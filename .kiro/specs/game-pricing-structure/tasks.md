@@ -9,42 +9,42 @@ schéma → migration des données → fonctions utilitaires → tests.
 
 ## Tasks
 
-- [ ] 1. Création du schéma de base de données
-  - [ ] 1.1 Créer la table stores
+- [x] 1. Création du schéma de base de données
+  - [x] 1.1 Créer la table stores
     - Créer la table `stores` avec nom unique, URL du site, logo
     - Ajouter les contraintes de validation (nom unique)
     - Ajouter les indexes appropriés pour les performances
     - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
 
-  - [ ] 1.2 Créer la table game_prices
+  - [x] 1.2 Créer la table game_prices
     - Créer la table `game_prices` avec référence vers games et stores
     - Ajouter les champs prix, devise, plateforme, URL du magasin
     - Ajouter les contraintes de validation (prix positifs, unicité)
     - Implémenter les indexes pour les performances
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
 
-  - [ ] 1.3 Configurer les politiques RLS et sécurité
+  - [x] 1.3 Configurer les politiques RLS et sécurité
     - Activer RLS sur les nouvelles tables
     - Créer les politiques de lecture publique
     - Créer les politiques d'administration
     - Ajouter les politiques de développement temporaires
     - _Requirements: 6.1, 6.2_
 
-- [ ] 2. Migration des données existantes
-  - [ ] 2.1 Créer les données de référence des magasins
+- [x] 2. Migration des données existantes
+  - [x] 2.1 Créer les données de référence des magasins
     - Insérer les magasins principaux (Steam, Epic Games, PlayStation Store,
       etc.)
     - Valider l'intégrité des données de référence
     - _Requirements: 5.2_
 
-  - [ ] 2.2 Migrer les prix existants
+  - [x] 2.2 Migrer les prix existants
     - Migrer `launch_price` et `current_price` vers `game_prices`
     - Préserver les informations de devise existantes
     - Assigner les prix à un magasin par défaut
     - Valider la cohérence des données migrées
     - _Requirements: 5.1, 5.3, 5.4_
 
-  - [ ] 2.3 Nettoyer l'ancien schéma
+  - [x] 2.3 Nettoyer l'ancien schéma
     - Supprimer les colonnes `launch_price`, `current_price`, `currency`
     - Mettre à jour les contraintes de la table `games`
     - Vérifier l'intégrité après suppression

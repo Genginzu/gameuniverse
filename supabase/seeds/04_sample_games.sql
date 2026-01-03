@@ -1,13 +1,13 @@
 -- Seeds pour les jeux d'exemple
 -- Jeux populaires pour tester et démontrer la plateforme
 
-INSERT INTO games (id, slug, developer, publisher, release_date, launch_price, current_price, currency, metascore, pegi_rating, media) VALUES
-('660e8400-e29b-41d4-a716-446655440001', 'the-witcher-3', 'CD Projekt RED', 'CD Projekt', '2015-05-19', 59.99, 29.99, 'EUR', 93, 18, '{"coverImage": "/images/witcher3-cover.jpg", "screenshots": ["/images/witcher3-1.jpg", "/images/witcher3-2.jpg"], "artwork": [], "trailers": [], "gameplay": []}'),
-('660e8400-e29b-41d4-a716-446655440002', 'cyberpunk-2077', 'CD Projekt RED', 'CD Projekt', '2020-12-10', 59.99, 39.99, 'EUR', 86, 18, '{"coverImage": "/images/cyberpunk-cover.jpg", "screenshots": ["/images/cyberpunk-1.jpg", "/images/cyberpunk-2.jpg"], "artwork": [], "trailers": [], "gameplay": []}'),
-('660e8400-e29b-41d4-a716-446655440003', 'minecraft', 'Mojang Studios', 'Microsoft', '2011-11-18', 26.95, 26.95, 'EUR', 93, 7, '{"coverImage": "/images/minecraft-cover.jpg", "screenshots": ["/images/minecraft-1.jpg", "/images/minecraft-2.jpg"], "artwork": [], "trailers": [], "gameplay": []}'),
-('660e8400-e29b-41d4-a716-446655440004', 'grand-theft-auto-v', 'Rockstar North', 'Rockstar Games', '2013-09-17', 59.99, 29.99, 'EUR', 97, 18, '{"coverImage": "/images/gtav-cover.jpg", "screenshots": ["/images/gtav-1.jpg", "/images/gtav-2.jpg"], "artwork": [], "trailers": [], "gameplay": []}'),
-('660e8400-e29b-41d4-a716-446655440005', 'red-dead-redemption-2', 'Rockstar Studios', 'Rockstar Games', '2018-10-26', 59.99, 49.99, 'EUR', 97, 18, '{"coverImage": "/images/rdr2-cover.jpg", "screenshots": ["/images/rdr2-1.jpg", "/images/rdr2-2.jpg"], "artwork": [], "trailers": [], "gameplay": []}'),
-('660e8400-e29b-41d4-a716-446655440006', 'elden-ring', 'FromSoftware', 'Bandai Namco Entertainment', '2022-02-25', 59.99, 59.99, 'EUR', 96, 16, '{"coverImage": "/images/eldenring-cover.jpg", "screenshots": ["/images/eldenring-1.jpg", "/images/eldenring-2.jpg"], "artwork": [], "trailers": [], "gameplay": []}'),
-('660e8400-e29b-41d4-a716-446655440007', 'god-of-war', 'Santa Monica Studio', 'Sony Interactive Entertainment', '2018-04-20', 59.99, 19.99, 'EUR', 94, 18, '{"coverImage": "/images/gow-cover.jpg", "screenshots": ["/images/gow-1.jpg", "/images/gow-2.jpg"], "artwork": [], "trailers": [], "gameplay": []}'),
-('660e8400-e29b-41d4-a716-446655440008', 'horizon-zero-dawn', 'Guerrilla Games', 'Sony Interactive Entertainment', '2017-02-28', 59.99, 19.99, 'EUR', 89, 16, '{"coverImage": "/images/hzd-cover.jpg", "screenshots": ["/images/hzd-1.jpg", "/images/hzd-2.jpg"], "artwork": [], "trailers": [], "gameplay": []}')
+INSERT INTO games (id, slug, release_date, metascore, pegi_rating, cover_image_url) VALUES
+('660e8400-e29b-41d4-a716-446655440001', 'the-witcher-3', '2015-05-19', 93, 18, '/images/witcher3-cover.jpg'),
+('660e8400-e29b-41d4-a716-446655440002', 'cyberpunk-2077', '2020-12-10', 86, 18, '/images/cyberpunk-cover.jpg'),
+('660e8400-e29b-41d4-a716-446655440003', 'minecraft', '2011-11-18', 93, 7, '/images/minecraft-cover.jpg'),
+('660e8400-e29b-41d4-a716-446655440004', 'grand-theft-auto-v', '2013-09-17', 97, 18, '/images/gtav-cover.jpg'),
+('660e8400-e29b-41d4-a716-446655440005', 'red-dead-redemption-2', '2018-10-26', 97, 18, '/images/rdr2-cover.jpg'),
+('660e8400-e29b-41d4-a716-446655440006', 'elden-ring', '2022-02-25', 96, 16, '/images/eldenring-cover.jpg'),
+('660e8400-e29b-41d4-a716-446655440007', 'god-of-war', '2018-04-20', 94, 18, '/images/gow-cover.jpg'),
+('660e8400-e29b-41d4-a716-446655440008', 'horizon-zero-dawn', '2017-02-28', 89, 16, '/images/hzd-cover.jpg')
 ON CONFLICT (id) DO NOTHING;
