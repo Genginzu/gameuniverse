@@ -2,7 +2,10 @@
 
 ## Overview
 
-Ce plan d'implémentation transforme la conception Game Universe en une série de tâches de développement incrémentales. L'approche privilégie la création d'un MVP fonctionnel avec Next.js 16, TypeScript, shadcn/ui, Supabase, et next-intl pour l'internationalisation.
+Ce plan d'implémentation transforme la conception Game Universe en une série de
+tâches de développement incrémentales. L'approche privilégie la création d'un
+MVP fonctionnel avec Next.js 16, TypeScript, shadcn/ui, Supabase, et next-intl
+pour l'internationalisation.
 
 **Utilisation de Bun comme runtime :**
 
@@ -12,7 +15,9 @@ Ce plan d'implémentation transforme la conception Game Universe en une série d
 - **Build optimisé** : Bundler intégré pour des builds plus rapides
 - **TypeScript natif** : Transpilation ultra-rapide sans configuration
 
-L'implémentation suit une approche progressive : configuration de base → authentification → internationalisation → fonctionnalités core → tests → optimisations.
+L'implémentation suit une approche progressive : configuration de base →
+authentification → internationalisation → fonctionnalités core → tests →
+optimisations.
 
 ## Tasks
 
@@ -23,7 +28,7 @@ L'implémentation suit une approche progressive : configuration de base → auth
   - Configurer la structure de dossiers selon les bonnes pratiques
   - _Requirements: Architecture générale_
 
-- [-] 1.1 Configurer les outils de développement avec Bun
+- [x] 1.1 Configurer les outils de développement avec Bun
   - Configurer ESLint, Prettier, et Husky avec Bun comme runtime
   - Configurer les scripts de développement et build optimisés pour Bun
   - Configurer bun.config.ts pour les tests et le build
@@ -36,7 +41,8 @@ L'implémentation suit une approche progressive : configuration de base → auth
     - _Requirements: 6.1, 6.2_
 
   - [ ] 2.2 Créer les migrations de base de données
-    - Implémenter la migration 001: tables principales (games, genres, languages, profiles)
+    - Implémenter la migration 001: tables principales (games, genres,
+      languages, profiles)
     - Implémenter la migration 002: RLS et politiques de sécurité
     - _Requirements: 6.1, 6.2, 10.1_
 
@@ -285,7 +291,8 @@ L'implémentation suit une approche progressive : configuration de base → auth
 ## Notes
 
 - Toutes les tâches sont obligatoires pour une approche complète dès le début
-- **Bun est utilisé comme runtime** pour des performances optimales de développement
+- **Bun est utilisé comme runtime** pour des performances optimales de
+  développement
 - Chaque tâche référence les exigences spécifiques pour la traçabilité
 - Les checkpoints permettent une validation incrémentale
 - Les tests de propriété valident les propriétés de correction universelles

@@ -39,4 +39,4 @@ const mockRouter = {
 (global as typeof globalThis & { mockRouter: typeof mockRouter }).mockRouter = mockRouter;
 
 // Add any other global test setup here
-console.log("Test setup completed with Bun runtime");
+console.warn("Test setup completed with Bun runtime");

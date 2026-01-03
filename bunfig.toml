@@ -1,40 +1,65 @@
-# Bun configuration for optimal performance
+# Configuration Bun optimisée pour Game Universe
 
 [install]
 # Use exact versions for better reproducibility
 exact = true
 # Enable auto-install for missing packages
 auto = true
-# Use faster registry
+# Use faster registry with fallback
 registry = "https://registry.npmjs.org/"
 # Cache packages for faster installs
 cache = true
+# Optimize for development speed
+dev = true
+# Use lockfile for consistency
+lockfile = true
+# Prefer offline cache when available
+prefer-offline = true
 
 [install.scopes]
 # Configure scoped packages if needed
+# "@supabase" = "https://registry.npmjs.org/"
 
 [run]
 # Use Bun's runtime for better performance
 bun = true
 # Enable hot reloading for development
 hot = true
+# Prefer Bun runtime over Node.js
+prefer-bun = true
 
 [test]
 # Use Bun's built-in test runner
 preload = ["./test/setup.ts"]
-# Set timeout for tests
+# Set timeout for tests (including property-based tests)
 timeout = 30000
+# Enable coverage by default
+coverage = true
+# Bail on first failure for faster feedback
+bail = false
+# Run tests in parallel
+parallel = true
 
 [build]
-# Optimize builds
+# Optimize builds for production
 minify = true
 # Enable source maps for debugging
 sourcemap = true
-# Target modern browsers
+# Target modern browsers for Game Universe
 target = "browser"
+# Enable tree shaking
+treeshaking = true
 
 [dev]
-# Enable fast refresh
+# Enable fast refresh for React
 fastRefresh = true
 # Use Bun's dev server optimizations
 port = 3000
+# Watch for file changes
+watch = true
+# Clear console on restart
+clear = true
+
+[macro]
+# Enable macros for build-time optimizations
+react-refresh = true

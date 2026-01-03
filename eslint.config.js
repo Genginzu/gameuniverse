@@ -1,6 +1,7 @@
 import js from "@eslint/js";
 import typescript from "@typescript-eslint/eslint-plugin";
 import typescriptParser from "@typescript-eslint/parser";
+import prettier from "eslint-config-prettier";
 
 export default [
   js.configs.recommended,
@@ -14,20 +15,96 @@ export default [
         ecmaFeatures: {
           jsx: true,
         },
+        project: "./tsconfig.json",
+      },
+      globals: {
+        // Bun globals
+        Bun: "readonly",
+        // Browser globals
+        window: "readonly",
+        document: "readonly",
+        console: "readonly",
+        // Node.js globals for build scripts
+        process: "readonly",
+        Buffer: "readonly",
+        __dirname: "readonly",
+        __filename: "readonly",
       },
     },
     plugins: {
       "@typescript-eslint": typescript,
     },
     rules: {
-      "@typescript-eslint/no-unused-vars": "error",
+      // TypeScript rules
+      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
       "@typescript-eslint/no-explicit-any": "warn",
+      "@typescript-eslint/no-var-requires": "error",
+
+      // General JavaScript rules
       "prefer-const": "error",
       "no-var": "error",
       "no-undef": "off", // TypeScript handles this
+      "no-console": ["warn", { allow: ["warn", "error"] }],
+
+      // React/Next.js specific rules
+      "react-hooks/rules-of-hooks": "off", // Will be handled by Next.js ESLint config
+      "react-hooks/exhaustive-deps": "off", // Will be handled by Next.js ESLint config
+
+      // Import rules
+      "no-duplicate-imports": "error",
+
+      // Code quality rules
+      eqeqeq: ["error", "always"],
+      curly: ["error", "all"],
+      "no-eval": "error",
+      "no-implied-eval": "error",
     },
   },
   {
-    ignores: [".next/", "node_modules/", "out/", "build/", "dist/", "*.config.js", "*.config.ts"],
+    files: ["**/*.test.{js,jsx,ts,tsx}", "**/*.spec.{js,jsx,ts,tsx}"],
+    languageOptions: {
+      globals: {
+        // Test globals for Bun test runner
+        describe: "readonly",
+        it: "readonly",
+        test: "readonly",
+        expect: "readonly",
+        beforeAll: "readonly",
+        afterAll: "readonly",
+        beforeEach: "readonly",
+        afterEach: "readonly",
+        jest: "readonly",
+        // fast-check globals for property-based testing
+        fc: "readonly",
+      },
+    },
+    rules: {
+      // Relax some rules for tests
+      "@typescript-eslint/no-explicit-any": "off",
+      "no-console": "off",
+    },
+  },
+  {
+    files: ["*.config.{js,ts}", "*.setup.{js,ts}"],
+    rules: {
+      // Allow any in config files
+      "@typescript-eslint/no-explicit-any": "off",
+      "no-console": "off",
+    },
+  },
+  prettier, // Must be last to override other configs
+  {
+    ignores: [
+      ".next/",
+      "node_modules/",
+      "out/",
+      "build/",
+      "dist/",
+      "coverage/",
+      "*.config.js",
+      "*.config.ts",
+      ".husky/",
+      "public/",
+    ],
   },
 ];

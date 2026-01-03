@@ -2,9 +2,15 @@
 
 ## Overview
 
-Game Universe est une plateforme web moderne dédiée à la découverte et exploration de jeux vidéo. Cette première version MVP se concentre sur une bibliothèque de jeux complète avec des fonctionnalités de navigation, recherche, filtrage et consultation détaillée.
+Game Universe est une plateforme web moderne dédiée à la découverte et
+exploration de jeux vidéo. Cette première version MVP se concentre sur une
+bibliothèque de jeux complète avec des fonctionnalités de navigation, recherche,
+filtrage et consultation détaillée.
 
-L'architecture privilégie la simplicité, la performance et l'extensibilité pour permettre l'ajout futur de fonctionnalités sociales et compétitives. La solution utilise une approche API-first avec une séparation claire entre le frontend et le backend.
+L'architecture privilégie la simplicité, la performance et l'extensibilité pour
+permettre l'ajout futur de fonctionnalités sociales et compétitives. La solution
+utilise une approche API-first avec une séparation claire entre le frontend et
+le backend.
 
 ## Architecture
 
@@ -44,10 +50,12 @@ graph TB
 
 - **Runtime:** Bun pour des performances optimales (installation, build, dev)
 - **Framework:** Next.js 16 avec App Router pour le SSR et les performances
-- **Internationalization:** next-intl pour la gestion des langues (FR par défaut, EN)
+- **Internationalization:** next-intl pour la gestion des langues (FR par
+  défaut, EN)
 - **UI Library:** shadcn/ui pour des composants modernes et accessibles
 - **Icons:** react-icons pour une large collection d'icônes (React Icons)
-- **Styling:** Tailwind CSS (inclus avec shadcn/ui) pour la rapidité de développement
+- **Styling:** Tailwind CSS (inclus avec shadcn/ui) pour la rapidité de
+  développement
 - **TypeScript:** Pour la robustesse et l'expérience développeur
 - **Deployment:** Vercel pour l'hébergement optimisé Next.js
 
@@ -57,8 +65,10 @@ graph TB
 - **Authentication:** Supabase Auth pour la gestion des utilisateurs
 - **Storage:** Supabase Storage pour les médias (images, vidéos)
 - **Email:** Resend pour l'envoi d'emails transactionnels
-- **API:** Next.js API Routes + Supabase client pour les opérations personnalisées
-- **Internationalization:** Base de données multilingue avec tables de traduction
+- **API:** Next.js API Routes + Supabase client pour les opérations
+  personnalisées
+- **Internationalization:** Base de données multilingue avec tables de
+  traduction
 
 **Avantages Économiques:**
 
@@ -521,7 +531,10 @@ export async function GET(request: Request) {
 }
 
 // /app/api/games/[id]/route.ts - Détails d'un jeu
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
   const supabase = createRouteHandlerClient({ cookies });
   // ... logique de récupération
 }
@@ -554,7 +567,8 @@ import { cookies } from "next/headers";
 export const createClient = () => createClientComponentClient();
 
 // Client pour les composants côté serveur
-export const createServerClient = () => createServerComponentClient({ cookies });
+export const createServerClient = () =>
+  createServerComponentClient({ cookies });
 
 // Types générés automatiquement par Supabase
 export type Database = {
@@ -669,77 +683,91 @@ enum GameMode {
 
 ## Correctness Properties
 
-_A property is a characteristic or behavior that should hold true across all valid executions of a system-essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees._
+_A property is a characteristic or behavior that should hold true across all
+valid executions of a system-essentially, a formal statement about what the
+system should do. Properties serve as the bridge between human-readable
+specifications and machine-verifiable correctness guarantees._
 
 ### Property 1: Game List Display Completeness
 
-_For any_ set of games in the library, when displaying the game list, each game card should contain title, cover image, genre, and release year information.
+_For any_ set of games in the library, when displaying the game list, each game
+card should contain title, cover image, genre, and release year information.
 **Validates: Requirements 1.2**
 
 ### Property 2: Pagination Navigation Consistency
 
-_For any_ valid page number within the total page range, clicking pagination controls should navigate to the requested page and display the correct subset of games.
-**Validates: Requirements 1.3**
+_For any_ valid page number within the total page range, clicking pagination
+controls should navigate to the requested page and display the correct subset of
+games. **Validates: Requirements 1.3**
 
 ### Property 3: Search Title Matching
 
-_For any_ search query and game collection, the search results should only include games whose titles contain the search query (case-insensitive).
+_For any_ search query and game collection, the search results should only
+include games whose titles contain the search query (case-insensitive).
 **Validates: Requirements 2.1, 2.4**
 
 ### Property 4: Search State Reset
 
-_For any_ active search query, clearing the search should restore the display to show all available games.
-**Validates: Requirements 2.5**
+_For any_ active search query, clearing the search should restore the display to
+show all available games. **Validates: Requirements 2.5**
 
 ### Property 5: Genre Filter Accuracy
 
-_For any_ selected genre filter and game collection, the filtered results should only include games that belong to the selected genre(s).
-**Validates: Requirements 3.1, 3.2**
+_For any_ selected genre filter and game collection, the filtered results should
+only include games that belong to the selected genre(s). **Validates:
+Requirements 3.1, 3.2**
 
 ### Property 6: Genre Count Accuracy
 
-_For any_ genre in the filter system, the displayed count should equal the actual number of games belonging to that genre.
-**Validates: Requirements 3.4**
+_For any_ genre in the filter system, the displayed count should equal the
+actual number of games belonging to that genre. **Validates: Requirements 3.4**
 
 ### Property 7: Filter State Reset
 
-_For any_ active filter combination, clearing all filters should restore the display to show all available games.
-**Validates: Requirements 3.5**
+_For any_ active filter combination, clearing all filters should restore the
+display to show all available games. **Validates: Requirements 3.5**
 
 ### Property 8: Game Details Completeness
 
-_For any_ game in the system, the game details page should display all available information including title, developer, publisher, release date, genres, description, platforms, languages, age rating, game modes, pricing, system requirements, and metascore.
-**Validates: Requirements 4.2**
+_For any_ game in the system, the game details page should display all available
+information including title, developer, publisher, release date, genres,
+description, platforms, languages, age rating, game modes, pricing, system
+requirements, and metascore. **Validates: Requirements 4.2**
 
 ### Property 9: Media Gallery Completeness
 
-_For any_ game with media content, the details page should display all media types (screenshots, artwork, trailers, gameplay videos) in organized galleries with navigation controls.
-**Validates: Requirements 4.3, 4.4**
+_For any_ game with media content, the details page should display all media
+types (screenshots, artwork, trailers, gameplay videos) in organized galleries
+with navigation controls. **Validates: Requirements 4.3, 4.4**
 
 ### Property 10: Responsive Layout Adaptation
 
-_For any_ supported screen size (mobile, tablet, desktop), the game library should adapt its layout appropriately and maintain functionality across orientation changes.
-**Validates: Requirements 5.1, 5.2, 5.3, 5.5**
+_For any_ supported screen size (mobile, tablet, desktop), the game library
+should adapt its layout appropriately and maintain functionality across
+orientation changes. **Validates: Requirements 5.1, 5.2, 5.3, 5.5**
 
 ### Property 11: Game Validation Integrity
 
-_For any_ game creation or update operation, all required fields should be validated, and invalid data should be rejected with appropriate error messages.
+_For any_ game creation or update operation, all required fields should be
+validated, and invalid data should be rejected with appropriate error messages.
 **Validates: Requirements 6.1, 6.2**
 
 ### Property 12: Game Deletion Consistency
 
-_For any_ deleted game, it should be completely removed from all search results, filter results, and library displays.
-**Validates: Requirements 6.3**
+_For any_ deleted game, it should be completely removed from all search results,
+filter results, and library displays. **Validates: Requirements 6.3**
 
 ### Property 13: Bulk Operations Atomicity
 
-_For any_ bulk operation on multiple games, either all operations should succeed or all should fail, maintaining data consistency.
-**Validates: Requirements 6.4**
+_For any_ bulk operation on multiple games, either all operations should succeed
+or all should fail, maintaining data consistency. **Validates: Requirements
+6.4**
 
 ### Property 14: Real-time Display Updates
 
-_For any_ game data modification, the changes should be immediately reflected in all relevant displays (library, search results, details page).
-**Validates: Requirements 6.5**
+_For any_ game data modification, the changes should be immediately reflected in
+all relevant displays (library, search results, details page). **Validates:
+Requirements 6.5**
 
 ## Error Handling
 
@@ -816,7 +844,10 @@ export function withErrorHandler(handler: Function) {
         );
       }
 
-      return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+      return NextResponse.json(
+        { error: "Internal server error" },
+        { status: 500 }
+      );
     }
   };
 }
@@ -833,7 +864,8 @@ export function withErrorHandler(handler: Function) {
 
 ### Dual Testing Approach
 
-The testing strategy employs both unit tests and property-based tests to ensure comprehensive coverage:
+The testing strategy employs both unit tests and property-based tests to ensure
+comprehensive coverage:
 
 **Unit Tests:**
 
@@ -851,16 +883,15 @@ The testing strategy employs both unit tests and property-based tests to ensure 
 
 ### Property-Based Testing Configuration
 
-**Framework:** fast-check pour TypeScript avec Jest/Vitest
-**Configuration:**
+**Framework:** fast-check pour TypeScript avec Jest/Vitest **Configuration:**
 
 - Minimum 100 itérations par test de propriété
 - Générateurs personnalisés pour les données de jeux
 - Shrinking activé pour trouver les exemples minimaux d'échec
 - Configuration de timeout pour les tests longs
 
-**Test Tagging Format:**
-Chaque test de propriété doit référencer sa propriété du document de conception :
+**Test Tagging Format:** Chaque test de propriété doit référencer sa propriété
+du document de conception :
 
 ```typescript
 // Feature: game-library, Property 1: Game List Display Completeness
@@ -1010,7 +1041,11 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single();
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single();
 
   return NextResponse.json({ user, profile });
 }

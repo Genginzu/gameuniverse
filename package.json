@@ -3,17 +3,21 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
-    "lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "type-check": "tsc --noEmit",
+    "dev": "bun --bun next dev",
+    "build": "bun --bun next build",
+    "start": "bun --bun next start",
+    "lint": "bun eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "bun eslint . --ext .js,.jsx,.ts,.tsx --fix",
+    "format": "bun prettier --write .",
+    "format:check": "bun prettier --check .",
+    "type-check": "bun tsc --noEmit",
     "test": "bun test",
     "test:watch": "bun test --watch",
-    "prepare": "husky install"
+    "test:run": "bun test --run",
+    "test:coverage": "bun test --coverage",
+    "clean": "bun rimraf .next dist coverage",
+    "check-all": "powershell -ExecutionPolicy Bypass -File scripts/check-all.ps1",
+    "check-all:unix": "bash scripts/check-all.sh"
   },
   "dependencies": {
     "class-variance-authority": "0.7.1",
@@ -42,22 +46,12 @@
     "eslint-config-next": "^16.1.1",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-prettier": "5.5.4",
-    "husky": "9.1.7",
     "jsdom": "27.4.0",
-    "lint-staged": "16.2.7",
     "postcss": "^8.5.6",
     "prettier": "3.7.4",
     "prettier-plugin-tailwindcss": "0.7.2",
+    "rimraf": "6.1.2",
     "tailwindcss": "^3.4.0",
     "typescript": "^5.9.3"
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{json,css,md}": [
-      "prettier --write"
-    ]
   }
 }

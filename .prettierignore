@@ -1,19 +1,24 @@
 # Dependencies
 node_modules/
-.pnp
-.pnp.js
+bun.lockb
 
-# Production builds
+# Build outputs
 .next/
 out/
-build/
 dist/
+build/
+
+# Coverage reports
+coverage/
 
 # Environment files
 .env*
 
 # Logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # Runtime data
 pids
@@ -21,44 +26,25 @@ pids
 *.seed
 *.pid.lock
 
-# Coverage directory used by tools like istanbul
-coverage/
+# Generated files
+*.tsbuildinfo
+.eslintcache
 
-# Dependency directories
-node_modules/
-
-# Optional npm cache directory
-.npm
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# dotenv environment variables file
-.env
-
-# Stores VSCode versions used for testing VSCode extensions
-.vscode-test
-
-# Yarn v2
-.yarn/cache
-.yarn/unplugged
-.yarn/build-state.yml
-.yarn/install-state.gz
-.pnp.*
-
-# Bun
-.bun
-
-# IDE
+# IDE files
 .vscode/
 .idea/
+*.swp
+*.swo
 
-# OS
+# OS generated files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
