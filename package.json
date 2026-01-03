@@ -17,9 +17,18 @@
     "test:coverage": "bun test --coverage",
     "clean": "bun rimraf .next dist coverage",
     "check-all": "powershell -ExecutionPolicy Bypass -File scripts/check-all.ps1",
-    "check-all:unix": "bash scripts/check-all.sh"
+    "check-all:unix": "bash scripts/check-all.sh",
+    "supabase:start": "bunx supabase start",
+    "supabase:stop": "bunx supabase stop",
+    "supabase:status": "bunx supabase status",
+    "supabase:reset": "bunx supabase db reset",
+    "supabase:migrate": "bunx supabase db push",
+    "supabase:seed": "bunx supabase db seed",
+    "supabase:types": "bunx supabase gen types typescript --local > src/lib/database.types.ts"
   },
   "dependencies": {
+    "@supabase/auth-helpers-nextjs": "0.15.0",
+    "@supabase/supabase-js": "2.89.0",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
     "next": "^16.1.1",
@@ -51,6 +60,7 @@
     "prettier": "3.7.4",
     "prettier-plugin-tailwindcss": "0.7.2",
     "rimraf": "6.1.2",
+    "supabase": "2.70.5",
     "tailwindcss": "^3.4.0",
     "typescript": "^5.9.3"
   }

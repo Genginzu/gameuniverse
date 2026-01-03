@@ -34,24 +34,24 @@ optimisations.
   - Configurer bun.config.ts pour les tests et le build
   - _Requirements: Architecture générale_
 
-- [ ] 2. Configuration Supabase et base de données
-  - [ ] 2.1 Initialiser le projet Supabase
+- [x] 2. Configuration Supabase et base de données
+  - [x] 2.1 Initialiser le projet Supabase
     - Créer le projet Supabase et configurer les variables d'environnement
     - Installer les packages Supabase pour Next.js avec Bun
     - _Requirements: 6.1, 6.2_
 
-  - [ ] 2.2 Créer les migrations de base de données
+  - [x] 2.2 Créer les migrations de base de données
     - Implémenter la migration 001: tables principales (games, genres,
       languages, profiles)
     - Implémenter la migration 002: RLS et politiques de sécurité
     - _Requirements: 6.1, 6.2, 10.1_
 
-  - [ ] 2.3 Configurer les seeds modulaires
+  - [x] 2.3 Configurer les seeds modulaires
     - Créer les fichiers de seeds par table (languages, genres, sample games)
     - Implémenter le fichier seed.sql principal qui orchestre l'exécution
     - _Requirements: 6.1_
 
-  - [ ] 2.4 Tester la configuration de base de données
+  - [x] 2.4 Tester la configuration de base de données
     - Vérifier que les migrations s'appliquent correctement
     - Vérifier que les seeds s'exécutent sans erreur
     - Tester les politiques RLS
