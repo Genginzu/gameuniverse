@@ -1,0 +1,127 @@
+{
+  "navigation": {
+    "home": "Accueil",
+    "library": "Bibliothèque",
+    "dashboard": "Tableau de bord",
+    "login": "Connexion",
+    "signup": "Inscription",
+    "logout": "Déconnexion"
+  },
+  "landing": {
+    "title": "Découvrez l'univers du jeu vidéo",
+    "subtitle": "La plateforme complète pour explorer, découvrir et partager votre passion du gaming",
+    "cta": {
+      "signup": "Commencer gratuitement",
+      "login": "Se connecter"
+    },
+    "features": {
+      "library": {
+        "title": "Bibliothèque complète",
+        "description": "Explorez des milliers de jeux vidéo avec des informations détaillées"
+      },
+      "search": {
+        "title": "Recherche avancée",
+        "description": "Trouvez facilement vos jeux préférés grâce à notre système de recherche et filtres"
+      },
+      "details": {
+        "title": "Informations détaillées",
+        "description": "Consultez toutes les informations techniques, prix et médias de chaque jeu"
+      }
+    }
+  },
+  "library": {
+    "title": "Bibliothèque de jeux",
+    "search": "Rechercher un jeu...",
+    "filters": "Filtres",
+    "noResults": "Aucun jeu trouvé",
+    "loading": "Chargement...",
+    "genres": "Genres",
+    "clearFilters": "Effacer les filtres",
+    "resultsCount": "{count} jeu(x) trouvé(s)"
+  },
+  "game": {
+    "details": "Détails du jeu",
+    "developer": "Développeur",
+    "publisher": "Éditeur",
+    "releaseDate": "Date de sortie",
+    "genres": "Genres",
+    "platforms": "Plateformes",
+    "price": "Prix",
+    "currentPrice": "Prix actuel",
+    "launchPrice": "Prix de lancement",
+    "rating": "Note",
+    "description": "Description",
+    "systemRequirements": "Configuration requise",
+    "media": "Médias",
+    "screenshots": "Captures d'écran",
+    "artwork": "Illustrations",
+    "trailers": "Bandes-annonces",
+    "gameplay": "Gameplay"
+  },
+  "auth": {
+    "signin": {
+      "title": "Connexion",
+      "description": "Connectez-vous à votre compte Game Universe",
+      "submit": "Se connecter",
+      "switchText": "Pas encore de compte ?",
+      "switchLink": "Créer un compte"
+    },
+    "signup": {
+      "title": "Inscription",
+      "description": "Créez votre compte Game Universe",
+      "submit": "Créer un compte",
+      "switchText": "Déjà un compte ?",
+      "switchLink": "Se connecter"
+    },
+    "form": {
+      "email": "Email",
+      "emailPlaceholder": "votre@email.com",
+      "password": "Mot de passe",
+      "passwordPlaceholder": "Votre mot de passe",
+      "fullName": "Nom complet",
+      "fullNamePlaceholder": "Votre nom complet",
+      "submitting": "En cours..."
+    },
+    "error": {
+      "title": "Erreur d'authentification",
+      "description": "Une erreur s'est produite lors de l'authentification",
+      "generic": "Une erreur inattendue s'est produite",
+      "tryAgain": "Réessayer",
+      "backHome": "Retour à l'accueil"
+    },
+    "footer": {
+      "text": "© 2024 Game Universe. Tous droits réservés."
+    }
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "welcome": "Bienvenue, {name}",
+    "quickActions": "Actions rapides",
+    "browseLibrary": "Parcourir la bibliothèque",
+    "searchGames": "Rechercher des jeux",
+    "profile": "Profil",
+    "settings": "Paramètres"
+  },
+  "common": {
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue",
+    "retry": "Réessayer",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "confirm": "Confirmer",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "close": "Fermer",
+    "language": "Langue"
+  },
+  "pagination": {
+    "page": "Page {current} sur {total}",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "first": "Premier",
+    "last": "Dernier"
+  }
+}

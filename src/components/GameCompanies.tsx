@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createSupabaseClient } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase";
 import type { Database } from "@/lib/database.types";
 
 type GameCompany = Database["public"]["Functions"]["get_game_companies"]["Returns"][0];
@@ -19,7 +19,7 @@ export default function GameCompanies({ gameId, gameTitle }: GameCompaniesProps)
   useEffect(() => {
     async function fetchGameCompanies() {
       try {
-        const supabase = createSupabaseClient();
+        const supabase = createClient();
 
         // Utiliser la fonction get_game_companies pour récupérer toutes les entreprises
         const { data, error } = await supabase.rpc("get_game_companies", {
@@ -121,7 +121,7 @@ export function GameDevelopers({ gameId, gameTitle }: GameCompaniesProps) {
   useEffect(() => {
     async function fetchDevelopers() {
       try {
-        const supabase = createSupabaseClient();
+        const supabase = createClient();
 
         // Récupérer seulement les développeurs
         const { data, error } = await supabase.rpc("get_game_companies", {

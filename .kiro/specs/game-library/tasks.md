@@ -57,43 +57,43 @@ optimisations.
     - Tester les politiques RLS
     - _Requirements: 6.1, 6.2_
 
-- [ ] 3. Configuration de l'internationalisation
-  - [ ] 3.1 Installer et configurer next-intl
+- [x] 3. Configuration de l'internationalisation
+  - [x] 3.1 Installer et configurer next-intl
     - Installer next-intl avec Bun et configurer les locales (fr, en)
     - Créer les fichiers de traduction de base
     - Configurer le middleware pour la détection de langue
     - _Requirements: 7.1, 7.2, 7.3_
 
-  - [ ] 3.2 Créer les composants d'internationalisation
+  - [x] 3.2 Créer les composants d'internationalisation
     - Implémenter le LanguageSwitcher avec shadcn/ui Select
     - Créer les hooks personnalisés pour les traductions
     - _Requirements: 7.2_
 
-  - [ ] 3.3 Tester l'internationalisation
+  - [x] 3.3 Tester l'internationalisation
     - Vérifier le changement de langue en temps réel
     - Tester le fallback vers la langue par défaut
     - _Requirements: 7.1, 7.2, 7.5_
 
-- [ ] 4. Système d'authentification
-  - [ ] 4.1 Configurer Supabase Auth
+- [x] 4. Système d'authentification
+  - [x] 4.1 Configurer Supabase Auth
     - Configurer les providers d'authentification (email/password)
     - Implémenter les API routes pour l'authentification
     - Créer le middleware d'authentification
     - _Requirements: 10.1, 10.2, 10.5_
 
-  - [ ] 4.2 Créer les composants d'authentification
+  - [x] 4.2 Créer les composants d'authentification
     - Implémenter AuthForm avec shadcn/ui (signin/signup)
     - Créer les pages de connexion et inscription
     - Implémenter la gestion des erreurs d'authentification
     - _Requirements: 10.1, 10.2, 10.4_
 
-  - [ ] 4.3 Implémenter la gestion des profils utilisateurs
+  - [x] 4.3 Implémenter la gestion des profils utilisateurs
     - Créer l'API route pour la gestion des profils
     - Implémenter la création automatique de profil à l'inscription
     - Gérer les préférences utilisateur (langue)
     - _Requirements: 10.1, 7.1_
 
-  - [ ] 4.4 Tester l'authentification
+  - [x] 4.4 Tester l'authentification
     - Tester l'inscription avec validation email
     - Tester la connexion et déconnexion
     - Vérifier les redirections automatiques

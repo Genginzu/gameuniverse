@@ -1,0 +1,127 @@
+{
+  "navigation": {
+    "home": "Home",
+    "library": "Library",
+    "dashboard": "Dashboard",
+    "login": "Login",
+    "signup": "Sign up",
+    "logout": "Logout"
+  },
+  "landing": {
+    "title": "Discover the gaming universe",
+    "subtitle": "The complete platform to explore, discover and share your gaming passion",
+    "cta": {
+      "signup": "Get started for free",
+      "login": "Sign in"
+    },
+    "features": {
+      "library": {
+        "title": "Complete library",
+        "description": "Explore thousands of video games with detailed information"
+      },
+      "search": {
+        "title": "Advanced search",
+        "description": "Easily find your favorite games with our search system and filters"
+      },
+      "details": {
+        "title": "Detailed information",
+        "description": "View all technical information, prices and media for each game"
+      }
+    }
+  },
+  "library": {
+    "title": "Game Library",
+    "search": "Search for a game...",
+    "filters": "Filters",
+    "noResults": "No games found",
+    "loading": "Loading...",
+    "genres": "Genres",
+    "clearFilters": "Clear filters",
+    "resultsCount": "{count} game(s) found"
+  },
+  "game": {
+    "details": "Game details",
+    "developer": "Developer",
+    "publisher": "Publisher",
+    "releaseDate": "Release date",
+    "genres": "Genres",
+    "platforms": "Platforms",
+    "price": "Price",
+    "currentPrice": "Current price",
+    "launchPrice": "Launch price",
+    "rating": "Rating",
+    "description": "Description",
+    "systemRequirements": "System requirements",
+    "media": "Media",
+    "screenshots": "Screenshots",
+    "artwork": "Artwork",
+    "trailers": "Trailers",
+    "gameplay": "Gameplay"
+  },
+  "auth": {
+    "signin": {
+      "title": "Sign In",
+      "description": "Sign in to your Game Universe account",
+      "submit": "Sign In",
+      "switchText": "Don't have an account?",
+      "switchLink": "Create account"
+    },
+    "signup": {
+      "title": "Sign Up",
+      "description": "Create your Game Universe account",
+      "submit": "Create Account",
+      "switchText": "Already have an account?",
+      "switchLink": "Sign in"
+    },
+    "form": {
+      "email": "Email",
+      "emailPlaceholder": "your@email.com",
+      "password": "Password",
+      "passwordPlaceholder": "Your password",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "Your full name",
+      "submitting": "Processing..."
+    },
+    "error": {
+      "title": "Authentication Error",
+      "description": "An error occurred during authentication",
+      "generic": "An unexpected error occurred",
+      "tryAgain": "Try Again",
+      "backHome": "Back to Home"
+    },
+    "footer": {
+      "text": "© 2024 Game Universe. All rights reserved."
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome, {name}",
+    "quickActions": "Quick actions",
+    "browseLibrary": "Browse library",
+    "searchGames": "Search games",
+    "profile": "Profile",
+    "settings": "Settings"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Retry",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "close": "Close",
+    "language": "Language"
+  },
+  "pagination": {
+    "page": "Page {current} of {total}",
+    "previous": "Previous",
+    "next": "Next",
+    "first": "First",
+    "last": "Last"
+  }
+}

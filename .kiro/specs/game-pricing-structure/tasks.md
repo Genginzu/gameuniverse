@@ -50,28 +50,28 @@ schéma → migration des données → fonctions utilitaires → tests.
     - Vérifier l'intégrité après suppression
     - _Requirements: 5.5_
 
-- [ ] 3. Fonctions utilitaires de base de données
-  - [ ] 3.1 Créer les fonctions de récupération de prix
+- [x] 3. Fonctions utilitaires de base de données
+  - [x] 3.1 Créer les fonctions de récupération de prix
     - Implémenter `get_game_prices(game_id, store?, platform?)`
     - Implémenter `get_best_price(game_id)`
     - Implémenter `compare_game_prices(game_id)`
     - Optimiser les requêtes avec les indexes appropriés
     - _Requirements: 3.1, 3.2, 3.3, 4.1, 4.2_
 
-  - [ ] 3.2 Créer les fonctions de gestion des magasins
+  - [x] 3.2 Créer les fonctions de gestion des magasins
     - Implémenter des fonctions pour gérer les magasins
     - Implémenter la validation des données de magasin
     - Ajouter les fonctions de recherche de magasins
     - _Requirements: 1.1, 1.2, 1.3_
 
-- [ ] 4. Mise à jour des types TypeScript
-  - [ ] 4.1 Générer les nouveaux types de base de données
+- [x] 4. Mise à jour des types TypeScript
+  - [x] 4.1 Générer les nouveaux types de base de données
     - Exécuter `supabase gen types` pour les nouvelles tables
     - Vérifier la cohérence des types générés
     - Mettre à jour les imports dans les fichiers existants
     - _Requirements: 3.4_
 
-  - [ ] 4.2 Créer les types d'interface personnalisés
+  - [x] 4.2 Créer les types d'interface personnalisés
     - Définir les interfaces pour les prix enrichis
     - Créer les types pour les réponses de fonctions de prix
     - Ajouter les types pour les comparaisons de prix
@@ -119,7 +119,7 @@ schéma → migration des données → fonctions utilitaires → tests.
     - _Requirements: 5.1, 5.2, 5.4, 5.5_
 
 - [ ] 7. Documentation et finalisation
-  - [ ] 7.1 Documenter la nouvelle structure
+  - [x] 7.1 Documenter la nouvelle structure
     - Créer la documentation technique des nouvelles tables
     - Documenter les fonctions de base de données
     - Créer des exemples d'utilisation pour les développeurs

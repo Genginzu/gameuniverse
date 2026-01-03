@@ -199,6 +199,54 @@ bun run build                 # Build for production
 
 The project is optimized for deployment on Vercel with Bun runtime support.
 
+## Game Pricing System Documentation
+
+The project includes a comprehensive game pricing system with detailed
+documentation:
+
+### Core Documentation
+
+- **[PRICING_SYSTEM.md](./PRICING_SYSTEM.md)** - Technical overview of the
+  pricing architecture
+- **[PRICING_API_EXAMPLES.md](./PRICING_API_EXAMPLES.md)** - Developer usage
+  examples and React components
+- **[PRICING_MIGRATION_GUIDE.md](./PRICING_MIGRATION_GUIDE.md)** - Complete
+  migration guide from old to new system
+- **[DATABASE_FUNCTIONS_REFERENCE.md](./DATABASE_FUNCTIONS_REFERENCE.md)** -
+  Complete reference of all database functions
+
+### Key Features
+
+- **Multi-store support** - Compare prices across Steam, Epic Games, PlayStation
+  Store, etc.
+- **Platform flexibility** - Support for PC, PlayStation, Xbox, Nintendo Switch
+- **Performance optimized** - Indexed queries and efficient database functions
+- **Type-safe API** - Full TypeScript integration with generated types
+- **Property-based testing** - Comprehensive test coverage with correctness
+  properties
+
+### Quick Start with Pricing API
+
+```typescript
+import { supabase } from "@/lib/supabase";
+import type { GamePriceResponse } from "@/lib/pricing-types";
+
+// Get all prices for a game
+const { data: prices } = await supabase.rpc("get_game_prices", {
+  game_uuid: gameId,
+});
+
+// Get the best price
+const { data: bestPrice } = await supabase.rpc("get_best_price", {
+  game_uuid: gameId,
+});
+
+// Compare prices with statistics
+const { data: comparison } = await supabase.rpc("compare_game_prices", {
+  game_uuid: gameId,
+});
+```
+
 ## Development Best Practices
 
 ### Code Quality
