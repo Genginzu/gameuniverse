@@ -1,0 +1,40 @@
+# Bun configuration for optimal performance
+
+[install]
+# Use exact versions for better reproducibility
+exact = true
+# Enable auto-install for missing packages
+auto = true
+# Use faster registry
+registry = "https://registry.npmjs.org/"
+# Cache packages for faster installs
+cache = true
+
+[install.scopes]
+# Configure scoped packages if needed
+
+[run]
+# Use Bun's runtime for better performance
+bun = true
+# Enable hot reloading for development
+hot = true
+
+[test]
+# Use Bun's built-in test runner
+preload = ["./test/setup.ts"]
+# Set timeout for tests
+timeout = 30000
+
+[build]
+# Optimize builds
+minify = true
+# Enable source maps for debugging
+sourcemap = true
+# Target modern browsers
+target = "browser"
+
+[dev]
+# Enable fast refresh
+fastRefresh = true
+# Use Bun's dev server optimizations
+port = 3000
