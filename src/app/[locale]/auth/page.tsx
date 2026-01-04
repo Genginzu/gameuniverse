@@ -2,7 +2,6 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { useTranslations } from "next-intl";
 import { AuthForm } from "@/components/AuthForm";
 import { AuthLoadingFallback } from "@/components/AuthLoadingFallback";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
@@ -11,7 +10,6 @@ import { GameUniverseLogo } from "@/components/ui/game-universe-logo";
 import Footer from "@/components/Footer";
 
 function AuthContent() {
-  const t = useTranslations("auth");
   const searchParams = useSearchParams();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
 

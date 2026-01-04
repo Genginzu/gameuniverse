@@ -4,17 +4,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  FaGamepad,
-  FaSearch,
-  FaUser,
-  FaCog,
-  FaChartLine,
-  FaHeart,
-  FaClock,
-  FaUsers,
-  FaBolt,
-} from "react-icons/fa";
+import { FaGamepad, FaUser, FaCog, FaChartLine, FaUsers, FaBolt } from "react-icons/fa";
 import type { User } from "@supabase/supabase-js";
 
 interface DashboardProps {
