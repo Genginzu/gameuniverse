@@ -12,11 +12,9 @@ import { useAuth } from "@/hooks/useAuth";
 
 interface AuthFormProps {
   mode: "signin" | "signup";
-  // eslint-disable-next-line no-unused-vars
-  onModeChange: (mode: "signin" | "signup") => void;
+  onModeChange: (_newMode: "signin" | "signup") => void;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function AuthForm({ mode, onModeChange }: AuthFormProps) {
   const t = useTranslations("auth");
   const locale = useLocale();

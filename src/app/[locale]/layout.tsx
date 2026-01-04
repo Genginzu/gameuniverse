@@ -6,7 +6,6 @@ import { Inter } from "next/font/google";
 import "../globals.css";
 import type { Metadata } from "next";
 import { AuthErrorHandler } from "@/components/AuthErrorHandler";
-import { DebugEnv } from "@/components/DebugEnv";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -44,7 +43,6 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
       <body className={inter.className}>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <AuthErrorHandler />
-          <DebugEnv />
           {children}
         </NextIntlClientProvider>
       </body>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 import { useRouter, usePathname } from "@/i18n/navigation";
 import * as React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
@@ -33,7 +33,6 @@ const LanguageSelectItem = React.forwardRef<
 LanguageSelectItem.displayName = "LanguageSelectItem";
 
 export function LanguageSwitcher() {
-  const t = useTranslations("common");
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();

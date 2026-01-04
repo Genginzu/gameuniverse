@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useAuth } from "@/hooks/useAuth";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { Button } from "@/components/ui/button";
+import { GameUniverseLogo } from "@/components/ui/game-universe-logo";
 import { FaUser, FaSignOutAlt } from "react-icons/fa";
 
 export function Navigation() {
@@ -23,9 +24,7 @@ export function Navigation() {
     <nav className="flex items-center justify-between border-b bg-white/95 p-6 shadow-lg backdrop-blur-sm">
       <div className="flex items-center space-x-8">
         <Link href="/" className="flex items-center space-x-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-600 to-purple-600">
-            <span className="text-lg font-bold text-white">G</span>
-          </div>
+          <GameUniverseLogo size="md" />
           <span className="bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-xl font-bold text-transparent">
             Game Universe
           </span>

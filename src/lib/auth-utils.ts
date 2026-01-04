@@ -34,7 +34,10 @@ export const clearAuthCookies = () => {
   }
 };
 
-export const handleAuthError = async (error: any, supabase: any) => {
+export const handleAuthError = async (
+  error: { message?: string },
+  supabase: { auth: { signOut: () => Promise<unknown> } }
+) => {
   console.error("Auth error:", error);
 
   // Si c'est une erreur de refresh token, nettoyer et rediriger

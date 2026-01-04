@@ -1,7 +1,6 @@
 "use client";
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useTranslations } from "next-intl";
 import { IoCheckmarkCircle } from "react-icons/io5";
 
 interface AuthSuccessMessageProps {
@@ -10,8 +9,6 @@ interface AuthSuccessMessageProps {
 }
 
 export function AuthSuccessMessage({ message, show }: AuthSuccessMessageProps) {
-  const t = useTranslations("auth");
-
   if (!show) return null;
 
   return (

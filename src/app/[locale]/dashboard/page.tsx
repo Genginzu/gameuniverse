@@ -2,19 +2,14 @@
 
 import { useEffect } from "react";
 import { useRouter } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
 import { useAuth } from "@/hooks/useAuth";
 import { Navigation } from "@/components/Navigation";
 import { Dashboard } from "@/components/Dashboard";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
-interface DashboardPageProps {
-  params: Promise<{ locale: string }>;
-}
-
-export default function DashboardPage({ params }: DashboardPageProps) {
+export default function DashboardPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
-  const t = useTranslations("dashboard");
 
   useEffect(() => {
     if (!loading && !user) {
@@ -24,8 +19,10 @@ export default function DashboardPage({ params }: DashboardPageProps) {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-lg">Chargement...</div>
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="rounded-lg bg-white/80 p-8 shadow-xl backdrop-blur-sm">
+          <LoadingSpinner size="lg" />
+        </div>
       </div>
     );
   }

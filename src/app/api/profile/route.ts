@@ -1,6 +1,5 @@
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { NextRequest, NextResponse } from "next/server";
-import type { Database } from "@/lib/database.types";
 
 export async function GET() {
   const supabase = await createRouteHandlerClient();
@@ -48,7 +47,7 @@ export async function PATCH(request: NextRequest) {
     const allowedFields = ["full_name", "preferred_locale"];
     const filteredUpdates = Object.keys(updates)
       .filter((key) => allowedFields.includes(key))
-      .reduce((obj: any, key) => {
+      .reduce((obj: Record<string, unknown>, key) => {
         obj[key] = updates[key];
         return obj;
       }, {});

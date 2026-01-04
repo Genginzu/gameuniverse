@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import type { Database } from "@/lib/database.types";
 
 type GameCompany = Database["public"]["Functions"]["get_game_companies"]["Returns"][0];
@@ -42,7 +43,11 @@ export default function GameCompanies({ gameId, gameTitle }: GameCompaniesProps)
   }, [gameId]);
 
   if (loading) {
-    return <div className="animate-pulse">Chargement des entreprises...</div>;
+    return (
+      <div className="flex justify-center py-4">
+        <LoadingSpinner size="sm" />
+      </div>
+    );
   }
 
   if (error) {
@@ -114,7 +119,7 @@ export default function GameCompanies({ gameId, gameTitle }: GameCompaniesProps)
 }
 
 // Exemple d'utilisation avec des développeurs spécifiques
-export function GameDevelopers({ gameId, gameTitle }: GameCompaniesProps) {
+export function GameDevelopers({ gameId }: { gameId: string }) {
   const [developers, setDevelopers] = useState<GameCompany[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -141,7 +146,12 @@ export function GameDevelopers({ gameId, gameTitle }: GameCompaniesProps) {
     fetchDevelopers();
   }, [gameId]);
 
-  if (loading) return <div>Chargement...</div>;
+  if (loading)
+    return (
+      <div className="flex justify-center py-4">
+        <LoadingSpinner size="sm" />
+      </div>
+    );
 
   return (
     <div>

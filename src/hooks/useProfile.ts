@@ -56,11 +56,12 @@ export function useProfile() {
           loading: false,
           error: null,
         });
-      } catch (err: any) {
+      } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : "Failed to fetch profile";
         setProfileState({
           profile: null,
           loading: false,
-          error: err.message || "Failed to fetch profile",
+          error: errorMessage,
         });
       }
     };
@@ -94,11 +95,12 @@ export function useProfile() {
       });
 
       return updatedProfile;
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to update profile";
       setProfileState((prev) => ({
         ...prev,
         loading: false,
-        error: err.message || "Failed to update profile",
+        error: errorMessage,
       }));
       throw err;
     }
@@ -131,11 +133,12 @@ export function useProfile() {
         loading: false,
         error: null,
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to refresh profile";
       setProfileState((prev) => ({
         ...prev,
         loading: false,
-        error: err.message || "Failed to refresh profile",
+        error: errorMessage,
       }));
     }
   };

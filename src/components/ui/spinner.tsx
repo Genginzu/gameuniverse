@@ -1,5 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { GameUniverseLogo } from "./game-universe-logo";
 
 interface SpinnerProps extends React.HTMLAttributes<HTMLDivElement> {
   size?: "sm" | "md" | "lg";
@@ -7,22 +8,10 @@ interface SpinnerProps extends React.HTMLAttributes<HTMLDivElement> {
 
 const Spinner = React.forwardRef<HTMLDivElement, SpinnerProps>(
   ({ className, size = "md", ...props }, ref) => {
-    const sizeClasses = {
-      sm: "h-4 w-4",
-      md: "h-6 w-6",
-      lg: "h-8 w-8",
-    };
-
     return (
-      <div
-        ref={ref}
-        className={cn(
-          "animate-spin rounded-full border-2 border-current border-t-transparent",
-          sizeClasses[size],
-          className
-        )}
-        {...props}
-      />
+      <div ref={ref} className={cn("flex items-center justify-center", className)} {...props}>
+        <GameUniverseLogo size={size} animate />
+      </div>
     );
   }
 );

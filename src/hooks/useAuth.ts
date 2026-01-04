@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase";
 import { useRouter } from "@/i18n/navigation";
 import { useEffect, useState } from "react";
 import type { User, Session } from "@supabase/supabase-js";
-import { clearAuthCookies, handleAuthError } from "@/lib/auth-utils";
+import { clearAuthCookies } from "@/lib/auth-utils";
 
 export interface AuthState {
   user: User | null;
@@ -27,7 +27,7 @@ export function useAuth() {
     // Get initial session with timeout
     const getInitialSession = async () => {
       try {
-        console.log("🔍 Getting initial session...");
+        console.warn("🔍 Getting initial session...");
 
         // Timeout de 5 secondes pour éviter le blocage
         const timeoutPromise = new Promise((_, reject) => {
@@ -38,7 +38,10 @@ export function useAuth() {
 
         const sessionPromise = supabase.auth.getSession();
 
-        const result = (await Promise.race([sessionPromise, timeoutPromise])) as any;
+        const result = (await Promise.race([sessionPromise, timeoutPromise])) as {
+          data: { session: Session | null };
+          error: Error | null;
+        };
         clearTimeout(timeoutId);
 
         const {
@@ -54,7 +57,7 @@ export function useAuth() {
             await supabase.auth.signOut();
           }
         } else {
-          console.log("✅ Initial session:", session ? "Found" : "None");
+          console.warn("✅ Initial session:", session ? "Found" : "None");
         }
 
         setAuthState({
@@ -85,12 +88,12 @@ export function useAuth() {
     getInitialSession();
 
     // Listen for auth changes with error handling
-    let subscription: any;
+    let subscription: ReturnType<typeof supabase.auth.onAuthStateChange>["data"]["subscription"];
     try {
       const {
         data: { subscription: sub },
       } = supabase.auth.onAuthStateChange(async (event, session) => {
-        console.log("🔄 Auth state change:", event, session ? "with session" : "no session");
+        console.warn("🔄 Auth state change:", event, session ? "with session" : "no session");
 
         // Gérer les erreurs de token
         if (event === "TOKEN_REFRESHED" && !session) {
@@ -190,7 +193,7 @@ export function useAuth() {
   };
 
   const forceSignOut = async () => {
-    console.log("🔄 Force sign out - clearing all auth data");
+    console.warn("🔄 Force sign out - clearing all auth data");
     clearAuthCookies();
 
     setAuthState({
