@@ -12,9 +12,11 @@ import { useAuth } from "@/hooks/useAuth";
 
 interface AuthFormProps {
   mode: "signin" | "signup";
+  // eslint-disable-next-line no-unused-vars
   onModeChange: (mode: "signin" | "signup") => void;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function AuthForm({ mode, onModeChange }: AuthFormProps) {
   const t = useTranslations("auth");
   const locale = useLocale();
@@ -89,7 +91,7 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
                 onChange={handleInputChange}
                 required
                 disabled={isSubmitting}
-                className="h-12 rounded-xl border-slate-200 bg-slate-50/50 transition-all duration-200 focus:border-slate-400 focus:bg-white"
+                className="h-12 rounded-md border-slate-200 bg-slate-50/50 transition-all duration-200 focus:border-slate-400 focus:bg-white"
               />
             </div>
           )}
@@ -107,7 +109,7 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
               onChange={handleInputChange}
               required
               disabled={isSubmitting}
-              className="h-12 rounded-xl border-slate-200 bg-slate-50/50 transition-all duration-200 focus:border-slate-400 focus:bg-white"
+              className="h-12 rounded-md border-slate-200 bg-slate-50/50 transition-all duration-200 focus:border-slate-400 focus:bg-white"
             />
           </div>
 
@@ -125,19 +127,19 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
               required
               disabled={isSubmitting}
               minLength={6}
-              className="h-12 rounded-xl border-slate-200 bg-slate-50/50 transition-all duration-200 focus:border-slate-400 focus:bg-white"
+              className="h-12 rounded-md border-slate-200 bg-slate-50/50 transition-all duration-200 focus:border-slate-400 focus:bg-white"
             />
           </div>
 
           {error && (
-            <Alert variant="destructive" className="rounded-xl border-red-200 bg-red-50">
+            <Alert variant="destructive" className="rounded-md border-red-200 bg-red-50">
               <AlertDescription className="text-red-800">{error}</AlertDescription>
             </Alert>
           )}
 
           <Button
             type="submit"
-            className="h-12 w-full rounded-xl bg-gradient-to-r from-slate-900 to-slate-800 font-semibold text-white shadow-lg transition-all duration-200 hover:from-slate-800 hover:to-slate-700 hover:shadow-xl"
+            className="h-12 w-full rounded-md bg-gradient-to-r from-slate-900 to-slate-800 font-semibold text-white shadow-lg transition-all duration-200 hover:from-slate-800 hover:to-slate-700 hover:shadow-xl"
             disabled={!isFormValid() || isSubmitting || loading}
           >
             {isSubmitting && <Spinner size="sm" className="mr-2" />}

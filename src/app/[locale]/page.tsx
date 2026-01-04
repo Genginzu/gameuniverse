@@ -6,11 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Navigation } from "@/components/Navigation";
 import { LandingPage } from "@/components/LandingPage";
 
-interface HomeProps {
-  params: Promise<{ locale: string }>;
-}
-
-export default function Home({ params }: HomeProps) {
+export default function Home() {
   const { user, loading } = useAuth();
   const router = useRouter();
 
@@ -24,8 +20,13 @@ export default function Home({ params }: HomeProps) {
   // Show loading state while checking authentication
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-lg">Chargement...</div>
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
+        <div className="rounded-lg bg-white/80 p-8 shadow-xl backdrop-blur-sm">
+          <div className="flex items-center space-x-3">
+            <div className="h-6 w-6 animate-spin rounded-full border-2 border-blue-600 border-t-transparent"></div>
+            <div className="text-lg font-medium text-gray-700">Chargement...</div>
+          </div>
+        </div>
       </div>
     );
   }
