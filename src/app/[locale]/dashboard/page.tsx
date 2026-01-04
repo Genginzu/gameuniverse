@@ -19,7 +19,7 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <div className="rounded-lg bg-white p-8 shadow-xl">
+        <div className="rounded-lg p-8">
           <LoadingSpinner size="lg" />
         </div>
       </div>
