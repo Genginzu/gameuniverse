@@ -3,8 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useAuth } from "@/hooks/useAuth";
-import { Navigation } from "@/components/Navigation";
-import { Dashboard } from "@/components/Dashboard";
+import { DashboardWithAuth } from "@/components/DashboardWithAuth";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 export default function DashboardPage() {
@@ -19,8 +18,8 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
-        <div className="rounded-lg bg-white/80 p-8 shadow-xl backdrop-blur-sm">
+      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+        <div className="rounded-lg bg-white p-8 shadow-xl">
           <LoadingSpinner size="lg" />
         </div>
       </div>
@@ -31,10 +30,5 @@ export default function DashboardPage() {
     return null; // Will redirect
   }
 
-  return (
-    <>
-      <Navigation />
-      <Dashboard user={user} />
-    </>
-  );
+  return <DashboardWithAuth user={user} />;
 }

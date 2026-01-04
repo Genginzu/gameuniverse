@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -14,15 +15,26 @@ import {
   FaClock,
   FaUsers,
   FaBolt,
+  FaSignOutAlt,
 } from "react-icons/fa";
 import type { User } from "@supabase/supabase-js";
 
-interface DashboardProps {
+interface DashboardWithAuthProps {
   user: User;
 }
 
-export function Dashboard({ user }: DashboardProps) {
+export function DashboardWithAuth({ user }: DashboardWithAuthProps) {
   const t = useTranslations("dashboard");
+  const tNav = useTranslations("navigation");
+  const { signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -67,7 +79,7 @@ export function Dashboard({ user }: DashboardProps) {
 
         {/* User Info at Bottom */}
         <div className="border-t border-gray-200 p-4">
-          <div className="flex items-center">
+          <div className="mb-3 flex items-center">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500">
               <FaUser className="h-4 w-4 text-white" />
             </div>
@@ -78,6 +90,15 @@ export function Dashboard({ user }: DashboardProps) {
               <p className="text-xs text-gray-500">{user.email}</p>
             </div>
           </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-full justify-start text-gray-600 hover:text-gray-900"
+            onClick={handleSignOut}
+          >
+            <FaSignOutAlt className="mr-2 h-4 w-4" />
+            {tNav("logout")}
+          </Button>
         </div>
       </div>
 

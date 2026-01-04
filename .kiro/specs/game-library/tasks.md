@@ -117,14 +117,14 @@ optimisations.
     - Tester la navigation entre les pages
     - _Requirements: 8.4, 8.5, 9.1, 9.3, 9.5_
 
-- [ ] 6. Dashboard utilisateur
-  - [ ] 6.1 Créer la structure du Dashboard
+- [x] 6. Dashboard utilisateur
+  - [x] 6.1 Créer la structure du Dashboard
     - Implémenter la page Dashboard avec layout responsive
     - Créer la navigation interne du dashboard
     - Ajouter l'accès à la bibliothèque de jeux
     - _Requirements: 9.2, 9.4_
 
-  - [ ] 6.2 Implémenter les fonctionnalités de base du Dashboard
+  - [x] 6.2 Implémenter les fonctionnalités de base du Dashboard
     - Afficher les informations utilisateur
     - Créer les liens vers les fonctionnalités principales
     - Implémenter la déconnexion

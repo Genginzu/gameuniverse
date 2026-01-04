@@ -62,7 +62,7 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
   };
 
   return (
-    <Card className="mx-auto w-full max-w-md border-0 bg-white/95 shadow-2xl backdrop-blur-sm">
+    <Card className="mx-auto w-full max-w-md border-0 bg-white/95 shadow-2xl backdrop-blur-sm hover:shadow-2xl">
       <CardHeader className="space-y-6 pb-8">
         <div className="space-y-2 text-center">
           <CardTitle className="bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-3xl font-bold text-transparent">
@@ -89,7 +89,7 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
                 onChange={handleInputChange}
                 required
                 disabled={isSubmitting}
-                className="h-12 rounded-md border-slate-200 bg-slate-50/50 transition-all duration-200 focus:border-slate-400 focus:bg-white"
+                className="h-12 rounded-xl border-slate-200 bg-slate-50/50 transition-all duration-200 focus:border-slate-400 focus:bg-white"
               />
             </div>
           )}
@@ -107,7 +107,7 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
               onChange={handleInputChange}
               required
               disabled={isSubmitting}
-              className="h-12 rounded-md border-slate-200 bg-slate-50/50 transition-all duration-200 focus:border-slate-400 focus:bg-white"
+              className="h-12 rounded-xl border-slate-200 bg-slate-50/50 transition-all duration-200 focus:border-slate-400 focus:bg-white"
             />
           </div>
 
@@ -125,7 +125,7 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
               required
               disabled={isSubmitting}
               minLength={6}
-              className="h-12 rounded-md border-slate-200 bg-slate-50/50 transition-all duration-200 focus:border-slate-400 focus:bg-white"
+              className="h-12 rounded-xl border-slate-200 bg-slate-50/50 transition-all duration-200 focus:border-slate-400 focus:bg-white"
             />
           </div>
 
@@ -137,7 +137,7 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
 
           <Button
             type="submit"
-            className="h-12 w-full rounded-md bg-gradient-to-r from-slate-900 to-slate-800 font-semibold text-white shadow-lg transition-all duration-200 hover:from-slate-800 hover:to-slate-700 hover:shadow-xl"
+            className="h-12 w-full rounded-xl border-2 bg-gradient-to-br from-blue-500 via-purple-600 to-purple-700 font-semibold text-white shadow-lg transition-all duration-200 hover:border-purple-700 hover:bg-none hover:text-black hover:shadow-xl"
             disabled={!isFormValid() || isSubmitting || loading}
           >
             {isSubmitting && <Spinner size="sm" className="mr-2" />}
@@ -150,15 +150,15 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
         </form>
 
         <div className="border-t border-slate-100 pt-4">
-          <p className="text-center text-sm text-slate-600">
+          <p className="rounded-xl text-center text-sm text-slate-600">
             {mode === "signin" ? t("signin.switchText") : t("signup.switchText")}{" "}
             <button
               type="button"
               onClick={() => onModeChange(mode === "signin" ? "signup" : "signin")}
-              className="font-semibold text-slate-900 transition-colors duration-200 hover:text-slate-700"
+              className="rounded-xl font-semibold text-slate-900 transition-colors duration-200 hover:text-purple-700"
               disabled={isSubmitting}
             >
-              {mode === "signin" ? t("signup.switchLink") : t("signin.switchLink")}
+              {mode === "signin" ? t("signin.switchLink") : t("signup.switchLink")}
             </button>
           </p>
         </div>
