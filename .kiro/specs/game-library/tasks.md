@@ -99,20 +99,20 @@ optimisations.
     - Vérifier les redirections automatiques
     - _Requirements: 10.1, 10.2, 10.3, 9.1, 9.3_
 
-- [ ] 5. Page d'accueil et navigation
-  - [ ] 5.1 Créer la page d'accueil (Landing Page)
+- [x] 5. Page d'accueil et navigation
+  - [x] 5.1 Créer la page d'accueil (Landing Page)
     - Implémenter la LandingPage avec shadcn/ui components
     - Créer une présentation attractive du site
     - Ajouter les CTA pour inscription/connexion
     - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
 
-  - [ ] 5.2 Implémenter le système de navigation
+  - [x] 5.2 Implémenter le système de navigation
     - Créer le Header avec navigation conditionnelle
     - Implémenter les redirections basées sur l'authentification
     - Gérer les états de chargement pendant l'authentification
     - _Requirements: 9.1, 9.2, 9.3, 9.5_
 
-  - [ ] 5.3 Tester la navigation et les redirections
+  - [x] 5.3 Tester la navigation et les redirections
     - Vérifier les redirections pour utilisateurs connectés/non connectés
     - Tester la navigation entre les pages
     - _Requirements: 8.4, 8.5, 9.1, 9.3, 9.5_

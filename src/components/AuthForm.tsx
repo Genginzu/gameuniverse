@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Spinner } from "@/components/ui/spinner";
 import { useAuth } from "@/hooks/useAuth";
 
 interface AuthFormProps {
@@ -44,8 +46,9 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
       } else {
         await signUp(formData.email, formData.password, formData.fullName, locale);
       }
-    } catch (err: any) {
-      setError(err.message || t("error.generic"));
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : t("error.generic");
+      setError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -59,20 +62,24 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
   };
 
   return (
-    <Card className="mx-auto w-full max-w-md">
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-center text-2xl">
-          {mode === "signin" ? t("signin.title") : t("signup.title")}
-        </CardTitle>
-        <CardDescription className="text-center">
-          {mode === "signin" ? t("signin.description") : t("signup.description")}
-        </CardDescription>
+    <Card className="mx-auto w-full max-w-md border-0 bg-white/95 shadow-2xl backdrop-blur-sm">
+      <CardHeader className="space-y-6 pb-8">
+        <div className="space-y-2 text-center">
+          <CardTitle className="bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-3xl font-bold text-transparent">
+            {mode === "signin" ? t("signin.title") : t("signup.title")}
+          </CardTitle>
+          <CardDescription className="text-base text-slate-600">
+            {mode === "signin" ? t("signin.description") : t("signup.description")}
+          </CardDescription>
+        </div>
       </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <CardContent className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-5">
           {mode === "signup" && (
-            <div className="space-y-2">
-              <Label htmlFor="fullName">{t("form.fullName")}</Label>
+            <div className="space-y-3">
+              <Label htmlFor="fullName" className="text-sm font-semibold text-slate-700">
+                {t("form.fullName")}
+              </Label>
               <Input
                 id="fullName"
                 name="fullName"
@@ -82,12 +89,15 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
                 onChange={handleInputChange}
                 required
                 disabled={isSubmitting}
+                className="h-12 rounded-xl border-slate-200 bg-slate-50/50 transition-all duration-200 focus:border-slate-400 focus:bg-white"
               />
             </div>
           )}
 
-          <div className="space-y-2">
-            <Label htmlFor="email">{t("form.email")}</Label>
+          <div className="space-y-3">
+            <Label htmlFor="email" className="text-sm font-semibold text-slate-700">
+              {t("form.email")}
+            </Label>
             <Input
               id="email"
               name="email"
@@ -97,11 +107,14 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
               onChange={handleInputChange}
               required
               disabled={isSubmitting}
+              className="h-12 rounded-xl border-slate-200 bg-slate-50/50 transition-all duration-200 focus:border-slate-400 focus:bg-white"
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="password">{t("form.password")}</Label>
+          <div className="space-y-3">
+            <Label htmlFor="password" className="text-sm font-semibold text-slate-700">
+              {t("form.password")}
+            </Label>
             <Input
               id="password"
               name="password"
@@ -112,16 +125,22 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
               required
               disabled={isSubmitting}
               minLength={6}
+              className="h-12 rounded-xl border-slate-200 bg-slate-50/50 transition-all duration-200 focus:border-slate-400 focus:bg-white"
             />
           </div>
 
-          {error && <div className="rounded-md bg-red-50 p-3 text-sm text-red-600">{error}</div>}
+          {error && (
+            <Alert variant="destructive" className="rounded-xl border-red-200 bg-red-50">
+              <AlertDescription className="text-red-800">{error}</AlertDescription>
+            </Alert>
+          )}
 
           <Button
             type="submit"
-            className="w-full"
+            className="h-12 w-full rounded-xl bg-gradient-to-r from-slate-900 to-slate-800 font-semibold text-white shadow-lg transition-all duration-200 hover:from-slate-800 hover:to-slate-700 hover:shadow-xl"
             disabled={!isFormValid() || isSubmitting || loading}
           >
+            {isSubmitting && <Spinner size="sm" className="mr-2" />}
             {isSubmitting
               ? t("form.submitting")
               : mode === "signin"
@@ -130,13 +149,13 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
           </Button>
         </form>
 
-        <div className="mt-6 text-center">
-          <p className="text-sm text-muted-foreground">
+        <div className="border-t border-slate-100 pt-4">
+          <p className="text-center text-sm text-slate-600">
             {mode === "signin" ? t("signin.switchText") : t("signup.switchText")}{" "}
             <button
               type="button"
               onClick={() => onModeChange(mode === "signin" ? "signup" : "signin")}
-              className="font-medium text-primary hover:underline"
+              className="font-semibold text-slate-900 transition-colors duration-200 hover:text-slate-700"
               disabled={isSubmitting}
             >
               {mode === "signin" ? t("signup.switchLink") : t("signin.switchLink")}

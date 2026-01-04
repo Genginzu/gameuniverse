@@ -180,18 +180,6 @@ export default function TestI18nPage() {
             </div>
           </div>
 
-          {/* Fallback Test */}
-          <div className="mt-8 rounded-lg border p-6">
-            <h2 className="mb-4 text-xl font-semibold">Fallback Test</h2>
-            <p className="mb-4">Testing fallback behavior with a non-existent translation key:</p>
-            <div className="rounded bg-gray-100 p-4">
-              <code>
-                {/* This should fallback gracefully */}
-                {t("nonexistent.key", { fallback: "Fallback text" })}
-              </code>
-            </div>
-          </div>
-
           {/* Real-time Language Change Test */}
           <div className="mt-8 rounded-lg border p-6">
             <h2 className="mb-4 text-xl font-semibold">Real-time Language Change Test</h2>

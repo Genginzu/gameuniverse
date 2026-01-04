@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname } from "@/i18n/navigation";
 import {
   Select,
   SelectContent,
@@ -22,25 +22,7 @@ export function LanguageSwitcher() {
   const pathname = usePathname();
 
   const handleLocaleChange = (newLocale: string) => {
-    // Set cookie for locale preference
-    document.cookie = `locale=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
-
-    // Navigate to the same page with new locale
-    const segments = pathname.split("/");
-
-    // Remove current locale if present
-    if (segments[1] === "fr" || segments[1] === "en") {
-      segments.splice(1, 1);
-    }
-
-    // Add new locale if not default
-    if (newLocale !== "fr") {
-      segments.splice(1, 0, newLocale);
-    }
-
-    const newPath = segments.join("/") || "/";
-    router.push(newPath);
-    router.refresh();
+    router.push(pathname, { locale: newLocale });
   };
 
   const currentLocale = locales.find((l) => l.code === locale);
@@ -56,11 +38,11 @@ export function LanguageSwitcher() {
         </SelectValue>
       </SelectTrigger>
       <SelectContent>
-        {locales.map((locale) => (
-          <SelectItem key={locale.code} value={locale.code}>
+        {locales.map((localeItem) => (
+          <SelectItem key={localeItem.code} value={localeItem.code}>
             <div className="flex items-center gap-2">
-              <span>{locale.flag}</span>
-              <span>{locale.name}</span>
+              <span>{localeItem.flag}</span>
+              <span>{localeItem.name}</span>
             </div>
           </SelectItem>
         ))}

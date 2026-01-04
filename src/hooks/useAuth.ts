@@ -1,9 +1,10 @@
 "use client";
 
 import { createClient } from "@/lib/supabase";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { useEffect, useState } from "react";
 import type { User, Session } from "@supabase/supabase-js";
+import { clearAuthCookies, handleAuthError } from "@/lib/auth-utils";
 
 export interface AuthState {
   user: User | null;
@@ -21,40 +22,112 @@ export function useAuth() {
   const supabase = createClient();
 
   useEffect(() => {
-    // Get initial session
-    const getInitialSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+    let timeoutId: NodeJS.Timeout;
 
-      setAuthState({
-        user: session?.user ?? null,
-        session,
-        loading: false,
-      });
+    // Get initial session with timeout
+    const getInitialSession = async () => {
+      try {
+        console.log("🔍 Getting initial session...");
+
+        // Timeout de 5 secondes pour éviter le blocage
+        const timeoutPromise = new Promise((_, reject) => {
+          timeoutId = setTimeout(() => {
+            reject(new Error("Supabase connection timeout"));
+          }, 5000);
+        });
+
+        const sessionPromise = supabase.auth.getSession();
+
+        const result = (await Promise.race([sessionPromise, timeoutPromise])) as any;
+        clearTimeout(timeoutId);
+
+        const {
+          data: { session },
+          error,
+        } = result;
+
+        if (error) {
+          console.error("❌ Error getting session:", error);
+          // Si c'est une erreur de token, nettoyer l'état
+          if (error.message?.includes("refresh") || error.message?.includes("token")) {
+            clearAuthCookies();
+            await supabase.auth.signOut();
+          }
+        } else {
+          console.log("✅ Initial session:", session ? "Found" : "None");
+        }
+
+        setAuthState({
+          user: session?.user ?? null,
+          session,
+          loading: false,
+        });
+      } catch (error) {
+        console.error("❌ Exception getting session (probably Supabase not available):", error);
+        clearTimeout(timeoutId);
+
+        // Si c'est une erreur d'authentification, nettoyer
+        if (
+          error instanceof Error &&
+          (error.message.includes("refresh") || error.message.includes("token"))
+        ) {
+          clearAuthCookies();
+        }
+
+        setAuthState({
+          user: null,
+          session: null,
+          loading: false,
+        });
+      }
     };
 
     getInitialSession();
 
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setAuthState({
-        user: session?.user ?? null,
-        session,
-        loading: false,
+    // Listen for auth changes with error handling
+    let subscription: any;
+    try {
+      const {
+        data: { subscription: sub },
+      } = supabase.auth.onAuthStateChange(async (event, session) => {
+        console.log("🔄 Auth state change:", event, session ? "with session" : "no session");
+
+        // Gérer les erreurs de token
+        if (event === "TOKEN_REFRESHED" && !session) {
+          console.warn("⚠️ Token refresh failed, clearing auth state");
+          clearAuthCookies();
+        }
+
+        setAuthState({
+          user: session?.user ?? null,
+          session,
+          loading: false,
+        });
+
+        // Handle auth events
+        if (event === "SIGNED_IN") {
+          router.push("/dashboard");
+        } else if (event === "SIGNED_OUT") {
+          router.push("/");
+        }
       });
-
-      // Handle auth events
-      if (event === "SIGNED_IN") {
-        router.push("/dashboard");
-      } else if (event === "SIGNED_OUT") {
-        router.push("/");
+      subscription = sub;
+    } catch (error) {
+      console.error("❌ Error setting up auth listener:", error);
+      if (
+        error instanceof Error &&
+        (error.message.includes("refresh") || error.message.includes("token"))
+      ) {
+        clearAuthCookies();
       }
-    });
+    }
 
-    return () => subscription.unsubscribe();
+    return () => {
+      clearTimeout(timeoutId);
+      if (subscription) {
+        subscription.unsubscribe();
+      }
+    };
   }, [supabase, router]);
 
   const signIn = async (email: string, password: string) => {
@@ -95,11 +168,38 @@ export function useAuth() {
   };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
+    try {
+      // Nettoyer d'abord les cookies locaux
+      clearAuthCookies();
 
-    if (error) {
-      throw error;
+      const { error } = await supabase.auth.signOut();
+
+      if (error) {
+        console.warn("Error during signOut, but continuing:", error);
+      }
+    } catch (error) {
+      console.warn("Exception during signOut, but continuing:", error);
     }
+
+    // Forcer la mise à jour de l'état même en cas d'erreur
+    setAuthState({
+      user: null,
+      session: null,
+      loading: false,
+    });
+  };
+
+  const forceSignOut = async () => {
+    console.log("🔄 Force sign out - clearing all auth data");
+    clearAuthCookies();
+
+    setAuthState({
+      user: null,
+      session: null,
+      loading: false,
+    });
+
+    router.push("/auth");
   };
 
   const resetPassword = async (email: string) => {
@@ -117,6 +217,7 @@ export function useAuth() {
     signIn,
     signUp,
     signOut,
+    forceSignOut,
     resetPassword,
   };
 }
