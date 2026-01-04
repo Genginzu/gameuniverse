@@ -15,8 +15,6 @@ import {
   FaUser,
   FaCog,
   FaChartLine,
-  FaHeart,
-  FaClock,
   FaUsers,
   FaBolt,
   FaSignOutAlt,
@@ -163,19 +161,18 @@ export function DashboardWithAuth({ user }: DashboardWithAuthProps) {
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                 className="mb-3 flex w-full items-center rounded-xl p-2 text-left hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-500">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500">
                   <FaUser className="h-4 w-4 text-white" />
                 </div>
                 <div className="ml-3 flex-1">
                   <p className="text-sm font-medium text-gray-900">
                     {user.user_metadata?.full_name || user.email?.split("@")[0] || "Utilisateur"}
                   </p>
-                  <p className="text-xs text-gray-500">{user.email}</p>
                 </div>
                 {isUserMenuOpen ? (
-                  <FaChevronUp className="h-3 w-3 text-gray-400" />
+                  <FaChevronUp className="h-4 w-4 text-gray-400" />
                 ) : (
-                  <FaChevronDown className="h-3 w-3 text-gray-400" />
+                  <FaChevronDown className="h-4 w-4 text-gray-400" />
                 )}
               </button>
 
