@@ -56,7 +56,7 @@ export function Navigation() {
       </div>
 
       <div className="flex items-center space-x-4">
-        <div className="rounded-lg bg-white/80 p-1 shadow-lg backdrop-blur-sm">
+        <div className="rounded-xl p-1">
           <LanguageSwitcher />
         </div>
 
