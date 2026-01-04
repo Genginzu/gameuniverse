@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/hooks/useAuth";
@@ -19,6 +20,9 @@ import {
   FaUsers,
   FaBolt,
   FaSignOutAlt,
+  FaMoon,
+  FaChevronDown,
+  FaChevronUp,
 } from "react-icons/fa";
 import type { User } from "@supabase/supabase-js";
 
@@ -30,14 +34,22 @@ export function DashboardWithAuth({ user }: DashboardWithAuthProps) {
   const t = useTranslations("dashboard");
   const tNav = useTranslations("navigation");
   const { signOut } = useAuth();
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const handleSignOut = async () => {
-    try {
-      await signOut();
-    } catch (error) {
-      console.error("Error signing out:", error);
-    }
-  };
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsUserMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
@@ -146,26 +158,68 @@ export function DashboardWithAuth({ user }: DashboardWithAuthProps) {
 
           {/* User Info at Bottom */}
           <div className="border-t border-gray-200 p-4">
-            <div className="mb-3 flex items-center">
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-500">
-                <FaUser className="h-4 w-4 text-white" />
-              </div>
-              <div className="ml-3">
-                <p className="text-sm font-medium text-gray-900">
-                  {user.user_metadata?.full_name || user.email?.split("@")[0] || "Utilisateur"}
-                </p>
-                <p className="text-xs text-gray-500">{user.email}</p>
-              </div>
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                className="mb-3 flex w-full items-center rounded-xl p-2 text-left hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-500">
+                  <FaUser className="h-4 w-4 text-white" />
+                </div>
+                <div className="ml-3 flex-1">
+                  <p className="text-sm font-medium text-gray-900">
+                    {user.user_metadata?.full_name || user.email?.split("@")[0] || "Utilisateur"}
+                  </p>
+                  <p className="text-xs text-gray-500">{user.email}</p>
+                </div>
+                {isUserMenuOpen ? (
+                  <FaChevronUp className="h-3 w-3 text-gray-400" />
+                ) : (
+                  <FaChevronDown className="h-3 w-3 text-gray-400" />
+                )}
+              </button>
+
+              {/* Dropdown Menu */}
+              {isUserMenuOpen && (
+                <div className="animate-in fade-in-0 zoom-in-95 absolute bottom-full left-0 right-0 mb-2 rounded-xl border border-gray-200 bg-white shadow-lg">
+                  <div className="py-2">
+                    <button
+                      className="flex w-full items-center rounded-xl px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50"
+                      onClick={() => {
+                        // TODO: Implement dark mode toggle
+                        setIsUserMenuOpen(false);
+                      }}
+                    >
+                      <FaMoon className="mr-3 h-4 w-4" />
+                      Mode sombre
+                    </button>
+                    <Link
+                      href="/settings"
+                      className="flex w-full items-center rounded-xl px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50"
+                      onClick={() => setIsUserMenuOpen(false)}
+                    >
+                      <FaCog className="mr-3 h-4 w-4" />
+                      Paramètres
+                    </Link>
+                    <div className="mx-2 my-1 border-t border-gray-100"></div>
+                    <button
+                      className="flex w-full items-center rounded-xl px-4 py-2 text-sm text-red-600 transition-colors hover:bg-red-50"
+                      onClick={async () => {
+                        setIsUserMenuOpen(false);
+                        try {
+                          await signOut();
+                        } catch (error) {
+                          console.error("Error signing out:", error);
+                        }
+                      }}
+                    >
+                      <FaSignOutAlt className="mr-3 h-4 w-4" />
+                      {tNav("logout")}
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="w-full justify-start rounded-xl text-gray-600 hover:text-gray-900"
-              onClick={handleSignOut}
-            >
-              <FaSignOutAlt className="mr-2 h-4 w-4" />
-              {tNav("logout")}
-            </Button>
           </div>
         </div>
 
