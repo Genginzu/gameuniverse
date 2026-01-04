@@ -1,12 +1,12 @@
 "use client";
 
 import { AuthenticatedPage } from "@/components/shared/AuthenticatedPage";
-import { UserLibraryContent } from "@/components/library/UserLibraryContent";
+import { AllGamesContent } from "@/components/games/AllGamesContent";
 
-export default function LibraryPage() {
+export default function AllGamesPage() {
   return (
     <AuthenticatedPage>
-      <UserLibraryContent />
+      <AllGamesContent />
     </AuthenticatedPage>
   );
 }

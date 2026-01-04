@@ -37,7 +37,12 @@
     "loading": "Loading...",
     "genres": "Genres",
     "clearFilters": "Clear filters",
-    "resultsCount": "{count} game(s) found"
+    "resultsCount": "{count} game(s) found",
+    "error": "Error",
+    "searchResults": "{count} result(s) for \"{query}\"",
+    "totalGames": "{count} game(s) total",
+    "noResultsForQuery": "No results for \"{query}\"",
+    "noGamesAvailable": "No games available at the moment"
   },
   "game": {
     "details": "Game details",

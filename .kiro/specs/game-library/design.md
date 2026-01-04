@@ -22,6 +22,12 @@ graph TB
         UI[Interface Utilisateur - shadcn/ui]
         Pages[Pages & API Routes]
         SSR[Server-Side Rendering]
+        Layouts[Two Main Layouts]
+    end
+
+    subgraph "Layouts"
+        Landing[Landing Page Layout - Non connecté]
+        Dashboard[Dashboard Layout - Connecté]
     end
 
     subgraph "Supabase Backend"
@@ -37,12 +43,87 @@ graph TB
     end
 
     UI --> Pages
+    Pages --> Layouts
+    Layouts --> Landing
+    Layouts --> Dashboard
     Pages --> API
     Pages --> Auth
     Pages --> Storage
     Resend --> Auth
     Vercel --> UI
 ```
+
+### Architecture des Layouts
+
+**Deux layouts principaux :**
+
+1. **Landing Page Layout** : Pour les utilisateurs non connectés
+   - Navigation simple avec login/signup
+   - Page d'accueil marketing
+   - Pages d'authentification
+
+2. **Dashboard Layout** : Pour les utilisateurs connectés
+   - Header avec navigation principale (Jeux, Personnages, Professionnels,
+     Social, Joueurs)
+   - Sidebar de navigation avec sections internes
+   - Breadcrumbs pour la navigation contextuelle
+   - Zone de contenu dynamique
+   - Informations utilisateur avec menu déroulant
+
+**Pages utilisant le Dashboard Layout :**
+
+- `/dashboard` - Tableau de bord principal avec statistiques et actions rapides
+- `/games` - Tous les jeux du site (catalogue complet avec recherche et filtres)
+- `/library` - Ma bibliothèque (jeux personnels de l'utilisateur)
+- `/profile` - Profil utilisateur
+- `/settings` - Paramètres
+
+**Distinction importante :**
+
+- **"Jeux" (`/games`)** : Catalogue complet de tous les jeux référencés sur le
+  site avec recherche par genre, plateforme, éditeur
+- **"Ma bibliothèque" (`/library`)** : Collection personnelle des jeux auxquels
+  le joueur a joué ou possède
+
+### Organisation des Composants
+
+```
+src/components/
+├── shared/           # Composants partagés (layouts, auth)
+│   ├── DashboardLayout.tsx      # Layout unifié pour toutes les pages connectées
+│   ├── AuthenticatedPage.tsx    # Wrapper d'authentification
+│   └── ...
+├── dashboard/        # Composants spécifiques au dashboard
+│   ├── DashboardContent.tsx     # Contenu principal du tableau de bord
+│   └── ...
+├── games/           # Composants pour la page "Tous les jeux"
+│   ├── AllGamesContent.tsx      # Contenu principal de la page jeux
+│   ├── GameCard.tsx             # Carte de jeu
+│   ├── GameSearchBar.tsx        # Barre de recherche
+│   ├── GameFilters.tsx          # Filtres avancés
+│   ├── GamePagination.tsx       # Pagination
+│   └── ...
+├── library/         # Composants pour la bibliothèque utilisateur
+│   ├── UserLibraryContent.tsx   # Contenu de la bibliothèque personnelle
+│   └── ...
+└── ui/              # Composants UI de base (shadcn/ui)
+    ├── button.tsx
+    ├── card.tsx
+    └── ...
+```
+
+**Architecture de navigation :**
+
+1. **Header principal** : Navigation entre les grandes sections du site (Jeux,
+   Personnages, etc.)
+2. **Sidebar** : Navigation interne pour les fonctionnalités utilisateur
+   (Dashboard, Ma bibliothèque, Profil, Paramètres)
+3. **Breadcrumbs** : Navigation contextuelle pour situer l'utilisateur
+4. **Contenu dynamique** : Zone centrale qui change selon la page active
+
+Cette architecture garantit une expérience utilisateur cohérente avec un layout
+unifié pour toutes les pages authentifiées, tout en permettant une navigation
+claire entre les différentes sections.
 
 ### Choix Technologiques
 

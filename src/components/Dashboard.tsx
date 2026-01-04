@@ -33,6 +33,13 @@ export function Dashboard({ user }: DashboardProps) {
             {t("dashboard")}
           </Link>
           <Link
+            href="/games"
+            className="flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+          >
+            <FaGamepad className="mr-3 h-4 w-4" />
+            Jeux
+          </Link>
+          <Link
             href="/library"
             className="flex items-center rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900"
           >

@@ -130,31 +130,32 @@ optimisations.
     - Implémenter la déconnexion
     - _Requirements: 9.2, 9.3, 9.4_
 
-- [ ] 7. Bibliothèque de jeux - Fonctionnalités core
-  - [ ] 7.1 Créer l'API pour les jeux
+- [x] 7. Bibliothèque de jeux - Fonctionnalités core
+  - [x] 7.1 Créer l'API pour les jeux
     - Implémenter l'API route pour lister les jeux avec pagination
     - Ajouter le support de l'internationalisation dans les requêtes
     - Implémenter la recherche par titre avec support multilingue
     - _Requirements: 1.1, 1.2, 2.1, 2.4, 7.4_
 
-  - [ ] 7.2 Implémenter les composants de la bibliothèque
+  - [x] 7.2 Implémenter les composants de la bibliothèque
     - Créer GameLibrary avec grille responsive et shadcn/ui
     - Implémenter GameCard avec informations essentielles
     - Créer SearchBar avec Input de shadcn/ui
     - _Requirements: 1.1, 1.2, 1.4, 2.1, 5.1, 5.2, 5.3_
 
-  - [ ] 7.3 Ajouter la pagination
+  - [x] 7.3 Ajouter la pagination
     - Implémenter Pagination avec Button de shadcn/ui
     - Gérer la navigation entre les pages
     - Maintenir l'état de recherche lors de la pagination
     - _Requirements: 1.3_
 
-  - [ ] 7.4 Écrire les tests de propriété pour la bibliothèque avec Bun
+  - [x] 7.4 (Optionnel) Écrire les tests de propriété pour la bibliothèque avec
+        Bun
     - Configurer fast-check avec le test runner intégré de Bun
     - **Property 1: Game List Display Completeness**
     - **Validates: Requirements 1.2**
 
-  - [ ] 7.5 Écrire les tests unitaires pour la bibliothèque avec Bun
+  - [x] 7.5 (Optionnel) Écrire les tests unitaires pour la bibliothèque avec Bun
     - Utiliser le test runner intégré de Bun pour les tests unitaires
     - Tester l'affichage des jeux avec différents états
     - Tester la gestion des états vides
@@ -173,12 +174,12 @@ optimisations.
     - Gérer les filtres multiples et leur réinitialisation
     - _Requirements: 3.1, 3.2, 3.4, 3.5_
 
-  - [ ] 8.3 Écrire les tests de propriété pour la recherche avec Bun
+  - [ ] 8.3 (Optionnel) Écrire les tests de propriété pour la recherche avec Bun
     - **Property 3: Search Title Matching**
     - **Property 4: Search State Reset**
     - **Validates: Requirements 2.1, 2.4, 2.5**
 
-  - [ ] 8.4 Écrire les tests de propriété pour les filtres avec Bun
+  - [ ] 8.4 (Optionnel) Écrire les tests de propriété pour les filtres avec Bun
     - **Property 5: Genre Filter Accuracy**
     - **Property 6: Genre Count Accuracy**
     - **Property 7: Filter State Reset**
@@ -203,7 +204,7 @@ optimisations.
     - Ajouter les contrôles de navigation dans la galerie
     - _Requirements: 4.3, 4.4_
 
-  - [ ] 9.4 Écrire les tests de propriété pour les détails avec Bun
+  - [ ] 9.4 (Optionnel) Écrire les tests de propriété pour les détails avec Bun
     - **Property 8: Game Details Completeness**
     - **Property 9: Media Gallery Completeness**
     - **Validates: Requirements 4.2, 4.3, 4.4**
@@ -221,7 +222,8 @@ optimisations.
     - Optimiser pour les lecteurs d'écran
     - _Requirements: 5.4_
 
-  - [ ] 10.3 Écrire les tests de propriété pour le responsive avec Bun
+  - [ ] 10.3 (Optionnel) Écrire les tests de propriété pour le responsive avec
+        Bun
     - **Property 10: Responsive Layout Adaptation**
     - **Validates: Requirements 5.1, 5.2, 5.3, 5.5**
 
@@ -237,7 +239,8 @@ optimisations.
     - Assurer la cohérence dans tous les résultats de recherche
     - _Requirements: 6.3_
 
-  - [ ] 11.3 Écrire les tests de propriété pour l'administration avec Bun
+  - [ ] 11.3 (Optionnel) Écrire les tests de propriété pour l'administration
+        avec Bun
     - **Property 11: Game Validation Integrity**
     - **Property 12: Game Deletion Consistency**
     - **Property 13: Bulk Operations Atomicity**
@@ -265,7 +268,7 @@ optimisations.
     - _Requirements: 10.3_
 
 - [ ] 14. Checkpoint final - Tests et déploiement
-  - [ ] 14.1 Tests d'intégration complets avec Bun
+  - [ ] 14.1 (Optionnel) Tests d'intégration complets avec Bun
     - Utiliser le test runner de Bun pour les tests d'intégration
     - Tester tous les parcours utilisateur critiques
     - Vérifier l'internationalisation sur toutes les pages
@@ -279,25 +282,30 @@ optimisations.
     - Configurer les domaines et redirections
     - _Requirements: Architecture_
 
-  - [ ] 14.3 Tests de performance et accessibilité
+  - [ ] 14.3 (Optionnel) Tests de performance et accessibilité
     - Exécuter les audits Lighthouse
     - Tester avec les lecteurs d'écran
     - Vérifier les performances sur mobile
     - _Requirements: 5.4_
 
-- [ ] 15. Finalisation - Ensure all tests pass
+- [ ] 15. Finalisation - (Optionnel) Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes
 
-- Toutes les tâches sont obligatoires pour une approche complète dès le début
+- Les tâches principales sont obligatoires pour un MVP fonctionnel
+- **Les étapes de tests sont optionnelles** mais recommandées pour une approche
+  robuste
 - **Bun est utilisé comme runtime** pour des performances optimales de
   développement
 - Chaque tâche référence les exigences spécifiques pour la traçabilité
 - Les checkpoints permettent une validation incrémentale
 - Les tests de propriété valident les propriétés de correction universelles
+  (optionnels)
 - Les tests unitaires valident les exemples spécifiques et cas limites
-- L'approche privilégie la qualité et la robustesse dès le développement initial
+  (optionnels)
+- L'approche privilégie un MVP fonctionnel avec possibilité d'ajouter les tests
+  plus tard
 
 **Avantages de Bun dans ce projet :**
 
@@ -307,3 +315,62 @@ optimisations.
 - **TypeScript natif** sans configuration supplémentaire
 - **Bundler intégré** pour des builds optimisés
 - **Compatibilité parfaite** avec Next.js 16 et l'écosystème React
+
+- [ ] 16. Restructuration et nouvelles fonctionnalités
+  - [ ] 16.1 Restructurer l'architecture des composants
+    - Créer la structure de dossiers par page (shared/, dashboard/, games/,
+      library/)
+    - Déplacer les composants existants dans les bons dossiers
+    - Créer le DashboardLayout partagé pour toutes les pages connectées
+    - _Requirements: Architecture générale_
+
+  - [ ] 16.2 Créer la page "Tous les jeux" (/games)
+    - Implémenter AllGamesContent avec recherche avancée
+    - Créer GameFilters avec filtres par genre, plateforme, éditeur
+    - Ajouter GameSearchBar avec recherche en temps réel
+    - Implémenter GamePagination pour la navigation
+    - _Requirements: 1.1, 1.2, 2.1, 2.4, 7.4_
+
+  - [ ] 16.3 Créer la page "Ma bibliothèque" (/library)
+    - Implémenter UserLibraryContent pour les jeux de l'utilisateur
+    - Afficher les statistiques personnelles (jeux possédés, terminés, temps de
+      jeu)
+    - Créer l'état vide avec CTA vers la page des jeux
+    - _Requirements: Bibliothèque personnelle_
+
+  - [ ] 16.4 Mettre à jour la navigation
+    - Modifier DashboardLayout pour inclure "Jeux" et "Ma bibliothèque"
+    - Distinguer clairement les deux sections dans la sidebar
+    - Mettre à jour les breadcrumbs et états actifs
+    - _Requirements: Navigation cohérente_
+
+  - [ ] 16.5 (Optionnel) Écrire les tests pour la nouvelle architecture
+    - Tester les nouveaux composants games/\*
+    - Tester les nouveaux composants library/\*
+    - Tester le DashboardLayout partagé
+    - _Requirements: Tests de régression_
+
+## Notes sur la nouvelle architecture
+
+**Distinction claire entre les pages :**
+
+- **Dashboard** (`/dashboard`) : Vue d'ensemble, statistiques, actions rapides
+- **Tous les jeux** (`/games`) : Catalogue complet avec recherche et filtres
+  avancés
+- **Ma bibliothèque** (`/library`) : Collection personnelle de l'utilisateur
+
+**Organisation des composants :**
+
+- `src/components/shared/` : Layouts et composants partagés
+- `src/components/dashboard/` : Composants spécifiques au tableau de bord
+- `src/components/games/` : Composants pour la page de tous les jeux
+- `src/components/library/` : Composants pour la bibliothèque utilisateur
+- `src/components/ui/` : Composants UI de base (shadcn/ui)
+
+**Layouts :**
+
+- **Landing Page Layout** : Pour les utilisateurs non connectés
+- **Dashboard Layout** : Layout unifié pour toutes les pages connectées
+
+Cette architecture améliore la maintenabilité et la scalabilité du projet en
+séparant clairement les responsabilités de chaque composant.
