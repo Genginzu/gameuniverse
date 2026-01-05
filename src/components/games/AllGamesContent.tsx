@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { GameCard } from "./GameCard";
 import { GameSearchBar } from "./GameSearchBar";
 import { GameFilters } from "./GameFilters";
+import { GameFilterButton } from "./GameFilterButton";
 import { GamePagination } from "./GamePagination";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -52,6 +53,7 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [selectedPublishers, setSelectedPublishers] = useState<string[]>([]);
+  const [showFilters, setShowFilters] = useState(false);
 
   // Fetch genres
   const fetchGenres = useCallback(async () => {
@@ -228,23 +230,31 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
 
       <div className="mx-auto max-w-7xl px-6 py-8">
         {/* Search and Filters */}
-        <div className="mb-8 space-y-6">
-          {/* Search bar - full width and prominent */}
-          <div className="mx-auto max-w-2xl">
-            <GameSearchBar onSearch={handleSearch} initialValue={searchQuery} />
+        <div className="mb-8 space-y-4">
+          {/* Search bar with filter button - same row */}
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <GameSearchBar onSearch={handleSearch} initialValue={searchQuery} />
+            </div>
+            <div className="flex-shrink-0">
+              <GameFilterButton
+                hasFilters={selectedGenres.length > 0 || selectedPublishers.length > 0}
+                filterCount={selectedGenres.length}
+                onClick={() => setShowFilters(!showFilters)}
+              />
+            </div>
           </div>
 
-          {/* Filters - below search */}
-          <div>
-            <GameFilters
-              genres={genres}
-              selectedGenres={selectedGenres}
-              selectedPublishers={selectedPublishers}
-              onGenreChange={handleGenreFilter}
-              onPublisherChange={handlePublisherFilter}
-              onClearFilters={handleClearFilters}
-            />
-          </div>
+          {/* Filter content below - full width */}
+          <GameFilters
+            genres={genres}
+            selectedGenres={selectedGenres}
+            selectedPublishers={selectedPublishers}
+            onGenreChange={handleGenreFilter}
+            onPublisherChange={handlePublisherFilter}
+            onClearFilters={handleClearFilters}
+            showAllGenres={showFilters}
+          />
         </div>
 
         {/* Results info */}

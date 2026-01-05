@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-
 interface Genre {
   id: string;
   name: string;
@@ -15,6 +13,7 @@ interface GameFiltersProps {
   onGenreChange: (genres: string[]) => void;
   onPublisherChange: (publishers: string[]) => void;
   onClearFilters: () => void;
+  showAllGenres: boolean;
 }
 
 export function GameFilters({
@@ -22,11 +21,10 @@ export function GameFilters({
   selectedGenres,
   selectedPublishers,
   onGenreChange,
-  onPublisherChange,
+  onPublisherChange: _onPublisherChange,
   onClearFilters,
+  showAllGenres,
 }: GameFiltersProps) {
-  const [showAllGenres, setShowAllGenres] = useState(false);
-
   const handleGenreToggle = (genreName: string) => {
     const newSelectedGenres = selectedGenres.includes(genreName)
       ? selectedGenres.filter((g) => g !== genreName)
@@ -35,22 +33,23 @@ export function GameFilters({
     onGenreChange(newSelectedGenres);
   };
 
-  const displayedGenres = showAllGenres ? genres : genres.slice(0, 8);
   const hasFilters = selectedGenres.length > 0 || selectedPublishers.length > 0;
+
+  // Don't render anything if no filters are active and panel is closed
+  if (!hasFilters && !showAllGenres) {
+    return null;
+  }
 
   return (
     <div className="space-y-4">
-      {/* Quick filters row */}
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="text-sm font-medium text-gray-700">Filtres rapides:</span>
-
-        {/* Clear all button */}
-        {hasFilters && (
+      {/* Clear all button - positioned at the right */}
+      {hasFilters && (
+        <div className="flex justify-end">
           <button
             onClick={onClearFilters}
-            className="inline-flex items-center rounded-full bg-red-50 px-3 py-1 text-xs font-medium text-red-700 transition-colors hover:bg-red-100"
+            className="inline-flex items-center rounded-lg bg-red-50 px-4 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-100"
           >
-            <svg className="mr-1 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -60,40 +59,8 @@ export function GameFilters({
             </svg>
             Tout effacer
           </button>
-        )}
-
-        {/* Popular genres as quick filters */}
-        {genres.slice(0, 4).map((genre) => (
-          <button
-            key={genre.id}
-            onClick={() => handleGenreToggle(genre.name)}
-            className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium transition-all duration-200 ${
-              selectedGenres.includes(genre.name)
-                ? "bg-blue-600 text-white shadow-md hover:bg-blue-700"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-sm"
-            }`}
-          >
-            {genre.name}
-            <span className="ml-1 text-xs opacity-75">({genre.gameCount})</span>
-          </button>
-        ))}
-
-        {/* More filters toggle */}
-        <button
-          onClick={() => setShowAllGenres(!showAllGenres)}
-          className="inline-flex items-center rounded-full bg-gradient-to-r from-blue-50 to-indigo-50 px-3 py-1 text-xs font-medium text-blue-700 transition-all hover:from-blue-100 hover:to-indigo-100"
-        >
-          <svg className="mr-1 h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"
-            />
-          </svg>
-          {showAllGenres ? "Moins de filtres" : "Plus de filtres"}
-        </button>
-      </div>
+        </div>
+      )}
 
       {/* Active filters display */}
       {hasFilters && (
