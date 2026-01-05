@@ -85,6 +85,7 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
       publishers: string[] = [],
       page: number = 1
     ) => {
+      console.log("🎮 fetchGames called with:", { search, genres, publishers, page });
       setLoading(true);
       setError(null);
 
@@ -128,31 +129,22 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
   );
 
   // Handle search
-  const handleSearch = useCallback(
-    (query: string) => {
-      setSearchQuery(query);
-      fetchGames(query, selectedGenres, selectedPublishers, 1);
-    },
-    [fetchGames, selectedGenres, selectedPublishers]
-  );
+  const handleSearch = useCallback((query: string) => {
+    setSearchQuery(query);
+    // Le useEffect va gérer l'appel à fetchGames
+  }, []);
 
   // Handle genre filter
-  const handleGenreFilter = useCallback(
-    (genres: string[]) => {
-      setSelectedGenres(genres);
-      fetchGames(searchQuery, genres, selectedPublishers, 1);
-    },
-    [fetchGames, searchQuery, selectedPublishers]
-  );
+  const handleGenreFilter = useCallback((genres: string[]) => {
+    setSelectedGenres(genres);
+    // Le useEffect va gérer l'appel à fetchGames
+  }, []);
 
   // Handle publisher filter
-  const handlePublisherFilter = useCallback(
-    (publishers: string[]) => {
-      setSelectedPublishers(publishers);
-      fetchGames(searchQuery, selectedGenres, publishers, 1);
-    },
-    [fetchGames, searchQuery, selectedGenres]
-  );
+  const handlePublisherFilter = useCallback((publishers: string[]) => {
+    setSelectedPublishers(publishers);
+    // Le useEffect va gérer l'appel à fetchGames
+  }, []);
 
   // Handle page change
   const handlePageChange = useCallback(
@@ -167,14 +159,23 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
     setSearchQuery("");
     setSelectedGenres([]);
     setSelectedPublishers([]);
-    fetchGames("", [], [], 1);
-  }, [fetchGames]);
+    // Les useEffect vont gérer le rechargement
+  }, []);
 
   // Initial load
   useEffect(() => {
     fetchGenres();
     fetchGames();
   }, [fetchGenres, fetchGames]);
+
+  // Effect pour gérer les changements de filtres avec debounce
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      fetchGames(searchQuery, selectedGenres, selectedPublishers, 1);
+    }, 300); // Debounce de 300ms
+
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery, selectedGenres, selectedPublishers, fetchGames]);
 
   if (error) {
     return (
