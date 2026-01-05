@@ -3,7 +3,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/hooks/useAuth";
 import { Input } from "@/components/ui/input";
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import { GameUniverseLogo } from "@/components/ui/game-universe-logo";
@@ -18,40 +17,17 @@ import {
   FaChevronDown,
   FaChevronUp,
 } from "react-icons/fa";
-import { useRouter } from "@/i18n/navigation";
-import { LoadingSpinner } from "../ui/loading-spinner";
+import { User } from "@supabase/supabase-js";
 
 type DashboardLayoutProps = {
-  children: React.ReactNode
+  children: React.ReactNode,
+  user: User
+  signout: () => void
 }
 
-export function DashboardLayout({ children }: DashboardLayoutProps) {
-  const { user, loading } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push("/auth?mode=signin");
-    }
-  }, [user, loading, router]);
-
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <div className="rounded-lg p-8">
-          <LoadingSpinner size="lg" />
-        </div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return null; // Will redirect
-  }
-
+export function DashboardLayout({ user, signout, children }: DashboardLayoutProps) {
   const t = useTranslations("dashboard");
   const tNav = useTranslations("navigation");
-  const { signOut } = useAuth();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -224,7 +200,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                       onClick={async () => {
                         setIsUserMenuOpen(false);
                         try {
-                          await signOut();
+                          await signout();
                         } catch (error) {
                           console.error("Error signing out:", error);
                         }

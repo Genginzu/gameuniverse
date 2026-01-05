@@ -2,9 +2,18 @@ import { FaBolt, FaGamepad, FaUser, FaUsers } from "react-icons/fa";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 import { Link } from "@/i18n/navigation";
+import type { User } from "@supabase/supabase-js";
+import { useTranslations } from "next-intl";
+import { DashboardLayout } from "../layout/DashboardLayout";
 
-export function DashboardContent({user}) {
+type DashboardContentProps = {
+  user: User;
+};
+
+export function DashboardContent({ user }: DashboardContentProps) {
+  const t = useTranslations("dashboard");
     return (
+      <DashboardLayout>
       <div className="flex-1 p-6">
         {/* Page Header */}
         <div className="mb-8">
@@ -158,5 +167,6 @@ export function DashboardContent({user}) {
           </div>
         </div>
       </div>
+      </DashboardLayout>
     );
 }
