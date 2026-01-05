@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { FaGamepad, FaSearch, FaInfoCircle, FaUsers, FaStar, FaChartLine } from "react-icons/fa";
-import Footer from "./Footer";
+import Footer from "../shared/Footer";
 
 export function LandingPage() {
   const t = useTranslations("landing");

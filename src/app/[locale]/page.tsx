@@ -3,8 +3,8 @@
 import { useEffect } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useAuth } from "@/hooks/useAuth";
-import { Navigation } from "@/components/Navigation";
-import { LandingPage } from "@/components/LandingPage";
+import { Navigation } from "@/components/shared/Navigation";
+import { LandingPage } from "@/components/landing/LandingPage";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 export default function Home() {

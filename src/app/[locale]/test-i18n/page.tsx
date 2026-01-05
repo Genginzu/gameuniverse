@@ -1,8 +1,8 @@
 "use client";
 
 import { useTranslations, useLocale } from "next-intl";
-import { Navigation } from "@/components/Navigation";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { Navigation } from "@/components/shared/Navigation";
+import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import {
   useCommonTranslations,
   useNavigationTranslations,

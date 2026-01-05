@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { AuthForm } from "../AuthForm";
+import { AuthForm } from "../auth/AuthForm";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslations, useLocale } from "next-intl";
 

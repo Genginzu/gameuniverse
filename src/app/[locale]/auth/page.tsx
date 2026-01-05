@@ -2,12 +2,12 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
-import { AuthForm } from "@/components/AuthForm";
-import { AuthLoadingFallback } from "@/components/AuthLoadingFallback";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { AuthForm } from "@/components/auth/AuthForm";
+import { AuthLoadingFallback } from "@/components/auth/AuthLoadingFallback";
+import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import Link from "next/link";
 import { GameUniverseLogo } from "@/components/ui/game-universe-logo";
-import Footer from "@/components/Footer";
+import Footer from "@/components/shared/Footer";
 
 function AuthContent() {
   const searchParams = useSearchParams();

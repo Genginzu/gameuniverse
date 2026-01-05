@@ -5,7 +5,7 @@ import { routing } from "@/i18n/routing";
 import { Inter } from "next/font/google";
 import "../globals.css";
 import type { Metadata } from "next";
-import { AuthErrorHandler } from "@/components/AuthErrorHandler";
+import { AuthErrorHandler } from "@/components/auth/AuthErrorHandler";
 
 const inter = Inter({ subsets: ["latin"] });
 

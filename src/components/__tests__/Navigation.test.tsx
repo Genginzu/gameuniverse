@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { Navigation } from "../Navigation";
+import { Navigation } from "../shared/Navigation";
 import { NextIntlClientProvider } from "next-intl";
 
 // Mock the useAuth hook with Bun's mock system
