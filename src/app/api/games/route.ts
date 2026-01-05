@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
     // Get total count for pagination (separate query for performance)
     let countQuery = supabase
       .from("games")
-      .select("id", { count: "exact", head: true })
+      .select("id, game_translations!inner(language_code)", { count: "exact", head: true })
       .eq("game_translations.language_code", locale);
 
     if (search.trim()) {

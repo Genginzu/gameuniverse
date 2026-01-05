@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
       `
       )
       .eq("genre_translations.language_code", locale)
-      .order("genre_translations.name");
+      .order("genre_translations(name)", { ascending: true });
 
     if (error) {
       console.error("Error fetching genres:", error);

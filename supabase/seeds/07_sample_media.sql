@@ -1,16 +1,6 @@
 -- Seeds pour les médias des jeux d'exemple
 -- Screenshots, artwork et vidéos pour les jeux de démonstration
 
--- Mise à jour des jeux avec les cover images
-UPDATE games SET cover_image_url = '/images/witcher3-cover.jpg' WHERE slug = 'the-witcher-3';
-UPDATE games SET cover_image_url = '/images/cyberpunk-cover.jpg' WHERE slug = 'cyberpunk-2077';
-UPDATE games SET cover_image_url = '/images/minecraft-cover.jpg' WHERE slug = 'minecraft';
-UPDATE games SET cover_image_url = '/images/gtav-cover.jpg' WHERE slug = 'grand-theft-auto-v';
-UPDATE games SET cover_image_url = '/images/rdr2-cover.jpg' WHERE slug = 'red-dead-redemption-2';
-UPDATE games SET cover_image_url = '/images/eldenring-cover.jpg' WHERE slug = 'elden-ring';
-UPDATE games SET cover_image_url = '/images/gow-cover.jpg' WHERE slug = 'god-of-war';
-UPDATE games SET cover_image_url = '/images/hzd-cover.jpg' WHERE slug = 'horizon-zero-dawn';
-
 -- Screenshots pour The Witcher 3
 INSERT INTO game_screenshots (game_id, url, alt_text, caption, display_order, is_featured) VALUES
 ('660e8400-e29b-41d4-a716-446655440001', '/images/witcher3-screenshot-1.jpg', 'Geralt dans les marais de Velen', 'Exploration des vastes marais de Velen', 1, true),

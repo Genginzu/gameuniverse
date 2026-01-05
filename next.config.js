@@ -8,7 +8,7 @@ const nextConfig = {
   },
   // Optimize images
   images: {
-    domains: [],
+    domains: ["images.igdb.com"],
     formats: ["image/webp", "image/avif"],
   },
   // Enable compression

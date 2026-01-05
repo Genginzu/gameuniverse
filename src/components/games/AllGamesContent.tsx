@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useTranslations } from "next-intl";
 import { GameCard } from "./GameCard";
 import { GameSearchBar } from "./GameSearchBar";
 import { GameFilters } from "./GameFilters";
@@ -43,7 +42,7 @@ interface AllGamesContentProps {
 }
 
 export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
-  const t = useTranslations("games");
+  // const t = useTranslations("games"); // Unused for now
 
   const [games, setGames] = useState<Game[]>([]);
   const [genres, setGenres] = useState<Genre[]>([]);
