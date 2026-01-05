@@ -1,12 +1,12 @@
 "use client";
 
-import { AuthenticatedPage } from "@/components/shared/AuthenticatedPage";
 import { UserLibraryContent } from "@/components/library/UserLibraryContent";
+import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
 
 export default function LibraryPage() {
   return (
-    <AuthenticatedPage>
+    <DashboardLayout>
       <UserLibraryContent />
-    </AuthenticatedPage>
+    </DashboardLayout>
   );
 }

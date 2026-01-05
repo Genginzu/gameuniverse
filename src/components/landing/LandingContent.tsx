@@ -5,13 +5,12 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { FaGamepad, FaSearch, FaInfoCircle, FaUsers, FaStar, FaChartLine } from "react-icons/fa";
-import Footer from "../shared/Footer";
 
-export function LandingPage() {
+export function LandingContent() {
   const t = useTranslations("landing");
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <>
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-600 py-24 text-white">
         <div className="absolute inset-0 bg-black/20"></div>
@@ -186,8 +185,6 @@ export function LandingPage() {
           </div>
         </div>
       </section>
-
-      <Footer />
-    </main>
+    </>
   );
 }

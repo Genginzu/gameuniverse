@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/hooks/useAuth";
-import { LanguageSwitcher } from "./LanguageSwitcher";
+import { LanguageSwitcher } from "../../shared/LanguageSwitcher";
 import { Button } from "@/components/ui/button";
 import { GameUniverseLogo } from "@/components/ui/game-universe-logo";
 import { FaUser, FaSignOutAlt } from "react-icons/fa";
 
-export function Navigation() {
+export function LandingHeader() {
   const t = useTranslations("navigation");
   const { user, loading, signOut } = useAuth();
 

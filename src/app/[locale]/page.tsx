@@ -3,9 +3,9 @@
 import { useEffect } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useAuth } from "@/hooks/useAuth";
-import { Navigation } from "@/components/shared/Navigation";
-import { LandingPage } from "@/components/landing/LandingPage";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import LandingLayout from "@/components/layout/landing/LandingLayout";
+import { LandingContent } from "@/components/landing/LandingContent";
 
 export default function Home() {
   const { user, loading } = useAuth();
@@ -35,9 +35,8 @@ export default function Home() {
   }
 
   return (
-    <>
-      <Navigation />
-      <LandingPage />
-    </>
+    <LandingLayout>
+      <LandingContent />
+    </LandingLayout>
   );
 }
