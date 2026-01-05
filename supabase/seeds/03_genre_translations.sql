@@ -12,7 +12,17 @@ INSERT INTO genre_translations (genre_id, language_code, name, description) VALU
 ('550e8400-e29b-41d4-a716-446655440007', 'fr', 'Course', 'Jeux de course automobile'),
 ('550e8400-e29b-41d4-a716-446655440008', 'fr', 'Puzzle', 'Jeux de réflexion et énigmes'),
 ('550e8400-e29b-41d4-a716-446655440009', 'fr', 'Horreur', 'Jeux d''horreur et suspense'),
-('550e8400-e29b-41d4-a716-446655440010', 'fr', 'Indépendant', 'Jeux indépendants créatifs')
+('550e8400-e29b-41d4-a716-446655440010', 'fr', 'Indépendant', 'Jeux indépendants créatifs'),
+('550e8400-e29b-41d4-a716-446655440011', 'fr', 'FPS', 'Jeux de tir à la première personne'),
+('550e8400-e29b-41d4-a716-446655440012', 'fr', 'Plateforme', 'Jeux de plateforme et saut'),
+('550e8400-e29b-41d4-a716-446655440013', 'fr', 'Combat', 'Jeux de combat et arts martiaux'),
+('550e8400-e29b-41d4-a716-446655440014', 'fr', 'MMO', 'Jeux massivement multijoueurs'),
+('550e8400-e29b-41d4-a716-446655440015', 'fr', 'Survie', 'Jeux de survie et crafting'),
+('550e8400-e29b-41d4-a716-446655440016', 'fr', 'Bac à sable', 'Jeux de création libre'),
+('550e8400-e29b-41d4-a716-446655440017', 'fr', 'Roguelike', 'Jeux avec génération procédurale'),
+('550e8400-e29b-41d4-a716-446655440018', 'fr', 'Infiltration', 'Jeux d''infiltration et discrétion'),
+('550e8400-e29b-41d4-a716-446655440019', 'fr', 'Rythme', 'Jeux musicaux et de rythme'),
+('550e8400-e29b-41d4-a716-446655440020', 'fr', 'Tower Defense', 'Jeux de défense de tour')
 ON CONFLICT (genre_id, language_code) DO NOTHING;
 
 -- Traductions anglaises des genres
@@ -26,5 +36,15 @@ INSERT INTO genre_translations (genre_id, language_code, name, description) VALU
 ('550e8400-e29b-41d4-a716-446655440007', 'en', 'Racing', 'Racing and driving games'),
 ('550e8400-e29b-41d4-a716-446655440008', 'en', 'Puzzle', 'Puzzle and brain teaser games'),
 ('550e8400-e29b-41d4-a716-446655440009', 'en', 'Horror', 'Horror and suspense games'),
-('550e8400-e29b-41d4-a716-446655440010', 'en', 'Indie', 'Creative independent games')
+('550e8400-e29b-41d4-a716-446655440010', 'en', 'Indie', 'Creative independent games'),
+('550e8400-e29b-41d4-a716-446655440011', 'en', 'FPS', 'First-person shooter games'),
+('550e8400-e29b-41d4-a716-446655440012', 'en', 'Platformer', 'Platform and jumping games'),
+('550e8400-e29b-41d4-a716-446655440013', 'en', 'Fighting', 'Fighting and martial arts games'),
+('550e8400-e29b-41d4-a716-446655440014', 'en', 'MMO', 'Massively multiplayer online games'),
+('550e8400-e29b-41d4-a716-446655440015', 'en', 'Survival', 'Survival and crafting games'),
+('550e8400-e29b-41d4-a716-446655440016', 'en', 'Sandbox', 'Open-world creative games'),
+('550e8400-e29b-41d4-a716-446655440017', 'en', 'Roguelike', 'Procedurally generated games'),
+('550e8400-e29b-41d4-a716-446655440018', 'en', 'Stealth', 'Stealth and infiltration games'),
+('550e8400-e29b-41d4-a716-446655440019', 'en', 'Rhythm', 'Music and rhythm games'),
+('550e8400-e29b-41d4-a716-446655440020', 'en', 'Tower Defense', 'Tower defense strategy games')
 ON CONFLICT (genre_id, language_code) DO NOTHING;

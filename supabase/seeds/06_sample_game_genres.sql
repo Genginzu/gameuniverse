@@ -6,31 +6,39 @@ INSERT INTO game_genres (game_id, genre_id) VALUES
 ('660e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440003'), -- RPG
 ('660e8400-e29b-41d4-a716-446655440001', '550e8400-e29b-41d4-a716-446655440002'), -- Adventure
 
--- Cyberpunk 2077: RPG + Action
+-- Cyberpunk 2077: RPG + Action + FPS
 ('660e8400-e29b-41d4-a716-446655440002', '550e8400-e29b-41d4-a716-446655440003'), -- RPG
 ('660e8400-e29b-41d4-a716-446655440002', '550e8400-e29b-41d4-a716-446655440001'), -- Action
+('660e8400-e29b-41d4-a716-446655440002', '550e8400-e29b-41d4-a716-446655440011'), -- FPS
 
--- Minecraft: Simulation + Indie
+-- Minecraft: Simulation + Indie + Sandbox + Survival
 ('660e8400-e29b-41d4-a716-446655440003', '550e8400-e29b-41d4-a716-446655440005'), -- Simulation
 ('660e8400-e29b-41d4-a716-446655440003', '550e8400-e29b-41d4-a716-446655440010'), -- Indie
+('660e8400-e29b-41d4-a716-446655440003', '550e8400-e29b-41d4-a716-446655440016'), -- Sandbox
+('660e8400-e29b-41d4-a716-446655440003', '550e8400-e29b-41d4-a716-446655440015'), -- Survival
 
--- Grand Theft Auto V: Action + Adventure
+-- Grand Theft Auto V: Action + Adventure + Racing
 ('660e8400-e29b-41d4-a716-446655440004', '550e8400-e29b-41d4-a716-446655440001'), -- Action
 ('660e8400-e29b-41d4-a716-446655440004', '550e8400-e29b-41d4-a716-446655440002'), -- Adventure
+('660e8400-e29b-41d4-a716-446655440004', '550e8400-e29b-41d4-a716-446655440007'), -- Racing
 
--- Red Dead Redemption 2: Action + Adventure
+-- Red Dead Redemption 2: Action + Adventure + Simulation
 ('660e8400-e29b-41d4-a716-446655440005', '550e8400-e29b-41d4-a716-446655440001'), -- Action
 ('660e8400-e29b-41d4-a716-446655440005', '550e8400-e29b-41d4-a716-446655440002'), -- Adventure
+('660e8400-e29b-41d4-a716-446655440005', '550e8400-e29b-41d4-a716-446655440005'), -- Simulation
 
--- Elden Ring: RPG + Action
+-- Elden Ring: RPG + Action + Indie
 ('660e8400-e29b-41d4-a716-446655440006', '550e8400-e29b-41d4-a716-446655440003'), -- RPG
 ('660e8400-e29b-41d4-a716-446655440006', '550e8400-e29b-41d4-a716-446655440001'), -- Action
+('660e8400-e29b-41d4-a716-446655440006', '550e8400-e29b-41d4-a716-446655440010'), -- Indie
 
--- God of War: Action + Adventure
+-- God of War: Action + Adventure + Fighting
 ('660e8400-e29b-41d4-a716-446655440007', '550e8400-e29b-41d4-a716-446655440001'), -- Action
 ('660e8400-e29b-41d4-a716-446655440007', '550e8400-e29b-41d4-a716-446655440002'), -- Adventure
+('660e8400-e29b-41d4-a716-446655440007', '550e8400-e29b-41d4-a716-446655440013'), -- Fighting
 
--- Horizon Zero Dawn: Action + RPG
+-- Horizon Zero Dawn: Action + RPG + Stealth
 ('660e8400-e29b-41d4-a716-446655440008', '550e8400-e29b-41d4-a716-446655440001'), -- Action
-('660e8400-e29b-41d4-a716-446655440008', '550e8400-e29b-41d4-a716-446655440003')  -- RPG
+('660e8400-e29b-41d4-a716-446655440008', '550e8400-e29b-41d4-a716-446655440003'), -- RPG
+('660e8400-e29b-41d4-a716-446655440008', '550e8400-e29b-41d4-a716-446655440018')  -- Stealth
 ON CONFLICT (game_id, genre_id) DO NOTHING;
