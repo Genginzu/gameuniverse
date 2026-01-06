@@ -1,15 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 
-export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   try {
     const { searchParams } = new URL(request.url);
     const locale = searchParams.get("locale") || "fr";
-    const { id: gameId } = await params;
+    const { slug: gameSlug } = await params;
+
+    if (!gameSlug) {
+      return NextResponse.json({ error: "Game slug is required" }, { status: 400 });
+    }
 
     const supabase = await createRouteHandlerClient();
 
-    // Fetch game details with all related data
+    // Fetch game details by slug with all related data
     const { data: game, error } = await supabase
       .from("games")
       .select(
@@ -28,6 +32,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         ),
         game_genres(
           genres(
+            id,
             slug,
             genre_translations(
               name,
@@ -119,11 +124,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         "game_ratings.game_rating_descriptors.content_descriptors.content_descriptor_translations.language_code",
         locale
       )
-      .eq("id", gameId)
+      .eq("slug", gameSlug)
       .single();
 
     if (error) {
-      console.error("Error fetching game details:", error);
+      console.error("Error fetching game details by slug:", error);
       if (error.code === "PGRST116") {
         return NextResponse.json({ error: "Game not found" }, { status: 404 });
       }
@@ -171,6 +176,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             isPrimary: gc.is_primary,
           })) || [],
     };
+
+    // Get primary developer and publisher for backward compatibility
+    const primaryDeveloper =
+      companies.developers.find((dev) => dev.isPrimary) || companies.developers[0];
+    const primaryPublisher =
+      companies.publishers.find((pub) => pub.isPrimary) || companies.publishers[0];
 
     // Process media
     const media = {
@@ -261,6 +272,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       systemRequirements: game.system_requirements,
       genres,
       companies,
+      developer: primaryDeveloper?.name || "Unknown",
+      publisher: primaryPublisher?.name || "Unknown",
       media,
       ageRating,
       pricing,

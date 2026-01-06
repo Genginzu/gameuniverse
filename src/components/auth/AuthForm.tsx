@@ -9,10 +9,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Spinner } from "@/components/ui/spinner";
 import { useAuth } from "@/hooks/useAuth";
+import { AuthMode } from "@/types/auth";
 
 interface AuthFormProps {
-  mode: "signin" | "signup";
-  onModeChange: (_newMode: "signin" | "signup") => void;
+  mode: AuthMode;
+  onModeChange: (_newMode: AuthMode) => void;
 }
 
 export function AuthForm({ mode, onModeChange }: AuthFormProps) {

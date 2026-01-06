@@ -2,11 +2,9 @@
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { IoCheckmarkCircle } from "react-icons/io5";
+import { AuthSuccessMessage as AuthSuccessMessageType } from "@/types/auth";
 
-interface AuthSuccessMessageProps {
-  message: string;
-  show: boolean;
-}
+interface AuthSuccessMessageProps extends AuthSuccessMessageType {}
 
 export function AuthSuccessMessage({ message, show }: AuthSuccessMessageProps) {
   if (!show) return null;

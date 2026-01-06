@@ -1,10 +1,9 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { GameUniverseLogoConfig } from "@/types/ui";
 
-interface GameUniverseLogoProps {
-  size?: "sm" | "md" | "lg" | "xl";
-  animate?: boolean;
+interface GameUniverseLogoProps extends GameUniverseLogoConfig {
   className?: string;
 }
 

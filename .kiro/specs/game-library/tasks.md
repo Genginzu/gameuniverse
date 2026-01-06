@@ -161,14 +161,14 @@ optimisations.
     - Tester la gestion des états vides
     - _Requirements: 1.5_
 
-- [ ] 8. Système de recherche et filtrage
-  - [ ] 8.1 Implémenter la recherche avancée
+- [x] 8. Système de recherche et filtrage
+  - [x] 8.1 Implémenter la recherche avancée
     - Étendre l'API pour supporter les filtres par genre
     - Implémenter la recherche insensible à la casse
     - Gérer les requêtes vides et les résultats vides
     - _Requirements: 2.2, 2.3, 2.5, 3.1, 3.2, 3.3_
 
-  - [ ] 8.2 Créer le système de filtres
+  - [x] 8.2 Créer le système de filtres
     - Implémenter FilterPanel avec Checkbox de shadcn/ui
     - Ajouter les compteurs de jeux par genre
     - Gérer les filtres multiples et leur réinitialisation
@@ -186,14 +186,15 @@ optimisations.
     - **Validates: Requirements 3.1, 3.2, 3.4, 3.5**
 
 - [ ] 9. Page de détails des jeux
-  - [ ] 9.1 Créer l'API pour les détails de jeu
-    - Implémenter l'API route pour récupérer un jeu par ID
+  - [x] 9.1 Créer l'API pour les détails de jeu
+    - Implémenter l'API route pour récupérer un jeu par slug
     - Inclure toutes les informations détaillées et traductions
-    - Gérer les cas où le jeu n'existe pas
+    - Gérer les cas où le jeu n'existe pas (slug invalide)
     - _Requirements: 4.1, 4.6_
 
-  - [ ] 9.2 Implémenter la page GameDetails
-    - Créer la page de détails avec toutes les informations requises
+  - [x] 9.2 Créer la page de détails de jeu (/games/[slug])
+    - Créer la structure de page /games/[slug]/page.tsx
+    - Implémenter GameDetailsContent avec toutes les informations requises
     - Afficher les informations techniques, prix, et métadonnées
     - Implémenter la navigation de retour vers la bibliothèque
     - _Requirements: 4.1, 4.2, 4.5, 4.6_
@@ -316,29 +317,29 @@ optimisations.
 - **Bundler intégré** pour des builds optimisés
 - **Compatibilité parfaite** avec Next.js 16 et l'écosystème React
 
-- [ ] 16. Restructuration et nouvelles fonctionnalités
-  - [ ] 16.1 Restructurer l'architecture des composants
+- [x] 16. Restructuration et nouvelles fonctionnalités
+  - [x] 16.1 Restructurer l'architecture des composants
     - Créer la structure de dossiers par page (shared/, dashboard/, games/,
       library/)
     - Déplacer les composants existants dans les bons dossiers
     - Créer le DashboardLayout partagé pour toutes les pages connectées
     - _Requirements: Architecture générale_
 
-  - [ ] 16.2 Créer la page "Tous les jeux" (/games)
+  - [x] 16.2 Créer la page "Tous les jeux" (/games)
     - Implémenter AllGamesContent avec recherche avancée
     - Créer GameFilters avec filtres par genre, plateforme, éditeur
     - Ajouter GameSearchBar avec recherche en temps réel
     - Implémenter GamePagination pour la navigation
     - _Requirements: 1.1, 1.2, 2.1, 2.4, 7.4_
 
-  - [ ] 16.3 Créer la page "Ma bibliothèque" (/library)
+  - [x] 16.3 Créer la page "Ma bibliothèque" (/library)
     - Implémenter UserLibraryContent pour les jeux de l'utilisateur
     - Afficher les statistiques personnelles (jeux possédés, terminés, temps de
       jeu)
     - Créer l'état vide avec CTA vers la page des jeux
     - _Requirements: Bibliothèque personnelle_
 
-  - [ ] 16.4 Mettre à jour la navigation
+  - [x] 16.4 Mettre à jour la navigation
     - Modifier DashboardLayout pour inclure "Jeux" et "Ma bibliothèque"
     - Distinguer clairement les deux sections dans la sidebar
     - Mettre à jour les breadcrumbs et états actifs
@@ -371,6 +372,34 @@ optimisations.
 
 - **Landing Page Layout** : Pour les utilisateurs non connectés
 - **Dashboard Layout** : Layout unifié pour toutes les pages connectées
+
+- [ ] 17. Fonctionnalités manquantes pour compléter les exigences
+  - [ ] 17.1 Améliorer la gestion des médias dans les jeux existants
+    - Mettre à jour les seeds pour inclure plus de médias (screenshots, artwork,
+      vidéos)
+    - Améliorer l'affichage des médias dans GameCard
+    - Optimiser le chargement des images avec next/image
+    - _Requirements: 4.3, 4.4_
+
+  - [ ] 17.2 Implémenter la fonctionnalité "Ajouter à ma bibliothèque"
+    - Créer l'API pour gérer la bibliothèque utilisateur (ajout/suppression)
+    - Ajouter le bouton "Ajouter à ma bibliothèque" sur GameCard
+    - Mettre à jour UserLibraryContent pour afficher les jeux de l'utilisateur
+    - Gérer les états (déjà dans la bibliothèque, ajout en cours)
+    - _Requirements: Bibliothèque personnelle_
+
+  - [ ] 17.3 Améliorer la gestion des erreurs et états de chargement
+    - Implémenter des Error Boundaries React pour les composants
+    - Ajouter des Skeleton components pour les états de chargement
+    - Améliorer la gestion des erreurs réseau avec retry automatique
+    - _Requirements: Gestion d'erreurs_
+
+  - [ ] 17.4 Optimiser les performances et l'accessibilité
+    - Implémenter le lazy loading pour les images
+    - Ajouter les attributs ARIA appropriés
+    - Optimiser les requêtes de base de données avec des index
+    - Tester la navigation au clavier
+    - _Requirements: 5.4, Performance_
 
 Cette architecture améliore la maintenabilité et la scalabilité du projet en
 séparant clairement les responsabilités de chaque composant.

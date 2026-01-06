@@ -2,15 +2,7 @@
 
 import { createClient } from "@/lib/supabase";
 import { useEffect, useState } from "react";
-import type { Database } from "@/lib/database.types";
-
-type Profile = Database["public"]["Tables"]["profiles"]["Row"];
-
-export interface ProfileState {
-  profile: Profile | null;
-  loading: boolean;
-  error: string | null;
-}
+import { Profile, ProfileState } from "@/types/profile";
 
 export function useProfile() {
   const [profileState, setProfileState] = useState<ProfileState>({

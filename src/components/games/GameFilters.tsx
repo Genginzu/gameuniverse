@@ -1,10 +1,6 @@
 "use client";
 
-interface Genre {
-  id: string;
-  name: string;
-  gameCount: number;
-}
+import { Genre } from "@/types/genre";
 
 interface GameFiltersProps {
   genres: Genre[];

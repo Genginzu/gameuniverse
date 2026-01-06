@@ -3,10 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
 import Link from "next/link";
-
-interface Genre {
-  name: string;
-}
+import { Genre } from "@/types/genre";
 
 interface GameCardProps {
   game: {
@@ -17,7 +14,7 @@ interface GameCardProps {
     coverImage?: string;
     releaseDate?: string;
     releaseYear?: number;
-    genres: Genre[];
+    genres: Array<{ name: string; id?: string }>;
     developer: string;
     publisher: string;
     metascore?: number;

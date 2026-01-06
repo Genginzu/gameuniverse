@@ -2,10 +2,9 @@
 
 import { GameUniverseLogo } from "./game-universe-logo";
 import { cn } from "@/lib/utils";
+import { LoadingSpinnerConfig } from "@/types/ui";
 
-interface LoadingSpinnerProps {
-  size?: "sm" | "md" | "lg" | "xl";
-  text?: string;
+interface LoadingSpinnerProps extends LoadingSpinnerConfig {
   showText?: boolean;
   className?: string;
 }

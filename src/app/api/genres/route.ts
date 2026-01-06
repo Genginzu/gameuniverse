@@ -52,9 +52,9 @@ export async function GET(request: NextRequest) {
     }
 
     // Count games per genre
-    const countsByGenre = {};
+    const countsByGenre: Record<string, number> = {};
     if (gameCounts) {
-      gameCounts.forEach((item) => {
+      gameCounts.forEach((item: any) => {
         countsByGenre[item.genre_id] = (countsByGenre[item.genre_id] || 0) + 1;
       });
     }
@@ -84,7 +84,10 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("Unexpected error in genres API:", error);
     return NextResponse.json(
-      { error: "Internal server error", details: error.message },
+      {
+        error: "Internal server error",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
       { status: 500 }
     );
   }

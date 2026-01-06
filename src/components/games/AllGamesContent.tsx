@@ -8,35 +8,9 @@ import { GameFilterButton } from "./GameFilterButton";
 import { GamePagination } from "./GamePagination";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-
-interface Genre {
-  id: string;
-  name: string;
-  gameCount: number;
-}
-
-interface Game {
-  id: string;
-  slug: string;
-  title: string;
-  description?: string;
-  coverImage?: string;
-  releaseDate?: string;
-  releaseYear?: number;
-  genres: { name: string }[];
-  developer: string;
-  publisher: string;
-  metascore?: number;
-}
-
-interface Pagination {
-  currentPage: number;
-  totalPages: number;
-  totalCount: number;
-  limit: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-}
+import { Genre } from "@/types/genre";
+import { GameSummary } from "@/types/game";
+import { Pagination } from "@/types/pagination";
 
 interface AllGamesContentProps {
   locale?: string;
@@ -45,7 +19,7 @@ interface AllGamesContentProps {
 export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
   // const t = useTranslations("games"); // Unused for now
 
-  const [games, setGames] = useState<Game[]>([]);
+  const [games, setGames] = useState<GameSummary[]>([]);
   const [genres, setGenres] = useState<Genre[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [loading, setLoading] = useState(true);

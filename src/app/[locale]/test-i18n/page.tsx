@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations, useLocale } from "next-intl";
-import { Navigation } from "@/components/layout/landing/LandingHeader";
+import { LandingHeader } from "@/components/layout/landing/LandingHeader";
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import {
   useCommonTranslations,
@@ -28,7 +28,7 @@ export default function TestI18nPage() {
 
   return (
     <>
-      <Navigation />
+      <LandingHeader />
       <main className="container mx-auto p-8">
         <div className="mx-auto max-w-4xl">
           <h1 className="mb-8 text-3xl font-bold">Internationalization Test Page</h1>
