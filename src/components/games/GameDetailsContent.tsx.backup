@@ -312,8 +312,21 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                   </p>
                 )}
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-              {/* Contenu principal - Sections séparées */}
+      {/* Contenu principal avec fond solide */}
+      <div 
+        className="relative z-10"
+        style={{
+          backgroundColor: game.backgroundColor || "#0f172a",
+        }}
+      >
+        <div className="container mx-auto px-4 py-12">
+          <div className="max-w-6xl mx-auto">
+            {/* Contenu principal - Sections séparées */}
               <div className="space-y-12">
                 {/* Section Aperçu - Informations du jeu */}
                 <div>

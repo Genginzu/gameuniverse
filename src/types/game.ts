@@ -1,5 +1,6 @@
 export interface GameMedia {
   coverImage?: string;
+  backgroundImage?: string;
   screenshots: Array<{
     id: string;
     url: string;
@@ -91,6 +92,7 @@ export interface GameDetails {
   releaseYear?: number;
   metascore?: number;
   systemRequirements?: Record<string, any> | null;
+  backgroundColor?: string;
   genres: GameGenre[];
   companies: GameCompanies;
   developer: string;

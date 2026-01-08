@@ -109,7 +109,11 @@ export function useAuth() {
 
         // Handle auth events
         if (event === "SIGNED_IN") {
-          router.push("/dashboard");
+          // Ne rediriger vers le dashboard que si on vient d'une page d'authentification
+          const currentPath = window.location.pathname;
+          if (currentPath.includes("/auth") || currentPath === "/") {
+            router.push("/dashboard");
+          }
         } else if (event === "SIGNED_OUT") {
           router.push("/");
         }

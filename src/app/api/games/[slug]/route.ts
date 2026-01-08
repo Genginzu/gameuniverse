@@ -21,6 +21,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         id,
         slug,
         cover_image_url,
+        background_color,
+        background_image_url,
         release_date,
         metascore,
         system_requirements,
@@ -186,6 +188,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     // Process media
     const media = {
       coverImage: game.cover_image_url,
+      backgroundImage: game.background_image_url,
       screenshots:
         game.game_screenshots
           ?.sort((a: any, b: any) => (a.display_order || 0) - (b.display_order || 0))
@@ -269,6 +272,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       releaseDate: game.release_date,
       releaseYear: game.release_date ? new Date(game.release_date).getFullYear() : null,
       metascore: game.metascore,
+      backgroundColor: game.background_color,
       systemRequirements: game.system_requirements,
       genres,
       companies,

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { GameDetailsContent } from "@/components/games/GameDetailsContent";
 import { GameService } from "@/lib/services/gameService";
+import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
 
 interface GameDetailsPageProps {
   params: Promise<{
@@ -19,7 +20,11 @@ export default async function GameDetailsPage({ params }: GameDetailsPageProps) 
       notFound();
     }
 
-    return <GameDetailsContent game={game} locale={locale} />;
+    return (
+      <DashboardLayout>
+        <GameDetailsContent game={game} locale={locale} />
+      </DashboardLayout>
+    );
   } catch (error) {
     console.error("Error in GameDetailsPage:", error);
     // Return error state
