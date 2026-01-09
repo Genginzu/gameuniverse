@@ -46,14 +46,14 @@ export function GameCard({ game, locale = "fr" }: GameCardProps) {
   return (
     <div className="group relative">
       <Link href={`/${locale}/games/${game.slug}`}>
-        {/* Cover Image Only */}
+        {/* Cover Image with Overlay */}
         <div className="relative aspect-[3/4] cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl hover:shadow-blue-500/10">
           {game.coverImage ? (
             <Image
               src={game.coverImage}
               alt={game.title}
               fill
-              className="rounded-2xl object-cover transition-all duration-500 group-hover:scale-105 group-hover:brightness-110"
+              className="rounded-2xl object-cover transition-all duration-500 group-hover:scale-105"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
           ) : (
@@ -78,7 +78,7 @@ export function GameCard({ game, locale = "fr" }: GameCardProps) {
 
           {/* Metascore badge - always visible */}
           {game.metascore && (
-            <div className="absolute right-3 top-3">
+            <div className="absolute right-3 top-3 z-20">
               <div
                 className={`${getMetascoreColor(
                   game.metascore
@@ -88,97 +88,80 @@ export function GameCard({ game, locale = "fr" }: GameCardProps) {
               </div>
             </div>
           )}
-        </div>
-      </Link>
 
-      {/* Hover Panel - appears below the cover */}
-      <div className="absolute left-0 right-0 top-full z-10 mt-2 translate-y-2 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-        <div className="rounded-2xl bg-white p-5 shadow-2xl ring-1 ring-black/5 backdrop-blur-sm">
-          {/* Title */}
-          <h3 className="mb-3 line-clamp-2 text-lg font-bold text-gray-900">{game.title}</h3>
+          {/* Hover Overlay - appears on the cover */}
+          <div className="absolute inset-0 z-10 flex flex-col justify-end rounded-2xl bg-gradient-to-t from-black/90 via-black/60 to-transparent opacity-0 transition-all duration-300 group-hover:opacity-100">
+            <div className="p-4">
+              {/* Title */}
+              <h3 className="mb-2 line-clamp-2 text-lg font-bold text-white">{game.title}</h3>
 
-          {/* Description */}
-          {game.description && (
-            <p className="mb-4 line-clamp-3 text-sm leading-relaxed text-gray-600">
-              {game.description}
-            </p>
-          )}
+              {/* Description */}
+              {game.description && (
+                <p className="mb-3 line-clamp-2 text-sm leading-relaxed text-gray-200">
+                  {game.description}
+                </p>
+              )}
 
-          {/* Developer & Publisher */}
-          <div className="mb-4 space-y-2 text-sm">
-            <div className="flex items-center text-gray-700">
-              <div className="mr-2 h-1 w-1 rounded-full bg-blue-500"></div>
-              <span className="font-medium text-gray-500">Développeur:</span>
-              <span className="ml-1 font-medium">{game.developer}</span>
-            </div>
-            {game.publisher !== game.developer && (
-              <div className="flex items-center text-gray-700">
-                <div className="mr-2 h-1 w-1 rounded-full bg-green-500"></div>
-                <span className="font-medium text-gray-500">Éditeur:</span>
-                <span className="ml-1 font-medium">{game.publisher}</span>
+              {/* Developer & Publisher */}
+              <div className="mb-3 space-y-1 text-xs">
+                <div className="flex items-center text-gray-300">
+                  <span className="font-medium text-gray-400">Dev:</span>
+                  <span className="ml-1 font-medium text-white">{game.developer}</span>
+                </div>
+                {game.publisher !== game.developer && (
+                  <div className="flex items-center text-gray-300">
+                    <span className="font-medium text-gray-400">Éd:</span>
+                    <span className="ml-1 font-medium text-white">{game.publisher}</span>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
 
-          {/* Genres */}
-          {game.genres.length > 0 && (
-            <div className="mb-4 flex flex-wrap gap-1.5">
-              {game.genres.slice(0, 3).map((genre, index) => (
-                <Badge
-                  key={index}
-                  variant="secondary"
-                  className="rounded-full bg-gradient-to-r from-blue-50 to-indigo-50 px-2.5 py-1 text-xs font-medium text-blue-700"
-                >
-                  {genre.name}
-                </Badge>
-              ))}
-              {game.genres.length > 3 && (
-                <Badge
-                  variant="outline"
-                  className="rounded-full border-gray-200 px-2.5 py-1 text-xs font-medium text-gray-500"
-                >
-                  +{game.genres.length - 3}
-                </Badge>
+              {/* Genres */}
+              {game.genres.length > 0 && (
+                <div className="mb-3 flex flex-wrap gap-1">
+                  {game.genres.slice(0, 2).map((genre, index) => (
+                    <Badge
+                      key={index}
+                      variant="secondary"
+                      className="rounded-full bg-white/20 px-2 py-0.5 text-xs font-medium text-white backdrop-blur-sm"
+                    >
+                      {genre.name}
+                    </Badge>
+                  ))}
+                  {game.genres.length > 2 && (
+                    <Badge
+                      variant="outline"
+                      className="rounded-full border-white/30 bg-white/10 px-2 py-0.5 text-xs font-medium text-white backdrop-blur-sm"
+                    >
+                      +{game.genres.length - 2}
+                    </Badge>
+                  )}
+                </div>
+              )}
+
+              {/* Release Date */}
+              {game.releaseDate && (
+                <div className="flex items-center text-xs text-gray-300">
+                  <svg
+                    className="mr-1 h-3 w-3"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
+                  </svg>
+                  {game.releaseYear || formatReleaseDate(game.releaseDate)}
+                </div>
               )}
             </div>
-          )}
-
-          {/* Release Date & Metascore */}
-          <div className="flex items-center justify-between">
-            {game.releaseDate && (
-              <div className="flex items-center text-sm text-gray-500">
-                <svg
-                  className="mr-1.5 h-4 w-4"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
-                {game.releaseYear || formatReleaseDate(game.releaseDate)}
-              </div>
-            )}
-
-            {game.metascore && (
-              <div className="flex items-center text-sm">
-                <span className="mr-2 text-gray-500">Score:</span>
-                <div
-                  className={`${getMetascoreColor(
-                    game.metascore
-                  )} flex h-6 w-6 items-center justify-center rounded text-xs font-bold text-white`}
-                >
-                  {game.metascore}
-                </div>
-              </div>
-            )}
           </div>
         </div>
-      </div>
+      </Link>
     </div>
   );
 }
