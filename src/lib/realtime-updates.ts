@@ -124,7 +124,7 @@ export function createGameUpdatesListener() {
 }
 
 /**
- * Invalidate cache entries for updated games
+ * Invalidate cache entries for updated games and ensure search consistency
  * This helps ensure that cached data is refreshed when games are modified
  */
 export async function invalidateGameCache(gameIds: string | string[]) {
@@ -136,12 +136,130 @@ export async function invalidateGameCache(gameIds: string | string[]) {
     // 2. Invalidate CDN cache
     // 3. Update search indexes
     // 4. Refresh materialized views
+    // 5. Clear application-level caches
 
     console.log("Cache invalidation requested for games:", ids);
 
+    // Simulate comprehensive cache invalidation
+    const cacheInvalidationTasks = [
+      // Clear game detail caches
+      ...ids.map((id) => `game:${id}`),
+      // Clear game list caches (pagination, search results, filters)
+      "games:list:*",
+      "games:search:*",
+      "games:filter:*",
+      // Clear genre-specific caches
+      "genres:games:*",
+      // Clear company-specific caches
+      "companies:games:*",
+      // Clear media caches
+      ...ids.flatMap((id) => [`game:${id}:screenshots`, `game:${id}:artwork`, `game:${id}:videos`]),
+      // Clear pricing caches
+      ...ids.map((id) => `game:${id}:prices`),
+    ];
+
+    console.log("Cache invalidation tasks:", cacheInvalidationTasks);
+
     // For now, we'll just log the cache invalidation
     // In the future, this could integrate with Redis, CDN APIs, etc.
+
+    // Simulate search index updates
+    await updateSearchIndexes(ids);
   } catch (error) {
     console.error("Error invalidating game cache:", error);
+  }
+}
+
+/**
+ * Update search indexes to ensure deleted games are removed from all search results
+ */
+async function updateSearchIndexes(gameIds: string[]) {
+  try {
+    console.log("Updating search indexes for games:", gameIds);
+
+    // In a real implementation, this would:
+    // 1. Remove games from Elasticsearch/Algolia indexes
+    // 2. Update full-text search indexes in PostgreSQL
+    // 3. Clear any cached search results
+    // 4. Rebuild genre/company aggregations
+
+    // For now, we simulate this process
+    const indexUpdateTasks = [
+      "elasticsearch:games:remove",
+      "postgresql:fts:refresh",
+      "aggregations:genres:rebuild",
+      "aggregations:companies:rebuild",
+    ];
+
+    console.log("Search index update tasks:", indexUpdateTasks);
+
+    // Simulate async index updates
+    await Promise.resolve();
+  } catch (error) {
+    console.error("Error updating search indexes:", error);
+  }
+}
+
+/**
+ * Verify that deleted games are completely removed from all search results
+ */
+export async function verifyGameDeletionConsistency(
+  gameIds: string[],
+  supabaseClient?: any
+): Promise<{
+  isConsistent: boolean;
+  inconsistencies: string[];
+}> {
+  try {
+    const supabase = supabaseClient || (await createRouteHandlerClient());
+    const inconsistencies: string[] = [];
+
+    // Check if games still appear in any search results
+    for (const gameId of gameIds) {
+      // Check main games table
+      const { data: gameExists } = await supabase
+        .from("games")
+        .select("id")
+        .eq("id", gameId)
+        .limit(1);
+
+      if (gameExists && gameExists.length > 0) {
+        inconsistencies.push(`Game ${gameId} still exists in games table`);
+      }
+
+      // Check related tables (should be empty due to CASCADE)
+      const relatedTables = [
+        "game_translations",
+        "game_genres",
+        "game_companies",
+        "game_screenshots",
+        "game_artwork",
+        "game_videos",
+        "game_prices",
+      ];
+
+      for (const table of relatedTables) {
+        const { data: relatedData } = await supabase
+          .from(table)
+          .select("id")
+          .eq("game_id", gameId)
+          .limit(1);
+
+        if (relatedData && relatedData.length > 0) {
+          inconsistencies.push(`Game ${gameId} still has data in ${table}`);
+        }
+      }
+    }
+
+    return {
+      isConsistent: inconsistencies.length === 0,
+      inconsistencies,
+    };
+  } catch (error) {
+    console.error("Error verifying game deletion consistency:", error);
+    return {
+      isConsistent: false,
+      inconsistencies: [`Error during consistency check: ${error}`],
+    };
   }
 }

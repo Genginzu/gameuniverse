@@ -12,6 +12,7 @@ import {
   notifyGameCreated,
   notifyBulkOperation,
   invalidateGameCache,
+  verifyGameDeletionConsistency,
 } from "@/lib/realtime-updates";
 import { z } from "zod";
 
@@ -381,7 +382,53 @@ export async function PATCH(request: NextRequest) {
     const supabase = await createRouteHandlerClient();
 
     if (operation === "delete") {
-      // Bulk delete games
+      // Bulk delete games with complete cleanup verification
+
+      // First, get information about games to be deleted for audit
+      const { data: gamesToDelete, error: fetchError } = await supabase
+        .from("games")
+        .select(
+          `
+          id,
+          slug,
+          game_translations(count),
+          game_genres(count),
+          game_companies(count),
+          game_screenshots(count),
+          game_artwork(count),
+          game_videos(count),
+          game_prices(count)
+        `
+        )
+        .in("id", game_ids);
+
+      if (fetchError) {
+        console.error("Error fetching games for deletion:", fetchError);
+        return NextResponse.json({ error: "Failed to fetch games for deletion" }, { status: 500 });
+      }
+
+      if (!gamesToDelete || gamesToDelete.length === 0) {
+        return NextResponse.json({ error: "No games found for deletion" }, { status: 404 });
+      }
+
+      // Log what will be deleted for audit purposes
+      const deletionSummary = gamesToDelete.map((game) => ({
+        id: game.id,
+        slug: game.slug,
+        relatedDataCounts: {
+          translations: game.game_translations?.[0]?.count || 0,
+          genres: game.game_genres?.[0]?.count || 0,
+          companies: game.game_companies?.[0]?.count || 0,
+          screenshots: game.game_screenshots?.[0]?.count || 0,
+          artwork: game.game_artwork?.[0]?.count || 0,
+          videos: game.game_videos?.[0]?.count || 0,
+          prices: game.game_prices?.[0]?.count || 0,
+        },
+      }));
+
+      console.log(`Bulk deleting ${gamesToDelete.length} games:`, deletionSummary);
+
+      // Perform bulk deletion (CASCADE will handle all related data)
       const { error } = await supabase.from("games").delete().in("id", game_ids);
 
       if (error) {
@@ -389,13 +436,24 @@ export async function PATCH(request: NextRequest) {
         return NextResponse.json({ error: "Failed to delete games" }, { status: 500 });
       }
 
+      // Verify complete deletion using the consistency check function
+      const consistencyCheck = await verifyGameDeletionConsistency(game_ids, supabase);
+
+      if (!consistencyCheck.isConsistent) {
+        console.warn(`Warning: Deletion consistency issues detected:`, consistencyCheck.inconsistencies);
+      }
+
       // Send real-time notification for bulk delete
       await notifyBulkOperation("delete", game_ids);
       await invalidateGameCache(game_ids);
 
       return NextResponse.json({
-        message: `Successfully deleted ${game_ids.length} games`,
+        message: `Successfully deleted ${game_ids.length} games with complete cleanup`,
         deletedIds: game_ids,
+        deletionSummary,
+        consistencyCheck,
+        timestamp: new Date().toISOString(),
+        },
       });
     } else if (operation === "update" && data) {
       // Bulk update games

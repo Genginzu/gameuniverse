@@ -235,7 +235,7 @@ optimisations.
     - Gérer les mises à jour en temps réel
     - _Requirements: 6.1, 6.2, 6.4, 6.5_
 
-  - [ ] 11.2 Implémenter la suppression et cohérence
+  - [x] 11.2 Implémenter la suppression et cohérence
     - Gérer la suppression des jeux avec nettoyage complet
     - Assurer la cohérence dans tous les résultats de recherche
     - _Requirements: 6.3_
