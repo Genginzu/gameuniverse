@@ -229,7 +229,7 @@ optimisations.
     - **Validates: Requirements 5.1, 5.2, 5.3, 5.5**
 
 - [ ] 11. Fonctionnalités administratives
-  - [-] 11.1 Créer les API routes d'administration
+  - [x] 11.1 Créer les API routes d'administration
     - Implémenter CRUD pour les jeux avec validation
     - Ajouter les opérations en lot (bulk operations)
     - Gérer les mises à jour en temps réel
