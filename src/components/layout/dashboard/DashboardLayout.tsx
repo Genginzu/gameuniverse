@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { LoadingSpinner } from "../../ui/loading-spinner";
 import { useRouter } from "@/i18n/navigation";
 import { useAuth } from "@/hooks/useAuth";
@@ -15,12 +15,57 @@ type DashboardLayoutProps = {
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const { user, loading, signOut } = useAuth();
   const router = useRouter();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
       router.push("/auth?mode=signin");
     }
   }, [user, loading, router]);
+
+  // Close sidebar when clicking outside on mobile
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const sidebar = document.getElementById("mobile-sidebar");
+      const sidebarToggle = document.getElementById("sidebar-toggle");
+
+      if (
+        sidebarOpen &&
+        sidebar &&
+        !sidebar.contains(event.target as Node) &&
+        sidebarToggle &&
+        !sidebarToggle.contains(event.target as Node)
+      ) {
+        setSidebarOpen(false);
+      }
+    };
+
+    if (sidebarOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [sidebarOpen]);
+
+  // Handle orientation changes
+  useEffect(() => {
+    const handleOrientationChange = () => {
+      // Close sidebar on orientation change for mobile
+      if (window.innerWidth < 1024) {
+        setSidebarOpen(false);
+      }
+    };
+
+    window.addEventListener("orientationchange", handleOrientationChange);
+    window.addEventListener("resize", handleOrientationChange);
+
+    return () => {
+      window.removeEventListener("orientationchange", handleOrientationChange);
+      window.removeEventListener("resize", handleOrientationChange);
+    };
+  }, []);
 
   if (loading) {
     return (
@@ -44,15 +89,24 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <DashboardContext.Provider value={contextValue}>
       <div className="flex min-h-screen flex-col bg-gray-50">
-        <DashboardHeader />
+        <DashboardHeader sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+
+        {/* Mobile sidebar overlay */}
+        {sidebarOpen && <div className="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden" />}
+
         {/* Sidebar Area */}
-        <div className="flex flex-1">
-          <DashboardSidebar signOut={signOut} user={user} />
+        <div className="relative flex flex-1">
+          <DashboardSidebar
+            signOut={signOut}
+            user={user}
+            sidebarOpen={sidebarOpen}
+            setSidebarOpen={setSidebarOpen}
+          />
+
           {/* Main Content */}
-          <div className="flex flex-1 flex-col">
-            {/* <DashboardBreadcrumb /> */}
+          <div className="flex min-w-0 flex-1 flex-col">
             {/* Page Content */}
-            {children}
+            <main className="flex-1 overflow-auto">{children}</main>
           </div>
         </div>
       </div>

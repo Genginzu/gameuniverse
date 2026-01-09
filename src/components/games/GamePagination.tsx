@@ -59,9 +59,9 @@ export function GamePagination({
   const visiblePages = getVisiblePages();
 
   return (
-    <div className="flex flex-col items-center space-y-6 rounded-2xl bg-white p-6 shadow-sm">
+    <div className="flex flex-col items-center space-y-4 rounded-2xl bg-white p-4 shadow-sm sm:space-y-6 sm:p-6">
       {/* Page info */}
-      <div className="flex items-center space-x-2 text-sm">
+      <div className="flex flex-col items-center space-y-2 text-sm sm:flex-row sm:space-x-2 sm:space-y-0">
         <div className="flex items-center space-x-1 text-gray-600">
           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -77,8 +77,8 @@ export function GamePagination({
           <span className="font-semibold">{totalPages}</span>
         </div>
         {totalCount > 0 && (
-          <div className="hidden items-center space-x-1 text-gray-500 sm:flex">
-            <span>•</span>
+          <div className="flex items-center space-x-1 text-gray-500">
+            <span className="hidden sm:inline">•</span>
             <span>
               {totalCount} {totalCount === 1 ? "résultat" : "résultats"}
             </span>
@@ -87,16 +87,16 @@ export function GamePagination({
       </div>
 
       {/* Pagination controls */}
-      <div className="flex items-center space-x-2">
-        {/* First page button */}
+      <div className="flex items-center space-x-1 sm:space-x-2">
+        {/* First page button - hidden on mobile */}
         <Button
           variant="outline"
           size="sm"
           onClick={() => onPageChange(1)}
           disabled={currentPage === 1 || loading}
-          className="hidden rounded-lg border-gray-200 px-3 py-2 text-sm font-medium transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-50 sm:inline-flex"
+          className="hidden rounded-lg border-gray-200 px-2 py-2 text-sm font-medium transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-50 md:inline-flex md:px-3"
         >
-          <svg className="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="h-4 w-4 md:mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -104,7 +104,7 @@ export function GamePagination({
               d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
             />
           </svg>
-          Premier
+          <span className="hidden md:inline">Premier</span>
         </Button>
 
         {/* Previous page button */}
@@ -113,9 +113,9 @@ export function GamePagination({
           size="sm"
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1 || loading}
-          className="rounded-lg border-gray-200 px-4 py-2 text-sm font-medium transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-50"
+          className="rounded-lg border-gray-200 px-3 py-2 text-sm font-medium transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-50 sm:px-4"
         >
-          <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="h-4 w-4 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -123,15 +123,15 @@ export function GamePagination({
               d="M15 19l-7-7 7-7"
             />
           </svg>
-          Précédent
+          <span className="hidden sm:inline">Précédent</span>
         </Button>
 
-        {/* Page numbers */}
+        {/* Page numbers - fewer on mobile */}
         <div className="flex items-center space-x-1">
           {visiblePages.map((page, index) => {
             if (page === "...") {
               return (
-                <span key={`dots-${index}`} className="px-3 py-2 text-gray-400">
+                <span key={`dots-${index}`} className="px-2 py-2 text-gray-400 sm:px-3">
                   <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
@@ -154,7 +154,7 @@ export function GamePagination({
                 size="sm"
                 onClick={() => onPageChange(pageNumber)}
                 disabled={loading}
-                className={`h-10 min-w-[44px] rounded-lg font-medium transition-all ${
+                className={`h-9 min-w-[36px] rounded-lg font-medium transition-all sm:h-10 sm:min-w-[44px] ${
                   isCurrentPage
                     ? "pointer-events-none bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg"
                     : "border-gray-200 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600"
@@ -172,24 +172,24 @@ export function GamePagination({
           size="sm"
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages || loading}
-          className="rounded-lg border-gray-200 px-4 py-2 text-sm font-medium transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-50"
+          className="rounded-lg border-gray-200 px-3 py-2 text-sm font-medium transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-50 sm:px-4"
         >
-          Suivant
-          <svg className="ml-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <span className="hidden sm:inline">Suivant</span>
+          <svg className="h-4 w-4 sm:ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
         </Button>
 
-        {/* Last page button */}
+        {/* Last page button - hidden on mobile */}
         <Button
           variant="outline"
           size="sm"
           onClick={() => onPageChange(totalPages)}
           disabled={currentPage === totalPages || loading}
-          className="hidden rounded-lg border-gray-200 px-3 py-2 text-sm font-medium transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-50 sm:inline-flex"
+          className="hidden rounded-lg border-gray-200 px-2 py-2 text-sm font-medium transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-50 md:inline-flex md:px-3"
         >
-          Dernier
-          <svg className="ml-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <span className="hidden md:inline">Dernier</span>
+          <svg className="h-4 w-4 md:ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"

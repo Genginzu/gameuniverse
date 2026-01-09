@@ -162,17 +162,17 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 px-6 py-12 text-white">
+      <div className="relative overflow-hidden bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 px-4 py-8 text-white sm:px-6 sm:py-12">
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="relative mx-auto max-w-4xl">
           <div className="text-center">
-            <h1 className="mb-3 text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
+            <h1 className="mb-3 text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl xl:text-5xl">
               Découvrez des Jeux
               <span className="block bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
                 Extraordinaires
               </span>
             </h1>
-            <p className="mx-auto max-w-xl text-lg text-indigo-100/90">
+            <p className="mx-auto max-w-xl text-base text-indigo-100/90 sm:text-lg">
               Explorez notre collection de jeux vidéo exceptionnels
             </p>
             {pagination && (
@@ -203,11 +203,11 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
         <div className="absolute -top-4 left-1/4 h-12 w-12 rounded-full bg-yellow-400/10 blur-lg"></div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-6 py-8">
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
         {/* Search and Filters */}
-        <div className="mb-8 space-y-4">
-          {/* Search bar with filter button - same row */}
-          <div className="flex gap-4">
+        <div className="mb-6 space-y-4 sm:mb-8">
+          {/* Search bar with filter button - responsive layout */}
+          <div className="flex flex-col gap-4 sm:flex-row">
             <div className="flex-1">
               <GameSearchBar onSearch={handleSearch} initialValue={searchQuery} />
             </div>
@@ -234,7 +234,7 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
 
         {/* Results info */}
         {pagination && (
-          <div className="mb-6 flex items-center justify-between rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 p-4">
+          <div className="mb-4 flex flex-col items-start justify-between rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 p-4 sm:mb-6 sm:flex-row sm:items-center">
             <div className="flex items-center space-x-2">
               <div className="h-2 w-2 rounded-full bg-blue-500"></div>
               {searchQuery ? (
@@ -249,7 +249,7 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
               )}
             </div>
             {(selectedGenres.length > 0 || selectedPublishers.length > 0) && (
-              <div className="flex items-center space-x-2 text-xs text-gray-500">
+              <div className="mt-2 flex items-center space-x-2 text-xs text-gray-500 sm:mt-0">
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
@@ -266,7 +266,7 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
 
         {/* Loading state */}
         {loading && (
-          <div className="flex flex-col items-center justify-center py-20">
+          <div className="flex flex-col items-center justify-center py-16 sm:py-20">
             <div className="relative">
               <LoadingSpinner size="lg" />
               <div className="absolute inset-0 animate-ping rounded-full bg-blue-400 opacity-20"></div>
@@ -279,10 +279,10 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
         {!loading && (
           <>
             {games.length === 0 ? (
-              <div className="flex flex-col items-center justify-center rounded-2xl bg-white py-20 text-center shadow-sm">
+              <div className="flex flex-col items-center justify-center rounded-2xl bg-white py-16 text-center shadow-sm sm:py-20">
                 <div className="mb-6 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 p-6">
                   <svg
-                    className="h-16 w-16 text-gray-400"
+                    className="h-12 w-12 text-gray-400 sm:h-16 sm:w-16"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -295,8 +295,10 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
                     />
                   </svg>
                 </div>
-                <h3 className="mb-2 text-xl font-semibold text-gray-900">Aucun jeu trouvé</h3>
-                <p className="max-w-md text-gray-500">
+                <h3 className="mb-2 text-lg font-semibold text-gray-900 sm:text-xl">
+                  Aucun jeu trouvé
+                </h3>
+                <p className="max-w-md text-sm text-gray-500 sm:text-base">
                   {searchQuery || selectedGenres.length > 0 || selectedPublishers.length > 0
                     ? "Essayez de modifier vos critères de recherche ou explorez d'autres catégories"
                     : "Aucun jeu disponible pour le moment"}
@@ -312,7 +314,8 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
               </div>
             ) : (
               <div className="space-y-8">
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {/* Responsive grid with better breakpoints */}
+                <div className="xs:grid-cols-2 grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
                   {games.map((game) => (
                     <GameCard key={game.id} game={game} locale={locale} />
                   ))}
@@ -321,7 +324,7 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
             )}
 
             {pagination && pagination.totalPages > 1 && (
-              <div className="mt-12">
+              <div className="mt-8 sm:mt-12">
                 <GamePagination
                   currentPage={pagination.currentPage}
                   totalPages={pagination.totalPages}

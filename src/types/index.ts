@@ -1,0 +1,17 @@
+// Export central de tous les types du projet
+
+// Types de base
+export * from "./api";
+export * from "./auth";
+export * from "./components";
+export * from "./database";
+export * from "./game";
+export * from "./genre";
+export * from "./hooks";
+export * from "./pagination";
+export * from "./profile";
+export * from "./supabase";
+export * from "./ui";
+
+// Types globaux
+export * from "./global.d";

@@ -3,13 +3,7 @@
 import { useState, useEffect } from "react";
 import { GameDetails, GameSummary } from "@/types/game";
 import { GameService } from "@/lib/services/gameService";
-
-interface UseGameDetailsReturn {
-  game: GameDetails | null;
-  loading: boolean;
-  error: string | null;
-  refetch: () => Promise<void>;
-}
+import { UseGameDetailsReturn, UseGamesOptions, UseGamesReturn } from "@/types/hooks";
 
 /**
  * Hook pour récupérer les détails d'un jeu côté client
@@ -62,23 +56,9 @@ export function useGameDetails(slug: string, locale: string = "fr"): UseGameDeta
  * Hook pour récupérer la liste des jeux côté client
  * Utile pour les composants de recherche et filtrage dynamiques
  */
-export function useGames(
-  options: {
-    search?: string;
-    genres?: string[];
-    page?: number;
-    limit?: number;
-    locale?: string;
-  } = {}
-) {
+export function useGames(options: UseGamesOptions = {}): UseGamesReturn {
   const [games, setGames] = useState<GameSummary[]>([]);
-  const [pagination, setPagination] = useState<{
-    currentPage: number;
-    totalPages: number;
-    totalCount: number;
-    hasNextPage: boolean;
-    hasPreviousPage: boolean;
-  } | null>(null);
+  const [pagination, setPagination] = useState<UseGamesReturn["pagination"]>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

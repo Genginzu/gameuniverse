@@ -8,6 +8,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      screens: {
+        xs: "475px",
+      },
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
@@ -56,7 +59,7 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)",
       },
     },
-  }
+  },
 };
 
 export default config;

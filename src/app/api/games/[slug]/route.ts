@@ -1,5 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import {
+  DatabaseGameGenre,
+  DatabaseGameCompanyRelation,
+  DatabaseGameScreenshot,
+  DatabaseGameArtwork,
+  DatabaseGameVideo,
+  DatabaseGameRating,
+  DatabaseGamePrice,
+  DatabaseGameData,
+} from "@/types/database";
+import { SupabaseError } from "@/types/api";
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   try {
@@ -14,15 +25,15 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const supabase = await createRouteHandlerClient();
 
     // Fetch game details by slug with all related data
-    const { data: game, error } = await supabase
+    const { data: game, error } = (await supabase
       .from("games")
       .select(
         `
         id,
         slug,
         cover_image_url,
-        background_color,
         background_image_url,
+        background_color,
         release_date,
         metascore,
         system_requirements,
@@ -127,7 +138,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         locale
       )
       .eq("slug", gameSlug)
-      .single();
+      .single()) as { data: DatabaseGameData | null; error: SupabaseError | null };
 
     if (error) {
       console.error("Error fetching game details by slug:", error);
@@ -146,7 +157,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     // Process genres
     const genres =
-      game.game_genres?.map((gg: any) => ({
+      game.game_genres?.map((gg: { genres: DatabaseGameGenre }) => ({
         id: gg.genres?.id,
         slug: gg.genres?.slug,
         name: gg.genres?.genre_translations?.[0]?.name || "Unknown",
@@ -157,33 +168,35 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const companies = {
       developers:
         game.game_companies
-          ?.filter((gc: any) => gc.role === "developer")
-          .map((gc: any) => ({
+          ?.filter((gc: DatabaseGameCompanyRelation) => gc.role === "developer")
+          .map((gc: DatabaseGameCompanyRelation) => ({
             id: gc.companies?.id,
             name: gc.companies?.name,
             slug: gc.companies?.slug,
             description: gc.companies?.description,
             websiteUrl: gc.companies?.website_url,
-            isPrimary: gc.is_primary,
+            isPrimary: gc.is_primary || false,
           })) || [],
       publishers:
         game.game_companies
-          ?.filter((gc: any) => gc.role === "publisher")
-          .map((gc: any) => ({
+          ?.filter((gc: DatabaseGameCompanyRelation) => gc.role === "publisher")
+          .map((gc: DatabaseGameCompanyRelation) => ({
             id: gc.companies?.id,
             name: gc.companies?.name,
             slug: gc.companies?.slug,
             description: gc.companies?.description,
             websiteUrl: gc.companies?.website_url,
-            isPrimary: gc.is_primary,
+            isPrimary: gc.is_primary || false,
           })) || [],
     };
 
     // Get primary developer and publisher for backward compatibility
     const primaryDeveloper =
-      companies.developers.find((dev) => dev.isPrimary) || companies.developers[0];
+      companies.developers.find((dev: { isPrimary: boolean }) => dev.isPrimary) ||
+      companies.developers[0];
     const primaryPublisher =
-      companies.publishers.find((pub) => pub.isPrimary) || companies.publishers[0];
+      companies.publishers.find((pub: { isPrimary: boolean }) => pub.isPrimary) ||
+      companies.publishers[0];
 
     // Process media
     const media = {
@@ -191,42 +204,51 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       backgroundImage: game.background_image_url,
       screenshots:
         game.game_screenshots
-          ?.sort((a: any, b: any) => (a.display_order || 0) - (b.display_order || 0))
-          .map((screenshot: any) => ({
+          ?.sort(
+            (a: DatabaseGameScreenshot, b: DatabaseGameScreenshot) =>
+              (a.display_order || 0) - (b.display_order || 0)
+          )
+          .map((screenshot: DatabaseGameScreenshot) => ({
             id: screenshot.id,
             url: screenshot.url,
             altText: screenshot.alt_text,
             caption: screenshot.caption,
-            isFeatured: screenshot.is_featured,
+            isFeatured: screenshot.is_featured || false,
           })) || [],
       artwork:
         game.game_artwork
-          ?.sort((a: any, b: any) => (a.display_order || 0) - (b.display_order || 0))
-          .map((art: any) => ({
+          ?.sort(
+            (a: DatabaseGameArtwork, b: DatabaseGameArtwork) =>
+              (a.display_order || 0) - (b.display_order || 0)
+          )
+          .map((art: DatabaseGameArtwork) => ({
             id: art.id,
             url: art.url,
             altText: art.alt_text,
             caption: art.caption,
-            type: art.artwork_type,
-            isFeatured: art.is_featured,
+            type: art.artwork_type || "unknown",
+            isFeatured: art.is_featured || false,
           })) || [],
       videos:
         game.game_videos
-          ?.sort((a: any, b: any) => (a.display_order || 0) - (b.display_order || 0))
-          .map((video: any) => ({
+          ?.sort(
+            (a: DatabaseGameVideo, b: DatabaseGameVideo) =>
+              (a.display_order || 0) - (b.display_order || 0)
+          )
+          .map((video: DatabaseGameVideo) => ({
             id: video.id,
             title: video.title,
             description: video.description,
             url: video.url,
             thumbnailUrl: video.thumbnail_url,
-            type: video.video_type,
+            type: video.video_type || "unknown",
             duration: video.duration_seconds,
-            isFeatured: video.is_featured,
+            isFeatured: video.is_featured || false,
           })) || [],
     };
 
     // Process ratings
-    const primaryRating = game.game_ratings?.find((gr: any) => gr.is_primary);
+    const primaryRating = game.game_ratings?.find((gr: DatabaseGameRating) => gr.is_primary);
     const ageRating = primaryRating
       ? {
           system: primaryRating.ratings?.rating_systems?.name,
@@ -238,24 +260,34 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           iconUrl: primaryRating.ratings?.icon_url,
           assignedDate: primaryRating.assigned_date,
           contentDescriptors:
-            primaryRating.game_rating_descriptors?.map((grd: any) => ({
-              code: grd.content_descriptors?.code,
-              name: grd.content_descriptors?.content_descriptor_translations?.[0]?.name,
-              description:
-                grd.content_descriptors?.content_descriptor_translations?.[0]?.description,
-            })) || [],
+            primaryRating.game_rating_descriptors?.map(
+              (grd: {
+                content_descriptors: {
+                  code: string;
+                  content_descriptor_translations: Array<{
+                    name: string;
+                    description: string | null;
+                  }>;
+                };
+              }) => ({
+                code: grd.content_descriptors?.code,
+                name: grd.content_descriptors?.content_descriptor_translations?.[0]?.name,
+                description:
+                  grd.content_descriptors?.content_descriptor_translations?.[0]?.description,
+              })
+            ) || [],
         }
       : null;
 
     // Process pricing
     const pricing =
       game.game_prices
-        ?.filter((gp: any) => gp.is_available)
-        .map((price: any) => ({
+        ?.filter((gp: DatabaseGamePrice) => gp.is_available)
+        .map((price: DatabaseGamePrice) => ({
           price: price.price,
           currency: price.currency,
           platform: price.platform,
-          lastUpdated: price.last_updated,
+          lastUpdated: price.last_updated || "",
           storeUrl: price.store_url,
           store: {
             name: price.stores?.name,

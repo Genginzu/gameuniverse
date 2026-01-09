@@ -1,4 +1,4 @@
-// Types pour les composants UI génériques
+// Types pour les composants UI de base (sans props)
 
 export interface SpinnerConfig {
   size?: "sm" | "md" | "lg";
@@ -12,4 +12,15 @@ export interface LoadingSpinnerConfig {
 export interface GameUniverseLogoConfig {
   size?: "sm" | "md" | "lg" | "xl";
   animate?: boolean;
+}
+
+// Types pour les composants UI génériques
+export interface ButtonVariant {
+  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
+  size?: "default" | "sm" | "lg" | "icon";
+}
+
+export interface InputVariant {
+  variant?: "default" | "error" | "success";
+  size?: "default" | "sm" | "lg";
 }

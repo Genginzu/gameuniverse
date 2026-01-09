@@ -199,7 +199,7 @@ optimisations.
     - Implémenter la navigation de retour vers la bibliothèque
     - _Requirements: 4.1, 4.2, 4.5, 4.6_
 
-  - [ ] 9.3 Créer la galerie de médias
+  - [x] 9.3 Créer la galerie de médias
     - Implémenter MediaGallery avec Dialog et Carousel de shadcn/ui
     - Organiser screenshots, artwork, trailers, et gameplay
     - Ajouter les contrôles de navigation dans la galerie
@@ -211,7 +211,7 @@ optimisations.
     - **Validates: Requirements 4.2, 4.3, 4.4**
 
 - [ ] 10. Responsive design et accessibilité
-  - [ ] 10.1 Implémenter le responsive design
+  - [x] 10.1 Implémenter le responsive design
     - Adapter tous les composants pour mobile, tablette, desktop
     - Gérer les changements d'orientation
     - Optimiser la grille de jeux pour différentes tailles d'écran
@@ -229,7 +229,7 @@ optimisations.
     - **Validates: Requirements 5.1, 5.2, 5.3, 5.5**
 
 - [ ] 11. Fonctionnalités administratives
-  - [ ] 11.1 Créer les API routes d'administration
+  - [-] 11.1 Créer les API routes d'administration
     - Implémenter CRUD pour les jeux avec validation
     - Ajouter les opérations en lot (bulk operations)
     - Gérer les mises à jour en temps réel
