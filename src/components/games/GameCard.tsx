@@ -1,8 +1,12 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { LazyImage } from "@/components/ui/lazy-image";
+import { useGameLibraryStatus } from "@/hooks/useGameLibraryStatus";
+import { useAuth } from "@/hooks/useAuth";
 import Link from "next/link";
+import { FaPlus, FaCheck, FaSpinner } from "react-icons/fa";
 
 interface GameCardProps {
   game: {
@@ -25,6 +29,9 @@ interface GameCardProps {
 }
 
 export function GameCard({ game, locale = "fr", priority = false }: GameCardProps) {
+  const { user } = useAuth();
+  const { inLibrary, adding, addToLibrary, removeFromLibrary } = useGameLibraryStatus(game.id);
+
   const formatReleaseDate = (dateString?: string) => {
     if (!dateString) return null;
 
@@ -43,6 +50,17 @@ export function GameCard({ game, locale = "fr", priority = false }: GameCardProp
     if (score >= 60) return "bg-yellow-500";
     if (score >= 40) return "bg-orange-500";
     return "bg-red-500";
+  };
+
+  const handleLibraryAction = async (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent navigation to game details
+    e.stopPropagation();
+
+    if (inLibrary) {
+      await removeFromLibrary();
+    } else {
+      await addToLibrary();
+    }
   };
 
   return (
@@ -130,7 +148,7 @@ export function GameCard({ game, locale = "fr", priority = false }: GameCardProp
 
               {/* Release Date */}
               {game.releaseDate && (
-                <div className="flex items-center text-xs text-gray-300">
+                <div className="mb-3 flex items-center text-xs text-gray-300">
                   <svg
                     className="mr-1 h-3 w-3"
                     fill="none"
@@ -146,6 +164,33 @@ export function GameCard({ game, locale = "fr", priority = false }: GameCardProp
                   </svg>
                   {game.releaseYear || formatReleaseDate(game.releaseDate)}
                 </div>
+              )}
+
+              {/* Library Button - Only show for authenticated users */}
+              {user && (
+                <Button
+                  onClick={handleLibraryAction}
+                  disabled={adding}
+                  size="sm"
+                  className={`w-full ${
+                    inLibrary
+                      ? "bg-green-600 text-white hover:bg-green-700"
+                      : "bg-blue-600 text-white hover:bg-blue-700"
+                  }`}
+                >
+                  {adding ? (
+                    <FaSpinner className="mr-2 h-3 w-3 animate-spin" />
+                  ) : inLibrary ? (
+                    <FaCheck className="mr-2 h-3 w-3" />
+                  ) : (
+                    <FaPlus className="mr-2 h-3 w-3" />
+                  )}
+                  {adding
+                    ? "..."
+                    : inLibrary
+                      ? "Dans ma bibliothèque"
+                      : "Ajouter à ma bibliothèque"}
+                </Button>
               )}
             </div>
           </div>

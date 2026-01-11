@@ -1,28 +1,46 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/hooks/useAuth";
+import { useUserLibrary } from "@/hooks/useUserLibrary";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { GameCard } from "@/components/games/GameCard";
 import { LibrarySkeleton } from "./LibrarySkeleton";
-import { FaGamepad, FaPlus } from "react-icons/fa";
+import { FaGamepad, FaPlus, FaClock, FaStar } from "react-icons/fa";
 import Link from "next/link";
 
 export function UserLibraryContent() {
   const t = useTranslations("library");
   const { user } = useAuth();
-  const [userGames, setUserGames] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // TODO: Fetch user's games from API
-    // For now, we'll show an empty state
-    setLoading(false);
-  }, []);
+  const { games, stats, loading, error } = useUserLibrary();
 
   if (loading) {
     return <LibrarySkeleton />;
+  }
+
+  if (error) {
+    return (
+      <div className="p-4 sm:p-6">
+        <Card className="bg-white">
+          <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+            <div className="mb-4 rounded-full bg-red-100 p-4 sm:p-6">
+              <FaGamepad className="h-8 w-8 text-red-400 sm:h-12 sm:w-12" />
+            </div>
+            <h3 className="mb-2 text-base font-medium text-gray-900 sm:text-lg">
+              Erreur de chargement
+            </h3>
+            <p className="mb-6 max-w-md text-sm text-gray-500 sm:text-base">{error}</p>
+            <Button
+              onClick={() => window.location.reload()}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              Réessayer
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   return (
@@ -36,7 +54,7 @@ export function UserLibraryContent() {
       </div>
 
       {/* Stats Cards */}
-      <div className="mb-6 grid grid-cols-1 gap-4 sm:mb-8 sm:gap-6 md:grid-cols-3">
+      <div className="mb-6 grid grid-cols-1 gap-4 sm:mb-8 sm:gap-6 md:grid-cols-4">
         <Card className="bg-white">
           <CardHeader className="pb-3">
             <div className="flex items-center">
@@ -49,7 +67,7 @@ export function UserLibraryContent() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-bold text-gray-900 sm:text-2xl">{userGames.length}</div>
+            <div className="text-xl font-bold text-gray-900 sm:text-2xl">{stats.totalGames}</div>
             <p className="text-xs text-gray-500">Dans votre bibliothèque</p>
           </CardContent>
         </Card>
@@ -66,7 +84,9 @@ export function UserLibraryContent() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-bold text-gray-900 sm:text-2xl">0</div>
+            <div className="text-xl font-bold text-gray-900 sm:text-2xl">
+              {stats.completedGames}
+            </div>
             <p className="text-xs text-gray-500">Complétés à 100%</p>
           </CardContent>
         </Card>
@@ -75,7 +95,7 @@ export function UserLibraryContent() {
           <CardHeader className="pb-3">
             <div className="flex items-center">
               <div className="rounded-lg bg-purple-100 p-2">
-                <FaGamepad className="h-4 w-4 text-purple-600 sm:h-5 sm:w-5" />
+                <FaClock className="h-4 w-4 text-purple-600 sm:h-5 sm:w-5" />
               </div>
               <div className="ml-3">
                 <CardTitle className="text-sm font-medium text-gray-900">Temps de jeu</CardTitle>
@@ -83,14 +103,35 @@ export function UserLibraryContent() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-bold text-gray-900 sm:text-2xl">0h</div>
+            <div className="text-xl font-bold text-gray-900 sm:text-2xl">
+              {stats.totalPlayTime}h
+            </div>
             <p className="text-xs text-gray-500">Total joué</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-white">
+          <CardHeader className="pb-3">
+            <div className="flex items-center">
+              <div className="rounded-lg bg-yellow-100 p-2">
+                <FaStar className="h-4 w-4 text-yellow-600 sm:h-5 sm:w-5" />
+              </div>
+              <div className="ml-3">
+                <CardTitle className="text-sm font-medium text-gray-900">Note moyenne</CardTitle>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-xl font-bold text-gray-900 sm:text-2xl">
+              {stats.averageRating ? `${stats.averageRating}/5` : "—"}
+            </div>
+            <p className="text-xs text-gray-500">Vos évaluations</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Empty State */}
-      {userGames.length === 0 && (
+      {games.length === 0 && (
         <Card className="bg-white">
           <CardContent className="flex flex-col items-center justify-center py-12 text-center">
             <div className="mb-4 rounded-full bg-gray-100 p-4 sm:p-6">
@@ -113,7 +154,31 @@ export function UserLibraryContent() {
         </Card>
       )}
 
-      {/* TODO: Add user games grid when user has games */}
+      {/* User Games Grid */}
+      {games.length > 0 && (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-gray-900">Vos jeux ({games.length})</h2>
+            <Button asChild variant="outline" size="sm">
+              <Link href="/games">
+                <FaPlus className="mr-2 h-4 w-4" />
+                Ajouter des jeux
+              </Link>
+            </Button>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+            {games.map((game, index) => (
+              <GameCard
+                key={game.id}
+                game={game}
+                locale="fr"
+                priority={index < 12} // Prioritize first 12 games for loading
+              />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -77,7 +77,6 @@ export function LazyImage({
         onError={handleImageError}
         priority={priority}
         sizes={sizes}
-        priority={priority}
       />
     </div>
   );

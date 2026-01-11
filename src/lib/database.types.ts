@@ -513,33 +513,63 @@ export type Database = {
       };
       games: {
         Row: {
-          cover_image_url: string | null;
-          created_at: string | null;
           id: string;
-          metascore: number | null;
-          release_date: string | null;
           slug: string;
+          developer?: string;
+          publisher?: string;
+          release_date: string | null;
+          launch_price?: number | null;
+          current_price?: number | null;
+          currency?: string | null;
+          metascore: number | null;
+          pegi_rating?: number | null;
+          esrb_rating?: string | null;
           system_requirements: Json | null;
+          media?: Json | null;
+          cover_image_url: string | null;
+          background_image_url?: string | null;
+          background_color?: string | null;
+          created_at: string | null;
           updated_at: string | null;
         };
         Insert: {
-          cover_image_url?: string | null;
-          created_at?: string | null;
           id?: string;
-          metascore?: number | null;
-          release_date?: string | null;
           slug: string;
+          developer?: string;
+          publisher?: string;
+          release_date?: string | null;
+          launch_price?: number | null;
+          current_price?: number | null;
+          currency?: string | null;
+          metascore?: number | null;
+          pegi_rating?: number | null;
+          esrb_rating?: string | null;
           system_requirements?: Json | null;
+          media?: Json | null;
+          cover_image_url?: string | null;
+          background_image_url?: string | null;
+          background_color?: string | null;
+          created_at?: string | null;
           updated_at?: string | null;
         };
         Update: {
-          cover_image_url?: string | null;
-          created_at?: string | null;
           id?: string;
-          metascore?: number | null;
-          release_date?: string | null;
           slug?: string;
+          developer?: string;
+          publisher?: string;
+          release_date?: string | null;
+          launch_price?: number | null;
+          current_price?: number | null;
+          currency?: string | null;
+          metascore?: number | null;
+          pegi_rating?: number | null;
+          esrb_rating?: string | null;
           system_requirements?: Json | null;
+          media?: Json | null;
+          cover_image_url?: string | null;
+          background_image_url?: string | null;
+          background_color?: string | null;
+          created_at?: string | null;
           updated_at?: string | null;
         };
         Relationships: [];
@@ -759,6 +789,54 @@ export type Database = {
         };
         Relationships: [];
       };
+      user_library: {
+        Row: {
+          id: string;
+          user_id: string;
+          game_id: string;
+          added_at: string;
+          status: string;
+          play_time_hours: number;
+          rating: number | null;
+          notes: string | null;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          game_id: string;
+          added_at?: string;
+          status?: string;
+          play_time_hours?: number;
+          rating?: number | null;
+          notes?: string | null;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          game_id?: string;
+          added_at?: string;
+          status?: string;
+          play_time_hours?: number;
+          rating?: number | null;
+          notes?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "user_library_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "user_library_game_id_fkey";
+            columns: ["game_id"];
+            isOneToOne: false;
+            referencedRelation: "games";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -911,6 +989,20 @@ export type Database = {
           error_message: string;
           is_valid: boolean;
         }[];
+      };
+      get_user_library_stats: {
+        Args: { user_uuid: string };
+        Returns: {
+          total_games: number;
+          owned_games: number;
+          completed_games: number;
+          total_play_time: number;
+          average_rating: number | null;
+        }[];
+      };
+      is_game_in_user_library: {
+        Args: { user_uuid: string; game_uuid: string };
+        Returns: boolean;
       };
     };
     Enums: Record<string, never>;

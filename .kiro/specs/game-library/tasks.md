@@ -381,7 +381,7 @@ optimisations.
     - Optimiser le chargement des images avec next/image
     - _Requirements: 4.3, 4.4_
 
-  - [ ] 17.2 Implémenter la fonctionnalité "Ajouter à ma bibliothèque"
+  - [x] 17.2 Implémenter la fonctionnalité "Ajouter à ma bibliothèque"
     - Créer l'API pour gérer la bibliothèque utilisateur (ajout/suppression)
     - Ajouter le bouton "Ajouter à ma bibliothèque" sur GameCard
     - Mettre à jour UserLibraryContent pour afficher les jeux de l'utilisateur
