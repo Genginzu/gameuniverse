@@ -113,9 +113,20 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
           </div>
 
           <div className="space-y-3">
-            <Label htmlFor="password" className="text-sm font-semibold text-slate-700">
-              {t("form.password")}
-            </Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password" className="text-sm font-semibold text-slate-700">
+                {t("form.password")}
+              </Label>
+              {mode === "signin" && (
+                <button
+                  type="button"
+                  onClick={() => (window.location.href = "/auth/forgot-password")}
+                  className="text-xs text-slate-500 transition-colors duration-200 hover:text-purple-700"
+                >
+                  Mot de passe oublié ?
+                </button>
+              )}
+            </div>
             <Input
               id="password"
               name="password"

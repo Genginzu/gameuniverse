@@ -4,10 +4,16 @@ import { Button } from "../ui/button";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useDashboard } from "@/hooks/useDashboard";
+import { DashboardSkeleton } from "./DashboardSkeleton";
 
 export function DashboardContent() {
   const t = useTranslations("dashboard");
-  const { user } = useDashboard();
+  const { user, loading } = useDashboard();
+
+  if (loading) {
+    return <DashboardSkeleton />;
+  }
+
   return (
     <div className="flex-1 p-4 sm:p-6">
       {/* Page Header */}

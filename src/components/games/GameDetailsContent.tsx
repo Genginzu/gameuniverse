@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import Image from "next/image";
+import { LazyImage } from "@/components/ui/lazy-image";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -158,14 +158,14 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
         {/* Image de fond - uniquement pour la section hero */}
         {game.media.backgroundImage && (
           <div className="absolute inset-0 z-0 h-[80vh] overflow-hidden">
-            <Image
+            <LazyImage
               src={game.media.backgroundImage}
               alt={`${game.title} background`}
               fill
               className="object-cover object-center"
               sizes="100vw"
               priority
-              quality={90}
+              showSkeleton={true}
             />
             {/* Overlay gradient pour l'ambiance */}
             <div
@@ -195,20 +195,15 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                     className={`absolute inset-0 bg-gradient-to-br ${colors.bg} scale-105 rounded-xl opacity-50 blur-xl`}
                   />
                   <div className="relative aspect-[3/4] overflow-hidden rounded-xl border border-slate-700 bg-slate-800/80 backdrop-blur-sm">
-                    {game.media.coverImage ? (
-                      <Image
-                        src={game.media.coverImage}
-                        alt={game.title}
-                        fill
-                        className="object-cover transition-transform duration-500 group-hover:scale-105"
-                        sizes="(max-width: 768px) 100vw, 33vw"
-                        priority
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center">
-                        <Gamepad2 className="h-16 w-16 text-slate-400" />
-                      </div>
-                    )}
+                    <LazyImage
+                      src={game.media.coverImage}
+                      alt={game.title}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      priority
+                      showSkeleton={true}
+                    />
 
                     {/* Badge Metascore */}
                     {game.metascore && (
@@ -525,12 +520,13 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                           <div>
                             {/* Image principale */}
                             <div className="relative mb-6 aspect-video overflow-hidden rounded-xl border border-slate-700 bg-slate-800">
-                              <Image
+                              <LazyImage
                                 src={game.media.screenshots[selectedScreenshotIndex]?.url || ""}
                                 alt={`${game.title} screenshot`}
                                 fill
                                 className="object-cover"
                                 sizes="(max-width: 768px) 100vw, 80vw"
+                                showSkeleton={true}
                               />
 
                               {/* Navigation */}
@@ -577,12 +573,13 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                                       : "opacity-70 hover:opacity-100"
                                   }`}
                                 >
-                                  <Image
+                                  <LazyImage
                                     src={screenshot.url}
                                     alt={`${game.title} screenshot ${index + 1}`}
                                     fill
                                     className="object-cover"
                                     sizes="120px"
+                                    showSkeleton={true}
                                   />
                                 </button>
                               ))}
@@ -600,12 +597,13 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                           <div>
                             {/* Image principale */}
                             <div className="relative mb-6 aspect-video overflow-hidden rounded-xl border border-slate-700 bg-slate-800">
-                              <Image
+                              <LazyImage
                                 src={game.media.artwork[selectedArtworkIndex]?.url || ""}
                                 alt={`${game.title} artwork`}
                                 fill
                                 className="object-cover"
                                 sizes="(max-width: 768px) 100vw, 80vw"
+                                showSkeleton={true}
                               />
 
                               {/* Navigation */}
@@ -652,12 +650,13 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                                       : "opacity-70 hover:opacity-100"
                                   }`}
                                 >
-                                  <Image
+                                  <LazyImage
                                     src={artwork.url}
                                     alt={`${game.title} artwork ${index + 1}`}
                                     fill
                                     className="object-cover"
                                     sizes="120px"
+                                    showSkeleton={true}
                                   />
                                 </button>
                               ))}
@@ -738,12 +737,13 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                                 >
                                   <div className="relative aspect-video">
                                     {video.thumbnailUrl ? (
-                                      <Image
+                                      <LazyImage
                                         src={video.thumbnailUrl}
                                         alt={video.title}
                                         fill
                                         className="object-cover"
                                         sizes="300px"
+                                        showSkeleton={true}
                                       />
                                     ) : (
                                       <div className="flex h-full w-full items-center justify-center bg-slate-800">

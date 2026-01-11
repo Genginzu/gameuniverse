@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
 
     if (!queryResult.success) {
       return NextResponse.json(
-        { error: "Invalid query parameters", details: queryResult.error.errors },
+        { error: "Invalid query parameters", details: queryResult.error.issues },
         { status: 400 }
       );
     }
@@ -219,7 +219,7 @@ export async function POST(request: NextRequest) {
 
     if (!validationResult.success) {
       return NextResponse.json(
-        { error: "Invalid input data", details: validationResult.error.errors },
+        { error: "Invalid input data", details: validationResult.error.issues },
         { status: 400 }
       );
     }
@@ -372,7 +372,7 @@ export async function PATCH(request: NextRequest) {
 
     if (!validationResult.success) {
       return NextResponse.json(
-        { error: "Invalid input data", details: validationResult.error.errors },
+        { error: "Invalid input data", details: validationResult.error.issues },
         { status: 400 }
       );
     }
@@ -440,7 +440,10 @@ export async function PATCH(request: NextRequest) {
       const consistencyCheck = await verifyGameDeletionConsistency(game_ids, supabase);
 
       if (!consistencyCheck.isConsistent) {
-        console.warn(`Warning: Deletion consistency issues detected:`, consistencyCheck.inconsistencies);
+        console.warn(
+          `Warning: Deletion consistency issues detected:`,
+          consistencyCheck.inconsistencies
+        );
       }
 
       // Send real-time notification for bulk delete
@@ -453,13 +456,10 @@ export async function PATCH(request: NextRequest) {
         deletionSummary,
         consistencyCheck,
         timestamp: new Date().toISOString(),
-        },
       });
     } else if (operation === "update" && data) {
       // Bulk update games
-      const updates = game_ids.map((id) => ({ id, ...data }));
-
-      const { error } = await supabase.from("games").upsert(updates);
+      const { error } = await supabase.from("games").update(data).in("id", game_ids);
 
       if (error) {
         console.error("Error bulk updating games:", error);

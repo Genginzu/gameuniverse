@@ -110,6 +110,8 @@ export interface GameSummary {
   title: string;
   description?: string;
   coverImage?: string;
+  backgroundImage?: string;
+  backgroundColor?: string;
   releaseDate?: string;
   releaseYear?: number;
   genres: Array<{ name: string; id?: string }>;

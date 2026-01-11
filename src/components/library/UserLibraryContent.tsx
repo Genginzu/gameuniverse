@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { LibrarySkeleton } from "./LibrarySkeleton";
 import { FaGamepad, FaPlus } from "react-icons/fa";
 import Link from "next/link";
 
@@ -21,11 +22,7 @@ export function UserLibraryContent() {
   }, []);
 
   if (loading) {
-    return (
-      <div className="flex justify-center py-12">
-        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-gray-900"></div>
-      </div>
-    );
+    return <LibrarySkeleton />;
   }
 
   return (

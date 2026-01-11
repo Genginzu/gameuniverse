@@ -33,8 +33,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         id,
         slug,
         cover_image_url,
-        background_image_url,
-        background_color,
         release_date,
         metascore,
         system_requirements,
@@ -138,8 +136,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       id: game.id,
       slug: game.slug,
       cover_image_url: game.cover_image_url,
-      background_image_url: game.background_image_url,
-      background_color: game.background_color,
       release_date: game.release_date,
       metascore: game.metascore,
       system_requirements: game.system_requirements,
@@ -212,7 +208,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     if (!validationResult.success) {
       return NextResponse.json(
-        { error: "Invalid input data", details: validationResult.error.errors },
+        { error: "Invalid input data", details: validationResult.error.issues },
         { status: 400 }
       );
     }
@@ -363,141 +359,16 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       }
     }
 
+    // Send real-time notification for successful update
+    await notifyGameUpdated(gameId);
+    await invalidateGameCache(gameId);
+
     return NextResponse.json({
       message: "Game updated successfully",
       gameId,
     });
   } catch (error) {
     console.error("Error in admin game PUT:", error);
-
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
-  } finally {
-    // Send real-time notification for successful update
-    await notifyGameUpdated(gameId);
-    await invalidateGameCache(gameId);
-  }
-}
-
-/**
- * DELETE /api/admin/games/[id] - Delete a game with complete cleanup
- */
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    // Check admin access
-    await requireAdmin();
-
-    const { id: gameId } = await params;
-
-    if (!gameId) {
-      return NextResponse.json({ error: "Game ID is required" }, { status: 400 });
-    }
-
-    const supabase = await createRouteHandlerClient();
-
-    // Check if game exists and get complete information for cleanup verification
-    const { data: existingGame, error: checkError } = await supabase
-      .from("games")
-      .select(
-        `
-        id,
-        slug,
-        game_translations(count),
-        game_genres(count),
-        game_companies(count),
-        game_screenshots(count),
-        game_artwork(count),
-        game_videos(count),
-        game_prices(count)
-      `
-      )
-      .eq("id", gameId)
-      .single();
-
-    if (checkError || !existingGame) {
-      return NextResponse.json({ error: "Game not found" }, { status: 404 });
-    }
-
-    // Log what will be deleted for audit purposes
-    const relatedDataCounts = {
-      translations: existingGame.game_translations?.[0]?.count || 0,
-      genres: existingGame.game_genres?.[0]?.count || 0,
-      companies: existingGame.game_companies?.[0]?.count || 0,
-      screenshots: existingGame.game_screenshots?.[0]?.count || 0,
-      artwork: existingGame.game_artwork?.[0]?.count || 0,
-      videos: existingGame.game_videos?.[0]?.count || 0,
-      prices: existingGame.game_prices?.[0]?.count || 0,
-    };
-
-    console.log(
-      `Deleting game ${existingGame.slug} (${gameId}) with related data:`,
-      relatedDataCounts
-    );
-
-    // Perform the deletion (CASCADE will handle all related data)
-    const { error: deleteError } = await supabase.from("games").delete().eq("id", gameId);
-
-    if (deleteError) {
-      console.error("Error deleting game:", deleteError);
-      return NextResponse.json({ error: "Failed to delete game" }, { status: 500 });
-    }
-
-    // Verify complete deletion by checking that no related data remains
-    const verificationQueries = await Promise.all([
-      supabase.from("game_translations").select("id").eq("game_id", gameId).limit(1),
-      supabase.from("game_genres").select("game_id").eq("game_id", gameId).limit(1),
-      supabase.from("game_companies").select("game_id").eq("game_id", gameId).limit(1),
-      supabase.from("game_screenshots").select("id").eq("game_id", gameId).limit(1),
-      supabase.from("game_artwork").select("id").eq("game_id", gameId).limit(1),
-      supabase.from("game_videos").select("id").eq("game_id", gameId).limit(1),
-      supabase.from("game_prices").select("id").eq("game_id", gameId).limit(1),
-    ]);
-
-    // Check if any related data still exists (should be empty after CASCADE delete)
-    const remainingData = verificationQueries.some(({ data }) => data && data.length > 0);
-
-    if (remainingData) {
-      console.warn(`Warning: Some related data may still exist for deleted game ${gameId}`);
-      // Log which tables still have data
-      verificationQueries.forEach(({ data }, index) => {
-        const tableNames = [
-          "game_translations",
-          "game_genres",
-          "game_companies",
-          "game_screenshots",
-          "game_artwork",
-          "game_videos",
-          "game_prices",
-        ];
-        if (data && data.length > 0) {
-          console.warn(`Remaining data in ${tableNames[index]}: ${data.length} records`);
-        }
-      });
-    }
-
-    // Send real-time notification for successful deletion
-    await notifyGameDeleted(gameId, existingGame.slug);
-    await invalidateGameCache(gameId);
-
-    // Enhanced response with deletion summary
-    return NextResponse.json({
-      message: "Game deleted successfully with complete cleanup",
-      gameId,
-      slug: existingGame.slug,
-      deletionSummary: {
-        relatedDataCounts,
-        verificationPassed: !remainingData,
-        timestamp: new Date().toISOString(),
-      },
-    });
-  } catch (error) {
-    console.error("Error in admin game DELETE:", error);
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });

@@ -6,11 +6,16 @@ import { GameSearchBar } from "./GameSearchBar";
 import { GameFilters } from "./GameFilters";
 import { GameFilterButton } from "./GameFilterButton";
 import { GamePagination } from "./GamePagination";
+import { GameGridSkeleton } from "./GameGridSkeleton";
+import { SearchSkeleton } from "./SearchSkeleton";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Genre } from "@/types/genre";
 import { GameSummary } from "@/types/game";
 import { Pagination } from "@/types/pagination";
+import { useApiClient } from "@/lib/api-client";
+import { useAsyncError } from "@/components/providers/ErrorProvider";
+import { toast } from "@/hooks/use-toast";
 
 interface AllGamesContentProps {
   locale?: string;
@@ -23,35 +28,37 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
   const [genres, setGenres] = useState<Genre[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [selectedPublishers, setSelectedPublishers] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
 
-  // Fetch genres
+  // Utiliser notre nouveau système de gestion d'erreurs
+  const apiClient = useApiClient();
+  const { executeAsync } = useAsyncError();
+
+  // Fetch genres avec gestion d'erreurs améliorée
   const fetchGenres = useCallback(async () => {
-    try {
+    const result = await executeAsync(async () => {
       console.log("Fetching genres for locale:", locale);
-      const response = await fetch(`/api/genres?locale=${locale}`);
-      console.log("Genres API response status:", response.status);
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Genres API error:", errorText);
-        throw new Error("Failed to fetch genres");
-      }
+      const data = await apiClient.get(`/api/genres?locale=${locale}`, {
+        retryConfig: {
+          maxAttempts: 2, // Moins de tentatives pour les genres
+        },
+      });
 
-      const data = await response.json();
       console.log("Genres API data:", data);
+      return data.genres || [];
+    }, "fetchGenres");
 
-      setGenres(data.genres || []);
-    } catch (err) {
-      console.error("Error fetching genres:", err);
+    if (result) {
+      setGenres(result);
     }
-  }, [locale]);
+  }, [locale, apiClient, executeAsync]);
 
-  // Fetch games
+  // Fetch games avec gestion d'erreurs améliorée
   const fetchGames = useCallback(
     async (
       search: string = "",
@@ -61,9 +68,8 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
     ) => {
       console.log("🎮 fetchGames called with:", { search, genres, publishers, page });
       setLoading(true);
-      setError(null);
 
-      try {
+      const result = await executeAsync(async () => {
         const params = new URLSearchParams({
           locale,
           page: page.toString(),
@@ -82,24 +88,35 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
           params.append("publishers", publishers.join(","));
         }
 
-        const response = await fetch(`/api/games?${params.toString()}`);
+        const data = await apiClient.get(`/api/games?${params.toString()}`, {
+          retryConfig: {
+            maxAttempts: 3,
+            baseDelay: 1000,
+          },
+        });
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        return {
+          games: data.games || [],
+          pagination: data.pagination || null,
+        };
+      }, "fetchGames");
 
-        const data = await response.json();
-
-        setGames(data.games || []);
-        setPagination(data.pagination || null);
-      } catch (err) {
-        console.error("Error fetching games:", err);
-        setError(err instanceof Error ? err.message : "An error occurred");
-      } finally {
-        setLoading(false);
+      if (result) {
+        setGames(result.games);
+        setPagination(result.pagination);
+      } else {
+        // En cas d'erreur, on garde les données précédentes mais on affiche un toast
+        toast({
+          variant: "destructive",
+          title: "Erreur de chargement",
+          description: "Impossible de charger les jeux. Les données précédentes sont conservées.",
+        });
       }
+
+      setLoading(false);
+      setInitialLoading(false);
     },
-    [locale]
+    [locale, apiClient, executeAsync]
   );
 
   // Handle search
@@ -139,7 +156,7 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
   // Initial load
   useEffect(() => {
     fetchGenres();
-    fetchGames();
+    fetchGames().finally(() => setInitialLoading(false));
   }, [fetchGenres, fetchGames]);
 
   // Effect pour gérer les changements de filtres avec debounce
@@ -151,12 +168,9 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
     return () => clearTimeout(timeoutId);
   }, [searchQuery, selectedGenres, selectedPublishers, fetchGames]);
 
-  if (error) {
-    return (
-      <Alert variant="destructive">
-        <AlertDescription>Erreur: {error}</AlertDescription>
-      </Alert>
-    );
+  // Show full skeleton on initial load
+  if (initialLoading) {
+    return <SearchSkeleton />;
   }
 
   return (
@@ -264,16 +278,8 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
           </div>
         )}
 
-        {/* Loading state */}
-        {loading && (
-          <div className="flex flex-col items-center justify-center py-16 sm:py-20">
-            <div className="relative">
-              <LoadingSpinner size="lg" />
-              <div className="absolute inset-0 animate-ping rounded-full bg-blue-400 opacity-20"></div>
-            </div>
-            <p className="mt-4 text-sm text-gray-500">Chargement des jeux...</p>
-          </div>
-        )}
+        {/* Loading state - Show skeleton grid instead of spinner */}
+        {loading && !initialLoading && <GameGridSkeleton count={20} />}
 
         {/* Games grid */}
         {!loading && (
@@ -315,9 +321,14 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
             ) : (
               <div className="space-y-8">
                 {/* Responsive grid with better breakpoints */}
-                <div className="xs:grid-cols-2 grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-                  {games.map((game) => (
-                    <GameCard key={game.id} game={game} locale={locale} />
+                <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+                  {games.map((game, index) => (
+                    <GameCard
+                      key={game.id}
+                      game={game}
+                      locale={locale}
+                      priority={index < 6} // Priority loading pour les 6 premières cartes
+                    />
                   ))}
                 </div>
               </div>

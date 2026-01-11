@@ -248,21 +248,21 @@ optimisations.
     - **Property 14: Real-time Display Updates**
     - **Validates: Requirements 6.1, 6.2, 6.3, 6.4, 6.5**
 
-- [ ] 12. Gestion d'erreurs et états de chargement
-  - [ ] 12.1 Implémenter la gestion d'erreurs globale
+- [x] 12. Gestion d'erreurs et états de chargement
+  - [x] 12.1 Implémenter la gestion d'erreurs globale
     - Créer les Error Boundaries React
     - Implémenter les composants Toast pour les notifications
     - Gérer les erreurs réseau avec retry automatique
     - _Requirements: Gestion d'erreurs_
 
-  - [ ] 12.2 Ajouter les états de chargement
+  - [x] 12.2 Ajouter les états de chargement
     - Implémenter les Skeleton components de shadcn/ui
     - Ajouter les indicateurs de chargement pour toutes les opérations
     - Gérer le lazy loading des images
     - _Requirements: Gestion d'erreurs_
 
 - [ ] 13. Configuration email avec Resend
-  - [ ] 13.1 Configurer Resend pour les emails transactionnels
+  - [x] 13.1 Configurer Resend pour les emails transactionnels
     - Intégrer Resend avec Supabase Auth
     - Configurer les templates d'email (vérification, reset password)
     - Tester l'envoi d'emails
@@ -374,7 +374,7 @@ optimisations.
 - **Dashboard Layout** : Layout unifié pour toutes les pages connectées
 
 - [ ] 17. Fonctionnalités manquantes pour compléter les exigences
-  - [ ] 17.1 Améliorer la gestion des médias dans les jeux existants
+  - [x] 17.1 Améliorer la gestion des médias dans les jeux existants
     - Mettre à jour les seeds pour inclure plus de médias (screenshots, artwork,
       vidéos)
     - Améliorer l'affichage des médias dans GameCard

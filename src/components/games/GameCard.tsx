@@ -1,9 +1,8 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import Image from "next/image";
+import { LazyImage } from "@/components/ui/lazy-image";
 import Link from "next/link";
-import { Genre } from "@/types/genre";
 
 interface GameCardProps {
   game: {
@@ -12,6 +11,8 @@ interface GameCardProps {
     title: string;
     description?: string;
     coverImage?: string;
+    backgroundImage?: string;
+    backgroundColor?: string;
     releaseDate?: string;
     releaseYear?: number;
     genres: Array<{ name: string; id?: string }>;
@@ -20,9 +21,10 @@ interface GameCardProps {
     metascore?: number;
   };
   locale?: string;
+  priority?: boolean; // Pour optimiser le chargement des premières cartes
 }
 
-export function GameCard({ game, locale = "fr" }: GameCardProps) {
+export function GameCard({ game, locale = "fr", priority = false }: GameCardProps) {
   const formatReleaseDate = (dateString?: string) => {
     if (!dateString) return null;
 
@@ -47,34 +49,21 @@ export function GameCard({ game, locale = "fr" }: GameCardProps) {
     <div className="group relative">
       <Link href={`/${locale}/games/${game.slug}`}>
         {/* Cover Image with Overlay */}
-        <div className="relative aspect-[3/4] cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl hover:shadow-blue-500/10">
-          {game.coverImage ? (
-            <Image
-              src={game.coverImage}
-              alt={game.title}
-              fill
-              className="rounded-2xl object-cover transition-all duration-500 group-hover:scale-105"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
-              <div className="rounded-full bg-white/80 p-4 shadow-lg">
-                <svg
-                  className="h-12 w-12 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                </svg>
-              </div>
-            </div>
-          )}
+        <div
+          className="relative aspect-[3/4] cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl hover:shadow-blue-500/10"
+          style={{
+            backgroundColor: game.backgroundColor || "#f3f4f6", // Fallback to gray-100
+          }}
+        >
+          <LazyImage
+            src={game.coverImage}
+            alt={game.title}
+            fill
+            className="rounded-2xl object-cover transition-all duration-500 group-hover:scale-105"
+            sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, (max-width: 1280px) 20vw, 16vw"
+            showSkeleton={true}
+            priority={priority}
+          />
 
           {/* Metascore badge - always visible */}
           {game.metascore && (
