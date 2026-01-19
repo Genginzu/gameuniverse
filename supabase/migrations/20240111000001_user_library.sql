@@ -44,7 +44,7 @@ RETURNS TABLE (
   completed_games INTEGER,
   total_play_time INTEGER,
   average_rating DECIMAL(3,2)
-) AS $
+) AS $$
 BEGIN
   RETURN QUERY
   SELECT 
@@ -56,15 +56,15 @@ BEGIN
   FROM user_library 
   WHERE user_id = user_uuid;
 END;
-$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Fonction pour vérifier si un jeu est dans la bibliothèque d'un utilisateur
 CREATE OR REPLACE FUNCTION is_game_in_user_library(user_uuid UUID, game_uuid UUID)
-RETURNS BOOLEAN AS $
+RETURNS BOOLEAN AS $$
 BEGIN
   RETURN EXISTS (
     SELECT 1 FROM user_library 
     WHERE user_id = user_uuid AND game_id = game_uuid
   );
 END;
-$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER;

@@ -170,16 +170,17 @@ export function useAuth() {
 
   const signOut = async () => {
     try {
-      // Nettoyer d'abord les cookies locaux
-      clearAuthCookies();
-
+      // Appeler d'abord signOut de Supabase
       const { error } = await supabase.auth.signOut();
 
       if (error) {
-        console.warn("Error during signOut, but continuing:", error);
+        console.error("Error during signOut:", error);
       }
+
+      // Nettoyer les cookies locaux
+      clearAuthCookies();
     } catch (error) {
-      console.warn("Exception during signOut, but continuing:", error);
+      console.error("Exception during signOut:", error);
     }
 
     // Forcer la mise à jour de l'état même en cas d'erreur
@@ -188,6 +189,9 @@ export function useAuth() {
       session: null,
       loading: false,
     });
+
+    // Rediriger vers la page d'accueil
+    router.push("/");
   };
 
   const forceSignOut = async () => {

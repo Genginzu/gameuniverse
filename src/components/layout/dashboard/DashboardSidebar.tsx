@@ -28,6 +28,13 @@ export default function DashboardSidebar({
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+
+      // Ne pas fermer si on clique sur un bouton dans le dropdown
+      if (target.closest("button[data-dropdown-action]")) {
+        return;
+      }
+
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsUserMenuOpen(false);
       }
@@ -193,8 +200,11 @@ function SidebarContent({
                 </Link>
                 <div className="mx-2 my-1 border-t border-gray-100"></div>
                 <button
+                  data-dropdown-action="logout"
                   className="flex w-full items-center rounded-xl px-4 py-2 text-sm text-red-600 transition-colors hover:bg-red-50"
-                  onClick={async () => {
+                  onMouseDown={async (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                     setIsUserMenuOpen(false);
                     try {
                       await signOut();
