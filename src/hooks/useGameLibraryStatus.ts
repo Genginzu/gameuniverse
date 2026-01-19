@@ -6,9 +6,9 @@ import { useAuth } from "./useAuth";
 export function useGameLibraryStatus(gameId: string) {
   const { user } = useAuth();
   const [inLibrary, setInLibrary] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState(false);
-  const hasChecked = useRef(false);
+  const hasCheckedRef = useRef(false);
 
   // Add game to library
   const addToLibrary = useCallback(async () => {
@@ -65,10 +65,14 @@ export function useGameLibraryStatus(gameId: string) {
   // Check status only once on mount
   useEffect(() => {
     // Skip if already checked, no user, or no gameId
-    if (hasChecked.current || !user || !gameId) {
-      hasChecked.current = true; // Marquer comme vérifié même si on skip
+    if (hasCheckedRef.current || !user || !gameId) {
+      if (!user || !gameId) {
+        setLoading(false);
+      }
       return;
     }
+
+    hasCheckedRef.current = true;
 
     const checkStatus = async () => {
       try {
@@ -76,17 +80,18 @@ export function useGameLibraryStatus(gameId: string) {
         const response = await fetch(`/api/library/${gameId}`);
         if (response.ok) {
           const data = await response.json();
-          setInLibrary(data.inLibrary);
+          setInLibrary(data.inLibrary === true);
         } else if (response.status === 500) {
-          // Si erreur 500 (table n'existe pas), on ignore silencieusement
           console.warn("Library feature not available yet");
+          setInLibrary(false);
+        } else {
+          setInLibrary(false);
         }
       } catch (err) {
-        // Ignorer les erreurs silencieusement pour ne pas polluer la console
         console.warn("Error checking library status:", err);
+        setInLibrary(false);
       } finally {
         setLoading(false);
-        hasChecked.current = true;
       }
     };
 

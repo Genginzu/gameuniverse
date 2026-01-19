@@ -29,7 +29,9 @@ interface GameCardProps {
 
 export function GameCard({ game, locale = "fr", priority = false }: GameCardProps) {
   const { user } = useAuth();
-  const { inLibrary, adding, addToLibrary, removeFromLibrary } = useGameLibraryStatus(game.id);
+  const { inLibrary, loading, adding, addToLibrary, removeFromLibrary } = useGameLibraryStatus(
+    game.id
+  );
 
   const formatReleaseDate = (dateString?: string) => {
     if (!dateString) return null;
@@ -86,7 +88,7 @@ export function GameCard({ game, locale = "fr", priority = false }: GameCardProp
           {user && (
             <button
               onClick={handleLibraryToggle}
-              disabled={adding}
+              disabled={adding || loading}
               className="absolute left-3 top-3 z-20 transition-transform hover:scale-110 disabled:opacity-50"
               aria-label={inLibrary ? "Retirer de ma bibliothèque" : "Ajouter à ma bibliothèque"}
             >
