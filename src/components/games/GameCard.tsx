@@ -1,12 +1,11 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { LazyImage } from "@/components/ui/lazy-image";
 import { useGameLibraryStatus } from "@/hooks/useGameLibraryStatus";
 import { useAuth } from "@/hooks/useAuth";
 import Link from "next/link";
-import { FaPlus, FaCheck, FaSpinner } from "react-icons/fa";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 
 interface GameCardProps {
   game: {
@@ -52,8 +51,8 @@ export function GameCard({ game, locale = "fr", priority = false }: GameCardProp
     return "bg-red-500";
   };
 
-  const handleLibraryAction = async (e: React.MouseEvent) => {
-    e.preventDefault(); // Prevent navigation to game details
+  const handleLibraryToggle = async (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
 
     if (inLibrary) {
@@ -82,6 +81,22 @@ export function GameCard({ game, locale = "fr", priority = false }: GameCardProp
             showSkeleton={true}
             priority={priority}
           />
+
+          {/* Heart icon for library - top left */}
+          {user && (
+            <button
+              onClick={handleLibraryToggle}
+              disabled={adding}
+              className="absolute left-3 top-3 z-20 transition-transform hover:scale-110 disabled:opacity-50"
+              aria-label={inLibrary ? "Retirer de ma bibliothèque" : "Ajouter à ma bibliothèque"}
+            >
+              {inLibrary ? (
+                <FaHeart className="h-6 w-6 text-red-500 drop-shadow-lg" />
+              ) : (
+                <FaRegHeart className="h-6 w-6 text-white drop-shadow-lg" />
+              )}
+            </button>
+          )}
 
           {/* Metascore badge - always visible */}
           {game.metascore && (
@@ -148,7 +163,7 @@ export function GameCard({ game, locale = "fr", priority = false }: GameCardProp
 
               {/* Release Date */}
               {game.releaseDate && (
-                <div className="mb-3 flex items-center text-xs text-gray-300">
+                <div className="flex items-center text-xs text-gray-300">
                   <svg
                     className="mr-1 h-3 w-3"
                     fill="none"
@@ -164,33 +179,6 @@ export function GameCard({ game, locale = "fr", priority = false }: GameCardProp
                   </svg>
                   {game.releaseYear || formatReleaseDate(game.releaseDate)}
                 </div>
-              )}
-
-              {/* Library Button - Only show for authenticated users */}
-              {user && (
-                <Button
-                  onClick={handleLibraryAction}
-                  disabled={adding}
-                  size="sm"
-                  className={`w-full ${
-                    inLibrary
-                      ? "bg-green-600 text-white hover:bg-green-700"
-                      : "bg-blue-600 text-white hover:bg-blue-700"
-                  }`}
-                >
-                  {adding ? (
-                    <FaSpinner className="mr-2 h-3 w-3 animate-spin" />
-                  ) : inLibrary ? (
-                    <FaCheck className="mr-2 h-3 w-3" />
-                  ) : (
-                    <FaPlus className="mr-2 h-3 w-3" />
-                  )}
-                  {adding
-                    ? "..."
-                    : inLibrary
-                      ? "Dans ma bibliothèque"
-                      : "Ajouter à ma bibliothèque"}
-                </Button>
               )}
             </div>
           </div>

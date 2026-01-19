@@ -61,6 +61,11 @@ export async function GET(request: NextRequest) {
       .order("added_at", { ascending: false });
 
     if (error) {
+      // PGRST205 = table not found (migration not applied yet)
+      if (error.code === "PGRST205") {
+        console.warn("user_library table not found - migration not applied yet");
+        return NextResponse.json({ games: [] });
+      }
       console.error("Error fetching user library:", error);
       return NextResponse.json({ error: "Failed to fetch library" }, { status: 500 });
     }
@@ -169,6 +174,14 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
+      // PGRST205 = table not found (migration not applied yet)
+      if (error.code === "PGRST205") {
+        console.warn("user_library table not found - migration not applied yet");
+        return NextResponse.json(
+          { error: "Library feature not available yet. Please contact administrator." },
+          { status: 503 }
+        );
+      }
       if (error.code === "23505") {
         // Unique constraint violation
         return NextResponse.json({ error: "Game already in library" }, { status: 409 });

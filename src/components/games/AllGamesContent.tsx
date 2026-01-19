@@ -153,20 +153,59 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
     // Les useEffect vont gérer le rechargement
   }, []);
 
-  // Initial load
+  // Initial load - ne dépend PAS de fetchGames pour éviter la boucle
   useEffect(() => {
     fetchGenres();
-    fetchGames().finally(() => setInitialLoading(false));
-  }, [fetchGenres, fetchGames]);
+    // Appel direct sans dépendre de fetchGames
+    const loadInitialGames = async () => {
+      setLoading(true);
+      setInitialLoading(true);
+
+      const result = await executeAsync(async () => {
+        const params = new URLSearchParams({
+          locale,
+          page: "1",
+          limit: "20",
+        });
+
+        const data = await apiClient.get(`/api/games?${params.toString()}`, {
+          retryConfig: {
+            maxAttempts: 3,
+            baseDelay: 1000,
+          },
+        });
+
+        return {
+          games: data.games || [],
+          pagination: data.pagination || null,
+        };
+      }, "fetchGames");
+
+      if (result) {
+        setGames(result.games);
+        setPagination(result.pagination);
+      }
+
+      setLoading(false);
+      setInitialLoading(false);
+    };
+
+    loadInitialGames();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Seulement au montage initial
 
   // Effect pour gérer les changements de filtres avec debounce
   useEffect(() => {
+    // Ne pas exécuter lors du chargement initial
+    if (initialLoading) return;
+
     const timeoutId = setTimeout(() => {
       fetchGames(searchQuery, selectedGenres, selectedPublishers, 1);
     }, 300); // Debounce de 300ms
 
     return () => clearTimeout(timeoutId);
-  }, [searchQuery, selectedGenres, selectedPublishers, fetchGames]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery, selectedGenres, selectedPublishers]); // Ne PAS inclure fetchGames
 
   // Show full skeleton on initial load
   if (initialLoading) {
@@ -320,14 +359,14 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
               </div>
             ) : (
               <div className="space-y-8">
-                {/* Responsive grid with better breakpoints */}
-                <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+                {/* Responsive grid - 4 columns layout */}
+                <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
                   {games.map((game, index) => (
                     <GameCard
                       key={game.id}
                       game={game}
                       locale={locale}
-                      priority={index < 6} // Priority loading pour les 6 premières cartes
+                      priority={index < 4} // Priority loading pour les 4 premières cartes
                     />
                   ))}
                 </div>

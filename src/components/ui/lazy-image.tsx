@@ -64,7 +64,7 @@ export function LazyImage({
   }
 
   return (
-    <div className="relative">
+    <div className={fill ? "relative h-full w-full" : "relative"}>
       {showSkeleton && !imageLoaded && <Skeleton className={`absolute inset-0 ${className}`} />}
       <Image
         src={imageSrc}

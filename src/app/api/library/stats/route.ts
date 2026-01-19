@@ -22,6 +22,17 @@ export async function GET(request: NextRequest) {
     });
 
     if (error) {
+      // PGRST205 = table/function not found (migration not applied yet)
+      if (error.code === "PGRST205" || error.code === "42883") {
+        console.warn("user_library table/function not found - migration not applied yet");
+        return NextResponse.json({
+          totalGames: 0,
+          ownedGames: 0,
+          completedGames: 0,
+          totalPlayTime: 0,
+          averageRating: null,
+        });
+      }
       console.error("Error fetching library stats:", error);
       return NextResponse.json({ error: "Failed to fetch library statistics" }, { status: 500 });
     }

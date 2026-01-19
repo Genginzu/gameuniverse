@@ -27,8 +27,6 @@ export function useAuth() {
     // Get initial session with timeout
     const getInitialSession = async () => {
       try {
-        console.warn("🔍 Getting initial session...");
-
         // Timeout de 5 secondes pour éviter le blocage
         const timeoutPromise = new Promise((_, reject) => {
           timeoutId = setTimeout(() => {
@@ -50,14 +48,12 @@ export function useAuth() {
         } = result;
 
         if (error) {
-          console.error("❌ Error getting session:", error);
+          console.error("Error getting session:", error);
           // Si c'est une erreur de token, nettoyer l'état
           if (error.message?.includes("refresh") || error.message?.includes("token")) {
             clearAuthCookies();
             await supabase.auth.signOut();
           }
-        } else {
-          console.warn("✅ Initial session:", session ? "Found" : "None");
         }
 
         setAuthState({
@@ -66,7 +62,7 @@ export function useAuth() {
           loading: false,
         });
       } catch (error) {
-        console.error("❌ Exception getting session (probably Supabase not available):", error);
+        console.error("Exception getting session:", error);
         clearTimeout(timeoutId);
 
         // Si c'est une erreur d'authentification, nettoyer
@@ -93,11 +89,9 @@ export function useAuth() {
       const {
         data: { subscription: sub },
       } = supabase.auth.onAuthStateChange(async (event, session) => {
-        console.warn("🔄 Auth state change:", event, session ? "with session" : "no session");
-
         // Gérer les erreurs de token
         if (event === "TOKEN_REFRESHED" && !session) {
-          console.warn("⚠️ Token refresh failed, clearing auth state");
+          console.warn("Token refresh failed, clearing auth state");
           clearAuthCookies();
         }
 
@@ -120,7 +114,7 @@ export function useAuth() {
       });
       subscription = sub;
     } catch (error) {
-      console.error("❌ Error setting up auth listener:", error);
+      console.error("Error setting up auth listener:", error);
       if (
         error instanceof Error &&
         (error.message.includes("refresh") || error.message.includes("token"))
@@ -197,7 +191,6 @@ export function useAuth() {
   };
 
   const forceSignOut = async () => {
-    console.warn("🔄 Force sign out - clearing all auth data");
     clearAuthCookies();
 
     setAuthState({

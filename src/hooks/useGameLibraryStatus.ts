@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useAuth } from "./useAuth";
 
 export function useGameLibraryStatus(gameId: string) {
@@ -8,27 +8,7 @@ export function useGameLibraryStatus(gameId: string) {
   const [inLibrary, setInLibrary] = useState(false);
   const [loading, setLoading] = useState(false);
   const [adding, setAdding] = useState(false);
-
-  // Check if game is in library
-  const checkStatus = useCallback(async () => {
-    if (!user || !gameId) {
-      setInLibrary(false);
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const response = await fetch(`/api/library/${gameId}`);
-      if (response.ok) {
-        const data = await response.json();
-        setInLibrary(data.inLibrary);
-      }
-    } catch (err) {
-      console.error("Error checking library status:", err);
-    } finally {
-      setLoading(false);
-    }
-  }, [user, gameId]);
+  const hasChecked = useRef(false);
 
   // Add game to library
   const addToLibrary = useCallback(async () => {
@@ -82,10 +62,36 @@ export function useGameLibraryStatus(gameId: string) {
     }
   }, [user, gameId]);
 
-  // Check status on mount and when dependencies change
+  // Check status only once on mount
   useEffect(() => {
+    // Skip if already checked, no user, or no gameId
+    if (hasChecked.current || !user || !gameId) {
+      hasChecked.current = true; // Marquer comme vérifié même si on skip
+      return;
+    }
+
+    const checkStatus = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`/api/library/${gameId}`);
+        if (response.ok) {
+          const data = await response.json();
+          setInLibrary(data.inLibrary);
+        } else if (response.status === 500) {
+          // Si erreur 500 (table n'existe pas), on ignore silencieusement
+          console.warn("Library feature not available yet");
+        }
+      } catch (err) {
+        // Ignorer les erreurs silencieusement pour ne pas polluer la console
+        console.warn("Error checking library status:", err);
+      } finally {
+        setLoading(false);
+        hasChecked.current = true;
+      }
+    };
+
     checkStatus();
-  }, [checkStatus]);
+  }, [user, gameId]);
 
   return {
     inLibrary,
@@ -93,6 +99,5 @@ export function useGameLibraryStatus(gameId: string) {
     adding,
     addToLibrary,
     removeFromLibrary,
-    refetch: checkStatus,
   };
 }

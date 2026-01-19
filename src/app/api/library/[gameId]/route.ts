@@ -33,6 +33,11 @@ export async function DELETE(
       .eq("game_id", gameId);
 
     if (error) {
+      // PGRST205 = table not found (migration not applied yet)
+      if (error.code === "PGRST205") {
+        console.warn("user_library table not found - migration not applied yet");
+        return NextResponse.json({ success: true }); // Retourner succès car rien à supprimer
+      }
       console.error("Error removing game from library:", error);
       return NextResponse.json({ error: "Failed to remove game from library" }, { status: 500 });
     }
@@ -78,6 +83,15 @@ export async function GET(
 
     if (error && error.code !== "PGRST116") {
       // PGRST116 = no rows returned
+      // PGRST205 = table not found (migration not applied yet)
+      if (error.code === "PGRST205") {
+        console.warn("user_library table not found - migration not applied yet");
+        return NextResponse.json({
+          inLibrary: false,
+          status: undefined,
+          addedAt: undefined,
+        });
+      }
       console.error("Error checking game in library:", error);
       return NextResponse.json({ error: "Failed to check library status" }, { status: 500 });
     }
