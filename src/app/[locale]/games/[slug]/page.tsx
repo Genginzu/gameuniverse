@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import { GameDetailsContent } from "@/components/games/GameDetailsContent";
 import { GameService } from "@/lib/services/gameService";
 import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
+import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
+import { ErrorFallback } from "@/components/shared/ErrorFallback";
 
 interface GameDetailsPageProps {
   params: Promise<{
@@ -22,25 +24,44 @@ export default async function GameDetailsPage({ params }: GameDetailsPageProps) 
 
     return (
       <DashboardLayout>
-        <GameDetailsContent game={game} locale={locale} />
+        <ErrorBoundary
+          fallback={
+            <ErrorFallback
+              title={locale === "fr" ? "Erreur de chargement" : "Loading Error"}
+              description={
+                locale === "fr"
+                  ? "Une erreur s'est produite lors de l'affichage des détails du jeu."
+                  : "An error occurred while displaying game details."
+              }
+              showBackButton={true}
+              backUrl={`/${locale}/games`}
+              backLabel={locale === "fr" ? "Retour aux jeux" : "Back to games"}
+              locale={locale}
+            />
+          }
+        >
+          <GameDetailsContent game={game} locale={locale} />
+        </ErrorBoundary>
       </DashboardLayout>
     );
   } catch (error) {
     console.error("Error in GameDetailsPage:", error);
     // Return error state
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center">
-          <h1 className="mb-4 text-2xl font-bold text-red-600">
-            {locale === "fr" ? "Erreur de chargement" : "Loading Error"}
-          </h1>
-          <p className="text-gray-600">
-            {locale === "fr"
+      <DashboardLayout>
+        <ErrorFallback
+          title={locale === "fr" ? "Erreur de chargement" : "Loading Error"}
+          description={
+            locale === "fr"
               ? "Impossible de charger les détails du jeu."
-              : "Unable to load game details."}
-          </p>
-        </div>
-      </div>
+              : "Unable to load game details."
+          }
+          showBackButton={true}
+          backUrl={`/${locale}/games`}
+          backLabel={locale === "fr" ? "Retour aux jeux" : "Back to games"}
+          locale={locale}
+        />
+      </DashboardLayout>
     );
   }
 }

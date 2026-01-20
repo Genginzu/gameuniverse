@@ -9,13 +9,30 @@ export async function GET(request: NextRequest) {
     const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
     const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") || "20")));
     const locale = searchParams.get("locale") || "fr";
+    const inLibrary = searchParams.get("inLibrary") === "true";
 
     const supabase = await createRouteHandlerClient();
+
+    // If library filtering is requested, check authentication
+    let userId: string | null = null;
+    if (inLibrary) {
+      const {
+        data: { user },
+        error: authError,
+      } = await supabase.auth.getUser();
+
+      if (authError || !user) {
+        return NextResponse.json({ error: "Authentication required" }, { status: 401 });
+      }
+
+      userId = user.id;
+    }
 
     // Calculate offset for pagination
     const offset = (page - 1) * limit;
 
     // Build the base query with joins for translations and genres
+    // Add user_library join if filtering by library
     let query = supabase
       .from("games")
       .select(
@@ -47,10 +64,22 @@ export async function GET(request: NextRequest) {
             name,
             slug
           )
-        )
+        )${inLibrary ? `,
+        user_library!inner(
+          user_id,
+          status,
+          added_at,
+          play_time_hours,
+          rating
+        )` : ""}
       `
       )
       .eq("game_translations.language_code", locale);
+
+    // Filter by user's library if requested
+    if (inLibrary && userId) {
+      query = query.eq("user_library.user_id", userId);
+    }
 
     // Add search filter if provided
     if (search.trim()) {
@@ -60,11 +89,19 @@ export async function GET(request: NextRequest) {
     // Get total count for pagination (separate query for performance)
     let countQuery = supabase
       .from("games")
-      .select("id, game_translations!inner(language_code)", { count: "exact", head: true })
+      .select(
+        `id, game_translations!inner(language_code)${inLibrary ? ", user_library!inner(user_id)" : ""}`,
+        { count: "exact", head: true }
+      )
       .eq("game_translations.language_code", locale);
 
     if (search.trim()) {
       countQuery = countQuery.ilike("game_translations.title", `%${search.trim()}%`);
+    }
+
+    // Filter count by user's library if requested
+    if (inLibrary && userId) {
+      countQuery = countQuery.eq("user_library.user_id", userId);
     }
 
     // Execute count query
@@ -158,6 +195,7 @@ export async function GET(request: NextRequest) {
         search,
         genres,
         locale,
+        inLibrary,
       },
     });
   } catch (error) {

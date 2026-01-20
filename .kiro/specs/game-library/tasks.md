@@ -388,10 +388,9 @@ optimisations.
     - Gérer les états (déjà dans la bibliothèque, ajout en cours)
     - _Requirements: Bibliothèque personnelle_
 
-  - [ ] 17.3 Améliorer la gestion des erreurs et états de chargement
+  - [x] 17.3 Améliorer la gestion des erreurs et états de chargement
     - Implémenter des Error Boundaries React pour les composants
     - Ajouter des Skeleton components pour les états de chargement
-    - Améliorer la gestion des erreurs réseau avec retry automatique
     - _Requirements: Gestion d'erreurs_
 
   - [ ] 17.4 Optimiser les performances et l'accessibilité
