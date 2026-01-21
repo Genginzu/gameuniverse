@@ -1,0 +1,170 @@
+import { NextRequest, NextResponse } from "next/server";
+import { createRouteHandlerClient } from "@/lib/supabase-server";
+
+export async function GET(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const locale = searchParams.get("locale") || "fr";
+    const { slug: characterSlug } = await params;
+
+    if (!characterSlug) {
+      return NextResponse.json({ error: "Character slug is required" }, { status: 400 });
+    }
+
+    const supabase = await createRouteHandlerClient();
+
+    // Fetch character details by slug with all related data
+    const { data: character, error } = await supabase
+      .from("characters")
+      .select(
+        `
+        id,
+        slug,
+        main_image,
+        background_image,
+        background_color,
+        created_at,
+        updated_at,
+        character_translations!inner(
+          name,
+          role,
+          description,
+          biography
+        ),
+        character_games(
+          is_primary,
+          games(
+            id,
+            slug,
+            cover_image_url,
+            release_date,
+            game_translations(
+              title
+            )
+          )
+        ),
+        character_media(
+          id,
+          type,
+          url,
+          thumbnail_url,
+          title,
+          description,
+          alt_text,
+          is_featured,
+          display_order
+        )
+      `
+      )
+      .eq("character_translations.language_code", locale)
+      .eq("character_games.games.game_translations.language_code", locale)
+      .eq("slug", characterSlug)
+      .single();
+
+    if (error) {
+      console.error("Error fetching character details by slug:", error);
+      if (error.code === "PGRST116") {
+        return NextResponse.json({ error: "Character not found" }, { status: 404 });
+      }
+      return NextResponse.json({ error: "Failed to fetch character details" }, { status: 500 });
+    }
+
+    if (!character) {
+      return NextResponse.json({ error: "Character not found" }, { status: 404 });
+    }
+
+    // Transform the data to match the expected format
+    const translation = character.character_translations?.[0];
+
+    // Process games
+    const games =
+      character.character_games
+        ?.map((cg: any) => ({
+          id: cg.games?.id,
+          slug: cg.games?.slug,
+          title: cg.games?.game_translations?.[0]?.title || "Unknown",
+          coverImage: cg.games?.cover_image_url,
+          releaseYear: cg.games?.release_date
+            ? new Date(cg.games.release_date).getFullYear()
+            : undefined,
+          isPrimary: cg.is_primary || false,
+        }))
+        .sort((a: any, b: any) => {
+          // Sort primary game first
+          if (a.isPrimary && !b.isPrimary) return -1;
+          if (!a.isPrimary && b.isPrimary) return 1;
+          return a.title.localeCompare(b.title);
+        }) || [];
+
+    // Get primary game name
+    const primaryGame = games.find((g: any) => g.isPrimary)?.title || games[0]?.title || "Unknown";
+
+    // Process media
+    const screenshots =
+      character.character_media
+        ?.filter((m: any) => m.type === "screenshot")
+        .sort((a: any, b: any) => (a.display_order || 0) - (b.display_order || 0))
+        .map((m: any) => ({
+          id: m.id,
+          url: m.url,
+          altText: m.alt_text,
+          caption: m.description,
+          isFeatured: m.is_featured || false,
+        })) || [];
+
+    const artwork =
+      character.character_media
+        ?.filter((m: any) => m.type === "artwork")
+        .sort((a: any, b: any) => (a.display_order || 0) - (b.display_order || 0))
+        .map((m: any) => ({
+          id: m.id,
+          url: m.url,
+          altText: m.alt_text,
+          caption: m.description,
+          type: m.title || "artwork",
+          isFeatured: m.is_featured || false,
+        })) || [];
+
+    const videos =
+      character.character_media
+        ?.filter((m: any) => m.type === "video")
+        .sort((a: any, b: any) => (a.display_order || 0) - (b.display_order || 0))
+        .map((m: any) => ({
+          id: m.id,
+          title: m.title || "Video",
+          description: m.description,
+          url: m.url,
+          thumbnailUrl: m.thumbnail_url,
+          type: "video",
+          isFeatured: m.is_featured || false,
+        })) || [];
+
+    const media = {
+      mainImage: character.main_image,
+      backgroundImage: character.background_image,
+      screenshots,
+      artwork,
+      videos,
+    };
+
+    const transformedCharacter = {
+      id: character.id,
+      slug: character.slug,
+      name: translation?.name || "Unnamed",
+      role: translation?.role,
+      description: translation?.description,
+      biography: translation?.biography,
+      backgroundColor: character.background_color || "#0f172a",
+      games,
+      primaryGame,
+      media,
+      createdAt: character.created_at,
+      updatedAt: character.updated_at,
+    };
+
+    return NextResponse.json(transformedCharacter);
+  } catch (error) {
+    console.error("Unexpected error in character details API:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
