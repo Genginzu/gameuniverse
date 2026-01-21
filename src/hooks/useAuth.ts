@@ -22,30 +22,17 @@ export function useAuth() {
   const supabase = createClient();
 
   useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
+    let mounted = true;
 
-    // Get initial session with timeout
+    // Get initial session
     const getInitialSession = async () => {
       try {
-        // Timeout de 5 secondes pour éviter le blocage
-        const timeoutPromise = new Promise((_, reject) => {
-          timeoutId = setTimeout(() => {
-            reject(new Error("Supabase connection timeout"));
-          }, 5000);
-        });
-
-        const sessionPromise = supabase.auth.getSession();
-
-        const result = (await Promise.race([sessionPromise, timeoutPromise])) as {
-          data: { session: Session | null };
-          error: Error | null;
-        };
-        clearTimeout(timeoutId);
-
         const {
           data: { session },
           error,
-        } = result;
+        } = await supabase.auth.getSession();
+
+        if (!mounted) return;
 
         if (error) {
           console.error("Error getting session:", error);
@@ -63,7 +50,8 @@ export function useAuth() {
         });
       } catch (error) {
         console.error("Exception getting session:", error);
-        clearTimeout(timeoutId);
+
+        if (!mounted) return;
 
         // Si c'est une erreur d'authentification, nettoyer
         if (
@@ -124,7 +112,7 @@ export function useAuth() {
     }
 
     return () => {
-      clearTimeout(timeoutId);
+      mounted = false;
       if (subscription) {
         subscription.unsubscribe();
       }

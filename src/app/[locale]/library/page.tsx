@@ -1,6 +1,6 @@
 "use client";
 
-import { UserLibraryContent } from "@/components/library/UserLibraryContent";
+import { LibraryGamesContent } from "@/components/library/LibraryGamesContent";
 import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
@@ -17,7 +17,7 @@ export default function LibraryPage() {
           />
         }
       >
-        <UserLibraryContent />
+        <LibraryGamesContent />
       </ErrorBoundary>
     </DashboardLayout>
   );

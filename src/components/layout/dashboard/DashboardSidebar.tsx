@@ -56,7 +56,7 @@ export default function DashboardSidebar({
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className="hidden w-64 flex-col border-r border-gray-200 bg-white lg:flex">
+      <div className="hidden h-full w-64 flex-shrink-0 flex-col border-r border-gray-200 bg-white lg:flex">
         <SidebarContent
           user={user}
           signOut={signOut}
@@ -114,9 +114,9 @@ function SidebarContent({
   onLinkClick: () => void;
 }) {
   return (
-    <>
+    <div className="flex h-full flex-col">
       {/* Navigation Menu */}
-      <nav className="flex-1 space-y-2 p-4">
+      <nav className="flex-1 space-y-2 overflow-y-auto p-4">
         <Link
           href="/dashboard"
           className="flex items-center rounded-xl bg-gray-100 px-3 py-2 text-sm font-medium text-gray-900"
@@ -152,7 +152,7 @@ function SidebarContent({
       </nav>
 
       {/* User Info at Bottom */}
-      <div className="border-t border-gray-200 p-4">
+      <div className="flex-shrink-0 border-t border-gray-200 p-4">
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
@@ -221,6 +221,6 @@ function SidebarContent({
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 }

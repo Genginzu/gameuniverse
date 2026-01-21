@@ -88,14 +88,14 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <DashboardContext.Provider value={contextValue}>
-      <div className="flex min-h-screen flex-col bg-gray-50">
+      <div className="flex h-screen flex-col bg-gray-50">
         <DashboardHeader sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
         {/* Mobile sidebar overlay */}
         {sidebarOpen && <div className="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden" />}
 
-        {/* Sidebar Area */}
-        <div className="relative flex flex-1">
+        {/* Sidebar and Content Area */}
+        <div className="flex flex-1 overflow-hidden">
           <DashboardSidebar
             signOut={signOut}
             user={user}
@@ -104,9 +104,9 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           />
 
           {/* Main Content */}
-          <div className="flex min-w-0 flex-1 flex-col">
+          <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
             {/* Page Content */}
-            <main className="flex-1 overflow-auto">{children}</main>
+            <main className="flex-1 overflow-y-auto">{children}</main>
           </div>
         </div>
       </div>

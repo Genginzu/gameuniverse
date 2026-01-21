@@ -25,9 +25,15 @@ interface GameCardProps {
   };
   locale?: string;
   priority?: boolean; // Pour optimiser le chargement des premières cartes
+  onRemovedFromLibrary?: (gameId: string) => void; // Callback when game is removed from library
 }
 
-export function GameCard({ game, locale = "fr", priority = false }: GameCardProps) {
+export function GameCard({
+  game,
+  locale = "fr",
+  priority = false,
+  onRemovedFromLibrary,
+}: GameCardProps) {
   const { user } = useAuth();
   const { inLibrary, loading, adding, addToLibrary, removeFromLibrary } = useGameLibraryStatus(
     game.id
@@ -58,7 +64,10 @@ export function GameCard({ game, locale = "fr", priority = false }: GameCardProp
     e.stopPropagation();
 
     if (inLibrary) {
-      await removeFromLibrary();
+      const success = await removeFromLibrary();
+      if (success && onRemovedFromLibrary) {
+        onRemovedFromLibrary(game.id);
+      }
     } else {
       await addToLibrary();
     }
