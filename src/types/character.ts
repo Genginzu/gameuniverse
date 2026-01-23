@@ -1,3 +1,16 @@
+export interface CharacterRelationship {
+  id: string;
+  relatedCharacter: {
+    id: string;
+    slug: string;
+    name: string;
+    mainImage?: string;
+    role?: string;
+  };
+  relationshipType: string; // ally, enemy, rival, family, romantic, mentor, friend
+  description?: string;
+}
+
 export interface CharacterMedia {
   mainImage?: string;
   backgroundImage?: string;
@@ -33,6 +46,7 @@ export interface CharacterGame {
   slug: string;
   title: string;
   coverImage?: string;
+  backgroundImage?: string;
   releaseYear?: number;
   isPrimary: boolean;
 }
@@ -44,10 +58,12 @@ export interface CharacterDetails {
   role?: string;
   description?: string;
   biography?: string;
+  weapons?: string;
   backgroundColor?: string;
   games: CharacterGame[];
-  primaryGame: string; // Nom du jeu principal
+  primaryGame: string;
   media: CharacterMedia;
+  relationships: CharacterRelationship[];
   createdAt: string;
   updatedAt: string;
 }

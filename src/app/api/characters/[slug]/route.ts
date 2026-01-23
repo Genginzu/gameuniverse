@@ -29,7 +29,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           name,
           role,
           description,
-          biography
+          biography,
+          weapons
         ),
         character_games(
           is_primary,
@@ -37,6 +38,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             id,
             slug,
             cover_image_url,
+            background_image_url,
             release_date,
             game_translations(
               title
@@ -57,7 +59,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       `
       )
       .eq("character_translations.language_code", locale)
-      .eq("character_games.games.game_translations.language_code", locale)
       .eq("slug", characterSlug)
       .single();
 
@@ -73,6 +74,54 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: "Character not found" }, { status: 404 });
     }
 
+    // Fetch relationships separately to avoid complex join issues
+    const { data: relationshipsData } = await supabase
+      .from("character_relationships")
+      .select("id, relationship_type, description, related_character_id")
+      .eq("character_id", character.id);
+
+    // Fetch related characters details if there are relationships
+    let processedRelationships: any[] = [];
+    if (relationshipsData && relationshipsData.length > 0) {
+      const relatedCharacterIds = relationshipsData.map((r) => r.related_character_id);
+
+      const { data: relatedCharacters } = await supabase
+        .from("characters")
+        .select(
+          `
+          id,
+          slug,
+          main_image,
+          character_translations(name, role, language_code)
+        `
+        )
+        .in("id", relatedCharacterIds);
+
+      processedRelationships = relationshipsData
+        .map((rel) => {
+          const related = relatedCharacters?.find((c) => c.id === rel.related_character_id);
+          if (!related) return null;
+
+          const relatedTranslation =
+            related.character_translations?.find((t: any) => t.language_code === locale) ||
+            related.character_translations?.[0];
+
+          return {
+            id: rel.id,
+            relatedCharacter: {
+              id: related.id,
+              slug: related.slug,
+              name: relatedTranslation?.name || "Unknown",
+              mainImage: related.main_image,
+              role: relatedTranslation?.role,
+            },
+            relationshipType: rel.relationship_type,
+            description: rel.description,
+          };
+        })
+        .filter((r) => r !== null);
+    }
+
     // Transform the data to match the expected format
     const translation = character.character_translations?.[0];
 
@@ -84,19 +133,18 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           slug: cg.games?.slug,
           title: cg.games?.game_translations?.[0]?.title || "Unknown",
           coverImage: cg.games?.cover_image_url,
+          backgroundImage: cg.games?.background_image_url,
           releaseYear: cg.games?.release_date
             ? new Date(cg.games.release_date).getFullYear()
             : undefined,
           isPrimary: cg.is_primary || false,
         }))
         .sort((a: any, b: any) => {
-          // Sort primary game first
           if (a.isPrimary && !b.isPrimary) return -1;
           if (!a.isPrimary && b.isPrimary) return 1;
           return a.title.localeCompare(b.title);
         }) || [];
 
-    // Get primary game name
     const primaryGame = games.find((g: any) => g.isPrimary)?.title || games[0]?.title || "Unknown";
 
     // Process media
@@ -154,10 +202,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       role: translation?.role,
       description: translation?.description,
       biography: translation?.biography,
+      weapons: translation?.weapons,
       backgroundColor: character.background_color || "#0f172a",
       games,
       primaryGame,
       media,
+      relationships: processedRelationships,
       createdAt: character.created_at,
       updatedAt: character.updated_at,
     };

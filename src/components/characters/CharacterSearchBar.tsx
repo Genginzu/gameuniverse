@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
-import { useTranslations } from "@/hooks/useTranslations";
+import { useCharacterTranslations } from "@/hooks/useTranslations";
 
 interface CharacterSearchBarProps {
   onSearch: (query: string) => void;
@@ -16,7 +16,7 @@ export function CharacterSearchBar({
   debounceMs = 300,
 }: CharacterSearchBarProps) {
   const [searchQuery, setSearchQuery] = useState(initialValue);
-  const t = useTranslations();
+  const t = useCharacterTranslations();
 
   // Debounce search to avoid too many API calls
   useEffect(() => {
@@ -36,7 +36,7 @@ export function CharacterSearchBar({
     onSearch(searchQuery);
   };
 
-  const placeholder = t("characters.searchPlaceholder") || "Rechercher un personnage...";
+  const placeholder = t("searchPlaceholder") || "Rechercher un personnage...";
 
   return (
     <div className="relative">
@@ -101,7 +101,7 @@ export function CharacterSearchBar({
                     d="M13 10V3L4 14h7v7l9-11h-7z"
                   />
                 </svg>
-                {t("characters.searchingFor") || "Recherche en cours pour"} "{searchQuery}"
+                {t("searchingFor") || "Recherche en cours pour"} "{searchQuery}"
               </div>
             </div>
           </div>

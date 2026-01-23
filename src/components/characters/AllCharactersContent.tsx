@@ -228,25 +228,6 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
             <p className="mx-auto max-w-xl text-base text-indigo-100/90 sm:text-lg">
               Explorez notre collection de personnages de jeux vidéo
             </p>
-            {pagination && (
-              <div className="mt-4 inline-flex items-center rounded-full bg-white/15 px-3 py-1.5 text-sm backdrop-blur-sm">
-                <svg
-                  className="mr-2 h-4 w-4 text-yellow-300"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                </svg>
-                <span className="font-medium">{pagination.totalCount}</span>
-                <span className="ml-1 text-indigo-200">personnages disponibles</span>
-              </div>
-            )}
           </div>
         </div>
 

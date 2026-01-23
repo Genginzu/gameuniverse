@@ -3,6 +3,7 @@ import {
   CharacterSummary,
   CharacterMedia,
   CharacterGame,
+  CharacterRelationship,
 } from "@/types/character";
 import { createServerClient } from "@/lib/supabase-server";
 
@@ -12,6 +13,7 @@ interface CharacterTranslationRow {
   role: string | null;
   description: string | null;
   biography?: string | null;
+  weapons?: string | null;
 }
 
 interface GameTranslationRow {
@@ -22,6 +24,7 @@ interface GameRow {
   id: string;
   slug: string;
   cover_image_url: string | null;
+  background_image_url: string | null;
   release_date: string | null;
   game_translations: GameTranslationRow[];
 }
@@ -43,6 +46,20 @@ interface CharacterMediaRow {
   display_order: number | null;
 }
 
+interface RelatedCharacterRow {
+  id: string;
+  slug: string;
+  main_image: string | null;
+  character_translations: CharacterTranslationRow[];
+}
+
+interface CharacterRelationshipRow {
+  id: string;
+  relationship_type: string;
+  description: string | null;
+  related_character: RelatedCharacterRow | null;
+}
+
 interface CharacterListRow {
   id: string;
   slug: string;
@@ -57,6 +74,7 @@ interface CharacterDetailsRow extends CharacterListRow {
   background_image: string | null;
   updated_at: string;
   character_media: CharacterMediaRow[];
+  character_relationships: CharacterRelationshipRow[];
 }
 
 /**
@@ -256,7 +274,8 @@ export class CharacterService {
           name,
           role,
           description,
-          biography
+          biography,
+          weapons
         ),
         character_games(
           is_primary,
@@ -264,6 +283,7 @@ export class CharacterService {
             id,
             slug,
             cover_image_url,
+            background_image_url,
             release_date,
             game_translations(
               title
@@ -280,6 +300,20 @@ export class CharacterService {
           alt_text,
           is_featured,
           display_order
+        ),
+        character_relationships(
+          id,
+          relationship_type,
+          description,
+          related_character:related_character_id(
+            id,
+            slug,
+            main_image,
+            character_translations(
+              name,
+              role
+            )
+          )
         )
       `
       )
@@ -315,6 +349,7 @@ export class CharacterService {
             slug: game.slug,
             title: game.game_translations?.[0]?.title || "Unknown",
             coverImage: game.cover_image_url || undefined,
+            backgroundImage: game.background_image_url || undefined,
             releaseYear: game.release_date ? new Date(game.release_date).getFullYear() : undefined,
             isPrimary: cg.is_primary || false,
           };
@@ -377,6 +412,29 @@ export class CharacterService {
       videos,
     };
 
+    // Process relationships
+    const relationships: CharacterRelationship[] =
+      typedCharacter.character_relationships
+        ?.map((rel) => {
+          const related = rel.related_character as RelatedCharacterRow | null;
+          if (!related) return null;
+
+          const relatedTranslation = related.character_translations?.[0];
+          return {
+            id: rel.id,
+            relatedCharacter: {
+              id: related.id,
+              slug: related.slug,
+              name: relatedTranslation?.name || "Unknown",
+              mainImage: related.main_image || undefined,
+              role: relatedTranslation?.role || undefined,
+            },
+            relationshipType: rel.relationship_type,
+            description: rel.description || undefined,
+          };
+        })
+        .filter((r): r is CharacterRelationship => r !== null) || [];
+
     return {
       id: typedCharacter.id,
       slug: typedCharacter.slug,
@@ -384,10 +442,12 @@ export class CharacterService {
       role: translation?.role || undefined,
       description: translation?.description || undefined,
       biography: translation?.biography || undefined,
+      weapons: translation?.weapons || undefined,
       backgroundColor: typedCharacter.background_color || "#0f172a",
       games,
       primaryGame,
       media,
+      relationships,
       createdAt: typedCharacter.created_at,
       updatedAt: typedCharacter.updated_at,
     };

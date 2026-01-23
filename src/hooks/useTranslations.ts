@@ -22,6 +22,11 @@ export function useGameTranslations() {
   return useNextIntlTranslations("game");
 }
 
+// Custom hook for character translations
+export function useCharacterTranslations() {
+  return useNextIntlTranslations("characters");
+}
+
 // Custom hook for auth translations
 export function useAuthTranslations() {
   return useNextIntlTranslations("auth");
