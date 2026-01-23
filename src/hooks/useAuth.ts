@@ -92,8 +92,10 @@ export function useAuth() {
         // Handle auth events
         if (event === "SIGNED_IN") {
           // Ne rediriger vers le dashboard que si on vient d'une page d'authentification
+          // mais PAS si on est sur la page de reset password
           const currentPath = window.location.pathname;
-          if (currentPath.includes("/auth") || currentPath === "/") {
+          const isResetPasswordPage = currentPath.includes("/reset-password");
+          if (!isResetPasswordPage && (currentPath.includes("/auth") || currentPath === "/")) {
             router.push("/dashboard");
           }
         } else if (event === "SIGNED_OUT") {

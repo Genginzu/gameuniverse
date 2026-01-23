@@ -57,14 +57,17 @@ export function useUserLibrary() {
 
       const response = await fetch("/api/library");
       if (!response.ok) {
-        throw new Error("Failed to fetch library");
+        // Don't throw for auth or server errors - just return empty
+        setGames([]);
+        return;
       }
 
       const data = await response.json();
       setGames(data.games || []);
     } catch (err) {
-      console.error("Error fetching library:", err);
-      setError(err instanceof Error ? err.message : "Failed to fetch library");
+      // Silently fail - library might not be set up yet
+      console.warn("Could not fetch library:", err);
+      setGames([]);
     } finally {
       setLoading(false);
     }
@@ -77,13 +80,15 @@ export function useUserLibrary() {
     try {
       const response = await fetch("/api/library/stats");
       if (!response.ok) {
-        throw new Error("Failed to fetch library stats");
+        // Don't throw - just keep default stats
+        return;
       }
 
       const data = await response.json();
       setStats(data);
     } catch (err) {
-      console.error("Error fetching library stats:", err);
+      // Silently fail - stats might not be available
+      console.warn("Could not fetch library stats:", err);
     }
   }, [user]);
 

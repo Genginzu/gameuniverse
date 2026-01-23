@@ -65,18 +65,6 @@ export default function DashboardHeader({ sidebarOpen, setSidebarOpen }: Dashboa
               Personnages
             </Link>
             <Link
-              href="/professionals"
-              className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900"
-            >
-              Professionnels
-            </Link>
-            <Link
-              href="/social"
-              className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900"
-            >
-              Social
-            </Link>
-            <Link
               href="/players"
               className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900"
             >

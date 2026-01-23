@@ -7,8 +7,6 @@ import { LazyImage } from "@/components/ui/lazy-image";
 import Link from "next/link";
 import {
   ArrowLeft,
-  Heart,
-  Share2,
   ChevronLeft,
   ChevronRight,
   Play,
@@ -76,7 +74,6 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
   const [selectedArtworkIndex, setSelectedArtworkIndex] = useState(0);
   const [selectedVideoIndex, setSelectedVideoIndex] = useState(0);
   const [activeTab, setActiveTab] = useState<"media" | "games" | "description">("description");
-  const [isFavorited, setIsFavorited] = useState(false);
 
   const colors = getCharacterColors(character.role);
 
@@ -149,31 +146,14 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                   {t("common.back")}
                 </Button>
               </Link>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="rounded-full bg-black/30 text-white backdrop-blur-sm hover:bg-black/50 hover:text-white"
-                >
-                  <Share2 className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className={`rounded-full bg-black/30 backdrop-blur-sm hover:bg-black/50 ${isFavorited ? "text-red-400" : "text-white"} hover:text-white`}
-                  onClick={() => setIsFavorited(!isFavorited)}
-                >
-                  <Heart className={`h-4 w-4 ${isFavorited ? "fill-current" : ""}`} />
-                </Button>
-              </div>
             </div>
           </div>
         </div>
 
-        <div className="container relative z-10 mx-auto flex min-h-[70vh] items-center justify-center px-4 py-12">
-          <div className="flex flex-col items-center justify-center gap-12 lg:flex-row lg:items-center">
+        <div className="container relative z-10 mx-auto min-h-[70vh] px-4 py-12">
+          <div className="flex min-h-[70vh] flex-col items-center justify-center lg:flex-row lg:items-center">
             {/* Character Image - Centered */}
-            <div className="relative flex-shrink-0">
+            <div className="relative flex-shrink-0 lg:flex lg:flex-1 lg:justify-center">
               <div
                 className={`absolute -inset-8 bg-gradient-to-t ${colors.bg} rounded-full opacity-30 blur-3xl`}
               />
@@ -194,15 +174,15 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
             </div>
 
             {/* Character Info - Right side */}
-            <div className="max-w-lg text-center lg:text-left">
+            <div className="mt-8 max-w-lg text-center lg:mt-0 lg:flex-1 lg:pl-12 lg:text-left">
               {/* Character name */}
-              <h1 className="mb-6 text-5xl font-bold leading-tight text-white drop-shadow-lg lg:text-6xl">
+              <h1 className="mb-6 text-5xl font-bold leading-tight text-white drop-shadow-lg [text-shadow:_0_2px_8px_rgba(0,0,0,0.5)] lg:text-6xl">
                 {character.name}
               </h1>
 
               {/* Short description */}
               {character.description && (
-                <p className="text-lg leading-relaxed text-slate-200 drop-shadow-sm">
+                <p className="text-lg leading-relaxed text-slate-200 [text-shadow:_0_1px_4px_rgba(0,0,0,0.4)]">
                   {character.description}
                 </p>
               )}

@@ -4,11 +4,13 @@ import { Button } from "../ui/button";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useDashboard } from "@/hooks/useDashboard";
+import { useUserLibrary } from "@/hooks/useUserLibrary";
 import { DashboardSkeleton } from "./DashboardSkeleton";
 
 export function DashboardContent() {
   const t = useTranslations("dashboard");
   const { user, loading } = useDashboard();
+  const { stats: libraryStats, loading: libraryLoading } = useUserLibrary();
 
   if (loading) {
     return <DashboardSkeleton />;
@@ -44,7 +46,9 @@ export function DashboardContent() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-bold text-gray-900 sm:text-2xl">0</div>
+            <div className="text-xl font-bold text-gray-900 sm:text-2xl">
+              {libraryLoading ? "..." : libraryStats.totalGames}
+            </div>
             <p className="text-xs text-gray-500">{t("gamesFavorites")}</p>
           </CardContent>
         </Card>
