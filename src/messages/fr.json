@@ -174,5 +174,87 @@
     "next": "Suivant",
     "first": "Premier",
     "last": "Dernier"
+  },
+  "characters": {
+    "title": "Personnages",
+    "heroTitle": "Découvrez des Personnages",
+    "heroTitleHighlight": "Extraordinaires",
+    "heroSubtitle": "Explorez notre collection de personnages de jeux vidéo",
+    "availableCount": "{count} personnages disponibles",
+    "searchPlaceholder": "Rechercher un personnage...",
+    "searchingFor": "Recherche en cours pour",
+    "filters": {
+      "title": "Filtres",
+      "byGame": "Filtrer par jeu",
+      "byRole": "Filtrer par rôle",
+      "available": "{count} disponibles",
+      "active": "Filtres actifs",
+      "selected": "{count} sélectionné(s)",
+      "clearAll": "Tout effacer",
+      "clear": "Effacer"
+    },
+    "roles": {
+      "protagonist": "Protagoniste",
+      "antagonist": "Antagoniste",
+      "supporting": "Secondaire",
+      "npc": "PNJ",
+      "playable": "Jouable"
+    },
+    "results": {
+      "count": "{count} résultat(s)",
+      "forQuery": "{count} résultat(s) pour \"{query}\"",
+      "total": "{count} personnages au total",
+      "activeFilters": "Filtres actifs"
+    },
+    "card": {
+      "game": "Jeu:",
+      "games": "{count} jeu(x)"
+    },
+    "details": {
+      "overview": "Aperçu",
+      "primaryGame": "Jeu principal",
+      "role": "Rôle",
+      "appearances": "Apparitions",
+      "gamesCount": "{count} jeu(x)"
+    },
+    "tabs": {
+      "media": "Médias",
+      "games": "Jeux",
+      "biography": "Biographie"
+    },
+    "media": {
+      "screenshots": "Captures d'écran",
+      "artwork": "Illustrations",
+      "videos": "Vidéos",
+      "videoNotSupported": "Votre navigateur ne supporte pas la lecture vidéo."
+    },
+    "empty": {
+      "title": "Aucun personnage trouvé",
+      "description": "Essayez de modifier vos critères de recherche ou explorez d'autres catégories",
+      "noCharacters": "Aucun personnage disponible pour le moment",
+      "clearFilters": "Effacer les filtres"
+    },
+    "errors": {
+      "loadingTitle": "Erreur de chargement",
+      "loadingDescription": "Une erreur s'est produite lors du chargement de la page des personnages. Veuillez réessayer.",
+      "detailsLoadingDescription": "Une erreur s'est produite lors du chargement des détails du personnage. Veuillez réessayer.",
+      "retry": "Réessayer",
+      "backToCharacters": "Retour aux personnages",
+      "backToHome": "Retour à l'accueil",
+      "notFoundTitle": "Personnage non trouvé",
+      "notFoundDescription": "Le personnage que vous recherchez n'existe pas ou a été supprimé.",
+      "loadingToast": "Erreur de chargement",
+      "loadingToastDescription": "Impossible de charger les personnages. Les données précédentes sont conservées."
+    },
+    "pagination": {
+      "page": "Page",
+      "of": "sur",
+      "results": "{count} résultat(s)",
+      "goToPage": "Aller à la page:",
+      "first": "Premier",
+      "previous": "Précédent",
+      "next": "Suivant",
+      "last": "Dernier"
+    }
   }
 }

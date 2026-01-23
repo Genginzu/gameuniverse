@@ -174,5 +174,87 @@
     "next": "Next",
     "first": "First",
     "last": "Last"
+  },
+  "characters": {
+    "title": "Characters",
+    "heroTitle": "Discover Extraordinary",
+    "heroTitleHighlight": "Characters",
+    "heroSubtitle": "Explore our collection of video game characters",
+    "availableCount": "{count} characters available",
+    "searchPlaceholder": "Search for a character...",
+    "searchingFor": "Searching for",
+    "filters": {
+      "title": "Filters",
+      "byGame": "Filter by game",
+      "byRole": "Filter by role",
+      "available": "{count} available",
+      "active": "Active filters",
+      "selected": "{count} selected",
+      "clearAll": "Clear all",
+      "clear": "Clear"
+    },
+    "roles": {
+      "protagonist": "Protagonist",
+      "antagonist": "Antagonist",
+      "supporting": "Supporting",
+      "npc": "NPC",
+      "playable": "Playable"
+    },
+    "results": {
+      "count": "{count} result(s)",
+      "forQuery": "{count} result(s) for \"{query}\"",
+      "total": "{count} characters total",
+      "activeFilters": "Active filters"
+    },
+    "card": {
+      "game": "Game:",
+      "games": "{count} game(s)"
+    },
+    "details": {
+      "overview": "Overview",
+      "primaryGame": "Primary Game",
+      "role": "Role",
+      "appearances": "Appearances",
+      "gamesCount": "{count} game(s)"
+    },
+    "tabs": {
+      "media": "Media",
+      "games": "Games",
+      "biography": "Biography"
+    },
+    "media": {
+      "screenshots": "Screenshots",
+      "artwork": "Artwork",
+      "videos": "Videos",
+      "videoNotSupported": "Your browser does not support video playback."
+    },
+    "empty": {
+      "title": "No characters found",
+      "description": "Try modifying your search criteria or explore other categories",
+      "noCharacters": "No characters available at the moment",
+      "clearFilters": "Clear filters"
+    },
+    "errors": {
+      "loadingTitle": "Loading Error",
+      "loadingDescription": "An error occurred while loading the characters page. Please try again.",
+      "detailsLoadingDescription": "An error occurred while loading character details. Please try again.",
+      "retry": "Retry",
+      "backToCharacters": "Back to characters",
+      "backToHome": "Back to home",
+      "notFoundTitle": "Character not found",
+      "notFoundDescription": "The character you are looking for does not exist or has been removed.",
+      "loadingToast": "Loading error",
+      "loadingToastDescription": "Unable to load characters. Previous data has been preserved."
+    },
+    "pagination": {
+      "page": "Page",
+      "of": "of",
+      "results": "{count} result(s)",
+      "goToPage": "Go to page:",
+      "first": "First",
+      "previous": "Previous",
+      "next": "Next",
+      "last": "Last"
+    }
   }
 }
