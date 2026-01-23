@@ -338,29 +338,30 @@ export class CharacterService {
     const translation = typedCharacter.character_translations?.[0];
 
     // Process games with locale-based field selection
-    const games: CharacterGame[] =
-      typedCharacter.character_games
-        ?.map((cg) => {
-          const game = cg.games as GameRow | null;
-          if (!game) return null;
+    const gamesRaw =
+      typedCharacter.character_games?.map((cg) => {
+        const game = cg.games as GameRow | null;
+        if (!game) return null;
 
-          return {
-            id: game.id,
-            slug: game.slug,
-            title: game.game_translations?.[0]?.title || "Unknown",
-            coverImage: game.cover_image_url || undefined,
-            backgroundImage: game.background_image_url || undefined,
-            releaseYear: game.release_date ? new Date(game.release_date).getFullYear() : undefined,
-            isPrimary: cg.is_primary || false,
-          };
-        })
-        .filter((g): g is CharacterGame => g !== null)
-        .sort((a, b) => {
-          // Sort primary game first, then alphabetically
-          if (a.isPrimary && !b.isPrimary) return -1;
-          if (!a.isPrimary && b.isPrimary) return 1;
-          return a.title.localeCompare(b.title);
-        }) || [];
+        return {
+          id: game.id,
+          slug: game.slug,
+          title: game.game_translations?.[0]?.title || "Unknown",
+          coverImage: game.cover_image_url || undefined,
+          backgroundImage: game.background_image_url || undefined,
+          releaseYear: game.release_date ? new Date(game.release_date).getFullYear() : undefined,
+          isPrimary: cg.is_primary || false,
+        };
+      }) || [];
+
+    const games: CharacterGame[] = gamesRaw
+      .filter((g): g is NonNullable<typeof g> => g !== null)
+      .sort((a, b) => {
+        // Sort primary game first, then alphabetically
+        if (a.isPrimary && !b.isPrimary) return -1;
+        if (!a.isPrimary && b.isPrimary) return 1;
+        return a.title.localeCompare(b.title);
+      });
 
     // Get primary game name
     const primaryGame = games.find((g) => g.isPrimary)?.title || games[0]?.title || "Unknown";
@@ -413,27 +414,29 @@ export class CharacterService {
     };
 
     // Process relationships
-    const relationships: CharacterRelationship[] =
-      typedCharacter.character_relationships
-        ?.map((rel) => {
-          const related = rel.related_character as RelatedCharacterRow | null;
-          if (!related) return null;
+    const relationshipsRaw =
+      typedCharacter.character_relationships?.map((rel) => {
+        const related = rel.related_character as RelatedCharacterRow | null;
+        if (!related) return null;
 
-          const relatedTranslation = related.character_translations?.[0];
-          return {
-            id: rel.id,
-            relatedCharacter: {
-              id: related.id,
-              slug: related.slug,
-              name: relatedTranslation?.name || "Unknown",
-              mainImage: related.main_image || undefined,
-              role: relatedTranslation?.role || undefined,
-            },
-            relationshipType: rel.relationship_type,
-            description: rel.description || undefined,
-          };
-        })
-        .filter((r): r is CharacterRelationship => r !== null) || [];
+        const relatedTranslation = related.character_translations?.[0];
+        return {
+          id: rel.id,
+          relatedCharacter: {
+            id: related.id,
+            slug: related.slug,
+            name: relatedTranslation?.name || "Unknown",
+            mainImage: related.main_image || undefined,
+            role: relatedTranslation?.role || undefined,
+          },
+          relationshipType: rel.relationship_type,
+          description: rel.description || undefined,
+        };
+      }) || [];
+
+    const relationships: CharacterRelationship[] = relationshipsRaw.filter(
+      (r): r is NonNullable<typeof r> => r !== null
+    );
 
     return {
       id: typedCharacter.id,

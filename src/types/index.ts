@@ -10,6 +10,7 @@ export * from "./game";
 export * from "./genre";
 export * from "./hooks";
 export * from "./pagination";
+export * from "./player";
 export * from "./profile";
 export * from "./supabase";
 export * from "./ui";

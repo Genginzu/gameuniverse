@@ -256,5 +256,90 @@
       "next": "Suivant",
       "last": "Dernier"
     }
+  },
+  "players": {
+    "title": "Joueurs",
+    "heroTitle": "Découvrez la Communauté",
+    "heroTitleHighlight": "Game Universe",
+    "heroSubtitle": "Explorez les profils des joueurs et découvrez leurs collections",
+    "availableCount": "{count} joueurs disponibles",
+    "searchPlaceholder": "Rechercher un joueur...",
+    "searchingFor": "Recherche en cours pour",
+    "filters": {
+      "title": "Filtres",
+      "byGameCount": "Filtrer par nombre de jeux",
+      "options": "options",
+      "active": "Filtres actifs",
+      "selected": "{count} sélectionné(s)",
+      "clearAll": "Tout effacer",
+      "clear": "Effacer",
+      "filter": "Filtrer"
+    },
+    "gameCountRanges": {
+      "0": "0 jeu",
+      "1-5": "1-5 jeux",
+      "6-20": "6-20 jeux",
+      "20+": "20+ jeux"
+    },
+    "results": {
+      "count": "{count} résultat(s)",
+      "forQuery": "{count} résultat(s) pour \"{query}\"",
+      "total": "{count} joueurs au total",
+      "activeFilters": "Filtres actifs"
+    },
+    "card": {
+      "games": "{count} jeu(x)",
+      "anonymousPlayer": "Joueur anonyme",
+      "viewProfile": "Voir le profil →"
+    },
+    "details": {
+      "back": "Retour",
+      "memberSince": "Membre depuis",
+      "totalGames": "Jeux possédés",
+      "completedGames": "Jeux terminés",
+      "totalPlayTime": "Temps de jeu",
+      "averageRating": "Note moyenne",
+      "noRating": "Aucune note",
+      "library": "Bibliothèque",
+      "inLibrary": "dans la bibliothèque"
+    },
+    "library": {
+      "empty": "Bibliothèque vide",
+      "emptyDescription": "Ce joueur n'a pas encore de jeux dans sa bibliothèque",
+      "status": {
+        "owned": "Possédé",
+        "wishlist": "Liste de souhaits",
+        "completed": "Terminé",
+        "playing": "En cours"
+      }
+    },
+    "empty": {
+      "title": "Aucun joueur trouvé",
+      "description": "Essayez de modifier vos critères de recherche ou explorez d'autres catégories",
+      "noPlayers": "Aucun joueur disponible pour le moment",
+      "clearFilters": "Effacer les filtres"
+    },
+    "errors": {
+      "loadingTitle": "Erreur de chargement",
+      "loadingDescription": "Une erreur s'est produite lors du chargement de la page des joueurs. Veuillez réessayer.",
+      "retry": "Réessayer",
+      "backToPlayers": "Retour aux joueurs",
+      "backToHome": "Retour à l'accueil",
+      "notFoundTitle": "Joueur non trouvé",
+      "notFoundDescription": "Le joueur que vous recherchez n'existe pas ou a été supprimé.",
+      "loadingToast": "Erreur de chargement",
+      "loadingToastDescription": "Impossible de charger les joueurs. Les données précédentes sont conservées."
+    },
+    "pagination": {
+      "page": "Page",
+      "of": "sur",
+      "result": "résultat",
+      "results": "résultats",
+      "goToPage": "Aller à la page:",
+      "first": "Premier",
+      "previous": "Précédent",
+      "next": "Suivant",
+      "last": "Dernier"
+    }
   }
 }

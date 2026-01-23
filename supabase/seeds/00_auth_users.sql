@@ -2,7 +2,7 @@
 -- Ce fichier doit être exécuté en premier (préfixe 00_)
 
 -- Insérer l'utilisateur dans auth.users
--- Le mot de passe est 'poisson03'
+-- Le mot de passe est 'Poisson$03'
 INSERT INTO auth.users (
   id,
   instance_id,
@@ -24,7 +24,7 @@ INSERT INTO auth.users (
   'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
   '00000000-0000-0000-0000-000000000000',
   'thomas_lenormand@hotmail.fr',
-  '$2b$10$N6KeNYoIzFt7VTtfKkkP3Ocalj0SXDwxsMQzr5C8tRbR2ceg3qKsC',
+  '$2a$10$PwVhDvGciWQqFlQniRpqsOyy0eYhGYfrkrDaAhQxQAEgryNWfaFYW',
   NOW(),
   NOW(),
   NOW(),

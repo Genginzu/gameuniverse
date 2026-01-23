@@ -256,5 +256,90 @@
       "next": "Next",
       "last": "Last"
     }
+  },
+  "players": {
+    "title": "Players",
+    "heroTitle": "Discover the Community",
+    "heroTitleHighlight": "Game Universe",
+    "heroSubtitle": "Explore player profiles and discover their collections",
+    "availableCount": "{count} players available",
+    "searchPlaceholder": "Search for a player...",
+    "searchingFor": "Searching for",
+    "filters": {
+      "title": "Filters",
+      "byGameCount": "Filter by game count",
+      "options": "options",
+      "active": "Active filters",
+      "selected": "{count} selected",
+      "clearAll": "Clear all",
+      "clear": "Clear",
+      "filter": "Filter"
+    },
+    "gameCountRanges": {
+      "0": "0 games",
+      "1-5": "1-5 games",
+      "6-20": "6-20 games",
+      "20+": "20+ games"
+    },
+    "results": {
+      "count": "{count} result(s)",
+      "forQuery": "{count} result(s) for \"{query}\"",
+      "total": "{count} players total",
+      "activeFilters": "Active filters"
+    },
+    "card": {
+      "games": "{count} game(s)",
+      "anonymousPlayer": "Anonymous player",
+      "viewProfile": "View profile →"
+    },
+    "details": {
+      "back": "Back",
+      "memberSince": "Member since",
+      "totalGames": "Games owned",
+      "completedGames": "Completed games",
+      "totalPlayTime": "Play time",
+      "averageRating": "Average rating",
+      "noRating": "No rating",
+      "library": "Library",
+      "inLibrary": "in library"
+    },
+    "library": {
+      "empty": "Empty library",
+      "emptyDescription": "This player doesn't have any games in their library yet",
+      "status": {
+        "owned": "Owned",
+        "wishlist": "Wishlist",
+        "completed": "Completed",
+        "playing": "Playing"
+      }
+    },
+    "empty": {
+      "title": "No players found",
+      "description": "Try modifying your search criteria or explore other categories",
+      "noPlayers": "No players available at the moment",
+      "clearFilters": "Clear filters"
+    },
+    "errors": {
+      "loadingTitle": "Loading Error",
+      "loadingDescription": "An error occurred while loading the players page. Please try again.",
+      "retry": "Retry",
+      "backToPlayers": "Back to players",
+      "backToHome": "Back to home",
+      "notFoundTitle": "Player not found",
+      "notFoundDescription": "The player you are looking for does not exist or has been removed.",
+      "loadingToast": "Loading error",
+      "loadingToastDescription": "Unable to load players. Previous data is preserved."
+    },
+    "pagination": {
+      "page": "Page",
+      "of": "of",
+      "result": "result",
+      "results": "results",
+      "goToPage": "Go to page:",
+      "first": "First",
+      "previous": "Previous",
+      "next": "Next",
+      "last": "Last"
+    }
   }
 }
