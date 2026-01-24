@@ -35,7 +35,7 @@ const mockUser = {
 const mockProfile = {
   id: "123",
   email: "test@example.com",
-  full_name: "Test User",
+  username: "Test User",
   preferred_locale: "fr",
   created_at: "2024-01-01T00:00:00Z",
   updated_at: "2024-01-01T00:00:00Z",
@@ -121,7 +121,7 @@ describe("/api/profile", () => {
     it("should update profile successfully", async () => {
       const updatedProfile = {
         ...mockProfile,
-        full_name: "Updated Name",
+        username: "Updated Name",
         updated_at: expect.any(String),
       };
 
@@ -147,7 +147,7 @@ describe("/api/profile", () => {
 
       const request = new NextRequest("http://localhost:3000/api/profile", {
         method: "PATCH",
-        body: JSON.stringify({ full_name: "Updated Name" }),
+        body: JSON.stringify({ username: "Updated Name" }),
         headers: { "Content-Type": "application/json" },
       });
 
@@ -155,10 +155,10 @@ describe("/api/profile", () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.full_name).toBe("Updated Name");
+      expect(data.username).toBe("Updated Name");
       expect(mockUpdate).toHaveBeenCalledWith(
         expect.objectContaining({
-          full_name: "Updated Name",
+          username: "Updated Name",
           updated_at: expect.any(String),
         })
       );
@@ -172,7 +172,7 @@ describe("/api/profile", () => {
 
       const request = new NextRequest("http://localhost:3000/api/profile", {
         method: "PATCH",
-        body: JSON.stringify({ full_name: "Updated Name" }),
+        body: JSON.stringify({ username: "Updated Name" }),
         headers: { "Content-Type": "application/json" },
       });
 
@@ -207,7 +207,7 @@ describe("/api/profile", () => {
       const request = new NextRequest("http://localhost:3000/api/profile", {
         method: "PATCH",
         body: JSON.stringify({
-          full_name: "Updated Name",
+          username: "Updated Name",
           invalid_field: "should be filtered",
           email: "should be filtered",
         }),
@@ -219,7 +219,7 @@ describe("/api/profile", () => {
       expect(response.status).toBe(200);
       expect(mockUpdate).toHaveBeenCalledWith(
         expect.objectContaining({
-          full_name: "Updated Name",
+          username: "Updated Name",
           updated_at: expect.any(String),
         })
       );

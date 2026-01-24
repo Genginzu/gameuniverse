@@ -23,7 +23,7 @@ export function DashboardContent() {
         <h1 className="mb-2 text-xl font-bold text-gray-900 sm:text-2xl">{t("dashboard")}</h1>
         <p className="text-sm text-gray-600 sm:text-base">
           {t("welcome", {
-            name: user.user_metadata?.full_name || user.email?.split("@")[0] || "Utilisateur",
+            name: user.user_metadata?.username || user.email?.split("@")[0] || "Utilisateur",
           })}
         </p>
       </div>

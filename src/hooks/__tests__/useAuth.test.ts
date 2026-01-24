@@ -122,7 +122,7 @@ describe("useAuth", () => {
       password: "password",
       options: {
         data: {
-          full_name: "Test User",
+          username: "Test User",
           preferred_locale: "fr",
         },
       },

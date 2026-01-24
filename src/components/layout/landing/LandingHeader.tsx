@@ -68,7 +68,7 @@ export function LandingHeader() {
                 <FaUser className="h-4 w-4 text-white" />
               </div>
               <span className="hidden font-medium sm:inline">
-                {user.user_metadata?.full_name || user.email}
+                {user.user_metadata?.username || user.email}
               </span>
             </div>
             <Button variant="ghost" size="sm" onClick={handleSignOut} className="rounded-xl">

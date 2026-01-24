@@ -92,7 +92,7 @@ describe("Navigation and Redirections", () => {
       const mockUser = {
         id: "test-user-id",
         email: "test@example.com",
-        user_metadata: { full_name: "Test User" },
+        user_metadata: { username: "Test User" },
       };
 
       Object.assign(mockUseAuthImplementation, {
@@ -164,7 +164,7 @@ describe("Navigation and Redirections", () => {
       const mockUser = {
         id: "test-user-id",
         email: "test@example.com",
-        user_metadata: { full_name: "Test User" },
+        user_metadata: { username: "Test User" },
       };
 
       Object.assign(mockUseAuthImplementation, {

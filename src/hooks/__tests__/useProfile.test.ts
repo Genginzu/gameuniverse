@@ -26,7 +26,7 @@ const mockSupabase = {
 const mockProfile = {
   id: "123",
   email: "test@example.com",
-  full_name: "Test User",
+  username: "Test User",
   preferred_locale: "fr",
   created_at: "2024-01-01T00:00:00Z",
   updated_at: "2024-01-01T00:00:00Z",
@@ -117,7 +117,7 @@ describe("useProfile", () => {
 
   it("should update profile successfully", async () => {
     const mockUser = { id: "123", email: "test@example.com" };
-    const updatedProfile = { ...mockProfile, full_name: "Updated Name" };
+    const updatedProfile = { ...mockProfile, username: "Updated Name" };
 
     mockSupabase.auth.getUser.mockResolvedValue({
       data: { user: mockUser },
@@ -153,7 +153,7 @@ describe("useProfile", () => {
     // Update profile
     await act(async () => {
       const response = await result.current.updateProfile({
-        full_name: "Updated Name",
+        username: "Updated Name",
       });
       expect(response).toEqual(updatedProfile);
     });
@@ -163,7 +163,7 @@ describe("useProfile", () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ full_name: "Updated Name" }),
+      body: JSON.stringify({ username: "Updated Name" }),
     });
 
     expect(result.current.profile).toEqual(updatedProfile);
@@ -205,7 +205,7 @@ describe("useProfile", () => {
 
     // Try to update profile
     await act(async () => {
-      await expect(result.current.updateProfile({ full_name: "Updated Name" })).rejects.toThrow(
+      await expect(result.current.updateProfile({ username: "Updated Name" })).rejects.toThrow(
         "Update failed"
       );
     });

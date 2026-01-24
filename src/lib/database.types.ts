@@ -657,7 +657,7 @@ export type Database = {
           avatar_url: string | null;
           created_at: string | null;
           email: string;
-          full_name: string | null;
+          username: string | null;
           id: string;
           preferred_locale: string | null;
           updated_at: string | null;
@@ -666,7 +666,7 @@ export type Database = {
           avatar_url?: string | null;
           created_at?: string | null;
           email: string;
-          full_name?: string | null;
+          username?: string | null;
           id: string;
           preferred_locale?: string | null;
           updated_at?: string | null;
@@ -675,7 +675,7 @@ export type Database = {
           avatar_url?: string | null;
           created_at?: string | null;
           email?: string;
-          full_name?: string | null;
+          username?: string | null;
           id?: string;
           preferred_locale?: string | null;
           updated_at?: string | null;

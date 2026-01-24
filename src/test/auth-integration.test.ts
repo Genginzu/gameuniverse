@@ -69,7 +69,7 @@ describe("Authentication System Integration", () => {
 
   it("should filter profile update fields", () => {
     const filterProfileFields = (updates: Record<string, any>) => {
-      const allowedFields = ["full_name", "preferred_locale"];
+      const allowedFields = ["username", "preferred_locale"];
       return Object.keys(updates)
         .filter((key) => allowedFields.includes(key))
         .reduce((obj: any, key) => {
@@ -79,7 +79,7 @@ describe("Authentication System Integration", () => {
     };
 
     const input = {
-      full_name: "Test User",
+      username: "Test User",
       preferred_locale: "fr",
       email: "should be filtered",
       invalid_field: "should be filtered",
@@ -88,7 +88,7 @@ describe("Authentication System Integration", () => {
     const filtered = filterProfileFields(input);
 
     expect(filtered).toEqual({
-      full_name: "Test User",
+      username: "Test User",
       preferred_locale: "fr",
     });
     expect(filtered.email).toBeUndefined();

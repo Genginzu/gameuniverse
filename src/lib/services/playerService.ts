@@ -12,7 +12,7 @@ import { createServerClient } from "@/lib/supabase-server";
 // Type definitions for Supabase query results
 interface ProfileRow {
   id: string;
-  full_name: string | null;
+  username: string | null;
   avatar_url: string | null;
   preferred_locale: string | null;
   created_at: string | null;
@@ -76,44 +76,66 @@ export class PlayerService {
     const supabase = await createServerClient();
     const offset = (page - 1) * limit;
 
-    // Build the base query with library count
+    // Build the base query for profiles (without join - user_library references auth.users, not profiles)
     let query = supabase.from("profiles").select(
       `
         id,
-        full_name,
+        username,
         avatar_url,
-        created_at,
-        user_library(count)
+        created_at
       `,
       { count: "exact" }
     );
 
-    // Add search filter if provided (case-insensitive on full_name)
+    // Add search filter if provided (case-insensitive on username)
     if (search.trim()) {
-      query = query.ilike("full_name", `%${search.trim()}%`);
+      query = query.ilike("username", `%${search.trim()}%`);
     }
 
     // Execute the query to get all matching profiles
-    const { data: allProfiles, error: queryError, count: totalBeforeFilter } = await query;
+    const { data: allProfiles, error: queryError } = await query;
 
     if (queryError) {
       console.error("Error fetching players:", queryError);
       throw new Error(`Failed to fetch players: ${queryError.message}`);
     }
 
+    // Get game counts for all profiles in a separate query
+    const profileIds = (allProfiles || []).map((p) => p.id);
+    
+    let gameCounts: Record<string, number> = {};
+    
+    if (profileIds.length > 0) {
+      // Query user_library to get counts per user
+      const { data: libraryCounts, error: countError } = await supabase
+        .from("user_library")
+        .select("user_id")
+        .in("user_id", profileIds);
+
+      if (countError) {
+        console.error("Error fetching library counts:", countError);
+        // Continue without counts rather than failing
+      } else if (libraryCounts) {
+        // Count games per user
+        for (const entry of libraryCounts) {
+          gameCounts[entry.user_id] = (gameCounts[entry.user_id] || 0) + 1;
+        }
+      }
+    }
+
     // Transform and filter by game count range
-    let transformedPlayers: PlayerSummary[] = (
-      (allProfiles as unknown as ProfileWithLibraryCountRow[]) || []
-    ).map((profile) => {
-      const gamesCount = profile.user_library?.[0]?.count || 0;
-      return {
-        id: profile.id,
-        fullName: profile.full_name,
-        avatarUrl: profile.avatar_url,
-        gamesCount,
-        createdAt: profile.created_at || new Date().toISOString(),
-      };
-    });
+    let transformedPlayers: PlayerSummary[] = ((allProfiles as unknown as ProfileRow[]) || []).map(
+      (profile) => {
+        const gamesCount = gameCounts[profile.id] || 0;
+        return {
+          id: profile.id,
+          fullName: profile.username,
+          avatarUrl: profile.avatar_url,
+          gamesCount,
+          createdAt: profile.created_at || new Date().toISOString(),
+        };
+      }
+    );
 
     // Apply game count range filter if specified
     if (gameCountRange && gameCountRange in GAME_COUNT_RANGES) {
@@ -161,65 +183,80 @@ export class PlayerService {
   ): Promise<PlayerDetails | null> {
     const supabase = await createServerClient();
 
-    // Fetch player profile with library
-    const { data: profile, error } = await supabase
+    // Fetch player profile (without join - user_library references auth.users, not profiles)
+    const { data: profile, error: profileError } = await supabase
       .from("profiles")
       .select(
         `
         id,
-        full_name,
+        username,
         avatar_url,
         preferred_locale,
         created_at,
-        updated_at,
-        user_library(
-          id,
-          game_id,
-          status,
-          play_time_hours,
-          rating,
-          added_at,
-          games(
-            id,
-            slug,
-            cover_image_url,
-            game_translations(
-              title
-            )
-          )
-        )
+        updated_at
       `
       )
       .eq("id", playerId)
-      .eq("user_library.games.game_translations.language_code", locale)
       .single();
 
-    if (error) {
-      if (error.code === "PGRST116") {
+    if (profileError) {
+      if (profileError.code === "PGRST116") {
         // No rows returned - player not found
         return null;
       }
-      console.error("Error fetching player details:", error);
-      throw new Error(`Failed to fetch player details: ${error.message}`);
+      console.error("Error fetching player details:", profileError);
+      throw new Error(`Failed to fetch player details: ${profileError.message}`);
     }
 
     if (!profile) {
       return null;
     }
 
-    const typedProfile = profile as unknown as ProfileDetailsRow;
+    // Fetch user library separately
+    const { data: libraryData, error: libraryError } = await supabase
+      .from("user_library")
+      .select(
+        `
+        id,
+        game_id,
+        status,
+        play_time_hours,
+        rating,
+        added_at,
+        games(
+          id,
+          slug,
+          cover_image_url,
+          game_translations(
+            title,
+            language_code
+          )
+        )
+      `
+      )
+      .eq("user_id", playerId);
+
+    if (libraryError) {
+      console.error("Error fetching user library:", libraryError);
+      // Continue without library rather than failing
+    }
 
     // Transform library entries
-    const library: PlayerLibraryGame[] = (typedProfile.user_library || [])
-      .map((entry) => {
+    const library: PlayerLibraryGame[] = (libraryData || [])
+      .map((entry: any) => {
         const game = entry.games;
         if (!game) return null;
+
+        // Find translation for the requested locale
+        const translation = game.game_translations?.find(
+          (t: any) => t.language_code === locale
+        ) || game.game_translations?.[0];
 
         return {
           id: entry.id,
           gameId: entry.game_id,
           slug: game.slug,
-          title: game.game_translations?.[0]?.title || "Unknown",
+          title: translation?.title || "Unknown",
           coverImage: game.cover_image_url,
           status: entry.status as PlayerLibraryGame["status"],
           playTimeHours: entry.play_time_hours || 0,
@@ -234,12 +271,12 @@ export class PlayerService {
     const stats = this.calculateStats(library);
 
     return {
-      id: typedProfile.id,
-      fullName: typedProfile.full_name,
-      avatarUrl: typedProfile.avatar_url,
-      preferredLocale: typedProfile.preferred_locale || "fr",
-      createdAt: typedProfile.created_at || new Date().toISOString(),
-      updatedAt: typedProfile.updated_at || new Date().toISOString(),
+      id: profile.id,
+      fullName: profile.username,
+      avatarUrl: profile.avatar_url,
+      preferredLocale: profile.preferred_locale || "fr",
+      createdAt: profile.created_at || new Date().toISOString(),
+      updatedAt: profile.updated_at || new Date().toISOString(),
       stats,
       library,
     };

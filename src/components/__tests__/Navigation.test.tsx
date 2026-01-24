@@ -98,7 +98,7 @@ describe("Navigation Component", () => {
       id: "test-user-id",
       email: "test@example.com",
       user_metadata: {
-        full_name: "Test User",
+        username: "Test User",
       },
       created_at: "2024-01-01T00:00:00Z",
       last_sign_in_at: "2024-01-01T00:00:00Z",

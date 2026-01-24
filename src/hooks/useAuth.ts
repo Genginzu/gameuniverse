@@ -145,7 +145,7 @@ export function useAuth() {
       password,
       options: {
         data: {
-          full_name: fullName || "",
+          username: fullName || "",
           preferred_locale: preferredLocale || "fr",
         },
       },

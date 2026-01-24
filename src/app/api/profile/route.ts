@@ -44,7 +44,7 @@ export async function PATCH(request: NextRequest) {
     const updates = await request.json();
 
     // Validate allowed fields
-    const allowedFields = ["full_name", "preferred_locale"];
+    const allowedFields = ["username", "preferred_locale"];
     const filteredUpdates = Object.keys(updates)
       .filter((key) => allowedFields.includes(key))
       .reduce((obj: Record<string, unknown>, key) => {

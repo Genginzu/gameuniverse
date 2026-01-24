@@ -42,6 +42,16 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(result);
   } catch (error) {
     console.error("Unexpected error in players API:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    // Return more details in development
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    return NextResponse.json(
+      { 
+        error: "Internal server error", 
+        message: process.env.NODE_ENV === "development" ? errorMessage : undefined,
+        stack: process.env.NODE_ENV === "development" ? errorStack : undefined
+      }, 
+      { status: 500 }
+    );
   }
 }

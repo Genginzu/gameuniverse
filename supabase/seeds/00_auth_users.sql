@@ -65,17 +65,20 @@ INSERT INTO auth.identities (
   NOW()
 ) ON CONFLICT (id) DO NOTHING;
 
--- Créer le profil associé dans la table public.profiles (si elle existe)
+-- Créer le profil associé dans la table public.profiles
 DO $$
 BEGIN
   IF EXISTS (SELECT FROM information_schema.tables WHERE table_schema = 'public' AND table_name = 'profiles') THEN
-    INSERT INTO public.profiles (id, email, full_name, created_at, updated_at)
+    INSERT INTO public.profiles (id, email, username, preferred_locale, created_at, updated_at)
     VALUES (
       'a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11',
       'thomas_lenormand@hotmail.fr',
       'Genginzu',
+      'fr',
       NOW(),
       NOW()
-    ) ON CONFLICT (id) DO NOTHING;
+    ) ON CONFLICT (id) DO UPDATE SET
+      username = EXCLUDED.username,
+      updated_at = NOW();
   END IF;
 END $$;

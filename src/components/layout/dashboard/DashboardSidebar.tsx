@@ -164,7 +164,6 @@ function SidebarContent({
             <div className="ml-3 min-w-0 flex-1">
               <p className="truncate text-sm font-medium text-gray-900">
                 {user.user_metadata?.username ||
-                  user.user_metadata?.full_name ||
                   user.email?.split("@")[0] ||
                   "Utilisateur"}
               </p>
