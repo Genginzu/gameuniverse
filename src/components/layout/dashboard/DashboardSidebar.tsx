@@ -1,6 +1,7 @@
 import { User } from "@supabase/supabase-js";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
   FaChartLine,
@@ -113,13 +114,29 @@ function SidebarContent({
   dropdownRef: React.RefObject<HTMLDivElement | null>;
   onLinkClick: () => void;
 }) {
+  const pathname = usePathname();
+
+  // Helper to check if a path is active
+  const isActive = (path: string) => {
+    // Remove locale prefix if present (e.g., /fr/dashboard -> /dashboard)
+    const normalizedPathname = pathname.replace(/^\/(fr|en)/, "") || "/";
+    return normalizedPathname === path || normalizedPathname.startsWith(path + "/");
+  };
+
+  const linkClasses = (path: string) =>
+    `flex items-center rounded-xl px-3 py-2 text-sm font-medium ${
+      isActive(path)
+        ? "bg-gray-100 text-gray-900"
+        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+    }`;
+
   return (
     <div className="flex h-full flex-col">
       {/* Navigation Menu */}
       <nav className="flex-1 space-y-2 overflow-y-auto p-4">
         <Link
           href="/dashboard"
-          className="flex items-center rounded-xl bg-gray-100 px-3 py-2 text-sm font-medium text-gray-900"
+          className={linkClasses("/dashboard")}
           onClick={onLinkClick}
         >
           <FaChartLine className="mr-3 h-4 w-4" />
@@ -127,7 +144,7 @@ function SidebarContent({
         </Link>
         <Link
           href="/library"
-          className="flex items-center rounded-xl px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+          className={linkClasses("/library")}
           onClick={onLinkClick}
         >
           <FaGamepad className="mr-3 h-4 w-4" />
@@ -135,7 +152,7 @@ function SidebarContent({
         </Link>
         <Link
           href="/profile"
-          className="flex items-center rounded-xl px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+          className={linkClasses("/profile")}
           onClick={onLinkClick}
         >
           <FaUser className="mr-3 h-4 w-4" />
@@ -143,7 +160,7 @@ function SidebarContent({
         </Link>
         <Link
           href="/settings"
-          className="flex items-center rounded-xl px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+          className={linkClasses("/settings")}
           onClick={onLinkClick}
         >
           <FaCog className="mr-3 h-4 w-4" />
