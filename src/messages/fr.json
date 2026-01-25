@@ -341,5 +341,41 @@
       "next": "Suivant",
       "last": "Dernier"
     }
+  },
+  "settings": {
+    "title": "Paramètres",
+    "subtitle": "Gérez les paramètres de votre compte et vos préférences",
+    "profile": {
+      "title": "Profil",
+      "description": "Gérez vos informations personnelles",
+      "username": "Nom d'utilisateur",
+      "usernamePlaceholder": "Entrez votre nom d'utilisateur",
+      "usernameRequired": "Le nom d'utilisateur est requis",
+      "usernameEmpty": "Le nom d'utilisateur ne peut pas être vide",
+      "noUsername": "Aucun nom d'utilisateur défini",
+      "email": "Email",
+      "emailPlaceholder": "Entrez votre email",
+      "emailRequired": "L'email est requis",
+      "emailInvalid": "Format d'email invalide",
+      "emailInUse": "Cette adresse email est déjà utilisée",
+      "updateUsername": "Mettre à jour le nom d'utilisateur",
+      "updateEmail": "Mettre à jour l'email",
+      "usernameUpdated": "Nom d'utilisateur mis à jour",
+      "emailUpdateSent": "Un email de confirmation a été envoyé à votre nouvelle adresse"
+    },
+    "security": {
+      "title": "Sécurité",
+      "description": "Gérez votre mot de passe et vos paramètres de sécurité",
+      "password": "Mot de passe",
+      "passwordDescription": "Demandez un lien de réinitialisation par email",
+      "requestReset": "Demander une réinitialisation",
+      "resetSent": "Un email de réinitialisation a été envoyé",
+      "resetError": "Échec de l'envoi de l'email de réinitialisation"
+    },
+    "errors": {
+      "updateFailed": "Échec de la mise à jour. Veuillez réessayer.",
+      "connectionError": "Erreur de connexion. Veuillez réessayer.",
+      "genericError": "Une erreur s'est produite. Veuillez réessayer."
+    }
   }
 }

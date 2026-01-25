@@ -40,15 +40,6 @@ export function SearchSkeleton() {
           </div>
         </div>
 
-        {/* Results info skeleton */}
-        <div className="mb-4 flex flex-col items-start justify-between rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 p-4 sm:mb-6 sm:flex-row sm:items-center">
-          <div className="flex items-center space-x-2">
-            <Skeleton className="h-2 w-2 rounded-full" />
-            <Skeleton className="h-4 w-48" />
-          </div>
-          <Skeleton className="mt-2 h-4 w-24 sm:mt-0" />
-        </div>
-
         {/* Loading spinner */}
         <div className="flex flex-col items-center justify-center py-16 sm:py-20">
           <div className="relative">

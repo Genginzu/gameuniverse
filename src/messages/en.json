@@ -341,5 +341,41 @@
       "next": "Next",
       "last": "Last"
     }
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your account settings and preferences",
+    "profile": {
+      "title": "Profile",
+      "description": "Manage your personal information",
+      "username": "Username",
+      "usernamePlaceholder": "Enter your username",
+      "usernameRequired": "Username is required",
+      "usernameEmpty": "Username cannot be empty",
+      "noUsername": "No username set",
+      "email": "Email",
+      "emailPlaceholder": "Enter your email",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Invalid email format",
+      "emailInUse": "This email is already in use",
+      "updateUsername": "Update username",
+      "updateEmail": "Update email",
+      "usernameUpdated": "Username updated successfully",
+      "emailUpdateSent": "A confirmation email has been sent to your new address"
+    },
+    "security": {
+      "title": "Security",
+      "description": "Manage your password and security settings",
+      "password": "Password",
+      "passwordDescription": "Request a password reset link via email",
+      "requestReset": "Request password reset",
+      "resetSent": "A password reset email has been sent",
+      "resetError": "Failed to send password reset email"
+    },
+    "errors": {
+      "updateFailed": "Failed to update. Please try again.",
+      "connectionError": "Connection error. Please try again.",
+      "genericError": "An error occurred. Please try again."
+    }
   }
 }

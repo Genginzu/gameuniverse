@@ -2,13 +2,9 @@ import { NextIntlClientProvider, hasLocale } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
-import { Inter } from "next/font/google";
-import "../globals.css";
 import type { Metadata } from "next";
 import { AuthErrorHandler } from "@/components/auth/AuthErrorHandler";
 import { ErrorProvider } from "@/components/providers/ErrorProvider";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Game Universe",
@@ -40,15 +36,11 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   const messages = await getMessages();
 
   return (
-    <html lang={locale}>
-      <body className={inter.className}>
-        <ErrorProvider>
-          <NextIntlClientProvider locale={locale} messages={messages}>
-            <AuthErrorHandler />
-            {children}
-          </NextIntlClientProvider>
-        </ErrorProvider>
-      </body>
-    </html>
+    <ErrorProvider>
+      <NextIntlClientProvider locale={locale} messages={messages}>
+        <AuthErrorHandler />
+        {children}
+      </NextIntlClientProvider>
+    </ErrorProvider>
   );
 }
