@@ -441,6 +441,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
                   totalCount={pagination.totalCount}
                   onPageChange={handlePageChange}
                   loading={loading}
+                  locale={locale}
                 />
               </div>
             )}

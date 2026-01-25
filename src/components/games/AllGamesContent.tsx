@@ -349,6 +349,7 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
                   totalCount={pagination.totalCount}
                   onPageChange={handlePageChange}
                   loading={loading}
+                  locale={locale}
                 />
               </div>
             )}

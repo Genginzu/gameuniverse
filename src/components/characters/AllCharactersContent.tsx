@@ -330,6 +330,7 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
                   totalCount={pagination.totalCount}
                   onPageChange={handlePageChange}
                   loading={loading}
+                  locale={locale}
                 />
               </div>
             )}
