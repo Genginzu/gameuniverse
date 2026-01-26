@@ -102,6 +102,8 @@ export interface GameDetails {
   pricing: GamePricing[];
   createdAt: string;
   updatedAt: string;
+  igdbId?: number;
+  lastSyncedAt?: string;
 }
 
 export interface GameSummary {
@@ -118,4 +120,6 @@ export interface GameSummary {
   developer: string;
   publisher: string;
   metascore?: number;
+  igdbId?: number;
+  source?: "local" | "igdb";
 }

@@ -529,6 +529,8 @@ export type Database = {
           cover_image_url: string | null;
           background_image_url?: string | null;
           background_color?: string | null;
+          igdb_id: number | null;
+          last_synced_at?: string | null;
           created_at: string | null;
           updated_at: string | null;
         };
@@ -549,6 +551,8 @@ export type Database = {
           cover_image_url?: string | null;
           background_image_url?: string | null;
           background_color?: string | null;
+          igdb_id?: number | null;
+          last_synced_at?: string | null;
           created_at?: string | null;
           updated_at?: string | null;
         };
@@ -569,6 +573,8 @@ export type Database = {
           cover_image_url?: string | null;
           background_image_url?: string | null;
           background_color?: string | null;
+          igdb_id?: number | null;
+          last_synced_at?: string | null;
           created_at?: string | null;
           updated_at?: string | null;
         };

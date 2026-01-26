@@ -1,9 +1,10 @@
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import { GameUniverseLogo } from "@/components/ui/game-universe-logo";
-import { Input } from "@/components/ui/input";
+import { GameSearchBar } from "@/components/games/GameSearchBar";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { FaSearch, FaBars, FaTimes } from "react-icons/fa";
+import { useLocale } from "next-intl";
+import { FaBars, FaTimes } from "react-icons/fa";
 
 interface DashboardHeaderProps {
   sidebarOpen: boolean;
@@ -11,6 +12,8 @@ interface DashboardHeaderProps {
 }
 
 export default function DashboardHeader({ sidebarOpen, setSidebarOpen }: DashboardHeaderProps) {
+  const locale = useLocale();
+
   return (
     <header className="border-b border-gray-200 bg-white px-4 py-3 lg:px-6 lg:py-4">
       <div className="flex items-center justify-between">
@@ -36,16 +39,9 @@ export default function DashboardHeader({ sidebarOpen, setSidebarOpen }: Dashboa
           </Link>
         </div>
 
-        {/* Center - Search Bar (hidden on mobile) */}
+        {/* Center - Hybrid Search Bar (hidden on mobile) */}
         <div className="ml-4 hidden max-w-md flex-1 md:block lg:ml-8">
-          <div className="relative">
-            <FaSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
-            <Input
-              type="text"
-              placeholder="Rechercher..."
-              className="w-full rounded-xl border-gray-200 bg-gray-50 pl-10 focus:bg-white"
-            />
-          </div>
+          <GameSearchBar locale={locale} />
         </div>
 
         {/* Right side - Navigation Links + Language Switcher */}
@@ -72,25 +68,13 @@ export default function DashboardHeader({ sidebarOpen, setSidebarOpen }: Dashboa
             </Link>
           </nav>
 
-          {/* Mobile search button */}
-          <Button variant="ghost" size="sm" className="md:hidden">
-            <FaSearch className="h-4 w-4" />
-          </Button>
-
           <LanguageSwitcher />
         </div>
       </div>
 
-      {/* Mobile search bar (shown when needed) */}
+      {/* Mobile search bar */}
       <div className="mt-3 md:hidden">
-        <div className="relative">
-          <FaSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
-          <Input
-            type="text"
-            placeholder="Rechercher..."
-            className="w-full rounded-xl border-gray-200 bg-gray-50 pl-10 focus:bg-white"
-          />
-        </div>
+        <GameSearchBar locale={locale} />
       </div>
     </header>
   );

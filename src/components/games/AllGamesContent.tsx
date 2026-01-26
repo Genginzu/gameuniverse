@@ -31,7 +31,6 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [loading, setLoading] = useState(true);
   const [initialLoading, setInitialLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [selectedPublishers, setSelectedPublishers] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
@@ -62,13 +61,8 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
 
   // Fetch games avec gestion d'erreurs améliorée
   const fetchGames = useCallback(
-    async (
-      search: string = "",
-      genres: string[] = [],
-      publishers: string[] = [],
-      page: number = 1
-    ) => {
-      console.log("🎮 fetchGames called with:", { search, genres, publishers, page });
+    async (genres: string[] = [], publishers: string[] = [], page: number = 1) => {
+      console.log("🎮 fetchGames called with:", { genres, publishers, page });
       setLoading(true);
 
       const result = await executeAsync(async () => {
@@ -77,10 +71,6 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
           page: page.toString(),
           limit: "20",
         });
-
-        if (search.trim()) {
-          params.append("search", search.trim());
-        }
 
         if (genres.length > 0) {
           params.append("genres", genres.join(","));
@@ -121,12 +111,6 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
     [locale, apiClient, executeAsync]
   );
 
-  // Handle search
-  const handleSearch = useCallback((query: string) => {
-    setSearchQuery(query);
-    // Le useEffect va gérer l'appel à fetchGames
-  }, []);
-
   // Handle genre filter
   const handleGenreFilter = useCallback((genres: string[]) => {
     setSelectedGenres(genres);
@@ -142,14 +126,13 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
   // Handle page change
   const handlePageChange = useCallback(
     (page: number) => {
-      fetchGames(searchQuery, selectedGenres, selectedPublishers, page);
+      fetchGames(selectedGenres, selectedPublishers, page);
     },
-    [fetchGames, searchQuery, selectedGenres, selectedPublishers]
+    [fetchGames, selectedGenres, selectedPublishers]
   );
 
   // Clear all filters
   const handleClearFilters = useCallback(() => {
-    setSearchQuery("");
     setSelectedGenres([]);
     setSelectedPublishers([]);
     // Les useEffect vont gérer le rechargement
@@ -202,12 +185,12 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
     if (initialLoading) return;
 
     const timeoutId = setTimeout(() => {
-      fetchGames(searchQuery, selectedGenres, selectedPublishers, 1);
+      fetchGames(selectedGenres, selectedPublishers, 1);
     }, 300); // Debounce de 300ms
 
     return () => clearTimeout(timeoutId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchQuery, selectedGenres, selectedPublishers]); // Ne PAS inclure fetchGames
+  }, [selectedGenres, selectedPublishers]); // Ne PAS inclure fetchGames
 
   // Show full skeleton on initial load
   if (initialLoading) {
@@ -263,7 +246,7 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
           {/* Search bar with filter button - responsive layout */}
           <div className="flex flex-col gap-4 sm:flex-row">
             <div className="flex-1">
-              <GameSearchBar onSearch={handleSearch} initialValue={searchQuery} />
+              <GameSearchBar locale={locale} />
             </div>
             <div className="flex-shrink-0">
               <GameFilterButton
@@ -313,11 +296,11 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
                   {t("noGamesFound")}
                 </h3>
                 <p className="max-w-md text-sm text-gray-500 sm:text-base">
-                  {searchQuery || selectedGenres.length > 0 || selectedPublishers.length > 0
+                  {selectedGenres.length > 0 || selectedPublishers.length > 0
                     ? t("modifySearch")
                     : t("noGamesAvailable")}
                 </p>
-                {(searchQuery || selectedGenres.length > 0 || selectedPublishers.length > 0) && (
+                {(selectedGenres.length > 0 || selectedPublishers.length > 0) && (
                   <button
                     onClick={handleClearFilters}
                     className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"

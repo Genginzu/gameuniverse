@@ -473,6 +473,19 @@
     "noGamesAvailable": "Aucun jeu disponible pour le moment",
     "clearFilters": "Effacer les filtres"
   },
+  "search": {
+    "placeholder": "Rechercher un jeu...",
+    "searching": "Recherche en cours pour \"{query}\"",
+    "noResults": "Aucun jeu trouvé",
+    "seeAll": "Voir tous les résultats",
+    "loading": "Chargement...",
+    "source": {
+      "local": "En bibliothèque",
+      "igdb": "IGDB"
+    },
+    "importing": "Import en cours...",
+    "importError": "Échec de l'import"
+  },
   "gameDetails": {
     "overview": "Aperçu",
     "platforms": "Plateformes",

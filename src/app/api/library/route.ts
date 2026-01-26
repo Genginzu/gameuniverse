@@ -31,14 +31,10 @@ export async function GET(request: NextRequest) {
         games (
           id,
           slug,
-          developer,
-          publisher,
           release_date,
-          current_price,
-          currency,
           metascore,
-          pegi_rating,
-          media,
+          cover_image_url,
+          background_color,
           game_translations (
             title,
             description,
@@ -53,6 +49,30 @@ export async function GET(request: NextRequest) {
                 language_code
               )
             )
+          ),
+          game_companies (
+            role,
+            is_primary,
+            companies (
+              name
+            )
+          ),
+          game_prices (
+            price,
+            currency,
+            is_available
+          ),
+          game_ratings (
+            is_primary,
+            ratings (
+              display_name,
+              minimum_age
+            )
+          ),
+          game_artwork (
+            url,
+            artwork_type,
+            is_featured
           )
         )
       `
@@ -95,23 +115,48 @@ export async function GET(request: NextRequest) {
             };
           }) || [];
 
-        // Parse media
-        const media = typeof game.media === "string" ? JSON.parse(game.media) : game.media || {};
+        // Get background image from artwork
+        const gameArtwork = (game as any).game_artwork || [];
+        const backgroundArtwork =
+          gameArtwork.find((a: any) => a.is_featured) ||
+          gameArtwork.find((a: any) => a.artwork_type === "wallpaper") ||
+          gameArtwork[0];
+
+        // Extract developer and publisher from game_companies
+        const gameCompanies = (game as any).game_companies || [];
+        const developerCompany =
+          gameCompanies.find((gc: any) => gc.role === "developer" && gc.is_primary) ||
+          gameCompanies.find((gc: any) => gc.role === "developer");
+        const publisherCompany =
+          gameCompanies.find((gc: any) => gc.role === "publisher" && gc.is_primary) ||
+          gameCompanies.find((gc: any) => gc.role === "publisher");
+
+        // Extract price from game_prices (get first available price)
+        const gamePrices = (game as any).game_prices || [];
+        const availablePrice = gamePrices.find((gp: any) => gp.is_available) || gamePrices[0];
+
+        // Extract rating from game_ratings (get primary rating)
+        const gameRatings = (game as any).game_ratings || [];
+        const primaryRating = gameRatings.find((gr: any) => gr.is_primary) || gameRatings[0];
 
         return {
           id: game.id,
           slug: game.slug,
           title: translation?.title || "Untitled Game",
           description: translation?.description,
-          coverImage: media.coverImage,
-          backgroundImage: media.backgroundImage,
-          backgroundColor: media.backgroundColor,
+          coverImage: game.cover_image_url,
+          backgroundImage: backgroundArtwork?.url,
+          backgroundColor: game.background_color,
           releaseDate: game.release_date,
           releaseYear: game.release_date ? new Date(game.release_date).getFullYear() : undefined,
           genres,
-          developer: game.developer || "Unknown Developer",
-          publisher: game.publisher || "Unknown Publisher",
+          developer: developerCompany?.companies?.name || "Unknown Developer",
+          publisher: publisherCompany?.companies?.name || "Unknown Publisher",
           metascore: game.metascore,
+          currentPrice: availablePrice?.price,
+          currency: availablePrice?.currency,
+          pegiRating: primaryRating?.ratings?.minimum_age,
+          ratingDisplayName: primaryRating?.ratings?.display_name,
           // Library-specific data
           libraryStatus: item.status,
           addedAt: item.added_at,
