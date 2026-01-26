@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { CharacterCard } from "./CharacterCard";
 import { CharacterSearchBar } from "./CharacterSearchBar";
 import { CharacterFilters } from "./CharacterFilters";
@@ -24,6 +25,8 @@ interface AllCharactersContentProps {
 }
 
 export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProps) {
+  const t = useTranslations("characters");
+  const tErrors = useTranslations("errors");
   // State management
   const [characters, setCharacters] = useState<CharacterSummary[]>([]);
   const [games, setGames] = useState<Game[]>([]);
@@ -104,9 +107,8 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
         // On error, keep previous data but show toast
         toast({
           variant: "destructive",
-          title: "Erreur de chargement",
-          description:
-            "Impossible de charger les personnages. Les données précédentes sont conservées.",
+          title: tErrors("loadingError"),
+          description: tErrors("loadingErrorDescription"),
         });
       }
 
@@ -220,13 +222,13 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
         <div className="relative mx-auto max-w-4xl">
           <div className="text-center">
             <h1 className="mb-3 text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl xl:text-5xl">
-              Découvrez des Personnages
+              {t("heroTitle")}
               <span className="block bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
-                Extraordinaires
+                {t("heroTitleHighlight")}
               </span>
             </h1>
             <p className="mx-auto max-w-xl text-base text-indigo-100/90 sm:text-lg">
-              Explorez notre collection de personnages de jeux vidéo
+              {t("heroSubtitle")}
             </p>
           </div>
         </div>
@@ -290,19 +292,19 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
                   </svg>
                 </div>
                 <h3 className="mb-2 text-lg font-semibold text-gray-900 sm:text-xl">
-                  Aucun personnage trouvé
+                  {t("empty.title")}
                 </h3>
                 <p className="max-w-md text-sm text-gray-500 sm:text-base">
                   {searchQuery || selectedGames.length > 0 || selectedRoles.length > 0
-                    ? "Essayez de modifier vos critères de recherche ou explorez d'autres catégories"
-                    : "Aucun personnage disponible pour le moment"}
+                    ? t("empty.description")
+                    : t("empty.noCharacters")}
                 </p>
                 {(searchQuery || selectedGames.length > 0 || selectedRoles.length > 0) && (
                   <button
                     onClick={handleClearFilters}
                     className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
                   >
-                    Effacer les filtres
+                    {t("empty.clearFilters")}
                   </button>
                 )}
               </div>

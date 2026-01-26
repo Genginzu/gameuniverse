@@ -1,5 +1,8 @@
 {
   "navigation": {
+    "games": "Jeux",
+    "characters": "Personnages",
+    "players": "Joueurs",
     "home": "Accueil",
     "library": "Bibliothèque",
     "dashboard": "Tableau de bord",
@@ -12,9 +15,13 @@
     "subtitle": "La plateforme complète pour explorer, découvrir et partager votre passion du gaming",
     "cta": {
       "signup": "Commencer gratuitement",
-      "login": "Se connecter"
+      "login": "Se connecter",
+      "title": "Prêt à commencer votre aventure gaming ?",
+      "subtitle": "Rejoignez des milliers de gamers qui utilisent déjà Game Universe pour découvrir leurs prochains jeux favoris"
     },
     "features": {
+      "mainTitle": "Fonctionnalités principales",
+      "mainSubtitle": "Découvrez tout ce que Game Universe a à offrir pour enrichir votre expérience gaming",
       "library": {
         "title": "Bibliothèque complète",
         "description": "Explorez des milliers de jeux vidéo avec des informations détaillées"
@@ -27,6 +34,13 @@
         "title": "Informations détaillées",
         "description": "Consultez toutes les informations techniques, prix et médias de chaque jeu"
       }
+    },
+    "stats": {
+      "title": "Nos statistiques",
+      "subtitle": "Des chiffres qui témoignent de notre engagement envers la communauté gaming",
+      "gamesReferenced": "Jeux référencés",
+      "ratings": "Évaluations",
+      "newGamesPerMonth": "Nouveaux jeux/mois"
     }
   },
   "library": {
@@ -47,6 +61,8 @@
   "game": {
     "details": "Détails du jeu",
     "developer": "Développeur",
+    "developerShort": "Dév",
+    "publisherShort": "Éd",
     "publisher": "Éditeur",
     "releaseDate": "Date de sortie",
     "genres": "Genres",
@@ -61,7 +77,22 @@
     "screenshots": "Captures d'écran",
     "artwork": "Illustrations",
     "trailers": "Bandes-annonces",
-    "gameplay": "Gameplay"
+    "gameplay": "Gameplay",
+    "addToLibrary": "Ajouter à ma bibliothèque",
+    "removeFromLibrary": "Retirer de ma bibliothèque",
+    "companies": {
+      "title": "Entreprises",
+      "noCompanies": "Aucune entreprise trouvée",
+      "viewProfile": "Voir profil",
+      "primary": "Principal",
+      "roles": {
+        "developer": "Développeur",
+        "publisher": "Éditeur",
+        "co-developer": "Co-développeur",
+        "co-publisher": "Co-éditeur"
+      },
+      "developedBy": "Développé par"
+    }
   },
   "auth": {
     "signin": {
@@ -93,6 +124,36 @@
       "generic": "Une erreur inattendue s'est produite",
       "tryAgain": "Réessayer",
       "backHome": "Retour à l'accueil"
+    },
+    "resetPassword": {
+      "title": "Nouveau mot de passe",
+      "description": "Choisissez un nouveau mot de passe sécurisé pour votre compte.",
+      "newPassword": "Nouveau mot de passe",
+      "newPasswordPlaceholder": "Entrez votre nouveau mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "confirmPasswordPlaceholder": "Confirmez votre nouveau mot de passe",
+      "submit": "Mettre à jour le mot de passe",
+      "submitting": "Mise à jour...",
+      "success": "Mot de passe mis à jour !",
+      "successDescription": "Votre mot de passe a été mis à jour avec succès. Redirection en cours...",
+      "invalidLink": "Lien invalide",
+      "invalidLinkDescription": "Le lien de réinitialisation est invalide ou a expiré.",
+      "noTokenFound": "Aucun token de récupération trouvé. Veuillez demander un nouveau lien.",
+      "backToLogin": "Retour à la connexion",
+      "requestNewLink": "Demander un nouveau lien",
+      "requirements": {
+        "title": "Le mot de passe doit contenir :",
+        "minLength": "Au moins 8 caractères",
+        "uppercase": "Une majuscule et une minuscule",
+        "number": "Au moins un chiffre"
+      },
+      "validation": {
+        "minLength": "Le mot de passe doit contenir au moins 8 caractères",
+        "uppercase": "Le mot de passe doit contenir au moins une majuscule",
+        "lowercase": "Le mot de passe doit contenir au moins une minuscule",
+        "number": "Le mot de passe doit contenir au moins un chiffre",
+        "mismatch": "Les mots de passe ne correspondent pas"
+      }
     },
     "footer": {
       "text": "© 2024 Game Universe. Tous droits réservés."
@@ -166,14 +227,21 @@
     "next": "Suivant",
     "previous": "Précédent",
     "close": "Fermer",
-    "language": "Langue"
+    "language": "Langue",
+    "reloadPage": "Recharger la page",
+    "backToHome": "Retour à l'accueil",
+    "games": "jeu(x)"
   },
   "pagination": {
     "page": "Page {current} sur {total}",
     "previous": "Précédent",
     "next": "Suivant",
     "first": "Premier",
-    "last": "Dernier"
+    "last": "Dernier",
+    "of": "sur",
+    "result": "résultat",
+    "results": "résultats",
+    "goToPage": "Aller à la page:"
   },
   "characters": {
     "title": "Personnages",
@@ -215,18 +283,36 @@
       "primaryGame": "Jeu principal",
       "role": "Rôle",
       "appearances": "Apparitions",
-      "gamesCount": "{count} jeu(x)"
+      "gamesCount": "{count} jeu(x)",
+      "gameAppearances": "Apparitions dans les jeux",
+      "noGames": "Aucun jeu associé",
+      "primary": "Principal",
+      "weaponsEquipment": "Armes & Équipement",
+      "biography": "Biographie",
+      "relationships": "Relations",
+      "noDescription": "Aucune description disponible",
+      "relationshipTypes": {
+        "ally": "Allié",
+        "enemy": "Ennemi",
+        "family": "Famille",
+        "friend": "Ami",
+        "rival": "Rival",
+        "romantic": "Romantique",
+        "mentor": "Mentor"
+      }
     },
     "tabs": {
       "media": "Médias",
       "games": "Jeux",
-      "biography": "Biographie"
+      "biography": "Biographie",
+      "description": "Description"
     },
     "media": {
       "screenshots": "Captures d'écran",
       "artwork": "Illustrations",
       "videos": "Vidéos",
-      "videoNotSupported": "Votre navigateur ne supporte pas la lecture vidéo."
+      "videoNotSupported": "Votre navigateur ne supporte pas la lecture vidéo.",
+      "noMedia": "Aucun média disponible"
     },
     "empty": {
       "title": "Aucun personnage trouvé",
@@ -238,6 +324,7 @@
       "loadingTitle": "Erreur de chargement",
       "loadingDescription": "Une erreur s'est produite lors du chargement de la page des personnages. Veuillez réessayer.",
       "detailsLoadingDescription": "Une erreur s'est produite lors du chargement des détails du personnage. Veuillez réessayer.",
+      "unableToLoad": "Impossible de charger les détails du personnage.",
       "retry": "Réessayer",
       "backToCharacters": "Retour aux personnages",
       "backToHome": "Retour à l'accueil",
@@ -322,6 +409,8 @@
     "errors": {
       "loadingTitle": "Erreur de chargement",
       "loadingDescription": "Une erreur s'est produite lors du chargement de la page des joueurs. Veuillez réessayer.",
+      "detailsLoadingDescription": "Une erreur s'est produite lors de l'affichage du profil du joueur.",
+      "unableToLoad": "Impossible de charger le profil du joueur.",
       "retry": "Réessayer",
       "backToPlayers": "Retour aux joueurs",
       "backToHome": "Retour à l'accueil",
@@ -340,6 +429,144 @@
       "previous": "Précédent",
       "next": "Suivant",
       "last": "Dernier"
+    }
+  },
+  "userLibrary": {
+    "title": "Ma Bibliothèque",
+    "subtitle": "Gérez votre collection personnelle de jeux vidéo",
+    "heroTitle": "Ma Bibliothèque",
+    "heroTitleHighlight": "de Jeux",
+    "heroSubtitle": "Gérez et explorez votre collection personnelle",
+    "errors": {
+      "loadingDescription": "Une erreur s'est produite lors du chargement de votre bibliothèque."
+    },
+    "stats": {
+      "gamesOwned": "Jeux possédés",
+      "inLibrary": "Dans votre bibliothèque",
+      "gamesCompleted": "Jeux terminés",
+      "completedPercent": "Complétés à 100%",
+      "playTime": "Temps de jeu",
+      "totalPlayed": "Total joué",
+      "averageRating": "Note moyenne",
+      "yourRatings": "Vos évaluations"
+    },
+    "empty": {
+      "title": "Votre bibliothèque est vide",
+      "description": "Commencez à construire votre collection en explorant notre catalogue de jeux et en ajoutant vos favoris à votre bibliothèque.",
+      "noGamesFound": "Aucun jeu trouvé",
+      "modifySearch": "Essayez de modifier vos critères de recherche",
+      "clearFilters": "Effacer les filtres",
+      "exploreGames": "Explorer les jeux",
+      "addGames": "Ajouter des jeux"
+    },
+    "yourGames": "Vos jeux ({count})",
+    "loadingError": "Erreur de chargement",
+    "retry": "Réessayer"
+  },
+  "games": {
+    "heroTitle": "Découvrez des Jeux",
+    "heroTitleHighlight": "Extraordinaires",
+    "heroSubtitle": "Explorez notre collection de jeux vidéo exceptionnels",
+    "availableCount": "{count} jeux disponibles",
+    "noGamesFound": "Aucun jeu trouvé",
+    "modifySearch": "Essayez de modifier vos critères de recherche ou explorez d'autres catégories",
+    "noGamesAvailable": "Aucun jeu disponible pour le moment",
+    "clearFilters": "Effacer les filtres"
+  },
+  "gameDetails": {
+    "overview": "Aperçu",
+    "platforms": "Plateformes",
+    "view": "Voir",
+    "errors": {
+      "loadingTitle": "Erreur de chargement",
+      "loadingDescription": "Une erreur s'est produite lors de l'affichage des détails du jeu.",
+      "unableToLoad": "Impossible de charger les détails du jeu.",
+      "backToGames": "Retour aux jeux"
+    },
+    "metascoreRatings": {
+      "exceptional": "Exceptionnel",
+      "excellent": "Excellent",
+      "good": "Bon",
+      "average": "Moyen",
+      "poor": "Faible"
+    },
+    "tabs": {
+      "media": "Médias",
+      "specs": "Spécifications",
+      "reviews": "Avis",
+      "playtime": "Temps de jeu",
+      "languages": "Langues",
+      "music": "Musique"
+    },
+    "media": {
+      "screenshots": "Captures d'écran",
+      "artwork": "Illustrations",
+      "videos": "Vidéos",
+      "videoNotSupported": "Votre navigateur ne supporte pas la lecture vidéo."
+    },
+    "specs": {
+      "noSpecs": "Aucune spécification disponible"
+    },
+    "reviews": {
+      "title": "Avis des joueurs",
+      "comingSoon": "Les avis des joueurs seront bientôt disponibles"
+    },
+    "playtime": {
+      "title": "Temps de jeu",
+      "comingSoon": "Les statistiques de temps de jeu seront bientôt disponibles"
+    },
+    "languages": {
+      "interface": "Interface",
+      "subtitles": "Sous-titres",
+      "voice": "Voix"
+    },
+    "music": {
+      "soundtrack": "Bande sonore",
+      "composer": "Compositeur",
+      "comingSoon": "La bande sonore sera bientôt disponible avec les informations sur le compositeur."
+    }
+  },
+  "footer": {
+    "tagline": "La plateforme complète pour explorer l'univers du jeu vidéo",
+    "copyright": "© 2024 Game Universe. Tous droits réservés."
+  },
+  "errors": {
+    "unexpectedError": "Une erreur s'est produite",
+    "unexpectedErrorMessage": "Une erreur inattendue s'est produite. Veuillez réessayer.",
+    "retry": "Réessayer",
+    "reloadPage": "Recharger la page",
+    "technicalDetails": "Détails techniques (développement)",
+    "loadingError": "Erreur de chargement",
+    "loadingErrorDescription": "Impossible de charger les données. Les données précédentes sont conservées.",
+    "demo": {
+      "title": "Démonstration du système de gestion d'erreurs",
+      "description": "Ce composant est uniquement visible en développement pour tester les différents types d'erreurs.",
+      "criticalErrors": "Erreurs critiques (Error Boundary)",
+      "triggerBoundary": "Déclencher Error Boundary",
+      "networkErrors": "Erreurs réseau (avec retry)",
+      "networkError": "Erreur réseau",
+      "attempting": "Tentative...",
+      "validationErrors": "Erreurs de validation",
+      "validationError": "Erreur de validation",
+      "authErrors": "Erreurs d'authentification",
+      "sessionExpired": "Session expirée",
+      "asyncFallback": "Async avec fallback",
+      "processing": "Traitement...",
+      "asyncExecute": "Async avec executeAsync",
+      "howToUse": "Comment utiliser le système :",
+      "boundaryHook": "Pour déclencher l'Error Boundary",
+      "asyncHook": "Pour gérer les erreurs async avec toasts",
+      "apiClient": "Client API avec retry automatique",
+      "errorProvider": "Provider global avec Toaster intégré",
+      "errorBoundary": "Composant pour capturer les erreurs React",
+      "simulatedCriticalError": "Erreur critique simulée pour tester l'Error Boundary",
+      "networkErrorCaptured": "Erreur réseau capturée et gérée par le système",
+      "invalidData": "Les données saisies ne sont pas valides",
+      "invalidEmailFormat": "Format d'email invalide",
+      "yourSessionExpired": "Votre session a expiré",
+      "reconnect": "Se reconnecter",
+      "simulatedAsyncError": "Erreur async simulée",
+      "asyncErrorWithExecute": "Erreur async avec executeAsync"
     }
   },
   "settings": {

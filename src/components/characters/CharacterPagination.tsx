@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useTranslations } from "next-intl";
 
 interface CharacterPaginationProps {
   currentPage: number;
@@ -17,23 +18,12 @@ export function CharacterPagination({
   totalCount,
   onPageChange,
   loading = false,
-  locale = "fr",
 }: CharacterPaginationProps) {
+  const t = useTranslations("characters.pagination");
+
   if (totalPages <= 1) {
     return null;
   }
-
-  const t = {
-    page: locale === "fr" ? "Page" : "Page",
-    of: locale === "fr" ? "sur" : "of",
-    result: locale === "fr" ? "résultat" : "result",
-    results: locale === "fr" ? "résultats" : "results",
-    first: locale === "fr" ? "Premier" : "First",
-    previous: locale === "fr" ? "Précédent" : "Previous",
-    next: locale === "fr" ? "Suivant" : "Next",
-    last: locale === "fr" ? "Dernier" : "Last",
-    goToPage: locale === "fr" ? "Aller à la page:" : "Go to page:",
-  };
 
   const getVisiblePages = () => {
     const delta = 2; // Number of pages to show on each side of current page
@@ -85,16 +75,16 @@ export function CharacterPagination({
               d="M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.009-5.824-2.562M15 6.5a3 3 0 11-6 0 3 3 0 016 0z"
             />
           </svg>
-          <span>{t.page}</span>
+          <span>{t("page")}</span>
           <span className="font-semibold text-blue-600">{currentPage}</span>
-          <span>{t.of}</span>
+          <span>{t("of")}</span>
           <span className="font-semibold">{totalPages}</span>
         </div>
         {totalCount > 0 && (
           <div className="flex items-center space-x-1 text-gray-500">
             <span className="hidden sm:inline">•</span>
             <span>
-              {totalCount} {totalCount === 1 ? t.result : t.results}
+              {totalCount} {totalCount === 1 ? t("result") : t("results")}
             </span>
           </div>
         )}
@@ -118,7 +108,7 @@ export function CharacterPagination({
               d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
             />
           </svg>
-          <span className="hidden md:inline">{t.first}</span>
+          <span className="hidden md:inline">{t("first")}</span>
         </Button>
 
         {/* Previous page button */}
@@ -137,7 +127,7 @@ export function CharacterPagination({
               d="M15 19l-7-7 7-7"
             />
           </svg>
-          <span className="hidden sm:inline">{t.previous}</span>
+          <span className="hidden sm:inline">{t("previous")}</span>
         </Button>
 
         {/* Page numbers - fewer on mobile */}
@@ -188,7 +178,7 @@ export function CharacterPagination({
           disabled={currentPage === totalPages || loading}
           className="rounded-lg border-gray-200 px-3 py-2 text-sm font-medium transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-50 sm:px-4"
         >
-          <span className="hidden sm:inline">{t.next}</span>
+          <span className="hidden sm:inline">{t("next")}</span>
           <svg className="h-4 w-4 sm:ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
@@ -202,7 +192,7 @@ export function CharacterPagination({
           disabled={currentPage === totalPages || loading}
           className="hidden rounded-lg border-gray-200 px-2 py-2 text-sm font-medium transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-50 md:inline-flex md:px-3"
         >
-          <span className="hidden md:inline">{t.last}</span>
+          <span className="hidden md:inline">{t("last")}</span>
           <svg className="h-4 w-4 md:ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
@@ -216,7 +206,7 @@ export function CharacterPagination({
 
       {/* Mobile-friendly page input */}
       <div className="flex items-center space-x-3 sm:hidden">
-        <span className="text-sm font-medium text-gray-700">{t.goToPage}</span>
+        <span className="text-sm font-medium text-gray-700">{t("goToPage")}</span>
         <select
           value={currentPage}
           onChange={(e) => onPageChange(parseInt(e.target.value))}
@@ -229,7 +219,9 @@ export function CharacterPagination({
             </option>
           ))}
         </select>
-        <span className="text-sm text-gray-500">{t.of} {totalPages}</span>
+        <span className="text-sm text-gray-500">
+          {t("of")} {totalPages}
+        </span>
       </div>
     </div>
   );

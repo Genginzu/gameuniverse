@@ -3,6 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { LazyImage } from "@/components/ui/lazy-image";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import type { CharacterSummary } from "@/types/character";
 
 interface CharacterCardProps {
@@ -12,6 +13,8 @@ interface CharacterCardProps {
 }
 
 export function CharacterCard({ character, locale = "fr", priority = false }: CharacterCardProps) {
+  const t = useTranslations("characters.card");
+
   return (
     <div className="group relative">
       <Link href={`/${locale}/characters/${character.slug}`}>
@@ -60,9 +63,7 @@ export function CharacterCard({ character, locale = "fr", priority = false }: Ch
               {/* Primary Game */}
               <div className="mb-3 space-y-1 text-xs">
                 <div className="flex items-center text-gray-300">
-                  <span className="font-medium text-gray-400">
-                    {locale === "fr" ? "Jeu:" : "Game:"}
-                  </span>
+                  <span className="font-medium text-gray-400">{t("game")}</span>
                   <span className="ml-1 font-medium text-white">{character.primaryGame}</span>
                 </div>
               </div>
@@ -77,7 +78,7 @@ export function CharacterCard({ character, locale = "fr", priority = false }: Ch
                     d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
                   />
                 </svg>
-                {character.gamesCount} {locale === "fr" ? "jeu(x)" : "game(s)"}
+                {t("games", { count: character.gamesCount })}
               </div>
             </div>
           </div>

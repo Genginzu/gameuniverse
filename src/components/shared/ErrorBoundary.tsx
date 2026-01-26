@@ -10,6 +10,14 @@ interface Props {
   children: ReactNode;
   fallback?: ReactNode;
   onError?: (error: Error, errorInfo: ErrorInfo) => void;
+  translations?: {
+    unexpectedError: string;
+    unexpectedErrorTitle: string;
+    unexpectedErrorMessage: string;
+    retry: string;
+    reloadPage: string;
+    technicalDetails: string;
+  };
 }
 
 interface State {
@@ -17,6 +25,15 @@ interface State {
   error?: Error;
   errorInfo?: ErrorInfo;
 }
+
+const defaultTranslations = {
+  unexpectedError: "Une erreur s'est produite",
+  unexpectedErrorTitle: "Erreur inattendue",
+  unexpectedErrorMessage: "Une erreur inattendue s'est produite. Veuillez réessayer.",
+  retry: "Réessayer",
+  reloadPage: "Recharger la page",
+  technicalDetails: "Détails techniques (développement)",
+};
 
 export class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
@@ -47,6 +64,8 @@ export class ErrorBoundary extends Component<Props, State> {
   };
 
   render() {
+    const t = this.props.translations || defaultTranslations;
+
     if (this.state.hasError) {
       // Utiliser le fallback personnalisé si fourni
       if (this.props.fallback) {
@@ -60,37 +79,36 @@ export class ErrorBoundary extends Component<Props, State> {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-destructive">
                 <AlertTriangle className="h-5 w-5" />
-                Une erreur s'est produite
+                {t.unexpectedError}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <Alert variant="destructive">
                 <AlertTriangle className="h-4 w-4" />
-                <AlertTitle>Erreur inattendue</AlertTitle>
+                <AlertTitle>{t.unexpectedErrorTitle}</AlertTitle>
                 <AlertDescription>
-                  {this.state.error?.message ||
-                    "Une erreur inattendue s'est produite. Veuillez réessayer."}
+                  {this.state.error?.message || t.unexpectedErrorMessage}
                 </AlertDescription>
               </Alert>
 
               <div className="flex gap-2">
                 <Button onClick={this.handleRetry} className="flex-1">
                   <RefreshCw className="mr-2 h-4 w-4" />
-                  Réessayer
+                  {t.retry}
                 </Button>
                 <Button
                   variant="outline"
                   onClick={() => window.location.reload()}
                   className="flex-1"
                 >
-                  Recharger la page
+                  {t.reloadPage}
                 </Button>
               </div>
 
               {process.env.NODE_ENV === "development" && this.state.error && (
                 <details className="mt-4">
                   <summary className="cursor-pointer text-sm text-muted-foreground">
-                    Détails techniques (développement)
+                    {t.technicalDetails}
                   </summary>
                   <pre className="mt-2 overflow-auto rounded bg-muted p-2 text-xs">
                     {this.state.error.stack}

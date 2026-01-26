@@ -1,6 +1,7 @@
 "use client";
 
 import { GAME_COUNT_RANGES, type GameCountRangeKey } from "@/types/player";
+import { useTranslations } from "next-intl";
 
 interface PlayerFiltersProps {
   selectedGameCounts: string[];
@@ -10,11 +11,11 @@ interface PlayerFiltersProps {
   locale?: string;
 }
 
-const GAME_COUNT_OPTIONS: { value: GameCountRangeKey; label_fr: string; label_en: string }[] = [
-  { value: "0", label_fr: "0 jeu", label_en: "0 games" },
-  { value: "1-5", label_fr: "1-5 jeux", label_en: "1-5 games" },
-  { value: "6-20", label_fr: "6-20 jeux", label_en: "6-20 games" },
-  { value: "20+", label_fr: "20+ jeux", label_en: "20+ games" },
+const GAME_COUNT_OPTIONS: { value: GameCountRangeKey }[] = [
+  { value: "0" },
+  { value: "1-5" },
+  { value: "6-20" },
+  { value: "20+" },
 ];
 
 export function PlayerFilters({
@@ -22,8 +23,10 @@ export function PlayerFilters({
   onGameCountChange,
   onClearFilters,
   showAllFilters,
-  locale = "fr",
 }: PlayerFiltersProps) {
+  const t = useTranslations("players.filters");
+  const tRanges = useTranslations("players.gameCountRanges");
+
   const handleGameCountToggle = (value: string) => {
     const newSelectedCounts = selectedGameCounts.includes(value)
       ? selectedGameCounts.filter((c) => c !== value)
@@ -40,7 +43,7 @@ export function PlayerFilters({
   }
 
   const getLabel = (option: (typeof GAME_COUNT_OPTIONS)[0]) => {
-    return locale === "fr" ? option.label_fr : option.label_en;
+    return tRanges(option.value);
   };
 
   return (
@@ -60,10 +63,8 @@ export function PlayerFilters({
                 d="M6 18L18 6M6 6l12 12"
               />
             </svg>
-            <span className="hidden sm:inline">
-              {locale === "fr" ? "Tout effacer" : "Clear all"}
-            </span>
-            <span className="sm:hidden">{locale === "fr" ? "Effacer" : "Clear"}</span>
+            <span className="hidden sm:inline">{t("clearAll")}</span>
+            <span className="sm:hidden">{t("clear")}</span>
           </button>
         </div>
       )}
@@ -72,11 +73,9 @@ export function PlayerFilters({
       {hasFilters && (
         <div className="rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 p-3 sm:p-4">
           <div className="mb-2 flex items-center justify-between">
-            <span className="text-sm font-medium text-blue-900">
-              {locale === "fr" ? "Filtres actifs" : "Active filters"}
-            </span>
+            <span className="text-sm font-medium text-blue-900">{t("active")}</span>
             <span className="text-xs text-blue-600">
-              {selectedGameCounts.length} {locale === "fr" ? "sélectionné(s)" : "selected"}
+              {t("selected", { count: selectedGameCounts.length })}
             </span>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -115,10 +114,10 @@ export function PlayerFilters({
           <div>
             <div className="mb-4 flex flex-col items-start justify-between sm:flex-row sm:items-center">
               <h3 className="text-base font-semibold text-gray-900 sm:text-lg">
-                {locale === "fr" ? "Filtrer par nombre de jeux" : "Filter by game count"}
+                {t("byGameCount")}
               </h3>
               <span className="mt-1 text-sm text-gray-500 sm:mt-0">
-                {GAME_COUNT_OPTIONS.length} {locale === "fr" ? "options" : "options"}
+                {GAME_COUNT_OPTIONS.length} {t("options")}
               </span>
             </div>
 

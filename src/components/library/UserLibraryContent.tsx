@@ -11,7 +11,8 @@ import { FaGamepad, FaPlus, FaClock, FaStar } from "react-icons/fa";
 import Link from "next/link";
 
 export function UserLibraryContent() {
-  const t = useTranslations("library");
+  const t = useTranslations("userLibrary");
+  const tLib = useTranslations("library");
   const { user } = useAuth();
   const { games, stats, loading, error } = useUserLibrary();
 
@@ -28,14 +29,14 @@ export function UserLibraryContent() {
               <FaGamepad className="h-8 w-8 text-red-400 sm:h-12 sm:w-12" />
             </div>
             <h3 className="mb-2 text-base font-medium text-gray-900 sm:text-lg">
-              Erreur de chargement
+              {t("loadingError")}
             </h3>
             <p className="mb-6 max-w-md text-sm text-gray-500 sm:text-base">{error}</p>
             <Button
               onClick={() => window.location.reload()}
               className="bg-blue-600 hover:bg-blue-700"
             >
-              Réessayer
+              {t("retry")}
             </Button>
           </CardContent>
         </Card>
@@ -47,10 +48,8 @@ export function UserLibraryContent() {
     <div className="p-4 sm:p-6">
       {/* Page Header */}
       <div className="mb-6 sm:mb-8">
-        <h1 className="mb-2 text-xl font-bold text-gray-900 sm:text-2xl">{t("title")}</h1>
-        <p className="text-sm text-gray-600 sm:text-base">
-          Gérez votre collection personnelle de jeux vidéo
-        </p>
+        <h1 className="mb-2 text-xl font-bold text-gray-900 sm:text-2xl">{tLib("title")}</h1>
+        <p className="text-sm text-gray-600 sm:text-base">{t("subtitle")}</p>
       </div>
 
       {/* Stats Cards */}
@@ -62,13 +61,15 @@ export function UserLibraryContent() {
                 <FaGamepad className="h-4 w-4 text-blue-600 sm:h-5 sm:w-5" />
               </div>
               <div className="ml-3">
-                <CardTitle className="text-sm font-medium text-gray-900">Jeux possédés</CardTitle>
+                <CardTitle className="text-sm font-medium text-gray-900">
+                  {t("stats.gamesOwned")}
+                </CardTitle>
               </div>
             </div>
           </CardHeader>
           <CardContent>
             <div className="text-xl font-bold text-gray-900 sm:text-2xl">{stats.totalGames}</div>
-            <p className="text-xs text-gray-500">Dans votre bibliothèque</p>
+            <p className="text-xs text-gray-500">{t("stats.inLibrary")}</p>
           </CardContent>
         </Card>
 
@@ -79,7 +80,9 @@ export function UserLibraryContent() {
                 <FaGamepad className="h-4 w-4 text-green-600 sm:h-5 sm:w-5" />
               </div>
               <div className="ml-3">
-                <CardTitle className="text-sm font-medium text-gray-900">Jeux terminés</CardTitle>
+                <CardTitle className="text-sm font-medium text-gray-900">
+                  {t("stats.gamesCompleted")}
+                </CardTitle>
               </div>
             </div>
           </CardHeader>
@@ -87,7 +90,7 @@ export function UserLibraryContent() {
             <div className="text-xl font-bold text-gray-900 sm:text-2xl">
               {stats.completedGames}
             </div>
-            <p className="text-xs text-gray-500">Complétés à 100%</p>
+            <p className="text-xs text-gray-500">{t("stats.completedPercent")}</p>
           </CardContent>
         </Card>
 
@@ -98,7 +101,9 @@ export function UserLibraryContent() {
                 <FaClock className="h-4 w-4 text-purple-600 sm:h-5 sm:w-5" />
               </div>
               <div className="ml-3">
-                <CardTitle className="text-sm font-medium text-gray-900">Temps de jeu</CardTitle>
+                <CardTitle className="text-sm font-medium text-gray-900">
+                  {t("stats.playTime")}
+                </CardTitle>
               </div>
             </div>
           </CardHeader>
@@ -106,7 +111,7 @@ export function UserLibraryContent() {
             <div className="text-xl font-bold text-gray-900 sm:text-2xl">
               {stats.totalPlayTime}h
             </div>
-            <p className="text-xs text-gray-500">Total joué</p>
+            <p className="text-xs text-gray-500">{t("stats.totalPlayed")}</p>
           </CardContent>
         </Card>
 
@@ -117,7 +122,9 @@ export function UserLibraryContent() {
                 <FaStar className="h-4 w-4 text-yellow-600 sm:h-5 sm:w-5" />
               </div>
               <div className="ml-3">
-                <CardTitle className="text-sm font-medium text-gray-900">Note moyenne</CardTitle>
+                <CardTitle className="text-sm font-medium text-gray-900">
+                  {t("stats.averageRating")}
+                </CardTitle>
               </div>
             </div>
           </CardHeader>
@@ -125,7 +132,7 @@ export function UserLibraryContent() {
             <div className="text-xl font-bold text-gray-900 sm:text-2xl">
               {stats.averageRating ? `${stats.averageRating}/5` : "—"}
             </div>
-            <p className="text-xs text-gray-500">Vos évaluations</p>
+            <p className="text-xs text-gray-500">{t("stats.yourRatings")}</p>
           </CardContent>
         </Card>
       </div>
@@ -138,16 +145,15 @@ export function UserLibraryContent() {
               <FaGamepad className="h-8 w-8 text-gray-400 sm:h-12 sm:w-12" />
             </div>
             <h3 className="mb-2 text-base font-medium text-gray-900 sm:text-lg">
-              Votre bibliothèque est vide
+              {t("empty.title")}
             </h3>
             <p className="mb-6 max-w-md text-sm text-gray-500 sm:text-base">
-              Commencez à construire votre collection en explorant notre catalogue de jeux et en
-              ajoutant vos favoris à votre bibliothèque.
+              {t("empty.description")}
             </p>
             <Button asChild className="bg-blue-600 hover:bg-blue-700">
               <Link href="/games">
                 <FaPlus className="mr-2 h-4 w-4" />
-                Explorer les jeux
+                {t("empty.exploreGames")}
               </Link>
             </Button>
           </CardContent>
@@ -158,11 +164,13 @@ export function UserLibraryContent() {
       {games.length > 0 && (
         <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900">Vos jeux ({games.length})</h2>
+            <h2 className="text-lg font-semibold text-gray-900">
+              {t("yourGames", { count: games.length })}
+            </h2>
             <Button asChild variant="outline" size="sm">
               <Link href="/games">
                 <FaPlus className="mr-2 h-4 w-4" />
-                Ajouter des jeux
+                {t("empty.addGames")}
               </Link>
             </Button>
           </div>

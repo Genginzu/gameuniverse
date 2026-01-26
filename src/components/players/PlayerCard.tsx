@@ -2,6 +2,7 @@
 
 import { LazyImage } from "@/components/ui/lazy-image";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import type { PlayerSummary } from "@/types/player";
 
 interface PlayerCardProps {
@@ -11,8 +12,8 @@ interface PlayerCardProps {
 }
 
 export function PlayerCard({ player, locale = "fr", priority = false }: PlayerCardProps) {
-  const displayName = player.fullName || (locale === "fr" ? "Joueur anonyme" : "Anonymous player");
-  const gamesLabel = locale === "fr" ? "jeu(x)" : "game(s)";
+  const t = useTranslations("players.card");
+  const displayName = player.fullName || t("anonymousPlayer");
 
   return (
     <div className="group relative">
@@ -45,7 +46,7 @@ export function PlayerCard({ player, locale = "fr", priority = false }: PlayerCa
             {/* Games count badge */}
             <div className="absolute right-3 top-3 z-20">
               <div className="rounded-full bg-white/90 px-3 py-1 text-xs font-medium text-gray-900 shadow-lg backdrop-blur-sm">
-                {player.gamesCount} {gamesLabel}
+                {t("games", { count: player.gamesCount })}
               </div>
             </div>
           </div>
@@ -79,9 +80,7 @@ export function PlayerCard({ player, locale = "fr", priority = false }: PlayerCa
                   {player.gamesCount}
                 </span>
               </div>
-              <div className="mt-2 text-xs text-blue-400">
-                {locale === "fr" ? "Voir le profil →" : "View profile →"}
-              </div>
+              <div className="mt-2 text-xs text-blue-400">{t("viewProfile")}</div>
             </div>
           </div>
         </div>

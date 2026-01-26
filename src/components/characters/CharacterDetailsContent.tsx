@@ -206,7 +206,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                 }`}
               >
                 <BookOpen className="mr-2 inline h-4 w-4" />
-                {locale === "fr" ? "Description" : "Description"}
+                {t("characters.tabs.description")}
               </button>
               <button
                 onClick={() => setActiveTab("games")}
@@ -217,7 +217,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                 }`}
               >
                 <Gamepad2 className="mr-2 inline h-4 w-4" />
-                {locale === "fr" ? "Jeux" : "Games"} ({character.games.length})
+                {t("characters.tabs.games")} ({character.games.length})
               </button>
               <button
                 onClick={() => setActiveTab("media")}
@@ -228,7 +228,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                 }`}
               >
                 <Eye className="mr-2 inline h-4 w-4" />
-                {locale === "fr" ? "Médias" : "Media"}
+                {t("characters.tabs.media")}
               </button>
             </div>
           </div>
@@ -242,7 +242,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                 {character.media.screenshots.length > 0 && (
                   <section>
                     <h3 className="mb-6 text-xl font-bold text-white">
-                      {locale === "fr" ? "Captures d'écran" : "Screenshots"}
+                      {t("characters.media.screenshots")}
                     </h3>
                     <div className="relative mb-4 aspect-video overflow-hidden rounded-2xl border border-slate-700/50 bg-slate-800/50">
                       <LazyImage
@@ -310,7 +310,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                 {character.media.artwork.length > 0 && (
                   <section>
                     <h3 className="mb-6 text-xl font-bold text-white">
-                      {locale === "fr" ? "Illustrations" : "Artwork"}
+                      {t("characters.media.artwork")}
                     </h3>
                     <div className="relative mb-4 aspect-video overflow-hidden rounded-2xl border border-slate-700/50 bg-slate-800/50">
                       <LazyImage
@@ -378,7 +378,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                 {character.media.videos.length > 0 && (
                   <section>
                     <h3 className="mb-6 text-xl font-bold text-white">
-                      {locale === "fr" ? "Vidéos" : "Videos"}
+                      {t("characters.media.videos")}
                     </h3>
                     <div className="relative mb-4 aspect-video overflow-hidden rounded-2xl border border-slate-700/50 bg-slate-800/50">
                       {character.media.videos[selectedVideoIndex]?.url ? (
@@ -439,9 +439,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                   character.media.videos.length === 0 && (
                     <div className="py-16 text-center">
                       <Eye className="mx-auto mb-4 h-12 w-12 text-slate-500" />
-                      <p className="text-slate-400">
-                        {locale === "fr" ? "Aucun média disponible" : "No media available"}
-                      </p>
+                      <p className="text-slate-400">{t("characters.media.noMedia")}</p>
                     </div>
                   )}
               </div>
@@ -451,7 +449,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
             {activeTab === "games" && (
               <div>
                 <h3 className="mb-6 text-xl font-bold text-white">
-                  {locale === "fr" ? "Apparitions dans les jeux" : "Game appearances"}
+                  {t("characters.details.gameAppearances")}
                 </h3>
                 {character.games.length > 0 ? (
                   <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
@@ -489,7 +487,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                                 className="text-xs font-bold text-white shadow-lg"
                                 style={{ backgroundColor: colors.primary }}
                               >
-                                {locale === "fr" ? "Principal" : "Primary"}
+                                {t("characters.details.primary")}
                               </Badge>
                             </div>
                           )}
@@ -510,9 +508,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                 ) : (
                   <div className="py-16 text-center">
                     <Gamepad2 className="mx-auto mb-4 h-12 w-12 text-slate-500" />
-                    <p className="text-slate-400">
-                      {locale === "fr" ? "Aucun jeu associé" : "No associated games"}
-                    </p>
+                    <p className="text-slate-400">{t("characters.details.noGames")}</p>
                   </div>
                 )}
               </div>
@@ -530,7 +526,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                         <div className="mb-2 flex items-center gap-2 text-slate-400">
                           <Star className="h-4 w-4" style={{ color: colors.accent }} />
                           <span className="text-sm font-medium">
-                            {locale === "fr" ? "Rôle" : "Role"}
+                            {t("characters.details.role")}
                           </span>
                         </div>
                         <p className="text-lg font-semibold text-white">{character.role}</p>
@@ -544,7 +540,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                       <div className="mb-2 flex items-center gap-2 text-slate-400">
                         <Gamepad2 className="h-4 w-4" style={{ color: colors.accent }} />
                         <span className="text-sm font-medium">
-                          {locale === "fr" ? "Jeu principal" : "Primary Game"}
+                          {t("characters.details.primaryGame")}
                         </span>
                       </div>
                       <p className="text-lg font-semibold text-white">{character.primaryGame}</p>
@@ -560,18 +556,11 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                       <div className="mb-2 flex items-center gap-2 text-slate-400">
                         <Users className="h-4 w-4" style={{ color: colors.accent }} />
                         <span className="text-sm font-medium">
-                          {locale === "fr" ? "Apparitions" : "Appearances"}
+                          {t("characters.details.appearances")}
                         </span>
                       </div>
                       <p className="text-lg font-semibold text-white">
-                        {character.games.length}{" "}
-                        {locale === "fr"
-                          ? character.games.length > 1
-                            ? "jeux"
-                            : "jeu"
-                          : character.games.length > 1
-                            ? "games"
-                            : "game"}
+                        {t("characters.details.gamesCount", { count: character.games.length })}
                       </p>
                     </CardContent>
                   </Card>
@@ -583,7 +572,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                     <CardContent className="p-6">
                       <h4 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
                         <Swords className="h-5 w-5" style={{ color: colors.accent }} />
-                        {locale === "fr" ? "Armes & Équipement" : "Weapons & Equipment"}
+                        {t("characters.details.weaponsEquipment")}
                       </h4>
                       <p className="whitespace-pre-wrap leading-relaxed text-slate-300">
                         {character.weapons}
@@ -598,7 +587,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                     <CardContent className="p-6">
                       <h4 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
                         <BookOpen className="h-5 w-5" style={{ color: colors.accent }} />
-                        {locale === "fr" ? "Biographie" : "Biography"}
+                        {t("characters.details.biography")}
                       </h4>
                       <div className="prose prose-invert max-w-none">
                         <p className="whitespace-pre-wrap leading-relaxed text-slate-300">
@@ -615,7 +604,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                     <CardContent className="p-6">
                       <h4 className="mb-6 flex items-center gap-2 text-lg font-semibold text-white">
                         <UserCircle className="h-5 w-5" style={{ color: colors.accent }} />
-                        {locale === "fr" ? "Relations" : "Relationships"}
+                        {t("characters.details.relationships")}
                       </h4>
                       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         {character.relationships.map((rel) => (
@@ -674,23 +663,10 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                                           : "#a78bfa",
                                 }}
                               >
-                                {locale === "fr"
-                                  ? rel.relationshipType === "ally"
-                                    ? "Allié"
-                                    : rel.relationshipType === "enemy"
-                                      ? "Ennemi"
-                                      : rel.relationshipType === "rival"
-                                        ? "Rival"
-                                        : rel.relationshipType === "family"
-                                          ? "Famille"
-                                          : rel.relationshipType === "romantic"
-                                            ? "Romantique"
-                                            : rel.relationshipType === "mentor"
-                                              ? "Mentor"
-                                              : rel.relationshipType === "friend"
-                                                ? "Ami"
-                                                : rel.relationshipType
-                                  : rel.relationshipType.charAt(0).toUpperCase() +
+                                {t(
+                                  `characters.details.relationshipTypes.${rel.relationshipType}`
+                                ) ||
+                                  rel.relationshipType.charAt(0).toUpperCase() +
                                     rel.relationshipType.slice(1)}
                               </Badge>
                               {rel.description && (
@@ -712,11 +688,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                   (!character.relationships || character.relationships.length === 0) && (
                     <div className="py-16 text-center">
                       <BookOpen className="mx-auto mb-4 h-12 w-12 text-slate-500" />
-                      <p className="text-slate-400">
-                        {locale === "fr"
-                          ? "Aucune description disponible"
-                          : "No description available"}
-                      </p>
+                      <p className="text-slate-400">{t("characters.details.noDescription")}</p>
                     </div>
                   )}
               </div>

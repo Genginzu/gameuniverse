@@ -16,23 +16,7 @@ import { z } from "zod";
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import { GameUniverseLogo } from "@/components/ui/game-universe-logo";
 import Footer from "@/components/shared/Footer";
-
-const resetPasswordSchema = z
-  .object({
-    password: z
-      .string()
-      .min(8, "Le mot de passe doit contenir au moins 8 caractères")
-      .regex(/[A-Z]/, "Le mot de passe doit contenir au moins une majuscule")
-      .regex(/[a-z]/, "Le mot de passe doit contenir au moins une minuscule")
-      .regex(/[0-9]/, "Le mot de passe doit contenir au moins un chiffre"),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Les mots de passe ne correspondent pas",
-    path: ["confirmPassword"],
-  });
-
-type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
+import { useTranslations } from "next-intl";
 
 export default function ResetPasswordPage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -43,11 +27,30 @@ export default function ResetPasswordPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const router = useRouter();
+  const t = useTranslations("auth.resetPassword");
+  const tError = useTranslations("auth.error");
 
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
+
+  const resetPasswordSchema = z
+    .object({
+      password: z
+        .string()
+        .min(8, t("validation.minLength"))
+        .regex(/[A-Z]/, t("validation.uppercase"))
+        .regex(/[a-z]/, t("validation.lowercase"))
+        .regex(/[0-9]/, t("validation.number")),
+      confirmPassword: z.string(),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: t("validation.mismatch"),
+      path: ["confirmPassword"],
+    });
+
+  type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 
   const {
     register,
@@ -88,13 +91,13 @@ export default function ResetPasswordPage() {
       if (session) {
         setIsAuthenticated(true);
       } else {
-        setError("Aucun token de récupération trouvé. Veuillez demander un nouveau lien.");
+        setError(t("noTokenFound"));
       }
       setIsLoading(false);
     };
 
     handleRecovery();
-  }, [supabase.auth]);
+  }, [supabase.auth, t]);
 
   const onSubmit = async (data: ResetPasswordFormData) => {
     setIsSubmitting(true);
@@ -115,7 +118,7 @@ export default function ResetPasswordPage() {
         router.push("/dashboard");
       }, 2000);
     } catch (err) {
-      setError("Une erreur inattendue s'est produite");
+      setError(tError("generic"));
       console.error("Reset password error:", err);
     } finally {
       setIsSubmitting(false);
@@ -155,10 +158,10 @@ export default function ResetPasswordPage() {
                 </div>
                 <div className="space-y-2 text-center">
                   <CardTitle className="bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-3xl font-bold text-transparent">
-                    Lien invalide
+                    {t("invalidLink")}
                   </CardTitle>
                   <CardDescription className="text-base text-slate-600">
-                    Le lien de réinitialisation est invalide ou a expiré.
+                    {t("invalidLinkDescription")}
                   </CardDescription>
                 </div>
               </CardHeader>
@@ -168,14 +171,14 @@ export default function ResetPasswordPage() {
                   asChild
                   className="h-12 w-full rounded-xl border-2 bg-gradient-to-br from-blue-500 via-purple-600 to-purple-700 font-semibold text-white shadow-lg"
                 >
-                  <Link href="/auth">Retour à la connexion</Link>
+                  <Link href="/auth">{t("backToLogin")}</Link>
                 </Button>
                 <Button
                   asChild
                   variant="outline"
                   className="h-12 w-full rounded-xl border-slate-200 font-semibold"
                 >
-                  <Link href="/auth/forgot-password">Demander un nouveau lien</Link>
+                  <Link href="/auth/forgot-password">{t("requestNewLink")}</Link>
                 </Button>
               </CardContent>
             </Card>
@@ -187,10 +190,10 @@ export default function ResetPasswordPage() {
                 </div>
                 <div className="space-y-2 text-center">
                   <CardTitle className="bg-gradient-to-r from-green-600 to-green-500 bg-clip-text text-3xl font-bold text-transparent">
-                    Mot de passe mis à jour !
+                    {t("success")}
                   </CardTitle>
                   <CardDescription className="text-base text-slate-600">
-                    Votre mot de passe a été mis à jour avec succès. Redirection en cours...
+                    {t("successDescription")}
                   </CardDescription>
                 </div>
               </CardHeader>
@@ -203,10 +206,10 @@ export default function ResetPasswordPage() {
                 </div>
                 <div className="space-y-2 text-center">
                   <CardTitle className="bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-3xl font-bold text-transparent">
-                    Nouveau mot de passe
+                    {t("title")}
                   </CardTitle>
                   <CardDescription className="text-base text-slate-600">
-                    Choisissez un nouveau mot de passe sécurisé pour votre compte.
+                    {t("description")}
                   </CardDescription>
                 </div>
               </CardHeader>
@@ -219,13 +222,13 @@ export default function ResetPasswordPage() {
                   )}
                   <div className="space-y-3">
                     <Label htmlFor="password" className="text-sm font-semibold text-slate-700">
-                      Nouveau mot de passe
+                      {t("newPassword")}
                     </Label>
                     <div className="relative">
                       <Input
                         id="password"
                         type={showPassword ? "text" : "password"}
-                        placeholder="Entrez votre nouveau mot de passe"
+                        placeholder={t("newPasswordPlaceholder")}
                         {...register("password")}
                         className={`h-12 rounded-xl border-slate-200 bg-slate-50/50 pr-10 transition-all duration-200 focus:border-slate-400 focus:bg-white ${errors.password ? "border-red-500" : ""}`}
                       />
@@ -252,13 +255,13 @@ export default function ResetPasswordPage() {
                       htmlFor="confirmPassword"
                       className="text-sm font-semibold text-slate-700"
                     >
-                      Confirmer le mot de passe
+                      {t("confirmPassword")}
                     </Label>
                     <div className="relative">
                       <Input
                         id="confirmPassword"
                         type={showConfirmPassword ? "text" : "password"}
-                        placeholder="Confirmez votre nouveau mot de passe"
+                        placeholder={t("confirmPasswordPlaceholder")}
                         {...register("confirmPassword")}
                         className={`h-12 rounded-xl border-slate-200 bg-slate-50/50 pr-10 transition-all duration-200 focus:border-slate-400 focus:bg-white ${errors.confirmPassword ? "border-red-500" : ""}`}
                       />
@@ -281,11 +284,11 @@ export default function ResetPasswordPage() {
                     )}
                   </div>
                   <div className="rounded-xl bg-slate-50 p-3 text-xs text-slate-600">
-                    <p className="font-semibold text-slate-700">Le mot de passe doit contenir :</p>
+                    <p className="font-semibold text-slate-700">{t("requirements.title")}</p>
                     <ul className="mt-1 list-inside list-disc space-y-0.5">
-                      <li>Au moins 8 caractères</li>
-                      <li>Une majuscule et une minuscule</li>
-                      <li>Au moins un chiffre</li>
+                      <li>{t("requirements.minLength")}</li>
+                      <li>{t("requirements.uppercase")}</li>
+                      <li>{t("requirements.number")}</li>
                     </ul>
                   </div>
                   <Button
@@ -296,10 +299,10 @@ export default function ResetPasswordPage() {
                     {isSubmitting ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Mise à jour...
+                        {t("submitting")}
                       </>
                     ) : (
-                      "Mettre à jour le mot de passe"
+                      t("submit")
                     )}
                   </Button>
                 </form>
@@ -310,7 +313,7 @@ export default function ResetPasswordPage() {
                       className="inline-flex items-center font-semibold text-slate-900 transition-colors duration-200 hover:text-purple-700"
                     >
                       <ArrowLeft className="mr-1 h-4 w-4" />
-                      Retour à la connexion
+                      {t("backToLogin")}
                     </Link>
                   </p>
                 </div>

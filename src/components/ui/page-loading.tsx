@@ -10,7 +10,7 @@ interface PageLoadingProps {
 
 export function PageLoading({
   type = "spinner",
-  message = "Chargement...",
+  message,
   showProgress = false,
   progress = 0,
 }: PageLoadingProps) {
@@ -19,7 +19,7 @@ export function PageLoading({
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm">
         <div className="text-center">
           <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-blue-600 border-t-transparent"></div>
-          <p className="text-sm text-gray-600">{message}</p>
+          {message && <p className="text-sm text-gray-600">{message}</p>}
         </div>
       </div>
     );
@@ -76,7 +76,7 @@ export function PageLoading({
           <div className="absolute inset-0 animate-ping rounded-full bg-blue-400 opacity-20"></div>
         </div>
 
-        <h3 className="mb-2 text-lg font-medium text-gray-900">{message}</h3>
+        {message && <h3 className="mb-2 text-lg font-medium text-gray-900">{message}</h3>}
 
         {showProgress && (
           <div className="mx-auto w-64">

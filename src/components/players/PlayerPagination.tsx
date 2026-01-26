@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { useTranslations } from "next-intl";
 
 interface PlayerPaginationProps {
   currentPage: number;
@@ -17,8 +18,9 @@ export function PlayerPagination({
   totalCount,
   onPageChange,
   loading = false,
-  locale = "fr",
 }: PlayerPaginationProps) {
+  const t = useTranslations("players.pagination");
+
   if (totalPages <= 1) {
     return null;
   }
@@ -60,18 +62,6 @@ export function PlayerPagination({
 
   const visiblePages = getVisiblePages();
 
-  const t = {
-    page: locale === "fr" ? "Page" : "Page",
-    of: locale === "fr" ? "sur" : "of",
-    result: locale === "fr" ? "résultat" : "result",
-    results: locale === "fr" ? "résultats" : "results",
-    first: locale === "fr" ? "Premier" : "First",
-    previous: locale === "fr" ? "Précédent" : "Previous",
-    next: locale === "fr" ? "Suivant" : "Next",
-    last: locale === "fr" ? "Dernier" : "Last",
-    goToPage: locale === "fr" ? "Aller à la page:" : "Go to page:",
-  };
-
   return (
     <div className="flex flex-col items-center space-y-4 rounded-2xl bg-white p-4 shadow-sm sm:space-y-6 sm:p-6">
       {/* Page info */}
@@ -85,16 +75,16 @@ export function PlayerPagination({
               d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
             />
           </svg>
-          <span>{t.page}</span>
+          <span>{t("page")}</span>
           <span className="font-semibold text-blue-600">{currentPage}</span>
-          <span>{t.of}</span>
+          <span>{t("of")}</span>
           <span className="font-semibold">{totalPages}</span>
         </div>
         {totalCount > 0 && (
           <div className="flex items-center space-x-1 text-gray-500">
             <span className="hidden sm:inline">•</span>
             <span>
-              {totalCount} {totalCount === 1 ? t.result : t.results}
+              {totalCount} {totalCount === 1 ? t("result") : t("results")}
             </span>
           </div>
         )}
@@ -118,7 +108,7 @@ export function PlayerPagination({
               d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
             />
           </svg>
-          <span className="hidden md:inline">{t.first}</span>
+          <span className="hidden md:inline">{t("first")}</span>
         </Button>
 
         {/* Previous page button */}
@@ -137,7 +127,7 @@ export function PlayerPagination({
               d="M15 19l-7-7 7-7"
             />
           </svg>
-          <span className="hidden sm:inline">{t.previous}</span>
+          <span className="hidden sm:inline">{t("previous")}</span>
         </Button>
 
         {/* Page numbers - fewer on mobile */}
@@ -188,7 +178,7 @@ export function PlayerPagination({
           disabled={currentPage === totalPages || loading}
           className="rounded-lg border-gray-200 px-3 py-2 text-sm font-medium transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-50 sm:px-4"
         >
-          <span className="hidden sm:inline">{t.next}</span>
+          <span className="hidden sm:inline">{t("next")}</span>
           <svg className="h-4 w-4 sm:ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
@@ -202,7 +192,7 @@ export function PlayerPagination({
           disabled={currentPage === totalPages || loading}
           className="hidden rounded-lg border-gray-200 px-2 py-2 text-sm font-medium transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-50 md:inline-flex md:px-3"
         >
-          <span className="hidden md:inline">{t.last}</span>
+          <span className="hidden md:inline">{t("last")}</span>
           <svg className="h-4 w-4 md:ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
@@ -216,7 +206,7 @@ export function PlayerPagination({
 
       {/* Mobile-friendly page input */}
       <div className="flex items-center space-x-3 sm:hidden">
-        <span className="text-sm font-medium text-gray-700">{t.goToPage}</span>
+        <span className="text-sm font-medium text-gray-700">{t("goToPage")}</span>
         <select
           value={currentPage}
           onChange={(e) => onPageChange(parseInt(e.target.value))}
@@ -230,7 +220,7 @@ export function PlayerPagination({
           ))}
         </select>
         <span className="text-sm text-gray-500">
-          {t.of} {totalPages}
+          {t("of")} {totalPages}
         </span>
       </div>
     </div>

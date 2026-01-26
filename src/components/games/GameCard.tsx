@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { LazyImage } from "@/components/ui/lazy-image";
 import { useGameLibraryStatus } from "@/hooks/useGameLibraryStatus";
 import { useAuth } from "@/hooks/useAuth";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 
@@ -38,6 +39,7 @@ export function GameCard({
   const { inLibrary, loading, adding, addToLibrary, removeFromLibrary } = useGameLibraryStatus(
     game.id
   );
+  const t = useTranslations("game");
 
   const formatReleaseDate = (dateString?: string) => {
     if (!dateString) return null;
@@ -99,7 +101,7 @@ export function GameCard({
               onClick={handleLibraryToggle}
               disabled={adding || loading}
               className="absolute left-3 top-3 z-20 transition-transform hover:scale-110 disabled:opacity-50"
-              aria-label={inLibrary ? "Retirer de ma bibliothèque" : "Ajouter à ma bibliothèque"}
+              aria-label={inLibrary ? t("removeFromLibrary") : t("addToLibrary")}
             >
               {inLibrary ? (
                 <FaHeart className="h-6 w-6 text-red-500 drop-shadow-lg" />
@@ -138,12 +140,12 @@ export function GameCard({
               {/* Developer & Publisher */}
               <div className="mb-3 space-y-1 text-xs">
                 <div className="flex items-center text-gray-300">
-                  <span className="font-medium text-gray-400">Dev:</span>
+                  <span className="font-medium text-gray-400">{t("developerShort")}:</span>
                   <span className="ml-1 font-medium text-white">{game.developer}</span>
                 </div>
                 {game.publisher !== game.developer && (
                   <div className="flex items-center text-gray-300">
-                    <span className="font-medium text-gray-400">Éd:</span>
+                    <span className="font-medium text-gray-400">{t("publisherShort")}:</span>
                     <span className="ml-1 font-medium text-white">{game.publisher}</span>
                   </div>
                 )}

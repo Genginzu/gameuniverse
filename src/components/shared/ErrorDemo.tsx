@@ -14,6 +14,7 @@ import { useAsyncError } from "@/components/providers/ErrorProvider";
 import { createAppError, ErrorType } from "@/lib/error-handling";
 import { toast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
+import { useTranslations } from "next-intl";
 
 // Ce composant est uniquement pour démonstration et tests
 // Il ne devrait pas être utilisé en production
@@ -24,13 +25,11 @@ export function ErrorDemo() {
   const { handleFormError } = useFormErrorHandler();
   const { executeAsync } = useAsyncError();
   const apiClient = useApiClient();
+  const t = useTranslations("errors.demo");
 
   // Démonstration d'erreur qui déclenche l'Error Boundary
   const triggerBoundaryError = () => {
-    const error = createAppError(
-      "Erreur critique simulée pour tester l'Error Boundary",
-      ErrorType.UNKNOWN
-    );
+    const error = createAppError(t("simulatedCriticalError"), ErrorType.UNKNOWN);
     showBoundary(error);
   };
 
@@ -45,7 +44,7 @@ export function ErrorDemo() {
         },
       });
     } catch (error) {
-      console.log("Erreur réseau capturée et gérée par le système");
+      console.log(t("networkErrorCaptured"));
     } finally {
       setLoading(false);
     }
@@ -53,24 +52,24 @@ export function ErrorDemo() {
 
   // Démonstration d'erreur de validation
   const triggerValidationError = () => {
-    const error = createAppError("Les données saisies ne sont pas valides", ErrorType.VALIDATION, {
-      details: { field: "email", message: "Format d'email invalide" },
+    const error = createAppError(t("invalidData"), ErrorType.VALIDATION, {
+      details: { field: "email", message: t("invalidEmailFormat") },
     });
     handleFormError(error, "email");
   };
 
   // Démonstration d'erreur d'authentification
   const triggerAuthError = () => {
-    const error = createAppError("Votre session a expiré", ErrorType.AUTHENTICATION, {
+    const error = createAppError(t("yourSessionExpired"), ErrorType.AUTHENTICATION, {
       statusCode: 401,
     });
     toast({
       variant: "destructive",
-      title: "Session expirée",
+      title: t("sessionExpired"),
       description: error.message,
       action: (
-        <ToastAction altText="Se reconnecter" onClick={() => console.log("Redirection vers login")}>
-          Se reconnecter
+        <ToastAction altText={t("reconnect")} onClick={() => console.log("Redirection vers login")}>
+          {t("reconnect")}
         </ToastAction>
       ),
     });
@@ -80,7 +79,7 @@ export function ErrorDemo() {
   const triggerAsyncErrorWithFallback = async () => {
     setLoading(true);
     const result = await captureAsyncError(async () => {
-      throw createAppError("Erreur async simulée", ErrorType.SERVER);
+      throw createAppError(t("simulatedAsyncError"), ErrorType.SERVER);
     }, "Valeur de fallback");
     console.log("Résultat avec fallback:", result);
     setLoading(false);
@@ -90,7 +89,7 @@ export function ErrorDemo() {
   const triggerAsyncErrorWithExecuteAsync = async () => {
     setLoading(true);
     const result = await executeAsync(async () => {
-      throw createAppError("Erreur async avec executeAsync", ErrorType.NETWORK);
+      throw createAppError(t("asyncErrorWithExecute"), ErrorType.NETWORK);
     }, "triggerAsyncErrorWithExecuteAsync");
     console.log("Résultat executeAsync:", result);
     setLoading(false);
@@ -103,92 +102,89 @@ export function ErrorDemo() {
   return (
     <Card className="mx-auto mt-8 w-full max-w-2xl">
       <CardHeader>
-        <CardTitle>🧪 Démonstration du système de gestion d'erreurs</CardTitle>
+        <CardTitle>🧪 {t("title")}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <Alert>
-          <AlertDescription>
-            Ce composant est uniquement visible en développement pour tester les différents types
-            d'erreurs.
-          </AlertDescription>
+          <AlertDescription>{t("description")}</AlertDescription>
         </Alert>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div className="space-y-2">
-            <h3 className="font-semibold">Erreurs critiques (Error Boundary)</h3>
+            <h3 className="font-semibold">{t("criticalErrors")}</h3>
             <Button onClick={triggerBoundaryError} variant="destructive" className="w-full">
-              Déclencher Error Boundary
+              {t("triggerBoundary")}
             </Button>
           </div>
 
           <div className="space-y-2">
-            <h3 className="font-semibold">Erreurs réseau (avec retry)</h3>
+            <h3 className="font-semibold">{t("networkErrors")}</h3>
             <Button
               onClick={triggerNetworkError}
               variant="outline"
               disabled={loading}
               className="w-full"
             >
-              {loading ? "Tentative..." : "Erreur réseau"}
+              {loading ? t("attempting") : t("networkError")}
             </Button>
           </div>
 
           <div className="space-y-2">
-            <h3 className="font-semibold">Erreurs de validation</h3>
+            <h3 className="font-semibold">{t("validationErrors")}</h3>
             <Button onClick={triggerValidationError} variant="outline" className="w-full">
-              Erreur de validation
+              {t("validationError")}
             </Button>
           </div>
 
           <div className="space-y-2">
-            <h3 className="font-semibold">Erreurs d'authentification</h3>
+            <h3 className="font-semibold">{t("authErrors")}</h3>
             <Button onClick={triggerAuthError} variant="outline" className="w-full">
-              Session expirée
+              {t("sessionExpired")}
             </Button>
           </div>
 
           <div className="space-y-2">
-            <h3 className="font-semibold">Async avec fallback</h3>
+            <h3 className="font-semibold">{t("asyncFallback")}</h3>
             <Button
               onClick={triggerAsyncErrorWithFallback}
               variant="outline"
               disabled={loading}
               className="w-full"
             >
-              {loading ? "Traitement..." : "Async + Fallback"}
+              {loading ? t("processing") : "Async + Fallback"}
             </Button>
           </div>
 
           <div className="space-y-2">
-            <h3 className="font-semibold">Async avec executeAsync</h3>
+            <h3 className="font-semibold">{t("asyncExecute")}</h3>
             <Button
               onClick={triggerAsyncErrorWithExecuteAsync}
               variant="outline"
               disabled={loading}
               className="w-full"
             >
-              {loading ? "Traitement..." : "executeAsync"}
+              {loading ? t("processing") : "executeAsync"}
             </Button>
           </div>
         </div>
 
         <div className="mt-6 rounded-lg bg-muted p-4">
-          <h4 className="mb-2 font-semibold">Comment utiliser le système :</h4>
+          <h4 className="mb-2 font-semibold">{t("howToUse")}</h4>
           <ul className="list-inside list-disc space-y-1 text-sm">
             <li>
-              <code>useErrorBoundary()</code> - Pour déclencher l'Error Boundary
+              <code>useErrorBoundary()</code> - {t("boundaryHook")}
             </li>
             <li>
-              <code>useAsyncError()</code> - Pour gérer les erreurs async avec toasts
+              <code>useAsyncError()</code> - {t("asyncHook")}
             </li>
             <li>
-              <code>apiClient</code> - Client API avec retry automatique
+              <code>apiClient</code> - {t("apiClient")}
             </li>
             <li>
-              <code>ErrorProvider</code> - Provider global avec Toaster intégré
+              <code>ErrorProvider</code> - {t("errorProvider")}
             </li>
             <li>
-              <code>ErrorBoundary</code> - Composant pour capturer les erreurs React
+              <code>ErrorBoundary</code> - {t("errorBoundary")}
             </li>
           </ul>
         </div>

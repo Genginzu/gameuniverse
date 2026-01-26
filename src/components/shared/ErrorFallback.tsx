@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, RefreshCw, ArrowLeft, Home } from "lucide-react";
@@ -26,34 +27,29 @@ export function ErrorFallback({
   backLabel,
   locale = "fr",
 }: ErrorFallbackProps) {
-  const defaultTitle = locale === "fr" ? "Erreur de chargement" : "Loading Error";
-  const defaultDescription =
-    locale === "fr"
-      ? "Une erreur inattendue s'est produite. Veuillez réessayer."
-      : "An unexpected error occurred. Please try again.";
-  const refreshLabel = locale === "fr" ? "Recharger la page" : "Reload page";
-  const homeLabel = locale === "fr" ? "Retour à l'accueil" : "Back to home";
+  const tErrors = useTranslations("errors");
+  const tCommon = useTranslations("common");
 
   return (
     <div className="flex min-h-[60vh] items-center justify-center p-4">
       <Alert variant="destructive" className="max-w-md">
         <AlertTriangle className="h-4 w-4" />
-        <AlertTitle>{title || defaultTitle}</AlertTitle>
+        <AlertTitle>{title || tErrors("loadingError")}</AlertTitle>
         <AlertDescription className="mt-2">
-          {description || defaultDescription}
+          {description || tErrors("unexpectedErrorMessage")}
         </AlertDescription>
         <div className="mt-4 flex flex-wrap gap-2">
           {showRefresh && (
             <Button onClick={() => window.location.reload()} variant="outline">
               <RefreshCw className="mr-2 h-4 w-4" />
-              {refreshLabel}
+              {tCommon("reloadPage")}
             </Button>
           )}
           {showBackButton && backUrl && (
             <Button asChild variant="outline">
               <Link href={backUrl}>
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                {backLabel || (locale === "fr" ? "Retour" : "Back")}
+                {backLabel || tCommon("back")}
               </Link>
             </Button>
           )}
@@ -61,7 +57,7 @@ export function ErrorFallback({
             <Button asChild variant="outline">
               <Link href={`/${locale}/dashboard`}>
                 <Home className="mr-2 h-4 w-4" />
-                {homeLabel}
+                {tCommon("backToHome")}
               </Link>
             </Button>
           )}

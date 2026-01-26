@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslations } from "next-intl";
+
 interface PlayerFilterButtonProps {
   hasFilters: boolean;
   filterCount: number;
@@ -7,12 +9,9 @@ interface PlayerFilterButtonProps {
   locale?: string;
 }
 
-export function PlayerFilterButton({
-  hasFilters,
-  filterCount,
-  onClick,
-  locale = "fr",
-}: PlayerFilterButtonProps) {
+export function PlayerFilterButton({ hasFilters, filterCount, onClick }: PlayerFilterButtonProps) {
+  const t = useTranslations("players.filters");
+
   return (
     <button
       onClick={onClick}
@@ -31,7 +30,7 @@ export function PlayerFilterButton({
           d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4"
         />
       </svg>
-      <span className="hidden sm:inline">{locale === "fr" ? "Filtrer" : "Filter"}</span>
+      <span className="hidden sm:inline">{t("filter")}</span>
       {hasFilters && (
         <span className="ml-1 rounded-full bg-white/20 px-1.5 py-0.5 text-xs sm:ml-2 sm:px-2 sm:text-sm">
           {filterCount}

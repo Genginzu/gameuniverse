@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { GameCard } from "@/components/games/GameCard";
 import { GameSearchBar } from "@/components/games/GameSearchBar";
 import { GameFilters } from "@/components/games/GameFilters";
@@ -31,6 +32,8 @@ interface LibraryStats {
 }
 
 export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps) {
+  const t = useTranslations("userLibrary");
+  const tErrors = useTranslations("errors");
   // State management
   const [games, setGames] = useState<GameSummary[]>([]);
   const [stats, setStats] = useState<LibraryStats>({
@@ -133,8 +136,8 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
       } else {
         toast({
           variant: "destructive",
-          title: "Erreur de chargement",
-          description: "Impossible de charger les jeux. Les données précédentes sont conservées.",
+          title: tErrors("loadingError"),
+          description: tErrors("loadingErrorDescription"),
         });
       }
 
@@ -260,13 +263,13 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
         <div className="relative mx-auto max-w-4xl">
           <div className="text-center">
             <h1 className="mb-3 text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl xl:text-5xl">
-              Ma Bibliothèque
+              {t("heroTitle")}
               <span className="block bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
-                de Jeux
+                {t("heroTitleHighlight")}
               </span>
             </h1>
             <p className="mx-auto max-w-xl text-base text-indigo-100/90 sm:text-lg">
-              Gérez et explorez votre collection personnelle
+              {t("heroSubtitle")}
             </p>
           </div>
         </div>
@@ -287,13 +290,15 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
                   <FaGamepad className="h-4 w-4 text-blue-600 sm:h-5 sm:w-5" />
                 </div>
                 <div className="ml-3">
-                  <CardTitle className="text-sm font-medium text-gray-900">Jeux possédés</CardTitle>
+                  <CardTitle className="text-sm font-medium text-gray-900">
+                    {t("stats.gamesOwned")}
+                  </CardTitle>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
               <div className="text-xl font-bold text-gray-900 sm:text-2xl">{stats.totalGames}</div>
-              <p className="text-xs text-gray-500">Dans votre bibliothèque</p>
+              <p className="text-xs text-gray-500">{t("stats.inLibrary")}</p>
             </CardContent>
           </Card>
 
@@ -304,7 +309,9 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
                   <FaGamepad className="h-4 w-4 text-green-600 sm:h-5 sm:w-5" />
                 </div>
                 <div className="ml-3">
-                  <CardTitle className="text-sm font-medium text-gray-900">Jeux terminés</CardTitle>
+                  <CardTitle className="text-sm font-medium text-gray-900">
+                    {t("stats.gamesCompleted")}
+                  </CardTitle>
                 </div>
               </div>
             </CardHeader>
@@ -312,7 +319,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
               <div className="text-xl font-bold text-gray-900 sm:text-2xl">
                 {stats.completedGames}
               </div>
-              <p className="text-xs text-gray-500">Complétés à 100%</p>
+              <p className="text-xs text-gray-500">{t("stats.completedPercent")}</p>
             </CardContent>
           </Card>
 
@@ -323,7 +330,9 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
                   <FaClock className="h-4 w-4 text-purple-600 sm:h-5 sm:w-5" />
                 </div>
                 <div className="ml-3">
-                  <CardTitle className="text-sm font-medium text-gray-900">Temps de jeu</CardTitle>
+                  <CardTitle className="text-sm font-medium text-gray-900">
+                    {t("stats.playTime")}
+                  </CardTitle>
                 </div>
               </div>
             </CardHeader>
@@ -331,7 +340,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
               <div className="text-xl font-bold text-gray-900 sm:text-2xl">
                 {stats.totalPlayTime}h
               </div>
-              <p className="text-xs text-gray-500">Total joué</p>
+              <p className="text-xs text-gray-500">{t("stats.totalPlayed")}</p>
             </CardContent>
           </Card>
 
@@ -342,7 +351,9 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
                   <FaStar className="h-4 w-4 text-yellow-600 sm:h-5 sm:w-5" />
                 </div>
                 <div className="ml-3">
-                  <CardTitle className="text-sm font-medium text-gray-900">Note moyenne</CardTitle>
+                  <CardTitle className="text-sm font-medium text-gray-900">
+                    {t("stats.averageRating")}
+                  </CardTitle>
                 </div>
               </div>
             </CardHeader>
@@ -350,7 +361,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
               <div className="text-xl font-bold text-gray-900 sm:text-2xl">
                 {stats.averageRating ? `${stats.averageRating}/5` : "—"}
               </div>
-              <p className="text-xs text-gray-500">Vos évaluations</p>
+              <p className="text-xs text-gray-500">{t("stats.yourRatings")}</p>
             </CardContent>
           </Card>
         </div>
@@ -395,23 +406,23 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
                   </div>
                   <h3 className="mb-2 text-base font-medium text-gray-900 sm:text-lg">
                     {searchQuery || selectedGenres.length > 0 || selectedPublishers.length > 0
-                      ? "Aucun jeu trouvé"
-                      : "Votre bibliothèque est vide"}
+                      ? t("empty.noGamesFound")
+                      : t("empty.title")}
                   </h3>
                   <p className="mb-6 max-w-md text-sm text-gray-500 sm:text-base">
                     {searchQuery || selectedGenres.length > 0 || selectedPublishers.length > 0
-                      ? "Essayez de modifier vos critères de recherche"
-                      : "Commencez à construire votre collection en explorant notre catalogue de jeux"}
+                      ? t("empty.modifySearch")
+                      : t("empty.description")}
                   </p>
                   {searchQuery || selectedGenres.length > 0 || selectedPublishers.length > 0 ? (
                     <Button onClick={handleClearFilters} className="bg-blue-600 hover:bg-blue-700">
-                      Effacer les filtres
+                      {t("empty.clearFilters")}
                     </Button>
                   ) : (
                     <Button asChild className="bg-blue-600 hover:bg-blue-700">
                       <Link href="/games">
                         <FaPlus className="mr-2 h-4 w-4" />
-                        Explorer les jeux
+                        {t("empty.exploreGames")}
                       </Link>
                     </Button>
                   )}

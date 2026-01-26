@@ -54,10 +54,10 @@ export function LandingContent() {
         <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
           <div className="text-center">
             <h2 className="mb-6 text-4xl font-bold text-gray-900 sm:text-5xl">
-              Fonctionnalités principales
+              {t("features.mainTitle")}
             </h2>
             <p className="mx-auto mb-20 max-w-2xl text-lg leading-relaxed text-gray-600">
-              Découvrez tout ce que Game Universe a à offrir pour enrichir votre expérience gaming
+              {t("features.mainSubtitle")}
             </p>
           </div>
 
@@ -111,10 +111,10 @@ export function LandingContent() {
       <section className="bg-gradient-to-b from-white to-slate-50 py-24">
         <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
           <div className="mb-16 text-center">
-            <h2 className="mb-4 text-4xl font-bold text-gray-900 sm:text-5xl">Nos statistiques</h2>
-            <p className="mx-auto max-w-2xl text-lg text-gray-600">
-              Des chiffres qui témoignent de notre engagement envers la communauté gaming
-            </p>
+            <h2 className="mb-4 text-4xl font-bold text-gray-900 sm:text-5xl">
+              {t("stats.title")}
+            </h2>
+            <p className="mx-auto max-w-2xl text-lg text-gray-600">{t("stats.subtitle")}</p>
           </div>
 
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
@@ -124,7 +124,7 @@ export function LandingContent() {
                   <FaGamepad className="h-10 w-10 text-white" />
                 </div>
                 <div className="mb-2 text-4xl font-bold text-gray-900">10,000+</div>
-                <div className="text-lg text-gray-600">Jeux référencés</div>
+                <div className="text-lg text-gray-600">{t("stats.gamesReferenced")}</div>
               </CardContent>
             </Card>
 
@@ -134,7 +134,7 @@ export function LandingContent() {
                   <FaStar className="h-10 w-10 text-white" />
                 </div>
                 <div className="mb-2 text-4xl font-bold text-gray-900">50,000+</div>
-                <div className="text-lg text-gray-600">Évaluations</div>
+                <div className="text-lg text-gray-600">{t("stats.ratings")}</div>
               </CardContent>
             </Card>
 
@@ -144,7 +144,7 @@ export function LandingContent() {
                   <FaChartLine className="h-10 w-10 text-white" />
                 </div>
                 <div className="mb-2 text-4xl font-bold text-gray-900">1,000+</div>
-                <div className="text-lg text-gray-600">Nouveaux jeux/mois</div>
+                <div className="text-lg text-gray-600">{t("stats.newGamesPerMonth")}</div>
               </CardContent>
             </Card>
           </div>
@@ -156,13 +156,8 @@ export function LandingContent() {
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
         <div className="relative mx-auto max-w-4xl px-6 text-center sm:px-8 lg:px-12">
-          <h2 className="mb-6 text-4xl font-bold sm:text-5xl">
-            Prêt à commencer votre aventure gaming ?
-          </h2>
-          <p className="mb-12 text-xl leading-relaxed text-blue-100">
-            Rejoignez des milliers de gamers qui utilisent déjà Game Universe pour découvrir leurs
-            prochains jeux favoris
-          </p>
+          <h2 className="mb-6 text-4xl font-bold sm:text-5xl">{t("cta.title")}</h2>
+          <p className="mb-12 text-xl leading-relaxed text-blue-100">{t("cta.subtitle")}</p>
           <div className="flex flex-col items-center justify-center gap-6 sm:flex-row">
             <Button
               size="lg"

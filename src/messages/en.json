@@ -1,5 +1,8 @@
 {
   "navigation": {
+    "games": "Games",
+    "characters": "Characters",
+    "players": "Players",
     "home": "Home",
     "library": "Library",
     "dashboard": "Dashboard",
@@ -12,9 +15,13 @@
     "subtitle": "The complete platform to explore, discover and share your gaming passion",
     "cta": {
       "signup": "Get started for free",
-      "login": "Sign in"
+      "login": "Sign in",
+      "title": "Ready to start your gaming adventure?",
+      "subtitle": "Join thousands of gamers already using Game Universe to discover their next favorite games"
     },
     "features": {
+      "mainTitle": "Main Features",
+      "mainSubtitle": "Discover everything Game Universe has to offer to enrich your gaming experience",
       "library": {
         "title": "Complete library",
         "description": "Explore thousands of video games with detailed information"
@@ -27,6 +34,13 @@
         "title": "Detailed information",
         "description": "View all technical information, prices and media for each game"
       }
+    },
+    "stats": {
+      "title": "Our Statistics",
+      "subtitle": "Numbers that demonstrate our commitment to the gaming community",
+      "gamesReferenced": "Games referenced",
+      "ratings": "Ratings",
+      "newGamesPerMonth": "New games/month"
     }
   },
   "library": {
@@ -47,6 +61,8 @@
   "game": {
     "details": "Game details",
     "developer": "Developer",
+    "developerShort": "Dev",
+    "publisherShort": "Pub",
     "publisher": "Publisher",
     "releaseDate": "Release date",
     "genres": "Genres",
@@ -61,7 +77,22 @@
     "screenshots": "Screenshots",
     "artwork": "Artwork",
     "trailers": "Trailers",
-    "gameplay": "Gameplay"
+    "gameplay": "Gameplay",
+    "addToLibrary": "Add to my library",
+    "removeFromLibrary": "Remove from my library",
+    "companies": {
+      "title": "Companies",
+      "noCompanies": "No companies found",
+      "viewProfile": "View profile",
+      "primary": "Primary",
+      "roles": {
+        "developer": "Developer",
+        "publisher": "Publisher",
+        "co-developer": "Co-developer",
+        "co-publisher": "Co-publisher"
+      },
+      "developedBy": "Developed by"
+    }
   },
   "auth": {
     "signin": {
@@ -93,6 +124,36 @@
       "generic": "An unexpected error occurred",
       "tryAgain": "Try Again",
       "backHome": "Back to Home"
+    },
+    "resetPassword": {
+      "title": "New Password",
+      "description": "Choose a new secure password for your account.",
+      "newPassword": "New password",
+      "newPasswordPlaceholder": "Enter your new password",
+      "confirmPassword": "Confirm password",
+      "confirmPasswordPlaceholder": "Confirm your new password",
+      "submit": "Update password",
+      "submitting": "Updating...",
+      "success": "Password updated!",
+      "successDescription": "Your password has been updated successfully. Redirecting...",
+      "invalidLink": "Invalid link",
+      "invalidLinkDescription": "The reset link is invalid or has expired.",
+      "noTokenFound": "No recovery token found. Please request a new link.",
+      "backToLogin": "Back to login",
+      "requestNewLink": "Request a new link",
+      "requirements": {
+        "title": "Password must contain:",
+        "minLength": "At least 8 characters",
+        "uppercase": "An uppercase and a lowercase letter",
+        "number": "At least one number"
+      },
+      "validation": {
+        "minLength": "Password must be at least 8 characters",
+        "uppercase": "Password must contain at least one uppercase letter",
+        "lowercase": "Password must contain at least one lowercase letter",
+        "number": "Password must contain at least one number",
+        "mismatch": "Passwords do not match"
+      }
     },
     "footer": {
       "text": "© 2024 Game Universe. All rights reserved."
@@ -166,14 +227,21 @@
     "next": "Next",
     "previous": "Previous",
     "close": "Close",
-    "language": "Language"
+    "language": "Language",
+    "reloadPage": "Reload page",
+    "backToHome": "Back to home",
+    "games": "game(s)"
   },
   "pagination": {
     "page": "Page {current} of {total}",
     "previous": "Previous",
     "next": "Next",
     "first": "First",
-    "last": "Last"
+    "last": "Last",
+    "of": "of",
+    "result": "result",
+    "results": "results",
+    "goToPage": "Go to page:"
   },
   "characters": {
     "title": "Characters",
@@ -215,18 +283,36 @@
       "primaryGame": "Primary Game",
       "role": "Role",
       "appearances": "Appearances",
-      "gamesCount": "{count} game(s)"
+      "gamesCount": "{count} game(s)",
+      "gameAppearances": "Game appearances",
+      "noGames": "No associated games",
+      "primary": "Primary",
+      "weaponsEquipment": "Weapons & Equipment",
+      "biography": "Biography",
+      "relationships": "Relationships",
+      "noDescription": "No description available",
+      "relationshipTypes": {
+        "ally": "Ally",
+        "enemy": "Enemy",
+        "family": "Family",
+        "friend": "Friend",
+        "rival": "Rival",
+        "romantic": "Romantic",
+        "mentor": "Mentor"
+      }
     },
     "tabs": {
       "media": "Media",
       "games": "Games",
-      "biography": "Biography"
+      "biography": "Biography",
+      "description": "Description"
     },
     "media": {
       "screenshots": "Screenshots",
       "artwork": "Artwork",
       "videos": "Videos",
-      "videoNotSupported": "Your browser does not support video playback."
+      "videoNotSupported": "Your browser does not support video playback.",
+      "noMedia": "No media available"
     },
     "empty": {
       "title": "No characters found",
@@ -238,6 +324,7 @@
       "loadingTitle": "Loading Error",
       "loadingDescription": "An error occurred while loading the characters page. Please try again.",
       "detailsLoadingDescription": "An error occurred while loading character details. Please try again.",
+      "unableToLoad": "Unable to load character details.",
       "retry": "Retry",
       "backToCharacters": "Back to characters",
       "backToHome": "Back to home",
@@ -322,6 +409,8 @@
     "errors": {
       "loadingTitle": "Loading Error",
       "loadingDescription": "An error occurred while loading the players page. Please try again.",
+      "detailsLoadingDescription": "An error occurred while displaying player profile.",
+      "unableToLoad": "Unable to load player profile.",
       "retry": "Retry",
       "backToPlayers": "Back to players",
       "backToHome": "Back to home",
@@ -340,6 +429,144 @@
       "previous": "Previous",
       "next": "Next",
       "last": "Last"
+    }
+  },
+  "userLibrary": {
+    "title": "My Library",
+    "subtitle": "Manage your personal video game collection",
+    "heroTitle": "My Library",
+    "heroTitleHighlight": "of Games",
+    "heroSubtitle": "Manage and explore your personal collection",
+    "errors": {
+      "loadingDescription": "An error occurred while loading your library."
+    },
+    "stats": {
+      "gamesOwned": "Games owned",
+      "inLibrary": "In your library",
+      "gamesCompleted": "Games completed",
+      "completedPercent": "100% completed",
+      "playTime": "Play time",
+      "totalPlayed": "Total played",
+      "averageRating": "Average rating",
+      "yourRatings": "Your ratings"
+    },
+    "empty": {
+      "title": "Your library is empty",
+      "description": "Start building your collection by exploring our game catalog and adding your favorites to your library.",
+      "noGamesFound": "No games found",
+      "modifySearch": "Try modifying your search criteria",
+      "clearFilters": "Clear filters",
+      "exploreGames": "Explore games",
+      "addGames": "Add games"
+    },
+    "yourGames": "Your games ({count})",
+    "loadingError": "Loading error",
+    "retry": "Retry"
+  },
+  "games": {
+    "heroTitle": "Discover",
+    "heroTitleHighlight": "Extraordinary Games",
+    "heroSubtitle": "Explore our collection of exceptional video games",
+    "availableCount": "{count} games available",
+    "noGamesFound": "No games found",
+    "modifySearch": "Try modifying your search criteria or explore other categories",
+    "noGamesAvailable": "No games available at the moment",
+    "clearFilters": "Clear filters"
+  },
+  "gameDetails": {
+    "overview": "Overview",
+    "platforms": "Platforms",
+    "view": "View",
+    "errors": {
+      "loadingTitle": "Loading Error",
+      "loadingDescription": "An error occurred while displaying game details.",
+      "unableToLoad": "Unable to load game details.",
+      "backToGames": "Back to games"
+    },
+    "metascoreRatings": {
+      "exceptional": "Exceptional",
+      "excellent": "Excellent",
+      "good": "Good",
+      "average": "Average",
+      "poor": "Poor"
+    },
+    "tabs": {
+      "media": "Media",
+      "specs": "Specifications",
+      "reviews": "Reviews",
+      "playtime": "Playtime",
+      "languages": "Languages",
+      "music": "Music"
+    },
+    "media": {
+      "screenshots": "Screenshots",
+      "artwork": "Artwork",
+      "videos": "Videos",
+      "videoNotSupported": "Your browser does not support video playback."
+    },
+    "specs": {
+      "noSpecs": "No specifications available"
+    },
+    "reviews": {
+      "title": "Player Reviews",
+      "comingSoon": "Player reviews coming soon"
+    },
+    "playtime": {
+      "title": "Playtime Statistics",
+      "comingSoon": "Playtime statistics coming soon"
+    },
+    "languages": {
+      "interface": "Interface",
+      "subtitles": "Subtitles",
+      "voice": "Voice"
+    },
+    "music": {
+      "soundtrack": "Soundtrack",
+      "composer": "Composer",
+      "comingSoon": "Soundtrack information and composer details coming soon."
+    }
+  },
+  "footer": {
+    "tagline": "The complete platform to explore the gaming universe",
+    "copyright": "© 2024 Game Universe. All rights reserved."
+  },
+  "errors": {
+    "unexpectedError": "An unexpected error occurred",
+    "unexpectedErrorMessage": "An unexpected error occurred. Please try again.",
+    "retry": "Retry",
+    "reloadPage": "Reload page",
+    "technicalDetails": "Technical details (development)",
+    "loadingError": "Loading error",
+    "loadingErrorDescription": "Unable to load data. Previous data has been preserved.",
+    "demo": {
+      "title": "Error handling system demonstration",
+      "description": "This component is only visible in development to test different error types.",
+      "criticalErrors": "Critical errors (Error Boundary)",
+      "triggerBoundary": "Trigger Error Boundary",
+      "networkErrors": "Network errors (with retry)",
+      "networkError": "Network error",
+      "attempting": "Attempting...",
+      "validationErrors": "Validation errors",
+      "validationError": "Validation error",
+      "authErrors": "Authentication errors",
+      "sessionExpired": "Session expired",
+      "asyncFallback": "Async with fallback",
+      "processing": "Processing...",
+      "asyncExecute": "Async with executeAsync",
+      "howToUse": "How to use the system:",
+      "boundaryHook": "To trigger the Error Boundary",
+      "asyncHook": "To handle async errors with toasts",
+      "apiClient": "API client with automatic retry",
+      "errorProvider": "Global provider with integrated Toaster",
+      "errorBoundary": "Component to capture React errors",
+      "simulatedCriticalError": "Simulated critical error to test the Error Boundary",
+      "networkErrorCaptured": "Network error captured and handled by the system",
+      "invalidData": "The entered data is not valid",
+      "invalidEmailFormat": "Invalid email format",
+      "yourSessionExpired": "Your session has expired",
+      "reconnect": "Reconnect",
+      "simulatedAsyncError": "Simulated async error",
+      "asyncErrorWithExecute": "Async error with executeAsync"
     }
   },
   "settings": {

@@ -5,23 +5,22 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { UserX, ArrowLeft, Home } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 export default function CharacterNotFound() {
   const params = useParams();
   const locale = (params?.locale as string) || "fr";
+  const t = useTranslations("characters.errors");
+  const tCommon = useTranslations("common");
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-4">
       <div className="w-full max-w-md">
         <Alert className="border-slate-700 bg-slate-800/50">
           <UserX className="h-4 w-4 text-slate-400" />
-          <AlertTitle className="text-white">
-            {locale === "fr" ? "Personnage non trouvé" : "Character not found"}
-          </AlertTitle>
+          <AlertTitle className="text-white">{t("notFoundTitle")}</AlertTitle>
           <AlertDescription className="mt-2 text-slate-300">
-            {locale === "fr"
-              ? "Le personnage que vous recherchez n'existe pas ou a été supprimé."
-              : "The character you are looking for does not exist or has been removed."}
+            {t("notFoundDescription")}
           </AlertDescription>
           <div className="mt-4 flex flex-wrap gap-2">
             <Button
@@ -31,7 +30,7 @@ export default function CharacterNotFound() {
             >
               <Link href={`/${locale}/characters`}>
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                {locale === "fr" ? "Retour aux personnages" : "Back to characters"}
+                {t("backToCharacters")}
               </Link>
             </Button>
             <Button
@@ -41,7 +40,7 @@ export default function CharacterNotFound() {
             >
               <Link href={`/${locale}/dashboard`}>
                 <Home className="mr-2 h-4 w-4" />
-                {locale === "fr" ? "Retour à l'accueil" : "Back to home"}
+                {tCommon("backToHome")}
               </Link>
             </Button>
           </div>

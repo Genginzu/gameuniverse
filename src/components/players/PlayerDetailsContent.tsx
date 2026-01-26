@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LazyImage } from "@/components/ui/lazy-image";
@@ -14,8 +15,11 @@ interface PlayerDetailsContentProps {
 }
 
 export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentProps) {
+  const t = useTranslations("players");
+  const tCommon = useTranslations("common");
+
   // Display name with fallback - Requirements 5.2
-  const displayName = player.fullName || (locale === "fr" ? "Joueur anonyme" : "Anonymous player");
+  const displayName = player.fullName || t("card.anonymousPlayer");
 
   // Format date for display
   const formatDate = (dateString: string) => {
@@ -25,20 +29,6 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
       month: "long",
       day: "numeric",
     }).format(date);
-  };
-
-  // Translations
-  const t = {
-    back: locale === "fr" ? "Retour" : "Back",
-    memberSince: locale === "fr" ? "Membre depuis" : "Member since",
-    totalGames: locale === "fr" ? "Jeux possédés" : "Games owned",
-    completedGames: locale === "fr" ? "Jeux terminés" : "Completed games",
-    totalPlayTime: locale === "fr" ? "Temps de jeu" : "Play time",
-    averageRating: locale === "fr" ? "Note moyenne" : "Average rating",
-    library: locale === "fr" ? "Bibliothèque" : "Library",
-    inLibrary: locale === "fr" ? "dans la bibliothèque" : "in library",
-    hours: locale === "fr" ? "heures" : "hours",
-    noRating: locale === "fr" ? "Aucune note" : "No rating",
   };
 
   return (
@@ -59,7 +49,7 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
                 className="rounded-full bg-black/30 text-white backdrop-blur-sm hover:bg-black/50 hover:text-white"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                {t.back}
+                {t("details.back")}
               </Button>
             </Link>
           </div>
@@ -97,7 +87,7 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
               <div className="flex items-center justify-center gap-2 text-slate-300 md:justify-start">
                 <Calendar className="h-4 w-4" />
                 <span className="text-sm">
-                  {t.memberSince} {formatDate(player.createdAt)}
+                  {t("details.memberSince")} {formatDate(player.createdAt)}
                 </span>
               </div>
             </div>
@@ -113,7 +103,7 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
             <CardContent className="p-6">
               <div className="mb-2 flex items-center gap-2 text-slate-400">
                 <Gamepad2 className="h-5 w-5 text-blue-400" />
-                <span className="text-sm font-medium">{t.totalGames}</span>
+                <span className="text-sm font-medium">{t("details.totalGames")}</span>
               </div>
               <p className="text-2xl font-bold text-white md:text-3xl">{player.stats.totalGames}</p>
             </CardContent>
@@ -124,7 +114,7 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
             <CardContent className="p-6">
               <div className="mb-2 flex items-center gap-2 text-slate-400">
                 <Trophy className="h-5 w-5 text-green-400" />
-                <span className="text-sm font-medium">{t.completedGames}</span>
+                <span className="text-sm font-medium">{t("details.completedGames")}</span>
               </div>
               <p className="text-2xl font-bold text-white md:text-3xl">
                 {player.stats.completedGames}
@@ -137,7 +127,7 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
             <CardContent className="p-6">
               <div className="mb-2 flex items-center gap-2 text-slate-400">
                 <Clock className="h-5 w-5 text-purple-400" />
-                <span className="text-sm font-medium">{t.totalPlayTime}</span>
+                <span className="text-sm font-medium">{t("details.totalPlayTime")}</span>
               </div>
               <p className="text-2xl font-bold text-white md:text-3xl">
                 {player.stats.totalPlayTime}
@@ -151,7 +141,7 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
             <CardContent className="p-6">
               <div className="mb-2 flex items-center gap-2 text-slate-400">
                 <Star className="h-5 w-5 text-yellow-400" />
-                <span className="text-sm font-medium">{t.averageRating}</span>
+                <span className="text-sm font-medium">{t("details.averageRating")}</span>
               </div>
               <p className="text-2xl font-bold text-white md:text-3xl">
                 {player.stats.averageRating !== null ? (
@@ -160,7 +150,7 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
                     <span className="ml-1 text-base font-normal text-slate-400">/5</span>
                   </>
                 ) : (
-                  <span className="text-lg text-slate-500">{t.noRating}</span>
+                  <span className="text-lg text-slate-500">{t("details.noRating")}</span>
                 )}
               </p>
             </CardContent>
@@ -172,10 +162,10 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
           <div className="mb-6 flex items-center justify-between">
             <h2 className="flex items-center gap-2 text-xl font-bold text-white md:text-2xl">
               <Gamepad2 className="h-6 w-6 text-blue-400" />
-              {t.library}
+              {t("details.library")}
             </h2>
             <span className="rounded-full bg-slate-700/50 px-3 py-1 text-sm text-slate-300">
-              {player.library.length} {locale === "fr" ? "jeu(x)" : "game(s)"} {t.inLibrary}
+              {player.library.length} {tCommon("games")} {t("details.inLibrary")}
             </span>
           </div>
 

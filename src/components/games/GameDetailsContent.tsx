@@ -79,6 +79,8 @@ const getGameColors = (gameTitle: string, _genres: string[]) => {
 
 export function GameDetailsContent({ game, locale }: GameDetailsProps) {
   const t = useTranslations();
+  const tGame = useTranslations("game");
+  const tDetails = useTranslations("gameDetails");
   const [selectedScreenshotIndex, setSelectedScreenshotIndex] = useState(0);
   const [selectedArtworkIndex, setSelectedArtworkIndex] = useState(0);
   const [selectedVideoIndex, setSelectedVideoIndex] = useState(0);
@@ -245,7 +247,7 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                               className="mt-1 border-slate-600 text-slate-300 hover:bg-slate-700"
                             >
                               <ExternalLink className="mr-1 h-3 w-3" />
-                              {locale === "fr" ? "Voir" : "View"}
+                              {tDetails("view")}
                             </Button>
                           </div>
                         </div>
@@ -312,9 +314,7 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
               <div className="space-y-12">
                 {/* Section Aperçu - Informations du jeu */}
                 <div>
-                  <h2 className="mb-6 text-2xl font-bold text-white">
-                    {locale === "fr" ? "Aperçu" : "Overview"}
-                  </h2>
+                  <h2 className="mb-6 text-2xl font-bold text-white">{tDetails("overview")}</h2>
                   <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {/* Développeur */}
                     <div className="rounded-xl border border-slate-700 bg-slate-800/50 p-4">
@@ -364,24 +364,14 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                           </div>
                           <div className="text-sm text-slate-300">
                             {game.metascore >= 90
-                              ? locale === "fr"
-                                ? "Exceptionnel"
-                                : "Exceptional"
+                              ? tDetails("metascoreRatings.exceptional")
                               : game.metascore >= 75
-                                ? locale === "fr"
-                                  ? "Excellent"
-                                  : "Excellent"
+                                ? tDetails("metascoreRatings.excellent")
                                 : game.metascore >= 60
-                                  ? locale === "fr"
-                                    ? "Bon"
-                                    : "Good"
+                                  ? tDetails("metascoreRatings.good")
                                   : game.metascore >= 40
-                                    ? locale === "fr"
-                                      ? "Moyen"
-                                      : "Average"
-                                    : locale === "fr"
-                                      ? "Faible"
-                                      : "Poor"}
+                                    ? tDetails("metascoreRatings.average")
+                                    : tDetails("metascoreRatings.poor")}
                           </div>
                         </div>
                       </div>
@@ -392,9 +382,7 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                       <div className="rounded-xl border border-slate-700 bg-slate-800/50 p-4">
                         <div className="mb-3 flex items-center gap-2">
                           <Smartphone className="h-4 w-4" style={{ color: colors.accent }} />
-                          <div className="text-sm text-slate-400">
-                            {locale === "fr" ? "Plateformes" : "Platforms"}
-                          </div>
+                          <div className="text-sm text-slate-400">{tDetails("platforms")}</div>
                         </div>
                         <div className="flex flex-wrap gap-2">
                           {Array.from(new Set(game.pricing.map((p) => p.platform))).map(
@@ -447,7 +435,7 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                       }`}
                     >
                       <Eye className="mr-2 inline h-4 w-4" />
-                      {locale === "fr" ? "Médias" : "Media"}
+                      {tDetails("tabs.media")}
                     </button>
                     <button
                       onClick={() => setActiveTab("specs")}
@@ -458,7 +446,7 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                       }`}
                     >
                       <Settings className="mr-2 inline h-4 w-4" />
-                      {locale === "fr" ? "Spécifications" : "Specifications"}
+                      {tDetails("tabs.specs")}
                     </button>
                     <button
                       onClick={() => setActiveTab("reviews")}
@@ -469,7 +457,7 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                       }`}
                     >
                       <MessageSquare className="mr-2 inline h-4 w-4" />
-                      {locale === "fr" ? "Avis" : "Reviews"}
+                      {tDetails("tabs.reviews")}
                     </button>
                     <button
                       onClick={() => setActiveTab("playtime")}
@@ -480,7 +468,7 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                       }`}
                     >
                       <Clock className="mr-2 inline h-4 w-4" />
-                      {locale === "fr" ? "Temps de jeu" : "Playtime"}
+                      {tDetails("tabs.playtime")}
                     </button>
                     <button
                       onClick={() => setActiveTab("languages")}
@@ -491,7 +479,7 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                       }`}
                     >
                       <Languages className="mr-2 inline h-4 w-4" />
-                      {locale === "fr" ? "Langues" : "Languages"}
+                      {tDetails("tabs.languages")}
                     </button>
                     <button
                       onClick={() => setActiveTab("music")}
@@ -502,7 +490,7 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                       }`}
                     >
                       <Music className="mr-2 inline h-4 w-4" />
-                      {locale === "fr" ? "Musique" : "Music"}
+                      {tDetails("tabs.music")}
                     </button>
                   </div>
                 </div>
@@ -515,7 +503,7 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                       {game.media.screenshots.length > 0 && (
                         <div>
                           <h3 className="mb-6 text-xl font-bold text-white">
-                            {locale === "fr" ? "Captures d'écran" : "Screenshots"}
+                            {tDetails("media.screenshots")}
                           </h3>
                           <div>
                             {/* Image principale */}
@@ -592,7 +580,7 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                       {game.media.artwork.length > 0 && (
                         <div>
                           <h3 className="mb-6 text-xl font-bold text-white">
-                            {locale === "fr" ? "Illustrations" : "Artwork"}
+                            {tDetails("media.artwork")}
                           </h3>
                           <div>
                             {/* Image principale */}
@@ -669,7 +657,7 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                       {game.media.videos.length > 0 && (
                         <div>
                           <h3 className="mb-6 text-xl font-bold text-white">
-                            {locale === "fr" ? "Vidéos" : "Videos"}
+                            {tDetails("media.videos")}
                           </h3>
                           <div>
                             {/* Vidéo principale */}
@@ -681,9 +669,7 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                                   className="h-full w-full object-cover"
                                   poster={game.media.videos[selectedVideoIndex]?.thumbnailUrl}
                                 >
-                                  {locale === "fr"
-                                    ? "Votre navigateur ne supporte pas la lecture vidéo."
-                                    : "Your browser does not support video playback."}
+                                  {tDetails("media.videoNotSupported")}
                                 </video>
                               ) : (
                                 <div className="flex h-full w-full items-center justify-center">
@@ -805,11 +791,7 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                       ) : (
                         <div className="py-12 text-center text-slate-400">
                           <Monitor className="mx-auto mb-4 h-12 w-12 opacity-50" />
-                          <p>
-                            {locale === "fr"
-                              ? "Aucune spécification disponible"
-                              : "No specifications available"}
-                          </p>
+                          <p>{tDetails("specs.noSpecs")}</p>
                         </div>
                       )}
                     </div>
@@ -820,13 +802,9 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                       <div className="py-12 text-center text-slate-400">
                         <MessageSquare className="mx-auto mb-4 h-12 w-12 opacity-50" />
                         <p className="mb-2 text-lg font-medium text-white">
-                          {locale === "fr" ? "Avis des joueurs" : "Player Reviews"}
+                          {tDetails("reviews.title")}
                         </p>
-                        <p>
-                          {locale === "fr"
-                            ? "Les avis des joueurs seront bientôt disponibles"
-                            : "Player reviews coming soon"}
-                        </p>
+                        <p>{tDetails("reviews.comingSoon")}</p>
                       </div>
                     </div>
                   )}
@@ -836,13 +814,9 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                       <div className="py-12 text-center text-slate-400">
                         <Clock className="mx-auto mb-4 h-12 w-12 opacity-50" />
                         <p className="mb-2 text-lg font-medium text-white">
-                          {locale === "fr" ? "Temps de jeu" : "Playtime Statistics"}
+                          {tDetails("playtime.title")}
                         </p>
-                        <p>
-                          {locale === "fr"
-                            ? "Les statistiques de temps de jeu seront bientôt disponibles"
-                            : "Playtime statistics coming soon"}
-                        </p>
+                        <p>{tDetails("playtime.comingSoon")}</p>
                       </div>
                     </div>
                   )}
@@ -856,7 +830,7 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                             <CardContent className="p-6">
                               <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
                                 <Monitor className="h-5 w-5" style={{ color: colors.accent }} />
-                                {locale === "fr" ? "Interface" : "Interface"}
+                                {tDetails("languages.interface")}
                               </h3>
                               <div className="space-y-2">
                                 <div className="flex items-center gap-2 text-slate-300">
@@ -887,7 +861,7 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                                   className="h-5 w-5"
                                   style={{ color: colors.accent }}
                                 />
-                                {locale === "fr" ? "Sous-titres" : "Subtitles"}
+                                {tDetails("languages.subtitles")}
                               </h3>
                               <div className="space-y-2">
                                 <div className="flex items-center gap-2 text-slate-300">
@@ -923,7 +897,7 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                             <CardContent className="p-6">
                               <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
                                 <Play className="h-5 w-5" style={{ color: colors.accent }} />
-                                {locale === "fr" ? "Voix" : "Voice"}
+                                {tDetails("languages.voice")}
                               </h3>
                               <div className="space-y-2">
                                 <div className="flex items-center gap-2 text-slate-300">
@@ -958,7 +932,7 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                           <CardContent className="p-6">
                             <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-white">
                               <Music className="h-5 w-5" style={{ color: colors.accent }} />
-                              {locale === "fr" ? "Bande sonore" : "Soundtrack"}
+                              {tDetails("music.soundtrack")}
                             </h3>
                             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                               {/* Exemple de pistes */}
@@ -1006,14 +980,10 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                           <CardContent className="p-6">
                             <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-white">
                               <Users className="h-5 w-5" style={{ color: colors.accent }} />
-                              {locale === "fr" ? "Compositeur" : "Composer"}
+                              {tDetails("music.composer")}
                             </h3>
                             <div className="text-slate-300">
-                              <p className="mb-2">
-                                {locale === "fr"
-                                  ? "La bande sonore sera bientôt disponible avec les informations sur le compositeur."
-                                  : "Soundtrack information and composer details coming soon."}
-                              </p>
+                              <p className="mb-2">{tDetails("music.comingSoon")}</p>
                             </div>
                           </CardContent>
                         </Card>

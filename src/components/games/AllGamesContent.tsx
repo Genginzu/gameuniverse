@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { GameCard } from "./GameCard";
 import { GameSearchBar } from "./GameSearchBar";
 import { GameFilters } from "./GameFilters";
@@ -22,7 +23,8 @@ interface AllGamesContentProps {
 }
 
 export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
-  // const t = useTranslations("games"); // Unused for now
+  const t = useTranslations("games");
+  const tErrors = useTranslations("errors");
 
   const [games, setGames] = useState<GameSummary[]>([]);
   const [genres, setGenres] = useState<Genre[]>([]);
@@ -108,8 +110,8 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
         // En cas d'erreur, on garde les données précédentes mais on affiche un toast
         toast({
           variant: "destructive",
-          title: "Erreur de chargement",
-          description: "Impossible de charger les jeux. Les données précédentes sont conservées.",
+          title: tErrors("loadingError"),
+          description: tErrors("loadingErrorDescription"),
         });
       }
 
@@ -220,13 +222,13 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
         <div className="relative mx-auto max-w-4xl">
           <div className="text-center">
             <h1 className="mb-3 text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl xl:text-5xl">
-              Découvrez des Jeux
+              {t("heroTitle")}
               <span className="block bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
-                Extraordinaires
+                {t("heroTitleHighlight")}
               </span>
             </h1>
             <p className="mx-auto max-w-xl text-base text-indigo-100/90 sm:text-lg">
-              Explorez notre collection de jeux vidéo exceptionnels
+              {t("heroSubtitle")}
             </p>
             {pagination && (
               <div className="mt-4 inline-flex items-center rounded-full bg-white/15 px-3 py-1.5 text-sm backdrop-blur-sm">
@@ -243,8 +245,7 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
                     d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
                   />
                 </svg>
-                <span className="font-medium">{pagination.totalCount}</span>
-                <span className="ml-1 text-indigo-200">jeux disponibles</span>
+                <span>{t("availableCount", { count: pagination.totalCount })}</span>
               </div>
             )}
           </div>
@@ -309,19 +310,19 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
                   </svg>
                 </div>
                 <h3 className="mb-2 text-lg font-semibold text-gray-900 sm:text-xl">
-                  Aucun jeu trouvé
+                  {t("noGamesFound")}
                 </h3>
                 <p className="max-w-md text-sm text-gray-500 sm:text-base">
                   {searchQuery || selectedGenres.length > 0 || selectedPublishers.length > 0
-                    ? "Essayez de modifier vos critères de recherche ou explorez d'autres catégories"
-                    : "Aucun jeu disponible pour le moment"}
+                    ? t("modifySearch")
+                    : t("noGamesAvailable")}
                 </p>
                 {(searchQuery || selectedGenres.length > 0 || selectedPublishers.length > 0) && (
                   <button
                     onClick={handleClearFilters}
                     className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
                   >
-                    Effacer les filtres
+                    {t("clearFilters")}
                   </button>
                 )}
               </div>

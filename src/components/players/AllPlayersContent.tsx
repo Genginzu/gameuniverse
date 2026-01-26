@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { PlayerCard } from "./PlayerCard";
 import { PlayerSearchBar } from "./PlayerSearchBar";
 import { PlayerFilters } from "./PlayerFilters";
@@ -17,6 +18,8 @@ interface AllPlayersContentProps {
 }
 
 export function AllPlayersContent({ locale = "fr" }: AllPlayersContentProps) {
+  const t = useTranslations("players");
+  const tErrors = useTranslations("errors");
   // State management
   const [players, setPlayers] = useState<PlayerSummary[]>([]);
   const [pagination, setPagination] = useState<PlayerPaginationType | null>(null);
@@ -29,35 +32,6 @@ export function AllPlayersContent({ locale = "fr" }: AllPlayersContentProps) {
   // Use error handling system
   const apiClient = useApiClient();
   const { executeAsync } = useAsyncError();
-
-  // Translations
-  const t = {
-    title: locale === "fr" ? "Découvrez la Communauté" : "Discover the Community",
-    titleHighlight: locale === "fr" ? "Game Universe" : "Game Universe",
-    subtitle:
-      locale === "fr"
-        ? "Explorez les profils des joueurs et découvrez leurs collections"
-        : "Explore player profiles and discover their collections",
-    playersAvailable: locale === "fr" ? "joueurs disponibles" : "players available",
-    resultsFor: locale === "fr" ? "résultat(s) pour" : "result(s) for",
-    playersTotal: locale === "fr" ? "joueurs au total" : "players total",
-    activeFilters: locale === "fr" ? "Filtres actifs" : "Active filters",
-    noPlayersFound: locale === "fr" ? "Aucun joueur trouvé" : "No players found",
-    noPlayersDescription:
-      locale === "fr"
-        ? "Essayez de modifier vos critères de recherche ou explorez d'autres catégories"
-        : "Try modifying your search criteria or explore other categories",
-    noPlayersAvailable:
-      locale === "fr"
-        ? "Aucun joueur disponible pour le moment"
-        : "No players available at the moment",
-    clearFilters: locale === "fr" ? "Effacer les filtres" : "Clear filters",
-    loadingError: locale === "fr" ? "Erreur de chargement" : "Loading error",
-    loadingErrorDescription:
-      locale === "fr"
-        ? "Impossible de charger les joueurs. Les données précédentes sont conservées."
-        : "Unable to load players. Previous data is preserved.",
-  };
 
   // Fetch players with error handling
   const fetchPlayers = useCallback(
@@ -101,15 +75,15 @@ export function AllPlayersContent({ locale = "fr" }: AllPlayersContentProps) {
         // On error, keep previous data but show toast
         toast({
           variant: "destructive",
-          title: t.loadingError,
-          description: t.loadingErrorDescription,
+          title: tErrors("loadingError"),
+          description: tErrors("loadingErrorDescription"),
         });
       }
 
       setLoading(false);
       setInitialLoading(false);
     },
-    [apiClient, executeAsync, t.loadingError, t.loadingErrorDescription]
+    [apiClient, executeAsync, tErrors]
   );
 
   // Handle search
@@ -208,12 +182,14 @@ export function AllPlayersContent({ locale = "fr" }: AllPlayersContentProps) {
         <div className="relative mx-auto max-w-4xl">
           <div className="text-center">
             <h1 className="mb-3 text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl xl:text-5xl">
-              {t.title}
+              {t("heroTitle")}
               <span className="block bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
-                {t.titleHighlight}
+                {t("heroTitleHighlight")}
               </span>
             </h1>
-            <p className="mx-auto max-w-xl text-base text-indigo-100/90 sm:text-lg">{t.subtitle}</p>
+            <p className="mx-auto max-w-xl text-base text-indigo-100/90 sm:text-lg">
+              {t("heroSubtitle")}
+            </p>
           </div>
         </div>
 
@@ -276,19 +252,19 @@ export function AllPlayersContent({ locale = "fr" }: AllPlayersContentProps) {
                   </svg>
                 </div>
                 <h3 className="mb-2 text-lg font-semibold text-gray-900 sm:text-xl">
-                  {t.noPlayersFound}
+                  {t("empty.title")}
                 </h3>
                 <p className="max-w-md text-sm text-gray-500 sm:text-base">
                   {searchQuery || selectedGameCounts.length > 0
-                    ? t.noPlayersDescription
-                    : t.noPlayersAvailable}
+                    ? t("empty.description")
+                    : t("empty.noPlayers")}
                 </p>
                 {(searchQuery || selectedGameCounts.length > 0) && (
                   <button
                     onClick={handleClearFilters}
                     className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
                   >
-                    {t.clearFilters}
+                    {t("empty.clearFilters")}
                   </button>
                 )}
               </div>

@@ -11,7 +11,7 @@ interface LoadingStateProps {
 export function LoadingState({
   type = "spinner",
   size = "md",
-  message = "Chargement...",
+  message,
   className = "",
 }: LoadingStateProps) {
   const sizeClasses = {

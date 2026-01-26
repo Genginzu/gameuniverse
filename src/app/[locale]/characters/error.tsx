@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertTriangle, RefreshCw, Home } from "lucide-react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 interface ErrorProps {
   error: Error & { digest?: string };
@@ -12,6 +14,11 @@ interface ErrorProps {
 }
 
 export default function CharactersError({ error, reset }: ErrorProps) {
+  const params = useParams();
+  const locale = (params?.locale as string) || "fr";
+  const t = useTranslations("characters.errors");
+  const tCommon = useTranslations("common");
+
   useEffect(() => {
     // Log the error to an error reporting service
     console.error("Characters page error:", error);
@@ -22,20 +29,17 @@ export default function CharactersError({ error, reset }: ErrorProps) {
       <div className="w-full max-w-md">
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>Erreur de chargement</AlertTitle>
-          <AlertDescription className="mt-2">
-            Une erreur s'est produite lors du chargement de la page des personnages. Veuillez
-            réessayer.
-          </AlertDescription>
+          <AlertTitle>{t("loadingTitle")}</AlertTitle>
+          <AlertDescription className="mt-2">{t("loadingDescription")}</AlertDescription>
           <div className="mt-4 flex flex-wrap gap-2">
             <Button onClick={reset} variant="outline">
               <RefreshCw className="mr-2 h-4 w-4" />
-              Réessayer
+              {t("retry")}
             </Button>
             <Button asChild variant="outline">
-              <Link href="/fr/dashboard">
+              <Link href={`/${locale}/dashboard`}>
                 <Home className="mr-2 h-4 w-4" />
-                Retour à l'accueil
+                {tCommon("backToHome")}
               </Link>
             </Button>
           </div>

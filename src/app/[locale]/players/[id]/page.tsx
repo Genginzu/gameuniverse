@@ -4,6 +4,7 @@ import { PlayerService } from "@/lib/services/playerService";
 import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
+import { getTranslations } from "next-intl/server";
 
 interface PlayerDetailsPageProps {
   params: Promise<{
@@ -14,6 +15,7 @@ interface PlayerDetailsPageProps {
 
 export default async function PlayerDetailsPage({ params }: PlayerDetailsPageProps) {
   const { locale, id } = await params;
+  const t = await getTranslations({ locale, namespace: "players.errors" });
 
   // Validate player ID format - Requirements 5.3
   if (!PlayerService.validatePlayerId(id)) {
@@ -33,15 +35,11 @@ export default async function PlayerDetailsPage({ params }: PlayerDetailsPagePro
         <ErrorBoundary
           fallback={
             <ErrorFallback
-              title={locale === "fr" ? "Erreur de chargement" : "Loading Error"}
-              description={
-                locale === "fr"
-                  ? "Une erreur s'est produite lors de l'affichage du profil du joueur."
-                  : "An error occurred while displaying player profile."
-              }
+              title={t("loadingTitle")}
+              description={t("detailsLoadingDescription")}
               showBackButton={true}
               backUrl={`/${locale}/players`}
-              backLabel={locale === "fr" ? "Retour aux joueurs" : "Back to players"}
+              backLabel={t("backToPlayers")}
               locale={locale}
             />
           }
@@ -56,15 +54,11 @@ export default async function PlayerDetailsPage({ params }: PlayerDetailsPagePro
     return (
       <DashboardLayout>
         <ErrorFallback
-          title={locale === "fr" ? "Erreur de chargement" : "Loading Error"}
-          description={
-            locale === "fr"
-              ? "Impossible de charger le profil du joueur."
-              : "Unable to load player profile."
-          }
+          title={t("loadingTitle")}
+          description={t("unableToLoad")}
           showBackButton={true}
           backUrl={`/${locale}/players`}
-          backLabel={locale === "fr" ? "Retour aux joueurs" : "Back to players"}
+          backLabel={t("backToPlayers")}
           locale={locale}
         />
       </DashboardLayout>

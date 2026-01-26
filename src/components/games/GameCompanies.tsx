@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { useTranslations } from "next-intl";
 import type { Database } from "@/lib/database.types";
 
 type GameCompany = Database["public"]["Functions"]["get_game_companies"]["Returns"][0];
@@ -16,6 +17,8 @@ export default function GameCompanies({ gameId, gameTitle }: GameCompaniesProps)
   const [companies, setCompanies] = useState<GameCompany[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const t = useTranslations("game.companies");
+  const tCommon = useTranslations("common");
 
   useEffect(() => {
     async function fetchGameCompanies() {
@@ -33,14 +36,14 @@ export default function GameCompanies({ gameId, gameTitle }: GameCompaniesProps)
 
         setCompanies(data || []);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Une erreur est survenue");
+        setError(err instanceof Error ? err.message : tCommon("error"));
       } finally {
         setLoading(false);
       }
     }
 
     fetchGameCompanies();
-  }, [gameId]);
+  }, [gameId, tCommon]);
 
   if (loading) {
     return (
@@ -51,11 +54,11 @@ export default function GameCompanies({ gameId, gameTitle }: GameCompaniesProps)
   }
 
   if (error) {
-    return <div className="text-red-500">Erreur: {error}</div>;
+    return <div className="text-red-500">{error}</div>;
   }
 
   if (companies.length === 0) {
-    return <div className="text-gray-500">Aucune entreprise trouvée</div>;
+    return <div className="text-gray-500">{t("noCompanies")}</div>;
   }
 
   // Grouper les entreprises par rôle
@@ -70,21 +73,17 @@ export default function GameCompanies({ gameId, gameTitle }: GameCompaniesProps)
     {} as Record<string, GameCompany[]>
   );
 
-  // Traduction des rôles
-  const roleTranslations: Record<string, string> = {
-    developer: "Développeur",
-    publisher: "Éditeur",
-    "co-developer": "Co-développeur",
-    "co-publisher": "Co-éditeur",
-  };
-
   return (
     <div className="space-y-4">
-      {gameTitle && <h3 className="text-lg font-semibold">Entreprises - {gameTitle}</h3>}
+      {gameTitle && (
+        <h3 className="text-lg font-semibold">
+          {t("title")} - {gameTitle}
+        </h3>
+      )}
 
       {Object.entries(groupedCompanies).map(([role, roleCompanies]) => (
         <div key={role} className="rounded-lg border p-4">
-          <h4 className="mb-2 font-medium text-gray-700">{roleTranslations[role] || role}</h4>
+          <h4 className="mb-2 font-medium text-gray-700">{t(`roles.${role}`) || role}</h4>
 
           <div className="space-y-2">
             {roleCompanies.map((company) => (
@@ -98,7 +97,7 @@ export default function GameCompanies({ gameId, gameTitle }: GameCompaniesProps)
                   <span className="font-medium">{company.company_name}</span>
                   {company.is_primary && (
                     <span className="ml-2 rounded bg-blue-100 px-2 py-1 text-xs text-blue-800">
-                      Principal
+                      {t("primary")}
                     </span>
                   )}
                 </div>
@@ -107,7 +106,7 @@ export default function GameCompanies({ gameId, gameTitle }: GameCompaniesProps)
                   href={`/companies/${company.company_slug}`}
                   className="text-sm text-blue-600 hover:text-blue-800"
                 >
-                  Voir profil →
+                  {t("viewProfile")} →
                 </a>
               </div>
             ))}
@@ -122,6 +121,7 @@ export default function GameCompanies({ gameId, gameTitle }: GameCompaniesProps)
 export function GameDevelopers({ gameId }: { gameId: string }) {
   const [developers, setDevelopers] = useState<GameCompany[]>([]);
   const [loading, setLoading] = useState(true);
+  const t = useTranslations("game.companies");
 
   useEffect(() => {
     async function fetchDevelopers() {
@@ -137,7 +137,7 @@ export function GameDevelopers({ gameId }: { gameId: string }) {
         if (error) throw error;
         setDevelopers(data || []);
       } catch (err) {
-        console.error("Erreur lors du chargement des développeurs:", err);
+        console.error("Error loading developers:", err);
       } finally {
         setLoading(false);
       }
@@ -155,7 +155,7 @@ export function GameDevelopers({ gameId }: { gameId: string }) {
 
   return (
     <div>
-      <h4 className="mb-2 font-medium">Développé par:</h4>
+      <h4 className="mb-2 font-medium">{t("developedBy")}:</h4>
       <div className="flex flex-wrap gap-2">
         {developers.map((dev) => (
           <span

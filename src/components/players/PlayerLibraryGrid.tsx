@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { LazyImage } from "@/components/ui/lazy-image";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
@@ -11,30 +12,32 @@ interface PlayerLibraryGridProps {
   locale: string;
 }
 
-// Status badge colors and labels
-const getStatusConfig = (status: PlayerLibraryGame["status"], locale: string) => {
-  const configs = {
-    owned: {
-      label: locale === "fr" ? "Possédé" : "Owned",
-      className: "bg-blue-500/20 text-blue-300 border-blue-500/30",
-    },
-    wishlist: {
-      label: locale === "fr" ? "Liste de souhaits" : "Wishlist",
-      className: "bg-purple-500/20 text-purple-300 border-purple-500/30",
-    },
-    completed: {
-      label: locale === "fr" ? "Terminé" : "Completed",
-      className: "bg-green-500/20 text-green-300 border-green-500/30",
-    },
-    playing: {
-      label: locale === "fr" ? "En cours" : "Playing",
-      className: "bg-yellow-500/20 text-yellow-300 border-yellow-500/30",
-    },
-  };
-  return configs[status] || configs.owned;
-};
-
 export function PlayerLibraryGrid({ games, locale }: PlayerLibraryGridProps) {
+  const t = useTranslations("players");
+
+  // Status badge colors and labels
+  const getStatusConfig = (status: PlayerLibraryGame["status"]) => {
+    const configs = {
+      owned: {
+        label: t("library.status.owned"),
+        className: "bg-blue-500/20 text-blue-300 border-blue-500/30",
+      },
+      wishlist: {
+        label: t("library.status.wishlist"),
+        className: "bg-purple-500/20 text-purple-300 border-purple-500/30",
+      },
+      completed: {
+        label: t("library.status.completed"),
+        className: "bg-green-500/20 text-green-300 border-green-500/30",
+      },
+      playing: {
+        label: t("library.status.playing"),
+        className: "bg-yellow-500/20 text-yellow-300 border-yellow-500/30",
+      },
+    };
+    return configs[status] || configs.owned;
+  };
+
   // Sort games by addedAt date (most recent first) - Requirements 6.1, 6.2
   const sortedGames = [...games].sort(
     (a, b) => new Date(b.addedAt).getTime() - new Date(a.addedAt).getTime()
@@ -47,14 +50,8 @@ export function PlayerLibraryGrid({ games, locale }: PlayerLibraryGridProps) {
         <div className="mb-4 rounded-full bg-slate-700/50 p-4">
           <Gamepad2 className="h-12 w-12 text-slate-400" />
         </div>
-        <h3 className="mb-2 text-lg font-semibold text-white">
-          {locale === "fr" ? "Bibliothèque vide" : "Empty library"}
-        </h3>
-        <p className="max-w-md text-sm text-slate-400">
-          {locale === "fr"
-            ? "Ce joueur n'a pas encore de jeux dans sa bibliothèque"
-            : "This player doesn't have any games in their library yet"}
-        </p>
+        <h3 className="mb-2 text-lg font-semibold text-white">{t("library.empty")}</h3>
+        <p className="max-w-md text-sm text-slate-400">{t("library.emptyDescription")}</p>
       </div>
     );
   }
@@ -62,7 +59,7 @@ export function PlayerLibraryGrid({ games, locale }: PlayerLibraryGridProps) {
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
       {sortedGames.map((game) => {
-        const statusConfig = getStatusConfig(game.status, locale);
+        const statusConfig = getStatusConfig(game.status);
 
         return (
           <Link
