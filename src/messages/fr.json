@@ -526,12 +526,19 @@
     },
     "playtime": {
       "title": "Temps de jeu",
-      "comingSoon": "Les statistiques de temps de jeu seront bientôt disponibles"
+      "mainStory": "Histoire principale",
+      "mainExtras": "Histoire + Extras",
+      "completionist": "Complétionniste",
+      "average": "Moyenne",
+      "noData": "Aucune donnée de temps de jeu disponible pour ce jeu",
+      "source": "Données fournies par"
     },
     "languages": {
+      "title": "Langues supportées",
       "interface": "Interface",
       "subtitles": "Sous-titres",
-      "voice": "Voix"
+      "voice": "Voix",
+      "noData": "Aucune information sur les langues disponible"
     },
     "music": {
       "soundtrack": "Bande sonore",

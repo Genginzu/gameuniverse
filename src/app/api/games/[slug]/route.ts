@@ -24,7 +24,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     const supabase = await createRouteHandlerClient();
 
-    // Fetch game details by slug with all related data
+    // Fetch game details by slug with all related data (except languages which may not exist)
     const { data: game, error } = (await supabase
       .from("games")
       .select(
@@ -150,6 +150,56 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     if (!game) {
       return NextResponse.json({ error: "Game not found" }, { status: 404 });
+    }
+
+    // Fetch languages separately (table may not exist yet)
+    let gameLanguages: Array<{
+      language_code: string;
+      language_name: string;
+      has_audio: boolean;
+      has_subtitles: boolean;
+      has_interface: boolean;
+    }> = [];
+
+    try {
+      const { data: langData } = await supabase
+        .from("game_languages")
+        .select("language_code, language_name, has_audio, has_subtitles, has_interface")
+        .eq("game_id", game.id);
+
+      if (langData) {
+        gameLanguages = langData;
+      }
+    } catch {
+      // Table may not exist yet, ignore error
+      console.log("game_languages table not available yet");
+    }
+
+    // Fetch playtime separately (columns may not exist yet)
+    let gamePlaytime: {
+      playtime_main: number | null;
+      playtime_main_extra: number | null;
+      playtime_completionist: number | null;
+      playtime_all_styles: number | null;
+      hltb_id: number | null;
+      playtime_updated_at: string | null;
+    } | null = null;
+
+    try {
+      const { data: playtimeData } = await supabase
+        .from("games")
+        .select(
+          "playtime_main, playtime_main_extra, playtime_completionist, playtime_all_styles, hltb_id, playtime_updated_at"
+        )
+        .eq("id", game.id)
+        .single();
+
+      if (playtimeData) {
+        gamePlaytime = playtimeData;
+      }
+    } catch {
+      // Columns may not exist yet, ignore error
+      console.log("playtime columns not available yet");
     }
 
     // Transform the data to match the expected format
@@ -296,6 +346,31 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           },
         })) || [];
 
+    // Process languages from separate query
+    const languages = gameLanguages.map((lang) => ({
+      code: lang.language_code,
+      name: lang.language_name,
+      hasAudio: lang.has_audio || false,
+      hasSubtitles: lang.has_subtitles || false,
+      hasInterface: lang.has_interface || false,
+    }));
+
+    // Process playtime (may be null if columns don't exist or not yet fetched)
+    const playtime =
+      gamePlaytime &&
+      (gamePlaytime.playtime_main ||
+        gamePlaytime.playtime_main_extra ||
+        gamePlaytime.playtime_completionist)
+        ? {
+            main: gamePlaytime.playtime_main,
+            mainExtra: gamePlaytime.playtime_main_extra,
+            completionist: gamePlaytime.playtime_completionist,
+            allStyles: gamePlaytime.playtime_all_styles,
+            hltbId: gamePlaytime.hltb_id,
+            lastUpdated: gamePlaytime.playtime_updated_at,
+          }
+        : null;
+
     const transformedGame = {
       id: game.id,
       slug: game.slug,
@@ -313,6 +388,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       media,
       ageRating,
       pricing,
+      languages,
+      playtime,
       createdAt: game.created_at,
       updatedAt: game.updated_at,
     };

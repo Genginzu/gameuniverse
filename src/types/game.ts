@@ -83,6 +83,23 @@ export interface GameGenre {
   description?: string;
 }
 
+export interface GameLanguage {
+  code: string;
+  name: string;
+  hasAudio: boolean;
+  hasSubtitles: boolean;
+  hasInterface: boolean;
+}
+
+export interface GamePlaytime {
+  main: number | null;
+  mainExtra: number | null;
+  completionist: number | null;
+  allStyles: number | null;
+  hltbId?: number;
+  lastUpdated?: string;
+}
+
 export interface GameDetails {
   id: string;
   slug: string;
@@ -100,6 +117,8 @@ export interface GameDetails {
   media: GameMedia;
   ageRating?: GameRating;
   pricing: GamePricing[];
+  languages?: GameLanguage[];
+  playtime?: GamePlaytime | null;
   createdAt: string;
   updatedAt: string;
   igdbId?: number;

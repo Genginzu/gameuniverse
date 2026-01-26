@@ -526,12 +526,19 @@
     },
     "playtime": {
       "title": "Playtime Statistics",
-      "comingSoon": "Playtime statistics coming soon"
+      "mainStory": "Main Story",
+      "mainExtras": "Main + Extras",
+      "completionist": "Completionist",
+      "average": "Average",
+      "noData": "No playtime data available for this game",
+      "source": "Data provided by"
     },
     "languages": {
+      "title": "Language Support",
       "interface": "Interface",
       "subtitles": "Subtitles",
-      "voice": "Voice"
+      "voice": "Voice",
+      "noData": "No language information available"
     },
     "music": {
       "soundtrack": "Soundtrack",

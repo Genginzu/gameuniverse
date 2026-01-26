@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LazyImage } from "@/components/ui/lazy-image";
+import { GamePlaytime } from "./GamePlaytime";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -192,7 +193,7 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
             <div className="lg:col-span-4">
               <div className="sticky top-24">
                 {/* Cover principale */}
-                <div className="group relative">
+                <div className="group relative mx-auto max-w-[400px]">
                   <div
                     className={`absolute inset-0 bg-gradient-to-br ${colors.bg} scale-105 rounded-xl opacity-50 blur-xl`}
                   />
@@ -202,7 +203,7 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                       alt={game.title}
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
-                      sizes="(max-width: 768px) 100vw, 33vw"
+                      sizes="400px"
                       priority
                       showSkeleton={true}
                     />
@@ -810,117 +811,113 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                   )}
 
                   {activeTab === "playtime" && (
-                    <div>
-                      <div className="py-12 text-center text-slate-400">
-                        <Clock className="mx-auto mb-4 h-12 w-12 opacity-50" />
-                        <p className="mb-2 text-lg font-medium text-white">
-                          {tDetails("playtime.title")}
-                        </p>
-                        <p>{tDetails("playtime.comingSoon")}</p>
-                      </div>
-                    </div>
+                    <GamePlaytime playtime={game.playtime} accentColor={colors.accent} />
                   )}
 
                   {activeTab === "languages" && (
                     <div>
-                      <div className="space-y-8">
-                        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                          {/* Interface */}
-                          <Card className="rounded-xl border-slate-700 bg-slate-800/50">
-                            <CardContent className="p-6">
-                              <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
-                                <Monitor className="h-5 w-5" style={{ color: colors.accent }} />
-                                {tDetails("languages.interface")}
-                              </h3>
-                              <div className="space-y-2">
-                                <div className="flex items-center gap-2 text-slate-300">
-                                  <div className="h-2 w-2 rounded-full bg-green-400"></div>
-                                  <span>Français</span>
+                      {game.languages && game.languages.length > 0 ? (
+                        <div className="space-y-8">
+                          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+                            {/* Interface */}
+                            <Card className="rounded-xl border-slate-700 bg-slate-800/50">
+                              <CardContent className="p-6">
+                                <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
+                                  <Monitor className="h-5 w-5" style={{ color: colors.accent }} />
+                                  {tDetails("languages.interface")}
+                                </h3>
+                                <div className="space-y-2">
+                                  {game.languages
+                                    .filter((lang) => lang.hasInterface)
+                                    .map((lang) => (
+                                      <div
+                                        key={`interface-${lang.code}`}
+                                        className="flex items-center gap-2 text-slate-300"
+                                      >
+                                        <div className="h-2 w-2 rounded-full bg-green-400"></div>
+                                        <span>{lang.name}</span>
+                                      </div>
+                                    ))}
+                                  {game.languages.filter((lang) => lang.hasInterface).length ===
+                                    0 && (
+                                    <p className="text-sm text-slate-500">
+                                      {tDetails("languages.noData")}
+                                    </p>
+                                  )}
                                 </div>
-                                <div className="flex items-center gap-2 text-slate-300">
-                                  <div className="h-2 w-2 rounded-full bg-green-400"></div>
-                                  <span>English</span>
-                                </div>
-                                <div className="flex items-center gap-2 text-slate-300">
-                                  <div className="h-2 w-2 rounded-full bg-green-400"></div>
-                                  <span>Español</span>
-                                </div>
-                                <div className="flex items-center gap-2 text-slate-300">
-                                  <div className="h-2 w-2 rounded-full bg-green-400"></div>
-                                  <span>Deutsch</span>
-                                </div>
-                              </div>
-                            </CardContent>
-                          </Card>
+                              </CardContent>
+                            </Card>
 
-                          {/* Sous-titres */}
-                          <Card className="rounded-xl border-slate-700 bg-slate-800/50">
-                            <CardContent className="p-6">
-                              <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
-                                <MessageSquare
-                                  className="h-5 w-5"
-                                  style={{ color: colors.accent }}
-                                />
-                                {tDetails("languages.subtitles")}
-                              </h3>
-                              <div className="space-y-2">
-                                <div className="flex items-center gap-2 text-slate-300">
-                                  <div className="h-2 w-2 rounded-full bg-green-400"></div>
-                                  <span>Français</span>
+                            {/* Sous-titres */}
+                            <Card className="rounded-xl border-slate-700 bg-slate-800/50">
+                              <CardContent className="p-6">
+                                <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
+                                  <MessageSquare
+                                    className="h-5 w-5"
+                                    style={{ color: colors.accent }}
+                                  />
+                                  {tDetails("languages.subtitles")}
+                                </h3>
+                                <div className="space-y-2">
+                                  {game.languages
+                                    .filter((lang) => lang.hasSubtitles)
+                                    .map((lang) => (
+                                      <div
+                                        key={`subtitles-${lang.code}`}
+                                        className="flex items-center gap-2 text-slate-300"
+                                      >
+                                        <div className="h-2 w-2 rounded-full bg-green-400"></div>
+                                        <span>{lang.name}</span>
+                                      </div>
+                                    ))}
+                                  {game.languages.filter((lang) => lang.hasSubtitles).length ===
+                                    0 && (
+                                    <p className="text-sm text-slate-500">
+                                      {tDetails("languages.noData")}
+                                    </p>
+                                  )}
                                 </div>
-                                <div className="flex items-center gap-2 text-slate-300">
-                                  <div className="h-2 w-2 rounded-full bg-green-400"></div>
-                                  <span>English</span>
-                                </div>
-                                <div className="flex items-center gap-2 text-slate-300">
-                                  <div className="h-2 w-2 rounded-full bg-green-400"></div>
-                                  <span>Español</span>
-                                </div>
-                                <div className="flex items-center gap-2 text-slate-300">
-                                  <div className="h-2 w-2 rounded-full bg-green-400"></div>
-                                  <span>Deutsch</span>
-                                </div>
-                                <div className="flex items-center gap-2 text-slate-300">
-                                  <div className="h-2 w-2 rounded-full bg-green-400"></div>
-                                  <span>Italiano</span>
-                                </div>
-                                <div className="flex items-center gap-2 text-slate-300">
-                                  <div className="h-2 w-2 rounded-full bg-green-400"></div>
-                                  <span>日本語</span>
-                                </div>
-                              </div>
-                            </CardContent>
-                          </Card>
+                              </CardContent>
+                            </Card>
 
-                          {/* Voix */}
-                          <Card className="rounded-xl border-slate-700 bg-slate-800/50">
-                            <CardContent className="p-6">
-                              <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
-                                <Play className="h-5 w-5" style={{ color: colors.accent }} />
-                                {tDetails("languages.voice")}
-                              </h3>
-                              <div className="space-y-2">
-                                <div className="flex items-center gap-2 text-slate-300">
-                                  <div className="h-2 w-2 rounded-full bg-green-400"></div>
-                                  <span>English</span>
+                            {/* Voix */}
+                            <Card className="rounded-xl border-slate-700 bg-slate-800/50">
+                              <CardContent className="p-6">
+                                <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
+                                  <Play className="h-5 w-5" style={{ color: colors.accent }} />
+                                  {tDetails("languages.voice")}
+                                </h3>
+                                <div className="space-y-2">
+                                  {game.languages
+                                    .filter((lang) => lang.hasAudio)
+                                    .map((lang) => (
+                                      <div
+                                        key={`audio-${lang.code}`}
+                                        className="flex items-center gap-2 text-slate-300"
+                                      >
+                                        <div className="h-2 w-2 rounded-full bg-green-400"></div>
+                                        <span>{lang.name}</span>
+                                      </div>
+                                    ))}
+                                  {game.languages.filter((lang) => lang.hasAudio).length === 0 && (
+                                    <p className="text-sm text-slate-500">
+                                      {tDetails("languages.noData")}
+                                    </p>
+                                  )}
                                 </div>
-                                <div className="flex items-center gap-2 text-slate-300">
-                                  <div className="h-2 w-2 rounded-full bg-green-400"></div>
-                                  <span>Français</span>
-                                </div>
-                                <div className="flex items-center gap-2 text-slate-300">
-                                  <div className="h-2 w-2 rounded-full bg-green-400"></div>
-                                  <span>Deutsch</span>
-                                </div>
-                                <div className="flex items-center gap-2 text-slate-300">
-                                  <div className="h-2 w-2 rounded-full bg-green-400"></div>
-                                  <span>日本語</span>
-                                </div>
-                              </div>
-                            </CardContent>
-                          </Card>
+                              </CardContent>
+                            </Card>
+                          </div>
                         </div>
-                      </div>
+                      ) : (
+                        <div className="py-12 text-center text-slate-400">
+                          <Languages className="mx-auto mb-4 h-12 w-12 opacity-50" />
+                          <p className="mb-2 text-lg font-medium text-white">
+                            {tDetails("languages.title")}
+                          </p>
+                          <p>{tDetails("languages.noData")}</p>
+                        </div>
+                      )}
                     </div>
                   )}
 

@@ -2,6 +2,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { IGDBGame } from "@/types/igdb";
 import { GameDetails } from "@/types/game";
 import { IGDBService } from "./igdbService";
+import { HLTBService } from "./hltbService";
 
 /**
  * Result of an import or sync operation
@@ -23,6 +24,12 @@ interface GameInsertData {
   cover_image_url: string | null;
   background_image_url: string | null;
   last_synced_at: string;
+  playtime_main: number | null;
+  playtime_main_extra: number | null;
+  playtime_completionist: number | null;
+  playtime_all_styles: number | null;
+  hltb_id: number | null;
+  playtime_updated_at: string | null;
 }
 
 /**
@@ -138,6 +145,14 @@ export class GameImportService {
       await this.createMedia(newGame.id, igdbGame);
       console.log(`[GameImportService] Media created`);
 
+      // Create language support entries
+      await this.createLanguages(newGame.id, igdbGame);
+      console.log(`[GameImportService] Languages created`);
+
+      // Fetch and save playtime from HowLongToBeat
+      await this.fetchAndSavePlaytime(newGame.id, igdbGame.name);
+      console.log(`[GameImportService] Playtime fetched`);
+
       // Fetch the complete game details to return
       const gameDetails = await this.fetchGameDetails(newGame.slug);
       console.log(`[GameImportService] Import complete for: ${newGame.slug}`);
@@ -218,6 +233,12 @@ export class GameImportService {
       // Update media (screenshots, artwork)
       await this.updateMedia(gameId, igdbGame);
 
+      // Update language support
+      await this.updateLanguages(gameId, igdbGame);
+
+      // Update playtime from HowLongToBeat
+      await this.fetchAndSavePlaytime(gameId, igdbGame.name);
+
       // Fetch updated game details
       const gameDetails = await this.fetchGameDetails(currentGame.slug);
 
@@ -271,7 +292,52 @@ export class GameImportService {
       cover_image_url: coverUrl,
       background_image_url: backgroundUrl,
       last_synced_at: new Date().toISOString(),
+      playtime_main: null,
+      playtime_main_extra: null,
+      playtime_completionist: null,
+      playtime_all_styles: null,
+      hltb_id: null,
+      playtime_updated_at: null,
     };
+  }
+
+  /**
+   * Fetches and saves playtime data from HowLongToBeat
+   *
+   * @param gameId The game UUID
+   * @param gameName The game name to search for
+   */
+  private static async fetchAndSavePlaytime(gameId: string, gameName: string): Promise<void> {
+    try {
+      const playtime = await HLTBService.getPlaytime(gameName);
+
+      if (!playtime) {
+        console.log(`[GameImportService] No playtime data found for: ${gameName}`);
+        return;
+      }
+
+      const supabase = await createRouteHandlerClient();
+
+      const { error } = await supabase
+        .from("games")
+        .update({
+          playtime_main: playtime.main,
+          playtime_main_extra: playtime.mainExtra,
+          playtime_completionist: playtime.completionist,
+          playtime_all_styles: playtime.allStyles,
+          hltb_id: playtime.hltbId || null,
+          playtime_updated_at: new Date().toISOString(),
+        })
+        .eq("id", gameId);
+
+      if (error) {
+        console.error(`[GameImportService] Failed to save playtime:`, error);
+      } else {
+        console.log(`[GameImportService] Playtime saved for: ${gameName}`);
+      }
+    } catch (error) {
+      console.error(`[GameImportService] Error fetching playtime for ${gameName}:`, error);
+    }
   }
 
   /**
@@ -596,6 +662,94 @@ export class GameImportService {
 
     // Create new media
     await this.createMedia(gameId, igdbGame);
+  }
+
+  /**
+   * Creates language support entries for a game
+   *
+   * @param gameId The game UUID
+   * @param igdbGame The IGDB game data
+   */
+  private static async createLanguages(gameId: string, igdbGame: IGDBGame): Promise<void> {
+    if (!igdbGame.language_supports || igdbGame.language_supports.length === 0) {
+      return;
+    }
+
+    const supabase = await createRouteHandlerClient();
+
+    // Group language supports by language to consolidate audio/subtitles/interface
+    const languageMap = new Map<
+      string,
+      {
+        name: string;
+        code: string;
+        hasAudio: boolean;
+        hasSubtitles: boolean;
+        hasInterface: boolean;
+      }
+    >();
+
+    for (const ls of igdbGame.language_supports) {
+      if (!ls.language?.locale) continue;
+
+      // Extract base language code (e.g., 'en' from 'en-US')
+      const langCode = ls.language.locale.split("-")[0].toLowerCase();
+      const langName = ls.language.name || ls.language.native_name || langCode;
+
+      const existing = languageMap.get(langCode) || {
+        name: langName,
+        code: langCode,
+        hasAudio: false,
+        hasSubtitles: false,
+        hasInterface: false,
+      };
+
+      // IGDB language_support_type: 1 = Audio, 2 = Subtitles, 3 = Interface
+      const supportType = ls.language_support_type?.name?.toLowerCase() || "";
+      if (supportType.includes("audio")) {
+        existing.hasAudio = true;
+      } else if (supportType.includes("subtitle")) {
+        existing.hasSubtitles = true;
+      } else if (supportType.includes("interface")) {
+        existing.hasInterface = true;
+      }
+
+      languageMap.set(langCode, existing);
+    }
+
+    // Insert all languages
+    const languageEntries = Array.from(languageMap.values()).map((lang) => ({
+      game_id: gameId,
+      language_code: lang.code,
+      language_name: lang.name,
+      has_audio: lang.hasAudio,
+      has_subtitles: lang.hasSubtitles,
+      has_interface: lang.hasInterface,
+    }));
+
+    if (languageEntries.length > 0) {
+      const { error } = await supabase.from("game_languages").insert(languageEntries);
+      if (error) {
+        console.error("[GameImportService] Failed to insert languages:", error);
+      }
+    }
+  }
+
+  /**
+   * Updates language support entries for an existing game
+   * Replaces existing languages with fresh data from IGDB
+   *
+   * @param gameId The game UUID
+   * @param igdbGame The IGDB game data
+   */
+  private static async updateLanguages(gameId: string, igdbGame: IGDBGame): Promise<void> {
+    const supabase = await createRouteHandlerClient();
+
+    // Delete existing languages
+    await supabase.from("game_languages").delete().eq("game_id", gameId);
+
+    // Create new languages
+    await this.createLanguages(gameId, igdbGame);
   }
 
   /**

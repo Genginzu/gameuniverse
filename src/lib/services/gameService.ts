@@ -18,14 +18,22 @@ export class GameService {
   static async fetchGameDetails(slug: string, locale: string = "fr"): Promise<GameDetails | null> {
     try {
       const baseUrl = this.getBaseUrl();
-      const response = await fetch(`${baseUrl}/api/games/${slug}?locale=${locale}`, {
+      const url = `${baseUrl}/api/games/${slug}?locale=${locale}`;
+      console.log(`[GameService] Fetching game details from: ${url}`);
+
+      const response = await fetch(url, {
         cache: "no-store", // Ensure fresh data for each request
       });
 
+      console.log(`[GameService] Response status: ${response.status}`);
+
       if (!response.ok) {
         if (response.status === 404) {
+          console.log(`[GameService] Game not found: ${slug}`);
           return null;
         }
+        const errorText = await response.text();
+        console.error(`[GameService] Error response: ${errorText}`);
         throw new Error(`Failed to fetch game details: ${response.status} ${response.statusText}`);
       }
 

@@ -10,6 +10,19 @@ export interface IGDBAuthToken {
   expires_at: number; // Calculated timestamp for expiration
 }
 
+export interface IGDBLanguageSupport {
+  language: {
+    id: number;
+    name: string;
+    native_name: string;
+    locale: string; // ISO code like 'en-US', 'fr-FR'
+  };
+  language_support_type: {
+    id: number;
+    name: string; // 'Audio', 'Subtitles', 'Interface'
+  };
+}
+
 export interface IGDBGame {
   id: number;
   name: string;
@@ -27,6 +40,7 @@ export interface IGDBGame {
     publisher: boolean;
   }>;
   aggregated_rating?: number;
+  language_supports?: IGDBLanguageSupport[];
 }
 
 export interface IGDBSearchResult {

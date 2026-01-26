@@ -311,8 +311,8 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
               </div>
             ) : (
               <div className="space-y-8">
-                {/* Responsive grid - 4 columns layout */}
-                <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
+                {/* Responsive grid - 5 columns layout */}
+                <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                   {games.map((game, index) => (
                     <GameCard
                       key={game.id}

@@ -180,7 +180,9 @@ export class IGDBService {
              artworks.image_id,
              genres.id, genres.name, genres.slug,
              involved_companies.company.id, involved_companies.company.name, involved_companies.company.slug,
-             involved_companies.developer, involved_companies.publisher;
+             involved_companies.developer, involved_companies.publisher,
+             language_supports.language.id, language_supports.language.name, language_supports.language.native_name, language_supports.language.locale,
+             language_supports.language_support_type.id, language_supports.language_support_type.name;
       where id = ${igdbId};
     `;
 

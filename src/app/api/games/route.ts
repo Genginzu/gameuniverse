@@ -39,6 +39,7 @@ export async function GET(request: NextRequest) {
         `
         id,
         slug,
+        igdb_id,
         cover_image_url,
         background_image_url,
         background_color,
@@ -64,14 +65,18 @@ export async function GET(request: NextRequest) {
             name,
             slug
           )
-        )${inLibrary ? `,
+        )${
+          inLibrary
+            ? `,
         user_library!inner(
           user_id,
           status,
           added_at,
           play_time_hours,
           rating
-        )` : ""}
+        )`
+            : ""
+        }
       `
       )
       .eq("game_translations.language_code", locale);
@@ -160,6 +165,7 @@ export async function GET(request: NextRequest) {
       return {
         id: game.id,
         slug: game.slug,
+        igdbId: game.igdb_id,
         title: translation?.title || "Untitled",
         description: translation?.description,
         coverImage: game.cover_image_url,
