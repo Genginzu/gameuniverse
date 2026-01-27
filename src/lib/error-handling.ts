@@ -185,32 +185,11 @@ export async function apiCall<T>(
 
     // Afficher un toast d'erreur si demandé
     if (showErrorToast) {
-      interface ToastConfig {
-        variant: "destructive";
-        title: string;
-        description: string;
-        action?: {
-          altText: string;
-          onClick: () => Promise<T>;
-          children: string;
-        };
-      }
-      
-      const toastConfig: ToastConfig = {
+      toast({
         variant: "destructive",
         title: "Erreur",
         description: errorMessage || appError.message,
-      };
-
-      if (appError.retryable) {
-        toastConfig.action = {
-          altText: "Réessayer",
-          onClick: () => apiCall(operation, options),
-          children: "Réessayer",
-        };
-      }
-
-      toast(toastConfig);
+      });
     }
 
     throw appError;

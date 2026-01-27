@@ -2,6 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { LazyImage } from "@/components/ui/lazy-image";
 import { GamePlaytime } from "./GamePlaytime";
 import Link from "next/link";
@@ -25,6 +26,7 @@ import {
   Smartphone,
   Languages,
   Music,
+  Monitor,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { GameDetails } from "@/types/game";

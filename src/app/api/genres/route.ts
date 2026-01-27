@@ -63,11 +63,11 @@ export async function GET(request: NextRequest) {
     interface GenreRow {
       id: string;
       slug: string;
-      created_at: string;
-      genre_translations?: Array<{ name: string; description?: string }>;
+      created_at: string | null;
+      genre_translations?: Array<{ name: string; description?: string | null }>;
     }
     
-    const transformedGenres = genres.map((genre: GenreRow) => {
+    const transformedGenres = (genres as GenreRow[]).map((genre) => {
       const translation = genre.genre_translations?.[0];
       return {
         id: genre.id,

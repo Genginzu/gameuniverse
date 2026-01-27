@@ -173,10 +173,10 @@ export async function GET(request: NextRequest) {
     }
 
     // Filter by genres if specified (post-processing for now, could be optimized with SQL)
-    let filteredGames = (games || []) as GameRow[];
+    let filteredGames = (games || []) as unknown as GameRow[];
     if (genres.length > 0) {
       filteredGames =
-        (games as GameRow[])?.filter((game) => {
+        (games as unknown as GameRow[])?.filter((game) => {
           const gameGenres =
             game.game_genres
               ?.map((gg) => gg.genres?.genre_translations?.[0]?.name?.toLowerCase())

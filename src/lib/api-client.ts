@@ -20,8 +20,9 @@ export interface ApiCallOptions extends RequestInit {
   skipErrorHandling?: boolean;
 }
 
-// Type for API response data
-type ApiResponseData = Record<string, unknown> | string;
+// Type for API response data - using Record for flexibility with property access
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ApiResponseData = Record<string, any>;
 
 // Type for error with type property
 interface TypedError extends Error {
@@ -77,7 +78,7 @@ export class ApiClient {
 
     let data: ApiResponseData;
     try {
-      data = isJson ? await response.json() : await response.text();
+      data = isJson ? await response.json() : { text: await response.text() };
     } catch (error) {
       throw createAppError(
         "Erreur lors du traitement de la réponse du serveur.",
@@ -90,9 +91,8 @@ export class ApiClient {
     }
 
     if (!response.ok) {
-      const errorData = typeof data === "object" ? data : {};
-      const errorMessage = (errorData as Record<string, unknown>)?.error as string || 
-                          (errorData as Record<string, unknown>)?.message as string || 
+      const errorMessage = data?.error as string || 
+                          data?.message as string || 
                           `Erreur HTTP ${response.status}`;
 
       let errorType: ErrorType;

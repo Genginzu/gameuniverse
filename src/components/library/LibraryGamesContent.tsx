@@ -56,7 +56,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
   // Fetch library statistics
   const fetchStats = useCallback(async () => {
     const result = await executeAsync(async () => {
-      const data = await apiClient.get("/api/library/stats", {
+      const data = await apiClient.get<LibraryStats>("/api/library/stats", {
         retryConfig: {
           maxAttempts: 2,
         },

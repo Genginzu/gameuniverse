@@ -261,10 +261,6 @@ export function GameSearchBar({
     }
   }, [searchQuery, locale, isExpanded, isLoadingMore]);
 
-  const handleClose = useCallback(() => {
-    setIsOpen(false);
-  }, []);
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (onSearch) {
@@ -337,7 +333,6 @@ export function GameSearchBar({
           hasMore={hasMore && !isExpanded}
           onSelectGame={handleSelectGame}
           onSeeAll={handleSeeAll}
-          onClose={handleClose}
           importingId={importingId}
         />
       )}
