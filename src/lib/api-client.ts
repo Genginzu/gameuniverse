@@ -20,6 +20,14 @@ export interface ApiCallOptions extends RequestInit {
   skipErrorHandling?: boolean;
 }
 
+// Type for API response data
+type ApiResponseData = Record<string, unknown> | string;
+
+// Type for error with type property
+interface TypedError extends Error {
+  type?: ErrorType;
+}
+
 // Classe pour gérer les appels API avec gestion d'erreurs intégrée
 export class ApiClient {
   private baseURL: string;
@@ -63,11 +71,11 @@ export class ApiClient {
   }
 
   // Méthode privée pour traiter la réponse
-  private async processResponse(response: Response): Promise<any> {
+  private async processResponse(response: Response): Promise<ApiResponseData> {
     const contentType = response.headers.get("content-type");
     const isJson = contentType?.includes("application/json");
 
-    let data: any;
+    let data: ApiResponseData;
     try {
       data = isJson ? await response.json() : await response.text();
     } catch (error) {
@@ -82,7 +90,10 @@ export class ApiClient {
     }
 
     if (!response.ok) {
-      const errorMessage = data?.error || data?.message || `Erreur HTTP ${response.status}`;
+      const errorData = typeof data === "object" ? data : {};
+      const errorMessage = (errorData as Record<string, unknown>)?.error as string || 
+                          (errorData as Record<string, unknown>)?.message as string || 
+                          `Erreur HTTP ${response.status}`;
 
       let errorType: ErrorType;
       switch (response.status) {
@@ -119,7 +130,7 @@ export class ApiClient {
   }
 
   // Méthode principale pour effectuer des appels API
-  async call<T = any>(endpoint: string, options: ApiCallOptions = {}): Promise<T> {
+  async call<T = ApiResponseData>(endpoint: string, options: ApiCallOptions = {}): Promise<T> {
     const {
       timeout = this.defaultTimeout,
       retryConfig = {},
@@ -134,14 +145,15 @@ export class ApiClient {
     const operation = async (): Promise<T> => {
       try {
         const response = await this.fetchWithTimeout(url, fetchOptions, timeout);
-        return await this.processResponse(response);
+        return await this.processResponse(response) as T;
       } catch (error) {
         if (skipErrorHandling) {
           throw error;
         }
 
         // Si c'est déjà une AppError, la relancer
-        if (error instanceof Error && (error as any).type) {
+        const typedError = error as TypedError;
+        if (typedError && typedError.type) {
           throw error;
         }
 
@@ -166,13 +178,13 @@ export class ApiClient {
   }
 
   // Méthodes de convenance pour les différents verbes HTTP
-  async get<T = any>(endpoint: string, options: Omit<ApiCallOptions, "method"> = {}): Promise<T> {
+  async get<T = ApiResponseData>(endpoint: string, options: Omit<ApiCallOptions, "method"> = {}): Promise<T> {
     return this.call<T>(endpoint, { ...options, method: "GET" });
   }
 
-  async post<T = any>(
+  async post<T = ApiResponseData>(
     endpoint: string,
-    data?: any,
+    data?: unknown,
     options: Omit<ApiCallOptions, "method" | "body"> = {}
   ): Promise<T> {
     return this.call<T>(endpoint, {
@@ -186,9 +198,9 @@ export class ApiClient {
     });
   }
 
-  async put<T = any>(
+  async put<T = ApiResponseData>(
     endpoint: string,
-    data?: any,
+    data?: unknown,
     options: Omit<ApiCallOptions, "method" | "body"> = {}
   ): Promise<T> {
     return this.call<T>(endpoint, {
@@ -202,9 +214,9 @@ export class ApiClient {
     });
   }
 
-  async patch<T = any>(
+  async patch<T = ApiResponseData>(
     endpoint: string,
-    data?: any,
+    data?: unknown,
     options: Omit<ApiCallOptions, "method" | "body"> = {}
   ): Promise<T> {
     return this.call<T>(endpoint, {
@@ -218,7 +230,7 @@ export class ApiClient {
     });
   }
 
-  async delete<T = any>(
+  async delete<T = ApiResponseData>(
     endpoint: string,
     options: Omit<ApiCallOptions, "method"> = {}
   ): Promise<T> {

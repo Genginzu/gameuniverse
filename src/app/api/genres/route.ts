@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    console.log("Fetched genres:", genres?.length || 0);
+    console.warn("Fetched genres:", genres?.length || 0);
 
     if (!genres || genres.length === 0) {
       return NextResponse.json({
@@ -54,13 +54,20 @@ export async function GET(request: NextRequest) {
     // Count games per genre
     const countsByGenre: Record<string, number> = {};
     if (gameCounts) {
-      gameCounts.forEach((item: any) => {
+      gameCounts.forEach((item: { genre_id: string }) => {
         countsByGenre[item.genre_id] = (countsByGenre[item.genre_id] || 0) + 1;
       });
     }
 
     // Transform the data
-    const transformedGenres = genres.map((genre: any) => {
+    interface GenreRow {
+      id: string;
+      slug: string;
+      created_at: string;
+      genre_translations?: Array<{ name: string; description?: string }>;
+    }
+    
+    const transformedGenres = genres.map((genre: GenreRow) => {
       const translation = genre.genre_translations?.[0];
       return {
         id: genre.id,
@@ -75,7 +82,7 @@ export async function GET(request: NextRequest) {
     // Sort by name
     transformedGenres.sort((a, b) => a.name.localeCompare(b.name));
 
-    console.log("Transformed genres:", transformedGenres.length);
+    console.warn("Transformed genres:", transformedGenres.length);
 
     return NextResponse.json({
       genres: transformedGenres,

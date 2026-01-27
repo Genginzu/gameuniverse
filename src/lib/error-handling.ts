@@ -1,5 +1,4 @@
 import { toast } from "@/hooks/use-toast";
-import { ToastAction } from "@/components/ui/toast";
 
 // Types d'erreurs
 export enum ErrorType {
@@ -16,7 +15,7 @@ export interface AppError extends Error {
   type: ErrorType;
   code?: string;
   statusCode?: number;
-  details?: any;
+  details?: unknown;
   retryable?: boolean;
 }
 
@@ -44,7 +43,7 @@ export function createAppError(
   options?: {
     code?: string;
     statusCode?: number;
-    details?: any;
+    details?: unknown;
     retryable?: boolean;
     cause?: Error;
   }
@@ -64,68 +63,71 @@ export function createAppError(
 }
 
 // Classifier une erreur selon son type
-export function classifyError(error: any): AppError {
+export function classifyError(error: unknown): AppError {
   // Si c'est déjà une AppError, la retourner telle quelle
-  if (error.type) {
+  if (error && typeof error === "object" && "type" in error) {
     return error as AppError;
   }
 
+  const err = error as Record<string, unknown>;
+
   // Erreurs réseau (fetch, axios, etc.)
-  if (error.name === "TypeError" && error.message.includes("fetch")) {
+  if (err?.name === "TypeError" && typeof err?.message === "string" && err.message.includes("fetch")) {
     return createAppError(
       "Erreur de connexion réseau. Vérifiez votre connexion internet.",
       ErrorType.NETWORK,
-      { cause: error, retryable: true }
+      { cause: error as Error, retryable: true }
     );
   }
 
   // Erreurs HTTP
-  if (error.status || error.statusCode) {
-    const statusCode = error.status || error.statusCode;
+  if (err?.status || err?.statusCode) {
+    const statusCode = (err.status || err.statusCode) as number;
 
     if (statusCode === 401) {
       return createAppError(
         "Session expirée. Veuillez vous reconnecter.",
         ErrorType.AUTHENTICATION,
-        { statusCode, cause: error }
+        { statusCode, cause: error as Error }
       );
     }
 
     if (statusCode === 403) {
       return createAppError("Accès non autorisé à cette ressource.", ErrorType.AUTHORIZATION, {
         statusCode,
-        cause: error,
+        cause: error as Error,
       });
     }
 
     if (statusCode === 404) {
       return createAppError("Ressource non trouvée.", ErrorType.NOT_FOUND, {
         statusCode,
-        cause: error,
+        cause: error as Error,
       });
     }
 
     if (statusCode >= 400 && statusCode < 500) {
       return createAppError("Erreur de validation des données.", ErrorType.VALIDATION, {
         statusCode,
-        cause: error,
+        cause: error as Error,
       });
     }
 
     if (statusCode >= 500) {
       return createAppError("Erreur serveur temporaire. Veuillez réessayer.", ErrorType.SERVER, {
         statusCode,
-        cause: error,
+        cause: error as Error,
         retryable: true,
       });
     }
   }
 
   // Erreur inconnue
+  const message = err?.message && typeof err.message === "string" ? err.message : "Une erreur inattendue s'est produite.";
   return createAppError(
-    error.message || "Une erreur inattendue s'est produite.",
+    message,
     ErrorType.UNKNOWN,
-    { cause: error }
+    { cause: error as Error }
   );
 }
 
@@ -183,7 +185,18 @@ export async function apiCall<T>(
 
     // Afficher un toast d'erreur si demandé
     if (showErrorToast) {
-      const toastConfig: any = {
+      interface ToastConfig {
+        variant: "destructive";
+        title: string;
+        description: string;
+        action?: {
+          altText: string;
+          onClick: () => Promise<T>;
+          children: string;
+        };
+      }
+      
+      const toastConfig: ToastConfig = {
         variant: "destructive",
         title: "Erreur",
         description: errorMessage || appError.message,
@@ -206,7 +219,7 @@ export async function apiCall<T>(
 
 // Hook pour gérer les erreurs dans les composants React
 export function useErrorHandler() {
-  const handleError = (error: any, context?: string) => {
+  const handleError = (error: unknown, context?: string) => {
     const appError = classifyError(error);
 
     console.error(`Error in ${context || "component"}:`, appError);

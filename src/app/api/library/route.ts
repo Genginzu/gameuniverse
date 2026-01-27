@@ -1,8 +1,88 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 
+// Type definitions for Supabase query results
+interface GameTranslation {
+  title: string;
+  description: string | null;
+  language_code: string;
+}
+
+interface GenreTranslation {
+  name: string;
+  language_code: string;
+}
+
+interface Genre {
+  id: string;
+  slug: string;
+  genre_translations: GenreTranslation[] | null;
+}
+
+interface GameGenre {
+  genres: Genre | null;
+}
+
+interface Company {
+  name: string;
+}
+
+interface GameCompany {
+  role: string;
+  is_primary: boolean;
+  companies: Company | null;
+}
+
+interface GamePrice {
+  price: number;
+  currency: string;
+  is_available: boolean;
+}
+
+interface Rating {
+  display_name: string;
+  minimum_age: number;
+}
+
+interface GameRating {
+  is_primary: boolean;
+  ratings: Rating | null;
+}
+
+interface GameArtwork {
+  url: string;
+  artwork_type: string;
+  is_featured: boolean;
+}
+
+interface LibraryGame {
+  id: string;
+  slug: string;
+  release_date: string | null;
+  metascore: number | null;
+  cover_image_url: string | null;
+  background_color: string | null;
+  game_translations: GameTranslation[] | null;
+  game_genres: GameGenre[] | null;
+  game_companies: GameCompany[] | null;
+  game_prices: GamePrice[] | null;
+  game_ratings: GameRating[] | null;
+  game_artwork: GameArtwork[] | null;
+}
+
+interface LibraryEntry {
+  id: string;
+  game_id: string;
+  status: string;
+  added_at: string;
+  play_time_hours: number | null;
+  rating: number | null;
+  notes: string | null;
+  games: LibraryGame | null;
+}
+
 // GET /api/library - Get user's library
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const supabase = await createRouteHandlerClient();
 
@@ -91,7 +171,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Transform the data to match our frontend expectations
-    const transformedGames = libraryGames
+    const transformedGames = (libraryGames as unknown as LibraryEntry[])
       ?.map((item) => {
         const game = item.games;
         if (!game) return null;
@@ -116,28 +196,28 @@ export async function GET(request: NextRequest) {
           }) || [];
 
         // Get background image from artwork
-        const gameArtwork = (game as any).game_artwork || [];
+        const gameArtwork = game.game_artwork || [];
         const backgroundArtwork =
-          gameArtwork.find((a: any) => a.is_featured) ||
-          gameArtwork.find((a: any) => a.artwork_type === "wallpaper") ||
+          gameArtwork.find((a) => a.is_featured) ||
+          gameArtwork.find((a) => a.artwork_type === "wallpaper") ||
           gameArtwork[0];
 
         // Extract developer and publisher from game_companies
-        const gameCompanies = (game as any).game_companies || [];
+        const gameCompanies = game.game_companies || [];
         const developerCompany =
-          gameCompanies.find((gc: any) => gc.role === "developer" && gc.is_primary) ||
-          gameCompanies.find((gc: any) => gc.role === "developer");
+          gameCompanies.find((gc) => gc.role === "developer" && gc.is_primary) ||
+          gameCompanies.find((gc) => gc.role === "developer");
         const publisherCompany =
-          gameCompanies.find((gc: any) => gc.role === "publisher" && gc.is_primary) ||
-          gameCompanies.find((gc: any) => gc.role === "publisher");
+          gameCompanies.find((gc) => gc.role === "publisher" && gc.is_primary) ||
+          gameCompanies.find((gc) => gc.role === "publisher");
 
         // Extract price from game_prices (get first available price)
-        const gamePrices = (game as any).game_prices || [];
-        const availablePrice = gamePrices.find((gp: any) => gp.is_available) || gamePrices[0];
+        const gamePrices = game.game_prices || [];
+        const availablePrice = gamePrices.find((gp) => gp.is_available) || gamePrices[0];
 
         // Extract rating from game_ratings (get primary rating)
-        const gameRatings = (game as any).game_ratings || [];
-        const primaryRating = gameRatings.find((gr: any) => gr.is_primary) || gameRatings[0];
+        const gameRatings = game.game_ratings || [];
+        const primaryRating = gameRatings.find((gr) => gr.is_primary) || gameRatings[0];
 
         return {
           id: game.id,

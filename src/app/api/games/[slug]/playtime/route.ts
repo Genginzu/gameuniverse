@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-import { HLTBService, GamePlaytime } from "@/lib/services/hltbService";
+import { IGDBService } from "@/lib/services/igdbService";
+import { GamePlaytime } from "@/types/game";
 
 /**
  * GET /api/games/[slug]/playtime
  *
- * Fetches playtime data for a game from HowLongToBeat.
+ * Fetches playtime data for a game from IGDB.
  * Caches results in the database to avoid repeated API calls.
  *
  * Returns:
@@ -26,67 +27,18 @@ export async function GET(
 
     const supabase = await createRouteHandlerClient();
 
-    // Fetch the game to get its title
+    // Fetch the game to get its IGDB ID
     const { data: game, error: fetchError } = await supabase
       .from("games")
-      .select(
-        `
-        id,
-        game_translations!inner(title)
-      `
-      )
+      .select("id, igdb_id")
       .eq("slug", slug)
-      .eq("game_translations.language_code", "en")
       .single();
 
     if (fetchError || !game) {
-      // Try with French if English not found
-      const { data: gameFr, error: fetchErrorFr } = await supabase
-        .from("games")
-        .select(
-          `
-          id,
-          game_translations!inner(title)
-        `
-        )
-        .eq("slug", slug)
-        .eq("game_translations.language_code", "fr")
-        .single();
-
-      if (fetchErrorFr || !gameFr) {
-        return NextResponse.json({ error: "Game not found" }, { status: 404 });
-      }
-
-      const title = (gameFr.game_translations as any)?.[0]?.title;
-      if (!title) {
-        return NextResponse.json({ error: "Game title not found" }, { status: 404 });
-      }
-
-      // Fetch playtime from HLTB
-      const playtime = await HLTBService.getPlaytime(title);
-
-      if (!playtime) {
-        return NextResponse.json({
-          main: null,
-          mainExtra: null,
-          completionist: null,
-          allStyles: null,
-          lastUpdated: new Date().toISOString(),
-        });
-      }
-
-      return NextResponse.json(playtime);
+      return NextResponse.json({ error: "Game not found" }, { status: 404 });
     }
 
-    const title = (game.game_translations as any)?.[0]?.title;
-    if (!title) {
-      return NextResponse.json({ error: "Game title not found" }, { status: 404 });
-    }
-
-    // Fetch playtime from HLTB
-    const playtime = await HLTBService.getPlaytime(title);
-
-    if (!playtime) {
+    if (!game.igdb_id) {
       return NextResponse.json({
         main: null,
         mainExtra: null,
@@ -95,6 +47,44 @@ export async function GET(
         lastUpdated: new Date().toISOString(),
       });
     }
+
+    // Fetch playtime from IGDB
+    const timeToBeat = await IGDBService.getTimeToBeat(game.igdb_id);
+
+    if (!timeToBeat) {
+      return NextResponse.json({
+        main: null,
+        mainExtra: null,
+        completionist: null,
+        allStyles: null,
+        lastUpdated: new Date().toISOString(),
+      });
+    }
+
+    // Convert seconds to hours
+    const secondsToHours = (seconds: number | null): number | null => {
+      if (seconds === null || seconds === 0) return null;
+      return Math.round((seconds / 3600) * 10) / 10;
+    };
+
+    const main = secondsToHours(timeToBeat.hastily);
+    const mainExtra = secondsToHours(timeToBeat.normally);
+    const completionist = secondsToHours(timeToBeat.completely);
+
+    // Calculate average
+    const times = [main, mainExtra, completionist].filter((t): t is number => t !== null);
+    const allStyles =
+      times.length > 0
+        ? Math.round((times.reduce((a, b) => a + b, 0) / times.length) * 10) / 10
+        : null;
+
+    const playtime: GamePlaytime = {
+      main,
+      mainExtra,
+      completionist,
+      allStyles,
+      lastUpdated: new Date().toISOString(),
+    };
 
     return NextResponse.json(playtime);
   } catch (error) {

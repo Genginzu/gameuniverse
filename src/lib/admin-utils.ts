@@ -1,5 +1,28 @@
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 
+// Type definitions for Supabase query results
+interface GenreStatItem {
+  genre_id: string;
+  genres: {
+    slug: string;
+    genre_translations: Array<{ name: string }> | null;
+  } | null;
+}
+
+interface GameDataTranslation {
+  title?: string;
+  language_code?: string;
+}
+
+interface GameDataInput {
+  game?: {
+    slug?: string;
+  };
+  translations?: GameDataTranslation[];
+  companies?: unknown[];
+  genres?: unknown[];
+}
+
 /**
  * Get available companies for game creation/editing
  */
@@ -180,7 +203,7 @@ export async function getGameStatistics() {
 
     // Process genre statistics
     const genreCount: Record<string, { name: string; count: number }> = {};
-    genreStats?.forEach((item: any) => {
+    (genreStats as unknown as GenreStatItem[])?.forEach((item) => {
       const genreName = item.genres?.genre_translations?.[0]?.name || "Unknown";
       const genreSlug = item.genres?.slug || "unknown";
 
@@ -212,7 +235,7 @@ export async function getGameStatistics() {
 /**
  * Validate required fields for game creation
  */
-export function validateGameData(gameData: any): { isValid: boolean; errors: string[] } {
+export function validateGameData(gameData: GameDataInput): { isValid: boolean; errors: string[] } {
   const errors: string[] = [];
 
   // Check required fields
@@ -223,7 +246,7 @@ export function validateGameData(gameData: any): { isValid: boolean; errors: str
   if (!gameData.translations || gameData.translations.length === 0) {
     errors.push("At least one translation is required");
   } else {
-    gameData.translations.forEach((translation: any, index: number) => {
+    gameData.translations.forEach((translation, index) => {
       if (!translation.title) {
         errors.push(`Translation ${index + 1}: Title is required`);
       }

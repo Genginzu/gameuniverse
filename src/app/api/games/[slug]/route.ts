@@ -168,11 +168,17 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         .eq("game_id", game.id);
 
       if (langData) {
-        gameLanguages = langData;
+        gameLanguages = langData.map((lang) => ({
+          language_code: lang.language_code,
+          language_name: lang.language_name,
+          has_audio: lang.has_audio ?? false,
+          has_subtitles: lang.has_subtitles ?? false,
+          has_interface: lang.has_interface ?? false,
+        }));
       }
     } catch {
       // Table may not exist yet, ignore error
-      console.log("game_languages table not available yet");
+      console.warn("game_languages table not available yet");
     }
 
     // Fetch playtime separately (columns may not exist yet)
@@ -181,7 +187,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       playtime_main_extra: number | null;
       playtime_completionist: number | null;
       playtime_all_styles: number | null;
-      hltb_id: number | null;
       playtime_updated_at: string | null;
     } | null = null;
 
@@ -189,17 +194,23 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       const { data: playtimeData } = await supabase
         .from("games")
         .select(
-          "playtime_main, playtime_main_extra, playtime_completionist, playtime_all_styles, hltb_id, playtime_updated_at"
+          "playtime_main, playtime_main_extra, playtime_completionist, playtime_all_styles, playtime_updated_at"
         )
         .eq("id", game.id)
         .single();
 
       if (playtimeData) {
-        gamePlaytime = playtimeData;
+        gamePlaytime = {
+          playtime_main: playtimeData.playtime_main ?? null,
+          playtime_main_extra: playtimeData.playtime_main_extra ?? null,
+          playtime_completionist: playtimeData.playtime_completionist ?? null,
+          playtime_all_styles: playtimeData.playtime_all_styles ?? null,
+          playtime_updated_at: playtimeData.playtime_updated_at ?? null,
+        };
       }
     } catch {
       // Columns may not exist yet, ignore error
-      console.log("playtime columns not available yet");
+      console.warn("playtime columns not available yet");
     }
 
     // Transform the data to match the expected format
@@ -366,7 +377,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             mainExtra: gamePlaytime.playtime_main_extra,
             completionist: gamePlaytime.playtime_completionist,
             allStyles: gamePlaytime.playtime_all_styles,
-            hltbId: gamePlaytime.hltb_id,
             lastUpdated: gamePlaytime.playtime_updated_at,
           }
         : null;

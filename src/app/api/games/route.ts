@@ -1,6 +1,51 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 
+// Type definitions for Supabase query results
+interface GameTranslation {
+  title: string;
+  description: string | null;
+}
+
+interface GenreTranslation {
+  name: string;
+}
+
+interface Genre {
+  genre_translations: GenreTranslation[] | null;
+}
+
+interface GameGenre {
+  genres: Genre | null;
+}
+
+interface Company {
+  name: string;
+  slug: string;
+}
+
+interface GameCompany {
+  company_id: string;
+  role: string;
+  is_primary: boolean;
+  companies: Company | null;
+}
+
+interface GameRow {
+  id: string;
+  slug: string;
+  igdb_id: number | null;
+  cover_image_url: string | null;
+  background_image_url: string | null;
+  background_color: string | null;
+  release_date: string | null;
+  metascore: number | null;
+  created_at: string;
+  game_translations: GameTranslation[] | null;
+  game_genres: GameGenre[] | null;
+  game_companies: GameCompany[] | null;
+}
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -128,13 +173,13 @@ export async function GET(request: NextRequest) {
     }
 
     // Filter by genres if specified (post-processing for now, could be optimized with SQL)
-    let filteredGames = games || [];
+    let filteredGames = (games || []) as GameRow[];
     if (genres.length > 0) {
       filteredGames =
-        games?.filter((game: any) => {
+        (games as GameRow[])?.filter((game) => {
           const gameGenres =
             game.game_genres
-              ?.map((gg: any) => gg.genres?.genre_translations?.[0]?.name?.toLowerCase())
+              ?.map((gg) => gg.genres?.genre_translations?.[0]?.name?.toLowerCase())
               .filter(Boolean) || [];
 
           return genres.some((genre) => gameGenres.includes(genre.toLowerCase()));
@@ -142,24 +187,24 @@ export async function GET(request: NextRequest) {
     }
 
     // Transform the data to match the expected format
-    const transformedGames = filteredGames.map((game: any) => {
+    const transformedGames = filteredGames.map((game) => {
       const translation = game.game_translations?.[0];
       const gameGenres =
-        game.game_genres?.map((gg: any) => ({
+        game.game_genres?.map((gg) => ({
           name: gg.genres?.genre_translations?.[0]?.name || "Unknown",
         })) || [];
 
       // Get primary developer/publisher
       const developer =
-        game.game_companies?.find((gc: any) => gc.role === "developer" && gc.is_primary)?.companies
+        game.game_companies?.find((gc) => gc.role === "developer" && gc.is_primary)?.companies
           ?.name ||
-        game.game_companies?.find((gc: any) => gc.role === "developer")?.companies?.name ||
+        game.game_companies?.find((gc) => gc.role === "developer")?.companies?.name ||
         "Unknown";
 
       const publisher =
-        game.game_companies?.find((gc: any) => gc.role === "publisher" && gc.is_primary)?.companies
+        game.game_companies?.find((gc) => gc.role === "publisher" && gc.is_primary)?.companies
           ?.name ||
-        game.game_companies?.find((gc: any) => gc.role === "publisher")?.companies?.name ||
+        game.game_companies?.find((gc) => gc.role === "publisher")?.companies?.name ||
         "Unknown";
 
       return {

@@ -511,6 +511,47 @@ export type Database = {
           },
         ];
       };
+      game_languages: {
+        Row: {
+          id: string;
+          game_id: string;
+          language_code: string;
+          language_name: string;
+          has_audio: boolean | null;
+          has_subtitles: boolean | null;
+          has_interface: boolean | null;
+          created_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          game_id: string;
+          language_code: string;
+          language_name: string;
+          has_audio?: boolean | null;
+          has_subtitles?: boolean | null;
+          has_interface?: boolean | null;
+          created_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          game_id?: string;
+          language_code?: string;
+          language_name?: string;
+          has_audio?: boolean | null;
+          has_subtitles?: boolean | null;
+          has_interface?: boolean | null;
+          created_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "game_languages_game_id_fkey";
+            columns: ["game_id"];
+            isOneToOne: false;
+            referencedRelation: "games";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       games: {
         Row: {
           id: string;
@@ -531,6 +572,11 @@ export type Database = {
           background_color?: string | null;
           igdb_id: number | null;
           last_synced_at?: string | null;
+          playtime_main?: number | null;
+          playtime_main_extra?: number | null;
+          playtime_completionist?: number | null;
+          playtime_all_styles?: number | null;
+          playtime_updated_at?: string | null;
           created_at: string | null;
           updated_at: string | null;
         };
@@ -553,6 +599,11 @@ export type Database = {
           background_color?: string | null;
           igdb_id?: number | null;
           last_synced_at?: string | null;
+          playtime_main?: number | null;
+          playtime_main_extra?: number | null;
+          playtime_completionist?: number | null;
+          playtime_all_styles?: number | null;
+          playtime_updated_at?: string | null;
           created_at?: string | null;
           updated_at?: string | null;
         };
@@ -575,6 +626,11 @@ export type Database = {
           background_color?: string | null;
           igdb_id?: number | null;
           last_synced_at?: string | null;
+          playtime_main?: number | null;
+          playtime_main_extra?: number | null;
+          playtime_completionist?: number | null;
+          playtime_all_styles?: number | null;
+          playtime_updated_at?: string | null;
           created_at?: string | null;
           updated_at?: string | null;
         };

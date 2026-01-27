@@ -107,8 +107,8 @@ function SidebarContent({
 }: {
   user: User;
   signOut: () => Promise<void>;
-  t: any;
-  tNav: any;
+  t: (key: string) => string;
+  tNav: (key: string) => string;
   isUserMenuOpen: boolean;
   setIsUserMenuOpen: (open: boolean) => void;
   dropdownRef: React.RefObject<HTMLDivElement | null>;

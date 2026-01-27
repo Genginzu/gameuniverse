@@ -29,7 +29,7 @@ export function LazyImage({
   priority = false,
 }: LazyImageProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
-  const { isLoading, hasError, imageSrc } = useImageLoading({ src, fallbackSrc });
+  const { isLoading, imageSrc } = useImageLoading({ src, fallbackSrc });
 
   const handleImageLoad = () => {
     setImageLoaded(true);

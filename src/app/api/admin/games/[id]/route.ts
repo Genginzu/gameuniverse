@@ -1,13 +1,54 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { requireAdmin } from "@/lib/auth-admin";
-import { updateGameSchema, type UpdateGameInput } from "@/lib/validations/game";
+import { updateGameSchema } from "@/lib/validations/game";
 import {
   notifyGameUpdated,
   notifyGameDeleted,
   invalidateGameCache,
   verifyGameDeletionConsistency,
 } from "@/lib/realtime-updates";
+
+// Types for Supabase query results
+interface AdminGameGenre {
+  genre_id: string;
+  genres?: {
+    id: string;
+    slug: string;
+    genre_translations?: Array<{ name: string; language_code: string }>;
+  };
+}
+
+interface AdminGameCompany {
+  id: string;
+  company_id: string;
+  role: string;
+  is_primary: boolean;
+  companies?: {
+    id: string;
+    name: string;
+    slug: string;
+    description?: string;
+    website_url?: string;
+  };
+}
+
+interface AdminGamePrice {
+  id: string;
+  store_id: string;
+  price: number;
+  currency: string;
+  platform: string;
+  store_url?: string;
+  is_available: boolean;
+  last_updated?: string;
+  stores?: {
+    id: string;
+    name: string;
+    logo_url?: string;
+    website_url?: string;
+  };
+}
 
 /**
  * GET /api/admin/games/[id] - Get detailed game data for admin editing
@@ -143,7 +184,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       updated_at: game.updated_at,
       translations: game.game_translations || [],
       genres:
-        game.game_genres?.map((gg: any) => ({
+        (game.game_genres as AdminGameGenre[] | undefined)?.map((gg) => ({
           genre_id: gg.genre_id,
           genre: {
             id: gg.genres?.id,
@@ -152,7 +193,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           },
         })) || [],
       companies:
-        game.game_companies?.map((gc: any) => ({
+        (game.game_companies as AdminGameCompany[] | undefined)?.map((gc) => ({
           id: gc.id,
           company_id: gc.company_id,
           role: gc.role,
@@ -169,7 +210,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       artwork: game.game_artwork || [],
       videos: game.game_videos || [],
       prices:
-        game.game_prices?.map((gp: any) => ({
+        (game.game_prices as AdminGamePrice[] | undefined)?.map((gp) => ({
           ...gp,
           store: gp.stores,
         })) || [],
@@ -431,7 +472,7 @@ export async function DELETE(
       prices: existingGame.game_prices?.[0]?.count || 0,
     };
 
-    console.log(
+    console.warn(
       `Deleting game ${existingGame.slug} (${gameId}) with related data:`,
       relatedDataCounts
     );

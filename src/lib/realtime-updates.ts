@@ -11,7 +11,7 @@ export interface GameUpdateEvent {
   gameIds?: string[];
   slug?: string;
   timestamp: string;
-  data?: Record<string, any>;
+  data?: Record<string, unknown>;
 }
 
 /**
@@ -31,7 +31,7 @@ export async function broadcastGameUpdate(event: GameUpdateEvent) {
       payload: event,
     });
 
-    console.log("Real-time update broadcasted:", event);
+    console.warn("Real-time update broadcasted:", event);
   } catch (error) {
     console.error("Error broadcasting real-time update:", error);
     // Don't throw error as this is not critical for the main operation
@@ -41,7 +41,7 @@ export async function broadcastGameUpdate(event: GameUpdateEvent) {
 /**
  * Notify clients when a game is created
  */
-export async function notifyGameCreated(gameId: string, slug: string, data?: Record<string, any>) {
+export async function notifyGameCreated(gameId: string, slug: string, data?: Record<string, unknown>) {
   await broadcastGameUpdate({
     type: "game_created",
     gameId,
@@ -54,7 +54,7 @@ export async function notifyGameCreated(gameId: string, slug: string, data?: Rec
 /**
  * Notify clients when a game is updated
  */
-export async function notifyGameUpdated(gameId: string, slug?: string, data?: Record<string, any>) {
+export async function notifyGameUpdated(gameId: string, slug?: string, data?: Record<string, unknown>) {
   await broadcastGameUpdate({
     type: "game_updated",
     gameId,
@@ -82,7 +82,7 @@ export async function notifyGameDeleted(gameId: string, slug: string) {
 export async function notifyBulkOperation(
   operation: "delete" | "update",
   gameIds: string[],
-  data?: Record<string, any>
+  data?: Record<string, unknown>
 ) {
   await broadcastGameUpdate({
     type: "bulk_operation",
@@ -102,7 +102,7 @@ export async function notifyBulkOperation(
  */
 export function createGameUpdatesListener() {
   return {
-    subscribe: (callback: (event: GameUpdateEvent) => void) => {
+    subscribe: (_callback: (event: GameUpdateEvent) => void) => {
       // This would be implemented on the client side using Supabase client
       // Example implementation:
       /*
@@ -138,7 +138,7 @@ export async function invalidateGameCache(gameIds: string | string[]) {
     // 4. Refresh materialized views
     // 5. Clear application-level caches
 
-    console.log("Cache invalidation requested for games:", ids);
+    console.warn("Cache invalidation requested for games:", ids);
 
     // Simulate comprehensive cache invalidation
     const cacheInvalidationTasks = [
@@ -158,7 +158,7 @@ export async function invalidateGameCache(gameIds: string | string[]) {
       ...ids.map((id) => `game:${id}:prices`),
     ];
 
-    console.log("Cache invalidation tasks:", cacheInvalidationTasks);
+    console.warn("Cache invalidation tasks:", cacheInvalidationTasks);
 
     // For now, we'll just log the cache invalidation
     // In the future, this could integrate with Redis, CDN APIs, etc.
@@ -175,7 +175,7 @@ export async function invalidateGameCache(gameIds: string | string[]) {
  */
 async function updateSearchIndexes(gameIds: string[]) {
   try {
-    console.log("Updating search indexes for games:", gameIds);
+    console.warn("Updating search indexes for games:", gameIds);
 
     // In a real implementation, this would:
     // 1. Remove games from Elasticsearch/Algolia indexes
@@ -184,14 +184,12 @@ async function updateSearchIndexes(gameIds: string[]) {
     // 4. Rebuild genre/company aggregations
 
     // For now, we simulate this process
-    const indexUpdateTasks = [
+    const _indexUpdateTasks = [
       "elasticsearch:games:remove",
       "postgresql:fts:refresh",
       "aggregations:genres:rebuild",
       "aggregations:companies:rebuild",
     ];
-
-    console.log("Search index update tasks:", indexUpdateTasks);
 
     // Simulate async index updates
     await Promise.resolve();
@@ -205,7 +203,7 @@ async function updateSearchIndexes(gameIds: string[]) {
  */
 export async function verifyGameDeletionConsistency(
   gameIds: string[],
-  supabaseClient?: any
+  supabaseClient?: ReturnType<typeof createRouteHandlerClient> extends Promise<infer T> ? T : never
 ): Promise<{
   isConsistent: boolean;
   inconsistencies: string[];

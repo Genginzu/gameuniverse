@@ -43,8 +43,8 @@ export function ErrorDemo() {
           baseDelay: 500,
         },
       });
-    } catch (error) {
-      console.log(t("networkErrorCaptured"));
+    } catch {
+      console.warn(t("networkErrorCaptured"));
     } finally {
       setLoading(false);
     }
@@ -68,7 +68,7 @@ export function ErrorDemo() {
       title: t("sessionExpired"),
       description: error.message,
       action: (
-        <ToastAction altText={t("reconnect")} onClick={() => console.log("Redirection vers login")}>
+        <ToastAction altText={t("reconnect")} onClick={() => console.warn("Redirection vers login")}>
           {t("reconnect")}
         </ToastAction>
       ),
@@ -81,7 +81,7 @@ export function ErrorDemo() {
     const result = await captureAsyncError(async () => {
       throw createAppError(t("simulatedAsyncError"), ErrorType.SERVER);
     }, "Valeur de fallback");
-    console.log("Résultat avec fallback:", result);
+    console.warn("Résultat avec fallback:", result);
     setLoading(false);
   };
 
@@ -91,7 +91,7 @@ export function ErrorDemo() {
     const result = await executeAsync(async () => {
       throw createAppError(t("asyncErrorWithExecute"), ErrorType.NETWORK);
     }, "triggerAsyncErrorWithExecuteAsync");
-    console.log("Résultat executeAsync:", result);
+    console.warn("Résultat executeAsync:", result);
     setLoading(false);
   };
 

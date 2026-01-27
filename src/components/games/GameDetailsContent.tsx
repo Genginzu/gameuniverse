@@ -2,20 +2,17 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { LazyImage } from "@/components/ui/lazy-image";
 import { GamePlaytime } from "./GamePlaytime";
 import Link from "next/link";
 import {
   ArrowLeft,
   Calendar,
-  Monitor,
   Users,
   Globe,
   Play,
   Heart,
   Share2,
-  Gamepad2,
   Info,
   ChevronLeft,
   ChevronRight,
@@ -80,7 +77,6 @@ const getGameColors = (gameTitle: string, _genres: string[]) => {
 
 export function GameDetailsContent({ game, locale }: GameDetailsProps) {
   const t = useTranslations();
-  const tGame = useTranslations("game");
   const tDetails = useTranslations("gameDetails");
   const [selectedScreenshotIndex, setSelectedScreenshotIndex] = useState(0);
   const [selectedArtworkIndex, setSelectedArtworkIndex] = useState(0);

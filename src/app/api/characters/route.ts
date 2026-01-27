@@ -1,6 +1,38 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 
+// Type definitions for Supabase query results
+interface CharacterTranslation {
+  name: string;
+  role: string | null;
+  description: string | null;
+}
+
+interface GameTranslation {
+  title: string;
+}
+
+interface Game {
+  id: string;
+  slug: string;
+  game_translations: GameTranslation[] | null;
+}
+
+interface CharacterGame {
+  is_primary: boolean;
+  games: Game | null;
+}
+
+interface CharacterRow {
+  id: string;
+  slug: string;
+  main_image: string | null;
+  background_color: string | null;
+  created_at: string;
+  character_translations: CharacterTranslation[] | null;
+  character_games: CharacterGame[] | null;
+}
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -103,24 +135,24 @@ export async function GET(request: NextRequest) {
     }
 
     // Filter by games if specified (post-processing)
-    let filteredCharacters = characters || [];
+    let filteredCharacters = (characters || []) as CharacterRow[];
     if (games.length > 0) {
       filteredCharacters =
-        characters?.filter((character: any) => {
+        (characters as CharacterRow[])?.filter((character) => {
           const characterGameIds =
-            character.character_games?.map((cg: any) => cg.games?.id).filter(Boolean) || [];
+            character.character_games?.map((cg) => cg.games?.id).filter(Boolean) || [];
           return games.some((gameId) => characterGameIds.includes(gameId));
         }) || [];
     }
 
     // Transform the data to match the expected format
     const transformedCharacters = filteredCharacters
-      .map((character: any) => {
+      .map((character) => {
         const translation = character.character_translations?.[0];
 
         // Get primary game
         const primaryGameRelation = character.character_games?.find(
-          (cg: any) => cg.is_primary === true
+          (cg) => cg.is_primary === true
         );
         const primaryGame =
           primaryGameRelation?.games?.game_translations?.[0]?.title ||
@@ -142,7 +174,7 @@ export async function GET(request: NextRequest) {
           gamesCount,
         };
       })
-      .sort((a: any, b: any) => a.name.localeCompare(b.name, locale));
+      .sort((a, b) => a.name.localeCompare(b.name, locale));
 
     // Calculate pagination metadata
     const totalPages = Math.ceil((totalCount || 0) / limit);

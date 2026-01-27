@@ -1,4 +1,4 @@
-import { IGDBAuthToken, IGDBGame, IGDBSearchResult, IGDBImageSize } from "@/types/igdb";
+import { IGDBAuthToken, IGDBGame, IGDBSearchResult, IGDBImageSize, IGDBTimeToBeat } from "@/types/igdb";
 
 /**
  * Service for interacting with the IGDB (Internet Game Database) API
@@ -210,6 +210,49 @@ export class IGDBService {
     }
 
     return games[0];
+  }
+
+  /**
+   * Fetches time to beat data for a game from IGDB
+   * @param igdbId The IGDB game ID
+   * @returns Time to beat data or null if not found
+   */
+  static async getTimeToBeat(igdbId: number): Promise<IGDBTimeToBeat | null> {
+    const accessToken = await this.getAccessToken();
+    const clientId = process.env.IGDB_CLIENT_ID;
+
+    if (!clientId) {
+      throw new Error("IGDB_CLIENT_ID not configured");
+    }
+
+    const body = `
+      fields game_id, hastily, normally, completely, count;
+      where game_id = ${igdbId};
+    `;
+
+    const response = await fetch(`${this.IGDB_API_URL}/game_time_to_beats`, {
+      method: "POST",
+      headers: {
+        "Client-ID": clientId,
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "text/plain",
+      },
+      body,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`IGDB getTimeToBeat failed: ${response.status} ${response.statusText} - ${errorText}`);
+      return null;
+    }
+
+    const results: IGDBTimeToBeat[] = await response.json();
+
+    if (results.length === 0) {
+      return null;
+    }
+
+    return results[0];
   }
 
   /**

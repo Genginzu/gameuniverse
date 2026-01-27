@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PlayerService } from "@/lib/services/playerService";
-import { GAME_COUNT_RANGES, GameCountRangeKey } from "@/types/player";
+import { GAME_COUNT_RANGES } from "@/types/player";
 
 export async function GET(request: NextRequest) {
   try {

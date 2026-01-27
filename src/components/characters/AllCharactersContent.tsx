@@ -45,15 +45,12 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
   // Fetch games for filter options with error handling
   const fetchGames = useCallback(async () => {
     const result = await executeAsync(async () => {
-      console.log("Fetching games for locale:", locale);
-
       const data = await apiClient.get(`/api/games?locale=${locale}&limit=100`, {
         retryConfig: {
           maxAttempts: 2,
         },
       });
 
-      console.log("Games API data:", data);
       return data.games || [];
     }, "fetchGames");
 
@@ -65,7 +62,6 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
   // Fetch characters with error handling
   const fetchCharacters = useCallback(
     async (search: string = "", games: string[] = [], roles: string[] = [], page: number = 1) => {
-      console.log("🎭 fetchCharacters called with:", { search, games, roles, page });
       setLoading(true);
 
       const result = await executeAsync(async () => {
@@ -187,7 +183,6 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
     };
 
     loadInitialCharacters();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Only on initial mount
 
   // Effect to handle filter changes with debounce
@@ -200,8 +195,7 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
     }, 300); // 300ms debounce
 
     return () => clearTimeout(timeoutId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchQuery, selectedGames, selectedRoles]); // Don't include fetchCharacters
+  }, [searchQuery, selectedGames, selectedRoles, fetchCharacters]); // Include fetchCharacters
 
   // Show full skeleton on initial load
   if (initialLoading) {

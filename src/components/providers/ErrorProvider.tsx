@@ -3,10 +3,10 @@
 import React, { createContext, useContext, ReactNode } from "react";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { Toaster } from "@/components/ui/toaster";
-import { useErrorHandler, AppError, ErrorType } from "@/lib/error-handling";
+import { useErrorHandler, AppError } from "@/lib/error-handling";
 
 interface ErrorContextType {
-  handleError: (error: any, context?: string) => void;
+  handleError: (error: unknown, context?: string) => void;
   reportError: (error: AppError, context?: string) => void;
 }
 

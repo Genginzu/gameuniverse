@@ -12,7 +12,6 @@ interface SearchResultsDropdownProps {
   hasMore: boolean;
   onSelectGame: (item: SearchResultItem) => void;
   onSeeAll: () => void;
-  onClose: () => void;
   importingId?: string | null;
 }
 
@@ -23,7 +22,6 @@ export function SearchResultsDropdown({
   hasMore,
   onSelectGame,
   onSeeAll,
-  onClose,
   importingId,
 }: SearchResultsDropdownProps) {
   const t = useTranslations("search");

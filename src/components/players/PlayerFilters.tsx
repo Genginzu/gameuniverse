@@ -1,6 +1,6 @@
 "use client";
 
-import { GAME_COUNT_RANGES, type GameCountRangeKey } from "@/types/player";
+import { type GameCountRangeKey } from "@/types/player";
 import { useTranslations } from "next-intl";
 
 interface PlayerFiltersProps {

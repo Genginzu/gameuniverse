@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { type, record } = body;
 
-    console.log("Auth webhook received:", { type, record: record?.email });
+    console.warn("Auth webhook received:", { type, record: record?.email });
 
     switch (type) {
       case "user.created":
@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
             locale,
           });
 
-          console.log("Verification email sent to:", record.email);
+          console.warn("Verification email sent to:", record.email);
         }
         break;
 
@@ -60,12 +60,12 @@ export async function POST(request: NextRequest) {
             locale,
           });
 
-          console.log("Password reset email sent to:", record.email);
+          console.warn("Password reset email sent to:", record.email);
         }
         break;
 
       default:
-        console.log("Unhandled webhook type:", type);
+        console.warn("Unhandled webhook type:", type);
     }
 
     return NextResponse.json({ success: true });

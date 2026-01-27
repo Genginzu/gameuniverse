@@ -235,7 +235,6 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
     };
 
     loadInitialGames();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Effect for filter changes with debounce
@@ -247,8 +246,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
     }, 300);
 
     return () => clearTimeout(timeoutId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchQuery, selectedGenres, selectedPublishers]);
+  }, [searchQuery, selectedGenres, selectedPublishers, fetchLibraryGames]);
 
   // Show full skeleton on initial load
   if (initialLoading) {

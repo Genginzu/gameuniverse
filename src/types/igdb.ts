@@ -58,3 +58,15 @@ export type IGDBImageSize =
   | "screenshot_big" // 889x500
   | "1080p" // 1920x1080
   | "720p"; // 1280x720
+
+/**
+ * IGDB Time To Beat data
+ * Times are in seconds
+ */
+export interface IGDBTimeToBeat {
+  game_id: number;
+  hastily: number | null; // Main story (quick playthrough)
+  normally: number | null; // Main + extras
+  completely: number | null; // 100% completion
+  count: number; // Number of submissions
+}

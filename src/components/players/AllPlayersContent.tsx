@@ -36,7 +36,6 @@ export function AllPlayersContent({ locale = "fr" }: AllPlayersContentProps) {
   // Fetch players with error handling
   const fetchPlayers = useCallback(
     async (search: string = "", gameCounts: string[] = [], page: number = 1) => {
-      console.log("👥 fetchPlayers called with:", { search, gameCounts, page });
       setLoading(true);
 
       const result = await executeAsync(async () => {
@@ -147,7 +146,6 @@ export function AllPlayersContent({ locale = "fr" }: AllPlayersContentProps) {
     };
 
     loadInitialPlayers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Only on initial mount
 
   // Effect to handle filter changes with debounce - Requirements 3.4
@@ -160,8 +158,7 @@ export function AllPlayersContent({ locale = "fr" }: AllPlayersContentProps) {
     }, 300); // 300ms debounce as per Requirements 3.4
 
     return () => clearTimeout(timeoutId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchQuery, selectedGameCounts]); // Don't include fetchPlayers
+  }, [searchQuery, selectedGameCounts, fetchPlayers]); // Include fetchPlayers
 
   // Show full skeleton on initial load - Requirements 1.3
   if (initialLoading) {

@@ -2,7 +2,6 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { IGDBGame } from "@/types/igdb";
 import { GameDetails } from "@/types/game";
 import { IGDBService } from "./igdbService";
-import { HLTBService } from "./hltbService";
 
 /**
  * Result of an import or sync operation
@@ -28,7 +27,6 @@ interface GameInsertData {
   playtime_main_extra: number | null;
   playtime_completionist: number | null;
   playtime_all_styles: number | null;
-  hltb_id: number | null;
   playtime_updated_at: string | null;
 }
 
@@ -59,20 +57,20 @@ export class GameImportService {
    */
   static async importFromIGDB(igdbId: number): Promise<ImportResult> {
     try {
-      console.log(`[GameImportService] Starting import for IGDB ID: ${igdbId}`);
+      console.warn(`[GameImportService] Starting import for IGDB ID: ${igdbId}`);
 
       // Fetch complete game details from IGDB
       const igdbGame = await IGDBService.getGameDetails(igdbId);
 
       if (!igdbGame) {
-        console.log(`[GameImportService] Game not found in IGDB: ${igdbId}`);
+        console.warn(`[GameImportService] Game not found in IGDB: ${igdbId}`);
         return {
           success: false,
           error: `Game with IGDB ID ${igdbId} not found`,
         };
       }
 
-      console.log(`[GameImportService] IGDB game found: ${igdbGame.name}`);
+      console.warn(`[GameImportService] IGDB game found: ${igdbGame.name}`);
 
       const supabase = await createRouteHandlerClient();
 
@@ -88,7 +86,7 @@ export class GameImportService {
       }
 
       if (existingGame) {
-        console.log(`[GameImportService] Game already exists: ${existingGame.slug}`);
+        console.warn(`[GameImportService] Game already exists: ${existingGame.slug}`);
         return {
           success: false,
           error: `Game with IGDB ID ${igdbId} already exists (slug: ${existingGame.slug})`,
@@ -96,13 +94,13 @@ export class GameImportService {
       }
 
       // Ensure related entities exist (genres, companies)
-      console.log(`[GameImportService] Ensuring related entities...`);
+      console.warn(`[GameImportService] Ensuring related entities...`);
       const relatedEntities = await this.ensureRelatedEntities(igdbGame);
-      console.log(`[GameImportService] Related entities:`, relatedEntities);
+      console.warn(`[GameImportService] Related entities:`, relatedEntities);
 
       // Transform IGDB data to Supabase format
       const gameData = this.transformIGDBToSupabase(igdbGame);
-      console.log(`[GameImportService] Transformed game data:`, gameData);
+      console.warn(`[GameImportService] Transformed game data:`, gameData);
 
       // Insert the game
       const { data: newGame, error: gameError } = await supabase
@@ -119,43 +117,43 @@ export class GameImportService {
         };
       }
 
-      console.log(`[GameImportService] Game created: ${newGame.slug}`);
+      console.warn(`[GameImportService] Game created: ${newGame.slug}`);
 
       // Create translations (FR and EN)
       await this.createTranslations(newGame.id, igdbGame);
-      console.log(`[GameImportService] Translations created`);
+      console.warn(`[GameImportService] Translations created`);
 
       // Link genres
       if (relatedEntities.genreIds.length > 0) {
         await this.linkGenres(newGame.id, relatedEntities.genreIds);
-        console.log(`[GameImportService] Genres linked`);
+        console.warn(`[GameImportService] Genres linked`);
       }
 
       // Link companies (developers and publishers)
       if (relatedEntities.developerIds.length > 0) {
         await this.linkCompanies(newGame.id, relatedEntities.developerIds, "developer");
-        console.log(`[GameImportService] Developers linked`);
+        console.warn(`[GameImportService] Developers linked`);
       }
       if (relatedEntities.publisherIds.length > 0) {
         await this.linkCompanies(newGame.id, relatedEntities.publisherIds, "publisher");
-        console.log(`[GameImportService] Publishers linked`);
+        console.warn(`[GameImportService] Publishers linked`);
       }
 
       // Create media entries (screenshots, artwork)
       await this.createMedia(newGame.id, igdbGame);
-      console.log(`[GameImportService] Media created`);
+      console.warn(`[GameImportService] Media created`);
 
       // Create language support entries
       await this.createLanguages(newGame.id, igdbGame);
-      console.log(`[GameImportService] Languages created`);
+      console.warn(`[GameImportService] Languages created`);
 
-      // Fetch and save playtime from HowLongToBeat
-      await this.fetchAndSavePlaytime(newGame.id, igdbGame.name);
-      console.log(`[GameImportService] Playtime fetched`);
+      // Fetch and save playtime from IGDB
+      await this.fetchAndSavePlaytime(newGame.id, igdbGame.id);
+      console.warn(`[GameImportService] Playtime fetched`);
 
       // Fetch the complete game details to return
       const gameDetails = await this.fetchGameDetails(newGame.slug);
-      console.log(`[GameImportService] Import complete for: ${newGame.slug}`);
+      console.warn(`[GameImportService] Import complete for: ${newGame.slug}`);
 
       return {
         success: true,
@@ -236,8 +234,8 @@ export class GameImportService {
       // Update language support
       await this.updateLanguages(gameId, igdbGame);
 
-      // Update playtime from HowLongToBeat
-      await this.fetchAndSavePlaytime(gameId, igdbGame.name);
+      // Update playtime from IGDB
+      await this.fetchAndSavePlaytime(gameId, igdbGame.id);
 
       // Fetch updated game details
       const gameDetails = await this.fetchGameDetails(currentGame.slug);
@@ -296,36 +294,51 @@ export class GameImportService {
       playtime_main_extra: null,
       playtime_completionist: null,
       playtime_all_styles: null,
-      hltb_id: null,
       playtime_updated_at: null,
     };
   }
 
   /**
-   * Fetches and saves playtime data from HowLongToBeat
+   * Fetches and saves playtime data from IGDB
    *
    * @param gameId The game UUID
-   * @param gameName The game name to search for
+   * @param igdbId The IGDB game ID
    */
-  private static async fetchAndSavePlaytime(gameId: string, gameName: string): Promise<void> {
+  private static async fetchAndSavePlaytime(gameId: string, igdbId: number): Promise<void> {
     try {
-      const playtime = await HLTBService.getPlaytime(gameName);
+      const timeToBeat = await IGDBService.getTimeToBeat(igdbId);
 
-      if (!playtime) {
-        console.log(`[GameImportService] No playtime data found for: ${gameName}`);
+      if (!timeToBeat) {
+        console.warn(`[GameImportService] No playtime data found for IGDB ID: ${igdbId}`);
         return;
       }
+
+      // Convert seconds to hours
+      const secondsToHours = (seconds: number | null): number | null => {
+        if (seconds === null || seconds === 0) return null;
+        return Math.round((seconds / 3600) * 10) / 10; // Round to 1 decimal
+      };
+
+      const main = secondsToHours(timeToBeat.hastily);
+      const mainExtra = secondsToHours(timeToBeat.normally);
+      const completionist = secondsToHours(timeToBeat.completely);
+
+      // Calculate average
+      const times = [main, mainExtra, completionist].filter((t): t is number => t !== null);
+      const allStyles =
+        times.length > 0
+          ? Math.round((times.reduce((a, b) => a + b, 0) / times.length) * 10) / 10
+          : null;
 
       const supabase = await createRouteHandlerClient();
 
       const { error } = await supabase
         .from("games")
         .update({
-          playtime_main: playtime.main,
-          playtime_main_extra: playtime.mainExtra,
-          playtime_completionist: playtime.completionist,
-          playtime_all_styles: playtime.allStyles,
-          hltb_id: playtime.hltbId || null,
+          playtime_main: main,
+          playtime_main_extra: mainExtra,
+          playtime_completionist: completionist,
+          playtime_all_styles: allStyles,
           playtime_updated_at: new Date().toISOString(),
         })
         .eq("id", gameId);
@@ -333,10 +346,10 @@ export class GameImportService {
       if (error) {
         console.error(`[GameImportService] Failed to save playtime:`, error);
       } else {
-        console.log(`[GameImportService] Playtime saved for: ${gameName}`);
+        console.warn(`[GameImportService] Playtime saved for IGDB ID: ${igdbId}`);
       }
     } catch (error) {
-      console.error(`[GameImportService] Error fetching playtime for ${gameName}:`, error);
+      console.error(`[GameImportService] Error fetching playtime for IGDB ID ${igdbId}:`, error);
     }
   }
 

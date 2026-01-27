@@ -19,33 +19,25 @@ interface ProfileRow {
   updated_at: string | null;
 }
 
-interface ProfileWithLibraryCountRow extends ProfileRow {
-  user_library: { count: number }[];
-}
-
-interface GameTranslationRow {
-  title: string;
-}
-
-interface GameRow {
+// Type definitions for library entry from Supabase
+interface LibraryEntryGame {
   id: string;
   slug: string;
   cover_image_url: string | null;
-  game_translations: GameTranslationRow[];
+  game_translations: Array<{
+    title: string;
+    language_code: string;
+  }> | null;
 }
 
-interface LibraryEntryRow {
+interface LibraryEntry {
   id: string;
   game_id: string;
   status: string;
-  play_time_hours: number;
+  play_time_hours: number | null;
   rating: number | null;
   added_at: string;
-  games: GameRow | null;
-}
-
-interface ProfileDetailsRow extends ProfileRow {
-  user_library: LibraryEntryRow[];
+  games: LibraryEntryGame | null;
 }
 
 /**
@@ -103,7 +95,7 @@ export class PlayerService {
     // Get game counts for all profiles in a separate query
     const profileIds = (allProfiles || []).map((p) => p.id);
     
-    let gameCounts: Record<string, number> = {};
+    const gameCounts: Record<string, number> = {};
     
     if (profileIds.length > 0) {
       // Query user_library to get counts per user
@@ -242,14 +234,14 @@ export class PlayerService {
     }
 
     // Transform library entries
-    const library: PlayerLibraryGame[] = (libraryData || [])
-      .map((entry: any) => {
+    const library: PlayerLibraryGame[] = ((libraryData || []) as LibraryEntry[])
+      .map((entry) => {
         const game = entry.games;
         if (!game) return null;
 
         // Find translation for the requested locale
         const translation = game.game_translations?.find(
-          (t: any) => t.language_code === locale
+          (t) => t.language_code === locale
         ) || game.game_translations?.[0];
 
         return {

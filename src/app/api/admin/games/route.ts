@@ -5,8 +5,6 @@ import {
   createGameSchema,
   bulkGameOperationSchema,
   adminGameQuerySchema,
-  type CreateGameInput,
-  type BulkGameOperationInput,
 } from "@/lib/validations/game";
 import {
   notifyGameCreated,
@@ -14,7 +12,47 @@ import {
   invalidateGameCache,
   verifyGameDeletionConsistency,
 } from "@/lib/realtime-updates";
-import { z } from "zod";
+
+// Types for Supabase query results
+interface AdminGameRow {
+  id: string;
+  slug: string;
+  cover_image_url?: string;
+  background_image_url?: string;
+  background_color?: string;
+  release_date?: string;
+  metascore?: number;
+  system_requirements?: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+  game_translations?: Array<{
+    id: string;
+    title: string;
+    description?: string;
+    language_code: string;
+  }>;
+  game_genres?: Array<{
+    genres?: {
+      id: string;
+      slug: string;
+      genre_translations?: Array<{ name: string }>;
+    };
+  }>;
+  game_companies?: Array<{
+    id: string;
+    role: string;
+    is_primary: boolean;
+    companies?: {
+      id: string;
+      name: string;
+      slug: string;
+    };
+  }>;
+  game_screenshots?: Array<{ count: number }>;
+  game_artwork?: Array<{ count: number }>;
+  game_videos?: Array<{ count: number }>;
+  game_prices?: Array<{ count: number }>;
+}
 
 /**
  * GET /api/admin/games - List games with admin-specific data
@@ -134,18 +172,18 @@ export async function GET(request: NextRequest) {
 
     // Transform data for admin view
     const transformedGames =
-      games?.map((game: any) => {
+      (games as AdminGameRow[] | null)?.map((game) => {
         const translation = game.game_translations?.[0];
         const genres =
-          game.game_genres?.map((gg: any) => ({
+          game.game_genres?.map((gg) => ({
             id: gg.genres?.id,
             slug: gg.genres?.slug,
             name: gg.genres?.genre_translations?.[0]?.name || "Unknown",
           })) || [];
 
         const companies = {
-          developers: game.game_companies?.filter((gc: any) => gc.role === "developer") || [],
-          publishers: game.game_companies?.filter((gc: any) => gc.role === "publisher") || [],
+          developers: game.game_companies?.filter((gc) => gc.role === "developer") || [],
+          publishers: game.game_companies?.filter((gc) => gc.role === "publisher") || [],
         };
 
         return {
@@ -426,7 +464,7 @@ export async function PATCH(request: NextRequest) {
         },
       }));
 
-      console.log(`Bulk deleting ${gamesToDelete.length} games:`, deletionSummary);
+      console.warn(`Bulk deleting ${gamesToDelete.length} games:`, deletionSummary);
 
       // Perform bulk deletion (CASCADE will handle all related data)
       const { error } = await supabase.from("games").delete().in("id", game_ids);

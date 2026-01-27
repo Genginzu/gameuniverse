@@ -71,8 +71,18 @@ export default [
     },
   },
   {
-    files: ["**/*.test.{js,jsx,ts,tsx}", "**/*.spec.{js,jsx,ts,tsx}"],
+    files: ["**/*.test.{js,jsx,ts,tsx}", "**/*.spec.{js,jsx,ts,tsx}", "test/**/*"],
     languageOptions: {
+      parser: typescriptParser,
+      parserOptions: {
+        ecmaVersion: "latest",
+        sourceType: "module",
+        ecmaFeatures: {
+          jsx: true,
+        },
+        // Don't use project for test files to avoid parsing errors
+        project: null,
+      },
       globals: {
         // Test globals for Bun test runner
         describe: "readonly",
@@ -91,6 +101,7 @@ export default [
     rules: {
       // Relax some rules for tests
       "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/no-unused-vars": "off",
       "no-console": "off",
     },
   },
@@ -115,6 +126,7 @@ export default [
       "*.config.ts",
       ".husky/",
       "public/",
+      "test-resend.js",
     ],
   },
 ];

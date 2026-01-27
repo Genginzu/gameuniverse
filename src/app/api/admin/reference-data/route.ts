@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     const locale = searchParams.get("locale") || "fr";
     const include = searchParams.get("include")?.split(",") || ["all"];
 
-    const referenceData: Record<string, any> = {};
+    const referenceData: Record<string, unknown> = {};
 
     // Get companies if requested
     if (include.includes("all") || include.includes("companies")) {

@@ -2,14 +2,14 @@
 
 import { useCallback } from "react";
 import { useError } from "@/components/providers/ErrorProvider";
-import { AppError, ErrorType, classifyError } from "@/lib/error-handling";
+import { ErrorType, classifyError } from "@/lib/error-handling";
 
 // Hook pour déclencher manuellement l'Error Boundary
 export function useErrorBoundary() {
   const { handleError } = useError();
 
   const showBoundary = useCallback(
-    (error: any) => {
+    (error: unknown) => {
       const appError = classifyError(error);
 
       // Pour certains types d'erreurs, on préfère les gérer avec des toasts
@@ -59,7 +59,7 @@ export function useFormErrorHandler() {
   const { handleError } = useError();
 
   const handleFormError = useCallback(
-    (error: any, fieldName?: string) => {
+    (error: unknown, fieldName?: string) => {
       const appError = classifyError(error);
 
       // Personnaliser le message selon le type d'erreur
@@ -87,7 +87,7 @@ export function useNavigationErrorHandler() {
   const { handleError } = useError();
 
   const handleNavigationError = useCallback(
-    (error: any, route?: string) => {
+    (error: unknown, route?: string) => {
       const appError = classifyError(error);
 
       let message = appError.message;

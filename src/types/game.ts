@@ -96,7 +96,6 @@ export interface GamePlaytime {
   mainExtra: number | null;
   completionist: number | null;
   allStyles: number | null;
-  hltbId?: number;
   lastUpdated?: string;
 }
 
@@ -108,7 +107,7 @@ export interface GameDetails {
   releaseDate?: string;
   releaseYear?: number;
   metascore?: number;
-  systemRequirements?: Record<string, any> | null;
+  systemRequirements?: Record<string, unknown> | null;
   backgroundColor?: string;
   genres: GameGenre[];
   companies: GameCompanies;

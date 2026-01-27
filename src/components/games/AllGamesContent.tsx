@@ -9,8 +9,6 @@ import { GameFilterButton } from "./GameFilterButton";
 import { GamePagination } from "./GamePagination";
 import { GameGridSkeleton } from "./GameGridSkeleton";
 import { SearchSkeleton } from "./SearchSkeleton";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Genre } from "@/types/genre";
 import { GameSummary } from "@/types/game";
 import { Pagination } from "@/types/pagination";
@@ -42,15 +40,12 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
   // Fetch genres avec gestion d'erreurs améliorée
   const fetchGenres = useCallback(async () => {
     const result = await executeAsync(async () => {
-      console.log("Fetching genres for locale:", locale);
-
       const data = await apiClient.get(`/api/genres?locale=${locale}`, {
         retryConfig: {
           maxAttempts: 2, // Moins de tentatives pour les genres
         },
       });
 
-      console.log("Genres API data:", data);
       return data.genres || [];
     }, "fetchGenres");
 
@@ -62,7 +57,6 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
   // Fetch games avec gestion d'erreurs améliorée
   const fetchGames = useCallback(
     async (genres: string[] = [], publishers: string[] = [], page: number = 1) => {
-      console.log("🎮 fetchGames called with:", { genres, publishers, page });
       setLoading(true);
 
       const result = await executeAsync(async () => {
@@ -176,7 +170,6 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
     };
 
     loadInitialGames();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Seulement au montage initial
 
   // Effect pour gérer les changements de filtres avec debounce
@@ -189,8 +182,7 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
     }, 300); // Debounce de 300ms
 
     return () => clearTimeout(timeoutId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedGenres, selectedPublishers]); // Ne PAS inclure fetchGames
+  }, [selectedGenres, selectedPublishers, fetchGames]); // Inclure fetchGames
 
   // Show full skeleton on initial load
   if (initialLoading) {

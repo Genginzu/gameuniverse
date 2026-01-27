@@ -59,7 +59,7 @@ export async function POST(
     GameImportService.syncWithIGDB(game.id, game.igdb_id)
       .then((result) => {
         if (result.success) {
-          console.log(`Background sync completed for game ${slug}`);
+          console.warn(`Background sync completed for game ${slug}`);
         } else {
           // Requirement 4.4: Log error but data is preserved
           console.error(`Background sync failed for game ${slug}:`, result.error);

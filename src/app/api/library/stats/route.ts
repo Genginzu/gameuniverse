@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 
 // GET /api/library/stats - Get user's library statistics
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const supabase = await createRouteHandlerClient();
 

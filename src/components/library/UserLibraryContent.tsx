@@ -1,7 +1,6 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/hooks/useAuth";
 import { useUserLibrary } from "@/hooks/useUserLibrary";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -13,7 +12,6 @@ import Link from "next/link";
 export function UserLibraryContent() {
   const t = useTranslations("userLibrary");
   const tLib = useTranslations("library");
-  const { user } = useAuth();
   const { games, stats, loading, error } = useUserLibrary();
 
   if (loading) {

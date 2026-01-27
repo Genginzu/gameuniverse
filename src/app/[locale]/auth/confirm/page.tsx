@@ -2,8 +2,9 @@ import { redirect } from "next/navigation";
 import { createServerClient } from "@/lib/supabase-server";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, XCircle } from "lucide-react";
+import { XCircle } from "lucide-react";
 import Link from "next/link";
+import type { EmailOtpType } from "@supabase/supabase-js";
 
 interface ConfirmPageProps {
   searchParams: {
@@ -49,9 +50,9 @@ export default async function ConfirmPage({ searchParams }: ConfirmPageProps) {
 
   try {
     // Vérifier le token avec Supabase
-    const { data, error } = await supabase.auth.verifyOtp({
+    const { error } = await supabase.auth.verifyOtp({
       token_hash: searchParams.token,
-      type: (searchParams.type as any) || "signup",
+      type: (searchParams.type as EmailOtpType) || "signup",
     });
 
     if (error) {

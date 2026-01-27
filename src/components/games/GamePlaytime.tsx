@@ -95,12 +95,12 @@ export function GamePlaytime({ playtime, accentColor }: GamePlaytimeProps) {
       <p className="text-center text-xs text-slate-500">
         {t("source")}{" "}
         <a
-          href="https://howlongtobeat.com"
+          href="https://www.igdb.com"
           target="_blank"
           rel="noopener noreferrer"
           className="text-slate-400 hover:text-white"
         >
-          HowLongToBeat
+          IGDB
         </a>
       </p>
     </div>
