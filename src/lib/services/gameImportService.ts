@@ -23,10 +23,9 @@ interface GameInsertData {
   cover_image_url: string | null;
   background_image_url: string | null;
   last_synced_at: string;
-  playtime_main: number | null;
-  playtime_main_extra: number | null;
-  playtime_completionist: number | null;
-  playtime_all_styles: number | null;
+  playtime_hastily: number | null;
+  playtime_normally: number | null;
+  playtime_completely: number | null;
   playtime_updated_at: string | null;
 }
 
@@ -235,7 +234,11 @@ export class GameImportService {
       await this.updateLanguages(gameId, igdbGame);
 
       // Update playtime from IGDB
+      console.warn(
+        `[GameImportService] Fetching playtime for game ${gameId}, IGDB ID: ${igdbGame.id}`
+      );
       await this.fetchAndSavePlaytime(gameId, igdbGame.id);
+      console.warn(`[GameImportService] Playtime fetch completed for IGDB ID: ${igdbGame.id}`);
 
       // Fetch updated game details
       const gameDetails = await this.fetchGameDetails(currentGame.slug);
@@ -290,10 +293,9 @@ export class GameImportService {
       cover_image_url: coverUrl,
       background_image_url: backgroundUrl,
       last_synced_at: new Date().toISOString(),
-      playtime_main: null,
-      playtime_main_extra: null,
-      playtime_completionist: null,
-      playtime_all_styles: null,
+      playtime_hastily: null,
+      playtime_normally: null,
+      playtime_completely: null,
       playtime_updated_at: null,
     };
   }
@@ -314,39 +316,56 @@ export class GameImportService {
       }
 
       // Convert seconds to hours
-      const secondsToHours = (seconds: number | null): number | null => {
-        if (seconds === null || seconds === 0) return null;
+      const secondsToHours = (seconds: number | null | undefined): number | null => {
+        if (seconds === null || seconds === undefined || seconds === 0 || isNaN(seconds))
+          return null;
         return Math.round((seconds / 3600) * 10) / 10; // Round to 1 decimal
       };
 
-      const main = secondsToHours(timeToBeat.hastily);
-      const mainExtra = secondsToHours(timeToBeat.normally);
-      const completionist = secondsToHours(timeToBeat.completely);
+      const hastily = secondsToHours(timeToBeat.hastily);
+      const normally = secondsToHours(timeToBeat.normally);
+      const completely = secondsToHours(timeToBeat.completely);
 
-      // Calculate average
-      const times = [main, mainExtra, completionist].filter((t): t is number => t !== null);
-      const allStyles =
-        times.length > 0
-          ? Math.round((times.reduce((a, b) => a + b, 0) / times.length) * 10) / 10
-          : null;
+      // Skip if all values are null
+      if (hastily === null && normally === null && completely === null) {
+        console.warn(`[GameImportService] All playtime values are null for IGDB ID: ${igdbId}`);
+        return;
+      }
 
       const supabase = await createRouteHandlerClient();
 
-      const { error } = await supabase
+      console.warn(
+        `[GameImportService] Saving playtime - hastily: ${hastily}, normally: ${normally}, completely: ${completely}`
+      );
+
+      const { data, error, count } = await supabase
         .from("games")
         .update({
-          playtime_main: main,
-          playtime_main_extra: mainExtra,
-          playtime_completionist: completionist,
-          playtime_all_styles: allStyles,
+          playtime_hastily: hastily,
+          playtime_normally: normally,
+          playtime_completely: completely,
           playtime_updated_at: new Date().toISOString(),
         })
-        .eq("id", gameId);
+        .eq("id", gameId)
+        .select("id, playtime_hastily, playtime_normally, playtime_completely");
+
+      console.warn(
+        `[GameImportService] Update result - data:`,
+        data,
+        `error:`,
+        error,
+        `count:`,
+        count
+      );
 
       if (error) {
         console.error(`[GameImportService] Failed to save playtime:`, error);
+      } else if (!data || data.length === 0) {
+        console.error(
+          `[GameImportService] No rows updated for game ${gameId} - possible RLS issue`
+        );
       } else {
-        console.warn(`[GameImportService] Playtime saved for IGDB ID: ${igdbId}`);
+        console.warn(`[GameImportService] Playtime saved for IGDB ID: ${igdbId}`, data);
       }
     } catch (error) {
       console.error(`[GameImportService] Error fetching playtime for IGDB ID ${igdbId}:`, error);

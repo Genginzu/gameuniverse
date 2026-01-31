@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { GameCard } from "@/components/games/GameCard";
 import { GameSearchBar } from "@/components/games/GameSearchBar";
@@ -52,6 +52,9 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
 
   const apiClient = useApiClient();
   const { executeAsync } = useAsyncError();
+
+  // Use ref to track if initial load has happened
+  const hasInitiallyLoaded = useRef(false);
 
   // Fetch library statistics
   const fetchStats = useCallback(async () => {
@@ -144,7 +147,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
       setLoading(false);
       setInitialLoading(false);
     },
-    [locale, apiClient, executeAsync]
+    [locale, apiClient, executeAsync, tErrors]
   );
 
   // Handle search
@@ -197,6 +200,10 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
 
   // Initial load
   useEffect(() => {
+    // Prevent double execution
+    if (hasInitiallyLoaded.current) return;
+    hasInitiallyLoaded.current = true;
+
     fetchGenres();
     fetchStats();
 
@@ -240,13 +247,16 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
   // Effect for filter changes with debounce
   useEffect(() => {
     if (initialLoading) return;
+    // Skip if no filters have been applied yet (initial state)
+    if (searchQuery === "" && selectedGenres.length === 0 && selectedPublishers.length === 0)
+      return;
 
     const timeoutId = setTimeout(() => {
       fetchLibraryGames(searchQuery, selectedGenres, selectedPublishers, 1);
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [searchQuery, selectedGenres, selectedPublishers, fetchLibraryGames]);
+  }, [searchQuery, selectedGenres, selectedPublishers, fetchLibraryGames, initialLoading]);
 
   // Show full skeleton on initial load
   if (initialLoading) {

@@ -183,28 +183,24 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     // Fetch playtime separately (columns may not exist yet)
     let gamePlaytime: {
-      playtime_main: number | null;
-      playtime_main_extra: number | null;
-      playtime_completionist: number | null;
-      playtime_all_styles: number | null;
+      playtime_hastily: number | null;
+      playtime_normally: number | null;
+      playtime_completely: number | null;
       playtime_updated_at: string | null;
     } | null = null;
 
     try {
       const { data: playtimeData } = await supabase
         .from("games")
-        .select(
-          "playtime_main, playtime_main_extra, playtime_completionist, playtime_all_styles, playtime_updated_at"
-        )
+        .select("playtime_hastily, playtime_normally, playtime_completely, playtime_updated_at")
         .eq("id", game.id)
         .single();
 
       if (playtimeData) {
         gamePlaytime = {
-          playtime_main: playtimeData.playtime_main ?? null,
-          playtime_main_extra: playtimeData.playtime_main_extra ?? null,
-          playtime_completionist: playtimeData.playtime_completionist ?? null,
-          playtime_all_styles: playtimeData.playtime_all_styles ?? null,
+          playtime_hastily: playtimeData.playtime_hastily ?? null,
+          playtime_normally: playtimeData.playtime_normally ?? null,
+          playtime_completely: playtimeData.playtime_completely ?? null,
           playtime_updated_at: playtimeData.playtime_updated_at ?? null,
         };
       }
@@ -308,37 +304,38 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           })) || [],
     };
 
-    // Process ratings
+    // Process ratings - get all ratings, not just primary
+    const processRating = (gr: DatabaseGameRating) => ({
+      system: gr.ratings?.rating_systems?.name,
+      systemCode: gr.ratings?.rating_systems?.code,
+      rating: gr.ratings?.display_name,
+      ratingCode: gr.ratings?.code,
+      minimumAge: gr.ratings?.minimum_age,
+      colorHex: gr.ratings?.color_hex,
+      iconUrl: gr.ratings?.icon_url,
+      assignedDate: gr.assigned_date,
+      isPrimary: gr.is_primary,
+      contentDescriptors:
+        gr.game_rating_descriptors?.map(
+          (grd: {
+            content_descriptors: {
+              code: string;
+              content_descriptor_translations: Array<{
+                name: string;
+                description: string | null;
+              }>;
+            };
+          }) => ({
+            code: grd.content_descriptors?.code,
+            name: grd.content_descriptors?.content_descriptor_translations?.[0]?.name,
+            description: grd.content_descriptors?.content_descriptor_translations?.[0]?.description,
+          })
+        ) || [],
+    });
+
+    const ageRatings = game.game_ratings?.map((gr: DatabaseGameRating) => processRating(gr)) || [];
     const primaryRating = game.game_ratings?.find((gr: DatabaseGameRating) => gr.is_primary);
-    const ageRating = primaryRating
-      ? {
-          system: primaryRating.ratings?.rating_systems?.name,
-          systemCode: primaryRating.ratings?.rating_systems?.code,
-          rating: primaryRating.ratings?.display_name,
-          ratingCode: primaryRating.ratings?.code,
-          minimumAge: primaryRating.ratings?.minimum_age,
-          colorHex: primaryRating.ratings?.color_hex,
-          iconUrl: primaryRating.ratings?.icon_url,
-          assignedDate: primaryRating.assigned_date,
-          contentDescriptors:
-            primaryRating.game_rating_descriptors?.map(
-              (grd: {
-                content_descriptors: {
-                  code: string;
-                  content_descriptor_translations: Array<{
-                    name: string;
-                    description: string | null;
-                  }>;
-                };
-              }) => ({
-                code: grd.content_descriptors?.code,
-                name: grd.content_descriptors?.content_descriptor_translations?.[0]?.name,
-                description:
-                  grd.content_descriptors?.content_descriptor_translations?.[0]?.description,
-              })
-            ) || [],
-        }
-      : null;
+    const ageRating = primaryRating ? processRating(primaryRating) : null;
 
     // Process pricing
     const pricing =
@@ -369,14 +366,13 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     // Process playtime (may be null if columns don't exist or not yet fetched)
     const playtime =
       gamePlaytime &&
-      (gamePlaytime.playtime_main ||
-        gamePlaytime.playtime_main_extra ||
-        gamePlaytime.playtime_completionist)
+      (gamePlaytime.playtime_hastily ||
+        gamePlaytime.playtime_normally ||
+        gamePlaytime.playtime_completely)
         ? {
-            main: gamePlaytime.playtime_main,
-            mainExtra: gamePlaytime.playtime_main_extra,
-            completionist: gamePlaytime.playtime_completionist,
-            allStyles: gamePlaytime.playtime_all_styles,
+            hastily: gamePlaytime.playtime_hastily,
+            normally: gamePlaytime.playtime_normally,
+            completely: gamePlaytime.playtime_completely,
             lastUpdated: gamePlaytime.playtime_updated_at,
           }
         : null;
@@ -397,6 +393,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       publisher: primaryPublisher?.name || "Unknown",
       media,
       ageRating,
+      ageRatings,
       pricing,
       languages,
       playtime,

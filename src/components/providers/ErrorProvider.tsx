@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, ReactNode } from "react";
+import React, { createContext, useContext, ReactNode, useCallback } from "react";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { Toaster } from "@/components/ui/toaster";
 import { useErrorHandler, AppError } from "@/lib/error-handling";
@@ -58,17 +58,17 @@ export function useError() {
 export function useAsyncError() {
   const { handleError } = useError();
 
-  const executeAsync = async function <T>(
-    operation: () => Promise<T>,
-    context?: string
-  ): Promise<T | null> {
-    try {
-      return await operation();
-    } catch (error) {
-      handleError(error, context);
-      return null;
-    }
-  };
+  const executeAsync = useCallback(
+    async function <T>(operation: () => Promise<T>, context?: string): Promise<T | null> {
+      try {
+        return await operation();
+      } catch (error) {
+        handleError(error, context);
+        return null;
+      }
+    },
+    [handleError]
+  );
 
   return { executeAsync };
 }

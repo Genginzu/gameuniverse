@@ -1,23 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { IGDBService } from "@/lib/services/igdbService";
-import { GamePlaytime } from "@/types/game";
 
 /**
  * GET /api/games/[slug]/playtime
  *
- * Fetches playtime data for a game from IGDB.
- * Caches results in the database to avoid repeated API calls.
- *
- * Returns:
- * - 200: Playtime data
- * - 404: Game not found
- * - 500: Internal server error
+ * Fetches and updates playtime data from IGDB for a specific game.
+ * Useful for manually refreshing playtime data.
  */
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
-): Promise<NextResponse<GamePlaytime | { error: string }>> {
+): Promise<NextResponse> {
   try {
     const { slug } = await params;
 
@@ -30,34 +24,36 @@ export async function GET(
     // Fetch the game to get its IGDB ID
     const { data: game, error: fetchError } = await supabase
       .from("games")
-      .select("id, igdb_id")
+      .select(
+        "id, igdb_id, playtime_hastily, playtime_normally, playtime_completely, playtime_updated_at"
+      )
       .eq("slug", slug)
       .single();
 
     if (fetchError || !game) {
-      return NextResponse.json({ error: "Game not found" }, { status: 404 });
+      if (fetchError?.code === "PGRST116") {
+        return NextResponse.json({ error: "Game not found" }, { status: 404 });
+      }
+      return NextResponse.json({ error: "Failed to fetch game" }, { status: 500 });
     }
 
     if (!game.igdb_id) {
-      return NextResponse.json({
-        main: null,
-        mainExtra: null,
-        completionist: null,
-        allStyles: null,
-        lastUpdated: new Date().toISOString(),
-      });
+      return NextResponse.json({ error: "Game has no IGDB ID" }, { status: 400 });
     }
 
-    // Fetch playtime from IGDB
+    // Fetch time to beat from IGDB
     const timeToBeat = await IGDBService.getTimeToBeat(game.igdb_id);
 
     if (!timeToBeat) {
       return NextResponse.json({
-        main: null,
-        mainExtra: null,
-        completionist: null,
-        allStyles: null,
-        lastUpdated: new Date().toISOString(),
+        message: "No playtime data available from IGDB for this game",
+        igdbId: game.igdb_id,
+        currentData: {
+          hastily: game.playtime_hastily,
+          normally: game.playtime_normally,
+          completely: game.playtime_completely,
+          lastUpdated: game.playtime_updated_at,
+        },
       });
     }
 
@@ -67,28 +63,38 @@ export async function GET(
       return Math.round((seconds / 3600) * 10) / 10;
     };
 
-    const main = secondsToHours(timeToBeat.hastily);
-    const mainExtra = secondsToHours(timeToBeat.normally);
-    const completionist = secondsToHours(timeToBeat.completely);
+    const hastily = secondsToHours(timeToBeat.hastily);
+    const normally = secondsToHours(timeToBeat.normally);
+    const completely = secondsToHours(timeToBeat.completely);
 
-    // Calculate average
-    const times = [main, mainExtra, completionist].filter((t): t is number => t !== null);
-    const allStyles =
-      times.length > 0
-        ? Math.round((times.reduce((a, b) => a + b, 0) / times.length) * 10) / 10
-        : null;
+    // Update the database
+    const { error: updateError } = await supabase
+      .from("games")
+      .update({
+        playtime_hastily: hastily,
+        playtime_normally: normally,
+        playtime_completely: completely,
+        playtime_updated_at: new Date().toISOString(),
+      })
+      .eq("id", game.id);
 
-    const playtime: GamePlaytime = {
-      main,
-      mainExtra,
-      completionist,
-      allStyles,
-      lastUpdated: new Date().toISOString(),
-    };
+    if (updateError) {
+      console.error("Failed to update playtime:", updateError);
+      return NextResponse.json({ error: "Failed to update playtime" }, { status: 500 });
+    }
 
-    return NextResponse.json(playtime);
+    return NextResponse.json({
+      success: true,
+      igdbId: game.igdb_id,
+      rawData: timeToBeat,
+      convertedData: {
+        hastily,
+        normally,
+        completely,
+      },
+    });
   } catch (error) {
-    console.error("Error in playtime API:", error);
+    console.error("Error fetching playtime:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

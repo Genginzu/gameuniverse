@@ -30,6 +30,11 @@ const DEFAULT_LOCAL_LIMIT = 5;
 const DEFAULT_IGDB_LIMIT = 5;
 
 /**
+ * Maximum limit for IGDB API (hard limit from IGDB)
+ */
+const MAX_IGDB_LIMIT = 500;
+
+/**
  * Service orchestrating parallel search across Supabase (local) and IGDB sources
  * Handles deduplication and result aggregation
  */
@@ -52,8 +57,9 @@ export class HybridSearchService {
     } = options;
 
     // Fetch extra results to determine hasMore
+    // But respect IGDB's max limit of 500
     const localFetchLimit = localLimit + 1;
-    const igdbFetchLimit = igdbLimit + 1;
+    const igdbFetchLimit = Math.min(igdbLimit + 1, MAX_IGDB_LIMIT);
 
     // Execute both searches in parallel using Promise.allSettled
     // This ensures one failing source doesn't break the entire search
@@ -79,7 +85,10 @@ export class HybridSearchService {
 
     // Check if there are more results than the limit
     const hasMoreLocal = localGames.length > localLimit;
-    const hasMoreIgdb = deduplicatedIgdbGames.length > igdbLimit;
+    // For IGDB, if we hit the max limit, assume there are more results
+    const hasMoreIgdb =
+      deduplicatedIgdbGames.length > igdbLimit ||
+      (igdbLimit >= MAX_IGDB_LIMIT - 1 && deduplicatedIgdbGames.length >= igdbLimit);
     const hasMore = hasMoreLocal || hasMoreIgdb;
 
     // Apply limits to final results

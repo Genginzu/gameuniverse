@@ -506,6 +506,7 @@
     "tabs": {
       "media": "Médias",
       "specs": "Spécifications",
+      "ageRatings": "Classifications",
       "reviews": "Avis",
       "playtime": "Temps de jeu",
       "languages": "Langues",
@@ -520,16 +521,22 @@
     "specs": {
       "noSpecs": "Aucune spécification disponible"
     },
+    "ageRatings": {
+      "title": "Classifications d'âge",
+      "noData": "Aucune information de classification disponible pour ce jeu",
+      "primary": "Principal",
+      "minimumAge": "Âge minimum : {age}+",
+      "contentDescriptors": "Avertissements de contenu"
+    },
     "reviews": {
       "title": "Avis des joueurs",
       "comingSoon": "Les avis des joueurs seront bientôt disponibles"
     },
     "playtime": {
       "title": "Temps de jeu",
-      "mainStory": "Histoire principale",
-      "mainExtras": "Histoire + Extras",
-      "completionist": "Complétionniste",
-      "average": "Moyenne",
+      "hastily": "Rapide",
+      "normally": "Normal",
+      "completely": "Complétionniste",
       "noData": "Aucune donnée de temps de jeu disponible pour ce jeu",
       "source": "Données fournies par"
     },

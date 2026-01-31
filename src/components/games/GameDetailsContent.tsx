@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LazyImage } from "@/components/ui/lazy-image";
 import { GamePlaytime } from "./GamePlaytime";
+import { GameAgeRatings } from "./GameAgeRatings";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -19,7 +20,7 @@ import {
   ChevronRight,
   ExternalLink,
   Eye,
-  Settings,
+  Shield,
   MessageSquare,
   Clock,
   Star,
@@ -437,15 +438,15 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                       {tDetails("tabs.media")}
                     </button>
                     <button
-                      onClick={() => setActiveTab("specs")}
+                      onClick={() => setActiveTab("ageRatings")}
                       className={`rounded-xl px-6 py-3 text-sm font-medium transition-all ${
-                        activeTab === "specs"
+                        activeTab === "ageRatings"
                           ? "bg-white text-slate-900"
                           : "text-slate-400 hover:bg-slate-700 hover:text-white"
                       }`}
                     >
-                      <Settings className="mr-2 inline h-4 w-4" />
-                      {tDetails("tabs.specs")}
+                      <Shield className="mr-2 inline h-4 w-4" />
+                      {tDetails("tabs.ageRatings")}
                     </button>
                     <button
                       onClick={() => setActiveTab("reviews")}
@@ -771,29 +772,8 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                     </div>
                   )}
 
-                  {activeTab === "specs" && (
-                    <div>
-                      {game.systemRequirements ? (
-                        <Card className="rounded-xl border-slate-700 bg-slate-800/50">
-                          <CardContent className="p-6">
-                            <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-white">
-                              <Monitor className="h-5 w-5" style={{ color: colors.accent }} />
-                              {t("game.systemRequirements")}
-                            </h3>
-                            <div className="rounded-xl border border-slate-700 bg-slate-900/50 p-4">
-                              <pre className="overflow-x-auto whitespace-pre-wrap text-sm text-slate-300">
-                                {JSON.stringify(game.systemRequirements, null, 2)}
-                              </pre>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ) : (
-                        <div className="py-12 text-center text-slate-400">
-                          <Monitor className="mx-auto mb-4 h-12 w-12 opacity-50" />
-                          <p>{tDetails("specs.noSpecs")}</p>
-                        </div>
-                      )}
-                    </div>
+                  {activeTab === "ageRatings" && (
+                    <GameAgeRatings ratings={game.ageRatings} accentColor={colors.accent} />
                   )}
 
                   {activeTab === "reviews" && (

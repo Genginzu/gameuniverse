@@ -506,6 +506,7 @@
     "tabs": {
       "media": "Media",
       "specs": "Specifications",
+      "ageRatings": "Age Ratings",
       "reviews": "Reviews",
       "playtime": "Playtime",
       "languages": "Languages",
@@ -520,16 +521,22 @@
     "specs": {
       "noSpecs": "No specifications available"
     },
+    "ageRatings": {
+      "title": "Age Ratings",
+      "noData": "No age rating information available for this game",
+      "primary": "Primary",
+      "minimumAge": "Minimum age: {age}+",
+      "contentDescriptors": "Content Warnings"
+    },
     "reviews": {
       "title": "Player Reviews",
       "comingSoon": "Player reviews coming soon"
     },
     "playtime": {
       "title": "Playtime Statistics",
-      "mainStory": "Main Story",
-      "mainExtras": "Main + Extras",
-      "completionist": "Completionist",
-      "average": "Average",
+      "hastily": "Hastily",
+      "normally": "Normally",
+      "completely": "Completely",
       "noData": "No playtime data available for this game",
       "source": "Data provided by"
     },

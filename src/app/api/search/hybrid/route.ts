@@ -39,9 +39,9 @@ export async function GET(
     const localLimitParam = parseInt(searchParams.get("localLimit") || "5", 10);
     const igdbLimitParam = parseInt(searchParams.get("igdbLimit") || "5", 10);
 
-    // Clamp limits to valid range (1-500)
+    // Clamp limits to valid range (1-500 for local, 1-499 for IGDB to allow hasMore check)
     const localLimit = Math.min(500, Math.max(1, isNaN(localLimitParam) ? 5 : localLimitParam));
-    const igdbLimit = Math.min(500, Math.max(1, isNaN(igdbLimitParam) ? 5 : igdbLimitParam));
+    const igdbLimit = Math.min(499, Math.max(1, isNaN(igdbLimitParam) ? 5 : igdbLimitParam));
 
     // Perform hybrid search
     const searchResult = await HybridSearchService.search({

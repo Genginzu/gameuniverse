@@ -50,6 +50,7 @@ export interface GameRating {
   colorHex?: string;
   iconUrl?: string;
   assignedDate?: string;
+  isPrimary?: boolean;
   contentDescriptors: Array<{
     code: string;
     name: string;
@@ -92,10 +93,9 @@ export interface GameLanguage {
 }
 
 export interface GamePlaytime {
-  main: number | null;
-  mainExtra: number | null;
-  completionist: number | null;
-  allStyles: number | null;
+  hastily: number | null;
+  normally: number | null;
+  completely: number | null;
   lastUpdated?: string;
 }
 
@@ -115,6 +115,7 @@ export interface GameDetails {
   publisher: string;
   media: GameMedia;
   ageRating?: GameRating;
+  ageRatings?: GameRating[];
   pricing: GamePricing[];
   languages?: GameLanguage[];
   playtime?: GamePlaytime | null;

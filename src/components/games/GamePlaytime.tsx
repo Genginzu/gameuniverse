@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Clock, Gamepad2, Trophy, Target } from "lucide-react";
+import { Clock, Zap, Gamepad2, Trophy } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { GamePlaytime as GamePlaytimeType } from "@/types/game";
 
@@ -19,7 +19,7 @@ export function GamePlaytime({ playtime, accentColor }: GamePlaytimeProps) {
     return `${hours}h`;
   };
 
-  const hasAnyData = playtime?.main || playtime?.mainExtra || playtime?.completionist;
+  const hasAnyData = playtime?.hastily || playtime?.normally || playtime?.completely;
 
   if (!playtime || !hasAnyData) {
     return (
@@ -33,8 +33,22 @@ export function GamePlaytime({ playtime, accentColor }: GamePlaytimeProps) {
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {/* Main Story */}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        {/* Hastily - Quick playthrough */}
+        <Card className="rounded-xl border-slate-700 bg-slate-800/50">
+          <CardContent className="p-6">
+            <div
+              className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl"
+              style={{ backgroundColor: `${accentColor}20` }}
+            >
+              <Zap className="h-6 w-6" style={{ color: accentColor }} />
+            </div>
+            <p className="mb-1 text-sm text-slate-400">{t("hastily")}</p>
+            <p className="text-2xl font-bold text-white">{formatHours(playtime.hastily)}</p>
+          </CardContent>
+        </Card>
+
+        {/* Normally - Standard playthrough */}
         <Card className="rounded-xl border-slate-700 bg-slate-800/50">
           <CardContent className="p-6">
             <div
@@ -43,26 +57,12 @@ export function GamePlaytime({ playtime, accentColor }: GamePlaytimeProps) {
             >
               <Gamepad2 className="h-6 w-6" style={{ color: accentColor }} />
             </div>
-            <p className="mb-1 text-sm text-slate-400">{t("mainStory")}</p>
-            <p className="text-2xl font-bold text-white">{formatHours(playtime.main)}</p>
+            <p className="mb-1 text-sm text-slate-400">{t("normally")}</p>
+            <p className="text-2xl font-bold text-white">{formatHours(playtime.normally)}</p>
           </CardContent>
         </Card>
 
-        {/* Main + Extras */}
-        <Card className="rounded-xl border-slate-700 bg-slate-800/50">
-          <CardContent className="p-6">
-            <div
-              className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl"
-              style={{ backgroundColor: `${accentColor}20` }}
-            >
-              <Target className="h-6 w-6" style={{ color: accentColor }} />
-            </div>
-            <p className="mb-1 text-sm text-slate-400">{t("mainExtras")}</p>
-            <p className="text-2xl font-bold text-white">{formatHours(playtime.mainExtra)}</p>
-          </CardContent>
-        </Card>
-
-        {/* Completionist */}
+        {/* Completely - 100% completion */}
         <Card className="rounded-xl border-slate-700 bg-slate-800/50">
           <CardContent className="p-6">
             <div
@@ -71,22 +71,8 @@ export function GamePlaytime({ playtime, accentColor }: GamePlaytimeProps) {
             >
               <Trophy className="h-6 w-6" style={{ color: accentColor }} />
             </div>
-            <p className="mb-1 text-sm text-slate-400">{t("completionist")}</p>
-            <p className="text-2xl font-bold text-white">{formatHours(playtime.completionist)}</p>
-          </CardContent>
-        </Card>
-
-        {/* All Styles Average */}
-        <Card className="rounded-xl border-slate-700 bg-slate-800/50">
-          <CardContent className="p-6">
-            <div
-              className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl"
-              style={{ backgroundColor: `${accentColor}20` }}
-            >
-              <Clock className="h-6 w-6" style={{ color: accentColor }} />
-            </div>
-            <p className="mb-1 text-sm text-slate-400">{t("average")}</p>
-            <p className="text-2xl font-bold text-white">{formatHours(playtime.allStyles)}</p>
+            <p className="mb-1 text-sm text-slate-400">{t("completely")}</p>
+            <p className="text-2xl font-bold text-white">{formatHours(playtime.completely)}</p>
           </CardContent>
         </Card>
       </div>
