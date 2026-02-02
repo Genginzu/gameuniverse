@@ -1,4 +1,11 @@
-import { IGDBAuthToken, IGDBGame, IGDBSearchResult, IGDBImageSize, IGDBTimeToBeat } from "@/types/igdb";
+import {
+  IGDBAuthToken,
+  IGDBGame,
+  IGDBSearchResult,
+  IGDBImageSize,
+  IGDBTimeToBeat,
+  IGDBAgeRating,
+} from "@/types/igdb";
 
 /**
  * Service for interacting with the IGDB (Internet Game Database) API
@@ -182,7 +189,9 @@ export class IGDBService {
              involved_companies.company.id, involved_companies.company.name, involved_companies.company.slug,
              involved_companies.developer, involved_companies.publisher,
              language_supports.language.id, language_supports.language.name, language_supports.language.native_name, language_supports.language.locale,
-             language_supports.language_support_type.id, language_supports.language_support_type.name;
+             language_supports.language_support_type.id, language_supports.language_support_type.name,
+             age_ratings.id, age_ratings.category, age_ratings.rating, 
+             age_ratings.content_descriptions.id, age_ratings.content_descriptions.category, age_ratings.content_descriptions.description;
       where id = ${igdbId};
     `;
 
@@ -242,7 +251,9 @@ export class IGDBService {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(`IGDB getTimeToBeat failed: ${response.status} ${response.statusText} - ${errorText}`);
+      console.error(
+        `IGDB getTimeToBeat failed: ${response.status} ${response.statusText} - ${errorText}`
+      );
       return null;
     }
 
@@ -253,6 +264,55 @@ export class IGDBService {
     }
 
     return results[0];
+  }
+
+  /**
+   * Fetches age ratings for a game from IGDB
+   * @param ageRatingIds Array of age rating IDs from the game
+   * @returns Array of age rating data
+   */
+  static async getAgeRatings(ageRatingIds: number[]): Promise<IGDBAgeRating[]> {
+    if (!ageRatingIds || ageRatingIds.length === 0) {
+      return [];
+    }
+
+    const accessToken = await this.getAccessToken();
+    const clientId = process.env.IGDB_CLIENT_ID;
+
+    if (!clientId) {
+      throw new Error("IGDB_CLIENT_ID not configured");
+    }
+
+    const body = `
+      fields id, organization, rating_category, synopsis, rating_content_descriptions, rating_cover_url;
+      where id = (${ageRatingIds.join(",")});
+    `;
+
+    console.warn(`[IGDBService] Fetching age ratings with body:`, body);
+
+    const response = await fetch(`${this.IGDB_API_URL}/age_ratings`, {
+      method: "POST",
+      headers: {
+        "Client-ID": clientId,
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "text/plain",
+      },
+      body,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(
+        `IGDB getAgeRatings failed: ${response.status} ${response.statusText} - ${errorText}`
+      );
+      return [];
+    }
+
+    const rawText = await response.text();
+    console.warn(`[IGDBService] Age ratings raw response:`, rawText);
+
+    const results: IGDBAgeRating[] = JSON.parse(rawText);
+    return results;
   }
 
   /**

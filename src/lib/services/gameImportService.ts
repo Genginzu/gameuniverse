@@ -1,5 +1,5 @@
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-import { IGDBGame } from "@/types/igdb";
+import { IGDBGame, IGDB_RATING_CATEGORIES, IGDB_ALL_RATINGS } from "@/types/igdb";
 import { GameDetails } from "@/types/game";
 import { IGDBService } from "./igdbService";
 
@@ -146,6 +146,10 @@ export class GameImportService {
       await this.createLanguages(newGame.id, igdbGame);
       console.warn(`[GameImportService] Languages created`);
 
+      // Create age ratings from IGDB
+      await this.createAgeRatings(newGame.id, igdbGame);
+      console.warn(`[GameImportService] Age ratings created`);
+
       // Fetch and save playtime from IGDB
       await this.fetchAndSavePlaytime(newGame.id, igdbGame.id);
       console.warn(`[GameImportService] Playtime fetched`);
@@ -232,6 +236,10 @@ export class GameImportService {
 
       // Update language support
       await this.updateLanguages(gameId, igdbGame);
+
+      // Update age ratings
+      await this.updateAgeRatings(gameId, igdbGame);
+      console.warn(`[GameImportService] Age ratings updated`);
 
       // Update playtime from IGDB
       console.warn(
@@ -806,5 +814,204 @@ export class GameImportService {
       console.error("Error fetching game details:", error);
       return null;
     }
+  }
+
+  /**
+   * Creates age ratings for a game from IGDB data
+   *
+   * @param gameId The game UUID
+   * @param igdbGame The IGDB game data
+   */
+  private static async createAgeRatings(gameId: string, igdbGame: IGDBGame): Promise<void> {
+    // Extract age rating IDs from the game data
+    const ageRatingIds =
+      igdbGame.age_ratings?.map((ar) => ar.id).filter((id): id is number => id !== undefined) || [];
+
+    console.warn(`[GameImportService] Processing age ratings, found IDs: ${ageRatingIds.length}`);
+
+    if (ageRatingIds.length === 0) {
+      console.warn(`[GameImportService] No age rating IDs found for game`);
+      return;
+    }
+
+    // Fetch full age rating details from IGDB
+    const ageRatings = await IGDBService.getAgeRatings(ageRatingIds);
+
+    console.warn(`[GameImportService] Age ratings from IGDB:`, JSON.stringify(ageRatings));
+
+    if (ageRatings.length === 0) {
+      console.warn(`[GameImportService] No age rating details returned from IGDB`);
+      return;
+    }
+
+    const supabase = await createRouteHandlerClient();
+
+    for (let i = 0; i < ageRatings.length; i++) {
+      const ageRating = ageRatings[i];
+      const systemCode = IGDB_RATING_CATEGORIES[ageRating.organization];
+
+      if (!systemCode) {
+        console.warn(`[GameImportService] Unknown rating organization: ${ageRating.organization}`);
+        continue;
+      }
+
+      // Get rating details from the unified mapping
+      const ratingInfo = IGDB_ALL_RATINGS[ageRating.rating_category];
+
+      let ratingCode: string;
+      let displayName: string;
+      let minimumAge: number | null = null;
+
+      if (ratingInfo) {
+        ratingCode = ratingInfo.code;
+        displayName = ratingInfo.name;
+        minimumAge = ratingInfo.age;
+      } else {
+        ratingCode = String(ageRating.rating_category);
+        displayName = `${systemCode} ${ageRating.rating_category}`;
+        console.warn(
+          `[GameImportService] Unknown rating_category: ${ageRating.rating_category} for ${systemCode}`
+        );
+      }
+
+      console.warn(`[GameImportService] Processing rating: ${displayName} (${systemCode})`);
+
+      // Find or create rating system
+      let { data: ratingSystem } = await supabase
+        .from("rating_systems")
+        .select("id")
+        .eq("code", systemCode)
+        .single();
+
+      if (!ratingSystem) {
+        const { data: newSystem, error } = await supabase
+          .from("rating_systems")
+          .insert({ code: systemCode, name: systemCode })
+          .select("id")
+          .single();
+
+        if (error || !newSystem) {
+          console.error(`[GameImportService] Failed to create rating system ${systemCode}:`, error);
+          continue;
+        }
+        ratingSystem = newSystem;
+      }
+
+      // Find or create rating
+      let { data: rating } = await supabase
+        .from("ratings")
+        .select("id")
+        .eq("rating_system_id", ratingSystem.id)
+        .eq("code", ratingCode)
+        .single();
+
+      if (!rating) {
+        const { data: newRating, error } = await supabase
+          .from("ratings")
+          .insert({
+            rating_system_id: ratingSystem.id,
+            code: ratingCode,
+            display_name: displayName,
+            minimum_age: minimumAge,
+          })
+          .select("id")
+          .single();
+
+        if (error || !newRating) {
+          console.error(`[GameImportService] Failed to create rating ${displayName}:`, error);
+          continue;
+        }
+        rating = newRating;
+      }
+
+      // Create game_rating link
+      const { data: gameRating, error: gameRatingError } = await supabase
+        .from("game_ratings")
+        .insert({
+          game_id: gameId,
+          rating_id: rating.id,
+          is_primary: i === 0, // First rating is primary
+        })
+        .select("id")
+        .single();
+
+      if (gameRatingError || !gameRating) {
+        console.error(`[GameImportService] Failed to link rating to game:`, gameRatingError);
+        continue;
+      }
+
+      // Create content descriptors if available
+      if (ageRating.content_descriptions && ageRating.content_descriptions.length > 0) {
+        for (const desc of ageRating.content_descriptions) {
+          // Find or create content descriptor
+          let { data: descriptor } = await supabase
+            .from("content_descriptors")
+            .select("id")
+            .eq("rating_system_id", ratingSystem.id)
+            .eq("code", String(desc.category))
+            .single();
+
+          if (!descriptor) {
+            const { data: newDescriptor, error } = await supabase
+              .from("content_descriptors")
+              .insert({
+                rating_system_id: ratingSystem.id,
+                code: String(desc.category),
+              })
+              .select("id")
+              .single();
+
+            if (error || !newDescriptor) {
+              console.error(`[GameImportService] Failed to create content descriptor:`, error);
+              continue;
+            }
+            descriptor = newDescriptor;
+
+            // Create translations for the descriptor
+            await supabase.from("content_descriptor_translations").insert([
+              { content_descriptor_id: descriptor.id, language_code: "en", name: desc.description },
+              { content_descriptor_id: descriptor.id, language_code: "fr", name: desc.description },
+            ]);
+          }
+
+          // Link descriptor to game rating
+          await supabase.from("game_rating_descriptors").insert({
+            game_rating_id: gameRating.id,
+            content_descriptor_id: descriptor.id,
+          });
+        }
+      }
+
+      console.warn(`[GameImportService] Created age rating: ${displayName} for game`);
+    }
+  }
+
+  /**
+   * Updates age ratings for an existing game
+   * Replaces existing ratings with fresh data from IGDB
+   *
+   * @param gameId The game UUID
+   * @param igdbGame The IGDB game data
+   */
+  private static async updateAgeRatings(gameId: string, igdbGame: IGDBGame): Promise<void> {
+    const supabase = await createRouteHandlerClient();
+
+    // Get existing game ratings to delete their descriptors first
+    const { data: existingRatings } = await supabase
+      .from("game_ratings")
+      .select("id")
+      .eq("game_id", gameId);
+
+    if (existingRatings && existingRatings.length > 0) {
+      // Delete descriptors for each rating
+      for (const rating of existingRatings) {
+        await supabase.from("game_rating_descriptors").delete().eq("game_rating_id", rating.id);
+      }
+      // Delete the ratings themselves
+      await supabase.from("game_ratings").delete().eq("game_id", gameId);
+    }
+
+    // Create new age ratings
+    await this.createAgeRatings(gameId, igdbGame);
   }
 }
