@@ -284,7 +284,7 @@ export class IGDBService {
     }
 
     const body = `
-      fields id, organization, rating_category, synopsis, rating_content_descriptions, rating_cover_url;
+      fields id, category, rating, synopsis, content_descriptions.category, content_descriptions.description, rating_cover_url;
       where id = (${ageRatingIds.join(",")});
     `;
 

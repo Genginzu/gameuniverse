@@ -848,26 +848,27 @@ export class GameImportService {
 
     for (let i = 0; i < ageRatings.length; i++) {
       const ageRating = ageRatings[i];
-      const systemCode = IGDB_RATING_CATEGORIES[ageRating.organization];
+      const systemCode = IGDB_RATING_CATEGORIES[ageRating.category];
 
       if (!systemCode) {
-        console.warn(`[GameImportService] Unknown rating organization: ${ageRating.organization}`);
+        console.warn(`[GameImportService] Unknown rating category: ${ageRating.category}`);
         continue;
       }
 
       // Get rating details from the unified mapping
-      const ratingInfo = IGDB_ALL_RATINGS[ageRating.rating_category];
+      const ratingInfo = IGDB_ALL_RATINGS[ageRating.rating];
 
       let ratingCode: string;
       let displayName: string;
       let minimumAge: number | null = null;
+      const iconUrl = ageRating.rating_cover_url || null;
 
       if (ratingInfo) {
         ratingCode = ratingInfo.code;
         displayName = ratingInfo.name;
         minimumAge = ratingInfo.age;
       } else {
-        ratingCode = String(ageRating.rating_category);
+        ratingCode = String(ageRating.rating);
         displayName = `${systemCode} ${ageRating.rating_category}`;
         console.warn(
           `[GameImportService] Unknown rating_category: ${ageRating.rating_category} for ${systemCode}`
@@ -900,7 +901,7 @@ export class GameImportService {
       // Find or create rating
       let { data: rating } = await supabase
         .from("ratings")
-        .select("id")
+        .select("id, icon_url")
         .eq("rating_system_id", ratingSystem.id)
         .eq("code", ratingCode)
         .single();
@@ -913,6 +914,7 @@ export class GameImportService {
             code: ratingCode,
             display_name: displayName,
             minimum_age: minimumAge,
+            icon_url: iconUrl,
           })
           .select("id")
           .single();
@@ -922,6 +924,12 @@ export class GameImportService {
           continue;
         }
         rating = newRating;
+      } else if (iconUrl && !rating.icon_url) {
+        // Update existing rating with icon_url if it doesn't have one
+        await supabase
+          .from("ratings")
+          .update({ icon_url: iconUrl })
+          .eq("id", rating.id);
       }
 
       // Create game_rating link

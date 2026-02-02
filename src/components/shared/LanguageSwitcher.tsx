@@ -36,6 +36,12 @@ export function LanguageSwitcher() {
   const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
+  const [mounted, setMounted] = React.useState(false);
+
+  // Prevent hydration mismatch by only rendering after mount
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleLocaleChange = (newLocale: string) => {
     router.push(pathname, { locale: newLocale });
@@ -43,6 +49,18 @@ export function LanguageSwitcher() {
 
   const currentLocale = locales.find((l) => l.code === locale);
   const CurrentFlagComponent = currentLocale?.FlagComponent;
+
+  // Show placeholder during SSR to avoid hydration mismatch with Radix IDs
+  if (!mounted) {
+    return (
+      <div className="flex h-12 w-20 items-center justify-center gap-2 rounded-2xl bg-white px-3 py-2">
+        {CurrentFlagComponent && (
+          <CurrentFlagComponent className="h-6 w-8 rounded-sm shadow-sm" />
+        )}
+        <IoChevronDown className="h-4 w-4 text-gray-600" />
+      </div>
+    );
+  }
 
   return (
     <SelectPrimitive.Root value={locale} onValueChange={handleLocaleChange}>
