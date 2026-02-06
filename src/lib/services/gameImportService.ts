@@ -823,21 +823,26 @@ export class GameImportService {
    * @param igdbGame The IGDB game data
    */
   private static async createAgeRatings(gameId: string, igdbGame: IGDBGame): Promise<void> {
-    // Extract age rating IDs from the game data
-    const ageRatingIds =
-      igdbGame.age_ratings?.map((ar) => ar.id).filter((id): id is number => id !== undefined) || [];
+    console.warn(`[GameImportService] igdbGame.age_ratings:`, JSON.stringify(igdbGame.age_ratings));
 
-    console.warn(`[GameImportService] Processing age ratings, found IDs: ${ageRatingIds.length}`);
-
-    if (ageRatingIds.length === 0) {
-      console.warn(`[GameImportService] No age rating IDs found for game`);
+    if (!igdbGame.age_ratings || igdbGame.age_ratings.length === 0) {
+      console.warn(`[GameImportService] No age ratings found for game`);
       return;
     }
 
-    // Fetch full age rating details from IGDB
-    const ageRatings = await IGDBService.getAgeRatings(ageRatingIds);
+    // Extract age rating IDs
+    const ageRatingIds = igdbGame.age_ratings
+      .map((ar) => ar.id)
+      .filter((id): id is number => id !== undefined);
 
-    console.warn(`[GameImportService] Age ratings from IGDB:`, JSON.stringify(ageRatings));
+    console.warn(
+      `[GameImportService] Processing age ratings, found IDs: ${ageRatingIds.length}`,
+      ageRatingIds
+    );
+
+    // Fetch full age rating details from IGDB (category, rating, rating_cover_url)
+    const ageRatings = await IGDBService.getAgeRatings(ageRatingIds);
+    console.warn(`[GameImportService] Full age ratings from IGDB:`, JSON.stringify(ageRatings));
 
     if (ageRatings.length === 0) {
       console.warn(`[GameImportService] No age rating details returned from IGDB`);
@@ -848,15 +853,27 @@ export class GameImportService {
 
     for (let i = 0; i < ageRatings.length; i++) {
       const ageRating = ageRatings[i];
-      const systemCode = IGDB_RATING_CATEGORIES[ageRating.category];
 
-      if (!systemCode) {
-        console.warn(`[GameImportService] Unknown rating category: ${ageRating.category}`);
+      // Use new field names: organization and rating_category
+      const organization = ageRating.organization;
+      const ratingCategory = ageRating.rating_category;
+
+      if (organization === undefined || ratingCategory === undefined) {
+        console.warn(
+          `[GameImportService] Missing organization or rating_category for age rating ID: ${ageRating.id}`
+        );
         continue;
       }
 
-      // Get rating details from the unified mapping
-      const ratingInfo = IGDB_ALL_RATINGS[ageRating.rating];
+      const systemCode = IGDB_RATING_CATEGORIES[organization];
+
+      if (!systemCode) {
+        console.warn(`[GameImportService] Unknown organization: ${organization}`);
+        continue;
+      }
+
+      // Get rating details from the unified mapping (uses rating_category values)
+      const ratingInfo = IGDB_ALL_RATINGS[ratingCategory];
 
       let ratingCode: string;
       let displayName: string;
@@ -868,10 +885,10 @@ export class GameImportService {
         displayName = ratingInfo.name;
         minimumAge = ratingInfo.age;
       } else {
-        ratingCode = String(ageRating.rating);
-        displayName = `${systemCode} ${ageRating.rating_category}`;
+        ratingCode = String(ratingCategory);
+        displayName = `${systemCode} ${ratingCategory}`;
         console.warn(
-          `[GameImportService] Unknown rating_category: ${ageRating.rating_category} for ${systemCode}`
+          `[GameImportService] Unknown rating_category value: ${ratingCategory} for ${systemCode}`
         );
       }
 
@@ -926,10 +943,7 @@ export class GameImportService {
         rating = newRating;
       } else if (iconUrl && !rating.icon_url) {
         // Update existing rating with icon_url if it doesn't have one
-        await supabase
-          .from("ratings")
-          .update({ icon_url: iconUrl })
-          .eq("id", rating.id);
+        await supabase.from("ratings").update({ icon_url: iconUrl }).eq("id", rating.id);
       }
 
       // Create game_rating link

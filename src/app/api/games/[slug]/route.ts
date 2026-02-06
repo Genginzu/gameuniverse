@@ -333,8 +333,23 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         ) || [],
     });
 
-    const ageRatings = game.game_ratings?.map((gr: DatabaseGameRating) => processRating(gr)) || [];
-    const primaryRating = game.game_ratings?.find((gr: DatabaseGameRating) => gr.is_primary);
+    // Sort ratings: PEGI first, then by system name
+    const gameRatingsArray = game.game_ratings || [];
+    const sortedGameRatings =
+      gameRatingsArray.length > 0
+        ? [...gameRatingsArray].sort((a: DatabaseGameRating, b: DatabaseGameRating) => {
+            const aCode = a.ratings?.rating_systems?.code?.toUpperCase() || "";
+            const bCode = b.ratings?.rating_systems?.code?.toUpperCase() || "";
+            // PEGI comes first
+            if (aCode === "PEGI" && bCode !== "PEGI") return -1;
+            if (bCode === "PEGI" && aCode !== "PEGI") return 1;
+            // Then alphabetically by system code
+            return aCode.localeCompare(bCode);
+          })
+        : [];
+
+    const ageRatings = sortedGameRatings.map((gr: DatabaseGameRating) => processRating(gr));
+    const primaryRating = gameRatingsArray.find((gr: DatabaseGameRating) => gr.is_primary);
     const ageRating = primaryRating ? processRating(primaryRating) : null;
 
     // Process pricing

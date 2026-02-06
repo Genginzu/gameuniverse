@@ -190,8 +190,8 @@ export class IGDBService {
              involved_companies.developer, involved_companies.publisher,
              language_supports.language.id, language_supports.language.name, language_supports.language.native_name, language_supports.language.locale,
              language_supports.language_support_type.id, language_supports.language_support_type.name,
-             age_ratings.id, age_ratings.category, age_ratings.rating, 
-             age_ratings.content_descriptions.id, age_ratings.content_descriptions.category, age_ratings.content_descriptions.description;
+             age_ratings.id, age_ratings.organization, age_ratings.rating_category, age_ratings.synopsis,
+             age_ratings.rating_content_descriptions;
       where id = ${igdbId};
     `;
 
@@ -269,7 +269,7 @@ export class IGDBService {
   /**
    * Fetches age ratings for a game from IGDB
    * @param ageRatingIds Array of age rating IDs from the game
-   * @returns Array of age rating data
+   * @returns Array of age rating data with content descriptions
    */
   static async getAgeRatings(ageRatingIds: number[]): Promise<IGDBAgeRating[]> {
     if (!ageRatingIds || ageRatingIds.length === 0) {
@@ -284,11 +284,12 @@ export class IGDBService {
     }
 
     const body = `
-      fields id, category, rating, synopsis, content_descriptions.category, content_descriptions.description, rating_cover_url;
+      fields id, organization, rating_category, synopsis, rating_content_descriptions, rating_cover_url;
       where id = (${ageRatingIds.join(",")});
+      limit 50;
     `;
 
-    console.warn(`[IGDBService] Fetching age ratings with body:`, body);
+    console.warn(`[IGDBService] Fetching age ratings for IDs:`, ageRatingIds);
 
     const response = await fetch(`${this.IGDB_API_URL}/age_ratings`, {
       method: "POST",
@@ -312,6 +313,84 @@ export class IGDBService {
     console.warn(`[IGDBService] Age ratings raw response:`, rawText);
 
     const results: IGDBAgeRating[] = JSON.parse(rawText);
+
+    // Collect all content description IDs to fetch
+    const allContentDescIds: number[] = [];
+    for (const rating of results) {
+      if (rating.rating_content_descriptions) {
+        allContentDescIds.push(...rating.rating_content_descriptions);
+      }
+    }
+
+    // Fetch content descriptions if any
+    if (allContentDescIds.length > 0) {
+      const contentDescriptions = await this.getAgeRatingContentDescriptions(allContentDescIds);
+      const contentDescMap = new Map(contentDescriptions.map((cd) => [cd.id, cd]));
+
+      // Attach content descriptions to each rating
+      for (const rating of results) {
+        if (rating.rating_content_descriptions) {
+          rating.content_descriptions = rating.rating_content_descriptions
+            .map((id) => contentDescMap.get(id))
+            .filter(
+              (cd): cd is { id: number; category: number; description: string } => cd !== undefined
+            )
+            .map((cd) => ({ category: cd.category, description: cd.description }));
+        }
+      }
+    }
+
+    return results;
+  }
+
+  /**
+   * Fetches age rating content descriptions from IGDB
+   * @param contentDescIds Array of content description IDs
+   * @returns Array of content description data
+   */
+  static async getAgeRatingContentDescriptions(
+    contentDescIds: number[]
+  ): Promise<Array<{ id: number; category: number; description: string }>> {
+    if (!contentDescIds || contentDescIds.length === 0) {
+      return [];
+    }
+
+    const accessToken = await this.getAccessToken();
+    const clientId = process.env.IGDB_CLIENT_ID;
+
+    if (!clientId) {
+      throw new Error("IGDB_CLIENT_ID not configured");
+    }
+
+    const uniqueIds = [...new Set(contentDescIds)];
+    const body = `
+      fields id, category, description;
+      where id = (${uniqueIds.join(",")});
+      limit 100;
+    `;
+
+    console.warn(`[IGDBService] Fetching content descriptions for IDs:`, uniqueIds);
+
+    const response = await fetch(`${this.IGDB_API_URL}/age_rating_content_descriptions`, {
+      method: "POST",
+      headers: {
+        "Client-ID": clientId,
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "text/plain",
+      },
+      body,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(
+        `IGDB getAgeRatingContentDescriptions failed: ${response.status} ${response.statusText} - ${errorText}`
+      );
+      return [];
+    }
+
+    const results = await response.json();
+    console.warn(`[IGDBService] Content descriptions response:`, JSON.stringify(results));
     return results;
   }
 

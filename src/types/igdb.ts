@@ -29,14 +29,18 @@ export interface IGDBLanguageSupport {
  */
 export interface IGDBAgeRating {
   id: number;
-  category: number; // 1=ESRB, 2=PEGI, 3=CERO, 4=USK, 5=GRAC, 6=CLASS_IND, 7=ACB
-  rating: number; // Rating value (varies by organization)
+  organization: number; // 1=ESRB, 2=PEGI, 3=CERO, 4=USK, 5=GRAC, 6=CLASS_IND, 7=ACB
+  rating_category: number; // Rating value (varies by organization)
   synopsis?: string;
+  rating_content_descriptions?: number[]; // Array of content descriptor IDs
   content_descriptions?: Array<{
     category: number;
     description: string;
   }>;
-  rating_cover_url?: string; // URL of the rating image (when available)
+  rating_cover_url?: string;
+  // Deprecated fields (kept for backwards compatibility)
+  category?: number;
+  rating?: number;
 }
 
 // IGDB Age Rating Organizations
