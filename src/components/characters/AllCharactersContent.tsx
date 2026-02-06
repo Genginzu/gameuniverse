@@ -200,7 +200,7 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
   // Show full skeleton on initial load
   if (initialLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
           <CharacterGridSkeleton count={20} />
         </div>
@@ -209,7 +209,7 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
       {/* Hero Section */}
       <div className="relative overflow-hidden bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 px-4 py-8 text-white sm:px-6 sm:py-12">
         <div className="absolute inset-0 bg-black/10"></div>
@@ -269,8 +269,8 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
         {!loading && (
           <>
             {characters.length === 0 ? (
-              <div className="flex flex-col items-center justify-center rounded-2xl bg-white py-16 text-center shadow-sm sm:py-20">
-                <div className="mb-6 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 p-6">
+              <div className="flex flex-col items-center justify-center rounded-2xl bg-white py-16 text-center shadow-sm sm:py-20 dark:bg-gray-800">
+                <div className="mb-6 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 p-6 dark:from-gray-700 dark:to-gray-600">
                   <svg
                     className="h-12 w-12 text-gray-400 sm:h-16 sm:w-16"
                     fill="none"
@@ -285,10 +285,10 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
                     />
                   </svg>
                 </div>
-                <h3 className="mb-2 text-lg font-semibold text-gray-900 sm:text-xl">
+                <h3 className="mb-2 text-lg font-semibold text-gray-900 sm:text-xl dark:text-white">
                   {t("empty.title")}
                 </h3>
-                <p className="max-w-md text-sm text-gray-500 sm:text-base">
+                <p className="max-w-md text-sm text-gray-500 sm:text-base dark:text-gray-400">
                   {searchQuery || selectedGames.length > 0 || selectedRoles.length > 0
                     ? t("empty.description")
                     : t("empty.noCharacters")}

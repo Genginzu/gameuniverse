@@ -299,7 +299,7 @@ export function GameSearchBar({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => isHybridMode && searchQuery.length >= 2 && setIsOpen(true)}
-            className="h-10 w-full rounded-xl border-2 border-blue-200 bg-blue-50/50 pl-11 pr-10 text-sm text-gray-900 placeholder-gray-500 shadow-sm transition-all duration-300 hover:border-blue-300 hover:bg-white hover:shadow-md focus:border-blue-500 focus:bg-white focus:shadow-lg focus:ring-2 focus:ring-blue-500/20 sm:h-12 sm:pl-12 sm:pr-12 sm:text-base"
+            className="h-10 w-full rounded-xl border-2 border-blue-200 bg-blue-50/50 pl-11 pr-10 text-sm text-gray-900 placeholder-gray-500 shadow-sm transition-all duration-300 hover:border-blue-300 hover:bg-white hover:shadow-md focus:border-blue-500 focus:bg-white focus:shadow-lg focus:ring-2 focus:ring-blue-500/20 sm:h-12 sm:pl-12 sm:pr-12 sm:text-base dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400 dark:hover:border-gray-500 dark:hover:bg-gray-700 dark:focus:border-blue-500 dark:focus:bg-gray-700"
           />
 
           {/* Clear button */}
@@ -309,7 +309,7 @@ export function GameSearchBar({
               onClick={handleClear}
               className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400 transition-all duration-200 hover:scale-110 hover:text-red-500"
             >
-              <div className="rounded-full bg-gray-100 p-1 transition-colors hover:bg-red-100">
+              <div className="rounded-full bg-gray-100 p-1 transition-colors hover:bg-red-100 dark:bg-gray-700 dark:hover:bg-red-900/30">
                 <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"

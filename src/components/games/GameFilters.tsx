@@ -43,7 +43,7 @@ export function GameFilters({
         <div className="flex justify-end">
           <button
             onClick={onClearFilters}
-            className="inline-flex items-center rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-100 sm:px-4"
+            className="inline-flex items-center rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-100 sm:px-4 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30"
           >
             <svg className="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -61,21 +61,25 @@ export function GameFilters({
 
       {/* Active filters display */}
       {hasFilters && (
-        <div className="rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 p-3 sm:p-4">
+        <div className="rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 p-3 sm:p-4 dark:from-blue-900/20 dark:to-indigo-900/20">
           <div className="mb-2 flex items-center justify-between">
-            <span className="text-sm font-medium text-blue-900">Filtres actifs</span>
-            <span className="text-xs text-blue-600">{selectedGenres.length} sélectionné(s)</span>
+            <span className="text-sm font-medium text-blue-900 dark:text-blue-300">
+              Filtres actifs
+            </span>
+            <span className="text-xs text-blue-600 dark:text-blue-400">
+              {selectedGenres.length} sélectionné(s)
+            </span>
           </div>
           <div className="flex flex-wrap gap-2">
             {selectedGenres.map((genre) => (
               <div
                 key={genre}
-                className="inline-flex items-center rounded-lg bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow-sm ring-1 ring-gray-200 sm:px-3 sm:py-1.5 sm:text-sm"
+                className="inline-flex items-center rounded-lg bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow-sm ring-1 ring-gray-200 sm:px-3 sm:py-1.5 sm:text-sm dark:bg-gray-800 dark:text-gray-200 dark:ring-gray-700"
               >
                 <span className="mr-1 sm:mr-2">{genre}</span>
                 <button
                   onClick={() => handleGenreToggle(genre)}
-                  className="rounded-full p-0.5 text-gray-400 transition-colors hover:bg-red-100 hover:text-red-600"
+                  className="rounded-full p-0.5 text-gray-400 transition-colors hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/30"
                 >
                   <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
@@ -94,17 +98,21 @@ export function GameFilters({
 
       {/* Expanded filters */}
       {showAllGenres && (
-        <div className="rounded-xl bg-white p-4 shadow-lg ring-1 ring-gray-200 sm:p-6">
+        <div className="rounded-xl bg-white p-4 shadow-lg ring-1 ring-gray-200 sm:p-6 dark:bg-gray-800 dark:ring-gray-700">
           <div className="mb-4 flex flex-col items-start justify-between sm:flex-row sm:items-center">
-            <h3 className="text-base font-semibold text-gray-900 sm:text-lg">Tous les genres</h3>
-            <span className="mt-1 text-sm text-gray-500 sm:mt-0">{genres.length} disponibles</span>
+            <h3 className="text-base font-semibold text-gray-900 sm:text-lg dark:text-white">
+              Tous les genres
+            </h3>
+            <span className="mt-1 text-sm text-gray-500 sm:mt-0 dark:text-gray-400">
+              {genres.length} disponibles
+            </span>
           </div>
 
-          <div className="xs:grid-cols-2 grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          <div className="grid grid-cols-1 gap-3 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {genres.map((genre) => (
               <label
                 key={genre.id}
-                className="group relative flex cursor-pointer items-center rounded-lg border border-gray-200 p-3 transition-all hover:border-blue-300 hover:bg-blue-50"
+                className="group relative flex cursor-pointer items-center rounded-lg border border-gray-200 p-3 transition-all hover:border-blue-300 hover:bg-blue-50 dark:border-gray-700 dark:hover:border-blue-600 dark:hover:bg-blue-900/20"
               >
                 <input
                   type="checkbox"
@@ -116,7 +124,7 @@ export function GameFilters({
                   className={`flex h-4 w-4 items-center justify-center rounded border-2 transition-all sm:h-5 sm:w-5 ${
                     selectedGenres.includes(genre.name)
                       ? "border-blue-600 bg-blue-600"
-                      : "border-gray-300 group-hover:border-blue-400"
+                      : "border-gray-300 group-hover:border-blue-400 dark:border-gray-600"
                   }`}
                 >
                   {selectedGenres.includes(genre.name) && (
@@ -136,8 +144,12 @@ export function GameFilters({
                   )}
                 </div>
                 <div className="ml-2 min-w-0 flex-1 sm:ml-3">
-                  <span className="text-xs font-medium text-gray-900 sm:text-sm">{genre.name}</span>
-                  <div className="text-xs text-gray-500">{genre.gameCount} jeux</div>
+                  <span className="text-xs font-medium text-gray-900 sm:text-sm dark:text-white">
+                    {genre.name}
+                  </span>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">
+                    {genre.gameCount} jeux
+                  </div>
                 </div>
               </label>
             ))}

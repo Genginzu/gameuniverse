@@ -18,9 +18,9 @@ export function PlayerCard({ player, locale = "fr", priority = false }: PlayerCa
   return (
     <div className="group relative">
       <Link href={`/${locale}/players/${player.id}`}>
-        <div className="relative cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl hover:shadow-blue-500/10">
+        <div className="relative cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl hover:shadow-blue-500/10 dark:bg-gray-800">
           {/* Avatar section */}
-          <div className="relative aspect-square bg-gradient-to-br from-blue-100 to-indigo-100">
+          <div className="relative aspect-square bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30">
             {player.avatarUrl ? (
               <LazyImage
                 src={player.avatarUrl}
@@ -53,7 +53,7 @@ export function PlayerCard({ player, locale = "fr", priority = false }: PlayerCa
 
           {/* Info section */}
           <div className="p-4">
-            <h3 className="line-clamp-1 text-base font-semibold text-gray-900 transition-colors group-hover:text-blue-600">
+            <h3 className="line-clamp-1 text-base font-semibold text-gray-900 transition-colors group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400">
               {displayName}
             </h3>
           </div>

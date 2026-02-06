@@ -85,7 +85,7 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
   const [selectedArtworkIndex, setSelectedArtworkIndex] = useState(0);
   const [selectedVideoIndex, setSelectedVideoIndex] = useState(0);
   const [activeTab, setActiveTab] = useState<
-    "media" | "specs" | "reviews" | "playtime" | "languages" | "music"
+    "media" | "specs" | "reviews" | "playtime" | "languages" | "music" | "ageRatings"
   >("media");
   const [isWishlisted, setIsWishlisted] = useState(false);
 

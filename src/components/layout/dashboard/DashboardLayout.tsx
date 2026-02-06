@@ -69,7 +69,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50">
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="rounded-lg p-8">
           <LoadingSpinner size="lg" />
         </div>
@@ -88,7 +88,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <DashboardContext.Provider value={contextValue}>
-      <div className="flex h-screen flex-col bg-gray-50">
+      <div className="flex h-screen flex-col bg-gray-50 dark:bg-gray-900">
         <DashboardHeader sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
         {/* Mobile sidebar overlay */}

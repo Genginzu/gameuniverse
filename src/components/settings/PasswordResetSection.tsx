@@ -23,13 +23,11 @@ export function PasswordResetSection({
   return (
     <div className="space-y-4">
       <div>
-        <label className="mb-2 block text-sm font-medium text-gray-900">
+        <label className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
           {t("password")}
         </label>
-        <p className="mb-4 text-sm text-gray-600">{t("passwordDescription")}</p>
-        <p className="mb-4 text-sm text-gray-500">
-          {userEmail}
-        </p>
+        <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">{t("passwordDescription")}</p>
+        <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">{userEmail}</p>
       </div>
       <LoadingButton
         type="button"

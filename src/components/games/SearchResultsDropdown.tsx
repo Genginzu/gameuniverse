@@ -29,10 +29,10 @@ export function SearchResultsDropdown({
   // Loading state
   if (isLoading) {
     return (
-      <div className="absolute left-0 right-0 top-full z-50 mt-2 rounded-xl bg-white shadow-lg ring-1 ring-gray-200">
+      <div className="absolute left-0 right-0 top-full z-50 mt-2 rounded-xl bg-white shadow-lg ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700">
         <div className="flex items-center justify-center p-4">
           <div className="h-5 w-5 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
-          <span className="ml-2 text-sm text-gray-600">{t("loading")}</span>
+          <span className="ml-2 text-sm text-gray-600 dark:text-gray-300">{t("loading")}</span>
         </div>
       </div>
     );
@@ -41,15 +41,17 @@ export function SearchResultsDropdown({
   // No results state
   if (results.length === 0) {
     return (
-      <div className="absolute left-0 right-0 top-full z-50 mt-2 rounded-xl bg-white shadow-lg ring-1 ring-gray-200">
-        <div className="p-4 text-center text-sm text-gray-500">{t("noResults")}</div>
+      <div className="absolute left-0 right-0 top-full z-50 mt-2 rounded-xl bg-white shadow-lg ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700">
+        <div className="p-4 text-center text-sm text-gray-500 dark:text-gray-400">
+          {t("noResults")}
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="absolute left-0 right-0 top-full z-50 mt-2 max-h-[70vh] overflow-y-auto rounded-xl bg-white shadow-lg ring-1 ring-gray-200">
-      <ul className="divide-y divide-gray-100">
+    <div className="absolute left-0 right-0 top-full z-50 mt-2 max-h-[70vh] overflow-y-auto rounded-xl bg-white shadow-lg ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700">
+      <ul className="divide-y divide-gray-100 dark:divide-gray-700">
         {results.map((item) => {
           const isImporting = importingId === item.id;
 
@@ -59,10 +61,10 @@ export function SearchResultsDropdown({
                 type="button"
                 onClick={() => !isImporting && onSelectGame(item)}
                 disabled={isImporting}
-                className="flex w-full items-center gap-3 p-3 text-left transition-colors hover:bg-gray-50 disabled:cursor-wait disabled:opacity-70"
+                className="flex w-full items-center gap-3 p-3 text-left transition-colors hover:bg-gray-50 disabled:cursor-wait disabled:opacity-70 dark:hover:bg-gray-700"
               >
                 {/* Cover image */}
-                <div className="relative h-16 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100">
+                <div className="relative h-16 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-700">
                   <LazyImage
                     src={item.coverUrl}
                     alt={item.title}
@@ -75,30 +77,34 @@ export function SearchResultsDropdown({
                 {/* Game info */}
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <h4 className="truncate text-sm font-medium text-gray-900">{item.title}</h4>
+                    <h4 className="truncate text-sm font-medium text-gray-900 dark:text-white">
+                      {item.title}
+                    </h4>
                     {/* Source indicator */}
                     <Badge
                       variant={item.source === "local" ? "default" : "secondary"}
                       className={`flex-shrink-0 text-xs ${
                         item.source === "local"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-blue-100 text-blue-700"
+                          ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                          : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
                       }`}
                     >
                       {t(`source.${item.source}`)}
                     </Badge>
                   </div>
 
-                  <div className="mt-1 flex items-center gap-2 text-xs text-gray-500">
+                  <div className="mt-1 flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                     {item.developer && <span className="truncate">{item.developer}</span>}
-                    {item.developer && item.releaseYear && <span className="text-gray-300">•</span>}
+                    {item.developer && item.releaseYear && (
+                      <span className="text-gray-300 dark:text-gray-600">•</span>
+                    )}
                     {item.releaseYear && <span>{item.releaseYear}</span>}
                   </div>
                 </div>
 
                 {/* Loading indicator for import */}
                 {isImporting && (
-                  <div className="flex items-center gap-2 text-xs text-blue-600">
+                  <div className="flex items-center gap-2 text-xs text-blue-600 dark:text-blue-400">
                     <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
                     <span>{t("importing")}</span>
                   </div>
@@ -111,12 +117,12 @@ export function SearchResultsDropdown({
 
       {/* See all results link */}
       {hasMore && (
-        <div className="border-t border-gray-100 p-2">
+        <div className="border-t border-gray-100 p-2 dark:border-gray-700">
           <button
             type="button"
             onClick={onSeeAll}
             disabled={isLoadingMore}
-            className="flex w-full items-center justify-center gap-2 rounded-lg p-2 text-sm font-medium text-blue-600 transition-colors hover:bg-blue-50 disabled:cursor-wait disabled:opacity-70"
+            className="flex w-full items-center justify-center gap-2 rounded-lg p-2 text-sm font-medium text-blue-600 transition-colors hover:bg-blue-50 disabled:cursor-wait disabled:opacity-70 dark:text-blue-400 dark:hover:bg-blue-900/20"
           >
             {isLoadingMore ? (
               <>

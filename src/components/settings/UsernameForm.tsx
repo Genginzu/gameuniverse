@@ -63,7 +63,7 @@ export function UsernameForm({ currentUsername, onUpdate, isLoading }: UsernameF
           name="username"
           render={({ field, fieldState }) => (
             <FormItem>
-              <FormLabel className="text-sm font-medium text-gray-900">
+              <FormLabel className="text-sm font-medium text-gray-900 dark:text-white">
                 {t("username")}
               </FormLabel>
               <FormControl>
@@ -74,9 +74,7 @@ export function UsernameForm({ currentUsername, onUpdate, isLoading }: UsernameF
                 />
               </FormControl>
               {fieldState.error && (
-                <FormMessage>
-                  {getErrorMessage(fieldState.error.message)}
-                </FormMessage>
+                <FormMessage>{getErrorMessage(fieldState.error.message)}</FormMessage>
               )}
             </FormItem>
           )}

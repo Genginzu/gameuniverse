@@ -940,7 +940,7 @@ export class GameImportService {
           console.error(`[GameImportService] Failed to create rating ${displayName}:`, error);
           continue;
         }
-        rating = newRating;
+        rating = { id: newRating.id, icon_url: iconUrl };
       } else if (iconUrl && !rating.icon_url) {
         // Update existing rating with icon_url if it doesn't have one
         await supabase.from("ratings").update({ icon_url: iconUrl }).eq("id", rating.id);

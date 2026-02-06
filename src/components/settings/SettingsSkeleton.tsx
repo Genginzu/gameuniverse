@@ -13,7 +13,7 @@ export function SettingsSkeleton() {
       {/* Settings Sections Skeleton */}
       <div className="space-y-6">
         {/* Profile Section Skeleton */}
-        <Card className="rounded-xl bg-white">
+        <Card className="rounded-xl bg-white dark:bg-gray-800">
           <CardHeader>
             <div className="flex items-center">
               <Skeleton className="h-9 w-9 rounded-xl" />
@@ -36,7 +36,7 @@ export function SettingsSkeleton() {
         </Card>
 
         {/* Security Section Skeleton */}
-        <Card className="rounded-xl bg-white">
+        <Card className="rounded-xl bg-white dark:bg-gray-800">
           <CardHeader>
             <div className="flex items-center">
               <Skeleton className="h-9 w-9 rounded-xl" />

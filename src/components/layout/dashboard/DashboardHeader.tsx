@@ -15,7 +15,7 @@ export default function DashboardHeader({ sidebarOpen, setSidebarOpen }: Dashboa
   const locale = useLocale();
 
   return (
-    <header className="border-b border-gray-200 bg-white px-4 py-3 lg:px-6 lg:py-4">
+    <header className="border-b border-gray-200 bg-white px-4 py-3 lg:px-6 lg:py-4 dark:border-gray-700 dark:bg-gray-800">
       <div className="flex items-center justify-between">
         {/* Left side - Mobile menu button + Logo + Brand */}
         <div className="flex items-center space-x-3">
@@ -32,7 +32,7 @@ export default function DashboardHeader({ sidebarOpen, setSidebarOpen }: Dashboa
 
           <Link href="/" className="flex items-center space-x-2 lg:space-x-3">
             <GameUniverseLogo size="sm" />
-            <span className="text-lg font-bold text-gray-900 lg:text-xl">
+            <span className="text-lg font-bold text-gray-900 lg:text-xl dark:text-white">
               <span className="hidden sm:inline">Game Universe</span>
               <span className="sm:hidden">GU</span>
             </span>
@@ -50,19 +50,19 @@ export default function DashboardHeader({ sidebarOpen, setSidebarOpen }: Dashboa
           <nav className="hidden items-center space-x-4 lg:flex lg:space-x-8">
             <Link
               href="/games"
-              className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900"
+              className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
             >
               Jeux
             </Link>
             <Link
               href="/characters"
-              className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900"
+              className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
             >
               Personnages
             </Link>
             <Link
               href="/players"
-              className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900"
+              className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
             >
               Joueurs
             </Link>

@@ -63,10 +63,10 @@ export function CharacterPagination({
   const visiblePages = getVisiblePages();
 
   return (
-    <div className="flex flex-col items-center space-y-4 rounded-2xl bg-white p-4 shadow-sm sm:space-y-6 sm:p-6">
+    <div className="flex flex-col items-center space-y-4 rounded-2xl bg-white p-4 shadow-sm sm:space-y-6 sm:p-6 dark:bg-gray-800">
       {/* Page info */}
       <div className="flex flex-col items-center space-y-2 text-sm sm:flex-row sm:space-x-2 sm:space-y-0">
-        <div className="flex items-center space-x-1 text-gray-600">
+        <div className="flex items-center space-x-1 text-gray-600 dark:text-gray-300">
           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
@@ -76,12 +76,12 @@ export function CharacterPagination({
             />
           </svg>
           <span>{t("page")}</span>
-          <span className="font-semibold text-blue-600">{currentPage}</span>
+          <span className="font-semibold text-blue-600 dark:text-blue-400">{currentPage}</span>
           <span>{t("of")}</span>
           <span className="font-semibold">{totalPages}</span>
         </div>
         {totalCount > 0 && (
-          <div className="flex items-center space-x-1 text-gray-500">
+          <div className="flex items-center space-x-1 text-gray-500 dark:text-gray-400">
             <span className="hidden sm:inline">•</span>
             <span>
               {totalCount} {totalCount === 1 ? t("result") : t("results")}
@@ -98,7 +98,7 @@ export function CharacterPagination({
           size="sm"
           onClick={() => onPageChange(1)}
           disabled={currentPage === 1 || loading}
-          className="hidden rounded-lg border-gray-200 px-2 py-2 text-sm font-medium transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-50 md:inline-flex md:px-3"
+          className="hidden rounded-lg border-gray-200 px-2 py-2 text-sm font-medium transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-50 md:inline-flex md:px-3 dark:border-gray-700 dark:hover:border-blue-600 dark:hover:bg-blue-900/20"
         >
           <svg className="h-4 w-4 md:mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -117,7 +117,7 @@ export function CharacterPagination({
           size="sm"
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1 || loading}
-          className="rounded-lg border-gray-200 px-3 py-2 text-sm font-medium transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-50 sm:px-4"
+          className="rounded-lg border-gray-200 px-3 py-2 text-sm font-medium transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-50 sm:px-4 dark:border-gray-700 dark:hover:border-blue-600 dark:hover:bg-blue-900/20"
         >
           <svg className="h-4 w-4 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -161,7 +161,7 @@ export function CharacterPagination({
                 className={`h-9 min-w-[36px] rounded-lg font-medium transition-all sm:h-10 sm:min-w-[44px] ${
                   isCurrentPage
                     ? "pointer-events-none bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg"
-                    : "border-gray-200 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600"
+                    : "border-gray-200 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 dark:border-gray-700 dark:hover:border-blue-600 dark:hover:bg-blue-900/20"
                 }`}
               >
                 {pageNumber}
@@ -176,7 +176,7 @@ export function CharacterPagination({
           size="sm"
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages || loading}
-          className="rounded-lg border-gray-200 px-3 py-2 text-sm font-medium transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-50 sm:px-4"
+          className="rounded-lg border-gray-200 px-3 py-2 text-sm font-medium transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-50 sm:px-4 dark:border-gray-700 dark:hover:border-blue-600 dark:hover:bg-blue-900/20"
         >
           <span className="hidden sm:inline">{t("next")}</span>
           <svg className="h-4 w-4 sm:ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -190,7 +190,7 @@ export function CharacterPagination({
           size="sm"
           onClick={() => onPageChange(totalPages)}
           disabled={currentPage === totalPages || loading}
-          className="hidden rounded-lg border-gray-200 px-2 py-2 text-sm font-medium transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-50 md:inline-flex md:px-3"
+          className="hidden rounded-lg border-gray-200 px-2 py-2 text-sm font-medium transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-50 md:inline-flex md:px-3 dark:border-gray-700 dark:hover:border-blue-600 dark:hover:bg-blue-900/20"
         >
           <span className="hidden md:inline">{t("last")}</span>
           <svg className="h-4 w-4 md:ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -206,12 +206,14 @@ export function CharacterPagination({
 
       {/* Mobile-friendly page input */}
       <div className="flex items-center space-x-3 sm:hidden">
-        <span className="text-sm font-medium text-gray-700">{t("goToPage")}</span>
+        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+          {t("goToPage")}
+        </span>
         <select
           value={currentPage}
           onChange={(e) => onPageChange(parseInt(e.target.value))}
           disabled={loading}
-          className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+          className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
         >
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
             <option key={page} value={page}>
@@ -219,7 +221,7 @@ export function CharacterPagination({
             </option>
           ))}
         </select>
-        <span className="text-sm text-gray-500">
+        <span className="text-sm text-gray-500 dark:text-gray-400">
           {t("of")} {totalPages}
         </span>
       </div>

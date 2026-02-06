@@ -264,7 +264,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
       {/* Hero Section */}
       <div className="relative overflow-hidden bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 px-4 py-8 text-white sm:px-6 sm:py-12">
         <div className="absolute inset-0 bg-black/10"></div>
@@ -291,85 +291,89 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
         {/* Stats Cards */}
         <div className="mb-6 grid grid-cols-1 gap-4 sm:mb-8 sm:gap-6 md:grid-cols-4">
-          <Card className="rounded-2xl bg-white">
+          <Card className="rounded-2xl bg-white dark:bg-gray-800">
             <CardHeader className="pb-3">
               <div className="flex items-center">
-                <div className="rounded-lg bg-blue-100 p-2">
-                  <FaGamepad className="h-4 w-4 text-blue-600 sm:h-5 sm:w-5" />
+                <div className="rounded-lg bg-blue-100 p-2 dark:bg-blue-900/30">
+                  <FaGamepad className="h-4 w-4 text-blue-600 sm:h-5 sm:w-5 dark:text-blue-400" />
                 </div>
                 <div className="ml-3">
-                  <CardTitle className="text-sm font-medium text-gray-900">
+                  <CardTitle className="text-sm font-medium text-gray-900 dark:text-white">
                     {t("stats.gamesOwned")}
                   </CardTitle>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-xl font-bold text-gray-900 sm:text-2xl">{stats.totalGames}</div>
-              <p className="text-xs text-gray-500">{t("stats.inLibrary")}</p>
+              <div className="text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">
+                {stats.totalGames}
+              </div>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{t("stats.inLibrary")}</p>
             </CardContent>
           </Card>
 
-          <Card className="rounded-2xl bg-white">
+          <Card className="rounded-2xl bg-white dark:bg-gray-800">
             <CardHeader className="pb-3">
               <div className="flex items-center">
-                <div className="rounded-lg bg-green-100 p-2">
-                  <FaGamepad className="h-4 w-4 text-green-600 sm:h-5 sm:w-5" />
+                <div className="rounded-lg bg-green-100 p-2 dark:bg-green-900/30">
+                  <FaGamepad className="h-4 w-4 text-green-600 sm:h-5 sm:w-5 dark:text-green-400" />
                 </div>
                 <div className="ml-3">
-                  <CardTitle className="text-sm font-medium text-gray-900">
+                  <CardTitle className="text-sm font-medium text-gray-900 dark:text-white">
                     {t("stats.gamesCompleted")}
                   </CardTitle>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-xl font-bold text-gray-900 sm:text-2xl">
+              <div className="text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">
                 {stats.completedGames}
               </div>
-              <p className="text-xs text-gray-500">{t("stats.completedPercent")}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                {t("stats.completedPercent")}
+              </p>
             </CardContent>
           </Card>
 
-          <Card className="rounded-2xl bg-white">
+          <Card className="rounded-2xl bg-white dark:bg-gray-800">
             <CardHeader className="pb-3">
               <div className="flex items-center">
-                <div className="rounded-lg bg-purple-100 p-2">
-                  <FaClock className="h-4 w-4 text-purple-600 sm:h-5 sm:w-5" />
+                <div className="rounded-lg bg-purple-100 p-2 dark:bg-purple-900/30">
+                  <FaClock className="h-4 w-4 text-purple-600 sm:h-5 sm:w-5 dark:text-purple-400" />
                 </div>
                 <div className="ml-3">
-                  <CardTitle className="text-sm font-medium text-gray-900">
+                  <CardTitle className="text-sm font-medium text-gray-900 dark:text-white">
                     {t("stats.playTime")}
                   </CardTitle>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-xl font-bold text-gray-900 sm:text-2xl">
+              <div className="text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">
                 {stats.totalPlayTime}h
               </div>
-              <p className="text-xs text-gray-500">{t("stats.totalPlayed")}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{t("stats.totalPlayed")}</p>
             </CardContent>
           </Card>
 
-          <Card className="rounded-2xl bg-white">
+          <Card className="rounded-2xl bg-white dark:bg-gray-800">
             <CardHeader className="pb-3">
               <div className="flex items-center">
-                <div className="rounded-lg bg-yellow-100 p-2">
-                  <FaStar className="h-4 w-4 text-yellow-600 sm:h-5 sm:w-5" />
+                <div className="rounded-lg bg-yellow-100 p-2 dark:bg-yellow-900/30">
+                  <FaStar className="h-4 w-4 text-yellow-600 sm:h-5 sm:w-5 dark:text-yellow-400" />
                 </div>
                 <div className="ml-3">
-                  <CardTitle className="text-sm font-medium text-gray-900">
+                  <CardTitle className="text-sm font-medium text-gray-900 dark:text-white">
                     {t("stats.averageRating")}
                   </CardTitle>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-xl font-bold text-gray-900 sm:text-2xl">
+              <div className="text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">
                 {stats.averageRating ? `${stats.averageRating}/5` : "—"}
               </div>
-              <p className="text-xs text-gray-500">{t("stats.yourRatings")}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{t("stats.yourRatings")}</p>
             </CardContent>
           </Card>
         </div>
@@ -407,17 +411,17 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
         {!loading && (
           <>
             {games.length === 0 ? (
-              <Card className="bg-white">
+              <Card className="bg-white dark:bg-gray-800">
                 <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-                  <div className="mb-4 rounded-full bg-gray-100 p-4 sm:p-6">
+                  <div className="mb-4 rounded-full bg-gray-100 p-4 sm:p-6 dark:bg-gray-700">
                     <FaGamepad className="h-8 w-8 text-gray-400 sm:h-12 sm:w-12" />
                   </div>
-                  <h3 className="mb-2 text-base font-medium text-gray-900 sm:text-lg">
+                  <h3 className="mb-2 text-base font-medium text-gray-900 sm:text-lg dark:text-white">
                     {searchQuery || selectedGenres.length > 0 || selectedPublishers.length > 0
                       ? t("empty.noGamesFound")
                       : t("empty.title")}
                   </h3>
-                  <p className="mb-6 max-w-md text-sm text-gray-500 sm:text-base">
+                  <p className="mb-6 max-w-md text-sm text-gray-500 sm:text-base dark:text-gray-400">
                     {searchQuery || selectedGenres.length > 0 || selectedPublishers.length > 0
                       ? t("empty.modifySearch")
                       : t("empty.description")}

@@ -20,8 +20,10 @@ export function DashboardContent() {
     <div className="flex-1 p-4 sm:p-6">
       {/* Page Header */}
       <div className="mb-6 sm:mb-8">
-        <h1 className="mb-2 text-xl font-bold text-gray-900 sm:text-2xl">{t("dashboard")}</h1>
-        <p className="text-sm text-gray-600 sm:text-base">
+        <h1 className="mb-2 text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">
+          {t("dashboard")}
+        </h1>
+        <p className="text-sm text-gray-600 sm:text-base dark:text-gray-400">
           {t("welcome", {
             name: user.user_metadata?.username || user.email?.split("@")[0] || "Utilisateur",
           })}
@@ -31,67 +33,73 @@ export function DashboardContent() {
       {/* Stats Cards */}
       <div className="mb-6 grid grid-cols-1 gap-4 sm:mb-8 sm:gap-6 md:grid-cols-3">
         {/* Mes Jeux */}
-        <Card className="rounded-xl bg-white">
+        <Card className="rounded-xl bg-white dark:bg-gray-800">
           <CardHeader className="pb-3">
             <div className="flex items-center">
-              <div className="rounded-xl bg-blue-100 p-2">
-                <FaGamepad className="h-4 w-4 text-blue-600 sm:h-5 sm:w-5" />
+              <div className="rounded-xl bg-blue-100 p-2 dark:bg-blue-900/30">
+                <FaGamepad className="h-4 w-4 text-blue-600 sm:h-5 sm:w-5 dark:text-blue-400" />
               </div>
               <div className="ml-3">
-                <CardTitle className="text-sm font-medium text-gray-900">{t("myGames")}</CardTitle>
-                <CardDescription className="text-xs text-gray-500">
+                <CardTitle className="text-sm font-medium text-gray-900 dark:text-white">
+                  {t("myGames")}
+                </CardTitle>
+                <CardDescription className="text-xs text-gray-500 dark:text-gray-400">
                   {t("myGamesDesc")}
                 </CardDescription>
               </div>
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-bold text-gray-900 sm:text-2xl">
+            <div className="text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">
               {libraryLoading ? "..." : libraryStats.totalGames}
             </div>
-            <p className="text-xs text-gray-500">{t("gamesFavorites")}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{t("gamesFavorites")}</p>
           </CardContent>
         </Card>
 
         {/* Mes Équipes */}
-        <Card className="rounded-xl bg-white">
+        <Card className="rounded-xl bg-white dark:bg-gray-800">
           <CardHeader className="pb-3">
             <div className="flex items-center">
-              <div className="rounded-xl bg-purple-100 p-2">
-                <FaUsers className="h-4 w-4 text-purple-600 sm:h-5 sm:w-5" />
+              <div className="rounded-xl bg-purple-100 p-2 dark:bg-purple-900/30">
+                <FaUsers className="h-4 w-4 text-purple-600 sm:h-5 sm:w-5 dark:text-purple-400" />
               </div>
               <div className="ml-3">
-                <CardTitle className="text-sm font-medium text-gray-900">{t("myTeams")}</CardTitle>
-                <CardDescription className="text-xs text-gray-500">
+                <CardTitle className="text-sm font-medium text-gray-900 dark:text-white">
+                  {t("myTeams")}
+                </CardTitle>
+                <CardDescription className="text-xs text-gray-500 dark:text-gray-400">
                   {t("myTeamsDesc")}
                 </CardDescription>
               </div>
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-bold text-gray-900 sm:text-2xl">0</div>
-            <p className="text-xs text-gray-500">{t("teamsJoined")}</p>
+            <div className="text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">0</div>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{t("teamsJoined")}</p>
           </CardContent>
         </Card>
 
         {/* Activité */}
-        <Card className="rounded-xl bg-white">
+        <Card className="rounded-xl bg-white dark:bg-gray-800">
           <CardHeader className="pb-3">
             <div className="flex items-center">
-              <div className="rounded-xl bg-green-100 p-2">
-                <FaBolt className="h-4 w-4 text-green-600 sm:h-5 sm:w-5" />
+              <div className="rounded-xl bg-green-100 p-2 dark:bg-green-900/30">
+                <FaBolt className="h-4 w-4 text-green-600 sm:h-5 sm:w-5 dark:text-green-400" />
               </div>
               <div className="ml-3">
-                <CardTitle className="text-sm font-medium text-gray-900">{t("activity")}</CardTitle>
-                <CardDescription className="text-xs text-gray-500">
+                <CardTitle className="text-sm font-medium text-gray-900 dark:text-white">
+                  {t("activity")}
+                </CardTitle>
+                <CardDescription className="text-xs text-gray-500 dark:text-gray-400">
                   {t("activityDesc")}
                 </CardDescription>
               </div>
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-bold text-gray-900 sm:text-2xl">0</div>
-            <p className="text-xs text-gray-500">{t("postsPublished")}</p>
+            <div className="text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">0</div>
+            <p className="text-xs text-gray-500 dark:text-gray-400">{t("postsPublished")}</p>
           </CardContent>
         </Card>
       </div>
@@ -100,32 +108,40 @@ export function DashboardContent() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Actions rapides */}
         <div className="lg:col-span-2">
-          <Card className="rounded-xl bg-white">
+          <Card className="rounded-xl bg-white dark:bg-gray-800">
             <CardHeader>
-              <CardTitle className="text-base font-semibold text-gray-900 sm:text-lg">
+              <CardTitle className="text-base font-semibold text-gray-900 sm:text-lg dark:text-white">
                 {t("quickActions")}
               </CardTitle>
-              <CardDescription className="text-sm text-gray-500">
+              <CardDescription className="text-sm text-gray-500 dark:text-gray-400">
                 {t("quickActionsDesc")}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               <Button
                 asChild
-                className="w-full justify-start rounded-xl bg-gray-900 text-white hover:bg-gray-800"
+                className="w-full justify-start rounded-xl bg-gray-900 text-white hover:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600"
               >
                 <Link href="/library">
                   <FaGamepad className="mr-2 h-4 w-4" />
                   {t("exploreGames")}
                 </Link>
               </Button>
-              <Button asChild variant="outline" className="w-full justify-start rounded-xl">
+              <Button
+                asChild
+                variant="outline"
+                className="w-full justify-start rounded-xl dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+              >
                 <Link href="/profile">
                   <FaUser className="mr-2 h-4 w-4" />
                   {t("editProfile")}
                 </Link>
               </Button>
-              <Button asChild variant="outline" className="w-full justify-start rounded-xl">
+              <Button
+                asChild
+                variant="outline"
+                className="w-full justify-start rounded-xl dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+              >
                 <Link href="/teams">
                   <FaUsers className="mr-2 h-4 w-4" />
                   {t("joinTeam")}
@@ -137,23 +153,25 @@ export function DashboardContent() {
 
         {/* Informations du compte */}
         <div>
-          <Card className="rounded-xl bg-white">
+          <Card className="rounded-xl bg-white dark:bg-gray-800">
             <CardHeader>
-              <CardTitle className="text-base font-semibold text-gray-900 sm:text-lg">
+              <CardTitle className="text-base font-semibold text-gray-900 sm:text-lg dark:text-white">
                 {t("accountInfo")}
               </CardTitle>
-              <CardDescription className="text-sm text-gray-500">
+              <CardDescription className="text-sm text-gray-500 dark:text-gray-400">
                 {t("accountInfoDesc")}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <p className="text-sm font-medium text-gray-900">{t("email")}</p>
-                <p className="break-all text-sm text-gray-600">{user.email}</p>
+                <p className="text-sm font-medium text-gray-900 dark:text-white">{t("email")}</p>
+                <p className="break-all text-sm text-gray-600 dark:text-gray-400">{user.email}</p>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-900">{t("memberSince")}</p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm font-medium text-gray-900 dark:text-white">
+                  {t("memberSince")}
+                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   {new Date(user.created_at).toLocaleDateString("fr-FR", {
                     day: "2-digit",
                     month: "2-digit",

@@ -35,7 +35,9 @@ export function GameAgeRatings({ ratings, accentColor }: GameAgeRatingsProps) {
             <Card
               key={`${rating.systemCode}-${rating.ratingCode}-${index}`}
               className={`rounded-xl border-slate-700 bg-slate-800/50 ${rating.isPrimary ? "ring-2" : ""}`}
-              style={rating.isPrimary ? { ringColor: accentColor } : {}}
+              style={
+                rating.isPrimary ? ({ "--tw-ring-color": accentColor } as React.CSSProperties) : {}
+              }
             >
               <CardContent className="p-6">
                 <div className="flex items-start gap-4">

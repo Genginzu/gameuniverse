@@ -17,10 +17,7 @@ import { LoadingButton } from "@/components/ui/loading-button";
 
 // Email validation schema - validates proper email format
 export const emailSchema = z.object({
-  email: z
-    .string()
-    .min(1, "emailRequired")
-    .email("emailInvalid"),
+  email: z.string().min(1, "emailRequired").email("emailInvalid"),
 });
 
 export type EmailFormValues = z.infer<typeof emailSchema>;
@@ -62,7 +59,7 @@ export function EmailForm({ currentEmail, onUpdate, isLoading }: EmailFormProps)
           name="email"
           render={({ field, fieldState }) => (
             <FormItem>
-              <FormLabel className="text-sm font-medium text-gray-900">
+              <FormLabel className="text-sm font-medium text-gray-900 dark:text-white">
                 {t("email")}
               </FormLabel>
               <FormControl>
@@ -74,9 +71,7 @@ export function EmailForm({ currentEmail, onUpdate, isLoading }: EmailFormProps)
                 />
               </FormControl>
               {fieldState.error && (
-                <FormMessage>
-                  {getErrorMessage(fieldState.error.message)}
-                </FormMessage>
+                <FormMessage>{getErrorMessage(fieldState.error.message)}</FormMessage>
               )}
             </FormItem>
           )}
