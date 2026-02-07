@@ -99,6 +99,13 @@ export interface GamePlaytime {
   lastUpdated?: string;
 }
 
+export interface GameVersion {
+  id: string;
+  igdbId: number;
+  title: string;
+  coverImageUrl: string | null;
+}
+
 export interface GameDetails {
   id: string;
   slug: string;
@@ -123,6 +130,7 @@ export interface GameDetails {
   updatedAt: string;
   igdbId?: number;
   lastSyncedAt?: string;
+  versions?: GameVersion[];
 }
 
 export interface GameSummary {

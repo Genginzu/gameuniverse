@@ -233,7 +233,7 @@
     "games": "jeu(x)"
   },
   "pagination": {
-    "page": "Page {current} sur {total}",
+    "page": "Page",
     "previous": "Précédent",
     "next": "Suivant",
     "first": "Premier",
@@ -507,6 +507,7 @@
       "media": "Médias",
       "specs": "Spécifications",
       "ageRatings": "Classifications",
+      "versions": "Versions",
       "reviews": "Avis",
       "playtime": "Temps de jeu",
       "languages": "Langues",
@@ -527,6 +528,10 @@
       "primary": "Principal",
       "minimumAge": "Âge minimum : {age}+",
       "contentDescriptors": "Avertissements de contenu"
+    },
+    "versions": {
+      "title": "Versions du jeu",
+      "noData": "Aucune information de version disponible pour ce jeu"
     },
     "reviews": {
       "title": "Avis des joueurs",

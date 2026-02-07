@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { LazyImage } from "@/components/ui/lazy-image";
 import { GamePlaytime } from "./GamePlaytime";
 import { GameAgeRatings } from "./GameAgeRatings";
+import { GameVersions } from "./GameVersions";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -28,6 +29,7 @@ import {
   Languages,
   Music,
   Monitor,
+  Package,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { GameDetails } from "@/types/game";
@@ -85,7 +87,7 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
   const [selectedArtworkIndex, setSelectedArtworkIndex] = useState(0);
   const [selectedVideoIndex, setSelectedVideoIndex] = useState(0);
   const [activeTab, setActiveTab] = useState<
-    "media" | "specs" | "reviews" | "playtime" | "languages" | "music" | "ageRatings"
+    "media" | "specs" | "reviews" | "playtime" | "languages" | "music" | "ageRatings" | "versions"
   >("media");
   const [isWishlisted, setIsWishlisted] = useState(false);
 
@@ -448,8 +450,21 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
                       <Shield className="mr-2 inline h-4 w-4" />
                       {tDetails("tabs.ageRatings")}
                     </button>
+                    {game.versions && game.versions.length > 0 && (
+                      <button
+                        onClick={() => setActiveTab("versions")}
+                        className={`rounded-xl px-6 py-3 text-sm font-medium transition-all ${
+                          activeTab === "versions"
+                            ? "bg-white text-slate-900"
+                            : "text-slate-400 hover:bg-slate-700 hover:text-white"
+                        }`}
+                      >
+                        <Package className="mr-2 inline h-4 w-4" />
+                        {tDetails("tabs.versions")}
+                      </button>
+                    )}
                     <button
-                      onClick={() => setActiveTab("reviews")}
+                      onClick={() => setActiveTab("reviews")}}
                       className={`rounded-xl px-6 py-3 text-sm font-medium transition-all ${
                         activeTab === "reviews"
                           ? "bg-white text-slate-900"
@@ -774,6 +789,10 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
 
                   {activeTab === "ageRatings" && (
                     <GameAgeRatings ratings={game.ageRatings} accentColor={colors.accent} />
+                  )}
+
+                  {activeTab === "versions" && (
+                    <GameVersions versions={game.versions} accentColor={colors.accent} />
                   )}
 
                   {activeTab === "reviews" && (

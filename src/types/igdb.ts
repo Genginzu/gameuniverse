@@ -155,3 +155,16 @@ export interface IGDBTimeToBeat {
   completely: number | null; // 100% completion
   count: number; // Number of submissions
 }
+
+/**
+ * IGDB Game Version
+ * Represents a version/edition of a game (e.g., Collector's Edition, Deluxe, GOTY)
+ * Versions are linked to a parent game via version_parent field
+ */
+export interface IGDBGameVersion {
+  id: number;
+  name: string;
+  slug: string;
+  version_title: string | null;
+  cover?: { image_id: string };
+}

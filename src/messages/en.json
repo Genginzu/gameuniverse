@@ -233,7 +233,7 @@
     "games": "game(s)"
   },
   "pagination": {
-    "page": "Page {current} of {total}",
+    "page": "Page",
     "previous": "Previous",
     "next": "Next",
     "first": "First",
@@ -507,6 +507,7 @@
       "media": "Media",
       "specs": "Specifications",
       "ageRatings": "Age Ratings",
+      "versions": "Versions",
       "reviews": "Reviews",
       "playtime": "Playtime",
       "languages": "Languages",
@@ -527,6 +528,10 @@
       "primary": "Primary",
       "minimumAge": "Minimum age: {age}+",
       "contentDescriptors": "Content Warnings"
+    },
+    "versions": {
+      "title": "Game Versions",
+      "noData": "No version information available for this game"
     },
     "reviews": {
       "title": "Player Reviews",

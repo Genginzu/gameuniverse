@@ -5,6 +5,7 @@ import {
   IGDBImageSize,
   IGDBTimeToBeat,
   IGDBAgeRating,
+  IGDBGameVersion,
 } from "@/types/igdb";
 
 /**
@@ -392,6 +393,47 @@ export class IGDBService {
     const results = await response.json();
     console.warn(`[IGDBService] Content descriptions response:`, JSON.stringify(results));
     return results;
+  }
+
+  /**
+   * Fetches all versions (editions) of a game from IGDB
+   * Versions are games that have the specified game as their version_parent
+   * @param igdbId The IGDB game ID of the parent game
+   * @returns Array of game versions (editions like Collector's, Deluxe, GOTY, etc.)
+   */
+  static async getGameVersions(igdbId: number): Promise<IGDBGameVersion[]> {
+    const accessToken = await this.getAccessToken();
+    const clientId = process.env.IGDB_CLIENT_ID;
+
+    if (!clientId) {
+      throw new Error("IGDB_CLIENT_ID not configured");
+    }
+
+    const body = `
+      fields id, name, slug, version_title, cover.image_id;
+      where version_parent = ${igdbId};
+      limit 50;
+    `;
+
+    const response = await fetch(`${this.IGDB_API_URL}/games`, {
+      method: "POST",
+      headers: {
+        "Client-ID": clientId,
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "text/plain",
+      },
+      body,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(
+        `IGDB getGameVersions failed: ${response.status} ${response.statusText} - ${errorText}`
+      );
+      return [];
+    }
+
+    return response.json();
   }
 
   /**

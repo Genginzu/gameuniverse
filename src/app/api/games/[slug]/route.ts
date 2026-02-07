@@ -209,6 +209,29 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       console.warn("playtime columns not available yet");
     }
 
+    // Fetch game versions (Requirements 5.1)
+    let gameVersions: Array<{
+      id: string;
+      igdb_id: number;
+      version_title: string;
+      cover_image_url: string | null;
+    }> = [];
+
+    try {
+      const { data: versionsData } = await supabase
+        .from("game_versions")
+        .select("id, igdb_id, version_title, cover_image_url")
+        .eq("game_id", game.id)
+        .order("display_order", { ascending: true });
+
+      if (versionsData) {
+        gameVersions = versionsData;
+      }
+    } catch {
+      // Table may not exist yet, ignore error
+      console.warn("game_versions table not available yet");
+    }
+
     // Transform the data to match the expected format
     const translation = game.game_translations?.[0];
 
@@ -392,6 +415,14 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           }
         : null;
 
+    // Process versions - map to GameVersion format (Requirements 5.2, 5.3)
+    const versions = gameVersions.map((v) => ({
+      id: v.id,
+      igdbId: v.igdb_id,
+      title: v.version_title,
+      coverImageUrl: v.cover_image_url,
+    }));
+
     const transformedGame = {
       id: game.id,
       slug: game.slug,
@@ -412,6 +443,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       pricing,
       languages,
       playtime,
+      versions,
       createdAt: game.created_at,
       updatedAt: game.updated_at,
     };
