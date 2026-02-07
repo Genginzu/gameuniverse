@@ -4,15 +4,18 @@ import * as fc from "fast-check";
 // Feature: game-library, Property 1: Game List Display Completeness
 // **Validates: Requirements 1.2**
 
+// Generate unique prefixed strings to avoid substring collisions
+const uniquePrefixedString = (prefix: string, minLength: number, maxLength: number) =>
+  fc.uuid().map((id) => `${prefix}_${id.slice(0, Math.min(maxLength - prefix.length - 1, 8))}`);
+
 // Mock game data generator for property-based testing
+// Uses unique prefixes to ensure no substring collisions between fields
 const gameGenerator = () =>
   fc.record({
     id: fc.uuid(),
-    slug: fc
-      .string({ minLength: 1, maxLength: 50 })
-      .map((s) => s.toLowerCase().replace(/[^a-z0-9]/g, "-")),
-    title: fc.string({ minLength: 1, maxLength: 100 }),
-    description: fc.option(fc.string({ minLength: 10, maxLength: 500 })),
+    slug: fc.uuid().map((id) => `slug-${id.slice(0, 8)}`),
+    title: uniquePrefixedString("Title", 10, 30),
+    description: fc.option(fc.constant("A game description")),
     coverImage: fc.option(fc.webUrl()),
     releaseDate: fc.option(
       fc
@@ -37,8 +40,8 @@ const gameGenerator = () =>
       }),
       { minLength: 1, maxLength: 5 }
     ),
-    developer: fc.string({ minLength: 1, maxLength: 50 }),
-    publisher: fc.string({ minLength: 1, maxLength: 50 }),
+    developer: uniquePrefixedString("Dev", 8, 20),
+    publisher: uniquePrefixedString("Pub", 8, 20),
     metascore: fc.option(fc.integer({ min: 0, max: 100 })),
   });
 
@@ -64,21 +67,25 @@ describe("GameLibrary Property-Based Tests", () => {
     fc.assert(
       fc.property(fc.array(gameGenerator(), { minLength: 1, maxLength: 20 }), (games) => {
         const rendered = renderGameList(games);
+        const lines = rendered.split("\n");
 
-        // Verify that each game's essential information is present in the rendered output
-        return games.every((game) => {
+        // Verify that each game's essential information is present in its corresponding line
+        return games.every((game, index) => {
+          const gameLine = lines[index];
+          if (!gameLine) return false;
+
           const gameTitle = game.title;
-          const gameGenres = game.genres.map((g) => g.name);
+          const gameGenres = game.genres.map((g: { name: string }) => g.name);
           const gameYear = game.releaseYear?.toString() || "Unknown Year";
           const gameDeveloper = game.developer;
           const gamePublisher = game.publisher;
 
-          // Check that all essential information is present in the rendered string
-          const hasTitle = rendered.includes(gameTitle);
-          const hasAtLeastOneGenre = gameGenres.some((genre) => rendered.includes(genre));
-          const hasYear = rendered.includes(gameYear);
-          const hasDeveloper = rendered.includes(gameDeveloper);
-          const hasPublisher = rendered.includes(gamePublisher);
+          // Check that all essential information is present in the game's line
+          const hasTitle = gameLine.includes(gameTitle);
+          const hasAtLeastOneGenre = gameGenres.some((genre: string) => gameLine.includes(genre));
+          const hasYear = gameLine.includes(gameYear);
+          const hasDeveloper = gameLine.includes(gameDeveloper);
+          const hasPublisher = gameLine.includes(gamePublisher);
 
           return hasTitle && hasAtLeastOneGenre && hasYear && hasDeveloper && hasPublisher;
         });
@@ -107,8 +114,8 @@ describe("GameLibrary Property-Based Tests", () => {
         fc.array(
           fc.record({
             id: fc.uuid(),
-            slug: fc.string({ minLength: 1, maxLength: 50 }),
-            title: fc.string({ minLength: 1, maxLength: 100 }),
+            slug: fc.uuid().map((id) => `slug-${id.slice(0, 8)}`),
+            title: uniquePrefixedString("Title", 10, 30),
             description: fc.constant(undefined), // Always undefined
             coverImage: fc.constant(undefined), // Always undefined
             releaseDate: fc.constant(undefined), // Always undefined
@@ -119,22 +126,26 @@ describe("GameLibrary Property-Based Tests", () => {
               }),
               { minLength: 1, maxLength: 2 }
             ),
-            developer: fc.string({ minLength: 1, maxLength: 50 }),
-            publisher: fc.string({ minLength: 1, maxLength: 50 }),
+            developer: uniquePrefixedString("Dev", 8, 20),
+            publisher: uniquePrefixedString("Pub", 8, 20),
             metascore: fc.constant(undefined), // Always undefined
           }),
           { minLength: 1, maxLength: 10 }
         ),
         (games) => {
           const rendered = renderGameList(games);
+          const lines = rendered.split("\n");
 
           // Even with missing optional data, essential information should still be present
-          return games.every((game) => {
-            const hasTitle = rendered.includes(game.title);
-            const hasGenre = game.genres.some((g) => rendered.includes(g.name));
-            const hasUnknownYear = rendered.includes("Unknown Year");
-            const hasDeveloper = rendered.includes(game.developer);
-            const hasPublisher = rendered.includes(game.publisher);
+          return games.every((game, index) => {
+            const gameLine = lines[index];
+            if (!gameLine) return false;
+
+            const hasTitle = gameLine.includes(game.title);
+            const hasGenre = game.genres.some((g: { name: string }) => gameLine.includes(g.name));
+            const hasUnknownYear = gameLine.includes("Unknown Year");
+            const hasDeveloper = gameLine.includes(game.developer);
+            const hasPublisher = gameLine.includes(game.publisher);
 
             return hasTitle && hasGenre && hasUnknownYear && hasDeveloper && hasPublisher;
           });

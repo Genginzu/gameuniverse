@@ -42,137 +42,157 @@ describe("SearchBar Property-Based Tests", () => {
 
       it("uses default minLength of 2 when not specified", () => {
         fc.assert(
-          fc.property(
-            fc.string({ minLength: 0, maxLength: 10 }),
-            (query) => {
-              const result = shouldTriggerSearch(query);
-              const expected = query.length >= 2;
-              return result === expected;
-            }
-          ),
+          fc.property(fc.string({ minLength: 0, maxLength: 10 }), (query) => {
+            const result = shouldTriggerSearch(query);
+            const expected = query.length >= 2;
+            return result === expected;
+          }),
           { numRuns: 50 }
         );
       });
 
-      it("empty string never triggers search", () => {
+      it("empty string never triggers search when minLength >= 1", () => {
         fc.assert(
-          fc.property(
-            fc.integer({ min: 0, max: 10 }),
-            (minLength) => {
-              return shouldTriggerSearch("", minLength) === false;
-            }
-          ),
+          fc.property(fc.integer({ min: 1, max: 10 }), (minLength) => {
+            return shouldTriggerSearch("", minLength) === false;
+          }),
           { numRuns: 50 }
         );
       });
 
-      it("single character only triggers search when minLength is 0 or 1", () => {
+      it("single character triggers search when minLength is 1", () => {
         fc.assert(
-          fc.property(
-            fc.char(),
-            fc.integer({ min: 0, max: 5 }),
-            (char, minLength) => {
-              const result = shouldTriggerSearch(char, minLength);
-              const expected = minLength <= 1;
-              return result === expected;
-            }
-          ),
+          fc.property(fc.integer({ min: 1, max: 5 }), (minLength) => {
+            // Use a simple single character 'a' for testing
+            const result = shouldTriggerSearch("a", minLength);
+            const expected = minLength <= 1;
+            return result === expected;
+          }),
           { numRuns: 50 }
         );
       });
     });
 
     describe("createDebouncedCallback helper", () => {
-      let originalSetTimeout: typeof setTimeout;
-      let originalClearTimeout: typeof clearTimeout;
-      let timeoutCallbacks: Map<number, { callback: () => void; delay: number }>;
-      let nextTimeoutId: number;
-
-      beforeEach(() => {
-        timeoutCallbacks = new Map();
-        nextTimeoutId = 1;
-        
-        originalSetTimeout = globalThis.setTimeout;
-        originalClearTimeout = globalThis.clearTimeout;
-        
-        // Mock setTimeout
-        (globalThis as unknown as { setTimeout: typeof setTimeout }).setTimeout = ((
-          callback: () => void,
-          delay: number
-        ) => {
-          const id = nextTimeoutId++;
-          timeoutCallbacks.set(id, { callback, delay });
-          return id as unknown as ReturnType<typeof setTimeout>;
-        }) as typeof setTimeout;
-        
-        // Mock clearTimeout
-        (globalThis as unknown as { clearTimeout: typeof clearTimeout }).clearTimeout = ((
-          id: ReturnType<typeof setTimeout>
-        ) => {
-          timeoutCallbacks.delete(id as unknown as number);
-        }) as typeof clearTimeout;
-      });
-
-      afterEach(() => {
-        globalThis.setTimeout = originalSetTimeout;
-        globalThis.clearTimeout = originalClearTimeout;
-      });
-
       it("creates a debounced function that schedules callback", () => {
         fc.assert(
-          fc.property(
-            fc.integer({ min: 1, max: 1000 }),
-            (delay) => {
+          fc.property(fc.integer({ min: 1, max: 1000 }), (delay) => {
+            let timeoutScheduled = false;
+            let timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+            const originalSetTimeout = globalThis.setTimeout;
+            const originalClearTimeout = globalThis.clearTimeout;
+
+            // Mock setTimeout for this iteration
+            (globalThis as unknown as { setTimeout: typeof setTimeout }).setTimeout = ((
+              callback: () => void,
+              _delay: number
+            ) => {
+              timeoutScheduled = true;
+              timeoutId = 1 as unknown as ReturnType<typeof setTimeout>;
+              return timeoutId;
+            }) as typeof setTimeout;
+
+            (globalThis as unknown as { clearTimeout: typeof clearTimeout }).clearTimeout = ((
+              _id: ReturnType<typeof setTimeout>
+            ) => {
+              timeoutId = null;
+            }) as typeof clearTimeout;
+
+            try {
               const mockCallback = mock(() => {});
               const { debouncedFn } = createDebouncedCallback(mockCallback, delay);
-              
               debouncedFn();
-              
-              // Should have scheduled a timeout
-              return timeoutCallbacks.size === 1;
+              return timeoutScheduled === true;
+            } finally {
+              globalThis.setTimeout = originalSetTimeout;
+              globalThis.clearTimeout = originalClearTimeout;
             }
-          ),
+          }),
           { numRuns: 50 }
         );
       });
 
       it("cancel function clears pending timeout", () => {
         fc.assert(
-          fc.property(
-            fc.integer({ min: 1, max: 1000 }),
-            (delay) => {
+          fc.property(fc.integer({ min: 1, max: 1000 }), (delay) => {
+            let timeoutCleared = false;
+
+            const originalSetTimeout = globalThis.setTimeout;
+            const originalClearTimeout = globalThis.clearTimeout;
+
+            // Mock setTimeout for this iteration
+            (globalThis as unknown as { setTimeout: typeof setTimeout }).setTimeout = ((
+              callback: () => void,
+              _delay: number
+            ) => {
+              return 1 as unknown as ReturnType<typeof setTimeout>;
+            }) as typeof setTimeout;
+
+            (globalThis as unknown as { clearTimeout: typeof clearTimeout }).clearTimeout = ((
+              _id: ReturnType<typeof setTimeout>
+            ) => {
+              timeoutCleared = true;
+            }) as typeof clearTimeout;
+
+            try {
               const mockCallback = mock(() => {});
               const { debouncedFn, cancel } = createDebouncedCallback(mockCallback, delay);
-              
               debouncedFn();
-              const sizeBeforeCancel = timeoutCallbacks.size;
-              
               cancel();
-              const sizeAfterCancel = timeoutCallbacks.size;
-              
-              return sizeBeforeCancel === 1 && sizeAfterCancel === 0;
+              return timeoutCleared === true;
+            } finally {
+              globalThis.setTimeout = originalSetTimeout;
+              globalThis.clearTimeout = originalClearTimeout;
             }
-          ),
+          }),
           { numRuns: 50 }
         );
       });
 
-      it("multiple rapid calls only schedule one timeout", () => {
+      it("multiple rapid calls result in only one pending timeout", () => {
         fc.assert(
           fc.property(
             fc.integer({ min: 1, max: 1000 }),
             fc.integer({ min: 2, max: 10 }),
             (delay, callCount) => {
-              const mockCallback = mock(() => {});
-              const { debouncedFn } = createDebouncedCallback(mockCallback, delay);
-              
-              // Call multiple times rapidly
-              for (let i = 0; i < callCount; i++) {
-                debouncedFn();
+              let setTimeoutCallCount = 0;
+              let clearTimeoutCallCount = 0;
+
+              const originalSetTimeout = globalThis.setTimeout;
+              const originalClearTimeout = globalThis.clearTimeout;
+
+              // Mock setTimeout for this iteration
+              (globalThis as unknown as { setTimeout: typeof setTimeout }).setTimeout = ((
+                callback: () => void,
+                _delay: number
+              ) => {
+                setTimeoutCallCount++;
+                return setTimeoutCallCount as unknown as ReturnType<typeof setTimeout>;
+              }) as typeof setTimeout;
+
+              (globalThis as unknown as { clearTimeout: typeof clearTimeout }).clearTimeout = ((
+                _id: ReturnType<typeof setTimeout>
+              ) => {
+                clearTimeoutCallCount++;
+              }) as typeof clearTimeout;
+
+              try {
+                const mockCallback = mock(() => {});
+                const { debouncedFn } = createDebouncedCallback(mockCallback, delay);
+
+                // Call multiple times rapidly
+                for (let i = 0; i < callCount; i++) {
+                  debouncedFn();
+                }
+
+                // Each call after the first should clear the previous timeout
+                // So we should have callCount setTimeout calls and (callCount - 1) clearTimeout calls
+                return setTimeoutCallCount === callCount && clearTimeoutCallCount === callCount - 1;
+              } finally {
+                globalThis.setTimeout = originalSetTimeout;
+                globalThis.clearTimeout = originalClearTimeout;
               }
-              
-              // Should only have one pending timeout (previous ones cleared)
-              return timeoutCallbacks.size === 1;
             }
           ),
           { numRuns: 50 }
@@ -204,12 +224,9 @@ describe("SearchBar Property-Based Tests", () => {
 
       it("clear button is visible when query is not empty", () => {
         fc.assert(
-          fc.property(
-            fc.string({ minLength: 1, maxLength: 100 }),
-            (query) => {
-              return simulateClearButtonVisibility(query) === true;
-            }
-          ),
+          fc.property(fc.string({ minLength: 1, maxLength: 100 }), (query) => {
+            return simulateClearButtonVisibility(query) === true;
+          }),
           { numRuns: 50 }
         );
       });

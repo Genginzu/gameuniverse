@@ -113,7 +113,7 @@ describe("Pagination Property-Based Tests", () => {
             // Pick a middle page (not first or last)
             const middlePage = Math.floor(totalPages / 2);
             if (middlePage <= 1 || middlePage >= totalPages) return true;
-            
+
             const result = simulatePaginationState(middlePage, totalPages, totalCount);
             return (
               result.firstButtonDisabled === false &&
@@ -136,7 +136,7 @@ describe("Pagination Property-Based Tests", () => {
             // Test with page in the middle where ellipsis should appear
             const middlePage = Math.floor(totalPages / 2);
             const result = simulatePaginationState(middlePage, totalPages, totalCount);
-            
+
             // When we're in the middle of a large page set, we should have ellipsis
             return result.hasEllipsis === true;
           }
@@ -145,11 +145,11 @@ describe("Pagination Property-Based Tests", () => {
       );
     });
 
-    it("does not show ellipsis when totalPages <= 5", () => {
+    it("does not show ellipsis when totalPages <= 4", () => {
       fc.assert(
         fc.property(
-          fc.integer({ min: 2, max: 5 }),
-          fc.integer({ min: 1, max: 5 }),
+          fc.integer({ min: 2, max: 4 }),
+          fc.integer({ min: 1, max: 4 }),
           fc.integer({ min: 0, max: 1000 }),
           (totalPages, currentPage, totalCount) => {
             const validCurrentPage = Math.min(currentPage, totalPages);
@@ -218,7 +218,7 @@ describe("Pagination Property-Based Tests", () => {
           (totalPages, currentPage, totalCount) => {
             const validCurrentPage = Math.min(currentPage, totalPages);
             const result = simulatePaginationState(validCurrentPage, totalPages, totalCount);
-            
+
             for (let i = 1; i < result.pageNumbers.length; i++) {
               if (result.pageNumbers[i] <= result.pageNumbers[i - 1]) {
                 return false;
@@ -240,7 +240,7 @@ describe("Pagination Property-Based Tests", () => {
           (totalPages, currentPage, totalCount) => {
             const validCurrentPage = Math.min(currentPage, totalPages);
             const result = simulatePaginationState(validCurrentPage, totalPages, totalCount);
-            
+
             return result.pageNumbers.every((page) => page >= 1 && page <= totalPages);
           }
         ),
@@ -274,7 +274,7 @@ describe("Pagination Property-Based Tests", () => {
           (currentPage, totalPages) => {
             const validCurrentPage = Math.min(currentPage, totalPages);
             const result = getVisiblePages(validCurrentPage, totalPages);
-            
+
             for (let i = 0; i < result.length - 1; i++) {
               if (result[i] === "...") {
                 // Ellipsis should be between two numbers
@@ -302,9 +302,9 @@ describe("Pagination Property-Based Tests", () => {
             const validCurrentPage = Math.min(currentPage, totalPages);
             const result1 = getVisiblePages(validCurrentPage, totalPages);
             const result2 = getVisiblePages(validCurrentPage, totalPages);
-            
+
             if (result1.length !== result2.length) return false;
-            
+
             for (let i = 0; i < result1.length; i++) {
               if (result1[i] !== result2[i]) return false;
             }

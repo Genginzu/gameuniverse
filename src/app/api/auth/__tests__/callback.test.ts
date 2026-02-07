@@ -48,13 +48,13 @@ describe("/api/auth/callback", () => {
     expect(response.headers.get("location")).toContain("Invalid%20auth%20code");
   });
 
-  it("should redirect to dashboard when no code provided", async () => {
+  it("should redirect to auth page when no code provided", async () => {
     const request = new NextRequest("http://localhost:3000/api/auth/callback");
 
     const response = await GET(request);
 
     expect(mockSupabase.auth.exchangeCodeForSession).not.toHaveBeenCalled();
     expect(response.status).toBe(307); // Redirect status
-    expect(response.headers.get("location")).toBe("http://localhost:3000/dashboard");
+    expect(response.headers.get("location")).toBe("http://localhost:3000/auth?mode=signin");
   });
 });
