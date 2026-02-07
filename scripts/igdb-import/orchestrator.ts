@@ -6,7 +6,7 @@
 import { IGDBService } from "../../src/lib/services/igdbService";
 import { importGameFromIGDB } from "./game-importer";
 import type { IGDBGame } from "../../src/types/igdb";
-import type { CLIOptions, ImportStats, CheckpointData } from "./types";
+import type { CLIOptions, ImportStats } from "./types";
 import { RateLimiter } from "./rate-limiter";
 import { withRetry } from "./retry";
 import { ProgressTracker } from "./progress-tracker";
