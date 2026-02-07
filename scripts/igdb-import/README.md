@@ -78,7 +78,6 @@ scripts/igdb-import/
 ├── rate-limiter.ts     # Gestion du rate limiting IGDB (4 req/s)
 ├── retry.ts            # Logique de retry avec backoff exponentiel
 ├── progress-tracker.ts # Affichage de la progression
-├── checkpoint.ts       # Sauvegarde/reprise après interruption
 ├── orchestrator.ts     # Orchestrateur principal de l'import
 ├── game-importer.ts    # Import d'un jeu (adapté pour scripts)
 ├── supabase-client.ts  # Client Supabase pour scripts standalone
@@ -87,14 +86,33 @@ scripts/igdb-import/
 
 ## Fonctionnalités
 
+- **Barre de progression** : Affiche une barre de progression avec temps restant
+  estimé (désactivée en mode `--verbose`)
 - **Rate limiting** : Respecte la limite de 4 requêtes/seconde de l'API IGDB
 - **Retry automatique** : Réessaie les requêtes échouées avec backoff
   exponentiel
-- **Checkpoints** : Sauvegarde la progression pour reprendre après une
-  interruption
 - **Mode dry-run** : Permet de tester sans modifier la base de données
 - **Gestion des doublons** : Les jeux déjà présents sont ignorés (comptés comme
   "skipped")
+
+### Affichage de la progression
+
+Par défaut (sans `--verbose`), le script affiche une barre de progression :
+
+```
+[Progress] [████████░░░░░░░░░░░░] 40.0% | 400/1000 | ✓ 350 | ⊘ 45 | ✗ 5 | Elapsed: 2m 30s | ETA: 3m 45s
+```
+
+- `████████░░░░░░░░░░░░` : Barre visuelle de progression
+- `40.0%` : Pourcentage de complétion
+- `400/1000` : Jeux traités / total estimé
+- `✓ 350` : Jeux importés avec succès
+- `⊘ 45` : Jeux ignorés (déjà existants)
+- `✗ 5` : Erreurs
+- `Elapsed` : Temps écoulé
+- `ETA` : Temps restant estimé
+
+Avec `--verbose`, les logs détaillés remplacent la barre de progression.
 
 ## Codes de sortie
 

@@ -214,13 +214,14 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       id: string;
       igdb_id: number;
       version_title: string;
+      description: string | null;
       cover_image_url: string | null;
     }> = [];
 
     try {
       const { data: versionsData } = await supabase
         .from("game_versions")
-        .select("id, igdb_id, version_title, cover_image_url")
+        .select("id, igdb_id, version_title, description, cover_image_url")
         .eq("game_id", game.id)
         .order("display_order", { ascending: true });
 
@@ -420,6 +421,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       id: v.id,
       igdbId: v.igdb_id,
       title: v.version_title,
+      description: v.description,
       coverImageUrl: v.cover_image_url,
     }));
 

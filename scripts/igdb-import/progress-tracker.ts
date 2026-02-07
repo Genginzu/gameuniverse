@@ -8,6 +8,7 @@ import type { ImportStats } from "./types";
 /**
  * Tracks and displays import progress in real-time.
  * Shows percentage completion, counters, and estimated time remaining.
+ * Uses carriage return to update the same line in the terminal.
  *
  * Requirements: 5.1, 5.2, 5.3, 5.4
  */
@@ -17,6 +18,7 @@ export class ProgressTracker {
   private startTime: Date;
   private lastUpdateTime: number = 0;
   private readonly updateIntervalMs: number;
+  private lastLineLength: number = 0;
 
   /**
    * Create a new ProgressTracker
@@ -32,6 +34,7 @@ export class ProgressTracker {
   /**
    * Update the progress display with current stats.
    * Throttles updates to avoid console spam.
+   * Uses carriage return to overwrite the same line.
    *
    * Requirements: 5.1, 5.2
    *
@@ -57,12 +60,15 @@ export class ProgressTracker {
 
     // Format the progress line
     const progressLine =
-      `[Progress] ${progressBar} ${percentage.toFixed(1)}% | ` +
-      `${current}/${this.total} | ` +
+      `${progressBar} ${percentage.toFixed(1).padStart(5)}% | ` +
+      `${String(current).padStart(String(this.total).length)}/${this.total} | ` +
       `✓ ${stats.imported} | ⊘ ${stats.skipped} | ✗ ${stats.errors} | ` +
-      `Elapsed: ${elapsed} | ETA: ${eta}`;
+      `${elapsed} | ETA: ${eta}`;
 
-    console.log(progressLine);
+    // Clear the previous line and write the new one
+    const padding = Math.max(0, this.lastLineLength - progressLine.length);
+    process.stdout.write(`\r${progressLine}${" ".repeat(padding)}`);
+    this.lastLineLength = progressLine.length;
   }
 
   /**
@@ -159,12 +165,16 @@ export class ProgressTracker {
   /**
    * Display the final summary when import is complete.
    * Shows total time, final counts, and processing rate.
+   * Moves to a new line before printing the summary.
    *
    * Requirements: 5.3, 5.4
    *
    * @param stats Final import statistics
    */
   finish(stats: ImportStats): void {
+    // Move to a new line after the progress bar
+    process.stdout.write("\n");
+
     const endTime = stats.endTime ?? new Date();
     const totalMs = endTime.getTime() - this.startTime.getTime();
     const totalDuration = this.formatDuration(totalMs);

@@ -29,16 +29,6 @@ export interface ImportStats {
 }
 
 /**
- * Checkpoint data for resuming interrupted imports
- */
-export interface CheckpointData {
-  lastOffset: number;
-  lastIgdbId: number;
-  stats: ImportStats;
-  timestamp: Date;
-}
-
-/**
  * Options for the withRetry function
  */
 export interface RetryOptions {

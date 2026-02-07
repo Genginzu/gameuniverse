@@ -84,12 +84,10 @@ export class GameImportService {
         console.error(`[GameImportService] Error checking existing game:`, checkError);
       }
 
+      // If game exists, sync it instead of returning an error
       if (existingGame) {
-        console.warn(`[GameImportService] Game already exists: ${existingGame.slug}`);
-        return {
-          success: false,
-          error: `Game with IGDB ID ${igdbId} already exists (slug: ${existingGame.slug})`,
-        };
+        console.warn(`[GameImportService] Game already exists: ${existingGame.slug}, updating...`);
+        return this.syncWithIGDB(existingGame.id, igdbId);
       }
 
       // Ensure related entities exist (genres, companies)
@@ -149,6 +147,10 @@ export class GameImportService {
       // Create age ratings from IGDB
       await this.createAgeRatings(newGame.id, igdbGame);
       console.warn(`[GameImportService] Age ratings created`);
+
+      // Create game versions (editions)
+      await this.createVersions(newGame.id, igdbGame.id);
+      console.warn(`[GameImportService] Versions created`);
 
       // Fetch and save playtime from IGDB
       await this.fetchAndSavePlaytime(newGame.id, igdbGame.id);
@@ -240,6 +242,10 @@ export class GameImportService {
       // Update age ratings
       await this.updateAgeRatings(gameId, igdbGame);
       console.warn(`[GameImportService] Age ratings updated`);
+
+      // Update game versions (editions)
+      await this.updateVersions(gameId, igdbGame.id);
+      console.warn(`[GameImportService] Versions updated`);
 
       // Update playtime from IGDB
       console.warn(
@@ -1035,5 +1041,63 @@ export class GameImportService {
 
     // Create new age ratings
     await this.createAgeRatings(gameId, igdbGame);
+  }
+
+  /**
+   * Creates game versions (editions) from IGDB data
+   *
+   * @param gameId The game UUID
+   * @param igdbId The IGDB game ID
+   */
+  private static async createVersions(gameId: string, igdbId: number): Promise<void> {
+    try {
+      const versions = await IGDBService.getGameVersions(igdbId);
+
+      if (!versions || versions.length === 0) {
+        console.warn(`[GameImportService] No versions found for IGDB ID: ${igdbId}`);
+        return;
+      }
+
+      const supabase = await createRouteHandlerClient();
+
+      const versionEntries = versions.map((version, index) => ({
+        game_id: gameId,
+        igdb_id: version.id,
+        version_title: version.version_title || version.name,
+        description: version.summary || null,
+        cover_image_url: version.cover?.image_id
+          ? IGDBService.buildImageUrl(version.cover.image_id, "cover_big")
+          : null,
+        display_order: index,
+      }));
+
+      // Use type assertion since game_versions may not be in generated types yet
+      const { error } = await (supabase.from("game_versions") as ReturnType<typeof supabase.from>).insert(versionEntries as unknown[]);
+
+      if (error) {
+        console.error(`[GameImportService] Failed to insert versions:`, error);
+      } else {
+        console.warn(`[GameImportService] Created ${versionEntries.length} versions`);
+      }
+    } catch (error) {
+      console.error(`[GameImportService] Error creating versions:`, error);
+    }
+  }
+
+  /**
+   * Updates game versions for an existing game
+   * Replaces existing versions with fresh data from IGDB
+   *
+   * @param gameId The game UUID
+   * @param igdbId The IGDB game ID
+   */
+  private static async updateVersions(gameId: string, igdbId: number): Promise<void> {
+    const supabase = await createRouteHandlerClient();
+
+    // Delete existing versions (use type assertion since table may not be in generated types)
+    await (supabase.from("game_versions") as ReturnType<typeof supabase.from>).delete().eq("game_id", gameId);
+
+    // Create new versions
+    await this.createVersions(gameId, igdbId);
   }
 }

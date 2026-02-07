@@ -9,12 +9,7 @@ import type { IGDBGame } from "../../src/types/igdb";
 import type { CLIOptions, ImportStats, CheckpointData } from "./types";
 import { RateLimiter } from "./rate-limiter";
 import { withRetry } from "./retry";
-import {
-  saveCheckpoint,
-  loadCheckpoint,
-  deleteCheckpoint,
-  getCheckpointFilePath,
-} from "./checkpoint";
+import { ProgressTracker } from "./progress-tracker";
 
 /**
  * Orchestrates the bulk import of games from IGDB to Supabase.
@@ -25,18 +20,16 @@ export class ImportOrchestrator {
   private rateLimiter: RateLimiter;
   private options: CLIOptions;
   private currentOffset: number = 0;
-  private lastIgdbId: number = 0;
   private isInterrupted: boolean = false;
-  private checkpointFilePath: string;
+  private progressTracker: ProgressTracker | null = null;
+  private estimatedTotal: number = 0;
 
   // IGDB API constants
   private static readonly IGDB_API_URL = "https://api.igdb.com/v4";
   private static readonly BATCH_SIZE = 500; // Max allowed by IGDB
-  private static readonly CHECKPOINT_INTERVAL = 10; // Save checkpoint every N games
 
-  constructor(options: CLIOptions, checkpointFilePath?: string) {
+  constructor(options: CLIOptions) {
     this.options = options;
-    this.checkpointFilePath = checkpointFilePath ?? getCheckpointFilePath();
     this.rateLimiter = new RateLimiter(4, 1000); // 4 requests per second
     this.stats = {
       total: 0,
@@ -49,89 +42,16 @@ export class ImportOrchestrator {
 
   /**
    * Set up signal handlers for graceful shutdown.
-   * Captures SIGINT (Ctrl+C) and SIGTERM to save checkpoint before exiting.
-   *
-   * Requirements: 4.3
+   * Captures SIGINT (Ctrl+C) and SIGTERM to stop the import cleanly.
    */
   setupSignalHandlers(): void {
     const handleSignal = (signal: string) => {
-      console.log(`\n[Import] Received ${signal}, saving checkpoint and shutting down...`);
+      console.log(`\n[Import] Received ${signal}, shutting down...`);
       this.isInterrupted = true;
-      this.saveCurrentCheckpoint();
-      console.log(
-        `[Import] Checkpoint saved. You can resume later with --offset=${this.currentOffset}`
-      );
-      process.exit(0);
     };
 
     process.on("SIGINT", () => handleSignal("SIGINT"));
     process.on("SIGTERM", () => handleSignal("SIGTERM"));
-  }
-
-  /**
-   * Save the current state as a checkpoint.
-   *
-   * Requirements: 4.3
-   */
-  private saveCurrentCheckpoint(): void {
-    const checkpoint: CheckpointData = {
-      lastOffset: this.currentOffset,
-      lastIgdbId: this.lastIgdbId,
-      stats: { ...this.stats },
-      timestamp: new Date(),
-    };
-    saveCheckpoint(checkpoint, this.checkpointFilePath);
-  }
-
-  /**
-   * Try to resume from a previous checkpoint if available.
-   * Returns true if a checkpoint was loaded and applied.
-   *
-   * Requirements: 4.3
-   *
-   * @returns True if resumed from checkpoint, false otherwise
-   */
-  tryResumeFromCheckpoint(): boolean {
-    const checkpoint = loadCheckpoint(this.checkpointFilePath);
-
-    if (!checkpoint) {
-      return false;
-    }
-
-    // Check if the checkpoint is recent (within 24 hours)
-    const checkpointAge = Date.now() - checkpoint.timestamp.getTime();
-    const maxAge = 24 * 60 * 60 * 1000; // 24 hours
-
-    if (checkpointAge > maxAge) {
-      console.log("[Checkpoint] Found old checkpoint (>24h), ignoring");
-      deleteCheckpoint(this.checkpointFilePath);
-      return false;
-    }
-
-    console.log(`[Checkpoint] Found checkpoint from ${checkpoint.timestamp.toISOString()}`);
-    console.log(
-      `[Checkpoint] Last offset: ${checkpoint.lastOffset}, Last IGDB ID: ${checkpoint.lastIgdbId}`
-    );
-    console.log(
-      `[Checkpoint] Previous stats - Imported: ${checkpoint.stats.imported}, ` +
-        `Skipped: ${checkpoint.stats.skipped}, Errors: ${checkpoint.stats.errors}`
-    );
-
-    // Apply checkpoint state (only if no explicit offset was provided)
-    if (this.options.offset === undefined) {
-      this.currentOffset = checkpoint.lastOffset;
-      this.lastIgdbId = checkpoint.lastIgdbId;
-      this.stats = {
-        ...checkpoint.stats,
-        startTime: new Date(), // Reset start time for this session
-        endTime: undefined,
-      };
-      console.log(`[Checkpoint] Resuming from offset ${this.currentOffset}`);
-      return true;
-    } else {
-      console.log(`[Checkpoint] Explicit --offset provided, ignoring checkpoint`);
-      return false;
-    }
   }
 
   /**
@@ -146,6 +66,68 @@ export class ImportOrchestrator {
    */
   wasInterrupted(): boolean {
     return this.isInterrupted;
+  }
+
+  /**
+   * Fetch the total count of games matching the date range.
+   * Used to initialize the progress bar with an accurate estimate.
+   *
+   * @returns Estimated total number of games
+   */
+  async fetchTotalCount(): Promise<number> {
+    const timestampFrom = Math.floor(this.options.fromDate.getTime() / 1000);
+    const timestampTo = Math.floor(this.options.toDate.getTime() / 1000);
+
+    const query = `
+      fields id;
+      where first_release_date >= ${timestampFrom} & first_release_date <= ${timestampTo};
+      limit 1;
+    `;
+
+    await this.rateLimiter.throttle();
+
+    try {
+      const result = await withRetry(
+        async () => {
+          const accessToken = await IGDBService.getAccessToken();
+          const clientId = process.env.IGDB_CLIENT_ID;
+
+          if (!clientId) {
+            throw new Error("IGDB_CLIENT_ID not configured");
+          }
+
+          // Use the count endpoint to get total
+          const response = await fetch(`${ImportOrchestrator.IGDB_API_URL}/games/count`, {
+            method: "POST",
+            headers: {
+              "Client-ID": clientId,
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "text/plain",
+            },
+            body: query,
+          });
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`IGDB count failed: ${response.status} - ${errorText}`);
+          }
+
+          const data = await response.json() as { count: number };
+          return data.count;
+        },
+        {
+          maxAttempts: 3,
+          initialDelayMs: 1000,
+          verbose: this.options.verbose,
+          operationName: "fetchTotalCount",
+        }
+      );
+
+      return result.value;
+    } catch {
+      // If count fails, return 0 (progress bar will show "calculating...")
+      return 0;
+    }
   }
 
   /**
@@ -302,22 +284,19 @@ export class ImportOrchestrator {
    * Run the bulk import process.
    * Fetches games in batches, processes each game, and tracks progress.
    * Respects limit and offset options for controlled imports.
-   * Saves checkpoints periodically and on interruption.
+   * Shows a progress bar with ETA when not in verbose mode.
    *
-   * Requirements: 2.3, 4.3
+   * Requirements: 2.3, 5.1, 5.2, 5.3, 5.4
    *
    * @returns Final import statistics
    */
   async run(): Promise<ImportStats> {
     this.stats.startTime = new Date();
 
-    // Try to resume from checkpoint if no explicit offset provided
-    const resumed = this.tryResumeFromCheckpoint();
-
-    const startOffset = this.options.offset ?? this.currentOffset;
+    const startOffset = this.options.offset ?? 0;
     this.currentOffset = startOffset;
     const maxGames = this.options.limit;
-    let totalProcessed = resumed ? this.stats.total : 0;
+    let totalProcessed = 0;
 
     console.log(`[Import] Starting bulk import from IGDB...`);
     console.log(`[Import] Mode: ${this.options.dryRun ? "DRY-RUN (no database writes)" : "LIVE"}`);
@@ -330,8 +309,27 @@ export class ImportOrchestrator {
     if (startOffset > 0) {
       console.log(`[Import] Starting from offset: ${startOffset}`);
     }
-    if (resumed) {
-      console.log(`[Import] Resumed from checkpoint`);
+
+    // Initialize progress tracker for non-verbose mode
+    if (!this.options.verbose) {
+      // Fetch total count for accurate progress estimation
+      console.log(`[Import] Fetching total game count...`);
+      this.estimatedTotal = await this.fetchTotalCount();
+      
+      // Apply limit if specified
+      const effectiveTotal = maxGames 
+        ? Math.min(this.estimatedTotal - startOffset, maxGames)
+        : this.estimatedTotal - startOffset;
+      
+      if (this.estimatedTotal > 0) {
+        console.log(`[Import] Found ${this.estimatedTotal} games in date range`);
+        if (startOffset > 0) {
+          console.log(`[Import] Will process ~${effectiveTotal} games (after offset)`);
+        }
+      }
+      
+      this.progressTracker = new ProgressTracker(Math.max(effectiveTotal, 1), 500);
+      console.log(`\n`); // Add spacing before progress bar
     }
 
     try {
@@ -368,16 +366,16 @@ export class ImportOrchestrator {
           await this.processGame(game, this.options.dryRun);
           totalProcessed++;
           this.stats.total = totalProcessed;
-          this.lastIgdbId = game.id;
 
-          // Save checkpoint periodically
-          if (totalProcessed % ImportOrchestrator.CHECKPOINT_INTERVAL === 0) {
-            this.currentOffset += 1;
-            this.saveCurrentCheckpoint();
-          }
-
-          // Log progress periodically (every 10 games)
-          if (totalProcessed % 10 === 0) {
+          // Update progress display
+          if (this.progressTracker && !this.options.verbose) {
+            this.progressTracker.update(totalProcessed, {
+              imported: this.stats.imported,
+              skipped: this.stats.skipped,
+              errors: this.stats.errors,
+            });
+          } else if (this.options.verbose && totalProcessed % 10 === 0) {
+            // Log progress periodically in verbose mode (every 10 games)
             console.log(
               `[Progress] Processed ${totalProcessed} games - ` +
                 `Imported: ${this.stats.imported}, Skipped: ${this.stats.skipped}, Errors: ${this.stats.errors}`
@@ -400,34 +398,30 @@ export class ImportOrchestrator {
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       console.error(`[Import] Fatal error during import: ${errorMessage}`);
-      this.saveCurrentCheckpoint();
     }
 
     // Finalize statistics
     this.stats.endTime = new Date();
     this.stats.total = totalProcessed;
 
-    // Delete checkpoint on successful completion
-    if (!this.isInterrupted && this.stats.errors === 0) {
-      deleteCheckpoint(this.checkpointFilePath);
-      if (this.options.verbose) {
-        console.log(`[Checkpoint] Deleted checkpoint file after successful import`);
-      }
+    // Display final summary
+    if (this.progressTracker && !this.options.verbose) {
+      this.progressTracker.finish(this.stats);
+    } else {
+      // Print final summary for verbose mode
+      const duration = this.stats.endTime.getTime() - this.stats.startTime.getTime();
+      const durationSeconds = Math.round(duration / 1000);
+      const durationMinutes = Math.floor(durationSeconds / 60);
+      const remainingSeconds = durationSeconds % 60;
+
+      console.log(`\n[Import] ========== IMPORT COMPLETE ==========`);
+      console.log(`[Import] Total games processed: ${this.stats.total}`);
+      console.log(`[Import] Successfully imported: ${this.stats.imported}`);
+      console.log(`[Import] Skipped (existing): ${this.stats.skipped}`);
+      console.log(`[Import] Errors: ${this.stats.errors}`);
+      console.log(`[Import] Duration: ${durationMinutes}m ${remainingSeconds}s`);
+      console.log(`[Import] ==========================================\n`);
     }
-
-    // Print final summary
-    const duration = this.stats.endTime.getTime() - this.stats.startTime.getTime();
-    const durationSeconds = Math.round(duration / 1000);
-    const durationMinutes = Math.floor(durationSeconds / 60);
-    const remainingSeconds = durationSeconds % 60;
-
-    console.log(`\n[Import] ========== IMPORT COMPLETE ==========`);
-    console.log(`[Import] Total games processed: ${this.stats.total}`);
-    console.log(`[Import] Successfully imported: ${this.stats.imported}`);
-    console.log(`[Import] Skipped (existing): ${this.stats.skipped}`);
-    console.log(`[Import] Errors: ${this.stats.errors}`);
-    console.log(`[Import] Duration: ${durationMinutes}m ${remainingSeconds}s`);
-    console.log(`[Import] ==========================================\n`);
 
     return this.stats;
   }

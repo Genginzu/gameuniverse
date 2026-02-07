@@ -132,8 +132,14 @@ export async function GET(request: NextRequest) {
     }
 
     // Add search filter if provided
+    // Split search into words and search for each word as a prefix
+    // This allows partial word matching (e.g., "Dragon Quest Rei" matches "Dragon Quest Reimagined")
     if (search.trim()) {
-      query = query.ilike("game_translations.title", `%${search.trim()}%`);
+      const searchWords = search.trim().split(/\s+/).filter(Boolean);
+      for (const word of searchWords) {
+        // Each word must appear somewhere in the title (as prefix or substring)
+        query = query.ilike("game_translations.title", `%${word}%`);
+      }
     }
 
     // Get total count for pagination (separate query for performance)
@@ -145,8 +151,12 @@ export async function GET(request: NextRequest) {
       )
       .eq("game_translations.language_code", locale);
 
+    // Apply the same word-by-word search filter for count query
     if (search.trim()) {
-      countQuery = countQuery.ilike("game_translations.title", `%${search.trim()}%`);
+      const searchWords = search.trim().split(/\s+/).filter(Boolean);
+      for (const word of searchWords) {
+        countQuery = countQuery.ilike("game_translations.title", `%${word}%`);
+      }
     }
 
     // Filter count by user's library if requested

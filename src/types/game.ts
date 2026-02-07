@@ -103,6 +103,7 @@ export interface GameVersion {
   id: string;
   igdbId: number;
   title: string;
+  description?: string | null;
   coverImageUrl: string | null;
 }
 

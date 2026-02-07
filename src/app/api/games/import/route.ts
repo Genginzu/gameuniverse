@@ -46,11 +46,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const result = await GameImportService.importFromIGDB(parsedIgdbId);
 
     if (!result.success) {
-      // Check if it's a "already exists" error
-      if (result.error?.includes("already exists")) {
-        return NextResponse.json({ error: result.error }, { status: 409 });
-      }
-
       // Check if it's a "not found" error
       if (result.error?.includes("not found")) {
         return NextResponse.json({ error: result.error }, { status: 404 });

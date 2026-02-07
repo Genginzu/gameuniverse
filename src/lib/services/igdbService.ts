@@ -96,6 +96,7 @@ export class IGDBService {
 
   /**
    * Searches for games in the IGDB database
+   * Supports partial word matching (e.g., "Dragon Quest Rei" finds "Dragon Quest Reimagined")
    * @param query The search query string
    * @param limit Maximum number of results to return (default: 10)
    * @returns Array of search results
@@ -108,10 +109,18 @@ export class IGDBService {
       throw new Error("IGDB_CLIENT_ID not configured");
     }
 
+    // Split query into words and build a where clause that matches all words
+    // Using case-insensitive contains (~) for each word to support partial matching
+    const words = query.trim().split(/\s+/).filter(Boolean);
+    const escapedWords = words.map(word => word.replace(/"/g, '\\"').replace(/\*/g, '\\*'));
+    
+    // Build where conditions: each word must appear in the name (case-insensitive)
+    const whereConditions = escapedWords.map(word => `name ~ *"${word}"*`).join(" & ");
+
     // IGDB uses a custom query language called Apicalypse
     const body = `
-      search "${query.replace(/"/g, '\\"')}";
       fields name, slug, cover.image_id, first_release_date, involved_companies.company.name, involved_companies.developer;
+      where ${whereConditions};
       limit ${limit};
     `;
 
@@ -410,7 +419,7 @@ export class IGDBService {
     }
 
     const body = `
-      fields id, name, slug, version_title, cover.image_id;
+      fields id, name, slug, version_title, summary, cover.image_id;
       where version_parent = ${igdbId};
       limit 50;
     `;

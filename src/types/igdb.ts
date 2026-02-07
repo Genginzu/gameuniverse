@@ -166,5 +166,6 @@ export interface IGDBGameVersion {
   name: string;
   slug: string;
   version_title: string | null;
+  summary?: string;
   cover?: { image_id: string };
 }

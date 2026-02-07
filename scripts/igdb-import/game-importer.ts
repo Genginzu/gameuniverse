@@ -589,14 +589,15 @@ async function importGameVersions(
         ? IGDBService.buildImageUrl(version.cover.image_id, "cover_big")
         : null;
 
-      const { error } = await supabase.from("game_versions").upsert(
+      const { error } = await (supabase.from("game_versions") as ReturnType<typeof supabase.from>).upsert(
         {
           game_id: gameId,
           igdb_id: version.id,
           version_title: version.version_title || version.name,
+          description: version.summary || null,
           cover_image_url: coverUrl,
           display_order: i,
-        },
+        } as Record<string, unknown>,
         {
           onConflict: "game_id,igdb_id",
         }
