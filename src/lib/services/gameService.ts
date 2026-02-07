@@ -1,8 +1,66 @@
 import { GameDetails, GameSummary } from "@/types/game";
+import {
+  BaseService,
+  FetchOptions,
+  PaginatedResponse,
+  EntityMetadata,
+} from "./baseService";
+
+/**
+ * Game-specific fetch options extending base options
+ */
+interface GameFetchOptions extends FetchOptions {
+  genres?: string[];
+}
+
+/**
+ * Game-specific paginated response format for backward compatibility
+ */
+interface GamesResponse {
+  games: GameSummary[];
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalCount: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+}
 
 /**
  * Service pour la gestion des jeux
  * Centralise toute la logique de récupération des données de jeux
+ */
+class GameServiceImpl extends BaseService<GameDetails, GameSummary> {
+  protected readonly entityName = "game";
+  protected readonly apiPath = "/api/games";
+
+  /**
+   * Builds SEO metadata from a game entity
+   */
+  protected buildMetadata(game: GameDetails, locale: string): EntityMetadata {
+    return {
+      title: `${game.title} - Game Universe`,
+      description:
+        game.description ||
+        (locale === "fr"
+          ? `Découvrez ${game.title}, développé par ${game.developer}`
+          : `Discover ${game.title}, developed by ${game.developer}`),
+      openGraph: {
+        title: game.title,
+        description: game.description,
+        images: game.media?.coverImage ? [game.media.coverImage] : [],
+      },
+    };
+  }
+}
+
+// Singleton instance for internal use
+const gameServiceInstance = new GameServiceImpl();
+
+/**
+ * Static GameService class for backward compatibility
+ * Maintains the same API as the original implementation
  */
 export class GameService {
   private static getBaseUrl(): string {
@@ -15,34 +73,11 @@ export class GameService {
    * @param locale - La locale (fr, en)
    * @returns Les détails du jeu ou null si non trouvé
    */
-  static async fetchGameDetails(slug: string, locale: string = "fr"): Promise<GameDetails | null> {
-    try {
-      const baseUrl = this.getBaseUrl();
-      const url = `${baseUrl}/api/games/${slug}?locale=${locale}`;
-      console.warn(`[GameService] Fetching game details from: ${url}`);
-
-      const response = await fetch(url, {
-        cache: "no-store", // Ensure fresh data for each request
-      });
-
-      console.warn(`[GameService] Response status: ${response.status}`);
-
-      if (!response.ok) {
-        if (response.status === 404) {
-          console.warn(`[GameService] Game not found: ${slug}`);
-          return null;
-        }
-        const errorText = await response.text();
-        console.error(`[GameService] Error response: ${errorText}`);
-        throw new Error(`Failed to fetch game details: ${response.status} ${response.statusText}`);
-      }
-
-      const gameDetails: GameDetails = await response.json();
-      return gameDetails;
-    } catch (error) {
-      console.error("Error fetching game details:", error);
-      throw error;
-    }
+  static async fetchGameDetails(
+    slug: string,
+    locale: string = "fr"
+  ): Promise<GameDetails | null> {
+    return gameServiceInstance.fetchDetails(slug, locale);
   }
 
   /**
@@ -58,39 +93,26 @@ export class GameService {
       limit?: number;
       locale?: string;
     } = {}
-  ): Promise<{
-    games: GameSummary[];
-    pagination: {
-      currentPage: number;
-      totalPages: number;
-      totalCount: number;
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-    };
-  }> {
-    try {
-      const baseUrl = this.getBaseUrl();
-      const searchParams = new URLSearchParams();
+  ): Promise<GamesResponse> {
+    // Use the base service fetchList and transform the response
+    const response = await gameServiceInstance.fetchList(
+      options as GameFetchOptions
+    );
 
-      if (options.search) searchParams.set("search", options.search);
-      if (options.genres?.length) searchParams.set("genres", options.genres.join(","));
-      if (options.page) searchParams.set("page", options.page.toString());
-      if (options.limit) searchParams.set("limit", options.limit.toString());
-      if (options.locale) searchParams.set("locale", options.locale);
+    // Transform to maintain backward compatibility
+    // The API returns { games: [...], pagination: {...} } format
+    // but BaseService expects { items: [...], pagination: {...} }
+    // We need to handle both formats
+    const rawResponse = response as unknown as GamesResponse | PaginatedResponse<GameSummary>;
 
-      const response = await fetch(`${baseUrl}/api/games?${searchParams.toString()}`, {
-        cache: "no-store",
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch games: ${response.status} ${response.statusText}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error("Error fetching games:", error);
-      throw error;
+    if ("games" in rawResponse) {
+      return rawResponse;
     }
+
+    return {
+      games: response.items,
+      pagination: response.pagination,
+    };
   }
 
   /**
@@ -100,13 +122,7 @@ export class GameService {
    * @returns true si le jeu existe, false sinon
    */
   static async gameExists(slug: string, locale: string = "fr"): Promise<boolean> {
-    try {
-      const game = await this.fetchGameDetails(slug, locale);
-      return game !== null;
-    } catch (_error) {
-      console.warn(`Failed to check if game exists: ${slug}`, _error);
-      return false;
-    }
+    return gameServiceInstance.exists(slug, locale);
   }
 
   /**
@@ -116,33 +132,6 @@ export class GameService {
    * @returns Métadonnées pour le SEO
    */
   static async generateGameMetadata(slug: string, locale: string = "fr") {
-    try {
-      const game = await this.fetchGameDetails(slug, locale);
-
-      if (!game) {
-        return {
-          title: locale === "fr" ? "Jeu non trouvé" : "Game not found",
-        };
-      }
-
-      return {
-        title: `${game.title} - Game Universe`,
-        description:
-          game.description ||
-          (locale === "fr"
-            ? `Découvrez ${game.title}, développé par ${game.developer}`
-            : `Discover ${game.title}, developed by ${game.developer}`),
-        openGraph: {
-          title: game.title,
-          description: game.description,
-          images: game.media?.coverImage ? [game.media.coverImage] : [],
-        },
-      };
-    } catch (error) {
-      console.error("Error generating game metadata:", error);
-      return {
-        title: locale === "fr" ? "Erreur" : "Error",
-      };
-    }
+    return gameServiceInstance.generateMetadata(slug, locale);
   }
 }

@@ -6,6 +6,7 @@ import {
   CharacterRelationship,
 } from "@/types/character";
 import { createServerClient } from "@/lib/supabase-server";
+import { BaseService, FetchOptions, PaginatedResponse, EntityMetadata } from "./baseService";
 
 // Type definitions for Supabase query results
 interface CharacterTranslationRow {
@@ -78,6 +79,58 @@ interface CharacterDetailsRow extends CharacterListRow {
 }
 
 /**
+ * Character-specific fetch options
+ */
+interface CharacterFetchOptions extends FetchOptions {
+  games?: string[];
+  roles?: string[];
+}
+
+/**
+ * Character-specific paginated response format
+ */
+interface CharactersResponse {
+  characters: CharacterSummary[];
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalCount: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
+}
+
+/**
+ * Internal CharacterService implementation extending BaseService
+ */
+class CharacterServiceImpl extends BaseService<CharacterDetails, CharacterSummary> {
+  protected readonly entityName = "character";
+  protected readonly apiPath = "/api/characters";
+
+  /**
+   * Builds SEO metadata from a character entity
+   */
+  protected buildMetadata(character: CharacterDetails, locale: string): EntityMetadata {
+    return {
+      title: `${character.name} - Game Universe`,
+      description:
+        character.description ||
+        (locale === "fr"
+          ? `Découvrez ${character.name}, personnage de ${character.primaryGame}`
+          : `Discover ${character.name}, character from ${character.primaryGame}`),
+      openGraph: {
+        title: character.name,
+        description: character.description,
+        images: character.media?.mainImage ? [character.media.mainImage] : [],
+      },
+    };
+  }
+}
+
+// Singleton instance for internal use
+const characterServiceInstance = new CharacterServiceImpl();
+
+/**
  * Service pour la gestion des personnages
  * Centralise toute la logique de récupération des données de personnages
  */
@@ -101,16 +154,7 @@ export class CharacterService {
       limit?: number;
       locale?: string;
     } = {}
-  ): Promise<{
-    characters: CharacterSummary[];
-    pagination: {
-      currentPage: number;
-      totalPages: number;
-      totalCount: number;
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-    };
-  }> {
+  ): Promise<CharactersResponse> {
     const { search = "", games = [], roles = [], page = 1, limit = 20, locale = "fr" } = options;
 
     const supabase = await createServerClient();
@@ -354,7 +398,7 @@ export class CharacterService {
         };
       }) || [];
 
-    const games: CharacterGame[] = gamesRaw
+    const processedGames: CharacterGame[] = gamesRaw
       .filter((g): g is NonNullable<typeof g> => g !== null)
       .sort((a, b) => {
         // Sort primary game first, then alphabetically
@@ -364,7 +408,8 @@ export class CharacterService {
       });
 
     // Get primary game name
-    const primaryGame = games.find((g) => g.isPrimary)?.title || games[0]?.title || "Unknown";
+    const primaryGame =
+      processedGames.find((g) => g.isPrimary)?.title || processedGames[0]?.title || "Unknown";
 
     // Process media with JSON aggregation pattern
     const mediaItems = typedCharacter.character_media || [];
@@ -447,7 +492,7 @@ export class CharacterService {
       biography: translation?.biography || undefined,
       weapons: translation?.weapons || undefined,
       backgroundColor: typedCharacter.background_color || "#0f172a",
-      games,
+      games: processedGames,
       primaryGame,
       media,
       relationships,
@@ -466,27 +511,7 @@ export class CharacterService {
     slug: string,
     locale: string = "fr"
   ): Promise<CharacterDetails | null> {
-    try {
-      const baseUrl = this.getBaseUrl();
-      const response = await fetch(`${baseUrl}/api/characters/${slug}?locale=${locale}`, {
-        cache: "no-store", // Ensure fresh data for each request
-      });
-
-      if (!response.ok) {
-        if (response.status === 404) {
-          return null;
-        }
-        throw new Error(
-          `Failed to fetch character details: ${response.status} ${response.statusText}`
-        );
-      }
-
-      const characterDetails: CharacterDetails = await response.json();
-      return characterDetails;
-    } catch (error) {
-      console.error("Error fetching character details:", error);
-      throw error;
-    }
+    return characterServiceInstance.fetchDetails(slug, locale);
   }
 
   /**
@@ -503,40 +528,24 @@ export class CharacterService {
       limit?: number;
       locale?: string;
     } = {}
-  ): Promise<{
-    characters: CharacterSummary[];
-    pagination: {
-      currentPage: number;
-      totalPages: number;
-      totalCount: number;
-      hasNextPage: boolean;
-      hasPreviousPage: boolean;
-    };
-  }> {
-    try {
-      const baseUrl = this.getBaseUrl();
-      const searchParams = new URLSearchParams();
+  ): Promise<CharactersResponse> {
+    // Use the base service fetchList and transform the response
+    const response = await characterServiceInstance.fetchList(options as CharacterFetchOptions);
 
-      if (options.search) searchParams.set("search", options.search);
-      if (options.games?.length) searchParams.set("games", options.games.join(","));
-      if (options.roles?.length) searchParams.set("roles", options.roles.join(","));
-      if (options.page) searchParams.set("page", options.page.toString());
-      if (options.limit) searchParams.set("limit", options.limit.toString());
-      if (options.locale) searchParams.set("locale", options.locale);
+    // Transform to maintain backward compatibility
+    // The API returns { characters: [...], pagination: {...} } format
+    const rawResponse = response as unknown as
+      | CharactersResponse
+      | PaginatedResponse<CharacterSummary>;
 
-      const response = await fetch(`${baseUrl}/api/characters?${searchParams.toString()}`, {
-        cache: "no-store",
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch characters: ${response.status} ${response.statusText}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error("Error fetching characters:", error);
-      throw error;
+    if ("characters" in rawResponse) {
+      return rawResponse;
     }
+
+    return {
+      characters: response.items,
+      pagination: response.pagination,
+    };
   }
 
   /**
@@ -546,13 +555,7 @@ export class CharacterService {
    * @returns true si le personnage existe, false sinon
    */
   static async characterExists(slug: string, locale: string = "fr"): Promise<boolean> {
-    try {
-      const character = await this.fetchCharacterDetails(slug, locale);
-      return character !== null;
-    } catch (_error) {
-      console.warn(`Failed to check if character exists: ${slug}`, _error);
-      return false;
-    }
+    return characterServiceInstance.exists(slug, locale);
   }
 
   /**
@@ -562,33 +565,6 @@ export class CharacterService {
    * @returns Métadonnées pour le SEO
    */
   static async generateCharacterMetadata(slug: string, locale: string = "fr") {
-    try {
-      const character = await this.fetchCharacterDetails(slug, locale);
-
-      if (!character) {
-        return {
-          title: locale === "fr" ? "Personnage non trouvé" : "Character not found",
-        };
-      }
-
-      return {
-        title: `${character.name} - Game Universe`,
-        description:
-          character.description ||
-          (locale === "fr"
-            ? `Découvrez ${character.name}, personnage de ${character.primaryGame}`
-            : `Discover ${character.name}, character from ${character.primaryGame}`),
-        openGraph: {
-          title: character.name,
-          description: character.description,
-          images: character.media?.mainImage ? [character.media.mainImage] : [],
-        },
-      };
-    } catch (error) {
-      console.error("Error generating character metadata:", error);
-      return {
-        title: locale === "fr" ? "Erreur" : "Error",
-      };
-    }
+    return characterServiceInstance.generateMetadata(slug, locale);
   }
 }

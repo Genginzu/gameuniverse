@@ -8,6 +8,7 @@ import {
   GameCountRangeKey,
 } from "@/types/player";
 import { createServerClient } from "@/lib/supabase-server";
+import { BaseService, FetchOptions, PaginatedResponse, EntityMetadata } from "./baseService";
 
 // Type definitions for Supabase query results
 interface ProfileRow {
@@ -39,6 +40,43 @@ interface LibraryEntry {
   added_at: string;
   games: LibraryEntryGame | null;
 }
+
+/**
+ * Player-specific fetch options
+ */
+interface PlayerFetchOptions extends FetchOptions {
+  gameCountRange?: string;
+}
+
+/**
+ * Internal PlayerService implementation extending BaseService
+ */
+class PlayerServiceImpl extends BaseService<PlayerDetails, PlayerSummary> {
+  protected readonly entityName = "player";
+  protected readonly apiPath = "/api/players";
+
+  /**
+   * Builds SEO metadata from a player entity
+   */
+  protected buildMetadata(player: PlayerDetails, locale: string): EntityMetadata {
+    const displayName = player.fullName || (locale === "fr" ? "Joueur" : "Player");
+
+    return {
+      title: `${displayName} - Game Universe`,
+      description:
+        locale === "fr"
+          ? `Profil de ${displayName} - ${player.stats.totalGames} jeux dans sa bibliothèque`
+          : `${displayName}'s profile - ${player.stats.totalGames} games in library`,
+      openGraph: {
+        title: displayName,
+        images: player.avatarUrl ? [player.avatarUrl] : [],
+      },
+    };
+  }
+}
+
+// Singleton instance for internal use
+const playerServiceInstance = new PlayerServiceImpl();
 
 /**
  * Service pour la gestion des joueurs (profils publics)
@@ -94,9 +132,9 @@ export class PlayerService {
 
     // Get game counts for all profiles in a separate query
     const profileIds = (allProfiles || []).map((p) => p.id);
-    
+
     const gameCounts: Record<string, number> = {};
-    
+
     if (profileIds.length > 0) {
       // Query user_library to get counts per user
       const { data: libraryCounts, error: countError } = await supabase
@@ -240,9 +278,9 @@ export class PlayerService {
         if (!game) return null;
 
         // Find translation for the requested locale
-        const translation = game.game_translations?.find(
-          (t) => t.language_code === locale
-        ) || game.game_translations?.[0];
+        const translation =
+          game.game_translations?.find((t) => t.language_code === locale) ||
+          game.game_translations?.[0];
 
         return {
           id: entry.id,
@@ -349,28 +387,21 @@ export class PlayerService {
       limit?: number;
     } = {}
   ): Promise<PlayersResponse> {
-    try {
-      const baseUrl = this.getBaseUrl();
-      const searchParams = new URLSearchParams();
+    // Use the base service fetchList and transform the response
+    const response = await playerServiceInstance.fetchList(options as PlayerFetchOptions);
 
-      if (options.search) searchParams.set("search", options.search);
-      if (options.gameCountRange) searchParams.set("gameCountRange", options.gameCountRange);
-      if (options.page) searchParams.set("page", options.page.toString());
-      if (options.limit) searchParams.set("limit", options.limit.toString());
+    // Transform to maintain backward compatibility
+    // The API returns { players: [...], pagination: {...} } format
+    const rawResponse = response as unknown as PlayersResponse | PaginatedResponse<PlayerSummary>;
 
-      const response = await fetch(`${baseUrl}/api/players?${searchParams.toString()}`, {
-        cache: "no-store",
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to fetch players: ${response.status} ${response.statusText}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      console.error("Error fetching players:", error);
-      throw error;
+    if ("players" in rawResponse) {
+      return rawResponse;
     }
+
+    return {
+      players: response.items,
+      pagination: response.pagination,
+    };
   }
 
   /**
@@ -379,13 +410,7 @@ export class PlayerService {
    * @returns true si le joueur existe, false sinon
    */
   static async playerExists(playerId: string): Promise<boolean> {
-    try {
-      const player = await this.fetchPlayerDetails(playerId);
-      return player !== null;
-    } catch (_error) {
-      console.warn(`Failed to check if player exists: ${playerId}`, _error);
-      return false;
-    }
+    return playerServiceInstance.exists(playerId);
   }
 
   /**
@@ -405,33 +430,6 @@ export class PlayerService {
    * @returns Métadonnées pour le SEO
    */
   static async generatePlayerMetadata(playerId: string, locale: string = "fr") {
-    try {
-      const player = await this.fetchPlayerDetails(playerId, locale);
-
-      if (!player) {
-        return {
-          title: locale === "fr" ? "Joueur non trouvé" : "Player not found",
-        };
-      }
-
-      const displayName = player.fullName || (locale === "fr" ? "Joueur" : "Player");
-
-      return {
-        title: `${displayName} - Game Universe`,
-        description:
-          locale === "fr"
-            ? `Profil de ${displayName} - ${player.stats.totalGames} jeux dans sa bibliothèque`
-            : `${displayName}'s profile - ${player.stats.totalGames} games in library`,
-        openGraph: {
-          title: displayName,
-          images: player.avatarUrl ? [player.avatarUrl] : [],
-        },
-      };
-    } catch (error) {
-      console.error("Error generating player metadata:", error);
-      return {
-        title: locale === "fr" ? "Erreur" : "Error",
-      };
-    }
+    return playerServiceInstance.generateMetadata(playerId, locale);
   }
 }
