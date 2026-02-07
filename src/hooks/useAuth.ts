@@ -122,10 +122,13 @@ export function useAuth() {
   }, [supabase, router]);
 
   const signIn = async (email: string, password: string) => {
+    console.log("Attempting sign in for:", email);
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
+
+    console.log("Sign in response:", { data, error });
 
     if (error) {
       throw error;
@@ -140,6 +143,7 @@ export function useAuth() {
     fullName?: string,
     preferredLocale?: string
   ) => {
+    const redirectUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -148,6 +152,7 @@ export function useAuth() {
           username: fullName || "",
           preferred_locale: preferredLocale || "fr",
         },
+        emailRedirectTo: `${redirectUrl}/api/auth/callback`,
       },
     });
 

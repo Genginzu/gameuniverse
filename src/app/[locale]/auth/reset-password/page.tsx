@@ -62,6 +62,7 @@ export default function ResetPasswordPage() {
 
   useEffect(() => {
     const handleRecovery = async () => {
+      // Vérifier d'abord les hash params (flow standard)
       const hashParams = new URLSearchParams(window.location.hash.substring(1));
       const accessToken = hashParams.get("access_token");
       const refreshToken = hashParams.get("refresh_token");
@@ -85,6 +86,30 @@ export default function ResetPasswordPage() {
         return;
       }
 
+      // Vérifier les query params (token_hash flow)
+      const queryParams = new URLSearchParams(window.location.search);
+      const tokenHash = queryParams.get("token_hash");
+      const queryType = queryParams.get("type");
+
+      if (tokenHash && queryType === "recovery") {
+        const { error: verifyError } = await supabase.auth.verifyOtp({
+          token_hash: tokenHash,
+          type: "recovery",
+        });
+
+        if (verifyError) {
+          setError(verifyError.message);
+          setIsLoading(false);
+          return;
+        }
+
+        window.history.replaceState(null, "", window.location.pathname);
+        setIsAuthenticated(true);
+        setIsLoading(false);
+        return;
+      }
+
+      // Vérifier si déjà authentifié
       const {
         data: { session },
       } = await supabase.auth.getSession();
@@ -293,7 +318,7 @@ export default function ResetPasswordPage() {
                   </div>
                   <Button
                     type="submit"
-                    className="h-12 w-full rounded-xl border-2 bg-gradient-to-br from-blue-500 via-purple-600 to-purple-700 font-semibold text-white shadow-lg transition-all duration-200 hover:border-purple-700 hover:bg-none hover:text-black hover:shadow-xl"
+                    className="h-12 w-full rounded-xl border-2 border-transparent bg-gradient-to-br from-blue-500 via-purple-600 to-purple-700 font-semibold text-white shadow-lg transition-all duration-200 hover:border-purple-500 hover:from-white hover:via-white hover:to-white hover:text-purple-700 hover:shadow-xl"
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? (

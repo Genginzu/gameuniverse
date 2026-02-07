@@ -87,7 +87,7 @@ export function LandingHeader() {
             </Button>
             <Button
               asChild
-              className="rounded-xl border-2 bg-gradient-to-br from-blue-500 to-purple-500 text-white transition-all hover:border-purple-500 hover:bg-none hover:text-black"
+              className="rounded-xl border-2 border-transparent bg-gradient-to-br from-blue-500 to-purple-500 text-white transition-all hover:border-purple-500 hover:from-white hover:to-white hover:text-purple-700"
             >
               <Link href="/auth?mode=signup">{t("signup")}</Link>
             </Button>

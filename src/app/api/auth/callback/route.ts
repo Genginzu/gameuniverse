@@ -4,19 +4,43 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
   const code = requestUrl.searchParams.get("code");
+  const token_hash = requestUrl.searchParams.get("token_hash");
+  const type = requestUrl.searchParams.get("type");
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
+  const supabase = await createRouteHandlerClient();
+
+  // Handle token_hash flow (from email templates)
+  if (token_hash && type) {
+    const { error } = await supabase.auth.verifyOtp({
+      token_hash,
+      type: type as "signup" | "recovery" | "email",
+    });
+
+    if (error) {
+      console.error("Auth callback verifyOtp error:", error);
+      return NextResponse.redirect(
+        new URL("/auth/error?message=" + encodeURIComponent(error.message), baseUrl)
+      );
+    }
+
+    return NextResponse.redirect(new URL("/dashboard", baseUrl));
+  }
+
+  // Handle code flow (PKCE)
   if (code) {
-    const supabase = await createRouteHandlerClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (error) {
       console.error("Auth callback error:", error);
       return NextResponse.redirect(
-        new URL("/auth/error?message=" + encodeURIComponent(error.message), requestUrl.origin)
+        new URL("/auth/error?message=" + encodeURIComponent(error.message), baseUrl)
       );
     }
+
+    return NextResponse.redirect(new URL("/dashboard", baseUrl));
   }
 
-  // Redirect to dashboard after successful authentication
-  return NextResponse.redirect(new URL("/dashboard", requestUrl.origin));
+  // No code or token_hash provided
+  return NextResponse.redirect(new URL("/auth?mode=signin", baseUrl));
 }

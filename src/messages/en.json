@@ -107,7 +107,13 @@
       "description": "Create your Game Universe account",
       "submit": "Create Account",
       "switchText": "Already have an account?",
-      "switchLink": "Sign in"
+      "switchLink": "Sign in",
+      "emailSentTitle": "Check your inbox",
+      "emailSentDescription": "We've sent you a confirmation email to activate your account.",
+      "emailSentTo": "An email has been sent to:",
+      "checkSpam": "If you don't see the email, check your spam folder.",
+      "alreadyConfirmed": "Already confirmed your email?",
+      "userAlreadyExists": "An account already exists with this email address. Sign in or use \"Forgot password\" if needed."
     },
     "form": {
       "email": "Email",
@@ -123,7 +129,13 @@
       "description": "An error occurred during authentication",
       "generic": "An unexpected error occurred",
       "tryAgain": "Try Again",
-      "backHome": "Back to Home"
+      "backHome": "Back to Home",
+      "invalidCredentials": "Invalid email or password",
+      "emailNotConfirmed": "Please confirm your email before signing in",
+      "userAlreadyRegistered": "An account already exists with this email address",
+      "passwordTooShort": "Password must be at least 6 characters",
+      "invalidEmail": "Invalid email format",
+      "rateLimitExceeded": "Too many attempts. Please try again later"
     },
     "resetPassword": {
       "title": "New Password",
