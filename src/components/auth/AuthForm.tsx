@@ -41,7 +41,7 @@ interface AuthFormProps {
 export function AuthForm({ mode, onModeChange }: AuthFormProps) {
   const t = useTranslations("auth");
   const locale = useLocale();
-  const { signIn, signUp, loading } = useAuth();
+  const { signIn, signUp, loading: _loading } = useAuth();
 
   const [formData, setFormData] = useState({
     email: "",

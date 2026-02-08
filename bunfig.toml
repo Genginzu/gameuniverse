@@ -37,7 +37,7 @@ timeout = 30000
 coverage = true
 # Bail on first failure for faster feedback
 bail = false
-# Run tests in parallel
+# Enable parallel execution - each worker has isolated module cache
 parallel = true
 
 [build]

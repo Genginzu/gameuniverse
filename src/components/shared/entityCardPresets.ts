@@ -1,5 +1,5 @@
 import type { EntityCardConfig } from "./EntityCard";
-import { getMetascoreColor } from "./EntityCard";
+import { getMetascoreColor } from "./EntityCard"; // eslint-disable-line no-duplicate-imports
 import type { GameSummary } from "@/types/game";
 import type { PlayerSummary } from "@/types/player";
 import type { CharacterSummary } from "@/types/character";

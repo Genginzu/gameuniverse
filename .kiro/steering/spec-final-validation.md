@@ -17,12 +17,15 @@ validation complète de l'application.
 ### 1. Exécution des Tests
 
 ```bash
-bun test --run
+bun run test:all
 ```
 
-- Exécuter tous les tests de l'application
+- Exécuter tous les tests de l'application (parallèles + isolés)
 - Vérifier que tous les tests passent
 - Si des tests échouent, les corriger avant de continuer
+
+**IMPORTANT**: Utiliser `bun run test:all` et non `bun test` pour inclure les
+tests isolés.
 
 ### 2. Lint du Code
 
@@ -51,8 +54,8 @@ Ajouter ces tâches à la fin du fichier `tasks.md` :
 ```markdown
 ## Task X: Exécution des tests complets
 
-- [ ] Exécuter `bun test --run`
-- [ ] Vérifier que tous les tests passent
+- [ ] Exécuter `bun run test:all`
+- [ ] Vérifier que tous les tests passent (parallèles + isolés)
 - [ ] Corriger les tests en échec si nécessaire
 
 ## Task X+1: Lint du code

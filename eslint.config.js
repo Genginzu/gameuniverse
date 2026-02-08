@@ -127,6 +127,7 @@ export default [
       ".husky/",
       "public/",
       "test-resend.js",
+      "scripts/test-igdb-age-ratings.js",
     ],
   },
 ];

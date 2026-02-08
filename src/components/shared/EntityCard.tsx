@@ -108,7 +108,7 @@ export function EntityCard<T extends object>({
   );
 
   // Get field values safely
-  const getFieldValue = <K extends keyof T>(field: K): T[K] => entity[field];
+  const _getFieldValue = <K extends keyof T>(field: K): T[K] => entity[field];
   const getStringValue = (field: keyof T): string => String(entity[field] || "");
 
   // Handle library toggle

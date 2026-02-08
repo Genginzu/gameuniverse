@@ -42,10 +42,24 @@ Use Bun's mocking utilities:
 ## Running Tests
 
 ```bash
-bun test           # Run all tests
-bun test --watch   # Watch mode
-bun test --run     # Single run
+bun test                # Run all tests
+bun test --watch        # Watch mode
+bun test --run          # Single run
+bun test --only-failures # Affiche uniquement les tests en échec (économise du contexte)
 ```
+
+## Debugging Failed Tests
+
+Quand tu dois corriger des tests en erreur, utilise `--only-failures` pour
+n'afficher que les échecs :
+
+```bash
+bun test --only-failures
+# ou via npm script
+bun run test:failures
+```
+
+Cela masque les tests qui passent et permet de se concentrer sur les problèmes.
 
 ## Why Bun?
 

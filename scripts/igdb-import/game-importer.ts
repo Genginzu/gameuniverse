@@ -6,7 +6,7 @@
 import { createScriptClient } from "./supabase-client";
 import { IGDBService } from "../../src/lib/services/igdbService";
 import type { IGDBGame } from "../../src/types/igdb";
-import { IGDB_RATING_CATEGORIES, IGDB_ALL_RATINGS } from "../../src/types/igdb";
+import { IGDB_RATING_CATEGORIES, IGDB_ALL_RATINGS } from "../../src/types/igdb"; // eslint-disable-line no-duplicate-imports
 
 export interface ImportResult {
   success: boolean;
@@ -589,7 +589,9 @@ async function importGameVersions(
         ? IGDBService.buildImageUrl(version.cover.image_id, "cover_big")
         : null;
 
-      const { error } = await (supabase.from("game_versions") as ReturnType<typeof supabase.from>).upsert(
+      const { error } = await (
+        supabase.from("game_versions") as ReturnType<typeof supabase.from>
+      ).upsert(
         {
           game_id: gameId,
           igdb_id: version.id,
