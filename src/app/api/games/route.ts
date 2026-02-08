@@ -1,58 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-
-// Type definitions for Supabase query results
-interface GameTranslation {
-  title: string;
-  description: string | null;
-}
-
-interface GenreTranslation {
-  name: string;
-}
-
-interface Genre {
-  genre_translations: GenreTranslation[] | null;
-}
-
-interface GameGenre {
-  genres: Genre | null;
-}
-
-interface Company {
-  name: string;
-  slug: string;
-}
-
-interface GameCompany {
-  company_id: string;
-  role: string;
-  is_primary: boolean;
-  companies: Company | null;
-}
-
-interface GameRow {
-  id: string;
-  slug: string;
-  igdb_id: number | null;
-  cover_image_url: string | null;
-  background_image_url: string | null;
-  background_color: string | null;
-  release_date: string | null;
-  metascore: number | null;
-  created_at: string;
-  game_translations: GameTranslation[] | null;
-  game_genres: GameGenre[] | null;
-  game_companies: GameCompany[] | null;
-}
+import {
+  parsePaginationParams,
+  parseArrayParam,
+  calculateOffset,
+  handleApiError,
+} from "@/lib/api-utils";
+import type { GameRowWithRelations } from "@/lib/types/supabase-queries";
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get("search") || "";
-    const genres = searchParams.get("genres")?.split(",").filter(Boolean) || [];
-    const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
-    const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") || "20")));
+    const genres = parseArrayParam(searchParams.get("genres"));
+    const { page, limit } = parsePaginationParams(searchParams);
     const locale = searchParams.get("locale") || "fr";
     const inLibrary = searchParams.get("inLibrary") === "true";
 
@@ -74,7 +35,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Calculate offset for pagination
-    const offset = (page - 1) * limit;
+    const offset = calculateOffset(page, limit);
 
     // Build the base query with joins for translations and genres
     // Add user_library join if filtering by library
@@ -183,10 +144,10 @@ export async function GET(request: NextRequest) {
     }
 
     // Filter by genres if specified (post-processing for now, could be optimized with SQL)
-    let filteredGames = (games || []) as unknown as GameRow[];
+    let filteredGames = (games || []) as unknown as GameRowWithRelations[];
     if (genres.length > 0) {
       filteredGames =
-        (games as unknown as GameRow[])?.filter((game) => {
+        (games as unknown as GameRowWithRelations[])?.filter((game) => {
           const gameGenres =
             game.game_genres
               ?.map((gg) => gg.genres?.genre_translations?.[0]?.name?.toLowerCase())
@@ -261,6 +222,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("Unexpected error in games API:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    const errorResponse = handleApiError(error, "Failed to fetch games");
+    return NextResponse.json(errorResponse, { status: 500 });
   }
 }

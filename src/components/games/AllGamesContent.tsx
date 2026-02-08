@@ -2,16 +2,18 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
-import { GameCard } from "./GameCard";
+import { EntityCard } from "@/components/shared/EntityCard";
+import { gameCardConfig } from "@/components/shared/entityCardPresets";
 import { GameSearchBar } from "./GameSearchBar";
 import { GameFilters } from "./GameFilters";
 import { GameFilterButton } from "./GameFilterButton";
-import { GamePagination } from "./GamePagination";
-import { GameGridSkeleton } from "./GameGridSkeleton";
+import { Pagination } from "@/components/shared/Pagination";
+import { GridSkeleton } from "@/components/shared/GridSkeleton";
+import { gameSkeletonConfig } from "@/components/shared/EntitySkeleton";
 import { SearchSkeleton } from "./SearchSkeleton";
 import { Genre } from "@/types/genre";
 import { GameSummary } from "@/types/game";
-import { Pagination } from "@/types/pagination";
+import { Pagination as PaginationType } from "@/types/pagination";
 import { useApiClient } from "@/lib/api-client";
 import { useAsyncError } from "@/components/providers/ErrorProvider";
 import { toast } from "@/hooks/use-toast";
@@ -26,7 +28,7 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
 
   const [games, setGames] = useState<GameSummary[]>([]);
   const [genres, setGenres] = useState<Genre[]>([]);
-  const [pagination, setPagination] = useState<Pagination | null>(null);
+  const [pagination, setPagination] = useState<PaginationType | null>(null);
   const [loading, setLoading] = useState(true);
   const [initialLoading, setInitialLoading] = useState(true);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
@@ -262,13 +264,15 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
         </div>
 
         {/* Loading state - Show skeleton grid instead of spinner */}
-        {loading && !initialLoading && <GameGridSkeleton count={20} />}
+        {loading && !initialLoading && (
+          <GridSkeleton skeletonConfig={gameSkeletonConfig} count={20} />
+        )}
 
         {/* Games grid */}
         {!loading && (
           <>
             {games.length === 0 ? (
-              <div className="flex flex-col items-center justify-center rounded-2xl bg-white py-16 text-center shadow-sm sm:py-20 dark:bg-gray-800">
+              <div className="flex flex-col items-center justify-center rounded-2xl bg-white py-16 text-center shadow-sm dark:bg-gray-800 sm:py-20">
                 <div className="mb-6 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 p-6 dark:from-gray-700 dark:to-gray-600">
                   <svg
                     className="h-12 w-12 text-gray-400 sm:h-16 sm:w-16"
@@ -284,10 +288,10 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
                     />
                   </svg>
                 </div>
-                <h3 className="mb-2 text-lg font-semibold text-gray-900 sm:text-xl dark:text-white">
+                <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white sm:text-xl">
                   {t("noGamesFound")}
                 </h3>
-                <p className="max-w-md text-sm text-gray-500 sm:text-base dark:text-gray-400">
+                <p className="max-w-md text-sm text-gray-500 dark:text-gray-400 sm:text-base">
                   {selectedGenres.length > 0 || selectedPublishers.length > 0
                     ? t("modifySearch")
                     : t("noGamesAvailable")}
@@ -306,9 +310,10 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
                 {/* Responsive grid - 5 columns layout */}
                 <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                   {games.map((game, index) => (
-                    <GameCard
+                    <EntityCard
                       key={game.id}
-                      game={game}
+                      entity={game}
+                      config={gameCardConfig}
                       locale={locale}
                       priority={index < 4} // Priority loading pour les 4 premières cartes
                     />
@@ -319,13 +324,13 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
 
             {pagination && pagination.totalPages > 1 && (
               <div className="mt-8 sm:mt-12">
-                <GamePagination
+                <Pagination
                   currentPage={pagination.currentPage}
                   totalPages={pagination.totalPages}
                   totalCount={pagination.totalCount}
                   onPageChange={handlePageChange}
                   loading={loading}
-                  locale={locale}
+                  translationNamespace="pagination"
                 />
               </div>
             )}

@@ -34,7 +34,7 @@ table dédiée et affichées dans un nouvel onglet sur la page de détail du jeu
     - Requête IGDB avec where version_parent = igdbId
     - Récupérer id, name, slug, version_title, cover.image_id
     - _Requirements: 1.1, 1.2_
-  - [ ]\* 3.2 Écrire un test property-based pour l'extraction des données
+  - [x] 3.2 Écrire un test property-based pour l'extraction des données
     - **Property 1: Extraction correcte des données de version**
     - **Validates: Requirements 1.2**
 
@@ -54,11 +54,10 @@ table dédiée et affichées dans un nouvel onglet sur la page de détail du jeu
   - [x] 5.3 Gérer le mode dry-run pour les versions
     - Ne pas écrire en base si dryRun est true
     - _Requirements: 4.2_
-  - [ ]\* 5.4 Écrire un test property-based pour l'idempotence
+  - [x] 5.4 Écrire un test property-based pour l'idempotence
     - **Property 2: Idempotence de l'import des versions**
     - **Validates: Requirements 2.4**
-  - [ ]\* 5.5 Écrire un test property-based pour l'association et
-    l'ordonnancement
+  - [x] 5.5 Écrire un test property-based pour l'association et l'ordonnancement
     - **Property 3: Association et ordonnancement des versions**
     - **Validates: Requirements 2.2, 2.3**
 
@@ -74,7 +73,7 @@ table dédiée et affichées dans un nouvel onglet sur la page de détail du jeu
     - Mapper vers le format GameVersion
     - Retourner tableau vide si pas de versions
     - _Requirements: 5.2, 5.3_
-  - [ ]\* 7.3 Écrire un test property-based pour la structure de la réponse API
+  - [x] 7.3 Écrire un test property-based pour la structure de la réponse API
     - **Property 5: Structure complète de la réponse API**
     - **Validates: Requirements 5.1, 5.2**
 
@@ -84,7 +83,7 @@ table dédiée et affichées dans un nouvel onglet sur la page de détail du jeu
     - Afficher grille de versions avec cover et titre
     - Retourner null si pas de versions
     - _Requirements: 3.2, 3.3_
-  - [ ]\* 8.2 Écrire un test property-based pour l'affichage
+  - [x] 8.2 Écrire un test property-based pour l'affichage
     - **Property 4: Affichage correct des versions**
     - **Validates: Requirements 3.2, 3.4**
 

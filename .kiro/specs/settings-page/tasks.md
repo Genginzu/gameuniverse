@@ -2,7 +2,9 @@
 
 ## Overview
 
-Implémentation de la page paramètres permettant aux utilisateurs de modifier leur username, email et de demander un reset de mot de passe. L'implémentation suit les patterns existants du projet (DashboardLayout, hooks, composants UI).
+Implémentation de la page paramètres permettant aux utilisateurs de modifier
+leur username, email et de demander un reset de mot de passe. L'implémentation
+suit les patterns existants du projet (DashboardLayout, hooks, composants UI).
 
 ## Tasks
 
@@ -12,46 +14,51 @@ Implémentation de la page paramètres permettant aux utilisateurs de modifier l
     - Add ErrorBoundary with ErrorFallback
     - _Requirements: 1.1, 1.2, 1.3_
 
-  - [x] 1.2 Create SettingsContent component at `src/components/settings/SettingsContent.tsx`
+  - [x] 1.2 Create SettingsContent component at
+        `src/components/settings/SettingsContent.tsx`
     - Import useProfile and useAuth hooks
     - Create two Card sections: Profile and Security
     - Add loading skeleton state
     - _Requirements: 5.4, 5.5_
 
-  - [x] 1.3 Add translations for settings page in `src/messages/en.json` and `src/messages/fr.json`
+  - [x] 1.3 Add translations for settings page in `src/messages/en.json` and
+        `src/messages/fr.json`
     - Add settings section with all labels and messages
     - _Requirements: 5.5_
 
 - [-] 2. Implement username modification
-  - [x] 2.1 Create UsernameForm component at `src/components/settings/UsernameForm.tsx`
+  - [x] 2.1 Create UsernameForm component at
+        `src/components/settings/UsernameForm.tsx`
     - Use react-hook-form with zod validation
     - Validate non-empty, trimmed username
     - Display current username as default value
     - Show loading state on submit button
     - _Requirements: 2.1, 2.2, 2.3, 2.4, 5.1_
 
-  - [ ]* 2.2 Write property test for username validation
+  - [x] 2.2 Write property test for username validation
     - **Property 1: Username validation rejects empty inputs**
     - **Validates: Requirements 2.1**
 
-  - [ ]* 2.3 Write property test for username update round-trip
+  - [x] 2.3 Write property test for username update round-trip
     - **Property 2: Username update round-trip consistency**
     - **Validates: Requirements 2.2**
 
 - [-] 3. Implement email modification
-  - [x] 3.1 Create EmailForm component at `src/components/settings/EmailForm.tsx`
+  - [x] 3.1 Create EmailForm component at
+        `src/components/settings/EmailForm.tsx`
     - Use react-hook-form with zod email validation
     - Call supabase.auth.updateUser({ email }) on submit
     - Display current email as default value
     - Show loading state and success/error toasts
     - _Requirements: 3.1, 3.2, 3.4, 3.5, 3.6, 5.1, 5.2, 5.3_
 
-  - [ ]* 3.2 Write property test for email validation
+  - [x] 3.2 Write property test for email validation
     - **Property 3: Email validation rejects invalid formats**
     - **Validates: Requirements 3.1**
 
 - [x] 4. Implement password reset section
-  - [x] 4.1 Create PasswordResetSection component at `src/components/settings/PasswordResetSection.tsx`
+  - [x] 4.1 Create PasswordResetSection component at
+        `src/components/settings/PasswordResetSection.tsx`
     - Display button to request password reset
     - Use useAuth.resetPassword function
     - Show loading state and success/error toasts
@@ -68,7 +75,7 @@ Implémentation de la page paramètres permettant aux utilisateurs de modifier l
     - Add toast notifications for all operations
     - _Requirements: 5.2, 5.3_
 
-  - [ ]* 6.2 Write property test for loading states
+  - [x] 6.2 Write property test for loading states
     - **Property 4: Loading state during form submission**
     - **Validates: Requirements 5.1**
 
@@ -85,6 +92,8 @@ Implémentation de la page paramètres permettant aux utilisateurs de modifier l
 - Each task references specific requirements for traceability
 - Checkpoints ensure incremental validation
 - Property tests validate universal correctness properties
-- The existing useProfile hook already supports updateProfile for username changes
-- Email changes require Supabase auth.updateUser which sends a confirmation email
+- The existing useProfile hook already supports updateProfile for username
+  changes
+- Email changes require Supabase auth.updateUser which sends a confirmation
+  email
 - Password reset uses the existing resetPassword function in useAuth

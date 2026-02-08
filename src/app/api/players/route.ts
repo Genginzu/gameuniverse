@@ -1,24 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PlayerService } from "@/lib/services/playerService";
 import { GAME_COUNT_RANGES } from "@/types/player";
+import { parsePaginationParams, handleApiError } from "@/lib/api-utils";
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get("search") || "";
     const gameCountRange = searchParams.get("gameCountRange") || undefined;
-    const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
-    const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") || "20")));
-
-    // Validate page parameter
-    if (isNaN(page) || page < 1) {
-      return NextResponse.json({ error: "Invalid page parameter" }, { status: 400 });
-    }
-
-    // Validate limit parameter
-    if (isNaN(limit) || limit < 1 || limit > 50) {
-      return NextResponse.json({ error: "Invalid limit parameter" }, { status: 400 });
-    }
+    const { page, limit } = parsePaginationParams(searchParams);
 
     // Validate gameCountRange if provided
     if (gameCountRange && !(gameCountRange in GAME_COUNT_RANGES)) {
@@ -42,16 +32,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(result);
   } catch (error) {
     console.error("Unexpected error in players API:", error);
-    // Return more details in development
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    const errorStack = error instanceof Error ? error.stack : undefined;
-    return NextResponse.json(
-      { 
-        error: "Internal server error", 
-        message: process.env.NODE_ENV === "development" ? errorMessage : undefined,
-        stack: process.env.NODE_ENV === "development" ? errorStack : undefined
-      }, 
-      { status: 500 }
-    );
+    const errorResponse = handleApiError(error, "Failed to fetch players");
+    return NextResponse.json(errorResponse, { status: 500 });
   }
 }

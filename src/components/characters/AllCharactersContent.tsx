@@ -2,14 +2,16 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
-import { CharacterCard } from "./CharacterCard";
+import { EntityCard } from "@/components/shared/EntityCard";
+import { characterCardConfig } from "@/components/shared/entityCardPresets";
 import { CharacterSearchBar } from "./CharacterSearchBar";
 import { CharacterFilters } from "./CharacterFilters";
 import { CharacterFilterButton } from "./CharacterFilterButton";
-import { CharacterPagination } from "./CharacterPagination";
-import { CharacterGridSkeleton } from "./CharacterGridSkeleton";
+import { Pagination } from "@/components/shared/Pagination";
+import { GridSkeleton } from "@/components/shared/GridSkeleton";
+import { characterSkeletonConfig } from "@/components/shared/EntitySkeleton";
 import { CharacterSummary } from "@/types/character";
-import { Pagination } from "@/types/pagination";
+import { Pagination as PaginationType } from "@/types/pagination";
 import { useApiClient } from "@/lib/api-client";
 import { useAsyncError } from "@/components/providers/ErrorProvider";
 import { toast } from "@/hooks/use-toast";
@@ -30,7 +32,7 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
   // State management
   const [characters, setCharacters] = useState<CharacterSummary[]>([]);
   const [games, setGames] = useState<Game[]>([]);
-  const [pagination, setPagination] = useState<Pagination | null>(null);
+  const [pagination, setPagination] = useState<PaginationType | null>(null);
   const [loading, setLoading] = useState(true);
   const [initialLoading, setInitialLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -202,7 +204,7 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
-          <CharacterGridSkeleton count={20} />
+          <GridSkeleton skeletonConfig={characterSkeletonConfig} count={20} />
         </div>
       </div>
     );
@@ -263,13 +265,15 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
         </div>
 
         {/* Loading state - Show skeleton grid */}
-        {loading && !initialLoading && <CharacterGridSkeleton count={20} />}
+        {loading && !initialLoading && (
+          <GridSkeleton skeletonConfig={characterSkeletonConfig} count={20} />
+        )}
 
         {/* Characters grid */}
         {!loading && (
           <>
             {characters.length === 0 ? (
-              <div className="flex flex-col items-center justify-center rounded-2xl bg-white py-16 text-center shadow-sm sm:py-20 dark:bg-gray-800">
+              <div className="flex flex-col items-center justify-center rounded-2xl bg-white py-16 text-center shadow-sm dark:bg-gray-800 sm:py-20">
                 <div className="mb-6 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 p-6 dark:from-gray-700 dark:to-gray-600">
                   <svg
                     className="h-12 w-12 text-gray-400 sm:h-16 sm:w-16"
@@ -285,10 +289,10 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
                     />
                   </svg>
                 </div>
-                <h3 className="mb-2 text-lg font-semibold text-gray-900 sm:text-xl dark:text-white">
+                <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white sm:text-xl">
                   {t("empty.title")}
                 </h3>
-                <p className="max-w-md text-sm text-gray-500 sm:text-base dark:text-gray-400">
+                <p className="max-w-md text-sm text-gray-500 dark:text-gray-400 sm:text-base">
                   {searchQuery || selectedGames.length > 0 || selectedRoles.length > 0
                     ? t("empty.description")
                     : t("empty.noCharacters")}
@@ -307,9 +311,10 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
                 {/* Responsive grid - 4 columns layout */}
                 <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
                   {characters.map((character, index) => (
-                    <CharacterCard
+                    <EntityCard
                       key={character.id}
-                      character={character}
+                      entity={character}
+                      config={characterCardConfig}
                       locale={locale}
                       priority={index < 4} // Priority loading for first 4 cards
                     />
@@ -320,13 +325,13 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
 
             {pagination && pagination.totalPages > 1 && (
               <div className="mt-8 sm:mt-12">
-                <CharacterPagination
+                <Pagination
                   currentPage={pagination.currentPage}
                   totalPages={pagination.totalPages}
                   totalCount={pagination.totalCount}
                   onPageChange={handlePageChange}
                   loading={loading}
-                  locale={locale}
+                  translationNamespace="characters.pagination"
                 />
               </div>
             )}

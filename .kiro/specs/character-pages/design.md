@@ -1265,7 +1265,7 @@ npm install --save-dev fast-check @types/fast-check
 
 ```typescript
 import fc from "fast-check";
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "bun:test";
 
 describe("Character Pages - Property Tests", () => {
   // Feature: character-pages, Property 2: Case-Insensitive Search Filtering
@@ -1358,7 +1358,7 @@ describe("Character Pages - Property Tests", () => {
 **Exemple de test unitaire:**
 
 ```typescript
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, mock } from 'bun:test';
 import { render, screen, waitFor } from '@testing-library/react';
 import { CharacterCard } from '@/components/characters/CharacterCard';
 
@@ -1425,7 +1425,7 @@ describe('CharacterCard', () => {
 **Exemple de test d'intégration:**
 
 ```typescript
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach } from 'bun:test';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { AllCharactersContent } from '@/components/characters/AllCharactersContent';
 

@@ -18,11 +18,11 @@ mirrors AllGamesContent but with library context.
     filter
   - _Requirements: 1.2, 4.1, 4.2, 4.3_
 
-- [ ]\* 1.1 Write property test for library-only filtering
+- [x] 1.1 Write property test for library-only filtering
   - **Property 1: Library-only filtering**
   - **Validates: Requirements 1.2, 4.2**
 
-- [ ]\* 1.2 Write property test for filter composition
+- [x] 1.2 Write property test for filter composition
   - **Property 2: Filter composition correctness**
   - **Validates: Requirements 1.3, 1.4, 1.5, 4.3**
 
@@ -35,15 +35,15 @@ mirrors AllGamesContent but with library context.
   - Fetch library stats on component mount
   - _Requirements: 1.1, 1.3, 1.4, 1.5, 3.1_
 
-- [ ]\* 2.1 Write property test for result count accuracy
+- [x] 2.1 Write property test for result count accuracy
   - **Property 3: Result count accuracy**
   - **Validates: Requirements 1.6**
 
-- [ ]\* 2.2 Write property test for filter change resets pagination
+- [x] 2.2 Write property test for filter change resets pagination
   - **Property 6: Filter change resets pagination**
   - **Validates: Requirements 2.3**
 
-- [ ]\* 2.3 Write property test for statistics invariance
+- [x] 2.3 Write property test for statistics invariance
   - **Property 9: Statistics invariance under filtering**
   - **Validates: Requirements 3.2**
 
@@ -55,7 +55,7 @@ mirrors AllGamesContent but with library context.
   - Handle error states with retry capability
   - _Requirements: 1.2, 1.3, 1.4, 1.5, 2.2, 4.1, 5.2, 5.3_
 
-- [ ]\* 3.1 Write unit tests for fetchLibraryGames
+- [x] 3.1 Write unit tests for fetchLibraryGames
   - Test API call with correct parameters
   - Test debouncing behavior
   - Test error handling and retry
@@ -67,15 +67,15 @@ mirrors AllGamesContent but with library context.
   - Implement page size of 20 games per page
   - _Requirements: 2.1, 2.2, 2.3, 2.4_
 
-- [ ]\* 4.1 Write property test for pagination page size
+- [x] 4.1 Write property test for pagination page size
   - **Property 4: Pagination page size consistency**
   - **Validates: Requirements 2.1**
 
-- [ ]\* 4.2 Write property test for pagination range correctness
+- [x] 4.2 Write property test for pagination range correctness
   - **Property 5: Pagination range correctness**
   - **Validates: Requirements 2.2**
 
-- [ ]\* 4.3 Write property test for pagination metadata
+- [x] 4.3 Write property test for pagination metadata
   - **Property 7: Pagination metadata consistency**
   - **Validates: Requirements 2.4**
 
@@ -86,7 +86,7 @@ mirrors AllGamesContent but with library context.
   - Fetch stats from `/api/library/stats` endpoint
   - _Requirements: 3.1, 3.2_
 
-- [ ]\* 5.1 Write property test for statistics calculation
+- [x] 5.1 Write property test for statistics calculation
   - **Property 8: Statistics calculation correctness**
   - **Validates: Requirements 3.1**
 
@@ -100,7 +100,7 @@ mirrors AllGamesContent but with library context.
   - Integrate GamePagination component
   - _Requirements: 1.1, 6.1, 6.2, 6.3, 6.4_
 
-- [ ]\* 6.1 Write unit tests for component rendering
+- [x] 6.1 Write unit tests for component rendering
   - Test that all UI components render correctly
   - Test responsive grid layout
   - Test filter button state
@@ -112,7 +112,7 @@ mirrors AllGamesContent but with library context.
   - Add "no results" state for filtered searches
   - _Requirements: 3.3, 5.1, 5.2, 5.4_
 
-- [ ]\* 7.1 Write unit tests for empty states
+- [x] 7.1 Write unit tests for empty states
   - Test empty library rendering
   - Test no results state
   - Test loading states
@@ -125,11 +125,11 @@ mirrors AllGamesContent but with library context.
   - Add toast notifications for transient errors
   - _Requirements: 4.4, 5.3_
 
-- [ ]\* 8.1 Write property test for authentication requirement
+- [x] 8.1 Write property test for authentication requirement
   - **Property 10: Authentication requirement**
   - **Validates: Requirements 4.4**
 
-- [ ]\* 8.2 Write unit tests for error handling
+- [x] 8.2 Write unit tests for error handling
   - Test error message display
   - Test retry functionality
   - Test authentication redirect

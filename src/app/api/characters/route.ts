@@ -1,61 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-
-// Type definitions for Supabase query results
-interface CharacterTranslation {
-  name: string;
-  role: string | null;
-  description: string | null;
-}
-
-interface GameTranslation {
-  title: string;
-}
-
-interface Game {
-  id: string;
-  slug: string;
-  game_translations: GameTranslation[] | null;
-}
-
-interface CharacterGame {
-  is_primary: boolean;
-  games: Game | null;
-}
-
-interface CharacterRow {
-  id: string;
-  slug: string;
-  main_image: string | null;
-  background_color: string | null;
-  created_at: string;
-  character_translations: CharacterTranslation[] | null;
-  character_games: CharacterGame[] | null;
-}
+import {
+  parsePaginationParams,
+  parseArrayParam,
+  calculateOffset,
+  handleApiError,
+} from "@/lib/api-utils";
+import type { CharacterRowWithRelations } from "@/lib/types/supabase-queries";
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get("search") || "";
-    const games = searchParams.get("games")?.split(",").filter(Boolean) || [];
-    const roles = searchParams.get("roles")?.split(",").filter(Boolean) || [];
-    const page = Math.max(1, parseInt(searchParams.get("page") || "1"));
-    const limit = Math.min(50, Math.max(1, parseInt(searchParams.get("limit") || "20")));
+    const games = parseArrayParam(searchParams.get("games"));
+    const roles = parseArrayParam(searchParams.get("roles"));
+    const { page, limit } = parsePaginationParams(searchParams);
     const locale = searchParams.get("locale") || "fr";
-
-    // Validate parameters
-    if (isNaN(page) || page < 1) {
-      return NextResponse.json({ error: "Invalid page parameter" }, { status: 400 });
-    }
-
-    if (isNaN(limit) || limit < 1 || limit > 50) {
-      return NextResponse.json({ error: "Invalid limit parameter" }, { status: 400 });
-    }
 
     const supabase = await createRouteHandlerClient();
 
     // Calculate offset for pagination
-    const offset = (page - 1) * limit;
+    const offset = calculateOffset(page, limit);
 
     // Build the base query with joins for translations and games
     let query = supabase
@@ -135,10 +100,10 @@ export async function GET(request: NextRequest) {
     }
 
     // Filter by games if specified (post-processing)
-    let filteredCharacters = (characters || []) as CharacterRow[];
+    let filteredCharacters = (characters || []) as CharacterRowWithRelations[];
     if (games.length > 0) {
       filteredCharacters =
-        (characters as CharacterRow[])?.filter((character) => {
+        (characters as CharacterRowWithRelations[])?.filter((character) => {
           const characterGameIds =
             character.character_games?.map((cg) => cg.games?.id).filter(Boolean) || [];
           return games.some((gameId) => characterGameIds.includes(gameId));
@@ -151,9 +116,7 @@ export async function GET(request: NextRequest) {
         const translation = character.character_translations?.[0];
 
         // Get primary game
-        const primaryGameRelation = character.character_games?.find(
-          (cg) => cg.is_primary === true
-        );
+        const primaryGameRelation = character.character_games?.find((cg) => cg.is_primary === true);
         const primaryGame =
           primaryGameRelation?.games?.game_translations?.[0]?.title ||
           character.character_games?.[0]?.games?.game_translations?.[0]?.title ||
@@ -193,6 +156,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error("Unexpected error in characters API:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    const errorResponse = handleApiError(error, "Failed to fetch characters");
+    return NextResponse.json(errorResponse, { status: 500 });
   }
 }

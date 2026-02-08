@@ -174,12 +174,12 @@ optimisations.
     - Gérer les filtres multiples et leur réinitialisation
     - _Requirements: 3.1, 3.2, 3.4, 3.5_
 
-  - [ ] 8.3 (Optionnel) Écrire les tests de propriété pour la recherche avec Bun
+  - [x] 8.3 (Optionnel) Écrire les tests de propriété pour la recherche avec Bun
     - **Property 3: Search Title Matching**
     - **Property 4: Search State Reset**
     - **Validates: Requirements 2.1, 2.4, 2.5**
 
-  - [ ] 8.4 (Optionnel) Écrire les tests de propriété pour les filtres avec Bun
+  - [x] 8.4 (Optionnel) Écrire les tests de propriété pour les filtres avec Bun
     - **Property 5: Genre Filter Accuracy**
     - **Property 6: Genre Count Accuracy**
     - **Property 7: Filter State Reset**
@@ -205,7 +205,7 @@ optimisations.
     - Ajouter les contrôles de navigation dans la galerie
     - _Requirements: 4.3, 4.4_
 
-  - [ ] 9.4 (Optionnel) Écrire les tests de propriété pour les détails avec Bun
+  - [x] 9.4 (Optionnel) Écrire les tests de propriété pour les détails avec Bun
     - **Property 8: Game Details Completeness**
     - **Property 9: Media Gallery Completeness**
     - **Validates: Requirements 4.2, 4.3, 4.4**
@@ -223,7 +223,7 @@ optimisations.
     - Optimiser pour les lecteurs d'écran
     - _Requirements: 5.4_
 
-  - [ ] 10.3 (Optionnel) Écrire les tests de propriété pour le responsive avec
+  - [x] 10.3 (Optionnel) Écrire les tests de propriété pour le responsive avec
         Bun
     - **Property 10: Responsive Layout Adaptation**
     - **Validates: Requirements 5.1, 5.2, 5.3, 5.5**
@@ -240,7 +240,7 @@ optimisations.
     - Assurer la cohérence dans tous les résultats de recherche
     - _Requirements: 6.3_
 
-  - [ ] 11.3 (Optionnel) Écrire les tests de propriété pour l'administration
+  - [x] 11.3 (Optionnel) Écrire les tests de propriété pour l'administration
         avec Bun
     - **Property 11: Game Validation Integrity**
     - **Property 12: Game Deletion Consistency**
@@ -345,7 +345,7 @@ optimisations.
     - Mettre à jour les breadcrumbs et états actifs
     - _Requirements: Navigation cohérente_
 
-  - [ ] 16.5 (Optionnel) Écrire les tests pour la nouvelle architecture
+  - [x] 16.5 (Optionnel) Écrire les tests pour la nouvelle architecture
     - Tester les nouveaux composants games/\*
     - Tester les nouveaux composants library/\*
     - Tester le DashboardLayout partagé

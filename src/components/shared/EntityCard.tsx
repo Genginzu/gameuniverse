@@ -76,7 +76,6 @@ export interface EntityCardProps<T> {
   onRemovedFromLibrary?: (entityId: string) => void;
 }
 
-
 // Helper function to get metascore color
 export function getMetascoreColor(score?: number): string {
   if (!score) return "bg-gray-500";
@@ -88,7 +87,7 @@ export function getMetascoreColor(score?: number): string {
 }
 
 // Generic EntityCard component
-export function EntityCard<T extends Record<string, unknown>>({
+export function EntityCard<T extends object>({
   entity,
   config,
   locale = "fr",
@@ -97,10 +96,12 @@ export function EntityCard<T extends Record<string, unknown>>({
 }: EntityCardProps<T>) {
   const { user } = useAuth();
   const t = useTranslations(config.translationNamespace || "common");
-  
+
   // Get entity ID for library operations
-  const entityId = config.idField ? String(entity[config.idField]) : String(entity["id"]);
-  
+  const entityId = config.idField
+    ? String((entity as Record<string, unknown>)[config.idField as string])
+    : String((entity as Record<string, unknown>)["id"]);
+
   // Library status hook - only used when libraryToggle is enabled
   const { inLibrary, loading, adding, addToLibrary, removeFromLibrary } = useGameLibraryStatus(
     config.actions?.libraryToggle ? entityId : ""
@@ -127,24 +128,22 @@ export function EntityCard<T extends Record<string, unknown>>({
 
   // Get image URL
   const imageUrl = entity[config.imageField] as string | undefined;
-  
+
   // Get background color
-  const backgroundColor = config.backgroundColorField 
-    ? (entity[config.backgroundColorField] as string | undefined) 
+  const backgroundColor = config.backgroundColorField
+    ? (entity[config.backgroundColorField] as string | undefined)
     : undefined;
 
   // Get title
   const title = getStringValue(config.titleField);
-  
+
   // Get description
-  const description = config.descriptionField 
-    ? getStringValue(config.descriptionField) 
-    : undefined;
+  const description = config.descriptionField ? getStringValue(config.descriptionField) : undefined;
 
   // Render badge based on variant
   const renderBadge = () => {
     if (!config.badge) return null;
-    
+
     const value = entity[config.badge.field];
     if (value === undefined || value === null) return null;
 
@@ -153,8 +152,8 @@ export function EntityCard<T extends Record<string, unknown>>({
     switch (config.badge.variant) {
       case "metascore": {
         const score = Number(value);
-        const colorClass = config.badge.colorFn 
-          ? config.badge.colorFn(score) 
+        const colorClass = config.badge.colorFn
+          ? config.badge.colorFn(score)
           : getMetascoreColor(score);
         return (
           <div className={`absolute ${positionClass} top-3 z-20`}>
@@ -202,9 +201,7 @@ export function EntityCard<T extends Record<string, unknown>>({
     if (config.customHoverRenderer) {
       return (
         <div className="absolute inset-0 z-10 flex flex-col justify-end rounded-2xl bg-gradient-to-t from-black/90 via-black/60 to-transparent opacity-0 transition-all duration-300 group-hover:opacity-100">
-          <div className="p-4">
-            {config.customHoverRenderer(entity, t)}
-          </div>
+          <div className="p-4">{config.customHoverRenderer(entity, t)}</div>
         </div>
       );
     }
@@ -219,9 +216,7 @@ export function EntityCard<T extends Record<string, unknown>>({
 
           {/* Description */}
           {config.hoverOverlay.showDescription !== false && description && (
-            <p className="mb-3 line-clamp-2 text-sm leading-relaxed text-gray-200">
-              {description}
-            </p>
+            <p className="mb-3 line-clamp-2 text-sm leading-relaxed text-gray-200">{description}</p>
           )}
 
           {/* Custom fields */}
@@ -230,7 +225,7 @@ export function EntityCard<T extends Record<string, unknown>>({
               {config.hoverOverlay.fields.map((fieldConfig, index) => {
                 const fieldValue = entity[fieldConfig.field];
                 if (!fieldValue) return null;
-                
+
                 const Icon = fieldConfig.icon;
                 return (
                   <div key={index} className="flex items-center text-gray-300">

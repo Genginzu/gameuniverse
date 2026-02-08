@@ -25,7 +25,7 @@ Next.js App Router, Supabase et les composants UI existants.
     - Implémenter fetchPlayersFromDB avec pagination, recherche et filtres
     - Implémenter fetchPlayerDetailsFromDB avec bibliothèque et stats
     - _Requirements: 1.1, 2.1, 3.2, 4.1, 5.1, 6.1_
-  - [ ]\* 2.2 Écrire le test property pour le calcul des statistiques
+  - [x] 2.2 Écrire le test property pour le calcul des statistiques
     - **Property 7: Calcul des statistiques**
     - **Validates: Requirements 6.4**
   - [x] 2.3 Créer l'API route pour la liste des joueurs
@@ -59,14 +59,14 @@ Next.js App Router, Supabase et les composants UI existants.
     - Créer `src/components/players/PlayerSearchBar.tsx`
     - Input avec debounce de 300ms
     - _Requirements: 3.1, 3.2, 3.4_
-  - [ ]\* 4.5 Écrire le test property pour la recherche
+  - [x] 4.5 Écrire le test property pour la recherche
     - **Property 3: Recherche par nom insensible à la casse**
     - **Validates: Requirements 3.2**
   - [x] 4.6 Créer le composant PlayerFilters
     - Créer `src/components/players/PlayerFilters.tsx`
     - Filtres par plage de nombre de jeux (0, 1-5, 6-20, 20+)
     - _Requirements: 4.1, 4.3_
-  - [ ]\* 4.7 Écrire le test property pour le filtrage
+  - [x] 4.7 Écrire le test property pour le filtrage
     - **Property 4: Filtrage par plage de nombre de jeux**
     - **Validates: Requirements 4.1**
   - [x] 4.8 Créer le composant PlayerFilterButton
@@ -77,7 +77,7 @@ Next.js App Router, Supabase et les composants UI existants.
     - Créer `src/components/players/PlayerPagination.tsx`
     - Navigation entre pages avec info total
     - _Requirements: 2.1, 2.2, 2.3_
-  - [ ]\* 4.10 Écrire le test property pour la pagination
+  - [x] 4.10 Écrire le test property pour la pagination
     - **Property 2: Pagination correcte**
     - **Validates: Requirements 2.1, 2.3**
 
@@ -98,7 +98,7 @@ Next.js App Router, Supabase et les composants UI existants.
     - Grille de jeux avec image, titre, statut
     - Liens vers les pages de jeux
     - _Requirements: 6.1, 6.2, 6.3, 7.3_
-  - [ ]\* 7.2 Écrire le test property pour l'affichage de la bibliothèque
+  - [x] 7.2 Écrire le test property pour l'affichage de la bibliothèque
     - **Property 6: Affichage de la bibliothèque**
     - **Validates: Requirements 6.1, 6.2**
   - [x] 7.3 Créer le composant PlayerDetailsContent
@@ -106,7 +106,7 @@ Next.js App Router, Supabase et les composants UI existants.
     - Afficher profil complet avec stats et bibliothèque
     - Bouton retour vers la liste
     - _Requirements: 5.2, 6.4, 7.2_
-  - [ ]\* 7.4 Écrire le test property pour le rendu des informations
+  - [x] 7.4 Écrire le test property pour le rendu des informations
     - **Property 1: Rendu des informations joueur**
     - **Validates: Requirements 1.2, 5.2**
 
@@ -133,7 +133,7 @@ Next.js App Router, Supabase et les composants UI existants.
   - [x] 9.2 Ajouter les traductions anglaises
     - Mettre à jour `src/messages/en.json` avec la section players
     - _Requirements: 8.1, 8.2_
-  - [ ]\* 9.3 Écrire le test property pour l'internationalisation
+  - [x] 9.3 Écrire le test property pour l'internationalisation
     - **Property 8: Internationalisation**
     - **Validates: Requirements 8.1, 8.3, 8.4**
 

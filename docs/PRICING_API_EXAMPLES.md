@@ -557,7 +557,7 @@ async function getMultipleGamePrices(
 ### 1. Test unitaire
 
 ```typescript
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, mock } from "bun:test";
 
 describe("Price API Functions", () => {
   it("should return empty array when no prices found", async () => {

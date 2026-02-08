@@ -974,9 +974,9 @@ per test.
 ### Test Configuration
 
 ```typescript
-// vitest.config.ts additions
-export default defineConfig({
-  test: {
+// bun.config.ts - Bun uses bunfig.toml for test configuration
+// See bunfig.toml for test settings
+// Example test configuration:
     // Property-based test configuration
     testTimeout: 30000, // Allow time for 100+ iterations
     coverage: {

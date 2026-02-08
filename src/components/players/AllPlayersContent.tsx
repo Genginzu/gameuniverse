@@ -2,12 +2,14 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
-import { PlayerCard } from "./PlayerCard";
+import { EntityCard } from "@/components/shared/EntityCard";
+import { playerCardConfig } from "@/components/shared/entityCardPresets";
 import { PlayerSearchBar } from "./PlayerSearchBar";
 import { PlayerFilters } from "./PlayerFilters";
 import { PlayerFilterButton } from "./PlayerFilterButton";
-import { PlayerPagination } from "./PlayerPagination";
-import { PlayerGridSkeleton } from "./PlayerGridSkeleton";
+import { Pagination } from "@/components/shared/Pagination";
+import { GridSkeleton } from "@/components/shared/GridSkeleton";
+import { playerSkeletonConfig } from "@/components/shared/EntitySkeleton";
 import { PlayerSummary, PlayerPagination as PlayerPaginationType } from "@/types/player";
 import { useApiClient } from "@/lib/api-client";
 import { useAsyncError } from "@/components/providers/ErrorProvider";
@@ -165,7 +167,7 @@ export function AllPlayersContent({ locale = "fr" }: AllPlayersContentProps) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
-          <PlayerGridSkeleton count={20} />
+          <GridSkeleton skeletonConfig={playerSkeletonConfig} count={20} />
         </div>
       </div>
     );
@@ -225,14 +227,16 @@ export function AllPlayersContent({ locale = "fr" }: AllPlayersContentProps) {
         </div>
 
         {/* Loading state - Show skeleton grid */}
-        {loading && !initialLoading && <PlayerGridSkeleton count={20} />}
+        {loading && !initialLoading && (
+          <GridSkeleton skeletonConfig={playerSkeletonConfig} count={20} />
+        )}
 
         {/* Players grid - Requirements 1.1, 1.2 */}
         {!loading && (
           <>
             {players.length === 0 ? (
               // Empty state - Requirements 1.4
-              <div className="flex flex-col items-center justify-center rounded-2xl bg-white py-16 text-center shadow-sm sm:py-20 dark:bg-gray-800">
+              <div className="flex flex-col items-center justify-center rounded-2xl bg-white py-16 text-center shadow-sm dark:bg-gray-800 sm:py-20">
                 <div className="mb-6 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 p-6 dark:from-gray-700 dark:to-gray-600">
                   <svg
                     className="h-12 w-12 text-gray-400 sm:h-16 sm:w-16"
@@ -248,10 +252,10 @@ export function AllPlayersContent({ locale = "fr" }: AllPlayersContentProps) {
                     />
                   </svg>
                 </div>
-                <h3 className="mb-2 text-lg font-semibold text-gray-900 sm:text-xl dark:text-white">
+                <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white sm:text-xl">
                   {t("empty.title")}
                 </h3>
-                <p className="max-w-md text-sm text-gray-500 sm:text-base dark:text-gray-400">
+                <p className="max-w-md text-sm text-gray-500 dark:text-gray-400 sm:text-base">
                   {searchQuery || selectedGameCounts.length > 0
                     ? t("empty.description")
                     : t("empty.noPlayers")}
@@ -270,9 +274,10 @@ export function AllPlayersContent({ locale = "fr" }: AllPlayersContentProps) {
                 {/* Responsive grid - Requirements 7.1 */}
                 <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                   {players.map((player, index) => (
-                    <PlayerCard
+                    <EntityCard
                       key={player.id}
-                      player={player}
+                      entity={player}
+                      config={playerCardConfig}
                       locale={locale}
                       priority={index < 4} // Priority loading for first 4 cards
                     />
@@ -284,13 +289,13 @@ export function AllPlayersContent({ locale = "fr" }: AllPlayersContentProps) {
             {/* Pagination - Requirements 2.1, 2.2, 2.3 */}
             {pagination && pagination.totalPages > 1 && (
               <div className="mt-8 sm:mt-12">
-                <PlayerPagination
+                <Pagination
                   currentPage={pagination.currentPage}
                   totalPages={pagination.totalPages}
                   totalCount={pagination.totalCount}
                   onPageChange={handlePageChange}
                   loading={loading}
-                  locale={locale}
+                  translationNamespace="players.pagination"
                 />
               </div>
             )}

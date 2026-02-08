@@ -1,0 +1,190 @@
+"use client";
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { LazyImage } from "@/components/ui/lazy-image";
+import Link from "next/link";
+import { ArrowLeft, Calendar, Users, Globe, Heart, Share2 } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { GameDetails } from "@/types/game";
+import { GameColors } from "@/lib/utils/game-utils";
+
+interface GameHeroSectionProps {
+  game: GameDetails;
+  locale: string;
+  colors: GameColors;
+  isWishlisted: boolean;
+  onWishlistToggle: () => void;
+  formatReleaseDate: (dateString?: string) => string | null;
+  getMetascoreColor: (score?: number) => string;
+}
+
+export function GameHeroSection({
+  game,
+  locale,
+  colors,
+  isWishlisted,
+  onWishlistToggle,
+  formatReleaseDate,
+  getMetascoreColor,
+}: GameHeroSectionProps) {
+  const t = useTranslations();
+
+  return (
+    <div className="relative">
+      {/* Floating navigation buttons */}
+      <div className="absolute left-0 right-0 top-0 z-50 px-4 py-4">
+        <div className="container mx-auto flex items-center justify-between">
+          <Link href={`/${locale}/games`}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="bg-slate-900/60 text-slate-300 backdrop-blur-sm hover:bg-slate-900/80 hover:text-white"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              {t("common.back")}
+            </Button>
+          </Link>
+
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="bg-slate-900/60 text-slate-300 backdrop-blur-sm hover:bg-slate-900/80 hover:text-white"
+            >
+              <Share2 className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className={`bg-slate-900/60 backdrop-blur-sm hover:bg-slate-900/80 hover:text-white ${isWishlisted ? "text-red-400" : "text-slate-300"}`}
+              onClick={onWishlistToggle}
+            >
+              <Heart className={`h-4 w-4 ${isWishlisted ? "fill-current" : ""}`} />
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Background image - only for hero section */}
+      {game.media.backgroundImage && (
+        <div className="absolute inset-0 z-0 h-[80vh] overflow-hidden">
+          <LazyImage
+            src={game.media.backgroundImage}
+            alt={`${game.title} background`}
+            fill
+            className="object-cover object-center"
+            sizes="100vw"
+            priority
+            showSkeleton={true}
+          />
+          {/* Overlay gradient for ambiance */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(to bottom, ${game.backgroundColor || "#0f172a"}20 0%, ${game.backgroundColor || "#0f172a"}60 40%, ${game.backgroundColor || "#0f172a"}90 70%, ${game.backgroundColor || "#0f172a"} 100%)`,
+            }}
+          />
+          {/* Vignette effect for ambiance */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `radial-gradient(ellipse at center, transparent 0%, ${game.backgroundColor || "#0f172a"}40 70%, ${game.backgroundColor || "#0f172a"}80 100%)`,
+            }}
+          />
+        </div>
+      )}
+
+      <div className="container relative z-10 mx-auto flex min-h-[80vh] items-center px-4 pb-8 pt-20">
+        <div className="grid w-full grid-cols-1 items-start gap-8 lg:grid-cols-12">
+          {/* Cover and actions - Left column */}
+          <div className="lg:col-span-4">
+            <div className="sticky top-24">
+              {/* Main cover */}
+              <div className="group relative mx-auto max-w-[320px]">
+                <div
+                  className={`absolute inset-0 bg-gradient-to-br ${colors.bg} scale-105 rounded-xl opacity-50 blur-xl`}
+                />
+                <div className="relative aspect-[3/4] overflow-hidden rounded-xl border border-slate-700 bg-slate-800/80 backdrop-blur-sm">
+                  <LazyImage
+                    src={game.media.coverImage}
+                    alt={game.title}
+                    fill
+                    className="object-contain transition-transform duration-500 group-hover:scale-105"
+                    sizes="320px"
+                    priority
+                    showSkeleton={true}
+                  />
+
+                  {/* Metascore badge */}
+                  {game.metascore && (
+                    <div className="absolute right-4 top-4">
+                      <div
+                        className={`${getMetascoreColor(game.metascore)} rounded-full px-3 py-1 text-sm font-bold text-white shadow-lg`}
+                      >
+                        {game.metascore}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Main content - Right column */}
+          <div className="lg:col-span-8">
+            {/* Game header */}
+            <div className="mb-8">
+              {/* Genres */}
+              {game.genres.length > 0 && (
+                <div className="mb-4 flex flex-wrap gap-2">
+                  {game.genres.slice(0, 3).map((genre) => (
+                    <Badge
+                      key={genre.id}
+                      variant="secondary"
+                      className="pointer-events-none border-slate-600 bg-slate-800/80 text-slate-300 backdrop-blur-sm"
+                    >
+                      {genre.name}
+                    </Badge>
+                  ))}
+                </div>
+              )}
+
+              {/* Title */}
+              <h1 className="mb-4 text-4xl font-bold leading-tight text-white drop-shadow-lg lg:text-6xl">
+                {game.title}
+              </h1>
+
+              {/* Metadata */}
+              <div className="mb-6 flex flex-wrap gap-6 text-slate-300">
+                <div className="flex items-center gap-2">
+                  <Users className="h-4 w-4" style={{ color: colors.accent }} />
+                  <span>{game.developer}</span>
+                </div>
+                {game.publisher !== game.developer && (
+                  <div className="flex items-center gap-2">
+                    <Globe className="h-4 w-4" style={{ color: colors.accent }} />
+                    <span>{game.publisher}</span>
+                  </div>
+                )}
+                {game.releaseDate && (
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4" style={{ color: colors.accent }} />
+                    <span>{formatReleaseDate(game.releaseDate)}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Description */}
+              {game.description && (
+                <p className="max-w-4xl text-lg leading-relaxed text-slate-200 drop-shadow-sm">
+                  {game.description}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

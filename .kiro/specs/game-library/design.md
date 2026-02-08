@@ -964,7 +964,7 @@ comprehensive coverage:
 
 ### Property-Based Testing Configuration
 
-**Framework:** fast-check pour TypeScript avec Jest/Vitest **Configuration:**
+**Framework:** fast-check pour TypeScript avec Bun Test **Configuration:**
 
 - Minimum 100 itérations par test de propriété
 - Générateurs personnalisés pour les données de jeux

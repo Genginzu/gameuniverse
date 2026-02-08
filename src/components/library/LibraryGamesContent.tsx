@@ -2,18 +2,20 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useTranslations } from "next-intl";
-import { GameCard } from "@/components/games/GameCard";
+import { EntityCard } from "@/components/shared/EntityCard";
+import { gameCardConfig } from "@/components/shared/entityCardPresets";
 import { GameSearchBar } from "@/components/games/GameSearchBar";
 import { GameFilters } from "@/components/games/GameFilters";
 import { GameFilterButton } from "@/components/games/GameFilterButton";
-import { GamePagination } from "@/components/games/GamePagination";
-import { GameGridSkeleton } from "@/components/games/GameGridSkeleton";
+import { Pagination } from "@/components/shared/Pagination";
+import { GridSkeleton } from "@/components/shared/GridSkeleton";
+import { gameSkeletonConfig } from "@/components/shared/EntitySkeleton";
 import { SearchSkeleton } from "@/components/games/SearchSkeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Genre } from "@/types/genre";
 import { GameSummary } from "@/types/game";
-import { Pagination } from "@/types/pagination";
+import { Pagination as PaginationType } from "@/types/pagination";
 import { useApiClient } from "@/lib/api-client";
 import { useAsyncError } from "@/components/providers/ErrorProvider";
 import { toast } from "@/hooks/use-toast";
@@ -42,7 +44,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
     totalPlayTime: 0,
   });
   const [genres, setGenres] = useState<Genre[]>([]);
-  const [pagination, setPagination] = useState<Pagination | null>(null);
+  const [pagination, setPagination] = useState<PaginationType | null>(null);
   const [loading, setLoading] = useState(true);
   const [initialLoading, setInitialLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -295,7 +297,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
             <CardHeader className="pb-3">
               <div className="flex items-center">
                 <div className="rounded-lg bg-blue-100 p-2 dark:bg-blue-900/30">
-                  <FaGamepad className="h-4 w-4 text-blue-600 sm:h-5 sm:w-5 dark:text-blue-400" />
+                  <FaGamepad className="h-4 w-4 text-blue-600 dark:text-blue-400 sm:h-5 sm:w-5" />
                 </div>
                 <div className="ml-3">
                   <CardTitle className="text-sm font-medium text-gray-900 dark:text-white">
@@ -305,7 +307,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">
+              <div className="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">
                 {stats.totalGames}
               </div>
               <p className="text-xs text-gray-500 dark:text-gray-400">{t("stats.inLibrary")}</p>
@@ -316,7 +318,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
             <CardHeader className="pb-3">
               <div className="flex items-center">
                 <div className="rounded-lg bg-green-100 p-2 dark:bg-green-900/30">
-                  <FaGamepad className="h-4 w-4 text-green-600 sm:h-5 sm:w-5 dark:text-green-400" />
+                  <FaGamepad className="h-4 w-4 text-green-600 dark:text-green-400 sm:h-5 sm:w-5" />
                 </div>
                 <div className="ml-3">
                   <CardTitle className="text-sm font-medium text-gray-900 dark:text-white">
@@ -326,7 +328,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">
+              <div className="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">
                 {stats.completedGames}
               </div>
               <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -339,7 +341,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
             <CardHeader className="pb-3">
               <div className="flex items-center">
                 <div className="rounded-lg bg-purple-100 p-2 dark:bg-purple-900/30">
-                  <FaClock className="h-4 w-4 text-purple-600 sm:h-5 sm:w-5 dark:text-purple-400" />
+                  <FaClock className="h-4 w-4 text-purple-600 dark:text-purple-400 sm:h-5 sm:w-5" />
                 </div>
                 <div className="ml-3">
                   <CardTitle className="text-sm font-medium text-gray-900 dark:text-white">
@@ -349,7 +351,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">
+              <div className="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">
                 {stats.totalPlayTime}h
               </div>
               <p className="text-xs text-gray-500 dark:text-gray-400">{t("stats.totalPlayed")}</p>
@@ -360,7 +362,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
             <CardHeader className="pb-3">
               <div className="flex items-center">
                 <div className="rounded-lg bg-yellow-100 p-2 dark:bg-yellow-900/30">
-                  <FaStar className="h-4 w-4 text-yellow-600 sm:h-5 sm:w-5 dark:text-yellow-400" />
+                  <FaStar className="h-4 w-4 text-yellow-600 dark:text-yellow-400 sm:h-5 sm:w-5" />
                 </div>
                 <div className="ml-3">
                   <CardTitle className="text-sm font-medium text-gray-900 dark:text-white">
@@ -370,7 +372,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">
+              <div className="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">
                 {stats.averageRating ? `${stats.averageRating}/5` : "—"}
               </div>
               <p className="text-xs text-gray-500 dark:text-gray-400">{t("stats.yourRatings")}</p>
@@ -405,7 +407,9 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
         </div>
 
         {/* Loading state */}
-        {loading && !initialLoading && <GameGridSkeleton count={20} />}
+        {loading && !initialLoading && (
+          <GridSkeleton skeletonConfig={gameSkeletonConfig} count={20} />
+        )}
 
         {/* Games grid */}
         {!loading && (
@@ -413,15 +417,15 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
             {games.length === 0 ? (
               <Card className="bg-white dark:bg-gray-800">
                 <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-                  <div className="mb-4 rounded-full bg-gray-100 p-4 sm:p-6 dark:bg-gray-700">
+                  <div className="mb-4 rounded-full bg-gray-100 p-4 dark:bg-gray-700 sm:p-6">
                     <FaGamepad className="h-8 w-8 text-gray-400 sm:h-12 sm:w-12" />
                   </div>
-                  <h3 className="mb-2 text-base font-medium text-gray-900 sm:text-lg dark:text-white">
+                  <h3 className="mb-2 text-base font-medium text-gray-900 dark:text-white sm:text-lg">
                     {searchQuery || selectedGenres.length > 0 || selectedPublishers.length > 0
                       ? t("empty.noGamesFound")
                       : t("empty.title")}
                   </h3>
-                  <p className="mb-6 max-w-md text-sm text-gray-500 sm:text-base dark:text-gray-400">
+                  <p className="mb-6 max-w-md text-sm text-gray-500 dark:text-gray-400 sm:text-base">
                     {searchQuery || selectedGenres.length > 0 || selectedPublishers.length > 0
                       ? t("empty.modifySearch")
                       : t("empty.description")}
@@ -444,9 +448,10 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
               <div className="space-y-8">
                 <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
                   {games.map((game, index) => (
-                    <GameCard
+                    <EntityCard
                       key={game.id}
-                      game={game}
+                      entity={game}
+                      config={gameCardConfig}
                       locale={locale}
                       priority={index < 4}
                       onRemovedFromLibrary={handleGameRemoved}
@@ -458,13 +463,13 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
 
             {pagination && pagination.totalPages > 1 && (
               <div className="mt-8 sm:mt-12">
-                <GamePagination
+                <Pagination
                   currentPage={pagination.currentPage}
                   totalPages={pagination.totalPages}
                   totalCount={pagination.totalCount}
                   onPageChange={handlePageChange}
                   loading={loading}
-                  locale={locale}
+                  translationNamespace="pagination"
                 />
               </div>
             )}

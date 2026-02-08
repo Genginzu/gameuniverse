@@ -4,7 +4,8 @@ import { useTranslations } from "next-intl";
 import { useUserLibrary } from "@/hooks/useUserLibrary";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { GameCard } from "@/components/games/GameCard";
+import { EntityCard } from "@/components/shared/EntityCard";
+import { gameCardConfig } from "@/components/shared/entityCardPresets";
 import { LibrarySkeleton } from "./LibrarySkeleton";
 import { FaGamepad, FaPlus, FaClock, FaStar } from "react-icons/fa";
 import Link from "next/link";
@@ -175,9 +176,10 @@ export function UserLibraryContent() {
 
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
             {games.map((game, index) => (
-              <GameCard
+              <EntityCard
                 key={game.id}
-                game={game}
+                entity={game}
+                config={gameCardConfig}
                 locale="fr"
                 priority={index < 12} // Prioritize first 12 games for loading
               />

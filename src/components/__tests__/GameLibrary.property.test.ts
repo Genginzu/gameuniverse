@@ -8,6 +8,20 @@ import * as fc from "fast-check";
 const uniquePrefixedString = (prefix: string, minLength: number, maxLength: number) =>
   fc.uuid().map((id) => `${prefix}_${id.slice(0, Math.min(maxLength - prefix.length - 1, 8))}`);
 
+// Safe date string generator that avoids Invalid Date issues
+const safeDateStringGenerator = (minYear: number = 1970, maxYear: number = 2030) =>
+  fc
+    .record({
+      year: fc.integer({ min: minYear, max: maxYear }),
+      month: fc.integer({ min: 1, max: 12 }),
+      day: fc.integer({ min: 1, max: 28 }), // Use 28 to avoid month-end issues
+    })
+    .map(({ year, month, day }) => {
+      const m = month.toString().padStart(2, "0");
+      const d = day.toString().padStart(2, "0");
+      return `${year}-${m}-${d}`;
+    });
+
 // Mock game data generator for property-based testing
 // Uses unique prefixes to ensure no substring collisions between fields
 const gameGenerator = () =>
@@ -15,14 +29,10 @@ const gameGenerator = () =>
     id: fc.uuid(),
     slug: fc.uuid().map((id) => `slug-${id.slice(0, 8)}`),
     title: uniquePrefixedString("Title", 10, 30),
-    description: fc.option(fc.constant("A game description")),
-    coverImage: fc.option(fc.webUrl()),
-    releaseDate: fc.option(
-      fc
-        .date({ min: new Date("1970-01-01"), max: new Date("2030-12-31") })
-        .map((d) => d.toISOString().split("T")[0])
-    ),
-    releaseYear: fc.option(fc.integer({ min: 1970, max: 2030 })),
+    description: fc.option(fc.constant("A game description"), { nil: undefined }),
+    coverImage: fc.option(fc.webUrl(), { nil: undefined }),
+    releaseDate: fc.option(safeDateStringGenerator(1970, 2030), { nil: undefined }),
+    releaseYear: fc.option(fc.integer({ min: 1970, max: 2030 }), { nil: undefined }),
     genres: fc.array(
       fc.record({
         name: fc.constantFrom(
@@ -42,7 +52,7 @@ const gameGenerator = () =>
     ),
     developer: uniquePrefixedString("Dev", 8, 20),
     publisher: uniquePrefixedString("Pub", 8, 20),
-    metascore: fc.option(fc.integer({ min: 0, max: 100 })),
+    metascore: fc.option(fc.integer({ min: 0, max: 100 }), { nil: undefined }),
   });
 
 // Mock function to simulate rendering a game list

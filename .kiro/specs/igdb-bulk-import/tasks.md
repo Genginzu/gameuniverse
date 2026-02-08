@@ -28,7 +28,7 @@ Supabase.
     - Maintenir une fenêtre glissante de 1 seconde avec max 4 requêtes
     - _Requirements: 2.4_
 
-  - [ ]\* 2.2 Écrire le test property-based pour le Rate Limiter
+  - [x] 2.2 Écrire le test property-based pour le Rate Limiter
     - **Property 1: Rate Limiting Respecté**
     - **Validates: Requirements 2.4**
 
@@ -39,7 +39,7 @@ Supabase.
     - Logger chaque tentative en mode verbose
     - _Requirements: 2.5_
 
-  - [ ]\* 3.2 Écrire le test property-based pour le retry
+  - [x] 3.2 Écrire le test property-based pour le retry
     - **Property 2: Retry avec Backoff Exponentiel**
     - **Validates: Requirements 2.5**
 
@@ -65,7 +65,7 @@ Supabase.
     - Sauvegarder le checkpoint périodiquement
     - _Requirements: 2.3, 4.3_
 
-  - [ ]\* 5.4 Écrire le test property-based pour l'invariant des statistiques
+  - [x] 5.4 Écrire le test property-based pour l'invariant des statistiques
     - **Property 5: Invariant des Statistiques**
     - **Validates: Requirements 4.4, 5.2, 5.4**
 
@@ -82,7 +82,7 @@ Supabase.
     - Logger ce qui serait importé
     - _Requirements: 6.2_
 
-  - [ ]\* 7.2 Écrire le test property-based pour le mode dry-run
+  - [x] 7.2 Écrire le test property-based pour le mode dry-run
     - **Property 6: Mode Dry-Run**
     - **Validates: Requirements 6.2**
 
@@ -113,7 +113,7 @@ Supabase.
     - Lancer l'import et afficher le résumé
     - _Requirements: 6.1_
 
-  - [ ]\* 10.3 Écrire les tests pour les options limit et offset
+  - [x] 10.3 Écrire les tests pour les options limit et offset
     - **Property 7: Option Limit**
     - **Property 8: Option Offset**
     - **Validates: Requirements 6.3, 6.4**

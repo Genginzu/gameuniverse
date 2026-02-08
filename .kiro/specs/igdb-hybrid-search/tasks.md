@@ -34,7 +34,7 @@ backend, puis les API routes, et enfin les composants UI.
     - Gérer l'expiration et le rafraîchissement du token
     - _Exigences: 6.1, 6.3_
 
-  - [ ]\* 2.2 Écrire le test de propriété pour le cache du token
+  - [x] 2.2 Écrire le test de propriété pour le cache du token
     - **Property 10: Cache du token IGDB**
     - **Valide: Exigences 6.3**
 
@@ -44,7 +44,7 @@ backend, puis les API routes, et enfin les composants UI.
     - Transformer les résultats au format `IGDBSearchResult`
     - _Exigences: 1.2, 6.4_
 
-  - [ ]\* 2.4 Écrire le test de propriété pour la transformation des données
+  - [x] 2.4 Écrire le test de propriété pour la transformation des données
     - **Property 11: Transformation données IGDB valide**
     - **Valide: Exigences 6.4**
 
@@ -66,11 +66,11 @@ backend, puis les API routes, et enfin les composants UI.
     - Gérer les erreurs partielles (une source échoue)
     - _Exigences: 1.1, 1.2, 1.3, 1.4_
 
-  - [ ]\* 4.2 Écrire le test de propriété pour la recherche parallèle
+  - [x] 4.2 Écrire le test de propriété pour la recherche parallèle
     - **Property 1: Recherche parallèle déclenchée**
     - **Valide: Exigences 1.1, 1.2**
 
-  - [ ]\* 4.3 Écrire le test de propriété pour la résilience aux erreurs
+  - [x] 4.3 Écrire le test de propriété pour la résilience aux erreurs
     - **Property 2: Résilience aux erreurs de source**
     - **Valide: Exigences 1.4**
 
@@ -80,7 +80,7 @@ backend, puis les API routes, et enfin les composants UI.
     - Préserver l'ordre (local d'abord)
     - _Exigences: 3.1, 3.2, 3.3_
 
-  - [ ]\* 4.5 Écrire le test de propriété pour la déduplication
+  - [x] 4.5 Écrire le test de propriété pour la déduplication
     - **Property 6: Déduplication par identifiant IGDB**
     - **Valide: Exigences 3.1, 3.2**
 
@@ -89,7 +89,7 @@ backend, puis les API routes, et enfin les composants UI.
     - Calculer `hasMore` pour le lien "Voir tous"
     - _Exigences: 7.3_
 
-  - [ ]\* 4.7 Écrire le test de propriété pour la limite d'affichage
+  - [x] 4.7 Écrire le test de propriété pour la limite d'affichage
     - **Property 12: Limite d'affichage respectée**
     - **Valide: Exigences 7.3**
 
@@ -106,7 +106,7 @@ backend, puis les API routes, et enfin les composants UI.
     - Créer les traductions FR/EN si disponibles
     - _Exigences: 5.3, 5.4_
 
-  - [ ]\* 5.3 Écrire le test de propriété pour l'import complet
+  - [x] 5.3 Écrire le test de propriété pour l'import complet
     - **Property 9: Import complet depuis IGDB**
     - **Valide: Exigences 5.1, 5.2, 5.3, 5.4**
 
@@ -115,7 +115,7 @@ backend, puis les API routes, et enfin les composants UI.
     - Préserver les données existantes en cas d'erreur
     - _Exigences: 4.2, 4.3, 4.4_
 
-  - [ ]\* 5.5 Écrire le test de propriété pour la préservation des données
+  - [x] 5.5 Écrire le test de propriété pour la préservation des données
     - **Property 8: Préservation des données en cas d'erreur de
       synchronisation**
     - **Valide: Exigences 4.4**
@@ -153,7 +153,7 @@ backend, puis les API routes, et enfin les composants UI.
     - Afficher "Aucun jeu trouvé" si vide
     - _Exigences: 2.1, 2.2, 2.3, 2.4, 2.5_
 
-  - [ ]\* 8.2 Écrire les tests de propriété pour l'affichage
+  - [x] 8.2 Écrire les tests de propriété pour l'affichage
     - **Property 3: Informations de jeu dans le rendu**
     - **Property 4: Ordre des résultats (local d'abord)**
     - **Property 5: Indicateur de source présent**
