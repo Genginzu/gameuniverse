@@ -6,6 +6,7 @@ export interface DatabaseGameGenre {
   genre_translations: Array<{
     name: string;
     description: string | null;
+    language_code?: string;
   }>;
 }
 
@@ -107,6 +108,7 @@ export interface DatabaseGameData {
   game_translations: Array<{
     title: string;
     description: string | null;
+    language_code?: string;
   }>;
   game_genres: Array<{
     genres: DatabaseGameGenre;

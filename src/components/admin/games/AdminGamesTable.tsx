@@ -167,7 +167,11 @@ export function AdminGamesTable({
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
                 {games.map((game) => (
-                  <tr key={game.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                  <tr
+                    key={game.id}
+                    className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50"
+                    onClick={() => onEdit(game.id)}
+                  >
                     <td className="px-4 py-3">
                       {game.coverImage ? (
                         <img
@@ -191,7 +195,7 @@ export function AdminGamesTable({
                       {formatDate(game.updatedAt)}
                     </td>
                     <td className="px-4 py-3">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                         <Button
                           variant="ghost"
                           size="sm"

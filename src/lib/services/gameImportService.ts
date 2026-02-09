@@ -481,17 +481,10 @@ export class GameImportService {
   private static async createGenreTranslations(genreId: string, name: string): Promise<void> {
     const supabase = await createRouteHandlerClient();
 
-    // Create English translation
+    // Only create English translation — IGDB data is English only
     await supabase.from("genre_translations").insert({
       genre_id: genreId,
       language_code: "en",
-      name: name,
-    });
-
-    // Create French translation (same as English for now, can be updated later)
-    await supabase.from("genre_translations").insert({
-      genre_id: genreId,
-      language_code: "fr",
       name: name,
     });
   }
@@ -574,18 +567,10 @@ export class GameImportService {
     // Use summary or storyline as description
     const description = igdbGame.summary || igdbGame.storyline || null;
 
-    // Create English translation
+    // Only create English translation — IGDB data is English only
     await supabase.from("game_translations").insert({
       game_id: gameId,
       language_code: "en",
-      title: igdbGame.name,
-      description,
-    });
-
-    // Create French translation (same as English for now)
-    await supabase.from("game_translations").insert({
-      game_id: gameId,
-      language_code: "fr",
       title: igdbGame.name,
       description,
     });
@@ -601,19 +586,13 @@ export class GameImportService {
     const supabase = await createRouteHandlerClient();
     const description = igdbGame.summary || igdbGame.storyline || null;
 
-    // Update English translation
+    // Only update English translation — IGDB data is English only
+    // French translations will be managed by a separate translation service
     await supabase
       .from("game_translations")
       .update({ title: igdbGame.name, description })
       .eq("game_id", gameId)
       .eq("language_code", "en");
-
-    // Update French translation
-    await supabase
-      .from("game_translations")
-      .update({ title: igdbGame.name, description })
-      .eq("game_id", gameId)
-      .eq("language_code", "fr");
   }
 
   /**
@@ -728,6 +707,7 @@ export class GameImportService {
       string,
       {
         name: string;
+        nativeName: string;
         code: string;
         hasAudio: boolean;
         hasSubtitles: boolean;
@@ -741,9 +721,11 @@ export class GameImportService {
       // Extract base language code (e.g., 'en' from 'en-US')
       const langCode = ls.language.locale.split("-")[0].toLowerCase();
       const langName = ls.language.name || ls.language.native_name || langCode;
+      const langNativeName = ls.language.native_name || ls.language.name || langCode;
 
       const existing = languageMap.get(langCode) || {
         name: langName,
+        nativeName: langNativeName,
         code: langCode,
         hasAudio: false,
         hasSubtitles: false,
@@ -763,17 +745,42 @@ export class GameImportService {
       languageMap.set(langCode, existing);
     }
 
-    // Insert all languages
-    const languageEntries = Array.from(languageMap.values()).map((lang) => ({
-      game_id: gameId,
-      language_code: lang.code,
-      language_name: lang.name,
-      has_audio: lang.hasAudio,
-      has_subtitles: lang.hasSubtitles,
-      has_interface: lang.hasInterface,
-    }));
+    const langs = Array.from(languageMap.values());
 
-    if (languageEntries.length > 0) {
+    // Ensure all languages exist in supported_languages reference table
+    if (langs.length > 0) {
+      const supportedRows = langs.map((l) => ({
+        code: l.code,
+        name: l.name,
+        native_name: l.nativeName,
+      }));
+      // upsert: insert if missing, do nothing if already exists
+      const { error: upsertErr } = await supabase
+        .from("supported_languages")
+        .upsert(supportedRows, { onConflict: "code", ignoreDuplicates: true });
+      if (upsertErr) {
+        console.warn("[GameImportService] Failed to upsert supported_languages:", upsertErr);
+      }
+
+      // Fetch back the canonical names from supported_languages
+      const codes = langs.map((l) => l.code);
+      const { data: supportedLangs } = await supabase
+        .from("supported_languages")
+        .select("code, name")
+        .in("code", codes);
+
+      const nameMap = new Map((supportedLangs ?? []).map((sl) => [sl.code, sl.name]));
+
+      // Insert game_languages using canonical names
+      const languageEntries = langs.map((lang) => ({
+        game_id: gameId,
+        language_code: lang.code,
+        language_name: nameMap.get(lang.code) ?? lang.name,
+        has_audio: lang.hasAudio,
+        has_subtitles: lang.hasSubtitles,
+        has_interface: lang.hasInterface,
+      }));
+
       const { error } = await supabase.from("game_languages").insert(languageEntries);
       if (error) {
         console.error("[GameImportService] Failed to insert languages:", error);
@@ -1072,7 +1079,9 @@ export class GameImportService {
       }));
 
       // Use type assertion since game_versions may not be in generated types yet
-      const { error } = await (supabase.from("game_versions") as ReturnType<typeof supabase.from>).insert(versionEntries as unknown[]);
+      const { error } = await (
+        supabase.from("game_versions") as ReturnType<typeof supabase.from>
+      ).insert(versionEntries as unknown[]);
 
       if (error) {
         console.error(`[GameImportService] Failed to insert versions:`, error);
@@ -1095,7 +1104,9 @@ export class GameImportService {
     const supabase = await createRouteHandlerClient();
 
     // Delete existing versions (use type assertion since table may not be in generated types)
-    await (supabase.from("game_versions") as ReturnType<typeof supabase.from>).delete().eq("game_id", gameId);
+    await (supabase.from("game_versions") as ReturnType<typeof supabase.from>)
+      .delete()
+      .eq("game_id", gameId);
 
     // Create new versions
     await this.createVersions(gameId, igdbId);

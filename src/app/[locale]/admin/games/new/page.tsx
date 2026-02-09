@@ -13,8 +13,17 @@ import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
 export default function NewGamePage() {
   const t = useTranslations("admin.games");
   const router = useRouter();
-  const { form, genres, companies, loadingOptions, submitGame, isSubmitting } =
-    useGameForm("create");
+  const {
+    form,
+    genres,
+    companies,
+    ratings,
+    contentDescriptors,
+    supportedLanguages,
+    loadingOptions,
+    submitGame,
+    isSubmitting,
+  } = useGameForm("create");
 
   const handleSubmit = useCallback(
     async (data: AdminGameFormData) => {
@@ -52,12 +61,15 @@ export default function NewGamePage() {
         </h1>
       </div>
 
-      <div className="mx-auto max-w-3xl">
+      <div className="mx-auto max-w-7xl">
         <GameForm
           mode="create"
           form={form}
           genres={genres}
           companies={companies}
+          ratings={ratings}
+          contentDescriptors={contentDescriptors}
+          supportedLanguages={supportedLanguages}
           loadingOptions={loadingOptions}
           onSubmit={handleSubmit}
           isSubmitting={isSubmitting}

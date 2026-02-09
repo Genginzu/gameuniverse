@@ -223,10 +223,10 @@ async function ensureGenres(
 async function createGenreTranslations(genreId: string, name: string): Promise<void> {
   const supabase = createScriptClient();
 
-  await supabase.from("genre_translations").insert([
-    { genre_id: genreId, language_code: "en", name },
-    { genre_id: genreId, language_code: "fr", name },
-  ]);
+  // Only create English translation — IGDB data is English only
+  await supabase
+    .from("genre_translations")
+    .insert([{ genre_id: genreId, language_code: "en", name }]);
 }
 
 async function ensureCompanies(
@@ -285,10 +285,10 @@ async function createTranslations(gameId: string, igdbGame: IGDBGame): Promise<v
   const supabase = createScriptClient();
   const description = igdbGame.summary || igdbGame.storyline || null;
 
-  await supabase.from("game_translations").insert([
-    { game_id: gameId, language_code: "en", title: igdbGame.name, description },
-    { game_id: gameId, language_code: "fr", title: igdbGame.name, description },
-  ]);
+  // Only create English translation — IGDB data is English only
+  await supabase
+    .from("game_translations")
+    .insert([{ game_id: gameId, language_code: "en", title: igdbGame.name, description }]);
 }
 
 async function linkGenres(gameId: string, genreIds: string[]): Promise<void> {
@@ -357,6 +357,7 @@ async function createLanguages(gameId: string, igdbGame: IGDBGame): Promise<void
     string,
     {
       name: string;
+      nativeName: string;
       code: string;
       hasAudio: boolean;
       hasSubtitles: boolean;
@@ -369,9 +370,11 @@ async function createLanguages(gameId: string, igdbGame: IGDBGame): Promise<void
 
     const langCode = ls.language.locale.split("-")[0].toLowerCase();
     const langName = ls.language.name || ls.language.native_name || langCode;
+    const langNativeName = ls.language.native_name || ls.language.name || langCode;
 
     const existing = languageMap.get(langCode) || {
       name: langName,
+      nativeName: langNativeName,
       code: langCode,
       hasAudio: false,
       hasSubtitles: false,
@@ -390,16 +393,40 @@ async function createLanguages(gameId: string, igdbGame: IGDBGame): Promise<void
     languageMap.set(langCode, existing);
   }
 
-  const languageEntries = Array.from(languageMap.values()).map((lang) => ({
-    game_id: gameId,
-    language_code: lang.code,
-    language_name: lang.name,
-    has_audio: lang.hasAudio,
-    has_subtitles: lang.hasSubtitles,
-    has_interface: lang.hasInterface,
-  }));
+  const langs = Array.from(languageMap.values());
 
-  if (languageEntries.length > 0) {
+  if (langs.length > 0) {
+    // Ensure all languages exist in supported_languages reference table
+    const supportedRows = langs.map((l) => ({
+      code: l.code,
+      name: l.name,
+      native_name: l.nativeName,
+    }));
+    const { error: upsertErr } = await supabase
+      .from("supported_languages")
+      .upsert(supportedRows, { onConflict: "code", ignoreDuplicates: true });
+    if (upsertErr) {
+      console.warn("[game-importer] Failed to upsert supported_languages:", upsertErr);
+    }
+
+    // Fetch back canonical names from supported_languages
+    const codes = langs.map((l) => l.code);
+    const { data: supportedLangs } = await supabase
+      .from("supported_languages")
+      .select("code, name")
+      .in("code", codes);
+
+    const nameMap = new Map((supportedLangs ?? []).map((sl) => [sl.code, sl.name]));
+
+    const languageEntries = langs.map((lang) => ({
+      game_id: gameId,
+      language_code: lang.code,
+      language_name: nameMap.get(lang.code) ?? lang.name,
+      has_audio: lang.hasAudio,
+      has_subtitles: lang.hasSubtitles,
+      has_interface: lang.hasInterface,
+    }));
+
     await supabase.from("game_languages").insert(languageEntries);
   }
 }

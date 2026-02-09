@@ -16,7 +16,12 @@ interface GameApiResponse {
   id: string;
   slug: string;
   cover_image_url: string | null;
+  background_image_url: string | null;
   release_date: string | null;
+  metascore: number | null;
+  playtime_hastily: number | null;
+  playtime_normally: number | null;
+  playtime_completely: number | null;
   translations: Array<{
     language_code: string;
     title: string;
@@ -27,6 +32,39 @@ interface GameApiResponse {
     company_id: string;
     role: string;
     is_primary: boolean;
+  }>;
+  screenshots: Array<{
+    url: string;
+    alt_text: string | null;
+    caption: string | null;
+    display_order: number | null;
+    is_featured: boolean;
+  }>;
+  artwork: Array<{
+    url: string;
+    alt_text: string | null;
+    caption: string | null;
+    artwork_type: string | null;
+    display_order: number | null;
+    is_featured: boolean;
+  }>;
+  game_ratings: Array<{
+    rating_id: string;
+    is_primary: boolean;
+    content_descriptors: string[];
+  }>;
+  versions: Array<{
+    version_title: string;
+    description: string | null;
+    cover_image_url: string | null;
+    display_order: number | null;
+  }>;
+  languages: Array<{
+    language_code: string;
+    language_name: string;
+    has_audio: boolean;
+    has_subtitles: boolean;
+    has_interface: boolean;
   }>;
 }
 
@@ -39,14 +77,104 @@ function toFormData(game: GameApiResponse): AdminGameFormData {
       description: t.description ?? "",
     })),
     cover_image_url: game.cover_image_url ?? "",
+    background_image_url: game.background_image_url ?? "",
     release_date: game.release_date ?? "",
+    metascore: game.metascore ?? "",
+    playtime_hastily: game.playtime_hastily ?? "",
+    playtime_normally: game.playtime_normally ?? "",
+    playtime_completely: game.playtime_completely ?? "",
     genres: game.genres.map((g) => ({ genre_id: g.genre_id })),
     companies: game.companies.map((c) => ({
       company_id: c.company_id,
       role: c.role as "developer" | "publisher",
       is_primary: c.is_primary,
     })),
+    screenshots: (game.screenshots ?? []).map((s) => ({
+      url: s.url,
+      alt_text: s.alt_text ?? "",
+      caption: s.caption ?? "",
+      display_order: s.display_order,
+      is_featured: s.is_featured,
+    })),
+    artwork: (game.artwork ?? []).map((a) => ({
+      url: a.url,
+      alt_text: a.alt_text ?? "",
+      caption: a.caption ?? "",
+      artwork_type: a.artwork_type ?? "",
+      display_order: a.display_order,
+      is_featured: a.is_featured,
+    })),
+    age_ratings: (game.game_ratings ?? []).map((r) => ({
+      rating_id: r.rating_id,
+      is_primary: r.is_primary,
+      content_descriptors: r.content_descriptors ?? [],
+    })),
+    versions: (game.versions ?? []).map((v) => ({
+      version_title: v.version_title,
+      description: v.description ?? "",
+      cover_image_url: v.cover_image_url ?? "",
+      display_order: v.display_order,
+    })),
+    languages: (game.languages ?? []).map((l) => ({
+      language_code: l.language_code,
+      language_name: l.language_name,
+      has_audio: l.has_audio,
+      has_subtitles: l.has_subtitles,
+      has_interface: l.has_interface,
+    })),
   };
+}
+
+/**
+ * Inner component that mounts only when initialData is ready,
+ * so useGameForm receives correct defaultValues on first render.
+ */
+function EditGameForm({ initialData, gameId }: { initialData: AdminGameFormData; gameId: string }) {
+  const t = useTranslations("admin.games");
+  const router = useRouter();
+
+  const {
+    form,
+    genres,
+    companies,
+    ratings,
+    contentDescriptors,
+    supportedLanguages,
+    loadingOptions,
+    submitGame,
+    isSubmitting,
+  } = useGameForm("edit", initialData, gameId);
+
+  const handleSubmit = useCallback(
+    async (data: AdminGameFormData) => {
+      try {
+        await submitGame(data);
+        toast({ title: t("editPage.success") });
+        router.push("/admin/games");
+      } catch (err) {
+        const message = err instanceof Error ? err.message : t("editPage.errorGeneric");
+        toast({ title: message, variant: "destructive" });
+      }
+    },
+    [submitGame, router, t]
+  );
+
+  return (
+    <div className="mx-auto max-w-7xl">
+      <GameForm
+        mode="edit"
+        form={form}
+        genres={genres}
+        companies={companies}
+        ratings={ratings}
+        contentDescriptors={contentDescriptors}
+        supportedLanguages={supportedLanguages}
+        loadingOptions={loadingOptions}
+        onSubmit={handleSubmit}
+        isSubmitting={isSubmitting}
+      />
+    </div>
+  );
 }
 
 export default function EditGamePage() {
@@ -59,13 +187,6 @@ export default function EditGamePage() {
   const [loadingGame, setLoadingGame] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
 
-  const { form, genres, companies, loadingOptions, submitGame, isSubmitting } = useGameForm(
-    "edit",
-    initialData,
-    gameId
-  );
-
-  // Fetch existing game data
   useEffect(() => {
     let mounted = true;
 
@@ -96,20 +217,6 @@ export default function EditGamePage() {
       mounted = false;
     };
   }, [gameId, t]);
-
-  const handleSubmit = useCallback(
-    async (data: AdminGameFormData) => {
-      try {
-        await submitGame(data);
-        toast({ title: t("editPage.success") });
-        router.push("/admin/games");
-      } catch (err) {
-        const message = err instanceof Error ? err.message : t("editPage.errorGeneric");
-        toast({ title: message, variant: "destructive" });
-      }
-    },
-    [submitGame, router, t]
-  );
 
   if (loadingGame) {
     return (
@@ -146,17 +253,7 @@ export default function EditGamePage() {
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t("editPage.title")}</h1>
       </div>
 
-      <div className="mx-auto max-w-3xl">
-        <GameForm
-          mode="edit"
-          form={form}
-          genres={genres}
-          companies={companies}
-          loadingOptions={loadingOptions}
-          onSubmit={handleSubmit}
-          isSubmitting={isSubmitting}
-        />
-      </div>
+      {initialData && <EditGameForm initialData={initialData} gameId={gameId} />}
     </div>
   );
 }

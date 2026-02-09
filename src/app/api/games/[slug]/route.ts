@@ -25,6 +25,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const supabase = await createRouteHandlerClient();
 
     // Fetch game details by slug with all related data (except languages which may not exist)
+    // Use left join on translations so games with only 'en' translations still appear for 'fr' locale
     const { data: game, error } = (await supabase
       .from("games")
       .select(
@@ -39,9 +40,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         system_requirements,
         created_at,
         updated_at,
-        game_translations!inner(
+        game_translations(
           title,
-          description
+          description,
+          language_code
         ),
         game_genres(
           genres(
@@ -49,7 +51,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             slug,
             genre_translations(
               name,
-              description
+              description,
+              language_code
             )
           )
         ),
@@ -131,12 +134,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         )
       `
       )
-      .eq("game_translations.language_code", locale)
-      .eq("game_genres.genres.genre_translations.language_code", locale)
-      .eq(
-        "game_ratings.game_rating_descriptors.content_descriptors.content_descriptor_translations.language_code",
-        locale
-      )
       .eq("slug", gameSlug)
       .single()) as { data: DatabaseGameData | null; error: SupabaseError | null };
 
@@ -156,6 +153,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     let gameLanguages: Array<{
       language_code: string;
       language_name: string;
+      native_name: string | null;
       has_audio: boolean;
       has_subtitles: boolean;
       has_interface: boolean;
@@ -167,14 +165,27 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         .select("language_code, language_name, has_audio, has_subtitles, has_interface")
         .eq("game_id", game.id);
 
-      if (langData) {
-        gameLanguages = langData.map((lang) => ({
-          language_code: lang.language_code,
-          language_name: lang.language_name,
-          has_audio: lang.has_audio ?? false,
-          has_subtitles: lang.has_subtitles ?? false,
-          has_interface: lang.has_interface ?? false,
-        }));
+      if (langData && langData.length > 0) {
+        // Fetch supported_languages to get native_name
+        const codes = langData.map((l) => l.language_code);
+        const { data: supportedLangs } = await supabase
+          .from("supported_languages")
+          .select("code, name, native_name")
+          .in("code", codes);
+
+        const supportedMap = new Map((supportedLangs ?? []).map((sl) => [sl.code, sl]));
+
+        gameLanguages = langData.map((lang) => {
+          const supported = supportedMap.get(lang.language_code);
+          return {
+            language_code: lang.language_code,
+            language_name: supported?.name ?? lang.language_name,
+            native_name: supported?.native_name ?? null,
+            has_audio: lang.has_audio ?? false,
+            has_subtitles: lang.has_subtitles ?? false,
+            has_interface: lang.has_interface ?? false,
+          };
+        });
       }
     } catch {
       // Table may not exist yet, ignore error
@@ -234,16 +245,28 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     // Transform the data to match the expected format
-    const translation = game.game_translations?.[0];
+    // Prefer translation matching the requested locale, fallback to first available
+    const translations = game.game_translations ?? [];
+    const translation =
+      translations.find((t: { language_code?: string }) => t.language_code === locale) ||
+      translations[0] ||
+      null;
 
-    // Process genres
+    // Process genres — prefer locale match, fallback to first translation
     const genres =
-      game.game_genres?.map((gg: { genres: DatabaseGameGenre }) => ({
-        id: gg.genres?.id,
-        slug: gg.genres?.slug,
-        name: gg.genres?.genre_translations?.[0]?.name || "Unknown",
-        description: gg.genres?.genre_translations?.[0]?.description,
-      })) || [];
+      game.game_genres?.map((gg: { genres: DatabaseGameGenre }) => {
+        const genreTranslations = gg.genres?.genre_translations ?? [];
+        const gt =
+          genreTranslations.find((t: { language_code?: string }) => t.language_code === locale) ||
+          genreTranslations[0] ||
+          null;
+        return {
+          id: gg.genres?.id,
+          slug: gg.genres?.slug,
+          name: gt?.name || "Unknown",
+          description: gt?.description,
+        };
+      }) || [];
 
     // Process companies
     const companies = {
@@ -347,13 +370,19 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
               content_descriptor_translations: Array<{
                 name: string;
                 description: string | null;
+                language_code?: string;
               }>;
             };
-          }) => ({
-            code: grd.content_descriptors?.code,
-            name: grd.content_descriptors?.content_descriptor_translations?.[0]?.name,
-            description: grd.content_descriptors?.content_descriptor_translations?.[0]?.description,
-          })
+          }) => {
+            const cdTranslations = grd.content_descriptors?.content_descriptor_translations ?? [];
+            const cdt =
+              cdTranslations.find((t) => t.language_code === locale) || cdTranslations[0] || null;
+            return {
+              code: grd.content_descriptors?.code,
+              name: cdt?.name,
+              description: cdt?.description,
+            };
+          }
         ) || [],
     });
 
@@ -397,6 +426,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const languages = gameLanguages.map((lang) => ({
       code: lang.language_code,
       name: lang.language_name,
+      nativeName: lang.native_name,
       hasAudio: lang.has_audio || false,
       hasSubtitles: lang.has_subtitles || false,
       hasInterface: lang.has_interface || false,

@@ -18,10 +18,41 @@ export interface Company {
   slug: string;
 }
 
+export interface Rating {
+  id: string;
+  code: string;
+  display_name: string;
+  minimum_age: number | null;
+  color_hex: string | null;
+  icon_url: string | null;
+  system: {
+    id: string;
+    code: string;
+    name: string;
+  } | null;
+}
+
+export interface ContentDescriptor {
+  id: string;
+  code: string;
+  rating_system_id: string | null;
+  name: string;
+  description: string | null;
+}
+
+export interface SupportedLanguage {
+  code: string;
+  name: string;
+  native_name: string;
+}
+
 export interface UseGameFormReturn {
   form: UseFormReturn<AdminGameFormData>;
   genres: Genre[];
   companies: Company[];
+  ratings: Rating[];
+  contentDescriptors: ContentDescriptor[];
+  supportedLanguages: SupportedLanguage[];
   loadingOptions: boolean;
   submitGame: (data: AdminGameFormData) => Promise<void>;
   isSubmitting: boolean;
@@ -40,6 +71,9 @@ export function useGameForm(
   const locale = useLocale();
   const [genres, setGenres] = useState<Genre[]>([]);
   const [companies, setCompanies] = useState<Company[]>([]);
+  const [ratings, setRatings] = useState<Rating[]>([]);
+  const [contentDescriptors, setContentDescriptors] = useState<ContentDescriptor[]>([]);
+  const [supportedLanguages, setSupportedLanguages] = useState<SupportedLanguage[]>([]);
   const [loadingOptions, setLoadingOptions] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -50,7 +84,17 @@ export function useGameForm(
       slug: "",
       translations: DEFAULT_TRANSLATIONS(locale),
       cover_image_url: "",
+      background_image_url: "",
       release_date: "",
+      metascore: "",
+      playtime_hastily: "",
+      playtime_normally: "",
+      playtime_completely: "",
+      screenshots: [],
+      artwork: [],
+      age_ratings: [],
+      versions: [],
+      languages: [],
       genres: [],
       companies: [],
     },
@@ -63,7 +107,7 @@ export function useGameForm(
     const loadOptions = async () => {
       try {
         const res = await fetch(
-          `/api/admin/reference-data?locale=${locale}&include=genres,companies`
+          `/api/admin/reference-data?locale=${locale}&include=genres,companies,ratings,contentDescriptors,supportedLanguages`
         );
         if (!res.ok) throw new Error("Failed to load reference data");
 
@@ -84,6 +128,9 @@ export function useGameForm(
             slug: c.slug,
           }))
         );
+        setRatings(json.data?.ratings ?? []);
+        setContentDescriptors(json.data?.contentDescriptors ?? []);
+        setSupportedLanguages(json.data?.supportedLanguages ?? []);
       } catch {
         // Options will remain empty — form can still be used
       } finally {
@@ -114,37 +161,76 @@ export function useGameForm(
 
         const method = mode === "create" ? "POST" : "PUT";
 
+        // Filter out translations with empty titles before sending
+        const validTranslations = data.translations
+          .filter((t) => t.title && t.title.trim().length > 0)
+          .map((t) => ({
+            language_code: t.language_code,
+            title: t.title!,
+            description: t.description || null,
+          }));
+
         // Build the payload matching the API schema
-        const payload =
-          mode === "create"
-            ? {
-                game: {
-                  slug: data.slug,
-                  cover_image_url: data.cover_image_url || null,
-                  release_date: data.release_date || null,
-                },
-                translations: data.translations.map((t) => ({
-                  language_code: t.language_code,
-                  title: t.title,
-                  description: t.description || null,
-                })),
-                genres: data.genres,
-                companies: data.companies,
-              }
-            : {
-                game: {
-                  slug: data.slug,
-                  cover_image_url: data.cover_image_url || null,
-                  release_date: data.release_date || null,
-                },
-                translations: data.translations.map((t) => ({
-                  language_code: t.language_code,
-                  title: t.title,
-                  description: t.description || null,
-                })),
-                genres: data.genres,
-                companies: data.companies,
-              };
+        const metascoreValue =
+          data.metascore === "" || data.metascore === undefined || data.metascore === null
+            ? null
+            : Number(data.metascore);
+
+        const toNum = (v: unknown) =>
+          v === "" || v === undefined || v === null ? null : Number(v);
+
+        const payload = {
+          game: {
+            slug: data.slug,
+            cover_image_url: data.cover_image_url || null,
+            background_image_url: data.background_image_url || null,
+            release_date: data.release_date || null,
+            metascore: metascoreValue,
+            playtime_hastily: toNum(data.playtime_hastily),
+            playtime_normally: toNum(data.playtime_normally),
+            playtime_completely: toNum(data.playtime_completely),
+          },
+          translations: validTranslations,
+          genres: data.genres,
+          companies: data.companies,
+          screenshots: data.screenshots
+            .filter((s) => s.url.trim().length > 0)
+            .map((s, i) => ({
+              url: s.url,
+              alt_text: s.alt_text || null,
+              caption: s.caption || null,
+              display_order: i,
+              is_featured: s.is_featured,
+            })),
+          artwork: data.artwork
+            .filter((a) => a.url.trim().length > 0)
+            .map((a, i) => ({
+              url: a.url,
+              alt_text: a.alt_text || null,
+              caption: a.caption || null,
+              artwork_type: a.artwork_type || null,
+              display_order: i,
+              is_featured: a.is_featured,
+            })),
+          age_ratings: data.age_ratings,
+          versions: data.versions
+            .filter((v) => v.version_title.trim().length > 0)
+            .map((v, i) => ({
+              version_title: v.version_title,
+              description: v.description || null,
+              cover_image_url: v.cover_image_url || null,
+              display_order: i,
+            })),
+          languages: data.languages
+            .filter((l) => l.language_code.trim().length > 0 && l.language_name.trim().length > 0)
+            .map((l) => ({
+              language_code: l.language_code,
+              language_name: l.language_name,
+              has_audio: l.has_audio,
+              has_subtitles: l.has_subtitles,
+              has_interface: l.has_interface,
+            })),
+        };
 
         const res = await fetch(url, {
           method,
@@ -171,6 +257,9 @@ export function useGameForm(
     form,
     genres,
     companies,
+    ratings,
+    contentDescriptors,
+    supportedLanguages,
     loadingOptions,
     submitGame,
     isSubmitting,

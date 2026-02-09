@@ -74,8 +74,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         id,
         slug,
         cover_image_url,
+        background_image_url,
         release_date,
         metascore,
+        playtime_hastily,
+        playtime_normally,
+        playtime_completely,
         system_requirements,
         created_at,
         updated_at,
@@ -152,6 +156,30 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             logo_url,
             website_url
           )
+        ),
+        game_ratings(
+          id,
+          rating_id,
+          is_primary,
+          assigned_date,
+          game_rating_descriptors(
+            content_descriptor_id
+          )
+        ),
+        game_versions(
+          id,
+          version_title,
+          description,
+          cover_image_url,
+          display_order
+        ),
+        game_languages(
+          id,
+          language_code,
+          language_name,
+          has_audio,
+          has_subtitles,
+          has_interface
         )
       `
       )
@@ -177,8 +205,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       id: game.id,
       slug: game.slug,
       cover_image_url: game.cover_image_url,
+      background_image_url: game.background_image_url,
       release_date: game.release_date,
       metascore: game.metascore,
+      playtime_hastily: game.playtime_hastily ?? null,
+      playtime_normally: game.playtime_normally ?? null,
+      playtime_completely: game.playtime_completely ?? null,
       system_requirements: game.system_requirements,
       created_at: game.created_at,
       updated_at: game.updated_at,
@@ -214,6 +246,45 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           ...gp,
           store: gp.stores,
         })) || [],
+      game_ratings:
+        (
+          game.game_ratings as
+            | Array<{
+                id: string;
+                rating_id: string;
+                is_primary: boolean;
+                assigned_date: string | null;
+                game_rating_descriptors: Array<{ content_descriptor_id: string }>;
+              }>
+            | undefined
+        )?.map((gr) => ({
+          rating_id: gr.rating_id,
+          is_primary: gr.is_primary ?? false,
+          content_descriptors: (gr.game_rating_descriptors ?? []).map(
+            (d) => d.content_descriptor_id
+          ),
+        })) || [],
+      versions:
+        (game.game_versions as
+          | Array<{
+              id: string;
+              version_title: string;
+              description: string | null;
+              cover_image_url: string | null;
+              display_order: number | null;
+            }>
+          | undefined) ?? [],
+      languages:
+        (game.game_languages as
+          | Array<{
+              id: string;
+              language_code: string;
+              language_name: string;
+              has_audio: boolean;
+              has_subtitles: boolean;
+              has_interface: boolean;
+            }>
+          | undefined) ?? [],
     };
 
     return NextResponse.json(adminGameData);
@@ -254,8 +325,19 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       );
     }
 
-    const { game, translations, companies, genres, screenshots, artwork, videos, prices } =
-      validationResult.data;
+    const {
+      game,
+      translations,
+      companies,
+      genres,
+      screenshots,
+      artwork,
+      videos,
+      prices,
+      age_ratings,
+      versions,
+      languages,
+    } = validationResult.data;
 
     const supabase = await createRouteHandlerClient();
 
@@ -396,6 +478,101 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
         if (pricesError) {
           console.warn("Error updating prices:", pricesError);
+        }
+      }
+    }
+
+    // Update age ratings if provided
+    if (age_ratings) {
+      // Delete existing descriptors first (via cascade or manually)
+      const { data: existingRatings } = await supabase
+        .from("game_ratings")
+        .select("id")
+        .eq("game_id", gameId);
+
+      if (existingRatings && existingRatings.length > 0) {
+        const ratingIds = existingRatings.map((r) => r.id);
+        await supabase.from("game_rating_descriptors").delete().in("game_rating_id", ratingIds);
+      }
+
+      await supabase.from("game_ratings").delete().eq("game_id", gameId);
+
+      if (age_ratings.length > 0) {
+        const ratingsWithGameId = age_ratings.map((r) => ({
+          game_id: gameId,
+          rating_id: r.rating_id,
+          is_primary: r.is_primary,
+        }));
+        const { data: insertedRatings, error: ratingsError } = await supabase
+          .from("game_ratings")
+          .insert(ratingsWithGameId)
+          .select("id, rating_id");
+
+        if (ratingsError) {
+          console.warn("Error updating age ratings:", ratingsError);
+        } else if (insertedRatings) {
+          // Insert content descriptors for each rating
+          const descriptorRows: { game_rating_id: string; content_descriptor_id: string }[] = [];
+          for (const inserted of insertedRatings) {
+            const original = age_ratings.find((r) => r.rating_id === inserted.rating_id);
+            if (original?.content_descriptors?.length) {
+              for (const descriptorId of original.content_descriptors) {
+                descriptorRows.push({
+                  game_rating_id: inserted.id,
+                  content_descriptor_id: descriptorId,
+                });
+              }
+            }
+          }
+          if (descriptorRows.length > 0) {
+            const { error: descriptorsError } = await supabase
+              .from("game_rating_descriptors")
+              .insert(descriptorRows);
+            if (descriptorsError) {
+              console.warn("Error updating rating descriptors:", descriptorsError);
+            }
+          }
+        }
+      }
+    }
+
+    // Update versions if provided
+    if (versions) {
+      await (supabase.from("game_versions") as ReturnType<typeof supabase.from>)
+        .delete()
+        .eq("game_id", gameId);
+
+      if (versions.length > 0) {
+        const versionsWithGameId = versions.map((v) => ({
+          ...v,
+          game_id: gameId,
+          igdb_id: 0,
+        }));
+        const { error: versionsError } = await (
+          supabase.from("game_versions") as ReturnType<typeof supabase.from>
+        ).insert(versionsWithGameId);
+
+        if (versionsError) {
+          console.warn("Error updating versions:", versionsError);
+        }
+      }
+    }
+
+    // Update languages if provided
+    if (languages) {
+      await supabase.from("game_languages").delete().eq("game_id", gameId);
+
+      if (languages.length > 0) {
+        const languagesWithGameId = languages.map((l) => ({
+          ...l,
+          game_id: gameId,
+        }));
+        const { error: languagesError } = await supabase
+          .from("game_languages")
+          .insert(languagesWithGameId);
+
+        if (languagesError) {
+          console.warn("Error updating languages:", languagesError);
         }
       }
     }

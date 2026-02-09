@@ -22,6 +22,9 @@ export const gameBaseSchema = z.object({
     .max(100, "Metascore must be between 0 and 100")
     .optional()
     .nullable(),
+  playtime_hastily: z.number().min(0).optional().nullable(),
+  playtime_normally: z.number().min(0).optional().nullable(),
+  playtime_completely: z.number().min(0).optional().nullable(),
   system_requirements: z.record(z.string(), z.any()).optional().nullable(),
 });
 
@@ -107,6 +110,34 @@ export const gamePriceSchema = z.object({
   is_available: z.boolean().default(true),
 });
 
+export const gameRatingLinkSchema = z.object({
+  rating_id: z.string().uuid("Invalid rating ID"),
+  is_primary: z.boolean().default(false),
+  content_descriptors: z.array(z.string().uuid()).default([]),
+});
+
+export const gameVersionSchema = z.object({
+  version_title: z
+    .string()
+    .min(1, "Version title is required")
+    .max(255, "Version title must be less than 255 characters"),
+  description: z
+    .string()
+    .max(5000, "Description must be less than 5000 characters")
+    .optional()
+    .nullable(),
+  cover_image_url: z.string().url("Invalid cover image URL").optional().nullable(),
+  display_order: z.number().int().min(0).optional().nullable(),
+});
+
+export const gameLanguageSchema = z.object({
+  language_code: z.string().min(1).max(10, "Language code must be less than 10 characters"),
+  language_name: z.string().min(1, "Language name is required").max(100),
+  has_audio: z.boolean().default(false),
+  has_subtitles: z.boolean().default(false),
+  has_interface: z.boolean().default(false),
+});
+
 // Complete game creation schema
 export const createGameSchema = z.object({
   game: gameBaseSchema,
@@ -117,6 +148,9 @@ export const createGameSchema = z.object({
   artwork: z.array(gameArtworkSchema).optional(),
   videos: z.array(gameVideoSchema).optional(),
   prices: z.array(gamePriceSchema).optional(),
+  age_ratings: z.array(gameRatingLinkSchema).optional(),
+  versions: z.array(gameVersionSchema).optional(),
+  languages: z.array(gameLanguageSchema).optional(),
 });
 
 // Game update schema (all fields optional except ID)
@@ -130,6 +164,9 @@ export const updateGameSchema = z.object({
   artwork: z.array(gameArtworkSchema).optional(),
   videos: z.array(gameVideoSchema).optional(),
   prices: z.array(gamePriceSchema).optional(),
+  age_ratings: z.array(gameRatingLinkSchema).optional(),
+  versions: z.array(gameVersionSchema).optional(),
+  languages: z.array(gameLanguageSchema).optional(),
 });
 
 // Bulk operations schema

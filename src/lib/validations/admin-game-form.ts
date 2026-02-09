@@ -7,7 +7,7 @@ import { z } from "zod";
 
 export const adminGameTranslationSchema = z.object({
   language_code: z.string().length(2, "Language code must be 2 characters"),
-  title: z.string().min(1, "Title is required").max(255, "Title must be less than 255 characters"),
+  title: z.string().max(255, "Title must be less than 255 characters").optional().or(z.literal("")),
   description: z
     .string()
     .max(5000, "Description must be less than 5000 characters")
@@ -27,6 +27,44 @@ export const adminGameCompanySchema = z.object({
   is_primary: z.boolean(),
 });
 
+export const adminGameScreenshotSchema = z.object({
+  url: z.string().url("Invalid URL"),
+  alt_text: z.string().max(255).optional().or(z.literal("")),
+  caption: z.string().max(500).optional().or(z.literal("")),
+  display_order: z.number().int().min(0).optional().nullable(),
+  is_featured: z.boolean().default(false),
+});
+
+export const adminGameArtworkSchema = z.object({
+  url: z.string().url("Invalid URL"),
+  alt_text: z.string().max(255).optional().or(z.literal("")),
+  caption: z.string().max(500).optional().or(z.literal("")),
+  artwork_type: z.string().max(50).optional().or(z.literal("")),
+  display_order: z.number().int().min(0).optional().nullable(),
+  is_featured: z.boolean().default(false),
+});
+
+export const adminGameVersionSchema = z.object({
+  version_title: z.string().min(1, "Version title is required").max(255),
+  description: z.string().max(5000).optional().or(z.literal("")),
+  cover_image_url: z.string().url("Invalid URL").optional().or(z.literal("")),
+  display_order: z.number().int().min(0).optional().nullable(),
+});
+
+export const adminGameLanguageSchema = z.object({
+  language_code: z.string().min(1).max(10),
+  language_name: z.string().min(1).max(100),
+  has_audio: z.boolean().default(false),
+  has_subtitles: z.boolean().default(false),
+  has_interface: z.boolean().default(false),
+});
+
+export const adminGameRatingSchema = z.object({
+  rating_id: z.string().uuid("Invalid rating ID"),
+  is_primary: z.boolean().default(false),
+  content_descriptors: z.array(z.string().uuid()).default([]),
+});
+
 export const adminGameFormSchema = z.object({
   slug: z
     .string()
@@ -41,7 +79,24 @@ export const adminGameFormSchema = z.object({
       "At least one translation must have a title"
     ),
   cover_image_url: z.string().url("Invalid URL").optional().or(z.literal("")),
+  background_image_url: z.string().url("Invalid URL").optional().or(z.literal("")),
   release_date: z.string().optional().or(z.literal("")),
+  metascore: z.coerce
+    .number()
+    .int()
+    .min(0, "Metascore must be between 0 and 100")
+    .max(100, "Metascore must be between 0 and 100")
+    .optional()
+    .nullable()
+    .or(z.literal("")),
+  playtime_hastily: z.coerce.number().min(0).optional().nullable().or(z.literal("")),
+  playtime_normally: z.coerce.number().min(0).optional().nullable().or(z.literal("")),
+  playtime_completely: z.coerce.number().min(0).optional().nullable().or(z.literal("")),
+  screenshots: z.array(adminGameScreenshotSchema).default([]),
+  artwork: z.array(adminGameArtworkSchema).default([]),
+  age_ratings: z.array(adminGameRatingSchema).default([]),
+  versions: z.array(adminGameVersionSchema).default([]),
+  languages: z.array(adminGameLanguageSchema).default([]),
   genres: z.array(adminGameGenreSchema).min(1, "At least one genre is required"),
   companies: z.array(adminGameCompanySchema).min(1, "At least one company is required"),
 });
@@ -50,3 +105,8 @@ export type AdminGameFormData = z.infer<typeof adminGameFormSchema>;
 export type AdminGameTranslation = z.infer<typeof adminGameTranslationSchema>;
 export type AdminGameGenre = z.infer<typeof adminGameGenreSchema>;
 export type AdminGameCompany = z.infer<typeof adminGameCompanySchema>;
+export type AdminGameScreenshot = z.infer<typeof adminGameScreenshotSchema>;
+export type AdminGameArtwork = z.infer<typeof adminGameArtworkSchema>;
+export type AdminGameRating = z.infer<typeof adminGameRatingSchema>;
+export type AdminGameVersion = z.infer<typeof adminGameVersionSchema>;
+export type AdminGameLanguage = z.infer<typeof adminGameLanguageSchema>;

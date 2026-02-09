@@ -157,16 +157,34 @@ export function GameHeroSection({
 
               {/* Metadata */}
               <div className="mb-6 flex flex-wrap gap-6 text-slate-300">
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4" style={{ color: colors.accent }} />
-                  <span>{game.developer}</span>
-                </div>
-                {game.publisher !== game.developer && (
+                {game.companies?.developers?.length > 0 ? (
+                  game.companies.developers.map((dev) => (
+                    <div key={dev.id} className="flex items-center gap-2">
+                      <Users className="h-4 w-4" style={{ color: colors.accent }} />
+                      <span>{dev.name}</span>
+                    </div>
+                  ))
+                ) : game.developer ? (
+                  <div className="flex items-center gap-2">
+                    <Users className="h-4 w-4" style={{ color: colors.accent }} />
+                    <span>{game.developer}</span>
+                  </div>
+                ) : null}
+                {game.companies?.publishers?.length > 0 ? (
+                  game.companies.publishers
+                    .filter((pub) => !game.companies.developers?.some((dev) => dev.id === pub.id))
+                    .map((pub) => (
+                      <div key={pub.id} className="flex items-center gap-2">
+                        <Globe className="h-4 w-4" style={{ color: colors.accent }} />
+                        <span>{pub.name}</span>
+                      </div>
+                    ))
+                ) : game.publisher && game.publisher !== game.developer ? (
                   <div className="flex items-center gap-2">
                     <Globe className="h-4 w-4" style={{ color: colors.accent }} />
                     <span>{game.publisher}</span>
                   </div>
-                )}
+                ) : null}
                 {game.releaseDate && (
                   <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4" style={{ color: colors.accent }} />

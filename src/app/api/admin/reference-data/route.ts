@@ -2,8 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth-admin";
 import {
   getAvailableCompanies,
+  getAvailableContentDescriptors,
   getAvailableGenres,
+  getAvailableRatings,
   getAvailableStores,
+  getAvailableSupportedLanguages,
   getGameStatistics,
 } from "@/lib/admin-utils";
 
@@ -36,12 +39,27 @@ export async function GET(request: NextRequest) {
       referenceData.stores = await getAvailableStores();
     }
 
+    // Get ratings if requested
+    if (include.includes("all") || include.includes("ratings")) {
+      referenceData.ratings = await getAvailableRatings();
+    }
+
+    // Get content descriptors if requested
+    if (include.includes("all") || include.includes("contentDescriptors")) {
+      referenceData.contentDescriptors = await getAvailableContentDescriptors(locale);
+    }
+
     // Get statistics if requested
     if (include.includes("all") || include.includes("statistics")) {
       referenceData.statistics = await getGameStatistics();
     }
 
-    // Get supported languages
+    // Get supported languages for game language assignment
+    if (include.includes("all") || include.includes("supportedLanguages")) {
+      referenceData.supportedLanguages = await getAvailableSupportedLanguages();
+    }
+
+    // Get app languages (for translations)
     if (include.includes("all") || include.includes("languages")) {
       referenceData.languages = [
         { code: "fr", name: "Français", nativeName: "Français", isDefault: true },

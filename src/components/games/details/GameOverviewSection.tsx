@@ -25,24 +25,50 @@ export function GameOverviewSection({
   return (
     <div>
       <h2 className="mb-6 text-2xl font-bold text-white">{tDetails("overview")}</h2>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {/* Developer */}
+      <div className="grid grid-cols-1 items-start gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {/* Developers */}
         <div className="rounded-xl border border-slate-700 bg-slate-800/50 p-4">
           <div className="mb-2 flex items-center gap-2">
             <Users className="h-4 w-4" style={{ color: colors.accent }} />
             <div className="text-sm text-slate-400">{t("game.developer")}</div>
           </div>
-          <div className="font-medium text-white">{game.developer}</div>
+          <div className="space-y-1">
+            {game.companies?.developers?.length > 0 ? (
+              game.companies.developers.map((dev) => (
+                <div key={dev.id} className="font-medium text-white">
+                  {dev.name}
+                </div>
+              ))
+            ) : (
+              <div className="font-medium text-white">{game.developer}</div>
+            )}
+          </div>
         </div>
 
-        {/* Publisher */}
-        {game.publisher !== game.developer && (
+        {/* Publishers */}
+        {(game.companies?.publishers?.length > 0
+          ? game.companies.publishers.some(
+              (pub) => !game.companies.developers?.some((dev) => dev.id === pub.id)
+            )
+          : game.publisher !== game.developer) && (
           <div className="rounded-xl border border-slate-700 bg-slate-800/50 p-4">
             <div className="mb-2 flex items-center gap-2">
               <Globe className="h-4 w-4" style={{ color: colors.accent }} />
               <div className="text-sm text-slate-400">{t("game.publisher")}</div>
             </div>
-            <div className="font-medium text-white">{game.publisher}</div>
+            <div className="space-y-1">
+              {game.companies?.publishers?.length > 0 ? (
+                game.companies.publishers
+                  .filter((pub) => !game.companies.developers?.some((dev) => dev.id === pub.id))
+                  .map((pub) => (
+                    <div key={pub.id} className="font-medium text-white">
+                      {pub.name}
+                    </div>
+                  ))
+              ) : (
+                <div className="font-medium text-white">{game.publisher}</div>
+              )}
+            </div>
           </div>
         )}
 

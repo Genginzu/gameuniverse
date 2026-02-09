@@ -175,7 +175,7 @@ export function GameDetailsTabs({ game, colors, activeTab, onTabChange }: GameDe
                               className="flex items-center gap-2 text-slate-300"
                             >
                               <div className="h-2 w-2 rounded-full bg-green-400"></div>
-                              <span>{lang.name}</span>
+                              <span>{lang.nativeName ?? lang.name}</span>
                             </div>
                           ))}
                         {game.languages.filter((lang) => lang.hasInterface).length === 0 && (
@@ -201,7 +201,7 @@ export function GameDetailsTabs({ game, colors, activeTab, onTabChange }: GameDe
                               className="flex items-center gap-2 text-slate-300"
                             >
                               <div className="h-2 w-2 rounded-full bg-green-400"></div>
-                              <span>{lang.name}</span>
+                              <span>{lang.nativeName ?? lang.name}</span>
                             </div>
                           ))}
                         {game.languages.filter((lang) => lang.hasSubtitles).length === 0 && (
@@ -227,7 +227,7 @@ export function GameDetailsTabs({ game, colors, activeTab, onTabChange }: GameDe
                               className="flex items-center gap-2 text-slate-300"
                             >
                               <div className="h-2 w-2 rounded-full bg-green-400"></div>
-                              <span>{lang.name}</span>
+                              <span>{lang.nativeName ?? lang.name}</span>
                             </div>
                           ))}
                         {game.languages.filter((lang) => lang.hasAudio).length === 0 && (

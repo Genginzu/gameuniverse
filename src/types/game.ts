@@ -87,6 +87,7 @@ export interface GameGenre {
 export interface GameLanguage {
   code: string;
   name: string;
+  nativeName: string | null;
   hasAudio: boolean;
   hasSubtitles: boolean;
   hasInterface: boolean;
