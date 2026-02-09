@@ -648,5 +648,95 @@
       "connectionError": "Connection error. Please try again.",
       "genericError": "An error occurred. Please try again."
     }
+  },
+  "admin": {
+    "title": "Administration",
+    "forbidden": "You do not have the required permissions to access this page.",
+    "backToDashboard": "Back to dashboard",
+    "errors": {
+      "title": "An error occurred",
+      "genericMessage": "An unexpected error occurred. Please try again.",
+      "retry": "Retry",
+      "notFoundTitle": "Page not found",
+      "notFoundDescription": "The page you are looking for does not exist or has been moved.",
+      "backToGames": "Back to games"
+    },
+    "roles": {
+      "admin": "Administrator",
+      "contributor": "Contributor"
+    },
+    "nav": {
+      "games": "Games"
+    },
+    "closeSidebar": "Close sidebar",
+    "lightMode": "Light mode",
+    "darkMode": "Dark mode",
+    "games": {
+      "title": "Game Management",
+      "newGame": "New Game",
+      "searchPlaceholder": "Search games by title...",
+      "search": "Search",
+      "totalGames": "{count, plural, =0 {No games} one {1 game} other {# games}}",
+      "noGames": "No games found.",
+      "columns": {
+        "image": "Image",
+        "title": "Title",
+        "releaseDate": "Release Date",
+        "updatedAt": "Last Modified",
+        "actions": "Actions"
+      },
+      "sortBy": "Sort by {field}",
+      "editGame": "Edit {title}",
+      "deleteGame": "Delete {title}",
+      "page": "Page {current} of {total}",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "form": {
+        "slug": "Slug",
+        "slugPlaceholder": "e.g. the-legend-of-zelda",
+        "translations": "Translations",
+        "addTranslation": "Add translation",
+        "removeTranslation": "Remove this translation",
+        "title": "Title",
+        "titlePlaceholder": "Game title",
+        "description": "Description",
+        "descriptionPlaceholder": "Game description...",
+        "coverImage": "Cover image (URL)",
+        "coverImagePlaceholder": "https://example.com/image.jpg",
+        "releaseDate": "Release date",
+        "genres": "Genres",
+        "companies": "Companies",
+        "noCompanies": "No companies available.",
+        "developer": "Developer",
+        "publisher": "Publisher",
+        "create": "Create game",
+        "save": "Save",
+        "backToList": "Back to games"
+      },
+      "createPage": {
+        "title": "Create a new game",
+        "success": "Game created successfully!",
+        "errorDuplicate": "A game with this slug already exists.",
+        "errorGeneric": "An error occurred while creating the game."
+      },
+      "editPage": {
+        "title": "Edit game",
+        "loading": "Loading game data...",
+        "notFound": "Game not found.",
+        "loadError": "Failed to load game data.",
+        "success": "Game updated successfully!",
+        "errorGeneric": "An error occurred while updating the game."
+      },
+      "deleteDialog": {
+        "title": "Delete game",
+        "warning": "Are you sure you want to delete \"{title}\"?",
+        "irreversible": "This action is irreversible. All data associated with this game will be permanently deleted.",
+        "confirm": "Delete",
+        "cancel": "Cancel",
+        "deleting": "Deleting...",
+        "success": "Game deleted successfully!",
+        "errorGeneric": "An error occurred while deleting the game."
+      }
+    }
   }
 }

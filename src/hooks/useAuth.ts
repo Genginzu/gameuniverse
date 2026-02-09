@@ -122,13 +122,10 @@ export function useAuth() {
   }, [supabase, router]);
 
   const signIn = async (email: string, password: string) => {
-    console.log("Attempting sign in for:", email);
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
-
-    console.log("Sign in response:", { data, error });
 
     if (error) {
       throw error;

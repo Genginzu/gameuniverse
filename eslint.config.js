@@ -106,6 +106,21 @@ export default [
     },
   },
   {
+    files: ["scripts/**/*.{js,ts}"],
+    rules: {
+      // Scripts are CLI tools where console output is expected
+      "no-console": "off",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          ignoreRestSiblings: true,
+        },
+      ],
+    },
+  },
+  {
     files: ["*.config.{js,ts}", "*.setup.{js,ts}"],
     rules: {
       // Allow any in config files

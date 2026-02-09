@@ -34,8 +34,8 @@ bun run lint
 ```
 
 - Exécuter le linter sur tout le projet
-- Vérifier qu'il n'y a pas d'erreurs de lint
-- Corriger les erreurs de lint si nécessaire
+- Vérifier qu'il n'y a pas d'erreurs ni de warnings de lint
+- Corriger les erreurs et les warnings de lint si nécessaire
 
 ### 3. Build de Production
 
@@ -46,6 +46,15 @@ bun run build
 - Exécuter le build de production
 - Vérifier qu'il n'y a pas d'erreurs de compilation
 - Si des erreurs sont détectées, les corriger
+
+### 4. README de la Fonctionnalité
+
+- Créer un fichier `docs/README_{FEATURE_NAME}.md` documentant la fonctionnalité
+- Le README doit contenir :
+  - **Description** : résumé de ce qui a été implémenté
+  - **Accès** : comment accéder à la fonctionnalité (routes, URLs, navigation)
+  - **Prérequis** : configuration ou permissions nécessaires
+  - **Utilisation** : guide rapide des principales actions disponibles
 
 ## Format des Tâches
 
@@ -69,6 +78,12 @@ Ajouter ces tâches à la fin du fichier `tasks.md` :
 - [ ] Exécuter `bun run build`
 - [ ] Vérifier qu'il n'y a pas d'erreurs de compilation
 - [ ] Corriger les erreurs de build si nécessaire
+
+## Task X+3: README de la fonctionnalité
+
+- [ ] Créer `docs/README_{FEATURE_NAME}.md`
+- [ ] Documenter ce qui a été implémenté, comment y accéder, les prérequis et
+      l'utilisation
 ```
 
 ## Pourquoi ?
@@ -78,3 +93,4 @@ Ajouter ces tâches à la fin du fichier `tasks.md` :
 - S'assurer que l'application reste déployable
 - Détecter les erreurs de typage et de compilation tôt
 - Maintenir la qualité du code
+- Documenter chaque fonctionnalité pour faciliter l'onboarding et la maintenance

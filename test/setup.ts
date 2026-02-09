@@ -52,7 +52,6 @@ mock.module("next/navigation", () => ({
 // Mock next/image to avoid React context issues
 mock.module("next/image", () => ({
   default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
-    // eslint-disable-next-line @next/next/no-img-element
     return React.createElement("img", { ...props, alt: props.alt || "" });
   },
 }));

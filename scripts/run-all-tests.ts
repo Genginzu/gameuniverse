@@ -6,7 +6,6 @@
  *   bun scripts/run-all-tests.ts [--coverage] [--verbose]
  */
 
-import { $ } from "bun";
 import { readdirSync, statSync } from "fs";
 import { join, relative } from "path";
 

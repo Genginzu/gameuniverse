@@ -78,6 +78,7 @@ describe("LazyImage loading state", () => {
       }),
     }));
 
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { LazyImage: LoadingLazyImage } = require("../../../../src/components/ui/lazy-image");
     const html = renderToString(
       <LoadingLazyImage src="/test.jpg" alt="Test" showSkeleton={true} />
@@ -96,6 +97,7 @@ describe("LazyImage no image state", () => {
       }),
     }));
 
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { LazyImage: NoImageLazyImage } = require("../../../../src/components/ui/lazy-image");
     const html = renderToString(<NoImageLazyImage src="" alt="Test" />);
     expect(html).toContain("<svg");

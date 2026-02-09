@@ -64,17 +64,19 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
 
-    // Validate query parameters
-    const queryResult = adminGameQuerySchema.safeParse({
-      page: searchParams.get("page"),
-      limit: searchParams.get("limit"),
-      search: searchParams.get("search"),
-      genre: searchParams.get("genre"),
-      company: searchParams.get("company"),
-      sort_by: searchParams.get("sort_by"),
-      sort_order: searchParams.get("sort_order"),
-      locale: searchParams.get("locale"),
-    });
+    // Validate query parameters — filter out null values so Zod defaults apply
+    const rawParams: Record<string, string | undefined> = {
+      page: searchParams.get("page") ?? undefined,
+      limit: searchParams.get("limit") ?? undefined,
+      search: searchParams.get("search") ?? undefined,
+      genre: searchParams.get("genre") ?? undefined,
+      company: searchParams.get("company") ?? undefined,
+      sort_by: searchParams.get("sort_by") ?? undefined,
+      sort_order: searchParams.get("sort_order") ?? undefined,
+      locale: searchParams.get("locale") ?? undefined,
+    };
+
+    const queryResult = adminGameQuerySchema.safeParse(rawParams);
 
     if (!queryResult.success) {
       return NextResponse.json(
@@ -89,10 +91,12 @@ export async function GET(request: NextRequest) {
     const offset = (page - 1) * limit;
 
     // Build the base query with admin-specific fields
-    let query = supabase
-      .from("games")
-      .select(
-        `
+    // Use !inner join on translations when searching (to exclude games without
+    // matching translations), otherwise use left join so all games appear.
+    const translationJoin = search?.trim() ? "game_translations!inner" : "game_translations";
+
+    let query = supabase.from("games").select(
+      `
         id,
         slug,
         cover_image_url,
@@ -103,7 +107,7 @@ export async function GET(request: NextRequest) {
         system_requirements,
         created_at,
         updated_at,
-        game_translations!inner(
+        ${translationJoin}(
           id,
           title,
           description,
@@ -133,8 +137,7 @@ export async function GET(request: NextRequest) {
         game_videos(count),
         game_prices(count)
       `
-      )
-      .eq("game_translations.language_code", locale);
+    );
 
     // Add search filter
     if (search?.trim()) {
@@ -142,13 +145,14 @@ export async function GET(request: NextRequest) {
     }
 
     // Get total count for pagination
-    let countQuery = supabase
-      .from("games")
-      .select("id, game_translations!inner(language_code)", { count: "exact", head: true })
-      .eq("game_translations.language_code", locale);
+    let countQuery = supabase.from("games").select("id", { count: "exact", head: true });
 
     if (search?.trim()) {
-      countQuery = countQuery.ilike("game_translations.title", `%${search.trim()}%`);
+      // For search, we need to join translations to filter by title
+      countQuery = supabase
+        .from("games")
+        .select("id, game_translations!inner(title)", { count: "exact", head: true })
+        .ilike("game_translations.title", `%${search.trim()}%`);
     }
 
     const { count: totalCount, error: countError } = await countQuery;
@@ -173,7 +177,10 @@ export async function GET(request: NextRequest) {
     // Transform data for admin view
     const transformedGames =
       (games as AdminGameRow[] | null)?.map((game) => {
-        const translation = game.game_translations?.[0];
+        // Prefer translation matching the requested locale, fallback to first available
+        const translations = game.game_translations ?? [];
+        const translation =
+          translations.find((t) => t.language_code === locale) || translations[0] || null;
         const genres =
           game.game_genres?.map((gg) => ({
             id: gg.genres?.id,

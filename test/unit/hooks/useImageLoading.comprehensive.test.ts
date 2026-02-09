@@ -146,22 +146,22 @@ describe("useImageLoading comprehensive tests", () => {
   describe("src change handling", () => {
     it("should reset to loading state when src changes", () => {
       // Initial loaded state
-      let state = {
+      const initialState = {
         isLoading: false,
         hasError: false,
         imageSrc: "old.jpg",
       };
 
       // Simulate src change effect
-      const handleSrcChange = (newSrc: string) => {
-        state = {
+      const handleSrcChange = (_newSrc: string) => {
+        return {
           isLoading: true,
           hasError: false,
-          imageSrc: state.imageSrc, // Keep old until new loads
+          imageSrc: initialState.imageSrc, // Keep old until new loads
         };
       };
 
-      handleSrcChange("new.jpg");
+      const state = handleSrcChange("new.jpg");
 
       expect(state.isLoading).toBe(true);
       expect(state.hasError).toBe(false);
@@ -240,7 +240,7 @@ describe("useImageLoading comprehensive tests", () => {
 
     it("should handle cleanup preventing stale updates", () => {
       let mounted = true;
-      let state = { imageSrc: undefined as string | undefined };
+      const state = { imageSrc: undefined as string | undefined };
 
       // Simulate async load completing after unmount
       const asyncLoad = () => {
