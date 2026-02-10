@@ -223,7 +223,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     // Fetch game versions (Requirements 5.1)
     let gameVersions: Array<{
       id: string;
-      igdb_id: number;
+      igdb_id: number | null;
       version_title: string;
       description: string | null;
       cover_image_url: string | null;

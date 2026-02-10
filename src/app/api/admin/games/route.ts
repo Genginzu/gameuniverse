@@ -145,7 +145,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Get total count for pagination
-    let countQuery = supabase.from("games").select("id", { count: "exact", head: true });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let countQuery: any = supabase.from("games").select("id", { count: "exact", head: true });
 
     if (search?.trim()) {
       // For search, we need to join translations to filter by title

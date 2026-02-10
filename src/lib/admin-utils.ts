@@ -81,7 +81,7 @@ export async function getAvailableGenres(locale: string = "fr") {
       genres?.map((genre) => {
         const translations = genre.genre_translations ?? [];
         const translation =
-          translations.find((t: { language_code: string }) => t.language_code === locale) ||
+          translations.find((t: { language_code: string | null }) => t.language_code === locale) ||
           translations[0] ||
           null;
         return {
@@ -233,7 +233,7 @@ export async function getAvailableContentDescriptors(locale: string = "fr") {
       data?.map((cd) => {
         const translations = cd.content_descriptor_translations ?? [];
         const translation =
-          translations.find((t: { language_code: string }) => t.language_code === locale) ||
+          translations.find((t: { language_code: string | null }) => t.language_code === locale) ||
           translations[0] ||
           null;
         return {

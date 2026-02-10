@@ -666,7 +666,8 @@
       "contributor": "Contributor"
     },
     "nav": {
-      "games": "Games"
+      "games": "Games",
+      "languages": "Languages"
     },
     "closeSidebar": "Close sidebar",
     "lightMode": "Light mode",
@@ -780,6 +781,72 @@
         "deleting": "Deleting...",
         "success": "Game deleted successfully!",
         "errorGeneric": "An error occurred while deleting the game."
+      }
+    },
+    "languages": {
+      "title": "Language Management",
+      "newLanguage": "New Language",
+      "searchPlaceholder": "Search languages by code or name...",
+      "search": "Search",
+      "totalLanguages": "{count, plural, =0 {No languages} one {1 language} other {# languages}}",
+      "noLanguages": "No languages found.",
+      "columns": {
+        "code": "Code",
+        "name": "English Name",
+        "nativeName": "Native Name",
+        "actions": "Actions"
+      },
+      "sortBy": "Sort by {field}",
+      "editLanguage": "Edit {name}",
+      "deleteLanguage": "Delete {name}",
+      "page": "Page {current} of {total}",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "form": {
+        "code": "Language Code",
+        "codePlaceholder": "e.g. fr, en, pt-br",
+        "codeDescription": "2 to 10 lowercase letters and hyphens. Cannot be changed after creation.",
+        "name": "English Name",
+        "namePlaceholder": "e.g. French, English, Portuguese",
+        "nativeName": "Native Name",
+        "nativeNamePlaceholder": "e.g. Français, English, Português",
+        "nativeNameDescription": "The name of the language in its own script (optional).",
+        "create": "Create Language",
+        "save": "Save Changes",
+        "backToList": "Back to languages"
+      },
+      "createPage": {
+        "title": "New Language",
+        "success": "Language created successfully.",
+        "errorDuplicate": "This language code already exists.",
+        "errorGeneric": "An error occurred while creating the language."
+      },
+      "editPage": {
+        "title": "Edit Language",
+        "success": "Language updated successfully.",
+        "errorGeneric": "An error occurred while updating the language.",
+        "notFound": "Language not found."
+      },
+      "deleteDialog": {
+        "title": "Delete Language",
+        "warning": "Are you sure you want to delete \"{name}\"?",
+        "irreversible": "This action is irreversible. The language will be permanently deleted.",
+        "usageWarning": "{count, plural, one {This language is used by 1 game.} other {This language is used by # games.}}",
+        "confirm": "Delete",
+        "cancel": "Cancel",
+        "deleting": "Deleting...",
+        "success": "Language deleted successfully!",
+        "errorGeneric": "An error occurred while deleting the language."
+      },
+      "siteLocales": {
+        "title": "Site Locales",
+        "description": "Translation languages available for the site interface.",
+        "code": "Code",
+        "name": "Name",
+        "default": "Default",
+        "translationKeys": "{count} translation keys",
+        "managedViaCode": "Site locales are currently managed via source code configuration ({routingFile} and {messagesDir}).",
+        "noLocales": "No locales configured."
       }
     }
   }

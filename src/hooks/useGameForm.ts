@@ -79,7 +79,8 @@ export function useGameForm(
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const form = useForm<AdminGameFormData>({
-    resolver: zodResolver(adminGameFormSchema),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    resolver: zodResolver(adminGameFormSchema) as any,
     defaultValues: initialData ?? {
       slug: "",
       translations: DEFAULT_TRANSLATIONS(locale),

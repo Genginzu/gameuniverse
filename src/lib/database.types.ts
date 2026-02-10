@@ -511,6 +511,47 @@ export type Database = {
           },
         ];
       };
+      game_versions: {
+        Row: {
+          id: string;
+          game_id: string;
+          igdb_id: number | null;
+          version_title: string;
+          description: string | null;
+          cover_image_url: string | null;
+          display_order: number | null;
+          created_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          game_id: string;
+          igdb_id?: number | null;
+          version_title: string;
+          description?: string | null;
+          cover_image_url?: string | null;
+          display_order?: number | null;
+          created_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          game_id?: string;
+          igdb_id?: number | null;
+          version_title?: string;
+          description?: string | null;
+          cover_image_url?: string | null;
+          display_order?: number | null;
+          created_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "game_versions_game_id_fkey";
+            columns: ["game_id"];
+            isOneToOne: false;
+            referencedRelation: "games";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       game_languages: {
         Row: {
           id: string;
@@ -549,6 +590,13 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "games";
             referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "game_languages_language_code_fkey";
+            columns: ["language_code"];
+            isOneToOne: false;
+            referencedRelation: "supported_languages";
+            referencedColumns: ["code"];
           },
         ];
       };
@@ -845,6 +893,24 @@ export type Database = {
           name?: string;
           updated_at?: string | null;
           website_url?: string | null;
+        };
+        Relationships: [];
+      };
+      supported_languages: {
+        Row: {
+          code: string;
+          name: string;
+          native_name: string | null;
+        };
+        Insert: {
+          code: string;
+          name: string;
+          native_name?: string | null;
+        };
+        Update: {
+          code?: string;
+          name?: string;
+          native_name?: string | null;
         };
         Relationships: [];
       };

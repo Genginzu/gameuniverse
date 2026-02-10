@@ -75,7 +75,7 @@ export const adminGameFormSchema = z.object({
     .array(adminGameTranslationSchema)
     .min(1, "At least one translation is required")
     .refine(
-      (translations) => translations.some((t) => t.title.trim().length > 0),
+      (translations) => translations.some((t) => (t.title ?? "").trim().length > 0),
       "At least one translation must have a title"
     ),
   cover_image_url: z.string().url("Invalid URL").optional().or(z.literal("")),
