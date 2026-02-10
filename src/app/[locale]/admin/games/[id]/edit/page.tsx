@@ -149,8 +149,9 @@ function EditGameForm({ initialData, gameId }: { initialData: AdminGameFormData;
     async (data: AdminGameFormData) => {
       try {
         await submitGame(data);
-        toast({ title: t("editPage.success") });
-        router.push("/admin/games");
+        toast({ title: t("editPage.success"), variant: "success" });
+        // Small delay to let the toast appear before navigation
+        setTimeout(() => router.push("/admin/games"), 500);
       } catch (err) {
         const message = err instanceof Error ? err.message : t("editPage.errorGeneric");
         toast({ title: message, variant: "destructive" });
@@ -250,7 +251,6 @@ export default function EditGamePage() {
           <FaArrowLeft className="mr-1 h-3 w-3" />
           {t("form.backToList")}
         </Button>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t("editPage.title")}</h1>
       </div>
 
       {initialData && <EditGameForm initialData={initialData} gameId={gameId} />}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { type UseFormReturn } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -737,17 +737,19 @@ export function GameForm({
 
   // Ensure all supported languages have a translation entry
   const currentTranslations = form.watch("translations");
-  if (currentTranslations.length < SUPPORTED_LANGUAGES.length) {
-    const missing = SUPPORTED_LANGUAGES.filter(
-      (l) => !currentTranslations.some((t) => t.language_code === l.code)
-    );
-    if (missing.length > 0) {
-      form.setValue("translations", [
-        ...currentTranslations,
-        ...missing.map((l) => ({ language_code: l.code, title: "", description: "" })),
-      ]);
+  useEffect(() => {
+    if (currentTranslations.length < SUPPORTED_LANGUAGES.length) {
+      const missing = SUPPORTED_LANGUAGES.filter(
+        (l) => !currentTranslations.some((t) => t.language_code === l.code)
+      );
+      if (missing.length > 0) {
+        form.setValue("translations", [
+          ...currentTranslations,
+          ...missing.map((l) => ({ language_code: l.code, title: "", description: "" })),
+        ]);
+      }
     }
-  }
+  }, [currentTranslations, form]);
 
   const toggleGenre = (genreId: string) => {
     const current = form.getValues("genres");

@@ -649,7 +649,7 @@ export class GameImportService {
     if (igdbGame.screenshots && igdbGame.screenshots.length > 0) {
       const screenshots = igdbGame.screenshots.map((ss, index) => ({
         game_id: gameId,
-        url: IGDBService.buildImageUrl(ss.image_id, "screenshot_big"),
+        url: IGDBService.buildImageUrl(ss.image_id, "1080p"),
         display_order: index,
         is_featured: index === 0,
       }));

@@ -29,10 +29,8 @@ export default function NewGamePage() {
     async (data: AdminGameFormData) => {
       try {
         await submitGame(data);
-        toast({
-          title: t("createPage.success"),
-        });
-        router.push("/admin/games");
+        toast({ title: t("createPage.success"), variant: "success" });
+        setTimeout(() => router.push("/admin/games"), 500);
       } catch (err) {
         const message = err instanceof Error ? err.message : t("createPage.errorGeneric");
         const isDuplicate =

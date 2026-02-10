@@ -68,7 +68,7 @@ export function GameHeroSection({
 
       {/* Background image - only for hero section */}
       {game.media.backgroundImage && (
-        <div className="absolute inset-0 z-0 h-[80vh] overflow-hidden">
+        <div className="absolute inset-0 z-0 h-[60vh] overflow-hidden">
           <LazyImage
             src={game.media.backgroundImage}
             alt={`${game.title} background`}
@@ -95,7 +95,7 @@ export function GameHeroSection({
         </div>
       )}
 
-      <div className="container relative z-10 mx-auto flex min-h-[80vh] items-center px-4 pb-8 pt-20">
+      <div className="container relative z-10 mx-auto flex min-h-[60vh] items-center px-4 pb-4 pt-16">
         <div className="grid w-full grid-cols-1 items-start gap-8 lg:grid-cols-12">
           {/* Cover and actions - Left column */}
           <div className="lg:col-span-4">

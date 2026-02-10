@@ -76,6 +76,7 @@ export default function AdminGamesPage() {
       await deleteGame(gameToDelete.id);
       toast({
         title: t("deleteDialog.success"),
+        variant: "success",
       });
       setGameToDelete(null);
     } catch {
