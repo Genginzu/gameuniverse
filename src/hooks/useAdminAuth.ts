@@ -3,14 +3,9 @@
 import { createClient } from "@/lib/supabase";
 import { useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
+import type { UserRole, AdminUser } from "@/types/admin-auth";
 
-export type UserRole = "admin" | "contributor" | "user";
-
-export interface AdminUser {
-  id: string;
-  email: string;
-  role: UserRole;
-}
+export type { UserRole, AdminUser };
 
 export interface UseAdminAuthReturn {
   user: AdminUser | null;

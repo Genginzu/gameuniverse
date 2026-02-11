@@ -15,7 +15,8 @@ import {
   FaChevronLeft,
   FaChevronRight,
 } from "react-icons/fa";
-import type { SupportedLanguage, PaginationInfo } from "@/hooks/useAdminLanguages";
+import type { SupportedLanguage } from "@/types/admin-languages";
+import type { PaginationInfo } from "@/types/pagination";
 
 export interface AdminLanguagesTableProps {
   languages: SupportedLanguage[];

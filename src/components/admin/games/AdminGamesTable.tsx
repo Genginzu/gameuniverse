@@ -16,7 +16,8 @@ import {
   FaChevronRight,
   FaImage,
 } from "react-icons/fa";
-import type { AdminGame, PaginationInfo } from "@/hooks/useAdminGames";
+import type { AdminGame } from "@/types/admin-games";
+import type { PaginationInfo } from "@/types/pagination";
 
 export interface AdminGamesTableProps {
   games: AdminGame[];

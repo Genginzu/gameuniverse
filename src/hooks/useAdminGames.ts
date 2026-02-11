@@ -2,32 +2,10 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useLocale } from "next-intl";
+import type { AdminGame, FetchGamesParams } from "@/types/admin-games";
+import type { PaginationInfo } from "@/types/pagination";
 
-export interface AdminGame {
-  id: string;
-  slug: string;
-  title: string;
-  coverImage: string | null;
-  releaseDate: string | null;
-  updatedAt: string;
-}
-
-export interface PaginationInfo {
-  currentPage: number;
-  totalPages: number;
-  totalCount: number;
-  limit: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-}
-
-export interface FetchGamesParams {
-  page?: number;
-  limit?: number;
-  search?: string;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-}
+export type { AdminGame, FetchGamesParams, PaginationInfo };
 
 export interface UseAdminGamesReturn {
   games: AdminGame[];

@@ -1,3 +1,7 @@
+---
+inclusion: always
+---
+
 # Test Structure Guidelines
 
 ## Rule

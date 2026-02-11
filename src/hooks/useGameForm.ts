@@ -5,46 +5,10 @@ import { useForm, type UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLocale } from "next-intl";
 import { adminGameFormSchema, type AdminGameFormData } from "@/lib/validations/admin-game-form";
+import type { Genre, Company, Rating, ContentDescriptor } from "@/types/admin-games";
+import type { SupportedLanguage } from "@/types/admin-languages";
 
-export interface Genre {
-  id: string;
-  slug: string;
-  name: string;
-}
-
-export interface Company {
-  id: string;
-  name: string;
-  slug: string;
-}
-
-export interface Rating {
-  id: string;
-  code: string;
-  display_name: string;
-  minimum_age: number | null;
-  color_hex: string | null;
-  icon_url: string | null;
-  system: {
-    id: string;
-    code: string;
-    name: string;
-  } | null;
-}
-
-export interface ContentDescriptor {
-  id: string;
-  code: string;
-  rating_system_id: string | null;
-  name: string;
-  description: string | null;
-}
-
-export interface SupportedLanguage {
-  code: string;
-  name: string;
-  native_name: string;
-}
+export type { Genre, Company, Rating, ContentDescriptor, SupportedLanguage };
 
 export interface UseGameFormReturn {
   form: UseFormReturn<AdminGameFormData>;

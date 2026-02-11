@@ -15,5 +15,11 @@ export * from "./profile";
 export * from "./supabase";
 export * from "./ui";
 
+// Types admin
+export * from "./admin-auth";
+export * from "./admin-games";
+export * from "./admin-languages";
+export * from "./pricing";
+
 // Types globaux
 export * from "./global.d";

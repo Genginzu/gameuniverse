@@ -3,7 +3,7 @@
  * These types extend the base database types with enriched data and function responses.
  */
 
-import type { Database, Json } from "./database.types";
+import type { Database, Json } from "../lib/database.types";
 
 // Base database types
 export type Store = Database["public"]["Tables"]["stores"]["Row"];
@@ -180,4 +180,4 @@ export interface StoreUpdateResponse {
 }
 
 // Re-export Json type for convenience
-export type { Json } from "./database.types";
+export type { Json } from "../lib/database.types";

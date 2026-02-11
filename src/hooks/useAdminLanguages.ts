@@ -1,29 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import type { SupportedLanguage, FetchLanguagesParams } from "@/types/admin-languages";
+import type { PaginationInfo } from "@/types/pagination";
 
-export interface SupportedLanguage {
-  code: string;
-  name: string;
-  native_name: string | null;
-}
-
-export interface PaginationInfo {
-  currentPage: number;
-  totalPages: number;
-  totalCount: number;
-  limit: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
-}
-
-export interface FetchLanguagesParams {
-  page?: number;
-  limit?: number;
-  search?: string;
-  sortBy?: string;
-  sortOrder?: "asc" | "desc";
-}
+export type { SupportedLanguage, FetchLanguagesParams, PaginationInfo };
 
 export interface UseAdminLanguagesReturn {
   languages: SupportedLanguage[];

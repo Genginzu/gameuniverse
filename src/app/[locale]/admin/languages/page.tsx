@@ -3,7 +3,8 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { useAdminLanguages, type SupportedLanguage } from "@/hooks/useAdminLanguages";
+import { useAdminLanguages } from "@/hooks/useAdminLanguages";
+import type { SupportedLanguage } from "@/types/admin-languages";
 import { AdminLanguagesTable } from "@/components/admin/languages/AdminLanguagesTable";
 import { DeleteLanguageDialog } from "@/components/admin/languages/DeleteLanguageDialog";
 import {

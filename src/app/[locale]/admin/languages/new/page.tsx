@@ -39,17 +39,18 @@ export default function NewLanguagePage() {
 
   return (
     <div className="p-4 lg:p-6">
-      <div className="mb-6 flex items-center gap-4">
+      <div className="mb-2">
         <Button variant="ghost" size="sm" onClick={() => router.push("/admin/languages")}>
           <FaArrowLeft className="mr-1 h-3 w-3" />
           {t("form.backToList")}
         </Button>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-          {t("createPage.title")}
-        </h1>
       </div>
 
       <div className="mx-auto max-w-2xl">
+        <h1 className="mb-6 text-2xl font-bold text-gray-900 dark:text-white">
+          {t("createPage.title")}
+        </h1>
+
         <LanguageForm
           mode="create"
           form={form}

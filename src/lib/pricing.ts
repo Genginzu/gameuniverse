@@ -13,7 +13,7 @@ import type {
   StoreCreationResponse,
   PriceFilters,
   StorePayload,
-} from "./pricing-types";
+} from "@/types/pricing";
 
 // Create a Supabase client for database operations
 const supabase = createClient<Database>(

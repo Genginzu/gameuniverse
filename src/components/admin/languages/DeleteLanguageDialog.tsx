@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { LoadingButton } from "@/components/ui/loading-button";
-import type { SupportedLanguage } from "@/hooks/useAdminLanguages";
+import type { SupportedLanguage } from "@/types/admin-languages";
 
 export interface DeleteLanguageDialogProps {
   language: SupportedLanguage | null;

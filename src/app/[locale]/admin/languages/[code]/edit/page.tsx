@@ -43,9 +43,7 @@ function EditLanguageForm({ initialData }: { initialData: LanguageFormData }) {
   );
 
   return (
-    <div className="mx-auto max-w-2xl">
-      <LanguageForm mode="edit" form={form} onSubmit={handleSubmit} isSubmitting={isSubmitting} />
-    </div>
+    <LanguageForm mode="edit" form={form} onSubmit={handleSubmit} isSubmitting={isSubmitting} />
   );
 }
 
@@ -110,14 +108,16 @@ export default function EditLanguagePage() {
   if (loadError) {
     return (
       <div className="p-4 lg:p-6">
-        <div className="mb-6 flex items-center gap-4">
+        <div className="mb-2">
           <Button variant="ghost" size="sm" onClick={() => router.push("/admin/languages")}>
             <FaArrowLeft className="mr-1 h-3 w-3" />
             {t("form.backToList")}
           </Button>
         </div>
-        <div className="rounded-xl border border-red-200 bg-red-50 p-8 text-center dark:border-red-800 dark:bg-red-900/20">
-          <p className="text-red-600 dark:text-red-400">{loadError}</p>
+        <div className="mx-auto max-w-2xl">
+          <div className="rounded-xl border border-red-200 bg-red-50 p-8 text-center dark:border-red-800 dark:bg-red-900/20">
+            <p className="text-red-600 dark:text-red-400">{loadError}</p>
+          </div>
         </div>
       </div>
     );
@@ -125,15 +125,20 @@ export default function EditLanguagePage() {
 
   return (
     <div className="p-4 lg:p-6">
-      <div className="mb-6 flex items-center gap-4">
+      <div className="mb-2">
         <Button variant="ghost" size="sm" onClick={() => router.push("/admin/languages")}>
           <FaArrowLeft className="mr-1 h-3 w-3" />
           {t("form.backToList")}
         </Button>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t("editPage.title")}</h1>
       </div>
 
-      {initialData && <EditLanguageForm initialData={initialData} />}
+      <div className="mx-auto max-w-2xl">
+        <h1 className="mb-6 text-2xl font-bold text-gray-900 dark:text-white">
+          {t("editPage.title")}
+        </h1>
+
+        {initialData && <EditLanguageForm initialData={initialData} />}
+      </div>
     </div>
   );
 }

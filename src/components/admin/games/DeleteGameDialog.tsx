@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { LoadingButton } from "@/components/ui/loading-button";
-import type { AdminGame } from "@/hooks/useAdminGames";
+import type { AdminGame } from "@/types/admin-games";
 
 export interface DeleteGameDialogProps {
   game: AdminGame | null;

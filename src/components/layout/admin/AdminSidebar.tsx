@@ -15,7 +15,7 @@ import {
   FaTimes,
   FaUser,
 } from "react-icons/fa";
-import type { AdminUser } from "@/hooks/useAdminAuth";
+import type { AdminUser } from "@/types/admin-auth";
 
 interface AdminSidebarProps {
   user: AdminUser;
@@ -165,7 +165,7 @@ function SidebarContent({
           </button>
 
           {isUserMenuOpen && (
-            <div className="animate-in fade-in-0 zoom-in-95 absolute bottom-full left-0 right-0 mb-2 rounded-xl border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
+            <div className="absolute bottom-full left-0 right-0 mb-2 rounded-xl border border-gray-200 bg-white shadow-lg animate-in fade-in-0 zoom-in-95 dark:border-gray-700 dark:bg-gray-800">
               <div className="py-2">
                 <button
                   data-dropdown-action="theme"
