@@ -1,0 +1,189 @@
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
+import { useCharacterForm } from "@/hooks/useCharacterForm";
+import { CharacterForm } from "@/components/admin/characters/CharacterForm";
+import { characterPayloadToForm } from "@/lib/utils/character-form-utils";
+import { Button } from "@/components/ui/button";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { toast } from "@/hooks/use-toast";
+import { FaArrowLeft } from "react-icons/fa";
+import type { AdminCharacterFormData } from "@/lib/validations/admin-character-form";
+import type { CharacterPayload } from "@/types/admin-characters";
+
+/** Raw API response shape from GET /api/admin/characters/[id] */
+interface CharacterApiResponse {
+  id: string;
+  slug: string;
+  main_image: string | null;
+  background_image: string | null;
+  background_color: string | null;
+  translations: Array<{
+    language_code: string;
+    name: string;
+    role: string | null;
+    description: string | null;
+    biography: string | null;
+  }>;
+  games: Array<{
+    game_id: string;
+    is_primary: boolean;
+  }>;
+  media: Array<{
+    type: "screenshot" | "artwork" | "video";
+    url: string;
+    thumbnail_url: string | null;
+    title: string | null;
+    description: string | null;
+    alt_text: string | null;
+    is_featured: boolean;
+    display_order: number;
+  }>;
+}
+
+/** Convert API response to CharacterPayload for use with characterPayloadToForm */
+function apiResponseToPayload(response: CharacterApiResponse): CharacterPayload {
+  return {
+    character: {
+      slug: response.slug,
+      main_image: response.main_image,
+      background_image: response.background_image,
+      background_color: response.background_color,
+    },
+    translations: response.translations,
+    games: response.games,
+    media: response.media,
+  };
+}
+
+/**
+ * Inner component that mounts only when initialData is ready,
+ * so useCharacterForm receives correct defaultValues on first render.
+ */
+function EditCharacterForm({
+  initialData,
+  characterId,
+}: {
+  initialData: AdminCharacterFormData;
+  characterId: string;
+}) {
+  const t = useTranslations("admin.characters");
+  const router = useRouter();
+
+  const { form, availableGames, loadingOptions, submitCharacter, isSubmitting } = useCharacterForm(
+    "edit",
+    initialData,
+    characterId
+  );
+
+  const handleSubmit = useCallback(
+    async (data: AdminCharacterFormData) => {
+      try {
+        await submitCharacter(data);
+        toast({ title: t("editPage.success"), variant: "success" });
+        setTimeout(() => router.push("/admin/characters"), 500);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : t("editPage.errorGeneric");
+        toast({ title: message, variant: "destructive" });
+      }
+    },
+    [submitCharacter, router, t]
+  );
+
+  return (
+    <div className="mx-auto max-w-7xl">
+      <CharacterForm
+        mode="edit"
+        form={form}
+        availableGames={availableGames}
+        loadingOptions={loadingOptions}
+        onSubmit={handleSubmit}
+        isSubmitting={isSubmitting}
+      />
+    </div>
+  );
+}
+
+export default function EditCharacterPage() {
+  const t = useTranslations("admin.characters");
+  const router = useRouter();
+  const params = useParams<{ id: string }>();
+  const characterId = params.id;
+
+  const [initialData, setInitialData] = useState<AdminCharacterFormData | undefined>(undefined);
+  const [loadingCharacter, setLoadingCharacter] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadCharacter = async () => {
+      try {
+        const res = await fetch(`/api/admin/characters/${characterId}`);
+        if (!res.ok) {
+          if (res.status === 404) {
+            if (mounted) setLoadError(t("editPage.notFound"));
+          } else {
+            if (mounted) setLoadError(t("editPage.loadError"));
+          }
+          return;
+        }
+        const data: CharacterApiResponse = await res.json();
+        if (mounted) {
+          const payload = apiResponseToPayload(data);
+          setInitialData(characterPayloadToForm(payload));
+        }
+      } catch {
+        if (mounted) setLoadError(t("editPage.loadError"));
+      } finally {
+        if (mounted) setLoadingCharacter(false);
+      }
+    };
+
+    loadCharacter();
+    return () => {
+      mounted = false;
+    };
+  }, [characterId, t]);
+
+  if (loadingCharacter) {
+    return (
+      <div className="flex justify-center py-12">
+        <LoadingSpinner size="md" />
+        <span className="ml-3 text-gray-500">{t("editPage.loading")}</span>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="p-4 lg:p-6">
+        <div className="mb-6 flex items-center gap-4">
+          <Button variant="ghost" size="sm" onClick={() => router.push("/admin/characters")}>
+            <FaArrowLeft className="mr-1 h-3 w-3" />
+            {t("form.backToList")}
+          </Button>
+        </div>
+        <div className="rounded-xl border border-red-200 bg-red-50 p-8 text-center dark:border-red-800 dark:bg-red-900/20">
+          <p className="text-red-600 dark:text-red-400">{loadError}</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-4 lg:p-6">
+      <div className="mb-6 flex items-center gap-4">
+        <Button variant="ghost" size="sm" onClick={() => router.push("/admin/characters")}>
+          <FaArrowLeft className="mr-1 h-3 w-3" />
+          {t("form.backToList")}
+        </Button>
+      </div>
+
+      {initialData && <EditCharacterForm initialData={initialData} characterId={characterId} />}
+    </div>
+  );
+}

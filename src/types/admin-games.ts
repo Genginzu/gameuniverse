@@ -20,7 +20,7 @@ export interface FetchGamesParams {
   sortOrder?: "asc" | "desc";
 }
 
-export interface Genre {
+export interface AdminGenre {
   id: string;
   slug: string;
   name: string;

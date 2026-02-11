@@ -1,9 +1,9 @@
 "use client";
 
-import type { GameFormTabProps, Genre } from "@/types/admin-games";
+import type { GameFormTabProps, AdminGenre } from "@/types/admin-games";
 
 interface GenresTabProps extends GameFormTabProps {
-  genres: Genre[];
+  genres: AdminGenre[];
   toggleGenre: (genreId: string) => void;
 }
 

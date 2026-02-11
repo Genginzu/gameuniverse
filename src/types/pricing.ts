@@ -179,5 +179,4 @@ export interface StoreUpdateResponse {
   message: string;
 }
 
-// Re-export Json type for convenience
-export type { Json } from "../lib/database.types";
+// Json type is already exported via supabase.ts barrel export

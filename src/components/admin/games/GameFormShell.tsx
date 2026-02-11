@@ -5,8 +5,7 @@ import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { FaImage, FaSave } from "react-icons/fa";
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
-import type { Genre, Tab, TabId } from "@/types/admin-games";
-import { SUPPORTED_LANGUAGES } from "@/types/admin-games";
+import { SUPPORTED_LANGUAGES, type AdminGenre, type Tab, type TabId } from "@/types/admin-games";
 
 /** Hero banner showing cover, title, slug and genres */
 export function HeroBanner({
@@ -17,7 +16,7 @@ export function HeroBanner({
   t,
 }: {
   form: UseFormReturn<AdminGameFormData>;
-  genres: Genre[];
+  genres: AdminGenre[];
   coverImageUrl: string | undefined;
   backgroundImageUrl: string | undefined;
   t: (key: string) => string;

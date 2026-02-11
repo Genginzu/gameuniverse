@@ -667,7 +667,8 @@
     },
     "nav": {
       "games": "Games",
-      "languages": "Languages"
+      "languages": "Languages",
+      "characters": "Characters"
     },
     "closeSidebar": "Close sidebar",
     "lightMode": "Light mode",
@@ -847,6 +848,92 @@
         "translationKeys": "{count} translation keys",
         "managedViaCode": "Site locales are currently managed via source code configuration ({routingFile} and {messagesDir}).",
         "noLocales": "No locales configured."
+      }
+    },
+    "characters": {
+      "title": "Character Management",
+      "newCharacter": "New Character",
+      "searchPlaceholder": "Search characters by name...",
+      "search": "Search",
+      "totalCharacters": "{count, plural, =0 {No characters} one {1 character} other {# characters}}",
+      "noCharacters": "No characters found.",
+      "columns": {
+        "image": "Image",
+        "name": "Name",
+        "role": "Role",
+        "primaryGame": "Primary Game",
+        "updatedAt": "Last Modified",
+        "actions": "Actions"
+      },
+      "sortBy": "Sort by {field}",
+      "editCharacter": "Edit {name}",
+      "deleteCharacter": "Delete {name}",
+      "page": "Page {current} of {total}",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "deleteDialog": {
+        "title": "Delete character",
+        "warning": "Are you sure you want to delete \"{name}\"?",
+        "irreversible": "This action is irreversible. All data associated with this character will be permanently deleted.",
+        "cancel": "Cancel",
+        "confirm": "Delete",
+        "deleting": "Deleting...",
+        "success": "Character deleted successfully!",
+        "errorGeneric": "An error occurred while deleting the character."
+      },
+      "form": {
+        "generalInfo": "General information",
+        "images": "Images",
+        "translations": "Translations",
+        "games": "Games",
+        "media": "Media",
+        "slug": "Slug",
+        "slugPlaceholder": "e.g. cloud-strife",
+        "backgroundColor": "Background color",
+        "mainImage": "Main image (URL)",
+        "mainImagePlaceholder": "https://example.com/image.jpg",
+        "backgroundImage": "Background image (URL)",
+        "backgroundImagePlaceholder": "https://example.com/background.jpg",
+        "name": "Name",
+        "namePlaceholder": "Character name",
+        "role": "Role",
+        "rolePlaceholder": "e.g. Protagonist, Antagonist",
+        "description": "Description",
+        "descriptionPlaceholder": "Character description...",
+        "biography": "Biography",
+        "biographyPlaceholder": "Character biography...",
+        "noGames": "No games added.",
+        "primaryGame": "Primary",
+        "addGame": "Add a game",
+        "allGamesAdded": "All games have been added",
+        "selectGame": "Select a game...",
+        "noMedia": "No media added.",
+        "mediaType_screenshot": "Screenshot",
+        "mediaType_artwork": "Artwork",
+        "mediaType_video": "Video",
+        "mediaTitle": "Title",
+        "altText": "Alt text",
+        "thumbnailUrl": "Thumbnail URL",
+        "removeMedia": "Remove",
+        "backToList": "Back to characters",
+        "create": "Create character",
+        "save": "Save",
+        "previous": "Previous",
+        "next": "Next"
+      },
+      "createPage": {
+        "title": "Create a new character",
+        "success": "Character created successfully!",
+        "errorGeneric": "An error occurred while creating the character.",
+        "errorDuplicate": "A character with this slug already exists."
+      },
+      "editPage": {
+        "title": "Edit character",
+        "success": "Character updated successfully!",
+        "errorGeneric": "An error occurred while updating the character.",
+        "notFound": "Character not found.",
+        "loadError": "Failed to load character data.",
+        "loading": "Loading character data..."
       }
     }
   }

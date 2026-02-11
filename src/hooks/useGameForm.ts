@@ -5,14 +5,14 @@ import { useForm, type UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLocale } from "next-intl";
 import { adminGameFormSchema, type AdminGameFormData } from "@/lib/validations/admin-game-form";
-import type { Genre, Company, Rating, ContentDescriptor } from "@/types/admin-games";
+import type { AdminGenre, Company, Rating, ContentDescriptor } from "@/types/admin-games";
 import type { SupportedLanguage } from "@/types/admin-languages";
 
-export type { Genre, Company, Rating, ContentDescriptor, SupportedLanguage };
+export type { AdminGenre as Genre, Company, Rating, ContentDescriptor, SupportedLanguage };
 
 export interface UseGameFormReturn {
   form: UseFormReturn<AdminGameFormData>;
-  genres: Genre[];
+  genres: AdminGenre[];
   companies: Company[];
   ratings: Rating[];
   contentDescriptors: ContentDescriptor[];
@@ -33,7 +33,7 @@ export function useGameForm(
   gameId?: string
 ): UseGameFormReturn {
   const locale = useLocale();
-  const [genres, setGenres] = useState<Genre[]>([]);
+  const [genres, setGenres] = useState<AdminGenre[]>([]);
   const [companies, setCompanies] = useState<Company[]>([]);
   const [ratings, setRatings] = useState<Rating[]>([]);
   const [contentDescriptors, setContentDescriptors] = useState<ContentDescriptor[]>([]);

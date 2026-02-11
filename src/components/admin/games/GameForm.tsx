@@ -16,8 +16,15 @@ import {
   FaLanguage,
 } from "react-icons/fa";
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
-import type { Genre, Company, Rating, ContentDescriptor, TabId, Tab } from "@/types/admin-games";
-import { SUPPORTED_LANGUAGES } from "@/types/admin-games";
+import {
+  SUPPORTED_LANGUAGES,
+  type AdminGenre,
+  type Company,
+  type Rating,
+  type ContentDescriptor,
+  type TabId,
+  type Tab,
+} from "@/types/admin-games";
 import type { SupportedLanguage } from "@/types/admin-languages";
 import { HeroBanner, TabNavigation, StickySubmitBar } from "./GameFormShell";
 import { GameFormGeneralTab } from "./GameFormGeneralTab";
@@ -32,7 +39,7 @@ import { GameFormLanguagesTab } from "./GameFormLanguagesTab";
 export interface GameFormProps {
   mode: "create" | "edit";
   form: UseFormReturn<AdminGameFormData>;
-  genres: Genre[];
+  genres: AdminGenre[];
   companies: Company[];
   ratings: Rating[];
   contentDescriptors: ContentDescriptor[];

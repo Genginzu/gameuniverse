@@ -667,7 +667,8 @@
     },
     "nav": {
       "games": "Jeux",
-      "languages": "Langues"
+      "languages": "Langues",
+      "characters": "Personnages"
     },
     "closeSidebar": "Fermer le menu latéral",
     "lightMode": "Mode clair",
@@ -850,6 +851,92 @@
         "translationKeys": "{count} clés de traduction",
         "managedViaCode": "Les locales du site sont actuellement gérées via la configuration du code source ({routingFile} et {messagesDir}).",
         "noLocales": "Aucune locale configurée."
+      }
+    },
+    "characters": {
+      "title": "Gestion des personnages",
+      "newCharacter": "Nouveau personnage",
+      "searchPlaceholder": "Rechercher un personnage par nom...",
+      "search": "Rechercher",
+      "totalCharacters": "{count, plural, =0 {Aucun personnage} one {1 personnage} other {# personnages}}",
+      "noCharacters": "Aucun personnage trouvé.",
+      "columns": {
+        "image": "Image",
+        "name": "Nom",
+        "role": "Rôle",
+        "primaryGame": "Jeu principal",
+        "updatedAt": "Dernière modification",
+        "actions": "Actions"
+      },
+      "sortBy": "Trier par {field}",
+      "editCharacter": "Modifier {name}",
+      "deleteCharacter": "Supprimer {name}",
+      "page": "Page {current} sur {total}",
+      "previousPage": "Page précédente",
+      "nextPage": "Page suivante",
+      "deleteDialog": {
+        "title": "Supprimer le personnage",
+        "warning": "Êtes-vous sûr de vouloir supprimer « {name} » ?",
+        "irreversible": "Cette action est irréversible. Toutes les données associées à ce personnage seront définitivement supprimées.",
+        "cancel": "Annuler",
+        "confirm": "Supprimer",
+        "deleting": "Suppression...",
+        "success": "Personnage supprimé avec succès !",
+        "errorGeneric": "Une erreur est survenue lors de la suppression du personnage."
+      },
+      "form": {
+        "generalInfo": "Informations générales",
+        "images": "Images",
+        "translations": "Traductions",
+        "games": "Jeux",
+        "media": "Médias",
+        "slug": "Slug",
+        "slugPlaceholder": "ex : cloud-strife",
+        "backgroundColor": "Couleur de fond",
+        "mainImage": "Image principale (URL)",
+        "mainImagePlaceholder": "https://example.com/image.jpg",
+        "backgroundImage": "Image de fond (URL)",
+        "backgroundImagePlaceholder": "https://example.com/background.jpg",
+        "name": "Nom",
+        "namePlaceholder": "Nom du personnage",
+        "role": "Rôle",
+        "rolePlaceholder": "ex : Protagoniste, Antagoniste",
+        "description": "Description",
+        "descriptionPlaceholder": "Description du personnage...",
+        "biography": "Biographie",
+        "biographyPlaceholder": "Biographie du personnage...",
+        "noGames": "Aucun jeu ajouté.",
+        "primaryGame": "Principal",
+        "addGame": "Ajouter un jeu",
+        "allGamesAdded": "Tous les jeux sont déjà ajoutés",
+        "selectGame": "Sélectionner un jeu...",
+        "noMedia": "Aucun média ajouté.",
+        "mediaType_screenshot": "Capture d'écran",
+        "mediaType_artwork": "Illustration",
+        "mediaType_video": "Vidéo",
+        "mediaTitle": "Titre",
+        "altText": "Texte alternatif",
+        "thumbnailUrl": "URL de la miniature",
+        "removeMedia": "Supprimer",
+        "backToList": "Retour aux personnages",
+        "create": "Créer le personnage",
+        "save": "Enregistrer",
+        "previous": "Précédent",
+        "next": "Suivant"
+      },
+      "createPage": {
+        "title": "Créer un nouveau personnage",
+        "success": "Personnage créé avec succès !",
+        "errorGeneric": "Une erreur est survenue lors de la création du personnage.",
+        "errorDuplicate": "Un personnage avec ce slug existe déjà."
+      },
+      "editPage": {
+        "title": "Modifier le personnage",
+        "success": "Personnage mis à jour avec succès !",
+        "errorGeneric": "Une erreur est survenue lors de la mise à jour du personnage.",
+        "notFound": "Personnage introuvable.",
+        "loadError": "Impossible de charger les données du personnage.",
+        "loading": "Chargement des données du personnage..."
       }
     }
   }
