@@ -32,6 +32,7 @@ export function CharacterFormImagesTab({ form, t }: CharacterFormTabProps) {
           />
           {mainImageUrl && (
             <img
+              key={mainImageUrl}
               src={mainImageUrl}
               alt="Main image preview"
               className="h-96 rounded-xl border border-gray-200 object-contain dark:border-gray-700"
@@ -61,7 +62,10 @@ export function CharacterFormImagesTab({ form, t }: CharacterFormTabProps) {
             )}
           />
           {backgroundImageUrl && (
-            <div className="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
+            <div
+              key={backgroundImageUrl}
+              className="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700"
+            >
               <img
                 src={backgroundImageUrl}
                 alt="Background preview"

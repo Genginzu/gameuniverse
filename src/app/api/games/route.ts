@@ -6,7 +6,7 @@ import {
   calculateOffset,
   handleApiError,
 } from "@/lib/api-utils";
-import type { GameRowWithRelations } from "@/lib/types/supabase-queries";
+import type { GameRowWithRelations, GenreTranslationRow } from "@/lib/types/supabase-queries";
 
 export async function GET(request: NextRequest) {
   try {
@@ -38,11 +38,9 @@ export async function GET(request: NextRequest) {
     const offset = calculateOffset(page, limit);
 
     // Build the base query with joins for translations and genres
-    // Add user_library join if filtering by library
-    let query = supabase
-      .from("games")
-      .select(
-        `
+    // Use left join on translations so games with only 'en' translations still appear for other locales
+    let query = supabase.from("games").select(
+      `
         id,
         slug,
         igdb_id,
@@ -52,14 +50,16 @@ export async function GET(request: NextRequest) {
         release_date,
         metascore,
         created_at,
-        game_translations!inner(
+        game_translations(
           title,
-          description
+          description,
+          language_code
         ),
         game_genres(
           genres(
             genre_translations(
-              name
+              name,
+              language_code
             )
           )
         ),
@@ -84,8 +84,7 @@ export async function GET(request: NextRequest) {
             : ""
         }
       `
-      )
-      .eq("game_translations.language_code", locale);
+    );
 
     // Filter by user's library if requested
     if (inLibrary && userId) {
@@ -104,13 +103,13 @@ export async function GET(request: NextRequest) {
     }
 
     // Get total count for pagination (separate query for performance)
+    // Use left join to count all games, including those without locale-specific translations
     let countQuery = supabase
       .from("games")
       .select(
-        `id, game_translations!inner(language_code)${inLibrary ? ", user_library!inner(user_id)" : ""}`,
+        `id, game_translations(language_code)${inLibrary ? ", user_library!inner(user_id)" : ""}`,
         { count: "exact", head: true }
-      )
-      .eq("game_translations.language_code", locale);
+      );
 
     // Apply the same word-by-word search filter for count query
     if (search.trim()) {
@@ -150,7 +149,14 @@ export async function GET(request: NextRequest) {
         (games as unknown as GameRowWithRelations[])?.filter((game) => {
           const gameGenres =
             game.game_genres
-              ?.map((gg) => gg.genres?.genre_translations?.[0]?.name?.toLowerCase())
+              ?.map((gg) => {
+                const genreTranslations = gg.genres?.genre_translations ?? [];
+                const gt =
+                  genreTranslations.find((t: GenreTranslationRow) => t.language_code === locale) ||
+                  genreTranslations[0] ||
+                  null;
+                return gt?.name?.toLowerCase();
+              })
               .filter(Boolean) || [];
 
           return genres.some((genre) => gameGenres.includes(genre.toLowerCase()));
@@ -159,11 +165,20 @@ export async function GET(request: NextRequest) {
 
     // Transform the data to match the expected format
     const transformedGames = filteredGames.map((game) => {
-      const translation = game.game_translations?.[0];
+      // Prefer translation matching the requested locale, fallback to first available
+      const translations = game.game_translations ?? [];
+      const translation =
+        translations.find((t) => t.language_code === locale) || translations[0] || null;
+
       const gameGenres =
-        game.game_genres?.map((gg) => ({
-          name: gg.genres?.genre_translations?.[0]?.name || "Unknown",
-        })) || [];
+        game.game_genres?.map((gg) => {
+          const genreTranslations = gg.genres?.genre_translations ?? [];
+          const gt =
+            genreTranslations.find((t) => t.language_code === locale) ||
+            genreTranslations[0] ||
+            null;
+          return { name: gt?.name || "Unknown" };
+        }) || [];
 
       // Get primary developer/publisher
       const developer =

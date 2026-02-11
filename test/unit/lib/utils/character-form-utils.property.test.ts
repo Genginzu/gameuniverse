@@ -65,6 +65,21 @@ const validMedia = () =>
     display_order: fc.integer({ min: 0, max: 100 }),
   });
 
+const validRelationship = () =>
+  fc.record({
+    related_character_id: fc.uuid(),
+    relationship_type: fc.constantFrom(
+      "ally" as const,
+      "enemy" as const,
+      "rival" as const,
+      "family" as const,
+      "romantic" as const,
+      "mentor" as const,
+      "friend" as const
+    ),
+    description: fc.oneof(fc.constant(""), fc.string({ minLength: 1, maxLength: 200 })),
+  });
+
 const validFormData = () =>
   fc.record({
     slug: validSlug(),
@@ -73,6 +88,7 @@ const validFormData = () =>
     background_image_url: fc.oneof(fc.constant(""), fc.webUrl()),
     translations: fc.array(validTranslation(), { minLength: 1, maxLength: 2 }),
     games: fc.array(validGame(), { minLength: 0, maxLength: 3 }),
+    relationships: fc.array(validRelationship(), { minLength: 0, maxLength: 3 }),
     media: fc.array(validMedia(), { minLength: 0, maxLength: 3 }),
   });
 
@@ -95,6 +111,11 @@ function normalizeFormData(data: AdminCharacterFormData): AdminCharacterFormData
       biography: t.biography || "",
     })),
     games: data.games ?? [],
+    relationships: (data.relationships ?? []).map((r) => ({
+      related_character_id: r.related_character_id,
+      relationship_type: r.relationship_type,
+      description: r.description || "",
+    })),
     media: (data.media ?? []).map((m) => ({
       type: m.type,
       url: m.url,

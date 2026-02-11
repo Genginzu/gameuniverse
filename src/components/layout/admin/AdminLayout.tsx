@@ -7,6 +7,7 @@ import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { useAuth } from "@/hooks/useAuth";
 import AdminSidebar from "./AdminSidebar";
 import { useTranslations } from "next-intl";
+import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import { Button } from "@/components/ui/button";
 import { FaBars, FaTimes } from "react-icons/fa";
 
@@ -130,6 +131,9 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         />
       )}
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+        <div className="flex items-center justify-end border-b border-gray-200 bg-white px-4 py-2 dark:border-gray-700 dark:bg-gray-900">
+          <LanguageSwitcher />
+        </div>
         <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900">{children}</main>
       </div>
     </div>

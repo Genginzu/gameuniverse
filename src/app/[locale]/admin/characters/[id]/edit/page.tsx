@@ -32,6 +32,11 @@ interface CharacterApiResponse {
     game_id: string;
     is_primary: boolean;
   }>;
+  relationships: Array<{
+    related_character_id: string;
+    relationship_type: string;
+    description: string | null;
+  }>;
   media: Array<{
     type: "screenshot" | "artwork" | "video";
     url: string;
@@ -55,6 +60,7 @@ function apiResponseToPayload(response: CharacterApiResponse): CharacterPayload 
     },
     translations: response.translations,
     games: response.games,
+    relationships: response.relationships,
     media: response.media,
   };
 }
@@ -73,11 +79,14 @@ function EditCharacterForm({
   const t = useTranslations("admin.characters");
   const router = useRouter();
 
-  const { form, availableGames, loadingOptions, submitCharacter, isSubmitting } = useCharacterForm(
-    "edit",
-    initialData,
-    characterId
-  );
+  const {
+    form,
+    availableGames,
+    availableCharacters,
+    loadingOptions,
+    submitCharacter,
+    isSubmitting,
+  } = useCharacterForm("edit", initialData, characterId);
 
   const handleSubmit = useCallback(
     async (data: AdminCharacterFormData) => {
@@ -99,9 +108,11 @@ function EditCharacterForm({
         mode="edit"
         form={form}
         availableGames={availableGames}
+        availableCharacters={availableCharacters}
         loadingOptions={loadingOptions}
         onSubmit={handleSubmit}
         isSubmitting={isSubmitting}
+        currentCharacterId={characterId}
       />
     </div>
   );

@@ -265,6 +265,21 @@ export async function POST(request: NextRequest) {
         }
       }
 
+      // Insert relationships
+      if (payload.relationships.length > 0) {
+        const relationshipsWithId = payload.relationships.map((r) => ({
+          ...r,
+          character_id: characterId,
+        }));
+        const { error: relationshipsError } = await db
+          .from("character_relationships")
+          .insert(relationshipsWithId);
+
+        if (relationshipsError) {
+          throw new Error(`Failed to create relationships: ${relationshipsError.message}`);
+        }
+      }
+
       return NextResponse.json(
         {
           message: "Character created successfully",

@@ -21,6 +21,11 @@ export function characterFormToPayload(formData: AdminCharacterFormData): Charac
       biography: t.biography || null,
     })),
     games: formData.games ?? [],
+    relationships: (formData.relationships ?? []).map((r) => ({
+      related_character_id: r.related_character_id,
+      relationship_type: r.relationship_type,
+      description: r.description || null,
+    })),
     media: (formData.media ?? []).map((m) => ({
       type: m.type,
       url: m.url,
@@ -52,6 +57,11 @@ export function characterPayloadToForm(payload: CharacterPayload): AdminCharacte
       biography: t.biography ?? "",
     })),
     games: payload.games,
+    relationships: payload.relationships.map((r) => ({
+      related_character_id: r.related_character_id,
+      relationship_type: r.relationship_type,
+      description: r.description ?? "",
+    })),
     media: payload.media.map((m) => ({
       type: m.type,
       url: m.url,

@@ -51,6 +51,21 @@
   }
 }
 
+/* Animation pulse ralentie pour un effet de chargement plus doux */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
 /* Animations modernes pour les pages de jeux */
 @keyframes slideInUp {
   from {
@@ -158,6 +173,7 @@
 
 /* Amélioration de l'accessibilité */
 @media (prefers-reduced-motion: reduce) {
+  .animate-pulse,
   .animate-slide-in-up,
   .animate-fade-in,
   .animate-scale-in,

@@ -27,7 +27,15 @@ export interface CharacterFormTabProps {
   t: (key: string) => string;
 }
 
-export type CharacterTabId = "general" | "images" | "translations" | "games" | "media";
+export type CharacterTabId =
+  | "general"
+  | "images"
+  | "translations"
+  | "games"
+  | "relationships"
+  | "screenshots"
+  | "artwork"
+  | "videos";
 
 export interface CharacterTab {
   id: CharacterTabId;
@@ -53,6 +61,11 @@ export interface CharacterPayload {
   games: Array<{
     game_id: string;
     is_primary: boolean;
+  }>;
+  relationships: Array<{
+    related_character_id: string;
+    relationship_type: string;
+    description: string | null;
   }>;
   media: Array<{
     type: "screenshot" | "artwork" | "video";

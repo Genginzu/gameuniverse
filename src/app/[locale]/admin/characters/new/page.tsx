@@ -13,8 +13,14 @@ import type { AdminCharacterFormData } from "@/lib/validations/admin-character-f
 export default function NewCharacterPage() {
   const t = useTranslations("admin.characters");
   const router = useRouter();
-  const { form, availableGames, loadingOptions, submitCharacter, isSubmitting } =
-    useCharacterForm("create");
+  const {
+    form,
+    availableGames,
+    availableCharacters,
+    loadingOptions,
+    submitCharacter,
+    isSubmitting,
+  } = useCharacterForm("create");
 
   const handleSubmit = useCallback(
     async (data: AdminCharacterFormData) => {
@@ -55,6 +61,7 @@ export default function NewCharacterPage() {
           mode="create"
           form={form}
           availableGames={availableGames}
+          availableCharacters={availableCharacters}
           loadingOptions={loadingOptions}
           onSubmit={handleSubmit}
           isSubmitting={isSubmitting}

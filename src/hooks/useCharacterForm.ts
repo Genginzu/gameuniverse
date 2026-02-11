@@ -17,9 +17,18 @@ export interface AvailableGame {
   coverImage: string | null;
 }
 
+/** Minimal character info for the relationships picker */
+export interface AvailableCharacter {
+  id: string;
+  name: string;
+  slug: string;
+  mainImage: string | null;
+}
+
 export interface UseCharacterFormReturn {
   form: UseFormReturn<AdminCharacterFormData>;
   availableGames: AvailableGame[];
+  availableCharacters: AvailableCharacter[];
   loadingOptions: boolean;
   submitCharacter: (data: AdminCharacterFormData) => Promise<void>;
   isSubmitting: boolean;
@@ -43,6 +52,7 @@ export function useCharacterForm(
 ): UseCharacterFormReturn {
   const locale = useLocale();
   const [availableGames, setAvailableGames] = useState<AvailableGame[]>([]);
+  const [availableCharacters, setAvailableCharacters] = useState<AvailableCharacter[]>([]);
   const [loadingOptions, setLoadingOptions] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -57,34 +67,52 @@ export function useCharacterForm(
       background_image_url: "",
       translations: DEFAULT_TRANSLATIONS(locale),
       games: [],
+      relationships: [],
       media: [],
     },
   });
 
-  // Load available games for the games selection tab
+  // Load available games and characters for selection tabs
   useEffect(() => {
     let mounted = true;
 
     const loadOptions = async () => {
       try {
-        const res = await fetch(
-          `/api/admin/games?locale=${locale}&limit=100&sort_by=title&sort_order=asc`
-        );
-        if (!res.ok) throw new Error("Failed to load available games");
+        const [gamesRes, charsRes] = await Promise.all([
+          fetch(`/api/admin/games?locale=${locale}&limit=100&sort_by=created_at&sort_order=desc`),
+          fetch(
+            `/api/admin/characters?locale=${locale}&limit=100&sort_by=created_at&sort_order=asc`
+          ),
+        ]);
 
-        const json = await res.json();
         if (!mounted) return;
 
-        setAvailableGames(
-          (json.games ?? []).map((g: Record<string, unknown>) => ({
-            id: g.id as string,
-            title: g.title as string,
-            slug: g.slug as string,
-            coverImage: (g.coverImage as string) ?? null,
-          }))
-        );
-      } catch {
-        // Games list will remain empty — form can still be used
+        if (gamesRes.ok) {
+          const gamesJson = await gamesRes.json();
+          setAvailableGames(
+            (gamesJson.games ?? []).map((g: Record<string, unknown>) => ({
+              id: g.id as string,
+              title: g.title as string,
+              slug: g.slug as string,
+              coverImage: (g.coverImage as string) ?? null,
+            }))
+          );
+        }
+
+        if (charsRes.ok) {
+          const charsJson = await charsRes.json();
+          const chars = (charsJson.characters ?? [])
+            .map((c: Record<string, unknown>) => ({
+              id: c.id as string,
+              name: c.name as string,
+              slug: c.slug as string,
+              mainImage: (c.mainImage as string) ?? null,
+            }))
+            .sort((a: AvailableCharacter, b: AvailableCharacter) => a.name.localeCompare(b.name));
+          setAvailableCharacters(chars);
+        }
+      } catch (err) {
+        console.error("Failed to load character form options:", err);
       } finally {
         if (mounted) setLoadingOptions(false);
       }
@@ -137,6 +165,7 @@ export function useCharacterForm(
   return {
     form,
     availableGames,
+    availableCharacters,
     loadingOptions,
     submitCharacter,
     isSubmitting,

@@ -134,10 +134,10 @@ export function GameHeroSection({
           {/* Main content - Right column */}
           <div className="lg:col-span-8">
             {/* Game header */}
-            <div className="mb-8">
+            <div className="mb-4">
               {/* Genres */}
               {game.genres.length > 0 && (
-                <div className="mb-4 flex flex-wrap gap-2">
+                <div className="mb-3 flex flex-wrap gap-2">
                   {game.genres.slice(0, 3).map((genre) => (
                     <Badge
                       key={genre.id}

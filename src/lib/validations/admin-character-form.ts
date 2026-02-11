@@ -26,6 +26,28 @@ export const adminCharacterGameSchema = z.object({
   is_primary: z.boolean(),
 });
 
+export const RELATIONSHIP_TYPES = [
+  "ally",
+  "enemy",
+  "rival",
+  "family",
+  "romantic",
+  "mentor",
+  "friend",
+] as const;
+
+export const adminCharacterRelationshipSchema = z.object({
+  related_character_id: z.string().uuid("Invalid character ID"),
+  relationship_type: z.enum(RELATIONSHIP_TYPES, {
+    message: "Invalid relationship type",
+  }),
+  description: z
+    .string()
+    .max(500, "Description must be less than 500 characters")
+    .optional()
+    .or(z.literal("")),
+});
+
 export const adminCharacterMediaSchema = z.object({
   type: z.enum(["screenshot", "artwork", "video"], {
     message: "Type must be 'screenshot', 'artwork', or 'video'",
@@ -68,12 +90,14 @@ export const adminCharacterFormSchema = z.object({
       "At least one translation must have a name"
     ),
   games: z.array(adminCharacterGameSchema).default([]),
+  relationships: z.array(adminCharacterRelationshipSchema).default([]),
   media: z.array(adminCharacterMediaSchema).default([]),
 });
 
 export type AdminCharacterFormData = z.infer<typeof adminCharacterFormSchema>;
 export type AdminCharacterTranslation = z.infer<typeof adminCharacterTranslationSchema>;
 export type AdminCharacterGame = z.infer<typeof adminCharacterGameSchema>;
+export type AdminCharacterRelationship = z.infer<typeof adminCharacterRelationshipSchema>;
 export type AdminCharacterMedia = z.infer<typeof adminCharacterMediaSchema>;
 
 // Query parameters validation for admin character list

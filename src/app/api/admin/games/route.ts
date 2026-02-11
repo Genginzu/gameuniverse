@@ -164,8 +164,11 @@ export async function GET(request: NextRequest) {
     }
 
     // Apply sorting and pagination
+    // Note: sorting by joined table columns (game_translations.title) only orders
+    // the nested rows, not the parent. Use created_at as fallback for title sort.
+    const orderColumn = sort_by === "title" ? "created_at" : sort_by;
     const { data: games, error } = await query
-      .order(sort_by === "title" ? "game_translations.title" : sort_by, {
+      .order(orderColumn, {
         ascending: sort_order === "asc",
       })
       .range(offset, offset + limit - 1);
@@ -217,6 +220,14 @@ export async function GET(request: NextRequest) {
           updatedAt: game.updated_at,
         };
       }) || [];
+
+    // Post-sort by title if requested (can't reliably sort by joined column in Supabase)
+    if (sort_by === "title") {
+      transformedGames.sort((a, b) => {
+        const cmp = a.title.localeCompare(b.title);
+        return sort_order === "asc" ? cmp : -cmp;
+      });
+    }
 
     const totalPages = Math.ceil((totalCount || 0) / limit);
 

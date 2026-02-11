@@ -6,27 +6,44 @@ import { type UseFormReturn } from "react-hook-form";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import { FaInfoCircle, FaImage, FaGlobe, FaGamepad, FaPhotoVideo, FaSave } from "react-icons/fa";
+import {
+  FaInfoCircle,
+  FaImage,
+  FaGlobe,
+  FaGamepad,
+  FaCamera,
+  FaPaintBrush,
+  FaVideo,
+  FaSave,
+  FaUsers,
+} from "react-icons/fa";
 import type { AdminCharacterFormData } from "@/lib/validations/admin-character-form";
 import {
   SUPPORTED_LANGUAGES,
   type CharacterTabId,
   type CharacterTab,
 } from "@/types/admin-characters";
-import type { AvailableGame } from "@/hooks/useCharacterForm";
+import type { AvailableGame, AvailableCharacter } from "@/hooks/useCharacterForm";
+import { CharacterHeroBanner } from "./CharacterFormShell";
 import { CharacterFormGeneralTab } from "./CharacterFormGeneralTab";
 import { CharacterFormImagesTab } from "./CharacterFormImagesTab";
 import { CharacterFormTranslationsTab } from "./CharacterFormTranslationsTab";
 import { CharacterFormGamesTab } from "./CharacterFormGamesTab";
-import { CharacterFormMediaTab } from "./CharacterFormMediaTab";
+import { CharacterFormScreenshotsTab } from "./CharacterFormScreenshotsTab";
+import { CharacterFormArtworkTab } from "./CharacterFormArtworkTab";
+import { CharacterFormVideosTab } from "./CharacterFormVideosTab";
+import { CharacterFormRelationsTab } from "./CharacterFormRelationsTab";
 
 export interface CharacterFormProps {
   mode: "create" | "edit";
   form: UseFormReturn<AdminCharacterFormData>;
   availableGames: AvailableGame[];
+  availableCharacters: AvailableCharacter[];
   loadingOptions: boolean;
   onSubmit: (data: AdminCharacterFormData) => Promise<void>;
   isSubmitting: boolean;
+  /** ID du personnage en cours d'édition (pour exclure du picker relations) */
+  currentCharacterId?: string;
 }
 
 const TABS: CharacterTab[] = [
@@ -34,16 +51,21 @@ const TABS: CharacterTab[] = [
   { id: "images", icon: <FaImage className="h-3.5 w-3.5" />, labelKey: "images" },
   { id: "translations", icon: <FaGlobe className="h-3.5 w-3.5" />, labelKey: "translations" },
   { id: "games", icon: <FaGamepad className="h-3.5 w-3.5" />, labelKey: "games" },
-  { id: "media", icon: <FaPhotoVideo className="h-3.5 w-3.5" />, labelKey: "media" },
+  { id: "relationships", icon: <FaUsers className="h-3.5 w-3.5" />, labelKey: "relationships" },
+  { id: "screenshots", icon: <FaCamera className="h-3.5 w-3.5" />, labelKey: "screenshots" },
+  { id: "artwork", icon: <FaPaintBrush className="h-3.5 w-3.5" />, labelKey: "artwork" },
+  { id: "videos", icon: <FaVideo className="h-3.5 w-3.5" />, labelKey: "videos" },
 ];
 
 export function CharacterForm({
   mode,
   form,
   availableGames,
+  availableCharacters,
   loadingOptions,
   onSubmit,
   isSubmitting,
+  currentCharacterId,
 }: CharacterFormProps) {
   const t = useTranslations("admin.characters.form");
   const [activeTab, setActiveTab] = useState<CharacterTabId>("general");
@@ -93,7 +115,10 @@ export function CharacterForm({
       ["images", !!(errors.main_image_url || errors.background_image_url)],
       ["translations", !!errors.translations],
       ["games", !!errors.games],
-      ["media", !!errors.media],
+      ["relationships", !!errors.relationships],
+      ["screenshots", !!errors.media],
+      ["artwork", !!errors.media],
+      ["videos", !!errors.media],
     ];
     const firstError = tabErrorMap.find(([, hasError]) => hasError);
     if (firstError) setActiveTab(firstError[0]);
@@ -106,6 +131,7 @@ export function CharacterForm({
         className="space-y-5 pb-24"
         noValidate
       >
+        <CharacterHeroBanner form={form} t={t} />
         <TabNavigation
           tabs={TABS}
           activeTab={activeTab}
@@ -121,7 +147,17 @@ export function CharacterForm({
           {activeTab === "games" && (
             <CharacterFormGamesTab form={form} t={t} availableGames={availableGames} />
           )}
-          {activeTab === "media" && <CharacterFormMediaTab form={form} t={t} />}
+          {activeTab === "relationships" && (
+            <CharacterFormRelationsTab
+              form={form}
+              t={t}
+              availableCharacters={availableCharacters}
+              currentCharacterId={currentCharacterId}
+            />
+          )}
+          {activeTab === "screenshots" && <CharacterFormScreenshotsTab form={form} t={t} />}
+          {activeTab === "artwork" && <CharacterFormArtworkTab form={form} t={t} />}
+          {activeTab === "videos" && <CharacterFormVideosTab form={form} t={t} />}
         </div>
 
         <StickySubmitBar
@@ -152,13 +188,20 @@ function TabNavigation({
   tabLabel: (tab: CharacterTab) => string;
 }) {
   const getBadge = (tabId: CharacterTabId): number | null => {
+    const media = form.watch("media");
     switch (tabId) {
       case "translations":
         return SUPPORTED_LANGUAGES.length;
       case "games":
         return form.watch("games").length;
-      case "media":
-        return form.watch("media").length;
+      case "relationships":
+        return form.watch("relationships").length;
+      case "screenshots":
+        return media.filter((m) => m.type === "screenshot").length;
+      case "artwork":
+        return media.filter((m) => m.type === "artwork").length;
+      case "videos":
+        return media.filter((m) => m.type === "video").length;
       default:
         return null;
     }

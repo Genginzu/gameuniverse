@@ -87,7 +87,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
       style={{ backgroundColor: character.backgroundColor || "#0f172a" }}
     >
       {/* Hero Section - Character centered over game background */}
-      <div className="relative min-h-[85vh] overflow-hidden">
+      <div className="relative min-h-[45vh] overflow-hidden">
         {/* Game background image */}
         {heroBackgroundImage && (
           <div className="absolute inset-0 z-0">
@@ -150,16 +150,16 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
           </div>
         </div>
 
-        <div className="container relative z-10 mx-auto min-h-[70vh] px-4 py-12">
-          <div className="flex min-h-[70vh] flex-col items-center justify-center lg:flex-row lg:items-center">
+        <div className="container relative z-10 mx-auto px-4 pt-16">
+          <div className="flex flex-col items-center justify-center lg:flex-row lg:items-center lg:justify-center">
             {/* Character Image - Centered */}
-            <div className="relative flex-shrink-0 lg:flex lg:flex-1 lg:justify-center">
+            <div className="relative flex-shrink-0">
               <div
                 className={`absolute -inset-8 bg-gradient-to-t ${colors.bg} rounded-full opacity-30 blur-3xl`}
               />
               <div className="relative">
                 {/* Main character image with transparent background effect */}
-                <div className="relative h-[500px] w-[375px] lg:h-[600px] lg:w-[450px]">
+                <div className="relative h-[400px] w-[300px] lg:h-[480px] lg:w-[360px]">
                   <LazyImage
                     src={character.media.mainImage}
                     alt={character.name}
@@ -174,9 +174,9 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
             </div>
 
             {/* Character Info - Right side */}
-            <div className="mt-8 max-w-lg text-center lg:mt-0 lg:flex-1 lg:pl-12 lg:text-left">
+            <div className="mt-2 max-w-lg text-center lg:mt-0 lg:flex-1 lg:pl-6 lg:text-left">
               {/* Character name */}
-              <h1 className="mb-6 text-5xl font-bold leading-tight text-white drop-shadow-lg [text-shadow:_0_2px_8px_rgba(0,0,0,0.5)] lg:text-6xl">
+              <h1 className="mb-3 text-5xl font-bold leading-tight text-white drop-shadow-lg [text-shadow:_0_2px_8px_rgba(0,0,0,0.5)] lg:text-6xl">
                 {character.name}
               </h1>
 
@@ -192,7 +192,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
       </div>
 
       {/* Content Section - Below the hero */}
-      <div className="relative z-20 -mt-8">
+      <div className="relative z-20 mt-2">
         <div className="container mx-auto px-4 pb-16">
           {/* Tabs navigation */}
           <div className="mb-8 flex justify-center">

@@ -4,8 +4,7 @@ import { requireAdmin } from "@/lib/auth-admin";
 import { adminCharacterFormSchema } from "@/lib/validations/admin-character-form";
 import { characterFormToPayload } from "@/lib/utils/character-form-utils";
 
-// Explicit type for the Supabase nested select result
-// (Supabase infers `never` for deeply nested joins)
+// Supabase nested select result type (Supabase infers `never` for deeply nested joins)
 interface CharacterDetailRow {
   id: string;
   slug: string;
@@ -15,7 +14,6 @@ interface CharacterDetailRow {
   created_at: string;
   updated_at: string;
   character_translations: Array<{
-    id: string;
     language_code: string;
     name: string;
     role: string | null;
@@ -23,7 +21,6 @@ interface CharacterDetailRow {
     biography: string | null;
   }>;
   character_games: Array<{
-    id: string;
     game_id: string;
     is_primary: boolean;
     games: {
@@ -33,7 +30,6 @@ interface CharacterDetailRow {
     };
   }>;
   character_media: Array<{
-    id: string;
     type: string;
     url: string;
     thumbnail_url: string | null;
@@ -43,13 +39,16 @@ interface CharacterDetailRow {
     is_featured: boolean;
     display_order: number;
   }>;
+  character_relationships: Array<{
+    related_character_id: string;
+    relationship_type: string;
+    description: string | null;
+  }>;
 }
 
 type RouteParams = { params: Promise<{ id: string }> };
 
-/**
- * GET /api/admin/characters/[id] - Full character details for editing
- */
+/** GET /api/admin/characters/[id] - Full character details for editing */
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
     await requireAdmin();
@@ -78,7 +77,6 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         created_at,
         updated_at,
         character_translations(
-          id,
           language_code,
           name,
           role,
@@ -86,7 +84,6 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
           biography
         ),
         character_games(
-          id,
           game_id,
           is_primary,
           games(
@@ -96,7 +93,6 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
           )
         ),
         character_media(
-          id,
           type,
           url,
           thumbnail_url,
@@ -105,6 +101,11 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
           alt_text,
           is_featured,
           display_order
+        ),
+        character_relationships!character_relationships_character_id_fkey(
+          related_character_id,
+          relationship_type,
+          description
         )
       `
       )
@@ -137,6 +138,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       updated_at: character.updated_at,
       translations: character.character_translations || [],
       games: character.character_games || [],
+      relationships: character.character_relationships || [],
       media: character.character_media || [],
     });
   } catch (error) {
@@ -150,9 +152,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-/**
- * PUT /api/admin/characters/[id] - Full update with relation replacement
- */
+/** PUT /api/admin/characters/[id] - Full update with relation replacement */
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   try {
     await requireAdmin();
@@ -267,6 +267,24 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       }
     }
 
+    // Replace relationships
+    await db.from("character_relationships").delete().eq("character_id", characterId);
+
+    if (payload.relationships.length > 0) {
+      const relationshipsWithId = payload.relationships.map((r) => ({
+        ...r,
+        character_id: characterId,
+      }));
+      const { error: relationshipsError } = await db
+        .from("character_relationships")
+        .insert(relationshipsWithId);
+
+      if (relationshipsError) {
+        console.error("Error updating relationships:", relationshipsError);
+        return NextResponse.json({ error: "Failed to update relationships" }, { status: 500 });
+      }
+    }
+
     return NextResponse.json({
       message: "Character updated successfully",
       characterId,
@@ -282,9 +300,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
   }
 }
 
-/**
- * DELETE /api/admin/characters/[id] - Delete with cascade
- */
+/** DELETE /api/admin/characters/[id] - Delete with cascade */
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {
     await requireAdmin();
