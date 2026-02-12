@@ -102,18 +102,38 @@ function EditCharacterForm({
     [submitCharacter, router, t]
   );
 
+  // Keep showing the same loading style until options are ready
+  if (loadingOptions) {
+    return (
+      <div className="flex flex-1 items-center justify-center py-12">
+        <div className="flex items-center gap-3">
+          <LoadingSpinner size="lg" />
+          <span className="text-gray-500 dark:text-gray-400">{t("editPage.loading")}</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="mx-auto max-w-7xl">
-      <CharacterForm
-        mode="edit"
-        form={form}
-        availableGames={availableGames}
-        availableCharacters={availableCharacters}
-        loadingOptions={loadingOptions}
-        onSubmit={handleSubmit}
-        isSubmitting={isSubmitting}
-        currentCharacterId={characterId}
-      />
+    <div className="p-4 lg:p-6">
+      <div className="mb-6 flex items-center gap-4">
+        <Button variant="ghost" size="sm" onClick={() => router.push("/admin/characters")}>
+          <FaArrowLeft className="mr-1 h-3 w-3" />
+          {t("form.backToList")}
+        </Button>
+      </div>
+      <div className="mx-auto max-w-7xl">
+        <CharacterForm
+          mode="edit"
+          form={form}
+          availableGames={availableGames}
+          availableCharacters={availableCharacters}
+          loadingOptions={loadingOptions}
+          onSubmit={handleSubmit}
+          isSubmitting={isSubmitting}
+          currentCharacterId={characterId}
+        />
+      </div>
     </div>
   );
 }
@@ -162,9 +182,11 @@ export default function EditCharacterPage() {
 
   if (loadingCharacter) {
     return (
-      <div className="flex justify-center py-12">
-        <LoadingSpinner size="md" />
-        <span className="ml-3 text-gray-500">{t("editPage.loading")}</span>
+      <div className="flex flex-1 items-center justify-center py-12">
+        <div className="flex items-center gap-3">
+          <LoadingSpinner size="lg" />
+          <span className="text-gray-500 dark:text-gray-400">{t("editPage.loading")}</span>
+        </div>
       </div>
     );
   }
@@ -186,15 +208,6 @@ export default function EditCharacterPage() {
   }
 
   return (
-    <div className="p-4 lg:p-6">
-      <div className="mb-6 flex items-center gap-4">
-        <Button variant="ghost" size="sm" onClick={() => router.push("/admin/characters")}>
-          <FaArrowLeft className="mr-1 h-3 w-3" />
-          {t("form.backToList")}
-        </Button>
-      </div>
-
-      {initialData && <EditCharacterForm initialData={initialData} characterId={characterId} />}
-    </div>
+    <>{initialData && <EditCharacterForm initialData={initialData} characterId={characterId} />}</>
   );
 }

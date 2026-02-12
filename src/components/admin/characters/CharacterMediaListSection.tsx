@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FaPlus, FaTimes } from "react-icons/fa";
 import type { UseFormReturn } from "react-hook-form";
-import type { AdminCharacterFormData } from "@/lib/validations/admin-character-form";
-import type { AdminCharacterMedia } from "@/lib/validations/admin-character-form";
+import type {
+  AdminCharacterFormData,
+  AdminCharacterMedia,
+} from "@/lib/validations/admin-character-form";
 
 interface CharacterMediaListSectionProps {
   form: UseFormReturn<AdminCharacterFormData>;

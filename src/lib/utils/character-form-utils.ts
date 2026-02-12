@@ -59,7 +59,14 @@ export function characterPayloadToForm(payload: CharacterPayload): AdminCharacte
     games: payload.games,
     relationships: payload.relationships.map((r) => ({
       related_character_id: r.related_character_id,
-      relationship_type: r.relationship_type,
+      relationship_type: r.relationship_type as
+        | "ally"
+        | "enemy"
+        | "rival"
+        | "family"
+        | "romantic"
+        | "mentor"
+        | "friend",
       description: r.description ?? "",
     })),
     media: payload.media.map((m) => ({

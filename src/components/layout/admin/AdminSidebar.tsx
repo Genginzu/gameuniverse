@@ -9,6 +9,7 @@ import {
   FaChevronUp,
   FaGamepad,
   FaGlobe,
+  FaList,
   FaMoon,
   FaSignOutAlt,
   FaSun,
@@ -132,6 +133,10 @@ function SidebarContent({
         <Link href="/admin/games" className={linkClasses("/admin/games")} onClick={onLinkClick}>
           <FaGamepad className="mr-3 h-4 w-4" />
           {t("nav.games")}
+        </Link>
+        <Link href="/admin/genres" className={linkClasses("/admin/genres")} onClick={onLinkClick}>
+          <FaList className="mr-3 h-4 w-4" />
+          {t("nav.genres")}
         </Link>
         <Link
           href="/admin/characters"

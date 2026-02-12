@@ -667,6 +667,7 @@
     },
     "nav": {
       "games": "Games",
+      "genres": "Genres",
       "languages": "Languages",
       "characters": "Characters"
     },
@@ -824,6 +825,7 @@
       },
       "editPage": {
         "title": "Edit Language",
+        "loading": "Loading language data...",
         "success": "Language updated successfully.",
         "errorGeneric": "An error occurred while updating the language.",
         "notFound": "Language not found."
@@ -964,6 +966,63 @@
         "notFound": "Character not found.",
         "loadError": "Failed to load character data.",
         "loading": "Loading character data..."
+      }
+    },
+    "genres": {
+      "title": "Genre Management",
+      "newGenre": "New Genre",
+      "searchPlaceholder": "Search genres by slug or name...",
+      "search": "Search",
+      "totalGenres": "{count, plural, =0 {No genres} one {1 genre} other {# genres}}",
+      "noGenres": "No genres found.",
+      "columns": {
+        "slug": "Slug",
+        "name": "Name",
+        "gameCount": "Games",
+        "actions": "Actions"
+      },
+      "sortBy": "Sort by {field}",
+      "editGenre": "Edit {name}",
+      "deleteGenre": "Delete {name}",
+      "page": "Page {current} of {total}",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "gameCount": "{count, plural, =0 {No games} one {1 game} other {# games}}",
+      "form": {
+        "slug": "Slug",
+        "slugPlaceholder": "e.g. tower-defense, rpg",
+        "slugDescription": "Lowercase letters, numbers and hyphens only. Cannot be changed after creation.",
+        "name": "Name",
+        "namePlaceholder": "Genre name in this language",
+        "description": "Description",
+        "descriptionPlaceholder": "Genre description in this language (optional)",
+        "create": "Create genre",
+        "save": "Save",
+        "backToList": "Back to genres"
+      },
+      "createPage": {
+        "title": "New Genre",
+        "success": "Genre created successfully!",
+        "errorDuplicate": "A genre with this slug already exists.",
+        "errorGeneric": "An error occurred while creating the genre."
+      },
+      "editPage": {
+        "title": "Edit Genre",
+        "loading": "Loading genre data...",
+        "success": "Genre updated successfully!",
+        "notFound": "Genre not found.",
+        "errorGeneric": "An error occurred while loading the genre."
+      },
+      "deleteDialog": {
+        "title": "Delete Genre",
+        "warning": "Are you sure you want to delete \"{name}\"?",
+        "irreversible": "This action is irreversible. The genre will be permanently deleted.",
+        "usageWarning": "{count, plural, one {This genre is used by 1 game.} other {This genre is used by # games.}}",
+        "confirm": "Delete",
+        "cancel": "Cancel",
+        "deleting": "Deleting...",
+        "success": "Genre deleted successfully!",
+        "errorGeneric": "An error occurred while deleting the genre."
       }
     }
   }

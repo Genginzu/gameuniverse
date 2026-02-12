@@ -20,6 +20,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   const { user: adminUser, loading: adminLoading, canRead } = useAdminAuth();
   const router = useRouter();
   const t = useTranslations("admin");
+  const tCommon = useTranslations("common");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const loading = authLoading || adminLoading;
@@ -80,8 +81,9 @@ export function AdminLayout({ children }: AdminLayoutProps) {
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="rounded-lg p-8">
+        <div className="flex items-center gap-3 rounded-lg p-8">
           <LoadingSpinner size="lg" />
+          <span className="text-gray-500 dark:text-gray-400">{tCommon("loading")}</span>
         </div>
       </div>
     );

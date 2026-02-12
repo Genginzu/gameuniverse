@@ -150,7 +150,6 @@ function EditGameForm({ initialData, gameId }: { initialData: AdminGameFormData;
       try {
         await submitGame(data);
         toast({ title: t("editPage.success"), variant: "success" });
-        // Small delay to let the toast appear before navigation
         setTimeout(() => router.push("/admin/games"), 500);
       } catch (err) {
         const message = err instanceof Error ? err.message : t("editPage.errorGeneric");
@@ -160,20 +159,40 @@ function EditGameForm({ initialData, gameId }: { initialData: AdminGameFormData;
     [submitGame, router, t]
   );
 
+  // Keep showing the same loading style until options are ready
+  if (loadingOptions) {
+    return (
+      <div className="flex flex-1 items-center justify-center py-12">
+        <div className="flex items-center gap-3">
+          <LoadingSpinner size="lg" />
+          <span className="text-gray-500 dark:text-gray-400">{t("editPage.loading")}</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="mx-auto max-w-7xl">
-      <GameForm
-        mode="edit"
-        form={form}
-        genres={genres}
-        companies={companies}
-        ratings={ratings}
-        contentDescriptors={contentDescriptors}
-        supportedLanguages={supportedLanguages}
-        loadingOptions={loadingOptions}
-        onSubmit={handleSubmit}
-        isSubmitting={isSubmitting}
-      />
+    <div className="p-4 lg:p-6">
+      <div className="mb-6 flex items-center gap-4">
+        <Button variant="ghost" size="sm" onClick={() => router.push("/admin/games")}>
+          <FaArrowLeft className="mr-1 h-3 w-3" />
+          {t("form.backToList")}
+        </Button>
+      </div>
+      <div className="mx-auto max-w-7xl">
+        <GameForm
+          mode="edit"
+          form={form}
+          genres={genres}
+          companies={companies}
+          ratings={ratings}
+          contentDescriptors={contentDescriptors}
+          supportedLanguages={supportedLanguages}
+          loadingOptions={loadingOptions}
+          onSubmit={handleSubmit}
+          isSubmitting={isSubmitting}
+        />
+      </div>
     </div>
   );
 }
@@ -221,9 +240,11 @@ export default function EditGamePage() {
 
   if (loadingGame) {
     return (
-      <div className="flex justify-center py-12">
-        <LoadingSpinner size="md" />
-        <span className="ml-3 text-gray-500">{t("editPage.loading")}</span>
+      <div className="flex flex-1 items-center justify-center py-12">
+        <div className="flex items-center gap-3">
+          <LoadingSpinner size="lg" />
+          <span className="text-gray-500 dark:text-gray-400">{t("editPage.loading")}</span>
+        </div>
       </div>
     );
   }
@@ -244,16 +265,5 @@ export default function EditGamePage() {
     );
   }
 
-  return (
-    <div className="p-4 lg:p-6">
-      <div className="mb-6 flex items-center gap-4">
-        <Button variant="ghost" size="sm" onClick={() => router.push("/admin/games")}>
-          <FaArrowLeft className="mr-1 h-3 w-3" />
-          {t("form.backToList")}
-        </Button>
-      </div>
-
-      {initialData && <EditGameForm initialData={initialData} gameId={gameId} />}
-    </div>
-  );
+  return <>{initialData && <EditGameForm initialData={initialData} gameId={gameId} />}</>;
 }

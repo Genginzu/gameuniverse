@@ -667,6 +667,7 @@
     },
     "nav": {
       "games": "Jeux",
+      "genres": "Genres",
       "languages": "Langues",
       "characters": "Personnages"
     },
@@ -827,6 +828,7 @@
       },
       "editPage": {
         "title": "Modifier la langue",
+        "loading": "Chargement des données de la langue...",
         "success": "Langue mise à jour avec succès.",
         "errorGeneric": "Une erreur est survenue lors de la mise à jour de la langue.",
         "notFound": "Langue introuvable."
@@ -967,6 +969,63 @@
         "notFound": "Personnage introuvable.",
         "loadError": "Impossible de charger les données du personnage.",
         "loading": "Chargement des données du personnage..."
+      }
+    },
+    "genres": {
+      "title": "Gestion des genres",
+      "newGenre": "Nouveau genre",
+      "searchPlaceholder": "Rechercher un genre par slug ou nom...",
+      "search": "Rechercher",
+      "totalGenres": "{count, plural, =0 {Aucun genre} one {1 genre} other {# genres}}",
+      "noGenres": "Aucun genre trouvé.",
+      "columns": {
+        "slug": "Slug",
+        "name": "Nom",
+        "gameCount": "Jeux",
+        "actions": "Actions"
+      },
+      "sortBy": "Trier par {field}",
+      "editGenre": "Modifier {name}",
+      "deleteGenre": "Supprimer {name}",
+      "page": "Page {current} sur {total}",
+      "previousPage": "Page précédente",
+      "nextPage": "Page suivante",
+      "gameCount": "{count, plural, =0 {Aucun jeu} one {1 jeu} other {# jeux}}",
+      "form": {
+        "slug": "Slug",
+        "slugPlaceholder": "ex. tower-defense, rpg",
+        "slugDescription": "Lettres minuscules, chiffres et tirets. Non modifiable après création.",
+        "name": "Nom",
+        "namePlaceholder": "Nom du genre dans cette langue",
+        "description": "Description",
+        "descriptionPlaceholder": "Description du genre dans cette langue (optionnel)",
+        "create": "Créer le genre",
+        "save": "Enregistrer",
+        "backToList": "Retour aux genres"
+      },
+      "createPage": {
+        "title": "Nouveau genre",
+        "success": "Genre créé avec succès !",
+        "errorDuplicate": "Un genre avec ce slug existe déjà.",
+        "errorGeneric": "Une erreur est survenue lors de la création du genre."
+      },
+      "editPage": {
+        "title": "Modifier le genre",
+        "loading": "Chargement des données du genre...",
+        "success": "Genre mis à jour avec succès !",
+        "notFound": "Genre introuvable.",
+        "errorGeneric": "Une erreur est survenue lors du chargement du genre."
+      },
+      "deleteDialog": {
+        "title": "Supprimer le genre",
+        "warning": "Êtes-vous sûr de vouloir supprimer « {name} » ?",
+        "irreversible": "Cette action est irréversible. Le genre sera définitivement supprimé.",
+        "usageWarning": "{count, plural, one {Ce genre est utilisé par 1 jeu.} other {Ce genre est utilisé par # jeux.}}",
+        "confirm": "Supprimer",
+        "cancel": "Annuler",
+        "deleting": "Suppression...",
+        "success": "Genre supprimé avec succès !",
+        "errorGeneric": "Une erreur est survenue lors de la suppression du genre."
       }
     }
   }

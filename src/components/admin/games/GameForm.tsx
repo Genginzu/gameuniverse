@@ -73,6 +73,7 @@ export function GameForm({
   isSubmitting,
 }: GameFormProps) {
   const t = useTranslations("admin.games.form");
+  const tCommon = useTranslations("common");
   const [activeTab, setActiveTab] = useState<TabId>("general");
 
   // Ensure all supported languages have a translation entry
@@ -115,8 +116,11 @@ export function GameForm({
 
   if (loadingOptions) {
     return (
-      <div className="flex justify-center py-12">
-        <LoadingSpinner size="md" />
+      <div className="flex flex-1 items-center justify-center py-12">
+        <div className="flex items-center gap-3">
+          <LoadingSpinner size="lg" />
+          <span className="text-gray-500 dark:text-gray-400">{tCommon("loading")}</span>
+        </div>
       </div>
     );
   }
