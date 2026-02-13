@@ -905,6 +905,8 @@
         "descriptionPlaceholder": "Character description...",
         "biography": "Biography",
         "biographyPlaceholder": "Character biography...",
+        "weapons": "Weapons & Equipment",
+        "weaponsPlaceholder": "Character weapons and equipment...",
         "noGames": "No games added.",
         "primaryGame": "Primary",
         "addGame": "Add a game",

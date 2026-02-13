@@ -96,6 +96,24 @@ export function CharacterFormTranslationsTab({ form, t }: CharacterFormTabProps)
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name={`translations.${index}.weapons`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t("weapons")}</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder={t("weaponsPlaceholder")}
+                        rows={3}
+                        {...field}
+                        value={field.value ?? ""}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
           </div>
         );

@@ -27,6 +27,7 @@ interface CharacterApiResponse {
     role: string | null;
     description: string | null;
     biography: string | null;
+    weapons: string | null;
   }>;
   games: Array<{
     game_id: string;

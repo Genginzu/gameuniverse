@@ -87,6 +87,7 @@ export function CharacterForm({
             role: "",
             description: "",
             biography: "",
+            weapons: "",
           })),
         ]);
       }

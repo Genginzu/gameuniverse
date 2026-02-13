@@ -19,6 +19,11 @@ export const adminCharacterTranslationSchema = z.object({
     .max(10000, "Biography must be less than 10000 characters")
     .optional()
     .or(z.literal("")),
+  weapons: z
+    .string()
+    .max(5000, "Weapons must be less than 5000 characters")
+    .optional()
+    .or(z.literal("")),
 });
 
 export const adminCharacterGameSchema = z.object({

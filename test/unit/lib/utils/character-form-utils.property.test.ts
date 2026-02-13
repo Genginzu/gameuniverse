@@ -34,6 +34,7 @@ const validTranslation = () =>
     role: fc.oneof(fc.constant(""), fc.string({ minLength: 1, maxLength: 50 })),
     description: fc.oneof(fc.constant(""), fc.string({ minLength: 1, maxLength: 200 })),
     biography: fc.oneof(fc.constant(""), fc.string({ minLength: 1, maxLength: 200 })),
+    weapons: fc.oneof(fc.constant(""), fc.string({ minLength: 1, maxLength: 200 })),
   });
 
 const validHexColor = () =>
@@ -109,6 +110,7 @@ function normalizeFormData(data: AdminCharacterFormData): AdminCharacterFormData
       role: t.role || "",
       description: t.description || "",
       biography: t.biography || "",
+      weapons: t.weapons || "",
     })),
     games: data.games ?? [],
     relationships: (data.relationships ?? []).map((r) => ({

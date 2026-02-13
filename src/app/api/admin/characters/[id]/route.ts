@@ -19,6 +19,7 @@ interface CharacterDetailRow {
     role: string | null;
     description: string | null;
     biography: string | null;
+    weapons: string | null;
   }>;
   character_games: Array<{
     game_id: string;
@@ -81,7 +82,8 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
           name,
           role,
           description,
-          biography
+          biography,
+          weapons
         ),
         character_games(
           game_id,

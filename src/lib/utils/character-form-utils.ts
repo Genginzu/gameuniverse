@@ -19,6 +19,7 @@ export function characterFormToPayload(formData: AdminCharacterFormData): Charac
       role: t.role || null,
       description: t.description || null,
       biography: t.biography || null,
+      weapons: t.weapons || null,
     })),
     games: formData.games ?? [],
     relationships: (formData.relationships ?? []).map((r) => ({
@@ -55,6 +56,7 @@ export function characterPayloadToForm(payload: CharacterPayload): AdminCharacte
       role: t.role ?? "",
       description: t.description ?? "",
       biography: t.biography ?? "",
+      weapons: t.weapons ?? "",
     })),
     games: payload.games,
     relationships: payload.relationships.map((r) => ({
