@@ -15,6 +15,7 @@ import {
   FaSun,
   FaTimes,
   FaUser,
+  FaBuilding,
   FaUserFriends,
 } from "react-icons/fa";
 import type { AdminUser } from "@/types/admin-auth";
@@ -153,6 +154,14 @@ function SidebarContent({
         >
           <FaGlobe className="mr-3 h-4 w-4" />
           {t("nav.languages")}
+        </Link>
+        <Link
+          href="/admin/companies"
+          className={linkClasses("/admin/companies")}
+          onClick={onLinkClick}
+        >
+          <FaBuilding className="mr-3 h-4 w-4" />
+          {t("nav.companies")}
         </Link>
       </nav>
 

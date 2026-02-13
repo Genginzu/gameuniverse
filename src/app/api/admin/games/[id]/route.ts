@@ -234,7 +234,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             id: gc.companies?.id,
             name: gc.companies?.name,
             slug: gc.companies?.slug,
-            description: gc.companies?.description,
             website_url: gc.companies?.website_url,
           },
         })) || [],

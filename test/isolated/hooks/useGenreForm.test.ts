@@ -188,24 +188,14 @@ describe("useGenreForm", () => {
     });
   });
 
-  it("should handle languages fetch failure gracefully", async () => {
-    globalThis.fetch = mock((url: string) => {
-      if (typeof url === "string" && url.includes("/api/admin/languages")) {
-        return Promise.resolve({ ok: false, status: 500, json: () => Promise.resolve({}) });
-      }
-      return Promise.resolve({
-        ok: true,
-        status: 201,
-        json: () => Promise.resolve({ genre: { id: "1", slug: "action" } }),
-      });
-    }) as unknown as typeof fetch;
-
+  it("should derive supportedLanguages from routing locales", async () => {
     const { useGenreForm } = await import("../../../src/hooks/useGenreForm");
     const { result } = renderHook(() => useGenreForm("create"));
 
-    // Should still work, just with empty languages
-    await waitFor(() => {
-      expect(result.current.supportedLanguages).toEqual([]);
-    });
+    // Languages are derived from routing.locales, not fetched from API
+    expect(result.current.supportedLanguages.length).toBeGreaterThan(0);
+    expect(result.current.supportedLanguages[0]).toHaveProperty("code");
+    expect(result.current.supportedLanguages[0]).toHaveProperty("name");
+    expect(result.current.supportedLanguages[0]).toHaveProperty("native_name");
   });
 });

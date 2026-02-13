@@ -10,12 +10,17 @@ export interface DatabaseGameGenre {
   }>;
 }
 
+export interface DatabaseCompanyTranslation {
+  language_code: string;
+  description: string | null;
+}
+
 export interface DatabaseGameCompany {
   id: string;
   name: string;
   slug: string;
-  description: string | null;
   website_url: string | null;
+  company_translations?: DatabaseCompanyTranslation[];
 }
 
 export interface DatabaseGameCompanyRelation {

@@ -669,7 +669,8 @@
       "games": "Jeux",
       "genres": "Genres",
       "languages": "Langues",
-      "characters": "Personnages"
+      "characters": "Personnages",
+      "companies": "Entreprises"
     },
     "closeSidebar": "Fermer le menu latéral",
     "lightMode": "Mode clair",
@@ -969,6 +970,83 @@
         "notFound": "Personnage introuvable.",
         "loadError": "Impossible de charger les données du personnage.",
         "loading": "Chargement des données du personnage..."
+      }
+    },
+    "companies": {
+      "title": "Gestion des entreprises",
+      "newCompany": "Nouvelle entreprise",
+      "searchPlaceholder": "Rechercher une entreprise par nom ou slug...",
+      "search": "Rechercher",
+      "totalCompanies": "{count, plural, =0 {Aucune entreprise} one {1 entreprise} other {# entreprises}}",
+      "noCompanies": "Aucune entreprise trouvée.",
+      "typeDeveloper": "Développeur",
+      "typePublisher": "Éditeur",
+      "typeBoth": "Développeur / Éditeur",
+      "gameCount": "{count, plural, =0 {Aucun jeu} one {1 jeu} other {# jeux}}",
+      "columns": {
+        "name": "Nom",
+        "slug": "Slug",
+        "type": "Type",
+        "gameCount": "Jeux",
+        "actions": "Actions"
+      },
+      "sortBy": "Trier par {field}",
+      "editCompany": "Modifier {name}",
+      "deleteCompany": "Supprimer {name}",
+      "page": "Page {current} sur {total}",
+      "previousPage": "Page précédente",
+      "nextPage": "Page suivante",
+      "form": {
+        "slug": "Slug",
+        "slugPlaceholder": "ex. cd-projekt-red",
+        "slugDescription": "Lettres minuscules, chiffres et tirets. Non modifiable après création.",
+        "name": "Nom",
+        "namePlaceholder": "ex. CD Projekt Red",
+        "companyType": "Type d'entreprise",
+        "companyTypePlaceholder": "Sélectionner un type...",
+        "companyTypes": {
+          "developer": "Développeur",
+          "publisher": "Éditeur",
+          "both": "Développeur / Éditeur"
+        },
+        "description": "Description",
+        "descriptionPlaceholder": "Description de l'entreprise (optionnel)",
+        "descriptionFor": "Description ({language})",
+        "websiteUrl": "Site web",
+        "websiteUrlPlaceholder": "https://example.com",
+        "logoUrl": "URL du logo",
+        "logoUrlPlaceholder": "https://example.com/logo.png",
+        "foundedYear": "Année de fondation",
+        "foundedYearPlaceholder": "ex. 1994",
+        "headquarters": "Siège social",
+        "headquartersPlaceholder": "ex. Varsovie, Pologne",
+        "create": "Créer l'entreprise",
+        "save": "Enregistrer",
+        "backToList": "Retour aux entreprises"
+      },
+      "createPage": {
+        "title": "Nouvelle entreprise",
+        "success": "Entreprise créée avec succès !",
+        "errorDuplicate": "Une entreprise avec ce nom ou ce slug existe déjà.",
+        "errorGeneric": "Une erreur est survenue lors de la création de l'entreprise."
+      },
+      "editPage": {
+        "title": "Modifier l'entreprise",
+        "loading": "Chargement des données de l'entreprise...",
+        "success": "Entreprise mise à jour avec succès !",
+        "notFound": "Entreprise introuvable.",
+        "errorGeneric": "Une erreur est survenue lors de la mise à jour de l'entreprise."
+      },
+      "deleteDialog": {
+        "title": "Supprimer l'entreprise",
+        "warning": "Êtes-vous sûr de vouloir supprimer « {name} » ?",
+        "irreversible": "Cette action est irréversible. L'entreprise sera définitivement supprimée.",
+        "usageWarning": "{count, plural, one {Cette entreprise est utilisée par 1 jeu.} other {Cette entreprise est utilisée par # jeux.}}",
+        "confirm": "Supprimer",
+        "cancel": "Annuler",
+        "deleting": "Suppression...",
+        "success": "Entreprise supprimée avec succès !",
+        "errorGeneric": "Une erreur est survenue lors de la suppression de l'entreprise."
       }
     },
     "genres": {

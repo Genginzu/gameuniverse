@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import {
   DatabaseGameGenre,
+  DatabaseGameCompany,
   DatabaseGameCompanyRelation,
   DatabaseGameScreenshot,
   DatabaseGameArtwork,
@@ -63,8 +64,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             id,
             name,
             slug,
-            description,
-            website_url
+            website_url,
+            company_translations(
+              language_code,
+              description
+            )
           )
         ),
         game_screenshots(
@@ -268,30 +272,33 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         };
       }) || [];
 
-    // Process companies
+    // Process companies — resolve description from company_translations by locale
+    const resolveCompanyDescription = (company: DatabaseGameCompany | undefined): string | null => {
+      if (!company) return null;
+      const translations = company.company_translations ?? [];
+      const localeTranslation = translations.find((t) => t.language_code === locale);
+      const fallbackTranslation = translations[0];
+      return localeTranslation?.description ?? fallbackTranslation?.description ?? null;
+    };
+
+    const mapCompany = (gc: DatabaseGameCompanyRelation) => ({
+      id: gc.companies?.id,
+      name: gc.companies?.name,
+      slug: gc.companies?.slug,
+      description: resolveCompanyDescription(gc.companies),
+      websiteUrl: gc.companies?.website_url,
+      isPrimary: gc.is_primary || false,
+    });
+
     const companies = {
       developers:
         game.game_companies
           ?.filter((gc: DatabaseGameCompanyRelation) => gc.role === "developer")
-          .map((gc: DatabaseGameCompanyRelation) => ({
-            id: gc.companies?.id,
-            name: gc.companies?.name,
-            slug: gc.companies?.slug,
-            description: gc.companies?.description,
-            websiteUrl: gc.companies?.website_url,
-            isPrimary: gc.is_primary || false,
-          })) || [],
+          .map(mapCompany) || [],
       publishers:
         game.game_companies
           ?.filter((gc: DatabaseGameCompanyRelation) => gc.role === "publisher")
-          .map((gc: DatabaseGameCompanyRelation) => ({
-            id: gc.companies?.id,
-            name: gc.companies?.name,
-            slug: gc.companies?.slug,
-            description: gc.companies?.description,
-            websiteUrl: gc.companies?.website_url,
-            isPrimary: gc.is_primary || false,
-          })) || [],
+          .map(mapCompany) || [],
     };
 
     // Get primary developer and publisher for backward compatibility

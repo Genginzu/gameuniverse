@@ -50,7 +50,7 @@ function EditGenreForm({ initialData }: { initialData: GenreFormData }) {
 
 export default function EditGenrePage() {
   const t = useTranslations("admin.genres");
-  const tCommon = useTranslations("common");
+  const _tCommon = useTranslations("common");
   const router = useRouter();
   const params = useParams<{ slug: string }>();
   const slug = params.slug;

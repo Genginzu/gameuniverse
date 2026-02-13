@@ -669,7 +669,8 @@
       "games": "Games",
       "genres": "Genres",
       "languages": "Languages",
-      "characters": "Characters"
+      "characters": "Characters",
+      "companies": "Companies"
     },
     "closeSidebar": "Close sidebar",
     "lightMode": "Light mode",
@@ -966,6 +967,83 @@
         "notFound": "Character not found.",
         "loadError": "Failed to load character data.",
         "loading": "Loading character data..."
+      }
+    },
+    "companies": {
+      "title": "Company Management",
+      "newCompany": "New Company",
+      "searchPlaceholder": "Search companies by name or slug...",
+      "search": "Search",
+      "totalCompanies": "{count, plural, =0 {No companies} one {1 company} other {# companies}}",
+      "noCompanies": "No companies found.",
+      "typeDeveloper": "Developer",
+      "typePublisher": "Publisher",
+      "typeBoth": "Developer / Publisher",
+      "gameCount": "{count, plural, =0 {No games} one {1 game} other {# games}}",
+      "columns": {
+        "name": "Name",
+        "slug": "Slug",
+        "type": "Type",
+        "gameCount": "Games",
+        "actions": "Actions"
+      },
+      "sortBy": "Sort by {field}",
+      "editCompany": "Edit {name}",
+      "deleteCompany": "Delete {name}",
+      "page": "Page {current} of {total}",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "form": {
+        "slug": "Slug",
+        "slugPlaceholder": "e.g. cd-projekt-red",
+        "slugDescription": "Lowercase letters, numbers and hyphens only. Cannot be changed after creation.",
+        "name": "Name",
+        "namePlaceholder": "e.g. CD Projekt Red",
+        "companyType": "Company type",
+        "companyTypePlaceholder": "Select a type...",
+        "companyTypes": {
+          "developer": "Developer",
+          "publisher": "Publisher",
+          "both": "Developer / Publisher"
+        },
+        "description": "Description",
+        "descriptionPlaceholder": "Company description (optional)",
+        "descriptionFor": "Description ({language})",
+        "websiteUrl": "Website",
+        "websiteUrlPlaceholder": "https://example.com",
+        "logoUrl": "Logo URL",
+        "logoUrlPlaceholder": "https://example.com/logo.png",
+        "foundedYear": "Founded year",
+        "foundedYearPlaceholder": "e.g. 1994",
+        "headquarters": "Headquarters",
+        "headquartersPlaceholder": "e.g. Warsaw, Poland",
+        "create": "Create company",
+        "save": "Save",
+        "backToList": "Back to companies"
+      },
+      "createPage": {
+        "title": "New Company",
+        "success": "Company created successfully!",
+        "errorDuplicate": "A company with this name or slug already exists.",
+        "errorGeneric": "An error occurred while creating the company."
+      },
+      "editPage": {
+        "title": "Edit Company",
+        "loading": "Loading company data...",
+        "success": "Company updated successfully!",
+        "notFound": "Company not found.",
+        "errorGeneric": "An error occurred while updating the company."
+      },
+      "deleteDialog": {
+        "title": "Delete Company",
+        "warning": "Are you sure you want to delete \"{name}\"?",
+        "irreversible": "This action is irreversible. The company will be permanently deleted.",
+        "usageWarning": "{count, plural, one {This company is used by 1 game.} other {This company is used by # games.}}",
+        "confirm": "Delete",
+        "cancel": "Cancel",
+        "deleting": "Deleting...",
+        "success": "Company deleted successfully!",
+        "errorGeneric": "An error occurred while deleting the company."
       }
     },
     "genres": {
