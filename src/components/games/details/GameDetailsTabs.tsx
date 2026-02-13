@@ -151,7 +151,7 @@ export function GameDetailsTabs({ game, colors, activeTab, onTabChange }: GameDe
         )}
 
         {activeTab === "playtime" && (
-          <GamePlaytime playtime={game.playtime} accentColor={colors.accent} />
+          <GamePlaytime playtime={game.playtime} accentColor={colors.accent} slug={game.slug} />
         )}
 
         {activeTab === "languages" && (

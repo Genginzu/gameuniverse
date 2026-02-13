@@ -555,7 +555,32 @@
       "normally": "Normal",
       "completely": "Complétionniste",
       "noData": "Aucune donnée de temps de jeu disponible pour ce jeu",
-      "source": "Données fournies par"
+      "source": "Données fournies par",
+      "players": {
+        "loading": "Chargement des données joueurs...",
+        "title": "Temps de jeu des joueurs",
+        "average": "Moyenne",
+        "hastily": "Rapide",
+        "normally": "Normal",
+        "completely": "Complétionniste",
+        "contributors": "Contributeurs",
+        "contributorsCount": "{count, plural, one {1 joueur} other {# joueurs}}",
+        "yourTime": "Votre temps",
+        "noData": "Aucun joueur n'a encore soumis son temps de jeu. Soyez le premier !",
+        "loginPrompt": "Connectez-vous pour soumettre votre temps de jeu",
+        "addPlaytime": "Ajouter mon temps de jeu",
+        "anonymous": "Joueur anonyme",
+        "dialogTitle": "Mon temps de jeu",
+        "dialogDescription": "Renseignez vos temps de jeu. Au moins un champ est requis.",
+        "fieldPlaceholder": "Heures (ex: 12.5)",
+        "submit": "Soumettre",
+        "submitting": "Envoi en cours...",
+        "cancel": "Annuler",
+        "errorPositive": "Le temps de jeu doit être un nombre strictement positif",
+        "errorMax": "Le temps de jeu ne peut pas dépasser 50 000 heures",
+        "errorPrecision": "Le temps de jeu doit être arrondi à une décimale (0.1h)",
+        "errorAtLeastOne": "Au moins un temps de jeu doit être renseigné"
+      }
     },
     "languages": {
       "title": "Langues supportées",

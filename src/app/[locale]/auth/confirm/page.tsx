@@ -6,20 +6,23 @@ import { XCircle } from "lucide-react";
 import Link from "next/link";
 import type { EmailOtpType } from "@supabase/supabase-js";
 
+interface ConfirmSearchParams {
+  token?: string;
+  type?: string;
+  redirect_to?: string;
+  error?: string;
+}
+
 interface ConfirmPageProps {
-  searchParams: {
-    token?: string;
-    type?: string;
-    redirect_to?: string;
-    error?: string;
-  };
+  searchParams: Promise<ConfirmSearchParams>;
 }
 
 export default async function ConfirmPage({ searchParams }: ConfirmPageProps) {
+  const params = await searchParams;
   const supabase = await createServerClient();
 
   // Si il y a une erreur dans les paramètres
-  if (searchParams.error) {
+  if (params.error) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
         <Card className="mx-auto w-full max-w-md">
@@ -33,7 +36,7 @@ export default async function ConfirmPage({ searchParams }: ConfirmPageProps) {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 text-center">
-            <p className="text-sm text-muted-foreground">{searchParams.error}</p>
+            <p className="text-sm text-muted-foreground">{params.error}</p>
             <Button asChild>
               <Link href="/auth">Retour à la connexion</Link>
             </Button>
@@ -44,15 +47,15 @@ export default async function ConfirmPage({ searchParams }: ConfirmPageProps) {
   }
 
   // Si pas de token, rediriger vers la page d'auth
-  if (!searchParams.token) {
+  if (!params.token) {
     redirect("/auth");
   }
 
   try {
     // Vérifier le token avec Supabase
     const { error } = await supabase.auth.verifyOtp({
-      token_hash: searchParams.token,
-      type: (searchParams.type as EmailOtpType) || "signup",
+      token_hash: params.token,
+      type: (params.type as EmailOtpType) || "signup",
     });
 
     if (error) {
@@ -84,7 +87,7 @@ export default async function ConfirmPage({ searchParams }: ConfirmPageProps) {
     }
 
     // Succès - rediriger vers la destination
-    const redirectTo = searchParams.redirect_to || "/dashboard";
+    const redirectTo = params.redirect_to || "/dashboard";
     redirect(redirectTo);
   } catch (error) {
     console.error("Unexpected error:", error);

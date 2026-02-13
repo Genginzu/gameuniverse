@@ -555,7 +555,32 @@
       "normally": "Normally",
       "completely": "Completely",
       "noData": "No playtime data available for this game",
-      "source": "Data provided by"
+      "source": "Data provided by",
+      "players": {
+        "loading": "Loading player data...",
+        "title": "Player Playtime",
+        "average": "Average",
+        "hastily": "Hastily",
+        "normally": "Normally",
+        "completely": "Completely",
+        "contributors": "Contributors",
+        "contributorsCount": "{count, plural, one {1 player} other {# players}}",
+        "yourTime": "Your time",
+        "noData": "No player has submitted their playtime yet. Be the first!",
+        "loginPrompt": "Sign in to submit your playtime",
+        "addPlaytime": "Add my playtime",
+        "anonymous": "Anonymous player",
+        "dialogTitle": "My playtime",
+        "dialogDescription": "Enter your playtime. At least one field is required.",
+        "fieldPlaceholder": "Hours (e.g. 12.5)",
+        "submit": "Submit",
+        "submitting": "Submitting...",
+        "cancel": "Cancel",
+        "errorPositive": "Playtime must be a positive number",
+        "errorMax": "Playtime cannot exceed 50,000 hours",
+        "errorPrecision": "Playtime must be rounded to one decimal place (0.1h)",
+        "errorAtLeastOne": "At least one playtime field is required"
+      }
     },
     "languages": {
       "title": "Language Support",

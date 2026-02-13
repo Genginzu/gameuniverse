@@ -244,6 +244,7 @@ async function upsertCompanyTranslations(
   }));
 
   // company_translations not in generated Supabase types — cast to bypass
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabase as any)
     .from("company_translations")
     .upsert(rows, { onConflict: "company_id,language_code" });

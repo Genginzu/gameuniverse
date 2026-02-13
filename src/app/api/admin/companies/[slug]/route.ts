@@ -164,6 +164,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       }));
 
       // company_translations not in generated Supabase types — cast to bypass
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error: upsertError } = await (supabase as any)
         .from("company_translations")
         .upsert(translationRows, { onConflict: "company_id,language_code" });
@@ -174,6 +175,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     }
 
     // company_translations not in generated Supabase types — cast to bypass
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: freshTranslations } = await (supabase as any)
       .from("company_translations")
       .select("language_code, description")
@@ -279,6 +281,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     }
 
     // company_translations not in generated Supabase types — cast to bypass
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { error: translationDeleteError } = await (supabase as any)
       .from("company_translations")
       .delete()

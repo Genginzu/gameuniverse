@@ -100,6 +100,29 @@ export interface GamePlaytime {
   lastUpdated?: string;
 }
 
+/** Temps de jeu d'un joueur (3 catégories IGDB) */
+export interface PlayerPlaytimeEntry {
+  hastily: number | null;
+  normally: number | null;
+  completely: number | null;
+}
+
+/** Un contributeur avec son profil et ses temps */
+export interface PlayerPlaytimeContributor {
+  userId: string;
+  username: string | null;
+  avatarUrl: string | null;
+  playtime: PlayerPlaytimeEntry;
+}
+
+/** Statistiques de temps de jeu des joueurs pour un jeu */
+export interface PlayerPlaytimeStats {
+  averages: PlayerPlaytimeEntry;
+  count: number;
+  userPlaytime: PlayerPlaytimeEntry | null;
+  contributors: PlayerPlaytimeContributor[];
+}
+
 export interface GameVersion {
   id: string;
   igdbId: number;

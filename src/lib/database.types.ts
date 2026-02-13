@@ -922,6 +922,9 @@ export type Database = {
           added_at: string;
           status: string;
           play_time_hours: number;
+          play_time_hastily: number | null;
+          play_time_normally: number | null;
+          play_time_completely: number | null;
           rating: number | null;
           notes: string | null;
         };
@@ -932,6 +935,9 @@ export type Database = {
           added_at?: string;
           status?: string;
           play_time_hours?: number;
+          play_time_hastily?: number | null;
+          play_time_normally?: number | null;
+          play_time_completely?: number | null;
           rating?: number | null;
           notes?: string | null;
         };
@@ -942,6 +948,9 @@ export type Database = {
           added_at?: string;
           status?: string;
           play_time_hours?: number;
+          play_time_hastily?: number | null;
+          play_time_normally?: number | null;
+          play_time_completely?: number | null;
           rating?: number | null;
           notes?: string | null;
         };

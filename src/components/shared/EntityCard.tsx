@@ -61,7 +61,8 @@ export interface EntityCardConfig<T> {
   // Custom badge renderer for complex badges (like genres)
   customBadgeRenderer?: (entity: T) => ReactNode;
   // Custom hover content renderer
-  customHoverRenderer?: (entity: T, t: (key: string) => string) => ReactNode;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  customHoverRenderer?: (entity: T, t: (key: string, values?: any) => string) => ReactNode;
   // Fallback avatar renderer (for players without avatar)
   fallbackAvatarRenderer?: () => ReactNode;
 }
