@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "./useAuth";
 import type { PlayerPlaytimeStats, PlayerPlaytimeEntry } from "@/types/game";
 
@@ -29,37 +29,41 @@ export function usePlayerPlaytime(slug: string): UsePlayerPlaytimeReturn {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const hasFetchedRef = useRef(false);
+  const fetchStats = useCallback(
+    async (signal?: AbortSignal) => {
+      if (!slug) return;
 
-  const fetchStats = useCallback(async () => {
-    if (!slug) return;
+      try {
+        setLoading(true);
+        setError(null);
 
-    try {
-      setLoading(true);
-      setError(null);
+        const response = await fetch(`/api/games/${slug}/playtime`, { signal });
 
-      const response = await fetch(`/api/games/${slug}/playtime`);
+        if (!response.ok) {
+          const data = await response.json().catch(() => null);
+          throw new Error(data?.error ?? "Failed to fetch playtime stats");
+        }
 
-      if (!response.ok) {
-        const data = await response.json().catch(() => null);
-        throw new Error(data?.error ?? "Failed to fetch playtime stats");
+        const data: PlayerPlaytimeStats = await response.json();
+        setStats(data);
+      } catch (err) {
+        // Ne pas traiter les erreurs d'abort comme de vraies erreurs
+        if (err instanceof DOMException && err.name === "AbortError") return;
+        const message = err instanceof Error ? err.message : "Unknown error";
+        setError(message);
+        setStats(EMPTY_STATS);
+      } finally {
+        setLoading(false);
       }
-
-      const data: PlayerPlaytimeStats = await response.json();
-      setStats(data);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Unknown error";
-      setError(message);
-      setStats(EMPTY_STATS);
-    } finally {
-      setLoading(false);
-    }
-  }, [slug]);
+    },
+    [slug]
+  );
 
   useEffect(() => {
-    if (hasFetchedRef.current) return;
-    hasFetchedRef.current = true;
-    fetchStats();
+    const controller = new AbortController();
+    fetchStats(controller.signal);
+
+    return () => controller.abort();
   }, [fetchStats]);
 
   const submitPlaytime = useCallback(

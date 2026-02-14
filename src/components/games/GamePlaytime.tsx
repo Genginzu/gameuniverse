@@ -6,6 +6,7 @@ import { usePlayerPlaytime } from "@/hooks/usePlayerPlaytime";
 import { useAuth } from "@/hooks/useAuth";
 import { GamePlaytimeOfficial } from "./GamePlaytimeOfficial";
 import { GamePlaytimePlayers } from "./GamePlaytimePlayers";
+import { GamePlaytimeContributors } from "./GamePlaytimeContributors";
 import { PlayerPlaytimeForm } from "./PlayerPlaytimeForm";
 
 interface GamePlaytimeProps {
@@ -16,32 +17,37 @@ interface GamePlaytimeProps {
 
 /**
  * Orchestrateur : affiche IGDB et joueurs côte à côte,
- * et gère le Dialog de soumission de temps de jeu.
+ * séparateur, puis liste des contributeurs individuels.
  */
-export function GamePlaytime({
-  playtime,
-  accentColor,
-  slug,
-}: GamePlaytimeProps) {
+export function GamePlaytime({ playtime, accentColor, slug }: GamePlaytimeProps) {
   const { user } = useAuth();
-  const { stats, loading, error, submitting, submitPlaytime } =
-    usePlayerPlaytime(slug);
+  const { stats, loading, error, submitting, submitPlaytime } = usePlayerPlaytime(slug);
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  const hasContributors = stats.contributors.length > 0;
 
   return (
     <div className="space-y-6">
+      {/* Deux colonnes de moyennes côte à côte */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
         <GamePlaytimeOfficial playtime={playtime} accentColor={accentColor} />
 
         <GamePlaytimePlayers
           stats={stats}
           loading={loading}
-          isAuthenticated={!!user}
           accentColor={accentColor}
           showAddButton={!!user}
           onAddPlaytime={() => setDialogOpen(true)}
         />
       </div>
+
+      {/* Séparateur + contributeurs individuels sous les deux colonnes */}
+      {hasContributors && (
+        <>
+          <hr className="border-slate-700" />
+          <GamePlaytimeContributors contributors={stats.contributors} />
+        </>
+      )}
 
       {user && (
         <PlayerPlaytimeForm

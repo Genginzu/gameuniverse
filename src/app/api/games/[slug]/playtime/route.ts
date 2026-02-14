@@ -2,10 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { playerPlaytimeSchema } from "@/lib/validations/player-playtime";
 import { computePlaytimeAverage } from "@/lib/services/player-playtime-utils";
-import type {
-  PlayerPlaytimeEntry,
-  PlayerPlaytimeContributor,
-} from "@/types/game";
+import type { PlayerPlaytimeEntry, PlayerPlaytimeContributor } from "@/types/game";
 
 /**
  * Resolve a game slug to its id. Returns the game id or null.
@@ -14,11 +11,7 @@ async function resolveGameId(
   supabase: Awaited<ReturnType<typeof createRouteHandlerClient>>,
   slug: string
 ): Promise<string | null> {
-  const { data, error } = await supabase
-    .from("games")
-    .select("id")
-    .eq("slug", slug)
-    .single();
+  const { data, error } = await supabase.from("games").select("id").eq("slug", slug).single();
 
   if (error || !data) return null;
   return data.id;
@@ -44,6 +37,35 @@ function hasAnyPlaytime(row: {
 }
 
 /**
+ * Fetch profiles (username, avatar) for a list of user IDs.
+ * Returns a Map keyed by user_id for O(1) lookup.
+ */
+async function fetchProfilesMap(
+  supabase: Awaited<ReturnType<typeof createRouteHandlerClient>>,
+  userIds: string[]
+): Promise<Map<string, { username: string | null; avatar_url: string | null }>> {
+  const map = new Map<string, { username: string | null; avatar_url: string | null }>();
+
+  if (userIds.length === 0) return map;
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("id, username, avatar_url")
+    .in("id", userIds);
+
+  if (error || !data) return map;
+
+  for (const row of data) {
+    map.set(row.id, {
+      username: row.username ?? null,
+      avatar_url: row.avatar_url ?? null,
+    });
+  }
+
+  return map;
+}
+
+/**
  * Fetch aggregated player playtime stats + individual contributors.
  */
 async function fetchPlaytimeStats(
@@ -51,12 +73,10 @@ async function fetchPlaytimeStats(
   gameId: string,
   userId: string | null
 ) {
-  // Join user_library with profiles to get username/avatar
+  // Fetch playtime entries (sans jointure profiles — la FK indirecte via auth.users ne fonctionne pas)
   const { data: entries, error } = await supabase
     .from("user_library")
-    .select(
-      "user_id, play_time_hastily, play_time_normally, play_time_completely, profiles(username, avatar_url)"
-    )
+    .select("user_id, play_time_hastily, play_time_normally, play_time_completely")
     .eq("game_id", gameId);
 
   if (error) {
@@ -68,18 +88,19 @@ async function fetchPlaytimeStats(
     play_time_hastily: unknown;
     play_time_normally: unknown;
     play_time_completely: unknown;
-    profiles: { username: string | null; avatar_url: string | null } | null;
   }>;
 
   const activeRows = rows.filter(hasAnyPlaytime);
 
+  // Fetch profiles séparément pour les contributeurs actifs
+  const profilesMap = await fetchProfilesMap(
+    supabase,
+    activeRows.map((r) => r.user_id)
+  );
+
   // Compute averages per field
-  const hastilyValues = activeRows
-    .map((e) => Number(e.play_time_hastily))
-    .filter((v) => v > 0);
-  const normallyValues = activeRows
-    .map((e) => Number(e.play_time_normally))
-    .filter((v) => v > 0);
+  const hastilyValues = activeRows.map((e) => Number(e.play_time_hastily)).filter((v) => v > 0);
+  const normallyValues = activeRows.map((e) => Number(e.play_time_normally)).filter((v) => v > 0);
   const completelyValues = activeRows
     .map((e) => Number(e.play_time_completely))
     .filter((v) => v > 0);
@@ -91,16 +112,19 @@ async function fetchPlaytimeStats(
   };
 
   // Build contributors list
-  const contributors: PlayerPlaytimeContributor[] = activeRows.map((row) => ({
-    userId: row.user_id,
-    username: row.profiles?.username ?? null,
-    avatarUrl: row.profiles?.avatar_url ?? null,
-    playtime: {
-      hastily: parsePlaytime(row.play_time_hastily),
-      normally: parsePlaytime(row.play_time_normally),
-      completely: parsePlaytime(row.play_time_completely),
-    },
-  }));
+  const contributors: PlayerPlaytimeContributor[] = activeRows.map((row) => {
+    const profile = profilesMap.get(row.user_id);
+    return {
+      userId: row.user_id,
+      username: profile?.username ?? null,
+      avatarUrl: profile?.avatar_url ?? null,
+      playtime: {
+        hastily: parsePlaytime(row.play_time_hastily),
+        normally: parsePlaytime(row.play_time_normally),
+        completely: parsePlaytime(row.play_time_completely),
+      },
+    };
+  });
 
   // Current user's playtime
   let userPlaytime: PlayerPlaytimeEntry | null = null;
@@ -134,10 +158,7 @@ export async function GET(
     const { slug } = await params;
 
     if (!slug) {
-      return NextResponse.json(
-        { error: "Game slug is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Game slug is required" }, { status: 400 });
     }
 
     const supabase = await createRouteHandlerClient();
@@ -155,10 +176,7 @@ export async function GET(
     return NextResponse.json(stats);
   } catch (error) {
     console.error("Error fetching player playtime stats:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 
@@ -173,10 +191,7 @@ export async function POST(
     const { slug } = await params;
 
     if (!slug) {
-      return NextResponse.json(
-        { error: "Game slug is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Game slug is required" }, { status: 400 });
     }
 
     const supabase = await createRouteHandlerClient();
@@ -198,8 +213,7 @@ export async function POST(
       return NextResponse.json({ error: message }, { status: 400 });
     }
 
-    const { playTimeHastily, playTimeNormally, playTimeCompletely } =
-      parsed.data;
+    const { playTimeHastily, playTimeNormally, playTimeCompletely } = parsed.data;
 
     const gameId = await resolveGameId(supabase, slug);
     if (!gameId) {
@@ -207,10 +221,8 @@ export async function POST(
     }
 
     const updateFields: Record<string, number | null> = {};
-    if (playTimeHastily !== undefined)
-      updateFields.play_time_hastily = playTimeHastily ?? null;
-    if (playTimeNormally !== undefined)
-      updateFields.play_time_normally = playTimeNormally ?? null;
+    if (playTimeHastily !== undefined) updateFields.play_time_hastily = playTimeHastily ?? null;
+    if (playTimeNormally !== undefined) updateFields.play_time_normally = playTimeNormally ?? null;
     if (playTimeCompletely !== undefined)
       updateFields.play_time_completely = playTimeCompletely ?? null;
 
@@ -230,33 +242,22 @@ export async function POST(
 
       if (updateError) {
         console.error("Failed to update playtime:", updateError);
-        return NextResponse.json(
-          { error: "Failed to update playtime" },
-          { status: 500 }
-        );
+        return NextResponse.json({ error: "Failed to update playtime" }, { status: 500 });
       }
     } else {
-      const { error: insertError } = await supabase
-        .from("user_library")
-        .insert({
-          user_id: user.id,
-          game_id: gameId,
-          status: "playing",
-          ...updateFields,
-        });
+      const { error: insertError } = await supabase.from("user_library").insert({
+        user_id: user.id,
+        game_id: gameId,
+        status: "playing",
+        ...updateFields,
+      });
 
       if (insertError) {
         if (insertError.code === "PGRST205") {
-          return NextResponse.json(
-            { error: "Feature not available" },
-            { status: 503 }
-          );
+          return NextResponse.json({ error: "Feature not available" }, { status: 503 });
         }
         console.error("Failed to insert playtime:", insertError);
-        return NextResponse.json(
-          { error: "Failed to save playtime" },
-          { status: 500 }
-        );
+        return NextResponse.json({ error: "Failed to save playtime" }, { status: 500 });
       }
     }
 
@@ -264,9 +265,6 @@ export async function POST(
     return NextResponse.json(stats);
   } catch (error) {
     console.error("Error submitting player playtime:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
