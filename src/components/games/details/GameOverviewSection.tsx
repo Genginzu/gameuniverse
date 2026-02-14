@@ -22,25 +22,34 @@ export function GameOverviewSection({
   const t = useTranslations();
   const tDetails = useTranslations("gameDetails");
 
+  const labelStyle = { color: colors.labelColor };
+  const textStyle = { color: colors.textColor };
+
   return (
     <div>
-      <h2 className="mb-6 text-2xl font-bold text-white">{tDetails("overview")}</h2>
+      <h2 className="mb-6 text-2xl font-bold" style={textStyle}>
+        {tDetails("overview")}
+      </h2>
       <div className="grid grid-cols-1 items-start gap-4 md:grid-cols-2 lg:grid-cols-4">
         {/* Developers */}
         <div className="rounded-xl border border-slate-700 bg-slate-800/50 p-4">
           <div className="mb-2 flex items-center gap-2">
             <Users className="h-4 w-4" style={{ color: colors.accent }} />
-            <div className="text-sm text-slate-400">{t("game.developer")}</div>
+            <div className="text-sm" style={labelStyle}>
+              {t("game.developer")}
+            </div>
           </div>
           <div className="space-y-1">
             {game.companies?.developers?.length > 0 ? (
               game.companies.developers.map((dev) => (
-                <div key={dev.id} className="font-medium text-white">
+                <div key={dev.id} className="font-medium" style={textStyle}>
                   {dev.name}
                 </div>
               ))
             ) : (
-              <div className="font-medium text-white">{game.developer}</div>
+              <div className="font-medium" style={textStyle}>
+                {game.developer}
+              </div>
             )}
           </div>
         </div>
@@ -54,19 +63,23 @@ export function GameOverviewSection({
           <div className="rounded-xl border border-slate-700 bg-slate-800/50 p-4">
             <div className="mb-2 flex items-center gap-2">
               <Globe className="h-4 w-4" style={{ color: colors.accent }} />
-              <div className="text-sm text-slate-400">{t("game.publisher")}</div>
+              <div className="text-sm" style={labelStyle}>
+                {t("game.publisher")}
+              </div>
             </div>
             <div className="space-y-1">
               {game.companies?.publishers?.length > 0 ? (
                 game.companies.publishers
                   .filter((pub) => !game.companies.developers?.some((dev) => dev.id === pub.id))
                   .map((pub) => (
-                    <div key={pub.id} className="font-medium text-white">
+                    <div key={pub.id} className="font-medium" style={textStyle}>
                       {pub.name}
                     </div>
                   ))
               ) : (
-                <div className="font-medium text-white">{game.publisher}</div>
+                <div className="font-medium" style={textStyle}>
+                  {game.publisher}
+                </div>
               )}
             </div>
           </div>
@@ -77,9 +90,13 @@ export function GameOverviewSection({
           <div className="rounded-xl border border-slate-700 bg-slate-800/50 p-4">
             <div className="mb-2 flex items-center gap-2">
               <Calendar className="h-4 w-4" style={{ color: colors.accent }} />
-              <div className="text-sm text-slate-400">{t("game.releaseDate")}</div>
+              <div className="text-sm" style={labelStyle}>
+                {t("game.releaseDate")}
+              </div>
             </div>
-            <div className="font-medium text-white">{formatReleaseDate(game.releaseDate)}</div>
+            <div className="font-medium" style={textStyle}>
+              {formatReleaseDate(game.releaseDate)}
+            </div>
           </div>
         )}
 
@@ -88,7 +105,9 @@ export function GameOverviewSection({
           <div className="rounded-xl border border-slate-700 bg-slate-800/50 p-4">
             <div className="mb-2 flex items-center gap-2">
               <Star className="h-4 w-4" style={{ color: colors.accent }} />
-              <div className="text-sm text-slate-400">Metascore</div>
+              <div className="text-sm" style={labelStyle}>
+                Metascore
+              </div>
             </div>
             <div className="flex items-center gap-2">
               <div
@@ -96,7 +115,7 @@ export function GameOverviewSection({
               >
                 {game.metascore}
               </div>
-              <div className="text-sm text-slate-300">
+              <div className="text-sm" style={labelStyle}>
                 {game.metascore >= 90
                   ? tDetails("metascoreRatings.exceptional")
                   : game.metascore >= 75
@@ -116,14 +135,17 @@ export function GameOverviewSection({
           <div className="rounded-xl border border-slate-700 bg-slate-800/50 p-4">
             <div className="mb-3 flex items-center gap-2">
               <Smartphone className="h-4 w-4" style={{ color: colors.accent }} />
-              <div className="text-sm text-slate-400">{tDetails("platforms")}</div>
+              <div className="text-sm" style={labelStyle}>
+                {tDetails("platforms")}
+              </div>
             </div>
             <div className="flex flex-wrap gap-2">
               {Array.from(new Set(game.pricing.map((p) => p.platform))).map((platform) => (
                 <Badge
                   key={platform}
                   variant="secondary"
-                  className="border-slate-600 bg-slate-700 text-slate-200"
+                  className="border-slate-600 bg-slate-700"
+                  style={textStyle}
                 >
                   {platform}
                 </Badge>
@@ -137,14 +159,17 @@ export function GameOverviewSection({
           <div className="rounded-xl border border-slate-700 bg-slate-800/50 p-4">
             <div className="mb-3 flex items-center gap-2">
               <Info className="h-4 w-4" style={{ color: colors.accent }} />
-              <div className="text-sm text-slate-400">{t("game.genres")}</div>
+              <div className="text-sm" style={labelStyle}>
+                {t("game.genres")}
+              </div>
             </div>
             <div className="flex flex-wrap gap-2">
               {game.genres.map((genre) => (
                 <Badge
                   key={genre.id}
                   variant="outline"
-                  className="pointer-events-none border-slate-600 text-slate-300"
+                  className="pointer-events-none border-slate-600"
+                  style={labelStyle}
                 >
                   {genre.name}
                 </Badge>

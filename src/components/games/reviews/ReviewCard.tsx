@@ -2,19 +2,12 @@
 
 import { ThumbsUp, ThumbsDown, User } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getRatingColor } from "@/lib/utils/ratingColor";
 import { useReviewTranslations, useDateFormatter } from "@/hooks/useTranslations";
 import type { Review } from "@/types/review";
 
 interface ReviewCardProps {
   review: Review;
-}
-
-function getRatingColor(rating: number): string {
-  const ratio = rating / 20;
-  if (ratio >= 0.75) return "text-green-400";
-  if (ratio >= 0.5) return "text-yellow-400";
-  if (ratio >= 0.25) return "text-orange-400";
-  return "text-red-400";
 }
 
 function ReviewAvatar({ name, avatar }: { name: string | null; avatar: string | null }) {

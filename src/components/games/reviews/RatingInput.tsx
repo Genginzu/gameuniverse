@@ -2,21 +2,13 @@
 
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { getRatingColor } from "@/lib/utils/ratingColor";
 import { useReviewTranslations } from "@/hooks/useTranslations";
 
 interface RatingInputProps {
   value: number | null;
-  onChange: (value: number) => void;
+  onChange: (value: number | null) => void;
   max?: number;
-}
-
-function getRatingColor(value: number | null, max: number): string {
-  if (value === null) return "text-slate-400";
-  const ratio = value / max;
-  if (ratio >= 0.75) return "text-green-400";
-  if (ratio >= 0.5) return "text-yellow-400";
-  if (ratio >= 0.25) return "text-orange-400";
-  return "text-red-400";
 }
 
 export function RatingInput({ value, onChange, max = 20 }: RatingInputProps) {
@@ -24,7 +16,10 @@ export function RatingInput({ value, onChange, max = 20 }: RatingInputProps) {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
-    if (raw === "") return;
+    if (raw === "") {
+      onChange(null);
+      return;
+    }
     const parsed = parseInt(raw, 10);
     if (!isNaN(parsed)) {
       onChange(Math.min(max, Math.max(0, parsed)));
@@ -44,17 +39,6 @@ export function RatingInput({ value, onChange, max = 20 }: RatingInputProps) {
         aria-label={t("rating.ariaLabel", { max })}
       />
       <span className={cn("text-lg font-medium", getRatingColor(value, max))}>/ {max}</span>
-      {value !== null && (
-        <span
-          className={cn(
-            "rounded-lg px-2 py-1 text-sm font-medium",
-            getRatingColor(value, max),
-            "bg-slate-800"
-          )}
-        >
-          {value}/{max}
-        </span>
-      )}
     </div>
   );
 }

@@ -28,7 +28,9 @@ function ToolbarButton({ onClick, isActive, icon, label }: ToolbarButtonProps) {
       aria-pressed={isActive}
       className={cn(
         "rounded-lg p-2 transition-colors",
-        isActive ? "bg-slate-600 text-white" : "text-slate-400 hover:bg-slate-700 hover:text-white"
+        isActive
+          ? "bg-accent text-accent-foreground"
+          : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
       )}
     >
       {icon}
@@ -70,7 +72,7 @@ function EditorToolbar({ editor }: { editor: Editor | null }) {
 
   return (
     <div
-      className="flex gap-1 border-b border-slate-700 p-2"
+      className="flex gap-1 border-b border-border p-2"
       role="toolbar"
       aria-label={t("editor.toolbarAriaLabel")}
     >
@@ -89,7 +91,7 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
     editorProps: {
       attributes: {
         class:
-          "prose prose-invert prose-sm max-w-none p-3 min-h-[150px] focus:outline-none text-slate-200",
+          "prose prose-sm dark:prose-invert max-w-none p-3 min-h-[150px] focus:outline-none text-foreground",
       },
     },
     onUpdate: ({ editor: e }) => {
@@ -98,11 +100,11 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
   });
 
   return (
-    <div className="rounded-xl border border-input bg-slate-900/50 transition-all focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-background">
+    <div className="relative rounded-xl border border-input bg-background transition-all focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-background">
       <EditorToolbar editor={editor} />
       <EditorContent editor={editor} />
       {!content && placeholder && !editor?.isFocused && (
-        <p className="pointer-events-none absolute p-3 text-sm text-muted-foreground">
+        <p className="pointer-events-none absolute bottom-0 left-0 p-3 text-sm text-muted-foreground">
           {placeholder}
         </p>
       )}

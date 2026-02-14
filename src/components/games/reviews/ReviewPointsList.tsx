@@ -16,7 +16,9 @@ export function ReviewPointsList({ points, onChange, type, maxPoints }: ReviewPo
   const t = useReviewTranslations();
   const isPositive = type === "positive";
   const label = isPositive ? t("points.positiveLabel") : t("points.negativeLabel");
-  const accentColor = isPositive ? "text-green-400" : "text-red-400";
+  const accentColor = isPositive
+    ? "text-green-600 dark:text-green-400"
+    : "text-red-600 dark:text-red-400";
   const borderColor = isPositive
     ? "border-green-500/30 focus-within:ring-green-500/50"
     : "border-red-500/30 focus-within:ring-red-500/50";
@@ -74,7 +76,7 @@ export function ReviewPointsList({ points, onChange, type, maxPoints }: ReviewPo
             variant="ghost"
             size="icon"
             onClick={() => removePoint(index)}
-            className="h-8 w-8 shrink-0 text-slate-400 hover:text-red-400"
+            className="h-8 w-8 shrink-0 text-muted-foreground hover:text-red-500"
             aria-label={t("points.removeAriaLabel", {
               label: label.toLowerCase(),
               index: index + 1,
@@ -86,7 +88,7 @@ export function ReviewPointsList({ points, onChange, type, maxPoints }: ReviewPo
       ))}
 
       {points.length === 0 && (
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-muted-foreground">
           {isPositive ? t("points.emptyPositive") : t("points.emptyNegative")}
         </p>
       )}

@@ -101,6 +101,26 @@ export const adminGameFormSchema = z.object({
   playtime_hastily: z.coerce.number().min(0).optional().nullable().or(z.literal("")),
   playtime_normally: z.coerce.number().min(0).optional().nullable().or(z.literal("")),
   playtime_completely: z.coerce.number().min(0).optional().nullable().or(z.literal("")),
+  background_color: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, "Invalid hex color")
+    .optional()
+    .or(z.literal("")),
+  accent_color: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, "Invalid hex color")
+    .optional()
+    .or(z.literal("")),
+  label_color: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, "Invalid hex color")
+    .optional()
+    .or(z.literal("")),
+  text_color: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, "Invalid hex color")
+    .optional()
+    .or(z.literal("")),
   screenshots: z.array(adminGameScreenshotSchema).default([]),
   artwork: z.array(adminGameArtworkSchema).default([]),
   age_ratings: z.array(adminGameRatingSchema).default([]),

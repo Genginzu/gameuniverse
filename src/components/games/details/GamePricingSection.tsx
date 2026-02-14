@@ -41,7 +41,7 @@ export function GamePricingSection({ pricing, colors, formatPrice }: GamePricing
             <Wrapper
               key={index}
               {...wrapperProps}
-              className="group flex items-center gap-2 rounded-md border border-slate-700 bg-slate-800/60 px-3 py-1.5 transition-colors hover:bg-slate-700/80"
+              className="group flex items-center gap-2 rounded-md border border-slate-700 bg-slate-800/90 px-3 py-1.5 backdrop-blur-sm transition-colors hover:bg-slate-700/95"
             >
               {price.store.logoUrl ? (
                 <Image

@@ -556,6 +556,10 @@
       "positivePoints": "Points positifs",
       "negativePoints": "Points négatifs",
       "writeReview": "Rédiger un avis",
+      "editReview": "Modifier mon avis",
+      "editDialogTitle": "Modifier votre avis",
+      "editDialogDescription": "Modifiez votre note et votre avis détaillé.",
+      "reviewCount": "{count, plural, =0 {aucun avis} =1 {1 avis} other {# avis}}",
       "dialogTitle": "Rédigez votre avis",
       "dialogDescription": "Partagez votre expérience avec ce jeu en lui attribuant une note et en laissant un avis détaillé.",
       "form": {
@@ -567,6 +571,7 @@
         "submitError": "Erreur lors de la soumission"
       },
       "points": {
+        "sectionTitle": "Partagez votre expérience avec ce jeu...",
         "positiveLabel": "Point positif",
         "negativeLabel": "Point négatif",
         "add": "Ajouter",
@@ -818,6 +823,11 @@
         "playtimeHastily": "Rapide",
         "playtimeNormally": "Normal",
         "playtimeCompletely": "Complétionniste",
+        "colors": "Couleurs de la page",
+        "backgroundColor": "Couleur de fond",
+        "accentColor": "Couleur d'accent",
+        "labelColor": "Couleur des labels",
+        "textColor": "Couleur du texte",
         "gameLanguages": "Langues",
         "noLanguages": "Aucune langue",
         "addLanguage": "Ajouter une langue",

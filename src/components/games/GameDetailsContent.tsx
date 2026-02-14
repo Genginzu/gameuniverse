@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { GameDetails } from "@/types/game";
 import {
-  getGameColors,
+  buildGameColors,
   formatReleaseDate as formatReleaseDateUtil,
   formatPrice as formatPriceUtil,
   getMetascoreColor as getMetascoreColorUtil,
@@ -32,11 +32,13 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
   const [activeTab, setActiveTab] = useState<TabType>("media");
   const [isWishlisted, setIsWishlisted] = useState(false);
 
-  // Get color scheme based on game title and genres
-  const colors = getGameColors(
-    game.title,
-    game.genres.map((g) => g.name)
-  );
+  // Build color scheme from DB-stored colors
+  const colors = buildGameColors({
+    accentColor: game.accentColor,
+    backgroundColor: game.backgroundColor,
+    labelColor: game.labelColor,
+    textColor: game.textColor,
+  });
 
   // Locale-aware formatting functions
   const formatReleaseDate = (dateString?: string) => formatReleaseDateUtil(dateString, locale);
@@ -53,7 +55,7 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
     <div
       className="min-h-screen"
       style={{
-        backgroundColor: game.backgroundColor || "#0f172a",
+        backgroundColor: colors.backgroundColor,
       }}
     >
       {/* Hero Section with background image */}

@@ -105,6 +105,9 @@ export interface DatabaseGameData {
   cover_image_url: string | null;
   background_image_url: string | null;
   background_color: string | null;
+  accent_color: string | null;
+  label_color: string | null;
+  text_color: string | null;
   release_date: string | null;
   metascore: number | null;
   system_requirements: Record<string, unknown> | null;

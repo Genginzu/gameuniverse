@@ -9,11 +9,13 @@ interface UseReviewsReturn {
   averageRating: number | null;
   totalCount: number;
   userHasReviewed: boolean;
+  userReview: Review | null;
   loading: boolean;
   error: string | null;
   submitting: boolean;
   fetchReviews: () => Promise<void>;
   submitReview: (data: ReviewFormData) => Promise<boolean>;
+  updateReview: (data: ReviewFormData) => Promise<boolean>;
 }
 
 /**
@@ -25,6 +27,7 @@ export function useReviews(gameId: string): UseReviewsReturn {
   const [averageRating, setAverageRating] = useState<number | null>(null);
   const [totalCount, setTotalCount] = useState(0);
   const [userHasReviewed, setUserHasReviewed] = useState(false);
+  const [userReview, setUserReview] = useState<Review | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -35,6 +38,7 @@ export function useReviews(gameId: string): UseReviewsReturn {
     setAverageRating(response.averageRating);
     setTotalCount(response.totalCount);
     setUserHasReviewed(response.userHasReviewed);
+    setUserReview(response.userReview ?? null);
   }, []);
 
   const fetchReviews = useCallback(async () => {
@@ -76,6 +80,27 @@ export function useReviews(gameId: string): UseReviewsReturn {
     [gameId, submitting, fetchReviews]
   );
 
+  const updateReview = useCallback(
+    async (data: ReviewFormData): Promise<boolean> => {
+      if (!gameId || submitting) return false;
+
+      try {
+        setSubmitting(true);
+        setError(null);
+        await ReviewService.updateReview(gameId, data);
+        await fetchReviews();
+        return true;
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "Failed to update review";
+        setError(message);
+        return false;
+      } finally {
+        setSubmitting(false);
+      }
+    },
+    [gameId, submitting, fetchReviews]
+  );
+
   // Chargement initial — une seule fois
   useEffect(() => {
     if (hasFetchedRef.current || !gameId) {
@@ -91,10 +116,12 @@ export function useReviews(gameId: string): UseReviewsReturn {
     averageRating,
     totalCount,
     userHasReviewed,
+    userReview,
     loading,
     error,
     submitting,
     fetchReviews,
     submitReview,
+    updateReview,
   };
 }

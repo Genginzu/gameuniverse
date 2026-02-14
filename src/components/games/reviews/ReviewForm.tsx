@@ -16,9 +16,15 @@ interface ReviewFormProps {
   onSubmitSuccess: () => void;
   onSubmit: (data: ReviewInput) => Promise<boolean>;
   submitting?: boolean;
+  defaultValues?: ReviewInput;
 }
 
-export function ReviewForm({ onSubmitSuccess, onSubmit, submitting = false }: ReviewFormProps) {
+export function ReviewForm({
+  onSubmitSuccess,
+  onSubmit,
+  submitting = false,
+  defaultValues,
+}: ReviewFormProps) {
   const t = useReviewTranslations();
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -29,8 +35,8 @@ export function ReviewForm({ onSubmitSuccess, onSubmit, submitting = false }: Re
     formState: { errors },
   } = useForm<ReviewInput>({
     resolver: zodResolver(reviewSchema),
-    defaultValues: {
-      rating: 10,
+    defaultValues: defaultValues ?? {
+      rating: undefined as unknown as number,
       content: "",
       positivePoints: [],
       negativePoints: [],
@@ -55,7 +61,9 @@ export function ReviewForm({ onSubmitSuccess, onSubmit, submitting = false }: Re
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
       {/* Rating */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-slate-200">{t("form.ratingLabel")}</label>
+        <label className="text-sm font-medium text-foreground">
+          {t("form.ratingLabel")} <span className="text-destructive">*</span>
+        </label>
         <Controller
           control={control}
           name="rating"
@@ -68,60 +76,61 @@ export function ReviewForm({ onSubmitSuccess, onSubmit, submitting = false }: Re
 
       {/* Rich text content */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-slate-200">{t("form.contentLabel")}</label>
+        <label className="text-sm font-medium text-foreground">
+          {t("form.contentLabel")} <span className="text-destructive">*</span>
+        </label>
         <Controller
           control={control}
           name="content"
-          render={({ field }) => (
-            <RichTextEditor
-              content={field.value}
-              onChange={field.onChange}
-              placeholder={t("form.contentPlaceholder")}
-            />
-          )}
+          render={({ field }) => <RichTextEditor content={field.value} onChange={field.onChange} />}
         />
         {errors.content && <p className="text-sm text-destructive">{errors.content.message}</p>}
       </div>
 
-      {/* Positive points */}
-      <Controller
-        control={control}
-        name="positivePoints"
-        render={({ field }) => (
-          <ReviewPointsList
-            points={field.value}
-            onChange={field.onChange}
-            type="positive"
-            maxPoints={10}
+      {/* Points section */}
+      <div className="space-y-6">
+        {/* Positive points */}
+        <div className="rounded-lg border border-green-500/20 bg-green-500/5 p-4">
+          <Controller
+            control={control}
+            name="positivePoints"
+            render={({ field }) => (
+              <ReviewPointsList
+                points={field.value}
+                onChange={field.onChange}
+                type="positive"
+                maxPoints={10}
+              />
+            )}
           />
-        )}
-      />
-      {errors.positivePoints && (
-        <p className="text-sm text-destructive">
-          {errors.positivePoints.message ?? errors.positivePoints.root?.message}
-        </p>
-      )}
+          {errors.positivePoints && (
+            <p className="mt-2 text-sm text-destructive">
+              {errors.positivePoints.message ?? errors.positivePoints.root?.message}
+            </p>
+          )}
+        </div>
 
-      {/* Negative points */}
-      <Controller
-        control={control}
-        name="negativePoints"
-        render={({ field }) => (
-          <ReviewPointsList
-            points={field.value}
-            onChange={field.onChange}
-            type="negative"
-            maxPoints={10}
+        {/* Negative points */}
+        <div className="rounded-lg border border-red-500/20 bg-red-500/5 p-4">
+          <Controller
+            control={control}
+            name="negativePoints"
+            render={({ field }) => (
+              <ReviewPointsList
+                points={field.value}
+                onChange={field.onChange}
+                type="negative"
+                maxPoints={10}
+              />
+            )}
           />
-        )}
-      />
-      {errors.negativePoints && (
-        <p className="text-sm text-destructive">
-          {errors.negativePoints.message ?? errors.negativePoints.root?.message}
-        </p>
-      )}
-
-      {/* Submit error */}
+          {errors.negativePoints && (
+            <p className="mt-2 text-sm text-destructive">
+              {errors.negativePoints.message ?? errors.negativePoints.root?.message}
+            </p>
+          )}
+        </div>
+      </div>
       {submitError && (
         <p className="rounded-lg bg-red-500/10 p-3 text-sm text-red-400">{submitError}</p>
       )}

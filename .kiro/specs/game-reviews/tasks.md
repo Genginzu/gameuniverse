@@ -142,9 +142,9 @@ validation, API, composants UI, puis intégration dans l'onglet existant.
   - [x] 14.2 Vérifier qu'il n'y a pas d'erreurs de compilation
   - [x] 14.3 Corriger les erreurs de build si nécessaire
 
-- [ ] 15. README de la fonctionnalité
-  - [ ] 15.1 Créer `docs/README_GAME_REVIEWS.md`
-  - [ ] 15.2 Documenter ce qui a été implémenté, comment y accéder, les
+- [x] 15. README de la fonctionnalité
+  - [x] 15.1 Créer `docs/README_GAME_REVIEWS.md`
+  - [x] 15.2 Documenter ce qui a été implémenté, comment y accéder, les
         prérequis et l'utilisation
 
 ## Notes

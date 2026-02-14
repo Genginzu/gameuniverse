@@ -41,4 +41,22 @@ export class ReviewService {
 
     return response.json();
   }
+
+  /**
+   * Met à jour une review existante pour un jeu.
+   */
+  static async updateReview(gameId: string, data: ReviewFormData): Promise<{ success: boolean }> {
+    const response = await fetch("/api/reviews", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ gameId, ...data }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || "Failed to update review");
+    }
+
+    return response.json();
+  }
 }

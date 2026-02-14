@@ -14,6 +14,21 @@ export const gameBaseSchema = z.object({
     .regex(/^#[0-9A-Fa-f]{6}$/, "Invalid hex color")
     .optional()
     .nullable(),
+  accent_color: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, "Invalid hex color")
+    .optional()
+    .nullable(),
+  label_color: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, "Invalid hex color")
+    .optional()
+    .nullable(),
+  text_color: z
+    .string()
+    .regex(/^#[0-9A-Fa-f]{6}$/, "Invalid hex color")
+    .optional()
+    .nullable(),
   release_date: z.string().date("Invalid release date").optional().nullable(),
   metascore: z
     .number()

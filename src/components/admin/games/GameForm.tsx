@@ -155,7 +155,11 @@ export function GameForm({
           errors.metascore ||
           errors.playtime_hastily ||
           errors.playtime_normally ||
-          errors.playtime_completely
+          errors.playtime_completely ||
+          errors.background_color ||
+          errors.accent_color ||
+          errors.label_color ||
+          errors.text_color
         ),
       ],
       [

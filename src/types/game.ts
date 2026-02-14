@@ -141,6 +141,9 @@ export interface GameDetails {
   metascore?: number;
   systemRequirements?: Record<string, unknown> | null;
   backgroundColor?: string;
+  accentColor?: string;
+  labelColor?: string;
+  textColor?: string;
   genres: GameGenre[];
   companies: GameCompanies;
   developer: string;

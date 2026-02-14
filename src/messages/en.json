@@ -556,6 +556,10 @@
       "positivePoints": "Positive points",
       "negativePoints": "Negative points",
       "writeReview": "Write a review",
+      "editReview": "Edit my review",
+      "editDialogTitle": "Edit your review",
+      "editDialogDescription": "Update your rating and detailed review.",
+      "reviewCount": "{count, plural, =0 {no reviews} =1 {1 review} other {# reviews}}",
       "dialogTitle": "Write your review",
       "dialogDescription": "Share your experience with this game by rating it and leaving a detailed review.",
       "form": {
@@ -567,6 +571,7 @@
         "submitError": "Error submitting review"
       },
       "points": {
+        "sectionTitle": "Share your experience with this game...",
         "positiveLabel": "Positive point",
         "negativeLabel": "Negative point",
         "add": "Add",
@@ -815,6 +820,11 @@
         "playtimeHastily": "Hastily",
         "playtimeNormally": "Normally",
         "playtimeCompletely": "Completionist",
+        "colors": "Page colors",
+        "backgroundColor": "Background color",
+        "accentColor": "Accent color",
+        "labelColor": "Label color",
+        "textColor": "Text color",
         "gameLanguages": "Languages",
         "noLanguages": "No languages",
         "addLanguage": "Add a language",

@@ -146,12 +146,24 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       data: { user },
     } = await supabase.auth.getUser();
     const userHasReviewed = user ? reviews.some((r) => r.userId === user.id) : false;
+    const userReview = user ? (reviews.find((r) => r.userId === user.id) ?? null) : null;
+
+    // Sort: user's review first, then by date descending
+    const sortedReviews = sortReviewsByDateDesc(reviews);
+    if (user) {
+      const userIdx = sortedReviews.findIndex((r) => r.userId === user.id);
+      if (userIdx > 0) {
+        const [userRev] = sortedReviews.splice(userIdx, 1);
+        sortedReviews.unshift(userRev);
+      }
+    }
 
     const response: ReviewsResponse = {
-      reviews: sortReviewsByDateDesc(reviews),
+      reviews: sortedReviews,
       averageRating: computeAverageRating(reviews),
       totalCount: reviews.length,
       userHasReviewed,
+      userReview: userReview ?? undefined,
     };
 
     return NextResponse.json(response);
@@ -247,6 +259,65 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ success: true, review }, { status: 201 });
   } catch (error) {
     console.error("Error in reviews POST:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
+
+/**
+ * PUT /api/reviews
+ *
+ * Update an existing review. Only the review author can update their review.
+ */
+export async function PUT(request: NextRequest): Promise<NextResponse> {
+  try {
+    const supabase = await createRouteHandlerClient();
+
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const parsed = reviewSchema.safeParse(body);
+
+    if (!parsed.success) {
+      const messages = parsed.error.issues.map((issue) => issue.message);
+      return NextResponse.json({ error: messages.join(", ") }, { status: 400 });
+    }
+
+    const { rating, content, positivePoints, negativePoints } = parsed.data;
+    const gameId = body.gameId;
+
+    if (!gameId) {
+      return NextResponse.json({ error: "gameId is required" }, { status: 400 });
+    }
+
+    const { data: review, error: updateError } = await supabase
+      .from("game_reviews")
+      .update({
+        rating,
+        content,
+        positive_points: positivePoints,
+        negative_points: negativePoints,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("game_id", gameId)
+      .eq("user_id", user.id)
+      .select()
+      .single();
+
+    if (updateError || !review) {
+      console.error("Error updating review:", updateError);
+      return NextResponse.json({ error: "Failed to update review" }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true, review });
+  } catch (error) {
+    console.error("Error in reviews PUT:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

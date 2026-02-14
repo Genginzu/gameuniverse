@@ -1,6 +1,8 @@
 "use client";
 
-import { Star, LogIn } from "lucide-react";
+import { Star, LogIn, Users } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { getRatingColor } from "@/lib/utils/ratingColor";
 import { useAuth } from "@/hooks/useAuth";
 import { useReviews } from "@/hooks/useReviews";
 import { useReviewTranslations } from "@/hooks/useTranslations";
@@ -14,17 +16,31 @@ interface GameReviewsTabProps {
   accentColor?: string;
 }
 
-function AverageRating({ rating, label }: { rating: number | null; label: string }) {
+function AverageRating({
+  rating,
+  label,
+  reviewCount,
+}: {
+  rating: number | null;
+  label: string;
+  reviewCount: number;
+}) {
   if (rating === null) return null;
 
   return (
     <div className="flex items-center gap-3 rounded-xl border border-slate-700/50 bg-slate-800/30 px-5 py-4">
       <Star className="h-6 w-6 text-yellow-400" />
       <div>
-        <span className="text-2xl font-bold text-white">{rating.toFixed(1)}</span>
+        <span className={cn("text-2xl font-bold", getRatingColor(rating))}>
+          {rating.toFixed(1)}
+        </span>
         <span className="ml-1 text-sm text-slate-400">/20</span>
       </div>
       <span className="text-sm text-slate-400">— {label}</span>
+      <span className="flex items-center gap-1 text-sm text-slate-300">
+        <Users className="h-3.5 w-3.5" />
+        {reviewCount}
+      </span>
     </div>
   );
 }
@@ -48,37 +64,55 @@ export function GameReviewsTab({
   const {
     reviews,
     averageRating,
+    totalCount,
     userHasReviewed,
+    userReview,
     loading,
     error,
     submitting,
     fetchReviews,
     submitReview,
+    updateReview,
   } = useReviews(gameId);
 
   const handleSubmit = async (data: ReviewFormData): Promise<boolean> => {
     return submitReview(data);
   };
 
+  const handleUpdate = async (data: ReviewFormData): Promise<boolean> => {
+    return updateReview(data);
+  };
+
   const isAuthenticated = !authLoading && user !== null;
-  const showForm = isAuthenticated && !userHasReviewed;
+  const showWriteButton = isAuthenticated && !userHasReviewed;
+  const showEditButton = isAuthenticated && userHasReviewed && userReview !== null;
 
   return (
     <div className="space-y-6">
-      <AverageRating rating={averageRating} label={t("averageRating")} />
+      <AverageRating rating={averageRating} label={t("averageRating")} reviewCount={totalCount} />
 
       {error && <p className="rounded-lg bg-red-500/10 p-3 text-sm text-red-400">{error}</p>}
 
       {!authLoading && (
         <>
           {!isAuthenticated && <LoginPrompt message={t("loginPrompt")} />}
-          {showForm && (
+          {showWriteButton && (
             <ReviewFormDialog
               gameId={gameId}
               onSubmitSuccess={fetchReviews}
               onSubmit={handleSubmit}
               submitting={submitting}
               accentColor={accentColor}
+            />
+          )}
+          {showEditButton && (
+            <ReviewFormDialog
+              gameId={gameId}
+              onSubmitSuccess={fetchReviews}
+              onSubmit={handleUpdate}
+              submitting={submitting}
+              accentColor={accentColor}
+              existingReview={userReview}
             />
           )}
         </>

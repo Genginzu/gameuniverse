@@ -24,4 +24,5 @@ export interface ReviewsResponse {
   averageRating: number | null;
   totalCount: number;
   userHasReviewed: boolean;
+  userReview?: Review;
 }

@@ -17,6 +17,10 @@ interface GameApiResponse {
   slug: string;
   cover_image_url: string | null;
   background_image_url: string | null;
+  background_color: string | null;
+  accent_color: string | null;
+  label_color: string | null;
+  text_color: string | null;
   release_date: string | null;
   metascore: number | null;
   playtime_hastily: number | null;
@@ -86,6 +90,10 @@ function toFormData(game: GameApiResponse): AdminGameFormData {
     })),
     cover_image_url: game.cover_image_url ?? "",
     background_image_url: game.background_image_url ?? "",
+    background_color: game.background_color ?? "",
+    accent_color: game.accent_color ?? "",
+    label_color: game.label_color ?? "",
+    text_color: game.text_color ?? "",
     release_date: game.release_date ?? "",
     metascore: game.metascore ?? "",
     playtime_hastily: game.playtime_hastily ?? "",

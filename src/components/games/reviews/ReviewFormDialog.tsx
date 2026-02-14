@@ -14,6 +14,7 @@ import {
 import { useReviewTranslations } from "@/hooks/useTranslations";
 import { ReviewForm } from "./ReviewForm";
 import type { ReviewInput } from "@/lib/validations/review";
+import type { Review } from "@/types/review";
 
 interface ReviewFormDialogProps {
   gameId: string;
@@ -21,6 +22,8 @@ interface ReviewFormDialogProps {
   onSubmit: (data: ReviewInput) => Promise<boolean>;
   submitting?: boolean;
   accentColor?: string;
+  /** Pass existing review to enable edit mode */
+  existingReview?: Review;
 }
 
 export function ReviewFormDialog({
@@ -29,9 +32,11 @@ export function ReviewFormDialog({
   onSubmit,
   submitting = false,
   accentColor,
+  existingReview,
 }: ReviewFormDialogProps) {
   const t = useReviewTranslations();
   const [open, setOpen] = useState(false);
+  const isEdit = !!existingReview;
 
   const handleSubmit = async (data: ReviewInput): Promise<boolean> => {
     const success = await onSubmit(data);
@@ -49,19 +54,31 @@ export function ReviewFormDialog({
           style={accentColor ? { backgroundColor: accentColor } : undefined}
         >
           <Pencil className="mr-2 h-4 w-4" />
-          {t("writeReview")}
+          {isEdit ? t("editReview") : t("writeReview")}
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
-        <DialogHeader>
-          <DialogTitle>{t("dialogTitle")}</DialogTitle>
-          <DialogDescription>{t("dialogDescription")}</DialogDescription>
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-4xl">
+        <DialogHeader className="mb-2">
+          <DialogTitle>{isEdit ? t("editDialogTitle") : t("dialogTitle")}</DialogTitle>
+          <DialogDescription>
+            {isEdit ? t("editDialogDescription") : t("dialogDescription")}
+          </DialogDescription>
         </DialogHeader>
         <ReviewForm
           gameId={gameId}
           onSubmitSuccess={onSubmitSuccess}
           onSubmit={handleSubmit}
           submitting={submitting}
+          defaultValues={
+            existingReview
+              ? {
+                  rating: existingReview.rating,
+                  content: existingReview.content,
+                  positivePoints: existingReview.positivePoints,
+                  negativePoints: existingReview.negativePoints,
+                }
+              : undefined
+          }
         />
       </DialogContent>
     </Dialog>

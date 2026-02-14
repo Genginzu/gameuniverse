@@ -19,6 +19,42 @@ export interface GameColors {
   accent: string;
   /** Background gradient class (Tailwind gradient) */
   bg: string;
+  /** Page background color (CSS hex) */
+  backgroundColor: string;
+  /** Label/small text color (CSS hex) */
+  labelColor: string;
+  /** Main text color (CSS hex) */
+  textColor: string;
+}
+
+/** Default colors when no custom color is set */
+const DEFAULT_COLORS = {
+  backgroundColor: "#0f172a",
+  accent: "#8b5cf6",
+  labelColor: "#94a3b8",
+  textColor: "#e2e8f0",
+} as const;
+
+/**
+ * Builds a GameColors object from DB-stored colors with sensible defaults.
+ * Replaces the old title-based getGameColors() approach.
+ */
+export function buildGameColors(opts: {
+  accentColor?: string | null;
+  backgroundColor?: string | null;
+  labelColor?: string | null;
+  textColor?: string | null;
+}): GameColors {
+  const accent = opts.accentColor || DEFAULT_COLORS.accent;
+  return {
+    primary: accent,
+    secondary: accent,
+    accent,
+    bg: "",
+    backgroundColor: opts.backgroundColor || DEFAULT_COLORS.backgroundColor,
+    labelColor: opts.labelColor || DEFAULT_COLORS.labelColor,
+    textColor: opts.textColor || DEFAULT_COLORS.textColor,
+  };
 }
 
 /**
@@ -46,6 +82,9 @@ export function getGameColors(gameTitle: string, _genres: string[]): GameColors 
       secondary: "#d97706", // amber-600
       accent: "#fbbf24", // amber-400
       bg: "from-amber-500/10 to-orange-500/10",
+      backgroundColor: DEFAULT_COLORS.backgroundColor,
+      labelColor: DEFAULT_COLORS.labelColor,
+      textColor: DEFAULT_COLORS.textColor,
     };
   }
 
@@ -55,6 +94,9 @@ export function getGameColors(gameTitle: string, _genres: string[]): GameColors 
       secondary: "#8b5cf6", // violet-500
       accent: "#22d3ee", // cyan-400
       bg: "from-cyan-500/10 to-violet-500/10",
+      backgroundColor: DEFAULT_COLORS.backgroundColor,
+      labelColor: DEFAULT_COLORS.labelColor,
+      textColor: DEFAULT_COLORS.textColor,
     };
   }
 
@@ -64,6 +106,9 @@ export function getGameColors(gameTitle: string, _genres: string[]): GameColors 
       secondary: "#059669", // emerald-600
       accent: "#34d399", // emerald-400
       bg: "from-emerald-500/10 to-green-500/10",
+      backgroundColor: DEFAULT_COLORS.backgroundColor,
+      labelColor: DEFAULT_COLORS.labelColor,
+      textColor: DEFAULT_COLORS.textColor,
     };
   }
 
@@ -73,6 +118,9 @@ export function getGameColors(gameTitle: string, _genres: string[]): GameColors 
     secondary: "#7c3aed", // violet-600
     accent: "#a78bfa", // violet-400
     bg: "from-violet-500/10 to-blue-500/10",
+    backgroundColor: DEFAULT_COLORS.backgroundColor,
+    labelColor: DEFAULT_COLORS.labelColor,
+    textColor: DEFAULT_COLORS.textColor,
   };
 }
 

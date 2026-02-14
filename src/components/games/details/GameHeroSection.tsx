@@ -85,14 +85,14 @@ export function GameHeroSection({
           <div
             className="absolute inset-0"
             style={{
-              background: `linear-gradient(to bottom, ${game.backgroundColor || "#0f172a"}20 0%, ${game.backgroundColor || "#0f172a"}60 40%, ${game.backgroundColor || "#0f172a"}90 70%, ${game.backgroundColor || "#0f172a"} 100%)`,
+              background: `linear-gradient(to bottom, ${colors.backgroundColor}20 0%, ${colors.backgroundColor}60 40%, ${colors.backgroundColor}90 70%, ${colors.backgroundColor} 100%)`,
             }}
           />
           {/* Vignette effect for ambiance */}
           <div
             className="absolute inset-0"
             style={{
-              background: `radial-gradient(ellipse at center, transparent 0%, ${game.backgroundColor || "#0f172a"}40 70%, ${game.backgroundColor || "#0f172a"}80 100%)`,
+              background: `radial-gradient(ellipse at center, transparent 0%, ${colors.backgroundColor}40 70%, ${colors.backgroundColor}80 100%)`,
             }}
           />
         </div>
@@ -106,7 +106,10 @@ export function GameHeroSection({
               {/* Main cover */}
               <div className="group relative mx-auto max-w-[320px]">
                 <div
-                  className={`absolute inset-0 bg-gradient-to-br ${colors.bg} scale-105 rounded-xl opacity-50 blur-xl`}
+                  className="absolute inset-0 scale-105 rounded-xl opacity-50 blur-xl"
+                  style={{
+                    background: `linear-gradient(to bottom right, ${colors.accent}20, ${colors.accent}10)`,
+                  }}
                 />
                 <div className="relative aspect-[3/4] overflow-hidden rounded-xl border border-slate-700 bg-slate-800/80 backdrop-blur-sm">
                   <LazyImage
@@ -154,12 +157,15 @@ export function GameHeroSection({
               )}
 
               {/* Title */}
-              <h1 className="mb-4 text-4xl font-bold leading-tight text-white drop-shadow-lg lg:text-6xl">
+              <h1
+                className="mb-4 text-4xl font-bold leading-tight drop-shadow-lg lg:text-6xl"
+                style={{ color: colors.textColor }}
+              >
                 {game.title}
               </h1>
 
               {/* Metadata */}
-              <div className="mb-6 flex flex-wrap gap-6 text-slate-300">
+              <div className="mb-6 flex flex-wrap gap-6" style={{ color: colors.labelColor }}>
                 {game.companies?.developers?.length > 0 ? (
                   game.companies.developers.map((dev) => (
                     <div key={dev.id} className="flex items-center gap-2">
@@ -198,7 +204,10 @@ export function GameHeroSection({
 
               {/* Description */}
               {game.description && (
-                <p className="max-w-4xl text-lg leading-relaxed text-slate-200 drop-shadow-sm">
+                <p
+                  className="max-w-4xl text-lg leading-relaxed drop-shadow-sm"
+                  style={{ color: colors.textColor }}
+                >
                   {game.description}
                 </p>
               )}

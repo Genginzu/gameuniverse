@@ -3,6 +3,7 @@
 import { Input } from "@/components/ui/input";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import type { GameFormTabProps } from "@/types/admin-games";
+import { GameFormColorFields } from "./GameFormColorFields";
 
 interface GeneralTabProps extends GameFormTabProps {
   mode: "create" | "edit";
@@ -138,6 +139,9 @@ export function GameFormGeneralTab({ form, t, mode }: GeneralTabProps) {
           />
         </div>
       </div>
+
+      {/* Colors */}
+      <GameFormColorFields form={form} t={t} />
     </div>
   );
 }
