@@ -784,6 +784,7 @@
         "backgroundImage": "Background image (URL)",
         "backgroundImagePlaceholder": "https://example.com/background.jpg",
         "releaseDate": "Release date",
+        "releaseDateNoData": "No release date provided",
         "genres": "Genres",
         "companies": "Companies",
         "noCompanies": "No companies added.",

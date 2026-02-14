@@ -54,11 +54,9 @@ export function GameColorPreview({ form, genres, companies, stores, t }: GameCol
     .filter((g): g is AdminGenre => g != null)
     .slice(0, 5);
 
-  // Resolve company names by role, filtering publishers that are also developers
+  // Resolve company names by role
   const developerNames = resolveCompanyNames(selectedCompanies, companies, "developer");
-  const publisherNames = resolveCompanyNames(selectedCompanies, companies, "publisher").filter(
-    (name) => !developerNames.includes(name)
-  );
+  const publisherNames = resolveCompanyNames(selectedCompanies, companies, "publisher");
 
   // Resolve prices with store names, sorted by price (matching GamePricingSection)
   const resolvedPrices = [...(prices || [])]
