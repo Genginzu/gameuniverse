@@ -20,6 +20,9 @@ export default function NewGamePage() {
     ratings,
     contentDescriptors,
     supportedLanguages,
+    stores,
+    currencies,
+    platforms,
     loadingOptions,
     submitGame,
     isSubmitting,
@@ -68,6 +71,9 @@ export default function NewGamePage() {
           ratings={ratings}
           contentDescriptors={contentDescriptors}
           supportedLanguages={supportedLanguages}
+          stores={stores}
+          currencies={currencies}
+          platforms={platforms}
           loadingOptions={loadingOptions}
           onSubmit={handleSubmit}
           isSubmitting={isSubmitting}

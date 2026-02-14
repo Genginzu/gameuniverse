@@ -68,7 +68,8 @@ export type TabId =
   | "companies"
   | "age_ratings"
   | "versions"
-  | "languages";
+  | "languages"
+  | "pricing";
 
 export interface Tab {
   id: TabId;
@@ -80,3 +81,16 @@ export const SUPPORTED_LANGUAGES = [
   { code: "fr", label: "Français", flag: "🇫🇷" },
   { code: "en", label: "English", flag: "🇬🇧" },
 ] as const;
+
+export interface AdminStore {
+  id: string;
+  name: string;
+  logo_url: string | null;
+  website_url: string | null;
+}
+
+export interface AdminCurrency {
+  code: string;
+  name: string;
+  symbol: string;
+}

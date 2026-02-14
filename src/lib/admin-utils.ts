@@ -32,7 +32,7 @@ export async function getAvailableCompanies() {
 
     const { data: companies, error } = await supabase
       .from("companies")
-      .select("id, name, slug, description, website_url")
+      .select("id, name, slug, website_url")
       .eq("is_active", true)
       .order("name");
 

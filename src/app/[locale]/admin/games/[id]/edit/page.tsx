@@ -66,6 +66,14 @@ interface GameApiResponse {
     has_subtitles: boolean;
     has_interface: boolean;
   }>;
+  prices: Array<{
+    store_id: string;
+    price: number;
+    currency: string;
+    platform: string;
+    store_url: string | null;
+    is_available: boolean;
+  }>;
 }
 
 function toFormData(game: GameApiResponse): AdminGameFormData {
@@ -122,6 +130,14 @@ function toFormData(game: GameApiResponse): AdminGameFormData {
       has_subtitles: l.has_subtitles,
       has_interface: l.has_interface,
     })),
+    prices: (game.prices ?? []).map((p) => ({
+      store_id: p.store_id,
+      price: p.price,
+      currency: p.currency,
+      platform: p.platform,
+      store_url: p.store_url ?? "",
+      is_available: p.is_available,
+    })),
   };
 }
 
@@ -140,6 +156,9 @@ function EditGameForm({ initialData, gameId }: { initialData: AdminGameFormData;
     ratings,
     contentDescriptors,
     supportedLanguages,
+    stores,
+    currencies,
+    platforms,
     loadingOptions,
     submitGame,
     isSubmitting,
@@ -188,6 +207,9 @@ function EditGameForm({ initialData, gameId }: { initialData: AdminGameFormData;
           ratings={ratings}
           contentDescriptors={contentDescriptors}
           supportedLanguages={supportedLanguages}
+          stores={stores}
+          currencies={currencies}
+          platforms={platforms}
           loadingOptions={loadingOptions}
           onSubmit={handleSubmit}
           isSubmitting={isSubmitting}

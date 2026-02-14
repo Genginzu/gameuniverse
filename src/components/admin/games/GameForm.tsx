@@ -14,6 +14,7 @@ import {
   FaShieldAlt,
   FaBoxes,
   FaLanguage,
+  FaDollarSign,
 } from "react-icons/fa";
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
 import {
@@ -24,6 +25,8 @@ import {
   type ContentDescriptor,
   type TabId,
   type Tab,
+  type AdminStore,
+  type AdminCurrency,
 } from "@/types/admin-games";
 import type { SupportedLanguage } from "@/types/admin-languages";
 import { HeroBanner, TabNavigation, StickySubmitBar } from "./GameFormShell";
@@ -35,6 +38,7 @@ import { GameFormCompaniesTab } from "./GameFormCompaniesTab";
 import { GameFormAgeRatingsTab } from "./GameFormAgeRatingsTab";
 import { GameFormVersionsTab } from "./GameFormVersionsTab";
 import { GameFormLanguagesTab } from "./GameFormLanguagesTab";
+import { GameFormPricingTab } from "./GameFormPricingTab";
 
 export interface GameFormProps {
   mode: "create" | "edit";
@@ -44,6 +48,9 @@ export interface GameFormProps {
   ratings: Rating[];
   contentDescriptors: ContentDescriptor[];
   supportedLanguages: SupportedLanguage[];
+  stores: AdminStore[];
+  currencies: AdminCurrency[];
+  platforms: string[];
   loadingOptions: boolean;
   onSubmit: (data: AdminGameFormData) => Promise<void>;
   isSubmitting: boolean;
@@ -58,6 +65,7 @@ const TABS: Tab[] = [
   { id: "age_ratings", icon: <FaShieldAlt className="h-3.5 w-3.5" />, labelKey: "ageRatings" },
   { id: "versions", icon: <FaBoxes className="h-3.5 w-3.5" />, labelKey: "versions" },
   { id: "languages", icon: <FaLanguage className="h-3.5 w-3.5" />, labelKey: "gameLanguages" },
+  { id: "pricing", icon: <FaDollarSign className="h-3.5 w-3.5" />, labelKey: "pricing" },
 ];
 
 export function GameForm({
@@ -68,6 +76,9 @@ export function GameForm({
   ratings,
   contentDescriptors,
   supportedLanguages,
+  stores,
+  currencies,
+  platforms,
   loadingOptions,
   onSubmit,
   isSubmitting,
@@ -161,6 +172,7 @@ export function GameForm({
       ["companies", !!errors.companies],
       ["versions", !!errors.versions],
       ["languages", !!errors.languages],
+      ["pricing", !!errors.prices],
     ];
     const firstError = tabErrorMap.find(([, hasError]) => hasError);
     if (firstError) setActiveTab(firstError[0]);
@@ -214,6 +226,15 @@ export function GameForm({
           {activeTab === "versions" && <GameFormVersionsTab form={form} t={t} />}
           {activeTab === "languages" && (
             <GameFormLanguagesTab form={form} t={t} supportedLanguages={supportedLanguages} />
+          )}
+          {activeTab === "pricing" && (
+            <GameFormPricingTab
+              form={form}
+              t={t}
+              stores={stores}
+              currencies={currencies}
+              platforms={platforms}
+            />
           )}
         </div>
 

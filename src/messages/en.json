@@ -786,7 +786,17 @@
         "langNamePlaceholder": "English",
         "langInterface": "Interface",
         "langSubtitles": "Subtitles",
-        "langAudio": "Audio"
+        "langAudio": "Audio",
+        "pricing": "Pricing",
+        "noPrices": "No prices configured",
+        "addPrice": "Add a price",
+        "removePrice": "Remove this price",
+        "store": "Store",
+        "priceAmount": "Price",
+        "currency": "Currency",
+        "platform": "Platform",
+        "storeUrl": "Store URL",
+        "available": "Available"
       },
       "createPage": {
         "title": "Create a new game",

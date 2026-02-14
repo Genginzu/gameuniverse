@@ -789,7 +789,17 @@
         "langNamePlaceholder": "Français",
         "langInterface": "Interface",
         "langSubtitles": "Sous-titres",
-        "langAudio": "Audio"
+        "langAudio": "Audio",
+        "pricing": "Prix",
+        "noPrices": "Aucun prix configuré",
+        "addPrice": "Ajouter un prix",
+        "removePrice": "Supprimer ce prix",
+        "store": "Magasin",
+        "priceAmount": "Prix",
+        "currency": "Devise",
+        "platform": "Plateforme",
+        "storeUrl": "URL du magasin",
+        "available": "Disponible"
       },
       "createPage": {
         "title": "Créer un nouveau jeu",

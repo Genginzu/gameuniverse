@@ -109,7 +109,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             id,
             name,
             slug,
-            description,
             website_url
           )
         ),

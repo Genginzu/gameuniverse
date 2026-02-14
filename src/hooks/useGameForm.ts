@@ -5,10 +5,25 @@ import { useForm, type UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLocale } from "next-intl";
 import { adminGameFormSchema, type AdminGameFormData } from "@/lib/validations/admin-game-form";
-import type { AdminGenre, Company, Rating, ContentDescriptor } from "@/types/admin-games";
+import type {
+  AdminGenre,
+  Company,
+  Rating,
+  ContentDescriptor,
+  AdminStore,
+  AdminCurrency,
+} from "@/types/admin-games";
 import type { SupportedLanguage } from "@/types/admin-languages";
 
-export type { AdminGenre as Genre, Company, Rating, ContentDescriptor, SupportedLanguage };
+export type {
+  AdminGenre as Genre,
+  Company,
+  Rating,
+  ContentDescriptor,
+  SupportedLanguage,
+  AdminStore,
+  AdminCurrency,
+};
 
 export interface UseGameFormReturn {
   form: UseFormReturn<AdminGameFormData>;
@@ -17,6 +32,9 @@ export interface UseGameFormReturn {
   ratings: Rating[];
   contentDescriptors: ContentDescriptor[];
   supportedLanguages: SupportedLanguage[];
+  stores: AdminStore[];
+  currencies: AdminCurrency[];
+  platforms: string[];
   loadingOptions: boolean;
   submitGame: (data: AdminGameFormData) => Promise<void>;
   isSubmitting: boolean;
@@ -38,6 +56,9 @@ export function useGameForm(
   const [ratings, setRatings] = useState<Rating[]>([]);
   const [contentDescriptors, setContentDescriptors] = useState<ContentDescriptor[]>([]);
   const [supportedLanguages, setSupportedLanguages] = useState<SupportedLanguage[]>([]);
+  const [stores, setStores] = useState<AdminStore[]>([]);
+  const [currencies, setCurrencies] = useState<AdminCurrency[]>([]);
+  const [platforms, setPlatforms] = useState<string[]>([]);
   const [loadingOptions, setLoadingOptions] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -60,6 +81,7 @@ export function useGameForm(
       age_ratings: [],
       versions: [],
       languages: [],
+      prices: [],
       genres: [],
       companies: [],
     },
@@ -72,7 +94,7 @@ export function useGameForm(
     const loadOptions = async () => {
       try {
         const res = await fetch(
-          `/api/admin/reference-data?locale=${locale}&include=genres,companies,ratings,contentDescriptors,supportedLanguages`
+          `/api/admin/reference-data?locale=${locale}&include=genres,companies,ratings,contentDescriptors,supportedLanguages,stores,currencies,platforms`
         );
         if (!res.ok) throw new Error("Failed to load reference data");
 
@@ -96,6 +118,9 @@ export function useGameForm(
         setRatings(json.data?.ratings ?? []);
         setContentDescriptors(json.data?.contentDescriptors ?? []);
         setSupportedLanguages(json.data?.supportedLanguages ?? []);
+        setStores(json.data?.stores ?? []);
+        setCurrencies(json.data?.currencies ?? []);
+        setPlatforms(json.data?.platforms ?? []);
       } catch {
         // Options will remain empty — form can still be used
       } finally {
@@ -195,6 +220,14 @@ export function useGameForm(
               has_subtitles: l.has_subtitles,
               has_interface: l.has_interface,
             })),
+          prices: data.prices.map((p) => ({
+            store_id: p.store_id,
+            price: p.price,
+            currency: p.currency,
+            platform: p.platform,
+            store_url: p.store_url || null,
+            is_available: p.is_available,
+          })),
         };
 
         const res = await fetch(url, {
@@ -225,6 +258,9 @@ export function useGameForm(
     ratings,
     contentDescriptors,
     supportedLanguages,
+    stores,
+    currencies,
+    platforms,
     loadingOptions,
     submitGame,
     isSubmitting,
