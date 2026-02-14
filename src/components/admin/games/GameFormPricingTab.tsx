@@ -38,8 +38,6 @@ export function GameFormPricingTab({ form, t, stores, currencies, platforms }: P
     );
   };
 
-  const storeName = (storeId: string) => stores.find((s) => s.id === storeId)?.name ?? storeId;
-
   return (
     <div className="space-y-4">
       {watchedPrices.length === 0 ? (

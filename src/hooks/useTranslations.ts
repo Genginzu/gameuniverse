@@ -47,6 +47,11 @@ export function usePaginationTranslations() {
   return useNextIntlTranslations("pagination");
 }
 
+// Custom hook for review translations
+export function useReviewTranslations() {
+  return useNextIntlTranslations("gameDetails.reviews");
+}
+
 // Custom hook to get current locale with additional utilities
 export function useCurrentLocale() {
   const locale = useLocale();

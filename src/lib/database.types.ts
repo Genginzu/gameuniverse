@@ -309,6 +309,57 @@ export type Database = {
           },
         ];
       };
+      game_reviews: {
+        Row: {
+          id: string;
+          user_id: string;
+          game_id: string;
+          rating: number;
+          content: string;
+          positive_points: string[];
+          negative_points: string[];
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          game_id: string;
+          rating: number;
+          content: string;
+          positive_points?: string[];
+          negative_points?: string[];
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          game_id?: string;
+          rating?: number;
+          content?: string;
+          positive_points?: string[];
+          negative_points?: string[];
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "game_reviews_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "game_reviews_game_id_fkey";
+            columns: ["game_id"];
+            isOneToOne: false;
+            referencedRelation: "games";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       game_rating_descriptors: {
         Row: {
           content_descriptor_id: string;

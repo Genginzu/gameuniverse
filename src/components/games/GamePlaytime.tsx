@@ -45,7 +45,7 @@ export function GamePlaytime({ playtime, accentColor, slug }: GamePlaytimeProps)
       {hasContributors && (
         <>
           <hr className="border-slate-700" />
-          <GamePlaytimeContributors contributors={stats.contributors} />
+          <GamePlaytimeContributors contributors={stats.contributors} accentColor={accentColor} />
         </>
       )}
 
@@ -57,6 +57,7 @@ export function GamePlaytime({ playtime, accentColor, slug }: GamePlaytimeProps)
           submitting={submitting}
           error={error}
           onSubmit={submitPlaytime}
+          accentColor={accentColor}
         />
       )}
     </div>

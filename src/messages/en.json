@@ -547,7 +547,44 @@
     },
     "reviews": {
       "title": "Player Reviews",
-      "comingSoon": "Player reviews coming soon"
+      "comingSoon": "Player reviews coming soon",
+      "averageRating": "Average rating",
+      "loginPrompt": "Sign in to share your review of this game.",
+      "emptyTitle": "No reviews yet",
+      "emptyDescription": "Be the first to share your experience with this game.",
+      "anonymousPlayer": "Anonymous player",
+      "positivePoints": "Positive points",
+      "negativePoints": "Negative points",
+      "writeReview": "Write a review",
+      "dialogTitle": "Write your review",
+      "dialogDescription": "Share your experience with this game by rating it and leaving a detailed review.",
+      "form": {
+        "ratingLabel": "Rating out of 20",
+        "contentLabel": "Your review",
+        "contentPlaceholder": "Share your experience with this game...",
+        "submitButton": "Publish my review",
+        "submitting": "Submitting...",
+        "submitError": "Error submitting review"
+      },
+      "points": {
+        "positiveLabel": "Positive point",
+        "negativeLabel": "Negative point",
+        "add": "Add",
+        "removeAriaLabel": "Remove {label} {index}",
+        "emptyPositive": "No positive points added. Click \"Add\" to add one.",
+        "emptyNegative": "No negative points added. Click \"Add\" to add one.",
+        "count": "({count}/{max})"
+      },
+      "editor": {
+        "bold": "Bold",
+        "italic": "Italic",
+        "bulletList": "Bullet list",
+        "orderedList": "Numbered list",
+        "toolbarAriaLabel": "Text formatting"
+      },
+      "rating": {
+        "ariaLabel": "Rating out of {max}"
+      }
     },
     "playtime": {
       "title": "Playtime Statistics",

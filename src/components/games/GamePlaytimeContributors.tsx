@@ -6,6 +6,7 @@ import type { PlayerPlaytimeContributor } from "@/types/game";
 
 interface GamePlaytimeContributorsProps {
   contributors: PlayerPlaytimeContributor[];
+  accentColor: string;
 }
 
 function formatTime(val: number | null): string {
@@ -17,7 +18,10 @@ function formatTime(val: number | null): string {
  * Liste des contributeurs individuels avec leurs temps de jeu.
  * Affiché sous les deux colonnes de moyennes, après un séparateur.
  */
-export function GamePlaytimeContributors({ contributors }: GamePlaytimeContributorsProps) {
+export function GamePlaytimeContributors({
+  contributors,
+  accentColor,
+}: GamePlaytimeContributorsProps) {
   const t = useTranslations("gameDetails.playtime.players");
 
   if (contributors.length === 0) return null;
@@ -50,24 +54,33 @@ export function GamePlaytimeContributors({ contributors }: GamePlaytimeContribut
           {/* Temps de jeu en badges, alignés à droite */}
           <div className="flex items-center gap-2">
             {contributor.playtime.hastily !== null && (
-              <span className="inline-flex items-center gap-1.5 rounded-lg bg-slate-700/60 px-3 py-1.5 text-sm">
-                <Zap className="h-3.5 w-3.5 text-yellow-400" />
+              <span
+                className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm"
+                style={{ backgroundColor: `${accentColor}20` }}
+              >
+                <Zap className="h-3.5 w-3.5" style={{ color: accentColor }} />
                 <span className="font-bold text-white">
                   {formatTime(contributor.playtime.hastily)}
                 </span>
               </span>
             )}
             {contributor.playtime.normally !== null && (
-              <span className="inline-flex items-center gap-1.5 rounded-lg bg-slate-700/60 px-3 py-1.5 text-sm">
-                <Gamepad2 className="h-3.5 w-3.5 text-blue-400" />
+              <span
+                className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm"
+                style={{ backgroundColor: `${accentColor}20` }}
+              >
+                <Gamepad2 className="h-3.5 w-3.5" style={{ color: accentColor }} />
                 <span className="font-bold text-white">
                   {formatTime(contributor.playtime.normally)}
                 </span>
               </span>
             )}
             {contributor.playtime.completely !== null && (
-              <span className="inline-flex items-center gap-1.5 rounded-lg bg-slate-700/60 px-3 py-1.5 text-sm">
-                <Trophy className="h-3.5 w-3.5 text-amber-400" />
+              <span
+                className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm"
+                style={{ backgroundColor: `${accentColor}20` }}
+              >
+                <Trophy className="h-3.5 w-3.5" style={{ color: accentColor }} />
                 <span className="font-bold text-white">
                   {formatTime(contributor.playtime.completely)}
                 </span>

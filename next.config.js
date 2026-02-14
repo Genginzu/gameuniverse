@@ -53,6 +53,12 @@ const nextConfig = {
       },
       {
         protocol: "https",
+        hostname: "www.nintendo.com",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
         hostname: "images.unsplash.com",
         port: "",
         pathname: "/**",

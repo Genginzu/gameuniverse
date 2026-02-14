@@ -120,6 +120,15 @@ Move a test to `test/isolated/` if it:
 - Passes individually but fails when run in parallel
 - Has timing-sensitive assertions
 
+## Durée des Tests
+
+La suite de tests est complète et donc relativement longue à exécuter. Quand une
+tâche lance `bun run test:all` (ou toute commande exécutant l'ensemble des
+tests), il faut **impérativement attendre que tous les tests soient terminés**
+avant de passer à la tâche suivante. Ne pas interrompre ni considérer les tests
+comme passés avant d'avoir reçu le résultat final complet. Cela s'applique à
+**toute tâche** qui lance les tests, pas uniquement la validation finale.
+
 ## Coverage Target
 
 Maintain minimum 90% line coverage across the codebase.

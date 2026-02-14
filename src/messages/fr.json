@@ -547,7 +547,44 @@
     },
     "reviews": {
       "title": "Avis des joueurs",
-      "comingSoon": "Les avis des joueurs seront bientôt disponibles"
+      "comingSoon": "Les avis des joueurs seront bientôt disponibles",
+      "averageRating": "Note moyenne",
+      "loginPrompt": "Connectez-vous pour partager votre avis sur ce jeu.",
+      "emptyTitle": "Aucun avis pour le moment",
+      "emptyDescription": "Soyez le premier à partager votre expérience avec ce jeu.",
+      "anonymousPlayer": "Joueur anonyme",
+      "positivePoints": "Points positifs",
+      "negativePoints": "Points négatifs",
+      "writeReview": "Rédiger un avis",
+      "dialogTitle": "Rédigez votre avis",
+      "dialogDescription": "Partagez votre expérience avec ce jeu en lui attribuant une note et en laissant un avis détaillé.",
+      "form": {
+        "ratingLabel": "Note sur 20",
+        "contentLabel": "Votre avis",
+        "contentPlaceholder": "Partagez votre expérience avec ce jeu...",
+        "submitButton": "Publier mon avis",
+        "submitting": "Envoi en cours...",
+        "submitError": "Erreur lors de la soumission"
+      },
+      "points": {
+        "positiveLabel": "Point positif",
+        "negativeLabel": "Point négatif",
+        "add": "Ajouter",
+        "removeAriaLabel": "Supprimer {label} {index}",
+        "emptyPositive": "Aucun point positif ajouté. Cliquez sur \"Ajouter\" pour en ajouter.",
+        "emptyNegative": "Aucun point négatif ajouté. Cliquez sur \"Ajouter\" pour en ajouter.",
+        "count": "({count}/{max})"
+      },
+      "editor": {
+        "bold": "Gras",
+        "italic": "Italique",
+        "bulletList": "Liste à puces",
+        "orderedList": "Liste numérotée",
+        "toolbarAriaLabel": "Formatage du texte"
+      },
+      "rating": {
+        "ariaLabel": "Note sur {max}"
+      }
     },
     "playtime": {
       "title": "Temps de jeu",

@@ -52,8 +52,9 @@ function findTestFiles(dir: string): string[] {
 }
 
 async function runParallelTests(
-  coverage: boolean
-): Promise<{ passed: number; failed: number; success: boolean }> {
+  coverage: boolean,
+  verbose: boolean
+): Promise<{ passed: number; failed: number; success: boolean; failureOutput: string }> {
   console.log(color("\n🚀 Phase 1: Running Parallel Tests", COLORS.bold));
   console.log(color("━".repeat(60), COLORS.dim));
 
@@ -70,10 +71,73 @@ async function runParallelTests(
   const stderr = await new Response(proc.stderr).text();
   const output = stdout + stderr;
 
-  console.log(output);
+  if (verbose) {
+    console.log(output);
+  }
 
   const { passed, failed } = parseTestOutput(output);
-  return { passed, failed, success: failed === 0 };
+
+  // Extract coverage table and summary lines from output
+  const lines = output.split("\n");
+  const summaryLines: string[] = [];
+  let failureOutput = "";
+
+  // Extract coverage table: everything between first and last separator lines (---...|...)
+  let inCoverageTable = false;
+  for (const line of lines) {
+    // Detect separator lines like "---|---------|---------|---"
+    const isSeparator = /^-+\s*\|/.test(line);
+    if (isSeparator && !inCoverageTable) {
+      inCoverageTable = true;
+    }
+    if (inCoverageTable) {
+      summaryLines.push(line);
+      // End after the closing separator (3rd separator line)
+      if (isSeparator && summaryLines.filter((l) => /^-+\s*\|/.test(l)).length >= 3) {
+        inCoverageTable = false;
+      }
+    }
+    // Also capture the "Ran X tests across Y files" line
+    if (/Ran \d+ tests across/.test(line)) {
+      summaryLines.push(line);
+    }
+  }
+
+  // Extract failure details when not verbose
+  if (failed > 0 && !verbose) {
+    const failureLines: string[] = [];
+    let capturing = false;
+    for (const line of lines) {
+      if (
+        line.includes("✗") ||
+        line.includes("Error") ||
+        line.includes("expected") ||
+        line.includes("AssertionError") ||
+        line.includes("TypeError") ||
+        line.includes("ReferenceError")
+      ) {
+        capturing = true;
+      }
+      if (capturing) {
+        failureLines.push(line);
+        if (line.trim() === "" && failureLines.length > 1) {
+          capturing = false;
+        }
+      }
+    }
+    failureOutput = failureLines.join("\n");
+  }
+
+  // Show coverage table if present
+  if (!verbose && summaryLines.length > 0) {
+    console.log(summaryLines.join("\n"));
+  }
+
+  console.log(
+    `  ${color(String(passed), COLORS.green)} pass, ${failed > 0 ? color(String(failed), COLORS.red) + " fail" : "0 fail"}`
+  );
+
+  return { passed, failed, success: failed === 0, failureOutput };
 }
 
 async function runIsolatedTests(
@@ -139,7 +203,7 @@ async function main(): Promise<void> {
 
   const startTime = Date.now();
 
-  const parallel = await runParallelTests(coverage);
+  const parallel = await runParallelTests(coverage, verbose);
   const isolated = await runIsolatedTests(verbose);
 
   const totalDuration = Date.now() - startTime;
@@ -162,6 +226,12 @@ async function main(): Promise<void> {
   );
   console.log(`  Time:      ${(totalDuration / 1000).toFixed(2)}s`);
   console.log(color("═".repeat(60), COLORS.cyan));
+
+  // Show failure details if any (and not already shown in verbose mode)
+  if (!verbose && parallel.failureOutput) {
+    console.log(color("\n📋 Parallel Test Failures:", COLORS.red));
+    console.log(parallel.failureOutput);
+  }
 
   if (allSuccess) {
     console.log(color("\n✅ All tests passed!\n", COLORS.green));

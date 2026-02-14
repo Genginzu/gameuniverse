@@ -17,6 +17,7 @@ import {
   Package,
   Users,
 } from "lucide-react";
+import { GameReviewsTab } from "../reviews/GameReviewsTab";
 import { useTranslations } from "next-intl";
 import { GameDetails } from "@/types/game";
 import { GameColors } from "@/lib/utils/game-utils";
@@ -141,13 +142,7 @@ export function GameDetailsTabs({ game, colors, activeTab, onTabChange }: GameDe
         )}
 
         {activeTab === "reviews" && (
-          <div>
-            <div className="py-12 text-center text-slate-400">
-              <MessageSquare className="mx-auto mb-4 h-12 w-12 opacity-50" />
-              <p className="mb-2 text-lg font-medium text-white">{tDetails("reviews.title")}</p>
-              <p>{tDetails("reviews.comingSoon")}</p>
-            </div>
-          </div>
+          <GameReviewsTab gameId={game.id} gameTitle={game.title} accentColor={colors.primary} />
         )}
 
         {activeTab === "playtime" && (

@@ -20,6 +20,7 @@ interface PlayerPlaytimeFormProps {
   submitting: boolean;
   error: string | null;
   onSubmit: (entry: Partial<PlayerPlaytimeEntry>) => Promise<boolean>;
+  accentColor?: string;
 }
 
 function toInputValue(val: number | null | undefined): string {
@@ -37,18 +38,13 @@ export function PlayerPlaytimeForm({
   submitting,
   error,
   onSubmit,
+  accentColor,
 }: PlayerPlaytimeFormProps) {
   const t = useTranslations("gameDetails.playtime.players");
 
-  const [hastily, setHastily] = useState(
-    toInputValue(currentPlaytime?.hastily)
-  );
-  const [normally, setNormally] = useState(
-    toInputValue(currentPlaytime?.normally)
-  );
-  const [completely, setCompletely] = useState(
-    toInputValue(currentPlaytime?.completely)
-  );
+  const [hastily, setHastily] = useState(toInputValue(currentPlaytime?.hastily));
+  const [normally, setNormally] = useState(toInputValue(currentPlaytime?.normally));
+  const [completely, setCompletely] = useState(toInputValue(currentPlaytime?.completely));
   const [validationError, setValidationError] = useState<string | null>(null);
 
   const parseField = (val: string): number | null => {
@@ -61,8 +57,7 @@ export function PlayerPlaytimeForm({
     if (val === null) return null;
     if (val <= 0) return `${label}: ${t("errorPositive")}`;
     if (val > 50000) return `${label}: ${t("errorMax")}`;
-    if (Math.round(val * 10) / 10 !== val)
-      return `${label}: ${t("errorPrecision")}`;
+    if (Math.round(val * 10) / 10 !== val) return `${label}: ${t("errorPrecision")}`;
     return null;
   };
 
@@ -168,7 +163,8 @@ export function PlayerPlaytimeForm({
             <button
               type="submit"
               disabled={submitting}
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-lg px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+              style={{ backgroundColor: accentColor || "#2563eb" }}
             >
               {submitting ? t("submitting") : t("submit")}
             </button>

@@ -1,6 +1,7 @@
 "use client";
 
-import { Users, Clock, Zap, Gamepad2, Trophy, Plus } from "lucide-react";
+import { Users, Zap, Gamepad2, Trophy, Plus } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 import { Card, CardContent } from "@/components/ui/card";
 import { useTranslations } from "next-intl";
 import type { PlayerPlaytimeStats } from "@/types/game";
@@ -33,8 +34,8 @@ export function GamePlaytimePlayers({
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-slate-400">
-        <Clock className="mb-2 h-8 w-8 animate-pulse opacity-50" />
+      <div className="flex flex-col items-center justify-center gap-3 py-12 text-slate-400">
+        <Spinner size="sm" />
         <p className="text-sm">{t("loading")}</p>
       </div>
     );
@@ -64,7 +65,8 @@ export function GamePlaytimePlayers({
         {showAddButton && onAddPlaytime && (
           <button
             onClick={onAddPlaytime}
-            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700"
+            className="inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
+            style={{ backgroundColor: accentColor }}
           >
             <Plus className="h-4 w-4" />
             {t("addPlaytime")}
