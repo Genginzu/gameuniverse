@@ -5,7 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { FaPlus, FaTimes } from "react-icons/fa";
 import type { GameFormTabProps, Rating, ContentDescriptor } from "@/types/admin-games";
-import { GameAgeRatingsPreview } from "./GameAgeRatingsPreview";
+import { SingleAgeRatingPreview } from "./GameAgeRatingsPreview";
 
 interface AgeRatingsTabProps extends GameFormTabProps {
   ratings: Rating[];
@@ -82,18 +82,17 @@ export function GameFormAgeRatingsTab({
   };
 
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
-      {/* Left: form controls */}
-      <div className="space-y-4">
-        {assignedRatings.length === 0 ? (
-          <p className="py-6 text-center text-sm text-gray-400 dark:text-gray-500">
-            {t("noAgeRatings") ?? "Aucune classification d'âge"}
-          </p>
-        ) : (
-          <div className="space-y-3">
-            {assignedRatings.map((rating) => (
+    <div className="space-y-4">
+      {assignedRatings.length === 0 ? (
+        <p className="py-6 text-center text-sm text-gray-400 dark:text-gray-500">
+          {t("noAgeRatings") ?? "Aucune classification d'âge"}
+        </p>
+      ) : (
+        <div className="space-y-4">
+          {assignedRatings.map((rating) => (
+            <div key={rating.id} className="grid gap-4 lg:grid-cols-2">
+              {/* Left: config card */}
               <AgeRatingCard
-                key={rating.id}
                 rating={rating}
                 formRating={watchedRatings.find((r) => r.rating_id === rating.id)!}
                 descriptors={getDescriptorsForRating(rating)}
@@ -102,40 +101,40 @@ export function GameFormAgeRatingsTab({
                 onToggleDescriptor={toggleDescriptor}
                 t={t}
               />
-            ))}
-          </div>
-        )}
+              {/* Right: live preview for this rating */}
+              <div className="lg:self-start">
+                <SingleAgeRatingPreview
+                  form={form}
+                  ratingId={rating.id}
+                  ratings={ratings}
+                  contentDescriptors={contentDescriptors}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
-        {showPicker ? (
-          <AgeRatingPicker
-            availableRatings={availableRatings}
-            onSelect={addRating}
-            onClose={() => setShowPicker(false)}
-            t={t}
-          />
-        ) : (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => setShowPicker(true)}
-            className="gap-1.5"
-            disabled={availableRatings.length === 0}
-          >
-            <FaPlus className="h-3 w-3" />
-            {t("addAgeRating") ?? "Ajouter une classification"}
-          </Button>
-        )}
-      </div>
-
-      {/* Right: live preview */}
-      <div className="lg:sticky lg:top-4 lg:self-start">
-        <GameAgeRatingsPreview
-          form={form}
-          ratings={ratings}
-          contentDescriptors={contentDescriptors}
+      {showPicker ? (
+        <AgeRatingPicker
+          availableRatings={availableRatings}
+          onSelect={addRating}
+          onClose={() => setShowPicker(false)}
+          t={t}
         />
-      </div>
+      ) : (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => setShowPicker(true)}
+          className="gap-1.5"
+          disabled={availableRatings.length === 0}
+        >
+          <FaPlus className="h-3 w-3" />
+          {t("addAgeRating") ?? "Ajouter une classification"}
+        </Button>
+      )}
     </div>
   );
 }
