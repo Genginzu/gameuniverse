@@ -8,6 +8,7 @@ import { ArrowLeft, Calendar, Users, Globe, Heart, Share2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { GameDetails } from "@/types/game";
 import { GameColors } from "@/lib/utils/game-utils";
+import { GamePricingSection } from "./GamePricingSection";
 
 interface GameHeroSectionProps {
   game: GameDetails;
@@ -17,6 +18,7 @@ interface GameHeroSectionProps {
   onWishlistToggle: () => void;
   formatReleaseDate: (dateString?: string) => string | null;
   getMetascoreColor: (score?: number) => string;
+  formatPrice: (price: number, currency: string) => string;
 }
 
 export function GameHeroSection({
@@ -27,6 +29,7 @@ export function GameHeroSection({
   onWishlistToggle,
   formatReleaseDate,
   getMetascoreColor,
+  formatPrice,
 }: GameHeroSectionProps) {
   const t = useTranslations();
 
@@ -199,6 +202,13 @@ export function GameHeroSection({
                   {game.description}
                 </p>
               )}
+
+              {/* Pricing - inline after description */}
+              <GamePricingSection
+                pricing={game.pricing}
+                colors={colors}
+                formatPrice={formatPrice}
+              />
             </div>
           </div>
         </div>

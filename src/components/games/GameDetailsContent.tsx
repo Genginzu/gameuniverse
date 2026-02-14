@@ -11,7 +11,6 @@ import {
 import { GameHeroSection } from "./details/GameHeroSection";
 import { GameOverviewSection } from "./details/GameOverviewSection";
 import { GameDetailsTabs, TabType } from "./details/GameDetailsTabs";
-import { GamePricingSection } from "./details/GamePricingSection";
 
 interface GameDetailsProps {
   game: GameDetails;
@@ -66,22 +65,8 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
         onWishlistToggle={handleWishlistToggle}
         formatReleaseDate={formatReleaseDate}
         getMetascoreColor={getMetascoreColor}
+        formatPrice={formatPrice}
       />
-
-      {/* Pricing Section - positioned within hero sticky area */}
-      <div className="container relative z-10 mx-auto px-4">
-        <div className="lg:grid lg:grid-cols-12 lg:gap-8">
-          <div className="lg:col-span-4">
-            <div className="sticky top-24">
-              <GamePricingSection
-                pricing={game.pricing}
-                colors={colors}
-                formatPrice={formatPrice}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* Main content - Full width */}
       <div className="container relative z-10 mx-auto px-4 pb-16">

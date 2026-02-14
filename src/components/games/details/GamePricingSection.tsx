@@ -1,17 +1,18 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
-import { useTranslations } from "next-intl";
 import { GameColors } from "@/lib/utils/game-utils";
+import Image from "next/image";
 
 interface GamePricing {
   store: {
     name: string;
+    logoUrl?: string;
   };
   platform: string;
   price: number;
   currency: string;
+  storeUrl?: string;
 }
 
 interface GamePricingSectionProps {
@@ -21,41 +22,47 @@ interface GamePricingSectionProps {
 }
 
 export function GamePricingSection({ pricing, colors, formatPrice }: GamePricingSectionProps) {
-  const tDetails = useTranslations("gameDetails");
-
   if (pricing.length === 0) {
     return null;
   }
 
+  const sortedPricing = [...pricing].sort((a, b) => a.price - b.price);
+
   return (
     <div className="mt-6">
-      <div className="space-y-3">
-        {pricing.slice(0, 3).map((price, index) => (
-          <div
-            key={index}
-            className="flex items-center justify-between rounded-xl border border-slate-700 bg-slate-800/80 p-3 backdrop-blur-sm"
-          >
-            <div className="flex items-center gap-3">
-              <div>
-                <div className="text-sm font-medium text-white">{price.store.name}</div>
-                <div className="text-xs text-slate-400">{price.platform}</div>
-              </div>
-            </div>
-            <div className="text-right">
-              <div className="text-lg font-bold" style={{ color: colors.accent }}>
+      <div className="flex flex-wrap items-center gap-2">
+        {sortedPricing.slice(0, 5).map((price, index) => {
+          const Wrapper = price.storeUrl ? "a" : "div";
+          const wrapperProps = price.storeUrl
+            ? { href: price.storeUrl, target: "_blank", rel: "noopener noreferrer" }
+            : {};
+
+          return (
+            <Wrapper
+              key={index}
+              {...wrapperProps}
+              className="group flex items-center gap-2 rounded-md border border-slate-700 bg-slate-800/60 px-3 py-1.5 transition-colors hover:bg-slate-700/80"
+            >
+              {price.store.logoUrl ? (
+                <Image
+                  src={price.store.logoUrl}
+                  alt={price.store.name}
+                  width={16}
+                  height={16}
+                  className="h-4 w-4 object-contain"
+                />
+              ) : (
+                <span className="text-[11px] text-slate-400">{price.store.name}</span>
+              )}
+              <span className="text-sm font-semibold" style={{ color: colors.accent }}>
                 {formatPrice(price.price, price.currency)}
-              </div>
-              <Button
-                size="sm"
-                variant="outline"
-                className="mt-1 border-slate-600 text-slate-300 hover:bg-slate-700"
-              >
-                <ExternalLink className="mr-1 h-3 w-3" />
-                {tDetails("view")}
-              </Button>
-            </div>
-          </div>
-        ))}
+              </span>
+              {price.storeUrl && (
+                <ExternalLink className="h-3 w-3 text-slate-500 opacity-0 transition-opacity group-hover:opacity-100" />
+              )}
+            </Wrapper>
+          );
+        })}
       </div>
     </div>
   );
