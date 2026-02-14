@@ -281,15 +281,9 @@ export async function validateGameSlug(slug: string, excludeGameId?: string) {
 
 /**
  * Generate a unique slug from a title
+ * @deprecated Use generateSlugFromTitle from '@/lib/utils/slug-utils' instead
  */
-export function generateSlugFromTitle(title: string): string {
-  return title
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, "") // Remove special characters
-    .replace(/[\s_-]+/g, "-") // Replace spaces and underscores with hyphens
-    .replace(/^-+|-+$/g, ""); // Remove leading/trailing hyphens
-}
+export { generateSlugFromTitle } from "@/lib/utils/slug-utils";
 
 /**
  * Get game statistics for admin dashboard

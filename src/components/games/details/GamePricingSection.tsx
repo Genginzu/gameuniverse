@@ -41,7 +41,19 @@ export function GamePricingSection({ pricing, colors, formatPrice }: GamePricing
             <Wrapper
               key={index}
               {...wrapperProps}
-              className="group flex items-center gap-2 rounded-md border border-slate-700 bg-slate-800/90 px-3 py-1.5 backdrop-blur-sm transition-colors hover:bg-slate-700/95"
+              className="group flex items-center gap-2 rounded-md border px-3 py-1.5 backdrop-blur-sm transition-colors"
+              style={{
+                backgroundColor: `${colors.backgroundColor}e6`,
+                borderColor: `${colors.backgroundColor}80`,
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.backgroundColor =
+                  `${colors.backgroundColor}f2`;
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.backgroundColor =
+                  `${colors.backgroundColor}e6`;
+              }}
             >
               {price.store.logoUrl ? (
                 <Image
@@ -52,13 +64,18 @@ export function GamePricingSection({ pricing, colors, formatPrice }: GamePricing
                   className="h-4 w-4 object-contain"
                 />
               ) : (
-                <span className="text-[11px] text-slate-400">{price.store.name}</span>
+                <span className="text-[11px]" style={{ color: colors.labelColor }}>
+                  {price.store.name}
+                </span>
               )}
               <span className="text-sm font-semibold" style={{ color: colors.accent }}>
                 {formatPrice(price.price, price.currency)}
               </span>
               {price.storeUrl && (
-                <ExternalLink className="h-3 w-3 text-slate-500 opacity-0 transition-opacity group-hover:opacity-100" />
+                <ExternalLink
+                  className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100"
+                  style={{ color: colors.labelColor }}
+                />
               )}
             </Wrapper>
           );

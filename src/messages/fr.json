@@ -766,6 +766,7 @@
       "nextPage": "Page suivante",
       "form": {
         "generalInfo": "Informations générales",
+        "design": "Design",
         "images": "Images",
         "previous": "Précédent",
         "next": "Suivant",
@@ -823,6 +824,8 @@
         "playtimeHastily": "Rapide",
         "playtimeNormally": "Normal",
         "playtimeCompletely": "Complétionniste",
+        "playtimePreview": "Aperçu du temps de jeu",
+        "playtimeNoData": "Aucun temps de jeu renseigné",
         "colors": "Couleurs de la page",
         "backgroundColor": "Couleur de fond",
         "accentColor": "Couleur d'accent",
@@ -846,7 +849,8 @@
         "currency": "Devise",
         "platform": "Plateforme",
         "storeUrl": "URL du magasin",
-        "available": "Disponible"
+        "available": "Disponible",
+        "colorPreview": "Aperçu des couleurs"
       },
       "createPage": {
         "title": "Créer un nouveau jeu",

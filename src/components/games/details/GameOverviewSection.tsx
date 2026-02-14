@@ -55,11 +55,7 @@ export function GameOverviewSection({
         </div>
 
         {/* Publishers */}
-        {(game.companies?.publishers?.length > 0
-          ? game.companies.publishers.some(
-              (pub) => !game.companies.developers?.some((dev) => dev.id === pub.id)
-            )
-          : game.publisher !== game.developer) && (
+        {(game.companies?.publishers?.length > 0 ? true : game.publisher !== game.developer) && (
           <div className="rounded-xl border border-slate-700 bg-slate-800/50 p-4">
             <div className="mb-2 flex items-center gap-2">
               <Globe className="h-4 w-4" style={{ color: colors.accent }} />
@@ -69,13 +65,11 @@ export function GameOverviewSection({
             </div>
             <div className="space-y-1">
               {game.companies?.publishers?.length > 0 ? (
-                game.companies.publishers
-                  .filter((pub) => !game.companies.developers?.some((dev) => dev.id === pub.id))
-                  .map((pub) => (
-                    <div key={pub.id} className="font-medium" style={textStyle}>
-                      {pub.name}
-                    </div>
-                  ))
+                game.companies.publishers.map((pub) => (
+                  <div key={pub.id} className="font-medium" style={textStyle}>
+                    {pub.name}
+                  </div>
+                ))
               ) : (
                 <div className="font-medium" style={textStyle}>
                   {game.publisher}

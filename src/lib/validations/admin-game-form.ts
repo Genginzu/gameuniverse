@@ -75,11 +75,7 @@ export const adminGameRatingSchema = z.object({
 });
 
 export const adminGameFormSchema = z.object({
-  slug: z
-    .string()
-    .min(1, "Slug is required")
-    .max(255, "Slug must be less than 255 characters")
-    .regex(/^[a-z0-9-]+$/, "Slug must contain only lowercase letters, numbers, and hyphens"),
+  slug: z.string().max(255, "Slug must be less than 255 characters").optional().or(z.literal("")),
   translations: z
     .array(adminGameTranslationSchema)
     .min(1, "At least one translation is required")

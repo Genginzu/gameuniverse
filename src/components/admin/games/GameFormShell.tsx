@@ -6,6 +6,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { FaImage, FaSave } from "react-icons/fa";
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
 import { SUPPORTED_LANGUAGES, type AdminGenre, type Tab, type TabId } from "@/types/admin-games";
+import { generateSlugFromTitle } from "@/lib/utils/slug-utils";
 
 /** Hero banner showing cover, title, slug and genres */
 export function HeroBanner({
@@ -59,7 +60,9 @@ export function HeroBanner({
             )}
           </p>
           <p className="mt-1 text-sm text-white/50">
-            {form.watch("slug") || "slug"}
+            {form.watch("slug") ||
+              generateSlugFromTitle(form.watch("translations.0.title") || "") ||
+              "slug"}
             {form.watch("release_date") && (
               <span className="ml-3">· {new Date(form.watch("release_date")!).getFullYear()}</span>
             )}

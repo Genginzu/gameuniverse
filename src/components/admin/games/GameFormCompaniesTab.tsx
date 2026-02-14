@@ -5,6 +5,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { FaPlus, FaTimes } from "react-icons/fa";
 import type { GameFormTabProps, Company } from "@/types/admin-games";
+import { GameCompaniesPreview } from "./GameCompaniesPreview";
 
 interface CompaniesTabProps extends GameFormTabProps {
   companies: Company[];
@@ -42,6 +43,8 @@ export function GameFormCompaniesTab({ form, companies, toggleCompany, t }: Comp
 
   return (
     <div className="space-y-4">
+      <GameCompaniesPreview form={form} companies={companies} />
+
       {assignedCompanies.length === 0 ? (
         <p className="py-6 text-center text-sm text-gray-400 dark:text-gray-500">
           {t("noCompanies")}

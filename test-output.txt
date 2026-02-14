@@ -1,0 +1,829 @@
+﻿bun test v1.3.5 (1e86cebd)
+bun : 
+Au caractère Ligne:1 : 1
++ bun test 2>&1 | Out-File -FilePath test-output.txt -Encoding utf8; Se ...
++ ~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+test\setup.test.ts:
+Test setup completed with Bun runtime
+(pass) Test Setup > should have DOM globals available
+(pass) Test Setup > should have mock router available
+(pass) Test Setup > should perform basic arithmetic
+
+test\integration\auth\auth-integration.test.ts:
+(pass) Authentication System Integration > should validate environment setup
+(pass) Authentication System Integration > should validate email format
+(pass) Authentication System Integration > should validate password requirements
+(pass) Authentication System Integration > should validate form data completeness
+(pass) Authentication System Integration > should handle authentication error messages
+(pass) Authentication System Integration > should filter profile update fields
+
+test\integration\i18n\i18n.test.ts:
+(pass) Internationalization > should have French translations
+(pass) Internationalization > should have English translations
+(pass) Internationalization > should have consistent translation keys between languages
+(pass) Internationalization > should have fallback behavior for missing translations
+
+test\integration\middleware\middleware.test.ts:
+(pass) Middleware Configuration > should have correct locale configuration
+(pass) Middleware Configuration > should handle locale detection logic
+(pass) Middleware Configuration > should handle path generation correctly
+
+test\integration\middleware\navigation-redirections.test.tsx:
+(pass) Navigation and Redirections Unit Tests > Home Page Redirections > should redirect authenticated users to dashboard
+(pass) Navigation and Redirections Unit Tests > Home Page Redirections > should not redirect unauthenticated users
+(pass) Navigation and Redirections Unit Tests > Home Page Redirections > should not redirect while loading
+(pass) Navigation and Redirections Unit Tests > Home Page Redirections > should show landing page for unauthenticated users
+(pass) Navigation and Redirections Unit Tests > Home Page Redirections > should not show landing page for authenticated users
+(pass) Navigation and Redirections Unit Tests > Home Page Redirections > should show loading state while checking authentication
+(pass) Navigation and Redirections Unit Tests > Dashboard Page Redirections > should redirect unauthenticated users to auth page
+(pass) Navigation and Redirections Unit Tests > Dashboard Page Redirections > should not redirect authenticated users
+(pass) Navigation and Redirections Unit Tests > Dashboard Page Redirections > should show dashboard for authenticated users
+(pass) Navigation and Redirections Unit Tests > Dashboard Page Redirections > should not show dashboard for unauthenticated users
+(pass) Navigation and Redirections Unit Tests > Dashboard Page Redirections > should show loading state while checking authentication
+(pass) Navigation and Redirections Unit Tests > Dashboard Page Redirections > should not redirect while loading
+(pass) Navigation and Redirections Unit Tests > Authentication State Changes > should handle transition from loading to unauthenticated
+(pass) Navigation and Redirections Unit Tests > Authentication State Changes > should handle transition from loading to authenticated
+(pass) Navigation and Redirections Unit Tests > Authentication State Changes > should handle sign out transition
+(pass) Navigation and Redirections Unit Tests > Edge Cases > should handle user without session
+(pass) Navigation and Redirections Unit Tests > Edge Cases > should handle session without user
+(pass) Navigation and Redirections Unit Tests > Edge Cases > should handle user with minimal data
+
+test\isolated\hooks\useAdminCharacters.test.ts:
+(pass) useAdminCharacters > should fetch characters on mount [109.00ms]
+(pass) useAdminCharacters > should pass search, sort params to the API [78.00ms]
+(pass) useAdminCharacters > should handle fetch error [78.00ms]
+(pass) useAdminCharacters > should handle network error [78.00ms]
+(pass) useAdminCharacters > should delete a character and refetch [78.00ms]
+(pass) useAdminCharacters > should throw on delete failure [79.00ms]
+(pass) useAdminCharacters > should refetch with last params [93.00ms]
+(pass) useAdminCharacters > should handle missing pagination in response [78.00ms]
+
+test\isolated\hooks\useAdminCompanies.test.ts:
+(pass) useAdminCompanies > should fetch companies on mount [79.00ms]
+(pass) useAdminCompanies > should pass search and sort params to the API [78.00ms]
+(pass) useAdminCompanies > should handle fetch error [78.00ms]
+(pass) useAdminCompanies > should delete a company and refetch [78.00ms]
+(pass) useAdminCompanies > should throw on delete failure [78.00ms]
+(pass) useAdminCompanies > should check company usage and return count from 409 [78.00ms]
+(pass) useAdminCompanies > should refetch with last params [78.00ms]
+
+test\isolated\hooks\useAdminGenres.test.ts:
+(pass) useAdminGenres > should fetch genres on mount [78.00ms]
+(pass) useAdminGenres > should pass search, sort and locale params to the API [78.00ms]
+(pass) useAdminGenres > should handle fetch error [78.00ms]
+(pass) useAdminGenres > should handle network error [78.00ms]
+(pass) useAdminGenres > should delete a genre and refetch [79.00ms]
+(pass) useAdminGenres > should throw on delete failure [78.00ms]
+(pass) useAdminGenres > should check genre usage and return count from 409 [78.00ms]
+(pass) useAdminGenres > should refetch with last params [78.00ms]
+(pass) useAdminGenres > should handle missing pagination in response [78.00ms]
+
+test\isolated\hooks\useAdminLanguages.test.ts:
+(pass) useAdminLanguages > should fetch languages on mount [94.00ms]
+(pass) useAdminLanguages > should pass search, sort params to the API [78.00ms]
+(pass) useAdminLanguages > should handle fetch error [78.00ms]
+(pass) useAdminLanguages > should handle network error [78.00ms]
+(pass) useAdminLanguages > should delete a language and refetch [78.00ms]
+(pass) useAdminLanguages > should throw on delete failure [78.00ms]
+(pass) useAdminLanguages > should check language usage and return count from 409 [79.00ms]
+(pass) useAdminLanguages > should refetch with last params [78.00ms]
+(pass) useAdminLanguages > should handle missing pagination in response [78.00ms]
+
+test\isolated\hooks\useAuth.integration.test.ts:
+(pass) useAuth integration tests > hook initialization > should return auth state and functions
+(pass) useAuth integration tests > hook initialization > should have correct initial state
+(pass) useAuth integration tests > signIn > should call supabase signInWithPassword
+(pass) useAuth integration tests > signIn > should return data on successful sign in
+(pass) useAuth integration tests > signIn > should throw error on failed sign in
+(pass) useAuth integration tests > signUp > should call supabase signUp with correct options
+(pass) useAuth integration tests > signUp > should use default values when optional params missing
+(pass) useAuth integration tests > signUp > should throw error on failed sign up
+(pass) useAuth integration tests > signOut > should call supabase signOut
+(pass) useAuth integration tests > signOut > should clear auth cookies
+(pass) useAuth integration tests > signOut > should redirect to home page
+Error during signOut: {
+  message: "Sign out failed",
+}
+(pass) useAuth integration tests > signOut > should handle signOut errors gracefully
+Exception during signOut: 235 |       expect(mockClearAuthCookies).toHaveBeenCalled();
+236 |       expect(mockPush).toHaveBeenCalledWith("/");
+237 |     });
+238 | 
+239 |     it("should handle signOut exceptions gracefully", async () => {
+240 |       mockSignOut.mockImplementation(() => Promise.reject(new Error("Network error")));
+                                                                ^
+error: Network error
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useAuth.integration.test.ts:240:59)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\src\hooks\useAuth.ts:166:45)
+      at signOut (C:\Users\thoma\Documents\Projets\gameuniverse\src\hooks\useAuth.ts:163:19)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useAuth.integration.test.ts:245:13)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useAuth.integration.test.ts:239:55)
+
+(pass) useAuth integration tests > signOut > should handle signOut exceptions gracefully
+(pass) useAuth integration tests > forceSignOut > should clear auth cookies
+(pass) useAuth integration tests > forceSignOut > should redirect to auth page
+(pass) useAuth integration tests > resetPassword > should call supabase resetPasswordForEmail
+(pass) useAuth integration tests > resetPassword > should throw error on failed reset
+
+test\isolated\hooks\useCharacterForm.test.ts:
+62 | 
+63 |     expect(result.current.form.getValues("slug")).toBe("");
+64 |     expect(result.current.form.getValues("translations")).toHaveLength(1);
+65 |     expect(result.current.form.getValues("games")).toEqual([]);
+66 |     expect(result.current.form.getValues("media")).toEqual([]);
+67 |     expect(result.current.isSubmitting).toBe(false);
+                                             ^
+error: expect(received).toBe(expected)
+
+Expected: false
+Received: {
+  user: null,
+  session: null,
+  loading: true,
+}
+
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useCharacterForm.test.ts:67:41)
+(fail) useCharacterForm > should initialize with default values in create mode [63.00ms]
+56 |     throw new Error(`The given node is not an Element, the node type is: ${typeof node}.`);
+57 |   }
+58 | }
+59 | function checkContainerType(container) {
+60 |   if (!container || !(typeof container.querySelector === 'function') || !(typeof container.querySelectorAll === 'function')) {
+61 |     throw new TypeError(`Expected container to be an Element, a Document or a DocumentFragment but got ${getTypeName(container)}.`);
+               ^
+TypeError: Expected container to be an Element, a Document or a DocumentFragment but got undefined.
+      at checkContainerType (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\helpers.js:61:11)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:86:22)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:29)
+      at new Promise (1:11)
+      at waitFor (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:10)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:87:28)
+      at asyncWrapper (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:83:23)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useCharacterForm.test.ts:75:11)
+(fail) useCharacterForm > should load available games on mount
+56 |     throw new Error(`The given node is not an Element, the node type is: ${typeof node}.`);
+57 |   }
+58 | }
+59 | function checkContainerType(container) {
+60 |   if (!container || !(typeof container.querySelector === 'function') || !(typeof container.querySelectorAll === 'function')) {
+61 |     throw new TypeError(`Expected container to be an Element, a Document or a DocumentFragment but got ${getTypeName(container)}.`);
+               ^
+TypeError: Expected container to be an Element, a Document or a DocumentFragment but got undefined.
+      at checkContainerType (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\helpers.js:61:11)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:86:22)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:29)
+      at new Promise (1:11)
+      at waitFor (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:10)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:87:28)
+      at asyncWrapper (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:83:23)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useCharacterForm.test.ts:103:11)
+(fail) useCharacterForm > should handle games loading failure gracefully
+56 |     throw new Error(`The given node is not an Element, the node type is: ${typeof node}.`);
+57 |   }
+58 | }
+59 | function checkContainerType(container) {
+60 |   if (!container || !(typeof container.querySelector === 'function') || !(typeof container.querySelectorAll === 'function')) {
+61 |     throw new TypeError(`Expected container to be an Element, a Document or a DocumentFragment but got ${getTypeName(container)}.`);
+               ^
+TypeError: Expected container to be an Element, a Document or a DocumentFragment but got undefined.
+      at checkContainerType (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\helpers.js:61:11)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:86:22)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:29)
+      at new Promise (1:11)
+      at waitFor (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:10)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:87:28)
+      at asyncWrapper (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:83:23)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useCharacterForm.test.ts:118:11)
+(fail) useCharacterForm > should submit character in create mode
+56 |     throw new Error(`The given node is not an Element, the node type is: ${typeof node}.`);
+57 |   }
+58 | }
+59 | function checkContainerType(container) {
+60 |   if (!container || !(typeof container.querySelector === 'function') || !(typeof container.querySelectorAll === 'function')) {
+61 |     throw new TypeError(`Expected container to be an Element, a Document or a DocumentFragment but got ${getTypeName(container)}.`);
+               ^
+TypeError: Expected container to be an Element, a Document or a DocumentFragment but got undefined.
+      at checkContainerType (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\helpers.js:61:11)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:86:22)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:29)
+      at new Promise (1:11)
+      at waitFor (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:10)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:87:28)
+      at asyncWrapper (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:83:23)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useCharacterForm.test.ts:149:11)
+(fail) useCharacterForm > should submit character in edit mode
+56 |     throw new Error(`The given node is not an Element, the node type is: ${typeof node}.`);
+57 |   }
+58 | }
+59 | function checkContainerType(container) {
+60 |   if (!container || !(typeof container.querySelector === 'function') || !(typeof container.querySelectorAll === 'function')) {
+61 |     throw new TypeError(`Expected container to be an Element, a Document or a DocumentFragment but got ${getTypeName(container)}.`);
+               ^
+TypeError: Expected container to be an Element, a Document or a DocumentFragment but got undefined.
+      at checkContainerType (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\helpers.js:61:11)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:86:22)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:29)
+      at new Promise (1:11)
+      at waitFor (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:10)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:87:28)
+      at asyncWrapper (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:83:23)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useCharacterForm.test.ts:193:11)
+(fail) useCharacterForm > should throw on submit error with correct message
+7742 |       do {
+7743 |         didScheduleRenderPhaseUpdateDuringThisPass && (thenableState = null);
+7744 |         thenableIndexCounter = 0;
+7745 |         didScheduleRenderPhaseUpdateDuringThisPass = !1;
+7746 |         if (numberOfReRenders >= RE_RENDER_LIMIT)
+7747 |           throw Error(
+                       ^
+error: Too many re-renders. React limits the number of renders to prevent an infinite loop.
+      at renderWithHooksAgain (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:7747:17)
+      at renderWithHooks (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:7665:21)
+      at updateFunctionComponent (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:10166:19)
+      at runWithFiberInDEV (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+      at performUnitOfWork (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:17641:22)
+      at workLoopSync (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:17469:41)
+      at renderRootSync (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:16583:35)
+      at performSyncWorkOnRoot (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:18972:7)
+      at flushSyncWorkAcrossRoots_impl (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:18814:21)
+(fail) useCharacterForm > should reset form when initialData changes [15.00ms]
+
+test\isolated\hooks\useCompanyForm.test.ts:
+37 | 
+38 |     const values = result.current.form.getValues();
+39 |     expect(values.name).toBe("");
+40 |     expect(values.slug).toBe("");
+41 |     expect(values.company_type).toBe("both");
+42 |     expect(result.current.isSubmitting).toBe(false);
+                                             ^
+error: expect(received).toBe(expected)
+
+Expected: false
+Received: {
+  user: null,
+  session: null,
+  loading: true,
+}
+
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useCompanyForm.test.ts:42:41)
+(fail) useCompanyForm > should initialize with default values in create mode
+7742 |       do {
+7743 |         didScheduleRenderPhaseUpdateDuringThisPass && (thenableState = null);
+7744 |         thenableIndexCounter = 0;
+7745 |         didScheduleRenderPhaseUpdateDuringThisPass = !1;
+7746 |         if (numberOfReRenders >= RE_RENDER_LIMIT)
+7747 |           throw Error(
+                       ^
+error: Too many re-renders. React limits the number of renders to prevent an infinite loop.
+      at renderWithHooksAgain (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:7747:17)
+      at renderWithHooks (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:7665:21)
+      at updateFunctionComponent (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:10166:19)
+      at runWithFiberInDEV (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+      at performUnitOfWork (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:17641:22)
+      at workLoopSync (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:17469:41)
+      at renderRootSync (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:16583:35)
+      at performSyncWorkOnRoot (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:18972:7)
+      at flushSyncWorkAcrossRoots_impl (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:18814:21)
+(fail) useCompanyForm > should initialize with initialData in edit mode
+(pass) useCompanyForm > should POST to /api/admin/companies in create mode
+7742 |       do {
+7743 |         didScheduleRenderPhaseUpdateDuringThisPass && (thenableState = null);
+7744 |         thenableIndexCounter = 0;
+7745 |         didScheduleRenderPhaseUpdateDuringThisPass = !1;
+7746 |         if (numberOfReRenders >= RE_RENDER_LIMIT)
+7747 |           throw Error(
+                       ^
+error: Too many re-renders. React limits the number of renders to prevent an infinite loop.
+      at renderWithHooksAgain (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:7747:17)
+      at renderWithHooks (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:7665:21)
+      at updateFunctionComponent (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:10166:19)
+      at runWithFiberInDEV (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+      at performUnitOfWork (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:17641:22)
+      at workLoopSync (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:17469:41)
+      at renderRootSync (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:16583:35)
+      at performSyncWorkOnRoot (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:18972:7)
+      at flushSyncWorkAcrossRoots_impl (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:18814:21)
+(fail) useCompanyForm > should PUT to /api/admin/companies/[slug] in edit mode without slug in body [15.00ms]
+56 |     throw new Error(`The given node is not an Element, the node type is: ${typeof node}.`);
+57 |   }
+58 | }
+59 | function checkContainerType(container) {
+60 |   if (!container || !(typeof container.querySelector === 'function') || !(typeof container.querySelectorAll === 'function')) {
+61 |     throw new TypeError(`Expected container to be an Element, a Document or a DocumentFragment but got ${getTypeName(container)}.`);
+               ^
+TypeError: Expected container to be an Element, a Document or a DocumentFragment but got undefined.
+      at checkContainerType (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\helpers.js:61:11)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:86:22)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:29)
+      at new Promise (1:11)
+      at waitFor (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:10)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:87:28)
+      at asyncWrapper (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:83:23)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useCompanyForm.test.ts:112:11)
+(fail) useCompanyForm > should set submitError on API failure and throw
+56 |     throw new Error(`The given node is not an Element, the node type is: ${typeof node}.`);
+57 |   }
+58 | }
+59 | function checkContainerType(container) {
+60 |   if (!container || !(typeof container.querySelector === 'function') || !(typeof container.querySelectorAll === 'function')) {
+61 |     throw new TypeError(`Expected container to be an Element, a Document or a DocumentFragment but got ${getTypeName(container)}.`);
+               ^
+TypeError: Expected container to be an Element, a Document or a DocumentFragment but got undefined.
+      at checkContainerType (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\helpers.js:61:11)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:86:22)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:29)
+      at new Promise (1:11)
+      at waitFor (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:10)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:87:28)
+      at asyncWrapper (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:83:23)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useCompanyForm.test.ts:130:11)
+(fail) useCompanyForm > should set submitError on network failure
+
+test\isolated\hooks\useGameLibraryStatus.integration.test.ts:
+(pass) useGameLibraryStatus integration tests > hook initialization > should return library status and functions
+(pass) useGameLibraryStatus integration tests > addToLibrary > should POST to /api/library with gameId
+(pass) useGameLibraryStatus integration tests > addToLibrary > should return true on success
+(pass) useGameLibraryStatus integration tests > addToLibrary > should return false when no user
+(pass) useGameLibraryStatus integration tests > addToLibrary > should return false when no gameId
+(pass) useGameLibraryStatus integration tests > addToLibrary > should guard against concurrent adds
+Failed to add to library: Failed
+(pass) useGameLibraryStatus integration tests > addToLibrary > should return false on API error
+Error checking library status: warn: Network error
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useGameLibraryStatus.integration.test.ts:157:57)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\src\hooks\useGameLibraryStatus.ts:80:32)
+      at checkStatus (C:\Users\thoma\Documents\Projets\gameuniverse\src\hooks\useGameLibraryStatus.ts:77:25)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\src\hooks\useGameLibraryStatus.ts:98:5)
+      at useEffect (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useGameLibraryStatus.integration.test.ts:33:5)
+      at useGameLibraryStatus (C:\Users\thoma\Documents\Projets\gameuniverse\src\hooks\useGameLibraryStatus.ts:66:3)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useGameLibraryStatus.integration.test.ts:159:32)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useGameLibraryStatus.integration.test.ts:156:48)
+
+Error adding to library: 152 | 
+153 |       expect(result).toBe(false);
+154 |     });
+155 | 
+156 |     it("should return false on network error", async () => {
+157 |       mockFetch.mockImplementation(() => Promise.reject(new Error("Network error")));
+                                                              ^
+error: Network error
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useGameLibraryStatus.integration.test.ts:157:57)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\src\hooks\useGameLibraryStatus.ts:19:30)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\src\hooks\useGameLibraryStatus.ts:14:36)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useGameLibraryStatus.integration.test.ts:160:28)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useGameLibraryStatus.integration.test.ts:156:48)
+
+(pass) useGameLibraryStatus integration tests > addToLibrary > should return false on network error
+Error checking library status: TypeError: response.json is not a function. (In 'response.json()', 'response.json' is undefined)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\src\hooks\useGameLibraryStatus.ts:82:39)
+
+(pass) useGameLibraryStatus integration tests > removeFromLibrary > should DELETE from /api/library/{gameId}
+Error checking library status: TypeError: response.json is not a function. (In 'response.json()', 'response.json' is undefined)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\src\hooks\useGameLibraryStatus.ts:82:39)
+
+(pass) useGameLibraryStatus integration tests > removeFromLibrary > should return true on success
+(pass) useGameLibraryStatus integration tests > removeFromLibrary > should return false when no user
+(pass) useGameLibraryStatus integration tests > removeFromLibrary > should return false when no gameId
+Failed to remove from library
+(pass) useGameLibraryStatus integration tests > removeFromLibrary > should return false on API error
+Error checking library status: warn: Network error
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useGameLibraryStatus.integration.test.ts:211:57)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\src\hooks\useGameLibraryStatus.ts:80:32)
+      at checkStatus (C:\Users\thoma\Documents\Projets\gameuniverse\src\hooks\useGameLibraryStatus.ts:77:25)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\src\hooks\useGameLibraryStatus.ts:98:5)
+      at useEffect (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useGameLibraryStatus.integration.test.ts:33:5)
+      at useGameLibraryStatus (C:\Users\thoma\Documents\Projets\gameuniverse\src\hooks\useGameLibraryStatus.ts:66:3)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useGameLibraryStatus.integration.test.ts:213:37)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useGameLibraryStatus.integration.test.ts:210:48)
+
+Error removing from library: 206 | 
+207 |       expect(result).toBe(false);
+208 |     });
+209 | 
+210 |     it("should return false on network error", async () => {
+211 |       mockFetch.mockImplementation(() => Promise.reject(new Error("Network error")));
+                                                              ^
+error: Network error
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useGameLibraryStatus.integration.test.ts:211:57)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\src\hooks\useGameLibraryStatus.ts:48:30)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\src\hooks\useGameLibraryStatus.ts:44:41)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useGameLibraryStatus.integration.test.ts:214:28)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useGameLibraryStatus.integration.test.ts:210:48)
+
+(pass) useGameLibraryStatus integration tests > removeFromLibrary > should return false on network error
+(pass) useGameLibraryStatus integration tests > status check on mount > should check status when user and gameId exist [32.00ms]
+(pass) useGameLibraryStatus integration tests > status check on mount > should not check status when already checked
+Library feature not available yet
+(pass) useGameLibraryStatus integration tests > status check on mount > should handle 500 error gracefully [15.00ms]
+
+test\isolated\hooks\useGenreForm.test.ts:
+(pass) useGenreForm > should initialize with default values in create mode
+7742 |       do {
+7743 |         didScheduleRenderPhaseUpdateDuringThisPass && (thenableState = null);
+7744 |         thenableIndexCounter = 0;
+7745 |         didScheduleRenderPhaseUpdateDuringThisPass = !1;
+7746 |         if (numberOfReRenders >= RE_RENDER_LIMIT)
+7747 |           throw Error(
+                       ^
+error: Too many re-renders. React limits the number of renders to prevent an infinite loop.
+      at renderWithHooksAgain (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:7747:17)
+      at renderWithHooks (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:7665:21)
+      at updateFunctionComponent (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:10166:19)
+      at runWithFiberInDEV (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+      at performUnitOfWork (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:17641:22)
+      at workLoopSync (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:17469:41)
+      at renderRootSync (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:16583:35)
+      at performSyncWorkOnRoot (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:18972:7)
+      at flushSyncWorkAcrossRoots_impl (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:18814:21)
+(fail) useGenreForm > should initialize with initialData in edit mode [16.00ms]
+56 |     throw new Error(`The given node is not an Element, the node type is: ${typeof node}.`);
+57 |   }
+58 | }
+59 | function checkContainerType(container) {
+60 |   if (!container || !(typeof container.querySelector === 'function') || !(typeof container.querySelectorAll === 'function')) {
+61 |     throw new TypeError(`Expected container to be an Element, a Document or a DocumentFragment but got ${getTypeName(container)}.`);
+               ^
+TypeError: Expected container to be an Element, a Document or a DocumentFragment but got undefined.
+      at checkContainerType (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\helpers.js:61:11)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:86:22)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:29)
+      at new Promise (1:11)
+      at waitFor (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:10)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:87:28)
+      at asyncWrapper (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:83:23)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useGenreForm.test.ts:66:11)
+(fail) useGenreForm > should fetch supported languages on mount
+(pass) useGenreForm > should POST to /api/admin/genres in create mode
+7742 |       do {
+7743 |         didScheduleRenderPhaseUpdateDuringThisPass && (thenableState = null);
+7744 |         thenableIndexCounter = 0;
+7745 |         didScheduleRenderPhaseUpdateDuringThisPass = !1;
+7746 |         if (numberOfReRenders >= RE_RENDER_LIMIT)
+7747 |           throw Error(
+                       ^
+error: Too many re-renders. React limits the number of renders to prevent an infinite loop.
+      at renderWithHooksAgain (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:7747:17)
+      at renderWithHooks (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:7665:21)
+      at updateFunctionComponent (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:10166:19)
+      at runWithFiberInDEV (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+      at performUnitOfWork (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:17641:22)
+      at workLoopSync (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:17469:41)
+      at renderRootSync (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:16583:35)
+      at performSyncWorkOnRoot (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:18972:7)
+      at flushSyncWorkAcrossRoots_impl (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:18814:21)
+(fail) useGenreForm > should PUT to /api/admin/genres/[slug] in edit mode
+56 |     throw new Error(`The given node is not an Element, the node type is: ${typeof node}.`);
+57 |   }
+58 | }
+59 | function checkContainerType(container) {
+60 |   if (!container || !(typeof container.querySelector === 'function') || !(typeof container.querySelectorAll === 'function')) {
+61 |     throw new TypeError(`Expected container to be an Element, a Document or a DocumentFragment but got ${getTypeName(container)}.`);
+               ^
+TypeError: Expected container to be an Element, a Document or a DocumentFragment but got undefined.
+      at checkContainerType (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\helpers.js:61:11)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:86:22)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:29)
+      at new Promise (1:11)
+      at waitFor (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:10)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:87:28)
+      at asyncWrapper (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:83:23)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useGenreForm.test.ts:158:11)
+(fail) useGenreForm > should set submitError on API failure and throw
+56 |     throw new Error(`The given node is not an Element, the node type is: ${typeof node}.`);
+57 |   }
+58 | }
+59 | function checkContainerType(container) {
+60 |   if (!container || !(typeof container.querySelector === 'function') || !(typeof container.querySelectorAll === 'function')) {
+61 |     throw new TypeError(`Expected container to be an Element, a Document or a DocumentFragment but got ${getTypeName(container)}.`);
+               ^
+TypeError: Expected container to be an Element, a Document or a DocumentFragment but got undefined.
+      at checkContainerType (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\helpers.js:61:11)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:86:22)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:29)
+      at new Promise (1:11)
+      at waitFor (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:10)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:87:28)
+      at asyncWrapper (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:83:23)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useGenreForm.test.ts:186:11)
+(fail) useGenreForm > should set submitError on network failure
+(pass) useGenreForm > should derive supportedLanguages from routing locales
+
+test\isolated\hooks\useImageLoading.integration.test.ts:
+(pass) useImageLoading integration tests > hook initialization > should return loading state and image src
+(pass) useImageLoading integration tests > with valid src > should set initial loading state
+(pass) useImageLoading integration tests > with valid src > should create Image object and set src
+(pass) useImageLoading integration tests > with valid src > should handle successful image load
+(pass) useImageLoading integration tests > with valid src > should handle image load error with fallback
+(pass) useImageLoading integration tests > with valid src > should handle image load error without fallback
+(pass) useImageLoading integration tests > without src > should set loading to false immediately
+(pass) useImageLoading integration tests > without src > should set hasError to true
+(pass) useImageLoading integration tests > without src > should use fallbackSrc when provided
+(pass) useImageLoading integration tests > cleanup > should return cleanup function that clears handlers
+
+test\isolated\hooks\useLanguageForm.test.ts:
+29 |       code: "",
+30 |       name: "",
+31 |       native_name: "",
+32 |     });
+33 |     expect(result.current.isSubmitting).toBe(false);
+34 |     expect(result.current.submitError).toBeNull();
+                                            ^
+error: expect(received).toBeNull()
+
+Received: undefined
+
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useLanguageForm.test.ts:34:40)
+(fail) useLanguageForm > should initialize with default values in create mode
+7742 |       do {
+7743 |         didScheduleRenderPhaseUpdateDuringThisPass && (thenableState = null);
+7744 |         thenableIndexCounter = 0;
+7745 |         didScheduleRenderPhaseUpdateDuringThisPass = !1;
+7746 |         if (numberOfReRenders >= RE_RENDER_LIMIT)
+7747 |           throw Error(
+                       ^
+error: Too many re-renders. React limits the number of renders to prevent an infinite loop.
+      at renderWithHooksAgain (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:7747:17)
+      at renderWithHooks (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:7665:21)
+      at updateFunctionComponent (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:10166:19)
+      at runWithFiberInDEV (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+      at performUnitOfWork (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:17641:22)
+      at workLoopSync (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:17469:41)
+      at renderRootSync (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:16583:35)
+      at performSyncWorkOnRoot (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:18972:7)
+      at flushSyncWorkAcrossRoots_impl (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:18814:21)
+(fail) useLanguageForm > should initialize with initialData in edit mode [16.00ms]
+(pass) useLanguageForm > should POST to /api/admin/languages in create mode
+7742 |       do {
+7743 |         didScheduleRenderPhaseUpdateDuringThisPass && (thenableState = null);
+7744 |         thenableIndexCounter = 0;
+7745 |         didScheduleRenderPhaseUpdateDuringThisPass = !1;
+7746 |         if (numberOfReRenders >= RE_RENDER_LIMIT)
+7747 |           throw Error(
+                       ^
+error: Too many re-renders. React limits the number of renders to prevent an infinite loop.
+      at renderWithHooksAgain (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:7747:17)
+      at renderWithHooks (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:7665:21)
+      at updateFunctionComponent (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:10166:19)
+      at runWithFiberInDEV (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:874:13)
+      at performUnitOfWork (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:17641:22)
+      at workLoopSync (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:17469:41)
+      at renderRootSync (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:17450:11)
+      at performWorkOnRoot (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:16583:35)
+      at performSyncWorkOnRoot (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:18972:7)
+      at flushSyncWorkAcrossRoots_impl (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\react-dom\cjs\react-dom-client.development.js:18814:21)
+(fail) useLanguageForm > should PUT to /api/admin/languages/[code] in edit mode
+56 |     throw new Error(`The given node is not an Element, the node type is: ${typeof node}.`);
+57 |   }
+58 | }
+59 | function checkContainerType(container) {
+60 |   if (!container || !(typeof container.querySelector === 'function') || !(typeof container.querySelectorAll === 'function')) {
+61 |     throw new TypeError(`Expected container to be an Element, a Document or a DocumentFragment but got ${getTypeName(container)}.`);
+               ^
+TypeError: Expected container to be an Element, a Document or a DocumentFragment but got undefined.
+      at checkContainerType (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\helpers.js:61:11)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:86:22)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:29)
+      at new Promise (1:11)
+      at waitFor (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:10)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:87:28)
+      at asyncWrapper (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:83:23)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useLanguageForm.test.ts:130:11)
+(fail) useLanguageForm > should set submitError on API failure and throw
+56 |     throw new Error(`The given node is not an Element, the node type is: ${typeof node}.`);
+57 |   }
+58 | }
+59 | function checkContainerType(container) {
+60 |   if (!container || !(typeof container.querySelector === 'function') || !(typeof container.querySelectorAll === 'function')) {
+61 |     throw new TypeError(`Expected container to be an Element, a Document or a DocumentFragment but got ${getTypeName(container)}.`);
+               ^
+TypeError: Expected container to be an Element, a Document or a DocumentFragment but got undefined.
+      at checkContainerType (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\helpers.js:61:11)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:86:22)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:29)
+      at new Promise (1:11)
+      at waitFor (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:10)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:87:28)
+      at asyncWrapper (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:83:23)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useLanguageForm.test.ts:152:11)
+(fail) useLanguageForm > should set submitError on network failure
+56 |     throw new Error(`The given node is not an Element, the node type is: ${typeof node}.`);
+57 |   }
+58 | }
+59 | function checkContainerType(container) {
+60 |   if (!container || !(typeof container.querySelector === 'function') || !(typeof container.querySelectorAll === 'function')) {
+61 |     throw new TypeError(`Expected container to be an Element, a Document or a DocumentFragment but got ${getTypeName(container)}.`);
+               ^
+TypeError: Expected container to be an Element, a Document or a DocumentFragment but got undefined.
+      at checkContainerType (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\helpers.js:61:11)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:86:22)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:29)
+      at new Promise (1:11)
+      at waitFor (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:10)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:87:28)
+      at asyncWrapper (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:83:23)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useLanguageForm.test.ts:187:11)
+(fail) useLanguageForm > should reset submitError on new successful submission
+(pass) useLanguageForm > should send empty string for native_name when not provided
+
+test\isolated\hooks\useProfile.test.ts:
+84 | 
+85 |     const { useProfile } = await import("../../../src/hooks/useProfile");
+86 |     const { result } = renderHook(() => useProfile());
+87 | 
+88 |     // Initial state should have loading true
+89 |     expect(result.current.loading).toBe(true);
+                                        ^
+error: expect(received).toBe(expected)
+
+Expected: true
+Received: undefined
+
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useProfile.test.ts:89:36)
+(fail) useProfile > should initialize with loading state
+56 |     throw new Error(`The given node is not an Element, the node type is: ${typeof node}.`);
+57 |   }
+58 | }
+59 | function checkContainerType(container) {
+60 |   if (!container || !(typeof container.querySelector === 'function') || !(typeof container.querySelectorAll === 'function')) {
+61 |     throw new TypeError(`Expected container to be an Element, a Document or a DocumentFragment but got ${getTypeName(container)}.`);
+               ^
+TypeError: Expected container to be an Element, a Document or a DocumentFragment but got undefined.
+      at checkContainerType (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\helpers.js:61:11)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:86:22)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:29)
+      at new Promise (1:11)
+      at waitFor (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:10)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:87:28)
+      at asyncWrapper (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:83:23)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useProfile.test.ts:118:11)
+(fail) useProfile > should fetch profile successfully
+56 |     throw new Error(`The given node is not an Element, the node type is: ${typeof node}.`);
+57 |   }
+58 | }
+59 | function checkContainerType(container) {
+60 |   if (!container || !(typeof container.querySelector === 'function') || !(typeof container.querySelectorAll === 'function')) {
+61 |     throw new TypeError(`Expected container to be an Element, a Document or a DocumentFragment but got ${getTypeName(container)}.`);
+               ^
+TypeError: Expected container to be an Element, a Document or a DocumentFragment but got undefined.
+      at checkContainerType (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\helpers.js:61:11)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:86:22)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:29)
+      at new Promise (1:11)
+      at waitFor (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:10)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:87:28)
+      at asyncWrapper (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:83:23)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useProfile.test.ts:145:11)
+(fail) useProfile > should handle no authenticated user
+56 |     throw new Error(`The given node is not an Element, the node type is: ${typeof node}.`);
+57 |   }
+58 | }
+59 | function checkContainerType(container) {
+60 |   if (!container || !(typeof container.querySelector === 'function') || !(typeof container.querySelectorAll === 'function')) {
+61 |     throw new TypeError(`Expected container to be an Element, a Document or a DocumentFragment but got ${getTypeName(container)}.`);
+               ^
+TypeError: Expected container to be an Element, a Document or a DocumentFragment but got undefined.
+      at checkContainerType (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\helpers.js:61:11)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:86:22)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:29)
+      at new Promise (1:11)
+      at waitFor (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:10)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:87:28)
+      at asyncWrapper (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:83:23)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useProfile.test.ts:182:11)
+(fail) useProfile > should handle profile fetch error
+56 |     throw new Error(`The given node is not an Element, the node type is: ${typeof node}.`);
+57 |   }
+58 | }
+59 | function checkContainerType(container) {
+60 |   if (!container || !(typeof container.querySelector === 'function') || !(typeof container.querySelectorAll === 'function')) {
+61 |     throw new TypeError(`Expected container to be an Element, a Document or a DocumentFragment but got ${getTypeName(container)}.`);
+               ^
+TypeError: Expected container to be an Element, a Document or a DocumentFragment but got undefined.
+      at checkContainerType (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\helpers.js:61:11)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:86:22)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:29)
+      at new Promise (1:11)
+      at waitFor (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:10)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:87:28)
+      at asyncWrapper (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:83:23)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useProfile.test.ts:227:11)
+(fail) useProfile > should update profile successfully
+56 |     throw new Error(`The given node is not an Element, the node type is: ${typeof node}.`);
+57 |   }
+58 | }
+59 | function checkContainerType(container) {
+60 |   if (!container || !(typeof container.querySelector === 'function') || !(typeof container.querySelectorAll === 'function')) {
+61 |     throw new TypeError(`Expected container to be an Element, a Document or a DocumentFragment but got ${getTypeName(container)}.`);
+               ^
+TypeError: Expected container to be an Element, a Document or a DocumentFragment but got undefined.
+      at checkContainerType (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\helpers.js:61:11)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:86:22)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:29)
+      at new Promise (1:11)
+      at waitFor (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\dom\dist\wait-for.js:36:10)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:87:28)
+      at asyncWrapper (C:\Users\thoma\Documents\Projets\gameuniverse\node_modules\@testing-library\react\dist\pure.js:83:23)
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\hooks\useProfile.test.ts:287:11)
+(fail) useProfile > should handle profile update error
+
+test\isolated\lib\auth-utils.test.ts:
+(pass) auth-utils > clearAuthCookies > should do nothing when window is undefined (server-side) [16.00ms]
+62 |       globalThis.sessionStorage = {};
+63 | 
+64 |       clearAuthCookies();
+65 | 
+66 |       // Should have cleared sb-token and supabase-auth cookies
+67 |       expect(clearedCookies.length).toBeGreaterThan(0);
+                                         ^
+error: expect(received).toBeGreaterThan(expected)
+
+Expected: > 0
+Received: 0
+
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\lib\auth-utils.test.ts:67:37)
+(fail) auth-utils > clearAuthCookies > should clear Supabase cookies from document
+ 99 |       // @ts-expect-error - Mocking sessionStorage
+100 |       globalThis.sessionStorage = {};
+101 | 
+102 |       clearAuthCookies();
+103 | 
+104 |       expect(removedItems).toContain("sb-auth-token");
+                                 ^
+error: expect(received).toContain(expected)
+
+Expected to contain: "sb-auth-token"
+Received: []
+
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\lib\auth-utils.test.ts:104:28)
+(fail) auth-utils > clearAuthCookies > should clear Supabase items from localStorage
+139 |         return originalObjectKeys(obj);
+140 |       };
+141 | 
+142 |       clearAuthCookies();
+143 | 
+144 |       expect(removedItems).toContain("sb-refresh-token");
+                                 ^
+error: expect(received).toContain(expected)
+
+Expected to contain: "sb-refresh-token"
+Received: []
+
+      at <anonymous> (C:\Users\thoma\Documents\Projets\gameuniverse\test\isolated\lib\auth-utils.test.ts:144:28)
+(fail) auth-utils > clearAuthCookies > should clear Supabase items from sessionStorage
+(pass) auth-utils > handleAuthError > should log the error
+(pass) auth-utils > handleAuthError > should clear cookies and redirect on refresh token error
+(pass) auth-utils > handleAuthError > should clear cookies and redirect on token error
+(pass) auth-utils > handleAuthError > should not redirect for non-token errors
+
+test\isolated\lib\gameService.property.test.ts:
+(pass) GameService Property-Based Tests > Property: Data Transformation Consistency > for any valid game data, fetchGames transformation preserves essential fields
+(pass) GameService Property-Based Tests > Property: Data Transformation Consistency > for any valid game data, fetchGames handles items format and preserves essential fields
+[gameService] Fetching details from: http://localhost:3000/api/games/bh6tqh3rk22?locale=en
+[gameService] Response status: 200
+[gameService] Fetching details from: http://localhost:3000/api/games/3k73s?locale=fr
+[gameService] Response status: 200
+[gameService] Fetching details from: http://localhost:3000/api/games/3cwlx65-ke?locale=fr
+[gameService] Response status: 200
+[gameService] Fetching details from: http://localhost:3000/api/games/set3l?locale=fr
+[gameService] Response status: 200
+[gameService] Fetching details from: http://localhost:3000/api/games/5rmf?locale=fr
+[gameService] Response status: 200
+[gameService] Fetching details from: http://localhost:3000/api/games/l82m?locale=fr
+[gameService] Response status: 200
+[gameService] Fetching details from: http://localhost:3000/api/games/ga1y?locale=en
+[gameService] Response status: 200
+[gameService] Fetching details from: http://localhost:3000/api/games/w1ffdscf?locale=en
+[gameService] Response status: 200
+[gameService] Fetching details from: http://localhost:3000/api/games/p?locale=fr
+[gameService] Response status: 200
+[gameService] Fetching details from: http://localhost:3000/api/games/d-res2acw6?locale=fr
+[gameService] Response status: 200
+[gameService] Fetching details from: http://localhost:3000/api/games/mfezz?locale=fr
+[gameService] Response status: 200
+[gameService] Fetching details from: http://localhost:3000/api/games/g?locale=fr
+[gameService] Response status: 200
+[gameService] Fetching details from: http://localhost:3000/api/games/8s?locale=fr
+[gameService] Response status: 200
+[gameService] Fetching details from: http://localhost:3000/api/games/lkgp9?locale=fr
+[gameService] Response status: 200
+[gameService] Fetching details from: http://localhost:3000/api/games/l?locale=en
+[gameService] Response status: 200
+[gameService] Fetching details from: http://localhost:3000/api/games/c?locale=fr
+[gameService] Response status: 200
+[gameService] Fetching details from: http://localhost:3000/api/games/vu0izfohw7-j?locale=en
+[gameService] Response status: 200
+[gameService] Fetching details from: http://localhost:3000/api/games/ghph2k1zbx?locale=en
+[gameService] Response status: 200
+[gameService] Fetching details from: http://localhost:3000/api/games/7ify?locale=fr
+[gameService] Response status: 200
+[gameService] Fetching details from: http://localhost:3000/api/games/t?locale=en
+[gameService] Response status: 200
+(pass) GameService Property-Based Tests > Property: Data Transformation Consistency > for any valid game details, metadata transformation preserves title [15.00ms]

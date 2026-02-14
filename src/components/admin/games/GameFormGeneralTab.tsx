@@ -3,34 +3,14 @@
 import { Input } from "@/components/ui/input";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import type { GameFormTabProps } from "@/types/admin-games";
-import { GameFormColorFields } from "./GameFormColorFields";
+import { GamePlaytimePreview } from "./GamePlaytimePreview";
+import { GameReleaseDatePreview } from "./GameReleaseDatePreview";
+import { GameMetascorePreview } from "./GameMetascorePreview";
 
-interface GeneralTabProps extends GameFormTabProps {
-  mode: "create" | "edit";
-}
-
-export function GameFormGeneralTab({ form, t, mode }: GeneralTabProps) {
+export function GameFormGeneralTab({ form, t }: GameFormTabProps) {
   return (
     <div className="space-y-5">
       <div className="grid gap-5 sm:grid-cols-2">
-        <FormField
-          control={form.control}
-          name="slug"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>{t("slug")}</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder={t("slugPlaceholder")}
-                  {...field}
-                  disabled={mode === "edit"}
-                  className={mode === "edit" ? "bg-gray-50 dark:bg-gray-900/50" : ""}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
         <FormField
           control={form.control}
           name="release_date"
@@ -41,6 +21,7 @@ export function GameFormGeneralTab({ form, t, mode }: GeneralTabProps) {
                 <Input type="date" {...field} />
               </FormControl>
               <FormMessage />
+              <GameReleaseDatePreview form={form} t={t} />
             </FormItem>
           )}
         />
@@ -62,6 +43,7 @@ export function GameFormGeneralTab({ form, t, mode }: GeneralTabProps) {
                 />
               </FormControl>
               <FormMessage />
+              <GameMetascorePreview form={form} />
             </FormItem>
           )}
         />
@@ -138,10 +120,10 @@ export function GameFormGeneralTab({ form, t, mode }: GeneralTabProps) {
             )}
           />
         </div>
-      </div>
 
-      {/* Colors */}
-      <GameFormColorFields form={form} t={t} />
+        {/* Live playtime preview */}
+        <GamePlaytimePreview form={form} t={t} />
+      </div>
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { IGDBGame, IGDB_RATING_CATEGORIES, IGDB_ALL_RATINGS } from "@/types/igdb";
 import { GameDetails } from "@/types/game";
 import { IGDBService } from "./igdbService";
+import { extractColorsFromCover } from "@/lib/utils/color-extraction";
 
 /**
  * Result of an import or sync operation
@@ -22,6 +23,10 @@ interface GameInsertData {
   metascore: number | null;
   cover_image_url: string | null;
   background_image_url: string | null;
+  background_color: string | null;
+  accent_color: string | null;
+  label_color: string | null;
+  text_color: string | null;
   last_synced_at: string;
   playtime_hastily: number | null;
   playtime_normally: number | null;
@@ -97,6 +102,18 @@ export class GameImportService {
 
       // Transform IGDB data to Supabase format
       const gameData = this.transformIGDBToSupabase(igdbGame);
+
+      // Extract colors from cover image to match the game's visual identity
+      if (gameData.cover_image_url) {
+        const colors = await extractColorsFromCover(gameData.cover_image_url, true);
+        if (colors) {
+          gameData.background_color = colors.background_color;
+          gameData.accent_color = colors.accent_color;
+          gameData.label_color = colors.label_color;
+          gameData.text_color = colors.text_color;
+        }
+      }
+
       console.warn(`[GameImportService] Transformed game data:`, gameData);
 
       // Insert the game
@@ -216,6 +233,17 @@ export class GameImportService {
       // Update game with fresh IGDB data
       const updateData = this.transformIGDBToSupabaseUpdate(igdbGame);
 
+      // Extract colors from cover image during sync too
+      if (updateData.cover_image_url) {
+        const colors = await extractColorsFromCover(updateData.cover_image_url, true);
+        if (colors) {
+          updateData.background_color = colors.background_color;
+          updateData.accent_color = colors.accent_color;
+          updateData.label_color = colors.label_color;
+          updateData.text_color = colors.text_color;
+        }
+      }
+
       const { error: updateError } = await supabase
         .from("games")
         .update(updateData)
@@ -306,6 +334,10 @@ export class GameImportService {
       metascore,
       cover_image_url: coverUrl,
       background_image_url: backgroundUrl,
+      background_color: null,
+      accent_color: null,
+      label_color: null,
+      text_color: null,
       last_synced_at: new Date().toISOString(),
       playtime_hastily: null,
       playtime_normally: null,
@@ -397,11 +429,16 @@ export class GameImportService {
     const baseData = this.transformIGDBToSupabase(igdbGame);
 
     // For updates, we don't change the slug or igdb_id
+    // Colors are set separately in syncWithIGDB after extraction
     return {
       release_date: baseData.release_date,
       metascore: baseData.metascore,
       cover_image_url: baseData.cover_image_url,
       background_image_url: baseData.background_image_url,
+      background_color: baseData.background_color,
+      accent_color: baseData.accent_color,
+      label_color: baseData.label_color,
+      text_color: baseData.text_color,
       last_synced_at: baseData.last_synced_at,
     };
   }

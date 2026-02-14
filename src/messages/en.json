@@ -766,6 +766,7 @@
       "nextPage": "Next page",
       "form": {
         "generalInfo": "General information",
+        "design": "Design",
         "images": "Images",
         "previous": "Previous",
         "next": "Next",
@@ -820,6 +821,8 @@
         "playtimeHastily": "Hastily",
         "playtimeNormally": "Normally",
         "playtimeCompletely": "Completionist",
+        "playtimePreview": "Playtime preview",
+        "playtimeNoData": "No playtime data entered",
         "colors": "Page colors",
         "backgroundColor": "Background color",
         "accentColor": "Accent color",
@@ -843,7 +846,8 @@
         "currency": "Currency",
         "platform": "Platform",
         "storeUrl": "Store URL",
-        "available": "Available"
+        "available": "Available",
+        "colorPreview": "Color Preview"
       },
       "createPage": {
         "title": "Create a new game",

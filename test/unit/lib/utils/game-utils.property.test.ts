@@ -2,6 +2,7 @@ import { describe, it, expect } from "bun:test";
 import * as fc from "fast-check";
 import {
   getGameColors,
+  buildGameColors,
   formatReleaseDate,
   formatPrice,
   getMetascoreColor,
@@ -371,6 +372,62 @@ describe("Game Utilities Property-Based Tests", () => {
         expect(getMetascoreColor(89)).toBe("bg-green-400");
         expect(getMetascoreColor(90)).toBe("bg-green-500");
       });
+    });
+  });
+
+  /**
+   * Feature: admin-game-color-preview
+   * Property 1: buildGameColors default merging
+   *
+   * For any combination of color inputs where each field is either a valid hex
+   * string or null/undefined, buildGameColors() returns provided values when
+   * present, or defaults (bg=#0f172a, accent=#8b5cf6, label=#94a3b8, text=#e2e8f0)
+   * when absent.
+   *
+   * **Validates: Requirements 1.3, 5.1, 5.2**
+   */
+  describe("Property 1: buildGameColors default merging", () => {
+    const hexColorArb = fc
+      .tuple(
+        fc.integer({ min: 0, max: 255 }),
+        fc.integer({ min: 0, max: 255 }),
+        fc.integer({ min: 0, max: 255 })
+      )
+      .map(
+        ([r, g, b]) =>
+          `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`
+      );
+
+    const optionalHexArb = fc.oneof(hexColorArb, fc.constant(null), fc.constant(undefined));
+
+    it("returns provided values when present, defaults when absent", () => {
+      fc.assert(
+        fc.property(
+          optionalHexArb,
+          optionalHexArb,
+          optionalHexArb,
+          optionalHexArb,
+          (bg, accent, label, text) => {
+            const colors = buildGameColors({
+              backgroundColor: bg,
+              accentColor: accent,
+              labelColor: label,
+              textColor: text,
+            });
+
+            // Each field should equal the provided value or the default
+            expect(colors.backgroundColor).toBe(bg || "#0f172a");
+            expect(colors.accent).toBe(accent || "#8b5cf6");
+            expect(colors.labelColor).toBe(label || "#94a3b8");
+            expect(colors.textColor).toBe(text || "#e2e8f0");
+
+            // primary and secondary mirror accent
+            expect(colors.primary).toBe(colors.accent);
+            expect(colors.secondary).toBe(colors.accent);
+          }
+        ),
+        { numRuns: 100 }
+      );
     });
   });
 });

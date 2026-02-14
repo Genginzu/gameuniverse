@@ -15,6 +15,7 @@ import {
   FaBoxes,
   FaLanguage,
   FaDollarSign,
+  FaPaintBrush,
 } from "react-icons/fa";
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
 import {
@@ -39,6 +40,7 @@ import { GameFormAgeRatingsTab } from "./GameFormAgeRatingsTab";
 import { GameFormVersionsTab } from "./GameFormVersionsTab";
 import { GameFormLanguagesTab } from "./GameFormLanguagesTab";
 import { GameFormPricingTab } from "./GameFormPricingTab";
+import { GameFormDesignTab } from "./GameFormDesignTab";
 
 export interface GameFormProps {
   mode: "create" | "edit";
@@ -57,6 +59,7 @@ export interface GameFormProps {
 }
 
 const TABS: Tab[] = [
+  { id: "design", icon: <FaPaintBrush className="h-3.5 w-3.5" />, labelKey: "design" },
   { id: "general", icon: <FaInfoCircle className="h-3.5 w-3.5" />, labelKey: "generalInfo" },
   { id: "images", icon: <FaImage className="h-3.5 w-3.5" />, labelKey: "images" },
   { id: "translations", icon: <FaGlobe className="h-3.5 w-3.5" />, labelKey: "translations" },
@@ -85,7 +88,7 @@ export function GameForm({
 }: GameFormProps) {
   const t = useTranslations("admin.games.form");
   const tCommon = useTranslations("common");
-  const [activeTab, setActiveTab] = useState<TabId>("general");
+  const [activeTab, setActiveTab] = useState<TabId>("design");
 
   // Ensure all supported languages have a translation entry
   const currentTranslations = form.watch("translations");
@@ -148,18 +151,22 @@ export function GameForm({
     const errors = form.formState.errors;
     const tabErrorMap: [TabId, boolean][] = [
       [
-        "general",
+        "design",
         !!(
-          errors.slug ||
-          errors.release_date ||
-          errors.metascore ||
-          errors.playtime_hastily ||
-          errors.playtime_normally ||
-          errors.playtime_completely ||
           errors.background_color ||
           errors.accent_color ||
           errors.label_color ||
           errors.text_color
+        ),
+      ],
+      [
+        "general",
+        !!(
+          errors.release_date ||
+          errors.metascore ||
+          errors.playtime_hastily ||
+          errors.playtime_normally ||
+          errors.playtime_completely
         ),
       ],
       [
@@ -205,7 +212,16 @@ export function GameForm({
         />
 
         <div className="rounded-2xl border border-gray-200/60 bg-white p-6 shadow-sm dark:border-gray-700/40 dark:bg-gray-800/60">
-          {activeTab === "general" && <GameFormGeneralTab form={form} t={t} mode={mode} />}
+          {activeTab === "design" && (
+            <GameFormDesignTab
+              form={form}
+              t={t}
+              genres={genres}
+              companies={companies}
+              stores={stores}
+            />
+          )}
+          {activeTab === "general" && <GameFormGeneralTab form={form} t={t} />}
           {activeTab === "images" && <GameFormImagesTab form={form} t={t} />}
           {activeTab === "translations" && <GameFormTranslationsTab form={form} t={t} />}
           {activeTab === "genres" && (

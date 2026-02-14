@@ -15,7 +15,7 @@ const pointSchema = z
 
 export const reviewSchema = z.object({
   rating: z
-    .number({ required_error: "La note est requise", invalid_type_error: "La note est requise" })
+    .number({ error: "La note est requise" })
     .int("La note doit être un nombre entier")
     .min(0, "La note doit être au minimum 0")
     .max(20, "La note doit être au maximum 20"),

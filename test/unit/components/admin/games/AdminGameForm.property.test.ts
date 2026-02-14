@@ -84,12 +84,13 @@ describe("Admin Game Form Validation Property Tests", () => {
   });
 
   describe("Property 3b: Invalid forms are rejected", () => {
-    it("form with empty slug is rejected", () => {
+    it("form with slug exceeding max length is rejected", () => {
       fc.assert(
-        fc.property(validFormData(), emptySlug(), (formData, slug) => {
+        fc.property(validFormData(), (formData) => {
+          const tooLongSlug = "a".repeat(256);
           const result = adminGameFormSchema.safeParse({
             ...formData,
-            slug,
+            slug: tooLongSlug,
           });
           return result.success === false;
         }),
@@ -97,14 +98,14 @@ describe("Admin Game Form Validation Property Tests", () => {
       );
     });
 
-    it("form with invalid slug characters is rejected", () => {
+    it("form with empty slug is accepted (slug is optional)", () => {
       fc.assert(
-        fc.property(validFormData(), invalidSlugChars(), (formData, slug) => {
+        fc.property(validFormData(), emptySlug(), (formData, slug) => {
           const result = adminGameFormSchema.safeParse({
             ...formData,
             slug,
           });
-          return result.success === false;
+          return result.success === true;
         }),
         { numRuns: 100 }
       );

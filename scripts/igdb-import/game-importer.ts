@@ -7,6 +7,7 @@ import { createScriptClient } from "./supabase-client";
 import { IGDBService } from "../../src/lib/services/igdbService";
 import type { IGDBGame } from "../../src/types/igdb";
 import { IGDB_RATING_CATEGORIES, IGDB_ALL_RATINGS } from "../../src/types/igdb"; // eslint-disable-line no-duplicate-imports
+import { extractColorsFromCover } from "./color-extractor";
 
 export interface ImportResult {
   success: boolean;
@@ -67,6 +68,17 @@ export async function importGameFromIGDB(
 
     // Transform and insert game
     const gameData = transformIGDBToSupabase(igdbGame);
+
+    // Extract colors from cover image to match the game's visual identity
+    if (gameData.cover_image_url) {
+      const colors = await extractColorsFromCover(gameData.cover_image_url, verbose);
+      if (colors) {
+        gameData.background_color = colors.background_color;
+        gameData.accent_color = colors.accent_color;
+        gameData.label_color = colors.label_color;
+        gameData.text_color = colors.text_color;
+      }
+    }
 
     const { data: newGame, error: gameError } = await supabase
       .from("games")
@@ -156,6 +168,10 @@ function transformIGDBToSupabase(igdbGame: IGDBGame) {
     metascore,
     cover_image_url: coverUrl,
     background_image_url: backgroundUrl,
+    background_color: null as string | null,
+    accent_color: null as string | null,
+    label_color: null as string | null,
+    text_color: null as string | null,
     last_synced_at: new Date().toISOString(),
     playtime_hastily: null,
     playtime_normally: null,

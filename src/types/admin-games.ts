@@ -61,6 +61,7 @@ export interface GameFormTabProps {
 }
 
 export type TabId =
+  | "design"
   | "general"
   | "images"
   | "translations"

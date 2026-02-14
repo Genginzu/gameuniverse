@@ -5,6 +5,7 @@ import { useForm, type UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLocale } from "next-intl";
 import { adminGameFormSchema, type AdminGameFormData } from "@/lib/validations/admin-game-form";
+import { generateSlugFromTitle } from "@/lib/utils/slug-utils";
 import type {
   AdminGenre,
   Company,
@@ -175,7 +176,10 @@ export function useGameForm(
 
         const payload = {
           game: {
-            slug: data.slug,
+            slug:
+              mode === "edit"
+                ? data.slug
+                : generateSlugFromTitle(validTranslations[0]?.title || "untitled"),
             cover_image_url: data.cover_image_url || null,
             background_image_url: data.background_image_url || null,
             background_color: data.background_color || null,
