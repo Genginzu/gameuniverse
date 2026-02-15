@@ -246,9 +246,9 @@ dr- [x] 2. Utilitaire de détection des modifications
   - [x] 14.3 Corriger les erreurs de build si nécessaire
 
 - [x] 15. README de la fonctionnalité
-  - [ ] 15.1 Créer `docs/README_igdb-field-tracking.md`
-  - [ ] 15.2 Documenter ce qui a été implémenté, comment y accéder, les
-        prérequis et l'utilisation
+  - [x] 15.1 Créer `docs/README_igdb-field-tracking.md`
+  - [-] 15.2 Documenter ce qui a été implémenté, comment y accéder, les
+    prérequis et l'utilisation
 
 ## Notes
 
