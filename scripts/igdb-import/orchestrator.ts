@@ -112,7 +112,7 @@ export class ImportOrchestrator {
             throw new Error(`IGDB count failed: ${response.status} - ${errorText}`);
           }
 
-          const data = await response.json() as { count: number };
+          const data = (await response.json()) as { count: number };
           return data.count;
         },
         {
@@ -253,22 +253,15 @@ export class ImportOrchestrator {
       if (result.success) {
         this.stats.imported++;
         if (this.options.verbose) {
-          console.log(`[Import] Successfully imported: ${game.name} (IGDB ID: ${game.id})`);
+          const action = result.synced ? "synced" : "imported";
+          console.log(`[Import] Successfully ${action}: ${game.name} (IGDB ID: ${game.id})`);
         }
       } else {
-        // Check if the error is "already exists" - treat as skip, not error
-        if (result.error && result.error.includes("already exists")) {
-          this.stats.skipped++;
-          if (this.options.verbose) {
-            console.log(`[Skip] Game already exists: ${game.name} (IGDB ID: ${game.id})`);
-          }
-        } else {
-          // Actual error - log and increment error counter
-          this.stats.errors++;
-          console.error(
-            `[Error] Failed to import ${game.name} (IGDB ID: ${game.id}): ${result.error}`
-          );
-        }
+        // Actual error - log and increment error counter
+        this.stats.errors++;
+        console.error(
+          `[Error] Failed to import ${game.name} (IGDB ID: ${game.id}): ${result.error}`
+        );
       }
     } catch (error) {
       // Unexpected error - log with context and continue
@@ -315,19 +308,19 @@ export class ImportOrchestrator {
       // Fetch total count for accurate progress estimation
       console.log(`[Import] Fetching total game count...`);
       this.estimatedTotal = await this.fetchTotalCount();
-      
+
       // Apply limit if specified
-      const effectiveTotal = maxGames 
+      const effectiveTotal = maxGames
         ? Math.min(this.estimatedTotal - startOffset, maxGames)
         : this.estimatedTotal - startOffset;
-      
+
       if (this.estimatedTotal > 0) {
         console.log(`[Import] Found ${this.estimatedTotal} games in date range`);
         if (startOffset > 0) {
           console.log(`[Import] Will process ~${effectiveTotal} games (after offset)`);
         }
       }
-      
+
       this.progressTracker = new ProgressTracker(Math.max(effectiveTotal, 1), 500);
       console.log(`\n`); // Add spacing before progress bar
     }

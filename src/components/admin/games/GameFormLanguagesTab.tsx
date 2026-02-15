@@ -4,12 +4,18 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { FaTimes } from "react-icons/fa";
 import type { GameFormTabProps } from "@/types/admin-games";
 import type { SupportedLanguage } from "@/types/admin-languages";
+import { IgdbFieldIndicator } from "./IgdbFieldIndicator";
 
 interface LanguagesTabProps extends GameFormTabProps {
   supportedLanguages: SupportedLanguage[];
 }
 
-export function GameFormLanguagesTab({ form, t, supportedLanguages }: LanguagesTabProps) {
+export function GameFormLanguagesTab({
+  form,
+  t,
+  supportedLanguages,
+  isIgdbField,
+}: LanguagesTabProps) {
   const watchedLanguages = form.watch("languages");
   const usedCodes = new Set(watchedLanguages.map((l) => l.language_code));
   const availableLanguages = supportedLanguages.filter((l) => !usedCodes.has(l.code));
@@ -46,6 +52,11 @@ export function GameFormLanguagesTab({ form, t, supportedLanguages }: LanguagesT
 
   return (
     <div className="space-y-4">
+      {isIgdbField && (
+        <div className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400">
+          <IgdbFieldIndicator fieldName="languages" isIgdbField={isIgdbField("languages")} />
+        </div>
+      )}
       {watchedLanguages.length === 0 ? (
         <p className="py-6 text-center text-sm text-gray-400 dark:text-gray-500">
           {t("noLanguages") ?? "Aucune langue"}

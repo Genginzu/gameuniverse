@@ -8,10 +8,13 @@ import { IGDBService } from "../../src/lib/services/igdbService";
 import type { IGDBGame } from "../../src/types/igdb";
 import { IGDB_RATING_CATEGORIES, IGDB_ALL_RATINGS } from "../../src/types/igdb"; // eslint-disable-line no-duplicate-imports
 import { extractColorsFromCover } from "./color-extractor";
+import { syncExistingGame } from "./game-sync";
 
 export interface ImportResult {
   success: boolean;
   gameSlug?: string;
+  /** Indicates the game was synced (updated) rather than newly imported */
+  synced?: boolean;
   error?: string;
 }
 
@@ -57,10 +60,8 @@ export async function importGameFromIGDB(
     }
 
     if (existingGame) {
-      return {
-        success: false,
-        error: `Game with IGDB ID ${igdbId} already exists (slug: ${existingGame.slug})`,
-      };
+      // Game exists — sync it instead of skipping
+      return syncExistingGame(existingGame.id, existingGame.slug, igdbId, verbose);
     }
 
     // Ensure related entities exist

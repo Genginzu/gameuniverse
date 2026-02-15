@@ -51,7 +51,8 @@ export async function extractColorsFromCover(
 
     const buffer = Buffer.from(await response.arrayBuffer());
     const image = await Jimp.read(buffer);
-    const palette = extractPalette(image, 10);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const palette = extractPalette(image as any, 10);
 
     if (palette.length === 0) {
       console.warn("[ColorExtractor] No palette extracted");
@@ -112,7 +113,7 @@ function extractPalette(image: InstanceType<typeof Jimp>, count: number): RGB[] 
  */
 function medianCut(pixels: RGB[], maxColors: number): RGB[] {
   type Bucket = RGB[];
-  let buckets: Bucket[] = [pixels];
+  const buckets: Bucket[] = [pixels];
 
   while (buckets.length < maxColors) {
     // Find the bucket with the widest color range

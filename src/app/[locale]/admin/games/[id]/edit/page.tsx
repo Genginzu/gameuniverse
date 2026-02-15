@@ -15,6 +15,7 @@ import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
 interface GameApiResponse {
   id: string;
   slug: string;
+  igdb_id: number | null;
   cover_image_url: string | null;
   background_image_url: string | null;
   background_color: string | null;
@@ -153,7 +154,15 @@ function toFormData(game: GameApiResponse): AdminGameFormData {
  * Inner component that mounts only when initialData is ready,
  * so useGameForm receives correct defaultValues on first render.
  */
-function EditGameForm({ initialData, gameId }: { initialData: AdminGameFormData; gameId: string }) {
+function EditGameForm({
+  initialData,
+  gameId,
+  igdbId,
+}: {
+  initialData: AdminGameFormData;
+  gameId: string;
+  igdbId: number | null;
+}) {
   const t = useTranslations("admin.games");
   const router = useRouter();
 
@@ -221,6 +230,8 @@ function EditGameForm({ initialData, gameId }: { initialData: AdminGameFormData;
           loadingOptions={loadingOptions}
           onSubmit={handleSubmit}
           isSubmitting={isSubmitting}
+          gameId={gameId}
+          igdbId={igdbId}
         />
       </div>
     </div>
@@ -234,6 +245,7 @@ export default function EditGamePage() {
   const gameId = params.id;
 
   const [initialData, setInitialData] = useState<AdminGameFormData | undefined>(undefined);
+  const [igdbId, setIgdbId] = useState<number | null>(null);
   const [loadingGame, setLoadingGame] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
 
@@ -254,6 +266,7 @@ export default function EditGamePage() {
         const data: GameApiResponse = await res.json();
         if (mounted) {
           setInitialData(toFormData(data));
+          setIgdbId(data.igdb_id);
         }
       } catch {
         if (mounted) setLoadError(t("editPage.loadError"));
@@ -295,5 +308,7 @@ export default function EditGamePage() {
     );
   }
 
-  return <>{initialData && <EditGameForm initialData={initialData} gameId={gameId} />}</>;
+  return (
+    <>{initialData && <EditGameForm initialData={initialData} gameId={gameId} igdbId={igdbId} />}</>
+  );
 }

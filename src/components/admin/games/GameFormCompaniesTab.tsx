@@ -6,13 +6,20 @@ import { Button } from "@/components/ui/button";
 import { FaPlus, FaTimes } from "react-icons/fa";
 import type { GameFormTabProps, Company } from "@/types/admin-games";
 import { GameCompaniesPreview } from "./GameCompaniesPreview";
+import { IgdbFieldIndicator } from "./IgdbFieldIndicator";
 
 interface CompaniesTabProps extends GameFormTabProps {
   companies: Company[];
   toggleCompany: (companyId: string, role: "developer" | "publisher") => void;
 }
 
-export function GameFormCompaniesTab({ form, companies, toggleCompany, t }: CompaniesTabProps) {
+export function GameFormCompaniesTab({
+  form,
+  companies,
+  toggleCompany,
+  t,
+  isIgdbField,
+}: CompaniesTabProps) {
   const [showPicker, setShowPicker] = useState(false);
   const watchedCompanies = form.watch("companies");
 
@@ -43,6 +50,11 @@ export function GameFormCompaniesTab({ form, companies, toggleCompany, t }: Comp
 
   return (
     <div className="space-y-4">
+      {isIgdbField && (
+        <div className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400">
+          <IgdbFieldIndicator fieldName="companies" isIgdbField={isIgdbField("companies")} />
+        </div>
+      )}
       <GameCompaniesPreview form={form} companies={companies} />
 
       {assignedCompanies.length === 0 ? (

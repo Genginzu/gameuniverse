@@ -46,12 +46,15 @@ export function GameColorPreview({ form, genres, companies, stores, t }: GameCol
   });
 
   const formattedDate = formatReleaseDate(releaseDate || undefined, locale);
-  const metascore = metascoreRaw != null && metascoreRaw !== "" ? Number(metascoreRaw) : null;
+  const metascore =
+    metascoreRaw !== null && metascoreRaw !== undefined && metascoreRaw !== ""
+      ? Number(metascoreRaw)
+      : null;
 
   // Resolve genre names from IDs
   const resolvedGenres = selectedGenres
     .map((g) => genres.find((gn) => gn.id === g.genre_id))
-    .filter((g): g is AdminGenre => g != null)
+    .filter((g): g is AdminGenre => g !== null && g !== undefined)
     .slice(0, 5);
 
   // Resolve company names by role
@@ -109,5 +112,5 @@ function resolveCompanyNames(
   return selectedCompanies
     .filter((c) => c.role === role)
     .map((c) => allCompanies.find((co) => co.id === c.company_id)?.name)
-    .filter((name): name is string => name != null);
+    .filter((name): name is string => name !== null && name !== undefined);
 }

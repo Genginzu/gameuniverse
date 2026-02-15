@@ -5,8 +5,9 @@ import { Input } from "@/components/ui/input";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { FaPlus, FaTimes } from "react-icons/fa";
 import type { GameFormTabProps } from "@/types/admin-games";
+import { IgdbFieldIndicator } from "./IgdbFieldIndicator";
 
-export function GameFormImagesTab({ form, t }: GameFormTabProps) {
+export function GameFormImagesTab({ form, t, isIgdbField }: GameFormTabProps) {
   const coverImageUrl = form.watch("cover_image_url");
   const backgroundImageUrl = form.watch("background_image_url");
 
@@ -20,7 +21,15 @@ export function GameFormImagesTab({ form, t }: GameFormTabProps) {
             name="cover_image_url"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("coverImage")}</FormLabel>
+                <FormLabel>
+                  {t("coverImage")}
+                  {isIgdbField && (
+                    <IgdbFieldIndicator
+                      fieldName="cover_image"
+                      isIgdbField={isIgdbField("cover_image")}
+                    />
+                  )}
+                </FormLabel>
                 <FormControl>
                   <Input type="url" placeholder={t("coverImagePlaceholder")} {...field} />
                 </FormControl>
@@ -45,7 +54,15 @@ export function GameFormImagesTab({ form, t }: GameFormTabProps) {
             name="background_image_url"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("backgroundImage")}</FormLabel>
+                <FormLabel>
+                  {t("backgroundImage")}
+                  {isIgdbField && (
+                    <IgdbFieldIndicator
+                      fieldName="background_image"
+                      isIgdbField={isIgdbField("background_image")}
+                    />
+                  )}
+                </FormLabel>
                 <FormControl>
                   <Input type="url" placeholder={t("backgroundImagePlaceholder")} {...field} />
                 </FormControl>
@@ -73,7 +90,9 @@ export function GameFormImagesTab({ form, t }: GameFormTabProps) {
       <MediaListSection
         form={form}
         t={t}
+        isIgdbField={isIgdbField}
         fieldName="screenshots"
+        trackableField="screenshots"
         titleKey="screenshots"
         fallbackTitle="Captures d'écran"
         addKey="addScreenshot"
@@ -98,7 +117,9 @@ export function GameFormImagesTab({ form, t }: GameFormTabProps) {
       <MediaListSection
         form={form}
         t={t}
+        isIgdbField={isIgdbField}
         fieldName="artwork"
+        trackableField="artworks"
         titleKey="artwork"
         fallbackTitle="Illustrations"
         addKey="addArtwork"
@@ -127,7 +148,9 @@ export function GameFormImagesTab({ form, t }: GameFormTabProps) {
 function MediaListSection({
   form,
   t,
+  isIgdbField,
   fieldName,
+  trackableField,
   titleKey,
   fallbackTitle,
   addKey,
@@ -136,6 +159,7 @@ function MediaListSection({
   onAdd,
 }: GameFormTabProps & {
   fieldName: "screenshots" | "artwork";
+  trackableField: "screenshots" | "artworks";
   titleKey: string;
   fallbackTitle: string;
   addKey: string;
@@ -150,6 +174,12 @@ function MediaListSection({
       <div className="mb-3 flex items-center justify-between">
         <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
           {t(titleKey) ?? fallbackTitle}{" "}
+          {isIgdbField && (
+            <IgdbFieldIndicator
+              fieldName={trackableField}
+              isIgdbField={isIgdbField(trackableField)}
+            />
+          )}{" "}
           <span className="font-normal text-gray-400">({items.length})</span>
         </h3>
         <Button type="button" variant="outline" size="sm" className="gap-1.5" onClick={onAdd}>

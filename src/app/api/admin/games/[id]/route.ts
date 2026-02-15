@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-import { requireAdmin } from "@/lib/auth-admin";
+import { requireAdmin, getCurrentUser } from "@/lib/auth-admin";
 import { updateGameSchema } from "@/lib/validations/game";
 import {
   notifyGameUpdated,
@@ -8,6 +8,13 @@ import {
   invalidateGameCache,
   verifyGameDeletionConsistency,
 } from "@/lib/realtime-updates";
+import {
+  detectChangedFields,
+  upsertFieldOverrides,
+  type SupabaseClientLike,
+} from "@/lib/utils/field-tracking";
+import type { CurrentGameData } from "@/lib/utils/field-tracking";
+import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
 
 // Types for Supabase query results
 interface AdminGameGenre {
@@ -73,6 +80,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         `
         id,
         slug,
+        igdb_id,
         cover_image_url,
         background_image_url,
         background_color,
@@ -207,6 +215,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const adminGameData = {
       id: game.id,
       slug: game.slug,
+      igdb_id: game.igdb_id ?? null,
       cover_image_url: game.cover_image_url,
       background_image_url: game.background_image_url,
       background_color: game.background_color ?? null,
@@ -347,10 +356,23 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     const supabase = await createRouteHandlerClient();
 
-    // Check if game exists
+    // Load current game data before updates (for field tracking comparison)
     const { data: existingGame, error: checkError } = await supabase
       .from("games")
-      .select("id")
+      .select(
+        `
+        id, cover_image_url, background_image_url, release_date, metascore,
+        playtime_hastily, playtime_normally, playtime_completely,
+        game_translations(language_code, title, description),
+        game_genres(genre_id),
+        game_companies(company_id, role, is_primary),
+        game_screenshots(url),
+        game_artwork(url),
+        game_ratings(rating_id, is_primary, game_rating_descriptors(content_descriptor_id)),
+        game_versions(version_title, description),
+        game_languages(language_code, has_audio, has_subtitles, has_interface)
+      `
+      )
       .eq("id", gameId)
       .single();
 
@@ -581,6 +603,86 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
           console.warn("Error updating languages:", languagesError);
         }
       }
+    }
+
+    // --- Field tracking: detect manual changes and record overrides ---
+    try {
+      const currentGameData = {
+        cover_image_url: existingGame.cover_image_url,
+        background_image_url: existingGame.background_image_url,
+        release_date: existingGame.release_date,
+        metascore: existingGame.metascore,
+        playtime_hastily: existingGame.playtime_hastily,
+        playtime_normally: existingGame.playtime_normally,
+        playtime_completely: existingGame.playtime_completely,
+        translations: existingGame.game_translations ?? [],
+        genres: existingGame.game_genres ?? [],
+        companies: existingGame.game_companies ?? [],
+        screenshots: existingGame.game_screenshots ?? [],
+        artwork: existingGame.game_artwork ?? [],
+        age_ratings:
+          (
+            existingGame.game_ratings as
+              | Array<{
+                  rating_id: string;
+                  is_primary: boolean;
+                  game_rating_descriptors: Array<{ content_descriptor_id: string }>;
+                }>
+              | undefined
+          )?.map((r) => ({
+            rating_id: r.rating_id,
+            is_primary: r.is_primary ?? false,
+            content_descriptors: (r.game_rating_descriptors ?? []).map(
+              (d) => d.content_descriptor_id
+            ),
+          })) ?? [],
+        versions: existingGame.game_versions ?? [],
+        languages: existingGame.game_languages ?? [],
+      };
+
+      // Build AdminGameFormData-compatible object from validated PUT data.
+      // Cast needed because DB types are wider (e.g. role: string vs "developer"|"publisher").
+      const submittedFormData = {
+        slug: game?.slug ?? "",
+        cover_image_url: game?.cover_image_url ?? "",
+        background_image_url: game?.background_image_url ?? "",
+        release_date: game?.release_date ?? "",
+        metascore: game?.metascore ?? null,
+        playtime_hastily: game?.playtime_hastily ?? null,
+        playtime_normally: game?.playtime_normally ?? null,
+        playtime_completely: game?.playtime_completely ?? null,
+        translations: (translations ?? currentGameData.translations).map((t) => ({
+          language_code: t.language_code ?? "",
+          title: t.title ?? undefined,
+          description: t.description ?? undefined,
+        })),
+        genres: genres ?? currentGameData.genres,
+        companies: companies ?? currentGameData.companies,
+        screenshots: screenshots ?? currentGameData.screenshots,
+        artwork: artwork ?? currentGameData.artwork,
+        age_ratings: age_ratings ?? currentGameData.age_ratings,
+        versions: versions ?? currentGameData.versions,
+        languages: languages ?? currentGameData.languages,
+        prices: prices ?? [],
+      } as AdminGameFormData;
+
+      const changedFields = detectChangedFields(
+        currentGameData as CurrentGameData,
+        submittedFormData
+      );
+
+      if (changedFields.length > 0) {
+        const user = await getCurrentUser();
+        await upsertFieldOverrides(
+          supabase as unknown as SupabaseClientLike,
+          gameId,
+          changedFields,
+          user.id
+        );
+      }
+    } catch (trackingError) {
+      // Field tracking is non-critical — log but don't fail the update
+      console.warn("Field tracking error (non-critical):", trackingError);
     }
 
     // Send real-time notification for successful update

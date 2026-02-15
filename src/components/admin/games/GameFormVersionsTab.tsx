@@ -5,8 +5,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { FaPlus, FaTimes } from "react-icons/fa";
 import type { GameFormTabProps } from "@/types/admin-games";
+import { IgdbFieldIndicator } from "./IgdbFieldIndicator";
 
-export function GameFormVersionsTab({ form, t }: GameFormTabProps) {
+export function GameFormVersionsTab({ form, t, isIgdbField }: GameFormTabProps) {
   const watchedVersions = form.watch("versions");
 
   const addVersion = () => {
@@ -28,6 +29,11 @@ export function GameFormVersionsTab({ form, t }: GameFormTabProps) {
 
   return (
     <div className="space-y-4">
+      {isIgdbField && (
+        <div className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400">
+          <IgdbFieldIndicator fieldName="versions" isIgdbField={isIgdbField("versions")} />
+        </div>
+      )}
       {watchedVersions.length === 0 ? (
         <p className="py-6 text-center text-sm text-gray-400 dark:text-gray-500">
           {t("noVersions") ?? "Aucune version"}

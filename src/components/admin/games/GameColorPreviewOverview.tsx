@@ -1,9 +1,8 @@
 "use client";
 
-import { Calendar, Users, Globe, Info, Star, Smartphone } from "lucide-react";
+import { Calendar, Users, Globe, Info, Star } from "lucide-react";
 import { useTranslations } from "next-intl";
-import type { GameColors } from "@/lib/utils/game-utils";
-import { getMetascoreColor } from "@/lib/utils/game-utils";
+import { getMetascoreColor, type GameColors } from "@/lib/utils/game-utils";
 
 interface PreviewOverviewProps {
   colors: GameColors;
@@ -88,7 +87,7 @@ export function GameColorPreviewOverview({
         </OverviewCard>
 
         {/* Metascore */}
-        {metascore != null && (
+        {metascore !== null && metascore !== undefined && (
           <OverviewCard icon={<Star className="h-3.5 w-3.5" />} label="Metascore" colors={colors}>
             <div className="flex items-center gap-1.5">
               <span

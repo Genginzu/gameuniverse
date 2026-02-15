@@ -4,10 +4,16 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { SUPPORTED_LANGUAGES, type GameFormTabProps } from "@/types/admin-games";
+import { IgdbFieldIndicator } from "./IgdbFieldIndicator";
 
-export function GameFormTranslationsTab({ form, t }: GameFormTabProps) {
+export function GameFormTranslationsTab({ form, t, isIgdbField }: GameFormTabProps) {
   return (
     <div className="space-y-4">
+      {isIgdbField && (
+        <div className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400">
+          <IgdbFieldIndicator fieldName="translations" isIgdbField={isIgdbField("translations")} />
+        </div>
+      )}
       {SUPPORTED_LANGUAGES.map((lang) => {
         const index = form.watch("translations").findIndex((tr) => tr.language_code === lang.code);
         if (index === -1) return null;

@@ -1,17 +1,21 @@
 "use client";
 
 import type { GameFormTabProps, AdminGenre } from "@/types/admin-games";
+import { IgdbFieldIndicator } from "./IgdbFieldIndicator";
 
 interface GenresTabProps extends GameFormTabProps {
   genres: AdminGenre[];
   toggleGenre: (genreId: string) => void;
 }
 
-export function GameFormGenresTab({ form, genres, toggleGenre }: GenresTabProps) {
+export function GameFormGenresTab({ form, genres, toggleGenre, isIgdbField }: GenresTabProps) {
   return (
     <div>
       <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">
         {form.watch("genres").length} {form.watch("genres").length === 1 ? "genre" : "genres"}
+        {isIgdbField && (
+          <IgdbFieldIndicator fieldName="genres" isIgdbField={isIgdbField("genres")} />
+        )}
       </p>
       <div className="flex flex-wrap gap-2">
         {genres.map((genre) => {

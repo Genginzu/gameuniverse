@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { type UseFormReturn } from "react-hook-form";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
@@ -16,6 +16,7 @@ import {
   FaLanguage,
   FaDollarSign,
   FaPaintBrush,
+  FaSync,
 } from "react-icons/fa";
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
 import {
@@ -41,6 +42,8 @@ import { GameFormVersionsTab } from "./GameFormVersionsTab";
 import { GameFormLanguagesTab } from "./GameFormLanguagesTab";
 import { GameFormPricingTab } from "./GameFormPricingTab";
 import { GameFormDesignTab } from "./GameFormDesignTab";
+import { GameFormSyncTab } from "./GameFormSyncTab";
+import { useGameOverrides } from "@/hooks/useGameOverrides";
 
 export interface GameFormProps {
   mode: "create" | "edit";
@@ -56,9 +59,13 @@ export interface GameFormProps {
   loadingOptions: boolean;
   onSubmit: (data: AdminGameFormData) => Promise<void>;
   isSubmitting: boolean;
+  /** Only needed in edit mode for the sync tab */
+  gameId?: string;
+  /** Only needed in edit mode for the sync tab */
+  igdbId?: number | null;
 }
 
-const TABS: Tab[] = [
+const BASE_TABS: Tab[] = [
   { id: "design", icon: <FaPaintBrush className="h-3.5 w-3.5" />, labelKey: "design" },
   { id: "general", icon: <FaInfoCircle className="h-3.5 w-3.5" />, labelKey: "generalInfo" },
   { id: "images", icon: <FaImage className="h-3.5 w-3.5" />, labelKey: "images" },
@@ -70,6 +77,12 @@ const TABS: Tab[] = [
   { id: "languages", icon: <FaLanguage className="h-3.5 w-3.5" />, labelKey: "gameLanguages" },
   { id: "pricing", icon: <FaDollarSign className="h-3.5 w-3.5" />, labelKey: "pricing" },
 ];
+
+const SYNC_TAB: Tab = {
+  id: "sync",
+  icon: <FaSync className="h-3.5 w-3.5" />,
+  labelKey: "syncTab",
+};
 
 export function GameForm({
   mode,
@@ -85,10 +98,22 @@ export function GameForm({
   loadingOptions,
   onSubmit,
   isSubmitting,
+  gameId,
+  igdbId,
 }: GameFormProps) {
   const t = useTranslations("admin.games.form");
   const tCommon = useTranslations("common");
   const [activeTab, setActiveTab] = useState<TabId>("design");
+
+  // Show sync tab only in edit mode
+  const TABS = useMemo(() => (mode === "edit" ? [...BASE_TABS, SYNC_TAB] : BASE_TABS), [mode]);
+
+  // IGDB field indicators — only active in edit mode with an igdb_id
+  const { isIgdbField } = useGameOverrides(
+    mode === "edit" ? gameId : undefined,
+    mode === "edit" ? igdbId : undefined
+  );
+  const igdbFieldProp = mode === "edit" && igdbId ? isIgdbField : undefined;
 
   // Ensure all supported languages have a translation entry
   const currentTranslations = form.watch("translations");
@@ -221,11 +246,23 @@ export function GameForm({
               stores={stores}
             />
           )}
-          {activeTab === "general" && <GameFormGeneralTab form={form} t={t} />}
-          {activeTab === "images" && <GameFormImagesTab form={form} t={t} />}
-          {activeTab === "translations" && <GameFormTranslationsTab form={form} t={t} />}
+          {activeTab === "general" && (
+            <GameFormGeneralTab form={form} t={t} isIgdbField={igdbFieldProp} />
+          )}
+          {activeTab === "images" && (
+            <GameFormImagesTab form={form} t={t} isIgdbField={igdbFieldProp} />
+          )}
+          {activeTab === "translations" && (
+            <GameFormTranslationsTab form={form} t={t} isIgdbField={igdbFieldProp} />
+          )}
           {activeTab === "genres" && (
-            <GameFormGenresTab form={form} t={t} genres={genres} toggleGenre={toggleGenre} />
+            <GameFormGenresTab
+              form={form}
+              t={t}
+              genres={genres}
+              toggleGenre={toggleGenre}
+              isIgdbField={igdbFieldProp}
+            />
           )}
           {activeTab === "companies" && (
             <GameFormCompaniesTab
@@ -233,6 +270,7 @@ export function GameForm({
               t={t}
               companies={companies}
               toggleCompany={toggleCompany}
+              isIgdbField={igdbFieldProp}
             />
           )}
           {activeTab === "age_ratings" && (
@@ -241,11 +279,19 @@ export function GameForm({
               t={t}
               ratings={ratings}
               contentDescriptors={contentDescriptors}
+              isIgdbField={igdbFieldProp}
             />
           )}
-          {activeTab === "versions" && <GameFormVersionsTab form={form} t={t} />}
+          {activeTab === "versions" && (
+            <GameFormVersionsTab form={form} t={t} isIgdbField={igdbFieldProp} />
+          )}
           {activeTab === "languages" && (
-            <GameFormLanguagesTab form={form} t={t} supportedLanguages={supportedLanguages} />
+            <GameFormLanguagesTab
+              form={form}
+              t={t}
+              supportedLanguages={supportedLanguages}
+              isIgdbField={igdbFieldProp}
+            />
           )}
           {activeTab === "pricing" && (
             <GameFormPricingTab
@@ -255,6 +301,9 @@ export function GameForm({
               currencies={currencies}
               platforms={platforms}
             />
+          )}
+          {activeTab === "sync" && mode === "edit" && gameId && (
+            <GameFormSyncTab gameId={gameId} igdbId={igdbId ?? null} />
           )}
         </div>
 

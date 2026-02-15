@@ -6,8 +6,9 @@ import type { GameFormTabProps } from "@/types/admin-games";
 import { GamePlaytimePreview } from "./GamePlaytimePreview";
 import { GameReleaseDatePreview } from "./GameReleaseDatePreview";
 import { GameMetascorePreview } from "./GameMetascorePreview";
+import { IgdbFieldIndicator } from "./IgdbFieldIndicator";
 
-export function GameFormGeneralTab({ form, t }: GameFormTabProps) {
+export function GameFormGeneralTab({ form, t, isIgdbField }: GameFormTabProps) {
   return (
     <div className="space-y-5">
       <div className="grid gap-5 sm:grid-cols-2">
@@ -16,7 +17,15 @@ export function GameFormGeneralTab({ form, t }: GameFormTabProps) {
           name="release_date"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("releaseDate")}</FormLabel>
+              <FormLabel>
+                {t("releaseDate")}
+                {isIgdbField && (
+                  <IgdbFieldIndicator
+                    fieldName="release_date"
+                    isIgdbField={isIgdbField("release_date")}
+                  />
+                )}
+              </FormLabel>
               <FormControl>
                 <Input type="date" {...field} />
               </FormControl>
@@ -30,7 +39,15 @@ export function GameFormGeneralTab({ form, t }: GameFormTabProps) {
           name="metascore"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Metascore</FormLabel>
+              <FormLabel>
+                Metascore
+                {isIgdbField && (
+                  <IgdbFieldIndicator
+                    fieldName="metascore"
+                    isIgdbField={isIgdbField("metascore")}
+                  />
+                )}
+              </FormLabel>
               <FormControl>
                 <Input
                   type="number"
@@ -53,6 +70,9 @@ export function GameFormGeneralTab({ form, t }: GameFormTabProps) {
       <div className="mt-2">
         <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-gray-300">
           {t("playtime") ?? "Temps de jeu"}{" "}
+          {isIgdbField && (
+            <IgdbFieldIndicator fieldName="playtime" isIgdbField={isIgdbField("playtime")} />
+          )}{" "}
           <span className="font-normal text-gray-400">({t("playtimeUnit") ?? "en heures"})</span>
         </h3>
         <div className="grid gap-5 sm:grid-cols-3">

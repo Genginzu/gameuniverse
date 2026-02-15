@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { FaPlus, FaTimes } from "react-icons/fa";
 import type { GameFormTabProps, Rating, ContentDescriptor } from "@/types/admin-games";
 import { SingleAgeRatingPreview } from "./GameAgeRatingsPreview";
+import { IgdbFieldIndicator } from "./IgdbFieldIndicator";
 
 interface AgeRatingsTabProps extends GameFormTabProps {
   ratings: Rating[];
@@ -17,6 +18,7 @@ export function GameFormAgeRatingsTab({
   ratings,
   contentDescriptors,
   t,
+  isIgdbField,
 }: AgeRatingsTabProps) {
   const [showPicker, setShowPicker] = useState(false);
   const watchedRatings = form.watch("age_ratings");
@@ -83,6 +85,11 @@ export function GameFormAgeRatingsTab({
 
   return (
     <div className="space-y-4">
+      {isIgdbField && (
+        <div className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400">
+          <IgdbFieldIndicator fieldName="age_ratings" isIgdbField={isIgdbField("age_ratings")} />
+        </div>
+      )}
       {assignedRatings.length === 0 ? (
         <p className="py-6 text-center text-sm text-gray-400 dark:text-gray-500">
           {t("noAgeRatings") ?? "Aucune classification d'âge"}

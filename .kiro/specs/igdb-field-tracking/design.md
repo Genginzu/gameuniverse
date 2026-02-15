@@ -78,6 +78,64 @@ const TRACKABLE_FIELDS = [
 2. **useGameSync.ts** : Hook custom gérant l'état de synchronisation, les appels
    API et le rafraîchissement des données.
 
+3. **IgdbFieldIndicator.tsx** : Composant réutilisable affichant un petit icône
+   IGDB à côté d'un label de champ. Visible uniquement si le jeu a un igdb_id et
+   que le champ n'a pas d'override. Inclut un tooltip au survol.
+
+4. **useGameOverrides.ts** : Hook custom qui charge les overrides d'un jeu via
+   GET /api/admin/games/:id/overrides et expose une fonction
+   `isIgdbField(fieldName): boolean` retournant `true` si le champ n'a pas
+   d'override (donc contient encore la donnée IGDB originale).
+
+### Indicateur visuel IGDB dans le formulaire d'édition
+
+L'indicateur IGDB est un petit icône (ex : `SiIgdb` de `react-icons/si` ou un
+badge custom avec le texte « IGDB ») affiché à côté du label de chaque champ
+synchronisable dans les onglets du formulaire d'édition.
+
+**Logique d'affichage :**
+
+- Le jeu doit avoir un `igdb_id` (sinon aucun indicateur n'est affiché)
+- Le hook `useGameOverrides` charge la liste des overrides au montage du
+  formulaire
+- Pour chaque champ, si `field_name` est ABSENT de `game_field_overrides` →
+  afficher l'icône IGDB
+- Pour chaque champ, si `field_name` est PRÉSENT dans `game_field_overrides` →
+  ne pas afficher l'icône (le champ a été modifié manuellement)
+
+**Composant IgdbFieldIndicator :**
+
+```typescript
+interface IgdbFieldIndicatorProps {
+  fieldName: TrackableField;
+  isIgdbField: boolean; // true si pas d'override
+}
+```
+
+Le composant affiche un petit badge/icône avec un tooltip « Donnée provenant
+d'IGDB — non modifiée manuellement » (traduit via i18n).
+
+**Intégration dans les onglets :**
+
+Chaque composant d'onglet (GameFormGeneralTab, GameFormImagesTab, etc.) reçoit
+une prop optionnelle `isIgdbField?: (fieldName: TrackableField) => boolean`.
+Quand cette prop est fournie, les labels de champs synchronisables affichent
+l'indicateur IGDB si `isIgdbField(fieldName)` retourne `true`.
+
+Le `GameForm.tsx` passe cette prop à chaque onglet en mode "edit" quand le jeu a
+un igdb_id.
+
+```mermaid
+flowchart TD
+    A[GameForm mode=edit, igdb_id présent] -->|charge overrides| B[useGameOverrides]
+    B -->|isIgdbField fn| C[GameFormGeneralTab]
+    B -->|isIgdbField fn| D[GameFormImagesTab]
+    B -->|isIgdbField fn| E[GameFormTranslationsTab]
+    B -->|isIgdbField fn| F[Autres onglets...]
+    C -->|champ sans override| G[IgdbFieldIndicator visible]
+    C -->|champ avec override| H[Pas d'indicateur]
+```
+
 ### API Routes
 
 1. **GET /api/admin/games/:id/overrides** : Retourne la liste des overrides pour
@@ -208,6 +266,15 @@ synchronisation.
 
 **Validates: Requirements 3.5, 4.1**
 
+### Property 5 : Indicateur IGDB reflète l'absence d'override
+
+_Pour tout_ ensemble d'overrides O et tout champ synchronisable F,
+`isIgdbField(F)` doit retourner `true` si et seulement si F est absent de O.
+Autrement dit, l'indicateur IGDB est affiché exactement pour les champs qui
+n'ont pas été modifiés manuellement.
+
+**Validates: Requirements 6.1, 6.2, 6.5**
+
 ## Extensibilité : ajout de nouveaux champs
 
 Quand un nouveau champ synchronisable depuis IGDB est ajouté au schéma d'un jeu,
@@ -247,6 +314,11 @@ rappeler cette procédure à tout agent ou développeur ajoutant un nouveau cham
   invalide)
 - Vérifier que le composant `GameFormSyncTab` affiche un message quand le jeu
   n'a pas d'igdb_id
+- Vérifier que `IgdbFieldIndicator` s'affiche quand `isIgdbField` retourne
+  `true` et ne s'affiche pas quand il retourne `false`
+- Vérifier que `useGameOverrides` retourne `isIgdbField(field) = true` pour les
+  champs sans override et `false` pour les champs avec override
+- Vérifier qu'aucun indicateur IGDB n'est affiché quand le jeu n'a pas d'igdb_id
 
 ### Tests property-based
 
@@ -259,9 +331,12 @@ Chaque test property-based doit :
 - Référencer la propriété du design via un commentaire tag
 - Format du tag : **Feature: igdb-field-tracking, Property {N}: {titre}**
 
-Les 4 propriétés identifiées ci-dessus seront implémentées comme des tests
-property-based dans `test/unit/lib/utils/field-tracking.property.test.ts` et
-`test/unit/lib/services/igdb-sync.property.test.ts`.
+Les 5 propriétés identifiées ci-dessus seront implémentées comme des tests
+property-based :
+
+- Properties 1–2 dans `test/unit/lib/utils/field-tracking.property.test.ts`
+- Properties 3–4 dans `test/unit/lib/services/igdb-sync.property.test.ts`
+- Property 5 dans `test/unit/hooks/useGameOverrides.property.test.ts`
 
 ### Tests d'intégration
 

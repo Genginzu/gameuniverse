@@ -851,7 +851,18 @@
         "platform": "Plateforme",
         "storeUrl": "URL du magasin",
         "available": "Disponible",
-        "colorPreview": "Aperçu des couleurs"
+        "colorPreview": "Aperçu des couleurs",
+        "syncTab": "Sync IGDB",
+        "syncAll": "Tout synchroniser",
+        "syncField": "Sync",
+        "fieldOverridden": "Modifié manuellement",
+        "fieldSynced": "Donnée IGDB",
+        "noIgdbLink": "Ce jeu n'est pas lié à IGDB.",
+        "syncSuccess": "Synchronisation réussie",
+        "syncError": "Erreur de synchronisation",
+        "lastSyncedAt": "Dernière synchronisation",
+        "igdbFieldTooltip": "Donnée provenant d'IGDB — non modifiée manuellement",
+        "metascore": "Metascore"
       },
       "createPage": {
         "title": "Créer un nouveau jeu",

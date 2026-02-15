@@ -27,6 +27,10 @@ d'un ou de tous les champs depuis IGDB.
   depuis l'API IGDB vers la base de données Supabase
 - **Administrateur** : Un utilisateur ayant les droits d'administration sur le
   site
+- **Formulaire_Édition** : Le formulaire d'édition admin d'un jeu, composé de
+  plusieurs onglets (général, images, traductions, genres, etc.)
+- **Indicateur_IGDB** : Un petit icône affiché à côté d'un champ pour signaler
+  que sa valeur provient d'IGDB et n'a pas été modifiée manuellement
 
 ## Requirements
 
@@ -138,3 +142,27 @@ efficacement l'état de chaque champ.
 4. WHEN un jeu est supprimé, THE Système_Tracking SHALL supprimer
    automatiquement les entrées de suivi associées via une contrainte ON DELETE
    CASCADE
+
+### Requirement 6 : Indicateur visuel des champs IGDB dans le formulaire d'édition
+
+**User Story:** En tant qu'administrateur, je veux voir un petit icône à côté
+des champs qui contiennent encore les données originales d'IGDB (non modifiées
+manuellement), afin de savoir d'un coup d'œil quels champs n'ont pas encore été
+personnalisés.
+
+#### Critères d'Acceptation
+
+1. WHILE un administrateur édite un jeu ayant un igdb*id, THE Formulaire*Édition
+   SHALL afficher un indicateur visuel (icône IGDB) à côté de chaque Champ_Suivi
+   qui n'a pas d'entrée dans la table game_field_overrides
+2. WHEN un Champ*Suivi possède une entrée dans game_field_overrides (modifié
+   manuellement), THE Formulaire*Édition SHALL ne pas afficher l'indicateur IGDB
+   pour ce champ
+3. WHEN un administrateur édite un jeu sans igdb*id, THE Formulaire*Édition
+   SHALL ne pas afficher d'indicateur IGDB sur aucun champ
+4. WHEN un administrateur survole l'indicateur IGDB, THE Formulaire_Édition
+   SHALL afficher un tooltip expliquant que la valeur provient d'IGDB et n'a pas
+   été modifiée manuellement
+5. WHEN les overrides d'un jeu sont chargés, THE Formulaire_Édition SHALL
+   déterminer l'état de chaque champ (IGDB original ou modifié manuellement) en
+   se basant sur l'absence ou la présence d'une entrée dans game_field_overrides

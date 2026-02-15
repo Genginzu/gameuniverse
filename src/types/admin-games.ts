@@ -58,6 +58,8 @@ export interface ContentDescriptor {
 export interface GameFormTabProps {
   form: UseFormReturn<AdminGameFormData>;
   t: (key: string) => string;
+  /** When provided, indicates whether a field still has original IGDB data */
+  isIgdbField?: (fieldName: TrackableField) => boolean;
 }
 
 export type TabId =
@@ -70,12 +72,38 @@ export type TabId =
   | "age_ratings"
   | "versions"
   | "languages"
-  | "pricing";
+  | "pricing"
+  | "sync";
 
 export interface Tab {
   id: TabId;
   icon: React.ReactNode;
   labelKey: string;
+}
+
+/** Catégories de champs synchronisables depuis IGDB */
+export type TrackableField =
+  | "translations"
+  | "cover_image"
+  | "background_image"
+  | "release_date"
+  | "metascore"
+  | "genres"
+  | "companies"
+  | "screenshots"
+  | "artworks"
+  | "age_ratings"
+  | "versions"
+  | "languages"
+  | "playtime";
+
+/** Entrée de suivi d'un champ modifié manuellement */
+export interface GameFieldOverride {
+  id: string;
+  gameId: string;
+  fieldName: TrackableField;
+  modifiedBy: string | null;
+  modifiedAt: string;
 }
 
 export const SUPPORTED_LANGUAGES = [
