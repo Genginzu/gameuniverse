@@ -11,6 +11,8 @@ import type { TrackableField } from "@/types/admin-games";
 interface GameFormSyncTabProps {
   gameId: string;
   igdbId: number | null;
+  /** Called after a successful sync so the parent can reload game data */
+  onSyncComplete?: () => void;
 }
 
 /** Maps each trackable field to its i18n label key */
@@ -30,7 +32,7 @@ const FIELD_LABEL_KEYS: Record<TrackableField, string> = {
   playtime: "playtime",
 };
 
-export function GameFormSyncTab({ gameId, igdbId }: GameFormSyncTabProps) {
+export function GameFormSyncTab({ gameId, igdbId, onSyncComplete }: GameFormSyncTabProps) {
   const t = useTranslations("admin.games.form");
   const { overrides, loadingOverrides, syncingField, syncField, syncAll, error } =
     useGameSync(gameId);
@@ -56,7 +58,10 @@ export function GameFormSyncTab({ gameId, igdbId }: GameFormSyncTabProps) {
           variant="outline"
           size="sm"
           disabled={isSyncing}
-          onClick={() => syncAll()}
+          onClick={async () => {
+            const ok = await syncAll();
+            if (ok) onSyncComplete?.();
+          }}
           className="gap-2"
         >
           {syncingField === "all" ? <LoadingSpinner size="sm" /> : <FaSync className="h-3 w-3" />}
@@ -106,7 +111,10 @@ export function GameFormSyncTab({ gameId, igdbId }: GameFormSyncTabProps) {
                   variant="ghost"
                   size="sm"
                   disabled={isSyncing}
-                  onClick={() => syncField(field)}
+                  onClick={async () => {
+                    const ok = await syncField(field);
+                    if (ok) onSyncComplete?.();
+                  }}
                   className="gap-1.5 text-xs"
                 >
                   {isSyncingThis ? (

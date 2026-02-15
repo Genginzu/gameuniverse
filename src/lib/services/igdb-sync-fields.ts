@@ -8,6 +8,21 @@ import type { IGDBGame } from "@/types/igdb";
 import type { SyncSupabaseClient } from "./igdb-sync";
 
 // ---------------------------------------------------------------------------
+// Helper pour contourner le typage SyncSupabaseClient sur les deletes.
+// Le vrai client Supabase chaîne .delete().eq() comme un builder,
+// mais l'interface minimale ne le modélise pas correctement.
+// ---------------------------------------------------------------------------
+
+/** Supprime toutes les lignes d'une table pour un game_id donné */
+async function deleteByGameId(
+  supabase: SyncSupabaseClient,
+  table: string,
+  gameId: string
+): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (supabase as any).from(table).delete().eq("game_id", gameId);
+  if (error) throw new Error(`Failed to delete from ${table}: ${error.message}`);
+}
 // Transformation IGDB → Supabase (logique partagée avec game-importer)
 // ---------------------------------------------------------------------------
 
@@ -76,13 +91,13 @@ export async function syncTranslations(
   if (error) throw new Error(`Failed to sync translations: ${error.message}`);
 }
 
-/** Synchronise les genres */
+/** Synchronise les genres — crée les genres manquants dans la DB locale */
 export async function syncGenres(
   supabase: SyncSupabaseClient,
   gameId: string,
   igdbGame: IGDBGame
 ): Promise<void> {
-  await supabase.from("game_genres").delete().eq("game_id", gameId).in("game_id", [gameId]);
+  await deleteByGameId(supabase, "game_genres", gameId);
   if (!igdbGame.genres || igdbGame.genres.length === 0) return;
 
   for (const igdbGenre of igdbGame.genres) {
@@ -91,32 +106,69 @@ export async function syncGenres(
       .select("id")
       .eq("slug", igdbGenre.slug)
       .single();
-    if (!existing?.id) continue;
-    await supabase
-      .from("game_genres")
-      .insert({ game_id: gameId, genre_id: existing.id as string })
-      .select("id")
-      .single();
+
+    let genreId: string;
+
+    if (existing?.id) {
+      genreId = existing.id as string;
+    } else {
+      const { data: newGenre } = await supabase
+        .from("genres")
+        .insert({ slug: igdbGenre.slug })
+        .select("id")
+        .single();
+      if (!newGenre?.id) continue;
+      genreId = newGenre.id as string;
+
+      await supabase
+        .from("genre_translations")
+        .insert({ genre_id: genreId, language_code: "en", name: igdbGenre.name })
+        .select("id")
+        .single();
+    }
+
+    // game_genres est une table de liaison sans colonne id — insert simple via as any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase as any).from("game_genres").insert({ game_id: gameId, genre_id: genreId });
   }
 }
 
-/** Synchronise les companies (développeurs/éditeurs) */
+/** Synchronise les companies — crée les companies manquantes dans la DB locale */
 export async function syncCompanies(
   supabase: SyncSupabaseClient,
   gameId: string,
   igdbGame: IGDBGame
 ): Promise<void> {
-  await supabase.from("game_companies").delete().eq("game_id", gameId).in("game_id", [gameId]);
+  // Supprimer les companies existantes du jeu
+  await deleteByGameId(supabase, "game_companies", gameId);
   if (!igdbGame.involved_companies || igdbGame.involved_companies.length === 0) return;
 
   for (const ic of igdbGame.involved_companies) {
+    // Chercher la company par slug dans la DB locale
     const { data: existing } = await supabase
       .from("companies")
       .select("id")
       .eq("slug", ic.company.slug)
       .single();
-    if (!existing?.id) continue;
-    const companyId = existing.id as string;
+
+    let companyId: string;
+
+    if (existing?.id) {
+      companyId = existing.id as string;
+    } else {
+      // Créer la company si elle n'existe pas localement
+      const { data: newCompany } = await supabase
+        .from("companies")
+        .insert({
+          name: ic.company.name,
+          slug: ic.company.slug,
+          company_type: ic.developer ? "developer" : ic.publisher ? "publisher" : null,
+        })
+        .select("id")
+        .single();
+      if (!newCompany?.id) continue;
+      companyId = newCompany.id as string;
+    }
 
     if (ic.developer) {
       await supabase
@@ -141,7 +193,7 @@ export async function syncScreenshots(
   gameId: string,
   igdbGame: IGDBGame
 ): Promise<void> {
-  await supabase.from("game_screenshots").delete().eq("game_id", gameId).in("game_id", [gameId]);
+  await deleteByGameId(supabase, "game_screenshots", gameId);
   if (!igdbGame.screenshots || igdbGame.screenshots.length === 0) return;
 
   for (let i = 0; i < igdbGame.screenshots.length; i++) {
@@ -164,7 +216,7 @@ export async function syncArtworks(
   gameId: string,
   igdbGame: IGDBGame
 ): Promise<void> {
-  await supabase.from("game_artwork").delete().eq("game_id", gameId).in("game_id", [gameId]);
+  await deleteByGameId(supabase, "game_artwork", gameId);
   if (!igdbGame.artworks || igdbGame.artworks.length === 0) return;
 
   for (let i = 0; i < igdbGame.artworks.length; i++) {

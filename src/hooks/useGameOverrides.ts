@@ -8,6 +8,8 @@ export interface UseGameOverridesReturn {
   isIgdbField: (fieldName: TrackableField) => boolean;
   /** Whether overrides are being loaded */
   loading: boolean;
+  /** Re-fetch overrides from the API (e.g. after saving the game) */
+  refetchOverrides: () => Promise<void>;
 }
 
 /** Always returns false — used when the game has no igdb_id */
@@ -64,8 +66,8 @@ export function useGameOverrides(
 
   // No igdb_id → always false, no indicators
   if (!hasIgdb) {
-    return { isIgdbField: ALWAYS_FALSE, loading: false };
+    return { isIgdbField: ALWAYS_FALSE, loading: false, refetchOverrides: async () => {} };
   }
 
-  return { isIgdbField, loading };
+  return { isIgdbField, loading, refetchOverrides: fetchOverrides };
 }

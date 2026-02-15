@@ -7,13 +7,24 @@ import { IGDBService } from "./igdbService";
 import { IGDB_RATING_CATEGORIES, IGDB_ALL_RATINGS, type IGDBGame } from "@/types/igdb";
 import type { SyncSupabaseClient } from "./igdb-sync";
 
+/** Supprime toutes les lignes d'une table pour un game_id donné */
+async function deleteByGameId(
+  supabase: SyncSupabaseClient,
+  table: string,
+  gameId: string
+): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (supabase as any).from(table).delete().eq("game_id", gameId);
+  if (error) throw new Error(`Failed to delete from ${table}: ${error.message}`);
+}
+
 /** Synchronise les age ratings */
 export async function syncAgeRatings(
   supabase: SyncSupabaseClient,
   gameId: string,
   igdbGame: IGDBGame
 ): Promise<void> {
-  await supabase.from("game_ratings").delete().eq("game_id", gameId).in("game_id", [gameId]);
+  await deleteByGameId(supabase, "game_ratings", gameId);
   if (!igdbGame.age_ratings || igdbGame.age_ratings.length === 0) return;
 
   for (let idx = 0; idx < igdbGame.age_ratings.length; idx++) {
@@ -76,7 +87,7 @@ export async function syncVersions(
   igdbId: number
 ): Promise<void> {
   const versions = await IGDBService.getGameVersions(igdbId);
-  await supabase.from("game_versions").delete().eq("game_id", gameId).in("game_id", [gameId]);
+  await deleteByGameId(supabase, "game_versions", gameId);
 
   for (let i = 0; i < versions.length; i++) {
     const version = versions[i];
@@ -105,7 +116,7 @@ export async function syncLanguages(
   gameId: string,
   igdbGame: IGDBGame
 ): Promise<void> {
-  await supabase.from("game_languages").delete().eq("game_id", gameId).in("game_id", [gameId]);
+  await deleteByGameId(supabase, "game_languages", gameId);
   if (!igdbGame.language_supports || igdbGame.language_supports.length === 0) return;
 
   // Agréger les supports par langue

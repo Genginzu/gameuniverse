@@ -124,7 +124,8 @@ async function removeOverride(
   gameId: string,
   field: TrackableField
 ): Promise<void> {
-  const { error } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (supabase as any)
     .from("game_field_overrides")
     .delete()
     .eq("game_id", gameId)
@@ -138,7 +139,8 @@ async function removeOverrides(
   fields: TrackableField[]
 ): Promise<void> {
   if (fields.length === 0) return;
-  const { error } = await supabase
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (supabase as any)
     .from("game_field_overrides")
     .delete()
     .eq("game_id", gameId)

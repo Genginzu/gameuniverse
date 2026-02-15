@@ -11,144 +11,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { toast } from "@/hooks/use-toast";
 import { FaArrowLeft } from "react-icons/fa";
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
-
-interface GameApiResponse {
-  id: string;
-  slug: string;
-  igdb_id: number | null;
-  cover_image_url: string | null;
-  background_image_url: string | null;
-  background_color: string | null;
-  accent_color: string | null;
-  label_color: string | null;
-  text_color: string | null;
-  release_date: string | null;
-  metascore: number | null;
-  playtime_hastily: number | null;
-  playtime_normally: number | null;
-  playtime_completely: number | null;
-  translations: Array<{
-    language_code: string;
-    title: string;
-    description: string | null;
-  }>;
-  genres: Array<{ genre_id: string }>;
-  companies: Array<{
-    company_id: string;
-    role: string;
-    is_primary: boolean;
-  }>;
-  screenshots: Array<{
-    url: string;
-    alt_text: string | null;
-    caption: string | null;
-    display_order: number | null;
-    is_featured: boolean;
-  }>;
-  artwork: Array<{
-    url: string;
-    alt_text: string | null;
-    caption: string | null;
-    artwork_type: string | null;
-    display_order: number | null;
-    is_featured: boolean;
-  }>;
-  game_ratings: Array<{
-    rating_id: string;
-    is_primary: boolean;
-    content_descriptors: string[];
-  }>;
-  versions: Array<{
-    version_title: string;
-    description: string | null;
-    cover_image_url: string | null;
-    display_order: number | null;
-  }>;
-  languages: Array<{
-    language_code: string;
-    language_name: string;
-    has_audio: boolean;
-    has_subtitles: boolean;
-    has_interface: boolean;
-  }>;
-  prices: Array<{
-    store_id: string;
-    price: number;
-    currency: string;
-    platform: string;
-    store_url: string | null;
-    is_available: boolean;
-  }>;
-}
-
-function toFormData(game: GameApiResponse): AdminGameFormData {
-  return {
-    slug: game.slug,
-    translations: game.translations.map((t) => ({
-      language_code: t.language_code,
-      title: t.title,
-      description: t.description ?? "",
-    })),
-    cover_image_url: game.cover_image_url ?? "",
-    background_image_url: game.background_image_url ?? "",
-    background_color: game.background_color ?? "",
-    accent_color: game.accent_color ?? "",
-    label_color: game.label_color ?? "",
-    text_color: game.text_color ?? "",
-    release_date: game.release_date ?? "",
-    metascore: game.metascore ?? "",
-    playtime_hastily: game.playtime_hastily ?? "",
-    playtime_normally: game.playtime_normally ?? "",
-    playtime_completely: game.playtime_completely ?? "",
-    genres: game.genres.map((g) => ({ genre_id: g.genre_id })),
-    companies: game.companies.map((c) => ({
-      company_id: c.company_id,
-      role: c.role as "developer" | "publisher",
-      is_primary: c.is_primary,
-    })),
-    screenshots: (game.screenshots ?? []).map((s) => ({
-      url: s.url,
-      alt_text: s.alt_text ?? "",
-      caption: s.caption ?? "",
-      display_order: s.display_order,
-      is_featured: s.is_featured,
-    })),
-    artwork: (game.artwork ?? []).map((a) => ({
-      url: a.url,
-      alt_text: a.alt_text ?? "",
-      caption: a.caption ?? "",
-      artwork_type: a.artwork_type ?? "",
-      display_order: a.display_order,
-      is_featured: a.is_featured,
-    })),
-    age_ratings: (game.game_ratings ?? []).map((r) => ({
-      rating_id: r.rating_id,
-      is_primary: r.is_primary,
-      content_descriptors: r.content_descriptors ?? [],
-    })),
-    versions: (game.versions ?? []).map((v) => ({
-      version_title: v.version_title,
-      description: v.description ?? "",
-      cover_image_url: v.cover_image_url ?? "",
-      display_order: v.display_order,
-    })),
-    languages: (game.languages ?? []).map((l) => ({
-      language_code: l.language_code,
-      language_name: l.language_name,
-      has_audio: l.has_audio,
-      has_subtitles: l.has_subtitles,
-      has_interface: l.has_interface,
-    })),
-    prices: (game.prices ?? []).map((p) => ({
-      store_id: p.store_id,
-      price: p.price,
-      currency: p.currency,
-      platform: p.platform,
-      store_url: p.store_url ?? "",
-      is_available: p.is_available,
-    })),
-  };
-}
+import { type GameApiResponse, toFormData } from "@/lib/utils/game-api-transform";
 
 /**
  * Inner component that mounts only when initialData is ready,
@@ -186,14 +49,25 @@ function EditGameForm({
       try {
         await submitGame(data);
         toast({ title: t("editPage.success"), variant: "success" });
-        setTimeout(() => router.push("/admin/games"), 500);
       } catch (err) {
         const message = err instanceof Error ? err.message : t("editPage.errorGeneric");
         toast({ title: message, variant: "destructive" });
       }
     },
-    [submitGame, router, t]
+    [submitGame, t]
   );
+
+  /** Re-fetch game data from API and reset the form after IGDB sync */
+  const handleSyncComplete = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/admin/games/${gameId}`);
+      if (!res.ok) return;
+      const data: GameApiResponse = await res.json();
+      form.reset(toFormData(data));
+    } catch {
+      // Silently fail — overrides are already refreshed by the sync hook
+    }
+  }, [gameId, form]);
 
   // Keep showing the same loading style until options are ready
   if (loadingOptions) {
@@ -232,6 +106,7 @@ function EditGameForm({
           isSubmitting={isSubmitting}
           gameId={gameId}
           igdbId={igdbId}
+          onSyncComplete={handleSyncComplete}
         />
       </div>
     </div>

@@ -32,17 +32,8 @@ import {
 } from "@/types/admin-games";
 import type { SupportedLanguage } from "@/types/admin-languages";
 import { HeroBanner, TabNavigation, StickySubmitBar } from "./GameFormShell";
-import { GameFormGeneralTab } from "./GameFormGeneralTab";
-import { GameFormImagesTab } from "./GameFormImagesTab";
-import { GameFormTranslationsTab } from "./GameFormTranslationsTab";
-import { GameFormGenresTab } from "./GameFormGenresTab";
-import { GameFormCompaniesTab } from "./GameFormCompaniesTab";
-import { GameFormAgeRatingsTab } from "./GameFormAgeRatingsTab";
-import { GameFormVersionsTab } from "./GameFormVersionsTab";
-import { GameFormLanguagesTab } from "./GameFormLanguagesTab";
-import { GameFormPricingTab } from "./GameFormPricingTab";
-import { GameFormDesignTab } from "./GameFormDesignTab";
-import { GameFormSyncTab } from "./GameFormSyncTab";
+import { GameFormTabContent } from "./GameFormTabContent";
+import { GameFormErrorSummary } from "./GameFormErrorSummary";
 import { useGameOverrides } from "@/hooks/useGameOverrides";
 
 export interface GameFormProps {
@@ -63,6 +54,8 @@ export interface GameFormProps {
   gameId?: string;
   /** Only needed in edit mode for the sync tab */
   igdbId?: number | null;
+  /** Called after a successful IGDB sync to reload game data */
+  onSyncComplete?: () => void;
 }
 
 const BASE_TABS: Tab[] = [
@@ -100,20 +93,34 @@ export function GameForm({
   isSubmitting,
   gameId,
   igdbId,
+  onSyncComplete,
 }: GameFormProps) {
   const t = useTranslations("admin.games.form");
   const tCommon = useTranslations("common");
   const [activeTab, setActiveTab] = useState<TabId>("design");
+  const [hasSubmitted, setHasSubmitted] = useState(false);
 
   // Show sync tab only in edit mode
   const TABS = useMemo(() => (mode === "edit" ? [...BASE_TABS, SYNC_TAB] : BASE_TABS), [mode]);
 
   // IGDB field indicators — only active in edit mode with an igdb_id
-  const { isIgdbField } = useGameOverrides(
+  const { isIgdbField, refetchOverrides } = useGameOverrides(
     mode === "edit" ? gameId : undefined,
     mode === "edit" ? igdbId : undefined
   );
   const igdbFieldProp = mode === "edit" && igdbId ? isIgdbField : undefined;
+
+  // Wrap onSubmit to refresh IGDB override badges after a successful save
+  const handleSubmit = async (data: AdminGameFormData) => {
+    await onSubmit(data);
+    await refetchOverrides();
+  };
+
+  // Wrap onSyncComplete to also refresh IGDB override badges
+  const handleSyncComplete = async () => {
+    await onSyncComplete?.();
+    await refetchOverrides();
+  };
 
   // Ensure all supported languages have a translation entry
   const currentTranslations = form.watch("translations");
@@ -172,7 +179,14 @@ export function GameForm({
     }
   };
 
+  /** Resolve a TabId to its translated label (for the error summary) */
+  const tabLabelById = (tabId: TabId) => {
+    const tab = TABS.find((tab) => tab.id === tabId);
+    return tab ? tabLabel(tab) : tabId;
+  };
+
   const navigateToErrorTab = () => {
+    setHasSubmitted(true);
     const errors = form.formState.errors;
     const tabErrorMap: [TabId, boolean][] = [
       [
@@ -217,7 +231,7 @@ export function GameForm({
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit, () => navigateToErrorTab())}
+        onSubmit={form.handleSubmit(handleSubmit, () => navigateToErrorTab())}
         className="space-y-5 pb-24"
         noValidate
       >
@@ -228,6 +242,13 @@ export function GameForm({
           backgroundImageUrl={form.watch("background_image_url")}
           t={t}
         />
+        {hasSubmitted && Object.keys(form.formState.errors).length > 0 && (
+          <GameFormErrorSummary
+            errors={form.formState.errors}
+            onNavigateToTab={setActiveTab}
+            tabLabel={tabLabelById}
+          />
+        )}
         <TabNavigation
           tabs={TABS}
           activeTab={activeTab}
@@ -237,74 +258,26 @@ export function GameForm({
         />
 
         <div className="rounded-2xl border border-gray-200/60 bg-white p-6 shadow-sm dark:border-gray-700/40 dark:bg-gray-800/60">
-          {activeTab === "design" && (
-            <GameFormDesignTab
-              form={form}
-              t={t}
-              genres={genres}
-              companies={companies}
-              stores={stores}
-            />
-          )}
-          {activeTab === "general" && (
-            <GameFormGeneralTab form={form} t={t} isIgdbField={igdbFieldProp} />
-          )}
-          {activeTab === "images" && (
-            <GameFormImagesTab form={form} t={t} isIgdbField={igdbFieldProp} />
-          )}
-          {activeTab === "translations" && (
-            <GameFormTranslationsTab form={form} t={t} isIgdbField={igdbFieldProp} />
-          )}
-          {activeTab === "genres" && (
-            <GameFormGenresTab
-              form={form}
-              t={t}
-              genres={genres}
-              toggleGenre={toggleGenre}
-              isIgdbField={igdbFieldProp}
-            />
-          )}
-          {activeTab === "companies" && (
-            <GameFormCompaniesTab
-              form={form}
-              t={t}
-              companies={companies}
-              toggleCompany={toggleCompany}
-              isIgdbField={igdbFieldProp}
-            />
-          )}
-          {activeTab === "age_ratings" && (
-            <GameFormAgeRatingsTab
-              form={form}
-              t={t}
-              ratings={ratings}
-              contentDescriptors={contentDescriptors}
-              isIgdbField={igdbFieldProp}
-            />
-          )}
-          {activeTab === "versions" && (
-            <GameFormVersionsTab form={form} t={t} isIgdbField={igdbFieldProp} />
-          )}
-          {activeTab === "languages" && (
-            <GameFormLanguagesTab
-              form={form}
-              t={t}
-              supportedLanguages={supportedLanguages}
-              isIgdbField={igdbFieldProp}
-            />
-          )}
-          {activeTab === "pricing" && (
-            <GameFormPricingTab
-              form={form}
-              t={t}
-              stores={stores}
-              currencies={currencies}
-              platforms={platforms}
-            />
-          )}
-          {activeTab === "sync" && mode === "edit" && gameId && (
-            <GameFormSyncTab gameId={gameId} igdbId={igdbId ?? null} />
-          )}
+          <GameFormTabContent
+            activeTab={activeTab}
+            mode={mode}
+            form={form}
+            t={t}
+            genres={genres}
+            companies={companies}
+            ratings={ratings}
+            contentDescriptors={contentDescriptors}
+            supportedLanguages={supportedLanguages}
+            stores={stores}
+            currencies={currencies}
+            platforms={platforms}
+            toggleGenre={toggleGenre}
+            toggleCompany={toggleCompany}
+            isIgdbField={igdbFieldProp}
+            gameId={gameId}
+            igdbId={igdbId}
+            onSyncComplete={handleSyncComplete}
+          />
         </div>
 
         <StickySubmitBar
