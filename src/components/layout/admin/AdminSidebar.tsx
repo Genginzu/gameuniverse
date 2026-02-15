@@ -11,6 +11,7 @@ import {
   FaGlobe,
   FaList,
   FaMoon,
+  FaShieldAlt,
   FaSignOutAlt,
   FaSun,
   FaTimes,
@@ -130,39 +131,68 @@ function SidebarContent({
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-2 overflow-y-auto p-4">
-        <Link href="/admin/games" className={linkClasses("/admin/games")} onClick={onLinkClick}>
-          <FaGamepad className="mr-3 h-4 w-4" />
-          {t("nav.games")}
-        </Link>
-        <Link href="/admin/genres" className={linkClasses("/admin/genres")} onClick={onLinkClick}>
-          <FaList className="mr-3 h-4 w-4" />
-          {t("nav.genres")}
-        </Link>
-        <Link
-          href="/admin/characters"
-          className={linkClasses("/admin/characters")}
-          onClick={onLinkClick}
-        >
-          <FaUserFriends className="mr-3 h-4 w-4" />
-          {t("nav.characters")}
-        </Link>
-        <Link
-          href="/admin/languages"
-          className={linkClasses("/admin/languages")}
-          onClick={onLinkClick}
-        >
-          <FaGlobe className="mr-3 h-4 w-4" />
-          {t("nav.languages")}
-        </Link>
-        <Link
-          href="/admin/companies"
-          className={linkClasses("/admin/companies")}
-          onClick={onLinkClick}
-        >
-          <FaBuilding className="mr-3 h-4 w-4" />
-          {t("nav.companies")}
-        </Link>
+      <nav className="flex-1 space-y-4 overflow-y-auto p-4">
+        {/* Games category */}
+        <div>
+          <p className="mb-1 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+            {t("nav.gamesCategory")}
+          </p>
+          <div className="space-y-1">
+            <Link href="/admin/games" className={linkClasses("/admin/games")} onClick={onLinkClick}>
+              <FaGamepad className="mr-3 h-4 w-4" />
+              {t("nav.games")}
+            </Link>
+            <Link
+              href="/admin/genres"
+              className={linkClasses("/admin/genres")}
+              onClick={onLinkClick}
+            >
+              <FaList className="mr-3 h-4 w-4" />
+              {t("nav.genres")}
+            </Link>
+            <Link
+              href="/admin/companies"
+              className={linkClasses("/admin/companies")}
+              onClick={onLinkClick}
+            >
+              <FaBuilding className="mr-3 h-4 w-4" />
+              {t("nav.companies")}
+            </Link>
+            <Link
+              href="/admin/languages"
+              className={linkClasses("/admin/languages")}
+              onClick={onLinkClick}
+            >
+              <FaGlobe className="mr-3 h-4 w-4" />
+              {t("nav.languages")}
+            </Link>
+            <Link
+              href="/admin/age-classifications"
+              className={linkClasses("/admin/age-classifications")}
+              onClick={onLinkClick}
+            >
+              <FaShieldAlt className="mr-3 h-4 w-4" />
+              {t("nav.ageClassifications")}
+            </Link>
+          </div>
+        </div>
+
+        {/* Characters category */}
+        <div>
+          <p className="mb-1 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+            {t("nav.charactersCategory")}
+          </p>
+          <div className="space-y-1">
+            <Link
+              href="/admin/characters"
+              className={linkClasses("/admin/characters")}
+              onClick={onLinkClick}
+            >
+              <FaUserFriends className="mr-3 h-4 w-4" />
+              {t("nav.characters")}
+            </Link>
+          </div>
+        </div>
       </nav>
 
       {/* User Info */}

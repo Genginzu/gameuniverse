@@ -735,11 +735,14 @@
       "contributor": "Contributeur"
     },
     "nav": {
+      "gamesCategory": "Jeux",
+      "charactersCategory": "Personnages",
       "games": "Jeux",
       "genres": "Genres",
       "languages": "Langues",
       "characters": "Personnages",
-      "companies": "Entreprises"
+      "companies": "Entreprises",
+      "ageClassifications": "Classifications d'âge"
     },
     "closeSidebar": "Fermer le menu latéral",
     "lightMode": "Mode clair",

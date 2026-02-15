@@ -735,11 +735,14 @@
       "contributor": "Contributor"
     },
     "nav": {
+      "gamesCategory": "Games",
+      "charactersCategory": "Characters",
       "games": "Games",
       "genres": "Genres",
       "languages": "Languages",
       "characters": "Characters",
-      "companies": "Companies"
+      "companies": "Companies",
+      "ageClassifications": "Age Classifications"
     },
     "closeSidebar": "Close sidebar",
     "lightMode": "Light mode",

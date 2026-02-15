@@ -12,7 +12,7 @@ validation complète de l'application.
 
 ## Tâches Finales Obligatoires
 
-À la fin de chaque fichier `tasks.md`, les trois dernières tâches doivent être :
+À la fin de chaque fichier `tasks.md`, les dernières tâches doivent être :
 
 ### 1. Exécution des Tests
 
@@ -26,6 +26,10 @@ bun run test:all
 
 **IMPORTANT**: Utiliser `bun run test:all` et non `bun test` pour inclure les
 tests isolés.
+
+**ANTI-DOUBLON** : Si la dernière tâche d'implémentation (ou un checkpoint
+final) exécute déjà `bun run test:all`, ne pas ajouter cette tâche une seconde
+fois. Passer directement au lint.
 
 ### 2. Lint du Code
 
@@ -61,13 +65,13 @@ bun run build
 Ajouter ces tâches à la fin du fichier `tasks.md` :
 
 ```markdown
-## Task X: Exécution des tests complets
+## Task X: Exécution des tests complets (si pas déjà fait dans la tâche précédente)
 
 - [ ] Exécuter `bun run test:all`
 - [ ] Vérifier que tous les tests passent (parallèles + isolés)
 - [ ] Corriger les tests en échec si nécessaire
 
-## Task X+1: Lint du code
+## Task X+1: Lint du code (ou Task X si les tests sont déjà couverts)
 
 - [ ] Exécuter `bun run lint`
 - [ ] Vérifier qu'il n'y a pas d'erreurs de lint

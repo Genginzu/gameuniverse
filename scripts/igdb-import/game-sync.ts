@@ -4,8 +4,7 @@
  */
 
 import { createScriptClient } from "./supabase-client";
-import { syncAllGameFields } from "../../src/lib/services/igdb-sync";
-import type { SyncSupabaseClient } from "../../src/lib/services/igdb-sync";
+import { syncAllGameFields, type SyncSupabaseClient } from "../../src/lib/services/igdb-sync";
 import type { TrackableField } from "../../src/types/admin-games";
 import type { ImportResult } from "./game-importer";
 

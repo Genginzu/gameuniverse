@@ -12,8 +12,8 @@ import {
   detectChangedFields,
   upsertFieldOverrides,
   type SupabaseClientLike,
+  type CurrentGameData,
 } from "@/lib/utils/field-tracking";
-import type { CurrentGameData } from "@/lib/utils/field-tracking";
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
 
 // Types for Supabase query results
