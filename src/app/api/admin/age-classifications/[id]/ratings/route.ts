@@ -200,6 +200,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       }));
 
       // Cast to any because rating_translations is not yet in generated Supabase types
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error: translationError } = await (supabase as any)
         .from("rating_translations")
         .insert(translationRows);

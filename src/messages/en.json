@@ -317,7 +317,8 @@
       "media": "Media",
       "games": "Games",
       "biography": "Biography",
-      "description": "Description"
+      "description": "Description",
+      "comments": "Comments"
     },
     "media": {
       "screenshots": "Screenshots",
@@ -354,6 +355,24 @@
       "previous": "Previous",
       "next": "Next",
       "last": "Last"
+    },
+    "comments": {
+      "title": "Comments",
+      "count": "{count, plural, =0 {no comments} =1 {1 comment} other {# comments}}",
+      "emptyTitle": "No comments yet",
+      "emptyDescription": "Be the first to share your thoughts on this character!",
+      "loginPrompt": "Log in to leave a comment on this character.",
+      "anonymousPlayer": "Anonymous player",
+      "form": {
+        "labelCreate": "Your comment",
+        "labelEdit": "Edit your comment",
+        "placeholder": "Share your thoughts on this character…",
+        "submit": "Submit",
+        "submitEdit": "Update",
+        "submitting": "Submitting…",
+        "submittingEdit": "Updating…",
+        "error": "An error occurred"
+      }
     }
   },
   "players": {
@@ -742,7 +761,10 @@
       "languages": "Languages",
       "characters": "Characters",
       "companies": "Companies",
-      "ageClassifications": "Age Classifications"
+      "ageClassifications": "Age Classifications",
+      "reviewsCategory": "Reviews",
+      "reviews": "Reviews",
+      "comments": "Comments"
     },
     "closeSidebar": "Close sidebar",
     "lightMode": "Light mode",
@@ -1206,6 +1228,100 @@
         "deleting": "Deleting...",
         "success": "Genre deleted successfully!",
         "errorGeneric": "An error occurred while deleting the genre."
+      }
+    },
+    "reviews": {
+      "title": "Review Management",
+      "searchPlaceholder": "Search by player or game...",
+      "search": "Search",
+      "totalReviews": "{count, plural, =0 {No reviews} one {1 review} other {# reviews}}",
+      "noReviews": "No reviews found.",
+      "columns": {
+        "player": "Player",
+        "game": "Game",
+        "rating": "Rating",
+        "content": "Content",
+        "date": "Date",
+        "actions": "Actions"
+      },
+      "sortBy": "Sort by {field}",
+      "editReview": "Edit review by {player}",
+      "deleteReview": "Delete review by {player}",
+      "page": "Page {current} of {total}",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "anonymousPlayer": "Anonymous player",
+      "ratingOutOf": "{rating}/20",
+      "editPage": {
+        "title": "Edit Review",
+        "loading": "Loading review...",
+        "success": "Review updated successfully!",
+        "notFound": "Review not found.",
+        "errorGeneric": "An error occurred while loading the review.",
+        "backToList": "Back to reviews",
+        "save": "Save",
+        "saving": "Saving...",
+        "playerLabel": "Player",
+        "gameLabel": "Game",
+        "ratingLabel": "Rating",
+        "contentLabel": "Content",
+        "positivePointsLabel": "Positive points",
+        "negativePointsLabel": "Negative points"
+      },
+      "deleteDialog": {
+        "title": "Delete Review",
+        "warning": "Are you sure you want to delete the review by \"{player}\" on \"{game}\"?",
+        "irreversible": "This action is irreversible. The review will be permanently deleted.",
+        "confirm": "Delete",
+        "cancel": "Cancel",
+        "deleting": "Deleting...",
+        "success": "Review deleted successfully!",
+        "errorGeneric": "An error occurred while deleting the review."
+      }
+    },
+    "comments": {
+      "title": "Comment Management",
+      "searchPlaceholder": "Search by player or character...",
+      "search": "Search",
+      "totalComments": "{count, plural, =0 {No comments} one {1 comment} other {# comments}}",
+      "noComments": "No comments found.",
+      "columns": {
+        "player": "Player",
+        "character": "Character",
+        "content": "Content",
+        "date": "Date",
+        "actions": "Actions"
+      },
+      "sortBy": "Sort by {field}",
+      "editComment": "Edit comment by {player}",
+      "deleteComment": "Delete comment by {player}",
+      "page": "Page {current} of {total}",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "anonymousPlayer": "Anonymous player",
+      "editPage": {
+        "title": "Edit Comment",
+        "loading": "Loading comment...",
+        "success": "Comment updated successfully!",
+        "notFound": "Comment not found.",
+        "errorGeneric": "An error occurred while loading the comment.",
+        "backToList": "Back to comments",
+        "playerLabel": "Player",
+        "characterLabel": "Character",
+        "contentLabel": "Content",
+        "contentPlaceholder": "Comment content...",
+        "save": "Save",
+        "saving": "Saving..."
+      },
+      "deleteDialog": {
+        "title": "Delete Comment",
+        "warning": "Are you sure you want to delete the comment by \"{player}\" on \"{character}\"?",
+        "irreversible": "This action is irreversible. The comment will be permanently deleted.",
+        "confirm": "Delete",
+        "cancel": "Cancel",
+        "deleting": "Deleting...",
+        "success": "Comment deleted successfully!",
+        "errorGeneric": "An error occurred while deleting the comment."
       }
     }
   }

@@ -1,0 +1,22 @@
+Côté joueur / social
+
+Système de "favoris" sur les personnages (comme la bibliothèque pour les jeux, mais pour les personnages qu'on aime). Table character_favorites, compteur visible sur la fiche, page "Mes personnages favoris" dans le profil.
+Listes personnalisées / collections — permettre aux joueurs de créer des listes thématiques de jeux ("À jouer", "Meilleurs RPG", "Nostalgie PS2"). Partageables publiquement avec un lien.
+Système de "likes" ou votes sur les reviews — les reviews existent déjà, mais les autres joueurs ne peuvent pas indiquer si une review leur a été utile. Un simple compteur "utile / pas utile" ajouterait de l'engagement.
+Fil d'activité / feed — un flux montrant les dernières actions de la communauté (nouvelles reviews, commentaires, ajouts en bibliothèque). Ça donne vie à la page d'accueil.
+Comparaison de bibliothèques entre joueurs — "X jeux en commun avec ce joueur". Sympa pour le côté social.
+
+Côté contenu / données
+
+Système de recommandations — "Si vous aimez ce jeu, vous aimerez aussi…" basé sur les genres, les tags, ou les bibliothèques similaires d'autres joueurs.
+Statistiques joueur enrichies — temps de jeu total, genre le plus joué, nombre de reviews écrites, "année en revue" style Spotify Wrapped pour le gaming.
+Système de tags communautaires — les joueurs peuvent taguer les jeux avec des mots-clés libres ("cozy", "souls-like", "pixel art"), avec modération admin. Ça enrichit la recherche au-delà des genres officiels.
+Historique de prix — vous avez déjà un système de pricing, ajouter un historique avec graphique permettrait de voir l'évolution du prix d'un jeu dans le temps.
+
+Côté technique / qualité
+
+Notifications (in-app ou email via Resend, que vous avez déjà configuré) — notifier quand quelqu'un commente un personnage qu'on a aussi commenté, ou quand un admin répond à une review.
+Mode sombre / clair — vous avez next-themes dans les dépendances, mais je ne sais pas si c'est pleinement exploité. Un vrai toggle avec persistance serait un plus.
+PWA / mode offline — avec un service worker basique, les joueurs pourraient consulter leur bibliothèque hors-ligne.
+Recherche full-text améliorée — vous avez déjà une route /api/search, mais un système de recherche globale (jeux + personnages + joueurs) avec autocomplétion serait plus fluide.
+Parmi tout ça, les favoris personnages et les votes sur les reviews me semblent les plus naturels à implémenter vu les patterns déjà en place — ça suit exactement la même architecture que les commentaires et les reviews. Tu veux qu'on creuse l'une de ces idées ?

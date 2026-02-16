@@ -80,12 +80,7 @@ export function ReviewCard({ review }: ReviewCardProps) {
             <p className="text-xs text-slate-500">{formatDate(review.createdAt)}</p>
           </div>
         </div>
-        <span
-          className={cn(
-            "rounded-lg bg-slate-900 px-2.5 py-1 text-sm font-semibold",
-            getRatingColor(review.rating)
-          )}
-        >
+        <span className={cn("text-2xl font-bold", getRatingColor(review.rating))}>
           {review.rating}/20
         </span>
       </div>

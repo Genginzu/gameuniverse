@@ -153,6 +153,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     // Upsert translations: delete existing, then insert new
     // Cast to any because rating_translations is not yet in generated Supabase types
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { error: deleteTransError } = await (supabase as any)
       .from("rating_translations")
       .delete()
@@ -170,6 +171,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         description: t.description,
       }));
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error: insertTransError } = await (supabase as any)
         .from("rating_translations")
         .insert(translationRows);

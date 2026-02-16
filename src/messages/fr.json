@@ -317,7 +317,8 @@
       "media": "Médias",
       "games": "Jeux",
       "biography": "Biographie",
-      "description": "Description"
+      "description": "Description",
+      "comments": "Commentaires"
     },
     "media": {
       "screenshots": "Captures d'écran",
@@ -354,6 +355,24 @@
       "previous": "Précédent",
       "next": "Suivant",
       "last": "Dernier"
+    },
+    "comments": {
+      "title": "Commentaires",
+      "count": "{count, plural, =0 {aucun commentaire} =1 {1 commentaire} other {# commentaires}}",
+      "emptyTitle": "Aucun commentaire pour le moment",
+      "emptyDescription": "Soyez le premier à partager votre avis sur ce personnage !",
+      "loginPrompt": "Connectez-vous pour laisser un commentaire sur ce personnage.",
+      "anonymousPlayer": "Joueur anonyme",
+      "form": {
+        "labelCreate": "Votre commentaire",
+        "labelEdit": "Modifier votre commentaire",
+        "placeholder": "Partagez votre avis sur ce personnage…",
+        "submit": "Envoyer",
+        "submitEdit": "Modifier",
+        "submitting": "Envoi…",
+        "submittingEdit": "Modification…",
+        "error": "Une erreur est survenue"
+      }
     }
   },
   "players": {
@@ -742,7 +761,10 @@
       "languages": "Langues",
       "characters": "Personnages",
       "companies": "Entreprises",
-      "ageClassifications": "Classifications d'âge"
+      "ageClassifications": "Classifications d'âge",
+      "reviewsCategory": "Avis",
+      "reviews": "Avis",
+      "comments": "Commentaires"
     },
     "closeSidebar": "Fermer le menu latéral",
     "lightMode": "Mode clair",
@@ -1209,6 +1231,100 @@
         "deleting": "Suppression...",
         "success": "Genre supprimé avec succès !",
         "errorGeneric": "Une erreur est survenue lors de la suppression du genre."
+      }
+    },
+    "reviews": {
+      "title": "Gestion des avis",
+      "searchPlaceholder": "Rechercher par joueur ou jeu...",
+      "search": "Rechercher",
+      "totalReviews": "{count, plural, =0 {Aucun avis} one {1 avis} other {# avis}}",
+      "noReviews": "Aucun avis trouvé.",
+      "columns": {
+        "player": "Joueur",
+        "game": "Jeu",
+        "rating": "Note",
+        "content": "Contenu",
+        "date": "Date",
+        "actions": "Actions"
+      },
+      "sortBy": "Trier par {field}",
+      "editReview": "Modifier l'avis de {player}",
+      "deleteReview": "Supprimer l'avis de {player}",
+      "page": "Page {current} sur {total}",
+      "previousPage": "Page précédente",
+      "nextPage": "Page suivante",
+      "anonymousPlayer": "Joueur anonyme",
+      "ratingOutOf": "{rating}/20",
+      "editPage": {
+        "title": "Modifier l'avis",
+        "loading": "Chargement de l'avis...",
+        "success": "Avis mis à jour avec succès !",
+        "notFound": "Avis introuvable.",
+        "errorGeneric": "Une erreur est survenue lors du chargement de l'avis.",
+        "backToList": "Retour aux avis",
+        "save": "Enregistrer",
+        "saving": "Enregistrement...",
+        "playerLabel": "Joueur",
+        "gameLabel": "Jeu",
+        "ratingLabel": "Note",
+        "contentLabel": "Contenu",
+        "positivePointsLabel": "Points positifs",
+        "negativePointsLabel": "Points négatifs"
+      },
+      "deleteDialog": {
+        "title": "Supprimer l'avis",
+        "warning": "Êtes-vous sûr de vouloir supprimer l'avis de « {player} » sur « {game} » ?",
+        "irreversible": "Cette action est irréversible. L'avis sera définitivement supprimé.",
+        "confirm": "Supprimer",
+        "cancel": "Annuler",
+        "deleting": "Suppression...",
+        "success": "Avis supprimé avec succès !",
+        "errorGeneric": "Une erreur est survenue lors de la suppression de l'avis."
+      }
+    },
+    "comments": {
+      "title": "Gestion des commentaires",
+      "searchPlaceholder": "Rechercher par joueur ou personnage...",
+      "search": "Rechercher",
+      "totalComments": "{count, plural, =0 {Aucun commentaire} one {1 commentaire} other {# commentaires}}",
+      "noComments": "Aucun commentaire trouvé.",
+      "columns": {
+        "player": "Joueur",
+        "character": "Personnage",
+        "content": "Contenu",
+        "date": "Date",
+        "actions": "Actions"
+      },
+      "sortBy": "Trier par {field}",
+      "editComment": "Modifier le commentaire de {player}",
+      "deleteComment": "Supprimer le commentaire de {player}",
+      "page": "Page {current} sur {total}",
+      "previousPage": "Page précédente",
+      "nextPage": "Page suivante",
+      "anonymousPlayer": "Joueur anonyme",
+      "editPage": {
+        "title": "Modifier le commentaire",
+        "loading": "Chargement du commentaire...",
+        "success": "Commentaire mis à jour avec succès !",
+        "notFound": "Commentaire introuvable.",
+        "errorGeneric": "Une erreur est survenue lors du chargement du commentaire.",
+        "backToList": "Retour aux commentaires",
+        "playerLabel": "Joueur",
+        "characterLabel": "Personnage",
+        "contentLabel": "Contenu",
+        "contentPlaceholder": "Contenu du commentaire...",
+        "save": "Enregistrer",
+        "saving": "Enregistrement..."
+      },
+      "deleteDialog": {
+        "title": "Supprimer le commentaire",
+        "warning": "Êtes-vous sûr de vouloir supprimer le commentaire de « {player} » sur « {character} » ?",
+        "irreversible": "Cette action est irréversible. Le commentaire sera définitivement supprimé.",
+        "confirm": "Supprimer",
+        "cancel": "Annuler",
+        "deleting": "Suppression...",
+        "success": "Commentaire supprimé avec succès !",
+        "errorGeneric": "Une erreur est survenue lors de la suppression du commentaire."
       }
     }
   }

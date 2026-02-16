@@ -18,10 +18,13 @@ import {
   Calendar,
   Swords,
   UserCircle,
+  MessageCircle,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { CharacterDetails } from "@/types/character";
 import { useState } from "react";
+import { CharacterCommentsTab } from "./comments/CharacterCommentsTab";
+import { useComments } from "@/hooks/useComments";
 
 interface CharacterDetailsContentProps {
   character: CharacterDetails;
@@ -73,7 +76,10 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
   const [selectedScreenshotIndex, setSelectedScreenshotIndex] = useState(0);
   const [selectedArtworkIndex, setSelectedArtworkIndex] = useState(0);
   const [selectedVideoIndex, setSelectedVideoIndex] = useState(0);
-  const [activeTab, setActiveTab] = useState<"media" | "games" | "description">("description");
+  const [activeTab, setActiveTab] = useState<"media" | "games" | "description" | "comments">(
+    "description"
+  );
+  const { totalCount: commentCount } = useComments(character.id);
 
   const colors = getCharacterColors(character.role);
 
@@ -229,6 +235,17 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
               >
                 <Eye className="mr-2 inline h-4 w-4" />
                 {t("characters.tabs.media")}
+              </button>
+              <button
+                onClick={() => setActiveTab("comments")}
+                className={`rounded-xl px-6 py-3 text-sm font-medium transition-all ${
+                  activeTab === "comments"
+                    ? "bg-white text-slate-900 shadow-lg"
+                    : "text-slate-400 hover:bg-slate-700/50 hover:text-white"
+                }`}
+              >
+                <MessageCircle className="mr-2 inline h-4 w-4" />
+                {t("characters.tabs.comments")} ({commentCount})
               </button>
             </div>
           </div>
@@ -693,6 +710,9 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                   )}
               </div>
             )}
+
+            {/* Comments Tab */}
+            {activeTab === "comments" && <CharacterCommentsTab characterId={character.id} />}
           </div>
         </div>
       </div>

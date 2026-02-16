@@ -18,7 +18,9 @@ import {
   FaUser,
   FaBuilding,
   FaUserFriends,
+  FaStar,
 } from "react-icons/fa";
+import { MessageCircle } from "lucide-react";
 import type { AdminUser } from "@/types/admin-auth";
 
 interface AdminSidebarProps {
@@ -174,6 +176,14 @@ function SidebarContent({
               <FaShieldAlt className="mr-3 h-4 w-4" />
               {t("nav.ageClassifications")}
             </Link>
+            <Link
+              href="/admin/reviews"
+              className={linkClasses("/admin/reviews")}
+              onClick={onLinkClick}
+            >
+              <FaStar className="mr-3 h-4 w-4" />
+              {t("nav.reviews")}
+            </Link>
           </div>
         </div>
 
@@ -190,6 +200,14 @@ function SidebarContent({
             >
               <FaUserFriends className="mr-3 h-4 w-4" />
               {t("nav.characters")}
+            </Link>
+            <Link
+              href="/admin/comments"
+              className={linkClasses("/admin/comments")}
+              onClick={onLinkClick}
+            >
+              <MessageCircle className="mr-3 h-4 w-4" />
+              {t("nav.comments")}
             </Link>
           </div>
         </div>
