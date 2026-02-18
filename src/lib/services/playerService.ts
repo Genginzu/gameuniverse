@@ -36,6 +36,9 @@ interface LibraryEntry {
   game_id: string;
   status: string;
   play_time_hours: number | null;
+  play_time_hastily: number | null;
+  play_time_normally: number | null;
+  play_time_completely: number | null;
   rating: number | null;
   added_at: string;
   games: LibraryEntryGame | null;
@@ -60,13 +63,14 @@ class PlayerServiceImpl extends BaseService<PlayerDetails, PlayerSummary> {
    */
   protected buildMetadata(player: PlayerDetails, locale: string): EntityMetadata {
     const displayName = player.fullName || (locale === "fr" ? "Joueur" : "Player");
+    const totalGames = player.stats?.totalGames ?? 0;
 
     return {
       title: `${displayName} - Game Universe`,
       description:
         locale === "fr"
-          ? `Profil de ${displayName} - ${player.stats.totalGames} jeux dans sa bibliothèque`
-          : `${displayName}'s profile - ${player.stats.totalGames} games in library`,
+          ? `Profil de ${displayName} - ${totalGames} jeux dans sa bibliothèque`
+          : `${displayName}'s profile - ${totalGames} games in library`,
       openGraph: {
         title: displayName,
         images: player.avatarUrl ? [player.avatarUrl] : [],
@@ -251,6 +255,9 @@ export class PlayerService {
         game_id,
         status,
         play_time_hours,
+        play_time_hastily,
+        play_time_normally,
+        play_time_completely,
         rating,
         added_at,
         games(
@@ -289,7 +296,13 @@ export class PlayerService {
           title: translation?.title || "Unknown",
           coverImage: game.cover_image_url,
           status: entry.status as PlayerLibraryGame["status"],
-          playTimeHours: entry.play_time_hours || 0,
+          // Take the highest playtime category the player has filled in
+          // (completely > normally > hastily) to represent actual time spent
+          playTimeHours: Math.max(
+            entry.play_time_completely || 0,
+            entry.play_time_normally || 0,
+            entry.play_time_hastily || 0
+          ),
           rating: entry.rating,
           addedAt: entry.added_at,
         };

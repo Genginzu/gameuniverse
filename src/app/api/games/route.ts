@@ -37,8 +37,52 @@ export async function GET(request: NextRequest) {
     // Calculate offset for pagination
     const offset = calculateOffset(page, limit);
 
+    // When searching, first find matching game IDs via game_translations,
+    // then fetch those games with ALL translations intact.
+    // This avoids the PostgREST issue where ilike on a joined table filters
+    // the joined rows themselves, causing non-matching translations to be dropped
+    // (which results in "Untitled" when the locale-specific translation doesn't match).
+    let matchingGameIds: string[] | null = null;
+
+    if (search.trim()) {
+      const searchWords = search.trim().split(/\s+/).filter(Boolean);
+
+      // Find game IDs where any translation title matches all search words
+      let searchQuery = supabase.from("game_translations").select("game_id");
+
+      for (const word of searchWords) {
+        searchQuery = searchQuery.ilike("title", `%${word}%`);
+      }
+
+      const { data: matchingTranslations, error: searchError } = await searchQuery;
+
+      if (searchError) {
+        console.error("Error searching game translations:", searchError);
+        return NextResponse.json({ error: "Failed to search games" }, { status: 500 });
+      }
+
+      // Deduplicate game IDs
+      matchingGameIds = [...new Set(matchingTranslations?.map((t) => t.game_id) ?? [])];
+
+      // No matches found — return empty results early
+      if (matchingGameIds.length === 0) {
+        return NextResponse.json({
+          games: [],
+          pagination: {
+            currentPage: page,
+            totalPages: 0,
+            totalCount: 0,
+            limit,
+            hasNextPage: false,
+            hasPreviousPage: false,
+            offset,
+          },
+          filters: { search, genres, locale, inLibrary },
+        });
+      }
+    }
+
     // Build the base query with joins for translations and genres
-    // Use left join on translations so games with only 'en' translations still appear for other locales
     let query = supabase.from("games").select(
       `
         id,
@@ -91,32 +135,21 @@ export async function GET(request: NextRequest) {
       query = query.eq("user_library.user_id", userId);
     }
 
-    // Add search filter if provided
-    // Split search into words and search for each word as a prefix
-    // This allows partial word matching (e.g., "Dragon Quest Rei" matches "Dragon Quest Reimagined")
-    if (search.trim()) {
-      const searchWords = search.trim().split(/\s+/).filter(Boolean);
-      for (const word of searchWords) {
-        // Each word must appear somewhere in the title (as prefix or substring)
-        query = query.ilike("game_translations.title", `%${word}%`);
-      }
+    // Filter by matching game IDs from the search step
+    if (matchingGameIds) {
+      query = query.in("id", matchingGameIds);
     }
 
-    // Get total count for pagination (separate query for performance)
-    // Use left join to count all games, including those without locale-specific translations
+    // Get total count for pagination
     let countQuery = supabase
       .from("games")
-      .select(
-        `id, game_translations(language_code)${inLibrary ? ", user_library!inner(user_id)" : ""}`,
-        { count: "exact", head: true }
-      );
+      .select(`id${inLibrary ? ", user_library!inner(user_id)" : ""}`, {
+        count: "exact",
+        head: true,
+      });
 
-    // Apply the same word-by-word search filter for count query
-    if (search.trim()) {
-      const searchWords = search.trim().split(/\s+/).filter(Boolean);
-      for (const word of searchWords) {
-        countQuery = countQuery.ilike("game_translations.title", `%${word}%`);
-      }
+    if (matchingGameIds) {
+      countQuery = countQuery.in("id", matchingGameIds);
     }
 
     // Filter count by user's library if requested

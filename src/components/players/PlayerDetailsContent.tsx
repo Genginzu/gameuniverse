@@ -7,6 +7,9 @@ import { LazyImage } from "@/components/ui/lazy-image";
 import { PlayerLibraryGrid } from "./PlayerLibraryGrid";
 import Link from "next/link";
 import { ArrowLeft, Gamepad2, Trophy, Clock, Star, Calendar, User } from "lucide-react";
+import { PlayerFavoriteCharacters } from "./PlayerFavoriteCharacters";
+import { PlayerCollections } from "./PlayerCollections";
+import { useAuth } from "@/hooks/useAuth";
 import type { PlayerDetails } from "@/types/player";
 
 interface PlayerDetailsContentProps {
@@ -17,9 +20,20 @@ interface PlayerDetailsContentProps {
 export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentProps) {
   const t = useTranslations("players");
   const tCommon = useTranslations("common");
+  const { user } = useAuth();
+  const isOwner = user?.id === player.id;
 
   // Display name with fallback - Requirements 5.2
   const displayName = player.fullName || t("card.anonymousPlayer");
+
+  // Defensive stats access — API may return player without stats
+  const stats = player.stats ?? {
+    totalGames: 0,
+    ownedGames: 0,
+    completedGames: 0,
+    totalPlayTime: 0,
+    averageRating: null,
+  };
 
   // Format date for display
   const formatDate = (dateString: string) => {
@@ -105,7 +119,7 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
                 <Gamepad2 className="h-5 w-5 text-blue-400" />
                 <span className="text-sm font-medium">{t("details.totalGames")}</span>
               </div>
-              <p className="text-2xl font-bold text-white md:text-3xl">{player.stats.totalGames}</p>
+              <p className="text-2xl font-bold text-white md:text-3xl">{stats.totalGames}</p>
             </CardContent>
           </Card>
 
@@ -116,9 +130,7 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
                 <Trophy className="h-5 w-5 text-green-400" />
                 <span className="text-sm font-medium">{t("details.completedGames")}</span>
               </div>
-              <p className="text-2xl font-bold text-white md:text-3xl">
-                {player.stats.completedGames}
-              </p>
+              <p className="text-2xl font-bold text-white md:text-3xl">{stats.completedGames}</p>
             </CardContent>
           </Card>
 
@@ -130,7 +142,7 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
                 <span className="text-sm font-medium">{t("details.totalPlayTime")}</span>
               </div>
               <p className="text-2xl font-bold text-white md:text-3xl">
-                {player.stats.totalPlayTime}
+                {stats.totalPlayTime}
                 <span className="ml-1 text-base font-normal text-slate-400">h</span>
               </p>
             </CardContent>
@@ -144,9 +156,9 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
                 <span className="text-sm font-medium">{t("details.averageRating")}</span>
               </div>
               <p className="text-2xl font-bold text-white md:text-3xl">
-                {player.stats.averageRating !== null ? (
+                {stats.averageRating !== null ? (
                   <>
-                    {player.stats.averageRating.toFixed(1)}
+                    {stats.averageRating.toFixed(1)}
                     <span className="ml-1 text-base font-normal text-slate-400">/5</span>
                   </>
                 ) : (
@@ -171,6 +183,12 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
 
           <PlayerLibraryGrid games={player.library} locale={locale} />
         </div>
+
+        {/* Favorite Characters Section - Requirements 4.1 */}
+        <PlayerFavoriteCharacters playerId={player.id} locale={locale} />
+
+        {/* Collections Section */}
+        <PlayerCollections playerId={player.id} locale={locale} isOwner={isOwner} />
       </div>
     </div>
   );

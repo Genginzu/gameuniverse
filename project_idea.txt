@@ -20,3 +20,5 @@ Mode sombre / clair — vous avez next-themes dans les dépendances, mais je ne 
 PWA / mode offline — avec un service worker basique, les joueurs pourraient consulter leur bibliothèque hors-ligne.
 Recherche full-text améliorée — vous avez déjà une route /api/search, mais un système de recherche globale (jeux + personnages + joueurs) avec autocomplétion serait plus fluide.
 Parmi tout ça, les favoris personnages et les votes sur les reviews me semblent les plus naturels à implémenter vu les patterns déjà en place — ça suit exactement la même architecture que les commentaires et les reviews. Tu veux qu'on creuse l'une de ces idées ?
+
+Elaborer le côté social

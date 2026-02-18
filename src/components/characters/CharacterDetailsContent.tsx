@@ -24,6 +24,7 @@ import { useTranslations } from "next-intl";
 import { CharacterDetails } from "@/types/character";
 import { useState } from "react";
 import { CharacterCommentsTab } from "./comments/CharacterCommentsTab";
+import { FavoriteCharacterButton } from "@/components/characters/FavoriteCharacterButton";
 import { useComments } from "@/hooks/useComments";
 
 interface CharacterDetailsContentProps {
@@ -138,20 +139,21 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
           </div>
         )}
 
-        {/* Navigation buttons - positioned at top of hero */}
-        <div className="absolute left-0 right-0 top-0 z-20 px-4 py-4">
-          <div className="container mx-auto">
-            <div className="flex items-center justify-between">
-              <Link href={`/${locale}/characters`}>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="rounded-full bg-black/30 text-white backdrop-blur-sm hover:bg-black/50 hover:text-white"
-                >
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  {t("common.back")}
-                </Button>
-              </Link>
+        {/* Floating navigation buttons - matching game detail page */}
+        <div className="absolute left-0 right-0 top-0 z-50 px-4 py-4">
+          <div className="container mx-auto flex items-center justify-between">
+            <Link href={`/${locale}/characters`}>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="bg-slate-900/60 text-slate-300 backdrop-blur-sm hover:bg-slate-900/80 hover:text-white"
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                {t("common.back")}
+              </Button>
+            </Link>
+            <div className="flex items-center gap-2">
+              <FavoriteCharacterButton characterSlug={character.slug} />
             </div>
           </div>
         </div>
@@ -182,9 +184,11 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
             {/* Character Info - Right side */}
             <div className="mt-2 max-w-lg text-center lg:mt-0 lg:flex-1 lg:pl-6 lg:text-left">
               {/* Character name */}
-              <h1 className="mb-3 text-5xl font-bold leading-tight text-white drop-shadow-lg [text-shadow:_0_2px_8px_rgba(0,0,0,0.5)] lg:text-6xl">
-                {character.name}
-              </h1>
+              <div className="mb-3 flex items-center justify-center gap-3 lg:justify-start">
+                <h1 className="text-5xl font-bold leading-tight text-white drop-shadow-lg [text-shadow:_0_2px_8px_rgba(0,0,0,0.5)] lg:text-6xl">
+                  {character.name}
+                </h1>
+              </div>
 
               {/* Short description */}
               {character.description && (

@@ -85,3 +85,14 @@ export interface CharacterFilters {
   games?: string[];
   roles?: string[];
 }
+
+export interface CharacterFavoriteSummary {
+  id: string;
+  slug: string;
+  name: string;
+  role?: string;
+  mainImage?: string;
+  backgroundColor?: string;
+  primaryGame: string;
+  favoritedAt: string;
+}

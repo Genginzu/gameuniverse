@@ -9,6 +9,8 @@ import {
   FaChevronUp,
   FaCog,
   FaGamepad,
+  FaHeart,
+  FaLayerGroup,
   FaMoon,
   FaSignOutAlt,
   FaSun,
@@ -59,7 +61,7 @@ export default function DashboardSidebar({
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className="hidden h-full w-64 flex-shrink-0 flex-col border-r border-gray-200 bg-white lg:flex dark:border-gray-700 dark:bg-gray-900">
+      <div className="hidden h-full w-64 flex-shrink-0 flex-col border-r border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900 lg:flex">
         <SidebarContent
           user={user}
           signOut={signOut}
@@ -77,7 +79,7 @@ export default function DashboardSidebar({
       {/* Mobile Sidebar */}
       <div
         id="mobile-sidebar"
-        className={`fixed inset-y-0 left-0 z-50 w-64 transform bg-white transition-transform duration-300 ease-in-out lg:hidden dark:bg-gray-900 ${
+        className={`fixed inset-y-0 left-0 z-50 w-64 transform bg-white transition-transform duration-300 ease-in-out dark:bg-gray-900 lg:hidden ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -153,6 +155,18 @@ function SidebarContent({
           <FaGamepad className="mr-3 h-4 w-4" />
           {t("library")}
         </Link>
+        <Link
+          href="/favorites/characters"
+          className={linkClasses("/favorites/characters")}
+          onClick={onLinkClick}
+        >
+          <FaHeart className="mr-3 h-4 w-4" />
+          {t("myCharacters")}
+        </Link>
+        <Link href="/collections" className={linkClasses("/collections")} onClick={onLinkClick}>
+          <FaLayerGroup className="mr-3 h-4 w-4" />
+          {t("collections")}
+        </Link>
         <Link href="/profile" className={linkClasses("/profile")} onClick={onLinkClick}>
           <FaUser className="mr-3 h-4 w-4" />
           {t("profile")}
@@ -183,7 +197,7 @@ function SidebarContent({
 
           {/* Dropdown Menu */}
           {isUserMenuOpen && (
-            <div className="animate-in fade-in-0 zoom-in-95 absolute bottom-full left-0 right-0 mb-2 rounded-xl border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
+            <div className="absolute bottom-full left-0 right-0 mb-2 rounded-xl border border-gray-200 bg-white shadow-lg animate-in fade-in-0 zoom-in-95 dark:border-gray-700 dark:bg-gray-800">
               <div className="py-2">
                 <button
                   data-dropdown-action="theme"

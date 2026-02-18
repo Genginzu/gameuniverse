@@ -90,11 +90,41 @@ export async function GET(request: NextRequest) {
     const supabase = await createRouteHandlerClient();
     const offset = (page - 1) * limit;
 
-    // Build the base query with admin-specific fields
-    // Use !inner join on translations when searching (to exclude games without
-    // matching translations), otherwise use left join so all games appear.
-    const translationJoin = search?.trim() ? "game_translations!inner" : "game_translations";
+    // When searching, first find matching game IDs via game_translations,
+    // then fetch those games with ALL translations intact.
+    // This avoids PostgREST filtering joined translation rows by the search term,
+    // which would drop non-matching locale translations and cause "Untitled".
+    let matchingGameIds: string[] | null = null;
 
+    if (search?.trim()) {
+      const { data: matchingTranslations, error: searchError } = await supabase
+        .from("game_translations")
+        .select("game_id")
+        .ilike("title", `%${search.trim()}%`);
+
+      if (searchError) {
+        console.error("Error searching game translations:", searchError);
+        return NextResponse.json({ error: "Failed to search games" }, { status: 500 });
+      }
+
+      matchingGameIds = [...new Set(matchingTranslations?.map((t) => t.game_id) ?? [])];
+
+      if (matchingGameIds.length === 0) {
+        return NextResponse.json({
+          games: [],
+          pagination: {
+            currentPage: page,
+            totalPages: 0,
+            totalCount: 0,
+            limit,
+            hasNextPage: false,
+            hasPreviousPage: false,
+          },
+        });
+      }
+    }
+
+    // Build the base query with admin-specific fields
     let query = supabase.from("games").select(
       `
         id,
@@ -107,7 +137,7 @@ export async function GET(request: NextRequest) {
         system_requirements,
         created_at,
         updated_at,
-        ${translationJoin}(
+        game_translations(
           id,
           title,
           description,
@@ -139,21 +169,17 @@ export async function GET(request: NextRequest) {
       `
     );
 
-    // Add search filter
-    if (search?.trim()) {
-      query = query.ilike("game_translations.title", `%${search.trim()}%`);
+    // Filter by matching game IDs from the search step
+    if (matchingGameIds) {
+      query = query.in("id", matchingGameIds);
     }
 
     // Get total count for pagination
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let countQuery: any = supabase.from("games").select("id", { count: "exact", head: true });
 
-    if (search?.trim()) {
-      // For search, we need to join translations to filter by title
-      countQuery = supabase
-        .from("games")
-        .select("id, game_translations!inner(title)", { count: "exact", head: true })
-        .ilike("game_translations.title", `%${search.trim()}%`);
+    if (matchingGameIds) {
+      countQuery = countQuery.in("id", matchingGameIds);
     }
 
     const { count: totalCount, error: countError } = await countQuery;

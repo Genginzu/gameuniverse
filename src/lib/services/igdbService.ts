@@ -112,15 +112,16 @@ export class IGDBService {
     // Split query into words and build a where clause that matches all words
     // Using case-insensitive contains (~) for each word to support partial matching
     const words = query.trim().split(/\s+/).filter(Boolean);
-    const escapedWords = words.map(word => word.replace(/"/g, '\\"').replace(/\*/g, '\\*'));
-    
+    const escapedWords = words.map((word) => word.replace(/"/g, '\\"').replace(/\*/g, "\\*"));
+
     // Build where conditions: each word must appear in the name (case-insensitive)
-    const whereConditions = escapedWords.map(word => `name ~ *"${word}"*`).join(" & ");
+    // Exclude game versions (editions) which have a version_parent
+    const whereConditions = escapedWords.map((word) => `name ~ *"${word}"*`).join(" & ");
 
     // IGDB uses a custom query language called Apicalypse
     const body = `
       fields name, slug, cover.image_id, first_release_date, involved_companies.company.name, involved_companies.developer;
-      where ${whereConditions};
+      where ${whereConditions} & version_parent = null;
       limit ${limit};
     `;
 

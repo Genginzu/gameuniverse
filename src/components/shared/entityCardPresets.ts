@@ -242,8 +242,11 @@ export const characterCardConfig: EntityCardConfig<CharacterSummary> = {
     showDescription: true,
     fields: [],
   },
-  actions: {},
+  actions: {
+    characterFavoriteToggle: true,
+  },
   linkTemplate: (character, locale) => `/${locale}/characters/${character.slug}`,
+  slugField: "slug",
   // Custom hover renderer for character card
   customHoverRenderer: (character, t) => {
     return React.createElement(

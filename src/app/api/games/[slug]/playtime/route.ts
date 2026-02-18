@@ -226,12 +226,25 @@ export async function POST(
     if (playTimeCompletely !== undefined)
       updateFields.play_time_completely = playTimeCompletely ?? null;
 
+    // Fetch existing record to merge playtime values for play_time_hours sync
     const { data: existing } = await supabase
       .from("user_library")
-      .select("id")
+      .select("id, play_time_hastily, play_time_normally, play_time_completely")
       .eq("user_id", user.id)
       .eq("game_id", gameId)
       .single();
+
+    // Merge submitted values with existing DB values for accurate sync
+    const mergedNormally =
+      playTimeNormally ?? (existing ? parsePlaytime(existing.play_time_normally) : null);
+    const mergedCompletely =
+      playTimeCompletely ?? (existing ? parsePlaytime(existing.play_time_completely) : null);
+    const mergedHastily =
+      playTimeHastily ?? (existing ? parsePlaytime(existing.play_time_hastily) : null);
+
+    // Sync play_time_hours with the highest available value (represents actual time spent)
+    updateFields.play_time_hours =
+      Math.max(mergedCompletely ?? 0, mergedNormally ?? 0, mergedHastily ?? 0) || null;
 
     if (existing) {
       const { error: updateError } = await supabase

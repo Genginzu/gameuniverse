@@ -175,6 +175,8 @@
     "title": "Dashboard",
     "dashboard": "Dashboard",
     "library": "Library",
+    "myCharacters": "My characters",
+    "collections": "My collections",
     "profile": "Profile",
     "settings": "Settings",
     "welcome": "Welcome, {name}",
@@ -288,7 +290,9 @@
     },
     "card": {
       "game": "Game:",
-      "games": "{count} game(s)"
+      "games": "{count} game(s)",
+      "addToFavorites": "Add to favorites",
+      "removeFromFavorites": "Remove from favorites"
     },
     "details": {
       "overview": "Overview",
@@ -373,6 +377,15 @@
         "submittingEdit": "Updating…",
         "error": "An error occurred"
       }
+    },
+    "favorites": {
+      "addToFavorites": "Add to favorites",
+      "removeFromFavorites": "Remove from favorites",
+      "title": "My Favorite Characters ({count})",
+      "emptyTitle": "No favorite characters yet",
+      "emptyDescription": "Explore our character collection and add your favorites by clicking the heart icon on their page.",
+      "exploreCharacters": "Explore characters",
+      "errorTitle": "Unable to load favorites"
     }
   },
   "players": {
@@ -430,6 +443,16 @@
         "completed": "Completed",
         "playing": "Playing"
       }
+    },
+    "favoriteCharacters": {
+      "title": "Favorite Characters",
+      "empty": "This player hasn't added any favorite characters yet",
+      "seeAll": "See all ({count})"
+    },
+    "collections": {
+      "title": "Collections",
+      "empty": "This player hasn't created any collections yet",
+      "seeAll": "See all ({count})"
     },
     "empty": {
       "title": "No players found",
@@ -1323,6 +1346,84 @@
         "success": "Comment deleted successfully!",
         "errorGeneric": "An error occurred while deleting the comment."
       }
+    }
+  },
+  "collections": {
+    "card": {
+      "gamesCount": "{count, plural, =0 {No games} one {# game} other {# games}}",
+      "public": "Public",
+      "private": "Private",
+      "updatedAt": "Updated {date}",
+      "noDescription": "No description"
+    },
+    "list": {
+      "emptyTitle": "No collections",
+      "emptyDescription": "This player hasn't created any collections yet."
+    },
+    "detail": {
+      "gamesCount": "{count, plural, =0 {No games} one {# game} other {# games}}",
+      "createdAt": "Created {date}",
+      "noDescription": "No description",
+      "emptyTitle": "No games yet",
+      "emptyDescription": "This collection doesn't contain any games yet.",
+      "gamesList": "Games"
+    },
+    "gameCard": {
+      "noteLabel": "Note"
+    },
+    "form": {
+      "createTitle": "Create a collection",
+      "editTitle": "Edit collection",
+      "nameLabel": "Name",
+      "namePlaceholder": "e.g. Best RPGs, To play...",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Describe your collection...",
+      "visibilityLabel": "Public collection",
+      "visibilityDescription": "A public collection is visible to everyone.",
+      "coverImageLabel": "Cover image (URL)",
+      "coverImagePlaceholder": "https://example.com/image.jpg",
+      "coverImageDescription": "URL of a custom image for the collection cover.",
+      "submit": "Create",
+      "submitEdit": "Save",
+      "submitting": "Saving..."
+    },
+    "addGame": {
+      "searchPlaceholder": "Search for a game...",
+      "noResults": "No games found",
+      "notePlaceholder": "Add a note (optional)...",
+      "addButton": "Add to collection",
+      "adding": "Adding...",
+      "importing": "Importing from IGDB...",
+      "changeGame": "Change"
+    },
+    "actions": {
+      "edit": "Edit",
+      "delete": "Delete",
+      "makePublic": "Make public",
+      "makePrivate": "Make private",
+      "copyLink": "Copy link",
+      "linkCopied": "Link copied!",
+      "linkCopiedDescription": "The share link has been copied to your clipboard.",
+      "deleteTitle": "Delete collection",
+      "deleteDescription": "Are you sure you want to delete \"{name}\"? This action is irreversible and all games in this collection will be removed.",
+      "deleteCancel": "Cancel",
+      "deleteConfirm": "Delete",
+      "deleting": "Deleting..."
+    },
+    "page": {
+      "title": "Collections",
+      "createButton": "Create a collection",
+      "backToPlayer": "Back to profile",
+      "errorTitle": "Loading error",
+      "errorDescription": "Unable to load collections. Please try again.",
+      "notFoundTitle": "Collection not found",
+      "notFoundDescription": "This collection does not exist or is not accessible.",
+      "backToCollections": "Back to collections",
+      "addGame": "Add a game",
+      "editCollection": "Edit collection",
+      "deleteSuccess": "Collection deleted successfully.",
+      "addGameSuccess": "Game added to collection.",
+      "updateSuccess": "Collection updated."
     }
   }
 }

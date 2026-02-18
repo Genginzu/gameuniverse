@@ -175,6 +175,8 @@
     "title": "Tableau de bord",
     "dashboard": "Tableau de bord",
     "library": "Bibliothèque",
+    "myCharacters": "Mes personnages",
+    "collections": "Mes collections",
     "profile": "Profil",
     "settings": "Paramètres",
     "welcome": "Bienvenue, {name}",
@@ -288,7 +290,9 @@
     },
     "card": {
       "game": "Jeu:",
-      "games": "{count} jeu(x)"
+      "games": "{count} jeu(x)",
+      "addToFavorites": "Ajouter aux favoris",
+      "removeFromFavorites": "Retirer des favoris"
     },
     "details": {
       "overview": "Aperçu",
@@ -373,6 +377,15 @@
         "submittingEdit": "Modification…",
         "error": "Une erreur est survenue"
       }
+    },
+    "favorites": {
+      "addToFavorites": "Ajouter aux favoris",
+      "removeFromFavorites": "Retirer des favoris",
+      "title": "Mes personnages favoris ({count})",
+      "emptyTitle": "Aucun personnage favori",
+      "emptyDescription": "Explorez notre collection de personnages et ajoutez vos favoris en cliquant sur l'icône cœur sur leur page.",
+      "exploreCharacters": "Explorer les personnages",
+      "errorTitle": "Impossible de charger les favoris"
     }
   },
   "players": {
@@ -430,6 +443,16 @@
         "completed": "Terminé",
         "playing": "En cours"
       }
+    },
+    "favoriteCharacters": {
+      "title": "Personnages favoris",
+      "empty": "Ce joueur n'a pas encore de personnages favoris",
+      "seeAll": "Voir tous ({count})"
+    },
+    "collections": {
+      "title": "Collections",
+      "empty": "Ce joueur n'a pas encore de collections",
+      "seeAll": "Voir toutes ({count})"
     },
     "empty": {
       "title": "Aucun joueur trouvé",
@@ -1326,6 +1349,84 @@
         "success": "Commentaire supprimé avec succès !",
         "errorGeneric": "Une erreur est survenue lors de la suppression du commentaire."
       }
+    }
+  },
+  "collections": {
+    "card": {
+      "gamesCount": "{count, plural, =0 {Aucun jeu} one {# jeu} other {# jeux}}",
+      "public": "Publique",
+      "private": "Privée",
+      "updatedAt": "Modifiée le {date}",
+      "noDescription": "Aucune description"
+    },
+    "list": {
+      "emptyTitle": "Aucune collection",
+      "emptyDescription": "Ce joueur n'a pas encore créé de collection."
+    },
+    "detail": {
+      "gamesCount": "{count, plural, =0 {Aucun jeu} one {# jeu} other {# jeux}}",
+      "createdAt": "Créée le {date}",
+      "noDescription": "Aucune description",
+      "emptyTitle": "Aucun jeu",
+      "emptyDescription": "Cette collection ne contient pas encore de jeux.",
+      "gamesList": "Jeux"
+    },
+    "gameCard": {
+      "noteLabel": "Note"
+    },
+    "form": {
+      "createTitle": "Créer une collection",
+      "editTitle": "Modifier la collection",
+      "nameLabel": "Nom",
+      "namePlaceholder": "ex. Meilleurs RPG, À jouer...",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Décrivez votre collection...",
+      "visibilityLabel": "Collection publique",
+      "visibilityDescription": "Une collection publique est visible par tous.",
+      "coverImageLabel": "Image de couverture (URL)",
+      "coverImagePlaceholder": "https://example.com/image.jpg",
+      "coverImageDescription": "URL d'une image personnalisée pour la couverture de la collection.",
+      "submit": "Créer",
+      "submitEdit": "Enregistrer",
+      "submitting": "Enregistrement..."
+    },
+    "addGame": {
+      "searchPlaceholder": "Rechercher un jeu...",
+      "noResults": "Aucun jeu trouvé",
+      "notePlaceholder": "Ajouter une note (optionnel)...",
+      "addButton": "Ajouter à la collection",
+      "adding": "Ajout en cours...",
+      "importing": "Import depuis IGDB...",
+      "changeGame": "Changer"
+    },
+    "actions": {
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "makePublic": "Rendre publique",
+      "makePrivate": "Rendre privée",
+      "copyLink": "Copier le lien",
+      "linkCopied": "Lien copié !",
+      "linkCopiedDescription": "Le lien de partage a été copié dans le presse-papiers.",
+      "deleteTitle": "Supprimer la collection",
+      "deleteDescription": "Êtes-vous sûr de vouloir supprimer « {name} » ? Cette action est irréversible et tous les jeux de cette collection seront retirés.",
+      "deleteCancel": "Annuler",
+      "deleteConfirm": "Supprimer",
+      "deleting": "Suppression..."
+    },
+    "page": {
+      "title": "Collections",
+      "createButton": "Créer une collection",
+      "backToPlayer": "Retour au profil",
+      "errorTitle": "Erreur de chargement",
+      "errorDescription": "Impossible de charger les collections. Veuillez réessayer.",
+      "notFoundTitle": "Collection introuvable",
+      "notFoundDescription": "Cette collection n'existe pas ou n'est pas accessible.",
+      "backToCollections": "Retour aux collections",
+      "addGame": "Ajouter un jeu",
+      "editCollection": "Modifier la collection",
+      "deleteSuccess": "Collection supprimée avec succès.",
+      "addGameSuccess": "Jeu ajouté à la collection.",
+      "updateSuccess": "Collection mise à jour."
     }
   }
 }

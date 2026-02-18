@@ -93,6 +93,17 @@ src/lib/
 - Utilitaires : `camelCase.ts`
 - Types/interfaces : `PascalCase` dans un fichier `types.ts` si partagés
 
+## Placement des nouvelles pages
+
+Toute nouvelle page créée **doit** être placée dans l'un des deux layouts
+existants :
+
+- `src/app/[locale]/admin/` — pour les pages d'administration
+- `src/app/[locale]/` — pour les pages publiques (utilisateur)
+
+❌ Ne **jamais** créer de page en dehors de ces deux layouts. ⚠️ En cas de doute
+sur le layout approprié, **demander à l'utilisateur** avant de créer la page.
+
 ## Bonnes pratiques
 
 - ❌ Pas de logique métier dans les composants de page (`page.tsx`). Déléguer

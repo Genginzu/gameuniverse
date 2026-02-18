@@ -6,6 +6,8 @@ import { cookies } from "next/headers";
 import type { Database } from "./database.types";
 
 // Client pour les composants côté serveur
+// In Server Components, cookies are read-only. set/remove must be no-ops
+// to avoid "Cookies can only be modified in a Server Action or Route Handler" errors.
 export const createServerClient = async () => {
   const cookieStore = await cookies();
 
@@ -17,11 +19,11 @@ export const createServerClient = async () => {
         get(name: string) {
           return cookieStore.get(name)?.value;
         },
-        set(name: string, value: string, options: CookieOptions) {
-          cookieStore.set({ name, value, ...options });
+        set() {
+          // No-op: cookies are read-only in Server Components
         },
-        remove(name: string, options: CookieOptions) {
-          cookieStore.set({ name, value: "", ...options });
+        remove() {
+          // No-op: cookies are read-only in Server Components
         },
       },
     }
