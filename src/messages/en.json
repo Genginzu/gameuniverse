@@ -630,7 +630,8 @@
       "reviews": "Reviews",
       "playtime": "Playtime",
       "languages": "Languages",
-      "music": "Music"
+      "music": "Music",
+      "priceHistory": "Prices"
     },
     "media": {
       "screenshots": "Screenshots",
@@ -751,6 +752,27 @@
       "soundtrack": "Soundtrack",
       "composer": "Composer",
       "comingSoon": "Soundtrack information and composer details coming soon."
+    },
+    "priceHistory": {
+      "periods": {
+        "1m": "1M",
+        "3m": "3M",
+        "6m": "6M",
+        "1y": "1Y",
+        "all": "All"
+      },
+      "periodSelectionLabel": "Period selection",
+      "storeFilterLabel": "Filter by store",
+      "stats": {
+        "minPrice": "Minimum price",
+        "maxPrice": "Maximum price",
+        "avgPrice": "Average price",
+        "lowestPrice": "Lowest price",
+        "belowAverage": "Below average"
+      },
+      "empty": "No price history available for this game.",
+      "error": "Unable to load price history.",
+      "retry": "Retry"
     }
   },
   "footer": {

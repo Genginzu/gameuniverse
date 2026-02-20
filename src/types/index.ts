@@ -20,6 +20,7 @@ export * from "./admin-auth";
 export * from "./admin-games";
 export * from "./admin-languages";
 export * from "./pricing";
+export * from "./price-history";
 
 // Types globaux
 export * from "./global.d";

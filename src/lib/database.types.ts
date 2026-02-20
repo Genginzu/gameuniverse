@@ -1143,6 +1143,36 @@ export type Database = {
           role: string;
         }[];
       };
+      get_price_history: {
+        Args: {
+          game_uuid: string;
+          start_date?: string;
+          end_date?: string;
+          store_filter?: string;
+          platform_filter?: string;
+        };
+        Returns: {
+          id: string;
+          game_id: string;
+          store_id: string;
+          store_name: string;
+          store_logo_url: string;
+          price: number;
+          currency: string;
+          platform: string;
+          recorded_at: string;
+        }[];
+      };
+      get_price_history_stats: {
+        Args: { game_uuid: string };
+        Returns: {
+          min_price: number;
+          max_price: number;
+          avg_price: number;
+          currency: string;
+          total_snapshots: number;
+        }[];
+      };
       get_game_prices: {
         Args: {
           game_uuid: string;

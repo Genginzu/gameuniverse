@@ -630,7 +630,8 @@
       "reviews": "Avis",
       "playtime": "Temps de jeu",
       "languages": "Langues",
-      "music": "Musique"
+      "music": "Musique",
+      "priceHistory": "Prix"
     },
     "media": {
       "screenshots": "Captures d'écran",
@@ -751,6 +752,27 @@
       "soundtrack": "Bande sonore",
       "composer": "Compositeur",
       "comingSoon": "La bande sonore sera bientôt disponible avec les informations sur le compositeur."
+    },
+    "priceHistory": {
+      "periods": {
+        "1m": "1M",
+        "3m": "3M",
+        "6m": "6M",
+        "1y": "1A",
+        "all": "Tout"
+      },
+      "periodSelectionLabel": "Sélection de période",
+      "storeFilterLabel": "Filtre par magasin",
+      "stats": {
+        "minPrice": "Prix minimum",
+        "maxPrice": "Prix maximum",
+        "avgPrice": "Prix moyen",
+        "lowestPrice": "Prix au plus bas",
+        "belowAverage": "En dessous de la moyenne"
+      },
+      "empty": "Aucun historique de prix disponible pour ce jeu.",
+      "error": "Impossible de charger l'historique de prix.",
+      "retry": "Réessayer"
     }
   },
   "footer": {

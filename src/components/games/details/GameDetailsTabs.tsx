@@ -16,7 +16,9 @@ import {
   Monitor,
   Package,
   Users,
+  TrendingUp,
 } from "lucide-react";
+import { PriceHistoryTab } from "@/components/games/details/PriceHistoryTab";
 import { GameReviewsTab } from "../reviews/GameReviewsTab";
 import { useTranslations } from "next-intl";
 import { GameDetails } from "@/types/game";
@@ -30,7 +32,8 @@ export type TabType =
   | "languages"
   | "music"
   | "ageRatings"
-  | "versions";
+  | "versions"
+  | "priceHistory";
 
 interface GameDetailsTabsProps {
   game: GameDetails;
@@ -125,6 +128,17 @@ export function GameDetailsTabs({ game, colors, activeTab, onTabChange }: GameDe
           >
             <Music className="mr-2 inline h-4 w-4" />
             {tDetails("tabs.music")}
+          </button>
+          <button
+            onClick={() => onTabChange("priceHistory")}
+            className={`rounded-xl px-6 py-3 text-sm font-medium transition-all ${
+              activeTab === "priceHistory"
+                ? "bg-white text-slate-900"
+                : "text-slate-400 hover:bg-slate-700 hover:text-white"
+            }`}
+          >
+            <TrendingUp className="mr-2 inline h-4 w-4" />
+            {tDetails("tabs.priceHistory")}
           </button>
         </div>
       </div>
@@ -308,6 +322,14 @@ export function GameDetailsTabs({ game, colors, activeTab, onTabChange }: GameDe
               </Card>
             </div>
           </div>
+        )}
+
+        {activeTab === "priceHistory" && (
+          <PriceHistoryTab
+            gameSlug={game.slug}
+            currentPrice={game.pricing?.[0]?.price}
+            colors={{ primary: colors.primary, secondary: colors.secondary }}
+          />
         )}
       </div>
     </>
