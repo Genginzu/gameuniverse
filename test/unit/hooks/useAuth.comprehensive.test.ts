@@ -1,19 +1,19 @@
-import { describe, it, expect, mock, beforeEach, afterEach, spyOn } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 
 // Mock modules before importing the hook
-const mockSignInWithPassword = mock(() =>
+const mockSignInWithPassword = vi.fn(() =>
   Promise.resolve({ data: { user: null, session: null }, error: null })
 );
-const mockSignUp = mock(() =>
+const mockSignUp = vi.fn(() =>
   Promise.resolve({ data: { user: null, session: null }, error: null })
 );
-const mockSignOut = mock(() => Promise.resolve({ error: null }));
-const mockResetPasswordForEmail = mock(() => Promise.resolve({ error: null }));
-const mockGetSession = mock(() => Promise.resolve({ data: { session: null }, error: null }));
-const mockOnAuthStateChange = mock(() => ({
+const mockSignOut = vi.fn(() => Promise.resolve({ error: null }));
+const mockResetPasswordForEmail = vi.fn(() => Promise.resolve({ error: null }));
+const mockGetSession = vi.fn(() => Promise.resolve({ data: { session: null }, error: null }));
+const mockOnAuthStateChange = vi.fn(() => ({
   data: {
     subscription: {
-      unsubscribe: mock(() => {}),
+      unsubscribe: vi.fn(() => {}),
     },
   },
 }));
@@ -29,18 +29,18 @@ const mockSupabaseClient = {
   },
 };
 
-mock.module("@/lib/supabase", () => ({
+vi.mock("@/lib/supabase", () => ({
   createClient: () => mockSupabaseClient,
 }));
 
-const mockPush = mock(() => {});
-mock.module("@/i18n/navigation", () => ({
+const mockPush = vi.fn(() => {});
+vi.mock("@/i18n/navigation", () => ({
   useRouter: () => ({ push: mockPush }),
 }));
 
-const mockClearAuthCookies = mock(() => {});
-const mockHandleAuthError = mock(() => Promise.resolve());
-mock.module("@/lib/auth-utils", () => ({
+const mockClearAuthCookies = vi.fn(() => {});
+const mockHandleAuthError = vi.fn(() => Promise.resolve());
+vi.mock("@/lib/auth-utils", () => ({
   clearAuthCookies: mockClearAuthCookies,
   handleAuthError: mockHandleAuthError,
 }));
@@ -279,11 +279,11 @@ describe("useAuth comprehensive tests", () => {
 
   describe("onAuthStateChange", () => {
     it("should set up auth state listener", () => {
-      const callback = mock(() => {});
+      const callback = vi.fn(() => {});
       mockOnAuthStateChange.mockImplementation(() => ({
         data: {
           subscription: {
-            unsubscribe: mock(() => {}),
+            unsubscribe: vi.fn(() => {}),
           },
         },
       }));
@@ -295,7 +295,7 @@ describe("useAuth comprehensive tests", () => {
     });
 
     it("should return unsubscribe function", () => {
-      const mockUnsubscribe = mock(() => {});
+      const mockUnsubscribe = vi.fn(() => {});
       mockOnAuthStateChange.mockImplementation(() => ({
         data: {
           subscription: {

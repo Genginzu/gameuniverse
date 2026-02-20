@@ -9,15 +9,20 @@ inclusion: always
 All tests MUST be placed in the centralized `test/` directory. Do NOT create
 `__tests__/` directories inside `src/`.
 
+All tests use **Vitest** as the sole test runner. See `no-vitest.md` steering
+file for detailed conventions.
+
 ## Directory Structure
 
 ```
 test/
-├── unit/                    # Unit tests (run in parallel)
+├── unit/                    # Unit tests (all run in parallel)
+│   ├── api/                # API route tests
+│   │   └── admin/
 │   ├── hooks/              # Hook tests
 │   ├── lib/                # Library/utility tests
-│   │   ├── services/       # Service tests
-│   │   └── utils/          # Utility tests
+│   │   ├── services/
+│   │   └── utils/
 │   └── components/         # Component tests
 │       ├── characters/
 │       ├── games/
@@ -26,109 +31,65 @@ test/
 │       ├── settings/
 │       ├── shared/
 │       └── ui/
-├── isolated/               # Tests with mock conflicts (run sequentially)
-│   ├── api/               # API tests needing isolation
-│   ├── components/        # Component tests needing isolation
-│   ├── hooks/             # Hook tests needing isolation
-│   └── lib/               # Library tests needing isolation
 ├── integration/            # Integration tests
-│   ├── auth/
-│   ├── i18n/
-│   └── middleware/
 ├── scripts/                # Script tests
-│   └── igdb-import/
-├── setup.ts                # Global test setup
-└── setup.test.ts           # Setup verification tests
+├── setup-vitest.ts         # Vitest setup (jsdom, next mocks)
+└── setup.test.ts           # Setup verification
 ```
-
-## Isolated Tests
-
-Tests in `test/isolated/` have mock conflicts with other tests due to Bun's
-module caching. They pass individually but fail when run in parallel.
-
-These tests are run sequentially via `bun scripts/run-isolated-tests.ts`.
 
 ## File Naming Conventions
 
-- Unit tests: `*.test.ts` or `*.test.tsx`
+- All tests: `*.test.ts` or `*.test.tsx`
 - Property-based tests: `*.property.test.ts`
-- Comprehensive tests: `*.comprehensive.test.ts` or `*.comprehensive.test.tsx`
 
 ## Import Paths
 
-When importing from source files, use relative paths from the test directory:
-
-```typescript
-// ✅ Correct
-import { myFunction } from "../../../src/lib/utils";
-import { MyComponent } from "../../../../src/components/shared/MyComponent";
-
-// ❌ Incorrect - Do not use alias paths in tests
-import { myFunction } from "@/lib/utils";
-```
+- Use alias paths (`@/lib/utils`) — resolved by vitest.config.ts
 
 ## Forbidden Patterns
 
 - ❌ Do NOT create `src/**/__tests__/` directories
 - ❌ Do NOT place test files alongside source files in `src/`
-- ❌ Do NOT use Vitest - use Bun's built-in test runner
-
-## Testing Framework
-
-Use Bun's built-in test runner exclusively:
-
-```typescript
-import {
-  describe,
-  it,
-  expect,
-  beforeEach,
-  afterEach,
-  mock,
-  spyOn,
-} from "bun:test";
-```
+- ❌ Do NOT import from `bun:test`
+- ❌ Do NOT use `.vitest.ts` / `.vitest.tsx` extensions — all tests are
+  `*.test.ts` / `*.test.tsx` now
 
 ## Running Tests
 
-**IMPORTANT**: Always use `bun run test:all` to run the complete test suite.
-Using `bun test` alone will skip isolated tests and may miss failures.
+**IMPORTANT**: Pour lancer TOUS les tests, utiliser uniquement
+`bun run test:all`. Ne rien ajouter après cette commande (pas de flags, pas de
+chemins, pas de `2>&1`).
+
+**INTERDIT** : Ne **jamais** ajouter `2>&1` à la fin d'une commande de test,
+quelle qu'elle soit (`bun run test:all`, `bunx vitest run`, `npx vitest run`,
+etc.). La redirection `2>&1` casse le formatage de la sortie et peut masquer des
+erreurs.
 
 ```bash
-# ✅ RECOMMENDED: Run ALL tests (parallel + isolated)
+# ✅ Run ALL tests (ne rien ajouter après)
 bun run test:all
 
-# Run with coverage
-bun run test:all:coverage
+# Run tests in watch mode
+bun run test:ui
 
-# Run parallel tests only (NOT recommended for full validation)
-bun run test
-
-# Run isolated tests only (sequential)
-bun run test:isolated
-
-# Debug failing tests
-bun run test:failures
+# Run a specific test file
+bunx vitest run test/unit/lib/utils/myUtil.test.ts
 ```
 
-## When to Move Tests to Isolated
+## Isolation avec Vitest
 
-Move a test to `test/isolated/` if it:
+Vitest isole chaque fichier de test dans son propre module scope. Les
+`vi.mock()` ne fuient pas entre fichiers. Il n'y a donc plus besoin d'un dossier
+`test/isolated/` séparé — tous les tests vont dans `test/unit/`.
 
-- Modifies `global.fetch` or other globals
-- Uses `mock.module()` that conflicts with other tests
-- Passes individually but fails when run in parallel
-- Has timing-sensitive assertions
+- ✅ `vi.mock()` est automatiquement scopé au fichier
+- ✅ Les modifications de `globalThis.fetch` dans `beforeEach`/`afterEach` sont
+  sûres en parallèle
+- ❌ Ne **jamais** recréer de dossier `test/isolated/`
 
 ## Durée des Tests
 
 La suite de tests est complète et donc relativement longue à exécuter. Quand une
 tâche lance `bun run test:all` (ou toute commande exécutant l'ensemble des
 tests), il faut **impérativement attendre que tous les tests soient terminés**
-avant de passer à la tâche suivante. Ne pas interrompre ni considérer les tests
-comme passés avant d'avoir reçu le résultat final complet. Cela s'applique à
-**toute tâche** qui lance les tests, pas uniquement la validation finale.
-
-## Coverage Target
-
-Maintain minimum 90% line coverage across the codebase.
+avant de passer à la tâche suivante.

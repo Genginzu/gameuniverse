@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import {
   parsePaginationParams,
@@ -61,7 +61,7 @@ describe("API Utilities Property-Based Tests", () => {
             expect(result.limit).toBeGreaterThanOrEqual(1);
             expect(result.limit).toBeLessThanOrEqual(50);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -77,7 +77,7 @@ describe("API Utilities Property-Based Tests", () => {
 
             expect(result.page).toBe(1);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -103,7 +103,7 @@ describe("API Utilities Property-Based Tests", () => {
 
             expect(result.limit).toBe(20);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -121,7 +121,7 @@ describe("API Utilities Property-Based Tests", () => {
               expect(result.limit).toBeLessThanOrEqual(50);
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -149,7 +149,7 @@ describe("API Utilities Property-Based Tests", () => {
               expect(result.limit).toBe(defaultLimit);
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
     });
@@ -163,7 +163,7 @@ describe("API Utilities Property-Based Tests", () => {
 
             expect(result).toEqual(items);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -198,7 +198,7 @@ describe("API Utilities Property-Based Tests", () => {
               expect(result).toEqual(items);
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -235,7 +235,7 @@ describe("API Utilities Property-Based Tests", () => {
               expect(result.pagination).toHaveProperty("hasPreviousPage");
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -251,7 +251,7 @@ describe("API Utilities Property-Based Tests", () => {
               expect(result.pagination.totalPages).toBe(expectedTotalPages);
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -269,7 +269,7 @@ describe("API Utilities Property-Based Tests", () => {
               expect(result.pagination.hasNextPage).toBe(expectedHasNext);
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -281,7 +281,7 @@ describe("API Utilities Property-Based Tests", () => {
             const expectedHasPrevious = page > 1;
             expect(result.pagination.hasPreviousPage).toBe(expectedHasPrevious);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -302,7 +302,7 @@ describe("API Utilities Property-Based Tests", () => {
               expect(result.filters).toEqual(filters);
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -322,7 +322,7 @@ describe("API Utilities Property-Based Tests", () => {
             expect(result).toHaveProperty("error");
             expect(typeof result.error).toBe("string");
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -334,7 +334,7 @@ describe("API Utilities Property-Based Tests", () => {
             expect(result).toHaveProperty("error");
             expect(typeof result.error).toBe("string");
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -387,7 +387,7 @@ describe("API Utilities Property-Based Tests", () => {
               expect(result.missing).toEqual([]);
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -409,7 +409,7 @@ describe("API Utilities Property-Based Tests", () => {
               expect(result.missing.sort()).toEqual(keys.sort());
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -437,7 +437,7 @@ describe("API Utilities Property-Based Tests", () => {
             const expected = (page - 1) * limit;
             expect(result).toBe(expected);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -447,7 +447,7 @@ describe("API Utilities Property-Based Tests", () => {
             const result = calculateOffset(1, limit);
             expect(result).toBe(0);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
     });

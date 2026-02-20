@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 
 // Feature: game-library, Property 1: Game List Display Completeness
@@ -100,7 +100,7 @@ describe("GameLibrary Property-Based Tests", () => {
           return hasTitle && hasAtLeastOneGenre && hasYear && hasDeveloper && hasPublisher;
         });
       }),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 

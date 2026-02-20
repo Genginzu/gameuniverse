@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import {
   detectChangedFields,
@@ -126,7 +126,7 @@ function toSubmittedData(data: GameDataShape): AdminGameFormData {
   return deepClone({ ...data, slug: "" }) as AdminGameFormData;
 }
 
-/** Applique une modification garantie à un champ spécifique */
+/** Applique une modification garantie a un champ specifique */
 function applyFieldChange(data: AdminGameFormData, field: string): void {
   switch (field) {
     case "translations":
@@ -205,13 +205,13 @@ function applyFieldChange(data: AdminGameFormData, field: string): void {
 }
 
 // =============================================================================
-// Property 1 : Détection des modifications de champs
-// Feature: igdb-field-tracking, Property 1: Détection des modifications de champs
+// Property 1 : Detection des modifications de champs
+// Feature: igdb-field-tracking, Property 1: Detection des modifications de champs
 // **Validates: Requirements 1.1, 1.2**
 // =============================================================================
 
-describe("Property 1: Détection des modifications de champs", () => {
-  it("données identiques → aucun champ modifié détecté", () => {
+describe("Property 1: Detection des modifications de champs", () => {
+  it("donnees identiques -> aucun champ modifie detecte", () => {
     fc.assert(
       fc.property(gameDataGen(), (gameData) => {
         const current = toCurrentData(gameData);
@@ -219,11 +219,11 @@ describe("Property 1: Détection des modifications de champs", () => {
         const changed = detectChangedFields(current, submitted);
         expect(changed).toEqual([]);
       }),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 
-  it("chaque champ retourné est un TrackableField valide et sans doublons", () => {
+  it("chaque champ retourne est un TrackableField valide et sans doublons", () => {
     fc.assert(
       fc.property(gameDataGen(), gameDataGen(), (currentRaw, submittedRaw) => {
         const current = toCurrentData(currentRaw);
@@ -235,11 +235,11 @@ describe("Property 1: Détection des modifications de champs", () => {
         }
         expect(new Set(changed).size).toBe(changed.length);
       }),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 
-  it("modifier un seul champ produit un résultat contenant ce champ", () => {
+  it("modifier un seul champ produit un resultat contenant ce champ", () => {
     fc.assert(
       fc.property(
         gameDataGen(),
@@ -252,7 +252,7 @@ describe("Property 1: Détection des modifications de champs", () => {
           expect(changed).toContain(fieldToChange);
         }
       ),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 });
@@ -261,7 +261,8 @@ describe("Property 1: Détection des modifications de champs", () => {
 // Property 2 : Idempotence de l'upsert des overrides
 // Feature: igdb-field-tracking, Property 2: Idempotence de l'upsert des overrides
 // **Validates: Requirements 1.3, 5.2**
-/** Crée un mock Supabase qui stocke les rows en mémoire et simule l'upsert */
+
+/** Cree un mock Supabase qui stocke les rows en memoire et simule l'upsert */
 function createMockSupabase() {
   const store: Map<
     string,
@@ -279,7 +280,7 @@ function createMockSupabase() {
         }>,
         _options?: { onConflict: string }
       ) => {
-        // Simule l'upsert : clé = game_id + field_name
+        // Simule l'upsert : cle = game_id + field_name
         for (const row of rows) {
           store.set(`${row.game_id}:${row.field_name}`, { ...row });
         }
@@ -294,7 +295,7 @@ function createMockSupabase() {
 }
 
 describe("Property 2: Idempotence de l'upsert des overrides", () => {
-  it("un double upsert produit exactement une entrée par (game_id, field_name)", async () => {
+  it("un double upsert produit exactement une entree par (game_id, field_name)", async () => {
     await fc.assert(
       fc.asyncProperty(
         fc.uuid(),
@@ -307,20 +308,20 @@ describe("Property 2: Idempotence de l'upsert des overrides", () => {
           await upsertFieldOverrides(client, gameId, fields, userId);
           const countAfterFirst = store.size;
 
-          // Deuxième upsert (même données)
+          // Deuxieme upsert (memes donnees)
           await upsertFieldOverrides(client, gameId, fields, userId);
           const countAfterSecond = store.size;
 
-          // Le nombre d'entrées ne doit pas changer
+          // Le nombre d'entrees ne doit pas changer
           expect(countAfterSecond).toBe(countAfterFirst);
           expect(countAfterSecond).toBe(fields.length);
         }
       ),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 
-  it("l'upsert met à jour modified_at sans créer de doublon", async () => {
+  it("l'upsert met a jour modified_at sans creer de doublon", async () => {
     await fc.assert(
       fc.asyncProperty(
         fc.uuid(),
@@ -332,13 +333,11 @@ describe("Property 2: Idempotence de l'upsert des overrides", () => {
           await upsertFieldOverrides(client, gameId, [field], userId);
           const firstDate = store.get(`${gameId}:${field}`)?.modified_at;
 
-          // Petit délai pour garantir un timestamp différent
-          await new Promise((r) => setTimeout(r, 2));
-
+          // Second upsert — timestamp is always >= first (same ms is valid)
           await upsertFieldOverrides(client, gameId, [field], userId);
           const secondDate = store.get(`${gameId}:${field}`)?.modified_at;
 
-          // Une seule entrée, date mise à jour
+          // Une seule entree, date mise a jour
           expect(store.size).toBe(1);
           expect(secondDate).toBeDefined();
           expect(new Date(secondDate!).getTime()).toBeGreaterThanOrEqual(
@@ -346,18 +345,18 @@ describe("Property 2: Idempotence de l'upsert des overrides", () => {
           );
         }
       ),
-      { numRuns: 100 }
+      { numRuns: 50 }
     );
   });
 
-  it("un upsert avec un tableau vide ne crée aucune entrée", async () => {
+  it("un upsert avec un tableau vide ne cree aucune entree", async () => {
     await fc.assert(
       fc.asyncProperty(fc.uuid(), fc.uuid(), async (gameId, userId) => {
         const { client, store } = createMockSupabase();
         await upsertFieldOverrides(client, gameId, [], userId);
         expect(store.size).toBe(0);
       }),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 });

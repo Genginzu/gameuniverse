@@ -12,6 +12,18 @@ export interface Review {
   playerAvatar: string | null;
 }
 
+export type VoteType = "helpful" | "not_helpful";
+
+export interface ReviewVoteCounts {
+  helpful: number;
+  notHelpful: number;
+}
+
+export interface ReviewWithVotes extends Review {
+  voteCounts: ReviewVoteCounts;
+  userVote: VoteType | null;
+}
+
 export interface ReviewFormData {
   rating: number;
   content: string;
@@ -20,7 +32,7 @@ export interface ReviewFormData {
 }
 
 export interface ReviewsResponse {
-  reviews: Review[];
+  reviews: ReviewWithVotes[];
   averageRating: number | null;
   totalCount: number;
   userHasReviewed: boolean;

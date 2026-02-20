@@ -107,7 +107,12 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: "Failed to search games" }, { status: 500 });
       }
 
-      matchingGameIds = [...new Set(matchingTranslations?.map((t) => t.game_id) ?? [])];
+      matchingGameIds = [
+        ...new Set(
+          matchingTranslations?.map((t) => t.game_id).filter((id): id is string => id !== null) ??
+            []
+        ),
+      ];
 
       if (matchingGameIds.length === 0) {
         return NextResponse.json({

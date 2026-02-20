@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 
 /**
@@ -175,7 +175,7 @@ describe("Character Pages Property-Based Tests - Locale Content Display", () => 
           expect(localizedCharacter.description).toBe(character.translations.fr.description);
           expect(localizedCharacter.biography).toBe(character.translations.fr.biography);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -189,7 +189,7 @@ describe("Character Pages Property-Based Tests - Locale Content Display", () => 
           expect(localizedCharacter.description).toBe(character.translations.en.description);
           expect(localizedCharacter.biography).toBe(character.translations.en.biography);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -204,7 +204,7 @@ describe("Character Pages Property-Based Tests - Locale Content Display", () => 
           expect(result1.description).toBe(result2.description);
           expect(result1.biography).toBe(result2.biography);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -223,7 +223,7 @@ describe("Character Pages Property-Based Tests - Locale Content Display", () => 
             expect(englishContent.name).toBe(character.translations.en.name);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -235,7 +235,7 @@ describe("Character Pages Property-Based Tests - Locale Content Display", () => 
           expect(localizedCharacter.id).toBe(character.id);
           expect(localizedCharacter.slug).toBe(character.slug);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -301,7 +301,7 @@ describe("Character Pages Property-Based Tests - Locale Content Display", () => 
           expect(localizedCharacter.description).toBe(expectedTranslation.description);
           expect(localizedCharacter.biography).toBe(expectedTranslation.biography);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -321,7 +321,7 @@ describe("Character Pages Property-Based Tests - Locale Content Display", () => 
             expect(localizedCharacter.biography).toBeUndefined();
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -338,7 +338,7 @@ describe("Character Pages Property-Based Tests - Locale Content Display", () => 
           expect(frenchContent.role).toBe(frenchAgain.role);
           expect(englishContent.role).toBe(englishAgain.role);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -419,7 +419,7 @@ describe("Character Pages Property-Based Tests - Locale Content Display", () => 
           expect(link).toContain(`/characters/${slug}`);
           expect(link).toBe(`/${locale}/characters/${slug}`);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 

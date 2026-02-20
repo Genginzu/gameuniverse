@@ -1,4 +1,4 @@
-import { describe, it, expect, mock } from "bun:test";
+import { describe, it, expect, vi } from "vitest";
 import * as fc from "fast-check";
 import {
   shouldTriggerSearch,
@@ -103,7 +103,7 @@ describe("SearchBar Property-Based Tests", () => {
             }) as typeof clearTimeout;
 
             try {
-              const mockCallback = mock(() => {});
+              const mockCallback = vi.fn(() => {});
               const { debouncedFn } = createDebouncedCallback(mockCallback, delay);
               debouncedFn();
               return timeoutScheduled === true;
@@ -139,7 +139,7 @@ describe("SearchBar Property-Based Tests", () => {
             }) as typeof clearTimeout;
 
             try {
-              const mockCallback = mock(() => {});
+              const mockCallback = vi.fn(() => {});
               const { debouncedFn, cancel } = createDebouncedCallback(mockCallback, delay);
               debouncedFn();
               cancel();
@@ -181,7 +181,7 @@ describe("SearchBar Property-Based Tests", () => {
               }) as typeof clearTimeout;
 
               try {
-                const mockCallback = mock(() => {});
+                const mockCallback = vi.fn(() => {});
                 const { debouncedFn } = createDebouncedCallback(mockCallback, delay);
 
                 // Call multiple times rapidly

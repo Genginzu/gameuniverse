@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, mock, spyOn } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { PlayerService } from "../../../../src/lib/services/playerService";
 import type {
   PlayerDetails,
@@ -9,8 +9,8 @@ import type {
 
 describe("PlayerService", () => {
   let originalFetch: typeof fetch;
-  let consoleWarnSpy: ReturnType<typeof spyOn>;
-  let consoleErrorSpy: ReturnType<typeof spyOn>;
+  let consoleWarnSpy: ReturnType<typeof vi.spyOn>;
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
   const mockLibraryGame: PlayerLibraryGame = {
     id: "lib-1",
@@ -53,8 +53,8 @@ describe("PlayerService", () => {
 
   beforeEach(() => {
     originalFetch = globalThis.fetch;
-    consoleWarnSpy = spyOn(console, "warn").mockImplementation(() => {});
-    consoleErrorSpy = spyOn(console, "error").mockImplementation(() => {});
+    consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -143,7 +143,7 @@ describe("PlayerService", () => {
 
   describe("fetchPlayerDetails", () => {
     it("should fetch player details successfully", async () => {
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: true,
         status: 200,
         json: async () => ({ player: mockPlayerDetails }),
@@ -155,7 +155,7 @@ describe("PlayerService", () => {
     });
 
     it("should return null for 404 response", async () => {
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: false,
         status: 404,
       })) as typeof fetch;
@@ -166,7 +166,7 @@ describe("PlayerService", () => {
     });
 
     it("should throw error for non-404 error responses", async () => {
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: false,
         status: 500,
         statusText: "Internal Server Error",
@@ -178,7 +178,7 @@ describe("PlayerService", () => {
     });
 
     it("should use default locale when not provided", async () => {
-      const mockFetch = mock(async () => ({
+      const mockFetch = vi.fn(async () => ({
         ok: true,
         status: 200,
         json: async () => ({ player: mockPlayerDetails }),
@@ -194,7 +194,7 @@ describe("PlayerService", () => {
     });
 
     it("should handle network errors", async () => {
-      globalThis.fetch = mock(async () => {
+      globalThis.fetch = vi.fn(async () => {
         throw new Error("Network error");
       }) as typeof fetch;
 
@@ -217,7 +217,7 @@ describe("PlayerService", () => {
     };
 
     it("should fetch players list successfully", async () => {
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: true,
         status: 200,
         json: async () => mockPlayersResponse,
@@ -231,7 +231,7 @@ describe("PlayerService", () => {
     });
 
     it("should pass search parameter", async () => {
-      const mockFetch = mock(async () => ({
+      const mockFetch = vi.fn(async () => ({
         ok: true,
         status: 200,
         json: async () => mockPlayersResponse,
@@ -247,7 +247,7 @@ describe("PlayerService", () => {
     });
 
     it("should pass gameCountRange parameter", async () => {
-      const mockFetch = mock(async () => ({
+      const mockFetch = vi.fn(async () => ({
         ok: true,
         status: 200,
         json: async () => mockPlayersResponse,
@@ -263,7 +263,7 @@ describe("PlayerService", () => {
     });
 
     it("should pass pagination parameters", async () => {
-      const mockFetch = mock(async () => ({
+      const mockFetch = vi.fn(async () => ({
         ok: true,
         status: 200,
         json: async () => mockPlayersResponse,
@@ -283,7 +283,7 @@ describe("PlayerService", () => {
         items: [mockPlayerSummary],
         pagination: mockPlayersResponse.pagination,
       };
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: true,
         status: 200,
         json: async () => itemsResponse,
@@ -296,7 +296,7 @@ describe("PlayerService", () => {
     });
 
     it("should throw error on failed fetch", async () => {
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: false,
         status: 500,
         statusText: "Internal Server Error",
@@ -308,7 +308,7 @@ describe("PlayerService", () => {
 
   describe("playerExists", () => {
     it("should return true when player exists", async () => {
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: true,
         status: 200,
         json: async () => mockPlayerDetails,
@@ -320,7 +320,7 @@ describe("PlayerService", () => {
     });
 
     it("should return false when player does not exist", async () => {
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: false,
         status: 404,
         text: async () => "Not found",
@@ -332,7 +332,7 @@ describe("PlayerService", () => {
     });
 
     it("should return false on error", async () => {
-      globalThis.fetch = mock(async () => {
+      globalThis.fetch = vi.fn(async () => {
         throw new Error("Network error");
       }) as typeof fetch;
 
@@ -344,7 +344,7 @@ describe("PlayerService", () => {
 
   describe("generatePlayerMetadata", () => {
     it("should generate metadata for existing player", async () => {
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: true,
         status: 200,
         json: async () => mockPlayerDetails,
@@ -358,7 +358,7 @@ describe("PlayerService", () => {
     });
 
     it("should generate French metadata when locale is fr", async () => {
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: true,
         status: 200,
         json: async () => mockPlayerDetails,
@@ -372,7 +372,7 @@ describe("PlayerService", () => {
 
     it("should use default name for player without fullName", async () => {
       const playerWithoutName = { ...mockPlayerDetails, fullName: null };
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: true,
         status: 200,
         json: async () => playerWithoutName,
@@ -385,7 +385,7 @@ describe("PlayerService", () => {
 
     it("should use French default name when locale is fr", async () => {
       const playerWithoutName = { ...mockPlayerDetails, fullName: null };
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: true,
         status: 200,
         json: async () => playerWithoutName,
@@ -397,7 +397,7 @@ describe("PlayerService", () => {
     });
 
     it("should include avatar in openGraph images", async () => {
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: true,
         status: 200,
         json: async () => mockPlayerDetails,
@@ -409,7 +409,7 @@ describe("PlayerService", () => {
     });
 
     it("should return not found metadata when player does not exist", async () => {
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: false,
         status: 404,
         text: async () => "Not found",
@@ -421,7 +421,7 @@ describe("PlayerService", () => {
     });
 
     it("should return error metadata on fetch error", async () => {
-      globalThis.fetch = mock(async () => {
+      globalThis.fetch = vi.fn(async () => {
         throw new Error("Network error");
       }) as typeof fetch;
 

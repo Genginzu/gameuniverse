@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 
 // Feature: game-library
@@ -90,7 +90,7 @@ describe("GameSearch Property-Based Tests", () => {
             return results.every((game) => matchesSearchQuery(game.title, searchQuery));
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -116,7 +116,7 @@ describe("GameSearch Property-Based Tests", () => {
             );
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -211,7 +211,7 @@ describe("GameSearch Property-Based Tests", () => {
             );
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 

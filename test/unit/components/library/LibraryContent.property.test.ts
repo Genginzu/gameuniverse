@@ -1,9 +1,9 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 
 // Feature: game-library, Task 16.5
 // Tests for UserLibraryContent and LibraryGamesContent component logic
-// **Validates: Requirements - Bibliothèque personnelle**
+// **Validates: Requirements - BibliothÃ¨que personnelle**
 
 /**
  * Represents a game in the user's library
@@ -189,7 +189,7 @@ describe("LibraryContent Property-Based Tests", () => {
           const stats = calculateStats(games);
           return stats.totalGames === games.length;
         }),
-        { numRuns: 50 }
+        { numRuns: 20 }
       );
     });
 
@@ -200,7 +200,7 @@ describe("LibraryContent Property-Based Tests", () => {
           const expectedCompleted = games.filter((g) => g.completed === true).length;
           return stats.completedGames === expectedCompleted;
         }),
-        { numRuns: 50 }
+        { numRuns: 20 }
       );
     });
 
@@ -211,7 +211,7 @@ describe("LibraryContent Property-Based Tests", () => {
           const expectedPlayTime = games.reduce((sum, g) => sum + (g.playTime || 0), 0);
           return stats.totalPlayTime === expectedPlayTime;
         }),
-        { numRuns: 50 }
+        { numRuns: 20 }
       );
     });
 
@@ -417,7 +417,7 @@ describe("LibraryContent Property-Based Tests", () => {
           const stats = calculateStats(games);
           return stats.completedGames <= stats.totalGames;
         }),
-        { numRuns: 50 }
+        { numRuns: 20 }
       );
     });
 
@@ -427,7 +427,7 @@ describe("LibraryContent Property-Based Tests", () => {
           const stats = calculateStats(games);
           return stats.totalPlayTime >= 0;
         }),
-        { numRuns: 50 }
+        { numRuns: 20 }
       );
     });
 

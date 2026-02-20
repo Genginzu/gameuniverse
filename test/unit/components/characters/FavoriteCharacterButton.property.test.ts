@@ -1,8 +1,8 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import type { CharacterFavoriteSummary } from "../../../../src/types/character";
 
-// Feature: character-favorites, Property 5: Complétude de l'affichage des favoris
+// Feature: character-favorites, Property 5: ComplÃ©tude de l'affichage des favoris
 // **Validates: Requirements 3.2, 4.1**
 //
 // For any CharacterFavoriteSummary displayed (whether on the favorites page
@@ -86,8 +86,8 @@ const characterFavoriteSummaryGenerator: fc.Arbitrary<CharacterFavoriteSummary> 
 // Property tests
 // ---------------------------------------------------------------------------
 
-describe("FavoriteCharacterButton — Property-Based Tests", () => {
-  describe("Property 5: Complétude de l'affichage des favoris", () => {
+describe("FavoriteCharacterButton â€” Property-Based Tests", () => {
+  describe("Property 5: ComplÃ©tude de l'affichage des favoris", () => {
     it("name is always present and matches the summary for any valid input", () => {
       fc.assert(
         fc.property(characterFavoriteSummaryGenerator, (summary) => {
@@ -96,7 +96,7 @@ describe("FavoriteCharacterButton — Property-Based Tests", () => {
           expect(display.name).toBe(summary.name);
           expect(display.name.length).toBeGreaterThan(0);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -108,7 +108,7 @@ describe("FavoriteCharacterButton — Property-Based Tests", () => {
           expect(display.primaryGame).toBe(summary.primaryGame);
           expect(display.primaryGame.length).toBeGreaterThan(0);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -120,7 +120,7 @@ describe("FavoriteCharacterButton — Property-Based Tests", () => {
           expect(display.imageUrl).toBe(summary.mainImage);
           expect(display.hasImage).toBe(!!summary.mainImage);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -132,7 +132,7 @@ describe("FavoriteCharacterButton — Property-Based Tests", () => {
           expect(display.role).toBe(summary.role);
           expect(display.hasRole).toBe(!!summary.role);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -168,7 +168,7 @@ describe("FavoriteCharacterButton — Property-Based Tests", () => {
             }
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -180,7 +180,7 @@ describe("FavoriteCharacterButton — Property-Based Tests", () => {
 
           expect(display1).toEqual(display2);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });

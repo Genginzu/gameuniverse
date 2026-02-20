@@ -1,4 +1,4 @@
-import { describe, it, expect, mock, beforeEach, afterEach } from "bun:test";
+﻿import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import * as fc from "fast-check";
 import { CharacterService } from "../../../../src/lib/services/characterService";
 import type { CharacterDetails, CharacterGame, CharacterMedia } from "@/types/character";
@@ -152,7 +152,7 @@ describe("CharacterService Property-Based Tests", () => {
       const testCases = fc.sample(fc.tuple(characterDetailsGenerator, localeGenerator), 100);
 
       for (const [characterData, locale] of testCases) {
-        global.fetch = mock(() =>
+        global.fetch = vi.fn(() =>
           Promise.resolve({
             ok: true,
             status: 200,
@@ -180,7 +180,7 @@ describe("CharacterService Property-Based Tests", () => {
       const testCases = fc.sample(fc.tuple(characterDetailsGenerator, localeGenerator), 100);
 
       for (const [characterData, locale] of testCases) {
-        global.fetch = mock(() =>
+        global.fetch = vi.fn(() =>
           Promise.resolve({
             ok: true,
             status: 200,
@@ -229,7 +229,7 @@ describe("CharacterService Property-Based Tests", () => {
           updatedAt: new Date().toISOString(),
         };
 
-        global.fetch = mock(() =>
+        global.fetch = vi.fn(() =>
           Promise.resolve({
             ok: true,
             status: 200,
@@ -273,7 +273,7 @@ describe("CharacterService Property-Based Tests", () => {
           updatedAt: new Date().toISOString(),
         };
 
-        global.fetch = mock(() =>
+        global.fetch = vi.fn(() =>
           Promise.resolve({
             ok: true,
             status: 200,
@@ -299,7 +299,7 @@ describe("CharacterService Property-Based Tests", () => {
       );
 
       for (const [slug, locale] of testCases) {
-        global.fetch = mock(() =>
+        global.fetch = vi.fn(() =>
           Promise.resolve({
             ok: false,
             status: 404,
@@ -346,7 +346,7 @@ describe("CharacterService Property-Based Tests", () => {
           updatedAt: new Date().toISOString(),
         };
 
-        global.fetch = mock(() =>
+        global.fetch = vi.fn(() =>
           Promise.resolve({
             ok: true,
             status: 200,
@@ -372,7 +372,7 @@ describe("CharacterService Property-Based Tests", () => {
 
       for (const [search, locale] of testCases) {
         let capturedUrl = "";
-        global.fetch = mock((url: string) => {
+        global.fetch = vi.fn((url: string) => {
           capturedUrl = url;
           return Promise.resolve({
             ok: true,
@@ -408,7 +408,7 @@ describe("CharacterService Property-Based Tests", () => {
 
       for (const [games, locale] of testCases) {
         let capturedUrl = "";
-        global.fetch = mock((url: string) => {
+        global.fetch = vi.fn((url: string) => {
           capturedUrl = url;
           return Promise.resolve({
             ok: true,
@@ -444,7 +444,7 @@ describe("CharacterService Property-Based Tests", () => {
 
       for (const [roles, locale] of testCases) {
         let capturedUrl = "";
-        global.fetch = mock((url: string) => {
+        global.fetch = vi.fn((url: string) => {
           capturedUrl = url;
           return Promise.resolve({
             ok: true,
@@ -485,7 +485,7 @@ describe("CharacterService Property-Based Tests", () => {
 
       for (const [search, games, roles, locale] of testCases) {
         let capturedUrl = "";
-        global.fetch = mock((url: string) => {
+        global.fetch = vi.fn((url: string) => {
           capturedUrl = url;
           return Promise.resolve({
             ok: true,
@@ -538,7 +538,7 @@ describe("CharacterService Property-Based Tests", () => {
       for (const [characters, pagination, options] of testCases) {
         const mockResponse = { characters, pagination };
 
-        global.fetch = mock(() =>
+        global.fetch = vi.fn(() =>
           Promise.resolve({
             ok: true,
             status: 200,
@@ -577,7 +577,7 @@ describe("CharacterService Property-Based Tests", () => {
 
       for (const [page, limit, search, roles, locale] of testCases) {
         let capturedUrl = "";
-        global.fetch = mock((url: string) => {
+        global.fetch = vi.fn((url: string) => {
           capturedUrl = url;
           return Promise.resolve({
             ok: true,
@@ -621,7 +621,7 @@ describe("CharacterService Property-Based Tests", () => {
 
       for (const locale of testCases) {
         let capturedUrl = "";
-        global.fetch = mock((url: string) => {
+        global.fetch = vi.fn((url: string) => {
           capturedUrl = url;
           return Promise.resolve({
             ok: true,
@@ -671,7 +671,7 @@ describe("CharacterService Property-Based Tests", () => {
       );
 
       for (const [options, statusCode] of testCases) {
-        global.fetch = mock(() =>
+        global.fetch = vi.fn(() =>
           Promise.resolve({
             ok: false,
             status: statusCode,

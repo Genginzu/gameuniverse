@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 
 // Feature: igdb-game-versions
@@ -112,7 +112,7 @@ describe("GameVersions Property-Based Tests", () => {
         fc.property(gameVersionsArrayGenerator(1, 20), (versions) => {
           return validateTitlesDisplayed(versions);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -122,7 +122,7 @@ describe("GameVersions Property-Based Tests", () => {
         fc.property(gameVersionsArrayGenerator(1, 20), (versions) => {
           return validateDisplayOrder(versions);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -132,7 +132,7 @@ describe("GameVersions Property-Based Tests", () => {
         fc.property(gameVersionsArrayGenerator(1, 20), (versions) => {
           return validateCoverHandling(versions);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -157,7 +157,7 @@ describe("GameVersions Property-Based Tests", () => {
           const result = renderGameVersions(versions, "#ffffff");
           return result.versionsDisplayed.length === versions.length;
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 

@@ -1,33 +1,33 @@
-import { describe, it, expect, beforeEach, afterEach, mock, spyOn } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 
 // Mock Supabase client
 const mockChannel = {
-  send: mock(async () => {}),
+  send: vi.fn(async () => {}),
 };
 
 const mockSupabaseClient = {
-  channel: mock(() => mockChannel),
-  from: mock(() => ({
-    select: mock(() => ({
-      eq: mock(() => ({
-        limit: mock(() => ({ data: null })),
+  channel: vi.fn(() => mockChannel),
+  from: vi.fn(() => ({
+    select: vi.fn(() => ({
+      eq: vi.fn(() => ({
+        limit: vi.fn(() => ({ data: null })),
       })),
     })),
   })),
 };
 
-mock.module("@/lib/supabase-server", () => ({
-  createServerClient: mock(async () => mockSupabaseClient),
-  createRouteHandlerClient: mock(async () => mockSupabaseClient),
+vi.mock("@/lib/supabase-server", () => ({
+  createServerClient: vi.fn(async () => mockSupabaseClient),
+  createRouteHandlerClient: vi.fn(async () => mockSupabaseClient),
 }));
 
 describe("realtime-updates", () => {
-  let consoleWarnSpy: ReturnType<typeof spyOn>;
-  let consoleErrorSpy: ReturnType<typeof spyOn>;
+  let consoleWarnSpy: ReturnType<typeof vi.spyOn>;
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    consoleWarnSpy = spyOn(console, "warn").mockImplementation(() => {});
-    consoleErrorSpy = spyOn(console, "error").mockImplementation(() => {});
+    consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     mockChannel.send.mockClear();
     mockSupabaseClient.channel.mockClear();
   });
@@ -246,10 +246,10 @@ describe("realtime-updates", () => {
   describe("verifyGameDeletionConsistency", () => {
     it("should return consistent when no games found", async () => {
       const mockClient = {
-        from: mock(() => ({
-          select: mock(() => ({
-            eq: mock(() => ({
-              limit: mock(() => ({ data: [] })),
+        from: vi.fn(() => ({
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              limit: vi.fn(() => ({ data: [] })),
             })),
           })),
         })),
@@ -270,10 +270,10 @@ describe("realtime-updates", () => {
 
     it("should return inconsistent when game still exists", async () => {
       const mockClient = {
-        from: mock(() => ({
-          select: mock(() => ({
-            eq: mock(() => ({
-              limit: mock(() => ({ data: [{ id: "game-123" }] })),
+        from: vi.fn(() => ({
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              limit: vi.fn(() => ({ data: [{ id: "game-123" }] })),
             })),
           })),
         })),
@@ -294,7 +294,7 @@ describe("realtime-updates", () => {
 
     it("should handle errors and return inconsistent", async () => {
       const mockClient = {
-        from: mock(() => {
+        from: vi.fn(() => {
           throw new Error("Database error");
         }),
       };

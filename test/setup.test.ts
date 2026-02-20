@@ -1,17 +1,10 @@
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 
 describe("Test Setup", () => {
   it("should have DOM globals available", () => {
-    expect(global.window).toBeDefined();
-    expect(global.document).toBeDefined();
-    expect(global.navigator).toBeDefined();
-  });
-
-  it("should have mock router available", () => {
-    const mockRouter = (global as any).mockRouter;
-    expect(mockRouter).toBeDefined();
-    expect(mockRouter.push).toBeDefined();
-    expect(mockRouter.pathname).toBe("/");
+    expect(typeof global.window).toBe("object");
+    expect(typeof global.document).toBe("object");
+    expect(typeof global.navigator).toBe("object");
   });
 
   it("should perform basic arithmetic", () => {

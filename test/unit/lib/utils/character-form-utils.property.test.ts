@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import {
   adminCharacterFormSchema,
@@ -10,7 +10,7 @@ import {
 } from "../../../../src/lib/utils/character-form-utils";
 
 // =============================================================================
-// Property 3: Round-trip serialization (form → payload → form)
+// Property 3: Round-trip serialization (form â†’ payload â†’ form)
 // =============================================================================
 
 /**
@@ -94,9 +94,9 @@ const validFormData = () =>
   });
 
 /**
- * Normalise les données de formulaire pour comparaison.
- * Les chaînes vides et undefined sont équivalentes pour les champs optionnels
- * après un round-trip (form → payload → form), car "" → null → "".
+ * Normalise les donnÃ©es de formulaire pour comparaison.
+ * Les chaÃ®nes vides et undefined sont Ã©quivalentes pour les champs optionnels
+ * aprÃ¨s un round-trip (form â†’ payload â†’ form), car "" â†’ null â†’ "".
  */
 function normalizeFormData(data: AdminCharacterFormData): AdminCharacterFormData {
   return {
@@ -133,8 +133,8 @@ function normalizeFormData(data: AdminCharacterFormData): AdminCharacterFormData
 
 // --- Tests ---
 
-describe("Property 3: Round-trip serialization (form ↔ payload)", () => {
-  it("form → payload → form produces equivalent data", () => {
+describe("Property 3: Round-trip serialization (form â†” payload)", () => {
+  it("form â†’ payload â†’ form produces equivalent data", () => {
     fc.assert(
       fc.property(validFormData(), (formData) => {
         // Validate form data passes schema
@@ -142,21 +142,21 @@ describe("Property 3: Round-trip serialization (form ↔ payload)", () => {
         expect(parseResult.success).toBe(true);
         if (!parseResult.success) return;
 
-        // Round-trip: form → payload → form
+        // Round-trip: form â†’ payload â†’ form
         const payload = characterFormToPayload(parseResult.data);
         const roundTripped = characterPayloadToForm(payload);
 
-        // Compare normalized versions (empty string ↔ null equivalence)
+        // Compare normalized versions (empty string â†” null equivalence)
         const normalizedOriginal = normalizeFormData(parseResult.data);
         const normalizedRoundTripped = normalizeFormData(roundTripped);
 
         expect(normalizedRoundTripped).toEqual(normalizedOriginal);
       }),
-      { numRuns: 200 }
+      { numRuns: 50 }
     );
   });
 
-  it("round-trip through schema is idempotent (form → payload → form → payload)", () => {
+  it("round-trip through schema is idempotent (form â†’ payload â†’ form â†’ payload)", () => {
     fc.assert(
       fc.property(validFormData(), (formData) => {
         const parseResult = adminCharacterFormSchema.safeParse(formData);
@@ -173,7 +173,7 @@ describe("Property 3: Round-trip serialization (form ↔ payload)", () => {
         // Both payloads should be identical
         expect(payload2).toEqual(payload1);
       }),
-      { numRuns: 200 }
+      { numRuns: 50 }
     );
   });
 

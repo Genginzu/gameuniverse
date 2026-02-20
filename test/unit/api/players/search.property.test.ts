@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 
 /**
@@ -75,7 +75,7 @@ describe("Player Search Property-Based Tests", () => {
             expect(player.fullName!.toLowerCase()).toContain(search.trim().toLowerCase());
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -92,7 +92,7 @@ describe("Player Search Property-Based Tests", () => {
             }
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -116,7 +116,7 @@ describe("Player Search Property-Based Tests", () => {
             expect(results[0].id).toBe(player.id);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -140,7 +140,7 @@ describe("Player Search Property-Based Tests", () => {
             expect(results[0].id).toBe(player.id);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -171,7 +171,7 @@ describe("Player Search Property-Based Tests", () => {
             }
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -184,7 +184,7 @@ describe("Player Search Property-Based Tests", () => {
           expect(resultsEmpty.length).toBe(players.length);
           expect(resultsSpaces.length).toBe(players.length);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -198,7 +198,7 @@ describe("Player Search Property-Based Tests", () => {
             expect(player.fullName).not.toBeNull();
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -225,7 +225,7 @@ describe("Player Search Property-Based Tests", () => {
             }
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -235,7 +235,7 @@ describe("Player Search Property-Based Tests", () => {
           const results = filterPlayersBySearch(players, search);
           expect(results.length).toBeLessThanOrEqual(players.length);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });

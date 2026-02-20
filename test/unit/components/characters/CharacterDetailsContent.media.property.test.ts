@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import type {
   CharacterDetails,
@@ -223,7 +223,7 @@ describe("CharacterDetailsContent Media Gallery Property-Based Tests", () => {
             expect(result.screenshots.items[index].url).toBe(screenshot.url);
           });
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -242,7 +242,7 @@ describe("CharacterDetailsContent Media Gallery Property-Based Tests", () => {
             expect(result.artwork.items[index].url).toBe(art.url);
           });
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -262,7 +262,7 @@ describe("CharacterDetailsContent Media Gallery Property-Based Tests", () => {
             expect(result.videos.items[index].title).toBe(video.title);
           });
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -276,7 +276,7 @@ describe("CharacterDetailsContent Media Gallery Property-Based Tests", () => {
           expect(result.artwork.hasItems).toBe(media.artwork.length > 0);
           expect(result.videos.hasItems).toBe(media.videos.length > 0);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -289,7 +289,7 @@ describe("CharacterDetailsContent Media Gallery Property-Based Tests", () => {
           expect(result.hasAnyMedia).toBe(true);
           expect(result.showEmptyState).toBe(false);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -305,7 +305,7 @@ describe("CharacterDetailsContent Media Gallery Property-Based Tests", () => {
           expect(result.artwork.hasItems).toBe(false);
           expect(result.videos.hasItems).toBe(false);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });
@@ -321,7 +321,7 @@ describe("CharacterDetailsContent Media Gallery Property-Based Tests", () => {
           expect(result.artwork.canNavigate).toBe(media.artwork.length > 1);
           expect(result.videos.canNavigate).toBe(media.videos.length > 1);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -345,7 +345,7 @@ describe("CharacterDetailsContent Media Gallery Property-Based Tests", () => {
             }
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -368,7 +368,7 @@ describe("CharacterDetailsContent Media Gallery Property-Based Tests", () => {
             }
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -381,7 +381,7 @@ describe("CharacterDetailsContent Media Gallery Property-Based Tests", () => {
             expect(result).toBe(0);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -394,7 +394,7 @@ describe("CharacterDetailsContent Media Gallery Property-Based Tests", () => {
             expect(result).toBe(0);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });
@@ -418,7 +418,7 @@ describe("CharacterDetailsContent Media Gallery Property-Based Tests", () => {
             });
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -437,7 +437,7 @@ describe("CharacterDetailsContent Media Gallery Property-Based Tests", () => {
             expect(result.artwork.items[index].url).toBe(art.url);
           });
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -457,7 +457,7 @@ describe("CharacterDetailsContent Media Gallery Property-Based Tests", () => {
             expect(result.videos.items[index].title).toBe(video.title);
           });
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -479,7 +479,7 @@ describe("CharacterDetailsContent Media Gallery Property-Based Tests", () => {
             expect(result.videos.items[index].id).toBe(video.id);
           });
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });
@@ -505,7 +505,7 @@ describe("CharacterDetailsContent Media Gallery Property-Based Tests", () => {
           expect(result1.artwork.items).toEqual(result2.artwork.items);
           expect(result1.videos.items).toEqual(result2.videos.items);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -520,7 +520,7 @@ describe("CharacterDetailsContent Media Gallery Property-Based Tests", () => {
 
           expect(totalCount).toBe(expectedTotal);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });

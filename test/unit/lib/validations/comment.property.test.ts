@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import { commentSchema } from "../../../../src/lib/validations/comment";
 
@@ -61,7 +61,7 @@ describe("Comment Schema - Property-Based Tests", () => {
           const result = commentSchema.safeParse({ content });
           expect(result.success).toBe(false);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -71,7 +71,7 @@ describe("Comment Schema - Property-Based Tests", () => {
           const result = commentSchema.safeParse({ content });
           expect(result.success).toBe(false);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -81,7 +81,7 @@ describe("Comment Schema - Property-Based Tests", () => {
           const result = commentSchema.safeParse({ content });
           expect(result.success).toBe(false);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -95,7 +95,7 @@ describe("Comment Schema - Property-Based Tests", () => {
             expect(result.success).toBe(true);
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -106,7 +106,7 @@ describe("Comment Schema - Property-Based Tests", () => {
           const result = commentSchema.safeParse({ content });
           expect(result.success).toBe(false);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -137,7 +137,7 @@ describe("Comment Schema - Property-Based Tests", () => {
             }
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });

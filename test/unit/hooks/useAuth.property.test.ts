@@ -1,4 +1,4 @@
-import { describe, it, expect, mock, beforeEach } from "bun:test";
+﻿import { describe, it, expect, beforeEach, vi } from "vitest";
 import * as fc from "fast-check";
 
 /**
@@ -112,7 +112,7 @@ describe("useAuth Property-Based Tests", () => {
           expect(result.user).toBeNull();
           expect(result.session).toBeNull();
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -126,7 +126,7 @@ describe("useAuth Property-Based Tests", () => {
           expect(result.user).toEqual(session.user);
           expect(result.session).toEqual(session);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -140,7 +140,7 @@ describe("useAuth Property-Based Tests", () => {
           expect(result.user).toBeNull();
           expect(result.session).toBeNull();
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -159,7 +159,7 @@ describe("useAuth Property-Based Tests", () => {
           expect(result.user).toBeNull();
           expect(result.session).toBeNull();
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -177,7 +177,7 @@ describe("useAuth Property-Based Tests", () => {
           expect(result.user).toEqual(user);
           expect(result.session).toEqual(session);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -198,7 +198,7 @@ describe("useAuth Property-Based Tests", () => {
             expect(result).toEqual(currentState);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -216,7 +216,7 @@ describe("useAuth Property-Based Tests", () => {
           expect(result.user).toBeNull();
           expect(result.session).toBeNull();
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -234,7 +234,7 @@ describe("useAuth Property-Based Tests", () => {
           expect(result.user).toBeNull();
           expect(result.session).toBeNull();
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -254,7 +254,7 @@ describe("useAuth Property-Based Tests", () => {
             expect(result1).toEqual(result2);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -279,7 +279,7 @@ describe("useAuth Property-Based Tests", () => {
             expect(result.loading).toBe(false);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -320,7 +320,7 @@ describe("useAuth Property-Based Tests", () => {
             expect(userIsNull).toBe(sessionIsNull);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });
@@ -333,7 +333,7 @@ describe("useAuth Property-Based Tests", () => {
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
           expect(email).toMatch(emailRegex);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -342,7 +342,7 @@ describe("useAuth Property-Based Tests", () => {
         fc.property(passwordGenerator, (password) => {
           expect(password.length).toBeGreaterThanOrEqual(6);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });

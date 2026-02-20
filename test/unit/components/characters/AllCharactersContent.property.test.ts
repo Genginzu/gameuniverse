@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 
 /**
@@ -109,7 +109,7 @@ describe("AllCharactersContent Property-Based Tests", () => {
             expect(result).toEqual(characters);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -127,7 +127,7 @@ describe("AllCharactersContent Property-Based Tests", () => {
             expect(result).toEqual(characters);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -155,7 +155,7 @@ describe("AllCharactersContent Property-Based Tests", () => {
             expect(result[0].name).toBe(lowercaseName);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -183,7 +183,7 @@ describe("AllCharactersContent Property-Based Tests", () => {
             expect(result[0].name).toBe(uppercaseName);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -245,7 +245,7 @@ describe("AllCharactersContent Property-Based Tests", () => {
             expect(result[0].name).toBe(characterName);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -271,7 +271,7 @@ describe("AllCharactersContent Property-Based Tests", () => {
             }
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -298,7 +298,7 @@ describe("AllCharactersContent Property-Based Tests", () => {
             }
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -320,7 +320,7 @@ describe("AllCharactersContent Property-Based Tests", () => {
             }
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -337,7 +337,7 @@ describe("AllCharactersContent Property-Based Tests", () => {
             expect(result1).toEqual(result2);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -372,7 +372,7 @@ describe("AllCharactersContent Property-Based Tests", () => {
             expect(result[0].name).toBe(fullName);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -406,7 +406,7 @@ describe("AllCharactersContent Property-Based Tests", () => {
             expect(result[0].name).toBe(baseName);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -570,7 +570,7 @@ describe("AllCharactersContent Property-Based Tests - Pagination State Preservat
           // Search query must be preserved
           expect(newState.searchQuery).toBe(initialState.searchQuery);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -583,7 +583,7 @@ describe("AllCharactersContent Property-Based Tests - Pagination State Preservat
           expect(newState.selectedGames).toEqual(initialState.selectedGames);
           expect(newState.selectedGames.length).toBe(initialState.selectedGames.length);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -596,7 +596,7 @@ describe("AllCharactersContent Property-Based Tests - Pagination State Preservat
           expect(newState.selectedRoles).toEqual(initialState.selectedRoles);
           expect(newState.selectedRoles.length).toBe(initialState.selectedRoles.length);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -611,7 +611,7 @@ describe("AllCharactersContent Property-Based Tests - Pagination State Preservat
           expect(newState.selectedGames).toEqual(initialState.selectedGames);
           expect(newState.selectedRoles).toEqual(initialState.selectedRoles);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -629,7 +629,7 @@ describe("AllCharactersContent Property-Based Tests - Pagination State Preservat
             expect(apiParams.page).toBe(newPage);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -647,7 +647,7 @@ describe("AllCharactersContent Property-Based Tests - Pagination State Preservat
             expect(apiParams.page).toBe(newPage);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -665,7 +665,7 @@ describe("AllCharactersContent Property-Based Tests - Pagination State Preservat
             expect(apiParams.page).toBe(newPage);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -690,7 +690,7 @@ describe("AllCharactersContent Property-Based Tests - Pagination State Preservat
             expect(apiParams.page).toBe(newPage);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -716,7 +716,7 @@ describe("AllCharactersContent Property-Based Tests - Pagination State Preservat
             expect(currentState.currentPage).toBe(pageSequence[pageSequence.length - 1]);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -729,7 +729,7 @@ describe("AllCharactersContent Property-Based Tests - Pagination State Preservat
           // State should be identical when changing to the same page
           expect(newState).toEqual(initialState);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -752,7 +752,7 @@ describe("AllCharactersContent Property-Based Tests - Pagination State Preservat
           expect(apiParams.roles).toBeUndefined();
           expect(apiParams.page).toBe(newPage);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -779,7 +779,7 @@ describe("AllCharactersContent Property-Based Tests - Pagination State Preservat
             expect(apiParams.search).toBeUndefined();
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });

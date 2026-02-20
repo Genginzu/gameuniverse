@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, mock, spyOn } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { CharacterService } from "../../../../src/lib/services/characterService";
 import type {
   CharacterDetails,
@@ -10,8 +10,8 @@ import type {
 
 describe("CharacterService", () => {
   let originalFetch: typeof fetch;
-  let consoleWarnSpy: ReturnType<typeof spyOn>;
-  let consoleErrorSpy: ReturnType<typeof spyOn>;
+  let consoleWarnSpy: ReturnType<typeof vi.spyOn>;
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
   const mockCharacterGame: CharacterGame = {
     id: "game-1",
@@ -89,8 +89,8 @@ describe("CharacterService", () => {
 
   beforeEach(() => {
     originalFetch = globalThis.fetch;
-    consoleWarnSpy = spyOn(console, "warn").mockImplementation(() => {});
-    consoleErrorSpy = spyOn(console, "error").mockImplementation(() => {});
+    consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -101,7 +101,7 @@ describe("CharacterService", () => {
 
   describe("fetchCharacterDetails", () => {
     it("should fetch character details successfully", async () => {
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: true,
         status: 200,
         json: async () => mockCharacterDetails,
@@ -114,7 +114,7 @@ describe("CharacterService", () => {
     });
 
     it("should return null for 404 response", async () => {
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: false,
         status: 404,
         text: async () => "Not found",
@@ -126,7 +126,7 @@ describe("CharacterService", () => {
     });
 
     it("should throw error for non-404 error responses", async () => {
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: false,
         status: 500,
         statusText: "Internal Server Error",
@@ -139,7 +139,7 @@ describe("CharacterService", () => {
     });
 
     it("should use default locale when not provided", async () => {
-      const mockFetch = mock(async () => ({
+      const mockFetch = vi.fn(async () => ({
         ok: true,
         status: 200,
         json: async () => mockCharacterDetails,
@@ -155,7 +155,7 @@ describe("CharacterService", () => {
     });
 
     it("should handle network errors", async () => {
-      globalThis.fetch = mock(async () => {
+      globalThis.fetch = vi.fn(async () => {
         throw new Error("Network error");
       }) as typeof fetch;
 
@@ -178,7 +178,7 @@ describe("CharacterService", () => {
     };
 
     it("should fetch characters list successfully", async () => {
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: true,
         status: 200,
         json: async () => mockCharactersResponse,
@@ -192,7 +192,7 @@ describe("CharacterService", () => {
     });
 
     it("should pass search parameter", async () => {
-      const mockFetch = mock(async () => ({
+      const mockFetch = vi.fn(async () => ({
         ok: true,
         status: 200,
         json: async () => mockCharactersResponse,
@@ -208,7 +208,7 @@ describe("CharacterService", () => {
     });
 
     it("should pass games filter parameter", async () => {
-      const mockFetch = mock(async () => ({
+      const mockFetch = vi.fn(async () => ({
         ok: true,
         status: 200,
         json: async () => mockCharactersResponse,
@@ -224,7 +224,7 @@ describe("CharacterService", () => {
     });
 
     it("should pass roles filter parameter", async () => {
-      const mockFetch = mock(async () => ({
+      const mockFetch = vi.fn(async () => ({
         ok: true,
         status: 200,
         json: async () => mockCharactersResponse,
@@ -240,7 +240,7 @@ describe("CharacterService", () => {
     });
 
     it("should pass pagination parameters", async () => {
-      const mockFetch = mock(async () => ({
+      const mockFetch = vi.fn(async () => ({
         ok: true,
         status: 200,
         json: async () => mockCharactersResponse,
@@ -260,7 +260,7 @@ describe("CharacterService", () => {
         items: [mockCharacterSummary],
         pagination: mockCharactersResponse.pagination,
       };
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: true,
         status: 200,
         json: async () => itemsResponse,
@@ -273,7 +273,7 @@ describe("CharacterService", () => {
     });
 
     it("should throw error on failed fetch", async () => {
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: false,
         status: 500,
         statusText: "Internal Server Error",
@@ -287,7 +287,7 @@ describe("CharacterService", () => {
 
   describe("characterExists", () => {
     it("should return true when character exists", async () => {
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: true,
         status: 200,
         json: async () => mockCharacterDetails,
@@ -299,7 +299,7 @@ describe("CharacterService", () => {
     });
 
     it("should return false when character does not exist", async () => {
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: false,
         status: 404,
         text: async () => "Not found",
@@ -311,7 +311,7 @@ describe("CharacterService", () => {
     });
 
     it("should return false on error", async () => {
-      globalThis.fetch = mock(async () => {
+      globalThis.fetch = vi.fn(async () => {
         throw new Error("Network error");
       }) as typeof fetch;
 
@@ -321,7 +321,7 @@ describe("CharacterService", () => {
     });
 
     it("should use default locale when not provided", async () => {
-      const mockFetch = mock(async () => ({
+      const mockFetch = vi.fn(async () => ({
         ok: true,
         status: 200,
         json: async () => mockCharacterDetails,
@@ -339,7 +339,7 @@ describe("CharacterService", () => {
 
   describe("generateCharacterMetadata", () => {
     it("should generate metadata for existing character", async () => {
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: true,
         status: 200,
         json: async () => mockCharacterDetails,
@@ -353,7 +353,7 @@ describe("CharacterService", () => {
     });
 
     it("should generate metadata with main image", async () => {
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: true,
         status: 200,
         json: async () => mockCharacterDetails,
@@ -366,7 +366,7 @@ describe("CharacterService", () => {
 
     it("should generate French metadata when locale is fr", async () => {
       const characterWithoutDescription = { ...mockCharacterDetails, description: undefined };
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: true,
         status: 200,
         json: async () => characterWithoutDescription,
@@ -380,7 +380,7 @@ describe("CharacterService", () => {
 
     it("should generate English metadata when locale is en", async () => {
       const characterWithoutDescription = { ...mockCharacterDetails, description: undefined };
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: true,
         status: 200,
         json: async () => characterWithoutDescription,
@@ -394,7 +394,7 @@ describe("CharacterService", () => {
 
     it("should include primary game in description", async () => {
       const characterWithoutDescription = { ...mockCharacterDetails, description: undefined };
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: true,
         status: 200,
         json: async () => characterWithoutDescription,
@@ -406,7 +406,7 @@ describe("CharacterService", () => {
     });
 
     it("should return not found metadata when character does not exist", async () => {
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: false,
         status: 404,
         text: async () => "Not found",
@@ -418,7 +418,7 @@ describe("CharacterService", () => {
     });
 
     it("should return error metadata on fetch error", async () => {
-      globalThis.fetch = mock(async () => {
+      globalThis.fetch = vi.fn(async () => {
         throw new Error("Network error");
       }) as typeof fetch;
 
@@ -428,7 +428,7 @@ describe("CharacterService", () => {
     });
 
     it("should return French error metadata on fetch error with fr locale", async () => {
-      globalThis.fetch = mock(async () => {
+      globalThis.fetch = vi.fn(async () => {
         throw new Error("Network error");
       }) as typeof fetch;
 

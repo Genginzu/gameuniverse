@@ -1,15 +1,15 @@
-import { describe, it, expect, beforeEach, afterEach, mock, spyOn } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { IGDBService } from "../../../../src/lib/services/igdbService";
 
 describe("IGDBService", () => {
   let originalFetch: typeof fetch;
-  let consoleErrorSpy: ReturnType<typeof spyOn>;
-  let consoleWarnSpy: ReturnType<typeof spyOn>;
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
+  let consoleWarnSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     originalFetch = globalThis.fetch;
-    consoleErrorSpy = spyOn(console, "error").mockImplementation(() => {});
-    consoleWarnSpy = spyOn(console, "warn").mockImplementation(() => {});
+    consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
     IGDBService.clearTokenCache();
 
     // Set up environment variables
@@ -32,7 +32,7 @@ describe("IGDBService", () => {
         token_type: "bearer",
       };
 
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: true,
         json: async () => mockToken,
       })) as typeof fetch;
@@ -50,7 +50,7 @@ describe("IGDBService", () => {
         token_type: "bearer",
       };
 
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: true,
         json: async () => mockToken,
       })) as typeof fetch;
@@ -59,7 +59,7 @@ describe("IGDBService", () => {
       await IGDBService.getAccessToken();
 
       // Reset mock to track second call
-      const secondFetch = mock(async () => ({
+      const secondFetch = vi.fn(async () => ({
         ok: true,
         json: async () => ({ access_token: "new-token", expires_in: 3600 }),
       })) as typeof fetch;
@@ -79,7 +79,7 @@ describe("IGDBService", () => {
     });
 
     it("should throw error on failed token fetch", async () => {
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: false,
         status: 401,
         statusText: "Unauthorized",
@@ -96,7 +96,7 @@ describe("IGDBService", () => {
     beforeEach(() => {
       // Mock token fetch
       const mockToken = { access_token: "test-token", expires_in: 3600 };
-      globalThis.fetch = mock(async (url: string) => {
+      globalThis.fetch = vi.fn(async (url: string) => {
         if (url.includes("oauth2/token")) {
           return { ok: true, json: async () => mockToken };
         }
@@ -116,7 +116,7 @@ describe("IGDBService", () => {
         },
       ];
 
-      globalThis.fetch = mock(async (url: string) => {
+      globalThis.fetch = vi.fn(async (url: string) => {
         if (url.includes("oauth2/token")) {
           return { ok: true, json: async () => ({ access_token: "token", expires_in: 3600 }) };
         }
@@ -131,7 +131,7 @@ describe("IGDBService", () => {
     });
 
     it("should handle empty search results", async () => {
-      globalThis.fetch = mock(async (url: string) => {
+      globalThis.fetch = vi.fn(async (url: string) => {
         if (url.includes("oauth2/token")) {
           return { ok: true, json: async () => ({ access_token: "token", expires_in: 3600 }) };
         }
@@ -144,7 +144,7 @@ describe("IGDBService", () => {
     });
 
     it("should throw error on search failure", async () => {
-      globalThis.fetch = mock(async (url: string) => {
+      globalThis.fetch = vi.fn(async (url: string) => {
         if (url.includes("oauth2/token")) {
           return { ok: true, json: async () => ({ access_token: "token", expires_in: 3600 }) };
         }
@@ -165,7 +165,7 @@ describe("IGDBService", () => {
         cover: { image_id: "cover123" },
       };
 
-      globalThis.fetch = mock(async (url: string) => {
+      globalThis.fetch = vi.fn(async (url: string) => {
         if (url.includes("oauth2/token")) {
           return { ok: true, json: async () => ({ access_token: "token", expires_in: 3600 }) };
         }
@@ -179,7 +179,7 @@ describe("IGDBService", () => {
     });
 
     it("should return null when game not found", async () => {
-      globalThis.fetch = mock(async (url: string) => {
+      globalThis.fetch = vi.fn(async (url: string) => {
         if (url.includes("oauth2/token")) {
           return { ok: true, json: async () => ({ access_token: "token", expires_in: 3600 }) };
         }
@@ -192,7 +192,7 @@ describe("IGDBService", () => {
     });
 
     it("should throw error on API failure", async () => {
-      globalThis.fetch = mock(async (url: string) => {
+      globalThis.fetch = vi.fn(async (url: string) => {
         if (url.includes("oauth2/token")) {
           return { ok: true, json: async () => ({ access_token: "token", expires_in: 3600 }) };
         }
@@ -206,7 +206,7 @@ describe("IGDBService", () => {
       delete process.env.IGDB_CLIENT_ID;
 
       // Need to mock token fetch to pass
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: true,
         json: async () => ({ access_token: "token", expires_in: 3600 }),
       })) as typeof fetch;
@@ -225,7 +225,7 @@ describe("IGDBService", () => {
         count: 100,
       };
 
-      globalThis.fetch = mock(async (url: string) => {
+      globalThis.fetch = vi.fn(async (url: string) => {
         if (url.includes("oauth2/token")) {
           return { ok: true, json: async () => ({ access_token: "token", expires_in: 3600 }) };
         }
@@ -239,7 +239,7 @@ describe("IGDBService", () => {
     });
 
     it("should return null when no time to beat data", async () => {
-      globalThis.fetch = mock(async (url: string) => {
+      globalThis.fetch = vi.fn(async (url: string) => {
         if (url.includes("oauth2/token")) {
           return { ok: true, json: async () => ({ access_token: "token", expires_in: 3600 }) };
         }
@@ -252,7 +252,7 @@ describe("IGDBService", () => {
     });
 
     it("should return null on API failure", async () => {
-      globalThis.fetch = mock(async (url: string) => {
+      globalThis.fetch = vi.fn(async (url: string) => {
         if (url.includes("oauth2/token")) {
           return { ok: true, json: async () => ({ access_token: "token", expires_in: 3600 }) };
         }
@@ -289,7 +289,7 @@ describe("IGDBService", () => {
       ];
 
       let callCount = 0;
-      globalThis.fetch = mock(async (url: string) => {
+      globalThis.fetch = vi.fn(async (url: string) => {
         if (url.includes("oauth2/token")) {
           return { ok: true, json: async () => ({ access_token: "token", expires_in: 3600 }) };
         }
@@ -309,7 +309,7 @@ describe("IGDBService", () => {
     });
 
     it("should return empty array on API failure", async () => {
-      globalThis.fetch = mock(async (url: string) => {
+      globalThis.fetch = vi.fn(async (url: string) => {
         if (url.includes("oauth2/token")) {
           return { ok: true, json: async () => ({ access_token: "token", expires_in: 3600 }) };
         }
@@ -335,7 +335,7 @@ describe("IGDBService", () => {
         { id: 2, category: 2, description: "Language" },
       ];
 
-      globalThis.fetch = mock(async (url: string) => {
+      globalThis.fetch = vi.fn(async (url: string) => {
         if (url.includes("oauth2/token")) {
           return { ok: true, json: async () => ({ access_token: "token", expires_in: 3600 }) };
         }
@@ -348,7 +348,7 @@ describe("IGDBService", () => {
     });
 
     it("should return empty array on API failure", async () => {
-      globalThis.fetch = mock(async (url: string) => {
+      globalThis.fetch = vi.fn(async (url: string) => {
         if (url.includes("oauth2/token")) {
           return { ok: true, json: async () => ({ access_token: "token", expires_in: 3600 }) };
         }
@@ -368,7 +368,7 @@ describe("IGDBService", () => {
         { id: 2, name: "Game - GOTY Edition", slug: "game-goty", version_title: "GOTY" },
       ];
 
-      globalThis.fetch = mock(async (url: string) => {
+      globalThis.fetch = vi.fn(async (url: string) => {
         if (url.includes("oauth2/token")) {
           return { ok: true, json: async () => ({ access_token: "token", expires_in: 3600 }) };
         }
@@ -382,7 +382,7 @@ describe("IGDBService", () => {
     });
 
     it("should return empty array when no versions found", async () => {
-      globalThis.fetch = mock(async (url: string) => {
+      globalThis.fetch = vi.fn(async (url: string) => {
         if (url.includes("oauth2/token")) {
           return { ok: true, json: async () => ({ access_token: "token", expires_in: 3600 }) };
         }
@@ -395,7 +395,7 @@ describe("IGDBService", () => {
     });
 
     it("should return empty array on API failure", async () => {
-      globalThis.fetch = mock(async (url: string) => {
+      globalThis.fetch = vi.fn(async (url: string) => {
         if (url.includes("oauth2/token")) {
           return { ok: true, json: async () => ({ access_token: "token", expires_in: 3600 }) };
         }
@@ -429,7 +429,7 @@ describe("IGDBService", () => {
   describe("clearTokenCache", () => {
     it("should clear the token cache", async () => {
       // First, populate the cache
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: true,
         json: async () => ({ access_token: "cached-token", expires_in: 3600 }),
       })) as typeof fetch;
@@ -450,7 +450,7 @@ describe("IGDBService", () => {
     });
 
     it("should return cached token after fetch", async () => {
-      globalThis.fetch = mock(async () => ({
+      globalThis.fetch = vi.fn(async () => ({
         ok: true,
         json: async () => ({ access_token: "test-token", expires_in: 3600 }),
       })) as typeof fetch;

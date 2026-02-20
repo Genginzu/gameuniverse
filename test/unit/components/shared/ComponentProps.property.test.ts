@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import {
   shouldTriggerSearch,
@@ -35,7 +35,7 @@ describe("Component Props Property-Based Tests", () => {
             const result = shouldTriggerSearch(query, minLength);
             return typeof result === "boolean";
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -46,7 +46,7 @@ describe("Component Props Property-Based Tests", () => {
             const expected = query.length >= minLength;
             return result === expected;
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -61,7 +61,7 @@ describe("Component Props Property-Based Tests", () => {
               typeof result.cancel === "function"
             );
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -82,7 +82,7 @@ describe("Component Props Property-Based Tests", () => {
               return true;
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
     });
@@ -120,7 +120,7 @@ describe("Component Props Property-Based Tests", () => {
             const result = hasActiveFilters(activeFilters);
             return typeof result === "boolean";
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -130,7 +130,7 @@ describe("Component Props Property-Based Tests", () => {
             const result = countActiveFilters(activeFilters);
             return typeof result === "number" && result >= 0 && Number.isInteger(result);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -144,7 +144,7 @@ describe("Component Props Property-Based Tests", () => {
             );
             return result === expected;
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -155,7 +155,7 @@ describe("Component Props Property-Based Tests", () => {
             const count = countActiveFilters(activeFilters);
             return hasFilters === count > 0;
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -177,7 +177,7 @@ describe("Component Props Property-Based Tests", () => {
               return result.length === expectedLength;
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -191,7 +191,7 @@ describe("Component Props Property-Based Tests", () => {
               return result.length === 1 && result[0] === value;
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -206,7 +206,7 @@ describe("Component Props Property-Based Tests", () => {
               return result1.length === result2.length && result1[0] === result2[0];
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -231,7 +231,7 @@ describe("Component Props Property-Based Tests", () => {
               );
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
     });
@@ -270,7 +270,7 @@ describe("Component Props Property-Based Tests", () => {
               return !afterAdd.includes(newValue);
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
     });

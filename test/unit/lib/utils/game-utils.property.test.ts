@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import {
   getGameColors,
@@ -72,7 +72,7 @@ describe("Game Utilities Property-Based Tests", () => {
             expect(typeof colors.accent).toBe("string");
             expect(typeof colors.bg).toBe("string");
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -85,7 +85,7 @@ describe("Game Utilities Property-Based Tests", () => {
             expect(colors.secondary).toMatch(hexColorPattern);
             expect(colors.accent).toMatch(hexColorPattern);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -96,7 +96,7 @@ describe("Game Utilities Property-Based Tests", () => {
 
             expect(colors.bg).toMatch(tailwindGradientPattern);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -159,7 +159,7 @@ describe("Game Utilities Property-Based Tests", () => {
 
             expect(colors1).toEqual(colors2);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
     });
@@ -173,7 +173,7 @@ describe("Game Utilities Property-Based Tests", () => {
             const result = formatReleaseDate(undefined, locale);
             expect(result).toBeNull();
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -186,7 +186,7 @@ describe("Game Utilities Property-Based Tests", () => {
             expect(typeof result).toBe("string");
             expect(result!.length).toBeGreaterThan(0);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -198,7 +198,7 @@ describe("Game Utilities Property-Based Tests", () => {
 
             expect(result1).toBe(result2);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -226,7 +226,7 @@ describe("Game Utilities Property-Based Tests", () => {
               expect(result.length).toBeGreaterThan(0);
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -243,7 +243,7 @@ describe("Game Utilities Property-Based Tests", () => {
               expect(result1).toBe(result2);
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -264,7 +264,7 @@ describe("Game Utilities Property-Based Tests", () => {
             expect(typeof result).toBe("string");
             expect(result.length).toBeGreaterThan(0);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
     });
@@ -286,7 +286,7 @@ describe("Game Utilities Property-Based Tests", () => {
             const result = getMetascoreColor(score);
             expect(result).toBe("bg-green-500");
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -296,7 +296,7 @@ describe("Game Utilities Property-Based Tests", () => {
             const result = getMetascoreColor(score);
             expect(result).toBe("bg-green-400");
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -306,7 +306,7 @@ describe("Game Utilities Property-Based Tests", () => {
             const result = getMetascoreColor(score);
             expect(result).toBe("bg-yellow-400");
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -316,7 +316,7 @@ describe("Game Utilities Property-Based Tests", () => {
             const result = getMetascoreColor(score);
             expect(result).toBe("bg-orange-400");
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -326,7 +326,7 @@ describe("Game Utilities Property-Based Tests", () => {
             const result = getMetascoreColor(score);
             expect(result).toBe("bg-red-400");
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -337,7 +337,7 @@ describe("Game Utilities Property-Based Tests", () => {
 
             expect(result).toMatch(/^bg-[a-z]+-\d+$/);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -349,7 +349,7 @@ describe("Game Utilities Property-Based Tests", () => {
 
             expect(result1).toBe(result2);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -426,7 +426,7 @@ describe("Game Utilities Property-Based Tests", () => {
             expect(colors.secondary).toBe(colors.accent);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });

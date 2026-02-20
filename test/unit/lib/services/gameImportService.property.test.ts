@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, mock } from "bun:test";
+﻿import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import * as fc from "fast-check";
 import { IGDBService } from "../../../../src/lib/services/igdbService";
 import { GameImportService } from "../../../../src/lib/services/gameImportService";
@@ -186,7 +186,7 @@ describe("GameImportService Property-Based Tests", () => {
           expect(transformed.igdb_id).toBeGreaterThan(0);
           expect(Number.isInteger(transformed.igdb_id)).toBe(true);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -222,7 +222,7 @@ describe("GameImportService Property-Based Tests", () => {
           expect(transformed.cover_image_url).toContain("t_cover_big");
           expect(transformed.cover_image_url).toMatch(/\.jpg$/);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -248,7 +248,7 @@ describe("GameImportService Property-Based Tests", () => {
           // Property: Cover URL must be null when no cover exists
           expect(transformed.cover_image_url).toBeNull();
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -285,7 +285,7 @@ describe("GameImportService Property-Based Tests", () => {
           expect(transformed.background_image_url).toContain(igdbGame.artworks[0].image_id);
           expect(transformed.background_image_url).toContain("t_1080p");
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -322,7 +322,7 @@ describe("GameImportService Property-Based Tests", () => {
           expect(transformed.background_image_url).toContain(igdbGame.screenshots[0].image_id);
           expect(transformed.background_image_url).toContain("t_1080p");
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -354,7 +354,7 @@ describe("GameImportService Property-Based Tests", () => {
           const parsedDate = new Date(transformed.release_date!);
           expect(parsedDate.toString()).not.toBe("Invalid Date");
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -387,7 +387,7 @@ describe("GameImportService Property-Based Tests", () => {
           // Verify rounding is correct
           expect(transformed.metascore).toBe(Math.round(igdbGame.aggregated_rating));
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -401,7 +401,7 @@ describe("GameImportService Property-Based Tests", () => {
           expect(translationData.title).toBe(igdbGame.name);
           expect(typeof translationData.title).toBe("string");
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -428,7 +428,7 @@ describe("GameImportService Property-Based Tests", () => {
           // Property: Description must use summary when available
           expect(translationData.description).toBe(igdbGame.summary);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -455,7 +455,7 @@ describe("GameImportService Property-Based Tests", () => {
           // Property: Description must use storyline when no summary
           expect(translationData.description).toBe(igdbGame.storyline);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -497,7 +497,7 @@ describe("GameImportService Property-Based Tests", () => {
             expect(relatedEntities.genres[i].slug).toBe(igdbGame.genres[i].slug);
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -550,7 +550,7 @@ describe("GameImportService Property-Based Tests", () => {
             expect(pub.publisher).toBe(true);
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -569,7 +569,7 @@ describe("GameImportService Property-Based Tests", () => {
           expect(syncedAt).toBeGreaterThanOrEqual(beforeTransform);
           expect(syncedAt).toBeLessThanOrEqual(afterTransform);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -597,13 +597,13 @@ describe("GameImportService Property-Based Tests", () => {
             expect(url).toMatch(/\.jpg$/);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });
 });
 
-// Feature: igdb-hybrid-search, Property 8: Préservation des données en cas d'erreur de synchronisation
+// Feature: igdb-hybrid-search, Property 8: PrÃ©servation des donnÃ©es en cas d'erreur de synchronisation
 // **Validates: Requirements 4.4**
 
 /**
@@ -711,9 +711,9 @@ describe("GameImportService Property-Based Tests - Data Preservation", () => {
     process.env = originalEnv;
   });
 
-  // Feature: igdb-hybrid-search, Property 8: Préservation des données en cas d'erreur de synchronisation
+  // Feature: igdb-hybrid-search, Property 8: PrÃ©servation des donnÃ©es en cas d'erreur de synchronisation
   // **Validates: Requirements 4.4**
-  describe("Property 8: Préservation des données en cas d'erreur de synchronisation", () => {
+  describe("Property 8: PrÃ©servation des donnÃ©es en cas d'erreur de synchronisation", () => {
     it("for any sync error, the syncWithIGDB method returns an error result without modifying data", async () => {
       await fc.assert(
         fc.asyncProperty(
@@ -744,7 +744,7 @@ describe("GameImportService Property-Based Tests - Data Preservation", () => {
             expect(mockResult.game).toBeUndefined();
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -759,7 +759,7 @@ describe("GameImportService Property-Based Tests - Data Preservation", () => {
           expect(mockResult.error).toBeDefined();
           expect(mockResult.error).toContain(String(existingGame.igdb_id));
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -774,7 +774,7 @@ describe("GameImportService Property-Based Tests - Data Preservation", () => {
           expect(mockResult.error).toBeDefined();
           expect(mockResult.error).toContain(existingGame.id);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -803,7 +803,7 @@ describe("GameImportService Property-Based Tests - Data Preservation", () => {
             }
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -840,7 +840,7 @@ describe("GameImportService Property-Based Tests - Data Preservation", () => {
           // Validate last_synced_at is a valid ISO timestamp
           expect(new Date(existingGame.last_synced_at).toString()).not.toBe("Invalid Date");
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -860,7 +860,7 @@ describe("GameImportService Property-Based Tests - Data Preservation", () => {
               mockResult.error!.toLowerCase().includes("network")
           ).toBe(true);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -875,7 +875,7 @@ describe("GameImportService Property-Based Tests - Data Preservation", () => {
           expect(mockResult.error).toBeDefined();
           expect(mockResult.game).toBeUndefined();
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });

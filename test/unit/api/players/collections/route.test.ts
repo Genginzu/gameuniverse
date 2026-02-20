@@ -1,20 +1,21 @@
-import { describe, it, expect, beforeEach, mock } from "bun:test";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { NextRequest } from "next/server";
 
-// Mock Supabase
-const mockGetUser = mock(() => Promise.resolve({ data: { user: null }, error: null }));
-const mockSupabase = { auth: { getUser: mockGetUser } };
-
-mock.module("../../../../../src/lib/supabase-server", () => ({
-  createServerClient: mock(() => Promise.resolve(mockSupabase)),
-  createRouteHandlerClient: mock(() => Promise.resolve(mockSupabase)),
+// vi.hoisted ensures mock fns are available when vi.mock factories run
+const { mockGetUser, mockFetchCollections, mockCreateCollection } = vi.hoisted(() => ({
+  mockGetUser: vi.fn(() => Promise.resolve({ data: { user: null }, error: null })),
+  mockFetchCollections: vi.fn(() => Promise.resolve([])),
+  mockCreateCollection: vi.fn(() => Promise.resolve({ id: "col-1", slug: "my-collection" })),
 }));
 
-// Mock service functions
-const mockFetchCollections = mock(() => Promise.resolve([]));
-const mockCreateCollection = mock(() => Promise.resolve({ id: "col-1", slug: "my-collection" }));
+const mockSupabase = { auth: { getUser: mockGetUser } };
 
-mock.module("../../../../../src/lib/services/collectionService", () => ({
+vi.mock("../../../../../src/lib/supabase-server", () => ({
+  createServerClient: vi.fn(() => Promise.resolve(mockSupabase)),
+  createRouteHandlerClient: vi.fn(() => Promise.resolve(mockSupabase)),
+}));
+
+vi.mock("../../../../../src/lib/services/collectionService", () => ({
   fetchCollections: mockFetchCollections,
   createCollection: mockCreateCollection,
 }));
@@ -60,11 +61,9 @@ describe("/api/players/[id]/collections", () => {
     it("should return collections for unauthenticated user (public only)", async () => {
       mockUnauthenticated();
       mockFetchCollections.mockResolvedValue(SAMPLE_COLLECTIONS);
-
       const req = new NextRequest("http://localhost/api/players/player-123/collections");
       const res = await GET(req, makeParams());
       const body = await res.json();
-
       expect(res.status).toBe(200);
       expect(body.collections).toEqual(SAMPLE_COLLECTIONS);
       expect(mockFetchCollections).toHaveBeenCalledWith(PLAYER_ID, undefined, "fr");
@@ -73,10 +72,8 @@ describe("/api/players/[id]/collections", () => {
     it("should pass currentUserId when authenticated", async () => {
       mockAuthenticatedUser(PLAYER_ID);
       mockFetchCollections.mockResolvedValue(SAMPLE_COLLECTIONS);
-
       const req = new NextRequest("http://localhost/api/players/player-123/collections");
       const res = await GET(req, makeParams());
-
       expect(res.status).toBe(200);
       expect(mockFetchCollections).toHaveBeenCalledWith(PLAYER_ID, PLAYER_ID, "fr");
     });
@@ -84,10 +81,8 @@ describe("/api/players/[id]/collections", () => {
     it("should pass locale query parameter", async () => {
       mockUnauthenticated();
       mockFetchCollections.mockResolvedValue([]);
-
       const req = new NextRequest("http://localhost/api/players/player-123/collections?locale=en");
       const res = await GET(req, makeParams());
-
       expect(res.status).toBe(200);
       expect(mockFetchCollections).toHaveBeenCalledWith(PLAYER_ID, undefined, "en");
     });
@@ -95,10 +90,8 @@ describe("/api/players/[id]/collections", () => {
     it("should return 500 on unexpected error", async () => {
       mockUnauthenticated();
       mockFetchCollections.mockRejectedValue(new Error("DB down"));
-
       const req = new NextRequest("http://localhost/api/players/player-123/collections");
       const res = await GET(req, makeParams());
-
       expect(res.status).toBe(500);
       expect((await res.json()).error).toBe("Internal server error");
     });
@@ -107,26 +100,22 @@ describe("/api/players/[id]/collections", () => {
   describe("POST", () => {
     it("should return 401 when not authenticated", async () => {
       mockUnauthenticated();
-
       const req = new NextRequest("http://localhost/api/players/player-123/collections", {
         method: "POST",
         body: JSON.stringify({ name: "Ma collection" }),
       });
       const res = await POST(req, makeParams());
-
       expect(res.status).toBe(401);
       expect((await res.json()).error).toBe("Unauthorized");
     });
 
     it("should return 403 when user is not the player", async () => {
       mockAuthenticatedUser(OTHER_USER_ID);
-
       const req = new NextRequest("http://localhost/api/players/player-123/collections", {
         method: "POST",
         body: JSON.stringify({ name: "Ma collection" }),
       });
       const res = await POST(req, makeParams());
-
       expect(res.status).toBe(403);
       expect((await res.json()).error).toBe("Forbidden");
     });
@@ -134,14 +123,12 @@ describe("/api/players/[id]/collections", () => {
     it("should create a collection with valid input", async () => {
       mockAuthenticatedUser(PLAYER_ID);
       mockCreateCollection.mockResolvedValue({ id: "col-new", slug: "ma-collection" });
-
       const req = new NextRequest("http://localhost/api/players/player-123/collections", {
         method: "POST",
         body: JSON.stringify({ name: "Ma collection", description: "Une description" }),
       });
       const res = await POST(req, makeParams());
       const body = await res.json();
-
       expect(res.status).toBe(201);
       expect(body.collection).toEqual({ id: "col-new", slug: "ma-collection" });
       expect(mockCreateCollection).toHaveBeenCalledWith(PLAYER_ID, {
@@ -153,38 +140,32 @@ describe("/api/players/[id]/collections", () => {
 
     it("should return 400 for invalid input (empty name)", async () => {
       mockAuthenticatedUser(PLAYER_ID);
-
       const req = new NextRequest("http://localhost/api/players/player-123/collections", {
         method: "POST",
         body: JSON.stringify({ name: "" }),
       });
       const res = await POST(req, makeParams());
-
       expect(res.status).toBe(400);
     });
 
     it("should return 400 for whitespace-only name", async () => {
       mockAuthenticatedUser(PLAYER_ID);
-
       const req = new NextRequest("http://localhost/api/players/player-123/collections", {
         method: "POST",
         body: JSON.stringify({ name: "   " }),
       });
       const res = await POST(req, makeParams());
-
       expect(res.status).toBe(400);
     });
 
     it("should return 500 on unexpected error", async () => {
       mockAuthenticatedUser(PLAYER_ID);
       mockCreateCollection.mockRejectedValue(new Error("DB down"));
-
       const req = new NextRequest("http://localhost/api/players/player-123/collections", {
         method: "POST",
         body: JSON.stringify({ name: "Ma collection" }),
       });
       const res = await POST(req, makeParams());
-
       expect(res.status).toBe(500);
       expect((await res.json()).error).toBe("Internal server error");
     });

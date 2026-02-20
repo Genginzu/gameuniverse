@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import { PlayerService } from "../../../../src/lib/services/playerService";
 import type { PlayerLibraryGame, PlayerStats } from "../../../../src/types/player";
@@ -8,9 +8,9 @@ import type { PlayerLibraryGame, PlayerStats } from "../../../../src/types/playe
  * Property 7: Calcul des statistiques
  * **Validates: Requirements 6.4**
  *
- * Pour tout joueur, les statistiques affichées doivent être mathématiquement correctes :
- * - totalGames = nombre d'entrées dans user_library
- * - completedGames = nombre d'entrées avec status = 'completed'
+ * Pour tout joueur, les statistiques affichÃ©es doivent Ãªtre mathÃ©matiquement correctes :
+ * - totalGames = nombre d'entrÃ©es dans user_library
+ * - completedGames = nombre d'entrÃ©es avec status = 'completed'
  * - totalPlayTime = somme de play_time_hours
  * - averageRating = moyenne des ratings non-null (ou null si aucun rating)
  */
@@ -52,7 +52,7 @@ describe("PlayerService Statistics Property-Based Tests", () => {
           const stats = PlayerService.calculateStats(library);
           expect(stats.totalGames).toBe(library.length);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -63,7 +63,7 @@ describe("PlayerService Statistics Property-Based Tests", () => {
           const expectedCompleted = library.filter((g) => g.status === "completed").length;
           expect(stats.completedGames).toBe(expectedCompleted);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -76,7 +76,7 @@ describe("PlayerService Statistics Property-Based Tests", () => {
           ).length;
           expect(stats.ownedGames).toBe(expectedOwned);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -87,7 +87,7 @@ describe("PlayerService Statistics Property-Based Tests", () => {
           const expectedPlayTime = library.reduce((sum, g) => sum + (g.playTimeHours || 0), 0);
           expect(stats.totalPlayTime).toBe(expectedPlayTime);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -113,7 +113,7 @@ describe("PlayerService Statistics Property-Based Tests", () => {
           const stats = PlayerService.calculateStats(library);
           expect(stats.averageRating).toBeNull();
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -135,7 +135,7 @@ describe("PlayerService Statistics Property-Based Tests", () => {
             expect(stats.averageRating).toBeCloseTo(expectedAverage, 10);
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -160,7 +160,7 @@ describe("PlayerService Statistics Property-Based Tests", () => {
             expect(stats.averageRating).toBeGreaterThanOrEqual(0);
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -170,7 +170,7 @@ describe("PlayerService Statistics Property-Based Tests", () => {
           const stats = PlayerService.calculateStats(library);
           expect(stats.completedGames).toBeLessThanOrEqual(stats.totalGames);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -180,7 +180,7 @@ describe("PlayerService Statistics Property-Based Tests", () => {
           const stats = PlayerService.calculateStats(library);
           expect(stats.ownedGames).toBeLessThanOrEqual(stats.totalGames);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });

@@ -9,7 +9,7 @@
  * and no character whose name contains the term should be excluded.
  */
 
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 
 // Pure search filter function matching the API's ilike behavior

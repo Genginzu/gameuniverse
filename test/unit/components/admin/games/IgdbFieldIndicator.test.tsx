@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 import { IgdbFieldIndicator } from "../../../../../src/components/admin/games/IgdbFieldIndicator";
 
 describe("IgdbFieldIndicator", () => {

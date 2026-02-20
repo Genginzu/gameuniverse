@@ -1,4 +1,4 @@
-import { describe, it, expect, mock, beforeEach, afterEach } from "bun:test";
+﻿import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import * as fc from "fast-check";
 import {
   BaseService,
@@ -93,7 +93,7 @@ describe("BaseService Property-Based Tests", () => {
 
       for (const [identifier, locale, mockEntity, shouldExist] of testCases) {
         // Set up mock before each test case
-        global.fetch = mock(() =>
+        global.fetch = vi.fn(() =>
           Promise.resolve({
             ok: shouldExist,
             status: shouldExist ? 200 : 404,
@@ -134,7 +134,7 @@ describe("BaseService Property-Based Tests", () => {
           pagination,
         };
 
-        global.fetch = mock(() =>
+        global.fetch = vi.fn(() =>
           Promise.resolve({
             ok: true,
             status: 200,
@@ -164,7 +164,7 @@ describe("BaseService Property-Based Tests", () => {
       );
 
       for (const [identifier, locale, mockEntity, shouldExist] of testCases) {
-        global.fetch = mock(() =>
+        global.fetch = vi.fn(() =>
           Promise.resolve({
             ok: shouldExist,
             status: shouldExist ? 200 : 404,
@@ -188,7 +188,7 @@ describe("BaseService Property-Based Tests", () => {
       );
 
       for (const [identifier, locale, mockEntity, shouldExist] of testCases) {
-        global.fetch = mock(() =>
+        global.fetch = vi.fn(() =>
           Promise.resolve({
             ok: shouldExist,
             status: shouldExist ? 200 : 404,
@@ -219,7 +219,7 @@ describe("BaseService Property-Based Tests", () => {
       const testCases = fc.sample(fc.tuple(identifierGenerator, localeGenerator), 50);
 
       for (const [identifier, locale] of testCases) {
-        global.fetch = mock(() => Promise.reject(new Error("Network error")));
+        global.fetch = vi.fn(() => Promise.reject(new Error("Network error")));
 
         await expect(service.fetchDetails(identifier, locale)).rejects.toThrow();
       }
@@ -229,7 +229,7 @@ describe("BaseService Property-Based Tests", () => {
       const testCases = fc.sample(fc.tuple(identifierGenerator, localeGenerator), 50);
 
       for (const [identifier, locale] of testCases) {
-        global.fetch = mock(() => Promise.reject(new Error("Network error")));
+        global.fetch = vi.fn(() => Promise.reject(new Error("Network error")));
 
         const result = await service.exists(identifier, locale);
         expect(result).toBe(false);
@@ -240,7 +240,7 @@ describe("BaseService Property-Based Tests", () => {
       const testCases = fc.sample(fc.tuple(identifierGenerator, localeGenerator), 50);
 
       for (const [identifier, locale] of testCases) {
-        global.fetch = mock(() => Promise.reject(new Error("Network error")));
+        global.fetch = vi.fn(() => Promise.reject(new Error("Network error")));
 
         const result = await service.generateMetadata(identifier, locale);
 
@@ -259,7 +259,7 @@ describe("BaseService Property-Based Tests", () => {
 
       for (const [identifier, locale, mockEntity] of testCases) {
         let capturedUrl = "";
-        global.fetch = mock((url: string) => {
+        global.fetch = vi.fn((url: string) => {
           capturedUrl = url;
           return Promise.resolve({
             ok: true,
@@ -288,7 +288,7 @@ describe("BaseService Property-Based Tests", () => {
 
       for (const options of testCases) {
         let capturedUrl = "";
-        global.fetch = mock((url: string) => {
+        global.fetch = vi.fn((url: string) => {
           capturedUrl = url;
           return Promise.resolve({
             ok: true,

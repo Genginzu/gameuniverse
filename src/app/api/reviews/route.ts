@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { reviewSchema } from "@/lib/validations/review";
-import type { Review, ReviewsResponse } from "@/types/review";
+import type { Review, ReviewsResponse, VoteType } from "@/types/review";
+import {
+  fetchVoteCountsMap,
+  fetchUserVotesMap,
+  enrichReviewsWithVotes,
+} from "@/lib/utils/reviewVoteQueries";
 
 interface ReviewRow {
   id: string;
@@ -88,7 +93,8 @@ async function fetchProfilesMap(
  * GET /api/reviews?gameId=<uuid>
  *
  * Returns all reviews for a game, sorted by date descending,
- * with player profiles, average rating, and whether the current user has reviewed.
+ * with player profiles, vote counts, user vote, average rating,
+ * and whether the current user has reviewed.
  */
 export async function GET(request: NextRequest): Promise<NextResponse> {
   try {
@@ -119,7 +125,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     if (reviewsError) {
       if (reviewsError.code === "PGRST205") {
-        // Table not found — migration not applied yet
         const emptyResponse: ReviewsResponse = {
           reviews: [],
           averageRating: null,
@@ -133,23 +138,31 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     }
 
     const reviewRows = (rows ?? []) as ReviewRow[];
+    const reviewIds = reviewRows.map((r) => r.id);
 
-    // Fetch profiles for all review authors
+    // Fetch profiles and vote data in parallel
     const userIds = [...new Set(reviewRows.map((r) => r.user_id))];
-    const profilesMap = await fetchProfilesMap(supabase, userIds);
-
-    // Transform rows to Review objects
-    const reviews: Review[] = reviewRows.map((row) => toReview(row, profilesMap));
-
-    // Check if current user has already reviewed
     const {
       data: { user },
     } = await supabase.auth.getUser();
+
+    const [profilesMap, voteCountsMap, userVotesMap] = await Promise.all([
+      fetchProfilesMap(supabase, userIds),
+      fetchVoteCountsMap(supabase, reviewIds),
+      user
+        ? fetchUserVotesMap(supabase, user.id, reviewIds)
+        : Promise.resolve(new Map<string, VoteType>()),
+    ]);
+
+    // Transform rows to Review objects, then enrich with vote data
+    const reviews: Review[] = reviewRows.map((row) => toReview(row, profilesMap));
+    const reviewsWithVotes = enrichReviewsWithVotes(reviews, voteCountsMap, userVotesMap);
+
     const userHasReviewed = user ? reviews.some((r) => r.userId === user.id) : false;
     const userReview = user ? (reviews.find((r) => r.userId === user.id) ?? null) : null;
 
     // Sort: user's review first, then by date descending
-    const sortedReviews = sortReviewsByDateDesc(reviews);
+    const sortedReviews = sortReviewsByDateDesc(reviewsWithVotes);
     if (user) {
       const userIdx = sortedReviews.findIndex((r) => r.userId === user.id);
       if (userIdx > 0) {

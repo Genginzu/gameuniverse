@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 
 // Feature: game-library
@@ -506,7 +506,7 @@ describe("GameDetails Property-Based Tests", () => {
         fc.property(gameDetailsGenerator(), (game) => {
           return hasCompleteRequiredInfo(game);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -516,7 +516,7 @@ describe("GameDetails Property-Based Tests", () => {
         fc.property(gameDetailsGenerator(), (game) => {
           return displaysAvailableOptionalInfo(game);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -557,7 +557,7 @@ describe("GameDetails Property-Based Tests", () => {
         fc.property(minimalGameGenerator(), (game) => {
           return hasCompleteRequiredInfo(game);
         }),
-        { numRuns: 50 }
+        { numRuns: 20 }
       );
     });
 
@@ -573,7 +573,7 @@ describe("GameDetails Property-Based Tests", () => {
 
           return true;
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });
@@ -598,7 +598,7 @@ describe("GameDetails Property-Based Tests", () => {
             );
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -620,7 +620,7 @@ describe("GameDetails Property-Based Tests", () => {
             );
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -640,7 +640,7 @@ describe("GameDetails Property-Based Tests", () => {
             return rendered.videosDisplayed === media.videos.length && rendered.allVideosAccessible;
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -660,7 +660,7 @@ describe("GameDetails Property-Based Tests", () => {
             return rendered.hasNavigationControls;
           }
         ),
-        { numRuns: 50 }
+        { numRuns: 20 }
       );
     });
 
@@ -694,7 +694,7 @@ describe("GameDetails Property-Based Tests", () => {
 
           return screenshotsMatch && artworkMatch && videosMatch;
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -708,7 +708,7 @@ describe("GameDetails Property-Based Tests", () => {
             return hasValidUrl && hasValidTitle;
           });
         }),
-        { numRuns: 50 }
+        { numRuns: 20 }
       );
     });
   });

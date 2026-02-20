@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 
 // Since Bun's mock.module doesn't work reliably with React hooks and Supabase client,
 // we test the useAuth hook logic through unit tests of its expected behavior.

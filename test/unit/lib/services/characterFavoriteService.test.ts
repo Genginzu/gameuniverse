@@ -1,21 +1,21 @@
-import { describe, it, expect, beforeEach, afterEach, mock, spyOn } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 
 // Mock Supabase client setup
-const mockInsert = mock(() => Promise.resolve({ error: null }));
-const mockRpc = mock(() => Promise.resolve({ data: null, error: null }));
+const mockInsert = vi.fn(() => Promise.resolve({ error: null }));
+const mockRpc = vi.fn(() => Promise.resolve({ data: null, error: null }));
 
 const mockDeleteChain = {
-  eq: mock(() => mockDeleteChain),
-  delete: mock(() => mockDeleteChain),
+  eq: vi.fn(() => mockDeleteChain),
+  delete: vi.fn(() => mockDeleteChain),
 };
 
 const mockSelectChain = {
-  select: mock(() => mockSelectChain),
-  eq: mock(() => mockSelectChain),
-  order: mock(() => Promise.resolve({ data: [], error: null })),
+  select: vi.fn(() => mockSelectChain),
+  eq: vi.fn(() => mockSelectChain),
+  order: vi.fn(() => Promise.resolve({ data: [], error: null })),
 };
 
-const mockFrom = mock((table: string) => {
+const mockFrom = vi.fn((table: string) => {
   // Return appropriate chain based on usage
   return {
     insert: mockInsert,
@@ -29,21 +29,21 @@ const mockSupabaseClient = {
   rpc: mockRpc,
 };
 
-mock.module("@/lib/supabase-server", () => ({
-  createServerClient: mock(async () => mockSupabaseClient),
-  createRouteHandlerClient: mock(async () => mockSupabaseClient),
+vi.mock("@/lib/supabase-server", () => ({
+  createServerClient: vi.fn(async () => mockSupabaseClient),
+  createRouteHandlerClient: vi.fn(async () => mockSupabaseClient),
 }));
 
 // Import after mocking
 import { CharacterFavoriteService } from "../../../../src/lib/services/characterFavoriteService";
 
 describe("CharacterFavoriteService", () => {
-  let consoleWarnSpy: ReturnType<typeof spyOn>;
-  let consoleErrorSpy: ReturnType<typeof spyOn>;
+  let consoleWarnSpy: ReturnType<typeof vi.spyOn>;
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    consoleWarnSpy = spyOn(console, "warn").mockImplementation(() => {});
-    consoleErrorSpy = spyOn(console, "error").mockImplementation(() => {});
+    consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     mockInsert.mockClear();
     mockRpc.mockClear();
     mockFrom.mockClear();
@@ -91,7 +91,7 @@ describe("CharacterFavoriteService", () => {
     it("should delete a favorite successfully", async () => {
       // Setup the delete chain to resolve without error
       mockDeleteChain.eq.mockReturnValueOnce({
-        eq: mock(() => Promise.resolve({ error: null })),
+        eq: vi.fn(() => Promise.resolve({ error: null })),
       });
 
       await CharacterFavoriteService.removeFavorite("char-1", "user-1");
@@ -101,7 +101,7 @@ describe("CharacterFavoriteService", () => {
 
     it("should handle PGRST205 gracefully", async () => {
       mockDeleteChain.eq.mockReturnValueOnce({
-        eq: mock(() =>
+        eq: vi.fn(() =>
           Promise.resolve({ error: { code: "PGRST205", message: "Table not found" } })
         ),
       });
@@ -238,9 +238,9 @@ describe("CharacterFavoriteService", () => {
 
     it("should return transformed favorites", async () => {
       const query = {
-        select: mock(() => query),
-        eq: mock(() => query),
-        order: mock(() => Promise.resolve({ data: mockFavoriteRows, error: null })),
+        select: vi.fn(() => query),
+        eq: vi.fn(() => query),
+        order: vi.fn(() => Promise.resolve({ data: mockFavoriteRows, error: null })),
       };
       mockFrom.mockReturnValueOnce(query);
 
@@ -257,9 +257,9 @@ describe("CharacterFavoriteService", () => {
 
     it("should return empty array on PGRST205", async () => {
       const query = {
-        select: mock(() => query),
-        eq: mock(() => query),
-        order: mock(() =>
+        select: vi.fn(() => query),
+        eq: vi.fn(() => query),
+        order: vi.fn(() =>
           Promise.resolve({ data: null, error: { code: "PGRST205", message: "Table not found" } })
         ),
       };
@@ -276,9 +276,9 @@ describe("CharacterFavoriteService", () => {
         { character_id: "char-deleted", created_at: "2024-01-10T00:00:00Z", characters: null },
       ];
       const query = {
-        select: mock(() => query),
-        eq: mock(() => query),
-        order: mock(() => Promise.resolve({ data: rowsWithNull, error: null })),
+        select: vi.fn(() => query),
+        eq: vi.fn(() => query),
+        order: vi.fn(() => Promise.resolve({ data: rowsWithNull, error: null })),
       };
       mockFrom.mockReturnValueOnce(query);
 
@@ -308,9 +308,9 @@ describe("CharacterFavoriteService", () => {
         },
       ];
       const query = {
-        select: mock(() => query),
-        eq: mock(() => query),
-        order: mock(() => Promise.resolve({ data: rowsNoPrimary, error: null })),
+        select: vi.fn(() => query),
+        eq: vi.fn(() => query),
+        order: vi.fn(() => Promise.resolve({ data: rowsNoPrimary, error: null })),
       };
       mockFrom.mockReturnValueOnce(query);
 
@@ -323,9 +323,9 @@ describe("CharacterFavoriteService", () => {
 
     it("should return empty array when user has no favorites", async () => {
       const query = {
-        select: mock(() => query),
-        eq: mock(() => query),
-        order: mock(() => Promise.resolve({ data: [], error: null })),
+        select: vi.fn(() => query),
+        eq: vi.fn(() => query),
+        order: vi.fn(() => Promise.resolve({ data: [], error: null })),
       };
       mockFrom.mockReturnValueOnce(query);
 
@@ -338,9 +338,9 @@ describe("CharacterFavoriteService", () => {
   describe("getPlayerFavorites", () => {
     it("should delegate to the same fetch logic as getUserFavorites", async () => {
       const query = {
-        select: mock(() => query),
-        eq: mock(() => query),
-        order: mock(() => Promise.resolve({ data: [], error: null })),
+        select: vi.fn(() => query),
+        eq: vi.fn(() => query),
+        order: vi.fn(() => Promise.resolve({ data: [], error: null })),
       };
       mockFrom.mockReturnValueOnce(query);
 

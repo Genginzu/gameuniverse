@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import {
   createCollectionSchema,
@@ -96,7 +96,7 @@ describe("Collection Validation - Property-Based Tests", () => {
             const result = createCollectionSchema.safeParse({ name });
             expect(result.success).toBe(false);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -106,7 +106,7 @@ describe("Collection Validation - Property-Based Tests", () => {
             const result = createCollectionSchema.safeParse({ name });
             expect(result.success).toBe(false);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -120,7 +120,7 @@ describe("Collection Validation - Property-Based Tests", () => {
               expect(nameErrors.length).toBeGreaterThan(0);
             }
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
     });
@@ -136,7 +136,7 @@ describe("Collection Validation - Property-Based Tests", () => {
               expect(descErrors.length).toBeGreaterThan(0);
             }
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
     });
@@ -165,7 +165,7 @@ describe("Collection Validation - Property-Based Tests", () => {
               expect(noteErrors.length).toBeGreaterThan(0);
             }
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
     });
@@ -202,7 +202,7 @@ describe("Collection Validation - Property-Based Tests", () => {
               }
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
     });

@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 import { Input } from "../../../../src/components/ui/input";
 
 describe("Input component", () => {

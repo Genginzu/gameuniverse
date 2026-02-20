@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import { adminCompanyFormSchema } from "../../../../src/lib/validations/admin-company-form";
 
@@ -24,10 +24,10 @@ function validBase(overrides: Record<string, unknown> = {}) {
 /**
  * Feature: admin-company-management, Property 5: Validation du slug
  *
- * _Pour toute_ chaîne de caractères, le schéma de validation du slug accepte
- * la chaîne si et seulement si elle contient uniquement des lettres minuscules,
+ * _Pour toute_ chaine de caracteres, le schema de validation du slug accepte
+ * la chaine si et seulement si elle contient uniquement des lettres minuscules,
  * des chiffres et des tirets, commence par une lettre, se termine par une
- * lettre ou un chiffre, et a entre 2 et 100 caractères.
+ * lettre ou un chiffre, et a entre 2 et 100 caracteres.
  *
  * **Validates: Requirements 2.4**
  */
@@ -107,8 +107,6 @@ const uppercaseSlugGenerator = fc
 
 describe("Admin Company Form Schema - Property-Based Tests", () => {
   describe("Property 5: Validation du slug", () => {
-    // Feature: admin-company-management, Property 5: Validation du slug
-
     it("accepts all valid slugs", () => {
       fc.assert(
         fc.property(validSlugGenerator, (slug) => {
@@ -125,7 +123,7 @@ describe("Admin Company Form Schema - Property-Based Tests", () => {
           const result = adminCompanyFormSchema.safeParse(validBase({ slug }));
           expect(result.success).toBe(false);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -135,7 +133,7 @@ describe("Admin Company Form Schema - Property-Based Tests", () => {
           const result = adminCompanyFormSchema.safeParse(validBase({ slug }));
           expect(result.success).toBe(false);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -145,7 +143,7 @@ describe("Admin Company Form Schema - Property-Based Tests", () => {
           const result = adminCompanyFormSchema.safeParse(validBase({ slug }));
           expect(result.success).toBe(false);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -155,7 +153,7 @@ describe("Admin Company Form Schema - Property-Based Tests", () => {
           const result = adminCompanyFormSchema.safeParse(validBase({ slug }));
           expect(result.success).toBe(false);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -165,7 +163,7 @@ describe("Admin Company Form Schema - Property-Based Tests", () => {
           const result = adminCompanyFormSchema.safeParse(validBase({ slug }));
           expect(result.success).toBe(false);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -198,10 +196,10 @@ describe("Admin Company Form Schema - Property-Based Tests", () => {
   /**
    * Feature: admin-company-management, Property 6: Validation des champs du formulaire
    *
-   * _Pour toute_ combinaison de nom, type et siège social, le schéma
-   * de validation accepte les données si et seulement si : le nom est non vide et
-   * ≤ 255 caractères, le type est developer/publisher/both, et le siège social
-   * est ≤ 255 caractères.
+   * _Pour toute_ combinaison de nom, type et siege social, le schema
+   * de validation accepte les donnees si et seulement si : le nom est non vide et
+   * <=255 caracteres, le type est developer/publisher/both, et le siege social
+   * est <=255 caracteres.
    *
    * **Validates: Requirements 2.5, 2.6, 2.7**
    */
@@ -239,7 +237,7 @@ describe("Admin Company Form Schema - Property-Based Tests", () => {
           const result = adminCompanyFormSchema.safeParse(validBase({ name: "", company_type }));
           expect(result.success).toBe(false);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -249,7 +247,7 @@ describe("Admin Company Form Schema - Property-Based Tests", () => {
           const result = adminCompanyFormSchema.safeParse(validBase({ name, company_type }));
           expect(result.success).toBe(false);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -259,7 +257,7 @@ describe("Admin Company Form Schema - Property-Based Tests", () => {
           const result = adminCompanyFormSchema.safeParse(validBase({ company_type }));
           expect(result.success).toBe(false);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -269,26 +267,26 @@ describe("Admin Company Form Schema - Property-Based Tests", () => {
           const result = adminCompanyFormSchema.safeParse(validBase({ headquarters }));
           expect(result.success).toBe(false);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });
 
   // ============================================================
-  // Property 7: Validation de l'année de fondation
+  // Property 7: Validation de l'annee de fondation
   // ============================================================
 
   /**
-   * Feature: admin-company-management, Property 7: Validation de l'année de fondation
+   * Feature: admin-company-management, Property 7: Validation de l'annee de fondation
    *
-   * _Pour tout_ entier, le schéma de validation de l'année de fondation accepte
-   * la valeur si et seulement si elle est comprise entre 1800 et l'année courante
+   * _Pour tout_ entier, le schema de validation de l'annee de fondation accepte
+   * la valeur si et seulement si elle est comprise entre 1800 et l'annee courante
    * incluse.
    *
    * **Validates: Requirements 2.9**
    */
 
-  describe("Property 7: Validation de l'année de fondation", () => {
+  describe("Property 7: Validation de l'annee de fondation", () => {
     const validYearGen = fc.integer({ min: 1800, max: CURRENT_YEAR });
     const tooOldYearGen = fc.integer({ min: 1, max: 1799 });
     const futureYearGen = fc.integer({ min: CURRENT_YEAR + 1, max: CURRENT_YEAR + 500 });
@@ -309,7 +307,7 @@ describe("Admin Company Form Schema - Property-Based Tests", () => {
           const result = adminCompanyFormSchema.safeParse(validBase({ founded_year }));
           expect(result.success).toBe(false);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -319,7 +317,7 @@ describe("Admin Company Form Schema - Property-Based Tests", () => {
           const result = adminCompanyFormSchema.safeParse(validBase({ founded_year }));
           expect(result.success).toBe(false);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 

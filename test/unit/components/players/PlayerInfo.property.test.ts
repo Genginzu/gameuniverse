@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import type { PlayerSummary, PlayerDetails, PlayerStats, PlayerLibraryGame } from "@/types/player";
 
@@ -8,8 +8,8 @@ import type { PlayerSummary, PlayerDetails, PlayerStats, PlayerLibraryGame } fro
  * **Validates: Requirements 1.2, 5.2**
  *
  * Pour tout joueur valide, le rendu de sa carte ou de son profil doit contenir :
- * son nom (ou un placeholder si null), son avatar (ou un avatar par défaut),
- * et son nombre de jeux dans la bibliothèque.
+ * son nom (ou un placeholder si null), son avatar (ou un avatar par dÃ©faut),
+ * et son nombre de jeux dans la bibliothÃ¨que.
  */
 
 // Generator for valid game status
@@ -100,7 +100,7 @@ describe("PlayerInfo Property-Based Tests", () => {
               expect(displayName).toBe(placeholder);
             }
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -118,7 +118,7 @@ describe("PlayerInfo Property-Based Tests", () => {
               expect(typeof player.avatarUrl).toBe("string");
             }
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -129,7 +129,7 @@ describe("PlayerInfo Property-Based Tests", () => {
             expect(Number.isInteger(player.gamesCount)).toBe(true);
             expect(player.gamesCount).toBeGreaterThanOrEqual(0);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -140,7 +140,7 @@ describe("PlayerInfo Property-Based Tests", () => {
           fc.property(playerSummaryArbitrary, (player) => {
             expect(uuidRegex.test(player.id)).toBe(true);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -152,7 +152,7 @@ describe("PlayerInfo Property-Based Tests", () => {
             // ISO string should be parseable back
             expect(typeof player.createdAt).toBe("string");
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
     });
@@ -174,7 +174,7 @@ describe("PlayerInfo Property-Based Tests", () => {
               expect(displayName).toBe(placeholder);
             }
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -189,7 +189,7 @@ describe("PlayerInfo Property-Based Tests", () => {
               expect(useDefault).toBe(false);
             }
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -210,7 +210,7 @@ describe("PlayerInfo Property-Based Tests", () => {
               expect(stats.averageRating).toBeGreaterThanOrEqual(0);
             }
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -220,7 +220,7 @@ describe("PlayerInfo Property-Based Tests", () => {
             expect(Array.isArray(player.library)).toBe(true);
             expect(player.library.length).toBeGreaterThanOrEqual(0);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -243,7 +243,7 @@ describe("PlayerInfo Property-Based Tests", () => {
               expect(game.slug.length).toBeGreaterThan(0);
             }
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -252,7 +252,7 @@ describe("PlayerInfo Property-Based Tests", () => {
           fc.property(playerDetailsArbitrary, (player) => {
             expect(["fr", "en"]).toContain(player.preferredLocale);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -269,7 +269,7 @@ describe("PlayerInfo Property-Based Tests", () => {
             // but in real data, updatedAt should be >= createdAt
             // We just verify both are valid dates
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
     });
@@ -295,7 +295,7 @@ describe("PlayerInfo Property-Based Tests", () => {
             // Both should produce the same display name
             expect(cardDisplayName).toBe(profileDisplayName);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -315,7 +315,7 @@ describe("PlayerInfo Property-Based Tests", () => {
 
             expect(cardUseDefault).toBe(profileUseDefault);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
     });

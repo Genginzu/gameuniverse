@@ -1,9 +1,9 @@
-import { describe, it, expect, beforeEach, mock, spyOn } from "bun:test";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { NextRequest } from "next/server";
 
 // Create mock functions using Bun's mock
-const mockGetUser = mock(() => Promise.resolve({ data: { user: null }, error: null }));
-const mockFrom = mock(() => ({}));
+const mockGetUser = vi.fn(() => Promise.resolve({ data: { user: null }, error: null }));
+const mockFrom = vi.fn(() => ({}));
 
 // Mock Supabase client
 const mockSupabase = {
@@ -14,9 +14,9 @@ const mockSupabase = {
 };
 
 // Mock the module
-mock.module("../../../../src/lib/supabase-server", () => ({
-  createServerClient: mock(() => Promise.resolve(mockSupabase)),
-  createRouteHandlerClient: mock(() => Promise.resolve(mockSupabase)),
+vi.mock("../../../../src/lib/supabase-server", () => ({
+  createServerClient: vi.fn(() => Promise.resolve(mockSupabase)),
+  createRouteHandlerClient: vi.fn(() => Promise.resolve(mockSupabase)),
 }));
 
 // Import after mocking
@@ -51,8 +51,8 @@ describe("/api/library", () => {
       });
 
       const mockSelect = {
-        eq: mock(() => mockSelect),
-        order: mock(() =>
+        eq: vi.fn(() => mockSelect),
+        order: vi.fn(() =>
           Promise.resolve({
             data: [],
             error: null,
@@ -61,7 +61,7 @@ describe("/api/library", () => {
       };
 
       mockFrom.mockReturnValue({
-        select: mock(() => mockSelect),
+        select: vi.fn(() => mockSelect),
       });
 
       const response = await GET();
@@ -80,8 +80,8 @@ describe("/api/library", () => {
       });
 
       const mockSelect = {
-        eq: mock(() => mockSelect),
-        order: mock(() =>
+        eq: vi.fn(() => mockSelect),
+        order: vi.fn(() =>
           Promise.resolve({
             data: null,
             error: { code: "UNKNOWN", message: "Database error" },
@@ -90,7 +90,7 @@ describe("/api/library", () => {
       };
 
       mockFrom.mockReturnValue({
-        select: mock(() => mockSelect),
+        select: vi.fn(() => mockSelect),
       });
 
       const response = await GET();
@@ -109,8 +109,8 @@ describe("/api/library", () => {
       });
 
       const mockSelect = {
-        eq: mock(() => mockSelect),
-        order: mock(() =>
+        eq: vi.fn(() => mockSelect),
+        order: vi.fn(() =>
           Promise.resolve({
             data: null,
             error: { code: "PGRST205", message: "Table not found" },
@@ -119,7 +119,7 @@ describe("/api/library", () => {
       };
 
       mockFrom.mockReturnValue({
-        select: mock(() => mockSelect),
+        select: vi.fn(() => mockSelect),
       });
 
       const response = await GET();
@@ -182,8 +182,8 @@ describe("/api/library", () => {
       ];
 
       const mockSelect = {
-        eq: mock(() => mockSelect),
-        order: mock(() =>
+        eq: vi.fn(() => mockSelect),
+        order: vi.fn(() =>
           Promise.resolve({
             data: mockLibraryData,
             error: null,
@@ -192,7 +192,7 @@ describe("/api/library", () => {
       };
 
       mockFrom.mockReturnValue({
-        select: mock(() => mockSelect),
+        select: vi.fn(() => mockSelect),
       });
 
       const response = await GET();
@@ -242,8 +242,8 @@ describe("/api/library", () => {
       ];
 
       const mockSelect = {
-        eq: mock(() => mockSelect),
-        order: mock(() =>
+        eq: vi.fn(() => mockSelect),
+        order: vi.fn(() =>
           Promise.resolve({
             data: mockLibraryData,
             error: null,
@@ -252,7 +252,7 @@ describe("/api/library", () => {
       };
 
       mockFrom.mockReturnValue({
-        select: mock(() => mockSelect),
+        select: vi.fn(() => mockSelect),
       });
 
       const response = await GET();
@@ -286,8 +286,8 @@ describe("/api/library", () => {
       ];
 
       const mockSelect = {
-        eq: mock(() => mockSelect),
-        order: mock(() =>
+        eq: vi.fn(() => mockSelect),
+        order: vi.fn(() =>
           Promise.resolve({
             data: mockLibraryData,
             error: null,
@@ -296,7 +296,7 @@ describe("/api/library", () => {
       };
 
       mockFrom.mockReturnValue({
-        select: mock(() => mockSelect),
+        select: vi.fn(() => mockSelect),
       });
 
       const response = await GET();
@@ -351,8 +351,8 @@ describe("/api/library", () => {
       ];
 
       const mockSelect = {
-        eq: mock(() => mockSelect),
-        order: mock(() =>
+        eq: vi.fn(() => mockSelect),
+        order: vi.fn(() =>
           Promise.resolve({
             data: mockLibraryData,
             error: null,
@@ -361,7 +361,7 @@ describe("/api/library", () => {
       };
 
       mockFrom.mockReturnValue({
-        select: mock(() => mockSelect),
+        select: vi.fn(() => mockSelect),
       });
 
       const response = await GET();
@@ -409,8 +409,8 @@ describe("/api/library", () => {
       ];
 
       const mockSelect = {
-        eq: mock(() => mockSelect),
-        order: mock(() =>
+        eq: vi.fn(() => mockSelect),
+        order: vi.fn(() =>
           Promise.resolve({
             data: mockLibraryData,
             error: null,
@@ -419,7 +419,7 @@ describe("/api/library", () => {
       };
 
       mockFrom.mockReturnValue({
-        select: mock(() => mockSelect),
+        select: vi.fn(() => mockSelect),
       });
 
       const response = await GET();
@@ -471,8 +471,8 @@ describe("/api/library", () => {
       ];
 
       const mockSelect = {
-        eq: mock(() => mockSelect),
-        order: mock(() =>
+        eq: vi.fn(() => mockSelect),
+        order: vi.fn(() =>
           Promise.resolve({
             data: mockLibraryData,
             error: null,
@@ -481,7 +481,7 @@ describe("/api/library", () => {
       };
 
       mockFrom.mockReturnValue({
-        select: mock(() => mockSelect),
+        select: vi.fn(() => mockSelect),
       });
 
       const response = await GET();
@@ -528,8 +528,8 @@ describe("/api/library", () => {
       ];
 
       const mockSelect = {
-        eq: mock(() => mockSelect),
-        order: mock(() =>
+        eq: vi.fn(() => mockSelect),
+        order: vi.fn(() =>
           Promise.resolve({
             data: mockLibraryData,
             error: null,
@@ -538,7 +538,7 @@ describe("/api/library", () => {
       };
 
       mockFrom.mockReturnValue({
-        select: mock(() => mockSelect),
+        select: vi.fn(() => mockSelect),
       });
 
       const response = await GET();
@@ -598,8 +598,8 @@ describe("/api/library", () => {
       });
 
       const mockGameSelect = {
-        eq: mock(() => mockGameSelect),
-        single: mock(() =>
+        eq: vi.fn(() => mockGameSelect),
+        single: vi.fn(() =>
           Promise.resolve({
             data: null,
             error: { code: "PGRST116", message: "Not found" },
@@ -608,7 +608,7 @@ describe("/api/library", () => {
       };
 
       mockFrom.mockReturnValue({
-        select: mock(() => mockGameSelect),
+        select: vi.fn(() => mockGameSelect),
       });
 
       const request = new NextRequest("http://localhost:3000/api/library", {
@@ -633,8 +633,8 @@ describe("/api/library", () => {
       });
 
       const mockGameSelect = {
-        eq: mock(() => mockGameSelect),
-        single: mock(() =>
+        eq: vi.fn(() => mockGameSelect),
+        single: vi.fn(() =>
           Promise.resolve({
             data: { id: gameId },
             error: null,
@@ -643,8 +643,8 @@ describe("/api/library", () => {
       };
 
       const mockLibraryInsert = {
-        select: mock(() => mockLibraryInsert),
-        single: mock(() =>
+        select: vi.fn(() => mockLibraryInsert),
+        single: vi.fn(() =>
           Promise.resolve({
             data: null,
             error: { code: "23505", message: "Unique constraint violation" },
@@ -654,10 +654,10 @@ describe("/api/library", () => {
 
       mockFrom
         .mockReturnValueOnce({
-          select: mock(() => mockGameSelect),
+          select: vi.fn(() => mockGameSelect),
         })
         .mockReturnValueOnce({
-          insert: mock(() => mockLibraryInsert),
+          insert: vi.fn(() => mockLibraryInsert),
         });
 
       const request = new NextRequest("http://localhost:3000/api/library", {
@@ -682,8 +682,8 @@ describe("/api/library", () => {
       });
 
       const mockGameSelect = {
-        eq: mock(() => mockGameSelect),
-        single: mock(() =>
+        eq: vi.fn(() => mockGameSelect),
+        single: vi.fn(() =>
           Promise.resolve({
             data: { id: gameId },
             error: null,
@@ -692,8 +692,8 @@ describe("/api/library", () => {
       };
 
       const mockLibraryInsert = {
-        select: mock(() => mockLibraryInsert),
-        single: mock(() =>
+        select: vi.fn(() => mockLibraryInsert),
+        single: vi.fn(() =>
           Promise.resolve({
             data: null,
             error: { code: "PGRST205", message: "Table not found" },
@@ -703,10 +703,10 @@ describe("/api/library", () => {
 
       mockFrom
         .mockReturnValueOnce({
-          select: mock(() => mockGameSelect),
+          select: vi.fn(() => mockGameSelect),
         })
         .mockReturnValueOnce({
-          insert: mock(() => mockLibraryInsert),
+          insert: vi.fn(() => mockLibraryInsert),
         });
 
       const request = new NextRequest("http://localhost:3000/api/library", {
@@ -731,8 +731,8 @@ describe("/api/library", () => {
       });
 
       const mockGameSelect = {
-        eq: mock(() => mockGameSelect),
-        single: mock(() =>
+        eq: vi.fn(() => mockGameSelect),
+        single: vi.fn(() =>
           Promise.resolve({
             data: { id: gameId },
             error: null,
@@ -741,8 +741,8 @@ describe("/api/library", () => {
       };
 
       const mockLibraryInsert = {
-        select: mock(() => mockLibraryInsert),
-        single: mock(() =>
+        select: vi.fn(() => mockLibraryInsert),
+        single: vi.fn(() =>
           Promise.resolve({
             data: null,
             error: { code: "UNKNOWN", message: "Unknown error" },
@@ -752,10 +752,10 @@ describe("/api/library", () => {
 
       mockFrom
         .mockReturnValueOnce({
-          select: mock(() => mockGameSelect),
+          select: vi.fn(() => mockGameSelect),
         })
         .mockReturnValueOnce({
-          insert: mock(() => mockLibraryInsert),
+          insert: vi.fn(() => mockLibraryInsert),
         });
 
       const request = new NextRequest("http://localhost:3000/api/library", {
@@ -780,8 +780,8 @@ describe("/api/library", () => {
       });
 
       const mockGameSelect = {
-        eq: mock(() => mockGameSelect),
-        single: mock(() =>
+        eq: vi.fn(() => mockGameSelect),
+        single: vi.fn(() =>
           Promise.resolve({
             data: { id: gameId },
             error: null,
@@ -790,8 +790,8 @@ describe("/api/library", () => {
       };
 
       const mockLibraryInsert = {
-        select: mock(() => mockLibraryInsert),
-        single: mock(() =>
+        select: vi.fn(() => mockLibraryInsert),
+        single: vi.fn(() =>
           Promise.resolve({
             data: {
               id: "library-entry-123",
@@ -806,10 +806,10 @@ describe("/api/library", () => {
 
       mockFrom
         .mockReturnValueOnce({
-          select: mock(() => mockGameSelect),
+          select: vi.fn(() => mockGameSelect),
         })
         .mockReturnValueOnce({
-          insert: mock(() => mockLibraryInsert),
+          insert: vi.fn(() => mockLibraryInsert),
         });
 
       const request = new NextRequest("http://localhost:3000/api/library", {

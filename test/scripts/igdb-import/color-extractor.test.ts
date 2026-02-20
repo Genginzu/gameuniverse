@@ -3,11 +3,11 @@
  * Tests the pure color derivation logic (no network calls).
  */
 
-import { describe, it, expect, mock, beforeEach } from "bun:test";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 
 // Mock Jimp before importing the module
-const mockRead = mock();
-mock.module("jimp", () => ({
+const mockRead = vi.fn();
+vi.mock("jimp", () => ({
   Jimp: { read: mockRead },
 }));
 
@@ -36,7 +36,7 @@ describe("extractColorsFromCover", () => {
 
   it("returns null when fetch fails", async () => {
     const originalFetch = globalThis.fetch;
-    globalThis.fetch = mock(() =>
+    globalThis.fetch = vi.fn(() =>
       Promise.resolve(new Response(null, { status: 404 }))
     ) as typeof fetch;
 
@@ -48,7 +48,7 @@ describe("extractColorsFromCover", () => {
 
   it("returns null when image read fails", async () => {
     const originalFetch = globalThis.fetch;
-    globalThis.fetch = mock(() =>
+    globalThis.fetch = vi.fn(() =>
       Promise.resolve(new Response(new Uint8Array([0xff, 0xd8, 0xff])))
     ) as typeof fetch;
 
@@ -62,7 +62,7 @@ describe("extractColorsFromCover", () => {
 
   it("extracts valid hex colors from a palette", async () => {
     const originalFetch = globalThis.fetch;
-    globalThis.fetch = mock(() =>
+    globalThis.fetch = vi.fn(() =>
       Promise.resolve(new Response(new Uint8Array([0xff, 0xd8, 0xff])))
     ) as typeof fetch;
 
@@ -89,7 +89,7 @@ describe("extractColorsFromCover", () => {
 
   it("produces a dark background color", async () => {
     const originalFetch = globalThis.fetch;
-    globalThis.fetch = mock(() =>
+    globalThis.fetch = vi.fn(() =>
       Promise.resolve(new Response(new Uint8Array([0xff, 0xd8, 0xff])))
     ) as typeof fetch;
 
@@ -114,7 +114,7 @@ describe("extractColorsFromCover", () => {
 
   it("produces a light text color for readability", async () => {
     const originalFetch = globalThis.fetch;
-    globalThis.fetch = mock(() =>
+    globalThis.fetch = vi.fn(() =>
       Promise.resolve(new Response(new Uint8Array([0xff, 0xd8, 0xff])))
     ) as typeof fetch;
 

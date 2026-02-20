@@ -27,6 +27,9 @@ bun run test:all
 **IMPORTANT**: Utiliser `bun run test:all` et non `bun test` pour inclure les
 tests isolés.
 
+**INTERDIT** : Ne **jamais** ajouter `2>&1` à la fin d'une commande de test.
+Exécuter la commande telle quelle, sans redirection.
+
 **ANTI-DOUBLON** : Si la dernière tâche d'implémentation (ou un checkpoint
 final) exécute déjà `bun run test:all`, ne pas ajouter cette tâche une seconde
 fois. Passer directement au lint.

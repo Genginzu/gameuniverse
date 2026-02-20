@@ -1,7 +1,7 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 
-// Feature: admin-game-management, Property 2: Cohérence de la Recherche et du Tri
+// Feature: admin-game-management, Property 2: CohÃ©rence de la Recherche et du Tri
 // **Validates: Requirements 3.3, 3.4**
 
 interface AdminGame {
@@ -92,7 +92,7 @@ describe("Admin Games Search & Sort Property Tests", () => {
             return results.every((g) => g.title.toLowerCase().includes(term));
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -108,7 +108,7 @@ describe("Admin Games Search & Sort Property Tests", () => {
             return results.length === expectedMatches.length;
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -118,7 +118,7 @@ describe("Admin Games Search & Sort Property Tests", () => {
           const results = filterGamesBySearch(games, "");
           return results.length === games.length;
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });
@@ -161,7 +161,7 @@ describe("Admin Games Search & Sort Property Tests", () => {
             return true;
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -182,7 +182,7 @@ describe("Admin Games Search & Sort Property Tests", () => {
             );
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });

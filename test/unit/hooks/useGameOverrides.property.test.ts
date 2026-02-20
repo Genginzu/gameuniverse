@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import { TRACKABLE_FIELDS } from "../../../src/lib/utils/field-tracking";
 import type { TrackableField } from "../../../src/types/admin-games";

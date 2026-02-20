@@ -1,13 +1,13 @@
-import { describe, it, expect, beforeEach, afterEach, mock, spyOn } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 
 // Mock the supabase-server module before importing CharacterService
-const mockSelect = mock(() => mockQuery);
-const mockEq = mock(() => mockQuery);
-const mockIlike = mock(() => mockQuery);
-const mockIn = mock(() => mockQuery);
-const mockRange = mock(() => mockQuery);
-const mockOrder = mock(() => mockQuery);
-const mockSingle = mock(() => Promise.resolve({ data: null, error: null }));
+const mockSelect = vi.fn(() => mockQuery);
+const mockEq = vi.fn(() => mockQuery);
+const mockIlike = vi.fn(() => mockQuery);
+const mockIn = vi.fn(() => mockQuery);
+const mockRange = vi.fn(() => mockQuery);
+const mockOrder = vi.fn(() => mockQuery);
+const mockSingle = vi.fn(() => Promise.resolve({ data: null, error: null }));
 
 const mockQuery = {
   select: mockSelect,
@@ -19,25 +19,25 @@ const mockQuery = {
   single: mockSingle,
 };
 
-const mockFrom = mock(() => mockQuery);
+const mockFrom = vi.fn(() => mockQuery);
 
 const mockSupabaseClient = {
   from: mockFrom,
 };
 
-mock.module("@/lib/supabase-server", () => ({
-  createServerClient: mock(async () => mockSupabaseClient),
-  createRouteHandlerClient: mock(async () => mockSupabaseClient),
+vi.mock("@/lib/supabase-server", () => ({
+  createServerClient: vi.fn(async () => mockSupabaseClient),
+  createRouteHandlerClient: vi.fn(async () => mockSupabaseClient),
 }));
 
 // Import after mocking
 import { CharacterService } from "../../../../src/lib/services/characterService";
 
 describe("CharacterService DB Methods", () => {
-  let consoleErrorSpy: ReturnType<typeof spyOn>;
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    consoleErrorSpy = spyOn(console, "error").mockImplementation(() => {});
+    consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     // Reset all mocks
     mockSelect.mockClear();
     mockEq.mockClear();
@@ -84,20 +84,20 @@ describe("CharacterService DB Methods", () => {
     it("should fetch characters with default options", async () => {
       // Setup mock chain for count query
       const countQuery = {
-        select: mock(() => countQuery),
-        eq: mock(() => countQuery),
-        ilike: mock(() => countQuery),
-        in: mock(() => Promise.resolve({ count: 1, error: null })),
+        select: vi.fn(() => countQuery),
+        eq: vi.fn(() => countQuery),
+        ilike: vi.fn(() => countQuery),
+        in: vi.fn(() => Promise.resolve({ count: 1, error: null })),
       };
 
       // Setup mock chain for main query
       const mainQuery = {
-        select: mock(() => mainQuery),
-        eq: mock(() => mainQuery),
-        ilike: mock(() => mainQuery),
-        in: mock(() => mainQuery),
-        range: mock(() => mainQuery),
-        order: mock(() => Promise.resolve({ data: mockCharacterListData, error: null })),
+        select: vi.fn(() => mainQuery),
+        eq: vi.fn(() => mainQuery),
+        ilike: vi.fn(() => mainQuery),
+        in: vi.fn(() => mainQuery),
+        range: vi.fn(() => mainQuery),
+        order: vi.fn(() => Promise.resolve({ data: mockCharacterListData, error: null })),
       };
 
       let callCount = 0;
@@ -118,17 +118,17 @@ describe("CharacterService DB Methods", () => {
 
     it("should apply search filter", async () => {
       const countQuery = {
-        select: mock(() => countQuery),
-        eq: mock(() => countQuery),
-        ilike: mock(() => Promise.resolve({ count: 1, error: null })),
+        select: vi.fn(() => countQuery),
+        eq: vi.fn(() => countQuery),
+        ilike: vi.fn(() => Promise.resolve({ count: 1, error: null })),
       };
 
       const mainQuery = {
-        select: mock(() => mainQuery),
-        eq: mock(() => mainQuery),
-        ilike: mock(() => mainQuery),
-        range: mock(() => mainQuery),
-        order: mock(() => Promise.resolve({ data: mockCharacterListData, error: null })),
+        select: vi.fn(() => mainQuery),
+        eq: vi.fn(() => mainQuery),
+        ilike: vi.fn(() => mainQuery),
+        range: vi.fn(() => mainQuery),
+        order: vi.fn(() => Promise.resolve({ data: mockCharacterListData, error: null })),
       };
 
       let callCount = 0;
@@ -145,17 +145,17 @@ describe("CharacterService DB Methods", () => {
 
     it("should apply role filter", async () => {
       const countQuery = {
-        select: mock(() => countQuery),
-        eq: mock(() => countQuery),
-        in: mock(() => Promise.resolve({ count: 1, error: null })),
+        select: vi.fn(() => countQuery),
+        eq: vi.fn(() => countQuery),
+        in: vi.fn(() => Promise.resolve({ count: 1, error: null })),
       };
 
       const mainQuery = {
-        select: mock(() => mainQuery),
-        eq: mock(() => mainQuery),
-        in: mock(() => mainQuery),
-        range: mock(() => mainQuery),
-        order: mock(() => Promise.resolve({ data: mockCharacterListData, error: null })),
+        select: vi.fn(() => mainQuery),
+        eq: vi.fn(() => mainQuery),
+        in: vi.fn(() => mainQuery),
+        range: vi.fn(() => mainQuery),
+        order: vi.fn(() => Promise.resolve({ data: mockCharacterListData, error: null })),
       };
 
       let callCount = 0;
@@ -172,19 +172,19 @@ describe("CharacterService DB Methods", () => {
 
     it("should filter by games post-processing", async () => {
       const countQuery = {
-        select: mock(() => countQuery),
-        eq: mock(() => countQuery),
-        ilike: mock(() => countQuery),
-        in: mock(() => Promise.resolve({ count: 2, error: null })),
+        select: vi.fn(() => countQuery),
+        eq: vi.fn(() => countQuery),
+        ilike: vi.fn(() => countQuery),
+        in: vi.fn(() => Promise.resolve({ count: 2, error: null })),
       };
 
       const mainQuery = {
-        select: mock(() => mainQuery),
-        eq: mock(() => mainQuery),
-        ilike: mock(() => mainQuery),
-        in: mock(() => mainQuery),
-        range: mock(() => mainQuery),
-        order: mock(() =>
+        select: vi.fn(() => mainQuery),
+        eq: vi.fn(() => mainQuery),
+        ilike: vi.fn(() => mainQuery),
+        in: vi.fn(() => mainQuery),
+        range: vi.fn(() => mainQuery),
+        order: vi.fn(() =>
           Promise.resolve({
             data: [
               ...mockCharacterListData,
@@ -228,15 +228,15 @@ describe("CharacterService DB Methods", () => {
 
     it("should handle count query error", async () => {
       const countQuery = {
-        select: mock(() => countQuery),
-        eq: mock(() => Promise.resolve({ count: null, error: { message: "Count error" } })),
+        select: vi.fn(() => countQuery),
+        eq: vi.fn(() => Promise.resolve({ count: null, error: { message: "Count error" } })),
       };
 
       const mainQuery = {
-        select: mock(() => mainQuery),
-        eq: mock(() => mainQuery),
-        range: mock(() => mainQuery),
-        order: mock(() => Promise.resolve({ data: [], error: null })),
+        select: vi.fn(() => mainQuery),
+        eq: vi.fn(() => mainQuery),
+        range: vi.fn(() => mainQuery),
+        order: vi.fn(() => Promise.resolve({ data: [], error: null })),
       };
 
       let callCount = 0;
@@ -253,15 +253,15 @@ describe("CharacterService DB Methods", () => {
 
     it("should handle main query error", async () => {
       const countQuery = {
-        select: mock(() => countQuery),
-        eq: mock(() => Promise.resolve({ count: 1, error: null })),
+        select: vi.fn(() => countQuery),
+        eq: vi.fn(() => Promise.resolve({ count: 1, error: null })),
       };
 
       const mainQuery = {
-        select: mock(() => mainQuery),
-        eq: mock(() => mainQuery),
-        range: mock(() => mainQuery),
-        order: mock(() => Promise.resolve({ data: null, error: { message: "Query error" } })),
+        select: vi.fn(() => mainQuery),
+        eq: vi.fn(() => mainQuery),
+        range: vi.fn(() => mainQuery),
+        order: vi.fn(() => Promise.resolve({ data: null, error: { message: "Query error" } })),
       };
 
       let callCount = 0;
@@ -278,15 +278,15 @@ describe("CharacterService DB Methods", () => {
 
     it("should calculate pagination correctly", async () => {
       const countQuery = {
-        select: mock(() => countQuery),
-        eq: mock(() => Promise.resolve({ count: 50, error: null })),
+        select: vi.fn(() => countQuery),
+        eq: vi.fn(() => Promise.resolve({ count: 50, error: null })),
       };
 
       const mainQuery = {
-        select: mock(() => mainQuery),
-        eq: mock(() => mainQuery),
-        range: mock(() => mainQuery),
-        order: mock(() => Promise.resolve({ data: mockCharacterListData, error: null })),
+        select: vi.fn(() => mainQuery),
+        eq: vi.fn(() => mainQuery),
+        range: vi.fn(() => mainQuery),
+        order: vi.fn(() => Promise.resolve({ data: mockCharacterListData, error: null })),
       };
 
       let callCount = 0;
@@ -307,15 +307,15 @@ describe("CharacterService DB Methods", () => {
 
     it("should handle empty results", async () => {
       const countQuery = {
-        select: mock(() => countQuery),
-        eq: mock(() => Promise.resolve({ count: 0, error: null })),
+        select: vi.fn(() => countQuery),
+        eq: vi.fn(() => Promise.resolve({ count: 0, error: null })),
       };
 
       const mainQuery = {
-        select: mock(() => mainQuery),
-        eq: mock(() => mainQuery),
-        range: mock(() => mainQuery),
-        order: mock(() => Promise.resolve({ data: [], error: null })),
+        select: vi.fn(() => mainQuery),
+        eq: vi.fn(() => mainQuery),
+        range: vi.fn(() => mainQuery),
+        order: vi.fn(() => Promise.resolve({ data: [], error: null })),
       };
 
       let callCount = 0;
@@ -394,9 +394,9 @@ describe("CharacterService DB Methods", () => {
 
     it("should fetch character details successfully", async () => {
       const query = {
-        select: mock(() => query),
-        eq: mock(() => query),
-        single: mock(() => Promise.resolve({ data: mockCharacterDetailsData, error: null })),
+        select: vi.fn(() => query),
+        eq: vi.fn(() => query),
+        single: vi.fn(() => Promise.resolve({ data: mockCharacterDetailsData, error: null })),
       };
 
       mockFrom.mockImplementation(() => query);
@@ -414,9 +414,9 @@ describe("CharacterService DB Methods", () => {
 
     it("should return null for non-existent character", async () => {
       const query = {
-        select: mock(() => query),
-        eq: mock(() => query),
-        single: mock(() =>
+        select: vi.fn(() => query),
+        eq: vi.fn(() => query),
+        single: vi.fn(() =>
           Promise.resolve({ data: null, error: { code: "PGRST116", message: "No rows" } })
         ),
       };
@@ -430,9 +430,9 @@ describe("CharacterService DB Methods", () => {
 
     it("should throw error for database errors", async () => {
       const query = {
-        select: mock(() => query),
-        eq: mock(() => query),
-        single: mock(() =>
+        select: vi.fn(() => query),
+        eq: vi.fn(() => query),
+        single: vi.fn(() =>
           Promise.resolve({ data: null, error: { code: "OTHER", message: "Database error" } })
         ),
       };
@@ -451,9 +451,9 @@ describe("CharacterService DB Methods", () => {
       };
 
       const query = {
-        select: mock(() => query),
-        eq: mock(() => query),
-        single: mock(() => Promise.resolve({ data: dataWithNoGames, error: null })),
+        select: vi.fn(() => query),
+        eq: vi.fn(() => query),
+        single: vi.fn(() => Promise.resolve({ data: dataWithNoGames, error: null })),
       };
 
       mockFrom.mockImplementation(() => query);
@@ -471,9 +471,9 @@ describe("CharacterService DB Methods", () => {
       };
 
       const query = {
-        select: mock(() => query),
-        eq: mock(() => query),
-        single: mock(() => Promise.resolve({ data: dataWithNoMedia, error: null })),
+        select: vi.fn(() => query),
+        eq: vi.fn(() => query),
+        single: vi.fn(() => Promise.resolve({ data: dataWithNoMedia, error: null })),
       };
 
       mockFrom.mockImplementation(() => query);
@@ -492,9 +492,9 @@ describe("CharacterService DB Methods", () => {
       };
 
       const query = {
-        select: mock(() => query),
-        eq: mock(() => query),
-        single: mock(() => Promise.resolve({ data: dataWithNoRelationships, error: null })),
+        select: vi.fn(() => query),
+        eq: vi.fn(() => query),
+        single: vi.fn(() => Promise.resolve({ data: dataWithNoRelationships, error: null })),
       };
 
       mockFrom.mockImplementation(() => query);
@@ -534,9 +534,9 @@ describe("CharacterService DB Methods", () => {
       };
 
       const query = {
-        select: mock(() => query),
-        eq: mock(() => query),
-        single: mock(() => Promise.resolve({ data: dataWithMultipleGames, error: null })),
+        select: vi.fn(() => query),
+        eq: vi.fn(() => query),
+        single: vi.fn(() => Promise.resolve({ data: dataWithMultipleGames, error: null })),
       };
 
       mockFrom.mockImplementation(() => query);
@@ -588,9 +588,9 @@ describe("CharacterService DB Methods", () => {
       };
 
       const query = {
-        select: mock(() => query),
-        eq: mock(() => query),
-        single: mock(() => Promise.resolve({ data: dataWithAllMediaTypes, error: null })),
+        select: vi.fn(() => query),
+        eq: vi.fn(() => query),
+        single: vi.fn(() => Promise.resolve({ data: dataWithAllMediaTypes, error: null })),
       };
 
       mockFrom.mockImplementation(() => query);

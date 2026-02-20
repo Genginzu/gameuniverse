@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "bun:test";
+import { describe, it, expect, beforeEach } from "vitest";
 
 // Simple integration test for authentication system
 describe("Authentication System Integration", () => {

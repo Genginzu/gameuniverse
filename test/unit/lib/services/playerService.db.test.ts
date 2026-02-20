@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, spyOn } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { PlayerService } from "../../../../src/lib/services/playerService";
 import type { PlayerLibraryGame } from "../../../../src/types/player";
 
@@ -13,10 +13,10 @@ import type { PlayerLibraryGame } from "../../../../src/types/player";
  */
 
 describe("PlayerService Pure Functions", () => {
-  let consoleErrorSpy: ReturnType<typeof spyOn>;
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    consoleErrorSpy = spyOn(console, "error").mockImplementation(() => {});
+    consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, mock, spyOn } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { HybridSearchService } from "../../../../src/lib/services/hybridSearchService";
 import { GameService } from "../../../../src/lib/services/gameService";
 import { IGDBService } from "../../../../src/lib/services/igdbService";
@@ -6,7 +6,7 @@ import type { GameSummary } from "../../../../src/types/game";
 import type { IGDBSearchResult } from "../../../../src/types/igdb";
 
 describe("HybridSearchService", () => {
-  let consoleErrorSpy: ReturnType<typeof spyOn>;
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
   const mockLocalGames: GameSummary[] = [
     {
@@ -49,7 +49,7 @@ describe("HybridSearchService", () => {
   ];
 
   beforeEach(() => {
-    consoleErrorSpy = spyOn(console, "error").mockImplementation(() => {});
+    consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -58,7 +58,7 @@ describe("HybridSearchService", () => {
 
   describe("search", () => {
     it("should search both local and IGDB sources in parallel", async () => {
-      const fetchGamesSpy = spyOn(GameService, "fetchGames").mockResolvedValue({
+      const fetchGamesSpy = vi.spyOn(GameService, "fetchGames").mockResolvedValue({
         games: mockLocalGames,
         pagination: {
           currentPage: 1,
@@ -69,7 +69,7 @@ describe("HybridSearchService", () => {
         },
       });
 
-      const searchGamesSpy = spyOn(IGDBService, "searchGames").mockResolvedValue(mockIgdbGames);
+      const searchGamesSpy = vi.spyOn(IGDBService, "searchGames").mockResolvedValue(mockIgdbGames);
 
       const result = await HybridSearchService.search({ query: "test" });
 
@@ -83,11 +83,11 @@ describe("HybridSearchService", () => {
     });
 
     it("should handle local search failure gracefully", async () => {
-      const fetchGamesSpy = spyOn(GameService, "fetchGames").mockRejectedValue(
+      const fetchGamesSpy = vi.spyOn(GameService, "fetchGames").mockRejectedValue(
         new Error("Database error")
       );
 
-      const searchGamesSpy = spyOn(IGDBService, "searchGames").mockResolvedValue(mockIgdbGames);
+      const searchGamesSpy = vi.spyOn(IGDBService, "searchGames").mockResolvedValue(mockIgdbGames);
 
       const result = await HybridSearchService.search({ query: "test" });
 
@@ -100,7 +100,7 @@ describe("HybridSearchService", () => {
     });
 
     it("should handle IGDB search failure gracefully", async () => {
-      const fetchGamesSpy = spyOn(GameService, "fetchGames").mockResolvedValue({
+      const fetchGamesSpy = vi.spyOn(GameService, "fetchGames").mockResolvedValue({
         games: mockLocalGames,
         pagination: {
           currentPage: 1,
@@ -111,7 +111,7 @@ describe("HybridSearchService", () => {
         },
       });
 
-      const searchGamesSpy = spyOn(IGDBService, "searchGames").mockRejectedValue(
+      const searchGamesSpy = vi.spyOn(IGDBService, "searchGames").mockRejectedValue(
         new Error("IGDB API error")
       );
 
@@ -126,11 +126,11 @@ describe("HybridSearchService", () => {
     });
 
     it("should handle both sources failing gracefully", async () => {
-      const fetchGamesSpy = spyOn(GameService, "fetchGames").mockRejectedValue(
+      const fetchGamesSpy = vi.spyOn(GameService, "fetchGames").mockRejectedValue(
         new Error("Database error")
       );
 
-      const searchGamesSpy = spyOn(IGDBService, "searchGames").mockRejectedValue(
+      const searchGamesSpy = vi.spyOn(IGDBService, "searchGames").mockRejectedValue(
         new Error("IGDB API error")
       );
 
@@ -156,7 +156,7 @@ describe("HybridSearchService", () => {
         slug: `igdb-game-${i}`,
       }));
 
-      const fetchGamesSpy = spyOn(GameService, "fetchGames").mockResolvedValue({
+      const fetchGamesSpy = vi.spyOn(GameService, "fetchGames").mockResolvedValue({
         games: manyLocalGames,
         pagination: {
           currentPage: 1,
@@ -167,7 +167,7 @@ describe("HybridSearchService", () => {
         },
       });
 
-      const searchGamesSpy = spyOn(IGDBService, "searchGames").mockResolvedValue(manyIgdbGames);
+      const searchGamesSpy = vi.spyOn(IGDBService, "searchGames").mockResolvedValue(manyIgdbGames);
 
       const result = await HybridSearchService.search({
         query: "test",
@@ -190,7 +190,7 @@ describe("HybridSearchService", () => {
         igdbId: 5000 + i,
       }));
 
-      const fetchGamesSpy = spyOn(GameService, "fetchGames").mockResolvedValue({
+      const fetchGamesSpy = vi.spyOn(GameService, "fetchGames").mockResolvedValue({
         games: manyLocalGames,
         pagination: {
           currentPage: 1,
@@ -201,7 +201,7 @@ describe("HybridSearchService", () => {
         },
       });
 
-      const searchGamesSpy = spyOn(IGDBService, "searchGames").mockResolvedValue([]);
+      const searchGamesSpy = vi.spyOn(IGDBService, "searchGames").mockResolvedValue([]);
 
       const result = await HybridSearchService.search({
         query: "test",
@@ -215,7 +215,7 @@ describe("HybridSearchService", () => {
     });
 
     it("should use default locale when not specified", async () => {
-      const fetchGamesSpy = spyOn(GameService, "fetchGames").mockResolvedValue({
+      const fetchGamesSpy = vi.spyOn(GameService, "fetchGames").mockResolvedValue({
         games: [],
         pagination: {
           currentPage: 1,
@@ -226,7 +226,7 @@ describe("HybridSearchService", () => {
         },
       });
 
-      const searchGamesSpy = spyOn(IGDBService, "searchGames").mockResolvedValue([]);
+      const searchGamesSpy = vi.spyOn(IGDBService, "searchGames").mockResolvedValue([]);
 
       await HybridSearchService.search({ query: "test" });
 

@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 import { GameUniverseLogo } from "../../../../src/components/ui/game-universe-logo";
 
 describe("GameUniverseLogo component", () => {

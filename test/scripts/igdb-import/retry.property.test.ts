@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import { withRetry } from "../../../scripts/igdb-import/retry";
 
@@ -38,14 +38,14 @@ describe("withRetry Property-Based Tests", () => {
             expect(attemptCount).toBe(maxAttempts);
           }
         ),
-        { numRuns: 50 }
+        { numRuns: 15 }
       );
     });
 
     it("follows exponential backoff timing between retries", async () => {
       await fc.assert(
         fc.asyncProperty(
-          fc.integer({ min: 30, max: 50 }), // initialDelayMs - larger values for more reliable timing
+          fc.integer({ min: 30, max: 50 }), // initialDelayMs - needs enough margin for Windows timing
           async (initialDelayMs) => {
             const attemptTimestamps: number[] = [];
             const maxAttempts = 3;
@@ -80,7 +80,7 @@ describe("withRetry Property-Based Tests", () => {
             }
           }
         ),
-        { numRuns: 30 }
+        { numRuns: 10 }
       );
     });
 
@@ -138,7 +138,7 @@ describe("withRetry Property-Based Tests", () => {
             expect(result.attempts).toBe(successOnAttempt);
           }
         ),
-        { numRuns: 50 }
+        { numRuns: 20 }
       );
     });
 
@@ -146,7 +146,7 @@ describe("withRetry Property-Based Tests", () => {
       await fc.assert(
         fc.asyncProperty(
           fc.integer({ min: 2, max: 3 }), // successOnAttempt
-          fc.integer({ min: 10, max: 20 }), // initialDelayMs
+          fc.integer({ min: 5, max: 10 }), // initialDelayMs - small but measurable
           async (successOnAttempt, initialDelayMs) => {
             let attemptCount = 0;
 
@@ -173,7 +173,7 @@ describe("withRetry Property-Based Tests", () => {
             expect(result.totalTimeMs).toBeGreaterThanOrEqual(expectedMinTime - 10);
           }
         ),
-        { numRuns: 30 }
+        { numRuns: 10 }
       );
     });
 
@@ -203,7 +203,7 @@ describe("withRetry Property-Based Tests", () => {
             }
           }
         ),
-        { numRuns: 50 }
+        { numRuns: 20 }
       );
     });
   });

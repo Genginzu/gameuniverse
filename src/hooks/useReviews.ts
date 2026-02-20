@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import type { Review, ReviewFormData, ReviewsResponse } from "@/types/review";
+import type { Review, ReviewFormData, ReviewsResponse, ReviewWithVotes } from "@/types/review";
 import { ReviewService } from "@/lib/services/reviewService";
 
 interface UseReviewsReturn {
-  reviews: Review[];
+  reviews: ReviewWithVotes[];
   averageRating: number | null;
   totalCount: number;
   userHasReviewed: boolean;
@@ -23,7 +23,7 @@ interface UseReviewsReturn {
  * Gère le chargement, la soumission, et l'état optimiste.
  */
 export function useReviews(gameId: string): UseReviewsReturn {
-  const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviews, setReviews] = useState<ReviewWithVotes[]>([]);
   const [averageRating, setAverageRating] = useState<number | null>(null);
   const [totalCount, setTotalCount] = useState(0);
   const [userHasReviewed, setUserHasReviewed] = useState(false);

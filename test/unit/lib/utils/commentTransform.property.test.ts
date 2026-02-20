@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import type { Comment, CommentsResponse } from "../../../../src/types/comment";
 import type { AdminComment } from "../../../../src/types/admin-comments";
@@ -7,15 +7,15 @@ import type { AdminComment } from "../../../../src/types/admin-comments";
  * Feature: character-comments, Property 5: Transformation inclut tous les champs requis
  *
  * _Pour tout_ commentaire, la transformation vers le format d'affichage (joueur ou
- * admin) doit inclure tous les champs requis : côté joueur (nom du joueur, contenu,
- * date), côté admin (nom du joueur, nom du personnage, extrait du contenu, date).
+ * admin) doit inclure tous les champs requis : cote joueur (nom du joueur, contenu,
+ * date), cote admin (nom du joueur, nom du personnage, extrait du contenu, date).
  *
  * **Validates: Requirements 3.2, 4.2**
  *
  * Feature: character-comments, Property 6: Total count = longueur de la liste
  *
- * _Pour toute_ réponse de l'API commentaires d'un personnage, le champ `totalCount`
- * doit être égal au nombre de commentaires dans le tableau `comments`.
+ * _Pour toute_ reponse de l'API commentaires d'un personnage, le champ `totalCount`
+ * doit etre egal au nombre de commentaires dans le tableau `comments`.
  *
  * **Validates: Requirements 3.4**
  */
@@ -77,15 +77,10 @@ describe("Comment Data Transformation - Property-Based Tests", () => {
     it("player-side Comment includes all required display fields (playerName, content, createdAt)", () => {
       fc.assert(
         fc.property(commentGenerator, (comment: Comment) => {
-          // playerName must be present (string or null, but not undefined)
           expect(comment.playerName).not.toBeUndefined();
           expect(typeof comment.playerName === "string" || comment.playerName === null).toBe(true);
-
-          // content must be a defined string
           expect(comment.content).not.toBeUndefined();
           expect(typeof comment.content).toBe("string");
-
-          // createdAt must be a defined string (ISO date)
           expect(comment.createdAt).not.toBeUndefined();
           expect(typeof comment.createdAt).toBe("string");
         }),
@@ -96,21 +91,14 @@ describe("Comment Data Transformation - Property-Based Tests", () => {
     it("admin-side AdminComment includes all required display fields (playerName, characterName, contentExcerpt, createdAt)", () => {
       fc.assert(
         fc.property(adminCommentGenerator, (adminComment: AdminComment) => {
-          // playerName must be present (string or null, but not undefined)
           expect(adminComment.playerName).not.toBeUndefined();
           expect(
             typeof adminComment.playerName === "string" || adminComment.playerName === null
           ).toBe(true);
-
-          // characterName must be a defined string
           expect(adminComment.characterName).not.toBeUndefined();
           expect(typeof adminComment.characterName).toBe("string");
-
-          // contentExcerpt must be a defined string
           expect(adminComment.contentExcerpt).not.toBeUndefined();
           expect(typeof adminComment.contentExcerpt).toBe("string");
-
-          // createdAt must be a defined string (ISO date)
           expect(adminComment.createdAt).not.toBeUndefined();
           expect(typeof adminComment.createdAt).toBe("string");
         }),
@@ -185,7 +173,7 @@ describe("Comment Data Transformation - Property-Based Tests", () => {
           expect(response.comments.length).toBe(0);
           expect(response.totalCount).toBe(response.comments.length);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 

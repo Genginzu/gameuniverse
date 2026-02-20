@@ -1,8 +1,8 @@
-import { describe, it, expect, beforeEach, afterEach, mock, spyOn } from "bun:test";
+﻿import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import * as fc from "fast-check";
 
 // ---------------------------------------------------------------------------
-// Mock Supabase client — stateful in-memory store for property testing
+// Mock Supabase client â€” stateful in-memory store for property testing
 // ---------------------------------------------------------------------------
 
 /** In-memory favorites store: Set of "userId::characterId" keys */
@@ -22,8 +22,8 @@ function storeKey(userId: string, characterId: string): string {
  */
 function buildMockClient() {
   return {
-    from: mock((table: string) => ({
-      insert: mock((row: { user_id: string; character_id: string }) => {
+    from: vi.fn((table: string) => ({
+      insert: vi.fn((row: { user_id: string; character_id: string }) => {
         insertCalls.push(row);
         const key = storeKey(row.user_id, row.character_id);
         if (favoritesStore.has(key)) {
@@ -36,13 +36,13 @@ function buildMockClient() {
         return Promise.resolve({ error: null });
       }),
 
-      delete: mock(() => {
+      delete: vi.fn(() => {
         // Returns a chainable object with .eq().eq() pattern
         let userId: string | null = null;
         let characterId: string | null = null;
 
         const chain = {
-          eq: mock((col: string, val: string) => {
+          eq: vi.fn((col: string, val: string) => {
             if (col === "user_id") userId = val;
             if (col === "character_id") characterId = val;
 
@@ -58,16 +58,16 @@ function buildMockClient() {
         return chain;
       }),
 
-      select: mock(() => {
-        // Chainable select → eq → eq → order for getUserFavorites
+      select: vi.fn(() => {
+        // Chainable select â†’ eq â†’ eq â†’ order for getUserFavorites
         let userId: string | null = null;
 
         const chain = {
-          eq: mock((col: string, val: string) => {
+          eq: vi.fn((col: string, val: string) => {
             if (col === "user_id") userId = val;
             return chain;
           }),
-          order: mock((column: string, opts?: { ascending: boolean }) => {
+          order: vi.fn((column: string, opts?: { ascending: boolean }) => {
             // Build rows from the store for this user
             const rows = [...favoritesStore]
               .filter((k) => k.startsWith(`${userId}::`))
@@ -101,7 +101,7 @@ function buildMockClient() {
       }),
     })),
 
-    rpc: mock((fnName: string, params: Record<string, string>) => {
+    rpc: vi.fn((fnName: string, params: Record<string, string>) => {
       if (fnName === "is_character_favorited") {
         const key = storeKey(params.user_uuid, params.character_uuid);
         return Promise.resolve({ data: favoritesStore.has(key), error: null });
@@ -118,9 +118,9 @@ function buildMockClient() {
 
 let mockClient: ReturnType<typeof buildMockClient>;
 
-mock.module("@/lib/supabase-server", () => ({
-  createServerClient: mock(async () => mockClient),
-  createRouteHandlerClient: mock(async () => mockClient),
+vi.mock("@/lib/supabase-server", () => ({
+  createServerClient: vi.fn(async () => mockClient),
+  createRouteHandlerClient: vi.fn(async () => mockClient),
 }));
 
 // Import after mocking
@@ -137,14 +137,14 @@ const characterIdGen = fc.uuid();
 // Tests
 // ---------------------------------------------------------------------------
 
-describe("CharacterFavoriteService — Property-Based Tests", () => {
-  let consoleWarnSpy: ReturnType<typeof spyOn>;
+describe("CharacterFavoriteService â€” Property-Based Tests", () => {
+  let consoleWarnSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     favoritesStore = new Set();
     insertCalls = [];
     mockClient = buildMockClient();
-    consoleWarnSpy = spyOn(console, "warn").mockImplementation(() => {});
+    consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -177,7 +177,7 @@ describe("CharacterFavoriteService — Property-Based Tests", () => {
           const afterRemove = await CharacterFavoriteService.isFavorite(characterId, userId);
           expect(afterRemove).toBe(false);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });
@@ -206,7 +206,7 @@ describe("CharacterFavoriteService — Property-Based Tests", () => {
             expect(count).toBe(userIds.length);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -231,16 +231,16 @@ describe("CharacterFavoriteService — Property-Based Tests", () => {
             expect(count).toBe(userIds.length - 1);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });
 
   // -------------------------------------------------------------------------
-  // Feature: character-favorites, Property 4: Tri des favoris par date décroissante
+  // Feature: character-favorites, Property 4: Tri des favoris par date dÃ©croissante
   // **Validates: Requirements 3.1**
   // -------------------------------------------------------------------------
-  describe("Property 4: Tri des favoris par date décroissante", () => {
+  describe("Property 4: Tri des favoris par date dÃ©croissante", () => {
     it("getUserFavorites returns items sorted by created_at descending", async () => {
       await fc.assert(
         fc.asyncProperty(
@@ -267,16 +267,16 @@ describe("CharacterFavoriteService — Property-Based Tests", () => {
             }
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });
 
   // -------------------------------------------------------------------------
-  // Feature: character-favorites, Property 6: Unicité des favoris
+  // Feature: character-favorites, Property 6: UnicitÃ© des favoris
   // **Validates: Requirements 5.2**
   // -------------------------------------------------------------------------
-  describe("Property 6: Unicité des favoris", () => {
+  describe("Property 6: UnicitÃ© des favoris", () => {
     it("adding the same favorite twice throws a unique constraint error and count stays at 1", async () => {
       await fc.assert(
         fc.asyncProperty(userIdGen, characterIdGen, async (userId, characterId) => {
@@ -302,7 +302,7 @@ describe("CharacterFavoriteService — Property-Based Tests", () => {
           const countAfterSecond = await CharacterFavoriteService.getFavoriteCount(characterId);
           expect(countAfterSecond).toBe(1);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });

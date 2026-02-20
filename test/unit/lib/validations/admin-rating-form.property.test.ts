@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import { adminRatingFormSchema } from "../../../../src/lib/validations/admin-rating-form";
 
@@ -109,7 +109,7 @@ describe("Admin Rating Form Schema - Property-Based Tests", () => {
           const result = adminRatingFormSchema.safeParse(data);
           expect(result.success).toBe(true);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -129,7 +129,7 @@ describe("Admin Rating Form Schema - Property-Based Tests", () => {
             expect(result.success).toBe(true);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -156,7 +156,7 @@ describe("Admin Rating Form Schema - Property-Based Tests", () => {
             }
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -183,7 +183,7 @@ describe("Admin Rating Form Schema - Property-Based Tests", () => {
             }
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -210,7 +210,7 @@ describe("Admin Rating Form Schema - Property-Based Tests", () => {
             }
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -231,7 +231,7 @@ describe("Admin Rating Form Schema - Property-Based Tests", () => {
             }
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });

@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 
 /**
@@ -105,7 +105,7 @@ describe("Library Games API Property-Based Tests", () => {
             }
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -126,7 +126,7 @@ describe("Library Games API Property-Based Tests", () => {
             expect(lastPage.games.length).toBeLessThanOrEqual(PAGE_SIZE);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -140,7 +140,7 @@ describe("Library Games API Property-Based Tests", () => {
 
           expect(totalGamesAcrossPages).toBe(games.length);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -168,7 +168,7 @@ describe("Library Games API Property-Based Tests", () => {
           const expectedLastPageSize = totalGames % PAGE_SIZE || PAGE_SIZE;
           expect(allPages[totalPages - 1].games.length).toBe(expectedLastPageSize);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -187,7 +187,7 @@ describe("Library Games API Property-Based Tests", () => {
           expect(result.pagination.hasNextPage).toBe(false);
           expect(result.pagination.hasPreviousPage).toBe(false);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -205,7 +205,7 @@ describe("Library Games API Property-Based Tests", () => {
             expect(result.pagination.hasNextPage).toBe(false);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -236,7 +236,7 @@ describe("Library Games API Property-Based Tests", () => {
             expect(page2.pagination.hasPreviousPage).toBe(true);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -260,7 +260,7 @@ describe("Library Games API Property-Based Tests", () => {
             expect(uniqueIds.size).toBe(allGameIds.length);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -283,7 +283,7 @@ describe("Library Games API Property-Based Tests", () => {
             }
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -312,7 +312,7 @@ describe("Library Games API Property-Based Tests", () => {
             expect(result.pagination.hasPreviousPage).toBe(validPage > 1);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });

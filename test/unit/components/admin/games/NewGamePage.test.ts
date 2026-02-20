@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, mock } from "bun:test";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 
 /**
  * NewGamePage Unit Tests
@@ -60,7 +60,7 @@ const translations: Record<string, string> = {
 describe("NewGamePage Submit Logic", () => {
   describe("Successful submission (Req 4.3)", () => {
     it("returns success with redirect on successful submit", async () => {
-      const submitGame = mock(() => Promise.resolve());
+      const submitGame = vi.fn(() => Promise.resolve());
       const result = await simulateHandleSubmit(submitGame, translations);
 
       expect(result.success).toBe(true);
@@ -72,7 +72,7 @@ describe("NewGamePage Submit Logic", () => {
 
   describe("Duplicate slug error (Req 4.4)", () => {
     it("detects 'duplicate' keyword in error message", async () => {
-      const submitGame = mock(() =>
+      const submitGame = vi.fn(() =>
         Promise.reject(new Error("duplicate key value violates unique constraint"))
       );
       const result = await simulateHandleSubmit(submitGame, translations);
@@ -84,7 +84,7 @@ describe("NewGamePage Submit Logic", () => {
     });
 
     it("detects 'already exists' keyword in error message", async () => {
-      const submitGame = mock(() =>
+      const submitGame = vi.fn(() =>
         Promise.reject(new Error("A game with slug 'test' already exists"))
       );
       const result = await simulateHandleSubmit(submitGame, translations);
@@ -94,7 +94,7 @@ describe("NewGamePage Submit Logic", () => {
     });
 
     it("detects French duplicate message", async () => {
-      const submitGame = mock(() => Promise.reject(new Error("Un jeu avec ce slug existe déjà")));
+      const submitGame = vi.fn(() => Promise.reject(new Error("Un jeu avec ce slug existe déjà")));
       const result = await simulateHandleSubmit(submitGame, translations);
 
       expect(result.success).toBe(false);
@@ -104,7 +104,7 @@ describe("NewGamePage Submit Logic", () => {
 
   describe("Generic error handling", () => {
     it("shows the error message for non-duplicate errors", async () => {
-      const submitGame = mock(() => Promise.reject(new Error("Network timeout")));
+      const submitGame = vi.fn(() => Promise.reject(new Error("Network timeout")));
       const result = await simulateHandleSubmit(submitGame, translations);
 
       expect(result.success).toBe(false);
@@ -114,7 +114,7 @@ describe("NewGamePage Submit Logic", () => {
     });
 
     it("uses generic message for non-Error throws", async () => {
-      const submitGame = mock(() => Promise.reject("unknown error"));
+      const submitGame = vi.fn(() => Promise.reject("unknown error"));
       const result = await simulateHandleSubmit(submitGame, translations);
 
       expect(result.success).toBe(false);

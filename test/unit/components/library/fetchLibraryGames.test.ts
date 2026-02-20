@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, mock, spyOn } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 
 /**
  * Feature: library-games-view
@@ -6,7 +6,7 @@ import { describe, it, expect, beforeEach, afterEach, mock, spyOn } from "bun:te
  *
  * Tests for the fetchLibraryGames function logic including:
  * - API call with correct parameters
- * - Debouncing behavior
+ * - Debouncing behavior (uses fake timers for speed)
  * - Error handling and retry
  */
 
@@ -242,7 +242,15 @@ describe("fetchLibraryGames Unit Tests", () => {
   });
 
   describe("Debouncing behavior", () => {
-    it("should delay execution by specified time", async () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    it("should delay execution by specified time", () => {
       const debouncer = createDebouncer(300);
       let executed = false;
 
@@ -253,13 +261,13 @@ describe("fetchLibraryGames Unit Tests", () => {
       expect(executed).toBe(false);
       expect(debouncer.hasPending()).toBe(true);
 
-      await new Promise((resolve) => setTimeout(resolve, 350));
+      vi.advanceTimersByTime(350);
 
       expect(executed).toBe(true);
       expect(debouncer.hasPending()).toBe(false);
     });
 
-    it("should cancel previous call when new call is made", async () => {
+    it("should cancel previous call when new call is made", () => {
       const debouncer = createDebouncer(300);
       let callCount = 0;
       let lastValue = "";
@@ -269,14 +277,14 @@ describe("fetchLibraryGames Unit Tests", () => {
         lastValue = "first";
       });
 
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      vi.advanceTimersByTime(100);
 
       debouncer.debounce(() => {
         callCount++;
         lastValue = "second";
       });
 
-      await new Promise((resolve) => setTimeout(resolve, 350));
+      vi.advanceTimersByTime(350);
 
       expect(callCount).toBe(1);
       expect(lastValue).toBe("second");
@@ -314,7 +322,7 @@ describe("fetchLibraryGames Unit Tests", () => {
       expect(debouncer.hasPending()).toBe(false);
     });
 
-    it("should handle rapid successive calls correctly", async () => {
+    it("should handle rapid successive calls correctly", () => {
       const debouncer = createDebouncer(100);
       const values: string[] = [];
 
@@ -322,10 +330,10 @@ describe("fetchLibraryGames Unit Tests", () => {
         debouncer.debounce(() => {
           values.push(`call-${i}`);
         });
-        await new Promise((resolve) => setTimeout(resolve, 30));
+        vi.advanceTimersByTime(30);
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 150));
+      vi.advanceTimersByTime(150);
 
       expect(values.length).toBe(1);
       expect(values[0]).toBe("call-4");

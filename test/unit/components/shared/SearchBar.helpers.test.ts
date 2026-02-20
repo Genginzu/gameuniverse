@@ -1,4 +1,4 @@
-import { describe, it, expect, mock, beforeEach, afterEach } from "bun:test";
+﻿import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import {
   shouldTriggerSearch,
   createDebouncedCallback,
@@ -74,7 +74,7 @@ describe("SearchBar Helper Functions", () => {
   describe("createDebouncedCallback", () => {
     describe("basic functionality", () => {
       it("returns an object with debouncedFn and cancel", () => {
-        const callback = mock(() => {});
+        const callback = vi.fn(() => {});
         const result = createDebouncedCallback(callback, 100);
 
         expect(typeof result.debouncedFn).toBe("function");
@@ -82,7 +82,7 @@ describe("SearchBar Helper Functions", () => {
       });
 
       it("does not call callback immediately", () => {
-        const callback = mock(() => {});
+        const callback = vi.fn(() => {});
         const { debouncedFn } = createDebouncedCallback(callback, 100);
 
         debouncedFn();
@@ -91,7 +91,7 @@ describe("SearchBar Helper Functions", () => {
       });
 
       it("calls callback after delay", async () => {
-        const callback = mock(() => {});
+        const callback = vi.fn(() => {});
         const { debouncedFn } = createDebouncedCallback(callback, 50);
 
         debouncedFn();
@@ -104,7 +104,7 @@ describe("SearchBar Helper Functions", () => {
 
     describe("debouncing behavior", () => {
       it("resets timer on subsequent calls", async () => {
-        const callback = mock(() => {});
+        const callback = vi.fn(() => {});
         const { debouncedFn } = createDebouncedCallback(callback, 50);
 
         debouncedFn();
@@ -123,7 +123,7 @@ describe("SearchBar Helper Functions", () => {
       });
 
       it("passes arguments to callback", async () => {
-        const callback = mock((arg: string) => arg);
+        const callback = vi.fn((arg: string) => arg);
         const { debouncedFn } = createDebouncedCallback(callback, 50);
 
         debouncedFn("test");
@@ -134,7 +134,7 @@ describe("SearchBar Helper Functions", () => {
       });
 
       it("uses last arguments when called multiple times", async () => {
-        const callback = mock((arg: string) => arg);
+        const callback = vi.fn((arg: string) => arg);
         const { debouncedFn } = createDebouncedCallback(callback, 50);
 
         debouncedFn("first");
@@ -150,7 +150,7 @@ describe("SearchBar Helper Functions", () => {
 
     describe("cancel functionality", () => {
       it("prevents callback execution when cancelled", async () => {
-        const callback = mock(() => {});
+        const callback = vi.fn(() => {});
         const { debouncedFn, cancel } = createDebouncedCallback(callback, 50);
 
         debouncedFn();
@@ -162,7 +162,7 @@ describe("SearchBar Helper Functions", () => {
       });
 
       it("can be called multiple times safely", () => {
-        const callback = mock(() => {});
+        const callback = vi.fn(() => {});
         const { cancel } = createDebouncedCallback(callback, 50);
 
         // Should not throw
@@ -172,7 +172,7 @@ describe("SearchBar Helper Functions", () => {
       });
 
       it("can cancel before any call", () => {
-        const callback = mock(() => {});
+        const callback = vi.fn(() => {});
         const { cancel } = createDebouncedCallback(callback, 50);
 
         // Should not throw
@@ -182,7 +182,7 @@ describe("SearchBar Helper Functions", () => {
 
     describe("timing variations", () => {
       it("works with very short delay", async () => {
-        const callback = mock(() => {});
+        const callback = vi.fn(() => {});
         const { debouncedFn } = createDebouncedCallback(callback, 10);
 
         debouncedFn();
@@ -193,7 +193,7 @@ describe("SearchBar Helper Functions", () => {
       });
 
       it("works with zero delay", async () => {
-        const callback = mock(() => {});
+        const callback = vi.fn(() => {});
         const { debouncedFn } = createDebouncedCallback(callback, 0);
 
         debouncedFn();
@@ -206,8 +206,8 @@ describe("SearchBar Helper Functions", () => {
 
     describe("multiple instances", () => {
       it("maintains separate timers for different instances", async () => {
-        const callback1 = mock(() => {});
-        const callback2 = mock(() => {});
+        const callback1 = vi.fn(() => {});
+        const callback2 = vi.fn(() => {});
 
         const { debouncedFn: fn1 } = createDebouncedCallback(callback1, 50);
         const { debouncedFn: fn2 } = createDebouncedCallback(callback2, 100);

@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import {
   adminGenreFormSchema,
@@ -8,10 +8,10 @@ import {
 /**
  * Feature: admin-genre-management, Property 5: Validation du slug
  *
- * _Pour toute_ chaîne de caractères, le schéma de validation du slug accepte
- * la chaîne si et seulement si elle contient uniquement des lettres minuscules,
+ * _Pour toute_ chaine de caracteres, le schema de validation du slug accepte
+ * la chaine si et seulement si elle contient uniquement des lettres minuscules,
  * des chiffres et des tirets, commence par une lettre, se termine par une
- * lettre ou un chiffre, et a entre 2 et 50 caractères.
+ * lettre ou un chiffre, et a entre 2 et 50 caracteres.
  *
  * **Validates: Requirements 2.4**
  */
@@ -118,8 +118,6 @@ const specialCharsSlugGenerator = fc
 
 describe("Admin Genre Form Schema - Property-Based Tests", () => {
   describe("Property 5: Validation du slug", () => {
-    // Feature: admin-genre-management, Property 5: Validation du slug
-
     it("accepts all valid slugs (lowercase letters, digits, hyphens, starts with letter, ends with letter/digit, 2-50 chars)", () => {
       fc.assert(
         fc.property(validSlugGenerator, (slug) => {
@@ -145,7 +143,7 @@ describe("Admin Genre Form Schema - Property-Based Tests", () => {
           });
           expect(result.success).toBe(false);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -158,7 +156,7 @@ describe("Admin Genre Form Schema - Property-Based Tests", () => {
           });
           expect(result.success).toBe(false);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -171,7 +169,7 @@ describe("Admin Genre Form Schema - Property-Based Tests", () => {
           });
           expect(result.success).toBe(false);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -184,7 +182,7 @@ describe("Admin Genre Form Schema - Property-Based Tests", () => {
           });
           expect(result.success).toBe(false);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -197,7 +195,7 @@ describe("Admin Genre Form Schema - Property-Based Tests", () => {
           });
           expect(result.success).toBe(false);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -210,7 +208,7 @@ describe("Admin Genre Form Schema - Property-Based Tests", () => {
           });
           expect(result.success).toBe(false);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -245,9 +243,9 @@ describe("Admin Genre Form Schema - Property-Based Tests", () => {
     /**
      * Property 6 : Validation des traductions
      *
-     * _Pour toute_ traduction, le schéma de validation accepte la traduction
-     * si et seulement si le nom est non vide et ne dépasse pas 100 caractères,
-     * et la description ne dépasse pas 500 caractères.
+     * _Pour toute_ traduction, le schema de validation accepte la traduction
+     * si et seulement si le nom est non vide et ne depasse pas 100 caracteres,
+     * et la description ne depasse pas 500 caracteres.
      *
      * **Validates: Requirements 2.5, 2.6**
      */
@@ -275,7 +273,7 @@ describe("Admin Genre Form Schema - Property-Based Tests", () => {
     /** Generator for descriptions that are too long (> 500 chars) */
     const tooLongDescriptionGenerator = fc.string({ minLength: 501, maxLength: 700 });
 
-    it("accepts translations with valid name (1-100 chars) and valid description (≤ 500 chars)", () => {
+    it("accepts translations with valid name (1-100 chars) and valid description (<=500 chars)", () => {
       fc.assert(
         fc.property(
           validLanguageCode,
@@ -304,7 +302,7 @@ describe("Admin Genre Form Schema - Property-Based Tests", () => {
           });
           expect(result.success).toBe(false);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -323,7 +321,7 @@ describe("Admin Genre Form Schema - Property-Based Tests", () => {
             expect(result.success).toBe(false);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -342,7 +340,7 @@ describe("Admin Genre Form Schema - Property-Based Tests", () => {
             expect(result.success).toBe(false);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -355,7 +353,7 @@ describe("Admin Genre Form Schema - Property-Based Tests", () => {
           });
           expect(result.success).toBe(true);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 

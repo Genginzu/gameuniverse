@@ -8,7 +8,7 @@
  * Requirements: 2.1, 2.4
  */
 
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 import { reviewSchema } from "../../../../../src/lib/validations/review";
 
 interface AdminReviewDetail {

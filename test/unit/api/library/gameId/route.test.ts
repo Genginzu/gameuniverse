@@ -1,9 +1,9 @@
-import { describe, it, expect, beforeEach, mock } from "bun:test";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { NextRequest } from "next/server";
 
 // Create mock functions
-const mockGetUser = mock(() => Promise.resolve({ data: { user: null }, error: null }));
-const mockFrom = mock(() => ({}));
+const mockGetUser = vi.fn(() => Promise.resolve({ data: { user: null }, error: null }));
+const mockFrom = vi.fn(() => ({}));
 
 const mockSupabase = {
   auth: {
@@ -13,9 +13,9 @@ const mockSupabase = {
 };
 
 // Mock the module
-mock.module("../../../../../src/lib/supabase-server", () => ({
-  createServerClient: mock(() => Promise.resolve(mockSupabase)),
-  createRouteHandlerClient: mock(() => Promise.resolve(mockSupabase)),
+vi.mock("../../../../../src/lib/supabase-server", () => ({
+  createServerClient: vi.fn(() => Promise.resolve(mockSupabase)),
+  createRouteHandlerClient: vi.fn(() => Promise.resolve(mockSupabase)),
 }));
 
 // Import after mocking
@@ -51,8 +51,8 @@ describe("/api/library/[gameId]", () => {
       });
 
       const mockSelect = {
-        eq: mock(() => mockSelect),
-        single: mock(() =>
+        eq: vi.fn(() => mockSelect),
+        single: vi.fn(() =>
           Promise.resolve({
             data: null,
             error: { code: "PGRST116" }, // No rows returned
@@ -61,7 +61,7 @@ describe("/api/library/[gameId]", () => {
       };
 
       mockFrom.mockReturnValue({
-        select: mock(() => mockSelect),
+        select: vi.fn(() => mockSelect),
       });
 
       const request = new NextRequest("http://localhost:3000/api/library/game-123");
@@ -88,8 +88,8 @@ describe("/api/library/[gameId]", () => {
       });
 
       const mockSelect = {
-        eq: mock(() => mockSelect),
-        single: mock(() =>
+        eq: vi.fn(() => mockSelect),
+        single: vi.fn(() =>
           Promise.resolve({
             data: mockLibraryEntry,
             error: null,
@@ -98,7 +98,7 @@ describe("/api/library/[gameId]", () => {
       };
 
       mockFrom.mockReturnValue({
-        select: mock(() => mockSelect),
+        select: vi.fn(() => mockSelect),
       });
 
       const request = new NextRequest("http://localhost:3000/api/library/game-123");
@@ -138,13 +138,13 @@ describe("/api/library/[gameId]", () => {
       });
 
       const mockDelete = {
-        eq: mock(() => mockDelete),
+        eq: vi.fn(() => mockDelete),
       };
       // The second eq call should return a promise that resolves
       mockDelete.eq.mockReturnValueOnce(mockDelete).mockResolvedValueOnce({ error: null });
 
       mockFrom.mockReturnValue({
-        delete: mock(() => mockDelete),
+        delete: vi.fn(() => mockDelete),
       });
 
       const request = new NextRequest("http://localhost:3000/api/library/game-123", {

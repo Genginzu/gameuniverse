@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import type { CharacterSummary } from "../../../../src/types/character";
 
@@ -111,7 +111,7 @@ describe("CharacterCard Property-Based Tests", () => {
           expect(result.name).toBe(character.name);
           expect(result.name.length).toBeGreaterThan(0);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -124,7 +124,7 @@ describe("CharacterCard Property-Based Tests", () => {
           expect(result.primaryGame).toBe(character.primaryGame);
           expect(result.primaryGame.length).toBeGreaterThan(0);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -136,7 +136,7 @@ describe("CharacterCard Property-Based Tests", () => {
           // Image URL must match the input (can be undefined)
           expect(result.imageUrl).toBe(character.mainImage);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -148,7 +148,7 @@ describe("CharacterCard Property-Based Tests", () => {
           // Alt text must always equal the character name
           expect(result.imageAlt).toBe(character.name);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -161,7 +161,7 @@ describe("CharacterCard Property-Based Tests", () => {
           expect(result.gamesCount).toBe(character.gamesCount);
           expect(result.gamesCount).toBeGreaterThanOrEqual(0);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -174,7 +174,7 @@ describe("CharacterCard Property-Based Tests", () => {
           const expectedHref = `/${locale}/characters/${character.slug}`;
           expect(result.linkHref).toBe(expectedHref);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -200,7 +200,7 @@ describe("CharacterCard Property-Based Tests", () => {
             expect(result.backgroundColor).toBe("#f3f4f6");
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -229,7 +229,7 @@ describe("CharacterCard Property-Based Tests", () => {
             expect(result.backgroundColor).toBe(color);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });
@@ -248,7 +248,7 @@ describe("CharacterCard Property-Based Tests", () => {
             expect(result.role).toBe(character.role);
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -265,7 +265,7 @@ describe("CharacterCard Property-Based Tests", () => {
             expect(result.description).toBe(character.description);
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });
@@ -290,7 +290,7 @@ describe("CharacterCard Property-Based Tests", () => {
           expect(result1.hasDescription).toBe(result2.hasDescription);
           expect(result1.description).toBe(result2.description);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 

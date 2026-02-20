@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import {
   adminGameFormSchema,
@@ -52,7 +52,7 @@ function toFormData(game: GameApiResponse): AdminGameFormData {
   };
 }
 
-// --- Conversion function: form data → API payload (mirrors useGameForm submit) ---
+// --- Conversion function: form data â†’ API payload (mirrors useGameForm submit) ---
 
 function toApiPayload(data: AdminGameFormData) {
   return {
@@ -123,10 +123,10 @@ const validGameApiResponse = () =>
 // --- Tests ---
 
 describe("Property 4: Round-Trip de Modification", () => {
-  it("loading game data into form and saving preserves all fields (API → form → API)", () => {
+  it("loading game data into form and saving preserves all fields (API â†’ form â†’ API)", () => {
     fc.assert(
       fc.property(validGameApiResponse(), (apiGame) => {
-        // Step 1: Convert API response → form data (simulates loading into form)
+        // Step 1: Convert API response â†’ form data (simulates loading into form)
         const formData = toFormData(apiGame);
 
         // Step 2: Validate form data passes schema (simulates form submission)
@@ -134,7 +134,7 @@ describe("Property 4: Round-Trip de Modification", () => {
         expect(parseResult.success).toBe(true);
         if (!parseResult.success) return;
 
-        // Step 3: Convert form data → API payload (simulates submit)
+        // Step 3: Convert form data â†’ API payload (simulates submit)
         const payload = toApiPayload(parseResult.data);
 
         // Step 4: Verify round-trip preserves all data
@@ -168,7 +168,7 @@ describe("Property 4: Round-Trip de Modification", () => {
     );
   });
 
-  it("form data round-trip through schema is idempotent (form → schema → form)", () => {
+  it("form data round-trip through schema is idempotent (form â†’ schema â†’ form)", () => {
     fc.assert(
       fc.property(validGameApiResponse(), (apiGame) => {
         const formData = toFormData(apiGame);

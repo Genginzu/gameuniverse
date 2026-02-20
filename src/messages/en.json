@@ -631,6 +631,13 @@
       },
       "rating": {
         "ariaLabel": "Rating out of {max}"
+      },
+      "votes": {
+        "helpful": "Helpful",
+        "notHelpful": "Not helpful",
+        "helpfulAriaLabel": "Mark as helpful ({count})",
+        "notHelpfulAriaLabel": "Mark as not helpful ({count})",
+        "loginToVote": "Sign in to vote"
       }
     },
     "playtime": {

@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import type { EntitySkeletonConfig } from "../../../../src/components/shared/EntitySkeleton";
 // eslint-disable-next-line no-duplicate-imports

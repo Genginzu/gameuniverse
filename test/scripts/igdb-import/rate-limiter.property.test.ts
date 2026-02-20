@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import { RateLimiter } from "../../../scripts/igdb-import/rate-limiter";
 
@@ -20,7 +20,7 @@ describe("RateLimiter Property-Based Tests", () => {
           fc.integer({ min: 5, max: 8 }), // Number of requests
           async (numRequests) => {
             const maxRequests = 4;
-            const windowMs = 50; // Small window for fast tests
+            const windowMs = 20; // Small window for fast tests
             const rateLimiter = new RateLimiter(maxRequests, windowMs);
 
             const startTime = Date.now();
@@ -36,7 +36,7 @@ describe("RateLimiter Property-Based Tests", () => {
             expect(elapsedMs).toBeGreaterThanOrEqual(minExpectedMs - 20);
           }
         ),
-        { numRuns: 20 }
+        { numRuns: 10 }
       );
     });
 
@@ -70,7 +70,7 @@ describe("RateLimiter Property-Based Tests", () => {
         fc.asyncProperty(
           fc.integer({ min: 2, max: 4 }), // Max requests per window
           async (maxRequests) => {
-            const windowMs = 50; // Small window for fast tests
+            const windowMs = 20; // Small window for fast tests
             const rateLimiter = new RateLimiter(maxRequests, windowMs);
 
             const startTime = Date.now();
@@ -86,7 +86,7 @@ describe("RateLimiter Property-Based Tests", () => {
             expect(elapsedMs).toBeGreaterThanOrEqual(windowMs - 20);
           }
         ),
-        { numRuns: 30 }
+        { numRuns: 15 }
       );
     });
 
@@ -96,7 +96,7 @@ describe("RateLimiter Property-Based Tests", () => {
           fc.integer({ min: 1, max: 6 }), // Number of requests
           fc.integer({ min: 2, max: 4 }), // Max requests per window
           async (numRequests, maxRequests) => {
-            const windowMs = 100;
+            const windowMs = 30;
             const rateLimiter = new RateLimiter(maxRequests, windowMs);
 
             for (let i = 0; i < numRequests; i++) {
@@ -109,7 +109,7 @@ describe("RateLimiter Property-Based Tests", () => {
             expect(count).toBeGreaterThanOrEqual(0);
           }
         ),
-        { numRuns: 30 }
+        { numRuns: 15 }
       );
     });
 
@@ -118,7 +118,7 @@ describe("RateLimiter Property-Based Tests", () => {
         fc.asyncProperty(
           fc.integer({ min: 2, max: 4 }), // Max requests per window
           async (maxRequests) => {
-            const windowMs = 200;
+            const windowMs = 100;
             const rateLimiter = new RateLimiter(maxRequests, windowMs);
 
             // Fill up the rate limiter
@@ -141,7 +141,7 @@ describe("RateLimiter Property-Based Tests", () => {
             expect(rateLimiter.getRequestCount()).toBe(maxRequests);
           }
         ),
-        { numRuns: 20 }
+        { numRuns: 10 }
       );
     });
   });

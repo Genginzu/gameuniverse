@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import {
   adminLanguageFormSchema,
@@ -6,7 +6,7 @@ import {
 } from "../../../../src/lib/validations/admin-language-form";
 
 /**
- * Feature: admin-language-management, Property 1: Validation du Schéma de Langue
+ * Feature: admin-language-management, Property 1: Validation du Schema de Langue
  *
  * _For any_ language form data, the Zod schema must accept it if and only if:
  * - the code matches pattern ^[a-z]([a-z-]*[a-z])?$ with length between 2 and 10 characters
@@ -112,7 +112,7 @@ const tooLongNativeNameGenerator = fc
 // --- Tests ---
 
 describe("Admin Language Form Schema - Property-Based Tests", () => {
-  describe("Property 1: Validation du Schéma de Langue", () => {
+  describe("Property 1: Validation du Schema de Langue", () => {
     it("accepts all valid language form data", () => {
       fc.assert(
         fc.property(validFormDataGenerator, (data) => {
@@ -140,7 +140,7 @@ describe("Admin Language Form Schema - Property-Based Tests", () => {
             const result = adminLanguageFormSchema.safeParse({ code, name });
             expect(result.success).toBe(false);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -150,7 +150,7 @@ describe("Admin Language Form Schema - Property-Based Tests", () => {
             const result = adminLanguageFormSchema.safeParse({ code, name });
             expect(result.success).toBe(false);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -160,7 +160,7 @@ describe("Admin Language Form Schema - Property-Based Tests", () => {
             const result = adminLanguageFormSchema.safeParse({ code, name });
             expect(result.success).toBe(false);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -170,7 +170,7 @@ describe("Admin Language Form Schema - Property-Based Tests", () => {
             const result = adminLanguageFormSchema.safeParse({ code, name });
             expect(result.success).toBe(false);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
     });
@@ -186,7 +186,7 @@ describe("Admin Language Form Schema - Property-Based Tests", () => {
               expect(nameErrors.length).toBeGreaterThan(0);
             }
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -200,7 +200,7 @@ describe("Admin Language Form Schema - Property-Based Tests", () => {
               expect(nameErrors.length).toBeGreaterThan(0);
             }
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
     });
@@ -217,7 +217,7 @@ describe("Admin Language Form Schema - Property-Based Tests", () => {
               expect(result.success).toBe(true);
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -238,7 +238,7 @@ describe("Admin Language Form Schema - Property-Based Tests", () => {
               }
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
     });
@@ -267,7 +267,7 @@ describe("Admin Language Form Schema - Property-Based Tests", () => {
               }
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
     });

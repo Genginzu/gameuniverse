@@ -2,11 +2,11 @@
 
 import { MessageSquare } from "lucide-react";
 import { useReviewTranslations } from "@/hooks/useTranslations";
-import type { Review } from "@/types/review";
+import type { ReviewWithVotes } from "@/types/review";
 import { ReviewCard } from "./ReviewCard";
 
 interface ReviewListProps {
-  reviews: Review[];
+  reviews: ReviewWithVotes[];
   loading?: boolean;
 }
 

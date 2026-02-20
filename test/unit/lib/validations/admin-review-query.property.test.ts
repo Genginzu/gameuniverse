@@ -9,7 +9,7 @@
  * **Validates: Requirements 1.1**
  */
 
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import { adminReviewQuerySchema } from "../../../../src/lib/validations/admin-review-query";
 

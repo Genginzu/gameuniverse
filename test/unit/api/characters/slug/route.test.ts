@@ -1,17 +1,17 @@
-import { describe, it, expect, beforeEach, mock } from "bun:test";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { NextRequest } from "next/server";
 
 // Create mock functions
-const mockFrom = mock(() => ({}));
+const mockFrom = vi.fn(() => ({}));
 
 const mockSupabase = {
   from: mockFrom,
 };
 
 // Mock the module
-mock.module("../../../../../src/lib/supabase-server", () => ({
-  createServerClient: mock(() => Promise.resolve(mockSupabase)),
-  createRouteHandlerClient: mock(() => Promise.resolve(mockSupabase)),
+vi.mock("../../../../../src/lib/supabase-server", () => ({
+  createServerClient: vi.fn(() => Promise.resolve(mockSupabase)),
+  createRouteHandlerClient: vi.fn(() => Promise.resolve(mockSupabase)),
 }));
 
 // Import after mocking
@@ -71,8 +71,8 @@ describe("/api/characters/[slug]", () => {
 
       // Mock main character query
       const mockMainQuery = {
-        eq: mock(() => mockMainQuery),
-        single: mock(() =>
+        eq: vi.fn(() => mockMainQuery),
+        single: vi.fn(() =>
           Promise.resolve({
             data: mockCharacter,
             error: null,
@@ -82,7 +82,7 @@ describe("/api/characters/[slug]", () => {
 
       // Mock relationships query
       const mockRelationshipsQuery = {
-        eq: mock(() =>
+        eq: vi.fn(() =>
           Promise.resolve({
             data: [],
             error: null,
@@ -92,10 +92,10 @@ describe("/api/characters/[slug]", () => {
 
       mockFrom
         .mockReturnValueOnce({
-          select: mock(() => mockMainQuery),
+          select: vi.fn(() => mockMainQuery),
         })
         .mockReturnValueOnce({
-          select: mock(() => mockRelationshipsQuery),
+          select: vi.fn(() => mockRelationshipsQuery),
         });
 
       const request = new NextRequest("http://localhost:3000/api/characters/mario");
@@ -119,8 +119,8 @@ describe("/api/characters/[slug]", () => {
     it("should return 404 for an invalid slug", async () => {
       // Mock main query returning PGRST116 error (not found)
       const mockMainQuery = {
-        eq: mock(() => mockMainQuery),
-        single: mock(() =>
+        eq: vi.fn(() => mockMainQuery),
+        single: vi.fn(() =>
           Promise.resolve({
             data: null,
             error: { code: "PGRST116", message: "No rows found" },
@@ -129,7 +129,7 @@ describe("/api/characters/[slug]", () => {
       };
 
       mockFrom.mockReturnValueOnce({
-        select: mock(() => mockMainQuery),
+        select: vi.fn(() => mockMainQuery),
       });
 
       const request = new NextRequest("http://localhost:3000/api/characters/nonexistent");
@@ -143,8 +143,8 @@ describe("/api/characters/[slug]", () => {
     it("should return 404 when character data is null", async () => {
       // Mock main query returning null data without error
       const mockMainQuery = {
-        eq: mock(() => mockMainQuery),
-        single: mock(() =>
+        eq: vi.fn(() => mockMainQuery),
+        single: vi.fn(() =>
           Promise.resolve({
             data: null,
             error: null,
@@ -153,7 +153,7 @@ describe("/api/characters/[slug]", () => {
       };
 
       mockFrom.mockReturnValueOnce({
-        select: mock(() => mockMainQuery),
+        select: vi.fn(() => mockMainQuery),
       });
 
       const request = new NextRequest("http://localhost:3000/api/characters/ghost");
@@ -167,8 +167,8 @@ describe("/api/characters/[slug]", () => {
     it("should return 500 when database query fails", async () => {
       // Mock main query with database error
       const mockMainQuery = {
-        eq: mock(() => mockMainQuery),
-        single: mock(() =>
+        eq: vi.fn(() => mockMainQuery),
+        single: vi.fn(() =>
           Promise.resolve({
             data: null,
             error: { code: "PGRST500", message: "Database connection error" },
@@ -177,7 +177,7 @@ describe("/api/characters/[slug]", () => {
       };
 
       mockFrom.mockReturnValueOnce({
-        select: mock(() => mockMainQuery),
+        select: vi.fn(() => mockMainQuery),
       });
 
       const request = new NextRequest("http://localhost:3000/api/characters/mario");
@@ -211,8 +211,8 @@ describe("/api/characters/[slug]", () => {
       };
 
       const mockMainQuery = {
-        eq: mock(() => mockMainQuery),
-        single: mock(() =>
+        eq: vi.fn(() => mockMainQuery),
+        single: vi.fn(() =>
           Promise.resolve({
             data: mockCharacter,
             error: null,
@@ -221,7 +221,7 @@ describe("/api/characters/[slug]", () => {
       };
 
       const mockRelationshipsQuery = {
-        eq: mock(() =>
+        eq: vi.fn(() =>
           Promise.resolve({
             data: [],
             error: null,
@@ -231,10 +231,10 @@ describe("/api/characters/[slug]", () => {
 
       mockFrom
         .mockReturnValueOnce({
-          select: mock(() => mockMainQuery),
+          select: vi.fn(() => mockMainQuery),
         })
         .mockReturnValueOnce({
-          select: mock(() => mockRelationshipsQuery),
+          select: vi.fn(() => mockRelationshipsQuery),
         });
 
       const request = new NextRequest("http://localhost:3000/api/characters/mario?locale=en");
@@ -266,8 +266,8 @@ describe("/api/characters/[slug]", () => {
       };
 
       const mockMainQuery = {
-        eq: mock(() => mockMainQuery),
-        single: mock(() =>
+        eq: vi.fn(() => mockMainQuery),
+        single: vi.fn(() =>
           Promise.resolve({
             data: mockCharacter,
             error: null,
@@ -276,7 +276,7 @@ describe("/api/characters/[slug]", () => {
       };
 
       const mockRelationshipsQuery = {
-        eq: mock(() =>
+        eq: vi.fn(() =>
           Promise.resolve({
             data: [],
             error: null,
@@ -286,10 +286,10 @@ describe("/api/characters/[slug]", () => {
 
       mockFrom
         .mockReturnValueOnce({
-          select: mock(() => mockMainQuery),
+          select: vi.fn(() => mockMainQuery),
         })
         .mockReturnValueOnce({
-          select: mock(() => mockRelationshipsQuery),
+          select: vi.fn(() => mockRelationshipsQuery),
         });
 
       const request = new NextRequest("http://localhost:3000/api/characters/mario");

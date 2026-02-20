@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import { sortCommentsByDateDesc } from "../../../../src/app/api/comments/route";
 

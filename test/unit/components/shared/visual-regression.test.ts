@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import type { EntityCardConfig } from "../../../../src/components/shared/EntityCard";
 import { getMetascoreColor } from "../../../../src/components/shared/EntityCard"; // eslint-disable-line no-duplicate-imports

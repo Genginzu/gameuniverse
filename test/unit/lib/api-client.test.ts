@@ -1,14 +1,14 @@
-import { describe, it, expect, beforeEach, afterEach, mock, spyOn } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { ApiClient, apiClient } from "../../../src/lib/api-client";
 import { ErrorType } from "../../../src/lib/error-handling";
 
 describe("api-client", () => {
   let originalFetch: typeof fetch;
-  let consoleWarnSpy: ReturnType<typeof spyOn>;
+  let consoleWarnSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     originalFetch = globalThis.fetch;
-    consoleWarnSpy = spyOn(console, "warn").mockImplementation(() => {});
+    consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -42,7 +42,7 @@ describe("api-client", () => {
     describe("call", () => {
       it("should make successful GET request", async () => {
         const mockResponse = { data: "test" };
-        globalThis.fetch = mock(async () => ({
+        globalThis.fetch = vi.fn(async () => ({
           ok: true,
           headers: new Headers({ "content-type": "application/json" }),
           json: async () => mockResponse,
@@ -65,7 +65,7 @@ describe("api-client", () => {
       });
 
       it("should handle non-JSON responses", async () => {
-        globalThis.fetch = mock(async () => ({
+        globalThis.fetch = vi.fn(async () => ({
           ok: true,
           headers: new Headers({ "content-type": "text/plain" }),
           text: async () => "plain text response",
@@ -88,7 +88,7 @@ describe("api-client", () => {
       });
 
       it("should handle absolute URLs", async () => {
-        const mockFetch = mock(async () => ({
+        const mockFetch = vi.fn(async () => ({
           ok: true,
           headers: new Headers({ "content-type": "application/json" }),
           json: async () => ({ success: true }),
@@ -112,7 +112,7 @@ describe("api-client", () => {
       });
 
       it("should throw timeout error on abort", async () => {
-        globalThis.fetch = mock(async () => {
+        globalThis.fetch = vi.fn(async () => {
           const error = new Error("Aborted");
           error.name = "AbortError";
           throw error;
@@ -137,7 +137,7 @@ describe("api-client", () => {
       });
 
       it("should handle 400 validation errors", async () => {
-        globalThis.fetch = mock(async () => ({
+        globalThis.fetch = vi.fn(async () => ({
           ok: false,
           status: 400,
           headers: new Headers({ "content-type": "application/json" }),
@@ -163,7 +163,7 @@ describe("api-client", () => {
       });
 
       it("should handle 401 authentication errors", async () => {
-        globalThis.fetch = mock(async () => ({
+        globalThis.fetch = vi.fn(async () => ({
           ok: false,
           status: 401,
           headers: new Headers({ "content-type": "application/json" }),
@@ -189,7 +189,7 @@ describe("api-client", () => {
       });
 
       it("should handle 403 authorization errors", async () => {
-        globalThis.fetch = mock(async () => ({
+        globalThis.fetch = vi.fn(async () => ({
           ok: false,
           status: 403,
           headers: new Headers({ "content-type": "application/json" }),
@@ -215,7 +215,7 @@ describe("api-client", () => {
       });
 
       it("should handle 404 not found errors", async () => {
-        globalThis.fetch = mock(async () => ({
+        globalThis.fetch = vi.fn(async () => ({
           ok: false,
           status: 404,
           headers: new Headers({ "content-type": "application/json" }),
@@ -241,7 +241,7 @@ describe("api-client", () => {
       });
 
       it("should handle 500 server errors", async () => {
-        globalThis.fetch = mock(async () => ({
+        globalThis.fetch = vi.fn(async () => ({
           ok: false,
           status: 500,
           headers: new Headers({ "content-type": "application/json" }),
@@ -268,7 +268,7 @@ describe("api-client", () => {
       });
 
       it("should handle network errors", async () => {
-        globalThis.fetch = mock(async () => {
+        globalThis.fetch = vi.fn(async () => {
           throw new TypeError("fetch failed");
         }) as typeof fetch;
 
@@ -291,7 +291,7 @@ describe("api-client", () => {
       });
 
       it("should handle JSON parse errors", async () => {
-        globalThis.fetch = mock(async () => ({
+        globalThis.fetch = vi.fn(async () => ({
           ok: true,
           headers: new Headers({ "content-type": "application/json" }),
           json: async () => {
@@ -317,7 +317,7 @@ describe("api-client", () => {
       });
 
       it("should skip error handling when skipErrorHandling is true", async () => {
-        globalThis.fetch = mock(async () => {
+        globalThis.fetch = vi.fn(async () => {
           throw new Error("Raw error");
         }) as typeof fetch;
 
@@ -355,7 +355,7 @@ describe("HTTP methods", () => {
 
   describe("get", () => {
     it("should make GET request", async () => {
-      const mockFetch = mock(async () => ({
+      const mockFetch = vi.fn(async () => ({
         ok: true,
         headers: new Headers({ "content-type": "application/json" }),
         json: async () => ({ data: "test" }),
@@ -381,7 +381,7 @@ describe("HTTP methods", () => {
 
   describe("post", () => {
     it("should make POST request with JSON body", async () => {
-      const mockFetch = mock(async () => ({
+      const mockFetch = vi.fn(async () => ({
         ok: true,
         headers: new Headers({ "content-type": "application/json" }),
         json: async () => ({ success: true }),
@@ -412,7 +412,7 @@ describe("HTTP methods", () => {
     });
 
     it("should make POST request without body", async () => {
-      const mockFetch = mock(async () => ({
+      const mockFetch = vi.fn(async () => ({
         ok: true,
         headers: new Headers({ "content-type": "application/json" }),
         json: async () => ({}),
@@ -444,7 +444,7 @@ describe("HTTP methods", () => {
 
   describe("put", () => {
     it("should make PUT request with JSON body", async () => {
-      const mockFetch = mock(async () => ({
+      const mockFetch = vi.fn(async () => ({
         ok: true,
         headers: new Headers({ "content-type": "application/json" }),
         json: async () => ({ updated: true }),
@@ -476,7 +476,7 @@ describe("HTTP methods", () => {
 
   describe("patch", () => {
     it("should make PATCH request with JSON body", async () => {
-      const mockFetch = mock(async () => ({
+      const mockFetch = vi.fn(async () => ({
         ok: true,
         headers: new Headers({ "content-type": "application/json" }),
         json: async () => ({ patched: true }),
@@ -508,7 +508,7 @@ describe("HTTP methods", () => {
 
   describe("delete", () => {
     it("should make DELETE request", async () => {
-      const mockFetch = mock(async () => ({
+      const mockFetch = vi.fn(async () => ({
         ok: true,
         headers: new Headers({ "content-type": "application/json" }),
         json: async () => ({ deleted: true }),

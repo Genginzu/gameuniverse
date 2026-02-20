@@ -1,4 +1,4 @@
-import { describe, it, expect, mock, beforeEach, afterEach } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 
 /**
  * Unit Tests for CharacterSearchBar Component

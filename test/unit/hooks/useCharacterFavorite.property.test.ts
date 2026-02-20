@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 
 // Feature: character-favorites, Property 2: Rollback de la mise à jour optimiste en cas d'erreur

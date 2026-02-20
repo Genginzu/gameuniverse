@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, mock, spyOn } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import * as fc from "fast-check";
 import type { TrackableField } from "../../../../src/types/admin-games";
 import type { IGDBGame } from "../../../../src/types/igdb";
@@ -200,15 +200,15 @@ function createTrackingSupabase() {
 // =============================================================================
 
 describe("Property 3: La synchronisation respecte les overrides", () => {
-  let getGameDetailsSpy: ReturnType<typeof spyOn>;
-  let getTimeToBeatSpy: ReturnType<typeof spyOn>;
-  let getGameVersionsSpy: ReturnType<typeof spyOn>;
+  let getGameDetailsSpy: ReturnType<typeof vi.spyOn>;
+  let getTimeToBeatSpy: ReturnType<typeof vi.spyOn>;
+  let getGameVersionsSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     // Mock les appels IGDB pour éviter les vrais appels réseau
-    getGameDetailsSpy = spyOn(IGDBService, "getGameDetails");
-    getTimeToBeatSpy = spyOn(IGDBService, "getTimeToBeat");
-    getGameVersionsSpy = spyOn(IGDBService, "getGameVersions");
+    getGameDetailsSpy = vi.spyOn(IGDBService, "getGameDetails");
+    getTimeToBeatSpy = vi.spyOn(IGDBService, "getTimeToBeat");
+    getGameVersionsSpy = vi.spyOn(IGDBService, "getGameVersions");
 
     getTimeToBeatSpy.mockResolvedValue({
       game_id: 1,
@@ -295,14 +295,14 @@ describe("Property 3: La synchronisation respecte les overrides", () => {
 // =============================================================================
 
 describe("Property 4: La synchronisation forcée supprime les overrides", () => {
-  let getGameDetailsSpy: ReturnType<typeof spyOn>;
-  let getTimeToBeatSpy: ReturnType<typeof spyOn>;
-  let getGameVersionsSpy: ReturnType<typeof spyOn>;
+  let getGameDetailsSpy: ReturnType<typeof vi.spyOn>;
+  let getTimeToBeatSpy: ReturnType<typeof vi.spyOn>;
+  let getGameVersionsSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    getGameDetailsSpy = spyOn(IGDBService, "getGameDetails");
-    getTimeToBeatSpy = spyOn(IGDBService, "getTimeToBeat");
-    getGameVersionsSpy = spyOn(IGDBService, "getGameVersions");
+    getGameDetailsSpy = vi.spyOn(IGDBService, "getGameDetails");
+    getTimeToBeatSpy = vi.spyOn(IGDBService, "getTimeToBeat");
+    getGameVersionsSpy = vi.spyOn(IGDBService, "getGameVersions");
 
     getTimeToBeatSpy.mockResolvedValue({
       game_id: 1,

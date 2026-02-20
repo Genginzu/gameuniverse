@@ -1,10 +1,10 @@
-import { describe, it, expect, mock, beforeEach, afterEach } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 
 // Since Bun's mock.module doesn't work reliably with React hooks,
 // we test the useCharacterFavorite hook logic through unit tests
 // of its expected behavior, API interactions, and data shapes.
 
-const mockFetch = mock(() => Promise.resolve(new Response()));
+const mockFetch = vi.fn(() => Promise.resolve(new Response()));
 
 describe("useCharacterFavorite", () => {
   beforeEach(() => {

@@ -1,17 +1,17 @@
-import { describe, it, expect, beforeEach, mock } from "bun:test";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { NextRequest } from "next/server";
 
 // Create mock functions
-const mockFrom = mock(() => ({}));
+const mockFrom = vi.fn(() => ({}));
 
 const mockSupabase = {
   from: mockFrom,
 };
 
 // Mock the module
-mock.module("../../../../src/lib/supabase-server", () => ({
-  createServerClient: mock(() => Promise.resolve(mockSupabase)),
-  createRouteHandlerClient: mock(() => Promise.resolve(mockSupabase)),
+vi.mock("../../../../src/lib/supabase-server", () => ({
+  createServerClient: vi.fn(() => Promise.resolve(mockSupabase)),
+  createRouteHandlerClient: vi.fn(() => Promise.resolve(mockSupabase)),
 }));
 
 // Import after mocking
@@ -53,7 +53,7 @@ describe("/api/characters", () => {
 
       // Mock count query
       const mockCountQuery = {
-        eq: mock(() => mockCountQuery),
+        eq: vi.fn(() => mockCountQuery),
       };
       mockCountQuery.eq.mockResolvedValue({
         count: 1,
@@ -62,11 +62,11 @@ describe("/api/characters", () => {
 
       // Mock main query
       const mockMainQuery = {
-        eq: mock(() => mockMainQuery),
-        ilike: mock(() => mockMainQuery),
-        in: mock(() => mockMainQuery),
-        range: mock(() => mockMainQuery),
-        order: mock(() =>
+        eq: vi.fn(() => mockMainQuery),
+        ilike: vi.fn(() => mockMainQuery),
+        in: vi.fn(() => mockMainQuery),
+        range: vi.fn(() => mockMainQuery),
+        order: vi.fn(() =>
           Promise.resolve({
             data: mockCharacters,
             error: null,
@@ -76,10 +76,10 @@ describe("/api/characters", () => {
 
       mockFrom
         .mockReturnValueOnce({
-          select: mock(() => mockMainQuery),
+          select: vi.fn(() => mockMainQuery),
         })
         .mockReturnValueOnce({
-          select: mock(() => mockCountQuery),
+          select: vi.fn(() => mockCountQuery),
         });
 
       const request = new NextRequest("http://localhost:3000/api/characters");
@@ -101,9 +101,9 @@ describe("/api/characters", () => {
 
       // Mock count query
       const mockCountQuery = {
-        eq: mock(() => mockCountQuery),
-        ilike: mock(() => mockCountQuery),
-        in: mock(() => mockCountQuery),
+        eq: vi.fn(() => mockCountQuery),
+        ilike: vi.fn(() => mockCountQuery),
+        in: vi.fn(() => mockCountQuery),
       };
       mockCountQuery.in.mockResolvedValue({
         count: 0,
@@ -112,11 +112,11 @@ describe("/api/characters", () => {
 
       // Mock main query
       const mockMainQuery = {
-        eq: mock(() => mockMainQuery),
-        ilike: mock(() => mockMainQuery),
-        in: mock(() => mockMainQuery),
-        range: mock(() => mockMainQuery),
-        order: mock(() =>
+        eq: vi.fn(() => mockMainQuery),
+        ilike: vi.fn(() => mockMainQuery),
+        in: vi.fn(() => mockMainQuery),
+        range: vi.fn(() => mockMainQuery),
+        order: vi.fn(() =>
           Promise.resolve({
             data: mockCharacters,
             error: null,
@@ -126,10 +126,10 @@ describe("/api/characters", () => {
 
       mockFrom
         .mockReturnValueOnce({
-          select: mock(() => mockMainQuery),
+          select: vi.fn(() => mockMainQuery),
         })
         .mockReturnValueOnce({
-          select: mock(() => mockCountQuery),
+          select: vi.fn(() => mockCountQuery),
         });
 
       const request = new NextRequest(
@@ -145,7 +145,7 @@ describe("/api/characters", () => {
     it("should return 500 when database count query fails", async () => {
       // Mock count query with error
       const mockCountQuery = {
-        eq: mock(() => mockCountQuery),
+        eq: vi.fn(() => mockCountQuery),
       };
       mockCountQuery.eq.mockResolvedValue({
         count: null,
@@ -154,9 +154,9 @@ describe("/api/characters", () => {
 
       // Mock main query
       const mockMainQuery = {
-        eq: mock(() => mockMainQuery),
-        range: mock(() => mockMainQuery),
-        order: mock(() =>
+        eq: vi.fn(() => mockMainQuery),
+        range: vi.fn(() => mockMainQuery),
+        order: vi.fn(() =>
           Promise.resolve({
             data: [],
             error: null,
@@ -166,10 +166,10 @@ describe("/api/characters", () => {
 
       mockFrom
         .mockReturnValueOnce({
-          select: mock(() => mockMainQuery),
+          select: vi.fn(() => mockMainQuery),
         })
         .mockReturnValueOnce({
-          select: mock(() => mockCountQuery),
+          select: vi.fn(() => mockCountQuery),
         });
 
       const request = new NextRequest("http://localhost:3000/api/characters");
@@ -183,7 +183,7 @@ describe("/api/characters", () => {
     it("should return 500 when database main query fails", async () => {
       // Mock count query
       const mockCountQuery = {
-        eq: mock(() => mockCountQuery),
+        eq: vi.fn(() => mockCountQuery),
       };
       mockCountQuery.eq.mockResolvedValue({
         count: 10,
@@ -192,9 +192,9 @@ describe("/api/characters", () => {
 
       // Mock main query with error
       const mockMainQuery = {
-        eq: mock(() => mockMainQuery),
-        range: mock(() => mockMainQuery),
-        order: mock(() =>
+        eq: vi.fn(() => mockMainQuery),
+        range: vi.fn(() => mockMainQuery),
+        order: vi.fn(() =>
           Promise.resolve({
             data: null,
             error: new Error("Database error"),
@@ -204,10 +204,10 @@ describe("/api/characters", () => {
 
       mockFrom
         .mockReturnValueOnce({
-          select: mock(() => mockMainQuery),
+          select: vi.fn(() => mockMainQuery),
         })
         .mockReturnValueOnce({
-          select: mock(() => mockCountQuery),
+          select: vi.fn(() => mockCountQuery),
         });
 
       const request = new NextRequest("http://localhost:3000/api/characters");

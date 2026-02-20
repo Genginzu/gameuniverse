@@ -6,7 +6,7 @@
  * Requirements: 4.1, 4.2, 4.3, 4.4
  */
 
-import { describe, test, expect } from "bun:test";
+import { describe, test, expect } from "vitest";
 import { TRACKABLE_FIELDS } from "../../../src/lib/utils/field-tracking";
 import type { TrackableField } from "../../../src/types/admin-games";
 

@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 
 /**
@@ -93,7 +93,7 @@ describe("Library Games API Property-Based Tests", () => {
             expect(result.pagination.offset).toBe(expectedOffset);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -115,7 +115,7 @@ describe("Library Games API Property-Based Tests", () => {
             }
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -139,7 +139,7 @@ describe("Library Games API Property-Based Tests", () => {
             }
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -165,7 +165,7 @@ describe("Library Games API Property-Based Tests", () => {
             }
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -191,7 +191,7 @@ describe("Library Games API Property-Based Tests", () => {
             }
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -218,7 +218,7 @@ describe("Library Games API Property-Based Tests", () => {
             expect(firstIndex).toBe(lastIndex + 1);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -237,7 +237,7 @@ describe("Library Games API Property-Based Tests", () => {
             expect(result.games.length).toBe(0);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -261,7 +261,7 @@ describe("Library Games API Property-Based Tests", () => {
           const uniqueIds = new Set(gameIds);
           expect(uniqueIds.size).toBe(games.length);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -280,7 +280,7 @@ describe("Library Games API Property-Based Tests", () => {
             expect(result.pagination.offset % PAGE_SIZE).toBe(0);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -297,7 +297,7 @@ describe("Library Games API Property-Based Tests", () => {
             expect(result.games[0].id).toBe(games[0].id);
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });

@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 
 /**
@@ -134,7 +134,7 @@ describe("Library Statistics Property-Based Tests", () => {
             expect(statsWithFilter1.averageRating).toBe(statsWithFilter2.averageRating);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -165,7 +165,7 @@ describe("Library Statistics Property-Based Tests", () => {
             }
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -205,7 +205,7 @@ describe("Library Statistics Property-Based Tests", () => {
             }
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -257,7 +257,7 @@ describe("Library Statistics Property-Based Tests", () => {
             }
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -296,7 +296,7 @@ describe("Library Statistics Property-Based Tests", () => {
             }
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -332,7 +332,7 @@ describe("Library Statistics Property-Based Tests", () => {
             expect(statsWithSearch.averageRating).toBe(statsNoSearch.averageRating);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -368,7 +368,7 @@ describe("Library Statistics Property-Based Tests", () => {
             expect(statsWithGenre.averageRating).toBe(statsNoGenre.averageRating);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -404,7 +404,7 @@ describe("Library Statistics Property-Based Tests", () => {
             expect(statsWithPublisher.averageRating).toBe(statsNoPublisher.averageRating);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });

@@ -1,17 +1,17 @@
-import { describe, it, expect, beforeEach, mock } from "bun:test";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { NextRequest } from "next/server";
 
 // Create mock functions
-const mockFrom = mock(() => ({}));
+const mockFrom = vi.fn(() => ({}));
 
 const mockSupabase = {
   from: mockFrom,
 };
 
 // Mock the module
-mock.module("../../../../../src/lib/supabase-server", () => ({
-  createServerClient: mock(() => Promise.resolve(mockSupabase)),
-  createRouteHandlerClient: mock(() => Promise.resolve(mockSupabase)),
+vi.mock("../../../../../src/lib/supabase-server", () => ({
+  createServerClient: vi.fn(() => Promise.resolve(mockSupabase)),
+  createRouteHandlerClient: vi.fn(() => Promise.resolve(mockSupabase)),
 }));
 
 // Import after mocking
@@ -74,8 +74,8 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
 
       // Mock main character query
       const mockMainQuery = {
-        eq: mock(() => mockMainQuery),
-        single: mock(() =>
+        eq: vi.fn(() => mockMainQuery),
+        single: vi.fn(() =>
           Promise.resolve({
             data: mockCharacter,
             error: null,
@@ -85,7 +85,7 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
 
       // Mock relationships query
       const mockRelationshipsQuery = {
-        eq: mock(() =>
+        eq: vi.fn(() =>
           Promise.resolve({
             data: mockRelationships,
             error: null,
@@ -95,7 +95,7 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
 
       // Mock related characters query
       const mockRelatedQuery = {
-        in: mock(() =>
+        in: vi.fn(() =>
           Promise.resolve({
             data: mockRelatedCharacters,
             error: null,
@@ -105,13 +105,13 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
 
       mockFrom
         .mockReturnValueOnce({
-          select: mock(() => mockMainQuery),
+          select: vi.fn(() => mockMainQuery),
         })
         .mockReturnValueOnce({
-          select: mock(() => mockRelationshipsQuery),
+          select: vi.fn(() => mockRelationshipsQuery),
         })
         .mockReturnValueOnce({
-          select: mock(() => mockRelatedQuery),
+          select: vi.fn(() => mockRelatedQuery),
         });
 
       const request = new NextRequest("http://localhost:3000/api/characters/mario");
@@ -204,8 +204,8 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
       };
 
       const mockMainQuery = {
-        eq: mock(() => mockMainQuery),
-        single: mock(() =>
+        eq: vi.fn(() => mockMainQuery),
+        single: vi.fn(() =>
           Promise.resolve({
             data: mockCharacter,
             error: null,
@@ -214,7 +214,7 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
       };
 
       const mockRelationshipsQuery = {
-        eq: mock(() =>
+        eq: vi.fn(() =>
           Promise.resolve({
             data: [],
             error: null,
@@ -224,10 +224,10 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
 
       mockFrom
         .mockReturnValueOnce({
-          select: mock(() => mockMainQuery),
+          select: vi.fn(() => mockMainQuery),
         })
         .mockReturnValueOnce({
-          select: mock(() => mockRelationshipsQuery),
+          select: vi.fn(() => mockRelationshipsQuery),
         });
 
       const request = new NextRequest("http://localhost:3000/api/characters/link");
@@ -257,8 +257,8 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
       };
 
       const mockMainQuery = {
-        eq: mock(() => mockMainQuery),
-        single: mock(() =>
+        eq: vi.fn(() => mockMainQuery),
+        single: vi.fn(() =>
           Promise.resolve({
             data: mockCharacter,
             error: null,
@@ -267,7 +267,7 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
       };
 
       const mockRelationshipsQuery = {
-        eq: mock(() =>
+        eq: vi.fn(() =>
           Promise.resolve({
             data: [],
             error: null,
@@ -277,10 +277,10 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
 
       mockFrom
         .mockReturnValueOnce({
-          select: mock(() => mockMainQuery),
+          select: vi.fn(() => mockMainQuery),
         })
         .mockReturnValueOnce({
-          select: mock(() => mockRelationshipsQuery),
+          select: vi.fn(() => mockRelationshipsQuery),
         });
 
       const request = new NextRequest("http://localhost:3000/api/characters/unknown");
@@ -327,8 +327,8 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
       };
 
       const mockMainQuery = {
-        eq: mock(() => mockMainQuery),
-        single: mock(() =>
+        eq: vi.fn(() => mockMainQuery),
+        single: vi.fn(() =>
           Promise.resolve({
             data: mockCharacter,
             error: null,
@@ -337,7 +337,7 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
       };
 
       const mockRelationshipsQuery = {
-        eq: mock(() =>
+        eq: vi.fn(() =>
           Promise.resolve({
             data: [],
             error: null,
@@ -347,10 +347,10 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
 
       mockFrom
         .mockReturnValueOnce({
-          select: mock(() => mockMainQuery),
+          select: vi.fn(() => mockMainQuery),
         })
         .mockReturnValueOnce({
-          select: mock(() => mockRelationshipsQuery),
+          select: vi.fn(() => mockRelationshipsQuery),
         });
 
       const request = new NextRequest("http://localhost:3000/api/characters/toad");
@@ -384,8 +384,8 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
       };
 
       const mockMainQuery = {
-        eq: mock(() => mockMainQuery),
-        single: mock(() =>
+        eq: vi.fn(() => mockMainQuery),
+        single: vi.fn(() =>
           Promise.resolve({
             data: mockCharacter,
             error: null,
@@ -394,7 +394,7 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
       };
 
       const mockRelationshipsQuery = {
-        eq: mock(() =>
+        eq: vi.fn(() =>
           Promise.resolve({
             data: [],
             error: null,
@@ -404,10 +404,10 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
 
       mockFrom
         .mockReturnValueOnce({
-          select: mock(() => mockMainQuery),
+          select: vi.fn(() => mockMainQuery),
         })
         .mockReturnValueOnce({
-          select: mock(() => mockRelationshipsQuery),
+          select: vi.fn(() => mockRelationshipsQuery),
         });
 
       const request = new NextRequest("http://localhost:3000/api/characters/npc");
@@ -451,8 +451,8 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
       ];
 
       const mockMainQuery = {
-        eq: mock(() => mockMainQuery),
-        single: mock(() =>
+        eq: vi.fn(() => mockMainQuery),
+        single: vi.fn(() =>
           Promise.resolve({
             data: mockCharacter,
             error: null,
@@ -461,7 +461,7 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
       };
 
       const mockRelationshipsQuery = {
-        eq: mock(() =>
+        eq: vi.fn(() =>
           Promise.resolve({
             data: mockRelationships,
             error: null,
@@ -470,7 +470,7 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
       };
 
       const mockRelatedQuery = {
-        in: mock(() =>
+        in: vi.fn(() =>
           Promise.resolve({
             data: [], // Related character not found
             error: null,
@@ -480,13 +480,13 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
 
       mockFrom
         .mockReturnValueOnce({
-          select: mock(() => mockMainQuery),
+          select: vi.fn(() => mockMainQuery),
         })
         .mockReturnValueOnce({
-          select: mock(() => mockRelationshipsQuery),
+          select: vi.fn(() => mockRelationshipsQuery),
         })
         .mockReturnValueOnce({
-          select: mock(() => mockRelatedQuery),
+          select: vi.fn(() => mockRelatedQuery),
         });
 
       const request = new NextRequest("http://localhost:3000/api/characters/mario");
@@ -540,8 +540,8 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
       ];
 
       const mockMainQuery = {
-        eq: mock(() => mockMainQuery),
-        single: mock(() =>
+        eq: vi.fn(() => mockMainQuery),
+        single: vi.fn(() =>
           Promise.resolve({
             data: mockCharacter,
             error: null,
@@ -550,7 +550,7 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
       };
 
       const mockRelationshipsQuery = {
-        eq: mock(() =>
+        eq: vi.fn(() =>
           Promise.resolve({
             data: mockRelationships,
             error: null,
@@ -559,7 +559,7 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
       };
 
       const mockRelatedQuery = {
-        in: mock(() =>
+        in: vi.fn(() =>
           Promise.resolve({
             data: mockRelatedCharacters,
             error: null,
@@ -569,13 +569,13 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
 
       mockFrom
         .mockReturnValueOnce({
-          select: mock(() => mockMainQuery),
+          select: vi.fn(() => mockMainQuery),
         })
         .mockReturnValueOnce({
-          select: mock(() => mockRelationshipsQuery),
+          select: vi.fn(() => mockRelationshipsQuery),
         })
         .mockReturnValueOnce({
-          select: mock(() => mockRelatedQuery),
+          select: vi.fn(() => mockRelatedQuery),
         });
 
       const request = new NextRequest("http://localhost:3000/api/characters/mario?locale=fr");
@@ -628,8 +628,8 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
       ];
 
       const mockMainQuery = {
-        eq: mock(() => mockMainQuery),
-        single: mock(() =>
+        eq: vi.fn(() => mockMainQuery),
+        single: vi.fn(() =>
           Promise.resolve({
             data: mockCharacter,
             error: null,
@@ -638,7 +638,7 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
       };
 
       const mockRelationshipsQuery = {
-        eq: mock(() =>
+        eq: vi.fn(() =>
           Promise.resolve({
             data: mockRelationships,
             error: null,
@@ -647,7 +647,7 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
       };
 
       const mockRelatedQuery = {
-        in: mock(() =>
+        in: vi.fn(() =>
           Promise.resolve({
             data: mockRelatedCharacters,
             error: null,
@@ -657,13 +657,13 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
 
       mockFrom
         .mockReturnValueOnce({
-          select: mock(() => mockMainQuery),
+          select: vi.fn(() => mockMainQuery),
         })
         .mockReturnValueOnce({
-          select: mock(() => mockRelationshipsQuery),
+          select: vi.fn(() => mockRelationshipsQuery),
         })
         .mockReturnValueOnce({
-          select: mock(() => mockRelatedQuery),
+          select: vi.fn(() => mockRelatedQuery),
         });
 
       const request = new NextRequest("http://localhost:3000/api/characters/mario");
@@ -716,8 +716,8 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
       };
 
       const mockMainQuery = {
-        eq: mock(() => mockMainQuery),
-        single: mock(() =>
+        eq: vi.fn(() => mockMainQuery),
+        single: vi.fn(() =>
           Promise.resolve({
             data: mockCharacter,
             error: null,
@@ -726,7 +726,7 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
       };
 
       const mockRelationshipsQuery = {
-        eq: mock(() =>
+        eq: vi.fn(() =>
           Promise.resolve({
             data: [],
             error: null,
@@ -736,10 +736,10 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
 
       mockFrom
         .mockReturnValueOnce({
-          select: mock(() => mockMainQuery),
+          select: vi.fn(() => mockMainQuery),
         })
         .mockReturnValueOnce({
-          select: mock(() => mockRelationshipsQuery),
+          select: vi.fn(() => mockRelationshipsQuery),
         });
 
       const request = new NextRequest("http://localhost:3000/api/characters/test");

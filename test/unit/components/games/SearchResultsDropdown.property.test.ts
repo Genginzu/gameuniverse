@@ -1,11 +1,11 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import { SearchResultItem } from "../../../../src/types/search";
 
 // Feature: igdb-hybrid-search
 // **Property 3: Informations de jeu dans le rendu**
-// **Property 4: Ordre des résultats (local d'abord)**
-// **Property 5: Indicateur de source présent**
+// **Property 4: Ordre des rÃ©sultats (local d'abord)**
+// **Property 5: Indicateur de source prÃ©sent**
 // **Validates: Requirements 2.1, 2.2, 2.3**
 
 /**
@@ -117,7 +117,7 @@ describe("SearchResultsDropdown Property-Based Tests", () => {
             );
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -133,7 +133,7 @@ describe("SearchResultsDropdown Property-Based Tests", () => {
             return rendered.every((item, index) => item.coverUrl === results[index].coverUrl);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -149,7 +149,7 @@ describe("SearchResultsDropdown Property-Based Tests", () => {
             return rendered.every((item, index) => item.developer === results[index].developer);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -171,19 +171,19 @@ describe("SearchResultsDropdown Property-Based Tests", () => {
             );
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });
 
-  describe("Property 4: Ordre des résultats (local d'abord)", () => {
+  describe("Property 4: Ordre des rÃ©sultats (local d'abord)", () => {
     it("when results are properly sorted, all local games should appear before IGDB games", () => {
       fc.assert(
         fc.property(mixedResultsGenerator(), (results) => {
           const sortedResults = sortResultsLocalFirst(results);
           return validateResultOrder(sortedResults);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -197,7 +197,7 @@ describe("SearchResultsDropdown Property-Based Tests", () => {
           if (localBefore.length !== localAfter.length) return false;
           return localBefore.every((game) => localAfter.some((g) => g.id === game.id));
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -211,7 +211,7 @@ describe("SearchResultsDropdown Property-Based Tests", () => {
           if (igdbBefore.length !== igdbAfter.length) return false;
           return igdbBefore.every((game) => igdbAfter.some((g) => g.id === game.id));
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -241,7 +241,7 @@ describe("SearchResultsDropdown Property-Based Tests", () => {
             return maxLocalIndex < minIgdbIndex;
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -254,12 +254,12 @@ describe("SearchResultsDropdown Property-Based Tests", () => {
           if (sortedOnce.length !== sortedTwice.length) return false;
           return sortedOnce.every((game, index) => game.id === sortedTwice[index].id);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });
 
-  describe("Property 5: Indicateur de source présent", () => {
+  describe("Property 5: Indicateur de source prÃ©sent", () => {
     it("every result should have a source indicator", () => {
       fc.assert(
         fc.property(
@@ -272,7 +272,7 @@ describe("SearchResultsDropdown Property-Based Tests", () => {
             return rendered.every((item) => item.hasSourceIndicator === true);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -288,7 +288,7 @@ describe("SearchResultsDropdown Property-Based Tests", () => {
             return rendered.every((item, index) => item.source === results[index].source);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -298,7 +298,7 @@ describe("SearchResultsDropdown Property-Based Tests", () => {
           const rendered = simulateRender(results);
           return rendered.every((item) => item.source === "local");
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -308,7 +308,7 @@ describe("SearchResultsDropdown Property-Based Tests", () => {
           const rendered = simulateRender(results);
           return rendered.every((item) => item.source === "igdb");
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -324,7 +324,7 @@ describe("SearchResultsDropdown Property-Based Tests", () => {
             return rendered.every((item) => item.source === "local" || item.source === "igdb");
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });

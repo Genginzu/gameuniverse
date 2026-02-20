@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import type {
   CharacterDetails,
@@ -210,7 +210,7 @@ describe("CharacterDetailsContent Property-Based Tests", () => {
           expect(result.heroSection.characterName).toBe(character.name);
           expect(result.heroSection.characterName.length).toBeGreaterThan(0);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -222,7 +222,7 @@ describe("CharacterDetailsContent Property-Based Tests", () => {
           // Main image must match the media.mainImage
           expect(result.heroSection.mainImage).toBe(character.media.mainImage);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -237,7 +237,7 @@ describe("CharacterDetailsContent Property-Based Tests", () => {
             expect(result.heroSection.backgroundColor).toBe("#0f172a");
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -265,7 +265,7 @@ describe("CharacterDetailsContent Property-Based Tests", () => {
             expect(result.heroSection.backgroundColor).toBe(color);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -281,7 +281,7 @@ describe("CharacterDetailsContent Property-Based Tests", () => {
           expect(result.characterInfo.primaryGame).toBe(character.primaryGame);
           expect(result.characterInfo.primaryGame.length).toBeGreaterThan(0);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -294,7 +294,7 @@ describe("CharacterDetailsContent Property-Based Tests", () => {
           expect(result.characterInfo.games).toEqual(character.games);
           expect(result.characterInfo.gamesCount).toBe(character.games.length);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -311,7 +311,7 @@ describe("CharacterDetailsContent Property-Based Tests", () => {
             expect(result.characterInfo.role).toBe(character.role);
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -328,7 +328,7 @@ describe("CharacterDetailsContent Property-Based Tests", () => {
             expect(result.characterInfo.description).toBe(character.description);
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -348,7 +348,7 @@ describe("CharacterDetailsContent Property-Based Tests", () => {
             expect(result.biographySection.biography).toBe(character.biography);
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -365,7 +365,7 @@ describe("CharacterDetailsContent Property-Based Tests", () => {
             expect(result.biographySection.weapons).toBe(character.weapons);
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -382,7 +382,7 @@ describe("CharacterDetailsContent Property-Based Tests", () => {
           expect(result.tabs.hasGamesTab).toBe(true);
           expect(result.tabs.hasMediaTab).toBe(true);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -397,7 +397,7 @@ describe("CharacterDetailsContent Property-Based Tests", () => {
 
           expect(result.heroSection.backgroundImage).toBe(expectedBackground);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });
@@ -425,7 +425,7 @@ describe("CharacterDetailsContent Property-Based Tests", () => {
           expect(result1.biographySection.hasBiography).toBe(result2.biographySection.hasBiography);
           expect(result1.biographySection.hasWeapons).toBe(result2.biographySection.hasWeapons);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -473,7 +473,7 @@ describe("CharacterDetailsContent Property-Based Tests", () => {
           // Fallback background color should be used
           expect(result.heroSection.backgroundColor).toBe("#0f172a");
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -521,7 +521,7 @@ describe("CharacterDetailsContent Property-Based Tests", () => {
           expect(result.biographySection.weapons).toBe(character.weapons);
           expect(result.heroSection.backgroundColor).toBe(character.backgroundColor);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });

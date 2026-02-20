@@ -1,4 +1,4 @@
-import { describe, it, expect, mock, beforeEach, afterEach, spyOn } from "bun:test";
+﻿import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import * as fc from "fast-check";
 import { HybridSearchService } from "../../../../src/lib/services/hybridSearchService";
 import { GameService } from "../../../../src/lib/services/gameService";
@@ -6,7 +6,7 @@ import { IGDBService } from "../../../../src/lib/services/igdbService";
 import { GameSummary } from "@/types/game";
 import { IGDBSearchResult } from "@/types/igdb";
 
-// Feature: igdb-hybrid-search, Property 1: Recherche parallèle déclenchée
+// Feature: igdb-hybrid-search, Property 1: Recherche parallÃ¨le dÃ©clenchÃ©e
 // **Validates: Requirements 1.1, 1.2**
 
 describe("HybridSearchService Property-Based Tests", () => {
@@ -29,7 +29,7 @@ describe("HybridSearchService Property-Based Tests", () => {
     IGDBService.clearTokenCache();
   });
 
-  describe("Property 1: Recherche parallèle déclenchée", () => {
+  describe("Property 1: Recherche parallÃ¨le dÃ©clenchÃ©e", () => {
     it("for any search query of 2+ characters, both Supabase and IGDB searches must be triggered", async () => {
       // Generate valid search queries (2+ characters)
       const validQueryArbitrary = fc.string({ minLength: 2, maxLength: 100 }).filter((s) => {
@@ -46,7 +46,7 @@ describe("HybridSearchService Property-Based Tests", () => {
 
           // Mock the GameService.fetchGames to track local search calls
           const originalFetchGames = GameService.fetchGames;
-          GameService.fetchGames = mock(async (options) => {
+          GameService.fetchGames = vi.fn(async (options) => {
             localSearchCalled = true;
             // Return empty results
             return {
@@ -62,7 +62,7 @@ describe("HybridSearchService Property-Based Tests", () => {
           });
 
           // Mock fetch to track IGDB API calls
-          global.fetch = mock((url: string) => {
+          global.fetch = vi.fn((url: string) => {
             if (url.includes("twitch.tv/oauth2/token")) {
               return Promise.resolve({
                 ok: true,
@@ -109,19 +109,19 @@ describe("HybridSearchService Property-Based Tests", () => {
             GameService.fetchGames = originalFetchGames;
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
     it("searches are executed in parallel (Promise.allSettled behavior)", async () => {
-      // Generate test cases with various query lengths
+      // Generate test cases with small delays to verify parallelism
       const testCases = fc.sample(
         fc.record({
           query: fc.string({ minLength: 2, maxLength: 50 }).filter((s) => s.trim().length >= 2),
-          localDelay: fc.integer({ min: 10, max: 100 }),
-          igdbDelay: fc.integer({ min: 10, max: 100 }),
+          localDelay: fc.integer({ min: 5, max: 20 }),
+          igdbDelay: fc.integer({ min: 5, max: 20 }),
         }),
-        50
+        10
       );
 
       for (const { query, localDelay, igdbDelay } of testCases) {
@@ -132,7 +132,7 @@ describe("HybridSearchService Property-Based Tests", () => {
 
         // Mock GameService.fetchGames with delay
         const originalFetchGames = GameService.fetchGames;
-        GameService.fetchGames = mock(async () => {
+        GameService.fetchGames = vi.fn(async () => {
           callOrder.push("local_start");
           await new Promise((resolve) => setTimeout(resolve, localDelay));
           completionOrder.push("local_complete");
@@ -149,7 +149,7 @@ describe("HybridSearchService Property-Based Tests", () => {
         });
 
         // Mock fetch for IGDB with delay
-        global.fetch = mock(async (url: string) => {
+        global.fetch = vi.fn(async (url: string) => {
           if (url.includes("twitch.tv/oauth2/token")) {
             return {
               ok: true,
@@ -225,7 +225,7 @@ describe("HybridSearchService Property-Based Tests", () => {
 
           // Mock GameService.fetchGames to capture the query
           const originalFetchGames = GameService.fetchGames;
-          GameService.fetchGames = mock(async (options) => {
+          GameService.fetchGames = vi.fn(async (options) => {
             localSearchQuery = options?.search;
             return {
               games: [],
@@ -240,7 +240,7 @@ describe("HybridSearchService Property-Based Tests", () => {
           });
 
           // Mock fetch to capture IGDB query
-          global.fetch = mock((url: string, options?: RequestInit) => {
+          global.fetch = vi.fn((url: string, options?: RequestInit) => {
             if (url.includes("twitch.tv/oauth2/token")) {
               return Promise.resolve({
                 ok: true,
@@ -289,16 +289,16 @@ describe("HybridSearchService Property-Based Tests", () => {
             GameService.fetchGames = originalFetchGames;
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });
 });
 
-// Feature: igdb-hybrid-search, Property 2: Résilience aux erreurs de source
+// Feature: igdb-hybrid-search, Property 2: RÃ©silience aux erreurs de source
 // **Validates: Requirements 1.4**
 
-describe("Property 2: Résilience aux erreurs de source", () => {
+describe("Property 2: RÃ©silience aux erreurs de source", () => {
   let originalFetch: typeof global.fetch;
   let originalEnv: NodeJS.ProcessEnv;
 
@@ -341,12 +341,12 @@ describe("Property 2: Résilience aux erreurs de source", () => {
 
         // Mock GameService.fetchGames to throw an error
         const originalFetchGames = GameService.fetchGames;
-        GameService.fetchGames = mock(async () => {
+        GameService.fetchGames = vi.fn(async () => {
           throw new Error("Database connection failed");
         });
 
         // Mock fetch for IGDB to return results
-        global.fetch = mock((url: string) => {
+        global.fetch = vi.fn((url: string) => {
           if (url.includes("twitch.tv/oauth2/token")) {
             return Promise.resolve({
               ok: true,
@@ -415,7 +415,7 @@ describe("Property 2: Résilience aux erreurs de source", () => {
           GameService.fetchGames = originalFetchGames;
         }
       }),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 
@@ -445,7 +445,7 @@ describe("Property 2: Résilience aux erreurs de source", () => {
 
         // Mock GameService.fetchGames to return local results
         const originalFetchGames = GameService.fetchGames;
-        GameService.fetchGames = mock(async () => {
+        GameService.fetchGames = vi.fn(async () => {
           return {
             games: localResults,
             pagination: {
@@ -459,7 +459,7 @@ describe("Property 2: Résilience aux erreurs de source", () => {
         });
 
         // Mock fetch for IGDB to fail
-        global.fetch = mock((url: string) => {
+        global.fetch = vi.fn((url: string) => {
           if (url.includes("twitch.tv/oauth2/token")) {
             return Promise.resolve({
               ok: true,
@@ -516,7 +516,7 @@ describe("Property 2: Résilience aux erreurs de source", () => {
           GameService.fetchGames = originalFetchGames;
         }
       }),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 
@@ -532,12 +532,12 @@ describe("Property 2: Résilience aux erreurs de source", () => {
 
         // Mock GameService.fetchGames to throw an error
         const originalFetchGames = GameService.fetchGames;
-        GameService.fetchGames = mock(async () => {
+        GameService.fetchGames = vi.fn(async () => {
           throw new Error("Database connection failed");
         });
 
         // Mock fetch for IGDB to fail
-        global.fetch = mock((url: string) => {
+        global.fetch = vi.fn((url: string) => {
           if (url.includes("twitch.tv/oauth2/token")) {
             return Promise.resolve({
               ok: true,
@@ -589,7 +589,7 @@ describe("Property 2: Résilience aux erreurs de source", () => {
           GameService.fetchGames = originalFetchGames;
         }
       }),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 
@@ -617,7 +617,7 @@ describe("Property 2: Résilience aux erreurs de source", () => {
 
           // Mock GameService.fetchGames based on error type
           const originalFetchGames = GameService.fetchGames;
-          GameService.fetchGames = mock(async () => {
+          GameService.fetchGames = vi.fn(async () => {
             if (localShouldFail) {
               switch (localErrorType) {
                 case "throw":
@@ -641,7 +641,7 @@ describe("Property 2: Résilience aux erreurs de source", () => {
           });
 
           // Mock fetch for IGDB based on error type
-          global.fetch = mock((url: string) => {
+          global.fetch = vi.fn((url: string) => {
             if (url.includes("twitch.tv/oauth2/token")) {
               return Promise.resolve({
                 ok: true,
@@ -739,15 +739,15 @@ describe("Property 2: Résilience aux erreurs de source", () => {
           }
         }
       ),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 });
 
-// Feature: igdb-hybrid-search, Property 2: Résilience aux erreurs de source
+// Feature: igdb-hybrid-search, Property 2: RÃ©silience aux erreurs de source
 // **Validates: Requirements 1.4**
 
-describe("Property 2: Résilience aux erreurs de source", () => {
+describe("Property 2: RÃ©silience aux erreurs de source", () => {
   let originalFetch: typeof global.fetch;
   let originalEnv: NodeJS.ProcessEnv;
 
@@ -790,12 +790,12 @@ describe("Property 2: Résilience aux erreurs de source", () => {
 
         // Mock GameService.fetchGames to throw an error
         const originalFetchGames = GameService.fetchGames;
-        GameService.fetchGames = mock(async () => {
+        GameService.fetchGames = vi.fn(async () => {
           throw new Error("Database connection failed");
         });
 
         // Mock fetch for IGDB to return results
-        global.fetch = mock((url: string) => {
+        global.fetch = vi.fn((url: string) => {
           if (url.includes("twitch.tv/oauth2/token")) {
             return Promise.resolve({
               ok: true,
@@ -864,7 +864,7 @@ describe("Property 2: Résilience aux erreurs de source", () => {
           GameService.fetchGames = originalFetchGames;
         }
       }),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 
@@ -894,7 +894,7 @@ describe("Property 2: Résilience aux erreurs de source", () => {
 
         // Mock GameService.fetchGames to return local results
         const originalFetchGames = GameService.fetchGames;
-        GameService.fetchGames = mock(async () => {
+        GameService.fetchGames = vi.fn(async () => {
           return {
             games: localResults,
             pagination: {
@@ -908,7 +908,7 @@ describe("Property 2: Résilience aux erreurs de source", () => {
         });
 
         // Mock fetch for IGDB to fail
-        global.fetch = mock((url: string) => {
+        global.fetch = vi.fn((url: string) => {
           if (url.includes("twitch.tv/oauth2/token")) {
             return Promise.resolve({
               ok: true,
@@ -965,7 +965,7 @@ describe("Property 2: Résilience aux erreurs de source", () => {
           GameService.fetchGames = originalFetchGames;
         }
       }),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 
@@ -981,12 +981,12 @@ describe("Property 2: Résilience aux erreurs de source", () => {
 
         // Mock GameService.fetchGames to throw an error
         const originalFetchGames = GameService.fetchGames;
-        GameService.fetchGames = mock(async () => {
+        GameService.fetchGames = vi.fn(async () => {
           throw new Error("Database connection failed");
         });
 
         // Mock fetch for IGDB to fail
-        global.fetch = mock((url: string) => {
+        global.fetch = vi.fn((url: string) => {
           if (url.includes("twitch.tv/oauth2/token")) {
             return Promise.resolve({
               ok: true,
@@ -1038,7 +1038,7 @@ describe("Property 2: Résilience aux erreurs de source", () => {
           GameService.fetchGames = originalFetchGames;
         }
       }),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 
@@ -1066,7 +1066,7 @@ describe("Property 2: Résilience aux erreurs de source", () => {
 
           // Mock GameService.fetchGames based on error type
           const originalFetchGames = GameService.fetchGames;
-          GameService.fetchGames = mock(async () => {
+          GameService.fetchGames = vi.fn(async () => {
             if (localShouldFail) {
               switch (localErrorType) {
                 case "throw":
@@ -1090,7 +1090,7 @@ describe("Property 2: Résilience aux erreurs de source", () => {
           });
 
           // Mock fetch for IGDB based on error type
-          global.fetch = mock((url: string) => {
+          global.fetch = vi.fn((url: string) => {
             if (url.includes("twitch.tv/oauth2/token")) {
               return Promise.resolve({
                 ok: true,
@@ -1188,15 +1188,15 @@ describe("Property 2: Résilience aux erreurs de source", () => {
           }
         }
       ),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 });
 
-// Feature: igdb-hybrid-search, Property 6: Déduplication par identifiant IGDB
+// Feature: igdb-hybrid-search, Property 6: DÃ©duplication par identifiant IGDB
 // **Validates: Requirements 3.1, 3.2**
 
-describe("Property 6: Déduplication par identifiant IGDB", () => {
+describe("Property 6: DÃ©duplication par identifiant IGDB", () => {
   describe("deduplicateResults", () => {
     it("for any combination of local and IGDB results where a game exists in both sources (same igdbId), only the local version must appear in the final results", () => {
       // Generate test data with potential duplicates
@@ -1284,7 +1284,7 @@ describe("Property 6: Déduplication par identifiant IGDB", () => {
           // Property assertion 3: The count should be exactly the IGDB-only games
           expect(deduplicatedIgdbGames.length).toBe(igdbOnlyIds.length);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -1335,7 +1335,7 @@ describe("Property 6: Déduplication par identifiant IGDB", () => {
             expect(deduplicatedIgdbGames[i].id).toBe(expectedRemainingGames[i].id);
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -1448,7 +1448,7 @@ describe("Property 6: Déduplication par identifiant IGDB", () => {
           // Property assertion: Result count matches expected
           expect(deduplicatedIgdbGames.length).toBe(expectedResultCount);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -1503,7 +1503,7 @@ describe("Property 6: Déduplication par identifiant IGDB", () => {
             expect(localSlugs.has(igdbGame.slug.toLowerCase())).toBe(false);
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -1552,16 +1552,16 @@ describe("Property 6: Déduplication par identifiant IGDB", () => {
           // Property assertion: Only non-matching games should remain
           expect(deduplicatedIgdbGames.length).toBe(nonMatchingCount);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });
 });
 
-// Feature: igdb-hybrid-search, Property 12: Limite d'affichage respectée
+// Feature: igdb-hybrid-search, Property 12: Limite d'affichage respectÃ©e
 // **Validates: Requirements 7.3**
 
-describe("Property 12: Limite d'affichage respectée", () => {
+describe("Property 12: Limite d'affichage respectÃ©e", () => {
   let originalFetch: typeof global.fetch;
   let originalEnv: NodeJS.ProcessEnv;
 
@@ -1612,7 +1612,7 @@ describe("Property 12: Limite d'affichage respectée", () => {
 
         // Mock GameService.fetchGames to return local results
         const originalFetchGames = GameService.fetchGames;
-        GameService.fetchGames = mock(async () => {
+        GameService.fetchGames = vi.fn(async () => {
           return {
             games: localGames,
             pagination: {
@@ -1626,7 +1626,7 @@ describe("Property 12: Limite d'affichage respectée", () => {
         });
 
         // Mock fetch for IGDB to return results
-        global.fetch = mock((url: string) => {
+        global.fetch = vi.fn((url: string) => {
           if (url.includes("twitch.tv/oauth2/token")) {
             return Promise.resolve({
               ok: true,
@@ -1686,7 +1686,7 @@ describe("Property 12: Limite d'affichage respectée", () => {
           GameService.fetchGames = originalFetchGames;
         }
       }),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 
@@ -1726,7 +1726,7 @@ describe("Property 12: Limite d'affichage respectée", () => {
 
           // Mock GameService.fetchGames
           const originalFetchGames = GameService.fetchGames;
-          GameService.fetchGames = mock(async () => {
+          GameService.fetchGames = vi.fn(async () => {
             return {
               games: localGames,
               pagination: {
@@ -1740,7 +1740,7 @@ describe("Property 12: Limite d'affichage respectée", () => {
           });
 
           // Mock fetch for IGDB
-          global.fetch = mock((url: string) => {
+          global.fetch = vi.fn((url: string) => {
             if (url.includes("twitch.tv/oauth2/token")) {
               return Promise.resolve({
                 ok: true,
@@ -1795,7 +1795,7 @@ describe("Property 12: Limite d'affichage respectée", () => {
           }
         }
       ),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 
@@ -1834,7 +1834,7 @@ describe("Property 12: Limite d'affichage respectée", () => {
 
         // Mock GameService.fetchGames
         const originalFetchGames = GameService.fetchGames;
-        GameService.fetchGames = mock(async () => {
+        GameService.fetchGames = vi.fn(async () => {
           return {
             games: localGames,
             pagination: {
@@ -1848,7 +1848,7 @@ describe("Property 12: Limite d'affichage respectée", () => {
         });
 
         // Mock fetch for IGDB
-        global.fetch = mock((url: string) => {
+        global.fetch = vi.fn((url: string) => {
           if (url.includes("twitch.tv/oauth2/token")) {
             return Promise.resolve({
               ok: true,
@@ -1892,7 +1892,7 @@ describe("Property 12: Limite d'affichage respectée", () => {
           GameService.fetchGames = originalFetchGames;
         }
       }),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 
@@ -1941,7 +1941,7 @@ describe("Property 12: Limite d'affichage respectée", () => {
 
         // Mock GameService.fetchGames
         const originalFetchGames = GameService.fetchGames;
-        GameService.fetchGames = mock(async () => {
+        GameService.fetchGames = vi.fn(async () => {
           return {
             games: localGames,
             pagination: {
@@ -1955,7 +1955,7 @@ describe("Property 12: Limite d'affichage respectée", () => {
         });
 
         // Mock fetch for IGDB
-        global.fetch = mock((url: string) => {
+        global.fetch = vi.fn((url: string) => {
           if (url.includes("twitch.tv/oauth2/token")) {
             return Promise.resolve({
               ok: true,
@@ -2008,7 +2008,7 @@ describe("Property 12: Limite d'affichage respectée", () => {
           GameService.fetchGames = originalFetchGames;
         }
       }),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 });

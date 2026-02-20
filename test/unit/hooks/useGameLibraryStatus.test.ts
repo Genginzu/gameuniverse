@@ -1,13 +1,13 @@
-import { describe, it, expect, mock, beforeEach, afterEach } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 
 // Mock fetch globally
-const mockFetch = mock(() => Promise.resolve(new Response()));
+const mockFetch = vi.fn(() => Promise.resolve(new Response()));
 
 // Mock useAuth
 const mockUser = { id: "user-123", email: "test@example.com" };
 let mockAuthUser: typeof mockUser | null = mockUser;
 
-mock.module("./useAuth", () => ({
+vi.mock("./useAuth", () => ({
   useAuth: () => ({ user: mockAuthUser }),
 }));
 

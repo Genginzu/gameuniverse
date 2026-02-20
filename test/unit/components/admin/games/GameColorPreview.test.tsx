@@ -1,4 +1,4 @@
-import { describe, it, expect, mock } from "bun:test";
+import { describe, it, expect, vi } from "vitest";
 import { renderToString } from "react-dom/server";
 
 // Mock react-hook-form's watch to return controlled values

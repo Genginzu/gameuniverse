@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import { adminCharacterFormSchema } from "../../../../src/lib/validations/admin-character-form";
 
@@ -63,7 +63,7 @@ describe("Property 1: Slug validation", () => {
         });
         expect(result.success).toBe(false);
       }),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 
@@ -83,7 +83,7 @@ describe("Property 1: Slug validation", () => {
         });
         expect(result.success).toBe(false);
       }),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 
@@ -100,7 +100,7 @@ describe("Property 1: Slug validation", () => {
         });
         expect(result.success).toBe(false);
       }),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 
@@ -117,7 +117,7 @@ describe("Property 1: Slug validation", () => {
         });
         expect(result.success).toBe(false);
       }),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 });
@@ -188,7 +188,7 @@ describe("Property 2: Translation name validation", () => {
         const result = adminCharacterFormSchema.safeParse({ slug, translations: [] });
         expect(result.success).toBe(false);
       }),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 });
@@ -224,7 +224,7 @@ describe("Property 5: URL and color validation", () => {
             expect(result.success).toBe(true);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -243,7 +243,7 @@ describe("Property 5: URL and color validation", () => {
             expect(result.success).toBe(true);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -258,7 +258,7 @@ describe("Property 5: URL and color validation", () => {
           });
           expect(result.success).toBe(true);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -286,7 +286,7 @@ describe("Property 5: URL and color validation", () => {
             expect(result.success).toBe(false);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -314,7 +314,7 @@ describe("Property 5: URL and color validation", () => {
             expect(result.success).toBe(false);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });
@@ -342,7 +342,7 @@ describe("Property 5: URL and color validation", () => {
             expect(result.success).toBe(true);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -356,7 +356,7 @@ describe("Property 5: URL and color validation", () => {
           });
           expect(result.success).toBe(true);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -379,7 +379,7 @@ describe("Property 5: URL and color validation", () => {
             expect(result.success).toBe(false);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });

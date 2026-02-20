@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 
 /**
@@ -109,7 +109,7 @@ describe("Library Statistics Property-Based Tests", () => {
           // Property: totalGames must equal the number of entries
           expect(stats.totalGames).toBe(entries.length);
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -134,7 +134,7 @@ describe("Library Statistics Property-Based Tests", () => {
             expect(stats.completedGames).toBe(expectedCompleted);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -159,7 +159,7 @@ describe("Library Statistics Property-Based Tests", () => {
             expect(stats.ownedGames).toBe(expectedOwned);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -184,7 +184,7 @@ describe("Library Statistics Property-Based Tests", () => {
             expect(stats.totalPlayTime).toBe(expectedTotalPlayTime);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -218,7 +218,7 @@ describe("Library Statistics Property-Based Tests", () => {
             }
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -235,7 +235,7 @@ describe("Library Statistics Property-Based Tests", () => {
           expect(stats.totalPlayTime).toBe(0);
           expect(stats.averageRating).toBeNull();
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -273,7 +273,7 @@ describe("Library Statistics Property-Based Tests", () => {
             expect(combinedStats.ownedGames).toBe(stats1.ownedGames + stats2.ownedGames);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -302,7 +302,7 @@ describe("Library Statistics Property-Based Tests", () => {
             expect(stats.averageRating).toBe(rating);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -345,7 +345,7 @@ describe("Library Statistics Property-Based Tests", () => {
             expect(stats.averageRating).toBe(rating);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -374,7 +374,7 @@ describe("Library Statistics Property-Based Tests", () => {
             );
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });

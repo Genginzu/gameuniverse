@@ -1,4 +1,4 @@
-import { describe, it, expect, mock, beforeEach, afterEach } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import {
   apiCreateCollection,
   apiUpdateCollection,
@@ -9,7 +9,7 @@ import {
   apiReorderItems,
 } from "../../../../src/lib/services/collectionApi";
 
-const mockFetch = mock(() => Promise.resolve(new Response()));
+const mockFetch = vi.fn(() => Promise.resolve(new Response()));
 
 describe("collectionApi", () => {
   beforeEach(() => {

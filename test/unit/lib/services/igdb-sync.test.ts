@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, spyOn } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import {
   syncGameField,
   syncAllGameFields,
@@ -71,14 +71,14 @@ const MOCK_IGDB_GAME: IGDBGame = {
 // =============================================================================
 
 describe("igdb-sync", () => {
-  let getGameDetailsSpy: ReturnType<typeof spyOn>;
-  let getTimeToBeatSpy: ReturnType<typeof spyOn>;
-  let getGameVersionsSpy: ReturnType<typeof spyOn>;
+  let getGameDetailsSpy: ReturnType<typeof vi.spyOn>;
+  let getTimeToBeatSpy: ReturnType<typeof vi.spyOn>;
+  let getGameVersionsSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
-    getGameDetailsSpy = spyOn(IGDBService, "getGameDetails");
-    getTimeToBeatSpy = spyOn(IGDBService, "getTimeToBeat");
-    getGameVersionsSpy = spyOn(IGDBService, "getGameVersions");
+    getGameDetailsSpy = vi.spyOn(IGDBService, "getGameDetails");
+    getTimeToBeatSpy = vi.spyOn(IGDBService, "getTimeToBeat");
+    getGameVersionsSpy = vi.spyOn(IGDBService, "getGameVersions");
 
     getTimeToBeatSpy.mockResolvedValue(null);
     getGameVersionsSpy.mockResolvedValue([]);

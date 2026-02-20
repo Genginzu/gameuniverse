@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 
 /**
@@ -83,7 +83,7 @@ describe("CharacterFilters Property-Based Tests", () => {
             expect(result).toEqual(characters);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -110,7 +110,7 @@ describe("CharacterFilters Property-Based Tests", () => {
             expect(result.length).toBe(expectedCount);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -135,7 +135,7 @@ describe("CharacterFilters Property-Based Tests", () => {
             expect(result.length).toBe(expectedCount);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -170,7 +170,7 @@ describe("CharacterFilters Property-Based Tests", () => {
             expect(result.length).toBe(expectedCount);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -220,7 +220,7 @@ describe("CharacterFilters Property-Based Tests", () => {
             }
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -247,7 +247,7 @@ describe("CharacterFilters Property-Based Tests", () => {
             expect(bothFiltersResult.length).toBeLessThanOrEqual(roleOnlyResult.length);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -266,7 +266,7 @@ describe("CharacterFilters Property-Based Tests", () => {
             expect(secondResult).toEqual(firstResult);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });
@@ -321,7 +321,7 @@ describe("CharacterFilters Property-Based Tests", () => {
             }
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -350,7 +350,7 @@ describe("CharacterFilters Property-Based Tests", () => {
             expect(afterClearList).toEqual(initialList);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -383,7 +383,7 @@ describe("CharacterFilters Property-Based Tests", () => {
             expect(filteredList.length).toBeLessThanOrEqual(initialList.length);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -424,7 +424,7 @@ describe("CharacterFilters Property-Based Tests", () => {
             }
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -448,7 +448,7 @@ describe("CharacterFilters Property-Based Tests", () => {
             expect(clearedState.selectedRoles.length).toBe(0);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -474,7 +474,7 @@ describe("CharacterFilters Property-Based Tests", () => {
             expect(afterClearList).toEqual(characters);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });

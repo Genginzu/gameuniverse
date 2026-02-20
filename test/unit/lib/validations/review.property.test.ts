@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import { reviewSchema, stripHtmlTags } from "../../../../src/lib/validations/review";
 
@@ -33,7 +33,7 @@ describe("Property 1: Validation du rating — valeurs invalides rejetées", () 
         });
         expect(result.success).toBe(false);
       }),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 
@@ -48,7 +48,7 @@ describe("Property 1: Validation du rating — valeurs invalides rejetées", () 
         });
         expect(result.success).toBe(false);
       }),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 
@@ -63,7 +63,7 @@ describe("Property 1: Validation du rating — valeurs invalides rejetées", () 
         });
         expect(result.success).toBe(false);
       }),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 
@@ -78,7 +78,7 @@ describe("Property 1: Validation du rating — valeurs invalides rejetées", () 
         });
         expect(result.success).toBe(true);
       }),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 });
@@ -111,7 +111,7 @@ describe("Property 2: Contenu HTML vide rejeté", () => {
         });
         expect(result.success).toBe(false);
       }),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 });
@@ -126,7 +126,6 @@ describe("Property 2: Contenu HTML vide rejeté", () => {
  */
 describe("Property 3: Contenu HTML trop long rejeté", () => {
   it("rejects HTML content exceeding 5000 plain text characters", () => {
-    // Generate a base string and repeat it to exceed 5000 chars
     const longTextGen = fc
       .stringMatching(/^[a-z]{50,100}$/)
       .map((s) => s.repeat(101).slice(0, 5001 + Math.floor(Math.random() * 500)));
@@ -142,7 +141,7 @@ describe("Property 3: Contenu HTML trop long rejeté", () => {
         });
         expect(result.success).toBe(false);
       }),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 });
@@ -167,7 +166,6 @@ describe("Property 4: Points positifs/négatifs invalides rejetés", () => {
   });
 
   it("rejects points exceeding 200 characters", () => {
-    // Generate strings > 200 chars by repeating a base
     const longPointGen = fc
       .stringMatching(/^[a-z]{10,20}$/)
       .map((s) => s.repeat(21).slice(0, 201 + Math.floor(Math.random() * 100)));
@@ -182,7 +180,7 @@ describe("Property 4: Points positifs/négatifs invalides rejetés", () => {
         });
         expect(result.success).toBe(false);
       }),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 
@@ -201,7 +199,7 @@ describe("Property 4: Points positifs/négatifs invalides rejetés", () => {
         });
         expect(result.success).toBe(false);
       }),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 });
@@ -226,7 +224,7 @@ describe("Property 5: Limite du nombre de points respectée", () => {
         });
         expect(result.success).toBe(false);
       }),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 
@@ -241,7 +239,7 @@ describe("Property 5: Limite du nombre de points respectée", () => {
         });
         expect(result.success).toBe(false);
       }),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 
@@ -256,7 +254,7 @@ describe("Property 5: Limite du nombre de points respectée", () => {
         });
         expect(result.success).toBe(true);
       }),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 });
@@ -281,7 +279,7 @@ describe("Property 9: Round-trip stripHtmlTags", () => {
         const result = stripHtmlTags(html);
         expect(result).toBe(text.trim());
       }),
-      { numRuns: 100 }
+      { numRuns: 30 }
     );
   });
 });

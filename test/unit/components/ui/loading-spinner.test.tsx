@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 import { LoadingSpinner } from "../../../../src/components/ui/loading-spinner";
 
 describe("LoadingSpinner component", () => {

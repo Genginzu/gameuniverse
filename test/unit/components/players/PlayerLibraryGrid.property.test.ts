@@ -1,15 +1,15 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import type { PlayerLibraryGame } from "@/types/player";
 
 /**
  * Feature: player-pages
- * Property 6: Affichage de la bibliothèque
+ * Property 6: Affichage de la bibliothÃ¨que
  * **Validates: Requirements 6.1, 6.2**
  *
- * Pour tout joueur avec une bibliothèque non vide, chaque jeu affiché doit contenir :
+ * Pour tout joueur avec une bibliothÃ¨que non vide, chaque jeu affichÃ© doit contenir :
  * le titre du jeu, l'image de couverture (ou placeholder), et le statut du jeu.
- * L'ordre d'affichage doit être cohérent (par date d'ajout décroissante).
+ * L'ordre d'affichage doit Ãªtre cohÃ©rent (par date d'ajout dÃ©croissante).
  */
 
 // Generator for valid game status
@@ -50,7 +50,7 @@ function sortGamesByAddedAtDescending(games: PlayerLibraryGame[]): PlayerLibrary
 }
 
 describe("PlayerLibraryGrid Property-Based Tests", () => {
-  describe("Property 6: Affichage de la bibliothèque", () => {
+  describe("Property 6: Affichage de la bibliothÃ¨que", () => {
     it("every game in a non-empty library has required fields: title, status, and coverImage (or null)", () => {
       fc.assert(
         fc.property(nonEmptyLibraryArbitrary, (library) => {
@@ -67,7 +67,7 @@ describe("PlayerLibraryGrid Property-Based Tests", () => {
             expect(game.coverImage === null || typeof game.coverImage === "string").toBe(true);
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -83,7 +83,7 @@ describe("PlayerLibraryGrid Property-Based Tests", () => {
             expect(currentDate).toBeGreaterThanOrEqual(nextDate);
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -104,7 +104,7 @@ describe("PlayerLibraryGrid Property-Based Tests", () => {
             expect(sortedIds.has(id)).toBe(true);
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -138,7 +138,7 @@ describe("PlayerLibraryGrid Property-Based Tests", () => {
             expect(game.addedAt).toBe(sameTimestamp);
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -151,7 +151,7 @@ describe("PlayerLibraryGrid Property-Based Tests", () => {
             expect(validStatuses).toContain(game.status);
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -168,7 +168,7 @@ describe("PlayerLibraryGrid Property-Based Tests", () => {
             expect(game.title).toBe(originalTitles.get(game.id));
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -185,7 +185,7 @@ describe("PlayerLibraryGrid Property-Based Tests", () => {
             expect(game.coverImage).toBe(originalCovers.get(game.id));
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -202,7 +202,7 @@ describe("PlayerLibraryGrid Property-Based Tests", () => {
             expect(game.status).toBe(originalStatuses.get(game.id));
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });

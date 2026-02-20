@@ -62,7 +62,12 @@ export async function GET(request: NextRequest) {
       }
 
       // Deduplicate game IDs
-      matchingGameIds = [...new Set(matchingTranslations?.map((t) => t.game_id) ?? [])];
+      matchingGameIds = [
+        ...new Set(
+          matchingTranslations?.map((t) => t.game_id).filter((id): id is string => id !== null) ??
+            []
+        ),
+      ];
 
       // No matches found — return empty results early
       if (matchingGameIds.length === 0) {

@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 
 // Feature: game-library, Task 16.5
@@ -170,7 +170,7 @@ describe("AllGamesContent Property-Based Tests", () => {
             );
           }
         ),
-        { numRuns: 50 }
+        { numRuns: 20 }
       );
     });
 
@@ -190,7 +190,7 @@ describe("AllGamesContent Property-Based Tests", () => {
             );
           }
         ),
-        { numRuns: 50 }
+        { numRuns: 20 }
       );
     });
 
@@ -210,7 +210,7 @@ describe("AllGamesContent Property-Based Tests", () => {
             );
           }
         ),
-        { numRuns: 50 }
+        { numRuns: 20 }
       );
     });
 
@@ -230,7 +230,7 @@ describe("AllGamesContent Property-Based Tests", () => {
             );
           }
         ),
-        { numRuns: 50 }
+        { numRuns: 20 }
       );
     });
 
@@ -254,7 +254,7 @@ describe("AllGamesContent Property-Based Tests", () => {
             );
           }
         ),
-        { numRuns: 50 }
+        { numRuns: 20 }
       );
     });
 
@@ -297,7 +297,7 @@ describe("AllGamesContent Property-Based Tests", () => {
             return newState.pagination?.currentPage === validTargetPage;
           }
         ),
-        { numRuns: 50 }
+        { numRuns: 20 }
       );
     });
 

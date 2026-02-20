@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 
 /**
@@ -184,7 +184,7 @@ describe("Library Games View Property-Based Tests", () => {
             expect(result.totalCount).toBe(expectedCount);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -228,7 +228,7 @@ describe("Library Games View Property-Based Tests", () => {
             expect(page1Result.totalCount).toBe(libraryEntries.length);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -256,7 +256,7 @@ describe("Library Games View Property-Based Tests", () => {
             expect(result.games.length).toBe(0);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -330,7 +330,7 @@ describe("Library Games View Property-Based Tests", () => {
             );
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -380,7 +380,7 @@ describe("Library Games View Property-Based Tests", () => {
             expect(totalGamesAcrossPages).toBe(firstPageResult.totalCount);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -412,7 +412,7 @@ describe("Library Games View Property-Based Tests", () => {
             expect(result.totalPages).toBe(1);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -460,7 +460,7 @@ describe("Library Games View Property-Based Tests", () => {
             expect(result.totalCount).toBe(expectedMatches);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });

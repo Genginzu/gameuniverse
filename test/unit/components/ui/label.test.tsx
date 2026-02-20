@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+import { describe, it, expect } from "vitest";
 import { Label } from "../../../../src/components/ui/label";
 
 describe("Label component", () => {

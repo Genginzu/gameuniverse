@@ -1,9 +1,9 @@
-import { describe, it, expect, beforeEach, mock } from "bun:test";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { NextRequest } from "next/server";
 
 // Create mock functions
-const mockExchangeCodeForSession = mock(() => Promise.resolve({ error: null }));
-const mockVerifyOtp = mock(() => Promise.resolve({ error: null }));
+const mockExchangeCodeForSession = vi.fn(() => Promise.resolve({ error: null }));
+const mockVerifyOtp = vi.fn(() => Promise.resolve({ error: null }));
 
 const mockSupabase = {
   auth: {
@@ -13,9 +13,9 @@ const mockSupabase = {
 };
 
 // Mock the module before importing the route
-mock.module("../../../../src/lib/supabase-server", () => ({
-  createServerClient: mock(() => Promise.resolve(mockSupabase)),
-  createRouteHandlerClient: mock(() => Promise.resolve(mockSupabase)),
+vi.mock("../../../../src/lib/supabase-server", () => ({
+  createServerClient: vi.fn(() => Promise.resolve(mockSupabase)),
+  createRouteHandlerClient: vi.fn(() => Promise.resolve(mockSupabase)),
 }));
 
 // Import after mocking

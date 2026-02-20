@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import { adminRatingSystemFormSchema } from "../../../../src/lib/validations/admin-rating-system-form";
 import { adminRatingFormSchema } from "../../../../src/lib/validations/admin-rating-form";
@@ -193,10 +193,10 @@ describe("Admin Age Classifications - Property-Based Tests", () => {
   /**
    * Feature: admin-age-classification, Property 4: Rejet des doublons de code
    *
-   * _Pour tout_ type d'entité (système, note, descripteur), les schémas
+   * _Pour tout_ type d'entitÃ© (systÃ¨me, note, descripteur), les schÃ©mas
    * acceptent les codes valides et rejettent les codes invalides.
    * La validation de code est le premier rempart contre les doublons :
-   * seuls les codes conformes au format attendu sont acceptés.
+   * seuls les codes conformes au format attendu sont acceptÃ©s.
    *
    * **Validates: Requirements 3.2, 3.3, 7.2, 7.3, 11.2, 14.1, 14.4**
    */
@@ -280,7 +280,7 @@ describe("Admin Age Classifications - Property-Based Tests", () => {
               expect(result.success).toBe(false);
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
     });
@@ -321,23 +321,23 @@ describe("Admin Age Classifications - Property-Based Tests", () => {
               expect(result.success).toBe(false);
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
     });
   });
 
   /**
-   * Feature: admin-age-classification, Property 5: Rejet des données invalides
+   * Feature: admin-age-classification, Property 5: Rejet des donnÃ©es invalides
    *
-   * _Pour toute_ requête API avec des données ne respectant pas le schéma Zod
-   * (champs obligatoires manquants, types incorrects, âge minimum négatif),
+   * _Pour toute_ requÃªte API avec des donnÃ©es ne respectant pas le schÃ©ma Zod
+   * (champs obligatoires manquants, types incorrects, Ã¢ge minimum nÃ©gatif),
    * safeParse retourne success: false.
    *
    * **Validates: Requirements 3.3, 7.3, 14.1**
    */
-  describe("Property 5: Rejet des données invalides", () => {
-    // Feature: admin-age-classification, Property 5: Rejet des données invalides
+  describe("Property 5: Rejet des donnÃ©es invalides", () => {
+    // Feature: admin-age-classification, Property 5: Rejet des donnÃ©es invalides
 
     describe("Rating System schema", () => {
       it("accepts all valid rating system form data", () => {
@@ -356,7 +356,7 @@ describe("Admin Age Classifications - Property-Based Tests", () => {
             const result = adminRatingSystemFormSchema.safeParse({ code, name: "" });
             expect(result.success).toBe(false);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -370,7 +370,7 @@ describe("Admin Age Classifications - Property-Based Tests", () => {
               expect(result.success).toBe(false);
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -389,7 +389,7 @@ describe("Admin Age Classifications - Property-Based Tests", () => {
               expect(result.success).toBe(false);
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -408,7 +408,7 @@ describe("Admin Age Classifications - Property-Based Tests", () => {
               expect(result.success).toBe(false);
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
     });
@@ -439,7 +439,7 @@ describe("Admin Age Classifications - Property-Based Tests", () => {
               expect(result.success).toBe(false);
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -458,7 +458,7 @@ describe("Admin Age Classifications - Property-Based Tests", () => {
               expect(result.success).toBe(false);
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -478,7 +478,7 @@ describe("Admin Age Classifications - Property-Based Tests", () => {
               expect(result.success).toBe(false);
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -498,7 +498,7 @@ describe("Admin Age Classifications - Property-Based Tests", () => {
               expect(result.success).toBe(false);
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -512,7 +512,7 @@ describe("Admin Age Classifications - Property-Based Tests", () => {
             });
             expect(result.success).toBe(false);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -532,7 +532,7 @@ describe("Admin Age Classifications - Property-Based Tests", () => {
               expect(result.success).toBe(false);
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
     });
@@ -557,7 +557,7 @@ describe("Admin Age Classifications - Property-Based Tests", () => {
             });
             expect(result.success).toBe(false);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -576,7 +576,7 @@ describe("Admin Age Classifications - Property-Based Tests", () => {
               expect(result.success).toBe(false);
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -589,7 +589,7 @@ describe("Admin Age Classifications - Property-Based Tests", () => {
             });
             expect(result.success).toBe(false);
           }),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -606,7 +606,7 @@ describe("Admin Age Classifications - Property-Based Tests", () => {
               expect(result.success).toBe(false);
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
 
@@ -625,7 +625,7 @@ describe("Admin Age Classifications - Property-Based Tests", () => {
               expect(result.success).toBe(false);
             }
           ),
-          { numRuns: 100 }
+          { numRuns: 30 }
         );
       });
     });

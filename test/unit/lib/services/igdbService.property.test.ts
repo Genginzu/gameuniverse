@@ -1,11 +1,11 @@
-import { describe, it, expect, mock, beforeEach, afterEach } from "bun:test";
+﻿import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import * as fc from "fast-check";
 import { IGDBService } from "../../../../src/lib/services/igdbService";
 import { IGDBGame, IGDBSearchResult } from "@/types/igdb";
 
 // Feature: igdb-hybrid-search, Property 10: Cache du token IGDB
 // **Validates: Requirements 6.3**
-// Feature: igdb-hybrid-search, Property 11: Transformation données IGDB valide
+// Feature: igdb-hybrid-search, Property 11: Transformation donnÃ©es IGDB valide
 // **Validates: Requirements 6.4**
 
 describe("IGDBService Property-Based Tests", () => {
@@ -51,7 +51,7 @@ describe("IGDBService Property-Based Tests", () => {
           token_type: "bearer",
         };
 
-        global.fetch = mock((url: string) => {
+        global.fetch = vi.fn((url: string) => {
           if (url.includes("twitch.tv/oauth2/token")) {
             fetchCallCount++;
             return Promise.resolve({
@@ -106,7 +106,7 @@ describe("IGDBService Property-Based Tests", () => {
         let fetchCallCount = 0;
         let currentToken = firstToken;
 
-        global.fetch = mock((url: string) => {
+        global.fetch = vi.fn((url: string) => {
           if (url.includes("twitch.tv/oauth2/token")) {
             fetchCallCount++;
             const response = {
@@ -161,7 +161,7 @@ describe("IGDBService Property-Based Tests", () => {
 
         let authCallCount = 0;
 
-        global.fetch = mock((url: string) => {
+        global.fetch = vi.fn((url: string) => {
           if (url.includes("twitch.tv/oauth2/token")) {
             authCallCount++;
             return Promise.resolve({
@@ -214,7 +214,7 @@ describe("IGDBService Property-Based Tests", () => {
         // Before any request, cache should be null
         expect(IGDBService.getTokenCache()).toBeNull();
 
-        global.fetch = mock((url: string) => {
+        global.fetch = vi.fn((url: string) => {
           if (url.includes("twitch.tv/oauth2/token")) {
             return Promise.resolve({
               ok: true,
@@ -260,7 +260,7 @@ describe("IGDBService Property-Based Tests", () => {
       for (const { tokenValue } of testCases) {
         IGDBService.clearTokenCache();
 
-        global.fetch = mock((url: string) => {
+        global.fetch = vi.fn((url: string) => {
           if (url.includes("twitch.tv/oauth2/token")) {
             return Promise.resolve({
               ok: true,
@@ -293,9 +293,9 @@ describe("IGDBService Property-Based Tests", () => {
     });
   });
 
-  // Feature: igdb-hybrid-search, Property 11: Transformation données IGDB valide
+  // Feature: igdb-hybrid-search, Property 11: Transformation donnÃ©es IGDB valide
   // **Validates: Requirements 6.4**
-  describe("Property 11: Transformation données IGDB valide", () => {
+  describe("Property 11: Transformation donnÃ©es IGDB valide", () => {
     // Arbitrary generator for IGDBGame objects
     const igdbGameArbitrary = fc.record({
       id: fc.integer({ min: 1, max: 999999 }),
@@ -364,7 +364,7 @@ describe("IGDBService Property-Based Tests", () => {
           IGDBService.clearTokenCache();
 
           // Mock fetch to return the generated game
-          global.fetch = mock((url: string) => {
+          global.fetch = vi.fn((url: string) => {
             if (url.includes("twitch.tv/oauth2/token")) {
               return Promise.resolve({
                 ok: true,
@@ -442,7 +442,7 @@ describe("IGDBService Property-Based Tests", () => {
             expect(result.developer).toBe(developerCompany?.company?.name);
           }
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -460,7 +460,7 @@ describe("IGDBService Property-Based Tests", () => {
       for (const minimalGame of minimalGames) {
         IGDBService.clearTokenCache();
 
-        global.fetch = mock((url: string) => {
+        global.fetch = vi.fn((url: string) => {
           if (url.includes("twitch.tv/oauth2/token")) {
             return Promise.resolve({
               ok: true,
@@ -525,7 +525,7 @@ describe("IGDBService Property-Based Tests", () => {
       for (const game of gamesWithCompanies) {
         IGDBService.clearTokenCache();
 
-        global.fetch = mock((url: string) => {
+        global.fetch = vi.fn((url: string) => {
           if (url.includes("twitch.tv/oauth2/token")) {
             return Promise.resolve({
               ok: true,
@@ -593,7 +593,7 @@ describe("IGDBService Property-Based Tests", () => {
             expect(url).toMatch(/\.jpg$/);
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });

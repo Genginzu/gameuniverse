@@ -1,10 +1,12 @@
-import { describe, it, expect, beforeEach, mock } from "bun:test";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { NextRequest } from "next/server";
 
-// Create mock function for CharacterFavoriteService.getPlayerFavorites
-const mockGetPlayerFavorites = mock(() => Promise.resolve([]));
+// vi.hoisted ensures mock fns are available when vi.mock factories run
+const { mockGetPlayerFavorites } = vi.hoisted(() => ({
+  mockGetPlayerFavorites: vi.fn(() => Promise.resolve([])),
+}));
 
-mock.module("../../../../../src/lib/services/characterFavoriteService", () => ({
+vi.mock("../../../../../src/lib/services/characterFavoriteService", () => ({
   CharacterFavoriteService: {
     getPlayerFavorites: mockGetPlayerFavorites,
   },
@@ -45,11 +47,9 @@ describe("/api/players/[id]/favorite-characters", () => {
   describe("GET", () => {
     it("should return player favorites with default locale", async () => {
       mockGetPlayerFavorites.mockResolvedValue(SAMPLE_FAVORITES);
-
       const req = new NextRequest("http://localhost/api/players/player-123/favorite-characters");
       const res = await GET(req, PARAMS);
       const body = await res.json();
-
       expect(res.status).toBe(200);
       expect(body.characters).toEqual(SAMPLE_FAVORITES);
       expect(mockGetPlayerFavorites).toHaveBeenCalledWith("player-123", "fr");
@@ -57,33 +57,27 @@ describe("/api/players/[id]/favorite-characters", () => {
 
     it("should pass locale query parameter to service", async () => {
       mockGetPlayerFavorites.mockResolvedValue([]);
-
       const req = new NextRequest(
         "http://localhost/api/players/player-123/favorite-characters?locale=en"
       );
       const res = await GET(req, PARAMS);
-
       expect(res.status).toBe(200);
       expect(mockGetPlayerFavorites).toHaveBeenCalledWith("player-123", "en");
     });
 
     it("should return empty array when player has no favorites", async () => {
       mockGetPlayerFavorites.mockResolvedValue([]);
-
       const req = new NextRequest("http://localhost/api/players/player-123/favorite-characters");
       const res = await GET(req, PARAMS);
       const body = await res.json();
-
       expect(res.status).toBe(200);
       expect(body.characters).toEqual([]);
     });
 
     it("should return 500 on unexpected error", async () => {
       mockGetPlayerFavorites.mockRejectedValue(new Error("DB down"));
-
       const req = new NextRequest("http://localhost/api/players/player-123/favorite-characters");
       const res = await GET(req, PARAMS);
-
       expect(res.status).toBe(500);
       expect((await res.json()).error).toBe("Internal server error");
     });

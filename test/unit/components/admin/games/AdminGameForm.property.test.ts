@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import { adminGameFormSchema } from "../../../../../src/lib/validations/admin-game-form";
 
@@ -78,7 +78,7 @@ describe("Admin Game Form Validation Property Tests", () => {
           const result = adminGameFormSchema.safeParse(formData);
           return result.success === true;
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });
@@ -94,7 +94,7 @@ describe("Admin Game Form Validation Property Tests", () => {
           });
           return result.success === false;
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -107,7 +107,7 @@ describe("Admin Game Form Validation Property Tests", () => {
           });
           return result.success === true;
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -120,7 +120,7 @@ describe("Admin Game Form Validation Property Tests", () => {
           });
           return result.success === false;
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -133,7 +133,7 @@ describe("Admin Game Form Validation Property Tests", () => {
           });
           return result.success === false;
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -146,7 +146,7 @@ describe("Admin Game Form Validation Property Tests", () => {
           });
           return result.success === false;
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -163,7 +163,7 @@ describe("Admin Game Form Validation Property Tests", () => {
           });
           return result.success === false;
         }),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });

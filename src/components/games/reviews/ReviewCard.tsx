@@ -4,10 +4,11 @@ import { ThumbsUp, ThumbsDown, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getRatingColor } from "@/lib/utils/ratingColor";
 import { useReviewTranslations, useDateFormatter } from "@/hooks/useTranslations";
-import type { Review } from "@/types/review";
+import { ReviewVoteButtons } from "./ReviewVoteButtons";
+import type { ReviewWithVotes } from "@/types/review";
 
 interface ReviewCardProps {
-  review: Review;
+  review: ReviewWithVotes;
 }
 
 function ReviewAvatar({ name, avatar }: { name: string | null; avatar: string | null }) {
@@ -106,6 +107,16 @@ export function ReviewCard({ review }: ReviewCardProps) {
           />
         </div>
       )}
+
+      {/* Vote buttons */}
+      <div className="mt-4 flex justify-end border-t border-slate-700/50 pt-3">
+        <ReviewVoteButtons
+          reviewId={review.id}
+          reviewUserId={review.userId}
+          initialCounts={review.voteCounts}
+          initialUserVote={review.userVote}
+        />
+      </div>
     </article>
   );
 }

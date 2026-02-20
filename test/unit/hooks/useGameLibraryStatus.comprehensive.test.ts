@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, mock } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 
 /**
  * Tests for useGameLibraryStatus hook logic
@@ -97,7 +97,7 @@ describe("useGameLibraryStatus comprehensive tests", () => {
     let mockFetch: ReturnType<typeof mock>;
 
     beforeEach(() => {
-      mockFetch = mock(() => Promise.resolve(new Response()));
+      mockFetch = vi.fn(() => Promise.resolve(new Response()));
       globalThis.fetch = mockFetch as unknown as typeof fetch;
     });
 
@@ -310,7 +310,7 @@ describe("useGameLibraryStatus comprehensive tests", () => {
 
   describe("error handling patterns", () => {
     it("should handle JSON parse error in response", async () => {
-      const mockFetch = mock(() =>
+      const mockFetch = vi.fn(() =>
         Promise.resolve(
           new Response("invalid json", {
             status: 200,
@@ -326,7 +326,7 @@ describe("useGameLibraryStatus comprehensive tests", () => {
     });
 
     it("should handle timeout scenario", async () => {
-      const mockFetch = mock(
+      const mockFetch = vi.fn(
         () =>
           new Promise((_, reject) => {
             setTimeout(() => reject(new Error("Timeout")), 100);

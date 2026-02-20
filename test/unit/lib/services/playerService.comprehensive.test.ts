@@ -1,8 +1,8 @@
-import { describe, it, expect, beforeEach, mock } from "bun:test";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 
 // Create mock functions
-const mockFrom = mock(() => ({}));
-const mockRpc = mock(() => Promise.resolve({ data: null, error: null }));
+const mockFrom = vi.fn(() => ({}));
+const mockRpc = vi.fn(() => Promise.resolve({ data: null, error: null }));
 
 const mockSupabase = {
   from: mockFrom,
@@ -10,9 +10,9 @@ const mockSupabase = {
 };
 
 // Mock the module
-mock.module("../../../../src/lib/supabase-server", () => ({
-  createServerClient: mock(() => Promise.resolve(mockSupabase)),
-  createRouteHandlerClient: mock(() => Promise.resolve(mockSupabase)),
+vi.mock("../../../../src/lib/supabase-server", () => ({
+  createServerClient: vi.fn(() => Promise.resolve(mockSupabase)),
+  createRouteHandlerClient: vi.fn(() => Promise.resolve(mockSupabase)),
 }));
 
 // Import after mocking
@@ -49,7 +49,7 @@ describe("PlayerService - Comprehensive Coverage", () => {
 
       // Mock profiles query
       const mockProfilesQuery = {
-        ilike: mock(() => mockProfilesQuery),
+        ilike: vi.fn(() => mockProfilesQuery),
       };
       Object.assign(mockProfilesQuery, {
         then: (resolve: (value: unknown) => void) => resolve({ data: mockProfiles, error: null }),
@@ -57,7 +57,7 @@ describe("PlayerService - Comprehensive Coverage", () => {
 
       // Mock library counts query
       const mockLibraryQuery = {
-        in: mock(() =>
+        in: vi.fn(() =>
           Promise.resolve({
             data: mockLibraryCounts,
             error: null,
@@ -67,10 +67,10 @@ describe("PlayerService - Comprehensive Coverage", () => {
 
       mockFrom
         .mockReturnValueOnce({
-          select: mock(() => mockProfilesQuery),
+          select: vi.fn(() => mockProfilesQuery),
         })
         .mockReturnValueOnce({
-          select: mock(() => mockLibraryQuery),
+          select: vi.fn(() => mockLibraryQuery),
         });
 
       const result = await PlayerService.fetchPlayersFromDB();
@@ -91,13 +91,13 @@ describe("PlayerService - Comprehensive Coverage", () => {
       ];
 
       const mockProfilesQuery = {
-        ilike: mock(() => ({
+        ilike: vi.fn(() => ({
           then: (resolve: (value: unknown) => void) => resolve({ data: mockProfiles, error: null }),
         })),
       };
 
       const mockLibraryQuery = {
-        in: mock(() =>
+        in: vi.fn(() =>
           Promise.resolve({
             data: [],
             error: null,
@@ -107,10 +107,10 @@ describe("PlayerService - Comprehensive Coverage", () => {
 
       mockFrom
         .mockReturnValueOnce({
-          select: mock(() => mockProfilesQuery),
+          select: vi.fn(() => mockProfilesQuery),
         })
         .mockReturnValueOnce({
-          select: mock(() => mockLibraryQuery),
+          select: vi.fn(() => mockLibraryQuery),
         });
 
       const result = await PlayerService.fetchPlayersFromDB({ search: "searched" });
@@ -160,14 +160,14 @@ describe("PlayerService - Comprehensive Coverage", () => {
       ];
 
       const mockProfilesQuery = {
-        ilike: mock(() => mockProfilesQuery),
+        ilike: vi.fn(() => mockProfilesQuery),
       };
       Object.assign(mockProfilesQuery, {
         then: (resolve: (value: unknown) => void) => resolve({ data: mockProfiles, error: null }),
       });
 
       const mockLibraryQuery = {
-        in: mock(() =>
+        in: vi.fn(() =>
           Promise.resolve({
             data: mockLibraryCounts,
             error: null,
@@ -177,10 +177,10 @@ describe("PlayerService - Comprehensive Coverage", () => {
 
       mockFrom
         .mockReturnValueOnce({
-          select: mock(() => mockProfilesQuery),
+          select: vi.fn(() => mockProfilesQuery),
         })
         .mockReturnValueOnce({
-          select: mock(() => mockLibraryQuery),
+          select: vi.fn(() => mockLibraryQuery),
         });
 
       // Filter for 1-5 games (user-1 has 5, user-2 has 15)
@@ -200,14 +200,14 @@ describe("PlayerService - Comprehensive Coverage", () => {
       }));
 
       const mockProfilesQuery = {
-        ilike: mock(() => mockProfilesQuery),
+        ilike: vi.fn(() => mockProfilesQuery),
       };
       Object.assign(mockProfilesQuery, {
         then: (resolve: (value: unknown) => void) => resolve({ data: mockProfiles, error: null }),
       });
 
       const mockLibraryQuery = {
-        in: mock(() =>
+        in: vi.fn(() =>
           Promise.resolve({
             data: [],
             error: null,
@@ -217,10 +217,10 @@ describe("PlayerService - Comprehensive Coverage", () => {
 
       mockFrom
         .mockReturnValueOnce({
-          select: mock(() => mockProfilesQuery),
+          select: vi.fn(() => mockProfilesQuery),
         })
         .mockReturnValueOnce({
-          select: mock(() => mockLibraryQuery),
+          select: vi.fn(() => mockLibraryQuery),
         });
 
       const result = await PlayerService.fetchPlayersFromDB({ page: 2, limit: 10 });
@@ -234,7 +234,7 @@ describe("PlayerService - Comprehensive Coverage", () => {
 
     it("should handle query error", async () => {
       const mockProfilesQuery = {
-        ilike: mock(() => mockProfilesQuery),
+        ilike: vi.fn(() => mockProfilesQuery),
       };
       Object.assign(mockProfilesQuery, {
         then: (resolve: (value: unknown) => void) =>
@@ -242,7 +242,7 @@ describe("PlayerService - Comprehensive Coverage", () => {
       });
 
       mockFrom.mockReturnValueOnce({
-        select: mock(() => mockProfilesQuery),
+        select: vi.fn(() => mockProfilesQuery),
       });
 
       await expect(PlayerService.fetchPlayersFromDB()).rejects.toThrow(
@@ -261,14 +261,14 @@ describe("PlayerService - Comprehensive Coverage", () => {
       ];
 
       const mockProfilesQuery = {
-        ilike: mock(() => mockProfilesQuery),
+        ilike: vi.fn(() => mockProfilesQuery),
       };
       Object.assign(mockProfilesQuery, {
         then: (resolve: (value: unknown) => void) => resolve({ data: mockProfiles, error: null }),
       });
 
       const mockLibraryQuery = {
-        in: mock(() =>
+        in: vi.fn(() =>
           Promise.resolve({
             data: null,
             error: { message: "Library error" },
@@ -278,10 +278,10 @@ describe("PlayerService - Comprehensive Coverage", () => {
 
       mockFrom
         .mockReturnValueOnce({
-          select: mock(() => mockProfilesQuery),
+          select: vi.fn(() => mockProfilesQuery),
         })
         .mockReturnValueOnce({
-          select: mock(() => mockLibraryQuery),
+          select: vi.fn(() => mockLibraryQuery),
         });
 
       // Should not throw, just continue without counts
@@ -293,14 +293,14 @@ describe("PlayerService - Comprehensive Coverage", () => {
 
     it("should handle empty profiles list", async () => {
       const mockProfilesQuery = {
-        ilike: mock(() => mockProfilesQuery),
+        ilike: vi.fn(() => mockProfilesQuery),
       };
       Object.assign(mockProfilesQuery, {
         then: (resolve: (value: unknown) => void) => resolve({ data: [], error: null }),
       });
 
       mockFrom.mockReturnValueOnce({
-        select: mock(() => mockProfilesQuery),
+        select: vi.fn(() => mockProfilesQuery),
       });
 
       const result = await PlayerService.fetchPlayersFromDB();
@@ -343,8 +343,8 @@ describe("PlayerService - Comprehensive Coverage", () => {
 
       // Mock profile query
       const mockProfileQuery = {
-        eq: mock(() => ({
-          single: mock(() =>
+        eq: vi.fn(() => ({
+          single: vi.fn(() =>
             Promise.resolve({
               data: mockProfile,
               error: null,
@@ -355,7 +355,7 @@ describe("PlayerService - Comprehensive Coverage", () => {
 
       // Mock library query
       const mockLibraryQuery = {
-        eq: mock(() =>
+        eq: vi.fn(() =>
           Promise.resolve({
             data: mockLibrary,
             error: null,
@@ -365,10 +365,10 @@ describe("PlayerService - Comprehensive Coverage", () => {
 
       mockFrom
         .mockReturnValueOnce({
-          select: mock(() => mockProfileQuery),
+          select: vi.fn(() => mockProfileQuery),
         })
         .mockReturnValueOnce({
-          select: mock(() => mockLibraryQuery),
+          select: vi.fn(() => mockLibraryQuery),
         });
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("user-1", "en");
@@ -383,8 +383,8 @@ describe("PlayerService - Comprehensive Coverage", () => {
 
     it("should return null for non-existent player", async () => {
       const mockProfileQuery = {
-        eq: mock(() => ({
-          single: mock(() =>
+        eq: vi.fn(() => ({
+          single: vi.fn(() =>
             Promise.resolve({
               data: null,
               error: { code: "PGRST116", message: "No rows returned" },
@@ -394,7 +394,7 @@ describe("PlayerService - Comprehensive Coverage", () => {
       };
 
       mockFrom.mockReturnValueOnce({
-        select: mock(() => mockProfileQuery),
+        select: vi.fn(() => mockProfileQuery),
       });
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("nonexistent");
@@ -404,8 +404,8 @@ describe("PlayerService - Comprehensive Coverage", () => {
 
     it("should throw error for database errors", async () => {
       const mockProfileQuery = {
-        eq: mock(() => ({
-          single: mock(() =>
+        eq: vi.fn(() => ({
+          single: vi.fn(() =>
             Promise.resolve({
               data: null,
               error: { code: "PGRST500", message: "Database error" },
@@ -415,7 +415,7 @@ describe("PlayerService - Comprehensive Coverage", () => {
       };
 
       mockFrom.mockReturnValueOnce({
-        select: mock(() => mockProfileQuery),
+        select: vi.fn(() => mockProfileQuery),
       });
 
       await expect(PlayerService.fetchPlayerDetailsFromDB("user-1")).rejects.toThrow(
@@ -425,8 +425,8 @@ describe("PlayerService - Comprehensive Coverage", () => {
 
     it("should return null when profile is null without error", async () => {
       const mockProfileQuery = {
-        eq: mock(() => ({
-          single: mock(() =>
+        eq: vi.fn(() => ({
+          single: vi.fn(() =>
             Promise.resolve({
               data: null,
               error: null,
@@ -436,7 +436,7 @@ describe("PlayerService - Comprehensive Coverage", () => {
       };
 
       mockFrom.mockReturnValueOnce({
-        select: mock(() => mockProfileQuery),
+        select: vi.fn(() => mockProfileQuery),
       });
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("user-1");
@@ -455,8 +455,8 @@ describe("PlayerService - Comprehensive Coverage", () => {
       };
 
       const mockProfileQuery = {
-        eq: mock(() => ({
-          single: mock(() =>
+        eq: vi.fn(() => ({
+          single: vi.fn(() =>
             Promise.resolve({
               data: mockProfile,
               error: null,
@@ -466,7 +466,7 @@ describe("PlayerService - Comprehensive Coverage", () => {
       };
 
       const mockLibraryQuery = {
-        eq: mock(() =>
+        eq: vi.fn(() =>
           Promise.resolve({
             data: null,
             error: { message: "Library error" },
@@ -476,10 +476,10 @@ describe("PlayerService - Comprehensive Coverage", () => {
 
       mockFrom
         .mockReturnValueOnce({
-          select: mock(() => mockProfileQuery),
+          select: vi.fn(() => mockProfileQuery),
         })
         .mockReturnValueOnce({
-          select: mock(() => mockLibraryQuery),
+          select: vi.fn(() => mockLibraryQuery),
         });
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("user-1");
@@ -516,8 +516,8 @@ describe("PlayerService - Comprehensive Coverage", () => {
       ];
 
       const mockProfileQuery = {
-        eq: mock(() => ({
-          single: mock(() =>
+        eq: vi.fn(() => ({
+          single: vi.fn(() =>
             Promise.resolve({
               data: mockProfile,
               error: null,
@@ -527,7 +527,7 @@ describe("PlayerService - Comprehensive Coverage", () => {
       };
 
       const mockLibraryQuery = {
-        eq: mock(() =>
+        eq: vi.fn(() =>
           Promise.resolve({
             data: mockLibrary,
             error: null,
@@ -537,10 +537,10 @@ describe("PlayerService - Comprehensive Coverage", () => {
 
       mockFrom
         .mockReturnValueOnce({
-          select: mock(() => mockProfileQuery),
+          select: vi.fn(() => mockProfileQuery),
         })
         .mockReturnValueOnce({
-          select: mock(() => mockLibraryQuery),
+          select: vi.fn(() => mockLibraryQuery),
         });
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("user-1", "fr");
@@ -585,8 +585,8 @@ describe("PlayerService - Comprehensive Coverage", () => {
       ];
 
       const mockProfileQuery = {
-        eq: mock(() => ({
-          single: mock(() =>
+        eq: vi.fn(() => ({
+          single: vi.fn(() =>
             Promise.resolve({
               data: mockProfile,
               error: null,
@@ -596,7 +596,7 @@ describe("PlayerService - Comprehensive Coverage", () => {
       };
 
       const mockLibraryQuery = {
-        eq: mock(() =>
+        eq: vi.fn(() =>
           Promise.resolve({
             data: mockLibrary,
             error: null,
@@ -606,10 +606,10 @@ describe("PlayerService - Comprehensive Coverage", () => {
 
       mockFrom
         .mockReturnValueOnce({
-          select: mock(() => mockProfileQuery),
+          select: vi.fn(() => mockProfileQuery),
         })
         .mockReturnValueOnce({
-          select: mock(() => mockLibraryQuery),
+          select: vi.fn(() => mockLibraryQuery),
         });
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("user-1");
@@ -629,8 +629,8 @@ describe("PlayerService - Comprehensive Coverage", () => {
       };
 
       const mockProfileQuery = {
-        eq: mock(() => ({
-          single: mock(() =>
+        eq: vi.fn(() => ({
+          single: vi.fn(() =>
             Promise.resolve({
               data: mockProfile,
               error: null,
@@ -640,7 +640,7 @@ describe("PlayerService - Comprehensive Coverage", () => {
       };
 
       const mockLibraryQuery = {
-        eq: mock(() =>
+        eq: vi.fn(() =>
           Promise.resolve({
             data: [],
             error: null,
@@ -650,10 +650,10 @@ describe("PlayerService - Comprehensive Coverage", () => {
 
       mockFrom
         .mockReturnValueOnce({
-          select: mock(() => mockProfileQuery),
+          select: vi.fn(() => mockProfileQuery),
         })
         .mockReturnValueOnce({
-          select: mock(() => mockLibraryQuery),
+          select: vi.fn(() => mockLibraryQuery),
         });
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("user-1");
@@ -691,8 +691,8 @@ describe("PlayerService - Comprehensive Coverage", () => {
       ];
 
       const mockProfileQuery = {
-        eq: mock(() => ({
-          single: mock(() =>
+        eq: vi.fn(() => ({
+          single: vi.fn(() =>
             Promise.resolve({
               data: mockProfile,
               error: null,
@@ -702,7 +702,7 @@ describe("PlayerService - Comprehensive Coverage", () => {
       };
 
       const mockLibraryQuery = {
-        eq: mock(() =>
+        eq: vi.fn(() =>
           Promise.resolve({
             data: mockLibrary,
             error: null,
@@ -712,10 +712,10 @@ describe("PlayerService - Comprehensive Coverage", () => {
 
       mockFrom
         .mockReturnValueOnce({
-          select: mock(() => mockProfileQuery),
+          select: vi.fn(() => mockProfileQuery),
         })
         .mockReturnValueOnce({
-          select: mock(() => mockLibraryQuery),
+          select: vi.fn(() => mockLibraryQuery),
         });
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("user-1");

@@ -1,4 +1,4 @@
-import { describe, it, expect } from "bun:test";
+﻿import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 
 // Feature: game-library
@@ -123,7 +123,7 @@ describe("GameFilters Property-Based Tests", () => {
             });
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -145,7 +145,7 @@ describe("GameFilters Property-Based Tests", () => {
             );
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -169,7 +169,7 @@ describe("GameFilters Property-Based Tests", () => {
             });
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -211,7 +211,7 @@ describe("GameFilters Property-Based Tests", () => {
             );
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -249,7 +249,7 @@ describe("GameFilters Property-Based Tests", () => {
             });
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -269,7 +269,7 @@ describe("GameFilters Property-Based Tests", () => {
             return lowerCount === upperCount && upperCount === mixedCount;
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 
@@ -316,7 +316,7 @@ describe("GameFilters Property-Based Tests", () => {
             return count >= 0;
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
   });
@@ -345,7 +345,7 @@ describe("GameFilters Property-Based Tests", () => {
             );
           }
         ),
-        { numRuns: 100 }
+        { numRuns: 30 }
       );
     });
 

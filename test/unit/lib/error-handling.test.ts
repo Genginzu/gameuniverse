@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, mock, spyOn } from "bun:test";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import {
   ErrorType,
   createAppError,
@@ -12,8 +12,8 @@ import {
 } from "../../../src/lib/error-handling";
 
 // Mock the toast module
-mock.module("@/hooks/use-toast", () => ({
-  toast: mock(),
+vi.mock("@/hooks/use-toast", () => ({
+  toast: vi.fn(),
 }));
 
 describe("error-handling", () => {
@@ -134,10 +134,10 @@ describe("error-handling", () => {
   });
 
   describe("withRetry", () => {
-    let consoleWarnSpy: ReturnType<typeof spyOn>;
+    let consoleWarnSpy: ReturnType<typeof vi.spyOn>;
 
     beforeEach(() => {
-      consoleWarnSpy = spyOn(console, "warn").mockImplementation(() => {});
+      consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
     });
 
     afterEach(() => {
@@ -145,7 +145,7 @@ describe("error-handling", () => {
     });
 
     it("should return result on successful operation", async () => {
-      const operation = mock(async () => "success");
+      const operation = vi.fn(async () => "success");
       const result = await withRetry(operation);
 
       expect(result).toBe("success");
@@ -154,7 +154,7 @@ describe("error-handling", () => {
 
     it("should retry on retryable errors", async () => {
       let attempts = 0;
-      const operation = mock(async () => {
+      const operation = vi.fn(async () => {
         attempts++;
         if (attempts < 2) {
           throw createAppError("Network error", ErrorType.NETWORK, { retryable: true });
@@ -169,7 +169,7 @@ describe("error-handling", () => {
     });
 
     it("should not retry on non-retryable errors", async () => {
-      const operation = mock(async () => {
+      const operation = vi.fn(async () => {
         throw createAppError("Validation error", ErrorType.VALIDATION, { retryable: false });
       });
 
@@ -180,7 +180,7 @@ describe("error-handling", () => {
     });
 
     it("should throw after max attempts", async () => {
-      const operation = mock(async () => {
+      const operation = vi.fn(async () => {
         throw createAppError("Server error", ErrorType.SERVER, { retryable: true });
       });
 
@@ -201,7 +201,7 @@ describe("error-handling", () => {
       }) as typeof setTimeout;
 
       let attempts = 0;
-      const operation = mock(async () => {
+      const operation = vi.fn(async () => {
         attempts++;
         if (attempts < 3) {
           throw createAppError("Error", ErrorType.NETWORK, { retryable: true });
@@ -234,14 +234,14 @@ describe("error-handling", () => {
     });
 
     it("should return result on successful operation", async () => {
-      const operation = mock(async () => ({ data: "test" }));
+      const operation = vi.fn(async () => ({ data: "test" }));
       const result = await apiCall(operation);
 
       expect(result).toEqual({ data: "test" });
     });
 
     it("should show error toast by default", async () => {
-      const operation = mock(async () => {
+      const operation = vi.fn(async () => {
         throw createAppError("Test error", ErrorType.VALIDATION);
       });
 
@@ -254,7 +254,7 @@ describe("error-handling", () => {
     });
 
     it("should use custom error message when provided", async () => {
-      const operation = mock(async () => {
+      const operation = vi.fn(async () => {
         throw createAppError("Original error", ErrorType.VALIDATION);
       });
 
@@ -273,7 +273,7 @@ describe("error-handling", () => {
     });
 
     it("should not show toast when showErrorToast is false", async () => {
-      const operation = mock(async () => {
+      const operation = vi.fn(async () => {
         throw createAppError("Test error", ErrorType.VALIDATION);
       });
 
@@ -289,10 +289,10 @@ describe("error-handling", () => {
   });
 
   describe("reportError", () => {
-    let consoleErrorSpy: ReturnType<typeof spyOn>;
+    let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
     beforeEach(() => {
-      consoleErrorSpy = spyOn(console, "error").mockImplementation(() => {});
+      consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     });
 
     afterEach(() => {
@@ -374,13 +374,13 @@ describe("error-handling", () => {
 
 describe("useErrorHandler", () => {
   let toastMock: ReturnType<typeof mock>;
-  let consoleErrorSpy: ReturnType<typeof spyOn>;
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(async () => {
     const toastModule = await import("@/hooks/use-toast");
     toastMock = toastModule.toast as ReturnType<typeof mock>;
     toastMock.mockClear();
-    consoleErrorSpy = spyOn(console, "error").mockImplementation(() => {});
+    consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
