@@ -133,6 +133,25 @@ export async function fetchReviewStats(): Promise<Map<string, ReviewStats>> {
   return result;
 }
 
+/** Metascores (0-100) grouped by game_id, null entries are omitted */
+export async function fetchMetascores(): Promise<Map<string, number>> {
+  const supabase = await createServerClient();
+  const { data, error } = await supabase
+    .from("games")
+    .select("id, metascore")
+    .not("metascore", "is", null);
+
+  if (error) throw new Error(`Failed to fetch metascores: ${error.message}`);
+
+  const result = new Map<string, number>();
+  for (const row of data ?? []) {
+    if (row.metascore !== null) {
+      result.set(row.id, row.metascore);
+    }
+  }
+  return result;
+}
+
 /** Fetch game metadata for the final recommendation output */
 export async function fetchGameMetadata(
   gameIds: string[]
@@ -144,7 +163,9 @@ export async function fetchGameMetadata(
   // Fetch games basic info + primary developer via game_companies
   const { data: games, error: gamesError } = await supabase
     .from("games")
-    .select("id, slug, cover_image_url, game_companies(role, is_primary, companies(name))")
+    .select(
+      "id, slug, cover_image_url, metascore, game_companies(role, is_primary, companies(name))"
+    )
     .in("id", gameIds);
 
   if (gamesError) throw new Error(`Failed to fetch games: ${gamesError.message}`);
@@ -210,6 +231,7 @@ export async function fetchGameMetadata(
       coverImage: game.cover_image_url,
       genres: genresByGame.get(game.id) ?? [],
       developer: developerName,
+      metascore: game.metascore ?? null,
       combinedScore: 0, // will be set by the caller
     });
   }

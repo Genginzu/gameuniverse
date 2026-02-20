@@ -3,15 +3,18 @@
 ## Description
 
 Système de recommandations de jeux « Si vous aimez ce jeu, vous aimerez aussi…
-». Le moteur combine trois signaux pour calculer un score de pertinence :
+». Le moteur combine quatre signaux pour calculer un score de pertinence :
 
 1. **Similarité par genres** — coefficient de Jaccard sur les genres partagés
 2. **Filtrage collaboratif** — co-occurrence dans les bibliothèques des joueurs
 3. **Qualité des reviews** — note moyenne pondérée par un discount de confiance
+4. **Note Metacritic** — metascore normalisé (0-100 → 0-1), signal optionnel
 
 Les scores sont combinés en un `Combined_Score` avec des poids configurables
-(genre 0.4, collaboratif 0.4, review 0.2), puis servis via une API REST avec
-cache in-memory (TTL 1h).
+(genre 0.35, collaboratif 0.35, review 0.15, metacritic 0.15). Quand un jeu n'a
+pas de metascore, ce signal est exclu et les poids restants sont re-normalisés
+automatiquement. Les résultats sont servis via une API REST avec cache in-memory
+(TTL 1h).
 
 ## Accès
 
@@ -37,6 +40,7 @@ Aucune migration SQL nécessaire. Le système exploite les tables existantes :
 - `user_library` — pour le Collaborative_Score (statuts `owned`, `completed`,
   `playing`)
 - `game_reviews` — pour le Review_Score
+- `games` — pour le Metacritic_Score (colonne `metascore`)
 - `games`, `game_translations`, `game_companies` — métadonnées des candidats
 
 ## Utilisation
@@ -62,7 +66,8 @@ src/lib/services/recommendation/
 ├── genreScorer.ts          # Coefficient de Jaccard
 ├── collaborativeScorer.ts  # Co-occurrence normalisée
 ├── reviewScorer.ts         # Note moyenne + discount confiance
-├── scoreCombiner.ts        # Somme pondérée normalisée
+├── metacriticScorer.ts     # Metascore normalisé (signal optionnel)
+├── scoreCombiner.ts        # Somme pondérée normalisée (signaux optionnels)
 ├── cache.ts                # Cache in-memory avec TTL
 ├── dataFetchers.ts         # Requêtes Supabase
 └── index.ts                # Barrel export

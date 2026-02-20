@@ -19,6 +19,7 @@ import {
   fetchAllGameGenres,
   fetchCoOccurrences,
   fetchReviewStats,
+  fetchMetascores,
   fetchGameMetadata,
   fetchUserLibraryGameIds,
 } from "@/lib/services/recommendation/dataFetchers";
@@ -39,6 +40,7 @@ const gameRecommendationGen = fc.record({
   coverImage: fc.option(fc.webUrl(), { nil: null }),
   genres: fc.array(genreGen, { minLength: 0, maxLength: 5 }),
   developer: fc.string({ minLength: 0, maxLength: 50 }),
+  metascore: fc.option(fc.integer({ min: 0, max: 100 }), { nil: null }),
   combinedScore: fc.double({ min: 0, max: 1, noNaN: true }),
 });
 
@@ -76,6 +78,7 @@ function setupMocks(sourceId: string, candidateIds: string[], genreIds: string[]
       coverImage: null,
       genres: [{ id: "g1", name: "Action" }],
       developer: "Dev",
+      metascore: null,
       combinedScore: 0,
     });
   }
@@ -87,6 +90,7 @@ function setupMocks(sourceId: string, candidateIds: string[], genreIds: string[]
     sourceLibraryCount: 0,
   });
   vi.mocked(fetchReviewStats).mockResolvedValue(new Map());
+  vi.mocked(fetchMetascores).mockResolvedValue(new Map());
   vi.mocked(fetchGameMetadata).mockResolvedValue(metadataMap);
 }
 
@@ -270,6 +274,7 @@ describe("recommendationService - Property-Based Tests", () => {
                 coverImage: null,
                 genres: [{ id: "g1", name: "Action" }],
                 developer: "Dev",
+                metascore: null,
                 combinedScore: 0,
               });
             }
@@ -283,6 +288,7 @@ describe("recommendationService - Property-Based Tests", () => {
               sourceLibraryCount: 0,
             });
             vi.mocked(fetchReviewStats).mockResolvedValue(new Map());
+            vi.mocked(fetchMetascores).mockResolvedValue(new Map());
             vi.mocked(fetchGameMetadata).mockResolvedValue(metadataMap);
 
             const results = await getPersonalRecommendations(userId);

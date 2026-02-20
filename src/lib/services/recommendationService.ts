@@ -14,6 +14,7 @@ import {
   computeGenreScore,
   computeCollaborativeScore,
   computeReviewScore,
+  computeMetacriticScore,
   computeCombinedScore,
   DEFAULT_WEIGHTS,
 } from "@/lib/services/recommendation";
@@ -23,6 +24,7 @@ import {
   fetchAllGameGenres,
   fetchCoOccurrences,
   fetchReviewStats,
+  fetchMetascores,
   fetchGameMetadata,
   fetchUserLibraryGameIds,
 } from "@/lib/services/recommendation/dataFetchers";
@@ -64,12 +66,14 @@ export async function getRecommendationsForGame(
   }
 
   // Fetch all data in parallel
-  const [sourceGenreIds, allGameGenres, coOccurrenceData, reviewStatsMap] = await Promise.all([
-    fetchGameGenreIds(gameId),
-    fetchAllGameGenres(),
-    fetchCoOccurrences(gameId),
-    fetchReviewStats(),
-  ]);
+  const [sourceGenreIds, allGameGenres, coOccurrenceData, reviewStatsMap, metascoreMap] =
+    await Promise.all([
+      fetchGameGenreIds(gameId),
+      fetchAllGameGenres(),
+      fetchCoOccurrences(gameId),
+      fetchReviewStats(),
+      fetchMetascores(),
+    ]);
 
   // Score every candidate game
   const scoredCandidates = scoreCandidates(
@@ -78,6 +82,7 @@ export async function getRecommendationsForGame(
     allGameGenres,
     coOccurrenceData,
     reviewStatsMap,
+    metascoreMap,
     weights
   );
 
@@ -166,6 +171,7 @@ function scoreCandidates(
   allGameGenres: Map<string, string[]>,
   coOccurrenceData: Awaited<ReturnType<typeof fetchCoOccurrences>>,
   reviewStatsMap: Map<string, { averageRating: number; reviewCount: number }>,
+  metascoreMap: Map<string, number>,
   weights: ScoringWeights
 ): ScoredCandidate[] {
   const coOccurrenceMap = new Map<string, number>();
@@ -198,7 +204,14 @@ function scoreCandidates(
       minReviewsForFullConfidence: MIN_REVIEWS_FOR_FULL_CONFIDENCE,
     });
 
-    const score = computeCombinedScore({ genreScore, collaborativeScore, reviewScore }, weights);
+    const metacriticScore = computeMetacriticScore({
+      metascore: metascoreMap.get(candidateId) ?? null,
+    });
+
+    const score = computeCombinedScore(
+      { genreScore, collaborativeScore, reviewScore, metacriticScore },
+      weights
+    );
 
     candidates.push({ gameId: candidateId, score });
   }

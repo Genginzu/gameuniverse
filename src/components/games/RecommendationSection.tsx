@@ -23,6 +23,7 @@ function toGameCardProps(rec: GameRecommendation) {
     genres: rec.genres,
     developer: rec.developer,
     publisher: "",
+    metascore: rec.metascore ?? undefined,
   };
 }
 

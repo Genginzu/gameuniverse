@@ -6,6 +6,7 @@ export interface GameRecommendation {
   coverImage: string | null;
   genres: Array<{ id: string; name: string }>;
   developer: string;
+  metascore: number | null;
   combinedScore: number;
 }
 
@@ -28,6 +29,7 @@ export interface ScoringWeights {
   genre: number;
   collaborative: number;
   review: number;
+  metacritic: number;
 }
 
 /** Scores individuels d'un candidat */
@@ -35,4 +37,6 @@ export interface CandidateScores {
   genreScore: number;
   collaborativeScore: number;
   reviewScore: number;
+  /** null when the candidate game has no metascore — signal is excluded from weighting */
+  metacriticScore: number | null;
 }
