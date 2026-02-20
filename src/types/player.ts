@@ -101,3 +101,23 @@ export const GAME_COUNT_RANGES = {
 } as const;
 
 export type GameCountRangeKey = keyof typeof GAME_COUNT_RANGES;
+
+/** Jeu en commun entre deux joueurs */
+export interface CommonGame {
+  gameId: string;
+  slug: string;
+  title: string;
+  coverImage: string | null;
+  genres: string[];
+}
+
+/** Résultat de la comparaison de bibliothèques */
+export interface CommonGamesResult {
+  commonGamesCount: number;
+  commonGames: CommonGame[];
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    hasNextPage: boolean;
+  };
+}

@@ -1,6 +1,19 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { renderHook, act, waitFor } from "@testing-library/react";
 
+// Mock next-intl before importing the hook
+vi.mock("next-intl", () => ({
+  useLocale: () => "fr",
+}));
+
+// Mock i18n/routing
+vi.mock("@/i18n/routing", () => ({
+  routing: { locales: ["fr", "en"], defaultLocale: "fr" },
+}));
+
+// Static import — module resolved once for the entire file
+import { useCharacterForm } from "../../../src/hooks/useCharacterForm";
+
 const originalFetch = globalThis.fetch;
 
 const mockGames = [
@@ -25,6 +38,25 @@ function createSuccessFetch() {
             })),
             pagination: { currentPage: 1, totalPages: 1, totalCount: 2, limit: 100 },
           }),
+      });
+    }
+    // Characters list fetch
+    if (typeof url === "string" && url.includes("/api/admin/characters")) {
+      if (options?.method === "POST" || options?.method === "PUT") {
+        return Promise.resolve({
+          ok: true,
+          status: options.method === "POST" ? 201 : 200,
+          json: () =>
+            Promise.resolve({
+              message: `Character ${options.method === "POST" ? "created" : "updated"} successfully`,
+              character: { id: "new-id", slug: "test-char" },
+            }),
+        });
+      }
+      return Promise.resolve({
+        ok: true,
+        status: 200,
+        json: () => Promise.resolve({ characters: [], pagination: {} }),
       });
     }
     // POST/PUT character
@@ -56,8 +88,7 @@ describe("useCharacterForm", () => {
     globalThis.fetch = originalFetch;
   });
 
-  it("should initialize with default values in create mode", async () => {
-    const { useCharacterForm } = await import("../../../src/hooks/useCharacterForm");
+  it("should initialize with default values in create mode", () => {
     const { result } = renderHook(() => useCharacterForm("create"));
 
     expect(result.current.form.getValues("slug")).toBe("");
@@ -69,15 +100,11 @@ describe("useCharacterForm", () => {
   });
 
   it("should load available games on mount", async () => {
-    const { useCharacterForm } = await import("../../../src/hooks/useCharacterForm");
     const { result } = renderHook(() => useCharacterForm("create"));
 
-    await waitFor(
-      () => {
-        expect(result.current.loadingOptions).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.loadingOptions).toBe(false);
+    });
 
     expect(result.current.availableGames).toHaveLength(2);
     expect(result.current.availableGames[0]).toEqual({
@@ -97,30 +124,22 @@ describe("useCharacterForm", () => {
       })
     ) as unknown as typeof fetch;
 
-    const { useCharacterForm } = await import("../../../src/hooks/useCharacterForm");
     const { result } = renderHook(() => useCharacterForm("create"));
 
-    await waitFor(
-      () => {
-        expect(result.current.loadingOptions).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.loadingOptions).toBe(false);
+    });
 
     // Should gracefully degrade — empty list, no crash
     expect(result.current.availableGames).toEqual([]);
   });
 
   it("should submit character in create mode", async () => {
-    const { useCharacterForm } = await import("../../../src/hooks/useCharacterForm");
     const { result } = renderHook(() => useCharacterForm("create"));
 
-    await waitFor(
-      () => {
-        expect(result.current.loadingOptions).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.loadingOptions).toBe(false);
+    });
 
     await act(async () => {
       await result.current.submitCharacter({
@@ -143,15 +162,11 @@ describe("useCharacterForm", () => {
   });
 
   it("should submit character in edit mode", async () => {
-    const { useCharacterForm } = await import("../../../src/hooks/useCharacterForm");
     const { result } = renderHook(() => useCharacterForm("edit", undefined, "char-123"));
 
-    await waitFor(
-      () => {
-        expect(result.current.loadingOptions).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.loadingOptions).toBe(false);
+    });
 
     await act(async () => {
       await result.current.submitCharacter({
@@ -179,23 +194,19 @@ describe("useCharacterForm", () => {
           json: () => Promise.resolve({ error: "Character with this slug already exists" }),
         });
       }
-      // Still return games for the initial load
+      // Still return games/characters for the initial load
       return Promise.resolve({
         ok: true,
         status: 200,
-        json: () => Promise.resolve({ games: mockGames, pagination: {} }),
+        json: () => Promise.resolve({ games: mockGames, characters: [], pagination: {} }),
       });
     }) as unknown as typeof fetch;
 
-    const { useCharacterForm } = await import("../../../src/hooks/useCharacterForm");
     const { result } = renderHook(() => useCharacterForm("create"));
 
-    await waitFor(
-      () => {
-        expect(result.current.loadingOptions).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.loadingOptions).toBe(false);
+    });
 
     let caughtError: Error | null = null;
     try {
@@ -213,7 +224,6 @@ describe("useCharacterForm", () => {
 
     expect(caughtError).toBeInstanceOf(Error);
     expect(caughtError?.message).toBe("Character with this slug already exists");
-    // isSubmitting is reset in the finally block
     expect(result.current.isSubmitting).toBe(false);
   });
 
@@ -230,7 +240,6 @@ describe("useCharacterForm", () => {
       media: [],
     };
 
-    const { useCharacterForm } = await import("../../../src/hooks/useCharacterForm");
     const { result, rerender } = renderHook(
       ({ data }) => useCharacterForm("edit", data, "char-1"),
       { initialProps: { data: initialData } }
@@ -241,11 +250,8 @@ describe("useCharacterForm", () => {
     const updatedData = { ...initialData, slug: "updated-slug" };
     rerender({ data: updatedData });
 
-    await waitFor(
-      () => {
-        expect(result.current.form.getValues("slug")).toBe("updated-slug");
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.form.getValues("slug")).toBe("updated-slug");
+    });
   });
 });

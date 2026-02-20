@@ -47,6 +47,9 @@ function createSuccessFetch() {
   ) as unknown as typeof fetch;
 }
 
+// Import once at module level instead of dynamic import per test
+import { useAdminCharacters } from "@/hooks/useAdminCharacters";
+
 describe("useAdminCharacters", () => {
   beforeEach(() => {
     globalThis.fetch = createSuccessFetch();
@@ -57,15 +60,11 @@ describe("useAdminCharacters", () => {
   });
 
   it("should fetch characters on mount", async () => {
-    const { useAdminCharacters } = await import("../../../src/hooks/useAdminCharacters");
     const { result } = renderHook(() => useAdminCharacters());
 
-    await waitFor(
-      () => {
-        expect(result.current.loading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
 
     expect(result.current.characters).toEqual(mockCharacters);
     expect(result.current.pagination).toEqual(mockPagination);
@@ -80,15 +79,11 @@ describe("useAdminCharacters", () => {
   });
 
   it("should pass search, sort params to the API", async () => {
-    const { useAdminCharacters } = await import("../../../src/hooks/useAdminCharacters");
     const { result } = renderHook(() => useAdminCharacters());
 
-    await waitFor(
-      () => {
-        expect(result.current.loading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
 
     await act(async () => {
       await result.current.fetchCharacters({
@@ -118,15 +113,11 @@ describe("useAdminCharacters", () => {
       })
     ) as unknown as typeof fetch;
 
-    const { useAdminCharacters } = await import("../../../src/hooks/useAdminCharacters");
     const { result } = renderHook(() => useAdminCharacters());
 
-    await waitFor(
-      () => {
-        expect(result.current.loading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
 
     expect(result.current.error).toBeInstanceOf(Error);
     expect(result.current.error?.message).toBe("Internal server error");
@@ -138,15 +129,11 @@ describe("useAdminCharacters", () => {
       Promise.reject(new Error("Network error"))
     ) as unknown as typeof fetch;
 
-    const { useAdminCharacters } = await import("../../../src/hooks/useAdminCharacters");
     const { result } = renderHook(() => useAdminCharacters());
 
-    await waitFor(
-      () => {
-        expect(result.current.loading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
 
     expect(result.current.error).toBeInstanceOf(Error);
     expect(result.current.error?.message).toBe("Network error");
@@ -174,15 +161,11 @@ describe("useAdminCharacters", () => {
       });
     }) as unknown as typeof fetch;
 
-    const { useAdminCharacters } = await import("../../../src/hooks/useAdminCharacters");
     const { result } = renderHook(() => useAdminCharacters());
 
-    await waitFor(
-      () => {
-        expect(result.current.loading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
 
     await act(async () => {
       await result.current.deleteCharacter("c1");
@@ -213,15 +196,11 @@ describe("useAdminCharacters", () => {
       });
     }) as unknown as typeof fetch;
 
-    const { useAdminCharacters } = await import("../../../src/hooks/useAdminCharacters");
     const { result } = renderHook(() => useAdminCharacters());
 
-    await waitFor(
-      () => {
-        expect(result.current.loading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
 
     let caughtError: Error | null = null;
     try {
@@ -237,15 +216,11 @@ describe("useAdminCharacters", () => {
   });
 
   it("should refetch with last params", async () => {
-    const { useAdminCharacters } = await import("../../../src/hooks/useAdminCharacters");
     const { result } = renderHook(() => useAdminCharacters());
 
-    await waitFor(
-      () => {
-        expect(result.current.loading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
 
     await act(async () => {
       await result.current.fetchCharacters({ page: 2, search: "zelda" });
@@ -273,15 +248,11 @@ describe("useAdminCharacters", () => {
       })
     ) as unknown as typeof fetch;
 
-    const { useAdminCharacters } = await import("../../../src/hooks/useAdminCharacters");
     const { result } = renderHook(() => useAdminCharacters());
 
-    await waitFor(
-      () => {
-        expect(result.current.loading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
 
     expect(result.current.pagination).toEqual({
       currentPage: 1,

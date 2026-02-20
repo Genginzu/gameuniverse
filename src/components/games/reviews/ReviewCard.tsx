@@ -70,7 +70,7 @@ export function ReviewCard({ review }: ReviewCardProps) {
 
   return (
     <article className="rounded-xl border border-slate-700/50 bg-slate-800/30 p-5">
-      {/* Header: avatar, name, date, rating */}
+      {/* Header: avatar, name, date, rating + votes */}
       <div className="mb-4 flex items-start justify-between">
         <div className="flex items-center gap-3">
           <ReviewAvatar name={review.playerName} avatar={review.playerAvatar} />
@@ -81,9 +81,17 @@ export function ReviewCard({ review }: ReviewCardProps) {
             <p className="text-xs text-slate-500">{formatDate(review.createdAt)}</p>
           </div>
         </div>
-        <span className={cn("text-2xl font-bold", getRatingColor(review.rating))}>
-          {review.rating}/20
-        </span>
+        <div className="flex items-center gap-3">
+          <ReviewVoteButtons
+            reviewId={review.id}
+            reviewUserId={review.userId}
+            initialCounts={review.voteCounts}
+            initialUserVote={review.userVote}
+          />
+          <span className={cn("text-2xl font-bold", getRatingColor(review.rating))}>
+            {review.rating}/20
+          </span>
+        </div>
       </div>
 
       {/* Rich text content */}
@@ -107,16 +115,6 @@ export function ReviewCard({ review }: ReviewCardProps) {
           />
         </div>
       )}
-
-      {/* Vote buttons */}
-      <div className="mt-4 flex justify-end border-t border-slate-700/50 pt-3">
-        <ReviewVoteButtons
-          reviewId={review.id}
-          reviewUserId={review.userId}
-          initialCounts={review.voteCounts}
-          initialUserVote={review.userVote}
-        />
-      </div>
     </article>
   );
 }

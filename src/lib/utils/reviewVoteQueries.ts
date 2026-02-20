@@ -24,7 +24,7 @@ export async function fetchVoteCountsMap(
 
   if (error || !data) return map;
 
-  for (const row of data as VoteRow[]) {
+  for (const row of data as unknown as VoteRow[]) {
     const existing = map.get(row.review_id) ?? { helpful: 0, notHelpful: 0 };
     if (row.vote_type === "helpful") {
       existing.helpful += 1;
@@ -57,7 +57,7 @@ export async function fetchUserVotesMap(
 
   if (error || !data) return map;
 
-  for (const row of data as VoteRow[]) {
+  for (const row of data as unknown as VoteRow[]) {
     map.set(row.review_id, row.vote_type as VoteType);
   }
 

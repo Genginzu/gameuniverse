@@ -10,7 +10,20 @@ import { ArrowLeft, Gamepad2, Trophy, Clock, Star, Calendar, User } from "lucide
 import { PlayerFavoriteCharacters } from "./PlayerFavoriteCharacters";
 import { PlayerCollections } from "./PlayerCollections";
 import { useAuth } from "@/hooks/useAuth";
+import { LibraryComparisonSection } from "@/components/players/LibraryComparisonSection";
 import type { PlayerDetails } from "@/types/player";
+
+/**
+ * Pure helper — determines whether the library comparison section should be shown.
+ * Exported for property-based testing (Property 3: Visibility of the indicator).
+ */
+export function shouldShowComparison(
+  isAuthenticated: boolean,
+  currentUserId: string | null,
+  targetPlayerId: string
+): boolean {
+  return isAuthenticated && currentUserId !== null && currentUserId !== targetPlayerId;
+}
 
 interface PlayerDetailsContentProps {
   player: PlayerDetails;
@@ -168,6 +181,11 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
             </CardContent>
           </Card>
         </div>
+
+        {/* Library Comparison Section - Requirements 2.1, 2.2, 2.3 */}
+        {shouldShowComparison(!!user, user?.id ?? null, player.id) && (
+          <LibraryComparisonSection playerId={player.id} locale={locale} />
+        )}
 
         {/* Library Section - Requirements 6.1, 6.2, 6.3 */}
         <div className="mb-8">

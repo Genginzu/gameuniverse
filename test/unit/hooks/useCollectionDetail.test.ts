@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
-import type { CollectionDetail } from "../../../src/types/collection";
+import type { CollectionDetail } from "@/types/collection";
 
 const originalFetch = globalThis.fetch;
 
@@ -33,6 +33,9 @@ const mockCollection: CollectionDetail = {
   ],
 };
 
+// Import once at module level
+import { useCollectionDetail } from "@/hooks/useCollectionDetail";
+
 describe("useCollectionDetail", () => {
   let mockFetch: ReturnType<typeof mock>;
 
@@ -52,7 +55,6 @@ describe("useCollectionDetail", () => {
   });
 
   it("should initialize with loading state", async () => {
-    const { useCollectionDetail } = await import("../../../src/hooks/useCollectionDetail");
     const { result } = renderHook(() => useCollectionDetail("player-1", "best-rpgs"));
 
     expect(result.current.isLoading).toBe(true);
@@ -62,15 +64,11 @@ describe("useCollectionDetail", () => {
   });
 
   it("should fetch collection detail successfully", async () => {
-    const { useCollectionDetail } = await import("../../../src/hooks/useCollectionDetail");
     const { result } = renderHook(() => useCollectionDetail("player-1", "best-rpgs"));
 
-    await waitFor(
-      () => {
-        expect(result.current.isLoading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
 
     expect(result.current.collection).toEqual(mockCollection);
     expect(result.current.error).toBeNull();
@@ -87,15 +85,11 @@ describe("useCollectionDetail", () => {
       })
     );
 
-    const { useCollectionDetail } = await import("../../../src/hooks/useCollectionDetail");
     const { result } = renderHook(() => useCollectionDetail("player-1", "nonexistent"));
 
-    await waitFor(
-      () => {
-        expect(result.current.isLoading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
 
     expect(result.current.notFound).toBe(true);
     expect(result.current.collection).toBeNull();
@@ -111,15 +105,11 @@ describe("useCollectionDetail", () => {
       })
     );
 
-    const { useCollectionDetail } = await import("../../../src/hooks/useCollectionDetail");
     const { result } = renderHook(() => useCollectionDetail("player-1", "best-rpgs"));
 
-    await waitFor(
-      () => {
-        expect(result.current.isLoading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
 
     expect(result.current.error).toBe("Failed to fetch collection detail");
     expect(result.current.collection).toBeNull();
@@ -129,45 +119,33 @@ describe("useCollectionDetail", () => {
   it("should handle network error", async () => {
     mockFetch.mockImplementation(() => Promise.reject(new Error("Network error")));
 
-    const { useCollectionDetail } = await import("../../../src/hooks/useCollectionDetail");
     const { result } = renderHook(() => useCollectionDetail("player-1", "best-rpgs"));
 
-    await waitFor(
-      () => {
-        expect(result.current.isLoading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
 
     expect(result.current.error).toBe("Network error");
     expect(result.current.collection).toBeNull();
   });
 
   it("should not fetch when playerId is empty", async () => {
-    const { useCollectionDetail } = await import("../../../src/hooks/useCollectionDetail");
     const { result } = renderHook(() => useCollectionDetail("", "best-rpgs"));
 
-    await waitFor(
-      () => {
-        expect(result.current.isLoading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
 
     expect(mockFetch).not.toHaveBeenCalled();
     expect(result.current.collection).toBeNull();
   });
 
   it("should not fetch when slug is empty", async () => {
-    const { useCollectionDetail } = await import("../../../src/hooks/useCollectionDetail");
     const { result } = renderHook(() => useCollectionDetail("player-1", ""));
 
-    await waitFor(
-      () => {
-        expect(result.current.isLoading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
 
     expect(mockFetch).not.toHaveBeenCalled();
     expect(result.current.collection).toBeNull();
@@ -182,15 +160,11 @@ describe("useCollectionDetail", () => {
       })
     );
 
-    const { useCollectionDetail } = await import("../../../src/hooks/useCollectionDetail");
     const { result } = renderHook(() => useCollectionDetail("player-1", "best-rpgs"));
 
-    await waitFor(
-      () => {
-        expect(result.current.isLoading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
 
     expect(result.current.collection).toBeNull();
     expect(result.current.error).toBeNull();

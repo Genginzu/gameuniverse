@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { renderHook, act, waitFor } from "@testing-library/react";
 
-// Save original fetch
 const originalFetch = globalThis.fetch;
 
 const mockLanguages = [
@@ -33,6 +32,9 @@ function createSuccessFetch() {
   ) as unknown as typeof fetch;
 }
 
+// Import once at module level instead of dynamic import per test
+import { useAdminLanguages } from "@/hooks/useAdminLanguages";
+
 describe("useAdminLanguages", () => {
   beforeEach(() => {
     globalThis.fetch = createSuccessFetch();
@@ -43,15 +45,11 @@ describe("useAdminLanguages", () => {
   });
 
   it("should fetch languages on mount", async () => {
-    const { useAdminLanguages } = await import("../../../src/hooks/useAdminLanguages");
     const { result } = renderHook(() => useAdminLanguages());
 
-    await waitFor(
-      () => {
-        expect(result.current.loading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
 
     expect(result.current.languages).toEqual(mockLanguages);
     expect(result.current.pagination).toEqual(mockPagination);
@@ -66,15 +64,11 @@ describe("useAdminLanguages", () => {
   });
 
   it("should pass search, sort params to the API", async () => {
-    const { useAdminLanguages } = await import("../../../src/hooks/useAdminLanguages");
     const { result } = renderHook(() => useAdminLanguages());
 
-    await waitFor(
-      () => {
-        expect(result.current.loading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
 
     await act(async () => {
       await result.current.fetchLanguages({
@@ -104,15 +98,11 @@ describe("useAdminLanguages", () => {
       })
     ) as unknown as typeof fetch;
 
-    const { useAdminLanguages } = await import("../../../src/hooks/useAdminLanguages");
     const { result } = renderHook(() => useAdminLanguages());
 
-    await waitFor(
-      () => {
-        expect(result.current.loading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
 
     expect(result.current.error).toBeInstanceOf(Error);
     expect(result.current.error?.message).toBe("Internal server error");
@@ -124,15 +114,11 @@ describe("useAdminLanguages", () => {
       Promise.reject(new Error("Network error"))
     ) as unknown as typeof fetch;
 
-    const { useAdminLanguages } = await import("../../../src/hooks/useAdminLanguages");
     const { result } = renderHook(() => useAdminLanguages());
 
-    await waitFor(
-      () => {
-        expect(result.current.loading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
 
     expect(result.current.error).toBeInstanceOf(Error);
     expect(result.current.error?.message).toBe("Network error");
@@ -160,21 +146,16 @@ describe("useAdminLanguages", () => {
       });
     }) as unknown as typeof fetch;
 
-    const { useAdminLanguages } = await import("../../../src/hooks/useAdminLanguages");
     const { result } = renderHook(() => useAdminLanguages());
 
-    await waitFor(
-      () => {
-        expect(result.current.loading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
 
     await act(async () => {
       await result.current.deleteLanguage("en");
     });
 
-    // Verify DELETE was called with the right URL
     const calls = (globalThis.fetch as unknown as ReturnType<typeof mock>).mock.calls;
     const deleteCalls = calls.filter(
       (call) =>
@@ -200,15 +181,11 @@ describe("useAdminLanguages", () => {
       });
     }) as unknown as typeof fetch;
 
-    const { useAdminLanguages } = await import("../../../src/hooks/useAdminLanguages");
     const { result } = renderHook(() => useAdminLanguages());
 
-    await waitFor(
-      () => {
-        expect(result.current.loading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
 
     let caughtError: Error | null = null;
     try {
@@ -244,15 +221,11 @@ describe("useAdminLanguages", () => {
       });
     }) as unknown as typeof fetch;
 
-    const { useAdminLanguages } = await import("../../../src/hooks/useAdminLanguages");
     const { result } = renderHook(() => useAdminLanguages());
 
-    await waitFor(
-      () => {
-        expect(result.current.loading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
 
     let usageCount: number | undefined;
     await act(async () => {
@@ -263,15 +236,11 @@ describe("useAdminLanguages", () => {
   });
 
   it("should refetch with last params", async () => {
-    const { useAdminLanguages } = await import("../../../src/hooks/useAdminLanguages");
     const { result } = renderHook(() => useAdminLanguages());
 
-    await waitFor(
-      () => {
-        expect(result.current.loading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
 
     await act(async () => {
       await result.current.fetchLanguages({ page: 2, search: "test" });
@@ -299,15 +268,11 @@ describe("useAdminLanguages", () => {
       })
     ) as unknown as typeof fetch;
 
-    const { useAdminLanguages } = await import("../../../src/hooks/useAdminLanguages");
     const { result } = renderHook(() => useAdminLanguages());
 
-    await waitFor(
-      () => {
-        expect(result.current.loading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
 
     expect(result.current.pagination).toEqual({
       currentPage: 1,

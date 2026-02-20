@@ -48,7 +48,7 @@ export function CollectionForm({
       name: defaultValues?.name ?? "",
       description: defaultValues?.description ?? "",
       isPublic: defaultValues?.isPublic ?? false,
-      coverImageUrl: (defaultValues as Record<string, unknown>)?.coverImageUrl ?? "",
+      coverImageUrl: ((defaultValues as Record<string, unknown>)?.coverImageUrl as string) ?? "",
     },
   });
 

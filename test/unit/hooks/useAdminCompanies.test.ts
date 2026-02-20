@@ -53,6 +53,9 @@ function createSuccessFetch() {
   ) as unknown as typeof fetch;
 }
 
+// Import once at module level instead of dynamic import per test
+import { useAdminCompanies } from "@/hooks/useAdminCompanies";
+
 describe("useAdminCompanies", () => {
   beforeEach(() => {
     globalThis.fetch = createSuccessFetch();
@@ -63,15 +66,11 @@ describe("useAdminCompanies", () => {
   });
 
   it("should fetch companies on mount", async () => {
-    const { useAdminCompanies } = await import("../../../src/hooks/useAdminCompanies");
     const { result } = renderHook(() => useAdminCompanies());
 
-    await waitFor(
-      () => {
-        expect(result.current.loading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
 
     expect(result.current.companies).toEqual(mockCompanies);
     expect(result.current.pagination).toEqual(mockPagination);
@@ -86,15 +85,11 @@ describe("useAdminCompanies", () => {
   });
 
   it("should pass search and sort params to the API", async () => {
-    const { useAdminCompanies } = await import("../../../src/hooks/useAdminCompanies");
     const { result } = renderHook(() => useAdminCompanies());
 
-    await waitFor(
-      () => {
-        expect(result.current.loading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
 
     await act(async () => {
       await result.current.fetchCompanies({
@@ -124,15 +119,11 @@ describe("useAdminCompanies", () => {
       })
     ) as unknown as typeof fetch;
 
-    const { useAdminCompanies } = await import("../../../src/hooks/useAdminCompanies");
     const { result } = renderHook(() => useAdminCompanies());
 
-    await waitFor(
-      () => {
-        expect(result.current.loading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
 
     expect(result.current.error).toBeInstanceOf(Error);
     expect(result.current.error?.message).toBe("Internal server error");
@@ -161,15 +152,11 @@ describe("useAdminCompanies", () => {
       });
     }) as unknown as typeof fetch;
 
-    const { useAdminCompanies } = await import("../../../src/hooks/useAdminCompanies");
     const { result } = renderHook(() => useAdminCompanies());
 
-    await waitFor(
-      () => {
-        expect(result.current.loading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
 
     await act(async () => {
       await result.current.deleteCompany("cd-projekt-red");
@@ -200,15 +187,11 @@ describe("useAdminCompanies", () => {
       });
     }) as unknown as typeof fetch;
 
-    const { useAdminCompanies } = await import("../../../src/hooks/useAdminCompanies");
     const { result } = renderHook(() => useAdminCompanies());
 
-    await waitFor(
-      () => {
-        expect(result.current.loading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
 
     let caughtError: Error | null = null;
     try {
@@ -244,15 +227,11 @@ describe("useAdminCompanies", () => {
       });
     }) as unknown as typeof fetch;
 
-    const { useAdminCompanies } = await import("../../../src/hooks/useAdminCompanies");
     const { result } = renderHook(() => useAdminCompanies());
 
-    await waitFor(
-      () => {
-        expect(result.current.loading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
 
     let usageCount: number | undefined;
     await act(async () => {
@@ -263,15 +242,11 @@ describe("useAdminCompanies", () => {
   });
 
   it("should refetch with last params", async () => {
-    const { useAdminCompanies } = await import("../../../src/hooks/useAdminCompanies");
     const { result } = renderHook(() => useAdminCompanies());
 
-    await waitFor(
-      () => {
-        expect(result.current.loading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
 
     await act(async () => {
       await result.current.fetchCompanies({ page: 2, search: "ea" });

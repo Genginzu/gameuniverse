@@ -1,6 +1,9 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { renderHook, act, waitFor } from "@testing-library/react";
 
+// Static import — module resolved once for the entire file
+import { useLanguageForm } from "../../../src/hooks/useLanguageForm";
+
 const originalFetch = globalThis.fetch;
 
 describe("useLanguageForm", () => {
@@ -21,8 +24,7 @@ describe("useLanguageForm", () => {
     globalThis.fetch = originalFetch;
   });
 
-  it("should initialize with default values in create mode", async () => {
-    const { useLanguageForm } = await import("../../../src/hooks/useLanguageForm");
+  it("should initialize with default values in create mode", () => {
     const { result } = renderHook(() => useLanguageForm("create"));
 
     expect(result.current.form.getValues()).toEqual({
@@ -34,16 +36,14 @@ describe("useLanguageForm", () => {
     expect(result.current.submitError).toBeNull();
   });
 
-  it("should initialize with initialData in edit mode", async () => {
+  it("should initialize with initialData in edit mode", () => {
     const initialData = { code: "fr", name: "French", native_name: "Français" };
-    const { useLanguageForm } = await import("../../../src/hooks/useLanguageForm");
     const { result } = renderHook(() => useLanguageForm("edit", initialData));
 
     expect(result.current.form.getValues()).toEqual(initialData);
   });
 
   it("should POST to /api/admin/languages in create mode", async () => {
-    const { useLanguageForm } = await import("../../../src/hooks/useLanguageForm");
     const { result } = renderHook(() => useLanguageForm("create"));
 
     await act(async () => {
@@ -80,7 +80,6 @@ describe("useLanguageForm", () => {
     ) as unknown as typeof fetch;
 
     const initialData = { code: "fr", name: "French", native_name: "Français" };
-    const { useLanguageForm } = await import("../../../src/hooks/useLanguageForm");
     const { result } = renderHook(() => useLanguageForm("edit", initialData));
 
     await act(async () => {
@@ -114,11 +113,8 @@ describe("useLanguageForm", () => {
       })
     ) as unknown as typeof fetch;
 
-    const { useLanguageForm } = await import("../../../src/hooks/useLanguageForm");
     const { result } = renderHook(() => useLanguageForm("create"));
 
-    // Call submitLanguage directly (not through act) to catch the error
-    // and let React state updates flush separately
     const submitPromise = result.current.submitLanguage({
       code: "en",
       name: "English",
@@ -138,7 +134,6 @@ describe("useLanguageForm", () => {
       Promise.reject(new Error("Network error"))
     ) as unknown as typeof fetch;
 
-    const { useLanguageForm } = await import("../../../src/hooks/useLanguageForm");
     const { result } = renderHook(() => useLanguageForm("create"));
 
     const submitPromise = result.current.submitLanguage({
@@ -175,7 +170,6 @@ describe("useLanguageForm", () => {
       });
     }) as unknown as typeof fetch;
 
-    const { useLanguageForm } = await import("../../../src/hooks/useLanguageForm");
     const { result } = renderHook(() => useLanguageForm("create"));
 
     const data = { code: "de", name: "German", native_name: "Deutsch" };
@@ -197,7 +191,6 @@ describe("useLanguageForm", () => {
   });
 
   it("should send empty string for native_name when not provided", async () => {
-    const { useLanguageForm } = await import("../../../src/hooks/useLanguageForm");
     const { result } = renderHook(() => useLanguageForm("create"));
 
     await act(async () => {

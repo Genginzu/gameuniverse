@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
-import type { CollectionSummary } from "../../../src/types/collection";
+import type { CollectionSummary } from "@/types/collection";
 
 const originalFetch = globalThis.fetch;
 
@@ -27,6 +27,9 @@ const mockCollections: CollectionSummary[] = [
   },
 ];
 
+// Import once at module level
+import { useCollections } from "@/hooks/useCollections";
+
 describe("useCollections", () => {
   let mockFetch: ReturnType<typeof mock>;
 
@@ -45,7 +48,6 @@ describe("useCollections", () => {
   });
 
   it("should initialize with loading state", async () => {
-    const { useCollections } = await import("../../../src/hooks/useCollections");
     const { result } = renderHook(() => useCollections("player-1"));
 
     expect(result.current.isLoading).toBe(true);
@@ -54,15 +56,11 @@ describe("useCollections", () => {
   });
 
   it("should fetch collections successfully", async () => {
-    const { useCollections } = await import("../../../src/hooks/useCollections");
     const { result } = renderHook(() => useCollections("player-1"));
 
-    await waitFor(
-      () => {
-        expect(result.current.isLoading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
 
     expect(result.current.collections).toEqual(mockCollections);
     expect(result.current.error).toBeNull();
@@ -78,15 +76,11 @@ describe("useCollections", () => {
       })
     );
 
-    const { useCollections } = await import("../../../src/hooks/useCollections");
     const { result } = renderHook(() => useCollections("player-1"));
 
-    await waitFor(
-      () => {
-        expect(result.current.isLoading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
 
     expect(result.current.error).toBe("Failed to fetch collections");
     expect(result.current.collections).toEqual([]);
@@ -95,30 +89,22 @@ describe("useCollections", () => {
   it("should handle network error", async () => {
     mockFetch.mockImplementation(() => Promise.reject(new Error("Network error")));
 
-    const { useCollections } = await import("../../../src/hooks/useCollections");
     const { result } = renderHook(() => useCollections("player-1"));
 
-    await waitFor(
-      () => {
-        expect(result.current.isLoading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
 
     expect(result.current.error).toBe("Network error");
     expect(result.current.collections).toEqual([]);
   });
 
   it("should not fetch when playerId is empty", async () => {
-    const { useCollections } = await import("../../../src/hooks/useCollections");
     const { result } = renderHook(() => useCollections(""));
 
-    await waitFor(
-      () => {
-        expect(result.current.isLoading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
 
     expect(mockFetch).not.toHaveBeenCalled();
     expect(result.current.collections).toEqual([]);
@@ -132,15 +118,11 @@ describe("useCollections", () => {
       })
     );
 
-    const { useCollections } = await import("../../../src/hooks/useCollections");
     const { result } = renderHook(() => useCollections("player-1"));
 
-    await waitFor(
-      () => {
-        expect(result.current.isLoading).toBe(false);
-      },
-      { timeout: 2000 }
-    );
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
 
     expect(result.current.collections).toEqual([]);
     expect(result.current.error).toBeNull();

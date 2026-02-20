@@ -420,6 +420,7 @@
     },
     "card": {
       "games": "{count} game(s)",
+      "gamesCount": "{count} game(s)",
       "anonymousPlayer": "Anonymous player",
       "viewProfile": "View profile →"
     },
@@ -483,6 +484,14 @@
       "previous": "Previous",
       "next": "Next",
       "last": "Last"
+    },
+    "comparison": {
+      "commonGames": "Common games",
+      "noCommonGames": "No games in common",
+      "gamesInCommon": "{count} games in common",
+      "loading": "Loading...",
+      "error": "Error loading data",
+      "retry": "Retry"
     }
   },
   "userLibrary": {

@@ -1,6 +1,19 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { renderHook, act, waitFor } from "@testing-library/react";
 
+// Mock next-intl before importing the hook
+vi.mock("next-intl", () => ({
+  useLocale: () => "fr",
+}));
+
+// Mock i18n/routing
+vi.mock("@/i18n/routing", () => ({
+  routing: { locales: ["fr", "en"], defaultLocale: "fr" },
+}));
+
+// Static import — module resolved once for the entire file
+import { useCompanyForm } from "../../../src/hooks/useCompanyForm";
+
 const originalFetch = globalThis.fetch;
 
 const sampleCompanyData = {
@@ -31,8 +44,7 @@ describe("useCompanyForm", () => {
     globalThis.fetch = originalFetch;
   });
 
-  it("should initialize with default values in create mode", async () => {
-    const { useCompanyForm } = await import("../../../src/hooks/useCompanyForm");
+  it("should initialize with default values in create mode", () => {
     const { result } = renderHook(() => useCompanyForm("create"));
 
     const values = result.current.form.getValues();
@@ -43,8 +55,7 @@ describe("useCompanyForm", () => {
     expect(result.current.submitError).toBeNull();
   });
 
-  it("should initialize with initialData in edit mode", async () => {
-    const { useCompanyForm } = await import("../../../src/hooks/useCompanyForm");
+  it("should initialize with initialData in edit mode", () => {
     const { result } = renderHook(() => useCompanyForm("edit", sampleCompanyData));
 
     expect(result.current.form.getValues().name).toBe("CD Projekt Red");
@@ -53,7 +64,6 @@ describe("useCompanyForm", () => {
   });
 
   it("should POST to /api/admin/companies in create mode", async () => {
-    const { useCompanyForm } = await import("../../../src/hooks/useCompanyForm");
     const { result } = renderHook(() => useCompanyForm("create"));
 
     await act(async () => {
@@ -73,7 +83,6 @@ describe("useCompanyForm", () => {
   });
 
   it("should PUT to /api/admin/companies/[slug] in edit mode without slug in body", async () => {
-    const { useCompanyForm } = await import("../../../src/hooks/useCompanyForm");
     const { result } = renderHook(() => useCompanyForm("edit", sampleCompanyData));
 
     await act(async () => {
@@ -102,7 +111,6 @@ describe("useCompanyForm", () => {
       })
     ) as unknown as typeof fetch;
 
-    const { useCompanyForm } = await import("../../../src/hooks/useCompanyForm");
     const { result } = renderHook(() => useCompanyForm("create"));
 
     const submitPromise = result.current.submitCompany(sampleCompanyData);
@@ -120,7 +128,6 @@ describe("useCompanyForm", () => {
       Promise.reject(new Error("Network error"))
     ) as unknown as typeof fetch;
 
-    const { useCompanyForm } = await import("../../../src/hooks/useCompanyForm");
     const { result } = renderHook(() => useCompanyForm("create"));
 
     const submitPromise = result.current.submitCompany(sampleCompanyData);

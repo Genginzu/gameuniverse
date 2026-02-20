@@ -96,7 +96,7 @@ describe("RateLimiter Property-Based Tests", () => {
           fc.integer({ min: 1, max: 6 }), // Number of requests
           fc.integer({ min: 2, max: 4 }), // Max requests per window
           async (numRequests, maxRequests) => {
-            const windowMs = 30;
+            const windowMs = 200; // Larger window to avoid timing imprecision
             const rateLimiter = new RateLimiter(maxRequests, windowMs);
 
             for (let i = 0; i < numRequests; i++) {

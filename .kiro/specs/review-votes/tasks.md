@@ -104,12 +104,12 @@ Implémentation incrémentale du système de votes sur les avis : migration DB �
   - Vérifier qu'il n'y a pas d'erreurs ni de warnings de lint
   - Corriger les erreurs et warnings si nécessaire
 
-- [ ] 10. Build de production
+- [x] 10. Build de production
   - Exécuter `bun run build`
   - Vérifier qu'il n'y a pas d'erreurs de compilation
   - Corriger les erreurs de build si nécessaire
 
-- [-] 11. README de la fonctionnalité
+- [x] 11. README de la fonctionnalité
   - Créer `docs/README_REVIEW_VOTES.md`
   - Documenter : description, accès (routes, navigation), prérequis, utilisation
 

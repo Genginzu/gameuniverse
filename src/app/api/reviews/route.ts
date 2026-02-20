@@ -37,12 +37,24 @@ export function computeAverageRating(reviews: { rating: number }[]): number | nu
 }
 
 /**
- * Sort reviews by creation date descending (most recent first).
+ * Sort reviews by helpful vote count descending, then by date descending as tiebreaker.
+ * The current user's review (if any) is always placed first.
  */
-export function sortReviewsByDateDesc<T extends { createdAt: string }>(reviews: T[]): T[] {
-  return [...reviews].sort(
-    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-  );
+export function sortReviewsByHelpfulVotes<
+  T extends { userId: string; voteCounts: { helpful: number }; createdAt: string },
+>(reviews: T[], currentUserId: string | null): T[] {
+  return [...reviews].sort((a, b) => {
+    // Current user's review always first
+    if (currentUserId) {
+      if (a.userId === currentUserId) return -1;
+      if (b.userId === currentUserId) return 1;
+    }
+    // Then by helpful votes descending
+    const diff = b.voteCounts.helpful - a.voteCounts.helpful;
+    if (diff !== 0) return diff;
+    // Tiebreaker: most recent first
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  });
 }
 
 /**
@@ -161,15 +173,8 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const userHasReviewed = user ? reviews.some((r) => r.userId === user.id) : false;
     const userReview = user ? (reviews.find((r) => r.userId === user.id) ?? null) : null;
 
-    // Sort: user's review first, then by date descending
-    const sortedReviews = sortReviewsByDateDesc(reviewsWithVotes);
-    if (user) {
-      const userIdx = sortedReviews.findIndex((r) => r.userId === user.id);
-      if (userIdx > 0) {
-        const [userRev] = sortedReviews.splice(userIdx, 1);
-        sortedReviews.unshift(userRev);
-      }
-    }
+    // Sort: user's review first, then by helpful votes descending
+    const sortedReviews = sortReviewsByHelpfulVotes(reviewsWithVotes, user?.id ?? null);
 
     const response: ReviewsResponse = {
       reviews: sortedReviews,

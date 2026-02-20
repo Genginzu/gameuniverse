@@ -1,8 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-
-// Note: next-intl is mocked globally in test/setup.ts
+import { render, screen, fireEvent, act, waitFor } from "@testing-library/react";
 
 // Use the global router mock from setup.ts
 const getRouterMocks = () =>
@@ -15,8 +13,7 @@ const getRouterMocks = () =>
     }
   ).__routerMocks;
 
-// Import after mocks
-import { GameSearchBar } from "../../../../src/components/games/GameSearchBar";
+import { GameSearchBar } from "@/components/games/GameSearchBar";
 
 describe("GameSearchBar Component", () => {
   let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
@@ -24,6 +21,7 @@ describe("GameSearchBar Component", () => {
   let routerMocks: ReturnType<typeof getRouterMocks>;
 
   beforeEach(() => {
+    vi.useFakeTimers();
     consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     routerMocks = getRouterMocks();
     if (routerMocks) {
@@ -33,6 +31,7 @@ describe("GameSearchBar Component", () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     consoleErrorSpy.mockRestore();
     if (fetchSpy) {
       fetchSpy.mockRestore();
@@ -43,77 +42,61 @@ describe("GameSearchBar Component", () => {
     it("renders with default placeholder from translations", () => {
       const onSearch = vi.fn(() => {});
       render(<GameSearchBar onSearch={onSearch} />);
-
-      const input = screen.getByPlaceholderText("Search games...");
-      expect(input).toBeDefined();
+      expect(screen.getByPlaceholderText("Search games...")).toBeDefined();
     });
 
     it("renders with custom placeholder", () => {
       const onSearch = vi.fn(() => {});
       render(<GameSearchBar onSearch={onSearch} placeholder="Find a game..." />);
-
-      const input = screen.getByPlaceholderText("Find a game...");
-      expect(input).toBeDefined();
+      expect(screen.getByPlaceholderText("Find a game...")).toBeDefined();
     });
 
     it("renders with initial value", () => {
       const onSearch = vi.fn(() => {});
       render(<GameSearchBar onSearch={onSearch} initialValue="zelda" />);
-
-      const input = screen.getByDisplayValue("zelda");
-      expect(input).toBeDefined();
+      expect(screen.getByDisplayValue("zelda")).toBeDefined();
     });
 
     it("updates input value on change", () => {
       const onSearch = vi.fn(() => {});
       render(<GameSearchBar onSearch={onSearch} />);
-
       const input = screen.getByPlaceholderText("Search games...") as HTMLInputElement;
       fireEvent.change(input, { target: { value: "mario" } });
-
       expect(input.value).toBe("mario");
     });
 
-    it("calls onSearch after debounce delay", async () => {
+    it("calls onSearch after debounce delay", () => {
       const onSearch = vi.fn(() => {});
       render(<GameSearchBar onSearch={onSearch} debounceMs={50} />);
 
-      const input = screen.getByPlaceholderText("Search games...");
-      fireEvent.change(input, { target: { value: "test" } });
+      fireEvent.change(screen.getByPlaceholderText("Search games..."), {
+        target: { value: "test" },
+      });
 
-      await waitFor(
-        () => {
-          expect(onSearch).toHaveBeenCalledWith("test");
-        },
-        { timeout: 200 }
-      );
+      expect(onSearch).not.toHaveBeenCalled();
+      act(() => {
+        vi.advanceTimersByTime(50);
+      });
+      expect(onSearch).toHaveBeenCalledWith("test");
     });
 
     it("shows clear button when input has value", () => {
       const onSearch = vi.fn(() => {});
       render(<GameSearchBar onSearch={onSearch} initialValue="test" />);
-
-      const clearButton = screen.getByRole("button");
-      expect(clearButton).toBeDefined();
+      expect(screen.getByRole("button")).toBeDefined();
     });
 
     it("clears input when clear button is clicked", () => {
       const onSearch = vi.fn(() => {});
       render(<GameSearchBar onSearch={onSearch} initialValue="test" />);
-
       const input = screen.getByDisplayValue("test") as HTMLInputElement;
-      const clearButton = screen.getByRole("button");
-
-      fireEvent.click(clearButton);
-
+      fireEvent.click(screen.getByRole("button"));
       expect(input.value).toBe("");
     });
 
     it("does not show dropdown in legacy mode", () => {
       const onSearch = vi.fn(() => {});
       render(<GameSearchBar onSearch={onSearch} initialValue="test query" />);
-
-      // No dropdown should be rendered in legacy mode
       expect(screen.queryByText("Loading...")).toBeNull();
       expect(screen.queryByText("No results found")).toBeNull();
     });
@@ -125,7 +108,6 @@ describe("GameSearchBar Component", () => {
       const { container } = render(
         <GameSearchBar onSearch={onSearch} initialValue="submit test" />
       );
-
       const form = container.querySelector("form");
       if (form) {
         fireEvent.submit(form);
@@ -136,7 +118,6 @@ describe("GameSearchBar Component", () => {
     it("navigates to games page on form submit in hybrid mode", () => {
       if (!routerMocks) return;
       const { container } = render(<GameSearchBar initialValue="search query" locale="en" />);
-
       const form = container.querySelector("form");
       if (form) {
         fireEvent.submit(form);
@@ -147,7 +128,6 @@ describe("GameSearchBar Component", () => {
     it("does not navigate if query is too short in hybrid mode", () => {
       if (!routerMocks) return;
       const { container } = render(<GameSearchBar initialValue="a" locale="en" />);
-
       const form = container.querySelector("form");
       if (form) {
         fireEvent.submit(form);
@@ -159,15 +139,11 @@ describe("GameSearchBar Component", () => {
   describe("hybrid mode (without onSearch callback)", () => {
     it("renders in hybrid mode when no onSearch is provided", () => {
       render(<GameSearchBar />);
-
-      const input = screen.getByPlaceholderText("Search games...");
-      expect(input).toBeDefined();
+      expect(screen.getByPlaceholderText("Search games...")).toBeDefined();
     });
 
     it("does not show dropdown when query is too short", () => {
       render(<GameSearchBar initialValue="a" />);
-
-      // Dropdown should not be visible for single character
       expect(screen.queryByText("Loading...")).toBeNull();
     });
   });
@@ -176,9 +152,7 @@ describe("GameSearchBar Component", () => {
     it("focuses input on render", () => {
       const onSearch = vi.fn(() => {});
       render(<GameSearchBar onSearch={onSearch} />);
-
-      const input = screen.getByPlaceholderText("Search games...");
-      expect(input).toBeDefined();
+      expect(screen.getByPlaceholderText("Search games...")).toBeDefined();
     });
   });
 
@@ -186,7 +160,6 @@ describe("GameSearchBar Component", () => {
     it("uses provided locale for navigation", () => {
       if (!routerMocks) return;
       const { container } = render(<GameSearchBar locale="fr" initialValue="test game" />);
-
       const form = container.querySelector("form");
       if (form) {
         fireEvent.submit(form);
@@ -197,7 +170,6 @@ describe("GameSearchBar Component", () => {
     it("defaults to fr locale", () => {
       if (!routerMocks) return;
       const { container } = render(<GameSearchBar initialValue="test game" />);
-
       const form = container.querySelector("form");
       if (form) {
         fireEvent.submit(form);
@@ -210,20 +182,12 @@ describe("GameSearchBar Component", () => {
     it("uses custom navigation callback when provided", async () => {
       const onNavigateToGame = vi.fn(() => {});
 
-      // Mock fetch for hybrid search
       fetchSpy = vi.spyOn(global, "fetch").mockImplementation(() =>
         Promise.resolve({
           ok: true,
           json: () =>
             Promise.resolve({
-              results: [
-                {
-                  id: "1",
-                  slug: "test-game",
-                  title: "Test Game",
-                  source: "local",
-                },
-              ],
+              results: [{ id: "1", slug: "test-game", title: "Test Game", source: "local" }],
               hasMore: false,
             }),
         } as Response)
@@ -235,15 +199,16 @@ describe("GameSearchBar Component", () => {
       fireEvent.change(input, { target: { value: "test" } });
       fireEvent.focus(input);
 
-      // Wait for search results
-      await waitFor(
-        () => {
-          expect(screen.getByText("Test Game")).toBeDefined();
-        },
-        { timeout: 1000 }
-      );
+      // Advance past debounce timer, then switch to real timers so waitFor can poll
+      await act(async () => {
+        vi.advanceTimersByTime(500);
+      });
+      vi.useRealTimers();
 
-      // Click on the result
+      await waitFor(() => {
+        expect(screen.getByText("Test Game")).toBeDefined();
+      });
+
       const resultButton = screen.getByText("Test Game").closest("button");
       if (resultButton) {
         fireEvent.click(resultButton);

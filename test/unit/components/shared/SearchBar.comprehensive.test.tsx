@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent, act } from "@testing-library/react";
 import {
   SearchBar,
   shouldTriggerSearch,
@@ -11,10 +11,12 @@ describe("SearchBar Component", () => {
   let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
+    vi.useFakeTimers();
     consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     consoleErrorSpy.mockRestore();
   });
 
@@ -68,7 +70,7 @@ describe("SearchBar Component", () => {
   });
 
   describe("debouncing", () => {
-    it("calls onSearch after debounce delay", async () => {
+    it("calls onSearch after debounce delay", () => {
       const onSearch = vi.fn();
       render(<SearchBar onSearch={onSearch} debounceMs={100} />);
 
@@ -78,15 +80,14 @@ describe("SearchBar Component", () => {
 
       expect(onSearch).not.toHaveBeenCalled();
 
-      await waitFor(
-        () => {
-          expect(onSearch).toHaveBeenCalledWith("test");
-        },
-        { timeout: 300 }
-      );
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
+
+      expect(onSearch).toHaveBeenCalledWith("test");
     });
 
-    it("only calls onSearch once for rapid changes", async () => {
+    it("only calls onSearch once for rapid changes", () => {
       const onSearch = vi.fn();
       render(<SearchBar onSearch={onSearch} debounceMs={100} />);
 
@@ -96,13 +97,11 @@ describe("SearchBar Component", () => {
       fireEvent.change(input, { target: { value: "tes" } });
       fireEvent.change(input, { target: { value: "test" } });
 
-      await waitFor(
-        () => {
-          expect(onSearch).toHaveBeenCalledWith("test");
-        },
-        { timeout: 300 }
-      );
+      act(() => {
+        vi.advanceTimersByTime(100);
+      });
 
+      expect(onSearch).toHaveBeenCalledWith("test");
       expect(onSearch).toHaveBeenCalledTimes(1);
     });
   });
@@ -153,26 +152,34 @@ describe("shouldTriggerSearch helper", () => {
 });
 
 describe("createDebouncedCallback helper", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it("returns debouncedFn and cancel functions", () => {
     const result = createDebouncedCallback(vi.fn(), 100);
     expect(typeof result.debouncedFn).toBe("function");
     expect(typeof result.cancel).toBe("function");
   });
 
-  it("cancel prevents callback execution", async () => {
+  it("cancel prevents callback execution", () => {
     const callback = vi.fn();
     const { debouncedFn, cancel } = createDebouncedCallback(callback, 50);
     debouncedFn();
     cancel();
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    vi.advanceTimersByTime(100);
     expect(callback).not.toHaveBeenCalled();
   });
 
-  it("executes callback after delay", async () => {
+  it("executes callback after delay", () => {
     const callback = vi.fn();
     const { debouncedFn } = createDebouncedCallback(callback, 50);
     debouncedFn();
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    vi.advanceTimersByTime(50);
     expect(callback).toHaveBeenCalled();
   });
 });

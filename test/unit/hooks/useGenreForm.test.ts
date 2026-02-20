@@ -1,15 +1,20 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { renderHook, act, waitFor } from "@testing-library/react";
 
-const originalFetch = globalThis.fetch;
+// Mock next-intl before importing the hook
+vi.mock("next-intl", () => ({
+  useLocale: () => "fr",
+}));
 
-const mockLanguagesResponse = {
-  languages: [
-    { code: "fr", name: "French", native_name: "Français" },
-    { code: "en", name: "English", native_name: "English" },
-  ],
-  pagination: { currentPage: 1, totalPages: 1, totalCount: 2, limit: 100 },
-};
+// Mock i18n/routing
+vi.mock("@/i18n/routing", () => ({
+  routing: { locales: ["fr", "en"], defaultLocale: "fr" },
+}));
+
+// Static import — module resolved once for the entire file
+import { useGenreForm } from "../../../src/hooks/useGenreForm";
+
+const originalFetch = globalThis.fetch;
 
 const sampleTranslations = [
   { language_code: "fr", name: "Action", description: "Jeux d'action" },
@@ -18,29 +23,21 @@ const sampleTranslations = [
 
 describe("useGenreForm", () => {
   beforeEach(() => {
-    // Default mock: languages fetch + successful genre submit
-    globalThis.fetch = vi.fn((url: string) => {
-      if (typeof url === "string" && url.includes("/api/admin/languages")) {
-        return Promise.resolve({
-          ok: true,
-          status: 200,
-          json: () => Promise.resolve(mockLanguagesResponse),
-        });
-      }
-      return Promise.resolve({
+    // Default mock: successful genre submit
+    globalThis.fetch = vi.fn(() =>
+      Promise.resolve({
         ok: true,
         status: 201,
         json: () => Promise.resolve({ genre: { id: "1", slug: "action" } }),
-      });
-    }) as unknown as typeof fetch;
+      })
+    ) as unknown as typeof fetch;
   });
 
   afterEach(() => {
     globalThis.fetch = originalFetch;
   });
 
-  it("should initialize with default values in create mode", async () => {
-    const { useGenreForm } = await import("../../../src/hooks/useGenreForm");
+  it("should initialize with default values in create mode", () => {
     const { result } = renderHook(() => useGenreForm("create"));
 
     expect(result.current.form.getValues()).toEqual({
@@ -51,28 +48,23 @@ describe("useGenreForm", () => {
     expect(result.current.submitError).toBeNull();
   });
 
-  it("should initialize with initialData in edit mode", async () => {
+  it("should initialize with initialData in edit mode", () => {
     const initialData = { slug: "action", translations: sampleTranslations };
-    const { useGenreForm } = await import("../../../src/hooks/useGenreForm");
     const { result } = renderHook(() => useGenreForm("edit", initialData));
 
     expect(result.current.form.getValues()).toEqual(initialData);
   });
 
-  it("should fetch supported languages on mount", async () => {
-    const { useGenreForm } = await import("../../../src/hooks/useGenreForm");
+  it("should derive supportedLanguages from routing locales", () => {
     const { result } = renderHook(() => useGenreForm("create"));
 
-    await waitFor(() => {
-      expect(result.current.supportedLanguages).toHaveLength(2);
-    });
-
-    expect(result.current.supportedLanguages[0].code).toBe("fr");
-    expect(result.current.supportedLanguages[1].code).toBe("en");
+    expect(result.current.supportedLanguages).toHaveLength(2);
+    expect(result.current.supportedLanguages[0]).toHaveProperty("code");
+    expect(result.current.supportedLanguages[0]).toHaveProperty("name");
+    expect(result.current.supportedLanguages[0]).toHaveProperty("native_name");
   });
 
   it("should POST to /api/admin/genres in create mode", async () => {
-    const { useGenreForm } = await import("../../../src/hooks/useGenreForm");
     const { result } = renderHook(() => useGenreForm("create"));
 
     await act(async () => {
@@ -83,12 +75,9 @@ describe("useGenreForm", () => {
     });
 
     const calls = (globalThis.fetch as unknown as ReturnType<typeof mock>).mock.calls;
-    const genreCalls = calls.filter(
-      (c) => typeof c[0] === "string" && (c[0] as string).includes("/api/admin/genres")
-    );
-    expect(genreCalls.length).toBe(1);
+    expect(calls.length).toBe(1);
 
-    const [url, options] = genreCalls[0] as [string, RequestInit];
+    const [url, options] = calls[0] as [string, RequestInit];
     expect(url).toBe("/api/admin/genres");
     expect(options.method).toBe("POST");
 
@@ -99,7 +88,6 @@ describe("useGenreForm", () => {
 
   it("should PUT to /api/admin/genres/[slug] in edit mode", async () => {
     const initialData = { slug: "action", translations: sampleTranslations };
-    const { useGenreForm } = await import("../../../src/hooks/useGenreForm");
     const { result } = renderHook(() => useGenreForm("edit", initialData));
 
     const updatedTranslations = [
@@ -114,12 +102,9 @@ describe("useGenreForm", () => {
     });
 
     const calls = (globalThis.fetch as unknown as ReturnType<typeof mock>).mock.calls;
-    const genreCalls = calls.filter(
-      (c) => typeof c[0] === "string" && (c[0] as string).includes("/api/admin/genres")
-    );
-    expect(genreCalls.length).toBe(1);
+    expect(calls.length).toBe(1);
 
-    const [url, options] = genreCalls[0] as [string, RequestInit];
+    const [url, options] = calls[0] as [string, RequestInit];
     expect(url).toBe("/api/admin/genres/action");
     expect(options.method).toBe("PUT");
 
@@ -130,22 +115,14 @@ describe("useGenreForm", () => {
   });
 
   it("should set submitError on API failure and throw", async () => {
-    globalThis.fetch = vi.fn((url: string) => {
-      if (typeof url === "string" && url.includes("/api/admin/languages")) {
-        return Promise.resolve({
-          ok: true,
-          status: 200,
-          json: () => Promise.resolve(mockLanguagesResponse),
-        });
-      }
-      return Promise.resolve({
+    globalThis.fetch = vi.fn(() =>
+      Promise.resolve({
         ok: false,
         status: 409,
         json: () => Promise.resolve({ error: "A genre with this slug already exists" }),
-      });
-    }) as unknown as typeof fetch;
+      })
+    ) as unknown as typeof fetch;
 
-    const { useGenreForm } = await import("../../../src/hooks/useGenreForm");
     const { result } = renderHook(() => useGenreForm("create"));
 
     const submitPromise = result.current.submitGenre({
@@ -162,18 +139,10 @@ describe("useGenreForm", () => {
   });
 
   it("should set submitError on network failure", async () => {
-    globalThis.fetch = vi.fn((url: string) => {
-      if (typeof url === "string" && url.includes("/api/admin/languages")) {
-        return Promise.resolve({
-          ok: true,
-          status: 200,
-          json: () => Promise.resolve(mockLanguagesResponse),
-        });
-      }
-      return Promise.reject(new Error("Network error"));
-    }) as unknown as typeof fetch;
+    globalThis.fetch = vi.fn(() =>
+      Promise.reject(new Error("Network error"))
+    ) as unknown as typeof fetch;
 
-    const { useGenreForm } = await import("../../../src/hooks/useGenreForm");
     const { result } = renderHook(() => useGenreForm("create"));
 
     const submitPromise = result.current.submitGenre({
@@ -186,16 +155,5 @@ describe("useGenreForm", () => {
     await waitFor(() => {
       expect(result.current.submitError).toBe("Network error");
     });
-  });
-
-  it("should derive supportedLanguages from routing locales", async () => {
-    const { useGenreForm } = await import("../../../src/hooks/useGenreForm");
-    const { result } = renderHook(() => useGenreForm("create"));
-
-    // Languages are derived from routing.locales, not fetched from API
-    expect(result.current.supportedLanguages.length).toBeGreaterThan(0);
-    expect(result.current.supportedLanguages[0]).toHaveProperty("code");
-    expect(result.current.supportedLanguages[0]).toHaveProperty("name");
-    expect(result.current.supportedLanguages[0]).toHaveProperty("native_name");
   });
 });
