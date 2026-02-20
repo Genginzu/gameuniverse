@@ -52,6 +52,7 @@ export interface PlayerDetails {
   preferredLocale: string;
   createdAt: string;
   updatedAt: string;
+  statsPrivate: boolean;
   stats: PlayerStats;
   library: PlayerLibraryGame[];
 }

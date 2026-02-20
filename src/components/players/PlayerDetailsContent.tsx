@@ -1,16 +1,19 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { LazyImage } from "@/components/ui/lazy-image";
 import { PlayerLibraryGrid } from "./PlayerLibraryGrid";
 import Link from "next/link";
-import { ArrowLeft, Gamepad2, Trophy, Clock, Star, Calendar, User } from "lucide-react";
+import { ArrowLeft, Gamepad2, Calendar, User } from "lucide-react";
 import { PlayerFavoriteCharacters } from "./PlayerFavoriteCharacters";
 import { PlayerCollections } from "./PlayerCollections";
 import { useAuth } from "@/hooks/useAuth";
 import { LibraryComparisonSection } from "@/components/players/LibraryComparisonSection";
+import { PersonalRecommendationSection } from "@/components/games/PersonalRecommendationSection";
+import { PlayerEnrichedStats } from "./PlayerEnrichedStats";
+import { YearInReviewLink } from "./YearInReviewLink";
 import type { PlayerDetails } from "@/types/player";
 
 /**
@@ -36,17 +39,22 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
   const { user } = useAuth();
   const isOwner = user?.id === player.id;
 
+  // Fetch available years for the year-in-review link (Req 7.1)
+  const [availableYears, setAvailableYears] = useState<number[]>([]);
+  useEffect(() => {
+    const currentYear = new Date().getFullYear();
+    fetch(`/api/players/${player.id}/year/${currentYear}?locale=${locale}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json) => {
+        if (json?.yearReview?.availableYears) {
+          setAvailableYears(json.yearReview.availableYears);
+        }
+      })
+      .catch(() => {});
+  }, [player.id, locale]);
+
   // Display name with fallback - Requirements 5.2
   const displayName = player.fullName || t("card.anonymousPlayer");
-
-  // Defensive stats access — API may return player without stats
-  const stats = player.stats ?? {
-    totalGames: 0,
-    ownedGames: 0,
-    completedGames: 0,
-    totalPlayTime: 0,
-    averageRating: null,
-  };
 
   // Format date for display
   const formatDate = (dateString: string) => {
@@ -124,63 +132,21 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
 
       {/* Stats Section - Requirements 6.4 */}
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
-          {/* Total Games */}
-          <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-sm">
-            <CardContent className="p-6">
-              <div className="mb-2 flex items-center gap-2 text-slate-400">
-                <Gamepad2 className="h-5 w-5 text-blue-400" />
-                <span className="text-sm font-medium">{t("details.totalGames")}</span>
-              </div>
-              <p className="text-2xl font-bold text-white md:text-3xl">{stats.totalGames}</p>
-            </CardContent>
-          </Card>
+        {/* Enriched Stats Section — Req 4.1 */}
+        <PlayerEnrichedStats
+          playerId={player.id}
+          locale={locale}
+          isOwnProfile={isOwner}
+          statsPrivate={player.statsPrivate}
+          totalGames={player.library.length}
+        />
 
-          {/* Completed Games */}
-          <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-sm">
-            <CardContent className="p-6">
-              <div className="mb-2 flex items-center gap-2 text-slate-400">
-                <Trophy className="h-5 w-5 text-green-400" />
-                <span className="text-sm font-medium">{t("details.completedGames")}</span>
-              </div>
-              <p className="text-2xl font-bold text-white md:text-3xl">{stats.completedGames}</p>
-            </CardContent>
-          </Card>
-
-          {/* Total Play Time */}
-          <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-sm">
-            <CardContent className="p-6">
-              <div className="mb-2 flex items-center gap-2 text-slate-400">
-                <Clock className="h-5 w-5 text-purple-400" />
-                <span className="text-sm font-medium">{t("details.totalPlayTime")}</span>
-              </div>
-              <p className="text-2xl font-bold text-white md:text-3xl">
-                {stats.totalPlayTime}
-                <span className="ml-1 text-base font-normal text-slate-400">h</span>
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Average Rating */}
-          <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-sm">
-            <CardContent className="p-6">
-              <div className="mb-2 flex items-center gap-2 text-slate-400">
-                <Star className="h-5 w-5 text-yellow-400" />
-                <span className="text-sm font-medium">{t("details.averageRating")}</span>
-              </div>
-              <p className="text-2xl font-bold text-white md:text-3xl">
-                {stats.averageRating !== null ? (
-                  <>
-                    {stats.averageRating.toFixed(1)}
-                    <span className="ml-1 text-base font-normal text-slate-400">/5</span>
-                  </>
-                ) : (
-                  <span className="text-lg text-slate-500">{t("details.noRating")}</span>
-                )}
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+        {/* Year in Review Link — Req 7.1 */}
+        {availableYears.length > 0 && (
+          <div className="mb-8">
+            <YearInReviewLink playerId={player.id} availableYears={availableYears} />
+          </div>
+        )}
 
         {/* Library Comparison Section - Requirements 2.1, 2.2, 2.3 */}
         {shouldShowComparison(!!user, user?.id ?? null, player.id) && (
@@ -207,6 +173,9 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
 
         {/* Collections Section */}
         <PlayerCollections playerId={player.id} locale={locale} isOwner={isOwner} />
+
+        {/* Personal Recommendations — only for the profile owner */}
+        {isOwner && <PersonalRecommendationSection locale={locale} />}
       </div>
     </div>
   );

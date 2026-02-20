@@ -94,6 +94,14 @@
       "developedBy": "Developed by"
     }
   },
+  "recommendations": {
+    "title": "If you like this game…",
+    "empty": "No similar games found",
+    "error": "Unable to load recommendations",
+    "personalTitle": "Recommended for you",
+    "basedOnGames": "Based on {count} games",
+    "emptyLibrary": "Add games to your library to get personalized recommendations"
+  },
   "auth": {
     "signin": {
       "title": "Sign In",
@@ -492,6 +500,54 @@
       "loading": "Loading...",
       "error": "Error loading data",
       "retry": "Retry"
+    },
+    "enrichedStats": {
+      "title": "Statistics",
+      "totalGames": "Games owned",
+      "totalPlayTime": "Total Play Time",
+      "hours": "h",
+      "favoriteGenre": "Favorite Genre",
+      "noFavoriteGenre": "No favorite genre",
+      "reviewCount": "Reviews Written",
+      "averageRating": "Average Rating",
+      "noRating": "No rating",
+      "private": "Private Statistics",
+      "privateDescription": "This player has chosen to hide their statistics",
+      "loading": "Loading statistics...",
+      "error": "Error loading statistics",
+      "retry": "Retry"
+    },
+    "yearInReview": {
+      "title": "Year in Review {year}",
+      "totalPlayTime": "Play Time",
+      "gamesAdded": "Games Added",
+      "favoriteGenre": "Favorite Genre",
+      "topGame": "Most Played Game",
+      "reviewCount": "Reviews Written",
+      "mostActiveMonth": "Most Active Month",
+      "gamesAddedCount": "{count} game(s) added",
+      "backToProfile": "Back to profile",
+      "noData": "No data for this year",
+      "noDataDescription": "Play more to see your stats here!",
+      "link": "View {year} review",
+      "noFavoriteGenre": "No favorite genre",
+      "noTopGame": "No game played",
+      "noActiveMonth": "No activity",
+      "notFound": "Player not found",
+      "months": {
+        "1": "January",
+        "2": "February",
+        "3": "March",
+        "4": "April",
+        "5": "May",
+        "6": "June",
+        "7": "July",
+        "8": "August",
+        "9": "September",
+        "10": "October",
+        "11": "November",
+        "12": "December"
+      }
     }
   },
   "userLibrary": {

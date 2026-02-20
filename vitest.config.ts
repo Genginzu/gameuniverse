@@ -20,6 +20,8 @@ const HOOK_TESTS_NEEDING_DOM = [
   "test/unit/hooks/useGenreForm.test.ts",
   "test/unit/hooks/useLanguageForm.test.ts",
   "test/unit/hooks/useProfile.test.ts",
+  "test/unit/hooks/useRecommendations.test.ts",
+  "test/unit/hooks/usePersonalRecommendations.test.ts",
   "test/unit/hooks/use-toast.test.ts",
   "test/setup.test.ts",
 ];

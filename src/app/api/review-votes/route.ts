@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { untypedTable } from "@/lib/utils/untypedTable";
 import type { VoteType } from "@/types/review";
 
 interface ExistingVoteRow {
@@ -63,8 +64,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // Check for existing vote
-    const { data: existingVoteData } = await supabase
-      .from("review_votes" as any)
+    const { data: existingVoteData } = await untypedTable(supabase, "review_votes")
       .select("id, vote_type")
       .eq("user_id", user.id)
       .eq("review_id", reviewId)
@@ -74,8 +74,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Toggle: same vote type → delete
     if (existingVote && existingVote.vote_type === voteType) {
-      const { error: deleteError } = await supabase
-        .from("review_votes" as any)
+      const { error: deleteError } = await untypedTable(supabase, "review_votes")
         .delete()
         .eq("id", existingVote.id);
 
@@ -89,9 +88,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Upsert: create or update vote
     if (existingVote) {
-      const { error: updateError } = await supabase
-        .from("review_votes" as any)
-        .update({ vote_type: voteType } as any)
+      const { error: updateError } = await untypedTable(supabase, "review_votes")
+        .update({ vote_type: voteType })
         .eq("id", existingVote.id);
 
       if (updateError) {
@@ -99,11 +97,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
       }
     } else {
-      const { error: insertError } = await supabase.from("review_votes" as any).insert({
+      const { error: insertError } = await untypedTable(supabase, "review_votes").insert({
         user_id: user.id,
         review_id: reviewId,
         vote_type: voteType,
-      } as any);
+      });
 
       if (insertError) {
         console.error("Error inserting vote:", insertError);
@@ -143,8 +141,7 @@ export async function DELETE(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: "Review not found" }, { status: 404 });
     }
 
-    const { error: deleteError } = await supabase
-      .from("review_votes" as any)
+    const { error: deleteError } = await untypedTable(supabase, "review_votes")
       .delete()
       .eq("user_id", user.id)
       .eq("review_id", reviewId);

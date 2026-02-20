@@ -9,6 +9,7 @@ import {
 } from "@/types/player";
 import { createServerClient } from "@/lib/supabase-server";
 import { BaseService, FetchOptions, PaginatedResponse, EntityMetadata } from "./baseService";
+import { isStatsPrivate } from "./playerStatsDbHelpers";
 
 // Type definitions for Supabase query results
 interface ProfileRow {
@@ -313,6 +314,9 @@ export class PlayerService {
     // Calculate stats
     const stats = this.calculateStats(library);
 
+    // Check stats privacy via helper (graceful if column doesn't exist yet)
+    const statsPrivate = await isStatsPrivate(supabase, playerId);
+
     return {
       id: profile.id,
       fullName: profile.username,
@@ -320,6 +324,7 @@ export class PlayerService {
       preferredLocale: profile.preferred_locale || "fr",
       createdAt: profile.created_at || new Date().toISOString(),
       updatedAt: profile.updated_at || new Date().toISOString(),
+      statsPrivate,
       stats,
       library,
     };

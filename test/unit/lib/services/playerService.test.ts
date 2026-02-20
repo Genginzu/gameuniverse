@@ -39,6 +39,7 @@ describe("PlayerService", () => {
     preferredLocale: "en",
     createdAt: "2024-01-01T00:00:00Z",
     updatedAt: "2024-01-15T00:00:00Z",
+    statsPrivate: false,
     stats: mockStats,
     library: [mockLibraryGame],
   };

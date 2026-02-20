@@ -1,4 +1,5 @@
 import type { createRouteHandlerClient } from "@/lib/supabase-server";
+import { untypedTable } from "@/lib/utils/untypedTable";
 import type { ReviewVoteCounts, VoteType, Review, ReviewWithVotes } from "@/types/review";
 
 interface VoteRow {
@@ -17,8 +18,7 @@ export async function fetchVoteCountsMap(
   const map = new Map<string, ReviewVoteCounts>();
   if (reviewIds.length === 0) return map;
 
-  const { data, error } = await supabase
-    .from("review_votes" as any)
+  const { data, error } = await untypedTable(supabase, "review_votes")
     .select("review_id, vote_type")
     .in("review_id", reviewIds);
 
@@ -49,8 +49,7 @@ export async function fetchUserVotesMap(
   const map = new Map<string, VoteType>();
   if (reviewIds.length === 0) return map;
 
-  const { data, error } = await supabase
-    .from("review_votes" as any)
+  const { data, error } = await untypedTable(supabase, "review_votes")
     .select("review_id, vote_type")
     .eq("user_id", userId)
     .in("review_id", reviewIds);

@@ -11,6 +11,7 @@ import {
 import { GameHeroSection } from "./details/GameHeroSection";
 import { GameOverviewSection } from "./details/GameOverviewSection";
 import { GameDetailsTabs, TabType } from "./details/GameDetailsTabs";
+import { RecommendationSection } from "@/components/games/RecommendationSection";
 
 interface GameDetailsProps {
   game: GameDetails;
@@ -88,6 +89,9 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
             activeTab={activeTab}
             onTabChange={setActiveTab}
           />
+
+          {/* Recommendations Section */}
+          <RecommendationSection gameSlug={game.slug} locale={locale} />
         </div>
       </div>
     </div>

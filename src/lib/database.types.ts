@@ -869,6 +869,7 @@ export type Database = {
           username: string | null;
           id: string;
           preferred_locale: string | null;
+          stats_private: boolean;
           updated_at: string | null;
         };
         Insert: {
@@ -878,6 +879,7 @@ export type Database = {
           username?: string | null;
           id: string;
           preferred_locale?: string | null;
+          stats_private?: boolean;
           updated_at?: string | null;
         };
         Update: {
@@ -887,6 +889,7 @@ export type Database = {
           username?: string | null;
           id?: string;
           preferred_locale?: string | null;
+          stats_private?: boolean;
           updated_at?: string | null;
         };
         Relationships: [];

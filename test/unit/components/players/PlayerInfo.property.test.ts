@@ -64,6 +64,7 @@ const playerDetailsArbitrary: fc.Arbitrary<PlayerDetails> = fc.record({
   preferredLocale: fc.constantFrom("fr", "en"),
   createdAt: isoDateArbitrary,
   updatedAt: isoDateArbitrary,
+  statsPrivate: fc.boolean(),
   stats: playerStatsArbitrary,
   library: fc.array(libraryGameArbitrary, { minLength: 0, maxLength: 20 }),
 });
