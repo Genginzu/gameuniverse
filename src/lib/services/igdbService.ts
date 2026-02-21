@@ -6,6 +6,7 @@ import {
   IGDBTimeToBeat,
   IGDBAgeRating,
   IGDBGameVersion,
+  IGDBDlcExtension,
 } from "@/types/igdb";
 
 /**
@@ -43,6 +44,7 @@ export class IGDBService {
 
     const response = await fetch(this.TWITCH_AUTH_URL, {
       method: "POST",
+      cache: "no-store",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
@@ -95,13 +97,10 @@ export class IGDBService {
   }
 
   /**
-   * Searches for games in the IGDB database
-   * Supports partial word matching (e.g., "Dragon Quest Rei" finds "Dragon Quest Reimagined")
-   * @param query The search query string
-   * @param limit Maximum number of results to return (default: 10)
-   * @returns Array of search results
+   * Makes an authenticated POST request to the IGDB API.
+   * Uses cache: 'no-store' to prevent Next.js from caching responses.
    */
-  static async searchGames(query: string, limit: number = 10): Promise<IGDBSearchResult[]> {
+  private static async igdbFetch(endpoint: string, body: string): Promise<Response> {
     const accessToken = await this.getAccessToken();
     const clientId = process.env.IGDB_CLIENT_ID;
 
@@ -109,25 +108,9 @@ export class IGDBService {
       throw new Error("IGDB_CLIENT_ID not configured");
     }
 
-    // Split query into words and build a where clause that matches all words
-    // Using case-insensitive contains (~) for each word to support partial matching
-    const words = query.trim().split(/\s+/).filter(Boolean);
-    const escapedWords = words.map((word) => word.replace(/"/g, '\\"').replace(/\*/g, "\\*"));
-
-    // Build where conditions: each word must appear in the name (case-insensitive)
-    // Exclude game versions (editions) which have a version_parent
-    // Only keep main games (0) and standalone expansions (4) — excludes DLC, bundles, episodes, etc.
-    const whereConditions = escapedWords.map((word) => `name ~ *"${word}"*`).join(" & ");
-
-    // IGDB uses a custom query language called Apicalypse
-    const body = `
-      fields name, slug, cover.image_id, first_release_date, involved_companies.company.name, involved_companies.developer;
-      where ${whereConditions} & version_parent = null & (category = 0 | category = 4);
-      limit ${limit};
-    `;
-
-    const response = await fetch(`${this.IGDB_API_URL}/games`, {
+    return fetch(`${this.IGDB_API_URL}/${endpoint}`, {
       method: "POST",
+      cache: "no-store",
       headers: {
         "Client-ID": clientId,
         Authorization: `Bearer ${accessToken}`,
@@ -135,6 +118,33 @@ export class IGDBService {
       },
       body,
     });
+  }
+
+  /**
+   * Searches for games in the IGDB database
+   * Supports partial word matching (e.g., "Dragon Quest Rei" finds "Dragon Quest Reimagined")
+   * @param query The search query string
+   * @param limit Maximum number of results to return (default: 10)
+   * @returns Array of search results
+   */
+  static async searchGames(query: string, limit: number = 10): Promise<IGDBSearchResult[]> {
+    // Split query into words and build a where clause that matches all words
+    // Using case-insensitive contains (~) for each word to support partial matching
+    const words = query.trim().split(/\s+/).filter(Boolean);
+    const escapedWords = words.map((word) => word.replace(/"/g, '\\"').replace(/\*/g, "\\*"));
+
+    // Build where conditions: each word must appear in the name (case-insensitive)
+    // Exclude game versions (editions) which have a version_parent
+    // Only keep main games (0) and standalone expansions (4) via game_type (replaces deprecated category)
+    const whereConditions = escapedWords.map((word) => `name ~ *"${word}"*`).join(" & ");
+
+    const body = `
+      fields name, slug, cover.image_id, first_release_date, involved_companies.company.name, involved_companies.developer;
+      where ${whereConditions} & version_parent = null & (game_type = 0 | game_type = 4);
+      limit ${limit};
+    `;
+
+    const response = await this.igdbFetch("games", body);
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -145,7 +155,6 @@ export class IGDBService {
 
     const games: IGDBGame[] = await response.json();
 
-    // Transform to IGDBSearchResult format
     return games.map((game) => this.transformToSearchResult(game));
   }
 
@@ -184,14 +193,6 @@ export class IGDBService {
    * @returns The full game details or null if not found
    */
   static async getGameDetails(igdbId: number): Promise<IGDBGame | null> {
-    const accessToken = await this.getAccessToken();
-    const clientId = process.env.IGDB_CLIENT_ID;
-
-    if (!clientId) {
-      throw new Error("IGDB_CLIENT_ID not configured");
-    }
-
-    // Fetch comprehensive game data including related entities
     const body = `
       fields name, slug, summary, storyline, first_release_date, aggregated_rating,
              cover.image_id,
@@ -203,19 +204,12 @@ export class IGDBService {
              language_supports.language.id, language_supports.language.name, language_supports.language.native_name, language_supports.language.locale,
              language_supports.language_support_type.id, language_supports.language_support_type.name,
              age_ratings.id, age_ratings.organization, age_ratings.rating_category, age_ratings.synopsis,
-             age_ratings.rating_content_descriptions;
+             age_ratings.rating_content_descriptions,
+             dlcs, expansions, bundles;
       where id = ${igdbId};
     `;
 
-    const response = await fetch(`${this.IGDB_API_URL}/games`, {
-      method: "POST",
-      headers: {
-        "Client-ID": clientId,
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "text/plain",
-      },
-      body,
-    });
+    const response = await this.igdbFetch("games", body);
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -225,12 +219,7 @@ export class IGDBService {
     }
 
     const games: IGDBGame[] = await response.json();
-
-    if (games.length === 0) {
-      return null;
-    }
-
-    return games[0];
+    return games.length === 0 ? null : games[0];
   }
 
   /**
@@ -239,27 +228,12 @@ export class IGDBService {
    * @returns Time to beat data or null if not found
    */
   static async getTimeToBeat(igdbId: number): Promise<IGDBTimeToBeat | null> {
-    const accessToken = await this.getAccessToken();
-    const clientId = process.env.IGDB_CLIENT_ID;
-
-    if (!clientId) {
-      throw new Error("IGDB_CLIENT_ID not configured");
-    }
-
     const body = `
       fields game_id, hastily, normally, completely, count;
       where game_id = ${igdbId};
     `;
 
-    const response = await fetch(`${this.IGDB_API_URL}/game_time_to_beats`, {
-      method: "POST",
-      headers: {
-        "Client-ID": clientId,
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "text/plain",
-      },
-      body,
-    });
+    const response = await this.igdbFetch("game_time_to_beats", body);
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -270,12 +244,7 @@ export class IGDBService {
     }
 
     const results: IGDBTimeToBeat[] = await response.json();
-
-    if (results.length === 0) {
-      return null;
-    }
-
-    return results[0];
+    return results.length === 0 ? null : results[0];
   }
 
   /**
@@ -288,13 +257,6 @@ export class IGDBService {
       return [];
     }
 
-    const accessToken = await this.getAccessToken();
-    const clientId = process.env.IGDB_CLIENT_ID;
-
-    if (!clientId) {
-      throw new Error("IGDB_CLIENT_ID not configured");
-    }
-
     const body = `
       fields id, organization, rating_category, synopsis, rating_content_descriptions, rating_cover_url;
       where id = (${ageRatingIds.join(",")});
@@ -303,15 +265,7 @@ export class IGDBService {
 
     console.warn(`[IGDBService] Fetching age ratings for IDs:`, ageRatingIds);
 
-    const response = await fetch(`${this.IGDB_API_URL}/age_ratings`, {
-      method: "POST",
-      headers: {
-        "Client-ID": clientId,
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "text/plain",
-      },
-      body,
-    });
+    const response = await this.igdbFetch("age_ratings", body);
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -367,13 +321,6 @@ export class IGDBService {
       return [];
     }
 
-    const accessToken = await this.getAccessToken();
-    const clientId = process.env.IGDB_CLIENT_ID;
-
-    if (!clientId) {
-      throw new Error("IGDB_CLIENT_ID not configured");
-    }
-
     const uniqueIds = [...new Set(contentDescIds)];
     const body = `
       fields id, category, description;
@@ -383,15 +330,7 @@ export class IGDBService {
 
     console.warn(`[IGDBService] Fetching content descriptions for IDs:`, uniqueIds);
 
-    const response = await fetch(`${this.IGDB_API_URL}/age_rating_content_descriptions`, {
-      method: "POST",
-      headers: {
-        "Client-ID": clientId,
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "text/plain",
-      },
-      body,
-    });
+    const response = await this.igdbFetch("age_rating_content_descriptions", body);
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -413,28 +352,13 @@ export class IGDBService {
    * @returns Array of game versions (editions like Collector's, Deluxe, GOTY, etc.)
    */
   static async getGameVersions(igdbId: number): Promise<IGDBGameVersion[]> {
-    const accessToken = await this.getAccessToken();
-    const clientId = process.env.IGDB_CLIENT_ID;
-
-    if (!clientId) {
-      throw new Error("IGDB_CLIENT_ID not configured");
-    }
-
     const body = `
       fields id, name, slug, version_title, summary, cover.image_id;
       where version_parent = ${igdbId};
       limit 50;
     `;
 
-    const response = await fetch(`${this.IGDB_API_URL}/games`, {
-      method: "POST",
-      headers: {
-        "Client-ID": clientId,
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "text/plain",
-      },
-      body,
-    });
+    const response = await this.igdbFetch("games", body);
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -445,6 +369,44 @@ export class IGDBService {
     }
 
     return response.json();
+  }
+
+  /**
+   * Fetches DLC, expansion, and bundle details from IGDB by their IDs
+   * Performs a batch query to /games with where id = (id1, id2, ...)
+   * @param ids - Array of IGDB game IDs to fetch
+   * @returns Array of DLC/extension details, or empty array if none found or on error
+   */
+  static async getDlcExtensions(ids: number[]): Promise<IGDBDlcExtension[]> {
+    if (!ids || ids.length === 0) {
+      return [];
+    }
+
+    try {
+      const uniqueIds = [...new Set(ids)];
+      const body = `
+        fields name, slug, summary, game_type, first_release_date, cover.image_id;
+        where id = (${uniqueIds.join(",")});
+        limit 500;
+      `;
+
+      console.warn(`[IGDBService] Fetching DLC/extensions for IDs:`, uniqueIds);
+
+      const response = await this.igdbFetch("games", body);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(
+          `IGDB getDlcExtensions failed: ${response.status} ${response.statusText} - ${errorText}`
+        );
+        return [];
+      }
+
+      return response.json();
+    } catch (error) {
+      console.error("[IGDBService] Error fetching DLC/extensions:", error);
+      return [];
+    }
   }
 
   /**

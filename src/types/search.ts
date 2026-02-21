@@ -15,6 +15,8 @@ export interface HybridSearchResponse {
   localCount: number;
   igdbCount: number;
   hasMore: boolean;
+  /** Warnings from partial failures (e.g. IGDB unavailable) */
+  warnings?: string[];
 }
 
 export interface SearchResultItem {

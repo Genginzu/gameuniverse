@@ -63,6 +63,7 @@ export async function GET(
       localCount: searchResult.localGames.length,
       igdbCount: searchResult.igdbGames.length,
       hasMore: searchResult.hasMore,
+      ...(searchResult.errors.length > 0 && { warnings: searchResult.errors }),
     };
 
     return NextResponse.json(response);

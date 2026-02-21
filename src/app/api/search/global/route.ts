@@ -49,6 +49,11 @@ export async function GET(
       playersLimit,
     });
 
+    // Surface IGDB/search errors for debugging
+    if (result.errors.length > 0) {
+      console.warn("[GlobalSearch] Partial failures:", result.errors);
+    }
+
     const response = GlobalSearchService.toGlobalSearchResponse(result);
 
     return NextResponse.json(response);

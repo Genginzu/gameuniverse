@@ -17,6 +17,7 @@ import {
   fetchAllGameGenres,
   fetchCoOccurrences,
   fetchReviewStats,
+  fetchMetascores,
   fetchGameMetadata,
   fetchUserLibraryGameIds,
 } from "@/lib/services/recommendation/dataFetchers";
@@ -54,6 +55,7 @@ function setupFetchers(
     sourceLibraryCount: 0,
   });
   vi.mocked(fetchReviewStats).mockResolvedValue(new Map());
+  vi.mocked(fetchMetascores).mockResolvedValue(new Map());
 
   const metadataMap = new Map<string, GameRecommendation>();
   for (const id of candidateIds) metadataMap.set(id, makeMetadata(id));
@@ -211,6 +213,7 @@ describe("getPersonalRecommendations", () => {
       sourceLibraryCount: 0,
     });
     vi.mocked(fetchReviewStats).mockResolvedValue(new Map());
+    vi.mocked(fetchMetascores).mockResolvedValue(new Map());
 
     const metadataMap = new Map<string, GameRecommendation>();
     metadataMap.set(CANDIDATE_A, makeMetadata(CANDIDATE_A));

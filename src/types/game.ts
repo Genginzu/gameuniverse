@@ -131,6 +131,33 @@ export interface GameVersion {
   coverImageUrl: string | null;
 }
 
+export type DlcExtensionCategory =
+  | "dlc"
+  | "expansion"
+  | "bundle"
+  | "mod"
+  | "episode"
+  | "season"
+  | "remake"
+  | "remaster"
+  | "expanded_game"
+  | "port"
+  | "fork"
+  | "pack"
+  | "update";
+
+export interface GameDlcExtension {
+  id: string;
+  igdbId: number;
+  name: string;
+  slug: string;
+  summary: string | null;
+  category: DlcExtensionCategory;
+  coverImageUrl: string | null;
+  releaseDate: string | null;
+  gameSlug: string | null; // slug du jeu local si importé, pour le lien
+}
+
 export interface GameDetails {
   id: string;
   slug: string;
@@ -159,6 +186,7 @@ export interface GameDetails {
   igdbId?: number;
   lastSyncedAt?: string;
   versions?: GameVersion[];
+  dlcExtensions?: GameDlcExtension[];
 }
 
 export interface GameSummary {

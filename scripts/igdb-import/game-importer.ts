@@ -6,6 +6,10 @@
 import { createScriptClient } from "./supabase-client";
 import { IGDBService } from "../../src/lib/services/igdbService";
 import type { IGDBGame } from "../../src/types/igdb";
+import {
+  collectDlcExtensionIds,
+  transformIgdbToDlcExtensionRow,
+} from "../../src/lib/utils/dlcExtensionUtils";
 import { IGDB_RATING_CATEGORIES, IGDB_ALL_RATINGS } from "../../src/types/igdb"; // eslint-disable-line no-duplicate-imports
 import { extractColorsFromCover } from "./color-extractor";
 import { syncExistingGame } from "./game-sync";
@@ -130,6 +134,12 @@ export async function importGameFromIGDB(
     const versionsCount = await importGameVersions(newGame.id, igdbGame.id, verbose, dryRun);
     if (verbose && versionsCount > 0) {
       console.log(`[Importer] Imported ${versionsCount} versions for game`);
+    }
+
+    // Import DLC/extensions
+    const dlcCount = await importDlcExtensions(newGame.id, igdbGame, verbose, dryRun);
+    if (verbose && dlcCount > 0) {
+      console.log(`[Importer] Imported ${dlcCount} DLC/extensions for game`);
     }
 
     return {
@@ -664,6 +674,95 @@ async function importGameVersions(
   } catch (error) {
     if (verbose) {
       console.error(`[Importer] Error importing versions for IGDB ID ${igdbId}:`, error);
+    }
+    return 0;
+  }
+}
+
+/**
+ * Imports DLC, expansions and bundles from IGDB for a given game.
+ * Follows the same pattern as importGameVersions.
+ *
+ * @param gameId The UUID of the game in our database
+ * @param igdbGame The full IGDB game object (contains dlcs/expansions/bundles arrays)
+ * @param verbose Whether to log verbose output
+ * @param dryRun If true, don't write to database
+ * @returns Number of DLC/extensions imported
+ */
+export async function importDlcExtensions(
+  gameId: string,
+  igdbGame: IGDBGame,
+  verbose: boolean,
+  dryRun: boolean = false
+): Promise<number> {
+  try {
+    // Collect tagged IDs from dlcs/expansions/bundles fields
+    const taggedIds = collectDlcExtensionIds(igdbGame);
+
+    if (taggedIds.length === 0) {
+      if (verbose) {
+        console.log(`[Importer] No DLC/extensions found for game: ${igdbGame.name}`);
+      }
+      return 0;
+    }
+
+    if (verbose) {
+      console.log(`[Importer] Found ${taggedIds.length} DLC/extensions for game: ${igdbGame.name}`);
+    }
+
+    // Fetch details from IGDB
+    const allIds = taggedIds.map((t) => t.id);
+    const igdbExtensions = await IGDBService.getDlcExtensions(allIds);
+
+    if (igdbExtensions.length === 0) {
+      if (verbose) {
+        console.log(`[Importer] No DLC/extension details returned from IGDB`);
+      }
+      return 0;
+    }
+
+    if (dryRun) {
+      if (verbose) {
+        console.log(`[Importer] Dry-run: Would import ${igdbExtensions.length} DLC/extensions`);
+        for (const ext of igdbExtensions) {
+          console.log(`[Importer]   - ${ext.name}`);
+        }
+      }
+      return igdbExtensions.length;
+    }
+
+    // Build a lookup map from ID → source category
+    const categoryMap = new Map(taggedIds.map((t) => [t.id, t.sourceCategory]));
+
+    const supabase = createScriptClient();
+    let importedCount = 0;
+
+    for (let i = 0; i < igdbExtensions.length; i++) {
+      const ext = igdbExtensions[i];
+      const sourceCategory = categoryMap.get(ext.id) ?? "dlc";
+      const row = transformIgdbToDlcExtensionRow(ext, gameId, sourceCategory, i);
+
+      const { error } = await (
+        supabase.from("game_dlc_extensions") as ReturnType<typeof supabase.from>
+      ).upsert(row as unknown as Record<string, unknown>, {
+        onConflict: "game_id,igdb_id",
+      });
+
+      if (!error) {
+        importedCount++;
+      } else if (verbose) {
+        console.log(`[Importer] Error importing DLC/extension ${ext.name}:`, error.message);
+      }
+    }
+
+    if (verbose) {
+      console.log(`[Importer] Imported ${importedCount} DLC/extensions for game`);
+    }
+
+    return importedCount;
+  } catch (error) {
+    if (verbose) {
+      console.error(`[Importer] Error importing DLC/extensions for game ${igdbGame.name}:`, error);
     }
     return 0;
   }

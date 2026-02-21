@@ -12,6 +12,7 @@ import { GameHeroSection } from "./details/GameHeroSection";
 import { GameOverviewSection } from "./details/GameOverviewSection";
 import { GameDetailsTabs, TabType } from "./details/GameDetailsTabs";
 import { RecommendationSection } from "@/components/games/RecommendationSection";
+import { useBackgroundSync } from "@/hooks/useBackgroundSync";
 
 interface GameDetailsProps {
   game: GameDetails;
@@ -32,6 +33,9 @@ interface GameDetailsProps {
 export function GameDetailsContent({ game, locale }: GameDetailsProps) {
   const [activeTab, setActiveTab] = useState<TabType>("media");
   const [isWishlisted, setIsWishlisted] = useState(false);
+
+  // Fire-and-forget IGDB sync on page visit (skips if synced recently)
+  useBackgroundSync(game.slug, game.igdbId, game.lastSyncedAt);
 
   // Build color scheme from DB-stored colors
   const colors = buildGameColors({

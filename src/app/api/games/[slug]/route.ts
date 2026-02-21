@@ -33,6 +33,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         `
         id,
         slug,
+        igdb_id,
+        last_synced_at,
         cover_image_url,
         background_image_url,
         background_color,
@@ -251,6 +253,55 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       console.warn("game_versions table not available yet");
     }
 
+    // Fetch DLC/extensions (Requirements 6.1, 6.2, 7.5)
+    let gameDlcExtensions: Array<{
+      id: string;
+      igdb_id: number;
+      name: string;
+      slug: string | null;
+      summary: string | null;
+      category: string;
+      cover_image_url: string | null;
+      release_date: string | null;
+    }> = [];
+
+    try {
+      const { data: dlcData } = await supabase
+        .from("game_dlc_extensions")
+        .select("id, igdb_id, name, slug, summary, category, cover_image_url, release_date")
+        .eq("game_id", game.id)
+        .order("category", { ascending: true })
+        .order("release_date", { ascending: true, nullsFirst: false });
+
+      if (dlcData) {
+        gameDlcExtensions = dlcData;
+      }
+    } catch {
+      // Table may not exist yet, ignore error
+      console.warn("game_dlc_extensions table not available yet");
+    }
+
+    // Resolve local game slugs for DLC/extensions that are also imported games
+    let localGameMap = new Map<number, string>();
+    try {
+      if (gameDlcExtensions.length > 0) {
+        const igdbIds = gameDlcExtensions.map((d) => d.igdb_id);
+        const { data: localGames } = await supabase
+          .from("games")
+          .select("igdb_id, slug")
+          .in("igdb_id", igdbIds);
+
+        localGameMap = new Map(
+          localGames
+            ?.filter((g): g is typeof g & { igdb_id: number } => g.igdb_id !== null)
+            .map((g) => [g.igdb_id, g.slug]) ?? []
+        );
+      }
+    } catch {
+      // Non-critical, continue without local game links
+      console.warn("Failed to resolve local game slugs for DLC extensions");
+    }
+
     // Transform the data to match the expected format
     // Prefer translation matching the requested locale, fallback to first available
     const translations = game.game_translations ?? [];
@@ -465,9 +516,24 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       coverImageUrl: v.cover_image_url,
     }));
 
+    // Process DLC/extensions - map to GameDlcExtension format (Requirements 6.1, 6.2, 7.5)
+    const dlcExtensions = gameDlcExtensions.map((d) => ({
+      id: d.id,
+      igdbId: d.igdb_id,
+      name: d.name,
+      slug: d.slug,
+      summary: d.summary,
+      category: d.category,
+      coverImageUrl: d.cover_image_url,
+      releaseDate: d.release_date,
+      gameSlug: localGameMap.get(d.igdb_id) ?? null,
+    }));
+
     const transformedGame = {
       id: game.id,
       slug: game.slug,
+      igdbId: game.igdb_id ?? undefined,
+      lastSyncedAt: game.last_synced_at ?? undefined,
       title: translation?.title || "Untitled",
       description: translation?.description,
       releaseDate: game.release_date,
@@ -489,6 +555,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       languages,
       playtime,
       versions,
+      dlcExtensions,
       createdAt: game.created_at,
       updatedAt: game.updated_at,
     };

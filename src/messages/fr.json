@@ -631,7 +631,8 @@
       "playtime": "Temps de jeu",
       "languages": "Langues",
       "music": "Musique",
-      "priceHistory": "Prix"
+      "priceHistory": "Prix",
+      "dlcExtensions": "Extensions et DLC"
     },
     "media": {
       "screenshots": "Captures d'écran",
@@ -652,6 +653,26 @@
     "versions": {
       "title": "Versions du jeu",
       "noData": "Aucune information de version disponible pour ce jeu"
+    },
+    "dlcExtensions": {
+      "title": "Extensions et DLC",
+      "noData": "Aucune extension ou DLC disponible",
+      "categories": {
+        "dlc": "DLC",
+        "expansion": "Extensions",
+        "bundle": "Bundles",
+        "mod": "Mods",
+        "episode": "Épisodes",
+        "season": "Saisons",
+        "remake": "Remakes",
+        "remaster": "Remasters",
+        "expanded_game": "Jeux étendus",
+        "port": "Portages",
+        "fork": "Forks",
+        "pack": "Packs",
+        "update": "Mises à jour"
+      },
+      "viewGame": "Voir la fiche"
     },
     "reviews": {
       "title": "Avis des joueurs",

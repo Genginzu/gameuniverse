@@ -126,6 +126,10 @@ export interface IGDBGame {
   aggregated_rating?: number;
   language_supports?: IGDBLanguageSupport[];
   age_ratings?: IGDBAgeRating[];
+  game_type?: number; // 0=Main Game, 1=DLC Addon, 2=Expansion, 3=Standalone Expansion, 4=Bundle (replaces deprecated category)
+  dlcs?: number[]; // IDs des DLC associés
+  expansions?: number[]; // IDs des expansions associées
+  bundles?: number[]; // IDs des bundles associés
 }
 
 export interface IGDBSearchResult {
@@ -167,5 +171,19 @@ export interface IGDBGameVersion {
   slug: string;
   version_title: string | null;
   summary?: string;
+  cover?: { image_id: string };
+}
+
+/**
+ * IGDB DLC/Extension details
+ * Represents a DLC, expansion, or bundle fetched from IGDB
+ */
+export interface IGDBDlcExtension {
+  id: number;
+  name: string;
+  slug: string;
+  summary?: string;
+  game_type?: number;
+  first_release_date?: number;
   cover?: { image_id: string };
 }

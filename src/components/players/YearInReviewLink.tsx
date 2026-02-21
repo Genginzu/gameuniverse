@@ -1,7 +1,3 @@
-import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
-import { CalendarHeart } from "lucide-react";
-
 /**
  * Pure function that determines which year to link to for the year-in-review page.
  *
@@ -25,7 +21,10 @@ interface YearInReviewLinkProps {
   availableYears: number[];
 }
 
-export function YearInReviewLink({ playerId, availableYears }: YearInReviewLinkProps) {
+export function YearInReviewLink({
+  playerId: _playerId,
+  availableYears: _availableYears,
+}: YearInReviewLinkProps) {
   // TODO: réactiver quand la feature résumé annuel sera prête
   return null;
 }

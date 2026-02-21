@@ -24,6 +24,22 @@ describe("PlayerService - Comprehensive Coverage", () => {
     mockRpc.mockReset();
   });
 
+  /** Helper: mock for isStatsPrivate (3rd supabase.from call in fetchPlayerDetailsFromDB) */
+  function mockStatsPrivateQuery(statsPrivate = false) {
+    return {
+      select: vi.fn(() => ({
+        eq: vi.fn(() => ({
+          single: vi.fn(() =>
+            Promise.resolve({
+              data: { stats_private: statsPrivate },
+              error: null,
+            })
+          ),
+        })),
+      })),
+    };
+  }
+
   describe("fetchPlayersFromDB", () => {
     it("should fetch players with default options", async () => {
       const mockProfiles = [
@@ -370,7 +386,8 @@ describe("PlayerService - Comprehensive Coverage", () => {
         })
         .mockReturnValueOnce({
           select: vi.fn(() => mockLibraryQuery),
-        });
+        })
+        .mockReturnValueOnce(mockStatsPrivateQuery());
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("user-1", "en");
 
@@ -481,7 +498,8 @@ describe("PlayerService - Comprehensive Coverage", () => {
         })
         .mockReturnValueOnce({
           select: vi.fn(() => mockLibraryQuery),
-        });
+        })
+        .mockReturnValueOnce(mockStatsPrivateQuery());
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("user-1");
 
@@ -542,7 +560,8 @@ describe("PlayerService - Comprehensive Coverage", () => {
         })
         .mockReturnValueOnce({
           select: vi.fn(() => mockLibraryQuery),
-        });
+        })
+        .mockReturnValueOnce(mockStatsPrivateQuery());
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("user-1", "fr");
 
@@ -611,7 +630,8 @@ describe("PlayerService - Comprehensive Coverage", () => {
         })
         .mockReturnValueOnce({
           select: vi.fn(() => mockLibraryQuery),
-        });
+        })
+        .mockReturnValueOnce(mockStatsPrivateQuery());
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("user-1");
 
@@ -655,7 +675,8 @@ describe("PlayerService - Comprehensive Coverage", () => {
         })
         .mockReturnValueOnce({
           select: vi.fn(() => mockLibraryQuery),
-        });
+        })
+        .mockReturnValueOnce(mockStatsPrivateQuery());
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("user-1");
 
@@ -717,7 +738,8 @@ describe("PlayerService - Comprehensive Coverage", () => {
         })
         .mockReturnValueOnce({
           select: vi.fn(() => mockLibraryQuery),
-        });
+        })
+        .mockReturnValueOnce(mockStatsPrivateQuery());
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("user-1");
 

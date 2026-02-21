@@ -25,6 +25,7 @@ describe("GlobalSearchService.search", () => {
       localGames: [],
       igdbGames: [],
       hasMore: false,
+      errors: [],
     });
     mockFetchCharacters.mockResolvedValue({
       characters: [],
@@ -118,6 +119,7 @@ describe("GlobalSearchService.search", () => {
       localGames: [localGame],
       igdbGames: [igdbGame],
       hasMore: false,
+      errors: [],
     });
     mockFetchCharacters.mockResolvedValue({
       characters: [character],

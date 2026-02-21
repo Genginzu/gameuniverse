@@ -22,3 +22,9 @@ Recherche full-text améliorée — vous avez déjà une route /api/search, mais
 Parmi tout ça, les favoris personnages et les votes sur les reviews me semblent les plus naturels à implémenter vu les patterns déjà en place — ça suit exactement la même architecture que les commentaires et les reviews. Tu veux qu'on creuse l'une de ces idées ?
 
 Elaborer le côté social
+
+Elaborer le magasin
+
+Elaborer l'esport
+
+Elaborer le training des joueurs

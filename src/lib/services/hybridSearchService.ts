@@ -11,6 +11,8 @@ export interface HybridSearchResult {
   localGames: GameSummary[];
   igdbGames: IGDBSearchResult[];
   hasMore: boolean;
+  /** Errors from partial failures (e.g. IGDB down) — surfaced for debugging */
+  errors: string[];
 }
 
 /**
@@ -69,15 +71,19 @@ export class HybridSearchService {
     ]);
 
     // Extract results, handling partial failures
+    const errors: string[] = [];
     const localGames = localResult.status === "fulfilled" ? localResult.value : [];
     const igdbGames = igdbResult.status === "fulfilled" ? igdbResult.value : [];
 
-    // Log errors for debugging but don't fail the search
     if (localResult.status === "rejected") {
-      console.error("Local search failed:", localResult.reason);
+      const msg = `Local search failed: ${String(localResult.reason)}`;
+      console.error(msg);
+      errors.push(msg);
     }
     if (igdbResult.status === "rejected") {
-      console.error("IGDB search failed:", igdbResult.reason);
+      const msg = `IGDB search failed: ${String(igdbResult.reason)}`;
+      console.error(msg);
+      errors.push(msg);
     }
 
     // Deduplicate IGDB results (remove games already in local)
@@ -85,7 +91,6 @@ export class HybridSearchService {
 
     // Check if there are more results than the limit
     const hasMoreLocal = localGames.length > localLimit;
-    // For IGDB, if we hit the max limit, assume there are more results
     const hasMoreIgdb =
       deduplicatedIgdbGames.length > igdbLimit ||
       (igdbLimit >= MAX_IGDB_LIMIT - 1 && deduplicatedIgdbGames.length >= igdbLimit);
@@ -99,6 +104,7 @@ export class HybridSearchService {
       localGames: limitedLocalGames,
       igdbGames: limitedIgdbGames,
       hasMore,
+      errors,
     };
   }
 

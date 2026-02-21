@@ -102,6 +102,8 @@ export interface DatabaseGamePrice {
 export interface DatabaseGameData {
   id: string;
   slug: string;
+  igdb_id: number | null;
+  last_synced_at: string | null;
   cover_image_url: string | null;
   background_image_url: string | null;
   background_color: string | null;

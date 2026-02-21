@@ -3,6 +3,10 @@ import { IGDBGame, IGDB_RATING_CATEGORIES, IGDB_ALL_RATINGS } from "@/types/igdb
 import { GameDetails } from "@/types/game";
 import { IGDBService } from "./igdbService";
 import { extractColorsFromCover } from "@/lib/utils/color-extraction";
+import {
+  collectDlcExtensionIds,
+  transformIgdbToDlcExtensionRow,
+} from "@/lib/utils/dlcExtensionUtils";
 
 /**
  * Result of an import or sync operation
@@ -169,6 +173,10 @@ export class GameImportService {
       await this.createVersions(newGame.id, igdbGame.id);
       console.warn(`[GameImportService] Versions created`);
 
+      // Create DLC and extensions
+      await this.createDlcExtensions(newGame.id, igdbGame);
+      console.warn(`[GameImportService] DLC/extensions created`);
+
       // Fetch and save playtime from IGDB
       await this.fetchAndSavePlaytime(newGame.id, igdbGame.id);
       console.warn(`[GameImportService] Playtime fetched`);
@@ -274,6 +282,10 @@ export class GameImportService {
       // Update game versions (editions)
       await this.updateVersions(gameId, igdbGame.id);
       console.warn(`[GameImportService] Versions updated`);
+
+      // Update DLC and extensions
+      await this.updateDlcExtensions(gameId, igdbGame);
+      console.warn(`[GameImportService] DLC/extensions updated`);
 
       // Update playtime from IGDB
       console.warn(
@@ -1147,5 +1159,82 @@ export class GameImportService {
 
     // Create new versions
     await this.createVersions(gameId, igdbId);
+  }
+
+  /**
+   * Creates DLC, expansion, and bundle entries for a game from IGDB data.
+   *
+   * Collects tagged IDs from igdbGame.dlcs/expansions/bundles, fetches details
+   * from IGDB in a single batch, then upserts into game_dlc_extensions.
+   * Wrapped in try/catch so failures don't block the main import.
+   *
+   * Requirements: 3.1, 4.1
+   */
+  private static async createDlcExtensions(gameId: string, igdbGame: IGDBGame): Promise<void> {
+    try {
+      const taggedIds = collectDlcExtensionIds(igdbGame);
+
+      if (taggedIds.length === 0) {
+        console.warn(`[GameImportService] No DLC/expansion/bundle IDs for game: ${igdbGame.name}`);
+        return;
+      }
+
+      // Build a map of igdbId → sourceCategory for quick lookup after fetch
+      const categoryByIgdbId = new Map(
+        taggedIds.map(({ id, sourceCategory }) => [id, sourceCategory])
+      );
+
+      const allIds = taggedIds.map(({ id }) => id);
+      const dlcDetails = await IGDBService.getDlcExtensions(allIds);
+
+      if (!dlcDetails || dlcDetails.length === 0) {
+        console.warn(
+          `[GameImportService] No DLC details returned from IGDB for game: ${igdbGame.name}`
+        );
+        return;
+      }
+
+      const rows = dlcDetails.map((ext, index) => {
+        const sourceCategory = categoryByIgdbId.get(ext.id) ?? "dlc";
+        return transformIgdbToDlcExtensionRow(ext, gameId, sourceCategory, index);
+      });
+
+      const supabase = await createRouteHandlerClient();
+
+      const { error } = await (
+        supabase.from("game_dlc_extensions") as ReturnType<typeof supabase.from>
+      ).upsert(rows as unknown[], { onConflict: "game_id,igdb_id" });
+
+      if (error) {
+        console.error(`[GameImportService] Failed to upsert DLC extensions:`, error);
+      } else {
+        console.warn(`[GameImportService] Created ${rows.length} DLC extensions`);
+      }
+    } catch (error) {
+      console.error(`[GameImportService] Error creating DLC extensions:`, error);
+    }
+  }
+
+  /**
+   * Updates DLC extensions for a game by deleting existing entries then re-creating.
+   *
+   * Follows the same pattern as updateVersions: delete all existing rows for the
+   * game, then delegate to createDlcExtensions for a fresh insert.
+   * Wrapped in try/catch so failures don't block the main sync.
+   *
+   * Requirements: 3.4, 4.2
+   */
+  private static async updateDlcExtensions(gameId: string, igdbGame: IGDBGame): Promise<void> {
+    try {
+      const supabase = await createRouteHandlerClient();
+
+      await (supabase.from("game_dlc_extensions") as ReturnType<typeof supabase.from>)
+        .delete()
+        .eq("game_id", gameId);
+
+      await this.createDlcExtensions(gameId, igdbGame);
+    } catch (error) {
+      console.error(`[GameImportService] Error updating DLC extensions:`, error);
+    }
   }
 }

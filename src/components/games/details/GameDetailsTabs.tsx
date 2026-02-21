@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { GamePlaytime } from "../GamePlaytime";
 import { GameAgeRatings } from "../GameAgeRatings";
 import { GameVersions } from "../GameVersions";
+import { GameDlcExtensions } from "../GameDlcExtensions";
 import { GameMediaGallery } from "./GameMediaGallery";
 import {
   Play,
@@ -15,6 +16,7 @@ import {
   Music,
   Monitor,
   Package,
+  Puzzle,
   Users,
   TrendingUp,
 } from "lucide-react";
@@ -33,6 +35,7 @@ export type TabType =
   | "music"
   | "ageRatings"
   | "versions"
+  | "dlcExtensions"
   | "priceHistory";
 
 interface GameDetailsTabsProps {
@@ -83,6 +86,19 @@ export function GameDetailsTabs({ game, colors, activeTab, onTabChange }: GameDe
             >
               <Package className="mr-2 inline h-4 w-4" />
               {tDetails("tabs.versions")}
+            </button>
+          )}
+          {game.dlcExtensions && game.dlcExtensions.length > 0 && (
+            <button
+              onClick={() => onTabChange("dlcExtensions")}
+              className={`rounded-xl px-6 py-3 text-sm font-medium transition-all ${
+                activeTab === "dlcExtensions"
+                  ? "bg-white text-slate-900"
+                  : "text-slate-400 hover:bg-slate-700 hover:text-white"
+              }`}
+            >
+              <Puzzle className="mr-2 inline h-4 w-4" />
+              {tDetails("tabs.dlcExtensions")}
             </button>
           )}
           <button
@@ -153,6 +169,10 @@ export function GameDetailsTabs({ game, colors, activeTab, onTabChange }: GameDe
 
         {activeTab === "versions" && (
           <GameVersions versions={game.versions} accentColor={colors.accent} />
+        )}
+
+        {activeTab === "dlcExtensions" && (
+          <GameDlcExtensions dlcExtensions={game.dlcExtensions ?? []} accentColor={colors.accent} />
         )}
 
         {activeTab === "reviews" && (
