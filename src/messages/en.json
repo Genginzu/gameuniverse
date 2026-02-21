@@ -1524,6 +1524,7 @@
     "placeholder": "Search games, characters, players...",
     "noResults": "No results found",
     "loading": "Searching...",
+    "importing": "Importing...",
     "categories": {
       "games": "Games",
       "characters": "Characters",

@@ -116,12 +116,13 @@ export class IGDBService {
 
     // Build where conditions: each word must appear in the name (case-insensitive)
     // Exclude game versions (editions) which have a version_parent
+    // Only keep main games (0) and standalone expansions (4) — excludes DLC, bundles, episodes, etc.
     const whereConditions = escapedWords.map((word) => `name ~ *"${word}"*`).join(" & ");
 
     // IGDB uses a custom query language called Apicalypse
     const body = `
       fields name, slug, cover.image_id, first_release_date, involved_companies.company.name, involved_companies.developer;
-      where ${whereConditions} & version_parent = null;
+      where ${whereConditions} & version_parent = null & (category = 0 | category = 4);
       limit ${limit};
     `;
 

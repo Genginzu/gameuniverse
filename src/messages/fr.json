@@ -1527,6 +1527,7 @@
     "placeholder": "Rechercher jeux, personnages, joueurs...",
     "noResults": "Aucun résultat trouvé",
     "loading": "Recherche en cours...",
+    "importing": "Import en cours...",
     "categories": {
       "games": "Jeux",
       "characters": "Personnages",

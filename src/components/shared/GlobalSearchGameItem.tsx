@@ -3,15 +3,17 @@
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { GlobalSearchGameItem as GameItem } from "@/types/global-search";
+import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 
 interface GlobalSearchGameItemProps {
   item: GameItem;
   isActive: boolean;
+  isImporting?: boolean;
 }
 
-export function GlobalSearchGameItem({ item, isActive }: GlobalSearchGameItemProps) {
+export function GlobalSearchGameItem({ item, isActive, isImporting }: GlobalSearchGameItemProps) {
   const t = useTranslations("globalSearch");
 
   const sourceLabel = item.source === "local" ? t("source.local") : t("source.igdb");
@@ -19,7 +21,11 @@ export function GlobalSearchGameItem({ item, isActive }: GlobalSearchGameItemPro
 
   return (
     <div
-      className={cn("flex items-center gap-3 px-3 py-2 transition-colors", isActive && "bg-accent")}
+      className={cn(
+        "flex items-center gap-3 px-3 py-2 transition-colors",
+        isActive && "bg-accent",
+        isImporting && "cursor-wait opacity-70"
+      )}
     >
       {/* Cover image */}
       <div className="relative h-12 w-9 flex-shrink-0 overflow-hidden rounded-sm bg-muted">
@@ -47,16 +53,23 @@ export function GlobalSearchGameItem({ item, isActive }: GlobalSearchGameItemPro
         </p>
       </div>
 
-      {/* Source badge */}
-      <Badge
-        variant={isLocal ? "secondary" : "outline"}
-        className={cn(
-          "flex-shrink-0 text-[10px]",
-          !isLocal && "border-blue-300 text-blue-600 dark:border-blue-700 dark:text-blue-400"
-        )}
-      >
-        {sourceLabel}
-      </Badge>
+      {/* Source badge or importing indicator */}
+      {isImporting ? (
+        <div className="flex flex-shrink-0 items-center gap-1.5 text-xs text-blue-600 dark:text-blue-400">
+          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          <span>{t("importing")}</span>
+        </div>
+      ) : (
+        <Badge
+          variant={isLocal ? "secondary" : "outline"}
+          className={cn(
+            "flex-shrink-0 text-[10px]",
+            !isLocal && "border-blue-300 text-blue-600 dark:border-blue-700 dark:text-blue-400"
+          )}
+        >
+          {sourceLabel}
+        </Badge>
+      )}
     </div>
   );
 }

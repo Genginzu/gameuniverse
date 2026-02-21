@@ -14,6 +14,7 @@ interface GlobalSearchDropdownProps {
   activeIndex: number;
   isLoading: boolean;
   onSelect: (item: FlatSearchItem) => void;
+  importingId: string | null;
 }
 
 /** Display order for categories — games first, then characters, then players */
@@ -25,6 +26,7 @@ export function GlobalSearchDropdown({
   activeIndex,
   isLoading,
   onSelect,
+  importingId,
 }: GlobalSearchDropdownProps) {
   const t = useTranslations("globalSearch");
 
@@ -73,12 +75,14 @@ export function GlobalSearchDropdown({
                   type="button"
                   className="w-full cursor-pointer text-left"
                   onClick={() => onSelect(flatItem)}
+                  disabled={importingId === flatItem.id}
                   data-active={isActive || undefined}
                 >
                   {category === "games" && (
                     <GlobalSearchGameItem
                       item={flatItem as FlatSearchItem & { type: "game" }}
                       isActive={isActive}
+                      isImporting={importingId === flatItem.id}
                     />
                   )}
                   {category === "characters" && (

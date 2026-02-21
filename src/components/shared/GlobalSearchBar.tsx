@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { Loader2, Search, X } from "lucide-react";
@@ -21,6 +21,7 @@ export function GlobalSearchBar() {
   const t = useTranslations("globalSearch");
   const router = useRouter();
   const containerRef = useRef<HTMLDivElement>(null);
+  const [importingId, setImportingId] = useState<string | null>(null);
   const {
     query,
     setQuery,
@@ -59,6 +60,7 @@ export function GlobalSearchBar() {
       }
       // IGDB game import
       if (item.type === "game" && item.source === "igdb" && item.igdbId) {
+        setImportingId(item.id);
         try {
           const res = await fetch("/api/games/import", {
             method: "POST",
@@ -68,11 +70,14 @@ export function GlobalSearchBar() {
           const data = await res.json();
           if (!res.ok) {
             console.error("Import failed:", res.status, data);
+            setImportingId(null);
             return;
           }
+          setImportingId(null);
           if (data.game?.slug) navigateAndClose(`/games/${data.game.slug}`);
         } catch (error) {
           console.error("IGDB import error:", error);
+          setImportingId(null);
         }
       }
     },
@@ -146,6 +151,7 @@ export function GlobalSearchBar() {
             activeIndex={activeIndex}
             isLoading={isLoading}
             onSelect={handleSelect}
+            importingId={importingId}
           />
         </div>
       )}
