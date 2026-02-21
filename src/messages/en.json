@@ -1519,5 +1519,19 @@
       "addGameSuccess": "Game added to collection.",
       "updateSuccess": "Collection updated."
     }
+  },
+  "globalSearch": {
+    "placeholder": "Search games, characters, players...",
+    "noResults": "No results found",
+    "loading": "Searching...",
+    "categories": {
+      "games": "Games",
+      "characters": "Characters",
+      "players": "Players"
+    },
+    "source": {
+      "local": "In library",
+      "igdb": "IGDB"
+    }
   }
 }

@@ -1,9 +1,8 @@
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import { GameUniverseLogo } from "@/components/ui/game-universe-logo";
-import { GameSearchBar } from "@/components/games/GameSearchBar";
+import { GlobalSearchBar } from "@/components/shared/GlobalSearchBar";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { useLocale } from "next-intl";
 import { FaBars, FaTimes } from "react-icons/fa";
 
 interface DashboardHeaderProps {
@@ -12,10 +11,8 @@ interface DashboardHeaderProps {
 }
 
 export default function DashboardHeader({ sidebarOpen, setSidebarOpen }: DashboardHeaderProps) {
-  const locale = useLocale();
-
   return (
-    <header className="border-b border-gray-200 bg-white px-4 py-3 lg:px-6 lg:py-4 dark:border-gray-700 dark:bg-gray-800">
+    <header className="relative z-30 border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-700 dark:bg-gray-800 lg:px-6 lg:py-4">
       <div className="flex items-center justify-between">
         {/* Left side - Mobile menu button + Logo + Brand */}
         <div className="flex items-center space-x-3">
@@ -32,7 +29,7 @@ export default function DashboardHeader({ sidebarOpen, setSidebarOpen }: Dashboa
 
           <Link href="/" className="flex items-center space-x-2 lg:space-x-3">
             <GameUniverseLogo size="sm" />
-            <span className="text-lg font-bold text-gray-900 lg:text-xl dark:text-white">
+            <span className="text-lg font-bold text-gray-900 dark:text-white lg:text-xl">
               <span className="hidden sm:inline">Game Universe</span>
               <span className="sm:hidden">GU</span>
             </span>
@@ -41,7 +38,7 @@ export default function DashboardHeader({ sidebarOpen, setSidebarOpen }: Dashboa
 
         {/* Center - Hybrid Search Bar (hidden on mobile) */}
         <div className="ml-4 hidden max-w-md flex-1 md:block lg:ml-8">
-          <GameSearchBar locale={locale} />
+          <GlobalSearchBar />
         </div>
 
         {/* Right side - Navigation Links + Language Switcher */}
@@ -74,7 +71,7 @@ export default function DashboardHeader({ sidebarOpen, setSidebarOpen }: Dashboa
 
       {/* Mobile search bar */}
       <div className="mt-3 md:hidden">
-        <GameSearchBar locale={locale} />
+        <GlobalSearchBar />
       </div>
     </header>
   );

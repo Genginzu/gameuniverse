@@ -140,7 +140,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
         )}
 
         {/* Floating navigation buttons - matching game detail page */}
-        <div className="absolute left-0 right-0 top-0 z-50 px-4 py-4">
+        <div className="absolute left-0 right-0 top-0 z-20 px-4 py-4">
           <div className="container mx-auto flex items-center justify-between">
             <Link href={`/${locale}/characters`}>
               <Button
