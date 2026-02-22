@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import * as Sentry from "@sentry/nextjs";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertTriangle, RefreshCw, ArrowLeft, Home } from "lucide-react";
@@ -20,7 +21,9 @@ export default function CharacterDetailsError({ error, reset }: ErrorProps) {
   const tCommon = useTranslations("common");
 
   useEffect(() => {
-    // Placeholder pour un service de monitoring (Sentry, etc.)
+    Sentry.captureException(error, {
+      tags: { section: "character-details" },
+    });
   }, [error]);
 
   return (

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { Component, ErrorInfo, ReactNode } from "react";
+import * as Sentry from "@sentry/nextjs";
 import { AlertTriangle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -46,11 +47,13 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error("ErrorBoundary caught an error:", error, errorInfo);
+    this.setState({ error, errorInfo });
 
-    this.setState({
-      error,
-      errorInfo,
+    // Remonter à Sentry avec le component stack
+    Sentry.captureException(error, {
+      extra: {
+        componentStack: errorInfo.componentStack,
+      },
     });
 
     // Appeler le callback d'erreur personnalisé si fourni
@@ -131,13 +134,11 @@ export class ErrorBoundary extends Component<Props, State> {
 }
 
 // Hook pour utiliser l'Error Boundary de manière déclarative
-export function useErrorHandler() {
+export function useErrorBoundaryHandler() {
   return (error: Error, errorInfo?: ErrorInfo) => {
-    console.error("Error caught by useErrorHandler:", error, errorInfo);
-
-    // Dans une vraie application, on pourrait envoyer l'erreur à un service de monitoring
-    // comme Sentry, LogRocket, etc.
-
+    Sentry.captureException(error, {
+      extra: { componentStack: errorInfo?.componentStack },
+    });
     throw error; // Re-throw pour que l'Error Boundary puisse l'attraper
   };
 }

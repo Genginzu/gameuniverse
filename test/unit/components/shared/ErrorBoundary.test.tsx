@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { ErrorBoundary, useErrorHandler } from "@/components/shared/ErrorBoundary";
+import { ErrorBoundary, useErrorBoundaryHandler } from "@/components/shared/ErrorBoundary";
 
 function ThrowingComponent({ shouldThrow = true }: { shouldThrow?: boolean }) {
   if (shouldThrow) {
@@ -151,7 +151,7 @@ describe("ErrorBoundary", () => {
   });
 });
 
-describe("useErrorHandler", () => {
+describe("useErrorBoundaryHandler", () => {
   let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
@@ -163,12 +163,12 @@ describe("useErrorHandler", () => {
   });
 
   it("returns a function", () => {
-    const handler = useErrorHandler();
+    const handler = useErrorBoundaryHandler();
     expect(typeof handler).toBe("function");
   });
 
   it("re-throws the error", () => {
-    const handler = useErrorHandler();
+    const handler = useErrorBoundaryHandler();
     expect(() => handler(new Error("Test error"))).toThrow("Test error");
   });
 });

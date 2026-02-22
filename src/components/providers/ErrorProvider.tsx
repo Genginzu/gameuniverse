@@ -3,7 +3,7 @@
 import React, { createContext, useContext, ReactNode, useCallback } from "react";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { Toaster } from "@/components/ui/toaster";
-import { useErrorHandler, AppError } from "@/lib/error-handling";
+import { useErrorHandler, reportError as sentryReportError, AppError } from "@/lib/error-handling";
 
 interface ErrorContextType {
   handleError: (error: unknown, context?: string) => void;
@@ -20,19 +20,9 @@ interface ErrorProviderProps {
 export function ErrorProvider({ children, onError }: ErrorProviderProps) {
   const { handleError } = useErrorHandler();
 
-  const reportError = (error: AppError, context?: string) => {
-    // Ici on pourrait intégrer avec un service de monitoring
-    console.error("Reporting error:", {
-      message: error.message,
-      type: error.type,
-      context,
-      stack: error.stack,
-    });
-  };
-
   const contextValue: ErrorContextType = {
     handleError,
-    reportError,
+    reportError: sentryReportError,
   };
 
   return (

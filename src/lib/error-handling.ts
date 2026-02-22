@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/nextjs";
 import { toast } from "@/hooks/use-toast";
 import { logger } from "@/lib/logger";
 
@@ -23,7 +24,7 @@ export interface AppError extends Error {
 // Configuration pour le retry automatique
 export interface RetryConfig {
   maxAttempts: number;
-  baseDelay: number; // en millisecondes
+  baseDelay: number;
   maxDelay: number;
   backoffMultiplier: number;
   retryableErrors: ErrorType[];
@@ -65,14 +66,12 @@ export function createAppError(
 
 // Classifier une erreur selon son type
 export function classifyError(error: unknown): AppError {
-  // Si c'est déjà une AppError, la retourner telle quelle
   if (error && typeof error === "object" && "type" in error) {
     return error as AppError;
   }
 
   const err = error as Record<string, unknown>;
 
-  // Erreurs réseau (fetch, axios, etc.)
   if (
     err?.name === "TypeError" &&
     typeof err?.message === "string" &&
@@ -85,7 +84,6 @@ export function classifyError(error: unknown): AppError {
     );
   }
 
-  // Erreurs HTTP
   if (err?.status || err?.statusCode) {
     const statusCode = (err.status || err.statusCode) as number;
 
@@ -127,7 +125,6 @@ export function classifyError(error: unknown): AppError {
     }
   }
 
-  // Erreur inconnue
   const message =
     err?.message && typeof err.message === "string"
       ? err.message
@@ -149,12 +146,10 @@ export async function withRetry<T>(
     } catch (error) {
       lastError = classifyError(error);
 
-      // Si l'erreur n'est pas retryable ou si c'est la dernière tentative
       if (!lastError.retryable || attempt === finalConfig.maxAttempts) {
         throw lastError;
       }
 
-      // Calculer le délai avec exponential backoff
       const delay = Math.min(
         finalConfig.baseDelay * Math.pow(finalConfig.backoffMultiplier, attempt - 1),
         finalConfig.maxDelay
@@ -165,7 +160,6 @@ export async function withRetry<T>(
       );
       logger.warn(`Retrying in ${delay}ms...`);
 
-      // Attendre avant la prochaine tentative
       await new Promise((resolve) => setTimeout(resolve, delay));
     }
   }
@@ -189,7 +183,6 @@ export async function apiCall<T>(
   } catch (error) {
     const appError = classifyError(error);
 
-    // Afficher un toast d'erreur si demandé
     if (showErrorToast) {
       toast({
         variant: "destructive",
@@ -207,24 +200,38 @@ export function useErrorHandler() {
   const handleError = (error: unknown, context?: string) => {
     const appError = classifyError(error);
 
-    // Afficher un toast d'erreur
     toast({
       variant: "destructive",
       title: "Erreur",
       description: appError.message,
     });
 
-    // Dans une vraie application, on pourrait envoyer l'erreur à un service de monitoring
-    // reportError(appError, context);
+    // Remonter à Sentry avec contexte
+    reportError(appError, context);
   };
 
   return { handleError };
 }
 
-// Fonction pour reporter les erreurs à un service de monitoring (placeholder)
-export function reportError(error: AppError, context?: string) {
-  // Placeholder pour intégration monitoring (Sentry, LogRocket, etc.)
-  // Les erreurs sont déjà loggées côté serveur via le logger structuré
+/**
+ * Report an error to Sentry with optional context.
+ * Replaces the old placeholder — now actually sends data.
+ */
+export function reportError(error: AppError | Error, context?: string) {
+  const appError = "type" in error ? (error as AppError) : classifyError(error);
+
+  Sentry.captureException(error, {
+    tags: {
+      errorType: appError.type,
+      ...(appError.code ? { errorCode: appError.code } : {}),
+    },
+    extra: {
+      context,
+      statusCode: appError.statusCode,
+      details: appError.details,
+      retryable: appError.retryable,
+    },
+  });
 }
 
 // Utilitaires pour les messages d'erreur localisés

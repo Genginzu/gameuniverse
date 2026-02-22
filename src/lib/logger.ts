@@ -5,10 +5,17 @@
  * and filterable in the Vercel dashboard / Log Drains.
  * In development, outputs human-readable colored messages.
  *
+ * Supports optional requestId for request tracing / correlation.
+ *
  * Usage:
  *   import { logger } from "@/lib/logger";
  *   logger.info("Game imported", { slug, igdbId });
  *   logger.error("Import failed", { igdbId, error });
+ *
+ *   // With request tracing
+ *   import { createRequestLogger } from "@/lib/logger";
+ *   const log = createRequestLogger(requestId);
+ *   log.info("Processing request", { path: "/api/games" });
  */
 
 type LogLevel = "debug" | "info" | "warn" | "error";
@@ -65,12 +72,15 @@ function log(level: LogLevel, message: string, data?: LogPayload) {
 
     switch (level) {
       case "error":
+        // eslint-disable-next-line no-console
         console.error(line);
         break;
       case "warn":
+        // eslint-disable-next-line no-console
         console.warn(line);
         break;
       default:
+        // eslint-disable-next-line no-console
         console.log(line);
     }
   } else {
@@ -83,15 +93,19 @@ function log(level: LogLevel, message: string, data?: LogPayload) {
 
     switch (level) {
       case "error":
+        // eslint-disable-next-line no-console
         console.error(...parts);
         break;
       case "warn":
+        // eslint-disable-next-line no-console
         console.warn(...parts);
         break;
       case "debug":
+        // eslint-disable-next-line no-console
         console.debug(...parts);
         break;
       default:
+        // eslint-disable-next-line no-console
         console.log(...parts);
     }
   }
@@ -103,3 +117,21 @@ export const logger = {
   warn: (message: string, data?: LogPayload) => log("warn", message, data),
   error: (message: string, data?: LogPayload) => log("error", message, data),
 };
+
+/**
+ * Create a logger scoped to a specific request via its correlation ID.
+ * Every log entry will include the requestId for easy filtering.
+ */
+export function createRequestLogger(requestId: string) {
+  const withRequestId = (data?: LogPayload): LogPayload => ({
+    ...data,
+    requestId,
+  });
+
+  return {
+    debug: (message: string, data?: LogPayload) => log("debug", message, withRequestId(data)),
+    info: (message: string, data?: LogPayload) => log("info", message, withRequestId(data)),
+    warn: (message: string, data?: LogPayload) => log("warn", message, withRequestId(data)),
+    error: (message: string, data?: LogPayload) => log("error", message, withRequestId(data)),
+  };
+}
