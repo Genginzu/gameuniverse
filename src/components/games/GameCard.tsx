@@ -130,13 +130,6 @@ export function GameCard({
               {/* Title */}
               <h3 className="mb-2 line-clamp-2 text-lg font-bold text-white">{game.title}</h3>
 
-              {/* Description */}
-              {game.description && (
-                <p className="mb-3 line-clamp-2 text-sm leading-relaxed text-gray-200">
-                  {game.description}
-                </p>
-              )}
-
               {/* Developer & Publisher */}
               <div className="mb-3 space-y-1 text-xs">
                 <div className="flex items-center text-gray-300">

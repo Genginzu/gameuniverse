@@ -186,6 +186,94 @@
   }
 }
 
+/* Glassmorphism utilities */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.dark .glass {
+  background: rgba(17, 24, 39, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+}
+
+.dark .glass-card {
+  background: rgba(31, 41, 55, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+}
+
+.glass-sidebar {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-right: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.dark .glass-sidebar {
+  background: rgba(17, 24, 39, 0.65);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.glass-header {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.dark .glass-header {
+  background: rgba(17, 24, 39, 0.7);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.glass-dropdown {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.dark .glass-dropdown {
+  background: rgba(31, 41, 55, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Dashboard gradient background */
+.dashboard-bg {
+  background: linear-gradient(
+    135deg,
+    #e0e7ff 0%,
+    #f0f4ff 25%,
+    #faf5ff 50%,
+    #fdf2f8 75%,
+    #fff1f2 100%
+  );
+}
+
+.dark .dashboard-bg {
+  background: linear-gradient(
+    135deg,
+    #0f172a 0%,
+    #1a1033 25%,
+    #1e1b2e 50%,
+    #1a1033 75%,
+    #0f172a 100%
+  );
+}
+
 /* Scrollbar personnalisée */
 ::-webkit-scrollbar {
   width: 8px;

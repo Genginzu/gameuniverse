@@ -88,7 +88,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <DashboardContext.Provider value={contextValue}>
-      <div className="flex h-screen flex-col bg-gray-50 dark:bg-gray-900">
+      <div className="dashboard-bg flex h-screen flex-col">
         <DashboardHeader sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
         {/* Mobile sidebar overlay */}

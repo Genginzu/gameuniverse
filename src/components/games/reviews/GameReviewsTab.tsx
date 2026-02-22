@@ -28,7 +28,7 @@ function AverageRating({
   if (rating === null) return null;
 
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-slate-700/50 bg-slate-800/30 px-5 py-4">
+    <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-5 py-4 shadow-lg shadow-black/20 backdrop-blur-xl">
       <Star className="h-6 w-6 text-yellow-400" />
       <div>
         <span className={cn("text-2xl font-bold", getRatingColor(rating))}>
@@ -47,7 +47,7 @@ function AverageRating({
 
 function LoginPrompt({ message }: { message: string }) {
   return (
-    <div className="rounded-xl border border-dashed border-slate-700 p-6 text-center">
+    <div className="rounded-xl border border-dashed border-white/10 p-6 text-center">
       <LogIn className="mx-auto mb-3 h-8 w-8 text-slate-500" />
       <p className="text-sm text-slate-400">{message}</p>
     </div>

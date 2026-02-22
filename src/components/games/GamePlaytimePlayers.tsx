@@ -5,6 +5,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { Card, CardContent } from "@/components/ui/card";
 import { useTranslations } from "next-intl";
 import type { PlayerPlaytimeStats } from "@/types/game";
+import { getContrastTextColor } from "@/lib/utils/game-utils";
 
 interface GamePlaytimePlayersProps {
   stats: PlayerPlaytimeStats;
@@ -65,8 +66,11 @@ export function GamePlaytimePlayers({
         {showAddButton && onAddPlaytime && (
           <button
             onClick={onAddPlaytime}
-            className="inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium text-white transition-opacity hover:opacity-90"
-            style={{ backgroundColor: accentColor }}
+            className="inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium transition-opacity hover:opacity-90"
+            style={{
+              backgroundColor: accentColor,
+              color: getContrastTextColor(accentColor),
+            }}
           >
             <Plus className="h-4 w-4" />
             {t("addPlaytime")}
@@ -77,7 +81,10 @@ export function GamePlaytimePlayers({
       {hasData ? (
         <div className="space-y-3">
           {avgCards.map(({ icon: Icon, label, value }) => (
-            <Card key={label} className="rounded-xl border-slate-700 bg-slate-800/50">
+            <Card
+              key={label}
+              className="rounded-xl border-white/10 bg-white/5 shadow-lg shadow-black/20 backdrop-blur-xl"
+            >
               <CardContent className="flex items-center gap-4 p-4">
                 <div
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"

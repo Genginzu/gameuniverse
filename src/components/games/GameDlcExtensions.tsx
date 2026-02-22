@@ -29,14 +29,7 @@ const CATEGORY_ORDER: DlcExtensionCategory[] = [
   "update",
 ];
 
-/** Truncates text to ~100 characters with ellipsis */
-function truncateSummary(summary: string | null): string | null {
-  if (!summary) return null;
-  if (summary.length <= 100) return summary;
-  return `${summary.slice(0, 100).trimEnd()}…`;
-}
-
-/** Formats an ISO date string (YYYY-MM-DD) for display */
+/** Formats an ISO date string for display. */
 function formatReleaseDate(dateStr: string | null, locale: string): string | null {
   if (!dateStr) return null;
   try {
@@ -69,7 +62,7 @@ export function GameDlcExtensions({ dlcExtensions, accentColor }: GameDlcExtensi
         return (
           <div key={category}>
             <h3 className="mb-4 text-lg font-semibold text-white">{t(`categories.${category}`)}</h3>
-            <div className="flex flex-wrap gap-4">
+            <div className="columns-1 gap-3 md:columns-2">
               {items.map((item) => (
                 <DlcCard
                   key={item.id}
@@ -96,56 +89,52 @@ interface DlcCardProps {
 
 function DlcCard({ item, accentColor, locale, viewGameLabel }: DlcCardProps) {
   const formattedDate = formatReleaseDate(item.releaseDate, locale);
-  const truncatedSummary = truncateSummary(item.summary);
 
   return (
-    <div
-      style={{ flexBasis: "calc(50% - 0.5rem)" }}
-      className="flex min-w-[280px] gap-4 rounded-xl border border-slate-700 bg-slate-800/50 p-4 hover:border-slate-600"
-    >
-      {/* Cover image */}
-      <div className="flex-shrink-0">
-        {item.coverImageUrl ? (
-          <div className="relative h-32 w-24 overflow-hidden rounded-lg bg-slate-900/50">
-            <Image
-              src={item.coverImageUrl}
-              alt={item.name}
-              fill
-              className="object-cover"
-              sizes="96px"
-              unoptimized
-            />
-          </div>
-        ) : (
-          <div
-            className="flex h-32 w-24 items-center justify-center rounded-lg"
-            style={{ backgroundColor: `${accentColor}20` }}
-          >
-            <Package className="h-8 w-8" style={{ color: accentColor }} />
-          </div>
-        )}
-      </div>
+    <div className="mb-3 break-inside-avoid rounded-xl border border-white/10 bg-white/5 p-4 shadow-lg shadow-black/20 backdrop-blur-xl transition-colors hover:border-white/20 hover:bg-white/[0.08]">
+      <div className="flex gap-4">
+        {/* Cover */}
+        <div className="flex-shrink-0">
+          {item.coverImageUrl ? (
+            <div className="relative h-24 w-16 overflow-hidden rounded-lg bg-white/5">
+              <Image
+                src={item.coverImageUrl}
+                alt={item.name}
+                fill
+                className="object-cover"
+                sizes="64px"
+                unoptimized
+              />
+            </div>
+          ) : (
+            <div
+              className="flex h-24 w-16 items-center justify-center rounded-lg"
+              style={{ backgroundColor: `${accentColor}20` }}
+            >
+              <Package className="h-5 w-5" style={{ color: accentColor }} />
+            </div>
+          )}
+        </div>
 
-      {/* Content */}
-      <div className="flex min-w-0 flex-1 flex-col">
-        <h4 className="text-sm font-medium text-white">{item.name}</h4>
+        {/* Content — full text, no truncation */}
+        <div className="flex min-w-0 flex-1 flex-col">
+          <h4 className="mb-1 text-sm font-medium text-white">{item.name}</h4>
 
-        {formattedDate && <span className="mt-1 text-xs text-slate-500">{formattedDate}</span>}
+          {formattedDate && <span className="mb-2 text-xs text-slate-500">{formattedDate}</span>}
 
-        {truncatedSummary && (
-          <p className="mt-2 text-sm leading-relaxed text-slate-400">{truncatedSummary}</p>
-        )}
+          {item.summary && <p className="text-sm leading-relaxed text-slate-400">{item.summary}</p>}
 
-        {item.gameSlug && (
-          <Link
-            href={`/${locale}/games/${item.gameSlug}`}
-            className="mt-auto inline-flex items-center gap-1 pt-2 text-xs font-medium transition-colors hover:text-white"
-            style={{ color: accentColor }}
-          >
-            <ExternalLink className="h-3 w-3" />
-            {viewGameLabel}
-          </Link>
-        )}
+          {item.gameSlug && (
+            <Link
+              href={`/${locale}/games/${item.gameSlug}`}
+              className="mt-auto inline-flex items-center gap-1 pt-2 text-xs font-medium transition-colors hover:text-white"
+              style={{ color: accentColor }}
+            >
+              <ExternalLink className="h-3 w-3" />
+              {viewGameLabel}
+            </Link>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -54,14 +54,6 @@ export const gameCardConfig: EntityCardConfig<GameSummary> = {
         game.title
       ),
 
-      // Description
-      game.description &&
-        React.createElement(
-          "p",
-          { className: "mb-3 line-clamp-2 text-sm leading-relaxed text-gray-200" },
-          game.description
-        ),
-
       // Developer & Publisher
       React.createElement(
         "div",

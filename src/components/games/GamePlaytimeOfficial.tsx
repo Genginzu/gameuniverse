@@ -19,14 +19,10 @@ function formatHours(hours: number | null): string {
 /**
  * Colonne gauche : les 3 cartes de temps de jeu officiel IGDB.
  */
-export function GamePlaytimeOfficial({
-  playtime,
-  accentColor,
-}: GamePlaytimeOfficialProps) {
+export function GamePlaytimeOfficial({ playtime, accentColor }: GamePlaytimeOfficialProps) {
   const t = useTranslations("gameDetails.playtime");
 
-  const hasAnyData =
-    playtime?.hastily || playtime?.normally || playtime?.completely;
+  const hasAnyData = playtime?.hastily || playtime?.normally || playtime?.completely;
 
   if (!playtime || !hasAnyData) {
     return (
@@ -55,7 +51,7 @@ export function GamePlaytimeOfficial({
         {cards.map(({ icon: Icon, label, value }) => (
           <Card
             key={label}
-            className="rounded-xl border-slate-700 bg-slate-800/50"
+            className="rounded-xl border-white/10 bg-white/5 shadow-lg shadow-black/20 backdrop-blur-xl"
           >
             <CardContent className="flex items-center gap-4 p-4">
               <div
@@ -67,9 +63,7 @@ export function GamePlaytimeOfficial({
               <div className="min-w-0 flex-1">
                 <p className="text-sm text-slate-400">{label}</p>
               </div>
-              <p className="text-xl font-bold text-white">
-                {formatHours(value)}
-              </p>
+              <p className="text-xl font-bold text-white">{formatHours(value)}</p>
             </CardContent>
           </Card>
         ))}

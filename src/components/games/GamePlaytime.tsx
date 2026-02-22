@@ -44,7 +44,7 @@ export function GamePlaytime({ playtime, accentColor, slug }: GamePlaytimeProps)
       {/* Séparateur + contributeurs individuels sous les deux colonnes */}
       {hasContributors && (
         <>
-          <hr className="border-slate-700" />
+          <hr className="border-white/10" />
           <GamePlaytimeContributors contributors={stats.contributors} accentColor={accentColor} />
         </>
       )}

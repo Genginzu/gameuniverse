@@ -51,16 +51,18 @@ function CustomTooltip({ active, payload, label, currency }: CustomTooltipProps)
   if (!active || !payload?.length) return null;
 
   return (
-    <div className="rounded-lg border bg-background p-3 shadow-md">
-      <p className="mb-1.5 text-sm font-medium">{formatDateLabel(label as string)}</p>
+    <div className="rounded-lg border border-white/10 bg-white/5 p-3 shadow-lg shadow-black/20 backdrop-blur-xl">
+      <p className="mb-1.5 text-sm font-medium text-white">{formatDateLabel(label as string)}</p>
       {payload.map((entry) => (
         <div key={entry.dataKey} className="flex items-center gap-2 text-sm">
           <span
             className="inline-block h-2.5 w-2.5 rounded-full"
             style={{ backgroundColor: entry.color }}
           />
-          <span className="text-muted-foreground">{entry.name}:</span>
-          <span className="font-semibold">{formatPrice(entry.value as number, currency)}</span>
+          <span className="text-slate-400">{entry.name}:</span>
+          <span className="font-semibold text-white">
+            {formatPrice(entry.value as number, currency)}
+          </span>
         </div>
       ))}
     </div>

@@ -34,7 +34,7 @@ export function GameAgeRatings({ ratings, accentColor }: GameAgeRatingsProps) {
           return (
             <Card
               key={`${rating.systemCode}-${rating.ratingCode}-${index}`}
-              className={`rounded-xl border-slate-700 bg-slate-800/50 ${rating.isPrimary ? "ring-2" : ""}`}
+              className={`rounded-xl border-white/10 bg-white/5 shadow-lg shadow-black/20 backdrop-blur-xl ${rating.isPrimary ? "ring-2" : ""}`}
               style={
                 rating.isPrimary ? ({ "--tw-ring-color": accentColor } as React.CSSProperties) : {}
               }
@@ -44,7 +44,7 @@ export function GameAgeRatings({ ratings, accentColor }: GameAgeRatingsProps) {
                   {/* Rating Image - only from IGDB or text fallback */}
                   <div className="flex-shrink-0">
                     {imageUrl ? (
-                      <div className="relative h-20 w-16 overflow-hidden rounded-lg bg-slate-900/50">
+                      <div className="relative h-20 w-16 overflow-hidden rounded-lg bg-white/5">
                         <Image
                           src={imageUrl}
                           alt={rating.rating}
@@ -94,7 +94,7 @@ export function GameAgeRatings({ ratings, accentColor }: GameAgeRatingsProps) {
 
                 {/* Content Descriptors */}
                 {rating.contentDescriptors && rating.contentDescriptors.length > 0 && (
-                  <div className="mt-4 border-t border-slate-700 pt-4">
+                  <div className="mt-4 border-t border-white/10 pt-4">
                     <div className="mb-2 flex items-center gap-2">
                       <AlertTriangle className="h-4 w-4 text-amber-400" />
                       <span className="text-sm font-medium text-slate-300">
@@ -105,7 +105,7 @@ export function GameAgeRatings({ ratings, accentColor }: GameAgeRatingsProps) {
                       {rating.contentDescriptors.map((descriptor, idx) => (
                         <span
                           key={`${descriptor.code}-${idx}`}
-                          className="rounded-full bg-slate-700/50 px-3 py-1 text-xs text-slate-300"
+                          className="rounded-full bg-white/10 px-3 py-1 text-xs text-slate-300"
                           title={descriptor.description || undefined}
                         >
                           {descriptor.name || descriptor.code}

@@ -11,7 +11,8 @@ interface RecommendationSectionProps {
   locale?: string;
 }
 
-const SKELETON_COUNT = 4;
+const SKELETON_COUNT = 5;
+const MAX_RECOMMENDATIONS = 5;
 
 /** Mappe un GameRecommendation vers les props attendues par GameCard */
 function toGameCardProps(rec: GameRecommendation) {
@@ -37,22 +38,22 @@ export function RecommendationSection({ gameSlug, locale = "fr" }: Recommendatio
   const hasRecommendations = recommendations.length > 0;
 
   return (
-    <section className="mt-12">
-      <h2 className="mb-6 text-2xl font-bold">{t("title")}</h2>
+    <section className="mt-12 rounded-2xl border border-white/10 bg-white/5 p-6 shadow-lg shadow-black/20 backdrop-blur-xl">
+      <h2 className="mb-6 text-2xl font-bold text-white">{t("title")}</h2>
 
       {loading && (
-        <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-          {Array.from({ length: SKELETON_COUNT }).map((_, index) => (
+        <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          {Array.from({ length: MAX_RECOMMENDATIONS }).map((_, index) => (
             <GameCardSkeleton key={index} />
           ))}
         </div>
       )}
 
-      {!loading && !hasRecommendations && <p className="text-muted-foreground">{t("empty")}</p>}
+      {!loading && !hasRecommendations && <p className="text-slate-400">{t("empty")}</p>}
 
       {!loading && hasRecommendations && (
-        <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
-          {recommendations.map((rec) => (
+        <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          {recommendations.slice(0, MAX_RECOMMENDATIONS).map((rec) => (
             <GameCard key={rec.id} game={toGameCardProps(rec)} locale={locale} />
           ))}
         </div>

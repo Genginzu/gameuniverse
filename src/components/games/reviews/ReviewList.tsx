@@ -14,7 +14,7 @@ function ReviewListEmpty() {
   const t = useReviewTranslations();
 
   return (
-    <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-700 py-12 text-center">
+    <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-white/10 py-12 text-center">
       <MessageSquare className="mb-3 h-10 w-10 text-slate-600" />
       <p className="text-lg font-medium text-slate-400">{t("emptyTitle")}</p>
       <p className="mt-1 text-sm text-slate-500">{t("emptyDescription")}</p>
@@ -26,10 +26,7 @@ function ReviewListSkeleton() {
   return (
     <div className="space-y-4">
       {Array.from({ length: 3 }).map((_, i) => (
-        <div
-          key={i}
-          className="animate-pulse rounded-xl border border-slate-700/50 bg-slate-800/30 p-5"
-        >
+        <div key={i} className="animate-pulse rounded-xl border border-white/10 bg-white/5 p-5">
           <div className="mb-4 flex items-center gap-3">
             <div className="h-10 w-10 rounded-full bg-slate-700" />
             <div className="space-y-2">

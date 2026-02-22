@@ -12,7 +12,7 @@ interface DashboardHeaderProps {
 
 export default function DashboardHeader({ sidebarOpen, setSidebarOpen }: DashboardHeaderProps) {
   return (
-    <header className="relative z-30 border-b border-gray-200 bg-white px-4 py-3 dark:border-gray-700 dark:bg-gray-800 lg:px-6 lg:py-4">
+    <header className="glass-header relative z-30 px-4 py-3 lg:px-6 lg:py-4">
       <div className="flex items-center justify-between">
         {/* Left side - Mobile menu button + Logo + Brand */}
         <div className="flex items-center space-x-3">

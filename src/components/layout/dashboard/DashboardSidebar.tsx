@@ -61,7 +61,7 @@ export default function DashboardSidebar({
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className="hidden h-full w-64 flex-shrink-0 flex-col border-r border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900 lg:flex">
+      <div className="glass-sidebar hidden h-full w-64 flex-shrink-0 flex-col lg:flex">
         <SidebarContent
           user={user}
           signOut={signOut}
@@ -79,11 +79,11 @@ export default function DashboardSidebar({
       {/* Mobile Sidebar */}
       <div
         id="mobile-sidebar"
-        className={`fixed inset-y-0 left-0 z-50 w-64 transform bg-white transition-transform duration-300 ease-in-out dark:bg-gray-900 lg:hidden ${
+        className={`glass-sidebar fixed inset-y-0 left-0 z-50 w-64 transform transition-transform duration-300 ease-in-out lg:hidden ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex h-full flex-col border-r border-gray-200 dark:border-gray-700">
+        <div className="flex h-full flex-col">
           <SidebarContent
             user={user}
             signOut={signOut}
@@ -197,7 +197,7 @@ function SidebarContent({
 
           {/* Dropdown Menu */}
           {isUserMenuOpen && (
-            <div className="absolute bottom-full left-0 right-0 mb-2 rounded-xl border border-gray-200 bg-white shadow-lg animate-in fade-in-0 zoom-in-95 dark:border-gray-700 dark:bg-gray-800">
+            <div className="glass-dropdown absolute bottom-full left-0 right-0 mb-2 rounded-xl shadow-lg animate-in fade-in-0 zoom-in-95">
               <div className="py-2">
                 <button
                   data-dropdown-action="theme"

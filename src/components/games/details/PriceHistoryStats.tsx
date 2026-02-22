@@ -45,14 +45,19 @@ export function PriceHistoryStatsDisplay({ stats, currentPrice }: PriceHistorySt
       {cards.map((card) => {
         const Icon = card.icon;
         return (
-          <Card key={card.label} className="shadow-sm">
+          <Card
+            key={card.label}
+            className="rounded-xl border-white/10 bg-white/5 shadow-lg shadow-black/20 backdrop-blur-xl"
+          >
             <CardContent className="flex items-center gap-3 p-4">
-              <div className={`rounded-md bg-muted p-2 ${card.iconColor}`}>
+              <div className={`rounded-md bg-white/10 p-2 ${card.iconColor}`}>
                 <Icon className="h-5 w-5" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-sm text-muted-foreground">{card.label}</p>
-                <p className="text-lg font-semibold">{formatPrice(card.value, stats.currency)}</p>
+                <p className="text-sm text-slate-400">{card.label}</p>
+                <p className="text-lg font-semibold text-white">
+                  {formatPrice(card.value, stats.currency)}
+                </p>
               </div>
             </CardContent>
           </Card>
@@ -62,12 +67,12 @@ export function PriceHistoryStatsDisplay({ stats, currentPrice }: PriceHistorySt
       {indicators && (indicators.isLowestPrice || indicators.isBelowAverage) && (
         <div className="flex flex-wrap gap-2 sm:col-span-3">
           {indicators.isLowestPrice && (
-            <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
+            <Badge className="border border-green-500/20 bg-green-500/10 text-green-400 hover:bg-green-500/10">
               🏷️ Prix au plus bas
             </Badge>
           )}
           {indicators.isBelowAverage && (
-            <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">
+            <Badge className="border border-blue-500/20 bg-blue-500/10 text-blue-400 hover:bg-blue-500/10">
               📉 En dessous de la moyenne
             </Badge>
           )}

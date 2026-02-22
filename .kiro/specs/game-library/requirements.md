@@ -2,11 +2,11 @@
 
 ## Introduction
 
-Game Universe est une plateforme web dédiée aux jeux vidéo qui permet aux
+<!-- Game Universe est une plateforme web dédiée aux jeux vidéo qui permet aux
 utilisateurs de découvrir et explorer une bibliothèque exhaustive de jeux. Cette
 première version MVP se concentre uniquement sur la fonctionnalité de
 bibliothèque de jeux, permettant aux utilisateurs de parcourir, rechercher et
-consulter les détails des jeux vidéo.
+consulter les détails des jeux vidéo. -->
 
 ## Glossary
 

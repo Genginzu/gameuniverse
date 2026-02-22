@@ -246,6 +246,7 @@
     "delete": "Delete",
     "confirm": "Confirm",
     "back": "Back",
+    "share": "Share",
     "next": "Next",
     "previous": "Previous",
     "close": "Close",
@@ -609,6 +610,14 @@
     "overview": "Overview",
     "platforms": "Platforms",
     "view": "View",
+    "playNow": "Play Now",
+    "addToWishlist": "Add to Wishlist",
+    "statsGrid": {
+      "globalScore": "Critics Score",
+      "price": "Price",
+      "genres": "Genres",
+      "classification": "Classification"
+    },
     "errors": {
       "loadingTitle": "Loading Error",
       "loadingDescription": "An error occurred while displaying game details.",
@@ -623,6 +632,8 @@
       "poor": "Poor"
     },
     "tabs": {
+      "overview": "Overview",
+      "detailsAndTime": "Details & Time",
       "media": "Media",
       "specs": "Specifications",
       "ageRatings": "Age Ratings",

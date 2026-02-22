@@ -41,19 +41,7 @@ export function GamePricingSection({ pricing, colors, formatPrice }: GamePricing
             <Wrapper
               key={index}
               {...wrapperProps}
-              className="group flex items-center gap-2 rounded-md border px-3 py-1.5 backdrop-blur-sm transition-colors"
-              style={{
-                backgroundColor: `${colors.backgroundColor}e6`,
-                borderColor: `${colors.backgroundColor}80`,
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.backgroundColor =
-                  `${colors.backgroundColor}f2`;
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.backgroundColor =
-                  `${colors.backgroundColor}e6`;
-              }}
+              className="group flex items-center gap-2 rounded-md border border-white/10 bg-white/5 px-3 py-1.5 shadow-lg shadow-black/20 backdrop-blur-xl transition-colors hover:bg-white/10"
             >
               {price.store.logoUrl ? (
                 <Image

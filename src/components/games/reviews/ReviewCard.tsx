@@ -69,7 +69,7 @@ export function ReviewCard({ review }: ReviewCardProps) {
   const { formatDate } = useDateFormatter();
 
   return (
-    <article className="rounded-xl border border-slate-700/50 bg-slate-800/30 p-5">
+    <article className="rounded-xl border border-white/10 bg-white/5 p-5 shadow-lg shadow-black/20 backdrop-blur-xl">
       {/* Header: avatar, name, date, rating + votes */}
       <div className="mb-4 flex items-start justify-between">
         <div className="flex items-center gap-3">
@@ -102,7 +102,7 @@ export function ReviewCard({ review }: ReviewCardProps) {
 
       {/* Points +/- */}
       {(review.positivePoints.length > 0 || review.negativePoints.length > 0) && (
-        <div className="grid gap-4 border-t border-slate-700/50 pt-4 sm:grid-cols-2">
+        <div className="grid gap-4 border-t border-white/10 pt-4 sm:grid-cols-2">
           <ReviewPoints
             points={review.positivePoints}
             type="positive"

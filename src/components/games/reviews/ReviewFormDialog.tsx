@@ -12,6 +12,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useReviewTranslations } from "@/hooks/useTranslations";
+import { getContrastTextColor } from "@/lib/utils/game-utils";
 import { ReviewForm } from "./ReviewForm";
 import type { ReviewInput } from "@/lib/validations/review";
 import type { Review } from "@/types/review";
@@ -50,8 +51,15 @@ export function ReviewFormDialog({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
-          className="text-white hover:opacity-90"
-          style={accentColor ? { backgroundColor: accentColor } : undefined}
+          className="hover:opacity-90"
+          style={
+            accentColor
+              ? {
+                  backgroundColor: accentColor,
+                  color: getContrastTextColor(accentColor),
+                }
+              : undefined
+          }
         >
           <Pencil className="mr-2 h-4 w-4" />
           {isEdit ? t("editReview") : t("writeReview")}

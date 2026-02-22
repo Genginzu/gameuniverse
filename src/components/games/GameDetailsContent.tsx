@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { GameDetails } from "@/types/game";
 import {
   buildGameColors,
@@ -8,10 +7,9 @@ import {
   formatPrice as formatPriceUtil,
   getMetascoreColor as getMetascoreColorUtil,
 } from "@/lib/utils/game-utils";
-import { GameHeroSection } from "./details/GameHeroSection";
-import { GameOverviewSection } from "./details/GameOverviewSection";
-import { GameDetailsTabs, TabType } from "./details/GameDetailsTabs";
-import { RecommendationSection } from "@/components/games/RecommendationSection";
+import { GameDetailsSidebar } from "./details/GameDetailsSidebar";
+import { GameDetailsMainContent } from "./details/GameDetailsMainContent";
+import { GameDetailsNavBar } from "./details/GameDetailsNavBar";
 import { useBackgroundSync } from "@/hooks/useBackgroundSync";
 
 interface GameDetailsProps {
@@ -20,24 +18,15 @@ interface GameDetailsProps {
 }
 
 /**
- * GameDetailsContent - Main component for displaying detailed game information.
+ * GameDetailsContent - Orchestrates the game detail page layout.
  *
- * This component composes several sub-components:
- * - GameHeroSection: Hero section with background image, cover, and navigation
- * - GameOverviewSection: Overview info cards (developer, publisher, etc.)
- * - GameDetailsTabs: Tab navigation with media, age ratings, versions, etc.
- * - GamePricingSection: Pricing cards with store links
- *
- * **Requirements: 14.1, 14.2, 14.3, 14.4, 14.5, 14.8, 14.9**
+ * Layout: persistent 2-column with sticky sidebar (cover + actions + meta)
+ * on the left, and main content (title, tabs, description, stats, media)
+ * on the right.
  */
 export function GameDetailsContent({ game, locale }: GameDetailsProps) {
-  const [activeTab, setActiveTab] = useState<TabType>("media");
-  const [isWishlisted, setIsWishlisted] = useState(false);
-
-  // Fire-and-forget IGDB sync on page visit (skips if synced recently)
   useBackgroundSync(game.slug, game.igdbId, game.lastSyncedAt);
 
-  // Build color scheme from DB-stored colors
   const colors = buildGameColors({
     accentColor: game.accentColor,
     backgroundColor: game.backgroundColor,
@@ -45,57 +34,49 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
     textColor: game.textColor,
   });
 
-  // Locale-aware formatting functions
   const formatReleaseDate = (dateString?: string) => formatReleaseDateUtil(dateString, locale);
-
   const formatPrice = (price: number, currency: string) => formatPriceUtil(price, currency, locale);
-
   const getMetascoreColor = (score?: number) => getMetascoreColorUtil(score);
 
-  const handleWishlistToggle = () => {
-    setIsWishlisted(!isWishlisted);
-  };
-
   return (
-    <div
-      className="min-h-screen"
-      style={{
-        backgroundColor: colors.backgroundColor,
-      }}
-    >
-      {/* Hero Section with background image */}
-      <GameHeroSection
-        game={game}
-        locale={locale}
-        colors={colors}
-        isWishlisted={isWishlisted}
-        onWishlistToggle={handleWishlistToggle}
-        formatReleaseDate={formatReleaseDate}
-        getMetascoreColor={getMetascoreColor}
-        formatPrice={formatPrice}
-      />
+    <div className="relative min-h-screen" style={{ backgroundColor: colors.backgroundColor }}>
+      {/* Background image — more visible for glassmorphism blur effect */}
+      {game.media.backgroundImage && (
+        <div className="absolute inset-x-0 top-0 z-0 h-[70vh]">
+          <img
+            src={game.media.backgroundImage}
+            alt=""
+            className="h-full w-full object-cover opacity-50"
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(to bottom, ${colors.backgroundColor}40 0%, ${colors.backgroundColor}A0 55%, ${colors.backgroundColor} 100%)`,
+            }}
+          />
+        </div>
+      )}
 
-      {/* Main content - Full width */}
-      <div className="container relative z-10 mx-auto px-4 pb-16">
-        <div className="space-y-12">
-          {/* Overview Section */}
-          <GameOverviewSection
+      <GameDetailsNavBar locale={locale} colors={colors} />
+
+      {/* Two-column layout */}
+      <div className="container relative z-10 mx-auto px-4 pb-16 pt-20">
+        <div className="flex flex-col gap-8 lg:flex-row">
+          <GameDetailsSidebar
             game={game}
+            locale={locale}
+            colors={colors}
+            formatReleaseDate={formatReleaseDate}
+            formatPrice={formatPrice}
+          />
+          <GameDetailsMainContent
+            game={game}
+            locale={locale}
             colors={colors}
             formatReleaseDate={formatReleaseDate}
             getMetascoreColor={getMetascoreColor}
+            formatPrice={formatPrice}
           />
-
-          {/* Tabs Section */}
-          <GameDetailsTabs
-            game={game}
-            colors={colors}
-            activeTab={activeTab}
-            onTabChange={setActiveTab}
-          />
-
-          {/* Recommendations Section */}
-          <RecommendationSection gameSlug={game.slug} locale={locale} />
         </div>
       </div>
     </div>

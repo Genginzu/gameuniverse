@@ -31,7 +31,7 @@ export function GamePlaytimeContributors({
       {contributors.map((contributor) => (
         <div
           key={contributor.userId}
-          className="flex items-center gap-3 rounded-xl border border-slate-700 bg-slate-800/30 px-5 py-3.5"
+          className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 px-5 py-3.5 shadow-lg shadow-black/20 backdrop-blur-xl"
         >
           {/* Avatar */}
           {contributor.avatarUrl ? (

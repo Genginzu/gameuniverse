@@ -1,0 +1,65 @@
+"use client";
+
+import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { GameDetails } from "@/types/game";
+import { GameColors } from "@/lib/utils/game-utils";
+import { GameDetailsTabs, TabType } from "./GameDetailsTabs";
+import { RecommendationSection } from "@/components/games/RecommendationSection";
+
+interface GameDetailsMainContentProps {
+  game: GameDetails;
+  locale: string;
+  colors: GameColors;
+  formatReleaseDate: (dateString?: string) => string | null;
+  getMetascoreColor: (score?: number) => string;
+  formatPrice: (price: number, currency: string) => string;
+}
+
+export function GameDetailsMainContent({
+  game,
+  locale,
+  colors,
+  getMetascoreColor,
+  formatPrice,
+}: GameDetailsMainContentProps) {
+  const [activeTab, setActiveTab] = useState<TabType>("overview");
+  const textStyle = { color: colors.textColor };
+
+  return (
+    <div className="min-w-0 flex-1">
+      {/* Genres pills */}
+      {game.genres.length > 0 && (
+        <div className="mb-3 flex flex-wrap gap-2">
+          {game.genres.slice(0, 4).map((genre) => (
+            <Badge
+              key={genre.id}
+              variant="secondary"
+              className="pointer-events-none rounded-full border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-300 backdrop-blur-sm"
+            >
+              {genre.name}
+            </Badge>
+          ))}
+        </div>
+      )}
+
+      {/* Title */}
+      <h1 className="mb-6 text-3xl font-bold leading-tight text-white lg:text-5xl">{game.title}</h1>
+
+      {/* Tabs right below title */}
+      <GameDetailsTabs
+        game={game}
+        colors={colors}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        getMetascoreColor={getMetascoreColor}
+        formatPrice={formatPrice}
+      />
+
+      {/* Recommendations */}
+      <div className="mt-12">
+        <RecommendationSection gameSlug={game.slug} locale={locale} />
+      </div>
+    </div>
+  );
+}

@@ -20,10 +20,10 @@ export function DashboardContent() {
     <div className="flex-1 p-4 sm:p-6">
       {/* Page Header */}
       <div className="mb-6 sm:mb-8">
-        <h1 className="mb-2 text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">
+        <h1 className="mb-2 text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">
           {t("dashboard")}
         </h1>
-        <p className="text-sm text-gray-600 sm:text-base dark:text-gray-400">
+        <p className="text-sm text-gray-600 dark:text-gray-400 sm:text-base">
           {t("welcome", {
             name: user.user_metadata?.username || user.email?.split("@")[0] || "Utilisateur",
           })}
@@ -33,11 +33,11 @@ export function DashboardContent() {
       {/* Stats Cards */}
       <div className="mb-6 grid grid-cols-1 gap-4 sm:mb-8 sm:gap-6 md:grid-cols-3">
         {/* Mes Jeux */}
-        <Card className="rounded-xl bg-white dark:bg-gray-800">
+        <Card className="glass-card rounded-xl">
           <CardHeader className="pb-3">
             <div className="flex items-center">
               <div className="rounded-xl bg-blue-100 p-2 dark:bg-blue-900/30">
-                <FaGamepad className="h-4 w-4 text-blue-600 sm:h-5 sm:w-5 dark:text-blue-400" />
+                <FaGamepad className="h-4 w-4 text-blue-600 dark:text-blue-400 sm:h-5 sm:w-5" />
               </div>
               <div className="ml-3">
                 <CardTitle className="text-sm font-medium text-gray-900 dark:text-white">
@@ -50,7 +50,7 @@ export function DashboardContent() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">
+            <div className="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">
               {libraryLoading ? "..." : libraryStats.totalGames}
             </div>
             <p className="text-xs text-gray-500 dark:text-gray-400">{t("gamesFavorites")}</p>
@@ -58,11 +58,11 @@ export function DashboardContent() {
         </Card>
 
         {/* Mes Équipes */}
-        <Card className="rounded-xl bg-white dark:bg-gray-800">
+        <Card className="glass-card rounded-xl">
           <CardHeader className="pb-3">
             <div className="flex items-center">
               <div className="rounded-xl bg-purple-100 p-2 dark:bg-purple-900/30">
-                <FaUsers className="h-4 w-4 text-purple-600 sm:h-5 sm:w-5 dark:text-purple-400" />
+                <FaUsers className="h-4 w-4 text-purple-600 dark:text-purple-400 sm:h-5 sm:w-5" />
               </div>
               <div className="ml-3">
                 <CardTitle className="text-sm font-medium text-gray-900 dark:text-white">
@@ -75,17 +75,17 @@ export function DashboardContent() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">0</div>
+            <div className="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">0</div>
             <p className="text-xs text-gray-500 dark:text-gray-400">{t("teamsJoined")}</p>
           </CardContent>
         </Card>
 
         {/* Activité */}
-        <Card className="rounded-xl bg-white dark:bg-gray-800">
+        <Card className="glass-card rounded-xl">
           <CardHeader className="pb-3">
             <div className="flex items-center">
               <div className="rounded-xl bg-green-100 p-2 dark:bg-green-900/30">
-                <FaBolt className="h-4 w-4 text-green-600 sm:h-5 sm:w-5 dark:text-green-400" />
+                <FaBolt className="h-4 w-4 text-green-600 dark:text-green-400 sm:h-5 sm:w-5" />
               </div>
               <div className="ml-3">
                 <CardTitle className="text-sm font-medium text-gray-900 dark:text-white">
@@ -98,7 +98,7 @@ export function DashboardContent() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">0</div>
+            <div className="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">0</div>
             <p className="text-xs text-gray-500 dark:text-gray-400">{t("postsPublished")}</p>
           </CardContent>
         </Card>
@@ -108,9 +108,9 @@ export function DashboardContent() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Actions rapides */}
         <div className="lg:col-span-2">
-          <Card className="rounded-xl bg-white dark:bg-gray-800">
+          <Card className="glass-card rounded-xl">
             <CardHeader>
-              <CardTitle className="text-base font-semibold text-gray-900 sm:text-lg dark:text-white">
+              <CardTitle className="text-base font-semibold text-gray-900 dark:text-white sm:text-lg">
                 {t("quickActions")}
               </CardTitle>
               <CardDescription className="text-sm text-gray-500 dark:text-gray-400">
@@ -153,9 +153,9 @@ export function DashboardContent() {
 
         {/* Informations du compte */}
         <div>
-          <Card className="rounded-xl bg-white dark:bg-gray-800">
+          <Card className="glass-card rounded-xl">
             <CardHeader>
-              <CardTitle className="text-base font-semibold text-gray-900 sm:text-lg dark:text-white">
+              <CardTitle className="text-base font-semibold text-gray-900 dark:text-white sm:text-lg">
                 {t("accountInfo")}
               </CardTitle>
               <CardDescription className="text-sm text-gray-500 dark:text-gray-400">

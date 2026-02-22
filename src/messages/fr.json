@@ -246,6 +246,7 @@
     "delete": "Supprimer",
     "confirm": "Confirmer",
     "back": "Retour",
+    "share": "Partager",
     "next": "Suivant",
     "previous": "Précédent",
     "close": "Fermer",
@@ -609,6 +610,14 @@
     "overview": "Aperçu",
     "platforms": "Plateformes",
     "view": "Voir",
+    "playNow": "Jouer maintenant",
+    "addToWishlist": "Ajouter à la liste de souhaits",
+    "statsGrid": {
+      "globalScore": "Note critiques",
+      "price": "Prix",
+      "genres": "Genres",
+      "classification": "Classification"
+    },
     "errors": {
       "loadingTitle": "Erreur de chargement",
       "loadingDescription": "Une erreur s'est produite lors de l'affichage des détails du jeu.",
@@ -623,6 +632,8 @@
       "poor": "Faible"
     },
     "tabs": {
+      "overview": "Aperçu",
+      "detailsAndTime": "Détails & Temps",
       "media": "Médias",
       "specs": "Spécifications",
       "ageRatings": "Classifications",
