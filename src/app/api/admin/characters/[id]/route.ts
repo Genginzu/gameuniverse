@@ -3,6 +3,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { adminCharacterFormSchema } from "@/lib/validations/admin-character-form";
 import { characterFormToPayload } from "@/lib/utils/character-form-utils";
+import { logger } from "@/lib/logger";
 
 // Supabase nested select result type (Supabase infers `never` for deeply nested joins)
 interface CharacterDetailRow {
@@ -117,7 +118,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     const character = data as CharacterDetailRow | null;
 
     if (error) {
-      console.error("Error fetching character details:", error);
+      logger.error("Error fetching character details", { error });
 
       if (error.code === "PGRST116") {
         return NextResponse.json({ error: "Character not found" }, { status: 404 });
@@ -144,7 +145,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       media: character.character_media || [],
     });
   } catch (error) {
-    console.error("Error in admin character GET:", error);
+    logger.error("Error in admin character GET", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
@@ -207,7 +208,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .eq("id", characterId);
 
     if (updateError) {
-      console.error("Error updating character:", updateError);
+      logger.error("Error updating character", { error: updateError });
 
       if (updateError.code === "23505") {
         return NextResponse.json(
@@ -232,7 +233,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         .insert(translationsWithId);
 
       if (translationsError) {
-        console.error("Error updating translations:", translationsError);
+        logger.error("Error updating translations", { error: translationsError });
         return NextResponse.json({ error: "Failed to update translations" }, { status: 500 });
       }
     }
@@ -248,7 +249,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       const { error: gamesError } = await db.from("character_games").insert(gamesWithId);
 
       if (gamesError) {
-        console.error("Error updating game relations:", gamesError);
+        logger.error("Error updating game relations", { error: gamesError });
         return NextResponse.json({ error: "Failed to update game relations" }, { status: 500 });
       }
     }
@@ -264,7 +265,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       const { error: mediaError } = await db.from("character_media").insert(mediaWithId);
 
       if (mediaError) {
-        console.error("Error updating media:", mediaError);
+        logger.error("Error updating media", { error: mediaError });
         return NextResponse.json({ error: "Failed to update media" }, { status: 500 });
       }
     }
@@ -282,7 +283,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         .insert(relationshipsWithId);
 
       if (relationshipsError) {
-        console.error("Error updating relationships:", relationshipsError);
+        logger.error("Error updating relationships", { error: relationshipsError });
         return NextResponse.json({ error: "Failed to update relationships" }, { status: 500 });
       }
     }
@@ -292,7 +293,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       characterId,
     });
   } catch (error) {
-    console.error("Error in admin character PUT:", error);
+    logger.error("Error in admin character PUT", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
@@ -334,7 +335,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     const { error: deleteError } = await db.from("characters").delete().eq("id", characterId);
 
     if (deleteError) {
-      console.error("Error deleting character:", deleteError);
+      logger.error("Error deleting character", { error: deleteError });
       return NextResponse.json({ error: "Failed to delete character" }, { status: 500 });
     }
 
@@ -344,7 +345,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       slug: existing.slug,
     });
   } catch (error) {
-    console.error("Error in admin character DELETE:", error);
+    logger.error("Error in admin character DELETE", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });

@@ -20,7 +20,7 @@ export default function AdminError({ error, reset }: ErrorProps) {
   const tAdmin = useTranslations("admin");
 
   useEffect(() => {
-    console.error("Admin page error:", error);
+    // Placeholder pour un service de monitoring (Sentry, etc.)
   }, [error]);
 
   return (

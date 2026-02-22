@@ -3,6 +3,7 @@ import { z } from "zod";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { adminLanguageFormSchema } from "@/lib/validations/admin-language-form";
+import { logger } from "@/lib/logger";
 
 // Query params validation schema
 const languageQuerySchema = z.object({
@@ -57,7 +58,7 @@ export async function GET(request: NextRequest) {
     const { count: totalCount, error: countError } = await countQuery;
 
     if (countError) {
-      console.error("Error counting languages:", countError);
+      logger.error("Error counting languages", { error: countError });
       return NextResponse.json({ error: "Failed to count languages" }, { status: 500 });
     }
 
@@ -74,7 +75,7 @@ export async function GET(request: NextRequest) {
       .range(offset, offset + limit - 1);
 
     if (error) {
-      console.error("Error fetching languages:", error);
+      logger.error("Error fetching languages", { error });
       return NextResponse.json({ error: "Failed to fetch languages" }, { status: 500 });
     }
 
@@ -92,7 +93,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Error in admin languages GET:", error);
+    logger.error("Error in admin languages GET", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
@@ -133,7 +134,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error("Error creating language:", error);
+      logger.error("Error creating language", { error });
 
       // Unique constraint violation (code already exists)
       if (error.code === "23505") {
@@ -148,7 +149,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ language }, { status: 201 });
   } catch (error) {
-    console.error("Error in admin languages POST:", error);
+    logger.error("Error in admin languages POST", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });

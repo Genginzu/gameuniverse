@@ -39,7 +39,6 @@ export function useCharacterFavorites(): UseCharacterFavoritesReturn {
         const data = await res.json();
         setCharacters(data.characters || []);
       } catch (err) {
-        console.warn("Error fetching character favorites:", err);
         setError(err instanceof Error ? err.message : "An error occurred");
         setCharacters([]);
       } finally {
@@ -85,7 +84,6 @@ export function usePlayerFavoriteCharacters(playerId: string): UseCharacterFavor
         const data = await res.json();
         setCharacters(data.characters || []);
       } catch (err) {
-        console.warn("Error fetching player favorite characters:", err);
         setError(err instanceof Error ? err.message : "An error occurred");
         setCharacters([]);
       } finally {

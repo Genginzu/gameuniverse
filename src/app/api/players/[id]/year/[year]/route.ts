@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { PlayerService } from "@/lib/services/playerService";
 import { PlayerStatsService } from "@/lib/services/playerStatsService";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { logger } from "@/lib/logger";
 
 const YEAR_REGEX = /^\d{4}$/;
 
@@ -58,7 +59,7 @@ export async function GET(
 
     return NextResponse.json({ yearReview });
   } catch (error) {
-    console.error("Error in year review API:", error);
+    logger.error("Error in year review API", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

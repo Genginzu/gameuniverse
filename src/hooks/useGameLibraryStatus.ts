@@ -28,12 +28,9 @@ export function useGameLibraryStatus(gameId: string) {
         setInLibrary(true);
         return true;
       } else {
-        const errorData = await response.json();
-        console.error("Failed to add to library:", errorData.error);
         return false;
       }
-    } catch (err) {
-      console.error("Error adding to library:", err);
+    } catch {
       return false;
     } finally {
       setAdding(false);
@@ -53,11 +50,9 @@ export function useGameLibraryStatus(gameId: string) {
         setInLibrary(false);
         return true;
       } else {
-        console.error("Failed to remove from library");
         return false;
       }
-    } catch (err) {
-      console.error("Error removing from library:", err);
+    } catch {
       return false;
     }
   }, [user, gameId]);
@@ -82,13 +77,12 @@ export function useGameLibraryStatus(gameId: string) {
           const data = await response.json();
           setInLibrary(data.inLibrary === true);
         } else if (response.status === 500) {
-          console.warn("Library feature not available yet");
+          // Fonctionnalité bibliothèque pas encore disponible
           setInLibrary(false);
         } else {
           setInLibrary(false);
         }
-      } catch (err) {
-        console.warn("Error checking library status:", err);
+      } catch {
         setInLibrary(false);
       } finally {
         setLoading(false);

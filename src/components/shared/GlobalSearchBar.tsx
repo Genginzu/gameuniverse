@@ -69,14 +69,12 @@ export function GlobalSearchBar() {
           });
           const data = await res.json();
           if (!res.ok) {
-            console.error("Import failed:", res.status, data);
             setImportingId(null);
             return;
           }
           setImportingId(null);
           if (data.game?.slug) navigateAndClose(`/games/${data.game.slug}`);
-        } catch (error) {
-          console.error("IGDB import error:", error);
+        } catch {
           setImportingId(null);
         }
       }

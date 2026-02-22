@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { getDateRangeForPeriod } from "@/lib/services/priceHistoryService";
 import type { PriceHistoryPeriod, PriceSnapshot, PriceHistoryStats } from "@/types/price-history";
+import { logger } from "@/lib/logger";
 
 const VALID_PERIODS: PriceHistoryPeriod[] = ["1m", "3m", "6m", "1y", "all"];
 
@@ -35,7 +36,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       if (gameError?.code === "PGRST116" || !game) {
         return NextResponse.json({ error: "Game not found" }, { status: 404 });
       }
-      console.error("Error fetching game by slug:", gameError);
+      logger.error("Error fetching game by slug", { error: gameError });
       return NextResponse.json({ error: "Failed to fetch game" }, { status: 500 });
     }
 
@@ -52,7 +53,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     });
 
     if (historyError) {
-      console.error("Error fetching price history:", historyError);
+      logger.error("Error fetching price history", { error: historyError });
       return NextResponse.json({ error: "Failed to fetch price history" }, { status: 500 });
     }
 
@@ -62,7 +63,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     });
 
     if (statsError) {
-      console.error("Error fetching price history stats:", statsError);
+      logger.error("Error fetching price history stats", { error: statsError });
       return NextResponse.json({ error: "Failed to fetch price history stats" }, { status: 500 });
     }
 
@@ -79,7 +80,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       stats,
     });
   } catch (error) {
-    console.error("Unexpected error in price history API:", error);
+    logger.error("Error in price history API", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

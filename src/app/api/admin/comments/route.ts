@@ -3,6 +3,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { adminCommentQuerySchema } from "@/lib/validations/admin-comment-query";
 import type { AdminComment } from "@/types/admin-comments";
+import { logger } from "@/lib/logger";
 
 /** Row shape returned by the Supabase query */
 interface CommentListRow {
@@ -132,7 +133,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Error in admin comments GET:", error);
+    logger.error("Error in admin comments GET", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
@@ -160,7 +161,7 @@ async function countComments(
     .select("id", { count: "exact", head: true });
 
   if (error) {
-    console.error("Error counting comments:", error);
+    logger.error("Error counting comments", { error });
     return null;
   }
 
@@ -211,7 +212,7 @@ async function fetchComments(
     .range(offset, offset + limit - 1);
 
   if (error) {
-    console.error("Error fetching comments:", error);
+    logger.error("Error fetching comments", { error });
     return null;
   }
 
@@ -238,7 +239,7 @@ async function findMatchingCommentIds(
     .ilike("username", pattern);
 
   if (profileError) {
-    console.error("Error searching profiles:", profileError);
+    logger.error("Error searching profiles", { error: profileError });
     return null;
   }
 
@@ -254,7 +255,7 @@ async function findMatchingCommentIds(
       .in("user_id", matchingUserIds);
 
     if (e1) {
-      console.error("Error searching comments by player:", e1);
+      logger.error("Error searching comments by player", { error: e1 });
       return null;
     }
     for (const c of byPlayer ?? []) ids.add(c.id);
@@ -267,7 +268,7 @@ async function findMatchingCommentIds(
     .ilike("characters.character_translations.name", pattern);
 
   if (e2) {
-    console.error("Error searching comments by character:", e2);
+    logger.error("Error searching comments by character", { error: e2 });
     return null;
   }
   for (const c of byCharacter ?? []) ids.add(c.id);

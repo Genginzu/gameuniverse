@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   try {
@@ -25,14 +26,12 @@ export async function GET(request: NextRequest) {
       .eq("genre_translations.language_code", locale);
 
     if (genresError) {
-      console.error("Error fetching genres:", genresError);
+      logger.error("Error fetching genres", { error: genresError });
       return NextResponse.json(
         { error: "Failed to fetch genres", details: genresError },
         { status: 500 }
       );
     }
-
-    console.warn("Fetched genres:", genres?.length || 0);
 
     if (!genres || genres.length === 0) {
       return NextResponse.json({
@@ -48,7 +47,7 @@ export async function GET(request: NextRequest) {
       .select("genre_id");
 
     if (countsError) {
-      console.error("Error fetching game counts:", countsError);
+      logger.error("Error fetching game counts", { error: countsError });
     }
 
     // Count games per genre
@@ -66,7 +65,7 @@ export async function GET(request: NextRequest) {
       created_at: string | null;
       genre_translations?: Array<{ name: string; description?: string | null }>;
     }
-    
+
     const transformedGenres = (genres as GenreRow[]).map((genre) => {
       const translation = genre.genre_translations?.[0];
       return {
@@ -82,14 +81,12 @@ export async function GET(request: NextRequest) {
     // Sort by name
     transformedGenres.sort((a, b) => a.name.localeCompare(b.name));
 
-    console.warn("Transformed genres:", transformedGenres.length);
-
     return NextResponse.json({
       genres: transformedGenres,
       locale,
     });
   } catch (error) {
-    console.error("Unexpected error in genres API:", error);
+    logger.error("Error in genres API", { error });
     return NextResponse.json(
       {
         error: "Internal server error",

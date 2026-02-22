@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { PlayerService } from "@/lib/services/playerService";
 import { GAME_COUNT_RANGES } from "@/types/player";
 import { parsePaginationParams, handleApiError } from "@/lib/api-utils";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   try {
@@ -31,7 +32,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error("Unexpected error in players API:", error);
+    logger.error("Error in players API", { error });
     const errorResponse = handleApiError(error, "Failed to fetch players");
     return NextResponse.json(errorResponse, { status: 500 });
   }

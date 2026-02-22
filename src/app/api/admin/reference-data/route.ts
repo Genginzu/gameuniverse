@@ -9,6 +9,7 @@ import {
   getAvailableSupportedLanguages,
   getGameStatistics,
 } from "@/lib/admin-utils";
+import { logger } from "@/lib/logger";
 
 /**
  * GET /api/admin/reference-data - Get reference data for admin forms
@@ -107,7 +108,7 @@ export async function GET(request: NextRequest) {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Error in admin reference-data GET:", error);
+    logger.error("Error in admin reference-data GET", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });

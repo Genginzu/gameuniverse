@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { logger } from "@/lib/logger";
 
 // GET /api/library/stats - Get user's library statistics
 export async function GET() {
@@ -24,7 +25,7 @@ export async function GET() {
     if (error) {
       // PGRST205 = table/function not found (migration not applied yet)
       if (error.code === "PGRST205" || error.code === "42883") {
-        console.warn("user_library table/function not found - migration not applied yet");
+        logger.warn("user_library table/function not found - migration not applied yet");
         return NextResponse.json({
           totalGames: 0,
           ownedGames: 0,
@@ -33,7 +34,7 @@ export async function GET() {
           averageRating: null,
         });
       }
-      console.error("Error fetching library stats:", error);
+      logger.error("Error fetching library stats", { error });
       return NextResponse.json({ error: "Failed to fetch library statistics" }, { status: 500 });
     }
 
@@ -54,7 +55,7 @@ export async function GET() {
       averageRating: statsData.average_rating,
     });
   } catch (error) {
-    console.error("Error in library stats API:", error);
+    logger.error("Error in library stats API", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

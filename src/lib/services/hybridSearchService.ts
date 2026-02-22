@@ -3,6 +3,7 @@ import { IGDBSearchResult } from "@/types/igdb";
 import { SearchResultItem } from "@/types/search";
 import { GameService } from "./gameService";
 import { IGDBService } from "./igdbService";
+import { logger } from "@/lib/logger";
 
 /**
  * Result from the hybrid search combining local and IGDB sources
@@ -77,12 +78,12 @@ export class HybridSearchService {
 
     if (localResult.status === "rejected") {
       const msg = `Local search failed: ${String(localResult.reason)}`;
-      console.error(msg);
+      logger.error(msg);
       errors.push(msg);
     }
     if (igdbResult.status === "rejected") {
       const msg = `IGDB search failed: ${String(igdbResult.reason)}`;
-      console.error(msg);
+      logger.error(msg);
       errors.push(msg);
     }
 

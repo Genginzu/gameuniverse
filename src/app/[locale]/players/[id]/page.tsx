@@ -48,8 +48,7 @@ export default async function PlayerDetailsPage({ params }: PlayerDetailsPagePro
         </ErrorBoundary>
       </DashboardLayout>
     );
-  } catch (error) {
-    console.error("Error in PlayerDetailsPage:", error);
+  } catch {
     // Return error state - Requirements 9.1, 9.2
     return (
       <DashboardLayout>

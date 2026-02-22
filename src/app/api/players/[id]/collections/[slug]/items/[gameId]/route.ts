@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { removeItem } from "@/lib/services/collectionService";
+import { logger } from "@/lib/logger";
 
 type RouteContext = { params: Promise<{ id: string; slug: string; gameId: string }> };
 
@@ -38,7 +39,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteContext) {
 
     return new NextResponse(null, { status: 204 });
   } catch (error) {
-    console.error("Error in players/[id]/collections/[slug]/items/[gameId] DELETE:", error);
+    logger.error("Error in collection item DELETE", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

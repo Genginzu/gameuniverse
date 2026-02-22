@@ -1,5 +1,6 @@
 import { createServerClient } from "@/lib/supabase-server";
 import type { CommonGame, CommonGamesResult } from "@/types/player";
+import { logger } from "@/lib/logger";
 
 const DEFAULT_PAGE_SIZE = 12;
 
@@ -42,7 +43,7 @@ export class LibraryComparisonService {
     });
 
     if (error) {
-      console.error("Error fetching common games:", error);
+      logger.error("Error fetching common games", { error });
       throw new Error(`Failed to fetch common games: ${error.message}`);
     }
 

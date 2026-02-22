@@ -64,9 +64,8 @@ export function useUserLibrary() {
 
       const data = await response.json();
       setGames(data.games || []);
-    } catch (err) {
-      // Silently fail - library might not be set up yet
-      console.warn("Could not fetch library:", err);
+    } catch {
+      // Échec silencieux — la bibliothèque n'est peut-être pas encore configurée
       setGames([]);
     } finally {
       setLoading(false);
@@ -86,9 +85,8 @@ export function useUserLibrary() {
 
       const data = await response.json();
       setStats(data);
-    } catch (err) {
-      // Silently fail - stats might not be available
-      console.warn("Could not fetch library stats:", err);
+    } catch {
+      // Échec silencieux — les stats ne sont peut-être pas disponibles
     }
   }, [user]);
 
@@ -115,7 +113,6 @@ export function useUserLibrary() {
         await Promise.all([fetchLibrary(), fetchStats()]);
         return true;
       } catch (err) {
-        console.error("Error adding game to library:", err);
         setError(err instanceof Error ? err.message : "Failed to add game to library");
         return false;
       }
@@ -141,7 +138,6 @@ export function useUserLibrary() {
         await Promise.all([fetchLibrary(), fetchStats()]);
         return true;
       } catch (err) {
-        console.error("Error removing game from library:", err);
         setError(err instanceof Error ? err.message : "Failed to remove game from library");
         return false;
       }
@@ -162,8 +158,7 @@ export function useUserLibrary() {
 
         const data = await response.json();
         return data.inLibrary;
-      } catch (err) {
-        console.error("Error checking library status:", err);
+      } catch {
         return false;
       }
     },

@@ -3,6 +3,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { adminReviewQuerySchema } from "@/lib/validations/admin-review-query";
 import type { AdminReview } from "@/types/admin-reviews";
+import { logger } from "@/lib/logger";
 
 /** Row shape returned by the Supabase query (without profiles join) */
 interface ReviewListRow {
@@ -129,7 +130,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Error in admin reviews GET:", error);
+    logger.error("Error in admin reviews GET", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
@@ -156,7 +157,7 @@ async function countReviews(
     .select("id", { count: "exact", head: true });
 
   if (error) {
-    console.error("Error counting reviews:", error);
+    logger.error("Error counting reviews", { error });
     return null;
   }
 
@@ -182,7 +183,7 @@ async function countReviewsWithSearch(
     .ilike("username", pattern);
 
   if (profileError) {
-    console.error("Error searching profiles:", profileError);
+    logger.error("Error searching profiles", { error: profileError });
     return null;
   }
 
@@ -198,7 +199,7 @@ async function countReviewsWithSearch(
       .in("user_id", matchingUserIds);
 
     if (e1) {
-      console.error("Error counting reviews by player:", e1);
+      logger.error("Error counting reviews by player", { error: e1 });
       return null;
     }
     for (const r of byPlayer ?? []) ids.add(r.id);
@@ -211,7 +212,7 @@ async function countReviewsWithSearch(
     .ilike("games.game_translations.title", pattern);
 
   if (e2) {
-    console.error("Error counting reviews by game title:", e2);
+    logger.error("Error counting reviews by game title", { error: e2 });
     return null;
   }
   for (const r of byGame ?? []) ids.add(r.id);
@@ -263,7 +264,7 @@ async function fetchReviews(
     .range(offset, offset + limit - 1);
 
   if (error) {
-    console.error("Error fetching reviews:", error);
+    logger.error("Error fetching reviews", { error });
     return null;
   }
 
@@ -291,7 +292,7 @@ async function findMatchingReviewIds(
     .ilike("username", pattern);
 
   if (profileError) {
-    console.error("Error searching profiles:", profileError);
+    logger.error("Error searching profiles", { error: profileError });
     return null;
   }
 
@@ -307,7 +308,7 @@ async function findMatchingReviewIds(
       .in("user_id", matchingUserIds);
 
     if (e1) {
-      console.error("Error searching reviews by player:", e1);
+      logger.error("Error searching reviews by player", { error: e1 });
       return null;
     }
     for (const r of byPlayer ?? []) ids.add(r.id);
@@ -320,7 +321,7 @@ async function findMatchingReviewIds(
     .ilike("games.game_translations.title", pattern);
 
   if (e2) {
-    console.error("Error searching reviews by game:", e2);
+    logger.error("Error searching reviews by game", { error: e2 });
     return null;
   }
   for (const r of byGame ?? []) ids.add(r.id);

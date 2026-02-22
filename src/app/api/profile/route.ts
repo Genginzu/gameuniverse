@@ -1,5 +1,6 @@
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 export async function GET() {
   const supabase = await createRouteHandlerClient();
@@ -21,7 +22,7 @@ export async function GET() {
     .single();
 
   if (profileError) {
-    console.error("Profile fetch error:", profileError);
+    logger.error("Profile fetch error", { error: profileError });
     return NextResponse.json({ error: "Failed to fetch profile" }, { status: 500 });
   }
 
@@ -67,13 +68,13 @@ export async function PATCH(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error("Profile update error:", error);
+      logger.error("Profile update error", { error });
       return NextResponse.json({ error: "Failed to update profile" }, { status: 500 });
     }
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error("Profile update error:", error);
+    logger.error("Profile update error", { error });
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 }

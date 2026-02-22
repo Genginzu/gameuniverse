@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { logger } from "@/lib/logger";
 
 // DELETE /api/library/[gameId] - Remove game from user's library
 export async function DELETE(
@@ -35,16 +36,16 @@ export async function DELETE(
     if (error) {
       // PGRST205 = table not found (migration not applied yet)
       if (error.code === "PGRST205") {
-        console.warn("user_library table not found - migration not applied yet");
+        logger.warn("user_library table not found - migration not applied yet");
         return NextResponse.json({ success: true }); // Retourner succès car rien à supprimer
       }
-      console.error("Error removing game from library:", error);
+      logger.error("Error removing game from library", { error });
       return NextResponse.json({ error: "Failed to remove game from library" }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error in library DELETE API:", error);
+    logger.error("Error in library DELETE API", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -85,14 +86,14 @@ export async function GET(
       // PGRST116 = no rows returned
       // PGRST205 = table not found (migration not applied yet)
       if (error.code === "PGRST205") {
-        console.warn("user_library table not found - migration not applied yet");
+        logger.warn("user_library table not found - migration not applied yet");
         return NextResponse.json({
           inLibrary: false,
           status: undefined,
           addedAt: undefined,
         });
       }
-      console.error("Error checking game in library:", error);
+      logger.error("Error checking game in library", { error });
       return NextResponse.json({ error: "Failed to check library status" }, { status: 500 });
     }
 
@@ -102,7 +103,7 @@ export async function GET(
       addedAt: data?.added_at,
     });
   } catch (error) {
-    console.error("Error in library GET API:", error);
+    logger.error("Error in library GET API", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

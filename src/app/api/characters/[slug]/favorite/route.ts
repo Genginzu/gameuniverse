@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { CharacterFavoriteService } from "@/lib/services/characterFavoriteService";
+import { logger } from "@/lib/logger";
 
 type RouteContext = { params: Promise<{ slug: string }> };
 
@@ -56,7 +57,7 @@ export async function POST(_request: NextRequest, { params }: RouteContext) {
     if (pgError.code === "23505") {
       return NextResponse.json({ error: "Already favorited" }, { status: 409 });
     }
-    console.error("Error in favorite POST API:", error);
+    logger.error("Error in favorite POST API", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -86,7 +87,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteContext) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error in favorite DELETE API:", error);
+    logger.error("Error in favorite DELETE API", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -137,7 +138,7 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
 
     return NextResponse.json({ isFavorite: false });
   } catch (error) {
-    console.error("Error in favorite GET API:", error);
+    logger.error("Error in favorite GET API", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

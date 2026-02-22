@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { getRecommendationsForGame } from "@/lib/services/recommendationService";
 import { fetchUserLibraryGameIds } from "@/lib/services/recommendation/dataFetchers";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   try {
@@ -51,7 +52,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       generatedAt: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Error computing recommendations:", error);
+    logger.error("Error computing recommendations", { error });
     return NextResponse.json({ error: "Failed to compute recommendations" }, { status: 500 });
   }
 }

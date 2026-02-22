@@ -6,6 +6,7 @@ import {
   type LibraryEntryWithGenres,
 } from "./playerStatsService";
 import { extractGenreEntries } from "./playerStatsYearHelpers";
+import { logger } from "@/lib/logger";
 
 /**
  * Vérifie si les stats d'un joueur sont privées.
@@ -19,7 +20,7 @@ export async function isStatsPrivate(supabase: any, playerId: string): Promise<b
     .single();
 
   if (error) {
-    console.error("Error checking stats privacy:", error);
+    logger.error("Error checking stats privacy", { error });
     return false;
   }
 
@@ -37,7 +38,7 @@ export async function fetchTotalPlayTime(supabase: any, playerId: string): Promi
     .eq("user_id", playerId);
 
   if (error) {
-    console.error("Error fetching play time:", error);
+    logger.error("Error fetching play time", { error });
     return 0;
   }
 
@@ -78,7 +79,7 @@ export async function fetchFavoriteGenreFromDB(
     .gt("play_time_hours", 0);
 
   if (libError) {
-    console.error("Error fetching library with genres:", libError);
+    logger.error("Error fetching library with genres", { error: libError });
     return null;
   }
 
@@ -102,7 +103,7 @@ export async function fetchReviewStats(
     .eq("user_id", playerId);
 
   if (error) {
-    console.error("Error fetching review stats:", error);
+    logger.error("Error fetching review stats", { error });
     return { reviewCount: 0, averageRating: null };
   }
 

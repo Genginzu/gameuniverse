@@ -1,4 +1,5 @@
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { logger } from "@/lib/logger";
 
 // Type definitions for Supabase query results
 interface GenreStatItem {
@@ -37,13 +38,13 @@ export async function getAvailableCompanies() {
       .order("name");
 
     if (error) {
-      console.error("Error fetching companies:", error);
+      logger.error("Error fetching companies", { error });
       return [];
     }
 
     return companies || [];
   } catch (error) {
-    console.error("Error in getAvailableCompanies:", error);
+    logger.error("Error in getAvailableCompanies", { error });
     return [];
   }
 }
@@ -73,7 +74,7 @@ export async function getAvailableGenres(locale: string = "fr") {
       .order("slug");
 
     if (error) {
-      console.error("Error fetching genres:", error);
+      logger.error("Error fetching genres", { error });
       return [];
     }
 
@@ -93,7 +94,7 @@ export async function getAvailableGenres(locale: string = "fr") {
       }) || []
     );
   } catch (error) {
-    console.error("Error in getAvailableGenres:", error);
+    logger.error("Error in getAvailableGenres", { error });
     return [];
   }
 }
@@ -112,13 +113,13 @@ export async function getAvailableStores() {
       .order("name");
 
     if (error) {
-      console.error("Error fetching stores:", error);
+      logger.error("Error fetching stores", { error });
       return [];
     }
 
     return stores || [];
   } catch (error) {
-    console.error("Error in getAvailableStores:", error);
+    logger.error("Error in getAvailableStores", { error });
     return [];
   }
 }
@@ -135,13 +136,13 @@ export async function getAvailableSupportedLanguages() {
       .order("name");
 
     if (error) {
-      console.error("Error fetching supported languages:", error);
+      logger.error("Error fetching supported languages", { error });
       return [];
     }
 
     return languages || [];
   } catch (error) {
-    console.error("Error in getAvailableSupportedLanguages:", error);
+    logger.error("Error in getAvailableSupportedLanguages", { error });
     return [];
   }
 }
@@ -174,7 +175,7 @@ export async function getAvailableRatings() {
       .order("sort_order");
 
     if (error) {
-      console.error("Error fetching ratings:", error);
+      logger.error("Error fetching ratings", { error });
       return [];
     }
 
@@ -196,7 +197,7 @@ export async function getAvailableRatings() {
       })) || []
     );
   } catch (error) {
-    console.error("Error in getAvailableRatings:", error);
+    logger.error("Error in getAvailableRatings", { error });
     return [];
   }
 }
@@ -225,7 +226,7 @@ export async function getAvailableContentDescriptors(locale: string = "fr") {
       .order("code");
 
     if (error) {
-      console.error("Error fetching content descriptors:", error);
+      logger.error("Error fetching content descriptors", { error });
       return [];
     }
 
@@ -246,7 +247,7 @@ export async function getAvailableContentDescriptors(locale: string = "fr") {
       }) || []
     );
   } catch (error) {
-    console.error("Error in getAvailableContentDescriptors:", error);
+    logger.error("Error in getAvailableContentDescriptors", { error });
     return [];
   }
 }
@@ -268,13 +269,13 @@ export async function validateGameSlug(slug: string, excludeGameId?: string) {
 
     if (error && error.code !== "PGRST116") {
       // PGRST116 = no rows returned
-      console.error("Error validating slug:", error);
+      logger.error("Error validating slug", { error });
       return false;
     }
 
     return !data; // Return true if no existing game found (slug is available)
   } catch (error) {
-    console.error("Error in validateGameSlug:", error);
+    logger.error("Error in validateGameSlug", { error });
     return false;
   }
 }
@@ -298,7 +299,7 @@ export async function getGameStatistics() {
       .select("*", { count: "exact", head: true });
 
     if (gamesError) {
-      console.error("Error counting games:", gamesError);
+      logger.error("Error counting games", { error: gamesError });
     }
 
     // Get games created in the last 30 days
@@ -311,7 +312,7 @@ export async function getGameStatistics() {
       .gte("created_at", thirtyDaysAgo.toISOString());
 
     if (recentError) {
-      console.error("Error counting recent games:", recentError);
+      logger.error("Error counting recent games", { error: recentError });
     }
 
     // Get games by genre
@@ -329,7 +330,7 @@ export async function getGameStatistics() {
       .eq("genres.genre_translations.language_code", "fr");
 
     if (genreError) {
-      console.error("Error fetching genre stats:", genreError);
+      logger.error("Error fetching genre stats", { error: genreError });
     }
 
     // Process genre statistics
@@ -354,7 +355,7 @@ export async function getGameStatistics() {
       })),
     };
   } catch (error) {
-    console.error("Error in getGameStatistics:", error);
+    logger.error("Error in getGameStatistics", { error });
     return {
       totalGames: 0,
       recentGames: 0,

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   try {
@@ -63,7 +64,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       .single();
 
     if (error) {
-      console.error("Error fetching character details by slug:", error);
+      logger.error("Error fetching character details by slug", { error });
       if (error.code === "PGRST116") {
         return NextResponse.json({ error: "Character not found" }, { status: 404 });
       }
@@ -283,7 +284,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     return NextResponse.json(transformedCharacter);
   } catch (error) {
-    console.error("Unexpected error in character details API:", error);
+    logger.error("Error in character details API", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

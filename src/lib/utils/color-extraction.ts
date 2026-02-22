@@ -7,6 +7,7 @@
  */
 
 import { Jimp } from "jimp";
+import { logger } from "@/lib/logger";
 
 /** RGB color tuple */
 type RGB = [number, number, number];
@@ -34,18 +35,13 @@ function upgradeImageUrl(coverUrl: string): string {
  */
 export async function extractColorsFromCover(
   coverUrl: string,
-  verbose: boolean = false
+  _verbose: boolean = false
 ): Promise<ExtractedGameColors | null> {
   try {
     const largeUrl = upgradeImageUrl(coverUrl);
 
-    if (verbose) {
-      console.warn(`[ColorExtractor] Downloading cover: ${largeUrl}`);
-    }
-
     const response = await fetch(largeUrl);
     if (!response.ok) {
-      console.warn(`[ColorExtractor] Failed to download: ${response.status}`);
       return null;
     }
 
@@ -55,26 +51,16 @@ export async function extractColorsFromCover(
     const palette = extractPalette(image as any, 10);
 
     if (palette.length === 0) {
-      console.warn("[ColorExtractor] No palette extracted");
       return null;
-    }
-
-    if (verbose) {
-      console.warn("[ColorExtractor] Palette:", palette.map(rgbToHex));
     }
 
     const colors = deriveGameColors(palette);
 
-    if (verbose) {
-      console.warn("[ColorExtractor] Colors:", colors);
-    }
-
     return colors;
   } catch (error) {
-    console.error(
-      "[ColorExtractor] Error:",
-      error instanceof Error ? error.stack || error.message : error
-    );
+    logger.error("[ColorExtractor] Error extracting colors", {
+      error: error instanceof Error ? error.stack || error.message : error,
+    });
     return null;
   }
 }

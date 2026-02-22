@@ -1,5 +1,6 @@
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url);
@@ -18,7 +19,7 @@ export async function GET(request: NextRequest) {
     });
 
     if (error) {
-      console.error("Auth callback verifyOtp error:", error);
+      logger.error("Auth callback verifyOtp error", { error });
       return NextResponse.redirect(
         new URL("/auth/error?message=" + encodeURIComponent(error.message), baseUrl)
       );
@@ -32,7 +33,7 @@ export async function GET(request: NextRequest) {
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (error) {
-      console.error("Auth callback error:", error);
+      logger.error("Auth callback error", { error });
       return NextResponse.redirect(
         new URL("/auth/error?message=" + encodeURIComponent(error.message), baseUrl)
       );

@@ -3,6 +3,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { reviewSchema } from "@/lib/validations/review";
 import type { AdminReviewDetail } from "@/types/admin-reviews";
+import { logger } from "@/lib/logger";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -78,7 +79,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       if (error.code === "PGRST116") {
         return NextResponse.json({ error: "Review not found" }, { status: 404 });
       }
-      console.error("Error fetching review:", error);
+      logger.error("Error fetching review", { error });
       return NextResponse.json({ error: "Failed to fetch review" }, { status: 500 });
     }
 
@@ -91,7 +92,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json(toAdminReviewDetail(row, playerName));
   } catch (error) {
-    console.error("Error in admin review GET:", error);
+    logger.error("Error in admin review GET", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
@@ -151,7 +152,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .eq("id", reviewId);
 
     if (updateError) {
-      console.error("Error updating review:", updateError);
+      logger.error("Error updating review", { error: updateError });
       return NextResponse.json({ error: "Failed to update review" }, { status: 500 });
     }
 
@@ -163,7 +164,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .single();
 
     if (fetchError || !updated) {
-      console.error("Error fetching updated review:", fetchError);
+      logger.error("Error fetching updated review", { error: fetchError });
       return NextResponse.json({ error: "Failed to fetch updated review" }, { status: 500 });
     }
 
@@ -172,7 +173,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json(toAdminReviewDetail(row, playerName));
   } catch (error) {
-    console.error("Error in admin review PUT:", error);
+    logger.error("Error in admin review PUT", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
@@ -211,13 +212,13 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     const { error: deleteError } = await supabase.from("game_reviews").delete().eq("id", reviewId);
 
     if (deleteError) {
-      console.error("Error deleting review:", deleteError);
+      logger.error("Error deleting review", { error: deleteError });
       return NextResponse.json({ error: "Failed to delete review" }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error in admin review DELETE:", error);
+    logger.error("Error in admin review DELETE", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });

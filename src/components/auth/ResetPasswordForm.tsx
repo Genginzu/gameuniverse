@@ -68,7 +68,6 @@ export default function ResetPasswordForm() {
       }, 2000);
     } catch (err) {
       setError("Une erreur inattendue s'est produite");
-      console.error("Reset password error:", err);
     } finally {
       setIsLoading(false);
     }

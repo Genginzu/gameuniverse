@@ -1,4 +1,5 @@
 import { createServerClient } from "@/lib/supabase-server";
+import { logger } from "@/lib/logger";
 import type { CollectionSummary, CollectionDetail, CollectionItem } from "@/types/collection";
 
 // Tables not yet in generated Supabase types (migration applied but types not regenerated)
@@ -136,7 +137,7 @@ export async function fetchCollections(
 
   if (error) {
     if (error.code === "PGRST205") {
-      console.warn("game_collections table not found - migration not applied yet");
+      logger.warn("game_collections table not found - migration not applied yet");
       return [];
     }
     throw error;

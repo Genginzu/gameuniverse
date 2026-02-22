@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { adminRatingSystemFormSchema } from "@/lib/validations/admin-rating-system-form";
+import { logger } from "@/lib/logger";
 
 /**
  * GET /api/admin/age-classifications/[id] - Get a single rating system with counts
@@ -53,7 +54,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       },
     });
   } catch (error) {
-    console.error("Error in admin age-classification GET:", error);
+    logger.error("Error in admin age-classification GET", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
@@ -111,7 +112,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       .maybeSingle();
 
     if (dupError) {
-      console.error("Error checking duplicate code:", dupError);
+      logger.error("Error checking duplicate code", { error: dupError });
       return NextResponse.json({ error: "Failed to check for duplicates" }, { status: 500 });
     }
 
@@ -137,7 +138,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       .single();
 
     if (updateError || !updated) {
-      console.error("Error updating rating system:", updateError);
+      logger.error("Error updating rating system", { error: updateError });
       return NextResponse.json({ error: "Failed to update rating system" }, { status: 500 });
     }
 
@@ -166,7 +167,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       },
     });
   } catch (error) {
-    console.error("Error in admin age-classification PUT:", error);
+    logger.error("Error in admin age-classification PUT", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
@@ -239,13 +240,13 @@ export async function DELETE(
     const { error: deleteError } = await supabase.from("rating_systems").delete().eq("id", id);
 
     if (deleteError) {
-      console.error("Error deleting rating system:", deleteError);
+      logger.error("Error deleting rating system", { error: deleteError });
       return NextResponse.json({ error: "Failed to delete rating system" }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error in admin age-classification DELETE:", error);
+    logger.error("Error in admin age-classification DELETE", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });

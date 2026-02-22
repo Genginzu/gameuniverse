@@ -12,6 +12,7 @@ import {
   DatabaseGameData,
 } from "@/types/database";
 import { SupabaseError } from "@/types/api";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   try {
@@ -147,7 +148,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       .single()) as { data: DatabaseGameData | null; error: SupabaseError | null };
 
     if (error) {
-      console.error("Error fetching game details by slug:", error);
+      logger.error("Error fetching game details by slug", { error });
       if (error.code === "PGRST116") {
         return NextResponse.json({ error: "Game not found" }, { status: 404 });
       }
@@ -198,7 +199,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       }
     } catch {
       // Table may not exist yet, ignore error
-      console.warn("game_languages table not available yet");
+      logger.warn("game_languages table not available yet");
     }
 
     // Fetch playtime separately (columns may not exist yet)
@@ -226,7 +227,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       }
     } catch {
       // Columns may not exist yet, ignore error
-      console.warn("playtime columns not available yet");
+      logger.warn("playtime columns not available yet");
     }
 
     // Fetch game versions (Requirements 5.1)
@@ -250,7 +251,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       }
     } catch {
       // Table may not exist yet, ignore error
-      console.warn("game_versions table not available yet");
+      logger.warn("game_versions table not available yet");
     }
 
     // Fetch DLC/extensions (Requirements 6.1, 6.2, 7.5)
@@ -278,7 +279,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       }
     } catch {
       // Table may not exist yet, ignore error
-      console.warn("game_dlc_extensions table not available yet");
+      logger.warn("game_dlc_extensions table not available yet");
     }
 
     // Resolve local game slugs for DLC/extensions that are also imported games
@@ -299,7 +300,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       }
     } catch {
       // Non-critical, continue without local game links
-      console.warn("Failed to resolve local game slugs for DLC extensions");
+      logger.warn("Failed to resolve local game slugs for DLC extensions");
     }
 
     // Transform the data to match the expected format
@@ -562,7 +563,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     return NextResponse.json(transformedGame);
   } catch (error) {
-    console.error("Unexpected error in game details API:", error);
+    logger.error("Error in game details API", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

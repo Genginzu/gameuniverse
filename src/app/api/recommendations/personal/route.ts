@@ -3,6 +3,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { getPersonalRecommendations } from "@/lib/services/recommendationService";
 import { fetchUserLibraryGameIds } from "@/lib/services/recommendation/dataFetchers";
 import type { PersonalRecommendationsResponse } from "@/types/recommendation";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   try {
@@ -39,7 +40,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error("Error computing personal recommendations:", error);
+    logger.error("Error computing personal recommendations", { error });
     return NextResponse.json({ error: "Failed to compute recommendations" }, { status: 500 });
   }
 }

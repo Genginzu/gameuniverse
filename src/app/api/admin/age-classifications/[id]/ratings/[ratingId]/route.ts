@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { adminRatingFormSchema } from "@/lib/validations/admin-rating-form";
+import { logger } from "@/lib/logger";
 
 type RouteParams = { params: Promise<{ id: string; ratingId: string }> };
 
@@ -72,7 +73,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       },
     });
   } catch (error) {
-    console.error("Error in admin rating GET:", error);
+    logger.error("Error in admin rating GET", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
@@ -147,7 +148,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .eq("id", ratingId);
 
     if (updateError) {
-      console.error("Error updating rating:", updateError);
+      logger.error("Error updating rating", { error: updateError });
       return NextResponse.json({ error: "Failed to update rating" }, { status: 500 });
     }
 
@@ -160,7 +161,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .eq("rating_id", ratingId);
 
     if (deleteTransError) {
-      console.error("Error deleting rating translations:", deleteTransError);
+      logger.error("Error deleting rating translations", { error: deleteTransError });
       return NextResponse.json({ error: "Failed to update rating translations" }, { status: 500 });
     }
 
@@ -177,7 +178,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         .insert(translationRows);
 
       if (insertTransError) {
-        console.error("Error inserting rating translations:", insertTransError);
+        logger.error("Error inserting rating translations", { error: insertTransError });
         return NextResponse.json(
           { error: "Failed to update rating translations" },
           { status: 500 }
@@ -209,7 +210,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       },
     });
   } catch (error) {
-    console.error("Error in admin rating PUT:", error);
+    logger.error("Error in admin rating PUT", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
@@ -263,13 +264,13 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     const { error: deleteError } = await supabase.from("ratings").delete().eq("id", ratingId);
 
     if (deleteError) {
-      console.error("Error deleting rating:", deleteError);
+      logger.error("Error deleting rating", { error: deleteError });
       return NextResponse.json({ error: "Failed to delete rating" }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error in admin rating DELETE:", error);
+    logger.error("Error in admin rating DELETE", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { fetchCollections, createCollection } from "@/lib/services/collectionService";
 import { createCollectionSchema } from "@/lib/validations/collection";
+import { logger } from "@/lib/logger";
 
 type RouteContext = { params: Promise<{ id: string }> };
 
@@ -30,7 +31,7 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
 
     return NextResponse.json({ collections });
   } catch (error) {
-    console.error("Error in players/[id]/collections GET:", error);
+    logger.error("Error in collections GET", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -73,7 +74,7 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
 
     return NextResponse.json({ collection: result }, { status: 201 });
   } catch (error) {
-    console.error("Error in players/[id]/collections POST:", error);
+    logger.error("Error in collections POST", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

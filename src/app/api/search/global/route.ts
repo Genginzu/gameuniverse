@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GlobalSearchService } from "@/lib/services/globalSearchService";
 import type { GlobalSearchResponse } from "@/types/global-search";
+import { logger } from "@/lib/logger";
 
 const DEFAULT_LIMIT = 5;
 
@@ -51,14 +52,14 @@ export async function GET(
 
     // Surface IGDB/search errors for debugging
     if (result.errors.length > 0) {
-      console.warn("[GlobalSearch] Partial failures:", result.errors);
+      logger.warn("[GlobalSearch] Partial failures", { errors: result.errors });
     }
 
     const response = GlobalSearchService.toGlobalSearchResponse(result);
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error("Error in global search API:", error);
+    logger.error("Error in global search API", { error });
     return NextResponse.json({ error: "Internal server error during search" }, { status: 500 });
   }
 }

@@ -142,9 +142,8 @@ export default function ResetPasswordPage() {
       setTimeout(() => {
         router.push("/dashboard");
       }, 2000);
-    } catch (err) {
+    } catch {
       setError(tError("generic"));
-      console.error("Reset password error:", err);
     } finally {
       setIsSubmitting(false);
     }

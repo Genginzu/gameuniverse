@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { CharacterFavoriteService } from "@/lib/services/characterFavoriteService";
+import { logger } from "@/lib/logger";
 
 /**
  * GET /api/players/[id]/favorite-characters — Favoris publics d'un joueur.
@@ -21,7 +22,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     return NextResponse.json({ characters });
   } catch (error) {
-    console.error("Error in players/[id]/favorite-characters GET API:", error);
+    logger.error("Error in favorite-characters GET API", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

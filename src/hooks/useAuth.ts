@@ -35,7 +35,6 @@ export function useAuth() {
         if (!mounted) return;
 
         if (error) {
-          console.error("Error getting session:", error);
           // Si c'est une erreur de token, nettoyer l'état
           if (error.message?.includes("refresh") || error.message?.includes("token")) {
             clearAuthCookies();
@@ -49,8 +48,6 @@ export function useAuth() {
           loading: false,
         });
       } catch (error) {
-        console.error("Exception getting session:", error);
-
         if (!mounted) return;
 
         // Si c'est une erreur d'authentification, nettoyer
@@ -79,7 +76,6 @@ export function useAuth() {
       } = supabase.auth.onAuthStateChange(async (event, session) => {
         // Gérer les erreurs de token
         if (event === "TOKEN_REFRESHED" && !session) {
-          console.warn("Token refresh failed, clearing auth state");
           clearAuthCookies();
         }
 
@@ -104,7 +100,6 @@ export function useAuth() {
       });
       subscription = sub;
     } catch (error) {
-      console.error("Error setting up auth listener:", error);
       if (
         error instanceof Error &&
         (error.message.includes("refresh") || error.message.includes("token"))
@@ -165,14 +160,12 @@ export function useAuth() {
       // Appeler d'abord signOut de Supabase
       const { error } = await supabase.auth.signOut();
 
-      if (error) {
-        console.error("Error during signOut:", error);
-      }
+      // Ignorer les erreurs de signOut — on nettoie quand même
 
       // Nettoyer les cookies locaux
       clearAuthCookies();
-    } catch (error) {
-      console.error("Exception during signOut:", error);
+    } catch {
+      // Erreur ignorée — le nettoyage continue ci-dessous
     }
 
     // Forcer la mise à jour de l'état même en cas d'erreur

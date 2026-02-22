@@ -6,6 +6,7 @@ import type {
 import { CharacterService } from "./characterService";
 import { HybridSearchService } from "./hybridSearchService";
 import { PlayerService } from "./playerService";
+import { logger } from "@/lib/logger";
 
 const DEFAULT_LIMIT = 5;
 
@@ -47,7 +48,7 @@ export class GlobalSearchService {
 
     if (gamesResult.status === "rejected") {
       const message = `Games search failed: ${String(gamesResult.reason)}`;
-      console.error(message);
+      logger.error(message);
       errors.push(message);
     }
 
@@ -55,7 +56,7 @@ export class GlobalSearchService {
 
     if (charactersResult.status === "rejected") {
       const message = `Characters search failed: ${String(charactersResult.reason)}`;
-      console.error(message);
+      logger.error(message);
       errors.push(message);
     }
 
@@ -63,7 +64,7 @@ export class GlobalSearchService {
 
     if (playersResult.status === "rejected") {
       const message = `Players search failed: ${String(playersResult.reason)}`;
-      console.error(message);
+      logger.error(message);
       errors.push(message);
     }
 
@@ -221,7 +222,7 @@ export class GlobalSearchService {
 
       return [...nameMatchedCharacters, ...gameCorrelated].slice(0, limit);
     } catch (error) {
-      console.error("Game-character correlation failed:", error);
+      logger.error("Game-character correlation failed", { error });
       return nameMatchedCharacters;
     }
   }

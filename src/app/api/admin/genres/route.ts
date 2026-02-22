@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { genreQuerySchema, adminGenreFormSchema } from "@/lib/validations/admin-genre-form";
+import { logger } from "@/lib/logger";
 
 /**
  * GET /api/admin/genres - List genres with pagination, search, sort, and game count
@@ -67,7 +68,7 @@ export async function GET(request: NextRequest) {
     const { count: totalCount, error: countError } = await countQuery;
 
     if (countError) {
-      console.error("Error counting genres:", countError);
+      logger.error("Error counting genres", { error: countError });
       return NextResponse.json({ error: "Failed to count genres" }, { status: 500 });
     }
 
@@ -92,7 +93,7 @@ export async function GET(request: NextRequest) {
     const { data: genresRaw, error: dataError } = await dataQuery;
 
     if (dataError) {
-      console.error("Error fetching genres:", dataError);
+      logger.error("Error fetching genres", { error: dataError });
       return NextResponse.json({ error: "Failed to fetch genres" }, { status: 500 });
     }
 
@@ -167,7 +168,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Error in admin genres GET:", error);
+    logger.error("Error in admin genres GET", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
@@ -207,7 +208,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (genreError) {
-      console.error("Error creating genre:", genreError);
+      logger.error("Error creating genre", { error: genreError });
 
       if (genreError.code === "23505") {
         return NextResponse.json(
@@ -232,7 +233,7 @@ export async function POST(request: NextRequest) {
       .insert(translationRows);
 
     if (translationError) {
-      console.error("Error creating genre translations:", translationError);
+      logger.error("Error creating genre translations", { error: translationError });
       // Clean up the genre if translations fail
       await supabase.from("genres").delete().eq("id", genre.id);
       return NextResponse.json({ error: "Failed to create genre translations" }, { status: 500 });
@@ -254,7 +255,7 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("Error in admin genres POST:", error);
+    logger.error("Error in admin genres POST", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });

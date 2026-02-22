@@ -3,6 +3,7 @@ import { z } from "zod";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { genreTranslationSchema } from "@/lib/validations/admin-genre-form";
+import { logger } from "@/lib/logger";
 
 // Validation schema for PUT body (slug is immutable, not in body)
 const updateGenreSchema = z.object({
@@ -41,7 +42,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       .eq("genre_id", genre.id);
 
     if (countError) {
-      console.error("Error counting genre games:", countError);
+      logger.error("Error counting genre games", { error: countError });
     }
 
     return NextResponse.json({
@@ -57,7 +58,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       },
     });
   } catch (error) {
-    console.error("Error in admin genre GET:", error);
+    logger.error("Error in admin genre GET", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
@@ -119,7 +120,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       .upsert(translationRows, { onConflict: "genre_id,language_code" });
 
     if (upsertError) {
-      console.error("Error upserting genre translations:", upsertError);
+      logger.error("Error upserting genre translations", { error: upsertError });
       return NextResponse.json({ error: "Failed to update genre translations" }, { status: 500 });
     }
 
@@ -153,7 +154,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       },
     });
   } catch (error) {
-    console.error("Error in admin genre PUT:", error);
+    logger.error("Error in admin genre PUT", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
@@ -203,7 +204,7 @@ export async function DELETE(
       .eq("genre_id", existing.id);
 
     if (usageError) {
-      console.error("Error checking genre usage:", usageError);
+      logger.error("Error checking genre usage", { error: usageError });
       return NextResponse.json({ error: "Failed to check genre usage" }, { status: 500 });
     }
 
@@ -230,7 +231,7 @@ export async function DELETE(
         .eq("genre_id", existing.id);
 
       if (cleanupError) {
-        console.error("Error cleaning up game_genres:", cleanupError);
+        logger.error("Error cleaning up game_genres", { error: cleanupError });
         return NextResponse.json(
           { error: "Failed to remove genre references from games" },
           { status: 500 }
@@ -245,7 +246,7 @@ export async function DELETE(
       .eq("genre_id", existing.id);
 
     if (translationDeleteError) {
-      console.error("Error deleting genre translations:", translationDeleteError);
+      logger.error("Error deleting genre translations", { error: translationDeleteError });
       return NextResponse.json({ error: "Failed to delete genre translations" }, { status: 500 });
     }
 
@@ -253,13 +254,13 @@ export async function DELETE(
     const { error: deleteError } = await supabase.from("genres").delete().eq("id", existing.id);
 
     if (deleteError) {
-      console.error("Error deleting genre:", deleteError);
+      logger.error("Error deleting genre", { error: deleteError });
       return NextResponse.json({ error: "Failed to delete genre" }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error in admin genre DELETE:", error);
+    logger.error("Error in admin genre DELETE", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });

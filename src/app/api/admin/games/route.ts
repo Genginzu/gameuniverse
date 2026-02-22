@@ -12,6 +12,7 @@ import {
   invalidateGameCache,
   verifyGameDeletionConsistency,
 } from "@/lib/realtime-updates";
+import { logger } from "@/lib/logger";
 
 // Types for Supabase query results
 interface AdminGameRow {
@@ -103,7 +104,7 @@ export async function GET(request: NextRequest) {
         .ilike("title", `%${search.trim()}%`);
 
       if (searchError) {
-        console.error("Error searching game translations:", searchError);
+        logger.error("Error searching game translations", { error: searchError });
         return NextResponse.json({ error: "Failed to search games" }, { status: 500 });
       }
 
@@ -190,7 +191,7 @@ export async function GET(request: NextRequest) {
     const { count: totalCount, error: countError } = await countQuery;
 
     if (countError) {
-      console.error("Error counting games:", countError);
+      logger.error("Error counting games", { error: countError });
       return NextResponse.json({ error: "Failed to count games" }, { status: 500 });
     }
 
@@ -205,7 +206,7 @@ export async function GET(request: NextRequest) {
       .range(offset, offset + limit - 1);
 
     if (error) {
-      console.error("Error fetching admin games:", error);
+      logger.error("Error fetching admin games", { error });
       return NextResponse.json({ error: "Failed to fetch games" }, { status: 500 });
     }
 
@@ -282,7 +283,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Error in admin games GET:", error);
+    logger.error("Error in admin games GET", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
@@ -325,7 +326,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (gameError) {
-      console.error("Error creating game:", gameError);
+      logger.error("Error creating game", { error: gameError });
 
       if (gameError.code === "23505") {
         // Unique constraint violation
@@ -374,7 +375,7 @@ export async function POST(request: NextRequest) {
           .insert(screenshotsWithGameId);
 
         if (screenshotsError) {
-          console.warn("Failed to create screenshots:", screenshotsError);
+          logger.warn("Failed to create screenshots", { error: screenshotsError });
         }
       }
 
@@ -385,7 +386,7 @@ export async function POST(request: NextRequest) {
           .insert(artworkWithGameId);
 
         if (artworkError) {
-          console.warn("Failed to create artwork:", artworkError);
+          logger.warn("Failed to create artwork", { error: artworkError });
         }
       }
 
@@ -394,7 +395,7 @@ export async function POST(request: NextRequest) {
         const { error: videosError } = await supabase.from("game_videos").insert(videosWithGameId);
 
         if (videosError) {
-          console.warn("Failed to create videos:", videosError);
+          logger.warn("Failed to create videos", { error: videosError });
         }
       }
 
@@ -403,7 +404,7 @@ export async function POST(request: NextRequest) {
         const { error: pricesError } = await supabase.from("game_prices").insert(pricesWithGameId);
 
         if (pricesError) {
-          console.warn("Failed to create prices:", pricesError);
+          logger.warn("Failed to create prices", { error: pricesError });
         }
       }
 
@@ -419,7 +420,7 @@ export async function POST(request: NextRequest) {
       );
     } catch (relatedDataError) {
       // If any related data insertion fails, clean up the game
-      console.error("Error creating related data:", relatedDataError);
+      logger.error("Error creating related data", { error: relatedDataError });
 
       await supabase.from("games").delete().eq("id", gameId);
 
@@ -435,7 +436,7 @@ export async function POST(request: NextRequest) {
       }
     }
   } catch (error) {
-    console.error("Error in admin games POST:", error);
+    logger.error("Error in admin games POST", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
@@ -491,7 +492,7 @@ export async function PATCH(request: NextRequest) {
         .in("id", game_ids);
 
       if (fetchError) {
-        console.error("Error fetching games for deletion:", fetchError);
+        logger.error("Error fetching games for deletion", { error: fetchError });
         return NextResponse.json({ error: "Failed to fetch games for deletion" }, { status: 500 });
       }
 
@@ -514,13 +515,13 @@ export async function PATCH(request: NextRequest) {
         },
       }));
 
-      console.warn(`Bulk deleting ${gamesToDelete.length} games:`, deletionSummary);
+      logger.warn("Bulk deleting games", { count: gamesToDelete.length, deletionSummary });
 
       // Perform bulk deletion (CASCADE will handle all related data)
       const { error } = await supabase.from("games").delete().in("id", game_ids);
 
       if (error) {
-        console.error("Error bulk deleting games:", error);
+        logger.error("Error bulk deleting games", { error });
         return NextResponse.json({ error: "Failed to delete games" }, { status: 500 });
       }
 
@@ -528,10 +529,9 @@ export async function PATCH(request: NextRequest) {
       const consistencyCheck = await verifyGameDeletionConsistency(game_ids, supabase);
 
       if (!consistencyCheck.isConsistent) {
-        console.warn(
-          `Warning: Deletion consistency issues detected:`,
-          consistencyCheck.inconsistencies
-        );
+        logger.warn("Deletion consistency issues detected", {
+          inconsistencies: consistencyCheck.inconsistencies,
+        });
       }
 
       // Send real-time notification for bulk delete
@@ -550,7 +550,7 @@ export async function PATCH(request: NextRequest) {
       const { error } = await supabase.from("games").update(data).in("id", game_ids);
 
       if (error) {
-        console.error("Error bulk updating games:", error);
+        logger.error("Error bulk updating games", { error });
         return NextResponse.json({ error: "Failed to update games" }, { status: 500 });
       }
 
@@ -566,7 +566,7 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json({ error: "Invalid operation or missing data" }, { status: 400 });
   } catch (error) {
-    console.error("Error in admin games PATCH:", error);
+    logger.error("Error in admin games PATCH", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });

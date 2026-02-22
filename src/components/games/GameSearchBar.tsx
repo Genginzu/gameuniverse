@@ -110,7 +110,6 @@ export function GameSearchBar({
         }
       } catch (error) {
         if (error instanceof Error && error.name !== "AbortError") {
-          console.error("Search error:", error);
           setResults([]);
           setIsLoading(false);
         }
@@ -181,9 +180,8 @@ export function GameSearchBar({
             await fetch(`/api/games/${item.slug}/sync`, {
               method: "POST",
             });
-          } catch (error) {
-            // Fire-and-forget, log error but don't block navigation
-            console.error("Background sync error:", error);
+          } catch {
+            // Fire-and-forget — don't block navigation
           }
         }
       } else {
@@ -202,7 +200,6 @@ export function GameSearchBar({
           const data = await response.json();
 
           if (!response.ok) {
-            console.error("Import failed:", response.status, data);
             // Show user-friendly error
             alert(data.error || `Import failed with status ${response.status}`);
             throw new Error(data.error || `Import failed with status ${response.status}`);
@@ -220,10 +217,8 @@ export function GameSearchBar({
               router.push(`/${locale}/games/${data.game.slug}`);
             }
           }
-        } catch (error) {
-          console.error("Import error:", error);
+        } catch {
           setImportingId(null);
-          // Could show a toast here for error feedback
         }
       }
     },
@@ -254,8 +249,8 @@ export function GameSearchBar({
       setResults(data.results);
       setHasMore(data.hasMore);
       setIsExpanded(true);
-    } catch (error) {
-      console.error("Load more error:", error);
+    } catch {
+      // Search expansion failed silently
     } finally {
       setIsLoadingMore(false);
     }
@@ -299,7 +294,7 @@ export function GameSearchBar({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => isHybridMode && searchQuery.length >= 2 && setIsOpen(true)}
-            className="h-10 w-full rounded-xl border-2 border-blue-200 bg-blue-50/50 pl-11 pr-10 text-sm text-gray-900 placeholder-gray-500 shadow-sm transition-all duration-300 hover:border-blue-300 hover:bg-white hover:shadow-md focus:border-blue-500 focus:bg-white focus:shadow-lg focus:ring-2 focus:ring-blue-500/20 sm:h-12 sm:pl-12 sm:pr-12 sm:text-base dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400 dark:hover:border-gray-500 dark:hover:bg-gray-700 dark:focus:border-blue-500 dark:focus:bg-gray-700"
+            className="h-10 w-full rounded-xl border-2 border-blue-200 bg-blue-50/50 pl-11 pr-10 text-sm text-gray-900 placeholder-gray-500 shadow-sm transition-all duration-300 hover:border-blue-300 hover:bg-white hover:shadow-md focus:border-blue-500 focus:bg-white focus:shadow-lg focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400 dark:hover:border-gray-500 dark:hover:bg-gray-700 dark:focus:border-blue-500 dark:focus:bg-gray-700 sm:h-12 sm:pl-12 sm:pr-12 sm:text-base"
           />
 
           {/* Clear button */}

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GameImportService } from "@/lib/services/gameImportService";
+import { logger } from "@/lib/logger";
 
 /**
  * POST /api/games/import
@@ -65,7 +66,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       { status: 201 }
     );
   } catch (error) {
-    console.error("Error in game import API:", error);
+    logger.error("Error in game import API", { error });
     return NextResponse.json({ error: "Internal server error during import" }, { status: 500 });
   }
 }

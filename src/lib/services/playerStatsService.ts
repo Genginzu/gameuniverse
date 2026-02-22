@@ -50,19 +50,22 @@ export function computeFavoriteGenre(entries: LibraryEntryWithGenres[]): Favorit
 
   if (genrePlayTime.size === 0) return null;
 
+  // Tie-breaking must use rounded values so the alphabetical rule applies
+  // after rounding, not on raw floating-point sums.
   let bestGenre = "";
-  let bestTime = -1;
+  let bestRounded = -1;
 
   for (const [genre, time] of genrePlayTime) {
-    if (time > bestTime || (time === bestTime && genre < bestGenre)) {
+    const rounded = Math.round(time * 10) / 10;
+    if (rounded > bestRounded || (rounded === bestRounded && genre < bestGenre)) {
       bestGenre = genre;
-      bestTime = time;
+      bestRounded = rounded;
     }
   }
 
   return {
     name: bestGenre,
-    playTime: Math.round(bestTime * 10) / 10,
+    playTime: bestRounded,
   };
 }
 

@@ -3,6 +3,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { commentSchema } from "@/lib/validations/comment";
 import type { AdminCommentDetail } from "@/types/admin-comments";
+import { logger } from "@/lib/logger";
 
 type RouteParams = { params: Promise<{ id: string }> };
 
@@ -75,7 +76,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       if (error.code === "PGRST116") {
         return NextResponse.json({ error: "Comment not found" }, { status: 404 });
       }
-      console.error("Error fetching comment:", error);
+      logger.error("Error fetching comment", { error });
       return NextResponse.json({ error: "Failed to fetch comment" }, { status: 500 });
     }
 
@@ -88,7 +89,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json(toAdminCommentDetail(row, playerName));
   } catch (error) {
-    console.error("Error in admin comment GET:", error);
+    logger.error("Error in admin comment GET", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
@@ -148,7 +149,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .eq("id", commentId);
 
     if (updateError) {
-      console.error("Error updating comment:", updateError);
+      logger.error("Error updating comment", { error: updateError });
       return NextResponse.json({ error: "Failed to update comment" }, { status: 500 });
     }
 
@@ -160,7 +161,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .single();
 
     if (fetchError || !updated) {
-      console.error("Error fetching updated comment:", fetchError);
+      logger.error("Error fetching updated comment", { error: fetchError });
       return NextResponse.json({ error: "Failed to fetch updated comment" }, { status: 500 });
     }
 
@@ -169,7 +170,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json(toAdminCommentDetail(row, playerName));
   } catch (error) {
-    console.error("Error in admin comment PUT:", error);
+    logger.error("Error in admin comment PUT", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
@@ -211,13 +212,13 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       .eq("id", commentId);
 
     if (deleteError) {
-      console.error("Error deleting comment:", deleteError);
+      logger.error("Error deleting comment", { error: deleteError });
       return NextResponse.json({ error: "Failed to delete comment" }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error in admin comment DELETE:", error);
+    logger.error("Error in admin comment DELETE", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });

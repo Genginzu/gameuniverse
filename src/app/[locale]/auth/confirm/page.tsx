@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createServerClient } from "@/lib/supabase-server";
+import { logger } from "@/lib/logger";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { XCircle } from "lucide-react";
@@ -59,7 +60,7 @@ export default async function ConfirmPage({ searchParams }: ConfirmPageProps) {
     });
 
     if (error) {
-      console.error("Confirmation error:", error);
+      logger.error("Confirmation error", { error: error.message });
       return (
         <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
           <Card className="mx-auto w-full max-w-md">
@@ -90,7 +91,7 @@ export default async function ConfirmPage({ searchParams }: ConfirmPageProps) {
     const redirectTo = params.redirect_to || "/dashboard";
     redirect(redirectTo);
   } catch (error) {
-    console.error("Unexpected error:", error);
+    logger.error("Unexpected error in confirm page", { error });
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
         <Card className="mx-auto w-full max-w-md">

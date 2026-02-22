@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { adminDescriptorFormSchema } from "@/lib/validations/admin-descriptor-form";
+import { logger } from "@/lib/logger";
 
 type RouteParams = { params: Promise<{ id: string; descriptorId: string }> };
 
@@ -61,7 +62,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       },
     });
   } catch (error) {
-    console.error("Error in admin descriptor GET:", error);
+    logger.error("Error in admin descriptor GET", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
@@ -129,7 +130,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .eq("id", descriptorId);
 
     if (updateError) {
-      console.error("Error updating descriptor:", updateError);
+      logger.error("Error updating descriptor", { error: updateError });
       return NextResponse.json({ error: "Failed to update descriptor" }, { status: 500 });
     }
 
@@ -140,7 +141,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .eq("content_descriptor_id", descriptorId);
 
     if (deleteTransError) {
-      console.error("Error deleting descriptor translations:", deleteTransError);
+      logger.error("Error deleting descriptor translations", { error: deleteTransError });
       return NextResponse.json(
         { error: "Failed to update descriptor translations" },
         { status: 500 }
@@ -159,7 +160,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .insert(translationRows);
 
     if (insertTransError) {
-      console.error("Error inserting descriptor translations:", insertTransError);
+      logger.error("Error inserting descriptor translations", { error: insertTransError });
       return NextResponse.json(
         { error: "Failed to update descriptor translations" },
         { status: 500 }
@@ -187,7 +188,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       },
     });
   } catch (error) {
-    console.error("Error in admin descriptor PUT:", error);
+    logger.error("Error in admin descriptor PUT", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
@@ -244,7 +245,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       .eq("content_descriptor_id", descriptorId);
 
     if (translationDeleteError) {
-      console.error("Error deleting descriptor translations:", translationDeleteError);
+      logger.error("Error deleting descriptor translations", { error: translationDeleteError });
       return NextResponse.json(
         { error: "Failed to delete descriptor translations" },
         { status: 500 }
@@ -258,13 +259,13 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       .eq("id", descriptorId);
 
     if (deleteError) {
-      console.error("Error deleting descriptor:", deleteError);
+      logger.error("Error deleting descriptor", { error: deleteError });
       return NextResponse.json({ error: "Failed to delete descriptor" }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error in admin descriptor DELETE:", error);
+    logger.error("Error in admin descriptor DELETE", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });

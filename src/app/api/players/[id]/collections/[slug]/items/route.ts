@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { addItem } from "@/lib/services/collectionService";
 import { addCollectionItemSchema } from "@/lib/validations/collection";
+import { logger } from "@/lib/logger";
 
 type RouteContext = { params: Promise<{ id: string; slug: string }> };
 
@@ -49,7 +50,7 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
       return NextResponse.json({ error: "Ce jeu est déjà dans la collection" }, { status: 409 });
     }
 
-    console.error("Error in players/[id]/collections/[slug]/items POST:", error);
+    logger.error("Error in collection items POST", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

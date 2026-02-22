@@ -6,6 +6,7 @@ import {
   deleteCollection,
 } from "@/lib/services/collectionService";
 import { updateCollectionSchema } from "@/lib/validations/collection";
+import { logger } from "@/lib/logger";
 
 type RouteContext = { params: Promise<{ id: string; slug: string }> };
 
@@ -37,7 +38,7 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
 
     return NextResponse.json({ collection });
   } catch (error) {
-    console.error("Error in players/[id]/collections/[slug] GET:", error);
+    logger.error("Error in collection GET", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -81,7 +82,7 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
 
     return NextResponse.json({ collection: result });
   } catch (error) {
-    console.error("Error in players/[id]/collections/[slug] PATCH:", error);
+    logger.error("Error in collection PATCH", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -116,7 +117,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteContext) {
 
     return new NextResponse(null, { status: 204 });
   } catch (error) {
-    console.error("Error in players/[id]/collections/[slug] DELETE:", error);
+    logger.error("Error in collection DELETE", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

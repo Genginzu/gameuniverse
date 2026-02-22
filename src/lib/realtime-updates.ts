@@ -1,4 +1,5 @@
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { logger } from "@/lib/logger";
 
 /**
  * Real-time update types
@@ -30,10 +31,8 @@ export async function broadcastGameUpdate(event: GameUpdateEvent) {
       event: "game_update",
       payload: event,
     });
-
-    console.warn("Real-time update broadcasted:", event);
   } catch (error) {
-    console.error("Error broadcasting real-time update:", error);
+    logger.error("Error broadcasting real-time update", { error });
     // Don't throw error as this is not critical for the main operation
   }
 }
@@ -41,7 +40,11 @@ export async function broadcastGameUpdate(event: GameUpdateEvent) {
 /**
  * Notify clients when a game is created
  */
-export async function notifyGameCreated(gameId: string, slug: string, data?: Record<string, unknown>) {
+export async function notifyGameCreated(
+  gameId: string,
+  slug: string,
+  data?: Record<string, unknown>
+) {
   await broadcastGameUpdate({
     type: "game_created",
     gameId,
@@ -54,7 +57,11 @@ export async function notifyGameCreated(gameId: string, slug: string, data?: Rec
 /**
  * Notify clients when a game is updated
  */
-export async function notifyGameUpdated(gameId: string, slug?: string, data?: Record<string, unknown>) {
+export async function notifyGameUpdated(
+  gameId: string,
+  slug?: string,
+  data?: Record<string, unknown>
+) {
   await broadcastGameUpdate({
     type: "game_updated",
     gameId,
@@ -138,10 +145,8 @@ export async function invalidateGameCache(gameIds: string | string[]) {
     // 4. Refresh materialized views
     // 5. Clear application-level caches
 
-    console.warn("Cache invalidation requested for games:", ids);
-
     // Simulate comprehensive cache invalidation
-    const cacheInvalidationTasks = [
+    const _cacheInvalidationTasks = [
       // Clear game detail caches
       ...ids.map((id) => `game:${id}`),
       // Clear game list caches (pagination, search results, filters)
@@ -158,15 +163,13 @@ export async function invalidateGameCache(gameIds: string | string[]) {
       ...ids.map((id) => `game:${id}:prices`),
     ];
 
-    console.warn("Cache invalidation tasks:", cacheInvalidationTasks);
-
     // For now, we'll just log the cache invalidation
     // In the future, this could integrate with Redis, CDN APIs, etc.
 
     // Simulate search index updates
     await updateSearchIndexes(ids);
   } catch (error) {
-    console.error("Error invalidating game cache:", error);
+    logger.error("Error invalidating game cache", { error });
   }
 }
 
@@ -175,8 +178,6 @@ export async function invalidateGameCache(gameIds: string | string[]) {
  */
 async function updateSearchIndexes(gameIds: string[]) {
   try {
-    console.warn("Updating search indexes for games:", gameIds);
-
     // In a real implementation, this would:
     // 1. Remove games from Elasticsearch/Algolia indexes
     // 2. Update full-text search indexes in PostgreSQL
@@ -194,7 +195,7 @@ async function updateSearchIndexes(gameIds: string[]) {
     // Simulate async index updates
     await Promise.resolve();
   } catch (error) {
-    console.error("Error updating search indexes:", error);
+    logger.error("Error updating search indexes", { error });
   }
 }
 
@@ -254,7 +255,7 @@ export async function verifyGameDeletionConsistency(
       inconsistencies,
     };
   } catch (error) {
-    console.error("Error verifying game deletion consistency:", error);
+    logger.error("Error verifying game deletion consistency", { error });
     return {
       isConsistent: false,
       inconsistencies: [`Error during consistency check: ${error}`],

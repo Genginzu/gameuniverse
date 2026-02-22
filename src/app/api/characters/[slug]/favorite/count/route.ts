@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { CharacterFavoriteService } from "@/lib/services/characterFavoriteService";
+import { logger } from "@/lib/logger";
 
 type RouteContext = { params: Promise<{ slug: string }> };
 
@@ -41,7 +42,7 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
 
     return NextResponse.json({ count });
   } catch (error) {
-    console.error("Error in favorite count GET API:", error);
+    logger.error("Error in favorite count GET API", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

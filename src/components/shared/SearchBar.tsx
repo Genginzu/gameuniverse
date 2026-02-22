@@ -55,14 +55,14 @@ export interface SearchBarProps<T extends SearchResultItem = SearchResultItem> {
 /**
  * Generic SearchBar component that supports both simple debounced search
  * and hybrid search with dropdown results.
- * 
+ *
  * @example
  * // Simple mode with debounced callback
- * <SearchBar 
- *   onSearch={(query) => console.log(query)} 
+ * <SearchBar
+ *   onSearch={(query) => console.log(query)}
  *   placeholder="Search..."
  * />
- * 
+ *
  * // Hybrid mode with dropdown results
  * <SearchBar
  *   onSearch={(query) => console.log(query)}
@@ -85,7 +85,7 @@ export function SearchBar<T extends SearchResultItem = SearchResultItem>({
   searchIndicatorText = "Searching for",
 }: SearchBarProps<T>) {
   const [searchQuery, setSearchQuery] = useState(initialValue);
-  
+
   // Hybrid search state
   const [results, setResults] = useState<T[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -142,7 +142,6 @@ export function SearchBar<T extends SearchResultItem = SearchResultItem>({
         }
       } catch (error) {
         if (error instanceof Error && error.name !== "AbortError") {
-          console.error("Search error:", error);
           setResults([]);
           setIsLoading(false);
         }
@@ -196,7 +195,7 @@ export function SearchBar<T extends SearchResultItem = SearchResultItem>({
   const handleSelectResult = useCallback(
     (result: T) => {
       if (!hybridConfig) return;
-      
+
       setImportingId(result.id);
       hybridConfig.onSelect(result);
       setIsOpen(false);
@@ -313,7 +312,7 @@ export function SearchBar<T extends SearchResultItem = SearchResultItem>({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => isHybridMode && searchQuery.length >= minQueryLength && setIsOpen(true)}
-            className="h-12 w-full rounded-2xl border-0 bg-white pl-12 pr-12 text-sm text-gray-900 placeholder-gray-400 shadow-lg ring-1 ring-gray-200 transition-all duration-300 hover:shadow-xl focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:h-14 sm:text-base dark:bg-gray-800 dark:text-white dark:placeholder-gray-500 dark:ring-gray-700"
+            className="h-12 w-full rounded-2xl border-0 bg-white pl-12 pr-12 text-sm text-gray-900 placeholder-gray-400 shadow-lg ring-1 ring-gray-200 transition-all duration-300 hover:shadow-xl focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500 dark:ring-gray-700 sm:h-14 sm:text-base"
           />
 
           {/* Clear button */}

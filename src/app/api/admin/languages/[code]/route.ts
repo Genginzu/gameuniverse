@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { requireAdmin } from "@/lib/auth-admin";
+import { logger } from "@/lib/logger";
 
 // Validation schema for PUT body (code is not modifiable)
 const updateLanguageSchema = z.object({
@@ -43,7 +44,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     return NextResponse.json({ language });
   } catch (error) {
-    console.error("Error in admin language GET:", error);
+    logger.error("Error in admin language GET", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
@@ -102,13 +103,13 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       .single();
 
     if (error) {
-      console.error("Error updating language:", error);
+      logger.error("Error updating language", { error });
       return NextResponse.json({ error: "Failed to update language" }, { status: 500 });
     }
 
     return NextResponse.json({ language });
   } catch (error) {
-    console.error("Error in admin language PUT:", error);
+    logger.error("Error in admin language PUT", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
@@ -158,7 +159,7 @@ export async function DELETE(
       .eq("language_code", code);
 
     if (usageError) {
-      console.error("Error checking language usage:", usageError);
+      logger.error("Error checking language usage", { error: usageError });
       return NextResponse.json({ error: "Failed to check language usage" }, { status: 500 });
     }
 
@@ -185,7 +186,7 @@ export async function DELETE(
         .eq("language_code", code);
 
       if (cleanupError) {
-        console.error("Error cleaning up game_languages:", cleanupError);
+        logger.error("Error cleaning up game_languages", { error: cleanupError });
         return NextResponse.json(
           { error: "Failed to remove language references from games" },
           { status: 500 }
@@ -200,13 +201,13 @@ export async function DELETE(
       .eq("code", code);
 
     if (deleteError) {
-      console.error("Error deleting language:", deleteError);
+      logger.error("Error deleting language", { error: deleteError });
       return NextResponse.json({ error: "Failed to delete language" }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error in admin language DELETE:", error);
+    logger.error("Error in admin language DELETE", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });

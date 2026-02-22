@@ -6,6 +6,7 @@ import {
   adminCharacterQuerySchema,
 } from "@/lib/validations/admin-character-form";
 import { characterFormToPayload } from "@/lib/utils/character-form-utils";
+import { logger } from "@/lib/logger";
 
 // Types for Supabase query results
 interface CharacterRow {
@@ -109,7 +110,7 @@ export async function GET(request: NextRequest) {
     const { count: totalCount, error: countError } = await countQuery;
 
     if (countError) {
-      console.error("Error counting characters:", countError);
+      logger.error("Error counting characters", { error: countError });
       return NextResponse.json({ error: "Failed to count characters" }, { status: 500 });
     }
 
@@ -120,7 +121,7 @@ export async function GET(request: NextRequest) {
       .range(offset, offset + limit - 1);
 
     if (error) {
-      console.error("Error fetching admin characters:", error);
+      logger.error("Error fetching admin characters", { error });
       return NextResponse.json({ error: "Failed to fetch characters" }, { status: 500 });
     }
 
@@ -158,7 +159,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Error in admin characters GET:", error);
+    logger.error("Error in admin characters GET", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
@@ -209,7 +210,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (charError) {
-      console.error("Error creating character:", charError);
+      logger.error("Error creating character", { error: charError });
 
       if (charError.code === "23505") {
         return NextResponse.json(
@@ -288,7 +289,7 @@ export async function POST(request: NextRequest) {
         { status: 201 }
       );
     } catch (relatedDataError) {
-      console.error("Error creating related data:", relatedDataError);
+      logger.error("Error creating related data", { error: relatedDataError });
 
       // Clean up the character if related data insertion fails
       await db.from("characters").delete().eq("id", characterId);
@@ -302,7 +303,7 @@ export async function POST(request: NextRequest) {
       );
     }
   } catch (error) {
-    console.error("Error in admin characters POST:", error);
+    logger.error("Error in admin characters POST", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });

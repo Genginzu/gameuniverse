@@ -38,8 +38,7 @@ export function useAsyncErrorBoundary() {
       } catch (error) {
         // Si on a une valeur de fallback, on l'utilise et on affiche juste un toast
         if (fallbackValue !== undefined) {
-          const appError = classifyError(error);
-          console.error("Async error caught with fallback:", appError);
+          // Erreur capturée avec fallback — on retourne la valeur par défaut
           return fallbackValue;
         }
 

@@ -2,10 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { adminRatingFormSchema } from "@/lib/validations/admin-rating-form";
-
-/**
- * GET /api/admin/age-classifications/[id]/ratings - List ratings for a rating system
- */
+import { logger } from "@/lib/logger";
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     await requireAdmin();
@@ -36,7 +33,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       .eq("rating_system_id", id);
 
     if (error) {
-      console.error("Error fetching ratings:", error);
+      logger.error("Error fetching ratings", { error });
       return NextResponse.json({ error: "Failed to fetch ratings" }, { status: 500 });
     }
 
@@ -109,7 +106,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     return NextResponse.json({ ratings });
   } catch (error) {
-    console.error("Error in admin ratings GET:", error);
+    logger.error("Error in admin ratings GET", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
@@ -187,7 +184,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       .single();
 
     if (createError || !rating) {
-      console.error("Error creating rating:", createError);
+      logger.error("Error creating rating", { error: createError });
       return NextResponse.json({ error: "Failed to create rating" }, { status: 500 });
     }
 
@@ -206,7 +203,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         .insert(translationRows);
 
       if (translationError) {
-        console.error("Error creating rating translations:", translationError);
+        logger.error("Error creating rating translations", { error: translationError });
         // Rollback: delete the rating we just created
         await supabase.from("ratings").delete().eq("id", rating.id);
         return NextResponse.json(
@@ -230,7 +227,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       { status: 201 }
     );
   } catch (error) {
-    console.error("Error in admin ratings POST:", error);
+    logger.error("Error in admin ratings POST", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });

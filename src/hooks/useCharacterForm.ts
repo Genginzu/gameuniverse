@@ -111,8 +111,8 @@ export function useCharacterForm(
             .sort((a: AvailableCharacter, b: AvailableCharacter) => a.name.localeCompare(b.name));
           setAvailableCharacters(chars);
         }
-      } catch (err) {
-        console.error("Failed to load character form options:", err);
+      } catch {
+        // Erreur ignorée — les options seront vides
       } finally {
         if (mounted) setLoadingOptions(false);
       }

@@ -3,6 +3,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { playerPlaytimeSchema } from "@/lib/validations/player-playtime";
 import { computePlaytimeAverage } from "@/lib/services/player-playtime-utils";
 import type { PlayerPlaytimeEntry, PlayerPlaytimeContributor } from "@/types/game";
+import { logger } from "@/lib/logger";
 
 /**
  * Resolve a game slug to its id. Returns the game id or null.
@@ -175,7 +176,7 @@ export async function GET(
     const stats = await fetchPlaytimeStats(supabase, gameId, user?.id ?? null);
     return NextResponse.json(stats);
   } catch (error) {
-    console.error("Error fetching player playtime stats:", error);
+    logger.error("Error fetching player playtime stats", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -254,7 +255,7 @@ export async function POST(
         .eq("game_id", gameId);
 
       if (updateError) {
-        console.error("Failed to update playtime:", updateError);
+        logger.error("Failed to update playtime", { error: updateError });
         return NextResponse.json({ error: "Failed to update playtime" }, { status: 500 });
       }
     } else {
@@ -269,7 +270,7 @@ export async function POST(
         if (insertError.code === "PGRST205") {
           return NextResponse.json({ error: "Feature not available" }, { status: 503 });
         }
-        console.error("Failed to insert playtime:", insertError);
+        logger.error("Failed to insert playtime", { error: insertError });
         return NextResponse.json({ error: "Failed to save playtime" }, { status: 500 });
       }
     }
@@ -277,7 +278,7 @@ export async function POST(
     const stats = await fetchPlaytimeStats(supabase, gameId, user.id);
     return NextResponse.json(stats);
   } catch (error) {
-    console.error("Error submitting player playtime:", error);
+    logger.error("Error submitting player playtime", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

@@ -7,6 +7,7 @@ import {
   handleApiError,
 } from "@/lib/api-utils";
 import type { GameRowWithRelations, GenreTranslationRow } from "@/lib/types/supabase-queries";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   try {
@@ -57,7 +58,7 @@ export async function GET(request: NextRequest) {
       const { data: matchingTranslations, error: searchError } = await searchQuery;
 
       if (searchError) {
-        console.error("Error searching game translations:", searchError);
+        logger.error("Error searching game translations", { error: searchError });
         return NextResponse.json({ error: "Failed to search games" }, { status: 500 });
       }
 
@@ -166,7 +167,7 @@ export async function GET(request: NextRequest) {
     const { count: totalCount, error: countError } = await countQuery;
 
     if (countError) {
-      console.error("Error counting games:", countError);
+      logger.error("Error counting games", { error: countError });
       return NextResponse.json({ error: "Failed to count games" }, { status: 500 });
     }
 
@@ -176,7 +177,7 @@ export async function GET(request: NextRequest) {
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Error fetching games:", error);
+      logger.error("Error fetching games", { error });
       return NextResponse.json({ error: "Failed to fetch games" }, { status: 500 });
     }
 
@@ -274,7 +275,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Unexpected error in games API:", error);
+    logger.error("Error in games API", { error });
     const errorResponse = handleApiError(error, "Failed to fetch games");
     return NextResponse.json(errorResponse, { status: 500 });
   }

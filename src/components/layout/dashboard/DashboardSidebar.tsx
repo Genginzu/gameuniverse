@@ -238,8 +238,8 @@ function SidebarContent({
                     setIsUserMenuOpen(false);
                     try {
                       await signOut();
-                    } catch (error) {
-                      console.error("Error signing out:", error);
+                    } catch {
+                      // Sign out failed silently
                     }
                   }}
                 >

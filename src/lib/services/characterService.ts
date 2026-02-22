@@ -6,6 +6,7 @@ import {
   CharacterRelationship,
 } from "@/types/character";
 import { createServerClient } from "@/lib/supabase-server";
+import { logger } from "@/lib/logger";
 import { BaseService, FetchOptions, PaginatedResponse, EntityMetadata } from "./baseService";
 
 // Type definitions for Supabase query results
@@ -220,7 +221,7 @@ export class CharacterService {
     const { count: totalCount, error: countError } = await countQuery;
 
     if (countError) {
-      console.error("Error counting characters:", countError);
+      logger.error("Error counting characters", { error: countError });
       throw new Error(`Failed to count characters: ${countError.message}`);
     }
 
@@ -230,7 +231,7 @@ export class CharacterService {
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Error fetching characters:", error);
+      logger.error("Error fetching characters", { error });
       throw new Error(`Failed to fetch characters: ${error.message}`);
     }
 
@@ -370,7 +371,7 @@ export class CharacterService {
         // No rows returned - character not found
         return null;
       }
-      console.error("Error fetching character details:", error);
+      logger.error("Error fetching character details", { error, slug });
       throw new Error(`Failed to fetch character details: ${error.message}`);
     }
 

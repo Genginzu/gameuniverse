@@ -2,10 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { adminDescriptorFormSchema } from "@/lib/validations/admin-descriptor-form";
-
-/**
- * GET /api/admin/age-classifications/[id]/descriptors
- * List content descriptors for a rating system, with translations and search
+import { logger } from "@/lib/logger";
  */
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -37,7 +34,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       .eq("rating_system_id", id);
 
     if (error) {
-      console.error("Error fetching descriptors:", error);
+      logger.error("Error fetching descriptors", { error });
       return NextResponse.json({ error: "Failed to fetch descriptors" }, { status: 500 });
     }
 
@@ -100,7 +97,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     return NextResponse.json({ descriptors });
   } catch (error) {
-    console.error("Error in admin descriptors GET:", error);
+    logger.error("Error in admin descriptors GET", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
@@ -168,7 +165,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       .single();
 
     if (createError || !descriptor) {
-      console.error("Error creating descriptor:", createError);
+      logger.error("Error creating descriptor", { error: createError });
       return NextResponse.json({ error: "Failed to create descriptor" }, { status: 500 });
     }
 
@@ -185,7 +182,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       .insert(translationRows);
 
     if (translationError) {
-      console.error("Error creating descriptor translations:", translationError);
+      logger.error("Error creating descriptor translations", { error: translationError });
       // Clean up the descriptor if translations fail
       await supabase.from("content_descriptors").delete().eq("id", descriptor.id);
       return NextResponse.json(
@@ -212,7 +209,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       { status: 201 }
     );
   } catch (error) {
-    console.error("Error in admin descriptors POST:", error);
+    logger.error("Error in admin descriptors POST", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });

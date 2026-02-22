@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { HybridSearchService } from "@/lib/services/hybridSearchService";
 import { HybridSearchResponse } from "@/types/search";
+import { logger } from "@/lib/logger";
 
 /**
  * GET /api/search/hybrid
@@ -68,7 +69,7 @@ export async function GET(
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error("Error in hybrid search API:", error);
+    logger.error("Error in hybrid search API", { error });
     return NextResponse.json({ error: "Internal server error during search" }, { status: 500 });
   }
 }

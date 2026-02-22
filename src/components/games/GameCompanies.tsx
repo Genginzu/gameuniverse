@@ -137,7 +137,7 @@ export function GameDevelopers({ gameId }: { gameId: string }) {
         if (error) throw error;
         setDevelopers(data || []);
       } catch (err) {
-        console.error("Error loading developers:", err);
+        setLoading(false);
       } finally {
         setLoading(false);
       }

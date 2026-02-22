@@ -1,4 +1,5 @@
 import { toast } from "@/hooks/use-toast";
+import { logger } from "@/lib/logger";
 
 // Types d'erreurs
 export enum ErrorType {
@@ -72,7 +73,11 @@ export function classifyError(error: unknown): AppError {
   const err = error as Record<string, unknown>;
 
   // Erreurs réseau (fetch, axios, etc.)
-  if (err?.name === "TypeError" && typeof err?.message === "string" && err.message.includes("fetch")) {
+  if (
+    err?.name === "TypeError" &&
+    typeof err?.message === "string" &&
+    err.message.includes("fetch")
+  ) {
     return createAppError(
       "Erreur de connexion réseau. Vérifiez votre connexion internet.",
       ErrorType.NETWORK,
@@ -123,12 +128,11 @@ export function classifyError(error: unknown): AppError {
   }
 
   // Erreur inconnue
-  const message = err?.message && typeof err.message === "string" ? err.message : "Une erreur inattendue s'est produite.";
-  return createAppError(
-    message,
-    ErrorType.UNKNOWN,
-    { cause: error as Error }
-  );
+  const message =
+    err?.message && typeof err.message === "string"
+      ? err.message
+      : "Une erreur inattendue s'est produite.";
+  return createAppError(message, ErrorType.UNKNOWN, { cause: error as Error });
 }
 
 // Fonction de retry avec exponential backoff
@@ -156,8 +160,10 @@ export async function withRetry<T>(
         finalConfig.maxDelay
       );
 
-      console.warn(`Tentative ${attempt}/${finalConfig.maxAttempts} échouée:`, lastError.message);
-      console.warn(`Nouvelle tentative dans ${delay}ms...`);
+      logger.warn(
+        `Retry attempt ${attempt}/${finalConfig.maxAttempts} failed: ${lastError.message}`
+      );
+      logger.warn(`Retrying in ${delay}ms...`);
 
       // Attendre avant la prochaine tentative
       await new Promise((resolve) => setTimeout(resolve, delay));
@@ -201,8 +207,6 @@ export function useErrorHandler() {
   const handleError = (error: unknown, context?: string) => {
     const appError = classifyError(error);
 
-    console.error(`Error in ${context || "component"}:`, appError);
-
     // Afficher un toast d'erreur
     toast({
       variant: "destructive",
@@ -219,16 +223,8 @@ export function useErrorHandler() {
 
 // Fonction pour reporter les erreurs à un service de monitoring (placeholder)
 export function reportError(error: AppError, context?: string) {
-  // Ici on pourrait intégrer avec Sentry, LogRocket, etc.
-  console.error("Reporting error:", {
-    message: error.message,
-    type: error.type,
-    code: error.code,
-    statusCode: error.statusCode,
-    context,
-    stack: error.stack,
-    details: error.details,
-  });
+  // Placeholder pour intégration monitoring (Sentry, LogRocket, etc.)
+  // Les erreurs sont déjà loggées côté serveur via le logger structuré
 }
 
 // Utilitaires pour les messages d'erreur localisés

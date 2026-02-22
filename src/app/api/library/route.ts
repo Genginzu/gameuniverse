@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { logger } from "@/lib/logger";
 
 // Type definitions for Supabase query results
 interface GameTranslation {
@@ -163,10 +164,10 @@ export async function GET() {
     if (error) {
       // PGRST205 = table not found (migration not applied yet)
       if (error.code === "PGRST205") {
-        console.warn("user_library table not found - migration not applied yet");
+        logger.warn("user_library table not found - migration not applied yet");
         return NextResponse.json({ games: [] });
       }
-      console.error("Error fetching user library:", error);
+      logger.error("Error fetching user library", { error });
       return NextResponse.json({ error: "Failed to fetch library" }, { status: 500 });
     }
 
@@ -249,7 +250,7 @@ export async function GET() {
 
     return NextResponse.json({ games: transformedGames });
   } catch (error) {
-    console.error("Error in library API:", error);
+    logger.error("Error in library API", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -301,7 +302,7 @@ export async function POST(request: NextRequest) {
     if (error) {
       // PGRST205 = table not found (migration not applied yet)
       if (error.code === "PGRST205") {
-        console.warn("user_library table not found - migration not applied yet");
+        logger.warn("user_library table not found - migration not applied yet");
         return NextResponse.json(
           { error: "Library feature not available yet. Please contact administrator." },
           { status: 503 }
@@ -311,13 +312,13 @@ export async function POST(request: NextRequest) {
         // Unique constraint violation
         return NextResponse.json({ error: "Game already in library" }, { status: 409 });
       }
-      console.error("Error adding game to library:", error);
+      logger.error("Error adding game to library", { error });
       return NextResponse.json({ error: "Failed to add game to library" }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, data });
   } catch (error) {
-    console.error("Error in library POST API:", error);
+    logger.error("Error in library POST API", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

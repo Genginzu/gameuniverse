@@ -42,8 +42,7 @@ export default async function GameDetailsPage({ params }: GameDetailsPageProps) 
         </ErrorBoundary>
       </DashboardLayout>
     );
-  } catch (error) {
-    console.error("Error in GameDetailsPage:", error);
+  } catch {
     // Return error state
     return (
       <DashboardLayout>

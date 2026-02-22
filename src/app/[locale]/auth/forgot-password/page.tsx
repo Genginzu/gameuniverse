@@ -53,9 +53,8 @@ export default function ForgotPasswordPage() {
       }
 
       setSuccess(true);
-    } catch (err) {
+    } catch {
       setError("Une erreur inattendue s'est produite");
-      console.error("Forgot password error:", err);
     } finally {
       setIsLoading(false);
     }

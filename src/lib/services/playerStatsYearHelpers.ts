@@ -1,5 +1,6 @@
 import type { TopGame } from "@/types/player-stats";
 import { computeTotalPlayTime, type LibraryEntryWithGenres } from "./playerStatsService";
+import { logger } from "@/lib/logger";
 
 /**
  * Récupère les années distinctes ayant des entrées dans la bibliothèque du joueur.
@@ -16,7 +17,7 @@ export async function queryAvailableYears(
     .eq("user_id", playerId);
 
   if (error) {
-    console.error("Error fetching available years:", error);
+    logger.error("Error fetching available years", { error });
     return [];
   }
 
@@ -70,7 +71,7 @@ export async function queryYearLibrary(
     .lt("added_at", startOfNextYear);
 
   if (error) {
-    console.error("Error fetching year library:", error);
+    logger.error("Error fetching year library", { error });
     return [];
   }
 
@@ -97,7 +98,7 @@ export async function queryYearReviewCount(
     .lt("created_at", startOfNextYear);
 
   if (error) {
-    console.error("Error fetching year review count:", error);
+    logger.error("Error fetching year review count", { error });
     return 0;
   }
 

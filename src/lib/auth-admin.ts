@@ -1,4 +1,5 @@
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { logger } from "@/lib/logger";
 import type { User } from "@supabase/supabase-js";
 
 export type UserRole = "admin" | "contributor" | "user";
@@ -53,7 +54,7 @@ export async function isAdmin(): Promise<boolean> {
 
     return getUserRoleFromUser(user) === "admin";
   } catch (error) {
-    console.error("Error checking admin status:", error);
+    logger.error("Error checking admin status", { error });
     return false;
   }
 }

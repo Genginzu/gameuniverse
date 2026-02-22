@@ -42,8 +42,7 @@ export default async function CharacterDetailsPage({ params }: CharacterDetailsP
         </ErrorBoundary>
       </DashboardLayout>
     );
-  } catch (error) {
-    console.error("Error in CharacterDetailsPage:", error);
+  } catch {
     // Return error state
     return (
       <DashboardLayout>

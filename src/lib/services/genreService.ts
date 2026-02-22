@@ -34,7 +34,6 @@ export class GenreService {
       const data = await response.json();
       return data.genres || [];
     } catch (error) {
-      console.error("Error fetching genres:", error);
       throw error;
     }
   }

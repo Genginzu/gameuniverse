@@ -7,6 +7,7 @@ import {
   handleApiError,
 } from "@/lib/api-utils";
 import type { CharacterRowWithRelations } from "@/lib/types/supabase-queries";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   try {
@@ -83,7 +84,7 @@ export async function GET(request: NextRequest) {
     const { count: totalCount, error: countError } = await countQuery;
 
     if (countError) {
-      console.error("Error counting characters:", countError);
+      logger.error("Error counting characters", { error: countError });
       return NextResponse.json({ error: "Failed to count characters" }, { status: 500 });
     }
 
@@ -95,7 +96,7 @@ export async function GET(request: NextRequest) {
       .order("created_at", { ascending: false });
 
     if (error) {
-      console.error("Error fetching characters:", error);
+      logger.error("Error fetching characters", { error });
       return NextResponse.json({ error: "Failed to fetch characters" }, { status: 500 });
     }
 
@@ -155,7 +156,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Unexpected error in characters API:", error);
+    logger.error("Error in characters API", { error });
     const errorResponse = handleApiError(error, "Failed to fetch characters");
     return NextResponse.json(errorResponse, { status: 500 });
   }

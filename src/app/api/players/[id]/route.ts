@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PlayerService } from "@/lib/services/playerService";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -26,7 +27,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     return NextResponse.json({ player });
   } catch (error) {
-    console.error("Unexpected error in player details API:", error);
+    logger.error("Error in player details API", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

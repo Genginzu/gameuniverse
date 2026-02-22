@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { untypedTable } from "@/lib/utils/untypedTable";
 import type { VoteType } from "@/types/review";
+import { logger } from "@/lib/logger";
 
 interface ExistingVoteRow {
   id: string;
@@ -79,7 +80,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         .eq("id", existingVote.id);
 
       if (deleteError) {
-        console.error("Error deleting vote:", deleteError);
+        logger.error("Error deleting vote", { error: deleteError });
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
       }
 
@@ -93,7 +94,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         .eq("id", existingVote.id);
 
       if (updateError) {
-        console.error("Error updating vote:", updateError);
+        logger.error("Error updating vote", { error: updateError });
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
       }
     } else {
@@ -104,14 +105,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       });
 
       if (insertError) {
-        console.error("Error inserting vote:", insertError);
+        logger.error("Error inserting vote", { error: insertError });
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
       }
     }
 
     return NextResponse.json({ success: true, vote: { voteType } });
   } catch (error) {
-    console.error("Error in review-votes POST:", error);
+    logger.error("Error in review-votes POST", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -147,13 +148,13 @@ export async function DELETE(request: NextRequest): Promise<NextResponse> {
       .eq("review_id", reviewId);
 
     if (deleteError) {
-      console.error("Error deleting vote:", deleteError);
+      logger.error("Error deleting vote", { error: deleteError });
       return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error in review-votes DELETE:", error);
+    logger.error("Error in review-votes DELETE", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { verifyGameDeletionConsistency } from "@/lib/realtime-updates";
 import { z } from "zod";
+import { logger } from "@/lib/logger";
 
 const verifyDeletionSchema = z.object({
   game_ids: z.array(z.string().uuid()).min(1).max(100),
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Error in deletion verification:", error);
+    logger.error("Error in deletion verification", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });

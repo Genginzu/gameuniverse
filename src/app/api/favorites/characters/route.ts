@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { CharacterFavoriteService } from "@/lib/services/characterFavoriteService";
+import { logger } from "@/lib/logger";
 
 /**
  * GET /api/favorites/characters — Liste des personnages favoris de l'utilisateur courant.
@@ -27,7 +28,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ characters });
   } catch (error) {
-    console.error("Error in favorites/characters GET API:", error);
+    logger.error("Error in favorites/characters GET API", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

@@ -7,6 +7,7 @@ import {
   collectDlcExtensionIds,
   transformIgdbToDlcExtensionRow,
 } from "@/lib/utils/dlcExtensionUtils";
+import { logger } from "@/lib/logger";
 
 /**
  * Result of an import or sync operation
@@ -65,20 +66,17 @@ export class GameImportService {
    */
   static async importFromIGDB(igdbId: number): Promise<ImportResult> {
     try {
-      console.warn(`[GameImportService] Starting import for IGDB ID: ${igdbId}`);
+      logger.info("Starting IGDB import", { igdbId });
 
       // Fetch complete game details from IGDB
       const igdbGame = await IGDBService.getGameDetails(igdbId);
 
       if (!igdbGame) {
-        console.warn(`[GameImportService] Game not found in IGDB: ${igdbId}`);
         return {
           success: false,
           error: `Game with IGDB ID ${igdbId} not found`,
         };
       }
-
-      console.warn(`[GameImportService] IGDB game found: ${igdbGame.name}`);
 
       const supabase = await createRouteHandlerClient();
 
@@ -90,26 +88,24 @@ export class GameImportService {
         .single();
 
       if (checkError && checkError.code !== "PGRST116") {
-        console.error(`[GameImportService] Error checking existing game:`, checkError);
+        logger.error("Error checking existing game", { igdbId, error: checkError });
       }
 
       // If game exists, sync it instead of returning an error
       if (existingGame) {
-        console.warn(`[GameImportService] Game already exists: ${existingGame.slug}, updating...`);
+        logger.info("Game already exists, syncing", { slug: existingGame.slug, igdbId });
         return this.syncWithIGDB(existingGame.id, igdbId);
       }
 
       // Ensure related entities exist (genres, companies)
-      console.warn(`[GameImportService] Ensuring related entities...`);
       const relatedEntities = await this.ensureRelatedEntities(igdbGame);
-      console.warn(`[GameImportService] Related entities:`, relatedEntities);
 
       // Transform IGDB data to Supabase format
       const gameData = this.transformIGDBToSupabase(igdbGame);
 
       // Extract colors from cover image to match the game's visual identity
       if (gameData.cover_image_url) {
-        const colors = await extractColorsFromCover(gameData.cover_image_url, true);
+        const colors = await extractColorsFromCover(gameData.cover_image_url);
         if (colors) {
           gameData.background_color = colors.background_color;
           gameData.accent_color = colors.accent_color;
@@ -117,8 +113,6 @@ export class GameImportService {
           gameData.text_color = colors.text_color;
         }
       }
-
-      console.warn(`[GameImportService] Transformed game data:`, gameData);
 
       // Insert the game
       const { data: newGame, error: gameError } = await supabase
@@ -128,69 +122,58 @@ export class GameImportService {
         .single();
 
       if (gameError || !newGame) {
-        console.error(`[GameImportService] Failed to insert game:`, gameError);
+        logger.error("Failed to insert game", { igdbId, error: gameError });
         return {
           success: false,
           error: `Failed to create game: ${gameError?.message || "Unknown error"}`,
         };
       }
 
-      console.warn(`[GameImportService] Game created: ${newGame.slug}`);
-
       // Create translations (FR and EN)
       await this.createTranslations(newGame.id, igdbGame);
-      console.warn(`[GameImportService] Translations created`);
 
       // Link genres
       if (relatedEntities.genreIds.length > 0) {
         await this.linkGenres(newGame.id, relatedEntities.genreIds);
-        console.warn(`[GameImportService] Genres linked`);
       }
 
       // Link companies (developers and publishers)
       if (relatedEntities.developerIds.length > 0) {
         await this.linkCompanies(newGame.id, relatedEntities.developerIds, "developer");
-        console.warn(`[GameImportService] Developers linked`);
       }
       if (relatedEntities.publisherIds.length > 0) {
         await this.linkCompanies(newGame.id, relatedEntities.publisherIds, "publisher");
-        console.warn(`[GameImportService] Publishers linked`);
       }
 
       // Create media entries (screenshots, artwork)
       await this.createMedia(newGame.id, igdbGame);
-      console.warn(`[GameImportService] Media created`);
 
       // Create language support entries
       await this.createLanguages(newGame.id, igdbGame);
-      console.warn(`[GameImportService] Languages created`);
 
       // Create age ratings from IGDB
       await this.createAgeRatings(newGame.id, igdbGame);
-      console.warn(`[GameImportService] Age ratings created`);
 
       // Create game versions (editions)
       await this.createVersions(newGame.id, igdbGame.id);
-      console.warn(`[GameImportService] Versions created`);
 
       // Create DLC and extensions
       await this.createDlcExtensions(newGame.id, igdbGame);
-      console.warn(`[GameImportService] DLC/extensions created`);
 
       // Fetch and save playtime from IGDB
       await this.fetchAndSavePlaytime(newGame.id, igdbGame.id);
-      console.warn(`[GameImportService] Playtime fetched`);
 
       // Fetch the complete game details to return
       const gameDetails = await this.fetchGameDetails(newGame.slug);
-      console.warn(`[GameImportService] Import complete for: ${newGame.slug}`);
+
+      logger.info("IGDB import complete", { slug: newGame.slug, igdbId });
 
       return {
         success: true,
         game: gameDetails || undefined,
       };
     } catch (error) {
-      console.error("[GameImportService] Error importing game from IGDB:", error);
+      logger.error("IGDB import failed", { igdbId, error });
       return {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error during import",
@@ -231,7 +214,7 @@ export class GameImportService {
 
       if (!igdbGame) {
         // IGDB game not found - preserve existing data (Requirement 4.4)
-        console.warn(`IGDB game ${igdbId} not found during sync, preserving existing data`);
+        logger.warn("IGDB game not found during sync, preserving existing data", { igdbId });
         return {
           success: false,
           error: `IGDB game ${igdbId} not found`,
@@ -259,7 +242,7 @@ export class GameImportService {
 
       if (updateError) {
         // Update failed - existing data is preserved (Requirement 4.4)
-        console.error("Failed to update game:", updateError);
+        logger.error("Failed to update game during sync", { gameId, error: updateError });
         return {
           success: false,
           error: `Failed to update game: ${updateError.message}`,
@@ -277,22 +260,15 @@ export class GameImportService {
 
       // Update age ratings
       await this.updateAgeRatings(gameId, igdbGame);
-      console.warn(`[GameImportService] Age ratings updated`);
 
       // Update game versions (editions)
       await this.updateVersions(gameId, igdbGame.id);
-      console.warn(`[GameImportService] Versions updated`);
 
       // Update DLC and extensions
       await this.updateDlcExtensions(gameId, igdbGame);
-      console.warn(`[GameImportService] DLC/extensions updated`);
 
       // Update playtime from IGDB
-      console.warn(
-        `[GameImportService] Fetching playtime for game ${gameId}, IGDB ID: ${igdbGame.id}`
-      );
       await this.fetchAndSavePlaytime(gameId, igdbGame.id);
-      console.warn(`[GameImportService] Playtime fetch completed for IGDB ID: ${igdbGame.id}`);
 
       // Fetch updated game details
       const gameDetails = await this.fetchGameDetails(currentGame.slug);
@@ -303,7 +279,7 @@ export class GameImportService {
       };
     } catch (error) {
       // Any error preserves existing data (Requirement 4.4)
-      console.error("Error syncing game with IGDB:", error);
+      logger.error("Game sync with IGDB failed", { gameId, igdbId, error });
       return {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error during sync",
@@ -369,7 +345,6 @@ export class GameImportService {
       const timeToBeat = await IGDBService.getTimeToBeat(igdbId);
 
       if (!timeToBeat) {
-        console.warn(`[GameImportService] No playtime data found for IGDB ID: ${igdbId}`);
         return;
       }
 
@@ -386,17 +361,12 @@ export class GameImportService {
 
       // Skip if all values are null
       if (hastily === null && normally === null && completely === null) {
-        console.warn(`[GameImportService] All playtime values are null for IGDB ID: ${igdbId}`);
         return;
       }
 
       const supabase = await createRouteHandlerClient();
 
-      console.warn(
-        `[GameImportService] Saving playtime - hastily: ${hastily}, normally: ${normally}, completely: ${completely}`
-      );
-
-      const { data, error, count } = await supabase
+      const { data, error } = await supabase
         .from("games")
         .update({
           playtime_hastily: hastily,
@@ -407,26 +377,13 @@ export class GameImportService {
         .eq("id", gameId)
         .select("id, playtime_hastily, playtime_normally, playtime_completely");
 
-      console.warn(
-        `[GameImportService] Update result - data:`,
-        data,
-        `error:`,
-        error,
-        `count:`,
-        count
-      );
-
       if (error) {
-        console.error(`[GameImportService] Failed to save playtime:`, error);
+        logger.error("Failed to save playtime", { gameId, igdbId, error });
       } else if (!data || data.length === 0) {
-        console.error(
-          `[GameImportService] No rows updated for game ${gameId} - possible RLS issue`
-        );
-      } else {
-        console.warn(`[GameImportService] Playtime saved for IGDB ID: ${igdbId}`, data);
+        logger.error("No rows updated for playtime — possible RLS issue", { gameId });
       }
     } catch (error) {
-      console.error(`[GameImportService] Error fetching playtime for IGDB ID ${igdbId}:`, error);
+      logger.error("Error fetching playtime from IGDB", { igdbId, error });
     }
   }
 
@@ -585,7 +542,7 @@ export class GameImportService {
           .single();
 
         if (!newCompany || error) {
-          console.error(`Failed to create company ${ic.company.name}:`, error);
+          logger.error("Failed to create company", { name: ic.company.name, error });
           continue;
         }
 
@@ -808,7 +765,7 @@ export class GameImportService {
         .from("supported_languages")
         .upsert(supportedRows, { onConflict: "code", ignoreDuplicates: true });
       if (upsertErr) {
-        console.warn("[GameImportService] Failed to upsert supported_languages:", upsertErr);
+        logger.warn("Failed to upsert supported_languages", { error: upsertErr });
       }
 
       // Fetch back the canonical names from supported_languages
@@ -832,7 +789,7 @@ export class GameImportService {
 
       const { error } = await supabase.from("game_languages").insert(languageEntries);
       if (error) {
-        console.error("[GameImportService] Failed to insert languages:", error);
+        logger.error("Failed to insert game languages", { gameId, error });
       }
     }
   }
@@ -873,7 +830,7 @@ export class GameImportService {
 
       return await response.json();
     } catch (error) {
-      console.error("Error fetching game details:", error);
+      logger.error("Error fetching game details", { slug, error });
       return null;
     }
   }
@@ -885,10 +842,7 @@ export class GameImportService {
    * @param igdbGame The IGDB game data
    */
   private static async createAgeRatings(gameId: string, igdbGame: IGDBGame): Promise<void> {
-    console.warn(`[GameImportService] igdbGame.age_ratings:`, JSON.stringify(igdbGame.age_ratings));
-
     if (!igdbGame.age_ratings || igdbGame.age_ratings.length === 0) {
-      console.warn(`[GameImportService] No age ratings found for game`);
       return;
     }
 
@@ -897,17 +851,10 @@ export class GameImportService {
       .map((ar) => ar.id)
       .filter((id): id is number => id !== undefined);
 
-    console.warn(
-      `[GameImportService] Processing age ratings, found IDs: ${ageRatingIds.length}`,
-      ageRatingIds
-    );
-
     // Fetch full age rating details from IGDB (category, rating, rating_cover_url)
     const ageRatings = await IGDBService.getAgeRatings(ageRatingIds);
-    console.warn(`[GameImportService] Full age ratings from IGDB:`, JSON.stringify(ageRatings));
 
     if (ageRatings.length === 0) {
-      console.warn(`[GameImportService] No age rating details returned from IGDB`);
       return;
     }
 
@@ -921,16 +868,13 @@ export class GameImportService {
       const ratingCategory = ageRating.rating_category;
 
       if (organization === undefined || ratingCategory === undefined) {
-        console.warn(
-          `[GameImportService] Missing organization or rating_category for age rating ID: ${ageRating.id}`
-        );
         continue;
       }
 
       const systemCode = IGDB_RATING_CATEGORIES[organization];
 
       if (!systemCode) {
-        console.warn(`[GameImportService] Unknown organization: ${organization}`);
+        logger.warn("Unknown IGDB age rating organization", { organization });
         continue;
       }
 
@@ -949,12 +893,7 @@ export class GameImportService {
       } else {
         ratingCode = String(ratingCategory);
         displayName = `${systemCode} ${ratingCategory}`;
-        console.warn(
-          `[GameImportService] Unknown rating_category value: ${ratingCategory} for ${systemCode}`
-        );
       }
-
-      console.warn(`[GameImportService] Processing rating: ${displayName} (${systemCode})`);
 
       // Find or create rating system
       let { data: ratingSystem } = await supabase
@@ -971,7 +910,7 @@ export class GameImportService {
           .single();
 
         if (error || !newSystem) {
-          console.error(`[GameImportService] Failed to create rating system ${systemCode}:`, error);
+          logger.error("Failed to create rating system", { systemCode, error });
           continue;
         }
         ratingSystem = newSystem;
@@ -999,7 +938,7 @@ export class GameImportService {
           .single();
 
         if (error || !newRating) {
-          console.error(`[GameImportService] Failed to create rating ${displayName}:`, error);
+          logger.error("Failed to create rating", { displayName, error });
           continue;
         }
         rating = { id: newRating.id, icon_url: iconUrl };
@@ -1020,7 +959,7 @@ export class GameImportService {
         .single();
 
       if (gameRatingError || !gameRating) {
-        console.error(`[GameImportService] Failed to link rating to game:`, gameRatingError);
+        logger.error("Failed to link rating to game", { gameId, error: gameRatingError });
         continue;
       }
 
@@ -1046,7 +985,7 @@ export class GameImportService {
               .single();
 
             if (error || !newDescriptor) {
-              console.error(`[GameImportService] Failed to create content descriptor:`, error);
+              logger.error("Failed to create content descriptor", { error });
               continue;
             }
             descriptor = newDescriptor;
@@ -1065,8 +1004,6 @@ export class GameImportService {
           });
         }
       }
-
-      console.warn(`[GameImportService] Created age rating: ${displayName} for game`);
     }
   }
 
@@ -1110,7 +1047,6 @@ export class GameImportService {
       const versions = await IGDBService.getGameVersions(igdbId);
 
       if (!versions || versions.length === 0) {
-        console.warn(`[GameImportService] No versions found for IGDB ID: ${igdbId}`);
         return;
       }
 
@@ -1133,12 +1069,10 @@ export class GameImportService {
       ).insert(versionEntries as unknown[]);
 
       if (error) {
-        console.error(`[GameImportService] Failed to insert versions:`, error);
-      } else {
-        console.warn(`[GameImportService] Created ${versionEntries.length} versions`);
+        logger.error("Failed to insert game versions", { gameId, error });
       }
     } catch (error) {
-      console.error(`[GameImportService] Error creating versions:`, error);
+      logger.error("Error creating game versions", { gameId, igdbId, error });
     }
   }
 
@@ -1175,7 +1109,6 @@ export class GameImportService {
       const taggedIds = collectDlcExtensionIds(igdbGame);
 
       if (taggedIds.length === 0) {
-        console.warn(`[GameImportService] No DLC/expansion/bundle IDs for game: ${igdbGame.name}`);
         return;
       }
 
@@ -1188,9 +1121,6 @@ export class GameImportService {
       const dlcDetails = await IGDBService.getDlcExtensions(allIds);
 
       if (!dlcDetails || dlcDetails.length === 0) {
-        console.warn(
-          `[GameImportService] No DLC details returned from IGDB for game: ${igdbGame.name}`
-        );
         return;
       }
 
@@ -1206,12 +1136,10 @@ export class GameImportService {
       ).upsert(rows as unknown[], { onConflict: "game_id,igdb_id" });
 
       if (error) {
-        console.error(`[GameImportService] Failed to upsert DLC extensions:`, error);
-      } else {
-        console.warn(`[GameImportService] Created ${rows.length} DLC extensions`);
+        logger.error("Failed to upsert DLC extensions", { gameId, error });
       }
     } catch (error) {
-      console.error(`[GameImportService] Error creating DLC extensions:`, error);
+      logger.error("Error creating DLC extensions", { gameId, error });
     }
   }
 
@@ -1234,7 +1162,7 @@ export class GameImportService {
 
       await this.createDlcExtensions(gameId, igdbGame);
     } catch (error) {
-      console.error(`[GameImportService] Error updating DLC extensions:`, error);
+      logger.error("Error updating DLC extensions", { gameId, error });
     }
   }
 }

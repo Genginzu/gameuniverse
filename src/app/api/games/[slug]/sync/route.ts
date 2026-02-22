@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { GameImportService } from "@/lib/services/gameImportService";
+import { logger } from "@/lib/logger";
 
 /**
  * POST /api/games/[slug]/sync
@@ -42,7 +43,7 @@ export async function POST(
       if (fetchError?.code === "PGRST116") {
         return NextResponse.json({ error: "Game not found" }, { status: 404 });
       }
-      console.error("Error fetching game for sync:", fetchError);
+      logger.error("Error fetching game for sync", { error: fetchError });
       return NextResponse.json({ error: "Failed to fetch game" }, { status: 500 });
     }
 
@@ -59,15 +60,15 @@ export async function POST(
     GameImportService.syncWithIGDB(game.id, game.igdb_id)
       .then((result) => {
         if (result.success) {
-          console.warn(`Background sync completed for game ${slug}`);
+          logger.info(`Background sync completed for game ${slug}`);
         } else {
           // Requirement 4.4: Log error but data is preserved
-          console.error(`Background sync failed for game ${slug}:`, result.error);
+          logger.error(`Background sync failed for game ${slug}`, { error: result.error });
         }
       })
       .catch((error) => {
         // Requirement 4.4: Log error but data is preserved
-        console.error(`Background sync error for game ${slug}:`, error);
+        logger.error(`Background sync error for game ${slug}`, { error });
       });
 
     // Return immediately with 202 Accepted (Requirement 4.2, 4.3)
@@ -81,7 +82,7 @@ export async function POST(
       { status: 202 }
     );
   } catch (error) {
-    console.error("Error in game sync API:", error);
+    logger.error("Error in game sync API", { error });
     return NextResponse.json(
       { error: "Internal server error during sync initiation" },
       { status: 500 }

@@ -20,8 +20,7 @@ export default function CharactersError({ error, reset }: ErrorProps) {
   const tCommon = useTranslations("common");
 
   useEffect(() => {
-    // Log the error to an error reporting service
-    console.error("Characters page error:", error);
+    // Placeholder pour un service de monitoring (Sentry, etc.)
   }, [error]);
 
   return (

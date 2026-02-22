@@ -299,7 +299,7 @@ describe("error-handling", () => {
       consoleErrorSpy.mockRestore();
     });
 
-    it("should log error details", () => {
+    it("should not log to console (reporting is a placeholder)", () => {
       const error = createAppError("Test error", ErrorType.SERVER, {
         code: "ERR_001",
         statusCode: 500,
@@ -308,17 +308,8 @@ describe("error-handling", () => {
 
       reportError(error, "TestContext");
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        "Reporting error:",
-        expect.objectContaining({
-          message: "Test error",
-          type: ErrorType.SERVER,
-          code: "ERR_001",
-          statusCode: 500,
-          context: "TestContext",
-          details: { field: "value" },
-        })
-      );
+      // console.error was removed — reportError is now a placeholder for monitoring
+      expect(consoleErrorSpy).not.toHaveBeenCalled();
     });
   });
 
@@ -394,14 +385,15 @@ describe("useErrorHandler", () => {
     expect(typeof handleError).toBe("function");
   });
 
-  it("should log error and show toast when handleError is called", async () => {
+  it("should show toast when handleError is called (no console.error)", async () => {
     const { useErrorHandler } = await import("../../../src/lib/error-handling");
     const { handleError } = useErrorHandler();
 
     const error = new Error("Test error");
     handleError(error, "TestComponent");
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith("Error in TestComponent:", expect.any(Object));
+    // console.error was removed — errors are shown via toast only
+    expect(consoleErrorSpy).not.toHaveBeenCalled();
     expect(toastMock).toHaveBeenCalledWith({
       variant: "destructive",
       title: "Erreur",
@@ -409,12 +401,13 @@ describe("useErrorHandler", () => {
     });
   });
 
-  it("should use default context when not provided", async () => {
+  it("should show toast with default context when not provided", async () => {
     const { useErrorHandler } = await import("../../../src/lib/error-handling");
     const { handleError } = useErrorHandler();
 
     handleError(new Error("Test"));
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith("Error in component:", expect.any(Object));
+    expect(consoleErrorSpy).not.toHaveBeenCalled();
+    expect(toastMock).toHaveBeenCalled();
   });
 });

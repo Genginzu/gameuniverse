@@ -6,6 +6,7 @@
  * @template TSummary - The summary entity type (e.g., GameSummary, PlayerSummary)
  */
 
+import { logger } from "@/lib/logger";
 export interface FetchOptions {
   search?: string;
   page?: number;
@@ -65,21 +66,20 @@ export abstract class BaseService<TDetails, TSummary> {
     try {
       const baseUrl = BaseService.getBaseUrl();
       const url = `${baseUrl}${this.apiPath}/${identifier}?locale=${locale}`;
-      console.warn(`[${this.entityName}Service] Fetching details from: ${url}`);
-
       const response = await fetch(url, {
         cache: "no-store",
       });
 
-      console.warn(`[${this.entityName}Service] Response status: ${response.status}`);
-
       if (!response.ok) {
         if (response.status === 404) {
-          console.warn(`[${this.entityName}Service] Entity not found: ${identifier}`);
           return null;
         }
         const errorText = await response.text();
-        console.error(`[${this.entityName}Service] Error response: ${errorText}`);
+        logger.error(`${this.entityName} fetch failed`, {
+          identifier,
+          status: response.status,
+          body: errorText,
+        });
         throw new Error(
           `Failed to fetch ${this.entityName} details: ${response.status} ${response.statusText}`
         );
@@ -88,7 +88,7 @@ export abstract class BaseService<TDetails, TSummary> {
       const details: TDetails = await response.json();
       return details;
     } catch (error) {
-      console.error(`Error fetching ${this.entityName} details:`, error);
+      logger.error(`Error fetching ${this.entityName} details`, { identifier, error });
       throw error;
     }
   }
@@ -127,7 +127,7 @@ export abstract class BaseService<TDetails, TSummary> {
 
       return await response.json();
     } catch (error) {
-      console.error(`Error fetching ${this.entityName} list:`, error);
+      logger.error(`Error fetching ${this.entityName} list`, { error });
       throw error;
     }
   }
@@ -144,7 +144,6 @@ export abstract class BaseService<TDetails, TSummary> {
       const entity = await this.fetchDetails(identifier, locale);
       return entity !== null;
     } catch (_error) {
-      console.warn(`Failed to check if ${this.entityName} exists: ${identifier}`, _error);
       return false;
     }
   }
@@ -170,7 +169,7 @@ export abstract class BaseService<TDetails, TSummary> {
       // Default implementation - subclasses should override for specific behavior
       return this.buildMetadata(entity, locale);
     } catch (error) {
-      console.error(`Error generating ${this.entityName} metadata:`, error);
+      logger.error(`Error generating ${this.entityName} metadata`, { identifier, error });
       return {
         title: locale === "fr" ? "Erreur" : "Error",
       };

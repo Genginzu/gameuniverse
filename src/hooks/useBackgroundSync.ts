@@ -14,18 +14,22 @@ export function useBackgroundSync(slug: string, igdbId?: number, lastSyncedAt?: 
 
   useEffect(() => {
     if (hasFired.current) return;
-    if (!igdbId) return;
+    if (!igdbId) {
+      return;
+    }
 
     // Skip if synced recently
     if (lastSyncedAt) {
       const elapsed = Date.now() - new Date(lastSyncedAt).getTime();
-      if (elapsed < SYNC_COOLDOWN_MS) return;
+      if (elapsed < SYNC_COOLDOWN_MS) {
+        return;
+      }
     }
 
     hasFired.current = true;
 
-    fetch(`/api/games/${slug}/sync`, { method: "POST" }).catch((error) => {
-      console.error("[useBackgroundSync] Sync error:", error);
+    fetch(`/api/games/${slug}/sync`, { method: "POST" }).catch(() => {
+      // Sync silencieux — les erreurs sont gérées côté serveur
     });
   }, [slug, igdbId, lastSyncedAt]);
 }

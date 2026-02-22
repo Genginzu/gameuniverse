@@ -10,6 +10,7 @@ import {
 import { createServerClient } from "@/lib/supabase-server";
 import { BaseService, FetchOptions, PaginatedResponse, EntityMetadata } from "./baseService";
 import { isStatsPrivate } from "./playerStatsDbHelpers";
+import { logger } from "@/lib/logger";
 
 // Type definitions for Supabase query results
 interface ProfileRow {
@@ -131,7 +132,7 @@ export class PlayerService {
     const { data: allProfiles, error: queryError } = await query;
 
     if (queryError) {
-      console.error("Error fetching players:", queryError);
+      logger.error("Error fetching players", { error: queryError });
       throw new Error(`Failed to fetch players: ${queryError.message}`);
     }
 
@@ -148,7 +149,7 @@ export class PlayerService {
         .in("user_id", profileIds);
 
       if (countError) {
-        console.error("Error fetching library counts:", countError);
+        logger.warn("Error fetching library counts", { error: countError });
         // Continue without counts rather than failing
       } else if (libraryCounts) {
         // Count games per user
@@ -239,7 +240,7 @@ export class PlayerService {
         // No rows returned - player not found
         return null;
       }
-      console.error("Error fetching player details:", profileError);
+      logger.error("Error fetching player details", { playerId, error: profileError });
       throw new Error(`Failed to fetch player details: ${profileError.message}`);
     }
 
@@ -275,7 +276,7 @@ export class PlayerService {
       .eq("user_id", playerId);
 
     if (libraryError) {
-      console.error("Error fetching user library:", libraryError);
+      logger.warn("Error fetching user library", { error: libraryError });
       // Continue without library rather than failing
     }
 
@@ -387,7 +388,7 @@ export class PlayerService {
       const data = await response.json();
       return data.player;
     } catch (error) {
-      console.error("Error fetching player details:", error);
+      logger.error("Error fetching player details via API", { error });
       throw error;
     }
   }

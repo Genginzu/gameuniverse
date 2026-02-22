@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { companyQuerySchema, adminCompanyFormSchema } from "@/lib/validations/admin-company-form";
+import { logger } from "@/lib/logger";
 
 /**
  * GET /api/admin/companies - List companies with pagination, search, sort, and game count
@@ -46,7 +47,7 @@ export async function GET(request: NextRequest) {
     );
 
     if (countError) {
-      console.error("Error counting companies:", countError);
+      logger.error("Error counting companies", { error: countError });
       return NextResponse.json({ error: "Failed to count companies" }, { status: 500 });
     }
 
@@ -65,7 +66,7 @@ export async function GET(request: NextRequest) {
     const { data: companiesRaw, error: dataError } = await dataQuery;
 
     if (dataError) {
-      console.error("Error fetching companies:", dataError);
+      logger.error("Error fetching companies", { error: dataError });
       return NextResponse.json({ error: "Failed to fetch companies" }, { status: 500 });
     }
 
@@ -135,7 +136,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Error in admin companies GET:", error);
+    logger.error("Error in admin companies GET", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
@@ -193,7 +194,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (insertError) {
-      console.error("Error creating company:", insertError);
+      logger.error("Error creating company", { error: insertError });
 
       if (insertError.code === "23505") {
         return NextResponse.json(
@@ -219,7 +220,7 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("Error in admin companies POST:", error);
+    logger.error("Error in admin companies POST", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
@@ -250,7 +251,7 @@ async function upsertCompanyTranslations(
     .upsert(rows, { onConflict: "company_id,language_code" });
 
   if (error) {
-    console.error("Error upserting company translations:", error);
+    logger.error("Error upserting company translations", { error });
   }
 
   return translations.map((t) => ({

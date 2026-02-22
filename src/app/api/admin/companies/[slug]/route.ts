@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { adminCompanyFormSchema } from "@/lib/validations/admin-company-form";
+import { logger } from "@/lib/logger";
 
 type RouteParams = { params: Promise<{ slug: string }> };
 
@@ -57,7 +58,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       .eq("company_id", company.id);
 
     if (countError) {
-      console.error("Error counting company games:", countError);
+      logger.error("Error counting company games", { error: countError });
     }
 
     const translations = (company.company_translations || []).map((t) => ({
@@ -81,7 +82,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       },
     });
   } catch (error) {
-    console.error("Error in admin company GET:", error);
+    logger.error("Error in admin company GET", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
@@ -151,7 +152,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .single();
 
     if (updateError || !updated) {
-      console.error("Error updating company:", updateError);
+      logger.error("Error updating company", { error: updateError });
       return NextResponse.json({ error: "Failed to update company" }, { status: 500 });
     }
 
@@ -170,7 +171,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         .upsert(translationRows, { onConflict: "company_id,language_code" });
 
       if (upsertError) {
-        console.error("Error upserting company translations:", upsertError);
+        logger.error("Error upserting company translations", { error: upsertError });
       }
     }
 
@@ -200,7 +201,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       },
     });
   } catch (error) {
-    console.error("Error in admin company PUT:", error);
+    logger.error("Error in admin company PUT", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
@@ -247,7 +248,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       .eq("company_id", existing.id);
 
     if (usageError) {
-      console.error("Error checking company usage:", usageError);
+      logger.error("Error checking company usage", { error: usageError });
       return NextResponse.json({ error: "Failed to check company usage" }, { status: 500 });
     }
 
@@ -272,7 +273,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
         .eq("company_id", existing.id);
 
       if (cleanupError) {
-        console.error("Error cleaning up game_companies:", cleanupError);
+        logger.error("Error cleaning up game_companies", { error: cleanupError });
         return NextResponse.json(
           { error: "Failed to remove company references from games" },
           { status: 500 }
@@ -288,20 +289,20 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       .eq("company_id", existing.id);
 
     if (translationDeleteError) {
-      console.error("Error deleting company translations:", translationDeleteError);
+      logger.error("Error deleting company translations", { error: translationDeleteError });
     }
 
     // Delete the company
     const { error: deleteError } = await supabase.from("companies").delete().eq("id", existing.id);
 
     if (deleteError) {
-      console.error("Error deleting company:", deleteError);
+      logger.error("Error deleting company", { error: deleteError });
       return NextResponse.json({ error: "Failed to delete company" }, { status: 500 });
     }
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error in admin company DELETE:", error);
+    logger.error("Error in admin company DELETE", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });

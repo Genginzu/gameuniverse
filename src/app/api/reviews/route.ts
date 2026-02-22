@@ -7,6 +7,7 @@ import {
   fetchUserVotesMap,
   enrichReviewsWithVotes,
 } from "@/lib/utils/reviewVoteQueries";
+import { logger } from "@/lib/logger";
 
 interface ReviewRow {
   id: string;
@@ -145,7 +146,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         };
         return NextResponse.json(emptyResponse);
       }
-      console.error("Error fetching reviews:", reviewsError);
+      logger.error("Error fetching reviews", { error: reviewsError });
       return NextResponse.json({ error: "Failed to fetch reviews" }, { status: 500 });
     }
 
@@ -186,7 +187,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error("Error in reviews GET:", error);
+    logger.error("Error in reviews GET", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -258,7 +259,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           { status: 409 }
         );
       }
-      console.error("Error inserting review:", insertError);
+      logger.error("Error inserting review", { error: insertError });
       return NextResponse.json({ error: "Failed to create review" }, { status: 500 });
     }
 
@@ -271,12 +272,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       });
     } catch {
       // Library addition is non-blocking — log and continue
-      console.warn("Could not add game to library (may already exist)");
+      logger.warn("Could not add game to library (may already exist)");
     }
 
     return NextResponse.json({ success: true, review }, { status: 201 });
   } catch (error) {
-    console.error("Error in reviews POST:", error);
+    logger.error("Error in reviews POST", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -329,13 +330,13 @@ export async function PUT(request: NextRequest): Promise<NextResponse> {
       .single();
 
     if (updateError || !review) {
-      console.error("Error updating review:", updateError);
+      logger.error("Error updating review", { error: updateError });
       return NextResponse.json({ error: "Failed to update review" }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, review });
   } catch (error) {
-    console.error("Error in reviews PUT:", error);
+    logger.error("Error in reviews PUT", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

@@ -5,6 +5,7 @@ import {
   adminRatingSystemFormSchema,
   ratingSystemQuerySchema,
 } from "@/lib/validations/admin-rating-system-form";
+import { logger } from "@/lib/logger";
 
 /**
  * GET /api/admin/age-classifications - List rating systems with pagination, search, and sort
@@ -48,7 +49,7 @@ export async function GET(request: NextRequest) {
     const { count: totalCount, error: countError } = await countQuery;
 
     if (countError) {
-      console.error("Error counting rating systems:", countError);
+      logger.error("Error counting rating systems", { error: countError });
       return NextResponse.json({ error: "Failed to count rating systems" }, { status: 500 });
     }
 
@@ -67,7 +68,7 @@ export async function GET(request: NextRequest) {
       .range(offset, offset + limit - 1);
 
     if (error) {
-      console.error("Error fetching rating systems:", error);
+      logger.error("Error fetching rating systems", { error });
       return NextResponse.json({ error: "Failed to fetch rating systems" }, { status: 500 });
     }
 
@@ -112,7 +113,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Error in admin age-classifications GET:", error);
+    logger.error("Error in admin age-classifications GET", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
@@ -159,7 +160,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error("Error creating rating system:", error);
+      logger.error("Error creating rating system", { error });
 
       // Unique constraint violation (code already exists)
       if (error.code === "23505") {
@@ -184,7 +185,7 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("Error in admin age-classifications POST:", error);
+    logger.error("Error in admin age-classifications POST", { error });
 
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });

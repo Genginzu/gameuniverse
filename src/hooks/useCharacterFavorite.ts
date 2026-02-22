@@ -38,8 +38,8 @@ export function useCharacterFavorite(characterSlug: string): UseCharacterFavorit
           const countData = await countRes.json();
           setFavoriteCount(countData.count);
         }
-      } catch (err) {
-        console.warn("Error fetching favorite count:", err);
+      } catch {
+        // Erreur ignorée — le compteur n'est pas critique
       } finally {
         if (!user) setIsLoading(false);
       }
@@ -62,8 +62,8 @@ export function useCharacterFavorite(characterSlug: string): UseCharacterFavorit
           const statusData = await statusRes.json();
           setIsFavorite(statusData.isFavorite === true);
         }
-      } catch (err) {
-        console.warn("Error fetching favorite status:", err);
+      } catch {
+        // Erreur ignorée — le statut favori n'est pas critique
       } finally {
         setIsLoading(false);
       }

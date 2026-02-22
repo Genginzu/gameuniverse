@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { PlayerService } from "@/lib/services/playerService";
 import { PlayerStatsService } from "@/lib/services/playerStatsService";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -36,7 +37,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     return NextResponse.json({ stats });
   } catch (error) {
-    console.error("Error in player stats API:", error);
+    logger.error("Error in player stats API", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

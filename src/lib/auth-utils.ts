@@ -38,9 +38,7 @@ export const handleAuthError = async (
   error: { message?: string },
   supabase: { auth: { signOut: () => Promise<unknown> } }
 ) => {
-  console.error("Auth error:", error);
-
-  // Si c'est une erreur de refresh token, nettoyer et rediriger
+  // Erreur auth — si c'est un refresh token, nettoyer et rediriger
   if (error?.message?.includes("refresh") || error?.message?.includes("token")) {
     clearAuthCookies();
     await supabase.auth.signOut();

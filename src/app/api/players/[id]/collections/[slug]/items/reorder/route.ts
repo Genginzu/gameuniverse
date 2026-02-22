@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { reorderItems } from "@/lib/services/collectionService";
 import { reorderCollectionItemsSchema } from "@/lib/validations/collection";
+import { logger } from "@/lib/logger";
 
 type RouteContext = { params: Promise<{ id: string; slug: string }> };
 
@@ -43,7 +44,7 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
-    console.error("Error in players/[id]/collections/[slug]/items/reorder PATCH:", error);
+    logger.error("Error in collection items reorder PATCH", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

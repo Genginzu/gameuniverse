@@ -50,7 +50,6 @@ export function LibraryComparisonSection({ playerId, locale }: LibraryComparison
         setPagination(data.pagination);
       } catch (err) {
         // Req 7.2 — hide the section rather than showing a broken state
-        console.warn("Error fetching common games:", err);
         setHasError(true);
       } finally {
         setIsLoading(false);

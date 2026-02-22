@@ -1,4 +1,5 @@
 import { createServerClient } from "@/lib/supabase-server";
+import { logger } from "@/lib/logger";
 import type { CharacterFavoriteSummary } from "@/types/character";
 
 /**
@@ -52,7 +53,7 @@ export class CharacterFavoriteService {
 
     if (error) {
       if (error.code === "PGRST205") {
-        console.warn("character_favorites table not found - migration not applied yet");
+        logger.warn("character_favorites table not found - migration not applied yet");
         return;
       }
       throw error;
@@ -73,7 +74,7 @@ export class CharacterFavoriteService {
 
     if (error) {
       if (error.code === "PGRST205") {
-        console.warn("character_favorites table not found - migration not applied yet");
+        logger.warn("character_favorites table not found - migration not applied yet");
         return;
       }
       throw error;
@@ -95,7 +96,7 @@ export class CharacterFavoriteService {
 
     if (error) {
       if (error.code === "PGRST205" || error.code === "42883") {
-        console.warn("is_character_favorited function not found - migration not applied yet");
+        logger.warn("is_character_favorited function not found - migration not applied yet");
         return false;
       }
       throw error;
@@ -118,7 +119,7 @@ export class CharacterFavoriteService {
 
     if (error) {
       if (error.code === "PGRST205" || error.code === "42883") {
-        console.warn("get_character_favorite_count function not found - migration not applied yet");
+        logger.warn("get_character_favorite_count function not found - migration not applied yet");
         return 0;
       }
       throw error;
@@ -194,7 +195,7 @@ export class CharacterFavoriteService {
 
     if (error) {
       if (error.code === "PGRST205") {
-        console.warn("character_favorites table not found - migration not applied yet");
+        logger.warn("character_favorites table not found - migration not applied yet");
         return [];
       }
       throw error;

@@ -163,7 +163,7 @@ describe("auth-utils", () => {
       globalThis.window = originalWindow;
     });
 
-    it("should log the error", async () => {
+    it("should not log to console (logging removed)", async () => {
       const mockSupabase = {
         auth: { signOut: vi.fn(async () => {}) },
       };
@@ -185,7 +185,8 @@ describe("auth-utils", () => {
 
       await handleAuthError({ message: "Some error" }, mockSupabase);
 
-      expect(consoleErrorSpy).toHaveBeenCalledWith("Auth error:", { message: "Some error" });
+      // console.error was removed — handleAuthError no longer logs
+      expect(consoleErrorSpy).not.toHaveBeenCalled();
 
       Object.keys = originalObjectKeys;
     });

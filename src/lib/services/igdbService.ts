@@ -8,6 +8,7 @@ import {
   IGDBGameVersion,
   IGDBDlcExtension,
 } from "@/types/igdb";
+import { logger } from "@/lib/logger";
 
 /**
  * Service for interacting with the IGDB (Internet Game Database) API
@@ -237,9 +238,11 @@ export class IGDBService {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(
-        `IGDB getTimeToBeat failed: ${response.status} ${response.statusText} - ${errorText}`
-      );
+      logger.error("IGDB getTimeToBeat failed", {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorText,
+      });
       return null;
     }
 
@@ -263,20 +266,19 @@ export class IGDBService {
       limit 50;
     `;
 
-    console.warn(`[IGDBService] Fetching age ratings for IDs:`, ageRatingIds);
-
     const response = await this.igdbFetch("age_ratings", body);
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(
-        `IGDB getAgeRatings failed: ${response.status} ${response.statusText} - ${errorText}`
-      );
+      logger.error("IGDB getAgeRatings failed", {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorText,
+      });
       return [];
     }
 
     const rawText = await response.text();
-    console.warn(`[IGDBService] Age ratings raw response:`, rawText);
 
     const results: IGDBAgeRating[] = JSON.parse(rawText);
 
@@ -328,20 +330,19 @@ export class IGDBService {
       limit 100;
     `;
 
-    console.warn(`[IGDBService] Fetching content descriptions for IDs:`, uniqueIds);
-
     const response = await this.igdbFetch("age_rating_content_descriptions", body);
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(
-        `IGDB getAgeRatingContentDescriptions failed: ${response.status} ${response.statusText} - ${errorText}`
-      );
+      logger.error("IGDB getAgeRatingContentDescriptions failed", {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorText,
+      });
       return [];
     }
 
     const results = await response.json();
-    console.warn(`[IGDBService] Content descriptions response:`, JSON.stringify(results));
     return results;
   }
 
@@ -362,9 +363,11 @@ export class IGDBService {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(
-        `IGDB getGameVersions failed: ${response.status} ${response.statusText} - ${errorText}`
-      );
+      logger.error("IGDB getGameVersions failed", {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorText,
+      });
       return [];
     }
 
@@ -390,21 +393,21 @@ export class IGDBService {
         limit 500;
       `;
 
-      console.warn(`[IGDBService] Fetching DLC/extensions for IDs:`, uniqueIds);
-
       const response = await this.igdbFetch("games", body);
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error(
-          `IGDB getDlcExtensions failed: ${response.status} ${response.statusText} - ${errorText}`
-        );
+        logger.error("IGDB getDlcExtensions failed", {
+          status: response.status,
+          statusText: response.statusText,
+          body: errorText,
+        });
         return [];
       }
 
       return response.json();
     } catch (error) {
-      console.error("[IGDBService] Error fetching DLC/extensions:", error);
+      logger.error("Error fetching DLC/extensions from IGDB", { error });
       return [];
     }
   }

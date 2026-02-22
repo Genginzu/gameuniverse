@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { PlayerService } from "@/lib/services/playerService";
 import { LibraryComparisonService } from "@/lib/services/libraryComparisonService";
+import { logger } from "@/lib/logger";
 
 /**
  * GET /api/players/[id]/common-games
@@ -54,7 +55,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error("Error in players/[id]/common-games GET API:", error);
+    logger.error("Error in common-games GET API", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

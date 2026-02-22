@@ -22,7 +22,6 @@ export function AuthErrorHandler() {
         error?.message?.includes("Invalid Refresh Token") ||
         error?.message?.includes("Refresh Token Not Found")
       ) {
-        console.warn("🔄 Auth error detected:", error.message);
         setShowError(true);
 
         // Auto-déconnexion après 5 secondes
@@ -41,7 +40,6 @@ export function AuthErrorHandler() {
         error?.message?.includes("Invalid Refresh Token") ||
         error?.message?.includes("Refresh Token Not Found")
       ) {
-        console.warn("🔄 Unhandled auth error detected:", error.message);
         setShowError(true);
         event.preventDefault(); // Empêcher l'affichage de l'erreur dans la console
 

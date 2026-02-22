@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { commentSchema } from "@/lib/validations/comment";
 import type { Comment, CommentsResponse } from "@/types/comment";
+import { logger } from "@/lib/logger";
 
 interface CommentRow {
   id: string;
@@ -113,7 +114,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
         };
         return NextResponse.json(emptyResponse);
       }
-      console.error("Error fetching comments:", commentsError);
+      logger.error("Error fetching comments", { error: commentsError });
       return NextResponse.json({ error: "Failed to fetch comments" }, { status: 500 });
     }
 
@@ -144,7 +145,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error("Error in comments GET:", error);
+    logger.error("Error in comments GET", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -213,13 +214,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           { status: 409 }
         );
       }
-      console.error("Error inserting comment:", insertError);
+      logger.error("Error inserting comment", { error: insertError });
       return NextResponse.json({ error: "Failed to create comment" }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, comment }, { status: 201 });
   } catch (error) {
-    console.error("Error in comments POST:", error);
+    logger.error("Error in comments POST", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -269,13 +270,13 @@ export async function PUT(request: NextRequest): Promise<NextResponse> {
       .single();
 
     if (updateError || !comment) {
-      console.error("Error updating comment:", updateError);
+      logger.error("Error updating comment", { error: updateError });
       return NextResponse.json({ error: "Failed to update comment" }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, comment });
   } catch (error) {
-    console.error("Error in comments PUT:", error);
+    logger.error("Error in comments PUT", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
