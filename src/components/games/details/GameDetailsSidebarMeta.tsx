@@ -26,6 +26,19 @@ export function GameDetailsSidebarMeta({
   return (
     <div className="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-lg shadow-black/20 backdrop-blur-xl">
       <div className="space-y-4">
+        {/* Release date — affiché en premier */}
+        {game.releaseDate && (
+          <div>
+            <div className="mb-1 flex items-center gap-1.5 text-xs" style={labelStyle}>
+              <Calendar className="h-3 w-3" />
+              {t("game.releaseDate")}
+            </div>
+            <div className="text-sm font-medium" style={textStyle}>
+              {formatReleaseDate(game.releaseDate)}
+            </div>
+          </div>
+        )}
+
         {/* Developer */}
         <div>
           <div className="mb-1 flex items-center gap-1.5 text-xs" style={labelStyle}>
@@ -68,19 +81,6 @@ export function GameDetailsSidebarMeta({
                   {game.publisher}
                 </div>
               )}
-            </div>
-          </div>
-        )}
-
-        {/* Release date */}
-        {game.releaseDate && (
-          <div>
-            <div className="mb-1 flex items-center gap-1.5 text-xs" style={labelStyle}>
-              <Calendar className="h-3 w-3" />
-              {t("game.releaseDate")}
-            </div>
-            <div className="text-sm font-medium" style={textStyle}>
-              {formatReleaseDate(game.releaseDate)}
             </div>
           </div>
         )}
