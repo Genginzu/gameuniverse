@@ -158,7 +158,7 @@ export function GameHeroSection({
 
               {/* Title */}
               <h1
-                className="mb-4 text-4xl font-bold leading-tight drop-shadow-lg lg:text-6xl"
+                className="neon-text mb-4 text-4xl font-bold leading-tight drop-shadow-lg lg:text-6xl"
                 style={{ color: colors.textColor }}
               >
                 {game.title}

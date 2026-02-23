@@ -110,7 +110,9 @@ export default function AdminGenresPage() {
     <div className="space-y-8 p-4 lg:p-6">
       <section>
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t("title")}</h1>
+          <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">
+            {t("title")}
+          </h1>
           <Button onClick={() => router.push("/admin/genres/new")}>
             <FaPlus className="h-4 w-4" />
             {t("newGenre")}

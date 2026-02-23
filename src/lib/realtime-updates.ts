@@ -176,7 +176,7 @@ export async function invalidateGameCache(gameIds: string | string[]) {
 /**
  * Update search indexes to ensure deleted games are removed from all search results
  */
-async function updateSearchIndexes(gameIds: string[]) {
+async function updateSearchIndexes(_gameIds: string[]) {
   try {
     // In a real implementation, this would:
     // 1. Remove games from Elasticsearch/Algolia indexes

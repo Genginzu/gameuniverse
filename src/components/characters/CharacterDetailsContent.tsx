@@ -185,7 +185,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
             <div className="mt-2 max-w-lg text-center lg:mt-0 lg:flex-1 lg:pl-6 lg:text-left">
               {/* Character name */}
               <div className="mb-3 flex items-center justify-center gap-3 lg:justify-start">
-                <h1 className="text-5xl font-bold leading-tight text-white drop-shadow-lg [text-shadow:_0_2px_8px_rgba(0,0,0,0.5)] lg:text-6xl">
+                <h1 className="neon-text text-5xl font-bold leading-tight text-white drop-shadow-lg [text-shadow:_0_2px_8px_rgba(0,0,0,0.5)] lg:text-6xl">
                   {character.name}
                 </h1>
               </div>

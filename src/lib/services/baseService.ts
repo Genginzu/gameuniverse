@@ -143,7 +143,7 @@ export abstract class BaseService<TDetails, TSummary> {
     try {
       const entity = await this.fetchDetails(identifier, locale);
       return entity !== null;
-    } catch (_error) {
+    } catch {
       return false;
     }
   }

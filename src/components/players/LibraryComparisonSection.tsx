@@ -48,7 +48,7 @@ export function LibraryComparisonSection({ playerId, locale }: LibraryComparison
         setCommonGamesCount(data.commonGamesCount);
         setCommonGames(data.commonGames);
         setPagination(data.pagination);
-      } catch (err) {
+      } catch {
         // Req 7.2 — hide the section rather than showing a broken state
         setHasError(true);
       } finally {

@@ -51,7 +51,7 @@ export function MyCollectionsContent() {
     <div className="flex-1 p-4 sm:p-6">
       {/* Header */}
       <div className="mb-6 flex items-center justify-between sm:mb-8">
-        <h1 className="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">
+        <h1 className="neon-text text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">
           {t("title")}
         </h1>
         <Button onClick={() => setShowCreateDialog(true)}>

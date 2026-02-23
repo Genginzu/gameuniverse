@@ -1,7 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Star, Users, Trophy, Shield, Tag } from "lucide-react";
+import { Star, Trophy, Shield, Tag } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { GameDetails } from "@/types/game";
 import { GameColors } from "@/lib/utils/game-utils";

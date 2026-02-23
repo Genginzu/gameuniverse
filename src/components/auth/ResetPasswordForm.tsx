@@ -66,7 +66,7 @@ export default function ResetPasswordForm() {
       setTimeout(() => {
         router.push("/dashboard");
       }, 2000);
-    } catch (err) {
+    } catch {
       setError("Une erreur inattendue s'est produite");
     } finally {
       setIsLoading(false);

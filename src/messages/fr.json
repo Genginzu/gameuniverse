@@ -8,7 +8,12 @@
     "dashboard": "Tableau de bord",
     "login": "Connexion",
     "signup": "Inscription",
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "search": "Recherche",
+    "settings": "Paramètres",
+    "lightMode": "Mode clair",
+    "darkMode": "Mode sombre",
+    "explore": "Explorer"
   },
   "landing": {
     "title": "Découvrez l'univers du jeu vidéo",
@@ -234,7 +239,8 @@
     "joinTeam": "Rejoindre une équipe",
     "accountInfo": "Informations du compte",
     "accountInfoDesc": "Détails de votre profil",
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "mySpace": "Mon espace"
   },
   "common": {
     "loading": "Chargement...",

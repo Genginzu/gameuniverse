@@ -51,7 +51,7 @@ export default function NewCharacterPage() {
           <FaArrowLeft className="mr-1 h-3 w-3" />
           {t("form.backToList")}
         </Button>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+        <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">
           {t("createPage.title")}
         </h1>
       </div>

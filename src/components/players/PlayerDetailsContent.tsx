@@ -118,7 +118,9 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
 
             {/* Player info */}
             <div className="flex-1">
-              <h1 className="mb-2 text-3xl font-bold text-white md:text-4xl">{displayName}</h1>
+              <h1 className="neon-text mb-2 text-3xl font-bold text-white md:text-4xl">
+                {displayName}
+              </h1>
               <div className="flex items-center justify-center gap-2 text-slate-300 md:justify-start">
                 <Calendar className="h-4 w-4" />
                 <span className="text-sm">
@@ -156,7 +158,7 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
         {/* Library Section - Requirements 6.1, 6.2, 6.3 */}
         <div className="mb-8">
           <div className="mb-6 flex items-center justify-between">
-            <h2 className="flex items-center gap-2 text-xl font-bold text-white md:text-2xl">
+            <h2 className="flex items-center gap-2 text-2xl font-bold text-white">
               <Gamepad2 className="h-6 w-6 text-blue-400" />
               {t("details.library")}
             </h2>

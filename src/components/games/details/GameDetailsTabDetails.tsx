@@ -1,6 +1,6 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
+// Card/CardContent removed — not used in this tab
 import { GamePlaytime } from "../GamePlaytime";
 import { GameAgeRatings } from "../GameAgeRatings";
 import { GameVersions } from "../GameVersions";
@@ -22,7 +22,7 @@ interface GameDetailsTabDetailsProps {
  * Groups: playtime, age ratings, languages, versions, DLC, music, price history.
  */
 export function GameDetailsTabDetails({ game, colors }: GameDetailsTabDetailsProps) {
-  const tDetails = useTranslations("gameDetails");
+  useTranslations("gameDetails");
 
   return (
     <div className="space-y-10">

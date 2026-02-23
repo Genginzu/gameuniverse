@@ -4,8 +4,11 @@ import React, { useEffect, useState } from "react";
 import { LoadingSpinner } from "../../ui/loading-spinner";
 import { useRouter } from "@/i18n/navigation";
 import { useAuth } from "@/hooks/useAuth";
-import DashboardHeader from "./DashboardHeader";
-import DashboardSidebar from "./DashboardSidebar";
+import { useSearchOverlay } from "@/hooks/useSearchOverlay";
+import Sidebar from "./Sidebar";
+import MobileHamburgerButton from "./MobileHamburgerButton";
+import MobileNavOverlay from "./MobileNavOverlay";
+import SearchOverlay from "./SearchOverlay";
 import { DashboardContext } from "@/hooks/useDashboard";
 
 type DashboardLayoutProps = {
@@ -15,57 +18,14 @@ type DashboardLayoutProps = {
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const { user, loading, signOut } = useAuth();
   const router = useRouter();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const { isOpen: searchOpen, open: openSearch, close: closeSearch } = useSearchOverlay();
 
   useEffect(() => {
     if (!loading && !user) {
       router.push("/auth?mode=signin");
     }
   }, [user, loading, router]);
-
-  // Close sidebar when clicking outside on mobile
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const sidebar = document.getElementById("mobile-sidebar");
-      const sidebarToggle = document.getElementById("sidebar-toggle");
-
-      if (
-        sidebarOpen &&
-        sidebar &&
-        !sidebar.contains(event.target as Node) &&
-        sidebarToggle &&
-        !sidebarToggle.contains(event.target as Node)
-      ) {
-        setSidebarOpen(false);
-      }
-    };
-
-    if (sidebarOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [sidebarOpen]);
-
-  // Handle orientation changes
-  useEffect(() => {
-    const handleOrientationChange = () => {
-      // Close sidebar on orientation change for mobile
-      if (window.innerWidth < 1024) {
-        setSidebarOpen(false);
-      }
-    };
-
-    window.addEventListener("orientationchange", handleOrientationChange);
-    window.addEventListener("resize", handleOrientationChange);
-
-    return () => {
-      window.removeEventListener("orientationchange", handleOrientationChange);
-      window.removeEventListener("resize", handleOrientationChange);
-    };
-  }, []);
 
   if (loading) {
     return (
@@ -78,7 +38,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   }
 
   if (!user) {
-    return null; // Will redirect
+    return null;
   }
 
   const contextValue = {
@@ -88,31 +48,16 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <DashboardContext.Provider value={contextValue}>
-      <div className="dashboard-bg flex h-screen flex-col">
-        <DashboardHeader sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-
-        {/* Mobile sidebar overlay — frosted */}
-        {sidebarOpen && (
-          <div
-            className="glass-overlay fixed inset-0 z-40 lg:hidden"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
-
-        {/* Sidebar and Content Area */}
-        <div className="flex flex-1 overflow-hidden">
-          <DashboardSidebar
-            signOut={signOut}
-            user={user}
-            sidebarOpen={sidebarOpen}
-            setSidebarOpen={setSidebarOpen}
-          />
-
-          {/* Main Content */}
-          <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-            <main className="flex-1 overflow-y-auto">{children}</main>
-          </div>
-        </div>
+      <div className="dashboard-bg flex h-screen">
+        <Sidebar user={user} signOut={signOut} onSearchOpen={openSearch} />
+        <MobileHamburgerButton onClick={() => setMobileNavOpen(true)} />
+        <MobileNavOverlay
+          isOpen={mobileNavOpen}
+          onClose={() => setMobileNavOpen(false)}
+          onSearchOpen={openSearch}
+        />
+        <SearchOverlay isOpen={searchOpen} onClose={closeSearch} />
+        <main className="animate-page-enter flex-1 overflow-y-auto">{children}</main>
       </div>
     </DashboardContext.Provider>
   );

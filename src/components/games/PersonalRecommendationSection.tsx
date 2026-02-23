@@ -42,7 +42,7 @@ export function PersonalRecommendationSection({
     <section className="mb-8">
       <div className="mb-6 flex items-center gap-2">
         <Sparkles className="h-6 w-6 text-yellow-400" />
-        <h2 className="text-xl font-bold text-white md:text-2xl">{t("personalTitle")}</h2>
+        <h2 className="text-2xl font-bold text-white">{t("personalTitle")}</h2>
         {basedOnGameCount > 0 && !loading && (
           <span className="rounded-full bg-slate-700/50 px-3 py-1 text-sm text-slate-300">
             {t("basedOnGames", { count: basedOnGameCount })}

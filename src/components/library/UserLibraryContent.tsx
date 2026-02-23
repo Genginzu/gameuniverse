@@ -47,7 +47,9 @@ export function UserLibraryContent() {
     <div className="p-4 sm:p-6">
       {/* Page Header */}
       <div className="mb-6 sm:mb-8">
-        <h1 className="mb-2 text-xl font-bold text-gray-900 sm:text-2xl">{tLib("title")}</h1>
+        <h1 className="neon-text mb-2 text-xl font-bold text-gray-900 sm:text-2xl">
+          {tLib("title")}
+        </h1>
         <p className="text-sm text-gray-600 sm:text-base">{t("subtitle")}</p>
       </div>
 

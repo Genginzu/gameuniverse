@@ -97,7 +97,7 @@ export default function AdminReviewsPage() {
   return (
     <div className="p-4 lg:p-6">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t("title")}</h1>
+        <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">{t("title")}</h1>
       </div>
 
       <AdminReviewsTable

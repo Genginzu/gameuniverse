@@ -44,7 +44,7 @@ export function YearInReviewContent({
     return (
       <div className="mx-auto max-w-4xl px-4 py-8">
         {backLink}
-        <h1 className="mt-6 text-3xl font-bold text-white">
+        <h1 className="neon-text mt-6 text-3xl font-bold text-white">
           {t("title", { year: yearReview.year })}
         </h1>
         <div className="mt-12 flex flex-col items-center justify-center text-center">
@@ -58,7 +58,7 @@ export function YearInReviewContent({
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
       {backLink}
-      <h1 className="mb-8 mt-6 text-3xl font-bold text-white">
+      <h1 className="neon-text mb-8 mt-6 text-3xl font-bold text-white">
         {t("title", { year: yearReview.year })}
       </h1>
       <YearInReviewCards yearReview={yearReview} locale={locale} t={t} />

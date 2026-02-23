@@ -158,7 +158,7 @@ export default function EditRatingSystemPage() {
         </Button>
       </div>
 
-      <h1 className="mb-6 text-2xl font-bold text-gray-900 dark:text-white">
+      <h1 className="neon-text mb-6 text-2xl font-bold text-gray-900 dark:text-white">
         Modifier {systemName}
       </h1>
 

@@ -68,7 +68,7 @@ export function PlayerFavoriteCharacters({ playerId, locale }: PlayerFavoriteCha
   if (!loading && !error && characters.length === 0) {
     return (
       <section className="mb-8">
-        <h2 className="mb-6 flex items-center gap-2 text-xl font-bold text-white md:text-2xl">
+        <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-white">
           <Heart className="h-6 w-6 text-pink-400" />
           {t("title")}
         </h2>
@@ -85,7 +85,7 @@ export function PlayerFavoriteCharacters({ playerId, locale }: PlayerFavoriteCha
   if (loading) {
     return (
       <section className="mb-8">
-        <h2 className="mb-6 flex items-center gap-2 text-xl font-bold text-white md:text-2xl">
+        <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-white">
           <Heart className="h-6 w-6 text-pink-400" />
           {t("title")}
         </h2>
@@ -105,7 +105,7 @@ export function PlayerFavoriteCharacters({ playerId, locale }: PlayerFavoriteCha
   return (
     <section className="mb-8">
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="flex items-center gap-2 text-xl font-bold text-white md:text-2xl">
+        <h2 className="flex items-center gap-2 text-2xl font-bold text-white">
           <Heart className="h-6 w-6 text-pink-400" />
           {t("title")}
         </h2>

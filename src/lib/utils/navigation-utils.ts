@@ -1,0 +1,42 @@
+import {
+  FaChartLine,
+  FaDice,
+  FaGamepad,
+  FaHeart,
+  FaLayerGroup,
+  FaUser,
+  FaUserFriends,
+  FaMask,
+} from "react-icons/fa";
+import type { IconType } from "react-icons";
+
+export interface NavLink {
+  href: string;
+  icon: IconType;
+  labelKey: string;
+}
+
+/** Main navigation links for the authenticated area. */
+export const NAV_LINKS: NavLink[] = [
+  { href: "/dashboard", icon: FaChartLine, labelKey: "dashboard" },
+  { href: "/library", icon: FaGamepad, labelKey: "library" },
+  { href: "/favorites/characters", icon: FaHeart, labelKey: "myCharacters" },
+  { href: "/collections", icon: FaLayerGroup, labelKey: "collections" },
+  { href: "/profile", icon: FaUser, labelKey: "profile" },
+];
+
+/** Public navigation links visible to all users. */
+export const PUBLIC_LINKS: NavLink[] = [
+  { href: "/games", icon: FaDice, labelKey: "games" },
+  { href: "/characters", icon: FaMask, labelKey: "characters" },
+  { href: "/players", icon: FaUserFriends, labelKey: "players" },
+];
+
+/**
+ * Determines if a navigation link is active based on the current pathname.
+ * Strips the locale prefix (e.g. /fr, /en) before comparing.
+ */
+export function isActive(pathname: string, linkPath: string): boolean {
+  const normalizedPathname = pathname.replace(/^\/(fr|en)/, "") || "/";
+  return normalizedPathname === linkPath || normalizedPathname.startsWith(linkPath + "/");
+}

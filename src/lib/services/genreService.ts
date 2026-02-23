@@ -21,20 +21,16 @@ export class GenreService {
       gameCount: number;
     }>
   > {
-    try {
-      const baseUrl = this.getBaseUrl();
-      const response = await fetch(`${baseUrl}/api/genres?locale=${locale}`, {
-        cache: "no-store",
-      });
+    const baseUrl = this.getBaseUrl();
+    const response = await fetch(`${baseUrl}/api/genres?locale=${locale}`, {
+      cache: "no-store",
+    });
 
-      if (!response.ok) {
-        throw new Error(`Failed to fetch genres: ${response.status} ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      return data.genres || [];
-    } catch (error) {
-      throw error;
+    if (!response.ok) {
+      throw new Error(`Failed to fetch genres: ${response.status} ${response.statusText}`);
     }
+
+    const data = await response.json();
+    return data.genres || [];
   }
 }

@@ -24,7 +24,9 @@ export function CollectionDetail({ collection }: CollectionDetailProps) {
     <div className="space-y-8">
       {/* Header */}
       <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
-        <h1 className="text-lg font-bold text-gray-900 dark:text-white">{collection.name}</h1>
+        <h1 className="neon-text text-lg font-bold text-gray-900 dark:text-white">
+          {collection.name}
+        </h1>
 
         <p className="mt-1 text-sm text-muted-foreground">
           {collection.description || t("noDescription")}

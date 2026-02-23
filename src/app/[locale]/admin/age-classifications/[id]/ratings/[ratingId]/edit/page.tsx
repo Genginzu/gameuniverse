@@ -149,7 +149,9 @@ function EditRatingFormWrapper({
       </div>
 
       <div className="mx-auto max-w-4xl">
-        <h1 className="mb-6 text-2xl font-bold text-gray-900 dark:text-white">Modifier la note</h1>
+        <h1 className="neon-text mb-6 text-2xl font-bold text-gray-900 dark:text-white">
+          Modifier la note
+        </h1>
 
         <RatingForm
           mode="edit"

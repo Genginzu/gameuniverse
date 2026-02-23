@@ -67,7 +67,9 @@ export function CollectionsPageContent({ playerId, locale }: CollectionsPageCont
               {t("backToPlayer")}
             </Button>
           </Link>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{t("title")}</h1>
+          <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">
+            {t("title")}
+          </h1>
         </div>
 
         {isOwner && (

@@ -14,6 +14,11 @@ const config: Config = {
         xs: "475px",
       },
       colors: {
+        neon: {
+          violet: "rgb(var(--neon-violet) / <alpha-value>)",
+          cyan: "rgb(var(--neon-cyan) / <alpha-value>)",
+          magenta: "rgb(var(--neon-magenta) / <alpha-value>)",
+        },
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {

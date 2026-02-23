@@ -217,7 +217,7 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
         <div className="absolute inset-0 bg-black/10"></div>
         <div className="relative mx-auto max-w-4xl">
           <div className="text-center">
-            <h1 className="mb-3 text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl xl:text-5xl">
+            <h1 className="neon-text mb-3 text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl xl:text-5xl">
               {t("heroTitle")}
               <span className="block bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
                 {t("heroTitleHighlight")}

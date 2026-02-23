@@ -24,8 +24,6 @@ export function GameDetailsMainContent({
   formatPrice,
 }: GameDetailsMainContentProps) {
   const [activeTab, setActiveTab] = useState<TabType>("overview");
-  const textStyle = { color: colors.textColor };
-
   return (
     <div className="min-w-0 flex-1">
       {/* Genres pills */}
@@ -44,7 +42,9 @@ export function GameDetailsMainContent({
       )}
 
       {/* Title */}
-      <h1 className="mb-6 text-3xl font-bold leading-tight text-white lg:text-5xl">{game.title}</h1>
+      <h1 className="neon-text mb-6 text-3xl font-bold leading-tight text-white lg:text-5xl">
+        {game.title}
+      </h1>
 
       {/* Tabs right below title */}
       <GameDetailsTabs

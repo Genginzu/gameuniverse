@@ -80,7 +80,7 @@ export function GameCard({
       <Link href={`/${locale}/games/${game.slug}`}>
         {/* Cover Image with Overlay */}
         <div
-          className="relative aspect-[3/4] cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl hover:shadow-blue-500/10"
+          className="hover:ring-neon-violet/30 relative aspect-[3/4] cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(var(--neon-violet),0.3),0_0_40px_rgba(var(--neon-cyan),0.15)] hover:ring-1 motion-reduce:transition-none motion-reduce:hover:scale-100"
           style={{
             backgroundColor: game.backgroundColor || "#f3f4f6", // Fallback to gray-100
           }}
@@ -89,7 +89,7 @@ export function GameCard({
             src={game.coverImage}
             alt={game.title}
             fill
-            className="rounded-2xl object-cover transition-all duration-500 group-hover:scale-105"
+            className="rounded-2xl object-cover transition-all duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
             sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, (max-width: 1280px) 20vw, 16vw"
             showSkeleton={true}
             priority={priority}
@@ -117,7 +117,7 @@ export function GameCard({
               <div
                 className={`${getMetascoreColor(
                   game.metascore
-                )} flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold text-white shadow-lg ring-2 ring-white/20 backdrop-blur-sm`}
+                )} flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold text-white shadow-[0_0_10px_currentColor] ring-2 ring-white/20 backdrop-blur-sm`}
               >
                 {game.metascore}
               </div>

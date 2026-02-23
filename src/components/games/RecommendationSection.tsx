@@ -11,7 +11,6 @@ interface RecommendationSectionProps {
   locale?: string;
 }
 
-const SKELETON_COUNT = 5;
 const MAX_RECOMMENDATIONS = 5;
 
 /** Mappe un GameRecommendation vers les props attendues par GameCard */

@@ -158,7 +158,7 @@ export function useAuth() {
   const signOut = async () => {
     try {
       // Appeler d'abord signOut de Supabase
-      const { error } = await supabase.auth.signOut();
+      await supabase.auth.signOut();
 
       // Ignorer les erreurs de signOut — on nettoie quand même
 

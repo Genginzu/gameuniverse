@@ -1,22 +1,8 @@
 // Types pour les props des composants
 
-import { User } from "@supabase/supabase-js";
 import { GameDetails } from "./game";
 import { Genre } from "./genre";
 import { AuthMode } from "./auth";
-
-// Layout Components
-export interface DashboardSidebarProps {
-  user: User;
-  signOut: () => Promise<void>;
-  sidebarOpen: boolean;
-  setSidebarOpen: (open: boolean) => void;
-}
-
-export interface DashboardHeaderProps {
-  sidebarOpen: boolean;
-  setSidebarOpen: (open: boolean) => void;
-}
 
 export interface DashboardLayoutProps {
   children: React.ReactNode;

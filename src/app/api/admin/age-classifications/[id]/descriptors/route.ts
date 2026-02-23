@@ -3,6 +3,10 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { adminDescriptorFormSchema } from "@/lib/validations/admin-descriptor-form";
 import { logger } from "@/lib/logger";
+
+/**
+ * GET /api/admin/age-classifications/[id]/descriptors
+ * Fetch all content descriptors for a rating system
  */
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {

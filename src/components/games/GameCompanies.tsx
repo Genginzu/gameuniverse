@@ -35,8 +35,8 @@ export default function GameCompanies({ gameId, gameTitle }: GameCompaniesProps)
         }
 
         setCompanies(data || []);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : tCommon("error"));
+      } catch (fetchError) {
+        setError(fetchError instanceof Error ? fetchError.message : tCommon("error"));
       } finally {
         setLoading(false);
       }
@@ -136,7 +136,7 @@ export function GameDevelopers({ gameId }: { gameId: string }) {
 
         if (error) throw error;
         setDevelopers(data || []);
-      } catch (err) {
+      } catch {
         setLoading(false);
       } finally {
         setLoading(false);

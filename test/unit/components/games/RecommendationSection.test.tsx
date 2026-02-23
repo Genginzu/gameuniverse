@@ -66,9 +66,9 @@ describe("RecommendationSection", () => {
     // Title should be visible
     expect(screen.getByText("title")).toBeDefined();
 
-    // Skeletons should be rendered (4 skeleton cards)
+    // Skeletons should be rendered (5 skeleton cards — matches MAX_RECOMMENDATIONS)
     const skeletons = container.querySelectorAll(".aspect-\\[3\\/4\\]");
-    expect(skeletons.length).toBe(4);
+    expect(skeletons.length).toBe(5);
   });
 
   it("renders empty message when no recommendations", () => {

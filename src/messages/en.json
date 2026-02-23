@@ -8,7 +8,12 @@
     "dashboard": "Dashboard",
     "login": "Login",
     "signup": "Sign up",
-    "logout": "Logout"
+    "logout": "Logout",
+    "search": "Search",
+    "settings": "Settings",
+    "lightMode": "Light mode",
+    "darkMode": "Dark mode",
+    "explore": "Explore"
   },
   "landing": {
     "title": "Discover the gaming universe",
@@ -234,7 +239,8 @@
     "joinTeam": "Join a team",
     "accountInfo": "Account information",
     "accountInfoDesc": "Your profile details",
-    "logout": "Logout"
+    "logout": "Logout",
+    "mySpace": "My Space"
   },
   "common": {
     "loading": "Loading...",

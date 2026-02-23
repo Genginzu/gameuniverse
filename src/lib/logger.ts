@@ -72,11 +72,9 @@ function log(level: LogLevel, message: string, data?: LogPayload) {
 
     switch (level) {
       case "error":
-        // eslint-disable-next-line no-console
         console.error(line);
         break;
       case "warn":
-        // eslint-disable-next-line no-console
         console.warn(line);
         break;
       default:
@@ -93,11 +91,9 @@ function log(level: LogLevel, message: string, data?: LogPayload) {
 
     switch (level) {
       case "error":
-        // eslint-disable-next-line no-console
         console.error(...parts);
         break;
       case "warn":
-        // eslint-disable-next-line no-console
         console.warn(...parts);
         break;
       case "debug":

@@ -14,7 +14,6 @@ interface GameDetailsSidebarProps {
   colors: GameColors;
   formatReleaseDate: (dateString?: string) => string | null;
   formatPrice: (price: number, currency: string) => string;
-  getMetascoreColor: (score?: number) => string;
 }
 
 export function GameDetailsSidebar({ game, colors, formatReleaseDate }: GameDetailsSidebarProps) {

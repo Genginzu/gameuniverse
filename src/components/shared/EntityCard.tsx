@@ -101,7 +101,7 @@ export function EntityCard<T extends object>({
         return (
           <div className={`absolute ${positionClass} top-3 z-20`}>
             <div
-              className={`${colorClass} flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold text-white shadow-lg ring-2 ring-white/20 backdrop-blur-sm`}
+              className={`${colorClass} flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold text-white shadow-[0_0_10px_currentColor] ring-2 ring-white/20 backdrop-blur-sm`}
             >
               {score}
             </div>
@@ -184,7 +184,7 @@ export function EntityCard<T extends object>({
     <div className="group relative">
       <Link href={config.linkTemplate(entity, locale)}>
         <div
-          className={`relative ${aspectRatioClass} cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl hover:shadow-blue-500/10 dark:bg-gray-800`}
+          className={`relative ${aspectRatioClass} hover:ring-neon-violet/30 cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(var(--neon-violet),0.3),0_0_40px_rgba(var(--neon-cyan),0.15)] hover:ring-1 motion-reduce:transition-none motion-reduce:hover:scale-100 dark:bg-gray-800`}
           style={{ backgroundColor: backgroundColor || "#f3f4f6" }}
         >
           {needsFallbackAvatar ? (
@@ -196,7 +196,7 @@ export function EntityCard<T extends object>({
               src={imageUrl}
               alt={title}
               fill
-              className="rounded-2xl object-cover transition-all duration-500 group-hover:scale-105"
+              className="rounded-2xl object-cover transition-all duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
               sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, (max-width: 1280px) 20vw, 16vw"
               showSkeleton={true}
               priority={priority}

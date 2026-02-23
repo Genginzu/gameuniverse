@@ -71,7 +71,7 @@ export function PlayerEnrichedStats({
   }, [fetchStats, isOwnProfile, statsPrivate]);
 
   const title = (
-    <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-white">
+    <h2 className="mb-4 flex items-center gap-2 text-2xl font-bold text-white">
       {t("enrichedStats.title")}
     </h2>
   );

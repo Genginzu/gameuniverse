@@ -23,14 +23,18 @@ export function DashboardStatCard({
     <div className="glass-card rounded-2xl p-5">
       <div className="mb-3 flex items-center">
         <div className={`rounded-xl p-2.5 ${iconBgClass}`}>
-          <Icon className={`h-4 w-4 sm:h-5 sm:w-5 ${iconColorClass}`} />
+          <Icon
+            className={`h-5 w-5 sm:h-6 sm:w-6 ${iconColorClass} drop-shadow-[0_0_6px_currentColor]`}
+          />
         </div>
         <div className="ml-3">
           <p className="text-sm font-medium text-gray-900 dark:text-white">{title}</p>
           <p className="text-xs text-gray-500 dark:text-gray-400">{description}</p>
         </div>
       </div>
-      <div className="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">{value}</div>
+      <div className="neon-text text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">
+        {value}
+      </div>
       <p className="text-xs text-gray-500 dark:text-gray-400">{subtitle}</p>
     </div>
   );

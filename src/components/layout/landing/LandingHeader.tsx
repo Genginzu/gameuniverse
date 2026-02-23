@@ -21,32 +21,32 @@ export function LandingHeader() {
   };
 
   return (
-    <nav className="flex items-center justify-between border-b bg-white/95 p-6 shadow-lg backdrop-blur-sm">
+    <nav className="glass-header relative z-30 flex items-center justify-between px-4 py-3 lg:px-6 lg:py-4">
       <div className="flex items-center space-x-8">
         <Link href="/" className="flex items-center space-x-3">
           <GameUniverseLogo size="md" />
-          <span className="bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-xl font-bold text-transparent">
+          <span className="text-lg font-bold text-gray-900 dark:text-white lg:text-xl">
             Game Universe
           </span>
         </Link>
 
-        <div className="hidden items-center space-x-6 md:flex">
+        <div className="hidden items-center space-x-2 md:flex">
           <Link
             href="/"
-            className="rounded-md px-3 py-2 text-gray-600 transition-all hover:scale-105 hover:rounded-xl hover:bg-gray-50 hover:text-gray-900"
+            className="rounded-xl px-3 py-2 text-sm font-medium text-gray-600 transition-all hover:bg-white/30 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-white/5 dark:hover:text-white"
           >
             {t("home")}
           </Link>
           <Link
             href="/games"
-            className="rounded-md px-3 py-2 text-gray-600 transition-all hover:scale-105 hover:rounded-xl hover:bg-gray-50 hover:text-gray-900"
+            className="rounded-xl px-3 py-2 text-sm font-medium text-gray-600 transition-all hover:bg-white/30 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-white/5 dark:hover:text-white"
           >
             {t("games")}
           </Link>
           {user && (
             <Link
               href="/dashboard"
-              className="rounded-md px-3 py-2 text-gray-600 transition-all hover:scale-105 hover:rounded-xl hover:bg-gray-50 hover:text-gray-900"
+              className="rounded-xl px-3 py-2 text-sm font-medium text-gray-600 transition-all hover:bg-white/30 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-white/5 dark:hover:text-white"
             >
               {t("dashboard")}
             </Link>
@@ -55,23 +55,26 @@ export function LandingHeader() {
       </div>
 
       <div className="flex items-center space-x-4">
-        <div className="rounded-xl p-1">
-          <LanguageSwitcher />
-        </div>
+        <LanguageSwitcher />
 
         {loading ? (
-          <div className="h-10 w-24 animate-pulse rounded-md bg-gray-200"></div>
+          <div className="h-10 w-24 animate-pulse rounded-xl bg-white/10"></div>
         ) : user ? (
           <div className="flex items-center space-x-3">
-            <div className="flex items-center space-x-3 rounded-lg bg-gray-50 px-4 py-2 text-sm text-gray-600">
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-purple-500">
+            <div className="glass flex items-center space-x-3 rounded-xl px-4 py-2 text-sm text-gray-600 dark:text-gray-300">
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-neon-violet to-neon-cyan">
                 <FaUser className="h-4 w-4 text-white" />
               </div>
               <span className="hidden font-medium sm:inline">
                 {user.user_metadata?.username || user.email}
               </span>
             </div>
-            <Button variant="ghost" size="sm" onClick={handleSignOut} className="rounded-xl">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleSignOut}
+              className="rounded-xl text-gray-600 hover:bg-white/30 dark:text-gray-300 dark:hover:bg-white/5"
+            >
               <FaSignOutAlt className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">{t("logout")}</span>
             </Button>
@@ -81,13 +84,13 @@ export function LandingHeader() {
             <Button
               variant="ghost"
               asChild
-              className="transition-all hover:scale-105 hover:rounded-xl hover:bg-gray-50 hover:text-gray-900"
+              className="rounded-xl text-gray-600 transition-all hover:bg-white/30 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-white/5 dark:hover:text-white"
             >
               <Link href="/auth?mode=signin">{t("login")}</Link>
             </Button>
             <Button
               asChild
-              className="rounded-xl border-2 border-transparent bg-gradient-to-br from-blue-500 to-purple-500 text-white transition-all hover:border-purple-500 hover:from-white hover:to-white hover:text-purple-700"
+              className="neon-btn rounded-xl bg-neon-violet/10 px-5 py-2 font-semibold text-neon-violet transition-all dark:bg-neon-violet/20 dark:text-white"
             >
               <Link href="/auth?mode=signup">{t("signup")}</Link>
             </Button>
