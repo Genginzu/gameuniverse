@@ -69,8 +69,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="rounded-lg p-8">
+      <div className="dashboard-bg flex min-h-screen items-center justify-center">
+        <div className="glass rounded-2xl p-8">
           <LoadingSpinner size="lg" />
         </div>
       </div>
@@ -91,8 +91,13 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       <div className="dashboard-bg flex h-screen flex-col">
         <DashboardHeader sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-        {/* Mobile sidebar overlay */}
-        {sidebarOpen && <div className="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden" />}
+        {/* Mobile sidebar overlay — frosted */}
+        {sidebarOpen && (
+          <div
+            className="glass-overlay fixed inset-0 z-40 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
 
         {/* Sidebar and Content Area */}
         <div className="flex flex-1 overflow-hidden">
@@ -105,7 +110,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
           {/* Main Content */}
           <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-            {/* Page Content */}
             <main className="flex-1 overflow-y-auto">{children}</main>
           </div>
         </div>

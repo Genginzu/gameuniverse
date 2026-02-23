@@ -16,12 +16,11 @@ export default function DashboardHeader({ sidebarOpen, setSidebarOpen }: Dashboa
       <div className="flex items-center justify-between">
         {/* Left side - Mobile menu button + Logo + Brand */}
         <div className="flex items-center space-x-3">
-          {/* Mobile menu button */}
           <Button
             id="sidebar-toggle"
             variant="ghost"
             size="sm"
-            className="lg:hidden"
+            className="text-gray-600 hover:bg-white/30 dark:text-gray-300 dark:hover:bg-white/5 lg:hidden"
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
             {sidebarOpen ? <FaTimes className="h-5 w-5" /> : <FaBars className="h-5 w-5" />}
@@ -36,30 +35,29 @@ export default function DashboardHeader({ sidebarOpen, setSidebarOpen }: Dashboa
           </Link>
         </div>
 
-        {/* Center - Hybrid Search Bar (hidden on mobile) */}
+        {/* Center - Search Bar */}
         <div className="ml-4 hidden max-w-md flex-1 md:block lg:ml-8">
           <GlobalSearchBar />
         </div>
 
-        {/* Right side - Navigation Links + Language Switcher */}
+        {/* Right side - Navigation + Language */}
         <div className="flex items-center space-x-2 lg:space-x-8">
-          {/* Desktop Navigation */}
-          <nav className="hidden items-center space-x-4 lg:flex lg:space-x-8">
+          <nav className="hidden items-center space-x-1 lg:flex lg:space-x-1">
             <Link
               href="/games"
-              className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+              className="rounded-xl px-3 py-2 text-sm font-medium text-gray-600 transition-all hover:bg-white/30 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-white/5 dark:hover:text-white"
             >
               Jeux
             </Link>
             <Link
               href="/characters"
-              className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+              className="rounded-xl px-3 py-2 text-sm font-medium text-gray-600 transition-all hover:bg-white/30 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-white/5 dark:hover:text-white"
             >
               Personnages
             </Link>
             <Link
               href="/players"
-              className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+              className="rounded-xl px-3 py-2 text-sm font-medium text-gray-600 transition-all hover:bg-white/30 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-white/5 dark:hover:text-white"
             >
               Joueurs
             </Link>
