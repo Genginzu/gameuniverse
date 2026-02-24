@@ -36,6 +36,9 @@ describe("PlayerService", () => {
     id: "player-uuid-1234",
     fullName: "TestPlayer",
     avatarUrl: "https://example.com/avatar.jpg",
+    bannerUrl: null,
+    socialLinks: {},
+    level: 1,
     preferredLocale: "en",
     createdAt: "2024-01-01T00:00:00Z",
     updatedAt: "2024-01-15T00:00:00Z",
@@ -49,6 +52,9 @@ describe("PlayerService", () => {
     fullName: "TestPlayer",
     avatarUrl: "https://example.com/avatar.jpg",
     gamesCount: 5,
+    level: 1,
+    socialLinks: {},
+    reviewCount: 0,
     createdAt: "2024-01-01T00:00:00Z",
   };
 

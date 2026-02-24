@@ -19,17 +19,6 @@ export function DashboardContent() {
 
   return (
     <div className="flex-1 p-4 sm:p-6">
-      {/* Gaming Welcome Header */}
-      <div className="mb-6 sm:mb-8">
-        <h1 className="neon-text mb-2 text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">
-          {t("dashboard")}
-        </h1>
-        <p className="text-sm text-gray-600 dark:text-gray-400 sm:text-base">
-          {t("welcome", { name: "" })}
-          <span className="neon-text font-bold text-neon-violet">{displayName}</span>
-        </p>
-      </div>
-
       {/* Stats Cards */}
       <div className="mb-6 grid grid-cols-1 gap-4 sm:mb-8 sm:gap-6 md:grid-cols-3">
         <DashboardStatCard

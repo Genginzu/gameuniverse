@@ -1,6 +1,5 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type { GlobalSearchGameItem as GameItem } from "@/types/global-search";
 import { Loader2 } from "lucide-react";
@@ -16,24 +15,27 @@ interface GlobalSearchGameItemProps {
 export function GlobalSearchGameItem({ item, isActive, isImporting }: GlobalSearchGameItemProps) {
   const t = useTranslations("globalSearch");
 
-  const sourceLabel = item.source === "local" ? t("source.local") : t("source.igdb");
-  const isLocal = item.source === "local";
-
   return (
     <div
       className={cn(
-        "flex items-center gap-3 px-3 py-2 transition-colors",
-        isActive && "bg-accent",
-        isImporting && "cursor-wait opacity-70"
+        "group relative overflow-hidden rounded-lg transition-all",
+        isActive && "ring-2 ring-white/60",
+        isImporting && "cursor-wait opacity-60"
       )}
     >
       {/* Cover image */}
-      <div className="relative h-12 w-9 flex-shrink-0 overflow-hidden rounded-sm bg-muted">
+      <div className="relative aspect-[3/4] w-full overflow-hidden rounded-lg bg-white/5">
         {item.coverUrl ? (
-          <Image src={item.coverUrl} alt={item.title} fill className="object-cover" sizes="36px" />
+          <Image
+            src={item.coverUrl}
+            alt={item.title}
+            fill
+            className="object-cover transition-transform group-hover:scale-105"
+            sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 20vw"
+          />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-muted-foreground">
-            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="flex h-full w-full items-center justify-center text-white/20">
+            <svg className="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -43,33 +45,31 @@ export function GlobalSearchGameItem({ item, isActive, isImporting }: GlobalSear
             </svg>
           </div>
         )}
+
+        {/* IGDB badge */}
+        {item.source === "igdb" && (
+          <span className="absolute right-1 top-1 rounded bg-blue-600/80 px-1.5 py-0.5 text-[9px] font-bold uppercase text-white backdrop-blur-sm">
+            IGDB
+          </span>
+        )}
+
+        {/* Importing overlay */}
+        {isImporting && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+            <Loader2 className="h-5 w-5 animate-spin text-white" />
+          </div>
+        )}
       </div>
 
-      {/* Text content */}
-      <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium text-foreground">{item.title}</p>
-        <p className="truncate text-xs text-muted-foreground">
-          {[item.developer, item.releaseYear].filter(Boolean).join(" · ")}
-        </p>
+      {/* Title + meta below cover */}
+      <div className="mt-2.5 px-0.5">
+        <p className="truncate text-sm font-medium text-white/90">{item.title}</p>
+        {(item.developer || item.releaseYear) && (
+          <p className="truncate text-xs text-white/40">
+            {[item.developer, item.releaseYear].filter(Boolean).join(" · ")}
+          </p>
+        )}
       </div>
-
-      {/* Source badge or importing indicator */}
-      {isImporting ? (
-        <div className="flex flex-shrink-0 items-center gap-1.5 text-xs text-blue-600 dark:text-blue-400">
-          <Loader2 className="h-3.5 w-3.5 animate-spin" />
-          <span>{t("importing")}</span>
-        </div>
-      ) : (
-        <Badge
-          variant={isLocal ? "secondary" : "outline"}
-          className={cn(
-            "flex-shrink-0 text-[10px]",
-            !isLocal && "border-blue-300 text-blue-600 dark:border-blue-700 dark:text-blue-400"
-          )}
-        >
-          {sourceLabel}
-        </Badge>
-      )}
     </div>
   );
 }

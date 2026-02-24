@@ -436,6 +436,8 @@
     "card": {
       "games": "{count} game(s)",
       "gamesCount": "{count} game(s)",
+      "gamesLabel": "Games",
+      "reviews": "Reviews",
       "anonymousPlayer": "Anonymous player",
       "viewProfile": "View profile →"
     },
@@ -449,6 +451,17 @@
       "noRating": "No rating",
       "library": "Library",
       "inLibrary": "in library"
+    },
+    "tabs": {
+      "overview": "Overview",
+      "library": "Library",
+      "activity": "Activity",
+      "friends": "Friends",
+      "reviews": "Reviews",
+      "collections": "Collections",
+      "media": "Media",
+      "stats": "Stats",
+      "recommendations": "Recommendations"
     },
     "library": {
       "empty": "Empty library",
@@ -1572,5 +1585,25 @@
       "local": "In library",
       "igdb": "IGDB"
     }
+  },
+  "pageBanner": {
+    "games": "Games",
+    "gamesDesc": "Browse our complete video game catalog",
+    "characters": "Characters",
+    "charactersDesc": "Discover iconic video game characters",
+    "players": "Players",
+    "playersDesc": "Find players in the community",
+    "dashboard": "Dashboard",
+    "dashboardDesc": "Your personal space at a glance",
+    "library": "Library",
+    "libraryDesc": "Manage and explore your personal collection",
+    "myCharacters": "My favorite characters",
+    "favoritesDesc": "Your favorite characters in one place",
+    "collections": "Collections",
+    "collectionsDesc": "Organize your games into custom collections",
+    "profile": "Profile",
+    "profileDesc": "View and manage your information",
+    "settings": "Settings",
+    "settingsDesc": "Configure your preferences"
   }
 }

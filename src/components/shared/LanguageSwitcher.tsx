@@ -4,7 +4,6 @@ import { useLocale } from "next-intl";
 import { useRouter, usePathname } from "@/i18n/navigation";
 import * as React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
-import { IoChevronDown } from "react-icons/io5";
 import { cn } from "@/lib/utils";
 import FR from "country-flag-icons/react/3x2/FR";
 import US from "country-flag-icons/react/3x2/US";
@@ -53,11 +52,8 @@ export function LanguageSwitcher() {
   // Show placeholder during SSR to avoid hydration mismatch with Radix IDs
   if (!mounted) {
     return (
-      <div className="flex h-12 w-20 items-center justify-center gap-2 rounded-2xl bg-white px-3 py-2">
-        {CurrentFlagComponent && (
-          <CurrentFlagComponent className="h-6 w-8 rounded-sm shadow-sm" />
-        )}
-        <IoChevronDown className="h-4 w-4 text-gray-600" />
+      <div className="flex h-12 w-20 items-center justify-center gap-2 rounded-2xl px-3 py-2">
+        {CurrentFlagComponent && <CurrentFlagComponent className="h-6 w-8 rounded-sm shadow-sm" />}
       </div>
     );
   }
@@ -66,7 +62,7 @@ export function LanguageSwitcher() {
     <SelectPrimitive.Root value={locale} onValueChange={handleLocaleChange}>
       <SelectPrimitive.Trigger
         className={cn(
-          "flex h-12 w-20 items-center justify-center gap-2 rounded-2xl bg-white px-3 py-2 transition-all hover:border-gray-400 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          "flex h-12 w-20 items-center justify-center gap-2 rounded-2xl px-3 py-2 transition-all hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         )}
       >
         <SelectPrimitive.Value>
@@ -74,15 +70,12 @@ export function LanguageSwitcher() {
             <CurrentFlagComponent className="h-6 w-8 rounded-sm shadow-sm" />
           )}
         </SelectPrimitive.Value>
-        <SelectPrimitive.Icon asChild>
-          <IoChevronDown className="h-4 w-4 text-gray-600" />
-        </SelectPrimitive.Icon>
       </SelectPrimitive.Trigger>
 
       <SelectPrimitive.Portal>
         <SelectPrimitive.Content
           className={cn(
-            "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 relative z-50 min-w-20 overflow-hidden rounded-2xl border-2 border-gray-200 bg-white shadow-xl"
+            "relative z-50 min-w-20 overflow-hidden rounded-2xl border-2 border-gray-200 bg-white shadow-xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2"
           )}
           position="popper"
           sideOffset={8}

@@ -10,6 +10,9 @@ export interface PlayerSummary {
   fullName: string | null;
   avatarUrl: string | null;
   gamesCount: number;
+  level: number;
+  socialLinks: PlayerSocialLinks;
+  reviewCount: number;
   createdAt: string;
 }
 
@@ -42,6 +45,15 @@ export interface PlayerLibraryGame {
 }
 
 /**
+ * Liens vers les réseaux sociaux d'un joueur
+ */
+export interface PlayerSocialLinks {
+  facebook?: string;
+  twitter?: string;
+  twitch?: string;
+}
+
+/**
  * Détails complets d'un joueur pour la page de profil
  * Inclut les informations personnelles, stats et bibliothèque
  */
@@ -49,6 +61,9 @@ export interface PlayerDetails {
   id: string;
   fullName: string | null;
   avatarUrl: string | null;
+  bannerUrl: string | null;
+  socialLinks: PlayerSocialLinks;
+  level: number;
   preferredLocale: string;
   createdAt: string;
   updatedAt: string;

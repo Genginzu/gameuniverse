@@ -267,29 +267,6 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-      {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 px-4 py-8 text-white sm:px-6 sm:py-12">
-        <div className="absolute inset-0 bg-black/10"></div>
-        <div className="relative mx-auto max-w-4xl">
-          <div className="text-center">
-            <h1 className="neon-text mb-3 text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl xl:text-5xl">
-              {t("heroTitle")}
-              <span className="block bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
-                {t("heroTitleHighlight")}
-              </span>
-            </h1>
-            <p className="mx-auto max-w-xl text-base text-indigo-100/90 sm:text-lg">
-              {t("heroSubtitle")}
-            </p>
-          </div>
-        </div>
-
-        {/* Decorative elements */}
-        <div className="absolute -left-2 top-1/3 h-16 w-16 rounded-full bg-white/5 blur-xl"></div>
-        <div className="absolute -right-4 top-2/3 h-20 w-20 rounded-full bg-white/5 blur-2xl"></div>
-        <div className="absolute -top-4 left-1/4 h-12 w-12 rounded-full bg-yellow-400/10 blur-lg"></div>
-      </div>
-
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
         {/* Stats Cards */}
         <div className="mb-6 grid grid-cols-1 gap-4 sm:mb-8 sm:gap-6 md:grid-cols-4">

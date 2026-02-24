@@ -3,6 +3,7 @@ import {
   PlayerDetails,
   PlayerStats,
   PlayerLibraryGame,
+  PlayerSocialLinks,
   PlayersResponse,
   GAME_COUNT_RANGES,
   GameCountRangeKey,
@@ -17,6 +18,8 @@ interface ProfileRow {
   id: string;
   username: string | null;
   avatar_url: string | null;
+  social_links: Record<string, string> | null;
+  level: number | null;
   preferred_locale: string | null;
   created_at: string | null;
   updated_at: string | null;
@@ -118,6 +121,8 @@ export class PlayerService {
         id,
         username,
         avatar_url,
+        social_links,
+        level,
         created_at
       `,
       { count: "exact" }
@@ -140,6 +145,7 @@ export class PlayerService {
     const profileIds = (allProfiles || []).map((p) => p.id);
 
     const gameCounts: Record<string, number> = {};
+    const reviewCounts: Record<string, number> = {};
 
     if (profileIds.length > 0) {
       // Query user_library to get counts per user
@@ -150,11 +156,23 @@ export class PlayerService {
 
       if (countError) {
         logger.warn("Error fetching library counts", { error: countError });
-        // Continue without counts rather than failing
       } else if (libraryCounts) {
-        // Count games per user
         for (const entry of libraryCounts) {
           gameCounts[entry.user_id] = (gameCounts[entry.user_id] || 0) + 1;
+        }
+      }
+
+      // Query game_reviews to get review counts per user
+      const { data: reviewData, error: reviewError } = await supabase
+        .from("game_reviews")
+        .select("user_id")
+        .in("user_id", profileIds);
+
+      if (reviewError) {
+        logger.warn("Error fetching review counts", { error: reviewError });
+      } else if (reviewData) {
+        for (const entry of reviewData) {
+          reviewCounts[entry.user_id] = (reviewCounts[entry.user_id] || 0) + 1;
         }
       }
     }
@@ -168,6 +186,9 @@ export class PlayerService {
           fullName: profile.username,
           avatarUrl: profile.avatar_url,
           gamesCount,
+          level: profile.level ?? 1,
+          socialLinks: (profile.social_links as PlayerSocialLinks) ?? {},
+          reviewCount: reviewCounts[profile.id] || 0,
           createdAt: profile.created_at || new Date().toISOString(),
         };
       }
@@ -227,6 +248,9 @@ export class PlayerService {
         id,
         username,
         avatar_url,
+        banner_url,
+        social_links,
+        level,
         preferred_locale,
         created_at,
         updated_at
@@ -322,6 +346,9 @@ export class PlayerService {
       id: profile.id,
       fullName: profile.username,
       avatarUrl: profile.avatar_url,
+      bannerUrl: profile.banner_url ?? null,
+      socialLinks: (profile.social_links as Record<string, string>) ?? {},
+      level: profile.level ?? 1,
       preferredLocale: profile.preferred_locale || "fr",
       createdAt: profile.created_at || new Date().toISOString(),
       updatedAt: profile.updated_at || new Date().toISOString(),

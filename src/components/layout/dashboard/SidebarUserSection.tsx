@@ -14,7 +14,6 @@ import {
   FaChevronUp,
   FaChevronDown,
 } from "react-icons/fa";
-import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 
 interface SidebarUserSectionProps {
   user: User;
@@ -66,15 +65,7 @@ export default function SidebarUserSection({ user, signOut }: SidebarUserSection
 
       {isOpen && (
         <div className="glass-dropdown absolute bottom-full left-3 right-3 mb-2 rounded-xl animate-in fade-in-0 zoom-in-95">
-          <div className="border-b border-gray-200 px-4 py-2 dark:border-white/10">
-            <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-              {displayName}
-            </p>
-          </div>
           <div className="py-1">
-            <div className="flex items-center justify-between px-3 py-2">
-              <LanguageSwitcher />
-            </div>
             <button
               className={itemClasses}
               onClick={() => {

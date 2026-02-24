@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { EntityCard } from "@/components/shared/EntityCard";
 import { gameCardConfig } from "@/components/shared/entityCardPresets";
-import { GameSearchBar } from "./GameSearchBar";
 import { GameFilters } from "./GameFilters";
 import { GameFilterButton } from "./GameFilterButton";
 import { Pagination } from "@/components/shared/Pagination";
@@ -193,63 +192,14 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-      {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 px-4 py-8 text-white sm:px-6 sm:py-12">
-        <div className="absolute inset-0 bg-black/10"></div>
-        <div className="relative mx-auto max-w-4xl">
-          <div className="text-center">
-            <h1 className="neon-text mb-3 text-2xl font-bold tracking-tight sm:text-3xl lg:text-4xl xl:text-5xl">
-              {t("heroTitle")}
-              <span className="block bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
-                {t("heroTitleHighlight")}
-              </span>
-            </h1>
-            <p className="mx-auto max-w-xl text-base text-indigo-100/90 sm:text-lg">
-              {t("heroSubtitle")}
-            </p>
-            {pagination && (
-              <div className="mt-4 inline-flex items-center rounded-full bg-white/15 px-3 py-1.5 text-sm backdrop-blur-sm">
-                <svg
-                  className="mr-2 h-4 w-4 text-yellow-300"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
-                  />
-                </svg>
-                <span>{t("availableCount", { count: pagination.totalCount })}</span>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Decorative elements - plus subtils */}
-        <div className="absolute -left-2 top-1/3 h-16 w-16 rounded-full bg-white/5 blur-xl"></div>
-        <div className="absolute -right-4 top-2/3 h-20 w-20 rounded-full bg-white/5 blur-2xl"></div>
-        <div className="absolute -top-4 left-1/4 h-12 w-12 rounded-full bg-yellow-400/10 blur-lg"></div>
-      </div>
-
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
-        {/* Search and Filters */}
+        {/* Filters */}
         <div className="mb-6 space-y-4 sm:mb-8">
-          {/* Search bar with filter button - responsive layout */}
-          <div className="flex flex-col gap-4 sm:flex-row">
-            <div className="flex-1">
-              <GameSearchBar locale={locale} />
-            </div>
-            <div className="flex-shrink-0">
-              <GameFilterButton
-                hasFilters={selectedGenres.length > 0 || selectedPublishers.length > 0}
-                filterCount={selectedGenres.length}
-                onClick={() => setShowFilters(!showFilters)}
-              />
-            </div>
-          </div>
+          <GameFilterButton
+            hasFilters={selectedGenres.length > 0 || selectedPublishers.length > 0}
+            filterCount={selectedGenres.length}
+            onClick={() => setShowFilters(!showFilters)}
+          />
 
           {/* Filter content below - full width */}
           <GameFilters

@@ -53,6 +53,13 @@ const playerSummaryArbitrary: fc.Arbitrary<PlayerSummary> = fc.record({
   fullName: fc.option(fc.string({ minLength: 1, maxLength: 100 }), { nil: null }),
   avatarUrl: fc.option(fc.webUrl(), { nil: null }),
   gamesCount: fc.integer({ min: 0, max: 1000 }),
+  level: fc.integer({ min: 1, max: 100 }),
+  socialLinks: fc.record({
+    facebook: fc.option(fc.webUrl(), { nil: undefined }),
+    twitter: fc.option(fc.webUrl(), { nil: undefined }),
+    twitch: fc.option(fc.webUrl(), { nil: undefined }),
+  }),
+  reviewCount: fc.integer({ min: 0, max: 500 }),
   createdAt: isoDateArbitrary,
 });
 
@@ -61,6 +68,13 @@ const playerDetailsArbitrary: fc.Arbitrary<PlayerDetails> = fc.record({
   id: fc.uuid(),
   fullName: fc.option(fc.string({ minLength: 1, maxLength: 100 }), { nil: null }),
   avatarUrl: fc.option(fc.webUrl(), { nil: null }),
+  bannerUrl: fc.option(fc.webUrl(), { nil: null }),
+  socialLinks: fc.record({
+    facebook: fc.option(fc.webUrl(), { nil: undefined }),
+    twitter: fc.option(fc.webUrl(), { nil: undefined }),
+    twitch: fc.option(fc.webUrl(), { nil: undefined }),
+  }),
+  level: fc.integer({ min: 1, max: 100 }),
   preferredLocale: fc.constantFrom("fr", "en"),
   createdAt: isoDateArbitrary,
   updatedAt: isoDateArbitrary,
@@ -287,6 +301,9 @@ describe("PlayerInfo Property-Based Tests", () => {
               fullName: player.fullName,
               avatarUrl: player.avatarUrl,
               gamesCount: player.stats.totalGames,
+              level: player.level,
+              socialLinks: player.socialLinks,
+              reviewCount: 0,
               createdAt: player.createdAt,
             };
 
@@ -308,6 +325,9 @@ describe("PlayerInfo Property-Based Tests", () => {
               fullName: player.fullName,
               avatarUrl: player.avatarUrl,
               gamesCount: player.stats.totalGames,
+              level: player.level,
+              socialLinks: player.socialLinks,
+              reviewCount: 0,
               createdAt: player.createdAt,
             };
 

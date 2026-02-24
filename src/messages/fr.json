@@ -436,6 +436,8 @@
     "card": {
       "games": "{count} jeu(x)",
       "gamesCount": "{count} jeu(x)",
+      "gamesLabel": "Jeux",
+      "reviews": "Avis",
       "anonymousPlayer": "Joueur anonyme",
       "viewProfile": "Voir le profil →"
     },
@@ -449,6 +451,17 @@
       "noRating": "Aucune note",
       "library": "Bibliothèque",
       "inLibrary": "dans la bibliothèque"
+    },
+    "tabs": {
+      "overview": "Aperçu",
+      "library": "Bibliothèque",
+      "activity": "Activité",
+      "friends": "Amis",
+      "reviews": "Avis",
+      "collections": "Collections",
+      "media": "Médias",
+      "stats": "Statistiques",
+      "recommendations": "Recommandations"
     },
     "library": {
       "empty": "Bibliothèque vide",
@@ -1575,5 +1588,25 @@
       "local": "En bibliothèque",
       "igdb": "IGDB"
     }
+  },
+  "pageBanner": {
+    "games": "Jeux",
+    "gamesDesc": "Explorez notre catalogue complet de jeux vidéo",
+    "characters": "Personnages",
+    "charactersDesc": "Découvrez les personnages emblématiques du jeu vidéo",
+    "players": "Joueurs",
+    "playersDesc": "Retrouvez les joueurs de la communauté",
+    "dashboard": "Tableau de bord",
+    "dashboardDesc": "Votre espace personnel en un coup d'œil",
+    "library": "Bibliothèque",
+    "libraryDesc": "Gérez et explorez votre collection personnelle",
+    "myCharacters": "Mes personnages favoris",
+    "favoritesDesc": "Vos personnages préférés au même endroit",
+    "collections": "Collections",
+    "collectionsDesc": "Organisez vos jeux en collections personnalisées",
+    "profile": "Profil",
+    "profileDesc": "Consultez et gérez vos informations",
+    "settings": "Paramètres",
+    "settingsDesc": "Configurez vos préférences"
   }
 }

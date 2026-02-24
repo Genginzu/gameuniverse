@@ -3,7 +3,7 @@
 import { useRef, useEffect, useCallback, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { Search, X, Loader2 } from "lucide-react";
+import { X, Loader2 } from "lucide-react";
 import { useGlobalSearch } from "@/hooks/useGlobalSearch";
 import { GlobalSearchDropdown } from "@/components/shared/GlobalSearchDropdown";
 import { getResultUrl, type FlatSearchItem } from "@/lib/utils/global-search-utils";
@@ -156,34 +156,13 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
       role="dialog"
       aria-modal="true"
       aria-label={t("placeholder")}
-      className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 pt-[15vh] backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-start justify-center bg-black/70 pt-[12vh] backdrop-blur-sm"
       onClick={handleBackdropClick}
       onKeyDown={handleFocusTrap}
     >
-      <div
-        ref={panelRef}
-        className="glass relative mx-4 w-full max-w-xl rounded-2xl border border-neon-violet/30 p-5 shadow-[0_0_30px_rgba(var(--neon-violet)/0.2)]"
-      >
-        {/* Close button */}
-        <button
-          ref={closeButtonRef}
-          type="button"
-          onClick={onClose}
-          className="absolute right-3 top-3 rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-neon-violet/50"
-          aria-label="Close"
-        >
-          <X className="h-5 w-5" />
-        </button>
-
-        {/* Search input */}
-        <div className="relative">
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-            {isLoading ? (
-              <Loader2 className="h-5 w-5 animate-spin text-neon-violet" />
-            ) : (
-              <Search className="h-5 w-5 text-neon-violet" />
-            )}
-          </div>
+      <div ref={panelRef} className="mx-4 flex w-full max-w-6xl flex-col items-center">
+        {/* Search input — centered, narrower than results */}
+        <div className="relative w-full max-w-3xl">
           <input
             ref={inputRef}
             type="text"
@@ -191,17 +170,38 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={onKeyDown}
-            className="glass-input h-12 w-full rounded-xl pl-12 pr-4 text-base text-foreground placeholder-muted-foreground focus:shadow-[0_0_15px_rgba(var(--neon-violet)/0.3)] focus:outline-none focus:ring-2 focus:ring-neon-violet/50"
+            className="h-16 w-full border-b-2 border-white bg-transparent text-3xl font-light text-white placeholder-white/40 caret-white focus:outline-none sm:text-4xl"
             aria-label={t("placeholder")}
             aria-autocomplete="list"
             role="combobox"
             aria-expanded={showResults}
           />
+          {/* Loading indicator */}
+          {isLoading && (
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+              <Loader2 className="h-6 w-6 animate-spin text-white/60" />
+            </div>
+          )}
+          {/* Clear button */}
+          {query && !isLoading && (
+            <button
+              ref={closeButtonRef}
+              type="button"
+              onClick={() => {
+                setQuery("");
+                inputRef.current?.focus();
+              }}
+              className="absolute inset-y-0 right-0 flex items-center pr-2 text-white/40 transition-colors hover:text-white focus:outline-none"
+              aria-label="Clear"
+            >
+              <X className="h-6 w-6" />
+            </button>
+          )}
         </div>
 
-        {/* Results */}
+        {/* Results — full width */}
         {showResults && (
-          <div className="mt-3 max-h-[50vh] overflow-y-auto rounded-xl">
+          <div className="mt-8 max-h-[65vh] w-full overflow-y-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <GlobalSearchDropdown
               results={results ?? EMPTY_RESULTS}
               flatItems={flatItems}

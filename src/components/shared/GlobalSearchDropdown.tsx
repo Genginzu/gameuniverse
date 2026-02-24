@@ -5,7 +5,8 @@ import { GlobalSearchGameItem } from "@/components/shared/GlobalSearchGameItem";
 import { GlobalSearchPlayerItem } from "@/components/shared/GlobalSearchPlayerItem";
 import type { FlatSearchItem } from "@/lib/utils/global-search-utils";
 import type { GlobalSearchResponse } from "@/types/global-search";
-import { Loader2 } from "lucide-react";
+import { Gamepad2, Loader2, Swords, Users } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 interface GlobalSearchDropdownProps {
@@ -17,8 +18,23 @@ interface GlobalSearchDropdownProps {
   importingId: string | null;
 }
 
-/** Display order for categories — games first, then characters, then players */
-const CATEGORIES = ["games", "characters", "players"] as const;
+function CategoryHeader({
+  icon: Icon,
+  label,
+  count,
+}: {
+  icon: LucideIcon;
+  label: string;
+  count: number;
+}) {
+  return (
+    <div className="flex items-center gap-2.5 border-b border-white/10 pb-2">
+      <Icon className="h-4 w-4 text-white/50" />
+      <span className="text-sm font-semibold uppercase tracking-wider text-white/50">{label}</span>
+      <span className="text-xs text-white/30">({count})</span>
+    </div>
+  );
+}
 
 export function GlobalSearchDropdown({
   results,
@@ -29,80 +45,125 @@ export function GlobalSearchDropdown({
   importingId,
 }: GlobalSearchDropdownProps) {
   const t = useTranslations("globalSearch");
-
   const hasResults = flatItems.length > 0;
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center gap-2 px-4 py-6 text-sm text-muted-foreground">
-        <Loader2 className="h-4 w-4 animate-spin" />
+      <div className="flex items-center justify-center gap-3 py-12 text-base text-white/50">
+        <Loader2 className="h-5 w-5 animate-spin" />
         {t("loading")}
       </div>
     );
   }
 
   if (!hasResults) {
-    return (
-      <div className="px-4 py-6 text-center text-sm text-muted-foreground">{t("noResults")}</div>
-    );
+    return <div className="py-12 text-center text-base text-white/50">{t("noResults")}</div>;
   }
 
-  // Track the running flat index offset per category
-  let flatOffset = 0;
+  const gamesOffset = 0;
+  const charsOffset = results.games.length;
+  const playersOffset = charsOffset + results.characters.length;
 
   return (
-    <div className="max-h-[400px] overflow-y-auto py-1">
-      {CATEGORIES.map((category) => {
-        const items = results[category];
-        if (items.length === 0) return null;
-
-        const categoryOffset = flatOffset;
-        flatOffset += items.length;
-
-        return (
-          <div key={category} role="group">
-            <div className="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              {t(`categories.${category}`)}
-            </div>
-            {items.map((_, index) => {
-              const flatIndex = categoryOffset + index;
+    <div className="space-y-8">
+      {results.games.length > 0 && (
+        <section>
+          <CategoryHeader
+            icon={Gamepad2}
+            label={t("categories.games")}
+            count={results.counts.games}
+          />
+          <div className="mt-4 grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
+            {results.games.map((_, index) => {
+              const flatIndex = gamesOffset + index;
               const flatItem = flatItems[flatIndex];
               const isActive = flatIndex === activeIndex;
-
               return (
                 <button
                   key={flatItem.id}
                   type="button"
-                  className="w-full cursor-pointer text-left"
+                  className="text-left"
                   onClick={() => onSelect(flatItem)}
                   disabled={importingId === flatItem.id}
                   data-active={isActive || undefined}
                 >
-                  {category === "games" && (
-                    <GlobalSearchGameItem
-                      item={flatItem as FlatSearchItem & { type: "game" }}
-                      isActive={isActive}
-                      isImporting={importingId === flatItem.id}
-                    />
-                  )}
-                  {category === "characters" && (
-                    <GlobalSearchCharacterItem
-                      item={flatItem as FlatSearchItem & { type: "character" }}
-                      isActive={isActive}
-                    />
-                  )}
-                  {category === "players" && (
-                    <GlobalSearchPlayerItem
-                      item={flatItem as FlatSearchItem & { type: "player" }}
-                      isActive={isActive}
-                    />
-                  )}
+                  <GlobalSearchGameItem
+                    item={flatItem as FlatSearchItem & { type: "game" }}
+                    isActive={isActive}
+                    isImporting={importingId === flatItem.id}
+                  />
                 </button>
               );
             })}
           </div>
-        );
-      })}
+        </section>
+      )}
+
+      {(results.characters.length > 0 || results.players.length > 0) && (
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+          {results.characters.length > 0 && (
+            <section>
+              <CategoryHeader
+                icon={Swords}
+                label={t("categories.characters")}
+                count={results.counts.characters}
+              />
+              <div className="mt-3 space-y-1">
+                {results.characters.map((_, index) => {
+                  const flatIndex = charsOffset + index;
+                  const flatItem = flatItems[flatIndex];
+                  const isActive = flatIndex === activeIndex;
+                  return (
+                    <button
+                      key={flatItem.id}
+                      type="button"
+                      className="w-full text-left"
+                      onClick={() => onSelect(flatItem)}
+                      data-active={isActive || undefined}
+                    >
+                      <GlobalSearchCharacterItem
+                        item={flatItem as FlatSearchItem & { type: "character" }}
+                        isActive={isActive}
+                      />
+                    </button>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+
+          {results.players.length > 0 && (
+            <section>
+              <CategoryHeader
+                icon={Users}
+                label={t("categories.players")}
+                count={results.counts.players}
+              />
+              <div className="mt-3 space-y-1">
+                {results.players.map((_, index) => {
+                  const flatIndex = playersOffset + index;
+                  const flatItem = flatItems[flatIndex];
+                  const isActive = flatIndex === activeIndex;
+                  return (
+                    <button
+                      key={flatItem.id}
+                      type="button"
+                      className="w-full text-left"
+                      onClick={() => onSelect(flatItem)}
+                      data-active={isActive || undefined}
+                    >
+                      <GlobalSearchPlayerItem
+                        item={flatItem as FlatSearchItem & { type: "player" }}
+                        isActive={isActive}
+                      />
+                    </button>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+        </div>
+      )}
     </div>
   );
 }

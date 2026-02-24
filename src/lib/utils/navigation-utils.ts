@@ -35,8 +35,24 @@ export const PUBLIC_LINKS: NavLink[] = [
 /**
  * Determines if a navigation link is active based on the current pathname.
  * Strips the locale prefix (e.g. /fr, /en) before comparing.
+ *
+ * When `currentUserId` is provided and the user is viewing their own player
+ * page (`/players/{currentUserId}`), the `/profile` link is considered active
+ * instead of `/players`.
  */
-export function isActive(pathname: string, linkPath: string): boolean {
+export function isActive(pathname: string, linkPath: string, currentUserId?: string): boolean {
   const normalizedPathname = pathname.replace(/^\/(fr|en)/, "") || "/";
+
+  // When viewing own profile (/players/{currentUserId}), activate /profile, not /players
+  if (currentUserId) {
+    const ownProfilePath = `/players/${currentUserId}`;
+    const isOnOwnProfile =
+      normalizedPathname === ownProfilePath || normalizedPathname.startsWith(ownProfilePath + "/");
+
+    if (isOnOwnProfile) {
+      return linkPath === "/profile";
+    }
+  }
+
   return normalizedPathname === linkPath || normalizedPathname.startsWith(linkPath + "/");
 }

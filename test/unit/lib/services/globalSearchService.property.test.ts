@@ -76,6 +76,13 @@ const playerSummaryArb: fc.Arbitrary<PlayerSummary> = fc.record({
   fullName: fc.option(fc.string({ minLength: 1, maxLength: 60 }), { nil: null }),
   avatarUrl: fc.option(fc.webUrl(), { nil: null }),
   gamesCount: fc.integer({ min: 0, max: 100 }),
+  level: fc.integer({ min: 1, max: 100 }),
+  socialLinks: fc.record({
+    facebook: fc.option(fc.webUrl(), { nil: undefined }),
+    twitter: fc.option(fc.webUrl(), { nil: undefined }),
+    twitch: fc.option(fc.webUrl(), { nil: undefined }),
+  }),
+  reviewCount: fc.integer({ min: 0, max: 200 }),
   createdAt: fc.integer({ min: 0, max: 1924991999000 }).map((ts) => new Date(ts).toISOString()),
 });
 

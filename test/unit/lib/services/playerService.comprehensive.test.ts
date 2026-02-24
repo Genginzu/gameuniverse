@@ -40,6 +40,20 @@ describe("PlayerService - Comprehensive Coverage", () => {
     };
   }
 
+  /** Helper: mock for game_reviews count query in fetchPlayersFromDB */
+  function mockReviewsQuery(reviewData: { user_id: string }[] = []) {
+    return {
+      select: vi.fn(() => ({
+        in: vi.fn(() =>
+          Promise.resolve({
+            data: reviewData,
+            error: null,
+          })
+        ),
+      })),
+    };
+  }
+
   describe("fetchPlayersFromDB", () => {
     it("should fetch players with default options", async () => {
       const mockProfiles = [
@@ -87,7 +101,8 @@ describe("PlayerService - Comprehensive Coverage", () => {
         })
         .mockReturnValueOnce({
           select: vi.fn(() => mockLibraryQuery),
-        });
+        })
+        .mockReturnValueOnce(mockReviewsQuery());
 
       const result = await PlayerService.fetchPlayersFromDB();
 
@@ -127,7 +142,8 @@ describe("PlayerService - Comprehensive Coverage", () => {
         })
         .mockReturnValueOnce({
           select: vi.fn(() => mockLibraryQuery),
-        });
+        })
+        .mockReturnValueOnce(mockReviewsQuery());
 
       const result = await PlayerService.fetchPlayersFromDB({ search: "searched" });
 
@@ -197,7 +213,8 @@ describe("PlayerService - Comprehensive Coverage", () => {
         })
         .mockReturnValueOnce({
           select: vi.fn(() => mockLibraryQuery),
-        });
+        })
+        .mockReturnValueOnce(mockReviewsQuery());
 
       // Filter for 1-5 games (user-1 has 5, user-2 has 15)
       const result = await PlayerService.fetchPlayersFromDB({ gameCountRange: "1-5" });
@@ -237,7 +254,8 @@ describe("PlayerService - Comprehensive Coverage", () => {
         })
         .mockReturnValueOnce({
           select: vi.fn(() => mockLibraryQuery),
-        });
+        })
+        .mockReturnValueOnce(mockReviewsQuery());
 
       const result = await PlayerService.fetchPlayersFromDB({ page: 2, limit: 10 });
 
@@ -298,7 +316,8 @@ describe("PlayerService - Comprehensive Coverage", () => {
         })
         .mockReturnValueOnce({
           select: vi.fn(() => mockLibraryQuery),
-        });
+        })
+        .mockReturnValueOnce(mockReviewsQuery());
 
       // Should not throw, just continue without counts
       const result = await PlayerService.fetchPlayersFromDB();
