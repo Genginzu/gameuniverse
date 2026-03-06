@@ -102,7 +102,6 @@ const nextConfig = {
 
 module.exports = withNextIntl(nextConfig);
 
-
 // Injected content via Sentry wizard below
 
 const { withSentryConfig } = require("@sentry/nextjs");
@@ -122,6 +121,11 @@ module.exports = withSentryConfig(module.exports, {
 
   // Upload a larger set of source maps for prettier stack traces (increases build time)
   widenClientFileUpload: true,
+
+  // Prevent sentry-cli sourcemap upload errors from breaking the build
+  errorHandler: (err) => {
+    console.warn("Sentry source map upload error (non-fatal):", err.message);
+  },
 
   // Route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
   // This can increase your server load as well as your hosting bill.
