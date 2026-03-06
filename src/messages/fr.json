@@ -568,6 +568,44 @@
         "11": "Novembre",
         "12": "Décembre"
       }
+    },
+    "activity": {
+      "feedLabel": "Flux d'activité du joueur",
+      "empty": "Aucune activité pour le moment",
+      "reviewDescription": "A publié une review sur <game>{game}</game>",
+      "commentDescription": "A commenté sur <character>{character}</character>",
+      "libraryDescription": "A ajouté <game>{game}</game> à sa bibliothèque",
+      "playtimeDescription": "A renseigné son temps de jeu pour <game>{game}</game>",
+      "favoriteDescription": "A ajouté <character>{character}</character> en favori",
+      "collectionDescription": "A créé la collection {name}",
+      "collectionGamesCount": "{count} jeu(x)",
+      "playtimeHastily": "Histoire",
+      "playtimeNormally": "Normal",
+      "playtimeCompletely": "Complétionniste",
+      "status": {
+        "owned": "Possédé",
+        "wishlist": "Liste de souhaits",
+        "completed": "Terminé",
+        "playing": "En cours"
+      },
+      "types": {
+        "review": "Review",
+        "comment": "Commentaire",
+        "library": "Bibliothèque",
+        "playtime": "Temps de jeu",
+        "favorite": "Favori",
+        "collection": "Collection"
+      },
+      "filters": {
+        "label": "Filtrer par type d'activité",
+        "all": "Tous",
+        "review": "Reviews",
+        "comment": "Commentaires",
+        "library": "Bibliothèque",
+        "playtime": "Temps de jeu",
+        "favorite": "Favoris",
+        "collection": "Collections"
+      }
     }
   },
   "userLibrary": {

@@ -568,6 +568,44 @@
         "11": "November",
         "12": "December"
       }
+    },
+    "activity": {
+      "feedLabel": "Player activity feed",
+      "empty": "No activity yet",
+      "reviewDescription": "Published a review on <game>{game}</game>",
+      "commentDescription": "Commented on <character>{character}</character>",
+      "libraryDescription": "Added <game>{game}</game> to their library",
+      "playtimeDescription": "Logged playtime for <game>{game}</game>",
+      "favoriteDescription": "Added <character>{character}</character> to favorites",
+      "collectionDescription": "Created the collection {name}",
+      "collectionGamesCount": "{count} game(s)",
+      "playtimeHastily": "Main Story",
+      "playtimeNormally": "Normal",
+      "playtimeCompletely": "Completionist",
+      "status": {
+        "owned": "Owned",
+        "wishlist": "Wishlist",
+        "completed": "Completed",
+        "playing": "Playing"
+      },
+      "types": {
+        "review": "Review",
+        "comment": "Comment",
+        "library": "Library",
+        "playtime": "Playtime",
+        "favorite": "Favorite",
+        "collection": "Collection"
+      },
+      "filters": {
+        "label": "Filter by activity type",
+        "all": "All",
+        "review": "Reviews",
+        "comment": "Comments",
+        "library": "Library",
+        "playtime": "Playtime",
+        "favorite": "Favorites",
+        "collection": "Collections"
+      }
     }
   },
   "userLibrary": {

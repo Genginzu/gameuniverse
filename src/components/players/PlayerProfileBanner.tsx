@@ -38,7 +38,7 @@ export function PlayerProfileBanner({
           <div className="h-full w-full bg-gradient-to-r from-indigo-600/40 via-purple-600/40 to-pink-600/40" />
         )}
         {/* Subtle bottom fade into the info section */}
-        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-slate-100 to-transparent dark:from-slate-900" />
+        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-gray-50 to-transparent dark:from-slate-900" />
       </div>
 
       {/* Avatar overlapping the banner — centered */}
@@ -82,8 +82,12 @@ export function PlayerProfileBanner({
 
           {/* Center: name + username */}
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-white md:text-3xl">{displayName}</h1>
-            {player.fullName && <p className="text-sm text-slate-400">@{player.fullName}</p>}
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white md:text-3xl">
+              {displayName}
+            </h1>
+            {player.fullName && (
+              <p className="text-sm text-gray-500 dark:text-slate-400">@{player.fullName}</p>
+            )}
           </div>
 
           {/* Right: social links */}
@@ -114,8 +118,8 @@ function ProfileCounters({
     <div className="flex gap-6">
       {counters.map((c) => (
         <div key={c.label} className="text-center">
-          <p className="text-lg font-bold text-white">{c.value}</p>
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+          <p className="text-lg font-bold text-gray-900 dark:text-white">{c.value}</p>
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400">
             {c.label}
           </p>
         </div>

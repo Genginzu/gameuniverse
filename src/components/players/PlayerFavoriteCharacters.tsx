@@ -68,15 +68,15 @@ export function PlayerFavoriteCharacters({ playerId, locale }: PlayerFavoriteCha
   if (!loading && !error && characters.length === 0) {
     return (
       <section className="mb-8">
-        <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-white">
+        <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-gray-900 dark:text-white">
           <Heart className="h-6 w-6 text-pink-400" />
           {t("title")}
         </h2>
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-slate-700/50 bg-slate-800/50 py-12 text-center">
-          <div className="mb-4 rounded-full bg-slate-700/50 p-4">
-            <Heart className="h-10 w-10 text-slate-400" />
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-gray-200 bg-white py-12 text-center dark:border-slate-700/50 dark:bg-slate-800/50">
+          <div className="mb-4 rounded-full bg-gray-100 p-4 dark:bg-slate-700/50">
+            <Heart className="h-10 w-10 text-gray-400 dark:text-slate-400" />
           </div>
-          <p className="text-sm text-slate-400">{t("empty")}</p>
+          <p className="text-sm text-gray-500 dark:text-slate-400">{t("empty")}</p>
         </div>
       </section>
     );
@@ -85,7 +85,7 @@ export function PlayerFavoriteCharacters({ playerId, locale }: PlayerFavoriteCha
   if (loading) {
     return (
       <section className="mb-8">
-        <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-white">
+        <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-gray-900 dark:text-white">
           <Heart className="h-6 w-6 text-pink-400" />
           {t("title")}
         </h2>
@@ -105,7 +105,7 @@ export function PlayerFavoriteCharacters({ playerId, locale }: PlayerFavoriteCha
   return (
     <section className="mb-8">
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="flex items-center gap-2 text-2xl font-bold text-white">
+        <h2 className="flex items-center gap-2 text-2xl font-bold text-gray-900 dark:text-white">
           <Heart className="h-6 w-6 text-pink-400" />
           {t("title")}
         </h2>

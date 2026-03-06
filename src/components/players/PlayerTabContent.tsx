@@ -6,6 +6,7 @@ import { PlayerFavoriteCharacters } from "./PlayerFavoriteCharacters";
 import { PlayerCollections } from "./PlayerCollections";
 import { LibraryComparisonSection } from "./LibraryComparisonSection";
 import { PersonalRecommendationSection } from "@/components/games/PersonalRecommendationSection";
+import { ActivityFeed } from "./ActivityFeed";
 import { PlayerEnrichedStats } from "./PlayerEnrichedStats";
 import { YearInReviewLink } from "./YearInReviewLink";
 import { shouldShowComparison } from "./PlayerDetailsContent";
@@ -61,6 +62,8 @@ export function PlayerTabContent({
       );
     case "collections":
       return <PlayerCollections playerId={player.id} locale={locale} isOwner={isOwner} />;
+    case "activity":
+      return <ActivityFeed playerId={player.id} locale={locale} />;
     case "recommendations":
       return isOwner ? <PersonalRecommendationSection locale={locale} /> : null;
     default:
@@ -132,11 +135,11 @@ function LibraryTab({
   return (
     <div className="mb-8">
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="flex items-center gap-2 text-2xl font-bold text-white">
-          <Gamepad2 className="h-6 w-6 text-blue-400" />
+        <h2 className="flex items-center gap-2 text-2xl font-bold text-gray-900 dark:text-white">
+          <Gamepad2 className="h-6 w-6 text-blue-500 dark:text-blue-400" />
           {t("details.library")}
         </h2>
-        <span className="rounded-full bg-slate-700/50 px-3 py-1 text-sm text-slate-300">
+        <span className="rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-600 dark:bg-slate-700/50 dark:text-slate-300">
           {player.library.length} {tCommon("games")} {t("details.inLibrary")}
         </span>
       </div>

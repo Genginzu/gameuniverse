@@ -66,11 +66,11 @@ export function PlayerProfileTabs({ activeTab, onTabChange, isOwner }: PlayerPro
   };
 
   return (
-    <div className="relative border-b border-slate-700/50 bg-slate-800/30">
+    <div className="relative border-b border-gray-200 bg-white/50 dark:border-slate-700/50 dark:bg-slate-800/30">
       <button
         type="button"
         onClick={() => scroll("left")}
-        className="absolute left-0 top-1/2 z-10 -translate-y-1/2 rounded-r-md bg-slate-800/80 p-1 text-slate-400 hover:text-white md:hidden"
+        className="absolute left-0 top-1/2 z-10 -translate-y-1/2 rounded-r-md bg-white/80 p-1 text-gray-500 hover:text-gray-900 dark:bg-slate-800/80 dark:text-slate-400 dark:hover:text-white md:hidden"
         aria-label="Scroll left"
       >
         <ChevronLeft className="h-4 w-4" />
@@ -91,7 +91,9 @@ export function PlayerProfileTabs({ activeTab, onTabChange, isOwner }: PlayerPro
               onMouseEnter={(e) => showTooltip(e, label)}
               onMouseLeave={() => setTooltip(null)}
               className={`relative flex shrink-0 items-center justify-center px-5 py-3 transition-colors ${
-                isActive ? "text-cyan-400" : "text-slate-400 hover:text-slate-200"
+                isActive
+                  ? "text-cyan-600 dark:text-cyan-400"
+                  : "text-gray-400 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200"
               }`}
               aria-label={label}
               aria-selected={isActive}
@@ -99,7 +101,7 @@ export function PlayerProfileTabs({ activeTab, onTabChange, isOwner }: PlayerPro
             >
               <Icon className="h-5 w-5" />
               {isActive && (
-                <span className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-cyan-400" />
+                <span className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-cyan-600 dark:bg-cyan-400" />
               )}
             </button>
           );
@@ -109,7 +111,7 @@ export function PlayerProfileTabs({ activeTab, onTabChange, isOwner }: PlayerPro
       <button
         type="button"
         onClick={() => scroll("right")}
-        className="absolute right-0 top-1/2 z-10 -translate-y-1/2 rounded-l-md bg-slate-800/80 p-1 text-slate-400 hover:text-white md:hidden"
+        className="absolute right-0 top-1/2 z-10 -translate-y-1/2 rounded-l-md bg-white/80 p-1 text-gray-500 hover:text-gray-900 dark:bg-slate-800/80 dark:text-slate-400 dark:hover:text-white md:hidden"
         aria-label="Scroll right"
       >
         <ChevronRight className="h-4 w-4" />
@@ -128,12 +130,12 @@ function BubbleTooltip({ label, x, y }: { label: string; x: number; y: number })
       className="animate-scale-in pointer-events-none fixed z-50 -translate-x-1/2"
       style={{ left: x, top: y - 44 }}
     >
-      <div className="relative whitespace-nowrap rounded-xl border-2 border-indigo-400 bg-slate-900 px-3 py-1.5 text-xs font-bold text-white shadow-lg shadow-indigo-500/20">
+      <div className="relative whitespace-nowrap rounded-xl border-2 border-indigo-400 bg-white px-3 py-1.5 text-xs font-bold text-gray-900 shadow-lg shadow-indigo-500/20 dark:bg-slate-900 dark:text-white">
         {label}
         {/* Tail — outer border triangle */}
         <span className="absolute -bottom-[7px] left-1/2 -translate-x-1/2 border-x-[7px] border-t-[7px] border-x-transparent border-t-indigo-400" />
         {/* Tail — inner fill triangle */}
-        <span className="absolute -bottom-[5px] left-1/2 -translate-x-1/2 border-x-[6px] border-t-[6px] border-x-transparent border-t-slate-900" />
+        <span className="absolute -bottom-[5px] left-1/2 -translate-x-1/2 border-x-[6px] border-t-[6px] border-x-transparent border-t-white dark:border-t-slate-900" />
       </div>
     </div>
   );

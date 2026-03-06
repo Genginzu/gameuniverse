@@ -23,7 +23,8 @@ type FetchState =
   | { status: "private" }
   | { status: "success"; data: EnrichedStats };
 
-const CARD_STYLE = "rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-sm";
+const CARD_STYLE =
+  "rounded-2xl border-gray-200 bg-white backdrop-blur-sm dark:border-slate-700/50 dark:bg-slate-800/50";
 
 /**
  * Pure function for visibility logic — exported for property-based testing.
@@ -71,7 +72,7 @@ export function PlayerEnrichedStats({
   }, [fetchStats, isOwnProfile, statsPrivate]);
 
   const title = (
-    <h2 className="mb-4 flex items-center gap-2 text-2xl font-bold text-white">
+    <h2 className="mb-4 flex items-center gap-2 text-2xl font-bold text-gray-900 dark:text-white">
       {t("enrichedStats.title")}
     </h2>
   );
@@ -83,9 +84,13 @@ export function PlayerEnrichedStats({
         {title}
         <Card className={CARD_STYLE}>
           <CardContent className="flex flex-col items-center gap-2 p-8 text-center">
-            <Lock className="h-8 w-8 text-slate-400" />
-            <p className="text-lg font-medium text-slate-300">{t("enrichedStats.private")}</p>
-            <p className="text-sm text-slate-500">{t("enrichedStats.privateDescription")}</p>
+            <Lock className="h-8 w-8 text-gray-400 dark:text-slate-400" />
+            <p className="text-lg font-medium text-gray-700 dark:text-slate-300">
+              {t("enrichedStats.private")}
+            </p>
+            <p className="text-sm text-gray-500 dark:text-slate-500">
+              {t("enrichedStats.privateDescription")}
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -101,8 +106,8 @@ export function PlayerEnrichedStats({
           {Array.from({ length: 3 }).map((_, i) => (
             <Card key={i} className={CARD_STYLE}>
               <CardContent className="p-6">
-                <Skeleton className="mb-3 h-4 w-24 bg-slate-700" />
-                <Skeleton className="h-8 w-16 bg-slate-700" />
+                <Skeleton className="mb-3 h-4 w-24 bg-gray-200 dark:bg-slate-700" />
+                <Skeleton className="h-8 w-16 bg-gray-200 dark:bg-slate-700" />
               </CardContent>
             </Card>
           ))}
@@ -119,7 +124,7 @@ export function PlayerEnrichedStats({
         <Card className={CARD_STYLE}>
           <CardContent className="flex flex-col items-center gap-3 p-8 text-center">
             <AlertCircle className="h-8 w-8 text-red-400" />
-            <p className="text-sm text-slate-400">{t("enrichedStats.error")}</p>
+            <p className="text-sm text-gray-500 dark:text-slate-400">{t("enrichedStats.error")}</p>
             <Button variant="outline" size="sm" onClick={fetchStats}>
               {t("enrichedStats.retry")}
             </Button>
