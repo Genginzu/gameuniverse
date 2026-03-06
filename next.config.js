@@ -119,12 +119,11 @@ module.exports = withSentryConfig(module.exports, {
   // For all available options, see:
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
 
-  // Upload a larger set of source maps for prettier stack traces (increases build time)
-  widenClientFileUpload: true,
-
-  // Prevent sentry-cli sourcemap upload errors from breaking the build
-  errorHandler: (err) => {
-    console.warn("Sentry source map upload error (non-fatal):", err.message);
+  // Disable sourcemap upload — sentry-cli crashes with "Resource temporarily unavailable"
+  // (Rust panic in stdout write). Re-enable once @sentry/nextjs ships a fixed CLI.
+  // See: https://github.com/getsentry/sentry-cli/issues
+  sourcemaps: {
+    disable: true,
   },
 
   // Route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
