@@ -15,7 +15,7 @@ export function DashboardContent() {
     return <DashboardSkeleton />;
   }
 
-  const displayName = user.user_metadata?.username || user.email?.split("@")[0] || "Utilisateur";
+  const _displayName = user.user_metadata?.username || user.email?.split("@")[0] || "Utilisateur";
 
   return (
     <div className="flex-1 p-4 sm:p-6">

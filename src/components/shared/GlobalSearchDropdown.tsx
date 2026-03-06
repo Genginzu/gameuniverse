@@ -5,8 +5,7 @@ import { GlobalSearchGameItem } from "@/components/shared/GlobalSearchGameItem";
 import { GlobalSearchPlayerItem } from "@/components/shared/GlobalSearchPlayerItem";
 import type { FlatSearchItem } from "@/lib/utils/global-search-utils";
 import type { GlobalSearchResponse } from "@/types/global-search";
-import { Gamepad2, Loader2, Swords, Users } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { Gamepad2, Loader2, Swords, Users, type LucideIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 interface GlobalSearchDropdownProps {

@@ -116,7 +116,7 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
   );
 
   // Handle search
-  const handleSearch = useCallback((query: string) => {
+  const _handleSearch = useCallback((query: string) => {
     setSearchQuery(query);
   }, []);
 

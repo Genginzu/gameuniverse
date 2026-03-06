@@ -1,5 +1,28 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import * as fc from "fast-check";
+
+// Mock modules to prevent ESM resolution errors in node environment
+vi.mock("next-intl/navigation", () => ({
+  createNavigation: () => ({
+    Link: () => null,
+    redirect: () => {},
+    usePathname: () => "/",
+    useRouter: () => ({ push: () => {}, replace: () => {}, prefetch: () => {} }),
+  }),
+}));
+
+vi.mock("next-intl", () => ({
+  useTranslations: () => (key: string) => key,
+  useLocale: () => "fr",
+}));
+
+vi.mock("next/link", () => ({ default: () => null }));
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: () => {}, replace: () => {} }),
+  usePathname: () => "/",
+  useSearchParams: () => new URLSearchParams(),
+}));
+
 import type { EntityCardConfig, BadgeVariant } from "../../../../src/components/shared/EntityCard";
 import { getMetascoreColor } from "../../../../src/components/shared/EntityCard"; // eslint-disable-line no-duplicate-imports
 

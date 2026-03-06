@@ -266,8 +266,8 @@ describe("LibraryGamesContent Error Handling", () => {
       mockStatsAndGenres(5, 2, 50);
       await renderAndWaitForStats("5");
 
-      expect(screen.getByText("Ma Bibliothèque")).toBeTruthy();
       expect(screen.getByText("Jeux possédés")).toBeTruthy();
+      expect(screen.getByText("Jeux terminés")).toBeTruthy();
     });
 
     it("should display library interface elements for authenticated user", async () => {
@@ -278,7 +278,7 @@ describe("LibraryGamesContent Error Handling", () => {
       });
 
       await waitFor(() => {
-        expect(screen.getByText("Ma Bibliothèque")).toBeTruthy();
+        expect(screen.getByText("Jeux possédés")).toBeTruthy();
       });
       expect(screen.getByRole("textbox")).toBeTruthy();
       expect(screen.getByRole("button", { name: /filtrer/i })).toBeTruthy();

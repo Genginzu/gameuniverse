@@ -13,7 +13,7 @@ interface GlobalSearchGameItemProps {
 }
 
 export function GlobalSearchGameItem({ item, isActive, isImporting }: GlobalSearchGameItemProps) {
-  const t = useTranslations("globalSearch");
+  const _t = useTranslations("globalSearch");
 
   return (
     <div

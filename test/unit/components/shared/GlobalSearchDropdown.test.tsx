@@ -67,6 +67,7 @@ describe("GlobalSearchDropdown", () => {
         activeIndex={-1}
         isLoading={true}
         onSelect={vi.fn()}
+        importingId={null}
       />
     );
     expect(screen.getByText("Recherche en cours...")).toBeInTheDocument();
@@ -81,6 +82,7 @@ describe("GlobalSearchDropdown", () => {
         activeIndex={-1}
         isLoading={false}
         onSelect={vi.fn()}
+        importingId={null}
       />
     );
     expect(screen.getByText("Aucun résultat trouvé")).toBeInTheDocument();
@@ -97,6 +99,7 @@ describe("GlobalSearchDropdown", () => {
         activeIndex={-1}
         isLoading={false}
         onSelect={vi.fn()}
+        importingId={null}
       />
     );
 
@@ -119,6 +122,7 @@ describe("GlobalSearchDropdown", () => {
         activeIndex={-1}
         isLoading={false}
         onSelect={vi.fn()}
+        importingId={null}
       />
     );
 
@@ -139,6 +143,7 @@ describe("GlobalSearchDropdown", () => {
         activeIndex={1}
         isLoading={false}
         onSelect={vi.fn()}
+        importingId={null}
       />
     );
 
@@ -159,6 +164,7 @@ describe("GlobalSearchDropdown", () => {
         activeIndex={-1}
         isLoading={false}
         onSelect={onSelect}
+        importingId={null}
       />
     );
 
@@ -170,20 +176,21 @@ describe("GlobalSearchDropdown", () => {
     const results = buildResults([mockGame], [mockCharacter], [mockPlayer]);
     const flatItems = flattenResults(results);
 
-    render(
+    const { container } = render(
       <GlobalSearchDropdown
         results={results}
         flatItems={flatItems}
         activeIndex={-1}
         isLoading={false}
         onSelect={vi.fn()}
+        importingId={null}
       />
     );
 
-    const groups = screen.getAllByRole("group");
-    expect(groups).toHaveLength(3);
-    expect(groups[0]).toHaveTextContent("Jeux");
-    expect(groups[1]).toHaveTextContent("Personnages");
-    expect(groups[2]).toHaveTextContent("Joueurs");
+    const sections = container.querySelectorAll("section");
+    expect(sections).toHaveLength(3);
+    expect(sections[0]).toHaveTextContent("Jeux");
+    expect(sections[1]).toHaveTextContent("Personnages");
+    expect(sections[2]).toHaveTextContent("Joueurs");
   });
 });

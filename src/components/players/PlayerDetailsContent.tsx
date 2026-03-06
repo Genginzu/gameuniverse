@@ -7,9 +7,8 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { PlayerProfileBanner } from "./PlayerProfileBanner";
-import { PlayerProfileTabs } from "./PlayerProfileTabs";
+import { PlayerProfileTabs, type ProfileTab } from "./PlayerProfileTabs";
 import { PlayerTabContent } from "./PlayerTabContent";
-import type { ProfileTab } from "./PlayerProfileTabs";
 import type { PlayerDetails } from "@/types/player";
 
 /**

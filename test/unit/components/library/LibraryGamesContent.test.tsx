@@ -103,7 +103,7 @@ async function renderAndWaitForStats(statValue: string) {
   });
   await waitFor(() => {
     if (statValue === "0") {
-      expect(screen.getByText("Ma Bibliothèque")).toBeTruthy();
+      expect(screen.getByText("Jeux possédés")).toBeTruthy();
     } else {
       expect(screen.getByText(statValue)).toBeTruthy();
     }
@@ -143,16 +143,16 @@ describe("LibraryGamesContent Component Rendering", () => {
       expect(container.querySelector(".animate-pulse")).toBeTruthy();
     });
 
-    it("should render loading spinner during initial loading", () => {
+    it("should render loading skeleton during initial loading", () => {
       mockGet.mockImplementation(() => new Promise(() => {}));
       const { container } = render(<LibraryGamesContent locale="fr" />);
-      expect(container.querySelector(".animate-spin")).toBeTruthy();
+      expect(container.querySelector(".animate-pulse")).toBeTruthy();
     });
 
     it("should hide skeleton after data loads", async () => {
       mockStatsAndGenres(5, 2, 50);
       await renderAndWaitForStats("5");
-      expect(screen.getByText("Ma Bibliothèque")).toBeTruthy();
+      expect(screen.getByText("Jeux possédés")).toBeTruthy();
     });
   });
 
@@ -267,13 +267,13 @@ describe("LibraryGamesContent Component Rendering", () => {
   });
 
   describe("Hero Section Rendering", () => {
-    it("should render hero section with title", async () => {
+    it("should render stats section with card titles", async () => {
       mockStatsAndGenres(0, 0, 0);
       await renderAndWaitForStats("0");
 
-      expect(screen.getByText("Ma Bibliothèque")).toBeTruthy();
-      expect(screen.getByText("de Jeux")).toBeTruthy();
-      expect(screen.getByText("Gérez votre collection de jeux")).toBeTruthy();
+      expect(screen.getByText("Jeux possédés")).toBeTruthy();
+      expect(screen.getByText("Jeux terminés")).toBeTruthy();
+      expect(screen.getByText("Temps de jeu")).toBeTruthy();
     });
   });
 
