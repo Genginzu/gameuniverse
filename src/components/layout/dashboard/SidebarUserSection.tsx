@@ -14,6 +14,7 @@ import {
   FaChevronUp,
   FaChevronDown,
 } from "react-icons/fa";
+import { resolveDisplayName } from "@/lib/utils/user-display";
 
 interface SidebarUserSectionProps {
   user: User;
@@ -38,7 +39,7 @@ export default function SidebarUserSection({ user, signOut }: SidebarUserSection
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const displayName = user.user_metadata?.username || user.email?.split("@")[0] || "User";
+  const displayName = resolveDisplayName(user);
 
   const itemClasses =
     "flex w-full items-center rounded-lg px-3 py-2 text-sm transition-all " +

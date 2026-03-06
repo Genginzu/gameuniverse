@@ -51,7 +51,7 @@ export function PersonalRecommendationSection({
       </div>
 
       {loading && (
-        <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
           {Array.from({ length: SKELETON_COUNT }).map((_, index) => (
             <GameCardSkeleton key={index} />
           ))}
@@ -63,7 +63,7 @@ export function PersonalRecommendationSection({
       )}
 
       {!loading && hasRecommendations && (
-        <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
           {recommendations.map((rec) => (
             <GameCard key={rec.id} game={toGameCardProps(rec)} locale={locale} />
           ))}

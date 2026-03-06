@@ -13,7 +13,7 @@ Transformation de la navigation horizontale (`GamingNavBar`) en sidebar latéral
     - Définir et exporter les constantes `NAV_LINKS` (5 liens principaux : Dashboard, Bibliothèque, Favoris, Collections, Profil) et `PUBLIC_LINKS` (3 liens publics : Jeux, Personnages, Joueurs)
     - _Exigences : 1.2, 1.3, 2.1, 2.4_
 
-  - [ ]* 1.2 Écrire le test property-based pour `isActive` — Propriété 1
+  - [x] 1.2 Écrire le test property-based pour `isActive` — Propriété 1
     - **Propriété 1 : Unicité et exactitude du lien actif**
     - Créer `test/unit/lib/utils/navigation-utils.property.test.ts`
     - Pour tout pathname valide et la liste `NAV_LINKS`, `isActive` retourne `true` pour au plus un seul lien
@@ -21,7 +21,7 @@ Transformation de la navigation horizontale (`GamingNavBar`) en sidebar latéral
     - Utiliser `fast-check` avec minimum 100 itérations
     - **Valide : Exigences 2.1, 2.4**
 
-  - [ ]* 1.3 Écrire les tests unitaires pour `navigation-utils`
+  - [x] 1.3 Écrire les tests unitaires pour `navigation-utils`
     - Créer `test/unit/lib/utils/navigation-utils.test.ts`
     - Tester `isActive` avec des cas spécifiques : chemin exact, sous-chemin, chemin non-correspondant, chemin racine, avec/sans préfixe locale
     - Tester que `NAV_LINKS` contient exactement 5 liens et `PUBLIC_LINKS` exactement 3 liens
@@ -50,7 +50,7 @@ Transformation de la navigation horizontale (`GamingNavBar`) en sidebar latéral
     - Dropdown au clic : LanguageSwitcher, changement de thème, paramètres, déconnexion
     - _Exigences : 6.1, 6.2, 6.3_
 
-  - [ ]* 2.4 Écrire le test property-based pour la résolution du nom d'affichage — Propriété 3
+  - [x] 2.4 Écrire le test property-based pour la résolution du nom d'affichage — Propriété 3
     - **Propriété 3 : Résolution du nom d'affichage utilisateur**
     - Créer `test/unit/lib/utils/user-display.property.test.ts`
     - Extraire la logique de résolution du nom dans une fonction pure testable
@@ -65,7 +65,7 @@ Transformation de la navigation horizontale (`GamingNavBar`) en sidebar latéral
     - Masqué sur mobile (<1024px) via `hidden lg:flex`
     - _Exigences : 1.1, 1.4, 1.5, 1.6_
 
-  - [ ]* 2.5 Écrire les tests unitaires pour les composants sidebar
+  - [x] 2.5 Écrire les tests unitaires pour les composants sidebar
     - Créer `test/unit/components/layout/Sidebar.test.tsx`
     - Tester le rendu des 5 liens principaux + 3 liens publics, logo, section utilisateur, bouton recherche
     - Créer `test/unit/components/layout/SidebarUserSection.test.tsx`
@@ -83,14 +83,14 @@ Transformation de la navigation horizontale (`GamingNavBar`) en sidebar latéral
     - Nettoyage des event listeners au démontage
     - _Exigences : 9.7, 9.10_
 
-  - [ ]* 4.2 Écrire le test property-based pour les raccourcis clavier — Propriété 4
+  - [x] 4.2 Écrire le test property-based pour les raccourcis clavier — Propriété 4
     - **Propriété 4 : Raccourcis clavier de l'overlay de recherche**
     - Créer `test/unit/hooks/useSearchOverlay.property.test.ts`
     - Pour tout événement clavier : Ctrl+K/Cmd+K ouvre si fermé, Escape ferme si ouvert, aucune autre touche ne modifie l'état
     - Utiliser `fast-check` avec minimum 100 itérations
     - **Valide : Exigences 9.7, 9.10**
 
-  - [ ]* 4.3 Écrire les tests unitaires pour `useSearchOverlay`
+  - [x] 4.3 Écrire les tests unitaires pour `useSearchOverlay`
     - Créer `test/unit/hooks/useSearchOverlay.test.ts`
     - Tester les états open/close, raccourci Ctrl+K/Cmd+K, fermeture Escape
     - _Exigences : 9.7, 9.10_
@@ -105,7 +105,7 @@ Transformation de la navigation horizontale (`GamingNavBar`) en sidebar latéral
     - Attributs `role="dialog"` et `aria-modal="true"`, focus trap
     - _Exigences : 9.2, 9.3, 9.4, 9.5, 9.6, 9.8, 9.9, 9.11, 9.12_
 
-  - [ ]* 4.5 Écrire les tests unitaires pour `SearchOverlay`
+  - [x] 4.5 Écrire les tests unitaires pour `SearchOverlay`
     - Créer `test/unit/components/layout/SearchOverlay.test.tsx`
     - Tester ouverture/fermeture, attributs ARIA, focus initial sur le champ de saisie
     - _Exigences : 9.2, 9.7, 9.8, 9.9, 9.11, 9.12_
@@ -129,14 +129,14 @@ Transformation de la navigation horizontale (`GamingNavBar`) en sidebar latéral
     - Respecter `prefers-reduced-motion` (pas d'animation de transition)
     - _Exigences : 5.3, 5.4, 5.5, 5.6, 7.3, 7.4, 8.2_
 
-  - [ ]* 6.3 Écrire le test property-based pour la fermeture overlay mobile — Propriété 2
+  - [x] 6.3 Écrire le test property-based pour la fermeture overlay mobile — Propriété 2
     - **Propriété 2 : Fermeture de l'overlay mobile au clic sur un lien**
     - Ajouter dans `test/unit/lib/utils/navigation-utils.property.test.ts`
     - Pour tout lien dans `NAV_LINKS`, le callback `onClose` est appelé exactement une fois au clic
     - Utiliser `fast-check` avec minimum 100 itérations
     - **Valide : Exigence 5.5**
 
-  - [ ]* 6.4 Écrire les tests unitaires pour `MobileNavOverlay` et `MobileHamburgerButton`
+  - [x] 6.4 Écrire les tests unitaires pour `MobileNavOverlay` et `MobileHamburgerButton`
     - Créer `test/unit/components/layout/MobileNavOverlay.test.tsx`
     - Tester bouton recherche, fermeture au clic sur un lien, attributs dialog/aria-modal
     - _Exigences : 5.2, 5.3, 5.4, 5.5, 5.6_

@@ -6,7 +6,7 @@ import { formatPlayTime } from "@/lib/utils/formatPlayTime";
 function StatsCardShell({ children }: { children: React.ReactNode }) {
   return (
     <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-sm">
-      <CardContent className="p-6">{children}</CardContent>
+      <CardContent className="p-6 text-center">{children}</CardContent>
     </Card>
   );
 }
@@ -23,7 +23,7 @@ export function EnrichedStatCards({ stats, locale, t, totalGames }: EnrichedStat
     <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
       {/* Total Games in Library */}
       <StatsCardShell>
-        <div className="mb-2 flex items-center gap-2 text-slate-400">
+        <div className="mb-2 flex items-center justify-center gap-2 text-slate-400">
           <Library className="h-5 w-5 text-green-400" />
           <span className="text-sm font-medium">{t("enrichedStats.totalGames")}</span>
         </div>
@@ -32,7 +32,7 @@ export function EnrichedStatCards({ stats, locale, t, totalGames }: EnrichedStat
 
       {/* Total Play Time — Req 4.1, 4.4 */}
       <StatsCardShell>
-        <div className="mb-2 flex items-center gap-2 text-slate-400">
+        <div className="mb-2 flex items-center justify-center gap-2 text-slate-400">
           <Clock className="h-5 w-5 text-purple-400" />
           <span className="text-sm font-medium">{t("enrichedStats.totalPlayTime")}</span>
         </div>
@@ -46,7 +46,7 @@ export function EnrichedStatCards({ stats, locale, t, totalGames }: EnrichedStat
 
       {/* Favorite Genre — Req 4.1, 4.2 */}
       <StatsCardShell>
-        <div className="mb-2 flex items-center gap-2 text-slate-400">
+        <div className="mb-2 flex items-center justify-center gap-2 text-slate-400">
           <Gamepad2 className="h-5 w-5 text-blue-400" />
           <span className="text-sm font-medium">{t("enrichedStats.favoriteGenre")}</span>
         </div>
@@ -59,7 +59,7 @@ export function EnrichedStatCards({ stats, locale, t, totalGames }: EnrichedStat
 
       {/* Review Count — Req 4.1 */}
       <StatsCardShell>
-        <div className="mb-2 flex items-center gap-2 text-slate-400">
+        <div className="mb-2 flex items-center justify-center gap-2 text-slate-400">
           <Star className="h-5 w-5 text-yellow-400" />
           <span className="text-sm font-medium">{t("enrichedStats.reviewCount")}</span>
         </div>
