@@ -48,8 +48,21 @@ function formatError(err: unknown): Record<string, unknown> {
       ...(err.cause ? { cause: formatError(err.cause) } : {}),
     };
   }
+  // Handle plain objects (e.g. Supabase PostgrestError: { message, details, hint, code })
+  if (err !== null && typeof err === "object") {
+    const obj = err as Record<string, unknown>;
+    return {
+      ...(obj.message ? { message: String(obj.message) } : {}),
+      ...(obj.code ? { code: obj.code } : {}),
+      ...(obj.details ? { details: obj.details } : {}),
+      ...(obj.hint ? { hint: obj.hint } : {}),
+      // Fallback: include all keys if none of the standard ones exist
+      ...(!obj.message && !obj.code ? obj : {}),
+    };
+  }
   return { message: String(err) };
 }
+
 
 function log(level: LogLevel, message: string, data?: LogPayload) {
   if (!shouldLog(level)) return;
