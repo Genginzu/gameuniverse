@@ -7,6 +7,7 @@ import { PlayerCollections } from "./PlayerCollections";
 import { LibraryComparisonSection } from "./LibraryComparisonSection";
 import { PersonalRecommendationSection } from "@/components/games/PersonalRecommendationSection";
 import { ActivityFeed } from "./ActivityFeed";
+import { FriendsTab } from "./FriendsTab";
 import { PlayerEnrichedStats } from "./PlayerEnrichedStats";
 import { YearInReviewLink } from "./YearInReviewLink";
 import { shouldShowComparison } from "./PlayerDetailsContent";
@@ -64,6 +65,8 @@ export function PlayerTabContent({
       return <PlayerCollections playerId={player.id} locale={locale} isOwner={isOwner} />;
     case "activity":
       return <ActivityFeed playerId={player.id} locale={locale} />;
+    case "friends":
+      return <FriendsTab playerId={player.id} locale={locale} />;
     case "recommendations":
       return isOwner ? <PersonalRecommendationSection locale={locale} /> : null;
     default:

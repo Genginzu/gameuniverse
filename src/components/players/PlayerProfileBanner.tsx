@@ -4,6 +4,7 @@ import { LazyImage } from "@/components/ui/lazy-image";
 import { User } from "lucide-react";
 import { PlayerProfileSocialLinks } from "./PlayerProfileSocialLinks";
 import type { PlayerDetails } from "@/types/player";
+import type { ReactNode } from "react";
 
 interface PlayerProfileBannerProps {
   player: PlayerDetails;
@@ -11,6 +12,7 @@ interface PlayerProfileBannerProps {
   reviewCount: number;
   friendCount: number;
   commentCount: number;
+  friendActionSlot?: ReactNode;
 }
 
 export function PlayerProfileBanner({
@@ -19,11 +21,12 @@ export function PlayerProfileBanner({
   reviewCount,
   friendCount,
   commentCount,
+  friendActionSlot,
 }: PlayerProfileBannerProps) {
   return (
     <div className="relative pt-6">
       {/* Banner image — 90% width, centered with rounded corners */}
-      <div className="relative mx-auto h-48 w-[80%] overflow-hidden rounded-2xl md:h-64">
+      <div className="relative mx-auto h-64 w-[80%] overflow-hidden rounded-2xl md:h-80">
         {player.bannerUrl ? (
           <LazyImage
             src={player.bannerUrl}
@@ -41,8 +44,8 @@ export function PlayerProfileBanner({
         <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-gray-50 to-transparent dark:from-slate-900" />
       </div>
 
-      {/* Avatar overlapping the banner — centered */}
-      <div className="relative z-10 mx-auto -mt-16 flex justify-center">
+      {/* Avatar overlapping the banner — centered, with button below */}
+      <div className="relative z-10 mx-auto -mt-32 flex flex-col items-center">
         <div className="relative">
           <div className="relative h-28 w-28 overflow-hidden rounded-2xl border-4 border-white bg-gradient-to-br from-blue-100 to-indigo-100 shadow-xl dark:border-slate-800 md:h-32 md:w-32">
             {player.avatarUrl ? (
@@ -68,10 +71,12 @@ export function PlayerProfileBanner({
             </span>
           )}
         </div>
+        {/* Friend action button — centered under avatar */}
+        {friendActionSlot && <div className="mt-3">{friendActionSlot}</div>}
       </div>
 
       {/* Info row: stats | name | social links */}
-      <div className="container mx-auto px-4 pb-4 pt-6">
+      <div className="container mx-auto px-4 pb-4 pt-2">
         <div className="flex flex-col items-center gap-4 md:flex-row md:items-center md:justify-between">
           {/* Left: counters */}
           <ProfileCounters

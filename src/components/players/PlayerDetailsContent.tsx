@@ -6,9 +6,11 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import { useFriends } from "@/hooks/useFriends";
 import { PlayerProfileBanner } from "./PlayerProfileBanner";
 import { PlayerProfileTabs, type ProfileTab } from "./PlayerProfileTabs";
 import { PlayerTabContent } from "./PlayerTabContent";
+import { FriendActionButton } from "./FriendActionButton";
 import type { PlayerDetails } from "@/types/player";
 
 /**
@@ -33,6 +35,16 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
   const tCommon = useTranslations("common");
   const { user } = useAuth();
   const isOwner = user?.id === player.id;
+
+  const {
+    friendCount,
+    relationshipStatus,
+    relationshipFriendshipId,
+    sendRequest,
+    acceptRequest,
+    declineRequest,
+    removeFriend,
+  } = useFriends(player.id, locale);
 
   const [activeTab, setActiveTab] = useState<ProfileTab>("overview");
 
@@ -73,8 +85,21 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
         player={player}
         displayName={displayName}
         reviewCount={player.stats.totalGames}
-        friendCount={0}
+        friendCount={friendCount}
         commentCount={0}
+        friendActionSlot={
+          <FriendActionButton
+            playerId={player.id}
+            isAuthenticated={!!user}
+            isOwner={isOwner}
+            relationshipStatus={relationshipStatus}
+            friendshipId={relationshipFriendshipId}
+            sendRequest={sendRequest}
+            acceptRequest={acceptRequest}
+            declineRequest={declineRequest}
+            removeFriend={removeFriend}
+          />
+        }
       />
 
       {/* Tab navigation */}

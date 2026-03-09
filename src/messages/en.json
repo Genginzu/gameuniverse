@@ -1643,5 +1643,17 @@
     "profileDesc": "View and manage your information",
     "settings": "Settings",
     "settingsDesc": "Configure your preferences"
+  },
+  "friends": {
+    "searchPlaceholder": "Search for a friend…",
+    "listLabel": "Friends list",
+    "empty": "No friends yet",
+    "pendingRequests": "Pending friend requests",
+    "accept": "Accept",
+    "decline": "Decline",
+    "addFriend": "Add friend",
+    "requestSent": "Request sent",
+    "removeFriend": "Remove friend",
+    "confirmRemove": "Are you sure you want to remove this person from your friends?"
   }
 }

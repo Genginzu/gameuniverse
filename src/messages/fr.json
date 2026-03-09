@@ -1646,5 +1646,17 @@
     "profileDesc": "Consultez et gérez vos informations",
     "settings": "Paramètres",
     "settingsDesc": "Configurez vos préférences"
+  },
+  "friends": {
+    "searchPlaceholder": "Rechercher un ami…",
+    "listLabel": "Liste d'amis",
+    "empty": "Aucun ami pour le moment",
+    "pendingRequests": "Demandes d'amis en attente",
+    "accept": "Accepter",
+    "decline": "Refuser",
+    "addFriend": "Ajouter en ami",
+    "requestSent": "Demande envoyée",
+    "removeFriend": "Retirer des amis",
+    "confirmRemove": "Êtes-vous sûr de vouloir retirer cette personne de vos amis ?"
   }
 }
