@@ -240,7 +240,8 @@
     "accountInfo": "Account information",
     "accountInfoDesc": "Your profile details",
     "logout": "Logout",
-    "mySpace": "My Space"
+    "mySpace": "My Space",
+    "friends": "Friends"
   },
   "common": {
     "loading": "Loading...",
@@ -579,6 +580,11 @@
       "favoriteDescription": "Added <character>{character}</character> to favorites",
       "collectionDescription": "Created the collection {name}",
       "collectionGamesCount": "{count} game(s)",
+      "friendshipDescription": {
+        "request_sent": "Sent a friend request to <player>{player}</player>",
+        "request_accepted": "Became friends with <player>{player}</player>",
+        "friend_removed": "Removed <player>{player}</player> from friends"
+      },
       "playtimeHastily": "Main Story",
       "playtimeNormally": "Normal",
       "playtimeCompletely": "Completionist",
@@ -594,7 +600,8 @@
         "library": "Library",
         "playtime": "Playtime",
         "favorite": "Favorite",
-        "collection": "Collection"
+        "collection": "Collection",
+        "friendship": "Friendship"
       },
       "filters": {
         "label": "Filter by activity type",
@@ -604,7 +611,8 @@
         "library": "Library",
         "playtime": "Playtime",
         "favorite": "Favorites",
-        "collection": "Collections"
+        "collection": "Collections",
+        "friendship": "Friends"
       }
     }
   },
@@ -1654,6 +1662,19 @@
     "addFriend": "Add friend",
     "requestSent": "Request sent",
     "removeFriend": "Remove friend",
-    "confirmRemove": "Are you sure you want to remove this person from your friends?"
+    "confirmRemove": "Are you sure you want to remove this person from your friends?",
+    "page": {
+      "title": "My Friends",
+      "friendsCount": "{count, plural, =0 {No friends} one {# friend} other {# friends}}",
+      "removeFriend": "Remove",
+      "confirmRemoveTitle": "Remove friend",
+      "confirmRemoveMessage": "Are you sure you want to remove {name} from your friends?",
+      "confirmRemoveConfirm": "Remove",
+      "confirmRemoveCancel": "Cancel",
+      "emptyState": "You don't have any friends yet. Explore the players page to find people to connect with!",
+      "explorePlayers": "Explore players",
+      "pendingBadgeLabel": "{count, plural, one {# pending friend request} other {# pending friend requests}}",
+      "loadingError": "An error occurred while loading the friends page."
+    }
   }
 }

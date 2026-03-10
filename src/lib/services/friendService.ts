@@ -1,6 +1,7 @@
 import type {
   FriendsListResponse,
   FriendsQueryParams,
+  PendingCountResponse,
   RelationshipStatusResponse,
 } from "@/types/friendship";
 
@@ -86,6 +87,18 @@ export class FriendService {
     if (!response.ok) {
       const body = await response.json().catch(() => null);
       throw new Error(body?.error || "Failed to decline friend request");
+    }
+    return response.json();
+  }
+
+  /**
+   * Récupère le nombre de demandes d'amitié en attente pour le joueur authentifié.
+   */
+  static async getPendingCount(): Promise<PendingCountResponse> {
+    const response = await fetch("/api/players/me/friends/pending-count");
+    if (!response.ok) {
+      const body = await response.json().catch(() => null);
+      throw new Error(body?.error || "Failed to fetch pending count");
     }
     return response.json();
   }

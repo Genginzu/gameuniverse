@@ -120,10 +120,10 @@ describe("/api/players/[id]/activity", () => {
 
   it("should pass page and type query parameters", async () => {
     const req = new NextRequest(
-      `http://localhost/api/players/${PLAYER_ID}/activity?page=3&type=comment&locale=en`
+      `http://localhost/api/players/${PLAYER_ID}/activity?page=3&type=friendship&locale=en`
     );
     await GET(req, makeParams());
-    expect(mockFetchPlayerActivity).toHaveBeenCalledWith(PLAYER_ID, "en", "comment", 3);
+    expect(mockFetchPlayerActivity).toHaveBeenCalledWith(PLAYER_ID, "en", "friendship", 3);
   });
 
   it("should ignore invalid type filter and pass undefined", async () => {

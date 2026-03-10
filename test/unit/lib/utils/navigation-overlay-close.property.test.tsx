@@ -16,6 +16,13 @@ import { NAV_LINKS, PUBLIC_LINKS } from "@/lib/utils/navigation-utils";
 // Mock i18n navigation — Link renders a plain <a> that forwards onClick
 vi.mock("@/i18n/navigation", () => ({
   usePathname: () => "/dashboard",
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    prefetch: vi.fn(),
+    back: vi.fn(),
+    forward: vi.fn(),
+  }),
   Link: ({
     children,
     href,
@@ -36,6 +43,15 @@ vi.mock("@/i18n/navigation", () => ({
       },
       children
     ),
+}));
+
+vi.mock("@/hooks/usePendingRequestCount", () => ({
+  usePendingRequestCount: () => ({
+    count: 0,
+    isLoading: false,
+    decrement: vi.fn(),
+    refresh: vi.fn(),
+  }),
 }));
 
 import MobileNavOverlay from "@/components/layout/dashboard/MobileNavOverlay";

@@ -4,6 +4,8 @@ import { Link, usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { FaSearch, FaTimes, FaSignInAlt } from "react-icons/fa";
 import { NAV_LINKS, PUBLIC_LINKS, isActive } from "@/lib/utils/navigation-utils";
+import { NotificationBadge } from "@/components/friends/NotificationBadge";
+import { usePendingRequestCount } from "@/hooks/usePendingRequestCount";
 
 interface MobileNavOverlayProps {
   isOpen: boolean;
@@ -23,6 +25,7 @@ export default function MobileNavOverlay({
   const t = useTranslations("dashboard");
   const tNav = useTranslations("navigation");
   const pathname = usePathname();
+  const { count: pendingCount } = usePendingRequestCount();
 
   if (!isOpen) return null;
 
@@ -98,6 +101,7 @@ export default function MobileNavOverlay({
             <ul className="flex flex-col gap-2">
               {NAV_LINKS.map(({ href, icon: Icon, labelKey }) => {
                 const active = isActive(pathname, href, currentUserId);
+                const isFriendsLink = href === "/friends";
                 return (
                   <li key={href}>
                     <Link
@@ -113,6 +117,9 @@ export default function MobileNavOverlay({
                         className={`h-5 w-5 ${active ? "drop-shadow-[0_0_6px_rgb(var(--neon-violet)/0.6)]" : ""}`}
                       />
                       <span>{t(labelKey)}</span>
+                      {isFriendsLink && pendingCount > 0 && (
+                        <NotificationBadge count={pendingCount} />
+                      )}
                     </Link>
                   </li>
                 );

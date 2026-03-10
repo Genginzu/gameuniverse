@@ -145,9 +145,9 @@ describe("ActivityFeed", () => {
     // ActivityFilters renders a group of buttons
     const filterGroup = screen.getByRole("group");
     expect(filterGroup).toBeInTheDocument();
-    // 7 filter buttons: all, review, comment, library, playtime, favorite, collection
+    // 8 filter buttons: all, review, comment, library, playtime, favorite, collection, friendship
     const buttons = screen.getAllByRole("button");
-    expect(buttons.length).toBe(7);
+    expect(buttons.length).toBe(8);
   });
 
   it("should pass playerId and locale to the hook", () => {

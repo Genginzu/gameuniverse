@@ -10,6 +10,7 @@ import type {
   PlaytimeEventData,
   FavoriteEventData,
   CollectionEventData,
+  FriendshipEventData,
 } from "@/types/activity";
 import { getActivityIcon } from "@/components/players/ActivityItem";
 
@@ -52,6 +53,7 @@ const ALL_EVENT_TYPES: ActivityEventType[] = [
   "playtime",
   "favorite",
   "collection",
+  "friendship",
 ];
 
 const isoDateArb = fc
@@ -116,6 +118,14 @@ function eventDataForType(type: ActivityEventType): fc.Arbitrary<ActivityEventDa
         collectionSlug: fc.string({ minLength: 1, maxLength: 30 }),
         collectionName: fc.string({ minLength: 1, maxLength: 50 }),
         gamesCount: fc.integer({ min: 0, max: 1000 }),
+      });
+    case "friendship":
+      return fc.record<FriendshipEventData>({
+        type: fc.constant("friendship"),
+        friendId: fc.uuid(),
+        friendName: fc.string({ minLength: 1, maxLength: 50 }),
+        friendAvatarUrl: fc.option(fc.webUrl(), { nil: null }),
+        action: fc.constantFrom("request_sent", "request_accepted", "friend_removed"),
       });
   }
 }
@@ -228,6 +238,7 @@ describe("Activity Service — Property-Based Tests", () => {
       ],
       favorite: ["characterSlug", "characterName"],
       collection: ["collectionSlug", "collectionName", "gamesCount"],
+      friendship: ["friendId", "friendName", "friendAvatarUrl", "action"],
     };
 
     it("every generated event contains all required fields for its type", () => {
@@ -251,7 +262,7 @@ describe("Activity Service — Property-Based Tests", () => {
      * For any two distinct event types, getActivityIcon must return
      * different icons.
      */
-    it("all 6 event types map to unique icons", () => {
+    it("all 7 event types map to unique icons", () => {
       const icons = ALL_EVENT_TYPES.map((type) => getActivityIcon(type));
       const uniqueIcons = new Set(icons);
       expect(uniqueIcons.size).toBe(ALL_EVENT_TYPES.length);

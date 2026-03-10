@@ -22,6 +22,7 @@ export const NAV_LINKS: NavLink[] = [
   { href: "/library", icon: FaGamepad, labelKey: "library" },
   { href: "/favorites/characters", icon: FaHeart, labelKey: "myCharacters" },
   { href: "/collections", icon: FaLayerGroup, labelKey: "collections" },
+  { href: "/friends", icon: FaUserFriends, labelKey: "friends" },
   { href: "/profile", icon: FaUser, labelKey: "profile" },
 ];
 
@@ -41,7 +42,7 @@ export const PUBLIC_LINKS: NavLink[] = [
  * instead of `/players`.
  */
 export function isActive(pathname: string, linkPath: string, currentUserId?: string): boolean {
-  const normalizedPathname = pathname.replace(/^\/(fr|en)/, "") || "/";
+  const normalizedPathname = pathname.replace(/^\/(fr|en)(?=\/|$)/, "") || "/";
 
   // When viewing own profile (/players/{currentUserId}), activate /profile, not /players
   if (currentUserId) {

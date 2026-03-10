@@ -240,7 +240,8 @@
     "accountInfo": "Informations du compte",
     "accountInfoDesc": "Détails de votre profil",
     "logout": "Déconnexion",
-    "mySpace": "Mon espace"
+    "mySpace": "Mon espace",
+    "friends": "Amis"
   },
   "common": {
     "loading": "Chargement...",
@@ -579,6 +580,11 @@
       "favoriteDescription": "A ajouté <character>{character}</character> en favori",
       "collectionDescription": "A créé la collection {name}",
       "collectionGamesCount": "{count} jeu(x)",
+      "friendshipDescription": {
+        "request_sent": "A envoyé une demande d'ami à <player>{player}</player>",
+        "request_accepted": "Est devenu ami avec <player>{player}</player>",
+        "friend_removed": "A retiré <player>{player}</player> de ses amis"
+      },
       "playtimeHastily": "Histoire",
       "playtimeNormally": "Normal",
       "playtimeCompletely": "Complétionniste",
@@ -594,7 +600,8 @@
         "library": "Bibliothèque",
         "playtime": "Temps de jeu",
         "favorite": "Favori",
-        "collection": "Collection"
+        "collection": "Collection",
+        "friendship": "Amitié"
       },
       "filters": {
         "label": "Filtrer par type d'activité",
@@ -604,7 +611,8 @@
         "library": "Bibliothèque",
         "playtime": "Temps de jeu",
         "favorite": "Favoris",
-        "collection": "Collections"
+        "collection": "Collections",
+        "friendship": "Amis"
       }
     }
   },
@@ -1657,6 +1665,19 @@
     "addFriend": "Ajouter en ami",
     "requestSent": "Demande envoyée",
     "removeFriend": "Retirer des amis",
-    "confirmRemove": "Êtes-vous sûr de vouloir retirer cette personne de vos amis ?"
+    "confirmRemove": "Êtes-vous sûr de vouloir retirer cette personne de vos amis ?",
+    "page": {
+      "title": "Mes amis",
+      "friendsCount": "{count, plural, =0 {Aucun ami} one {# ami} other {# amis}}",
+      "removeFriend": "Retirer",
+      "confirmRemoveTitle": "Retirer un ami",
+      "confirmRemoveMessage": "Êtes-vous sûr de vouloir retirer {name} de vos amis ?",
+      "confirmRemoveConfirm": "Retirer",
+      "confirmRemoveCancel": "Annuler",
+      "emptyState": "Vous n'avez pas encore d'amis. Explorez la page des joueurs pour trouver des personnes avec qui vous connecter !",
+      "explorePlayers": "Explorer les joueurs",
+      "pendingBadgeLabel": "{count, plural, one {# demande d'amitié en attente} other {# demandes d'amitié en attente}}",
+      "loadingError": "Une erreur est survenue lors du chargement de la page amis."
+    }
   }
 }

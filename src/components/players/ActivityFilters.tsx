@@ -1,7 +1,16 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Star, MessageCircle, Library, Clock, Heart, FolderOpen, LayoutGrid } from "lucide-react";
+import {
+  Star,
+  MessageCircle,
+  Library,
+  Clock,
+  Heart,
+  FolderOpen,
+  Users,
+  LayoutGrid,
+} from "lucide-react";
 import type { ActivityFilter } from "@/hooks/usePlayerActivity";
 
 const FILTER_OPTIONS: { value: ActivityFilter; icon: React.ElementType }[] = [
@@ -12,6 +21,7 @@ const FILTER_OPTIONS: { value: ActivityFilter; icon: React.ElementType }[] = [
   { value: "playtime", icon: Clock },
   { value: "favorite", icon: Heart },
   { value: "collection", icon: FolderOpen },
+  { value: "friendship", icon: Users },
 ];
 
 interface ActivityFiltersProps {

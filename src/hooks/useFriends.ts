@@ -66,8 +66,9 @@ export function useFriends(playerId: string, _locale: string): UseFriendsReturn 
         setHasNextPage(response.pagination.hasNextPage);
         pageRef.current = page;
 
-        // Owner gets pending requests from the same response
-        if (isOwner && response.pendingRequests) {
+        // L'API ne retourne pendingRequests que si le requêteur est le owner
+        // (vérifié côté serveur), donc on stocke directement sans re-vérifier
+        if (response.pendingRequests) {
           setPendingRequests(response.pendingRequests);
         }
       } catch (err) {
@@ -79,7 +80,7 @@ export function useFriends(playerId: string, _locale: string): UseFriendsReturn 
         isFetchingRef.current = false;
       }
     },
-    [playerId, isOwner]
+    [playerId]
   );
 
   // --- Fetch relationship status (visitor only) ---

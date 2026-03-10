@@ -80,3 +80,14 @@ export function sortFriendsByDate(friends: FriendSummary[]): FriendSummary[] {
     (a, b) => new Date(b.acceptedAt).getTime() - new Date(a.acceptedAt).getTime()
   );
 }
+
+/**
+ * Compte le nombre de demandes d'amitié en attente reçues par un utilisateur.
+ * Ne compte que les entrées où receiver_id === userId et status === 'pending'.
+ */
+export function countPendingRequests(
+  friendships: Array<{ receiver_id: string; status: string }>,
+  userId: string
+): number {
+  return friendships.filter((f) => f.receiver_id === userId && f.status === "pending").length;
+}

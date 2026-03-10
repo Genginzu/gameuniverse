@@ -8,6 +8,7 @@ import {
   Clock,
   Heart,
   FolderOpen,
+  Users,
   type LucideIcon,
 } from "lucide-react";
 import type { ActivityEvent, ActivityEventType } from "@/types/activity";
@@ -17,6 +18,7 @@ import { ActivityItemLibrary } from "./ActivityItemLibrary";
 import { ActivityItemPlaytime } from "./ActivityItemPlaytime";
 import { ActivityItemFavorite } from "./ActivityItemFavorite";
 import { ActivityItemCollection } from "./ActivityItemCollection";
+import { ActivityItemFriendship } from "./ActivityItemFriendship";
 
 /** Maps each ActivityEventType to a unique Lucide icon — exported for property-based testing */
 export function getActivityIcon(type: ActivityEventType): LucideIcon {
@@ -27,6 +29,7 @@ export function getActivityIcon(type: ActivityEventType): LucideIcon {
     playtime: Clock,
     favorite: Heart,
     collection: FolderOpen,
+    friendship: Users,
   };
   return iconMap[type];
 }
@@ -74,6 +77,8 @@ function ActivityItemContent({ event, locale }: { event: ActivityEvent; locale: 
       return <ActivityItemFavorite data={event.data} locale={locale} />;
     case "collection":
       return <ActivityItemCollection data={event.data} locale={locale} />;
+    case "friendship":
+      return <ActivityItemFriendship data={event.data} locale={locale} />;
     default:
       return null;
   }

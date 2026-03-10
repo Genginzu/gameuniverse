@@ -6,8 +6,8 @@ import { isActive, NAV_LINKS, PUBLIC_LINKS } from "@/lib/utils/navigation-utils"
 // =============================================================================
 
 describe("NAV_LINKS", () => {
-  it("contains exactly 5 links", () => {
-    expect(NAV_LINKS).toHaveLength(5);
+  it("contains exactly 6 links", () => {
+    expect(NAV_LINKS).toHaveLength(6);
   });
 
   it("each link has href, icon, and labelKey", () => {
@@ -16,6 +16,24 @@ describe("NAV_LINKS", () => {
       expect(typeof link.icon).toBe("function");
       expect(link.labelKey).toBeTruthy();
     }
+  });
+
+  it("has /friends link between /collections and /profile", () => {
+    const hrefs = NAV_LINKS.map((l) => l.href);
+    const collectionsIdx = hrefs.indexOf("/collections");
+    const friendsIdx = hrefs.indexOf("/friends");
+    const profileIdx = hrefs.indexOf("/profile");
+
+    expect(friendsIdx).toBeGreaterThan(-1);
+    expect(friendsIdx).toBe(collectionsIdx + 1);
+    expect(friendsIdx).toBe(profileIdx - 1);
+  });
+
+  it("/friends link uses correct icon and labelKey", () => {
+    const friendsLink = NAV_LINKS.find((l) => l.href === "/friends");
+    expect(friendsLink).toBeDefined();
+    expect(friendsLink!.labelKey).toBe("friends");
+    expect(typeof friendsLink!.icon).toBe("function");
   });
 });
 

@@ -93,8 +93,11 @@ describe("Library Comparison Components — Property-Based Tests", () => {
   // Feature: library-comparison, Property 4: Complétude des données
   // **Validates: Requirements 3.1, 3.2**
   describe("Property 4: Complétude des données", () => {
-    /** Generates a non-empty alphanumeric string (simulates gameId, slug, title) */
+    /** Generates a non-empty alphanumeric string (simulates gameId, title) */
     const nonEmptyStringArb = fc.string({ minLength: 1, maxLength: 30, unit: "grapheme" });
+
+    /** Generates a URL-safe slug (lowercase alphanumeric + hyphens, no Unicode) */
+    const slugArb = fc.stringMatching(/^[a-z0-9][a-z0-9-]{0,29}$/);
 
     /** Generates a locale string */
     const localeArb = fc.constantFrom("fr", "en");
@@ -102,7 +105,7 @@ describe("Library Comparison Components — Property-Based Tests", () => {
     /** Generates a CommonGame with non-empty required fields */
     const commonGameArb = fc.record({
       gameId: nonEmptyStringArb,
-      slug: nonEmptyStringArb,
+      slug: slugArb,
       title: nonEmptyStringArb,
       coverImage: fc.oneof(fc.constant(null), fc.webUrl()),
       genres: fc.array(nonEmptyStringArb, { minLength: 0, maxLength: 5 }),

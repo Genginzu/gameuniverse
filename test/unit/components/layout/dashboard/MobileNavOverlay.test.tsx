@@ -13,6 +13,13 @@ import React from "react";
 const mockUsePathname = vi.fn(() => "/dashboard");
 vi.mock("@/i18n/navigation", () => ({
   usePathname: () => mockUsePathname(),
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    prefetch: vi.fn(),
+    back: vi.fn(),
+    forward: vi.fn(),
+  }),
   Link: ({
     children,
     href,
@@ -26,6 +33,15 @@ vi.mock("@/i18n/navigation", () => ({
 
 vi.mock("next-intl", () => ({
   useTranslations: (ns: string) => (key: string) => key,
+}));
+
+vi.mock("@/hooks/usePendingRequestCount", () => ({
+  usePendingRequestCount: () => ({
+    count: 0,
+    isLoading: false,
+    decrement: vi.fn(),
+    refresh: vi.fn(),
+  }),
 }));
 
 import MobileNavOverlay from "@/components/layout/dashboard/MobileNavOverlay";
@@ -77,12 +93,13 @@ describe("MobileNavOverlay", () => {
     expect(screen.getByText("players")).toBeInTheDocument();
   });
 
-  it("renders the 5 main nav links when authenticated", () => {
+  it("renders the 6 main nav links when authenticated", () => {
     render(<MobileNavOverlay {...defaultProps} />);
     expect(screen.getByText("dashboard")).toBeInTheDocument();
     expect(screen.getByText("library")).toBeInTheDocument();
     expect(screen.getByText("myCharacters")).toBeInTheDocument();
     expect(screen.getByText("collections")).toBeInTheDocument();
+    expect(screen.getByText("friends")).toBeInTheDocument();
     expect(screen.getByText("profile")).toBeInTheDocument();
   });
 

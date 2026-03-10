@@ -12,6 +12,7 @@ const VALID_EVENT_TYPES: Set<string> = new Set<string>([
   "playtime",
   "favorite",
   "collection",
+  "friendship",
 ]);
 
 /**

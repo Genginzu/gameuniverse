@@ -64,7 +64,7 @@ describe("/api/players/[id]/friends/[friendshipId] — PATCH", () => {
   });
 
   it("returns 404 when friendship not found (PGRST116)", async () => {
-    mockAcceptRequest.mockRejectedValue({ code: "PGRST116" });
+    mockAcceptRequest.mockRejectedValue(new Error("Friendship not found"));
     const req = new NextRequest(
       `http://localhost/api/players/${PLAYER_ID}/friends/${FRIENDSHIP_ID}`,
       { method: "PATCH" }

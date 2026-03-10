@@ -35,6 +35,15 @@ vi.mock("next-themes", () => ({
   useTheme: () => ({ theme: "dark", setTheme: vi.fn() }),
 }));
 
+vi.mock("@/hooks/usePendingRequestCount", () => ({
+  usePendingRequestCount: () => ({
+    count: 0,
+    isLoading: false,
+    decrement: vi.fn(),
+    refresh: vi.fn(),
+  }),
+}));
+
 import Sidebar from "@/components/layout/dashboard/Sidebar";
 
 const mockUser = {
@@ -59,7 +68,7 @@ describe("Sidebar", () => {
       expect(screen.getByText("players")).toBeInTheDocument();
     });
 
-    it("renders the 5 main nav links when authenticated", () => {
+    it("renders the 6 main nav links when authenticated", () => {
       render(<Sidebar isAuthenticated={true} user={mockUser} signOut={mockSignOut} />);
 
       // Main links use t(labelKey) from dashboard translations — mock returns key
@@ -67,6 +76,7 @@ describe("Sidebar", () => {
       expect(screen.getByText("library")).toBeInTheDocument();
       expect(screen.getByText("myCharacters")).toBeInTheDocument();
       expect(screen.getByText("collections")).toBeInTheDocument();
+      expect(screen.getByText("friends")).toBeInTheDocument();
       expect(screen.getByText("profile")).toBeInTheDocument();
     });
 
@@ -76,12 +86,12 @@ describe("Sidebar", () => {
       expect(screen.getByText("TestPlayer")).toBeInTheDocument();
     });
 
-    it("renders all 8 navigation links (5 main + 3 public) as anchors", () => {
+    it("renders all 9 navigation links (6 main + 3 public) as anchors", () => {
       render(<Sidebar isAuthenticated={true} user={mockUser} signOut={mockSignOut} />);
 
       const nav = screen.getByRole("navigation", { name: "Main navigation" });
       const links = nav.querySelectorAll("a");
-      expect(links).toHaveLength(8);
+      expect(links).toHaveLength(9);
     });
   });
 

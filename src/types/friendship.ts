@@ -52,3 +52,8 @@ export interface FriendsQueryParams {
   page?: number;
   limit?: number;
 }
+
+/** Réponse de l'API pour le compteur de demandes en attente */
+export interface PendingCountResponse {
+  count: number;
+}

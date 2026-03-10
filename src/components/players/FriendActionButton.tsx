@@ -20,7 +20,7 @@ interface FriendActionButtonProps {
 }
 
 export function FriendActionButton({
-  playerId,
+  playerId: _playerId,
   isAuthenticated,
   isOwner,
   relationshipStatus,
