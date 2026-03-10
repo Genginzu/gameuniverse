@@ -484,6 +484,25 @@
       "empty": "Ce joueur n'a pas encore de collections",
       "seeAll": "Voir toutes ({count})"
     },
+    "collectionsTab": {
+      "title": "Collections",
+      "empty": "Aucune collection",
+      "emptyDescription": "Ce joueur n'a pas encore créé de collection.",
+      "error": "Erreur lors du chargement des collections",
+      "ariaLabel": "Liste des collections",
+      "sort": {
+        "label": "Trier les collections",
+        "updated_at_desc": "Plus récentes",
+        "name_asc": "Nom A-Z",
+        "name_desc": "Nom Z-A",
+        "games_count_desc": "Plus de jeux"
+      },
+      "stats": {
+        "totalCollections": "Collections",
+        "totalGames": "Jeux au total",
+        "largestCollection": "Plus grande collection"
+      }
+    },
     "empty": {
       "title": "Aucun joueur trouvé",
       "description": "Essayez de modifier vos critères de recherche ou explorez d'autres catégories",
@@ -614,6 +633,29 @@
         "collection": "Collections",
         "friendship": "Amis"
       }
+    },
+    "reviews": {
+      "card": {
+        "positivePoints": "Points positifs",
+        "negativePoints": "Points négatifs"
+      },
+      "stats": {
+        "totalReviews": "Nombre total d'avis",
+        "averageRating": "Note moyenne",
+        "noRating": "Aucune note",
+        "distribution": "Distribution des notes"
+      },
+      "sort": {
+        "label": "Trier les avis",
+        "dateDesc": "Plus récents",
+        "dateAsc": "Plus anciens",
+        "ratingDesc": "Meilleures notes",
+        "ratingAsc": "Notes les plus basses"
+      },
+      "empty": "Ce joueur n'a pas encore rédigé d'avis",
+      "loading": "Chargement des avis…",
+      "error": "Impossible de charger les avis. Veuillez réessayer.",
+      "feedLabel": "Liste des avis du joueur"
     }
   },
   "userLibrary": {

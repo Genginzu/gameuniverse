@@ -4,10 +4,12 @@ import { Gamepad2 } from "lucide-react";
 import { PlayerLibraryGrid } from "./PlayerLibraryGrid";
 import { PlayerFavoriteCharacters } from "./PlayerFavoriteCharacters";
 import { PlayerCollections } from "./PlayerCollections";
+import { PlayerCollectionsFeed } from "./PlayerCollectionsFeed";
 import { LibraryComparisonSection } from "./LibraryComparisonSection";
 import { PersonalRecommendationSection } from "@/components/games/PersonalRecommendationSection";
 import { ActivityFeed } from "./ActivityFeed";
 import { FriendsTab } from "./FriendsTab";
+import { PlayerReviewsFeed } from "./PlayerReviewsFeed";
 import { PlayerEnrichedStats } from "./PlayerEnrichedStats";
 import { YearInReviewLink } from "./YearInReviewLink";
 import { shouldShowComparison } from "./PlayerDetailsContent";
@@ -62,13 +64,15 @@ export function PlayerTabContent({
         />
       );
     case "collections":
-      return <PlayerCollections playerId={player.id} locale={locale} isOwner={isOwner} />;
+      return <PlayerCollectionsFeed playerId={player.id} locale={locale} isOwner={isOwner} />;
     case "activity":
       return <ActivityFeed playerId={player.id} locale={locale} />;
     case "friends":
       return <FriendsTab playerId={player.id} locale={locale} />;
     case "recommendations":
       return isOwner ? <PersonalRecommendationSection locale={locale} /> : null;
+    case "reviews":
+      return <PlayerReviewsFeed playerId={player.id} locale={locale} />;
     default:
       return (
         <OverviewTab

@@ -484,6 +484,25 @@
       "empty": "This player hasn't created any collections yet",
       "seeAll": "See all ({count})"
     },
+    "collectionsTab": {
+      "title": "Collections",
+      "empty": "No collections",
+      "emptyDescription": "This player hasn't created any collections yet.",
+      "error": "Error loading collections",
+      "ariaLabel": "Collections list",
+      "sort": {
+        "label": "Sort collections",
+        "updated_at_desc": "Most recent",
+        "name_asc": "Name A-Z",
+        "name_desc": "Name Z-A",
+        "games_count_desc": "Most games"
+      },
+      "stats": {
+        "totalCollections": "Collections",
+        "totalGames": "Total games",
+        "largestCollection": "Largest collection"
+      }
+    },
     "empty": {
       "title": "No players found",
       "description": "Try modifying your search criteria or explore other categories",
@@ -614,6 +633,29 @@
         "collection": "Collections",
         "friendship": "Friends"
       }
+    },
+    "reviews": {
+      "card": {
+        "positivePoints": "Positive points",
+        "negativePoints": "Negative points"
+      },
+      "stats": {
+        "totalReviews": "Total reviews",
+        "averageRating": "Average rating",
+        "noRating": "No rating",
+        "distribution": "Rating distribution"
+      },
+      "sort": {
+        "label": "Sort reviews",
+        "dateDesc": "Most recent",
+        "dateAsc": "Oldest",
+        "ratingDesc": "Highest rated",
+        "ratingAsc": "Lowest rated"
+      },
+      "empty": "This player hasn't written any reviews yet",
+      "loading": "Loading reviews…",
+      "error": "Unable to load reviews. Please try again.",
+      "feedLabel": "Player reviews list"
     }
   },
   "userLibrary": {
