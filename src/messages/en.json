@@ -460,9 +460,9 @@
       "friends": "Friends",
       "reviews": "Reviews",
       "collections": "Collections",
-      "media": "Media",
       "stats": "Stats",
-      "recommendations": "Recommendations"
+      "recommendations": "Recommendations",
+      "settings": "Settings"
     },
     "library": {
       "empty": "Empty library",
@@ -681,7 +681,8 @@
       "tagInputPlaceholder": "Tags",
       "tagInputAriaLabel": "Add tags",
       "tagRemoveAriaLabel": "Remove tag {tag}",
-      "anonymousPlayer": "Anonymous Player"
+      "anonymousPlayer": "Anonymous Player",
+      "newPost": "New post"
     }
   },
   "userLibrary": {
@@ -1781,9 +1782,12 @@
       "empty": "No reviews written",
       "average": "Average",
       "median": "Median",
-      "mode": "Mode",
+      "mode": "Favorite Rating",
+      "maxRating": "Max Rating",
       "totalReviews": "Total Reviews",
-      "helpfulVotes": "Helpful Votes"
+      "helpfulVotes": "Helpful Votes",
+      "game": "game",
+      "games": "games"
     },
     "social": {
       "title": "Social Stats",
@@ -1803,7 +1807,8 @@
       "empty": "No play time data",
       "averagePlayTime": "Average per game",
       "hours": "hours",
-      "topGame": "Most Played Game"
+      "topGame": "Most Played Game",
+      "topGames": "Top 5 Playtime"
     },
     "achievements": {
       "title": "Achievements",

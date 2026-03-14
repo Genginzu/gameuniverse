@@ -95,7 +95,7 @@ describe("MobileNavOverlay", () => {
 
   it("renders the 6 main nav links when authenticated", () => {
     render(<MobileNavOverlay {...defaultProps} />);
-    expect(screen.getByText("dashboard")).toBeInTheDocument();
+    expect(screen.getByText("profile")).toBeInTheDocument();
     expect(screen.getByText("library")).toBeInTheDocument();
     expect(screen.getByText("myCharacters")).toBeInTheDocument();
     expect(screen.getByText("collections")).toBeInTheDocument();
@@ -105,7 +105,7 @@ describe("MobileNavOverlay", () => {
 
   it("does not render main nav links when not authenticated", () => {
     render(<MobileNavOverlay {...defaultProps} isAuthenticated={false} />);
-    expect(screen.queryByText("dashboard")).not.toBeInTheDocument();
+    expect(screen.queryByText("profile")).not.toBeInTheDocument();
     expect(screen.queryByText("library")).not.toBeInTheDocument();
   });
 
@@ -116,7 +116,7 @@ describe("MobileNavOverlay", () => {
 
   it("calls onClose when a nav link is clicked", () => {
     render(<MobileNavOverlay {...defaultProps} />);
-    fireEvent.click(screen.getByText("dashboard"));
+    fireEvent.click(screen.getByText("profile"));
     expect(defaultProps.onClose).toHaveBeenCalledTimes(1);
   });
 

@@ -9,11 +9,10 @@ import React from "react";
  * Validates: Requirements 6.1, 6.2, 6.3
  */
 
-const mockPush = vi.fn();
 vi.mock("@/i18n/navigation", () => ({
   usePathname: () => "/dashboard",
   useRouter: () => ({
-    push: mockPush,
+    push: vi.fn(),
     replace: vi.fn(),
     prefetch: vi.fn(),
     back: vi.fn(),
@@ -70,7 +69,6 @@ describe("SidebarUserSection", () => {
       render(<SidebarUserSection user={mockUser} signOut={mockSignOut} locale="fr" />);
 
       // Dropdown items should not be visible before clicking
-      expect(screen.queryByText("settings")).not.toBeInTheDocument();
       expect(screen.queryByText("logout")).not.toBeInTheDocument();
     });
 
@@ -80,7 +78,6 @@ describe("SidebarUserSection", () => {
       // Click the user section button to open dropdown
       fireEvent.click(screen.getByText("GamerOne"));
 
-      expect(screen.getByText("settings")).toBeInTheDocument();
       expect(screen.getByText("logout")).toBeInTheDocument();
     });
 
@@ -102,15 +99,6 @@ describe("SidebarUserSection", () => {
       fireEvent.click(screen.getByText("lightMode"));
 
       expect(mockSetTheme).toHaveBeenCalledWith("light");
-    });
-
-    it("navigates to settings when settings is clicked", () => {
-      render(<SidebarUserSection user={mockUser} signOut={mockSignOut} locale="fr" />);
-
-      fireEvent.click(screen.getByText("GamerOne"));
-      fireEvent.click(screen.getByText("settings"));
-
-      expect(mockPush).toHaveBeenCalledWith("/settings");
     });
 
     it("calls signOut when logout is clicked", async () => {

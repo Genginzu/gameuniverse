@@ -2,18 +2,9 @@
 
 import { User } from "@supabase/supabase-js";
 import { useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
 import { useTheme } from "next-themes";
 import { useState, useEffect, useRef } from "react";
-import {
-  FaUser,
-  FaCog,
-  FaSignOutAlt,
-  FaSun,
-  FaMoon,
-  FaChevronUp,
-  FaChevronDown,
-} from "react-icons/fa";
+import { FaUser, FaSignOutAlt, FaSun, FaMoon, FaChevronUp, FaChevronDown } from "react-icons/fa";
 import { resolveDisplayName } from "@/lib/utils/user-display";
 
 interface SidebarUserSectionProps {
@@ -26,7 +17,6 @@ export default function SidebarUserSection({ user, signOut }: SidebarUserSection
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const t = useTranslations("navigation");
-  const router = useRouter();
   const { theme, setTheme } = useTheme();
 
   useEffect(() => {
@@ -80,16 +70,6 @@ export default function SidebarUserSection({ user, signOut }: SidebarUserSection
                 <FaMoon className="mr-3 h-4 w-4" />
               )}
               {theme === "dark" ? t("lightMode") : t("darkMode")}
-            </button>
-            <button
-              className={itemClasses}
-              onClick={() => {
-                setIsOpen(false);
-                router.push("/settings");
-              }}
-            >
-              <FaCog className="mr-3 h-4 w-4" />
-              {t("settings")}
             </button>
             <div className="mx-2 my-1 border-t border-gray-200 dark:border-white/10" />
             <button

@@ -100,7 +100,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         <div className="text-center">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white">403</h1>
           <p className="mt-2 text-gray-600 dark:text-gray-400">{t("forbidden")}</p>
-          <Button className="mt-4" onClick={() => router.push("/dashboard")}>
+          <Button className="mt-4" onClick={() => router.push("/profile")}>
             {t("backToDashboard")}
           </Button>
         </div>

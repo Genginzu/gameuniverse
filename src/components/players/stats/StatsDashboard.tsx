@@ -14,7 +14,6 @@ import { ReviewAnalytics } from "@/components/players/stats/ReviewAnalytics";
 import { SocialStats } from "@/components/players/stats/SocialStats";
 import { ActivityTimeline } from "@/components/players/stats/ActivityTimeline";
 import { PlaytimeStats } from "@/components/players/stats/PlaytimeStats";
-import { AchievementsList } from "@/components/players/stats/AchievementsList";
 import { SessionStats } from "@/components/players/stats/SessionStats";
 import { PersonalGoals } from "@/components/players/stats/PersonalGoals";
 
@@ -142,10 +141,6 @@ export function StatsDashboard({
         <SocialStats social={data.social} locale={locale} />
         <ActivityTimeline timeline={data.activityTimeline} locale={locale} />
         <PlaytimeStats playtime={data.playtime} locale={locale} />
-        <AchievementsList
-          achievements={data.achievements}
-          totalCount={data.achievementDefinitions.length}
-        />
         <SessionStats sessions={data.sessions} />
         <PersonalGoals goals={data.goals} isOwnProfile={isOwnProfile} playerId={playerId} />
       </div>

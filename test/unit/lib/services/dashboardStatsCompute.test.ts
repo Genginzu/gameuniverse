@@ -65,12 +65,13 @@ describe("computeReviewDistribution — empty inputs", () => {
 });
 
 describe("computeReviewStatistics — empty inputs", () => {
-  it("returns null for average, median, and mode when no ratings exist", () => {
+  it("returns null for average, median, mode, and max when no ratings exist", () => {
     const result = computeReviewStatistics([]);
 
     expect(result.average).toBeNull();
     expect(result.median).toBeNull();
     expect(result.mode).toBeNull();
+    expect(result.max).toBeNull();
   });
 });
 

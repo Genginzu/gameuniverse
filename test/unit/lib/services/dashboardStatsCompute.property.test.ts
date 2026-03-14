@@ -203,7 +203,7 @@ describe("Property 4: Review rating distribution bucketing is exhaustive", () =>
  * **Validates: Requirements 4.3**
  */
 describe("Property 5: Review statistical measures are correct", () => {
-  it("computes correct average, median, and mode", () => {
+  it("computes correct average, median, mode, and max", () => {
     const nonEmptyRatingsGen = fc.array(ratingGen, { minLength: 1, maxLength: 100 });
 
     fc.assert(
@@ -234,6 +234,10 @@ describe("Property 5: Review statistical measures are correct", () => {
           }
         }
         expect(result.mode).toBe(expectedMode);
+
+        // Max
+        const expectedMax = sorted[sorted.length - 1];
+        expect(result.max).toBe(expectedMax);
       }),
       { numRuns: 100 }
     );

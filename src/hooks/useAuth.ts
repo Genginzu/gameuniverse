@@ -92,7 +92,7 @@ export function useAuth() {
           const currentPath = window.location.pathname;
           const isResetPasswordPage = currentPath.includes("/reset-password");
           if (!isResetPasswordPage && (currentPath.includes("/auth") || currentPath === "/")) {
-            router.push("/dashboard");
+            router.push("/profile");
           }
         } else if (event === "SIGNED_OUT") {
           router.push("/");

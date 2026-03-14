@@ -45,7 +45,7 @@ export function LandingHeader() {
           </Link>
           {user && (
             <Link
-              href="/dashboard"
+              href="/profile"
               className="rounded-xl px-3 py-2 text-sm font-medium text-gray-600 transition-all hover:bg-white/30 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-white/5 dark:hover:text-white"
             >
               {t("dashboard")}

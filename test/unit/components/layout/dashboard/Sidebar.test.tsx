@@ -72,7 +72,7 @@ describe("Sidebar", () => {
       render(<Sidebar isAuthenticated={true} user={mockUser} signOut={mockSignOut} />);
 
       // Main links use t(labelKey) from dashboard translations — mock returns key
-      expect(screen.getByText("dashboard")).toBeInTheDocument();
+      expect(screen.getByText("profile")).toBeInTheDocument();
       expect(screen.getByText("library")).toBeInTheDocument();
       expect(screen.getByText("myCharacters")).toBeInTheDocument();
       expect(screen.getByText("collections")).toBeInTheDocument();
@@ -104,7 +104,7 @@ describe("Sidebar", () => {
       expect(screen.getByText("players")).toBeInTheDocument();
 
       // Main links should not be present
-      expect(screen.queryByText("dashboard")).not.toBeInTheDocument();
+      expect(screen.queryByText("profile")).not.toBeInTheDocument();
       expect(screen.queryByText("library")).not.toBeInTheDocument();
     });
 

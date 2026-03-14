@@ -1,5 +1,4 @@
 import {
-  FaChartLine,
   FaDice,
   FaGamepad,
   FaHeart,
@@ -18,12 +17,11 @@ export interface NavLink {
 
 /** Main navigation links for the authenticated area. */
 export const NAV_LINKS: NavLink[] = [
-  { href: "/dashboard", icon: FaChartLine, labelKey: "dashboard" },
+  { href: "/profile", icon: FaUser, labelKey: "profile" },
   { href: "/library", icon: FaGamepad, labelKey: "library" },
   { href: "/favorites/characters", icon: FaHeart, labelKey: "myCharacters" },
   { href: "/collections", icon: FaLayerGroup, labelKey: "collections" },
   { href: "/friends", icon: FaUserFriends, labelKey: "friends" },
-  { href: "/profile", icon: FaUser, labelKey: "profile" },
 ];
 
 /** Public navigation links visible to all users. */

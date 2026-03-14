@@ -6,12 +6,10 @@ import {
   FaDice,
   FaMask,
   FaUserFriends,
-  FaChartLine,
   FaGamepad,
   FaHeart,
   FaLayerGroup,
   FaUser,
-  FaCog,
 } from "react-icons/fa";
 import type { IconType } from "react-icons";
 
@@ -25,7 +23,6 @@ const BANNER_CONFIG: Record<string, BannerConfig> = {
   "/games": { icon: FaDice, titleKey: "games", descriptionKey: "gamesDesc" },
   "/characters": { icon: FaMask, titleKey: "characters", descriptionKey: "charactersDesc" },
   "/players": { icon: FaUserFriends, titleKey: "players", descriptionKey: "playersDesc" },
-  "/dashboard": { icon: FaChartLine, titleKey: "dashboard", descriptionKey: "dashboardDesc" },
   "/library": { icon: FaGamepad, titleKey: "library", descriptionKey: "libraryDesc" },
   "/favorites": { icon: FaHeart, titleKey: "myCharacters", descriptionKey: "favoritesDesc" },
   "/collections": {
@@ -34,7 +31,6 @@ const BANNER_CONFIG: Record<string, BannerConfig> = {
     descriptionKey: "collectionsDesc",
   },
   "/profile": { icon: FaUser, titleKey: "profile", descriptionKey: "profileDesc" },
-  "/settings": { icon: FaCog, titleKey: "settings", descriptionKey: "settingsDesc" },
 };
 
 const EXCLUDED_ROUTES = ["/", "/auth", "/admin"];

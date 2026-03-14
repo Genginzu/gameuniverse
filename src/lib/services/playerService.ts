@@ -17,6 +17,7 @@ interface ProfileRow {
   id: string;
   username: string | null;
   avatar_url: string | null;
+  banner_url: string | null;
   preferred_locale: string | null;
   created_at: string | null;
   updated_at: string | null;
@@ -243,6 +244,7 @@ export class PlayerService {
         id,
         username,
         avatar_url,
+        banner_url,
         preferred_locale,
         created_at,
         updated_at
@@ -338,7 +340,7 @@ export class PlayerService {
       id: profile.id,
       fullName: profile.username,
       avatarUrl: profile.avatar_url,
-      bannerUrl: null,
+      bannerUrl: profile.banner_url || null,
       socialLinks: {},
       level: 1,
       preferredLocale: profile.preferred_locale || "fr",

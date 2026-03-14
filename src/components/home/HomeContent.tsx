@@ -19,7 +19,7 @@ export function HomeContent() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.push("/dashboard");
+      router.push("/profile");
     }
   }, [isAuthenticated, router]);
 

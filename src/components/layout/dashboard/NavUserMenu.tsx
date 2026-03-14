@@ -2,17 +2,8 @@
 
 import { User } from "@supabase/supabase-js";
 import { useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
 import { useState, useEffect, useRef } from "react";
-import {
-  FaUser,
-  FaCog,
-  FaSignOutAlt,
-  FaSun,
-  FaMoon,
-  FaChevronDown,
-  FaChevronUp,
-} from "react-icons/fa";
+import { FaUser, FaSignOutAlt, FaSun, FaMoon, FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 interface NavUserMenuProps {
   user: User;
@@ -25,7 +16,6 @@ export default function NavUserMenu({ user, signOut, theme, setTheme }: NavUserM
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const tNav = useTranslations("navigation");
-  const router = useRouter();
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -79,16 +69,6 @@ export default function NavUserMenu({ user, signOut, theme, setTheme }: NavUserM
                 <FaMoon className="mr-3 h-4 w-4" />
               )}
               {theme === "dark" ? "Mode clair" : "Mode sombre"}
-            </button>
-            <button
-              className={`${itemClasses} text-gray-700 dark:text-gray-200`}
-              onClick={() => {
-                setIsOpen(false);
-                router.push("/settings");
-              }}
-            >
-              <FaCog className="mr-3 h-4 w-4" />
-              Paramètres
             </button>
             <div className="mx-2 my-1 border-t border-white/20 dark:border-white/5" />
             <button

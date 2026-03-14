@@ -115,6 +115,7 @@ export class DashboardStatsService {
       averageRating: stats.average,
       medianRating: stats.median,
       modeRating: stats.mode,
+      maxRating: stats.max,
       totalReviews: ratings.length,
       helpfulVotesReceived,
     };
@@ -160,9 +161,14 @@ export class DashboardStatsService {
       coverImage: r.games?.cover_image_url ?? null,
       playTimeHours: r.play_time_hours ?? 0,
     }));
+    const topGames = [...gamesForTop]
+      .filter((g) => g.playTimeHours > 0)
+      .sort((a, b) => b.playTimeHours - a.playTimeHours)
+      .slice(0, 5);
     return {
       averagePlayTimeHours: computeAveragePlaytime(rows.map((r) => r.play_time_hours ?? 0)),
       topGame: computeTopGame(gamesForTop),
+      topGames,
     };
   }
 

@@ -5,6 +5,7 @@ import { Clock, Gamepad2, Trophy } from "lucide-react";
 import type { PlaytimeData } from "@/types/dashboard-stats";
 import { formatLocalizedNumber } from "@/lib/utils/statsFormatters";
 import { StatsEmptyState } from "@/components/players/stats/StatsEmptyState";
+import { TopGamesPlaytime } from "@/components/players/stats/TopGamesPlaytime";
 
 interface PlaytimeStatsProps {
   playtime: PlaytimeData;
@@ -93,6 +94,11 @@ export function PlaytimeStats({ playtime, locale }: PlaytimeStatsProps) {
             </div>
           )}
         </div>
+
+        {/* Top 5 games by playtime */}
+        {playtime.topGames.length > 0 && (
+          <TopGamesPlaytime games={playtime.topGames} locale={locale} />
+        )}
       </div>
     </section>
   );

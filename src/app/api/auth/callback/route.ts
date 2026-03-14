@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    return NextResponse.redirect(new URL("/dashboard", baseUrl));
+    return NextResponse.redirect(new URL("/profile", baseUrl));
   }
 
   // Handle code flow (PKCE)
@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    return NextResponse.redirect(new URL("/dashboard", baseUrl));
+    return NextResponse.redirect(new URL("/profile", baseUrl));
   }
 
   // No code or token_hash provided

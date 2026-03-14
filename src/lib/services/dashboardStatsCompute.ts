@@ -121,8 +121,9 @@ export function computeReviewStatistics(ratings: number[]): {
   average: number | null;
   median: number | null;
   mode: number | null;
+  max: number | null;
 } {
-  if (ratings.length === 0) return { average: null, median: null, mode: null };
+  if (ratings.length === 0) return { average: null, median: null, mode: null, max: null };
 
   const sum = ratings.reduce((a, b) => a + b, 0);
   const average = Math.round((sum / ratings.length) * 10) / 10;
@@ -130,6 +131,8 @@ export function computeReviewStatistics(ratings: number[]): {
   const sorted = [...ratings].sort((a, b) => a - b);
   const mid = Math.floor(sorted.length / 2);
   const median = sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid];
+
+  const max = sorted[sorted.length - 1];
 
   // Mode: most frequent, smallest in case of tie
   const freq = new Map<number, number>();
@@ -143,7 +146,7 @@ export function computeReviewStatistics(ratings: number[]): {
     }
   }
 
-  return { average, median, mode };
+  return { average, median, mode, max };
 }
 
 // --- 6. Activity By Month (Req 6.1, 6.2, 6.3) ---

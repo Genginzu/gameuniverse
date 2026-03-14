@@ -9,9 +9,9 @@ import {
   Users,
   BookOpen,
   FolderOpen,
-  Image,
   BarChart3,
   Globe,
+  Settings,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -23,9 +23,9 @@ export type ProfileTab =
   | "friends"
   | "reviews"
   | "collections"
-  | "media"
   | "stats"
-  | "recommendations";
+  | "recommendations"
+  | "settings";
 
 interface PlayerProfileTabsProps {
   activeTab: ProfileTab;
@@ -44,9 +44,9 @@ const TAB_DEFINITIONS: {
   { id: "friends", icon: Users },
   { id: "reviews", icon: BookOpen },
   { id: "collections", icon: FolderOpen },
-  { id: "media", icon: Image },
   { id: "stats", icon: BarChart3 },
   { id: "recommendations", icon: Globe, ownerOnly: true },
+  { id: "settings", icon: Settings, ownerOnly: true },
 ];
 
 export function PlayerProfileTabs({ activeTab, onTabChange, isOwner }: PlayerProfileTabsProps) {

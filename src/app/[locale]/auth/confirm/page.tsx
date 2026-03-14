@@ -88,7 +88,7 @@ export default async function ConfirmPage({ searchParams }: ConfirmPageProps) {
     }
 
     // Succès - rediriger vers la destination
-    const redirectTo = params.redirect_to || "/dashboard";
+    const redirectTo = params.redirect_to || "/profile";
     redirect(redirectTo);
   } catch (error) {
     logger.error("Unexpected error in confirm page", { error });

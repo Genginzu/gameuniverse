@@ -31,6 +31,7 @@ export interface ReviewAnalyticsData {
   averageRating: number | null;
   medianRating: number | null;
   modeRating: number | null;
+  maxRating: number | null;
   totalReviews: number;
   helpfulVotesReceived: number;
 }
@@ -59,14 +60,17 @@ export interface MonthlyActivity {
 }
 
 /** Temps de jeu (Req 7) */
+export interface PlaytimeGameEntry {
+  id: string;
+  title: string;
+  coverImage: string | null;
+  playTimeHours: number;
+}
+
 export interface PlaytimeData {
   averagePlayTimeHours: number | null;
-  topGame: {
-    id: string;
-    title: string;
-    coverImage: string | null;
-    playTimeHours: number;
-  } | null;
+  topGame: PlaytimeGameEntry | null;
+  topGames: PlaytimeGameEntry[];
 }
 
 /** Succès/Achievement (Req 11) */

@@ -9,6 +9,7 @@ import { ActivityFeed } from "./ActivityFeed";
 import { FriendsTab } from "./FriendsTab";
 import { PlayerReviewsFeed } from "./PlayerReviewsFeed";
 import { StatsDashboard } from "@/components/players/stats/StatsDashboard";
+import { SettingsContent } from "@/components/settings/SettingsContent";
 import type { ProfileTab } from "./PlayerProfileTabs";
 import type { PlayerDetails } from "@/types/player";
 import type { User } from "@supabase/supabase-js";
@@ -66,6 +67,8 @@ export function PlayerTabContent({
       return isOwner ? <PersonalRecommendationSection locale={locale} /> : null;
     case "reviews":
       return <PlayerReviewsFeed playerId={player.id} locale={locale} />;
+    case "settings":
+      return isOwner ? <SettingsContent /> : null;
     default:
       return (
         <PostsFeed

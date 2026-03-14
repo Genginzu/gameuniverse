@@ -87,7 +87,7 @@ export function SocialStats({ social, locale }: SocialStatsProps) {
       <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
         {t("social.title")}
       </h3>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {cards.map((card) => (
           <SocialMetricCard key={card.label} {...card} />
         ))}

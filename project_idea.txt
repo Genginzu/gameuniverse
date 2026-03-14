@@ -28,3 +28,10 @@ Elaborer le magasin
 Elaborer l'esport
 
 Elaborer le training des joueurs
+
+Système de Notifications
+Système de session de jeu
+Système d'Objectifs
+Système de connexion aux différents comptes pour récupérer les jeux possédés
+Système de tchat
+Système de Succès
