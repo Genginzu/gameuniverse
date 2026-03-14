@@ -454,7 +454,7 @@
       "inLibrary": "dans la bibliothèque"
     },
     "tabs": {
-      "overview": "Aperçu",
+      "posts": "Posts",
       "library": "Bibliothèque",
       "activity": "Activité",
       "friends": "Amis",
@@ -656,6 +656,32 @@
       "loading": "Chargement des avis…",
       "error": "Impossible de charger les avis. Veuillez réessayer.",
       "feedLabel": "Liste des avis du joueur"
+    },
+    "posts": {
+      "placeholder": "Quoi de neuf ?",
+      "publish": "Publier",
+      "charCount": "{remaining} caractères restants",
+      "empty": "Aucun post pour le moment",
+      "feedLabel": "Fil de posts du joueur",
+      "error": "Impossible de charger les posts. Veuillez réessayer.",
+      "errorCreate": "Impossible de publier le post. Veuillez réessayer.",
+      "errorDelete": "Impossible de supprimer le post. Veuillez réessayer.",
+      "deleteLabel": "Supprimer le post",
+      "deleteConfirm": "Supprimer",
+      "deleteCancel": "Annuler",
+      "searchPlaceholder": "Rechercher dans les posts…",
+      "searchAriaLabel": "Rechercher dans les posts",
+      "noResults": "Aucun résultat pour « {term} »",
+      "tagAriaLabel": "Tag : {tag}",
+      "mentionAriaLabel": "Mention : {username}",
+      "imageUrlPlaceholder": "URL de l'image (https://...)",
+      "imageUrlToggle": "Ajouter une image",
+      "imageUrlError": "L'URL doit commencer par https://",
+      "imageUrlAriaLabel": "URL de l'image",
+      "tagInputPlaceholder": "Tags",
+      "tagInputAriaLabel": "Ajouter des tags",
+      "tagRemoveAriaLabel": "Supprimer le tag {tag}",
+      "anonymousPlayer": "Joueur anonyme"
     }
   },
   "userLibrary": {
@@ -1720,6 +1746,117 @@
       "explorePlayers": "Explorer les joueurs",
       "pendingBadgeLabel": "{count, plural, one {# demande d'amitié en attente} other {# demandes d'amitié en attente}}",
       "loadingError": "Une erreur est survenue lors du chargement de la page amis."
+    }
+  },
+  "playerStats": {
+    "dashboard": {
+      "title": "Statistiques détaillées",
+      "private": "Statistiques privées",
+      "privateDescription": "Ce joueur a choisi de garder ses statistiques privées.",
+      "error": "Impossible de charger les statistiques.",
+      "retry": "Réessayer"
+    },
+    "overview": {
+      "title": "Vue d'ensemble",
+      "totalGames": "Total de jeux",
+      "totalPlayTime": "Temps de jeu",
+      "reviews": "Avis rédigés",
+      "averageRating": "Note moyenne",
+      "collections": "Collections",
+      "friends": "Amis",
+      "empty": "Aucune donnée disponible. Ajoutez des jeux à votre bibliothèque pour voir vos statistiques."
+    },
+    "genreDistribution": {
+      "title": "Répartition par genre",
+      "empty": "Aucun genre dans la bibliothèque"
+    },
+    "completion": {
+      "title": "Progression",
+      "empty": "Aucun jeu dans la bibliothèque",
+      "completed": "Terminés",
+      "playing": "En cours",
+      "owned": "Possédés",
+      "wishlist": "Souhaités",
+      "percentage": "complétés"
+    },
+    "reviewAnalytics": {
+      "title": "Analyse des avis",
+      "empty": "Aucun avis rédigé",
+      "average": "Moyenne",
+      "median": "Médiane",
+      "mode": "Mode",
+      "totalReviews": "Total avis",
+      "helpfulVotes": "Votes utiles"
+    },
+    "social": {
+      "title": "Statistiques sociales",
+      "empty": "Aucune activité sociale",
+      "friends": "Amis",
+      "comments": "Commentaires",
+      "favorites": "Favoris",
+      "collections": "Collections"
+    },
+    "activityTimeline": {
+      "title": "Chronologie d'activité",
+      "empty": "Aucune activité sur les 12 derniers mois",
+      "gamesAdded": "jeux ajoutés"
+    },
+    "playtime": {
+      "title": "Temps de jeu",
+      "empty": "Aucune donnée de temps de jeu",
+      "averagePlayTime": "Temps moyen par jeu",
+      "hours": "heures",
+      "topGame": "Jeu le plus joué"
+    },
+    "achievements": {
+      "title": "Succès",
+      "progress": "{count} sur {total}",
+      "unlocked": "Débloqué le",
+      "locked": "Verrouillé",
+      "names": {
+        "first_game": "Premier jeu",
+        "library_10": "Bibliothèque 10",
+        "library_50": "Bibliothèque 50",
+        "first_review": "Premier avis",
+        "reviews_10": "10 avis",
+        "playtime_100h": "100h de jeu",
+        "playtime_500h": "500h de jeu",
+        "first_friend": "Premier ami",
+        "friends_10": "10 amis",
+        "first_collection": "Première collection"
+      }
+    },
+    "sessions": {
+      "title": "Sessions de jeu",
+      "empty": "Aucune session enregistrée",
+      "totalSessions": "Total sessions",
+      "averageDuration": "Durée moyenne",
+      "longestSession": "Plus longue session",
+      "minutes": "min",
+      "sessionsCount": "sessions"
+    },
+    "goals": {
+      "title": "Objectifs personnels",
+      "empty": "Aucun objectif défini",
+      "addGoal": "Ajouter un objectif",
+      "deleteGoal": "Supprimer",
+      "completed": "Terminé",
+      "deadline": "Échéance",
+      "targetValue": "Valeur cible",
+      "goalTypes": {
+        "games_to_complete": "Jeux à terminer",
+        "play_time_hours": "Heures de jeu",
+        "reviews_to_write": "Avis à rédiger",
+        "collections_to_create": "Collections à créer"
+      },
+      "create": {
+        "title": "Nouvel objectif",
+        "type": "Type d'objectif",
+        "target": "Objectif",
+        "deadline": "Échéance (optionnel)",
+        "submit": "Créer",
+        "cancel": "Annuler"
+      }
     }
   }
 }

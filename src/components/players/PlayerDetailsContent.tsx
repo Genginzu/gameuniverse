@@ -46,7 +46,7 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
     removeFriend,
   } = useFriends(player.id, locale);
 
-  const [activeTab, setActiveTab] = useState<ProfileTab>("overview");
+  const [activeTab, setActiveTab] = useState<ProfileTab>("posts");
 
   // Fetch available years for the year-in-review link (Req 7.1)
   const [availableYears, setAvailableYears] = useState<number[]>([]);

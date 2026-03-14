@@ -10,7 +10,7 @@ import { PlayerCollectionsService } from "@/lib/services/playerCollectionsServic
  * Gère le chargement initial, la pagination incrémentale, le tri et les statistiques.
  * Les stats sont chargées avec la première page et conservées lors des pages suivantes.
  */
-export function usePlayerCollections(playerId: string, locale: string, isOwner: boolean) {
+export function usePlayerCollections(playerId: string, locale: string, _isOwner: boolean) {
   const [collections, setCollections] = useState<CollectionSummary[]>([]);
   const [stats, setStats] = useState<PlayerCollectionsStatsData | null>(null);
   const [isLoading, setIsLoading] = useState(true);

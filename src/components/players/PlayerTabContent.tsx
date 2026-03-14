@@ -1,18 +1,14 @@
 "use client";
 
 import { Gamepad2 } from "lucide-react";
+import { PostsFeed } from "./PostsFeed";
 import { PlayerLibraryGrid } from "./PlayerLibraryGrid";
-import { PlayerFavoriteCharacters } from "./PlayerFavoriteCharacters";
-import { PlayerCollections } from "./PlayerCollections";
 import { PlayerCollectionsFeed } from "./PlayerCollectionsFeed";
-import { LibraryComparisonSection } from "./LibraryComparisonSection";
 import { PersonalRecommendationSection } from "@/components/games/PersonalRecommendationSection";
 import { ActivityFeed } from "./ActivityFeed";
 import { FriendsTab } from "./FriendsTab";
 import { PlayerReviewsFeed } from "./PlayerReviewsFeed";
-import { PlayerEnrichedStats } from "./PlayerEnrichedStats";
-import { YearInReviewLink } from "./YearInReviewLink";
-import { shouldShowComparison } from "./PlayerDetailsContent";
+import { StatsDashboard } from "@/components/players/stats/StatsDashboard";
 import type { ProfileTab } from "./PlayerProfileTabs";
 import type { PlayerDetails } from "@/types/player";
 import type { User } from "@supabase/supabase-js";
@@ -33,34 +29,31 @@ export function PlayerTabContent({
   player,
   locale,
   isOwner,
-  availableYears,
-  user,
+  availableYears: _availableYears,
+  user: _user,
   t,
   tCommon,
 }: PlayerTabContentProps) {
   switch (activeTab) {
-    case "overview":
+    case "posts":
       return (
-        <OverviewTab
-          player={player}
+        <PostsFeed
+          playerId={player.id}
+          playerName={player.fullName}
+          playerAvatar={player.avatarUrl}
           locale={locale}
           isOwner={isOwner}
-          availableYears={availableYears}
-          user={user}
-          t={t}
-          tCommon={tCommon}
         />
       );
     case "library":
       return <LibraryTab player={player} locale={locale} t={t} tCommon={tCommon} />;
     case "stats":
       return (
-        <PlayerEnrichedStats
+        <StatsDashboard
           playerId={player.id}
           locale={locale}
           isOwnProfile={isOwner}
           statsPrivate={player.statsPrivate}
-          totalGames={player.library.length}
         />
       );
     case "collections":
@@ -75,57 +68,15 @@ export function PlayerTabContent({
       return <PlayerReviewsFeed playerId={player.id} locale={locale} />;
     default:
       return (
-        <OverviewTab
-          player={player}
+        <PostsFeed
+          playerId={player.id}
+          playerName={player.fullName}
+          playerAvatar={player.avatarUrl}
           locale={locale}
           isOwner={isOwner}
-          availableYears={availableYears}
-          user={user}
-          t={t}
-          tCommon={tCommon}
         />
       );
   }
-}
-
-/** Overview tab — shows stats, year-in-review, comparison, library preview, characters, collections */
-function OverviewTab({
-  player,
-  locale,
-  isOwner,
-  availableYears,
-  user,
-  t,
-  tCommon,
-}: Omit<PlayerTabContentProps, "activeTab">) {
-  return (
-    <>
-      <PlayerEnrichedStats
-        playerId={player.id}
-        locale={locale}
-        isOwnProfile={isOwner}
-        statsPrivate={player.statsPrivate}
-        totalGames={player.library.length}
-      />
-
-      {availableYears.length > 0 && (
-        <div className="mb-8">
-          <YearInReviewLink playerId={player.id} availableYears={availableYears} />
-        </div>
-      )}
-
-      {shouldShowComparison(!!user, user?.id ?? null, player.id) && (
-        <LibraryComparisonSection playerId={player.id} locale={locale} />
-      )}
-
-      <LibraryTab player={player} locale={locale} t={t} tCommon={tCommon} />
-
-      <PlayerFavoriteCharacters playerId={player.id} locale={locale} />
-      <PlayerCollections playerId={player.id} locale={locale} isOwner={isOwner} />
-
-      {isOwner && <PersonalRecommendationSection locale={locale} />}
-    </>
-  );
 }
 
 function LibraryTab({

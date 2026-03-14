@@ -22,6 +22,11 @@ const sortOptionArb = fc.constantFrom<ReviewSortOption>(
   "rating_asc"
 );
 
+// Use integer timestamps to avoid RangeError: Invalid Date during fast-check shrinking
+const MIN_TS = new Date("2020-01-01").getTime();
+const MAX_TS = new Date("2025-12-31").getTime();
+const isoDateArb = fc.integer({ min: MIN_TS, max: MAX_TS }).map((ts) => new Date(ts).toISOString());
+
 const reviewItemArb: fc.Arbitrary<PlayerReviewItem> = fc.record({
   id: fc.uuid(),
   gameId: fc.uuid(),
@@ -32,12 +37,8 @@ const reviewItemArb: fc.Arbitrary<PlayerReviewItem> = fc.record({
   content: fc.string(),
   positivePoints: fc.array(fc.string(), { maxLength: 5 }),
   negativePoints: fc.array(fc.string(), { maxLength: 5 }),
-  createdAt: fc
-    .date({ min: new Date("2020-01-01"), max: new Date("2025-12-31") })
-    .map((d) => d.toISOString()),
-  updatedAt: fc
-    .date({ min: new Date("2020-01-01"), max: new Date("2025-12-31") })
-    .map((d) => d.toISOString()),
+  createdAt: isoDateArb,
+  updatedAt: isoDateArb,
 });
 
 const rawRecordArb: fc.Arbitrary<RawReviewRecord> = fc.record({
@@ -50,12 +51,8 @@ const rawRecordArb: fc.Arbitrary<RawReviewRecord> = fc.record({
   content: fc.string(),
   positive_points: fc.array(fc.string(), { maxLength: 5 }),
   negative_points: fc.array(fc.string(), { maxLength: 5 }),
-  created_at: fc
-    .date({ min: new Date("2020-01-01"), max: new Date("2025-12-31") })
-    .map((d) => d.toISOString()),
-  updated_at: fc
-    .date({ min: new Date("2020-01-01"), max: new Date("2025-12-31") })
-    .map((d) => d.toISOString()),
+  created_at: isoDateArb,
+  updated_at: isoDateArb,
 });
 
 // ---------------------------------------------------------------------------

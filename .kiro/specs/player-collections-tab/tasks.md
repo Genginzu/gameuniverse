@@ -89,59 +89,59 @@ Implémenter l'onglet « Collections » complet du profil joueur : enrichir l'en
 - [x] 8. Checkpoint — Vérifier le rendu et l'intégration des composants
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 9. Tests unitaires
+- [x] 9. Tests unitaires
   - [x] 9.1 Créer `test/unit/api/players/collections.test.ts` — tests de la route API : réponse valide avec collections et stats, joueur inexistant (404), UUID invalide (400), paramètre sort invalide (fallback défaut), visibilité propriétaire vs visiteur, erreur serveur (500), rétrocompatibilité sans paramètre `page`
     - _Exigences : 1.1, 1.2, 1.5, 1.8, 1.9, 1.10_
-  - [ ] 9.2 Créer `test/unit/components/players/PlayerCollectionsFeed.test.tsx` — tests du composant : rendu avec collections, état vide, état de chargement (skeleton), attributs ARIA (`role="feed"`, `aria-busy`), sélecteur de tri, grille responsive
+  - [x] 9.2 Créer `test/unit/components/players/PlayerCollectionsFeed.test.tsx` — tests du composant : rendu avec collections, état vide, état de chargement (skeleton), attributs ARIA (`role="feed"`, `aria-busy`), sélecteur de tri, grille responsive
     - _Exigences : 2.1, 2.3, 2.5, 2.6, 8.3, 8.5_
-  - [ ] 9.3 Créer `test/unit/lib/services/playerCollectionsService.test.ts` — tests du service client : appel réussi, propagation d'erreur avec message descriptif, construction URL avec différents paramètres
+  - [x] 9.3 Créer `test/unit/lib/services/playerCollectionsService.test.ts` — tests du service client : appel réussi, propagation d'erreur avec message descriptif, construction URL avec différents paramètres
     - _Exigences : 6.1, 6.2, 6.3_
 
-- [ ] 10. Tests property-based
-  - [ ] 10.1 Créer `test/unit/lib/services/playerCollectionsService.property.test.ts` avec les propriétés suivantes :
-  - [ ] 10.2 Propriété 1 : Correction du tri — pour toute liste de collections et toute option de tri, la liste retournée est correctement ordonnée selon le critère choisi
+- [x] 10. Tests property-based
+  - [x] 10.1 Créer `test/unit/lib/services/playerCollectionsService.property.test.ts` avec les propriétés suivantes :
+  - [x] 10.2 Propriété 1 : Correction du tri — pour toute liste de collections et toute option de tri, la liste retournée est correctement ordonnée selon le critère choisi
     - **Property 1 : Correction du tri**
     - `// Feature: player-collections-tab, Property 1: Correction du tri`
     - **Valide : Exigences 1.1, 1.5, 1.6**
-  - [ ] 10.3 Propriété 2 : Correction de la pagination — pour tout N et page p, la page retourne au plus 12 collections, totalPages = ceil(N/12), hasNextPage ssi p < totalPages
+  - [x] 10.3 Propriété 2 : Correction de la pagination — pour tout N et page p, la page retourne au plus 12 collections, totalPages = ceil(N/12), hasNextPage ssi p < totalPages
     - **Property 2 : Correction de la pagination**
     - `// Feature: player-collections-tab, Property 2: Correction de la pagination`
     - **Valide : Exigences 1.2, 1.4**
-  - [ ] 10.4 Propriété 3 : Correction des statistiques agrégées — pour tout ensemble de collections, totalCollections, totalGames et largestCollection sont corrects
+  - [x] 10.4 Propriété 3 : Correction des statistiques agrégées — pour tout ensemble de collections, totalCollections, totalGames et largestCollection sont corrects
     - **Property 3 : Correction des statistiques agrégées**
     - `// Feature: player-collections-tab, Property 3: Correction des statistiques agrégées`
     - **Valide : Exigence 1.7**
-  - [ ] 10.5 Propriété 4 : Correction du filtrage par visibilité — pour tout ensemble de collections mixtes, le filtrage retourne toutes les collections si isOwner, sinon uniquement les publiques
+  - [x] 10.5 Propriété 4 : Correction du filtrage par visibilité — pour tout ensemble de collections mixtes, le filtrage retourne toutes les collections si isOwner, sinon uniquement les publiques
     - **Property 4 : Correction du filtrage par visibilité**
     - `// Feature: player-collections-tab, Property 4: Correction du filtrage par visibilité`
     - **Valide : Exigences 1.8, 1.9**
-  - [ ] 10.6 Propriété 5 : Construction correcte de l'URL — pour tout playerId et params, l'URL contient le bon chemin et les query params non-undefined
+  - [x] 10.6 Propriété 5 : Construction correcte de l'URL — pour tout playerId et params, l'URL contient le bon chemin et les query params non-undefined
     - **Property 5 : Construction correcte de l'URL du service**
     - `// Feature: player-collections-tab, Property 5: Construction correcte de l'URL du service`
     - **Valide : Exigence 6.1**
-  - [ ] 10.7 Propriété 6 : Propagation des erreurs — pour tout code HTTP d'erreur, le service lève une exception avec message descriptif
+  - [x] 10.7 Propriété 6 : Propagation des erreurs — pour tout code HTTP d'erreur, le service lève une exception avec message descriptif
     - **Property 6 : Propagation des erreurs du service**
     - `// Feature: player-collections-tab, Property 6: Propagation des erreurs du service`
     - **Valide : Exigence 6.3**
 
-- [ ] 11. Checkpoint final — Exécution des tests complets
-  - [ ] 11.1 Exécuter `bun run test:all`
-  - [ ] 11.2 Vérifier que tous les tests passent
-  - [ ] 11.3 Corriger les tests en échec si nécessaire
+- [x] 11. Checkpoint final — Exécution des tests complets
+  - [x] 11.1 Exécuter `bun run test:all`
+  - [x] 11.2 Vérifier que tous les tests passent
+  - [x] 11.3 Corriger les tests en échec si nécessaire
 
-- [ ] 12. Lint du code
-  - [ ] 12.1 Exécuter `bun run lint`
-  - [ ] 12.2 Vérifier qu'il n'y a pas d'erreurs de lint
-  - [ ] 12.3 Corriger les erreurs de lint si nécessaire
+- [x] 12. Lint du code
+  - [x] 12.1 Exécuter `bun run lint`
+  - [x] 12.2 Vérifier qu'il n'y a pas d'erreurs de lint
+  - [x] 12.3 Corriger les erreurs de lint si nécessaire
 
-- [ ] 13. Build de production
-  - [ ] 13.1 Exécuter `bun run build`
-  - [ ] 13.2 Vérifier qu'il n'y a pas d'erreurs de compilation
-  - [ ] 13.3 Corriger les erreurs de build si nécessaire
+- [x] 13. Build de production
+  - [x] 13.1 Exécuter `bun run build`
+  - [x] 13.2 Vérifier qu'il n'y a pas d'erreurs de compilation
+  - [x] 13.3 Corriger les erreurs de build si nécessaire
 
-- [ ] 14. README de la fonctionnalité
-  - [ ] 14.1 Créer `docs/README_player-collections-tab.md`
-  - [ ] 14.2 Documenter ce qui a été implémenté, comment y accéder, les prérequis et l'utilisation
+- [x] 14. README de la fonctionnalité
+  - [x] 14.1 Créer `docs/README_player-collections-tab.md`
+  - [x] 14.2 Documenter ce qui a été implémenté, comment y accéder, les prérequis et l'utilisation
 
 ## Notes
 

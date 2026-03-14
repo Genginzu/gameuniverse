@@ -454,7 +454,7 @@
       "inLibrary": "in library"
     },
     "tabs": {
-      "overview": "Overview",
+      "posts": "Posts",
       "library": "Library",
       "activity": "Activity",
       "friends": "Friends",
@@ -656,6 +656,32 @@
       "loading": "Loading reviews…",
       "error": "Unable to load reviews. Please try again.",
       "feedLabel": "Player reviews list"
+    },
+    "posts": {
+      "placeholder": "What's on your mind?",
+      "publish": "Publish",
+      "charCount": "{remaining} characters remaining",
+      "empty": "No posts yet",
+      "feedLabel": "Player posts feed",
+      "error": "Unable to load posts. Please try again.",
+      "errorCreate": "Unable to publish post. Please try again.",
+      "errorDelete": "Unable to delete post. Please try again.",
+      "deleteLabel": "Delete post",
+      "deleteConfirm": "Delete",
+      "deleteCancel": "Cancel",
+      "searchPlaceholder": "Search posts…",
+      "searchAriaLabel": "Search posts",
+      "noResults": "No results for \"{term}\"",
+      "tagAriaLabel": "Tag: {tag}",
+      "mentionAriaLabel": "Mention: {username}",
+      "imageUrlPlaceholder": "Image URL (https://...)",
+      "imageUrlToggle": "Add image",
+      "imageUrlError": "URL must start with https://",
+      "imageUrlAriaLabel": "Image URL",
+      "tagInputPlaceholder": "Tags",
+      "tagInputAriaLabel": "Add tags",
+      "tagRemoveAriaLabel": "Remove tag {tag}",
+      "anonymousPlayer": "Anonymous Player"
     }
   },
   "userLibrary": {
@@ -1717,6 +1743,117 @@
       "explorePlayers": "Explore players",
       "pendingBadgeLabel": "{count, plural, one {# pending friend request} other {# pending friend requests}}",
       "loadingError": "An error occurred while loading the friends page."
+    }
+  },
+  "playerStats": {
+    "dashboard": {
+      "title": "Detailed Statistics",
+      "private": "Private Statistics",
+      "privateDescription": "This player has chosen to keep their statistics private.",
+      "error": "Unable to load statistics.",
+      "retry": "Retry"
+    },
+    "overview": {
+      "title": "Overview",
+      "totalGames": "Total Games",
+      "totalPlayTime": "Play Time",
+      "reviews": "Reviews Written",
+      "averageRating": "Average Rating",
+      "collections": "Collections",
+      "friends": "Friends",
+      "empty": "No data available. Add games to your library to see your statistics."
+    },
+    "genreDistribution": {
+      "title": "Genre Distribution",
+      "empty": "No genres in library"
+    },
+    "completion": {
+      "title": "Completion",
+      "empty": "No games in library",
+      "completed": "Completed",
+      "playing": "Playing",
+      "owned": "Owned",
+      "wishlist": "Wishlist",
+      "percentage": "completed"
+    },
+    "reviewAnalytics": {
+      "title": "Review Analytics",
+      "empty": "No reviews written",
+      "average": "Average",
+      "median": "Median",
+      "mode": "Mode",
+      "totalReviews": "Total Reviews",
+      "helpfulVotes": "Helpful Votes"
+    },
+    "social": {
+      "title": "Social Stats",
+      "empty": "No social activity",
+      "friends": "Friends",
+      "comments": "Comments",
+      "favorites": "Favorites",
+      "collections": "Collections"
+    },
+    "activityTimeline": {
+      "title": "Activity Timeline",
+      "empty": "No activity in the last 12 months",
+      "gamesAdded": "games added"
+    },
+    "playtime": {
+      "title": "Play Time",
+      "empty": "No play time data",
+      "averagePlayTime": "Average per game",
+      "hours": "hours",
+      "topGame": "Most Played Game"
+    },
+    "achievements": {
+      "title": "Achievements",
+      "progress": "{count} of {total}",
+      "unlocked": "Unlocked on",
+      "locked": "Locked",
+      "names": {
+        "first_game": "First Game",
+        "library_10": "Library 10",
+        "library_50": "Library 50",
+        "first_review": "First Review",
+        "reviews_10": "10 Reviews",
+        "playtime_100h": "100h Playtime",
+        "playtime_500h": "500h Playtime",
+        "first_friend": "First Friend",
+        "friends_10": "10 Friends",
+        "first_collection": "First Collection"
+      }
+    },
+    "sessions": {
+      "title": "Game Sessions",
+      "empty": "No sessions recorded",
+      "totalSessions": "Total Sessions",
+      "averageDuration": "Average Duration",
+      "longestSession": "Longest Session",
+      "minutes": "min",
+      "sessionsCount": "sessions"
+    },
+    "goals": {
+      "title": "Personal Goals",
+      "empty": "No goals set",
+      "addGoal": "Add Goal",
+      "deleteGoal": "Delete",
+      "completed": "Completed",
+      "deadline": "Deadline",
+      "targetValue": "Target Value",
+      "goalTypes": {
+        "games_to_complete": "Games to Complete",
+        "play_time_hours": "Play Time Hours",
+        "reviews_to_write": "Reviews to Write",
+        "collections_to_create": "Collections to Create"
+      },
+      "create": {
+        "title": "New Goal",
+        "type": "Goal Type",
+        "target": "Target",
+        "deadline": "Deadline (optional)",
+        "submit": "Create",
+        "cancel": "Cancel"
+      }
     }
   }
 }
