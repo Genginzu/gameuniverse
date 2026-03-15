@@ -11,11 +11,12 @@ import { SettingsSkeleton } from "./SettingsSkeleton";
 import { UsernameForm } from "./UsernameForm";
 import { EmailForm } from "./EmailForm";
 import { PasswordResetSection } from "./PasswordResetSection";
+import { AppearanceSection } from "./AppearanceSection";
 import { createClient } from "@/lib/supabase";
 
 export function SettingsContent() {
   const t = useTranslations("settings");
-  const { profile, loading: profileLoading, updateProfile } = useProfile();
+  const { profile, loading: profileLoading, updateProfile, refreshProfile } = useProfile();
   const { user, loading: authLoading, resetPassword } = useAuth();
   const { toast } = useToast();
   const [isUpdatingUsername, setIsUpdatingUsername] = useState(false);
@@ -95,6 +96,32 @@ export function SettingsContent() {
     }
   };
 
+  const handleAvatarChange = () => {
+    refreshProfile();
+  };
+
+  const handleBannerChange = () => {
+    refreshProfile();
+  };
+
+  const handleAvatarDelete = async () => {
+    const {
+      data: { user: currentUser },
+    } = await supabase.auth.getUser();
+    if (!currentUser) return;
+    await supabase.from("profiles").update({ avatar_url: null }).eq("id", currentUser.id);
+    refreshProfile();
+  };
+
+  const handleBannerDelete = async () => {
+    const {
+      data: { user: currentUser },
+    } = await supabase.auth.getUser();
+    if (!currentUser) return;
+    await supabase.from("profiles").update({ banner_url: null }).eq("id", currentUser.id);
+    refreshProfile();
+  };
+
   return (
     <div className="flex-1 p-4 sm:p-6">
       {/* Page Header */}
@@ -140,6 +167,16 @@ export function SettingsContent() {
             />
           </CardContent>
         </Card>
+
+        {/* Appearance Section */}
+        <AppearanceSection
+          avatarUrl={profile?.avatar_url ?? null}
+          bannerUrl={profile?.banner_url ?? null}
+          onAvatarChange={handleAvatarChange}
+          onBannerChange={handleBannerChange}
+          onAvatarDelete={handleAvatarDelete}
+          onBannerDelete={handleBannerDelete}
+        />
 
         {/* Security Section */}
         <Card className="rounded-xl bg-white dark:bg-gray-800">

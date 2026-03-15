@@ -22,6 +22,8 @@ const mockHookReturn = {
   isCreating: false,
   hasNextPage: false,
   error: null as string | null,
+  searchTerm: "",
+  setSearchTerm: vi.fn(),
   loadMore: vi.fn(),
   createPost: vi.fn(),
   deletePost: vi.fn(),
@@ -87,18 +89,24 @@ describe("Posts UI Property-Based Tests", () => {
   // Feature: player-posts-tab, Property 7: Composer visibility based on ownership
   // **Validates: Requirements 7.1, 7.8**
   describe("Property 7: Composer visibility based on ownership", () => {
-    it("PostComposer is rendered iff isOwner is true", () => {
+    it("New post button is rendered iff isOwner is true", () => {
       fc.assert(
         fc.property(fc.boolean(), (isOwner) => {
           mockUsePlayerPosts.mockReturnValue({ ...mockHookReturn });
           const { unmount } = render(
-            <PostsFeed playerId="player-1" locale="fr" isOwner={isOwner} />
+            <PostsFeed
+              playerId="player-1"
+              playerName={null}
+              playerAvatar={null}
+              locale="fr"
+              isOwner={isOwner}
+            />
           );
-          const composer = screen.queryByPlaceholderText("placeholder");
+          const newPostBtn = screen.queryByText("newPost");
           if (isOwner) {
-            expect(composer).toBeInTheDocument();
+            expect(newPostBtn).toBeInTheDocument();
           } else {
-            expect(composer).not.toBeInTheDocument();
+            expect(newPostBtn).not.toBeInTheDocument();
           }
           unmount();
         }),

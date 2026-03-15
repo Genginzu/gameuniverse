@@ -1014,6 +1014,12 @@
       "resetSent": "A password reset email has been sent",
       "resetError": "Failed to send password reset email"
     },
+    "appearance": {
+      "title": "Appearance",
+      "description": "Customize your avatar and banner",
+      "avatarLabel": "Avatar",
+      "bannerLabel": "Banner"
+    },
     "errors": {
       "updateFailed": "Failed to update. Please try again.",
       "connectionError": "Connection error. Please try again.",
@@ -1860,5 +1866,17 @@
         "cancel": "Cancel"
       }
     }
+  },
+  "upload": {
+    "selectImage": "Select an image",
+    "preview": "Image preview",
+    "dragOrClick": "Drag or click",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "errorInvalidFormat": "Accepted formats: JPEG, PNG, WebP, GIF",
+    "errorFileTooLarge": "Maximum file size is 5 MB",
+    "errorUploadFailed": "Upload failed. Please try again.",
+    "errorConfirmFailed": "Save failed. Please try again."
   }
 }

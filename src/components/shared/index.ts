@@ -15,11 +15,7 @@ export {
 } from "./EntityCard";
 
 // EntityCard Presets - Pre-configured card settings for each entity type
-export {
-  gameCardConfig,
-  playerCardConfig,
-  characterCardConfig,
-} from "./entityCardPresets";
+export { gameCardConfig, playerCardConfig, characterCardConfig } from "./entityCardPresets";
 
 // EntitySkeleton - Generic skeleton component for loading states
 export {
@@ -32,17 +28,10 @@ export {
 } from "./EntitySkeleton";
 
 // GridSkeleton - Generic grid skeleton for loading states
-export {
-  GridSkeleton,
-  type GridSkeletonProps,
-} from "./GridSkeleton";
+export { GridSkeleton, type GridSkeletonProps } from "./GridSkeleton";
 
 // Pagination - Generic pagination component for all entity types
-export {
-  Pagination,
-  getVisiblePages,
-  type PaginationProps,
-} from "./Pagination";
+export { Pagination, getVisiblePages, type PaginationProps } from "./Pagination";
 
 // SearchBar - Generic search bar component with simple and hybrid modes
 export {
@@ -64,3 +53,6 @@ export {
   type FilterConfig,
   type FilterOption,
 } from "./FilterPanel";
+
+// ImageUploader - Reusable image upload component with drag & drop, preview, and S3 upload
+export { ImageUploader } from "./ImageUploader";

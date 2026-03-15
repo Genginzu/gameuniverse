@@ -1014,6 +1014,12 @@
       "resetSent": "Un email de réinitialisation a été envoyé",
       "resetError": "Échec de l'envoi de l'email de réinitialisation"
     },
+    "appearance": {
+      "title": "Apparence",
+      "description": "Personnalisez votre avatar et votre bannière",
+      "avatarLabel": "Avatar",
+      "bannerLabel": "Bannière"
+    },
     "errors": {
       "updateFailed": "Échec de la mise à jour. Veuillez réessayer.",
       "connectionError": "Erreur de connexion. Veuillez réessayer.",
@@ -1863,5 +1869,17 @@
         "cancel": "Annuler"
       }
     }
+  },
+  "upload": {
+    "selectImage": "Sélectionner une image",
+    "preview": "Aperçu de l'image",
+    "dragOrClick": "Glisser ou cliquer",
+    "confirm": "Confirmer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "errorInvalidFormat": "Formats acceptés : JPEG, PNG, WebP, GIF",
+    "errorFileTooLarge": "La taille maximale est de 5 Mo",
+    "errorUploadFailed": "Erreur lors de l'upload. Veuillez réessayer.",
+    "errorConfirmFailed": "Erreur lors de la sauvegarde. Veuillez réessayer."
   }
 }

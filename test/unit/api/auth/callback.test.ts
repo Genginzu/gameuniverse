@@ -35,7 +35,7 @@ describe("/api/auth/callback", () => {
 
     expect(mockExchangeCodeForSession).toHaveBeenCalledWith("auth_code_123");
     expect(response.status).toBe(307); // Redirect status
-    expect(response.headers.get("location")).toBe("http://localhost:3000/dashboard");
+    expect(response.headers.get("location")).toBe("http://localhost:3000/profile");
   });
 
   it("should handle auth callback error", async () => {

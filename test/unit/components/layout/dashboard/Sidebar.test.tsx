@@ -68,7 +68,7 @@ describe("Sidebar", () => {
       expect(screen.getByText("players")).toBeInTheDocument();
     });
 
-    it("renders the 6 main nav links when authenticated", () => {
+    it("renders the 5 main nav links when authenticated", () => {
       render(<Sidebar isAuthenticated={true} user={mockUser} signOut={mockSignOut} />);
 
       // Main links use t(labelKey) from dashboard translations — mock returns key
@@ -86,12 +86,12 @@ describe("Sidebar", () => {
       expect(screen.getByText("TestPlayer")).toBeInTheDocument();
     });
 
-    it("renders all 9 navigation links (6 main + 3 public) as anchors", () => {
+    it("renders all 8 navigation links (5 main + 3 public) as anchors", () => {
       render(<Sidebar isAuthenticated={true} user={mockUser} signOut={mockSignOut} />);
 
       const nav = screen.getByRole("navigation", { name: "Main navigation" });
       const links = nav.querySelectorAll("a");
-      expect(links).toHaveLength(9);
+      expect(links).toHaveLength(8);
     });
   });
 

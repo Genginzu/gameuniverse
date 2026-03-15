@@ -69,6 +69,12 @@ const nextConfig = {
         port: "",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "gameuniverse-uploads.s3.eu-west-3.amazonaws.com",
+        port: "",
+        pathname: "/public/**",
+      },
     ],
     formats: ["image/webp", "image/avif"],
   },

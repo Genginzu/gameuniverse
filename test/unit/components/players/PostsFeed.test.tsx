@@ -25,6 +25,8 @@ const mockHookReturn = {
   isCreating: false,
   hasNextPage: false,
   error: null as string | null,
+  searchTerm: "",
+  setSearchTerm: vi.fn(),
   loadMore: vi.fn(),
   createPost: vi.fn(),
   deletePost: vi.fn(),
@@ -77,36 +79,75 @@ describe("PostsFeed", () => {
   // Req 6.5 — empty state displayed when no posts and not loading
   it("shows empty state when no posts and not loading", () => {
     setHookState({ posts: [], isLoading: false });
-    render(<PostsFeed playerId="player-1" locale="fr" isOwner={false} />);
+    render(
+      <PostsFeed
+        playerId="player-1"
+        playerName={null}
+        playerAvatar={null}
+        locale="fr"
+        isOwner={false}
+      />
+    );
     expect(screen.getByText("empty")).toBeInTheDocument();
   });
 
   // Req 6.4 — skeleton during loading
   it("shows skeleton during loading", () => {
     setHookState({ isLoading: true });
-    const { container } = render(<PostsFeed playerId="player-1" locale="fr" isOwner={false} />);
+    const { container } = render(
+      <PostsFeed
+        playerId="player-1"
+        playerName={null}
+        playerAvatar={null}
+        locale="fr"
+        isOwner={false}
+      />
+    );
     const skeletons = container.querySelectorAll(".animate-pulse");
     expect(skeletons.length).toBeGreaterThan(0);
   });
 
-  // Req 7.1 — PostComposer visible when isOwner=true
-  it("shows PostComposer when isOwner is true", () => {
+  // Req 7.1 — "New post" button visible when isOwner=true
+  it("shows new post button when isOwner is true", () => {
     setHookState({ posts: [], isLoading: false });
-    render(<PostsFeed playerId="player-1" locale="fr" isOwner={true} />);
-    const textarea = screen.getByPlaceholderText("placeholder");
-    expect(textarea).toBeInTheDocument();
+    render(
+      <PostsFeed
+        playerId="player-1"
+        playerName={null}
+        playerAvatar={null}
+        locale="fr"
+        isOwner={true}
+      />
+    );
+    expect(screen.getByText("newPost")).toBeInTheDocument();
   });
 
-  // Req 7.8 — PostComposer hidden when isOwner=false
-  it("hides PostComposer when isOwner is false", () => {
+  // Req 7.8 — "New post" button hidden when isOwner=false
+  it("hides new post button when isOwner is false", () => {
     setHookState({ posts: [], isLoading: false });
-    render(<PostsFeed playerId="player-1" locale="fr" isOwner={false} />);
-    expect(screen.queryByPlaceholderText("placeholder")).not.toBeInTheDocument();
+    render(
+      <PostsFeed
+        playerId="player-1"
+        playerName={null}
+        playerAvatar={null}
+        locale="fr"
+        isOwner={false}
+      />
+    );
+    expect(screen.queryByText("newPost")).not.toBeInTheDocument();
   });
 
   // Req 11.3 — role="feed" present
   it("has role=feed on the feed container", () => {
-    render(<PostsFeed playerId="player-1" locale="fr" isOwner={false} />);
+    render(
+      <PostsFeed
+        playerId="player-1"
+        playerName={null}
+        playerAvatar={null}
+        locale="fr"
+        isOwner={false}
+      />
+    );
     const feed = screen.getByRole("feed");
     expect(feed).toBeInTheDocument();
   });
@@ -114,14 +155,30 @@ describe("PostsFeed", () => {
   // Req 11.6 — aria-busy="false" when not loading
   it("sets aria-busy to false when not loading", () => {
     setHookState({ isLoading: false, isLoadingMore: false });
-    render(<PostsFeed playerId="player-1" locale="fr" isOwner={false} />);
+    render(
+      <PostsFeed
+        playerId="player-1"
+        playerName={null}
+        playerAvatar={null}
+        locale="fr"
+        isOwner={false}
+      />
+    );
     expect(screen.getByRole("feed")).toHaveAttribute("aria-busy", "false");
   });
 
   // Req 11.6 — aria-busy="true" when loading
   it("sets aria-busy to true when loading", () => {
     setHookState({ isLoading: true });
-    render(<PostsFeed playerId="player-1" locale="fr" isOwner={false} />);
+    render(
+      <PostsFeed
+        playerId="player-1"
+        playerName={null}
+        playerAvatar={null}
+        locale="fr"
+        isOwner={false}
+      />
+    );
     expect(screen.getByRole("feed")).toHaveAttribute("aria-busy", "true");
   });
 });
