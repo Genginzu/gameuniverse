@@ -1,12 +1,4 @@
-import {
-  FaDice,
-  FaGamepad,
-  FaHeart,
-  FaLayerGroup,
-  FaUser,
-  FaUserFriends,
-  FaMask,
-} from "react-icons/fa";
+import { FaDice, FaGamepad, FaHeart, FaUser, FaUserFriends, FaMask } from "react-icons/fa";
 import type { IconType } from "react-icons";
 
 export interface NavLink {
@@ -20,8 +12,6 @@ export const NAV_LINKS: NavLink[] = [
   { href: "/profile", icon: FaUser, labelKey: "profile" },
   { href: "/library", icon: FaGamepad, labelKey: "library" },
   { href: "/favorites/characters", icon: FaHeart, labelKey: "myCharacters" },
-  { href: "/collections", icon: FaLayerGroup, labelKey: "collections" },
-  { href: "/friends", icon: FaUserFriends, labelKey: "friends" },
 ];
 
 /** Public navigation links visible to all users. */

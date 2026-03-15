@@ -68,16 +68,13 @@ describe("Sidebar", () => {
       expect(screen.getByText("players")).toBeInTheDocument();
     });
 
-    it("renders the 5 main nav links when authenticated", () => {
+    it("renders the 3 main nav links when authenticated", () => {
       render(<Sidebar isAuthenticated={true} user={mockUser} signOut={mockSignOut} />);
 
       // Main links use t(labelKey) from dashboard translations — mock returns key
       expect(screen.getByText("profile")).toBeInTheDocument();
       expect(screen.getByText("library")).toBeInTheDocument();
       expect(screen.getByText("myCharacters")).toBeInTheDocument();
-      expect(screen.getByText("collections")).toBeInTheDocument();
-      expect(screen.getByText("friends")).toBeInTheDocument();
-      expect(screen.getByText("profile")).toBeInTheDocument();
     });
 
     it("renders the user section with display name", () => {
@@ -86,12 +83,12 @@ describe("Sidebar", () => {
       expect(screen.getByText("TestPlayer")).toBeInTheDocument();
     });
 
-    it("renders all 8 navigation links (5 main + 3 public) as anchors", () => {
+    it("renders all 6 navigation links (3 main + 3 public) as anchors", () => {
       render(<Sidebar isAuthenticated={true} user={mockUser} signOut={mockSignOut} />);
 
       const nav = screen.getByRole("navigation", { name: "Main navigation" });
       const links = nav.querySelectorAll("a");
-      expect(links).toHaveLength(8);
+      expect(links).toHaveLength(6);
     });
   });
 

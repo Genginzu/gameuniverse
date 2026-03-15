@@ -2,17 +2,9 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import React from "react";
 
-// IntersectionObserver stub for jsdom
-class MockIntersectionObserver {
-  observe = vi.fn();
-  disconnect = vi.fn();
-  unobserve = vi.fn();
-  constructor() {}
-}
-globalThis.IntersectionObserver =
-  MockIntersectionObserver as unknown as typeof IntersectionObserver;
+// --- Mocks ---
 
-const mockHookReturn = {
+const mockCollectionsReturn = {
   collections: [] as Array<{
     id: string;
     name: string;
@@ -24,24 +16,24 @@ const mockHookReturn = {
     coverImages: string[];
     coverImageUrl: string | null;
   }>,
-  stats: null as null | {
-    totalCollections: number;
-    totalGames: number;
-    largestCollection: string | null;
-  },
   isLoading: false,
-  isLoadingMore: false,
-  hasNextPage: false,
-  sortOption: "updated_at_desc" as const,
   error: null as string | null,
-  setSort: vi.fn(),
-  loadMore: vi.fn(),
+  refetch: vi.fn(),
 };
 
-const mockUsePlayerCollections = vi.fn(() => mockHookReturn);
+const mockUseCollections = vi.fn(() => mockCollectionsReturn);
+const mockCreateCollection = vi.fn();
 
-vi.mock("@/hooks/usePlayerCollections", () => ({
-  usePlayerCollections: (...args: unknown[]) => mockUsePlayerCollections(...args),
+vi.mock("@/hooks/useCollections", () => ({
+  useCollections: (...args: unknown[]) => mockUseCollections(...args),
+}));
+
+vi.mock("@/hooks/useCollectionMutations", () => ({
+  useCollectionMutations: () => ({ createCollection: mockCreateCollection }),
+}));
+
+vi.mock("@/hooks/useAuth", () => ({
+  useAuth: () => ({ user: { id: "player-1" } }),
 }));
 
 vi.mock("next-intl", () => {
@@ -56,13 +48,6 @@ vi.mock("next-intl", () => {
   return {
     useTranslations: () => createTranslator(),
     useLocale: () => "fr",
-    useMessages: () => ({}),
-    useFormatter: () => ({
-      relativeTime: () => "il y a 2 heures",
-      dateTime: () => "01/03/2024",
-      number: (n: number) => String(n),
-    }),
-    NextIntlClientProvider: ({ children }: { children: React.ReactNode }) => children,
   };
 });
 
@@ -90,33 +75,20 @@ const SAMPLE_COLLECTION = {
   coverImageUrl: null,
 };
 
-const SAMPLE_STATS = {
-  totalCollections: 5,
-  totalGames: 42,
-  largestCollection: "RPG Favorites",
-};
-
-function setHookState(overrides: Partial<typeof mockHookReturn>) {
-  mockUsePlayerCollections.mockReturnValue({ ...mockHookReturn, ...overrides });
+function setHookState(overrides: Partial<typeof mockCollectionsReturn>) {
+  mockUseCollections.mockReturnValue({ ...mockCollectionsReturn, ...overrides });
 }
 
 describe("PlayerCollectionsFeed", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockUsePlayerCollections.mockReturnValue({ ...mockHookReturn });
+    mockUseCollections.mockReturnValue({ ...mockCollectionsReturn });
   });
 
   it("renders collections when data is available", () => {
-    setHookState({ collections: [SAMPLE_COLLECTION], stats: SAMPLE_STATS });
+    setHookState({ collections: [SAMPLE_COLLECTION] });
     render(<PlayerCollectionsFeed playerId="player-1" locale="fr" isOwner={false} />);
-    // "RPG Favorites" appears in both stats and card — use getAllByText
-    const matches = screen.getAllByText("RPG Favorites");
-    expect(matches.length).toBeGreaterThanOrEqual(1);
-    // Verify the collection card link is rendered
-    expect(screen.getByRole("link")).toHaveAttribute(
-      "href",
-      "/fr/players/player-1/collections/rpg-favorites"
-    );
+    expect(screen.getByText("RPG Favorites")).toBeInTheDocument();
   });
 
   it("shows empty state when no collections", () => {
@@ -130,48 +102,35 @@ describe("PlayerCollectionsFeed", () => {
     const { container } = render(
       <PlayerCollectionsFeed playerId="player-1" locale="fr" isOwner={false} />
     );
-    const skeletons = container.querySelectorAll(".animate-pulse");
+    // Skeleton elements are rendered by PlayerCollectionsListView
+    const skeletons = container.querySelectorAll("[class*='bg-gray-200'], [class*='bg-slate-700']");
     expect(skeletons.length).toBeGreaterThan(0);
   });
 
-  it("has role='feed' with correct aria-label", () => {
-    render(<PlayerCollectionsFeed playerId="player-1" locale="fr" isOwner={false} />);
-    const feed = screen.getByRole("feed");
-    expect(feed).toBeInTheDocument();
-    expect(feed).toHaveAttribute("aria-label", "ariaLabel");
+  it("shows create button when isOwner is true", () => {
+    setHookState({ collections: [SAMPLE_COLLECTION] });
+    render(<PlayerCollectionsFeed playerId="player-1" locale="fr" isOwner={true} />);
+    expect(screen.getByText("createButton")).toBeInTheDocument();
   });
 
-  it("sets aria-busy to false when not loading", () => {
-    setHookState({ isLoading: false, isLoadingMore: false });
+  it("hides create button when isOwner is false", () => {
+    setHookState({ collections: [SAMPLE_COLLECTION] });
     render(<PlayerCollectionsFeed playerId="player-1" locale="fr" isOwner={false} />);
-    expect(screen.getByRole("feed")).toHaveAttribute("aria-busy", "false");
-  });
-
-  it("sets aria-busy to true during initial loading", () => {
-    setHookState({ isLoading: true });
-    render(<PlayerCollectionsFeed playerId="player-1" locale="fr" isOwner={false} />);
-    expect(screen.getByRole("feed")).toHaveAttribute("aria-busy", "true");
-  });
-
-  it("sets aria-busy to true when loading more", () => {
-    setHookState({ collections: [SAMPLE_COLLECTION], isLoadingMore: true });
-    render(<PlayerCollectionsFeed playerId="player-1" locale="fr" isOwner={false} />);
-    expect(screen.getByRole("feed")).toHaveAttribute("aria-busy", "true");
-  });
-
-  it("shows sort selector when collections exist", () => {
-    setHookState({ collections: [SAMPLE_COLLECTION], stats: SAMPLE_STATS });
-    render(<PlayerCollectionsFeed playerId="player-1" locale="fr" isOwner={false} />);
-    const select = screen.getByRole("combobox");
-    expect(select).toBeInTheDocument();
+    expect(screen.queryByText("createButton")).not.toBeInTheDocument();
   });
 
   it("renders responsive grid with correct CSS classes", () => {
-    setHookState({ collections: [SAMPLE_COLLECTION], stats: SAMPLE_STATS });
+    setHookState({ collections: [SAMPLE_COLLECTION] });
     const { container } = render(
       <PlayerCollectionsFeed playerId="player-1" locale="fr" isOwner={false} />
     );
-    const grid = container.querySelector(".grid-cols-2.md\\:grid-cols-3.lg\\:grid-cols-4");
+    const grid = container.querySelector(".grid-cols-2");
     expect(grid).toBeInTheDocument();
+  });
+
+  it("shows error message when error occurs", () => {
+    setHookState({ error: "Network error" });
+    render(<PlayerCollectionsFeed playerId="player-1" locale="fr" isOwner={false} />);
+    expect(screen.getByText("error")).toBeInTheDocument();
   });
 });

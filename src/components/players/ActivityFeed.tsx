@@ -1,112 +1,84 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Smile } from "lucide-react";
-import { usePlayerActivity } from "@/hooks/usePlayerActivity";
-import { ActivityFilters } from "./ActivityFilters";
-import { ActivityItem } from "./ActivityItem";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Plus, X } from "lucide-react";
+import { usePlayerPosts } from "@/hooks/usePlayerPosts";
+import { SearchBar } from "./SearchBar";
+import { PostComposer } from "./PostComposer";
+import { ActivityFeedColumn } from "./ActivityFeedColumn";
+import { PostsFeedColumn } from "./PostsFeedColumn";
 
 interface ActivityFeedProps {
   playerId: string;
+  playerName: string | null;
+  playerAvatar: string | null;
   locale: string;
+  isOwner: boolean;
 }
 
-export function ActivityFeed({ playerId, locale }: ActivityFeedProps) {
-  const t = useTranslations("players.activity");
-  const {
-    events,
-    isLoading,
-    isLoadingMore,
-    hasNextPage,
-    activeFilter,
-    error,
-    setFilter,
-    loadMore,
-  } = usePlayerActivity(playerId, locale);
+/**
+ * Onglet unifié Activité + Posts.
+ * Barre de recherche + bouton nouveau post en haut,
+ * puis activités à gauche et posts à droite.
+ */
+export function ActivityFeed({
+  playerId,
+  playerName,
+  playerAvatar,
+  locale,
+  isOwner,
+}: ActivityFeedProps) {
+  const t = useTranslations("players.posts");
+  const postHook = usePlayerPosts(playerId);
+  const [showComposer, setShowComposer] = useState(false);
 
-  const sentinelRef = useRef<HTMLDivElement>(null);
-
-  // IntersectionObserver for infinite scroll
-  useEffect(() => {
-    const sentinel = sentinelRef.current;
-    if (!sentinel) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting && hasNextPage && !isLoadingMore) {
-          loadMore();
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, [hasNextPage, isLoadingMore, loadMore]);
-
-  const isBusy = isLoading || isLoadingMore;
+  const handlePostCreated = async (content: string, imageUrl?: string) => {
+    await postHook.createPost(content, imageUrl);
+    setShowComposer(false);
+  };
 
   return (
-    <section className="mb-8">
-      <ActivityFilters activeFilter={activeFilter} onFilterChange={setFilter} />
-
-      <div role="feed" aria-busy={isBusy} aria-label={t("feedLabel")}>
-        {isLoading && <ActivityFeedSkeleton />}
-
-        {!isLoading && error && (
-          <p className="py-8 text-center text-sm text-red-500 dark:text-red-400">{error}</p>
+    <section className="mb-8 space-y-6">
+      {/* Top bar: search + new post button */}
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <SearchBar value={postHook.searchTerm} onChange={postHook.setSearchTerm} />
+        </div>
+        {isOwner && (
+          <button
+            type="button"
+            onClick={() => setShowComposer((v) => !v)}
+            className="inline-flex shrink-0 items-center gap-2 rounded-2xl bg-gradient-to-br from-violet-500 to-blue-500 px-5 py-3 text-sm font-medium text-white shadow-lg shadow-violet-500/20 transition-all duration-300 hover:opacity-90"
+          >
+            {showComposer ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+            {t("newPost")}
+          </button>
         )}
+      </div>
 
-        {!isLoading && !error && events.length === 0 && <ActivityFeedEmpty />}
+      {/* Composer (toggled) */}
+      {isOwner && showComposer && (
+        <PostComposer
+          playerId={playerId}
+          playerAvatar={playerAvatar}
+          isCreating={postHook.isCreating}
+          onSubmit={handlePostCreated}
+          onPostCreated={() => {}}
+        />
+      )}
 
-        {!isLoading && events.length > 0 && (
-          <div className="space-y-3">
-            {events.map((event) => (
-              <ActivityItem key={`${event.type}-${event.id}`} event={event} locale={locale} />
-            ))}
-          </div>
-        )}
-
-        {/* Loading more indicator */}
-        {isLoadingMore && (
-          <div className="mt-3 space-y-3">
-            {Array.from({ length: 2 }).map((_, i) => (
-              <Skeleton
-                key={i}
-                className="h-24 w-full rounded-xl bg-gray-200 dark:bg-slate-700/50"
-              />
-            ))}
-          </div>
-        )}
-
-        {/* Sentinel element for IntersectionObserver */}
-        <div ref={sentinelRef} className="h-1" aria-hidden="true" />
+      {/* Two-column layout: activities left, posts right */}
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+        <ActivityFeedColumn playerId={playerId} locale={locale} />
+        <PostsFeedColumn
+          postHook={postHook}
+          playerName={playerName}
+          playerAvatar={playerAvatar}
+          locale={locale}
+          isOwner={isOwner}
+        />
       </div>
     </section>
-  );
-}
-
-function ActivityFeedSkeleton() {
-  return (
-    <div className="space-y-3">
-      {Array.from({ length: 4 }).map((_, i) => (
-        <Skeleton key={i} className="h-24 w-full rounded-xl bg-gray-200 dark:bg-slate-700/50" />
-      ))}
-    </div>
-  );
-}
-
-function ActivityFeedEmpty() {
-  const t = useTranslations("players.activity");
-
-  return (
-    <div className="flex flex-col items-center justify-center rounded-2xl border border-gray-200 bg-white py-12 text-center dark:border-slate-700/50 dark:bg-slate-800/50">
-      <div className="mb-4 rounded-full bg-gray-100 p-4 dark:bg-slate-700/50">
-        <Smile className="h-10 w-10 text-gray-400 dark:text-slate-400" />
-      </div>
-      <p className="text-sm text-gray-500 dark:text-slate-400">{t("empty")}</p>
-    </div>
   );
 }

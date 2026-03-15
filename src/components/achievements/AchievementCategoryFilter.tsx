@@ -35,10 +35,12 @@ export function AchievementCategoryFilter({
             onClick={() => onCategoryChange(value)}
             className={`rounded-full px-4 py-1.5 text-sm font-medium transition-all duration-300 ${
               isActive
-                ? "bg-gradient-to-r from-blue-500 via-purple-600 to-purple-700 text-white shadow-lg shadow-purple-600/25"
+                ? "border-purple-500 bg-purple-500/10 text-purple-600 dark:border-purple-400 dark:bg-purple-500/15 dark:text-purple-300"
                 : "bg-white/40 text-gray-700 hover:bg-white/60 dark:bg-slate-800/50 dark:text-slate-300 dark:hover:bg-slate-700/60"
             } border ${
-              isActive ? "border-transparent" : "border-white/20 dark:border-slate-700/50"
+              isActive
+                ? "border-purple-500 dark:border-purple-400"
+                : "border-white/20 dark:border-slate-700/50"
             }`}
           >
             {t(`categories.${key}`)}

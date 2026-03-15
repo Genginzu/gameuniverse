@@ -47,7 +47,7 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
     removeFriend,
   } = useFriends(player.id, locale);
 
-  const [activeTab, setActiveTab] = useState<ProfileTab>("posts");
+  const [activeTab, setActiveTab] = useState<ProfileTab>("activity");
 
   // Fetch XP stats for the ProgressRing (Req 5.4, 5.5)
   const [xpStats, setXpStats] = useState<PlayerXpStats | null>(null);

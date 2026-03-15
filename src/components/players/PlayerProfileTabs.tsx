@@ -3,7 +3,6 @@
 import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import {
-  MessageSquare,
   Gamepad2,
   Smile,
   Users,
@@ -18,9 +17,8 @@ import {
 } from "lucide-react";
 
 export type ProfileTab =
-  | "posts"
-  | "library"
   | "activity"
+  | "library"
   | "friends"
   | "reviews"
   | "collections"
@@ -40,9 +38,8 @@ const TAB_DEFINITIONS: {
   icon: React.ElementType;
   ownerOnly?: boolean;
 }[] = [
-  { id: "posts", icon: MessageSquare },
-  { id: "library", icon: Gamepad2 },
   { id: "activity", icon: Smile },
+  { id: "library", icon: Gamepad2 },
   { id: "friends", icon: Users },
   { id: "reviews", icon: BookOpen },
   { id: "collections", icon: FolderOpen },

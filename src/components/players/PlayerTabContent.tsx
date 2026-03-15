@@ -1,7 +1,6 @@
 "use client";
 
 import { Gamepad2 } from "lucide-react";
-import { PostsFeed } from "./PostsFeed";
 import { PlayerLibraryGrid } from "./PlayerLibraryGrid";
 import { PlayerCollectionsFeed } from "./PlayerCollectionsFeed";
 import { PersonalRecommendationSection } from "@/components/games/PersonalRecommendationSection";
@@ -37,9 +36,9 @@ export function PlayerTabContent({
   tCommon,
 }: PlayerTabContentProps) {
   switch (activeTab) {
-    case "posts":
+    case "activity":
       return (
-        <PostsFeed
+        <ActivityFeed
           playerId={player.id}
           playerName={player.fullName}
           playerAvatar={player.avatarUrl}
@@ -62,8 +61,6 @@ export function PlayerTabContent({
       return <PlayerCollectionsFeed playerId={player.id} locale={locale} isOwner={isOwner} />;
     case "achievements":
       return <AchievementsPageContent playerId={player.id} />;
-    case "activity":
-      return <ActivityFeed playerId={player.id} locale={locale} />;
     case "friends":
       return <FriendsTab playerId={player.id} locale={locale} />;
     case "recommendations":
@@ -74,7 +71,7 @@ export function PlayerTabContent({
       return isOwner ? <SettingsContent /> : null;
     default:
       return (
-        <PostsFeed
+        <ActivityFeed
           playerId={player.id}
           playerName={player.fullName}
           playerAvatar={player.avatarUrl}

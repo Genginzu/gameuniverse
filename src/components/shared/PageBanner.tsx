@@ -2,15 +2,7 @@
 
 import { usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import {
-  FaDice,
-  FaMask,
-  FaUserFriends,
-  FaGamepad,
-  FaHeart,
-  FaLayerGroup,
-  FaUser,
-} from "react-icons/fa";
+import { FaDice, FaMask, FaUserFriends, FaGamepad, FaHeart, FaUser } from "react-icons/fa";
 import type { IconType } from "react-icons";
 
 interface BannerConfig {
@@ -25,11 +17,6 @@ const BANNER_CONFIG: Record<string, BannerConfig> = {
   "/players": { icon: FaUserFriends, titleKey: "players", descriptionKey: "playersDesc" },
   "/library": { icon: FaGamepad, titleKey: "library", descriptionKey: "libraryDesc" },
   "/favorites": { icon: FaHeart, titleKey: "myCharacters", descriptionKey: "favoritesDesc" },
-  "/collections": {
-    icon: FaLayerGroup,
-    titleKey: "collections",
-    descriptionKey: "collectionsDesc",
-  },
   "/profile": { icon: FaUser, titleKey: "profile", descriptionKey: "profileDesc" },
 };
 

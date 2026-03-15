@@ -3,8 +3,6 @@
 import { Link, usePathname } from "@/i18n/navigation";
 import { NAV_LINKS, PUBLIC_LINKS, isActive } from "@/lib/utils/navigation-utils";
 import { useTranslations } from "next-intl";
-import { NotificationBadge } from "@/components/friends/NotificationBadge";
-import { usePendingRequestCount } from "@/hooks/usePendingRequestCount";
 
 interface SidebarNavProps {
   isAuthenticated?: boolean;
@@ -20,7 +18,6 @@ export default function SidebarNav({
   const t = useTranslations("dashboard");
   const tNav = useTranslations("navigation");
   const pathname = usePathname();
-  const { count: pendingCount } = usePendingRequestCount();
 
   const linkClasses = (active: boolean) =>
     `group flex items-center rounded-lg px-3 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-neon-violet/60 focus:ring-offset-1 focus:ring-offset-transparent motion-safe:transition-all motion-safe:duration-200 ${
@@ -60,12 +57,10 @@ export default function SidebarNav({
           </p>
           {NAV_LINKS.map(({ href, icon: Icon, labelKey }) => {
             const active = isActive(pathname, href, currentUserId);
-            const isFriendsLink = href === "/friends";
             return (
               <Link key={href} href={href} onClick={onLinkClick} className={linkClasses(active)}>
                 <Icon className={iconClasses(active)} />
                 <span>{t(labelKey)}</span>
-                {isFriendsLink && pendingCount > 0 && <NotificationBadge count={pendingCount} />}
               </Link>
             );
           })}

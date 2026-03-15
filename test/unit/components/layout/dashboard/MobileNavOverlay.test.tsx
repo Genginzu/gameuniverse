@@ -93,14 +93,11 @@ describe("MobileNavOverlay", () => {
     expect(screen.getByText("players")).toBeInTheDocument();
   });
 
-  it("renders the 6 main nav links when authenticated", () => {
+  it("renders the 3 main nav links when authenticated", () => {
     render(<MobileNavOverlay {...defaultProps} />);
     expect(screen.getByText("profile")).toBeInTheDocument();
     expect(screen.getByText("library")).toBeInTheDocument();
     expect(screen.getByText("myCharacters")).toBeInTheDocument();
-    expect(screen.getByText("collections")).toBeInTheDocument();
-    expect(screen.getByText("friends")).toBeInTheDocument();
-    expect(screen.getByText("profile")).toBeInTheDocument();
   });
 
   it("does not render main nav links when not authenticated", () => {

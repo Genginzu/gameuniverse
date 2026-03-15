@@ -26,6 +26,7 @@ export function FriendsTab({ playerId, locale }: FriendsTabProps) {
     hasNextPage,
     acceptRequest,
     declineRequest,
+    removeFriend,
     loadMore,
   } = useFriends(playerId, locale);
 
@@ -57,6 +58,7 @@ export function FriendsTab({ playerId, locale }: FriendsTabProps) {
         isLoadingMore={isLoadingMore}
         hasNextPage={hasNextPage}
         onLoadMore={loadMore}
+        onRemove={isOwner ? removeFriend : undefined}
         locale={locale}
       />
     </section>

@@ -131,9 +131,9 @@ function ProfileCounters({
           key={c.label}
           className="flex items-center gap-2 rounded-xl bg-white/40 px-3 py-2 backdrop-blur-sm transition-all duration-300 hover:bg-white/60 dark:bg-slate-800/40 dark:hover:bg-slate-700/50"
         >
-          <c.icon className="h-4 w-4 text-purple-500 dark:text-purple-400" />
-          <span className="text-sm font-bold text-gray-900 dark:text-white">{c.value}</span>
-          <span className="text-xs text-gray-500 dark:text-slate-400">{c.label}</span>
+          <c.icon className="h-5 w-5 text-purple-500 dark:text-purple-400" />
+          <span className="text-base font-bold text-gray-900 dark:text-white">{c.value}</span>
+          <span className="text-sm text-gray-500 dark:text-slate-400">{c.label}</span>
         </div>
       ))}
     </div>

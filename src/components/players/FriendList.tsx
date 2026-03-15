@@ -13,6 +13,7 @@ interface FriendListProps {
   isLoadingMore: boolean;
   hasNextPage: boolean;
   onLoadMore: () => void;
+  onRemove?: (friendshipId: string) => Promise<void>;
   locale: string;
 }
 
@@ -22,6 +23,7 @@ export function FriendList({
   isLoadingMore,
   hasNextPage,
   onLoadMore,
+  onRemove,
   locale,
 }: FriendListProps) {
   const t = useTranslations("friends");
@@ -62,7 +64,7 @@ export function FriendList({
       >
         {friends.map((friend) => (
           <div key={friend.friendshipId} role="listitem">
-            <FriendCard friend={friend} locale={locale} />
+            <FriendCard friend={friend} locale={locale} onRemove={onRemove} />
           </div>
         ))}
       </div>

@@ -35,3 +35,5 @@ Système d'Objectifs
 Système de connexion aux différents comptes pour récupérer les jeux possédés
 Système de tchat
 Administration des succès des joueurs
+Intégrer les plateformes
+Système pour proposer la création de collection selon les infos du joueur

@@ -12,6 +12,8 @@ interface CollectionCardProps {
   isOwner?: boolean;
   /** Override du chemin de base pour le lien (ex: "/collections" pour le dashboard) */
   basePath?: string;
+  /** Si fourni, remplace la navigation par un callback (utilisé dans le profil joueur) */
+  onSelect?: (slug: string) => void;
 }
 
 export function CollectionCard({
@@ -19,6 +21,7 @@ export function CollectionCard({
   playerId,
   isOwner = false,
   basePath,
+  onSelect,
 }: CollectionCardProps) {
   const t = useTranslations("collections.card");
   const locale = useLocale();
@@ -34,61 +37,73 @@ export function CollectionCard({
     ? `/${locale}${basePath}/${collection.slug}`
     : `/${locale}/players/${playerId}/collections/${collection.slug}`;
 
-  return (
-    <div className="group relative">
-      <Link href={href}>
-        <div className="relative cursor-pointer overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-blue-500/10 dark:bg-gray-800">
-          {/* Cover: image personnalisée ou grille auto */}
-          <div className="relative aspect-[16/9] bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30">
-            {collection.coverImageUrl ? (
-              <LazyImage
-                src={collection.coverImageUrl}
-                alt={collection.name}
-                fill
-                className="object-cover"
-                sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
-                showSkeleton
-              />
-            ) : coverImages.length > 0 ? (
-              <CoverGrid images={coverImages} name={collection.name} />
-            ) : (
-              <EmptyCovers />
-            )}
+  const cardContent = (
+    <div className="relative cursor-pointer overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-blue-500/10 dark:bg-gray-800">
+      {/* Cover: image personnalisée ou grille auto */}
+      <div className="relative aspect-[16/9] bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30">
+        {collection.coverImageUrl ? (
+          <LazyImage
+            src={collection.coverImageUrl}
+            alt={collection.name}
+            fill
+            className="object-cover"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+            showSkeleton
+          />
+        ) : coverImages.length > 0 ? (
+          <CoverGrid images={coverImages} name={collection.name} />
+        ) : (
+          <EmptyCovers />
+        )}
 
-            {/* Visibility badge for owner */}
-            {isOwner && (
-              <div className="absolute left-2 top-2 z-20">
-                <Badge
-                  variant={collection.isPublic ? "default" : "secondary"}
-                  className="px-1.5 py-0 text-[10px]"
-                >
-                  {collection.isPublic ? t("public") : t("private")}
-                </Badge>
-              </div>
-            )}
-
-            {/* Games count badge */}
-            <div className="absolute right-2 top-2 z-20">
-              <div className="rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-medium text-gray-900 shadow backdrop-blur-sm">
-                {t("gamesCount", { count: collection.gamesCount })}
-              </div>
-            </div>
+        {/* Visibility badge for owner */}
+        {isOwner && (
+          <div className="absolute left-2 top-2 z-20">
+            <Badge
+              variant={collection.isPublic ? "default" : "secondary"}
+              className="px-1.5 py-0 text-[10px]"
+            >
+              {collection.isPublic ? t("public") : t("private")}
+            </Badge>
           </div>
+        )}
 
-          {/* Info section */}
-          <div className="p-3">
-            <h3 className="line-clamp-1 text-sm font-semibold text-gray-900 transition-colors group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400">
-              {collection.name}
-            </h3>
-            <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">
-              {collection.description || t("noDescription")}
-            </p>
-            <p className="mt-1 text-[10px] text-gray-500 dark:text-gray-400">
-              {t("updatedAt", { date: formattedDate })}
-            </p>
+        {/* Games count badge */}
+        <div className="absolute right-2 top-2 z-20">
+          <div className="rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-medium text-gray-900 shadow backdrop-blur-sm">
+            {t("gamesCount", { count: collection.gamesCount })}
           </div>
         </div>
-      </Link>
+      </div>
+
+      {/* Info section */}
+      <div className="p-3">
+        <h3 className="line-clamp-1 text-sm font-semibold text-gray-900 transition-colors group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400">
+          {collection.name}
+        </h3>
+        <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">
+          {collection.description || t("noDescription")}
+        </p>
+        <p className="mt-1 text-[10px] text-gray-500 dark:text-gray-400">
+          {t("updatedAt", { date: formattedDate })}
+        </p>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="group relative">
+      {onSelect ? (
+        <button
+          type="button"
+          onClick={() => onSelect(collection.slug)}
+          className="w-full text-left"
+        >
+          {cardContent}
+        </button>
+      ) : (
+        <Link href={href}>{cardContent}</Link>
+      )}
     </div>
   );
 }
