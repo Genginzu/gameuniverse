@@ -19,9 +19,9 @@ export function ActivityFeedColumn({ playerId, locale }: ActivityFeedColumnProps
     isLoading,
     isLoadingMore,
     hasNextPage,
-    activeFilter,
+    activeFilter: _activeFilter,
     error,
-    setFilter,
+    setFilter: _setFilter,
     loadMore,
   } = usePlayerActivity(playerId, locale);
 

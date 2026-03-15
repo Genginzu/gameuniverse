@@ -19,6 +19,7 @@ import {
   FaBuilding,
   FaUserFriends,
   FaStar,
+  FaTrophy,
 } from "react-icons/fa";
 import { MessageCircle } from "lucide-react";
 import type { AdminUser } from "@/types/admin-auth";
@@ -208,6 +209,31 @@ function SidebarContent({
             >
               <MessageCircle className="mr-3 h-4 w-4" />
               {t("nav.comments")}
+            </Link>
+          </div>
+        </div>
+
+        {/* Players category */}
+        <div>
+          <p className="mb-1 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+            {t("nav.playersCategory")}
+          </p>
+          <div className="space-y-1">
+            <Link
+              href="/admin/achievements"
+              className={linkClasses("/admin/achievements")}
+              onClick={onLinkClick}
+            >
+              <FaTrophy className="mr-3 h-4 w-4" />
+              {t("nav.achievements")}
+            </Link>
+            <Link
+              href="/admin/achievements/players"
+              className={linkClasses("/admin/achievements/players")}
+              onClick={onLinkClick}
+            >
+              <FaUserFriends className="mr-3 h-4 w-4" />
+              {t("nav.playerAchievements")}
             </Link>
           </div>
         </div>

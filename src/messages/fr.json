@@ -1059,7 +1059,10 @@
       "ageClassifications": "Classifications d'âge",
       "reviewsCategory": "Avis",
       "reviews": "Avis",
-      "comments": "Commentaires"
+      "comments": "Commentaires",
+      "playersCategory": "Joueurs",
+      "achievements": "Succès",
+      "playerAchievements": "Succès joueurs"
     },
     "closeSidebar": "Fermer le menu latéral",
     "lightMode": "Mode clair",
@@ -1916,6 +1919,130 @@
       "reviews": "Avis",
       "social": "Social",
       "collections": "Collections"
+    }
+  },
+  "adminAchievements": {
+    "title": "Gestion des succès",
+    "newAchievement": "Nouveau succès",
+    "searchPlaceholder": "Rechercher un succès par clé ou nom...",
+    "search": "Rechercher",
+    "totalAchievements": "{count, plural, =0 {Aucun succès} one {1 succès} other {# succès}}",
+    "noAchievements": "Aucun succès trouvé.",
+    "columns": {
+      "key": "Clé",
+      "category": "Catégorie",
+      "tier": "Palier",
+      "threshold": "Seuil",
+      "xpValue": "XP",
+      "name": "Nom",
+      "actions": "Actions"
+    },
+    "sortBy": "Trier par {field}",
+    "editAchievement": "Modifier {name}",
+    "deleteAchievement": "Supprimer {name}",
+    "page": "Page {current} sur {total}",
+    "previousPage": "Page précédente",
+    "nextPage": "Page suivante",
+    "categories": {
+      "library": "Bibliothèque",
+      "playtime": "Temps de jeu",
+      "reviews": "Avis",
+      "social": "Social",
+      "collections": "Collections"
+    },
+    "tiers": {
+      "bronze": "Bronze",
+      "silver": "Argent",
+      "gold": "Or"
+    },
+    "form": {
+      "key": "Clé",
+      "keyPlaceholder": "ex. first_game_added",
+      "keyDescription": "Lettres minuscules, chiffres et underscores. Doit commencer par une lettre.",
+      "category": "Catégorie",
+      "categoryPlaceholder": "Sélectionner une catégorie...",
+      "tier": "Palier",
+      "tierPlaceholder": "Sélectionner un palier...",
+      "threshold": "Seuil",
+      "thresholdPlaceholder": "ex. 10",
+      "xpValue": "Valeur XP",
+      "xpValuePlaceholder": "ex. 100",
+      "icon": "Icône",
+      "iconPlaceholder": "ex. trophy",
+      "nameFr": "Nom (FR)",
+      "nameFrPlaceholder": "Nom du succès en français",
+      "nameEn": "Nom (EN)",
+      "nameEnPlaceholder": "Nom du succès en anglais",
+      "descriptionFr": "Description (FR)",
+      "descriptionFrPlaceholder": "Description du succès en français",
+      "descriptionEn": "Description (EN)",
+      "descriptionEnPlaceholder": "Description du succès en anglais",
+      "sortOrder": "Ordre d'affichage",
+      "sortOrderPlaceholder": "ex. 0",
+      "create": "Créer le succès",
+      "save": "Enregistrer",
+      "backToList": "Retour aux succès"
+    },
+    "createPage": {
+      "title": "Nouveau succès",
+      "success": "Succès créé avec succès !",
+      "errorDuplicate": "Un succès avec cette clé existe déjà.",
+      "errorGeneric": "Une erreur est survenue lors de la création du succès."
+    },
+    "editPage": {
+      "title": "Modifier le succès",
+      "loading": "Chargement des données du succès...",
+      "success": "Succès mis à jour avec succès !",
+      "notFound": "Succès introuvable.",
+      "errorGeneric": "Une erreur est survenue lors de la mise à jour du succès."
+    },
+    "deleteDialog": {
+      "title": "Supprimer le succès",
+      "warning": "Êtes-vous sûr de vouloir supprimer « {name} » ?",
+      "irreversible": "Cette action est irréversible. Le succès sera définitivement supprimé.",
+      "usageWarning": "{count, plural, one {Ce succès a été débloqué par 1 joueur.} other {Ce succès a été débloqué par # joueurs.}}",
+      "forceWarning": "La suppression retirera ce succès de tous les joueurs concernés.",
+      "confirm": "Supprimer",
+      "forceConfirm": "Supprimer quand même",
+      "cancel": "Annuler",
+      "deleting": "Suppression...",
+      "success": "Succès supprimé avec succès !",
+      "errorGeneric": "Une erreur est survenue lors de la suppression du succès."
+    },
+    "playerManager": {
+      "title": "Gestion des succès joueurs",
+      "searchPlayer": "Rechercher un joueur...",
+      "searchPlayerPlaceholder": "Nom d'utilisateur ou identifiant...",
+      "noPlayersFound": "Aucun joueur trouvé.",
+      "selectPlayer": "Sélectionner un joueur",
+      "playerAchievements": "Succès de {player}",
+      "unlocked": "Débloqué",
+      "locked": "Verrouillé",
+      "unlockedOn": "Débloqué le {date}",
+      "assign": "Attribuer",
+      "revoke": "Retirer",
+      "assignDialog": {
+        "title": "Attribuer un succès",
+        "message": "Voulez-vous attribuer « {achievement} » à {player} ?",
+        "xpInfo": "{xp} XP seront ajoutés au joueur.",
+        "confirm": "Attribuer",
+        "cancel": "Annuler",
+        "assigning": "Attribution...",
+        "success": "Succès attribué avec succès !",
+        "errorAlreadyAssigned": "Ce succès est déjà attribué à ce joueur.",
+        "errorGeneric": "Une erreur est survenue lors de l'attribution du succès."
+      },
+      "revokeDialog": {
+        "title": "Retirer un succès",
+        "message": "Voulez-vous retirer « {achievement} » de {player} ?",
+        "xpInfo": "{xp} XP seront retirés du joueur.",
+        "confirm": "Retirer",
+        "cancel": "Annuler",
+        "revoking": "Retrait...",
+        "success": "Succès retiré avec succès !",
+        "errorNotAssigned": "Ce succès n'est pas attribué à ce joueur.",
+        "errorGeneric": "Une erreur est survenue lors du retrait du succès."
+      }
     }
   }
 }

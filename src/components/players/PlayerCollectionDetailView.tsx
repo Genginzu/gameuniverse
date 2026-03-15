@@ -27,7 +27,7 @@ interface PlayerCollectionDetailViewProps {
 export function PlayerCollectionDetailView({
   playerId,
   slug,
-  locale,
+  locale: _locale,
   isOwner,
   onBack,
   onDeleted,

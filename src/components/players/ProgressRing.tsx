@@ -25,7 +25,7 @@ export function computeArcOffset(
   strokeWidth: number = STROKE_WIDTH,
   borderRadius: number = BORDER_RADIUS
 ): { circumference: number; offset: number } {
-  const inset = strokeWidth / 2;
+  const _inset = strokeWidth / 2;
   const rectW = size - strokeWidth;
   const rectH = size - strokeWidth;
   const r = Math.min(borderRadius, rectW / 2, rectH / 2);

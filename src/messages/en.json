@@ -1059,7 +1059,10 @@
       "ageClassifications": "Age Classifications",
       "reviewsCategory": "Reviews",
       "reviews": "Reviews",
-      "comments": "Comments"
+      "comments": "Comments",
+      "playersCategory": "Players",
+      "achievements": "Achievements",
+      "playerAchievements": "Player Achievements"
     },
     "closeSidebar": "Close sidebar",
     "lightMode": "Light mode",
@@ -1913,6 +1916,130 @@
       "reviews": "Reviews",
       "social": "Social",
       "collections": "Collections"
+    }
+  },
+  "adminAchievements": {
+    "title": "Achievements Management",
+    "newAchievement": "New Achievement",
+    "searchPlaceholder": "Search achievement by key or name...",
+    "search": "Search",
+    "totalAchievements": "{count, plural, =0 {No achievements} one {1 achievement} other {# achievements}}",
+    "noAchievements": "No achievements found.",
+    "columns": {
+      "key": "Key",
+      "category": "Category",
+      "tier": "Tier",
+      "threshold": "Threshold",
+      "xpValue": "XP",
+      "name": "Name",
+      "actions": "Actions"
+    },
+    "sortBy": "Sort by {field}",
+    "editAchievement": "Edit {name}",
+    "deleteAchievement": "Delete {name}",
+    "page": "Page {current} of {total}",
+    "previousPage": "Previous page",
+    "nextPage": "Next page",
+    "categories": {
+      "library": "Library",
+      "playtime": "Playtime",
+      "reviews": "Reviews",
+      "social": "Social",
+      "collections": "Collections"
+    },
+    "tiers": {
+      "bronze": "Bronze",
+      "silver": "Silver",
+      "gold": "Gold"
+    },
+    "form": {
+      "key": "Key",
+      "keyPlaceholder": "e.g. first_game_added",
+      "keyDescription": "Lowercase letters, numbers and underscores. Must start with a letter.",
+      "category": "Category",
+      "categoryPlaceholder": "Select a category...",
+      "tier": "Tier",
+      "tierPlaceholder": "Select a tier...",
+      "threshold": "Threshold",
+      "thresholdPlaceholder": "e.g. 10",
+      "xpValue": "XP Value",
+      "xpValuePlaceholder": "e.g. 100",
+      "icon": "Icon",
+      "iconPlaceholder": "e.g. trophy",
+      "nameFr": "Name (FR)",
+      "nameFrPlaceholder": "Achievement name in French",
+      "nameEn": "Name (EN)",
+      "nameEnPlaceholder": "Achievement name in English",
+      "descriptionFr": "Description (FR)",
+      "descriptionFrPlaceholder": "Achievement description in French",
+      "descriptionEn": "Description (EN)",
+      "descriptionEnPlaceholder": "Achievement description in English",
+      "sortOrder": "Sort Order",
+      "sortOrderPlaceholder": "e.g. 0",
+      "create": "Create Achievement",
+      "save": "Save",
+      "backToList": "Back to achievements"
+    },
+    "createPage": {
+      "title": "New Achievement",
+      "success": "Achievement created successfully!",
+      "errorDuplicate": "An achievement with this key already exists.",
+      "errorGeneric": "An error occurred while creating the achievement."
+    },
+    "editPage": {
+      "title": "Edit Achievement",
+      "loading": "Loading achievement data...",
+      "success": "Achievement updated successfully!",
+      "notFound": "Achievement not found.",
+      "errorGeneric": "An error occurred while updating the achievement."
+    },
+    "deleteDialog": {
+      "title": "Delete Achievement",
+      "warning": "Are you sure you want to delete \"{name}\"?",
+      "irreversible": "This action is irreversible. The achievement will be permanently deleted.",
+      "usageWarning": "{count, plural, one {This achievement has been unlocked by 1 player.} other {This achievement has been unlocked by # players.}}",
+      "forceWarning": "Deleting will remove this achievement from all affected players.",
+      "confirm": "Delete",
+      "forceConfirm": "Delete anyway",
+      "cancel": "Cancel",
+      "deleting": "Deleting...",
+      "success": "Achievement deleted successfully!",
+      "errorGeneric": "An error occurred while deleting the achievement."
+    },
+    "playerManager": {
+      "title": "Player Achievements Management",
+      "searchPlayer": "Search player...",
+      "searchPlayerPlaceholder": "Username or ID...",
+      "noPlayersFound": "No players found.",
+      "selectPlayer": "Select a player",
+      "playerAchievements": "{player}'s Achievements",
+      "unlocked": "Unlocked",
+      "locked": "Locked",
+      "unlockedOn": "Unlocked on {date}",
+      "assign": "Assign",
+      "revoke": "Revoke",
+      "assignDialog": {
+        "title": "Assign Achievement",
+        "message": "Do you want to assign \"{achievement}\" to {player}?",
+        "xpInfo": "{xp} XP will be added to the player.",
+        "confirm": "Assign",
+        "cancel": "Cancel",
+        "assigning": "Assigning...",
+        "success": "Achievement assigned successfully!",
+        "errorAlreadyAssigned": "This achievement is already assigned to this player.",
+        "errorGeneric": "An error occurred while assigning the achievement."
+      },
+      "revokeDialog": {
+        "title": "Revoke Achievement",
+        "message": "Do you want to revoke \"{achievement}\" from {player}?",
+        "xpInfo": "{xp} XP will be removed from the player.",
+        "confirm": "Revoke",
+        "cancel": "Cancel",
+        "revoking": "Revoking...",
+        "success": "Achievement revoked successfully!",
+        "errorNotAssigned": "This achievement is not assigned to this player.",
+        "errorGeneric": "An error occurred while revoking the achievement."
+      }
     }
   }
 }
