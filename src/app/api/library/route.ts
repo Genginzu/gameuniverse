@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { AchievementEngine } from "@/lib/services/achievementEngine";
 import { logger } from "@/lib/logger";
 
 // Type definitions for Supabase query results
@@ -314,6 +315,13 @@ export async function POST(request: NextRequest) {
       }
       logger.error("Error adding game to library", { error });
       return NextResponse.json({ error: "Failed to add game to library" }, { status: 500 });
+    }
+
+    // Evaluate achievements (non-blocking)
+    try {
+      await AchievementEngine.evaluate(user.id, "library");
+    } catch (error) {
+      console.error("Achievement evaluation failed:", error);
     }
 
     return NextResponse.json({ success: true, data });

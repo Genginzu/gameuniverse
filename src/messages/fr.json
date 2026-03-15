@@ -451,7 +451,12 @@
       "averageRating": "Note moyenne",
       "noRating": "Aucune note",
       "library": "Bibliothèque",
-      "inLibrary": "dans la bibliothèque"
+      "inLibrary": "dans la bibliothèque",
+      "counters": {
+        "posts": "Posts",
+        "friends": "Amis",
+        "comments": "Commentaires"
+      }
     },
     "tabs": {
       "posts": "Posts",
@@ -460,6 +465,7 @@
       "friends": "Amis",
       "reviews": "Avis",
       "collections": "Collections",
+      "achievements": "Succès",
       "stats": "Statistiques",
       "recommendations": "Recommandations",
       "settings": "Paramètres"
@@ -1821,6 +1827,7 @@
     },
     "achievements": {
       "title": "Succès",
+      "level": "Niveau {level}",
       "progress": "{count} sur {total}",
       "unlocked": "Débloqué le",
       "locked": "Verrouillé",
@@ -1881,5 +1888,34 @@
     "errorFileTooLarge": "La taille maximale est de 5 Mo",
     "errorUploadFailed": "Erreur lors de l'upload. Veuillez réessayer.",
     "errorConfirmFailed": "Erreur lors de la sauvegarde. Veuillez réessayer."
+  },
+  "achievements": {
+    "unlockedOn": "Débloqué le",
+    "locked": "Verrouillé",
+    "pageTitle": "Succès",
+    "loading": "Chargement...",
+    "error": "Une erreur est survenue",
+    "empty": "Aucun succès pour le moment",
+    "backToPlayer": "Retour au profil",
+    "level": "Niveau {level}",
+    "stats": {
+      "unlocked": "{count} / {total} débloqués",
+      "xpTotal": "XP total",
+      "level": "Niveau {level}",
+      "progress": "{percent}% vers le prochain niveau"
+    },
+    "tier": {
+      "bronze": "Bronze",
+      "silver": "Argent",
+      "gold": "Or"
+    },
+    "categories": {
+      "all": "Tous",
+      "library": "Bibliothèque",
+      "playtime": "Temps de jeu",
+      "reviews": "Avis",
+      "social": "Social",
+      "collections": "Collections"
+    }
   }
 }

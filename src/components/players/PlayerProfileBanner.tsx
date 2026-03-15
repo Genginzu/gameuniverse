@@ -1,9 +1,12 @@
 "use client";
 
 import { LazyImage } from "@/components/ui/lazy-image";
-import { User } from "lucide-react";
+import { User, PenLine, Users, MessageSquare } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { PlayerProfileSocialLinks } from "./PlayerProfileSocialLinks";
+import { ProgressRing } from "./ProgressRing";
 import type { PlayerDetails } from "@/types/player";
+import type { PlayerXpStats } from "@/types/achievement";
 import type { ReactNode } from "react";
 
 interface PlayerProfileBannerProps {
@@ -12,6 +15,7 @@ interface PlayerProfileBannerProps {
   reviewCount: number;
   friendCount: number;
   commentCount: number;
+  xpStats?: PlayerXpStats | null;
   friendActionSlot?: ReactNode;
 }
 
@@ -21,6 +25,7 @@ export function PlayerProfileBanner({
   reviewCount,
   friendCount,
   commentCount,
+  xpStats,
   friendActionSlot,
 }: PlayerProfileBannerProps) {
   return (
@@ -44,10 +49,14 @@ export function PlayerProfileBanner({
         <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-gray-50 to-transparent dark:from-slate-900" />
       </div>
 
-      {/* Avatar overlapping the banner — centered, with button below */}
+      {/* Avatar overlapping the banner — centered, with ProgressRing */}
       <div className="relative z-10 mx-auto -mt-32 flex flex-col items-center">
-        <div className="relative">
-          <div className="relative h-28 w-28 overflow-hidden rounded-2xl border-4 border-white bg-gradient-to-br from-blue-100 to-indigo-100 shadow-xl dark:border-slate-800 md:h-32 md:w-32">
+        <ProgressRing
+          progressPercent={xpStats?.progressPercent ?? 0}
+          level={xpStats?.level ?? player.level}
+          size={140}
+        >
+          <div className="relative h-[132px] w-[132px] overflow-hidden rounded-xl bg-gradient-to-br from-blue-100 to-indigo-100 shadow-xl">
             {player.avatarUrl ? (
               <LazyImage
                 src={player.avatarUrl}
@@ -64,13 +73,7 @@ export function PlayerProfileBanner({
               </div>
             )}
           </div>
-          {/* Level badge */}
-          {player.level > 0 && (
-            <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-indigo-600 px-2.5 py-0.5 text-xs font-bold text-white shadow">
-              {player.level}
-            </span>
-          )}
-        </div>
+        </ProgressRing>
         {/* Friend action button — centered under avatar */}
         {friendActionSlot && <div className="mt-3">{friendActionSlot}</div>}
       </div>
@@ -78,15 +81,8 @@ export function PlayerProfileBanner({
       {/* Info row: stats | name | social links */}
       <div className="container mx-auto px-4 pb-4 pt-2">
         <div className="flex flex-col items-center gap-4 md:flex-row md:items-center md:justify-between">
-          {/* Left: counters */}
-          <ProfileCounters
-            reviewCount={reviewCount}
-            friendCount={friendCount}
-            commentCount={commentCount}
-          />
-
-          {/* Center: name + username */}
-          <div className="text-center">
+          {/* Left: name + username */}
+          <div className="text-center md:text-left">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white md:text-3xl">
               {displayName}
             </h1>
@@ -94,6 +90,13 @@ export function PlayerProfileBanner({
               <p className="text-sm text-gray-500 dark:text-slate-400">@{player.fullName}</p>
             )}
           </div>
+
+          {/* Center: counters */}
+          <ProfileCounters
+            reviewCount={reviewCount}
+            friendCount={friendCount}
+            commentCount={commentCount}
+          />
 
           {/* Right: social links */}
           <PlayerProfileSocialLinks socialLinks={player.socialLinks} />
@@ -103,7 +106,7 @@ export function PlayerProfileBanner({
   );
 }
 
-/** Small stat counter block (posts / friends / comments) */
+/** Glassmorphism stat counters with icons */
 function ProfileCounters({
   reviewCount,
   friendCount,
@@ -113,20 +116,24 @@ function ProfileCounters({
   friendCount: number;
   commentCount: number;
 }) {
+  const t = useTranslations("players.details.counters");
+
   const counters = [
-    { value: reviewCount, label: "POSTS" },
-    { value: friendCount, label: "FRIEND" },
-    { value: commentCount, label: "COMMENTS" },
+    { value: reviewCount, label: t("posts"), icon: PenLine },
+    { value: friendCount, label: t("friends"), icon: Users },
+    { value: commentCount, label: t("comments"), icon: MessageSquare },
   ];
 
   return (
-    <div className="flex gap-6">
+    <div className="flex gap-3">
       {counters.map((c) => (
-        <div key={c.label} className="text-center">
-          <p className="text-lg font-bold text-gray-900 dark:text-white">{c.value}</p>
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-500 dark:text-slate-400">
-            {c.label}
-          </p>
+        <div
+          key={c.label}
+          className="flex items-center gap-2 rounded-xl bg-white/40 px-3 py-2 backdrop-blur-sm transition-all duration-300 hover:bg-white/60 dark:bg-slate-800/40 dark:hover:bg-slate-700/50"
+        >
+          <c.icon className="h-4 w-4 text-purple-500 dark:text-purple-400" />
+          <span className="text-sm font-bold text-gray-900 dark:text-white">{c.value}</span>
+          <span className="text-xs text-gray-500 dark:text-slate-400">{c.label}</span>
         </div>
       ))}
     </div>

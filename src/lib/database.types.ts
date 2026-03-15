@@ -911,7 +911,9 @@ export type Database = {
           email: string;
           username: string | null;
           id: string;
+          level: number | null;
           preferred_locale: string | null;
+          social_links: Json | null;
           stats_private: boolean;
           updated_at: string | null;
         };
@@ -922,7 +924,9 @@ export type Database = {
           email: string;
           username?: string | null;
           id: string;
+          level?: number | null;
           preferred_locale?: string | null;
+          social_links?: Json | null;
           stats_private?: boolean;
           updated_at?: string | null;
         };
@@ -933,7 +937,9 @@ export type Database = {
           email?: string;
           username?: string | null;
           id?: string;
+          level?: number | null;
           preferred_locale?: string | null;
+          social_links?: Json | null;
           stats_private?: boolean;
           updated_at?: string | null;
         };
@@ -1114,6 +1120,213 @@ export type Database = {
           },
           {
             foreignKeyName: "user_library_game_id_fkey";
+            columns: ["game_id"];
+            isOneToOne: false;
+            referencedRelation: "games";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      achievement_catalog: {
+        Row: {
+          id: string;
+          key: string;
+          category: string;
+          tier: string;
+          threshold: number;
+          xp_value: number;
+          icon: string;
+          name_fr: string;
+          name_en: string;
+          description_fr: string;
+          description_en: string;
+          sort_order: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          key: string;
+          category: string;
+          tier: string;
+          threshold: number;
+          xp_value: number;
+          icon: string;
+          name_fr: string;
+          name_en: string;
+          description_fr: string;
+          description_en: string;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          key?: string;
+          category?: string;
+          tier?: string;
+          threshold?: number;
+          xp_value?: number;
+          icon?: string;
+          name_fr?: string;
+          name_en?: string;
+          description_fr?: string;
+          description_en?: string;
+          sort_order?: number;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
+      player_achievements: {
+        Row: {
+          id: string;
+          user_id: string;
+          achievement_key: string;
+          unlocked_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          achievement_key: string;
+          unlocked_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          achievement_key?: string;
+          unlocked_at?: string;
+        };
+        Relationships: [];
+      };
+      player_xp: {
+        Row: {
+          id: string;
+          user_id: string;
+          xp_total: number;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          xp_total?: number;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          xp_total?: number;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      game_sessions: {
+        Row: {
+          id: string;
+          user_id: string;
+          game_id: string;
+          started_at: string;
+          ended_at: string;
+          duration_minutes: number;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          game_id: string;
+          started_at: string;
+          ended_at: string;
+          duration_minutes?: number;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          game_id?: string;
+          started_at?: string;
+          ended_at?: string;
+          duration_minutes?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "game_sessions_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "game_sessions_game_id_fkey";
+            columns: ["game_id"];
+            isOneToOne: false;
+            referencedRelation: "games";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      game_collections: {
+        Row: {
+          id: string;
+          user_id: string;
+          name: string;
+          slug: string;
+          description: string | null;
+          is_public: boolean | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          name: string;
+          slug: string;
+          description?: string | null;
+          is_public?: boolean | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          name?: string;
+          slug?: string;
+          description?: string | null;
+          is_public?: boolean | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      game_collection_items: {
+        Row: {
+          id: string;
+          collection_id: string;
+          game_id: string;
+          position: number;
+          note: string | null;
+          added_at: string;
+        };
+        Insert: {
+          id?: string;
+          collection_id: string;
+          game_id: string;
+          position?: number;
+          note?: string | null;
+          added_at?: string;
+        };
+        Update: {
+          id?: string;
+          collection_id?: string;
+          game_id?: string;
+          position?: number;
+          note?: string | null;
+          added_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "game_collection_items_collection_id_fkey";
+            columns: ["collection_id"];
+            isOneToOne: false;
+            referencedRelation: "game_collections";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "game_collection_items_game_id_fkey";
             columns: ["game_id"];
             isOneToOne: false;
             referencedRelation: "games";

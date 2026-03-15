@@ -10,6 +10,7 @@ import { FriendsTab } from "./FriendsTab";
 import { PlayerReviewsFeed } from "./PlayerReviewsFeed";
 import { StatsDashboard } from "@/components/players/stats/StatsDashboard";
 import { SettingsContent } from "@/components/settings/SettingsContent";
+import { AchievementsPageContent } from "@/components/achievements/AchievementsPageContent";
 import type { ProfileTab } from "./PlayerProfileTabs";
 import type { PlayerDetails } from "@/types/player";
 import type { User } from "@supabase/supabase-js";
@@ -59,6 +60,8 @@ export function PlayerTabContent({
       );
     case "collections":
       return <PlayerCollectionsFeed playerId={player.id} locale={locale} isOwner={isOwner} />;
+    case "achievements":
+      return <AchievementsPageContent playerId={player.id} />;
     case "activity":
       return <ActivityFeed playerId={player.id} locale={locale} />;
     case "friends":

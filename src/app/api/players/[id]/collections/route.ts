@@ -3,6 +3,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { PlayerService } from "@/lib/services/playerService";
 import { PlayerCollectionsServerService } from "@/lib/services/playerCollectionsServerService";
 import { fetchCollections, createCollection } from "@/lib/services/collectionService";
+import { AchievementEngine } from "@/lib/services/achievementEngine";
 import { createCollectionSchema } from "@/lib/validations/collection";
 import { logger } from "@/lib/logger";
 import type { CollectionSortOption, PlayerCollectionsResponse } from "@/types/playerCollection";
@@ -183,6 +184,13 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     }
 
     const result = await createCollection(user.id, parsed.data);
+
+    // Evaluate achievements (non-blocking)
+    try {
+      await AchievementEngine.evaluate(user.id, "collections");
+    } catch (error) {
+      console.error("Achievement evaluation failed:", error);
+    }
 
     return NextResponse.json({ collection: result }, { status: 201 });
   } catch (error) {

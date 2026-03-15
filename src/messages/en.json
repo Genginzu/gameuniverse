@@ -451,7 +451,12 @@
       "averageRating": "Average rating",
       "noRating": "No rating",
       "library": "Library",
-      "inLibrary": "in library"
+      "inLibrary": "in library",
+      "counters": {
+        "posts": "Posts",
+        "friends": "Friends",
+        "comments": "Comments"
+      }
     },
     "tabs": {
       "posts": "Posts",
@@ -460,6 +465,7 @@
       "friends": "Friends",
       "reviews": "Reviews",
       "collections": "Collections",
+      "achievements": "Achievements",
       "stats": "Stats",
       "recommendations": "Recommendations",
       "settings": "Settings"
@@ -1818,6 +1824,7 @@
     },
     "achievements": {
       "title": "Achievements",
+      "level": "Level {level}",
       "progress": "{count} of {total}",
       "unlocked": "Unlocked on",
       "locked": "Locked",
@@ -1878,5 +1885,34 @@
     "errorFileTooLarge": "Maximum file size is 5 MB",
     "errorUploadFailed": "Upload failed. Please try again.",
     "errorConfirmFailed": "Save failed. Please try again."
+  },
+  "achievements": {
+    "unlockedOn": "Unlocked on",
+    "locked": "Locked",
+    "pageTitle": "Achievements",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "empty": "No achievements yet",
+    "backToPlayer": "Back to profile",
+    "level": "Level {level}",
+    "stats": {
+      "unlocked": "{count} / {total} unlocked",
+      "xpTotal": "Total XP",
+      "level": "Level {level}",
+      "progress": "{percent}% to next level"
+    },
+    "tier": {
+      "bronze": "Bronze",
+      "silver": "Silver",
+      "gold": "Gold"
+    },
+    "categories": {
+      "all": "All",
+      "library": "Library",
+      "playtime": "Playtime",
+      "reviews": "Reviews",
+      "social": "Social",
+      "collections": "Collections"
+    }
   }
 }

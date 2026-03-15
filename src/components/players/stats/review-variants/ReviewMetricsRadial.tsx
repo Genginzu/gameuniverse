@@ -76,7 +76,7 @@ export function ReviewMetricsRadial({ analytics, locale }: Props) {
   const t = useTranslations("playerStats");
 
   const fmt = (v: number | null | undefined) =>
-    v != null ? formatLocalizedNumber(Math.round(v * 10) / 10, locale) : "—";
+    v !== null && v !== undefined ? formatLocalizedNumber(Math.round(v * 10) / 10, locale) : "—";
 
   /* Max dynamique pour Total avis : arrondi à la dizaine supérieure, min 10 */
   const totalMax = Math.max(10, Math.ceil(analytics.totalReviews / 10) * 10);

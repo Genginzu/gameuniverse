@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { FriendServerService } from "@/lib/services/friendServerService";
+import { AchievementEngine } from "@/lib/services/achievementEngine";
 import { logger } from "@/lib/logger";
 
 type RouteContext = { params: Promise<{ id: string; friendshipId: string }> };
@@ -24,6 +25,13 @@ export async function PATCH(_request: NextRequest, { params }: RouteContext) {
     }
 
     const updated = await FriendServerService.acceptRequest(friendshipId, user.id);
+
+    // Evaluate achievements for both users (non-blocking)
+    try {
+      await AchievementEngine.evaluate(user.id, "social");
+    } catch (error) {
+      console.error("Achievement evaluation failed:", error);
+    }
 
     return NextResponse.json(updated);
   } catch (error: unknown) {

@@ -12,6 +12,7 @@ import {
   BarChart3,
   Globe,
   Settings,
+  Trophy,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -23,6 +24,7 @@ export type ProfileTab =
   | "friends"
   | "reviews"
   | "collections"
+  | "achievements"
   | "stats"
   | "recommendations"
   | "settings";
@@ -44,6 +46,7 @@ const TAB_DEFINITIONS: {
   { id: "friends", icon: Users },
   { id: "reviews", icon: BookOpen },
   { id: "collections", icon: FolderOpen },
+  { id: "achievements", icon: Trophy },
   { id: "stats", icon: BarChart3 },
   { id: "recommendations", icon: Globe, ownerOnly: true },
   { id: "settings", icon: Settings, ownerOnly: true },

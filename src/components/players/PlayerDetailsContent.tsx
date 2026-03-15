@@ -8,6 +8,7 @@ import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useFriends } from "@/hooks/useFriends";
 import { PlayerProfileBanner } from "./PlayerProfileBanner";
+import type { PlayerXpStats } from "@/types/achievement";
 import { PlayerProfileTabs, type ProfileTab } from "./PlayerProfileTabs";
 import { PlayerTabContent } from "./PlayerTabContent";
 import { FriendActionButton } from "./FriendActionButton";
@@ -48,6 +49,17 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
 
   const [activeTab, setActiveTab] = useState<ProfileTab>("posts");
 
+  // Fetch XP stats for the ProgressRing (Req 5.4, 5.5)
+  const [xpStats, setXpStats] = useState<PlayerXpStats | null>(null);
+  useEffect(() => {
+    fetch(`/api/players/${player.id}/xp`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((json: PlayerXpStats | null) => {
+        if (json) setXpStats(json);
+      })
+      .catch(() => {});
+  }, [player.id]);
+
   // Fetch available years for the year-in-review link (Req 7.1)
   const [availableYears, setAvailableYears] = useState<number[]>([]);
   useEffect(() => {
@@ -87,6 +99,7 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
         reviewCount={player.stats.totalGames}
         friendCount={friendCount}
         commentCount={0}
+        xpStats={xpStats}
         friendActionSlot={
           <FriendActionButton
             playerId={player.id}

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { reviewSchema } from "@/lib/validations/review";
+import { AchievementEngine } from "@/lib/services/achievementEngine";
 import type { Review, ReviewsResponse, VoteType } from "@/types/review";
 import {
   fetchVoteCountsMap,
@@ -273,6 +274,13 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     } catch {
       // Library addition is non-blocking — log and continue
       logger.warn("Could not add game to library (may already exist)");
+    }
+
+    // Evaluate achievements (non-blocking)
+    try {
+      await AchievementEngine.evaluate(user.id, "reviews");
+    } catch (error) {
+      console.error("Achievement evaluation failed:", error);
     }
 
     return NextResponse.json({ success: true, review }, { status: 201 });

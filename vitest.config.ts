@@ -26,6 +26,7 @@ const HOOK_TESTS_NEEDING_DOM = [
   "test/unit/hooks/usePriceHistory.test.ts",
   "test/unit/hooks/useSearchOverlay.test.ts",
   "test/unit/hooks/usePendingRequestCount.test.ts",
+  "test/unit/hooks/useAchievements.test.ts",
   "test/setup.test.ts",
 ];
 
