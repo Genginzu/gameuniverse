@@ -241,7 +241,8 @@
     "accountInfoDesc": "Détails de votre profil",
     "logout": "Déconnexion",
     "mySpace": "Mon espace",
-    "friends": "Amis"
+    "friends": "Amis",
+    "discussions": "Discussions"
   },
   "common": {
     "loading": "Chargement...",
@@ -2044,5 +2045,22 @@
         "errorGeneric": "Une erreur est survenue lors du retrait du succès."
       }
     }
+  },
+  "discussions": {
+    "pageTitle": "Discussions",
+    "conversations": "Conversations",
+    "newConversation": "Nouvelle conversation",
+    "noConversations": "Aucune conversation. Démarrez une discussion avec un ami !",
+    "noMessages": "Aucun message",
+    "sentAt": "Envoyé à {time}",
+    "inputPlaceholder": "Écrivez un message...",
+    "send": "Envoyer",
+    "messageEmpty": "Le message ne peut pas être vide",
+    "messageTooLong": "Le message ne doit pas dépasser {max} caractères",
+    "loadMore": "Charger plus",
+    "searchFriends": "Rechercher un ami...",
+    "noFriendsFound": "Aucun ami trouvé",
+    "selectConversation": "Sélectionnez une conversation pour commencer à discuter",
+    "startConversation": "Démarrer une conversation"
   }
 }

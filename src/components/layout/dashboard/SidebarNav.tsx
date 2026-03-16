@@ -3,6 +3,8 @@
 import { Link, usePathname } from "@/i18n/navigation";
 import { NAV_LINKS, PUBLIC_LINKS, isActive } from "@/lib/utils/navigation-utils";
 import { useTranslations } from "next-intl";
+import UnreadBadge from "@/components/discussions/UnreadBadge";
+import { useUnreadCount } from "@/hooks/useUnreadCount";
 
 interface SidebarNavProps {
   isAuthenticated?: boolean;
@@ -18,6 +20,7 @@ export default function SidebarNav({
   const t = useTranslations("dashboard");
   const tNav = useTranslations("navigation");
   const pathname = usePathname();
+  const { count: unreadCount } = useUnreadCount();
 
   const linkClasses = (active: boolean) =>
     `group flex items-center rounded-lg px-3 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-neon-violet/60 focus:ring-offset-1 focus:ring-offset-transparent motion-safe:transition-all motion-safe:duration-200 ${
@@ -61,6 +64,7 @@ export default function SidebarNav({
               <Link key={href} href={href} onClick={onLinkClick} className={linkClasses(active)}>
                 <Icon className={iconClasses(active)} />
                 <span>{t(labelKey)}</span>
+                {href === "/discussions" && <UnreadBadge count={unreadCount} />}
               </Link>
             );
           })}

@@ -29,6 +29,8 @@ const HOOK_TESTS_NEEDING_DOM = [
   "test/unit/hooks/useAchievements.test.ts",
   "test/unit/hooks/useAdminAchievements.test.ts",
   "test/unit/hooks/usePlayerAchievementManager.test.ts",
+  "test/unit/hooks/useDiscussions.test.ts",
+  "test/unit/hooks/useUnreadCount.test.ts",
   "test/setup.test.ts",
 ];
 

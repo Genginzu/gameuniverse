@@ -241,7 +241,8 @@
     "accountInfoDesc": "Your profile details",
     "logout": "Logout",
     "mySpace": "My Space",
-    "friends": "Friends"
+    "friends": "Friends",
+    "discussions": "Messages"
   },
   "common": {
     "loading": "Loading...",
@@ -2041,5 +2042,22 @@
         "errorGeneric": "An error occurred while revoking the achievement."
       }
     }
+  },
+  "discussions": {
+    "pageTitle": "Messages",
+    "conversations": "Conversations",
+    "newConversation": "New conversation",
+    "noConversations": "No conversations yet. Start chatting with a friend!",
+    "noMessages": "No messages yet",
+    "sentAt": "Sent at {time}",
+    "inputPlaceholder": "Type a message...",
+    "send": "Send",
+    "messageEmpty": "Message cannot be empty",
+    "messageTooLong": "Message must not exceed {max} characters",
+    "loadMore": "Load more",
+    "searchFriends": "Search for a friend...",
+    "noFriendsFound": "No friends found",
+    "selectConversation": "Select a conversation to start chatting",
+    "startConversation": "Start a conversation"
   }
 }

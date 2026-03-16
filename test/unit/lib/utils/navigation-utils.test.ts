@@ -6,8 +6,8 @@ import { isActive, NAV_LINKS, PUBLIC_LINKS } from "@/lib/utils/navigation-utils"
 // =============================================================================
 
 describe("NAV_LINKS", () => {
-  it("contains exactly 3 links", () => {
-    expect(NAV_LINKS).toHaveLength(3);
+  it("contains exactly 4 links", () => {
+    expect(NAV_LINKS).toHaveLength(4);
   });
 
   it("each link has href, icon, and labelKey", () => {
