@@ -73,51 +73,56 @@ export function GameDetailsTabMusic({ music, colors }: GameDetailsTabMusicProps)
         </Card>
       )}
 
-      {/* Spotify embed */}
-      {music.spotifyEmbedUrl && (
-        <Card className="rounded-xl border-white/10 bg-white/5 shadow-lg shadow-black/20 backdrop-blur-xl">
-          <CardContent className="p-6">
-            <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-white">
-              <Music className="h-5 w-5" style={{ color: colors.accent }} />
-              {tDetails("music.soundtrack")}
-            </h3>
-            <div className="overflow-hidden rounded-xl">
-              <iframe
-                src={getSpotifyEmbedSrc(music.spotifyEmbedUrl)}
-                width="100%"
-                height="352"
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                loading="lazy"
-                title={tDetails("music.spotifyPlayer")}
-                className="border-0"
-              />
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      {/* Spotify + YouTube side by side (stacked on mobile) */}
+      {(music.spotifyEmbedUrl || music.youtubeVideoUrl) && (
+        <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
+          {/* Spotify embed */}
+          {music.spotifyEmbedUrl && (
+            <Card className="rounded-xl border-white/10 bg-white/5 shadow-lg shadow-black/20 backdrop-blur-xl">
+              <CardContent className="p-6">
+                <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-white">
+                  <Music className="h-5 w-5" style={{ color: colors.accent }} />
+                  {tDetails("music.soundtrack")}
+                </h3>
+                <div className="overflow-hidden rounded-xl">
+                  <iframe
+                    src={getSpotifyEmbedSrc(music.spotifyEmbedUrl)}
+                    width="100%"
+                    height="500"
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                    loading="lazy"
+                    title={tDetails("music.spotifyPlayer")}
+                    className="border-0"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
-      {/* YouTube video */}
-      {music.youtubeVideoUrl && (
-        <Card className="rounded-xl border-white/10 bg-white/5 shadow-lg shadow-black/20 backdrop-blur-xl">
-          <CardContent className="p-6">
-            <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-white">
-              <Youtube className="h-5 w-5" style={{ color: colors.accent }} />
-              {tDetails("music.youtubeVideo")}
-            </h3>
-            <div className="aspect-video overflow-hidden rounded-xl">
-              <iframe
-                src={getYoutubeEmbedSrc(music.youtubeVideoUrl)}
-                width="100%"
-                height="100%"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                loading="lazy"
-                title={tDetails("music.youtubePlayer")}
-                className="border-0"
-              />
-            </div>
-          </CardContent>
-        </Card>
+          {/* YouTube video */}
+          {music.youtubeVideoUrl && (
+            <Card className="rounded-xl border-white/10 bg-white/5 shadow-lg shadow-black/20 backdrop-blur-xl">
+              <CardContent className="p-6">
+                <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-white">
+                  <Youtube className="h-5 w-5" style={{ color: colors.accent }} />
+                  {tDetails("music.youtubeVideo")}
+                </h3>
+                <div className="aspect-video overflow-hidden rounded-xl">
+                  <iframe
+                    src={getYoutubeEmbedSrc(music.youtubeVideoUrl)}
+                    width="100%"
+                    height="100%"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    loading="lazy"
+                    title={tDetails("music.youtubePlayer")}
+                    className="border-0"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
       )}
     </div>
   );
