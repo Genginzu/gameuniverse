@@ -71,9 +71,9 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "gameuniverse-uploads.s3.eu-west-3.amazonaws.com",
+        hostname: "kwlomzswurveyywcoivy.supabase.co",
         port: "",
-        pathname: "/public/**",
+        pathname: "/storage/v1/object/public/**",
       },
     ],
     formats: ["image/webp", "image/avif"],

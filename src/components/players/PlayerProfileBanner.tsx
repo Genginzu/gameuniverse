@@ -45,8 +45,6 @@ export function PlayerProfileBanner({
         ) : (
           <div className="h-full w-full bg-gradient-to-r from-indigo-600/40 via-purple-600/40 to-pink-600/40" />
         )}
-        {/* Subtle bottom fade into the info section */}
-        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-gray-50 to-transparent dark:from-slate-900" />
       </div>
 
       {/* Avatar overlapping the banner — centered, with ProgressRing */}
