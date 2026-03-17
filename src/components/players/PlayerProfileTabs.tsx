@@ -101,7 +101,10 @@ export function PlayerProfileTabs({ activeTab, onTabChange, isOwner }: PlayerPro
             >
               <Icon className="h-5 w-5" />
               {isActive && (
-                <span className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-cyan-600 dark:bg-cyan-400" />
+                <>
+                  <span className="ml-2 hidden text-sm font-medium md:inline">{label}</span>
+                  <span className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-cyan-600 dark:bg-cyan-400" />
+                </>
               )}
             </button>
           );

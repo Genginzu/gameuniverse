@@ -89,6 +89,9 @@ export function useGameForm(
       prices: [],
       genres: [],
       companies: [],
+      music_composer: "",
+      music_spotify_embed_url: "",
+      music_youtube_video_url: "",
     },
   });
 
@@ -240,6 +243,11 @@ export function useGameForm(
             store_url: p.store_url || null,
             is_available: p.is_available,
           })),
+          music: {
+            composer: data.music_composer || null,
+            spotify_embed_url: data.music_spotify_embed_url || null,
+            youtube_video_url: data.music_youtube_video_url || null,
+          },
         };
 
         const res = await fetch(url, {

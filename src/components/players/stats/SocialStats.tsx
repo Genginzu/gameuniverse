@@ -5,6 +5,7 @@ import { Users, MessageCircle, Heart, FolderOpen } from "lucide-react";
 import type { SocialStatsData } from "@/types/dashboard-stats";
 import { formatLocalizedNumber } from "@/lib/utils/statsFormatters";
 import { StatsEmptyState } from "@/components/players/stats/StatsEmptyState";
+import { StatsSectionTitle } from "@/components/players/stats/StatsSectionTitle";
 import type { ReactNode } from "react";
 
 interface SocialStatsProps {
@@ -47,9 +48,7 @@ export function SocialStats({ social, locale }: SocialStatsProps) {
   if (isEmpty) {
     return (
       <section>
-        <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
-          {t("social.title")}
-        </h3>
+        <StatsSectionTitle>{t("social.title")}</StatsSectionTitle>
         <StatsEmptyState icon={<Users className="h-8 w-8" />} message={t("social.empty")} />
       </section>
     );
@@ -84,9 +83,7 @@ export function SocialStats({ social, locale }: SocialStatsProps) {
 
   return (
     <section>
-      <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
-        {t("social.title")}
-      </h3>
+      <StatsSectionTitle>{t("social.title")}</StatsSectionTitle>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {cards.map((card) => (
           <SocialMetricCard key={card.label} {...card} />

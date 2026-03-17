@@ -100,6 +100,12 @@ export interface GamePlaytime {
   lastUpdated?: string;
 }
 
+export interface GameMusic {
+  composer?: string;
+  spotifyEmbedUrl?: string;
+  youtubeVideoUrl?: string;
+}
+
 /** Temps de jeu d'un joueur (3 catégories IGDB) */
 export interface PlayerPlaytimeEntry {
   hastily: number | null;
@@ -181,6 +187,7 @@ export interface GameDetails {
   pricing: GamePricing[];
   languages?: GameLanguage[];
   playtime?: GamePlaytime | null;
+  music?: GameMusic | null;
   createdAt: string;
   updatedAt: string;
   igdbId?: number;

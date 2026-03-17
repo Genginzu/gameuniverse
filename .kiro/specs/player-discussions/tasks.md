@@ -176,22 +176,22 @@ Chaque tâche construit sur la précédente : schéma DB → types/validation �
     - Sidebar : "Discussions" (fr) / "Messages" (en)
     - _Requirements: 1.3, 8.1, 8.2, 8.3_
 
-- [ ] 9. Checkpoint final — Vérification complète
+- [x] 9. Checkpoint final — Vérification complète
   - Ensure all tests pass, ask the user if questions arise.
 
 - [ ] 10. Lint du code
-  - [ ] 10.1 Exécuter `bun run lint`
-  - [ ] 10.2 Vérifier qu'il n'y a pas d'erreurs ni de warnings de lint
-  - [ ] 10.3 Corriger les erreurs et warnings de lint si nécessaire
+  - [x] 10.1 Exécuter `bun run lint`
+  - [x] 10.2 Vérifier qu'il n'y a pas d'erreurs ni de warnings de lint
+  - [x] 10.3 Corriger les erreurs et warnings de lint si nécessaire
 
 - [ ] 11. Build de production
-  - [ ] 11.1 Exécuter `bun run build`
-  - [ ] 11.2 Vérifier qu'il n'y a pas d'erreurs de compilation
-  - [ ] 11.3 Corriger les erreurs de build si nécessaire
+  - [x] 11.1 Exécuter `bun run build`
+  - [x] 11.2 Vérifier qu'il n'y a pas d'erreurs de compilation
+  - [x] 11.3 Corriger les erreurs de build si nécessaire
 
 - [ ] 12. README de la fonctionnalité
-  - [ ] 12.1 Créer `docs/README_player-discussions.md`
-  - [ ] 12.2 Documenter : description, accès (route /discussions, sidebar), prérequis (amitié acceptée), utilisation (conversations, envoi de messages, badge non lus)
+  - [x] 12.1 Créer `docs/README_player-discussions.md`
+  - [x] 12.2 Documenter : description, accès (route /discussions, sidebar), prérequis (amitié acceptée), utilisation (conversations, envoi de messages, badge non lus)
 
 ## Notes
 

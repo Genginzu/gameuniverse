@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import type { DashboardStatsResponse } from "@/types/dashboard-stats";
+import { StatsSectionTitle } from "@/components/players/stats/StatsSectionTitle";
 import { StatsOverviewCards } from "@/components/players/stats/StatsOverviewCards";
 import { GenreDistributionChart } from "@/components/players/stats/GenreDistributionChart";
 import { CompletionTracker } from "@/components/players/stats/CompletionTracker";
@@ -68,11 +69,7 @@ export function StatsDashboard({
     fetchStats();
   }, [fetchStats, isOwnProfile, statsPrivate]);
 
-  const title = (
-    <h2 className="mb-4 flex items-center gap-2 text-2xl font-bold text-gray-900 dark:text-white">
-      {t("dashboard.title")}
-    </h2>
-  );
+  const title = <StatsSectionTitle>{t("dashboard.title")}</StatsSectionTitle>;
 
   if (state.status === "private") {
     return (

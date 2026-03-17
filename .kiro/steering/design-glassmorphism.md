@@ -58,6 +58,27 @@ Le projet utilise des couleurs néon comme accents :
 - Utiliser `bg-gradient-to-br from-neon-violet to-neon-cyan` pour les accents
   forts
 
+## Gradient principal (obligatoire)
+
+Lorsqu'un gradient est utilisé (bannières, boutons d'accent, barres de
+progression, badges, etc.), il **doit** reprendre le gradient du header
+(`.topbar` dans `globals.css`) :
+
+```css
+/* Light */
+background: linear-gradient(135deg, #615dfa 0%, #5b36d4 50%, #7c5cfc 100%);
+
+/* Dark */
+background: linear-gradient(135deg, #4a3fcf 0%, #3d1fa8 50%, #5b3fd4 100%);
+
+/* Équivalent Tailwind (approximation) */
+bg-gradient-to-r from-[#615dfa] via-[#5b36d4] to-[#7c5cfc]
+```
+
+- ✅ Utiliser ce gradient comme référence unique pour tout nouvel élément.
+- ❌ Ne **jamais** inventer un gradient custom différent (ex : rouge-orange,
+  vert-jaune, bleu→violet, etc.) sans validation explicite.
+
 ## Règles obligatoires
 
 - ✅ Toujours supporter le **dark mode** (`dark:` prefix Tailwind).

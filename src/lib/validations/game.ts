@@ -153,6 +153,13 @@ export const gameLanguageSchema = z.object({
   has_interface: z.boolean().default(false),
 });
 
+// Music validation schema
+export const gameMusicSchema = z.object({
+  composer: z.string().max(500).optional().nullable(),
+  spotify_embed_url: z.string().url("Invalid Spotify URL").optional().nullable(),
+  youtube_video_url: z.string().url("Invalid YouTube URL").optional().nullable(),
+});
+
 // Complete game creation schema
 export const createGameSchema = z.object({
   game: gameBaseSchema,
@@ -166,6 +173,7 @@ export const createGameSchema = z.object({
   age_ratings: z.array(gameRatingLinkSchema).optional(),
   versions: z.array(gameVersionSchema).optional(),
   languages: z.array(gameLanguageSchema).optional(),
+  music: gameMusicSchema.optional(),
 });
 
 // Game update schema (all fields optional except ID)
@@ -182,6 +190,7 @@ export const updateGameSchema = z.object({
   age_ratings: z.array(gameRatingLinkSchema).optional(),
   versions: z.array(gameVersionSchema).optional(),
   languages: z.array(gameLanguageSchema).optional(),
+  music: gameMusicSchema.optional(),
 });
 
 // Bulk operations schema

@@ -27,6 +27,9 @@ const FIELD_TO_TAB: Record<string, TabId> = {
   versions: "versions",
   languages: "languages",
   prices: "pricing",
+  music_composer: "music",
+  music_spotify_embed_url: "music",
+  music_youtube_video_url: "music",
 };
 
 /** Human-readable tab labels (used as fallback, actual labels come from i18n) */
@@ -41,6 +44,7 @@ const TAB_LABELS: Record<TabId, string> = {
   versions: "Versions",
   languages: "Languages",
   pricing: "Pricing",
+  music: "Music",
   sync: "Sync",
 };
 

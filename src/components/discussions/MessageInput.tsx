@@ -74,7 +74,7 @@ export default function MessageInput({ onSend, isSending, maxLength }: MessageIn
           type="button"
           onClick={handleSend}
           disabled={isSending}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-neon-violet to-neon-cyan text-white shadow-[0_0_8px_rgba(139,92,246,0.4),0_0_16px_rgba(6,182,212,0.2)] transition-all duration-300 hover:opacity-90 disabled:opacity-50"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 via-purple-600 to-purple-700 text-white shadow-lg transition-all duration-300 hover:opacity-90 disabled:opacity-50"
           data-testid="message-send-button"
           aria-label={t("send")}
         >

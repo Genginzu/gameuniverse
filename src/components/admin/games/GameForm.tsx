@@ -17,6 +17,7 @@ import {
   FaDollarSign,
   FaPaintBrush,
   FaSync,
+  FaMusic,
 } from "react-icons/fa";
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
 import {
@@ -69,6 +70,7 @@ const BASE_TABS: Tab[] = [
   { id: "versions", icon: <FaBoxes className="h-3.5 w-3.5" />, labelKey: "versions" },
   { id: "languages", icon: <FaLanguage className="h-3.5 w-3.5" />, labelKey: "gameLanguages" },
   { id: "pricing", icon: <FaDollarSign className="h-3.5 w-3.5" />, labelKey: "pricing" },
+  { id: "music", icon: <FaMusic className="h-3.5 w-3.5" />, labelKey: "music" },
 ];
 
 const SYNC_TAB: Tab = {
@@ -223,6 +225,14 @@ export function GameForm({
       ["versions", !!errors.versions],
       ["languages", !!errors.languages],
       ["pricing", !!errors.prices],
+      [
+        "music",
+        !!(
+          errors.music_composer ||
+          errors.music_spotify_embed_url ||
+          errors.music_youtube_video_url
+        ),
+      ],
     ];
     const firstError = tabErrorMap.find(([, hasError]) => hasError);
     if (firstError) setActiveTab(firstError[0]);

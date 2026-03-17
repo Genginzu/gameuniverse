@@ -24,7 +24,6 @@ export default function ConversationItem({
   const { friend, lastMessage, unreadCount } = conversation;
 
   const preview = lastMessage ? truncatePreview(lastMessage.content, 80) : t("noMessages");
-
   const timestamp = lastMessage ? formatMessageDate(lastMessage.createdAt) : null;
 
   return (
@@ -33,13 +32,13 @@ export default function ConversationItem({
       onClick={() => onSelect(conversation.id)}
       className={`flex w-full items-center gap-3 rounded-xl p-3 text-left transition-all duration-300 ${
         isSelected
-          ? "border-l-2 border-neon-violet bg-white/60 dark:bg-slate-700/60"
-          : "cursor-pointer hover:bg-white/60 dark:hover:bg-slate-700/60"
+          ? "bg-gradient-to-r from-blue-500/15 via-purple-600/10 to-purple-700/10 shadow-[inset_0_0_0_1px_rgba(139,92,246,0.3)]"
+          : "cursor-pointer hover:bg-white/40 dark:hover:bg-slate-700/40"
       }`}
       data-testid="conversation-item"
     >
       {/* Avatar */}
-      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30">
+      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-gradient-to-br from-blue-500/20 via-purple-600/20 to-purple-700/20">
         {friend.avatarUrl ? (
           <LazyImage
             src={friend.avatarUrl}
@@ -51,7 +50,7 @@ export default function ConversationItem({
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
-            <User className="h-5 w-5 text-blue-300" />
+            <User className="h-5 w-5 text-neon-violet/70" />
           </div>
         )}
       </div>
@@ -63,13 +62,21 @@ export default function ConversationItem({
             {friend.displayName}
           </p>
           {timestamp && (
-            <span className="shrink-0 text-[11px] text-slate-500 dark:text-slate-400">
+            <span className="shrink-0 text-[11px] text-slate-400 dark:text-slate-500">
               {timestamp}
             </span>
           )}
         </div>
         <div className="flex items-center justify-between gap-2">
-          <p className="truncate text-xs text-slate-500 dark:text-slate-400">{preview}</p>
+          <p
+            className={`truncate text-xs ${
+              unreadCount > 0
+                ? "font-medium text-slate-700 dark:text-slate-300"
+                : "text-slate-500 dark:text-slate-400"
+            }`}
+          >
+            {preview}
+          </p>
           {unreadCount > 0 && <UnreadBadge count={unreadCount} />}
         </div>
       </div>

@@ -924,7 +924,11 @@
     "music": {
       "soundtrack": "Soundtrack",
       "composer": "Composer",
-      "comingSoon": "Soundtrack information and composer details coming soon."
+      "comingSoon": "Soundtrack information and composer details coming soon.",
+      "noData": "No music information available for this game.",
+      "spotifyPlayer": "Spotify Player",
+      "youtubeVideo": "YouTube Video",
+      "youtubePlayer": "YouTube Player"
     },
     "priceHistory": {
       "periods": {
@@ -1183,7 +1187,12 @@
         "syncError": "Synchronization error",
         "lastSyncedAt": "Last synced at",
         "igdbFieldTooltip": "Data from IGDB — not manually modified",
-        "metascore": "Metascore"
+        "metascore": "Metascore",
+        "music": "Music",
+        "musicComposer": "Composer",
+        "musicSpotifyUrl": "Spotify URL (embed or link)",
+        "musicSpotifyHint": "Paste a Spotify link (album, playlist or track). It will be automatically converted to an embed.",
+        "musicYoutubeUrl": "YouTube URL (video or embed)"
       },
       "createPage": {
         "title": "Create a new game",
@@ -2045,7 +2054,9 @@
   },
   "discussions": {
     "pageTitle": "Messages",
+    "pageSubtitle": "Chat with your friends easily",
     "conversations": "Conversations",
+    "new": "New",
     "newConversation": "New conversation",
     "noConversations": "No conversations yet. Start chatting with a friend!",
     "noMessages": "No messages yet",
@@ -2058,6 +2069,7 @@
     "searchFriends": "Search for a friend...",
     "noFriendsFound": "No friends found",
     "selectConversation": "Select a conversation to start chatting",
+    "selectConversationHint": "Pick a friend from the list on the left",
     "startConversation": "Start a conversation"
   }
 }

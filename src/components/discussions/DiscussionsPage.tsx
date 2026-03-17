@@ -6,6 +6,10 @@ import { useTranslations } from "next-intl";
 import { useDiscussions } from "@/hooks/useDiscussions";
 import { useAuth } from "@/hooks/useAuth";
 
+import { User } from "lucide-react";
+
+import { LazyImage } from "@/components/ui/lazy-image";
+
 import ConversationList from "./ConversationList";
 import MessageThread from "./MessageThread";
 import MessageInput from "./MessageInput";
@@ -75,14 +79,23 @@ export default function DiscussionsPage() {
     await createConversation(friendId);
   };
 
-  return (
-    <div className="flex h-full flex-col p-4 md:p-6" data-testid="discussions-page">
-      <h1 className="mb-4 text-2xl font-bold text-slate-900 dark:text-white">{t("pageTitle")}</h1>
+  // Find selected friend name for the thread header
+  const selectedConversation = conversations.find((c) => c.id === selectedConversationId);
 
-      {/* Split layout: conversation list left, thread right */}
+  return (
+    <div className="flex h-full flex-col gap-6 p-4 md:p-6" data-testid="discussions-page">
+      {/* Page header */}
+      <div>
+        <h1 className="neon-text text-2xl font-bold text-slate-900 dark:text-white">
+          {t("pageTitle")}
+        </h1>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{t("pageSubtitle")}</p>
+      </div>
+
+      {/* Split layout */}
       <div className="flex min-h-0 flex-1 gap-4">
-        {/* Left panel — ~1/3 width */}
-        <div className="hidden w-1/3 min-w-[280px] md:flex">
+        {/* Left panel — conversation list */}
+        <div className="hidden w-1/3 min-w-[300px] max-w-[380px] md:flex">
           <ConversationList
             conversations={conversations}
             selectedId={selectedConversationId}
@@ -92,8 +105,8 @@ export default function DiscussionsPage() {
           />
         </div>
 
-        {/* Right panel — ~2/3 width */}
-        <div className="flex flex-1 flex-col gap-3">
+        {/* Right panel — message thread */}
+        <div className="flex flex-1 flex-col">
           {/* Mobile: show conversation list when no conversation selected */}
           <div className="md:hidden">
             {!selectedConversationId && (
@@ -108,7 +121,31 @@ export default function DiscussionsPage() {
           </div>
 
           {selectedConversationId && user ? (
-            <>
+            <div className="glass-card flex flex-1 flex-col rounded-2xl">
+              {/* Thread header */}
+              {selectedConversation && (
+                <div className="flex items-center gap-3 border-b border-white/20 px-5 py-4 dark:border-slate-700/50">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-blue-500/30 via-purple-600/30 to-purple-700/30">
+                    {selectedConversation.friend.avatarUrl ? (
+                      <LazyImage
+                        src={selectedConversation.friend.avatarUrl}
+                        alt={selectedConversation.friend.displayName}
+                        fill
+                        className="object-cover"
+                        sizes="36px"
+                        showSkeleton
+                      />
+                    ) : (
+                      <User className="h-4 w-4 text-neon-violet" />
+                    )}
+                  </div>
+                  <span className="text-sm font-semibold text-slate-900 dark:text-white">
+                    {selectedConversation.friend.displayName}
+                  </span>
+                </div>
+              )}
+
+              {/* Messages */}
               <div className="min-h-0 flex-1">
                 <MessageThread
                   messages={messages}
@@ -118,8 +155,12 @@ export default function DiscussionsPage() {
                   onLoadMore={loadMoreMessages}
                 />
               </div>
-              <MessageInput onSend={sendMessage} isSending={isSending} maxLength={2000} />
-            </>
+
+              {/* Input */}
+              <div className="border-t border-white/20 px-4 py-3 dark:border-slate-700/50">
+                <MessageInput onSend={sendMessage} isSending={isSending} maxLength={2000} />
+              </div>
+            </div>
           ) : (
             <div className="hidden flex-1 md:flex">
               <EmptyConversationState />

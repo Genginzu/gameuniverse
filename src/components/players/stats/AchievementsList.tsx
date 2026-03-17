@@ -3,6 +3,7 @@
 import { useTranslations, useLocale } from "next-intl";
 import { Trophy, Lock, Check } from "lucide-react";
 import { ACHIEVEMENT_DEFINITIONS, type AchievementData } from "@/types/dashboard-stats";
+import { StatsSectionTitle } from "@/components/players/stats/StatsSectionTitle";
 
 interface AchievementsListProps {
   achievements: AchievementData[];
@@ -31,9 +32,7 @@ export function AchievementsList({ achievements, totalCount }: AchievementsListP
 
   return (
     <section>
-      <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
-        {t("achievements.title")}
-      </h3>
+      <StatsSectionTitle>{t("achievements.title")}</StatsSectionTitle>
 
       <div className="glass-card rounded-xl p-6">
         {/* Global progress bar */}

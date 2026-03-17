@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { CheckCircle } from "lucide-react";
 import type { CompletionStats } from "@/types/dashboard-stats";
 import { StatsEmptyState } from "@/components/players/stats/StatsEmptyState";
+import { StatsSectionTitle } from "@/components/players/stats/StatsSectionTitle";
 
 interface CompletionTrackerProps {
   completion: CompletionStats;
@@ -26,9 +27,7 @@ export function CompletionTracker({ completion }: CompletionTrackerProps) {
   if (completion.total === 0) {
     return (
       <div>
-        <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
-          {t("completion.title")}
-        </h3>
+        <StatsSectionTitle>{t("completion.title")}</StatsSectionTitle>
         <StatsEmptyState
           icon={<CheckCircle className="h-8 w-8" />}
           message={t("completion.empty")}
@@ -39,9 +38,7 @@ export function CompletionTracker({ completion }: CompletionTrackerProps) {
 
   return (
     <div>
-      <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
-        {t("completion.title")}
-      </h3>
+      <StatsSectionTitle>{t("completion.title")}</StatsSectionTitle>
       <div className="glass-card rounded-xl p-6 transition-all duration-300">
         {/* Percentage label */}
         <div className="mb-3 flex items-baseline gap-2">

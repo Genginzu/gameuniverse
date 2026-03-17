@@ -125,6 +125,9 @@ export const adminGameFormSchema = z.object({
   prices: z.array(adminGamePriceSchema).default([]),
   genres: z.array(adminGameGenreSchema).min(1, "At least one genre is required"),
   companies: z.array(adminGameCompanySchema).min(1, "At least one company is required"),
+  music_composer: z.string().max(500).optional().or(z.literal("")),
+  music_spotify_embed_url: z.string().url("Invalid URL").optional().or(z.literal("")),
+  music_youtube_video_url: z.string().url("Invalid URL").optional().or(z.literal("")),
 });
 
 export type AdminGameFormData = z.infer<typeof adminGameFormSchema>;

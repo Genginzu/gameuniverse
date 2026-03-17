@@ -5,6 +5,7 @@ import { PieChart as PieChartIcon } from "lucide-react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import type { GenreDistributionEntry } from "@/types/dashboard-stats";
 import { StatsEmptyState } from "@/components/players/stats/StatsEmptyState";
+import { StatsSectionTitle } from "@/components/players/stats/StatsSectionTitle";
 
 interface GenreDistributionChartProps {
   distribution: GenreDistributionEntry[];
@@ -50,9 +51,7 @@ export function GenreDistributionChart({
   if (distribution.length === 0) {
     return (
       <div>
-        <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
-          {t("genreDistribution.title")}
-        </h3>
+        <StatsSectionTitle>{t("genreDistribution.title")}</StatsSectionTitle>
         <StatsEmptyState
           icon={<PieChartIcon className="h-8 w-8" />}
           message={t("genreDistribution.empty")}
@@ -63,9 +62,7 @@ export function GenreDistributionChart({
 
   return (
     <div>
-      <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
-        {t("genreDistribution.title")}
-      </h3>
+      <StatsSectionTitle>{t("genreDistribution.title")}</StatsSectionTitle>
       <div className="glass-card rounded-xl p-6 transition-all duration-300">
         <div className="flex flex-col items-center gap-4 md:flex-row">
           <div className="h-64 w-64">

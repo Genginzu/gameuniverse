@@ -5,6 +5,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { Target, Plus, Trash2, CheckCircle } from "lucide-react";
 import type { PlayerGoal } from "@/types/dashboard-stats";
 import { StatsEmptyState } from "@/components/players/stats/StatsEmptyState";
+import { StatsSectionTitle } from "@/components/players/stats/StatsSectionTitle";
 import { PersonalGoalForm } from "@/components/players/stats/PersonalGoalForm";
 
 interface PersonalGoalsProps {
@@ -52,9 +53,7 @@ export function PersonalGoals({ goals: initialGoals, isOwnProfile, playerId }: P
 
   return (
     <section>
-      <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
-        {t("goals.title")}
-      </h3>
+      <StatsSectionTitle>{t("goals.title")}</StatsSectionTitle>
 
       <div className="glass-card rounded-xl p-6">
         {goals.length === 0 && !showForm ? (

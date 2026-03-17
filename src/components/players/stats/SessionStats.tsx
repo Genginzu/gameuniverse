@@ -6,6 +6,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recha
 import type { SessionStatsData, DayFrequency } from "@/types/dashboard-stats";
 import { formatLocalizedNumber } from "@/lib/utils/statsFormatters";
 import { StatsEmptyState } from "@/components/players/stats/StatsEmptyState";
+import { StatsSectionTitle } from "@/components/players/stats/StatsSectionTitle";
 
 interface SessionStatsProps {
   sessions: SessionStatsData;
@@ -39,9 +40,7 @@ export function SessionStats({ sessions }: SessionStatsProps) {
   if (sessions.totalSessions === 0) {
     return (
       <div>
-        <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
-          {t("sessions.title")}
-        </h3>
+        <StatsSectionTitle>{t("sessions.title")}</StatsSectionTitle>
         <StatsEmptyState icon={<Activity className="h-8 w-8" />} message={t("sessions.empty")} />
       </div>
     );
@@ -73,9 +72,7 @@ export function SessionStats({ sessions }: SessionStatsProps) {
 
   return (
     <div>
-      <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
-        {t("sessions.title")}
-      </h3>
+      <StatsSectionTitle>{t("sessions.title")}</StatsSectionTitle>
 
       {/* Metric cards */}
       <div className="mb-4 grid grid-cols-3 gap-3">

@@ -313,7 +313,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { game, translations, companies, genres, screenshots, artwork, videos, prices } =
+    const { game, translations, companies, genres, screenshots, artwork, videos, prices, music } =
       validationResult.data;
 
     const supabase = await createRouteHandlerClient();
@@ -406,6 +406,24 @@ export async function POST(request: NextRequest) {
         if (pricesError) {
           logger.warn("Failed to create prices", { error: pricesError });
         }
+      }
+
+      // Insert music/soundtrack data if provided (non-critical)
+      try {
+        if (music && (music.composer || music.spotify_embed_url || music.youtube_video_url)) {
+          const { error: musicError } = await supabase.from("game_music").insert({
+            game_id: gameId,
+            composer: music.composer ?? null,
+            spotify_embed_url: music.spotify_embed_url ?? null,
+            youtube_video_url: music.youtube_video_url ?? null,
+          });
+
+          if (musicError) {
+            logger.warn("Failed to create music data", { error: musicError });
+          }
+        }
+      } catch (musicErr) {
+        logger.warn("Music insert failed (non-critical)", { error: musicErr });
       }
 
       return NextResponse.json(

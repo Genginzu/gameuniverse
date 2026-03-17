@@ -5,6 +5,7 @@ import { Clock, Gamepad2, Trophy } from "lucide-react";
 import type { PlaytimeData } from "@/types/dashboard-stats";
 import { formatLocalizedNumber } from "@/lib/utils/statsFormatters";
 import { StatsEmptyState } from "@/components/players/stats/StatsEmptyState";
+import { StatsSectionTitle } from "@/components/players/stats/StatsSectionTitle";
 import { TopGamesPlaytime } from "@/components/players/stats/TopGamesPlaytime";
 
 interface PlaytimeStatsProps {
@@ -20,9 +21,7 @@ export function PlaytimeStats({ playtime, locale }: PlaytimeStatsProps) {
   if (isEmpty) {
     return (
       <section>
-        <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
-          {t("playtime.title")}
-        </h3>
+        <StatsSectionTitle>{t("playtime.title")}</StatsSectionTitle>
         <StatsEmptyState icon={<Clock className="h-8 w-8" />} message={t("playtime.empty")} />
       </section>
     );
@@ -30,9 +29,7 @@ export function PlaytimeStats({ playtime, locale }: PlaytimeStatsProps) {
 
   return (
     <section>
-      <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
-        {t("playtime.title")}
-      </h3>
+      <StatsSectionTitle>{t("playtime.title")}</StatsSectionTitle>
       <div className="flex flex-col gap-4 md:flex-row">
         {/* Average play time card */}
         <div className="glass-card flex flex-1 items-center gap-4 rounded-xl p-5 transition-all duration-300">

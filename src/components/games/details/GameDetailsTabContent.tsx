@@ -66,7 +66,7 @@ export function GameDetailsTabContent({
         <GameDetailsTabLanguages languages={game.languages} colors={colors} />
       )}
 
-      {activeTab === "music" && <GameDetailsTabMusic colors={colors} />}
+      {activeTab === "music" && <GameDetailsTabMusic music={game.music} colors={colors} />}
 
       {activeTab === "priceHistory" && (
         <PriceHistoryTab

@@ -5,6 +5,7 @@ import { MessageSquare } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import type { ReviewAnalyticsData, ReviewBucket } from "@/types/dashboard-stats";
 import { StatsEmptyState } from "@/components/players/stats/StatsEmptyState";
+import { StatsSectionTitle } from "@/components/players/stats/StatsSectionTitle";
 import { ReviewMetricsRadial } from "./review-variants/ReviewMetricsRadial";
 
 interface ReviewAnalyticsProps {
@@ -39,9 +40,7 @@ export function ReviewAnalytics({ analytics, locale }: ReviewAnalyticsProps) {
   if (analytics.totalReviews === 0) {
     return (
       <div>
-        <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
-          {t("reviewAnalytics.title")}
-        </h3>
+        <StatsSectionTitle>{t("reviewAnalytics.title")}</StatsSectionTitle>
         <StatsEmptyState
           icon={<MessageSquare className="h-8 w-8" />}
           message={t("reviewAnalytics.empty")}
@@ -52,9 +51,7 @@ export function ReviewAnalytics({ analytics, locale }: ReviewAnalyticsProps) {
 
   return (
     <div>
-      <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
-        {t("reviewAnalytics.title")}
-      </h3>
+      <StatsSectionTitle>{t("reviewAnalytics.title")}</StatsSectionTitle>
       <div className="glass-card rounded-xl p-6 transition-all duration-300">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center">
           {/* Radial gauges à gauche */}

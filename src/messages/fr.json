@@ -924,7 +924,11 @@
     "music": {
       "soundtrack": "Bande sonore",
       "composer": "Compositeur",
-      "comingSoon": "La bande sonore sera bientôt disponible avec les informations sur le compositeur."
+      "comingSoon": "La bande sonore sera bientôt disponible avec les informations sur le compositeur.",
+      "noData": "Aucune information musicale disponible pour ce jeu.",
+      "spotifyPlayer": "Lecteur Spotify",
+      "youtubeVideo": "Vidéo YouTube",
+      "youtubePlayer": "Lecteur YouTube"
     },
     "priceHistory": {
       "periods": {
@@ -1186,7 +1190,12 @@
         "syncError": "Erreur de synchronisation",
         "lastSyncedAt": "Dernière synchronisation",
         "igdbFieldTooltip": "Donnée provenant d'IGDB — non modifiée manuellement",
-        "metascore": "Metascore"
+        "metascore": "Metascore",
+        "music": "Musique",
+        "musicComposer": "Compositeur",
+        "musicSpotifyUrl": "URL Spotify (embed ou lien)",
+        "musicSpotifyHint": "Collez un lien Spotify (album, playlist ou track). Il sera converti automatiquement en embed.",
+        "musicYoutubeUrl": "URL YouTube (vidéo ou embed)"
       },
       "createPage": {
         "title": "Créer un nouveau jeu",
@@ -2048,7 +2057,9 @@
   },
   "discussions": {
     "pageTitle": "Discussions",
+    "pageSubtitle": "Échangez avec vos amis en toute simplicité",
     "conversations": "Conversations",
+    "new": "Nouveau",
     "newConversation": "Nouvelle conversation",
     "noConversations": "Aucune conversation. Démarrez une discussion avec un ami !",
     "noMessages": "Aucun message",
@@ -2061,6 +2072,7 @@
     "searchFriends": "Rechercher un ami...",
     "noFriendsFound": "Aucun ami trouvé",
     "selectConversation": "Sélectionnez une conversation pour commencer à discuter",
+    "selectConversationHint": "Choisissez un ami dans la liste à gauche",
     "startConversation": "Démarrer une conversation"
   }
 }

@@ -72,6 +72,11 @@ export interface GameApiResponse {
     store_url: string | null;
     is_available: boolean;
   }>;
+  music?: {
+    composer: string | null;
+    spotify_embed_url: string | null;
+    youtube_video_url: string | null;
+  } | null;
 }
 
 /** Convert a raw API game response to the form's data shape */
@@ -141,5 +146,8 @@ export function toFormData(game: GameApiResponse): AdminGameFormData {
       store_url: p.store_url ?? "",
       is_available: p.is_available,
     })),
+    music_composer: game.music?.composer ?? "",
+    music_spotify_embed_url: game.music?.spotify_embed_url ?? "",
+    music_youtube_video_url: game.music?.youtube_video_url ?? "",
   };
 }

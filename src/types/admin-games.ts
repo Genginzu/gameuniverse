@@ -73,6 +73,7 @@ export type TabId =
   | "versions"
   | "languages"
   | "pricing"
+  | "music"
   | "sync";
 
 export interface Tab {

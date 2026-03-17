@@ -24,6 +24,7 @@ import { GameFormLanguagesTab } from "./GameFormLanguagesTab";
 import { GameFormPricingTab } from "./GameFormPricingTab";
 import { GameFormDesignTab } from "./GameFormDesignTab";
 import { GameFormSyncTab } from "./GameFormSyncTab";
+import { GameFormMusicTab } from "./GameFormMusicTab";
 
 interface GameFormTabContentProps {
   activeTab: TabId;
@@ -135,6 +136,8 @@ export function GameFormTabContent({
           platforms={platforms}
         />
       );
+    case "music":
+      return <GameFormMusicTab form={form} t={t} />;
     case "sync":
       if (mode === "edit" && gameId) {
         return (

@@ -5,6 +5,7 @@ import { Calendar } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import type { MonthlyActivity } from "@/types/dashboard-stats";
 import { StatsEmptyState } from "@/components/players/stats/StatsEmptyState";
+import { StatsSectionTitle } from "@/components/players/stats/StatsSectionTitle";
 
 interface ActivityTimelineProps {
   timeline: MonthlyActivity[];
@@ -42,9 +43,7 @@ export function ActivityTimeline({ timeline }: ActivityTimelineProps) {
   if (!hasActivity(timeline)) {
     return (
       <div>
-        <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
-          {t("activityTimeline.title")}
-        </h3>
+        <StatsSectionTitle>{t("activityTimeline.title")}</StatsSectionTitle>
         <StatsEmptyState
           icon={<Calendar className="h-8 w-8" />}
           message={t("activityTimeline.empty")}
@@ -55,9 +54,7 @@ export function ActivityTimeline({ timeline }: ActivityTimelineProps) {
 
   return (
     <div>
-      <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
-        {t("activityTimeline.title")}
-      </h3>
+      <StatsSectionTitle>{t("activityTimeline.title")}</StatsSectionTitle>
       <div className="glass-card rounded-xl p-6 transition-all duration-300">
         <div className="h-52">
           <ResponsiveContainer width="100%" height="100%">

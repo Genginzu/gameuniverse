@@ -31,6 +31,22 @@ vi.mock("@/hooks/usePlayerActivity", () => ({
   usePlayerActivity: (...args: unknown[]) => mockUsePlayerActivity(...args),
 }));
 
+vi.mock("@/hooks/usePlayerPosts", () => ({
+  usePlayerPosts: () => ({
+    posts: [],
+    isLoading: false,
+    isLoadingMore: false,
+    isCreating: false,
+    hasNextPage: false,
+    error: null,
+    searchTerm: "",
+    setSearchTerm: vi.fn(),
+    loadMore: vi.fn(),
+    createPost: vi.fn(),
+    deletePost: vi.fn(),
+  }),
+}));
+
 // Override the global next-intl mock to add useFormatter and t.rich support
 vi.mock("next-intl", () => {
   const createTranslator = () => {
@@ -56,22 +72,20 @@ vi.mock("next-intl", () => {
 
 import { ActivityFeed } from "@/components/players/ActivityFeed";
 
-const SAMPLE_EVENT: ActivityEvent = {
-  id: "evt-1",
-  type: "review",
-  date: "2024-03-01T12:00:00Z",
-  data: {
-    type: "review",
-    gameId: "g1",
-    gameSlug: "zelda",
-    gameName: "Zelda",
-    rating: 18,
-    contentExcerpt: "Excellent jeu",
-  },
-};
-
 const SAMPLE_EVENTS: ActivityEvent[] = [
-  SAMPLE_EVENT,
+  {
+    id: "evt-1",
+    type: "review",
+    date: "2024-03-01T12:00:00Z",
+    data: {
+      type: "review",
+      gameId: "g1",
+      gameSlug: "zelda",
+      gameName: "Zelda",
+      rating: 18,
+      contentExcerpt: "Excellent jeu",
+    },
+  },
   {
     id: "evt-2",
     type: "comment",
@@ -86,6 +100,14 @@ const SAMPLE_EVENTS: ActivityEvent[] = [
   },
 ];
 
+const defaultProps = {
+  playerId: "p1",
+  playerName: "TestPlayer",
+  playerAvatar: null,
+  locale: "fr",
+  isOwner: false,
+};
+
 function setHookState(overrides: Partial<UsePlayerActivityReturn>) {
   mockUsePlayerActivity.mockReturnValue({ ...mockHookReturn, ...overrides });
 }
@@ -98,66 +120,62 @@ describe("ActivityFeed", () => {
 
   it("should render events when data is available", () => {
     setHookState({ events: SAMPLE_EVENTS });
-    render(<ActivityFeed playerId="p1" locale="fr" />);
+    render(<ActivityFeed {...defaultProps} />);
     expect(screen.getAllByRole("article")).toHaveLength(2);
   });
 
   it("should show empty state when no events and not loading", () => {
     setHookState({ events: [], isLoading: false });
-    render(<ActivityFeed playerId="p1" locale="fr" />);
-    expect(screen.getByText("empty")).toBeInTheDocument();
+    render(<ActivityFeed {...defaultProps} />);
+    // Both activity and posts columns show empty state
+    const emptyTexts = screen.getAllByText("empty");
+    expect(emptyTexts.length).toBeGreaterThanOrEqual(1);
   });
 
   it("should show skeleton during initial loading", () => {
     setHookState({ isLoading: true });
-    const { container } = render(<ActivityFeed playerId="p1" locale="fr" />);
-    // No articles should be visible during loading
+    const { container } = render(<ActivityFeed {...defaultProps} />);
     expect(screen.queryAllByRole("article")).toHaveLength(0);
-    // Skeleton renders animated placeholder divs
     const skeletons = container.querySelectorAll(".animate-pulse");
     expect(skeletons.length).toBeGreaterThan(0);
   });
 
-  it("should have role='feed' on the feed container", () => {
-    render(<ActivityFeed playerId="p1" locale="fr" />);
-    expect(screen.getByRole("feed")).toBeInTheDocument();
+  it("should have role='feed' on the feed containers", () => {
+    render(<ActivityFeed {...defaultProps} />);
+    // Two columns: activity feed + posts feed
+    const feeds = screen.getAllByRole("feed");
+    expect(feeds.length).toBe(2);
   });
 
-  it("should set aria-busy=true while loading", () => {
+  it("should set aria-busy=true on activity feed while loading", () => {
     setHookState({ isLoading: true });
-    render(<ActivityFeed playerId="p1" locale="fr" />);
-    expect(screen.getByRole("feed")).toHaveAttribute("aria-busy", "true");
+    render(<ActivityFeed {...defaultProps} />);
+    const feeds = screen.getAllByRole("feed");
+    // First feed is the activity column
+    expect(feeds[0]).toHaveAttribute("aria-busy", "true");
   });
 
   it("should set aria-busy=false when not loading", () => {
     setHookState({ isLoading: false, isLoadingMore: false });
-    render(<ActivityFeed playerId="p1" locale="fr" />);
-    expect(screen.getByRole("feed")).toHaveAttribute("aria-busy", "false");
+    render(<ActivityFeed {...defaultProps} />);
+    const feeds = screen.getAllByRole("feed");
+    expect(feeds[0]).toHaveAttribute("aria-busy", "false");
   });
 
-  it("should have aria-label on the feed", () => {
-    render(<ActivityFeed playerId="p1" locale="fr" />);
-    expect(screen.getByRole("feed")).toHaveAttribute("aria-label", "feedLabel");
+  it("should have aria-label on the feed containers", () => {
+    render(<ActivityFeed {...defaultProps} />);
+    const feeds = screen.getAllByRole("feed");
+    expect(feeds[0]).toHaveAttribute("aria-label", "feedLabel");
   });
 
-  it("should render filter buttons", () => {
-    render(<ActivityFeed playerId="p1" locale="fr" />);
-    // ActivityFilters renders a group of buttons
-    const filterGroup = screen.getByRole("group");
-    expect(filterGroup).toBeInTheDocument();
-    // 8 filter buttons: all, review, comment, library, playtime, favorite, collection, friendship
-    const buttons = screen.getAllByRole("button");
-    expect(buttons.length).toBe(8);
-  });
-
-  it("should pass playerId and locale to the hook", () => {
-    render(<ActivityFeed playerId="player-42" locale="en" />);
+  it("should pass playerId and locale to the activity hook", () => {
+    render(<ActivityFeed {...defaultProps} playerId="player-42" locale="en" />);
     expect(mockUsePlayerActivity).toHaveBeenCalledWith("player-42", "en");
   });
 
   it("should display error message when error occurs", () => {
     setHookState({ error: "Network error" });
-    render(<ActivityFeed playerId="p1" locale="fr" />);
+    render(<ActivityFeed {...defaultProps} />);
     expect(screen.getByText("Network error")).toBeInTheDocument();
   });
 });

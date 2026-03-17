@@ -181,7 +181,7 @@ export class DiscussionServerService {
     const sliced = hasMore ? rows.slice(0, limit) : rows;
     sliced.reverse(); // ascending order for display
     const messages = sliced.map(toMessage);
-    const nextCursor = sliced.length > 0 ? sliced[0].createdAt : null;
+    const nextCursor = sliced.length > 0 ? sliced[0].created_at : null;
     return { messages, hasMore, nextCursor };
   }
 

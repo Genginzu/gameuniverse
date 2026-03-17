@@ -230,6 +230,27 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       logger.warn("playtime columns not available yet");
     }
 
+    // Fetch music/soundtrack info
+    let gameMusic: {
+      composer: string | null;
+      spotify_embed_url: string | null;
+      youtube_video_url: string | null;
+    } | null = null;
+
+    try {
+      const { data: musicData } = await supabase
+        .from("game_music")
+        .select("composer, spotify_embed_url, youtube_video_url")
+        .eq("game_id", game.id)
+        .single();
+
+      if (musicData) {
+        gameMusic = musicData;
+      }
+    } catch {
+      logger.warn("game_music table not available yet");
+    }
+
     // Fetch game versions (Requirements 5.1)
     let gameVersions: Array<{
       id: string;
@@ -555,6 +576,13 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       pricing,
       languages,
       playtime,
+      music: gameMusic
+        ? {
+            composer: gameMusic.composer ?? undefined,
+            spotifyEmbedUrl: gameMusic.spotify_embed_url ?? undefined,
+            youtubeVideoUrl: gameMusic.youtube_video_url ?? undefined,
+          }
+        : null,
       versions,
       dlcExtensions,
       createdAt: game.created_at,

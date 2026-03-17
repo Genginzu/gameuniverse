@@ -43,9 +43,9 @@ export default function MessageThread({
   }, [messages]);
 
   return (
-    <div className="glass-card flex h-full flex-col rounded-xl" data-testid="message-thread">
+    <div className="flex h-full flex-col" data-testid="message-thread">
       {/* Scrollable message area */}
-      <div ref={containerRef} className="flex flex-1 flex-col gap-3 overflow-y-auto p-4">
+      <div ref={containerRef} className="flex flex-1 flex-col gap-3 overflow-y-auto px-5 py-4">
         {/* Load more button */}
         {hasMore && (
           <div className="flex justify-center pb-2">

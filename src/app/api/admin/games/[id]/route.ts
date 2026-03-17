@@ -303,6 +303,21 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           | undefined) ?? [],
     };
 
+    // Fetch music data separately (table may not exist yet)
+    try {
+      const { data: musicData } = await supabase
+        .from("game_music")
+        .select("composer, spotify_embed_url, youtube_video_url")
+        .eq("game_id", gameId)
+        .single();
+
+      if (musicData) {
+        (adminGameData as Record<string, unknown>).music = musicData;
+      }
+    } catch {
+      logger.warn("game_music table not available yet");
+    }
+
     return NextResponse.json(adminGameData);
   } catch (error) {
     logger.error("Error in admin game GET", { error });
@@ -335,6 +350,10 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     const validationResult = updateGameSchema.safeParse({ id: gameId, ...body });
 
     if (!validationResult.success) {
+      logger.error("Game update validation failed", {
+        gameId,
+        issues: validationResult.error.issues,
+      });
       return NextResponse.json(
         { error: "Invalid input data", details: validationResult.error.issues },
         { status: 400 }
@@ -353,6 +372,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       age_ratings,
       versions,
       languages,
+      music,
     } = validationResult.data;
 
     const supabase = await createRouteHandlerClient();
@@ -383,13 +403,14 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     // Update main game data if provided
     if (game && Object.keys(game).length > 0) {
+      const updatePayload = { ...game, updated_at: new Date().toISOString() };
       const { error: gameError } = await supabase
         .from("games")
-        .update({ ...game, updated_at: new Date().toISOString() })
+        .update(updatePayload)
         .eq("id", gameId);
 
       if (gameError) {
-        logger.error("Error updating game", { error: gameError });
+        logger.error("Error updating game", { error: gameError, gameId });
 
         if (gameError.code === "23505") {
           // Unique constraint violation
@@ -604,6 +625,44 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
           logger.warn("Error updating languages", { error: languagesError });
         }
       }
+    }
+
+    // Upsert music/soundtrack data if provided (non-critical — wrapped in try/catch)
+    try {
+      if (music !== undefined) {
+        const hasAnyMusicData =
+          music?.composer || music?.spotify_embed_url || music?.youtube_video_url;
+
+        if (hasAnyMusicData) {
+          const { error: musicError } = await supabase.from("game_music").upsert(
+            {
+              game_id: gameId,
+              composer: music.composer ?? null,
+              spotify_embed_url: music.spotify_embed_url ?? null,
+              youtube_video_url: music.youtube_video_url ?? null,
+              updated_at: new Date().toISOString(),
+            },
+            { onConflict: "game_id" }
+          );
+
+          if (musicError) {
+            logger.warn("Error updating music", { error: musicError });
+          }
+        } else {
+          // All fields empty — remove the row
+          const { error: deleteError } = await supabase
+            .from("game_music")
+            .delete()
+            .eq("game_id", gameId);
+
+          if (deleteError) {
+            logger.warn("Error deleting music row", { error: deleteError });
+          }
+        }
+      }
+    } catch (musicErr) {
+      // game_music table may not exist yet — never block the main save
+      logger.warn("Music operation failed (non-critical)", { error: musicErr });
     }
 
     // --- Field tracking: detect manual changes and record overrides ---
