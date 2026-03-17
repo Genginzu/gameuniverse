@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (updateError) {
-    logger.error("Profile update failed, rolling back S3 upload", {
+    logger.error("Profile update failed, rolling back storage upload", {
       error: updateError,
       userId: user.id,
       context,
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
     try {
       await deleteFile(publicUrl);
     } catch (rollbackError) {
-      logger.error("Rollback S3 delete also failed", { error: rollbackError });
+      logger.error("Rollback storage delete also failed", { error: rollbackError });
     }
 
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
   // Clean up old file (fire and forget)
   if (oldUrl && oldUrl !== publicUrl) {
     deleteFile(oldUrl).catch((err) => {
-      logger.error("Failed to delete old file from S3", {
+      logger.error("Failed to delete old file from storage", {
         error: err,
         oldUrl,
       });

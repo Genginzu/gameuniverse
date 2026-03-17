@@ -411,12 +411,14 @@ export async function POST(request: NextRequest) {
       // Insert music/soundtrack data if provided (non-critical)
       try {
         if (music && (music.composer || music.spotify_embed_url || music.youtube_video_url)) {
-          const { error: musicError } = await supabase.from("game_music").insert({
+          const { error: musicError } = await (
+            supabase.from("game_music") as ReturnType<typeof supabase.from>
+          ).insert({
             game_id: gameId,
             composer: music.composer ?? null,
             spotify_embed_url: music.spotify_embed_url ?? null,
             youtube_video_url: music.youtube_video_url ?? null,
-          });
+          } as Record<string, unknown>);
 
           if (musicError) {
             logger.warn("Failed to create music data", { error: musicError });

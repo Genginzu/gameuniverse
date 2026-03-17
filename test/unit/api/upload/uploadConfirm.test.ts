@@ -11,7 +11,6 @@ const mockUpdateEqSelectSingle = vi.fn();
 const mockSupabase = {
   auth: { getUser: mockGetUser },
   from: vi.fn((table: string) => {
-    // We need to distinguish select-only (GET current profile) from update chains
     void table;
     return {
       select: vi.fn(() => ({
@@ -47,9 +46,9 @@ import { POST } from "../../../../src/app/api/upload/confirm/route";
 
 const mockUser = { id: "user-uuid-123", email: "player@example.com" };
 const validPublicUrl =
-  "https://gameuniverse-uploads.s3.eu-west-3.amazonaws.com/public/avatars/user-uuid-123/1700000000-abc123.webp";
+  "https://test-project.supabase.co/storage/v1/object/public/avatars/user-uuid-123/1700000000-abc123.webp";
 const oldAvatarUrl =
-  "https://gameuniverse-uploads.s3.eu-west-3.amazonaws.com/public/avatars/user-uuid-123/1699000000-old123.webp";
+  "https://test-project.supabase.co/storage/v1/object/public/avatars/user-uuid-123/1699000000-old123.webp";
 
 function createConfirmRequest(body: Record<string, unknown>) {
   return new NextRequest("http://localhost:3000/api/upload/confirm", {
@@ -106,12 +105,12 @@ describe("/api/upload/confirm POST", () => {
     expect(response.status).toBe(400);
   });
 
-  it("should return 400 for invalid publicUrl (not a URL)", async () => {
+  it("should return 400 for invalid publicUrl (not a Supabase Storage URL)", async () => {
     mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
 
     const request = createConfirmRequest({
       context: "avatars",
-      publicUrl: "not-a-url",
+      publicUrl: "https://example.com/not-a-storage-url",
     });
     const response = await POST(request);
 
@@ -152,10 +151,12 @@ describe("/api/upload/confirm POST", () => {
       data: { banner_url: null },
       error: null,
     });
+    const bannerUrl =
+      "https://test-project.supabase.co/storage/v1/object/public/banners/user-uuid-123/1700000000-abc123.webp";
     const updatedProfile = {
       id: mockUser.id,
       avatar_url: null,
-      banner_url: validPublicUrl,
+      banner_url: bannerUrl,
     };
     mockUpdateEqSelectSingle.mockResolvedValue({
       data: updatedProfile,
@@ -164,17 +165,17 @@ describe("/api/upload/confirm POST", () => {
 
     const request = createConfirmRequest({
       context: "banners",
-      publicUrl: validPublicUrl,
+      publicUrl: bannerUrl,
     });
     const response = await POST(request);
     const data = await response.json();
 
     expect(response.status).toBe(200);
     expect(data.success).toBe(true);
-    expect(data.profile.banner_url).toBe(validPublicUrl);
+    expect(data.profile.banner_url).toBe(bannerUrl);
   });
 
-  it("should delete old file from S3 when replacing an existing image", async () => {
+  it("should delete old file from storage when replacing an existing image", async () => {
     mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
     mockSelectEqSingle.mockResolvedValue({
       data: { avatar_url: oldAvatarUrl },
@@ -219,7 +220,7 @@ describe("/api/upload/confirm POST", () => {
     expect(mockDeleteFile).not.toHaveBeenCalled();
   });
 
-  it("should rollback (delete new file from S3) when profile update fails", async () => {
+  it("should rollback (delete new file) when profile update fails", async () => {
     mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
     mockSelectEqSingle.mockResolvedValue({
       data: { avatar_url: null },
@@ -253,7 +254,7 @@ describe("/api/upload/confirm POST", () => {
       data: null,
       error: { message: "DB update failed" },
     });
-    mockDeleteFile.mockRejectedValue(new Error("S3 delete also failed"));
+    mockDeleteFile.mockRejectedValue(new Error("Storage delete also failed"));
 
     const request = createConfirmRequest({
       context: "avatars",

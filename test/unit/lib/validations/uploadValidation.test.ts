@@ -84,23 +84,50 @@ describe("uploadRequestSchema", () => {
 });
 
 describe("uploadConfirmSchema", () => {
-  it("accepts a valid confirm request", () => {
+  it("accepts a valid Supabase Storage URL", () => {
     const result = uploadConfirmSchema.safeParse({
       context: "avatars",
-      publicUrl: "https://bucket.s3.amazonaws.com/public/avatars/uid/file.webp",
+      publicUrl:
+        "https://test-project.supabase.co/storage/v1/object/public/avatars/user-123/1700000000-abc123.webp",
     });
     expect(result.success).toBe(true);
   });
 
-  it("rejects invalid context", () => {
+  it("accepts a valid Supabase Storage URL for banners", () => {
     const result = uploadConfirmSchema.safeParse({
-      context: "collections",
+      context: "banners",
+      publicUrl:
+        "https://test-project.supabase.co/storage/v1/object/public/banners/user-456/1700000000-def456.jpg",
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it("rejects an S3 URL", () => {
+    const result = uploadConfirmSchema.safeParse({
+      context: "avatars",
+      publicUrl: "https://bucket.s3.amazonaws.com/public/avatars/uid/file.webp",
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects a URL without Supabase Storage path", () => {
+    const result = uploadConfirmSchema.safeParse({
+      context: "avatars",
       publicUrl: "https://example.com/file.png",
     });
     expect(result.success).toBe(false);
   });
 
-  it("rejects invalid URL", () => {
+  it("rejects invalid context", () => {
+    const result = uploadConfirmSchema.safeParse({
+      context: "collections",
+      publicUrl:
+        "https://test-project.supabase.co/storage/v1/object/public/avatars/user-123/file.webp",
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it("rejects a non-URL string", () => {
     const result = uploadConfirmSchema.safeParse({
       context: "banners",
       publicUrl: "not-a-url",

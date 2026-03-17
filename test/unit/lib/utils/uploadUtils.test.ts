@@ -1,48 +1,110 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 
 import {
-  generateS3Key,
-  extractS3KeyFromUrl,
+  generateStoragePath,
+  getBucketName,
+  extractStoragePathFromUrl,
   getExtensionFromMimeType,
 } from "@/lib/utils/uploadUtils";
 
-describe("generateS3Key", () => {
-  it("generates a key matching the expected pattern", () => {
-    const key = generateS3Key("avatars", "user-123", "webp");
-    expect(key).toMatch(/^public\/avatars\/user-123\/\d+-[a-z0-9]+\.webp$/);
+describe("generateStoragePath", () => {
+  it("generates a path matching the expected pattern", () => {
+    const path = generateStoragePath("550e8400-e29b-41d4-a716-446655440000", "webp");
+    expect(path).toMatch(/^550e8400-e29b-41d4-a716-446655440000\/\d+-[a-z0-9]+\.webp$/);
   });
 
-  it("uses the correct context in the path", () => {
-    const key = generateS3Key("banners", "user-456", "png");
-    expect(key).toMatch(/^public\/banners\/user-456\/\d+-[a-z0-9]+\.png$/);
+  it("uses the correct userId and extension", () => {
+    const path = generateStoragePath("user-456", "png");
+    expect(path).toMatch(/^user-456\/\d+-[a-z0-9]+\.png$/);
   });
 
-  it("generates unique keys for the same parameters", () => {
-    const key1 = generateS3Key("avatars", "user-123", "jpg");
-    const key2 = generateS3Key("avatars", "user-123", "jpg");
-    expect(key1).not.toBe(key2);
+  it("generates unique paths for the same parameters", () => {
+    const path1 = generateStoragePath("user-123", "jpg");
+    const path2 = generateStoragePath("user-123", "jpg");
+    expect(path1).not.toBe(path2);
+  });
+
+  it("includes a positive timestamp", () => {
+    const path = generateStoragePath("user-123", "gif");
+    const match = path.match(/^user-123\/(\d+)-[a-z0-9]+\.gif$/);
+    expect(match).not.toBeNull();
+    expect(Number(match![1])).toBeGreaterThan(0);
   });
 });
 
-describe("extractS3KeyFromUrl", () => {
-  it("extracts the key from a valid public URL", () => {
-    const url =
-      "https://gameuniverse-uploads.s3.eu-west-3.amazonaws.com/public/avatars/user-123/1700000000-abc123.webp";
-    const key = extractS3KeyFromUrl(url);
-    expect(key).toBe("public/avatars/user-123/1700000000-abc123.webp");
+describe("getBucketName", () => {
+  it('returns "avatars" for avatars context', () => {
+    expect(getBucketName("avatars")).toBe("avatars");
   });
 
-  it("returns null for a URL with a different bucket", () => {
-    const url = "https://other-bucket.s3.eu-west-3.amazonaws.com/public/avatars/user-123/file.webp";
-    expect(extractS3KeyFromUrl(url)).toBeNull();
+  it('returns "banners" for banners context', () => {
+    expect(getBucketName("banners")).toBe("banners");
+  });
+});
+
+describe("extractStoragePathFromUrl", () => {
+  const SUPABASE_URL = "https://test-project.supabase.co";
+  let originalEnv: string | undefined;
+
+  beforeEach(() => {
+    originalEnv = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    process.env.NEXT_PUBLIC_SUPABASE_URL = SUPABASE_URL;
+  });
+
+  afterEach(() => {
+    if (originalEnv === undefined) {
+      delete process.env.NEXT_PUBLIC_SUPABASE_URL;
+    } else {
+      process.env.NEXT_PUBLIC_SUPABASE_URL = originalEnv;
+    }
+  });
+
+  it("extracts bucket and path from a valid Supabase public URL", () => {
+    const url = `${SUPABASE_URL}/storage/v1/object/public/avatars/user-123/1700000000-abc123.webp`;
+    const result = extractStoragePathFromUrl(url);
+    expect(result).toEqual({
+      bucket: "avatars",
+      path: "user-123/1700000000-abc123.webp",
+    });
+  });
+
+  it("extracts from a banners URL", () => {
+    const url = `${SUPABASE_URL}/storage/v1/object/public/banners/user-456/1700000000-def456.png`;
+    const result = extractStoragePathFromUrl(url);
+    expect(result).toEqual({
+      bucket: "banners",
+      path: "user-456/1700000000-def456.png",
+    });
   });
 
   it("returns null for a completely unrelated URL", () => {
-    expect(extractS3KeyFromUrl("https://example.com/image.png")).toBeNull();
+    expect(extractStoragePathFromUrl("https://example.com/image.png")).toBeNull();
   });
 
   it("returns null for an empty string", () => {
-    expect(extractS3KeyFromUrl("")).toBeNull();
+    expect(extractStoragePathFromUrl("")).toBeNull();
+  });
+
+  it("returns null for an S3 URL", () => {
+    const url =
+      "https://gameuniverse-uploads.s3.eu-west-3.amazonaws.com/public/avatars/user-123/file.webp";
+    expect(extractStoragePathFromUrl(url)).toBeNull();
+  });
+
+  it("returns null when NEXT_PUBLIC_SUPABASE_URL is not set", () => {
+    delete process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const url = `${SUPABASE_URL}/storage/v1/object/public/avatars/user-123/file.webp`;
+    expect(extractStoragePathFromUrl(url)).toBeNull();
+  });
+
+  it("returns null when URL has bucket but no path", () => {
+    const url = `${SUPABASE_URL}/storage/v1/object/public/avatars`;
+    expect(extractStoragePathFromUrl(url)).toBeNull();
+  });
+
+  it("returns null when URL has bucket with trailing slash but no path", () => {
+    const url = `${SUPABASE_URL}/storage/v1/object/public/avatars/`;
+    expect(extractStoragePathFromUrl(url)).toBeNull();
   });
 });
 
@@ -69,5 +131,99 @@ describe("getExtensionFromMimeType", () => {
 
   it("returns bin for empty string", () => {
     expect(getExtensionFromMimeType("")).toBe("bin");
+  });
+});
+
+import fc from "fast-check";
+
+describe("Property-based tests", () => {
+  // Feature: supabase-storage-migration, Property 1: Storage path pattern
+  // **Validates: Requirements 1.3, 1.4, 6.1**
+  it("P1 — generateStoragePath always matches the expected pattern", () => {
+    fc.assert(
+      fc.property(fc.uuid(), fc.constantFrom("jpg", "png", "webp", "gif"), (userId, ext) => {
+        const path = generateStoragePath(userId, ext);
+        const regex = new RegExp(`^${userId.replace(/-/g, "\\-")}/\\d+-[a-z0-9]+\\.${ext}$`);
+        expect(path).toMatch(regex);
+      }),
+      { numRuns: 100 }
+    );
+  });
+
+  // Feature: supabase-storage-migration, Property 2: Bucket name resolution
+  // **Validates: Requirements 2.2, 6.2**
+  it("P2 — getBucketName returns the corresponding bucket name", () => {
+    fc.assert(
+      fc.property(fc.constantFrom("avatars" as const, "banners" as const), (context) => {
+        const bucket = getBucketName(context);
+        expect(bucket).toBe(context);
+      }),
+      { numRuns: 100 }
+    );
+  });
+
+  // Feature: supabase-storage-migration, Property 5: Round-trip public URL ↔ extraction
+  // **Validates: Requirements 6.3, 6.4**
+  describe("P5 — Round-trip public URL ↔ extraction", () => {
+    const SUPABASE_URL = "https://test-project.supabase.co";
+    let originalEnv: string | undefined;
+
+    beforeEach(() => {
+      originalEnv = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      process.env.NEXT_PUBLIC_SUPABASE_URL = SUPABASE_URL;
+    });
+
+    afterEach(() => {
+      if (originalEnv === undefined) {
+        delete process.env.NEXT_PUBLIC_SUPABASE_URL;
+      } else {
+        process.env.NEXT_PUBLIC_SUPABASE_URL = originalEnv;
+      }
+    });
+
+    it("round-trips valid bucket + path through URL construction and extraction", () => {
+      fc.assert(
+        fc.property(
+          fc.constantFrom("avatars", "banners"),
+          fc.uuid(),
+          fc.constantFrom("jpg", "png", "webp", "gif"),
+          (bucket, userId, ext) => {
+            const storagePath = generateStoragePath(userId, ext);
+            const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${bucket}/${storagePath}`;
+            const result = extractStoragePathFromUrl(publicUrl);
+            expect(result).not.toBeNull();
+            expect(result!.bucket).toBe(bucket);
+            expect(result!.path).toBe(storagePath);
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
+
+    it("returns null for non-Supabase URLs", () => {
+      fc.assert(
+        fc.property(
+          fc.string().filter((s) => !s.startsWith(SUPABASE_URL)),
+          (randomUrl) => {
+            const result = extractStoragePathFromUrl(randomUrl);
+            expect(result).toBeNull();
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
+  });
+
+  // Feature: supabase-storage-migration, Property 6: Path uniqueness
+  // **Validates: Requirements 1.3, 1.4**
+  it("P6 — two consecutive calls produce different paths", () => {
+    fc.assert(
+      fc.property(fc.uuid(), fc.constantFrom("jpg", "png", "webp", "gif"), (userId, ext) => {
+        const path1 = generateStoragePath(userId, ext);
+        const path2 = generateStoragePath(userId, ext);
+        expect(path1).not.toBe(path2);
+      }),
+      { numRuns: 100 }
+    );
   });
 });

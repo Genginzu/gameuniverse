@@ -17,10 +17,10 @@ vi.mock("../../../../src/lib/logger", () => ({
   logger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
 }));
 
-// Mock upload service
-const mockGeneratePresignedUrl = vi.fn();
+// Mock upload service — now uses generateSignedUploadUrl (Supabase Storage)
+const mockGenerateSignedUploadUrl = vi.fn();
 vi.mock("../../../../src/lib/services/uploadService", () => ({
-  generatePresignedUrl: (...args: unknown[]) => mockGeneratePresignedUrl(...args),
+  generateSignedUploadUrl: (...args: unknown[]) => mockGenerateSignedUploadUrl(...args),
 }));
 
 import { POST } from "../../../../src/app/api/upload/route";
@@ -38,7 +38,7 @@ function createUploadRequest(body: Record<string, unknown>) {
 describe("/api/upload POST", () => {
   beforeEach(() => {
     mockGetUser.mockReset();
-    mockGeneratePresignedUrl.mockReset();
+    mockGenerateSignedUploadUrl.mockReset();
   });
 
   it("should return 401 when user is not authenticated", async () => {
@@ -59,12 +59,14 @@ describe("/api/upload POST", () => {
     expect(data.error).toBe("Unauthorized");
   });
 
-  it("should return presigned URL for valid request", async () => {
+  it("should return signed URL for valid request", async () => {
     mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
-    mockGeneratePresignedUrl.mockResolvedValue({
-      presignedUrl: "https://s3.example.com/presigned",
-      publicUrl: "https://s3.example.com/public/avatars/user-uuid-123/file.png",
-      s3Key: "public/avatars/user-uuid-123/file.png",
+    mockGenerateSignedUploadUrl.mockResolvedValue({
+      signedUrl:
+        "https://test-project.supabase.co/storage/v1/upload/sign/avatars/user-uuid-123/1700000000-abc123.png",
+      publicUrl:
+        "https://test-project.supabase.co/storage/v1/object/public/avatars/user-uuid-123/1700000000-abc123.png",
+      storagePath: "user-uuid-123/1700000000-abc123.png",
     });
 
     const request = createUploadRequest({
@@ -76,16 +78,22 @@ describe("/api/upload POST", () => {
     const data = await response.json();
 
     expect(response.status).toBe(200);
-    expect(data.presignedUrl).toBe("https://s3.example.com/presigned");
-    expect(data.publicUrl).toBe("https://s3.example.com/public/avatars/user-uuid-123/file.png");
+    expect(data.signedUrl).toBe(
+      "https://test-project.supabase.co/storage/v1/upload/sign/avatars/user-uuid-123/1700000000-abc123.png"
+    );
+    expect(data.publicUrl).toBe(
+      "https://test-project.supabase.co/storage/v1/object/public/avatars/user-uuid-123/1700000000-abc123.png"
+    );
   });
 
-  it("should call generatePresignedUrl with correct params", async () => {
+  it("should call generateSignedUploadUrl with correct params", async () => {
     mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
-    mockGeneratePresignedUrl.mockResolvedValue({
-      presignedUrl: "https://s3.example.com/presigned",
-      publicUrl: "https://s3.example.com/public/banners/user-uuid-123/file.webp",
-      s3Key: "public/banners/user-uuid-123/file.webp",
+    mockGenerateSignedUploadUrl.mockResolvedValue({
+      signedUrl:
+        "https://test-project.supabase.co/storage/v1/upload/sign/banners/user-uuid-123/1700000000-abc123.webp",
+      publicUrl:
+        "https://test-project.supabase.co/storage/v1/object/public/banners/user-uuid-123/1700000000-abc123.webp",
+      storagePath: "user-uuid-123/1700000000-abc123.webp",
     });
 
     const request = createUploadRequest({
@@ -95,7 +103,7 @@ describe("/api/upload POST", () => {
     });
     await POST(request);
 
-    expect(mockGeneratePresignedUrl).toHaveBeenCalledWith({
+    expect(mockGenerateSignedUploadUrl).toHaveBeenCalledWith({
       context: "banners",
       userId: "user-uuid-123",
       contentType: "image/webp",
@@ -151,9 +159,9 @@ describe("/api/upload POST", () => {
     expect(response.status).toBe(400);
   });
 
-  it("should return 503 when S3 service fails", async () => {
+  it("should return 503 when storage service fails", async () => {
     mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
-    mockGeneratePresignedUrl.mockRejectedValue(new Error("S3 connection failed"));
+    mockGenerateSignedUploadUrl.mockRejectedValue(new Error("Storage connection failed"));
 
     const request = createUploadRequest({
       context: "avatars",

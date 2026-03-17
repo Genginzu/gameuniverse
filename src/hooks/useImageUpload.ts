@@ -68,7 +68,7 @@ export function useImageUpload({
     setProgress(0);
   }, [previewUrl]);
 
-  const uploadToS3 = useCallback((presignedUrl: string, file: File): Promise<void> => {
+  const uploadToStorage = useCallback((signedUrl: string, file: File): Promise<void> => {
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       abortRef.current = xhr;
@@ -83,12 +83,12 @@ export function useImageUpload({
         if (xhr.status >= 200 && xhr.status < 300) {
           resolve();
         } else {
-          reject(new Error("s3UploadFailed"));
+          reject(new Error("storageUploadFailed"));
         }
       });
 
-      xhr.addEventListener("error", () => reject(new Error("s3UploadFailed")));
-      xhr.open("PUT", presignedUrl);
+      xhr.addEventListener("error", () => reject(new Error("storageUploadFailed")));
+      xhr.open("PUT", signedUrl);
       xhr.setRequestHeader("Content-Type", file.type);
       xhr.send(file);
     });
@@ -102,7 +102,7 @@ export function useImageUpload({
     setError(null);
 
     try {
-      // Step 1: Request presigned URL
+      // Step 1: Request signed upload URL
       const response = await fetch("/api/upload", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -117,10 +117,10 @@ export function useImageUpload({
         throw new Error("presignedFailed");
       }
 
-      const { presignedUrl, publicUrl }: UploadResponse = await response.json();
+      const { signedUrl, publicUrl }: UploadResponse = await response.json();
 
-      // Step 2: Upload directly to S3
-      await uploadToS3(presignedUrl, selectedFile);
+      // Step 2: Upload directly to Supabase Storage
+      await uploadToStorage(signedUrl, selectedFile);
 
       // Step 3: Confirm upload
       const confirmResponse = await fetch("/api/upload/confirm", {
@@ -142,7 +142,7 @@ export function useImageUpload({
       setUploading(false);
       abortRef.current = null;
     }
-  }, [selectedFile, context, uploadToS3, onUploadSuccess, clearPreview]);
+  }, [selectedFile, context, uploadToStorage, onUploadSuccess, clearPreview]);
 
   const handleDelete = useCallback(async () => {
     onDelete?.();

@@ -1,28 +1,54 @@
 import type { UploadContext } from "@/types/upload";
 
-const S3_BUCKET_NAME = "gameuniverse-uploads";
-const S3_REGION = "eu-west-3";
-const S3_PUBLIC_URL_PREFIX = `https://${S3_BUCKET_NAME}.s3.${S3_REGION}.amazonaws.com/`;
+const SUPABASE_PUBLIC_STORAGE_PREFIX = "/storage/v1/object/public/";
 
 /**
- * Generates a unique S3 key following the pattern:
- * `public/{context}/{userId}/{timestamp}-{randomId}.{extension}`
+ * Generates a unique storage path following the pattern:
+ * `{userId}/{timestamp}-{randomId}.{extension}`
+ *
+ * The bucket is determined separately via `getBucketName`.
  */
-export function generateS3Key(context: UploadContext, userId: string, extension: string): string {
+export function generateStoragePath(userId: string, extension: string): string {
   const timestamp = Date.now();
   const randomId = Math.random().toString(36).substring(2, 10);
-  return `public/${context}/${userId}/${timestamp}-${randomId}.${extension}`;
+  return `${userId}/${timestamp}-${randomId}.${extension}`;
 }
 
 /**
- * Extracts the S3 key from a public URL.
- * Returns null if the URL doesn't match the expected bucket URL prefix.
+ * Resolves the Supabase Storage bucket name from the upload context.
  */
-export function extractS3KeyFromUrl(url: string): string | null {
-  if (!url.startsWith(S3_PUBLIC_URL_PREFIX)) {
-    return null;
-  }
-  return url.slice(S3_PUBLIC_URL_PREFIX.length);
+export function getBucketName(context: UploadContext): string {
+  const bucketMap: Record<UploadContext, string> = {
+    avatars: "avatars",
+    banners: "banners",
+  };
+  return bucketMap[context];
+}
+
+/**
+ * Extracts the bucket name and storage path from a Supabase Storage public URL.
+ *
+ * Expected format:
+ * `https://{project}.supabase.co/storage/v1/object/public/{bucket}/{path}`
+ *
+ * Returns `null` if the URL doesn't match the expected Supabase Storage format.
+ */
+export function extractStoragePathFromUrl(url: string): { bucket: string; path: string } | null {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!supabaseUrl) return null;
+
+  const prefix = `${supabaseUrl}${SUPABASE_PUBLIC_STORAGE_PREFIX}`;
+  if (!url.startsWith(prefix)) return null;
+
+  const remainder = url.slice(prefix.length);
+  const slashIndex = remainder.indexOf("/");
+  if (slashIndex <= 0) return null;
+
+  const bucket = remainder.substring(0, slashIndex);
+  const path = remainder.substring(slashIndex + 1);
+  if (!path) return null;
+
+  return { bucket, path };
 }
 
 /**

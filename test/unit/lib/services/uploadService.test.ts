@@ -1,142 +1,179 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 
 // vi.hoisted runs before vi.mock hoisting — safe to reference in mock factories
-const { mockSend } = vi.hoisted(() => ({
-  mockSend: vi.fn(),
-}));
-
-vi.mock("@aws-sdk/client-s3", () => {
-  class MockS3Client {
-    send = mockSend;
-  }
-  return {
-    S3Client: MockS3Client,
-    PutObjectCommand: vi.fn(),
-    DeleteObjectCommand: vi.fn(),
-  };
+const { mockCreateSignedUploadUrl, mockRemove, mockFrom } = vi.hoisted(() => {
+  const mockCreateSignedUploadUrl = vi.fn();
+  const mockRemove = vi.fn();
+  const mockFrom = vi.fn(() => ({
+    createSignedUploadUrl: mockCreateSignedUploadUrl,
+    remove: mockRemove,
+  }));
+  return { mockCreateSignedUploadUrl, mockRemove, mockFrom };
 });
 
-vi.mock("@aws-sdk/s3-request-presigner", () => ({
-  getSignedUrl: vi.fn(),
+vi.mock("@supabase/supabase-js", () => ({
+  createClient: vi.fn(() => ({
+    storage: { from: mockFrom },
+  })),
 }));
 
 vi.mock("@/lib/utils/uploadUtils", () => ({
-  generateS3Key: vi.fn(),
-  extractS3KeyFromUrl: vi.fn(),
+  generateStoragePath: vi.fn(),
+  getBucketName: vi.fn(),
+  extractStoragePathFromUrl: vi.fn(),
 }));
 
-import { generatePresignedUrl, deleteFile } from "@/lib/services/uploadService";
-import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { generateS3Key, extractS3KeyFromUrl } from "@/lib/utils/uploadUtils";
-import type { PresignedUrlParams } from "@/types/upload";
+import { generateSignedUploadUrl, deleteFile } from "@/lib/services/uploadService";
+import {
+  generateStoragePath,
+  getBucketName,
+  extractStoragePathFromUrl,
+} from "@/lib/utils/uploadUtils";
+import type { SignedUploadUrlParams } from "@/types/upload";
 
-const mockedGetSignedUrl = vi.mocked(getSignedUrl);
-const mockedGenerateS3Key = vi.mocked(generateS3Key);
-const mockedExtractS3KeyFromUrl = vi.mocked(extractS3KeyFromUrl);
-const MockedPutObjectCommand = vi.mocked(PutObjectCommand);
-const MockedDeleteObjectCommand = vi.mocked(DeleteObjectCommand);
+const mockedGenerateStoragePath = vi.mocked(generateStoragePath);
+const mockedGetBucketName = vi.mocked(getBucketName);
+const mockedExtractStoragePathFromUrl = vi.mocked(extractStoragePathFromUrl);
 
-const VALID_PARAMS: PresignedUrlParams = {
+const SUPABASE_URL = "https://test-project.supabase.co";
+const SERVICE_ROLE_KEY = "test-service-role-key";
+const FAKE_STORAGE_PATH = "user-123/1700000000-abc123.webp";
+const FAKE_SIGNED_URL =
+  "https://test-project.supabase.co/storage/v1/upload/sign/avatars/user-123/1700000000-abc123.webp?token=abc";
+const FAKE_BUCKET = "avatars";
+
+const VALID_PARAMS: SignedUploadUrlParams = {
   context: "avatars",
   userId: "user-123",
   contentType: "image/webp",
   extension: "webp",
 };
 
-const FAKE_S3_KEY = "public/avatars/user-123/1700000000-abc123.webp";
-const FAKE_PRESIGNED_URL = "https://s3.amazonaws.com/presigned?token=abc";
-
 describe("uploadService", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockedGenerateS3Key.mockReturnValue(FAKE_S3_KEY);
-    mockedGetSignedUrl.mockResolvedValue(FAKE_PRESIGNED_URL);
+    process.env.NEXT_PUBLIC_SUPABASE_URL = SUPABASE_URL;
+    process.env.SUPABASE_SERVICE_ROLE_KEY = SERVICE_ROLE_KEY;
+
+    mockedGetBucketName.mockReturnValue(FAKE_BUCKET);
+    mockedGenerateStoragePath.mockReturnValue(FAKE_STORAGE_PATH);
   });
 
-  /** Validates: Requirements 1.1, 1.5 */
-  describe("generatePresignedUrl", () => {
-    it("should return presignedUrl, publicUrl, and s3Key", async () => {
-      const result = await generatePresignedUrl(VALID_PARAMS);
+  afterEach(() => {
+    delete process.env.NEXT_PUBLIC_SUPABASE_URL;
+    delete process.env.SUPABASE_SERVICE_ROLE_KEY;
+  });
 
-      expect(result).toEqual({
-        presignedUrl: FAKE_PRESIGNED_URL,
-        publicUrl: expect.stringContaining(FAKE_S3_KEY),
-        s3Key: FAKE_S3_KEY,
+  /** Validates: Requirements 9.1 */
+  describe("generateSignedUploadUrl", () => {
+    beforeEach(() => {
+      mockCreateSignedUploadUrl.mockResolvedValue({
+        data: { signedUrl: FAKE_SIGNED_URL, token: "abc", path: FAKE_STORAGE_PATH },
+        error: null,
       });
     });
 
-    it("should call generateS3Key with correct params", async () => {
-      await generatePresignedUrl(VALID_PARAMS);
+    it("should return signedUrl, publicUrl, and storagePath on success", async () => {
+      const result = await generateSignedUploadUrl(VALID_PARAMS);
 
-      expect(mockedGenerateS3Key).toHaveBeenCalledWith(
-        VALID_PARAMS.context,
-        VALID_PARAMS.userId,
-        VALID_PARAMS.extension
+      expect(result).toEqual({
+        signedUrl: FAKE_SIGNED_URL,
+        publicUrl: `${SUPABASE_URL}/storage/v1/object/public/${FAKE_BUCKET}/${FAKE_STORAGE_PATH}`,
+        storagePath: FAKE_STORAGE_PATH,
+      });
+    });
+
+    it("should call getBucketName with the correct context", async () => {
+      await generateSignedUploadUrl(VALID_PARAMS);
+
+      expect(mockedGetBucketName).toHaveBeenCalledWith("avatars");
+    });
+
+    it("should call generateStoragePath with correct userId and extension", async () => {
+      await generateSignedUploadUrl(VALID_PARAMS);
+
+      expect(mockedGenerateStoragePath).toHaveBeenCalledWith("user-123", "webp");
+    });
+
+    it("should call createSignedUploadUrl with the correct path", async () => {
+      await generateSignedUploadUrl(VALID_PARAMS);
+
+      expect(mockFrom).toHaveBeenCalledWith(FAKE_BUCKET);
+      expect(mockCreateSignedUploadUrl).toHaveBeenCalledWith(FAKE_STORAGE_PATH);
+    });
+
+    it("should construct publicUrl in the correct Supabase format", async () => {
+      const result = await generateSignedUploadUrl(VALID_PARAMS);
+
+      const expectedUrl = `${SUPABASE_URL}/storage/v1/object/public/${FAKE_BUCKET}/${FAKE_STORAGE_PATH}`;
+      expect(result.publicUrl).toBe(expectedUrl);
+    });
+
+    it("should throw when createSignedUploadUrl returns an error", async () => {
+      mockCreateSignedUploadUrl.mockResolvedValue({
+        data: null,
+        error: { message: "Bucket not found" },
+      });
+
+      await expect(generateSignedUploadUrl(VALID_PARAMS)).rejects.toThrow(
+        "Failed to create signed upload URL: Bucket not found"
       );
     });
 
-    it("should create PutObjectCommand with correct bucket, key, and contentType", async () => {
-      await generatePresignedUrl(VALID_PARAMS);
-
-      expect(MockedPutObjectCommand).toHaveBeenCalledWith({
-        Bucket: expect.any(String),
-        Key: FAKE_S3_KEY,
-        ContentType: VALID_PARAMS.contentType,
+    it("should throw with unknown error when data is null without error", async () => {
+      mockCreateSignedUploadUrl.mockResolvedValue({
+        data: null,
+        error: null,
       });
-    });
 
-    it("should call getSignedUrl with expiresIn 300", async () => {
-      await generatePresignedUrl(VALID_PARAMS);
-
-      expect(mockedGetSignedUrl).toHaveBeenCalledWith(expect.anything(), expect.anything(), {
-        expiresIn: 300,
-      });
-    });
-
-    /** Validates: Requirements 7.3 */
-    it("should throw when S3 connection fails", async () => {
-      mockedGetSignedUrl.mockRejectedValue(new Error("Network error"));
-
-      await expect(generatePresignedUrl(VALID_PARAMS)).rejects.toThrow("Network error");
+      await expect(generateSignedUploadUrl(VALID_PARAMS)).rejects.toThrow(
+        "Failed to create signed upload URL: Unknown error"
+      );
     });
   });
 
-  /** Validates: Requirements 1.3 */
+  /** Validates: Requirements 9.1 */
   describe("deleteFile", () => {
-    const VALID_FILE_URL =
-      "https://gameuniverse-uploads.s3.eu-west-3.amazonaws.com/public/avatars/user-123/1700000000-abc123.webp";
+    const VALID_FILE_URL = `${SUPABASE_URL}/storage/v1/object/public/avatars/user-123/1700000000-abc123.webp`;
 
-    it("should call DeleteObjectCommand with correct bucket and key", async () => {
-      mockedExtractS3KeyFromUrl.mockReturnValue(FAKE_S3_KEY);
-      mockSend.mockResolvedValue({});
+    it("should call remove with the correct path when URL is valid", async () => {
+      mockedExtractStoragePathFromUrl.mockReturnValue({
+        bucket: FAKE_BUCKET,
+        path: FAKE_STORAGE_PATH,
+      });
+      mockRemove.mockResolvedValue({ error: null });
 
       await deleteFile(VALID_FILE_URL);
 
-      expect(MockedDeleteObjectCommand).toHaveBeenCalledWith({
-        Bucket: expect.any(String),
-        Key: FAKE_S3_KEY,
-      });
-      expect(mockSend).toHaveBeenCalled();
+      expect(mockFrom).toHaveBeenCalledWith(FAKE_BUCKET);
+      expect(mockRemove).toHaveBeenCalledWith([FAKE_STORAGE_PATH]);
     });
 
-    it("should log warning and return when URL does not match bucket pattern", async () => {
-      mockedExtractS3KeyFromUrl.mockReturnValue(null);
+    it("should log warning and return when URL extraction returns null", async () => {
+      mockedExtractStoragePathFromUrl.mockReturnValue(null);
       const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 
-      await deleteFile("https://other-bucket.com/file.webp");
+      await deleteFile("https://invalid-url.com/file.webp");
 
-      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining("Could not extract S3 key"));
-      expect(mockSend).not.toHaveBeenCalled();
+      expect(warnSpy).toHaveBeenCalledWith(
+        expect.stringContaining("Could not extract storage path")
+      );
+      expect(mockRemove).not.toHaveBeenCalled();
       warnSpy.mockRestore();
     });
 
-    /** Validates: Requirements 7.3 */
-    it("should throw when S3 delete fails", async () => {
-      mockedExtractS3KeyFromUrl.mockReturnValue(FAKE_S3_KEY);
-      mockSend.mockRejectedValue(new Error("S3 delete failed"));
+    it("should throw when remove returns an error", async () => {
+      mockedExtractStoragePathFromUrl.mockReturnValue({
+        bucket: FAKE_BUCKET,
+        path: FAKE_STORAGE_PATH,
+      });
+      mockRemove.mockResolvedValue({
+        error: { message: "Permission denied" },
+      });
 
-      await expect(deleteFile(VALID_FILE_URL)).rejects.toThrow("S3 delete failed");
+      await expect(deleteFile(VALID_FILE_URL)).rejects.toThrow(
+        "Failed to delete file: Permission denied"
+      );
     });
   });
 });

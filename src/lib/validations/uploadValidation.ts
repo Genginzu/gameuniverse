@@ -16,7 +16,12 @@ export const uploadRequestSchema = z.object({
 
 export const uploadConfirmSchema = z.object({
   context: z.enum(["avatars", "banners"]),
-  publicUrl: z.string().url(),
+  publicUrl: z
+    .string()
+    .url()
+    .refine((url) => url.includes("/storage/v1/object/public/"), {
+      message: "URL must be a valid Supabase Storage public URL",
+    }),
 });
 
 export type UploadRequestInput = z.infer<typeof uploadRequestSchema>;

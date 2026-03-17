@@ -238,8 +238,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     } | null = null;
 
     try {
-      const { data: musicData } = await supabase
-        .from("game_music")
+      const { data: musicData } = await (
+        supabase.from("game_music") as ReturnType<typeof supabase.from>
+      )
         .select("composer, spotify_embed_url, youtube_video_url")
         .eq("game_id", game.id)
         .single();

@@ -1,6 +1,6 @@
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
-import { generatePresignedUrl } from "@/lib/services/uploadService";
+import { generateSignedUploadUrl } from "@/lib/services/uploadService";
 import { uploadRequestSchema } from "@/lib/validations/uploadValidation";
 import { getExtensionFromMimeType } from "@/lib/utils/uploadUtils";
 import { NextRequest, NextResponse } from "next/server";
@@ -34,16 +34,16 @@ export async function POST(request: NextRequest) {
   const extension = getExtensionFromMimeType(contentType);
 
   try {
-    const { presignedUrl, publicUrl } = await generatePresignedUrl({
+    const { signedUrl, publicUrl } = await generateSignedUploadUrl({
       context,
       userId: user.id,
       contentType,
       extension,
     });
 
-    return NextResponse.json({ presignedUrl, publicUrl });
+    return NextResponse.json({ signedUrl, publicUrl });
   } catch (error) {
-    logger.error("Upload presigned URL generation failed", { error });
+    logger.error("Upload signed URL generation failed", { error });
     return NextResponse.json({ error: "Service temporarily unavailable" }, { status: 503 });
   }
 }

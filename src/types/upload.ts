@@ -17,17 +17,17 @@ export const CONTEXT_TO_PROFILE_FIELD: Record<UploadContext, "avatar_url" | "ban
   banners: "banner_url",
 };
 
-export interface PresignedUrlParams {
+export interface SignedUploadUrlParams {
   context: UploadContext;
   userId: string;
   contentType: string;
   extension: string;
 }
 
-export interface PresignedUrlResult {
-  presignedUrl: string;
+export interface SignedUploadUrlResult {
+  signedUrl: string;
   publicUrl: string;
-  s3Key: string;
+  storagePath: string;
 }
 
 export interface UploadRequest {
@@ -37,7 +37,7 @@ export interface UploadRequest {
 }
 
 export interface UploadResponse {
-  presignedUrl: string;
+  signedUrl: string;
   publicUrl: string;
 }
 

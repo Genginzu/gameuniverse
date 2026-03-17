@@ -1,71 +1,90 @@
-import { DeleteObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-import { extractS3KeyFromUrl, generateS3Key } from "@/lib/utils/uploadUtils";
-import type { PresignedUrlParams, PresignedUrlResult } from "@/types/upload";
+import {
+  extractStoragePathFromUrl,
+  generateStoragePath,
+  getBucketName,
+} from "@/lib/utils/uploadUtils";
+import {
+  ALLOWED_MIME_TYPES,
+  MAX_FILE_SIZE_BYTES,
+  type AllowedMimeType,
+  type SignedUploadUrlParams,
+  type SignedUploadUrlResult,
+} from "@/types/upload";
 
-// Lazy-initialized S3 client to avoid build-time errors when env vars are missing
-let _s3Client: S3Client | null = null;
+// Lazy-initialized Supabase admin client (service role) to avoid build-time errors
+let _supabaseAdmin: SupabaseClient | null = null;
 
-function getS3Client(): S3Client {
-  if (!_s3Client) {
-    _s3Client = new S3Client({
-      region: process.env.AWS_S3_REGION ?? "",
-      credentials: {
-        accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID ?? "",
-        secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY ?? "",
-      },
+function getSupabaseAdmin(): SupabaseClient {
+  if (!_supabaseAdmin) {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!supabaseUrl || !serviceRoleKey) {
+      throw new Error("Missing Supabase environment variables for admin client");
+    }
+    _supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
+      auth: { autoRefreshToken: false, persistSession: false },
     });
   }
-  return _s3Client;
-}
-
-function getBucket(): string {
-  return process.env.AWS_S3_BUCKET_NAME ?? "";
-}
-
-function getRegion(): string {
-  return process.env.AWS_S3_REGION ?? "";
+  return _supabaseAdmin;
 }
 
 /**
- * Generates a presigned PUT URL for direct browser-to-S3 upload.
- * Returns the presigned URL, the final public URL, and the S3 key.
+ * Generates a signed upload URL for direct browser-to-Supabase-Storage upload.
+ * Returns the signed URL, the final public URL, and the storage path.
  */
-export async function generatePresignedUrl(
-  params: PresignedUrlParams
-): Promise<PresignedUrlResult> {
-  const { context, userId, contentType, extension } = params;
-  const s3Key = generateS3Key(context, userId, extension);
+export async function generateSignedUploadUrl(
+  params: SignedUploadUrlParams
+): Promise<SignedUploadUrlResult> {
+  const { context, userId, extension } = params;
+  const bucket = getBucketName(context);
+  const storagePath = generateStoragePath(userId, extension);
 
-  const command = new PutObjectCommand({
-    Bucket: getBucket(),
-    Key: s3Key,
-    ContentType: contentType,
-  });
+  const { data, error } = await getSupabaseAdmin()
+    .storage.from(bucket)
+    .createSignedUploadUrl(storagePath);
 
-  const presignedUrl = await getSignedUrl(getS3Client(), command, { expiresIn: 300 });
-  const publicUrl = `https://${getBucket()}.s3.${getRegion()}.amazonaws.com/${s3Key}`;
+  if (error || !data) {
+    throw new Error(`Failed to create signed upload URL: ${error?.message ?? "Unknown error"}`);
+  }
 
-  return { presignedUrl, publicUrl, s3Key };
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const publicUrl = `${supabaseUrl}/storage/v1/object/public/${bucket}/${storagePath}`;
+
+  return { signedUrl: data.signedUrl, publicUrl, storagePath };
 }
 
 /**
- * Deletes a file from S3 given its public URL.
- * If the key cannot be extracted from the URL, logs a warning and returns.
+ * Deletes a file from Supabase Storage given its public URL.
+ * If the path cannot be extracted from the URL, logs a warning and returns.
  */
 export async function deleteFile(fileUrl: string): Promise<void> {
-  const s3Key = extractS3KeyFromUrl(fileUrl);
+  const extracted = extractStoragePathFromUrl(fileUrl);
 
-  if (!s3Key) {
-    console.warn(`[uploadService] Could not extract S3 key from URL: ${fileUrl}`);
+  if (!extracted) {
+    console.warn(`[uploadService] Could not extract storage path from URL: ${fileUrl}`);
     return;
   }
 
-  const command = new DeleteObjectCommand({
-    Bucket: getBucket(),
-    Key: s3Key,
-  });
+  const { bucket, path } = extracted;
+  const { error } = await getSupabaseAdmin().storage.from(bucket).remove([path]);
 
-  await getS3Client().send(command);
+  if (error) {
+    throw new Error(`Failed to delete file: ${error.message}`);
+  }
+}
+
+/**
+ * Checks whether a MIME type is in the allowed list.
+ */
+export function isAllowedMimeType(mimeType: string): boolean {
+  return ALLOWED_MIME_TYPES.includes(mimeType as AllowedMimeType);
+}
+
+/**
+ * Checks whether a file size is within the allowed limit (0 < size <= 5 MB).
+ */
+export function isValidFileSize(size: number): boolean {
+  return size > 0 && size <= MAX_FILE_SIZE_BYTES;
 }

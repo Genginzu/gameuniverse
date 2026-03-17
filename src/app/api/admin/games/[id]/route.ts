@@ -305,8 +305,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     // Fetch music data separately (table may not exist yet)
     try {
-      const { data: musicData } = await supabase
-        .from("game_music")
+      const { data: musicData } = await (
+        supabase.from("game_music") as ReturnType<typeof supabase.from>
+      )
         .select("composer, spotify_embed_url, youtube_video_url")
         .eq("game_id", gameId)
         .single();
@@ -634,14 +635,16 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
           music?.composer || music?.spotify_embed_url || music?.youtube_video_url;
 
         if (hasAnyMusicData) {
-          const { error: musicError } = await supabase.from("game_music").upsert(
+          const { error: musicError } = await (
+            supabase.from("game_music") as ReturnType<typeof supabase.from>
+          ).upsert(
             {
               game_id: gameId,
               composer: music.composer ?? null,
               spotify_embed_url: music.spotify_embed_url ?? null,
               youtube_video_url: music.youtube_video_url ?? null,
               updated_at: new Date().toISOString(),
-            },
+            } as Record<string, unknown>,
             { onConflict: "game_id" }
           );
 
@@ -650,8 +653,9 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
           }
         } else {
           // All fields empty — remove the row
-          const { error: deleteError } = await supabase
-            .from("game_music")
+          const { error: deleteError } = await (
+            supabase.from("game_music") as ReturnType<typeof supabase.from>
+          )
             .delete()
             .eq("game_id", gameId);
 
