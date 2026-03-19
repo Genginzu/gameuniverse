@@ -15,6 +15,13 @@ export interface GenreDistributionEntry {
   percentage: number;
 }
 
+/** Entrée de répartition par plateforme (Req 5) */
+export interface PlatformDistributionEntry {
+  platform: string;
+  count: number;
+  percentage: number;
+}
+
 /** Stats de complétion (Req 3) */
 export interface CompletionStats {
   total: number;
@@ -122,6 +129,7 @@ export interface DashboardStatsResponse {
   achievementDefinitions: AchievementDefinition[];
   sessions: SessionStatsData;
   goals: PlayerGoal[];
+  platformDistribution: PlatformDistributionEntry[];
 }
 
 /** Réponse API quand stats privées */

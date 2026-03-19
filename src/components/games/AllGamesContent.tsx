@@ -10,6 +10,8 @@ import { Pagination } from "@/components/shared/Pagination";
 import { GridSkeleton } from "@/components/shared/GridSkeleton";
 import { gameSkeletonConfig } from "@/components/shared/EntitySkeleton";
 import { SearchSkeleton } from "./SearchSkeleton";
+import { PlatformFilter } from "./PlatformFilter";
+import { GamesEmptyState } from "./GamesEmptyState";
 import { Genre } from "@/types/genre";
 import { GameSummary } from "@/types/game";
 import { Pagination as PaginationType } from "@/types/pagination";
@@ -22,7 +24,6 @@ interface AllGamesContentProps {
 }
 
 export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
-  const t = useTranslations("games");
   const tErrors = useTranslations("errors");
 
   const [games, setGames] = useState<GameSummary[]>([]);
@@ -32,6 +33,7 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
   const [initialLoading, setInitialLoading] = useState(true);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [selectedPublishers, setSelectedPublishers] = useState<string[]>([]);
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
 
   // Utiliser notre nouveau système de gestion d'erreurs
@@ -57,7 +59,12 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
 
   // Fetch games avec gestion d'erreurs améliorée
   const fetchGames = useCallback(
-    async (genres: string[] = [], publishers: string[] = [], page: number = 1) => {
+    async (
+      genres: string[] = [],
+      publishers: string[] = [],
+      page: number = 1,
+      platforms: string[] = []
+    ) => {
       setLoading(true);
 
       const result = await executeAsync(async () => {
@@ -73,6 +80,10 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
 
         if (publishers.length > 0) {
           params.append("publishers", publishers.join(","));
+        }
+
+        if (platforms.length > 0) {
+          params.append("platforms", platforms.join(","));
         }
 
         const data = await apiClient.get(`/api/games?${params.toString()}`, {
@@ -118,18 +129,24 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
     // Le useEffect va gérer l'appel à fetchGames
   }, []);
 
+  // Handle platform filter
+  const handlePlatformFilter = useCallback((platforms: string[]) => {
+    setSelectedPlatforms(platforms);
+  }, []);
+
   // Handle page change
   const handlePageChange = useCallback(
     (page: number) => {
-      fetchGames(selectedGenres, selectedPublishers, page);
+      fetchGames(selectedGenres, selectedPublishers, page, selectedPlatforms);
     },
-    [fetchGames, selectedGenres, selectedPublishers]
+    [fetchGames, selectedGenres, selectedPublishers, selectedPlatforms]
   );
 
   // Clear all filters
   const handleClearFilters = useCallback(() => {
     setSelectedGenres([]);
     setSelectedPublishers([]);
+    setSelectedPlatforms([]);
     // Les useEffect vont gérer le rechargement
   }, []);
 
@@ -179,11 +196,11 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
     if (initialLoading) return;
 
     const timeoutId = setTimeout(() => {
-      fetchGames(selectedGenres, selectedPublishers, 1);
+      fetchGames(selectedGenres, selectedPublishers, 1, selectedPlatforms);
     }, 300); // Debounce de 300ms
 
     return () => clearTimeout(timeoutId);
-  }, [selectedGenres, selectedPublishers, fetchGames]); // Inclure fetchGames
+  }, [selectedGenres, selectedPublishers, selectedPlatforms, fetchGames]); // Inclure fetchGames
 
   // Show full skeleton on initial load
   if (initialLoading) {
@@ -196,8 +213,12 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
         {/* Filters */}
         <div className="mb-6 space-y-4 sm:mb-8">
           <GameFilterButton
-            hasFilters={selectedGenres.length > 0 || selectedPublishers.length > 0}
-            filterCount={selectedGenres.length}
+            hasFilters={
+              selectedGenres.length > 0 ||
+              selectedPublishers.length > 0 ||
+              selectedPlatforms.length > 0
+            }
+            filterCount={selectedGenres.length + selectedPlatforms.length}
             onClick={() => setShowFilters(!showFilters)}
           />
 
@@ -211,6 +232,15 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
             onClearFilters={handleClearFilters}
             showAllGenres={showFilters}
           />
+
+          {/* Platform filter */}
+          {showFilters && (
+            <PlatformFilter
+              selectedPlatforms={selectedPlatforms}
+              onPlatformsChange={handlePlatformFilter}
+              locale={locale}
+            />
+          )}
         </div>
 
         {/* Loading state - Show skeleton grid instead of spinner */}
@@ -222,39 +252,14 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
         {!loading && (
           <>
             {games.length === 0 ? (
-              <div className="flex flex-col items-center justify-center rounded-2xl bg-white py-16 text-center shadow-sm dark:bg-gray-800 sm:py-20">
-                <div className="mb-6 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 p-6 dark:from-gray-700 dark:to-gray-600">
-                  <svg
-                    className="h-12 w-12 text-gray-400 sm:h-16 sm:w-16"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.009-5.824-2.562M15 6.5a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                  </svg>
-                </div>
-                <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white sm:text-xl">
-                  {t("noGamesFound")}
-                </h3>
-                <p className="max-w-md text-sm text-gray-500 dark:text-gray-400 sm:text-base">
-                  {selectedGenres.length > 0 || selectedPublishers.length > 0
-                    ? t("modifySearch")
-                    : t("noGamesAvailable")}
-                </p>
-                {(selectedGenres.length > 0 || selectedPublishers.length > 0) && (
-                  <button
-                    onClick={handleClearFilters}
-                    className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
-                  >
-                    {t("clearFilters")}
-                  </button>
-                )}
-              </div>
+              <GamesEmptyState
+                hasFilters={
+                  selectedGenres.length > 0 ||
+                  selectedPublishers.length > 0 ||
+                  selectedPlatforms.length > 0
+                }
+                onClearFilters={handleClearFilters}
+              />
             ) : (
               <div className="space-y-8">
                 {/* Responsive grid - 5 columns layout */}

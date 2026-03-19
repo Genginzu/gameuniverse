@@ -39,6 +39,7 @@ function EditGameForm({
     stores,
     currencies,
     platforms,
+    gamePlatforms,
     loadingOptions,
     submitGame,
     isSubmitting,
@@ -101,6 +102,7 @@ function EditGameForm({
           stores={stores}
           currencies={currencies}
           platforms={platforms}
+          gamePlatforms={gamePlatforms}
           loadingOptions={loadingOptions}
           onSubmit={handleSubmit}
           isSubmitting={isSubmitting}

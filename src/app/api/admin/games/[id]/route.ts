@@ -192,6 +192,17 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           has_audio,
           has_subtitles,
           has_interface
+        ),
+        game_platforms(
+          platform_id,
+          platforms(
+            id,
+            slug,
+            platform_translations(
+              name,
+              language_code
+            )
+          )
         )
       `
       )
@@ -301,6 +312,26 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
               has_interface: boolean;
             }>
           | undefined) ?? [],
+      game_platforms:
+        (
+          game.game_platforms as
+            | Array<{
+                platform_id: string;
+                platforms: {
+                  id: string;
+                  slug: string;
+                  platform_translations: Array<{ name: string; language_code: string }>;
+                } | null;
+              }>
+            | undefined
+        )?.map((gp) => ({
+          platform_id: gp.platform_id,
+          platform: {
+            id: gp.platforms?.id,
+            slug: gp.platforms?.slug,
+            name: gp.platforms?.platform_translations?.[0]?.name || gp.platforms?.slug || "Unknown",
+          },
+        })) || [],
     };
 
     // Fetch music data separately (table may not exist yet)
@@ -374,6 +405,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       versions,
       languages,
       music,
+      game_platforms,
     } = validationResult.data;
 
     const supabase = await createRouteHandlerClient();
@@ -392,7 +424,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         game_artwork(url),
         game_ratings(rating_id, is_primary, game_rating_descriptors(content_descriptor_id)),
         game_versions(version_title, description),
-        game_languages(language_code, has_audio, has_subtitles, has_interface)
+        game_languages(language_code, has_audio, has_subtitles, has_interface),
+        game_platforms(platform_id)
       `
       )
       .eq("id", gameId)
@@ -628,6 +661,25 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
       }
     }
 
+    // Update game platforms if provided
+    if (game_platforms) {
+      await supabase.from("game_platforms").delete().eq("game_id", gameId);
+
+      if (game_platforms.length > 0) {
+        const platformsWithGameId = game_platforms.map((p) => ({
+          ...p,
+          game_id: gameId,
+        }));
+        const { error: platformsError } = await supabase
+          .from("game_platforms")
+          .insert(platformsWithGameId);
+
+        if (platformsError) {
+          logger.warn("Error updating game platforms", { error: platformsError });
+        }
+      }
+    }
+
     // Upsert music/soundtrack data if provided (non-critical — wrapped in try/catch)
     try {
       if (music !== undefined) {
@@ -702,6 +754,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
           })) ?? [],
         versions: existingGame.game_versions ?? [],
         languages: existingGame.game_languages ?? [],
+        game_platforms: existingGame.game_platforms ?? [],
       };
 
       // Build AdminGameFormData-compatible object from validated PUT data.
@@ -727,6 +780,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         age_ratings: age_ratings ?? currentGameData.age_ratings,
         versions: versions ?? currentGameData.versions,
         languages: languages ?? currentGameData.languages,
+        game_platforms: game_platforms ?? currentGameData.game_platforms,
         prices: prices ?? [],
       } as AdminGameFormData;
 

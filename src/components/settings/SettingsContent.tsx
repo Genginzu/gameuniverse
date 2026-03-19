@@ -4,6 +4,7 @@ import { useState } from "react";
 import { FaUser, FaShieldAlt } from "react-icons/fa";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
 import { useProfile } from "@/hooks/useProfile";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -16,6 +17,7 @@ import { createClient } from "@/lib/supabase";
 
 export function SettingsContent() {
   const t = useTranslations("settings");
+  const router = useRouter();
   const { profile, loading: profileLoading, updateProfile, refreshProfile } = useProfile();
   const { user, loading: authLoading, resetPassword } = useAuth();
   const { toast } = useToast();
@@ -98,10 +100,13 @@ export function SettingsContent() {
 
   const handleAvatarChange = () => {
     refreshProfile();
+    // Invalidate Next.js Router Cache so the profile page shows the new image
+    router.refresh();
   };
 
   const handleBannerChange = () => {
     refreshProfile();
+    router.refresh();
   };
 
   const handleAvatarDelete = async () => {
@@ -111,6 +116,7 @@ export function SettingsContent() {
     if (!currentUser) return;
     await supabase.from("profiles").update({ avatar_url: null }).eq("id", currentUser.id);
     refreshProfile();
+    router.refresh();
   };
 
   const handleBannerDelete = async () => {
@@ -120,6 +126,7 @@ export function SettingsContent() {
     if (!currentUser) return;
     await supabase.from("profiles").update({ banner_url: null }).eq("id", currentUser.id);
     refreshProfile();
+    router.refresh();
   };
 
   return (

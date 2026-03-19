@@ -13,6 +13,7 @@ import {
 import { IGDB_RATING_CATEGORIES, IGDB_ALL_RATINGS } from "../../src/types/igdb"; // eslint-disable-line no-duplicate-imports
 import { extractColorsFromCover } from "./color-extractor";
 import { syncExistingGame } from "./game-sync";
+import { ensurePlatforms, linkPlatforms } from "./platform-importer";
 
 export interface ImportResult {
   success: boolean;
@@ -120,6 +121,12 @@ export async function importGameFromIGDB(
 
     // Create media
     await createMedia(newGame.id, igdbGame);
+
+    // Link platforms
+    const platformIds = await ensurePlatforms(igdbGame, verbose);
+    if (platformIds.length > 0) {
+      await linkPlatforms(newGame.id, platformIds);
+    }
 
     // Create languages
     await createLanguages(newGame.id, igdbGame);

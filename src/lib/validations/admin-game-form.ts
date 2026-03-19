@@ -74,6 +74,10 @@ export const adminGameRatingSchema = z.object({
   content_descriptors: z.array(z.string().uuid()).default([]),
 });
 
+export const adminGamePlatformSchema = z.object({
+  platform_id: z.string().uuid("Invalid platform ID"),
+});
+
 export const adminGameFormSchema = z.object({
   slug: z.string().max(255, "Slug must be less than 255 characters").optional().or(z.literal("")),
   translations: z
@@ -125,6 +129,7 @@ export const adminGameFormSchema = z.object({
   prices: z.array(adminGamePriceSchema).default([]),
   genres: z.array(adminGameGenreSchema).min(1, "At least one genre is required"),
   companies: z.array(adminGameCompanySchema).min(1, "At least one company is required"),
+  game_platforms: z.array(adminGamePlatformSchema).default([]),
   music_composer: z.string().max(500).optional().or(z.literal("")),
   music_spotify_embed_url: z.string().url("Invalid URL").optional().or(z.literal("")),
   music_youtube_video_url: z.string().url("Invalid URL").optional().or(z.literal("")),
@@ -140,3 +145,4 @@ export type AdminGameRating = z.infer<typeof adminGameRatingSchema>;
 export type AdminGameVersion = z.infer<typeof adminGameVersionSchema>;
 export type AdminGameLanguage = z.infer<typeof adminGameLanguageSchema>;
 export type AdminGamePrice = z.infer<typeof adminGamePriceSchema>;
+export type AdminGamePlatform = z.infer<typeof adminGamePlatformSchema>;

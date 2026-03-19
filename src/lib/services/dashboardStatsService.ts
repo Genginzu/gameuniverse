@@ -1,9 +1,9 @@
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 // prettier-ignore
-import { ACHIEVEMENT_DEFINITIONS, type AchievementData, type AchievementDefinition, type CompletionStats, type DashboardStatsResponse, type GenreDistributionEntry, type MonthlyActivity, type OverviewMetrics, type PlaytimeData, type PlayerGoal, type ReviewAnalyticsData, type SessionStatsData, type SocialStatsData } from "@/types/dashboard-stats";
+import { ACHIEVEMENT_DEFINITIONS, type AchievementData, type AchievementDefinition, type CompletionStats, type DashboardStatsResponse, type GenreDistributionEntry, type MonthlyActivity, type OverviewMetrics, type PlatformDistributionEntry, type PlaytimeData, type PlayerGoal, type ReviewAnalyticsData, type SessionStatsData, type SocialStatsData } from "@/types/dashboard-stats";
 // prettier-ignore
-import { computeOverviewMetrics, computeGenreDistribution, computeCompletionStats, computeReviewDistribution, computeReviewStatistics, computeActivityByMonth, computeAveragePlaytime, computeTopGame, computeAchievementProgress, computeSessionFrequency } from "@/lib/services/dashboardStatsCompute";
+import { computeOverviewMetrics, computeGenreDistribution, computeCompletionStats, computeReviewDistribution, computeReviewStatistics, computeActivityByMonth, computeAveragePlaytime, computeTopGame, computeAchievementProgress, computeSessionFrequency, computePlatformDistribution } from "@/lib/services/dashboardStatsCompute";
 import { untypedTable } from "@/lib/utils/untypedTable";
 
 function logAndThrow(ctx: string, err: { message: string }): Error {
@@ -252,11 +252,33 @@ export class DashboardStatsService {
     }));
   }
 
+  /** Req 5 (platforms) — Platform distribution from user library */
+  static async fetchPlatformDistribution(playerId: string): Promise<PlatformDistributionEntry[]> {
+    const supabase = await createRouteHandlerClient();
+    const { data, error } = await supabase
+      .from("user_library")
+      .select(`game_id, games(game_platforms(platforms(platform_translations(name))))`)
+      .eq("user_id", playerId);
+    if (error) throw logAndThrow("fetchPlatformDistribution", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const libraryWithPlatforms = ((data ?? []) as any[]).map((row) => {
+      const platforms: string[] = [];
+      for (const gp of row.games?.game_platforms ?? []) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const match = (gp.platforms?.platform_translations ?? []).find((t: any) => t.name);
+        if (match?.name) platforms.push(match.name);
+      }
+      return { platforms };
+    });
+    return computePlatformDistribution(libraryWithPlatforms);
+  }
+
   /** Fetch all dashboard stats in parallel (Req 9.6) */
   static async fetchAllStats(playerId: string, locale: string): Promise<DashboardStatsResponse> {
     const [
       overview,
       genreDistribution,
+      platformDistribution,
       completion,
       reviewAnalytics,
       social,
@@ -268,6 +290,7 @@ export class DashboardStatsService {
     ] = await Promise.all([
       this.fetchOverviewMetrics(playerId),
       this.fetchGenreDistribution(playerId, locale),
+      this.fetchPlatformDistribution(playerId),
       this.fetchCompletionStats(playerId),
       this.fetchReviewAnalytics(playerId),
       this.fetchSocialStats(playerId),
@@ -280,6 +303,7 @@ export class DashboardStatsService {
     return {
       overview,
       genreDistribution,
+      platformDistribution,
       completion,
       reviewAnalytics,
       social,

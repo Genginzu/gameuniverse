@@ -23,6 +23,7 @@ export default function NewGamePage() {
     stores,
     currencies,
     platforms,
+    gamePlatforms,
     loadingOptions,
     submitGame,
     isSubmitting,
@@ -74,6 +75,7 @@ export default function NewGamePage() {
           stores={stores}
           currencies={currencies}
           platforms={platforms}
+          gamePlatforms={gamePlatforms}
           loadingOptions={loadingOptions}
           onSubmit={handleSubmit}
           isSubmitting={isSubmitting}

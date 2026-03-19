@@ -14,6 +14,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get("search") || "";
     const genres = parseArrayParam(searchParams.get("genres"));
+    const platforms = parseArrayParam(searchParams.get("platforms"));
     const { page, limit } = parsePaginationParams(searchParams);
     const locale = searchParams.get("locale") || "fr";
     const inLibrary = searchParams.get("inLibrary") === "true";
@@ -83,8 +84,51 @@ export async function GET(request: NextRequest) {
             hasPreviousPage: false,
             offset,
           },
-          filters: { search, genres, locale, inLibrary },
+          filters: { search, genres, platforms, locale, inLibrary },
         });
+      }
+    }
+
+    // Filter by platform slugs if specified
+    if (platforms.length > 0) {
+      const { data: platformRows } = await supabase
+        .from("platforms")
+        .select("id")
+        .in("slug", platforms);
+
+      if (platformRows && platformRows.length > 0) {
+        const platformIds = platformRows.map((p: { id: string }) => p.id);
+        const { data: gpRows } = await supabase
+          .from("game_platforms")
+          .select("game_id")
+          .in("platform_id", platformIds);
+
+        const platformGameIds = [
+          ...new Set(gpRows?.map((r: { game_id: string }) => r.game_id) ?? []),
+        ];
+
+        // Intersect with search results if both filters are active
+        if (matchingGameIds) {
+          matchingGameIds = matchingGameIds.filter((id) => platformGameIds.includes(id));
+        } else {
+          matchingGameIds = platformGameIds;
+        }
+
+        if (matchingGameIds.length === 0) {
+          return NextResponse.json({
+            games: [],
+            pagination: {
+              currentPage: page,
+              totalPages: 0,
+              totalCount: 0,
+              limit,
+              hasNextPage: false,
+              hasPreviousPage: false,
+              offset,
+            },
+            filters: { search, genres, platforms, locale, inLibrary },
+          });
+        }
       }
     }
 
@@ -270,6 +314,7 @@ export async function GET(request: NextRequest) {
       filters: {
         search,
         genres,
+        platforms,
         locale,
         inLibrary,
       },

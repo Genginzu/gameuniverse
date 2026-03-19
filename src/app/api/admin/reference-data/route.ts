@@ -3,6 +3,7 @@ import { requireAdmin } from "@/lib/auth-admin";
 import {
   getAvailableCompanies,
   getAvailableContentDescriptors,
+  getAvailableGamePlatforms,
   getAvailableGenres,
   getAvailableRatings,
   getAvailableStores,
@@ -78,7 +79,7 @@ export async function GET(request: NextRequest) {
       ];
     }
 
-    // Get supported platforms
+    // Get supported platforms (from DB)
     if (include.includes("all") || include.includes("platforms")) {
       referenceData.platforms = [
         "PC",
@@ -92,6 +93,11 @@ export async function GET(request: NextRequest) {
         "Mac",
         "Linux",
       ];
+    }
+
+    // Get game platforms (from platforms table)
+    if (include.includes("all") || include.includes("gamePlatforms")) {
+      referenceData.gamePlatforms = await getAvailableGamePlatforms(locale);
     }
 
     // Get media types

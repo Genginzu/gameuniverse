@@ -375,6 +375,95 @@ export type Database = {
           },
         ];
       };
+      game_platforms: {
+        Row: {
+          game_id: string;
+          platform_id: string;
+        };
+        Insert: {
+          game_id: string;
+          platform_id: string;
+        };
+        Update: {
+          game_id?: string;
+          platform_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "game_platforms_game_id_fkey";
+            columns: ["game_id"];
+            isOneToOne: false;
+            referencedRelation: "games";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "game_platforms_platform_id_fkey";
+            columns: ["platform_id"];
+            isOneToOne: false;
+            referencedRelation: "platforms";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      platforms: {
+        Row: {
+          id: string;
+          slug: string;
+          igdb_id: number | null;
+          icon_url: string | null;
+          created_at: string | null;
+          updated_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          slug: string;
+          igdb_id?: number | null;
+          icon_url?: string | null;
+          created_at?: string | null;
+          updated_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          slug?: string;
+          igdb_id?: number | null;
+          icon_url?: string | null;
+          created_at?: string | null;
+          updated_at?: string | null;
+        };
+        Relationships: [];
+      };
+      platform_translations: {
+        Row: {
+          id: string;
+          platform_id: string;
+          language_code: string;
+          name: string;
+          abbreviation: string | null;
+        };
+        Insert: {
+          id?: string;
+          platform_id: string;
+          language_code: string;
+          name: string;
+          abbreviation?: string | null;
+        };
+        Update: {
+          id?: string;
+          platform_id?: string;
+          language_code?: string;
+          name?: string;
+          abbreviation?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "platform_translations_platform_id_fkey";
+            columns: ["platform_id"];
+            isOneToOne: false;
+            referencedRelation: "platforms";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       game_prices: {
         Row: {
           created_at: string | null;

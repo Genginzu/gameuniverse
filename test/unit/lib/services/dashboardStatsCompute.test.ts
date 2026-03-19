@@ -8,6 +8,7 @@ import {
   computeActivityByMonth,
   computeAveragePlaytime,
   computeSessionFrequency,
+  computePlatformDistribution,
 } from "@/lib/services/dashboardStatsCompute";
 import { ACHIEVEMENT_DEFINITIONS } from "@/types/dashboard-stats";
 
@@ -125,5 +126,64 @@ describe("computeSessionFrequency — no sessions", () => {
 describe("ACHIEVEMENT_DEFINITIONS", () => {
   it("contains exactly 10 achievement definitions", () => {
     expect(ACHIEVEMENT_DEFINITIONS).toHaveLength(10);
+  });
+});
+
+// --- Req 5.1, 5.2, 5.3: Platform distribution ---
+describe("computePlatformDistribution", () => {
+  it("returns empty array for empty library", () => {
+    const result = computePlatformDistribution([]);
+    expect(result).toEqual([]);
+  });
+
+  it("returns empty array when all games have no platforms", () => {
+    const result = computePlatformDistribution([{ platforms: [] }, { platforms: [] }]);
+    expect(result).toEqual([]);
+  });
+
+  it("counts multi-platform game correctly", () => {
+    const result = computePlatformDistribution([{ platforms: ["PS5", "PC", "Xbox"] }]);
+
+    expect(result).toHaveLength(3);
+    // Each platform has count 1
+    for (const entry of result) {
+      expect(entry.count).toBe(1);
+    }
+    // Each percentage ≈ 33.3%
+    const totalPct = result.reduce((sum, e) => sum + e.percentage, 0);
+    expect(totalPct).toBeCloseTo(100, 0);
+  });
+
+  it("computes correct percentages for uneven distribution", () => {
+    const result = computePlatformDistribution([
+      { platforms: ["PS5"] },
+      { platforms: ["PS5"] },
+      { platforms: ["PS5"] },
+      { platforms: ["PC"] },
+    ]);
+
+    expect(result).toHaveLength(2);
+    expect(result[0].platform).toBe("PS5");
+    expect(result[0].count).toBe(3);
+    expect(result[0].percentage).toBe(75);
+    expect(result[1].platform).toBe("PC");
+    expect(result[1].count).toBe(1);
+    expect(result[1].percentage).toBe(25);
+  });
+
+  it("sorts entries by count descending", () => {
+    const result = computePlatformDistribution([
+      { platforms: ["Switch"] },
+      { platforms: ["PC", "PS5"] },
+      { platforms: ["PC"] },
+      { platforms: ["PC", "PS5", "Switch"] },
+    ]);
+
+    // PC: 3, PS5: 2, Switch: 2
+    expect(result[0].platform).toBe("PC");
+    expect(result[0].count).toBe(3);
+    for (let i = 1; i < result.length; i++) {
+      expect(result[i - 1].count).toBeGreaterThanOrEqual(result[i].count);
+    }
   });
 });

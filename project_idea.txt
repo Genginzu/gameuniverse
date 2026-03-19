@@ -6,10 +6,11 @@ Elaborer le magasin
 Elaborer l'esport
 Elaborer le training des joueurs
 
-Système de Notifications
 Système de session de jeu
 Système d'Objectifs
 Système de connexion aux différents comptes pour récupérer les jeux possédés
-Intégrer les plateformes
 Système pour proposer la création de collection selon les infos du joueur
 Mettre en place un système de publicité
+
+Système de Notifications
+Intégrer les plateformes

@@ -325,6 +325,71 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       logger.warn("Failed to resolve local game slugs for DLC extensions");
     }
 
+    // Fetch platforms for this game
+    let gamePlatforms: Array<{
+      id: string;
+      slug: string;
+      name: string;
+      abbreviation: string | null;
+      iconUrl: string | null;
+    }> = [];
+
+    try {
+      const { data: gpData } = await supabase
+        .from("game_platforms")
+        .select("platform_id")
+        .eq("game_id", game.id);
+
+      if (gpData && gpData.length > 0) {
+        const platformIds = gpData.map((gp: { platform_id: string }) => gp.platform_id);
+        const { data: platformData } = await supabase
+          .from("platforms")
+          .select(
+            `
+            id,
+            slug,
+            icon_url,
+            platform_translations(
+              name,
+              abbreviation,
+              language_code
+            )
+          `
+          )
+          .in("id", platformIds);
+
+        if (platformData) {
+          gamePlatforms = platformData.map(
+            (p: {
+              id: string;
+              slug: string;
+              icon_url: string | null;
+              platform_translations: Array<{
+                name: string;
+                abbreviation: string | null;
+                language_code: string;
+              }>;
+            }) => {
+              const translations = p.platform_translations ?? [];
+              const t =
+                translations.find((tr) => tr.language_code === locale) ||
+                translations.find((tr) => tr.language_code === "en") ||
+                translations[0];
+              return {
+                id: p.id,
+                slug: p.slug,
+                name: t?.name || p.slug,
+                abbreviation: t?.abbreviation || null,
+                iconUrl: p.icon_url,
+              };
+            }
+          );
+        }
+      }
+    } catch {
+      logger.warn("game_platforms table not available yet");
+    }
+
     // Transform the data to match the expected format
     // Prefer translation matching the requested locale, fallback to first available
     const translations = game.game_translations ?? [];
@@ -586,6 +651,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         : null,
       versions,
       dlcExtensions,
+      platforms: gamePlatforms,
       createdAt: game.created_at,
       updatedAt: game.updated_at,
     };

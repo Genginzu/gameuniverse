@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { EntityCard } from "@/components/shared/EntityCard";
 import { characterCardConfig } from "@/components/shared/entityCardPresets";
 import { CharacterFilters } from "./CharacterFilters";
+import { CharactersEmptyState } from "./CharactersEmptyState";
 import { CharacterFilterButton } from "./CharacterFilterButton";
 import { Pagination } from "@/components/shared/Pagination";
 import { GridSkeleton } from "@/components/shared/GridSkeleton";
@@ -26,9 +27,7 @@ interface AllCharactersContentProps {
 }
 
 export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProps) {
-  const t = useTranslations("characters");
   const tErrors = useTranslations("errors");
-  // State management
   const [characters, setCharacters] = useState<CharacterSummary[]>([]);
   const [games, setGames] = useState<Game[]>([]);
   const [pagination, setPagination] = useState<PaginationType | null>(null);
@@ -37,13 +36,12 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedGames, setSelectedGames] = useState<string[]>([]);
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
 
-  // Use error handling system
   const apiClient = useApiClient();
   const { executeAsync } = useAsyncError();
 
-  // Fetch games for filter options with error handling
   const fetchGames = useCallback(async () => {
     const result = await executeAsync(async () => {
       const data = await apiClient.get(`/api/games?locale=${locale}&limit=100`, {
@@ -60,9 +58,14 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
     }
   }, [locale, apiClient, executeAsync]);
 
-  // Fetch characters with error handling
   const fetchCharacters = useCallback(
-    async (search: string = "", games: string[] = [], roles: string[] = [], page: number = 1) => {
+    async (
+      search: string = "",
+      games: string[] = [],
+      roles: string[] = [],
+      page: number = 1,
+      platforms: string[] = []
+    ) => {
       setLoading(true);
 
       const result = await executeAsync(async () => {
@@ -84,6 +87,10 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
           params.append("roles", roles.join(","));
         }
 
+        if (platforms.length > 0) {
+          params.append("platforms", platforms.join(","));
+        }
+
         const data = await apiClient.get(`/api/characters?${params.toString()}`, {
           retryConfig: {
             maxAttempts: 3,
@@ -101,7 +108,6 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
         setCharacters(result.characters);
         setPagination(result.pagination);
       } else {
-        // On error, keep previous data but show toast
         toast({
           variant: "destructive",
           title: tErrors("loadingError"),
@@ -115,11 +121,6 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
     [locale, apiClient, executeAsync]
   );
 
-  // Handle search
-  const _handleSearch = useCallback((query: string) => {
-    setSearchQuery(query);
-  }, []);
-
   // Handle game filter
   const handleGameFilter = useCallback((games: string[]) => {
     setSelectedGames(games);
@@ -130,12 +131,17 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
     setSelectedRoles(roles);
   }, []);
 
+  // Handle platform filter
+  const handlePlatformFilter = useCallback((platforms: string[]) => {
+    setSelectedPlatforms(platforms);
+  }, []);
+
   // Handle page change
   const handlePageChange = useCallback(
     (page: number) => {
-      fetchCharacters(searchQuery, selectedGames, selectedRoles, page);
+      fetchCharacters(searchQuery, selectedGames, selectedRoles, page, selectedPlatforms);
     },
-    [fetchCharacters, searchQuery, selectedGames, selectedRoles]
+    [fetchCharacters, searchQuery, selectedGames, selectedRoles, selectedPlatforms]
   );
 
   // Clear all filters
@@ -143,6 +149,7 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
     setSearchQuery("");
     setSelectedGames([]);
     setSelectedRoles([]);
+    setSelectedPlatforms([]);
   }, []);
 
   // Initial load - only on mount
@@ -192,11 +199,11 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
     if (initialLoading) return;
 
     const timeoutId = setTimeout(() => {
-      fetchCharacters(searchQuery, selectedGames, selectedRoles, 1);
+      fetchCharacters(searchQuery, selectedGames, selectedRoles, 1, selectedPlatforms);
     }, 300); // 300ms debounce
 
     return () => clearTimeout(timeoutId);
-  }, [searchQuery, selectedGames, selectedRoles, fetchCharacters]); // Include fetchCharacters
+  }, [searchQuery, selectedGames, selectedRoles, selectedPlatforms, fetchCharacters]); // Include fetchCharacters
 
   // Show full skeleton on initial load
   if (initialLoading) {
@@ -215,8 +222,10 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
         {/* Filters */}
         <div className="mb-6 space-y-4 sm:mb-8">
           <CharacterFilterButton
-            hasFilters={selectedGames.length > 0 || selectedRoles.length > 0}
-            filterCount={selectedGames.length + selectedRoles.length}
+            hasFilters={
+              selectedGames.length > 0 || selectedRoles.length > 0 || selectedPlatforms.length > 0
+            }
+            filterCount={selectedGames.length + selectedRoles.length + selectedPlatforms.length}
             onClick={() => setShowFilters(!showFilters)}
           />
 
@@ -225,10 +234,13 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
             games={games}
             selectedGames={selectedGames}
             selectedRoles={selectedRoles}
+            selectedPlatforms={selectedPlatforms}
             onGameChange={handleGameFilter}
             onRoleChange={handleRoleFilter}
+            onPlatformsChange={handlePlatformFilter}
             onClearFilters={handleClearFilters}
             showAllFilters={showFilters}
+            locale={locale}
           />
         </div>
 
@@ -241,39 +253,15 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
         {!loading && (
           <>
             {characters.length === 0 ? (
-              <div className="flex flex-col items-center justify-center rounded-2xl bg-white py-16 text-center shadow-sm dark:bg-gray-800 sm:py-20">
-                <div className="mb-6 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 p-6 dark:from-gray-700 dark:to-gray-600">
-                  <svg
-                    className="h-12 w-12 text-gray-400 sm:h-16 sm:w-16"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                </div>
-                <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white sm:text-xl">
-                  {t("empty.title")}
-                </h3>
-                <p className="max-w-md text-sm text-gray-500 dark:text-gray-400 sm:text-base">
-                  {searchQuery || selectedGames.length > 0 || selectedRoles.length > 0
-                    ? t("empty.description")
-                    : t("empty.noCharacters")}
-                </p>
-                {(searchQuery || selectedGames.length > 0 || selectedRoles.length > 0) && (
-                  <button
-                    onClick={handleClearFilters}
-                    className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
-                  >
-                    {t("empty.clearFilters")}
-                  </button>
-                )}
-              </div>
+              <CharactersEmptyState
+                hasFilters={
+                  !!searchQuery ||
+                  selectedGames.length > 0 ||
+                  selectedRoles.length > 0 ||
+                  selectedPlatforms.length > 0
+                }
+                onClearFilters={handleClearFilters}
+              />
             ) : (
               <div className="space-y-8">
                 {/* Responsive grid - 4 columns layout */}

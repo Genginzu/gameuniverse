@@ -15,6 +15,7 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get("search") || "";
     const games = parseArrayParam(searchParams.get("games"));
     const roles = parseArrayParam(searchParams.get("roles"));
+    const platforms = parseArrayParam(searchParams.get("platforms"));
     const { page, limit } = parsePaginationParams(searchParams);
     const locale = searchParams.get("locale") || "fr";
 
@@ -109,6 +110,31 @@ export async function GET(request: NextRequest) {
             character.character_games?.map((cg) => cg.games?.id).filter(Boolean) || [];
           return games.some((gameId) => characterGameIds.includes(gameId));
         }) || [];
+    }
+
+    // Filter by platforms if specified — keep characters whose at least one game
+    // is available on one of the selected platforms
+    if (platforms.length > 0) {
+      const { data: platformRows } = await supabase
+        .from("platforms")
+        .select("id")
+        .in("slug", platforms);
+
+      if (platformRows && platformRows.length > 0) {
+        const platformIds = platformRows.map((p: { id: string }) => p.id);
+        const { data: gpRows } = await supabase
+          .from("game_platforms")
+          .select("game_id")
+          .in("platform_id", platformIds);
+
+        const platformGameIds = new Set(gpRows?.map((r: { game_id: string }) => r.game_id) ?? []);
+
+        filteredCharacters = filteredCharacters.filter((character) => {
+          const characterGameIds =
+            character.character_games?.map((cg) => cg.games?.id).filter(Boolean) || [];
+          return characterGameIds.some((gameId) => platformGameIds.has(gameId as string));
+        });
+      }
     }
 
     // Transform the data to match the expected format

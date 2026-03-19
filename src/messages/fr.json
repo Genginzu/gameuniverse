@@ -1029,7 +1029,10 @@
       "title": "Apparence",
       "description": "Personnalisez votre avatar et votre bannière",
       "avatarLabel": "Avatar",
-      "bannerLabel": "Bannière"
+      "bannerLabel": "Bannière",
+      "editAvatar": "Modifier l'avatar",
+      "editBanner": "Modifier la bannière",
+      "previewHint": "Cliquez sur l'avatar ou la bannière pour les modifier"
     },
     "errors": {
       "updateFailed": "Échec de la mise à jour. Veuillez réessayer.",
@@ -1061,6 +1064,7 @@
       "languages": "Langues",
       "characters": "Personnages",
       "companies": "Entreprises",
+      "platforms": "Plateformes",
       "ageClassifications": "Classifications d'âge",
       "reviewsCategory": "Avis",
       "reviews": "Avis",
@@ -1161,6 +1165,7 @@
         "labelColor": "Couleur des labels",
         "textColor": "Couleur du texte",
         "gameLanguages": "Langues",
+        "gamePlatforms": "Plateformes",
         "noLanguages": "Aucune langue",
         "addLanguage": "Ajouter une langue",
         "langCode": "Code",
@@ -1796,6 +1801,10 @@
       "title": "Répartition par genre",
       "empty": "Aucun genre dans la bibliothèque"
     },
+    "platformDistribution": {
+      "title": "Répartition par plateforme",
+      "empty": "Aucune donnée de plateforme. Ajoutez des jeux à votre bibliothèque pour voir la répartition par plateforme."
+    },
     "completion": {
       "title": "Progression",
       "empty": "Aucun jeu dans la bibliothèque",
@@ -1900,7 +1909,14 @@
     "errorInvalidFormat": "Formats acceptés : JPEG, PNG, WebP, GIF",
     "errorFileTooLarge": "La taille maximale est de 5 Mo",
     "errorUploadFailed": "Erreur lors de l'upload. Veuillez réessayer.",
-    "errorConfirmFailed": "Erreur lors de la sauvegarde. Veuillez réessayer."
+    "errorConfirmFailed": "Erreur lors de la sauvegarde. Veuillez réessayer.",
+    "crop": {
+      "title": "Recadrer l'image",
+      "zoom": "Zoom",
+      "confirm": "Valider le recadrage",
+      "cancel": "Annuler",
+      "errorCanvasFailed": "Impossible de générer l'image recadrée. Veuillez réessayer."
+    }
   },
   "achievements": {
     "unlockedOn": "Débloqué le",
@@ -2053,6 +2069,60 @@
         "errorNotAssigned": "Ce succès n'est pas attribué à ce joueur.",
         "errorGeneric": "Une erreur est survenue lors du retrait du succès."
       }
+    },
+    "platforms": {
+      "title": "Gestion des plateformes",
+      "newPlatform": "Nouvelle plateforme",
+      "searchPlaceholder": "Rechercher une plateforme par slug ou nom...",
+      "search": "Rechercher",
+      "totalPlatforms": "{count, plural, =0 {Aucune plateforme} one {1 plateforme} other {# plateformes}}",
+      "noPlatforms": "Aucune plateforme trouvée.",
+      "columns": {
+        "slug": "Slug",
+        "name": "Nom",
+        "icon": "Icône",
+        "gameCount": "Jeux",
+        "actions": "Actions"
+      },
+      "sortBy": "Trier par {field}",
+      "editPlatform": "Modifier {name}",
+      "deletePlatform": "Supprimer {name}",
+      "page": "Page {current} sur {total}",
+      "previousPage": "Page précédente",
+      "nextPage": "Page suivante",
+      "gameCount": "{count, plural, =0 {Aucun jeu} one {1 jeu} other {# jeux}}",
+      "form": {
+        "createTitle": "Nouvelle plateforme",
+        "editTitle": "Modifier la plateforme",
+        "slug": "Slug",
+        "slugPlaceholder": "ex : playstation-5",
+        "slugDescription": "Lettres minuscules, chiffres et tirets. Non modifiable après création.",
+        "iconUrl": "URL de l'icône",
+        "iconUrlPlaceholder": "https://exemple.com/icon.png",
+        "nameFr": "Nom (FR)",
+        "nameFrPlaceholder": "Nom en français",
+        "nameEn": "Nom (EN)",
+        "nameEnPlaceholder": "Name in English",
+        "abbreviation": "Abréviation",
+        "abbreviationPlaceholder": "ex : PS5",
+        "create": "Créer la plateforme",
+        "save": "Enregistrer",
+        "cancel": "Annuler",
+        "success": "Plateforme enregistrée avec succès !",
+        "errorDuplicate": "Une plateforme avec ce slug existe déjà.",
+        "errorGeneric": "Une erreur est survenue lors de l'enregistrement."
+      },
+      "deleteDialog": {
+        "title": "Supprimer la plateforme",
+        "warning": "Êtes-vous sûr de vouloir supprimer « {name} » ?",
+        "irreversible": "Cette action est irréversible. La plateforme et toutes ses associations seront supprimées.",
+        "usageWarning": "{count, plural, one {Cette plateforme est utilisée par 1 jeu.} other {Cette plateforme est utilisée par # jeux.}}",
+        "confirm": "Supprimer",
+        "cancel": "Annuler",
+        "deleting": "Suppression...",
+        "success": "Plateforme supprimée avec succès !",
+        "errorGeneric": "Une erreur est survenue lors de la suppression."
+      }
     }
   },
   "discussions": {
@@ -2074,5 +2144,23 @@
     "selectConversation": "Sélectionnez une conversation pour commencer à discuter",
     "selectConversationHint": "Choisissez un ami dans la liste à gauche",
     "startConversation": "Démarrer une conversation"
+  },
+  "platforms": {
+    "title": "Plateformes",
+    "filter": {
+      "title": "Plateformes",
+      "available": "disponibles",
+      "placeholder": "Filtrer par plateforme...",
+      "selected": "{count} sélectionnée(s)",
+      "clearAll": "Tout effacer"
+    },
+    "distribution": {
+      "title": "Répartition par plateforme",
+      "empty": "Aucune donnée de plateforme",
+      "emptyDescription": "Ajoutez des jeux à votre bibliothèque pour voir la répartition par plateforme.",
+      "games": "{count} jeu(x)",
+      "percentage": "{value}%"
+    },
+    "empty": "Aucune plateforme"
   }
 }

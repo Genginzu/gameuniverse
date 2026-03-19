@@ -72,6 +72,7 @@ export interface GameApiResponse {
     store_url: string | null;
     is_available: boolean;
   }>;
+  game_platforms: Array<{ platform_id: string }>;
   music?: {
     composer: string | null;
     spotify_embed_url: string | null;
@@ -145,6 +146,9 @@ export function toFormData(game: GameApiResponse): AdminGameFormData {
       platform: p.platform,
       store_url: p.store_url ?? "",
       is_available: p.is_available,
+    })),
+    game_platforms: (game.game_platforms ?? []).map((gp) => ({
+      platform_id: gp.platform_id,
     })),
     music_composer: game.music?.composer ?? "",
     music_spotify_embed_url: game.music?.spotify_embed_url ?? "",

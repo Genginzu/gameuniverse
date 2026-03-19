@@ -50,3 +50,18 @@ export interface UploadConfirmResponse {
   success: boolean;
   profile: Profile;
 }
+
+/** Dimensions de sortie par contexte d'upload */
+export const OUTPUT_DIMENSIONS: Record<UploadContext, { width: number; height: number }> = {
+  avatars: { width: 256, height: 256 },
+  banners: { width: 1280, height: 400 },
+};
+
+/** Configuration WebP par défaut pour le crop */
+export const CROP_OUTPUT_FORMAT = "image/webp";
+export const CROP_OUTPUT_QUALITY = 0.9;
+
+/** Limites de zoom */
+export const ZOOM_MIN = 1;
+export const ZOOM_MAX = 3;
+export const ZOOM_STEP = 0.01;

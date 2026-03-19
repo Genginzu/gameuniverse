@@ -5,8 +5,10 @@
 
 import { createScriptClient } from "./supabase-client";
 import { syncAllGameFields, type SyncSupabaseClient } from "../../src/lib/services/igdb-sync";
+import { IGDBService } from "../../src/lib/services/igdbService";
 import type { TrackableField } from "../../src/types/admin-games";
 import type { ImportResult } from "./game-importer";
+import { syncGamePlatforms } from "./platform-importer";
 
 /**
  * Synchronise un jeu existant depuis IGDB en respectant les overrides manuels.
@@ -55,6 +57,15 @@ export async function syncExistingGame(
 
     if (!result.success) {
       return { success: false, error: result.error };
+    }
+
+    // Sync platforms with superset behavior (add new, keep existing)
+    const igdbGame = await IGDBService.getGameDetails(igdbId);
+    if (igdbGame) {
+      const newPlatforms = await syncGamePlatforms(gameId, igdbGame, verbose);
+      if (verbose && newPlatforms > 0) {
+        console.log(`[Importer] Synced ${newPlatforms} new platforms for ${gameSlug}`);
+      }
     }
 
     if (verbose) {

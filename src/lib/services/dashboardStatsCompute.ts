@@ -1,6 +1,7 @@
 import type {
   OverviewMetrics,
   GenreDistributionEntry,
+  PlatformDistributionEntry,
   CompletionStats,
   ReviewBucket,
   MonthlyActivity,
@@ -258,4 +259,30 @@ export function computeGoalProgress(goal: { targetValue: number; currentValue: n
   const ratio = Math.min(goal.currentValue / goal.targetValue, 1);
   const isCompleted = goal.currentValue >= goal.targetValue;
   return { ratio, isCompleted };
+}
+
+// --- 12. Platform Distribution (Req 5.1, 5.3) ---
+
+export function computePlatformDistribution(
+  libraryWithPlatforms: Array<{ platforms: string[] }>
+): PlatformDistributionEntry[] {
+  const platformCounts = new Map<string, number>();
+
+  for (const entry of libraryWithPlatforms) {
+    for (const platform of entry.platforms) {
+      platformCounts.set(platform, (platformCounts.get(platform) ?? 0) + 1);
+    }
+  }
+
+  if (platformCounts.size === 0) return [];
+
+  const totalAssignments = Array.from(platformCounts.values()).reduce((a, b) => a + b, 0);
+
+  const sorted = Array.from(platformCounts.entries()).sort((a, b) => b[1] - a[1]);
+
+  return sorted.map(([platform, count]) => ({
+    platform,
+    count,
+    percentage: Math.round((count / totalAssignments) * 1000) / 10,
+  }));
 }

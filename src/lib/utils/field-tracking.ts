@@ -13,6 +13,7 @@ export const TRACKABLE_FIELDS: readonly TrackableField[] = [
   "metascore",
   "genres",
   "companies",
+  "platforms",
   "screenshots",
   "artworks",
   "age_ratings",
@@ -46,6 +47,7 @@ export interface CurrentGameData {
     has_subtitles: boolean;
     has_interface: boolean;
   }>;
+  game_platforms?: Array<{ platform_id: string }>;
 }
 
 // --- Helpers de comparaison ---
@@ -121,6 +123,11 @@ export function detectChangedFields(
     changed.push("companies");
   }
 
+  // platforms
+  if (hasPlatformsChanged(currentData.game_platforms ?? [], submittedData.game_platforms ?? [])) {
+    changed.push("platforms");
+  }
+
   // screenshots
   if (hasScreenshotsChanged(currentData.screenshots ?? [], submittedData.screenshots ?? [])) {
     changed.push("screenshots");
@@ -189,6 +196,15 @@ function hasCompaniesChanged(
   submitted: Array<{ company_id: string; role: string; is_primary: boolean }>
 ): boolean {
   return !arraysEqual(current, submitted, "company_id", ["company_id", "role", "is_primary"]);
+}
+
+function hasPlatformsChanged(
+  current: Array<{ platform_id: string }>,
+  submitted: Array<{ platform_id: string }>
+): boolean {
+  if (current.length !== submitted.length) return true;
+  const currentIds = new Set(current.map((p) => p.platform_id));
+  return submitted.some((p) => !currentIds.has(p.platform_id));
 }
 
 function hasScreenshotsChanged(

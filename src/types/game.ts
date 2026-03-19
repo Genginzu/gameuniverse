@@ -1,3 +1,5 @@
+import type { GamePlatform, GameSummaryPlatform } from "@/types/platform";
+
 export interface GameMedia {
   coverImage?: string;
   backgroundImage?: string;
@@ -194,6 +196,7 @@ export interface GameDetails {
   lastSyncedAt?: string;
   versions?: GameVersion[];
   dlcExtensions?: GameDlcExtension[];
+  platforms: GamePlatform[];
 }
 
 export interface GameSummary {
@@ -212,4 +215,5 @@ export interface GameSummary {
   metascore?: number;
   igdbId?: number;
   source?: "local" | "igdb";
+  platforms?: GameSummaryPlatform[];
 }

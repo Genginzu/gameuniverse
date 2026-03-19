@@ -68,6 +68,11 @@ export const gameGenreSchema = z.object({
   genre_id: z.string().uuid("Invalid genre ID"),
 });
 
+// Game platform relation validation schema
+export const gamePlatformLinkSchema = z.object({
+  platform_id: z.string().uuid("Invalid platform ID"),
+});
+
 // Media validation schemas
 export const gameScreenshotSchema = z.object({
   url: z.string().url("Invalid screenshot URL"),
@@ -174,6 +179,7 @@ export const createGameSchema = z.object({
   versions: z.array(gameVersionSchema).optional(),
   languages: z.array(gameLanguageSchema).optional(),
   music: gameMusicSchema.optional(),
+  game_platforms: z.array(gamePlatformLinkSchema).optional(),
 });
 
 // Game update schema (all fields optional except ID)
@@ -191,6 +197,7 @@ export const updateGameSchema = z.object({
   versions: z.array(gameVersionSchema).optional(),
   languages: z.array(gameLanguageSchema).optional(),
   music: gameMusicSchema.optional(),
+  game_platforms: z.array(gamePlatformLinkSchema).optional(),
 });
 
 // Bulk operations schema

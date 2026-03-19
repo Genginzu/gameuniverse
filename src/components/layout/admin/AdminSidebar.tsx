@@ -20,6 +20,7 @@ import {
   FaUserFriends,
   FaStar,
   FaTrophy,
+  FaDesktop,
 } from "react-icons/fa";
 import { MessageCircle } from "lucide-react";
 import type { AdminUser } from "@/types/admin-auth";
@@ -160,6 +161,14 @@ function SidebarContent({
             >
               <FaBuilding className="mr-3 h-4 w-4" />
               {t("nav.companies")}
+            </Link>
+            <Link
+              href="/admin/platforms"
+              className={linkClasses("/admin/platforms")}
+              onClick={onLinkClick}
+            >
+              <FaDesktop className="mr-3 h-4 w-4" />
+              {t("nav.platforms")}
             </Link>
             <Link
               href="/admin/languages"

@@ -187,6 +187,58 @@ export async function syncCompanies(
   }
 }
 
+/** Synchronise les plateformes — crée les plateformes manquantes dans la DB locale */
+export async function syncPlatforms(
+  supabase: SyncSupabaseClient,
+  gameId: string,
+  igdbGame: IGDBGame
+): Promise<void> {
+  await deleteByGameId(supabase, "game_platforms", gameId);
+  if (!igdbGame.platforms || igdbGame.platforms.length === 0) return;
+
+  for (const igdbPlatform of igdbGame.platforms) {
+    const name = igdbPlatform.name || `platform-${igdbPlatform.id}`;
+    const slug = name
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9-]/g, "")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "");
+
+    // Check if platform exists by igdb_id
+    const { data: existing } = await supabase
+      .from("platforms")
+      .select("id")
+      .eq("igdb_id", igdbPlatform.id)
+      .single();
+
+    let platformId: string;
+
+    if (existing?.id) {
+      platformId = existing.id as string;
+    } else {
+      const { data: newPlatform } = await supabase
+        .from("platforms")
+        .insert({ slug, igdb_id: igdbPlatform.id })
+        .select("id")
+        .single();
+      if (!newPlatform?.id) continue;
+      platformId = newPlatform.id as string;
+
+      await supabase
+        .from("platform_translations")
+        .insert({ platform_id: platformId, language_code: "en", name })
+        .select("id")
+        .single();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase as any)
+      .from("game_platforms")
+      .insert({ game_id: gameId, platform_id: platformId });
+  }
+}
+
 /** Synchronise les screenshots */
 export async function syncScreenshots(
   supabase: SyncSupabaseClient,

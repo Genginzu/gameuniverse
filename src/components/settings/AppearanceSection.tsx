@@ -1,6 +1,6 @@
 "use client";
 
-import { FaPalette, FaUser } from "react-icons/fa";
+import { FaPalette } from "react-icons/fa";
 import { useTranslations } from "next-intl";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,7 +26,7 @@ export function AppearanceSection({
   const t = useTranslations("settings");
 
   return (
-    <Card className="rounded-xl bg-white dark:bg-gray-800">
+    <Card className="overflow-hidden rounded-xl bg-white/40 backdrop-blur-xl dark:bg-slate-800/50">
       <CardHeader>
         <div className="flex items-center">
           <div className="rounded-xl bg-pink-100 p-2 dark:bg-pink-900/30">
@@ -42,45 +42,35 @@ export function AppearanceSection({
           </div>
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-          {/* Avatar upload */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {t("appearance.avatarLabel")}
-            </label>
-            {!avatarUrl && (
-              <div className="mx-auto flex h-32 w-32 items-center justify-center rounded-full bg-gray-100 dark:bg-slate-700/50">
-                <FaUser className="h-12 w-12 text-gray-400 dark:text-gray-500" />
-              </div>
-            )}
-            <ImageUploader
-              context="avatars"
-              currentImageUrl={avatarUrl}
-              aspectRatio="1:1"
-              onUploadSuccess={onAvatarChange}
-              onDelete={onAvatarDelete}
-            />
-          </div>
 
-          {/* Banner upload */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {t("appearance.bannerLabel")}
-            </label>
-            {!bannerUrl && (
-              <div className="flex h-28 w-full items-center justify-center rounded-xl bg-gradient-to-br from-violet-500/20 to-cyan-500/20 dark:from-violet-500/10 dark:to-cyan-500/10">
-                <span className="text-xs text-gray-400 dark:text-gray-500">16:5</span>
-              </div>
-            )}
-            <ImageUploader
-              context="banners"
-              currentImageUrl={bannerUrl}
-              aspectRatio="16:5"
-              onUploadSuccess={onBannerChange}
-              onDelete={onBannerDelete}
-            />
-          </div>
+      <CardContent className="space-y-2 p-4 pt-0">
+        {/* Banner — full width, click to change */}
+        <div>
+          <label className="mb-1.5 block text-xs font-medium text-gray-500 dark:text-gray-400">
+            {t("appearance.bannerLabel")}
+          </label>
+          <ImageUploader
+            context="banners"
+            currentImageUrl={bannerUrl}
+            aspectRatio="16:5"
+            dropZoneClassName="h-44 sm:h-56"
+            onUploadSuccess={onBannerChange}
+            onDelete={onBannerDelete}
+          />
+        </div>
+
+        {/* Avatar — centered, click to change */}
+        <div>
+          <label className="mb-1.5 block text-xs font-medium text-gray-500 dark:text-gray-400">
+            {t("appearance.avatarLabel")}
+          </label>
+          <ImageUploader
+            context="avatars"
+            currentImageUrl={avatarUrl}
+            aspectRatio="1:1"
+            onUploadSuccess={onAvatarChange}
+            onDelete={onAvatarDelete}
+          />
         </div>
       </CardContent>
     </Card>

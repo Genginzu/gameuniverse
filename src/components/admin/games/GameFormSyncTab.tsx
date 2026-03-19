@@ -24,6 +24,7 @@ const FIELD_LABEL_KEYS: Record<TrackableField, string> = {
   metascore: "metascore",
   genres: "genres",
   companies: "companies",
+  platforms: "gamePlatforms",
   screenshots: "screenshots",
   artworks: "artwork",
   age_ratings: "ageRatings",

@@ -18,6 +18,7 @@ import {
   FaPaintBrush,
   FaSync,
   FaMusic,
+  FaDesktop,
 } from "react-icons/fa";
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
 import {
@@ -48,6 +49,7 @@ export interface GameFormProps {
   stores: AdminStore[];
   currencies: AdminCurrency[];
   platforms: string[];
+  gamePlatforms: Array<{ id: string; slug: string; name: string }>;
   loadingOptions: boolean;
   onSubmit: (data: AdminGameFormData) => Promise<void>;
   isSubmitting: boolean;
@@ -66,6 +68,7 @@ const BASE_TABS: Tab[] = [
   { id: "translations", icon: <FaGlobe className="h-3.5 w-3.5" />, labelKey: "translations" },
   { id: "genres", icon: <FaTag className="h-3.5 w-3.5" />, labelKey: "genres" },
   { id: "companies", icon: <FaBuilding className="h-3.5 w-3.5" />, labelKey: "companies" },
+  { id: "game_platforms", icon: <FaDesktop className="h-3.5 w-3.5" />, labelKey: "gamePlatforms" },
   { id: "age_ratings", icon: <FaShieldAlt className="h-3.5 w-3.5" />, labelKey: "ageRatings" },
   { id: "versions", icon: <FaBoxes className="h-3.5 w-3.5" />, labelKey: "versions" },
   { id: "languages", icon: <FaLanguage className="h-3.5 w-3.5" />, labelKey: "gameLanguages" },
@@ -90,6 +93,7 @@ export function GameForm({
   stores,
   currencies,
   platforms,
+  gamePlatforms,
   loadingOptions,
   onSubmit,
   isSubmitting,
@@ -158,6 +162,18 @@ export function GameForm({
       exists
         ? current.filter((c) => !(c.company_id === companyId && c.role === role))
         : [...current, { company_id: companyId, role, is_primary: false }],
+      { shouldValidate: true }
+    );
+  };
+
+  const togglePlatform = (platformId: string) => {
+    const current = form.getValues("game_platforms");
+    const exists = current.some((p) => p.platform_id === platformId);
+    form.setValue(
+      "game_platforms",
+      exists
+        ? current.filter((p) => p.platform_id !== platformId)
+        : [...current, { platform_id: platformId }],
       { shouldValidate: true }
     );
   };
@@ -281,8 +297,10 @@ export function GameForm({
             stores={stores}
             currencies={currencies}
             platforms={platforms}
+            gamePlatforms={gamePlatforms}
             toggleGenre={toggleGenre}
             toggleCompany={toggleCompany}
+            togglePlatform={togglePlatform}
             isIgdbField={igdbFieldProp}
             gameId={gameId}
             igdbId={igdbId}

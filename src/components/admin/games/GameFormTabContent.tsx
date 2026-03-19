@@ -18,6 +18,7 @@ import { GameFormImagesTab } from "./GameFormImagesTab";
 import { GameFormTranslationsTab } from "./GameFormTranslationsTab";
 import { GameFormGenresTab } from "./GameFormGenresTab";
 import { GameFormCompaniesTab } from "./GameFormCompaniesTab";
+import { GameFormPlatformsTab } from "./GameFormPlatformsTab";
 import { GameFormAgeRatingsTab } from "./GameFormAgeRatingsTab";
 import { GameFormVersionsTab } from "./GameFormVersionsTab";
 import { GameFormLanguagesTab } from "./GameFormLanguagesTab";
@@ -39,8 +40,10 @@ interface GameFormTabContentProps {
   stores: AdminStore[];
   currencies: AdminCurrency[];
   platforms: string[];
+  gamePlatforms: Array<{ id: string; slug: string; name: string }>;
   toggleGenre: (genreId: string) => void;
   toggleCompany: (companyId: string, role: "developer" | "publisher") => void;
+  togglePlatform: (platformId: string) => void;
   isIgdbField?: (field: TrackableField) => boolean;
   gameId?: string;
   igdbId?: number | null;
@@ -61,8 +64,10 @@ export function GameFormTabContent({
   stores,
   currencies,
   platforms,
+  gamePlatforms,
   toggleGenre,
   toggleCompany,
+  togglePlatform,
   isIgdbField,
   gameId,
   igdbId,
@@ -102,6 +107,16 @@ export function GameFormTabContent({
           t={t}
           companies={companies}
           toggleCompany={toggleCompany}
+          isIgdbField={isIgdbField}
+        />
+      );
+    case "game_platforms":
+      return (
+        <GameFormPlatformsTab
+          form={form}
+          t={t}
+          gamePlatforms={gamePlatforms}
+          togglePlatform={togglePlatform}
           isIgdbField={isIgdbField}
         />
       );

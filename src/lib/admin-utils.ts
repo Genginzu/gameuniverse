@@ -253,6 +253,52 @@ export async function getAvailableContentDescriptors(locale: string = "fr") {
 }
 
 /**
+ * Get available game platforms for game creation/editing
+ */
+export async function getAvailableGamePlatforms(locale: string = "fr") {
+  try {
+    const supabase = await createRouteHandlerClient();
+
+    const { data: platforms, error } = await supabase
+      .from("platforms")
+      .select(
+        `
+        id,
+        slug,
+        platform_translations(
+          name,
+          language_code
+        )
+      `
+      )
+      .order("slug");
+
+    if (error) {
+      logger.error("Error fetching game platforms", { error });
+      return [];
+    }
+
+    return (
+      platforms?.map((p) => {
+        const translations = p.platform_translations ?? [];
+        const translation =
+          translations.find((t: { language_code: string | null }) => t.language_code === locale) ||
+          translations[0] ||
+          null;
+        return {
+          id: p.id,
+          slug: p.slug,
+          name: translation?.name || p.slug || "Unknown",
+        };
+      }) || []
+    );
+  } catch (error) {
+    logger.error("Error in getAvailableGamePlatforms", { error });
+    return [];
+  }
+}
+
+/**
  * Validate game slug uniqueness
  */
 export async function validateGameSlug(slug: string, excludeGameId?: string) {

@@ -1,0 +1,46 @@
+"use client";
+
+import { useTranslations } from "next-intl";
+
+interface CharactersEmptyStateProps {
+  hasFilters: boolean;
+  onClearFilters: () => void;
+}
+
+export function CharactersEmptyState({ hasFilters, onClearFilters }: CharactersEmptyStateProps) {
+  const t = useTranslations("characters");
+
+  return (
+    <div className="flex flex-col items-center justify-center rounded-2xl bg-white/40 py-16 text-center shadow-sm backdrop-blur-xl dark:bg-slate-800/50 sm:py-20">
+      <div className="mb-6 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 p-6 dark:from-gray-700 dark:to-gray-600">
+        <svg
+          className="h-12 w-12 text-gray-400 sm:h-16 sm:w-16"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={1.5}
+            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+          />
+        </svg>
+      </div>
+      <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white sm:text-xl">
+        {t("empty.title")}
+      </h3>
+      <p className="max-w-md text-sm text-gray-500 dark:text-gray-400 sm:text-base">
+        {hasFilters ? t("empty.description") : t("empty.noCharacters")}
+      </p>
+      {hasFilters && (
+        <button
+          onClick={onClearFilters}
+          className="mt-4 rounded-lg bg-gradient-to-r from-[#615dfa] via-[#5b36d4] to-[#7c5cfc] px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:shadow-lg"
+        >
+          {t("empty.clearFilters")}
+        </button>
+      )}
+    </div>
+  );
+}

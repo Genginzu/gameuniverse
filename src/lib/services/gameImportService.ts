@@ -160,6 +160,12 @@ export class GameImportService {
       // Create DLC and extensions
       await this.createDlcExtensions(newGame.id, igdbGame);
 
+      // Import and link platforms
+      const platformIds = await this.ensurePlatforms(igdbGame);
+      if (platformIds.length > 0) {
+        await this.linkPlatforms(newGame.id, platformIds);
+      }
+
       // Fetch and save playtime from IGDB
       await this.fetchAndSavePlaytime(newGame.id, igdbGame.id);
 
@@ -266,6 +272,9 @@ export class GameImportService {
 
       // Update DLC and extensions
       await this.updateDlcExtensions(gameId, igdbGame);
+
+      // Sync platforms (superset: add new, keep existing)
+      await this.syncPlatforms(gameId, igdbGame);
 
       // Update playtime from IGDB
       await this.fetchAndSavePlaytime(gameId, igdbGame.id);
@@ -640,6 +649,114 @@ export class GameImportService {
     }));
 
     await supabase.from("game_companies").insert(gameCompanies);
+  }
+
+  /**
+   * Ensures all platforms from an IGDB game exist in the database.
+   * Creates new platforms with EN translation if they don't exist yet.
+   *
+   * @returns Array of platform UUIDs
+   */
+  private static async ensurePlatforms(igdbGame: IGDBGame): Promise<string[]> {
+    if (!igdbGame.platforms || igdbGame.platforms.length === 0) return [];
+
+    const supabase = await createRouteHandlerClient();
+    const platformIds: string[] = [];
+
+    for (const igdbPlatform of igdbGame.platforms) {
+      const name = igdbPlatform.name || `platform-${igdbPlatform.id}`;
+      const slug = name
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9-]/g, "")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
+
+      // Check if platform already exists by igdb_id
+      const { data: existing } = await supabase
+        .from("platforms")
+        .select("id")
+        .eq("igdb_id", igdbPlatform.id)
+        .single();
+
+      if (existing) {
+        platformIds.push(existing.id);
+        continue;
+      }
+
+      // Create new platform
+      const { data: newPlatform, error } = await supabase
+        .from("platforms")
+        .insert({ slug, igdb_id: igdbPlatform.id })
+        .select("id")
+        .single();
+
+      if (error || !newPlatform) {
+        logger.error("Failed to create platform", { name, error });
+        continue;
+      }
+
+      platformIds.push(newPlatform.id);
+
+      // Create English translation
+      await supabase
+        .from("platform_translations")
+        .insert({ platform_id: newPlatform.id, language_code: "en", name });
+    }
+
+    return platformIds;
+  }
+
+  /**
+   * Links platforms to a game via game_platforms junction table.
+   */
+  private static async linkPlatforms(gameId: string, platformIds: string[]): Promise<void> {
+    if (platformIds.length === 0) return;
+
+    const supabase = await createRouteHandlerClient();
+
+    const rows = platformIds.map((platformId) => ({
+      game_id: gameId,
+      platform_id: platformId,
+    }));
+
+    const { error } = await supabase.from("game_platforms").insert(rows);
+
+    if (error && !error.message?.includes("duplicate")) {
+      logger.error("Error linking platforms", { gameId, error });
+    }
+  }
+
+  /**
+   * Syncs platforms for an existing game (superset: adds new, keeps existing).
+   */
+  private static async syncPlatforms(gameId: string, igdbGame: IGDBGame): Promise<void> {
+    const platformIds = await this.ensurePlatforms(igdbGame);
+    if (platformIds.length === 0) return;
+
+    const supabase = await createRouteHandlerClient();
+
+    // Fetch existing associations
+    const { data: existingLinks } = await supabase
+      .from("game_platforms")
+      .select("platform_id")
+      .eq("game_id", gameId);
+
+    const existingIds = new Set((existingLinks ?? []).map((l) => l.platform_id));
+    const newIds = platformIds.filter((id) => !existingIds.has(id));
+
+    if (newIds.length === 0) return;
+
+    const rows = newIds.map((platformId) => ({
+      game_id: gameId,
+      platform_id: platformId,
+    }));
+
+    const { error } = await supabase.from("game_platforms").insert(rows);
+
+    if (error) {
+      logger.error("Error syncing platforms", { gameId, error });
+    }
   }
 
   /**

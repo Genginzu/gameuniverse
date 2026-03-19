@@ -497,6 +497,7 @@ export class CharacterService {
       primaryGame,
       media,
       relationships,
+      platforms: [],
       createdAt: typedCharacter.created_at,
       updatedAt: typedCharacter.updated_at,
     };

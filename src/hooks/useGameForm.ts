@@ -36,6 +36,7 @@ export interface UseGameFormReturn {
   stores: AdminStore[];
   currencies: AdminCurrency[];
   platforms: string[];
+  gamePlatforms: Array<{ id: string; slug: string; name: string }>;
   loadingOptions: boolean;
   submitGame: (data: AdminGameFormData) => Promise<void>;
   isSubmitting: boolean;
@@ -60,6 +61,9 @@ export function useGameForm(
   const [stores, setStores] = useState<AdminStore[]>([]);
   const [currencies, setCurrencies] = useState<AdminCurrency[]>([]);
   const [platforms, setPlatforms] = useState<string[]>([]);
+  const [gamePlatforms, setGamePlatforms] = useState<
+    Array<{ id: string; slug: string; name: string }>
+  >([]);
   const [loadingOptions, setLoadingOptions] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -92,6 +96,7 @@ export function useGameForm(
       music_composer: "",
       music_spotify_embed_url: "",
       music_youtube_video_url: "",
+      game_platforms: [],
     },
   });
 
@@ -102,7 +107,7 @@ export function useGameForm(
     const loadOptions = async () => {
       try {
         const res = await fetch(
-          `/api/admin/reference-data?locale=${locale}&include=genres,companies,ratings,contentDescriptors,supportedLanguages,stores,currencies,platforms`
+          `/api/admin/reference-data?locale=${locale}&include=genres,companies,ratings,contentDescriptors,supportedLanguages,stores,currencies,platforms,gamePlatforms`
         );
         if (!res.ok) throw new Error("Failed to load reference data");
 
@@ -129,6 +134,7 @@ export function useGameForm(
         setStores(json.data?.stores ?? []);
         setCurrencies(json.data?.currencies ?? []);
         setPlatforms(json.data?.platforms ?? []);
+        setGamePlatforms(json.data?.gamePlatforms ?? []);
       } catch {
         // Options will remain empty — form can still be used
       } finally {
@@ -248,6 +254,7 @@ export function useGameForm(
             spotify_embed_url: data.music_spotify_embed_url || null,
             youtube_video_url: data.music_youtube_video_url || null,
           },
+          game_platforms: data.game_platforms,
         };
 
         const res = await fetch(url, {
@@ -281,6 +288,7 @@ export function useGameForm(
     stores,
     currencies,
     platforms,
+    gamePlatforms,
     loadingOptions,
     submitGame,
     isSubmitting,

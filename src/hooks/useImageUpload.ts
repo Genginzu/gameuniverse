@@ -3,7 +3,16 @@
 import { useState, useCallback, useRef } from "react";
 
 import { isAllowedMimeType, isValidFileSize } from "@/lib/validations/uploadValidation";
-import { MAX_FILE_SIZE_BYTES, type UploadContext, type UploadResponse } from "@/types/upload";
+import {
+  CROP_OUTPUT_FORMAT,
+  MAX_FILE_SIZE_BYTES,
+  type UploadContext,
+  type UploadResponse,
+} from "@/types/upload";
+
+function getContentType(data: File | Blob): string {
+  return data instanceof File ? data.type : CROP_OUTPUT_FORMAT;
+}
 
 interface UseImageUploadParams {
   context: UploadContext;
@@ -19,6 +28,7 @@ interface UseImageUploadReturn {
   error: string | null;
   handleFileSelect: (file: File) => void;
   handleUpload: () => Promise<void>;
+  handleCroppedUpload: (blob: Blob) => Promise<void>;
   handleDelete: () => Promise<void>;
   clearPreview: () => void;
 }
@@ -29,7 +39,7 @@ export function useImageUpload({
   onUploadSuccess,
   onDelete,
 }: UseImageUploadParams): UseImageUploadReturn {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | Blob | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -68,31 +78,34 @@ export function useImageUpload({
     setProgress(0);
   }, [previewUrl]);
 
-  const uploadToStorage = useCallback((signedUrl: string, file: File): Promise<void> => {
-    return new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      abortRef.current = xhr;
+  const uploadToStorage = useCallback(
+    (signedUrl: string, data: File | Blob, contentType: string): Promise<void> => {
+      return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        abortRef.current = xhr;
 
-      xhr.upload.addEventListener("progress", (event) => {
-        if (event.lengthComputable) {
-          setProgress(Math.round((event.loaded / event.total) * 100));
-        }
+        xhr.upload.addEventListener("progress", (event) => {
+          if (event.lengthComputable) {
+            setProgress(Math.round((event.loaded / event.total) * 100));
+          }
+        });
+
+        xhr.addEventListener("load", () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            resolve();
+          } else {
+            reject(new Error("storageUploadFailed"));
+          }
+        });
+
+        xhr.addEventListener("error", () => reject(new Error("storageUploadFailed")));
+        xhr.open("PUT", signedUrl);
+        xhr.setRequestHeader("Content-Type", contentType);
+        xhr.send(data);
       });
-
-      xhr.addEventListener("load", () => {
-        if (xhr.status >= 200 && xhr.status < 300) {
-          resolve();
-        } else {
-          reject(new Error("storageUploadFailed"));
-        }
-      });
-
-      xhr.addEventListener("error", () => reject(new Error("storageUploadFailed")));
-      xhr.open("PUT", signedUrl);
-      xhr.setRequestHeader("Content-Type", file.type);
-      xhr.send(file);
-    });
-  }, []);
+    },
+    []
+  );
 
   const handleUpload = useCallback(async () => {
     if (!selectedFile) return;
@@ -101,6 +114,8 @@ export function useImageUpload({
     setProgress(0);
     setError(null);
 
+    const contentType = getContentType(selectedFile);
+
     try {
       // Step 1: Request signed upload URL
       const response = await fetch("/api/upload", {
@@ -108,7 +123,7 @@ export function useImageUpload({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           context,
-          contentType: selectedFile.type,
+          contentType,
           fileSize: selectedFile.size,
         }),
       });
@@ -120,7 +135,7 @@ export function useImageUpload({
       const { signedUrl, publicUrl }: UploadResponse = await response.json();
 
       // Step 2: Upload directly to Supabase Storage
-      await uploadToStorage(signedUrl, selectedFile);
+      await uploadToStorage(signedUrl, selectedFile, contentType);
 
       // Step 3: Confirm upload
       const confirmResponse = await fetch("/api/upload/confirm", {
@@ -149,6 +164,57 @@ export function useImageUpload({
     clearPreview();
   }, [onDelete, clearPreview]);
 
+  const handleCroppedUpload = useCallback(
+    async (blob: Blob) => {
+      setSelectedFile(blob);
+      setUploading(true);
+      setProgress(0);
+      setError(null);
+
+      const contentType = CROP_OUTPUT_FORMAT;
+
+      try {
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            context,
+            contentType,
+            fileSize: blob.size,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error("presignedFailed");
+        }
+
+        const { signedUrl, publicUrl }: UploadResponse = await response.json();
+
+        await uploadToStorage(signedUrl, blob, contentType);
+
+        const confirmResponse = await fetch("/api/upload/confirm", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ context, publicUrl }),
+        });
+
+        if (!confirmResponse.ok) {
+          throw new Error("confirmFailed");
+        }
+
+        onUploadSuccess(publicUrl);
+        clearPreview();
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "uploadError";
+        setError(message);
+      } finally {
+        setUploading(false);
+        abortRef.current = null;
+      }
+    },
+    [context, uploadToStorage, onUploadSuccess, clearPreview]
+  );
+
   return {
     previewUrl,
     uploading,
@@ -156,6 +222,7 @@ export function useImageUpload({
     error,
     handleFileSelect,
     handleUpload,
+    handleCroppedUpload,
     handleDelete,
     clearPreview,
   };

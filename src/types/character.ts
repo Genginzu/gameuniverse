@@ -1,3 +1,5 @@
+import type { PlatformSummary } from "@/types/platform";
+
 export interface CharacterRelationship {
   id: string;
   relatedCharacter: {
@@ -64,6 +66,7 @@ export interface CharacterDetails {
   primaryGame: string;
   media: CharacterMedia;
   relationships: CharacterRelationship[];
+  platforms: PlatformSummary[];
   createdAt: string;
   updatedAt: string;
 }

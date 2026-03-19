@@ -1029,7 +1029,10 @@
       "title": "Appearance",
       "description": "Customize your avatar and banner",
       "avatarLabel": "Avatar",
-      "bannerLabel": "Banner"
+      "bannerLabel": "Banner",
+      "editAvatar": "Edit avatar",
+      "editBanner": "Edit banner",
+      "previewHint": "Click on the avatar or banner to edit them"
     },
     "errors": {
       "updateFailed": "Failed to update. Please try again.",
@@ -1061,6 +1064,7 @@
       "languages": "Languages",
       "characters": "Characters",
       "companies": "Companies",
+      "platforms": "Platforms",
       "ageClassifications": "Age Classifications",
       "reviewsCategory": "Reviews",
       "reviews": "Reviews",
@@ -1158,6 +1162,7 @@
         "labelColor": "Label color",
         "textColor": "Text color",
         "gameLanguages": "Languages",
+        "gamePlatforms": "Platforms",
         "noLanguages": "No languages",
         "addLanguage": "Add a language",
         "langCode": "Code",
@@ -1793,6 +1798,10 @@
       "title": "Genre Distribution",
       "empty": "No genres in library"
     },
+    "platformDistribution": {
+      "title": "Platform Distribution",
+      "empty": "No platform data. Add games to your library to see platform distribution."
+    },
     "completion": {
       "title": "Completion",
       "empty": "No games in library",
@@ -1897,7 +1906,14 @@
     "errorInvalidFormat": "Accepted formats: JPEG, PNG, WebP, GIF",
     "errorFileTooLarge": "Maximum file size is 5 MB",
     "errorUploadFailed": "Upload failed. Please try again.",
-    "errorConfirmFailed": "Save failed. Please try again."
+    "errorConfirmFailed": "Save failed. Please try again.",
+    "crop": {
+      "title": "Crop image",
+      "zoom": "Zoom",
+      "confirm": "Confirm crop",
+      "cancel": "Cancel",
+      "errorCanvasFailed": "Unable to generate cropped image. Please try again."
+    }
   },
   "achievements": {
     "unlockedOn": "Unlocked on",
@@ -2050,6 +2066,60 @@
         "errorNotAssigned": "This achievement is not assigned to this player.",
         "errorGeneric": "An error occurred while revoking the achievement."
       }
+    },
+    "platforms": {
+      "title": "Platform Management",
+      "newPlatform": "New Platform",
+      "searchPlaceholder": "Search platforms by slug or name...",
+      "search": "Search",
+      "totalPlatforms": "{count, plural, =0 {No platforms} one {1 platform} other {# platforms}}",
+      "noPlatforms": "No platforms found.",
+      "columns": {
+        "slug": "Slug",
+        "name": "Name",
+        "icon": "Icon",
+        "gameCount": "Games",
+        "actions": "Actions"
+      },
+      "sortBy": "Sort by {field}",
+      "editPlatform": "Edit {name}",
+      "deletePlatform": "Delete {name}",
+      "page": "Page {current} of {total}",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "gameCount": "{count, plural, =0 {No games} one {1 game} other {# games}}",
+      "form": {
+        "createTitle": "New Platform",
+        "editTitle": "Edit Platform",
+        "slug": "Slug",
+        "slugPlaceholder": "e.g.: playstation-5",
+        "slugDescription": "Lowercase letters, numbers and hyphens only. Cannot be changed after creation.",
+        "iconUrl": "Icon URL",
+        "iconUrlPlaceholder": "https://example.com/icon.png",
+        "nameFr": "Name (FR)",
+        "nameFrPlaceholder": "Name in French",
+        "nameEn": "Name (EN)",
+        "nameEnPlaceholder": "Name in English",
+        "abbreviation": "Abbreviation",
+        "abbreviationPlaceholder": "e.g.: PS5",
+        "create": "Create platform",
+        "save": "Save",
+        "cancel": "Cancel",
+        "success": "Platform saved successfully!",
+        "errorDuplicate": "A platform with this slug already exists.",
+        "errorGeneric": "An error occurred while saving."
+      },
+      "deleteDialog": {
+        "title": "Delete Platform",
+        "warning": "Are you sure you want to delete \"{name}\"?",
+        "irreversible": "This action is irreversible. The platform and all its associations will be deleted.",
+        "usageWarning": "{count, plural, one {This platform is used by 1 game.} other {This platform is used by # games.}}",
+        "confirm": "Delete",
+        "cancel": "Cancel",
+        "deleting": "Deleting...",
+        "success": "Platform deleted successfully!",
+        "errorGeneric": "An error occurred while deleting."
+      }
     }
   },
   "discussions": {
@@ -2071,5 +2141,23 @@
     "selectConversation": "Select a conversation to start chatting",
     "selectConversationHint": "Pick a friend from the list on the left",
     "startConversation": "Start a conversation"
+  },
+  "platforms": {
+    "title": "Platforms",
+    "filter": {
+      "title": "Platforms",
+      "available": "available",
+      "placeholder": "Filter by platform...",
+      "selected": "{count} selected",
+      "clearAll": "Clear all"
+    },
+    "distribution": {
+      "title": "Platform distribution",
+      "empty": "No platform data",
+      "emptyDescription": "Add games to your library to see platform distribution.",
+      "games": "{count} game(s)",
+      "percentage": "{value}%"
+    },
+    "empty": "No platforms"
   }
 }

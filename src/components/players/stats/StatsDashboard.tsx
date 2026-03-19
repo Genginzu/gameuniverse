@@ -10,6 +10,7 @@ import type { DashboardStatsResponse } from "@/types/dashboard-stats";
 import { StatsSectionTitle } from "@/components/players/stats/StatsSectionTitle";
 import { StatsOverviewCards } from "@/components/players/stats/StatsOverviewCards";
 import { GenreDistributionChart } from "@/components/players/stats/GenreDistributionChart";
+import { PlatformDistributionChart } from "@/components/players/stats/PlatformDistributionChart";
 import { CompletionTracker } from "@/components/players/stats/CompletionTracker";
 import { ReviewAnalytics } from "@/components/players/stats/ReviewAnalytics";
 import { SocialStats } from "@/components/players/stats/SocialStats";
@@ -133,6 +134,7 @@ export function StatsDashboard({
       <div className="space-y-8">
         <StatsOverviewCards metrics={data.overview} locale={locale} />
         <GenreDistributionChart distribution={data.genreDistribution} locale={locale} />
+        <PlatformDistributionChart distribution={data.platformDistribution} locale={locale} />
         <CompletionTracker completion={data.completion} />
         <ReviewAnalytics analytics={data.reviewAnalytics} locale={locale} />
         <SocialStats social={data.social} locale={locale} />
