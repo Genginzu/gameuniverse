@@ -6,8 +6,9 @@ import { useTranslations } from "next-intl";
 import { AchievementForm } from "@/components/admin/achievements/AchievementForm";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { FaArrowLeft } from "react-icons/fa";
+
 import type { AchievementFormData } from "@/lib/validations/admin-achievement-form";
+import { Icon } from "@iconify/react";
 
 export default function NewAchievementPage() {
   const t = useTranslations("adminAchievements");
@@ -49,7 +50,7 @@ export default function NewAchievementPage() {
     <div className="p-4 lg:p-6">
       <div className="mb-2">
         <Button variant="ghost" size="sm" onClick={() => router.push("/admin/achievements")}>
-          <FaArrowLeft className="mr-1 h-3 w-3" />
+          <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
           {t("form.backToList")}
         </Button>
       </div>

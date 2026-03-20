@@ -7,8 +7,9 @@ import { RatingsTable } from "./RatingsTable";
 import { DeleteRatingDialog } from "./DeleteRatingDialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { FaPlus } from "react-icons/fa";
+
 import type { AdminRating } from "@/types/admin-age-classifications";
+import { Icon } from "@iconify/react";
 
 interface RatingsTabProps {
   ratingSystemId: string;
@@ -80,7 +81,7 @@ export function RatingsTab({ ratingSystemId }: RatingsTabProps) {
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Notes</h2>
         <Button size="sm" onClick={handleCreate}>
-          <FaPlus className="h-3 w-3" />
+          <Icon icon="fa:plus" className="h-3 w-3"  />
           Nouvelle note
         </Button>
       </div>

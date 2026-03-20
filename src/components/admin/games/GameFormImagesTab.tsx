@@ -3,9 +3,10 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { FaPlus, FaTimes } from "react-icons/fa";
+
 import type { GameFormTabProps } from "@/types/admin-games";
 import { IgdbFieldIndicator } from "./IgdbFieldIndicator";
+import { Icon } from "@iconify/react";
 
 export function GameFormImagesTab({ form, t, isIgdbField }: GameFormTabProps) {
   const coverImageUrl = form.watch("cover_image_url");
@@ -183,7 +184,7 @@ function MediaListSection({
           <span className="font-normal text-gray-400">({items.length})</span>
         </h3>
         <Button type="button" variant="outline" size="sm" className="gap-1.5" onClick={onAdd}>
-          <FaPlus className="h-3 w-3" />
+          <Icon icon="fa:plus" className="h-3 w-3"  />
           {t(addKey) ?? "Ajouter"}
         </Button>
       </div>
@@ -230,7 +231,7 @@ function MediaListSection({
                   className="mt-2 flex-shrink-0 rounded-md p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20"
                   aria-label="Supprimer"
                 >
-                  <FaTimes className="h-3.5 w-3.5" />
+                  <Icon icon="fa:times" className="h-3.5 w-3.5"  />
                 </button>
               </div>
             </div>

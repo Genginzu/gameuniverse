@@ -1,9 +1,10 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { FaGlobe, FaStar, FaKey, FaInfoCircle } from "react-icons/fa";
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Icon } from "@iconify/react";
 
 export interface SiteLocale {
   code: string;
@@ -24,7 +25,7 @@ export function SiteLocalesSection({ locales }: SiteLocalesSectionProps) {
     <Card>
       <CardHeader>
         <div className="flex items-center gap-2">
-          <FaGlobe className="h-5 w-5 text-blue-500" />
+          <Icon icon="fa:globe" className="h-5 w-5 text-blue-500"  />
           <CardTitle>{t("title")}</CardTitle>
         </div>
         <CardDescription>{t("description")}</CardDescription>
@@ -54,7 +55,7 @@ export function SiteLocalesSection({ locales }: SiteLocalesSectionProps) {
                     className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300"
                   >
                     <div className="flex items-center gap-1">
-                      <FaKey className="h-3 w-3" />
+                      <Icon icon="fa:key" className="h-3 w-3"  />
                       <span>{t("translationKeys", { count: 0 }).replace("0 ", "")}</span>
                     </div>
                   </th>
@@ -70,7 +71,7 @@ export function SiteLocalesSection({ locales }: SiteLocalesSectionProps) {
                         </span>
                         {locale.isDefault && (
                           <Badge variant="secondary" className="gap-1">
-                            <FaStar className="h-3 w-3 text-yellow-500" />
+                            <Icon icon="fa:star" className="h-3 w-3 text-yellow-500"  />
                             {t("default")}
                           </Badge>
                         )}
@@ -100,7 +101,7 @@ export function SiteLocalesSection({ locales }: SiteLocalesSectionProps) {
 
         {/* Info message about source code management */}
         <div className="flex items-start gap-2 rounded-lg border border-blue-200 bg-blue-50 p-3 dark:border-blue-800 dark:bg-blue-950">
-          <FaInfoCircle className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
+          <Icon icon="fa:info-circle" className="mt-0.5 h-4 w-4 shrink-0 text-blue-500"  />
           <p className="text-sm text-blue-700 dark:text-blue-300">
             {t("managedViaCode", {
               routingFile: "src/i18n/routing.ts",

@@ -1,33 +1,25 @@
-import {
-  FaComments,
-  FaDice,
-  FaGamepad,
-  FaHeart,
-  FaUser,
-  FaUserFriends,
-  FaMask,
-} from "react-icons/fa";
-import type { IconType } from "react-icons";
+
+
 
 export interface NavLink {
   href: string;
-  icon: IconType;
+  icon: string;
   labelKey: string;
 }
 
 /** Main navigation links for the authenticated area. */
 export const NAV_LINKS: NavLink[] = [
-  { href: "/profile", icon: FaUser, labelKey: "profile" },
-  { href: "/library", icon: FaGamepad, labelKey: "library" },
-  { href: "/favorites/characters", icon: FaHeart, labelKey: "myCharacters" },
-  { href: "/discussions", icon: FaComments, labelKey: "discussions" },
+  { href: "/profile", icon: "fa:user", labelKey: "profile" },
+  { href: "/library", icon: "fa:gamepad", labelKey: "library" },
+  { href: "/favorites/characters", icon: "fa:heart", labelKey: "myCharacters" },
+  { href: "/discussions", icon: "fa:comments", labelKey: "discussions" },
 ];
 
 /** Public navigation links visible to all users. */
 export const PUBLIC_LINKS: NavLink[] = [
-  { href: "/games", icon: FaDice, labelKey: "games" },
-  { href: "/characters", icon: FaMask, labelKey: "characters" },
-  { href: "/players", icon: FaUserFriends, labelKey: "players" },
+  { href: "/games", icon: "fa:dice", labelKey: "games" },
+  { href: "/characters", icon: "fa:mask", labelKey: "characters" },
+  { href: "/players", icon: "fa:user-friends", labelKey: "players" },
 ];
 
 /**

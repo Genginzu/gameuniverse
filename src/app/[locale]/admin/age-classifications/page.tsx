@@ -7,8 +7,9 @@ import { RatingSystemsTable } from "@/components/admin/age-classifications/Ratin
 import { DeleteRatingSystemDialog } from "@/components/admin/age-classifications/DeleteRatingSystemDialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { FaPlus } from "react-icons/fa";
+
 import type { AdminRatingSystem } from "@/types/admin-age-classifications";
+import { Icon } from "@iconify/react";
 
 export default function AdminAgeClassificationsPage() {
   const router = useRouter();
@@ -118,7 +119,7 @@ export default function AdminAgeClassificationsPage() {
             Classifications d&apos;âge
           </h1>
           <Button onClick={() => router.push("/admin/age-classifications/new")}>
-            <FaPlus className="h-4 w-4" />
+            <Icon icon="fa:plus" className="h-4 w-4"  />
             Nouveau système
           </Button>
         </div>

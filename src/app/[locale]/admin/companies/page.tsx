@@ -9,7 +9,8 @@ import { AdminCompaniesTable } from "@/components/admin/companies/AdminCompanies
 import { DeleteCompanyDialog } from "@/components/admin/companies/DeleteCompanyDialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { FaPlus } from "react-icons/fa";
+import { Icon } from "@iconify/react";
+
 
 export default function AdminCompaniesPage() {
   const t = useTranslations("admin.companies");
@@ -114,7 +115,7 @@ export default function AdminCompaniesPage() {
             {t("title")}
           </h1>
           <Button onClick={() => router.push("/admin/companies/new")}>
-            <FaPlus className="h-4 w-4" />
+            <Icon icon="fa:plus" className="h-4 w-4"  />
             {t("newCompany")}
           </Button>
         </div>

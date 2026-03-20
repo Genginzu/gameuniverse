@@ -4,7 +4,8 @@ import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { PlayerAchievementManager } from "@/components/admin/achievements/PlayerAchievementManager";
 import { Button } from "@/components/ui/button";
-import { FaArrowLeft } from "react-icons/fa";
+import { Icon } from "@iconify/react";
+
 
 export default function PlayerAchievementsPage() {
   const t = useTranslations("adminAchievements");
@@ -14,7 +15,7 @@ export default function PlayerAchievementsPage() {
     <div className="p-4 lg:p-6">
       <div className="mb-2">
         <Button variant="ghost" size="sm" onClick={() => router.push("/admin/achievements")}>
-          <FaArrowLeft className="mr-1 h-3 w-3" />
+          <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
           {t("form.backToList")}
         </Button>
       </div>

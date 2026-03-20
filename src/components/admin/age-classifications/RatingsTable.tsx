@@ -4,8 +4,9 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { FaSearch, FaEdit, FaTrash } from "react-icons/fa";
+
 import type { AdminRating } from "@/types/admin-age-classifications";
+import { Icon } from "@iconify/react";
 
 export interface RatingsTableProps {
   ratings: AdminRating[];
@@ -36,7 +37,7 @@ export function RatingsTable({
       {/* Barre de recherche */}
       <form onSubmit={handleSearchSubmit} className="flex gap-2">
         <div className="relative flex-1">
-          <FaSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <Icon icon="fa:search" className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"  />
           <Input
             type="text"
             placeholder="Rechercher par code ou nom…"
@@ -133,7 +134,7 @@ export function RatingsTable({
                         onClick={() => onEdit(rating)}
                         aria-label={`Modifier ${rating.display_name}`}
                       >
-                        <FaEdit className="h-4 w-4" />
+                        <Icon icon="fa:edit" className="h-4 w-4"  />
                       </Button>
                       <Button
                         variant="ghost"
@@ -142,7 +143,7 @@ export function RatingsTable({
                         aria-label={`Supprimer ${rating.display_name}`}
                         className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                       >
-                        <FaTrash className="h-4 w-4" />
+                        <Icon icon="fa:trash" className="h-4 w-4"  />
                       </Button>
                     </div>
                   </td>

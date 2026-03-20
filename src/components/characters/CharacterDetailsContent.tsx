@@ -24,6 +24,7 @@ import { useTranslations } from "next-intl";
 import { CharacterDetails } from "@/types/character";
 import { useState } from "react";
 import { CharacterCommentsTab } from "./comments/CharacterCommentsTab";
+import { CharacterPlatformsCard } from "./CharacterPlatformsCard";
 import { FavoriteCharacterButton } from "@/components/characters/FavoriteCharacterButton";
 import { useComments } from "@/hooks/useComments";
 
@@ -586,6 +587,12 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                     </CardContent>
                   </Card>
                 </div>
+
+                {/* Platforms */}
+                <CharacterPlatformsCard
+                  platforms={character.platforms}
+                  accentColor={colors.accent}
+                />
 
                 {/* Weapons */}
                 {character.weapons && (

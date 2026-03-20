@@ -206,6 +206,7 @@ export class IGDBService {
              language_supports.language_support_type.id, language_supports.language_support_type.name,
              age_ratings.id, age_ratings.organization, age_ratings.rating_category, age_ratings.synopsis,
              age_ratings.rating_content_descriptions,
+             platforms.id, platforms.name,
              dlcs, expansions, bundles;
       where id = ${igdbId};
     `;

@@ -106,6 +106,10 @@ const gameDataGen = () =>
     age_ratings: fc.array(ageRatingGen(), { minLength: 0, maxLength: 2 }),
     versions: fc.array(versionGen(), { minLength: 0, maxLength: 2 }),
     languages: fc.array(languageGen(), { minLength: 0, maxLength: 3 }),
+    game_platforms: fc.array(fc.record({ platform_id: fc.uuid() }), {
+      minLength: 0,
+      maxLength: 3,
+    }),
   });
 
 // =============================================================================
@@ -200,6 +204,11 @@ function applyFieldChange(data: AdminGameFormData, field: string): void {
       break;
     case "playtime":
       data.playtime_hastily = ((data.playtime_hastily as number) ?? 10) === 999 ? 1 : 999;
+      break;
+    case "platforms":
+      (data as Record<string, unknown>).game_platforms = [
+        { platform_id: "00000000-0000-0000-0000-000000000099" },
+      ];
       break;
   }
 }

@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
+import { Icon } from "@iconify/react";
+import { getPlatformIcon } from "@/lib/utils/platform-icons";
 
 interface PlatformOption {
   id: string;
@@ -99,7 +101,13 @@ export function CharacterPlatformFilter({
               )}
             </div>
             <div className="ml-2 min-w-0 flex-1 sm:ml-3">
-              <span className="text-xs font-medium text-gray-900 dark:text-white sm:text-sm">
+              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-900 dark:text-white sm:text-sm">
+                {(() => {
+                  const platformIconName = getPlatformIcon(platform.slug);
+                  return (
+                    <Icon icon={platformIconName} className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
+                  );
+                })()}
                 {platform.name}
               </span>
               <div className="text-xs text-gray-500 dark:text-gray-400">

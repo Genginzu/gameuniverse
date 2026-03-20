@@ -29,7 +29,7 @@ export function PlayerCardSocialLinks({ socialLinks }: PlayerCardSocialLinksProp
 
   return (
     <div className="flex gap-2">
-      {visibleLinks.map(({ key, href, color, icon: Icon }) => (
+      {visibleLinks.map(({ key, href, color, icon: IconComp }) => (
         <a
           key={key}
           href={href}
@@ -39,7 +39,7 @@ export function PlayerCardSocialLinks({ socialLinks }: PlayerCardSocialLinksProp
           onClick={(e) => e.stopPropagation()}
           className={`flex h-8 w-8 items-center justify-center rounded-full ${color} text-white transition-opacity hover:opacity-80`}
         >
-          <Icon className="h-3.5 w-3.5" />
+          <IconComp className="h-3.5 w-3.5" />
         </a>
       ))}
     </div>

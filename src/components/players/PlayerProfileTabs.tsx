@@ -80,7 +80,7 @@ export function PlayerProfileTabs({ activeTab, onTabChange, isOwner }: PlayerPro
         ref={scrollRef}
         className="scrollbar-hide flex overflow-x-auto px-6 md:justify-center md:px-0"
       >
-        {visibleTabs.map(({ id, icon: Icon }) => {
+        {visibleTabs.map(({ id, icon: IconComp }) => {
           const isActive = activeTab === id;
           const label = t(id);
           return (
@@ -99,7 +99,7 @@ export function PlayerProfileTabs({ activeTab, onTabChange, isOwner }: PlayerPro
               aria-selected={isActive}
               role="tab"
             >
-              <Icon className="h-5 w-5" />
+              <IconComp className="h-5 w-5" />
               {isActive && (
                 <>
                   <span className="ml-2 hidden text-sm font-medium md:inline">{label}</span>

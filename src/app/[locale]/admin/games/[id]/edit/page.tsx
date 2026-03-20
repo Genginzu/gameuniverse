@@ -9,9 +9,10 @@ import { GameForm } from "@/components/admin/games/GameForm";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { toast } from "@/hooks/use-toast";
-import { FaArrowLeft } from "react-icons/fa";
+
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
 import { type GameApiResponse, toFormData } from "@/lib/utils/game-api-transform";
+import { Icon } from "@iconify/react";
 
 /**
  * Inner component that mounts only when initialData is ready,
@@ -43,6 +44,7 @@ function EditGameForm({
     loadingOptions,
     submitGame,
     isSubmitting,
+    refreshGamePlatforms,
   } = useGameForm("edit", initialData, gameId);
 
   const handleSubmit = useCallback(
@@ -65,10 +67,12 @@ function EditGameForm({
       if (!res.ok) return;
       const data: GameApiResponse = await res.json();
       form.reset(toFormData(data));
+      // Sync may have created new platforms — reload the reference list
+      await refreshGamePlatforms();
     } catch {
       // Silently fail — overrides are already refreshed by the sync hook
     }
-  }, [gameId, form]);
+  }, [gameId, form, refreshGamePlatforms]);
 
   // Keep showing the same loading style until options are ready
   if (loadingOptions) {
@@ -86,7 +90,7 @@ function EditGameForm({
     <div className="p-4 lg:p-6">
       <div className="mb-6 flex items-center gap-4">
         <Button variant="ghost" size="sm" onClick={() => router.push("/admin/games")}>
-          <FaArrowLeft className="mr-1 h-3 w-3" />
+          <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
           {t("form.backToList")}
         </Button>
       </div>
@@ -174,7 +178,7 @@ export default function EditGamePage() {
       <div className="p-4 lg:p-6">
         <div className="mb-6 flex items-center gap-4">
           <Button variant="ghost" size="sm" onClick={() => router.push("/admin/games")}>
-            <FaArrowLeft className="mr-1 h-3 w-3" />
+            <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
             {t("form.backToList")}
           </Button>
         </div>

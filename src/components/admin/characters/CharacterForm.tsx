@@ -6,17 +6,7 @@ import { type UseFormReturn } from "react-hook-form";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
-import {
-  FaInfoCircle,
-  FaImage,
-  FaGlobe,
-  FaGamepad,
-  FaCamera,
-  FaPaintBrush,
-  FaVideo,
-  FaSave,
-  FaUsers,
-} from "react-icons/fa";
+
 import type { AdminCharacterFormData } from "@/lib/validations/admin-character-form";
 import {
   SUPPORTED_LANGUAGES,
@@ -33,6 +23,7 @@ import { CharacterFormScreenshotsTab } from "./CharacterFormScreenshotsTab";
 import { CharacterFormArtworkTab } from "./CharacterFormArtworkTab";
 import { CharacterFormVideosTab } from "./CharacterFormVideosTab";
 import { CharacterFormRelationsTab } from "./CharacterFormRelationsTab";
+import { Icon } from "@iconify/react";
 
 export interface CharacterFormProps {
   mode: "create" | "edit";
@@ -47,14 +38,14 @@ export interface CharacterFormProps {
 }
 
 const TABS: CharacterTab[] = [
-  { id: "general", icon: <FaInfoCircle className="h-3.5 w-3.5" />, labelKey: "generalInfo" },
-  { id: "images", icon: <FaImage className="h-3.5 w-3.5" />, labelKey: "images" },
-  { id: "translations", icon: <FaGlobe className="h-3.5 w-3.5" />, labelKey: "translations" },
-  { id: "games", icon: <FaGamepad className="h-3.5 w-3.5" />, labelKey: "games" },
-  { id: "relationships", icon: <FaUsers className="h-3.5 w-3.5" />, labelKey: "relationships" },
-  { id: "screenshots", icon: <FaCamera className="h-3.5 w-3.5" />, labelKey: "screenshots" },
-  { id: "artwork", icon: <FaPaintBrush className="h-3.5 w-3.5" />, labelKey: "artwork" },
-  { id: "videos", icon: <FaVideo className="h-3.5 w-3.5" />, labelKey: "videos" },
+  { id: "general", icon: <Icon icon="fa:info-circle" className="h-3.5 w-3.5"  />, labelKey: "generalInfo" },
+  { id: "images", icon: <Icon icon="fa:image" className="h-3.5 w-3.5"  />, labelKey: "images" },
+  { id: "translations", icon: <Icon icon="fa:globe" className="h-3.5 w-3.5"  />, labelKey: "translations" },
+  { id: "games", icon: <Icon icon="fa:gamepad" className="h-3.5 w-3.5"  />, labelKey: "games" },
+  { id: "relationships", icon: <Icon icon="fa:users" className="h-3.5 w-3.5"  />, labelKey: "relationships" },
+  { id: "screenshots", icon: <Icon icon="fa:camera" className="h-3.5 w-3.5"  />, labelKey: "screenshots" },
+  { id: "artwork", icon: <Icon icon="fa:paint-brush" className="h-3.5 w-3.5"  />, labelKey: "artwork" },
+  { id: "videos", icon: <Icon icon="fa:video" className="h-3.5 w-3.5"  />, labelKey: "videos" },
 ];
 
 export function CharacterForm({
@@ -303,7 +294,7 @@ function StickySubmitBar({
             <LoadingSpinner size="sm" />
           ) : (
             <>
-              <FaSave className="h-4 w-4" />
+              <Icon icon="fa:save" className="h-4 w-4"  />
               {mode === "create" ? t("create") : t("save")}
             </>
           )}

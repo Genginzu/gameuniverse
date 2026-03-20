@@ -8,6 +8,8 @@ import { ArrowLeft, Calendar, Users, Globe, Heart, Share2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { GameDetails } from "@/types/game";
 import { GameColors } from "@/lib/utils/game-utils";
+import { getPlatformIcon } from "@/lib/utils/platform-icons";
+import { Icon } from "@iconify/react";
 import { GamePricingSection } from "./GamePricingSection";
 
 interface GameHeroSectionProps {
@@ -141,18 +143,22 @@ export function GameHeroSection({
           <div className="lg:col-span-8">
             {/* Game header */}
             <div className="mb-4">
-              {/* Genres */}
-              {game.genres.length > 0 && (
+              {/* Platforms */}
+              {game.platforms?.length > 0 && (
                 <div className="mb-3 flex flex-wrap gap-2">
-                  {game.genres.slice(0, 3).map((genre) => (
-                    <Badge
-                      key={genre.id}
-                      variant="secondary"
-                      className="pointer-events-none border-slate-600 bg-slate-800/80 text-slate-300 backdrop-blur-sm"
-                    >
-                      {genre.name}
-                    </Badge>
-                  ))}
+                  {game.platforms.map((platform) => {
+                    const platformIconName = getPlatformIcon(platform.slug);
+                    return (
+                      <Badge
+                        key={platform.id}
+                        variant="secondary"
+                        className="pointer-events-none inline-flex items-center gap-1.5 border-slate-600 bg-slate-800/80 text-slate-300 backdrop-blur-sm"
+                      >
+                        <Icon icon={platformIconName} className="h-3 w-3 shrink-0" />
+                        {platform.abbreviation || platform.name}
+                      </Badge>
+                    );
+                  })}
                 </div>
               )}
 

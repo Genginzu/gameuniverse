@@ -34,7 +34,7 @@ export function ActivityFilters({ activeFilter, onFilterChange }: ActivityFilter
 
   return (
     <div className="mb-6 flex flex-wrap gap-2" role="group" aria-label={t("label")}>
-      {FILTER_OPTIONS.map(({ value, icon: Icon }) => {
+      {FILTER_OPTIONS.map(({ value, icon: IconComp }) => {
         const isActive = activeFilter === value;
         return (
           <button
@@ -48,7 +48,7 @@ export function ActivityFilters({ activeFilter, onFilterChange }: ActivityFilter
             }`}
             aria-pressed={isActive}
           >
-            <Icon className="h-4 w-4" />
+            <IconComp className="h-4 w-4" />
             {t(value)}
           </button>
         );

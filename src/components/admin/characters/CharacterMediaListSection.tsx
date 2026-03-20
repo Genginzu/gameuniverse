@@ -2,8 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { FaPlus, FaTimes } from "react-icons/fa";
+
 import type { UseFormReturn } from "react-hook-form";
+import { Icon } from "@iconify/react";
 import type {
   AdminCharacterFormData,
   AdminCharacterMedia,
@@ -68,7 +69,7 @@ export function CharacterMediaListSection({
           {t(titleKey)} <span className="font-normal text-gray-400">({indices.length})</span>
         </h3>
         <Button type="button" variant="outline" size="sm" className="gap-1.5" onClick={addItem}>
-          <FaPlus className="h-3 w-3" />
+          <Icon icon="fa:plus" className="h-3 w-3"  />
           {t(addKey)}
         </Button>
       </div>
@@ -143,7 +144,7 @@ function MediaItemCard({
           className="mt-2 flex-shrink-0 rounded-md p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20"
           aria-label={t("removeMedia")}
         >
-          <FaTimes className="h-3.5 w-3.5" />
+          <Icon icon="fa:times" className="h-3.5 w-3.5"  />
         </button>
       </div>
     </div>

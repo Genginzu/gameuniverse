@@ -41,6 +41,8 @@ export interface UseGameFormReturn {
   submitGame: (data: AdminGameFormData) => Promise<void>;
   isSubmitting: boolean;
   submitError: string | null;
+  /** Reload gamePlatforms from the API (useful after IGDB sync creates new platforms) */
+  refreshGamePlatforms: () => Promise<void>;
 }
 
 const DEFAULT_TRANSLATIONS = (locale: string): AdminGameFormData["translations"] => [
@@ -154,6 +156,18 @@ export function useGameForm(
       form.reset(initialData);
     }
   }, [initialData, form]);
+
+  /** Reload only gamePlatforms from the API (after IGDB sync creates new platforms) */
+  const refreshGamePlatforms = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/admin/reference-data?locale=${locale}&include=gamePlatforms`);
+      if (!res.ok) return;
+      const json = await res.json();
+      setGamePlatforms(json.data?.gamePlatforms ?? []);
+    } catch {
+      // Silently fail — existing list remains usable
+    }
+  }, [locale]);
 
   const submitGame = useCallback(
     async (data: AdminGameFormData) => {
@@ -293,5 +307,6 @@ export function useGameForm(
     submitGame,
     isSubmitting,
     submitError,
+    refreshGamePlatforms,
   };
 }

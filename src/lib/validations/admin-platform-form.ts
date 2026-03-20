@@ -18,7 +18,7 @@ export const adminPlatformFormSchema = z
       .min(2, "Le slug doit contenir au moins 2 caractères")
       .max(50, "Le slug ne peut pas dépasser 50 caractères")
       .regex(/^[a-z]([a-z0-9-]*[a-z0-9])?$/, "Lettres minuscules, chiffres et tirets uniquement"),
-    iconUrl: z.string().url().optional().or(z.literal("")),
+    iconUrl: z.string().optional().or(z.literal("")),
     translations: z.array(platformTranslationSchema),
   })
   .refine((data) => data.translations.some((t) => t.name && t.name.trim().length > 0), {

@@ -74,14 +74,14 @@ export function GameStatsGrid({
       {stats
         .filter((s) => s.show)
         .map((stat, index) => {
-          const Icon = stat.icon;
+          const StatIcon = stat.icon;
           return (
             <div
               key={index}
               className={`flex flex-col justify-between rounded-xl border border-white/10 bg-white/5 p-4 shadow-lg shadow-black/10 backdrop-blur-xl`}
             >
               <div className="mb-2">
-                <Icon className="h-4 w-4" style={{ color: colors.accent }} />
+                <StatIcon className="h-4 w-4" style={{ color: colors.accent }} />
               </div>
               {stat.metascoreBg ? (
                 <div

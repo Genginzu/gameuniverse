@@ -9,7 +9,8 @@ import { AchievementsTable } from "@/components/admin/achievements/AchievementsT
 import { DeleteAchievementDialog } from "@/components/admin/achievements/DeleteAchievementDialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { FaPlus, FaUserFriends } from "react-icons/fa";
+import { Icon } from "@iconify/react";
+
 
 export default function AdminAchievementsPage() {
   const t = useTranslations("adminAchievements");
@@ -115,11 +116,11 @@ export default function AdminAchievementsPage() {
           </h1>
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => router.push("/admin/achievements/players")}>
-              <FaUserFriends className="h-4 w-4" />
+              <Icon icon="fa:user-friends" className="h-4 w-4"  />
               {t("playerManager.title")}
             </Button>
             <Button onClick={() => router.push("/admin/achievements/new")}>
-              <FaPlus className="h-4 w-4" />
+              <Icon icon="fa:plus" className="h-4 w-4"  />
               {t("newAchievement")}
             </Button>
           </div>

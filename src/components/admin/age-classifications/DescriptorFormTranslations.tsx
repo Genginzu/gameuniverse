@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
-import { FaPlus, FaTrash } from "react-icons/fa";
+
 import type { DescriptorFormData } from "@/lib/validations/admin-descriptor-form";
+import { Icon } from "@iconify/react";
 
 export interface DescriptorFormTranslationsProps {
   form: UseFormReturn<DescriptorFormData>;
@@ -27,7 +28,7 @@ export function DescriptorFormTranslations({ form }: DescriptorFormTranslationsP
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Traductions</h3>
         <Button type="button" variant="outline" size="sm" onClick={handleAddTranslation}>
-          <FaPlus className="mr-2 h-3 w-3" />
+          <Icon icon="fa:plus" className="mr-2 h-3 w-3"  />
           Ajouter une traduction
         </Button>
       </div>
@@ -65,7 +66,7 @@ export function DescriptorFormTranslations({ form }: DescriptorFormTranslationsP
                   className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                   aria-label={`Supprimer la traduction ${index + 1}`}
                 >
-                  <FaTrash className="h-3 w-3" />
+                  <Icon icon="fa:trash" className="h-3 w-3"  />
                 </Button>
               )}
             </div>

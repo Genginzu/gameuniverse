@@ -6,7 +6,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { LanguageSwitcher } from "../../shared/LanguageSwitcher";
 import { Button } from "@/components/ui/button";
 import { GameUniverseLogo } from "@/components/ui/game-universe-logo";
-import { FaUser, FaSignOutAlt } from "react-icons/fa";
+import { Icon } from "@iconify/react";
+
 
 export function LandingHeader() {
   const t = useTranslations("navigation");
@@ -63,7 +64,7 @@ export function LandingHeader() {
           <div className="flex items-center space-x-3">
             <div className="glass flex items-center space-x-3 rounded-xl px-4 py-2 text-sm text-gray-600 dark:text-gray-300">
               <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-neon-violet to-neon-cyan">
-                <FaUser className="h-4 w-4 text-white" />
+                <Icon icon="fa:user" className="h-4 w-4 text-white"  />
               </div>
               <span className="hidden font-medium sm:inline">
                 {user.user_metadata?.username || user.email}
@@ -75,7 +76,7 @@ export function LandingHeader() {
               onClick={handleSignOut}
               className="rounded-xl text-gray-600 hover:bg-white/30 dark:text-gray-300 dark:hover:bg-white/5"
             >
-              <FaSignOutAlt className="h-4 w-4 sm:mr-2" />
+              <Icon icon="fa:sign-out-alt" className="h-4 w-4 sm:mr-2"  />
               <span className="hidden sm:inline">{t("logout")}</span>
             </Button>
           </div>

@@ -3,8 +3,9 @@
 import { useEffect } from "react";
 import { useRouter, Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { FaDice, FaMask, FaUserFriends, FaUsers } from "react-icons/fa";
+
 import { useAuth } from "@/hooks/useAuth";
+import { Icon } from "@iconify/react";
 
 /**
  * Home page content — redirects authenticated users to dashboard,
@@ -42,21 +43,21 @@ export function HomeContent() {
       <div className="mx-auto mb-8 grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-3 sm:gap-6">
         <ExploreCard
           href="/games"
-          icon={FaDice}
+          icon={"fa:dice"}
           label={tNav("games")}
           colorClass="text-neon-violet"
           bgClass="bg-neon-violet/10 dark:bg-neon-violet/15"
         />
         <ExploreCard
           href="/characters"
-          icon={FaMask}
+          icon={"fa:mask"}
           label={tNav("characters")}
           colorClass="text-neon-cyan"
           bgClass="bg-neon-cyan/10 dark:bg-neon-cyan/15"
         />
         <ExploreCard
           href="/players"
-          icon={FaUserFriends}
+          icon={"fa:user-friends"}
           label={tNav("players")}
           colorClass="text-neon-magenta"
           bgClass="bg-neon-magenta/10 dark:bg-neon-magenta/15"
@@ -69,7 +70,7 @@ export function HomeContent() {
           href="/auth?mode=signup"
           className="neon-btn inline-flex items-center rounded-xl bg-gradient-to-r from-neon-violet/20 to-neon-cyan/20 px-6 py-3 font-semibold text-gray-900 transition-all duration-200 hover:from-neon-violet/30 hover:to-neon-cyan/30 dark:text-white"
         >
-          <FaUsers className="mr-3 h-5 w-5 text-neon-violet" />
+          <Icon icon="fa:users" className="mr-3 h-5 w-5 text-neon-violet" />
           {t("cta.signup")}
         </Link>
       </div>
@@ -79,13 +80,13 @@ export function HomeContent() {
 
 function ExploreCard({
   href,
-  icon: Icon,
+  icon,
   label,
   colorClass,
   bgClass,
 }: {
   href: string;
-  icon: React.ComponentType<{ className?: string }>;
+  icon: string;
   label: string;
   colorClass: string;
   bgClass: string;
@@ -96,7 +97,7 @@ function ExploreCard({
       className="glass-card group flex flex-col items-center rounded-2xl p-6 text-center transition-all duration-200 hover:scale-[1.02]"
     >
       <div className={`mb-3 rounded-xl ${bgClass} p-3`}>
-        <Icon className={`h-6 w-6 ${colorClass} drop-shadow-[0_0_6px_currentColor]`} />
+        <Icon icon={icon} className={`h-6 w-6 ${colorClass} drop-shadow-[0_0_6px_currentColor]`} />
       </div>
       <span className="text-sm font-semibold text-gray-900 dark:text-white">{label}</span>
     </Link>

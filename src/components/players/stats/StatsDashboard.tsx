@@ -133,8 +133,10 @@ export function StatsDashboard({
       {title}
       <div className="space-y-8">
         <StatsOverviewCards metrics={data.overview} locale={locale} />
-        <GenreDistributionChart distribution={data.genreDistribution} locale={locale} />
-        <PlatformDistributionChart distribution={data.platformDistribution} locale={locale} />
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+          <GenreDistributionChart distribution={data.genreDistribution} locale={locale} />
+          <PlatformDistributionChart distribution={data.platformDistribution} locale={locale} />
+        </div>
         <CompletionTracker completion={data.completion} />
         <ReviewAnalytics analytics={data.reviewAnalytics} locale={locale} />
         <SocialStats social={data.social} locale={locale} />

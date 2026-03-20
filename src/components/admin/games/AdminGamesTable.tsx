@@ -5,19 +5,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import {
-  FaSearch,
-  FaSortUp,
-  FaSortDown,
-  FaSort,
-  FaEdit,
-  FaTrash,
-  FaChevronLeft,
-  FaChevronRight,
-  FaImage,
-} from "react-icons/fa";
+
 import type { AdminGame } from "@/types/admin-games";
 import type { PaginationInfo } from "@/types/pagination";
+import { Icon } from "@iconify/react";
 
 export interface AdminGamesTableProps {
   games: AdminGame[];
@@ -61,11 +52,11 @@ export function AdminGamesTable({
   };
 
   const renderSortIcon = (field: SortField) => {
-    if (currentSort?.field !== field) return <FaSort className="h-3 w-3 opacity-40" />;
+    if (currentSort?.field !== field) return <Icon icon="fa:sort" className="h-3 w-3 opacity-40"  />;
     return currentSort.order === "asc" ? (
-      <FaSortUp className="h-3 w-3" />
+      <Icon icon="fa:sort-up" className="h-3 w-3"  />
     ) : (
-      <FaSortDown className="h-3 w-3" />
+      <Icon icon="fa:sort-down" className="h-3 w-3"  />
     );
   };
 
@@ -83,7 +74,7 @@ export function AdminGamesTable({
       {/* Search bar */}
       <form onSubmit={handleSearchSubmit} className="flex gap-2">
         <div className="relative flex-1">
-          <FaSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <Icon icon="fa:search" className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"  />
           <Input
             type="text"
             placeholder={t("searchPlaceholder")}
@@ -182,7 +173,7 @@ export function AdminGamesTable({
                         />
                       ) : (
                         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700">
-                          <FaImage className="h-4 w-4 text-gray-400" />
+                          <Icon icon="fa:image" className="h-4 w-4 text-gray-400"  />
                         </div>
                       )}
                     </td>
@@ -203,7 +194,7 @@ export function AdminGamesTable({
                           onClick={() => onEdit(game.id)}
                           aria-label={t("editGame", { title: game.title })}
                         >
-                          <FaEdit className="h-4 w-4" />
+                          <Icon icon="fa:edit" className="h-4 w-4"  />
                         </Button>
                         {canDelete && (
                           <Button
@@ -213,7 +204,7 @@ export function AdminGamesTable({
                             aria-label={t("deleteGame", { title: game.title })}
                             className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                           >
-                            <FaTrash className="h-4 w-4" />
+                            <Icon icon="fa:trash" className="h-4 w-4"  />
                           </Button>
                         )}
                       </div>
@@ -241,7 +232,7 @@ export function AdminGamesTable({
                   onClick={() => onPageChange(pagination.currentPage - 1)}
                   aria-label={t("previousPage")}
                 >
-                  <FaChevronLeft className="h-3 w-3" />
+                  <Icon icon="fa:chevron-left" className="h-3 w-3"  />
                 </Button>
                 <Button
                   variant="outline"
@@ -250,7 +241,7 @@ export function AdminGamesTable({
                   onClick={() => onPageChange(pagination.currentPage + 1)}
                   aria-label={t("nextPage")}
                 >
-                  <FaChevronRight className="h-3 w-3" />
+                  <Icon icon="fa:chevron-right" className="h-3 w-3"  />
                 </Button>
               </div>
             </div>

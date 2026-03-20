@@ -8,9 +8,10 @@ import { DescriptorForm } from "./DescriptorForm";
 import { DeleteDescriptorDialog } from "./DeleteDescriptorDialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { FaPlus } from "react-icons/fa";
+
 import type { AdminContentDescriptor } from "@/types/admin-age-classifications";
 import type { DescriptorFormData } from "@/lib/validations/admin-descriptor-form";
+import { Icon } from "@iconify/react";
 
 interface DescriptorsTabProps {
   ratingSystemId: string;
@@ -136,7 +137,7 @@ export function DescriptorsTab({ ratingSystemId }: DescriptorsTabProps) {
         </h2>
         {!showForm && (
           <Button size="sm" onClick={handleCreate}>
-            <FaPlus className="h-3 w-3" />
+            <Icon icon="fa:plus" className="h-3 w-3"  />
             Nouveau descripteur
           </Button>
         )}

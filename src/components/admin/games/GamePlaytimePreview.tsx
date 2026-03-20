@@ -76,7 +76,7 @@ export function GamePlaytimePreview({ form, t }: GamePlaytimePreviewProps) {
               {t("playtime") ?? "Temps de jeu"}
             </h5>
             <div className="space-y-1.5">
-              {cards.map(({ icon: Icon, label, value }) => (
+              {cards.map(({ icon: IconComp, label, value }) => (
                 <div
                   key={label}
                   className="flex items-center gap-3 rounded-lg border border-slate-700 bg-slate-800/50 px-3 py-2"
@@ -85,7 +85,7 @@ export function GamePlaytimePreview({ form, t }: GamePlaytimePreviewProps) {
                     className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md"
                     style={{ backgroundColor: `${accent}20` }}
                   >
-                    <Icon className="h-3.5 w-3.5" style={{ color: accent }} />
+                    <IconComp className="h-3.5 w-3.5" style={{ color: accent }} />
                   </div>
                   <span className="flex-1 text-xs" style={{ color: colors.labelColor }}>
                     {label}

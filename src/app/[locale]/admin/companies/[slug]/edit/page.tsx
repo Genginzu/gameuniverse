@@ -9,9 +9,10 @@ import { CompanyForm } from "@/components/admin/companies/CompanyForm";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { toast } from "@/hooks/use-toast";
-import { FaArrowLeft } from "react-icons/fa";
+
 import type { CompanyFormData } from "@/lib/validations/admin-company-form";
 import type { AdminCompany } from "@/types/admin-companies";
+import { Icon } from "@iconify/react";
 
 /**
  * Inner component that mounts only when initialData is ready,
@@ -123,7 +124,7 @@ export default function EditCompanyPage() {
       <div className="p-4 lg:p-6">
         <div className="mb-2">
           <Button variant="ghost" size="sm" onClick={() => router.push("/admin/companies")}>
-            <FaArrowLeft className="mr-1 h-3 w-3" />
+            <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
             {t("form.backToList")}
           </Button>
         </div>
@@ -140,7 +141,7 @@ export default function EditCompanyPage() {
     <div className="p-4 lg:p-6">
       <div className="mb-2">
         <Button variant="ghost" size="sm" onClick={() => router.push("/admin/companies")}>
-          <FaArrowLeft className="mr-1 h-3 w-3" />
+          <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
           {t("form.backToList")}
         </Button>
       </div>

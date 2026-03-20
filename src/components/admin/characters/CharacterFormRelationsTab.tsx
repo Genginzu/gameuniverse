@@ -3,10 +3,11 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { FaPlus, FaTimes, FaSearch } from "react-icons/fa";
+
 import type { CharacterFormTabProps } from "@/types/admin-characters";
 import type { AvailableCharacter } from "@/hooks/useCharacterForm";
 import { RELATIONSHIP_TYPES } from "@/lib/validations/admin-character-form";
+import { Icon } from "@iconify/react";
 
 interface RelationsTabProps extends CharacterFormTabProps {
   availableCharacters: AvailableCharacter[];
@@ -118,7 +119,7 @@ export function CharacterFormRelationsTab({
           className="gap-1.5"
           disabled={pickableCharacters.length === 0}
         >
-          <FaPlus className="h-3 w-3" />
+          <Icon icon="fa:plus" className="h-3 w-3"  />
           {t("addRelation") ?? "Ajouter une relation"}
         </Button>
       )}
@@ -176,7 +177,7 @@ function RelationRow({
           className="rounded-md p-1 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20"
           aria-label={`Remove ${characterName}`}
         >
-          <FaTimes className="h-3 w-3" />
+          <Icon icon="fa:times" className="h-3 w-3"  />
         </button>
       </div>
       <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -248,12 +249,12 @@ function CharacterSearchPicker({
           onClick={onClose}
           className="rounded-md p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
         >
-          <FaTimes className="h-3 w-3" />
+          <Icon icon="fa:times" className="h-3 w-3"  />
         </button>
       </div>
 
       <div className="relative mb-3">
-        <FaSearch className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />
+        <Icon icon="fa:search" className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400"  />
         <Input
           ref={inputRef}
           type="text"

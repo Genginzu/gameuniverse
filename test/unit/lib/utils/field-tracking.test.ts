@@ -11,8 +11,8 @@ import type { AdminGameFormData } from "../../../../src/lib/validations/admin-ga
 // =============================================================================
 
 describe("TRACKABLE_FIELDS", () => {
-  it("contient exactement les 13 catégories attendues", () => {
-    expect(TRACKABLE_FIELDS).toHaveLength(13);
+  it("contient exactement les 14 catégories attendues", () => {
+    expect(TRACKABLE_FIELDS).toHaveLength(14);
     const expected = [
       "translations",
       "cover_image",
@@ -21,6 +21,7 @@ describe("TRACKABLE_FIELDS", () => {
       "metascore",
       "genres",
       "companies",
+      "platforms",
       "screenshots",
       "artworks",
       "age_ratings",
@@ -52,6 +53,7 @@ const baseCurrentData: CurrentGameData = {
   age_ratings: [{ rating_id: "rating-1", is_primary: true, content_descriptors: ["desc-1"] }],
   versions: [{ version_title: "Standard", description: "Base game" }],
   languages: [{ language_code: "fr", has_audio: true, has_subtitles: true, has_interface: true }],
+  game_platforms: [{ platform_id: "platform-1" }],
 };
 
 function toSubmitted(overrides: Partial<AdminGameFormData> = {}): AdminGameFormData {
@@ -97,6 +99,7 @@ function toSubmitted(overrides: Partial<AdminGameFormData> = {}): AdminGameFormD
         has_interface: true,
       },
     ],
+    game_platforms: [{ platform_id: "platform-1" }],
     prices: [],
     ...overrides,
   } as AdminGameFormData;
@@ -158,10 +161,11 @@ describe("detectChangedFields", () => {
           has_interface: false,
         },
       ],
+      game_platforms: [{ platform_id: "platform-99" }],
     });
 
     const result = detectChangedFields(baseCurrentData, submitted);
-    expect(result).toHaveLength(13);
+    expect(result).toHaveLength(14);
     expect(result).toEqual(expect.arrayContaining([...TRACKABLE_FIELDS]));
   });
 
@@ -182,6 +186,7 @@ describe("detectChangedFields", () => {
       age_ratings: [],
       versions: [],
       languages: [],
+      game_platforms: [],
     };
 
     const emptySubmitted = toSubmitted({
@@ -200,6 +205,7 @@ describe("detectChangedFields", () => {
       age_ratings: [],
       versions: [],
       languages: [],
+      game_platforms: [],
     });
 
     const result = detectChangedFields(emptyCurrentData, emptySubmitted);

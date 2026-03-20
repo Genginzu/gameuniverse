@@ -43,6 +43,18 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             release_date,
             game_translations(
               title
+            ),
+            game_platforms(
+              platforms(
+                id,
+                slug,
+                icon_url,
+                platform_translations(
+                  name,
+                  abbreviation,
+                  language_code
+                )
+              )
             )
           )
         ),
@@ -100,6 +112,18 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           background_image_url: string | null;
           release_date: string | null;
           game_translations: Array<{ title: string }>;
+          game_platforms?: Array<{
+            platforms: {
+              id: string;
+              slug: string;
+              icon_url: string | null;
+              platform_translations: Array<{
+                name: string;
+                abbreviation: string | null;
+                language_code: string;
+              }>;
+            } | null;
+          }>;
         } | null;
       }>;
       character_media: Array<{
@@ -265,6 +289,36 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       videos,
     };
 
+    // Aggregate unique platforms from all character's games
+    const platformMap = new Map<
+      string,
+      {
+        id: string;
+        slug: string;
+        name: string;
+        abbreviation: string | null;
+        iconUrl: string | null;
+      }
+    >();
+    for (const cg of characterData.character_games ?? []) {
+      for (const gp of cg.games?.game_platforms ?? []) {
+        const platform = gp.platforms;
+        if (!platform || platformMap.has(platform.id)) continue;
+        const translations = platform.platform_translations ?? [];
+        const tr =
+          translations.find((t) => t.language_code === locale) ||
+          translations.find((t) => t.language_code === "en") ||
+          translations[0];
+        platformMap.set(platform.id, {
+          id: platform.id,
+          slug: platform.slug,
+          name: tr?.name || platform.slug,
+          abbreviation: tr?.abbreviation || null,
+          iconUrl: platform.icon_url,
+        });
+      }
+    }
+
     const transformedCharacter = {
       id: characterData.id,
       slug: characterData.slug,
@@ -278,6 +332,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       primaryGame,
       media,
       relationships: processedRelationships,
+      platforms: Array.from(platformMap.values()),
       createdAt: characterData.created_at,
       updatedAt: characterData.updated_at,
     };

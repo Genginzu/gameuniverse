@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { IconPicker } from "@/components/ui/icon-picker";
 import {
   Form,
   FormField,
@@ -17,12 +18,13 @@ import {
 } from "@/components/ui/form";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { toast } from "@/hooks/use-toast";
-import { FaSave, FaTimes } from "react-icons/fa";
+
 import {
   adminPlatformFormSchema,
   type PlatformFormData,
 } from "@/lib/validations/admin-platform-form";
 import type { AdminPlatform } from "@/types/admin-platforms";
+import { Icon } from "@iconify/react";
 
 interface PlatformFormProps {
   platform?: AdminPlatform | null;
@@ -118,15 +120,18 @@ export function PlatformForm({ platform, onSuccess, onCancel }: PlatformFormProp
             )}
           />
 
-          {/* Icon URL */}
+          {/* Icon */}
           <FormField
             control={form.control}
             name="iconUrl"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{t("iconUrl")}</FormLabel>
+                <FormLabel>{t("icon")}</FormLabel>
                 <FormControl>
-                  <Input placeholder={t("iconUrlPlaceholder")} {...field} />
+                  <IconPicker
+                    value={field.value || null}
+                    onChange={(iconName) => field.onChange(iconName ?? "")}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -211,7 +216,7 @@ export function PlatformForm({ platform, onSuccess, onCancel }: PlatformFormProp
           {/* Actions */}
           <div className="flex justify-end gap-3">
             <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
-              <FaTimes className="mr-1 h-4 w-4" />
+              <Icon icon="fa:times" className="mr-1 h-4 w-4"  />
               {t("cancel")}
             </Button>
             <Button type="submit" disabled={isSubmitting} className="min-w-[140px] gap-2">
@@ -219,7 +224,7 @@ export function PlatformForm({ platform, onSuccess, onCancel }: PlatformFormProp
                 <LoadingSpinner size="sm" />
               ) : (
                 <>
-                  <FaSave className="h-4 w-4" />
+                  <Icon icon="fa:save" className="h-4 w-4"  />
                   {isEdit ? t("save") : t("create")}
                 </>
               )}

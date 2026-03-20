@@ -3,8 +3,9 @@
 import { useTranslations, useLocale } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { FaLock, FaUnlock } from "react-icons/fa";
+
 import type { AdminAchievement } from "@/types/admin-achievements";
+import { Icon } from "@iconify/react";
 
 export interface PlayerAchievementListProps {
   achievements: AdminAchievement[];
@@ -71,12 +72,12 @@ export function PlayerAchievementList({
                 <span className="truncate font-medium text-gray-900 dark:text-white">{name}</span>
                 {isUnlocked ? (
                   <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">
-                    <FaUnlock className="h-2.5 w-2.5" />
+                    <Icon icon="fa:unlock" className="h-2.5 w-2.5"  />
                     {t("unlocked")}
                   </span>
                 ) : (
                   <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500 dark:bg-gray-700 dark:text-gray-400">
-                    <FaLock className="h-2.5 w-2.5" />
+                    <Icon icon="fa:lock" className="h-2.5 w-2.5"  />
                     {t("locked")}
                   </span>
                 )}

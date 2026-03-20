@@ -25,7 +25,7 @@ export function PlayerProfileSocialLinks({ socialLinks }: PlayerProfileSocialLin
 
   return (
     <div className="flex gap-2">
-      {visibleLinks.map(({ key, href, color, icon: Icon }) => (
+      {visibleLinks.map(({ key, href, color, icon: IconComp }) => (
         <a
           key={key}
           href={href}
@@ -34,7 +34,7 @@ export function PlayerProfileSocialLinks({ socialLinks }: PlayerProfileSocialLin
           aria-label={key}
           className={`flex h-10 w-10 items-center justify-center rounded-full ${color} text-white transition-opacity hover:opacity-80`}
         >
-          <Icon className="h-4 w-4" />
+          <IconComp className="h-4 w-4" />
         </a>
       ))}
     </div>

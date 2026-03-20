@@ -8,9 +8,10 @@ import { AdminReviewForm } from "@/components/admin/reviews/AdminReviewForm";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { toast } from "@/hooks/use-toast";
-import { FaArrowLeft } from "react-icons/fa";
+
 import type { AdminReviewDetail } from "@/types/admin-reviews";
 import type { ReviewInput } from "@/lib/validations/review";
+import { Icon } from "@iconify/react";
 
 export default function EditReviewPage() {
   const t = useTranslations("admin.reviews");
@@ -93,7 +94,7 @@ export default function EditReviewPage() {
       <div className="p-4 lg:p-6">
         <div className="mb-6 flex items-center gap-4">
           <Button variant="ghost" size="sm" onClick={() => router.push("/admin/reviews")}>
-            <FaArrowLeft className="mr-1 h-3 w-3" />
+            <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
             {t("editPage.backToList")}
           </Button>
         </div>
@@ -110,7 +111,7 @@ export default function EditReviewPage() {
     <div className="p-4 lg:p-6">
       <div className="mb-6 flex items-center gap-4">
         <Button variant="ghost" size="sm" onClick={() => router.push("/admin/reviews")}>
-          <FaArrowLeft className="mr-1 h-3 w-3" />
+          <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
           {t("editPage.backToList")}
         </Button>
         <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">

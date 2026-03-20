@@ -5,21 +5,7 @@ import { useTranslations } from "next-intl";
 import { type UseFormReturn } from "react-hook-form";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Form } from "@/components/ui/form";
-import {
-  FaImage,
-  FaGlobe,
-  FaTag,
-  FaBuilding,
-  FaInfoCircle,
-  FaShieldAlt,
-  FaBoxes,
-  FaLanguage,
-  FaDollarSign,
-  FaPaintBrush,
-  FaSync,
-  FaMusic,
-  FaDesktop,
-} from "react-icons/fa";
+
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
 import {
   SUPPORTED_LANGUAGES,
@@ -37,6 +23,7 @@ import { HeroBanner, TabNavigation, StickySubmitBar } from "./GameFormShell";
 import { GameFormTabContent } from "./GameFormTabContent";
 import { GameFormErrorSummary } from "./GameFormErrorSummary";
 import { useGameOverrides } from "@/hooks/useGameOverrides";
+import { Icon } from "@iconify/react";
 
 export interface GameFormProps {
   mode: "create" | "edit";
@@ -62,23 +49,23 @@ export interface GameFormProps {
 }
 
 const BASE_TABS: Tab[] = [
-  { id: "design", icon: <FaPaintBrush className="h-3.5 w-3.5" />, labelKey: "design" },
-  { id: "general", icon: <FaInfoCircle className="h-3.5 w-3.5" />, labelKey: "generalInfo" },
-  { id: "images", icon: <FaImage className="h-3.5 w-3.5" />, labelKey: "images" },
-  { id: "translations", icon: <FaGlobe className="h-3.5 w-3.5" />, labelKey: "translations" },
-  { id: "genres", icon: <FaTag className="h-3.5 w-3.5" />, labelKey: "genres" },
-  { id: "companies", icon: <FaBuilding className="h-3.5 w-3.5" />, labelKey: "companies" },
-  { id: "game_platforms", icon: <FaDesktop className="h-3.5 w-3.5" />, labelKey: "gamePlatforms" },
-  { id: "age_ratings", icon: <FaShieldAlt className="h-3.5 w-3.5" />, labelKey: "ageRatings" },
-  { id: "versions", icon: <FaBoxes className="h-3.5 w-3.5" />, labelKey: "versions" },
-  { id: "languages", icon: <FaLanguage className="h-3.5 w-3.5" />, labelKey: "gameLanguages" },
-  { id: "pricing", icon: <FaDollarSign className="h-3.5 w-3.5" />, labelKey: "pricing" },
-  { id: "music", icon: <FaMusic className="h-3.5 w-3.5" />, labelKey: "music" },
+  { id: "design", icon: <Icon icon="fa:paint-brush" className="h-3.5 w-3.5"  />, labelKey: "design" },
+  { id: "general", icon: <Icon icon="fa:info-circle" className="h-3.5 w-3.5"  />, labelKey: "generalInfo" },
+  { id: "images", icon: <Icon icon="fa:image" className="h-3.5 w-3.5"  />, labelKey: "images" },
+  { id: "translations", icon: <Icon icon="fa:globe" className="h-3.5 w-3.5"  />, labelKey: "translations" },
+  { id: "genres", icon: <Icon icon="fa:tag" className="h-3.5 w-3.5"  />, labelKey: "genres" },
+  { id: "companies", icon: <Icon icon="fa:building" className="h-3.5 w-3.5"  />, labelKey: "companies" },
+  { id: "game_platforms", icon: <Icon icon="fa:desktop" className="h-3.5 w-3.5"  />, labelKey: "gamePlatforms" },
+  { id: "age_ratings", icon: <Icon icon="fa:shield-alt" className="h-3.5 w-3.5"  />, labelKey: "ageRatings" },
+  { id: "versions", icon: <Icon icon="fa:boxes" className="h-3.5 w-3.5"  />, labelKey: "versions" },
+  { id: "languages", icon: <Icon icon="fa:language" className="h-3.5 w-3.5"  />, labelKey: "gameLanguages" },
+  { id: "pricing", icon: <Icon icon="fa:dollar-sign" className="h-3.5 w-3.5"  />, labelKey: "pricing" },
+  { id: "music", icon: <Icon icon="fa:music" className="h-3.5 w-3.5"  />, labelKey: "music" },
 ];
 
 const SYNC_TAB: Tab = {
   id: "sync",
-  icon: <FaSync className="h-3.5 w-3.5" />,
+  icon: <Icon icon="fa:sync" className="h-3.5 w-3.5"  />,
   labelKey: "syncTab",
 };
 

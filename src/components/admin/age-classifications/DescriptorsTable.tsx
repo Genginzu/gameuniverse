@@ -5,8 +5,9 @@ import { useLocale } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { FaSearch, FaEdit, FaTrash } from "react-icons/fa";
+
 import type { AdminContentDescriptor } from "@/types/admin-age-classifications";
+import { Icon } from "@iconify/react";
 
 export interface DescriptorsTableProps {
   descriptors: AdminContentDescriptor[];
@@ -45,7 +46,7 @@ export function DescriptorsTable({
       {/* Barre de recherche */}
       <form onSubmit={handleSearchSubmit} className="flex gap-2">
         <div className="relative flex-1">
-          <FaSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <Icon icon="fa:search" className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"  />
           <Input
             type="text"
             placeholder="Rechercher par code ou nom…"
@@ -111,7 +112,7 @@ export function DescriptorsTable({
                         onClick={() => onEdit(descriptor)}
                         aria-label={`Modifier ${descriptor.code}`}
                       >
-                        <FaEdit className="h-4 w-4" />
+                        <Icon icon="fa:edit" className="h-4 w-4"  />
                       </Button>
                       <Button
                         variant="ghost"
@@ -120,7 +121,7 @@ export function DescriptorsTable({
                         aria-label={`Supprimer ${descriptor.code}`}
                         className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                       >
-                        <FaTrash className="h-4 w-4" />
+                        <Icon icon="fa:trash" className="h-4 w-4"  />
                       </Button>
                     </div>
                   </td>

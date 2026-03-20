@@ -3,10 +3,11 @@
 import { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { FaPlus, FaTimes } from "react-icons/fa";
+
 import type { GameFormTabProps, Company } from "@/types/admin-games";
 import { GameCompaniesPreview } from "./GameCompaniesPreview";
 import { IgdbFieldIndicator } from "./IgdbFieldIndicator";
+import { Icon } from "@iconify/react";
 
 interface CompaniesTabProps extends GameFormTabProps {
   companies: Company[];
@@ -101,7 +102,7 @@ export function GameFormCompaniesTab({
                     className="ml-1 rounded-md p-1 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20"
                     aria-label={`Remove ${company.name}`}
                   >
-                    <FaTimes className="h-3 w-3" />
+                    <Icon icon="fa:times" className="h-3 w-3"  />
                   </button>
                 </div>
               </div>
@@ -126,7 +127,7 @@ export function GameFormCompaniesTab({
           className="gap-1.5"
           disabled={availableCompanies.length === 0}
         >
-          <FaPlus className="h-3 w-3" />
+          <Icon icon="fa:plus" className="h-3 w-3"  />
           {t("addCompany") ?? "Ajouter une entreprise"}
         </Button>
       )}
@@ -162,7 +163,7 @@ function CompanyPicker({
           onClick={onClose}
           className="rounded-md p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
         >
-          <FaTimes className="h-3 w-3" />
+          <Icon icon="fa:times" className="h-3 w-3"  />
         </button>
       </div>
       {availableCompanies.length === 0 ? (

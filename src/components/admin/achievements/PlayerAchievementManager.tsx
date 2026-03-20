@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { FaSearch } from "react-icons/fa";
+
 import { toast } from "@/hooks/use-toast";
 import { usePlayerAchievementManager } from "@/hooks/usePlayerAchievementManager";
 import { useAdminAchievements } from "@/hooks/useAdminAchievements";
@@ -12,6 +12,7 @@ import { PlayerAchievementList } from "./PlayerAchievementList";
 import { AssignAchievementDialog } from "./AssignAchievementDialog";
 import { RevokeAchievementDialog } from "./RevokeAchievementDialog";
 import type { AdminAchievement, PlayerSearchResult } from "@/types/admin-achievements";
+import { Icon } from "@iconify/react";
 
 export function PlayerAchievementManager() {
   const t = useTranslations("adminAchievements.playerManager");
@@ -84,7 +85,7 @@ export function PlayerAchievementManager() {
           {t("searchPlayer")}
         </h2>
         <div className="relative">
-          <FaSearch className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <Icon icon="fa:search" className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"  />
           <Input
             type="text"
             placeholder={t("searchPlayerPlaceholder")}

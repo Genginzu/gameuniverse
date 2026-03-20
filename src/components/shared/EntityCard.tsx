@@ -7,8 +7,9 @@ import { useCharacterFavorite } from "@/hooks/useCharacterFavorite";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { FaHeart, FaRegHeart } from "react-icons/fa";
+
 import type { EntityCardProps } from "@/types/entity-card";
+import { Icon } from "@iconify/react";
 
 // Re-export types for backward compatibility
 export type {
@@ -161,10 +162,10 @@ export function EntityCard<T extends object>({
               {config.hoverOverlay.fields.map((fieldConfig, index) => {
                 const fieldValue = entity[fieldConfig.field];
                 if (!fieldValue) return null;
-                const Icon = fieldConfig.icon;
+                const fieldIconName = fieldConfig.icon;
                 return (
                   <div key={index} className="flex items-center text-gray-300">
-                    {Icon && <Icon className="mr-1 h-3 w-3" />}
+                    {fieldIconName && <Icon icon={fieldIconName} className="mr-1 h-3 w-3" />}
                     <span className="font-medium text-gray-400">{t(fieldConfig.label)}:</span>
                     <span className="ml-1 font-medium text-white">{String(fieldValue)}</span>
                   </div>
@@ -184,7 +185,7 @@ export function EntityCard<T extends object>({
     <div className="group relative">
       <Link href={config.linkTemplate(entity, locale)}>
         <div
-          className={`relative ${aspectRatioClass} hover:ring-neon-violet/30 cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(var(--neon-violet),0.3),0_0_40px_rgba(var(--neon-cyan),0.15)] hover:ring-1 motion-reduce:transition-none motion-reduce:hover:scale-100 dark:bg-gray-800`}
+          className={`relative ${aspectRatioClass} cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(var(--neon-violet),0.3),0_0_40px_rgba(var(--neon-cyan),0.15)] hover:ring-1 hover:ring-neon-violet/30 motion-reduce:transition-none motion-reduce:hover:scale-100 dark:bg-gray-800`}
           style={{ backgroundColor: backgroundColor || "#f3f4f6" }}
         >
           {needsFallbackAvatar ? (
@@ -212,9 +213,9 @@ export function EntityCard<T extends object>({
               aria-label={inLibrary ? t("removeFromLibrary") : t("addToLibrary")}
             >
               {inLibrary ? (
-                <FaHeart className="h-6 w-6 text-red-500 drop-shadow-lg" />
+                <Icon icon="fa:heart" className="h-6 w-6 text-red-500 drop-shadow-lg" />
               ) : (
-                <FaRegHeart className="h-6 w-6 text-white drop-shadow-lg" />
+                <Icon icon="fa-regular:heart" className="h-6 w-6 text-white drop-shadow-lg" />
               )}
             </button>
           )}
@@ -228,9 +229,9 @@ export function EntityCard<T extends object>({
               aria-label={isFavorite ? t("removeFromFavorites") : t("addToFavorites")}
             >
               {isFavorite ? (
-                <FaHeart className="h-6 w-6 text-red-500 drop-shadow-lg" />
+                <Icon icon="fa:heart" className="h-6 w-6 text-red-500 drop-shadow-lg" />
               ) : (
-                <FaRegHeart className="h-6 w-6 text-white drop-shadow-lg" />
+                <Icon icon="fa-regular:heart" className="h-6 w-6 text-white drop-shadow-lg" />
               )}
             </button>
           )}

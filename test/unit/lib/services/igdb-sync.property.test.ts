@@ -93,6 +93,7 @@ const FIELD_TO_TABLES: Record<TrackableField, string[]> = {
   metascore: ["games"],
   genres: ["game_genres"],
   companies: ["game_companies"],
+  platforms: ["game_platforms"],
   screenshots: ["game_screenshots"],
   artworks: ["game_artwork"],
   age_ratings: ["game_ratings"],

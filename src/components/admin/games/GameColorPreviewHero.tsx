@@ -1,8 +1,9 @@
 "use client";
 
-import { FaImage } from "react-icons/fa";
+
 import { Users, Calendar, Globe } from "lucide-react";
 import type { GameColors } from "@/lib/utils/game-utils";
+import { Icon } from "@iconify/react";
 
 interface PreviewPriceBadge {
   storeName: string;
@@ -88,7 +89,7 @@ export function GameColorPreviewHero({
             </div>
           ) : (
             <div className="flex aspect-[3/4] w-24 items-center justify-center rounded-lg border border-dashed border-slate-600 bg-slate-800/50">
-              <FaImage className="h-5 w-5 text-slate-500" />
+              <Icon icon="fa:image" className="h-5 w-5 text-slate-500"  />
             </div>
           )}
         </div>

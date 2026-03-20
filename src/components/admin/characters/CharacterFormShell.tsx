@@ -1,8 +1,9 @@
 "use client";
 
 import { type UseFormReturn } from "react-hook-form";
-import { FaUser } from "react-icons/fa";
+
 import type { AdminCharacterFormData } from "@/lib/validations/admin-character-form";
+import { Icon } from "@iconify/react";
 
 /** Hero banner showing main image, name, slug and role */
 export function CharacterHeroBanner({
@@ -55,7 +56,7 @@ export function CharacterHeroBanner({
             />
           ) : (
             <div className="flex h-44 w-32 items-center justify-center rounded-xl border-2 border-dashed border-white/20 bg-white/5 backdrop-blur-sm">
-              <FaUser className="h-8 w-8 text-white/30" />
+              <Icon icon="fa:user" className="h-8 w-8 text-white/30"  />
             </div>
           )}
         </div>

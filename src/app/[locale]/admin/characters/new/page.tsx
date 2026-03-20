@@ -7,8 +7,9 @@ import { useCharacterForm } from "@/hooks/useCharacterForm";
 import { CharacterForm } from "@/components/admin/characters/CharacterForm";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { FaArrowLeft } from "react-icons/fa";
+
 import type { AdminCharacterFormData } from "@/lib/validations/admin-character-form";
+import { Icon } from "@iconify/react";
 
 export default function NewCharacterPage() {
   const t = useTranslations("admin.characters");
@@ -48,7 +49,7 @@ export default function NewCharacterPage() {
     <div className="p-4 lg:p-6">
       <div className="mb-6 flex items-center gap-4">
         <Button variant="ghost" size="sm" onClick={() => router.push("/admin/characters")}>
-          <FaArrowLeft className="mr-1 h-3 w-3" />
+          <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
           {t("form.backToList")}
         </Button>
         <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">

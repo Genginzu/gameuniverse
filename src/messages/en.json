@@ -324,6 +324,8 @@
       "biography": "Biography",
       "relationships": "Relationships",
       "noDescription": "No description available",
+      "platforms": "Platforms",
+      "noPlatforms": "No platform associated with the character",
       "relationshipTypes": {
         "ally": "Ally",
         "enemy": "Enemy",
@@ -732,7 +734,10 @@
     "noGamesFound": "No games found",
     "modifySearch": "Try modifying your search criteria or explore other categories",
     "noGamesAvailable": "No games available at the moment",
-    "clearFilters": "Clear filters"
+    "clearFilters": "Clear filters",
+    "clearAll": "Clear all",
+    "genres": "Genres",
+    "available": "available"
   },
   "search": {
     "placeholder": "Search for a game...",
@@ -1636,6 +1641,61 @@
         "success": "Comment deleted successfully!",
         "errorGeneric": "An error occurred while deleting the comment."
       }
+    },
+    "platforms": {
+      "title": "Platform Management",
+      "newPlatform": "New Platform",
+      "searchPlaceholder": "Search platforms by slug or name...",
+      "search": "Search",
+      "totalPlatforms": "{count, plural, =0 {No platforms} one {1 platform} other {# platforms}}",
+      "noPlatforms": "No platforms found.",
+      "columns": {
+        "slug": "Slug",
+        "name": "Name",
+        "icon": "Icon",
+        "gameCount": "Games",
+        "actions": "Actions"
+      },
+      "sortBy": "Sort by {field}",
+      "editPlatform": "Edit {name}",
+      "deletePlatform": "Delete {name}",
+      "page": "Page {current} of {total}",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "gameCount": "{count, plural, =0 {No games} one {1 game} other {# games}}",
+      "form": {
+        "createTitle": "New Platform",
+        "editTitle": "Edit Platform",
+        "slug": "Slug",
+        "slugPlaceholder": "e.g.: playstation-5",
+        "slugDescription": "Lowercase letters, numbers and hyphens only. Cannot be changed after creation.",
+        "icon": "Icon",
+        "iconUrl": "Icon",
+        "iconUrlPlaceholder": "https://example.com/icon.png",
+        "nameFr": "Name (FR)",
+        "nameFrPlaceholder": "Name in French",
+        "nameEn": "Name (EN)",
+        "nameEnPlaceholder": "Name in English",
+        "abbreviation": "Abbreviation",
+        "abbreviationPlaceholder": "e.g.: PS5",
+        "create": "Create platform",
+        "save": "Save",
+        "cancel": "Cancel",
+        "success": "Platform saved successfully!",
+        "errorDuplicate": "A platform with this slug already exists.",
+        "errorGeneric": "An error occurred while saving."
+      },
+      "deleteDialog": {
+        "title": "Delete Platform",
+        "warning": "Are you sure you want to delete \"{name}\"?",
+        "irreversible": "This action is irreversible. The platform and all its associations will be deleted.",
+        "usageWarning": "{count, plural, one {This platform is used by 1 game.} other {This platform is used by # games.}}",
+        "confirm": "Delete",
+        "cancel": "Cancel",
+        "deleting": "Deleting...",
+        "success": "Platform deleted successfully!",
+        "errorGeneric": "An error occurred while deleting."
+      }
     }
   },
   "collections": {
@@ -2066,60 +2126,6 @@
         "errorNotAssigned": "This achievement is not assigned to this player.",
         "errorGeneric": "An error occurred while revoking the achievement."
       }
-    },
-    "platforms": {
-      "title": "Platform Management",
-      "newPlatform": "New Platform",
-      "searchPlaceholder": "Search platforms by slug or name...",
-      "search": "Search",
-      "totalPlatforms": "{count, plural, =0 {No platforms} one {1 platform} other {# platforms}}",
-      "noPlatforms": "No platforms found.",
-      "columns": {
-        "slug": "Slug",
-        "name": "Name",
-        "icon": "Icon",
-        "gameCount": "Games",
-        "actions": "Actions"
-      },
-      "sortBy": "Sort by {field}",
-      "editPlatform": "Edit {name}",
-      "deletePlatform": "Delete {name}",
-      "page": "Page {current} of {total}",
-      "previousPage": "Previous page",
-      "nextPage": "Next page",
-      "gameCount": "{count, plural, =0 {No games} one {1 game} other {# games}}",
-      "form": {
-        "createTitle": "New Platform",
-        "editTitle": "Edit Platform",
-        "slug": "Slug",
-        "slugPlaceholder": "e.g.: playstation-5",
-        "slugDescription": "Lowercase letters, numbers and hyphens only. Cannot be changed after creation.",
-        "iconUrl": "Icon URL",
-        "iconUrlPlaceholder": "https://example.com/icon.png",
-        "nameFr": "Name (FR)",
-        "nameFrPlaceholder": "Name in French",
-        "nameEn": "Name (EN)",
-        "nameEnPlaceholder": "Name in English",
-        "abbreviation": "Abbreviation",
-        "abbreviationPlaceholder": "e.g.: PS5",
-        "create": "Create platform",
-        "save": "Save",
-        "cancel": "Cancel",
-        "success": "Platform saved successfully!",
-        "errorDuplicate": "A platform with this slug already exists.",
-        "errorGeneric": "An error occurred while saving."
-      },
-      "deleteDialog": {
-        "title": "Delete Platform",
-        "warning": "Are you sure you want to delete \"{name}\"?",
-        "irreversible": "This action is irreversible. The platform and all its associations will be deleted.",
-        "usageWarning": "{count, plural, one {This platform is used by 1 game.} other {This platform is used by # games.}}",
-        "confirm": "Delete",
-        "cancel": "Cancel",
-        "deleting": "Deleting...",
-        "success": "Platform deleted successfully!",
-        "errorGeneric": "An error occurred while deleting."
-      }
     }
   },
   "discussions": {
@@ -2159,5 +2165,13 @@
       "percentage": "{value}%"
     },
     "empty": "No platforms"
+  },
+  "iconPicker": {
+    "placeholder": "Choose an icon…",
+    "searchPlaceholder": "Search icons…",
+    "resultsCount": "{count, plural, =0 {No results} one {1 icon} other {# icons}}",
+    "noResults": "No icons found.",
+    "loading": "Searching…",
+    "typeToSearch": "Type to search 200,000+ icons"
   }
 }

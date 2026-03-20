@@ -4,9 +4,10 @@ import { useState, useMemo, useRef, useEffect } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { FaPlus, FaTimes, FaSearch } from "react-icons/fa";
+
 import type { CharacterFormTabProps } from "@/types/admin-characters";
 import type { AvailableGame } from "@/hooks/useCharacterForm";
+import { Icon } from "@iconify/react";
 
 interface GamesTabProps extends CharacterFormTabProps {
   availableGames: AvailableGame[];
@@ -89,7 +90,7 @@ export function CharacterFormGamesTab({ form, t, availableGames }: GamesTabProps
           className="gap-1.5"
           disabled={unassignedGames.length === 0}
         >
-          <FaPlus className="h-3 w-3" />
+          <Icon icon="fa:plus" className="h-3 w-3"  />
           {t("addGame") ?? "Ajouter un jeu"}
         </Button>
       )}
@@ -147,7 +148,7 @@ function AssignedGameRow({
           className="ml-1 rounded-md p-1 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20"
           aria-label={`Remove ${game.title}`}
         >
-          <FaTimes className="h-3 w-3" />
+          <Icon icon="fa:times" className="h-3 w-3"  />
         </button>
       </div>
     </div>
@@ -191,12 +192,12 @@ function GameSearchPicker({
           onClick={onClose}
           className="rounded-md p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
         >
-          <FaTimes className="h-3 w-3" />
+          <Icon icon="fa:times" className="h-3 w-3"  />
         </button>
       </div>
 
       <div className="relative mb-3">
-        <FaSearch className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />
+        <Icon icon="fa:search" className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400"  />
         <Input
           ref={inputRef}
           type="text"

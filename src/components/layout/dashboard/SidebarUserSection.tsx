@@ -4,8 +4,9 @@ import { User } from "@supabase/supabase-js";
 import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { useState, useEffect, useRef } from "react";
-import { FaUser, FaSignOutAlt, FaSun, FaMoon, FaChevronUp, FaChevronDown } from "react-icons/fa";
+
 import { resolveDisplayName } from "@/lib/utils/user-display";
+import { Icon } from "@iconify/react";
 
 interface SidebarUserSectionProps {
   user: User;
@@ -42,15 +43,15 @@ export default function SidebarUserSection({ user, signOut }: SidebarUserSection
         className="flex w-full items-center gap-3 rounded-lg px-2 py-2 transition-all hover:bg-black/5 focus:outline-none focus:ring-2 focus:ring-violet-400/50 dark:hover:bg-white/10"
       >
         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-blue-500 shadow-lg shadow-violet-500/20">
-          <FaUser className="h-3.5 w-3.5 text-white" />
+          <Icon icon="fa:user" className="h-3.5 w-3.5 text-white"  />
         </div>
         <span className="truncate text-sm font-medium text-gray-900 dark:text-white">
           {displayName}
         </span>
         {isOpen ? (
-          <FaChevronUp className="ml-auto h-3 w-3 text-gray-400" />
+          <Icon icon="fa:chevron-up" className="ml-auto h-3 w-3 text-gray-400"  />
         ) : (
-          <FaChevronDown className="ml-auto h-3 w-3 text-gray-400" />
+          <Icon icon="fa:chevron-down" className="ml-auto h-3 w-3 text-gray-400"  />
         )}
       </button>
 
@@ -65,9 +66,9 @@ export default function SidebarUserSection({ user, signOut }: SidebarUserSection
               }}
             >
               {theme === "dark" ? (
-                <FaSun className="mr-3 h-4 w-4" />
+                <Icon icon="fa:sun" className="mr-3 h-4 w-4"  />
               ) : (
-                <FaMoon className="mr-3 h-4 w-4" />
+                <Icon icon="fa:moon" className="mr-3 h-4 w-4"  />
               )}
               {theme === "dark" ? t("lightMode") : t("darkMode")}
             </button>
@@ -83,7 +84,7 @@ export default function SidebarUserSection({ user, signOut }: SidebarUserSection
                 }
               }}
             >
-              <FaSignOutAlt className="mr-3 h-4 w-4" />
+              <Icon icon="fa:sign-out-alt" className="mr-3 h-4 w-4"  />
               {t("logout")}
             </button>
           </div>

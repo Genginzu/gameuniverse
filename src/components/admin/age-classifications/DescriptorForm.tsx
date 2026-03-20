@@ -13,9 +13,10 @@ import {
   FormDescription,
 } from "@/components/ui/form";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { FaSave } from "react-icons/fa";
+
 import { DescriptorFormTranslations } from "./DescriptorFormTranslations";
 import type { DescriptorFormData } from "@/lib/validations/admin-descriptor-form";
+import { Icon } from "@iconify/react";
 
 export interface DescriptorFormProps {
   mode: "create" | "edit";
@@ -85,7 +86,7 @@ export function DescriptorForm({ mode, form, onSubmit, isSubmitting }: Descripto
               <LoadingSpinner size="sm" />
             ) : (
               <>
-                <FaSave className="h-4 w-4" />
+                <Icon icon="fa:save" className="h-4 w-4"  />
                 {mode === "create" ? "Créer" : "Enregistrer"}
               </>
             )}

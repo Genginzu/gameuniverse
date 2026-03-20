@@ -10,7 +10,8 @@ import { AdminGamesTable } from "@/components/admin/games/AdminGamesTable";
 import { DeleteGameDialog } from "@/components/admin/games/DeleteGameDialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { FaPlus } from "react-icons/fa";
+import { Icon } from "@iconify/react";
+
 
 export default function AdminGamesPage() {
   const t = useTranslations("admin.games");
@@ -101,7 +102,7 @@ export default function AdminGamesPage() {
       <div className="mb-6 flex items-center justify-between">
         <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">{t("title")}</h1>
         <Button onClick={() => router.push("/admin/games/new")}>
-          <FaPlus className="h-4 w-4" />
+          <Icon icon="fa:plus" className="h-4 w-4"  />
           {t("newGame")}
         </Button>
       </div>

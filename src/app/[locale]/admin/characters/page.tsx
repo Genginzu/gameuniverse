@@ -10,7 +10,8 @@ import { AdminCharactersTable } from "@/components/admin/characters/AdminCharact
 import { DeleteCharacterDialog } from "@/components/admin/characters/DeleteCharacterDialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { FaPlus } from "react-icons/fa";
+import { Icon } from "@iconify/react";
+
 
 export default function AdminCharactersPage() {
   const t = useTranslations("admin.characters");
@@ -102,7 +103,7 @@ export default function AdminCharactersPage() {
       <div className="mb-6 flex items-center justify-between">
         <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">{t("title")}</h1>
         <Button onClick={() => router.push("/admin/characters/new")}>
-          <FaPlus className="h-4 w-4" />
+          <Icon icon="fa:plus" className="h-4 w-4"  />
           {t("newCharacter")}
         </Button>
       </div>

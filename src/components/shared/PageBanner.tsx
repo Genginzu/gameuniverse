@@ -2,22 +2,21 @@
 
 import { usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { FaDice, FaMask, FaUserFriends, FaGamepad, FaHeart, FaUser } from "react-icons/fa";
-import type { IconType } from "react-icons";
+import { Icon } from "@iconify/react";
 
 interface BannerConfig {
-  icon: IconType;
+  icon: string;
   titleKey: string;
   descriptionKey: string;
 }
 
 const BANNER_CONFIG: Record<string, BannerConfig> = {
-  "/games": { icon: FaDice, titleKey: "games", descriptionKey: "gamesDesc" },
-  "/characters": { icon: FaMask, titleKey: "characters", descriptionKey: "charactersDesc" },
-  "/players": { icon: FaUserFriends, titleKey: "players", descriptionKey: "playersDesc" },
-  "/library": { icon: FaGamepad, titleKey: "library", descriptionKey: "libraryDesc" },
-  "/favorites": { icon: FaHeart, titleKey: "myCharacters", descriptionKey: "favoritesDesc" },
-  "/profile": { icon: FaUser, titleKey: "profile", descriptionKey: "profileDesc" },
+  "/games": { icon: "fa:dice", titleKey: "games", descriptionKey: "gamesDesc" },
+  "/characters": { icon: "fa:mask", titleKey: "characters", descriptionKey: "charactersDesc" },
+  "/players": { icon: "fa:user-friends", titleKey: "players", descriptionKey: "playersDesc" },
+  "/library": { icon: "fa:gamepad", titleKey: "library", descriptionKey: "libraryDesc" },
+  "/favorites": { icon: "fa:heart", titleKey: "myCharacters", descriptionKey: "favoritesDesc" },
+  "/profile": { icon: "fa:user", titleKey: "profile", descriptionKey: "profileDesc" },
 };
 
 const EXCLUDED_ROUTES = ["/", "/auth", "/admin"];
@@ -51,7 +50,7 @@ export function PageBanner() {
 
   if (!config) return null;
 
-  const Icon = config.icon;
+  const iconName = config.icon;
 
   return (
     <div className="mx-auto mt-6 w-[90%] overflow-hidden rounded-2xl bg-gradient-to-r from-[#615dfa] via-[#5b7fff] to-[#41efff] shadow-lg">
@@ -74,7 +73,7 @@ export function PageBanner() {
         {/* Icon card — mimics the Vikinger illustration block */}
         <div className="relative mr-6 flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-2xl bg-white shadow-xl sm:h-[88px] sm:w-[88px]">
           <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#615dfa] to-[#41efff] opacity-10" />
-          <Icon className="relative h-8 w-8 text-[#615dfa] sm:h-10 sm:w-10" />
+          <Icon icon={iconName} className="relative h-8 w-8 text-[#615dfa] sm:h-10 sm:w-10" />
         </div>
 
         {/* Title + description */}

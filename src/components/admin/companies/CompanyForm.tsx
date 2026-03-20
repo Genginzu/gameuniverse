@@ -21,10 +21,11 @@ import {
   FormDescription,
 } from "@/components/ui/form";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { FaSave } from "react-icons/fa";
+
 import type { CompanyFormData } from "@/lib/validations/admin-company-form";
 import type { SupportedLanguage } from "@/types/admin-languages";
 import { CompanyFormTranslations } from "./CompanyFormTranslations";
+import { Icon } from "@iconify/react";
 
 export interface CompanyFormProps {
   mode: "create" | "edit";
@@ -196,7 +197,7 @@ export function CompanyForm({
               <LoadingSpinner size="sm" />
             ) : (
               <>
-                <FaSave className="h-4 w-4" />
+                <Icon icon="fa:save" className="h-4 w-4"  />
                 {mode === "create" ? t("create") : t("save")}
               </>
             )}

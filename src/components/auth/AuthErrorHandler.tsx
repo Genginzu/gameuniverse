@@ -5,7 +5,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
-import { IoWarning, IoClose } from "react-icons/io5";
+import { Icon } from "@iconify/react";
+
 
 export function AuthErrorHandler() {
   const { forceSignOut } = useAuth();
@@ -68,7 +69,7 @@ export function AuthErrorHandler() {
         variant="destructive"
         className="relative rounded-2xl border-0 bg-red-50/95 shadow-2xl backdrop-blur-sm"
       >
-        <IoWarning className="h-5 w-5 text-red-600" />
+        <Icon icon="ion:warning" className="h-5 w-5 text-red-600"  />
         <AlertDescription className="pr-10">
           <div className="flex flex-col gap-4">
             <div className="space-y-2">
@@ -109,7 +110,7 @@ export function AuthErrorHandler() {
           className="absolute right-2 top-2 h-7 w-7 rounded-xl p-0 text-red-600 hover:bg-red-100/50 hover:text-red-700"
           onClick={() => setShowError(false)}
         >
-          <IoClose className="h-4 w-4" />
+          <Icon icon="ion:close" className="h-4 w-4"  />
         </Button>
       </Alert>
     </div>

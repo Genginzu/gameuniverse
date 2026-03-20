@@ -15,7 +15,7 @@ export interface BadgeConfig<T> {
 export interface HoverOverlayField<T> {
   field: keyof T;
   label: string;
-  icon?: React.ComponentType<{ className?: string }>;
+  icon?: string;
 }
 
 // Hover overlay configuration

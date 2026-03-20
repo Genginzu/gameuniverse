@@ -14,10 +14,11 @@ import {
   FormDescription,
 } from "@/components/ui/form";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { FaSave } from "react-icons/fa";
+
 import type { GenreFormData } from "@/lib/validations/admin-genre-form";
 import type { SupportedLanguage } from "@/types/admin-languages";
 import { GenreFormTranslations } from "./GenreFormTranslations";
+import { Icon } from "@iconify/react";
 
 export interface GenreFormProps {
   mode: "create" | "edit";
@@ -75,7 +76,7 @@ export function GenreForm({
               <LoadingSpinner size="sm" />
             ) : (
               <>
-                <FaSave className="h-4 w-4" />
+                <Icon icon="fa:save" className="h-4 w-4"  />
                 {mode === "create" ? t("create") : t("save")}
               </>
             )}

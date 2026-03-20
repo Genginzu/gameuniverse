@@ -9,7 +9,8 @@ import { PlatformForm } from "@/components/admin/platforms/PlatformForm";
 import { DeletePlatformDialog } from "@/components/admin/platforms/DeletePlatformDialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { FaPlus } from "react-icons/fa";
+import { Icon } from "@iconify/react";
+
 
 export default function AdminPlatformsPage() {
   const t = useTranslations("admin.platforms");
@@ -131,7 +132,7 @@ export default function AdminPlatformsPage() {
             {t("title")}
           </h1>
           <Button onClick={handleCreate}>
-            <FaPlus className="h-4 w-4" />
+            <Icon icon="fa:plus" className="h-4 w-4"  />
             {t("newPlatform")}
           </Button>
         </div>

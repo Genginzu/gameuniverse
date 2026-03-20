@@ -2,22 +2,22 @@
 
 import { useTranslations } from "next-intl";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { FaGamepad, FaSearch, FaInfoCircle } from "react-icons/fa";
+import { Icon } from "@iconify/react";
 
 const FEATURES = [
   {
     key: "library" as const,
-    icon: FaGamepad,
+    icon: "fa:gamepad",
     gradient: "from-neon-violet to-neon-cyan",
   },
   {
     key: "search" as const,
-    icon: FaSearch,
+    icon: "fa:search",
     gradient: "from-neon-cyan to-neon-magenta",
   },
   {
     key: "details" as const,
-    icon: FaInfoCircle,
+    icon: "fa:info-circle",
     gradient: "from-neon-magenta to-neon-violet",
   },
 ];
@@ -41,7 +41,7 @@ export function LandingFeatures() {
         </div>
 
         <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.map(({ key, icon: Icon, gradient }) => (
+          {FEATURES.map(({ key, icon, gradient }) => (
             <Card
               key={key}
               className="glass-card group rounded-2xl border-0 transition-all duration-300 hover:scale-105"
@@ -50,7 +50,7 @@ export function LandingFeatures() {
                 <div
                   className={`mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-xl bg-gradient-to-br ${gradient} shadow-xl transition-shadow duration-300 group-hover:shadow-neon-violet/30`}
                 >
-                  <Icon className="h-10 w-10 text-white" />
+                  <Icon icon={icon} className="h-10 w-10 text-white" />
                 </div>
                 <CardTitle className="text-2xl font-bold text-white">
                   {t(`features.${key}.title`)}

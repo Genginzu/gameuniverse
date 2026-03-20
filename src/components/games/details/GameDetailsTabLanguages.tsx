@@ -49,7 +49,7 @@ export function GameDetailsTabLanguages({ languages, colors }: GameDetailsTabLan
   return (
     <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
       {categories.map((cat) => {
-        const Icon = cat.icon;
+        const CatIcon = cat.icon;
         const filtered = languages.filter(cat.filter);
         return (
           <Card
@@ -58,7 +58,7 @@ export function GameDetailsTabLanguages({ languages, colors }: GameDetailsTabLan
           >
             <CardContent className="p-6">
               <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
-                <Icon className="h-5 w-5" style={{ color: colors.accent }} />
+                <CatIcon className="h-5 w-5" style={{ color: colors.accent }} />
                 {cat.label}
               </h3>
               <div className="space-y-2">

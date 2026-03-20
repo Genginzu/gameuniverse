@@ -10,9 +10,10 @@ import { characterPayloadToForm } from "@/lib/utils/character-form-utils";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { toast } from "@/hooks/use-toast";
-import { FaArrowLeft } from "react-icons/fa";
+
 import type { AdminCharacterFormData } from "@/lib/validations/admin-character-form";
 import type { CharacterPayload } from "@/types/admin-characters";
+import { Icon } from "@iconify/react";
 
 /** Raw API response shape from GET /api/admin/characters/[id] */
 interface CharacterApiResponse {
@@ -119,7 +120,7 @@ function EditCharacterForm({
     <div className="p-4 lg:p-6">
       <div className="mb-6 flex items-center gap-4">
         <Button variant="ghost" size="sm" onClick={() => router.push("/admin/characters")}>
-          <FaArrowLeft className="mr-1 h-3 w-3" />
+          <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
           {t("form.backToList")}
         </Button>
       </div>
@@ -197,7 +198,7 @@ export default function EditCharacterPage() {
       <div className="p-4 lg:p-6">
         <div className="mb-6 flex items-center gap-4">
           <Button variant="ghost" size="sm" onClick={() => router.push("/admin/characters")}>
-            <FaArrowLeft className="mr-1 h-3 w-3" />
+            <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
             {t("form.backToList")}
           </Button>
         </div>

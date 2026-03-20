@@ -2,9 +2,9 @@
 
 import * as React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
-import { IoCheckmark, IoChevronDown, IoChevronUp } from "react-icons/io5";
 
 import { cn } from "@/lib/utils";
+import { Icon } from "@iconify/react";
 
 const Select = SelectPrimitive.Root;
 
@@ -26,7 +26,7 @@ const SelectTrigger = React.forwardRef<
   >
     {children}
     <SelectPrimitive.Icon asChild>
-      <IoChevronDown className="h-4 w-4 opacity-50" />
+      <Icon icon="ion:chevron-down" className="h-4 w-4 opacity-50"  />
     </SelectPrimitive.Icon>
   </SelectPrimitive.Trigger>
 ));
@@ -41,7 +41,7 @@ const SelectScrollUpButton = React.forwardRef<
     className={cn("flex cursor-default items-center justify-center py-1", className)}
     {...props}
   >
-    <IoChevronUp className="h-4 w-4" />
+    <Icon icon="ion:chevron-up" className="h-4 w-4"  />
   </SelectPrimitive.ScrollUpButton>
 ));
 SelectScrollUpButton.displayName = SelectPrimitive.ScrollUpButton.displayName;
@@ -55,7 +55,7 @@ const SelectScrollDownButton = React.forwardRef<
     className={cn("flex cursor-default items-center justify-center py-1", className)}
     {...props}
   >
-    <IoChevronDown className="h-4 w-4" />
+    <Icon icon="ion:chevron-down" className="h-4 w-4"  />
   </SelectPrimitive.ScrollDownButton>
 ));
 SelectScrollDownButton.displayName = SelectPrimitive.ScrollDownButton.displayName;
@@ -118,7 +118,7 @@ const SelectItem = React.forwardRef<
   >
     <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
       <SelectPrimitive.ItemIndicator>
-        <IoCheckmark className="h-4 w-4" />
+        <Icon icon="ion:checkmark" className="h-4 w-4"  />
       </SelectPrimitive.ItemIndicator>
     </span>
 

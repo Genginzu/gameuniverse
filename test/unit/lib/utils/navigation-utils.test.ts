@@ -13,7 +13,7 @@ describe("NAV_LINKS", () => {
   it("each link has href, icon, and labelKey", () => {
     for (const link of NAV_LINKS) {
       expect(link.href).toBeTruthy();
-      expect(typeof link.icon).toBe("function");
+      expect(typeof link.icon).toBe("string");
       expect(link.labelKey).toBeTruthy();
     }
   });
@@ -27,7 +27,7 @@ describe("PUBLIC_LINKS", () => {
   it("each link has href, icon, and labelKey", () => {
     for (const link of PUBLIC_LINKS) {
       expect(link.href).toBeTruthy();
-      expect(typeof link.icon).toBe("function");
+      expect(typeof link.icon).toBe("string");
       expect(link.labelKey).toBeTruthy();
     }
   });

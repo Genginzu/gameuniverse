@@ -1,10 +1,11 @@
 "use client";
 
 import { Checkbox } from "@/components/ui/checkbox";
-import { FaTimes } from "react-icons/fa";
+
 import type { GameFormTabProps } from "@/types/admin-games";
 import type { SupportedLanguage } from "@/types/admin-languages";
 import { IgdbFieldIndicator } from "./IgdbFieldIndicator";
+import { Icon } from "@iconify/react";
 
 interface LanguagesTabProps extends GameFormTabProps {
   supportedLanguages: SupportedLanguage[];
@@ -109,7 +110,7 @@ export function GameFormLanguagesTab({
                 className="flex-shrink-0 rounded-md p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20"
                 aria-label="Supprimer"
               >
-                <FaTimes className="h-3.5 w-3.5" />
+                <Icon icon="fa:times" className="h-3.5 w-3.5"  />
               </button>
             </div>
           ))}

@@ -122,10 +122,10 @@ export function PlayerPlaytimeForm({
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {fields.map(({ icon: Icon, label, value, onChange }) => (
+          {fields.map(({ icon: IconComp, label, value, onChange }) => (
             <div key={label} className="space-y-1">
               <label className="flex items-center gap-2 text-sm text-slate-300">
-                <Icon className="h-4 w-4 text-slate-400" />
+                <IconComp className="h-4 w-4 text-slate-400" />
                 {label}
               </label>
               <input

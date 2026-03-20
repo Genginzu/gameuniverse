@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
-import { FaUsers } from "react-icons/fa";
+import { Icon } from "@iconify/react";
+
 
 /**
  * Hero section with dark gaming background, animated CSS grid,
@@ -35,7 +36,7 @@ export function LandingHero() {
               asChild
             >
               <Link href="/auth?mode=signup">
-                <FaUsers className="mr-3 h-5 w-5" />
+                <Icon icon="fa:users" className="mr-3 h-5 w-5"  />
                 {t("cta.signup")}
               </Link>
             </Button>

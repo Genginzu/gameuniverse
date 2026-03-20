@@ -1,10 +1,11 @@
-import { FaBolt, FaGamepad, FaUser, FaUsers } from "react-icons/fa";
+
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useDashboard } from "@/hooks/useDashboard";
 import { useUserLibrary } from "@/hooks/useUserLibrary";
 import { DashboardSkeleton } from "./DashboardSkeleton";
 import { DashboardStatCard } from "./DashboardStatCard";
+import { Icon } from "@iconify/react";
 
 export function DashboardContent() {
   const t = useTranslations("dashboard");
@@ -22,7 +23,7 @@ export function DashboardContent() {
       {/* Stats Cards */}
       <div className="mb-6 grid grid-cols-1 gap-4 sm:mb-8 sm:gap-6 md:grid-cols-3">
         <DashboardStatCard
-          icon={FaGamepad}
+          icon={"fa:gamepad"}
           iconBgClass="bg-neon-violet/10 dark:bg-neon-violet/15"
           iconColorClass="text-neon-violet"
           title={t("myGames")}
@@ -31,7 +32,7 @@ export function DashboardContent() {
           subtitle={t("gamesFavorites")}
         />
         <DashboardStatCard
-          icon={FaUsers}
+          icon={"fa:users"}
           iconBgClass="bg-neon-cyan/10 dark:bg-neon-cyan/15"
           iconColorClass="text-neon-cyan"
           title={t("myTeams")}
@@ -40,7 +41,7 @@ export function DashboardContent() {
           subtitle={t("teamsJoined")}
         />
         <DashboardStatCard
-          icon={FaBolt}
+          icon={"fa:bolt"}
           iconBgClass="bg-neon-magenta/10 dark:bg-neon-magenta/15"
           iconColorClass="text-neon-magenta"
           title={t("activity")}
@@ -70,21 +71,21 @@ function QuickActionsCard({ t }: { t: (key: string) => string }) {
           href="/library"
           className="neon-btn flex w-full items-center rounded-xl bg-gradient-to-r from-neon-violet/20 to-neon-cyan/20 px-4 py-3 font-semibold text-gray-900 transition-all duration-200 hover:from-neon-violet/30 hover:to-neon-cyan/30 dark:text-white"
         >
-          <FaGamepad className="mr-3 h-5 w-5 text-neon-violet drop-shadow-[0_0_6px_currentColor]" />
+          <Icon icon="fa:gamepad" className="mr-3 h-5 w-5 text-neon-violet drop-shadow-[0_0_6px_currentColor]"  />
           {t("exploreGames")}
         </Link>
         <Link
           href="/profile"
           className="neon-btn flex w-full items-center rounded-xl px-4 py-3 font-semibold text-gray-900 transition-all duration-200 dark:text-white"
         >
-          <FaUser className="mr-3 h-5 w-5 text-neon-cyan drop-shadow-[0_0_6px_currentColor]" />
+          <Icon icon="fa:user" className="mr-3 h-5 w-5 text-neon-cyan drop-shadow-[0_0_6px_currentColor]"  />
           {t("editProfile")}
         </Link>
         <Link
           href="/teams"
           className="neon-btn flex w-full items-center rounded-xl px-4 py-3 font-semibold text-gray-900 transition-all duration-200 dark:text-white"
         >
-          <FaUsers className="mr-3 h-5 w-5 text-neon-magenta drop-shadow-[0_0_6px_currentColor]" />
+          <Icon icon="fa:users" className="mr-3 h-5 w-5 text-neon-magenta drop-shadow-[0_0_6px_currentColor]"  />
           {t("joinTeam")}
         </Link>
       </div>

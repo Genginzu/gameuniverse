@@ -6,7 +6,7 @@ import {
   calculateOffset,
   handleApiError,
 } from "@/lib/api-utils";
-import type { GameRowWithRelations, GenreTranslationRow } from "@/lib/types/supabase-queries";
+import type { GameRowWithRelations } from "@/lib/types/supabase-queries";
 import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
@@ -132,6 +132,61 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    // Filter by genre names if specified (resolve to game IDs at DB level)
+    if (genres.length > 0) {
+      const { data: genreRows } = await supabase
+        .from("genre_translations")
+        .select("genre_id, name")
+        .in("name", genres);
+
+      // Si aucun genre trouvé en BD, retourner 0 résultats
+      if (!genreRows || genreRows.length === 0) {
+        return NextResponse.json({
+          games: [],
+          pagination: {
+            currentPage: page,
+            totalPages: 0,
+            totalCount: 0,
+            limit,
+            hasNextPage: false,
+            hasPreviousPage: false,
+            offset,
+          },
+          filters: { search, genres, platforms, locale, inLibrary },
+        });
+      }
+
+      const genreIds = [...new Set(genreRows.map((g: { genre_id: string }) => g.genre_id))];
+      const { data: ggRows } = await supabase
+        .from("game_genres")
+        .select("game_id")
+        .in("genre_id", genreIds);
+
+      const genreGameIds = [...new Set(ggRows?.map((r: { game_id: string }) => r.game_id) ?? [])];
+
+      if (matchingGameIds) {
+        matchingGameIds = matchingGameIds.filter((id) => genreGameIds.includes(id));
+      } else {
+        matchingGameIds = genreGameIds;
+      }
+
+      if (matchingGameIds.length === 0) {
+        return NextResponse.json({
+          games: [],
+          pagination: {
+            currentPage: page,
+            totalPages: 0,
+            totalCount: 0,
+            limit,
+            hasNextPage: false,
+            hasPreviousPage: false,
+            offset,
+          },
+          filters: { search, genres, platforms, locale, inLibrary },
+        });
+      }
+    }
+
     // Build the base query with joins for translations and genres
     let query = supabase.from("games").select(
       `
@@ -225,29 +280,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Failed to fetch games" }, { status: 500 });
     }
 
-    // Filter by genres if specified (post-processing for now, could be optimized with SQL)
-    let filteredGames = (games || []) as unknown as GameRowWithRelations[];
-    if (genres.length > 0) {
-      filteredGames =
-        (games as unknown as GameRowWithRelations[])?.filter((game) => {
-          const gameGenres =
-            game.game_genres
-              ?.map((gg) => {
-                const genreTranslations = gg.genres?.genre_translations ?? [];
-                const gt =
-                  genreTranslations.find((t: GenreTranslationRow) => t.language_code === locale) ||
-                  genreTranslations[0] ||
-                  null;
-                return gt?.name?.toLowerCase();
-              })
-              .filter(Boolean) || [];
-
-          return genres.some((genre) => gameGenres.includes(genre.toLowerCase()));
-        }) || [];
-    }
-
     // Transform the data to match the expected format
-    const transformedGames = filteredGames.map((game) => {
+    const gamesData = (games || []) as unknown as GameRowWithRelations[];
+
+    const transformedGames = gamesData.map((game) => {
       // Prefer translation matching the requested locale, fallback to first available
       const translations = game.game_translations ?? [];
       const translation =

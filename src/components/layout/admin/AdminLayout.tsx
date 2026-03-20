@@ -9,7 +9,8 @@ import AdminSidebar from "./AdminSidebar";
 import { useTranslations } from "next-intl";
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import { Button } from "@/components/ui/button";
-import { FaBars, FaTimes } from "react-icons/fa";
+import { Icon } from "@iconify/react";
+
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -118,7 +119,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         className="fixed left-4 top-4 z-30 lg:hidden"
         onClick={() => setSidebarOpen(!sidebarOpen)}
       >
-        {sidebarOpen ? <FaTimes className="h-5 w-5" /> : <FaBars className="h-5 w-5" />}
+        {sidebarOpen ? <Icon icon="fa:times" className="h-5 w-5"  /> : <Icon icon="fa:bars" className="h-5 w-5"  />}
       </Button>
 
       {/* Mobile sidebar overlay */}

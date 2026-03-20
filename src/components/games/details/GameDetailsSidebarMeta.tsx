@@ -1,7 +1,6 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
-import { Calendar, Users, Globe, Smartphone } from "lucide-react";
+import { Calendar, Users, Globe } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { GameDetails } from "@/types/game";
 import { GameColors } from "@/lib/utils/game-utils";
@@ -19,7 +18,6 @@ export function GameDetailsSidebarMeta({
   formatReleaseDate,
 }: GameDetailsSidebarMetaProps) {
   const t = useTranslations();
-  const tDetails = useTranslations("gameDetails");
   const labelStyle = { color: colors.labelColor };
   const textStyle = { color: colors.textColor };
 
@@ -81,28 +79,6 @@ export function GameDetailsSidebarMeta({
                   {game.publisher}
                 </div>
               )}
-            </div>
-          </div>
-        )}
-
-        {/* Platforms */}
-        {game.pricing.length > 0 && (
-          <div>
-            <div className="mb-1.5 flex items-center gap-1.5 text-xs" style={labelStyle}>
-              <Smartphone className="h-3 w-3" />
-              {tDetails("platforms")}
-            </div>
-            <div className="flex flex-wrap gap-1.5">
-              {Array.from(new Set(game.pricing.map((p) => p.platform))).map((platform) => (
-                <Badge
-                  key={platform}
-                  variant="secondary"
-                  className="rounded-md border-white/10 bg-white/10 text-xs"
-                  style={textStyle}
-                >
-                  {platform}
-                </Badge>
-              ))}
             </div>
           </div>
         )}

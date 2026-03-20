@@ -14,8 +14,9 @@ import {
   FormDescription,
 } from "@/components/ui/form";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { FaSave } from "react-icons/fa";
+
 import type { RatingSystemFormData } from "@/lib/validations/admin-rating-system-form";
+import { Icon } from "@iconify/react";
 
 export interface RatingSystemFormProps {
   mode: "create" | "edit";
@@ -150,7 +151,7 @@ export function RatingSystemForm({ mode, form, onSubmit, isSubmitting }: RatingS
               <LoadingSpinner size="sm" />
             ) : (
               <>
-                <FaSave className="h-4 w-4" />
+                <Icon icon="fa:save" className="h-4 w-4"  />
                 {mode === "create" ? "Créer" : "Enregistrer"}
               </>
             )}

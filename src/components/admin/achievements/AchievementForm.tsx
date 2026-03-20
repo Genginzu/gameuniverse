@@ -6,13 +6,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { FaSave } from "react-icons/fa";
+
 import {
   adminAchievementFormSchema,
   type AchievementFormData,
 } from "@/lib/validations/admin-achievement-form";
 import type { AdminAchievement } from "@/types/admin-achievements";
 import { AchievementFormFields } from "./AchievementFormFields";
+import { Icon } from "@iconify/react";
 
 export interface AchievementFormProps {
   mode: "create" | "edit";
@@ -78,7 +79,7 @@ export function AchievementForm({
               <LoadingSpinner size="sm" />
             ) : (
               <>
-                <FaSave className="h-4 w-4" />
+                <Icon icon="fa:save" className="h-4 w-4"  />
                 {mode === "create" ? t("create") : t("save")}
               </>
             )}

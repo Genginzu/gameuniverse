@@ -7,8 +7,9 @@ import { useRatingForm } from "@/hooks/useRatingForm";
 import { RatingForm } from "@/components/admin/age-classifications/RatingForm";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { FaArrowLeft } from "react-icons/fa";
+
 import type { RatingFormData } from "@/lib/validations/admin-rating-form";
+import { Icon } from "@iconify/react";
 
 export default function NewRatingPage() {
   const router = useRouter();
@@ -50,7 +51,7 @@ export default function NewRatingPage() {
           size="sm"
           onClick={() => router.push(`/admin/age-classifications/${ratingSystemId}/edit`)}
         >
-          <FaArrowLeft className="mr-1 h-3 w-3" />
+          <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
           Retour au système
         </Button>
       </div>

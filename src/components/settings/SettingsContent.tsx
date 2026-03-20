@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FaUser, FaShieldAlt } from "react-icons/fa";
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
@@ -14,6 +14,7 @@ import { EmailForm } from "./EmailForm";
 import { PasswordResetSection } from "./PasswordResetSection";
 import { AppearanceSection } from "./AppearanceSection";
 import { createClient } from "@/lib/supabase";
+import { Icon } from "@iconify/react";
 
 export function SettingsContent() {
   const t = useTranslations("settings");
@@ -146,7 +147,7 @@ export function SettingsContent() {
           <CardHeader>
             <div className="flex items-center">
               <div className="rounded-xl bg-blue-100 p-2 dark:bg-blue-900/30">
-                <FaUser className="h-4 w-4 text-blue-600 dark:text-blue-400 sm:h-5 sm:w-5" />
+                <Icon icon="fa:user" className="h-4 w-4 text-blue-600 dark:text-blue-400 sm:h-5 sm:w-5"  />
               </div>
               <div className="ml-3">
                 <CardTitle className="text-base font-semibold text-gray-900 dark:text-white sm:text-lg">
@@ -190,7 +191,7 @@ export function SettingsContent() {
           <CardHeader>
             <div className="flex items-center">
               <div className="rounded-xl bg-purple-100 p-2 dark:bg-purple-900/30">
-                <FaShieldAlt className="h-4 w-4 text-purple-600 dark:text-purple-400 sm:h-5 sm:w-5" />
+                <Icon icon="fa:shield-alt" className="h-4 w-4 text-purple-600 dark:text-purple-400 sm:h-5 sm:w-5"  />
               </div>
               <div className="ml-3">
                 <CardTitle className="text-base font-semibold text-gray-900 dark:text-white sm:text-lg">

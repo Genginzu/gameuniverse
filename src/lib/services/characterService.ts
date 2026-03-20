@@ -5,6 +5,7 @@ import {
   CharacterGame,
   CharacterRelationship,
 } from "@/types/character";
+import type { PlatformSummary } from "@/types/platform";
 import { createServerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 import { BaseService, FetchOptions, PaginatedResponse, EntityMetadata } from "./baseService";
@@ -22,6 +23,23 @@ interface GameTranslationRow {
   title: string;
 }
 
+interface PlatformTranslationRow {
+  name: string;
+  abbreviation: string | null;
+  language_code: string;
+}
+
+interface PlatformRow {
+  id: string;
+  slug: string;
+  icon_url: string | null;
+  platform_translations: PlatformTranslationRow[];
+}
+
+interface GamePlatformRow {
+  platforms: PlatformRow | null;
+}
+
 interface GameRow {
   id: string;
   slug: string;
@@ -29,6 +47,7 @@ interface GameRow {
   background_image_url: string | null;
   release_date: string | null;
   game_translations: GameTranslationRow[];
+  game_platforms?: GamePlatformRow[];
 }
 
 interface CharacterGameRow {
@@ -332,6 +351,18 @@ export class CharacterService {
             release_date,
             game_translations(
               title
+            ),
+            game_platforms(
+              platforms(
+                id,
+                slug,
+                icon_url,
+                platform_translations(
+                  name,
+                  abbreviation,
+                  language_code
+                )
+              )
             )
           )
         ),
@@ -484,6 +515,29 @@ export class CharacterService {
       (r): r is NonNullable<typeof r> => r !== null
     );
 
+    // Aggregate unique platforms from all character's games
+    const platformMap = new Map<string, PlatformSummary>();
+    for (const cg of typedCharacter.character_games ?? []) {
+      const game = cg.games as GameRow | null;
+      if (!game?.game_platforms) continue;
+      for (const gp of game.game_platforms) {
+        const platform = gp.platforms;
+        if (!platform || platformMap.has(platform.id)) continue;
+        const translations = platform.platform_translations ?? [];
+        const tr =
+          translations.find((t) => t.language_code === locale) ||
+          translations.find((t) => t.language_code === "en") ||
+          translations[0];
+        platformMap.set(platform.id, {
+          id: platform.id,
+          slug: platform.slug,
+          name: tr?.name || platform.slug,
+          abbreviation: tr?.abbreviation || undefined,
+          iconUrl: platform.icon_url || undefined,
+        });
+      }
+    }
+
     return {
       id: typedCharacter.id,
       slug: typedCharacter.slug,
@@ -497,7 +551,7 @@ export class CharacterService {
       primaryGame,
       media,
       relationships,
-      platforms: [],
+      platforms: Array.from(platformMap.values()),
       createdAt: typedCharacter.created_at,
       updatedAt: typedCharacter.updated_at,
     };

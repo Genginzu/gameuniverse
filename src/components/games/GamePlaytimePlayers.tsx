@@ -80,7 +80,7 @@ export function GamePlaytimePlayers({
 
       {hasData ? (
         <div className="space-y-3">
-          {avgCards.map(({ icon: Icon, label, value }) => (
+          {avgCards.map(({ icon: IconComp, label, value }) => (
             <Card
               key={label}
               className="rounded-xl border-white/10 bg-white/5 shadow-lg shadow-black/20 backdrop-blur-xl"
@@ -90,7 +90,7 @@ export function GamePlaytimePlayers({
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
                   style={{ backgroundColor: `${accentColor}20` }}
                 >
-                  <Icon className="h-5 w-5" style={{ color: accentColor }} />
+                  <IconComp className="h-5 w-5" style={{ color: accentColor }} />
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm text-slate-400">{label}</p>

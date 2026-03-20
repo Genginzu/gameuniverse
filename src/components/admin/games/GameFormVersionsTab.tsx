@@ -3,9 +3,10 @@
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { FaPlus, FaTimes } from "react-icons/fa";
+
 import type { GameFormTabProps } from "@/types/admin-games";
 import { IgdbFieldIndicator } from "./IgdbFieldIndicator";
+import { Icon } from "@iconify/react";
 
 export function GameFormVersionsTab({ form, t, isIgdbField }: GameFormTabProps) {
   const watchedVersions = form.watch("versions");
@@ -78,7 +79,7 @@ export function GameFormVersionsTab({ form, t, isIgdbField }: GameFormTabProps) 
                   className="mt-2 flex-shrink-0 rounded-md p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20"
                   aria-label="Supprimer"
                 >
-                  <FaTimes className="h-3.5 w-3.5" />
+                  <Icon icon="fa:times" className="h-3.5 w-3.5"  />
                 </button>
               </div>
             </div>
@@ -87,7 +88,7 @@ export function GameFormVersionsTab({ form, t, isIgdbField }: GameFormTabProps) 
       )}
 
       <Button type="button" variant="outline" size="sm" onClick={addVersion} className="gap-1.5">
-        <FaPlus className="h-3 w-3" />
+        <Icon icon="fa:plus" className="h-3 w-3"  />
         {t("addVersion") ?? "Ajouter une version"}
       </Button>
 

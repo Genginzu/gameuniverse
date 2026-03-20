@@ -10,8 +10,9 @@ import { DescriptorsTab } from "@/components/admin/age-classifications/Descripto
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { toast } from "@/hooks/use-toast";
-import { FaArrowLeft } from "react-icons/fa";
+
 import type { RatingSystemFormData } from "@/lib/validations/admin-rating-system-form";
+import { Icon } from "@iconify/react";
 
 type TabId = "info" | "ratings" | "descriptors";
 
@@ -136,7 +137,7 @@ export default function EditRatingSystemPage() {
             size="sm"
             onClick={() => router.push("/admin/age-classifications")}
           >
-            <FaArrowLeft className="mr-1 h-3 w-3" />
+            <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
             Retour à la liste
           </Button>
         </div>
@@ -153,7 +154,7 @@ export default function EditRatingSystemPage() {
     <div className="p-4 lg:p-6">
       <div className="mb-2">
         <Button variant="ghost" size="sm" onClick={() => router.push("/admin/age-classifications")}>
-          <FaArrowLeft className="mr-1 h-3 w-3" />
+          <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
           Retour à la liste
         </Button>
       </div>

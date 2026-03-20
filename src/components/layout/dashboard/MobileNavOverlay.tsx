@@ -2,8 +2,9 @@
 
 import { Link, usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
-import { FaSearch, FaTimes, FaSignInAlt } from "react-icons/fa";
+
 import { NAV_LINKS, PUBLIC_LINKS, isActive } from "@/lib/utils/navigation-utils";
+import { Icon } from "@iconify/react";
 
 interface MobileNavOverlayProps {
   isOpen: boolean;
@@ -48,7 +49,7 @@ export default function MobileNavOverlay({
           className="absolute right-4 top-4 rounded-lg p-2 text-gray-400 hover:text-white motion-safe:transition-colors motion-safe:duration-200"
           aria-label="Close navigation"
         >
-          <FaTimes className="h-5 w-5" />
+          <Icon icon="fa:times" className="h-5 w-5"  />
         </button>
 
         {/* Search button */}
@@ -56,7 +57,7 @@ export default function MobileNavOverlay({
           onClick={handleSearchClick}
           className="mt-2 flex w-full items-center gap-3 rounded-xl px-4 py-3 text-base font-medium text-gray-300 hover:bg-white/5 hover:text-white motion-safe:transition-all motion-safe:duration-200"
         >
-          <FaSearch className="h-5 w-5" />
+          <Icon icon="fa:search" className="h-5 w-5"  />
           <span>{t("search")}</span>
         </button>
 
@@ -65,7 +66,7 @@ export default function MobileNavOverlay({
           {tNav("explore")}
         </p>
         <ul className="flex flex-col gap-2">
-          {PUBLIC_LINKS.map(({ href, icon: Icon, labelKey }) => {
+          {PUBLIC_LINKS.map(({ href, icon, labelKey }) => {
             const active = isActive(pathname, href, currentUserId);
             return (
               <li key={href}>
@@ -78,8 +79,7 @@ export default function MobileNavOverlay({
                       : "text-gray-300 hover:bg-white/5 hover:text-white"
                   }`}
                 >
-                  <Icon
-                    className={`h-5 w-5 ${active ? "drop-shadow-[0_0_6px_rgb(var(--neon-violet)/0.6)]" : ""}`}
+                  <Icon icon={icon} className={`h-5 w-5 ${active ? "drop-shadow-[0_0_6px_rgb(var(--neon-violet)/0.6)]" : ""}`}
                   />
                   <span>{tNav(labelKey)}</span>
                 </Link>
@@ -95,7 +95,7 @@ export default function MobileNavOverlay({
               {t("mySpace")}
             </p>
             <ul className="flex flex-col gap-2">
-              {NAV_LINKS.map(({ href, icon: Icon, labelKey }) => {
+              {NAV_LINKS.map(({ href, icon, labelKey }) => {
                 const active = isActive(pathname, href, currentUserId);
                 return (
                   <li key={href}>
@@ -108,8 +108,7 @@ export default function MobileNavOverlay({
                           : "text-gray-300 hover:bg-white/5 hover:text-white"
                       }`}
                     >
-                      <Icon
-                        className={`h-5 w-5 ${active ? "drop-shadow-[0_0_6px_rgb(var(--neon-violet)/0.6)]" : ""}`}
+                      <Icon icon={icon} className={`h-5 w-5 ${active ? "drop-shadow-[0_0_6px_rgb(var(--neon-violet)/0.6)]" : ""}`}
                       />
                       <span>{t(labelKey)}</span>
                     </Link>
@@ -128,7 +127,7 @@ export default function MobileNavOverlay({
               onClick={onClose}
               className="flex items-center gap-3 rounded-xl px-4 py-3 text-base font-medium text-neon-violet transition-all hover:bg-neon-violet/10"
             >
-              <FaSignInAlt className="h-5 w-5" />
+              <Icon icon="fa:sign-in-alt" className="h-5 w-5"  />
               <span>{tNav("login")}</span>
             </Link>
           </div>

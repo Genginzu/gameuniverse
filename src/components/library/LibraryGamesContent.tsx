@@ -19,8 +19,9 @@ import { Pagination as PaginationType } from "@/types/pagination";
 import { useApiClient } from "@/lib/api-client";
 import { useAsyncError } from "@/components/providers/ErrorProvider";
 import { toast } from "@/hooks/use-toast";
-import { FaGamepad, FaClock, FaStar, FaPlus } from "react-icons/fa";
+
 import Link from "next/link";
+import { Icon } from "@iconify/react";
 
 interface LibraryGamesContentProps {
   locale?: string;
@@ -274,7 +275,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
             <CardHeader className="pb-3">
               <div className="flex items-center">
                 <div className="rounded-lg bg-blue-100 p-2 dark:bg-blue-900/30">
-                  <FaGamepad className="h-4 w-4 text-blue-600 dark:text-blue-400 sm:h-5 sm:w-5" />
+                  <Icon icon="fa:gamepad" className="h-4 w-4 text-blue-600 dark:text-blue-400 sm:h-5 sm:w-5"  />
                 </div>
                 <div className="ml-3">
                   <CardTitle className="text-sm font-medium text-gray-900 dark:text-white">
@@ -295,7 +296,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
             <CardHeader className="pb-3">
               <div className="flex items-center">
                 <div className="rounded-lg bg-green-100 p-2 dark:bg-green-900/30">
-                  <FaGamepad className="h-4 w-4 text-green-600 dark:text-green-400 sm:h-5 sm:w-5" />
+                  <Icon icon="fa:gamepad" className="h-4 w-4 text-green-600 dark:text-green-400 sm:h-5 sm:w-5"  />
                 </div>
                 <div className="ml-3">
                   <CardTitle className="text-sm font-medium text-gray-900 dark:text-white">
@@ -318,7 +319,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
             <CardHeader className="pb-3">
               <div className="flex items-center">
                 <div className="rounded-lg bg-purple-100 p-2 dark:bg-purple-900/30">
-                  <FaClock className="h-4 w-4 text-purple-600 dark:text-purple-400 sm:h-5 sm:w-5" />
+                  <Icon icon="fa:clock" className="h-4 w-4 text-purple-600 dark:text-purple-400 sm:h-5 sm:w-5"  />
                 </div>
                 <div className="ml-3">
                   <CardTitle className="text-sm font-medium text-gray-900 dark:text-white">
@@ -339,7 +340,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
             <CardHeader className="pb-3">
               <div className="flex items-center">
                 <div className="rounded-lg bg-yellow-100 p-2 dark:bg-yellow-900/30">
-                  <FaStar className="h-4 w-4 text-yellow-600 dark:text-yellow-400 sm:h-5 sm:w-5" />
+                  <Icon icon="fa:star" className="h-4 w-4 text-yellow-600 dark:text-yellow-400 sm:h-5 sm:w-5"  />
                 </div>
                 <div className="ml-3">
                   <CardTitle className="text-sm font-medium text-gray-900 dark:text-white">
@@ -395,7 +396,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
               <Card className="bg-white dark:bg-gray-800">
                 <CardContent className="flex flex-col items-center justify-center py-12 text-center">
                   <div className="mb-4 rounded-full bg-gray-100 p-4 dark:bg-gray-700 sm:p-6">
-                    <FaGamepad className="h-8 w-8 text-gray-400 sm:h-12 sm:w-12" />
+                    <Icon icon="fa:gamepad" className="h-8 w-8 text-gray-400 sm:h-12 sm:w-12"  />
                   </div>
                   <h3 className="mb-2 text-base font-medium text-gray-900 dark:text-white sm:text-lg">
                     {searchQuery || selectedGenres.length > 0 || selectedPublishers.length > 0
@@ -414,7 +415,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
                   ) : (
                     <Button asChild className="bg-blue-600 hover:bg-blue-700">
                       <Link href="/games">
-                        <FaPlus className="mr-2 h-4 w-4" />
+                        <Icon icon="fa:plus" className="mr-2 h-4 w-4"  />
                         {t("empty.exploreGames")}
                       </Link>
                     </Button>

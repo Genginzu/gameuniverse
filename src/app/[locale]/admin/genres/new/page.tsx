@@ -7,8 +7,9 @@ import { useGenreForm } from "@/hooks/useGenreForm";
 import { GenreForm } from "@/components/admin/genres/GenreForm";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { FaArrowLeft } from "react-icons/fa";
+
 import type { GenreFormData } from "@/lib/validations/admin-genre-form";
+import { Icon } from "@iconify/react";
 
 export default function NewGenrePage() {
   const t = useTranslations("admin.genres");
@@ -40,7 +41,7 @@ export default function NewGenrePage() {
     <div className="p-4 lg:p-6">
       <div className="mb-2">
         <Button variant="ghost" size="sm" onClick={() => router.push("/admin/genres")}>
-          <FaArrowLeft className="mr-1 h-3 w-3" />
+          <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
           {t("form.backToList")}
         </Button>
       </div>

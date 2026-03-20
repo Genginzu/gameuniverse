@@ -4,26 +4,10 @@ import { Link, usePathname } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { useTheme } from "next-themes";
-import {
-  FaChevronDown,
-  FaChevronUp,
-  FaGamepad,
-  FaGlobe,
-  FaList,
-  FaMoon,
-  FaShieldAlt,
-  FaSignOutAlt,
-  FaSun,
-  FaTimes,
-  FaUser,
-  FaBuilding,
-  FaUserFriends,
-  FaStar,
-  FaTrophy,
-  FaDesktop,
-} from "react-icons/fa";
+
 import { MessageCircle } from "lucide-react";
 import type { AdminUser } from "@/types/admin-auth";
+import { Icon } from "@iconify/react";
 
 interface AdminSidebarProps {
   user: AdminUser;
@@ -67,7 +51,7 @@ export default function AdminSidebar({
               className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
               aria-label={t("closeSidebar")}
             >
-              <FaTimes className="h-5 w-5" />
+              <Icon icon="fa:times" className="h-5 w-5"  />
             </button>
           </div>
           <SidebarContent user={user} signOut={signOut} onLinkClick={handleLinkClick} />
@@ -143,7 +127,7 @@ function SidebarContent({
           </p>
           <div className="space-y-1">
             <Link href="/admin/games" className={linkClasses("/admin/games")} onClick={onLinkClick}>
-              <FaGamepad className="mr-3 h-4 w-4" />
+              <Icon icon="fa:gamepad" className="mr-3 h-4 w-4"  />
               {t("nav.games")}
             </Link>
             <Link
@@ -151,7 +135,7 @@ function SidebarContent({
               className={linkClasses("/admin/genres")}
               onClick={onLinkClick}
             >
-              <FaList className="mr-3 h-4 w-4" />
+              <Icon icon="fa:list" className="mr-3 h-4 w-4"  />
               {t("nav.genres")}
             </Link>
             <Link
@@ -159,7 +143,7 @@ function SidebarContent({
               className={linkClasses("/admin/companies")}
               onClick={onLinkClick}
             >
-              <FaBuilding className="mr-3 h-4 w-4" />
+              <Icon icon="fa:building" className="mr-3 h-4 w-4"  />
               {t("nav.companies")}
             </Link>
             <Link
@@ -167,7 +151,7 @@ function SidebarContent({
               className={linkClasses("/admin/platforms")}
               onClick={onLinkClick}
             >
-              <FaDesktop className="mr-3 h-4 w-4" />
+              <Icon icon="fa:desktop" className="mr-3 h-4 w-4"  />
               {t("nav.platforms")}
             </Link>
             <Link
@@ -175,7 +159,7 @@ function SidebarContent({
               className={linkClasses("/admin/languages")}
               onClick={onLinkClick}
             >
-              <FaGlobe className="mr-3 h-4 w-4" />
+              <Icon icon="fa:globe" className="mr-3 h-4 w-4"  />
               {t("nav.languages")}
             </Link>
             <Link
@@ -183,7 +167,7 @@ function SidebarContent({
               className={linkClasses("/admin/age-classifications")}
               onClick={onLinkClick}
             >
-              <FaShieldAlt className="mr-3 h-4 w-4" />
+              <Icon icon="fa:shield-alt" className="mr-3 h-4 w-4"  />
               {t("nav.ageClassifications")}
             </Link>
             <Link
@@ -191,7 +175,7 @@ function SidebarContent({
               className={linkClasses("/admin/reviews")}
               onClick={onLinkClick}
             >
-              <FaStar className="mr-3 h-4 w-4" />
+              <Icon icon="fa:star" className="mr-3 h-4 w-4"  />
               {t("nav.reviews")}
             </Link>
           </div>
@@ -208,7 +192,7 @@ function SidebarContent({
               className={linkClasses("/admin/characters")}
               onClick={onLinkClick}
             >
-              <FaUserFriends className="mr-3 h-4 w-4" />
+              <Icon icon="fa:user-friends" className="mr-3 h-4 w-4"  />
               {t("nav.characters")}
             </Link>
             <Link
@@ -233,7 +217,7 @@ function SidebarContent({
               className={linkClasses("/admin/achievements")}
               onClick={onLinkClick}
             >
-              <FaTrophy className="mr-3 h-4 w-4" />
+              <Icon icon="fa:trophy" className="mr-3 h-4 w-4"  />
               {t("nav.achievements")}
             </Link>
             <Link
@@ -241,7 +225,7 @@ function SidebarContent({
               className={linkClasses("/admin/achievements/players")}
               onClick={onLinkClick}
             >
-              <FaUserFriends className="mr-3 h-4 w-4" />
+              <Icon icon="fa:user-friends" className="mr-3 h-4 w-4"  />
               {t("nav.playerAchievements")}
             </Link>
           </div>
@@ -256,7 +240,7 @@ function SidebarContent({
             className="mb-3 flex w-full items-center rounded-xl p-2 text-left hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:hover:bg-gray-800"
           >
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500">
-              <FaUser className="h-4 w-4 text-white" />
+              <Icon icon="fa:user" className="h-4 w-4 text-white"  />
             </div>
             <div className="ml-3 min-w-0 flex-1">
               <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
@@ -264,9 +248,9 @@ function SidebarContent({
               </p>
             </div>
             {isUserMenuOpen ? (
-              <FaChevronUp className="h-4 w-4 flex-shrink-0 text-gray-400" />
+              <Icon icon="fa:chevron-up" className="h-4 w-4 flex-shrink-0 text-gray-400"  />
             ) : (
-              <FaChevronDown className="h-4 w-4 flex-shrink-0 text-gray-400" />
+              <Icon icon="fa:chevron-down" className="h-4 w-4 flex-shrink-0 text-gray-400"  />
             )}
           </button>
 
@@ -283,9 +267,9 @@ function SidebarContent({
                   }}
                 >
                   {theme === "dark" ? (
-                    <FaSun className="mr-3 h-4 w-4" />
+                    <Icon icon="fa:sun" className="mr-3 h-4 w-4"  />
                   ) : (
-                    <FaMoon className="mr-3 h-4 w-4" />
+                    <Icon icon="fa:moon" className="mr-3 h-4 w-4"  />
                   )}
                   {theme === "dark" ? t("lightMode") : t("darkMode")}
                 </button>
@@ -304,7 +288,7 @@ function SidebarContent({
                     }
                   }}
                 >
-                  <FaSignOutAlt className="mr-3 h-4 w-4" />
+                  <Icon icon="fa:sign-out-alt" className="mr-3 h-4 w-4"  />
                   {tNav("logout")}
                 </button>
               </div>

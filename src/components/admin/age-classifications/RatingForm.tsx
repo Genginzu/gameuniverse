@@ -13,10 +13,11 @@ import {
   FormDescription,
 } from "@/components/ui/form";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { FaSave } from "react-icons/fa";
+
 import type { RatingFormData } from "@/lib/validations/admin-rating-form";
 import type { SupportedLanguage } from "@/types/admin-languages";
 import { RatingFormTranslations } from "./RatingFormTranslations";
+import { Icon } from "@iconify/react";
 
 export interface RatingFormProps {
   mode: "create" | "edit";
@@ -174,7 +175,7 @@ export function RatingForm({
               <LoadingSpinner size="sm" />
             ) : (
               <>
-                <FaSave className="h-4 w-4" />
+                <Icon icon="fa:save" className="h-4 w-4"  />
                 {mode === "create" ? "Créer" : "Enregistrer"}
               </>
             )}

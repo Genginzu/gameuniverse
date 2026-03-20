@@ -1,161 +1,158 @@
 "use client";
 
+import { useMemo } from "react";
+import { useTranslations } from "next-intl";
 import { Genre } from "@/types/genre";
+import { PlatformFilterOption } from "@/types/platform";
+import { PlatformFilter } from "./PlatformFilter";
 
 interface GameFiltersProps {
   genres: Genre[];
+  platforms: PlatformFilterOption[];
   selectedGenres: string[];
   selectedPublishers: string[];
+  selectedPlatforms: string[];
   onGenreChange: (genres: string[]) => void;
   onPublisherChange: (publishers: string[]) => void;
+  onPlatformsChange: (platforms: string[]) => void;
   onClearFilters: () => void;
   showAllGenres: boolean;
 }
 
 export function GameFilters({
   genres,
+  platforms,
   selectedGenres,
-  selectedPublishers,
+  selectedPublishers: _selectedPublishers,
+  selectedPlatforms,
   onGenreChange,
   onPublisherChange: _onPublisherChange,
+  onPlatformsChange,
   onClearFilters,
   showAllGenres,
 }: GameFiltersProps) {
+  const t = useTranslations("games");
+
+  // Slug → name lookup pour les chips actifs
+  const platformMap = useMemo(() => {
+    const map = new Map<string, string>();
+    platforms.forEach((p) => map.set(p.slug, p.name));
+    return map;
+  }, [platforms]);
+
   const handleGenreToggle = (genreName: string) => {
-    const newSelectedGenres = selectedGenres.includes(genreName)
+    const updated = selectedGenres.includes(genreName)
       ? selectedGenres.filter((g) => g !== genreName)
       : [...selectedGenres, genreName];
-
-    onGenreChange(newSelectedGenres);
+    onGenreChange(updated);
   };
 
-  const hasFilters = selectedGenres.length > 0 || selectedPublishers.length > 0;
+  const hasFilters =
+    selectedGenres.length > 0 || _selectedPublishers.length > 0 || selectedPlatforms.length > 0;
 
-  // Don't render anything if no filters are active and panel is closed
-  if (!hasFilters && !showAllGenres) {
-    return null;
-  }
+  if (!hasFilters && !showAllGenres) return null;
 
   return (
-    <div className="space-y-4">
-      {/* Clear all button - positioned at the right */}
+    <div className="space-y-3">
       {hasFilters && (
-        <div className="flex justify-end">
+        <div className="flex items-center gap-2">
+          <div className="flex flex-1 flex-wrap items-center gap-1.5">
+            {selectedGenres.map((genre) => (
+              <ActiveChip
+                key={genre}
+                label={genre}
+                onRemove={() => handleGenreToggle(genre)}
+                variant="blue"
+              />
+            ))}
+            {selectedPlatforms.map((slug) => (
+              <ActiveChip
+                key={slug}
+                label={platformMap.get(slug) || slug}
+                onRemove={() => onPlatformsChange(selectedPlatforms.filter((s) => s !== slug))}
+                variant="violet"
+              />
+            ))}
+          </div>
           <button
             onClick={onClearFilters}
-            className="inline-flex items-center rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-100 sm:px-4 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30"
+            className="shrink-0 rounded-lg px-2.5 py-1 text-xs font-medium text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
           >
-            <svg className="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-            <span className="hidden sm:inline">Tout effacer</span>
-            <span className="sm:hidden">Effacer</span>
+            {t("clearAll")}
           </button>
         </div>
       )}
 
-      {/* Active filters display */}
-      {hasFilters && (
-        <div className="rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 p-3 sm:p-4 dark:from-blue-900/20 dark:to-indigo-900/20">
-          <div className="mb-2 flex items-center justify-between">
-            <span className="text-sm font-medium text-blue-900 dark:text-blue-300">
-              Filtres actifs
-            </span>
-            <span className="text-xs text-blue-600 dark:text-blue-400">
-              {selectedGenres.length} sélectionné(s)
-            </span>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {selectedGenres.map((genre) => (
-              <div
-                key={genre}
-                className="inline-flex items-center rounded-lg bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow-sm ring-1 ring-gray-200 sm:px-3 sm:py-1.5 sm:text-sm dark:bg-gray-800 dark:text-gray-200 dark:ring-gray-700"
-              >
-                <span className="mr-1 sm:mr-2">{genre}</span>
-                <button
-                  onClick={() => handleGenreToggle(genre)}
-                  className="rounded-full p-0.5 text-gray-400 transition-colors hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/30"
-                >
-                  <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Expanded filters */}
       {showAllGenres && (
-        <div className="rounded-xl bg-white p-4 shadow-lg ring-1 ring-gray-200 sm:p-6 dark:bg-gray-800 dark:ring-gray-700">
-          <div className="mb-4 flex flex-col items-start justify-between sm:flex-row sm:items-center">
-            <h3 className="text-base font-semibold text-gray-900 sm:text-lg dark:text-white">
-              Tous les genres
-            </h3>
-            <span className="mt-1 text-sm text-gray-500 sm:mt-0 dark:text-gray-400">
-              {genres.length} disponibles
+        <div className="rounded-xl bg-white/60 p-4 ring-1 ring-gray-200/50 backdrop-blur-sm dark:bg-slate-800/50 dark:ring-slate-700/50">
+          <div className="mb-3 flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{t("genres")}</h3>
+            <span className="text-xs text-gray-500 dark:text-gray-400">
+              {genres.length} {t("available")}
             </span>
           </div>
-
-          <div className="grid grid-cols-1 gap-3 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-            {genres.map((genre) => (
-              <label
-                key={genre.id}
-                className="group relative flex cursor-pointer items-center rounded-lg border border-gray-200 p-3 transition-all hover:border-blue-300 hover:bg-blue-50 dark:border-gray-700 dark:hover:border-blue-600 dark:hover:bg-blue-900/20"
-              >
-                <input
-                  type="checkbox"
-                  checked={selectedGenres.includes(genre.name)}
-                  onChange={() => handleGenreToggle(genre.name)}
-                  className="sr-only"
-                />
-                <div
-                  className={`flex h-4 w-4 items-center justify-center rounded border-2 transition-all sm:h-5 sm:w-5 ${
-                    selectedGenres.includes(genre.name)
-                      ? "border-blue-600 bg-blue-600"
-                      : "border-gray-300 group-hover:border-blue-400 dark:border-gray-600"
+          <div className="flex flex-wrap gap-1.5">
+            {genres.map((genre) => {
+              const isSelected = selectedGenres.includes(genre.name);
+              return (
+                <button
+                  key={genre.id}
+                  onClick={() => handleGenreToggle(genre.name)}
+                  className={`rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
+                    isSelected
+                      ? "bg-gradient-to-r from-[#615dfa] via-[#5b36d4] to-[#7c5cfc] text-white shadow-sm"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700/50 dark:text-gray-300 dark:hover:bg-slate-700"
                   }`}
                 >
-                  {selectedGenres.includes(genre.name) && (
-                    <svg
-                      className="h-2.5 w-2.5 text-white sm:h-3 sm:w-3"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={3}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                  )}
-                </div>
-                <div className="ml-2 min-w-0 flex-1 sm:ml-3">
-                  <span className="text-xs font-medium text-gray-900 sm:text-sm dark:text-white">
-                    {genre.name}
-                  </span>
-                  <div className="text-xs text-gray-500 dark:text-gray-400">
-                    {genre.gameCount} jeux
-                  </div>
-                </div>
-              </label>
-            ))}
+                  {genre.name}
+                  <span className="ml-1 opacity-60">{genre.gameCount}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
       )}
+
+      {showAllGenres && (
+        <PlatformFilter
+          platforms={platforms}
+          selectedPlatforms={selectedPlatforms}
+          onPlatformsChange={onPlatformsChange}
+        />
+      )}
     </div>
+  );
+}
+
+/** Chip affichant un filtre actif avec bouton de suppression */
+function ActiveChip({
+  label,
+  onRemove,
+  variant,
+}: {
+  label: string;
+  onRemove: () => void;
+  variant: "blue" | "violet";
+}) {
+  const colors =
+    variant === "blue"
+      ? "bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50"
+      : "bg-violet-100 text-violet-800 hover:bg-violet-200 dark:bg-violet-900/30 dark:text-violet-300 dark:hover:bg-violet-900/50";
+
+  return (
+    <button
+      onClick={onRemove}
+      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${colors}`}
+    >
+      {label}
+      <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M6 18L18 6M6 6l12 12"
+        />
+      </svg>
+    </button>
   );
 }

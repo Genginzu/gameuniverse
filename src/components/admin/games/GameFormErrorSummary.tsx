@@ -1,9 +1,10 @@
 "use client";
 
 import { type FieldErrors } from "react-hook-form";
-import { FaExclamationTriangle } from "react-icons/fa";
+
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
 import type { TabId } from "@/types/admin-games";
+import { Icon } from "@iconify/react";
 
 /** Maps form field names to the tab they belong to */
 const FIELD_TO_TAB: Record<string, TabId> = {
@@ -23,6 +24,7 @@ const FIELD_TO_TAB: Record<string, TabId> = {
   translations: "translations",
   genres: "genres",
   companies: "companies",
+  game_platforms: "game_platforms",
   age_ratings: "age_ratings",
   versions: "versions",
   languages: "languages",
@@ -40,6 +42,7 @@ const TAB_LABELS: Record<TabId, string> = {
   translations: "Translations",
   genres: "Genres",
   companies: "Companies",
+  game_platforms: "Platforms",
   age_ratings: "Age Ratings",
   versions: "Versions",
   languages: "Languages",
@@ -119,7 +122,7 @@ export function GameFormErrorSummary({
       className="rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-800/50 dark:bg-red-900/20"
     >
       <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-red-700 dark:text-red-400">
-        <FaExclamationTriangle className="h-4 w-4 flex-shrink-0" />
+        <Icon icon="fa:exclamation-triangle" className="h-4 w-4 flex-shrink-0" />
         <span>
           {errorGroups.reduce((sum, g) => sum + g.messages.length, 0)} erreur(s) à corriger
         </span>

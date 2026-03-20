@@ -3,7 +3,8 @@
 import { User } from "@supabase/supabase-js";
 import { useTranslations } from "next-intl";
 import { useState, useEffect, useRef } from "react";
-import { FaUser, FaSignOutAlt, FaSun, FaMoon, FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { Icon } from "@iconify/react";
+
 
 interface NavUserMenuProps {
   user: User;
@@ -39,12 +40,12 @@ export default function NavUserMenu({ user, signOut, theme, setTheme }: NavUserM
         className="flex items-center gap-2 rounded-xl px-2 py-1.5 transition-all hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-violet-400/50 dark:hover:bg-white/5"
       >
         <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-blue-500 shadow-lg shadow-violet-500/20">
-          <FaUser className="h-3 w-3 text-white" />
+          <Icon icon="fa:user" className="h-3 w-3 text-white"  />
         </div>
         {isOpen ? (
-          <FaChevronUp className="h-3 w-3 text-gray-400" />
+          <Icon icon="fa:chevron-up" className="h-3 w-3 text-gray-400"  />
         ) : (
-          <FaChevronDown className="h-3 w-3 text-gray-400" />
+          <Icon icon="fa:chevron-down" className="h-3 w-3 text-gray-400"  />
         )}
       </button>
 
@@ -64,9 +65,9 @@ export default function NavUserMenu({ user, signOut, theme, setTheme }: NavUserM
               }}
             >
               {theme === "dark" ? (
-                <FaSun className="mr-3 h-4 w-4" />
+                <Icon icon="fa:sun" className="mr-3 h-4 w-4"  />
               ) : (
-                <FaMoon className="mr-3 h-4 w-4" />
+                <Icon icon="fa:moon" className="mr-3 h-4 w-4"  />
               )}
               {theme === "dark" ? "Mode clair" : "Mode sombre"}
             </button>
@@ -82,7 +83,7 @@ export default function NavUserMenu({ user, signOut, theme, setTheme }: NavUserM
                 }
               }}
             >
-              <FaSignOutAlt className="mr-3 h-4 w-4" />
+              <Icon icon="fa:sign-out-alt" className="mr-3 h-4 w-4"  />
               {tNav("logout")}
             </button>
           </div>

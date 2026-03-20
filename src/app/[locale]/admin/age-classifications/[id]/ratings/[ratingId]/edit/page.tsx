@@ -8,9 +8,10 @@ import { RatingForm } from "@/components/admin/age-classifications/RatingForm";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { toast } from "@/hooks/use-toast";
-import { FaArrowLeft } from "react-icons/fa";
+
 import type { RatingFormData } from "@/lib/validations/admin-rating-form";
 import type { AdminRating } from "@/types/admin-age-classifications";
+import { Icon } from "@iconify/react";
 
 export default function EditRatingPage() {
   const router = useRouter();
@@ -82,7 +83,7 @@ export default function EditRatingPage() {
       <div className="p-4 lg:p-6">
         <div className="mb-2">
           <Button variant="ghost" size="sm" onClick={() => router.push(backUrl)}>
-            <FaArrowLeft className="mr-1 h-3 w-3" />
+            <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
             Retour au système
           </Button>
         </div>
@@ -143,7 +144,7 @@ function EditRatingFormWrapper({
     <div className="p-4 lg:p-6">
       <div className="mb-2">
         <Button variant="ghost" size="sm" onClick={() => router.push(backUrl)}>
-          <FaArrowLeft className="mr-1 h-3 w-3" />
+          <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
           Retour au système
         </Button>
       </div>

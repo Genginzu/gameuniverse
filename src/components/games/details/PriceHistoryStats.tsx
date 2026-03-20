@@ -43,7 +43,7 @@ export function PriceHistoryStatsDisplay({ stats, currentPrice }: PriceHistorySt
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
       {cards.map((card) => {
-        const Icon = card.icon;
+        const CardIcon = card.icon;
         return (
           <Card
             key={card.label}
@@ -51,7 +51,7 @@ export function PriceHistoryStatsDisplay({ stats, currentPrice }: PriceHistorySt
           >
             <CardContent className="flex items-center gap-3 p-4">
               <div className={`rounded-md bg-white/10 p-2 ${card.iconColor}`}>
-                <Icon className="h-5 w-5" />
+                <CardIcon className="h-5 w-5" />
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm text-slate-400">{card.label}</p>

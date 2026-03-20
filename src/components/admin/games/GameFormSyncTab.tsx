@@ -1,12 +1,13 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { FaSync, FaCheck, FaPen } from "react-icons/fa";
+
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useGameSync } from "@/hooks/useGameSync";
 import { TRACKABLE_FIELDS } from "@/lib/utils/field-tracking";
 import type { TrackableField } from "@/types/admin-games";
+import { Icon } from "@iconify/react";
 
 interface GameFormSyncTabProps {
   gameId: string;
@@ -65,7 +66,7 @@ export function GameFormSyncTab({ gameId, igdbId, onSyncComplete }: GameFormSync
           }}
           className="gap-2"
         >
-          {syncingField === "all" ? <LoadingSpinner size="sm" /> : <FaSync className="h-3 w-3" />}
+          {syncingField === "all" ? <LoadingSpinner size="sm" /> : <Icon icon="fa:sync" className="h-3 w-3"  />}
           {t("syncAll")}
         </Button>
       </div>
@@ -93,11 +94,11 @@ export function GameFormSyncTab({ gameId, igdbId, onSyncComplete }: GameFormSync
                 <div className="flex items-center gap-3">
                   {isOverridden ? (
                     <span className="flex h-5 w-5 items-center justify-center rounded-full bg-amber-100 dark:bg-amber-900/40">
-                      <FaPen className="h-2.5 w-2.5 text-amber-600 dark:text-amber-400" />
+                      <Icon icon="fa:pen" className="h-2.5 w-2.5 text-amber-600 dark:text-amber-400"  />
                     </span>
                   ) : (
                     <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/40">
-                      <FaCheck className="h-2.5 w-2.5 text-emerald-600 dark:text-emerald-400" />
+                      <Icon icon="fa:check" className="h-2.5 w-2.5 text-emerald-600 dark:text-emerald-400"  />
                     </span>
                   )}
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -121,7 +122,7 @@ export function GameFormSyncTab({ gameId, igdbId, onSyncComplete }: GameFormSync
                   {isSyncingThis ? (
                     <LoadingSpinner size="sm" />
                   ) : (
-                    <FaSync className="h-2.5 w-2.5" />
+                    <Icon icon="fa:sync" className="h-2.5 w-2.5"  />
                   )}
                   {t("syncField")}
                 </Button>

@@ -2,8 +2,9 @@
 
 import { useTranslations } from "next-intl";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { FaUser } from "react-icons/fa";
+
 import type { PlayerSearchResult } from "@/types/admin-achievements";
+import { Icon } from "@iconify/react";
 
 export interface PlayerSearchResultsProps {
   players: PlayerSearchResult[];
@@ -51,7 +52,7 @@ export function PlayerSearchResults({
               />
             ) : (
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700">
-                <FaUser className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+                <Icon icon="fa:user" className="h-4 w-4 text-gray-500 dark:text-gray-400"  />
               </div>
             )}
             <span className="font-medium text-gray-900 dark:text-white">{player.username}</span>

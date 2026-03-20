@@ -58,6 +58,28 @@ export async function GET(request: NextRequest) {
     }
 
     if (!platforms || platforms.length === 0) {
+      // Fallback to English if no translations found for requested locale
+      if (locale !== "en") {
+        const { data: fallbackPlatforms, error: fallbackError } = await supabase
+          .from("platforms")
+          .select(
+            `
+            id,
+            slug,
+            icon_url,
+            created_at,
+            platform_translations!inner(
+              name,
+              abbreviation
+            )
+          `
+          )
+          .eq("platform_translations.language_code", "en");
+
+        if (!fallbackError && fallbackPlatforms && fallbackPlatforms.length > 0) {
+          return buildResponse(supabase, fallbackPlatforms, locale);
+        }
+      }
       return NextResponse.json({ platforms: [], locale });
     }
 

@@ -13,7 +13,8 @@ import {
 } from "@/components/admin/languages/SiteLocalesSection";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import { FaPlus } from "react-icons/fa";
+import { Icon } from "@iconify/react";
+
 
 // Site locales data derived from src/i18n/routing.ts and src/messages/*.json
 const SITE_LOCALES: SiteLocale[] = [
@@ -172,7 +173,7 @@ export default function AdminLanguagesPage() {
             {t("title")}
           </h1>
           <Button onClick={() => router.push("/admin/languages/new")}>
-            <FaPlus className="h-4 w-4" />
+            <Icon icon="fa:plus" className="h-4 w-4"  />
             {t("newLanguage")}
           </Button>
         </div>

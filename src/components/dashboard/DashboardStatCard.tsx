@@ -1,7 +1,7 @@
-import { IconType } from "react-icons";
+import { Icon } from "@iconify/react";
 
 interface DashboardStatCardProps {
-  icon: IconType;
+  icon: string;
   iconBgClass: string;
   iconColorClass: string;
   title: string;
@@ -11,7 +11,7 @@ interface DashboardStatCardProps {
 }
 
 export function DashboardStatCard({
-  icon: Icon,
+  icon,
   iconBgClass,
   iconColorClass,
   title,
@@ -24,6 +24,7 @@ export function DashboardStatCard({
       <div className="mb-3 flex items-center">
         <div className={`rounded-xl p-2.5 ${iconBgClass}`}>
           <Icon
+            icon={icon}
             className={`h-5 w-5 sm:h-6 sm:w-6 ${iconColorClass} drop-shadow-[0_0_6px_currentColor]`}
           />
         </div>

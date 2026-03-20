@@ -3,6 +3,14 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 
+// --- ResizeObserver polyfill (not available in jsdom) ---
+class ResizeObserverMock {
+  observe = vi.fn();
+  unobserve = vi.fn();
+  disconnect = vi.fn();
+}
+globalThis.ResizeObserver = ResizeObserverMock as unknown as typeof ResizeObserver;
+
 // --- Mocks ---
 
 const mockGetCropParams = vi.fn().mockReturnValue({

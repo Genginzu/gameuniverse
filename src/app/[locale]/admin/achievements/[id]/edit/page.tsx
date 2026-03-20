@@ -8,9 +8,10 @@ import { AchievementForm } from "@/components/admin/achievements/AchievementForm
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { toast } from "@/hooks/use-toast";
-import { FaArrowLeft } from "react-icons/fa";
+
 import type { AchievementFormData } from "@/lib/validations/admin-achievement-form";
 import type { AdminAchievement } from "@/types/admin-achievements";
+import { Icon } from "@iconify/react";
 
 export default function EditAchievementPage() {
   const t = useTranslations("adminAchievements");
@@ -105,7 +106,7 @@ export default function EditAchievementPage() {
       <div className="p-4 lg:p-6">
         <div className="mb-2">
           <Button variant="ghost" size="sm" onClick={() => router.push("/admin/achievements")}>
-            <FaArrowLeft className="mr-1 h-3 w-3" />
+            <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
             {t("form.backToList")}
           </Button>
         </div>
@@ -122,7 +123,7 @@ export default function EditAchievementPage() {
     <div className="p-4 lg:p-6">
       <div className="mb-2">
         <Button variant="ghost" size="sm" onClick={() => router.push("/admin/achievements")}>
-          <FaArrowLeft className="mr-1 h-3 w-3" />
+          <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
           {t("form.backToList")}
         </Button>
       </div>

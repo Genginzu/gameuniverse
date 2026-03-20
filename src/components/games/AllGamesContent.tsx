@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { EntityCard } from "@/components/shared/EntityCard";
 import { gameCardConfig } from "@/components/shared/entityCardPresets";
@@ -10,11 +10,11 @@ import { Pagination } from "@/components/shared/Pagination";
 import { GridSkeleton } from "@/components/shared/GridSkeleton";
 import { gameSkeletonConfig } from "@/components/shared/EntitySkeleton";
 import { SearchSkeleton } from "./SearchSkeleton";
-import { PlatformFilter } from "./PlatformFilter";
 import { GamesEmptyState } from "./GamesEmptyState";
 import { Genre } from "@/types/genre";
 import { GameSummary } from "@/types/game";
 import { Pagination as PaginationType } from "@/types/pagination";
+import { PlatformFilterOption } from "@/types/platform";
 import { useApiClient } from "@/lib/api-client";
 import { useAsyncError } from "@/components/providers/ErrorProvider";
 import { toast } from "@/hooks/use-toast";
@@ -28,6 +28,7 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
 
   const [games, setGames] = useState<GameSummary[]>([]);
   const [genres, setGenres] = useState<Genre[]>([]);
+  const [platforms, setPlatforms] = useState<PlatformFilterOption[]>([]);
   const [pagination, setPagination] = useState<PaginationType | null>(null);
   const [loading, setLoading] = useState(true);
   const [initialLoading, setInitialLoading] = useState(true);
@@ -54,6 +55,20 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
 
     if (result) {
       setGenres(result);
+    }
+  }, [locale, apiClient, executeAsync]);
+
+  // Fetch platforms au montage (prioritaire, avant les jeux)
+  const fetchPlatforms = useCallback(async () => {
+    const result = await executeAsync(async () => {
+      const data = await apiClient.get(`/api/platforms?locale=${locale}`, {
+        retryConfig: { maxAttempts: 2 },
+      });
+      return data.platforms || [];
+    }, "fetchPlatforms");
+
+    if (result) {
+      setPlatforms(result);
     }
   }, [locale, apiClient, executeAsync]);
 
@@ -117,6 +132,10 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
     [locale, apiClient, executeAsync]
   );
 
+  // Ref stable pour éviter les re-triggers du useEffect
+  const fetchGamesRef = useRef(fetchGames);
+  fetchGamesRef.current = fetchGames;
+
   // Handle genre filter
   const handleGenreFilter = useCallback((genres: string[]) => {
     setSelectedGenres(genres);
@@ -137,9 +156,9 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
   // Handle page change
   const handlePageChange = useCallback(
     (page: number) => {
-      fetchGames(selectedGenres, selectedPublishers, page, selectedPlatforms);
+      fetchGamesRef.current(selectedGenres, selectedPublishers, page, selectedPlatforms);
     },
-    [fetchGames, selectedGenres, selectedPublishers, selectedPlatforms]
+    [selectedGenres, selectedPublishers, selectedPlatforms]
   );
 
   // Clear all filters
@@ -152,8 +171,11 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
 
   // Initial load - ne dépend PAS de fetchGames pour éviter la boucle
   useEffect(() => {
+    // Charger filtres en priorité (genres + plateformes)
     fetchGenres();
-    // Appel direct sans dépendre de fetchGames
+    fetchPlatforms();
+
+    // Puis charger les jeux
     const loadInitialGames = async () => {
       setLoading(true);
       setInitialLoading(true);
@@ -196,11 +218,11 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
     if (initialLoading) return;
 
     const timeoutId = setTimeout(() => {
-      fetchGames(selectedGenres, selectedPublishers, 1, selectedPlatforms);
-    }, 300); // Debounce de 300ms
+      fetchGamesRef.current(selectedGenres, selectedPublishers, 1, selectedPlatforms);
+    }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [selectedGenres, selectedPublishers, selectedPlatforms, fetchGames]); // Inclure fetchGames
+  }, [selectedGenres, selectedPublishers, selectedPlatforms, initialLoading]);
 
   // Show full skeleton on initial load
   if (initialLoading) {
@@ -225,22 +247,16 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
           {/* Filter content below - full width */}
           <GameFilters
             genres={genres}
+            platforms={platforms}
             selectedGenres={selectedGenres}
             selectedPublishers={selectedPublishers}
+            selectedPlatforms={selectedPlatforms}
             onGenreChange={handleGenreFilter}
             onPublisherChange={handlePublisherFilter}
+            onPlatformsChange={handlePlatformFilter}
             onClearFilters={handleClearFilters}
             showAllGenres={showFilters}
           />
-
-          {/* Platform filter */}
-          {showFilters && (
-            <PlatformFilter
-              selectedPlatforms={selectedPlatforms}
-              onPlatformsChange={handlePlatformFilter}
-              locale={locale}
-            />
-          )}
         </div>
 
         {/* Loading state - Show skeleton grid instead of spinner */}

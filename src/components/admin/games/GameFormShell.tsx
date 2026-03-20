@@ -3,10 +3,11 @@
 import { type UseFormReturn } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { FaImage, FaSave } from "react-icons/fa";
+
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
 import { SUPPORTED_LANGUAGES, type AdminGenre, type Tab, type TabId } from "@/types/admin-games";
 import { generateSlugFromTitle } from "@/lib/utils/slug-utils";
+import { Icon } from "@iconify/react";
 
 /** Hero banner showing cover, title, slug and genres */
 export function HeroBanner({
@@ -49,7 +50,7 @@ export function HeroBanner({
             />
           ) : (
             <div className="flex h-44 w-32 items-center justify-center rounded-xl border-2 border-dashed border-white/20 bg-white/5 backdrop-blur-sm">
-              <FaImage className="h-8 w-8 text-white/30" />
+              <Icon icon="fa:image" className="h-8 w-8 text-white/30"  />
             </div>
           )}
         </div>
@@ -216,7 +217,7 @@ export function StickySubmitBar({
             <LoadingSpinner size="sm" />
           ) : (
             <>
-              <FaSave className="h-4 w-4" />
+              <Icon icon="fa:save" className="h-4 w-4"  />
               {mode === "create" ? t("create") : t("save")}
             </>
           )}

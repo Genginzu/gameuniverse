@@ -2,6 +2,7 @@
 
 import { Link, usePathname } from "@/i18n/navigation";
 import { NAV_LINKS, PUBLIC_LINKS, isActive } from "@/lib/utils/navigation-utils";
+import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import UnreadBadge from "@/components/discussions/UnreadBadge";
 import { useUnreadCount } from "@/hooks/useUnreadCount";
@@ -42,11 +43,11 @@ export default function SidebarNav({
       <p className="px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-500">
         {tNav("explore")}
       </p>
-      {PUBLIC_LINKS.map(({ href, icon: Icon, labelKey }) => {
+      {PUBLIC_LINKS.map(({ href, icon, labelKey }) => {
         const active = isActive(pathname, href, currentUserId);
         return (
           <Link key={href} href={href} onClick={onLinkClick} className={linkClasses(active)}>
-            <Icon className={iconClasses(active)} />
+            <Icon icon={icon} className={iconClasses(active)} />
             <span>{tNav(labelKey)}</span>
           </Link>
         );
@@ -58,11 +59,11 @@ export default function SidebarNav({
           <p className="px-3 pb-1 pt-4 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-500">
             {t("mySpace")}
           </p>
-          {NAV_LINKS.map(({ href, icon: Icon, labelKey }) => {
+          {NAV_LINKS.map(({ href, icon, labelKey }) => {
             const active = isActive(pathname, href, currentUserId);
             return (
               <Link key={href} href={href} onClick={onLinkClick} className={linkClasses(active)}>
-                <Icon className={iconClasses(active)} />
+                <Icon icon={icon} className={iconClasses(active)} />
                 <span>{t(labelKey)}</span>
                 {href === "/discussions" && <UnreadBadge count={unreadCount} />}
               </Link>

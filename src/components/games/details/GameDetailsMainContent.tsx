@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { GameDetails } from "@/types/game";
 import { GameColors } from "@/lib/utils/game-utils";
+import { getPlatformIcon } from "@/lib/utils/platform-icons";
+import { Icon } from "@iconify/react";
 import { GameDetailsTabs, TabType } from "./GameDetailsTabs";
 import { RecommendationSection } from "@/components/games/RecommendationSection";
 
@@ -26,18 +28,22 @@ export function GameDetailsMainContent({
   const [activeTab, setActiveTab] = useState<TabType>("overview");
   return (
     <div className="min-w-0 flex-1">
-      {/* Genres pills */}
-      {game.genres.length > 0 && (
+      {/* Platforms */}
+      {game.platforms?.length > 0 && (
         <div className="mb-3 flex flex-wrap gap-2">
-          {game.genres.slice(0, 4).map((genre) => (
-            <Badge
-              key={genre.id}
-              variant="secondary"
-              className="pointer-events-none rounded-full border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-300 backdrop-blur-sm"
-            >
-              {genre.name}
-            </Badge>
-          ))}
+          {game.platforms.map((platform) => {
+            const platformIconName = getPlatformIcon(platform.slug);
+            return (
+              <Badge
+                key={platform.id}
+                variant="secondary"
+                className="pointer-events-none inline-flex items-center gap-1.5 rounded-full border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-300 backdrop-blur-sm"
+              >
+                <Icon icon={platformIconName} className="h-3 w-3 shrink-0" />
+                {platform.abbreviation || platform.name}
+              </Badge>
+            );
+          })}
         </div>
       )}
 
