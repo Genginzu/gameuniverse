@@ -13,7 +13,6 @@ const DEFAULT_LIMIT = 5;
  * Query Parameters:
  * - query (required): Search query string (minimum 2 characters after trim)
  * - locale (optional): Locale for translations (default: "fr")
- * - gamesLimit (optional): Maximum game results (default: 5)
  * - charactersLimit (optional): Maximum character results (default: 5)
  * - playersLimit (optional): Maximum player results (default: 5)
  *
@@ -38,14 +37,13 @@ export async function GET(
     const locale = searchParams.get("locale") || "fr";
 
     // Parse optional limit parameters with defaults (Requirement 2.5)
-    const gamesLimit = parseLimit(searchParams.get("gamesLimit"));
+    // Games: no limit — return all matching local games
     const charactersLimit = parseLimit(searchParams.get("charactersLimit"));
     const playersLimit = parseLimit(searchParams.get("playersLimit"));
 
     const result = await GlobalSearchService.search({
       query,
       locale,
-      gamesLimit,
       charactersLimit,
       playersLimit,
     });
@@ -64,9 +62,9 @@ export async function GET(
   }
 }
 
-/** Parses a limit query param to a positive integer, falling back to DEFAULT_LIMIT. */
-function parseLimit(value: string | null): number {
-  if (value === null) return DEFAULT_LIMIT;
+/** Parses a limit query param to a positive integer, falling back to the given default. */
+function parseLimit(value: string | null, fallback: number = DEFAULT_LIMIT): number {
+  if (value === null) return fallback;
   const parsed = parseInt(value, 10);
-  return isNaN(parsed) || parsed < 1 ? DEFAULT_LIMIT : parsed;
+  return isNaN(parsed) || parsed < 1 ? fallback : parsed;
 }

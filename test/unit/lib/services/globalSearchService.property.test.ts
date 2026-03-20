@@ -387,8 +387,17 @@ describe("GlobalSearchService Property-Based Tests", () => {
           fc.array(characterSummaryArb, { maxLength: 5 }),
           fc.array(playerSummaryArb, { maxLength: 5 }),
           (localGames, igdbGames, characters, players) => {
+            // Deduplicate IGDB games by id to avoid ambiguous find() matches after sort
+            const uniqueIgdb = igdbGames.filter(
+              (g, i, arr) => arr.findIndex((x) => x.id === g.id) === i
+            );
+            // Deduplicate local games by id
+            const uniqueLocal = localGames.filter(
+              (g, i, arr) => arr.findIndex((x) => x.id === g.id) === i
+            );
+
             const result: GlobalSearchResult = {
-              games: { local: localGames, igdb: igdbGames },
+              games: { local: uniqueLocal, igdb: uniqueIgdb },
               characters,
               players,
               errors: [],
@@ -396,31 +405,30 @@ describe("GlobalSearchService Property-Based Tests", () => {
 
             const response = GlobalSearchService.toGlobalSearchResponse(result);
 
+            // Response games are sorted by releaseYear desc, so look up by id
             // Local games: preserve id, slug, title, coverUrl, developer, releaseYear, source
-            for (let i = 0; i < localGames.length; i++) {
-              const src = localGames[i];
-              const dst = response.games[i];
-              expect(dst.id).toBe(src.id);
-              expect(dst.slug).toBe(src.slug);
-              expect(dst.title).toBe(src.title);
-              expect(dst.coverUrl).toBe(src.coverImage);
-              expect(dst.developer).toBe(src.developer || undefined);
-              expect(dst.releaseYear).toBe(src.releaseYear);
-              expect(dst.source).toBe("local");
+            for (const src of uniqueLocal) {
+              const dst = response.games.find((g) => g.id === src.id && g.source === "local");
+              expect(dst).toBeDefined();
+              expect(dst!.slug).toBe(src.slug);
+              expect(dst!.title).toBe(src.title);
+              expect(dst!.coverUrl).toBe(src.coverImage);
+              expect(dst!.developer).toBe(src.developer || undefined);
+              expect(dst!.releaseYear).toBe(src.releaseYear);
             }
 
             // IGDB games: preserve id (as string), slug, name→title, cover_url, developer, release_year
-            for (let i = 0; i < igdbGames.length; i++) {
-              const src = igdbGames[i];
-              const dst = response.games[localGames.length + i];
-              expect(dst.id).toBe(String(src.id));
-              expect(dst.igdbId).toBe(src.id);
-              expect(dst.slug).toBe(src.slug);
-              expect(dst.title).toBe(src.name);
-              expect(dst.coverUrl).toBe(src.cover_url);
-              expect(dst.developer).toBe(src.developer);
-              expect(dst.releaseYear).toBe(src.release_year);
-              expect(dst.source).toBe("igdb");
+            for (const src of uniqueIgdb) {
+              const dst = response.games.find(
+                (g) => g.id === String(src.id) && g.source === "igdb"
+              );
+              expect(dst).toBeDefined();
+              expect(dst!.igdbId).toBe(src.id);
+              expect(dst!.slug).toBe(src.slug);
+              expect(dst!.title).toBe(src.name);
+              expect(dst!.coverUrl).toBe(src.cover_url);
+              expect(dst!.developer).toBe(src.developer);
+              expect(dst!.releaseYear).toBe(src.release_year);
             }
 
             // Characters: preserve id, slug, name, mainImage, role, primaryGame

@@ -61,14 +61,10 @@ export function GlobalSearchGameItem({ item, isActive, isImporting }: GlobalSear
         )}
       </div>
 
-      {/* Title + meta below cover */}
+      {/* Title + release year below cover */}
       <div className="mt-2.5 px-0.5">
         <p className="truncate text-sm font-medium text-white/90">{item.title}</p>
-        {(item.developer || item.releaseYear) && (
-          <p className="truncate text-xs text-white/40">
-            {[item.developer, item.releaseYear].filter(Boolean).join(" · ")}
-          </p>
-        )}
+        {item.releaseYear && <p className="truncate text-xs text-white/40">{item.releaseYear}</p>}
       </div>
     </div>
   );

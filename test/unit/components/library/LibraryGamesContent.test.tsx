@@ -304,8 +304,9 @@ describe("LibraryGamesContent Component Rendering", () => {
       const filterButton = screen.getByRole("button", { name: /filtrer/i });
       fireEvent.click(filterButton);
 
+      // GameFilters renders genre names when showAllGenres is true
       await waitFor(() => {
-        expect(screen.getByText("Tous les genres")).toBeTruthy();
+        expect(screen.getByText("Action")).toBeTruthy();
       });
     });
   });

@@ -58,7 +58,7 @@ const MIN_LIMIT = 1;
  *
  * - Returns page=1 for invalid/missing page values
  * - Returns limit=20 for invalid/missing limit values
- * - Clamps limit between 1 and 50
+ * - Clamps limit between 1 and maxLimit (default 50)
  *
  * @param searchParams - URLSearchParams object from request URL
  * @param defaults - Optional custom default values
@@ -70,10 +70,11 @@ const MIN_LIMIT = 1;
  */
 export function parsePaginationParams(
   searchParams: URLSearchParams,
-  defaults?: { page?: number; limit?: number }
+  defaults?: { page?: number; limit?: number; maxLimit?: number }
 ): PaginationParams {
   const defaultPage = defaults?.page ?? DEFAULT_PAGE;
   const defaultLimit = defaults?.limit ?? DEFAULT_LIMIT;
+  const maxLimit = defaults?.maxLimit ?? MAX_LIMIT;
 
   const pageStr = searchParams.get("page");
   const limitStr = searchParams.get("limit");
@@ -90,7 +91,7 @@ export function parsePaginationParams(
   if (limitStr !== null) {
     const parsed = parseInt(limitStr, 10);
     if (!isNaN(parsed)) {
-      limit = Math.min(MAX_LIMIT, Math.max(MIN_LIMIT, parsed));
+      limit = Math.min(maxLimit, Math.max(MIN_LIMIT, parsed));
     }
   }
 

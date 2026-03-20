@@ -20,8 +20,22 @@ export function PlayerCard({ player, locale = "fr", priority = false }: PlayerCa
   return (
     <Link href={`/${locale}/players/${player.id}`} className="group block">
       <div className="relative overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-xl dark:bg-gray-800">
-        {/* Gradient banner */}
-        <div className="h-20 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-400" />
+        {/* Banner */}
+        {player.bannerUrl ? (
+          <div className="relative h-20">
+            <LazyImage
+              src={player.bannerUrl}
+              alt=""
+              fill
+              className="object-cover"
+              sizes="(max-width: 640px) 100vw, 300px"
+              showSkeleton
+              priority={priority}
+            />
+          </div>
+        ) : (
+          <div className="h-20 bg-gradient-to-r from-[#615dfa] via-[#5b36d4] to-[#7c5cfc]" />
+        )}
 
         {/* Avatar with level badge */}
         <div className="relative z-10 -mt-12 flex justify-center">

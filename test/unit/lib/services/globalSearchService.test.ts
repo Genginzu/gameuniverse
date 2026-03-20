@@ -72,7 +72,7 @@ describe("GlobalSearchService.search", () => {
       query: "mario",
       locale: "en",
       localLimit: 3,
-      igdbLimit: 3,
+      igdbLimit: 499,
     });
     expect(mockFetchCharacters).toHaveBeenCalledWith({
       search: "mario",
@@ -90,8 +90,9 @@ describe("GlobalSearchService.search", () => {
   it("should use default limit of 5 when not specified", async () => {
     await GlobalSearchService.search(buildRequest({ query: "test" }));
 
+    // gamesLimit is undefined → searchGames uses 10000 local, 499 IGDB
     expect(mockHybridSearch).toHaveBeenCalledWith(
-      expect.objectContaining({ localLimit: 5, igdbLimit: 5 })
+      expect.objectContaining({ localLimit: 10000, igdbLimit: 499 })
     );
     expect(mockFetchCharacters).toHaveBeenCalledWith(expect.objectContaining({ limit: 5 }));
     expect(mockFetchPlayers).toHaveBeenCalledWith(expect.objectContaining({ limit: 5 }));

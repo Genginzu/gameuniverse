@@ -102,6 +102,7 @@ export default [
       // Relax some rules for tests
       "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-unused-vars": "off",
+      "no-useless-assignment": "off",
       "no-console": "off",
     },
   },

@@ -100,7 +100,7 @@ export function GameFilters({
                   onClick={() => handleGenreToggle(genre.name)}
                   className={`rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
                     isSelected
-                      ? "bg-gradient-to-r from-[#615dfa] via-[#5b36d4] to-[#7c5cfc] text-white shadow-sm"
+                      ? "bg-gradient-to-r from-cyan-500 to-violet-500 text-white shadow-sm"
                       : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700/50 dark:text-gray-300 dark:hover:bg-slate-700"
                   }`}
                 >

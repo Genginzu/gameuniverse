@@ -119,6 +119,7 @@ export class PlayerService {
         id,
         username,
         avatar_url,
+        banner_url,
         created_at
       `,
       { count: "exact" }
@@ -181,6 +182,7 @@ export class PlayerService {
           id: profile.id,
           fullName: profile.username,
           avatarUrl: profile.avatar_url,
+          bannerUrl: profile.banner_url,
           gamesCount,
           level: 1,
           socialLinks: {},

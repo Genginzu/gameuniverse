@@ -87,7 +87,6 @@ describe("GET /api/search/global", () => {
     expect(mockSearch).toHaveBeenCalledWith({
       query: "mario",
       locale: "fr",
-      gamesLimit: 5,
       charactersLimit: 5,
       playersLimit: 5,
     });
@@ -98,7 +97,6 @@ describe("GET /api/search/global", () => {
       makeRequest({
         query: "link",
         locale: "en",
-        gamesLimit: "3",
         charactersLimit: "10",
         playersLimit: "2",
       })
@@ -107,7 +105,6 @@ describe("GET /api/search/global", () => {
     expect(mockSearch).toHaveBeenCalledWith({
       query: "link",
       locale: "en",
-      gamesLimit: 3,
       charactersLimit: 10,
       playersLimit: 2,
     });
@@ -117,7 +114,6 @@ describe("GET /api/search/global", () => {
     await GET(
       makeRequest({
         query: "test",
-        gamesLimit: "abc",
         charactersLimit: "-1",
         playersLimit: "0",
       })
@@ -126,7 +122,6 @@ describe("GET /api/search/global", () => {
     expect(mockSearch).toHaveBeenCalledWith({
       query: "test",
       locale: "fr",
-      gamesLimit: 5,
       charactersLimit: 5,
       playersLimit: 5,
     });

@@ -61,23 +61,28 @@ Le projet utilise des couleurs néon comme accents :
 ## Gradient principal (obligatoire)
 
 Lorsqu'un gradient est utilisé (bannières, boutons d'accent, barres de
-progression, badges, etc.), il **doit** reprendre le gradient du header
-(`.topbar` dans `globals.css`) :
+progression, badges, cercles, etc.), il **doit** reprendre le gradient cyan →
+violet utilisé dans les cercles d'avis de l'onglet stats joueur
+(`ReviewMetricsRadial`) :
 
 ```css
-/* Light */
-background: linear-gradient(135deg, #615dfa 0%, #5b36d4 50%, #7c5cfc 100%);
+/* CSS — direction adaptable selon le contexte */
+background: linear-gradient(to right, rgb(6, 182, 212), rgb(139, 92, 246));
 
-/* Dark */
-background: linear-gradient(135deg, #4a3fcf 0%, #3d1fa8 50%, #5b3fd4 100%);
+/* SVG (linearGradient) */
+<stop offset="0%" stop-color="rgb(6, 182, 212)" />   /* cyan */
+<stop offset="100%" stop-color="rgb(139, 92, 246)" /> /* violet */
 
-/* Équivalent Tailwind (approximation) */
-bg-gradient-to-r from-[#615dfa] via-[#5b36d4] to-[#7c5cfc]
+/* Équivalent Tailwind */
+bg-gradient-to-r from-cyan-500 to-violet-500
+/* ou avec les custom colors du projet */
+bg-gradient-to-r from-neon-cyan to-neon-violet
 ```
 
-- ✅ Utiliser ce gradient comme référence unique pour tout nouvel élément.
+- ✅ Utiliser ce gradient cyan → violet comme référence unique pour tout nouvel
+  élément.
 - ❌ Ne **jamais** inventer un gradient custom différent (ex : rouge-orange,
-  vert-jaune, bleu→violet, etc.) sans validation explicite.
+  vert-jaune, violet monochrome, etc.) sans validation explicite.
 
 ## Règles obligatoires
 

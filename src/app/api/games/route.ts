@@ -15,7 +15,9 @@ export async function GET(request: NextRequest) {
     const search = searchParams.get("search") || "";
     const genres = parseArrayParam(searchParams.get("genres"));
     const platforms = parseArrayParam(searchParams.get("platforms"));
-    const { page, limit } = parsePaginationParams(searchParams);
+    const { page, limit } = parsePaginationParams(searchParams, {
+      maxLimit: search.trim() ? 10000 : undefined,
+    });
     const locale = searchParams.get("locale") || "fr";
     const inLibrary = searchParams.get("inLibrary") === "true";
 
@@ -50,7 +52,8 @@ export async function GET(request: NextRequest) {
       const searchWords = search.trim().split(/\s+/).filter(Boolean);
 
       // Find game IDs where any translation title matches all search words
-      let searchQuery = supabase.from("game_translations").select("game_id");
+      // Explicit limit to avoid PostgREST default max_rows truncation
+      let searchQuery = supabase.from("game_translations").select("game_id").limit(10000);
 
       for (const word of searchWords) {
         searchQuery = searchQuery.ilike("title", `%${word}%`);

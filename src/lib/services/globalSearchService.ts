@@ -25,7 +25,7 @@ export class GlobalSearchService {
     const {
       query,
       locale = "fr",
-      gamesLimit = DEFAULT_LIMIT,
+      gamesLimit,
       charactersLimit = DEFAULT_LIMIT,
       playersLimit = DEFAULT_LIMIT,
     } = request;
@@ -108,7 +108,13 @@ export class GlobalSearchService {
       source: "igdb" as const,
     }));
 
-    const games = [...localGames, ...igdbGames];
+    // Sort by release year descending (newest first), games without year go last
+    const games = [...localGames, ...igdbGames].sort((a, b) => {
+      if (!a.releaseYear && !b.releaseYear) return 0;
+      if (!a.releaseYear) return 1;
+      if (!b.releaseYear) return -1;
+      return b.releaseYear - a.releaseYear;
+    });
 
     const characters = result.characters.map((character) => ({
       id: character.id,
@@ -139,18 +145,21 @@ export class GlobalSearchService {
 
   /**
    * Searches games via HybridSearchService (local Supabase + IGDB).
-   * Returns both local and IGDB results separately for the GlobalSearchResult shape.
+   * Returns all matching games from both local DB and IGDB.
    */
   private static async searchGames(
     query: string,
     locale: string,
-    limit: number
+    limit?: number
   ): Promise<GlobalSearchResult["games"]> {
+    // No limit = fetch all matching games (10000 local, 499 IGDB max)
+    const effectiveLimit = limit ?? 10000;
+
     const result = await HybridSearchService.search({
       query,
       locale,
-      localLimit: limit,
-      igdbLimit: limit,
+      localLimit: effectiveLimit,
+      igdbLimit: 499,
     });
 
     return {

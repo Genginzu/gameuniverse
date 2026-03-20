@@ -9,6 +9,7 @@ export interface PlayerSummary {
   id: string;
   fullName: string | null;
   avatarUrl: string | null;
+  bannerUrl: string | null;
   gamesCount: number;
   level: number;
   socialLinks: PlayerSocialLinks;
