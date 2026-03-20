@@ -148,7 +148,7 @@ function AgeRatingPreviewCard({
       <div className="flex items-start gap-3">
         {/* Rating badge */}
         <div
-          className="flex h-12 w-10 flex-shrink-0 items-center justify-center rounded-lg text-sm font-bold"
+          className="flex h-12 w-10 shrink-0 items-center justify-center rounded-lg text-sm font-bold"
           style={{
             backgroundColor: rating.color_hex ? `${rating.color_hex}30` : `${colors.accent}20`,
             color: rating.color_hex || colors.accent,

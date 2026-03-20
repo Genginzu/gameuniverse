@@ -24,7 +24,7 @@ export default function SidebarNav({
   const { count: unreadCount } = useUnreadCount();
 
   const linkClasses = (active: boolean) =>
-    `group flex items-center rounded-lg px-3 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-neon-violet/60 focus:ring-offset-1 focus:ring-offset-transparent motion-safe:transition-all motion-safe:duration-200 ${
+    `group flex items-center rounded-lg px-3 py-2.5 text-sm font-medium focus:outline-hidden focus:ring-2 focus:ring-neon-violet/60 focus:ring-offset-1 focus:ring-offset-transparent motion-safe:transition-all motion-safe:duration-200 ${
       active
         ? "border-l-2 border-neon-violet bg-neon-violet/10 text-neon-violet shadow-[0_0_8px_rgb(var(--neon-violet)/0.6)]"
         : "border-l-2 border-transparent text-gray-700 motion-safe:hover:bg-black/5 motion-safe:hover:text-gray-900 dark:text-gray-400 dark:motion-safe:hover:bg-white/10 dark:motion-safe:hover:text-white"

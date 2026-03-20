@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Clock, Gamepad2, Trophy } from "lucide-react";
 import type { PlaytimeData } from "@/types/dashboard-stats";
+import Image from "next/image";
 import { formatLocalizedNumber } from "@/lib/utils/statsFormatters";
 import { StatsEmptyState } from "@/components/players/stats/StatsEmptyState";
 import { StatsSectionTitle } from "@/components/players/stats/StatsSectionTitle";
@@ -33,7 +34,7 @@ export function PlaytimeStats({ playtime, locale }: PlaytimeStatsProps) {
       <div className="flex flex-col gap-4 md:flex-row">
         {/* Average play time card */}
         <div className="glass-card flex flex-1 items-center gap-4 rounded-xl p-5 transition-all duration-300">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-neon-violet/20 text-neon-violet">
+          <div className="bg-neon-violet/20 text-neon-violet flex h-12 w-12 shrink-0 items-center justify-center rounded-xl">
             <Clock className="h-6 w-6" />
           </div>
           <div className="min-w-0">
@@ -57,9 +58,11 @@ export function PlaytimeStats({ playtime, locale }: PlaytimeStatsProps) {
             <>
               <div className="h-16 w-12 shrink-0 overflow-hidden rounded-lg">
                 {playtime.topGame.coverImage ? (
-                  <img
+                  <Image
                     src={playtime.topGame.coverImage}
                     alt={playtime.topGame.title}
+                    width={48}
+                    height={64}
                     className="h-full w-full object-cover"
                   />
                 ) : (
@@ -70,7 +73,7 @@ export function PlaytimeStats({ playtime, locale }: PlaytimeStatsProps) {
               </div>
               <div className="min-w-0 flex-1">
                 <div className="mb-1 flex items-center gap-1.5">
-                  <Trophy className="h-4 w-4 shrink-0 text-neon-cyan" />
+                  <Trophy className="text-neon-cyan h-4 w-4 shrink-0" />
                   <p className="truncate text-sm text-gray-500 dark:text-slate-400">
                     {t("playtime.topGame")}
                   </p>

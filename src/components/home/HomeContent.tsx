@@ -68,7 +68,7 @@ export function HomeContent() {
       <div className="mx-auto max-w-md text-center">
         <Link
           href="/auth?mode=signup"
-          className="neon-btn inline-flex items-center rounded-xl bg-gradient-to-r from-neon-violet/20 to-neon-cyan/20 px-6 py-3 font-semibold text-gray-900 transition-all duration-200 hover:from-neon-violet/30 hover:to-neon-cyan/30 dark:text-white"
+          className="neon-btn inline-flex items-center rounded-xl bg-linear-to-r from-neon-violet/20 to-neon-cyan/20 px-6 py-3 font-semibold text-gray-900 transition-all duration-200 hover:from-neon-violet/30 hover:to-neon-cyan/30 dark:text-white"
         >
           <Icon icon="fa:users" className="mr-3 h-5 w-5 text-neon-violet" />
           {t("cta.signup")}

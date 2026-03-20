@@ -164,7 +164,7 @@ export function AllPlayersContent({ locale = "fr" }: AllPlayersContentProps) {
   // Show full skeleton on initial load - Requirements 1.3
   if (initialLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+      <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
           <GridSkeleton skeletonConfig={playerSkeletonConfig} count={20} />
         </div>
@@ -173,7 +173,7 @@ export function AllPlayersContent({ locale = "fr" }: AllPlayersContentProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
         {/* Search and Filters - Requirements 3.1, 4.1 */}
         <div className="mb-6 space-y-4 sm:mb-8">
@@ -182,7 +182,7 @@ export function AllPlayersContent({ locale = "fr" }: AllPlayersContentProps) {
             <div className="flex-1">
               <PlayerSearchBar onSearch={handleSearch} initialValue={searchQuery} />
             </div>
-            <div className="flex-shrink-0">
+            <div className="shrink-0">
               <PlayerFilterButton
                 hasFilters={selectedGameCounts.length > 0}
                 filterCount={selectedGameCounts.length}
@@ -212,8 +212,8 @@ export function AllPlayersContent({ locale = "fr" }: AllPlayersContentProps) {
           <>
             {players.length === 0 ? (
               // Empty state - Requirements 1.4
-              <div className="flex flex-col items-center justify-center rounded-2xl bg-white py-16 text-center shadow-sm dark:bg-gray-800 sm:py-20">
-                <div className="mb-6 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 p-6 dark:from-gray-700 dark:to-gray-600">
+              <div className="flex flex-col items-center justify-center rounded-2xl bg-white py-16 text-center shadow-xs dark:bg-gray-800 sm:py-20">
+                <div className="mb-6 rounded-full bg-linear-to-br from-gray-100 to-gray-200 p-6 dark:from-gray-700 dark:to-gray-600">
                   <svg
                     className="h-12 w-12 text-gray-400 sm:h-16 sm:w-16"
                     fill="none"

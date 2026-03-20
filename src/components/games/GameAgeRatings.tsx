@@ -42,7 +42,7 @@ export function GameAgeRatings({ ratings, accentColor }: GameAgeRatingsProps) {
               <CardContent className="p-6">
                 <div className="flex items-start gap-4">
                   {/* Rating Image - only from IGDB or text fallback */}
-                  <div className="flex-shrink-0">
+                  <div className="shrink-0">
                     {imageUrl ? (
                       <div className="relative h-20 w-16 overflow-hidden rounded-lg bg-white/5">
                         <Image

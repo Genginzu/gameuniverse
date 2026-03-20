@@ -37,7 +37,7 @@ describe("Badge component", () => {
       expect(html).toContain("bg-destructive");
     });
 
-    it("should render with outline variant", () => {
+    it("should render with outline-solid variant", () => {
       const html = renderToString(<Badge variant="outline">Outline</Badge>);
       expect(html).toContain("Outline");
       expect(html).toContain("text-foreground");
@@ -72,7 +72,7 @@ describe("Badge component", () => {
       expect(classes).toContain("bg-destructive");
     });
 
-    it("should return outline classes", () => {
+    it("should return outline-solid classes", () => {
       const classes = badgeVariants({ variant: "outline" });
       expect(classes).toContain("text-foreground");
     });

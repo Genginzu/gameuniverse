@@ -5,6 +5,7 @@ import { useTranslations, useFormatter } from "next-intl";
 import { Trash2, Loader2, MoreHorizontal, User } from "lucide-react";
 import { LazyImage } from "@/components/ui/lazy-image";
 import type { Post } from "@/types/post";
+import Image from "next/image";
 import { PostContentRenderer } from "@/components/players/PostContentRenderer";
 
 interface PostCardProps {
@@ -82,12 +83,16 @@ export function PostCard({
       <div className="pl-[52px]">
         {/* Image above text */}
         {post.imageUrl && !imageError && (
-          <img
-            src={post.imageUrl}
-            alt=""
-            onError={() => setImageError(true)}
-            className="mb-3 w-full rounded-xl object-cover"
-          />
+          <div className="relative mb-3 aspect-video w-full overflow-hidden rounded-xl">
+            <Image
+              src={post.imageUrl}
+              alt=""
+              fill
+              onError={() => setImageError(true)}
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 600px"
+            />
+          </div>
         )}
 
         <PostContentRenderer
@@ -118,7 +123,7 @@ export function PostCard({
 /** Reusable avatar circle for posts */
 function PostAvatar({ src, alt }: { src: string | null; alt: string }) {
   return (
-    <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30">
+    <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-linear-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30">
       {src ? (
         <LazyImage src={src} alt={alt} fill className="object-cover" sizes="40px" showSkeleton />
       ) : (

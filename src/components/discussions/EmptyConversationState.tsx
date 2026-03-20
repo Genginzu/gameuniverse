@@ -11,7 +11,7 @@ export default function EmptyConversationState() {
       className="glass-card flex h-full w-full flex-col items-center justify-center gap-4 rounded-2xl p-8"
       data-testid="empty-conversation-state"
     >
-      <div className="rounded-2xl bg-gradient-to-br from-blue-500/20 via-purple-600/20 to-purple-700/20 p-5 shadow-[0_0_20px_rgba(139,92,246,0.15)] transition-all duration-300">
+      <div className="rounded-2xl bg-linear-to-br from-blue-500/20 via-purple-600/20 to-purple-700/20 p-5 shadow-[0_0_20px_rgba(139,92,246,0.15)] transition-all duration-300">
         <MessageSquare className="h-10 w-10 text-neon-violet" />
       </div>
       <div className="text-center">

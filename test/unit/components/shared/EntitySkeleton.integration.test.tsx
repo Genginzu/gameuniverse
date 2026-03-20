@@ -50,7 +50,7 @@ describe("EntitySkeleton integration tests", () => {
     it("should render with 3:4 aspect ratio", () => {
       const html = renderToString(<EntitySkeleton config={gameSkeletonConfig} />);
 
-      expect(html).toContain("aspect-[3/4]");
+      expect(html).toContain("aspect-3/4");
     });
 
     it("should render with 1:1 aspect ratio when configured", () => {
@@ -158,7 +158,7 @@ describe("EntitySkeleton integration tests", () => {
     it("should apply gradient background when configured", () => {
       const html = renderToString(<EntitySkeleton config={playerSkeletonConfig} />);
 
-      expect(html).toContain("bg-gradient-to-br");
+      expect(html).toContain("bg-linear-to-br");
       expect(html).toContain("from-blue-100");
       expect(html).toContain("to-indigo-100");
     });
@@ -172,10 +172,10 @@ describe("EntitySkeleton integration tests", () => {
 
       const html = renderToString(<EntitySkeleton config={config} />);
 
-      expect(html).not.toContain("bg-gradient-to-br");
+      expect(html).not.toContain("bg-linear-to-br");
     });
 
-    it("should render with rounded corners and shadow", () => {
+    it("should render with rounded corners and shadow-sm", () => {
       const html = renderToString(<EntitySkeleton config={playerSkeletonConfig} />);
 
       expect(html).toContain("rounded-2xl");

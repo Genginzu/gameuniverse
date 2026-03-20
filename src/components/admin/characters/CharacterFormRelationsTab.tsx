@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useMemo, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -119,13 +120,13 @@ export function CharacterFormRelationsTab({
           className="gap-1.5"
           disabled={pickableCharacters.length === 0}
         >
-          <Icon icon="fa:plus" className="h-3 w-3"  />
+          <Icon icon="fa:plus" className="h-3 w-3" />
           {t("addRelation") ?? "Ajouter une relation"}
         </Button>
       )}
 
       {form.formState.errors.relationships && (
-        <p className="text-sm font-medium text-destructive">
+        <p className="text-destructive text-sm font-medium">
           {form.formState.errors.relationships.message}
         </p>
       )}
@@ -154,14 +155,17 @@ function RelationRow({
   t: (key: string) => string;
 }) {
   return (
-    <div className="rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 dark:bg-primary/10">
+    <div className="border-primary/20 bg-primary/5 dark:bg-primary/10 rounded-xl border px-4 py-3">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           {characterImage && (
-            <img
+            <Image
               src={characterImage}
               alt={characterName}
+              width={40}
+              height={40}
               className="h-10 w-10 rounded-full border border-gray-200 object-cover dark:border-gray-700"
+              unoptimized
               onError={(e) => {
                 (e.target as HTMLImageElement).style.display = "none";
               }}
@@ -177,7 +181,7 @@ function RelationRow({
           className="rounded-md p-1 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20"
           aria-label={`Remove ${characterName}`}
         >
-          <Icon icon="fa:times" className="h-3 w-3"  />
+          <Icon icon="fa:times" className="h-3 w-3" />
         </button>
       </div>
       <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -249,12 +253,15 @@ function CharacterSearchPicker({
           onClick={onClose}
           className="rounded-md p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
         >
-          <Icon icon="fa:times" className="h-3 w-3"  />
+          <Icon icon="fa:times" className="h-3 w-3" />
         </button>
       </div>
 
       <div className="relative mb-3">
-        <Icon icon="fa:search" className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400"  />
+        <Icon
+          icon="fa:search"
+          className="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-gray-400"
+        />
         <Input
           ref={inputRef}
           type="text"
@@ -286,13 +293,16 @@ function CharacterSearchPicker({
                 role="option"
                 aria-selected={false}
                 onClick={() => onSelect(character.id)}
-                className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors hover:bg-primary/10 dark:hover:bg-primary/20"
+                className="hover:bg-primary/10 dark:hover:bg-primary/20 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors"
               >
                 {character.mainImage && (
-                  <img
+                  <Image
                     src={character.mainImage}
                     alt=""
-                    className="h-8 w-8 flex-shrink-0 rounded-full border border-gray-200 object-cover dark:border-gray-700"
+                    width={32}
+                    height={32}
+                    className="h-8 w-8 shrink-0 rounded-full border border-gray-200 object-cover dark:border-gray-700"
+                    unoptimized
                     onError={(e) => {
                       (e.target as HTMLImageElement).style.display = "none";
                     }}

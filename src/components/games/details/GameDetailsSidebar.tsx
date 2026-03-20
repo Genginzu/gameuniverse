@@ -33,11 +33,11 @@ export function GameDetailsSidebar({ game, colors, formatReleaseDate }: GameDeta
   const isProcessing = loading || adding;
 
   return (
-    <div className="w-full flex-shrink-0 lg:w-[320px]">
+    <div className="w-full shrink-0 lg:w-[320px]">
       <div className="sticky top-24 space-y-4">
         {/* Cover image */}
         <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-lg shadow-black/20 backdrop-blur-xl">
-          <div className="relative aspect-[3/4]">
+          <div className="relative aspect-3/4">
             <LazyImage
               src={game.media.coverImage}
               alt={game.title}

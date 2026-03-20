@@ -14,7 +14,7 @@ export function LandingCta() {
 
   return (
     <section className="relative overflow-hidden bg-slate-950 py-24 text-white">
-      <div className="absolute inset-0 bg-gradient-to-br from-neon-violet/10 via-transparent to-neon-cyan/10" />
+      <div className="absolute inset-0 bg-linear-to-br from-neon-violet/10 via-transparent to-neon-cyan/10" />
 
       <div className="relative mx-auto max-w-4xl px-6 text-center sm:px-8 lg:px-12">
         <h2 className="neon-text mb-6 text-4xl font-bold sm:text-5xl">{t("cta.title")}</h2>

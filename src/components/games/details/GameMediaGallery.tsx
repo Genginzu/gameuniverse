@@ -128,7 +128,7 @@ export function GameMediaGallery({ media, gameTitle }: GameMediaGalleryProps) {
 
                     {/* Overlay play button */}
                     <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity group-hover:opacity-100">
-                      <div className="rounded-full bg-white/20 p-3 backdrop-blur-sm">
+                      <div className="rounded-full bg-white/20 p-3 backdrop-blur-xs">
                         <Play className="h-6 w-6 text-white" />
                       </div>
                     </div>

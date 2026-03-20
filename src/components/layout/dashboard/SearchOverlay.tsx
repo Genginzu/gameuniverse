@@ -156,7 +156,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
       role="dialog"
       aria-modal="true"
       aria-label={t("placeholder")}
-      className="fixed inset-0 z-50 flex items-start justify-center bg-black/70 pt-[12vh] backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-start justify-center bg-black/70 pt-[12vh] backdrop-blur-xs"
       onClick={handleBackdropClick}
       onKeyDown={handleFocusTrap}
     >
@@ -170,7 +170,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={onKeyDown}
-            className="h-16 w-full border-b-2 border-white bg-transparent text-3xl font-light text-white placeholder-white/40 caret-white focus:outline-none sm:text-4xl"
+            className="h-16 w-full border-b-2 border-white bg-transparent text-3xl font-light text-white placeholder-white/40 caret-white focus:outline-hidden sm:text-4xl"
             aria-label={t("placeholder")}
             aria-autocomplete="list"
             role="combobox"
@@ -191,7 +191,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                 setQuery("");
                 inputRef.current?.focus();
               }}
-              className="absolute inset-y-0 right-0 flex items-center pr-2 text-white/40 transition-colors hover:text-white focus:outline-none"
+              className="absolute inset-y-0 right-0 flex items-center pr-2 text-white/40 transition-colors hover:text-white focus:outline-hidden"
               aria-label="Clear"
             >
               <X className="h-6 w-6" />

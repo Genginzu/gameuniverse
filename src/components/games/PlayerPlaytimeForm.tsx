@@ -139,7 +139,7 @@ export function PlayerPlaytimeForm({
                   setValidationError(null);
                 }}
                 placeholder={t("fieldPlaceholder")}
-                className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-3 py-2 text-sm text-white placeholder-slate-400 focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+                className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-3 py-2 text-sm text-white placeholder-slate-400 focus:border-slate-500 focus:outline-hidden focus:ring-1 focus:ring-slate-500"
                 disabled={submitting}
                 aria-label={label}
               />

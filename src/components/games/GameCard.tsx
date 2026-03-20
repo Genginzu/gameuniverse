@@ -80,7 +80,7 @@ export function GameCard({
       <Link href={`/${locale}/games/${game.slug}`}>
         {/* Cover Image with Overlay */}
         <div
-          className="relative aspect-[3/4] cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(var(--neon-violet),0.3),0_0_40px_rgba(var(--neon-cyan),0.15)] hover:ring-1 hover:ring-neon-violet/30 motion-reduce:transition-none motion-reduce:hover:scale-100"
+          className="relative aspect-3/4 cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(var(--neon-violet),0.3),0_0_40px_rgba(var(--neon-cyan),0.15)] hover:ring-1 hover:ring-neon-violet/30 motion-reduce:transition-none motion-reduce:hover:scale-100"
           style={{
             backgroundColor: game.backgroundColor || "#f3f4f6", // Fallback to gray-100
           }}
@@ -117,7 +117,7 @@ export function GameCard({
               <div
                 className={`${getMetascoreColor(
                   game.metascore
-                )} flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold text-white shadow-[0_0_10px_currentColor] ring-2 ring-white/20 backdrop-blur-sm`}
+                )} flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold text-white shadow-[0_0_10px_currentColor] ring-2 ring-white/20 backdrop-blur-xs`}
               >
                 {game.metascore}
               </div>
@@ -125,7 +125,7 @@ export function GameCard({
           )}
 
           {/* Hover Overlay - appears on the cover */}
-          <div className="absolute inset-0 z-10 flex flex-col justify-end rounded-2xl bg-gradient-to-t from-black/90 via-black/60 to-transparent opacity-0 transition-all duration-300 group-hover:opacity-100">
+          <div className="absolute inset-0 z-10 flex flex-col justify-end rounded-2xl bg-linear-to-t from-black/90 via-black/60 to-transparent opacity-0 transition-all duration-300 group-hover:opacity-100">
             <div className="p-4">
               {/* Title */}
               <h3 className="mb-2 line-clamp-2 text-lg font-bold text-white">{game.title}</h3>
@@ -151,7 +151,7 @@ export function GameCard({
                     <Badge
                       key={index}
                       variant="secondary"
-                      className="rounded-full bg-white/20 px-2 py-0.5 text-xs font-medium text-white backdrop-blur-sm"
+                      className="rounded-full bg-white/20 px-2 py-0.5 text-xs font-medium text-white backdrop-blur-xs"
                     >
                       {genre.name}
                     </Badge>
@@ -159,7 +159,7 @@ export function GameCard({
                   {game.genres.length > 2 && (
                     <Badge
                       variant="outline"
-                      className="rounded-full border-white/30 bg-white/10 px-2 py-0.5 text-xs font-medium text-white backdrop-blur-sm"
+                      className="rounded-full border-white/30 bg-white/10 px-2 py-0.5 text-xs font-medium text-white backdrop-blur-xs"
                     >
                       +{game.genres.length - 2}
                     </Badge>

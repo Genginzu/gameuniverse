@@ -85,7 +85,7 @@ Implémentation incrémentale de l'éditeur de recadrage interactif intégré au
     - Afficher la zone de crop avec la forme appropriée (circulaire pour 1:1, rectangulaire arrondi pour 16:5)
     - Ajouter le slider de zoom avec le gradient d'accent du projet
     - Ajouter les boutons « Valider » et « Annuler » avec traductions `next-intl`
-    - Appliquer les classes glassmorphism (`.glass-card`, fonds semi-transparents, `backdrop-blur`)
+    - Appliquer les classes glassmorphism (`.glass-card`, fonds semi-transparents, `backdrop-blur-sm`)
     - Supporter le dark mode via `dark:` Tailwind
     - Appliquer coins arrondis (`rounded-xl` / `rounded-2xl`) et transitions fluides
     - Gérer l'état `disabled` (pendant l'upload)

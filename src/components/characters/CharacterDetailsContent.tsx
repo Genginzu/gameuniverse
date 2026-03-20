@@ -147,7 +147,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
               <Button
                 variant="ghost"
                 size="sm"
-                className="bg-slate-900/60 text-slate-300 backdrop-blur-sm hover:bg-slate-900/80 hover:text-white"
+                className="bg-slate-900/60 text-slate-300 backdrop-blur-xs hover:bg-slate-900/80 hover:text-white"
               >
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 {t("common.back")}
@@ -162,9 +162,9 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
         <div className="container relative z-10 mx-auto px-4 pt-16">
           <div className="flex flex-col items-center justify-center lg:flex-row lg:items-center lg:justify-center">
             {/* Character Image - Centered */}
-            <div className="relative flex-shrink-0">
+            <div className="relative shrink-0">
               <div
-                className={`absolute -inset-8 bg-gradient-to-t ${colors.bg} rounded-full opacity-30 blur-3xl`}
+                className={`absolute -inset-8 bg-linear-to-t ${colors.bg} rounded-full opacity-30 blur-3xl`}
               />
               <div className="relative">
                 {/* Main character image with transparent background effect */}
@@ -186,14 +186,14 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
             <div className="mt-2 max-w-lg text-center lg:mt-0 lg:flex-1 lg:pl-6 lg:text-left">
               {/* Character name */}
               <div className="mb-3 flex items-center justify-center gap-3 lg:justify-start">
-                <h1 className="neon-text text-5xl font-bold leading-tight text-white drop-shadow-lg [text-shadow:_0_2px_8px_rgba(0,0,0,0.5)] lg:text-6xl">
+                <h1 className="neon-text text-5xl font-bold leading-tight text-white drop-shadow-lg [text-shadow:0_2px_8px_rgba(0,0,0,0.5)] lg:text-6xl">
                   {character.name}
                 </h1>
               </div>
 
               {/* Short description */}
               {character.description && (
-                <p className="text-lg leading-relaxed text-slate-200 [text-shadow:_0_1px_4px_rgba(0,0,0,0.4)]">
+                <p className="text-lg leading-relaxed text-slate-200 [text-shadow:0_1px_4px_rgba(0,0,0,0.4)]">
                   {character.description}
                 </p>
               )}
@@ -207,7 +207,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
         <div className="container mx-auto px-4 pb-16">
           {/* Tabs navigation */}
           <div className="mb-8 flex justify-center">
-            <div className="inline-flex gap-1 rounded-2xl border border-slate-700/50 bg-slate-800/80 p-1.5 backdrop-blur-sm">
+            <div className="inline-flex gap-1 rounded-2xl border border-slate-700/50 bg-slate-800/80 p-1.5 backdrop-blur-xs">
               <button
                 onClick={() => setActiveTab("description")}
                 className={`rounded-xl px-6 py-3 text-sm font-medium transition-all ${
@@ -283,7 +283,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                                 prev > 0 ? prev - 1 : character.media.screenshots.length - 1
                               )
                             }
-                            className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/60 p-2.5 text-white backdrop-blur-sm transition-all hover:bg-black/80"
+                            className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/60 p-2.5 text-white backdrop-blur-xs transition-all hover:bg-black/80"
                           >
                             <ChevronLeft className="h-5 w-5" />
                           </button>
@@ -293,13 +293,13 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                                 prev < character.media.screenshots.length - 1 ? prev + 1 : 0
                               )
                             }
-                            className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/60 p-2.5 text-white backdrop-blur-sm transition-all hover:bg-black/80"
+                            className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/60 p-2.5 text-white backdrop-blur-xs transition-all hover:bg-black/80"
                           >
                             <ChevronRight className="h-5 w-5" />
                           </button>
                         </>
                       )}
-                      <div className="absolute bottom-4 left-4 rounded-full bg-black/60 px-3 py-1.5 text-sm text-white backdrop-blur-sm">
+                      <div className="absolute bottom-4 left-4 rounded-full bg-black/60 px-3 py-1.5 text-sm text-white backdrop-blur-xs">
                         {selectedScreenshotIndex + 1} / {character.media.screenshots.length}
                       </div>
                     </div>
@@ -351,7 +351,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                                 prev > 0 ? prev - 1 : character.media.artwork.length - 1
                               )
                             }
-                            className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/60 p-2.5 text-white backdrop-blur-sm transition-all hover:bg-black/80"
+                            className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/60 p-2.5 text-white backdrop-blur-xs transition-all hover:bg-black/80"
                           >
                             <ChevronLeft className="h-5 w-5" />
                           </button>
@@ -361,13 +361,13 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                                 prev < character.media.artwork.length - 1 ? prev + 1 : 0
                               )
                             }
-                            className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/60 p-2.5 text-white backdrop-blur-sm transition-all hover:bg-black/80"
+                            className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/60 p-2.5 text-white backdrop-blur-xs transition-all hover:bg-black/80"
                           >
                             <ChevronRight className="h-5 w-5" />
                           </button>
                         </>
                       )}
-                      <div className="absolute bottom-4 left-4 rounded-full bg-black/60 px-3 py-1.5 text-sm text-white backdrop-blur-sm">
+                      <div className="absolute bottom-4 left-4 rounded-full bg-black/60 px-3 py-1.5 text-sm text-white backdrop-blur-xs">
                         {selectedArtworkIndex + 1} / {character.media.artwork.length}
                       </div>
                     </div>
@@ -488,7 +488,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                           borderColor: game.isPrimary ? colors.primary : undefined,
                         }}
                       >
-                        <div className="relative aspect-[3/4]">
+                        <div className="relative aspect-3/4">
                           {game.coverImage ? (
                             <LazyImage
                               src={game.coverImage}
@@ -513,7 +513,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                               </Badge>
                             </div>
                           )}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                          <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent" />
                           <div className="absolute bottom-0 left-0 right-0 p-4">
                             <h4 className="text-lg font-bold text-white">{game.title}</h4>
                             {game.releaseYear && (
@@ -543,7 +543,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {/* Role */}
                   {character.role && (
-                    <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-sm">
+                    <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-xs">
                       <CardContent className="p-6">
                         <div className="mb-2 flex items-center gap-2 text-slate-400">
                           <Star className="h-4 w-4" style={{ color: colors.accent }} />
@@ -557,7 +557,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                   )}
 
                   {/* Primary Game */}
-                  <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-sm">
+                  <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-xs">
                     <CardContent className="p-6">
                       <div className="mb-2 flex items-center gap-2 text-slate-400">
                         <Gamepad2 className="h-4 w-4" style={{ color: colors.accent }} />
@@ -573,7 +573,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                   </Card>
 
                   {/* Appearances */}
-                  <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-sm">
+                  <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-xs">
                     <CardContent className="p-6">
                       <div className="mb-2 flex items-center gap-2 text-slate-400">
                         <Users className="h-4 w-4" style={{ color: colors.accent }} />
@@ -596,7 +596,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
 
                 {/* Weapons */}
                 {character.weapons && (
-                  <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-sm">
+                  <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-xs">
                     <CardContent className="p-6">
                       <h4 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
                         <Swords className="h-5 w-5" style={{ color: colors.accent }} />
@@ -611,7 +611,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
 
                 {/* Biography */}
                 {character.biography && (
-                  <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-sm">
+                  <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-xs">
                     <CardContent className="p-6">
                       <h4 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
                         <BookOpen className="h-5 w-5" style={{ color: colors.accent }} />
@@ -628,7 +628,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
 
                 {/* Relationships */}
                 {character.relationships && character.relationships.length > 0 && (
-                  <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-sm">
+                  <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-xs">
                     <CardContent className="p-6">
                       <h4 className="mb-6 flex items-center gap-2 text-lg font-semibold text-white">
                         <UserCircle className="h-5 w-5" style={{ color: colors.accent }} />
@@ -642,7 +642,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                             className="group flex items-center gap-4 rounded-xl border border-slate-700/50 bg-slate-900/50 p-4 transition-all hover:border-slate-600 hover:bg-slate-800/50"
                           >
                             {/* Character avatar */}
-                            <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-full border-2 border-slate-600">
+                            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full border-2 border-slate-600">
                               {rel.relatedCharacter.mainImage ? (
                                 <LazyImage
                                   src={rel.relatedCharacter.mainImage}

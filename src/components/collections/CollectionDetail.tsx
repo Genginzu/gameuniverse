@@ -2,6 +2,7 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import type { CollectionDetail as CollectionDetailType } from "@/types/collection";
+import Image from "next/image";
 import { CollectionGameCard } from "./CollectionGameCard";
 
 interface CollectionDetailProps {
@@ -23,12 +24,12 @@ export function CollectionDetail({ collection }: CollectionDetailProps) {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="rounded-xl bg-white p-4 shadow-sm dark:bg-gray-800">
+      <div className="rounded-xl bg-white p-4 shadow-xs dark:bg-gray-800">
         <h1 className="neon-text text-lg font-bold text-gray-900 dark:text-white">
           {collection.name}
         </h1>
 
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="text-muted-foreground mt-1 text-sm">
           {collection.description || t("noDescription")}
         </p>
 
@@ -68,9 +69,11 @@ function OwnerBadge({ owner }: { owner: CollectionDetailType["owner"] }) {
   return (
     <div className="flex items-center gap-2">
       {owner.avatarUrl ? (
-        <img
+        <Image
           src={owner.avatarUrl}
           alt={ownerName}
+          width={24}
+          height={24}
           className="h-6 w-6 rounded-full object-cover ring-1 ring-gray-300 dark:ring-gray-600"
         />
       ) : (
@@ -103,7 +106,7 @@ function EmptyState() {
         />
       </svg>
       <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{t("emptyTitle")}</h3>
-      <p className="mt-1 text-sm text-muted-foreground">{t("emptyDescription")}</p>
+      <p className="text-muted-foreground mt-1 text-sm">{t("emptyDescription")}</p>
     </div>
   );
 }

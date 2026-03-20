@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import type { CharacterFormTabProps } from "@/types/admin-characters";
@@ -31,15 +32,19 @@ export function CharacterFormImagesTab({ form, t }: CharacterFormTabProps) {
             )}
           />
           {mainImageUrl && (
-            <img
-              key={mainImageUrl}
-              src={mainImageUrl}
-              alt="Main image preview"
-              className="h-96 rounded-xl border border-gray-200 object-contain dark:border-gray-700"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = "none";
-              }}
-            />
+            <div className="relative h-96 rounded-xl border border-gray-200 dark:border-gray-700">
+              <Image
+                key={mainImageUrl}
+                src={mainImageUrl}
+                alt="Main image preview"
+                fill
+                className="rounded-xl object-contain"
+                unoptimized
+                onError={(e) => {
+                  (e.target as HTMLImageElement).parentElement!.style.display = "none";
+                }}
+              />
+            </div>
           )}
         </div>
         <div className="space-y-3">
@@ -64,13 +69,15 @@ export function CharacterFormImagesTab({ form, t }: CharacterFormTabProps) {
           {backgroundImageUrl && (
             <div
               key={backgroundImageUrl}
-              className="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700"
+              className="relative overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700"
+              style={{ height: "360px" }}
             >
-              <img
+              <Image
                 src={backgroundImageUrl}
                 alt="Background preview"
-                className="w-full object-contain"
-                style={{ maxHeight: "360px" }}
+                fill
+                className="object-contain"
+                unoptimized
                 onError={(e) => {
                   (e.target as HTMLImageElement).parentElement!.style.display = "none";
                 }}

@@ -113,7 +113,7 @@ export function ImageUploader({
           {uploading && (
             <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-slate-700">
               <div
-                className="h-full rounded-full bg-gradient-to-r from-violet-500 to-cyan-500 transition-all duration-300"
+                className="h-full rounded-full bg-linear-to-r from-violet-500 to-cyan-500 transition-all duration-300"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -161,7 +161,7 @@ export function ImageUploader({
 
             {/* Drag overlay */}
             {isDragging && !uploading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-violet-500/20 backdrop-blur-sm">
+              <div className="absolute inset-0 flex items-center justify-center bg-violet-500/20 backdrop-blur-xs">
                 <Upload className="h-8 w-8 text-violet-600 dark:text-violet-400" />
               </div>
             )}

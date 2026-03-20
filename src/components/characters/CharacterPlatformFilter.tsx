@@ -80,7 +80,7 @@ export function CharacterPlatformFilter({
             <div
               className={`flex h-4 w-4 items-center justify-center rounded border-2 transition-all sm:h-5 sm:w-5 ${
                 selectedPlatforms.includes(platform.slug)
-                  ? "border-cyan-500 bg-gradient-to-r from-cyan-500 to-violet-500"
+                  ? "border-cyan-500 bg-linear-to-r from-cyan-500 to-violet-500"
                   : "border-gray-300 group-hover:border-violet-400 dark:border-gray-600"
               }`}
             >

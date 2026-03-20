@@ -64,7 +64,7 @@ export function SearchResultsDropdown({
                 className="flex w-full items-center gap-3 p-3 text-left transition-colors hover:bg-gray-50 disabled:cursor-wait disabled:opacity-70 dark:hover:bg-gray-700"
               >
                 {/* Cover image */}
-                <div className="relative h-16 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-700">
+                <div className="relative h-16 w-12 shrink-0 overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-700">
                   <LazyImage
                     src={item.coverUrl}
                     alt={item.title}
@@ -83,7 +83,7 @@ export function SearchResultsDropdown({
                     {/* Source indicator */}
                     <Badge
                       variant={item.source === "local" ? "default" : "secondary"}
-                      className={`flex-shrink-0 text-xs ${
+                      className={`shrink-0 text-xs ${
                         item.source === "local"
                           ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
                           : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"

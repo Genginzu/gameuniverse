@@ -88,7 +88,7 @@ function VoteButton({
       aria-pressed={isActive}
       className={cn(
         "inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm transition-colors",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800",
+        "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800",
         "disabled:cursor-not-allowed disabled:opacity-50",
         isActive && isHelpful && "bg-green-500/20 text-green-400",
         isActive && !isHelpful && "bg-red-500/20 text-red-400",

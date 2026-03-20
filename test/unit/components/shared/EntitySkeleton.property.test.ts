@@ -43,7 +43,7 @@ const simulateEntitySkeletonRender = (
   infoLineCount: number;
   hasGradientBackground: boolean;
 } => {
-  const aspectRatioClass = config.aspectRatio === "3:4" ? "aspect-[3/4]" : "aspect-square";
+  const aspectRatioClass = config.aspectRatio === "3:4" ? "aspect-3/4" : "aspect-square";
   const hasBadge = config.showBadge ?? false;
   const badgePositionClass = config.badgePosition === "top-left" ? "left-3" : "right-3";
 
@@ -86,7 +86,7 @@ describe("EntitySkeleton Property-Based Tests", () => {
 
           // Verify aspect ratio class matches configuration
           if (config.aspectRatio === "3:4") {
-            return result.aspectRatioClass === "aspect-[3/4]";
+            return result.aspectRatioClass === "aspect-3/4";
           } else {
             return result.aspectRatioClass === "aspect-square";
           }
@@ -175,7 +175,7 @@ describe("EntitySkeleton Property-Based Tests", () => {
     it("gameSkeletonConfig produces correct render output", () => {
       const result = simulateEntitySkeletonRender(gameSkeletonConfig);
 
-      expect(result.aspectRatioClass).toBe("aspect-[3/4]");
+      expect(result.aspectRatioClass).toBe("aspect-3/4");
       expect(result.hasBadge).toBe(true);
       expect(result.badgePositionClass).toBe("right-3");
       expect(result.badgeSizeClasses).toBe("h-8 w-8 rounded-full");
@@ -197,7 +197,7 @@ describe("EntitySkeleton Property-Based Tests", () => {
     it("characterSkeletonConfig produces correct render output", () => {
       const result = simulateEntitySkeletonRender(characterSkeletonConfig);
 
-      expect(result.aspectRatioClass).toBe("aspect-[3/4]");
+      expect(result.aspectRatioClass).toBe("aspect-3/4");
       expect(result.hasBadge).toBe(true);
       expect(result.badgePositionClass).toBe("right-3");
       expect(result.badgeSizeClasses).toBe("h-7 w-20 rounded-full");

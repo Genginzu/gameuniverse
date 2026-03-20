@@ -17,6 +17,3 @@
 
 # Corrections
 * Refaire une passe pour optimiser les requêtes et faire du lazy loading
-* Mettre à jour vers NextJS 16.2 avant de mettre en ligne
-* Faire une passe pour vérifier que les images utilise bien NextJS Image
-* Passer Tailwind en 4.x

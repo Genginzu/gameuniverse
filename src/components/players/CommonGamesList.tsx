@@ -45,7 +45,7 @@ export function CommonGamesList({ games, locale, pagination, onPageChange }: Com
             className="group relative overflow-hidden rounded-xl border border-slate-700/50 bg-slate-800/50 transition-all hover:scale-[1.02] hover:border-slate-600 hover:shadow-lg hover:shadow-indigo-500/10"
           >
             {/* Cover image */}
-            <div className="relative aspect-[3/4]">
+            <div className="relative aspect-3/4">
               {game.coverImage ? (
                 <LazyImage
                   src={game.coverImage}
@@ -62,7 +62,7 @@ export function CommonGamesList({ games, locale, pagination, onPageChange }: Com
               )}
 
               {/* Gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent" />
 
               {/* Game info */}
               <div className="absolute bottom-0 left-0 right-0 p-3">

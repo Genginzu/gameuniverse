@@ -9,7 +9,7 @@ export function CollectionListSkeleton() {
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {Array.from({ length: 6 }).map((_, i) => (
         <div key={i} className="overflow-hidden rounded-2xl bg-white shadow-md dark:bg-gray-800">
-          <Skeleton className="aspect-[16/10] w-full rounded-none" />
+          <Skeleton className="aspect-16/10 w-full rounded-none" />
           <div className="space-y-2 p-4">
             <Skeleton className="h-5 w-3/4" />
             <Skeleton className="h-4 w-full" />
@@ -57,7 +57,7 @@ export function CollectionDetailSkeleton() {
               key={i}
               className="overflow-hidden rounded-2xl bg-white shadow-md dark:bg-gray-800"
             >
-              <Skeleton className="aspect-[3/4] w-full rounded-none" />
+              <Skeleton className="aspect-3/4 w-full rounded-none" />
               <div className="space-y-2 p-4">
                 <Skeleton className="h-5 w-3/4" />
                 <Skeleton className="h-3 w-1/2" />

@@ -43,7 +43,7 @@ export function PlayerProfileBanner({
             showSkeleton={true}
           />
         ) : (
-          <div className="h-full w-full bg-gradient-to-r from-indigo-600/40 via-purple-600/40 to-pink-600/40" />
+          <div className="h-full w-full bg-linear-to-r from-indigo-600/40 via-purple-600/40 to-pink-600/40" />
         )}
       </div>
 
@@ -54,7 +54,7 @@ export function PlayerProfileBanner({
           level={xpStats?.level ?? player.level}
           size={140}
         >
-          <div className="relative h-[132px] w-[132px] overflow-hidden rounded-xl bg-gradient-to-br from-blue-100 to-indigo-100 shadow-xl">
+          <div className="relative h-[132px] w-[132px] overflow-hidden rounded-xl bg-linear-to-br from-blue-100 to-indigo-100 shadow-xl">
             {player.avatarUrl ? (
               <LazyImage
                 src={player.avatarUrl}
@@ -127,7 +127,7 @@ function ProfileCounters({
       {counters.map((c) => (
         <div
           key={c.label}
-          className="flex items-center gap-2 rounded-xl bg-white/40 px-3 py-2 backdrop-blur-sm transition-all duration-300 hover:bg-white/60 dark:bg-slate-800/40 dark:hover:bg-slate-700/50"
+          className="flex items-center gap-2 rounded-xl bg-white/40 px-3 py-2 backdrop-blur-xs transition-all duration-300 hover:bg-white/60 dark:bg-slate-800/40 dark:hover:bg-slate-700/50"
         >
           <c.icon className="h-5 w-5 text-purple-500 dark:text-purple-400" />
           <span className="text-base font-bold text-gray-900 dark:text-white">{c.value}</span>

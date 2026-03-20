@@ -25,7 +25,7 @@ export function FavoriteCharacterButton({ characterSlug }: FavoriteCharacterButt
     <Button
       variant="ghost"
       size="sm"
-      className={`bg-slate-900/60 backdrop-blur-sm hover:bg-slate-900/80 hover:text-white ${
+      className={`bg-slate-900/60 backdrop-blur-xs hover:bg-slate-900/80 hover:text-white ${
         isFavorite ? "text-red-400" : "text-slate-300"
       }`}
       onClick={toggleFavorite}

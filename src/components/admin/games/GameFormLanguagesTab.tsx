@@ -107,7 +107,7 @@ export function GameFormLanguagesTab({
               <button
                 type="button"
                 onClick={() => removeLanguage(idx)}
-                className="flex-shrink-0 rounded-md p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20"
+                className="shrink-0 rounded-md p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20"
                 aria-label="Supprimer"
               >
                 <Icon icon="fa:times" className="h-3.5 w-3.5"  />
@@ -119,7 +119,7 @@ export function GameFormLanguagesTab({
 
       {availableLanguages.length > 0 && (
         <select
-          className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 shadow-sm transition-colors hover:border-gray-300 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:border-gray-600"
+          className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 shadow-xs transition-colors hover:border-gray-300 focus:border-blue-500 focus:outline-hidden focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:border-gray-600"
           value=""
           onChange={(e) => {
             if (e.target.value) addLanguage(e.target.value);

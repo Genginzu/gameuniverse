@@ -97,7 +97,7 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
   // Affichage du message de confirmation après inscription
   if (emailSent) {
     return (
-      <Card className="mx-auto w-full max-w-md border-0 bg-white/95 shadow-2xl backdrop-blur-sm">
+      <Card className="mx-auto w-full max-w-md border-0 bg-white/95 shadow-2xl backdrop-blur-xs">
         <CardHeader className="space-y-6 pb-4">
           <div className="flex justify-center">
             <div className="rounded-full bg-green-100 p-4">
@@ -107,7 +107,7 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
           <div className="space-y-2 text-center">
             <div className="flex items-center justify-center gap-2">
               <CheckCircle className="h-5 w-5 text-green-600" />
-              <CardTitle className="bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-2xl font-bold text-transparent">
+              <CardTitle className="bg-linear-to-r from-slate-900 to-slate-700 bg-clip-text text-2xl font-bold text-transparent">
                 {t("signup.emailSentTitle")}
               </CardTitle>
             </div>
@@ -143,10 +143,10 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
   }
 
   return (
-    <Card className="mx-auto w-full max-w-md border-0 bg-white/95 shadow-2xl backdrop-blur-sm hover:shadow-2xl">
+    <Card className="mx-auto w-full max-w-md border-0 bg-white/95 shadow-2xl backdrop-blur-xs hover:shadow-2xl">
       <CardHeader className="space-y-6 pb-8">
         <div className="space-y-2 text-center">
-          <CardTitle className="bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-3xl font-bold text-transparent">
+          <CardTitle className="bg-linear-to-r from-slate-900 to-slate-700 bg-clip-text text-3xl font-bold text-transparent">
             {mode === "signin" ? t("signin.title") : t("signup.title")}
           </CardTitle>
           <CardDescription className="text-base text-slate-600">
@@ -237,7 +237,7 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
 
           <Button
             type="submit"
-            className="h-12 w-full rounded-xl border-2 border-transparent bg-gradient-to-br from-blue-500 via-purple-600 to-purple-700 font-semibold text-white shadow-lg transition-all duration-200 hover:border-purple-500 hover:from-white hover:via-white hover:to-white hover:text-purple-700 hover:shadow-xl"
+            className="h-12 w-full rounded-xl border-2 border-transparent bg-linear-to-br from-blue-500 via-purple-600 to-purple-700 font-semibold text-white shadow-lg transition-all duration-200 hover:border-purple-500 hover:from-white hover:via-white hover:to-white hover:text-purple-700 hover:shadow-xl"
             disabled={!isFormValid() || isSubmitting}
           >
             {isSubmitting && <Spinner size="sm" className="mr-2" />}

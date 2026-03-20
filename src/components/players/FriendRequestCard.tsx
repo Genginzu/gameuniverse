@@ -26,7 +26,7 @@ export function FriendRequestCard({
   return (
     <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-3 dark:border-slate-700/50 dark:bg-slate-800/50">
       {/* Sender avatar */}
-      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30">
+      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-linear-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30">
         {sender.avatarUrl ? (
           <LazyImage
             src={sender.avatarUrl}

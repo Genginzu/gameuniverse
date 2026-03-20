@@ -13,7 +13,7 @@ function AuthErrorContent() {
   const error = searchParams.get("message") || t("error.generic");
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 p-4">
+    <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-slate-50 to-slate-100 p-4">
       <Card className="mx-auto w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-center text-2xl text-red-600">{t("error.title")}</CardTitle>

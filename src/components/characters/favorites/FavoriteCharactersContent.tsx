@@ -74,7 +74,7 @@ export function FavoriteCharactersContent() {
   if (error) {
     return (
       <div className="p-4 sm:p-6">
-        <div className="flex flex-col items-center justify-center rounded-2xl bg-white py-12 text-center shadow-sm dark:bg-gray-800">
+        <div className="flex flex-col items-center justify-center rounded-2xl bg-white py-12 text-center shadow-xs dark:bg-gray-800">
           <div className="mb-4 rounded-full bg-red-100 p-4 dark:bg-red-900/30">
             <Heart className="h-8 w-8 text-red-400" />
           </div>
@@ -91,7 +91,7 @@ export function FavoriteCharactersContent() {
   if (characters.length === 0) {
     return (
       <div className="p-4 sm:p-6">
-        <div className="flex flex-col items-center justify-center rounded-2xl bg-white py-16 text-center shadow-sm dark:bg-gray-800">
+        <div className="flex flex-col items-center justify-center rounded-2xl bg-white py-16 text-center shadow-xs dark:bg-gray-800">
           <div className="mb-6 rounded-full bg-gray-100 p-6 dark:bg-gray-700">
             <Heart className="h-12 w-12 text-gray-400" />
           </div>

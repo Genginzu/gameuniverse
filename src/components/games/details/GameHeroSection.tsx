@@ -44,7 +44,7 @@ export function GameHeroSection({
             <Button
               variant="ghost"
               size="sm"
-              className="bg-slate-900/60 text-slate-300 backdrop-blur-sm hover:bg-slate-900/80 hover:text-white"
+              className="bg-slate-900/60 text-slate-300 backdrop-blur-xs hover:bg-slate-900/80 hover:text-white"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
               {t("common.back")}
@@ -55,14 +55,14 @@ export function GameHeroSection({
             <Button
               variant="ghost"
               size="sm"
-              className="bg-slate-900/60 text-slate-300 backdrop-blur-sm hover:bg-slate-900/80 hover:text-white"
+              className="bg-slate-900/60 text-slate-300 backdrop-blur-xs hover:bg-slate-900/80 hover:text-white"
             >
               <Share2 className="h-4 w-4" />
             </Button>
             <Button
               variant="ghost"
               size="sm"
-              className={`bg-slate-900/60 backdrop-blur-sm hover:bg-slate-900/80 hover:text-white ${isWishlisted ? "text-red-400" : "text-slate-300"}`}
+              className={`bg-slate-900/60 backdrop-blur-xs hover:bg-slate-900/80 hover:text-white ${isWishlisted ? "text-red-400" : "text-slate-300"}`}
               onClick={onWishlistToggle}
             >
               <Heart className={`h-4 w-4 ${isWishlisted ? "fill-current" : ""}`} />
@@ -113,7 +113,7 @@ export function GameHeroSection({
                     background: `linear-gradient(to bottom right, ${colors.accent}20, ${colors.accent}10)`,
                   }}
                 />
-                <div className="relative aspect-[3/4] overflow-hidden rounded-xl border border-slate-700 bg-slate-800/80 backdrop-blur-sm">
+                <div className="relative aspect-3/4 overflow-hidden rounded-xl border border-slate-700 bg-slate-800/80 backdrop-blur-xs">
                   <LazyImage
                     src={game.media.coverImage}
                     alt={game.title}
@@ -152,7 +152,7 @@ export function GameHeroSection({
                       <Badge
                         key={platform.id}
                         variant="secondary"
-                        className="pointer-events-none inline-flex items-center gap-1.5 border-slate-600 bg-slate-800/80 text-slate-300 backdrop-blur-sm"
+                        className="pointer-events-none inline-flex items-center gap-1.5 border-slate-600 bg-slate-800/80 text-slate-300 backdrop-blur-xs"
                       >
                         <Icon icon={platformIconName} className="h-3 w-3 shrink-0" />
                         {platform.abbreviation || platform.name}
@@ -211,7 +211,7 @@ export function GameHeroSection({
               {/* Description */}
               {game.description && (
                 <p
-                  className="max-w-4xl text-lg leading-relaxed drop-shadow-sm"
+                  className="max-w-4xl text-lg leading-relaxed drop-shadow-xs"
                   style={{ color: colors.textColor }}
                 >
                   {game.description}

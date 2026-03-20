@@ -1,6 +1,6 @@
 "use client";
 
-
+import Image from "next/image";
 import { Users, Calendar, Globe } from "lucide-react";
 import type { GameColors } from "@/lib/utils/game-utils";
 import { Icon } from "@iconify/react";
@@ -47,10 +47,12 @@ export function GameColorPreviewHero({
       {/* Background image */}
       {backgroundUrl && (
         <div className="absolute inset-0 z-0">
-          <img
+          <Image
             src={backgroundUrl}
             alt=""
-            className="h-full w-full object-cover object-center"
+            fill
+            className="object-cover object-center"
+            unoptimized
             onError={(e) => {
               (e.target as HTMLImageElement).style.display = "none";
             }}
@@ -60,13 +62,13 @@ export function GameColorPreviewHero({
 
       {/* Gradient overlay matching GameHeroSection */}
       <div
-        className="absolute inset-0 z-[1]"
+        className="absolute inset-0 z-1"
         style={{
           background: `linear-gradient(to bottom, ${colors.backgroundColor}20 0%, ${colors.backgroundColor}60 40%, ${colors.backgroundColor}90 70%, ${colors.backgroundColor} 100%)`,
         }}
       />
       <div
-        className="absolute inset-0 z-[1]"
+        className="absolute inset-0 z-1"
         style={{
           background: `radial-gradient(ellipse at center, transparent 0%, ${colors.backgroundColor}40 70%, ${colors.backgroundColor}80 100%)`,
         }}
@@ -75,21 +77,23 @@ export function GameColorPreviewHero({
       {/* Content: cover left, info right */}
       <div className="relative z-10 flex items-start gap-5 p-5">
         {/* Cover (aspect 3/4) */}
-        <div className="flex-shrink-0">
+        <div className="shrink-0">
           {coverUrl ? (
-            <div className="relative aspect-[3/4] w-24 overflow-hidden rounded-lg border border-slate-700 bg-slate-800/80">
-              <img
+            <div className="relative aspect-3/4 w-24 overflow-hidden rounded-lg border border-slate-700 bg-slate-800/80">
+              <Image
                 src={coverUrl}
                 alt=""
-                className="h-full w-full object-cover"
+                fill
+                className="object-cover"
+                unoptimized
                 onError={(e) => {
                   (e.target as HTMLImageElement).style.display = "none";
                 }}
               />
             </div>
           ) : (
-            <div className="flex aspect-[3/4] w-24 items-center justify-center rounded-lg border border-dashed border-slate-600 bg-slate-800/50">
-              <Icon icon="fa:image" className="h-5 w-5 text-slate-500"  />
+            <div className="flex aspect-3/4 w-24 items-center justify-center rounded-lg border border-dashed border-slate-600 bg-slate-800/50">
+              <Icon icon="fa:image" className="h-5 w-5 text-slate-500" />
             </div>
           )}
         </div>
@@ -102,7 +106,7 @@ export function GameColorPreviewHero({
               {genres.map((genre) => (
                 <span
                   key={genre.id}
-                  className="rounded-full border border-slate-600 bg-slate-800/80 px-2.5 py-0.5 text-[11px] font-medium text-slate-300 backdrop-blur-sm"
+                  className="rounded-full border border-slate-600 bg-slate-800/80 px-2.5 py-0.5 text-[11px] font-medium text-slate-300 backdrop-blur-xs"
                 >
                   {genre.name}
                 </span>
@@ -112,7 +116,7 @@ export function GameColorPreviewHero({
 
           {/* Title */}
           <h3
-            className="mb-2 text-xl font-bold leading-tight drop-shadow-lg"
+            className="mb-2 text-xl leading-tight font-bold drop-shadow-lg"
             style={{ color: colors.textColor }}
           >
             {title || (
@@ -148,7 +152,7 @@ export function GameColorPreviewHero({
           {/* Description (truncated) */}
           {description && (
             <p
-              className="line-clamp-2 text-sm leading-relaxed drop-shadow-sm"
+              className="line-clamp-2 text-sm leading-relaxed drop-shadow-xs"
               style={{ color: colors.textColor }}
             >
               {description}
@@ -161,7 +165,7 @@ export function GameColorPreviewHero({
               {prices.map((p, i) => (
                 <div
                   key={i}
-                  className="flex items-center gap-2 rounded-md border px-3 py-1.5 backdrop-blur-sm"
+                  className="flex items-center gap-2 rounded-md border px-3 py-1.5 backdrop-blur-xs"
                   style={{
                     backgroundColor: `${colors.backgroundColor}e6`,
                     borderColor: `${colors.backgroundColor}80`,

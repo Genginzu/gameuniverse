@@ -91,7 +91,7 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
     editorProps: {
       attributes: {
         class:
-          "prose prose-sm dark:prose-invert max-w-none p-3 min-h-[150px] focus:outline-none text-foreground",
+          "prose prose-sm dark:prose-invert max-w-none p-3 min-h-[150px] focus:outline-hidden text-foreground",
       },
     },
     onUpdate: ({ editor: e }) => {

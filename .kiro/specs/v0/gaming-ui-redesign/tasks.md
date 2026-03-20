@@ -154,7 +154,7 @@ Transformation visuelle de Game Universe en 4 couches : tokens CSS néon → cla
 
 - [x] 7. Refonte de la page d'accueil (Landing)
   - [x] 7.1 Refactoriser `LandingLayout.tsx`
-    - Remplacer le fond `bg-gradient-to-br from-slate-50 to-slate-100` par un fond sombre gaming cohérent
+    - Remplacer le fond `bg-linear-to-br from-slate-50 to-slate-100` par un fond sombre gaming cohérent
     - _Requirements: 5.1_
 
   - [x] 7.2 Refactoriser `LandingHeader.tsx`

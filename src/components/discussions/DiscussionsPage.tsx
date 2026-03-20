@@ -125,7 +125,7 @@ export default function DiscussionsPage() {
               {/* Thread header */}
               {selectedConversation && (
                 <div className="flex items-center gap-3 border-b border-white/20 px-5 py-4 dark:border-slate-700/50">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-blue-500/30 via-purple-600/30 to-purple-700/30">
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-linear-to-br from-blue-500/30 via-purple-600/30 to-purple-700/30">
                     {selectedConversation.friend.avatarUrl ? (
                       <LazyImage
                         src={selectedConversation.friend.avatarUrl}

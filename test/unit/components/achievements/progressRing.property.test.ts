@@ -13,7 +13,7 @@ import { computeArcOffset } from "@/components/players/ProgressRing";
  *
  * **Validates: Requirements 5.2**
  */
-describe("Property 6: Progress ring arc proportionality", () => {
+describe("Property 6: Progress ring-3 arc proportionality", () => {
   const percentGen = fc.double({ min: 0, max: 100, noNaN: true });
   const sizeGen = fc.integer({ min: 20, max: 500 });
   const strokeWidthGen = fc.integer({ min: 1, max: 10 });

@@ -307,7 +307,7 @@ export function GameForm({
           tabLabel={tabLabel}
         />
 
-        <div className="rounded-2xl border border-gray-200/60 bg-white p-6 shadow-sm dark:border-gray-700/40 dark:bg-gray-800/60">
+        <div className="rounded-2xl border border-gray-200/60 bg-white p-6 shadow-xs dark:border-gray-700/40 dark:bg-gray-800/60">
           <GameFormTabContent
             activeTab={activeTab}
             mode={mode}

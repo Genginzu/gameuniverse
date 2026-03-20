@@ -75,7 +75,7 @@ export function PlayerReviewCard({ review, locale }: PlayerReviewCardProps) {
       {/* Header: game cover + game name + rating */}
       <div className="mb-4 flex gap-4">
         {/* Game cover thumbnail */}
-        <Link href={`/${locale}/games/${review.gameSlug}`} className="flex-shrink-0">
+        <Link href={`/${locale}/games/${review.gameSlug}`} className="shrink-0">
           <div className="relative h-20 w-14 overflow-hidden rounded-lg bg-white/10 dark:bg-slate-700/50">
             {review.gameCoverUrl ? (
               <Image

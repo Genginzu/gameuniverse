@@ -5,6 +5,7 @@ import { Search, Globe, Database } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import type { SearchResultItem } from "@/types/search";
+import Image from "next/image";
 
 interface SelectedGamePreviewProps {
   game: SearchResultItem;
@@ -18,21 +19,27 @@ export function SelectedGamePreview({ game, onClear }: SelectedGamePreviewProps)
   return (
     <div className="flex items-center gap-3 rounded-lg border p-3">
       {game.coverUrl ? (
-        <img src={game.coverUrl} alt={game.title} className="h-12 w-9 rounded object-cover" />
+        <Image
+          src={game.coverUrl}
+          alt={game.title}
+          width={36}
+          height={48}
+          className="h-12 w-9 rounded object-cover"
+        />
       ) : (
-        <div className="flex h-12 w-9 items-center justify-center rounded bg-muted text-xs">🎮</div>
+        <div className="bg-muted flex h-12 w-9 items-center justify-center rounded text-xs">🎮</div>
       )}
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <p className="truncate text-sm font-medium">{game.title}</p>
           <SourceBadge source={game.source} />
         </div>
-        {game.releaseYear && <p className="text-xs text-muted-foreground">{game.releaseYear}</p>}
+        {game.releaseYear && <p className="text-muted-foreground text-xs">{game.releaseYear}</p>}
       </div>
       <button
         type="button"
         onClick={onClear}
-        className="text-xs text-muted-foreground hover:text-foreground"
+        className="text-muted-foreground hover:text-foreground text-xs"
       >
         {t("changeGame")}
       </button>
@@ -65,7 +72,7 @@ export function SearchInput({
   return (
     <div className="relative">
       <div className="relative">
-        <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
         <Input
           type="text"
           placeholder={placeholder}
@@ -76,13 +83,13 @@ export function SearchInput({
       </div>
 
       {showDropdown && (
-        <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-64 overflow-y-auto rounded-lg border bg-popover shadow-md">
+        <div className="bg-popover absolute top-full right-0 left-0 z-50 mt-1 max-h-64 overflow-y-auto rounded-lg border shadow-md">
           {isSearching ? (
             <div className="flex items-center justify-center p-4">
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+              <div className="border-primary h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />
             </div>
           ) : results.length === 0 ? (
-            <p className="p-4 text-center text-sm text-muted-foreground">{noResultsText}</p>
+            <p className="text-muted-foreground p-4 text-center text-sm">{noResultsText}</p>
           ) : (
             <ul className="divide-y">
               {results.map((game) => (
@@ -90,16 +97,18 @@ export function SearchInput({
                   <button
                     type="button"
                     onClick={() => onSelect(game)}
-                    className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-accent"
+                    className="hover:bg-accent flex w-full items-center gap-3 px-3 py-2 text-left transition-colors"
                   >
                     {game.coverUrl ? (
-                      <img
+                      <Image
                         src={game.coverUrl}
                         alt={game.title}
+                        width={28}
+                        height={40}
                         className="h-10 w-7 rounded object-cover"
                       />
                     ) : (
-                      <div className="flex h-10 w-7 items-center justify-center rounded bg-muted text-xs">
+                      <div className="bg-muted flex h-10 w-7 items-center justify-center rounded text-xs">
                         🎮
                       </div>
                     )}
@@ -108,7 +117,7 @@ export function SearchInput({
                         <p className="truncate text-sm font-medium">{game.title}</p>
                         <SourceBadge source={game.source} />
                       </div>
-                      <p className="truncate text-xs text-muted-foreground">
+                      <p className="text-muted-foreground truncate text-xs">
                         {[game.releaseYear, game.developer].filter(Boolean).join(" · ")}
                       </p>
                     </div>

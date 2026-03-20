@@ -55,7 +55,7 @@ Le projet utilise des couleurs néon comme accents :
 
 - Violet néon : `neon-violet` / `rgba(139, 92, 246, ...)`
 - Cyan néon : `neon-cyan` / classes `text-cyan-*`, `bg-cyan-*`
-- Utiliser `bg-gradient-to-br from-neon-violet to-neon-cyan` pour les accents
+- Utiliser `bg-linear-to-br from-neon-violet to-neon-cyan` pour les accents
   forts
 
 ## Gradient principal (obligatoire)
@@ -74,9 +74,9 @@ background: linear-gradient(to right, rgb(6, 182, 212), rgb(139, 92, 246));
 <stop offset="100%" stop-color="rgb(139, 92, 246)" /> /* violet */
 
 /* Équivalent Tailwind */
-bg-gradient-to-r from-cyan-500 to-violet-500
+bg-linear-to-r from-cyan-500 to-violet-500
 /* ou avec les custom colors du projet */
-bg-gradient-to-r from-neon-cyan to-neon-violet
+bg-linear-to-r from-neon-cyan to-neon-violet
 ```
 
 - ✅ Utiliser ce gradient cyan → violet comme référence unique pour tout nouvel

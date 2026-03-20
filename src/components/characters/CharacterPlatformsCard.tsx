@@ -18,7 +18,7 @@ export function CharacterPlatformsCard({ platforms, accentColor }: CharacterPlat
 
   if (platforms.length === 0) {
     return (
-      <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-sm">
+      <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-xs">
         <CardContent className="p-6">
           <h4 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
             <Monitor className="h-5 w-5" style={{ color: accentColor }} />
@@ -31,7 +31,7 @@ export function CharacterPlatformsCard({ platforms, accentColor }: CharacterPlat
   }
 
   return (
-    <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-sm">
+    <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-xs">
       <CardContent className="p-6">
         <h4 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
           <Monitor className="h-5 w-5" style={{ color: accentColor }} />
@@ -44,7 +44,7 @@ export function CharacterPlatformsCard({ platforms, accentColor }: CharacterPlat
               <Badge
                 key={platform.id}
                 variant="secondary"
-                className="inline-flex items-center gap-1.5 border-slate-600 bg-slate-900/50 px-3 py-1.5 text-sm text-slate-300 backdrop-blur-sm transition-all hover:bg-slate-700/60"
+                className="inline-flex items-center gap-1.5 border-slate-600 bg-slate-900/50 px-3 py-1.5 text-sm text-slate-300 backdrop-blur-xs transition-all hover:bg-slate-700/60"
               >
                 <Icon icon={platformIconName} className="h-3.5 w-3.5 shrink-0" />
                 {platform.abbreviation || platform.name}

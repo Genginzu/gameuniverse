@@ -34,13 +34,13 @@ export function PlayerCard({ player, locale = "fr", priority = false }: PlayerCa
             />
           </div>
         ) : (
-          <div className="h-20 bg-gradient-to-r from-[#615dfa] via-[#5b36d4] to-[#7c5cfc]" />
+          <div className="h-20 bg-linear-to-r from-[#615dfa] via-[#5b36d4] to-[#7c5cfc]" />
         )}
 
         {/* Avatar with level badge */}
         <div className="relative z-10 -mt-12 flex justify-center">
           <div className="relative">
-            <div className="h-20 w-20 overflow-hidden rounded-2xl border-4 border-white bg-gradient-to-br from-blue-100 to-indigo-100 shadow-lg dark:border-gray-800 dark:from-blue-900/30 dark:to-indigo-900/30">
+            <div className="h-20 w-20 overflow-hidden rounded-2xl border-4 border-white bg-linear-to-br from-blue-100 to-indigo-100 shadow-lg dark:border-gray-800 dark:from-blue-900/30 dark:to-indigo-900/30">
               {player.avatarUrl ? (
                 <LazyImage
                   src={player.avatarUrl}
@@ -59,7 +59,7 @@ export function PlayerCard({ player, locale = "fr", priority = false }: PlayerCa
             </div>
             {/* Level badge */}
             {player.level > 0 && (
-              <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-bold text-white shadow ring-2 ring-white dark:ring-gray-800">
+              <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-bold text-white shadow-sm ring-2 ring-white dark:ring-gray-800">
                 {player.level}
               </span>
             )}

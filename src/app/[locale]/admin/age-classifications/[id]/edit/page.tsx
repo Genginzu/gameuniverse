@@ -164,7 +164,7 @@ export default function EditRatingSystemPage() {
       </h1>
 
       {/* Tab navigation */}
-      <nav className="mb-6 flex gap-1 rounded-xl border border-gray-200/60 bg-white p-1 shadow-sm dark:border-gray-700/40 dark:bg-gray-800/60">
+      <nav className="mb-6 flex gap-1 rounded-xl border border-gray-200/60 bg-white p-1 shadow-xs dark:border-gray-700/40 dark:bg-gray-800/60">
         {TABS.map((tab) => (
           <button
             key={tab.id}

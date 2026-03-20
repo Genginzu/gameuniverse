@@ -15,7 +15,7 @@ describe("Button component", () => {
       expect(classes).toContain("text-destructive-foreground");
     });
 
-    it("should generate outline variant classes", () => {
+    it("should generate outline-solid variant classes", () => {
       const classes = buttonVariants({ variant: "outline" });
       expect(classes).toContain("border");
       expect(classes).toContain("bg-background");
@@ -78,7 +78,7 @@ describe("Button component", () => {
 
     it("should include focus and disabled states", () => {
       const classes = buttonVariants();
-      expect(classes).toContain("focus-visible:outline-none");
+      expect(classes).toContain("focus-visible:outline-hidden");
       expect(classes).toContain("disabled:pointer-events-none");
       expect(classes).toContain("disabled:opacity-50");
     });

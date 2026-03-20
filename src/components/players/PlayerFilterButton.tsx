@@ -15,7 +15,7 @@ export function PlayerFilterButton({ hasFilters, filterCount, onClick }: PlayerF
   return (
     <button
       onClick={onClick}
-      className="inline-flex h-12 items-center rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 text-sm font-semibold text-white shadow-lg transition-all hover:from-blue-700 hover:to-indigo-700 hover:shadow-xl sm:h-14 sm:px-6 sm:text-base"
+      className="inline-flex h-12 items-center rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 px-4 text-sm font-semibold text-white shadow-lg transition-all hover:from-blue-700 hover:to-indigo-700 hover:shadow-xl sm:h-14 sm:px-6 sm:text-base"
     >
       <svg
         className="h-4 w-4 sm:mr-2 sm:h-5 sm:w-5"

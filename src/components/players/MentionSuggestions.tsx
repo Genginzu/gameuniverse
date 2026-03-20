@@ -49,7 +49,7 @@ export function MentionSuggestions({
               : "hover:bg-white/40 dark:hover:bg-slate-700/40"
           }`}
         >
-          <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30">
+          <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-full bg-linear-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30">
             {player.avatarUrl ? (
               <LazyImage
                 src={player.avatarUrl}

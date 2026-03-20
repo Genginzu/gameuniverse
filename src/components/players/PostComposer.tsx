@@ -126,7 +126,7 @@ export function PostComposer({
     <div className="rounded-2xl bg-white/80 p-4 shadow-md backdrop-blur-xl transition-all duration-300 dark:bg-slate-800/60 dark:shadow-lg dark:shadow-black/20">
       <div className="flex gap-3">
         {/* Avatar */}
-        <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30">
+        <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-linear-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30">
           {playerAvatar ? (
             <LazyImage
               src={playerAvatar}
@@ -156,7 +156,7 @@ export function PostComposer({
               aria-label={t("placeholder")}
               maxLength={MAX_LENGTH}
               rows={3}
-              className="w-full resize-none rounded-xl border-2 border-violet-300 bg-white/60 p-3 pb-7 text-sm text-gray-800 placeholder-gray-400 backdrop-blur-sm transition-all duration-200 focus:border-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-400/20 dark:border-violet-500/50 dark:bg-slate-700/40 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-violet-400/60 dark:focus:ring-violet-400/15"
+              className="w-full resize-none rounded-xl border-2 border-violet-300 bg-white/60 p-3 pb-7 text-sm text-gray-800 placeholder-gray-400 backdrop-blur-xs transition-all duration-200 focus:border-violet-400 focus:outline-hidden focus:ring-2 focus:ring-violet-400/20 dark:border-violet-500/50 dark:bg-slate-700/40 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-violet-400/60 dark:focus:ring-violet-400/15"
             />
             <span
               className={`absolute bottom-2 right-3 text-xs ${remaining < 0 ? "text-red-500" : "text-gray-400 dark:text-slate-500"}`}
@@ -189,7 +189,7 @@ export function PostComposer({
                 onChange={(e) => setImageUrl(e.target.value)}
                 placeholder={t("imageUrlPlaceholder")}
                 aria-label={t("imageUrlAriaLabel")}
-                className="w-full rounded-full border-2 border-violet-300 bg-white/60 py-2 pl-9 pr-3 text-xs text-gray-800 placeholder-gray-400 transition-all duration-200 focus:border-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-400/20 dark:border-violet-500/50 dark:bg-slate-700/40 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-violet-400/60 dark:focus:ring-violet-400/15"
+                className="w-full rounded-full border-2 border-violet-300 bg-white/60 py-2 pl-9 pr-3 text-xs text-gray-800 placeholder-gray-400 transition-all duration-200 focus:border-violet-400 focus:outline-hidden focus:ring-2 focus:ring-violet-400/20 dark:border-violet-500/50 dark:bg-slate-700/40 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-violet-400/60 dark:focus:ring-violet-400/15"
               />
               {hasImageUrlError && (
                 <p className="absolute -bottom-4 left-3 text-[10px] text-red-500">
@@ -202,7 +202,7 @@ export function PostComposer({
               type="button"
               onClick={handleSubmit}
               disabled={isDisabled}
-              className="inline-flex shrink-0 items-center gap-2 rounded-full bg-gradient-to-br from-violet-500 to-blue-500 px-5 py-2 text-sm font-medium text-white shadow-lg shadow-violet-500/20 transition-all duration-300 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex shrink-0 items-center gap-2 rounded-full bg-linear-to-br from-violet-500 to-blue-500 px-5 py-2 text-sm font-medium text-white shadow-lg shadow-violet-500/20 transition-all duration-300 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isCreating ? (
                 <Loader2 className="h-4 w-4 animate-spin" />

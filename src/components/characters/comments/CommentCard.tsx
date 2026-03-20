@@ -4,6 +4,7 @@ import { User } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useDateFormatter } from "@/hooks/useTranslations";
 import type { Comment } from "@/types/comment";
+import Image from "next/image";
 
 interface CommentCardProps {
   comment: Comment;
@@ -14,9 +15,11 @@ function CommentAvatar({ name, avatar }: { name: string | null; avatar: string |
 
   if (avatar) {
     return (
-      <img
+      <Image
         src={avatar}
         alt={name ?? t("anonymousPlayer")}
+        width={40}
+        height={40}
         className="h-10 w-10 rounded-full object-cover ring-2 ring-slate-600"
       />
     );
@@ -43,7 +46,7 @@ export function CommentCard({ comment }: CommentCardProps) {
         </div>
       </div>
 
-      <p className="whitespace-pre-line text-sm leading-relaxed text-slate-300">
+      <p className="text-sm leading-relaxed whitespace-pre-line text-slate-300">
         {comment.content}
       </p>
     </article>

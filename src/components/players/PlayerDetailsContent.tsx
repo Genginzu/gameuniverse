@@ -77,14 +77,14 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
   const displayName = player.fullName || t("card.anonymousPlayer");
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       {/* Back navigation */}
       <div className="absolute left-4 top-4 z-20">
         <Link href={`/${locale}/players`}>
           <Button
             variant="ghost"
             size="sm"
-            className="rounded-full bg-black/20 text-gray-700 backdrop-blur-sm hover:bg-black/30 hover:text-gray-900 dark:bg-black/30 dark:text-white dark:hover:bg-black/50 dark:hover:text-white"
+            className="rounded-full bg-black/20 text-gray-700 backdrop-blur-xs hover:bg-black/30 hover:text-gray-900 dark:bg-black/30 dark:text-white dark:hover:bg-black/50 dark:hover:text-white"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
             {t("details.back")}

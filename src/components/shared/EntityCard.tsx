@@ -102,7 +102,7 @@ export function EntityCard<T extends object>({
         return (
           <div className={`absolute ${positionClass} top-3 z-20`}>
             <div
-              className={`${colorClass} flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold text-white shadow-[0_0_10px_currentColor] ring-2 ring-white/20 backdrop-blur-sm`}
+              className={`${colorClass} flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold text-white shadow-[0_0_10px_currentColor] ring-2 ring-white/20 backdrop-blur-xs`}
             >
               {score}
             </div>
@@ -113,7 +113,7 @@ export function EntityCard<T extends object>({
         const count = Number(value);
         return (
           <div className={`absolute ${positionClass} top-3 z-20`}>
-            <div className="rounded-full bg-white/90 px-3 py-1 text-xs font-medium text-gray-900 shadow-lg backdrop-blur-sm">
+            <div className="rounded-full bg-white/90 px-3 py-1 text-xs font-medium text-gray-900 shadow-lg backdrop-blur-xs">
               {t("gamesCount", { count })}
             </div>
           </div>
@@ -125,7 +125,7 @@ export function EntityCard<T extends object>({
           <div className={`absolute ${positionClass} top-3 z-20`}>
             <Badge
               variant="secondary"
-              className="rounded-full bg-white/90 px-3 py-1 text-xs font-medium text-gray-900 shadow-lg backdrop-blur-sm"
+              className="rounded-full bg-white/90 px-3 py-1 text-xs font-medium text-gray-900 shadow-lg backdrop-blur-xs"
             >
               {role}
             </Badge>
@@ -142,14 +142,14 @@ export function EntityCard<T extends object>({
 
     if (config.customHoverRenderer) {
       return (
-        <div className="absolute inset-0 z-10 flex flex-col justify-end rounded-2xl bg-gradient-to-t from-black/90 via-black/60 to-transparent opacity-0 transition-all duration-300 group-hover:opacity-100">
+        <div className="absolute inset-0 z-10 flex flex-col justify-end rounded-2xl bg-linear-to-t from-black/90 via-black/60 to-transparent opacity-0 transition-all duration-300 group-hover:opacity-100">
           <div className="p-4">{config.customHoverRenderer(entity, t)}</div>
         </div>
       );
     }
 
     return (
-      <div className="absolute inset-0 z-10 flex flex-col justify-end rounded-2xl bg-gradient-to-t from-black/90 via-black/60 to-transparent opacity-0 transition-all duration-300 group-hover:opacity-100">
+      <div className="absolute inset-0 z-10 flex flex-col justify-end rounded-2xl bg-linear-to-t from-black/90 via-black/60 to-transparent opacity-0 transition-all duration-300 group-hover:opacity-100">
         <div className="p-4">
           {config.hoverOverlay.showTitle !== false && (
             <h3 className="mb-2 line-clamp-2 text-lg font-bold text-white">{title}</h3>
@@ -178,7 +178,7 @@ export function EntityCard<T extends object>({
     );
   };
 
-  const aspectRatioClass = config.aspectRatio === "3:4" ? "aspect-[3/4]" : "aspect-square";
+  const aspectRatioClass = config.aspectRatio === "3:4" ? "aspect-3/4" : "aspect-square";
   const needsFallbackAvatar = !imageUrl && config.fallbackAvatarRenderer;
 
   return (
@@ -189,7 +189,7 @@ export function EntityCard<T extends object>({
           style={{ backgroundColor: backgroundColor || "#f3f4f6" }}
         >
           {needsFallbackAvatar ? (
-            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30">
+            <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30">
               {config.fallbackAvatarRenderer!()}
             </div>
           ) : (

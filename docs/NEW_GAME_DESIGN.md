@@ -44,7 +44,7 @@ d'onglets et séparer les différents types de médias en sections distinctes.**
 ### Header Sticky
 
 ```tsx
-- Position sticky avec backdrop-blur
+- Position sticky avec backdrop-blur-sm
 - Navigation retour + actions rapides (partage, favoris)
 - Fond semi-transparent avec bordure
 ```

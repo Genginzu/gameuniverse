@@ -5,7 +5,7 @@ export function PlayerCardSkeleton() {
     <div className="group relative">
       <div className="relative overflow-hidden rounded-2xl bg-white shadow-md dark:bg-gray-800">
         {/* Avatar section skeleton */}
-        <div className="relative aspect-square bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30">
+        <div className="relative aspect-square bg-linear-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30">
           <Skeleton className="h-full w-full" />
 
           {/* Games count badge skeleton */}

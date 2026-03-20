@@ -215,7 +215,7 @@ const [showFilters, setShowFilters] = useState(false);
 **Structure JSX:**
 
 ```jsx
-<div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+<div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100">
   {/* Hero Section */}
   <div className="hero-section">
     <h1>Découvrez des Personnages Extraordinaires</h1>
@@ -406,7 +406,7 @@ interface CharacterCardProps {
 ```jsx
 <Link href={`/${locale}/characters/${character.slug}`}>
   <Card className="character-card group">
-    <div className="relative aspect-[3/4]">
+    <div className="relative aspect-3/4">
       <LazyImage
         src={character.mainImage}
         alt={character.name}
@@ -530,7 +530,7 @@ const AVAILABLE_ROLES = [
       {games.map((game) => (
         <Badge
           key={game.id}
-          variant={selectedGames.includes(game.id) ? "default" : "outline"}
+          variant={selectedGames.includes(game.id) ? "default" : "outline-solid"}
           onClick={() => toggleGameFilter(game.id)}
           className="cursor-pointer"
         >
@@ -547,7 +547,7 @@ const AVAILABLE_ROLES = [
       {AVAILABLE_ROLES.map((role) => (
         <Badge
           key={role.value}
-          variant={selectedRoles.includes(role.value) ? "default" : "outline"}
+          variant={selectedRoles.includes(role.value) ? "default" : "outline-solid"}
           onClick={() => toggleRoleFilter(role.value)}
           className="cursor-pointer"
         >

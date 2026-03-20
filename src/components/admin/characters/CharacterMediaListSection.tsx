@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -69,7 +70,7 @@ export function CharacterMediaListSection({
           {t(titleKey)} <span className="font-normal text-gray-400">({indices.length})</span>
         </h3>
         <Button type="button" variant="outline" size="sm" className="gap-1.5" onClick={addItem}>
-          <Icon icon="fa:plus" className="h-3 w-3"  />
+          <Icon icon="fa:plus" className="h-3 w-3" />
           {t(addKey)}
         </Button>
       </div>
@@ -114,15 +115,19 @@ function MediaItemCard({
     <div className="rounded-xl border border-gray-100 bg-gray-50/60 p-4 dark:border-gray-700/30 dark:bg-gray-900/20">
       <div className="flex items-start gap-4">
         {url && !showThumbnail && (
-          <img
-            key={url}
-            src={url}
-            alt={form.watch(`media.${index}.alt_text`) || ""}
-            className="h-20 w-32 flex-shrink-0 rounded-lg border border-gray-200 object-cover dark:border-gray-700"
-            onError={(e) => {
-              (e.target as HTMLImageElement).style.display = "none";
-            }}
-          />
+          <div className="relative h-20 w-32 shrink-0 rounded-lg border border-gray-200 dark:border-gray-700">
+            <Image
+              key={url}
+              src={url}
+              alt={form.watch(`media.${index}.alt_text`) || ""}
+              fill
+              className="rounded-lg object-cover"
+              unoptimized
+              onError={(e) => {
+                (e.target as HTMLImageElement).parentElement!.style.display = "none";
+              }}
+            />
+          </div>
         )}
         <div className="min-w-0 flex-1 space-y-2">
           <Input type="url" placeholder="URL" {...form.register(`media.${index}.url`)} />
@@ -141,10 +146,10 @@ function MediaItemCard({
         <button
           type="button"
           onClick={onRemove}
-          className="mt-2 flex-shrink-0 rounded-md p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20"
+          className="mt-2 shrink-0 rounded-md p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20"
           aria-label={t("removeMedia")}
         >
-          <Icon icon="fa:times" className="h-3.5 w-3.5"  />
+          <Icon icon="fa:times" className="h-3.5 w-3.5" />
         </button>
       </div>
     </div>

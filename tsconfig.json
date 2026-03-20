@@ -36,6 +36,7 @@
     "**/*.test.ts",
     "**/*.test.tsx",
     "test/**/*",
-    "test-resend.js"
+    "test-resend.js",
+    "vitest.config.ts"
   ]
 }

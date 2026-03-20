@@ -130,7 +130,7 @@ describe("SidebarUserSection", () => {
       );
 
       // Avatar container has the gradient background
-      const avatarDiv = container.querySelector(".bg-gradient-to-br");
+      const avatarDiv = container.querySelector(".bg-linear-to-br");
       expect(avatarDiv).toBeInTheDocument();
     });
   });

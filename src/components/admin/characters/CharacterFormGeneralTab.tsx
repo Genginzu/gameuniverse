@@ -42,7 +42,7 @@ export function CharacterFormGeneralTab({ form, t, mode }: GeneralTabProps) {
                 </FormControl>
                 {field.value && /^#[0-9a-fA-F]{6}$/.test(field.value) && (
                   <div
-                    className="h-9 w-9 flex-shrink-0 rounded-lg border border-gray-200 dark:border-gray-700"
+                    className="h-9 w-9 shrink-0 rounded-lg border border-gray-200 dark:border-gray-700"
                     style={{ backgroundColor: field.value }}
                     aria-label={`Color preview: ${field.value}`}
                   />

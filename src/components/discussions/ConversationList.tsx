@@ -35,7 +35,7 @@ export default function ConversationList({
         <button
           type="button"
           onClick={onNewConversation}
-          className="flex items-center gap-1.5 rounded-xl bg-gradient-to-br from-blue-500 via-purple-600 to-purple-700 px-3 py-1.5 text-xs font-medium text-white shadow-lg transition-all duration-300 hover:opacity-90"
+          className="flex items-center gap-1.5 rounded-xl bg-linear-to-br from-blue-500 via-purple-600 to-purple-700 px-3 py-1.5 text-xs font-medium text-white shadow-lg transition-all duration-300 hover:opacity-90"
           aria-label={t("newConversation")}
           data-testid="new-conversation-button"
         >
@@ -52,7 +52,7 @@ export default function ConversationList({
           </div>
         ) : conversations.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-3 py-12 text-center">
-            <div className="rounded-2xl bg-gradient-to-br from-blue-500/20 via-purple-600/20 to-purple-700/20 p-4">
+            <div className="rounded-2xl bg-linear-to-br from-blue-500/20 via-purple-600/20 to-purple-700/20 p-4">
               <MessageSquare className="h-8 w-8 text-neon-violet" />
             </div>
             <p className="text-sm text-slate-500 dark:text-slate-400">{t("noConversations")}</p>

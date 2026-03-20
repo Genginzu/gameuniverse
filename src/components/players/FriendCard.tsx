@@ -52,7 +52,7 @@ export function FriendCard({ friend, locale, onRemove }: FriendCardProps) {
         className="flex min-w-0 flex-1 items-center gap-3"
       >
         {/* Avatar */}
-        <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30">
+        <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-linear-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30">
           {friend.avatarUrl ? (
             <LazyImage
               src={friend.avatarUrl}

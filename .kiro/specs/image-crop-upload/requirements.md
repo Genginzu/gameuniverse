@@ -197,7 +197,7 @@ s'intègre visuellement au reste du site, afin d'avoir une expérience cohérent
 #### Critères d'acceptation
 
 1. THE Éditeur_de_Recadrage SHALL utiliser les classes glassmorphism existantes
-   (`.glass-card`, fonds semi-transparents, `backdrop-blur`) pour ses
+   (`.glass-card`, fonds semi-transparents, `backdrop-blur-sm`) pour ses
    conteneurs.
 2. THE Éditeur_de_Recadrage SHALL supporter le mode sombre (dark mode) via les
    classes Tailwind `dark:`.

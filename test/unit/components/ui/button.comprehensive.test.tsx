@@ -31,7 +31,7 @@ describe("Button component", () => {
       expect(html).toContain("bg-destructive");
     });
 
-    it("should render with outline variant", () => {
+    it("should render with outline-solid variant", () => {
       const html = renderToString(<Button variant="outline">Outline</Button>);
       expect(html).toContain("Outline");
       expect(html).toContain("border");

@@ -21,7 +21,7 @@ const LanguageSelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex w-full cursor-pointer select-none items-center justify-center rounded-lg px-4 py-3 text-sm outline-none transition-colors hover:bg-gray-100 focus:bg-gray-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+      "relative flex w-full cursor-pointer select-none items-center justify-center rounded-lg px-4 py-3 text-sm outline-hidden transition-colors hover:bg-gray-100 focus:bg-gray-100 data-disabled:pointer-events-none data-disabled:opacity-50",
       className
     )}
     {...props}
@@ -53,7 +53,7 @@ export function LanguageSwitcher() {
   if (!mounted) {
     return (
       <div className="flex h-12 w-20 items-center justify-center gap-2 rounded-2xl px-3 py-2">
-        {CurrentFlagComponent && <CurrentFlagComponent className="h-6 w-8 rounded-sm shadow-sm" />}
+        {CurrentFlagComponent && <CurrentFlagComponent className="h-6 w-8 rounded-sm shadow-xs" />}
       </div>
     );
   }
@@ -62,12 +62,12 @@ export function LanguageSwitcher() {
     <SelectPrimitive.Root value={locale} onValueChange={handleLocaleChange}>
       <SelectPrimitive.Trigger
         className={cn(
-          "flex h-12 w-20 items-center justify-center gap-2 rounded-2xl px-3 py-2 transition-all hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          "flex h-12 w-20 items-center justify-center gap-2 rounded-2xl px-3 py-2 transition-all hover:shadow-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
         )}
       >
         <SelectPrimitive.Value>
           {CurrentFlagComponent && (
-            <CurrentFlagComponent className="h-6 w-8 rounded-sm shadow-sm" />
+            <CurrentFlagComponent className="h-6 w-8 rounded-sm shadow-xs" />
           )}
         </SelectPrimitive.Value>
       </SelectPrimitive.Trigger>
@@ -85,7 +85,7 @@ export function LanguageSwitcher() {
               const FlagComponent = localeItem.FlagComponent;
               return (
                 <LanguageSelectItem key={localeItem.code} value={localeItem.code}>
-                  <FlagComponent className="h-6 w-8 rounded-sm shadow-sm" />
+                  <FlagComponent className="h-6 w-8 rounded-sm shadow-xs" />
                 </LanguageSelectItem>
               );
             })}

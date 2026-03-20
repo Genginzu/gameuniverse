@@ -49,7 +49,7 @@ export function ActivityFeed({
           <button
             type="button"
             onClick={() => setShowComposer((v) => !v)}
-            className="inline-flex shrink-0 items-center gap-2 rounded-2xl bg-gradient-to-br from-violet-500 to-blue-500 px-5 py-3 text-sm font-medium text-white shadow-lg shadow-violet-500/20 transition-all duration-300 hover:opacity-90"
+            className="inline-flex shrink-0 items-center gap-2 rounded-2xl bg-linear-to-br from-violet-500 to-blue-500 px-5 py-3 text-sm font-medium text-white shadow-lg shadow-violet-500/20 transition-all duration-300 hover:opacity-90"
           >
             {showComposer ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
             {t("newPost")}

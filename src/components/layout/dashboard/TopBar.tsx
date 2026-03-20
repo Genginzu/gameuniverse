@@ -30,7 +30,7 @@ export default function TopBar({ isAuthenticated, onSearchOpen }: TopBarProps) {
         <button
           type="button"
           onClick={onSearchOpen}
-          className="flex w-full max-w-md items-center gap-2.5 rounded-xl bg-white/10 px-4 py-2 text-sm text-white/60 backdrop-blur-sm transition-all hover:bg-white/15 hover:text-white/80 focus:outline-none focus:ring-2 focus:ring-white/30"
+          className="flex w-full max-w-md items-center gap-2.5 rounded-xl bg-white/10 px-4 py-2 text-sm text-white/60 backdrop-blur-xs transition-all hover:bg-white/15 hover:text-white/80 focus:outline-hidden focus:ring-2 focus:ring-white/30"
         >
           <Icon icon="fa:search" className="h-3.5 w-3.5 shrink-0"  />
           <span className="hidden sm:inline">{t("search")}...</span>
@@ -46,7 +46,7 @@ export default function TopBar({ isAuthenticated, onSearchOpen }: TopBarProps) {
         {!isAuthenticated && (
           <Link
             href="/auth?mode=signin"
-            className="flex items-center rounded-xl bg-white px-5 py-2 text-sm font-bold text-indigo-600 shadow-md shadow-black/10 transition-all hover:bg-white/90 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-white/50"
+            className="flex items-center rounded-xl bg-white px-5 py-2 text-sm font-bold text-indigo-600 shadow-md shadow-black/10 transition-all hover:bg-white/90 hover:shadow-lg focus:outline-hidden focus:ring-2 focus:ring-white/50"
           >
             {t("login")}
           </Link>

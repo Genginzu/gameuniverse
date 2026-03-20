@@ -25,7 +25,7 @@ export default async function ConfirmPage({ searchParams }: ConfirmPageProps) {
   // Si il y a une erreur dans les paramètres
   if (params.error) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+      <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-blue-50 to-indigo-100 p-4">
         <Card className="mx-auto w-full max-w-md">
           <CardHeader className="text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
@@ -62,7 +62,7 @@ export default async function ConfirmPage({ searchParams }: ConfirmPageProps) {
     if (error) {
       logger.error("Confirmation error", { error: error.message });
       return (
-        <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+        <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-blue-50 to-indigo-100 p-4">
           <Card className="mx-auto w-full max-w-md">
             <CardHeader className="text-center">
               <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
@@ -93,7 +93,7 @@ export default async function ConfirmPage({ searchParams }: ConfirmPageProps) {
   } catch (error) {
     logger.error("Unexpected error in confirm page", { error });
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+      <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-blue-50 to-indigo-100 p-4">
         <Card className="mx-auto w-full max-w-md">
           <CardHeader className="text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">

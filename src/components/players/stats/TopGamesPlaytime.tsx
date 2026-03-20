@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Gamepad2 } from "lucide-react";
 import type { PlaytimeGameEntry } from "@/types/dashboard-stats";
+import Image from "next/image";
 import { formatLocalizedNumber } from "@/lib/utils/statsFormatters";
 
 interface TopGamesPlaytimeProps {
@@ -35,9 +36,11 @@ export function TopGamesPlaytime({ games, locale }: TopGamesPlaytimeProps) {
               {/* Cover */}
               <div className="h-10 w-7 shrink-0 overflow-hidden rounded-md">
                 {game.coverImage ? (
-                  <img
+                  <Image
                     src={game.coverImage}
                     alt={game.title}
+                    width={28}
+                    height={40}
                     className="h-full w-full object-cover"
                   />
                 ) : (
@@ -53,7 +56,7 @@ export function TopGamesPlaytime({ games, locale }: TopGamesPlaytimeProps) {
                 </p>
                 <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200/60 dark:bg-slate-700/60">
                   <div
-                    className="h-full rounded-full bg-gradient-to-r from-violet-500 to-cyan-500 transition-all duration-700"
+                    className="h-full rounded-full bg-linear-to-r from-violet-500 to-cyan-500 transition-all duration-700"
                     style={{ width: `${ratio}%` }}
                   />
                 </div>

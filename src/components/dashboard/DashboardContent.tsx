@@ -69,7 +69,7 @@ function QuickActionsCard({ t }: { t: (key: string) => string }) {
       <div className="space-y-3">
         <Link
           href="/library"
-          className="neon-btn flex w-full items-center rounded-xl bg-gradient-to-r from-neon-violet/20 to-neon-cyan/20 px-4 py-3 font-semibold text-gray-900 transition-all duration-200 hover:from-neon-violet/30 hover:to-neon-cyan/30 dark:text-white"
+          className="neon-btn flex w-full items-center rounded-xl bg-linear-to-r from-neon-violet/20 to-neon-cyan/20 px-4 py-3 font-semibold text-gray-900 transition-all duration-200 hover:from-neon-violet/30 hover:to-neon-cyan/30 dark:text-white"
         >
           <Icon icon="fa:gamepad" className="mr-3 h-5 w-5 text-neon-violet drop-shadow-[0_0_6px_currentColor]"  />
           {t("exploreGames")}

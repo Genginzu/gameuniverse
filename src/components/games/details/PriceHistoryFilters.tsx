@@ -43,7 +43,7 @@ export function PriceHistoryFiltersBar({
             size="sm"
             onClick={() => handlePeriodChange(option.value)}
             aria-pressed={filters.period === option.value}
-            className={cn("min-w-[3rem]", filters.period === option.value && "pointer-events-none")}
+            className={cn("min-w-12", filters.period === option.value && "pointer-events-none")}
           >
             {option.label}
           </Button>
@@ -64,7 +64,7 @@ export function PriceHistoryFiltersBar({
               size="sm"
               onClick={() => handleStoreToggle(store)}
               aria-pressed={filters.store === store}
-              className={cn("text-xs", filters.store === store && "ring-1 ring-ring")}
+              className={cn("text-xs", filters.store === store && "ring-ring ring-1")}
             >
               {store}
             </Button>

@@ -3,6 +3,7 @@
 import { User, Zap, Gamepad2, Trophy } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { PlayerPlaytimeContributor } from "@/types/game";
+import Image from "next/image";
 
 interface GamePlaytimeContributorsProps {
   contributors: PlayerPlaytimeContributor[];
@@ -35,9 +36,11 @@ export function GamePlaytimeContributors({
         >
           {/* Avatar */}
           {contributor.avatarUrl ? (
-            <img
+            <Image
               src={contributor.avatarUrl}
               alt={contributor.username ?? ""}
+              width={36}
+              height={36}
               className="h-9 w-9 shrink-0 rounded-full object-cover ring-2 ring-slate-600"
             />
           ) : (

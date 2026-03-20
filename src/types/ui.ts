@@ -16,7 +16,7 @@ export interface GameUniverseLogoConfig {
 
 // Types pour les composants UI génériques
 export interface ButtonVariant {
-  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
+  variant?: "default" | "destructive" | "outline-solid" | "secondary" | "ghost" | "link";
   size?: "default" | "sm" | "lg" | "icon";
 }
 

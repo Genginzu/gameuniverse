@@ -267,7 +267,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
         {/* Stats Cards */}
         <div className="mb-6 grid grid-cols-1 gap-4 sm:mb-8 sm:gap-6 md:grid-cols-4">
@@ -376,7 +376,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
             <div className="flex-1">
               <GameSearchBar onSearch={handleSearch} initialValue={searchQuery} />
             </div>
-            <div className="flex-shrink-0">
+            <div className="shrink-0">
               <GameFilterButton
                 hasFilters={selectedGenres.length > 0 || selectedPublishers.length > 0}
                 filterCount={selectedGenres.length}

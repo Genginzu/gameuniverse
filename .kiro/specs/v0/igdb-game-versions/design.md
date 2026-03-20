@@ -203,7 +203,7 @@ export function GameVersions({ versions, accentColor }: GameVersionsProps) {
             className="rounded-xl border border-slate-700 bg-slate-800/50 p-4"
           >
             {version.coverImageUrl && (
-              <div className="relative aspect-[3/4] mb-3 overflow-hidden rounded-lg">
+              <div className="relative aspect-3/4 mb-3 overflow-hidden rounded-lg">
                 <Image
                   src={version.coverImageUrl}
                   alt={version.title}

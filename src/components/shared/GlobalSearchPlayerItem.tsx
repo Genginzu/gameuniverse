@@ -18,7 +18,7 @@ export function GlobalSearchPlayerItem({ item, isActive }: GlobalSearchPlayerIte
       )}
     >
       {/* Player avatar */}
-      <div className="relative h-11 w-11 flex-shrink-0 overflow-hidden rounded-full bg-white/10">
+      <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full bg-white/10">
         {item.avatarUrl ? (
           <Image
             src={item.avatarUrl}

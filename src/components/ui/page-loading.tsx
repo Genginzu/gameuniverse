@@ -16,7 +16,7 @@ export function PageLoading({
 }: PageLoadingProps) {
   if (type === "minimal") {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-sm">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-xs">
         <div className="text-center">
           <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-blue-600 border-t-transparent"></div>
           {message && <p className="text-sm text-gray-600">{message}</p>}
@@ -39,7 +39,7 @@ export function PageLoading({
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             <div className="space-y-6 md:col-span-2">
               {Array.from({ length: 3 }).map((_, index) => (
-                <div key={index} className="rounded-lg bg-white p-6 shadow-sm">
+                <div key={index} className="rounded-lg bg-white p-6 shadow-xs">
                   <Skeleton className="mb-4 h-6 w-32" />
                   <div className="space-y-2">
                     <Skeleton className="h-4 w-full" />
@@ -52,7 +52,7 @@ export function PageLoading({
 
             <div className="space-y-6">
               {Array.from({ length: 2 }).map((_, index) => (
-                <div key={index} className="rounded-lg bg-white p-6 shadow-sm">
+                <div key={index} className="rounded-lg bg-white p-6 shadow-xs">
                   <Skeleton className="mb-4 h-6 w-24" />
                   <div className="space-y-2">
                     <Skeleton className="h-4 w-full" />
@@ -69,7 +69,7 @@ export function PageLoading({
 
   // Default spinner type
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/90 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/90 backdrop-blur-xs">
       <div className="text-center">
         <div className="relative mb-6">
           <LoadingSpinner size="lg" />

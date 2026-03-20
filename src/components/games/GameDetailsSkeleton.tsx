@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 export function GameDetailsSkeleton() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
         {/* Back button skeleton */}
         <div className="mb-6">
@@ -16,7 +16,7 @@ export function GameDetailsSkeleton() {
             <Card className="overflow-hidden bg-white shadow-lg">
               <CardContent className="p-0">
                 {/* Cover image skeleton */}
-                <Skeleton className="aspect-[3/4] w-full" />
+                <Skeleton className="aspect-3/4 w-full" />
 
                 <div className="p-6">
                   {/* Title skeleton */}

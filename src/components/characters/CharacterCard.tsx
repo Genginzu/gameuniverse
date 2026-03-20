@@ -20,7 +20,7 @@ export function CharacterCard({ character, locale = "fr", priority = false }: Ch
       <Link href={`/${locale}/characters/${character.slug}`}>
         {/* Cover Image with Overlay */}
         <div
-          className="relative aspect-[3/4] cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl hover:shadow-blue-500/10"
+          className="relative aspect-3/4 cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl hover:shadow-blue-500/10"
           style={{
             backgroundColor: character.backgroundColor || "#f3f4f6", // Fallback to gray-100
           }}
@@ -40,7 +40,7 @@ export function CharacterCard({ character, locale = "fr", priority = false }: Ch
             <div className="absolute right-3 top-3 z-20">
               <Badge
                 variant="secondary"
-                className="rounded-full bg-white/90 px-3 py-1 text-xs font-medium text-gray-900 shadow-lg backdrop-blur-sm"
+                className="rounded-full bg-white/90 px-3 py-1 text-xs font-medium text-gray-900 shadow-lg backdrop-blur-xs"
               >
                 {character.role}
               </Badge>
@@ -48,7 +48,7 @@ export function CharacterCard({ character, locale = "fr", priority = false }: Ch
           )}
 
           {/* Hover Overlay - appears on the cover */}
-          <div className="absolute inset-0 z-10 flex flex-col justify-end rounded-2xl bg-gradient-to-t from-black/90 via-black/60 to-transparent opacity-0 transition-all duration-300 group-hover:opacity-100">
+          <div className="absolute inset-0 z-10 flex flex-col justify-end rounded-2xl bg-linear-to-t from-black/90 via-black/60 to-transparent opacity-0 transition-all duration-300 group-hover:opacity-100">
             <div className="p-4">
               {/* Name */}
               <h3 className="mb-2 line-clamp-2 text-lg font-bold text-white">{character.name}</h3>

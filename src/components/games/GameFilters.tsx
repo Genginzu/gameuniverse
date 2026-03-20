@@ -84,7 +84,7 @@ export function GameFilters({
       )}
 
       {showAllGenres && (
-        <div className="rounded-xl bg-white/60 p-4 ring-1 ring-gray-200/50 backdrop-blur-sm dark:bg-slate-800/50 dark:ring-slate-700/50">
+        <div className="rounded-xl bg-white/60 p-4 ring-1 ring-gray-200/50 backdrop-blur-xs dark:bg-slate-800/50 dark:ring-slate-700/50">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{t("genres")}</h3>
             <span className="text-xs text-gray-500 dark:text-gray-400">
@@ -100,7 +100,7 @@ export function GameFilters({
                   onClick={() => handleGenreToggle(genre.name)}
                   className={`rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
                     isSelected
-                      ? "bg-gradient-to-r from-cyan-500 to-violet-500 text-white shadow-sm"
+                      ? "bg-linear-to-r from-cyan-500 to-violet-500 text-white shadow-xs"
                       : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700/50 dark:text-gray-300 dark:hover:bg-slate-700"
                   }`}
                 >

@@ -177,7 +177,7 @@ export function FilterPanel({
 
       {/* Active filters display */}
       {hasFilters && (
-        <div className="rounded-xl bg-gradient-to-r from-blue-50 to-indigo-50 p-3 sm:p-4 dark:from-blue-900/20 dark:to-indigo-900/20">
+        <div className="rounded-xl bg-linear-to-r from-blue-50 to-indigo-50 p-3 sm:p-4 dark:from-blue-900/20 dark:to-indigo-900/20">
           <div className="mb-2 flex items-center justify-between">
             <span className="text-sm font-medium text-blue-900 dark:text-blue-300">
               {labels.activeFilters}
@@ -191,7 +191,7 @@ export function FilterPanel({
               values.map((optionId) => (
                 <div
                   key={`${filterId}-${optionId}`}
-                  className="inline-flex items-center rounded-lg bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow-sm ring-1 ring-gray-200 sm:px-3 sm:py-1.5 sm:text-sm dark:bg-gray-800 dark:text-gray-200 dark:ring-gray-700"
+                  className="inline-flex items-center rounded-lg bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow-xs ring-1 ring-gray-200 sm:px-3 sm:py-1.5 sm:text-sm dark:bg-gray-800 dark:text-gray-200 dark:ring-gray-700"
                 >
                   <span className="mr-1 sm:mr-2">{getOptionLabel(filterId, optionId)}</span>
                   <button

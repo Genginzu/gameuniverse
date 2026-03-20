@@ -11,6 +11,7 @@ import { GameDetailsSidebar } from "./details/GameDetailsSidebar";
 import { GameDetailsMainContent } from "./details/GameDetailsMainContent";
 import { GameDetailsNavBar } from "./details/GameDetailsNavBar";
 import { useBackgroundSync } from "@/hooks/useBackgroundSync";
+import Image from "next/image";
 
 interface GameDetailsProps {
   game: GameDetails;
@@ -43,10 +44,13 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
       {/* Background image — more visible for glassmorphism blur effect */}
       {game.media.backgroundImage && (
         <div className="absolute inset-x-0 top-0 z-0 h-[70vh]">
-          <img
+          <Image
             src={game.media.backgroundImage}
             alt=""
-            className="h-full w-full object-cover opacity-50"
+            fill
+            className="object-cover opacity-50"
+            sizes="100vw"
+            priority
           />
           <div
             className="absolute inset-0"
@@ -60,7 +64,7 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
       <GameDetailsNavBar locale={locale} colors={colors} />
 
       {/* Two-column layout */}
-      <div className="container relative z-10 mx-auto px-4 pb-16 pt-20">
+      <div className="relative z-10 container mx-auto px-4 pt-20 pb-16">
         <div className="flex flex-col gap-8 lg:flex-row">
           <GameDetailsSidebar
             game={game}

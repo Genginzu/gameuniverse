@@ -32,7 +32,7 @@ export default function AdminSidebar({
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className="hidden h-full w-64 flex-shrink-0 flex-col border-r border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900 lg:flex">
+      <div className="hidden h-full w-64 shrink-0 flex-col border-r border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900 lg:flex">
         <SidebarContent user={user} signOut={signOut} onLinkClick={handleLinkClick} />
       </div>
 
@@ -233,11 +233,11 @@ function SidebarContent({
       </nav>
 
       {/* User Info */}
-      <div className="flex-shrink-0 border-t border-gray-200 p-4 dark:border-gray-700">
+      <div className="shrink-0 border-t border-gray-200 p-4 dark:border-gray-700">
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-            className="mb-3 flex w-full items-center rounded-xl p-2 text-left hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:hover:bg-gray-800"
+            className="mb-3 flex w-full items-center rounded-xl p-2 text-left hover:bg-gray-50 focus:outline-hidden focus:ring-2 focus:ring-blue-500 dark:hover:bg-gray-800"
           >
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500">
               <Icon icon="fa:user" className="h-4 w-4 text-white"  />
@@ -248,9 +248,9 @@ function SidebarContent({
               </p>
             </div>
             {isUserMenuOpen ? (
-              <Icon icon="fa:chevron-up" className="h-4 w-4 flex-shrink-0 text-gray-400"  />
+              <Icon icon="fa:chevron-up" className="h-4 w-4 shrink-0 text-gray-400"  />
             ) : (
-              <Icon icon="fa:chevron-down" className="h-4 w-4 flex-shrink-0 text-gray-400"  />
+              <Icon icon="fa:chevron-down" className="h-4 w-4 shrink-0 text-gray-400"  />
             )}
           </button>
 

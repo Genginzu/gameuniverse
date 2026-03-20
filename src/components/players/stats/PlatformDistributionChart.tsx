@@ -57,7 +57,7 @@ export function PlatformDistributionChart({
               </div>
               <div className="h-2.5 w-full overflow-hidden rounded-full bg-gray-200/60 dark:bg-slate-700/60">
                 <div
-                  className={`h-full rounded-full bg-gradient-to-r ${BAR_COLORS[index % BAR_COLORS.length]} transition-all duration-500`}
+                  className={`h-full rounded-full bg-linear-to-r ${BAR_COLORS[index % BAR_COLORS.length]} transition-all duration-500`}
                   style={{ width: `${maxCount > 0 ? (entry.count / maxCount) * 100 : 0}%` }}
                 />
               </div>

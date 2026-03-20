@@ -15,9 +15,9 @@ export function CollectionGameCard({ item }: CollectionGameCardProps) {
   return (
     <div className="group relative">
       <Link href={`/${locale}/games/${item.slug}`}>
-        <div className="relative cursor-pointer overflow-hidden rounded-lg bg-white shadow-sm transition-all duration-200 hover:shadow-md dark:bg-gray-800">
+        <div className="relative cursor-pointer overflow-hidden rounded-lg bg-white shadow-xs transition-all duration-200 hover:shadow-md dark:bg-gray-800">
           {/* Cover image */}
-          <div className="relative aspect-[2/3] bg-gray-100 dark:bg-gray-700">
+          <div className="relative aspect-2/3 bg-gray-100 dark:bg-gray-700">
             <LazyImage
               src={item.coverImage ?? undefined}
               alt={item.title}

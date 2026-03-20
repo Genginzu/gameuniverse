@@ -6,6 +6,7 @@ import { getRatingColor } from "@/lib/utils/ratingColor";
 import { useReviewTranslations, useDateFormatter } from "@/hooks/useTranslations";
 import { ReviewVoteButtons } from "./ReviewVoteButtons";
 import type { ReviewWithVotes } from "@/types/review";
+import Image from "next/image";
 
 interface ReviewCardProps {
   review: ReviewWithVotes;
@@ -16,9 +17,11 @@ function ReviewAvatar({ name, avatar }: { name: string | null; avatar: string | 
 
   if (avatar) {
     return (
-      <img
+      <Image
         src={avatar}
         alt={name ?? t("anonymousPlayer")}
+        width={40}
+        height={40}
         className="h-10 w-10 rounded-full object-cover ring-2 ring-slate-600"
       />
     );

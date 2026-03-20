@@ -67,7 +67,7 @@ export function AuthErrorHandler() {
     <div className="fixed right-6 top-6 z-50 w-96 max-w-[calc(100vw-3rem)]">
       <Alert
         variant="destructive"
-        className="relative rounded-2xl border-0 bg-red-50/95 shadow-2xl backdrop-blur-sm"
+        className="relative rounded-2xl border-0 bg-red-50/95 shadow-2xl backdrop-blur-xs"
       >
         <Icon icon="ion:warning" className="h-5 w-5 text-red-600"  />
         <AlertDescription className="pr-10">

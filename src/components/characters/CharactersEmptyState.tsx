@@ -11,8 +11,8 @@ export function CharactersEmptyState({ hasFilters, onClearFilters }: CharactersE
   const t = useTranslations("characters");
 
   return (
-    <div className="flex flex-col items-center justify-center rounded-2xl bg-white/40 py-16 text-center shadow-sm backdrop-blur-xl dark:bg-slate-800/50 sm:py-20">
-      <div className="mb-6 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 p-6 dark:from-gray-700 dark:to-gray-600">
+    <div className="flex flex-col items-center justify-center rounded-2xl bg-white/40 py-16 text-center shadow-xs backdrop-blur-xl dark:bg-slate-800/50 sm:py-20">
+      <div className="mb-6 rounded-full bg-linear-to-br from-gray-100 to-gray-200 p-6 dark:from-gray-700 dark:to-gray-600">
         <svg
           className="h-12 w-12 text-gray-400 sm:h-16 sm:w-16"
           fill="none"
@@ -36,7 +36,7 @@ export function CharactersEmptyState({ hasFilters, onClearFilters }: CharactersE
       {hasFilters && (
         <button
           onClick={onClearFilters}
-          className="mt-4 rounded-lg bg-gradient-to-r from-[#615dfa] via-[#5b36d4] to-[#7c5cfc] px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:shadow-lg"
+          className="mt-4 rounded-lg bg-linear-to-r from-[#615dfa] via-[#5b36d4] to-[#7c5cfc] px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:shadow-lg"
         >
           {t("empty.clearFilters")}
         </button>

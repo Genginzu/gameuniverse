@@ -40,7 +40,7 @@ export function PlayerCollectionsSortSelect({ value, onChange }: PlayerCollectio
       >
         <SelectValue />
       </SelectTrigger>
-      <SelectContent className="glass-dropdown z-50 min-w-[10rem] overflow-hidden rounded-xl border-0 p-1">
+      <SelectContent className="glass-dropdown z-50 min-w-40 overflow-hidden rounded-xl border-0 p-1">
         {SORT_OPTIONS.map((option) => (
           <SelectItem
             key={option}

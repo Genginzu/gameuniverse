@@ -123,7 +123,7 @@ export function GameFormErrorSummary({
       className="rounded-xl border border-red-200 bg-red-50 p-4 dark:border-red-800/50 dark:bg-red-900/20"
     >
       <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-red-700 dark:text-red-400">
-        <Icon icon="fa:exclamation-triangle" className="h-4 w-4 flex-shrink-0" />
+        <Icon icon="fa:exclamation-triangle" className="h-4 w-4 shrink-0" />
         <span>
           {errorGroups.reduce((sum, g) => sum + g.messages.length, 0)} erreur(s) à corriger
         </span>

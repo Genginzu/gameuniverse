@@ -5,7 +5,7 @@ import { formatPlayTime } from "@/lib/utils/formatPlayTime";
 
 function StatsCardShell({ children }: { children: React.ReactNode }) {
   return (
-    <Card className="rounded-2xl border-gray-200 bg-white backdrop-blur-sm dark:border-slate-700/50 dark:bg-slate-800/50">
+    <Card className="rounded-2xl border-gray-200 bg-white backdrop-blur-xs dark:border-slate-700/50 dark:bg-slate-800/50">
       <CardContent className="p-6 text-center">{children}</CardContent>
     </Card>
   );

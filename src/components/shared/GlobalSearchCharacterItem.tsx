@@ -18,7 +18,7 @@ export function GlobalSearchCharacterItem({ item, isActive }: GlobalSearchCharac
       )}
     >
       {/* Character image */}
-      <div className="relative h-11 w-11 flex-shrink-0 overflow-hidden rounded-full bg-white/10">
+      <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full bg-white/10">
         {item.mainImage ? (
           <Image src={item.mainImage} alt={item.name} fill className="object-cover" sizes="44px" />
         ) : (

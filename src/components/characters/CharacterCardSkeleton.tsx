@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export function CharacterCardSkeleton() {
   return (
     <div className="group relative">
-      <div className="relative aspect-[3/4] overflow-hidden rounded-2xl bg-white shadow-md">
+      <div className="relative aspect-3/4 overflow-hidden rounded-2xl bg-white shadow-md">
         {/* Cover Image Skeleton */}
         <Skeleton className="h-full w-full rounded-2xl" />
 

@@ -22,7 +22,7 @@ export function GameUniverseLogo({
   return (
     <div
       className={cn(
-        "relative flex items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 via-purple-600 to-purple-700 shadow-lg",
+        "relative flex items-center justify-center rounded-2xl bg-linear-to-br from-blue-500 via-purple-600 to-purple-700 shadow-lg",
         sizeClasses[size],
         animate && "animate-spin",
         className

@@ -191,7 +191,7 @@ export function CropEditor({
           value={state.zoom}
           onChange={(e) => setZoom(Number(e.target.value))}
           disabled={isDisabled}
-          className="crop-zoom-slider h-2 flex-1 cursor-pointer appearance-none rounded-full bg-gradient-to-r from-[#615dfa] via-[#5b36d4] to-[#7c5cfc] outline-none"
+          className="crop-zoom-slider h-2 flex-1 cursor-pointer appearance-none rounded-full bg-linear-to-r from-[#615dfa] via-[#5b36d4] to-[#7c5cfc] outline-hidden"
         />
       </div>
 
@@ -204,7 +204,7 @@ export function CropEditor({
           type="button"
           onClick={handleConfirm}
           disabled={isDisabled}
-          className="inline-flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-[#615dfa] via-[#5b36d4] to-[#7c5cfc] px-4 py-2 text-xs font-medium text-white shadow-md transition-all duration-300 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex items-center gap-1.5 rounded-xl bg-linear-to-r from-[#615dfa] via-[#5b36d4] to-[#7c5cfc] px-4 py-2 text-xs font-medium text-white shadow-md transition-all duration-300 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <Check className="h-3.5 w-3.5" />
           {t("confirm")}

@@ -21,18 +21,18 @@ function AuthContent() {
   }, [searchParams]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100">
       {/* Header avec design arrondi */}
       <header className="relative">
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-900/5 to-slate-800/5 backdrop-blur-sm"></div>
+        <div className="absolute inset-0 bg-linear-to-r from-slate-900/5 to-slate-800/5 backdrop-blur-xs"></div>
         <div className="relative flex items-center justify-between p-6">
           <Link href="/" className="flex items-center space-x-3">
             <GameUniverseLogo size="md" />
-            <span className="bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-xl font-bold text-transparent">
+            <span className="bg-linear-to-r from-gray-900 to-gray-700 bg-clip-text text-xl font-bold text-transparent">
               Game Universe
             </span>
           </Link>
-          <div className="rounded-2xl backdrop-blur-sm">
+          <div className="rounded-2xl backdrop-blur-xs">
             <LanguageSwitcher />
           </div>
         </div>

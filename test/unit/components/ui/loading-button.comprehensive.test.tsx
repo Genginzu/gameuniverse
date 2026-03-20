@@ -105,7 +105,7 @@ describe("LoadingButton component rendering", () => {
       expect(html).toContain("bg-destructive");
     });
 
-    it("should support outline variant", () => {
+    it("should support outline-solid variant", () => {
       const html = renderToString(<LoadingButton variant="outline">Outline</LoadingButton>);
       expect(html).toContain("border");
       expect(html).toContain("bg-background");

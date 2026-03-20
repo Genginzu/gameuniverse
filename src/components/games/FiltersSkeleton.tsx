@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export function FiltersSkeleton() {
   return (
-    <div className="rounded-xl bg-white p-4 shadow-sm">
+    <div className="rounded-xl bg-white p-4 shadow-xs">
       {/* Clear filters button skeleton */}
       <div className="mb-4 flex justify-end">
         <Skeleton className="h-8 w-24 rounded-lg" />

@@ -17,7 +17,7 @@ describe("GameUniverseLogo component rendering", () => {
 
     it("should apply gradient background classes", () => {
       const html = renderToString(<GameUniverseLogo />);
-      expect(html).toContain("bg-gradient-to-br");
+      expect(html).toContain("bg-linear-to-br");
       expect(html).toContain("from-blue-500");
       expect(html).toContain("via-purple-600");
       expect(html).toContain("to-purple-700");
@@ -91,7 +91,7 @@ describe("GameUniverseLogo component rendering", () => {
     it("should merge custom className", () => {
       const html = renderToString(<GameUniverseLogo className="my-custom-class" />);
       expect(html).toContain("my-custom-class");
-      expect(html).toContain("bg-gradient-to-br");
+      expect(html).toContain("bg-linear-to-br");
     });
 
     it("should handle multiple custom classes", () => {

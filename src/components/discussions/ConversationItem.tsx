@@ -32,13 +32,13 @@ export default function ConversationItem({
       onClick={() => onSelect(conversation.id)}
       className={`flex w-full items-center gap-3 rounded-xl p-3 text-left transition-all duration-300 ${
         isSelected
-          ? "bg-gradient-to-r from-blue-500/15 via-purple-600/10 to-purple-700/10 shadow-[inset_0_0_0_1px_rgba(139,92,246,0.3)]"
+          ? "bg-linear-to-r from-blue-500/15 via-purple-600/10 to-purple-700/10 shadow-[inset_0_0_0_1px_rgba(139,92,246,0.3)]"
           : "cursor-pointer hover:bg-white/40 dark:hover:bg-slate-700/40"
       }`}
       data-testid="conversation-item"
     >
       {/* Avatar */}
-      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-gradient-to-br from-blue-500/20 via-purple-600/20 to-purple-700/20">
+      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-linear-to-br from-blue-500/20 via-purple-600/20 to-purple-700/20">
         {friend.avatarUrl ? (
           <LazyImage
             src={friend.avatarUrl}

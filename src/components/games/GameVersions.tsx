@@ -37,11 +37,11 @@ export function GameVersions({ versions, accentColor }: GameVersionsProps) {
       {versions.map((version) => (
         <div
           key={version.id}
-          className="mb-3 break-inside-avoid rounded-xl border border-white/10 bg-white/5 p-4 shadow-lg shadow-black/20 backdrop-blur-xl transition-colors hover:border-white/20 hover:bg-white/[0.08]"
+          className="mb-3 break-inside-avoid rounded-xl border border-white/10 bg-white/5 p-4 shadow-lg shadow-black/20 backdrop-blur-xl transition-colors hover:border-white/20 hover:bg-white/8"
         >
           <div className="flex gap-4">
             {/* Cover */}
-            <div className="flex-shrink-0">
+            <div className="shrink-0">
               {version.coverImageUrl ? (
                 <div className="relative h-24 w-16 overflow-hidden rounded-lg bg-white/5">
                   <Image

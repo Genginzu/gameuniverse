@@ -97,7 +97,7 @@ export function PersonalGoals({ goals: initialGoals, isOwnProfile, playerId }: P
                   {/* Progress bar */}
                   <div className="mb-1 h-2.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-slate-700">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-neon-violet to-neon-cyan transition-all duration-500"
+                      className="h-full rounded-full bg-linear-to-r from-neon-violet to-neon-cyan transition-all duration-500"
                       style={{ width: `${percent}%` }}
                     />
                   </div>

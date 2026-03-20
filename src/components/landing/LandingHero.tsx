@@ -17,7 +17,7 @@ export function LandingHero() {
     <section className="relative overflow-hidden bg-slate-950 py-24 text-white">
       {/* Animated CSS grid background — respects prefers-reduced-motion via globals.css */}
       <div className="landing-grid-bg absolute inset-0 opacity-20" />
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-slate-950/60 to-slate-950" />
+      <div className="absolute inset-0 bg-linear-to-b from-transparent via-slate-950/60 to-slate-950" />
 
       <div className="relative mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
         <div className="text-center">

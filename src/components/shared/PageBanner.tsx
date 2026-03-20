@@ -53,7 +53,7 @@ export function PageBanner() {
   const iconName = config.icon;
 
   return (
-    <div className="mx-auto mt-6 w-[90%] overflow-hidden rounded-2xl bg-gradient-to-r from-[#615dfa] via-[#5b7fff] to-[#41efff] shadow-lg">
+    <div className="mx-auto mt-6 w-[90%] overflow-hidden rounded-2xl bg-linear-to-r from-[#615dfa] via-[#5b7fff] to-[#41efff] shadow-lg">
       {/* SVG pattern background — mimics Vikinger's people silhouettes */}
       <div className="pointer-events-none absolute inset-0">
         <svg className="h-full w-full opacity-[0.06]" xmlns="http://www.w3.org/2000/svg">
@@ -72,7 +72,7 @@ export function PageBanner() {
       <div className="relative flex items-center px-6 py-6 sm:px-10 sm:py-8">
         {/* Icon card — mimics the Vikinger illustration block */}
         <div className="relative mr-6 flex h-[72px] w-[72px] shrink-0 items-center justify-center rounded-2xl bg-white shadow-xl sm:h-[88px] sm:w-[88px]">
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#615dfa] to-[#41efff] opacity-10" />
+          <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-[#615dfa] to-[#41efff] opacity-10" />
           <Icon icon={iconName} className="relative h-8 w-8 text-[#615dfa] sm:h-10 sm:w-10" />
         </div>
 

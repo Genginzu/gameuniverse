@@ -129,7 +129,7 @@ const simulateEntityCardRender = (
   hasLibraryToggle: boolean;
   linkHref: string;
 } => {
-  const aspectRatioClass = config.aspectRatio === "3:4" ? "aspect-[3/4]" : "aspect-square";
+  const aspectRatioClass = config.aspectRatio === "3:4" ? "aspect-3/4" : "aspect-square";
 
   let hasBadge = false;
   let badgePosition: string | null = null;
@@ -168,7 +168,7 @@ describe("EntityCard Property-Based Tests", () => {
 
           // Verify aspect ratio class matches configuration
           if (config.aspectRatio === "3:4") {
-            return result.aspectRatioClass === "aspect-[3/4]";
+            return result.aspectRatioClass === "aspect-3/4";
           } else {
             return result.aspectRatioClass === "aspect-square";
           }

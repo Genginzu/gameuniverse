@@ -50,7 +50,7 @@ export function CompanyForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" noValidate>
         {/* Slug + Name + Type */}
-        <div className="rounded-2xl border border-gray-200/60 bg-white p-6 shadow-sm dark:border-gray-700/40 dark:bg-gray-800/60">
+        <div className="rounded-2xl border border-gray-200/60 bg-white p-6 shadow-xs dark:border-gray-700/40 dark:bg-gray-800/60">
           <div className="space-y-5">
             <FormField
               control={form.control}
@@ -118,7 +118,7 @@ export function CompanyForm({
         <CompanyFormTranslations form={form} supportedLanguages={supportedLanguages} />
 
         {/* Other optional fields */}
-        <div className="rounded-2xl border border-gray-200/60 bg-white p-6 shadow-sm dark:border-gray-700/40 dark:bg-gray-800/60">
+        <div className="rounded-2xl border border-gray-200/60 bg-white p-6 shadow-xs dark:border-gray-700/40 dark:bg-gray-800/60">
           <div className="space-y-5">
             <FormField
               control={form.control}

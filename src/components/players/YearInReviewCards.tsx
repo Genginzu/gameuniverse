@@ -20,7 +20,7 @@ interface StatCardProps {
 
 function StatCard({ icon, label, children }: StatCardProps) {
   return (
-    <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-sm">
+    <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-xs">
       <CardContent className="p-6">
         <div className="mb-2 flex items-center gap-2 text-slate-400">
           {icon}
@@ -62,7 +62,7 @@ export function YearInReviewCards({ yearReview, locale, t }: YearInReviewCardsPr
         {yearReview.topGame ? (
           <div className="flex items-center gap-3">
             {yearReview.topGame.coverImage && (
-              <div className="relative h-16 w-12 flex-shrink-0 overflow-hidden rounded-md">
+              <div className="relative h-16 w-12 shrink-0 overflow-hidden rounded-md">
                 <LazyImage
                   src={yearReview.topGame.coverImage}
                   alt={yearReview.topGame.title}

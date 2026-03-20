@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useMemo, useRef, useEffect } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
@@ -90,13 +91,13 @@ export function CharacterFormGamesTab({ form, t, availableGames }: GamesTabProps
           className="gap-1.5"
           disabled={unassignedGames.length === 0}
         >
-          <Icon icon="fa:plus" className="h-3 w-3"  />
+          <Icon icon="fa:plus" className="h-3 w-3" />
           {t("addGame") ?? "Ajouter un jeu"}
         </Button>
       )}
 
       {form.formState.errors.games && (
-        <p className="text-sm font-medium text-destructive">
+        <p className="text-destructive text-sm font-medium">
           {form.formState.errors.games.message}
         </p>
       )}
@@ -119,13 +120,16 @@ function AssignedGameRow({
   t: (key: string) => string;
 }) {
   return (
-    <div className="flex items-center justify-between rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 dark:bg-primary/10">
+    <div className="border-primary/20 bg-primary/5 dark:bg-primary/10 flex items-center justify-between rounded-xl border px-4 py-3">
       <div className="flex items-center gap-3">
         {game.coverImage && (
-          <img
+          <Image
             src={game.coverImage}
             alt={game.title}
+            width={32}
+            height={40}
             className="h-10 w-8 rounded border border-gray-200 object-cover dark:border-gray-700"
+            unoptimized
             onError={(e) => {
               (e.target as HTMLImageElement).style.display = "none";
             }}
@@ -148,7 +152,7 @@ function AssignedGameRow({
           className="ml-1 rounded-md p-1 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20"
           aria-label={`Remove ${game.title}`}
         >
-          <Icon icon="fa:times" className="h-3 w-3"  />
+          <Icon icon="fa:times" className="h-3 w-3" />
         </button>
       </div>
     </div>
@@ -192,12 +196,15 @@ function GameSearchPicker({
           onClick={onClose}
           className="rounded-md p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
         >
-          <Icon icon="fa:times" className="h-3 w-3"  />
+          <Icon icon="fa:times" className="h-3 w-3" />
         </button>
       </div>
 
       <div className="relative mb-3">
-        <Icon icon="fa:search" className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400"  />
+        <Icon
+          icon="fa:search"
+          className="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-gray-400"
+        />
         <Input
           ref={inputRef}
           type="text"
@@ -229,13 +236,16 @@ function GameSearchPicker({
                 role="option"
                 aria-selected={false}
                 onClick={() => onSelect(game.id)}
-                className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors hover:bg-primary/10 dark:hover:bg-primary/20"
+                className="hover:bg-primary/10 dark:hover:bg-primary/20 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors"
               >
                 {game.coverImage && (
-                  <img
+                  <Image
                     src={game.coverImage}
                     alt=""
-                    className="h-8 w-6 flex-shrink-0 rounded border border-gray-200 object-cover dark:border-gray-700"
+                    width={24}
+                    height={32}
+                    className="h-8 w-6 shrink-0 rounded border border-gray-200 object-cover dark:border-gray-700"
+                    unoptimized
                     onError={(e) => {
                       (e.target as HTMLImageElement).style.display = "none";
                     }}

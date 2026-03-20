@@ -37,7 +37,7 @@ export function AchievementFormFields({ form, mode }: AchievementFormFieldsProps
   return (
     <div className="space-y-6">
       {/* Key & identifiers section */}
-      <div className="rounded-2xl border border-gray-200/60 bg-white/40 p-6 shadow-sm dark:border-gray-700/40 dark:bg-gray-800/60">
+      <div className="rounded-2xl border border-gray-200/60 bg-white/40 p-6 shadow-xs dark:border-gray-700/40 dark:bg-gray-800/60">
         <div className="grid gap-5 sm:grid-cols-2">
           <FormField
             control={form.control}
@@ -127,7 +127,7 @@ export function AchievementFormFields({ form, mode }: AchievementFormFieldsProps
       </div>
 
       {/* Numeric values section */}
-      <div className="rounded-2xl border border-gray-200/60 bg-white/40 p-6 shadow-sm dark:border-gray-700/40 dark:bg-gray-800/60">
+      <div className="rounded-2xl border border-gray-200/60 bg-white/40 p-6 shadow-xs dark:border-gray-700/40 dark:bg-gray-800/60">
         <div className="grid gap-5 sm:grid-cols-3">
           <FormField
             control={form.control}
@@ -189,7 +189,7 @@ export function AchievementFormFields({ form, mode }: AchievementFormFieldsProps
       </div>
 
       {/* Translations section */}
-      <div className="rounded-2xl border border-gray-200/60 bg-white/40 p-6 shadow-sm dark:border-gray-700/40 dark:bg-gray-800/60">
+      <div className="rounded-2xl border border-gray-200/60 bg-white/40 p-6 shadow-xs dark:border-gray-700/40 dark:bg-gray-800/60">
         <div className="grid gap-5 sm:grid-cols-2">
           <FormField
             control={form.control}

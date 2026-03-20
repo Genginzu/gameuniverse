@@ -37,7 +37,7 @@ export function RatingFormTranslations({ form, supportedLanguages }: RatingFormT
         {supportedLanguages.map((lang, index) => (
           <div
             key={lang.code}
-            className="rounded-2xl border border-gray-200/60 bg-white p-6 shadow-sm dark:border-gray-700/40 dark:bg-gray-800/60"
+            className="rounded-2xl border border-gray-200/60 bg-white p-6 shadow-xs dark:border-gray-700/40 dark:bg-gray-800/60"
           >
             <h4 className="mb-4 text-sm font-semibold text-gray-700 dark:text-gray-300">
               {lang.native_name ?? lang.name} ({lang.code})

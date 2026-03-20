@@ -68,11 +68,11 @@ export function CommentForm({
           {...register("content")}
           rows={4}
           placeholder={t("placeholder")}
-          className="w-full resize-none rounded-lg border border-slate-700 bg-slate-800/50 px-4 py-3 text-sm text-slate-200 placeholder:text-slate-500 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          className="w-full resize-none rounded-lg border border-slate-700 bg-slate-800/50 px-4 py-3 text-sm text-slate-200 placeholder:text-slate-500 focus:border-indigo-500 focus:outline-hidden focus:ring-1 focus:ring-indigo-500"
         />
 
         <div className="flex items-center justify-between">
-          <div className="min-h-[1.25rem]">
+          <div className="min-h-5">
             {errors.content && <p className="text-sm text-destructive">{errors.content.message}</p>}
           </div>
           <span className={`text-xs ${isOverLimit ? "text-destructive" : "text-slate-500"}`}>

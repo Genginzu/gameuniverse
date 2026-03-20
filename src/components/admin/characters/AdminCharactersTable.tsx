@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -53,11 +54,11 @@ export function AdminCharactersTable({
   };
 
   const renderSortIcon = (field: SortField) => {
-    if (currentSort?.field !== field) return <Icon icon="fa:sort" className="h-3 w-3 opacity-40"  />;
+    if (currentSort?.field !== field) return <Icon icon="fa:sort" className="h-3 w-3 opacity-40" />;
     return currentSort.order === "asc" ? (
-      <Icon icon="fa:sort-up" className="h-3 w-3"  />
+      <Icon icon="fa:sort-up" className="h-3 w-3" />
     ) : (
-      <Icon icon="fa:sort-down" className="h-3 w-3"  />
+      <Icon icon="fa:sort-down" className="h-3 w-3" />
     );
   };
 
@@ -75,7 +76,10 @@ export function AdminCharactersTable({
       {/* Search bar */}
       <form onSubmit={handleSearchSubmit} className="flex gap-2">
         <div className="relative flex-1">
-          <Icon icon="fa:search" className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"  />
+          <Icon
+            icon="fa:search"
+            className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400"
+          />
           <Input
             type="text"
             placeholder={t("searchPlaceholder")}
@@ -173,14 +177,16 @@ export function AdminCharactersTable({
                   >
                     <td className="px-4 py-3">
                       {character.mainImage ? (
-                        <img
+                        <Image
                           src={character.mainImage}
                           alt={character.name}
+                          width={40}
+                          height={40}
                           className="h-10 w-10 rounded-lg object-cover"
                         />
                       ) : (
                         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700">
-                          <Icon icon="fa:image" className="h-4 w-4 text-gray-400"  />
+                          <Icon icon="fa:image" className="h-4 w-4 text-gray-400" />
                         </div>
                       )}
                     </td>
@@ -204,7 +210,7 @@ export function AdminCharactersTable({
                           onClick={() => onEdit(character.id)}
                           aria-label={t("editCharacter", { name: character.name })}
                         >
-                          <Icon icon="fa:edit" className="h-4 w-4"  />
+                          <Icon icon="fa:edit" className="h-4 w-4" />
                         </Button>
                         {canDelete && (
                           <Button
@@ -214,7 +220,7 @@ export function AdminCharactersTable({
                             aria-label={t("deleteCharacter", { name: character.name })}
                             className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                           >
-                            <Icon icon="fa:trash" className="h-4 w-4"  />
+                            <Icon icon="fa:trash" className="h-4 w-4" />
                           </Button>
                         )}
                       </div>
@@ -242,7 +248,7 @@ export function AdminCharactersTable({
                   onClick={() => onPageChange(pagination.currentPage - 1)}
                   aria-label={t("previousPage")}
                 >
-                  <Icon icon="fa:chevron-left" className="h-3 w-3"  />
+                  <Icon icon="fa:chevron-left" className="h-3 w-3" />
                 </Button>
                 <Button
                   variant="outline"
@@ -251,7 +257,7 @@ export function AdminCharactersTable({
                   onClick={() => onPageChange(pagination.currentPage + 1)}
                   aria-label={t("nextPage")}
                 >
-                  <Icon icon="fa:chevron-right" className="h-3 w-3"  />
+                  <Icon icon="fa:chevron-right" className="h-3 w-3" />
                 </Button>
               </div>
             </div>

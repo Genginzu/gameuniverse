@@ -67,7 +67,7 @@ describe("RecommendationSection", () => {
     expect(screen.getByText("title")).toBeDefined();
 
     // Skeletons should be rendered (5 skeleton cards — matches MAX_RECOMMENDATIONS)
-    const skeletons = container.querySelectorAll(".aspect-\\[3\\/4\\]");
+    const skeletons = container.querySelectorAll(".aspect-3\\/4");
     expect(skeletons.length).toBe(5);
   });
 

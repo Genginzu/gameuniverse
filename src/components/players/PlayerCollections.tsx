@@ -36,7 +36,7 @@ export function PlayerCollections({ playerId, locale, isOwner = false }: PlayerC
           {Array.from({ length: MAX_PREVIEW_COUNT }).map((_, i) => (
             <div
               key={i}
-              className="aspect-[16/9] animate-pulse rounded-xl bg-gray-200 dark:bg-slate-700/50"
+              className="aspect-video animate-pulse rounded-xl bg-gray-200 dark:bg-slate-700/50"
             />
           ))}
         </div>

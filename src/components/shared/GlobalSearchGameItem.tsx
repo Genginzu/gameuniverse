@@ -24,7 +24,7 @@ export function GlobalSearchGameItem({ item, isActive, isImporting }: GlobalSear
       )}
     >
       {/* Cover image */}
-      <div className="relative aspect-[3/4] w-full overflow-hidden rounded-lg bg-white/5">
+      <div className="relative aspect-3/4 w-full overflow-hidden rounded-lg bg-white/5">
         {item.coverUrl ? (
           <Image
             src={item.coverUrl}
@@ -48,7 +48,7 @@ export function GlobalSearchGameItem({ item, isActive, isImporting }: GlobalSear
 
         {/* IGDB badge */}
         {item.source === "igdb" && (
-          <span className="absolute right-1 top-1 rounded bg-blue-600/80 px-1.5 py-0.5 text-[9px] font-bold uppercase text-white backdrop-blur-sm">
+          <span className="absolute right-1 top-1 rounded bg-blue-600/80 px-1.5 py-0.5 text-[9px] font-bold uppercase text-white backdrop-blur-xs">
             IGDB
           </span>
         )}

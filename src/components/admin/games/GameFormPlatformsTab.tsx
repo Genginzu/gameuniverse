@@ -37,7 +37,7 @@ export function GameFormPlatformsTab({
               onClick={() => togglePlatform(platform.id)}
               className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-all ${
                 isSelected
-                  ? "border-primary bg-primary/10 text-primary shadow-sm dark:bg-primary/20"
+                  ? "border-primary bg-primary/10 text-primary shadow-xs dark:bg-primary/20"
                   : "border-gray-200 text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:border-gray-700 dark:text-gray-400 dark:hover:border-gray-600"
               }`}
               aria-pressed={isSelected}

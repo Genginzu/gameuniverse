@@ -99,7 +99,7 @@ export const gameCardConfig: EntityCardConfig<GameSummary> = {
                 key: index,
                 variant: "secondary",
                 className:
-                  "rounded-full bg-white/20 px-2 py-0.5 text-xs font-medium text-white backdrop-blur-sm",
+                  "rounded-full bg-white/20 px-2 py-0.5 text-xs font-medium text-white backdrop-blur-xs",
               },
               genre.name
             )
@@ -110,7 +110,7 @@ export const gameCardConfig: EntityCardConfig<GameSummary> = {
               {
                 variant: "outline",
                 className:
-                  "rounded-full border-white/30 bg-white/10 px-2 py-0.5 text-xs font-medium text-white backdrop-blur-sm",
+                  "rounded-full border-white/30 bg-white/10 px-2 py-0.5 text-xs font-medium text-white backdrop-blur-xs",
               },
               `+${game.genres.length - 2}`
             )

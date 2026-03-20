@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -48,14 +49,18 @@ export function GameFormVersionsTab({ form, t, isIgdbField }: GameFormTabProps) 
             >
               <div className="flex items-start gap-4">
                 {form.watch(`versions.${idx}.cover_image_url`) && (
-                  <img
-                    src={form.watch(`versions.${idx}.cover_image_url`) || ""}
-                    alt=""
-                    className="h-24 w-16 flex-shrink-0 rounded-lg border border-gray-200 object-cover dark:border-gray-700"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = "none";
-                    }}
-                  />
+                  <div className="relative h-24 w-16 shrink-0 rounded-lg border border-gray-200 dark:border-gray-700">
+                    <Image
+                      src={form.watch(`versions.${idx}.cover_image_url`) || ""}
+                      alt=""
+                      fill
+                      className="rounded-lg object-cover"
+                      unoptimized
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).parentElement!.style.display = "none";
+                      }}
+                    />
+                  </div>
                 )}
                 <div className="min-w-0 flex-1 space-y-2">
                   <Input
@@ -76,10 +81,10 @@ export function GameFormVersionsTab({ form, t, isIgdbField }: GameFormTabProps) 
                 <button
                   type="button"
                   onClick={() => removeVersion(idx)}
-                  className="mt-2 flex-shrink-0 rounded-md p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20"
+                  className="mt-2 shrink-0 rounded-md p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20"
                   aria-label="Supprimer"
                 >
-                  <Icon icon="fa:times" className="h-3.5 w-3.5"  />
+                  <Icon icon="fa:times" className="h-3.5 w-3.5" />
                 </button>
               </div>
             </div>
@@ -88,12 +93,12 @@ export function GameFormVersionsTab({ form, t, isIgdbField }: GameFormTabProps) 
       )}
 
       <Button type="button" variant="outline" size="sm" onClick={addVersion} className="gap-1.5">
-        <Icon icon="fa:plus" className="h-3 w-3"  />
+        <Icon icon="fa:plus" className="h-3 w-3" />
         {t("addVersion") ?? "Ajouter une version"}
       </Button>
 
       {form.formState.errors.versions && (
-        <p className="text-sm font-medium text-destructive">
+        <p className="text-destructive text-sm font-medium">
           {form.formState.errors.versions.message}
         </p>
       )}

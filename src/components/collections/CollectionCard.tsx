@@ -38,9 +38,9 @@ export function CollectionCard({
     : `/${locale}/players/${playerId}/collections/${collection.slug}`;
 
   const cardContent = (
-    <div className="relative cursor-pointer overflow-hidden rounded-xl bg-white shadow-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-blue-500/10 dark:bg-gray-800">
+    <div className="relative cursor-pointer overflow-hidden rounded-xl bg-white shadow-xs transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-blue-500/10 dark:bg-gray-800">
       {/* Cover: image personnalisée ou grille auto */}
-      <div className="relative aspect-[16/9] bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30">
+      <div className="relative aspect-video bg-linear-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30">
         {collection.coverImageUrl ? (
           <LazyImage
             src={collection.coverImageUrl}
@@ -70,7 +70,7 @@ export function CollectionCard({
 
         {/* Games count badge */}
         <div className="absolute right-2 top-2 z-20">
-          <div className="rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-medium text-gray-900 shadow backdrop-blur-sm">
+          <div className="rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-medium text-gray-900 shadow-sm backdrop-blur-xs">
             {t("gamesCount", { count: collection.gamesCount })}
           </div>
         </div>

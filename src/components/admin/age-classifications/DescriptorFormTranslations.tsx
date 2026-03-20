@@ -50,7 +50,7 @@ export function DescriptorFormTranslations({ form }: DescriptorFormTranslationsP
         {fields.map((field, index) => (
           <div
             key={field.id}
-            className="rounded-2xl border border-gray-200/60 bg-white p-6 shadow-sm dark:border-gray-700/40 dark:bg-gray-800/60"
+            className="rounded-2xl border border-gray-200/60 bg-white p-6 shadow-xs dark:border-gray-700/40 dark:bg-gray-800/60"
           >
             <div className="mb-4 flex items-center justify-between">
               <span className="text-xs font-medium text-gray-500 dark:text-gray-400">

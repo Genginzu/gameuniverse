@@ -51,7 +51,7 @@ export function AchievementsList({ achievements, totalCount }: AchievementsListP
           </div>
           <div className="h-3 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-slate-700">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-neon-violet to-neon-cyan transition-all duration-500"
+              className="h-full rounded-full bg-linear-to-r from-neon-violet to-neon-cyan transition-all duration-500"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
@@ -76,7 +76,7 @@ export function AchievementsList({ achievements, totalCount }: AchievementsListP
                 <div
                   className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
                     isUnlocked
-                      ? "bg-gradient-to-br from-neon-violet to-neon-cyan text-white"
+                      ? "bg-linear-to-br from-neon-violet to-neon-cyan text-white"
                       : "bg-gray-200 text-gray-400 dark:bg-slate-700 dark:text-slate-500"
                   }`}
                 >

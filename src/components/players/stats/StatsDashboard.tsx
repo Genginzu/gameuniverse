@@ -33,7 +33,7 @@ type FetchState =
   | { status: "success"; data: DashboardStatsResponse };
 
 const CARD_STYLE =
-  "rounded-2xl border-gray-200 bg-white backdrop-blur-sm dark:border-slate-700/50 dark:bg-slate-800/50";
+  "rounded-2xl border-gray-200 bg-white backdrop-blur-xs dark:border-slate-700/50 dark:bg-slate-800/50";
 
 export function StatsDashboard({
   playerId,

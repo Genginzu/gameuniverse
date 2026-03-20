@@ -37,7 +37,7 @@ export function GameDetailsMainContent({
               <Badge
                 key={platform.id}
                 variant="secondary"
-                className="pointer-events-none inline-flex items-center gap-1.5 rounded-full border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-300 backdrop-blur-sm"
+                className="pointer-events-none inline-flex items-center gap-1.5 rounded-full border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-300 backdrop-blur-xs"
               >
                 <Icon icon={platformIconName} className="h-3 w-3 shrink-0" />
                 {platform.abbreviation || platform.name}

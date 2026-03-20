@@ -59,7 +59,7 @@ function getBadgeSizeClasses(size?: "small" | "medium" | "large"): string {
 }
 
 export function EntitySkeleton({ config, className = "" }: EntitySkeletonProps) {
-  const aspectRatioClass = config.aspectRatio === "3:4" ? "aspect-[3/4]" : "aspect-square";
+  const aspectRatioClass = config.aspectRatio === "3:4" ? "aspect-3/4" : "aspect-square";
   const badgePositionClass = config.badgePosition === "top-left" ? "left-3" : "right-3";
   const badgeSizeClasses = getBadgeSizeClasses(config.badgeSize);
 
@@ -72,7 +72,7 @@ export function EntitySkeleton({ config, className = "" }: EntitySkeletonProps) 
           <div
             className={`relative ${aspectRatioClass} ${
               config.useGradientBackground
-                ? "bg-gradient-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30"
+                ? "bg-linear-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30"
                 : ""
             }`}
           >

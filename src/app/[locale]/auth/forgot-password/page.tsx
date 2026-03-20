@@ -61,17 +61,17 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100">
       <header className="relative">
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-900/5 to-slate-800/5 backdrop-blur-sm"></div>
+        <div className="absolute inset-0 bg-linear-to-r from-slate-900/5 to-slate-800/5 backdrop-blur-xs"></div>
         <div className="relative flex items-center justify-between p-6">
           <Link href="/" className="flex items-center space-x-3">
             <GameUniverseLogo size="md" />
-            <span className="bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-xl font-bold text-transparent">
+            <span className="bg-linear-to-r from-gray-900 to-gray-700 bg-clip-text text-xl font-bold text-transparent">
               Game Universe
             </span>
           </Link>
-          <div className="rounded-2xl backdrop-blur-sm">
+          <div className="rounded-2xl backdrop-blur-xs">
             <LanguageSwitcher />
           </div>
         </div>
@@ -80,13 +80,13 @@ export default function ForgotPasswordPage() {
       <div className="flex flex-1 items-center justify-center p-6 py-12">
         <div className="w-full max-w-md">
           {success ? (
-            <Card className="mx-auto w-full max-w-md border-0 bg-white/95 shadow-2xl backdrop-blur-sm">
+            <Card className="mx-auto w-full max-w-md border-0 bg-white/95 shadow-2xl backdrop-blur-xs">
               <CardHeader className="space-y-6 pb-8">
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
                   <CheckCircle className="h-8 w-8 text-green-600" />
                 </div>
                 <div className="space-y-2 text-center">
-                  <CardTitle className="bg-gradient-to-r from-green-600 to-green-500 bg-clip-text text-3xl font-bold text-transparent">
+                  <CardTitle className="bg-linear-to-r from-green-600 to-green-500 bg-clip-text text-3xl font-bold text-transparent">
                     Email envoyé !
                   </CardTitle>
                   <CardDescription className="text-base text-slate-600">
@@ -134,13 +134,13 @@ export default function ForgotPasswordPage() {
               </CardContent>
             </Card>
           ) : (
-            <Card className="mx-auto w-full max-w-md border-0 bg-white/95 shadow-2xl backdrop-blur-sm">
+            <Card className="mx-auto w-full max-w-md border-0 bg-white/95 shadow-2xl backdrop-blur-xs">
               <CardHeader className="space-y-6 pb-8">
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-blue-100 to-purple-100">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-linear-to-br from-blue-100 to-purple-100">
                   <Mail className="h-8 w-8 text-purple-600" />
                 </div>
                 <div className="space-y-2 text-center">
-                  <CardTitle className="bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-3xl font-bold text-transparent">
+                  <CardTitle className="bg-linear-to-r from-slate-900 to-slate-700 bg-clip-text text-3xl font-bold text-transparent">
                     Mot de passe oublié ?
                   </CardTitle>
                   <CardDescription className="text-base text-slate-600">
@@ -171,7 +171,7 @@ export default function ForgotPasswordPage() {
                   </div>
                   <Button
                     type="submit"
-                    className="h-12 w-full rounded-xl border-2 border-transparent bg-gradient-to-br from-blue-500 via-purple-600 to-purple-700 font-semibold text-white shadow-lg transition-all duration-200 hover:border-purple-500 hover:from-white hover:via-white hover:to-white hover:text-purple-700 hover:shadow-xl"
+                    className="h-12 w-full rounded-xl border-2 border-transparent bg-linear-to-br from-blue-500 via-purple-600 to-purple-700 font-semibold text-white shadow-lg transition-all duration-200 hover:border-purple-500 hover:from-white hover:via-white hover:to-white hover:text-purple-700 hover:shadow-xl"
                     disabled={isLoading}
                   >
                     {isLoading ? (

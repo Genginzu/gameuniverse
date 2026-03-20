@@ -136,7 +136,7 @@ export function CharacterForm({
           tabLabel={tabLabel}
         />
 
-        <div className="rounded-2xl border border-gray-200/60 bg-white p-6 shadow-sm dark:border-gray-700/40 dark:bg-gray-800/60">
+        <div className="rounded-2xl border border-gray-200/60 bg-white p-6 shadow-xs dark:border-gray-700/40 dark:bg-gray-800/60">
           {activeTab === "general" && <CharacterFormGeneralTab form={form} t={t} mode={mode} />}
           {activeTab === "images" && <CharacterFormImagesTab form={form} t={t} />}
           {activeTab === "translations" && <CharacterFormTranslationsTab form={form} t={t} />}
@@ -204,7 +204,7 @@ function TabNavigation({
   };
 
   return (
-    <nav className="flex flex-wrap gap-1 rounded-xl border border-gray-200/60 bg-white p-1 shadow-sm dark:border-gray-700/40 dark:bg-gray-800/60">
+    <nav className="flex flex-wrap gap-1 rounded-xl border border-gray-200/60 bg-white p-1 shadow-xs dark:border-gray-700/40 dark:bg-gray-800/60">
       {tabs.map((tab) => {
         const isActive = activeTab === tab.id;
         const badge = getBadge(tab.id);
@@ -215,7 +215,7 @@ function TabNavigation({
             onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-2 whitespace-nowrap rounded-lg px-4 py-2.5 text-sm font-medium transition-all ${
               isActive
-                ? "bg-primary text-primary-foreground shadow-sm"
+                ? "bg-primary text-primary-foreground shadow-xs"
                 : "text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700/50 dark:hover:text-gray-300"
             }`}
           >

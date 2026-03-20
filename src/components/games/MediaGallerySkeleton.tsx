@@ -15,7 +15,7 @@ export function MediaGallerySkeleton() {
           {/* Thumbnails skeleton */}
           <div className="flex space-x-2 overflow-x-auto pb-2">
             {Array.from({ length: 5 }).map((_, index) => (
-              <Skeleton key={index} className="h-20 w-32 flex-shrink-0 rounded-lg" />
+              <Skeleton key={index} className="h-20 w-32 shrink-0 rounded-lg" />
             ))}
           </div>
         </div>
@@ -33,7 +33,7 @@ export function MediaGallerySkeleton() {
           {/* Thumbnails skeleton */}
           <div className="flex space-x-2 overflow-x-auto pb-2">
             {Array.from({ length: 4 }).map((_, index) => (
-              <Skeleton key={index} className="h-20 w-32 flex-shrink-0 rounded-lg" />
+              <Skeleton key={index} className="h-20 w-32 shrink-0 rounded-lg" />
             ))}
           </div>
         </div>

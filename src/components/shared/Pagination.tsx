@@ -15,16 +15,16 @@ export interface PaginationProps {
 /**
  * Generic Pagination component that works for all entity types.
  * Supports configurable translation namespace for localized labels.
- * 
+ *
  * @example
  * // For games (uses default "pagination" namespace)
  * <Pagination currentPage={1} totalPages={10} totalCount={100} onPageChange={setPage} />
- * 
+ *
  * // For players (uses "players.pagination" namespace)
- * <Pagination 
- *   currentPage={1} 
- *   totalPages={10} 
- *   totalCount={100} 
+ * <Pagination
+ *   currentPage={1}
+ *   totalPages={10}
+ *   totalCount={100}
  *   onPageChange={setPage}
  *   translationNamespace="players.pagination"
  * />
@@ -81,9 +81,9 @@ export function Pagination({
   const visiblePages = getVisiblePages();
 
   return (
-    <div className="flex flex-col items-center space-y-4 rounded-2xl bg-white p-4 shadow-sm sm:space-y-6 sm:p-6 dark:bg-gray-800">
+    <div className="flex flex-col items-center space-y-4 rounded-2xl bg-white p-4 shadow-xs sm:space-y-6 sm:p-6 dark:bg-gray-800">
       {/* Page info */}
-      <div className="flex flex-col items-center space-y-2 text-sm sm:flex-row sm:space-x-2 sm:space-y-0">
+      <div className="flex flex-col items-center space-y-2 text-sm sm:flex-row sm:space-y-0 sm:space-x-2">
         <div className="flex items-center space-x-1 text-gray-600 dark:text-gray-300">
           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -178,7 +178,7 @@ export function Pagination({
                 disabled={loading}
                 className={`h-9 min-w-[36px] rounded-lg font-medium transition-all sm:h-10 sm:min-w-[44px] ${
                   isCurrentPage
-                    ? "pointer-events-none bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg"
+                    ? "pointer-events-none bg-linear-to-r from-blue-600 to-indigo-600 text-white shadow-lg"
                     : "border-gray-200 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 dark:border-gray-700 dark:hover:border-blue-600 dark:hover:bg-blue-900/20"
                 }`}
               >
@@ -231,7 +231,7 @@ export function Pagination({
           value={currentPage}
           onChange={(e) => onPageChange(parseInt(e.target.value))}
           disabled={loading}
-          className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+          className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium shadow-xs focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
         >
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
             <option key={page} value={page}>

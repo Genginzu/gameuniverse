@@ -122,7 +122,7 @@ export function PersonalGoalForm({ playerId, onCreated, onCancel }: PersonalGoal
         <button
           type="submit"
           disabled={submitting || !targetValue}
-          className="rounded-lg bg-gradient-to-r from-neon-violet to-neon-cyan px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:opacity-90 disabled:opacity-50"
+          className="rounded-lg bg-linear-to-r from-neon-violet to-neon-cyan px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:opacity-90 disabled:opacity-50"
         >
           {t("goals.create.submit")}
         </button>
