@@ -11,8 +11,8 @@ import type { AdminGameFormData } from "../../../../src/lib/validations/admin-ga
 // =============================================================================
 
 describe("TRACKABLE_FIELDS", () => {
-  it("contient exactement les 14 catégories attendues", () => {
-    expect(TRACKABLE_FIELDS).toHaveLength(14);
+  it("contient exactement les 15 catégories attendues", () => {
+    expect(TRACKABLE_FIELDS).toHaveLength(15);
     const expected = [
       "translations",
       "cover_image",
@@ -28,6 +28,7 @@ describe("TRACKABLE_FIELDS", () => {
       "versions",
       "languages",
       "playtime",
+      "videos",
     ];
     expect([...TRACKABLE_FIELDS]).toEqual(expected);
   });
@@ -165,8 +166,10 @@ describe("detectChangedFields", () => {
     });
 
     const result = detectChangedFields(baseCurrentData, submitted);
-    expect(result).toHaveLength(14);
-    expect(result).toEqual(expect.arrayContaining([...TRACKABLE_FIELDS]));
+    // "videos" is not detectable via admin form — only 14 fields are form-comparable
+    const formComparableFields = TRACKABLE_FIELDS.filter((f) => f !== "videos");
+    expect(result).toHaveLength(formComparableFields.length);
+    expect(result).toEqual(expect.arrayContaining([...formComparableFields]));
   });
 
   it("gère les valeurs null/vides correctement (pas de faux positif)", () => {

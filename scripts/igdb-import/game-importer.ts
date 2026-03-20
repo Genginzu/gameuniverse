@@ -14,6 +14,7 @@ import { IGDB_RATING_CATEGORIES, IGDB_ALL_RATINGS } from "../../src/types/igdb";
 import { extractColorsFromCover } from "./color-extractor";
 import { syncExistingGame } from "./game-sync";
 import { ensurePlatforms, linkPlatforms } from "./platform-importer";
+import { transformIgdbVideos } from "./video-transform";
 
 export interface ImportResult {
   success: boolean;
@@ -121,6 +122,9 @@ export async function importGameFromIGDB(
 
     // Create media
     await createMedia(newGame.id, igdbGame);
+
+    // Import videos
+    await createVideos(newGame.id, igdbGame, verbose);
 
     // Link platforms
     const platformIds = await ensurePlatforms(igdbGame, verbose);
@@ -377,6 +381,33 @@ async function createMedia(gameId: string, igdbGame: IGDBGame): Promise<void> {
     }));
 
     await supabase.from("game_artwork").insert(artworks);
+  }
+}
+
+async function createVideos(gameId: string, igdbGame: IGDBGame, verbose: boolean): Promise<void> {
+  if (!igdbGame.videos || igdbGame.videos.length === 0) {
+    return;
+  }
+
+  try {
+    const supabase = createScriptClient();
+    const videoRows = transformIgdbVideos(igdbGame.videos, gameId);
+
+    const { error } = await supabase.from("game_videos").insert(videoRows);
+
+    if (error) {
+      console.error(`[Importer] Failed to insert videos:`, error.message);
+      return;
+    }
+
+    if (verbose) {
+      console.log(`[Importer] Imported ${videoRows.length} videos`);
+    }
+  } catch (error) {
+    console.error(
+      `[Importer] Error importing videos:`,
+      error instanceof Error ? error.message : error
+    );
   }
 }
 

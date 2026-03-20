@@ -158,7 +158,8 @@ export class ImportOrchestrator {
              language_supports.language.id, language_supports.language.name, language_supports.language.native_name, language_supports.language.locale,
              language_supports.language_support_type.id, language_supports.language_support_type.name,
              age_ratings.id, age_ratings.organization, age_ratings.rating_category, age_ratings.synopsis,
-             age_ratings.rating_content_descriptions;
+             age_ratings.rating_content_descriptions,
+             videos.video_id, videos.name;
       where first_release_date >= ${timestampFrom} & first_release_date <= ${timestampTo};
       sort first_release_date desc;
       limit ${Math.min(limit, ImportOrchestrator.BATCH_SIZE)};
@@ -238,8 +239,10 @@ export class ImportOrchestrator {
           : "unknown";
         const genres = game.genres?.map((g) => g.name).join(", ") || "none";
 
+        const videoCount = game.videos?.length ?? 0;
+
         console.log(
-          `[Dry-run] Would import: "${game.name}" (IGDB ID: ${game.id}, Release: ${releaseDate}, Genres: ${genres})`
+          `[Dry-run] Would import: "${game.name}" (IGDB ID: ${game.id}, Release: ${releaseDate}, Genres: ${genres}, Videos: ${videoCount})`
         );
 
         // In dry-run mode, we count as skipped to keep imported at 0

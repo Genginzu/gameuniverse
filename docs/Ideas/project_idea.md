@@ -23,3 +23,4 @@
 * Mettre à jour vers NextJS 16.2 avant de mettre en ligne
 * Changer le gradient pour que ce soit celui du cyan au violet plutot que celui du header actuel
 * Changer couleur des boutons quand appuie sur filtre et du bouton annuler les filtres
+* Améliorer la recherche qui n'affiche pas tous les jeux

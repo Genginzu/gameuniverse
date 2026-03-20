@@ -249,10 +249,12 @@ describe("Property 1: Detection des modifications de champs", () => {
   });
 
   it("modifier un seul champ produit un resultat contenant ce champ", () => {
+    // "videos" is not detectable via admin form (no form field for videos)
+    const formComparableFields = TRACKABLE_FIELDS.filter((f) => f !== "videos");
     fc.assert(
       fc.property(
         gameDataGen(),
-        fc.constantFrom(...TRACKABLE_FIELDS),
+        fc.constantFrom(...formComparableFields),
         (gameData, fieldToChange) => {
           const current = toCurrentData(gameData);
           const submitted = toSubmittedData(gameData);

@@ -792,6 +792,21 @@ export class GameImportService {
 
       await supabase.from("game_artwork").insert(artworks);
     }
+
+    // Create videos from IGDB YouTube data
+    if (igdbGame.videos && igdbGame.videos.length > 0) {
+      const videos = igdbGame.videos.map((video, index) => ({
+        game_id: gameId,
+        url: `https://www.youtube.com/watch?v=${video.video_id}`,
+        thumbnail_url: `https://img.youtube.com/vi/${video.video_id}/maxresdefault.jpg`,
+        title: video.name,
+        video_type: "trailer",
+        display_order: index,
+        is_featured: index === 0,
+      }));
+
+      await supabase.from("game_videos").insert(videos);
+    }
   }
 
   /**
@@ -804,11 +819,12 @@ export class GameImportService {
   private static async updateMedia(gameId: string, igdbGame: IGDBGame): Promise<void> {
     const supabase = await createRouteHandlerClient();
 
-    // Delete existing screenshots and artwork
+    // Delete existing screenshots, artwork, and videos
     await supabase.from("game_screenshots").delete().eq("game_id", gameId);
     await supabase.from("game_artwork").delete().eq("game_id", gameId);
+    await supabase.from("game_videos").delete().eq("game_id", gameId);
 
-    // Create new media
+    // Recreate all media including videos
     await this.createMedia(gameId, igdbGame);
   }
 

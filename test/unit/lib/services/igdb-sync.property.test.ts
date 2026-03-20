@@ -100,6 +100,7 @@ const FIELD_TO_TABLES: Record<TrackableField, string[]> = {
   versions: ["game_versions"],
   languages: ["game_languages", "supported_languages"],
   playtime: ["games"],
+  videos: ["game_videos"],
 };
 
 /**

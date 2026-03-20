@@ -73,6 +73,14 @@ export interface GameApiResponse {
     is_available: boolean;
   }>;
   game_platforms: Array<{ platform_id: string }>;
+  videos: Array<{
+    url: string;
+    title: string | null;
+    thumbnail_url: string | null;
+    video_type: string | null;
+    display_order: number | null;
+    is_featured: boolean;
+  }>;
   music?: {
     composer: string | null;
     spotify_embed_url: string | null;
@@ -149,6 +157,14 @@ export function toFormData(game: GameApiResponse): AdminGameFormData {
     })),
     game_platforms: (game.game_platforms ?? []).map((gp) => ({
       platform_id: gp.platform_id,
+    })),
+    videos: (game.videos ?? []).map((v) => ({
+      url: v.url,
+      title: v.title ?? "",
+      thumbnail_url: v.thumbnail_url ?? "",
+      video_type: v.video_type ?? "",
+      display_order: v.display_order,
+      is_featured: v.is_featured,
     })),
     music_composer: game.music?.composer ?? "",
     music_spotify_embed_url: game.music?.spotify_embed_url ?? "",

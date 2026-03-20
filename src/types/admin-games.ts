@@ -74,6 +74,7 @@ export type TabId =
   | "versions"
   | "languages"
   | "pricing"
+  | "videos"
   | "music"
   | "sync";
 
@@ -98,7 +99,8 @@ export type TrackableField =
   | "age_ratings"
   | "versions"
   | "languages"
-  | "playtime";
+  | "playtime"
+  | "videos";
 
 /** Entrée de suivi d'un champ modifié manuellement */
 export interface GameFieldOverride {

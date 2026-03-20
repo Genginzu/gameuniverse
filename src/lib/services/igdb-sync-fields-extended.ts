@@ -6,6 +6,7 @@
 import { IGDBService } from "./igdbService";
 import { IGDB_RATING_CATEGORIES, IGDB_ALL_RATINGS, type IGDBGame } from "@/types/igdb";
 import type { SyncSupabaseClient } from "./igdb-sync";
+import { transformIgdbVideos } from "../../../scripts/igdb-import/video-transform";
 
 /** Supprime toutes les lignes d'une table pour un game_id donné */
 async function deleteByGameId(
@@ -195,4 +196,23 @@ export async function syncPlaytime(
     })
     .eq("id", gameId);
   if (error) throw new Error(`Failed to sync playtime: ${error.message}`);
+}
+
+/** Synchronise les vidéos — delete + re-insert depuis les données IGDB */
+export async function syncVideos(
+  supabase: SyncSupabaseClient,
+  gameId: string,
+  igdbGame: IGDBGame
+): Promise<void> {
+  await deleteByGameId(supabase, "game_videos", gameId);
+  if (!igdbGame.videos || igdbGame.videos.length === 0) return;
+
+  const rows = transformIgdbVideos(igdbGame.videos, gameId);
+  for (const row of rows) {
+    await supabase
+      .from("game_videos")
+      .insert({ ...row })
+      .select("id")
+      .single();
+  }
 }

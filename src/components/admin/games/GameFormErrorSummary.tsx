@@ -48,6 +48,7 @@ const TAB_LABELS: Record<TabId, string> = {
   languages: "Languages",
   pricing: "Pricing",
   music: "Music",
+  videos: "Videos",
   sync: "Sync",
 };
 

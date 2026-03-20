@@ -1205,7 +1205,12 @@
         "musicComposer": "Compositeur",
         "musicSpotifyUrl": "URL Spotify (embed ou lien)",
         "musicSpotifyHint": "Collez un lien Spotify (album, playlist ou track). Il sera converti automatiquement en embed.",
-        "musicYoutubeUrl": "URL YouTube (vidéo ou embed)"
+        "musicYoutubeUrl": "URL YouTube (vidéo ou embed)",
+        "videos": "Vidéos",
+        "addVideo": "Ajouter une vidéo",
+        "noVideos": "Aucune vidéo ajoutée.",
+        "videoUrlPlaceholder": "https://www.youtube.com/watch?v=...",
+        "videoTitlePlaceholder": "Titre de la vidéo"
       },
       "createPage": {
         "title": "Créer un nouveau jeu",
@@ -1370,6 +1375,8 @@
         "videos": "Vidéos",
         "addVideo": "Ajouter une vidéo",
         "noVideos": "Aucune vidéo ajoutée.",
+        "videoUrlPlaceholder": "https://www.youtube.com/watch?v=...",
+        "videoTitlePlaceholder": "Titre de la vidéo",
         "relationships": "Relations",
         "noRelations": "Aucune relation ajoutée.",
         "addRelation": "Ajouter une relation",

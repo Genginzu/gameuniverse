@@ -156,7 +156,9 @@ export async function GET(request: NextRequest) {
         });
       }
 
-      const genreIds = [...new Set(genreRows.map((g: { genre_id: string }) => g.genre_id))];
+      const genreIds = [
+        ...new Set(genreRows.filter((g) => g.genre_id !== null).map((g) => g.genre_id as string)),
+      ];
       const { data: ggRows } = await supabase
         .from("game_genres")
         .select("game_id")

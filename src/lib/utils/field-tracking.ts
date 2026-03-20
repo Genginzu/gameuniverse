@@ -2,7 +2,7 @@ import type { TrackableField } from "@/types/admin-games";
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
 
 /**
- * Les 13 catégories de champs synchronisables depuis IGDB.
+ * Les 15 catégories de champs synchronisables depuis IGDB.
  * Utilisé pour le suivi des modifications manuelles.
  */
 export const TRACKABLE_FIELDS: readonly TrackableField[] = [
@@ -20,6 +20,7 @@ export const TRACKABLE_FIELDS: readonly TrackableField[] = [
   "versions",
   "languages",
   "playtime",
+  "videos",
 ] as const;
 
 /**
