@@ -4,12 +4,37 @@ import { Badge } from "@/components/ui/badge";
 import { LazyImage } from "@/components/ui/lazy-image";
 import { useGameLibraryStatus } from "@/hooks/useGameLibraryStatus";
 import { useCharacterFavorite } from "@/hooks/useCharacterFavorite";
+import { useLibraryStatus } from "@/components/providers/LibraryStatusProvider";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslations } from "next-intl";
+import { useState, useCallback } from "react";
 import Link from "next/link";
 
 import type { EntityCardProps } from "@/types/entity-card";
-import { Icon } from "@iconify/react";
+import dynamic from "next/dynamic";
+
+// Chargement dynamique d'Iconify — utilisé uniquement pour les icônes configurables du hover overlay
+const Icon = dynamic(() => import("@iconify/react").then((mod) => mod.Icon), {
+  ssr: false,
+  loading: () => <span className="mr-1 inline-block h-3 w-3" />,
+});
+
+// SVG inline pour les cœurs — rendu immédiat sans attendre Iconify
+function HeartFilled({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+    </svg>
+  );
+}
+
+function HeartOutline({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z" />
+    </svg>
+  );
+}
 
 // Re-export types for backward compatibility
 export type {
@@ -47,9 +72,61 @@ export function EntityCard<T extends object>({
     ? String((entity as Record<string, unknown>)[config.idField as string])
     : String((entity as Record<string, unknown>)["id"]);
 
-  const { inLibrary, loading, adding, addToLibrary, removeFromLibrary } = useGameLibraryStatus(
-    config.actions?.libraryToggle ? entityId : ""
+  // Batch context (fourni par LibraryStatusProvider sur la page games)
+  const batchCtx = useLibraryStatus();
+  const batchStatus = batchCtx.getStatus(entityId);
+  const useBatch = config.actions?.libraryToggle && batchStatus !== undefined;
+
+  // Hook individuel — désactivé quand le batch fournit déjà le statut
+  const individual = useGameLibraryStatus(
+    config.actions?.libraryToggle && !useBatch ? entityId : ""
   );
+
+  // État unifié pour la bibliothèque
+  const inLibrary = useBatch ? batchStatus : individual.inLibrary;
+  const loading = useBatch ? batchCtx.loading : individual.loading;
+  const [adding, setAdding] = useState(false);
+
+  const addToLibrary = useCallback(async () => {
+    if (!user || !entityId || adding) return false;
+    if (useBatch) {
+      setAdding(true);
+      try {
+        const res = await fetch("/api/library", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ gameId: entityId }),
+        });
+        if (res.ok) {
+          batchCtx.setStatus(entityId, true);
+          return true;
+        }
+        return false;
+      } catch {
+        return false;
+      } finally {
+        setAdding(false);
+      }
+    }
+    return individual.addToLibrary();
+  }, [user, entityId, adding, useBatch, batchCtx, individual]);
+
+  const removeFromLibrary = useCallback(async () => {
+    if (!user || !entityId) return false;
+    if (useBatch) {
+      try {
+        const res = await fetch(`/api/library/${entityId}`, { method: "DELETE" });
+        if (res.ok) {
+          batchCtx.setStatus(entityId, false);
+          return true;
+        }
+        return false;
+      } catch {
+        return false;
+      }
+    }
+    return individual.removeFromLibrary();
+  }, [user, entityId, useBatch, batchCtx, individual]);
 
   const entitySlug = config.slugField
     ? String((entity as Record<string, unknown>)[config.slugField as string])
@@ -63,16 +140,19 @@ export function EntityCard<T extends object>({
 
   const getStringValue = (field: keyof T): string => String(entity[field] || "");
 
-  const handleLibraryToggle = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (inLibrary) {
-      const success = await removeFromLibrary();
-      if (success && onRemovedFromLibrary) onRemovedFromLibrary(entityId);
-    } else {
-      await addToLibrary();
-    }
-  };
+  const handleLibraryToggle = useCallback(
+    async (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (inLibrary) {
+        const success = await removeFromLibrary();
+        if (success && onRemovedFromLibrary) onRemovedFromLibrary(entityId);
+      } else {
+        await addToLibrary();
+      }
+    },
+    [inLibrary, removeFromLibrary, addToLibrary, onRemovedFromLibrary, entityId]
+  );
 
   const handleFavoriteToggle = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -185,7 +265,7 @@ export function EntityCard<T extends object>({
     <div className="group relative">
       <Link href={config.linkTemplate(entity, locale)}>
         <div
-          className={`relative ${aspectRatioClass} cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(var(--neon-violet),0.3),0_0_40px_rgba(var(--neon-cyan),0.15)] hover:ring-1 hover:ring-neon-violet/30 motion-reduce:transition-none motion-reduce:hover:scale-100 dark:bg-gray-800`}
+          className={`relative ${aspectRatioClass} hover:ring-neon-violet/30 cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(var(--neon-violet),0.3),0_0_40px_rgba(var(--neon-cyan),0.15)] hover:ring-1 motion-reduce:transition-none motion-reduce:hover:scale-100 dark:bg-gray-800`}
           style={{ backgroundColor: backgroundColor || "#f3f4f6" }}
         >
           {needsFallbackAvatar ? (
@@ -209,13 +289,13 @@ export function EntityCard<T extends object>({
             <button
               onClick={handleLibraryToggle}
               disabled={adding || loading}
-              className="absolute left-3 top-3 z-20 transition-transform hover:scale-110 disabled:opacity-50"
+              className="absolute top-3 left-3 z-20 transition-transform hover:scale-110 disabled:opacity-50"
               aria-label={inLibrary ? t("removeFromLibrary") : t("addToLibrary")}
             >
               {inLibrary ? (
-                <Icon icon="fa:heart" className="h-6 w-6 text-red-500 drop-shadow-lg" />
+                <HeartFilled className="h-6 w-6 text-red-500 drop-shadow-lg" />
               ) : (
-                <Icon icon="fa-regular:heart" className="h-6 w-6 text-white drop-shadow-lg" />
+                <HeartOutline className="h-6 w-6 text-white drop-shadow-lg" />
               )}
             </button>
           )}
@@ -225,13 +305,13 @@ export function EntityCard<T extends object>({
             <button
               onClick={handleFavoriteToggle}
               disabled={favLoading || favToggling}
-              className="absolute left-3 top-3 z-20 transition-transform hover:scale-110 disabled:opacity-50"
+              className="absolute top-3 left-3 z-20 transition-transform hover:scale-110 disabled:opacity-50"
               aria-label={isFavorite ? t("removeFromFavorites") : t("addToFavorites")}
             >
               {isFavorite ? (
-                <Icon icon="fa:heart" className="h-6 w-6 text-red-500 drop-shadow-lg" />
+                <HeartFilled className="h-6 w-6 text-red-500 drop-shadow-lg" />
               ) : (
-                <Icon icon="fa-regular:heart" className="h-6 w-6 text-white drop-shadow-lg" />
+                <HeartOutline className="h-6 w-6 text-white drop-shadow-lg" />
               )}
             </button>
           )}

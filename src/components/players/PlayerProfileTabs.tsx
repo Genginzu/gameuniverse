@@ -70,7 +70,7 @@ export function PlayerProfileTabs({ activeTab, onTabChange, isOwner }: PlayerPro
       <button
         type="button"
         onClick={() => scroll("left")}
-        className="absolute left-0 top-1/2 z-10 -translate-y-1/2 rounded-r-md bg-white/80 p-1 text-gray-500 hover:text-gray-900 dark:bg-slate-800/80 dark:text-slate-400 dark:hover:text-white md:hidden"
+        className="absolute top-1/2 left-0 z-10 -translate-y-1/2 rounded-r-md bg-white/80 p-1 text-gray-500 hover:text-gray-900 md:hidden dark:bg-slate-800/80 dark:text-slate-400 dark:hover:text-white"
         aria-label="Scroll left"
       >
         <ChevronLeft className="h-4 w-4" />
@@ -90,7 +90,7 @@ export function PlayerProfileTabs({ activeTab, onTabChange, isOwner }: PlayerPro
               onClick={() => onTabChange(id)}
               onMouseEnter={(e) => showTooltip(e, label)}
               onMouseLeave={() => setTooltip(null)}
-              className={`relative flex shrink-0 items-center justify-center px-5 py-3 transition-colors ${
+              className={`relative flex shrink-0 cursor-pointer items-center justify-center px-5 py-3 transition-colors ${
                 isActive
                   ? "text-cyan-600 dark:text-cyan-400"
                   : "text-gray-400 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200"
@@ -114,7 +114,7 @@ export function PlayerProfileTabs({ activeTab, onTabChange, isOwner }: PlayerPro
       <button
         type="button"
         onClick={() => scroll("right")}
-        className="absolute right-0 top-1/2 z-10 -translate-y-1/2 rounded-l-md bg-white/80 p-1 text-gray-500 hover:text-gray-900 dark:bg-slate-800/80 dark:text-slate-400 dark:hover:text-white md:hidden"
+        className="absolute top-1/2 right-0 z-10 -translate-y-1/2 rounded-l-md bg-white/80 p-1 text-gray-500 hover:text-gray-900 md:hidden dark:bg-slate-800/80 dark:text-slate-400 dark:hover:text-white"
         aria-label="Scroll right"
       >
         <ChevronRight className="h-4 w-4" />
@@ -133,7 +133,7 @@ function BubbleTooltip({ label, x, y }: { label: string; x: number; y: number })
       className="animate-scale-in pointer-events-none fixed z-50 -translate-x-1/2"
       style={{ left: x, top: y - 44 }}
     >
-      <div className="relative whitespace-nowrap rounded-xl border-2 border-indigo-400 bg-white px-3 py-1.5 text-xs font-bold text-gray-900 shadow-lg shadow-indigo-500/20 dark:bg-slate-900 dark:text-white">
+      <div className="relative rounded-xl border-2 border-indigo-400 bg-white px-3 py-1.5 text-xs font-bold whitespace-nowrap text-gray-900 shadow-lg shadow-indigo-500/20 dark:bg-slate-900 dark:text-white">
         {label}
         {/* Tail — outer border triangle */}
         <span className="absolute -bottom-[7px] left-1/2 -translate-x-1/2 border-x-[7px] border-t-[7px] border-x-transparent border-t-indigo-400" />

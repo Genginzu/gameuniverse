@@ -1,7 +1,6 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useImageLoading } from "@/hooks/useImageLoading";
 
 interface LazyImageProps {
   src?: string;
@@ -29,21 +28,13 @@ export function LazyImage({
   priority = false,
 }: LazyImageProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
-  const { isLoading, imageSrc } = useImageLoading({ src, fallbackSrc });
+  const [hasError, setHasError] = useState(false);
 
-  const handleImageLoad = () => {
-    setImageLoaded(true);
-  };
+  // Utiliser le fallback si pas de src ou si erreur de chargement
+  const effectiveSrc = hasError || !src ? fallbackSrc : src;
 
-  const handleImageError = () => {
-    setImageLoaded(true);
-  };
-
-  if (isLoading && showSkeleton) {
-    return <Skeleton className={`${className} ${fill ? "absolute inset-0" : ""}`} />;
-  }
-
-  if (!imageSrc) {
+  // Pas de src et pas de fallback → placeholder SVG
+  if (!effectiveSrc) {
     return (
       <div className={`flex items-center justify-center bg-gray-100 ${className}`}>
         <svg
@@ -67,14 +58,22 @@ export function LazyImage({
     <div className={fill ? "relative h-full w-full" : "relative"}>
       {showSkeleton && !imageLoaded && <Skeleton className={`absolute inset-0 ${className}`} />}
       <Image
-        src={imageSrc}
+        src={effectiveSrc}
         alt={alt}
         width={width}
         height={height}
         fill={fill}
         className={`${className} ${!imageLoaded ? "opacity-0" : "opacity-100"} transition-opacity duration-300`}
-        onLoad={handleImageLoad}
-        onError={handleImageError}
+        onLoad={() => setImageLoaded(true)}
+        onError={() => {
+          // Si c'est déjà le fallback qui échoue, on affiche quand même
+          if (hasError) {
+            setImageLoaded(true);
+            return;
+          }
+          setHasError(true);
+          setImageLoaded(false);
+        }}
         priority={priority}
         sizes={sizes}
       />

@@ -55,23 +55,13 @@ export function PostContentRenderer({ content, tags, mentions, locale }: PostCon
   const segments = tokenize(content);
 
   return (
-    <span className="whitespace-pre-wrap text-sm leading-relaxed text-gray-700 dark:text-slate-200">
+    <span className="text-sm leading-relaxed whitespace-pre-wrap text-gray-700 dark:text-slate-200">
       {segments.map((segment, index) => {
-        // Tag token — rendered as plain text (pills shown separately below content)
+        // Tag token — skip rendering (tags are displayed as pills below content)
         if (segment.startsWith("#")) {
           const tagName = segment.slice(1).toLowerCase();
           if (validTags.has(tagName)) {
-            return (
-              <span
-                key={index}
-                role="button"
-                tabIndex={0}
-                aria-label={t("tagAriaLabel", { tag: tagName })}
-                className="cursor-pointer rounded-full bg-neon-violet/10 px-2 py-0.5 text-xs font-medium text-neon-violet transition-all duration-300 hover:bg-neon-violet/20 dark:bg-neon-violet/20 dark:text-violet-300 dark:hover:bg-neon-violet/30"
-              >
-                #{tagName}
-              </span>
-            );
+            return null;
           }
         }
 

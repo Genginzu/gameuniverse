@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Genre } from "@/types/genre";
 import { PlatformFilterOption } from "@/types/platform";
 import { PlatformFilter } from "./PlatformFilter";
@@ -87,28 +88,44 @@ export function GameFilters({
         <div className="rounded-xl bg-white/60 p-4 ring-1 ring-gray-200/50 backdrop-blur-xs dark:bg-slate-800/50 dark:ring-slate-700/50">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{t("genres")}</h3>
-            <span className="text-xs text-gray-500 dark:text-gray-400">
-              {genres.length} {t("available")}
-            </span>
+            {genres.length > 0 ? (
+              <span className="text-xs text-gray-500 dark:text-gray-400">
+                {genres.length} {t("available")}
+              </span>
+            ) : (
+              <Skeleton className="h-4 w-16 rounded" />
+            )}
           </div>
           <div className="flex flex-wrap gap-1.5">
-            {genres.map((genre) => {
-              const isSelected = selectedGenres.includes(genre.name);
-              return (
-                <button
-                  key={genre.id}
-                  onClick={() => handleGenreToggle(genre.name)}
-                  className={`rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
-                    isSelected
-                      ? "bg-linear-to-r from-cyan-500 to-violet-500 text-white shadow-xs"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700/50 dark:text-gray-300 dark:hover:bg-slate-700"
-                  }`}
-                >
-                  {genre.name}
-                  <span className="ml-1 opacity-60">{genre.gameCount}</span>
-                </button>
-              );
-            })}
+            {genres.length > 0
+              ? genres.map((genre) => {
+                  const isSelected = selectedGenres.includes(genre.name);
+                  return (
+                    <button
+                      key={genre.id}
+                      onClick={() => handleGenreToggle(genre.name)}
+                      className={`cursor-pointer rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
+                        isSelected
+                          ? "bg-linear-to-r from-cyan-500 to-violet-500 text-white shadow-xs"
+                          : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700/50 dark:text-gray-300 dark:hover:bg-slate-700"
+                      }`}
+                    >
+                      {genre.name}
+                      <span className="ml-1 opacity-60">{genre.gameCount}</span>
+                    </button>
+                  );
+                })
+              : Array.from({ length: 12 }).map((_, i) => {
+                  // Largeurs variées pour simuler des noms de genres différents
+                  const widths = [72, 88, 64, 96, 80, 68, 92, 76, 84, 60, 100, 72];
+                  return (
+                    <Skeleton
+                      key={i}
+                      className="h-7 rounded-full"
+                      style={{ width: `${widths[i]}px` }}
+                    />
+                  );
+                })}
           </div>
         </div>
       )}
@@ -118,6 +135,7 @@ export function GameFilters({
           platforms={platforms}
           selectedPlatforms={selectedPlatforms}
           onPlatformsChange={onPlatformsChange}
+          showSkeleton={showAllGenres}
         />
       )}
     </div>

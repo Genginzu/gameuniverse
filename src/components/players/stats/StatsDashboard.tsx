@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { Lock, AlertCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { StatsDashboardSkeleton } from "@/components/players/stats/StatsDashboardSkeleton";
 import { Button } from "@/components/ui/button";
 import type { DashboardStatsResponse } from "@/types/dashboard-stats";
 import { StatsSectionTitle } from "@/components/players/stats/StatsSectionTitle";
@@ -95,16 +95,7 @@ export function StatsDashboard({
     return (
       <div>
         {title}
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Card key={i} className={CARD_STYLE}>
-              <CardContent className="p-6">
-                <Skeleton className="mb-3 h-4 w-24 bg-gray-200 dark:bg-slate-700" />
-                <Skeleton className="h-8 w-16 bg-gray-200 dark:bg-slate-700" />
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        <StatsDashboardSkeleton />
       </div>
     );
   }

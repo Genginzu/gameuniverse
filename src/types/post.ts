@@ -27,4 +27,5 @@ export interface PostsResponse {
 export interface CreatePostPayload {
   content: string;
   imageUrl?: string;
+  tags?: string[];
 }

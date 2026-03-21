@@ -2,10 +2,10 @@
 
 import { useState, useRef, useCallback } from "react";
 import { useTranslations } from "next-intl";
-import { Send, Loader2, Image, User } from "lucide-react";
+import { Send, Loader2, Image as ImageIcon, User, X } from "lucide-react";
 import { LazyImage } from "@/components/ui/lazy-image";
 import { useToast } from "@/hooks/use-toast";
-import { isValidImageUrl } from "@/lib/utils/postContentParser";
+import { usePostImageUpload } from "@/hooks/usePostImageUpload";
 import { useMentionAutocomplete } from "@/hooks/useMentionAutocomplete";
 import { MentionSuggestions } from "./MentionSuggestions";
 import { TagInput } from "./TagInput";
@@ -18,7 +18,7 @@ interface PostComposerProps {
   playerId: string;
   playerAvatar: string | null;
   isCreating: boolean;
-  onSubmit: (content: string, imageUrl?: string) => Promise<void>;
+  onSubmit: (content: string, imageUrl?: string, tags?: string[]) => Promise<void>;
 }
 
 export function PostComposer({
@@ -32,9 +32,11 @@ export function PostComposer({
   const [content, setContent] = useState("");
   const [cursorPos, setCursorPos] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [imageUrl, setImageUrl] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const imageUpload = usePostImageUpload();
 
   const { suggestions, isLoading, isOpen, mentionQuery } = useMentionAutocomplete(
     content,
@@ -42,8 +44,7 @@ export function PostComposer({
   );
 
   const trimmed = content.trim();
-  const hasImageUrlError = imageUrl.trim() !== "" && !isValidImageUrl(imageUrl.trim());
-  const isDisabled = !trimmed || isCreating || hasImageUrlError;
+  const isDisabled = !trimmed || isCreating || imageUpload.uploading;
   const remaining = MAX_LENGTH - content.length;
 
   const handleSelectMention = useCallback(
@@ -68,14 +69,10 @@ export function PostComposer({
   const handleSubmit = async () => {
     if (isDisabled) return;
     try {
-      const validUrl =
-        imageUrl.trim() && isValidImageUrl(imageUrl.trim()) ? imageUrl.trim() : undefined;
-      // Append explicit tags so server-side extractTags() picks them up
-      const tagsSuffix = tags.length > 0 ? ` ${tags.map((t) => `#${t}`).join(" ")}` : "";
-      await onSubmit(content + tagsSuffix, validUrl);
+      await onSubmit(content, imageUpload.uploadedUrl ?? undefined, tags);
       setContent("");
-      setImageUrl("");
       setTags([]);
+      imageUpload.clearImage();
     } catch {
       toast({ variant: "destructive", title: t("errorCreate") });
     }
@@ -156,10 +153,10 @@ export function PostComposer({
               aria-label={t("placeholder")}
               maxLength={MAX_LENGTH}
               rows={3}
-              className="w-full resize-none rounded-xl border-2 border-violet-300 bg-white/60 p-3 pb-7 text-sm text-gray-800 placeholder-gray-400 backdrop-blur-xs transition-all duration-200 focus:border-violet-400 focus:outline-hidden focus:ring-2 focus:ring-violet-400/20 dark:border-violet-500/50 dark:bg-slate-700/40 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-violet-400/60 dark:focus:ring-violet-400/15"
+              className="w-full resize-none rounded-xl border-2 border-violet-300 bg-white/60 p-3 pb-7 text-sm text-gray-800 placeholder-gray-400 backdrop-blur-xs transition-all duration-200 focus:border-violet-400 focus:ring-2 focus:ring-violet-400/20 focus:outline-hidden dark:border-violet-500/50 dark:bg-slate-700/40 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-violet-400/60 dark:focus:ring-violet-400/15"
             />
             <span
-              className={`absolute bottom-2 right-3 text-xs ${remaining < 0 ? "text-red-500" : "text-gray-400 dark:text-slate-500"}`}
+              className={`absolute right-3 bottom-2 text-xs ${remaining < 0 ? "text-red-500" : "text-gray-400 dark:text-slate-500"}`}
             >
               {t("charCount", { remaining })}
             </span>
@@ -179,24 +176,63 @@ export function PostComposer({
             <TagInput tags={tags} onChange={setTags} />
           </div>
 
-          {/* Actions bar: image URL + publish */}
-          <div className="mt-3 flex items-center gap-2">
-            <div className="relative min-w-0 flex-1">
-              <Image className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-violet-400 dark:text-violet-300" />
-              <input
-                type="url"
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-                placeholder={t("imageUrlPlaceholder")}
-                aria-label={t("imageUrlAriaLabel")}
-                className="w-full rounded-full border-2 border-violet-300 bg-white/60 py-2 pl-9 pr-3 text-xs text-gray-800 placeholder-gray-400 transition-all duration-200 focus:border-violet-400 focus:outline-hidden focus:ring-2 focus:ring-violet-400/20 dark:border-violet-500/50 dark:bg-slate-700/40 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-violet-400/60 dark:focus:ring-violet-400/15"
+          {/* Image preview */}
+          {imageUpload.previewUrl && (
+            <div className="relative mt-2 overflow-hidden rounded-xl">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={imageUpload.previewUrl}
+                alt=""
+                className="max-h-48 w-full rounded-xl object-cover"
               />
-              {hasImageUrlError && (
-                <p className="absolute -bottom-4 left-3 text-[10px] text-red-500">
-                  {t("imageUrlError")}
-                </p>
+              {imageUpload.uploading && (
+                <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-black/40">
+                  <div className="flex items-center gap-2 text-sm text-white">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    {imageUpload.progress}%
+                  </div>
+                </div>
               )}
+              <button
+                type="button"
+                onClick={imageUpload.clearImage}
+                className="absolute top-2 right-2 rounded-full bg-black/50 p-1 text-white transition-colors hover:bg-black/70"
+                aria-label={t("imageRemove")}
+              >
+                <X className="h-4 w-4" />
+              </button>
             </div>
+          )}
+
+          {imageUpload.error && (
+            <p className="mt-1 text-xs text-red-500">{t(`imageError_${imageUpload.error}`)}</p>
+          )}
+
+          {/* Actions bar: file picker + publish */}
+          <div className="mt-3 flex items-center gap-2">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/gif"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) imageUpload.handleFileSelect(file);
+                e.target.value = "";
+              }}
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={imageUpload.uploading}
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border-2 border-violet-300 bg-white/60 px-3 py-2 text-xs text-violet-500 transition-all duration-200 hover:bg-violet-50 disabled:opacity-50 dark:border-violet-500/50 dark:bg-slate-700/40 dark:text-violet-300 dark:hover:bg-slate-700/60"
+              aria-label={t("imageUploadLabel")}
+            >
+              <ImageIcon className="h-4 w-4" />
+              {t("imageUploadButton")}
+            </button>
+
+            <div className="flex-1" />
 
             <button
               type="button"

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Loader2 } from "lucide-react";
 import type { AchievementCategory } from "@/types/achievement";
 import { useAchievements } from "@/hooks/useAchievements";
 import { filterByCategory } from "@/lib/utils/achievementGrouping";
@@ -22,12 +21,7 @@ export function AchievementsPageContent({ playerId }: AchievementsPageContentPro
   const { achievements, xpStats, isLoading, error } = useAchievements(playerId, locale);
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 className="h-6 w-6 animate-spin text-neon-violet" />
-        <span className="ml-2 text-sm text-gray-500 dark:text-slate-400">{t("loading")}</span>
-      </div>
-    );
+    return <AchievementsSkeleton />;
   }
 
   if (error) {
@@ -60,6 +54,64 @@ export function AchievementsPageContent({ playerId }: AchievementsPageContentPro
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+/** Skeleton matching the real achievements layout: header stats + filter bar + card grid */
+function AchievementsSkeleton() {
+  return (
+    <div className="space-y-6">
+      {/* Header: title + 3 stat cards */}
+      <div className="space-y-4">
+        <div className="h-7 w-48 animate-pulse rounded-lg bg-gray-200 dark:bg-slate-700" />
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div
+              key={i}
+              className="glass-card flex animate-pulse items-center gap-3 rounded-xl p-4"
+            >
+              <div className="h-10 w-10 shrink-0 rounded-xl bg-gray-200 dark:bg-slate-700" />
+              <div className="min-w-0 flex-1 space-y-2">
+                <div className="h-4 w-3/4 rounded bg-gray-200 dark:bg-slate-700" />
+                <div className="h-3 w-1/2 rounded bg-gray-200 dark:bg-slate-700" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Category filter bar */}
+      <div className="flex gap-2">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div
+            key={i}
+            className="h-8 w-20 animate-pulse rounded-full bg-gray-200 dark:bg-slate-700"
+          />
+        ))}
+      </div>
+
+      {/* Achievement cards grid */}
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="glass-card animate-pulse rounded-xl p-4">
+            <div className="flex items-start gap-3">
+              <div className="h-10 w-10 shrink-0 rounded-xl bg-gray-200 dark:bg-slate-700" />
+              <div className="min-w-0 flex-1 space-y-2">
+                <div className="flex items-center gap-2">
+                  <div className="h-4 w-2/3 rounded bg-gray-200 dark:bg-slate-700" />
+                  <div className="h-4 w-12 rounded-full bg-gray-200 dark:bg-slate-700" />
+                </div>
+                <div className="h-3 w-full rounded bg-gray-200 dark:bg-slate-700" />
+                <div className="flex items-center gap-2">
+                  <div className="h-4 w-14 rounded-full bg-gray-200 dark:bg-slate-700" />
+                  <div className="h-3 w-24 rounded bg-gray-200 dark:bg-slate-700" />
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

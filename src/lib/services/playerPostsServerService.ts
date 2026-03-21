@@ -110,7 +110,12 @@ export class PlayerPostsServerService {
   }
 
   /** Create a new post and return it with enriched tags/mentions. */
-  static async createPost(playerId: string, content: string, imageUrl?: string): Promise<Post> {
+  static async createPost(
+    playerId: string,
+    content: string,
+    imageUrl?: string,
+    explicitTags?: string[]
+  ): Promise<Post> {
     const supabase = await createRouteHandlerClient();
 
     // 1. Insert the post
@@ -132,8 +137,11 @@ export class PlayerPostsServerService {
 
     const postId = (data as unknown as PostRow).id;
 
-    // 2. Extract and insert tags (best-effort)
-    const tags = extractTags(content);
+    // 2. Extract inline tags from content and merge with explicit tags (deduplicated)
+    const inlineTags = extractTags(content);
+    const allExplicit = (explicitTags ?? []).map((t) => t.toLowerCase());
+    const mergedSet = new Set([...inlineTags, ...allExplicit]);
+    const tags = Array.from(mergedSet).slice(0, 10);
     if (tags.length > 0) {
       const tagRows = tags.map((tag) => ({ post_id: postId, tag }));
       const { error: tagError } = await supabase.from("post_tags" as UntypedFrom).insert(tagRows);

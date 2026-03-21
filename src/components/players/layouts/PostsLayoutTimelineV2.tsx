@@ -18,7 +18,7 @@ export interface PostsLayoutProps {
   error: string | null;
   searchTerm: string;
   setSearchTerm: (term: string) => void;
-  createPost: (content: string, imageUrl?: string) => Promise<void>;
+  createPost: (content: string, imageUrl?: string, tags?: string[]) => Promise<void>;
   deletePost: (postId: string) => void;
   playerId: string;
   playerName: string | null;
@@ -51,8 +51,8 @@ export function PostsLayoutTimelineV2(props: PostsLayoutProps) {
     sentinelRef,
   } = props;
 
-  const handlePostCreated = async (content: string, imageUrl?: string) => {
-    await createPost(content, imageUrl);
+  const handlePostCreated = async (content: string, imageUrl?: string, tags?: string[]) => {
+    await createPost(content, imageUrl, tags);
     setShowComposer(false);
   };
 
@@ -109,7 +109,7 @@ export function PostsLayoutTimelineV2(props: PostsLayoutProps) {
             {posts.map((post) => (
               <div key={post.id} className="relative mb-6">
                 {/* Timeline dot */}
-                <div className="absolute -left-[33px] top-5 h-4 w-4 rounded-full border-2 border-violet-400 bg-white dark:border-violet-500 dark:bg-slate-800" />
+                <div className="absolute top-5 -left-[33px] h-4 w-4 rounded-full border-2 border-violet-400 bg-white dark:border-violet-500 dark:bg-slate-800" />
                 <PostCard
                   post={post}
                   playerName={playerName}

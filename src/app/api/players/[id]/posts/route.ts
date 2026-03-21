@@ -91,7 +91,17 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       return NextResponse.json({ error: "Invalid image URL (must be https://)" }, { status: 400 });
     }
 
-    const post = await PlayerPostsServerService.createPost(playerId, content, imageUrl);
+    // Accept explicit tags from the client (TagInput component)
+    const explicitTags = Array.isArray(body?.tags)
+      ? body.tags.filter((t: unknown) => typeof t === "string" && t.length > 0).slice(0, 10)
+      : undefined;
+
+    const post = await PlayerPostsServerService.createPost(
+      playerId,
+      content,
+      imageUrl,
+      explicitTags
+    );
     return NextResponse.json(post, { status: 201 });
   } catch (error) {
     logger.error("Error in player posts POST", { error });

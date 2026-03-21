@@ -2,9 +2,9 @@
 
 import type { Profile } from "@/types/profile";
 
-export type UploadContext = "avatars" | "banners";
+export type UploadContext = "avatars" | "banners" | "post-images";
 
-export const ALLOWED_CONTEXTS: UploadContext[] = ["avatars", "banners"];
+export const ALLOWED_CONTEXTS: UploadContext[] = ["avatars", "banners", "post-images"];
 
 export const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"] as const;
 

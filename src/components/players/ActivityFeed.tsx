@@ -33,8 +33,8 @@ export function ActivityFeed({
   const postHook = usePlayerPosts(playerId);
   const [showComposer, setShowComposer] = useState(false);
 
-  const handlePostCreated = async (content: string, imageUrl?: string) => {
-    await postHook.createPost(content, imageUrl);
+  const handlePostCreated = async (content: string, imageUrl?: string, tags?: string[]) => {
+    await postHook.createPost(content, imageUrl, tags);
     setShowComposer(false);
   };
 

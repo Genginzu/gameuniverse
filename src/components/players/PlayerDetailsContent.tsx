@@ -37,49 +37,29 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
   const { user } = useAuth();
   const isOwner = user?.id === player.id;
 
-  const {
-    friendCount,
-    relationshipStatus,
-    relationshipFriendshipId,
-    sendRequest,
-    acceptRequest,
-    declineRequest,
-    removeFriend,
-  } = useFriends(player.id, locale);
+  const friendsHook = useFriends(player.id, locale);
 
   const [activeTab, setActiveTab] = useState<ProfileTab>("activity");
 
   // Fetch XP stats for the ProgressRing (Req 5.4, 5.5)
   const [xpStats, setXpStats] = useState<PlayerXpStats | null>(null);
   useEffect(() => {
-    fetch(`/api/players/${player.id}/xp`)
+    const controller = new AbortController();
+    fetch(`/api/players/${player.id}/xp`, { signal: controller.signal })
       .then((res) => (res.ok ? res.json() : null))
       .then((json: PlayerXpStats | null) => {
         if (json) setXpStats(json);
       })
       .catch(() => {});
+    return () => controller.abort();
   }, [player.id]);
-
-  // Fetch available years for the year-in-review link (Req 7.1)
-  const [availableYears, setAvailableYears] = useState<number[]>([]);
-  useEffect(() => {
-    const currentYear = new Date().getFullYear();
-    fetch(`/api/players/${player.id}/year/${currentYear}?locale=${locale}`)
-      .then((res) => (res.ok ? res.json() : null))
-      .then((json) => {
-        if (json?.yearReview?.availableYears) {
-          setAvailableYears(json.yearReview.availableYears);
-        }
-      })
-      .catch(() => {});
-  }, [player.id, locale]);
 
   const displayName = player.fullName || t("card.anonymousPlayer");
 
   return (
     <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       {/* Back navigation */}
-      <div className="absolute left-4 top-4 z-20">
+      <div className="absolute top-4 left-4 z-20">
         <Link href={`/${locale}/players`}>
           <Button
             variant="ghost"
@@ -97,7 +77,7 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
         player={player}
         displayName={displayName}
         reviewCount={player.stats.totalGames}
-        friendCount={friendCount}
+        friendCount={friendsHook.friendCount}
         commentCount={0}
         xpStats={xpStats}
         friendActionSlot={
@@ -105,12 +85,12 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
             playerId={player.id}
             isAuthenticated={!!user}
             isOwner={isOwner}
-            relationshipStatus={relationshipStatus}
-            friendshipId={relationshipFriendshipId}
-            sendRequest={sendRequest}
-            acceptRequest={acceptRequest}
-            declineRequest={declineRequest}
-            removeFriend={removeFriend}
+            relationshipStatus={friendsHook.relationshipStatus}
+            friendshipId={friendsHook.relationshipFriendshipId}
+            sendRequest={friendsHook.sendRequest}
+            acceptRequest={friendsHook.acceptRequest}
+            declineRequest={friendsHook.declineRequest}
+            removeFriend={friendsHook.removeFriend}
           />
         }
       />
@@ -125,8 +105,7 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
           player={player}
           locale={locale}
           isOwner={isOwner}
-          availableYears={availableYears}
-          user={user}
+          friendsHook={friendsHook}
           t={t}
           tCommon={tCommon}
         />

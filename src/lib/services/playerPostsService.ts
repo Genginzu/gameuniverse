@@ -29,10 +29,16 @@ export class PlayerPostsService {
     return response.json();
   }
 
-  /** Crée un nouveau post pour un joueur, avec image optionnelle. */
-  static async createPost(playerId: string, content: string, imageUrl?: string): Promise<Post> {
+  /** Crée un nouveau post pour un joueur, avec image et tags optionnels. */
+  static async createPost(
+    playerId: string,
+    content: string,
+    imageUrl?: string,
+    tags?: string[]
+  ): Promise<Post> {
     const payload: CreatePostPayload = { content };
     if (imageUrl) payload.imageUrl = imageUrl;
+    if (tags && tags.length > 0) payload.tags = tags;
 
     const response = await fetch(`/api/players/${playerId}/posts`, {
       method: "POST",

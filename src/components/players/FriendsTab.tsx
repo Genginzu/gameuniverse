@@ -2,18 +2,20 @@
 
 import { useState, useMemo } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { useFriends } from "@/hooks/useFriends";
 import { filterFriendsByName } from "@/lib/utils/friendUtils";
 import { FriendRequestList } from "./FriendRequestList";
 import { FriendSearchBar } from "./FriendSearchBar";
 import { FriendList } from "./FriendList";
+import type { UseFriendsReturn } from "@/hooks/useFriends";
 
 interface FriendsTabProps {
   playerId: string;
   locale: string;
+  /** Shared hook instance — avoids duplicate fetch with PlayerDetailsContent */
+  friendsHook: UseFriendsReturn;
 }
 
-export function FriendsTab({ playerId, locale }: FriendsTabProps) {
+export function FriendsTab({ playerId, locale, friendsHook }: FriendsTabProps) {
   const { user } = useAuth();
   const isOwner = user?.id === playerId;
   const [searchQuery, setSearchQuery] = useState("");
@@ -28,7 +30,7 @@ export function FriendsTab({ playerId, locale }: FriendsTabProps) {
     declineRequest,
     removeFriend,
     loadMore,
-  } = useFriends(playerId, locale);
+  } = friendsHook;
 
   const filteredFriends = useMemo(
     () => filterFriendsByName(friends, searchQuery),

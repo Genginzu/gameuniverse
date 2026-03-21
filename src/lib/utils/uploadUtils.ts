@@ -21,6 +21,7 @@ export function getBucketName(context: UploadContext): string {
   const bucketMap: Record<UploadContext, string> = {
     avatars: "avatars",
     banners: "banners",
+    "post-images": "post-images",
   };
   return bucketMap[context];
 }
