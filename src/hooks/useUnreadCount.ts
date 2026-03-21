@@ -1,8 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { DiscussionService } from "@/lib/services/discussionService";
+import { useCallback } from "react";
+import useSWR from "swr";
 import { useAuth } from "@/hooks/useAuth";
+
+interface UnreadCountResponse {
+  count: number;
+}
 
 export interface UseUnreadCountReturn {
   count: number;
@@ -11,36 +15,26 @@ export interface UseUnreadCountReturn {
 }
 
 /**
- * Hook pour récupérer et gérer le compteur global de messages non lus.
- * Ne fetch que si l'utilisateur est authentifié. Retourne 0 en cas d'erreur.
+ * Hook pour récupérer le compteur global de messages non lus.
+ * SWR gère le fetch + cache. Retourne 0 si pas authentifié.
  */
 export function useUnreadCount(): UseUnreadCountReturn {
   const { user } = useAuth();
-  const [count, setCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const fetchCount = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const response = await DiscussionService.fetchUnreadCount();
-      setCount(response.count);
-    } catch {
-      // Fallback silencieux : on affiche 0 en cas d'erreur (pattern existant)
-      setCount(0);
-    } finally {
-      setIsLoading(false);
+  const { data, isLoading, mutate } = useSWR<UnreadCountResponse>(
+    user?.id ? "/api/discussions/unread-count" : null,
+    {
+      // Fallback silencieux : 0 en cas d'erreur (pattern existant)
+      onError: () => {},
     }
-  }, []);
+  );
 
-  useEffect(() => {
-    if (!user?.id) return;
-    fetchCount();
-  }, [user?.id, fetchCount]);
+  const count = data?.count ?? 0;
 
   const refresh = useCallback(async () => {
     if (!user?.id) return;
-    await fetchCount();
-  }, [user?.id, fetchCount]);
+    await mutate();
+  }, [user?.id, mutate]);
 
   return { count, isLoading, refresh };
 }

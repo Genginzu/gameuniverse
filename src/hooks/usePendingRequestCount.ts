@@ -1,8 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { FriendService } from "@/lib/services/friendService";
+import { useCallback } from "react";
+import useSWR from "swr";
 import { useAuth } from "@/hooks/useAuth";
+
+interface PendingCountResponse {
+  count: number;
+}
 
 export interface UsePendingRequestCountReturn {
   count: number;
@@ -13,39 +17,30 @@ export interface UsePendingRequestCountReturn {
 
 /**
  * Hook pour récupérer et gérer le compteur de demandes d'amitié en attente.
- * Ne fetch que si l'utilisateur est authentifié. Retourne 0 en cas d'erreur.
+ * SWR gère le fetch + cache. Retourne 0 si pas authentifié.
  */
 export function usePendingRequestCount(): UsePendingRequestCountReturn {
   const { user } = useAuth();
-  const [count, setCount] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const fetchCount = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const response = await FriendService.getPendingCount();
-      setCount(response.count);
-    } catch {
-      // Fallback silencieux : on affiche 0 en cas d'erreur
-      setCount(0);
-    } finally {
-      setIsLoading(false);
+  const { data, isLoading, mutate } = useSWR<PendingCountResponse>(
+    user?.id ? "/api/players/me/friends/pending-count" : null,
+    {
+      // Fallback silencieux : 0 en cas d'erreur (pattern existant)
+      onError: () => {},
     }
-  }, []);
+  );
 
-  useEffect(() => {
-    if (!user?.id) return;
-    fetchCount();
-  }, [user?.id, fetchCount]);
+  const count = data?.count ?? 0;
 
   const decrement = useCallback(() => {
-    setCount((prev) => Math.max(0, prev - 1));
-  }, []);
+    // Optimistic update du cache sans revalidation
+    mutate({ count: Math.max(0, count - 1) }, false);
+  }, [count, mutate]);
 
   const refresh = useCallback(async () => {
     if (!user?.id) return;
-    await fetchCount();
-  }, [user?.id, fetchCount]);
+    await mutate();
+  }, [user?.id, mutate]);
 
   return { count, isLoading, decrement, refresh };
 }

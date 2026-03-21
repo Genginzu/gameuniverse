@@ -1,16 +1,28 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useCallback } from "react";
+import useSWR from "swr";
 import { useAuth } from "./useAuth";
 
+interface LibraryStatusResponse {
+  inLibrary: boolean;
+}
+
+/**
+ * Hook pour vérifier et gérer le statut d'un jeu dans la bibliothèque.
+ * SWR gère la lecture (cache + déduplication), les mutations restent manuelles.
+ */
 export function useGameLibraryStatus(gameId: string) {
   const { user } = useAuth();
-  const [inLibrary, setInLibrary] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState(false);
-  const hasCheckedRef = useRef(false);
 
-  // Add game to library
+  // SWR pour la lecture du statut — clé null si pas d'user ou pas de gameId
+  const { data, error, isLoading, mutate } = useSWR<LibraryStatusResponse>(
+    user && gameId ? `/api/library/${gameId}` : null
+  );
+
+  const inLibrary = data?.inLibrary ?? false;
+
   const addToLibrary = useCallback(async () => {
     if (!user || !gameId || adding) return false;
 
@@ -18,83 +30,42 @@ export function useGameLibraryStatus(gameId: string) {
       setAdding(true);
       const response = await fetch("/api/library", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ gameId }),
       });
 
       if (response.ok) {
-        setInLibrary(true);
+        // Mise à jour optimiste du cache SWR
+        await mutate({ inLibrary: true }, false);
         return true;
-      } else {
-        return false;
       }
+      return false;
     } catch {
       return false;
     } finally {
       setAdding(false);
     }
-  }, [user, gameId, adding]);
+  }, [user, gameId, adding, mutate]);
 
-  // Remove game from library
   const removeFromLibrary = useCallback(async () => {
     if (!user || !gameId) return false;
 
     try {
-      const response = await fetch(`/api/library/${gameId}`, {
-        method: "DELETE",
-      });
+      const response = await fetch(`/api/library/${gameId}`, { method: "DELETE" });
 
       if (response.ok) {
-        setInLibrary(false);
+        await mutate({ inLibrary: false }, false);
         return true;
-      } else {
-        return false;
       }
+      return false;
     } catch {
       return false;
     }
-  }, [user, gameId]);
-
-  // Check status only once on mount
-  useEffect(() => {
-    // Skip if already checked, no user, or no gameId
-    if (hasCheckedRef.current || !user || !gameId) {
-      if (!user || !gameId) {
-        setLoading(false);
-      }
-      return;
-    }
-
-    hasCheckedRef.current = true;
-
-    const checkStatus = async () => {
-      try {
-        setLoading(true);
-        const response = await fetch(`/api/library/${gameId}`);
-        if (response.ok) {
-          const data = await response.json();
-          setInLibrary(data.inLibrary === true);
-        } else if (response.status === 500) {
-          // Fonctionnalité bibliothèque pas encore disponible
-          setInLibrary(false);
-        } else {
-          setInLibrary(false);
-        }
-      } catch {
-        setInLibrary(false);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkStatus();
-  }, [user, gameId]);
+  }, [user, gameId, mutate]);
 
   return {
     inLibrary,
-    loading,
+    loading: isLoading,
     adding,
     addToLibrary,
     removeFromLibrary,
