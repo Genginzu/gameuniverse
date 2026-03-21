@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, RefreshCw, ArrowLeft, Home } from "lucide-react";
+import { Icon } from "@iconify/react";
 import Link from "next/link";
 
 interface ErrorFallbackProps {
@@ -33,7 +33,7 @@ export function ErrorFallback({
   return (
     <div className="flex min-h-[60vh] items-center justify-center p-4">
       <Alert variant="destructive" className="max-w-md">
-        <AlertTriangle className="h-4 w-4" />
+        <Icon icon="lucide:alert-triangle" className="h-4 w-4" />
         <AlertTitle>{title || tErrors("loadingError")}</AlertTitle>
         <AlertDescription className="mt-2">
           {description || tErrors("unexpectedErrorMessage")}
@@ -41,14 +41,14 @@ export function ErrorFallback({
         <div className="mt-4 flex flex-wrap gap-2">
           {showRefresh && (
             <Button onClick={() => window.location.reload()} variant="outline">
-              <RefreshCw className="mr-2 h-4 w-4" />
+              <Icon icon="lucide:refresh-cw" className="mr-2 h-4 w-4" />
               {tCommon("reloadPage")}
             </Button>
           )}
           {showBackButton && backUrl && (
             <Button asChild variant="outline">
               <Link href={backUrl}>
-                <ArrowLeft className="mr-2 h-4 w-4" />
+                <Icon icon="lucide:arrow-left" className="mr-2 h-4 w-4" />
                 {backLabel || tCommon("back")}
               </Link>
             </Button>
@@ -56,7 +56,7 @@ export function ErrorFallback({
           {showHomeButton && (
             <Button asChild variant="outline">
               <Link href={`/${locale}/dashboard`}>
-                <Home className="mr-2 h-4 w-4" />
+                <Icon icon="lucide:home" className="mr-2 h-4 w-4" />
                 {tCommon("backToHome")}
               </Link>
             </Button>

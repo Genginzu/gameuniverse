@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { ChevronUp, Loader2 } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 
 import type { Message } from "@/types/discussion";
@@ -57,9 +57,9 @@ export default function MessageThread({
               data-testid="load-more-button"
             >
               {isLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Icon icon="lucide:loader-2" className="h-4 w-4 animate-spin" />
               ) : (
-                <ChevronUp className="h-4 w-4" />
+                <Icon icon="lucide:chevron-up" className="h-4 w-4" />
               )}
               {t("loadMore")}
             </button>
@@ -69,7 +69,7 @@ export default function MessageThread({
         {/* Loading spinner (initial load) */}
         {isLoading && messages.length === 0 && (
           <div className="flex flex-1 items-center justify-center">
-            <Loader2 className="h-6 w-6 animate-spin text-neon-violet" />
+            <Icon icon="lucide:loader-2" className="text-neon-violet h-6 w-6 animate-spin" />
           </div>
         )}
 

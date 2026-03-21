@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Library, Gamepad2, Trophy } from "lucide-react";
+import { Icon } from "@iconify/react";
 import type { PlayerCollectionsStatsData } from "@/types/playerCollection";
 
 interface PlayerCollectionsStatsProps {
@@ -15,21 +15,21 @@ export function PlayerCollectionsStats({ stats }: PlayerCollectionsStatsProps) {
 
   const metrics = [
     {
-      icon: Library,
+      icon: "lucide:library",
       label: t("stats.totalCollections"),
       value: stats.totalCollections,
       iconBg: "bg-neon-violet/20",
       iconColor: "text-neon-violet",
     },
     {
-      icon: Gamepad2,
+      icon: "lucide:gamepad-2",
       label: t("stats.totalGames"),
       value: stats.totalGames,
       iconBg: "bg-neon-cyan/20",
       iconColor: "text-neon-cyan",
     },
     {
-      icon: Trophy,
+      icon: "lucide:trophy",
       label: t("stats.largestCollection"),
       value: stats.largestCollection ?? "—",
       iconBg: "bg-amber-500/20",
@@ -47,7 +47,7 @@ export function PlayerCollectionsStats({ stats }: PlayerCollectionsStatsProps) {
           <div
             className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${metric.iconBg} ${metric.iconColor}`}
           >
-            <metric.icon className="h-5 w-5" />
+            <Icon icon={metric.icon} className="h-5 w-5" />
           </div>
           <div className="min-w-0">
             <p className="text-sm text-gray-500 dark:text-slate-400">{metric.label}</p>

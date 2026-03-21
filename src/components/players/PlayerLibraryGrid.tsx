@@ -5,7 +5,7 @@ import { LazyImage } from "@/components/ui/lazy-image";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import type { PlayerLibraryGame } from "@/types/player";
-import { Gamepad2 } from "lucide-react";
+import { Icon } from "@iconify/react";
 
 interface PlayerLibraryGridProps {
   games: PlayerLibraryGame[];
@@ -48,7 +48,7 @@ export function PlayerLibraryGrid({ games, locale }: PlayerLibraryGridProps) {
     return (
       <div className="flex flex-col items-center justify-center rounded-2xl border border-slate-700/50 bg-slate-800/50 py-16 text-center">
         <div className="mb-4 rounded-full bg-slate-700/50 p-4">
-          <Gamepad2 className="h-12 w-12 text-slate-400" />
+          <Icon icon="lucide:gamepad-2" className="h-12 w-12 text-slate-400" />
         </div>
         <h3 className="mb-2 text-lg font-semibold text-white">{t("library.empty")}</h3>
         <p className="max-w-md text-sm text-slate-400">{t("library.emptyDescription")}</p>
@@ -80,12 +80,12 @@ export function PlayerLibraryGrid({ games, locale }: PlayerLibraryGridProps) {
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center bg-slate-700">
-                  <Gamepad2 className="h-12 w-12 text-slate-500" />
+                  <Icon icon="lucide:gamepad-2" className="h-12 w-12 text-slate-500" />
                 </div>
               )}
 
               {/* Status badge */}
-              <div className="absolute left-2 top-2">
+              <div className="absolute top-2 left-2">
                 <Badge
                   variant="outline"
                   className={`text-xs font-medium ${statusConfig.className}`}
@@ -96,7 +96,7 @@ export function PlayerLibraryGrid({ games, locale }: PlayerLibraryGridProps) {
 
               {/* Rating badge (if available) */}
               {game.rating !== null && (
-                <div className="absolute right-2 top-2">
+                <div className="absolute top-2 right-2">
                   <div className="flex items-center rounded-full bg-black/60 px-2 py-1 text-xs font-medium text-yellow-400 backdrop-blur-xs">
                     <svg className="mr-1 h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
                       <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -110,7 +110,7 @@ export function PlayerLibraryGrid({ games, locale }: PlayerLibraryGridProps) {
               <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent" />
 
               {/* Game info */}
-              <div className="absolute bottom-0 left-0 right-0 p-3">
+              <div className="absolute right-0 bottom-0 left-0 p-3">
                 <h4 className="line-clamp-2 text-sm font-semibold text-white">{game.title}</h4>
                 {game.playTimeHours > 0 && (
                   <p className="mt-1 flex items-center text-xs text-slate-300">

@@ -741,7 +741,7 @@
     "clearFilters": "Clear filters",
     "clearAll": "Clear all",
     "genres": "Genres",
-    "available": "available"
+    "available": "{count} available"
   },
   "search": {
     "placeholder": "Search for a game...",
@@ -1072,6 +1072,7 @@
       "genres": "Genres",
       "languages": "Languages",
       "characters": "Characters",
+      "characterRoles": "Roles",
       "companies": "Companies",
       "platforms": "Platforms",
       "ageClassifications": "Age Classifications",
@@ -1340,6 +1341,8 @@
         "generalInfo": "General information",
         "images": "Images",
         "translations": "Translations",
+        "roles": "Roles",
+        "roleDescription": "Select the roles that match this character.",
         "games": "Games",
         "media": "Media",
         "slug": "Slug",
@@ -1351,8 +1354,9 @@
         "backgroundImagePlaceholder": "https://example.com/background.jpg",
         "name": "Name",
         "namePlaceholder": "Character name",
-        "role": "Role",
+        "role": "Roles",
         "rolePlaceholder": "e.g. Protagonist, Antagonist",
+        "noRolesAvailable": "No roles available. Create some in the admin roles section.",
         "description": "Description",
         "descriptionPlaceholder": "Character description...",
         "biography": "Biography",
@@ -1557,6 +1561,63 @@
         "deleting": "Deleting...",
         "success": "Genre deleted successfully!",
         "errorGeneric": "An error occurred while deleting the genre."
+      }
+    },
+    "characterRoles": {
+      "title": "Role Management",
+      "newRole": "New Role",
+      "searchPlaceholder": "Search roles by slug or name...",
+      "search": "Search",
+      "totalRoles": "{count, plural, =0 {No roles} one {1 role} other {# roles}}",
+      "noRoles": "No roles found.",
+      "columns": {
+        "slug": "Slug",
+        "name": "Name",
+        "characterCount": "Characters",
+        "actions": "Actions"
+      },
+      "sortBy": "Sort by {field}",
+      "editRole": "Edit {name}",
+      "deleteRole": "Delete {name}",
+      "page": "Page {current} of {total}",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "characterCount": "{count, plural, =0 {No characters} one {1 character} other {# characters}}",
+      "form": {
+        "slug": "Slug",
+        "slugPlaceholder": "e.g. protagonist, antagonist",
+        "slugDescription": "Lowercase letters, numbers and hyphens only. Cannot be changed after creation.",
+        "name": "Name",
+        "namePlaceholder": "Role name in this language",
+        "description": "Description",
+        "descriptionPlaceholder": "Role description in this language (optional)",
+        "create": "Create role",
+        "save": "Save",
+        "backToList": "Back to roles"
+      },
+      "createPage": {
+        "title": "New Role",
+        "success": "Role created successfully!",
+        "errorDuplicate": "A role with this slug already exists.",
+        "errorGeneric": "An error occurred while creating the role."
+      },
+      "editPage": {
+        "title": "Edit Role",
+        "loading": "Loading role data...",
+        "success": "Role updated successfully!",
+        "notFound": "Role not found.",
+        "errorGeneric": "An error occurred while loading the role."
+      },
+      "deleteDialog": {
+        "title": "Delete Role",
+        "warning": "Are you sure you want to delete \"{name}\"?",
+        "irreversible": "This action is irreversible. The role will be permanently deleted.",
+        "usageWarning": "{count, plural, one {This role is used by 1 character.} other {This role is used by # characters.}}",
+        "confirm": "Delete",
+        "cancel": "Cancel",
+        "deleting": "Deleting...",
+        "success": "Role deleted successfully!",
+        "errorGeneric": "An error occurred while deleting the role."
       }
     },
     "reviews": {
@@ -2184,5 +2245,11 @@
     "noResults": "No icons found.",
     "loading": "Searching…",
     "typeToSearch": "Type to search 200,000+ icons"
+  },
+  "filters": {
+    "filter": "Filter",
+    "clearAll": "Clear all",
+    "roles": "Roles",
+    "available": "{count} available"
   }
 }

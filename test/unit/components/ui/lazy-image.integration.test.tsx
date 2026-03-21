@@ -89,16 +89,15 @@ describe("LazyImage integration tests", () => {
         <LazyImage src="https://example.com/image.jpg" alt="Test image" showSkeleton={false} />
       );
 
-      // Should render placeholder instead
-      expect(html).toContain("svg");
+      // showSkeleton=false means no skeleton rendered, but image still renders
+      expect(html).not.toContain("skeleton");
+      expect(html).toContain("img");
     });
 
-    it("should render placeholder when no imageSrc", () => {
+    it("should render placeholder when no imageSrc and no fallback", () => {
       mockImageLoadingState = { isLoading: false, hasError: true, imageSrc: undefined };
 
-      const html = renderToString(
-        <LazyImage src="https://example.com/broken.jpg" alt="Test image" />
-      );
+      const html = renderToString(<LazyImage src="" alt="Test image" fallbackSrc="" />);
 
       expect(html).toContain("svg");
       expect(html).toContain("bg-gray-100");

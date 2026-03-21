@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import type { GlobalSearchGameItem as GameItem } from "@/types/global-search";
-import { Loader2 } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 
@@ -48,7 +48,7 @@ export function GlobalSearchGameItem({ item, isActive, isImporting }: GlobalSear
 
         {/* IGDB badge */}
         {item.source === "igdb" && (
-          <span className="absolute right-1 top-1 rounded bg-blue-600/80 px-1.5 py-0.5 text-[9px] font-bold uppercase text-white backdrop-blur-xs">
+          <span className="absolute top-1 right-1 rounded bg-blue-600/80 px-1.5 py-0.5 text-[9px] font-bold text-white uppercase backdrop-blur-xs">
             IGDB
           </span>
         )}
@@ -56,7 +56,7 @@ export function GlobalSearchGameItem({ item, isActive, isImporting }: GlobalSear
         {/* Importing overlay */}
         {isImporting && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-            <Loader2 className="h-5 w-5 animate-spin text-white" />
+            <Icon icon="lucide:loader-2" className="h-5 w-5 animate-spin text-white" />
           </div>
         )}
       </div>

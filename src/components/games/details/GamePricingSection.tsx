@@ -1,6 +1,6 @@
 "use client";
 
-import { ExternalLink } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { GameColors } from "@/lib/utils/game-utils";
 import Image from "next/image";
 
@@ -60,7 +60,8 @@ export function GamePricingSection({ pricing, colors, formatPrice }: GamePricing
                 {formatPrice(price.price, price.currency)}
               </span>
               {price.storeUrl && (
-                <ExternalLink
+                <Icon
+                  icon="lucide:external-link"
                   className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100"
                   style={{ color: colors.labelColor }}
                 />

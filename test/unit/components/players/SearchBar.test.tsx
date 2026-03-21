@@ -24,9 +24,9 @@ vi.mock("next-intl", () => {
   };
 });
 
-vi.mock("lucide-react", () => ({
-  Search: (props: Record<string, unknown>) =>
-    React.createElement("svg", { "data-testid": "search-icon", ...props }),
+vi.mock("@iconify/react", () => ({
+  Icon: (props: Record<string, unknown>) =>
+    React.createElement("svg", { "data-testid": `icon-${props.icon}`, ...props }),
 }));
 
 import { SearchBar } from "@/components/players/SearchBar";
@@ -85,6 +85,6 @@ describe("SearchBar", () => {
   // Req 4.2 — renders search icon
   it("renders search icon", () => {
     render(<SearchBar {...defaultProps} />);
-    expect(screen.getByTestId("search-icon")).toBeInTheDocument();
+    expect(screen.getByTestId("icon-lucide:search")).toBeInTheDocument();
   });
 });

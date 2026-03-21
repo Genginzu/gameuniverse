@@ -13,11 +13,12 @@ import {
   type CharacterTabId,
   type CharacterTab,
 } from "@/types/admin-characters";
-import type { AvailableGame, AvailableCharacter } from "@/hooks/useCharacterForm";
+import type { AvailableGame, AvailableCharacter, AvailableRole } from "@/hooks/useCharacterForm";
 import { CharacterHeroBanner } from "./CharacterFormShell";
 import { CharacterFormGeneralTab } from "./CharacterFormGeneralTab";
 import { CharacterFormImagesTab } from "./CharacterFormImagesTab";
 import { CharacterFormTranslationsTab } from "./CharacterFormTranslationsTab";
+import { CharacterFormRolesTab } from "./CharacterFormRolesTab";
 import { CharacterFormGamesTab } from "./CharacterFormGamesTab";
 import { CharacterFormScreenshotsTab } from "./CharacterFormScreenshotsTab";
 import { CharacterFormArtworkTab } from "./CharacterFormArtworkTab";
@@ -30,6 +31,7 @@ export interface CharacterFormProps {
   form: UseFormReturn<AdminCharacterFormData>;
   availableGames: AvailableGame[];
   availableCharacters: AvailableCharacter[];
+  availableRoles: AvailableRole[];
   loadingOptions: boolean;
   onSubmit: (data: AdminCharacterFormData) => Promise<void>;
   isSubmitting: boolean;
@@ -38,14 +40,39 @@ export interface CharacterFormProps {
 }
 
 const TABS: CharacterTab[] = [
-  { id: "general", icon: <Icon icon="fa:info-circle" className="h-3.5 w-3.5"  />, labelKey: "generalInfo" },
-  { id: "images", icon: <Icon icon="fa:image" className="h-3.5 w-3.5"  />, labelKey: "images" },
-  { id: "translations", icon: <Icon icon="fa:globe" className="h-3.5 w-3.5"  />, labelKey: "translations" },
-  { id: "games", icon: <Icon icon="fa:gamepad" className="h-3.5 w-3.5"  />, labelKey: "games" },
-  { id: "relationships", icon: <Icon icon="fa:users" className="h-3.5 w-3.5"  />, labelKey: "relationships" },
-  { id: "screenshots", icon: <Icon icon="fa:camera" className="h-3.5 w-3.5"  />, labelKey: "screenshots" },
-  { id: "artwork", icon: <Icon icon="fa:paint-brush" className="h-3.5 w-3.5"  />, labelKey: "artwork" },
-  { id: "videos", icon: <Icon icon="fa:video" className="h-3.5 w-3.5"  />, labelKey: "videos" },
+  {
+    id: "general",
+    icon: <Icon icon="fa:info-circle" className="h-3.5 w-3.5" />,
+    labelKey: "generalInfo",
+  },
+  { id: "images", icon: <Icon icon="fa:image" className="h-3.5 w-3.5" />, labelKey: "images" },
+  {
+    id: "translations",
+    icon: <Icon icon="fa:globe" className="h-3.5 w-3.5" />,
+    labelKey: "translations",
+  },
+  {
+    id: "roles",
+    icon: <Icon icon="fa:id-badge" className="h-3.5 w-3.5" />,
+    labelKey: "roles",
+  },
+  { id: "games", icon: <Icon icon="fa:gamepad" className="h-3.5 w-3.5" />, labelKey: "games" },
+  {
+    id: "relationships",
+    icon: <Icon icon="fa:users" className="h-3.5 w-3.5" />,
+    labelKey: "relationships",
+  },
+  {
+    id: "screenshots",
+    icon: <Icon icon="fa:camera" className="h-3.5 w-3.5" />,
+    labelKey: "screenshots",
+  },
+  {
+    id: "artwork",
+    icon: <Icon icon="fa:paint-brush" className="h-3.5 w-3.5" />,
+    labelKey: "artwork",
+  },
+  { id: "videos", icon: <Icon icon="fa:video" className="h-3.5 w-3.5" />, labelKey: "videos" },
 ];
 
 export function CharacterForm({
@@ -53,6 +80,7 @@ export function CharacterForm({
   form,
   availableGames,
   availableCharacters,
+  availableRoles,
   loadingOptions,
   onSubmit,
   isSubmitting,
@@ -140,6 +168,9 @@ export function CharacterForm({
           {activeTab === "general" && <CharacterFormGeneralTab form={form} t={t} mode={mode} />}
           {activeTab === "images" && <CharacterFormImagesTab form={form} t={t} />}
           {activeTab === "translations" && <CharacterFormTranslationsTab form={form} t={t} />}
+          {activeTab === "roles" && (
+            <CharacterFormRolesTab form={form} t={t} availableRoles={availableRoles} />
+          )}
           {activeTab === "games" && (
             <CharacterFormGamesTab form={form} t={t} availableGames={availableGames} />
           )}
@@ -188,6 +219,8 @@ function TabNavigation({
     switch (tabId) {
       case "translations":
         return SUPPORTED_LANGUAGES.length;
+      case "roles":
+        return (form.watch("role_ids") ?? []).length;
       case "games":
         return form.watch("games").length;
       case "relationships":
@@ -213,7 +246,7 @@ function TabNavigation({
             key={tab.id}
             type="button"
             onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-2 whitespace-nowrap rounded-lg px-4 py-2.5 text-sm font-medium transition-all ${
+            className={`flex cursor-pointer items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-all ${
               isActive
                 ? "bg-primary text-primary-foreground shadow-xs"
                 : "text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700/50 dark:hover:text-gray-300"
@@ -223,9 +256,9 @@ function TabNavigation({
             <span className="hidden sm:inline">{tabLabel(tab)}</span>
             {badge !== null && badge > 0 && (
               <span
-                className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold tabular-nums leading-none ${
+                className={`rounded-full px-1.5 py-0.5 text-[10px] leading-none font-bold tabular-nums ${
                   isActive
-                    ? "bg-white/20 text-primary-foreground"
+                    ? "text-primary-foreground bg-white/20"
                     : "bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400"
                 }`}
               >
@@ -256,7 +289,7 @@ function StickySubmitBar({
   t: (key: string) => string;
 }) {
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-20 border-t border-gray-200/60 bg-white/80 backdrop-blur-xl dark:border-gray-700/40 dark:bg-gray-900/80 lg:left-64">
+    <div className="fixed right-0 bottom-0 left-0 z-20 border-t border-gray-200/60 bg-white/80 backdrop-blur-xl lg:left-64 dark:border-gray-700/40 dark:bg-gray-900/80">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
         <div className="flex gap-2">
           <Button
@@ -294,7 +327,7 @@ function StickySubmitBar({
             <LoadingSpinner size="sm" />
           ) : (
             <>
-              <Icon icon="fa:save" className="h-4 w-4"  />
+              <Icon icon="fa:save" className="h-4 w-4" />
               {mode === "create" ? t("create") : t("save")}
             </>
           )}

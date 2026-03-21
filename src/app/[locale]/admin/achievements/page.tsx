@@ -11,7 +11,6 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { Icon } from "@iconify/react";
 
-
 export default function AdminAchievementsPage() {
   const t = useTranslations("adminAchievements");
   const router = useRouter();
@@ -116,11 +115,11 @@ export default function AdminAchievementsPage() {
           </h1>
           <div className="flex gap-2">
             <Button variant="outline" onClick={() => router.push("/admin/achievements/players")}>
-              <Icon icon="fa:user-friends" className="h-4 w-4"  />
+              <Icon icon="lucide:award" className="h-4 w-4" />
               {t("playerManager.title")}
             </Button>
             <Button onClick={() => router.push("/admin/achievements/new")}>
-              <Icon icon="fa:plus" className="h-4 w-4"  />
+              <Icon icon="fa:plus" className="h-4 w-4" />
               {t("newAchievement")}
             </Button>
           </div>

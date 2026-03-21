@@ -49,6 +49,7 @@ interface CharacterApiResponse {
     is_featured: boolean;
     display_order: number;
   }>;
+  role_ids?: string[];
 }
 
 /** Convert API response to CharacterPayload for use with characterPayloadToForm */
@@ -64,6 +65,7 @@ function apiResponseToPayload(response: CharacterApiResponse): CharacterPayload 
     games: response.games,
     relationships: response.relationships,
     media: response.media,
+    role_ids: response.role_ids ?? [],
   };
 }
 
@@ -85,6 +87,7 @@ function EditCharacterForm({
     form,
     availableGames,
     availableCharacters,
+    availableRoles,
     loadingOptions,
     submitCharacter,
     isSubmitting,
@@ -95,13 +98,12 @@ function EditCharacterForm({
       try {
         await submitCharacter(data);
         toast({ title: t("editPage.success"), variant: "success" });
-        setTimeout(() => router.push("/admin/characters"), 500);
       } catch (err) {
         const message = err instanceof Error ? err.message : t("editPage.errorGeneric");
         toast({ title: message, variant: "destructive" });
       }
     },
-    [submitCharacter, router, t]
+    [submitCharacter, t]
   );
 
   // Keep showing the same loading style until options are ready
@@ -120,7 +122,7 @@ function EditCharacterForm({
     <div className="p-4 lg:p-6">
       <div className="mb-6 flex items-center gap-4">
         <Button variant="ghost" size="sm" onClick={() => router.push("/admin/characters")}>
-          <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
+          <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3" />
           {t("form.backToList")}
         </Button>
       </div>
@@ -130,6 +132,7 @@ function EditCharacterForm({
           form={form}
           availableGames={availableGames}
           availableCharacters={availableCharacters}
+          availableRoles={availableRoles}
           loadingOptions={loadingOptions}
           onSubmit={handleSubmit}
           isSubmitting={isSubmitting}
@@ -198,7 +201,7 @@ export default function EditCharacterPage() {
       <div className="p-4 lg:p-6">
         <div className="mb-6 flex items-center gap-4">
           <Button variant="ghost" size="sm" onClick={() => router.push("/admin/characters")}>
-            <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
+            <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3" />
             {t("form.backToList")}
           </Button>
         </div>

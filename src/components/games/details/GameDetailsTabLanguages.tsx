@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Monitor, MessageSquare, Play, Languages } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import { GameLanguage } from "@/types/game";
 import { GameColors } from "@/lib/utils/game-utils";
@@ -18,7 +18,7 @@ export function GameDetailsTabLanguages({ languages, colors }: GameDetailsTabLan
   if (!languages || languages.length === 0) {
     return (
       <div className="py-12 text-center text-slate-400">
-        <Languages className="mx-auto mb-4 h-12 w-12 opacity-50" />
+        <Icon icon="lucide:languages" className="mx-auto mb-4 h-12 w-12 opacity-50" />
         <p className="mb-2 text-lg font-medium text-white">{tDetails("languages.title")}</p>
         <p>{tDetails("languages.noData")}</p>
       </div>
@@ -28,19 +28,19 @@ export function GameDetailsTabLanguages({ languages, colors }: GameDetailsTabLan
   const categories = [
     {
       key: "interface",
-      icon: Monitor,
+      icon: "lucide:monitor",
       label: tDetails("languages.interface"),
       filter: (lang: GameLanguage) => lang.hasInterface,
     },
     {
       key: "subtitles",
-      icon: MessageSquare,
+      icon: "lucide:message-square",
       label: tDetails("languages.subtitles"),
       filter: (lang: GameLanguage) => lang.hasSubtitles,
     },
     {
       key: "voice",
-      icon: Play,
+      icon: "lucide:play",
       label: tDetails("languages.voice"),
       filter: (lang: GameLanguage) => lang.hasAudio,
     },
@@ -58,7 +58,7 @@ export function GameDetailsTabLanguages({ languages, colors }: GameDetailsTabLan
           >
             <CardContent className="p-6">
               <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
-                <CatIcon className="h-5 w-5" style={{ color: colors.accent }} />
+                <Icon icon={CatIcon} className="h-5 w-5" style={{ color: colors.accent }} />
                 {cat.label}
               </h3>
               <div className="space-y-2">

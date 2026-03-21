@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { ArrowLeft, Plus } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
@@ -118,7 +118,7 @@ export function CollectionDetailPageContent({
       <div className="mb-6 flex items-center gap-4">
         <Link href={`/${locale}/players/${playerId}/collections`}>
           <Button variant="ghost" size="sm">
-            <ArrowLeft className="mr-1.5 h-4 w-4" />
+            <Icon icon="lucide:arrow-left" className="mr-1.5 h-4 w-4" />
             {t("backToCollections")}
           </Button>
         </Link>
@@ -134,7 +134,7 @@ export function CollectionDetailPageContent({
             onToggleVisibility={handleToggleVisibility}
           />
           <Button variant="outline" size="sm" onClick={() => setShowAddGameDialog(true)}>
-            <Plus className="mr-1.5 h-4 w-4" />
+            <Icon icon="lucide:plus" className="mr-1.5 h-4 w-4" />
             {t("addGame")}
           </Button>
         </div>

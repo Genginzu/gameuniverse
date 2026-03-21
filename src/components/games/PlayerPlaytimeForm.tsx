@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Zap, Gamepad2, Trophy } from "lucide-react";
+import { Icon } from "@iconify/react";
 import {
   Dialog,
   DialogContent,
@@ -94,19 +94,19 @@ export function PlayerPlaytimeForm({
 
   const fields = [
     {
-      icon: Zap,
+      icon: "lucide:zap",
       label: t("hastily"),
       value: hastily,
       onChange: setHastily,
     },
     {
-      icon: Gamepad2,
+      icon: "lucide:gamepad-2",
       label: t("normally"),
       value: normally,
       onChange: setNormally,
     },
     {
-      icon: Trophy,
+      icon: "lucide:trophy",
       label: t("completely"),
       value: completely,
       onChange: setCompletely,
@@ -122,10 +122,10 @@ export function PlayerPlaytimeForm({
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {fields.map(({ icon: IconComp, label, value, onChange }) => (
+          {fields.map(({ icon: iconName, label, value, onChange }) => (
             <div key={label} className="space-y-1">
               <label className="flex items-center gap-2 text-sm text-slate-300">
-                <IconComp className="h-4 w-4 text-slate-400" />
+                <Icon icon={iconName} className="h-4 w-4 text-slate-400" />
                 {label}
               </label>
               <input
@@ -139,7 +139,7 @@ export function PlayerPlaytimeForm({
                   setValidationError(null);
                 }}
                 placeholder={t("fieldPlaceholder")}
-                className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-3 py-2 text-sm text-white placeholder-slate-400 focus:border-slate-500 focus:outline-hidden focus:ring-1 focus:ring-slate-500"
+                className="w-full rounded-lg border border-slate-600 bg-slate-700/50 px-3 py-2 text-sm text-white placeholder-slate-400 focus:border-slate-500 focus:ring-1 focus:ring-slate-500 focus:outline-hidden"
                 disabled={submitting}
                 aria-label={label}
               />

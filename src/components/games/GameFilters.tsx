@@ -2,10 +2,12 @@
 
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Icon } from "@iconify/react";
 import { Genre } from "@/types/genre";
 import { PlatformFilterOption } from "@/types/platform";
-import { PlatformFilter } from "./PlatformFilter";
+import { FilterSection } from "@/components/shared/FilterSection";
+import { FilterChip, ActiveFilterChip } from "@/components/shared/FilterChip";
+import { getPlatformIcon } from "@/lib/utils/platform-icons";
 
 interface GameFiltersProps {
   genres: Genre[];
@@ -33,8 +35,9 @@ export function GameFilters({
   showAllGenres,
 }: GameFiltersProps) {
   const t = useTranslations("games");
+  const tPlatforms = useTranslations("platforms");
+  const tFilters = useTranslations("filters");
 
-  // Slug → name lookup pour les chips actifs
   const platformMap = useMemo(() => {
     const map = new Map<string, string>();
     platforms.forEach((p) => map.set(p.slug, p.name));
@@ -48,6 +51,13 @@ export function GameFilters({
     onGenreChange(updated);
   };
 
+  const handlePlatformToggle = (slug: string) => {
+    const updated = selectedPlatforms.includes(slug)
+      ? selectedPlatforms.filter((s) => s !== slug)
+      : [...selectedPlatforms, slug];
+    onPlatformsChange(updated);
+  };
+
   const hasFilters =
     selectedGenres.length > 0 || _selectedPublishers.length > 0 || selectedPlatforms.length > 0;
 
@@ -59,7 +69,7 @@ export function GameFilters({
         <div className="flex items-center gap-2">
           <div className="flex flex-1 flex-wrap items-center gap-1.5">
             {selectedGenres.map((genre) => (
-              <ActiveChip
+              <ActiveFilterChip
                 key={genre}
                 label={genre}
                 onRemove={() => handleGenreToggle(genre)}
@@ -67,7 +77,7 @@ export function GameFilters({
               />
             ))}
             {selectedPlatforms.map((slug) => (
-              <ActiveChip
+              <ActiveFilterChip
                 key={slug}
                 label={platformMap.get(slug) || slug}
                 onRemove={() => onPlatformsChange(selectedPlatforms.filter((s) => s !== slug))}
@@ -79,98 +89,48 @@ export function GameFilters({
             onClick={onClearFilters}
             className="shrink-0 rounded-lg px-2.5 py-1 text-xs font-medium text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
           >
-            {t("clearAll")}
+            {tFilters("clearAll")}
           </button>
         </div>
       )}
 
       {showAllGenres && (
-        <div className="rounded-xl bg-white/60 p-4 ring-1 ring-gray-200/50 backdrop-blur-xs dark:bg-slate-800/50 dark:ring-slate-700/50">
-          <div className="mb-3 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-white">{t("genres")}</h3>
-            {genres.length > 0 ? (
-              <span className="text-xs text-gray-500 dark:text-gray-400">
-                {genres.length} {t("available")}
-              </span>
-            ) : (
-              <Skeleton className="h-4 w-16 rounded" />
-            )}
-          </div>
-          <div className="flex flex-wrap gap-1.5">
-            {genres.length > 0
-              ? genres.map((genre) => {
-                  const isSelected = selectedGenres.includes(genre.name);
-                  return (
-                    <button
-                      key={genre.id}
-                      onClick={() => handleGenreToggle(genre.name)}
-                      className={`cursor-pointer rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
-                        isSelected
-                          ? "bg-linear-to-r from-cyan-500 to-violet-500 text-white shadow-xs"
-                          : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700/50 dark:text-gray-300 dark:hover:bg-slate-700"
-                      }`}
-                    >
-                      {genre.name}
-                      <span className="ml-1 opacity-60">{genre.gameCount}</span>
-                    </button>
-                  );
-                })
-              : Array.from({ length: 12 }).map((_, i) => {
-                  // Largeurs variées pour simuler des noms de genres différents
-                  const widths = [72, 88, 64, 96, 80, 68, 92, 76, 84, 60, 100, 72];
-                  return (
-                    <Skeleton
-                      key={i}
-                      className="h-7 rounded-full"
-                      style={{ width: `${widths[i]}px` }}
-                    />
-                  );
-                })}
-          </div>
-        </div>
+        <FilterSection
+          title={t("genres")}
+          availableLabel={genres.length > 0 ? t("available", { count: genres.length }) : ""}
+          loading={genres.length === 0}
+          skeletonWidths={[72, 88, 64, 96, 80, 68, 92, 76, 84, 60, 100, 72]}
+        >
+          {genres.map((genre) => (
+            <FilterChip
+              key={genre.id}
+              label={genre.name}
+              selected={selectedGenres.includes(genre.name)}
+              onClick={() => handleGenreToggle(genre.name)}
+              count={genre.gameCount}
+            />
+          ))}
+        </FilterSection>
       )}
 
       {showAllGenres && (
-        <PlatformFilter
-          platforms={platforms}
-          selectedPlatforms={selectedPlatforms}
-          onPlatformsChange={onPlatformsChange}
-          showSkeleton={showAllGenres}
-        />
+        <FilterSection
+          title={tPlatforms("filter.title")}
+          availableLabel={`${platforms.length} ${tPlatforms("filter.available")}`}
+          loading={platforms.length === 0}
+        >
+          {platforms.map((platform) => (
+            <FilterChip
+              key={platform.id}
+              label={platform.name}
+              selected={selectedPlatforms.includes(platform.slug)}
+              onClick={() => handlePlatformToggle(platform.slug)}
+              count={platform.gameCount}
+              icon={<Icon icon={getPlatformIcon(platform.slug)} className="h-3.5 w-3.5 shrink-0" />}
+            />
+          ))}
+        </FilterSection>
       )}
     </div>
-  );
-}
-
-/** Chip affichant un filtre actif avec bouton de suppression */
-function ActiveChip({
-  label,
-  onRemove,
-  variant,
-}: {
-  label: string;
-  onRemove: () => void;
-  variant: "blue" | "violet";
-}) {
-  const colors =
-    variant === "blue"
-      ? "bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50"
-      : "bg-violet-100 text-violet-800 hover:bg-violet-200 dark:bg-violet-900/30 dark:text-violet-300 dark:hover:bg-violet-900/50";
-
-  return (
-    <button
-      onClick={onRemove}
-      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${colors}`}
-    >
-      {label}
-      <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M6 18L18 6M6 6l12 12"
-        />
-      </svg>
-    </button>
   );
 }

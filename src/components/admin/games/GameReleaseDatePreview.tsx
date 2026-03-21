@@ -1,7 +1,7 @@
 "use client";
 
 import { type UseFormReturn } from "react-hook-form";
-import { Calendar } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useLocale } from "next-intl";
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
 import { buildGameColors, formatReleaseDate } from "@/lib/utils/game-utils";
@@ -42,7 +42,7 @@ export function GameReleaseDatePreview({ form, t }: GameReleaseDatePreviewProps)
       >
         {!formattedDate ? (
           <div className="flex flex-col items-center justify-center py-4 text-slate-400">
-            <Calendar className="mb-2 h-8 w-8 opacity-50" />
+            <Icon icon="lucide:calendar" className="mb-2 h-8 w-8 opacity-50" />
             <p className="text-xs">
               {t("releaseDateNoData") ?? "Aucune date de sortie renseignée"}
             </p>
@@ -53,7 +53,7 @@ export function GameReleaseDatePreview({ form, t }: GameReleaseDatePreviewProps)
             data-testid="release-date-preview-card"
           >
             <div className="mb-2 flex items-center gap-2">
-              <Calendar className="h-4 w-4" style={{ color: colors.accent }} />
+              <Icon icon="lucide:calendar" className="h-4 w-4" style={{ color: colors.accent }} />
               <span className="text-sm" style={{ color: colors.labelColor }}>
                 {t("releaseDate") ?? "Date de sortie"}
               </span>

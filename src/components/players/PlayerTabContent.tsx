@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import dynamic from "next/dynamic";
-import { Gamepad2 } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PlayerLibraryGrid } from "./PlayerLibraryGrid";
 import { StatsDashboardSkeleton } from "@/components/players/stats/StatsDashboardSkeleton";
@@ -239,7 +239,7 @@ function LibraryTab({
     <div className="mb-8">
       <div className="mb-6 flex items-center justify-between">
         <h2 className="flex items-center gap-2 text-2xl font-bold text-gray-900 dark:text-white">
-          <Gamepad2 className="h-6 w-6 text-blue-500 dark:text-blue-400" />
+          <Icon icon="lucide:gamepad-2" className="h-6 w-6 text-blue-500 dark:text-blue-400" />
           {t("details.library")}
         </h2>
         <span className="rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-600 dark:bg-slate-700/50 dark:text-slate-300">

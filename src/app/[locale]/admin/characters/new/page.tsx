@@ -18,6 +18,7 @@ export default function NewCharacterPage() {
     form,
     availableGames,
     availableCharacters,
+    availableRoles,
     loadingOptions,
     submitCharacter,
     isSubmitting,
@@ -28,7 +29,6 @@ export default function NewCharacterPage() {
       try {
         await submitCharacter(data);
         toast({ title: t("createPage.success"), variant: "success" });
-        setTimeout(() => router.push("/admin/characters"), 500);
       } catch (err) {
         const message = err instanceof Error ? err.message : t("createPage.errorGeneric");
         const isDuplicate =
@@ -49,7 +49,7 @@ export default function NewCharacterPage() {
     <div className="p-4 lg:p-6">
       <div className="mb-6 flex items-center gap-4">
         <Button variant="ghost" size="sm" onClick={() => router.push("/admin/characters")}>
-          <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
+          <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3" />
           {t("form.backToList")}
         </Button>
         <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">
@@ -63,6 +63,7 @@ export default function NewCharacterPage() {
           form={form}
           availableGames={availableGames}
           availableCharacters={availableCharacters}
+          availableRoles={availableRoles}
           loadingOptions={loadingOptions}
           onSubmit={handleSubmit}
           isSubmitting={isSubmitting}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { X, Search, Loader2 } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 
 import FriendSearchItem from "./FriendSearchItem";
@@ -71,20 +71,23 @@ export default function NewConversationDialog({
             className="rounded-lg p-1 transition-all duration-300 hover:bg-white/60 dark:hover:bg-slate-700/60"
             aria-label="Close"
           >
-            <X className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+            <Icon icon="lucide:x" className="h-5 w-5 text-slate-500 dark:text-slate-400" />
           </button>
         </div>
 
         {/* Search */}
         <div className="p-4 pb-2">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Icon
+              icon="lucide:search"
+              className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400"
+            />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t("searchFriends")}
-              className="glass-input w-full rounded-xl py-2 pl-9 pr-3 text-sm"
+              className="glass-input w-full rounded-xl py-2 pr-3 pl-9 text-sm"
               autoFocus
             />
           </div>
@@ -94,7 +97,7 @@ export default function NewConversationDialog({
         <div className="max-h-64 flex-1 overflow-y-auto px-2 pb-3">
           {isLoadingFriends ? (
             <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-6 w-6 animate-spin text-neon-violet" />
+              <Icon icon="lucide:loader-2" className="text-neon-violet h-6 w-6 animate-spin" />
             </div>
           ) : filteredFriends.length === 0 ? (
             <p className="py-8 text-center text-sm text-slate-500 dark:text-slate-400">

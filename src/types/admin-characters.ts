@@ -31,6 +31,7 @@ export type CharacterTabId =
   | "general"
   | "images"
   | "translations"
+  | "roles"
   | "games"
   | "relationships"
   | "screenshots"
@@ -78,6 +79,8 @@ export interface CharacterPayload {
     is_featured: boolean;
     display_order: number;
   }>;
+  /** IDs des rôles assignés au personnage (table character_character_roles) */
+  role_ids: string[];
 }
 
 /** Réponse API pour la liste des personnages */

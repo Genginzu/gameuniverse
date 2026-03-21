@@ -1,6 +1,6 @@
 "use client";
 
-import { MessageSquare } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useReviewTranslations } from "@/hooks/useTranslations";
 import type { ReviewWithVotes } from "@/types/review";
 import { ReviewCard } from "./ReviewCard";
@@ -15,7 +15,7 @@ function ReviewListEmpty() {
 
   return (
     <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-white/10 py-12 text-center">
-      <MessageSquare className="mb-3 h-10 w-10 text-slate-600" />
+      <Icon icon="lucide:message-square" className="mb-3 h-10 w-10 text-slate-600" />
       <p className="text-lg font-medium text-slate-400">{t("emptyTitle")}</p>
       <p className="mt-1 text-sm text-slate-500">{t("emptyDescription")}</p>
     </div>

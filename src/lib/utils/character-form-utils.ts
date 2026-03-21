@@ -37,6 +37,7 @@ export function characterFormToPayload(formData: AdminCharacterFormData): Charac
       is_featured: m.is_featured ?? false,
       display_order: m.display_order ?? 0,
     })),
+    role_ids: formData.role_ids ?? [],
   };
 }
 
@@ -81,5 +82,6 @@ export function characterPayloadToForm(payload: CharacterPayload): AdminCharacte
       is_featured: m.is_featured,
       display_order: m.display_order,
     })),
+    role_ids: payload.role_ids ?? [],
   };
 }

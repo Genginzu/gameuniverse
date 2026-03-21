@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useCollections } from "@/hooks/useCollections";
 import { CollectionCard } from "@/components/collections/CollectionCard";
-import { FolderOpen, Layers } from "lucide-react";
+import { Icon } from "@iconify/react";
 import Link from "next/link";
 
 const MAX_PREVIEW_COUNT = 4;
@@ -29,7 +29,7 @@ export function PlayerCollections({ playerId, locale, isOwner = false }: PlayerC
     return (
       <section className="mb-8">
         <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-gray-900 dark:text-white">
-          <Layers className="h-6 w-6 text-indigo-400" />
+          <Icon icon="lucide:layers" className="h-6 w-6 text-indigo-400" />
           {t("title")}
         </h2>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
@@ -48,12 +48,15 @@ export function PlayerCollections({ playerId, locale, isOwner = false }: PlayerC
     return (
       <section className="mb-8">
         <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-gray-900 dark:text-white">
-          <Layers className="h-6 w-6 text-indigo-400" />
+          <Icon icon="lucide:layers" className="h-6 w-6 text-indigo-400" />
           {t("title")}
         </h2>
         <div className="flex flex-col items-center justify-center rounded-2xl border border-gray-200 bg-white py-12 text-center dark:border-slate-700/50 dark:bg-slate-800/50">
           <div className="mb-4 rounded-full bg-gray-100 p-4 dark:bg-slate-700/50">
-            <FolderOpen className="h-10 w-10 text-gray-400 dark:text-slate-400" />
+            <Icon
+              icon="lucide:folder-open"
+              className="h-10 w-10 text-gray-400 dark:text-slate-400"
+            />
           </div>
           <p className="text-sm text-gray-500 dark:text-slate-400">{t("empty")}</p>
         </div>
@@ -68,7 +71,7 @@ export function PlayerCollections({ playerId, locale, isOwner = false }: PlayerC
     <section className="mb-8">
       <div className="mb-6 flex items-center justify-between">
         <h2 className="flex items-center gap-2 text-2xl font-bold text-gray-900 dark:text-white">
-          <Layers className="h-6 w-6 text-indigo-400" />
+          <Icon icon="lucide:layers" className="h-6 w-6 text-indigo-400" />
           {t("title")}
         </h2>
         {hasMore && (

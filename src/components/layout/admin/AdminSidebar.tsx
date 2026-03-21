@@ -5,9 +5,8 @@ import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { useTheme } from "next-themes";
 
-import { MessageCircle } from "lucide-react";
-import type { AdminUser } from "@/types/admin-auth";
 import { Icon } from "@iconify/react";
+import type { AdminUser } from "@/types/admin-auth";
 
 interface AdminSidebarProps {
   user: AdminUser;
@@ -32,14 +31,14 @@ export default function AdminSidebar({
   return (
     <>
       {/* Desktop Sidebar */}
-      <div className="hidden h-full w-64 shrink-0 flex-col border-r border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-900 lg:flex">
+      <div className="hidden h-full w-64 shrink-0 flex-col border-r border-gray-200 bg-white lg:flex dark:border-gray-700 dark:bg-gray-900">
         <SidebarContent user={user} signOut={signOut} onLinkClick={handleLinkClick} />
       </div>
 
       {/* Mobile Sidebar */}
       <div
         id="admin-mobile-sidebar"
-        className={`fixed inset-y-0 left-0 z-50 w-64 transform bg-white transition-transform duration-300 ease-in-out dark:bg-gray-900 lg:hidden ${
+        className={`fixed inset-y-0 left-0 z-50 w-64 transform bg-white transition-transform duration-300 ease-in-out lg:hidden dark:bg-gray-900 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -51,7 +50,7 @@ export default function AdminSidebar({
               className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
               aria-label={t("closeSidebar")}
             >
-              <Icon icon="fa:times" className="h-5 w-5"  />
+              <Icon icon="fa:times" className="h-5 w-5" />
             </button>
           </div>
           <SidebarContent user={user} signOut={signOut} onLinkClick={handleLinkClick} />
@@ -122,12 +121,12 @@ function SidebarContent({
       <nav className="flex-1 space-y-4 overflow-y-auto p-4">
         {/* Games category */}
         <div>
-          <p className="mb-1 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+          <p className="mb-1 px-3 text-xs font-semibold tracking-wider text-gray-400 uppercase dark:text-gray-500">
             {t("nav.gamesCategory")}
           </p>
           <div className="space-y-1">
             <Link href="/admin/games" className={linkClasses("/admin/games")} onClick={onLinkClick}>
-              <Icon icon="fa:gamepad" className="mr-3 h-4 w-4"  />
+              <Icon icon="fa:gamepad" className="mr-3 h-4 w-4" />
               {t("nav.games")}
             </Link>
             <Link
@@ -135,7 +134,7 @@ function SidebarContent({
               className={linkClasses("/admin/genres")}
               onClick={onLinkClick}
             >
-              <Icon icon="fa:list" className="mr-3 h-4 w-4"  />
+              <Icon icon="fa:list" className="mr-3 h-4 w-4" />
               {t("nav.genres")}
             </Link>
             <Link
@@ -143,7 +142,7 @@ function SidebarContent({
               className={linkClasses("/admin/companies")}
               onClick={onLinkClick}
             >
-              <Icon icon="fa:building" className="mr-3 h-4 w-4"  />
+              <Icon icon="fa:building" className="mr-3 h-4 w-4" />
               {t("nav.companies")}
             </Link>
             <Link
@@ -151,7 +150,7 @@ function SidebarContent({
               className={linkClasses("/admin/platforms")}
               onClick={onLinkClick}
             >
-              <Icon icon="fa:desktop" className="mr-3 h-4 w-4"  />
+              <Icon icon="fa:desktop" className="mr-3 h-4 w-4" />
               {t("nav.platforms")}
             </Link>
             <Link
@@ -159,7 +158,7 @@ function SidebarContent({
               className={linkClasses("/admin/languages")}
               onClick={onLinkClick}
             >
-              <Icon icon="fa:globe" className="mr-3 h-4 w-4"  />
+              <Icon icon="fa:globe" className="mr-3 h-4 w-4" />
               {t("nav.languages")}
             </Link>
             <Link
@@ -167,7 +166,7 @@ function SidebarContent({
               className={linkClasses("/admin/age-classifications")}
               onClick={onLinkClick}
             >
-              <Icon icon="fa:shield-alt" className="mr-3 h-4 w-4"  />
+              <Icon icon="lucide:shield" className="mr-3 h-4 w-4" />
               {t("nav.ageClassifications")}
             </Link>
             <Link
@@ -175,7 +174,7 @@ function SidebarContent({
               className={linkClasses("/admin/reviews")}
               onClick={onLinkClick}
             >
-              <Icon icon="fa:star" className="mr-3 h-4 w-4"  />
+              <Icon icon="fa:star" className="mr-3 h-4 w-4" />
               {t("nav.reviews")}
             </Link>
           </div>
@@ -183,7 +182,7 @@ function SidebarContent({
 
         {/* Characters category */}
         <div>
-          <p className="mb-1 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+          <p className="mb-1 px-3 text-xs font-semibold tracking-wider text-gray-400 uppercase dark:text-gray-500">
             {t("nav.charactersCategory")}
           </p>
           <div className="space-y-1">
@@ -192,15 +191,19 @@ function SidebarContent({
               className={linkClasses("/admin/characters")}
               onClick={onLinkClick}
             >
-              <Icon icon="fa:user-friends" className="mr-3 h-4 w-4"  />
+              <Icon icon="lucide:user-round" className="mr-3 h-4 w-4" />
               {t("nav.characters")}
+            </Link>
+            <Link href="/admin/roles" className={linkClasses("/admin/roles")} onClick={onLinkClick}>
+              <Icon icon="fa:id-badge" className="mr-3 h-4 w-4" />
+              {t("nav.characterRoles")}
             </Link>
             <Link
               href="/admin/comments"
               className={linkClasses("/admin/comments")}
               onClick={onLinkClick}
             >
-              <MessageCircle className="mr-3 h-4 w-4" />
+              <Icon icon="lucide:message-circle" className="mr-3 h-4 w-4" />
               {t("nav.comments")}
             </Link>
           </div>
@@ -208,7 +211,7 @@ function SidebarContent({
 
         {/* Players category */}
         <div>
-          <p className="mb-1 px-3 text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+          <p className="mb-1 px-3 text-xs font-semibold tracking-wider text-gray-400 uppercase dark:text-gray-500">
             {t("nav.playersCategory")}
           </p>
           <div className="space-y-1">
@@ -217,7 +220,7 @@ function SidebarContent({
               className={linkClasses("/admin/achievements")}
               onClick={onLinkClick}
             >
-              <Icon icon="fa:trophy" className="mr-3 h-4 w-4"  />
+              <Icon icon="fa:trophy" className="mr-3 h-4 w-4" />
               {t("nav.achievements")}
             </Link>
             <Link
@@ -225,7 +228,7 @@ function SidebarContent({
               className={linkClasses("/admin/achievements/players")}
               onClick={onLinkClick}
             >
-              <Icon icon="fa:user-friends" className="mr-3 h-4 w-4"  />
+              <Icon icon="lucide:award" className="mr-3 h-4 w-4" />
               {t("nav.playerAchievements")}
             </Link>
           </div>
@@ -237,10 +240,10 @@ function SidebarContent({
         <div className="relative" ref={dropdownRef}>
           <button
             onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-            className="mb-3 flex w-full items-center rounded-xl p-2 text-left hover:bg-gray-50 focus:outline-hidden focus:ring-2 focus:ring-blue-500 dark:hover:bg-gray-800"
+            className="mb-3 flex w-full items-center rounded-xl p-2 text-left hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:outline-hidden dark:hover:bg-gray-800"
           >
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500">
-              <Icon icon="fa:user" className="h-4 w-4 text-white"  />
+              <Icon icon="fa:user" className="h-4 w-4 text-white" />
             </div>
             <div className="ml-3 min-w-0 flex-1">
               <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
@@ -248,14 +251,14 @@ function SidebarContent({
               </p>
             </div>
             {isUserMenuOpen ? (
-              <Icon icon="fa:chevron-up" className="h-4 w-4 shrink-0 text-gray-400"  />
+              <Icon icon="fa:chevron-up" className="h-4 w-4 shrink-0 text-gray-400" />
             ) : (
-              <Icon icon="fa:chevron-down" className="h-4 w-4 shrink-0 text-gray-400"  />
+              <Icon icon="fa:chevron-down" className="h-4 w-4 shrink-0 text-gray-400" />
             )}
           </button>
 
           {isUserMenuOpen && (
-            <div className="absolute bottom-full left-0 right-0 mb-2 rounded-xl border border-gray-200 bg-white shadow-lg animate-in fade-in-0 zoom-in-95 dark:border-gray-700 dark:bg-gray-800">
+            <div className="animate-in fade-in-0 zoom-in-95 absolute right-0 bottom-full left-0 mb-2 rounded-xl border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
               <div className="py-2">
                 <button
                   data-dropdown-action="theme"
@@ -267,9 +270,9 @@ function SidebarContent({
                   }}
                 >
                   {theme === "dark" ? (
-                    <Icon icon="fa:sun" className="mr-3 h-4 w-4"  />
+                    <Icon icon="fa:sun" className="mr-3 h-4 w-4" />
                   ) : (
-                    <Icon icon="fa:moon" className="mr-3 h-4 w-4"  />
+                    <Icon icon="fa:moon" className="mr-3 h-4 w-4" />
                   )}
                   {theme === "dark" ? t("lightMode") : t("darkMode")}
                 </button>
@@ -288,7 +291,7 @@ function SidebarContent({
                     }
                   }}
                 >
-                  <Icon icon="fa:sign-out-alt" className="mr-3 h-4 w-4"  />
+                  <Icon icon="lucide:log-out" className="mr-3 h-4 w-4" />
                   {tNav("logout")}
                 </button>
               </div>

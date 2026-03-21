@@ -1,4 +1,4 @@
-import { Gamepad2 } from "lucide-react";
+import { Icon } from "@iconify/react";
 
 /**
  * Skeleton matching the PlayerLibraryGrid layout: header bar + 6-column cover grid.
@@ -10,7 +10,7 @@ export function PlayerLibraryGridSkeleton() {
       {/* Header: title + count badge */}
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Gamepad2 className="h-6 w-6 text-blue-500 dark:text-blue-400" />
+          <Icon icon="lucide:gamepad-2" className="h-6 w-6 text-blue-500 dark:text-blue-400" />
           <div className="h-7 w-36 animate-pulse rounded-lg bg-gray-200 dark:bg-slate-700" />
         </div>
         <div className="h-6 w-28 animate-pulse rounded-full bg-gray-100 dark:bg-slate-700/50" />

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Plus } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { CollectionForm } from "@/components/collections/CollectionForm";
@@ -69,7 +69,7 @@ export function PlayerCollectionsFeed({ playerId, locale, isOwner }: PlayerColle
       {isOwner && (
         <div className="flex justify-end">
           <Button onClick={() => setShowCreateDialog(true)} size="sm">
-            <Plus className="mr-1.5 h-4 w-4" />
+            <Icon icon="lucide:plus" className="mr-1.5 h-4 w-4" />
             {t("createButton")}
           </Button>
         </div>

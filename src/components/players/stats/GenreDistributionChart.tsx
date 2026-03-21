@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { PieChart as PieChartIcon } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import type { GenreDistributionEntry } from "@/types/dashboard-stats";
 import { StatsEmptyState } from "@/components/players/stats/StatsEmptyState";
@@ -53,7 +53,7 @@ export function GenreDistributionChart({
       <div>
         <StatsSectionTitle>{t("genreDistribution.title")}</StatsSectionTitle>
         <StatsEmptyState
-          icon={<PieChartIcon className="h-8 w-8" />}
+          icon={<Icon icon="lucide:pie-chart" className="h-8 w-8" />}
           message={t("genreDistribution.empty")}
         />
       </div>

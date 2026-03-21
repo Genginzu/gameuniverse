@@ -1,7 +1,7 @@
 "use client";
 
 import { type UseFormReturn } from "react-hook-form";
-import { Users, Globe } from "lucide-react";
+import { Icon } from "@iconify/react";
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
 import type { Company } from "@/types/admin-games";
 import { buildGameColors } from "@/lib/utils/game-utils";
@@ -53,7 +53,7 @@ export function GameCompaniesPreview({ form, companies }: GameCompaniesPreviewPr
           {developers.length > 0 && (
             <div className="rounded-xl border border-slate-700 bg-slate-800/50 p-4">
               <div className="mb-2 flex items-center gap-2">
-                <Users className="h-4 w-4" style={{ color: colors.accent }} />
+                <Icon icon="lucide:users" className="h-4 w-4" style={{ color: colors.accent }} />
                 <span className="text-sm" style={{ color: colors.labelColor }}>
                   Développeur
                 </span>
@@ -71,7 +71,7 @@ export function GameCompaniesPreview({ form, companies }: GameCompaniesPreviewPr
           {publishers.length > 0 && (
             <div className="rounded-xl border border-slate-700 bg-slate-800/50 p-4">
               <div className="mb-2 flex items-center gap-2">
-                <Globe className="h-4 w-4" style={{ color: colors.accent }} />
+                <Icon icon="lucide:globe" className="h-4 w-4" style={{ color: colors.accent }} />
                 <span className="text-sm" style={{ color: colors.labelColor }}>
                   Éditeur
                 </span>

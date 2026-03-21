@@ -2,7 +2,7 @@
 
 import React, { Component, ErrorInfo, ReactNode } from "react";
 import * as Sentry from "@sentry/nextjs";
-import { AlertTriangle, RefreshCw } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -80,14 +80,14 @@ export class ErrorBoundary extends Component<Props, State> {
         <div className="flex min-h-screen items-center justify-center p-4">
           <Card className="w-full max-w-md">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-destructive">
-                <AlertTriangle className="h-5 w-5" />
+              <CardTitle className="text-destructive flex items-center gap-2">
+                <Icon icon="lucide:alert-triangle" className="h-5 w-5" />
                 {t.unexpectedError}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <Alert variant="destructive">
-                <AlertTriangle className="h-4 w-4" />
+                <Icon icon="lucide:alert-triangle" className="h-4 w-4" />
                 <AlertTitle>{t.unexpectedErrorTitle}</AlertTitle>
                 <AlertDescription>
                   {this.state.error?.message || t.unexpectedErrorMessage}
@@ -96,7 +96,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
               <div className="flex gap-2">
                 <Button onClick={this.handleRetry} className="flex-1">
-                  <RefreshCw className="mr-2 h-4 w-4" />
+                  <Icon icon="lucide:refresh-cw" className="mr-2 h-4 w-4" />
                   {t.retry}
                 </Button>
                 <Button
@@ -110,14 +110,14 @@ export class ErrorBoundary extends Component<Props, State> {
 
               {process.env.NODE_ENV === "development" && this.state.error && (
                 <details className="mt-4">
-                  <summary className="cursor-pointer text-sm text-muted-foreground">
+                  <summary className="text-muted-foreground cursor-pointer text-sm">
                     {t.technicalDetails}
                   </summary>
-                  <pre className="mt-2 overflow-auto rounded bg-muted p-2 text-xs">
+                  <pre className="bg-muted mt-2 overflow-auto rounded p-2 text-xs">
                     {this.state.error.stack}
                   </pre>
                   {this.state.errorInfo && (
-                    <pre className="mt-2 overflow-auto rounded bg-muted p-2 text-xs">
+                    <pre className="bg-muted mt-2 overflow-auto rounded p-2 text-xs">
                       {this.state.errorInfo.componentStack}
                     </pre>
                   )}

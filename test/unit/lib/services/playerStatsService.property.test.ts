@@ -16,7 +16,7 @@ import {
 // without triggering React/navigation side-effects in the node test environment.
 vi.mock("next-intl", () => ({ useTranslations: vi.fn() }));
 vi.mock("@/i18n/navigation", () => ({ Link: "a" }));
-vi.mock("lucide-react", () => ({ CalendarHeart: "span" }));
+vi.mock("@iconify/react", () => ({ Icon: "span" }));
 
 import { resolveYearLink } from "@/components/players/YearInReviewLink";
 

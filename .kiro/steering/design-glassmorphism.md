@@ -107,6 +107,23 @@ bg-linear-to-r from-neon-cyan to-neon-violet
 - ❌ Ne **jamais** créer de composant UI sans vérifier la cohérence avec les
   composants similaires déjà en place.
 
+## Icônes : Iconify uniquement
+
+Le projet utilise la librairie **Iconify** (`@iconify/react`) pour toutes les
+icônes. C'est la seule librairie d'icônes autorisée.
+
+```tsx
+import { Icon } from "@iconify/react";
+
+<Icon icon="mdi:home" className="size-5" />;
+```
+
+- ✅ Toujours utiliser `@iconify/react` pour afficher des icônes.
+- ❌ Ne **jamais** utiliser une autre librairie d'icônes (`lucide-react`,
+  `react-icons`, `heroicons`, etc.) sauf demande explicite de l'utilisateur.
+- ⚠️ Si dans un cas précis une autre librairie semble plus adaptée, **proposer
+  l'alternative à l'utilisateur** et attendre sa validation avant de l'utiliser.
+
 ## Checklist pour tout nouveau composant/page
 
 1. Utilise les classes `.glass-*` ou les patterns Tailwind semi-transparents
@@ -114,4 +131,5 @@ bg-linear-to-r from-neon-cyan to-neon-violet
 3. Coins arrondis cohérents (`rounded-xl` / `rounded-2xl`)
 4. Transitions fluides sur les interactions
 5. Couleurs d'accent cohérentes (néon violet/cyan)
-6. Vérifié visuellement à côté des pages existantes
+6. Icônes via Iconify (`@iconify/react`)
+7. Vérifié visuellement à côté des pages existantes

@@ -1,7 +1,7 @@
 "use client";
 
 import { type UseFormReturn } from "react-hook-form";
-import { Clock, Zap, Gamepad2, Trophy } from "lucide-react";
+import { Icon } from "@iconify/react";
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
 import { buildGameColors } from "@/lib/utils/game-utils";
 
@@ -46,9 +46,13 @@ export function GamePlaytimePreview({ form, t }: GamePlaytimePreviewProps) {
     (completely !== null && completely !== undefined && completely !== "");
 
   const cards = [
-    { icon: Zap, label: t("playtimeHastily") ?? "Rapide", value: hastily },
-    { icon: Gamepad2, label: t("playtimeNormally") ?? "Normal", value: normally },
-    { icon: Trophy, label: t("playtimeCompletely") ?? "Complétionniste", value: completely },
+    { icon: "lucide:zap", label: t("playtimeHastily") ?? "Rapide", value: hastily },
+    { icon: "lucide:gamepad-2", label: t("playtimeNormally") ?? "Normal", value: normally },
+    {
+      icon: "lucide:trophy",
+      label: t("playtimeCompletely") ?? "Complétionniste",
+      value: completely,
+    },
   ] as const;
 
   return (
@@ -63,7 +67,7 @@ export function GamePlaytimePreview({ form, t }: GamePlaytimePreviewProps) {
       >
         {!hasAny ? (
           <div className="flex flex-col items-center justify-center py-4 text-slate-400">
-            <Clock className="mb-2 h-8 w-8 opacity-50" />
+            <Icon icon="lucide:clock" className="mb-2 h-8 w-8 opacity-50" />
             <p className="text-xs">{t("playtimeNoData") ?? "Aucun temps de jeu renseigné"}</p>
           </div>
         ) : (
@@ -72,11 +76,11 @@ export function GamePlaytimePreview({ form, t }: GamePlaytimePreviewProps) {
               className="flex items-center gap-1.5 text-sm font-semibold"
               style={{ color: colors.textColor }}
             >
-              <Clock className="h-4 w-4" style={{ color: accent }} />
+              <Icon icon="lucide:clock" className="h-4 w-4" style={{ color: accent }} />
               {t("playtime") ?? "Temps de jeu"}
             </h5>
             <div className="space-y-1.5">
-              {cards.map(({ icon: IconComp, label, value }) => (
+              {cards.map(({ icon: iconName, label, value }) => (
                 <div
                   key={label}
                   className="flex items-center gap-3 rounded-lg border border-slate-700 bg-slate-800/50 px-3 py-2"
@@ -85,7 +89,7 @@ export function GamePlaytimePreview({ form, t }: GamePlaytimePreviewProps) {
                     className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md"
                     style={{ backgroundColor: `${accent}20` }}
                   >
-                    <IconComp className="h-3.5 w-3.5" style={{ color: accent }} />
+                    <Icon icon={iconName} className="h-3.5 w-3.5" style={{ color: accent }} />
                   </div>
                   <span className="flex-1 text-xs" style={{ color: colors.labelColor }}>
                     {label}

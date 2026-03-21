@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, Trash2 } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useReviewTranslations } from "@/hooks/useTranslations";
@@ -54,7 +54,7 @@ export function ReviewPointsList({ points, onChange, type, maxPoints }: ReviewPo
             onClick={addPoint}
             className={accentColor}
           >
-            <Plus className="mr-1 h-4 w-4" />
+            <Icon icon="lucide:plus" className="mr-1 h-4 w-4" />
             {t("points.add")}
           </Button>
         )}
@@ -76,19 +76,19 @@ export function ReviewPointsList({ points, onChange, type, maxPoints }: ReviewPo
             variant="ghost"
             size="icon"
             onClick={() => removePoint(index)}
-            className="h-8 w-8 shrink-0 text-muted-foreground hover:text-red-500"
+            className="text-muted-foreground h-8 w-8 shrink-0 hover:text-red-500"
             aria-label={t("points.removeAriaLabel", {
               label: label.toLowerCase(),
               index: index + 1,
             })}
           >
-            <Trash2 className="h-4 w-4" />
+            <Icon icon="lucide:trash-2" className="h-4 w-4" />
           </Button>
         </div>
       ))}
 
       {points.length === 0 && (
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           {isPositive ? t("points.emptyPositive") : t("points.emptyNegative")}
         </p>
       )}

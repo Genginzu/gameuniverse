@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
-import { Target, Plus, Trash2, CheckCircle } from "lucide-react";
+import { Icon } from "@iconify/react";
 import type { PlayerGoal } from "@/types/dashboard-stats";
 import { StatsEmptyState } from "@/components/players/stats/StatsEmptyState";
 import { StatsSectionTitle } from "@/components/players/stats/StatsSectionTitle";
@@ -57,7 +57,10 @@ export function PersonalGoals({ goals: initialGoals, isOwnProfile, playerId }: P
 
       <div className="glass-card rounded-xl p-6">
         {goals.length === 0 && !showForm ? (
-          <StatsEmptyState icon={<Target className="h-8 w-8" />} message={t("goals.empty")} />
+          <StatsEmptyState
+            icon={<Icon icon="lucide:target" className="h-8 w-8" />}
+            message={t("goals.empty")}
+          />
         ) : (
           <div className="grid gap-3">
             {goals.map((goal) => {
@@ -75,7 +78,9 @@ export function PersonalGoals({ goals: initialGoals, isOwnProfile, playerId }: P
                       <span className="text-sm font-medium text-gray-900 dark:text-white">
                         {t(`goals.goalTypes.${goal.goalType}` as Parameters<typeof t>[0])}
                       </span>
-                      {isCompleted && <CheckCircle className="h-4 w-4 text-emerald-500" />}
+                      {isCompleted && (
+                        <Icon icon="lucide:check-circle" className="h-4 w-4 text-emerald-500" />
+                      )}
                     </div>
                     <div className="flex items-center gap-2">
                       {isCompleted && (
@@ -89,7 +94,7 @@ export function PersonalGoals({ goals: initialGoals, isOwnProfile, playerId }: P
                         className="rounded-lg p-1.5 text-gray-400 transition-all duration-300 hover:bg-red-500/10 hover:text-red-500 disabled:opacity-50 dark:text-slate-500 dark:hover:text-red-400"
                         title={t("goals.deleteGoal")}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Icon icon="lucide:trash-2" className="h-4 w-4" />
                       </button>
                     </div>
                   </div>
@@ -97,7 +102,7 @@ export function PersonalGoals({ goals: initialGoals, isOwnProfile, playerId }: P
                   {/* Progress bar */}
                   <div className="mb-1 h-2.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-slate-700">
                     <div
-                      className="h-full rounded-full bg-linear-to-r from-neon-violet to-neon-cyan transition-all duration-500"
+                      className="from-neon-violet to-neon-cyan h-full rounded-full bg-linear-to-r transition-all duration-500"
                       style={{ width: `${percent}%` }}
                     />
                   </div>
@@ -128,9 +133,9 @@ export function PersonalGoals({ goals: initialGoals, isOwnProfile, playerId }: P
         ) : (
           <button
             onClick={() => setShowForm(true)}
-            className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-white/30 px-4 py-3 text-sm font-medium text-gray-600 transition-all duration-300 hover:border-neon-violet hover:text-neon-violet dark:border-slate-600 dark:text-slate-400 dark:hover:border-neon-cyan dark:hover:text-neon-cyan"
+            className="hover:border-neon-violet hover:text-neon-violet dark:hover:border-neon-cyan dark:hover:text-neon-cyan mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-white/30 px-4 py-3 text-sm font-medium text-gray-600 transition-all duration-300 dark:border-slate-600 dark:text-slate-400"
           >
-            <Plus className="h-4 w-4" />
+            <Icon icon="lucide:plus" className="h-4 w-4" />
             {t("goals.addGoal")}
           </button>
         )}

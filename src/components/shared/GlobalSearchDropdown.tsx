@@ -5,7 +5,7 @@ import { GlobalSearchGameItem } from "@/components/shared/GlobalSearchGameItem";
 import { GlobalSearchPlayerItem } from "@/components/shared/GlobalSearchPlayerItem";
 import type { FlatSearchItem } from "@/lib/utils/global-search-utils";
 import type { GlobalSearchResponse } from "@/types/global-search";
-import { Gamepad2, Loader2, Swords, Users, type LucideIcon } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 
 interface GlobalSearchDropdownProps {
@@ -17,19 +17,11 @@ interface GlobalSearchDropdownProps {
   importingId: string | null;
 }
 
-function CategoryHeader({
-  icon: IconComp,
-  label,
-  count,
-}: {
-  icon: LucideIcon;
-  label: string;
-  count: number;
-}) {
+function CategoryHeader({ icon, label, count }: { icon: string; label: string; count: number }) {
   return (
     <div className="flex items-center gap-2.5 border-b border-white/10 pb-2">
-      <IconComp className="h-4 w-4 text-white/50" />
-      <span className="text-sm font-semibold uppercase tracking-wider text-white/50">{label}</span>
+      <Icon icon={icon} className="h-4 w-4 text-white/50" />
+      <span className="text-sm font-semibold tracking-wider text-white/50 uppercase">{label}</span>
       <span className="text-xs text-white/30">({count})</span>
     </div>
   );
@@ -49,7 +41,7 @@ export function GlobalSearchDropdown({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center gap-3 py-12 text-base text-white/50">
-        <Loader2 className="h-5 w-5 animate-spin" />
+        <Icon icon="lucide:loader-2" className="h-5 w-5 animate-spin" />
         {t("loading")}
       </div>
     );
@@ -68,7 +60,7 @@ export function GlobalSearchDropdown({
       {results.games.length > 0 && (
         <section>
           <CategoryHeader
-            icon={Gamepad2}
+            icon="lucide:gamepad-2"
             label={t("categories.games")}
             count={results.counts.games}
           />
@@ -103,7 +95,7 @@ export function GlobalSearchDropdown({
           {results.characters.length > 0 && (
             <section>
               <CategoryHeader
-                icon={Swords}
+                icon="lucide:swords"
                 label={t("categories.characters")}
                 count={results.counts.characters}
               />
@@ -134,7 +126,7 @@ export function GlobalSearchDropdown({
           {results.players.length > 0 && (
             <section>
               <CategoryHeader
-                icon={Users}
+                icon="lucide:users"
                 label={t("categories.players")}
                 count={results.counts.players}
               />

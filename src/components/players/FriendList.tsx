@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
-import { Users } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FriendCard } from "./FriendCard";
 import type { FriendSummary } from "@/types/friendship";
@@ -100,7 +100,7 @@ function FriendListEmpty() {
   return (
     <div className="flex flex-col items-center justify-center rounded-2xl border border-gray-200 bg-white py-12 text-center dark:border-slate-700/50 dark:bg-slate-800/50">
       <div className="mb-4 rounded-full bg-gray-100 p-4 dark:bg-slate-700/50">
-        <Users className="h-10 w-10 text-gray-400 dark:text-slate-400" />
+        <Icon icon="lucide:users" className="h-10 w-10 text-gray-400 dark:text-slate-400" />
       </div>
       <p className="text-sm text-gray-500 dark:text-slate-400">{t("empty")}</p>
     </div>

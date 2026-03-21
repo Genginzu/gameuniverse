@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Shield, AlertTriangle } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import { GameRating } from "@/types/game";
 import Image from "next/image";
@@ -17,7 +17,7 @@ export function GameAgeRatings({ ratings, accentColor }: GameAgeRatingsProps) {
   if (!ratings || ratings.length === 0) {
     return (
       <div className="py-12 text-center text-slate-400">
-        <Shield className="mx-auto mb-4 h-12 w-12 opacity-50" />
+        <Icon icon="lucide:shield" className="mx-auto mb-4 h-12 w-12 opacity-50" />
         <p className="mb-2 text-lg font-medium text-white">{t("title")}</p>
         <p>{t("noData")}</p>
       </div>
@@ -96,7 +96,7 @@ export function GameAgeRatings({ ratings, accentColor }: GameAgeRatingsProps) {
                 {rating.contentDescriptors && rating.contentDescriptors.length > 0 && (
                   <div className="mt-4 border-t border-white/10 pt-4">
                     <div className="mb-2 flex items-center gap-2">
-                      <AlertTriangle className="h-4 w-4 text-amber-400" />
+                      <Icon icon="lucide:alert-triangle" className="h-4 w-4 text-amber-400" />
                       <span className="text-sm font-medium text-slate-300">
                         {t("contentDescriptors")}
                       </span>

@@ -2,7 +2,6 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Monitor } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { PlatformSummary } from "@/types/platform";
 import { Icon } from "@iconify/react";
@@ -21,7 +20,7 @@ export function CharacterPlatformsCard({ platforms, accentColor }: CharacterPlat
       <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-xs">
         <CardContent className="p-6">
           <h4 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
-            <Monitor className="h-5 w-5" style={{ color: accentColor }} />
+            <Icon icon="lucide:monitor" className="h-5 w-5" style={{ color: accentColor }} />
             {t("characters.details.platforms")}
           </h4>
           <p className="text-sm text-slate-400">{t("characters.details.noPlatforms")}</p>
@@ -34,7 +33,7 @@ export function CharacterPlatformsCard({ platforms, accentColor }: CharacterPlat
     <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-xs">
       <CardContent className="p-6">
         <h4 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
-          <Monitor className="h-5 w-5" style={{ color: accentColor }} />
+          <Icon icon="lucide:monitor" className="h-5 w-5" style={{ color: accentColor }} />
           {t("characters.details.platforms")}
         </h4>
         <div className="flex flex-wrap gap-2">

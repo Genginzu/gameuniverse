@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { LazyImage } from "@/components/ui/lazy-image";
-import { Clock, Gamepad2, Tag, Trophy, Star, Calendar } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { formatPlayTime } from "@/lib/utils/formatPlayTime";
 import type { YearInReview } from "@/types/player-stats";
 
@@ -36,7 +36,10 @@ export function YearInReviewCards({ yearReview, locale, t }: YearInReviewCardsPr
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {/* Total Play Time — Req 6.2 */}
-      <StatCard icon={<Clock className="h-5 w-5 text-purple-400" />} label={t("totalPlayTime")}>
+      <StatCard
+        icon={<Icon icon="lucide:clock" className="h-5 w-5 text-purple-400" />}
+        label={t("totalPlayTime")}
+      >
         <p className="text-2xl font-bold text-white">
           {formatPlayTime(yearReview.totalPlayTime, locale)}
           <span className="ml-1 text-base font-normal text-slate-400">h</span>
@@ -44,12 +47,18 @@ export function YearInReviewCards({ yearReview, locale, t }: YearInReviewCardsPr
       </StatCard>
 
       {/* Games Added — Req 6.2 */}
-      <StatCard icon={<Gamepad2 className="h-5 w-5 text-blue-400" />} label={t("gamesAdded")}>
+      <StatCard
+        icon={<Icon icon="lucide:gamepad-2" className="h-5 w-5 text-blue-400" />}
+        label={t("gamesAdded")}
+      >
         <p className="text-2xl font-bold text-white">{yearReview.gamesAdded}</p>
       </StatCard>
 
       {/* Favorite Genre — Req 6.2 */}
-      <StatCard icon={<Tag className="h-5 w-5 text-green-400" />} label={t("favoriteGenre")}>
+      <StatCard
+        icon={<Icon icon="lucide:tag" className="h-5 w-5 text-green-400" />}
+        label={t("favoriteGenre")}
+      >
         {yearReview.favoriteGenre ? (
           <p className="text-2xl font-bold text-white">{yearReview.favoriteGenre.name}</p>
         ) : (
@@ -58,7 +67,10 @@ export function YearInReviewCards({ yearReview, locale, t }: YearInReviewCardsPr
       </StatCard>
 
       {/* Top Game — Req 6.2 */}
-      <StatCard icon={<Trophy className="h-5 w-5 text-amber-400" />} label={t("topGame")}>
+      <StatCard
+        icon={<Icon icon="lucide:trophy" className="h-5 w-5 text-amber-400" />}
+        label={t("topGame")}
+      >
         {yearReview.topGame ? (
           <div className="flex items-center gap-3">
             {yearReview.topGame.coverImage && (
@@ -85,12 +97,18 @@ export function YearInReviewCards({ yearReview, locale, t }: YearInReviewCardsPr
       </StatCard>
 
       {/* Reviews Written — Req 6.2 */}
-      <StatCard icon={<Star className="h-5 w-5 text-yellow-400" />} label={t("reviewCount")}>
+      <StatCard
+        icon={<Icon icon="lucide:star" className="h-5 w-5 text-yellow-400" />}
+        label={t("reviewCount")}
+      >
         <p className="text-2xl font-bold text-white">{yearReview.reviewCount}</p>
       </StatCard>
 
       {/* Most Active Month — Req 6.2, 5.5 */}
-      <StatCard icon={<Calendar className="h-5 w-5 text-rose-400" />} label={t("mostActiveMonth")}>
+      <StatCard
+        icon={<Icon icon="lucide:calendar" className="h-5 w-5 text-rose-400" />}
+        label={t("mostActiveMonth")}
+      >
         {yearReview.mostActiveMonth ? (
           <div>
             <p className="text-2xl font-bold text-white">

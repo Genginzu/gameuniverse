@@ -1,6 +1,6 @@
 "use client";
 
-import { Calendar, Users, Globe } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import { GameDetails } from "@/types/game";
 import { GameColors } from "@/lib/utils/game-utils";
@@ -28,7 +28,7 @@ export function GameDetailsSidebarMeta({
         {game.releaseDate && (
           <div>
             <div className="mb-1 flex items-center gap-1.5 text-xs" style={labelStyle}>
-              <Calendar className="h-3 w-3" />
+              <Icon icon="lucide:calendar" className="h-3 w-3" />
               {t("game.releaseDate")}
             </div>
             <div className="text-sm font-medium" style={textStyle}>
@@ -40,7 +40,7 @@ export function GameDetailsSidebarMeta({
         {/* Developer */}
         <div>
           <div className="mb-1 flex items-center gap-1.5 text-xs" style={labelStyle}>
-            <Users className="h-3 w-3" />
+            <Icon icon="lucide:users" className="h-3 w-3" />
             {t("game.developer")}
           </div>
           <div className="space-y-0.5">
@@ -64,7 +64,7 @@ export function GameDetailsSidebarMeta({
           : game.publisher && game.publisher !== game.developer) && (
           <div>
             <div className="mb-1 flex items-center gap-1.5 text-xs" style={labelStyle}>
-              <Globe className="h-3 w-3" />
+              <Icon icon="lucide:globe" className="h-3 w-3" />
               {t("game.publisher")}
             </div>
             <div className="space-y-0.5">

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { ArrowLeft, Plus } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
@@ -63,7 +63,7 @@ export function CollectionsPageContent({ playerId, locale }: CollectionsPageCont
         <div className="flex items-center gap-4">
           <Link href={`/${locale}/players/${playerId}`}>
             <Button variant="ghost" size="sm">
-              <ArrowLeft className="mr-1.5 h-4 w-4" />
+              <Icon icon="lucide:arrow-left" className="mr-1.5 h-4 w-4" />
               {t("backToPlayer")}
             </Button>
           </Link>
@@ -74,7 +74,7 @@ export function CollectionsPageContent({ playerId, locale }: CollectionsPageCont
 
         {isOwner && (
           <Button onClick={() => setShowCreateDialog(true)}>
-            <Plus className="mr-1.5 h-4 w-4" />
+            <Icon icon="lucide:plus" className="mr-1.5 h-4 w-4" />
             {t("createButton")}
           </Button>
         )}

@@ -1,6 +1,6 @@
 "use client";
 
-import { User } from "lucide-react";
+import { Icon } from "@iconify/react";
 
 import { LazyImage } from "@/components/ui/lazy-image";
 
@@ -34,7 +34,7 @@ export default function FriendSearchItem({ friend, onSelect }: FriendSearchItemP
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
-            <User className="h-4 w-4 text-blue-300" />
+            <Icon icon="lucide:user" className="h-4 w-4 text-blue-300" />
           </div>
         )}
       </div>

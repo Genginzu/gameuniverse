@@ -9,14 +9,10 @@ vi.mock("next-intl", () => ({
   useTranslations: () => (key: string) => key,
 }));
 
-// Mock lucide-react icons used by ConversationList
-vi.mock("lucide-react", () => ({
-  Plus: (props: React.SVGProps<SVGSVGElement>) =>
-    React.createElement("svg", { ...props, "data-testid": "plus-icon" }),
-  MessageSquare: (props: React.SVGProps<SVGSVGElement>) =>
-    React.createElement("svg", { ...props, "data-testid": "message-square-icon" }),
-  Loader2: (props: React.SVGProps<SVGSVGElement>) =>
-    React.createElement("svg", { ...props, "data-testid": "loader-icon" }),
+// Mock @iconify/react icons used by ConversationList
+vi.mock("@iconify/react", () => ({
+  Icon: (props: Record<string, unknown>) =>
+    React.createElement("svg", { ...props, "data-testid": `icon-${props.icon}` }),
 }));
 
 // Mock ConversationItem — render a simplified button with conversation data
@@ -99,14 +95,14 @@ describe("ConversationList", () => {
   it("shows empty state when no conversations exist", () => {
     render(<ConversationList {...defaultProps} conversations={[]} />);
 
-    expect(screen.getByTestId("message-square-icon")).toBeInTheDocument();
+    expect(screen.getByTestId("icon-lucide:message-square")).toBeInTheDocument();
     expect(screen.getByText("noConversations")).toBeInTheDocument();
   });
 
   it("shows loading spinner when isLoading is true", () => {
     render(<ConversationList {...defaultProps} isLoading={true} />);
 
-    expect(screen.getByTestId("loader-icon")).toBeInTheDocument();
+    expect(screen.getByTestId("icon-lucide:loader-2")).toBeInTheDocument();
     // Empty state should not be visible during loading
     expect(screen.queryByText("noConversations")).not.toBeInTheDocument();
   });
@@ -162,6 +158,6 @@ describe("ConversationList", () => {
     render(<ConversationList {...defaultProps} conversations={conversations} />);
 
     expect(screen.queryByText("noConversations")).not.toBeInTheDocument();
-    expect(screen.queryByTestId("loader-icon")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("icon-lucide:loader-2")).not.toBeInTheDocument();
   });
 });

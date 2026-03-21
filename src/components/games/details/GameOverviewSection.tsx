@@ -1,11 +1,10 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Users, Globe, Info, Star, Smartphone } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import { GameDetails } from "@/types/game";
 import { GameColors } from "@/lib/utils/game-utils";
-import { Icon } from "@iconify/react";
 import { getPlatformIcon } from "@/lib/utils/platform-icons";
 
 interface GameOverviewSectionProps {
@@ -36,7 +35,7 @@ export function GameOverviewSection({
         {/* Developers */}
         <div className="rounded-xl border border-slate-700 bg-slate-800/50 p-4">
           <div className="mb-2 flex items-center gap-2">
-            <Users className="h-4 w-4" style={{ color: colors.accent }} />
+            <Icon icon="lucide:users" className="h-4 w-4" style={{ color: colors.accent }} />
             <div className="text-sm" style={labelStyle}>
               {t("game.developer")}
             </div>
@@ -60,7 +59,7 @@ export function GameOverviewSection({
         {(game.companies?.publishers?.length > 0 ? true : game.publisher !== game.developer) && (
           <div className="rounded-xl border border-slate-700 bg-slate-800/50 p-4">
             <div className="mb-2 flex items-center gap-2">
-              <Globe className="h-4 w-4" style={{ color: colors.accent }} />
+              <Icon icon="lucide:globe" className="h-4 w-4" style={{ color: colors.accent }} />
               <div className="text-sm" style={labelStyle}>
                 {t("game.publisher")}
               </div>
@@ -85,7 +84,7 @@ export function GameOverviewSection({
         {game.releaseDate && (
           <div className="rounded-xl border border-slate-700 bg-slate-800/50 p-4">
             <div className="mb-2 flex items-center gap-2">
-              <Calendar className="h-4 w-4" style={{ color: colors.accent }} />
+              <Icon icon="lucide:calendar" className="h-4 w-4" style={{ color: colors.accent }} />
               <div className="text-sm" style={labelStyle}>
                 {t("game.releaseDate")}
               </div>
@@ -100,7 +99,7 @@ export function GameOverviewSection({
         {game.metascore && (
           <div className="rounded-xl border border-slate-700 bg-slate-800/50 p-4">
             <div className="mb-2 flex items-center gap-2">
-              <Star className="h-4 w-4" style={{ color: colors.accent }} />
+              <Icon icon="lucide:star" className="h-4 w-4" style={{ color: colors.accent }} />
               <div className="text-sm" style={labelStyle}>
                 Metascore
               </div>
@@ -130,7 +129,7 @@ export function GameOverviewSection({
         {game.pricing.length > 0 && (
           <div className="rounded-xl border border-slate-700 bg-slate-800/50 p-4">
             <div className="mb-3 flex items-center gap-2">
-              <Smartphone className="h-4 w-4" style={{ color: colors.accent }} />
+              <Icon icon="lucide:smartphone" className="h-4 w-4" style={{ color: colors.accent }} />
               <div className="text-sm" style={labelStyle}>
                 {tDetails("platforms")}
               </div>
@@ -158,7 +157,7 @@ export function GameOverviewSection({
         {game.genres.length > 0 && (
           <div className="rounded-xl border border-slate-700 bg-slate-800/50 p-4">
             <div className="mb-3 flex items-center gap-2">
-              <Info className="h-4 w-4" style={{ color: colors.accent }} />
+              <Icon icon="lucide:info" className="h-4 w-4" style={{ color: colors.accent }} />
               <div className="text-sm" style={labelStyle}>
                 {t("game.genres")}
               </div>

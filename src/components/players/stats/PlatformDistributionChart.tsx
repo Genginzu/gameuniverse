@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Monitor } from "lucide-react";
+import { Icon } from "@iconify/react";
 import type { PlatformDistributionEntry } from "@/types/dashboard-stats";
 import { StatsEmptyState } from "@/components/players/stats/StatsEmptyState";
 import { StatsSectionTitle } from "@/components/players/stats/StatsSectionTitle";
@@ -31,7 +31,7 @@ export function PlatformDistributionChart({
       <div>
         <StatsSectionTitle>{t("platformDistribution.title")}</StatsSectionTitle>
         <StatsEmptyState
-          icon={<Monitor className="h-8 w-8" />}
+          icon={<Icon icon="lucide:monitor" className="h-8 w-8" />}
           message={t("platformDistribution.empty")}
         />
       </div>

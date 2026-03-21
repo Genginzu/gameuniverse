@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { ArrowLeft, Eye, EyeOff, Loader2, CheckCircle, XCircle, KeyRound } from "lucide-react";
+import { Icon } from "@iconify/react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -171,14 +171,14 @@ export default function ResetPasswordPage() {
           {isLoading ? (
             <Card className="mx-auto w-full max-w-md border-0 bg-white/95 shadow-2xl backdrop-blur-xs">
               <CardContent className="flex items-center justify-center py-16">
-                <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+                <Icon icon="lucide:loader-2" className="h-8 w-8 animate-spin text-purple-600" />
               </CardContent>
             </Card>
           ) : error && !isAuthenticated ? (
             <Card className="mx-auto w-full max-w-md border-0 bg-white/95 shadow-2xl backdrop-blur-xs">
               <CardHeader className="space-y-6 pb-8">
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
-                  <XCircle className="h-8 w-8 text-red-600" />
+                  <Icon icon="lucide:x-circle" className="h-8 w-8 text-red-600" />
                 </div>
                 <div className="space-y-2 text-center">
                   <CardTitle className="bg-linear-to-r from-red-600 to-red-500 bg-clip-text text-3xl font-bold text-transparent">
@@ -210,7 +210,7 @@ export default function ResetPasswordPage() {
             <Card className="mx-auto w-full max-w-md border-0 bg-white/95 shadow-2xl backdrop-blur-xs">
               <CardHeader className="space-y-6 pb-8">
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-                  <CheckCircle className="h-8 w-8 text-green-600" />
+                  <Icon icon="lucide:check-circle" className="h-8 w-8 text-green-600" />
                 </div>
                 <div className="space-y-2 text-center">
                   <CardTitle className="bg-linear-to-r from-green-600 to-green-500 bg-clip-text text-3xl font-bold text-transparent">
@@ -226,7 +226,7 @@ export default function ResetPasswordPage() {
             <Card className="mx-auto w-full max-w-md border-0 bg-white/95 shadow-2xl backdrop-blur-xs">
               <CardHeader className="space-y-6 pb-8">
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-linear-to-br from-blue-100 to-purple-100">
-                  <KeyRound className="h-8 w-8 text-purple-600" />
+                  <Icon icon="lucide:key-round" className="h-8 w-8 text-purple-600" />
                 </div>
                 <div className="space-y-2 text-center">
                   <CardTitle className="bg-linear-to-r from-slate-900 to-slate-700 bg-clip-text text-3xl font-bold text-transparent">
@@ -260,13 +260,13 @@ export default function ResetPasswordPage() {
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                        className="absolute top-0 right-0 h-full px-3 hover:bg-transparent"
                         onClick={() => setShowPassword(!showPassword)}
                       >
                         {showPassword ? (
-                          <EyeOff className="h-4 w-4 text-slate-400" />
+                          <Icon icon="lucide:eye-off" className="h-4 w-4 text-slate-400" />
                         ) : (
-                          <Eye className="h-4 w-4 text-slate-400" />
+                          <Icon icon="lucide:eye" className="h-4 w-4 text-slate-400" />
                         )}
                       </Button>
                     </div>
@@ -293,13 +293,13 @@ export default function ResetPasswordPage() {
                         type="button"
                         variant="ghost"
                         size="sm"
-                        className="absolute right-0 top-0 h-full px-3 hover:bg-transparent"
+                        className="absolute top-0 right-0 h-full px-3 hover:bg-transparent"
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       >
                         {showConfirmPassword ? (
-                          <EyeOff className="h-4 w-4 text-slate-400" />
+                          <Icon icon="lucide:eye-off" className="h-4 w-4 text-slate-400" />
                         ) : (
-                          <Eye className="h-4 w-4 text-slate-400" />
+                          <Icon icon="lucide:eye" className="h-4 w-4 text-slate-400" />
                         )}
                       </Button>
                     </div>
@@ -322,7 +322,7 @@ export default function ResetPasswordPage() {
                   >
                     {isSubmitting ? (
                       <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <Icon icon="lucide:loader-2" className="mr-2 h-4 w-4 animate-spin" />
                         {t("submitting")}
                       </>
                     ) : (
@@ -336,7 +336,7 @@ export default function ResetPasswordPage() {
                       href="/auth"
                       className="inline-flex items-center font-semibold text-slate-900 transition-colors duration-200 hover:text-purple-700"
                     >
-                      <ArrowLeft className="mr-1 h-4 w-4" />
+                      <Icon icon="lucide:arrow-left" className="mr-1 h-4 w-4" />
                       {t("backToLogin")}
                     </Link>
                   </p>

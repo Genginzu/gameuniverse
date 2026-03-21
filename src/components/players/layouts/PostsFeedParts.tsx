@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { MessageSquareOff } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { PostCard } from "../PostCard";
 import type { Post } from "@/types/post";
 
@@ -100,7 +100,10 @@ export function PostsFeedEmpty() {
   return (
     <div className="flex flex-col items-center justify-center rounded-2xl bg-white/80 py-12 text-center shadow-md backdrop-blur-xl dark:bg-slate-800/60 dark:shadow-lg dark:shadow-black/20">
       <div className="mb-4 rounded-full bg-gray-100 p-4 dark:bg-slate-700/50">
-        <MessageSquareOff className="h-10 w-10 text-gray-400 dark:text-slate-400" />
+        <Icon
+          icon="lucide:message-square-off"
+          className="h-10 w-10 text-gray-400 dark:text-slate-400"
+        />
       </div>
       <p className="text-sm text-gray-500 dark:text-slate-400">{t("empty")}</p>
     </div>

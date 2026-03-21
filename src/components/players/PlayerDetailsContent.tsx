@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useAuth } from "@/hooks/useAuth";
 import { useFriends } from "@/hooks/useFriends";
 import { PlayerProfileBanner } from "./PlayerProfileBanner";
@@ -66,7 +66,7 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
             size="sm"
             className="rounded-full bg-black/20 text-gray-700 backdrop-blur-xs hover:bg-black/30 hover:text-gray-900 dark:bg-black/30 dark:text-white dark:hover:bg-black/50 dark:hover:text-white"
           >
-            <ArrowLeft className="mr-2 h-4 w-4" />
+            <Icon icon="lucide:arrow-left" className="mr-2 h-4 w-4" />
             {t("details.back")}
           </Button>
         </Link>

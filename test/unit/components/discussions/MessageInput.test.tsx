@@ -3,9 +3,9 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import MessageInput from "@/components/discussions/MessageInput";
 
-vi.mock("lucide-react", () => ({
-  Send: (props: React.SVGProps<SVGSVGElement>) =>
-    React.createElement("svg", { ...props, "data-testid": "send-icon" }),
+vi.mock("@iconify/react", () => ({
+  Icon: (props: Record<string, unknown>) =>
+    React.createElement("svg", { ...props, "data-testid": `icon-${props.icon}` }),
 }));
 
 describe("MessageInput", () => {

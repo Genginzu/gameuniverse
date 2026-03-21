@@ -1,7 +1,7 @@
 "use client";
 
 import { LazyImage } from "@/components/ui/lazy-image";
-import { Play, ChevronLeft, ChevronRight } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 /** Extract YouTube video_id from a watch URL, returns null if not parseable */
@@ -62,7 +62,7 @@ export function GameMediaGallery({ media, gameTitle }: GameMediaGalleryProps) {
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center">
-                  <Play className="h-16 w-16 text-slate-400" />
+                  <Icon icon="lucide:play" className="h-16 w-16 text-slate-400" />
                 </div>
               )}
 
@@ -75,9 +75,9 @@ export function GameMediaGallery({ media, gameTitle }: GameMediaGalleryProps) {
                         prev > 0 ? prev - 1 : media.videos.length - 1
                       )
                     }
-                    className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white transition-all hover:bg-black/70"
+                    className="absolute top-1/2 left-4 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white transition-all hover:bg-black/70"
                   >
-                    <ChevronLeft className="h-5 w-5" />
+                    <Icon icon="lucide:chevron-left" className="h-5 w-5" />
                   </button>
                   <button
                     onClick={() =>
@@ -85,9 +85,9 @@ export function GameMediaGallery({ media, gameTitle }: GameMediaGalleryProps) {
                         prev < media.videos.length - 1 ? prev + 1 : 0
                       )
                     }
-                    className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white transition-all hover:bg-black/70"
+                    className="absolute top-1/2 right-4 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white transition-all hover:bg-black/70"
                   >
-                    <ChevronRight className="h-5 w-5" />
+                    <Icon icon="lucide:chevron-right" className="h-5 w-5" />
                   </button>
                 </>
               )}
@@ -122,14 +122,14 @@ export function GameMediaGallery({ media, gameTitle }: GameMediaGalleryProps) {
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center bg-slate-800">
-                        <Play className="h-8 w-8 text-slate-400" />
+                        <Icon icon="lucide:play" className="h-8 w-8 text-slate-400" />
                       </div>
                     )}
 
                     {/* Overlay play button */}
                     <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity group-hover:opacity-100">
                       <div className="rounded-full bg-white/20 p-3 backdrop-blur-xs">
-                        <Play className="h-6 w-6 text-white" />
+                        <Icon icon="lucide:play" className="h-6 w-6 text-white" />
                       </div>
                     </div>
                   </div>
@@ -171,9 +171,9 @@ export function GameMediaGallery({ media, gameTitle }: GameMediaGalleryProps) {
                         prev > 0 ? prev - 1 : media.screenshots.length - 1
                       )
                     }
-                    className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white transition-all hover:bg-black/70"
+                    className="absolute top-1/2 left-4 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white transition-all hover:bg-black/70"
                   >
-                    <ChevronLeft className="h-5 w-5" />
+                    <Icon icon="lucide:chevron-left" className="h-5 w-5" />
                   </button>
                   <button
                     onClick={() =>
@@ -181,9 +181,9 @@ export function GameMediaGallery({ media, gameTitle }: GameMediaGalleryProps) {
                         prev < media.screenshots.length - 1 ? prev + 1 : 0
                       )
                     }
-                    className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white transition-all hover:bg-black/70"
+                    className="absolute top-1/2 right-4 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white transition-all hover:bg-black/70"
                   >
-                    <ChevronRight className="h-5 w-5" />
+                    <Icon icon="lucide:chevron-right" className="h-5 w-5" />
                   </button>
                 </>
               )}
@@ -246,9 +246,9 @@ export function GameMediaGallery({ media, gameTitle }: GameMediaGalleryProps) {
                         prev > 0 ? prev - 1 : media.artwork.length - 1
                       )
                     }
-                    className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white transition-all hover:bg-black/70"
+                    className="absolute top-1/2 left-4 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white transition-all hover:bg-black/70"
                   >
-                    <ChevronLeft className="h-5 w-5" />
+                    <Icon icon="lucide:chevron-left" className="h-5 w-5" />
                   </button>
                   <button
                     onClick={() =>
@@ -256,9 +256,9 @@ export function GameMediaGallery({ media, gameTitle }: GameMediaGalleryProps) {
                         prev < media.artwork.length - 1 ? prev + 1 : 0
                       )
                     }
-                    className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white transition-all hover:bg-black/70"
+                    className="absolute top-1/2 right-4 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white transition-all hover:bg-black/70"
                   >
-                    <ChevronRight className="h-5 w-5" />
+                    <Icon icon="lucide:chevron-right" className="h-5 w-5" />
                   </button>
                 </>
               )}

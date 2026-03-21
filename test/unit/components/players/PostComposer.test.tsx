@@ -91,7 +91,7 @@ describe("PostComposer", () => {
     fireEvent.change(textarea, { target: { value: "My new post" } });
     const button = screen.getByRole("button", { name: /publish/i });
     fireEvent.click(button);
-    expect(defaultProps.onSubmit).toHaveBeenCalledWith("My new post", undefined);
+    expect(defaultProps.onSubmit).toHaveBeenCalledWith("My new post", undefined, []);
   });
 
   // Req 7.6 — button disabled when isCreating=true

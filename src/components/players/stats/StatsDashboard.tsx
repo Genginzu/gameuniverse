@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
-import { Lock, AlertCircle } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { Card, CardContent } from "@/components/ui/card";
 import { StatsDashboardSkeleton } from "@/components/players/stats/StatsDashboardSkeleton";
 import { Button } from "@/components/ui/button";
@@ -78,7 +78,7 @@ export function StatsDashboard({
         {title}
         <Card className={CARD_STYLE}>
           <CardContent className="flex flex-col items-center gap-2 p-8 text-center">
-            <Lock className="h-8 w-8 text-gray-400 dark:text-slate-400" />
+            <Icon icon="lucide:lock" className="h-8 w-8 text-gray-400 dark:text-slate-400" />
             <p className="text-lg font-medium text-gray-700 dark:text-slate-300">
               {t("dashboard.private")}
             </p>
@@ -106,7 +106,7 @@ export function StatsDashboard({
         {title}
         <Card className={CARD_STYLE}>
           <CardContent className="flex flex-col items-center gap-3 p-8 text-center">
-            <AlertCircle className="h-8 w-8 text-red-400" />
+            <Icon icon="lucide:alert-circle" className="h-8 w-8 text-red-400" />
             <p className="text-sm text-gray-500 dark:text-slate-400">{t("dashboard.error")}</p>
             <Button variant="outline" size="sm" onClick={fetchStats}>
               {t("dashboard.retry")}

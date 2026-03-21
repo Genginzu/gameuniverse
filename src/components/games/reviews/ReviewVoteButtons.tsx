@@ -1,6 +1,6 @@
 "use client";
 
-import { ThumbsUp, ThumbsDown } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/useAuth";
 import { useReviewVote } from "@/hooks/useReviewVote";
@@ -76,7 +76,7 @@ function VoteButton({
   onClick: () => void;
 }) {
   const isHelpful = type === "helpful";
-  const Icon = isHelpful ? ThumbsUp : ThumbsDown;
+  const iconName = isHelpful ? "lucide:thumbs-up" : "lucide:thumbs-down";
 
   return (
     <button
@@ -88,14 +88,14 @@ function VoteButton({
       aria-pressed={isActive}
       className={cn(
         "inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-sm transition-colors",
-        "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800",
+        "focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800 focus-visible:outline-hidden",
         "disabled:cursor-not-allowed disabled:opacity-50",
         isActive && isHelpful && "bg-green-500/20 text-green-400",
         isActive && !isHelpful && "bg-red-500/20 text-red-400",
         !isActive && "text-slate-400 hover:bg-slate-700/50 hover:text-slate-300"
       )}
     >
-      <Icon className="h-4 w-4" />
+      <Icon icon={iconName} className="h-4 w-4" />
       <span>{count}</span>
     </button>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { CheckCircle } from "lucide-react";
+import { Icon } from "@iconify/react";
 import type { CompletionStats } from "@/types/dashboard-stats";
 import { StatsEmptyState } from "@/components/players/stats/StatsEmptyState";
 import { StatsSectionTitle } from "@/components/players/stats/StatsSectionTitle";
@@ -29,7 +29,7 @@ export function CompletionTracker({ completion }: CompletionTrackerProps) {
       <div>
         <StatsSectionTitle>{t("completion.title")}</StatsSectionTitle>
         <StatsEmptyState
-          icon={<CheckCircle className="h-8 w-8" />}
+          icon={<Icon icon="lucide:check-circle" className="h-8 w-8" />}
           message={t("completion.empty")}
         />
       </div>

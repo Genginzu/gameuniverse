@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Pencil } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -61,7 +61,7 @@ export function ReviewFormDialog({
               : undefined
           }
         >
-          <Pencil className="mr-2 h-4 w-4" />
+          <Icon icon="lucide:pencil" className="mr-2 h-4 w-4" />
           {isEdit ? t("editReview") : t("writeReview")}
         </Button>
       </DialogTrigger>

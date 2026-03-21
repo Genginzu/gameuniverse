@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, MessageSquare, Loader2 } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 
 import type { ConversationSummary } from "@/types/discussion";
@@ -39,7 +39,7 @@ export default function ConversationList({
           aria-label={t("newConversation")}
           data-testid="new-conversation-button"
         >
-          <Plus className="h-3.5 w-3.5" />
+          <Icon icon="lucide:plus" className="h-3.5 w-3.5" />
           {t("new")}
         </button>
       </div>
@@ -48,12 +48,12 @@ export default function ConversationList({
       <div className="flex-1 overflow-y-auto p-2">
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="h-6 w-6 animate-spin text-neon-violet" />
+            <Icon icon="lucide:loader-2" className="text-neon-violet h-6 w-6 animate-spin" />
           </div>
         ) : conversations.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-3 py-12 text-center">
             <div className="rounded-2xl bg-linear-to-br from-blue-500/20 via-purple-600/20 to-purple-700/20 p-4">
-              <MessageSquare className="h-8 w-8 text-neon-violet" />
+              <Icon icon="lucide:message-square" className="text-neon-violet h-8 w-8" />
             </div>
             <p className="text-sm text-slate-500 dark:text-slate-400">{t("noConversations")}</p>
           </div>

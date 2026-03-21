@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { FolderOpen } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CollectionCard } from "@/components/collections/CollectionCard";
 import type { CollectionSummary } from "@/types/collection";
@@ -70,7 +70,7 @@ function EmptyState() {
   return (
     <div className="glass-card flex flex-col items-center justify-center rounded-2xl py-12 text-center">
       <div className="mb-4 rounded-full bg-gray-100 p-4 dark:bg-slate-700/50">
-        <FolderOpen className="h-10 w-10 text-gray-400 dark:text-slate-400" />
+        <Icon icon="lucide:folder-open" className="h-10 w-10 text-gray-400 dark:text-slate-400" />
       </div>
       <p className="font-medium text-gray-500 dark:text-slate-400">{t("empty")}</p>
       <p className="mt-1 text-sm text-gray-400 dark:text-slate-500">{t("emptyDescription")}</p>

@@ -741,7 +741,7 @@
     "clearFilters": "Effacer les filtres",
     "clearAll": "Effacer tout",
     "genres": "Genres",
-    "available": "disponibles"
+    "available": "{count} disponibles"
   },
   "search": {
     "placeholder": "Rechercher un jeu...",
@@ -1072,6 +1072,7 @@
       "genres": "Genres",
       "languages": "Langues",
       "characters": "Personnages",
+      "characterRoles": "Rôles",
       "companies": "Entreprises",
       "platforms": "Plateformes",
       "ageClassifications": "Classifications d'âge",
@@ -1343,6 +1344,8 @@
         "generalInfo": "Informations générales",
         "images": "Images",
         "translations": "Traductions",
+        "roles": "Rôles",
+        "roleDescription": "Sélectionnez les rôles qui correspondent à ce personnage.",
         "games": "Jeux",
         "media": "Médias",
         "slug": "Slug",
@@ -1354,8 +1357,9 @@
         "backgroundImagePlaceholder": "https://example.com/background.jpg",
         "name": "Nom",
         "namePlaceholder": "Nom du personnage",
-        "role": "Rôle",
+        "role": "Rôles",
         "rolePlaceholder": "ex : Protagoniste, Antagoniste",
+        "noRolesAvailable": "Aucun rôle disponible. Créez-en dans la section admin des rôles.",
         "description": "Description",
         "descriptionPlaceholder": "Description du personnage...",
         "biography": "Biographie",
@@ -1560,6 +1564,63 @@
         "deleting": "Suppression...",
         "success": "Genre supprimé avec succès !",
         "errorGeneric": "Une erreur est survenue lors de la suppression du genre."
+      }
+    },
+    "characterRoles": {
+      "title": "Gestion des rôles",
+      "newRole": "Nouveau rôle",
+      "searchPlaceholder": "Rechercher un rôle par slug ou nom...",
+      "search": "Rechercher",
+      "totalRoles": "{count, plural, =0 {Aucun rôle} one {1 rôle} other {# rôles}}",
+      "noRoles": "Aucun rôle trouvé.",
+      "columns": {
+        "slug": "Slug",
+        "name": "Nom",
+        "characterCount": "Personnages",
+        "actions": "Actions"
+      },
+      "sortBy": "Trier par {field}",
+      "editRole": "Modifier {name}",
+      "deleteRole": "Supprimer {name}",
+      "page": "Page {current} sur {total}",
+      "previousPage": "Page précédente",
+      "nextPage": "Page suivante",
+      "characterCount": "{count, plural, =0 {Aucun personnage} one {1 personnage} other {# personnages}}",
+      "form": {
+        "slug": "Slug",
+        "slugPlaceholder": "ex. protagonist, antagonist",
+        "slugDescription": "Lettres minuscules, chiffres et tirets. Non modifiable après création.",
+        "name": "Nom",
+        "namePlaceholder": "Nom du rôle dans cette langue",
+        "description": "Description",
+        "descriptionPlaceholder": "Description du rôle dans cette langue (optionnel)",
+        "create": "Créer le rôle",
+        "save": "Enregistrer",
+        "backToList": "Retour aux rôles"
+      },
+      "createPage": {
+        "title": "Nouveau rôle",
+        "success": "Rôle créé avec succès !",
+        "errorDuplicate": "Un rôle avec ce slug existe déjà.",
+        "errorGeneric": "Une erreur est survenue lors de la création du rôle."
+      },
+      "editPage": {
+        "title": "Modifier le rôle",
+        "loading": "Chargement des données du rôle...",
+        "success": "Rôle mis à jour avec succès !",
+        "notFound": "Rôle introuvable.",
+        "errorGeneric": "Une erreur est survenue lors du chargement du rôle."
+      },
+      "deleteDialog": {
+        "title": "Supprimer le rôle",
+        "warning": "Êtes-vous sûr de vouloir supprimer « {name} » ?",
+        "irreversible": "Cette action est irréversible. Le rôle sera définitivement supprimé.",
+        "usageWarning": "{count, plural, one {Ce rôle est utilisé par 1 personnage.} other {Ce rôle est utilisé par # personnages.}}",
+        "confirm": "Supprimer",
+        "cancel": "Annuler",
+        "deleting": "Suppression...",
+        "success": "Rôle supprimé avec succès !",
+        "errorGeneric": "Une erreur est survenue lors de la suppression du rôle."
       }
     },
     "reviews": {
@@ -2187,5 +2248,11 @@
     "noResults": "Aucune icône trouvée.",
     "loading": "Recherche…",
     "typeToSearch": "Tapez pour chercher parmi 200 000+ icônes"
+  },
+  "filters": {
+    "filter": "Filtrer",
+    "clearAll": "Tout effacer",
+    "roles": "Rôles",
+    "available": "{count} disponibles"
   }
 }

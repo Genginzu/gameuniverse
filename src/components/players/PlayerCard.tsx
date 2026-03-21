@@ -4,7 +4,7 @@ import { LazyImage } from "@/components/ui/lazy-image";
 import { PlayerCardSocialLinks } from "./PlayerCardSocialLinks";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { User } from "lucide-react";
+import { Icon } from "@iconify/react";
 import type { PlayerSummary } from "@/types/player";
 
 interface PlayerCardProps {
@@ -53,13 +53,13 @@ export function PlayerCard({ player, locale = "fr", priority = false }: PlayerCa
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center">
-                  <User className="h-8 w-8 text-blue-300" />
+                  <Icon icon="lucide:user" className="h-8 w-8 text-blue-300" />
                 </div>
               )}
             </div>
             {/* Level badge */}
             {player.level > 0 && (
-              <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-bold text-white shadow-sm ring-2 ring-white dark:ring-gray-800">
+              <span className="absolute -right-1 -bottom-1 flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-bold text-white shadow-sm ring-2 ring-white dark:ring-gray-800">
                 {player.level}
               </span>
             )}
@@ -107,7 +107,7 @@ function PlayerCardStats({
       {stats.map((s) => (
         <div key={s.label} className="text-center">
           <p className="text-sm font-bold text-gray-900 dark:text-white">{s.value}</p>
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-gray-400">
+          <p className="text-[10px] font-semibold tracking-wider text-gray-400 uppercase">
             {s.label}
           </p>
         </div>

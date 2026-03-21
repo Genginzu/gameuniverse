@@ -49,11 +49,11 @@ export function RatingSystemsTable({
   };
 
   const renderSortIcon = (field: SortField) => {
-    if (currentSort?.field !== field) return <Icon icon="fa:sort" className="h-3 w-3 opacity-40"  />;
+    if (currentSort?.field !== field) return <Icon icon="fa:sort" className="h-3 w-3 opacity-40" />;
     return currentSort.order === "asc" ? (
-      <Icon icon="fa:sort-up" className="h-3 w-3"  />
+      <Icon icon="fa:sort-up" className="h-3 w-3" />
     ) : (
-      <Icon icon="fa:sort-down" className="h-3 w-3"  />
+      <Icon icon="fa:sort-down" className="h-3 w-3" />
     );
   };
 
@@ -67,7 +67,10 @@ export function RatingSystemsTable({
       {/* Barre de recherche */}
       <form onSubmit={handleSearchSubmit} className="flex gap-2">
         <div className="relative flex-1">
-          <Icon icon="fa:search" className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"  />
+          <Icon
+            icon="fa:search"
+            className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400"
+          />
           <Input
             type="text"
             placeholder="Rechercher par code ou nom…"
@@ -170,7 +173,7 @@ export function RatingSystemsTable({
                           className="inline-flex items-center gap-1 text-blue-600 hover:underline dark:text-blue-400"
                           onClick={(e) => e.stopPropagation()}
                         >
-                          <Icon icon="fa:external-link-alt" className="h-3 w-3"  />
+                          <Icon icon="lucide:external-link" className="h-3 w-3" />
                           Lien
                         </a>
                       ) : (
@@ -185,7 +188,7 @@ export function RatingSystemsTable({
                           onClick={() => onEdit(system.id)}
                           aria-label={`Modifier ${system.name}`}
                         >
-                          <Icon icon="fa:edit" className="h-4 w-4"  />
+                          <Icon icon="fa:edit" className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="ghost"
@@ -194,7 +197,7 @@ export function RatingSystemsTable({
                           aria-label={`Supprimer ${system.name}`}
                           className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                         >
-                          <Icon icon="fa:trash" className="h-4 w-4"  />
+                          <Icon icon="fa:trash" className="h-4 w-4" />
                         </Button>
                       </div>
                     </td>
@@ -218,7 +221,7 @@ export function RatingSystemsTable({
                   onClick={() => onPageChange(pagination.currentPage - 1)}
                   aria-label="Page précédente"
                 >
-                  <Icon icon="fa:chevron-left" className="h-3 w-3"  />
+                  <Icon icon="fa:chevron-left" className="h-3 w-3" />
                 </Button>
                 <Button
                   variant="outline"
@@ -227,7 +230,7 @@ export function RatingSystemsTable({
                   onClick={() => onPageChange(pagination.currentPage + 1)}
                   aria-label="Page suivante"
                 >
-                  <Icon icon="fa:chevron-right" className="h-3 w-3"  />
+                  <Icon icon="fa:chevron-right" className="h-3 w-3" />
                 </Button>
               </div>
             </div>

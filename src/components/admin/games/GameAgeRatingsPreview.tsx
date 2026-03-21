@@ -1,7 +1,7 @@
 "use client";
 
 import { type UseFormReturn } from "react-hook-form";
-import { Shield, AlertTriangle } from "lucide-react";
+import { Icon } from "@iconify/react";
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
 import type { Rating, ContentDescriptor } from "@/types/admin-games";
 import { buildGameColors } from "@/lib/utils/game-utils";
@@ -33,7 +33,7 @@ export function GameAgeRatingsPreview({
         className="flex flex-col items-center justify-center rounded-xl border border-gray-200/60 py-8 dark:border-gray-700/40"
         style={{ backgroundColor: colors.backgroundColor }}
       >
-        <Shield className="mb-2 h-8 w-8 text-slate-400 opacity-50" />
+        <Icon icon="lucide:shield" className="mb-2 h-8 w-8 text-slate-400 opacity-50" />
         <p className="text-xs text-slate-400">Aucune classification</p>
       </div>
     );
@@ -180,7 +180,7 @@ function AgeRatingPreviewCard({
       {rating.descriptors.length > 0 && (
         <div className="mt-3 border-t border-slate-700 pt-3">
           <div className="mb-1.5 flex items-center gap-1.5">
-            <AlertTriangle className="h-3 w-3 text-amber-400" />
+            <Icon icon="lucide:alert-triangle" className="h-3 w-3 text-amber-400" />
             <span className="text-[10px] font-medium text-slate-300">Avertissements</span>
           </div>
           <div className="flex flex-wrap gap-1">

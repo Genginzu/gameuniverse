@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { ArrowLeft } from "lucide-react";
+import { Icon } from "@iconify/react";
 import Link from "next/link";
 import type { YearInReview } from "@/types/player-stats";
 import { YearInReviewCards } from "./YearInReviewCards";
@@ -34,7 +34,7 @@ export function YearInReviewContent({
       href={`/${locale}/players/${playerId}`}
       className="inline-flex items-center gap-1.5 text-sm text-slate-400 transition-colors hover:text-white"
     >
-      <ArrowLeft className="h-4 w-4" />
+      <Icon icon="lucide:arrow-left" className="h-4 w-4" />
       {t("backToProfile")}
     </Link>
   );
@@ -48,8 +48,8 @@ export function YearInReviewContent({
           {t("title", { year: yearReview.year })}
         </h1>
         <div className="mt-12 flex flex-col items-center justify-center text-center">
-          <p className="text-lg font-semibold text-muted-foreground">{noDataMessage}</p>
-          <p className="mt-2 text-sm text-muted-foreground">{noDataDescription}</p>
+          <p className="text-muted-foreground text-lg font-semibold">{noDataMessage}</p>
+          <p className="text-muted-foreground mt-2 text-sm">{noDataDescription}</p>
         </div>
       </div>
     );
@@ -58,7 +58,7 @@ export function YearInReviewContent({
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
       {backLink}
-      <h1 className="neon-text mb-8 mt-6 text-3xl font-bold text-white">
+      <h1 className="neon-text mt-6 mb-8 text-3xl font-bold text-white">
         {t("title", { year: yearReview.year })}
       </h1>
       <YearInReviewCards yearReview={yearReview} locale={locale} t={t} />

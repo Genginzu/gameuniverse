@@ -2,7 +2,7 @@
 
 import { useState, useRef, useCallback } from "react";
 import { useTranslations } from "next-intl";
-import { Send, Loader2, Image as ImageIcon, User, X } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { LazyImage } from "@/components/ui/lazy-image";
 import { useToast } from "@/hooks/use-toast";
 import { usePostImageUpload } from "@/hooks/usePostImageUpload";
@@ -135,7 +135,7 @@ export function PostComposer({
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center">
-              <User className="h-5 w-5 text-blue-300" />
+              <Icon icon="lucide:user" className="h-5 w-5 text-blue-300" />
             </div>
           )}
         </div>
@@ -179,7 +179,6 @@ export function PostComposer({
           {/* Image preview */}
           {imageUpload.previewUrl && (
             <div className="relative mt-2 overflow-hidden rounded-xl">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={imageUpload.previewUrl}
                 alt=""
@@ -188,7 +187,7 @@ export function PostComposer({
               {imageUpload.uploading && (
                 <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-black/40">
                   <div className="flex items-center gap-2 text-sm text-white">
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <Icon icon="lucide:loader-2" className="h-4 w-4 animate-spin" />
                     {imageUpload.progress}%
                   </div>
                 </div>
@@ -199,7 +198,7 @@ export function PostComposer({
                 className="absolute top-2 right-2 rounded-full bg-black/50 p-1 text-white transition-colors hover:bg-black/70"
                 aria-label={t("imageRemove")}
               >
-                <X className="h-4 w-4" />
+                <Icon icon="lucide:x" className="h-4 w-4" />
               </button>
             </div>
           )}
@@ -228,7 +227,7 @@ export function PostComposer({
               className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border-2 border-violet-300 bg-white/60 px-3 py-2 text-xs text-violet-500 transition-all duration-200 hover:bg-violet-50 disabled:opacity-50 dark:border-violet-500/50 dark:bg-slate-700/40 dark:text-violet-300 dark:hover:bg-slate-700/60"
               aria-label={t("imageUploadLabel")}
             >
-              <ImageIcon className="h-4 w-4" />
+              <Icon icon="lucide:image" className="h-4 w-4" />
               {t("imageUploadButton")}
             </button>
 
@@ -241,9 +240,9 @@ export function PostComposer({
               className="inline-flex shrink-0 items-center gap-2 rounded-full bg-linear-to-br from-violet-500 to-blue-500 px-5 py-2 text-sm font-medium text-white shadow-lg shadow-violet-500/20 transition-all duration-300 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {isCreating ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Icon icon="lucide:loader-2" className="h-4 w-4 animate-spin" />
               ) : (
-                <Send className="h-4 w-4" />
+                <Icon icon="lucide:send" className="h-4 w-4" />
               )}
               {t("publish")}
             </button>

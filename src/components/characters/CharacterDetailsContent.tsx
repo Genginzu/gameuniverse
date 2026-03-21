@@ -5,21 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { LazyImage } from "@/components/ui/lazy-image";
 import Link from "next/link";
-import {
-  ArrowLeft,
-  ChevronLeft,
-  ChevronRight,
-  Play,
-  Eye,
-  Gamepad2,
-  BookOpen,
-  Users,
-  Star,
-  Calendar,
-  Swords,
-  UserCircle,
-  MessageCircle,
-} from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import { CharacterDetails } from "@/types/character";
 import { useState } from "react";
@@ -141,7 +127,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
         )}
 
         {/* Floating navigation buttons - matching game detail page */}
-        <div className="absolute left-0 right-0 top-0 z-20 px-4 py-4">
+        <div className="absolute top-0 right-0 left-0 z-20 px-4 py-4">
           <div className="container mx-auto flex items-center justify-between">
             <Link href={`/${locale}/characters`}>
               <Button
@@ -149,7 +135,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                 size="sm"
                 className="bg-slate-900/60 text-slate-300 backdrop-blur-xs hover:bg-slate-900/80 hover:text-white"
               >
-                <ArrowLeft className="mr-2 h-4 w-4" />
+                <Icon icon="lucide:arrow-left" className="mr-2 h-4 w-4" />
                 {t("common.back")}
               </Button>
             </Link>
@@ -159,7 +145,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
           </div>
         </div>
 
-        <div className="container relative z-10 mx-auto px-4 pt-16">
+        <div className="relative z-10 container mx-auto px-4 pt-16">
           <div className="flex flex-col items-center justify-center lg:flex-row lg:items-center lg:justify-center">
             {/* Character Image - Centered */}
             <div className="relative shrink-0">
@@ -186,7 +172,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
             <div className="mt-2 max-w-lg text-center lg:mt-0 lg:flex-1 lg:pl-6 lg:text-left">
               {/* Character name */}
               <div className="mb-3 flex items-center justify-center gap-3 lg:justify-start">
-                <h1 className="neon-text text-5xl font-bold leading-tight text-white drop-shadow-lg [text-shadow:0_2px_8px_rgba(0,0,0,0.5)] lg:text-6xl">
+                <h1 className="neon-text text-5xl leading-tight font-bold text-white drop-shadow-lg [text-shadow:0_2px_8px_rgba(0,0,0,0.5)] lg:text-6xl">
                   {character.name}
                 </h1>
               </div>
@@ -216,7 +202,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                     : "text-slate-400 hover:bg-slate-700/50 hover:text-white"
                 }`}
               >
-                <BookOpen className="mr-2 inline h-4 w-4" />
+                <Icon icon="lucide:book-open" className="mr-2 inline h-4 w-4" />
                 {t("characters.tabs.description")}
               </button>
               <button
@@ -227,7 +213,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                     : "text-slate-400 hover:bg-slate-700/50 hover:text-white"
                 }`}
               >
-                <Gamepad2 className="mr-2 inline h-4 w-4" />
+                <Icon icon="lucide:gamepad-2" className="mr-2 inline h-4 w-4" />
                 {t("characters.tabs.games")} ({character.games.length})
               </button>
               <button
@@ -238,7 +224,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                     : "text-slate-400 hover:bg-slate-700/50 hover:text-white"
                 }`}
               >
-                <Eye className="mr-2 inline h-4 w-4" />
+                <Icon icon="lucide:eye" className="mr-2 inline h-4 w-4" />
                 {t("characters.tabs.media")}
               </button>
               <button
@@ -249,7 +235,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                     : "text-slate-400 hover:bg-slate-700/50 hover:text-white"
                 }`}
               >
-                <MessageCircle className="mr-2 inline h-4 w-4" />
+                <Icon icon="lucide:message-circle" className="mr-2 inline h-4 w-4" />
                 {t("characters.tabs.comments")} ({commentCount})
               </button>
             </div>
@@ -283,9 +269,9 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                                 prev > 0 ? prev - 1 : character.media.screenshots.length - 1
                               )
                             }
-                            className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/60 p-2.5 text-white backdrop-blur-xs transition-all hover:bg-black/80"
+                            className="absolute top-1/2 left-4 -translate-y-1/2 rounded-full bg-black/60 p-2.5 text-white backdrop-blur-xs transition-all hover:bg-black/80"
                           >
-                            <ChevronLeft className="h-5 w-5" />
+                            <Icon icon="lucide:chevron-left" className="h-5 w-5" />
                           </button>
                           <button
                             onClick={() =>
@@ -293,9 +279,9 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                                 prev < character.media.screenshots.length - 1 ? prev + 1 : 0
                               )
                             }
-                            className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/60 p-2.5 text-white backdrop-blur-xs transition-all hover:bg-black/80"
+                            className="absolute top-1/2 right-4 -translate-y-1/2 rounded-full bg-black/60 p-2.5 text-white backdrop-blur-xs transition-all hover:bg-black/80"
                           >
-                            <ChevronRight className="h-5 w-5" />
+                            <Icon icon="lucide:chevron-right" className="h-5 w-5" />
                           </button>
                         </>
                       )}
@@ -351,9 +337,9 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                                 prev > 0 ? prev - 1 : character.media.artwork.length - 1
                               )
                             }
-                            className="absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/60 p-2.5 text-white backdrop-blur-xs transition-all hover:bg-black/80"
+                            className="absolute top-1/2 left-4 -translate-y-1/2 rounded-full bg-black/60 p-2.5 text-white backdrop-blur-xs transition-all hover:bg-black/80"
                           >
-                            <ChevronLeft className="h-5 w-5" />
+                            <Icon icon="lucide:chevron-left" className="h-5 w-5" />
                           </button>
                           <button
                             onClick={() =>
@@ -361,9 +347,9 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                                 prev < character.media.artwork.length - 1 ? prev + 1 : 0
                               )
                             }
-                            className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/60 p-2.5 text-white backdrop-blur-xs transition-all hover:bg-black/80"
+                            className="absolute top-1/2 right-4 -translate-y-1/2 rounded-full bg-black/60 p-2.5 text-white backdrop-blur-xs transition-all hover:bg-black/80"
                           >
-                            <ChevronRight className="h-5 w-5" />
+                            <Icon icon="lucide:chevron-right" className="h-5 w-5" />
                           </button>
                         </>
                       )}
@@ -412,7 +398,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                         />
                       ) : (
                         <div className="flex h-full w-full items-center justify-center">
-                          <Play className="h-16 w-16 text-slate-400" />
+                          <Icon icon="lucide:play" className="h-16 w-16 text-slate-400" />
                         </div>
                       )}
                     </div>
@@ -439,11 +425,11 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                               />
                             ) : (
                               <div className="flex h-full w-full items-center justify-center bg-slate-800">
-                                <Play className="h-8 w-8 text-slate-400" />
+                                <Icon icon="lucide:play" className="h-8 w-8 text-slate-400" />
                               </div>
                             )}
                             <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition-opacity group-hover:opacity-100">
-                              <Play className="h-8 w-8 text-white" />
+                              <Icon icon="lucide:play" className="h-8 w-8 text-white" />
                             </div>
                           </div>
                           <div className="bg-slate-800/80 p-2">
@@ -460,7 +446,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                   character.media.artwork.length === 0 &&
                   character.media.videos.length === 0 && (
                     <div className="py-16 text-center">
-                      <Eye className="mx-auto mb-4 h-12 w-12 text-slate-500" />
+                      <Icon icon="lucide:eye" className="mx-auto mb-4 h-12 w-12 text-slate-500" />
                       <p className="text-slate-400">{t("characters.media.noMedia")}</p>
                     </div>
                   )}
@@ -500,11 +486,11 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                             />
                           ) : (
                             <div className="flex h-full w-full items-center justify-center bg-slate-800">
-                              <Gamepad2 className="h-12 w-12 text-slate-500" />
+                              <Icon icon="lucide:gamepad-2" className="h-12 w-12 text-slate-500" />
                             </div>
                           )}
                           {game.isPrimary && (
-                            <div className="absolute left-2 top-2">
+                            <div className="absolute top-2 left-2">
                               <Badge
                                 className="text-xs font-bold text-white shadow-lg"
                                 style={{ backgroundColor: colors.primary }}
@@ -514,11 +500,11 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                             </div>
                           )}
                           <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent" />
-                          <div className="absolute bottom-0 left-0 right-0 p-4">
+                          <div className="absolute right-0 bottom-0 left-0 p-4">
                             <h4 className="text-lg font-bold text-white">{game.title}</h4>
                             {game.releaseYear && (
                               <p className="flex items-center gap-1 text-sm text-slate-300">
-                                <Calendar className="h-3 w-3" />
+                                <Icon icon="lucide:calendar" className="h-3 w-3" />
                                 {game.releaseYear}
                               </p>
                             )}
@@ -529,7 +515,10 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                   </div>
                 ) : (
                   <div className="py-16 text-center">
-                    <Gamepad2 className="mx-auto mb-4 h-12 w-12 text-slate-500" />
+                    <Icon
+                      icon="lucide:gamepad-2"
+                      className="mx-auto mb-4 h-12 w-12 text-slate-500"
+                    />
                     <p className="text-slate-400">{t("characters.details.noGames")}</p>
                   </div>
                 )}
@@ -546,7 +535,11 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                     <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-xs">
                       <CardContent className="p-6">
                         <div className="mb-2 flex items-center gap-2 text-slate-400">
-                          <Star className="h-4 w-4" style={{ color: colors.accent }} />
+                          <Icon
+                            icon="lucide:star"
+                            className="h-4 w-4"
+                            style={{ color: colors.accent }}
+                          />
                           <span className="text-sm font-medium">
                             {t("characters.details.role")}
                           </span>
@@ -560,7 +553,11 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                   <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-xs">
                     <CardContent className="p-6">
                       <div className="mb-2 flex items-center gap-2 text-slate-400">
-                        <Gamepad2 className="h-4 w-4" style={{ color: colors.accent }} />
+                        <Icon
+                          icon="lucide:gamepad-2"
+                          className="h-4 w-4"
+                          style={{ color: colors.accent }}
+                        />
                         <span className="text-sm font-medium">
                           {t("characters.details.primaryGame")}
                         </span>
@@ -576,7 +573,11 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                   <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-xs">
                     <CardContent className="p-6">
                       <div className="mb-2 flex items-center gap-2 text-slate-400">
-                        <Users className="h-4 w-4" style={{ color: colors.accent }} />
+                        <Icon
+                          icon="lucide:users"
+                          className="h-4 w-4"
+                          style={{ color: colors.accent }}
+                        />
                         <span className="text-sm font-medium">
                           {t("characters.details.appearances")}
                         </span>
@@ -599,10 +600,14 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                   <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-xs">
                     <CardContent className="p-6">
                       <h4 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
-                        <Swords className="h-5 w-5" style={{ color: colors.accent }} />
+                        <Icon
+                          icon="lucide:swords"
+                          className="h-5 w-5"
+                          style={{ color: colors.accent }}
+                        />
                         {t("characters.details.weaponsEquipment")}
                       </h4>
-                      <p className="whitespace-pre-wrap leading-relaxed text-slate-300">
+                      <p className="leading-relaxed whitespace-pre-wrap text-slate-300">
                         {character.weapons}
                       </p>
                     </CardContent>
@@ -614,11 +619,15 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                   <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-xs">
                     <CardContent className="p-6">
                       <h4 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
-                        <BookOpen className="h-5 w-5" style={{ color: colors.accent }} />
+                        <Icon
+                          icon="lucide:book-open"
+                          className="h-5 w-5"
+                          style={{ color: colors.accent }}
+                        />
                         {t("characters.details.biography")}
                       </h4>
                       <div className="prose prose-invert max-w-none">
-                        <p className="whitespace-pre-wrap leading-relaxed text-slate-300">
+                        <p className="leading-relaxed whitespace-pre-wrap text-slate-300">
                           {character.biography}
                         </p>
                       </div>
@@ -631,7 +640,11 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                   <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-xs">
                     <CardContent className="p-6">
                       <h4 className="mb-6 flex items-center gap-2 text-lg font-semibold text-white">
-                        <UserCircle className="h-5 w-5" style={{ color: colors.accent }} />
+                        <Icon
+                          icon="lucide:user-circle"
+                          className="h-5 w-5"
+                          style={{ color: colors.accent }}
+                        />
                         {t("characters.details.relationships")}
                       </h4>
                       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -654,7 +667,10 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                                 />
                               ) : (
                                 <div className="flex h-full w-full items-center justify-center bg-slate-700">
-                                  <UserCircle className="h-8 w-8 text-slate-500" />
+                                  <Icon
+                                    icon="lucide:user-circle"
+                                    className="h-8 w-8 text-slate-500"
+                                  />
                                 </div>
                               )}
                             </div>
@@ -715,7 +731,10 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
                   !character.weapons &&
                   (!character.relationships || character.relationships.length === 0) && (
                     <div className="py-16 text-center">
-                      <BookOpen className="mx-auto mb-4 h-12 w-12 text-slate-500" />
+                      <Icon
+                        icon="lucide:book-open"
+                        className="mx-auto mb-4 h-12 w-12 text-slate-500"
+                      />
                       <p className="text-slate-400">{t("characters.details.noDescription")}</p>
                     </div>
                   )}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Users, MessageCircle, Heart, FolderOpen } from "lucide-react";
+import { Icon } from "@iconify/react";
 import type { SocialStatsData } from "@/types/dashboard-stats";
 import { formatLocalizedNumber } from "@/lib/utils/statsFormatters";
 import { StatsEmptyState } from "@/components/players/stats/StatsEmptyState";
@@ -49,32 +49,35 @@ export function SocialStats({ social, locale }: SocialStatsProps) {
     return (
       <section>
         <StatsSectionTitle>{t("social.title")}</StatsSectionTitle>
-        <StatsEmptyState icon={<Users className="h-8 w-8" />} message={t("social.empty")} />
+        <StatsEmptyState
+          icon={<Icon icon="lucide:users" className="h-8 w-8" />}
+          message={t("social.empty")}
+        />
       </section>
     );
   }
 
   const cards = [
     {
-      icon: <Users className="h-5 w-5" />,
+      icon: <Icon icon="lucide:users" className="h-5 w-5" />,
       label: t("social.friends"),
       value: formatLocalizedNumber(social.friendsCount, locale),
       iconColorClass: "bg-neon-violet/20 text-neon-violet",
     },
     {
-      icon: <MessageCircle className="h-5 w-5" />,
+      icon: <Icon icon="lucide:message-circle" className="h-5 w-5" />,
       label: t("social.comments"),
       value: formatLocalizedNumber(social.commentsCount, locale),
       iconColorClass: "bg-neon-cyan/20 text-neon-cyan",
     },
     {
-      icon: <Heart className="h-5 w-5" />,
+      icon: <Icon icon="lucide:heart" className="h-5 w-5" />,
       label: t("social.favorites"),
       value: formatLocalizedNumber(social.favoritesCount, locale),
       iconColorClass: "bg-neon-violet/20 text-neon-violet",
     },
     {
-      icon: <FolderOpen className="h-5 w-5" />,
+      icon: <Icon icon="lucide:folder-open" className="h-5 w-5" />,
       label: t("social.collections"),
       value: formatLocalizedNumber(social.collectionsCount, locale),
       iconColorClass: "bg-neon-cyan/20 text-neon-cyan",

@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { ArrowLeft, Mail, Loader2, CheckCircle } from "lucide-react";
+import { Icon } from "@iconify/react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -83,7 +83,7 @@ export default function ForgotPasswordPage() {
             <Card className="mx-auto w-full max-w-md border-0 bg-white/95 shadow-2xl backdrop-blur-xs">
               <CardHeader className="space-y-6 pb-8">
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-                  <CheckCircle className="h-8 w-8 text-green-600" />
+                  <Icon icon="lucide:check-circle" className="h-8 w-8 text-green-600" />
                 </div>
                 <div className="space-y-2 text-center">
                   <CardTitle className="bg-linear-to-r from-green-600 to-green-500 bg-clip-text text-3xl font-bold text-transparent">
@@ -126,7 +126,7 @@ export default function ForgotPasswordPage() {
                     className="h-12 w-full rounded-xl border-slate-200 font-semibold"
                   >
                     <Link href="/auth">
-                      <ArrowLeft className="mr-2 h-4 w-4" />
+                      <Icon icon="lucide:arrow-left" className="mr-2 h-4 w-4" />
                       Retour à la connexion
                     </Link>
                   </Button>
@@ -137,7 +137,7 @@ export default function ForgotPasswordPage() {
             <Card className="mx-auto w-full max-w-md border-0 bg-white/95 shadow-2xl backdrop-blur-xs">
               <CardHeader className="space-y-6 pb-8">
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-linear-to-br from-blue-100 to-purple-100">
-                  <Mail className="h-8 w-8 text-purple-600" />
+                  <Icon icon="lucide:mail" className="h-8 w-8 text-purple-600" />
                 </div>
                 <div className="space-y-2 text-center">
                   <CardTitle className="bg-linear-to-r from-slate-900 to-slate-700 bg-clip-text text-3xl font-bold text-transparent">
@@ -176,12 +176,12 @@ export default function ForgotPasswordPage() {
                   >
                     {isLoading ? (
                       <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <Icon icon="lucide:loader-2" className="mr-2 h-4 w-4 animate-spin" />
                         Envoi en cours...
                       </>
                     ) : (
                       <>
-                        <Mail className="mr-2 h-4 w-4" />
+                        <Icon icon="lucide:mail" className="mr-2 h-4 w-4" />
                         Envoyer le lien
                       </>
                     )}

@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { useDiscussions } from "@/hooks/useDiscussions";
 import { useAuth } from "@/hooks/useAuth";
 
-import { User } from "lucide-react";
+import { Icon } from "@iconify/react";
 
 import { LazyImage } from "@/components/ui/lazy-image";
 
@@ -95,7 +95,7 @@ export default function DiscussionsPage() {
       {/* Split layout */}
       <div className="flex min-h-0 flex-1 gap-4">
         {/* Left panel — conversation list */}
-        <div className="hidden w-1/3 min-w-[300px] max-w-[380px] md:flex">
+        <div className="hidden w-1/3 max-w-[380px] min-w-[300px] md:flex">
           <ConversationList
             conversations={conversations}
             selectedId={selectedConversationId}
@@ -136,7 +136,7 @@ export default function DiscussionsPage() {
                         showSkeleton
                       />
                     ) : (
-                      <User className="h-4 w-4 text-neon-violet" />
+                      <Icon icon="lucide:user" className="text-neon-violet h-4 w-4" />
                     )}
                   </div>
                   <span className="text-sm font-semibold text-slate-900 dark:text-white">

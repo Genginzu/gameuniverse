@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Heart } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useCharacterFavorite } from "@/hooks/useCharacterFavorite";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslations } from "next-intl";
@@ -36,7 +36,8 @@ export function FavoriteCharacterButton({ characterSlug }: FavoriteCharacterButt
           : t("characters.favorites.addToFavorites")
       }
     >
-      <Heart
+      <Icon
+        icon="lucide:heart"
         className={`h-4 w-4 transition-transform ${isToggling ? "scale-110" : ""}`}
         fill={isFavorite ? "currentColor" : "none"}
       />

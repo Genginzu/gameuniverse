@@ -9,12 +9,10 @@ vi.mock("next-intl", () => ({
   useTranslations: () => (key: string) => key,
 }));
 
-// Mock lucide-react icons used by MessageThread
-vi.mock("lucide-react", () => ({
-  ChevronUp: (props: React.SVGProps<SVGSVGElement>) =>
-    React.createElement("svg", { ...props, "data-testid": "chevron-up-icon" }),
-  Loader2: (props: React.SVGProps<SVGSVGElement>) =>
-    React.createElement("svg", { ...props, "data-testid": "loader-icon" }),
+// Mock @iconify/react icons used by MessageThread
+vi.mock("@iconify/react", () => ({
+  Icon: (props: Record<string, unknown>) =>
+    React.createElement("svg", { ...props, "data-testid": `icon-${props.icon}` }),
 }));
 
 // Track props passed to each MessageBubble for assertion
@@ -112,7 +110,7 @@ describe("MessageThread", () => {
   it("shows loading spinner when isLoading and no messages", () => {
     render(<MessageThread {...defaultProps} isLoading={true} messages={[]} />);
     // The loader icon appears in the empty loading state
-    const loaders = screen.getAllByTestId("loader-icon");
+    const loaders = screen.getAllByTestId("icon-lucide:loader-2");
     expect(loaders.length).toBeGreaterThanOrEqual(1);
   });
 

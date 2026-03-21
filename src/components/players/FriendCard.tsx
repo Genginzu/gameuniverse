@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { User, UserMinus } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import { LazyImage } from "@/components/ui/lazy-image";
 import type { FriendSummary } from "@/types/friendship";
@@ -64,7 +64,7 @@ export function FriendCard({ friend, locale, onRemove }: FriendCardProps) {
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center">
-              <User className="h-5 w-5 text-blue-300" />
+              <Icon icon="lucide:user" className="h-5 w-5 text-blue-300" />
             </div>
           )}
         </div>
@@ -105,7 +105,7 @@ export function FriendCard({ friend, locale, onRemove }: FriendCardProps) {
               t("confirmRemoveConfirm")
             )
           ) : (
-            <UserMinus className="h-4 w-4" />
+            <Icon icon="lucide:user-minus" className="h-4 w-4" />
           )}
         </button>
       )}

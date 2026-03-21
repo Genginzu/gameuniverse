@@ -62,22 +62,19 @@ describe("PostContentRenderer", () => {
     expect(screen.getByText("Hello world, just text")).toBeInTheDocument();
   });
 
-  // Req 2.3, 2.7, 9.4 — renders tags as styled badges with aria-label
-  it("renders tags as styled badges with aria-label", () => {
+  // Req 2.3, 2.7 — valid tags are stripped from inline content (rendered as pills by PostCard)
+  it("does not render valid tags inline (they are displayed as pills by PostCard)", () => {
     render(<PostContentRenderer {...defaultProps} content="Check out #rpg" tags={["rpg"]} />);
-    // The mock t("tagAriaLabel", { tag: "rpg" }) returns "tagAriaLabel" (key has no {tag} placeholder)
-    const tag = screen.getByRole("button");
-    expect(tag).toBeInTheDocument();
-    expect(tag).toHaveTextContent("#rpg");
-    expect(tag).toHaveAttribute("aria-label");
+    expect(screen.queryByRole("button")).not.toBeInTheDocument();
+    expect(screen.queryByText("#rpg")).not.toBeInTheDocument();
+    expect(screen.getByText("Check out")).toBeInTheDocument();
   });
 
-  // Req 9.3 — tags have role="button" and tabIndex=0 (keyboard navigable)
-  it("tags have role='button' and tabIndex=0 for keyboard navigation", () => {
-    render(<PostContentRenderer {...defaultProps} content="Play #speedrun" tags={["speedrun"]} />);
-    const tag = screen.getByRole("button");
-    expect(tag).toHaveAttribute("role", "button");
-    expect(tag).toHaveAttribute("tabindex", "0");
+  // Unrecognized hashtags (not in tags array) are rendered as plain text
+  it("renders unrecognized hashtags as plain text", () => {
+    render(<PostContentRenderer {...defaultProps} content="Play #speedrun" tags={[]} />);
+    expect(screen.queryByRole("button")).not.toBeInTheDocument();
+    expect(screen.getByText("#speedrun")).toBeInTheDocument();
   });
 
   // Req 3.4 — renders valid mentions as links to player profile
@@ -116,9 +113,8 @@ describe("PostContentRenderer", () => {
         mentions={mentions}
       />
     );
-    // Tag rendered as button
-    const tagButton = screen.getByRole("button");
-    expect(tagButton).toHaveTextContent("#rpg");
+    // Valid tag is stripped from inline content (rendered as pill by PostCard)
+    expect(screen.queryByRole("button")).not.toBeInTheDocument();
     // Valid mention rendered as link
     const mentionLink = screen.getByRole("link");
     expect(mentionLink).toHaveTextContent("@Charlie");
@@ -128,10 +124,11 @@ describe("PostContentRenderer", () => {
     expect(screen.queryAllByRole("link")).toHaveLength(1);
   });
 
-  // Req 2.2 — tags are rendered in lowercase
-  it("renders tags in lowercase", () => {
+  // Req 2.2 — valid tags are stripped from inline rendering
+  it("strips valid tags from inline content regardless of case", () => {
     render(<PostContentRenderer {...defaultProps} content="Check #RPG" tags={["rpg"]} />);
-    const tag = screen.getByRole("button");
-    expect(tag).toHaveTextContent("#rpg");
+    expect(screen.queryByRole("button")).not.toBeInTheDocument();
+    expect(screen.queryByText("#RPG")).not.toBeInTheDocument();
+    expect(screen.queryByText("#rpg")).not.toBeInTheDocument();
   });
 });

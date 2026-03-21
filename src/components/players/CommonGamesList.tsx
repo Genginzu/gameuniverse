@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { LazyImage } from "@/components/ui/lazy-image";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Gamepad2 } from "lucide-react";
+import { Icon } from "@iconify/react";
 import type { CommonGame } from "@/types/player";
 
 interface CommonGamesListProps {
@@ -57,7 +57,7 @@ export function CommonGamesList({ games, locale, pagination, onPageChange }: Com
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center bg-slate-700">
-                  <Gamepad2 className="h-12 w-12 text-slate-500" />
+                  <Icon icon="lucide:gamepad-2" className="h-12 w-12 text-slate-500" />
                 </div>
               )}
 
@@ -65,7 +65,7 @@ export function CommonGamesList({ games, locale, pagination, onPageChange }: Com
               <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent" />
 
               {/* Game info */}
-              <div className="absolute bottom-0 left-0 right-0 p-3">
+              <div className="absolute right-0 bottom-0 left-0 p-3">
                 <h4 className="line-clamp-2 text-sm font-semibold text-white">{game.title}</h4>
                 {game.genres.length > 0 && (
                   <div className="mt-1 flex flex-wrap gap-1">
@@ -95,7 +95,7 @@ export function CommonGamesList({ games, locale, pagination, onPageChange }: Com
             onClick={() => onPageChange(currentPage - 1)}
             className="flex items-center gap-1 rounded-lg border border-slate-700/50 bg-slate-800/50 px-3 py-2 text-sm text-slate-300 transition-colors hover:border-slate-600 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <Icon icon="lucide:chevron-left" className="h-4 w-4" />
             {t("pagination.previous")}
           </button>
 
@@ -110,7 +110,7 @@ export function CommonGamesList({ games, locale, pagination, onPageChange }: Com
             className="flex items-center gap-1 rounded-lg border border-slate-700/50 bg-slate-800/50 px-3 py-2 text-sm text-slate-300 transition-colors hover:border-slate-600 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
           >
             {t("pagination.next")}
-            <ChevronRight className="h-4 w-4" />
+            <Icon icon="lucide:chevron-right" className="h-4 w-4" />
           </button>
         </div>
       )}

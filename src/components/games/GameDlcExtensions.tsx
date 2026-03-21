@@ -1,6 +1,6 @@
 "use client";
 
-import { Package, ExternalLink } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useTranslations, useLocale } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
@@ -111,7 +111,7 @@ function DlcCard({ item, accentColor, locale, viewGameLabel }: DlcCardProps) {
               className="flex h-24 w-16 items-center justify-center rounded-lg"
               style={{ backgroundColor: `${accentColor}20` }}
             >
-              <Package className="h-5 w-5" style={{ color: accentColor }} />
+              <Icon icon="lucide:package" className="h-5 w-5" style={{ color: accentColor }} />
             </div>
           )}
         </div>
@@ -130,7 +130,7 @@ function DlcCard({ item, accentColor, locale, viewGameLabel }: DlcCardProps) {
               className="mt-auto inline-flex items-center gap-1 pt-2 text-xs font-medium transition-colors hover:text-white"
               style={{ color: accentColor }}
             >
-              <ExternalLink className="h-3 w-3" />
+              <Icon icon="lucide:external-link" className="h-3 w-3" />
               {viewGameLabel}
             </Link>
           )}

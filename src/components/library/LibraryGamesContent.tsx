@@ -6,7 +6,7 @@ import { EntityCard } from "@/components/shared/EntityCard";
 import { gameCardConfig } from "@/components/shared/entityCardPresets";
 import { GameSearchBar } from "@/components/games/GameSearchBar";
 import { GameFilters } from "@/components/games/GameFilters";
-import { GameFilterButton } from "@/components/games/GameFilterButton";
+import { FilterButton } from "@/components/shared/FilterButton";
 import { Pagination } from "@/components/shared/Pagination";
 import { GridSkeleton } from "@/components/shared/GridSkeleton";
 import { gameSkeletonConfig } from "@/components/shared/EntitySkeleton";
@@ -277,7 +277,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
                 <div className="rounded-lg bg-blue-100 p-2 dark:bg-blue-900/30">
                   <Icon
                     icon="fa:gamepad"
-                    className="h-4 w-4 text-blue-600 dark:text-blue-400 sm:h-5 sm:w-5"
+                    className="h-4 w-4 text-blue-600 sm:h-5 sm:w-5 dark:text-blue-400"
                   />
                 </div>
                 <div className="ml-3">
@@ -288,7 +288,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">
+              <div className="text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">
                 {stats.totalGames}
               </div>
               <p className="text-xs text-gray-500 dark:text-gray-400">{t("stats.inLibrary")}</p>
@@ -301,7 +301,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
                 <div className="rounded-lg bg-green-100 p-2 dark:bg-green-900/30">
                   <Icon
                     icon="fa:gamepad"
-                    className="h-4 w-4 text-green-600 dark:text-green-400 sm:h-5 sm:w-5"
+                    className="h-4 w-4 text-green-600 sm:h-5 sm:w-5 dark:text-green-400"
                   />
                 </div>
                 <div className="ml-3">
@@ -312,7 +312,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">
+              <div className="text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">
                 {stats.completedGames}
               </div>
               <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -327,7 +327,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
                 <div className="rounded-lg bg-purple-100 p-2 dark:bg-purple-900/30">
                   <Icon
                     icon="fa:clock"
-                    className="h-4 w-4 text-purple-600 dark:text-purple-400 sm:h-5 sm:w-5"
+                    className="h-4 w-4 text-purple-600 sm:h-5 sm:w-5 dark:text-purple-400"
                   />
                 </div>
                 <div className="ml-3">
@@ -338,7 +338,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">
+              <div className="text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">
                 {stats.totalPlayTime}h
               </div>
               <p className="text-xs text-gray-500 dark:text-gray-400">{t("stats.totalPlayed")}</p>
@@ -351,7 +351,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
                 <div className="rounded-lg bg-yellow-100 p-2 dark:bg-yellow-900/30">
                   <Icon
                     icon="fa:star"
-                    className="h-4 w-4 text-yellow-600 dark:text-yellow-400 sm:h-5 sm:w-5"
+                    className="h-4 w-4 text-yellow-600 sm:h-5 sm:w-5 dark:text-yellow-400"
                   />
                 </div>
                 <div className="ml-3">
@@ -362,7 +362,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
               </div>
             </CardHeader>
             <CardContent>
-              <div className="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">
+              <div className="text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">
                 {stats.averageRating ? `${stats.averageRating}/5` : "—"}
               </div>
               <p className="text-xs text-gray-500 dark:text-gray-400">{t("stats.yourRatings")}</p>
@@ -377,7 +377,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
               <GameSearchBar onSearch={handleSearch} initialValue={searchQuery} />
             </div>
             <div className="shrink-0">
-              <GameFilterButton
+              <FilterButton
                 hasFilters={selectedGenres.length > 0 || selectedPublishers.length > 0}
                 filterCount={selectedGenres.length}
                 onClick={() => setShowFilters(!showFilters)}
@@ -410,15 +410,15 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
             {games.length === 0 ? (
               <Card className="bg-white dark:bg-gray-800">
                 <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-                  <div className="mb-4 rounded-full bg-gray-100 p-4 dark:bg-gray-700 sm:p-6">
+                  <div className="mb-4 rounded-full bg-gray-100 p-4 sm:p-6 dark:bg-gray-700">
                     <Icon icon="fa:gamepad" className="h-8 w-8 text-gray-400 sm:h-12 sm:w-12" />
                   </div>
-                  <h3 className="mb-2 text-base font-medium text-gray-900 dark:text-white sm:text-lg">
+                  <h3 className="mb-2 text-base font-medium text-gray-900 sm:text-lg dark:text-white">
                     {searchQuery || selectedGenres.length > 0 || selectedPublishers.length > 0
                       ? t("empty.noGamesFound")
                       : t("empty.title")}
                   </h3>
-                  <p className="mb-6 max-w-md text-sm text-gray-500 dark:text-gray-400 sm:text-base">
+                  <p className="mb-6 max-w-md text-sm text-gray-500 sm:text-base dark:text-gray-400">
                     {searchQuery || selectedGenres.length > 0 || selectedPublishers.length > 0
                       ? t("empty.modifySearch")
                       : t("empty.description")}
@@ -439,7 +439,7 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
               </Card>
             ) : (
               <div className="space-y-8">
-                <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
+                <div className="xs:grid-cols-2 grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
                   {games.map((game, index) => (
                     <EntityCard
                       key={game.id}

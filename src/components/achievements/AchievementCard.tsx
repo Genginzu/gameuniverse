@@ -2,39 +2,23 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import type { PlayerAchievementWithDetails } from "@/types/achievement";
-import {
-  BookOpen,
-  Library,
-  BookMarked,
-  Clock,
-  Timer,
-  Hourglass,
-  Star,
-  MessageSquare,
-  PenLine,
-  UserPlus,
-  Users,
-  FolderPlus,
-  Layers,
-  Grid3X3,
-  Trophy,
-} from "lucide-react";
+import { Icon } from "@iconify/react";
 
-const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
-  BookOpen,
-  Library,
-  BookMarked,
-  Clock,
-  Timer,
-  Hourglass,
-  Star,
-  MessageSquare,
-  PenLine,
-  UserPlus,
-  Users,
-  FolderPlus,
-  Layers,
-  Grid3X3,
+const ICON_MAP: Record<string, string> = {
+  BookOpen: "lucide:book-open",
+  Library: "lucide:library",
+  BookMarked: "lucide:book-marked",
+  Clock: "lucide:clock",
+  Timer: "lucide:timer",
+  Hourglass: "lucide:hourglass",
+  Star: "lucide:star",
+  MessageSquare: "lucide:message-square",
+  PenLine: "lucide:pen-line",
+  UserPlus: "lucide:user-plus",
+  Users: "lucide:users",
+  FolderPlus: "lucide:folder-plus",
+  Layers: "lucide:layers",
+  Grid3X3: "lucide:grid-3x3",
 };
 
 const TIER_STYLES = {
@@ -72,7 +56,7 @@ export function AchievementCard({ achievement }: AchievementCardProps) {
   const locale = useLocale();
 
   const isUnlocked = achievement.unlockedAt !== null;
-  const IconComponent = ICON_MAP[achievement.icon] ?? Trophy;
+  const iconName = ICON_MAP[achievement.icon] ?? "lucide:trophy";
   const tierStyle = TIER_STYLES[achievement.tier];
 
   return (
@@ -90,7 +74,7 @@ export function AchievementCard({ achievement }: AchievementCardProps) {
               : "bg-gray-200 text-gray-400 dark:bg-slate-700 dark:text-slate-500"
           }`}
         >
-          <IconComponent className="h-5 w-5" />
+          <Icon icon={iconName} className="h-5 w-5" />
         </div>
 
         {/* Content */}

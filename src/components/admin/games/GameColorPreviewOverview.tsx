@@ -1,6 +1,6 @@
 "use client";
 
-import { Calendar, Users, Globe, Info, Star } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import { getMetascoreColor, type GameColors } from "@/lib/utils/game-utils";
 
@@ -39,7 +39,7 @@ export function GameColorPreviewOverview({
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
         {/* Developers */}
         <OverviewCard
-          icon={<Users className="h-3.5 w-3.5" />}
+          icon={<Icon icon="lucide:users" className="h-3.5 w-3.5" />}
           label={t("game.developer")}
           colors={colors}
         >
@@ -58,7 +58,7 @@ export function GameColorPreviewOverview({
 
         {/* Publishers */}
         <OverviewCard
-          icon={<Globe className="h-3.5 w-3.5" />}
+          icon={<Icon icon="lucide:globe" className="h-3.5 w-3.5" />}
           label={t("game.publisher")}
           colors={colors}
         >
@@ -77,7 +77,7 @@ export function GameColorPreviewOverview({
 
         {/* Release date */}
         <OverviewCard
-          icon={<Calendar className="h-3.5 w-3.5" />}
+          icon={<Icon icon="lucide:calendar" className="h-3.5 w-3.5" />}
           label={t("game.releaseDate")}
           colors={colors}
         >
@@ -88,7 +88,11 @@ export function GameColorPreviewOverview({
 
         {/* Metascore */}
         {metascore !== null && metascore !== undefined && (
-          <OverviewCard icon={<Star className="h-3.5 w-3.5" />} label="Metascore" colors={colors}>
+          <OverviewCard
+            icon={<Icon icon="lucide:star" className="h-3.5 w-3.5" />}
+            label="Metascore"
+            colors={colors}
+          >
             <div className="flex items-center gap-1.5">
               <span
                 className={`${getMetascoreColor(metascore)} rounded-md px-2 py-0.5 text-xs font-bold text-white`}
@@ -113,7 +117,7 @@ export function GameColorPreviewOverview({
         {/* Genres */}
         {genres.length > 0 && (
           <OverviewCard
-            icon={<Info className="h-3.5 w-3.5" />}
+            icon={<Icon icon="lucide:info" className="h-3.5 w-3.5" />}
             label={t("game.genres")}
             colors={colors}
           >

@@ -1,6 +1,6 @@
 "use client";
 
-import { User, Loader2 } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { LazyImage } from "@/components/ui/lazy-image";
 import type { MentionSuggestion } from "@/hooks/useMentionAutocomplete";
 
@@ -28,7 +28,10 @@ export function MentionSuggestions({
     >
       {isLoading && suggestions.length === 0 && (
         <div className="flex items-center justify-center py-3">
-          <Loader2 className="h-4 w-4 animate-spin text-gray-400 dark:text-slate-500" />
+          <Icon
+            icon="lucide:loader-2"
+            className="h-4 w-4 animate-spin text-gray-400 dark:text-slate-500"
+          />
         </div>
       )}
 
@@ -60,7 +63,7 @@ export function MentionSuggestions({
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center">
-                <User className="h-3.5 w-3.5 text-blue-300" />
+                <Icon icon="lucide:user" className="h-3.5 w-3.5 text-blue-300" />
               </div>
             )}
           </div>

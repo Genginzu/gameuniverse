@@ -1,16 +1,16 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import { Upload, Trash2, ImageIcon, Camera } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 
 import { CropEditor } from "@/components/shared/CropEditor";
 import { useImageUpload } from "@/hooks/useImageUpload";
-import { OUTPUT_DIMENSIONS, type UploadContext } from "@/types/upload";
+import { OUTPUT_DIMENSIONS, type ProfileUploadContext } from "@/types/upload";
 
 interface ImageUploaderProps {
-  context: UploadContext;
+  context: ProfileUploadContext;
   currentImageUrl: string | null;
   aspectRatio: "1:1" | "16:5";
   maxSizeMB?: number;
@@ -149,12 +149,15 @@ export function ImageUploader({
                 />
                 {/* Hover overlay — camera icon to signal clickability */}
                 <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-black/0 transition-all duration-300 group-hover:bg-black/30">
-                  <Camera className="h-6 w-6 text-white opacity-0 drop-shadow-lg transition-all duration-300 group-hover:opacity-100" />
+                  <Icon
+                    icon="lucide:camera"
+                    className="h-6 w-6 text-white opacity-0 drop-shadow-lg transition-all duration-300 group-hover:opacity-100"
+                  />
                 </div>
               </>
             ) : (
               <div className="flex flex-col items-center gap-1 text-gray-400 dark:text-gray-500">
-                <ImageIcon className="h-8 w-8" />
+                <Icon icon="lucide:image" className="h-8 w-8" />
                 <span className="text-xs">{t("dragOrClick")}</span>
               </div>
             )}
@@ -162,7 +165,10 @@ export function ImageUploader({
             {/* Drag overlay */}
             {isDragging && !uploading && (
               <div className="absolute inset-0 flex items-center justify-center bg-violet-500/20 backdrop-blur-xs">
-                <Upload className="h-8 w-8 text-violet-600 dark:text-violet-400" />
+                <Icon
+                  icon="lucide:upload"
+                  className="h-8 w-8 text-violet-600 dark:text-violet-400"
+                />
               </div>
             )}
           </div>
@@ -175,7 +181,7 @@ export function ImageUploader({
                 onClick={handleDelete}
                 className="inline-flex items-center gap-1.5 rounded-xl bg-white/40 px-3 py-1.5 text-xs font-medium text-red-600 transition-all duration-300 hover:bg-red-50/60 dark:bg-slate-800/50 dark:text-red-400 dark:hover:bg-red-900/20"
               >
-                <Trash2 className="h-3.5 w-3.5" />
+                <Icon icon="lucide:trash-2" className="h-3.5 w-3.5" />
                 {t("delete")}
               </button>
             </div>

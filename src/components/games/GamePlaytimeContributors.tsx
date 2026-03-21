@@ -1,6 +1,6 @@
 "use client";
 
-import { User, Zap, Gamepad2, Trophy } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import type { PlayerPlaytimeContributor } from "@/types/game";
 import Image from "next/image";
@@ -45,7 +45,7 @@ export function GamePlaytimeContributors({
             />
           ) : (
             <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-700 ring-2 ring-slate-600">
-              <User className="h-4 w-4 text-slate-400" />
+              <Icon icon="lucide:user" className="h-4 w-4 text-slate-400" />
             </div>
           )}
 
@@ -61,7 +61,7 @@ export function GamePlaytimeContributors({
                 className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm"
                 style={{ backgroundColor: `${accentColor}20` }}
               >
-                <Zap className="h-3.5 w-3.5" style={{ color: accentColor }} />
+                <Icon icon="lucide:zap" className="h-3.5 w-3.5" style={{ color: accentColor }} />
                 <span className="font-bold text-white">
                   {formatTime(contributor.playtime.hastily)}
                 </span>
@@ -72,7 +72,11 @@ export function GamePlaytimeContributors({
                 className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm"
                 style={{ backgroundColor: `${accentColor}20` }}
               >
-                <Gamepad2 className="h-3.5 w-3.5" style={{ color: accentColor }} />
+                <Icon
+                  icon="lucide:gamepad-2"
+                  className="h-3.5 w-3.5"
+                  style={{ color: accentColor }}
+                />
                 <span className="font-bold text-white">
                   {formatTime(contributor.playtime.normally)}
                 </span>
@@ -83,7 +87,7 @@ export function GamePlaytimeContributors({
                 className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm"
                 style={{ backgroundColor: `${accentColor}20` }}
               >
-                <Trophy className="h-3.5 w-3.5" style={{ color: accentColor }} />
+                <Icon icon="lucide:trophy" className="h-3.5 w-3.5" style={{ color: accentColor }} />
                 <span className="font-bold text-white">
                   {formatTime(contributor.playtime.completely)}
                 </span>

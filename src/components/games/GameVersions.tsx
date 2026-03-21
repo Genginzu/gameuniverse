@@ -1,6 +1,6 @@
 "use client";
 
-import { Package } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { GameVersion } from "@/types/game";
 import Image from "next/image";
 
@@ -58,7 +58,7 @@ export function GameVersions({ versions, accentColor }: GameVersionsProps) {
                   className="flex h-24 w-16 items-center justify-center rounded-lg"
                   style={{ backgroundColor: `${accentColor}20` }}
                 >
-                  <Package className="h-5 w-5" style={{ color: accentColor }} />
+                  <Icon icon="lucide:package" className="h-5 w-5" style={{ color: accentColor }} />
                 </div>
               )}
             </div>

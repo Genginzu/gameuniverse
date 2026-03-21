@@ -93,12 +93,12 @@ describe("LazyImage loading state", () => {
 });
 
 describe("LazyImage no image state", () => {
-  it("should render placeholder when imageSrc is undefined", () => {
+  it("should render placeholder when no src and no fallback", () => {
     mockState.isLoading = false;
     mockState.hasError = true;
     mockState.imageSrc = undefined;
 
-    const html = renderToString(<LazyImage src="" alt="Test" />);
+    const html = renderToString(<LazyImage src="" alt="Test" fallbackSrc="" />);
     expect(html).toContain("<svg");
     expect(html).toContain("bg-gray-100");
   });

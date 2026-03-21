@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Trophy, Zap, TrendingUp } from "lucide-react";
+import { Icon } from "@iconify/react";
 import type { PlayerAchievementWithDetails, PlayerXpStats } from "@/types/achievement";
 
 interface AchievementsHeaderProps {
@@ -21,17 +21,17 @@ export function AchievementsHeader({ achievements, xpStats }: AchievementsHeader
 
   const stats = [
     {
-      icon: Trophy,
+      icon: "lucide:trophy",
       label: t("stats.unlocked", { count: unlockedCount, total: totalCount }),
       value: null,
     },
     {
-      icon: Zap,
+      icon: "lucide:zap",
       label: t("stats.xpTotal"),
       value: xpTotal.toLocaleString(),
     },
     {
-      icon: TrendingUp,
+      icon: "lucide:trending-up",
       label: t("stats.level", { level }),
       value: t("stats.progress", { percent: Math.round(progressPercent) }),
     },
@@ -48,7 +48,7 @@ export function AchievementsHeader({ achievements, xpStats }: AchievementsHeader
             className="glass-card flex items-center gap-3 rounded-xl p-4 transition-all duration-300"
           >
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-blue-500 via-purple-600 to-purple-700 text-white">
-              <stat.icon className="h-5 w-5" />
+              <Icon icon={stat.icon} className="h-5 w-5" />
             </div>
             <div className="min-w-0">
               <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">

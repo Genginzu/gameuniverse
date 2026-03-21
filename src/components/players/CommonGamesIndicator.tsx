@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Gamepad2 } from "lucide-react";
+import { Icon } from "@iconify/react";
 
 interface CommonGamesIndicatorProps {
   count: number;
@@ -32,7 +32,7 @@ export function CommonGamesIndicator({ count, isLoading, onClick }: CommonGamesI
   if (count === 0) {
     return (
       <div className="flex items-center gap-3 rounded-xl border border-slate-700/50 bg-slate-800/50 px-4 py-3 text-slate-400">
-        <Gamepad2 className="h-5 w-5" />
+        <Icon icon="lucide:gamepad-2" className="h-5 w-5" />
         <span className="text-sm font-medium">{t("noCommonGames")}</span>
       </div>
     );
@@ -45,7 +45,7 @@ export function CommonGamesIndicator({ count, isLoading, onClick }: CommonGamesI
       onClick={onClick}
       className="flex items-center gap-3 rounded-xl border border-indigo-500/30 bg-indigo-500/10 px-4 py-3 text-indigo-300 transition-colors hover:border-indigo-500/50 hover:bg-indigo-500/20"
     >
-      <Gamepad2 className="h-5 w-5" />
+      <Icon icon="lucide:gamepad-2" className="h-5 w-5" />
       <span className="text-sm font-medium">{t("gamesInCommon", { count })}</span>
     </button>
   );

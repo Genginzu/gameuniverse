@@ -1,6 +1,6 @@
 "use client";
 
-import { TrendingDown, TrendingUp, BarChart3 } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { computePriceIndicators } from "@/lib/services/priceHistoryService";
@@ -23,19 +23,19 @@ export function PriceHistoryStatsDisplay({ stats, currentPrice }: PriceHistorySt
     {
       label: "Prix minimum",
       value: stats.min_price,
-      icon: TrendingDown,
+      icon: "lucide:trending-down",
       iconColor: "text-green-500",
     },
     {
       label: "Prix maximum",
       value: stats.max_price,
-      icon: TrendingUp,
+      icon: "lucide:trending-up",
       iconColor: "text-red-500",
     },
     {
       label: "Prix moyen",
       value: stats.avg_price,
-      icon: BarChart3,
+      icon: "lucide:bar-chart-3",
       iconColor: "text-blue-500",
     },
   ];
@@ -51,7 +51,7 @@ export function PriceHistoryStatsDisplay({ stats, currentPrice }: PriceHistorySt
           >
             <CardContent className="flex items-center gap-3 p-4">
               <div className={`rounded-md bg-white/10 p-2 ${card.iconColor}`}>
-                <CardIcon className="h-5 w-5" />
+                <Icon icon={CardIcon} className="h-5 w-5" />
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm text-slate-400">{card.label}</p>

@@ -1,27 +1,18 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import {
-  Star,
-  MessageCircle,
-  Library,
-  Clock,
-  Heart,
-  FolderOpen,
-  Users,
-  LayoutGrid,
-} from "lucide-react";
+import { Icon } from "@iconify/react";
 import type { ActivityFilter } from "@/hooks/usePlayerActivity";
 
-const FILTER_OPTIONS: { value: ActivityFilter; icon: React.ElementType }[] = [
-  { value: "all", icon: LayoutGrid },
-  { value: "review", icon: Star },
-  { value: "comment", icon: MessageCircle },
-  { value: "library", icon: Library },
-  { value: "playtime", icon: Clock },
-  { value: "favorite", icon: Heart },
-  { value: "collection", icon: FolderOpen },
-  { value: "friendship", icon: Users },
+const FILTER_OPTIONS: { value: ActivityFilter; icon: string }[] = [
+  { value: "all", icon: "lucide:layout-grid" },
+  { value: "review", icon: "lucide:star" },
+  { value: "comment", icon: "lucide:message-circle" },
+  { value: "library", icon: "lucide:library" },
+  { value: "playtime", icon: "lucide:clock" },
+  { value: "favorite", icon: "lucide:heart" },
+  { value: "collection", icon: "lucide:folder-open" },
+  { value: "friendship", icon: "lucide:users" },
 ];
 
 interface ActivityFiltersProps {
@@ -34,7 +25,7 @@ export function ActivityFilters({ activeFilter, onFilterChange }: ActivityFilter
 
   return (
     <div className="mb-6 flex flex-wrap gap-2" role="group" aria-label={t("label")}>
-      {FILTER_OPTIONS.map(({ value, icon: IconComp }) => {
+      {FILTER_OPTIONS.map(({ value, icon }) => {
         const isActive = activeFilter === value;
         return (
           <button
@@ -48,7 +39,7 @@ export function ActivityFilters({ activeFilter, onFilterChange }: ActivityFilter
             }`}
             aria-pressed={isActive}
           >
-            <IconComp className="h-4 w-4" />
+            <Icon icon={icon} className="h-4 w-4" />
             {t(value)}
           </button>
         );

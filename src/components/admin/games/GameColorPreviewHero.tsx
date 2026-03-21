@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { Users, Calendar, Globe } from "lucide-react";
 import type { GameColors } from "@/lib/utils/game-utils";
 import { Icon } from "@iconify/react";
 
@@ -131,19 +130,31 @@ export function GameColorPreviewHero({
           >
             {developers.map((name) => (
               <span key={`dev-${name}`} className="flex items-center gap-1.5">
-                <Users className="h-3.5 w-3.5" style={{ color: colors.accent }} />
+                <Icon
+                  icon="lucide:users"
+                  className="h-3.5 w-3.5"
+                  style={{ color: colors.accent }}
+                />
                 {name}
               </span>
             ))}
             {publishers.map((name) => (
               <span key={`pub-${name}`} className="flex items-center gap-1.5">
-                <Globe className="h-3.5 w-3.5" style={{ color: colors.accent }} />
+                <Icon
+                  icon="lucide:globe"
+                  className="h-3.5 w-3.5"
+                  style={{ color: colors.accent }}
+                />
                 {name}
               </span>
             ))}
             {formattedDate && (
               <span className="flex items-center gap-1.5">
-                <Calendar className="h-3.5 w-3.5" style={{ color: colors.accent }} />
+                <Icon
+                  icon="lucide:calendar"
+                  className="h-3.5 w-3.5"
+                  style={{ color: colors.accent }}
+                />
                 {formattedDate}
               </span>
             )}

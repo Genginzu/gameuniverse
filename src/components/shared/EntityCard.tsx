@@ -7,7 +7,7 @@ import { useCharacterFavorite } from "@/hooks/useCharacterFavorite";
 import { useLibraryStatus } from "@/components/providers/LibraryStatusProvider";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslations } from "next-intl";
-import { useState, useCallback } from "react";
+import { useState, useCallback, memo } from "react";
 import Link from "next/link";
 
 import type { EntityCardProps } from "@/types/entity-card";
@@ -57,8 +57,9 @@ export function getMetascoreColor(score?: number): string {
   return "bg-red-500";
 }
 
-// Generic EntityCard component
-export function EntityCard<T extends object>({
+// Generic EntityCard component — mémoïsé pour éviter les re-renders
+// quand les props (entity, config, locale, priority) n'ont pas changé
+function EntityCardInner<T extends object>({
   entity,
   config,
   locale = "fr",
@@ -332,5 +333,8 @@ export function EntityCard<T extends object>({
     </div>
   );
 }
+
+// Memo wrapper preserving generic type signature
+export const EntityCard = memo(EntityCardInner) as typeof EntityCardInner;
 
 export default EntityCard;

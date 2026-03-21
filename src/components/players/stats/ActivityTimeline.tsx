@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Calendar } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import type { MonthlyActivity } from "@/types/dashboard-stats";
 import { StatsEmptyState } from "@/components/players/stats/StatsEmptyState";
@@ -45,7 +45,7 @@ export function ActivityTimeline({ timeline }: ActivityTimelineProps) {
       <div>
         <StatsSectionTitle>{t("activityTimeline.title")}</StatsSectionTitle>
         <StatsEmptyState
-          icon={<Calendar className="h-8 w-8" />}
+          icon={<Icon icon="lucide:calendar" className="h-8 w-8" />}
           message={t("activityTimeline.empty")}
         />
       </div>

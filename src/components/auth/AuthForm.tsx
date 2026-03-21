@@ -10,7 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Spinner } from "@/components/ui/spinner";
 import { useAuth } from "@/hooks/useAuth";
 import { AuthMode } from "@/types/auth";
-import { Mail, CheckCircle } from "lucide-react";
+import { Icon } from "@iconify/react";
 
 // Fonction pour traduire les erreurs Supabase
 function translateSupabaseError(message: string, t: (key: string) => string): string {
@@ -101,12 +101,12 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
         <CardHeader className="space-y-6 pb-4">
           <div className="flex justify-center">
             <div className="rounded-full bg-green-100 p-4">
-              <Mail className="h-12 w-12 text-green-600" />
+              <Icon icon="lucide:mail" className="h-12 w-12 text-green-600" />
             </div>
           </div>
           <div className="space-y-2 text-center">
             <div className="flex items-center justify-center gap-2">
-              <CheckCircle className="h-5 w-5 text-green-600" />
+              <Icon icon="lucide:check-circle" className="h-5 w-5 text-green-600" />
               <CardTitle className="bg-linear-to-r from-slate-900 to-slate-700 bg-clip-text text-2xl font-bold text-transparent">
                 {t("signup.emailSentTitle")}
               </CardTitle>

@@ -1,6 +1,6 @@
 "use client";
 
-import { ThumbsUp, ThumbsDown, Gamepad2, Calendar } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
@@ -35,7 +35,7 @@ function ReviewPoints({
   if (points.length === 0) return null;
 
   const isPositive = type === "positive";
-  const Icon = isPositive ? ThumbsUp : ThumbsDown;
+  const iconName = isPositive ? "lucide:thumbs-up" : "lucide:thumbs-down";
   const colorClass = isPositive
     ? "text-green-500 dark:text-green-400"
     : "text-red-500 dark:text-red-400";
@@ -43,7 +43,7 @@ function ReviewPoints({
   return (
     <div className="space-y-1.5">
       <div className={cn("flex items-center gap-1.5 text-sm font-medium", colorClass)}>
-        <Icon className="h-3.5 w-3.5" />
+        <Icon icon={iconName} className="h-3.5 w-3.5" />
         <span>{label}</span>
       </div>
       <ul className="space-y-1">
@@ -88,7 +88,7 @@ export function PlayerReviewCard({ review, locale }: PlayerReviewCardProps) {
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center">
-                <Gamepad2 className="h-5 w-5 text-slate-400" />
+                <Icon icon="lucide:gamepad-2" className="h-5 w-5 text-slate-400" />
               </div>
             )}
           </div>
@@ -99,12 +99,12 @@ export function PlayerReviewCard({ review, locale }: PlayerReviewCardProps) {
           <div>
             <Link
               href={`/${locale}/games/${review.gameSlug}`}
-              className="text-sm font-semibold text-gray-900 transition-colors hover:text-neon-violet dark:text-white dark:hover:text-neon-cyan"
+              className="hover:text-neon-violet dark:hover:text-neon-cyan text-sm font-semibold text-gray-900 transition-colors dark:text-white"
             >
               {review.gameName}
             </Link>
             <div className="mt-1 flex items-center gap-1.5 text-xs text-gray-500 dark:text-slate-400">
-              <Calendar className="h-3 w-3" />
+              <Icon icon="lucide:calendar" className="h-3 w-3" />
               <time dateTime={review.createdAt}>{formattedDate}</time>
             </div>
           </div>
@@ -123,7 +123,7 @@ export function PlayerReviewCard({ review, locale }: PlayerReviewCardProps) {
 
       {/* Positive / negative points */}
       {(review.positivePoints.length > 0 || review.negativePoints.length > 0) && (
-        <div className="grid gap-4 border-t border-white/20 pt-4 dark:border-slate-700/50 sm:grid-cols-2">
+        <div className="grid gap-4 border-t border-white/20 pt-4 sm:grid-cols-2 dark:border-slate-700/50">
           <ReviewPoints
             points={review.positivePoints}
             type="positive"

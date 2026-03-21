@@ -6,7 +6,7 @@ import { EntityCard, type EntityCardConfig } from "@/components/shared/EntityCar
 import { GridSkeleton } from "@/components/shared/GridSkeleton";
 import { characterSkeletonConfig } from "@/components/shared/EntitySkeleton";
 import { Button } from "@/components/ui/button";
-import { Heart } from "lucide-react";
+import { Icon } from "@iconify/react";
 import Link from "next/link";
 import React from "react";
 import type { CharacterFavoriteSummary } from "@/types/character";
@@ -76,7 +76,7 @@ export function FavoriteCharactersContent() {
       <div className="p-4 sm:p-6">
         <div className="flex flex-col items-center justify-center rounded-2xl bg-white py-12 text-center shadow-xs dark:bg-gray-800">
           <div className="mb-4 rounded-full bg-red-100 p-4 dark:bg-red-900/30">
-            <Heart className="h-8 w-8 text-red-400" />
+            <Icon icon="lucide:heart" className="h-8 w-8 text-red-400" />
           </div>
           <h3 className="mb-2 text-lg font-medium text-gray-900 dark:text-white">
             {t("errorTitle")}
@@ -93,7 +93,7 @@ export function FavoriteCharactersContent() {
       <div className="p-4 sm:p-6">
         <div className="flex flex-col items-center justify-center rounded-2xl bg-white py-16 text-center shadow-xs dark:bg-gray-800">
           <div className="mb-6 rounded-full bg-gray-100 p-6 dark:bg-gray-700">
-            <Heart className="h-12 w-12 text-gray-400" />
+            <Icon icon="lucide:heart" className="h-12 w-12 text-gray-400" />
           </div>
           <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
             {t("emptyTitle")}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { User, Check, X, Loader2 } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import { LazyImage } from "@/components/ui/lazy-image";
 import { getAriaLabel } from "@/lib/utils/friendUtils";
@@ -38,7 +38,7 @@ export function FriendRequestCard({
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
-            <User className="h-5 w-5 text-blue-300" />
+            <Icon icon="lucide:user" className="h-5 w-5 text-blue-300" />
           </div>
         )}
       </div>
@@ -62,7 +62,11 @@ export function FriendRequestCard({
           disabled={isProcessing}
           aria-label={getAriaLabel(t("accept"), sender.displayName)}
         >
-          {isProcessing ? <Loader2 className="animate-spin" /> : <Check />}
+          {isProcessing ? (
+            <Icon icon="lucide:loader-2" className="animate-spin" />
+          ) : (
+            <Icon icon="lucide:check" />
+          )}
         </Button>
         <Button
           size="sm"
@@ -71,7 +75,11 @@ export function FriendRequestCard({
           disabled={isProcessing}
           aria-label={getAriaLabel(t("decline"), sender.displayName)}
         >
-          {isProcessing ? <Loader2 className="animate-spin" /> : <X />}
+          {isProcessing ? (
+            <Icon icon="lucide:loader-2" className="animate-spin" />
+          ) : (
+            <Icon icon="lucide:x" />
+          )}
         </Button>
       </div>
     </div>

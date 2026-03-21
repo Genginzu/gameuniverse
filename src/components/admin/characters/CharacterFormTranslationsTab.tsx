@@ -7,7 +7,8 @@ import { SUPPORTED_LANGUAGES, type CharacterFormTabProps } from "@/types/admin-c
 
 export function CharacterFormTranslationsTab({ form, t }: CharacterFormTabProps) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      {/* Per-language translations */}
       {SUPPORTED_LANGUAGES.map((lang) => {
         const index = form.watch("translations").findIndex((tr) => tr.language_code === lang.code);
         if (index === -1) return null;
@@ -24,42 +25,23 @@ export function CharacterFormTranslationsTab({ form, t }: CharacterFormTabProps)
             </div>
             <input type="hidden" {...form.register(`translations.${index}.language_code`)} />
             <div className="space-y-4">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <FormField
-                  control={form.control}
-                  name={`translations.${index}.name`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("name")}</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder={t("namePlaceholder")}
-                          {...field}
-                          value={field.value ?? ""}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name={`translations.${index}.role`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("role")}</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder={t("rolePlaceholder")}
-                          {...field}
-                          value={field.value ?? ""}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              <FormField
+                control={form.control}
+                name={`translations.${index}.name`}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t("name")}</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder={t("namePlaceholder")}
+                        {...field}
+                        value={field.value ?? ""}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name={`translations.${index}.description`}
@@ -119,7 +101,7 @@ export function CharacterFormTranslationsTab({ form, t }: CharacterFormTabProps)
         );
       })}
       {form.formState.errors.translations?.root && (
-        <p className="text-sm font-medium text-destructive">
+        <p className="text-destructive text-sm font-medium">
           {form.formState.errors.translations.root.message}
         </p>
       )}

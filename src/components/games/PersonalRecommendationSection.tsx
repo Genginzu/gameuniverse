@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { usePersonalRecommendations } from "@/hooks/usePersonalRecommendations";
 import { GameCard } from "@/components/games/GameCard";
 import { GameCardSkeleton } from "@/components/games/GameCardSkeleton";
-import { Sparkles } from "lucide-react";
+import { Icon } from "@iconify/react";
 import type { GameRecommendation } from "@/types/recommendation";
 
 interface PersonalRecommendationSectionProps {
@@ -41,7 +41,7 @@ export function PersonalRecommendationSection({
   return (
     <section className="mb-8">
       <div className="mb-6 flex items-center gap-2">
-        <Sparkles className="h-6 w-6 text-yellow-400" />
+        <Icon icon="lucide:sparkles" className="h-6 w-6 text-yellow-400" />
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{t("personalTitle")}</h2>
         {basedOnGameCount > 0 && !loading && (
           <span className="rounded-full bg-gray-200/60 px-3 py-1 text-sm text-gray-600 dark:bg-slate-700/50 dark:text-slate-300">

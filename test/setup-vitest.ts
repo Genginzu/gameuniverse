@@ -119,6 +119,7 @@ vi.mock("next-intl", () => ({
       "empty.exploreGames": "Explorer les jeux",
       loadingError: "Erreur de chargement",
       loadingErrorDescription: "Impossible de charger les jeux",
+      filter: "Filtrer",
     };
     return translations[key] || key;
   },

@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations, useLocale } from "next-intl";
-import { Trophy, Lock, Check } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { ACHIEVEMENT_DEFINITIONS, type AchievementData } from "@/types/dashboard-stats";
 import { StatsSectionTitle } from "@/components/players/stats/StatsSectionTitle";
 
@@ -39,7 +39,7 @@ export function AchievementsList({ achievements, totalCount }: AchievementsListP
         <div className="mb-6">
           <div className="mb-2 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Trophy className="h-5 w-5 text-neon-violet" />
+              <Icon icon="lucide:trophy" className="text-neon-violet h-5 w-5" />
               <span className="text-sm font-medium text-gray-700 dark:text-slate-300">
                 {t("achievements.progress", {
                   count: unlockedCount,
@@ -47,11 +47,11 @@ export function AchievementsList({ achievements, totalCount }: AchievementsListP
                 })}
               </span>
             </div>
-            <span className="text-sm font-bold text-neon-violet">{progressPercent}%</span>
+            <span className="text-neon-violet text-sm font-bold">{progressPercent}%</span>
           </div>
           <div className="h-3 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-slate-700">
             <div
-              className="h-full rounded-full bg-linear-to-r from-neon-violet to-neon-cyan transition-all duration-500"
+              className="from-neon-violet to-neon-cyan h-full rounded-full bg-linear-to-r transition-all duration-500"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
@@ -76,11 +76,15 @@ export function AchievementsList({ achievements, totalCount }: AchievementsListP
                 <div
                   className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
                     isUnlocked
-                      ? "bg-linear-to-br from-neon-violet to-neon-cyan text-white"
+                      ? "from-neon-violet to-neon-cyan bg-linear-to-br text-white"
                       : "bg-gray-200 text-gray-400 dark:bg-slate-700 dark:text-slate-500"
                   }`}
                 >
-                  {isUnlocked ? <Check className="h-5 w-5" /> : <Lock className="h-4 w-4" />}
+                  {isUnlocked ? (
+                    <Icon icon="lucide:check" className="h-5 w-5" />
+                  ) : (
+                    <Icon icon="lucide:lock" className="h-4 w-4" />
+                  )}
                 </div>
 
                 {/* Achievement info */}

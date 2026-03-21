@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { LazyImage } from "@/components/ui/lazy-image";
-import { Gamepad2 } from "lucide-react";
+import { Icon } from "@iconify/react";
 import type { LibraryEventData } from "@/types/activity";
 
 interface ActivityItemLibraryProps {
@@ -28,7 +28,7 @@ export function ActivityItemLibrary({ data, locale }: ActivityItemLibraryProps) 
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
-            <Gamepad2 className="h-5 w-5 text-slate-500" />
+            <Icon icon="lucide:gamepad-2" className="h-5 w-5 text-slate-500" />
           </div>
         )}
       </div>

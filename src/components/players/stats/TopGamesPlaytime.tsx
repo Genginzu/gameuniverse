@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Gamepad2 } from "lucide-react";
+import { Icon } from "@iconify/react";
 import type { PlaytimeGameEntry } from "@/types/dashboard-stats";
 import Image from "next/image";
 import { formatLocalizedNumber } from "@/lib/utils/statsFormatters";
@@ -45,7 +45,10 @@ export function TopGamesPlaytime({ games, locale }: TopGamesPlaytimeProps) {
                   />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center bg-slate-200 dark:bg-slate-700">
-                    <Gamepad2 className="h-3.5 w-3.5 text-gray-400 dark:text-slate-500" />
+                    <Icon
+                      icon="lucide:gamepad-2"
+                      className="h-3.5 w-3.5 text-gray-400 dark:text-slate-500"
+                    />
                   </div>
                 )}
               </div>

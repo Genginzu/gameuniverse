@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Clock, Gamepad2, Trophy } from "lucide-react";
+import { Icon } from "@iconify/react";
 import type { PlaytimeData } from "@/types/dashboard-stats";
 import Image from "next/image";
 import { formatLocalizedNumber } from "@/lib/utils/statsFormatters";
@@ -23,7 +23,10 @@ export function PlaytimeStats({ playtime, locale }: PlaytimeStatsProps) {
     return (
       <section>
         <StatsSectionTitle>{t("playtime.title")}</StatsSectionTitle>
-        <StatsEmptyState icon={<Clock className="h-8 w-8" />} message={t("playtime.empty")} />
+        <StatsEmptyState
+          icon={<Icon icon="lucide:clock" className="h-8 w-8" />}
+          message={t("playtime.empty")}
+        />
       </section>
     );
   }
@@ -35,7 +38,7 @@ export function PlaytimeStats({ playtime, locale }: PlaytimeStatsProps) {
         {/* Average play time card */}
         <div className="glass-card flex flex-1 items-center gap-4 rounded-xl p-5 transition-all duration-300">
           <div className="bg-neon-violet/20 text-neon-violet flex h-12 w-12 shrink-0 items-center justify-center rounded-xl">
-            <Clock className="h-6 w-6" />
+            <Icon icon="lucide:clock" className="h-6 w-6" />
           </div>
           <div className="min-w-0">
             <p className="truncate text-sm text-gray-500 dark:text-slate-400">
@@ -67,13 +70,16 @@ export function PlaytimeStats({ playtime, locale }: PlaytimeStatsProps) {
                   />
                 ) : (
                   <div className="flex h-full w-full items-center justify-center bg-slate-200 dark:bg-slate-700">
-                    <Gamepad2 className="h-6 w-6 text-gray-400 dark:text-slate-500" />
+                    <Icon
+                      icon="lucide:gamepad-2"
+                      className="h-6 w-6 text-gray-400 dark:text-slate-500"
+                    />
                   </div>
                 )}
               </div>
               <div className="min-w-0 flex-1">
                 <div className="mb-1 flex items-center gap-1.5">
-                  <Trophy className="text-neon-cyan h-4 w-4 shrink-0" />
+                  <Icon icon="lucide:trophy" className="text-neon-cyan h-4 w-4 shrink-0" />
                   <p className="truncate text-sm text-gray-500 dark:text-slate-400">
                     {t("playtime.topGame")}
                   </p>
@@ -89,7 +95,7 @@ export function PlaytimeStats({ playtime, locale }: PlaytimeStatsProps) {
             </>
           ) : (
             <div className="flex items-center gap-3">
-              <Gamepad2 className="h-6 w-6 text-gray-400 dark:text-slate-500" />
+              <Icon icon="lucide:gamepad-2" className="h-6 w-6 text-gray-400 dark:text-slate-500" />
               <p className="text-sm text-gray-500 dark:text-slate-400">—</p>
             </div>
           )}

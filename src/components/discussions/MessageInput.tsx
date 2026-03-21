@@ -1,6 +1,6 @@
 "use client";
 
-import { Send } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 
@@ -78,7 +78,7 @@ export default function MessageInput({ onSend, isSending, maxLength }: MessageIn
           data-testid="message-send-button"
           aria-label={t("send")}
         >
-          <Send className="h-4 w-4" />
+          <Icon icon="lucide:send" className="h-4 w-4" />
         </button>
       </div>
 

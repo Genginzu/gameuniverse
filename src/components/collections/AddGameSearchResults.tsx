@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Search, Globe, Database } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import type { SearchResultItem } from "@/types/search";
@@ -72,7 +72,10 @@ export function SearchInput({
   return (
     <div className="relative">
       <div className="relative">
-        <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
+        <Icon
+          icon="lucide:search"
+          className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2"
+        />
         <Input
           type="text"
           placeholder={placeholder}
@@ -137,7 +140,7 @@ function SourceBadge({ source }: { source: "local" | "igdb" }) {
   if (source === "local") {
     return (
       <Badge variant="secondary" className="shrink-0 gap-1 px-1.5 py-0 text-[10px]">
-        <Database className="h-2.5 w-2.5" />
+        <Icon icon="lucide:database" className="h-2.5 w-2.5" />
         Local
       </Badge>
     );
@@ -148,7 +151,7 @@ function SourceBadge({ source }: { source: "local" | "igdb" }) {
       variant="outline"
       className="shrink-0 gap-1 border-purple-300 px-1.5 py-0 text-[10px] text-purple-600 dark:border-purple-600 dark:text-purple-400"
     >
-      <Globe className="h-2.5 w-2.5" />
+      <Icon icon="lucide:globe" className="h-2.5 w-2.5" />
       IGDB
     </Badge>
   );

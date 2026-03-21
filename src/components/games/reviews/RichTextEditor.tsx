@@ -2,7 +2,7 @@
 
 import { useEditor, EditorContent, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { Bold, Italic, List, ListOrdered } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { cn } from "@/lib/utils";
 import { useReviewTranslations } from "@/hooks/useTranslations";
 
@@ -47,32 +47,32 @@ function EditorToolbar({ editor }: { editor: Editor | null }) {
     {
       onClick: () => editor.chain().focus().toggleBold().run(),
       isActive: editor.isActive("bold"),
-      icon: <Bold className="h-4 w-4" />,
+      icon: <Icon icon="lucide:bold" className="h-4 w-4" />,
       label: t("editor.bold"),
     },
     {
       onClick: () => editor.chain().focus().toggleItalic().run(),
       isActive: editor.isActive("italic"),
-      icon: <Italic className="h-4 w-4" />,
+      icon: <Icon icon="lucide:italic" className="h-4 w-4" />,
       label: t("editor.italic"),
     },
     {
       onClick: () => editor.chain().focus().toggleBulletList().run(),
       isActive: editor.isActive("bulletList"),
-      icon: <List className="h-4 w-4" />,
+      icon: <Icon icon="lucide:list" className="h-4 w-4" />,
       label: t("editor.bulletList"),
     },
     {
       onClick: () => editor.chain().focus().toggleOrderedList().run(),
       isActive: editor.isActive("orderedList"),
-      icon: <ListOrdered className="h-4 w-4" />,
+      icon: <Icon icon="lucide:list-ordered" className="h-4 w-4" />,
       label: t("editor.orderedList"),
     },
   ];
 
   return (
     <div
-      className="flex gap-1 border-b border-border p-2"
+      className="border-border flex gap-1 border-b p-2"
       role="toolbar"
       aria-label={t("editor.toolbarAriaLabel")}
     >
@@ -100,11 +100,11 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
   });
 
   return (
-    <div className="relative rounded-xl border border-input bg-background transition-all focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 focus-within:ring-offset-background">
+    <div className="border-input bg-background focus-within:ring-ring focus-within:ring-offset-background relative rounded-xl border transition-all focus-within:ring-2 focus-within:ring-offset-2">
       <EditorToolbar editor={editor} />
       <EditorContent editor={editor} />
       {!content && placeholder && !editor?.isFocused && (
-        <p className="pointer-events-none absolute bottom-0 left-0 p-3 text-sm text-muted-foreground">
+        <p className="text-muted-foreground pointer-events-none absolute bottom-0 left-0 p-3 text-sm">
           {placeholder}
         </p>
       )}

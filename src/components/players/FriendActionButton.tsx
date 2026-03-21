@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { UserPlus, UserMinus, Check, X, Loader2 } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import { getButtonState } from "@/lib/utils/friendUtils";
 import type { RelationshipStatus } from "@/types/friendship";
@@ -57,7 +57,11 @@ export function FriendActionButton({
     <div aria-live="polite">
       {buttonState === "add_friend" && (
         <Button size="sm" onClick={() => handleAction(sendRequest)} disabled={isProcessing}>
-          {isProcessing ? <Loader2 className="animate-spin" /> : <UserPlus />}
+          {isProcessing ? (
+            <Icon icon="lucide:loader-2" className="animate-spin" />
+          ) : (
+            <Icon icon="lucide:user-plus" />
+          )}
           {t("addFriend")}
         </Button>
       )}
@@ -75,7 +79,11 @@ export function FriendActionButton({
             onClick={() => handleAction(() => acceptRequest(friendshipId))}
             disabled={isProcessing}
           >
-            {isProcessing ? <Loader2 className="animate-spin" /> : <Check />}
+            {isProcessing ? (
+              <Icon icon="lucide:loader-2" className="animate-spin" />
+            ) : (
+              <Icon icon="lucide:check" />
+            )}
             {t("accept")}
           </Button>
           <Button
@@ -84,7 +92,11 @@ export function FriendActionButton({
             onClick={() => handleAction(() => declineRequest(friendshipId))}
             disabled={isProcessing}
           >
-            {isProcessing ? <Loader2 className="animate-spin" /> : <X />}
+            {isProcessing ? (
+              <Icon icon="lucide:loader-2" className="animate-spin" />
+            ) : (
+              <Icon icon="lucide:x" />
+            )}
             {t("decline")}
           </Button>
         </div>
@@ -92,7 +104,11 @@ export function FriendActionButton({
 
       {buttonState === "remove_friend" && (
         <Button size="sm" variant="outline" onClick={handleRemoveFriend} disabled={isProcessing}>
-          {isProcessing ? <Loader2 className="animate-spin" /> : <UserMinus />}
+          {isProcessing ? (
+            <Icon icon="lucide:loader-2" className="animate-spin" />
+          ) : (
+            <Icon icon="lucide:user-minus" />
+          )}
           {t("removeFriend")}
         </Button>
       )}

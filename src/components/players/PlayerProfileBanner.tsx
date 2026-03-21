@@ -1,7 +1,7 @@
 "use client";
 
 import { LazyImage } from "@/components/ui/lazy-image";
-import { User, PenLine, Users, MessageSquare } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import { PlayerProfileSocialLinks } from "./PlayerProfileSocialLinks";
 import { ProgressRing } from "./ProgressRing";
@@ -67,7 +67,7 @@ export function PlayerProfileBanner({
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center">
-                <User className="h-12 w-12 text-blue-300" />
+                <Icon icon="lucide:user" className="h-12 w-12 text-blue-300" />
               </div>
             )}
           </div>
@@ -77,11 +77,11 @@ export function PlayerProfileBanner({
       </div>
 
       {/* Info row: stats | name | social links */}
-      <div className="container mx-auto px-4 pb-4 pt-2">
+      <div className="container mx-auto px-4 pt-2 pb-4">
         <div className="flex flex-col items-center gap-4 md:flex-row md:items-center md:justify-between">
           {/* Left: name + username */}
           <div className="text-center md:text-left">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white md:text-3xl">
+            <h1 className="text-2xl font-bold text-gray-900 md:text-3xl dark:text-white">
               {displayName}
             </h1>
             {player.fullName && (
@@ -117,9 +117,9 @@ function ProfileCounters({
   const t = useTranslations("players.details.counters");
 
   const counters = [
-    { value: reviewCount, label: t("posts"), icon: PenLine },
-    { value: friendCount, label: t("friends"), icon: Users },
-    { value: commentCount, label: t("comments"), icon: MessageSquare },
+    { value: reviewCount, label: t("posts"), icon: "lucide:pen-line" },
+    { value: friendCount, label: t("friends"), icon: "lucide:users" },
+    { value: commentCount, label: t("comments"), icon: "lucide:message-square" },
   ];
 
   return (
@@ -129,7 +129,7 @@ function ProfileCounters({
           key={c.label}
           className="flex items-center gap-2 rounded-xl bg-white/40 px-3 py-2 backdrop-blur-xs transition-all duration-300 hover:bg-white/60 dark:bg-slate-800/40 dark:hover:bg-slate-700/50"
         >
-          <c.icon className="h-5 w-5 text-purple-500 dark:text-purple-400" />
+          <Icon icon={c.icon} className="h-5 w-5 text-purple-500 dark:text-purple-400" />
           <span className="text-base font-bold text-gray-900 dark:text-white">{c.value}</span>
           <span className="text-sm text-gray-500 dark:text-slate-400">{c.label}</span>
         </div>

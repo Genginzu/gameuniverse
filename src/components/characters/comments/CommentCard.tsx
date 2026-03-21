@@ -1,6 +1,6 @@
 "use client";
 
-import { User } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import { useDateFormatter } from "@/hooks/useTranslations";
 import type { Comment } from "@/types/comment";
@@ -27,7 +27,7 @@ function CommentAvatar({ name, avatar }: { name: string | null; avatar: string |
 
   return (
     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-700 ring-2 ring-slate-600">
-      <User className="h-5 w-5 text-slate-400" />
+      <Icon icon="lucide:user" className="h-5 w-5 text-slate-400" />
     </div>
   );
 }

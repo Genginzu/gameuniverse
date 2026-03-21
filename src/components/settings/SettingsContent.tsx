@@ -134,10 +134,10 @@ export function SettingsContent() {
     <div className="flex-1 p-4 sm:p-6">
       {/* Page Header */}
       <div className="mb-6 sm:mb-8">
-        <h1 className="neon-text mb-2 text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">
+        <h1 className="neon-text mb-2 text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">
           {t("title")}
         </h1>
-        <p className="text-sm text-gray-600 dark:text-gray-400 sm:text-base">{t("subtitle")}</p>
+        <p className="text-sm text-gray-600 sm:text-base dark:text-gray-400">{t("subtitle")}</p>
       </div>
 
       {/* Settings Sections */}
@@ -147,10 +147,13 @@ export function SettingsContent() {
           <CardHeader>
             <div className="flex items-center">
               <div className="rounded-xl bg-blue-100 p-2 dark:bg-blue-900/30">
-                <Icon icon="fa:user" className="h-4 w-4 text-blue-600 dark:text-blue-400 sm:h-5 sm:w-5"  />
+                <Icon
+                  icon="fa:user"
+                  className="h-4 w-4 text-blue-600 sm:h-5 sm:w-5 dark:text-blue-400"
+                />
               </div>
               <div className="ml-3">
-                <CardTitle className="text-base font-semibold text-gray-900 dark:text-white sm:text-lg">
+                <CardTitle className="text-base font-semibold text-gray-900 sm:text-lg dark:text-white">
                   {t("profile.title")}
                 </CardTitle>
                 <CardDescription className="text-sm text-gray-500 dark:text-gray-400">
@@ -191,10 +194,13 @@ export function SettingsContent() {
           <CardHeader>
             <div className="flex items-center">
               <div className="rounded-xl bg-purple-100 p-2 dark:bg-purple-900/30">
-                <Icon icon="fa:shield-alt" className="h-4 w-4 text-purple-600 dark:text-purple-400 sm:h-5 sm:w-5"  />
+                <Icon
+                  icon="lucide:shield"
+                  className="h-4 w-4 text-purple-600 sm:h-5 sm:w-5 dark:text-purple-400"
+                />
               </div>
               <div className="ml-3">
-                <CardTitle className="text-base font-semibold text-gray-900 dark:text-white sm:text-lg">
+                <CardTitle className="text-base font-semibold text-gray-900 sm:text-lg dark:text-white">
                   {t("security.title")}
                 </CardTitle>
                 <CardDescription className="text-sm text-gray-500 dark:text-gray-400">

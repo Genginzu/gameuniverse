@@ -64,7 +64,11 @@ const gameSummaryGenerator = fc.record({
           `#${r.toString(16).padStart(2, "0")}${g.toString(16).padStart(2, "0")}${b.toString(16).padStart(2, "0")}`
       )
   ),
-  releaseDate: fc.option(fc.date().map((d) => d.toISOString().split("T")[0])),
+  releaseDate: fc.option(
+    fc
+      .integer({ min: new Date("1970-01-01").getTime(), max: new Date("2030-12-31").getTime() })
+      .map((ts) => new Date(ts).toISOString().split("T")[0])
+  ),
   releaseYear: fc.option(fc.integer({ min: 1970, max: 2030 })),
   genres: fc.array(fc.record({ id: fc.uuid(), name: fc.string({ minLength: 1, maxLength: 30 }) }), {
     minLength: 0,

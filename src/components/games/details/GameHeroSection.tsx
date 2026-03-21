@@ -4,12 +4,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { LazyImage } from "@/components/ui/lazy-image";
 import Link from "next/link";
-import { ArrowLeft, Calendar, Users, Globe, Heart, Share2 } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import { GameDetails } from "@/types/game";
 import { GameColors } from "@/lib/utils/game-utils";
 import { getPlatformIcon } from "@/lib/utils/platform-icons";
-import { Icon } from "@iconify/react";
 import { GamePricingSection } from "./GamePricingSection";
 
 interface GameHeroSectionProps {
@@ -38,7 +37,7 @@ export function GameHeroSection({
   return (
     <div className="relative">
       {/* Floating navigation buttons */}
-      <div className="absolute left-0 right-0 top-0 z-20 px-4 py-4">
+      <div className="absolute top-0 right-0 left-0 z-20 px-4 py-4">
         <div className="container mx-auto flex items-center justify-between">
           <Link href={`/${locale}/games`}>
             <Button
@@ -46,7 +45,7 @@ export function GameHeroSection({
               size="sm"
               className="bg-slate-900/60 text-slate-300 backdrop-blur-xs hover:bg-slate-900/80 hover:text-white"
             >
-              <ArrowLeft className="mr-2 h-4 w-4" />
+              <Icon icon="lucide:arrow-left" className="mr-2 h-4 w-4" />
               {t("common.back")}
             </Button>
           </Link>
@@ -57,7 +56,7 @@ export function GameHeroSection({
               size="sm"
               className="bg-slate-900/60 text-slate-300 backdrop-blur-xs hover:bg-slate-900/80 hover:text-white"
             >
-              <Share2 className="h-4 w-4" />
+              <Icon icon="lucide:share-2" className="h-4 w-4" />
             </Button>
             <Button
               variant="ghost"
@@ -65,7 +64,10 @@ export function GameHeroSection({
               className={`bg-slate-900/60 backdrop-blur-xs hover:bg-slate-900/80 hover:text-white ${isWishlisted ? "text-red-400" : "text-slate-300"}`}
               onClick={onWishlistToggle}
             >
-              <Heart className={`h-4 w-4 ${isWishlisted ? "fill-current" : ""}`} />
+              <Icon
+                icon="lucide:heart"
+                className={`h-4 w-4 ${isWishlisted ? "fill-current" : ""}`}
+              />
             </Button>
           </div>
         </div>
@@ -100,7 +102,7 @@ export function GameHeroSection({
         </div>
       )}
 
-      <div className="container relative z-10 mx-auto flex min-h-[60vh] items-center px-4 pb-4 pt-16">
+      <div className="relative z-10 container mx-auto flex min-h-[60vh] items-center px-4 pt-16 pb-4">
         <div className="grid w-full grid-cols-1 items-start gap-8 lg:grid-cols-12">
           {/* Cover and actions - Left column */}
           <div className="lg:col-span-4">
@@ -126,7 +128,7 @@ export function GameHeroSection({
 
                   {/* Metascore badge */}
                   {game.metascore && (
-                    <div className="absolute right-4 top-4">
+                    <div className="absolute top-4 right-4">
                       <div
                         className={`${getMetascoreColor(game.metascore)} rounded-full px-3 py-1 text-sm font-bold text-white shadow-lg`}
                       >
@@ -164,7 +166,7 @@ export function GameHeroSection({
 
               {/* Title */}
               <h1
-                className="neon-text mb-4 text-4xl font-bold leading-tight drop-shadow-lg lg:text-6xl"
+                className="neon-text mb-4 text-4xl leading-tight font-bold drop-shadow-lg lg:text-6xl"
                 style={{ color: colors.textColor }}
               >
                 {game.title}
@@ -175,13 +177,21 @@ export function GameHeroSection({
                 {game.companies?.developers?.length > 0 ? (
                   game.companies.developers.map((dev) => (
                     <div key={dev.id} className="flex items-center gap-2">
-                      <Users className="h-4 w-4" style={{ color: colors.accent }} />
+                      <Icon
+                        icon="lucide:users"
+                        className="h-4 w-4"
+                        style={{ color: colors.accent }}
+                      />
                       <span>{dev.name}</span>
                     </div>
                   ))
                 ) : game.developer ? (
                   <div className="flex items-center gap-2">
-                    <Users className="h-4 w-4" style={{ color: colors.accent }} />
+                    <Icon
+                      icon="lucide:users"
+                      className="h-4 w-4"
+                      style={{ color: colors.accent }}
+                    />
                     <span>{game.developer}</span>
                   </div>
                 ) : null}
@@ -190,19 +200,31 @@ export function GameHeroSection({
                     .filter((pub) => !game.companies.developers?.some((dev) => dev.id === pub.id))
                     .map((pub) => (
                       <div key={pub.id} className="flex items-center gap-2">
-                        <Globe className="h-4 w-4" style={{ color: colors.accent }} />
+                        <Icon
+                          icon="lucide:globe"
+                          className="h-4 w-4"
+                          style={{ color: colors.accent }}
+                        />
                         <span>{pub.name}</span>
                       </div>
                     ))
                 ) : game.publisher && game.publisher !== game.developer ? (
                   <div className="flex items-center gap-2">
-                    <Globe className="h-4 w-4" style={{ color: colors.accent }} />
+                    <Icon
+                      icon="lucide:globe"
+                      className="h-4 w-4"
+                      style={{ color: colors.accent }}
+                    />
                     <span>{game.publisher}</span>
                   </div>
                 ) : null}
                 {game.releaseDate && (
                   <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4" style={{ color: colors.accent }} />
+                    <Icon
+                      icon="lucide:calendar"
+                      className="h-4 w-4"
+                      style={{ color: colors.accent }}
+                    />
                     <span>{formatReleaseDate(game.releaseDate)}</span>
                   </div>
                 )}

@@ -1,6 +1,5 @@
 "use client";
 
-
 import { useTranslations } from "next-intl";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -31,10 +30,13 @@ export function AppearanceSection({
       <CardHeader>
         <div className="flex items-center">
           <div className="rounded-xl bg-pink-100 p-2 dark:bg-pink-900/30">
-            <Icon icon="fa:palette" className="h-4 w-4 text-pink-600 dark:text-pink-400 sm:h-5 sm:w-5"  />
+            <Icon
+              icon="lucide:palette"
+              className="h-4 w-4 text-pink-600 sm:h-5 sm:w-5 dark:text-pink-400"
+            />
           </div>
           <div className="ml-3">
-            <CardTitle className="text-base font-semibold text-gray-900 dark:text-white sm:text-lg">
+            <CardTitle className="text-base font-semibold text-gray-900 sm:text-lg dark:text-white">
               {t("appearance.title")}
             </CardTitle>
             <CardDescription className="text-sm text-gray-500 dark:text-gray-400">

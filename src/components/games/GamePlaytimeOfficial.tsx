@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Clock, Zap, Gamepad2, Trophy } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import { GamePlaytime as GamePlaytimeType } from "@/types/game";
 
@@ -27,7 +27,7 @@ export function GamePlaytimeOfficial({ playtime, accentColor }: GamePlaytimeOffi
   if (!playtime || !hasAnyData) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-slate-400">
-        <Clock className="mb-4 h-12 w-12 opacity-50" />
+        <Icon icon="lucide:clock" className="mb-4 h-12 w-12 opacity-50" />
         <p className="mb-2 text-lg font-medium text-white">{t("title")}</p>
         <p>{t("noData")}</p>
       </div>
@@ -35,20 +35,20 @@ export function GamePlaytimeOfficial({ playtime, accentColor }: GamePlaytimeOffi
   }
 
   const cards = [
-    { icon: Zap, label: t("hastily"), value: playtime.hastily },
-    { icon: Gamepad2, label: t("normally"), value: playtime.normally },
-    { icon: Trophy, label: t("completely"), value: playtime.completely },
+    { icon: "lucide:zap", label: t("hastily"), value: playtime.hastily },
+    { icon: "lucide:gamepad-2", label: t("normally"), value: playtime.normally },
+    { icon: "lucide:trophy", label: t("completely"), value: playtime.completely },
   ] as const;
 
   return (
     <div className="space-y-4">
       <h3 className="flex items-center gap-2 text-lg font-semibold text-white">
-        <Clock className="h-5 w-5" style={{ color: accentColor }} />
+        <Icon icon="lucide:clock" className="h-5 w-5" style={{ color: accentColor }} />
         {t("title")}
       </h3>
 
       <div className="space-y-3">
-        {cards.map(({ icon: IconComp, label, value }) => (
+        {cards.map(({ icon: iconName, label, value }) => (
           <Card
             key={label}
             className="rounded-xl border-white/10 bg-white/5 shadow-lg shadow-black/20 backdrop-blur-xl"
@@ -58,7 +58,7 @@ export function GamePlaytimeOfficial({ playtime, accentColor }: GamePlaytimeOffi
                 className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
                 style={{ backgroundColor: `${accentColor}20` }}
               >
-                <IconComp className="h-5 w-5" style={{ color: accentColor }} />
+                <Icon icon={iconName} className="h-5 w-5" style={{ color: accentColor }} />
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm text-slate-400">{label}</p>

@@ -1,7 +1,7 @@
 "use client";
 
 import { type UseFormReturn } from "react-hook-form";
-import { Star } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
 import { buildGameColors, getMetascoreColor } from "@/lib/utils/game-utils";
@@ -55,7 +55,7 @@ export function GameMetascorePreview({ form }: GameMetascorePreviewProps) {
       >
         {!hasScore ? (
           <div className="flex flex-col items-center justify-center py-4 text-slate-400">
-            <Star className="mb-2 h-8 w-8 opacity-50" />
+            <Icon icon="lucide:star" className="mb-2 h-8 w-8 opacity-50" />
             <p className="text-xs">Aucun metascore renseigné</p>
           </div>
         ) : (
@@ -64,7 +64,7 @@ export function GameMetascorePreview({ form }: GameMetascorePreviewProps) {
             data-testid="metascore-preview-card"
           >
             <div className="mb-2 flex items-center gap-2">
-              <Star className="h-4 w-4" style={{ color: colors.accent }} />
+              <Icon icon="lucide:star" className="h-4 w-4" style={{ color: colors.accent }} />
               <span className="text-sm" style={{ color: colors.labelColor }}>
                 Metascore
               </span>

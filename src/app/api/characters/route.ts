@@ -13,7 +13,6 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get("search") || "";
-    const games = parseArrayParam(searchParams.get("games"));
     const roles = parseArrayParam(searchParams.get("roles"));
     const platforms = parseArrayParam(searchParams.get("platforms"));
     const { page, limit } = parsePaginationParams(searchParams);
@@ -59,9 +58,46 @@ export async function GET(request: NextRequest) {
       query = query.ilike("character_translations.name", `%${search.trim()}%`);
     }
 
-    // Add role filter if provided
+    // Add role filter — filter via character_character_roles join table
+    // We collect matching character IDs first, then filter the main query
+    let roleCharacterIds: string[] | null = null;
     if (roles.length > 0) {
-      query = query.in("character_translations.role", roles);
+      // Resolve role slugs to role IDs
+      const { data: roleRows } = await supabase
+        .from("character_roles")
+        .select("id")
+        .in("slug", roles);
+
+      if (roleRows && roleRows.length > 0) {
+        const roleIds = roleRows.map((r: { id: string }) => r.id);
+        const { data: ccrRows } = await supabase
+          .from("character_character_roles")
+          .select("character_id")
+          .in("role_id", roleIds);
+
+        roleCharacterIds = [
+          ...new Set((ccrRows || []).map((r: { character_id: string }) => r.character_id)),
+        ];
+      } else {
+        // No matching roles found — return empty results
+        roleCharacterIds = [];
+      }
+    }
+
+    if (roleCharacterIds !== null) {
+      if (roleCharacterIds.length === 0) {
+        return NextResponse.json({
+          characters: [],
+          pagination: {
+            currentPage: page,
+            totalPages: 0,
+            totalCount: 0,
+            hasNextPage: false,
+            hasPreviousPage: false,
+          },
+        });
+      }
+      query = query.in("id", roleCharacterIds);
     }
 
     // Get total count for pagination (separate query for performance)
@@ -77,8 +113,8 @@ export async function GET(request: NextRequest) {
       countQuery = countQuery.ilike("character_translations.name", `%${search.trim()}%`);
     }
 
-    if (roles.length > 0) {
-      countQuery = countQuery.in("character_translations.role", roles);
+    if (roleCharacterIds !== null && roleCharacterIds.length > 0) {
+      countQuery = countQuery.in("id", roleCharacterIds);
     }
 
     // Execute count query
@@ -101,16 +137,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Failed to fetch characters" }, { status: 500 });
     }
 
-    // Filter by games if specified (post-processing)
     let filteredCharacters = (characters || []) as CharacterRowWithRelations[];
-    if (games.length > 0) {
-      filteredCharacters =
-        (characters as CharacterRowWithRelations[])?.filter((character) => {
-          const characterGameIds =
-            character.character_games?.map((cg) => cg.games?.id).filter(Boolean) || [];
-          return games.some((gameId) => characterGameIds.includes(gameId));
-        }) || [];
-    }
 
     // Filter by platforms if specified — keep characters whose at least one game
     // is available on one of the selected platforms

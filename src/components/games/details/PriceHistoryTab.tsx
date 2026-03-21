@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { AlertCircle, BarChart3 } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -64,7 +64,7 @@ export function PriceHistoryTab({ gameSlug, currentPrice }: PriceHistoryTabProps
     return (
       <Card className="rounded-xl border-white/10 bg-white/5 shadow-lg shadow-black/20 backdrop-blur-xl">
         <CardContent className="flex flex-col items-center gap-3 p-8 text-center">
-          <AlertCircle className="h-8 w-8 text-red-400" />
+          <Icon icon="lucide:alert-circle" className="h-8 w-8 text-red-400" />
           <p className="text-sm text-slate-400">Impossible de charger l&apos;historique de prix.</p>
           <Button variant="outline" size="sm" onClick={refetch}>
             Réessayer
@@ -79,7 +79,7 @@ export function PriceHistoryTab({ gameSlug, currentPrice }: PriceHistoryTabProps
     return (
       <Card className="rounded-xl border-white/10 bg-white/5 shadow-lg shadow-black/20 backdrop-blur-xl">
         <CardContent className="flex flex-col items-center gap-2 p-8 text-center">
-          <BarChart3 className="h-8 w-8 text-slate-400" />
+          <Icon icon="lucide:bar-chart-3" className="h-8 w-8 text-slate-400" />
           <p className="text-sm text-slate-400">Aucun historique de prix disponible pour ce jeu.</p>
         </CardContent>
       </Card>

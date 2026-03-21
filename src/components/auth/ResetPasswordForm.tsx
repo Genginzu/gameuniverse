@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Eye, EyeOff, Loader2, CheckCircle } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -77,11 +77,11 @@ export default function ResetPasswordForm() {
     return (
       <div className="space-y-4 text-center">
         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-          <CheckCircle className="h-6 w-6 text-green-600" />
+          <Icon icon="lucide:check-circle" className="h-6 w-6 text-green-600" />
         </div>
         <div>
           <h3 className="text-lg font-semibold text-green-600">Mot de passe mis à jour !</h3>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="text-muted-foreground mt-2 text-sm">
             Votre mot de passe a été mis à jour avec succès. Vous allez être redirigé vers votre
             tableau de bord.
           </p>
@@ -112,10 +112,14 @@ export default function ResetPasswordForm() {
             type="button"
             variant="ghost"
             size="sm"
-            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+            className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
             onClick={() => setShowPassword(!showPassword)}
           >
-            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            {showPassword ? (
+              <Icon icon="lucide:eye-off" className="h-4 w-4" />
+            ) : (
+              <Icon icon="lucide:eye" className="h-4 w-4" />
+            )}
           </Button>
         </div>
         {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
@@ -135,10 +139,14 @@ export default function ResetPasswordForm() {
             type="button"
             variant="ghost"
             size="sm"
-            className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+            className="absolute top-0 right-0 h-full px-3 py-2 hover:bg-transparent"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
           >
-            {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            {showConfirmPassword ? (
+              <Icon icon="lucide:eye-off" className="h-4 w-4" />
+            ) : (
+              <Icon icon="lucide:eye" className="h-4 w-4" />
+            )}
           </Button>
         </div>
         {errors.confirmPassword && (
@@ -150,7 +158,7 @@ export default function ResetPasswordForm() {
         <Button type="submit" className="w-full" disabled={isLoading}>
           {isLoading ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Icon icon="lucide:loader-2" className="mr-2 h-4 w-4 animate-spin" />
               Mise à jour...
             </>
           ) : (
@@ -158,7 +166,7 @@ export default function ResetPasswordForm() {
           )}
         </Button>
 
-        <div className="text-xs text-muted-foreground">
+        <div className="text-muted-foreground text-xs">
           <p>Le mot de passe doit contenir :</p>
           <ul className="mt-1 list-inside list-disc space-y-1">
             <li>Au moins 8 caractères</li>

@@ -25,10 +25,18 @@ export interface AvailableCharacter {
   mainImage: string | null;
 }
 
+/** Minimal role info for the role selection */
+export interface AvailableRole {
+  id: string;
+  slug: string;
+  name: string;
+}
+
 export interface UseCharacterFormReturn {
   form: UseFormReturn<AdminCharacterFormData>;
   availableGames: AvailableGame[];
   availableCharacters: AvailableCharacter[];
+  availableRoles: AvailableRole[];
   loadingOptions: boolean;
   submitCharacter: (data: AdminCharacterFormData) => Promise<void>;
   isSubmitting: boolean;
@@ -53,6 +61,7 @@ export function useCharacterForm(
   const locale = useLocale();
   const [availableGames, setAvailableGames] = useState<AvailableGame[]>([]);
   const [availableCharacters, setAvailableCharacters] = useState<AvailableCharacter[]>([]);
+  const [availableRoles, setAvailableRoles] = useState<AvailableRole[]>([]);
   const [loadingOptions, setLoadingOptions] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -69,6 +78,7 @@ export function useCharacterForm(
       games: [],
       relationships: [],
       media: [],
+      role_ids: [],
     },
   });
 
@@ -78,11 +88,12 @@ export function useCharacterForm(
 
     const loadOptions = async () => {
       try {
-        const [gamesRes, charsRes] = await Promise.all([
+        const [gamesRes, charsRes, rolesRes] = await Promise.all([
           fetch(`/api/admin/games?locale=${locale}&limit=100&sort_by=created_at&sort_order=desc`),
           fetch(
             `/api/admin/characters?locale=${locale}&limit=100&sort_by=created_at&sort_order=asc`
           ),
+          fetch(`/api/admin/roles?locale=${locale}&limit=100&sort_by=name&sort_order=asc`),
         ]);
 
         if (!mounted) return;
@@ -110,6 +121,22 @@ export function useCharacterForm(
             }))
             .sort((a: AvailableCharacter, b: AvailableCharacter) => a.name.localeCompare(b.name));
           setAvailableCharacters(chars);
+        }
+
+        if (rolesRes.ok) {
+          const rolesJson = await rolesRes.json();
+          setAvailableRoles(
+            (rolesJson.roles ?? []).map((r: Record<string, unknown>) => {
+              const translations =
+                (r.translations as Array<{ language_code: string; name: string }>) ?? [];
+              const tr = translations.find((t) => t.language_code === locale) ?? translations[0];
+              return {
+                id: r.id as string,
+                slug: r.slug as string,
+                name: tr?.name ?? (r.slug as string),
+              };
+            })
+          );
         }
       } catch {
         // Erreur ignorée — les options seront vides
@@ -166,6 +193,7 @@ export function useCharacterForm(
     form,
     availableGames,
     availableCharacters,
+    availableRoles,
     loadingOptions,
     submitCharacter,
     isSubmitting,

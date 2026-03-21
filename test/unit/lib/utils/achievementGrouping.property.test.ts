@@ -33,8 +33,8 @@ const achievementArb: fc.Arbitrary<PlayerAchievementWithDetails> = fc.record({
   unlockedAt: fc.oneof(
     fc.constant(null),
     fc
-      .date({ min: new Date("2000-01-01"), max: new Date("2030-12-31") })
-      .map((d) => d.toISOString())
+      .integer({ min: new Date("2000-01-01").getTime(), max: new Date("2030-12-31").getTime() })
+      .map((ts) => new Date(ts).toISOString())
   ),
   sortOrder: fc.nat({ max: 100 }),
 });

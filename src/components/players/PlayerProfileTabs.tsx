@@ -2,19 +2,7 @@
 
 import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import {
-  Gamepad2,
-  Smile,
-  Users,
-  BookOpen,
-  FolderOpen,
-  BarChart3,
-  Globe,
-  Settings,
-  Trophy,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { Icon } from "@iconify/react";
 
 export type ProfileTab =
   | "activity"
@@ -35,18 +23,18 @@ interface PlayerProfileTabsProps {
 
 const TAB_DEFINITIONS: {
   id: ProfileTab;
-  icon: React.ElementType;
+  icon: string;
   ownerOnly?: boolean;
 }[] = [
-  { id: "activity", icon: Smile },
-  { id: "library", icon: Gamepad2 },
-  { id: "friends", icon: Users },
-  { id: "reviews", icon: BookOpen },
-  { id: "collections", icon: FolderOpen },
-  { id: "achievements", icon: Trophy },
-  { id: "stats", icon: BarChart3 },
-  { id: "recommendations", icon: Globe, ownerOnly: true },
-  { id: "settings", icon: Settings, ownerOnly: true },
+  { id: "activity", icon: "lucide:smile" },
+  { id: "library", icon: "lucide:gamepad-2" },
+  { id: "friends", icon: "lucide:users" },
+  { id: "reviews", icon: "lucide:book-open" },
+  { id: "collections", icon: "lucide:folder-open" },
+  { id: "achievements", icon: "lucide:trophy" },
+  { id: "stats", icon: "lucide:bar-chart-3" },
+  { id: "recommendations", icon: "lucide:globe", ownerOnly: true },
+  { id: "settings", icon: "lucide:settings", ownerOnly: true },
 ];
 
 export function PlayerProfileTabs({ activeTab, onTabChange, isOwner }: PlayerProfileTabsProps) {
@@ -73,14 +61,14 @@ export function PlayerProfileTabs({ activeTab, onTabChange, isOwner }: PlayerPro
         className="absolute top-1/2 left-0 z-10 -translate-y-1/2 rounded-r-md bg-white/80 p-1 text-gray-500 hover:text-gray-900 md:hidden dark:bg-slate-800/80 dark:text-slate-400 dark:hover:text-white"
         aria-label="Scroll left"
       >
-        <ChevronLeft className="h-4 w-4" />
+        <Icon icon="lucide:chevron-left" className="h-4 w-4" />
       </button>
 
       <div
         ref={scrollRef}
         className="scrollbar-hide flex overflow-x-auto px-6 md:justify-center md:px-0"
       >
-        {visibleTabs.map(({ id, icon: IconComp }) => {
+        {visibleTabs.map(({ id, icon }) => {
           const isActive = activeTab === id;
           const label = t(id);
           return (
@@ -99,7 +87,7 @@ export function PlayerProfileTabs({ activeTab, onTabChange, isOwner }: PlayerPro
               aria-selected={isActive}
               role="tab"
             >
-              <IconComp className="h-5 w-5" />
+              <Icon icon={icon} className="h-5 w-5" />
               {isActive && (
                 <>
                   <span className="ml-2 hidden text-sm font-medium md:inline">{label}</span>
@@ -117,7 +105,7 @@ export function PlayerProfileTabs({ activeTab, onTabChange, isOwner }: PlayerPro
         className="absolute top-1/2 right-0 z-10 -translate-y-1/2 rounded-l-md bg-white/80 p-1 text-gray-500 hover:text-gray-900 md:hidden dark:bg-slate-800/80 dark:text-slate-400 dark:hover:text-white"
         aria-label="Scroll right"
       >
-        <ChevronRight className="h-4 w-4" />
+        <Icon icon="lucide:chevron-right" className="h-4 w-4" />
       </button>
 
       {/* Comic-style speech bubble — rendered via fixed position to escape overflow */}

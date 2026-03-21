@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Plus, X } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { PostComposer } from "../PostComposer";
 import { PostCard } from "../PostCard";
 import { SearchBar } from "../SearchBar";
@@ -69,7 +69,11 @@ export function PostsLayoutTimelineV2(props: PostsLayoutProps) {
             onClick={() => setShowComposer((v) => !v)}
             className="inline-flex shrink-0 items-center gap-2 rounded-2xl bg-linear-to-br from-violet-500 to-blue-500 px-5 py-3 text-sm font-medium text-white shadow-lg shadow-violet-500/20 transition-all duration-300 hover:opacity-90"
           >
-            {showComposer ? <X className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+            {showComposer ? (
+              <Icon icon="lucide:x" className="h-4 w-4" />
+            ) : (
+              <Icon icon="lucide:plus" className="h-4 w-4" />
+            )}
             {t("newPost")}
           </button>
         )}

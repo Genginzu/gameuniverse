@@ -5,7 +5,7 @@ import { useEffect, useState, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { Lock, AlertCircle } from "lucide-react";
+import { Icon } from "@iconify/react";
 import type { EnrichedStats } from "@/types/player-stats";
 import { EnrichedStatCards } from "./EnrichedStatCards";
 
@@ -84,7 +84,7 @@ export function PlayerEnrichedStats({
         {title}
         <Card className={CARD_STYLE}>
           <CardContent className="flex flex-col items-center gap-2 p-8 text-center">
-            <Lock className="h-8 w-8 text-gray-400 dark:text-slate-400" />
+            <Icon icon="lucide:lock" className="h-8 w-8 text-gray-400 dark:text-slate-400" />
             <p className="text-lg font-medium text-gray-700 dark:text-slate-300">
               {t("enrichedStats.private")}
             </p>
@@ -123,7 +123,7 @@ export function PlayerEnrichedStats({
         {title}
         <Card className={CARD_STYLE}>
           <CardContent className="flex flex-col items-center gap-3 p-8 text-center">
-            <AlertCircle className="h-8 w-8 text-red-400" />
+            <Icon icon="lucide:alert-circle" className="h-8 w-8 text-red-400" />
             <p className="text-sm text-gray-500 dark:text-slate-400">{t("enrichedStats.error")}</p>
             <Button variant="outline" size="sm" onClick={fetchStats}>
               {t("enrichedStats.retry")}

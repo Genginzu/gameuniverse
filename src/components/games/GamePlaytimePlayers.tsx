@@ -1,6 +1,6 @@
 "use client";
 
-import { Users, Zap, Gamepad2, Trophy, Plus } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { Spinner } from "@/components/ui/spinner";
 import { Card, CardContent } from "@/components/ui/card";
 import { useTranslations } from "next-intl";
@@ -45,16 +45,16 @@ export function GamePlaytimePlayers({
   const hasData = stats.count > 0;
 
   const avgCards = [
-    { icon: Zap, label: t("hastily"), value: stats.averages.hastily },
-    { icon: Gamepad2, label: t("normally"), value: stats.averages.normally },
-    { icon: Trophy, label: t("completely"), value: stats.averages.completely },
+    { icon: "lucide:zap", label: t("hastily"), value: stats.averages.hastily },
+    { icon: "lucide:gamepad-2", label: t("normally"), value: stats.averages.normally },
+    { icon: "lucide:trophy", label: t("completely"), value: stats.averages.completely },
   ] as const;
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="flex items-center gap-2 text-lg font-semibold text-white">
-          <Users className="h-5 w-5" style={{ color: accentColor }} />
+          <Icon icon="lucide:users" className="h-5 w-5" style={{ color: accentColor }} />
           {t("title")}
           {hasData && (
             <span className="text-sm font-normal text-slate-400">
@@ -72,7 +72,7 @@ export function GamePlaytimePlayers({
               color: getContrastTextColor(accentColor),
             }}
           >
-            <Plus className="h-4 w-4" />
+            <Icon icon="lucide:plus" className="h-4 w-4" />
             {t("addPlaytime")}
           </button>
         )}
@@ -80,7 +80,7 @@ export function GamePlaytimePlayers({
 
       {hasData ? (
         <div className="space-y-3">
-          {avgCards.map(({ icon: IconComp, label, value }) => (
+          {avgCards.map(({ icon: iconName, label, value }) => (
             <Card
               key={label}
               className="rounded-xl border-white/10 bg-white/5 shadow-lg shadow-black/20 backdrop-blur-xl"
@@ -90,7 +90,7 @@ export function GamePlaytimePlayers({
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
                   style={{ backgroundColor: `${accentColor}20` }}
                 >
-                  <IconComp className="h-5 w-5" style={{ color: accentColor }} />
+                  <Icon icon={iconName} className="h-5 w-5" style={{ color: accentColor }} />
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm text-slate-400">{label}</p>
@@ -102,7 +102,7 @@ export function GamePlaytimePlayers({
         </div>
       ) : (
         <div className="py-6 text-center text-slate-400">
-          <Users className="mx-auto mb-2 h-8 w-8 opacity-50" />
+          <Icon icon="lucide:users" className="mx-auto mb-2 h-8 w-8 opacity-50" />
           <p>{t("noData")}</p>
         </div>
       )}

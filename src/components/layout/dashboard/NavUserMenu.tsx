@@ -5,7 +5,6 @@ import { useTranslations } from "next-intl";
 import { useState, useEffect, useRef } from "react";
 import { Icon } from "@iconify/react";
 
-
 interface NavUserMenuProps {
   user: User;
   signOut: () => Promise<void>;
@@ -37,20 +36,20 @@ export default function NavUserMenu({ user, signOut, theme, setTheme }: NavUserM
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 rounded-xl px-2 py-1.5 transition-all hover:bg-white/20 focus:outline-hidden focus:ring-2 focus:ring-violet-400/50 dark:hover:bg-white/5"
+        className="flex items-center gap-2 rounded-xl px-2 py-1.5 transition-all hover:bg-white/20 focus:ring-2 focus:ring-violet-400/50 focus:outline-hidden dark:hover:bg-white/5"
       >
         <div className="flex h-7 w-7 items-center justify-center rounded-full bg-linear-to-br from-violet-500 to-blue-500 shadow-lg shadow-violet-500/20">
-          <Icon icon="fa:user" className="h-3 w-3 text-white"  />
+          <Icon icon="fa:user" className="h-3 w-3 text-white" />
         </div>
         {isOpen ? (
-          <Icon icon="fa:chevron-up" className="h-3 w-3 text-gray-400"  />
+          <Icon icon="fa:chevron-up" className="h-3 w-3 text-gray-400" />
         ) : (
-          <Icon icon="fa:chevron-down" className="h-3 w-3 text-gray-400"  />
+          <Icon icon="fa:chevron-down" className="h-3 w-3 text-gray-400" />
         )}
       </button>
 
       {isOpen && (
-        <div className="glass-dropdown absolute right-0 top-full mt-2 w-52 rounded-xl animate-in fade-in-0 zoom-in-95">
+        <div className="glass-dropdown animate-in fade-in-0 zoom-in-95 absolute top-full right-0 mt-2 w-52 rounded-xl">
           <div className="border-b border-white/20 px-4 py-2 dark:border-white/5">
             <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
               {displayName}
@@ -65,9 +64,9 @@ export default function NavUserMenu({ user, signOut, theme, setTheme }: NavUserM
               }}
             >
               {theme === "dark" ? (
-                <Icon icon="fa:sun" className="mr-3 h-4 w-4"  />
+                <Icon icon="fa:sun" className="mr-3 h-4 w-4" />
               ) : (
-                <Icon icon="fa:moon" className="mr-3 h-4 w-4"  />
+                <Icon icon="fa:moon" className="mr-3 h-4 w-4" />
               )}
               {theme === "dark" ? "Mode clair" : "Mode sombre"}
             </button>
@@ -83,7 +82,7 @@ export default function NavUserMenu({ user, signOut, theme, setTheme }: NavUserM
                 }
               }}
             >
-              <Icon icon="fa:sign-out-alt" className="mr-3 h-4 w-4"  />
+              <Icon icon="lucide:log-out" className="mr-3 h-4 w-4" />
               {tNav("logout")}
             </button>
           </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Music, Users, Youtube } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import { GameColors } from "@/lib/utils/game-utils";
 import { GameMusic } from "@/types/game";
@@ -49,7 +49,7 @@ export function GameDetailsTabMusic({ music, colors }: GameDetailsTabMusicProps)
       <Card className="rounded-xl border-white/10 bg-white/5 shadow-lg shadow-black/20 backdrop-blur-xl">
         <CardContent className="p-6">
           <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-white">
-            <Music className="h-5 w-5" style={{ color: colors.accent }} />
+            <Icon icon="lucide:music" className="h-5 w-5" style={{ color: colors.accent }} />
             {tDetails("music.soundtrack")}
           </h3>
           <p className="text-slate-400">{tDetails("music.noData")}</p>
@@ -65,7 +65,7 @@ export function GameDetailsTabMusic({ music, colors }: GameDetailsTabMusicProps)
         <Card className="rounded-xl border-white/10 bg-white/5 shadow-lg shadow-black/20 backdrop-blur-xl">
           <CardContent className="p-6">
             <h3 className="mb-3 flex items-center gap-2 text-xl font-semibold text-white">
-              <Users className="h-5 w-5" style={{ color: colors.accent }} />
+              <Icon icon="lucide:users" className="h-5 w-5" style={{ color: colors.accent }} />
               {tDetails("music.composer")}
             </h3>
             <p className="text-lg text-slate-200">{music.composer}</p>
@@ -81,7 +81,7 @@ export function GameDetailsTabMusic({ music, colors }: GameDetailsTabMusicProps)
             <Card className="rounded-xl border-white/10 bg-white/5 shadow-lg shadow-black/20 backdrop-blur-xl">
               <CardContent className="p-6">
                 <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-white">
-                  <Music className="h-5 w-5" style={{ color: colors.accent }} />
+                  <Icon icon="lucide:music" className="h-5 w-5" style={{ color: colors.accent }} />
                   {tDetails("music.soundtrack")}
                 </h3>
                 <div className="overflow-hidden rounded-xl">
@@ -104,7 +104,11 @@ export function GameDetailsTabMusic({ music, colors }: GameDetailsTabMusicProps)
             <Card className="rounded-xl border-white/10 bg-white/5 shadow-lg shadow-black/20 backdrop-blur-xl">
               <CardContent className="p-6">
                 <h3 className="mb-4 flex items-center gap-2 text-xl font-semibold text-white">
-                  <Youtube className="h-5 w-5" style={{ color: colors.accent }} />
+                  <Icon
+                    icon="lucide:youtube"
+                    className="h-5 w-5"
+                    style={{ color: colors.accent }}
+                  />
                   {tDetails("music.youtubeVideo")}
                 </h3>
                 <div className="aspect-video overflow-hidden rounded-xl">

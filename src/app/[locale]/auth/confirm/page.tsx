@@ -3,7 +3,7 @@ import { createServerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { XCircle } from "lucide-react";
+import { Icon } from "@iconify/react";
 import Link from "next/link";
 import type { EmailOtpType } from "@supabase/supabase-js";
 
@@ -29,7 +29,7 @@ export default async function ConfirmPage({ searchParams }: ConfirmPageProps) {
         <Card className="mx-auto w-full max-w-md">
           <CardHeader className="text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
-              <XCircle className="h-6 w-6 text-red-600" />
+              <Icon icon="lucide:x-circle" className="h-6 w-6 text-red-600" />
             </div>
             <CardTitle className="text-red-600">Erreur de confirmation</CardTitle>
             <CardDescription>
@@ -37,7 +37,7 @@ export default async function ConfirmPage({ searchParams }: ConfirmPageProps) {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 text-center">
-            <p className="text-sm text-muted-foreground">{params.error}</p>
+            <p className="text-muted-foreground text-sm">{params.error}</p>
             <Button asChild>
               <Link href="/auth">Retour à la connexion</Link>
             </Button>
@@ -66,13 +66,13 @@ export default async function ConfirmPage({ searchParams }: ConfirmPageProps) {
           <Card className="mx-auto w-full max-w-md">
             <CardHeader className="text-center">
               <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
-                <XCircle className="h-6 w-6 text-red-600" />
+                <Icon icon="lucide:x-circle" className="h-6 w-6 text-red-600" />
               </div>
               <CardTitle className="text-red-600">Confirmation échouée</CardTitle>
               <CardDescription>Le lien de confirmation est invalide ou a expiré.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 text-center">
-              <p className="text-sm text-muted-foreground">{error.message}</p>
+              <p className="text-muted-foreground text-sm">{error.message}</p>
               <div className="space-y-2">
                 <Button asChild className="w-full">
                   <Link href="/auth">Retour à la connexion</Link>
@@ -97,7 +97,7 @@ export default async function ConfirmPage({ searchParams }: ConfirmPageProps) {
         <Card className="mx-auto w-full max-w-md">
           <CardHeader className="text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
-              <XCircle className="h-6 w-6 text-red-600" />
+              <Icon icon="lucide:x-circle" className="h-6 w-6 text-red-600" />
             </div>
             <CardTitle className="text-red-600">Erreur inattendue</CardTitle>
             <CardDescription>Une erreur inattendue s'est produite.</CardDescription>

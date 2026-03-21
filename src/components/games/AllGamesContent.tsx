@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { EntityCard } from "@/components/shared/EntityCard";
 import { gameCardConfig } from "@/components/shared/entityCardPresets";
-import { GameFilterButton } from "./GameFilterButton";
+import { FilterButton } from "@/components/shared/FilterButton";
 import { GridSkeleton } from "@/components/shared/GridSkeleton";
 import { gameSkeletonConfig } from "@/components/shared/EntitySkeleton";
 import { SearchSkeleton } from "./SearchSkeleton";
@@ -210,7 +210,7 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
         {/* Filters */}
         <div className="mb-6 space-y-4 sm:mb-8">
-          <GameFilterButton
+          <FilterButton
             hasFilters={
               selectedGenres.length > 0 ||
               selectedPublishers.length > 0 ||

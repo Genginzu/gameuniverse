@@ -1,6 +1,6 @@
 "use client";
 
-import { ThumbsUp, ThumbsDown, User } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { cn } from "@/lib/utils";
 import { getRatingColor } from "@/lib/utils/ratingColor";
 import { useReviewTranslations, useDateFormatter } from "@/hooks/useTranslations";
@@ -29,7 +29,7 @@ function ReviewAvatar({ name, avatar }: { name: string | null; avatar: string | 
 
   return (
     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-700 ring-2 ring-slate-600">
-      <User className="h-5 w-5 text-slate-400" />
+      <Icon icon="lucide:user" className="h-5 w-5 text-slate-400" />
     </div>
   );
 }
@@ -46,13 +46,13 @@ function ReviewPoints({
   if (points.length === 0) return null;
 
   const isPositive = type === "positive";
-  const Icon = isPositive ? ThumbsUp : ThumbsDown;
+  const iconName = isPositive ? "lucide:thumbs-up" : "lucide:thumbs-down";
   const colorClass = isPositive ? "text-green-400" : "text-red-400";
 
   return (
     <div className="space-y-1.5">
       <div className={cn("flex items-center gap-1.5 text-sm font-medium", colorClass)}>
-        <Icon className="h-3.5 w-3.5" />
+        <Icon icon={iconName} className="h-3.5 w-3.5" />
         <span>{label}</span>
       </div>
       <ul className="space-y-1">

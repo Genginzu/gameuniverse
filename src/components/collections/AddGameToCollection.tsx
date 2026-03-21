@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Plus } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { Textarea } from "@/components/ui/textarea";
 import { LoadingButton } from "@/components/ui/loading-button";
 import { useApiClient } from "@/lib/api-client";
@@ -139,7 +139,7 @@ export function AddGameToCollection({ onAdd, isAdding = false }: AddGameToCollec
             rows={2}
             className="resize-none"
           />
-          <p className="mt-1 text-xs text-muted-foreground">
+          <p className="text-muted-foreground mt-1 text-xs">
             {note.length}/{NOTE_MAX_LENGTH}
           </p>
         </div>
@@ -152,7 +152,7 @@ export function AddGameToCollection({ onAdd, isAdding = false }: AddGameToCollec
           loadingText={submitText}
           disabled={!selectedGame}
         >
-          <Plus className="mr-1.5 h-4 w-4" />
+          <Icon icon="lucide:plus" className="mr-1.5 h-4 w-4" />
           {t("addButton")}
         </LoadingButton>
       )}

@@ -46,6 +46,9 @@ interface CharacterDetailRow {
     relationship_type: string;
     description: string | null;
   }>;
+  character_character_roles: Array<{
+    role_id: string;
+  }>;
 }
 
 type RouteParams = { params: Promise<{ id: string }> };
@@ -109,6 +112,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
           related_character_id,
           relationship_type,
           description
+        ),
+        character_character_roles(
+          role_id
         )
       `
       )
@@ -143,6 +149,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       games: character.character_games || [],
       relationships: character.character_relationships || [],
       media: character.character_media || [],
+      role_ids: (character.character_character_roles || []).map((r) => r.role_id),
     });
   } catch (error) {
     logger.error("Error in admin character GET", { error });
@@ -285,6 +292,22 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       if (relationshipsError) {
         logger.error("Error updating relationships", { error: relationshipsError });
         return NextResponse.json({ error: "Failed to update relationships" }, { status: 500 });
+      }
+    }
+
+    // Replace role associations
+    await db.from("character_character_roles").delete().eq("character_id", characterId);
+
+    if (payload.role_ids.length > 0) {
+      const roleRows = payload.role_ids.map((role_id) => ({
+        character_id: characterId,
+        role_id,
+      }));
+      const { error: rolesError } = await db.from("character_character_roles").insert(roleRows);
+
+      if (rolesError) {
+        logger.error("Error updating role associations", { error: rolesError });
+        return NextResponse.json({ error: "Failed to update role associations" }, { status: 500 });
       }
     }
 

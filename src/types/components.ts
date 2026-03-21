@@ -63,12 +63,6 @@ export interface GameFiltersProps {
   onClearFilters: () => void;
 }
 
-export interface GameFilterButtonProps {
-  hasFilters: boolean;
-  filterCount: number;
-  onClick: () => void;
-}
-
 export interface GameCompaniesProps {
   gameId: string;
   gameTitle?: string;

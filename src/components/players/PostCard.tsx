@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations, useFormatter } from "next-intl";
-import { Trash2, Loader2, MoreHorizontal, User } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { LazyImage } from "@/components/ui/lazy-image";
 import type { Post } from "@/types/post";
 import Image from "next/image";
@@ -128,7 +128,7 @@ function PostAvatar({ src, alt }: { src: string | null; alt: string }) {
         <LazyImage src={src} alt={alt} fill className="object-cover" sizes="40px" showSkeleton />
       ) : (
         <div className="flex h-full w-full items-center justify-center">
-          <User className="h-5 w-5 text-blue-300" />
+          <Icon icon="lucide:user" className="h-5 w-5 text-blue-300" />
         </div>
       )}
     </div>
@@ -159,7 +159,7 @@ function PostMenu({
         className="rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:text-slate-500 dark:hover:bg-slate-700/50 dark:hover:text-slate-300"
         aria-label={t("deleteLabel")}
       >
-        <MoreHorizontal className="h-5 w-5" />
+        <Icon icon="lucide:more-horizontal" className="h-5 w-5" />
       </button>
     );
   }
@@ -179,8 +179,8 @@ function PostMenu({
         disabled={isDeleting}
         className="inline-flex items-center gap-1 rounded-lg bg-red-600 px-2.5 py-1 text-xs font-medium text-white transition-colors hover:bg-red-700 disabled:opacity-50"
       >
-        {isDeleting && <Loader2 className="h-3 w-3 animate-spin" />}
-        <Trash2 className="h-3 w-3" />
+        {isDeleting && <Icon icon="lucide:loader-2" className="h-3 w-3 animate-spin" />}
+        <Icon icon="lucide:trash-2" className="h-3 w-3" />
         {t("deleteConfirm")}
       </button>
     </div>

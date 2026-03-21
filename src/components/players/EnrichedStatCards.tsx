@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Clock, Gamepad2, Library, Star } from "lucide-react";
+import { Icon } from "@iconify/react";
 import type { EnrichedStats } from "@/types/player-stats";
 import { formatPlayTime } from "@/lib/utils/formatPlayTime";
 
@@ -24,19 +24,19 @@ export function EnrichedStatCards({ stats, locale, t, totalGames }: EnrichedStat
       {/* Total Games in Library */}
       <StatsCardShell>
         <div className="mb-2 flex items-center justify-center gap-2 text-gray-500 dark:text-slate-400">
-          <Library className="h-5 w-5 text-green-500 dark:text-green-400" />
+          <Icon icon="lucide:library" className="h-5 w-5 text-green-500 dark:text-green-400" />
           <span className="text-sm font-medium">{t("enrichedStats.totalGames")}</span>
         </div>
-        <p className="text-2xl font-bold text-gray-900 dark:text-white md:text-3xl">{totalGames}</p>
+        <p className="text-2xl font-bold text-gray-900 md:text-3xl dark:text-white">{totalGames}</p>
       </StatsCardShell>
 
       {/* Total Play Time — Req 4.1, 4.4 */}
       <StatsCardShell>
         <div className="mb-2 flex items-center justify-center gap-2 text-gray-500 dark:text-slate-400">
-          <Clock className="h-5 w-5 text-purple-500 dark:text-purple-400" />
+          <Icon icon="lucide:clock" className="h-5 w-5 text-purple-500 dark:text-purple-400" />
           <span className="text-sm font-medium">{t("enrichedStats.totalPlayTime")}</span>
         </div>
-        <p className="text-2xl font-bold text-gray-900 dark:text-white md:text-3xl">
+        <p className="text-2xl font-bold text-gray-900 md:text-3xl dark:text-white">
           {formatPlayTime(stats.totalPlayTime, locale)}
           <span className="ml-1 text-base font-normal text-gray-500 dark:text-slate-400">
             {t("enrichedStats.hours")}
@@ -47,11 +47,11 @@ export function EnrichedStatCards({ stats, locale, t, totalGames }: EnrichedStat
       {/* Favorite Genre — Req 4.1, 4.2 */}
       <StatsCardShell>
         <div className="mb-2 flex items-center justify-center gap-2 text-gray-500 dark:text-slate-400">
-          <Gamepad2 className="h-5 w-5 text-blue-500 dark:text-blue-400" />
+          <Icon icon="lucide:gamepad-2" className="h-5 w-5 text-blue-500 dark:text-blue-400" />
           <span className="text-sm font-medium">{t("enrichedStats.favoriteGenre")}</span>
         </div>
         {stats.favoriteGenre ? (
-          <p className="text-2xl font-bold text-gray-900 dark:text-white md:text-3xl">
+          <p className="text-2xl font-bold text-gray-900 md:text-3xl dark:text-white">
             {stats.favoriteGenre.name}
           </p>
         ) : (
@@ -64,10 +64,10 @@ export function EnrichedStatCards({ stats, locale, t, totalGames }: EnrichedStat
       {/* Review Count — Req 4.1 */}
       <StatsCardShell>
         <div className="mb-2 flex items-center justify-center gap-2 text-gray-500 dark:text-slate-400">
-          <Star className="h-5 w-5 text-yellow-500 dark:text-yellow-400" />
+          <Icon icon="lucide:star" className="h-5 w-5 text-yellow-500 dark:text-yellow-400" />
           <span className="text-sm font-medium">{t("enrichedStats.reviewCount")}</span>
         </div>
-        <p className="text-2xl font-bold text-gray-900 dark:text-white md:text-3xl">
+        <p className="text-2xl font-bold text-gray-900 md:text-3xl dark:text-white">
           {stats.reviewCount}
         </p>
       </StatsCardShell>

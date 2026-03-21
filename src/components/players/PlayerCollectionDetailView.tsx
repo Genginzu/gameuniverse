@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { ArrowLeft, Plus } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { CollectionDetail } from "@/components/collections/CollectionDetail";
@@ -125,7 +125,7 @@ export function PlayerCollectionDetailView({
             onToggleVisibility={handleToggleVisibility}
           />
           <Button variant="outline" size="sm" onClick={() => setShowAddGameDialog(true)}>
-            <Plus className="mr-1.5 h-4 w-4" />
+            <Icon icon="lucide:plus" className="mr-1.5 h-4 w-4" />
             {t("addGame")}
           </Button>
         </div>
@@ -174,7 +174,7 @@ function BackButton({ onBack }: { onBack: () => void }) {
 
   return (
     <Button variant="ghost" size="sm" onClick={onBack}>
-      <ArrowLeft className="mr-1.5 h-4 w-4" />
+      <Icon icon="lucide:arrow-left" className="mr-1.5 h-4 w-4" />
       {t("backToCollections")}
     </Button>
   );

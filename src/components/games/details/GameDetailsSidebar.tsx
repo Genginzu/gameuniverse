@@ -1,7 +1,7 @@
 "use client";
 
 import { LazyImage } from "@/components/ui/lazy-image";
-import { Heart, Loader2, Share2 } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import { GameDetails } from "@/types/game";
 import { GameColors, getContrastTextColor } from "@/lib/utils/game-utils";
@@ -62,16 +62,16 @@ export function GameDetailsSidebar({ game, colors, formatReleaseDate }: GameDeta
           }}
         >
           {isProcessing ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
+            <Icon icon="lucide:loader-2" className="h-4 w-4 animate-spin" />
           ) : (
-            <Heart className={`h-4 w-4 ${inLibrary ? "fill-current" : ""}`} />
+            <Icon icon="lucide:heart" className={`h-4 w-4 ${inLibrary ? "fill-current" : ""}`} />
           )}
           {inLibrary ? t("game.removeFromLibrary") : t("game.addToLibrary")}
         </button>
 
         {/* Share button */}
         <button className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 py-3 text-sm font-medium text-slate-300 shadow-lg shadow-black/10 backdrop-blur-xl transition-colors hover:bg-white/10">
-          <Share2 className="h-4 w-4" />
+          <Icon icon="lucide:share-2" className="h-4 w-4" />
           {t("common.share")}
         </button>
 

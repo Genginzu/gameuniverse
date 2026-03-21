@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { BarChart3, Star, MessageSquare } from "lucide-react";
+import { Icon } from "@iconify/react";
 import type { PlayerReviewsStatsData } from "@/types/playerReview";
 import { getRatingColor } from "@/lib/utils/ratingColor";
 
@@ -23,8 +23,8 @@ export function PlayerReviewsStats({ stats }: PlayerReviewsStatsProps) {
       <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
         {/* Total reviews */}
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-neon-violet/20 text-neon-violet">
-            <MessageSquare className="h-5 w-5" />
+          <div className="bg-neon-violet/20 text-neon-violet flex h-10 w-10 items-center justify-center rounded-xl">
+            <Icon icon="lucide:message-square" className="h-5 w-5" />
           </div>
           <div>
             <p className="text-sm text-gray-500 dark:text-slate-400">{t("stats.totalReviews")}</p>
@@ -34,8 +34,8 @@ export function PlayerReviewsStats({ stats }: PlayerReviewsStatsProps) {
 
         {/* Average rating */}
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-neon-cyan/20 text-neon-cyan">
-            <Star className="h-5 w-5" />
+          <div className="bg-neon-cyan/20 text-neon-cyan flex h-10 w-10 items-center justify-center rounded-xl">
+            <Icon icon="lucide:star" className="h-5 w-5" />
           </div>
           <div>
             <p className="text-sm text-gray-500 dark:text-slate-400">{t("stats.averageRating")}</p>
@@ -56,7 +56,7 @@ export function PlayerReviewsStats({ stats }: PlayerReviewsStatsProps) {
       {/* Distribution */}
       <div>
         <div className="mb-3 flex items-center gap-2">
-          <BarChart3 className="h-4 w-4 text-gray-500 dark:text-slate-400" />
+          <Icon icon="lucide:bar-chart-3" className="h-4 w-4 text-gray-500 dark:text-slate-400" />
           <p className="text-sm font-medium text-gray-700 dark:text-slate-300">
             {t("stats.distribution")}
           </p>

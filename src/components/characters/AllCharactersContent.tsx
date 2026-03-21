@@ -4,23 +4,18 @@ import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { EntityCard } from "@/components/shared/EntityCard";
 import { characterCardConfig } from "@/components/shared/entityCardPresets";
-import { CharacterFilters } from "./CharacterFilters";
+import { CharacterFilters, type RoleFilterOption } from "./CharacterFilters";
 import { CharactersEmptyState } from "./CharactersEmptyState";
-import { CharacterFilterButton } from "./CharacterFilterButton";
+import { FilterButton } from "@/components/shared/FilterButton";
 import { Pagination } from "@/components/shared/Pagination";
 import { GridSkeleton } from "@/components/shared/GridSkeleton";
 import { characterSkeletonConfig } from "@/components/shared/EntitySkeleton";
 import { CharacterSummary } from "@/types/character";
+import { PlatformFilterOption } from "@/types/platform";
 import { Pagination as PaginationType } from "@/types/pagination";
 import { useApiClient } from "@/lib/api-client";
 import { useAsyncError } from "@/components/providers/ErrorProvider";
 import { toast } from "@/hooks/use-toast";
-
-interface Game {
-  id: string;
-  title: string;
-  characterCount?: number;
-}
 
 interface AllCharactersContentProps {
   locale?: string;
@@ -29,39 +24,22 @@ interface AllCharactersContentProps {
 export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProps) {
   const tErrors = useTranslations("errors");
   const [characters, setCharacters] = useState<CharacterSummary[]>([]);
-  const [games, setGames] = useState<Game[]>([]);
   const [pagination, setPagination] = useState<PaginationType | null>(null);
   const [loading, setLoading] = useState(true);
   const [initialLoading, setInitialLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedGames, setSelectedGames] = useState<string[]>([]);
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
+  const [platforms, setPlatforms] = useState<PlatformFilterOption[]>([]);
+  const [roles, setRoles] = useState<RoleFilterOption[]>([]);
   const [showFilters, setShowFilters] = useState(false);
 
   const apiClient = useApiClient();
   const { executeAsync } = useAsyncError();
 
-  const fetchGames = useCallback(async () => {
-    const result = await executeAsync(async () => {
-      const data = await apiClient.get(`/api/games?locale=${locale}&limit=100`, {
-        retryConfig: {
-          maxAttempts: 2,
-        },
-      });
-
-      return data.games || [];
-    }, "fetchGames");
-
-    if (result) {
-      setGames(result);
-    }
-  }, [locale, apiClient, executeAsync]);
-
   const fetchCharacters = useCallback(
     async (
       search: string = "",
-      games: string[] = [],
       roles: string[] = [],
       page: number = 1,
       platforms: string[] = []
@@ -77,10 +55,6 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
 
         if (search.trim()) {
           params.append("search", search.trim());
-        }
-
-        if (games.length > 0) {
-          params.append("games", games.join(","));
         }
 
         if (roles.length > 0) {
@@ -121,11 +95,6 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
     [locale, apiClient, executeAsync]
   );
 
-  // Handle game filter
-  const handleGameFilter = useCallback((games: string[]) => {
-    setSelectedGames(games);
-  }, []);
-
   // Handle role filter
   const handleRoleFilter = useCallback((roles: string[]) => {
     setSelectedRoles(roles);
@@ -139,23 +108,48 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
   // Handle page change
   const handlePageChange = useCallback(
     (page: number) => {
-      fetchCharacters(searchQuery, selectedGames, selectedRoles, page, selectedPlatforms);
+      fetchCharacters(searchQuery, selectedRoles, page, selectedPlatforms);
     },
-    [fetchCharacters, searchQuery, selectedGames, selectedRoles, selectedPlatforms]
+    [fetchCharacters, searchQuery, selectedRoles, selectedPlatforms]
   );
 
   // Clear all filters
   const handleClearFilters = useCallback(() => {
     setSearchQuery("");
-    setSelectedGames([]);
     setSelectedRoles([]);
     setSelectedPlatforms([]);
   }, []);
 
+  // Fetch platforms for filter panel
+  const fetchPlatforms = useCallback(async () => {
+    const result = await executeAsync(async () => {
+      const data = await apiClient.get(`/api/platforms?locale=${locale}`, {
+        retryConfig: { maxAttempts: 2 },
+      });
+      return data.platforms || [];
+    }, "fetchPlatforms");
+
+    if (result) {
+      setPlatforms(result);
+    }
+  }, [locale, apiClient, executeAsync]);
+
+  // Fetch roles for filter panel
+  const fetchRoles = useCallback(async () => {
+    const result = await executeAsync(async () => {
+      const data = await apiClient.get(`/api/roles?locale=${locale}`, {
+        retryConfig: { maxAttempts: 2 },
+      });
+      return data.roles || [];
+    }, "fetchRoles");
+
+    if (result) {
+      setRoles(result);
+    }
+  }, [locale, apiClient, executeAsync]);
+
   // Initial load - only on mount
   useEffect(() => {
-    fetchGames();
-
     // Direct call without depending on fetchCharacters
     const loadInitialCharacters = async () => {
       setLoading(true);
@@ -191,6 +185,8 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
     };
 
     loadInitialCharacters();
+    fetchPlatforms();
+    fetchRoles();
   }, []); // Only on initial mount
 
   // Effect to handle filter changes with debounce
@@ -199,11 +195,11 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
     if (initialLoading) return;
 
     const timeoutId = setTimeout(() => {
-      fetchCharacters(searchQuery, selectedGames, selectedRoles, 1, selectedPlatforms);
+      fetchCharacters(searchQuery, selectedRoles, 1, selectedPlatforms);
     }, 300); // 300ms debounce
 
     return () => clearTimeout(timeoutId);
-  }, [searchQuery, selectedGames, selectedRoles, selectedPlatforms, fetchCharacters]); // Include fetchCharacters
+  }, [searchQuery, selectedRoles, selectedPlatforms, fetchCharacters]); // Include fetchCharacters
 
   // Show full skeleton on initial load
   if (initialLoading) {
@@ -221,26 +217,22 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
         {/* Filters */}
         <div className="mb-6 space-y-4 sm:mb-8">
-          <CharacterFilterButton
-            hasFilters={
-              selectedGames.length > 0 || selectedRoles.length > 0 || selectedPlatforms.length > 0
-            }
-            filterCount={selectedGames.length + selectedRoles.length + selectedPlatforms.length}
+          <FilterButton
+            hasFilters={selectedRoles.length > 0 || selectedPlatforms.length > 0}
+            filterCount={selectedRoles.length + selectedPlatforms.length}
             onClick={() => setShowFilters(!showFilters)}
           />
 
           {/* Filter content below - full width */}
           <CharacterFilters
-            games={games}
-            selectedGames={selectedGames}
             selectedRoles={selectedRoles}
             selectedPlatforms={selectedPlatforms}
-            onGameChange={handleGameFilter}
+            roles={roles}
+            platforms={platforms}
             onRoleChange={handleRoleFilter}
             onPlatformsChange={handlePlatformFilter}
             onClearFilters={handleClearFilters}
             showAllFilters={showFilters}
-            locale={locale}
           />
         </div>
 
@@ -255,17 +247,14 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
             {characters.length === 0 ? (
               <CharactersEmptyState
                 hasFilters={
-                  !!searchQuery ||
-                  selectedGames.length > 0 ||
-                  selectedRoles.length > 0 ||
-                  selectedPlatforms.length > 0
+                  !!searchQuery || selectedRoles.length > 0 || selectedPlatforms.length > 0
                 }
                 onClearFilters={handleClearFilters}
               />
             ) : (
               <div className="space-y-8">
                 {/* Responsive grid - 4 columns layout */}
-                <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
+                <div className="xs:grid-cols-2 grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
                   {characters.map((character, index) => (
                     <EntityCard
                       key={character.id}

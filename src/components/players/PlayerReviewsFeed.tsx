@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
-import { MessageSquareOff } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { usePlayerReviews } from "@/hooks/usePlayerReviews";
 import { PlayerReviewsStats } from "./PlayerReviewsStats";
 import { PlayerReviewsSortSelect } from "./PlayerReviewsSortSelect";
@@ -124,7 +124,10 @@ function ReviewsFeedEmpty() {
   return (
     <div className="glass-card flex flex-col items-center justify-center rounded-2xl py-12 text-center">
       <div className="mb-4 rounded-full bg-gray-100 p-4 dark:bg-slate-700/50">
-        <MessageSquareOff className="h-10 w-10 text-gray-400 dark:text-slate-400" />
+        <Icon
+          icon="lucide:message-square-off"
+          className="h-10 w-10 text-gray-400 dark:text-slate-400"
+        />
       </div>
       <p className="text-sm text-gray-500 dark:text-slate-400">{t("empty")}</p>
     </div>

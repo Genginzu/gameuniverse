@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Check, X } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 
 import { useCropEditor } from "@/hooks/useCropEditor";
@@ -166,7 +166,7 @@ export function CropEditor({
             src={imageSrc}
             alt=""
             draggable={false}
-            className="pointer-events-none absolute left-0 top-0 max-w-none select-none"
+            className="pointer-events-none absolute top-0 left-0 max-w-none select-none"
             style={{
               width: imageSize.width,
               height: imageSize.height,
@@ -206,7 +206,7 @@ export function CropEditor({
           disabled={isDisabled}
           className="inline-flex items-center gap-1.5 rounded-xl bg-linear-to-r from-[#615dfa] via-[#5b36d4] to-[#7c5cfc] px-4 py-2 text-xs font-medium text-white shadow-md transition-all duration-300 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          <Check className="h-3.5 w-3.5" />
+          <Icon icon="lucide:check" className="h-3.5 w-3.5" />
           {t("confirm")}
         </button>
         <button
@@ -215,7 +215,7 @@ export function CropEditor({
           disabled={isDisabled}
           className="inline-flex items-center gap-1.5 rounded-xl bg-white/40 px-4 py-2 text-xs font-medium text-gray-700 transition-all duration-300 hover:bg-white/60 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-slate-800/50 dark:text-gray-300 dark:hover:bg-slate-700/60"
         >
-          <X className="h-3.5 w-3.5" />
+          <Icon icon="lucide:x" className="h-3.5 w-3.5" />
           {t("cancel")}
         </button>
       </div>

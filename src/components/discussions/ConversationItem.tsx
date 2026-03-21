@@ -1,6 +1,6 @@
 "use client";
 
-import { User } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 
 import { LazyImage } from "@/components/ui/lazy-image";
@@ -50,7 +50,7 @@ export default function ConversationItem({
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
-            <User className="h-5 w-5 text-neon-violet/70" />
+            <Icon icon="lucide:user" className="text-neon-violet/70 h-5 w-5" />
           </div>
         )}
       </div>

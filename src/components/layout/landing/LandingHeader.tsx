@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { GameUniverseLogo } from "@/components/ui/game-universe-logo";
 import { Icon } from "@iconify/react";
 
-
 export function LandingHeader() {
   const t = useTranslations("navigation");
   const { user, loading, signOut } = useAuth();
@@ -26,7 +25,7 @@ export function LandingHeader() {
       <div className="flex items-center space-x-8">
         <Link href="/" className="flex items-center space-x-3">
           <GameUniverseLogo size="md" />
-          <span className="text-lg font-bold text-gray-900 dark:text-white lg:text-xl">
+          <span className="text-lg font-bold text-gray-900 lg:text-xl dark:text-white">
             Game Universe
           </span>
         </Link>
@@ -63,8 +62,8 @@ export function LandingHeader() {
         ) : user ? (
           <div className="flex items-center space-x-3">
             <div className="glass flex items-center space-x-3 rounded-xl px-4 py-2 text-sm text-gray-600 dark:text-gray-300">
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-linear-to-br from-neon-violet to-neon-cyan">
-                <Icon icon="fa:user" className="h-4 w-4 text-white"  />
+              <div className="from-neon-violet to-neon-cyan flex h-8 w-8 items-center justify-center rounded-xl bg-linear-to-br">
+                <Icon icon="fa:user" className="h-4 w-4 text-white" />
               </div>
               <span className="hidden font-medium sm:inline">
                 {user.user_metadata?.username || user.email}
@@ -76,7 +75,7 @@ export function LandingHeader() {
               onClick={handleSignOut}
               className="rounded-xl text-gray-600 hover:bg-white/30 dark:text-gray-300 dark:hover:bg-white/5"
             >
-              <Icon icon="fa:sign-out-alt" className="h-4 w-4 sm:mr-2"  />
+              <Icon icon="lucide:log-out" className="h-4 w-4 sm:mr-2" />
               <span className="hidden sm:inline">{t("logout")}</span>
             </Button>
           </div>
@@ -91,7 +90,7 @@ export function LandingHeader() {
             </Button>
             <Button
               asChild
-              className="neon-btn rounded-xl bg-neon-violet/10 px-5 py-2 font-semibold text-neon-violet transition-all dark:bg-neon-violet/20 dark:text-white"
+              className="neon-btn bg-neon-violet/10 text-neon-violet dark:bg-neon-violet/20 rounded-xl px-5 py-2 font-semibold transition-all dark:text-white"
             >
               <Link href="/auth?mode=signup">{t("signup")}</Link>
             </Button>

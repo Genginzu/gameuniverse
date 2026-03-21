@@ -3,7 +3,7 @@
 import { useRef, useEffect, useCallback, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
-import { X, Loader2 } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useGlobalSearch } from "@/hooks/useGlobalSearch";
 import { GlobalSearchDropdown } from "@/components/shared/GlobalSearchDropdown";
 import { getResultUrl, type FlatSearchItem } from "@/lib/utils/global-search-utils";
@@ -179,7 +179,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
           {/* Loading indicator */}
           {isLoading && (
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-              <Loader2 className="h-6 w-6 animate-spin text-white/60" />
+              <Icon icon="lucide:loader-2" className="h-6 w-6 animate-spin text-white/60" />
             </div>
           )}
           {/* Clear button */}
@@ -194,7 +194,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
               className="absolute inset-y-0 right-0 flex items-center pr-2 text-white/40 transition-colors hover:text-white focus:outline-hidden"
               aria-label="Clear"
             >
-              <X className="h-6 w-6" />
+              <Icon icon="lucide:x" className="h-6 w-6" />
             </button>
           )}
         </div>

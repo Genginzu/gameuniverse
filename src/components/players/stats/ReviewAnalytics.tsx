@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { MessageSquare } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import type { ReviewAnalyticsData, ReviewBucket } from "@/types/dashboard-stats";
 import { StatsEmptyState } from "@/components/players/stats/StatsEmptyState";
@@ -42,7 +42,7 @@ export function ReviewAnalytics({ analytics, locale }: ReviewAnalyticsProps) {
       <div>
         <StatsSectionTitle>{t("reviewAnalytics.title")}</StatsSectionTitle>
         <StatsEmptyState
-          icon={<MessageSquare className="h-8 w-8" />}
+          icon={<Icon icon="lucide:message-square" className="h-8 w-8" />}
           message={t("reviewAnalytics.empty")}
         />
       </div>

@@ -12,7 +12,9 @@ export type AllowedMimeType = (typeof ALLOWED_MIME_TYPES)[number];
 
 export const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 Mo
 
-export const CONTEXT_TO_PROFILE_FIELD: Record<UploadContext, "avatar_url" | "banner_url"> = {
+export type ProfileUploadContext = "avatars" | "banners";
+
+export const CONTEXT_TO_PROFILE_FIELD: Record<ProfileUploadContext, "avatar_url" | "banner_url"> = {
   avatars: "avatar_url",
   banners: "banner_url",
 };
@@ -52,7 +54,7 @@ export interface UploadConfirmResponse {
 }
 
 /** Dimensions de sortie par contexte d'upload */
-export const OUTPUT_DIMENSIONS: Record<UploadContext, { width: number; height: number }> = {
+export const OUTPUT_DIMENSIONS: Record<ProfileUploadContext, { width: number; height: number }> = {
   avatars: { width: 256, height: 256 },
   banners: { width: 1280, height: 400 },
 };

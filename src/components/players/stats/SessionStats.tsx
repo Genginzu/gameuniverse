@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations, useLocale } from "next-intl";
-import { Activity, Clock, Timer } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import type { SessionStatsData, DayFrequency } from "@/types/dashboard-stats";
 import { formatLocalizedNumber } from "@/lib/utils/statsFormatters";
@@ -41,19 +41,22 @@ export function SessionStats({ sessions }: SessionStatsProps) {
     return (
       <div>
         <StatsSectionTitle>{t("sessions.title")}</StatsSectionTitle>
-        <StatsEmptyState icon={<Activity className="h-8 w-8" />} message={t("sessions.empty")} />
+        <StatsEmptyState
+          icon={<Icon icon="lucide:activity" className="h-8 w-8" />}
+          message={t("sessions.empty")}
+        />
       </div>
     );
   }
 
   const metrics = [
     {
-      icon: <Activity className="h-5 w-5 text-neon-violet" />,
+      icon: <Icon icon="lucide:activity" className="text-neon-violet h-5 w-5" />,
       label: t("sessions.totalSessions"),
       value: formatLocalizedNumber(sessions.totalSessions, locale),
     },
     {
-      icon: <Clock className="h-5 w-5 text-neon-violet" />,
+      icon: <Icon icon="lucide:clock" className="text-neon-violet h-5 w-5" />,
       label: t("sessions.averageDuration"),
       value:
         sessions.averageDurationMinutes !== null
@@ -61,7 +64,7 @@ export function SessionStats({ sessions }: SessionStatsProps) {
           : "—",
     },
     {
-      icon: <Timer className="h-5 w-5 text-neon-violet" />,
+      icon: <Icon icon="lucide:timer" className="text-neon-violet h-5 w-5" />,
       label: t("sessions.longestSession"),
       value:
         sessions.longestSessionMinutes !== null

@@ -1,7 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Star, Trophy, Shield, Tag } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import { GameDetails } from "@/types/game";
 import { GameColors } from "@/lib/utils/game-utils";
@@ -39,21 +39,21 @@ export function GameStatsGrid({
   // Metascore colored badge class
   const stats = [
     {
-      icon: Star,
+      icon: "lucide:star",
       value: game.metascore ? String(game.metascore) : "—",
       label: tDetails("statsGrid.globalScore"),
       metascoreBg: game.metascore ? getMetascoreColor(game.metascore) : undefined,
       show: true,
     },
     {
-      icon: Tag,
+      icon: "lucide:tag",
       value: cheapest ? formatPrice(cheapest.price, cheapest.currency) : "—",
       label: tDetails("statsGrid.price"),
       metascoreBg: undefined,
       show: true,
     },
     {
-      icon: Trophy,
+      icon: "lucide:trophy",
       value: "",
       label: tDetails("statsGrid.genres"),
       metascoreBg: undefined,
@@ -61,7 +61,7 @@ export function GameStatsGrid({
       genres: game.genres,
     },
     {
-      icon: Shield,
+      icon: "lucide:shield",
       value: ageDisplay || "—",
       label: tDetails("statsGrid.classification"),
       metascoreBg: undefined,
@@ -81,7 +81,7 @@ export function GameStatsGrid({
               className={`flex flex-col justify-between rounded-xl border border-white/10 bg-white/5 p-4 shadow-lg shadow-black/10 backdrop-blur-xl`}
             >
               <div className="mb-2">
-                <StatIcon className="h-4 w-4" style={{ color: colors.accent }} />
+                <Icon icon={StatIcon} className="h-4 w-4" style={{ color: colors.accent }} />
               </div>
               {stat.metascoreBg ? (
                 <div

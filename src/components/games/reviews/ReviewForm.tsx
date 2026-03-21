@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Send } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { reviewSchema, type ReviewInput } from "@/lib/validations/review";
 import { useReviewTranslations } from "@/hooks/useTranslations";
 import { LoadingButton } from "@/components/ui/loading-button";
@@ -61,7 +61,7 @@ export function ReviewForm({
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
       {/* Rating */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-foreground">
+        <label className="text-foreground text-sm font-medium">
           {t("form.ratingLabel")} <span className="text-destructive">*</span>
         </label>
         <Controller
@@ -71,12 +71,12 @@ export function ReviewForm({
             <RatingInput value={field.value} onChange={field.onChange} max={20} />
           )}
         />
-        {errors.rating && <p className="text-sm text-destructive">{errors.rating.message}</p>}
+        {errors.rating && <p className="text-destructive text-sm">{errors.rating.message}</p>}
       </div>
 
       {/* Rich text content */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-foreground">
+        <label className="text-foreground text-sm font-medium">
           {t("form.contentLabel")} <span className="text-destructive">*</span>
         </label>
         <Controller
@@ -84,7 +84,7 @@ export function ReviewForm({
           name="content"
           render={({ field }) => <RichTextEditor content={field.value} onChange={field.onChange} />}
         />
-        {errors.content && <p className="text-sm text-destructive">{errors.content.message}</p>}
+        {errors.content && <p className="text-destructive text-sm">{errors.content.message}</p>}
       </div>
 
       {/* Points section */}
@@ -104,7 +104,7 @@ export function ReviewForm({
             )}
           />
           {errors.positivePoints && (
-            <p className="mt-2 text-sm text-destructive">
+            <p className="text-destructive mt-2 text-sm">
               {errors.positivePoints.message ?? errors.positivePoints.root?.message}
             </p>
           )}
@@ -125,7 +125,7 @@ export function ReviewForm({
             )}
           />
           {errors.negativePoints && (
-            <p className="mt-2 text-sm text-destructive">
+            <p className="text-destructive mt-2 text-sm">
               {errors.negativePoints.message ?? errors.negativePoints.root?.message}
             </p>
           )}
@@ -137,7 +137,7 @@ export function ReviewForm({
 
       {/* Submit button */}
       <LoadingButton type="submit" loading={submitting} loadingText={t("form.submitting")}>
-        <Send className="mr-2 h-4 w-4" />
+        <Icon icon="lucide:send" className="mr-2 h-4 w-4" />
         {t("form.submitButton")}
       </LoadingButton>
     </form>

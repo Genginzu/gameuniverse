@@ -281,6 +281,19 @@ export async function POST(request: NextRequest) {
         }
       }
 
+      // Insert role associations
+      if (payload.role_ids.length > 0) {
+        const roleRows = payload.role_ids.map((role_id) => ({
+          character_id: characterId,
+          role_id,
+        }));
+        const { error: rolesError } = await db.from("character_character_roles").insert(roleRows);
+
+        if (rolesError) {
+          throw new Error(`Failed to create role associations: ${rolesError.message}`);
+        }
+      }
+
       return NextResponse.json(
         {
           message: "Character created successfully",

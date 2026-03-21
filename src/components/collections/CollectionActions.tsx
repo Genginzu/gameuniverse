@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { Pencil, Trash2, Eye, EyeOff, Link2 } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import { LoadingButton } from "@/components/ui/loading-button";
 import {
@@ -54,26 +54,26 @@ export function CollectionActions({
     <>
       <div className="flex flex-wrap items-center gap-2">
         <Button variant="outline" size="sm" onClick={onEdit}>
-          <Pencil className="mr-1.5 h-4 w-4" />
+          <Icon icon="lucide:pencil" className="mr-1.5 h-4 w-4" />
           {t("edit")}
         </Button>
 
         <Button variant="outline" size="sm" onClick={onToggleVisibility}>
           {collection.isPublic ? (
-            <EyeOff className="mr-1.5 h-4 w-4" />
+            <Icon icon="lucide:eye-off" className="mr-1.5 h-4 w-4" />
           ) : (
-            <Eye className="mr-1.5 h-4 w-4" />
+            <Icon icon="lucide:eye" className="mr-1.5 h-4 w-4" />
           )}
           {collection.isPublic ? t("makePrivate") : t("makePublic")}
         </Button>
 
         <Button variant="outline" size="sm" onClick={handleCopyLink}>
-          <Link2 className="mr-1.5 h-4 w-4" />
+          <Icon icon="lucide:link-2" className="mr-1.5 h-4 w-4" />
           {t("copyLink")}
         </Button>
 
         <Button variant="destructive" size="sm" onClick={() => setShowDeleteDialog(true)}>
-          <Trash2 className="mr-1.5 h-4 w-4" />
+          <Icon icon="lucide:trash-2" className="mr-1.5 h-4 w-4" />
           {t("delete")}
         </Button>
       </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Hash, X } from "lucide-react";
+import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 
 const MAX_TAGS = 10;
@@ -61,7 +61,7 @@ export function TagInput({ tags, onChange }: TagInputProps) {
 
   return (
     <div className="flex flex-wrap items-center gap-1.5 rounded-xl border-2 border-violet-300 bg-white/60 px-3 py-2 shadow-xs backdrop-blur-xs transition-all duration-200 focus-within:border-violet-400 focus-within:ring-2 focus-within:ring-violet-400/20 dark:border-violet-500/50 dark:bg-slate-700/40 dark:focus-within:border-violet-400/60 dark:focus-within:ring-violet-400/15">
-      <Hash className="h-4 w-4 shrink-0 text-violet-400 dark:text-violet-300" />
+      <Icon icon="lucide:hash" className="h-4 w-4 shrink-0 text-violet-400 dark:text-violet-300" />
 
       {tags.map((tag) => (
         <span
@@ -75,7 +75,7 @@ export function TagInput({ tags, onChange }: TagInputProps) {
             className="rounded-full p-0.5 hover:bg-violet-500/20 dark:hover:bg-violet-400/20"
             aria-label={t("tagRemoveAriaLabel", { tag })}
           >
-            <X className="h-3 w-3" />
+            <Icon icon="lucide:x" className="h-3 w-3" />
           </button>
         </span>
       ))}
@@ -88,7 +88,7 @@ export function TagInput({ tags, onChange }: TagInputProps) {
           onKeyDown={handleKeyDown}
           placeholder={tags.length === 0 ? t("tagInputPlaceholder") : ""}
           aria-label={t("tagInputAriaLabel")}
-          className="min-w-[80px] flex-1 border-none bg-transparent text-xs text-gray-800 placeholder-gray-400 outline-hidden ring-0 focus:border-none focus:outline-hidden focus:ring-0 dark:text-slate-100 dark:placeholder-slate-500"
+          className="min-w-[80px] flex-1 border-none bg-transparent text-xs text-gray-800 placeholder-gray-400 ring-0 outline-hidden focus:border-none focus:ring-0 focus:outline-hidden dark:text-slate-100 dark:placeholder-slate-500"
         />
       )}
     </div>
