@@ -1,12 +1,13 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import useSWR from "swr";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Icon } from "@iconify/react";
 import { useAuth } from "@/hooks/useAuth";
-import { useFriends } from "@/hooks/useFriends";
+import { useFriendRelationship } from "@/hooks/useFriendRelationship";
 import { PlayerProfileBanner } from "./PlayerProfileBanner";
 import type { PlayerXpStats } from "@/types/achievement";
 import { PlayerProfileTabs, type ProfileTab } from "./PlayerProfileTabs";
@@ -37,22 +38,15 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
   const { user } = useAuth();
   const isOwner = user?.id === player.id;
 
-  const friendsHook = useFriends(player.id, locale);
+  // Lightweight hook: only fetches friend count + relationship status (not the full list)
+  const relationship = useFriendRelationship(player.id);
 
   const [activeTab, setActiveTab] = useState<ProfileTab>("activity");
 
-  // Fetch XP stats for the ProgressRing (Req 5.4, 5.5)
-  const [xpStats, setXpStats] = useState<PlayerXpStats | null>(null);
-  useEffect(() => {
-    const controller = new AbortController();
-    fetch(`/api/players/${player.id}/xp`, { signal: controller.signal })
-      .then((res) => (res.ok ? res.json() : null))
-      .then((json: PlayerXpStats | null) => {
-        if (json) setXpStats(json);
-      })
-      .catch(() => {});
-    return () => controller.abort();
-  }, [player.id]);
+  // SWR-cached XP stats for the ProgressRing (Req 5.4, 5.5)
+  const { data: xpStats } = useSWR<PlayerXpStats>(`/api/players/${player.id}/xp`, {
+    revalidateOnFocus: false,
+  });
 
   const displayName = player.fullName || t("card.anonymousPlayer");
 
@@ -77,20 +71,20 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
         player={player}
         displayName={displayName}
         reviewCount={player.stats.totalGames}
-        friendCount={friendsHook.friendCount}
+        friendCount={relationship.friendCount}
         commentCount={0}
-        xpStats={xpStats}
+        xpStats={xpStats ?? null}
         friendActionSlot={
           <FriendActionButton
             playerId={player.id}
             isAuthenticated={!!user}
             isOwner={isOwner}
-            relationshipStatus={friendsHook.relationshipStatus}
-            friendshipId={friendsHook.relationshipFriendshipId}
-            sendRequest={friendsHook.sendRequest}
-            acceptRequest={friendsHook.acceptRequest}
-            declineRequest={friendsHook.declineRequest}
-            removeFriend={friendsHook.removeFriend}
+            relationshipStatus={relationship.relationshipStatus}
+            friendshipId={relationship.relationshipFriendshipId}
+            sendRequest={relationship.sendRequest}
+            acceptRequest={relationship.acceptRequest}
+            declineRequest={relationship.declineRequest}
+            removeFriend={relationship.removeFriend}
           />
         }
       />
@@ -105,7 +99,6 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
           player={player}
           locale={locale}
           isOwner={isOwner}
-          friendsHook={friendsHook}
           t={t}
           tCommon={tCommon}
         />

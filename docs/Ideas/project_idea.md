@@ -34,6 +34,15 @@
 # Corrections
 
 - Refaire une passe pour optimiser les requêtes et faire du lazy loading
+Page de jeu - Ok
+Page de personnage - Ok
+Listing jeu - Ok
+Listing personnage - Ok
+Profil - Ok
+Discussions - Ok
+Ma bibliothèque - OK
+Mes personnages - Ok
+Admin - Ok
 - Refaire une passe pour s'assurer que tout est rangé proprement.
 
 Peux-tu prendre <page> et faire une passe pour regarder ce qui pourrait être

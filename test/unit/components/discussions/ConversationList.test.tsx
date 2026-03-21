@@ -99,10 +99,10 @@ describe("ConversationList", () => {
     expect(screen.getByText("noConversations")).toBeInTheDocument();
   });
 
-  it("shows loading spinner when isLoading is true", () => {
+  it("shows loading skeleton when isLoading is true", () => {
     render(<ConversationList {...defaultProps} isLoading={true} />);
 
-    expect(screen.getByTestId("icon-lucide:loader-2")).toBeInTheDocument();
+    expect(screen.getByTestId("conversation-list-skeleton")).toBeInTheDocument();
     // Empty state should not be visible during loading
     expect(screen.queryByText("noConversations")).not.toBeInTheDocument();
   });
@@ -153,11 +153,11 @@ describe("ConversationList", () => {
     );
   });
 
-  it("does not show empty state or spinner when conversations are present", () => {
+  it("does not show empty state or skeleton when conversations are present", () => {
     const conversations = [makeConversation()];
     render(<ConversationList {...defaultProps} conversations={conversations} />);
 
     expect(screen.queryByText("noConversations")).not.toBeInTheDocument();
-    expect(screen.queryByTestId("icon-lucide:loader-2")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("conversation-list-skeleton")).not.toBeInTheDocument();
   });
 });

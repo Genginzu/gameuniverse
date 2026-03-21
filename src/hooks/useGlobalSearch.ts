@@ -3,7 +3,7 @@
 // Hook for global search: debounce, fetch, keyboard navigation, state management
 // Requirements: 3.1, 3.2, 3.3, 3.4, 4.1, 4.2, 4.3, 4.4, 5.1, 5.3, 5.4
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useRef, useEffect, useMemo } from "react";
 import { useLocale } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import type { GlobalSearchResponse } from "@/types/global-search";
@@ -31,7 +31,8 @@ export function useGlobalSearch() {
   const abortRef = useRef<AbortController | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const flatItems: FlatSearchItem[] = flattenResults(results);
+  // Mémoïsé pour éviter de recréer le tableau à chaque render (navigation clavier, etc.)
+  const flatItems: FlatSearchItem[] = useMemo(() => flattenResults(results), [results]);
 
   const getActiveItem = useCallback((): FlatSearchItem | null => {
     if (activeIndex < 0 || activeIndex >= flatItems.length) return null;

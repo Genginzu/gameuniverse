@@ -59,6 +59,7 @@ export function GameMediaGallery({ media, gameTitle }: GameMediaGalleryProps) {
                   className="h-full w-full"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
+                  loading="lazy"
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center">

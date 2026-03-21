@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 
@@ -15,7 +16,7 @@ interface ConversationItemProps {
   onSelect: (id: string) => void;
 }
 
-export default function ConversationItem({
+export default memo(function ConversationItem({
   conversation,
   isSelected,
   onSelect,
@@ -24,7 +25,13 @@ export default function ConversationItem({
   const { friend, lastMessage, unreadCount } = conversation;
 
   const preview = lastMessage ? truncatePreview(lastMessage.content, 80) : t("noMessages");
-  const timestamp = lastMessage ? formatMessageDate(lastMessage.createdAt) : null;
+  const timestamp = lastMessage
+    ? formatMessageDate(lastMessage.createdAt, {
+        justNow: t("timeJustNow"),
+        minutesAgo: (min) => t("timeMinutesAgo", { min }),
+        hoursAgo: (hours) => t("timeHoursAgo", { hours }),
+      })
+    : null;
 
   return (
     <button
@@ -82,4 +89,4 @@ export default function ConversationItem({
       </div>
     </button>
   );
-}
+});

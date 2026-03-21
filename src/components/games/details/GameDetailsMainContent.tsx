@@ -7,7 +7,13 @@ import { GameColors } from "@/lib/utils/game-utils";
 import { getPlatformIcon } from "@/lib/utils/platform-icons";
 import { Icon } from "@iconify/react";
 import { GameDetailsTabs, TabType } from "./GameDetailsTabs";
-import { RecommendationSection } from "@/components/games/RecommendationSection";
+import dynamic from "next/dynamic";
+
+// Lazy load — section en bas de page, non critique au premier rendu
+const RecommendationSection = dynamic(
+  () => import("@/components/games/RecommendationSection").then((m) => m.RecommendationSection),
+  { ssr: false }
+);
 
 interface GameDetailsMainContentProps {
   game: GameDetails;
@@ -48,7 +54,7 @@ export function GameDetailsMainContent({
       )}
 
       {/* Title */}
-      <h1 className="neon-text mb-6 text-3xl font-bold leading-tight text-white lg:text-5xl">
+      <h1 className="neon-text mb-6 text-3xl leading-tight font-bold text-white lg:text-5xl">
         {game.title}
       </h1>
 

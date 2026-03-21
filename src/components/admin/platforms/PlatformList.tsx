@@ -5,7 +5,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { AdminTableSkeleton } from "@/components/admin/shared/AdminTableSkeleton";
 
 import type { AdminPlatform } from "@/types/admin-platforms";
 import type { PaginationInfo } from "@/types/pagination";
@@ -98,9 +98,7 @@ export function PlatformList({
 
       {/* Loading state */}
       {isLoading ? (
-        <div className="flex justify-center py-12">
-          <LoadingSpinner size="md" />
-        </div>
+        <AdminTableSkeleton columns={3} rows={6} />
       ) : platforms.length === 0 ? (
         <div className="rounded-xl border border-white/20 bg-white/40 p-12 text-center backdrop-blur-xl dark:border-slate-700/50 dark:bg-slate-800/50">
           <p className="text-gray-500 dark:text-gray-400">{t("noPlatforms")}</p>

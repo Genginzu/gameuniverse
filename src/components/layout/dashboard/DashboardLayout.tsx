@@ -8,7 +8,9 @@ import TopBar from "./TopBar";
 import Sidebar from "./Sidebar";
 import MobileHamburgerButton from "./MobileHamburgerButton";
 import MobileNavOverlay from "./MobileNavOverlay";
-import SearchOverlay from "./SearchOverlay";
+import dynamic from "next/dynamic";
+
+const SearchOverlay = dynamic(() => import("./SearchOverlay"), { ssr: false });
 import { PageBanner } from "@/components/shared/PageBanner";
 import { DashboardContext } from "@/hooks/useDashboard";
 

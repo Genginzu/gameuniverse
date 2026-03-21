@@ -71,6 +71,8 @@ export interface PlayerDetails {
   statsPrivate: boolean;
   stats: PlayerStats;
   library: PlayerLibraryGame[];
+  /** Total number of games in library (may exceed library.length when paginated) */
+  libraryTotalCount: number;
 }
 
 /**

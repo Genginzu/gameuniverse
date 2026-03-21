@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { LazyImage } from "@/components/ui/lazy-image";
 import { Badge } from "@/components/ui/badge";
@@ -39,8 +40,9 @@ export function PlayerLibraryGrid({ games, locale }: PlayerLibraryGridProps) {
   };
 
   // Sort games by addedAt date (most recent first) - Requirements 6.1, 6.2
-  const sortedGames = [...games].sort(
-    (a, b) => new Date(b.addedAt).getTime() - new Date(a.addedAt).getTime()
+  const sortedGames = useMemo(
+    () => [...games].sort((a, b) => new Date(b.addedAt).getTime() - new Date(a.addedAt).getTime()),
+    [games]
   );
 
   // Empty state - Requirements 6.3

@@ -5,9 +5,13 @@ import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { useAdminReviews } from "@/hooks/useAdminReviews";
+import dynamic from "next/dynamic";
 import type { AdminReview } from "@/types/admin-reviews";
 import { AdminReviewsTable } from "@/components/admin/reviews/AdminReviewsTable";
-import { DeleteReviewDialog } from "@/components/admin/reviews/DeleteReviewDialog";
+const DeleteReviewDialog = dynamic(
+  () => import("@/components/admin/reviews/DeleteReviewDialog").then((m) => m.DeleteReviewDialog),
+  { ssr: false }
+);
 import { toast } from "@/hooks/use-toast";
 
 export default function AdminReviewsPage() {

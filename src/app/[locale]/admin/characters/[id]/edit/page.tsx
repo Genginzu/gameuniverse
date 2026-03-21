@@ -8,7 +8,7 @@ import { useCharacterForm } from "@/hooks/useCharacterForm";
 import { CharacterForm } from "@/components/admin/characters/CharacterForm";
 import { characterPayloadToForm } from "@/lib/utils/character-form-utils";
 import { Button } from "@/components/ui/button";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { AdminFormSkeleton } from "@/components/admin/shared/AdminFormSkeleton";
 import { toast } from "@/hooks/use-toast";
 
 import type { AdminCharacterFormData } from "@/lib/validations/admin-character-form";
@@ -108,14 +108,7 @@ function EditCharacterForm({
 
   // Keep showing the same loading style until options are ready
   if (loadingOptions) {
-    return (
-      <div className="flex flex-1 items-center justify-center py-12">
-        <div className="flex items-center gap-3">
-          <LoadingSpinner size="lg" />
-          <span className="text-gray-500 dark:text-gray-400">{t("editPage.loading")}</span>
-        </div>
-      </div>
-    );
+    return <AdminFormSkeleton showHeroBanner tabs={9} fields={4} />;
   }
 
   return (
@@ -186,14 +179,7 @@ export default function EditCharacterPage() {
   }, [characterId, t]);
 
   if (loadingCharacter) {
-    return (
-      <div className="flex flex-1 items-center justify-center py-12">
-        <div className="flex items-center gap-3">
-          <LoadingSpinner size="lg" />
-          <span className="text-gray-500 dark:text-gray-400">{t("editPage.loading")}</span>
-        </div>
-      </div>
-    );
+    return <AdminFormSkeleton showHeroBanner tabs={9} fields={4} />;
   }
 
   if (loadError) {

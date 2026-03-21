@@ -24,7 +24,7 @@ describe("PlayerService - Comprehensive Coverage", () => {
     mockRpc.mockReset();
   });
 
-  /** Helper: mock for isStatsPrivate (3rd supabase.from call in fetchPlayerDetailsFromDB) */
+  /** Helper: mock for isStatsPrivate (profiles → stats_private) */
   function mockStatsPrivateQuery(statsPrivate = false) {
     return {
       select: vi.fn(() => ({
@@ -36,6 +36,24 @@ describe("PlayerService - Comprehensive Coverage", () => {
             })
           ),
         })),
+      })),
+    };
+  }
+
+  /** Helper: mock for library count query (user_library → select("id", { count, head })) */
+  function mockLibraryCountQuery(count = 0) {
+    return {
+      select: vi.fn(() => ({
+        eq: vi.fn(() => Promise.resolve({ count, data: null, error: null })),
+      })),
+    };
+  }
+
+  /** Helper: mock for lightweight stats query (user_library → select("status, ...")) */
+  function mockStatsDataQuery(statsRows: Record<string, unknown>[] = []) {
+    return {
+      select: vi.fn(() => ({
+        eq: vi.fn(() => Promise.resolve({ data: statsRows, error: null })),
       })),
     };
   }
@@ -363,6 +381,9 @@ describe("PlayerService - Comprehensive Coverage", () => {
           game_id: "game-1",
           status: "completed",
           play_time_hours: 50,
+          play_time_hastily: null,
+          play_time_normally: null,
+          play_time_completely: 50,
           rating: 9,
           added_at: "2024-01-01T00:00:00Z",
           games: {
@@ -389,24 +410,37 @@ describe("PlayerService - Comprehensive Coverage", () => {
         })),
       };
 
-      // Mock library query
+      // Mock paginated library query (eq → order → range)
       const mockLibraryQuery = {
-        eq: vi.fn(() =>
-          Promise.resolve({
-            data: mockLibrary,
-            error: null,
-          })
-        ),
+        eq: vi.fn(() => ({
+          order: vi.fn(() => ({
+            range: vi.fn(() =>
+              Promise.resolve({
+                data: mockLibrary,
+                error: null,
+              })
+            ),
+          })),
+        })),
       };
 
       mockFrom
-        .mockReturnValueOnce({
-          select: vi.fn(() => mockProfileQuery),
-        })
-        .mockReturnValueOnce({
-          select: vi.fn(() => mockLibraryQuery),
-        })
-        .mockReturnValueOnce(mockStatsPrivateQuery());
+        .mockReturnValueOnce({ select: vi.fn(() => mockProfileQuery) }) // 1. profiles
+        .mockReturnValueOnce(mockLibraryCountQuery(1)) // 2. library count
+        .mockReturnValueOnce(
+          mockStatsDataQuery([
+            {
+              status: "completed",
+              play_time_hours: 50,
+              play_time_hastily: null,
+              play_time_normally: null,
+              play_time_completely: 50,
+              rating: 9,
+            },
+          ])
+        ) // 3. stats
+        .mockReturnValueOnce({ select: vi.fn(() => mockLibraryQuery) }) // 4. library page
+        .mockReturnValueOnce(mockStatsPrivateQuery()); // 5. stats_private
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("user-1", "en");
 
@@ -502,22 +536,25 @@ describe("PlayerService - Comprehensive Coverage", () => {
         })),
       };
 
+      // Paginated library query that errors (eq → order → range)
       const mockLibraryQuery = {
-        eq: vi.fn(() =>
-          Promise.resolve({
-            data: null,
-            error: { message: "Library error" },
-          })
-        ),
+        eq: vi.fn(() => ({
+          order: vi.fn(() => ({
+            range: vi.fn(() =>
+              Promise.resolve({
+                data: null,
+                error: { message: "Library error" },
+              })
+            ),
+          })),
+        })),
       };
 
       mockFrom
-        .mockReturnValueOnce({
-          select: vi.fn(() => mockProfileQuery),
-        })
-        .mockReturnValueOnce({
-          select: vi.fn(() => mockLibraryQuery),
-        })
+        .mockReturnValueOnce({ select: vi.fn(() => mockProfileQuery) })
+        .mockReturnValueOnce(mockLibraryCountQuery(0))
+        .mockReturnValueOnce(mockStatsDataQuery([]))
+        .mockReturnValueOnce({ select: vi.fn(() => mockLibraryQuery) })
         .mockReturnValueOnce(mockStatsPrivateQuery());
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("user-1");
@@ -542,6 +579,9 @@ describe("PlayerService - Comprehensive Coverage", () => {
           game_id: "game-1",
           status: "owned",
           play_time_hours: null,
+          play_time_hastily: null,
+          play_time_normally: null,
+          play_time_completely: null,
           rating: null,
           added_at: "2024-01-01T00:00:00Z",
           games: {
@@ -565,21 +605,34 @@ describe("PlayerService - Comprehensive Coverage", () => {
       };
 
       const mockLibraryQuery = {
-        eq: vi.fn(() =>
-          Promise.resolve({
-            data: mockLibrary,
-            error: null,
-          })
-        ),
+        eq: vi.fn(() => ({
+          order: vi.fn(() => ({
+            range: vi.fn(() =>
+              Promise.resolve({
+                data: mockLibrary,
+                error: null,
+              })
+            ),
+          })),
+        })),
       };
 
       mockFrom
-        .mockReturnValueOnce({
-          select: vi.fn(() => mockProfileQuery),
-        })
-        .mockReturnValueOnce({
-          select: vi.fn(() => mockLibraryQuery),
-        })
+        .mockReturnValueOnce({ select: vi.fn(() => mockProfileQuery) })
+        .mockReturnValueOnce(mockLibraryCountQuery(1))
+        .mockReturnValueOnce(
+          mockStatsDataQuery([
+            {
+              status: "owned",
+              play_time_hours: null,
+              play_time_hastily: null,
+              play_time_normally: null,
+              play_time_completely: null,
+              rating: null,
+            },
+          ])
+        )
+        .mockReturnValueOnce({ select: vi.fn(() => mockLibraryQuery) })
         .mockReturnValueOnce(mockStatsPrivateQuery());
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("user-1", "fr");
@@ -603,6 +656,9 @@ describe("PlayerService - Comprehensive Coverage", () => {
           game_id: "game-1",
           status: "owned",
           play_time_hours: null,
+          play_time_hastily: null,
+          play_time_normally: null,
+          play_time_completely: null,
           rating: null,
           added_at: "2024-01-01T00:00:00Z",
           games: null, // Null game reference
@@ -612,6 +668,9 @@ describe("PlayerService - Comprehensive Coverage", () => {
           game_id: "game-2",
           status: "completed",
           play_time_hours: 10,
+          play_time_hastily: null,
+          play_time_normally: null,
+          play_time_completely: 10,
           rating: 8,
           added_at: "2024-01-02T00:00:00Z",
           games: {
@@ -635,21 +694,42 @@ describe("PlayerService - Comprehensive Coverage", () => {
       };
 
       const mockLibraryQuery = {
-        eq: vi.fn(() =>
-          Promise.resolve({
-            data: mockLibrary,
-            error: null,
-          })
-        ),
+        eq: vi.fn(() => ({
+          order: vi.fn(() => ({
+            range: vi.fn(() =>
+              Promise.resolve({
+                data: mockLibrary,
+                error: null,
+              })
+            ),
+          })),
+        })),
       };
 
       mockFrom
-        .mockReturnValueOnce({
-          select: vi.fn(() => mockProfileQuery),
-        })
-        .mockReturnValueOnce({
-          select: vi.fn(() => mockLibraryQuery),
-        })
+        .mockReturnValueOnce({ select: vi.fn(() => mockProfileQuery) })
+        .mockReturnValueOnce(mockLibraryCountQuery(2))
+        .mockReturnValueOnce(
+          mockStatsDataQuery([
+            {
+              status: "owned",
+              play_time_hours: null,
+              play_time_hastily: null,
+              play_time_normally: null,
+              play_time_completely: null,
+              rating: null,
+            },
+            {
+              status: "completed",
+              play_time_hours: 10,
+              play_time_hastily: null,
+              play_time_normally: null,
+              play_time_completely: 10,
+              rating: 8,
+            },
+          ])
+        )
+        .mockReturnValueOnce({ select: vi.fn(() => mockLibraryQuery) })
         .mockReturnValueOnce(mockStatsPrivateQuery());
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("user-1");
@@ -680,21 +760,23 @@ describe("PlayerService - Comprehensive Coverage", () => {
       };
 
       const mockLibraryQuery = {
-        eq: vi.fn(() =>
-          Promise.resolve({
-            data: [],
-            error: null,
-          })
-        ),
+        eq: vi.fn(() => ({
+          order: vi.fn(() => ({
+            range: vi.fn(() =>
+              Promise.resolve({
+                data: [],
+                error: null,
+              })
+            ),
+          })),
+        })),
       };
 
       mockFrom
-        .mockReturnValueOnce({
-          select: vi.fn(() => mockProfileQuery),
-        })
-        .mockReturnValueOnce({
-          select: vi.fn(() => mockLibraryQuery),
-        })
+        .mockReturnValueOnce({ select: vi.fn(() => mockProfileQuery) })
+        .mockReturnValueOnce(mockLibraryCountQuery(0))
+        .mockReturnValueOnce(mockStatsDataQuery([]))
+        .mockReturnValueOnce({ select: vi.fn(() => mockLibraryQuery) })
         .mockReturnValueOnce(mockStatsPrivateQuery());
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("user-1");
@@ -720,6 +802,9 @@ describe("PlayerService - Comprehensive Coverage", () => {
           game_id: "game-1",
           status: "owned",
           play_time_hours: null,
+          play_time_hastily: null,
+          play_time_normally: null,
+          play_time_completely: null,
           rating: null,
           added_at: "2024-01-01T00:00:00Z",
           games: {
@@ -743,21 +828,34 @@ describe("PlayerService - Comprehensive Coverage", () => {
       };
 
       const mockLibraryQuery = {
-        eq: vi.fn(() =>
-          Promise.resolve({
-            data: mockLibrary,
-            error: null,
-          })
-        ),
+        eq: vi.fn(() => ({
+          order: vi.fn(() => ({
+            range: vi.fn(() =>
+              Promise.resolve({
+                data: mockLibrary,
+                error: null,
+              })
+            ),
+          })),
+        })),
       };
 
       mockFrom
-        .mockReturnValueOnce({
-          select: vi.fn(() => mockProfileQuery),
-        })
-        .mockReturnValueOnce({
-          select: vi.fn(() => mockLibraryQuery),
-        })
+        .mockReturnValueOnce({ select: vi.fn(() => mockProfileQuery) })
+        .mockReturnValueOnce(mockLibraryCountQuery(1))
+        .mockReturnValueOnce(
+          mockStatsDataQuery([
+            {
+              status: "owned",
+              play_time_hours: null,
+              play_time_hastily: null,
+              play_time_normally: null,
+              play_time_completely: null,
+              rating: null,
+            },
+          ])
+        )
+        .mockReturnValueOnce({ select: vi.fn(() => mockLibraryQuery) })
         .mockReturnValueOnce(mockStatsPrivateQuery());
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("user-1");

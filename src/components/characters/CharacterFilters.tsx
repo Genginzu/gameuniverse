@@ -2,19 +2,18 @@
 
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
-import { Icon } from "@iconify/react";
+import dynamic from "next/dynamic";
 import { PlatformFilterOption } from "@/types/platform";
+import { RoleFilterOption } from "@/types/character";
 import { FilterSection } from "@/components/shared/FilterSection";
 import { FilterChip, ActiveFilterChip } from "@/components/shared/FilterChip";
 import { getPlatformIcon } from "@/lib/utils/platform-icons";
 
-/** Role option fetched from /api/roles */
-export interface RoleFilterOption {
-  id: string;
-  slug: string;
-  name: string;
-  characterCount: number;
-}
+// Chargement dynamique d'Iconify — le panneau filtres n'est pas toujours visible
+const Icon = dynamic(() => import("@iconify/react").then((mod) => mod.Icon), {
+  ssr: false,
+  loading: () => <span className="inline-block h-3.5 w-3.5 shrink-0" />,
+});
 
 interface CharacterFiltersProps {
   selectedRoles: string[];

@@ -268,7 +268,22 @@ export class PlayerService {
       return null;
     }
 
-    // Fetch user library separately
+    // Fetch user library count for accurate stats
+    const { count: libraryTotalCount } = await supabase
+      .from("user_library")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", playerId);
+
+    // Fetch lightweight stats data (no game joins) for accurate calculations
+    const { data: statsData } = await supabase
+      .from("user_library")
+      .select(
+        "status, play_time_hours, play_time_hastily, play_time_normally, play_time_completely, rating"
+      )
+      .eq("user_id", playerId);
+
+    // Fetch first page of library with full game details (SSR limit: 30)
+    const SSR_LIBRARY_LIMIT = 30;
     const { data: libraryData, error: libraryError } = await supabase
       .from("user_library")
       .select(
@@ -293,14 +308,16 @@ export class PlayerService {
         )
       `
       )
-      .eq("user_id", playerId);
+      .eq("user_id", playerId)
+      .order("added_at", { ascending: false })
+      .range(0, SSR_LIBRARY_LIMIT - 1);
 
     if (libraryError) {
       logger.warn("Error fetching user library", { error: libraryError });
       // Continue without library rather than failing
     }
 
-    // Transform library entries
+    // Transform library entries (already sorted by added_at desc from query)
     const library: PlayerLibraryGame[] = ((libraryData || []) as LibraryEntry[])
       .map((entry) => {
         const game = entry.games;
@@ -329,11 +346,25 @@ export class PlayerService {
           addedAt: entry.added_at,
         };
       })
-      .filter((entry): entry is PlayerLibraryGame => entry !== null)
-      .sort((a, b) => new Date(b.addedAt).getTime() - new Date(a.addedAt).getTime());
+      .filter((entry): entry is PlayerLibraryGame => entry !== null);
 
-    // Calculate stats
-    const stats = this.calculateStats(library);
+    // Calculate stats from lightweight data (covers the full library, not just the SSR page)
+    const statsLibrary: PlayerLibraryGame[] = (statsData || []).map((row, i) => ({
+      id: String(i),
+      gameId: "",
+      slug: "",
+      title: "",
+      coverImage: null,
+      status: row.status as PlayerLibraryGame["status"],
+      playTimeHours: Math.max(
+        row.play_time_completely || 0,
+        row.play_time_normally || 0,
+        row.play_time_hastily || 0
+      ),
+      rating: row.rating,
+      addedAt: "",
+    }));
+    const stats = this.calculateStats(statsLibrary);
 
     // Check stats privacy via helper (graceful if column doesn't exist yet)
     const statsPrivate = await isStatsPrivate(supabase, playerId);
@@ -351,6 +382,7 @@ export class PlayerService {
       statsPrivate,
       stats,
       library,
+      libraryTotalCount: libraryTotalCount ?? library.length,
     };
   }
 

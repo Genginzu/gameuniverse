@@ -33,12 +33,13 @@ export function useEntityLibraryToggle(
 
   const inLibrary = useBatch ? batchStatus : individual.inLibrary;
   const loading = useBatch ? batchCtx.loading : individual.loading;
-  const [adding, setAdding] = useState(false);
+  const [batchAdding, setBatchAdding] = useState(false);
+  const adding = useBatch ? batchAdding : individual.adding;
 
   const addToLibrary = useCallback(async () => {
     if (!user || !entityId || adding) return false;
     if (useBatch) {
-      setAdding(true);
+      setBatchAdding(true);
       try {
         const res = await fetch("/api/library", {
           method: "POST",
@@ -53,7 +54,7 @@ export function useEntityLibraryToggle(
       } catch {
         return false;
       } finally {
-        setAdding(false);
+        setBatchAdding(false);
       }
     }
     return individual.addToLibrary();
@@ -62,6 +63,7 @@ export function useEntityLibraryToggle(
   const removeFromLibrary = useCallback(async () => {
     if (!user || !entityId) return false;
     if (useBatch) {
+      setBatchAdding(true);
       try {
         const res = await fetch(`/api/library/${entityId}`, { method: "DELETE" });
         if (res.ok) {
@@ -71,6 +73,8 @@ export function useEntityLibraryToggle(
         return false;
       } catch {
         return false;
+      } finally {
+        setBatchAdding(false);
       }
     }
     return individual.removeFromLibrary();

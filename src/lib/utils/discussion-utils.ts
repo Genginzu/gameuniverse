@@ -26,23 +26,29 @@ export function sortConversationsByRecent(
 }
 
 /**
- * Formate une date en chaîne relative :
- * - < 1 min : "À l'instant"
- * - < 60 min : "il y a X min"
- * - < 24h : "il y a X h"
- * - sinon : format DD/MM/YYYY
+ * Formate une date en chaîne relative, localisée via les traductions i18n.
+ * Accepte un objet de traductions avec les clés :
+ *   timeJustNow, timeMinutesAgo, timeHoursAgo
+ * Fallback : format DD/MM/YYYY pour les dates > 24h.
  */
-export function formatMessageDate(dateString: string): string {
+export function formatMessageDate(
+  dateString: string,
+  translations?: {
+    justNow: string;
+    minutesAgo: (min: number) => string;
+    hoursAgo: (hours: number) => string;
+  }
+): string {
   const date = new Date(dateString);
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   const diffMin = Math.floor(diffMs / 60_000);
 
-  if (diffMin < 1) return "À l'instant";
-  if (diffMin < 60) return `il y a ${diffMin} min`;
+  if (diffMin < 1) return translations?.justNow ?? "À l'instant";
+  if (diffMin < 60) return translations?.minutesAgo(diffMin) ?? `il y a ${diffMin} min`;
 
   const diffHours = Math.floor(diffMin / 60);
-  if (diffHours < 24) return `il y a ${diffHours} h`;
+  if (diffHours < 24) return translations?.hoursAgo(diffHours) ?? `il y a ${diffHours} h`;
 
   const day = String(date.getDate()).padStart(2, "0");
   const month = String(date.getMonth() + 1).padStart(2, "0");

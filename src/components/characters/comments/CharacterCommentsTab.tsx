@@ -4,12 +4,14 @@ import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/hooks/useAuth";
 import { useComments } from "@/hooks/useComments";
+import { Skeleton } from "@/components/ui/skeleton";
 import { CommentForm } from "./CommentForm";
 import { CommentList } from "./CommentList";
 import type { CommentFormData } from "@/types/comment";
 
 interface CharacterCommentsTabProps {
   characterId: string;
+  onCountLoaded?: (count: number) => void;
 }
 
 function CommentCount({ count }: { count: number }) {
@@ -35,18 +37,54 @@ function LoginPrompt() {
   );
 }
 
-export function CharacterCommentsTab({ characterId }: CharacterCommentsTabProps) {
+/** Skeleton affiché pendant le chargement initial des commentaires */
+function CommentsSkeleton() {
+  return (
+    <div className="space-y-6">
+      {/* Count skeleton */}
+      <div className="flex items-center gap-3 rounded-xl border border-slate-700/50 bg-slate-800/30 px-5 py-4">
+        <Skeleton className="h-6 w-6 rounded-full" />
+        <Skeleton className="h-7 w-10" />
+        <Skeleton className="h-4 w-24" />
+      </div>
+      {/* Comment cards skeleton */}
+      {[1, 2, 3].map((i) => (
+        <div key={i} className="rounded-xl border border-slate-700/50 bg-slate-800/30 p-5">
+          <div className="mb-3 flex items-center gap-3">
+            <Skeleton className="h-10 w-10 rounded-full" />
+            <div className="space-y-1.5">
+              <Skeleton className="h-4 w-28" />
+              <Skeleton className="h-3 w-20" />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Skeleton className="h-3 w-full" />
+            <Skeleton className="h-3 w-4/5" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export function CharacterCommentsTab({ characterId, onCountLoaded }: CharacterCommentsTabProps) {
   const { user, loading: authLoading } = useAuth();
   const {
     comments,
     totalCount,
     userHasCommented,
     userComment,
+    loading,
     error,
     submitting,
     submitComment,
     updateComment,
   } = useComments(characterId);
+
+  // Remonter le count au parent quand il est disponible
+  if (onCountLoaded && !loading) {
+    onCountLoaded(totalCount);
+  }
 
   const handleSubmit = async (data: CommentFormData): Promise<boolean> => {
     return submitComment(data);
@@ -55,6 +93,11 @@ export function CharacterCommentsTab({ characterId }: CharacterCommentsTabProps)
   const handleUpdate = async (data: CommentFormData): Promise<boolean> => {
     return updateComment(data);
   };
+
+  // Skeleton pendant le chargement initial
+  if (loading) {
+    return <CommentsSkeleton />;
+  }
 
   const isAuthenticated = !authLoading && user !== null;
   const showCreateForm = isAuthenticated && !userHasCommented;

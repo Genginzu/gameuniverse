@@ -4,13 +4,17 @@ import { useState, useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useAdminCompanies } from "@/hooks/useAdminCompanies";
+import dynamic from "next/dynamic";
 import type { AdminCompany } from "@/types/admin-companies";
 import { AdminCompaniesTable } from "@/components/admin/companies/AdminCompaniesTable";
-import { DeleteCompanyDialog } from "@/components/admin/companies/DeleteCompanyDialog";
+const DeleteCompanyDialog = dynamic(
+  () =>
+    import("@/components/admin/companies/DeleteCompanyDialog").then((m) => m.DeleteCompanyDialog),
+  { ssr: false }
+);
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { Icon } from "@iconify/react";
-
 
 export default function AdminCompaniesPage() {
   const t = useTranslations("admin.companies");
@@ -115,7 +119,7 @@ export default function AdminCompaniesPage() {
             {t("title")}
           </h1>
           <Button onClick={() => router.push("/admin/companies/new")}>
-            <Icon icon="fa:plus" className="h-4 w-4"  />
+            <Icon icon="fa:plus" className="h-4 w-4" />
             {t("newCompany")}
           </Button>
         </div>

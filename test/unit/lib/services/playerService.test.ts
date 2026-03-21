@@ -45,6 +45,7 @@ describe("PlayerService", () => {
     statsPrivate: false,
     stats: mockStats,
     library: [mockLibraryGame],
+    libraryTotalCount: 1,
   };
 
   const mockPlayerSummary: PlayerSummary = {

@@ -3,8 +3,8 @@
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import { useDateFormatter } from "@/hooks/useTranslations";
+import { LazyImage } from "@/components/ui/lazy-image";
 import type { Comment } from "@/types/comment";
-import Image from "next/image";
 
 interface CommentCardProps {
   comment: Comment;
@@ -15,12 +15,13 @@ function CommentAvatar({ name, avatar }: { name: string | null; avatar: string |
 
   if (avatar) {
     return (
-      <Image
+      <LazyImage
         src={avatar}
         alt={name ?? t("anonymousPlayer")}
         width={40}
         height={40}
         className="h-10 w-10 rounded-full object-cover ring-2 ring-slate-600"
+        showSkeleton={true}
       />
     );
   }

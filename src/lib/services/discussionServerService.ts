@@ -2,14 +2,13 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 import type { ConversationSummary, Message, MessagesResponse } from "@/types/discussion";
 import { canonicalParticipants } from "@/lib/utils/discussion-utils";
+import {
+  fetchProfileMap,
+  fetchLastMessages,
+  fetchUnreadCounts,
+} from "@/lib/services/discussionQueryHelpers";
 
 const MSG_COLS = "id, conversation_id, sender_id, content, created_at, read_at" as const;
-
-interface ProfileRow {
-  id: string;
-  username: string | null;
-  avatar_url: string | null;
-}
 
 function toMessage(r: Record<string, string | null>): Message {
   return {
@@ -45,37 +44,22 @@ export class DiscussionServerService {
     const friendIds = conversations.map((c) =>
       c.participant_1 === userId ? c.participant_2 : c.participant_1
     );
-    const profileMap = await this.fetchProfileMap(friendIds);
+    const conversationIds = conversations.map((c) => c.id);
 
-    const summaries: ConversationSummary[] = [];
-    for (const conv of conversations) {
+    // Batch: profils, derniers messages et compteurs non lus en parallèle
+    const [profileMap, lastMessagesMap, unreadCountsMap] = await Promise.all([
+      fetchProfileMap(friendIds),
+      fetchLastMessages(conversationIds),
+      fetchUnreadCounts(conversationIds, userId),
+    ]);
+
+    const summaries: ConversationSummary[] = conversations.map((conv) => {
       const friendId = conv.participant_1 === userId ? conv.participant_2 : conv.participant_1;
       const profile = profileMap.get(friendId);
+      const lastMessage = lastMessagesMap.get(conv.id) ?? null;
+      const unreadCount = unreadCountsMap.get(conv.id) ?? 0;
 
-      const { data: lastMsgRows } = await supabase
-        .from("messages")
-        .select("content, sender_id, created_at")
-        .eq("conversation_id", conv.id)
-        .order("created_at", { ascending: false })
-        .limit(1);
-
-      const lastMessage =
-        lastMsgRows && lastMsgRows.length > 0
-          ? {
-              content: lastMsgRows[0].content,
-              senderId: lastMsgRows[0].sender_id,
-              createdAt: lastMsgRows[0].created_at,
-            }
-          : null;
-
-      const { count: unreadCount } = await supabase
-        .from("messages")
-        .select("*", { count: "exact", head: true })
-        .eq("conversation_id", conv.id)
-        .neq("sender_id", userId)
-        .is("read_at", null);
-
-      summaries.push({
+      return {
         id: conv.id,
         friend: {
           id: friendId,
@@ -83,9 +67,9 @@ export class DiscussionServerService {
           avatarUrl: profile?.avatar_url ?? null,
         },
         lastMessage,
-        unreadCount: unreadCount ?? 0,
-      });
-    }
+        unreadCount,
+      };
+    });
 
     // Sort by most recent message first; no-message conversations go last
     summaries.sort((a, b) => {
@@ -275,24 +259,5 @@ export class DiscussionServerService {
       throw new Error(error.message ?? "Failed to verify participation");
     }
     if (!data) throw new Error("Conversation not found");
-  }
-
-  private static async fetchProfileMap(profileIds: string[]): Promise<Map<string, ProfileRow>> {
-    if (profileIds.length === 0) return new Map();
-    const supabase = await createRouteHandlerClient();
-
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("id, username, avatar_url")
-      .in("id", profileIds);
-
-    if (error) {
-      logger.error("Failed to fetch profiles", { error: error.message, profileIds });
-      throw new Error(error.message ?? "Failed to fetch profiles");
-    }
-
-    const map = new Map<string, ProfileRow>();
-    for (const profile of data ?? []) map.set(profile.id, profile);
-    return map;
   }
 }

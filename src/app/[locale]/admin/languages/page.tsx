@@ -4,9 +4,14 @@ import { useState, useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useAdminLanguages } from "@/hooks/useAdminLanguages";
+import dynamic from "next/dynamic";
 import type { SupportedLanguage } from "@/types/admin-languages";
 import { AdminLanguagesTable } from "@/components/admin/languages/AdminLanguagesTable";
-import { DeleteLanguageDialog } from "@/components/admin/languages/DeleteLanguageDialog";
+const DeleteLanguageDialog = dynamic(
+  () =>
+    import("@/components/admin/languages/DeleteLanguageDialog").then((m) => m.DeleteLanguageDialog),
+  { ssr: false }
+);
 import {
   SiteLocalesSection,
   type SiteLocale,
@@ -14,7 +19,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { Icon } from "@iconify/react";
-
 
 // Site locales data derived from src/i18n/routing.ts and src/messages/*.json
 const SITE_LOCALES: SiteLocale[] = [
@@ -173,7 +177,7 @@ export default function AdminLanguagesPage() {
             {t("title")}
           </h1>
           <Button onClick={() => router.push("/admin/languages/new")}>
-            <Icon icon="fa:plus" className="h-4 w-4"  />
+            <Icon icon="fa:plus" className="h-4 w-4" />
             {t("newLanguage")}
           </Button>
         </div>

@@ -103,7 +103,6 @@ function DlcCard({ item, accentColor, locale, viewGameLabel }: DlcCardProps) {
                 fill
                 className="object-cover"
                 sizes="64px"
-                unoptimized
               />
             </div>
           ) : (

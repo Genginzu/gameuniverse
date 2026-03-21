@@ -4,9 +4,14 @@ import { useState, useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useAdminComments } from "@/hooks/useAdminComments";
+import dynamic from "next/dynamic";
 import type { AdminComment } from "@/types/admin-comments";
 import { AdminCommentsTable } from "@/components/admin/comments/AdminCommentsTable";
-import { DeleteCommentDialog } from "@/components/admin/comments/DeleteCommentDialog";
+const DeleteCommentDialog = dynamic(
+  () =>
+    import("@/components/admin/comments/DeleteCommentDialog").then((m) => m.DeleteCommentDialog),
+  { ssr: false }
+);
 import { toast } from "@/hooks/use-toast";
 
 export default function AdminCommentsPage() {

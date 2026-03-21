@@ -15,15 +15,7 @@ import {
 } from "@/types/admin-characters";
 import type { AvailableGame, AvailableCharacter, AvailableRole } from "@/hooks/useCharacterForm";
 import { CharacterHeroBanner } from "./CharacterFormShell";
-import { CharacterFormGeneralTab } from "./CharacterFormGeneralTab";
-import { CharacterFormImagesTab } from "./CharacterFormImagesTab";
-import { CharacterFormTranslationsTab } from "./CharacterFormTranslationsTab";
-import { CharacterFormRolesTab } from "./CharacterFormRolesTab";
-import { CharacterFormGamesTab } from "./CharacterFormGamesTab";
-import { CharacterFormScreenshotsTab } from "./CharacterFormScreenshotsTab";
-import { CharacterFormArtworkTab } from "./CharacterFormArtworkTab";
-import { CharacterFormVideosTab } from "./CharacterFormVideosTab";
-import { CharacterFormRelationsTab } from "./CharacterFormRelationsTab";
+import { CharacterFormTabContent } from "./CharacterFormTabContent";
 import { Icon } from "@iconify/react";
 
 export interface CharacterFormProps {
@@ -165,26 +157,16 @@ export function CharacterForm({
         />
 
         <div className="rounded-2xl border border-gray-200/60 bg-white p-6 shadow-xs dark:border-gray-700/40 dark:bg-gray-800/60">
-          {activeTab === "general" && <CharacterFormGeneralTab form={form} t={t} mode={mode} />}
-          {activeTab === "images" && <CharacterFormImagesTab form={form} t={t} />}
-          {activeTab === "translations" && <CharacterFormTranslationsTab form={form} t={t} />}
-          {activeTab === "roles" && (
-            <CharacterFormRolesTab form={form} t={t} availableRoles={availableRoles} />
-          )}
-          {activeTab === "games" && (
-            <CharacterFormGamesTab form={form} t={t} availableGames={availableGames} />
-          )}
-          {activeTab === "relationships" && (
-            <CharacterFormRelationsTab
-              form={form}
-              t={t}
-              availableCharacters={availableCharacters}
-              currentCharacterId={currentCharacterId}
-            />
-          )}
-          {activeTab === "screenshots" && <CharacterFormScreenshotsTab form={form} t={t} />}
-          {activeTab === "artwork" && <CharacterFormArtworkTab form={form} t={t} />}
-          {activeTab === "videos" && <CharacterFormVideosTab form={form} t={t} />}
+          <CharacterFormTabContent
+            activeTab={activeTab}
+            mode={mode}
+            form={form}
+            t={t}
+            availableGames={availableGames}
+            availableCharacters={availableCharacters}
+            availableRoles={availableRoles}
+            currentCharacterId={currentCharacterId}
+          />
         </div>
 
         <StickySubmitBar

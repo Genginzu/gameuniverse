@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useEffect, useState, useCallback } from "react";
+import useSWR from "swr";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -17,11 +17,19 @@ interface PlayerEnrichedStatsProps {
   totalGames: number;
 }
 
-type FetchState =
-  | { status: "loading" }
-  | { status: "error" }
-  | { status: "private" }
-  | { status: "success"; data: EnrichedStats };
+interface EnrichedStatsApiResponse {
+  stats: EnrichedStats;
+  private?: boolean;
+}
+
+/** Custom fetcher that detects private stats and throws typed errors */
+async function enrichedStatsFetcher(url: string): Promise<EnrichedStats> {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("fetch_error");
+  const json: EnrichedStatsApiResponse = await res.json();
+  if (json.private) throw new Error("private");
+  return json.stats;
+}
 
 const CARD_STYLE =
   "rounded-2xl border-gray-200 bg-white backdrop-blur-xs dark:border-slate-700/50 dark:bg-slate-800/50";
@@ -42,34 +50,14 @@ export function PlayerEnrichedStats({
   totalGames,
 }: PlayerEnrichedStatsProps) {
   const t = useTranslations("players");
-  const [state, setState] = useState<FetchState>(
-    // Skip fetch when we already know stats are private for a visitor
-    !isOwnProfile && statsPrivate ? { status: "private" } : { status: "loading" }
-  );
 
-  const fetchStats = useCallback(async () => {
-    setState({ status: "loading" });
-    try {
-      const res = await fetch(`/api/players/${playerId}/stats?locale=${locale}`);
-      if (!res.ok) {
-        setState({ status: "error" });
-        return;
-      }
-      const json = await res.json();
-      if (json.private) {
-        setState({ status: "private" });
-        return;
-      }
-      setState({ status: "success", data: json.stats });
-    } catch {
-      setState({ status: "error" });
-    }
-  }, [playerId, locale]);
+  // Skip fetch entirely when we know stats are private for a visitor
+  const isPrivate = !isOwnProfile && statsPrivate;
+  const swrKey = isPrivate ? null : `/api/players/${playerId}/stats?locale=${locale}`;
 
-  useEffect(() => {
-    if (!isOwnProfile && statsPrivate) return;
-    fetchStats();
-  }, [fetchStats, isOwnProfile, statsPrivate]);
+  const { data, error, isLoading, mutate } = useSWR<EnrichedStats>(swrKey, enrichedStatsFetcher, {
+    revalidateOnFocus: false,
+  });
 
   const title = (
     <h2 className="mb-4 flex items-center gap-2 text-2xl font-bold text-gray-900 dark:text-white">
@@ -77,8 +65,8 @@ export function PlayerEnrichedStats({
     </h2>
   );
 
-  // Private stats — visitor cannot see (Req 8.2)
-  if (state.status === "private") {
+  // Private stats — known upfront or detected from API (Req 8.2)
+  if (isPrivate || error?.message === "private") {
     return (
       <div className="mb-8">
         {title}
@@ -98,7 +86,7 @@ export function PlayerEnrichedStats({
   }
 
   // Loading skeleton (Req 4.3)
-  if (state.status === "loading") {
+  if (isLoading) {
     return (
       <div className="mb-8">
         {title}
@@ -117,7 +105,7 @@ export function PlayerEnrichedStats({
   }
 
   // Error state with retry
-  if (state.status === "error") {
+  if (error) {
     return (
       <div className="mb-8">
         {title}
@@ -125,7 +113,7 @@ export function PlayerEnrichedStats({
           <CardContent className="flex flex-col items-center gap-3 p-8 text-center">
             <Icon icon="lucide:alert-circle" className="h-8 w-8 text-red-400" />
             <p className="text-sm text-gray-500 dark:text-slate-400">{t("enrichedStats.error")}</p>
-            <Button variant="outline" size="sm" onClick={fetchStats}>
+            <Button variant="outline" size="sm" onClick={() => mutate()}>
               {t("enrichedStats.retry")}
             </Button>
           </CardContent>
@@ -134,10 +122,12 @@ export function PlayerEnrichedStats({
     );
   }
 
+  if (!data) return null;
+
   return (
     <div className="mb-8">
       {title}
-      <EnrichedStatCards stats={state.data} locale={locale} t={t} totalGames={totalGames} />
+      <EnrichedStatCards stats={data} locale={locale} t={t} totalGames={totalGames} />
     </div>
   );
 }

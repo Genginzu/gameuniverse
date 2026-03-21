@@ -50,7 +50,6 @@ export function GameVersions({ versions, accentColor }: GameVersionsProps) {
                     fill
                     className="object-cover"
                     sizes="64px"
-                    unoptimized
                   />
                 </div>
               ) : (

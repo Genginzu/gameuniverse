@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { AdminTableSkeleton } from "@/components/admin/shared/AdminTableSkeleton";
 
 import type { SupportedLanguage } from "@/types/admin-languages";
 import type { PaginationInfo } from "@/types/pagination";
@@ -51,11 +51,11 @@ export function AdminLanguagesTable({
   };
 
   const renderSortIcon = (field: SortField) => {
-    if (currentSort?.field !== field) return <Icon icon="fa:sort" className="h-3 w-3 opacity-40"  />;
+    if (currentSort?.field !== field) return <Icon icon="fa:sort" className="h-3 w-3 opacity-40" />;
     return currentSort.order === "asc" ? (
-      <Icon icon="fa:sort-up" className="h-3 w-3"  />
+      <Icon icon="fa:sort-up" className="h-3 w-3" />
     ) : (
-      <Icon icon="fa:sort-down" className="h-3 w-3"  />
+      <Icon icon="fa:sort-down" className="h-3 w-3" />
     );
   };
 
@@ -64,7 +64,10 @@ export function AdminLanguagesTable({
       {/* Search bar */}
       <form onSubmit={handleSearchSubmit} className="flex gap-2">
         <div className="relative flex-1">
-          <Icon icon="fa:search" className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"  />
+          <Icon
+            icon="fa:search"
+            className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400"
+          />
           <Input
             type="text"
             placeholder={t("searchPlaceholder")}
@@ -86,9 +89,7 @@ export function AdminLanguagesTable({
 
       {/* Loading state */}
       {isLoading ? (
-        <div className="flex justify-center py-12">
-          <LoadingSpinner size="md" />
-        </div>
+        <AdminTableSkeleton columns={4} rows={8} />
       ) : languages.length === 0 ? (
         <div className="rounded-xl border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800">
           <p className="text-gray-500 dark:text-gray-400">{t("noLanguages")}</p>
@@ -160,7 +161,7 @@ export function AdminLanguagesTable({
                           onClick={() => onEdit(language.code)}
                           aria-label={t("editLanguage", { name: language.name })}
                         >
-                          <Icon icon="fa:edit" className="h-4 w-4"  />
+                          <Icon icon="fa:edit" className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="ghost"
@@ -169,7 +170,7 @@ export function AdminLanguagesTable({
                           aria-label={t("deleteLanguage", { name: language.name })}
                           className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                         >
-                          <Icon icon="fa:trash" className="h-4 w-4"  />
+                          <Icon icon="fa:trash" className="h-4 w-4" />
                         </Button>
                       </div>
                     </td>
@@ -196,7 +197,7 @@ export function AdminLanguagesTable({
                   onClick={() => onPageChange(pagination.currentPage - 1)}
                   aria-label={t("previousPage")}
                 >
-                  <Icon icon="fa:chevron-left" className="h-3 w-3"  />
+                  <Icon icon="fa:chevron-left" className="h-3 w-3" />
                 </Button>
                 <Button
                   variant="outline"
@@ -205,7 +206,7 @@ export function AdminLanguagesTable({
                   onClick={() => onPageChange(pagination.currentPage + 1)}
                   aria-label={t("nextPage")}
                 >
-                  <Icon icon="fa:chevron-right" className="h-3 w-3"  />
+                  <Icon icon="fa:chevron-right" className="h-3 w-3" />
                 </Button>
               </div>
             </div>

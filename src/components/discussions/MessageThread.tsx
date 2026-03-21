@@ -8,6 +8,25 @@ import type { Message } from "@/types/discussion";
 
 import MessageBubble from "@/components/discussions/MessageBubble";
 
+function MessageSkeleton({ isOwn }: { isOwn: boolean }) {
+  return (
+    <div className={`flex ${isOwn ? "justify-end" : "justify-start"}`}>
+      <div
+        className={`animate-pulse space-y-2 rounded-2xl px-4 py-2.5 ${
+          isOwn
+            ? "rounded-br-md bg-purple-500/15 dark:bg-purple-500/10"
+            : "rounded-bl-md bg-slate-200/40 dark:bg-slate-700/40"
+        }`}
+        style={{ width: isOwn ? "55%" : "65%", maxWidth: "75%" }}
+      >
+        <div className="h-3 w-full rounded-md bg-slate-300/50 dark:bg-slate-600/50" />
+        <div className="h-3 w-3/4 rounded-md bg-slate-300/40 dark:bg-slate-600/40" />
+        <div className="h-2 w-12 rounded-md bg-slate-300/30 dark:bg-slate-600/30" />
+      </div>
+    </div>
+  );
+}
+
 interface MessageThreadProps {
   messages: Message[];
   currentUserId: string;
@@ -66,10 +85,17 @@ export default function MessageThread({
           </div>
         )}
 
-        {/* Loading spinner (initial load) */}
+        {/* Loading skeleton (initial load) */}
         {isLoading && messages.length === 0 && (
-          <div className="flex flex-1 items-center justify-center">
-            <Icon icon="lucide:loader-2" className="text-neon-violet h-6 w-6 animate-spin" />
+          <div
+            className="flex flex-1 flex-col justify-end gap-3"
+            data-testid="message-thread-skeleton"
+          >
+            <MessageSkeleton isOwn={false} />
+            <MessageSkeleton isOwn={true} />
+            <MessageSkeleton isOwn={false} />
+            <MessageSkeleton isOwn={true} />
+            <MessageSkeleton isOwn={false} />
           </div>
         )}
 

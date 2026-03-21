@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { useTranslations } from "next-intl";
 
 import { formatMessageDate } from "@/lib/utils/discussion-utils";
@@ -10,9 +11,13 @@ interface MessageBubbleProps {
   isOwn: boolean;
 }
 
-export default function MessageBubble({ message, isOwn }: MessageBubbleProps) {
+export default memo(function MessageBubble({ message, isOwn }: MessageBubbleProps) {
   const t = useTranslations("discussions");
-  const timestamp = formatMessageDate(message.createdAt);
+  const timestamp = formatMessageDate(message.createdAt, {
+    justNow: t("timeJustNow"),
+    minutesAgo: (min) => t("timeMinutesAgo", { min }),
+    hoursAgo: (hours) => t("timeHoursAgo", { hours }),
+  });
 
   return (
     <div className={`flex ${isOwn ? "justify-end" : "justify-start"}`} data-testid="message-bubble">
@@ -24,7 +29,9 @@ export default function MessageBubble({ message, isOwn }: MessageBubbleProps) {
         }`}
         data-testid={isOwn ? "message-own" : "message-received"}
       >
-        <p className="whitespace-pre-wrap wrap-break-word text-sm leading-relaxed">{message.content}</p>
+        <p className="text-sm leading-relaxed wrap-break-word whitespace-pre-wrap">
+          {message.content}
+        </p>
         <span
           className={`mt-1 block text-[10px] ${
             isOwn ? "text-white/60" : "text-slate-400 dark:text-slate-500"
@@ -36,4 +43,4 @@ export default function MessageBubble({ message, isOwn }: MessageBubbleProps) {
       </div>
     </div>
   );
-}
+});

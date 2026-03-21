@@ -20,6 +20,9 @@ export async function GET(request: NextRequest) {
     });
     const locale = searchParams.get("locale") || "fr";
     const inLibrary = searchParams.get("inLibrary") === "true";
+    // Champs optionnels à inclure dans la réponse (ex: "description")
+    // Par défaut, description est exclue du listing pour réduire le payload
+    const fields = parseArrayParam(searchParams.get("fields"));
 
     const supabase = await createRouteHandlerClient();
 
@@ -322,7 +325,7 @@ export async function GET(request: NextRequest) {
         slug: game.slug,
         igdbId: game.igdb_id,
         title: translation?.title || "Untitled",
-        description: translation?.description,
+        description: fields.includes("description") ? translation?.description : undefined,
         coverImage: game.cover_image_url,
         backgroundImage: game.background_image_url,
         backgroundColor: game.background_color,

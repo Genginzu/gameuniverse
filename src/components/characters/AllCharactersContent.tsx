@@ -1,22 +1,20 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
-import { useTranslations } from "next-intl";
+import { useState, useMemo, useCallback } from "react";
 import { EntityCard } from "@/components/shared/EntityCard";
 import { characterCardConfig } from "@/components/shared/entityCardPresets";
-import { CharacterFilters, type RoleFilterOption } from "./CharacterFilters";
+import { CharacterFilters } from "./CharacterFilters";
 import { CharactersEmptyState } from "./CharactersEmptyState";
 import { FilterButton } from "@/components/shared/FilterButton";
 import { Pagination } from "@/components/shared/Pagination";
 import { GridSkeleton } from "@/components/shared/GridSkeleton";
 import { characterSkeletonConfig } from "@/components/shared/EntitySkeleton";
 import { CharacterSummary } from "@/types/character";
-import { PlatformFilterOption } from "@/types/platform";
 import { Pagination as PaginationType } from "@/types/pagination";
-import { useApiClient } from "@/lib/api-client";
-import { useAsyncError } from "@/components/providers/ErrorProvider";
 import { CharacterFavoriteStatusProvider } from "@/components/providers/CharacterFavoriteStatusProvider";
-import { toast } from "@/hooks/use-toast";
+import { useCharacters } from "@/hooks/useCharacters";
+import { useCharacterFilters } from "@/hooks/useCharacterFilters";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
 interface AllCharactersContentProps {
   locale?: string;
@@ -29,194 +27,65 @@ export function AllCharactersContent({
   initialCharacters,
   initialPagination,
 }: AllCharactersContentProps) {
-  const hasServerData = !!initialCharacters;
-  const tErrors = useTranslations("errors");
-  const [characters, setCharacters] = useState<CharacterSummary[]>(initialCharacters ?? []);
-  const [pagination, setPagination] = useState<PaginationType | null>(initialPagination ?? null);
-  const [loading, setLoading] = useState(!hasServerData);
-  const [initialLoading, setInitialLoading] = useState(!hasServerData);
+  // --- État local des filtres ---
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
-  const [platforms, setPlatforms] = useState<PlatformFilterOption[]>([]);
-  const [roles, setRoles] = useState<RoleFilterOption[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
 
-  const apiClient = useApiClient();
-  const { executeAsync } = useAsyncError();
+  const debouncedSearch = useDebouncedValue(searchQuery, 300);
 
-  const fetchCharacters = useCallback(
-    async (
-      search: string = "",
-      roles: string[] = [],
-      page: number = 1,
-      platforms: string[] = []
-    ) => {
-      setLoading(true);
+  // --- Données SSR comme fallback SWR (page 1, pas de filtres) ---
+  const isDefaultView =
+    !debouncedSearch &&
+    selectedRoles.length === 0 &&
+    selectedPlatforms.length === 0 &&
+    currentPage === 1;
+  const fallbackData =
+    isDefaultView && initialCharacters
+      ? { characters: initialCharacters, pagination: initialPagination as PaginationType }
+      : undefined;
 
-      const result = await executeAsync(async () => {
-        const params = new URLSearchParams({
-          locale,
-          page: page.toString(),
-          limit: "20",
-        });
-
-        if (search.trim()) {
-          params.append("search", search.trim());
-        }
-
-        if (roles.length > 0) {
-          params.append("roles", roles.join(","));
-        }
-
-        if (platforms.length > 0) {
-          params.append("platforms", platforms.join(","));
-        }
-
-        const data = await apiClient.get(`/api/characters?${params.toString()}`, {
-          retryConfig: {
-            maxAttempts: 3,
-            baseDelay: 1000,
-          },
-        });
-
-        return {
-          characters: data.characters || [],
-          pagination: data.pagination || null,
-        };
-      }, "fetchCharacters");
-
-      if (result) {
-        setCharacters(result.characters);
-        setPagination(result.pagination);
-      } else {
-        toast({
-          variant: "destructive",
-          title: tErrors("loadingError"),
-          description: tErrors("loadingErrorDescription"),
-        });
-      }
-
-      setLoading(false);
-      setInitialLoading(false);
+  // --- Hook SWR : personnages ---
+  const { characters, pagination, isLoading, isValidating } = useCharacters(
+    {
+      locale,
+      search: debouncedSearch,
+      roles: selectedRoles,
+      platforms: selectedPlatforms,
+      page: currentPage,
     },
-    [locale, apiClient, executeAsync]
+    fallbackData
   );
 
-  // Handle role filter
+  // --- Hook SWR : filtres (rôles + plateformes) ---
+  const { roles, platforms, rolesLoading, platformsLoading } = useCharacterFilters(locale);
+
+  // --- Handlers ---
   const handleRoleFilter = useCallback((roles: string[]) => {
     setSelectedRoles(roles);
+    setCurrentPage(1);
   }, []);
 
-  // Handle platform filter
   const handlePlatformFilter = useCallback((platforms: string[]) => {
     setSelectedPlatforms(platforms);
+    setCurrentPage(1);
   }, []);
 
-  // Handle page change
-  const handlePageChange = useCallback(
-    (page: number) => {
-      fetchCharacters(searchQuery, selectedRoles, page, selectedPlatforms);
-    },
-    [fetchCharacters, searchQuery, selectedRoles, selectedPlatforms]
-  );
-
-  // Clear all filters
   const handleClearFilters = useCallback(() => {
     setSearchQuery("");
     setSelectedRoles([]);
     setSelectedPlatforms([]);
+    setCurrentPage(1);
   }, []);
-
-  // Fetch platforms for filter panel
-  const fetchPlatforms = useCallback(async () => {
-    const result = await executeAsync(async () => {
-      const data = await apiClient.get(`/api/platforms?locale=${locale}`, {
-        retryConfig: { maxAttempts: 2 },
-      });
-      return data.platforms || [];
-    }, "fetchPlatforms");
-
-    if (result) {
-      setPlatforms(result);
-    }
-  }, [locale, apiClient, executeAsync]);
-
-  // Fetch roles for filter panel
-  const fetchRoles = useCallback(async () => {
-    const result = await executeAsync(async () => {
-      const data = await apiClient.get(`/api/roles?locale=${locale}`, {
-        retryConfig: { maxAttempts: 2 },
-      });
-      return data.roles || [];
-    }, "fetchRoles");
-
-    if (result) {
-      setRoles(result);
-    }
-  }, [locale, apiClient, executeAsync]);
-
-  // Initial load - skip if server provided initial data
-  useEffect(() => {
-    if (hasServerData) {
-      fetchPlatforms();
-      fetchRoles();
-      return;
-    }
-
-    const loadInitialCharacters = async () => {
-      setLoading(true);
-      setInitialLoading(true);
-
-      const result = await executeAsync(async () => {
-        const params = new URLSearchParams({
-          locale,
-          page: "1",
-          limit: "20",
-        });
-
-        const data = await apiClient.get(`/api/characters?${params.toString()}`, {
-          retryConfig: {
-            maxAttempts: 3,
-            baseDelay: 1000,
-          },
-        });
-
-        return {
-          characters: data.characters || [],
-          pagination: data.pagination || null,
-        };
-      }, "fetchCharacters");
-
-      if (result) {
-        setCharacters(result.characters);
-        setPagination(result.pagination);
-      }
-
-      setLoading(false);
-      setInitialLoading(false);
-    };
-
-    loadInitialCharacters();
-    fetchPlatforms();
-    fetchRoles();
-  }, []); // Only on initial mount
-
-  // Effect to handle filter changes with debounce — skip during initial loading
-  useEffect(() => {
-    if (initialLoading) return;
-
-    const timeoutId = setTimeout(() => {
-      fetchCharacters(searchQuery, selectedRoles, 1, selectedPlatforms);
-    }, 300); // 300ms debounce
-
-    return () => clearTimeout(timeoutId);
-  }, [searchQuery, selectedRoles, selectedPlatforms, fetchCharacters]); // Include fetchCharacters
 
   // Slugs mémoïsés pour le batch fetch des favoris (évite re-render du provider)
   const characterSlugs = useMemo(() => characters.map((c) => c.slug), [characters]);
 
-  // Show full skeleton on initial load
+  // Premier chargement sans données SSR
+  const initialLoading = isLoading && characters.length === 0;
+
   if (initialLoading) {
     return (
       <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
@@ -238,7 +107,6 @@ export function AllCharactersContent({
             onClick={() => setShowFilters(!showFilters)}
           />
 
-          {/* Filter content below - full width */}
           <CharacterFilters
             selectedRoles={selectedRoles}
             selectedPlatforms={selectedPlatforms}
@@ -251,12 +119,12 @@ export function AllCharactersContent({
           />
         </div>
 
-        {/* Characters grid — semi-transparent pendant le rechargement pour éviter le layout shift */}
+        {/* Characters grid — semi-transparent pendant la revalidation pour éviter le layout shift */}
         <CharacterFavoriteStatusProvider slugs={characterSlugs}>
           <div
-            className={`transition-opacity duration-200 ${loading && !initialLoading ? "pointer-events-none opacity-40" : ""}`}
+            className={`transition-opacity duration-200 ${isValidating && !isLoading ? "pointer-events-none opacity-40" : ""}`}
           >
-            {characters.length === 0 && !loading ? (
+            {characters.length === 0 && !isLoading ? (
               <CharactersEmptyState
                 hasFilters={
                   !!searchQuery || selectedRoles.length > 0 || selectedPlatforms.length > 0
@@ -265,7 +133,6 @@ export function AllCharactersContent({
               />
             ) : characters.length > 0 ? (
               <div className="space-y-8">
-                {/* Responsive grid - 4 columns layout */}
                 <div className="xs:grid-cols-2 grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
                   {characters.map((character, index) => (
                     <EntityCard
@@ -288,8 +155,8 @@ export function AllCharactersContent({
               currentPage={pagination.currentPage}
               totalPages={pagination.totalPages}
               totalCount={pagination.totalCount}
-              onPageChange={handlePageChange}
-              loading={loading}
+              onPageChange={setCurrentPage}
+              loading={isValidating}
               translationNamespace="characters.pagination"
             />
           </div>

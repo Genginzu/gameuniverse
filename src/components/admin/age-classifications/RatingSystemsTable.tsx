@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { AdminTableSkeleton } from "@/components/admin/shared/AdminTableSkeleton";
 
 import type { AdminRatingSystem } from "@/types/admin-age-classifications";
 import type { PaginationInfo } from "@/types/pagination";
@@ -92,9 +92,7 @@ export function RatingSystemsTable({
 
       {/* État de chargement */}
       {isLoading ? (
-        <div className="flex justify-center py-12">
-          <LoadingSpinner size="md" />
-        </div>
+        <AdminTableSkeleton columns={3} rows={6} />
       ) : systems.length === 0 ? (
         <div className="rounded-xl border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800">
           <p className="text-gray-500 dark:text-gray-400">Aucun système de classification trouvé</p>

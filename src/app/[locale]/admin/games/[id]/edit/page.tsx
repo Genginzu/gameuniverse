@@ -7,7 +7,7 @@ import { useTranslations } from "next-intl";
 import { useGameForm } from "@/hooks/useGameForm";
 import { GameForm } from "@/components/admin/games/GameForm";
 import { Button } from "@/components/ui/button";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { AdminFormSkeleton } from "@/components/admin/shared/AdminFormSkeleton";
 import { toast } from "@/hooks/use-toast";
 
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
@@ -76,21 +76,14 @@ function EditGameForm({
 
   // Keep showing the same loading style until options are ready
   if (loadingOptions) {
-    return (
-      <div className="flex flex-1 items-center justify-center py-12">
-        <div className="flex items-center gap-3">
-          <LoadingSpinner size="lg" />
-          <span className="text-gray-500 dark:text-gray-400">{t("editPage.loading")}</span>
-        </div>
-      </div>
-    );
+    return <AdminFormSkeleton showHeroBanner tabs={13} fields={5} />;
   }
 
   return (
     <div className="p-4 lg:p-6">
       <div className="mb-6 flex items-center gap-4">
         <Button variant="ghost" size="sm" onClick={() => router.push("/admin/games")}>
-          <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
+          <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3" />
           {t("form.backToList")}
         </Button>
       </div>
@@ -163,14 +156,7 @@ export default function EditGamePage() {
   }, [gameId, t]);
 
   if (loadingGame) {
-    return (
-      <div className="flex flex-1 items-center justify-center py-12">
-        <div className="flex items-center gap-3">
-          <LoadingSpinner size="lg" />
-          <span className="text-gray-500 dark:text-gray-400">{t("editPage.loading")}</span>
-        </div>
-      </div>
-    );
+    return <AdminFormSkeleton showHeroBanner tabs={13} fields={5} />;
   }
 
   if (loadError) {
@@ -178,7 +164,7 @@ export default function EditGamePage() {
       <div className="p-4 lg:p-6">
         <div className="mb-6 flex items-center gap-4">
           <Button variant="ghost" size="sm" onClick={() => router.push("/admin/games")}>
-            <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
+            <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3" />
             {t("form.backToList")}
           </Button>
         </div>

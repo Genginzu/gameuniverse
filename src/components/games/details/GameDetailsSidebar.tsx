@@ -54,7 +54,7 @@ export function GameDetailsSidebar({ game, colors, formatReleaseDate }: GameDeta
         <button
           onClick={handleLibraryToggle}
           disabled={isProcessing}
-          className="flex w-full items-center justify-center gap-2 rounded-xl border border-white/20 py-3 text-sm font-semibold shadow-[0_8px_32px_rgba(0,0,0,0.3)] backdrop-blur-xl transition-all hover:scale-[1.02] hover:shadow-[0_8px_40px_rgba(0,0,0,0.4)] active:scale-[0.98] disabled:opacity-60"
+          className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl border border-white/20 py-3 text-sm font-semibold shadow-[0_8px_32px_rgba(0,0,0,0.3)] backdrop-blur-xl transition-all hover:scale-[1.02] hover:shadow-[0_8px_40px_rgba(0,0,0,0.4)] active:scale-[0.98] disabled:opacity-60"
           style={{
             backgroundColor: inLibrary ? "rgba(255,255,255,0.08)" : `${colors.accent}CC`,
             borderColor: inLibrary ? colors.accent : `${colors.accent}60`,
@@ -62,7 +62,7 @@ export function GameDetailsSidebar({ game, colors, formatReleaseDate }: GameDeta
           }}
         >
           {isProcessing ? (
-            <Icon icon="lucide:loader-2" className="h-4 w-4 animate-spin" />
+            <Icon icon="svg-spinners:ring-resize" className="h-4 w-4" />
           ) : (
             <Icon icon="lucide:heart" className={`h-4 w-4 ${inLibrary ? "fill-current" : ""}`} />
           )}

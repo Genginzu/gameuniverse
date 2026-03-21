@@ -107,11 +107,9 @@ describe("MessageThread", () => {
     expect(button).toBeDisabled();
   });
 
-  it("shows loading spinner when isLoading and no messages", () => {
+  it("shows loading skeleton when isLoading and no messages", () => {
     render(<MessageThread {...defaultProps} isLoading={true} messages={[]} />);
-    // The loader icon appears in the empty loading state
-    const loaders = screen.getAllByTestId("icon-lucide:loader-2");
-    expect(loaders.length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByTestId("message-thread-skeleton")).toBeInTheDocument();
   });
 
   it("passes isOwn=true for messages sent by currentUserId", () => {

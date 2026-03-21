@@ -8,10 +8,11 @@ import { characterSkeletonConfig } from "@/components/shared/EntitySkeleton";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
-import React from "react";
 import type { CharacterFavoriteSummary } from "@/types/character";
 
-/** EntityCard config tailored for CharacterFavoriteSummary (no gamesCount/description) */
+/** Grille responsive partagée entre le skeleton et le rendu final */
+const GRID_CLASS =
+  "grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6";
 const favoriteCardConfig: EntityCardConfig<CharacterFavoriteSummary> = {
   aspectRatio: "3:4",
   imageField: "mainImage",
@@ -32,30 +33,17 @@ const favoriteCardConfig: EntityCardConfig<CharacterFavoriteSummary> = {
   },
   actions: {},
   linkTemplate: (character, locale) => `/${locale}/characters/${character.slug}`,
-  customHoverRenderer: (character, t) =>
-    React.createElement(
-      React.Fragment,
-      null,
-      React.createElement(
-        "h3",
-        { className: "mb-2 line-clamp-2 text-lg font-bold text-white" },
-        character.name
-      ),
-      React.createElement(
-        "div",
-        { className: "mb-3 space-y-1 text-xs" },
-        React.createElement(
-          "div",
-          { className: "flex items-center text-gray-300" },
-          React.createElement("span", { className: "font-medium text-gray-400" }, t("game")),
-          React.createElement(
-            "span",
-            { className: "ml-1 font-medium text-white" },
-            character.primaryGame
-          )
-        )
-      )
-    ),
+  customHoverRenderer: (character, t) => (
+    <>
+      <h3 className="mb-2 line-clamp-2 text-lg font-bold text-white">{character.name}</h3>
+      <div className="mb-3 space-y-1 text-xs">
+        <div className="flex items-center text-gray-300">
+          <span className="font-medium text-gray-400">{t("game")}</span>
+          <span className="ml-1 font-medium text-white">{character.primaryGame}</span>
+        </div>
+      </div>
+    </>
+  ),
 };
 
 export function FavoriteCharactersContent() {
@@ -66,7 +54,11 @@ export function FavoriteCharactersContent() {
   if (loading) {
     return (
       <div className="p-4 sm:p-6">
-        <GridSkeleton skeletonConfig={characterSkeletonConfig} count={8} />
+        <GridSkeleton
+          skeletonConfig={characterSkeletonConfig}
+          count={8}
+          gridClassName={GRID_CLASS}
+        />
       </div>
     );
   }
@@ -119,7 +111,7 @@ export function FavoriteCharactersContent() {
         </h2>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+      <div className={GRID_CLASS}>
         {characters.map((character, index) => (
           <EntityCard
             key={character.id}

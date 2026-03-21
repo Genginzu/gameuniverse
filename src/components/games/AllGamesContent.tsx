@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useCallback } from "react";
 import dynamic from "next/dynamic";
-import { useTranslations } from "next-intl";
 import { EntityCard } from "@/components/shared/EntityCard";
 import { gameCardConfig } from "@/components/shared/entityCardPresets";
 import { FilterButton } from "@/components/shared/FilterButton";
@@ -10,13 +9,7 @@ import { GridSkeleton } from "@/components/shared/GridSkeleton";
 import { gameSkeletonConfig } from "@/components/shared/EntitySkeleton";
 import { SearchSkeleton } from "./SearchSkeleton";
 import { LibraryStatusProvider } from "@/components/providers/LibraryStatusProvider";
-import { Genre } from "@/types/genre";
-import { GameSummary } from "@/types/game";
-import { Pagination as PaginationType } from "@/types/pagination";
-import { PlatformFilterOption } from "@/types/platform";
-import { useApiClient } from "@/lib/api-client";
-import { useAsyncError } from "@/components/providers/ErrorProvider";
-import { toast } from "@/hooks/use-toast";
+import { useGameListing, useGenres, usePlatforms } from "@/hooks/useGameListing";
 
 // Lazy load des composants non visibles au premier rendu
 const GameFilters = dynamic(() => import("./GameFilters").then((m) => m.GameFilters));
@@ -30,177 +23,57 @@ interface AllGamesContentProps {
 }
 
 export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
-  const tErrors = useTranslations("errors");
-
-  const [games, setGames] = useState<GameSummary[]>([]);
-  const [genres, setGenres] = useState<Genre[]>([]);
-  const [platforms, setPlatforms] = useState<PlatformFilterOption[]>([]);
-  const [pagination, setPagination] = useState<PaginationType | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [initialLoading, setInitialLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [selectedPublishers, setSelectedPublishers] = useState<string[]>([]);
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
 
-  // Utiliser notre nouveau système de gestion d'erreurs
-  const apiClient = useApiClient();
-  const { executeAsync } = useAsyncError();
-
-  // Fetch genres avec gestion d'erreurs améliorée
-  const fetchGenres = useCallback(async () => {
-    const result = await executeAsync(async () => {
-      const data = await apiClient.get(`/api/genres?locale=${locale}`, {
-        retryConfig: {
-          maxAttempts: 2, // Moins de tentatives pour les genres
-        },
-      });
-
-      return data.genres || [];
-    }, "fetchGenres");
-
-    if (result) {
-      setGenres(result);
-    }
-  }, [locale, apiClient, executeAsync]);
-
-  // Fetch platforms au montage (prioritaire, avant les jeux)
-  const fetchPlatforms = useCallback(async () => {
-    const result = await executeAsync(async () => {
-      const data = await apiClient.get(`/api/platforms?locale=${locale}`, {
-        retryConfig: { maxAttempts: 2 },
-      });
-      return data.platforms || [];
-    }, "fetchPlatforms");
-
-    if (result) {
-      setPlatforms(result);
-    }
-  }, [locale, apiClient, executeAsync]);
-
-  // Fetch games avec gestion d'erreurs améliorée
-  const fetchGames = useCallback(
-    async (
-      genres: string[] = [],
-      publishers: string[] = [],
-      page: number = 1,
-      platforms: string[] = []
-    ) => {
-      setLoading(true);
-
-      const result = await executeAsync(async () => {
-        const params = new URLSearchParams({
-          locale,
-          page: page.toString(),
-          limit: "20",
-        });
-
-        if (genres.length > 0) {
-          params.append("genres", genres.join(","));
-        }
-
-        if (publishers.length > 0) {
-          params.append("publishers", publishers.join(","));
-        }
-
-        if (platforms.length > 0) {
-          params.append("platforms", platforms.join(","));
-        }
-
-        const data = await apiClient.get(`/api/games?${params.toString()}`, {
-          retryConfig: {
-            maxAttempts: 3,
-            baseDelay: 1000,
-          },
-        });
-
-        return {
-          games: data.games || [],
-          pagination: data.pagination || null,
-        };
-      }, "fetchGames");
-
-      if (result) {
-        setGames(result.games);
-        setPagination(result.pagination);
-      } else {
-        // En cas d'erreur, on garde les données précédentes mais on affiche un toast
-        toast({
-          variant: "destructive",
-          title: tErrors("loadingError"),
-          description: tErrors("loadingErrorDescription"),
-        });
-      }
-
-      setLoading(false);
-      setInitialLoading(false);
-    },
-    [locale, apiClient, executeAsync]
+  // SWR hooks — cache automatique, stale-while-revalidate, déduplication
+  const { genres } = useGenres(locale);
+  const { platforms } = usePlatforms(locale);
+  const { games, pagination, loading, validating } = useGameListing(
+    locale,
+    currentPage,
+    selectedGenres,
+    selectedPlatforms
   );
 
-  // Ref stable pour éviter les re-triggers du useEffect
-  const fetchGamesRef = useRef(fetchGames);
-  fetchGamesRef.current = fetchGames;
+  // Le premier chargement est quand SWR n'a encore aucune donnée
+  const initialLoading = loading && games.length === 0;
+  // Transition : SWR revalide (changement de filtre/page) mais a des données précédentes
+  const transitioning = validating && !loading;
 
-  // Handle genre filter
   const handleGenreFilter = useCallback((genres: string[]) => {
     setSelectedGenres(genres);
-    // Le useEffect va gérer l'appel à fetchGames
+    setCurrentPage(1);
   }, []);
 
-  // Handle publisher filter
   const handlePublisherFilter = useCallback((publishers: string[]) => {
     setSelectedPublishers(publishers);
-    // Le useEffect va gérer l'appel à fetchGames
   }, []);
 
-  // Handle platform filter
   const handlePlatformFilter = useCallback((platforms: string[]) => {
     setSelectedPlatforms(platforms);
+    setCurrentPage(1);
   }, []);
 
-  // Handle page change
-  const handlePageChange = useCallback(
-    (page: number) => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      fetchGamesRef.current(selectedGenres, selectedPublishers, page, selectedPlatforms);
-    },
-    [selectedGenres, selectedPublishers, selectedPlatforms]
-  );
+  const handlePageChange = useCallback((page: number) => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    setCurrentPage(page);
+  }, []);
 
-  // Clear all filters
   const handleClearFilters = useCallback(() => {
     setSelectedGenres([]);
     setSelectedPublishers([]);
     setSelectedPlatforms([]);
-    // Les useEffect vont gérer le rechargement
+    setCurrentPage(1);
   }, []);
 
-  // Ref pour savoir si le chargement initial est terminé (évite le double-fetch)
-  const hasInitiallyLoaded = useRef(false);
+  const hasFilters =
+    selectedGenres.length > 0 || selectedPublishers.length > 0 || selectedPlatforms.length > 0;
 
-  // Initial load - ne dépend PAS de fetchGames pour éviter la boucle
-  useEffect(() => {
-    fetchGenres();
-    fetchPlatforms();
-    fetchGamesRef.current([], [], 1, []).then(() => {
-      hasInitiallyLoaded.current = true;
-    });
-  }, []); // Seulement au montage initial
-
-  // Effect pour gérer les changements de filtres avec debounce
-  useEffect(() => {
-    // Ne pas exécuter tant que le chargement initial n'est pas terminé
-    if (!hasInitiallyLoaded.current) return;
-
-    const timeoutId = setTimeout(() => {
-      fetchGamesRef.current(selectedGenres, selectedPublishers, 1, selectedPlatforms);
-    }, 300);
-
-    return () => clearTimeout(timeoutId);
-  }, [selectedGenres, selectedPublishers, selectedPlatforms]);
-
-  // Show full skeleton on initial load
+  // Skeleton complet au premier chargement
   if (initialLoading) {
     return <SearchSkeleton />;
   }
@@ -211,16 +84,11 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
         {/* Filters */}
         <div className="mb-6 space-y-4 sm:mb-8">
           <FilterButton
-            hasFilters={
-              selectedGenres.length > 0 ||
-              selectedPublishers.length > 0 ||
-              selectedPlatforms.length > 0
-            }
+            hasFilters={hasFilters}
             filterCount={selectedGenres.length + selectedPlatforms.length}
             onClick={() => setShowFilters(!showFilters)}
           />
 
-          {/* Filter content below - full width */}
           <GameFilters
             genres={genres}
             platforms={platforms}
@@ -235,29 +103,14 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
           />
         </div>
 
-        {/* Skeleton avec fade-out */}
+        {/* Contenu avec transition d'opacité pendant la revalidation */}
         <div
-          className={`transition-opacity duration-300 ${
-            loading && !initialLoading ? "opacity-100" : "pointer-events-none absolute opacity-0"
-          }`}
+          className={`transition-opacity duration-300 ${transitioning ? "opacity-50" : "opacity-100"}`}
         >
-          <GridSkeleton skeletonConfig={gameSkeletonConfig} count={games.length || 20} />
-        </div>
-
-        {/* Contenu avec fade-in */}
-        <div className={`transition-opacity duration-300 ${loading ? "opacity-0" : "opacity-100"}`}>
-          {games.length === 0 && !loading ? (
-            <GamesEmptyState
-              hasFilters={
-                selectedGenres.length > 0 ||
-                selectedPublishers.length > 0 ||
-                selectedPlatforms.length > 0
-              }
-              onClearFilters={handleClearFilters}
-            />
+          {games.length === 0 && !validating ? (
+            <GamesEmptyState hasFilters={hasFilters} onClearFilters={handleClearFilters} />
           ) : (
             <div className="space-y-8">
-              {/* Responsive grid - 5 columns layout */}
               <LibraryStatusProvider gameIds={games.map((g) => g.id)}>
                 <div className="xs:grid-cols-2 grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                   {games.map((game, index) => (
@@ -281,7 +134,7 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
                 totalPages={pagination.totalPages}
                 totalCount={pagination.totalCount}
                 onPageChange={handlePageChange}
-                loading={loading}
+                loading={validating}
                 translationNamespace="pagination"
               />
             </div>

@@ -5,6 +5,7 @@ import { GlobalSearchGameItem } from "@/components/shared/GlobalSearchGameItem";
 import { GlobalSearchPlayerItem } from "@/components/shared/GlobalSearchPlayerItem";
 import type { FlatSearchItem } from "@/lib/utils/global-search-utils";
 import type { GlobalSearchResponse } from "@/types/global-search";
+import { GlobalSearchSkeleton } from "@/components/shared/GlobalSearchSkeleton";
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 
@@ -39,12 +40,7 @@ export function GlobalSearchDropdown({
   const hasResults = flatItems.length > 0;
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center gap-3 py-12 text-base text-white/50">
-        <Icon icon="lucide:loader-2" className="h-5 w-5 animate-spin" />
-        {t("loading")}
-      </div>
-    );
+    return <GlobalSearchSkeleton />;
   }
 
   if (!hasResults) {

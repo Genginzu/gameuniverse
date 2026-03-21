@@ -80,7 +80,7 @@ export function GameCard({
       <Link href={`/${locale}/games/${game.slug}`}>
         {/* Cover Image with Overlay */}
         <div
-          className="relative aspect-3/4 cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(var(--neon-violet),0.3),0_0_40px_rgba(var(--neon-cyan),0.15)] hover:ring-1 hover:ring-neon-violet/30 motion-reduce:transition-none motion-reduce:hover:scale-100"
+          className="hover:ring-neon-violet/30 relative aspect-3/4 cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(var(--neon-violet),0.3),0_0_40px_rgba(var(--neon-cyan),0.15)] hover:ring-1 motion-reduce:transition-none motion-reduce:hover:scale-100"
           style={{
             backgroundColor: game.backgroundColor || "#f3f4f6", // Fallback to gray-100
           }}
@@ -100,10 +100,15 @@ export function GameCard({
             <button
               onClick={handleLibraryToggle}
               disabled={adding || loading}
-              className="absolute left-3 top-3 z-20 transition-transform hover:scale-110 disabled:opacity-50"
+              className="absolute top-3 left-3 z-20 cursor-pointer transition-transform hover:scale-110 disabled:opacity-50"
               aria-label={inLibrary ? t("removeFromLibrary") : t("addToLibrary")}
             >
-              {inLibrary ? (
+              {adding ? (
+                <Icon
+                  icon="svg-spinners:ring-resize"
+                  className="h-6 w-6 text-white drop-shadow-lg"
+                />
+              ) : inLibrary ? (
                 <Icon icon="fa:heart" className="h-6 w-6 text-red-500 drop-shadow-lg" />
               ) : (
                 <Icon icon="fa-regular:heart" className="h-6 w-6 text-white drop-shadow-lg" />
@@ -113,7 +118,7 @@ export function GameCard({
 
           {/* Metascore badge - always visible */}
           {game.metascore && (
-            <div className="absolute right-3 top-3 z-20">
+            <div className="absolute top-3 right-3 z-20">
               <div
                 className={`${getMetascoreColor(
                   game.metascore

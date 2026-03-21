@@ -455,6 +455,8 @@
       "noRating": "Aucune note",
       "library": "Bibliothèque",
       "inLibrary": "dans la bibliothèque",
+      "showMore": "Voir plus",
+      "loadingMore": "Chargement…",
       "counters": {
         "posts": "Posts",
         "friends": "Amis",
@@ -2221,7 +2223,10 @@
     "noFriendsFound": "Aucun ami trouvé",
     "selectConversation": "Sélectionnez une conversation pour commencer à discuter",
     "selectConversationHint": "Choisissez un ami dans la liste à gauche",
-    "startConversation": "Démarrer une conversation"
+    "startConversation": "Démarrer une conversation",
+    "timeJustNow": "À l'instant",
+    "timeMinutesAgo": "il y a {min} min",
+    "timeHoursAgo": "il y a {hours} h"
   },
   "platforms": {
     "title": "Plateformes",

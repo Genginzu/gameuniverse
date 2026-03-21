@@ -16,6 +16,7 @@ interface GameHeroSectionProps {
   locale: string;
   colors: GameColors;
   isWishlisted: boolean;
+  isWishlistToggling?: boolean;
   onWishlistToggle: () => void;
   formatReleaseDate: (dateString?: string) => string | null;
   getMetascoreColor: (score?: number) => string;
@@ -27,6 +28,7 @@ export function GameHeroSection({
   locale,
   colors,
   isWishlisted,
+  isWishlistToggling = false,
   onWishlistToggle,
   formatReleaseDate,
   getMetascoreColor,
@@ -61,13 +63,18 @@ export function GameHeroSection({
             <Button
               variant="ghost"
               size="sm"
-              className={`bg-slate-900/60 backdrop-blur-xs hover:bg-slate-900/80 hover:text-white ${isWishlisted ? "text-red-400" : "text-slate-300"}`}
+              className={`cursor-pointer bg-slate-900/60 backdrop-blur-xs hover:bg-slate-900/80 hover:text-white ${isWishlisted ? "text-red-400" : "text-slate-300"}`}
               onClick={onWishlistToggle}
+              disabled={isWishlistToggling}
             >
-              <Icon
-                icon="lucide:heart"
-                className={`h-4 w-4 ${isWishlisted ? "fill-current" : ""}`}
-              />
+              {isWishlistToggling ? (
+                <Icon icon="svg-spinners:ring-resize" className="h-4 w-4" />
+              ) : (
+                <Icon
+                  icon="lucide:heart"
+                  className={`h-4 w-4 ${isWishlisted ? "fill-current" : ""}`}
+                />
+              )}
             </Button>
           </div>
         </div>

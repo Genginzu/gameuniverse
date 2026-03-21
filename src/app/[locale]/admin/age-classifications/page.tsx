@@ -2,9 +2,16 @@
 
 import { useState, useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
+import dynamic from "next/dynamic";
 import { useAdminRatingSystems } from "@/hooks/useAdminRatingSystems";
 import { RatingSystemsTable } from "@/components/admin/age-classifications/RatingSystemsTable";
-import { DeleteRatingSystemDialog } from "@/components/admin/age-classifications/DeleteRatingSystemDialog";
+const DeleteRatingSystemDialog = dynamic(
+  () =>
+    import("@/components/admin/age-classifications/DeleteRatingSystemDialog").then(
+      (m) => m.DeleteRatingSystemDialog
+    ),
+  { ssr: false }
+);
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 
@@ -119,7 +126,7 @@ export default function AdminAgeClassificationsPage() {
             Classifications d&apos;âge
           </h1>
           <Button onClick={() => router.push("/admin/age-classifications/new")}>
-            <Icon icon="fa:plus" className="h-4 w-4"  />
+            <Icon icon="fa:plus" className="h-4 w-4" />
             Nouveau système
           </Button>
         </div>

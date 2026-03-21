@@ -5,13 +5,16 @@ import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { useAdminGames } from "@/hooks/useAdminGames";
+import dynamic from "next/dynamic";
 import type { AdminGame } from "@/types/admin-games";
 import { AdminGamesTable } from "@/components/admin/games/AdminGamesTable";
-import { DeleteGameDialog } from "@/components/admin/games/DeleteGameDialog";
+const DeleteGameDialog = dynamic(
+  () => import("@/components/admin/games/DeleteGameDialog").then((m) => m.DeleteGameDialog),
+  { ssr: false }
+);
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { Icon } from "@iconify/react";
-
 
 export default function AdminGamesPage() {
   const t = useTranslations("admin.games");
@@ -102,7 +105,7 @@ export default function AdminGamesPage() {
       <div className="mb-6 flex items-center justify-between">
         <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">{t("title")}</h1>
         <Button onClick={() => router.push("/admin/games/new")}>
-          <Icon icon="fa:plus" className="h-4 w-4"  />
+          <Icon icon="fa:plus" className="h-4 w-4" />
           {t("newGame")}
         </Button>
       </div>

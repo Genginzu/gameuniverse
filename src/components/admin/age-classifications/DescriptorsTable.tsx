@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useLocale } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { AdminTableSkeleton } from "@/components/admin/shared/AdminTableSkeleton";
 
 import type { AdminContentDescriptor } from "@/types/admin-age-classifications";
 import { Icon } from "@iconify/react";
@@ -46,7 +46,10 @@ export function DescriptorsTable({
       {/* Barre de recherche */}
       <form onSubmit={handleSearchSubmit} className="flex gap-2">
         <div className="relative flex-1">
-          <Icon icon="fa:search" className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"  />
+          <Icon
+            icon="fa:search"
+            className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400"
+          />
           <Input
             type="text"
             placeholder="Rechercher par code ou nom…"
@@ -68,9 +71,7 @@ export function DescriptorsTable({
 
       {/* État de chargement */}
       {isLoading ? (
-        <div className="flex justify-center py-12">
-          <LoadingSpinner size="md" />
-        </div>
+        <AdminTableSkeleton columns={3} rows={6} />
       ) : descriptors.length === 0 ? (
         <div className="rounded-xl border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800">
           <p className="text-gray-500 dark:text-gray-400">Aucun descripteur trouvé</p>
@@ -112,7 +113,7 @@ export function DescriptorsTable({
                         onClick={() => onEdit(descriptor)}
                         aria-label={`Modifier ${descriptor.code}`}
                       >
-                        <Icon icon="fa:edit" className="h-4 w-4"  />
+                        <Icon icon="fa:edit" className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
@@ -121,7 +122,7 @@ export function DescriptorsTable({
                         aria-label={`Supprimer ${descriptor.code}`}
                         className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                       >
-                        <Icon icon="fa:trash" className="h-4 w-4"  />
+                        <Icon icon="fa:trash" className="h-4 w-4" />
                       </Button>
                     </div>
                   </td>

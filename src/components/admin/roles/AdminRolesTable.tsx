@@ -4,7 +4,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { AdminTableSkeleton } from "@/components/admin/shared/AdminTableSkeleton";
 import type { AdminRole } from "@/types/admin-roles";
 import type { PaginationInfo } from "@/types/pagination";
 import { Icon } from "@iconify/react";
@@ -92,9 +92,7 @@ export function AdminRolesTable({
       </p>
 
       {isLoading ? (
-        <div className="flex justify-center py-12">
-          <LoadingSpinner size="md" />
-        </div>
+        <AdminTableSkeleton columns={3} rows={8} />
       ) : roles.length === 0 ? (
         <div className="rounded-xl border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800">
           <p className="text-gray-500 dark:text-gray-400">{t("noRoles")}</p>

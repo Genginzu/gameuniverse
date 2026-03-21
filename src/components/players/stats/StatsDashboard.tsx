@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
+import useSWR from "swr";
 import { Icon } from "@iconify/react";
 import { Card, CardContent } from "@/components/ui/card";
 import { StatsDashboardSkeleton } from "@/components/players/stats/StatsDashboardSkeleton";
@@ -26,11 +26,14 @@ interface StatsDashboardProps {
   statsPrivate: boolean;
 }
 
-type FetchState =
-  | { status: "loading" }
-  | { status: "error" }
-  | { status: "private" }
-  | { status: "success"; data: DashboardStatsResponse };
+/** Custom fetcher that detects private stats and throws typed errors */
+async function dashboardFetcher(url: string): Promise<DashboardStatsResponse> {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("fetch_error");
+  const json = await res.json();
+  if (json.private === true) throw new Error("private");
+  return json;
+}
 
 const CARD_STYLE =
   "rounded-2xl border-gray-200 bg-white backdrop-blur-xs dark:border-slate-700/50 dark:bg-slate-800/50";
@@ -42,37 +45,21 @@ export function StatsDashboard({
   statsPrivate,
 }: StatsDashboardProps) {
   const t = useTranslations("playerStats");
-  const [state, setState] = useState<FetchState>(
-    !isOwnProfile && statsPrivate ? { status: "private" } : { status: "loading" }
+
+  // Skip fetch entirely when we know stats are private for a visitor
+  const isPrivate = !isOwnProfile && statsPrivate;
+  const swrKey = isPrivate ? null : `/api/players/${playerId}/stats/dashboard?locale=${locale}`;
+
+  const { data, error, isLoading, mutate } = useSWR<DashboardStatsResponse>(
+    swrKey,
+    dashboardFetcher,
+    { revalidateOnFocus: false }
   );
-
-  const fetchStats = useCallback(async () => {
-    setState({ status: "loading" });
-    try {
-      const res = await fetch(`/api/players/${playerId}/stats/dashboard?locale=${locale}`);
-      if (!res.ok) {
-        setState({ status: "error" });
-        return;
-      }
-      const json = await res.json();
-      if (json.private === true) {
-        setState({ status: "private" });
-        return;
-      }
-      setState({ status: "success", data: json });
-    } catch {
-      setState({ status: "error" });
-    }
-  }, [playerId, locale]);
-
-  useEffect(() => {
-    if (!isOwnProfile && statsPrivate) return;
-    fetchStats();
-  }, [fetchStats, isOwnProfile, statsPrivate]);
 
   const title = <StatsSectionTitle>{t("dashboard.title")}</StatsSectionTitle>;
 
-  if (state.status === "private") {
+  // Private stats — known upfront or detected from API
+  if (isPrivate || error?.message === "private") {
     return (
       <div>
         {title}
@@ -91,7 +78,7 @@ export function StatsDashboard({
     );
   }
 
-  if (state.status === "loading") {
+  if (isLoading) {
     return (
       <div>
         {title}
@@ -100,7 +87,7 @@ export function StatsDashboard({
     );
   }
 
-  if (state.status === "error") {
+  if (error) {
     return (
       <div>
         {title}
@@ -108,7 +95,7 @@ export function StatsDashboard({
           <CardContent className="flex flex-col items-center gap-3 p-8 text-center">
             <Icon icon="lucide:alert-circle" className="h-8 w-8 text-red-400" />
             <p className="text-sm text-gray-500 dark:text-slate-400">{t("dashboard.error")}</p>
-            <Button variant="outline" size="sm" onClick={fetchStats}>
+            <Button variant="outline" size="sm" onClick={() => mutate()}>
               {t("dashboard.retry")}
             </Button>
           </CardContent>
@@ -117,7 +104,7 @@ export function StatsDashboard({
     );
   }
 
-  const { data } = state;
+  if (!data) return null;
 
   return (
     <div>

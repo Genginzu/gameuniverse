@@ -35,6 +35,24 @@ function HeartOutline({ className }: { className?: string }) {
   );
 }
 
+function HeartSpinner({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2.5" opacity="0.2" />
+      <path d="M12 3a9 9 0 0 1 9 9" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+        <animateTransform
+          attributeName="transform"
+          type="rotate"
+          from="0 12 12"
+          to="360 12 12"
+          dur="0.8s"
+          repeatCount="indefinite"
+        />
+      </path>
+    </svg>
+  );
+}
+
 // Re-export types for backward compatibility
 export type {
   BadgeVariant,
@@ -215,10 +233,12 @@ function EntityCardInner<T extends object>({
             <button
               onClick={library.handleToggle}
               disabled={library.adding || library.loading}
-              className="absolute top-3 left-3 z-20 transition-transform hover:scale-110 disabled:opacity-50"
+              className="absolute top-3 left-3 z-20 cursor-pointer transition-transform hover:scale-110 disabled:opacity-50"
               aria-label={library.inLibrary ? t("removeFromLibrary") : t("addToLibrary")}
             >
-              {library.inLibrary ? (
+              {library.adding ? (
+                <HeartSpinner className="h-6 w-6 text-white drop-shadow-lg" />
+              ) : library.inLibrary ? (
                 <HeartFilled className="h-6 w-6 text-red-500 drop-shadow-lg" />
               ) : (
                 <HeartOutline className="h-6 w-6 text-white drop-shadow-lg" />
@@ -231,10 +251,12 @@ function EntityCardInner<T extends object>({
             <button
               onClick={charFav.handleToggle}
               disabled={charFav.loading || charFav.toggling}
-              className="absolute top-3 left-3 z-20 transition-transform hover:scale-110 disabled:opacity-50"
+              className="absolute top-3 left-3 z-20 cursor-pointer transition-transform hover:scale-110 disabled:opacity-50"
               aria-label={charFav.isFavorite ? t("removeFromFavorites") : t("addToFavorites")}
             >
-              {charFav.isFavorite ? (
+              {charFav.toggling ? (
+                <HeartSpinner className="h-6 w-6 text-white drop-shadow-lg" />
+              ) : charFav.isFavorite ? (
                 <HeartFilled className="h-6 w-6 text-red-500 drop-shadow-lg" />
               ) : (
                 <HeartOutline className="h-6 w-6 text-white drop-shadow-lg" />

@@ -6,7 +6,7 @@ export { SearchSkeleton } from "../../games/SearchSkeleton";
 export { FiltersSkeleton } from "../../games/FiltersSkeleton";
 export { MediaGallerySkeleton } from "../../games/MediaGallerySkeleton";
 export { DashboardSkeleton } from "../../dashboard/DashboardSkeleton";
-export { LibrarySkeleton } from "../../library/LibrarySkeleton";
+export { LibraryPageSkeleton } from "../../library/LibraryPageSkeleton";
 export { FormSkeleton } from "../form-skeleton";
 export { ListSkeleton } from "../list-skeleton";
 export { LoadingState } from "../loading-state";

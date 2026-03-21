@@ -4,9 +4,13 @@ import { useState, useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useAdminRoles } from "@/hooks/useAdminRoles";
+import dynamic from "next/dynamic";
 import type { AdminRole } from "@/types/admin-roles";
 import { AdminRolesTable } from "@/components/admin/roles/AdminRolesTable";
-import { DeleteRoleDialog } from "@/components/admin/roles/DeleteRoleDialog";
+const DeleteRoleDialog = dynamic(
+  () => import("@/components/admin/roles/DeleteRoleDialog").then((m) => m.DeleteRoleDialog),
+  { ssr: false }
+);
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { Icon } from "@iconify/react";

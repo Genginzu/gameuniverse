@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 
 import { useDiscussions } from "@/hooks/useDiscussions";
@@ -14,7 +15,10 @@ import ConversationList from "./ConversationList";
 import MessageThread from "./MessageThread";
 import MessageInput from "./MessageInput";
 import EmptyConversationState from "./EmptyConversationState";
-import NewConversationDialog from "./NewConversationDialog";
+
+const NewConversationDialog = dynamic(() => import("./NewConversationDialog"), {
+  ssr: false,
+});
 
 interface FriendEntry {
   id: string;

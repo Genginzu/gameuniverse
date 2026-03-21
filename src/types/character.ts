@@ -89,6 +89,14 @@ export interface CharacterFilters {
   roles?: string[];
 }
 
+/** Option de rôle pour les filtres (avec compteur de personnages) */
+export interface RoleFilterOption {
+  id: string;
+  slug: string;
+  name: string;
+  characterCount: number;
+}
+
 export interface CharacterFavoriteSummary {
   id: string;
   slug: string;

@@ -1,6 +1,11 @@
 "use client";
 
-import { Icon } from "@iconify/react";
+import dynamic from "next/dynamic";
+
+const Icon = dynamic(() => import("@iconify/react").then((mod) => mod.Icon), {
+  ssr: false,
+  loading: () => <span className="inline-block size-4 sm:size-5" />,
+});
 import { useTranslations } from "next-intl";
 
 interface FilterButtonProps {

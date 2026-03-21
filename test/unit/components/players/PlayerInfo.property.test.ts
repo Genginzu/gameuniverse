@@ -81,6 +81,7 @@ const playerDetailsArbitrary: fc.Arbitrary<PlayerDetails> = fc.record({
   statsPrivate: fc.boolean(),
   stats: playerStatsArbitrary,
   library: fc.array(libraryGameArbitrary, { minLength: 0, maxLength: 20 }),
+  libraryTotalCount: fc.integer({ min: 0, max: 500 }),
 });
 
 // Helper: Compute display name (same logic as components)

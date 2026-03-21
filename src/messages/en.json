@@ -455,6 +455,8 @@
       "noRating": "No rating",
       "library": "Library",
       "inLibrary": "in library",
+      "showMore": "Show more",
+      "loadingMore": "Loading…",
       "counters": {
         "posts": "Posts",
         "friends": "Friends",
@@ -2218,7 +2220,10 @@
     "noFriendsFound": "No friends found",
     "selectConversation": "Select a conversation to start chatting",
     "selectConversationHint": "Pick a friend from the list on the left",
-    "startConversation": "Start a conversation"
+    "startConversation": "Start a conversation",
+    "timeJustNow": "Just now",
+    "timeMinutesAgo": "{min} min ago",
+    "timeHoursAgo": "{hours}h ago"
   },
   "platforms": {
     "title": "Platforms",

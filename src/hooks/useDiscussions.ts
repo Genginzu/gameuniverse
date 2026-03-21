@@ -64,9 +64,11 @@ export function useDiscussions(): UseDiscussionsReturn {
       setMessages(data.messages);
       setHasMoreMessages(data.hasMore);
       setNextCursor(data.nextCursor);
-      // Marquer comme lus et rafraîchir les conversations pour mettre à jour les compteurs
-      await DiscussionService.markAsRead(conversationId);
-      const updated = await DiscussionService.fetchConversations();
+      // Marquer comme lus et rafraîchir les conversations en parallèle
+      const [, updated] = await Promise.all([
+        DiscussionService.markAsRead(conversationId),
+        DiscussionService.fetchConversations(),
+      ]);
       setConversations(updated.conversations);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load messages");
@@ -83,9 +85,32 @@ export function useDiscussions(): UseDiscussionsReturn {
       try {
         const newMessage = await DiscussionService.sendMessage(selectedConversationId, content);
         setMessages((prev) => [...prev, newMessage]);
-        // Rafraîchir les conversations pour mettre à jour lastMessage
-        const updated = await DiscussionService.fetchConversations();
-        setConversations(updated.conversations);
+        // Mise à jour optimiste de la conversation (lastMessage + tri)
+        setConversations((prev) => {
+          const updated = prev.map((c) =>
+            c.id === selectedConversationId
+              ? {
+                  ...c,
+                  lastMessage: {
+                    content: newMessage.content,
+                    senderId: newMessage.senderId,
+                    createdAt: newMessage.createdAt,
+                  },
+                }
+              : c
+          );
+          // Re-trier : la conversation active remonte en premier
+          updated.sort((a, b) => {
+            if (!a.lastMessage && !b.lastMessage) return 0;
+            if (!a.lastMessage) return 1;
+            if (!b.lastMessage) return -1;
+            return (
+              new Date(b.lastMessage.createdAt).getTime() -
+              new Date(a.lastMessage.createdAt).getTime()
+            );
+          });
+          return updated;
+        });
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to send message");
       } finally {

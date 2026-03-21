@@ -4,9 +4,16 @@ import { useState, useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useAdminAchievements } from "@/hooks/useAdminAchievements";
+import dynamic from "next/dynamic";
 import type { AdminAchievement } from "@/types/admin-achievements";
 import { AchievementsTable } from "@/components/admin/achievements/AchievementsTable";
-import { DeleteAchievementDialog } from "@/components/admin/achievements/DeleteAchievementDialog";
+const DeleteAchievementDialog = dynamic(
+  () =>
+    import("@/components/admin/achievements/DeleteAchievementDialog").then(
+      (m) => m.DeleteAchievementDialog
+    ),
+  { ssr: false }
+);
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { Icon } from "@iconify/react";

@@ -60,7 +60,7 @@ function buildResults(
 describe("GlobalSearchDropdown", () => {
   it("shows loading state", () => {
     const results = buildResults();
-    render(
+    const { container } = render(
       <GlobalSearchDropdown
         results={results}
         flatItems={[]}
@@ -70,7 +70,8 @@ describe("GlobalSearchDropdown", () => {
         importingId={null}
       />
     );
-    expect(screen.getByText("Recherche en cours...")).toBeInTheDocument();
+    // Le skeleton structuré remplace le spinner textuel
+    expect(container.querySelector(".animate-pulse")).toBeInTheDocument();
   });
 
   it("shows no results message when all categories are empty", () => {
