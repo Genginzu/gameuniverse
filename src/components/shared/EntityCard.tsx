@@ -2,12 +2,11 @@
 
 import { Badge } from "@/components/ui/badge";
 import { LazyImage } from "@/components/ui/lazy-image";
-import { useGameLibraryStatus } from "@/hooks/useGameLibraryStatus";
-import { useCharacterFavorite } from "@/hooks/useCharacterFavorite";
-import { useLibraryStatus } from "@/components/providers/LibraryStatusProvider";
+import { useEntityLibraryToggle } from "@/hooks/useEntityLibraryToggle";
+import { useEntityCharacterFavorite } from "@/hooks/useEntityCharacterFavorite";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslations } from "next-intl";
-import { useState, useCallback, memo } from "react";
+import { memo } from "react";
 import Link from "next/link";
 
 import type { EntityCardProps } from "@/types/entity-card";
@@ -73,93 +72,19 @@ function EntityCardInner<T extends object>({
     ? String((entity as Record<string, unknown>)[config.idField as string])
     : String((entity as Record<string, unknown>)["id"]);
 
-  // Batch context (fourni par LibraryStatusProvider sur la page games)
-  const batchCtx = useLibraryStatus();
-  const batchStatus = batchCtx.getStatus(entityId);
-  const useBatch = config.actions?.libraryToggle && batchStatus !== undefined;
-
-  // Hook individuel — désactivé quand le batch fournit déjà le statut
-  const individual = useGameLibraryStatus(
-    config.actions?.libraryToggle && !useBatch ? entityId : ""
-  );
-
-  // État unifié pour la bibliothèque
-  const inLibrary = useBatch ? batchStatus : individual.inLibrary;
-  const loading = useBatch ? batchCtx.loading : individual.loading;
-  const [adding, setAdding] = useState(false);
-
-  const addToLibrary = useCallback(async () => {
-    if (!user || !entityId || adding) return false;
-    if (useBatch) {
-      setAdding(true);
-      try {
-        const res = await fetch("/api/library", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ gameId: entityId }),
-        });
-        if (res.ok) {
-          batchCtx.setStatus(entityId, true);
-          return true;
-        }
-        return false;
-      } catch {
-        return false;
-      } finally {
-        setAdding(false);
-      }
-    }
-    return individual.addToLibrary();
-  }, [user, entityId, adding, useBatch, batchCtx, individual]);
-
-  const removeFromLibrary = useCallback(async () => {
-    if (!user || !entityId) return false;
-    if (useBatch) {
-      try {
-        const res = await fetch(`/api/library/${entityId}`, { method: "DELETE" });
-        if (res.ok) {
-          batchCtx.setStatus(entityId, false);
-          return true;
-        }
-        return false;
-      } catch {
-        return false;
-      }
-    }
-    return individual.removeFromLibrary();
-  }, [user, entityId, useBatch, batchCtx, individual]);
-
   const entitySlug = config.slugField
     ? String((entity as Record<string, unknown>)[config.slugField as string])
     : "";
-  const {
-    isFavorite,
-    isLoading: favLoading,
-    isToggling: favToggling,
-    toggleFavorite,
-  } = useCharacterFavorite(config.actions?.characterFavoriteToggle ? entitySlug : "");
+
+  // Hooks extraits — gèrent batch vs individuel automatiquement
+  const library = useEntityLibraryToggle(
+    entityId,
+    !!config.actions?.libraryToggle,
+    onRemovedFromLibrary
+  );
+  const charFav = useEntityCharacterFavorite(entitySlug, !!config.actions?.characterFavoriteToggle);
 
   const getStringValue = (field: keyof T): string => String(entity[field] || "");
-
-  const handleLibraryToggle = useCallback(
-    async (e: React.MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      if (inLibrary) {
-        const success = await removeFromLibrary();
-        if (success && onRemovedFromLibrary) onRemovedFromLibrary(entityId);
-      } else {
-        await addToLibrary();
-      }
-    },
-    [inLibrary, removeFromLibrary, addToLibrary, onRemovedFromLibrary, entityId]
-  );
-
-  const handleFavoriteToggle = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    await toggleFavorite();
-  };
 
   const imageUrl = entity[config.imageField] as string | undefined;
   const backgroundColor = config.backgroundColorField
@@ -288,12 +213,12 @@ function EntityCardInner<T extends object>({
           {/* Library toggle button */}
           {config.actions?.libraryToggle && user && (
             <button
-              onClick={handleLibraryToggle}
-              disabled={adding || loading}
+              onClick={library.handleToggle}
+              disabled={library.adding || library.loading}
               className="absolute top-3 left-3 z-20 transition-transform hover:scale-110 disabled:opacity-50"
-              aria-label={inLibrary ? t("removeFromLibrary") : t("addToLibrary")}
+              aria-label={library.inLibrary ? t("removeFromLibrary") : t("addToLibrary")}
             >
-              {inLibrary ? (
+              {library.inLibrary ? (
                 <HeartFilled className="h-6 w-6 text-red-500 drop-shadow-lg" />
               ) : (
                 <HeartOutline className="h-6 w-6 text-white drop-shadow-lg" />
@@ -304,12 +229,12 @@ function EntityCardInner<T extends object>({
           {/* Character favorite toggle button */}
           {config.actions?.characterFavoriteToggle && user && (
             <button
-              onClick={handleFavoriteToggle}
-              disabled={favLoading || favToggling}
+              onClick={charFav.handleToggle}
+              disabled={charFav.loading || charFav.toggling}
               className="absolute top-3 left-3 z-20 transition-transform hover:scale-110 disabled:opacity-50"
-              aria-label={isFavorite ? t("removeFromFavorites") : t("addToFavorites")}
+              aria-label={charFav.isFavorite ? t("removeFromFavorites") : t("addToFavorites")}
             >
-              {isFavorite ? (
+              {charFav.isFavorite ? (
                 <HeartFilled className="h-6 w-6 text-red-500 drop-shadow-lg" />
               ) : (
                 <HeartOutline className="h-6 w-6 text-white drop-shadow-lg" />

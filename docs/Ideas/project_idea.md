@@ -35,7 +35,6 @@
 
 - Refaire une passe pour optimiser les requêtes et faire du lazy loading
 - Refaire une passe pour s'assurer que tout est rangé proprement.
-- ~~Remplacer Lucide-react par iconify et créer un steering~~
 - Rajouter SWR au projet
 
 Peux-tu prendre <page> et faire une passe pour regarder ce qui pourrait être

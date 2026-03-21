@@ -245,9 +245,10 @@ export class CharacterService {
     }
 
     // Apply pagination and execute main query
+    // Tri global par nom via la table jointe character_translations (inner join)
     const { data: characters, error } = await query
-      .range(offset, offset + limit - 1)
-      .order("created_at", { ascending: false });
+      .order("name", { referencedTable: "character_translations", ascending: true })
+      .range(offset, offset + limit - 1);
 
     if (error) {
       logger.error("Error fetching characters", { error });

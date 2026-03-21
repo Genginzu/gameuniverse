@@ -84,8 +84,57 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    if (roleCharacterIds !== null) {
-      if (roleCharacterIds.length === 0) {
+    // Pre-resolve platform filter — collect character IDs whose games match
+    // the selected platforms, before pagination (same pattern as role filter)
+    let platformCharacterIds: string[] | null = null;
+    if (platforms.length > 0) {
+      const { data: platformRows } = await supabase
+        .from("platforms")
+        .select("id")
+        .in("slug", platforms);
+
+      if (platformRows && platformRows.length > 0) {
+        const platformIds = platformRows.map((p: { id: string }) => p.id);
+        const { data: gpRows } = await supabase
+          .from("game_platforms")
+          .select("game_id")
+          .in("platform_id", platformIds);
+
+        const platformGameIds = [
+          ...new Set(gpRows?.map((r: { game_id: string }) => r.game_id) ?? []),
+        ];
+
+        if (platformGameIds.length > 0) {
+          const { data: cgRows } = await supabase
+            .from("character_games")
+            .select("character_id")
+            .in("game_id", platformGameIds);
+
+          platformCharacterIds = [
+            ...new Set((cgRows || []).map((r: { character_id: string }) => r.character_id)),
+          ];
+        } else {
+          platformCharacterIds = [];
+        }
+      } else {
+        platformCharacterIds = [];
+      }
+    }
+
+    // Combine role and platform character ID filters
+    let filteredCharacterIds: string[] | null = null;
+    if (roleCharacterIds !== null && platformCharacterIds !== null) {
+      // Intersection — character must match both filters
+      const platformSet = new Set(platformCharacterIds);
+      filteredCharacterIds = roleCharacterIds.filter((id) => platformSet.has(id));
+    } else if (roleCharacterIds !== null) {
+      filteredCharacterIds = roleCharacterIds;
+    } else if (platformCharacterIds !== null) {
+      filteredCharacterIds = platformCharacterIds;
+    }
+
+    if (filteredCharacterIds !== null) {
+      if (filteredCharacterIds.length === 0) {
         return NextResponse.json({
           characters: [],
           pagination: {
@@ -97,7 +146,7 @@ export async function GET(request: NextRequest) {
           },
         });
       }
-      query = query.in("id", roleCharacterIds);
+      query = query.in("id", filteredCharacterIds);
     }
 
     // Get total count for pagination (separate query for performance)
@@ -113,8 +162,8 @@ export async function GET(request: NextRequest) {
       countQuery = countQuery.ilike("character_translations.name", `%${search.trim()}%`);
     }
 
-    if (roleCharacterIds !== null && roleCharacterIds.length > 0) {
-      countQuery = countQuery.in("id", roleCharacterIds);
+    if (filteredCharacterIds !== null && filteredCharacterIds.length > 0) {
+      countQuery = countQuery.in("id", filteredCharacterIds);
     }
 
     // Execute count query
@@ -126,72 +175,44 @@ export async function GET(request: NextRequest) {
     }
 
     // Apply pagination and execute main query
-    // Note: Supabase doesn't support ordering by joined table columns directly
-    // We'll order by created_at and sort by name in post-processing
+    // Tri global par nom via la table jointe character_translations (inner join)
     const { data: characters, error } = await query
-      .range(offset, offset + limit - 1)
-      .order("created_at", { ascending: false });
+      .order("name", { referencedTable: "character_translations", ascending: true })
+      .range(offset, offset + limit - 1);
 
     if (error) {
       logger.error("Error fetching characters", { error });
       return NextResponse.json({ error: "Failed to fetch characters" }, { status: 500 });
     }
 
-    let filteredCharacters = (characters || []) as CharacterRowWithRelations[];
-
-    // Filter by platforms if specified — keep characters whose at least one game
-    // is available on one of the selected platforms
-    if (platforms.length > 0) {
-      const { data: platformRows } = await supabase
-        .from("platforms")
-        .select("id")
-        .in("slug", platforms);
-
-      if (platformRows && platformRows.length > 0) {
-        const platformIds = platformRows.map((p: { id: string }) => p.id);
-        const { data: gpRows } = await supabase
-          .from("game_platforms")
-          .select("game_id")
-          .in("platform_id", platformIds);
-
-        const platformGameIds = new Set(gpRows?.map((r: { game_id: string }) => r.game_id) ?? []);
-
-        filteredCharacters = filteredCharacters.filter((character) => {
-          const characterGameIds =
-            character.character_games?.map((cg) => cg.games?.id).filter(Boolean) || [];
-          return characterGameIds.some((gameId) => platformGameIds.has(gameId as string));
-        });
-      }
-    }
+    const typedCharacters = (characters || []) as CharacterRowWithRelations[];
 
     // Transform the data to match the expected format
-    const transformedCharacters = filteredCharacters
-      .map((character) => {
-        const translation = character.character_translations?.[0];
+    const transformedCharacters = typedCharacters.map((character) => {
+      const translation = character.character_translations?.[0];
 
-        // Get primary game
-        const primaryGameRelation = character.character_games?.find((cg) => cg.is_primary === true);
-        const primaryGame =
-          primaryGameRelation?.games?.game_translations?.[0]?.title ||
-          character.character_games?.[0]?.games?.game_translations?.[0]?.title ||
-          "Unknown";
+      // Get primary game
+      const primaryGameRelation = character.character_games?.find((cg) => cg.is_primary === true);
+      const primaryGame =
+        primaryGameRelation?.games?.game_translations?.[0]?.title ||
+        character.character_games?.[0]?.games?.game_translations?.[0]?.title ||
+        "Unknown";
 
-        // Count total games
-        const gamesCount = character.character_games?.length || 0;
+      // Count total games
+      const gamesCount = character.character_games?.length || 0;
 
-        return {
-          id: character.id,
-          slug: character.slug,
-          name: translation?.name || "Unnamed",
-          role: translation?.role,
-          description: translation?.description,
-          mainImage: character.main_image,
-          backgroundColor: character.background_color,
-          primaryGame,
-          gamesCount,
-        };
-      })
-      .sort((a, b) => a.name.localeCompare(b.name, locale));
+      return {
+        id: character.id,
+        slug: character.slug,
+        name: translation?.name || "Unnamed",
+        role: translation?.role,
+        description: translation?.description,
+        mainImage: character.main_image,
+        backgroundColor: character.background_color,
+        primaryGame,
+        gamesCount,
+      };
+    });
 
     // Calculate pagination metadata
     const totalPages = Math.ceil((totalCount || 0) / limit);

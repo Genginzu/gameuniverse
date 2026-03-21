@@ -5,6 +5,7 @@ import { routing } from "@/i18n/routing";
 import type { Metadata } from "next";
 import { AuthErrorHandler } from "@/components/auth/AuthErrorHandler";
 import { ErrorProvider } from "@/components/providers/ErrorProvider";
+import { SWRProvider } from "@/components/providers/SWRProvider";
 
 export const metadata: Metadata = {
   title: "Game Universe",
@@ -38,8 +39,10 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   return (
     <ErrorProvider>
       <NextIntlClientProvider locale={locale} messages={messages}>
-        <AuthErrorHandler />
-        {children}
+        <SWRProvider>
+          <AuthErrorHandler />
+          {children}
+        </SWRProvider>
       </NextIntlClientProvider>
     </ErrorProvider>
   );

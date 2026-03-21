@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { EntityCard } from "@/components/shared/EntityCard";
 import { characterCardConfig } from "@/components/shared/entityCardPresets";
@@ -15,18 +15,26 @@ import { PlatformFilterOption } from "@/types/platform";
 import { Pagination as PaginationType } from "@/types/pagination";
 import { useApiClient } from "@/lib/api-client";
 import { useAsyncError } from "@/components/providers/ErrorProvider";
+import { CharacterFavoriteStatusProvider } from "@/components/providers/CharacterFavoriteStatusProvider";
 import { toast } from "@/hooks/use-toast";
 
 interface AllCharactersContentProps {
   locale?: string;
+  initialCharacters?: CharacterSummary[];
+  initialPagination?: PaginationType | null;
 }
 
-export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProps) {
+export function AllCharactersContent({
+  locale = "fr",
+  initialCharacters,
+  initialPagination,
+}: AllCharactersContentProps) {
+  const hasServerData = !!initialCharacters;
   const tErrors = useTranslations("errors");
-  const [characters, setCharacters] = useState<CharacterSummary[]>([]);
-  const [pagination, setPagination] = useState<PaginationType | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [initialLoading, setInitialLoading] = useState(true);
+  const [characters, setCharacters] = useState<CharacterSummary[]>(initialCharacters ?? []);
+  const [pagination, setPagination] = useState<PaginationType | null>(initialPagination ?? null);
+  const [loading, setLoading] = useState(!hasServerData);
+  const [initialLoading, setInitialLoading] = useState(!hasServerData);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
@@ -148,9 +156,14 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
     }
   }, [locale, apiClient, executeAsync]);
 
-  // Initial load - only on mount
+  // Initial load - skip if server provided initial data
   useEffect(() => {
-    // Direct call without depending on fetchCharacters
+    if (hasServerData) {
+      fetchPlatforms();
+      fetchRoles();
+      return;
+    }
+
     const loadInitialCharacters = async () => {
       setLoading(true);
       setInitialLoading(true);
@@ -189,9 +202,8 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
     fetchRoles();
   }, []); // Only on initial mount
 
-  // Effect to handle filter changes with debounce
+  // Effect to handle filter changes with debounce — skip during initial loading
   useEffect(() => {
-    // Don't execute during initial loading
     if (initialLoading) return;
 
     const timeoutId = setTimeout(() => {
@@ -200,6 +212,9 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
 
     return () => clearTimeout(timeoutId);
   }, [searchQuery, selectedRoles, selectedPlatforms, fetchCharacters]); // Include fetchCharacters
+
+  // Slugs mémoïsés pour le batch fetch des favoris (évite re-render du provider)
+  const characterSlugs = useMemo(() => characters.map((c) => c.slug), [characters]);
 
   // Show full skeleton on initial load
   if (initialLoading) {
@@ -236,22 +251,19 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
           />
         </div>
 
-        {/* Loading state - Show skeleton grid */}
-        {loading && !initialLoading && (
-          <GridSkeleton skeletonConfig={characterSkeletonConfig} count={20} />
-        )}
-
-        {/* Characters grid */}
-        {!loading && (
-          <>
-            {characters.length === 0 ? (
+        {/* Characters grid — semi-transparent pendant le rechargement pour éviter le layout shift */}
+        <CharacterFavoriteStatusProvider slugs={characterSlugs}>
+          <div
+            className={`transition-opacity duration-200 ${loading && !initialLoading ? "pointer-events-none opacity-40" : ""}`}
+          >
+            {characters.length === 0 && !loading ? (
               <CharactersEmptyState
                 hasFilters={
                   !!searchQuery || selectedRoles.length > 0 || selectedPlatforms.length > 0
                 }
                 onClearFilters={handleClearFilters}
               />
-            ) : (
+            ) : characters.length > 0 ? (
               <div className="space-y-8">
                 {/* Responsive grid - 4 columns layout */}
                 <div className="xs:grid-cols-2 grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
@@ -261,26 +273,26 @@ export function AllCharactersContent({ locale = "fr" }: AllCharactersContentProp
                       entity={character}
                       config={characterCardConfig}
                       locale={locale}
-                      priority={index < 4} // Priority loading for first 4 cards
+                      priority={index < 4}
                     />
                   ))}
                 </div>
               </div>
-            )}
+            ) : null}
+          </div>
+        </CharacterFavoriteStatusProvider>
 
-            {pagination && pagination.totalPages > 1 && (
-              <div className="mt-8 sm:mt-12">
-                <Pagination
-                  currentPage={pagination.currentPage}
-                  totalPages={pagination.totalPages}
-                  totalCount={pagination.totalCount}
-                  onPageChange={handlePageChange}
-                  loading={loading}
-                  translationNamespace="characters.pagination"
-                />
-              </div>
-            )}
-          </>
+        {pagination && pagination.totalPages > 1 && (
+          <div className="mt-8 sm:mt-12">
+            <Pagination
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              totalCount={pagination.totalCount}
+              onPageChange={handlePageChange}
+              loading={loading}
+              translationNamespace="characters.pagination"
+            />
+          </div>
         )}
       </div>
     </div>
