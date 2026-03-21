@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useCallback } from "react";
+import useSWR from "swr";
 import { useAuth } from "./useAuth";
 
 interface LibraryGame {
@@ -32,65 +33,41 @@ interface LibraryStats {
   averageRating?: number;
 }
 
+interface LibraryResponse {
+  games: LibraryGame[];
+}
+
+const DEFAULT_STATS: LibraryStats = {
+  totalGames: 0,
+  ownedGames: 0,
+  completedGames: 0,
+  totalPlayTime: 0,
+};
+
 export function useUserLibrary() {
   const { user } = useAuth();
-  const [games, setGames] = useState<LibraryGame[]>([]);
-  const [stats, setStats] = useState<LibraryStats>({
-    totalGames: 0,
-    ownedGames: 0,
-    completedGames: 0,
-    totalPlayTime: 0,
+
+  // SWR pour les jeux de la bibliothèque
+  const {
+    data: libraryData,
+    error: libraryError,
+    isLoading: libraryLoading,
+    mutate: mutateLibrary,
+  } = useSWR<LibraryResponse>(user ? "/api/library" : null, {
+    onError: () => {},
   });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
-  // Fetch user's library
-  const fetchLibrary = useCallback(async () => {
-    if (!user) {
-      setLoading(false);
-      return;
+  // SWR pour les stats — endpoint séparé, cache indépendant
+  const { data: statsData, mutate: mutateStats } = useSWR<LibraryStats>(
+    user ? "/api/library/stats" : null,
+    {
+      onError: () => {},
     }
+  );
 
-    try {
-      setLoading(true);
-      setError(null);
+  const games = libraryData?.games ?? [];
+  const stats = statsData ?? DEFAULT_STATS;
 
-      const response = await fetch("/api/library");
-      if (!response.ok) {
-        // Don't throw for auth or server errors - just return empty
-        setGames([]);
-        return;
-      }
-
-      const data = await response.json();
-      setGames(data.games || []);
-    } catch {
-      // Échec silencieux — la bibliothèque n'est peut-être pas encore configurée
-      setGames([]);
-    } finally {
-      setLoading(false);
-    }
-  }, [user]);
-
-  // Fetch library statistics
-  const fetchStats = useCallback(async () => {
-    if (!user) return;
-
-    try {
-      const response = await fetch("/api/library/stats");
-      if (!response.ok) {
-        // Don't throw - just keep default stats
-        return;
-      }
-
-      const data = await response.json();
-      setStats(data);
-    } catch {
-      // Échec silencieux — les stats ne sont peut-être pas disponibles
-    }
-  }, [user]);
-
-  // Add game to library
   const addToLibrary = useCallback(
     async (gameId: string, status = "owned") => {
       if (!user) return false;
@@ -98,9 +75,7 @@ export function useUserLibrary() {
       try {
         const response = await fetch("/api/library", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ gameId, status }),
         });
 
@@ -109,53 +84,40 @@ export function useUserLibrary() {
           throw new Error(errorData.error || "Failed to add game to library");
         }
 
-        // Refresh library and stats
-        await Promise.all([fetchLibrary(), fetchStats()]);
+        // Revalider les deux caches
+        await Promise.all([mutateLibrary(), mutateStats()]);
         return true;
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to add game to library");
+      } catch {
         return false;
       }
     },
-    [user, fetchLibrary, fetchStats]
+    [user, mutateLibrary, mutateStats]
   );
 
-  // Remove game from library
   const removeFromLibrary = useCallback(
     async (gameId: string) => {
       if (!user) return false;
 
       try {
-        const response = await fetch(`/api/library/${gameId}`, {
-          method: "DELETE",
-        });
+        const response = await fetch(`/api/library/${gameId}`, { method: "DELETE" });
+        if (!response.ok) throw new Error("Failed to remove game from library");
 
-        if (!response.ok) {
-          throw new Error("Failed to remove game from library");
-        }
-
-        // Refresh library and stats
-        await Promise.all([fetchLibrary(), fetchStats()]);
+        await Promise.all([mutateLibrary(), mutateStats()]);
         return true;
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to remove game from library");
+      } catch {
         return false;
       }
     },
-    [user, fetchLibrary, fetchStats]
+    [user, mutateLibrary, mutateStats]
   );
 
-  // Check if game is in library
   const isInLibrary = useCallback(
     async (gameId: string) => {
       if (!user) return false;
 
       try {
         const response = await fetch(`/api/library/${gameId}`);
-        if (!response.ok) {
-          return false;
-        }
-
+        if (!response.ok) return false;
         const data = await response.json();
         return data.inLibrary;
       } catch {
@@ -165,30 +127,18 @@ export function useUserLibrary() {
     [user]
   );
 
-  // Initial load
-  useEffect(() => {
-    if (user) {
-      Promise.all([fetchLibrary(), fetchStats()]);
-    } else {
-      setLoading(false);
-      setGames([]);
-      setStats({
-        totalGames: 0,
-        ownedGames: 0,
-        completedGames: 0,
-        totalPlayTime: 0,
-      });
-    }
-  }, [user, fetchLibrary, fetchStats]);
-
   return {
     games,
     stats,
-    loading,
-    error,
+    loading: libraryLoading,
+    error: libraryError
+      ? libraryError instanceof Error
+        ? libraryError.message
+        : "Failed to fetch library"
+      : null,
     addToLibrary,
     removeFromLibrary,
     isInLibrary,
-    refetch: () => Promise.all([fetchLibrary(), fetchStats()]),
+    refetch: () => Promise.all([mutateLibrary(), mutateStats()]),
   };
 }

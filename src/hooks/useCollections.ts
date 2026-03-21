@@ -1,8 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import useSWR from "swr";
 import { useLocale } from "next-intl";
 import type { CollectionSummary } from "@/types/collection";
+
+interface CollectionsResponse {
+  collections: CollectionSummary[];
+}
 
 interface UseCollectionsReturn {
   collections: CollectionSummary[];
@@ -13,47 +17,21 @@ interface UseCollectionsReturn {
 
 /**
  * Hook pour récupérer les collections d'un joueur.
- * Gère le chargement, les erreurs et le rafraîchissement.
+ * SWR gère le cache, la déduplication et la revalidation.
  */
 export function useCollections(playerId: string): UseCollectionsReturn {
-  const [collections, setCollections] = useState<CollectionSummary[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const hasFetchedRef = useRef(false);
   const locale = useLocale();
 
-  const fetchCollections = useCallback(async () => {
-    if (!playerId) return;
+  const { data, error, isLoading, mutate } = useSWR<CollectionsResponse>(
+    playerId ? `/api/players/${playerId}/collections?locale=${locale}` : null
+  );
 
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      const response = await fetch(`/api/players/${playerId}/collections?locale=${locale}`);
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch collections");
-      }
-
-      const data = await response.json();
-      setCollections(data.collections ?? []);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to fetch collections";
-      setError(message);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [playerId, locale]);
-
-  // Chargement initial — une seule fois
-  useEffect(() => {
-    if (hasFetchedRef.current || !playerId) {
-      if (!playerId) setIsLoading(false);
-      return;
-    }
-    hasFetchedRef.current = true;
-    fetchCollections();
-  }, [playerId, fetchCollections]);
-
-  return { collections, isLoading, error, refetch: fetchCollections };
+  return {
+    collections: data?.collections ?? [],
+    isLoading,
+    error: error ? (error instanceof Error ? error.message : "Failed to fetch collections") : null,
+    refetch: async () => {
+      await mutate();
+    },
+  };
 }

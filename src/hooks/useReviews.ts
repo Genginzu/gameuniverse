@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useCallback } from "react";
+import useSWR from "swr";
 import type { Review, ReviewFormData, ReviewsResponse, ReviewWithVotes } from "@/types/review";
 import { ReviewService } from "@/lib/services/reviewService";
 
@@ -20,105 +21,78 @@ interface UseReviewsReturn {
 
 /**
  * Hook pour gérer les reviews d'un jeu.
- * Gère le chargement, la soumission, et l'état optimiste.
+ * SWR gère la lecture, les mutations passent par le ReviewService.
  */
 export function useReviews(gameId: string): UseReviewsReturn {
-  const [reviews, setReviews] = useState<ReviewWithVotes[]>([]);
-  const [averageRating, setAverageRating] = useState<number | null>(null);
-  const [totalCount, setTotalCount] = useState(0);
-  const [userHasReviewed, setUserHasReviewed] = useState(false);
-  const [userReview, setUserReview] = useState<Review | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const hasFetchedRef = useRef(false);
+  const [mutationError, setMutationError] = useState<string | null>(null);
 
-  const applyResponse = useCallback((response: ReviewsResponse) => {
-    setReviews(response.reviews);
-    setAverageRating(response.averageRating);
-    setTotalCount(response.totalCount);
-    setUserHasReviewed(response.userHasReviewed);
-    setUserReview(response.userReview ?? null);
-  }, []);
+  // Fetcher custom car ReviewService retourne un format spécifique
+  const { data, error, isLoading, mutate } = useSWR<ReviewsResponse>(
+    gameId ? ["reviews", gameId] : null,
+    () => ReviewService.fetchReviews(gameId)
+  );
 
   const fetchReviews = useCallback(async () => {
-    if (!gameId) return;
-
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await ReviewService.fetchReviews(gameId);
-      applyResponse(response);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to fetch reviews";
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
-  }, [gameId, applyResponse]);
+    await mutate();
+  }, [mutate]);
 
   const submitReview = useCallback(
-    async (data: ReviewFormData): Promise<boolean> => {
+    async (formData: ReviewFormData): Promise<boolean> => {
       if (!gameId || submitting) return false;
 
       try {
         setSubmitting(true);
-        setError(null);
-        await ReviewService.submitReview(gameId, data);
-
-        // Rafraîchir les reviews après soumission réussie
-        await fetchReviews();
+        setMutationError(null);
+        await ReviewService.submitReview(gameId, formData);
+        await mutate();
         return true;
       } catch (err) {
         const message = err instanceof Error ? err.message : "Failed to submit review";
-        setError(message);
+        setMutationError(message);
         return false;
       } finally {
         setSubmitting(false);
       }
     },
-    [gameId, submitting, fetchReviews]
+    [gameId, submitting, mutate]
   );
 
   const updateReview = useCallback(
-    async (data: ReviewFormData): Promise<boolean> => {
+    async (formData: ReviewFormData): Promise<boolean> => {
       if (!gameId || submitting) return false;
 
       try {
         setSubmitting(true);
-        setError(null);
-        await ReviewService.updateReview(gameId, data);
-        await fetchReviews();
+        setMutationError(null);
+        await ReviewService.updateReview(gameId, formData);
+        await mutate();
         return true;
       } catch (err) {
         const message = err instanceof Error ? err.message : "Failed to update review";
-        setError(message);
+        setMutationError(message);
         return false;
       } finally {
         setSubmitting(false);
       }
     },
-    [gameId, submitting, fetchReviews]
+    [gameId, submitting, mutate]
   );
 
-  // Chargement initial — une seule fois
-  useEffect(() => {
-    if (hasFetchedRef.current || !gameId) {
-      if (!gameId) setLoading(false);
-      return;
-    }
-    hasFetchedRef.current = true;
-    fetchReviews();
-  }, [gameId, fetchReviews]);
+  const fetchError = error
+    ? error instanceof Error
+      ? error.message
+      : "Failed to fetch reviews"
+    : null;
 
   return {
-    reviews,
-    averageRating,
-    totalCount,
-    userHasReviewed,
-    userReview,
-    loading,
-    error,
+    reviews: data?.reviews ?? [],
+    averageRating: data?.averageRating ?? null,
+    totalCount: data?.totalCount ?? 0,
+    userHasReviewed: data?.userHasReviewed ?? false,
+    userReview: data?.userReview ?? null,
+    loading: isLoading,
+    error: mutationError || fetchError,
     submitting,
     fetchReviews,
     submitReview,

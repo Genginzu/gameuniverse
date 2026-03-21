@@ -104,6 +104,20 @@ existants :
 ❌ Ne **jamais** créer de page en dehors de ces deux layouts. ⚠️ En cas de doute
 sur le layout approprié, **demander à l'utilisateur** avant de créer la page.
 
+## Fetching de données côté client : SWR
+
+Le projet utilise **SWR** (`swr`) pour le fetching de données côté client.
+
+- ✅ Utiliser `useSWR` en **priorité** pour tout besoin de fetching, cache,
+  revalidation ou synchronisation de données côté client.
+- ✅ SWR couvre la majorité des cas : listes, détails, polling, optimistic
+  updates, pagination, etc.
+- ⚠️ Si SWR ne répond pas au besoin (ex : upload de fichier, mutation complexe
+  sans revalidation, appel ponctuel sans cache), utiliser une approche plus
+  adaptée (`fetch` direct, server action, etc.).
+- ❌ Ne **jamais** réimplémenter manuellement un mécanisme de cache ou de
+  revalidation que SWR fournit déjà.
+
 ## Bonnes pratiques
 
 - ❌ Pas de logique métier dans les composants de page (`page.tsx`). Déléguer

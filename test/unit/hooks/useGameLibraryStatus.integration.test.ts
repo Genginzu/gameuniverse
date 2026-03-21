@@ -1,98 +1,114 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
+// @vitest-environment jsdom
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { renderHook, waitFor, act } from "@testing-library/react";
+import { createSWRWrapper } from "../../helpers/swr-wrapper";
 
-// Track state changes
-let libraryState = { inLibrary: false, loading: true, adding: false };
-const mockSetInLibrary = vi.fn((val: boolean) => {
-  libraryState.inLibrary = val;
-});
-const mockSetLoading = vi.fn((val: boolean) => {
-  libraryState.loading = val;
-});
-const mockSetAdding = vi.fn((val: boolean) => {
-  libraryState.adding = val;
-});
+const originalFetch = globalThis.fetch;
 
-// Track ref
-let hasCheckedRef = { current: false };
-
-// Mock React
-vi.mock("react", () => ({
-  useState: (initial: unknown) => {
-    if (initial === false && !libraryState.inLibrary) {
-      return [libraryState.inLibrary, mockSetInLibrary];
-    }
-    if (initial === true) {
-      return [libraryState.loading, mockSetLoading];
-    }
-    if (initial === false) {
-      return [libraryState.adding, mockSetAdding];
-    }
-    return [initial, vi.fn(() => {})];
-  },
-  useEffect: (callback: () => void | (() => void), deps?: unknown[]) => {
-    callback();
-  },
-  useCallback: <T extends (...args: unknown[]) => unknown>(fn: T) => fn,
-  useRef: (initial: unknown) => {
-    if (initial === false) {
-      return hasCheckedRef;
-    }
-    return { current: initial };
-  },
-}));
-
-// Mock useAuth
+// Mock auth — mutable pour basculer entre authentifié / non-authentifié
 let mockUser: { id: string } | null = { id: "user-123" };
-vi.mock("../../../src/hooks/useAuth", () => ({
+
+vi.mock("@/hooks/useAuth", () => ({
   useAuth: () => ({ user: mockUser }),
 }));
 
-// Mock fetch
-const mockFetch = vi.fn(() =>
-  Promise.resolve({
-    ok: true,
-    json: () => Promise.resolve({ inLibrary: true }),
-  })
-);
-globalThis.fetch = mockFetch as unknown as typeof fetch;
+import { useGameLibraryStatus } from "@/hooks/useGameLibraryStatus";
 
-// Import the hook
-import { useGameLibraryStatus } from "../../../src/hooks/useGameLibraryStatus";
+function jsonResponse(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
 
-describe("useGameLibraryStatus integration tests", () => {
+describe("useGameLibraryStatus", () => {
+  let mockFetch: ReturnType<typeof vi.fn>;
+
   beforeEach(() => {
-    libraryState = { inLibrary: false, loading: true, adding: false };
-    hasCheckedRef = { current: false };
     mockUser = { id: "user-123" };
-    mockFetch.mockClear();
-    mockSetInLibrary.mockClear();
-    mockSetLoading.mockClear();
-    mockSetAdding.mockClear();
-    mockFetch.mockImplementation(() =>
-      Promise.resolve({
-        ok: true,
-        json: () => Promise.resolve({ inLibrary: true }),
-      })
-    );
+    mockFetch = vi.fn(() => Promise.resolve(jsonResponse({ inLibrary: true })));
+    globalThis.fetch = mockFetch as unknown as typeof fetch;
+  });
+
+  afterEach(() => {
+    globalThis.fetch = originalFetch;
   });
 
   describe("hook initialization", () => {
-    it("should return library status and functions", () => {
-      const result = useGameLibraryStatus("game-123");
+    it("should return library status and functions", async () => {
+      const { result } = renderHook(() => useGameLibraryStatus("game-123"), {
+        wrapper: createSWRWrapper(),
+      });
 
-      expect(result).toHaveProperty("inLibrary");
-      expect(result).toHaveProperty("loading");
-      expect(result).toHaveProperty("adding");
-      expect(result).toHaveProperty("addToLibrary");
-      expect(result).toHaveProperty("removeFromLibrary");
+      expect(result.current).toHaveProperty("inLibrary");
+      expect(result.current).toHaveProperty("loading");
+      expect(result.current).toHaveProperty("adding");
+      expect(result.current).toHaveProperty("addToLibrary");
+      expect(result.current).toHaveProperty("removeFromLibrary");
+    });
+  });
+
+  describe("status check on mount", () => {
+    it("should fetch status when user and gameId exist", async () => {
+      const { result } = renderHook(() => useGameLibraryStatus("game-789"), {
+        wrapper: createSWRWrapper(),
+      });
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      expect(result.current.inLibrary).toBe(true);
+    });
+
+    it("should not fetch when no gameId", async () => {
+      const { result } = renderHook(() => useGameLibraryStatus(""), {
+        wrapper: createSWRWrapper(),
+      });
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      expect(result.current.inLibrary).toBe(false);
+    });
+
+    it("should not fetch when no user", async () => {
+      mockUser = null;
+
+      const { result } = renderHook(() => useGameLibraryStatus("game-789"), {
+        wrapper: createSWRWrapper(),
+      });
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      expect(result.current.inLibrary).toBe(false);
     });
   });
 
   describe("addToLibrary", () => {
     it("should POST to /api/library with gameId", async () => {
-      const { addToLibrary } = useGameLibraryStatus("game-123");
+      // SWR GET pour le status initial
+      mockFetch.mockImplementation((url: string, options?: RequestInit) => {
+        if (options?.method === "POST") {
+          return Promise.resolve(jsonResponse({}));
+        }
+        return Promise.resolve(jsonResponse({ inLibrary: false }));
+      });
 
-      await addToLibrary();
+      const { result } = renderHook(() => useGameLibraryStatus("game-123"), {
+        wrapper: createSWRWrapper(),
+      });
+
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      await act(async () => {
+        await result.current.addToLibrary();
+      });
 
       expect(mockFetch).toHaveBeenCalledWith("/api/library", {
         method: "POST",
@@ -102,152 +118,230 @@ describe("useGameLibraryStatus integration tests", () => {
     });
 
     it("should return true on success", async () => {
-      mockFetch.mockImplementation(() =>
-        Promise.resolve({ ok: true, json: () => Promise.resolve({}) })
-      );
+      mockFetch.mockImplementation((url: string, options?: RequestInit) => {
+        if (options?.method === "POST") {
+          return Promise.resolve(jsonResponse({}));
+        }
+        return Promise.resolve(jsonResponse({ inLibrary: false }));
+      });
 
-      const { addToLibrary } = useGameLibraryStatus("game-123");
-      const result = await addToLibrary();
+      const { result } = renderHook(() => useGameLibraryStatus("game-123"), {
+        wrapper: createSWRWrapper(),
+      });
 
-      expect(result).toBe(true);
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      let addResult: boolean | undefined;
+      await act(async () => {
+        addResult = await result.current.addToLibrary();
+      });
+
+      expect(addResult).toBe(true);
     });
 
     it("should return false when no user", async () => {
       mockUser = null;
 
-      const { addToLibrary } = useGameLibraryStatus("game-123");
-      const result = await addToLibrary();
+      const { result } = renderHook(() => useGameLibraryStatus("game-123"), {
+        wrapper: createSWRWrapper(),
+      });
 
-      expect(result).toBe(false);
-      expect(mockFetch).not.toHaveBeenCalledWith("/api/library", expect.anything());
+      let addResult: boolean | undefined;
+      await act(async () => {
+        addResult = await result.current.addToLibrary();
+      });
+
+      expect(addResult).toBe(false);
     });
 
     it("should return false when no gameId", async () => {
-      const { addToLibrary } = useGameLibraryStatus("");
-      const result = await addToLibrary();
+      const { result } = renderHook(() => useGameLibraryStatus(""), {
+        wrapper: createSWRWrapper(),
+      });
 
-      expect(result).toBe(false);
-    });
+      let addResult: boolean | undefined;
+      await act(async () => {
+        addResult = await result.current.addToLibrary();
+      });
 
-    it("should guard against concurrent adds", async () => {
-      // The adding state is managed internally by the hook
-      // We test that the hook properly handles the adding state
-      const { addToLibrary } = useGameLibraryStatus("game-123");
-
-      // First call should succeed
-      const result1 = await addToLibrary();
-      expect(result1).toBe(true);
+      expect(addResult).toBe(false);
     });
 
     it("should return false on API error", async () => {
-      mockFetch.mockImplementation(() =>
-        Promise.resolve({
-          ok: false,
-          json: () => Promise.resolve({ error: "Failed" }),
-        })
-      );
+      mockFetch.mockImplementation((url: string, options?: RequestInit) => {
+        if (options?.method === "POST") {
+          return Promise.resolve(new Response(null, { status: 500 }));
+        }
+        return Promise.resolve(jsonResponse({ inLibrary: false }));
+      });
 
-      const { addToLibrary } = useGameLibraryStatus("game-123");
-      const result = await addToLibrary();
+      const { result } = renderHook(() => useGameLibraryStatus("game-123"), {
+        wrapper: createSWRWrapper(),
+      });
 
-      expect(result).toBe(false);
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      let addResult: boolean | undefined;
+      await act(async () => {
+        addResult = await result.current.addToLibrary();
+      });
+
+      expect(addResult).toBe(false);
     });
 
     it("should return false on network error", async () => {
-      mockFetch.mockImplementation(() => Promise.reject(new Error("Network error")));
+      mockFetch.mockImplementation((url: string, options?: RequestInit) => {
+        if (options?.method === "POST") {
+          return Promise.reject(new Error("Network error"));
+        }
+        return Promise.resolve(jsonResponse({ inLibrary: false }));
+      });
 
-      const { addToLibrary } = useGameLibraryStatus("game-123");
-      const result = await addToLibrary();
+      const { result } = renderHook(() => useGameLibraryStatus("game-123"), {
+        wrapper: createSWRWrapper(),
+      });
 
-      expect(result).toBe(false);
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      let addResult: boolean | undefined;
+      await act(async () => {
+        addResult = await result.current.addToLibrary();
+      });
+
+      expect(addResult).toBe(false);
     });
   });
 
   describe("removeFromLibrary", () => {
     it("should DELETE from /api/library/{gameId}", async () => {
-      mockFetch.mockImplementation(() => Promise.resolve({ ok: true }));
+      mockFetch.mockImplementation((url: string, options?: RequestInit) => {
+        if (options?.method === "DELETE") {
+          return Promise.resolve(new Response(null, { status: 200 }));
+        }
+        return Promise.resolve(jsonResponse({ inLibrary: true }));
+      });
 
-      const { removeFromLibrary } = useGameLibraryStatus("game-456");
-      await removeFromLibrary();
+      const { result } = renderHook(() => useGameLibraryStatus("game-456"), {
+        wrapper: createSWRWrapper(),
+      });
 
-      expect(mockFetch).toHaveBeenCalledWith("/api/library/game-456", { method: "DELETE" });
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      await act(async () => {
+        await result.current.removeFromLibrary();
+      });
+
+      expect(mockFetch).toHaveBeenCalledWith("/api/library/game-456", {
+        method: "DELETE",
+      });
     });
 
     it("should return true on success", async () => {
-      mockFetch.mockImplementation(() => Promise.resolve({ ok: true }));
+      mockFetch.mockImplementation((url: string, options?: RequestInit) => {
+        if (options?.method === "DELETE") {
+          return Promise.resolve(new Response(null, { status: 200 }));
+        }
+        return Promise.resolve(jsonResponse({ inLibrary: true }));
+      });
 
-      const { removeFromLibrary } = useGameLibraryStatus("game-456");
-      const result = await removeFromLibrary();
+      const { result } = renderHook(() => useGameLibraryStatus("game-456"), {
+        wrapper: createSWRWrapper(),
+      });
 
-      expect(result).toBe(true);
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      let removeResult: boolean | undefined;
+      await act(async () => {
+        removeResult = await result.current.removeFromLibrary();
+      });
+
+      expect(removeResult).toBe(true);
     });
 
     it("should return false when no user", async () => {
       mockUser = null;
 
-      const { removeFromLibrary } = useGameLibraryStatus("game-456");
-      const result = await removeFromLibrary();
+      const { result } = renderHook(() => useGameLibraryStatus("game-456"), {
+        wrapper: createSWRWrapper(),
+      });
 
-      expect(result).toBe(false);
+      let removeResult: boolean | undefined;
+      await act(async () => {
+        removeResult = await result.current.removeFromLibrary();
+      });
+
+      expect(removeResult).toBe(false);
     });
 
     it("should return false when no gameId", async () => {
-      const { removeFromLibrary } = useGameLibraryStatus("");
-      const result = await removeFromLibrary();
+      const { result } = renderHook(() => useGameLibraryStatus(""), {
+        wrapper: createSWRWrapper(),
+      });
 
-      expect(result).toBe(false);
+      let removeResult: boolean | undefined;
+      await act(async () => {
+        removeResult = await result.current.removeFromLibrary();
+      });
+
+      expect(removeResult).toBe(false);
     });
 
     it("should return false on API error", async () => {
-      mockFetch.mockImplementation(() => Promise.resolve({ ok: false }));
+      mockFetch.mockImplementation((url: string, options?: RequestInit) => {
+        if (options?.method === "DELETE") {
+          return Promise.resolve(new Response(null, { status: 500 }));
+        }
+        return Promise.resolve(jsonResponse({ inLibrary: true }));
+      });
 
-      const { removeFromLibrary } = useGameLibraryStatus("game-456");
-      const result = await removeFromLibrary();
+      const { result } = renderHook(() => useGameLibraryStatus("game-456"), {
+        wrapper: createSWRWrapper(),
+      });
 
-      expect(result).toBe(false);
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
+
+      let removeResult: boolean | undefined;
+      await act(async () => {
+        removeResult = await result.current.removeFromLibrary();
+      });
+
+      expect(removeResult).toBe(false);
     });
 
     it("should return false on network error", async () => {
-      mockFetch.mockImplementation(() => Promise.reject(new Error("Network error")));
+      mockFetch.mockImplementation((url: string, options?: RequestInit) => {
+        if (options?.method === "DELETE") {
+          return Promise.reject(new Error("Network error"));
+        }
+        return Promise.resolve(jsonResponse({ inLibrary: true }));
+      });
 
-      const { removeFromLibrary } = useGameLibraryStatus("game-456");
-      const result = await removeFromLibrary();
+      const { result } = renderHook(() => useGameLibraryStatus("game-456"), {
+        wrapper: createSWRWrapper(),
+      });
 
-      expect(result).toBe(false);
-    });
-  });
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
+      });
 
-  describe("status check on mount", () => {
-    it("should check status when user and gameId exist", async () => {
-      hasCheckedRef.current = false;
-      useGameLibraryStatus("game-789");
+      let removeResult: boolean | undefined;
+      await act(async () => {
+        removeResult = await result.current.removeFromLibrary();
+      });
 
-      // Wait for async
-      await new Promise((resolve) => setTimeout(resolve, 10));
-
-      expect(mockFetch).toHaveBeenCalledWith("/api/library/game-789");
-    });
-
-    it("should not check status when already checked", () => {
-      hasCheckedRef.current = true;
-      mockFetch.mockClear();
-
-      useGameLibraryStatus("game-789");
-
-      // Should not call fetch for status check
-      expect(mockFetch).not.toHaveBeenCalledWith("/api/library/game-789");
-    });
-
-    it("should handle 500 error gracefully", async () => {
-      hasCheckedRef.current = false;
-      mockFetch.mockImplementation(() => Promise.resolve({ ok: false, status: 500 }));
-
-      useGameLibraryStatus("game-789");
-
-      await new Promise((resolve) => setTimeout(resolve, 10));
-
-      // Should not throw
-      expect(mockSetInLibrary).toHaveBeenCalledWith(false);
+      expect(removeResult).toBe(false);
     });
   });
 });

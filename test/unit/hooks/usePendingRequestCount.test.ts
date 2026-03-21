@@ -1,67 +1,71 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { renderHook, waitFor, act } from "@testing-library/react";
+import { createSWRWrapper } from "../../helpers/swr-wrapper";
 
-// Mutable mock user — allows toggling auth state between tests
+const originalFetch = globalThis.fetch;
+
+// Mock auth — mutable pour basculer entre authentifié / non-authentifié
 let mockUser: { id: string } | null = { id: "user-123" };
 
 vi.mock("@/hooks/useAuth", () => ({
   useAuth: () => ({ user: mockUser }),
 }));
 
-vi.mock("@/lib/services/friendService", () => ({
-  FriendService: {
-    getPendingCount: vi.fn(),
-  },
-}));
-
 import { usePendingRequestCount } from "@/hooks/usePendingRequestCount";
-import { FriendService } from "@/lib/services/friendService";
 
-const mockedGetPendingCount = FriendService.getPendingCount as ReturnType<typeof vi.fn>;
+function jsonResponse(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json" },
+  });
+}
 
 describe("usePendingRequestCount", () => {
+  let mockFetch: ReturnType<typeof vi.fn>;
+
   beforeEach(() => {
     mockUser = { id: "user-123" };
-    mockedGetPendingCount.mockReset();
-    mockedGetPendingCount.mockResolvedValue({ count: 3 });
+    mockFetch = vi.fn(() => Promise.resolve(jsonResponse({ count: 3 })));
+    globalThis.fetch = mockFetch as unknown as typeof fetch;
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    globalThis.fetch = originalFetch;
   });
 
-  // --- Requirements 3.1, 4.1 — Initial fetch on mount ---
   it("should fetch pending count on mount when authenticated", async () => {
-    const { result } = renderHook(() => usePendingRequestCount());
+    const { result } = renderHook(() => usePendingRequestCount(), {
+      wrapper: createSWRWrapper(),
+    });
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    expect(mockedGetPendingCount).toHaveBeenCalledOnce();
     expect(result.current.count).toBe(3);
   });
 
-  // --- Requirement 3.4 — No fetch when unauthenticated ---
   it("should not fetch when user is not authenticated", async () => {
     mockUser = null;
 
-    const { result } = renderHook(() => usePendingRequestCount());
+    const { result } = renderHook(() => usePendingRequestCount(), {
+      wrapper: createSWRWrapper(),
+    });
 
-    // Give time for any potential async call
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    expect(mockedGetPendingCount).not.toHaveBeenCalled();
+    expect(mockFetch).not.toHaveBeenCalled();
     expect(result.current.count).toBe(0);
   });
 
-  // --- Requirement 3.4 — Decrement after accept/decline ---
   it("should decrement count by 1 and not go below 0", async () => {
-    mockedGetPendingCount.mockResolvedValue({ count: 1 });
+    mockFetch.mockImplementation(() => Promise.resolve(jsonResponse({ count: 1 })));
 
-    const { result } = renderHook(() => usePendingRequestCount());
+    const { result } = renderHook(() => usePendingRequestCount(), {
+      wrapper: createSWRWrapper(),
+    });
 
     await waitFor(() => {
       expect(result.current.count).toBe(1);
@@ -72,54 +76,62 @@ describe("usePendingRequestCount", () => {
     });
     expect(result.current.count).toBe(0);
 
-    // Should not go below 0
+    // Ne doit pas descendre en dessous de 0
     act(() => {
       result.current.decrement();
     });
     expect(result.current.count).toBe(0);
   });
 
-  // --- Requirement 3.4 — Refresh re-fetches the count ---
   it("should re-fetch count on refresh", async () => {
-    const { result } = renderHook(() => usePendingRequestCount());
+    const { result } = renderHook(() => usePendingRequestCount(), {
+      wrapper: createSWRWrapper(),
+    });
 
     await waitFor(() => {
       expect(result.current.count).toBe(3);
     });
 
-    mockedGetPendingCount.mockResolvedValue({ count: 5 });
+    // Changer la réponse pour le prochain fetch
+    mockFetch.mockImplementation(() => Promise.resolve(jsonResponse({ count: 5 })));
 
     await act(async () => {
       await result.current.refresh();
     });
 
-    expect(result.current.count).toBe(5);
-    expect(mockedGetPendingCount).toHaveBeenCalledTimes(2);
+    await waitFor(() => {
+      expect(result.current.count).toBe(5);
+    });
   });
 
-  // --- Error fallback — silent fallback to 0 ---
   it("should fallback to 0 on error", async () => {
-    mockedGetPendingCount.mockRejectedValue(new Error("Network error"));
+    mockFetch.mockImplementation(() =>
+      Promise.resolve(jsonResponse({ error: "Server error" }, 500))
+    );
 
-    const { result } = renderHook(() => usePendingRequestCount());
+    const { result } = renderHook(() => usePendingRequestCount(), {
+      wrapper: createSWRWrapper(),
+    });
 
     await waitFor(() => {
       expect(result.current.isLoading).toBe(false);
     });
 
+    // Le hook gère l'erreur silencieusement → count = 0
     expect(result.current.count).toBe(0);
   });
 
-  // --- Refresh should not fetch when unauthenticated ---
   it("should not refresh when user is not authenticated", async () => {
     mockUser = null;
 
-    const { result } = renderHook(() => usePendingRequestCount());
+    const { result } = renderHook(() => usePendingRequestCount(), {
+      wrapper: createSWRWrapper(),
+    });
 
     await act(async () => {
       await result.current.refresh();
     });
 
-    expect(mockedGetPendingCount).not.toHaveBeenCalled();
+    expect(mockFetch).not.toHaveBeenCalled();
   });
 });

@@ -96,8 +96,10 @@ describe("CharacterService DB Methods", () => {
         eq: vi.fn(() => mainQuery),
         ilike: vi.fn(() => mainQuery),
         in: vi.fn(() => mainQuery),
-        range: vi.fn(() => mainQuery),
-        order: vi.fn(() => Promise.resolve({ data: mockCharacterListData, error: null })),
+        range: vi.fn(() => Promise.resolve({ data: mockCharacterListData, error: null })),
+        order: vi.fn(() => ({
+          range: vi.fn(() => Promise.resolve({ data: mockCharacterListData, error: null })),
+        })),
       };
 
       let callCount = 0;
@@ -127,8 +129,10 @@ describe("CharacterService DB Methods", () => {
         select: vi.fn(() => mainQuery),
         eq: vi.fn(() => mainQuery),
         ilike: vi.fn(() => mainQuery),
-        range: vi.fn(() => mainQuery),
-        order: vi.fn(() => Promise.resolve({ data: mockCharacterListData, error: null })),
+        range: vi.fn(() => Promise.resolve({ data: mockCharacterListData, error: null })),
+        order: vi.fn(() => ({
+          range: vi.fn(() => Promise.resolve({ data: mockCharacterListData, error: null })),
+        })),
       };
 
       let callCount = 0;
@@ -154,8 +158,10 @@ describe("CharacterService DB Methods", () => {
         select: vi.fn(() => mainQuery),
         eq: vi.fn(() => mainQuery),
         in: vi.fn(() => mainQuery),
-        range: vi.fn(() => mainQuery),
-        order: vi.fn(() => Promise.resolve({ data: mockCharacterListData, error: null })),
+        range: vi.fn(() => Promise.resolve({ data: mockCharacterListData, error: null })),
+        order: vi.fn(() => ({
+          range: vi.fn(() => Promise.resolve({ data: mockCharacterListData, error: null })),
+        })),
       };
 
       let callCount = 0;
@@ -171,6 +177,28 @@ describe("CharacterService DB Methods", () => {
     });
 
     it("should filter by games post-processing", async () => {
+      const allData = [
+        ...mockCharacterListData,
+        {
+          id: "char-2",
+          slug: "other-character",
+          main_image: null,
+          background_color: null,
+          created_at: "2024-01-02T00:00:00Z",
+          character_translations: [{ name: "Other", role: "Villain", description: null }],
+          character_games: [
+            {
+              is_primary: true,
+              games: {
+                id: "game-2",
+                slug: "other-game",
+                game_translations: [{ title: "Other Game" }],
+              },
+            },
+          ],
+        },
+      ];
+
       const countQuery = {
         select: vi.fn(() => countQuery),
         eq: vi.fn(() => countQuery),
@@ -183,33 +211,10 @@ describe("CharacterService DB Methods", () => {
         eq: vi.fn(() => mainQuery),
         ilike: vi.fn(() => mainQuery),
         in: vi.fn(() => mainQuery),
-        range: vi.fn(() => mainQuery),
-        order: vi.fn(() =>
-          Promise.resolve({
-            data: [
-              ...mockCharacterListData,
-              {
-                id: "char-2",
-                slug: "other-character",
-                main_image: null,
-                background_color: null,
-                created_at: "2024-01-02T00:00:00Z",
-                character_translations: [{ name: "Other", role: "Villain", description: null }],
-                character_games: [
-                  {
-                    is_primary: true,
-                    games: {
-                      id: "game-2",
-                      slug: "other-game",
-                      game_translations: [{ title: "Other Game" }],
-                    },
-                  },
-                ],
-              },
-            ],
-            error: null,
-          })
-        ),
+        range: vi.fn(() => Promise.resolve({ data: allData, error: null })),
+        order: vi.fn(() => ({
+          range: vi.fn(() => Promise.resolve({ data: allData, error: null })),
+        })),
       };
 
       let callCount = 0;
@@ -235,8 +240,8 @@ describe("CharacterService DB Methods", () => {
       const mainQuery = {
         select: vi.fn(() => mainQuery),
         eq: vi.fn(() => mainQuery),
-        range: vi.fn(() => mainQuery),
-        order: vi.fn(() => Promise.resolve({ data: [], error: null })),
+        range: vi.fn(() => Promise.resolve({ data: [], error: null })),
+        order: vi.fn(() => ({ range: vi.fn(() => Promise.resolve({ data: [], error: null })) })),
       };
 
       let callCount = 0;
@@ -260,8 +265,10 @@ describe("CharacterService DB Methods", () => {
       const mainQuery = {
         select: vi.fn(() => mainQuery),
         eq: vi.fn(() => mainQuery),
-        range: vi.fn(() => mainQuery),
-        order: vi.fn(() => Promise.resolve({ data: null, error: { message: "Query error" } })),
+        range: vi.fn(() => Promise.resolve({ data: null, error: { message: "Query error" } })),
+        order: vi.fn(() => ({
+          range: vi.fn(() => Promise.resolve({ data: null, error: { message: "Query error" } })),
+        })),
       };
 
       let callCount = 0;
@@ -285,8 +292,10 @@ describe("CharacterService DB Methods", () => {
       const mainQuery = {
         select: vi.fn(() => mainQuery),
         eq: vi.fn(() => mainQuery),
-        range: vi.fn(() => mainQuery),
-        order: vi.fn(() => Promise.resolve({ data: mockCharacterListData, error: null })),
+        range: vi.fn(() => Promise.resolve({ data: mockCharacterListData, error: null })),
+        order: vi.fn(() => ({
+          range: vi.fn(() => Promise.resolve({ data: mockCharacterListData, error: null })),
+        })),
       };
 
       let callCount = 0;
@@ -314,8 +323,8 @@ describe("CharacterService DB Methods", () => {
       const mainQuery = {
         select: vi.fn(() => mainQuery),
         eq: vi.fn(() => mainQuery),
-        range: vi.fn(() => mainQuery),
-        order: vi.fn(() => Promise.resolve({ data: [], error: null })),
+        range: vi.fn(() => Promise.resolve({ data: [], error: null })),
+        order: vi.fn(() => ({ range: vi.fn(() => Promise.resolve({ data: [], error: null })) })),
       };
 
       let callCount = 0;

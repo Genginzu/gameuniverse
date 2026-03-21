@@ -60,18 +60,19 @@ describe("/api/characters", () => {
         error: null,
       });
 
-      // Mock main query
+      // Mock main query — source does .order().range()
       const mockMainQuery = {
         eq: vi.fn(() => mockMainQuery),
         ilike: vi.fn(() => mockMainQuery),
         in: vi.fn(() => mockMainQuery),
-        range: vi.fn(() => mockMainQuery),
-        order: vi.fn(() =>
-          Promise.resolve({
-            data: mockCharacters,
-            error: null,
-          })
-        ),
+        order: vi.fn(() => ({
+          range: vi.fn(() =>
+            Promise.resolve({
+              data: mockCharacters,
+              error: null,
+            })
+          ),
+        })),
       };
 
       mockFrom
@@ -110,18 +111,19 @@ describe("/api/characters", () => {
         error: null,
       });
 
-      // Mock main query
+      // Mock main query — source does .order().range()
       const mockMainQuery = {
         eq: vi.fn(() => mockMainQuery),
         ilike: vi.fn(() => mockMainQuery),
         in: vi.fn(() => mockMainQuery),
-        range: vi.fn(() => mockMainQuery),
-        order: vi.fn(() =>
-          Promise.resolve({
-            data: mockCharacters,
-            error: null,
-          })
-        ),
+        order: vi.fn(() => ({
+          range: vi.fn(() =>
+            Promise.resolve({
+              data: mockCharacters,
+              error: null,
+            })
+          ),
+        })),
       };
 
       mockFrom
@@ -152,16 +154,17 @@ describe("/api/characters", () => {
         error: new Error("Database error"),
       });
 
-      // Mock main query
+      // Mock main query — source does .order().range()
       const mockMainQuery = {
         eq: vi.fn(() => mockMainQuery),
-        range: vi.fn(() => mockMainQuery),
-        order: vi.fn(() =>
-          Promise.resolve({
-            data: [],
-            error: null,
-          })
-        ),
+        order: vi.fn(() => ({
+          range: vi.fn(() =>
+            Promise.resolve({
+              data: [],
+              error: null,
+            })
+          ),
+        })),
       };
 
       mockFrom
@@ -190,16 +193,17 @@ describe("/api/characters", () => {
         error: null,
       });
 
-      // Mock main query with error
+      // Mock main query with error — source does .order().range()
       const mockMainQuery = {
         eq: vi.fn(() => mockMainQuery),
-        range: vi.fn(() => mockMainQuery),
-        order: vi.fn(() =>
-          Promise.resolve({
-            data: null,
-            error: new Error("Database error"),
-          })
-        ),
+        order: vi.fn(() => ({
+          range: vi.fn(() =>
+            Promise.resolve({
+              data: null,
+              error: new Error("Database error"),
+            })
+          ),
+        })),
       };
 
       mockFrom

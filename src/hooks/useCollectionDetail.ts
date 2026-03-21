@@ -1,8 +1,18 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import useSWR from "swr";
 import { useLocale } from "next-intl";
 import type { CollectionDetail } from "@/types/collection";
+import { ErrorType } from "@/lib/error-handling";
+
+interface CollectionDetailResponse {
+  collection: CollectionDetail;
+}
+
+interface TypedError extends Error {
+  type?: ErrorType;
+  statusCode?: number;
+}
 
 interface UseCollectionDetailReturn {
   collection: CollectionDetail | null;
@@ -14,54 +24,31 @@ interface UseCollectionDetailReturn {
 
 /**
  * Hook pour récupérer le détail d'une collection via son slug.
- * Gère le chargement, les erreurs et le cas 404 (collection inexistante ou privée).
+ * Gère le cas 404 (collection inexistante ou privée) via l'erreur SWR.
  */
 export function useCollectionDetail(playerId: string, slug: string): UseCollectionDetailReturn {
-  const [collection, setCollection] = useState<CollectionDetail | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [notFound, setNotFound] = useState(false);
-  const hasFetchedRef = useRef(false);
   const locale = useLocale();
 
-  const fetchDetail = useCallback(async () => {
-    if (!playerId || !slug) return;
+  const { data, error, isLoading, mutate } = useSWR<CollectionDetailResponse>(
+    playerId && slug ? `/api/players/${playerId}/collections/${slug}?locale=${locale}` : null
+  );
 
-    try {
-      setIsLoading(true);
-      setError(null);
-      setNotFound(false);
+  // Détecter le 404 via l'erreur typée de l'ApiClient
+  const typedError = error as TypedError | undefined;
+  const notFound = typedError?.type === ErrorType.NOT_FOUND || typedError?.statusCode === 404;
 
-      const response = await fetch(`/api/players/${playerId}/collections/${slug}?locale=${locale}`);
-
-      if (response.status === 404) {
-        setNotFound(true);
-        setCollection(null);
-        return;
-      }
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch collection detail");
-      }
-
-      const data = await response.json();
-      setCollection(data.collection ?? null);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to fetch collection detail";
-      setError(message);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [playerId, slug, locale]);
-
-  useEffect(() => {
-    if (hasFetchedRef.current || !playerId || !slug) {
-      if (!playerId || !slug) setIsLoading(false);
-      return;
-    }
-    hasFetchedRef.current = true;
-    fetchDetail();
-  }, [playerId, slug, fetchDetail]);
-
-  return { collection, isLoading, error, notFound, refetch: fetchDetail };
+  return {
+    collection: data?.collection ?? null,
+    isLoading,
+    error:
+      error && !notFound
+        ? error instanceof Error
+          ? error.message
+          : "Failed to fetch collection detail"
+        : null,
+    notFound,
+    refetch: async () => {
+      await mutate();
+    },
+  };
 }

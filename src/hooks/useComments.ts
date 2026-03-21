@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useCallback } from "react";
+import useSWR from "swr";
 import type { Comment, CommentFormData, CommentsResponse } from "@/types/comment";
 import { CommentService } from "@/lib/services/commentService";
 
@@ -19,100 +20,77 @@ interface UseCommentsReturn {
 
 /**
  * Hook pour gérer les commentaires d'un personnage.
- * Gère le chargement, la soumission, la modification et les états.
+ * SWR gère la lecture, les mutations passent par le CommentService.
  */
 export function useComments(characterId: string): UseCommentsReturn {
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [totalCount, setTotalCount] = useState(0);
-  const [userHasCommented, setUserHasCommented] = useState(false);
-  const [userComment, setUserComment] = useState<Comment | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const hasFetchedRef = useRef(false);
+  const [mutationError, setMutationError] = useState<string | null>(null);
 
-  const applyResponse = useCallback((response: CommentsResponse) => {
-    setComments(response.comments);
-    setTotalCount(response.totalCount);
-    setUserHasCommented(response.userHasCommented);
-    setUserComment(response.userComment ?? null);
-  }, []);
+  // Fetcher custom car CommentService retourne un format spécifique
+  const { data, error, isLoading, mutate } = useSWR<CommentsResponse>(
+    characterId ? ["comments", characterId] : null,
+    () => CommentService.fetchComments(characterId)
+  );
 
   const fetchComments = useCallback(async () => {
-    if (!characterId) return;
-
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await CommentService.fetchComments(characterId);
-      applyResponse(response);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Failed to fetch comments";
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
-  }, [characterId, applyResponse]);
+    await mutate();
+  }, [mutate]);
 
   const submitComment = useCallback(
-    async (data: CommentFormData): Promise<boolean> => {
+    async (formData: CommentFormData): Promise<boolean> => {
       if (!characterId || submitting) return false;
 
       try {
         setSubmitting(true);
-        setError(null);
-        await CommentService.submitComment(characterId, data);
-        await fetchComments();
+        setMutationError(null);
+        await CommentService.submitComment(characterId, formData);
+        await mutate();
         return true;
       } catch (err) {
         const message = err instanceof Error ? err.message : "Failed to submit comment";
-        setError(message);
+        setMutationError(message);
         return false;
       } finally {
         setSubmitting(false);
       }
     },
-    [characterId, submitting, fetchComments]
+    [characterId, submitting, mutate]
   );
 
   const updateComment = useCallback(
-    async (data: CommentFormData): Promise<boolean> => {
+    async (formData: CommentFormData): Promise<boolean> => {
       if (!characterId || submitting) return false;
 
       try {
         setSubmitting(true);
-        setError(null);
-        await CommentService.updateComment(characterId, data);
-        await fetchComments();
+        setMutationError(null);
+        await CommentService.updateComment(characterId, formData);
+        await mutate();
         return true;
       } catch (err) {
         const message = err instanceof Error ? err.message : "Failed to update comment";
-        setError(message);
+        setMutationError(message);
         return false;
       } finally {
         setSubmitting(false);
       }
     },
-    [characterId, submitting, fetchComments]
+    [characterId, submitting, mutate]
   );
 
-  // Chargement initial — une seule fois
-  useEffect(() => {
-    if (hasFetchedRef.current || !characterId) {
-      if (!characterId) setLoading(false);
-      return;
-    }
-    hasFetchedRef.current = true;
-    fetchComments();
-  }, [characterId, fetchComments]);
+  const fetchError = error
+    ? error instanceof Error
+      ? error.message
+      : "Failed to fetch comments"
+    : null;
 
   return {
-    comments,
-    totalCount,
-    userHasCommented,
-    userComment,
-    loading,
-    error,
+    comments: data?.comments ?? [],
+    totalCount: data?.totalCount ?? 0,
+    userHasCommented: data?.userHasCommented ?? false,
+    userComment: data?.userComment ?? null,
+    loading: isLoading,
+    error: mutationError || fetchError,
     submitting,
     fetchComments,
     submitComment,

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
+import useSWR from "swr";
 import { useAuth } from "./useAuth";
 import type { PlayerPlaytimeStats, PlayerPlaytimeEntry } from "@/types/game";
 
@@ -21,50 +22,16 @@ const EMPTY_STATS: PlayerPlaytimeStats = {
 
 /**
  * Hook pour gérer le temps de jeu des joueurs (3 catégories).
- * Récupère les stats au mount et permet de soumettre un temps de jeu.
+ * SWR gère la lecture, la mutation submit reste manuelle.
  */
 export function usePlayerPlaytime(slug: string): UsePlayerPlaytimeReturn {
   const { user } = useAuth();
-  const [stats, setStats] = useState<PlayerPlaytimeStats>(EMPTY_STATS);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const fetchStats = useCallback(
-    async (signal?: AbortSignal) => {
-      if (!slug) return;
+  const [mutationError, setMutationError] = useState<string | null>(null);
 
-      try {
-        setLoading(true);
-        setError(null);
-
-        const response = await fetch(`/api/games/${slug}/playtime`, { signal });
-
-        if (!response.ok) {
-          const data = await response.json().catch(() => null);
-          throw new Error(data?.error ?? "Failed to fetch playtime stats");
-        }
-
-        const data: PlayerPlaytimeStats = await response.json();
-        setStats(data);
-      } catch (err) {
-        // Ne pas traiter les erreurs d'abort comme de vraies erreurs
-        if (err instanceof DOMException && err.name === "AbortError") return;
-        const message = err instanceof Error ? err.message : "Unknown error";
-        setError(message);
-        setStats(EMPTY_STATS);
-      } finally {
-        setLoading(false);
-      }
-    },
-    [slug]
+  const { data, error, isLoading, mutate } = useSWR<PlayerPlaytimeStats>(
+    slug ? `/api/games/${slug}/playtime` : null
   );
-
-  useEffect(() => {
-    const controller = new AbortController();
-    fetchStats(controller.signal);
-
-    return () => controller.abort();
-  }, [fetchStats]);
 
   const submitPlaytime = useCallback(
     async (entry: Partial<PlayerPlaytimeEntry>): Promise<boolean> => {
@@ -72,7 +39,7 @@ export function usePlayerPlaytime(slug: string): UsePlayerPlaytimeReturn {
 
       try {
         setSubmitting(true);
-        setError(null);
+        setMutationError(null);
 
         const response = await fetch(`/api/games/${slug}/playtime`, {
           method: "POST",
@@ -89,19 +56,28 @@ export function usePlayerPlaytime(slug: string): UsePlayerPlaytimeReturn {
           throw new Error(data?.error ?? "Failed to submit playtime");
         }
 
+        // L'API retourne les stats mises à jour — on met à jour le cache SWR
         const updatedStats: PlayerPlaytimeStats = await response.json();
-        setStats(updatedStats);
+        await mutate(updatedStats, false);
         return true;
       } catch (err) {
         const message = err instanceof Error ? err.message : "Unknown error";
-        setError(message);
+        setMutationError(message);
         return false;
       } finally {
         setSubmitting(false);
       }
     },
-    [user, slug, submitting]
+    [user, slug, submitting, mutate]
   );
 
-  return { stats, loading, error, submitting, submitPlaytime };
+  const fetchError = error ? (error instanceof Error ? error.message : "Unknown error") : null;
+
+  return {
+    stats: data ?? EMPTY_STATS,
+    loading: isLoading,
+    error: mutationError || fetchError,
+    submitting,
+    submitPlaytime,
+  };
 }

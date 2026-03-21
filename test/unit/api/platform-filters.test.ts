@@ -97,23 +97,47 @@ function mockGamesTable(rows: any[], count: number) {
 }
 
 function mockCharactersTable(rows: any[], count: number) {
+  const countResult = Promise.resolve({ count, error: null });
+  const dataResult = Promise.resolve({ data: rows, error: null });
+
   return {
     select: vi.fn((_c: string, opts?: { head?: boolean }) => {
       if (opts?.head) {
-        return {
-          eq: vi.fn(() => Promise.resolve({ count, error: null })),
-        };
+        // Count query: chain .eq()/.ilike()/.in() all return countResult (a Promise)
+        // The route awaits the final result, so the last method in the chain must return a Promise
+        const countChain: any = {};
+        countChain.eq = vi.fn(() => countChain);
+        countChain.ilike = vi.fn(() => countChain);
+        countChain.in = vi.fn(() => countChain);
+        // Make countChain itself thenable so `await countChain` resolves
+        countChain.then = countResult.then.bind(countResult);
+        countChain.catch = countResult.catch.bind(countResult);
+        return countChain;
       }
-      return {
-        eq: vi.fn(() => ({
-          eq: vi.fn(() => ({
-            range: vi.fn(() => ({
-              order: vi.fn(() => Promise.resolve({ data: rows, error: null })),
-            })),
-          })),
-        })),
-      };
+      // Main query: chain .eq()/.ilike()/.in() then .order().range()
+      const mainChain: any = {};
+      mainChain.eq = vi.fn(() => mainChain);
+      mainChain.ilike = vi.fn(() => mainChain);
+      mainChain.in = vi.fn(() => mainChain);
+      mainChain.order = vi.fn(() => ({
+        range: vi.fn(() => dataResult),
+      }));
+      return mainChain;
     }),
+  };
+}
+
+/** Helper: mock character_games returning character IDs for given game IDs */
+function mockCharacterGames(characterIds: string[]) {
+  return {
+    select: vi.fn(() => ({
+      in: vi.fn(() =>
+        Promise.resolve({
+          data: characterIds.map((character_id) => ({ character_id })),
+          error: null,
+        })
+      ),
+    })),
   };
 }
 
@@ -205,6 +229,7 @@ describe("GET /api/characters — platform filter", () => {
       if (table === "characters") return mockCharactersTable([char], 1);
       if (table === "platforms") return mockPlatformLookup(["plat-1"]);
       if (table === "game_platforms") return mockGamePlatforms(["game-1"]);
+      if (table === "character_games") return mockCharacterGames(["char-1"]);
       return {};
     });
 
@@ -219,13 +244,14 @@ describe("GET /api/characters — platform filter", () => {
 
   test("excludes characters with no matching platform games", async () => {
     const { GET } = await import("../../../src/app/api/characters/route");
-    const char = makeCharacterRow("char-1", "Link", ["game-99"]);
 
     mockSupabaseFrom = vi.fn((table: string) => {
-      if (table === "characters") return mockCharactersTable([char], 1);
+      if (table === "characters") return mockCharactersTable([], 0);
       if (table === "platforms") return mockPlatformLookup(["plat-1"]);
-      // game_platforms returns a different game ID
+      // game_platforms returns a different game ID than any character's games
       if (table === "game_platforms") return mockGamePlatforms(["game-other"]);
+      // No characters have games matching "game-other"
+      if (table === "character_games") return mockCharacterGames([]);
       return {};
     });
 

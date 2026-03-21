@@ -35,12 +35,11 @@
 
 - Refaire une passe pour optimiser les requêtes et faire du lazy loading
 - Refaire une passe pour s'assurer que tout est rangé proprement.
-- Rajouter SWR au projet
 
 Peux-tu prendre <page> et faire une passe pour regarder ce qui pourrait être
 améliorer en terme de perfromance, de lazy loading et d'affichage skeleton ?
 Dans un premier temps fait moi un etat des lieux détaillés suivi d'un tableau
-recap et je te confirmerais les points à mettre en place par la suite
+recap et je te confirmerais les points à mettre en place par la suite. Il se peut que rien ne soit à faire dans ce cas ne pas inventer quoi que ce soit ou ne te force pas à trouver des points à améliorer.
 
 Pour la suite de cette conversation remontre moi la liste des points à traité en
 enlevant à chaque fois le point que l'on vient de terminer. Fait le point
@@ -48,11 +47,13 @@ enlevant à chaque fois le point que l'on vient de terminer. Fait le point
 
 # Point Impact Priorité
 
-1 Batch des statuts library (20 requêtes → 1) Perf réseau Haute 2 Supprimer le
-double chargement d'image Perf réseau + LCP Haute 3 Cache client
-(SWR/react-query) UX navigation Moyenne 4 Duplication du code de fetch initial
-Maintenabilité Moyenne 5 Lazy load des filtres et pagination Taille du bundle
-Moyenne 6 Iconify chargé pour chaque carte Perf réseau Faible 7 Skeleton de la
-zone de filtres manquant UX visuelle Faible 8 Transition animée skeleton →
-contenu UX visuelle Faible 9 Skeleton count adaptatif UX visuelle Faible 10
-Scroll to top au changement de page UX navigation Faible
+1 Batch des statuts library (20 requêtes → 1) Perf réseau Haute
+2 Supprimer le double chargement d'image Perf réseau + LCP Haute
+3 Cache client (SWR/react-query) UX navigation Moyenne
+4 Duplication du code de fetch initial Maintenabilité Moyenne
+5 Lazy load des filtres et pagination Taille du bundle Moyenne
+6 Iconify chargé pour chaque carte Perf réseau Faible
+7 Skeleton de la zone de filtres manquant UX visuelle Faible
+8 Transition animée skeleton → contenu UX visuelle Faible
+9 Skeleton count adaptatif UX visuelle Faible
+10 Scroll to top au changement de page UX navigation Faible
