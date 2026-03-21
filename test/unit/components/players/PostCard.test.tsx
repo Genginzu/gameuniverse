@@ -24,7 +24,7 @@ vi.mock("next-intl", () => {
   };
 });
 
-import { PostCard } from "@/components/players/PostCard";
+import { PostCard } from "@/components/players/posts/PostCard";
 
 const SAMPLE_POST = {
   id: "post-1",

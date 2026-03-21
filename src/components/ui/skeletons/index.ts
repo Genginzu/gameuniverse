@@ -1,10 +1,10 @@
 // Export all skeleton components for easy importing
 export { GameCardSkeleton } from "../../games/GameCardSkeleton";
 export { GameGridSkeleton } from "../../games/GameGridSkeleton";
-export { GameDetailsSkeleton } from "../../games/GameDetailsSkeleton";
+export { GameDetailsSkeleton } from "../../games/details/GameDetailsSkeleton";
 export { SearchSkeleton } from "../../games/SearchSkeleton";
 export { FiltersSkeleton } from "../../games/FiltersSkeleton";
-export { MediaGallerySkeleton } from "../../games/MediaGallerySkeleton";
+export { MediaGallerySkeleton } from "../../games/details/MediaGallerySkeleton";
 export { DashboardSkeleton } from "../../dashboard/DashboardSkeleton";
 export { LibraryPageSkeleton } from "../../library/LibraryPageSkeleton";
 export { FormSkeleton } from "../form-skeleton";

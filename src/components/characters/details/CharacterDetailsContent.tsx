@@ -17,7 +17,7 @@ import { FavoriteCharacterButton } from "./FavoriteCharacterButton";
 // Lazy load du tab commentaires — react-hook-form + zod ne sont chargés que si nécessaire
 const CharacterCommentsTab = dynamic(
   () =>
-    import("./comments/CharacterCommentsTab").then((m) => ({ default: m.CharacterCommentsTab })),
+    import("../comments/CharacterCommentsTab").then((m) => ({ default: m.CharacterCommentsTab })),
   {
     ssr: false,
     loading: () => <CommentsTabSkeleton />,

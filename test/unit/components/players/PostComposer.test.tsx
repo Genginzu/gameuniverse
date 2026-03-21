@@ -30,7 +30,7 @@ vi.mock("@/hooks/use-toast", () => ({
   useToast: () => ({ toast: mockToast }),
 }));
 
-import { PostComposer } from "@/components/players/PostComposer";
+import { PostComposer } from "@/components/players/posts/PostComposer";
 
 const defaultProps = {
   onPostCreated: vi.fn(),

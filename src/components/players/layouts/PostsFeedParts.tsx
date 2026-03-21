@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
-import { PostCard } from "../PostCard";
+import { PostCard } from "../posts/PostCard";
 import type { Post } from "@/types/post";
 
 interface FeedContentProps {

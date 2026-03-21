@@ -41,7 +41,7 @@ vi.mock("next/link", () => ({
   }) => React.createElement("a", { href, ...props }, children),
 }));
 
-import { PostContentRenderer } from "@/components/players/PostContentRenderer";
+import { PostContentRenderer } from "@/components/players/posts/PostContentRenderer";
 import type { PostMention } from "@/types/post";
 
 const defaultProps = {

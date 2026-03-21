@@ -25,7 +25,7 @@ vi.mock("@/hooks/useGameLibraryStatus", () => ({
   }),
 }));
 
-import { RecommendationSection } from "@/components/games/RecommendationSection";
+import { RecommendationSection } from "@/components/games/details/RecommendationSection";
 
 const mockRecommendations: GameRecommendation[] = [
   {

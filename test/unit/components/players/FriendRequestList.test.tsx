@@ -28,7 +28,7 @@ vi.mock("@/lib/utils/friendUtils", () => ({
   getAriaLabel: (action: string, name: string) => `${action} ${name}`,
 }));
 
-import { FriendRequestList } from "@/components/players/FriendRequestList";
+import { FriendRequestList } from "@/components/players/friends/FriendRequestList";
 
 const makeRequest = (index: number): FriendRequest => ({
   friendshipId: `fs-${index}`,

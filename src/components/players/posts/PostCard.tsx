@@ -6,7 +6,7 @@ import { Icon } from "@iconify/react";
 import { LazyImage } from "@/components/ui/lazy-image";
 import type { Post } from "@/types/post";
 import Image from "next/image";
-import { PostContentRenderer } from "@/components/players/PostContentRenderer";
+import { PostContentRenderer } from "@/components/players/posts/PostContentRenderer";
 
 interface PostCardProps {
   post: Post;

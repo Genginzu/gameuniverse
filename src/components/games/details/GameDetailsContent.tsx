@@ -7,9 +7,9 @@ import {
   formatPrice as formatPriceUtil,
   getMetascoreColor as getMetascoreColorUtil,
 } from "@/lib/utils/game-utils";
-import { GameDetailsSidebar } from "./details/GameDetailsSidebar";
-import { GameDetailsMainContent } from "./details/GameDetailsMainContent";
-import { GameDetailsNavBar } from "./details/GameDetailsNavBar";
+import { GameDetailsSidebar } from "./GameDetailsSidebar";
+import { GameDetailsMainContent } from "./GameDetailsMainContent";
+import { GameDetailsNavBar } from "./GameDetailsNavBar";
 import { useBackgroundSync } from "@/hooks/useBackgroundSync";
 import Image from "next/image";
 

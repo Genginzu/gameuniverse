@@ -20,7 +20,7 @@ vi.mock("next-intl", () => {
   };
 });
 
-import { FriendActionButton } from "@/components/players/FriendActionButton";
+import { FriendActionButton } from "@/components/players/friends/FriendActionButton";
 
 const PLAYER_ID = "other-player";
 const mockSendRequest = vi.fn(() => Promise.resolve());

@@ -6,7 +6,7 @@ import {
   calculateOffset,
   handleApiError,
 } from "@/lib/api-utils";
-import type { GameRowWithRelations } from "@/lib/types/supabase-queries";
+import type { GameRowWithRelations } from "@/types/supabase-queries";
 import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {

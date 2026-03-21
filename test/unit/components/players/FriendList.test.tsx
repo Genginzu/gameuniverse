@@ -54,7 +54,7 @@ vi.mock("@/components/ui/skeleton", () => ({
   ),
 }));
 
-import { FriendList } from "@/components/players/FriendList";
+import { FriendList } from "@/components/players/friends/FriendList";
 
 const makeFriend = (index: number): FriendSummary => ({
   id: `player-${index}`,

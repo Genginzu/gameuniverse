@@ -61,7 +61,7 @@ vi.mock("next/image", () => ({
     React.createElement("img", { src: props.src as string, alt: props.alt as string }),
 }));
 
-import { PlayerCollectionsFeed } from "@/components/players/PlayerCollectionsFeed";
+import { PlayerCollectionsFeed } from "@/components/players/collections/PlayerCollectionsFeed";
 
 const SAMPLE_COLLECTION = {
   id: "col-1",

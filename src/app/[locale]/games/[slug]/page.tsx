@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { GameDetailsContent } from "@/components/games/GameDetailsContent";
+import { GameDetailsContent } from "@/components/games/details/GameDetailsContent";
 import { GameService } from "@/lib/services/gameService";
 import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";

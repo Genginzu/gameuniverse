@@ -61,9 +61,9 @@ vi.mock("@/hooks/use-toast", () => ({
 }));
 
 // Imports AFTER all vi.mock() calls
-import { PostsFeed } from "@/components/players/PostsFeed";
-import { PostComposer } from "@/components/players/PostComposer";
-import { PostCard } from "@/components/players/PostCard";
+import { PostsFeed } from "@/components/players/posts/PostsFeed";
+import { PostComposer } from "@/components/players/posts/PostComposer";
+import { PostCard } from "@/components/players/posts/PostCard";
 
 // Arbitrary for Post objects — integer timestamps avoid invalid date edge cases
 const toISO = (ms: number) => new Date(ms).toISOString();

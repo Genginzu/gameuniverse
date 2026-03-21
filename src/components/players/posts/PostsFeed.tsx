@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { usePlayerPosts } from "@/hooks/usePlayerPosts";
-import { PostsLayoutTimelineV2 } from "./layouts/PostsLayoutTimelineV2";
+import { PostsLayoutTimelineV2 } from "../layouts/PostsLayoutTimelineV2";
 
 interface PostsFeedProps {
   playerId: string;

@@ -11,16 +11,16 @@ import { TabType } from "./GameDetailsTabs";
 
 // Lazy load des onglets non-overview pour réduire le bundle initial.
 // recharts (~50kB), TipTap (~35kB), etc. ne sont chargés qu'au clic.
-const GameAgeRatings = dynamic(() => import("../GameAgeRatings").then((m) => m.GameAgeRatings));
-const GameVersions = dynamic(() => import("../GameVersions").then((m) => m.GameVersions));
+const GameAgeRatings = dynamic(() => import("./GameAgeRatings").then((m) => m.GameAgeRatings));
+const GameVersions = dynamic(() => import("./GameVersions").then((m) => m.GameVersions));
 const GameDlcExtensions = dynamic(() =>
-  import("../GameDlcExtensions").then((m) => m.GameDlcExtensions)
+  import("./GameDlcExtensions").then((m) => m.GameDlcExtensions)
 );
 const GameReviewsTab = dynamic(
   () => import("../reviews/GameReviewsTab").then((m) => m.GameReviewsTab),
   { loading: () => <TabSkeleton lines={4} /> }
 );
-const GamePlaytime = dynamic(() => import("../GamePlaytime").then((m) => m.GamePlaytime), {
+const GamePlaytime = dynamic(() => import("./GamePlaytime").then((m) => m.GamePlaytime), {
   loading: () => <TabSkeleton lines={3} />,
 });
 const GameDetailsTabLanguages = dynamic(() =>

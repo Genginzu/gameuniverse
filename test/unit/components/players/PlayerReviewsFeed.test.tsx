@@ -68,7 +68,7 @@ vi.mock("next-intl", () => {
   };
 });
 
-import { PlayerReviewsFeed } from "@/components/players/PlayerReviewsFeed";
+import { PlayerReviewsFeed } from "@/components/players/reviews/PlayerReviewsFeed";
 
 const SAMPLE_REVIEW = {
   id: "review-1",

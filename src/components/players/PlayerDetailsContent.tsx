@@ -12,7 +12,7 @@ import { PlayerProfileBanner } from "./PlayerProfileBanner";
 import type { PlayerXpStats } from "@/types/achievement";
 import { PlayerProfileTabs, type ProfileTab } from "./PlayerProfileTabs";
 import { PlayerTabContent } from "./PlayerTabContent";
-import { FriendActionButton } from "./FriendActionButton";
+import { FriendActionButton } from "./friends/FriendActionButton";
 import type { PlayerDetails } from "@/types/player";
 
 /**

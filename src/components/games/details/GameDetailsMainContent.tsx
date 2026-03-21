@@ -11,7 +11,7 @@ import dynamic from "next/dynamic";
 
 // Lazy load — section en bas de page, non critique au premier rendu
 const RecommendationSection = dynamic(
-  () => import("@/components/games/RecommendationSection").then((m) => m.RecommendationSection),
+  () => import("@/components/games/details/RecommendationSection").then((m) => m.RecommendationSection),
   { ssr: false }
 );
 

@@ -60,7 +60,7 @@ describe("CommonGamesIndicator Unit Tests", () => {
 
   describe("component export", () => {
     it("should export CommonGamesIndicator as a function", async () => {
-      const mod = await import("@/components/players/CommonGamesIndicator");
+      const mod = await import("@/components/players/friends/CommonGamesIndicator");
       expect(mod.CommonGamesIndicator).toBeDefined();
       expect(typeof mod.CommonGamesIndicator).toBe("function");
     });

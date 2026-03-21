@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { PlayerService } from "@/lib/services/playerService";
 import { PlayerStatsService } from "@/lib/services/playerStatsService";
 import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
-import { YearInReviewContent } from "@/components/players/YearInReviewContent";
+import { YearInReviewContent } from "@/components/players/year-in-review/YearInReviewContent";
 import { getTranslations } from "next-intl/server";
 
 interface YearInReviewPageProps {

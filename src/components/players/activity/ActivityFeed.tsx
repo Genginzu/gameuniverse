@@ -4,10 +4,10 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { usePlayerPosts } from "@/hooks/usePlayerPosts";
-import { SearchBar } from "./SearchBar";
-import { PostComposer } from "./PostComposer";
+import { SearchBar } from "../SearchBar";
+import { PostComposer } from "../posts/PostComposer";
 import { ActivityFeedColumn } from "./ActivityFeedColumn";
-import { PostsFeedColumn } from "./PostsFeedColumn";
+import { PostsFeedColumn } from "../posts/PostsFeedColumn";
 
 interface ActivityFeedProps {
   playerId: string;

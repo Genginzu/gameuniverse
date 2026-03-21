@@ -7,10 +7,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { PlayerLibraryGrid } from "./PlayerLibraryGrid";
 import { StatsDashboardSkeleton } from "@/components/players/stats/StatsDashboardSkeleton";
 import { SettingsSkeleton } from "@/components/settings/SettingsSkeleton";
-import { ReviewsFeedSkeleton } from "./ReviewsFeedSkeleton";
-import { CollectionsFeedSkeleton } from "./CollectionsFeedSkeleton";
+import { ReviewsFeedSkeleton } from "./reviews/ReviewsFeedSkeleton";
+import { CollectionsFeedSkeleton } from "./collections/CollectionsFeedSkeleton";
 // ActivityFeed is the default tab — keep it static to avoid loading delay
-import { ActivityFeed } from "./ActivityFeed";
+import { ActivityFeed } from "./activity/ActivityFeed";
 import type { ProfileTab } from "./PlayerProfileTabs";
 import type { PlayerDetails, PlayerLibraryGame } from "@/types/player";
 
@@ -66,13 +66,13 @@ const LazyStatsDashboard = dynamic(
 );
 
 const LazyPlayerReviewsFeed = dynamic(
-  () => import("./PlayerReviewsFeed").then((m) => ({ default: m.PlayerReviewsFeed })),
+  () => import("./reviews/PlayerReviewsFeed").then((m) => ({ default: m.PlayerReviewsFeed })),
   { loading: () => <ReviewsFeedSkeleton /> }
 );
 
 const LazyPlayerCollectionsFeed = dynamic(
   () =>
-    import("./PlayerCollectionsFeed").then((m) => ({
+    import("./collections/PlayerCollectionsFeed").then((m) => ({
       default: m.PlayerCollectionsFeed,
     })),
   { loading: () => <CollectionsFeedSkeleton /> }
@@ -87,13 +87,13 @@ const LazyAchievementsPageContent = dynamic(
 );
 
 const LazyFriendsTab = dynamic(
-  () => import("./FriendsTab").then((m) => ({ default: m.FriendsTab })),
+  () => import("./friends/FriendsTab").then((m) => ({ default: m.FriendsTab })),
   { loading: () => <FriendsSkeleton /> }
 );
 
 const LazyPersonalRecommendationSection = dynamic(
   () =>
-    import("@/components/games/PersonalRecommendationSection").then((m) => ({
+    import("@/components/games/details/PersonalRecommendationSection").then((m) => ({
       default: m.PersonalRecommendationSection,
     })),
   { loading: () => <RecommendationsSkeleton /> }

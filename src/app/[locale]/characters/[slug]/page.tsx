@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { CharacterDetailsContent } from "@/components/characters/CharacterDetailsContent";
+import { CharacterDetailsContent } from "@/components/characters/details/CharacterDetailsContent";
 import { CharacterService } from "@/lib/services/characterService";
 import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";

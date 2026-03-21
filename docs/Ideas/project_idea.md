@@ -43,7 +43,6 @@ Discussions - Ok
 Ma bibliothèque - OK
 Mes personnages - Ok
 Admin - Ok
-- Refaire une passe pour s'assurer que tout est rangé proprement.
 
 Peux-tu prendre <page> et faire une passe pour regarder ce qui pourrait être
 améliorer en terme de perfromance, de lazy loading et d'affichage skeleton ?

@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
-import { PostComposer } from "../PostComposer";
-import { PostCard } from "../PostCard";
+import { PostComposer } from "../posts/PostComposer";
+import { PostCard } from "../posts/PostCard";
 import { SearchBar } from "../SearchBar";
 import { SkeletonCards, PostsFeedEmpty } from "./PostsFeedParts";
 import type { Post } from "@/types/post";

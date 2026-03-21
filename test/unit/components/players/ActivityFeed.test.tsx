@@ -70,7 +70,7 @@ vi.mock("next-intl", () => {
   };
 });
 
-import { ActivityFeed } from "@/components/players/ActivityFeed";
+import { ActivityFeed } from "@/components/players/activity/ActivityFeed";
 
 const SAMPLE_EVENTS: ActivityEvent[] = [
   {

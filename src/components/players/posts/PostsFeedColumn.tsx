@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { PostCard } from "./PostCard";
-import { SkeletonCards, PostsFeedEmpty } from "./layouts/PostsFeedParts";
+import { SkeletonCards, PostsFeedEmpty } from "../layouts/PostsFeedParts";
 import type { usePlayerPosts } from "@/hooks/usePlayerPosts";
 
 interface PostsFeedColumnProps {

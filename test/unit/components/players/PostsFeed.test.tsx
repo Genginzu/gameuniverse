@@ -64,7 +64,7 @@ vi.mock("@/hooks/use-toast", () => ({
   useToast: () => ({ toast: vi.fn() }),
 }));
 
-import { PostsFeed } from "@/components/players/PostsFeed";
+import { PostsFeed } from "@/components/players/posts/PostsFeed";
 
 function setHookState(overrides: Partial<typeof mockHookReturn>) {
   mockUsePlayerPosts.mockReturnValue({ ...mockHookReturn, ...overrides });

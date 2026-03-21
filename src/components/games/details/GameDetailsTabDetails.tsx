@@ -1,10 +1,10 @@
 "use client";
 
 // Card/CardContent removed — not used in this tab
-import { GamePlaytime } from "../GamePlaytime";
-import { GameAgeRatings } from "../GameAgeRatings";
-import { GameVersions } from "../GameVersions";
-import { GameDlcExtensions } from "../GameDlcExtensions";
+import { GamePlaytime } from "./GamePlaytime";
+import { GameAgeRatings } from "./GameAgeRatings";
+import { GameVersions } from "./GameVersions";
+import { GameDlcExtensions } from "./GameDlcExtensions";
 import { PriceHistoryTab } from "./PriceHistoryTab";
 import { GameDetailsTabLanguages } from "./GameDetailsTabLanguages";
 import { GameDetailsTabMusic } from "./GameDetailsTabMusic";
