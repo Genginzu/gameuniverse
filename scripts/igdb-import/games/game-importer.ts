@@ -3,15 +3,15 @@
  * Adapted from GameImportService but uses script-compatible Supabase client
  */
 
-import { createScriptClient } from "./supabase-client";
-import { IGDBService } from "../../src/lib/services/igdbService";
-import type { IGDBGame } from "../../src/types/igdb";
+import { createScriptClient } from "../shared/supabase-client";
+import { IGDBService } from "../../../src/lib/services/igdbService";
+import type { IGDBGame } from "../../../src/types/igdb";
 import {
   collectDlcExtensionIds,
   transformIgdbToDlcExtensionRow,
-} from "../../src/lib/utils/dlcExtensionUtils";
-import { IGDB_RATING_CATEGORIES, IGDB_ALL_RATINGS } from "../../src/types/igdb"; // eslint-disable-line no-duplicate-imports
-import { extractColorsFromCover } from "./color-extractor";
+} from "../../../src/lib/utils/dlcExtensionUtils";
+import { IGDB_RATING_CATEGORIES, IGDB_ALL_RATINGS } from "../../../src/types/igdb"; // eslint-disable-line no-duplicate-imports
+import { extractColorsFromCover } from "../shared/color-extractor";
 import { syncExistingGame } from "./game-sync";
 import { ensurePlatforms, linkPlatforms } from "./platform-importer";
 import { transformIgdbVideos } from "./video-transform";

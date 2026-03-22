@@ -6,7 +6,7 @@
 import { IGDBService } from "./igdbService";
 import { IGDB_RATING_CATEGORIES, IGDB_ALL_RATINGS, type IGDBGame } from "@/types/igdb";
 import type { SyncSupabaseClient } from "./igdb-sync";
-import { transformIgdbVideos } from "../../../scripts/igdb-import/video-transform";
+import { transformIgdbVideos } from "../../../scripts/igdb-import/games/video-transform";
 
 /** Supprime toutes les lignes d'une table pour un game_id donné */
 async function deleteByGameId(

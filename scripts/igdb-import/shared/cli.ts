@@ -11,7 +11,7 @@ IGDB Bulk Import Script
 Imports games from IGDB API into Supabase database, filtered by release date.
 
 Usage:
-  bun run scripts/igdb-import/index.ts --from=YYYY-MM-DD [options]
+  bun run scripts/igdb-import/games/index.ts --from=YYYY-MM-DD [options]
 
 Required:
   --from=DATE   Start date for game release (YYYY-MM-DD format)
@@ -25,9 +25,9 @@ Options:
   --help        Show this help message
 
 Examples:
-  bun run scripts/igdb-import/index.ts --from=2024-01-01 --dry-run --limit=10
-  bun run scripts/igdb-import/index.ts --from=2023-01-01 --to=2023-12-31 --verbose
-  bun run scripts/igdb-import/index.ts --from=2020-01-01 --offset=500 --limit=100
+  bun run scripts/igdb-import/games/index.ts --from=2024-01-01 --dry-run --limit=10
+  bun run scripts/igdb-import/games/index.ts --from=2023-01-01 --to=2023-12-31 --verbose
+  bun run scripts/igdb-import/games/index.ts --from=2020-01-01 --offset=500 --limit=100
 `;
 
 /**

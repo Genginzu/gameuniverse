@@ -9,4 +9,4 @@
 export {
   extractColorsFromCover,
   type ExtractedGameColors,
-} from "../../src/lib/utils/color-extraction";
+} from "../../../src/lib/utils/color-extraction";

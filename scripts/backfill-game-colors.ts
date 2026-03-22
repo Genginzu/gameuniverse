@@ -13,7 +13,7 @@
  *   --force     Re-extract colors even if already set
  */
 
-import { createScriptClient } from "./igdb-import/supabase-client";
+import { createScriptClient } from "./igdb-import/shared/supabase-client";
 import { extractColorsFromCover } from "../src/lib/utils/color-extraction";
 
 const args = process.argv.slice(2);

@@ -5,7 +5,7 @@
  * Imports games from the last 10 years from IGDB API into Supabase database.
  *
  * Usage:
- *   bun run scripts/igdb-import/index.ts [options]
+ *   bun run scripts/igdb-import/games/index.ts [options]
  *
  * Options:
  *   --dry-run     Simulate import without writing to database
@@ -15,8 +15,8 @@
  *   --help        Show this help message
  *
  * Examples:
- *   bun run scripts/igdb-import/index.ts --dry-run --limit=10
- *   bun run scripts/igdb-import/index.ts --offset=500 --limit=100 --verbose
+ *   bun run scripts/igdb-import/games/index.ts --dry-run --limit=10
+ *   bun run scripts/igdb-import/games/index.ts --offset=500 --limit=100 --verbose
  *
  * Environment Variables:
  *   IGDB_CLIENT_ID      - Twitch/IGDB Client ID (required)
@@ -25,7 +25,7 @@
  * Requirements: 6.1, 6.5
  */
 
-import { parseArgs, validateCredentials } from "./cli";
+import { parseArgs, validateCredentials } from "../shared/cli";
 import { ImportOrchestrator } from "./orchestrator";
 
 /**
@@ -88,17 +88,17 @@ export async function main(): Promise<void> {
 // Run main if this is the entry point
 const isMainModule =
   import.meta.url === `file://${process.argv[1]}` ||
-  process.argv[1]?.endsWith("igdb-import/index.ts") ||
-  process.argv[1]?.endsWith("igdb-import\\index.ts");
+  process.argv[1]?.endsWith("igdb-import/games/index.ts") ||
+  process.argv[1]?.endsWith("igdb-import\\games\\index.ts");
 
 if (isMainModule) {
   main();
 }
 
 // Re-export all modules for external use
-export * from "./types";
-export * from "./cli";
-export * from "./rate-limiter";
-export * from "./retry";
-export * from "./progress-tracker";
+export * from "../shared/types";
+export * from "../shared/cli";
+export * from "../shared/rate-limiter";
+export * from "../shared/retry";
+export * from "../shared/progress-tracker";
 export * from "./orchestrator";

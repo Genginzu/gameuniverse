@@ -7,6 +7,7 @@ import {
   IGDBAgeRating,
   IGDBGameVersion,
   IGDBDlcExtension,
+  IGDBCharacter,
 } from "@/types/igdb";
 import { logger } from "@/lib/logger";
 
@@ -419,6 +420,59 @@ export class IGDBService {
    */
   static clearTokenCache(): void {
     this.tokenCache = null;
+  }
+
+  /**
+   * Fetch a batch of characters from IGDB with expanded sub-resources.
+   * Uses character_gender and character_species (non-deprecated fields).
+   */
+  static async getCharactersBatch(offset: number, limit: number): Promise<IGDBCharacter[]> {
+    const query = `
+      fields name, slug, description, country_name, url, akas,
+             character_gender.name,
+             character_species.name,
+             mug_shot.image_id,
+             games;
+      sort id asc;
+      limit ${limit};
+      offset ${offset};
+    `;
+
+    try {
+      const response = await this.igdbFetch("characters", query);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        logger.error("IGDB getCharactersBatch failed", {
+          status: response.status,
+          error: errorText,
+        });
+        return [];
+      }
+
+      return response.json();
+    } catch (error) {
+      logger.error("Error fetching characters from IGDB", { error });
+      return [];
+    }
+  }
+
+  /**
+   * Fetch the total count of characters in IGDB.
+   */
+  static async getCharactersCount(): Promise<number> {
+    try {
+      const response = await this.igdbFetch("characters/count", "fields id;");
+
+      if (!response.ok) {
+        return 0;
+      }
+
+      const data = (await response.json()) as { count: number };
+      return data.count;
+    } catch {
+      return 0;
+    }
   }
 
   /**

@@ -3,8 +3,8 @@
  * Handles creating/upserting platforms and linking them to games.
  */
 
-import { createScriptClient } from "./supabase-client";
-import type { IGDBGame } from "../../src/types/igdb";
+import { createScriptClient } from "../shared/supabase-client";
+import type { IGDBGame } from "../../../src/types/igdb";
 
 /**
  * Generates a URL-friendly slug from a platform name.

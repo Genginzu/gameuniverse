@@ -134,6 +134,27 @@ export interface IGDBGame {
   videos?: Array<{ video_id: string; name: string }>;
 }
 
+/**
+ * IGDB Character
+ * See: https://api-docs.igdb.com/#character
+ */
+export interface IGDBCharacter {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string;
+  /** Non-deprecated — Reference ID expanded to { id, name } */
+  character_gender?: { id: number; name: string };
+  /** Non-deprecated — Reference ID expanded to { id, name } */
+  character_species?: { id: number; name: string };
+  /** Reference ID expanded to { image_id } via character_mug_shots */
+  mug_shot?: { image_id: string };
+  games?: number[];
+  akas?: string[];
+  url?: string;
+  country_name?: string;
+}
+
 export interface IGDBSearchResult {
   id: number;
   name: string;

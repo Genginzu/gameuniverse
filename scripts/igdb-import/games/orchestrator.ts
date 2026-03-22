@@ -3,13 +3,13 @@
  * Requirements: 2.1, 2.2, 2.3, 3.1-3.8, 4.1, 4.3, 6.2
  */
 
-import { IGDBService } from "../../src/lib/services/igdbService";
+import { IGDBService } from "../../../src/lib/services/igdbService";
 import { importGameFromIGDB } from "./game-importer";
-import type { IGDBGame } from "../../src/types/igdb";
-import type { CLIOptions, ImportStats } from "./types";
-import { RateLimiter } from "./rate-limiter";
-import { withRetry } from "./retry";
-import { ProgressTracker } from "./progress-tracker";
+import type { IGDBGame } from "../../../src/types/igdb";
+import type { CLIOptions, ImportStats } from "../shared/types";
+import { RateLimiter } from "../shared/rate-limiter";
+import { withRetry } from "../shared/retry";
+import { ProgressTracker } from "../shared/progress-tracker";
 
 /**
  * Orchestrates the bulk import of games from IGDB to Supabase.

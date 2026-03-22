@@ -3,10 +3,10 @@
  * Respecte les overrides manuels enregistrés dans game_field_overrides.
  */
 
-import { createScriptClient } from "./supabase-client";
-import { syncAllGameFields, type SyncSupabaseClient } from "../../src/lib/services/igdb-sync";
-import { IGDBService } from "../../src/lib/services/igdbService";
-import type { TrackableField } from "../../src/types/admin-games";
+import { createScriptClient } from "../shared/supabase-client";
+import { syncAllGameFields, type SyncSupabaseClient } from "../../../src/lib/services/igdb-sync";
+import { IGDBService } from "../../../src/lib/services/igdbService";
+import type { TrackableField } from "../../../src/types/admin-games";
 import type { ImportResult } from "./game-importer";
 import { syncGamePlatforms } from "./platform-importer";
 
