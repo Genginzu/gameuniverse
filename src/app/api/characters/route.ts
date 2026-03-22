@@ -7,6 +7,7 @@ import {
   handleApiError,
 } from "@/lib/api-utils";
 import type { CharacterRowWithRelations } from "@/types/supabase-queries";
+import { pickTranslation } from "@/lib/utils/pickTranslation";
 import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
@@ -23,7 +24,8 @@ export async function GET(request: NextRequest) {
     // Calculate offset for pagination
     const offset = calculateOffset(page, limit);
 
-    // Build the base query with joins for translations and games
+    // Left join on character_translations — fallback to "en" or first available
+    // when the requested locale is missing for a character.
     let query = supabase
       .from("characters")
       .select(
@@ -33,7 +35,8 @@ export async function GET(request: NextRequest) {
         main_image,
         background_color,
         created_at,
-        character_translations!inner(
+        character_translations(
+          language_code,
           name,
           role,
           description
@@ -50,7 +53,6 @@ export async function GET(request: NextRequest) {
         )
       `
       )
-      .eq("character_translations.language_code", locale)
       .eq("character_games.games.game_translations.language_code", locale);
 
     // Add search filter if provided
@@ -149,14 +151,12 @@ export async function GET(request: NextRequest) {
       query = query.in("id", filteredCharacterIds);
     }
 
-    // Get total count for pagination (separate query for performance)
-    let countQuery = supabase
-      .from("characters")
-      .select("id, character_translations!inner(language_code, name, role)", {
-        count: "exact",
-        head: true,
-      })
-      .eq("character_translations.language_code", locale);
+    // Count all characters (no locale filter — characters without the requested
+    // locale translation are still shown via fallback)
+    let countQuery = supabase.from("characters").select("id", {
+      count: "exact",
+      head: true,
+    });
 
     if (search.trim()) {
       countQuery = countQuery.ilike("character_translations.name", `%${search.trim()}%`);
@@ -189,7 +189,7 @@ export async function GET(request: NextRequest) {
 
     // Transform the data to match the expected format
     const transformedCharacters = typedCharacters.map((character) => {
-      const translation = character.character_translations?.[0];
+      const translation = pickTranslation(character.character_translations, locale);
 
       // Get primary game
       const primaryGameRelation = character.character_games?.find((cg) => cg.is_primary === true);

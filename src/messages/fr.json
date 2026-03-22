@@ -372,7 +372,8 @@
     "pagination": {
       "page": "Page",
       "of": "sur",
-      "results": "{count} résultat(s)",
+      "result": "résultat",
+      "results": "résultats",
       "goToPage": "Aller à la page:",
       "first": "Premier",
       "previous": "Précédent",

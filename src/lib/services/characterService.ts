@@ -8,10 +8,12 @@ import {
 import type { PlatformSummary } from "@/types/platform";
 import { createServerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
+import { pickTranslation } from "@/lib/utils/pickTranslation";
 import { BaseService, FetchOptions, PaginatedResponse, EntityMetadata } from "./baseService";
 
 // Type definitions for Supabase query results
 interface CharacterTranslationRow {
+  language_code: string;
   name: string;
   role: string | null;
   description: string | null;
@@ -180,17 +182,17 @@ export class CharacterService {
     const supabase = await createServerClient();
     const offset = (page - 1) * limit;
 
-    // Build the base query with joins for translations and games
-    let query = supabase
-      .from("characters")
-      .select(
-        `
+    // Left join on character_translations (no !inner) so characters are returned
+    // even when the requested locale is missing — fallback handled in JS.
+    let query = supabase.from("characters").select(
+      `
         id,
         slug,
         main_image,
         background_color,
         created_at,
-        character_translations!inner(
+        character_translations(
+          language_code,
           name,
           role,
           description
@@ -206,33 +208,25 @@ export class CharacterService {
           )
         )
       `
-      )
-      .eq("character_translations.language_code", locale);
+    );
 
-    // Add search filter if provided (case-insensitive)
-    if (search.trim()) {
-      query = query.ilike("character_translations.name", `%${search.trim()}%`);
-    }
-
-    // Add role filter if provided
-    if (roles.length > 0) {
-      query = query.in("character_translations.role", roles);
-    }
-
-    // Get total count for pagination (separate query for performance)
+    // Count all characters that have at least one translation
     let countQuery = supabase
       .from("characters")
-      .select("id, character_translations!inner(language_code, name, role)", {
+      .select("id, character_translations(language_code, name, role)", {
         count: "exact",
         head: true,
-      })
-      .eq("character_translations.language_code", locale);
+      });
 
+    // Search and role filters need to work across all translations,
+    // so we apply them without restricting to a single language_code.
     if (search.trim()) {
+      query = query.ilike("character_translations.name", `%${search.trim()}%`);
       countQuery = countQuery.ilike("character_translations.name", `%${search.trim()}%`);
     }
 
     if (roles.length > 0) {
+      query = query.in("character_translations.role", roles);
       countQuery = countQuery.in("character_translations.role", roles);
     }
 
@@ -245,7 +239,6 @@ export class CharacterService {
     }
 
     // Apply pagination and execute main query
-    // Tri global par nom via la table jointe character_translations (inner join)
     const { data: characters, error } = await query
       .order("name", { referencedTable: "character_translations", ascending: true })
       .range(offset, offset + limit - 1);
@@ -269,7 +262,7 @@ export class CharacterService {
 
     // Transform the data to match the expected CharacterSummary format
     const transformedCharacters: CharacterSummary[] = filteredCharacters.map((character) => {
-      const translation = character.character_translations?.[0];
+      const translation = pickTranslation(character.character_translations, locale);
 
       // Get primary game title
       const primaryGameRelation = character.character_games?.find((cg) => cg.is_primary === true);
@@ -323,7 +316,8 @@ export class CharacterService {
   ): Promise<CharacterDetails | null> {
     const supabase = await createServerClient();
 
-    // Fetch character details by slug with all related data
+    // Left join on character_translations — fallback to "en" or first available
+    // when the requested locale is missing for this character.
     const { data: character, error } = await supabase
       .from("characters")
       .select(
@@ -335,7 +329,8 @@ export class CharacterService {
         background_color,
         created_at,
         updated_at,
-        character_translations!inner(
+        character_translations(
+          language_code,
           name,
           role,
           description,
@@ -387,6 +382,7 @@ export class CharacterService {
             slug,
             main_image,
             character_translations(
+              language_code,
               name,
               role
             )
@@ -394,7 +390,6 @@ export class CharacterService {
         )
       `
       )
-      .eq("character_translations.language_code", locale)
       .eq("slug", slug)
       .single();
 
@@ -412,7 +407,7 @@ export class CharacterService {
     }
 
     const typedCharacter = character as unknown as CharacterDetailsRow;
-    const translation = typedCharacter.character_translations?.[0];
+    const translation = pickTranslation(typedCharacter.character_translations, locale);
 
     // Process games with locale-based field selection
     const gamesRaw =
@@ -497,7 +492,7 @@ export class CharacterService {
         const related = rel.related_character as RelatedCharacterRow | null;
         if (!related) return null;
 
-        const relatedTranslation = related.character_translations?.[0];
+        const relatedTranslation = pickTranslation(related.character_translations, locale);
         return {
           id: rel.id,
           relatedCharacter: {

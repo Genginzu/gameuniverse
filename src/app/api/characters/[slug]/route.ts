@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { pickTranslation } from "@/lib/utils/pickTranslation";
 import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
@@ -14,7 +15,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     const supabase = await createRouteHandlerClient();
 
-    // Fetch character details by slug with all related data
+    // Left join on character_translations — fallback handled via pickTranslation
     const { data: character, error } = await supabase
       .from("characters")
       .select(
@@ -26,7 +27,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         background_color,
         created_at,
         updated_at,
-        character_translations!inner(
+        character_translations(
+          language_code,
           name,
           role,
           description,
@@ -71,7 +73,6 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         )
       `
       )
-      .eq("character_translations.language_code", locale)
       .eq("slug", characterSlug)
       .single();
 
@@ -97,6 +98,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       created_at: string | null;
       updated_at: string | null;
       character_translations: Array<{
+        language_code: string;
         name: string;
         role: string | null;
         description: string | null;
@@ -196,9 +198,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           const related = relatedCharacters?.find((c) => c.id === rel.related_character_id);
           if (!related) return null;
 
-          const relatedTranslation =
-            related.character_translations?.find((t) => t.language_code === locale) ||
-            related.character_translations?.[0];
+          const relatedTranslation = pickTranslation(related.character_translations, locale);
 
           return {
             id: rel.id,
@@ -217,7 +217,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     // Transform the data to match the expected format
-    const translation = characterData.character_translations?.[0];
+    const translation = pickTranslation(characterData.character_translations, locale);
 
     // Process games
     const games =

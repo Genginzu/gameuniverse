@@ -372,7 +372,8 @@
     "pagination": {
       "page": "Page",
       "of": "of",
-      "results": "{count} result(s)",
+      "result": "result",
+      "results": "results",
       "goToPage": "Go to page:",
       "first": "First",
       "previous": "Previous",
