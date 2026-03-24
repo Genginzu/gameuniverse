@@ -5,7 +5,7 @@
 
 export interface IGDBVideo {
   video_id: string;
-  name: string;
+  name?: string;
 }
 
 export interface GameVideoRow {
@@ -23,13 +23,15 @@ export interface GameVideoRow {
  * Pure function — no side effects, no DB calls.
  */
 export function transformIgdbVideos(videos: IGDBVideo[], gameId: string): GameVideoRow[] {
-  return videos.map((video, index) => ({
-    game_id: gameId,
-    url: `https://www.youtube.com/watch?v=${video.video_id}`,
-    thumbnail_url: `https://img.youtube.com/vi/${video.video_id}/maxresdefault.jpg`,
-    title: video.name,
-    video_type: "trailer",
-    display_order: index,
-    is_featured: index === 0,
-  }));
+  return videos
+    .filter((video) => video.video_id)
+    .map((video, index) => ({
+      game_id: gameId,
+      url: `https://www.youtube.com/watch?v=${video.video_id}`,
+      thumbnail_url: `https://img.youtube.com/vi/${video.video_id}/maxresdefault.jpg`,
+      title: video.name || "Trailer",
+      video_type: "trailer",
+      display_order: index,
+      is_featured: index === 0,
+    }));
 }

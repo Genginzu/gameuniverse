@@ -1,7 +1,10 @@
 // Feature: igdb-video-sync, Property 1: Video transformation correctness
 import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
-import { transformIgdbVideos, type IGDBVideo } from "../../../scripts/igdb-import/video-transform";
+import {
+  transformIgdbVideos,
+  type IGDBVideo,
+} from "../../../scripts/igdb-import/games/video-transform";
 
 // --- Smart generators ---
 
@@ -21,10 +24,10 @@ const videoIdArb = fc
 /** Non-empty video name */
 const videoNameArb = fc.string({ minLength: 1, maxLength: 200 });
 
-/** Single IGDB video */
+/** Single IGDB video — name is optional to match real IGDB API behavior */
 const igdbVideoArb: fc.Arbitrary<IGDBVideo> = fc.record({
   video_id: videoIdArb,
-  name: videoNameArb,
+  name: fc.option(videoNameArb, { nil: undefined }),
 });
 
 /** Array of IGDB videos (0–20 items) */
@@ -71,12 +74,12 @@ describe("Feature: igdb-video-sync, Property 1: Video transformation correctness
     );
   });
 
-  it("each row title equals the corresponding input name", () => {
+  it("each row title equals the corresponding input name (or 'Trailer' fallback)", () => {
     fc.assert(
       fc.property(igdbVideosArb, gameIdArb, (videos, gameId) => {
         const result = transformIgdbVideos(videos, gameId);
-        for (let i = 0; i < videos.length; i++) {
-          expect(result[i].title).toBe(videos[i].name);
+        for (let i = 0; i < result.length; i++) {
+          expect(result[i].title).toBe(videos[i].name || "Trailer");
         }
       }),
       { numRuns: 100 }
@@ -170,6 +173,27 @@ describe("Feature: igdb-video-sync, Property 3: Transformation length preservati
       fc.property(igdbVideosArb, gameIdArb, (videos, gameId) => {
         const result = transformIgdbVideos(videos, gameId);
         expect(result).toHaveLength(videos.length);
+      }),
+      { numRuns: 100 }
+    );
+  });
+});
+
+/**
+ * Feature: igdb-video-sync
+ * Property 4: Missing name fallback
+ * Videos without a name should get "Trailer" as title (never null/undefined)
+ */
+describe("Feature: igdb-video-sync, Property 4: Missing name fallback", () => {
+  it("title is never null or undefined", () => {
+    fc.assert(
+      fc.property(igdbVideosArb, gameIdArb, (videos, gameId) => {
+        const result = transformIgdbVideos(videos, gameId);
+        for (const row of result) {
+          expect(row.title).toBeDefined();
+          expect(row.title).not.toBeNull();
+          expect(row.title.length).toBeGreaterThan(0);
+        }
       }),
       { numRuns: 100 }
     );

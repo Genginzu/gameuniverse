@@ -131,7 +131,7 @@ export interface IGDBGame {
   expansions?: number[]; // IDs des expansions associées
   bundles?: number[]; // IDs des bundles associés
   platforms?: Array<{ id: number; name: string }>;
-  videos?: Array<{ video_id: string; name: string }>;
+  videos?: Array<{ video_id: string; name?: string }>;
 }
 
 /**

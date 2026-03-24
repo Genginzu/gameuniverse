@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { transformIgdbVideos, type IGDBVideo } from "../../../scripts/igdb-import/video-transform";
+import {
+  transformIgdbVideos,
+  type IGDBVideo,
+} from "../../../scripts/igdb-import/games/video-transform";
 
 /**
  * Unit tests for transformIgdbVideos — pure transformation function.
@@ -89,5 +92,29 @@ describe("transformIgdbVideos", () => {
     const videos: IGDBVideo[] = [{ video_id: "abc123", name: "トレーラー — Bande-annonce #1" }];
     const result = transformIgdbVideos(videos, GAME_ID);
     expect(result[0].title).toBe("トレーラー — Bande-annonce #1");
+  });
+
+  it("falls back to 'Trailer' when name is undefined", () => {
+    const videos: IGDBVideo[] = [{ video_id: "abc123" }];
+    const result = transformIgdbVideos(videos, GAME_ID);
+    expect(result[0].title).toBe("Trailer");
+  });
+
+  it("falls back to 'Trailer' when name is empty string", () => {
+    const videos: IGDBVideo[] = [{ video_id: "abc123", name: "" }];
+    const result = transformIgdbVideos(videos, GAME_ID);
+    expect(result[0].title).toBe("Trailer");
+  });
+
+  it("filters out videos without video_id", () => {
+    const videos = [
+      { video_id: "valid1", name: "Good" },
+      { video_id: "", name: "No ID" },
+      { video_id: "valid2", name: "Also Good" },
+    ] as IGDBVideo[];
+    const result = transformIgdbVideos(videos, GAME_ID);
+    expect(result).toHaveLength(2);
+    expect(result[0].title).toBe("Good");
+    expect(result[1].title).toBe("Also Good");
   });
 });

@@ -37,7 +37,10 @@ export async function fetchGender(
       .eq("id", genderId)
       .single();
     if (!data) return undefined;
-    const gt = pickTranslation(data.gender_translations, locale);
+    const gt = pickTranslation(
+      data.gender_translations as { language_code: string; name: string }[],
+      locale
+    );
     return gt ? { id: data.id, slug: data.slug, name: gt.name } : undefined;
   } catch {
     return undefined;
@@ -58,7 +61,10 @@ export async function fetchSpecies(
       .eq("id", speciesId)
       .single();
     if (!data) return undefined;
-    const st = pickTranslation(data.species_translations, locale);
+    const st = pickTranslation(
+      data.species_translations as { language_code: string; name: string }[],
+      locale
+    );
     return st ? { id: data.id, slug: data.slug, name: st.name } : undefined;
   } catch {
     return undefined;
@@ -98,7 +104,14 @@ export async function fetchRelationships(
           (c: { id: string }) => c.id === rel.related_character_id
         );
         if (!related) return null;
-        const t = pickTranslation(related.character_translations, locale);
+        const t = pickTranslation(
+          related.character_translations as {
+            language_code: string;
+            name: string;
+            role: string | null;
+          }[],
+          locale
+        );
         return {
           id: rel.id,
           relatedCharacter: {
