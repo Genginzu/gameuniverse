@@ -28,22 +28,10 @@
 - Elaborer le magasin
 - Elaborer l'esport
 - Elaborer le training des joueurs
-- Mettre en place un système de paiement pour débloquer des avatars et des
-  bannières et en débloquer avec des succès
+- Mettre en place un système de paiement pour débloquer des avatars et des bannières et en débloquer avec des succès
+- Mettre la traduction automatique en place
 
 # Corrections
 
-- Refaire une passe pour optimiser les requêtes et faire du lazy loading
-Page de jeu - Ok
-Page de personnage - Ok
-Listing jeu - Ok
-Listing personnage - Ok
-Profil - Ok
-Discussions - Ok
-Ma bibliothèque - OK
-Mes personnages - Ok
-Admin - Ok
-
-- Il faut refaire une passe sur les personnages pour bien gérer l'importe en masse et rajouter le gender et le species
 
 Peux-tu prendre <page> et faire une passe pour regarder ce qui pourrait être améliorer en terme de perfromance, de lazy loading et d'affichage skeleton ? Dans un premier temps fait moi un etat des lieux détaillés suivi d'un tableau recap et je te confirmerais les points à mettre en place par la suite. Il se peut que rien ne soit à faire dans ce cas ne pas inventer quoi que ce soit ou ne te force pas à trouver des points à améliorer.

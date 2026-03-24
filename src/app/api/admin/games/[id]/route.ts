@@ -16,6 +16,7 @@ import {
 } from "@/lib/utils/field-tracking";
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
 import { logger } from "@/lib/logger";
+import { invalidateForDeletedGame } from "@/lib/services/recommendation/cache";
 
 // Types for Supabase query results
 interface AdminGameGenre {
@@ -902,6 +903,9 @@ export async function DELETE(
     // Send real-time notification for successful deletion
     await notifyGameDeleted(gameId, existingGame.slug);
     await invalidateGameCache(gameId);
+
+    // Purge deleted game from recommendation cache
+    invalidateForDeletedGame(gameId);
 
     // Enhanced response with deletion summary
     return NextResponse.json({

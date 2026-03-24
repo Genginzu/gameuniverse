@@ -3,8 +3,10 @@
  *
  * Used by the recommendation service to avoid recomputing scores
  * for the same game/user within a short time window.
- * TTL-based invalidation is sufficient for V1 — no active invalidation needed.
+ * Active invalidation is triggered when a game is deleted.
  */
+
+import type { GameRecommendation } from "@/types/recommendation";
 
 interface CacheEntry<T> {
   data: T;
@@ -42,4 +44,32 @@ export function cacheInvalidate(key: string): void {
 /** Clear the entire cache (useful for testing) */
 export function cacheClear(): void {
   cache.clear();
+}
+
+/**
+ * Purge a deleted game from all cached recommendation lists.
+ *
+ * - Removes the `game:{id}` entry (recommendations *for* that game).
+ * - Filters the game out of every `personal:*` and other `game:*` list
+ *   so users never see a stale recommendation pointing to a deleted game.
+ */
+export function invalidateForDeletedGame(gameId: string): void {
+  // Direct entry for this game
+  cache.delete(`game:${gameId}`);
+
+  // Scan all remaining entries and filter out the deleted game
+  for (const [key, entry] of cache) {
+    if (!Array.isArray(entry.data)) continue;
+
+    const filtered = (entry.data as GameRecommendation[]).filter((rec) => rec.id !== gameId);
+
+    // If nothing was removed, skip the write
+    if (filtered.length === (entry.data as GameRecommendation[]).length) continue;
+
+    if (filtered.length === 0) {
+      cache.delete(key);
+    } else {
+      entry.data = filtered;
+    }
+  }
 }

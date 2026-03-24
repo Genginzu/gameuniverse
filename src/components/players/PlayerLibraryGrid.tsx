@@ -48,12 +48,16 @@ export function PlayerLibraryGrid({ games, locale }: PlayerLibraryGridProps) {
   // Empty state - Requirements 6.3
   if (sortedGames.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-2xl border border-slate-700/50 bg-slate-800/50 py-16 text-center">
-        <div className="mb-4 rounded-full bg-slate-700/50 p-4">
-          <Icon icon="lucide:gamepad-2" className="h-12 w-12 text-slate-400" />
+      <div className="flex flex-col items-center justify-center rounded-2xl border border-white/20 bg-white/40 py-16 text-center shadow-lg shadow-black/5 backdrop-blur-xl transition-all duration-300 dark:border-slate-700/50 dark:bg-slate-800/50 dark:shadow-black/20">
+        <div className="mb-6 rounded-full bg-linear-to-br from-cyan-100 to-violet-100 p-6 dark:from-cyan-900/30 dark:to-violet-900/30">
+          <Icon icon="lucide:gamepad-2" className="h-12 w-12 text-cyan-500 dark:text-cyan-400" />
         </div>
-        <h3 className="mb-2 text-lg font-semibold text-white">{t("library.empty")}</h3>
-        <p className="max-w-md text-sm text-slate-400">{t("library.emptyDescription")}</p>
+        <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
+          {t("library.empty")}
+        </h3>
+        <p className="max-w-md px-4 text-sm text-gray-500 dark:text-slate-400">
+          {t("library.emptyDescription")}
+        </p>
       </div>
     );
   }

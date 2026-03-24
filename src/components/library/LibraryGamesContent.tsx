@@ -12,7 +12,6 @@ import { GridSkeleton } from "@/components/shared/GridSkeleton";
 import { gameSkeletonConfig } from "@/components/shared/EntitySkeleton";
 import { LibraryPageSkeleton } from "./LibraryPageSkeleton";
 import { LibraryStatsCards } from "./LibraryStatsCards";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useLibraryGames } from "@/hooks/useLibraryGames";
 
@@ -148,30 +147,34 @@ function LibraryEmptyState({
   const t = useTranslations("userLibrary");
 
   return (
-    <Card className="bg-white dark:bg-gray-800">
-      <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-        <div className="mb-4 rounded-full bg-gray-100 p-4 sm:p-6 dark:bg-gray-700">
-          <Icon icon="fa:gamepad" className="h-8 w-8 text-gray-400 sm:h-12 sm:w-12" />
-        </div>
-        <h3 className="mb-2 text-base font-medium text-gray-900 sm:text-lg dark:text-white">
-          {hasFilters ? t("empty.noGamesFound") : t("empty.title")}
-        </h3>
-        <p className="mb-6 max-w-md text-sm text-gray-500 sm:text-base dark:text-gray-400">
-          {hasFilters ? t("empty.modifySearch") : t("empty.description")}
-        </p>
-        {hasFilters ? (
-          <Button onClick={onClearFilters} className="bg-blue-600 hover:bg-blue-700">
-            {t("empty.clearFilters")}
-          </Button>
-        ) : (
-          <Button asChild className="bg-blue-600 hover:bg-blue-700">
-            <Link href="/games">
-              <Icon icon="fa:plus" className="mr-2 h-4 w-4" />
-              {t("empty.exploreGames")}
-            </Link>
-          </Button>
-        )}
-      </CardContent>
-    </Card>
+    <div className="flex flex-col items-center justify-center rounded-2xl border border-white/20 bg-white/40 py-16 text-center shadow-lg shadow-black/5 backdrop-blur-xl transition-all duration-300 dark:border-slate-700/50 dark:bg-slate-800/50 dark:shadow-black/20">
+      <div className="mb-6 rounded-full bg-linear-to-br from-cyan-100 to-violet-100 p-6 dark:from-cyan-900/30 dark:to-violet-900/30">
+        <Icon icon="lucide:gamepad-2" className="h-12 w-12 text-cyan-500 dark:text-cyan-400" />
+      </div>
+      <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
+        {hasFilters ? t("empty.noGamesFound") : t("empty.title")}
+      </h3>
+      <p className="mb-6 max-w-md px-4 text-sm text-gray-500 dark:text-slate-400">
+        {hasFilters ? t("empty.modifySearch") : t("empty.description")}
+      </p>
+      {hasFilters ? (
+        <Button
+          onClick={onClearFilters}
+          className="bg-linear-to-r from-cyan-500 to-violet-500 text-white hover:from-cyan-600 hover:to-violet-600"
+        >
+          {t("empty.clearFilters")}
+        </Button>
+      ) : (
+        <Button
+          asChild
+          className="bg-linear-to-r from-cyan-500 to-violet-500 text-white hover:from-cyan-600 hover:to-violet-600"
+        >
+          <Link href="/games">
+            <Icon icon="lucide:plus" className="mr-2 h-4 w-4" />
+            {t("empty.exploreGames")}
+          </Link>
+        </Button>
+      )}
+    </div>
   );
 }
