@@ -32,6 +32,8 @@
 - Mettre la traduction automatique en place
 
 # Corrections
-
+- Faire un footer
+- Faire la page d'accueil
+- Corriger le mode sombre
 
 Peux-tu prendre <page> et faire une passe pour regarder ce qui pourrait être améliorer en terme de perfromance, de lazy loading et d'affichage skeleton ? Dans un premier temps fait moi un etat des lieux détaillés suivi d'un tableau recap et je te confirmerais les points à mettre en place par la suite. Il se peut que rien ne soit à faire dans ce cas ne pas inventer quoi que ce soit ou ne te force pas à trouver des points à améliorer.

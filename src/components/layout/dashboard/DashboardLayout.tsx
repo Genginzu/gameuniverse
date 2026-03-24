@@ -12,6 +12,7 @@ import dynamic from "next/dynamic";
 
 const SearchOverlay = dynamic(() => import("./SearchOverlay"), { ssr: false });
 import { PageBanner } from "@/components/shared/PageBanner";
+import Footer from "@/components/shared/Footer";
 import { DashboardContext } from "@/hooks/useDashboard";
 
 type DashboardLayoutProps = {
@@ -56,7 +57,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         <SearchOverlay isOpen={searchOpen} onClose={closeSearch} />
         <main className="animate-page-enter flex-1 overflow-y-auto">
           <PageBanner />
-          {children}
+          <div className="flex min-h-full flex-col">
+            <div className="flex-1">{children}</div>
+            <Footer />
+          </div>
         </main>
       </div>
     </div>

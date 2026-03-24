@@ -13,7 +13,8 @@
     "settings": "Settings",
     "lightMode": "Light mode",
     "darkMode": "Dark mode",
-    "explore": "Explore"
+    "explore": "Explore",
+    "discussions": "Discussions"
   },
   "landing": {
     "title": "Discover the gaming universe",
@@ -968,7 +969,11 @@
   },
   "footer": {
     "tagline": "The complete platform to explore the gaming universe",
-    "copyright": "© 2024 Game Universe. All rights reserved."
+    "copyright": "© {year} Game Universe. All rights reserved.",
+    "explore": "Explore",
+    "community": "Community",
+    "madeWith": "Made with",
+    "forGamers": "for gamers"
   },
   "errors": {
     "unexpectedError": "An unexpected error occurred",

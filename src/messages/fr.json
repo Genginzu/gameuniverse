@@ -13,7 +13,8 @@
     "settings": "Paramètres",
     "lightMode": "Mode clair",
     "darkMode": "Mode sombre",
-    "explore": "Explorer"
+    "explore": "Explorer",
+    "discussions": "Discussions"
   },
   "landing": {
     "title": "Découvrez l'univers du jeu vidéo",
@@ -968,7 +969,11 @@
   },
   "footer": {
     "tagline": "La plateforme complète pour explorer l'univers du jeu vidéo",
-    "copyright": "© 2024 Game Universe. Tous droits réservés."
+    "copyright": "© {year} Game Universe. Tous droits réservés.",
+    "explore": "Explorer",
+    "community": "Communauté",
+    "madeWith": "Fait avec",
+    "forGamers": "pour les gamers"
   },
   "errors": {
     "unexpectedError": "Une erreur s'est produite",
