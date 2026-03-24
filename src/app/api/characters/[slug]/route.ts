@@ -119,7 +119,17 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       fetchRelationships(supabase, character.id, locale),
     ]);
 
-    const translation = pickTranslationWithName(character.character_translations, locale);
+    const translation = pickTranslationWithName(
+      character.character_translations as {
+        language_code: string;
+        name?: string | null;
+        role?: string | null;
+        description?: string | null;
+        biography?: string | null;
+        weapons?: string | null;
+      }[],
+      locale
+    );
     const games = buildGames(character.character_games);
     const primaryGame = games.find((g) => g.isPrimary)?.title || games[0]?.title || "Unknown";
 
