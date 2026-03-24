@@ -799,7 +799,7 @@ export class GameImportService {
         game_id: gameId,
         url: `https://www.youtube.com/watch?v=${video.video_id}`,
         thumbnail_url: `https://img.youtube.com/vi/${video.video_id}/maxresdefault.jpg`,
-        title: video.name,
+        title: video.name || "Video",
         video_type: "trailer",
         display_order: index,
         is_featured: index === 0,
