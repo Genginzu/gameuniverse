@@ -187,6 +187,17 @@
   }
 }
 
+/* Floating animation for hero orbs */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-30px) scale(1.05);
+  }
+}
+
 /* Classes utilitaires pour les animations */
 .animate-slide-in-up {
   animation: slideInUp 0.6s ease-out;
@@ -268,6 +279,11 @@
   .animate-page-enter,
   .dashboard-bg,
   .landing-grid-bg {
+    animation: none;
+  }
+
+  /* Disable float animation on orbs */
+  [class*="animate-\\[float"] {
     animation: none;
   }
 

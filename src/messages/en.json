@@ -17,36 +17,57 @@
     "discussions": "Discussions"
   },
   "landing": {
-    "title": "Discover the gaming universe",
-    "subtitle": "The complete platform to explore, discover and share your gaming passion",
+    "title": "Your",
+    "titleHighlight": "gaming",
+    "titleEnd": "universe starts here",
+    "subtitle": "Explore thousands of games, discover iconic characters and join a community of passionate gamers",
     "cta": {
       "signup": "Get started for free",
+      "explore": "Explore games",
       "login": "Sign in",
-      "title": "Ready to start your gaming adventure?",
+      "title": "Ready to join the adventure?",
       "subtitle": "Join thousands of gamers already using Game Universe to discover their next favorite games"
     },
     "features": {
-      "mainTitle": "Main Features",
-      "mainSubtitle": "Discover everything Game Universe has to offer to enrich your gaming experience",
+      "mainTitle": "Everything for gamers",
+      "mainSubtitle": "A platform designed to enrich your gaming experience",
       "library": {
-        "title": "Complete library",
-        "description": "Explore thousands of video games with detailed information"
+        "title": "Massive library",
+        "description": "Thousands of games with detailed info, ratings, media and price comparisons"
+      },
+      "characters": {
+        "title": "Iconic characters",
+        "description": "Explore the heroes and villains of your favorite games with full biographies"
+      },
+      "community": {
+        "title": "Active community",
+        "description": "Share your reviews, create collections and connect with other players"
       },
       "search": {
         "title": "Advanced search",
-        "description": "Easily find your favorite games with our search system and filters"
+        "description": "Easily find your favorite games with our powerful search and filter system"
       },
-      "details": {
-        "title": "Detailed information",
-        "description": "View all technical information, prices and media for each game"
+      "tracking": {
+        "title": "Collection tracking",
+        "description": "Manage your library, track your playtime and progress"
+      },
+      "reviews": {
+        "title": "Detailed reviews",
+        "description": "Write and read comprehensive reviews with pros and cons"
       }
     },
+    "recentGames": {
+      "title": "Recently added games",
+      "subtitle": "The latest gems added to our catalog",
+      "viewAll": "View all games"
+    },
     "stats": {
-      "title": "Our Statistics",
-      "subtitle": "Numbers that demonstrate our commitment to the gaming community",
+      "title": "A growing community",
+      "subtitle": "Numbers that speak for themselves",
       "gamesReferenced": "Games referenced",
-      "ratings": "Ratings",
-      "newGamesPerMonth": "New games/month"
+      "characters": "Characters",
+      "players": "Active players",
+      "reviews": "Published reviews"
     }
   },
   "library": {

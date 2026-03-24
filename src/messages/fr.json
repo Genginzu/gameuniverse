@@ -17,36 +17,57 @@
     "discussions": "Discussions"
   },
   "landing": {
-    "title": "Découvrez l'univers du jeu vidéo",
-    "subtitle": "La plateforme complète pour explorer, découvrir et partager votre passion du gaming",
+    "title": "Votre univers",
+    "titleHighlight": "gaming",
+    "titleEnd": "commence ici",
+    "subtitle": "Explorez des milliers de jeux, découvrez des personnages iconiques et rejoignez une communauté de passionnés",
     "cta": {
       "signup": "Commencer gratuitement",
+      "explore": "Explorer les jeux",
       "login": "Se connecter",
-      "title": "Prêt à commencer votre aventure gaming ?",
+      "title": "Prêt à rejoindre l'aventure ?",
       "subtitle": "Rejoignez des milliers de gamers qui utilisent déjà Game Universe pour découvrir leurs prochains jeux favoris"
     },
     "features": {
-      "mainTitle": "Fonctionnalités principales",
-      "mainSubtitle": "Découvrez tout ce que Game Universe a à offrir pour enrichir votre expérience gaming",
+      "mainTitle": "Tout pour les gamers",
+      "mainSubtitle": "Une plateforme pensée pour enrichir votre expérience gaming",
       "library": {
-        "title": "Bibliothèque complète",
-        "description": "Explorez des milliers de jeux vidéo avec des informations détaillées"
+        "title": "Bibliothèque immense",
+        "description": "Des milliers de jeux avec fiches détaillées, notes, médias et prix comparés"
+      },
+      "characters": {
+        "title": "Personnages iconiques",
+        "description": "Explorez les héros et vilains de vos jeux préférés avec leurs biographies complètes"
+      },
+      "community": {
+        "title": "Communauté active",
+        "description": "Partagez vos avis, créez des collections et connectez-vous avec d'autres joueurs"
       },
       "search": {
         "title": "Recherche avancée",
         "description": "Trouvez facilement vos jeux préférés grâce à notre système de recherche et filtres"
       },
-      "details": {
-        "title": "Informations détaillées",
-        "description": "Consultez toutes les informations techniques, prix et médias de chaque jeu"
+      "tracking": {
+        "title": "Suivi de collection",
+        "description": "Gérez votre bibliothèque, suivez votre temps de jeu et vos progressions"
+      },
+      "reviews": {
+        "title": "Avis détaillés",
+        "description": "Rédigez et consultez des avis complets avec points positifs et négatifs"
       }
     },
+    "recentGames": {
+      "title": "Derniers jeux ajoutés",
+      "subtitle": "Les dernières pépites ajoutées à notre catalogue",
+      "viewAll": "Voir tous les jeux"
+    },
     "stats": {
-      "title": "Nos statistiques",
-      "subtitle": "Des chiffres qui témoignent de notre engagement envers la communauté gaming",
+      "title": "Une communauté qui grandit",
+      "subtitle": "Des chiffres qui parlent d'eux-mêmes",
       "gamesReferenced": "Jeux référencés",
-      "ratings": "Évaluations",
-      "newGamesPerMonth": "Nouveaux jeux/mois"
+      "characters": "Personnages",
+      "players": "Joueurs actifs",
+      "reviews": "Avis publiés"
     }
   },
   "library": {
