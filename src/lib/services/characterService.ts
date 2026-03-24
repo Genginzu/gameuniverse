@@ -539,34 +539,41 @@ export class CharacterService {
     let genderObj: { id: string; slug: string; name: string } | undefined;
     let speciesObj: { id: string; slug: string; name: string } | undefined;
     try {
-      const { data: gsData } = await supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: gsData } = await (supabase as any)
         .from("characters")
         .select("gender_id, species_id")
         .eq("id", typedCharacter.id)
         .single();
 
       if (gsData?.gender_id) {
-        const { data: genderData } = await supabase
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data: genderData } = await (supabase as any)
           .from("genders")
           .select("id, slug, gender_translations(language_code, name)")
           .eq("id", gsData.gender_id)
           .single();
         if (genderData) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const gt = pickTranslation((genderData as any).gender_translations, locale);
+          const gt = pickTranslation(
+            genderData.gender_translations as { language_code: string; name: string }[],
+            locale
+          );
           if (gt) genderObj = { id: genderData.id, slug: genderData.slug, name: gt.name };
         }
       }
 
       if (gsData?.species_id) {
-        const { data: speciesData } = await supabase
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data: speciesData } = await (supabase as any)
           .from("species")
           .select("id, slug, species_translations(language_code, name)")
           .eq("id", gsData.species_id)
           .single();
         if (speciesData) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const st = pickTranslation((speciesData as any).species_translations, locale);
+          const st = pickTranslation(
+            speciesData.species_translations as { language_code: string; name: string }[],
+            locale
+          );
           if (st) speciesObj = { id: speciesData.id, slug: speciesData.slug, name: st.name };
         }
       }
