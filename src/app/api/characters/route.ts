@@ -79,7 +79,7 @@ export async function GET(request: NextRequest) {
           .in("role_id", roleIds);
 
         roleCharacterIds = [
-          ...new Set((ccrRows || []).map((r: { character_id: string }) => r.character_id)),
+          ...new Set<string>((ccrRows || []).map((r: { character_id: string }) => r.character_id)),
         ];
       } else {
         // No matching roles found — return empty results
@@ -101,7 +101,7 @@ export async function GET(request: NextRequest) {
           .in("platform_id", platformIds);
 
         const platformGameIds = [
-          ...new Set(gpRows?.map((r: { game_id: string }) => r.game_id) ?? []),
+          ...new Set<string>(gpRows?.map((r: { game_id: string }) => r.game_id) ?? []),
         ];
 
         if (platformGameIds.length > 0) {
@@ -111,7 +111,7 @@ export async function GET(request: NextRequest) {
             .in("game_id", platformGameIds);
 
           platformCharacterIds = [
-            ...new Set((cgRows || []).map((r: { character_id: string }) => r.character_id)),
+            ...new Set<string>((cgRows || []).map((r: { character_id: string }) => r.character_id)),
           ];
         } else {
           platformCharacterIds = [];
