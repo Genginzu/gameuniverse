@@ -534,6 +534,46 @@ export class CharacterService {
       }
     }
 
+    // Fetch gender and species separately (columns added by migration,
+    // may not exist yet — graceful fallback to undefined)
+    let genderObj: { id: string; slug: string; name: string } | undefined;
+    let speciesObj: { id: string; slug: string; name: string } | undefined;
+    try {
+      const { data: gsData } = await supabase
+        .from("characters")
+        .select("gender_id, species_id")
+        .eq("id", typedCharacter.id)
+        .single();
+
+      if (gsData?.gender_id) {
+        const { data: genderData } = await supabase
+          .from("genders")
+          .select("id, slug, gender_translations(language_code, name)")
+          .eq("id", gsData.gender_id)
+          .single();
+        if (genderData) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const gt = pickTranslation((genderData as any).gender_translations, locale);
+          if (gt) genderObj = { id: genderData.id, slug: genderData.slug, name: gt.name };
+        }
+      }
+
+      if (gsData?.species_id) {
+        const { data: speciesData } = await supabase
+          .from("species")
+          .select("id, slug, species_translations(language_code, name)")
+          .eq("id", gsData.species_id)
+          .single();
+        if (speciesData) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const st = pickTranslation((speciesData as any).species_translations, locale);
+          if (st) speciesObj = { id: speciesData.id, slug: speciesData.slug, name: st.name };
+        }
+      }
+    } catch {
+      // Migration not applied yet — gender/species columns don't exist
+    }
+
     return {
       id: typedCharacter.id,
       slug: typedCharacter.slug,
@@ -543,6 +583,8 @@ export class CharacterService {
       biography: translation?.biography || undefined,
       weapons: translation?.weapons || undefined,
       backgroundColor: typedCharacter.background_color || "#0f172a",
+      ...(genderObj && { gender: genderObj }),
+      ...(speciesObj && { species: speciesObj }),
       games: processedGames,
       primaryGame,
       media,

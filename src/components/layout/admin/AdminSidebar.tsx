@@ -199,6 +199,22 @@ function SidebarContent({
               {t("nav.characterRoles")}
             </Link>
             <Link
+              href="/admin/genders"
+              className={linkClasses("/admin/genders")}
+              onClick={onLinkClick}
+            >
+              <Icon icon="fa:venus-mars" className="mr-3 h-4 w-4" />
+              {t("nav.characterGenders")}
+            </Link>
+            <Link
+              href="/admin/species"
+              className={linkClasses("/admin/species")}
+              onClick={onLinkClick}
+            >
+              <Icon icon="fa:paw" className="mr-3 h-4 w-4" />
+              {t("nav.characterSpecies")}
+            </Link>
+            <Link
               href="/admin/comments"
               className={linkClasses("/admin/comments")}
               onClick={onLinkClick}

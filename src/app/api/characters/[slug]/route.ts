@@ -1,7 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-import { pickTranslation } from "@/lib/utils/pickTranslation";
+import { pickTranslationWithName } from "@/lib/utils/pickTranslation";
 import { logger } from "@/lib/logger";
+import {
+  fetchGenderSpeciesIds,
+  fetchGender,
+  fetchSpecies,
+  fetchRelationships,
+  buildGames,
+  buildMedia,
+  buildPlatforms,
+} from "./helpers";
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   try {
@@ -15,8 +24,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     const supabase = await createRouteHandlerClient();
 
-    // Left join on character_translations — fallback handled via pickTranslation
-    const { data: character, error } = await supabase
+    // Character tables are not yet in generated Supabase types (database.types.ts)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const db = supabase as any;
+
+    // Main query — core character data with known relations
+    const { data: character, error } = await db
       .from("characters")
       .select(
         `
@@ -88,253 +101,46 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       return NextResponse.json({ error: "Character not found" }, { status: 404 });
     }
 
-    // Cast character to access properties (TypeScript has trouble inferring complex nested types)
-    const characterData = character as {
-      id: string;
-      slug: string;
-      main_image: string | null;
-      background_image: string | null;
-      background_color: string | null;
-      created_at: string | null;
-      updated_at: string | null;
-      character_translations: Array<{
-        language_code: string;
-        name: string;
-        role: string | null;
-        description: string | null;
-        biography: string | null;
-        weapons: string | null;
-      }>;
-      character_games: Array<{
-        is_primary: boolean;
-        games: {
-          id: string;
-          slug: string;
-          cover_image_url: string | null;
-          background_image_url: string | null;
-          release_date: string | null;
-          game_translations: Array<{ title: string }>;
-          game_platforms?: Array<{
-            platforms: {
-              id: string;
-              slug: string;
-              icon_url: string | null;
-              platform_translations: Array<{
-                name: string;
-                abbreviation: string | null;
-                language_code: string;
-              }>;
-            } | null;
-          }>;
-        } | null;
-      }>;
-      character_media: Array<{
-        id: string;
-        type: string;
-        url: string;
-        thumbnail_url: string | null;
-        title: string | null;
-        description: string | null;
-        alt_text: string | null;
-        is_featured: boolean | null;
-        display_order: number | null;
-      }>;
-    };
+    // Debug: log translation availability to help diagnose missing data
+    logger.info("Character fetched", {
+      slug: character.slug,
+      translations: character.character_translations,
+      gamesCount: character.character_games?.length ?? 0,
+    });
 
-    // Fetch relationships separately to avoid complex join issues
-    const { data: relationshipsData } = (await supabase
-      .from("character_relationships")
-      .select("id, relationship_type, description, related_character_id")
-      .eq("character_id", characterData.id)) as {
-      data: Array<{
-        id: string;
-        relationship_type: string;
-        description: string | null;
-        related_character_id: string;
-      }> | null;
-    };
+    // Fetch gender/species IDs separately (columns added by migration,
+    // may not exist yet — graceful fallback to undefined)
+    const genderSpeciesIds = await fetchGenderSpeciesIds(supabase, character.id);
 
-    // Fetch related characters details if there are relationships
-    let processedRelationships: Array<{
-      id: string;
-      relatedCharacter: {
-        id: string;
-        slug: string;
-        name: string;
-        mainImage: string | null;
-        role: string | null;
-      };
-      relationshipType: string;
-      description: string | null;
-    }> = [];
-    if (relationshipsData && relationshipsData.length > 0) {
-      const relatedCharacterIds = relationshipsData.map((r) => r.related_character_id);
+    // Fetch gender, species, and relationships in parallel
+    const [genderObj, speciesObj, relationships] = await Promise.all([
+      fetchGender(supabase, genderSpeciesIds?.genderId ?? null, locale),
+      fetchSpecies(supabase, genderSpeciesIds?.speciesId ?? null, locale),
+      fetchRelationships(supabase, character.id, locale),
+    ]);
 
-      const { data: relatedCharacters } = (await supabase
-        .from("characters")
-        .select(
-          `
-          id,
-          slug,
-          main_image,
-          character_translations(name, role, language_code)
-        `
-        )
-        .in("id", relatedCharacterIds)) as {
-        data: Array<{
-          id: string;
-          slug: string;
-          main_image: string | null;
-          character_translations: Array<{
-            name: string;
-            role: string | null;
-            language_code: string;
-          }>;
-        }> | null;
-      };
-
-      processedRelationships = relationshipsData
-        .map((rel) => {
-          const related = relatedCharacters?.find((c) => c.id === rel.related_character_id);
-          if (!related) return null;
-
-          const relatedTranslation = pickTranslation(related.character_translations, locale);
-
-          return {
-            id: rel.id,
-            relatedCharacter: {
-              id: related.id,
-              slug: related.slug,
-              name: relatedTranslation?.name || "Unknown",
-              mainImage: related.main_image,
-              role: relatedTranslation?.role ?? null,
-            },
-            relationshipType: rel.relationship_type,
-            description: rel.description,
-          };
-        })
-        .filter((r): r is NonNullable<typeof r> => r !== null);
-    }
-
-    // Transform the data to match the expected format
-    const translation = pickTranslation(characterData.character_translations, locale);
-
-    // Process games
-    const games =
-      characterData.character_games
-        ?.map((cg) => ({
-          id: cg.games?.id,
-          slug: cg.games?.slug,
-          title: cg.games?.game_translations?.[0]?.title || "Unknown",
-          coverImage: cg.games?.cover_image_url,
-          backgroundImage: cg.games?.background_image_url,
-          releaseYear: cg.games?.release_date
-            ? new Date(cg.games.release_date).getFullYear()
-            : undefined,
-          isPrimary: cg.is_primary || false,
-        }))
-        .sort((a, b) => {
-          if (a.isPrimary && !b.isPrimary) return -1;
-          if (!a.isPrimary && b.isPrimary) return 1;
-          return a.title.localeCompare(b.title);
-        }) || [];
-
+    const translation = pickTranslationWithName(character.character_translations, locale);
+    const games = buildGames(character.character_games);
     const primaryGame = games.find((g) => g.isPrimary)?.title || games[0]?.title || "Unknown";
 
-    // Process media
-    const screenshots =
-      characterData.character_media
-        ?.filter((m) => m.type === "screenshot")
-        .sort((a, b) => (a.display_order || 0) - (b.display_order || 0))
-        .map((m) => ({
-          id: m.id,
-          url: m.url,
-          altText: m.alt_text,
-          caption: m.description,
-          isFeatured: m.is_featured || false,
-        })) || [];
-
-    const artwork =
-      characterData.character_media
-        ?.filter((m) => m.type === "artwork")
-        .sort((a, b) => (a.display_order || 0) - (b.display_order || 0))
-        .map((m) => ({
-          id: m.id,
-          url: m.url,
-          altText: m.alt_text,
-          caption: m.description,
-          type: m.title || "artwork",
-          isFeatured: m.is_featured || false,
-        })) || [];
-
-    const videos =
-      characterData.character_media
-        ?.filter((m) => m.type === "video")
-        .sort((a, b) => (a.display_order || 0) - (b.display_order || 0))
-        .map((m) => ({
-          id: m.id,
-          title: m.title || "Video",
-          description: m.description,
-          url: m.url,
-          thumbnailUrl: m.thumbnail_url,
-          type: "video",
-          isFeatured: m.is_featured || false,
-        })) || [];
-
-    const media = {
-      mainImage: characterData.main_image,
-      backgroundImage: characterData.background_image,
-      screenshots,
-      artwork,
-      videos,
-    };
-
-    // Aggregate unique platforms from all character's games
-    const platformMap = new Map<
-      string,
-      {
-        id: string;
-        slug: string;
-        name: string;
-        abbreviation: string | null;
-        iconUrl: string | null;
-      }
-    >();
-    for (const cg of characterData.character_games ?? []) {
-      for (const gp of cg.games?.game_platforms ?? []) {
-        const platform = gp.platforms;
-        if (!platform || platformMap.has(platform.id)) continue;
-        const translations = platform.platform_translations ?? [];
-        const tr =
-          translations.find((t) => t.language_code === locale) ||
-          translations.find((t) => t.language_code === "en") ||
-          translations[0];
-        platformMap.set(platform.id, {
-          id: platform.id,
-          slug: platform.slug,
-          name: tr?.name || platform.slug,
-          abbreviation: tr?.abbreviation || null,
-          iconUrl: platform.icon_url,
-        });
-      }
-    }
-
     const transformedCharacter = {
-      id: characterData.id,
-      slug: characterData.slug,
+      id: character.id,
+      slug: character.slug,
       name: translation?.name || "Unnamed",
       role: translation?.role,
       description: translation?.description,
       biography: translation?.biography,
       weapons: translation?.weapons,
-      backgroundColor: characterData.background_color || "#0f172a",
+      backgroundColor: character.background_color || "#0f172a",
+      ...(genderObj && { gender: genderObj }),
+      ...(speciesObj && { species: speciesObj }),
       games,
       primaryGame,
-      media,
-      relationships: processedRelationships,
-      platforms: Array.from(platformMap.values()),
-      createdAt: characterData.created_at,
-      updatedAt: characterData.updated_at,
+      media: buildMedia(character),
+      relationships,
+      platforms: buildPlatforms(character.character_games, locale),
+      createdAt: character.created_at,
+      updatedAt: character.updated_at,
     };
 
     return NextResponse.json(transformedCharacter);

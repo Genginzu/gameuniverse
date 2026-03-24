@@ -29,7 +29,6 @@ interface LibraryGamesContentProps {
 }
 
 export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps) {
-  const t = useTranslations("userLibrary");
   const [showFilters, setShowFilters] = useState(false);
 
   const {

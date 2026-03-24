@@ -45,14 +45,13 @@ export async function POST(request: NextRequest) {
       throw charError;
     }
 
-    const charRows = (characters ?? []) as { id: string; slug: string }[];
+    const charRows = (characters ?? []) as unknown as { id: string; slug: string }[];
     if (charRows.length === 0) {
       const statuses: Record<string, boolean> = {};
       for (const s of limitedSlugs) statuses[s] = false;
       return NextResponse.json({ statuses });
     }
 
-    const idToSlug = new Map(charRows.map((c) => [c.id, c.slug]));
     const charIds = charRows.map((c) => c.id);
 
     // Batch query favorites
@@ -70,7 +69,7 @@ export async function POST(request: NextRequest) {
     }
 
     const favSet = new Set(
-      ((favData ?? []) as { character_id: string }[]).map((r) => r.character_id)
+      ((favData ?? []) as unknown as { character_id: string }[]).map((r) => r.character_id)
     );
 
     const statuses: Record<string, boolean> = {};

@@ -12,7 +12,6 @@ import type { IGDBCharacter } from "../../../src/types/igdb";
 import type { CharacterCLIOptions } from "./index";
 import type { ImportStats } from "../shared/types";
 
-const IGDB_API_URL = "https://api.igdb.com/v4";
 const BATCH_SIZE = 500;
 
 export class CharacterOrchestrator {

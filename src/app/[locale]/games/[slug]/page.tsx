@@ -1,5 +1,7 @@
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { GameDetailsContent } from "@/components/games/details/GameDetailsContent";
+import { GameDetailsSkeleton } from "@/components/games/details/GameDetailsSkeleton";
 import { GameService } from "@/lib/services/gameService";
 import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
@@ -13,8 +15,8 @@ interface GameDetailsPageProps {
   }>;
 }
 
-export default async function GameDetailsPage({ params }: GameDetailsPageProps) {
-  const { locale, slug } = await params;
+/** Composant async qui fetch les données complètes du jeu */
+async function GameDetailsLoader({ slug, locale }: { slug: string; locale: string }) {
   const t = await getTranslations({ locale, namespace: "gameDetails.errors" });
 
   try {
@@ -25,43 +27,51 @@ export default async function GameDetailsPage({ params }: GameDetailsPageProps) 
     }
 
     return (
-      <DashboardLayout>
-        <ErrorBoundary
-          fallback={
-            <ErrorFallback
-              title={t("loadingTitle")}
-              description={t("loadingDescription")}
-              showBackButton={true}
-              backUrl={`/${locale}/games`}
-              backLabel={t("backToGames")}
-              locale={locale}
-            />
-          }
-        >
-          <GameDetailsContent game={game} locale={locale} />
-        </ErrorBoundary>
-      </DashboardLayout>
+      <ErrorBoundary
+        fallback={
+          <ErrorFallback
+            title={t("loadingTitle")}
+            description={t("loadingDescription")}
+            showBackButton={true}
+            backUrl={`/${locale}/games`}
+            backLabel={t("backToGames")}
+            locale={locale}
+          />
+        }
+      >
+        <GameDetailsContent game={game} locale={locale} />
+      </ErrorBoundary>
     );
   } catch {
-    // Return error state
     return (
-      <DashboardLayout>
-        <ErrorFallback
-          title={t("loadingTitle")}
-          description={t("unableToLoad")}
-          showBackButton={true}
-          backUrl={`/${locale}/games`}
-          backLabel={t("backToGames")}
-          locale={locale}
-        />
-      </DashboardLayout>
+      <ErrorFallback
+        title={t("loadingTitle")}
+        description={t("unableToLoad")}
+        showBackButton={true}
+        backUrl={`/${locale}/games`}
+        backLabel={t("backToGames")}
+        locale={locale}
+      />
     );
   }
 }
 
-// Generate metadata for SEO
-export async function generateMetadata({ params }: GameDetailsPageProps) {
+export default async function GameDetailsPage({ params }: GameDetailsPageProps) {
   const { locale, slug } = await params;
 
+  // Fetch léger : juste les couleurs pour colorer le skeleton
+  const colorHints = await GameService.fetchGameColors(slug);
+
+  return (
+    <DashboardLayout>
+      <Suspense fallback={<GameDetailsSkeleton backgroundColor={colorHints?.backgroundColor} />}>
+        <GameDetailsLoader slug={slug} locale={locale} />
+      </Suspense>
+    </DashboardLayout>
+  );
+}
+
+export async function generateMetadata({ params }: GameDetailsPageProps) {
+  const { locale, slug } = await params;
   return await GameService.generateGameMetadata(slug, locale);
 }

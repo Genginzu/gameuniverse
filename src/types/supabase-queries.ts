@@ -142,7 +142,7 @@ export interface GameRowWithExtendedRelations extends GameRowWithRelations {
  */
 export interface CharacterTranslationRow {
   character_id?: string;
-  language_code?: string;
+  language_code: string;
   name: string;
   role: string | null;
   description: string | null;

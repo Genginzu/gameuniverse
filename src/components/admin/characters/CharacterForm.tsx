@@ -29,6 +29,8 @@ export interface CharacterFormProps {
   isSubmitting: boolean;
   /** ID du personnage en cours d'édition (pour exclure du picker relations) */
   currentCharacterId?: string;
+  /** IGDB ID for sync tab (edit mode only) */
+  igdbId?: number | null;
 }
 
 const TABS: CharacterTab[] = [
@@ -48,6 +50,16 @@ const TABS: CharacterTab[] = [
     icon: <Icon icon="fa:id-badge" className="h-3.5 w-3.5" />,
     labelKey: "roles",
   },
+  {
+    id: "gender",
+    icon: <Icon icon="lucide:user" className="h-3.5 w-3.5" />,
+    labelKey: "gender",
+  },
+  {
+    id: "species",
+    icon: <Icon icon="lucide:dna" className="h-3.5 w-3.5" />,
+    labelKey: "species",
+  },
   { id: "games", icon: <Icon icon="fa:gamepad" className="h-3.5 w-3.5" />, labelKey: "games" },
   {
     id: "relationships",
@@ -65,6 +77,7 @@ const TABS: CharacterTab[] = [
     labelKey: "artwork",
   },
   { id: "videos", icon: <Icon icon="fa:video" className="h-3.5 w-3.5" />, labelKey: "videos" },
+  { id: "sync", icon: <Icon icon="fa:sync" className="h-3.5 w-3.5" />, labelKey: "sync" },
 ];
 
 export function CharacterForm({
@@ -77,6 +90,7 @@ export function CharacterForm({
   onSubmit,
   isSubmitting,
   currentCharacterId,
+  igdbId,
 }: CharacterFormProps) {
   const t = useTranslations("admin.characters.form");
   const tCommon = useTranslations("common");
@@ -140,6 +154,9 @@ export function CharacterForm({
     if (firstError) setActiveTab(firstError[0]);
   };
 
+  // Only show sync tab for characters with igdb_id
+  const visibleTabs = igdbId ? TABS : TABS.filter((tab) => tab.id !== "sync");
+
   return (
     <Form {...form}>
       <form
@@ -149,7 +166,7 @@ export function CharacterForm({
       >
         <CharacterHeroBanner form={form} t={t} />
         <TabNavigation
-          tabs={TABS}
+          tabs={visibleTabs}
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           form={form}
@@ -166,11 +183,12 @@ export function CharacterForm({
             availableCharacters={availableCharacters}
             availableRoles={availableRoles}
             currentCharacterId={currentCharacterId}
+            characterIgdbId={igdbId}
           />
         </div>
 
         <StickySubmitBar
-          tabs={TABS}
+          tabs={visibleTabs}
           activeTab={activeTab}
           setActiveTab={setActiveTab}
           isSubmitting={isSubmitting}

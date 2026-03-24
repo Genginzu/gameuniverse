@@ -9,9 +9,12 @@ import { logger } from "@/lib/logger";
 interface CharacterDetailRow {
   id: string;
   slug: string;
+  igdb_id: number | null;
   main_image: string | null;
   background_image: string | null;
   background_color: string | null;
+  gender_id: string | null;
+  species_id: string | null;
   created_at: string;
   updated_at: string;
   character_translations: Array<{
@@ -76,9 +79,12 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         `
         id,
         slug,
+        igdb_id,
         main_image,
         background_image,
         background_color,
+        gender_id,
+        species_id,
         created_at,
         updated_at,
         character_translations(
@@ -140,9 +146,12 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json({
       id: character.id,
       slug: character.slug,
+      igdb_id: character.igdb_id ?? null,
       main_image: character.main_image,
       background_image: character.background_image,
       background_color: character.background_color,
+      gender_id: character.gender_id ?? null,
+      species_id: character.species_id ?? null,
       created_at: character.created_at,
       updated_at: character.updated_at,
       translations: character.character_translations || [],
@@ -210,6 +219,8 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         main_image: payload.character.main_image,
         background_image: payload.character.background_image,
         background_color: payload.character.background_color,
+        gender_id: payload.character.gender_id,
+        species_id: payload.character.species_id,
         updated_at: new Date().toISOString(),
       })
       .eq("id", characterId);

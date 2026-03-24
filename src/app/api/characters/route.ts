@@ -7,7 +7,7 @@ import {
   handleApiError,
 } from "@/lib/api-utils";
 import type { CharacterRowWithRelations } from "@/types/supabase-queries";
-import { pickTranslation } from "@/lib/utils/pickTranslation";
+import { pickTranslationWithName } from "@/lib/utils/pickTranslation";
 import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
@@ -21,12 +21,16 @@ export async function GET(request: NextRequest) {
 
     const supabase = await createRouteHandlerClient();
 
+    // Character tables are not yet in generated Supabase types (database.types.ts)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const db = supabase as any;
+
     // Calculate offset for pagination
     const offset = calculateOffset(page, limit);
 
     // Left join on character_translations — fallback to "en" or first available
     // when the requested locale is missing for a character.
-    let query = supabase
+    let query = db
       .from("characters")
       .select(
         `
@@ -65,14 +69,11 @@ export async function GET(request: NextRequest) {
     let roleCharacterIds: string[] | null = null;
     if (roles.length > 0) {
       // Resolve role slugs to role IDs
-      const { data: roleRows } = await supabase
-        .from("character_roles")
-        .select("id")
-        .in("slug", roles);
+      const { data: roleRows } = await db.from("character_roles").select("id").in("slug", roles);
 
       if (roleRows && roleRows.length > 0) {
         const roleIds = roleRows.map((r: { id: string }) => r.id);
-        const { data: ccrRows } = await supabase
+        const { data: ccrRows } = await db
           .from("character_character_roles")
           .select("character_id")
           .in("role_id", roleIds);
@@ -90,14 +91,11 @@ export async function GET(request: NextRequest) {
     // the selected platforms, before pagination (same pattern as role filter)
     let platformCharacterIds: string[] | null = null;
     if (platforms.length > 0) {
-      const { data: platformRows } = await supabase
-        .from("platforms")
-        .select("id")
-        .in("slug", platforms);
+      const { data: platformRows } = await db.from("platforms").select("id").in("slug", platforms);
 
       if (platformRows && platformRows.length > 0) {
         const platformIds = platformRows.map((p: { id: string }) => p.id);
-        const { data: gpRows } = await supabase
+        const { data: gpRows } = await db
           .from("game_platforms")
           .select("game_id")
           .in("platform_id", platformIds);
@@ -107,7 +105,7 @@ export async function GET(request: NextRequest) {
         ];
 
         if (platformGameIds.length > 0) {
-          const { data: cgRows } = await supabase
+          const { data: cgRows } = await db
             .from("character_games")
             .select("character_id")
             .in("game_id", platformGameIds);
@@ -152,15 +150,15 @@ export async function GET(request: NextRequest) {
     }
 
     // Count all characters (no locale filter — characters without the requested
-    // locale translation are still shown via fallback)
-    let countQuery = supabase.from("characters").select("id", {
-      count: "exact",
-      head: true,
-    });
-
-    if (search.trim()) {
-      countQuery = countQuery.ilike("character_translations.name", `%${search.trim()}%`);
-    }
+    // locale translation are still shown via fallback).
+    // When searching by name we must join character_translations so the ilike
+    // filter can resolve; otherwise a simple "id" select is enough.
+    let countQuery = search.trim()
+      ? db
+          .from("characters")
+          .select("id, character_translations!inner(name)", { count: "exact", head: true })
+          .ilike("character_translations.name", `%${search.trim()}%`)
+      : db.from("characters").select("id", { count: "exact", head: true });
 
     if (filteredCharacterIds !== null && filteredCharacterIds.length > 0) {
       countQuery = countQuery.in("id", filteredCharacterIds);
@@ -189,7 +187,7 @@ export async function GET(request: NextRequest) {
 
     // Transform the data to match the expected format
     const transformedCharacters = typedCharacters.map((character) => {
-      const translation = pickTranslation(character.character_translations, locale);
+      const translation = pickTranslationWithName(character.character_translations, locale);
 
       // Get primary game
       const primaryGameRelation = character.character_games?.find((cg) => cg.is_primary === true);

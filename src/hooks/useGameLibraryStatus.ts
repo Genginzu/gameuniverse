@@ -17,7 +17,7 @@ export function useGameLibraryStatus(gameId: string) {
   const [adding, setAdding] = useState(false);
 
   // SWR pour la lecture du statut — clé null si pas d'user ou pas de gameId
-  const { data, error, isLoading, mutate } = useSWR<LibraryStatusResponse>(
+  const { data, isLoading, mutate } = useSWR<LibraryStatusResponse>(
     user && gameId ? `/api/library/${gameId}` : null
   );
 

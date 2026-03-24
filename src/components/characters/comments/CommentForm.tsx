@@ -58,9 +58,8 @@ export function CommentForm({
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-3">
       <div className="space-y-1.5">
-        <label htmlFor="comment-content" className="text-foreground text-sm font-medium">
-          {isEditing ? t("labelEdit") : t("labelCreate")}{" "}
-          <span className="text-destructive">*</span>
+        <label htmlFor="comment-content" className="sr-only">
+          {isEditing ? t("labelEdit") : t("labelCreate")}
         </label>
 
         <textarea

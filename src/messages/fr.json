@@ -324,6 +324,8 @@
       "biography": "Biographie",
       "relationships": "Relations",
       "noDescription": "Aucune description disponible",
+      "gender": "Genre",
+      "species": "Espèce",
       "platforms": "Plateformes",
       "noPlatforms": "Aucune plateforme associée au personnage",
       "relationshipTypes": {
@@ -1076,6 +1078,8 @@
       "languages": "Langues",
       "characters": "Personnages",
       "characterRoles": "Rôles",
+      "characterGenders": "Genres",
+      "characterSpecies": "Espèces",
       "companies": "Entreprises",
       "platforms": "Plateformes",
       "ageClassifications": "Classifications d'âge",
@@ -1418,7 +1422,22 @@
         "create": "Créer le personnage",
         "save": "Enregistrer",
         "previous": "Précédent",
-        "next": "Suivant"
+        "next": "Suivant",
+        "gender": "Genre",
+        "species": "Espèce",
+        "genderTab": {
+          "label": "Genre du personnage",
+          "select": "Sélectionner un genre",
+          "none": "Aucun genre",
+          "description": "Sélectionnez le genre de ce personnage."
+        },
+        "speciesTab": {
+          "label": "Espèce du personnage",
+          "select": "Sélectionner une espèce",
+          "none": "Aucune espèce",
+          "description": "Sélectionnez l'espèce de ce personnage."
+        },
+        "sync": "Synchronisation IGDB"
       },
       "createPage": {
         "title": "Créer un nouveau personnage",
@@ -1433,6 +1452,20 @@
         "notFound": "Personnage introuvable.",
         "loadError": "Impossible de charger les données du personnage.",
         "loading": "Chargement des données du personnage..."
+      },
+      "sync": {
+        "title": "Synchronisation IGDB",
+        "translations": "Traductions",
+        "mainImage": "Image principale",
+        "gender": "Genre",
+        "species": "Espèce",
+        "games": "Jeux",
+        "syncAll": "Tout synchroniser",
+        "syncField": "Synchroniser",
+        "fieldSynced": "Synchronisé depuis IGDB",
+        "fieldOverridden": "Modifié manuellement",
+        "syncError": "Erreur de synchronisation",
+        "noIgdbLink": "Ce personnage n'est pas lié à IGDB."
       }
     },
     "companies": {
@@ -1567,6 +1600,116 @@
         "deleting": "Suppression...",
         "success": "Genre supprimé avec succès !",
         "errorGeneric": "Une erreur est survenue lors de la suppression du genre."
+      }
+    },
+    "genders": {
+      "title": "Gestion des genres de personnages",
+      "newGender": "Nouveau genre",
+      "searchPlaceholder": "Rechercher un genre par slug ou nom...",
+      "search": "Rechercher",
+      "totalGenders": "{count, plural, =0 {Aucun genre} one {1 genre} other {# genres}}",
+      "noGenders": "Aucun genre trouvé.",
+      "columns": {
+        "slug": "Slug",
+        "name": "Nom",
+        "characterCount": "Personnages",
+        "actions": "Actions"
+      },
+      "sortBy": "Trier par {field}",
+      "editGender": "Modifier {name}",
+      "deleteGender": "Supprimer {name}",
+      "page": "Page {current} sur {total}",
+      "previousPage": "Page précédente",
+      "nextPage": "Page suivante",
+      "characterCount": "{count, plural, =0 {Aucun personnage} one {1 personnage} other {# personnages}}",
+      "form": {
+        "slug": "Slug",
+        "slugPlaceholder": "ex. male, female, non-binary",
+        "slugDescription": "Lettres minuscules, chiffres et tirets. Non modifiable après création.",
+        "name": "Nom",
+        "namePlaceholder": "Nom du genre dans cette langue",
+        "create": "Créer le genre",
+        "save": "Enregistrer",
+        "backToList": "Retour aux genres de personnages"
+      },
+      "createPage": {
+        "title": "Nouveau genre de personnage",
+        "success": "Genre créé avec succès !",
+        "errorDuplicate": "Un genre avec ce slug existe déjà.",
+        "errorGeneric": "Une erreur est survenue lors de la création du genre."
+      },
+      "editPage": {
+        "title": "Modifier le genre de personnage",
+        "loading": "Chargement des données du genre...",
+        "success": "Genre mis à jour avec succès !",
+        "notFound": "Genre introuvable.",
+        "errorGeneric": "Une erreur est survenue lors du chargement du genre."
+      },
+      "deleteDialog": {
+        "title": "Supprimer le genre",
+        "warning": "Êtes-vous sûr de vouloir supprimer « {name} » ?",
+        "irreversible": "Cette action est irréversible. Le genre sera définitivement supprimé.",
+        "usageWarning": "{count, plural, one {Ce genre est utilisé par 1 personnage.} other {Ce genre est utilisé par # personnages.}}",
+        "confirm": "Supprimer",
+        "cancel": "Annuler",
+        "deleting": "Suppression...",
+        "success": "Genre supprimé avec succès !",
+        "errorGeneric": "Une erreur est survenue lors de la suppression du genre."
+      }
+    },
+    "species": {
+      "title": "Gestion des espèces de personnages",
+      "newSpecies": "Nouvelle espèce",
+      "searchPlaceholder": "Rechercher une espèce par slug ou nom...",
+      "search": "Rechercher",
+      "totalSpecies": "{count, plural, =0 {Aucune espèce} one {1 espèce} other {# espèces}}",
+      "noSpecies": "Aucune espèce trouvée.",
+      "columns": {
+        "slug": "Slug",
+        "name": "Nom",
+        "characterCount": "Personnages",
+        "actions": "Actions"
+      },
+      "sortBy": "Trier par {field}",
+      "editSpecies": "Modifier {name}",
+      "deleteSpecies": "Supprimer {name}",
+      "page": "Page {current} sur {total}",
+      "previousPage": "Page précédente",
+      "nextPage": "Page suivante",
+      "characterCount": "{count, plural, =0 {Aucun personnage} one {1 personnage} other {# personnages}}",
+      "form": {
+        "slug": "Slug",
+        "slugPlaceholder": "ex. human, alien, robot",
+        "slugDescription": "Lettres minuscules, chiffres et tirets. Non modifiable après création.",
+        "name": "Nom",
+        "namePlaceholder": "Nom de l'espèce dans cette langue",
+        "create": "Créer l'espèce",
+        "save": "Enregistrer",
+        "backToList": "Retour aux espèces de personnages"
+      },
+      "createPage": {
+        "title": "Nouvelle espèce de personnage",
+        "success": "Espèce créée avec succès !",
+        "errorDuplicate": "Une espèce avec ce slug existe déjà.",
+        "errorGeneric": "Une erreur est survenue lors de la création de l'espèce."
+      },
+      "editPage": {
+        "title": "Modifier l'espèce de personnage",
+        "loading": "Chargement des données de l'espèce...",
+        "success": "Espèce mise à jour avec succès !",
+        "notFound": "Espèce introuvable.",
+        "errorGeneric": "Une erreur est survenue lors du chargement de l'espèce."
+      },
+      "deleteDialog": {
+        "title": "Supprimer l'espèce",
+        "warning": "Êtes-vous sûr de vouloir supprimer « {name} » ?",
+        "irreversible": "Cette action est irréversible. L'espèce sera définitivement supprimée.",
+        "usageWarning": "{count, plural, one {Cette espèce est utilisée par 1 personnage.} other {Cette espèce est utilisée par # personnages.}}",
+        "confirm": "Supprimer",
+        "cancel": "Annuler",
+        "deleting": "Suppression...",
+        "success": "Espèce supprimée avec succès !",
+        "errorGeneric": "Une erreur est survenue lors de la suppression de l'espèce."
       }
     },
     "characterRoles": {

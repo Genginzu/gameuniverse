@@ -98,6 +98,8 @@ export const adminCharacterFormSchema = z.object({
   relationships: z.array(adminCharacterRelationshipSchema).default([]),
   media: z.array(adminCharacterMediaSchema).default([]),
   role_ids: z.array(z.string().uuid("Invalid role ID")).default([]),
+  gender_id: z.string().uuid().nullable().optional(),
+  species_id: z.string().uuid().nullable().optional(),
 });
 
 export type AdminCharacterFormData = z.infer<typeof adminCharacterFormSchema>;

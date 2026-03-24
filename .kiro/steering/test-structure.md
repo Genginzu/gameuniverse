@@ -60,10 +60,12 @@ test/
 `bun run test:all`. Ne rien ajouter après cette commande (pas de flags, pas de
 chemins, pas de `2>&1`).
 
-**INTERDIT** : Ne **jamais** ajouter `2>&1` à la fin d'une commande de test,
+**INTERDIT** : Ne **jamais** ajouter de redirection à une commande de test,
 quelle qu'elle soit (`bun run test:all`, `bunx vitest run`, `npx vitest run`,
-etc.). La redirection `2>&1` casse le formatage de la sortie et peut masquer des
-erreurs.
+etc.). Cela inclut `2>&1`, `> fichier`, `| tee`, ou tout autre opérateur de
+redirection shell. La redirection casse le formatage de la sortie et empêche
+l'utilisateur de voir les résultats en temps réel pour pouvoir aider au
+débogage.
 
 ```bash
 # ✅ Run ALL tests (ne rien ajouter après)

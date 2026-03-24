@@ -43,14 +43,9 @@ export interface UseCharacterFormReturn {
   submitError: string | null;
 }
 
-const DEFAULT_TRANSLATIONS = (locale: string): AdminCharacterFormData["translations"] => [
-  {
-    language_code: locale === "en" ? "en" : "fr",
-    name: "",
-    role: "",
-    description: "",
-    biography: "",
-  },
+const DEFAULT_TRANSLATIONS = (): AdminCharacterFormData["translations"] => [
+  { language_code: "fr", name: "", role: "", description: "", biography: "", weapons: "" },
+  { language_code: "en", name: "", role: "", description: "", biography: "", weapons: "" },
 ];
 
 export function useCharacterForm(
@@ -74,11 +69,13 @@ export function useCharacterForm(
       background_color: "",
       main_image_url: "",
       background_image_url: "",
-      translations: DEFAULT_TRANSLATIONS(locale),
+      translations: DEFAULT_TRANSLATIONS(),
       games: [],
       relationships: [],
       media: [],
       role_ids: [],
+      gender_id: null,
+      species_id: null,
     },
   });
 

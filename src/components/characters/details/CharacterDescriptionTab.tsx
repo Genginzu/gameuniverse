@@ -8,7 +8,6 @@ import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import { CharacterPlatformsCard } from "./CharacterPlatformsCard";
 import type { CharacterDetails, CharacterRelationship } from "@/types/character";
-import type { PlatformSummary } from "@/types/platform";
 
 interface CharacterDescriptionTabProps {
   character: CharacterDetails;

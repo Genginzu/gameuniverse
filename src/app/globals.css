@@ -742,6 +742,24 @@ textarea:focus-visible,
   background: #161b28;
 }
 
+/* Cursor pointer global pour tous les éléments cliquables */
+button,
+a,
+select,
+summary,
+[role="button"],
+[role="tab"],
+[role="menuitem"],
+[role="option"],
+[role="link"],
+[type="button"],
+[type="submit"],
+[type="reset"],
+label[for],
+.cursor-pointer {
+  cursor: pointer;
+}
+
 /* Scrollbar personnalisée */
 ::-webkit-scrollbar {
   width: 8px;

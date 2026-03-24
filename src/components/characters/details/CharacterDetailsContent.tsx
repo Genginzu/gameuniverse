@@ -68,7 +68,6 @@ const getCharacterColors = (role?: string) => {
 };
 
 export function CharacterDetailsContent({ character, locale }: CharacterDetailsContentProps) {
-  const t = useTranslations();
   const [activeTab, setActiveTab] = useState<TabKey>("description");
   // Le count commentaires est remonté par le tab quand il est chargé
   const [commentCount, setCommentCount] = useState<number | null>(null);
@@ -224,6 +223,24 @@ function HeroSection({
                 {character.name}
               </h1>
             </div>
+            {(character.gender || character.species) && (
+              <div className="mb-3 flex flex-wrap items-center justify-center gap-2 lg:justify-start">
+                {character.gender && (
+                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-slate-600/40 bg-slate-800/50 px-3 py-1 text-sm text-slate-300 backdrop-blur-xs">
+                    <Icon icon="lucide:user" className="h-3.5 w-3.5 text-slate-400" />
+                    <span className="text-slate-400">{t("characters.details.gender")}:</span>
+                    <span className="text-slate-200">{character.gender.name}</span>
+                  </span>
+                )}
+                {character.species && (
+                  <span className="inline-flex items-center gap-1.5 rounded-lg border border-slate-600/40 bg-slate-800/50 px-3 py-1 text-sm text-slate-300 backdrop-blur-xs">
+                    <Icon icon="lucide:dna" className="h-3.5 w-3.5 text-slate-400" />
+                    <span className="text-slate-400">{t("characters.details.species")}:</span>
+                    <span className="text-slate-200">{character.species.name}</span>
+                  </span>
+                )}
+              </div>
+            )}
             {character.description && (
               <p className="text-lg leading-relaxed text-slate-200 [text-shadow:0_1px_4px_rgba(0,0,0,0.4)]">
                 {character.description}

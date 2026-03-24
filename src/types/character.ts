@@ -62,6 +62,8 @@ export interface CharacterDetails {
   biography?: string;
   weapons?: string;
   backgroundColor?: string;
+  gender?: { id: string; slug: string; name: string };
+  species?: { id: string; slug: string; name: string };
   games: CharacterGame[];
   primaryGame: string;
   media: CharacterMedia;
@@ -79,6 +81,8 @@ export interface CharacterSummary {
   description?: string;
   mainImage?: string;
   backgroundColor?: string;
+  gender?: { id: string; slug: string; name: string };
+  species?: { id: string; slug: string; name: string };
   primaryGame: string;
   gamesCount: number;
 }

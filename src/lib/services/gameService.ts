@@ -1,10 +1,14 @@
 import { GameDetails, GameSummary } from "@/types/game";
-import {
-  BaseService,
-  FetchOptions,
-  PaginatedResponse,
-  EntityMetadata,
-} from "./baseService";
+import { BaseService, FetchOptions, PaginatedResponse, EntityMetadata } from "./baseService";
+import { createServerClient } from "@/lib/supabase-server";
+
+/** Couleurs minimales d'un jeu, pour le skeleton de chargement */
+export interface GameColorHints {
+  backgroundColor: string | null;
+  accentColor: string | null;
+  labelColor: string | null;
+  textColor: string | null;
+}
 
 /**
  * Game-specific fetch options extending base options
@@ -73,10 +77,7 @@ export class GameService {
    * @param locale - La locale (fr, en)
    * @returns Les détails du jeu ou null si non trouvé
    */
-  static async fetchGameDetails(
-    slug: string,
-    locale: string = "fr"
-  ): Promise<GameDetails | null> {
+  static async fetchGameDetails(slug: string, locale: string = "fr"): Promise<GameDetails | null> {
     return gameServiceInstance.fetchDetails(slug, locale);
   }
 
@@ -95,9 +96,7 @@ export class GameService {
     } = {}
   ): Promise<GamesResponse> {
     // Use the base service fetchList and transform the response
-    const response = await gameServiceInstance.fetchList(
-      options as GameFetchOptions
-    );
+    const response = await gameServiceInstance.fetchList(options as GameFetchOptions);
 
     // Transform to maintain backward compatibility
     // The API returns { games: [...], pagination: {...} } format
@@ -133,5 +132,31 @@ export class GameService {
    */
   static async generateGameMetadata(slug: string, locale: string = "fr") {
     return gameServiceInstance.generateMetadata(slug, locale);
+  }
+
+  /**
+   * Fetch léger : uniquement les colonnes de couleurs d'un jeu.
+   * Utilisé pour colorer le skeleton avant que les données complètes arrivent.
+   */
+  static async fetchGameColors(slug: string): Promise<GameColorHints | null> {
+    try {
+      const supabase = await createServerClient();
+      const { data } = await supabase
+        .from("games")
+        .select("background_color, accent_color, label_color, text_color")
+        .eq("slug", slug)
+        .single();
+
+      if (!data) return null;
+
+      return {
+        backgroundColor: data.background_color ?? null,
+        accentColor: data.accent_color ?? null,
+        labelColor: data.label_color ?? null,
+        textColor: data.text_color ?? null,
+      };
+    } catch {
+      return null;
+    }
   }
 }

@@ -5,8 +5,6 @@ import dynamic from "next/dynamic";
 import { EntityCard } from "@/components/shared/EntityCard";
 import { gameCardConfig } from "@/components/shared/entityCardPresets";
 import { FilterButton } from "@/components/shared/FilterButton";
-import { GridSkeleton } from "@/components/shared/GridSkeleton";
-import { gameSkeletonConfig } from "@/components/shared/EntitySkeleton";
 import { SearchSkeleton } from "./SearchSkeleton";
 import { LibraryStatusProvider } from "@/components/providers/LibraryStatusProvider";
 import { useGameListing, useGenres, usePlatforms } from "@/hooks/useGameListing";

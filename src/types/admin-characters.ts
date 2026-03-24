@@ -36,7 +36,10 @@ export type CharacterTabId =
   | "relationships"
   | "screenshots"
   | "artwork"
-  | "videos";
+  | "videos"
+  | "gender"
+  | "species"
+  | "sync";
 
 export interface CharacterTab {
   id: CharacterTabId;
@@ -51,6 +54,8 @@ export interface CharacterPayload {
     main_image: string | null;
     background_image: string | null;
     background_color: string | null;
+    gender_id: string | null;
+    species_id: string | null;
   };
   translations: Array<{
     language_code: string;
@@ -94,6 +99,23 @@ export interface CharacterListResponse {
     hasNextPage: boolean;
     hasPreviousPage: boolean;
   };
+}
+
+/** Catégories de champs synchronisables depuis IGDB pour les personnages */
+export type CharacterTrackableField =
+  | "translations"
+  | "main_image"
+  | "gender"
+  | "species"
+  | "games";
+
+/** Entrée de suivi d'un champ modifié manuellement */
+export interface CharacterFieldOverride {
+  id: string;
+  characterId: string;
+  fieldName: CharacterTrackableField;
+  overriddenBy: string | null;
+  overriddenAt: string;
 }
 
 export const SUPPORTED_LANGUAGES = [

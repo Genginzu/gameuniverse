@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/hooks/useAuth";
@@ -82,9 +83,11 @@ export function CharacterCommentsTab({ characterId, onCountLoaded }: CharacterCo
   } = useComments(characterId);
 
   // Remonter le count au parent quand il est disponible
-  if (onCountLoaded && !loading) {
-    onCountLoaded(totalCount);
-  }
+  useEffect(() => {
+    if (onCountLoaded && !loading) {
+      onCountLoaded(totalCount);
+    }
+  }, [onCountLoaded, loading, totalCount]);
 
   const handleSubmit = async (data: CommentFormData): Promise<boolean> => {
     return submitComment(data);

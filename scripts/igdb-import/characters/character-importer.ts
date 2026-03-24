@@ -16,6 +16,138 @@ export interface CharacterImportResult {
 }
 
 /**
+ * Ensure a gender exists in the DB by igdb_id, creating it if needed.
+ * Returns the gender UUID or null on failure.
+ */
+export async function ensureGender(
+  igdbGender: { id: number; name: string } | undefined,
+  verbose: boolean = false
+): Promise<string | null> {
+  if (!igdbGender) return null;
+
+  try {
+    // Tables genders/gender_translations are not in generated Supabase types yet
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const supabase = createScriptClient() as any;
+    const slug = igdbGender.name.toLowerCase().replace(/\s+/g, "-");
+
+    // Check if gender already exists by igdb_id
+    const { data: existing } = await supabase
+      .from("genders")
+      .select("id")
+      .eq("igdb_id", igdbGender.id)
+      .single();
+
+    if (existing) {
+      if (verbose) {
+        console.log(`[CharImporter] Gender exists: ${igdbGender.name} (IGDB ${igdbGender.id})`);
+      }
+      return existing.id;
+    }
+
+    // Create gender
+    const { data: newGender, error: genderError } = await supabase
+      .from("genders")
+      .insert({ slug, igdb_id: igdbGender.id })
+      .select("id")
+      .single();
+
+    if (genderError || !newGender) {
+      if (verbose) {
+        console.log(`[CharImporter] Failed to create gender: ${genderError?.message}`);
+      }
+      return null;
+    }
+
+    // Create English translation
+    await supabase.from("gender_translations").insert({
+      gender_id: newGender.id,
+      language_code: "en",
+      name: igdbGender.name,
+    });
+
+    if (verbose) {
+      console.log(`[CharImporter] Created gender: ${igdbGender.name} → ${newGender.id}`);
+    }
+
+    return newGender.id;
+  } catch (error) {
+    if (verbose) {
+      console.log(
+        `[CharImporter] Error ensuring gender: ${error instanceof Error ? error.message : "Unknown"}`
+      );
+    }
+    return null;
+  }
+}
+
+/**
+ * Ensure a species exists in the DB by igdb_id, creating it if needed.
+ * Returns the species UUID or null on failure.
+ */
+export async function ensureSpecies(
+  igdbSpecies: { id: number; name: string } | undefined,
+  verbose: boolean = false
+): Promise<string | null> {
+  if (!igdbSpecies) return null;
+
+  try {
+    // Tables species/species_translations are not in generated Supabase types yet
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const supabase = createScriptClient() as any;
+    const slug = igdbSpecies.name.toLowerCase().replace(/\s+/g, "-");
+
+    // Check if species already exists by igdb_id
+    const { data: existing } = await supabase
+      .from("species")
+      .select("id")
+      .eq("igdb_id", igdbSpecies.id)
+      .single();
+
+    if (existing) {
+      if (verbose) {
+        console.log(`[CharImporter] Species exists: ${igdbSpecies.name} (IGDB ${igdbSpecies.id})`);
+      }
+      return existing.id;
+    }
+
+    // Create species
+    const { data: newSpecies, error: speciesError } = await supabase
+      .from("species")
+      .insert({ slug, igdb_id: igdbSpecies.id })
+      .select("id")
+      .single();
+
+    if (speciesError || !newSpecies) {
+      if (verbose) {
+        console.log(`[CharImporter] Failed to create species: ${speciesError?.message}`);
+      }
+      return null;
+    }
+
+    // Create English translation
+    await supabase.from("species_translations").insert({
+      species_id: newSpecies.id,
+      language_code: "en",
+      name: igdbSpecies.name,
+    });
+
+    if (verbose) {
+      console.log(`[CharImporter] Created species: ${igdbSpecies.name} → ${newSpecies.id}`);
+    }
+
+    return newSpecies.id;
+  } catch (error) {
+    if (verbose) {
+      console.log(
+        `[CharImporter] Error ensuring species: ${error instanceof Error ? error.message : "Unknown"}`
+      );
+    }
+    return null;
+  }
+}
+
+/**
  * Import a single IGDB character into Supabase.
  * - Skips if igdb_id already exists
  * - Creates character, English translation, mug_shot image, and game links
@@ -25,7 +157,9 @@ export async function importCharacterFromIGDB(
   verbose: boolean = false
 ): Promise<CharacterImportResult> {
   try {
-    const supabase = createScriptClient();
+    // gender_id/species_id columns are not yet in generated Supabase types
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const supabase = createScriptClient() as any;
 
     // Check if character already exists by igdb_id
     const { data: existing } = await supabase
@@ -57,6 +191,10 @@ export async function importCharacterFromIGDB(
       }
     }
 
+    // Ensure gender and species exist before character insert
+    const genderId = await ensureGender(igdbCharacter.character_gender, verbose);
+    const speciesId = await ensureSpecies(igdbCharacter.character_species, verbose);
+
     // Insert character
     const { data: newCharacter, error: insertError } = await supabase
       .from("characters")
@@ -65,6 +203,8 @@ export async function importCharacterFromIGDB(
         igdb_id: igdbCharacter.id,
         main_image: mugShotUrl,
         background_color: backgroundColor ?? "#0f172a",
+        gender_id: genderId,
+        species_id: speciesId,
       })
       .select("id, slug")
       .single();
@@ -86,11 +226,6 @@ export async function importCharacterFromIGDB(
     // Link to games that already exist in our DB
     await linkGames(newCharacter.id, igdbCharacter.games ?? [], verbose);
 
-    // Save mug_shot as character_media
-    if (mugShotUrl) {
-      await saveMugShotMedia(newCharacter.id, mugShotUrl);
-    }
-
     return { success: true, characterSlug: newCharacter.slug };
   } catch (error) {
     return {
@@ -101,7 +236,8 @@ export async function importCharacterFromIGDB(
 }
 
 async function createTranslation(characterId: string, igdbCharacter: IGDBCharacter): Promise<void> {
-  const supabase = createScriptClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createScriptClient() as any;
 
   const genderName = igdbCharacter.character_gender?.name ?? null;
   const speciesName = igdbCharacter.character_species?.name ?? null;
@@ -130,7 +266,8 @@ async function linkGames(
 ): Promise<void> {
   if (igdbGameIds.length === 0) return;
 
-  const supabase = createScriptClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = createScriptClient() as any;
 
   // Find which of these IGDB game IDs exist in our games table
   const { data: matchedGames } = await supabase
@@ -145,7 +282,7 @@ async function linkGames(
     return;
   }
 
-  const rows = matchedGames.map((game, index) => ({
+  const rows = matchedGames.map((game: { id: string; igdb_id: number }, index: number) => ({
     character_id: characterId,
     game_id: game.id,
     is_primary: index === 0,
@@ -158,16 +295,4 @@ async function linkGames(
   } else if (verbose) {
     console.log(`[CharImporter] Linked to ${matchedGames.length} game(s)`);
   }
-}
-
-async function saveMugShotMedia(characterId: string, mugShotUrl: string): Promise<void> {
-  const supabase = createScriptClient();
-
-  await supabase.from("character_media").insert({
-    character_id: characterId,
-    type: "artwork",
-    url: mugShotUrl,
-    is_featured: true,
-    display_order: 0,
-  });
 }

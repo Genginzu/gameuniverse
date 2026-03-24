@@ -19,9 +19,12 @@ import { Icon } from "@iconify/react";
 interface CharacterApiResponse {
   id: string;
   slug: string;
+  igdb_id: number | null;
   main_image: string | null;
   background_image: string | null;
   background_color: string | null;
+  gender_id: string | null;
+  species_id: string | null;
   translations: Array<{
     language_code: string;
     name: string;
@@ -60,6 +63,8 @@ function apiResponseToPayload(response: CharacterApiResponse): CharacterPayload 
       main_image: response.main_image,
       background_image: response.background_image,
       background_color: response.background_color,
+      gender_id: response.gender_id ?? null,
+      species_id: response.species_id ?? null,
     },
     translations: response.translations,
     games: response.games,
@@ -76,9 +81,11 @@ function apiResponseToPayload(response: CharacterApiResponse): CharacterPayload 
 function EditCharacterForm({
   initialData,
   characterId,
+  igdbId,
 }: {
   initialData: AdminCharacterFormData;
   characterId: string;
+  igdbId: number | null;
 }) {
   const t = useTranslations("admin.characters");
   const router = useRouter();
@@ -130,6 +137,7 @@ function EditCharacterForm({
           onSubmit={handleSubmit}
           isSubmitting={isSubmitting}
           currentCharacterId={characterId}
+          igdbId={igdbId}
         />
       </div>
     </div>
@@ -143,6 +151,7 @@ export default function EditCharacterPage() {
   const characterId = params.id;
 
   const [initialData, setInitialData] = useState<AdminCharacterFormData | undefined>(undefined);
+  const [igdbId, setIgdbId] = useState<number | null>(null);
   const [loadingCharacter, setLoadingCharacter] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
 
@@ -164,6 +173,7 @@ export default function EditCharacterPage() {
         if (mounted) {
           const payload = apiResponseToPayload(data);
           setInitialData(characterPayloadToForm(payload));
+          setIgdbId(data.igdb_id ?? null);
         }
       } catch {
         if (mounted) setLoadError(t("editPage.loadError"));
@@ -199,6 +209,10 @@ export default function EditCharacterPage() {
   }
 
   return (
-    <>{initialData && <EditCharacterForm initialData={initialData} characterId={characterId} />}</>
+    <>
+      {initialData && (
+        <EditCharacterForm initialData={initialData} characterId={characterId} igdbId={igdbId} />
+      )}
+    </>
   );
 }

@@ -46,9 +46,11 @@ import { renderHook } from "@testing-library/react";
 
 ## Running Tests
 
-**INTERDIT** : Ne **jamais** ajouter `2>&1` à la fin d'une commande de test,
-quelle qu'elle soit. La redirection `2>&1` casse le formatage de la sortie et
-peut masquer des erreurs.
+**INTERDIT** : Ne **jamais** ajouter de redirection à une commande de test,
+quelle qu'elle soit. Cela inclut `2>&1`, `> fichier`, `| tee`, ou tout autre
+opérateur de redirection shell. La redirection casse le formatage de la sortie
+et empêche l'utilisateur de voir les résultats en temps réel pour pouvoir aider
+au débogage.
 
 ```bash
 # ✅ Run ALL tests (ne rien ajouter après)
@@ -66,5 +68,9 @@ bunx vitest run test/unit/lib/utils/myUtil.test.ts
 - ❌ `bun run test:all 2>&1`
 - ❌ `npx vitest run 2>&1`
 - ❌ `bunx vitest run 2>&1`
+- ❌ `bun run test:all > output.txt`
+- ❌ `bunx vitest run | tee log.txt`
+- ❌ Toute commande de test avec un opérateur de redirection (`>`, `>>`, `2>`,
+  `2>&1`, `|`, `| tee`, etc.)
 - ✅ `bun run test:all`
 - ✅ `bunx vitest run test/unit/...`

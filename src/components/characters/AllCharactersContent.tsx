@@ -60,7 +60,7 @@ export function AllCharactersContent({
   );
 
   // --- Hook SWR : filtres (rôles + plateformes) ---
-  const { roles, platforms, rolesLoading, platformsLoading } = useCharacterFilters(locale);
+  const { roles, platforms } = useCharacterFilters(locale);
 
   // --- Handlers ---
   const handleRoleFilter = useCallback((roles: string[]) => {

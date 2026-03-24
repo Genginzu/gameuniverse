@@ -1,7 +1,7 @@
 "use client";
 
 import useSWR from "swr";
-import { GameDetails, GameSummary } from "@/types/game";
+import { GameDetails } from "@/types/game";
 import { GameService } from "@/lib/services/gameService";
 import { UseGameDetailsReturn, UseGamesOptions, UseGamesReturn } from "@/types/hooks";
 

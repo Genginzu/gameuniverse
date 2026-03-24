@@ -204,6 +204,8 @@ export async function POST(request: NextRequest) {
           main_image: payload.character.main_image,
           background_image: payload.character.background_image,
           background_color: payload.character.background_color,
+          gender_id: payload.character.gender_id,
+          species_id: payload.character.species_id,
         },
       ])
       .select("id, slug")

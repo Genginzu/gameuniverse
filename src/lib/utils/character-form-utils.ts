@@ -12,6 +12,8 @@ export function characterFormToPayload(formData: AdminCharacterFormData): Charac
       main_image: formData.main_image_url || null,
       background_image: formData.background_image_url || null,
       background_color: formData.background_color || null,
+      gender_id: formData.gender_id ?? null,
+      species_id: formData.species_id ?? null,
     },
     translations: formData.translations.map((t) => ({
       language_code: t.language_code,
@@ -46,19 +48,42 @@ export function characterFormToPayload(formData: AdminCharacterFormData): Charac
  * Les valeurs null sont converties en chaînes vides pour les champs du formulaire.
  */
 export function characterPayloadToForm(payload: CharacterPayload): AdminCharacterFormData {
+  // Garantir que toutes les langues supportées sont présentes dans le formulaire.
+  // Si une traduction manque, on l'initialise avec des valeurs vides pour éviter
+  // de perdre les traductions existantes lors de la sauvegarde (DELETE + INSERT).
+  const SUPPORTED_CODES = ["fr", "en"];
+  const existingTranslations = payload.translations.map((t) => ({
+    language_code: t.language_code,
+    name: t.name,
+    role: t.role ?? "",
+    description: t.description ?? "",
+    biography: t.biography ?? "",
+    weapons: t.weapons ?? "",
+  }));
+  const existingCodes = new Set(existingTranslations.map((t) => t.language_code));
+  const missingTranslations = SUPPORTED_CODES.filter((code) => !existingCodes.has(code)).map(
+    (code) => ({
+      language_code: code,
+      name: "",
+      role: "",
+      description: "",
+      biography: "",
+      weapons: "",
+    })
+  );
+  // Trier fr en premier pour cohérence avec l'UI
+  const allTranslations = [...existingTranslations, ...missingTranslations].sort((a, b) =>
+    a.language_code === "fr" ? -1 : b.language_code === "fr" ? 1 : 0
+  );
+
   return {
     slug: payload.character.slug,
     main_image_url: payload.character.main_image ?? "",
     background_image_url: payload.character.background_image ?? "",
     background_color: payload.character.background_color ?? "",
-    translations: payload.translations.map((t) => ({
-      language_code: t.language_code,
-      name: t.name,
-      role: t.role ?? "",
-      description: t.description ?? "",
-      biography: t.biography ?? "",
-      weapons: t.weapons ?? "",
-    })),
+    gender_id: payload.character.gender_id ?? null,
+    species_id: payload.character.species_id ?? null,
+    translations: allTranslations,
     games: payload.games,
     relationships: payload.relationships.map((r) => ({
       related_character_id: r.related_character_id,

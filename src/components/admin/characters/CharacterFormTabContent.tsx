@@ -39,6 +39,15 @@ const CharacterFormArtworkTab = lazy(() =>
 const CharacterFormVideosTab = lazy(() =>
   import("./CharacterFormVideosTab").then((m) => ({ default: m.CharacterFormVideosTab }))
 );
+const CharacterFormGenderTab = lazy(() =>
+  import("./CharacterFormGenderTab").then((m) => ({ default: m.CharacterFormGenderTab }))
+);
+const CharacterFormSpeciesTab = lazy(() =>
+  import("./CharacterFormSpeciesTab").then((m) => ({ default: m.CharacterFormSpeciesTab }))
+);
+const CharacterFormSyncTab = lazy(() =>
+  import("./CharacterFormSyncTab").then((m) => ({ default: m.CharacterFormSyncTab }))
+);
 
 function TabFallback() {
   return (
@@ -57,6 +66,8 @@ interface CharacterFormTabContentProps {
   availableCharacters: AvailableCharacter[];
   availableRoles: AvailableRole[];
   currentCharacterId?: string;
+  /** Character ID for sync tab (edit mode only) */
+  characterIgdbId?: number | null;
 }
 
 /** Renders the active tab's content with lazy loading */
@@ -69,6 +80,7 @@ export function CharacterFormTabContent({
   availableCharacters,
   availableRoles,
   currentCharacterId,
+  characterIgdbId,
 }: CharacterFormTabContentProps) {
   const renderTab = () => {
     switch (activeTab) {
@@ -97,6 +109,14 @@ export function CharacterFormTabContent({
         return <CharacterFormArtworkTab form={form} t={t} />;
       case "videos":
         return <CharacterFormVideosTab form={form} t={t} />;
+      case "gender":
+        return <CharacterFormGenderTab form={form} t={t} />;
+      case "species":
+        return <CharacterFormSpeciesTab form={form} t={t} />;
+      case "sync":
+        return currentCharacterId ? (
+          <CharacterFormSyncTab characterId={currentCharacterId} igdbId={characterIgdbId ?? null} />
+        ) : null;
       default:
         return null;
     }

@@ -324,6 +324,8 @@
       "biography": "Biography",
       "relationships": "Relationships",
       "noDescription": "No description available",
+      "gender": "Gender",
+      "species": "Species",
       "platforms": "Platforms",
       "noPlatforms": "No platform associated with the character",
       "relationshipTypes": {
@@ -1076,6 +1078,8 @@
       "languages": "Languages",
       "characters": "Characters",
       "characterRoles": "Roles",
+      "characterGenders": "Genders",
+      "characterSpecies": "Species",
       "companies": "Companies",
       "platforms": "Platforms",
       "ageClassifications": "Age Classifications",
@@ -1415,7 +1419,22 @@
         "create": "Create character",
         "save": "Save",
         "previous": "Previous",
-        "next": "Next"
+        "next": "Next",
+        "gender": "Gender",
+        "species": "Species",
+        "genderTab": {
+          "label": "Character Gender",
+          "select": "Select a gender",
+          "none": "No gender",
+          "description": "Select this character's gender."
+        },
+        "speciesTab": {
+          "label": "Character Species",
+          "select": "Select a species",
+          "none": "No species",
+          "description": "Select this character's species."
+        },
+        "sync": "IGDB Sync"
       },
       "createPage": {
         "title": "Create a new character",
@@ -1430,6 +1449,20 @@
         "notFound": "Character not found.",
         "loadError": "Failed to load character data.",
         "loading": "Loading character data..."
+      },
+      "sync": {
+        "title": "IGDB Sync",
+        "translations": "Translations",
+        "mainImage": "Main Image",
+        "gender": "Gender",
+        "species": "Species",
+        "games": "Games",
+        "syncAll": "Sync All",
+        "syncField": "Sync",
+        "fieldSynced": "Synced from IGDB",
+        "fieldOverridden": "Manually modified",
+        "syncError": "Sync error",
+        "noIgdbLink": "This character is not linked to IGDB."
       }
     },
     "companies": {
@@ -1564,6 +1597,116 @@
         "deleting": "Deleting...",
         "success": "Genre deleted successfully!",
         "errorGeneric": "An error occurred while deleting the genre."
+      }
+    },
+    "genders": {
+      "title": "Character Gender Management",
+      "newGender": "New Gender",
+      "searchPlaceholder": "Search genders by slug or name...",
+      "search": "Search",
+      "totalGenders": "{count, plural, =0 {No genders} one {1 gender} other {# genders}}",
+      "noGenders": "No genders found.",
+      "columns": {
+        "slug": "Slug",
+        "name": "Name",
+        "characterCount": "Characters",
+        "actions": "Actions"
+      },
+      "sortBy": "Sort by {field}",
+      "editGender": "Edit {name}",
+      "deleteGender": "Delete {name}",
+      "page": "Page {current} of {total}",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "characterCount": "{count, plural, =0 {No characters} one {1 character} other {# characters}}",
+      "form": {
+        "slug": "Slug",
+        "slugPlaceholder": "e.g. male, female, non-binary",
+        "slugDescription": "Lowercase letters, numbers and hyphens only. Cannot be changed after creation.",
+        "name": "Name",
+        "namePlaceholder": "Gender name in this language",
+        "create": "Create gender",
+        "save": "Save",
+        "backToList": "Back to character genders"
+      },
+      "createPage": {
+        "title": "New Character Gender",
+        "success": "Gender created successfully!",
+        "errorDuplicate": "A gender with this slug already exists.",
+        "errorGeneric": "An error occurred while creating the gender."
+      },
+      "editPage": {
+        "title": "Edit Character Gender",
+        "loading": "Loading gender data...",
+        "success": "Gender updated successfully!",
+        "notFound": "Gender not found.",
+        "errorGeneric": "An error occurred while loading the gender."
+      },
+      "deleteDialog": {
+        "title": "Delete Gender",
+        "warning": "Are you sure you want to delete \"{name}\"?",
+        "irreversible": "This action is irreversible. The gender will be permanently deleted.",
+        "usageWarning": "{count, plural, one {This gender is used by 1 character.} other {This gender is used by # characters.}}",
+        "confirm": "Delete",
+        "cancel": "Cancel",
+        "deleting": "Deleting...",
+        "success": "Gender deleted successfully!",
+        "errorGeneric": "An error occurred while deleting the gender."
+      }
+    },
+    "species": {
+      "title": "Character Species Management",
+      "newSpecies": "New Species",
+      "searchPlaceholder": "Search species by slug or name...",
+      "search": "Search",
+      "totalSpecies": "{count, plural, =0 {No species} one {1 species} other {# species}}",
+      "noSpecies": "No species found.",
+      "columns": {
+        "slug": "Slug",
+        "name": "Name",
+        "characterCount": "Characters",
+        "actions": "Actions"
+      },
+      "sortBy": "Sort by {field}",
+      "editSpecies": "Edit {name}",
+      "deleteSpecies": "Delete {name}",
+      "page": "Page {current} of {total}",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "characterCount": "{count, plural, =0 {No characters} one {1 character} other {# characters}}",
+      "form": {
+        "slug": "Slug",
+        "slugPlaceholder": "e.g. human, alien, robot",
+        "slugDescription": "Lowercase letters, numbers and hyphens only. Cannot be changed after creation.",
+        "name": "Name",
+        "namePlaceholder": "Species name in this language",
+        "create": "Create species",
+        "save": "Save",
+        "backToList": "Back to character species"
+      },
+      "createPage": {
+        "title": "New Character Species",
+        "success": "Species created successfully!",
+        "errorDuplicate": "A species with this slug already exists.",
+        "errorGeneric": "An error occurred while creating the species."
+      },
+      "editPage": {
+        "title": "Edit Character Species",
+        "loading": "Loading species data...",
+        "success": "Species updated successfully!",
+        "notFound": "Species not found.",
+        "errorGeneric": "An error occurred while loading the species."
+      },
+      "deleteDialog": {
+        "title": "Delete Species",
+        "warning": "Are you sure you want to delete \"{name}\"?",
+        "irreversible": "This action is irreversible. The species will be permanently deleted.",
+        "usageWarning": "{count, plural, one {This species is used by 1 character.} other {This species is used by # characters.}}",
+        "confirm": "Delete",
+        "cancel": "Cancel",
+        "deleting": "Deleting...",
+        "success": "Species deleted successfully!",
+        "errorGeneric": "An error occurred while deleting the species."
       }
     },
     "characterRoles": {
