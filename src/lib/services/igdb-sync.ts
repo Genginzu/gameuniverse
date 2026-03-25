@@ -204,6 +204,8 @@ export async function syncGameField(
  * Si `overriddenFields` est fourni, ces champs sont ignorés (protégés).
  * Si `overriddenFields` est absent, tous les champs sont synchronisés
  * et tous les overrides sont supprimés (sync forcée).
+ *
+ * Les champs indépendants sont synchronisés en parallèle pour la performance.
  */
 export async function syncAllGameFields(
   supabase: SyncSupabaseClient,
@@ -224,9 +226,10 @@ export async function syncAllGameFields(
     const overrideSet = new Set(overriddenFields ?? []);
     const fieldsToSync = TRACKABLE_FIELDS.filter((f) => !overrideSet.has(f));
 
-    for (const field of fieldsToSync) {
-      await FIELD_SYNC_MAP[field](supabase, gameId, igdbGame, igdbId);
-    }
+    // All field syncs are independent — run them in parallel
+    await Promise.all(
+      fieldsToSync.map((field) => FIELD_SYNC_MAP[field](supabase, gameId, igdbGame, igdbId))
+    );
 
     // En sync forcée (pas d'overriddenFields), supprimer tous les overrides
     if (!overriddenFields) {

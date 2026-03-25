@@ -5,10 +5,8 @@
 
 import { createScriptClient } from "../shared/supabase-client";
 import { syncAllGameFields, type SyncSupabaseClient } from "../../../src/lib/services/igdb-sync";
-import { IGDBService } from "../../../src/lib/services/igdbService";
 import type { TrackableField } from "../../../src/types/admin-games";
 import type { ImportResult } from "./game-importer";
-import { syncGamePlatforms } from "./platform-importer";
 
 /**
  * Synchronise un jeu existant depuis IGDB en respectant les overrides manuels.
@@ -27,8 +25,6 @@ export async function syncExistingGame(
     }
 
     const supabase = createScriptClient();
-    // Cast to SyncSupabaseClient – the full SupabaseClient is structurally
-    // compatible but its deep generics cause "excessively deep" TS errors.
     const syncClient = supabase as unknown as SyncSupabaseClient;
 
     // Fetch overridden fields from game_field_overrides
@@ -52,20 +48,11 @@ export async function syncExistingGame(
       console.log(`[Importer] Protected fields (overrides): ${overriddenFields.join(", ")}`);
     }
 
-    // Delegate to syncAllGameFields which handles selective sync + last_synced_at
+    // syncAllGameFields handles all fields including platforms — no need for a separate call
     const result = await syncAllGameFields(syncClient, gameId, igdbId, overriddenFields);
 
     if (!result.success) {
       return { success: false, error: result.error };
-    }
-
-    // Sync platforms with superset behavior (add new, keep existing)
-    const igdbGame = await IGDBService.getGameDetails(igdbId);
-    if (igdbGame) {
-      const newPlatforms = await syncGamePlatforms(gameId, igdbGame, verbose);
-      if (verbose && newPlatforms > 0) {
-        console.log(`[Importer] Synced ${newPlatforms} new platforms for ${gameSlug}`);
-      }
     }
 
     if (verbose) {

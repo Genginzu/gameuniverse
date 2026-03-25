@@ -141,7 +141,7 @@ export class ImportOrchestrator {
    * @param limit The maximum number of games to fetch in this batch
    * @returns Array of IGDB games
    */
-  async fetchGamesBatch(offset: number, limit: number): Promise<IGDBGame[]> {
+  async fetchGamesBatch(offset: number, limit: number): Promise<IGDBGame[] | null> {
     // Use the date range from CLI options
     const timestampFrom = Math.floor(this.options.fromDate.getTime() / 1000);
     const timestampTo = Math.floor(this.options.toDate.getTime() / 1000);
@@ -169,48 +169,56 @@ export class ImportOrchestrator {
     // Apply rate limiting before making the request
     await this.rateLimiter.throttle();
 
-    // Execute with retry logic for resilience
-    const result = await withRetry(
-      async () => {
-        const accessToken = await IGDBService.getAccessToken();
-        const clientId = process.env.IGDB_CLIENT_ID;
+    try {
+      // Execute with retry logic for resilience
+      const result = await withRetry(
+        async () => {
+          const accessToken = await IGDBService.getAccessToken();
+          const clientId = process.env.IGDB_CLIENT_ID;
 
-        if (!clientId) {
-          throw new Error("IGDB_CLIENT_ID not configured");
+          if (!clientId) {
+            throw new Error("IGDB_CLIENT_ID not configured");
+          }
+
+          const response = await fetch(`${ImportOrchestrator.IGDB_API_URL}/games`, {
+            method: "POST",
+            headers: {
+              "Client-ID": clientId,
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "text/plain",
+            },
+            body: query,
+          });
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(
+              `IGDB fetchGamesBatch failed: ${response.status} ${response.statusText} - ${errorText}`
+            );
+          }
+
+          return response.json() as Promise<IGDBGame[]>;
+        },
+        {
+          maxAttempts: 5,
+          initialDelayMs: 2000,
+          verbose: this.options.verbose,
+          operationName: `fetchGamesBatch(offset=${offset}, limit=${limit})`,
         }
+      );
 
-        const response = await fetch(`${ImportOrchestrator.IGDB_API_URL}/games`, {
-          method: "POST",
-          headers: {
-            "Client-ID": clientId,
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "text/plain",
-          },
-          body: query,
-        });
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(
-            `IGDB fetchGamesBatch failed: ${response.status} ${response.statusText} - ${errorText}`
-          );
-        }
-
-        return response.json() as Promise<IGDBGame[]>;
-      },
-      {
-        maxAttempts: 3,
-        initialDelayMs: 1000,
-        verbose: this.options.verbose,
-        operationName: `fetchGamesBatch(offset=${offset}, limit=${limit})`,
+      if (this.options.verbose) {
+        console.log(`[Fetch] Retrieved ${result.value.length} games from offset ${offset}`);
       }
-    );
 
-    if (this.options.verbose) {
-      console.log(`[Fetch] Retrieved ${result.value.length} games from offset ${offset}`);
+      return result.value;
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : String(error);
+      console.error(`[Import] fetchGamesBatch failed at offset ${offset}: ${msg}`);
+      console.error(`[Import] Waiting 10s before continuing...`);
+      await new Promise((resolve) => setTimeout(resolve, 10_000));
+      return null;
     }
-
-    return result.value;
   }
 
   /**
@@ -341,6 +349,11 @@ export class ImportOrchestrator {
 
         // Fetch the next batch of games
         const games = await this.fetchGamesBatch(this.currentOffset, batchSize);
+
+        // null = transient error (e.g. 429), retry same offset
+        if (games === null) {
+          continue;
+        }
 
         if (games.length === 0) {
           if (this.options.verbose) {

@@ -64,25 +64,34 @@ export class CharacterOrchestrator {
 
   /**
    * Fetch a batch of characters from IGDB with rate limiting and retry.
+   * Returns null on persistent failure (vs empty array = no more data).
    */
-  private async fetchBatch(offset: number, limit: number): Promise<IGDBCharacter[]> {
+  private async fetchBatch(offset: number, limit: number): Promise<IGDBCharacter[] | null> {
     await this.rateLimiter.throttle();
 
-    const result = await withRetry(
-      () => IGDBService.getCharactersBatch(offset, Math.min(limit, BATCH_SIZE)),
-      {
-        maxAttempts: 3,
-        initialDelayMs: 1000,
-        verbose: this.options.verbose,
-        operationName: `fetchCharactersBatch(offset=${offset}, limit=${limit})`,
+    try {
+      const result = await withRetry(
+        () => IGDBService.getCharactersBatch(offset, Math.min(limit, BATCH_SIZE)),
+        {
+          maxAttempts: 5,
+          initialDelayMs: 2000,
+          verbose: this.options.verbose,
+          operationName: `fetchCharactersBatch(offset=${offset}, limit=${limit})`,
+        }
+      );
+
+      if (this.options.verbose) {
+        console.log(`[Fetch] Retrieved ${result.value.length} characters from offset ${offset}`);
       }
-    );
 
-    if (this.options.verbose) {
-      console.log(`[Fetch] Retrieved ${result.value.length} characters from offset ${offset}`);
+      return result.value;
+    } catch (error) {
+      const msg = error instanceof Error ? error.message : String(error);
+      console.error(`[CharImport] fetchBatch failed at offset ${offset}: ${msg}`);
+      console.error(`[CharImport] Waiting 10s before continuing...`);
+      await new Promise((resolve) => setTimeout(resolve, 10_000));
+      return null;
     }
-
-    return result.value;
   }
 
   /**
@@ -105,11 +114,7 @@ export class CharacterOrchestrator {
       const result = await importCharacterFromIGDB(character, this.options.verbose);
 
       if (result.success) {
-        if (result.skipped) {
-          this.stats.skipped++;
-        } else {
-          this.stats.imported++;
-        }
+        this.stats.imported++;
       } else {
         this.stats.errors++;
         console.error(
@@ -166,6 +171,11 @@ export class CharacterOrchestrator {
         if (batchSize <= 0) break;
 
         const characters = await this.fetchBatch(this.currentOffset, batchSize);
+
+        // null = transient error (e.g. 429), retry same offset
+        if (characters === null) {
+          continue;
+        }
 
         if (characters.length === 0) {
           if (this.options.verbose) {

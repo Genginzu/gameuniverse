@@ -7,6 +7,7 @@ import { createScriptClient } from "../shared/supabase-client";
 import { IGDBService } from "../../../src/lib/services/igdbService";
 import type { IGDBCharacter } from "../../../src/types/igdb";
 import { extractColorsFromCover } from "../shared/color-extractor";
+import { syncExistingCharacter } from "./character-sync";
 
 export interface CharacterImportResult {
   success: boolean;
@@ -151,6 +152,7 @@ export async function ensureSpecies(
  * Import a single IGDB character into Supabase.
  * - Skips if igdb_id already exists
  * - Creates character, English translation, mug_shot image, and game links
+ * - Parallelizes independent operations for speed
  */
 export async function importCharacterFromIGDB(
   igdbCharacter: IGDBCharacter,
@@ -169,12 +171,8 @@ export async function importCharacterFromIGDB(
       .single();
 
     if (existing) {
-      if (verbose) {
-        console.log(
-          `[CharImporter] Skipped (exists): ${igdbCharacter.name} (IGDB ${igdbCharacter.id})`
-        );
-      }
-      return { success: true, characterSlug: existing.slug, skipped: true };
+      // Character exists — sync it with fresh IGDB data
+      return syncExistingCharacter(existing.id, existing.slug, igdbCharacter, verbose);
     }
 
     // Build mug_shot URL
@@ -182,18 +180,14 @@ export async function importCharacterFromIGDB(
       ? IGDBService.buildImageUrl(igdbCharacter.mug_shot.image_id, "cover_big")
       : null;
 
-    // Extract background color from mug_shot
-    let backgroundColor: string | null = null;
-    if (mugShotUrl) {
-      const colors = await extractColorsFromCover(mugShotUrl, verbose);
-      if (colors) {
-        backgroundColor = colors.background_color;
-      }
-    }
+    // Run color extraction, gender, and species in parallel (all independent)
+    const [colors, genderId, speciesId] = await Promise.all([
+      mugShotUrl ? extractColorsFromCover(mugShotUrl, verbose) : Promise.resolve(null),
+      ensureGender(igdbCharacter.character_gender, verbose),
+      ensureSpecies(igdbCharacter.character_species, verbose),
+    ]);
 
-    // Ensure gender and species exist before character insert
-    const genderId = await ensureGender(igdbCharacter.character_gender, verbose);
-    const speciesId = await ensureSpecies(igdbCharacter.character_species, verbose);
+    const backgroundColor = colors?.background_color ?? "#0f172a";
 
     // Insert character
     const { data: newCharacter, error: insertError } = await supabase
@@ -202,7 +196,7 @@ export async function importCharacterFromIGDB(
         slug: igdbCharacter.slug,
         igdb_id: igdbCharacter.id,
         main_image: mugShotUrl,
-        background_color: backgroundColor ?? "#0f172a",
+        background_color: backgroundColor,
         gender_id: genderId,
         species_id: speciesId,
       })
@@ -220,11 +214,11 @@ export async function importCharacterFromIGDB(
       console.log(`[CharImporter] Created: ${newCharacter.slug}`);
     }
 
-    // Create English translation (IGDB data is English only)
-    await createTranslation(newCharacter.id, igdbCharacter);
-
-    // Link to games that already exist in our DB
-    await linkGames(newCharacter.id, igdbCharacter.games ?? [], verbose);
+    // Translation and game linking are independent — run in parallel
+    await Promise.all([
+      createTranslation(newCharacter.id, igdbCharacter),
+      linkGames(newCharacter.id, igdbCharacter.games ?? [], verbose),
+    ]);
 
     return { success: true, characterSlug: newCharacter.slug };
   } catch (error) {

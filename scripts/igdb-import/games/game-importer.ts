@@ -25,7 +25,8 @@ export interface ImportResult {
 }
 
 /**
- * Imports a game from IGDB into Supabase (script version)
+ * Imports a game from IGDB into Supabase (script version).
+ * Parallelizes independent operations for speed.
  */
 export async function importGameFromIGDB(
   igdbId: number,
@@ -61,30 +62,29 @@ export async function importGameFromIGDB(
       .single();
 
     if (checkError && checkError.code !== "PGRST116") {
-      // PGRST116 = not found, which is expected
       console.error(`[Importer] Error checking existing game:`, checkError);
     }
 
     if (existingGame) {
-      // Game exists — sync it instead of skipping
       return syncExistingGame(existingGame.id, existingGame.slug, igdbId, verbose);
     }
 
-    // Ensure related entities exist
-    const relatedEntities = await ensureRelatedEntities(igdbGame, verbose);
-
-    // Transform and insert game
+    // Transform game data (sync, no I/O)
     const gameData = transformIGDBToSupabase(igdbGame);
 
-    // Extract colors from cover image to match the game's visual identity
-    if (gameData.cover_image_url) {
-      const colors = await extractColorsFromCover(gameData.cover_image_url, verbose);
-      if (colors) {
-        gameData.background_color = colors.background_color;
-        gameData.accent_color = colors.accent_color;
-        gameData.label_color = colors.label_color;
-        gameData.text_color = colors.text_color;
-      }
+    // Run related entities + color extraction in parallel (both independent)
+    const [relatedEntities, colors] = await Promise.all([
+      ensureRelatedEntities(igdbGame, verbose),
+      gameData.cover_image_url
+        ? extractColorsFromCover(gameData.cover_image_url, verbose)
+        : Promise.resolve(null),
+    ]);
+
+    if (colors) {
+      gameData.background_color = colors.background_color;
+      gameData.accent_color = colors.accent_color;
+      gameData.label_color = colors.label_color;
+      gameData.text_color = colors.text_color;
     }
 
     const { data: newGame, error: gameError } = await supabase
@@ -104,54 +104,39 @@ export async function importGameFromIGDB(
       console.log(`[Importer] Game created: ${newGame.slug}`);
     }
 
-    // Create translations
-    await createTranslations(newGame.id, igdbGame);
+    // Parallelize all independent Supabase writes that only need gameId
+    const writeOps: Promise<unknown>[] = [
+      createTranslations(newGame.id, igdbGame),
+      createMedia(newGame.id, igdbGame),
+      createVideos(newGame.id, igdbGame, verbose),
+      createLanguages(newGame.id, igdbGame),
+      createAgeRatings(newGame.id, igdbGame, verbose),
+    ];
 
-    // Link genres
     if (relatedEntities.genreIds.length > 0) {
-      await linkGenres(newGame.id, relatedEntities.genreIds);
+      writeOps.push(linkGenres(newGame.id, relatedEntities.genreIds));
     }
-
-    // Link companies
     if (relatedEntities.developerIds.length > 0) {
-      await linkCompanies(newGame.id, relatedEntities.developerIds, "developer");
+      writeOps.push(linkCompanies(newGame.id, relatedEntities.developerIds, "developer"));
     }
     if (relatedEntities.publisherIds.length > 0) {
-      await linkCompanies(newGame.id, relatedEntities.publisherIds, "publisher");
+      writeOps.push(linkCompanies(newGame.id, relatedEntities.publisherIds, "publisher"));
     }
 
-    // Create media
-    await createMedia(newGame.id, igdbGame);
+    writeOps.push(
+      ensurePlatforms(igdbGame, verbose).then((platformIds) =>
+        platformIds.length > 0 ? linkPlatforms(newGame.id, platformIds) : undefined
+      )
+    );
 
-    // Import videos
-    await createVideos(newGame.id, igdbGame, verbose);
+    await Promise.all(writeOps);
 
-    // Link platforms
-    const platformIds = await ensurePlatforms(igdbGame, verbose);
-    if (platformIds.length > 0) {
-      await linkPlatforms(newGame.id, platformIds);
-    }
-
-    // Create languages
-    await createLanguages(newGame.id, igdbGame);
-
-    // Create age ratings
-    await createAgeRatings(newGame.id, igdbGame, verbose);
-
-    // Fetch and save playtime
-    await fetchAndSavePlaytime(newGame.id, igdbGame.id, verbose);
-
-    // Import game versions (editions)
-    const versionsCount = await importGameVersions(newGame.id, igdbGame.id, verbose, dryRun);
-    if (verbose && versionsCount > 0) {
-      console.log(`[Importer] Imported ${versionsCount} versions for game`);
-    }
-
-    // Import DLC/extensions
-    const dlcCount = await importDlcExtensions(newGame.id, igdbGame, verbose, dryRun);
-    if (verbose && dlcCount > 0) {
-      console.log(`[Importer] Imported ${dlcCount} DLC/extensions for game`);
-    }
+    // Parallelize the 3 remaining IGDB-dependent operations
+    await Promise.all([
+      fetchAndSavePlaytime(newGame.id, igdbGame.id, verbose),
+      importGameVersions(newGame.id, igdbGame.id, verbose, dryRun),
+      importDlcExtensions(newGame.id, igdbGame, verbose, dryRun),
+    ]);
 
     return {
       success: true,

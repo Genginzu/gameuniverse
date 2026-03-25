@@ -22,10 +22,11 @@ export interface ExtractedGameColors {
 
 /**
  * Upgrades a cover URL to a larger size for better color sampling.
- * Replaces t_cover_big (264×374) with t_720p (1280×720) when possible.
+ * Uses t_cover_big_2x (528×748) — good balance between quality and speed.
+ * Avoids t_720p (1280×720) which is much slower to download and process.
  */
 function upgradeImageUrl(coverUrl: string): string {
-  return coverUrl.replace("/t_cover_big/", "/t_720p/");
+  return coverUrl.replace("/t_cover_big/", "/t_cover_big_2x/");
 }
 
 /**
