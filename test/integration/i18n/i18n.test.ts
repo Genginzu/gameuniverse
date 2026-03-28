@@ -9,7 +9,7 @@ describe("Internationalization", () => {
     expect(frMessages.default.navigation).toBeDefined();
     expect(frMessages.default.navigation.home).toBe("Accueil");
     expect(frMessages.default.navigation.library).toBe("Bibliothèque");
-    expect(frMessages.default.landing.title).toBe("Découvrez l'univers du jeu vidéo");
+    expect(frMessages.default.landing.title).toBe("Votre univers");
   });
 
   it("should have English translations", async () => {
@@ -19,7 +19,7 @@ describe("Internationalization", () => {
     expect(enMessages.default.navigation).toBeDefined();
     expect(enMessages.default.navigation.home).toBe("Home");
     expect(enMessages.default.navigation.library).toBe("Library");
-    expect(enMessages.default.landing.title).toBe("Discover the gaming universe");
+    expect(enMessages.default.landing.title).toBe("Your");
   });
 
   it("should have consistent translation keys between languages", async () => {

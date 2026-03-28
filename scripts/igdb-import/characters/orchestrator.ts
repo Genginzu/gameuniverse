@@ -1,6 +1,6 @@
 /**
  * Character Import Orchestrator — coordinates bulk character import from IGDB.
- * Follows the same pattern as the game ImportOrchestrator but is fully independent.
+ * Supports both API and dump file sources.
  */
 
 import { IGDBService } from "../../../src/lib/services/igdbService";
@@ -8,6 +8,9 @@ import { RateLimiter } from "../shared/rate-limiter";
 import { withRetry } from "../shared/retry";
 import { ProgressTracker } from "../shared/progress-tracker";
 import { importCharacterFromIGDB } from "./character-importer";
+import { DumpReader } from "../shared/dump-reader";
+import { downloadCharacterDumps } from "../shared/dump-downloader";
+import { assembleCharactersFromDumps } from "./dump-assembler";
 import type { IGDBCharacter } from "../../../src/types/igdb";
 import type { CharacterCLIOptions } from "./index";
 import type { ImportStats } from "../shared/types";
@@ -43,12 +46,9 @@ export class CharacterOrchestrator {
     process.on("SIGTERM", () => handleSignal("SIGTERM"));
   }
 
-  /**
-   * Fetch total character count from IGDB for progress tracking.
-   */
+  /** Fetch total character count from IGDB for progress tracking. */
   private async fetchTotalCount(): Promise<number> {
     await this.rateLimiter.throttle();
-
     try {
       const result = await withRetry(() => IGDBService.getCharactersCount(), {
         maxAttempts: 3,
@@ -62,13 +62,9 @@ export class CharacterOrchestrator {
     }
   }
 
-  /**
-   * Fetch a batch of characters from IGDB with rate limiting and retry.
-   * Returns null on persistent failure (vs empty array = no more data).
-   */
+  /** Fetch a batch of characters from IGDB. Returns null on transient failure. */
   private async fetchBatch(offset: number, limit: number): Promise<IGDBCharacter[] | null> {
     await this.rateLimiter.throttle();
-
     try {
       const result = await withRetry(
         () => IGDBService.getCharactersBatch(offset, Math.min(limit, BATCH_SIZE)),
@@ -79,11 +75,9 @@ export class CharacterOrchestrator {
           operationName: `fetchCharactersBatch(offset=${offset}, limit=${limit})`,
         }
       );
-
       if (this.options.verbose) {
         console.log(`[Fetch] Retrieved ${result.value.length} characters from offset ${offset}`);
       }
-
       return result.value;
     } catch (error) {
       const msg = error instanceof Error ? error.message : String(error);
@@ -94,16 +88,13 @@ export class CharacterOrchestrator {
     }
   }
 
-  /**
-   * Process a single character: import or dry-run log.
-   */
+  /** Process a single character: import or dry-run log. */
   private async processCharacter(character: IGDBCharacter): Promise<void> {
     try {
       if (this.options.dryRun) {
         const gender = character.character_gender?.name ?? "unknown";
         const species = character.character_species?.name ?? "unknown";
         const gameCount = character.games?.length ?? 0;
-
         console.log(
           `[Dry-run] Would import: "${character.name}" (IGDB ID: ${character.id}, Gender: ${gender}, Species: ${species}, Games: ${gameCount})`
         );
@@ -112,7 +103,6 @@ export class CharacterOrchestrator {
       }
 
       const result = await importCharacterFromIGDB(character, this.options.verbose);
-
       if (result.success) {
         this.stats.imported++;
       } else {
@@ -130,63 +120,98 @@ export class CharacterOrchestrator {
     }
   }
 
-  /**
-   * Run the bulk character import process with pagination and progress tracking.
-   */
+  /** Run the bulk character import. Delegates to API or dump based on options. */
   async run(): Promise<ImportStats> {
     this.stats.startTime = new Date();
 
     const startOffset = this.options.offset ?? 0;
     this.currentOffset = startOffset;
-    const maxCharacters = this.options.limit;
-    let totalProcessed = 0;
+    const maxItems = this.options.limit;
 
-    console.log(`[CharImport] Starting bulk character import from IGDB...`);
-    console.log(`[CharImport] Mode: ${this.options.dryRun ? "DRY-RUN" : "LIVE"}`);
-    if (maxCharacters) console.log(`[CharImport] Limit: ${maxCharacters} characters`);
-    if (startOffset > 0) console.log(`[CharImport] Starting from offset: ${startOffset}`);
+    this.logStartup(startOffset, maxItems);
 
-    // Initialize progress tracker
-    if (!this.options.verbose) {
-      console.log(`[CharImport] Fetching total character count...`);
-      const estimatedTotal = await this.fetchTotalCount();
+    // Build the batch provider based on source
+    let getBatch: (offset: number, limit: number) => Promise<IGDBCharacter[] | null>;
 
-      const effectiveTotal = maxCharacters
-        ? Math.min(estimatedTotal - startOffset, maxCharacters)
-        : estimatedTotal - startOffset;
+    if (this.options.source === "dump") {
+      const dumpsDir = this.options.dumpFile ?? "scripts/igdb-import/dumps";
+      const csvPaths = await downloadCharacterDumps(dumpsDir, this.options.verbose);
 
-      if (estimatedTotal > 0) {
-        console.log(`[CharImport] Found ${estimatedTotal} characters in IGDB`);
+      if (!csvPaths.has("characters")) {
+        throw new Error("Failed to download the characters dump — cannot proceed.");
       }
 
-      this.progressTracker = new ProgressTracker(Math.max(effectiveTotal, 1), 500);
-      console.log(`\n`);
+      const allCharacters = await assembleCharactersFromDumps(csvPaths, this.options.verbose);
+      const reader = new DumpReader<IGDBCharacter>("", this.options.verbose);
+      reader.loadFromArray(allCharacters);
+
+      this.initProgress(reader.getTotalCount(), startOffset, maxItems);
+      getBatch = async (offset, limit) => reader.readBatch(offset, limit);
+    } else {
+      await this.initApiProgress(startOffset, maxItems);
+      getBatch = async (offset, limit) => this.fetchBatch(offset, limit);
     }
+
+    const totalProcessed = await this.runPaginatedLoop(getBatch, maxItems);
+
+    this.stats.endTime = new Date();
+    this.stats.total = totalProcessed;
+    this.printSummary();
+    return this.stats;
+  }
+
+  private logStartup(startOffset: number, maxItems?: number): void {
+    const isDump = this.options.source === "dump";
+    console.log(
+      `[CharImport] Starting bulk character import from ${isDump ? "IGDB data dumps" : "IGDB API"}...`
+    );
+    console.log(`[CharImport] Mode: ${this.options.dryRun ? "DRY-RUN" : "LIVE"}`);
+    if (isDump)
+      console.log(
+        `[CharImport] Dumps directory: ${this.options.dumpFile ?? "scripts/igdb-import/dumps"}`
+      );
+    console.log(`[CharImport] Source: ${isDump ? "dump" : "api"}`);
+    if (maxItems) console.log(`[CharImport] Limit: ${maxItems} characters`);
+    if (startOffset > 0) console.log(`[CharImport] Starting from offset: ${startOffset}`);
+  }
+
+  private async initApiProgress(startOffset: number, maxItems?: number): Promise<void> {
+    if (this.options.verbose) return;
+    console.log(`[CharImport] Fetching total character count...`);
+    const total = await this.fetchTotalCount();
+    const effective = maxItems ? Math.min(total - startOffset, maxItems) : total - startOffset;
+    if (total > 0) console.log(`[CharImport] Found ${total} characters in IGDB`);
+    this.progressTracker = new ProgressTracker(Math.max(effective, 1), 500);
+    console.log(`\n`);
+  }
+
+  private initProgress(total: number, startOffset: number, maxItems?: number): void {
+    if (this.options.verbose) return;
+    console.log(`[CharImport] Dump contains ${total} characters`);
+    const effective = maxItems ? Math.min(total - startOffset, maxItems) : total - startOffset;
+    this.progressTracker = new ProgressTracker(Math.max(effective, 1), 500);
+    console.log(`\n`);
+  }
+
+  /** Generic paginated loop shared between API and dump modes. */
+  private async runPaginatedLoop(
+    getBatch: (offset: number, limit: number) => Promise<IGDBCharacter[] | null>,
+    maxItems?: number
+  ): Promise<number> {
+    let totalProcessed = 0;
 
     try {
       while (!this.isInterrupted) {
-        const remaining = maxCharacters ? maxCharacters - totalProcessed : BATCH_SIZE;
+        const remaining = maxItems ? maxItems - totalProcessed : BATCH_SIZE;
         const batchSize = Math.min(remaining, BATCH_SIZE);
-
         if (batchSize <= 0) break;
 
-        const characters = await this.fetchBatch(this.currentOffset, batchSize);
-
-        // null = transient error (e.g. 429), retry same offset
-        if (characters === null) {
-          continue;
-        }
-
-        if (characters.length === 0) {
-          if (this.options.verbose) {
-            console.log(`[CharImport] No more characters at offset ${this.currentOffset}`);
-          }
-          break;
-        }
+        const characters = await getBatch(this.currentOffset, batchSize);
+        if (characters === null) continue; // transient error, retry
+        if (characters.length === 0) break;
 
         for (const character of characters) {
-          if (this.isInterrupted) break;
-          if (maxCharacters && totalProcessed >= maxCharacters) break;
+          if (this.isInterrupted || (maxItems && totalProcessed >= maxItems)) break;
 
           await this.processCharacter(character);
           totalProcessed++;
@@ -205,10 +230,8 @@ export class CharacterOrchestrator {
           }
         }
 
-        if (this.isInterrupted || (maxCharacters && totalProcessed >= maxCharacters)) break;
-
+        if (this.isInterrupted || (maxItems && totalProcessed >= maxItems)) break;
         this.currentOffset += characters.length;
-
         if (characters.length < batchSize) break;
       }
     } catch (error) {
@@ -216,30 +239,24 @@ export class CharacterOrchestrator {
       console.error(`[CharImport] Fatal error: ${errorMessage}`);
     }
 
-    // Finalize
-    this.stats.endTime = new Date();
-    this.stats.total = totalProcessed;
-
-    this.printSummary();
-
-    return this.stats;
+    return totalProcessed;
   }
 
   private printSummary(): void {
+    if (this.progressTracker && !this.options.verbose) {
+      this.progressTracker.finish(this.stats);
+      return;
+    }
     const duration = (this.stats.endTime!.getTime() - this.stats.startTime.getTime()) / 1000;
     const minutes = Math.floor(duration / 60);
     const seconds = Math.round(duration % 60);
 
-    if (this.progressTracker && !this.options.verbose) {
-      this.progressTracker.finish(this.stats);
-    } else {
-      console.log(`\n[CharImport] ========== IMPORT COMPLETE ==========`);
-      console.log(`[CharImport] Total processed: ${this.stats.total}`);
-      console.log(`[CharImport] Imported: ${this.stats.imported}`);
-      console.log(`[CharImport] Skipped (existing): ${this.stats.skipped}`);
-      console.log(`[CharImport] Errors: ${this.stats.errors}`);
-      console.log(`[CharImport] Duration: ${minutes}m ${seconds}s`);
-      console.log(`[CharImport] ==========================================\n`);
-    }
+    console.log(`\n[CharImport] ========== IMPORT COMPLETE ==========`);
+    console.log(`[CharImport] Total processed: ${this.stats.total}`);
+    console.log(`[CharImport] Imported: ${this.stats.imported}`);
+    console.log(`[CharImport] Skipped (existing): ${this.stats.skipped}`);
+    console.log(`[CharImport] Errors: ${this.stats.errors}`);
+    console.log(`[CharImport] Duration: ${minutes}m ${seconds}s`);
+    console.log(`[CharImport] ==========================================\n`);
   }
 }

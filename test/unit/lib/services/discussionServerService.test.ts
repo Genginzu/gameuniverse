@@ -13,6 +13,17 @@ vi.mock("@/lib/logger", () => ({
   logger: { error: vi.fn(), info: vi.fn(), warn: vi.fn(), debug: vi.fn() },
 }));
 
+// Mock the batch helpers used by getConversations
+const mockFetchProfileMap = vi.fn();
+const mockFetchLastMessages = vi.fn();
+const mockFetchUnreadCounts = vi.fn();
+
+vi.mock("@/lib/services/discussionQueryHelpers", () => ({
+  fetchProfileMap: (...args: unknown[]) => mockFetchProfileMap(...args),
+  fetchLastMessages: (...args: unknown[]) => mockFetchLastMessages(...args),
+  fetchUnreadCounts: (...args: unknown[]) => mockFetchUnreadCounts(...args),
+}));
+
 // Import after mocks
 import { DiscussionServerService } from "@/lib/services/discussionServerService";
 
@@ -64,33 +75,22 @@ describe("DiscussionServerService", () => {
         data: [{ id: CONV_ID, participant_1: USER_ID, participant_2: FRIEND_ID }],
         error: null,
       });
-      const profileChain = buildChain({
-        data: [{ id: FRIEND_ID, username: "Alice", avatar_url: "https://img.png" }],
-        error: null,
-      });
-      const lastMsgChain = buildChain({
-        data: [{ content: "Hello!", sender_id: FRIEND_ID, created_at: "2024-03-01T12:00:00Z" }],
-        error: null,
-      });
-      const unreadChain = buildChain({ data: null, error: null, count: 3 });
 
       mockFrom.mockImplementation((table: string) => {
-        if (table === "profiles") return profileChain;
         if (table === "conversations") return convChain;
-        // messages: first call = last message, second call = unread count
-        return lastMsgChain;
-      });
-      // After last message query, next messages query is unread count
-      let msgCallCount = 0;
-      mockFrom.mockImplementation((table: string) => {
-        if (table === "profiles") return profileChain;
-        if (table === "conversations") return convChain;
-        if (table === "messages") {
-          msgCallCount++;
-          return msgCallCount === 1 ? lastMsgChain : unreadChain;
-        }
         return buildChain({ data: null, error: null });
       });
+
+      // Mock the batch helpers
+      mockFetchProfileMap.mockResolvedValue(
+        new Map([[FRIEND_ID, { id: FRIEND_ID, username: "Alice", avatar_url: "https://img.png" }]])
+      );
+      mockFetchLastMessages.mockResolvedValue(
+        new Map([
+          [CONV_ID, { content: "Hello!", senderId: FRIEND_ID, createdAt: "2024-03-01T12:00:00Z" }],
+        ])
+      );
+      mockFetchUnreadCounts.mockResolvedValue(new Map([[CONV_ID, 3]]));
 
       const result = await DiscussionServerService.getConversations(USER_ID);
 

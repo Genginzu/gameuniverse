@@ -249,6 +249,23 @@ function SidebarContent({
             </Link>
           </div>
         </div>
+
+        {/* IGDB category */}
+        <div>
+          <p className="mb-1 px-3 text-xs font-semibold tracking-wider text-gray-400 uppercase dark:text-gray-500">
+            {t("nav.igdbCategory")}
+          </p>
+          <div className="space-y-1">
+            <Link
+              href="/admin/webhooks"
+              className={linkClasses("/admin/webhooks")}
+              onClick={onLinkClick}
+            >
+              <Icon icon="lucide:webhook" className="mr-3 h-4 w-4" />
+              {t("nav.webhooks")}
+            </Link>
+          </div>
+        </div>
       </nav>
 
       {/* User Info */}

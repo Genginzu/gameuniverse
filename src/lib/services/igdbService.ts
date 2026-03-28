@@ -429,8 +429,8 @@ export class IGDBService {
   static async getCharactersBatch(offset: number, limit: number): Promise<IGDBCharacter[]> {
     const query = `
       fields name, slug, description, country_name, url, akas,
-             character_gender.name,
-             character_species.name,
+             character_gender.id, character_gender.name,
+             character_species.id, character_species.name,
              mug_shot.image_id,
              games;
       sort id asc;

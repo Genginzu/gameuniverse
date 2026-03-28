@@ -1,0 +1,44 @@
+.input {
+  width: 100%;
+}
+
+.warning {
+  color: black;
+}
+
+#logo {
+  display: block;
+  color: white;
+  width: 200px;
+  padding: 20px 30px;
+  text-decoration: none;
+  line-height: 20px;
+}
+
+.pull-left {
+  float: left;
+}
+
+wrap {
+  display: block;
+}
+
+.content_code pre {
+  float: none;
+  width: 50%;
+  margin-bottom: 10px;
+}
+.content_code .highlight {
+  background-color: transparent;
+  margin-bottom: 10px;
+}
+
+#examples pre {
+  float: none;
+  width: 50%;
+  margin-bottom: 10px;
+}
+#examples .highlight {
+  background-color: transparent;
+  margin-bottom: 10px;
+}

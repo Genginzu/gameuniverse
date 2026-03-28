@@ -1114,7 +1114,9 @@
       "comments": "Comments",
       "playersCategory": "Players",
       "achievements": "Achievements",
-      "playerAchievements": "Player Achievements"
+      "playerAchievements": "Player Achievements",
+      "igdbCategory": "IGDB",
+      "webhooks": "Webhooks"
     },
     "closeSidebar": "Close sidebar",
     "lightMode": "Light mode",
@@ -2370,6 +2372,59 @@
         "errorNotAssigned": "This achievement is not assigned to this player.",
         "errorGeneric": "An error occurred while revoking the achievement."
       }
+    }
+  },
+  "webhooks": {
+    "title": "IGDB Webhooks",
+    "tabs": {
+      "games": "Game Events",
+      "characters": "Character Events",
+      "registrations": "Webhook Management"
+    },
+    "noEvents": "No events received.",
+    "unknownEntity": "Unknown entity",
+    "columns": {
+      "event": "Event",
+      "entity": "Entity",
+      "igdbId": "IGDB ID",
+      "status": "Status",
+      "date": "Date"
+    },
+    "eventTypes": {
+      "create": "Create",
+      "update": "Update",
+      "delete": "Delete"
+    },
+    "statuses": {
+      "received": "Received",
+      "processing": "Processing",
+      "processed": "Processed",
+      "failed": "Failed",
+      "ignored": "Ignored"
+    },
+    "filters": {
+      "eventType": "Event type",
+      "allEventTypes": "All types",
+      "status": "Status",
+      "allStatuses": "All statuses"
+    },
+    "pagination": {
+      "total": "{count, plural, =0 {No events} one {1 event} other {# events}}",
+      "page": "Page {current} of {total}"
+    },
+    "registrations": {
+      "registerNew": "Register a new webhook",
+      "endpoint": "Endpoint",
+      "method": "Method",
+      "register": "Register",
+      "active": "Active webhooks",
+      "noWebhooks": "No webhooks registered with IGDB.",
+      "statusActive": "Active",
+      "statusInactive": "Inactive",
+      "registerSuccess": "Webhook registered successfully.",
+      "registerError": "Failed to register webhook.",
+      "deleteSuccess": "Webhook deleted successfully.",
+      "deleteError": "Failed to delete webhook."
     }
   },
   "discussions": {

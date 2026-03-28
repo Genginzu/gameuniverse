@@ -6,6 +6,7 @@
 import { describe, test, expect, beforeEach, vi } from "vitest";
 
 let mockSupabaseFrom: any;
+let mockSupabaseRpc: any;
 
 vi.mock("../../../src/lib/supabase-server", () => ({
   createRouteHandlerClient: () =>
@@ -13,6 +14,10 @@ vi.mock("../../../src/lib/supabase-server", () => ({
       from: (table: string) => {
         if (mockSupabaseFrom) return mockSupabaseFrom(table);
         return {};
+      },
+      rpc: (...args: unknown[]) => {
+        if (mockSupabaseRpc) return mockSupabaseRpc(...args);
+        return Promise.resolve({ data: null, error: null });
       },
       auth: {
         getUser: () => Promise.resolve({ data: { user: null }, error: null }),
@@ -147,18 +152,44 @@ function mockCharacterGames(characterIds: string[]) {
 describe("GET /api/games — platform filter", () => {
   beforeEach(() => {
     mockSupabaseFrom = null;
+    mockSupabaseRpc = null;
   });
 
   test("filters games by platform slugs", async () => {
     const { GET } = await import("../../../src/app/api/games/route");
-    const game = makeGameRow("game-1", "zelda", "Zelda");
 
     mockSupabaseFrom = vi.fn((table: string) => {
       if (table === "platforms") return mockPlatformLookup(["plat-1"]);
       if (table === "game_platforms") return mockGamePlatforms(["game-1"]);
-      if (table === "games") return mockGamesTable([game], 1);
       return {};
     });
+
+    mockSupabaseRpc = vi.fn(() =>
+      Promise.resolve({
+        data: {
+          games: [
+            {
+              id: "game-1",
+              slug: "zelda",
+              igdb_id: null,
+              cover_image_url: null,
+              background_image_url: null,
+              background_color: null,
+              release_date: null,
+              metascore: null,
+              created_at: "2024-01-01",
+              title: "Zelda",
+              description: null,
+              genres: [],
+              developer: "Unknown",
+              publisher: "Unknown",
+            },
+          ],
+          totalCount: 1,
+        },
+        error: null,
+      })
+    );
 
     const res = await GET(makeRequest("http://localhost/api/games?platforms=ps5&locale=fr"));
     expect(res.status).toBe(200);
@@ -185,25 +216,49 @@ describe("GET /api/games — platform filter", () => {
 
   test("returns all games when no platform filter (Req 4.4)", async () => {
     const { GET } = await import("../../../src/app/api/games/route");
-    const rows = [makeGameRow("g1", "a", "Game A"), makeGameRow("g2", "b", "Game B")];
 
-    mockSupabaseFrom = vi.fn((table: string) => {
-      if (table === "games") {
-        return {
-          select: vi.fn((_c: string, opts?: { head?: boolean }) => {
-            if (opts?.head) {
-              return Promise.resolve({ count: 2, error: null });
-            }
-            return {
-              range: vi.fn(() => ({
-                order: vi.fn(() => Promise.resolve({ data: rows, error: null })),
-              })),
-            };
-          }),
-        };
-      }
-      return {};
-    });
+    mockSupabaseRpc = vi.fn(() =>
+      Promise.resolve({
+        data: {
+          games: [
+            {
+              id: "g1",
+              slug: "a",
+              igdb_id: null,
+              cover_image_url: null,
+              background_image_url: null,
+              background_color: null,
+              release_date: null,
+              metascore: null,
+              created_at: "2024-01-01",
+              title: "Game A",
+              description: null,
+              genres: [],
+              developer: "Unknown",
+              publisher: "Unknown",
+            },
+            {
+              id: "g2",
+              slug: "b",
+              igdb_id: null,
+              cover_image_url: null,
+              background_image_url: null,
+              background_color: null,
+              release_date: null,
+              metascore: null,
+              created_at: "2024-01-01",
+              title: "Game B",
+              description: null,
+              genres: [],
+              developer: "Unknown",
+              publisher: "Unknown",
+            },
+          ],
+          totalCount: 2,
+        },
+        error: null,
+      })
+    );
 
     const res = await GET(makeRequest("http://localhost/api/games?locale=fr"));
     expect(res.status).toBe(200);

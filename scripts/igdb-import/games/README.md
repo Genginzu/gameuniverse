@@ -1,7 +1,7 @@
 # IGDB Game Bulk Import Script
 
-Script d'import en masse des jeux depuis l'API IGDB vers la base de données
-Supabase.
+Script d'import en masse des jeux depuis l'API IGDB (ou un fichier dump local)
+vers la base de données Supabase.
 
 ## Prérequis
 
@@ -17,28 +17,43 @@ Supabase.
 Les credentials IGDB peuvent être obtenus sur
 [Twitch Developer Console](https://dev.twitch.tv/console).
 
+> **Note** : Les credentials IGDB sont nécessaires même en mode dump, car
+> l'import de certaines données complémentaires (versions, DLC, playtime)
+> nécessite des appels API.
+
 ## Utilisation
+
+### Mode API (par défaut)
 
 ```bash
 bun run scripts/igdb-import/games/index.ts --from=YYYY-MM-DD [options]
 ```
 
+### Mode Dump (fichier local)
+
+```bash
+bun run scripts/igdb-import/games/index.ts --source=dump [options]
+```
+
 ### Paramètres obligatoires
 
-| Paramètre     | Description                                                                |
-| ------------- | -------------------------------------------------------------------------- |
-| `--from=DATE` | Date de début pour filtrer les jeux par date de sortie (format YYYY-MM-DD) |
+| Paramètre         | Mode | Description                                                    |
+| ----------------- | ---- | -------------------------------------------------------------- |
+| `--from=DATE`     | API  | Date de début pour filtrer les jeux (format YYYY-MM-DD)        |
+| `--source=dump`   | Dump | Télécharge les CSV dumps IGDB et importe depuis ceux-ci        |
+| `--dump-dir=PATH` | Dump | Répertoire pour les CSV (défaut : `scripts/igdb-import/dumps`) |
 
 ### Options
 
-| Option       | Description                                               |
-| ------------ | --------------------------------------------------------- |
-| `--to=DATE`  | Date de fin (format YYYY-MM-DD). Par défaut : aujourd'hui |
-| `--dry-run`  | Simule l'import sans écrire dans la base de données       |
-| `--limit=N`  | Limite le nombre de jeux à importer                       |
-| `--offset=N` | Commence l'import à partir d'un offset donné              |
-| `--verbose`  | Active les logs détaillés                                 |
-| `--help`     | Affiche l'aide                                            |
+| Option           | Description                                                          |
+| ---------------- | -------------------------------------------------------------------- |
+| `--to=DATE`      | Date de fin (format YYYY-MM-DD). Par défaut : aujourd'hui (API only) |
+| `--dry-run`      | Simule l'import sans écrire dans la base de données                  |
+| `--limit=N`      | Limite le nombre de jeux à importer                                  |
+| `--offset=N`     | Commence l'import à partir d'un offset donné                         |
+| `--notable-only` | N'importe que les jeux notables (avec avis, notes, hypes ou follows) |
+| `--verbose`      | Active les logs détaillés                                            |
+| `--help`         | Affiche l'aide                                                       |
 
 ## Exemples
 
@@ -60,11 +75,58 @@ bun run scripts/igdb-import/games/index.ts --from=2024-01-01
 bun run scripts/igdb-import/games/index.ts --from=2024-01-01 --limit=100 --verbose
 ```
 
+### Import uniquement des jeux notables (avec avis/notes/hypes)
+
+```bash
+bun run scripts/igdb-import/games/index.ts --from=2024-01-01 --notable-only
+```
+
 ### Reprendre un import interrompu
 
 ```bash
 bun run scripts/igdb-import/games/index.ts --from=2024-01-01 --offset=500
 ```
+
+### Import depuis un fichier dump JSON (chemin par défaut)
+
+```bash
+bun run scripts/igdb-import/games/index.ts --source=dump --verbose
+```
+
+### Import depuis un fichier dump custom
+
+```bash
+bun run scripts/igdb-import/games/index.ts --source=dump --dump-dir=./dumps --verbose
+```
+
+### Import depuis un fichier dump NDJSON avec limite
+
+```bash
+bun run scripts/igdb-import/games/index.ts --source=dump --dump-dir=./dumps --limit=100
+```
+
+## Mode Dump
+
+Le mode dump permet d'importer des jeux depuis un fichier local au lieu de l'API
+IGDB. C'est plus rapide car il n'y a pas de rate limiting ni d'appels réseau
+pour la récupération des jeux.
+
+### Formats supportés
+
+- **JSON Array** : un fichier contenant un tableau JSON d'objets `IGDBGame`
+- **NDJSON** : un objet JSON par ligne (Newline-Delimited JSON)
+
+### Créer un fichier dump
+
+Vous pouvez créer un dump en exportant les résultats de l'API IGDB. Le format
+attendu est le même que la réponse de l'endpoint `/v4/games` avec les champs
+expandés (genres, companies, platforms, etc.).
+
+### Quand utiliser le mode dump
+
+- Import initial de gros volumes (évite le rate limiting de 4 req/s)
+- Ré-import après un reset de la base de données
+- Tests et développement local
 
 ## Structure des fichiers
 
@@ -77,7 +139,10 @@ scripts/igdb-import/
 │   ├── retry.ts             # Retry avec backoff exponentiel
 │   ├── progress-tracker.ts  # Barre de progression terminal
 │   ├── supabase-client.ts   # Client Supabase pour scripts standalone
-│   └── color-extractor.ts   # Extraction de couleurs depuis les images
+│   ├── color-extractor.ts   # Extraction de couleurs depuis les images
+│   └── dump-reader.ts       # Lecteur de fichiers dump (JSON/NDJSON)
+├── dumps/                   # Fichiers dump par défaut (gitignored)
+│   └── games.json           # Dump des jeux (à placer ici)
 ├── games/                   # Fichiers spécifiques au game importer
 │   ├── index.ts             # Point d'entrée principal
 │   ├── orchestrator.ts      # Orchestrateur principal de l'import

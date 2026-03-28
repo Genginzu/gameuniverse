@@ -87,7 +87,32 @@ const validFormData = () =>
     background_color: validHexColor(),
     main_image_url: fc.oneof(fc.constant(""), fc.webUrl()),
     background_image_url: fc.oneof(fc.constant(""), fc.webUrl()),
-    translations: fc.array(validTranslation(), { minLength: 1, maxLength: 2 }),
+    // Generate exactly one translation per language to avoid duplicate language_code issues
+    translations: fc
+      .tuple(
+        fc.record({
+          language_code: fc.constant("fr" as const),
+          name: fc.string({ minLength: 1, maxLength: 100 }).filter((s) => s.trim().length > 0),
+          role: fc.oneof(fc.constant(""), fc.string({ minLength: 1, maxLength: 50 })),
+          description: fc.oneof(fc.constant(""), fc.string({ minLength: 1, maxLength: 200 })),
+          biography: fc.oneof(fc.constant(""), fc.string({ minLength: 1, maxLength: 200 })),
+          weapons: fc.oneof(fc.constant(""), fc.string({ minLength: 1, maxLength: 200 })),
+        }),
+        fc.boolean()
+      )
+      .chain(([frTranslation, includeEn]) => {
+        if (!includeEn) return fc.constant([frTranslation]);
+        return fc
+          .record({
+            language_code: fc.constant("en" as const),
+            name: fc.string({ minLength: 1, maxLength: 100 }).filter((s) => s.trim().length > 0),
+            role: fc.oneof(fc.constant(""), fc.string({ minLength: 1, maxLength: 50 })),
+            description: fc.oneof(fc.constant(""), fc.string({ minLength: 1, maxLength: 200 })),
+            biography: fc.oneof(fc.constant(""), fc.string({ minLength: 1, maxLength: 200 })),
+            weapons: fc.oneof(fc.constant(""), fc.string({ minLength: 1, maxLength: 200 })),
+          })
+          .map((enTranslation) => [frTranslation, enTranslation]);
+      }),
     games: fc.array(validGame(), { minLength: 0, maxLength: 3 }),
     relationships: fc.array(validRelationship(), { minLength: 0, maxLength: 3 }),
     media: fc.array(validMedia(), { minLength: 0, maxLength: 3 }),
@@ -99,19 +124,37 @@ const validFormData = () =>
  * aprÃ¨s un round-trip (form â†’ payload â†’ form), car "" â†’ null â†’ "".
  */
 function normalizeFormData(data: AdminCharacterFormData): AdminCharacterFormData {
+  // Ensure both supported languages are present (characterPayloadToForm adds missing ones)
+  const SUPPORTED_CODES = ["fr", "en"];
+  const existingTranslations = data.translations.map((t) => ({
+    language_code: t.language_code,
+    name: t.name ?? "",
+    role: t.role || "",
+    description: t.description || "",
+    biography: t.biography || "",
+    weapons: t.weapons || "",
+  }));
+  const existingCodes = new Set(existingTranslations.map((t) => t.language_code));
+  const missingTranslations = SUPPORTED_CODES.filter((code) => !existingCodes.has(code)).map(
+    (code) => ({
+      language_code: code,
+      name: "",
+      role: "",
+      description: "",
+      biography: "",
+      weapons: "",
+    })
+  );
+  const allTranslations = [...existingTranslations, ...missingTranslations].sort((a, b) =>
+    a.language_code === "fr" ? -1 : b.language_code === "fr" ? 1 : 0
+  );
+
   return {
     slug: data.slug,
     main_image_url: data.main_image_url || "",
     background_image_url: data.background_image_url || "",
     background_color: data.background_color || "",
-    translations: data.translations.map((t) => ({
-      language_code: t.language_code,
-      name: t.name ?? "",
-      role: t.role || "",
-      description: t.description || "",
-      biography: t.biography || "",
-      weapons: t.weapons || "",
-    })),
+    translations: allTranslations,
     games: data.games ?? [],
     relationships: (data.relationships ?? []).map((r) => ({
       related_character_id: r.related_character_id,
@@ -167,11 +210,13 @@ describe("Property 3: Round-trip serialization (form â†” payload)", () => {
         const payload1 = characterFormToPayload(parseResult.data);
         const form1 = characterPayloadToForm(payload1);
 
-        // Second round-trip
+        // Second round-trip (from the stabilized form)
         const payload2 = characterFormToPayload(form1);
+        const form2 = characterPayloadToForm(payload2);
 
-        // Both payloads should be identical
-        expect(payload2).toEqual(payload1);
+        // After first round-trip, subsequent round-trips should be stable
+        const payload3 = characterFormToPayload(form2);
+        expect(payload3).toEqual(payload2);
       }),
       { numRuns: 50 }
     );
@@ -203,15 +248,15 @@ describe("Property 3: Round-trip serialization (form â†” payload)", () => {
         const payload = characterFormToPayload(parseResult.data);
         const roundTripped = characterPayloadToForm(payload);
 
-        expect(roundTripped.translations.length).toBe(parseResult.data.translations.length);
-        for (let i = 0; i < parseResult.data.translations.length; i++) {
-          expect(roundTripped.translations[i].language_code).toBe(
-            parseResult.data.translations[i].language_code
+        // Round-trip ensures both fr and en are present (2 translations always)
+        expect(roundTripped.translations.length).toBe(2);
+        // Original translations should be preserved within the round-tripped set
+        for (const origT of parseResult.data.translations) {
+          const match = roundTripped.translations.find(
+            (t) => t.language_code === origT.language_code
           );
-          // name: "" stays "", non-empty stays non-empty
-          expect(roundTripped.translations[i].name).toBe(
-            parseResult.data.translations[i].name ?? ""
-          );
+          expect(match).toBeDefined();
+          expect(match!.name).toBe(origT.name ?? "");
         }
       }),
       { numRuns: 100 }

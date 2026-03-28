@@ -1,7 +1,8 @@
 # IGDB Character Bulk Import Script
 
-Script d'import en masse des personnages depuis l'API IGDB vers la base de
-données Supabase. Complètement indépendant du script d'import des jeux.
+Script d'import en masse des personnages depuis l'API IGDB (ou un fichier dump
+local) vers la base de données Supabase. Complètement indépendant du script
+d'import des jeux.
 
 ## Prérequis
 
@@ -19,19 +20,29 @@ Les credentials IGDB peuvent être obtenus sur
 
 ## Utilisation
 
+### Mode API (par défaut)
+
 ```bash
 bun run scripts/igdb-import/characters/index.ts [options]
 ```
 
+### Mode Dump (fichier local)
+
+```bash
+bun run scripts/igdb-import/characters/index.ts --source=dump [options]
+```
+
 ### Options
 
-| Option       | Description                                         |
-| ------------ | --------------------------------------------------- |
-| `--dry-run`  | Simule l'import sans écrire dans la base de données |
-| `--limit=N`  | Limite le nombre de personnages à importer          |
-| `--offset=N` | Commence l'import à partir d'un offset donné        |
-| `--verbose`  | Active les logs détaillés                           |
-| `--help`     | Affiche l'aide                                      |
+| Option            | Description                                                    |
+| ----------------- | -------------------------------------------------------------- |
+| `--source=MODE`   | Source de données : `api` (défaut) ou `dump` (IGDB data dumps) |
+| `--dump-dir=PATH` | Répertoire pour les CSV (défaut : `scripts/igdb-import/dumps`) |
+| `--dry-run`       | Simule l'import sans écrire dans la base de données            |
+| `--limit=N`       | Limite le nombre de personnages à importer                     |
+| `--offset=N`      | Commence l'import à partir d'un offset donné                   |
+| `--verbose`       | Active les logs détaillés                                      |
+| `--help`          | Affiche l'aide                                                 |
 
 > **Note** : Contrairement au game importer, il n'y a pas de paramètre
 > `--from`/`--to`. L'API IGDB characters ne filtre pas par date de sortie — le
@@ -63,6 +74,24 @@ bun run scripts/igdb-import/characters/index.ts --limit=100 --verbose
 bun run scripts/igdb-import/characters/index.ts --offset=500 --limit=500
 ```
 
+### Import depuis un fichier dump (chemin par défaut)
+
+```bash
+bun run scripts/igdb-import/characters/index.ts --source=dump
+```
+
+### Import depuis un fichier dump custom
+
+```bash
+bun run scripts/igdb-import/characters/index.ts --source=dump --dump-dir=./my-dumps
+```
+
+### Import dump avec limite et logs détaillés
+
+```bash
+bun run scripts/igdb-import/characters/index.ts --source=dump --dump-dir=./my-dumps --limit=100 --verbose
+```
+
 ## Structure des fichiers
 
 ```
@@ -74,7 +103,8 @@ scripts/igdb-import/
 │   ├── retry.ts             # Retry avec backoff exponentiel
 │   ├── progress-tracker.ts  # Barre de progression terminal
 │   ├── supabase-client.ts   # Client Supabase pour scripts standalone
-│   └── color-extractor.ts   # Extraction de couleurs depuis les images
+│   ├── color-extractor.ts   # Extraction de couleurs depuis les images
+│   └── dump-reader.ts       # Lecteur de fichiers dump (JSON/NDJSON)
 ├── characters/              # Fichiers spécifiques au character importer
 │   ├── index.ts             # Point d'entrée principal + CLI parser
 │   ├── character-importer.ts # Import d'un personnage dans Supabase
@@ -156,6 +186,7 @@ ajoute la colonne `igdb_id` (unique, indexée) à la table `characters`.
 | ------------------ | ----------------------------- | --------------------------------- |
 | Endpoint IGDB      | `/v4/games`                   | `/v4/characters`                  |
 | Filtrage par date  | Oui (`--from`/`--to`)         | Non (pagination par ID)           |
+| Mode dump          | Oui (`--source=dump`)         | Oui (`--source=dump`)             |
 | Entités liées      | Genres, companies, platforms… | Jeux existants en base            |
 | Sync (mise à jour) | Oui (game-sync.ts)            | Non (skip si existe)              |
 | Point d'entrée     | `scripts/igdb-import/games/`  | `scripts/igdb-import/characters/` |

@@ -145,14 +145,17 @@ describe("/api/characters", () => {
     });
 
     it("should return 500 when database count query fails", async () => {
-      // Mock count query with error
-      const mockCountQuery = {
-        eq: vi.fn(() => mockCountQuery),
-      };
-      mockCountQuery.eq.mockResolvedValue({
+      // Mock count query with error — must be thenable since it's awaited directly
+      const countResult = Promise.resolve({
         count: null,
         error: new Error("Database error"),
       });
+      const mockCountQuery: Record<string, unknown> = {
+        eq: vi.fn(() => mockCountQuery),
+        in: vi.fn(() => mockCountQuery),
+      };
+      mockCountQuery.then = countResult.then.bind(countResult);
+      mockCountQuery.catch = countResult.catch.bind(countResult);
 
       // Mock main query — source does .order().range()
       const mockMainQuery = {

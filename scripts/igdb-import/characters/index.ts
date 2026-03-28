@@ -23,24 +23,34 @@
 import { validateCredentials } from "../shared/cli";
 import { CharacterOrchestrator } from "./orchestrator";
 
+import type { ImportSource } from "../shared/types";
+
 const HELP_TEXT = `
 IGDB Character Bulk Import Script
 
-Imports characters from IGDB API into Supabase database.
+Imports characters from IGDB API (or a local dump file) into Supabase database.
 
 Usage:
   bun run scripts/igdb-import/characters/index.ts [options]
+  bun run scripts/igdb-import/characters/index.ts --source=dump [options]
 
 Options:
-  --dry-run     Simulate import without writing to database
-  --limit=N     Limit the number of characters to import
-  --offset=N    Start import from a specific offset
-  --verbose     Enable verbose logging
-  --help        Show this help message
+  --source=MODE    Data source: "api" (default) or "dump" (IGDB data dumps)
+  --dump-dir=PATH  Directory for CSV downloads (default: scripts/igdb-import/dumps)
+  --dry-run        Simulate import without writing to database
+  --limit=N        Limit the number of characters to import
+  --offset=N       Start import from a specific offset
+  --verbose        Enable verbose logging
+  --help           Show this help message
 
 Examples:
+  # API mode
   bun run scripts/igdb-import/characters/index.ts --dry-run --limit=10
   bun run scripts/igdb-import/characters/index.ts --offset=500 --limit=100 --verbose
+
+  # Dump mode (downloads CSVs from IGDB, assembles and imports)
+  bun run scripts/igdb-import/characters/index.ts --source=dump
+  bun run scripts/igdb-import/characters/index.ts --source=dump --dump-dir=./my-dumps --limit=100
 `;
 
 export interface CharacterCLIOptions {
@@ -48,12 +58,15 @@ export interface CharacterCLIOptions {
   limit?: number;
   offset?: number;
   verbose: boolean;
+  source: ImportSource;
+  dumpFile?: string;
 }
 
 function parseCharacterArgs(args: string[]): CharacterCLIOptions {
   const options: CharacterCLIOptions = {
     dryRun: false,
     verbose: false,
+    source: "api",
   };
 
   for (const arg of args) {
@@ -67,6 +80,21 @@ function parseCharacterArgs(args: string[]): CharacterCLIOptions {
     }
     if (arg === "--verbose" || arg === "-v") {
       options.verbose = true;
+      continue;
+    }
+
+    if (arg.startsWith("--source=")) {
+      const value = arg.slice("--source=".length);
+      if (value !== "api" && value !== "dump") {
+        console.error(`Error: Invalid --source value: "${value}". Must be "api" or "dump".`);
+        process.exit(1);
+      }
+      options.source = value;
+      continue;
+    }
+
+    if (arg.startsWith("--dump-dir=")) {
+      options.dumpFile = arg.slice("--dump-dir=".length);
       continue;
     }
 
@@ -96,6 +124,11 @@ function parseCharacterArgs(args: string[]): CharacterCLIOptions {
     }
   }
 
+  // Dump mode: default dumps directory if not specified
+  if (options.source === "dump" && !options.dumpFile) {
+    options.dumpFile = "scripts/igdb-import/dumps";
+  }
+
   return options;
 }
 
@@ -113,6 +146,10 @@ async function main(): Promise<void> {
 
   if (options.verbose) {
     console.log("[Config] Options:");
+    console.log(`  - Source: ${options.source}`);
+    if (options.source === "dump") {
+      console.log(`  - Dumps directory: ${options.dumpFile}`);
+    }
     console.log(`  - Dry-run: ${options.dryRun}`);
     console.log(`  - Limit: ${options.limit ?? "none"}`);
     console.log(`  - Offset: ${options.offset ?? 0}`);

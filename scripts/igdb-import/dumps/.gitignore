@@ -1,0 +1,4 @@
+# Ignore dump files (can be large)
+*.json
+*.ndjson
+!.gitignore

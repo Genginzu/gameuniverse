@@ -1114,7 +1114,9 @@
       "comments": "Commentaires",
       "playersCategory": "Joueurs",
       "achievements": "Succès",
-      "playerAchievements": "Succès joueurs"
+      "playerAchievements": "Succès joueurs",
+      "igdbCategory": "IGDB",
+      "webhooks": "Webhooks"
     },
     "closeSidebar": "Fermer le menu latéral",
     "lightMode": "Mode clair",
@@ -2373,6 +2375,59 @@
         "errorNotAssigned": "Ce succès n'est pas attribué à ce joueur.",
         "errorGeneric": "Une erreur est survenue lors du retrait du succès."
       }
+    }
+  },
+  "webhooks": {
+    "title": "Webhooks IGDB",
+    "tabs": {
+      "games": "Événements Jeux",
+      "characters": "Événements Personnages",
+      "registrations": "Gestion des webhooks"
+    },
+    "noEvents": "Aucun événement reçu.",
+    "unknownEntity": "Entité inconnue",
+    "columns": {
+      "event": "Événement",
+      "entity": "Entité",
+      "igdbId": "ID IGDB",
+      "status": "Statut",
+      "date": "Date"
+    },
+    "eventTypes": {
+      "create": "Création",
+      "update": "Mise à jour",
+      "delete": "Suppression"
+    },
+    "statuses": {
+      "received": "Reçu",
+      "processing": "En cours",
+      "processed": "Traité",
+      "failed": "Échoué",
+      "ignored": "Ignoré"
+    },
+    "filters": {
+      "eventType": "Type d'événement",
+      "allEventTypes": "Tous les types",
+      "status": "Statut",
+      "allStatuses": "Tous les statuts"
+    },
+    "pagination": {
+      "total": "{count, plural, =0 {Aucun événement} one {1 événement} other {# événements}}",
+      "page": "Page {current} sur {total}"
+    },
+    "registrations": {
+      "registerNew": "Enregistrer un nouveau webhook",
+      "endpoint": "Endpoint",
+      "method": "Méthode",
+      "register": "Enregistrer",
+      "active": "Webhooks actifs",
+      "noWebhooks": "Aucun webhook enregistré auprès d'IGDB.",
+      "statusActive": "Actif",
+      "statusInactive": "Inactif",
+      "registerSuccess": "Webhook enregistré avec succès.",
+      "registerError": "Erreur lors de l'enregistrement du webhook.",
+      "deleteSuccess": "Webhook supprimé avec succès.",
+      "deleteError": "Erreur lors de la suppression du webhook."
     }
   },
   "discussions": {

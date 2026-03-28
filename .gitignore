@@ -41,3 +41,6 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 .idea
 # Sentry Config File
 .env.sentry-build-plugin
+
+#IGDB Mass import dump
+scripts/igdb-import/dumps/*.csv

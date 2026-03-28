@@ -82,13 +82,16 @@ describe("CharacterService DB Methods", () => {
     ];
 
     it("should fetch characters with default options", async () => {
-      // Setup mock chain for count query
-      const countQuery = {
+      const countResult = Promise.resolve({ count: 1, error: null });
+      // Count query must be thenable — awaited directly when no filters
+      const countQuery: Record<string, unknown> = {
         select: vi.fn(() => countQuery),
         eq: vi.fn(() => countQuery),
         ilike: vi.fn(() => countQuery),
-        in: vi.fn(() => Promise.resolve({ count: 1, error: null })),
+        in: vi.fn(() => countQuery),
       };
+      countQuery.then = countResult.then.bind(countResult);
+      countQuery.catch = countResult.catch.bind(countResult);
 
       // Setup mock chain for main query
       const mainQuery = {
@@ -105,7 +108,6 @@ describe("CharacterService DB Methods", () => {
       let callCount = 0;
       mockFrom.mockImplementation(() => {
         callCount++;
-        // First call is for main query, second is for count
         if (callCount === 1) return mainQuery;
         return countQuery;
       });
@@ -119,11 +121,14 @@ describe("CharacterService DB Methods", () => {
     });
 
     it("should apply search filter", async () => {
-      const countQuery = {
+      const countResult = Promise.resolve({ count: 1, error: null });
+      const countQuery: Record<string, unknown> = {
         select: vi.fn(() => countQuery),
         eq: vi.fn(() => countQuery),
-        ilike: vi.fn(() => Promise.resolve({ count: 1, error: null })),
+        ilike: vi.fn(() => countQuery),
       };
+      countQuery.then = countResult.then.bind(countResult);
+      countQuery.catch = countResult.catch.bind(countResult);
 
       const mainQuery = {
         select: vi.fn(() => mainQuery),
@@ -148,11 +153,14 @@ describe("CharacterService DB Methods", () => {
     });
 
     it("should apply role filter", async () => {
-      const countQuery = {
+      const countResult = Promise.resolve({ count: 1, error: null });
+      const countQuery: Record<string, unknown> = {
         select: vi.fn(() => countQuery),
         eq: vi.fn(() => countQuery),
-        in: vi.fn(() => Promise.resolve({ count: 1, error: null })),
+        in: vi.fn(() => countQuery),
       };
+      countQuery.then = countResult.then.bind(countResult);
+      countQuery.catch = countResult.catch.bind(countResult);
 
       const mainQuery = {
         select: vi.fn(() => mainQuery),
@@ -199,12 +207,15 @@ describe("CharacterService DB Methods", () => {
         },
       ];
 
-      const countQuery = {
+      const countResult = Promise.resolve({ count: 2, error: null });
+      const countQuery: Record<string, unknown> = {
         select: vi.fn(() => countQuery),
         eq: vi.fn(() => countQuery),
         ilike: vi.fn(() => countQuery),
-        in: vi.fn(() => Promise.resolve({ count: 2, error: null })),
+        in: vi.fn(() => countQuery),
       };
+      countQuery.then = countResult.then.bind(countResult);
+      countQuery.catch = countResult.catch.bind(countResult);
 
       const mainQuery = {
         select: vi.fn(() => mainQuery),
@@ -232,10 +243,13 @@ describe("CharacterService DB Methods", () => {
     });
 
     it("should handle count query error", async () => {
-      const countQuery = {
+      const countResult = Promise.resolve({ count: null, error: { message: "Count error" } });
+      const countQuery: Record<string, unknown> = {
         select: vi.fn(() => countQuery),
-        eq: vi.fn(() => Promise.resolve({ count: null, error: { message: "Count error" } })),
+        eq: vi.fn(() => countQuery),
       };
+      countQuery.then = countResult.then.bind(countResult);
+      countQuery.catch = countResult.catch.bind(countResult);
 
       const mainQuery = {
         select: vi.fn(() => mainQuery),
@@ -257,10 +271,13 @@ describe("CharacterService DB Methods", () => {
     });
 
     it("should handle main query error", async () => {
-      const countQuery = {
+      const countResult = Promise.resolve({ count: 1, error: null });
+      const countQuery: Record<string, unknown> = {
         select: vi.fn(() => countQuery),
-        eq: vi.fn(() => Promise.resolve({ count: 1, error: null })),
+        eq: vi.fn(() => countQuery),
       };
+      countQuery.then = countResult.then.bind(countResult);
+      countQuery.catch = countResult.catch.bind(countResult);
 
       const mainQuery = {
         select: vi.fn(() => mainQuery),
@@ -284,10 +301,13 @@ describe("CharacterService DB Methods", () => {
     });
 
     it("should calculate pagination correctly", async () => {
-      const countQuery = {
+      const countResult = Promise.resolve({ count: 50, error: null });
+      const countQuery: Record<string, unknown> = {
         select: vi.fn(() => countQuery),
-        eq: vi.fn(() => Promise.resolve({ count: 50, error: null })),
+        eq: vi.fn(() => countQuery),
       };
+      countQuery.then = countResult.then.bind(countResult);
+      countQuery.catch = countResult.catch.bind(countResult);
 
       const mainQuery = {
         select: vi.fn(() => mainQuery),
@@ -315,10 +335,13 @@ describe("CharacterService DB Methods", () => {
     });
 
     it("should handle empty results", async () => {
-      const countQuery = {
+      const countResult = Promise.resolve({ count: 0, error: null });
+      const countQuery: Record<string, unknown> = {
         select: vi.fn(() => countQuery),
-        eq: vi.fn(() => Promise.resolve({ count: 0, error: null })),
+        eq: vi.fn(() => countQuery),
       };
+      countQuery.then = countResult.then.bind(countResult);
+      countQuery.catch = countResult.catch.bind(countResult);
 
       const mainQuery = {
         select: vi.fn(() => mainQuery),

@@ -8,8 +8,22 @@ import type { IGDBCharacter } from "../../../src/types/igdb";
 
 // --- Fluent mock Supabase client ---
 
-let responseQueue: Array<{ data: unknown; error: unknown }> = [];
+/** Table-specific response queues to handle parallel operations deterministically */
+const tableQueues: Record<string, Array<{ data: unknown; error: unknown }>> = {};
 let insertCalls: Array<{ table: string; rows: unknown }> = [];
+
+/** Push a response for a specific table (or "default" for any table) */
+function pushResponse(table: string, response: { data: unknown; error: unknown }) {
+  if (!tableQueues[table]) tableQueues[table] = [];
+  tableQueues[table].push(response);
+}
+
+/** Shift a response: try table-specific queue first, then "default" */
+function shiftResponse(table: string): { data: unknown; error: unknown } {
+  if (tableQueues[table]?.length) return tableQueues[table].shift()!;
+  if (tableQueues["default"]?.length) return tableQueues["default"].shift()!;
+  return { data: null, error: null };
+}
 
 function createFluentChain(tableName: string) {
   const chain: Record<string, unknown> = {};
@@ -17,12 +31,12 @@ function createFluentChain(tableName: string) {
   chain.eq = vi.fn(() => chain);
   chain.in = vi.fn(() => chain);
   chain.single = vi.fn(() => {
-    const next = responseQueue.shift() ?? { data: null, error: null };
+    const next = shiftResponse(tableName);
     return Promise.resolve(next);
   });
   chain.insert = vi.fn((rows: unknown) => {
     insertCalls.push({ table: tableName, rows });
-    const next = responseQueue.shift() ?? { data: null, error: null };
+    const next = shiftResponse(tableName);
     const insertChain: Record<string, unknown> = { ...next };
     insertChain.select = vi.fn(() => insertChain);
     insertChain.single = vi.fn(() => Promise.resolve(next));
@@ -61,7 +75,8 @@ function makeIgdbCharacter(overrides: Partial<IGDBCharacter> = {}): IGDBCharacte
 
 beforeEach(() => {
   vi.clearAllMocks();
-  responseQueue = [];
+  // Clear all table queues
+  for (const key of Object.keys(tableQueues)) delete tableQueues[key];
   insertCalls = [];
 });
 
@@ -73,9 +88,9 @@ describe("ensureGender", () => {
   });
 
   it("creates gender and translation when not existing", async () => {
-    responseQueue.push({ data: null, error: { code: "PGRST116" } }); // not found
-    responseQueue.push({ data: { id: GENDER_UUID }, error: null }); // insert gender
-    responseQueue.push({ data: null, error: null }); // insert translation
+    pushResponse("genders", { data: null, error: { code: "PGRST116" } }); // not found
+    pushResponse("genders", { data: { id: GENDER_UUID }, error: null }); // insert gender
+    pushResponse("gender_translations", { data: null, error: null }); // insert translation
 
     const result = await ensureGender({ id: 1, name: "Male" });
     expect(result).toBe(GENDER_UUID);
@@ -94,7 +109,7 @@ describe("ensureGender", () => {
   });
 
   it("returns existing gender ID when already in DB", async () => {
-    responseQueue.push({ data: { id: GENDER_UUID }, error: null }); // found
+    pushResponse("genders", { data: { id: GENDER_UUID }, error: null }); // found
 
     const result = await ensureGender({ id: 1, name: "Male" });
     expect(result).toBe(GENDER_UUID);
@@ -102,8 +117,8 @@ describe("ensureGender", () => {
   });
 
   it("returns null on insert failure", async () => {
-    responseQueue.push({ data: null, error: { code: "PGRST116" } }); // not found
-    responseQueue.push({ data: null, error: { message: "duplicate" } }); // insert fails
+    pushResponse("genders", { data: null, error: { code: "PGRST116" } }); // not found
+    pushResponse("genders", { data: null, error: { message: "duplicate" } }); // insert fails
 
     const result = await ensureGender({ id: 1, name: "Male" });
     expect(result).toBeNull();
@@ -117,9 +132,9 @@ describe("ensureSpecies", () => {
   });
 
   it("creates species and translation when not existing", async () => {
-    responseQueue.push({ data: null, error: { code: "PGRST116" } });
-    responseQueue.push({ data: { id: SPECIES_UUID }, error: null });
-    responseQueue.push({ data: null, error: null });
+    pushResponse("species", { data: null, error: { code: "PGRST116" } });
+    pushResponse("species", { data: { id: SPECIES_UUID }, error: null });
+    pushResponse("species_translations", { data: null, error: null });
 
     const result = await ensureSpecies({ id: 10, name: "Human" });
     expect(result).toBe(SPECIES_UUID);
@@ -130,7 +145,7 @@ describe("ensureSpecies", () => {
   });
 
   it("returns existing species ID when already in DB", async () => {
-    responseQueue.push({ data: { id: SPECIES_UUID }, error: null });
+    pushResponse("species", { data: { id: SPECIES_UUID }, error: null });
 
     const result = await ensureSpecies({ id: 10, name: "Human" });
     expect(result).toBe(SPECIES_UUID);
@@ -141,19 +156,19 @@ describe("ensureSpecies", () => {
 describe("importCharacterFromIGDB with gender/species", () => {
   it("imports character with gender and species FKs (Req 7.1, 7.2, 7.4)", async () => {
     // character check → not found
-    responseQueue.push({ data: null, error: { code: "PGRST116" } });
+    pushResponse("characters", { data: null, error: { code: "PGRST116" } });
     // ensureGender: not found → create
-    responseQueue.push({ data: null, error: { code: "PGRST116" } });
-    responseQueue.push({ data: { id: GENDER_UUID }, error: null });
-    responseQueue.push({ data: null, error: null }); // gender translation
+    pushResponse("genders", { data: null, error: { code: "PGRST116" } });
+    pushResponse("genders", { data: { id: GENDER_UUID }, error: null });
+    pushResponse("gender_translations", { data: null, error: null });
     // ensureSpecies: not found → create
-    responseQueue.push({ data: null, error: { code: "PGRST116" } });
-    responseQueue.push({ data: { id: SPECIES_UUID }, error: null });
-    responseQueue.push({ data: null, error: null }); // species translation
+    pushResponse("species", { data: null, error: { code: "PGRST116" } });
+    pushResponse("species", { data: { id: SPECIES_UUID }, error: null });
+    pushResponse("species_translations", { data: null, error: null });
     // insert character
-    responseQueue.push({ data: { id: CHAR_UUID, slug: CHAR_SLUG }, error: null });
+    pushResponse("characters", { data: { id: CHAR_UUID, slug: CHAR_SLUG }, error: null });
     // createTranslation
-    responseQueue.push({ data: null, error: null });
+    pushResponse("character_translations", { data: null, error: null });
 
     const igdbChar = makeIgdbCharacter({
       character_gender: { id: 1, name: "Male" },
@@ -173,11 +188,11 @@ describe("importCharacterFromIGDB with gender/species", () => {
 
   it("imports character without gender/species — FKs are NULL (Req 7.5)", async () => {
     // character check → not found
-    responseQueue.push({ data: null, error: { code: "PGRST116" } });
+    pushResponse("characters", { data: null, error: { code: "PGRST116" } });
     // insert character (no ensureGender/ensureSpecies calls since both undefined)
-    responseQueue.push({ data: { id: CHAR_UUID, slug: CHAR_SLUG }, error: null });
+    pushResponse("characters", { data: { id: CHAR_UUID, slug: CHAR_SLUG }, error: null });
     // createTranslation
-    responseQueue.push({ data: null, error: null });
+    pushResponse("character_translations", { data: null, error: null });
 
     const result = await importCharacterFromIGDB(makeIgdbCharacter(), false);
     expect(result.success).toBe(true);
@@ -190,18 +205,18 @@ describe("importCharacterFromIGDB with gender/species", () => {
 
   it("handles gender upsert failure gracefully — FK stays NULL (Req 7.5)", async () => {
     // character check → not found
-    responseQueue.push({ data: null, error: { code: "PGRST116" } });
+    pushResponse("characters", { data: null, error: { code: "PGRST116" } });
     // ensureGender: not found → insert fails
-    responseQueue.push({ data: null, error: { code: "PGRST116" } });
-    responseQueue.push({ data: null, error: { message: "db error" } });
+    pushResponse("genders", { data: null, error: { code: "PGRST116" } });
+    pushResponse("genders", { data: null, error: { message: "db error" } });
     // ensureSpecies: not found → create OK
-    responseQueue.push({ data: null, error: { code: "PGRST116" } });
-    responseQueue.push({ data: { id: SPECIES_UUID }, error: null });
-    responseQueue.push({ data: null, error: null });
+    pushResponse("species", { data: null, error: { code: "PGRST116" } });
+    pushResponse("species", { data: { id: SPECIES_UUID }, error: null });
+    pushResponse("species_translations", { data: null, error: null });
     // insert character
-    responseQueue.push({ data: { id: CHAR_UUID, slug: CHAR_SLUG }, error: null });
+    pushResponse("characters", { data: { id: CHAR_UUID, slug: CHAR_SLUG }, error: null });
     // createTranslation
-    responseQueue.push({ data: null, error: null });
+    pushResponse("character_translations", { data: null, error: null });
 
     const igdbChar = makeIgdbCharacter({
       character_gender: { id: 1, name: "Male" },
@@ -219,15 +234,15 @@ describe("importCharacterFromIGDB with gender/species", () => {
 
   it("reuses existing gender/species on idempotent import (Req 7.3)", async () => {
     // character check → not found
-    responseQueue.push({ data: null, error: { code: "PGRST116" } });
+    pushResponse("characters", { data: null, error: { code: "PGRST116" } });
     // ensureGender: found existing
-    responseQueue.push({ data: { id: GENDER_UUID }, error: null });
+    pushResponse("genders", { data: { id: GENDER_UUID }, error: null });
     // ensureSpecies: found existing
-    responseQueue.push({ data: { id: SPECIES_UUID }, error: null });
+    pushResponse("species", { data: { id: SPECIES_UUID }, error: null });
     // insert character
-    responseQueue.push({ data: { id: CHAR_UUID, slug: CHAR_SLUG }, error: null });
+    pushResponse("characters", { data: { id: CHAR_UUID, slug: CHAR_SLUG }, error: null });
     // createTranslation
-    responseQueue.push({ data: null, error: null });
+    pushResponse("character_translations", { data: null, error: null });
 
     const igdbChar = makeIgdbCharacter({
       character_gender: { id: 1, name: "Male" },

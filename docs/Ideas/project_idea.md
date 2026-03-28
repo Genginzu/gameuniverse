@@ -35,5 +35,27 @@
 - Faire un footer
 - Faire la page d'accueil
 - Corriger le mode sombre
+- Ajouter une manière de catégoriser le jeu par sa popularité ou en tout cas les actions que les joueux réalisent dessus (temps de jeu, avis, etc.)
+- récupérer les infos suivantes pour les jeux : 
+game_modes — modes de jeu (Single player, Multiplayer, Co-op)
+themes — thèmes du jeu
+keywords — mots-clés
+player_perspectives — perspective joueur (First person, Third person, etc.)
+similar_games — jeux similaires
+franchises / franchise — franchises
+game_engines — moteurs de jeu
+multiplayer_modes — détails multijoueur
+websites — sites web officiels
+total_rating / total_rating_count — note combinée users+critiques
+rating / rating_count — note utilisateurs IGDB
 
 Peux-tu prendre <page> et faire une passe pour regarder ce qui pourrait être améliorer en terme de perfromance, de lazy loading et d'affichage skeleton ? Dans un premier temps fait moi un etat des lieux détaillés suivi d'un tableau recap et je te confirmerais les points à mettre en place par la suite. Il se peut que rien ne soit à faire dans ce cas ne pas inventer quoi que ce soit ou ne te force pas à trouver des points à améliorer.
+
+2000
+2001
+2002
+2003 - 2010
+2011
+2012
+2013
+2014 - 2016

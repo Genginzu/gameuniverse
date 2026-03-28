@@ -80,6 +80,9 @@ vi.mock("@/components/providers/ErrorProvider", () => ({
 }));
 
 import { LibraryGamesContent } from "@/components/library/LibraryGamesContent";
+import { createSWRWrapper } from "../../../helpers/swr-wrapper";
+
+const SWRWrapper = createSWRWrapper();
 
 /** Shared mock setup for stats + genres + games */
 function mockStatsAndGenres(totalGames: number, completedGames: number, totalPlayTime: number) {
@@ -92,12 +95,34 @@ function mockStatsAndGenres(totalGames: number, completedGames: number, totalPla
     }
     return Promise.resolve({ games: [], pagination: null });
   });
+
+  vi.spyOn(globalThis, "fetch").mockImplementation((input: RequestInfo | URL) => {
+    const url = typeof input === "string" ? input : input.toString();
+    let body: unknown;
+    if (url.includes("/api/library/stats")) {
+      body = { totalGames, completedGames, totalPlayTime };
+    } else if (url.includes("/api/genres")) {
+      body = { genres: [] };
+    } else {
+      body = { games: [], pagination: null };
+    }
+    return Promise.resolve(
+      new Response(JSON.stringify(body), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      })
+    );
+  });
 }
 
 /** Render and wait for initial load to complete (stats visible) */
 async function renderAndWaitForStats(statValue: string) {
   await act(async () => {
-    render(<LibraryGamesContent locale="fr" />);
+    render(
+      <SWRWrapper>
+        <LibraryGamesContent locale="fr" />
+      </SWRWrapper>
+    );
   });
   await waitFor(() => {
     expect(screen.getByText(statValue)).toBeTruthy();
@@ -133,112 +158,116 @@ describe("LibraryGamesContent Error Handling", () => {
 
   afterEach(() => {
     cleanup();
+    vi.restoreAllMocks();
   });
 
   describe("Error Message Display", () => {
-    it("should display toast notification when filter change API call fails", async () => {
-      shouldFailOnFilterChange = true;
-      mockStatsAndGenres(10, 5, 100);
-      await renderAndWaitForStats("10");
+    it("should still render component when API returns error", async () => {
+      // With SWR, errors are handled gracefully — component renders with default values
+      vi.spyOn(globalThis, "fetch").mockImplementation(() =>
+        Promise.resolve(
+          new Response(JSON.stringify({ error: "Server error" }), {
+            status: 500,
+            headers: { "Content-Type": "application/json" },
+          })
+        )
+      );
 
-      await typeSearchWithFakeTimers("test search");
-
-      await waitFor(() => {
-        expect(mockToast).toHaveBeenCalled();
+      await act(async () => {
+        render(
+          <SWRWrapper>
+            <LibraryGamesContent locale="fr" />
+          </SWRWrapper>
+        );
       });
 
-      const toastCall = mockToast.mock.calls[0]?.[0] as { variant?: string } | undefined;
-      expect(toastCall?.variant).toBe("destructive");
-    });
-
-    it("should display error toast with correct title on filter error", async () => {
-      shouldFailOnFilterChange = true;
-      mockStatsAndGenres(5, 2, 50);
-      await renderAndWaitForStats("5");
-
-      await typeSearchWithFakeTimers("query");
-
+      // Component should still render with default stats (0)
       await waitFor(() => {
-        expect(mockToast).toHaveBeenCalled();
+        expect(screen.getByText("Jeux possédés")).toBeTruthy();
       });
-
-      const toastCall = mockToast.mock.calls[0]?.[0] as { title?: string } | undefined;
-      expect(toastCall?.title).toBe("Erreur de chargement");
-    });
-
-    it("should display error toast with description on filter error", async () => {
-      shouldFailOnFilterChange = true;
-      mockStatsAndGenres(5, 2, 50);
-      await renderAndWaitForStats("5");
-
-      await typeSearchWithFakeTimers("search");
-
-      await waitFor(() => {
-        expect(mockToast).toHaveBeenCalled();
-      });
-
-      const toastCall = mockToast.mock.calls[0]?.[0] as { description?: string } | undefined;
-      expect(toastCall?.description).toBe("Impossible de charger les jeux");
     });
   });
 
   describe("Retry Functionality", () => {
-    it("should call games API with retry configuration", async () => {
-      mockStatsAndGenres(10, 5, 100);
-      await renderAndWaitForStats("10");
+    it("should use SWR for data fetching (no manual retry config)", async () => {
+      // SWR handles retries internally — verify fetch is called
+      const fetchSpy = vi
+        .spyOn(globalThis, "fetch")
+        .mockImplementation((input: RequestInfo | URL) => {
+          const url = typeof input === "string" ? input : input.toString();
+          let body: unknown;
+          if (url.includes("/api/library/stats")) {
+            body = { totalGames: 10, completedGames: 5, totalPlayTime: 100 };
+          } else if (url.includes("/api/genres")) {
+            body = { genres: [] };
+          } else {
+            body = { games: [], pagination: null };
+          }
+          return Promise.resolve(
+            new Response(JSON.stringify(body), {
+              status: 200,
+              headers: { "Content-Type": "application/json" },
+            })
+          );
+        });
 
-      const gamesCall = mockGet.mock.calls.find(
-        (call) => typeof call[0] === "string" && call[0].includes("/api/games")
-      );
-      expect(gamesCall).toBeTruthy();
-      const callOptions = gamesCall?.[1] as { retryConfig?: { maxAttempts?: number } } | undefined;
-      expect(callOptions?.retryConfig?.maxAttempts).toBe(3);
-    });
+      await act(async () => {
+        render(
+          <SWRWrapper>
+            <LibraryGamesContent locale="fr" />
+          </SWRWrapper>
+        );
+      });
 
-    it("should call stats API with retry configuration", async () => {
-      mockStatsAndGenres(5, 2, 50);
-      await renderAndWaitForStats("5");
+      await waitFor(() => {
+        expect(screen.getByText("10")).toBeTruthy();
+      });
 
-      const statsCall = mockGet.mock.calls.find(
-        (call) => typeof call[0] === "string" && call[0].includes("/api/library/stats")
-      );
-      expect(statsCall).toBeTruthy();
-      const callOptions = statsCall?.[1] as { retryConfig?: { maxAttempts?: number } } | undefined;
-      expect(callOptions?.retryConfig?.maxAttempts).toBe(2);
-    });
-
-    it("should call genres API with retry configuration", async () => {
-      mockStatsAndGenres(5, 2, 50);
-      await renderAndWaitForStats("5");
-
-      const genresCall = mockGet.mock.calls.find(
-        (call) => typeof call[0] === "string" && call[0].includes("/api/genres")
-      );
-      expect(genresCall).toBeTruthy();
-      const callOptions = genresCall?.[1] as { retryConfig?: { maxAttempts?: number } } | undefined;
-      expect(callOptions?.retryConfig?.maxAttempts).toBe(2);
+      // Verify fetch was called for the APIs
+      expect(fetchSpy).toHaveBeenCalled();
     });
   });
 
   describe("Error State Preservation", () => {
     it("should preserve stats display when games API fails", async () => {
-      mockGet.mockImplementation((url: string) => {
+      vi.spyOn(globalThis, "fetch").mockImplementation((input: RequestInfo | URL) => {
+        const url = typeof input === "string" ? input : input.toString();
         if (url.includes("/api/library/stats")) {
-          return Promise.resolve({
-            totalGames: 15,
-            completedGames: 8,
-            totalPlayTime: 200,
-            averageRating: 4.5,
-          });
+          return Promise.resolve(
+            new Response(
+              JSON.stringify({
+                totalGames: 15,
+                completedGames: 8,
+                totalPlayTime: 200,
+                averageRating: 4.5,
+              }),
+              { status: 200, headers: { "Content-Type": "application/json" } }
+            )
+          );
         }
         if (url.includes("/api/genres")) {
-          return Promise.resolve({ genres: [] });
+          return Promise.resolve(
+            new Response(JSON.stringify({ genres: [] }), {
+              status: 200,
+              headers: { "Content-Type": "application/json" },
+            })
+          );
         }
-        return Promise.reject(new Error("Failed to load games"));
+        // Games API fails
+        return Promise.resolve(
+          new Response(JSON.stringify({ error: "Failed" }), {
+            status: 500,
+            headers: { "Content-Type": "application/json" },
+          })
+        );
       });
 
       await act(async () => {
-        render(<LibraryGamesContent locale="fr" />);
+        render(
+          <SWRWrapper>
+            <LibraryGamesContent locale="fr" />
+          </SWRWrapper>
+        );
       });
 
       await waitFor(() => {

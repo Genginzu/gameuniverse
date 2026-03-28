@@ -8,26 +8,37 @@ import type { CLIOptions } from "./types";
 const HELP_TEXT = `
 IGDB Bulk Import Script
 
-Imports games from IGDB API into Supabase database, filtered by release date.
+Imports games from IGDB API or IGDB data dumps into Supabase database.
 
 Usage:
   bun run scripts/igdb-import/games/index.ts --from=YYYY-MM-DD [options]
+  bun run scripts/igdb-import/games/index.ts --source=dump [options]
 
-Required:
-  --from=DATE   Start date for game release (YYYY-MM-DD format)
+Required (API mode):
+  --from=DATE        Start date for game release (YYYY-MM-DD format)
+
+Dump mode:
+  --source=dump      Download CSV dumps from IGDB and import from them
+  --dump-dir=PATH    Directory for CSV downloads (default: scripts/igdb-import/dumps)
 
 Options:
-  --to=DATE     End date for game release (YYYY-MM-DD format, defaults to today)
-  --dry-run     Simulate import without writing to database
-  --limit=N     Limit the number of games to import
-  --offset=N    Start import from a specific offset
-  --verbose     Enable verbose logging
-  --help        Show this help message
+  --to=DATE          End date for game release (YYYY-MM-DD format, defaults to today)
+  --dry-run          Simulate import without writing to database
+  --limit=N          Limit the number of games to import
+  --offset=N         Start import from a specific offset
+  --notable-only     Only import notable games (with player/press ratings, hypes, or follows)
+  --not-notable      Only import non-notable games (no ratings, hypes, or follows)
+  --verbose          Enable verbose logging
+  --help             Show this help message
 
 Examples:
+  # API mode
   bun run scripts/igdb-import/games/index.ts --from=2024-01-01 --dry-run --limit=10
   bun run scripts/igdb-import/games/index.ts --from=2023-01-01 --to=2023-12-31 --verbose
-  bun run scripts/igdb-import/games/index.ts --from=2020-01-01 --offset=500 --limit=100
+
+  # Dump mode (downloads CSVs from IGDB, assembles and imports)
+  bun run scripts/igdb-import/games/index.ts --source=dump --verbose
+  bun run scripts/igdb-import/games/index.ts --source=dump --dump-dir=./my-dumps --limit=100
 `;
 
 /**
@@ -64,8 +75,11 @@ export function parseArgs(args: string[]): CLIOptions {
   const options: CLIOptions = {
     dryRun: false,
     verbose: false,
+    notableOnly: false,
+    notNotable: false,
     fromDate: todayUTC, // Will be set from --from argument
     toDate: todayUTC, // Defaults to today
+    source: "api", // Default to API mode
   };
 
   let fromDateProvided = false;
@@ -83,6 +97,31 @@ export function parseArgs(args: string[]): CLIOptions {
 
     if (arg === "--verbose" || arg === "-v") {
       options.verbose = true;
+      continue;
+    }
+
+    if (arg === "--notable-only") {
+      options.notableOnly = true;
+      continue;
+    }
+
+    if (arg === "--not-notable") {
+      options.notNotable = true;
+      continue;
+    }
+
+    if (arg.startsWith("--source=")) {
+      const value = arg.slice("--source=".length);
+      if (value !== "api" && value !== "dump") {
+        console.error(`Error: Invalid value for --source: "${value}". Must be "api" or "dump".`);
+        process.exit(1);
+      }
+      options.source = value;
+      continue;
+    }
+
+    if (arg.startsWith("--dump-dir=")) {
+      options.dumpFile = arg.slice("--dump-dir=".length);
       continue;
     }
 
@@ -140,7 +179,14 @@ export function parseArgs(args: string[]): CLIOptions {
     }
   }
 
-  // Validate that --from is provided
+  // Dump mode: default dumps directory if not specified
+  if (options.source === "dump") {
+    if (!options.dumpFile) {
+      options.dumpFile = "scripts/igdb-import/dumps";
+    }
+  }
+
+  // --from is required in both modes
   if (!fromDateProvided) {
     console.error("Error: --from=YYYY-MM-DD is required.");
     console.error("Use --help for usage information.");

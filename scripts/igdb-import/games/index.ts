@@ -40,7 +40,7 @@ export async function main(): Promise<void> {
   const args = process.argv.slice(2);
   const options = parseArgs(args);
 
-  // Validate credentials before starting
+  // Validate credentials (needed even in dump mode for game versions, DLC, and playtime API calls)
   if (!validateCredentials()) {
     process.exit(1);
   }
@@ -52,12 +52,18 @@ export async function main(): Promise<void> {
 
   if (options.verbose) {
     console.log("[Config] Options:");
-    console.log(`  - From date: ${options.fromDate.toISOString().split("T")[0]}`);
-    console.log(`  - To date: ${options.toDate.toISOString().split("T")[0]}`);
+    console.log(`  - Source: ${options.source}`);
+    if (options.source === "dump") {
+      console.log(`  - Dumps directory: ${options.dumpFile}`);
+    } else {
+      console.log(`  - From date: ${options.fromDate.toISOString().split("T")[0]}`);
+      console.log(`  - To date: ${options.toDate.toISOString().split("T")[0]}`);
+    }
     console.log(`  - Dry-run: ${options.dryRun}`);
     console.log(`  - Limit: ${options.limit ?? "none"}`);
     console.log(`  - Offset: ${options.offset ?? 0}`);
     console.log(`  - Verbose: ${options.verbose}`);
+    console.log(`  - Notable only: ${options.notableOnly}`);
     console.log("");
   }
 

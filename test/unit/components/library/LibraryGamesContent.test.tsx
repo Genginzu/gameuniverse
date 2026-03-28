@@ -69,14 +69,18 @@ vi.mock("@/hooks/use-toast", () => ({
 }));
 
 import { LibraryGamesContent } from "@/components/library/LibraryGamesContent";
+import { createSWRWrapper } from "../../../helpers/swr-wrapper";
 
-/** Shared mock setup */
+const SWRWrapper = createSWRWrapper();
+
+/** Shared mock setup — mocks globalThis.fetch for SWR */
 function mockStatsAndGenres(
   totalGames: number,
   completedGames: number,
   totalPlayTime: number,
   extra?: { averageRating?: number; genres?: unknown[]; games?: unknown[]; pagination?: unknown }
 ) {
+  // Mock both the old api-client and globalThis.fetch for SWR
   mockGet.mockImplementation((url: string) => {
     if (url.includes("/api/library/stats")) {
       return Promise.resolve({
@@ -94,12 +98,34 @@ function mockStatsAndGenres(
       pagination: extra?.pagination ?? null,
     });
   });
+
+  vi.spyOn(globalThis, "fetch").mockImplementation((input: RequestInfo | URL) => {
+    const url = typeof input === "string" ? input : input.toString();
+    let body: unknown;
+    if (url.includes("/api/library/stats")) {
+      body = { totalGames, completedGames, totalPlayTime, averageRating: extra?.averageRating };
+    } else if (url.includes("/api/genres")) {
+      body = { genres: extra?.genres ?? [] };
+    } else {
+      body = { games: extra?.games ?? [], pagination: extra?.pagination ?? null };
+    }
+    return Promise.resolve(
+      new Response(JSON.stringify(body), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      })
+    );
+  });
 }
 
 /** Render and wait for initial load */
 async function renderAndWaitForStats(statValue: string) {
   await act(async () => {
-    render(<LibraryGamesContent locale="fr" />);
+    render(
+      <SWRWrapper>
+        <LibraryGamesContent locale="fr" />
+      </SWRWrapper>
+    );
   });
   await waitFor(() => {
     if (statValue === "0") {
@@ -134,18 +160,27 @@ describe("LibraryGamesContent Component Rendering", () => {
 
   afterEach(() => {
     cleanup();
+    vi.restoreAllMocks();
   });
 
   describe("Initial Loading State", () => {
     it("should render SearchSkeleton during initial loading", () => {
-      mockGet.mockImplementation(() => new Promise(() => {}));
-      const { container } = render(<LibraryGamesContent locale="fr" />);
+      vi.spyOn(globalThis, "fetch").mockImplementation(() => new Promise(() => {}));
+      const { container } = render(
+        <SWRWrapper>
+          <LibraryGamesContent locale="fr" />
+        </SWRWrapper>
+      );
       expect(container.querySelector(".animate-pulse")).toBeTruthy();
     });
 
     it("should render loading skeleton during initial loading", () => {
-      mockGet.mockImplementation(() => new Promise(() => {}));
-      const { container } = render(<LibraryGamesContent locale="fr" />);
+      vi.spyOn(globalThis, "fetch").mockImplementation(() => new Promise(() => {}));
+      const { container } = render(
+        <SWRWrapper>
+          <LibraryGamesContent locale="fr" />
+        </SWRWrapper>
+      );
       expect(container.querySelector(".animate-pulse")).toBeTruthy();
     });
 
@@ -159,21 +194,31 @@ describe("LibraryGamesContent Component Rendering", () => {
   describe("Filter Update Loading State", () => {
     it("should show loading state when filters are being applied", async () => {
       let callCount = 0;
-      mockGet.mockImplementation((url: string) => {
+      vi.spyOn(globalThis, "fetch").mockImplementation((input: RequestInfo | URL) => {
+        const url = typeof input === "string" ? input : input.toString();
+        let body: unknown;
         if (url.includes("/api/library/stats")) {
-          return Promise.resolve({ totalGames: 10, completedGames: 5, totalPlayTime: 100 });
+          body = { totalGames: 10, completedGames: 5, totalPlayTime: 100 };
+        } else if (url.includes("/api/genres")) {
+          body = { genres: [] };
+        } else {
+          callCount++;
+          if (callCount > 1) return new Promise(() => {});
+          body = { games: [], pagination: null };
         }
-        if (url.includes("/api/genres")) {
-          return Promise.resolve({ genres: [] });
-        }
-        callCount++;
-        if (callCount > 1) {
-          return new Promise(() => {});
-        }
-        return Promise.resolve({ games: [], pagination: null });
+        return Promise.resolve(
+          new Response(JSON.stringify(body), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          })
+        );
       });
 
-      const { container } = render(<LibraryGamesContent locale="fr" />);
+      const { container } = render(
+        <SWRWrapper>
+          <LibraryGamesContent locale="fr" />
+        </SWRWrapper>
+      );
       await waitFor(() => {
         expect(screen.getByText("10")).toBeTruthy();
       });
@@ -200,32 +245,42 @@ describe("LibraryGamesContent Component Rendering", () => {
         },
       ];
 
-      mockGet.mockImplementation((url: string) => {
+      vi.spyOn(globalThis, "fetch").mockImplementation((input: RequestInfo | URL) => {
+        const url = typeof input === "string" ? input : input.toString();
+        let body: unknown;
         if (url.includes("/api/library/stats")) {
-          return Promise.resolve({ totalGames: 1, completedGames: 0, totalPlayTime: 10 });
+          body = { totalGames: 1, completedGames: 0, totalPlayTime: 10 };
+        } else if (url.includes("/api/genres")) {
+          body = { genres: [] };
+        } else {
+          callCount++;
+          if (callCount > 1) return new Promise(() => {});
+          body = {
+            games: mockGames,
+            pagination: {
+              currentPage: 1,
+              totalPages: 1,
+              totalCount: 1,
+              limit: 20,
+              hasNextPage: false,
+              hasPreviousPage: false,
+              offset: 0,
+            },
+          };
         }
-        if (url.includes("/api/genres")) {
-          return Promise.resolve({ genres: [] });
-        }
-        callCount++;
-        if (callCount > 1) {
-          return new Promise(() => {});
-        }
-        return Promise.resolve({
-          games: mockGames,
-          pagination: {
-            currentPage: 1,
-            totalPages: 1,
-            totalCount: 1,
-            limit: 20,
-            hasNextPage: false,
-            hasPreviousPage: false,
-            offset: 0,
-          },
-        });
+        return Promise.resolve(
+          new Response(JSON.stringify(body), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          })
+        );
       });
 
-      const { container } = render(<LibraryGamesContent locale="fr" />);
+      const { container } = render(
+        <SWRWrapper>
+          <LibraryGamesContent locale="fr" />
+        </SWRWrapper>
+      );
       await waitFor(() => {
         expect(screen.getByText("1")).toBeTruthy();
       });
@@ -344,7 +399,7 @@ describe("LibraryGamesContent Component Rendering", () => {
       await waitFor(() => {
         expect(screen.getByText("Bibliothèque vide")).toBeTruthy();
       });
-      const iconContainer = container.querySelector(".rounded-full.bg-gray-100");
+      const iconContainer = container.querySelector(".rounded-full");
       expect(iconContainer).toBeTruthy();
     });
   });

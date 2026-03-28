@@ -39,7 +39,7 @@ function createFluentChain(tableName: string) {
 
 const mockFrom = vi.fn((table: string) => createFluentChain(table));
 
-vi.mock("../../../scripts/igdb-import/supabase-client", () => ({
+vi.mock("../../../scripts/igdb-import/shared/supabase-client", () => ({
   createScriptClient: () => ({ from: mockFrom }),
 }));
 
@@ -53,15 +53,15 @@ vi.mock("../../../src/lib/services/igdbService", () => ({
   },
 }));
 
-vi.mock("../../../scripts/igdb-import/color-extractor", () => ({
+vi.mock("../../../scripts/igdb-import/shared/color-extractor", () => ({
   extractColorsFromCover: vi.fn().mockResolvedValue(null),
 }));
 
-vi.mock("../../../scripts/igdb-import/game-sync", () => ({
+vi.mock("../../../scripts/igdb-import/games/game-sync", () => ({
   syncExistingGame: vi.fn(),
 }));
 
-vi.mock("../../../scripts/igdb-import/platform-importer", () => ({
+vi.mock("../../../scripts/igdb-import/games/platform-importer", () => ({
   ensurePlatforms: vi.fn().mockResolvedValue([]),
   linkPlatforms: vi.fn().mockResolvedValue(undefined),
 }));
@@ -72,7 +72,7 @@ vi.mock("../../../src/lib/utils/dlcExtensionUtils", () => ({
 }));
 
 const { IGDBService } = await import("../../../src/lib/services/igdbService");
-const { importGameFromIGDB } = await import("../../../scripts/igdb-import/game-importer");
+const { importGameFromIGDB } = await import("../../../scripts/igdb-import/games/game-importer");
 
 const GAME_UUID = "game-uuid-123";
 const GAME_SLUG = "test-game";

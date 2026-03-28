@@ -9,8 +9,19 @@ import type { IGDBCharacter } from "../../../src/types/igdb";
 
 // --- Fluent mock Supabase client ---
 
-let responseQueue: Array<{ data: unknown; error: unknown }> = [];
+const tableQueues: Record<string, Array<{ data: unknown; error: unknown }>> = {};
 let insertCalls: Array<{ table: string; rows: unknown }> = [];
+
+function pushResponse(table: string, response: { data: unknown; error: unknown }) {
+  if (!tableQueues[table]) tableQueues[table] = [];
+  tableQueues[table].push(response);
+}
+
+function shiftResponse(table: string): { data: unknown; error: unknown } {
+  if (tableQueues[table]?.length) return tableQueues[table].shift()!;
+  if (tableQueues["default"]?.length) return tableQueues["default"].shift()!;
+  return { data: null, error: null };
+}
 
 function createFluentChain(tableName: string) {
   const chain: Record<string, unknown> = {};
@@ -18,12 +29,12 @@ function createFluentChain(tableName: string) {
   chain.eq = vi.fn(() => chain);
   chain.in = vi.fn(() => chain);
   chain.single = vi.fn(() => {
-    const next = responseQueue.shift() ?? { data: null, error: null };
+    const next = shiftResponse(tableName);
     return Promise.resolve(next);
   });
   chain.insert = vi.fn((rows: unknown) => {
     insertCalls.push({ table: tableName, rows });
-    const next = responseQueue.shift() ?? { data: null, error: null };
+    const next = shiftResponse(tableName);
     const insertChain: Record<string, unknown> = { ...next };
     insertChain.select = vi.fn(() => insertChain);
     insertChain.single = vi.fn(() => Promise.resolve(next));
@@ -79,7 +90,7 @@ function makeIgdbCharacter(overrides: Partial<IGDBCharacter> = {}): IGDBCharacte
 
 beforeEach(() => {
   vi.clearAllMocks();
-  responseQueue = [];
+  for (const key of Object.keys(tableQueues)) delete tableQueues[key];
   insertCalls = [];
 });
 
@@ -89,27 +100,27 @@ describe("Property 6: Importer creates gender/species and assigns correct FKs", 
     await fc.assert(
       fc.asyncProperty(igdbGenderArb, igdbSpeciesArb, async (gender, species) => {
         vi.clearAllMocks();
-        responseQueue = [];
+        for (const key of Object.keys(tableQueues)) delete tableQueues[key];
         insertCalls = [];
 
         // character check → not found
-        responseQueue.push({ data: null, error: { code: "PGRST116" } });
+        pushResponse("characters", { data: null, error: { code: "PGRST116" } });
         // ensureGender: check existing → not found
-        responseQueue.push({ data: null, error: { code: "PGRST116" } });
+        pushResponse("genders", { data: null, error: { code: "PGRST116" } });
         // ensureGender: insert gender → success
-        responseQueue.push({ data: { id: GENDER_UUID }, error: null });
+        pushResponse("genders", { data: { id: GENDER_UUID }, error: null });
         // ensureGender: insert gender_translations → success
-        responseQueue.push({ data: null, error: null });
+        pushResponse("gender_translations", { data: null, error: null });
         // ensureSpecies: check existing → not found
-        responseQueue.push({ data: null, error: { code: "PGRST116" } });
+        pushResponse("species", { data: null, error: { code: "PGRST116" } });
         // ensureSpecies: insert species → success
-        responseQueue.push({ data: { id: SPECIES_UUID }, error: null });
+        pushResponse("species", { data: { id: SPECIES_UUID }, error: null });
         // ensureSpecies: insert species_translations → success
-        responseQueue.push({ data: null, error: null });
+        pushResponse("species_translations", { data: null, error: null });
         // insert character → success
-        responseQueue.push({ data: { id: CHAR_UUID, slug: CHAR_SLUG }, error: null });
+        pushResponse("characters", { data: { id: CHAR_UUID, slug: CHAR_SLUG }, error: null });
         // createTranslation → success
-        responseQueue.push({ data: null, error: null });
+        pushResponse("character_translations", { data: null, error: null });
 
         const igdbChar = makeIgdbCharacter({
           character_gender: gender,
@@ -149,11 +160,11 @@ describe("Property 6: Importer creates gender/species and assigns correct FKs", 
    */
   it("should leave FKs NULL when IGDB character has no gender/species", async () => {
     // character check → not found
-    responseQueue.push({ data: null, error: { code: "PGRST116" } });
+    pushResponse("characters", { data: null, error: { code: "PGRST116" } });
     // insert character → success
-    responseQueue.push({ data: { id: CHAR_UUID, slug: CHAR_SLUG }, error: null });
+    pushResponse("characters", { data: { id: CHAR_UUID, slug: CHAR_SLUG }, error: null });
     // createTranslation → success
-    responseQueue.push({ data: null, error: null });
+    pushResponse("character_translations", { data: null, error: null });
 
     const igdbChar = makeIgdbCharacter();
     const result = await importCharacterFromIGDB(igdbChar, false);
@@ -177,19 +188,19 @@ describe("Property 7: Importer gender/species upsert is idempotent", () => {
     await fc.assert(
       fc.asyncProperty(igdbGenderArb, async (gender) => {
         vi.clearAllMocks();
-        responseQueue = [];
+        for (const key of Object.keys(tableQueues)) delete tableQueues[key];
         insertCalls = [];
 
         // First call: not found → create
-        responseQueue.push({ data: null, error: { code: "PGRST116" } });
-        responseQueue.push({ data: { id: GENDER_UUID }, error: null });
-        responseQueue.push({ data: null, error: null }); // translation
+        pushResponse("genders", { data: null, error: { code: "PGRST116" } });
+        pushResponse("genders", { data: { id: GENDER_UUID }, error: null });
+        pushResponse("gender_translations", { data: null, error: null });
 
         const id1 = await ensureGender(gender, false);
         expect(id1).toBe(GENDER_UUID);
 
         // Second call: found → reuse
-        responseQueue.push({ data: { id: GENDER_UUID }, error: null });
+        pushResponse("genders", { data: { id: GENDER_UUID }, error: null });
 
         const id2 = await ensureGender(gender, false);
         expect(id2).toBe(GENDER_UUID);
@@ -206,19 +217,19 @@ describe("Property 7: Importer gender/species upsert is idempotent", () => {
     await fc.assert(
       fc.asyncProperty(igdbSpeciesArb, async (species) => {
         vi.clearAllMocks();
-        responseQueue = [];
+        for (const key of Object.keys(tableQueues)) delete tableQueues[key];
         insertCalls = [];
 
         // First call: not found → create
-        responseQueue.push({ data: null, error: { code: "PGRST116" } });
-        responseQueue.push({ data: { id: SPECIES_UUID }, error: null });
-        responseQueue.push({ data: null, error: null }); // translation
+        pushResponse("species", { data: null, error: { code: "PGRST116" } });
+        pushResponse("species", { data: { id: SPECIES_UUID }, error: null });
+        pushResponse("species_translations", { data: null, error: null });
 
         const id1 = await ensureSpecies(species, false);
         expect(id1).toBe(SPECIES_UUID);
 
         // Second call: found → reuse
-        responseQueue.push({ data: { id: SPECIES_UUID }, error: null });
+        pushResponse("species", { data: { id: SPECIES_UUID }, error: null });
 
         const id2 = await ensureSpecies(species, false);
         expect(id2).toBe(SPECIES_UUID);

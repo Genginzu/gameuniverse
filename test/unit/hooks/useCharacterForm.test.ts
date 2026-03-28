@@ -92,7 +92,7 @@ describe("useCharacterForm", () => {
     const { result } = renderHook(() => useCharacterForm("create"));
 
     expect(result.current.form.getValues("slug")).toBe("");
-    expect(result.current.form.getValues("translations")).toHaveLength(1);
+    expect(result.current.form.getValues("translations")).toHaveLength(2);
     expect(result.current.form.getValues("games")).toEqual([]);
     expect(result.current.form.getValues("media")).toEqual([]);
     expect(result.current.isSubmitting).toBe(false);

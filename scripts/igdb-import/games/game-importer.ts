@@ -26,30 +26,35 @@ export interface ImportResult {
 
 /**
  * Imports a game from IGDB into Supabase (script version).
- * Parallelizes independent operations for speed.
+ * Accepts a pre-fetched IGDBGame object to avoid redundant API calls.
+ * Falls back to fetching from IGDB if no object is provided.
  */
 export async function importGameFromIGDB(
-  igdbId: number,
+  igdbIdOrGame: number | IGDBGame,
   verbose: boolean = false,
   dryRun: boolean = false
 ): Promise<ImportResult> {
   try {
-    if (verbose) {
-      console.log(`[Importer] Starting import for IGDB ID: ${igdbId}`);
+    // Resolve the IGDB game object — reuse if already fetched, otherwise fetch
+    let igdbGame: IGDBGame;
+    if (typeof igdbIdOrGame === "number") {
+      if (verbose) {
+        console.log(`[Importer] Fetching game from IGDB ID: ${igdbIdOrGame}`);
+      }
+      const fetched = await IGDBService.getGameDetails(igdbIdOrGame);
+      if (!fetched) {
+        return {
+          success: false,
+          error: `Game with IGDB ID ${igdbIdOrGame} not found in IGDB`,
+        };
+      }
+      igdbGame = fetched;
+    } else {
+      igdbGame = igdbIdOrGame;
     }
 
-    // Fetch game details from IGDB
-    const igdbGame = await IGDBService.getGameDetails(igdbId);
-
-    if (!igdbGame) {
-      return {
-        success: false,
-        error: `Game with IGDB ID ${igdbId} not found in IGDB`,
-      };
-    }
-
     if (verbose) {
-      console.log(`[Importer] Found game: ${igdbGame.name}`);
+      console.log(`[Importer] Processing game: ${igdbGame.name} (IGDB ID: ${igdbGame.id})`);
     }
 
     const supabase = createScriptClient();
@@ -58,7 +63,7 @@ export async function importGameFromIGDB(
     const { data: existingGame, error: checkError } = await supabase
       .from("games")
       .select("id, slug")
-      .eq("igdb_id", igdbId)
+      .eq("igdb_id", igdbGame.id)
       .single();
 
     if (checkError && checkError.code !== "PGRST116") {
@@ -66,7 +71,7 @@ export async function importGameFromIGDB(
     }
 
     if (existingGame) {
-      return syncExistingGame(existingGame.id, existingGame.slug, igdbId, verbose);
+      return syncExistingGame(existingGame.id, existingGame.slug, igdbGame.id, verbose);
     }
 
     // Transform game data (sync, no I/O)
@@ -163,7 +168,7 @@ function transformIGDBToSupabase(igdbGame: IGDBGame) {
   }
 
   const releaseDate = igdbGame.first_release_date
-    ? new Date(igdbGame.first_release_date * 1000).toISOString().split("T")[0]
+    ? toDateString(igdbGame.first_release_date)
     : null;
 
   const metascore = igdbGame.aggregated_rating ? Math.round(igdbGame.aggregated_rating) : null;
@@ -185,6 +190,17 @@ function transformIGDBToSupabase(igdbGame: IGDBGame) {
     playtime_completely: null,
     playtime_updated_at: null,
   };
+}
+
+/** Safely convert a Unix timestamp (seconds) to YYYY-MM-DD, returning null on invalid dates */
+function toDateString(timestamp: number): string | null {
+  try {
+    const date = new Date(timestamp * 1000);
+    if (isNaN(date.getTime())) return null;
+    return date.toISOString().split("T")[0];
+  } catch {
+    return null;
+  }
 }
 
 interface RelatedEntities {

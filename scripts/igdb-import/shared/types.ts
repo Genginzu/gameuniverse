@@ -3,6 +3,11 @@
  */
 
 /**
+ * Data source for the import: API calls or local dump file
+ */
+export type ImportSource = "api" | "dump";
+
+/**
  * CLI options parsed from command line arguments
  */
 export interface CLIOptions {
@@ -10,10 +15,18 @@ export interface CLIOptions {
   limit?: number;
   offset?: number;
   verbose: boolean;
-  /** Start date for filtering games by release date (YYYY-MM-DD) - required */
+  /** Start date for filtering games by release date (YYYY-MM-DD) - required when source=api */
   fromDate: Date;
   /** End date for filtering games by release date (YYYY-MM-DD) - defaults to today */
   toDate: Date;
+  /** Only import notable games (with ratings, reviews, hypes, or follows) */
+  notableOnly: boolean;
+  /** Only import non-notable games (inverse of notableOnly) */
+  notNotable: boolean;
+  /** Data source: 'api' (default) or 'dump' (local file) */
+  source: ImportSource;
+  /** Path to the dump file (required when source=dump) */
+  dumpFile?: string;
 }
 
 /**

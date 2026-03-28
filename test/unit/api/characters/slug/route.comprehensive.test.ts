@@ -8,6 +8,15 @@ const mockSupabase = {
   from: mockFrom,
 };
 
+/** Mock for fetchGenderSpeciesIds — returns no gender/species */
+function mockGenderSpeciesQuery() {
+  const chain = {
+    eq: vi.fn(() => chain),
+    single: vi.fn(() => Promise.resolve({ data: null, error: null })),
+  };
+  return { select: vi.fn(() => chain) };
+}
+
 // Mock the module
 vi.mock("../../../../../src/lib/supabase-server", () => ({
   createServerClient: vi.fn(() => Promise.resolve(mockSupabase)),
@@ -107,6 +116,7 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
         .mockReturnValueOnce({
           select: vi.fn(() => mockMainQuery),
         })
+        .mockReturnValueOnce(mockGenderSpeciesQuery())
         .mockReturnValueOnce({
           select: vi.fn(() => mockRelationshipsQuery),
         })
@@ -226,6 +236,7 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
         .mockReturnValueOnce({
           select: vi.fn(() => mockMainQuery),
         })
+        .mockReturnValueOnce(mockGenderSpeciesQuery())
         .mockReturnValueOnce({
           select: vi.fn(() => mockRelationshipsQuery),
         });
@@ -279,6 +290,7 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
         .mockReturnValueOnce({
           select: vi.fn(() => mockMainQuery),
         })
+        .mockReturnValueOnce(mockGenderSpeciesQuery())
         .mockReturnValueOnce({
           select: vi.fn(() => mockRelationshipsQuery),
         });
@@ -349,6 +361,7 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
         .mockReturnValueOnce({
           select: vi.fn(() => mockMainQuery),
         })
+        .mockReturnValueOnce(mockGenderSpeciesQuery())
         .mockReturnValueOnce({
           select: vi.fn(() => mockRelationshipsQuery),
         });
@@ -406,6 +419,7 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
         .mockReturnValueOnce({
           select: vi.fn(() => mockMainQuery),
         })
+        .mockReturnValueOnce(mockGenderSpeciesQuery())
         .mockReturnValueOnce({
           select: vi.fn(() => mockRelationshipsQuery),
         });
@@ -482,6 +496,7 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
         .mockReturnValueOnce({
           select: vi.fn(() => mockMainQuery),
         })
+        .mockReturnValueOnce(mockGenderSpeciesQuery())
         .mockReturnValueOnce({
           select: vi.fn(() => mockRelationshipsQuery),
         })
@@ -571,6 +586,7 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
         .mockReturnValueOnce({
           select: vi.fn(() => mockMainQuery),
         })
+        .mockReturnValueOnce(mockGenderSpeciesQuery())
         .mockReturnValueOnce({
           select: vi.fn(() => mockRelationshipsQuery),
         })
@@ -659,6 +675,7 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
         .mockReturnValueOnce({
           select: vi.fn(() => mockMainQuery),
         })
+        .mockReturnValueOnce(mockGenderSpeciesQuery())
         .mockReturnValueOnce({
           select: vi.fn(() => mockRelationshipsQuery),
         })
@@ -738,6 +755,7 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
         .mockReturnValueOnce({
           select: vi.fn(() => mockMainQuery),
         })
+        .mockReturnValueOnce(mockGenderSpeciesQuery())
         .mockReturnValueOnce({
           select: vi.fn(() => mockRelationshipsQuery),
         });

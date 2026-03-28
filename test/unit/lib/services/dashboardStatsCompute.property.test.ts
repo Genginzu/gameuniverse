@@ -254,10 +254,12 @@ describe("Property 5: Review statistical measures are correct", () => {
  */
 describe("Property 6: Activity timeline always has 12 entries", () => {
   it("returns exactly 12 entries with correct gamesAdded sum", () => {
-    const referenceDateGen = fc.date({
-      min: new Date(2020, 0, 1),
-      max: new Date(2030, 11, 31),
-    });
+    const referenceDateGen = fc
+      .date({
+        min: new Date(2020, 0, 1),
+        max: new Date(2030, 11, 31),
+      })
+      .filter((d) => !isNaN(d.getTime()));
 
     // Generate library entries with added_at dates within a reasonable range
     const libraryEntryGen = (refDate: Date) => {
