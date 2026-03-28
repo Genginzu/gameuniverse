@@ -88,12 +88,12 @@ async function handleGameCreate(eventId: string, igdbId: number): Promise<Proces
   }
 
   // Link the event to the newly created game
-  if (result.gameSlug) {
-    await linkEventToGame(eventId, result.gameSlug);
+  if (result.game?.slug) {
+    await linkEventToGame(eventId, result.game.slug);
   }
 
   await updateEventStatus(eventId, "processed");
-  logger.info("Webhook: game auto-imported", { igdbId, slug: result.gameSlug });
+  logger.info("Webhook: game auto-imported", { igdbId, slug: result.game?.slug });
   return { eventId, status: "processed" };
 }
 

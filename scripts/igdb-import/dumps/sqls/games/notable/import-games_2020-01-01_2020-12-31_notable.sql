@@ -1,5 +1,5 @@
 -- IGDB Game Dump Import
--- Generated: 2026-03-28T15:09:11.220Z
+-- Generated: 2026-03-28T18:44:51.659Z
 -- Games: 1325
 
 BEGIN;
