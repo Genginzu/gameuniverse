@@ -51,8 +51,8 @@ export async function assembleGamesFromDumps(
 ): Promise<IGDBGame[]> {
   console.log("[DumpAssembler] Loading CSV files into memory...");
 
-  const empty = <T>(): Promise<Map<number, T>> => Promise.resolve(new Map());
-  const load = <T>(key: string) =>
+  const empty = <T extends Record<string, unknown>>(): Promise<Map<number, T>> => Promise.resolve(new Map());
+  const load = <T extends Record<string, unknown>>(key: string) =>
     csvPaths.has(key) ? buildLookupMap<T>(csvPaths.get(key)!) : empty<T>();
 
   const [

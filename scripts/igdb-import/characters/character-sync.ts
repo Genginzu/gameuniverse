@@ -6,9 +6,8 @@
 import { createScriptClient } from "../shared/supabase-client";
 import { IGDBService } from "../../../src/lib/services/igdbService";
 import { extractColorsFromCover } from "../shared/color-extractor";
-import { ensureGender, ensureSpecies } from "./character-importer";
+import { ensureGender, ensureSpecies, type CharacterImportResult } from "./character-importer";
 import type { IGDBCharacter } from "../../../src/types/igdb";
-import type { CharacterImportResult } from "./character-importer";
 
 /**
  * Sync an existing character with fresh IGDB data.
@@ -25,8 +24,7 @@ export async function syncExistingCharacter(
       console.log(`[CharSync] Syncing: ${characterSlug} (IGDB ${igdbCharacter.id})`);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const supabase = createScriptClient() as any;
+    const supabase = createScriptClient() as ReturnType<typeof createScriptClient>;
 
     // Build mug_shot URL
     const mugShotUrl = igdbCharacter.mug_shot?.image_id
@@ -67,9 +65,8 @@ export async function syncExistingCharacter(
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function updateCharacterRow(
-  supabase: any,
+  supabase: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   characterId: string,
   mugShotUrl: string | null,
   backgroundColor: string | null,
@@ -91,9 +88,8 @@ async function updateCharacterRow(
   await supabase.from("characters").update(updates).eq("id", characterId);
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function upsertTranslation(
-  supabase: any,
+  supabase: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   characterId: string,
   igdbCharacter: IGDBCharacter
 ): Promise<void> {
@@ -118,9 +114,8 @@ async function upsertTranslation(
  * Sync game links — delete existing and re-insert from IGDB data.
  * First game in the list is marked as primary.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function syncGameLinks(
-  supabase: any,
+  supabase: any, // eslint-disable-line @typescript-eslint/no-explicit-any
   characterId: string,
   igdbGameIds: number[],
   verbose: boolean

@@ -7,9 +7,8 @@
 
 import { writeFile, mkdir } from "fs/promises";
 import { dirname } from "path";
-import type { IGDBGame } from "../../../src/types/igdb";
+import { IGDB_RATING_CATEGORIES, IGDB_ALL_RATINGS, type IGDBGame } from "../../../src/types/igdb";
 import { IGDBService } from "../../../src/lib/services/igdbService";
-import { IGDB_RATING_CATEGORIES, IGDB_ALL_RATINGS } from "../../../src/types/igdb";
 import {
   esc,
   num,

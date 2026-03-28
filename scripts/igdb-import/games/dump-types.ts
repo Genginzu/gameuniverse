@@ -3,8 +3,6 @@
  * These represent the flat structure of CSV rows before assembly into IGDBGame.
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 export interface RawGame {
   id: number;
   name: string;

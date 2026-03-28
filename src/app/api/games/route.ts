@@ -59,7 +59,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Call the optimized database function instead of nested PostgREST joins
-    const { data: rpcResult, error } = await supabase.rpc("get_games_listing", {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: rpcResult, error } = await (supabase as any).rpc("get_games_listing", {
       p_locale: locale,
       p_limit: limit,
       p_offset: offset,

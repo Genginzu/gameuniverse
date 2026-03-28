@@ -84,13 +84,12 @@ async function enrichEventsWithNames(
   if (gameIds.length > 0) {
     const { data: games } = await supabase
       .from("games")
-      .select("id, slug, game_translations(name)")
+      .select("id, slug, game_translations(title)")
       .in("id", [...new Set(gameIds)]);
 
-    for (const game of games ?? []) {
-      const translations = game.game_translations as { name: string }[] | undefined;
-      const name = translations?.[0]?.name ?? game.slug;
-      gameMap.set(game.id as string, { name: name as string, slug: game.slug as string });
+    for (const game of (games ?? []) as { id: string; slug: string; game_translations: { title: string }[] }[]) {
+      const name = game.game_translations?.[0]?.title ?? game.slug;
+      gameMap.set(game.id, { name, slug: game.slug });
     }
   }
 
@@ -102,10 +101,9 @@ async function enrichEventsWithNames(
       .select("id, slug, character_translations(name)")
       .in("id", [...new Set(characterIds)]);
 
-    for (const char of characters ?? []) {
-      const translations = char.character_translations as { name: string }[] | undefined;
-      const name = translations?.[0]?.name ?? char.slug;
-      charMap.set(char.id as string, { name: name as string, slug: char.slug as string });
+    for (const char of (characters ?? []) as { id: string; slug: string; character_translations: { name: string }[] }[]) {
+      const name = char.character_translations?.[0]?.name ?? char.slug;
+      charMap.set(char.id, { name, slug: char.slug });
     }
   }
 

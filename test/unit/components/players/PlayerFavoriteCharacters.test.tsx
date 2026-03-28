@@ -1,5 +1,10 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
+import React from "react";
 import type { CharacterFavoriteSummary } from "../../../../src/types/character";
+
+vi.mock("@iconify/react", () => ({
+  Icon: (props: Record<string, unknown>) => React.createElement("span", { "data-icon": props.icon }),
+}));
 
 /**
  * Unit Tests for PlayerFavoriteCharacters Component

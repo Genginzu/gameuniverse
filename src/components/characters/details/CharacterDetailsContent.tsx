@@ -297,7 +297,7 @@ function TabNavigation({ activeTab, onTabChange, gamesCount, commentCount }: Tab
           >
             <Icon icon={icon} className="mr-2 inline h-4 w-4" />
             {label}
-            {count != null && ` (${count})`}
+            {count !== null && count !== undefined && ` (${count})`}
           </button>
         ))}
       </div>

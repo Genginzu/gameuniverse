@@ -3,8 +3,7 @@
  * Used by sql-generator.ts to produce INSERT statements for shared entities.
  */
 
-import { IGDB_RATING_CATEGORIES, IGDB_ALL_RATINGS } from "../../../src/types/igdb";
-import type { IGDBGame } from "../../../src/types/igdb";
+import { IGDB_RATING_CATEGORIES, IGDB_ALL_RATINGS, type IGDBGame } from "../../../src/types/igdb";
 
 /** Escape a string for SQL (single quotes) */
 export function esc(val: unknown): string {

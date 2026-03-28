@@ -6,8 +6,7 @@ import { useWebhookRegistrations } from "@/hooks/useWebhookRegistrations";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react";
 import { toast } from "@/hooks/use-toast";
-import type { WebhookEventType } from "@/types/webhooks";
-import { IGDB_ENDPOINTS } from "@/types/webhooks";
+import { IGDB_ENDPOINTS, type WebhookEventType } from "@/types/webhooks";
 
 const METHOD_OPTIONS: WebhookEventType[] = ["create", "update", "delete"];
 

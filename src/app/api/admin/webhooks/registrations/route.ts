@@ -8,8 +8,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { IGDBService } from "@/lib/services/igdbService";
 import { logger } from "@/lib/logger";
-import type { WebhookEventType } from "@/types/webhooks";
-import { IGDB_ENDPOINTS } from "@/types/webhooks";
+import { IGDB_ENDPOINTS, type WebhookEventType } from "@/types/webhooks";
 
 const VALID_METHODS: WebhookEventType[] = ["create", "update", "delete"];
 

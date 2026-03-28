@@ -11,8 +11,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { processWebhookEvent } from "@/lib/services/igdbWebhookService";
 import { logger } from "@/lib/logger";
-import type { WebhookEventType } from "@/types/webhooks";
-import { IGDB_ENDPOINTS } from "@/types/webhooks";
+import { IGDB_ENDPOINTS, type WebhookEventType } from "@/types/webhooks";
 
 const VALID_METHODS: WebhookEventType[] = ["create", "update", "delete"];
 

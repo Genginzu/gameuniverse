@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import * as fc from "fast-check";
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, cleanup } from "@testing-library/react";
 import MessageBubble from "@/components/discussions/MessageBubble";
 import type { Message } from "@/types/discussion";
 
@@ -74,6 +74,7 @@ describe("MessageBubble", () => {
           expect(screen.getByTestId("message-own")).toBeInTheDocument();
 
           unmount();
+          cleanup();
         }),
         { numRuns: 100 }
       );
@@ -95,6 +96,7 @@ describe("MessageBubble", () => {
             expect(screen.getByTestId("message-received")).toBeInTheDocument();
 
             unmount();
+            cleanup();
           }
         ),
         { numRuns: 100 }

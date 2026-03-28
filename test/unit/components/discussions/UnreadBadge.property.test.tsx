@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, cleanup } from "@testing-library/react";
 import UnreadBadge from "@/components/discussions/UnreadBadge";
 
 /**
@@ -23,6 +23,7 @@ describe("UnreadBadge Property-Based Tests", () => {
           expect(screen.queryByTestId("unread-badge")).not.toBeInTheDocument();
           expect(container.innerHTML).toBe("");
           unmount();
+          cleanup();
         }),
         { numRuns: 100 }
       );
@@ -36,6 +37,7 @@ describe("UnreadBadge Property-Based Tests", () => {
           expect(badge).toBeInTheDocument();
           expect(badge.textContent).toBe(String(count));
           unmount();
+          cleanup();
         }),
         { numRuns: 100 }
       );
@@ -49,6 +51,7 @@ describe("UnreadBadge Property-Based Tests", () => {
           expect(badge).toBeInTheDocument();
           expect(badge.textContent).toBe("99+");
           unmount();
+          cleanup();
         }),
         { numRuns: 100 }
       );
@@ -61,6 +64,7 @@ describe("UnreadBadge Property-Based Tests", () => {
           const badge = screen.getByTestId("unread-badge");
           expect(badge.getAttribute("aria-label")).toBe(`${count} unread`);
           unmount();
+          cleanup();
         }),
         { numRuns: 100 }
       );
