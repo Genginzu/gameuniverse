@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { TranslationDashboard } from "@/components/admin/translations/TranslationDashboard";
 import type { UseAdminTranslationsReturn } from "@/hooks/useAdminTranslations";
-import type { TranslationStats, TranslationMissingItem } from "@/types/admin-translations";
+import type { TranslationStats } from "@/types/admin-translations";
 
 // ─── Mocks ──────────────────────────────────────────────────────────
 
@@ -36,6 +36,9 @@ const mockSwr: UseAdminTranslationsReturn = {
   translateOne: vi.fn().mockResolvedValue({ entityId: "1", translatedFields: {}, saved: true }),
   translateBatch: vi.fn().mockResolvedValue({ total: 0, succeeded: 0, failed: 0 }),
   saveTranslation: vi.fn().mockResolvedValue(undefined),
+  fetchEntityDetail: vi
+    .fn()
+    .mockResolvedValue({ entityId: "1", identifier: "test", languages: [] }),
 };
 
 vi.mock("@/hooks/useAdminTranslations", () => ({
@@ -66,11 +69,21 @@ describe("TranslationDashboard", () => {
     expect(langSelect.querySelectorAll("option")).toHaveLength(2);
   });
 
-  it("renders entity type selector with 10 types", () => {
+  it("renders entity grid cards on initial view", () => {
+    mockSwr.stats = [
+      {
+        entityType: "games",
+        language: "en",
+        total: 50,
+        complete: 25,
+        partial: 5,
+        missing: 20,
+        percentage: 50,
+      },
+    ] as TranslationStats[];
     render(<TranslationDashboard />);
-    const typeSelect = screen.getByLabelText("entityType");
-    expect(typeSelect).toBeInTheDocument();
-    expect(typeSelect.querySelectorAll("option")).toHaveLength(10);
+    // Grid cards are buttons with entity type names
+    expect(screen.getByText("entityTypes.games")).toBeInTheDocument();
   });
 
   it("renders the progress bar component", () => {
@@ -86,7 +99,6 @@ describe("TranslationDashboard", () => {
       },
     ] as TranslationStats[];
     render(<TranslationDashboard />);
-    // Progress bar shows translated / total
     expect(screen.getByText(/60 \/ 100/)).toBeInTheDocument();
   });
 
@@ -103,29 +115,18 @@ describe("TranslationDashboard", () => {
       },
     ] as TranslationStats[];
     render(<TranslationDashboard />);
-    // "50%" appears in both the global progress bar and the stats card
     const matches = screen.getAllByText("50%");
     expect(matches.length).toBeGreaterThanOrEqual(2);
   });
 
   it("does not render batch progress when no batch is running", () => {
     render(<TranslationDashboard />);
-    // Batch progress shows "batch.progress" or "batch.processing" — neither should be present
-    // as a standalone batch component (the progress bar also uses batch.progress, so check for batch-specific text)
     expect(screen.queryByText("batch.processing")).not.toBeInTheDocument();
   });
 
-  it("renders the translation table", () => {
+  it("does not show table on initial grid view", () => {
     render(<TranslationDashboard />);
-    // Table renders with search placeholder
-    expect(screen.getByPlaceholderText("table.searchPlaceholder")).toBeInTheDocument();
-  });
-
-  it("changes entity type when selector changes", () => {
-    render(<TranslationDashboard />);
-    const typeSelect = screen.getByLabelText("entityType");
-    fireEvent.change(typeSelect, { target: { value: "characters" } });
-    expect((typeSelect as HTMLSelectElement).value).toBe("characters");
+    expect(screen.queryByPlaceholderText("table.searchPlaceholder")).not.toBeInTheDocument();
   });
 
   it("changes target language when selector changes", () => {

@@ -1961,6 +1961,8 @@
       },
       "table": {
         "source": "Texte source",
+        "sourceLang": "Langue source",
+        "missingLangs": "Langues manquantes",
         "target": "Texte cible",
         "status": "Statut",
         "actions": "Actions",
@@ -1970,7 +1972,8 @@
         "selected": "{count} sélectionné(s)",
         "page": "Page {current} sur {total}",
         "previous": "Précédent",
-        "next": "Suivant"
+        "next": "Suivant",
+        "subtitle": "Entités avec traductions manquantes"
       },
       "status": {
         "missing": "Manquant",
@@ -2003,6 +2006,11 @@
         "translateError": "Erreur de traduction",
         "saveSuccess": "Traduction sauvegardée",
         "saveError": "Erreur de sauvegarde"
+      },
+      "detail": {
+        "translationStatus": "État des traductions",
+        "translateAll": "Tout traduire",
+        "empty": "Non traduit"
       },
       "languages": {
         "fr": "Français",

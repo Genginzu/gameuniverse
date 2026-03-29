@@ -96,16 +96,12 @@ describe("Feature: admin-translation-management, Property 4: Cohérence de la pa
  */
 
 /** Pure search filter matching the service's logic: item matches if any text field
- *  (sourceText values, targetText values, or identifier) contains the term. */
+ *  (sourceText values or identifier) contains the term. */
 function filterBySearch(items: TranslationMissingItem[], search: string): TranslationMissingItem[] {
   const term = search.trim().toLowerCase();
   if (!term) return items;
   return items.filter((item) => {
-    const allTexts = [
-      ...Object.values(item.sourceText),
-      ...Object.values(item.targetText),
-      item.identifier,
-    ];
+    const allTexts = [...Object.values(item.sourceText), item.identifier];
     return allTexts.some((t) => t.toLowerCase().includes(term));
   });
 }
@@ -118,14 +114,13 @@ function missingItemGen(entityType: EntityType): fc.Arbitrary<TranslationMissing
   ) as fc.Arbitrary<Record<string, string>>;
 
   return fc
-    .tuple(fc.uuid(), nonEmptyStringGen, fieldsRecord, fieldsRecord)
-    .map(([id, identifier, sourceText, targetText]) => ({
+    .tuple(fc.uuid(), nonEmptyStringGen, fieldsRecord)
+    .map(([id, identifier, sourceText]) => ({
       entityId: id,
       identifier,
       sourceText,
-      targetText,
       sourceLang: "en",
-      status: "partial" as const,
+      missingLangs: ["fr"],
     }));
 }
 
@@ -145,22 +140,14 @@ describe("Feature: admin-translation-management, Property 5: Filtrage par recher
           const term = searchTerm.trim().toLowerCase();
 
           for (const item of filtered) {
-            const allTexts = [
-              ...Object.values(item.sourceText),
-              ...Object.values(item.targetText),
-              item.identifier,
-            ];
+            const allTexts = [...Object.values(item.sourceText), item.identifier];
             const matches = allTexts.some((t) => t.toLowerCase().includes(term));
             expect(matches).toBe(true);
           }
 
           // Also verify no matching item was excluded
           for (const item of items) {
-            const allTexts = [
-              ...Object.values(item.sourceText),
-              ...Object.values(item.targetText),
-              item.identifier,
-            ];
+            const allTexts = [...Object.values(item.sourceText), item.identifier];
             const shouldMatch = allTexts.some((t) => t.toLowerCase().includes(term));
             if (shouldMatch) {
               expect(filtered).toContainEqual(item);

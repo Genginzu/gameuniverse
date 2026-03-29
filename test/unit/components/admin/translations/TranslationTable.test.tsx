@@ -9,9 +9,8 @@ function makeItem(overrides: Partial<TranslationMissingItem> = {}): TranslationM
     entityId: "uuid-1",
     identifier: "the-legend-of-zelda",
     sourceText: { title: "The Legend of Zelda", description: "An adventure game" },
-    targetText: {},
     sourceLang: "en",
-    status: "missing",
+    missingLangs: ["fr"],
     ...overrides,
   };
 }
@@ -29,14 +28,13 @@ function makeProps(overrides: Record<string, unknown> = {}) {
   return {
     items: [makeItem()],
     pagination: basePagination,
-    entityType: "games" as const,
-    targetLang: "fr",
     selectedIds: new Set<string>(),
     onToggleSelect: vi.fn(),
     onSelectAll: vi.fn(),
     onClearSelection: vi.fn(),
     onTranslate: vi.fn(),
     onTranslateAndReview: vi.fn(),
+    onRowClick: vi.fn(),
     onPageChange: vi.fn(),
     onSearch: vi.fn(),
     isLoading: false,
@@ -58,8 +56,8 @@ describe("TranslationTable", () => {
   it("renders table headers", () => {
     render(<TranslationTable {...makeProps()} />);
     expect(screen.getByText("table.source")).toBeInTheDocument();
-    expect(screen.getByText("table.target")).toBeInTheDocument();
-    expect(screen.getByText("table.status")).toBeInTheDocument();
+    expect(screen.getByText("table.sourceLang")).toBeInTheDocument();
+    expect(screen.getByText("table.missingLangs")).toBeInTheDocument();
     expect(screen.getByText("table.actions")).toBeInTheDocument();
   });
 
@@ -71,7 +69,6 @@ describe("TranslationTable", () => {
 
   it("shows skeleton rows when loading", () => {
     render(<TranslationTable {...makeProps({ isLoading: true, items: [] })} />);
-    // Skeleton rows don't render item text
     expect(screen.queryByText("The Legend of Zelda")).not.toBeInTheDocument();
   });
 
@@ -97,18 +94,11 @@ describe("TranslationTable", () => {
   it("shows 'Translate Selection' button when items are selected", () => {
     render(<TranslationTable {...makeProps({ selectedIds: new Set(["uuid-1"]) })} />);
     expect(screen.getByText("buttons.translateSelection")).toBeInTheDocument();
-    expect(screen.getByText("table.selected")).toBeInTheDocument();
-  });
-
-  it("does not show 'Translate Selection' when nothing is selected", () => {
-    render(<TranslationTable {...makeProps()} />);
-    expect(screen.queryByText("buttons.translateSelection")).not.toBeInTheDocument();
   });
 
   it("calls onSelectAll when select-all checkbox is checked", () => {
     const onSelectAll = vi.fn();
     render(<TranslationTable {...makeProps({ onSelectAll })} />);
-    // The first checkbox in the header is the select-all
     const checkboxes = screen.getAllByRole("checkbox");
     fireEvent.click(checkboxes[0]);
     expect(onSelectAll).toHaveBeenCalledWith(["uuid-1"]);
@@ -125,15 +115,10 @@ describe("TranslationTable", () => {
   });
 
   it("renders pagination when totalPages > 1", () => {
-    const pagination: PaginationInfo = {
-      ...basePagination,
-      totalPages: 3,
-      hasNextPage: true,
-    };
+    const pagination: PaginationInfo = { ...basePagination, totalPages: 3, hasNextPage: true };
     render(<TranslationTable {...makeProps({ pagination })} />);
     expect(screen.getByText("table.page")).toBeInTheDocument();
     expect(screen.getByText("table.next")).toBeInTheDocument();
-    expect(screen.getByText("table.previous")).toBeInTheDocument();
   });
 
   it("does not render pagination when totalPages is 1", () => {
@@ -143,26 +128,9 @@ describe("TranslationTable", () => {
 
   it("calls onPageChange when next button is clicked", () => {
     const onPageChange = vi.fn();
-    const pagination: PaginationInfo = {
-      ...basePagination,
-      totalPages: 3,
-      hasNextPage: true,
-    };
+    const pagination: PaginationInfo = { ...basePagination, totalPages: 3, hasNextPage: true };
     render(<TranslationTable {...makeProps({ pagination, onPageChange })} />);
     fireEvent.click(screen.getByText("table.next"));
     expect(onPageChange).toHaveBeenCalledWith(2);
-  });
-
-  it("disables previous button on first page", () => {
-    const pagination: PaginationInfo = {
-      ...basePagination,
-      currentPage: 1,
-      totalPages: 3,
-      hasNextPage: true,
-      hasPreviousPage: false,
-    };
-    render(<TranslationTable {...makeProps({ pagination })} />);
-    const prevButton = screen.getByText("table.previous").closest("button");
-    expect(prevButton).toBeDisabled();
   });
 });

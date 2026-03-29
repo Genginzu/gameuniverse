@@ -5,11 +5,14 @@ import { routing } from "@/i18n/routing";
 import { useAdminTranslations } from "@/hooks/useAdminTranslations";
 import type {
   EntityType,
+  EntityTranslationDetail,
   TranslationMissingItem,
   BatchProgressEvent,
 } from "@/types/admin-translations";
 
 // ─── State types ────────────────────────────────────────────────────
+/** The 3 views of the translation dashboard */
+export type TranslationView = "grid" | "table" | "detail";
 
 export interface BatchState {
   isRunning: boolean;
@@ -24,6 +27,7 @@ export interface ReviewState {
   item: TranslationMissingItem | null;
   translatedFields: Record<string, string>;
   isSaving: boolean;
+  reviewTargetLang: string;
 }
 
 const INITIAL_BATCH: BatchState = {
@@ -33,17 +37,19 @@ const INITIAL_BATCH: BatchState = {
   succeeded: 0,
   failed: 0,
 };
-
 const INITIAL_REVIEW: ReviewState = {
   isOpen: false,
   item: null,
   translatedFields: {},
   isSaving: false,
+  reviewTargetLang: "",
 };
 
 // ─── Hook ───────────────────────────────────────────────────────────
-
 export function useTranslationDashboard() {
+  // Navigation view
+  const [view, setView] = useState<TranslationView>("grid");
+
   // Filters
   const defaultLang =
     routing.locales.find((l) => l !== routing.defaultLocale) ?? routing.locales[0];
@@ -56,6 +62,11 @@ export function useTranslationDashboard() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [translatingIds, setTranslatingIds] = useState<Set<string>>(new Set());
 
+  // Entity detail state
+  const [entityDetail, setEntityDetail] = useState<EntityTranslationDetail | null>(null);
+  const [isLoadingDetail, setIsLoadingDetail] = useState(false);
+  const [translatingLangs, setTranslatingLangs] = useState<Set<string>>(new Set());
+
   // Batch & review state
   const [batch, setBatch] = useState<BatchState>(INITIAL_BATCH);
   const [review, setReview] = useState<ReviewState>(INITIAL_REVIEW);
@@ -64,13 +75,48 @@ export function useTranslationDashboard() {
   // SWR hook
   const swr = useAdminTranslations({ targetLang, entityType, page, search });
 
-  // Reset selection when filters change
-  const handleEntityTypeChange = useCallback((type: EntityType) => {
+  // Error message
+  const [lastError, setLastError] = useState<string | null>(null);
+  const clearError = useCallback(() => setLastError(null), []);
+
+  // ── Navigation handlers ─────────────────────────────────────────
+  const navigateToEntity = useCallback((type: EntityType) => {
     setEntityType(type);
     setPage(1);
+    setSearch("");
     setSelectedIds(new Set());
+    setView("table");
   }, []);
 
+  const navigateToGrid = useCallback(() => {
+    setView("grid");
+    setEntityDetail(null);
+  }, []);
+
+  const navigateToDetail = useCallback(
+    async (item: TranslationMissingItem) => {
+      setIsLoadingDetail(true);
+      setView("detail");
+      try {
+        const detail = await swr.fetchEntityDetail(item.entityId);
+        setEntityDetail(detail);
+      } catch (err) {
+        setLastError(err instanceof Error ? err.message : "Failed to load detail");
+        setView("table");
+      } finally {
+        setIsLoadingDetail(false);
+      }
+    },
+    [swr]
+  );
+
+  const navigateBackToTable = useCallback(() => {
+    setView("table");
+    setEntityDetail(null);
+    setTranslatingLangs(new Set());
+  }, []);
+
+  // ── Filter handlers ─────────────────────────────────────────────
   const handleTargetLangChange = useCallback((lang: string) => {
     setTargetLang(lang as (typeof routing.locales)[number]);
     setPage(1);
@@ -83,7 +129,6 @@ export function useTranslationDashboard() {
   }, []);
 
   // ── Selection handlers ──────────────────────────────────────────
-
   const toggleSelect = useCallback((id: string) => {
     setSelectedIds((prev) => {
       const next = new Set(prev);
@@ -101,13 +146,17 @@ export function useTranslationDashboard() {
     setSelectedIds(new Set());
   }, []);
 
-  // ── Translate one ───────────────────────────────────────────────
-
+  // ── Translate one (all missing langs) ─────────────────────────
   const handleTranslateOne = useCallback(
     async (item: TranslationMissingItem) => {
       setTranslatingIds((prev) => new Set(prev).add(item.entityId));
       try {
-        await swr.translateOne(item.entityId);
+        for (const lang of item.missingLangs) {
+          await swr.translateOne(item.entityId, { targetLang: lang });
+        }
+        setLastError(null);
+      } catch (err) {
+        setLastError(err instanceof Error ? err.message : "Translation failed");
       } finally {
         setTranslatingIds((prev) => {
           const next = new Set(prev);
@@ -119,19 +168,74 @@ export function useTranslationDashboard() {
     [swr]
   );
 
-  // ── Translate and review ────────────────────────────────────────
+  // ── Translate single language from detail view ────────────────
+  const handleTranslateLang = useCallback(
+    async (lang: string) => {
+      if (!entityDetail) return;
+      setTranslatingLangs((prev) => new Set(prev).add(lang));
+      try {
+        await swr.translateOne(entityDetail.entityId, { targetLang: lang });
+        // Refresh detail
+        const updated = await swr.fetchEntityDetail(entityDetail.entityId);
+        setEntityDetail(updated);
+        setLastError(null);
+      } catch (err) {
+        setLastError(err instanceof Error ? err.message : "Translation failed");
+      } finally {
+        setTranslatingLangs((prev) => {
+          const next = new Set(prev);
+          next.delete(lang);
+          return next;
+        });
+      }
+    },
+    [entityDetail, swr]
+  );
 
+  // ── Translate all missing languages from detail view ──────────
+  const handleTranslateAllLangs = useCallback(async () => {
+    if (!entityDetail) return;
+    const missingLangs = entityDetail.languages
+      .filter((l) => l.status !== "complete")
+      .map((l) => l.language);
+    if (missingLangs.length === 0) return;
+
+    setTranslatingLangs(new Set(missingLangs));
+    try {
+      for (const lang of missingLangs) {
+        await swr.translateOne(entityDetail.entityId, { targetLang: lang });
+      }
+      const updated = await swr.fetchEntityDetail(entityDetail.entityId);
+      setEntityDetail(updated);
+      setLastError(null);
+    } catch (err) {
+      setLastError(err instanceof Error ? err.message : "Translation failed");
+    } finally {
+      setTranslatingLangs(new Set());
+    }
+  }, [entityDetail, swr]);
+
+  // ── Translate and review ────────────────────────────────────────
   const handleTranslateAndReview = useCallback(
     async (item: TranslationMissingItem) => {
+      if (item.missingLangs.length === 0) return;
+      const firstLang = item.missingLangs[0];
       setTranslatingIds((prev) => new Set(prev).add(item.entityId));
       try {
-        const result = await swr.translateOne(item.entityId, { saveToDb: false });
+        const result = await swr.translateOne(item.entityId, {
+          saveToDb: false,
+          targetLang: firstLang,
+        });
         setReview({
           isOpen: true,
           item,
           translatedFields: result.translatedFields,
           isSaving: false,
+          reviewTargetLang: firstLang,
         });
+        setLastError(null);
+      } catch (err) {
+        setLastError(err instanceof Error ? err.message : "Translation failed");
       } finally {
         setTranslatingIds((prev) => {
           const next = new Set(prev);
@@ -144,7 +248,6 @@ export function useTranslationDashboard() {
   );
 
   // ── Batch translate ─────────────────────────────────────────────
-
   const handleBatchTranslate = useCallback(
     async (entityIds: string[]) => {
       const controller = new AbortController();
@@ -177,52 +280,55 @@ export function useTranslationDashboard() {
   }, []);
 
   // ── Review modal ────────────────────────────────────────────────
-
   const handleSaveReview = useCallback(
     async (fields: Record<string, string>) => {
-      if (!review.item) return;
+      if (!review.item || !review.reviewTargetLang) return;
       setReview((prev) => ({ ...prev, isSaving: true }));
       try {
-        await swr.saveTranslation(review.item.entityId, fields);
+        await swr.saveTranslation(review.item.entityId, fields, review.reviewTargetLang);
         setReview(INITIAL_REVIEW);
       } finally {
         setReview((prev) => ({ ...prev, isSaving: false }));
       }
     },
-    [review.item, swr]
+    [review.item, review.reviewTargetLang, swr]
   );
 
-  const closeReview = useCallback(() => {
-    setReview(INITIAL_REVIEW);
-  }, []);
+  const closeReview = useCallback(() => setReview(INITIAL_REVIEW), []);
 
   return {
-    // Filters
+    view,
+    navigateToEntity,
+    navigateToGrid,
+    navigateToDetail,
+    navigateBackToTable,
     targetLang,
     entityType,
     page,
     search,
     setPage,
-    handleEntityTypeChange,
     handleTargetLangChange,
     handleSearch,
-    // SWR data
     ...swr,
-    // Selection
     selectedIds,
     translatingIds,
     toggleSelect,
     selectAll,
     clearSelection,
-    // Batch
+    entityDetail,
+    isLoadingDetail,
+    translatingLangs,
+    handleTranslateLang,
+    handleTranslateAllLangs,
     batch,
     handleBatchTranslate,
     cancelBatch,
-    // Review
     review,
     handleTranslateOne,
     handleTranslateAndReview,
     handleSaveReview,
     closeReview,
+    lastError,
+    clearError,
   };
 }

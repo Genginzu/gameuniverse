@@ -9,7 +9,7 @@ interface TranslationProgressBarProps {
 
 export function TranslationProgressBar({ translated, total }: TranslationProgressBarProps) {
   const t = useTranslations("admin.translations");
-  const percentage = total > 0 ? Math.round((translated / total) * 100) : 0;
+  const percentage = total > 0 ? Math.round((translated / total) * 100) : 100;
 
   return (
     <div className="glass-card rounded-2xl p-6 transition-all duration-300">

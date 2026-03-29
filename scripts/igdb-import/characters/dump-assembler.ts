@@ -55,11 +55,11 @@ export async function assembleCharactersFromDumps(
     csvPaths.has("character_mug_shots")
       ? buildLookupMap<RawMugShot>(csvPaths.get("character_mug_shots")!)
       : Promise.resolve(new Map<number, RawMugShot>()),
-    csvPaths.has("genders")
-      ? buildLookupMap<RawGender>(csvPaths.get("genders")!)
+    csvPaths.has("character_genders")
+      ? buildLookupMap<RawGender>(csvPaths.get("character_genders")!)
       : Promise.resolve(new Map<number, RawGender>()),
-    csvPaths.has("species")
-      ? buildLookupMap<RawSpecies>(csvPaths.get("species")!)
+    csvPaths.has("character_species")
+      ? buildLookupMap<RawSpecies>(csvPaths.get("character_species")!)
       : Promise.resolve(new Map<number, RawSpecies>()),
   ]);
 

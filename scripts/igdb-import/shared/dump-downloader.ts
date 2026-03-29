@@ -242,7 +242,7 @@ export async function downloadCharacterDumps(
   dumpsDir: string,
   verbose: boolean
 ): Promise<Map<string, string>> {
-  const endpoints = ["characters", "character_mug_shots", "genders", "species"];
+  const endpoints = ["characters", "character_mug_shots", "character_genders", "character_species"];
 
   console.log(`[DumpDownloader] Downloading ${endpoints.length} character-related dumps...`);
   const paths = new Map<string, string>();

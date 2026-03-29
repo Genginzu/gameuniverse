@@ -20,9 +20,8 @@ function makeItem(overrides?: Partial<TranslationMissingItem>): TranslationMissi
     entityId: "uuid-1",
     identifier: "test-slug",
     sourceText: { title: "Source Title", description: "Source Description" },
-    targetText: {},
     sourceLang: "en",
-    status: "missing",
+    missingLangs: ["fr"],
     ...overrides,
   };
 }

@@ -81,7 +81,7 @@ export const FK_COLUMN_MAP: Record<EntityType, string> = {
   genres: "genre_id",
   companies: "company_id",
   platforms: "platform_id",
-  character_roles: "character_role_id",
+  character_roles: "role_id",
   genders: "gender_id",
   species: "species_id",
   content_descriptors: "content_descriptor_id",
@@ -107,9 +107,9 @@ export interface TranslationMissingItem {
   entityId: string;
   identifier: string;
   sourceText: Record<string, string>;
-  targetText: Record<string, string>;
   sourceLang: string;
-  status: TranslationStatus;
+  /** Languages that still need translation */
+  missingLangs: string[];
 }
 
 /** Statistiques de traduction pour un type d'entité et une langue */
@@ -121,6 +121,20 @@ export interface TranslationStats {
   partial: number;
   missing: number;
   percentage: number;
+}
+
+/** Détail des traductions d'une entité par langue */
+export interface EntityTranslationLangDetail {
+  language: string;
+  status: TranslationStatus;
+  fields: Record<string, string | null>;
+}
+
+/** Détail complet des traductions d'une entité */
+export interface EntityTranslationDetail {
+  entityId: string;
+  identifier: string;
+  languages: EntityTranslationLangDetail[];
 }
 
 /** Résultat d'une traduction individuelle */

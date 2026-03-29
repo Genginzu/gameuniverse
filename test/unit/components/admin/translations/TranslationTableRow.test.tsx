@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import React from "react";
-import { render, screen, fireEvent, cleanup } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { TranslationTableRow } from "@/components/admin/translations/TranslationTableRow";
 import type { TranslationMissingItem } from "@/types/admin-translations";
 
@@ -9,14 +9,12 @@ function makeItem(overrides: Partial<TranslationMissingItem> = {}): TranslationM
     entityId: "uuid-1",
     identifier: "the-legend-of-zelda",
     sourceText: { title: "The Legend of Zelda", description: "An adventure game" },
-    targetText: {},
     sourceLang: "en",
-    status: "missing",
+    missingLangs: ["fr"],
     ...overrides,
   };
 }
 
-/** Wraps a <tr> in a valid table structure so React doesn't warn */
 function renderRow(ui: React.ReactElement) {
   return render(
     <table>
@@ -26,12 +24,12 @@ function renderRow(ui: React.ReactElement) {
 }
 
 const defaultProps = {
-  entityType: "games" as const,
   isSelected: false,
   isTranslating: false,
   onToggleSelect: vi.fn(),
   onTranslate: vi.fn(),
   onTranslateAndReview: vi.fn(),
+  onRowClick: vi.fn(),
 };
 
 describe("TranslationTableRow", () => {
@@ -45,29 +43,18 @@ describe("TranslationTableRow", () => {
     expect(screen.getByText("the-legend-of-zelda")).toBeInTheDocument();
   });
 
-  it("shows 'missing' indicator when targetText is empty", () => {
+  it("renders source language badge", () => {
     renderRow(<TranslationTableRow item={makeItem()} {...defaultProps} />);
-    // "status.missing" appears twice: once as the target cell indicator, once as the status badge
-    const missingElements = screen.getAllByText("status.missing");
-    expect(missingElements).toHaveLength(2);
-    // The italic one is the target cell indicator
-    const italicIndicator = missingElements.find((el) => el.classList.contains("italic"));
-    expect(italicIndicator).toBeDefined();
+    expect(screen.getByText("languages.en")).toBeInTheDocument();
   });
 
-  it("shows target text when available", () => {
-    const item = makeItem({
-      targetText: { title: "La Légende de Zelda" },
-      status: "complete",
-    });
-    renderRow(<TranslationTableRow item={item} {...defaultProps} />);
-    expect(screen.getByText("La Légende de Zelda")).toBeInTheDocument();
-  });
-
-  it("renders status badge", () => {
-    renderRow(<TranslationTableRow item={makeItem({ status: "partial" })} {...defaultProps} />);
-    // Status badge text
-    expect(screen.getByText("status.partial")).toBeInTheDocument();
+  it("renders missing language badges", () => {
+    renderRow(
+      <TranslationTableRow item={makeItem({ missingLangs: ["fr", "en"] })} {...defaultProps} />
+    );
+    expect(screen.getByText("languages.fr")).toBeInTheDocument();
+    // "languages.en" appears twice: once as source badge, once as missing badge
+    expect(screen.getAllByText("languages.en")).toHaveLength(2);
   });
 
   it("calls onToggleSelect when checkbox is clicked", () => {
@@ -75,24 +62,20 @@ describe("TranslationTableRow", () => {
     renderRow(
       <TranslationTableRow item={makeItem()} {...defaultProps} onToggleSelect={onToggleSelect} />
     );
-    const checkbox = screen.getByRole("checkbox");
-    fireEvent.click(checkbox);
+    fireEvent.click(screen.getByRole("checkbox"));
     expect(onToggleSelect).toHaveBeenCalledWith("uuid-1");
   });
 
   it("checkbox reflects isSelected prop", () => {
     renderRow(<TranslationTableRow item={makeItem()} {...defaultProps} isSelected={true} />);
-    const checkbox = screen.getByRole("checkbox") as HTMLInputElement;
-    expect(checkbox.checked).toBe(true);
+    expect((screen.getByRole("checkbox") as HTMLInputElement).checked).toBe(true);
   });
 
   it("calls onTranslate when Translate button is clicked", () => {
     const onTranslate = vi.fn();
     const item = makeItem();
     renderRow(<TranslationTableRow item={item} {...defaultProps} onTranslate={onTranslate} />);
-    const buttons = screen.getAllByRole("button");
-    // First button is "Traduire"
-    fireEvent.click(buttons[0]);
+    fireEvent.click(screen.getAllByRole("button")[0]);
     expect(onTranslate).toHaveBeenCalledWith(item);
   });
 
@@ -106,9 +89,7 @@ describe("TranslationTableRow", () => {
         onTranslateAndReview={onTranslateAndReview}
       />
     );
-    const buttons = screen.getAllByRole("button");
-    // Second button is "Traduire et relire"
-    fireEvent.click(buttons[1]);
+    fireEvent.click(screen.getAllByRole("button")[1]);
     expect(onTranslateAndReview).toHaveBeenCalledWith(item);
   });
 
@@ -121,7 +102,6 @@ describe("TranslationTableRow", () => {
 
   it("renders two action buttons", () => {
     renderRow(<TranslationTableRow item={makeItem()} {...defaultProps} />);
-    const buttons = screen.getAllByRole("button");
-    expect(buttons).toHaveLength(2);
+    expect(screen.getAllByRole("button")).toHaveLength(2);
   });
 });

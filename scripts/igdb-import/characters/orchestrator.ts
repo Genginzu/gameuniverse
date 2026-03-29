@@ -8,9 +8,10 @@ import { RateLimiter } from "../shared/rate-limiter";
 import { withRetry } from "../shared/retry";
 import { ProgressTracker } from "../shared/progress-tracker";
 import { importCharacterFromIGDB } from "./character-importer";
-import { DumpReader } from "../shared/dump-reader";
 import { downloadCharacterDumps } from "../shared/dump-downloader";
 import { assembleCharactersFromDumps } from "./dump-assembler";
+import { generateCharactersSql } from "./sql-generator";
+import { join } from "path";
 import type { IGDBCharacter } from "../../../src/types/igdb";
 import type { CharacterCLIOptions } from "./index";
 import type { ImportStats } from "../shared/types";
@@ -130,10 +131,8 @@ export class CharacterOrchestrator {
 
     this.logStartup(startOffset, maxItems);
 
-    // Build the batch provider based on source
-    let getBatch: (offset: number, limit: number) => Promise<IGDBCharacter[] | null>;
-
     if (this.options.source === "dump") {
+      // Dump mode: download CSVs → assemble → generate SQL file
       const dumpsDir = this.options.dumpFile ?? "scripts/igdb-import/dumps";
       const csvPaths = await downloadCharacterDumps(dumpsDir, this.options.verbose);
 
@@ -141,16 +140,33 @@ export class CharacterOrchestrator {
         throw new Error("Failed to download the characters dump — cannot proceed.");
       }
 
-      const allCharacters = await assembleCharactersFromDumps(csvPaths, this.options.verbose);
-      const reader = new DumpReader<IGDBCharacter>("", this.options.verbose);
-      reader.loadFromArray(allCharacters);
+      let allCharacters = await assembleCharactersFromDumps(csvPaths, this.options.verbose);
 
-      this.initProgress(reader.getTotalCount(), startOffset, maxItems);
-      getBatch = async (offset, limit) => reader.readBatch(offset, limit);
-    } else {
-      await this.initApiProgress(startOffset, maxItems);
-      getBatch = async (offset, limit) => this.fetchBatch(offset, limit);
+      // Apply offset and limit
+      if (startOffset > 0) allCharacters = allCharacters.slice(startOffset);
+      if (maxItems) allCharacters = allCharacters.slice(0, maxItems);
+
+      const sqlDir = join(dumpsDir, "sqls");
+      const today = new Date().toISOString().split("T")[0];
+      const sqlPath = join(sqlDir, `import-characters_${today}.sql`);
+      await generateCharactersSql(allCharacters, sqlPath, this.options.verbose);
+
+      this.stats.endTime = new Date();
+      this.stats.total = allCharacters.length;
+      this.stats.imported = allCharacters.length;
+
+      console.log(`\n[CharImport] SQL file generated: ${sqlPath}`);
+      console.log(
+        `[CharImport] Execute it in Supabase SQL editor to import ${allCharacters.length} characters.`
+      );
+      console.log(`[CharImport] Then run the API mode to sync colors.\n`);
+
+      return this.stats;
     }
+
+    // API mode: paginated import via IGDB API
+    await this.initApiProgress(startOffset, maxItems);
+    const getBatch = async (offset: number, limit: number) => this.fetchBatch(offset, limit);
 
     const totalProcessed = await this.runPaginatedLoop(getBatch, maxItems);
 
@@ -181,14 +197,6 @@ export class CharacterOrchestrator {
     const total = await this.fetchTotalCount();
     const effective = maxItems ? Math.min(total - startOffset, maxItems) : total - startOffset;
     if (total > 0) console.log(`[CharImport] Found ${total} characters in IGDB`);
-    this.progressTracker = new ProgressTracker(Math.max(effective, 1), 500);
-    console.log(`\n`);
-  }
-
-  private initProgress(total: number, startOffset: number, maxItems?: number): void {
-    if (this.options.verbose) return;
-    console.log(`[CharImport] Dump contains ${total} characters`);
-    const effective = maxItems ? Math.min(total - startOffset, maxItems) : total - startOffset;
     this.progressTracker = new ProgressTracker(Math.max(effective, 1), 500);
     console.log(`\n`);
   }

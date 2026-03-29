@@ -4,6 +4,7 @@ import { useCallback } from "react";
 import useSWR from "swr";
 import type {
   EntityType,
+  EntityTranslationDetail,
   TranslationMissingItem,
   TranslationStats,
   TranslateResult,
@@ -30,13 +31,21 @@ export interface UseAdminTranslationsReturn {
   error: Error | null;
   mutateStats: () => void;
   mutateItems: () => void;
-  translateOne: (entityId: string, opts?: { saveToDb?: boolean }) => Promise<TranslateResult>;
+  translateOne: (
+    entityId: string,
+    opts?: { saveToDb?: boolean; targetLang?: string }
+  ) => Promise<TranslateResult>;
   translateBatch: (
     entityIds: string[],
     onProgress: (event: BatchProgressEvent) => void,
     signal?: AbortSignal
   ) => Promise<BatchSummary>;
-  saveTranslation: (entityId: string, fields: Record<string, string>) => Promise<void>;
+  saveTranslation: (
+    entityId: string,
+    fields: Record<string, string>,
+    overrideLang?: string
+  ) => Promise<void>;
+  fetchEntityDetail: (entityId: string) => Promise<EntityTranslationDetail>;
 }
 
 // ─── Defaults ───────────────────────────────────────────────────────
@@ -55,7 +64,6 @@ const DEFAULT_PAGINATION: PaginationInfo = {
 function buildMissingKey(params: UseAdminTranslationsParams): string {
   const sp = new URLSearchParams({
     type: params.entityType,
-    targetLang: params.targetLang,
     page: String(params.page ?? 1),
   });
   if (params.search?.trim()) sp.set("search", params.search.trim());
@@ -132,11 +140,13 @@ export function useAdminTranslations(
 
   // Stats — single endpoint, no query params
   const {
-    data: statsData,
+    data: statsResponse,
     isLoading: isLoadingStats,
     error: statsError,
     mutate: rawMutateStats,
-  } = useSWR<TranslationStats[]>("/api/admin/translations/stats");
+  } = useSWR<{ stats: TranslationStats[] }>("/api/admin/translations/stats");
+
+  const statsData = statsResponse?.stats;
 
   // Missing items — depends on entityType, targetLang, page, search
   const missingKey = buildMissingKey(params);
@@ -163,14 +173,17 @@ export function useAdminTranslations(
   // ── translateOne ────────────────────────────────────────────────
 
   const translateOne = useCallback(
-    async (entityId: string, opts?: { saveToDb?: boolean }): Promise<TranslateResult> => {
+    async (
+      entityId: string,
+      opts?: { saveToDb?: boolean; targetLang?: string }
+    ): Promise<TranslateResult> => {
       const res = await fetch("/api/admin/translations/translate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           entityType,
           entityId,
-          targetLang,
+          targetLang: opts?.targetLang ?? targetLang,
           saveToDb: opts?.saveToDb ?? true,
         }),
       });
@@ -217,14 +230,18 @@ export function useAdminTranslations(
   // ── saveTranslation ─────────────────────────────────────────────
 
   const saveTranslation = useCallback(
-    async (entityId: string, fields: Record<string, string>): Promise<void> => {
+    async (
+      entityId: string,
+      fields: Record<string, string>,
+      overrideLang?: string
+    ): Promise<void> => {
       const res = await fetch("/api/admin/translations/save", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           entityType,
           entityId,
-          targetLang,
+          targetLang: overrideLang ?? targetLang,
           translations: fields,
         }),
       });
@@ -239,6 +256,22 @@ export function useAdminTranslations(
     [entityType, targetLang, revalidateAll]
   );
 
+  // ── fetchEntityDetail ─────────────────────────────────────────
+
+  const fetchEntityDetail = useCallback(
+    async (entityId: string): Promise<EntityTranslationDetail> => {
+      const sp = new URLSearchParams({ type: entityType, entityId });
+      const res = await fetch(`/api/admin/translations/entity-detail?${sp.toString()}`);
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error ?? `Failed to fetch detail (${res.status})`);
+      }
+      const { detail } = await res.json();
+      return detail;
+    },
+    [entityType]
+  );
+
   return {
     stats: statsData,
     items: missingData?.items ?? [],
@@ -251,5 +284,6 @@ export function useAdminTranslations(
     translateOne,
     translateBatch,
     saveTranslation,
+    fetchEntityDetail,
   };
 }

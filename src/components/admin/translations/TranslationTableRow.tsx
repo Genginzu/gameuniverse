@@ -2,43 +2,38 @@
 
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
-import type { TranslationMissingItem, EntityType } from "@/types/admin-translations";
+import type { TranslationMissingItem } from "@/types/admin-translations";
 
 interface TranslationTableRowProps {
   item: TranslationMissingItem;
-  entityType: EntityType;
   isSelected: boolean;
   isTranslating: boolean;
   onToggleSelect: (id: string) => void;
   onTranslate: (item: TranslationMissingItem) => void;
   onTranslateAndReview: (item: TranslationMissingItem) => void;
+  onRowClick: () => void;
 }
-
-const STATUS_STYLES: Record<string, string> = {
-  missing: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
-  partial: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
-  complete: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400",
-};
 
 export function TranslationTableRow({
   item,
-  entityType: _entityType,
   isSelected,
   isTranslating,
   onToggleSelect,
   onTranslate,
   onTranslateAndReview,
+  onRowClick,
 }: TranslationTableRowProps) {
   const t = useTranslations("admin.translations");
 
-  // Display the first source field value as preview
   const sourcePreview = Object.values(item.sourceText)[0] ?? "—";
-  const targetPreview = Object.values(item.targetText)[0];
 
   return (
-    <tr className="border-b border-white/10 transition-all duration-300 hover:bg-white/20 dark:hover:bg-slate-700/30">
+    <tr
+      className="cursor-pointer border-b border-white/10 transition-all duration-300 hover:bg-white/20 dark:hover:bg-slate-700/30"
+      onClick={onRowClick}
+    >
       {/* Checkbox */}
-      <td className="px-3 py-3">
+      <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
         <input
           type="checkbox"
           checked={isSelected}
@@ -52,31 +47,34 @@ export function TranslationTableRow({
         {item.identifier}
       </td>
 
-      {/* Source text */}
+      {/* Source text preview */}
       <td className="max-w-[200px] truncate px-3 py-3 text-sm text-gray-900 dark:text-white">
         {sourcePreview}
       </td>
 
-      {/* Target text */}
-      <td className="max-w-[200px] truncate px-3 py-3 text-sm">
-        {targetPreview ? (
-          <span className="text-gray-700 dark:text-gray-300">{targetPreview}</span>
-        ) : (
-          <span className="text-red-400 italic dark:text-red-500">{t("status.missing")}</span>
-        )}
-      </td>
-
-      {/* Status badge */}
+      {/* Source language badge */}
       <td className="px-3 py-3">
-        <span
-          className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-medium ${STATUS_STYLES[item.status]}`}
-        >
-          {t(`status.${item.status}`)}
+        <span className="inline-block rounded-full bg-emerald-100 px-2.5 py-0.5 text-[10px] font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+          {t(`languages.${item.sourceLang}`)}
         </span>
       </td>
 
-      {/* Actions */}
+      {/* Missing languages */}
       <td className="px-3 py-3">
+        <div className="flex flex-wrap gap-1">
+          {item.missingLangs.map((lang) => (
+            <span
+              key={lang}
+              className="inline-block rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-medium text-red-700 dark:bg-red-900/30 dark:text-red-400"
+            >
+              {t(`languages.${lang}`)}
+            </span>
+          ))}
+        </div>
+      </td>
+
+      {/* Actions */}
+      <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center gap-1.5">
           <button
             onClick={() => onTranslate(item)}

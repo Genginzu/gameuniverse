@@ -17,7 +17,6 @@ export const entityTypeSchema = z.enum([
 /** Paramètres de la route GET /api/admin/translations/missing */
 export const missingQuerySchema = z.object({
   type: entityTypeSchema,
-  targetLang: z.string().length(2).default("fr"),
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),
   search: z.string().optional(),

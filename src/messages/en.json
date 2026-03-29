@@ -1958,6 +1958,8 @@
       },
       "table": {
         "source": "Source Text",
+        "sourceLang": "Source Language",
+        "missingLangs": "Missing Languages",
         "target": "Target Text",
         "status": "Status",
         "actions": "Actions",
@@ -1967,7 +1969,8 @@
         "selected": "{count} selected",
         "page": "Page {current} of {total}",
         "previous": "Previous",
-        "next": "Next"
+        "next": "Next",
+        "subtitle": "Entities with missing translations"
       },
       "status": {
         "missing": "Missing",
@@ -2000,6 +2003,11 @@
         "translateError": "Translation error",
         "saveSuccess": "Translation saved",
         "saveError": "Save error"
+      },
+      "detail": {
+        "translationStatus": "Translation status",
+        "translateAll": "Translate all",
+        "empty": "Not translated"
       },
       "languages": {
         "fr": "French",

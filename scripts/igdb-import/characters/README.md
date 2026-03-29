@@ -107,7 +107,10 @@ scripts/igdb-import/
 │   └── dump-reader.ts       # Lecteur de fichiers dump (JSON/NDJSON)
 ├── characters/              # Fichiers spécifiques au character importer
 │   ├── index.ts             # Point d'entrée principal + CLI parser
-│   ├── character-importer.ts # Import d'un personnage dans Supabase
+│   ├── character-importer.ts # Import d'un personnage dans Supabase (mode API)
+│   ├── character-sync.ts    # Sync d'un personnage existant (mode API)
+│   ├── dump-assembler.ts    # Assemblage des CSV dumps en IGDBCharacter[]
+│   ├── sql-generator.ts     # Génération du fichier SQL (mode dump)
 │   ├── orchestrator.ts      # Orchestrateur (pagination, batch, progress)
 │   └── README.md            # Cette documentation
 └── games/                   # Fichiers spécifiques au game importer
@@ -180,13 +183,39 @@ ajoute la colonne `igdb_id` (unique, indexée) à la table `characters`.
 | 1    | Erreur fatale (credentials manquants, etc.)     |
 | 2    | Succès partiel (certains personnages en erreur) |
 
+## Mode Dump → SQL
+
+En mode `--source=dump`, le script ne fait **aucun appel API Supabase**. Il :
+
+1. Télécharge les CSV dumps IGDB (characters, mug_shots, genders, species)
+2. Assemble les données en objets `IGDBCharacter`
+3. Génère un fichier SQL dans
+   `scripts/igdb-import/dumps/sqls/import-characters_YYYY-MM-DD.sql`
+
+Le fichier SQL contient :
+
+- Les `INSERT` pour les genders et species (tables de référence)
+- Les `INSERT` pour chaque personnage (character, translation, game links)
+- Le tout dans une transaction (`BEGIN` / `COMMIT`)
+
+Pour exécuter le SQL généré :
+
+```bash
+bun run scripts/igdb-import/execute-sql.ts scripts/igdb-import/dumps/sqls/import-characters_2026-03-29.sql
+```
+
+> **Note** : Les couleurs de fond (`background_color`) ne sont pas extraites en
+> mode dump (valeur par défaut `#0f172a`). Lancer ensuite le mode API pour
+> synchroniser les couleurs.
+
 ## Différences avec le game importer
 
 | Aspect             | Game Importer                 | Character Importer                |
 | ------------------ | ----------------------------- | --------------------------------- |
 | Endpoint IGDB      | `/v4/games`                   | `/v4/characters`                  |
 | Filtrage par date  | Oui (`--from`/`--to`)         | Non (pagination par ID)           |
-| Mode dump          | Oui (`--source=dump`)         | Oui (`--source=dump`)             |
+| Mode dump          | Génère un SQL                 | Génère un SQL                     |
+| Mode API           | Import direct Supabase        | Import direct Supabase            |
 | Entités liées      | Genres, companies, platforms… | Jeux existants en base            |
-| Sync (mise à jour) | Oui (game-sync.ts)            | Non (skip si existe)              |
+| Sync (mise à jour) | Oui (game-sync.ts)            | Oui (character-sync.ts)           |
 | Point d'entrée     | `scripts/igdb-import/games/`  | `scripts/igdb-import/characters/` |

@@ -3,6 +3,8 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { logger } from "@/lib/logger";
 import {
   type EntityType,
+  type EntityTranslationDetail,
+  type EntityTranslationLangDetail,
   type TranslationMissingItem,
   type TranslationStats,
   type TranslationStatus,
@@ -33,18 +35,20 @@ export function classifyStatus(
 }
 
 /**
- * Retrieves entities with missing or incomplete translations for a target language.
- * Uses a two-step approach: fetch entities, then LEFT JOIN with translations.
+ * Retrieves entities that have at least one translation but are missing
+ * translations in one or more supported languages.
+ * For each entity, determines the source language (prefers "en") and lists
+ * all languages that still need translation.
  */
 export async function getMissingTranslations(params: {
   supabase: SupabaseClient;
   entityType: EntityType;
-  targetLang: string;
+  languages: string[];
   page: number;
   limit: number;
   search?: string;
 }): Promise<{ items: TranslationMissingItem[]; totalCount: number }> {
-  const { supabase, entityType, targetLang, page, limit, search } = params;
+  const { supabase, entityType, languages, page, limit, search } = params;
   const client = db(supabase);
   const entityTable = ENTITY_TABLE_MAP[entityType];
   const translationTable = TRANSLATION_TABLE_MAP[entityType];
@@ -55,17 +59,22 @@ export async function getMissingTranslations(params: {
 
   const translationSelect = [fkColumn, "language_code", ...editableFields].join(", ");
 
-  // Get all translations for targetLang to identify missing/incomplete
+  // Fetch all translations for this entity type
   const { data: allTranslations, error: trError } = await client
     .from(translationTable)
-    .select(translationSelect)
-    .eq("language_code", targetLang);
+    .select(translationSelect);
   if (trError) {
-    logger.error("Error fetching translations", { error: trError, entityType, targetLang });
+    logger.error("Error fetching translations", { error: trError, entityType });
     throw new Error("Failed to fetch translations");
   }
-  const targetMap = new Map<string, Record<string, string | null>>();
-  for (const row of allTranslations || []) targetMap.set(row[fkColumn], row);
+
+  // Group translations by entity ID → { lang → row }
+  const translationsByEntity = new Map<string, Map<string, Record<string, string | null>>>();
+  for (const row of allTranslations || []) {
+    const eid = row[fkColumn] as string;
+    if (!translationsByEntity.has(eid)) translationsByEntity.set(eid, new Map());
+    translationsByEntity.get(eid)!.set(row.language_code, row);
+  }
 
   // Get entities, optionally filtered by search
   let entityQuery = client.from(entityTable).select(`id, ${identifierField}`);
@@ -92,47 +101,75 @@ export async function getMissingTranslations(params: {
     throw new Error("Failed to fetch entities");
   }
 
-  // Step 3: Build source map (prefer "en") from translations in other languages
-  const { data: sourceTrs } = await client
-    .from(translationTable)
-    .select(translationSelect)
-    .neq("language_code", targetLang);
-
-  const sourceMap = new Map<string, { lang: string; fields: Record<string, string> }>();
-  for (const row of sourceTrs || []) {
-    const eid = row[fkColumn] as string;
-    const existing = sourceMap.get(eid);
-    if (existing && !(row.language_code === "en" && existing.lang !== "en")) continue;
-    const fields: Record<string, string> = {};
-    for (const f of editableFields) {
-      if (row[f]) fields[f] = row[f];
-    }
-    if (Object.keys(fields).length > 0) sourceMap.set(eid, { lang: row.language_code, fields });
-  }
-
-  // Step 4: Filter to only missing/incomplete, then paginate
+  // Build items: for each entity, find source lang and missing langs
   const allItems: TranslationMissingItem[] = [];
   for (const entity of entities || []) {
-    const targetRow = targetMap.get(entity.id) || null;
-    const status = classifyStatus(targetRow, requiredFields);
-    if (status === "complete") continue;
-    const source = sourceMap.get(entity.id);
-    const targetText: Record<string, string> = {};
-    if (targetRow)
-      for (const f of editableFields) {
-        if (targetRow[f]) targetText[f] = targetRow[f];
+    const langMap = translationsByEntity.get(entity.id);
+    if (!langMap || langMap.size === 0) continue; // no translations at all — skip (nothing to translate from)
+
+    // Find best source: prefer "en", then first complete row
+    let sourceLang = "";
+    let sourceFields: Record<string, string> = {};
+    const enRow = langMap.get("en");
+    if (enRow) {
+      const fields = extractFields(enRow, editableFields);
+      if (Object.keys(fields).length > 0) {
+        sourceLang = "en";
+        sourceFields = fields;
       }
+    }
+    if (!sourceLang) {
+      for (const [lang, row] of langMap) {
+        const fields = extractFields(row, editableFields);
+        if (Object.keys(fields).length > 0) {
+          sourceLang = lang;
+          sourceFields = fields;
+          break;
+        }
+      }
+    }
+    if (!sourceLang) continue; // no usable source text
+
+    // Determine which languages are missing or incomplete
+    const missingLangs: string[] = [];
+    for (const lang of languages) {
+      if (lang === sourceLang) {
+        // Source lang itself might still be incomplete in required fields
+        const row = langMap.get(lang);
+        const status = classifyStatus(row || null, requiredFields);
+        if (status !== "complete") missingLangs.push(lang);
+        continue;
+      }
+      const row = langMap.get(lang);
+      const status = classifyStatus(row || null, requiredFields);
+      if (status !== "complete") missingLangs.push(lang);
+    }
+
+    if (missingLangs.length === 0) continue; // fully translated
+
     allItems.push({
       entityId: entity.id,
       identifier: entity[identifierField] || entity.id,
-      sourceText: source?.fields || {},
-      targetText,
-      sourceLang: source?.lang || "",
-      status,
+      sourceText: sourceFields,
+      sourceLang,
+      missingLangs,
     });
   }
+
   const totalCount = allItems.length;
   return { items: allItems.slice((page - 1) * limit, (page - 1) * limit + limit), totalCount };
+}
+
+/** Extract non-empty editable fields from a translation row */
+function extractFields(
+  row: Record<string, string | null>,
+  editableFields: string[]
+): Record<string, string> {
+  const fields: Record<string, string> = {};
+  for (const f of editableFields) {
+    if (row[f]) fields[f] = row[f]!;
+  }
+  return fields;
 }
 
 /** Helper: empty stats row for a given entity type and language. */
@@ -144,7 +181,7 @@ function emptyStats(entityType: EntityType, lang: string): TranslationStats {
     complete: 0,
     partial: 0,
     missing: 0,
-    percentage: 0,
+    percentage: 100, // Nothing to translate = 100% done
   };
 }
 
@@ -293,4 +330,72 @@ export async function upsertTranslation(params: {
     logger.error("Error upserting translation", { error, entityType, entityId, targetLang });
     throw new Error("Failed to upsert translation");
   }
+}
+
+/**
+ * Returns the full translation detail for a single entity across all languages.
+ * For each language, returns the status and all editable field values.
+ */
+export async function getEntityTranslationDetail(params: {
+  supabase: SupabaseClient;
+  entityType: EntityType;
+  entityId: string;
+  languages: string[];
+}): Promise<EntityTranslationDetail | null> {
+  const { supabase, entityType, entityId, languages } = params;
+  const client = db(supabase);
+  const translationTable = TRANSLATION_TABLE_MAP[entityType];
+  const entityTable = ENTITY_TABLE_MAP[entityType];
+  const fkColumn = FK_COLUMN_MAP[entityType];
+  const identifierField = IDENTIFIER_FIELD_MAP[entityType];
+  const editableFields = EDITABLE_FIELDS[entityType];
+  const requiredFields = REQUIRED_FIELDS[entityType];
+
+  // Fetch entity identifier
+  const { data: entity, error: entityError } = await client
+    .from(entityTable)
+    .select(`id, ${identifierField}`)
+    .eq("id", entityId)
+    .single();
+
+  if (entityError || !entity) return null;
+
+  // Fetch all translations for this entity
+  const selectFields = ["language_code", ...editableFields].join(", ");
+  const { data: rows, error: trError } = await client
+    .from(translationTable)
+    .select(selectFields)
+    .eq(fkColumn, entityId);
+
+  if (trError) {
+    logger.error("Error fetching entity translation detail", {
+      error: trError,
+      entityType,
+      entityId,
+    });
+    throw new Error("Failed to fetch entity translation detail");
+  }
+
+  // Build a map lang → row
+  const rowByLang = new Map<string, Record<string, string | null>>();
+  for (const row of rows || []) {
+    rowByLang.set(row.language_code, row);
+  }
+
+  // Build detail per language
+  const langDetails: EntityTranslationLangDetail[] = languages.map((lang) => {
+    const row = rowByLang.get(lang) ?? null;
+    const status = classifyStatus(row, requiredFields);
+    const fields: Record<string, string | null> = {};
+    for (const f of editableFields) {
+      fields[f] = row?.[f] ?? null;
+    }
+    return { language: lang, status, fields };
+  });
+
+  return {
+    entityId,
+    identifier: entity[identifierField] || entityId,
+    languages: langDetails,
+  };
 }

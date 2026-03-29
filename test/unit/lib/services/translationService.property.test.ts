@@ -265,7 +265,7 @@ describe("Feature: admin-translation-management, Property 1: Classification corr
  *
  * _For any_ entity type and _for any_ supported language, the sum
  * complete + partial + missing must equal total, and percentage must equal
- * Math.round((complete / total) * 100) (or 0 if total is 0).
+ * Math.round((complete / total) * 100) (or 100 if total is 0).
  *
  * **Validates: Requirements 2.2**
  */
@@ -337,7 +337,7 @@ function zeroTotalStatsGen(
     complete: 0,
     partial: 0,
     missing: 0,
-    percentage: 0,
+    percentage: 100,
   } satisfies TranslationStats);
 }
 
@@ -359,7 +359,7 @@ describe("Feature: admin-translation-management, Property 2: Invariant des stati
     );
   });
 
-  it("when total is 0, percentage must be 0 and all counts must be 0", () => {
+  it("when total is 0, percentage must be 100 and all counts must be 0", () => {
     fc.assert(
       fc.property(
         entityTypeGenP2.chain((et) => langGenP2.chain((lang) => zeroTotalStatsGen(et, lang))),
@@ -368,7 +368,7 @@ describe("Feature: admin-translation-management, Property 2: Invariant des stati
           expect(stats.complete).toBe(0);
           expect(stats.partial).toBe(0);
           expect(stats.missing).toBe(0);
-          expect(stats.percentage).toBe(0);
+          expect(stats.percentage).toBe(100);
         }
       ),
       { numRuns: 100 }

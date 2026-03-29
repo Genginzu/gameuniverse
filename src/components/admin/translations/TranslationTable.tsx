@@ -3,24 +3,19 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
-import type {
-  TranslationMissingItem,
-  EntityType,
-  PaginationInfo,
-} from "@/types/admin-translations";
+import type { TranslationMissingItem, PaginationInfo } from "@/types/admin-translations";
 import { TranslationTableRow } from "./TranslationTableRow";
 
 interface TranslationTableProps {
   items: TranslationMissingItem[];
   pagination: PaginationInfo;
-  entityType: EntityType;
-  targetLang: string;
   selectedIds: Set<string>;
   onToggleSelect: (id: string) => void;
   onSelectAll: (ids: string[]) => void;
   onClearSelection: () => void;
   onTranslate: (item: TranslationMissingItem) => void;
   onTranslateAndReview: (item: TranslationMissingItem) => void;
+  onRowClick: (item: TranslationMissingItem) => void;
   onPageChange: (page: number) => void;
   onSearch: (query: string) => void;
   isLoading: boolean;
@@ -30,14 +25,13 @@ interface TranslationTableProps {
 export function TranslationTable({
   items,
   pagination,
-  entityType,
-  targetLang: _targetLang,
   selectedIds,
   onToggleSelect,
   onSelectAll,
   onClearSelection,
   onTranslate,
   onTranslateAndReview,
+  onRowClick,
   onPageChange,
   onSearch,
   isLoading,
@@ -130,8 +124,8 @@ export function TranslationTable({
               </th>
               <th className="px-3 py-3">ID</th>
               <th className="px-3 py-3">{t("table.source")}</th>
-              <th className="px-3 py-3">{t("table.target")}</th>
-              <th className="px-3 py-3">{t("table.status")}</th>
+              <th className="px-3 py-3">{t("table.sourceLang")}</th>
+              <th className="px-3 py-3">{t("table.missingLangs")}</th>
               <th className="px-3 py-3">{t("table.actions")}</th>
             </tr>
           </thead>
@@ -142,12 +136,12 @@ export function TranslationTable({
                   <TranslationTableRow
                     key={item.entityId}
                     item={item}
-                    entityType={entityType}
                     isSelected={selectedIds.has(item.entityId)}
                     isTranslating={translatingIds.has(item.entityId)}
                     onToggleSelect={onToggleSelect}
                     onTranslate={onTranslate}
                     onTranslateAndReview={onTranslateAndReview}
+                    onRowClick={() => onRowClick(item)}
                   />
                 ))}
           </tbody>
