@@ -34,7 +34,7 @@ function makeProps(overrides: Record<string, unknown> = {}) {
     onClearSelection: vi.fn(),
     onTranslate: vi.fn(),
     onTranslateAndReview: vi.fn(),
-    onRowClick: vi.fn(),
+    rowHref: (item: TranslationMissingItem) => `/admin/translations/games/${item.entityId}`,
     onPageChange: vi.fn(),
     onSearch: vi.fn(),
     isLoading: false,

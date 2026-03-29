@@ -7,6 +7,8 @@ import { logger } from "@/lib/logger";
 import { z } from "zod";
 import type { EntityType } from "@/types/admin-translations";
 
+export const dynamic = "force-dynamic";
+
 const querySchema = z.object({
   type: z.enum([
     "games",
@@ -56,7 +58,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Entity not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ detail });
+    return NextResponse.json(
+      { detail },
+      {
+        headers: { "Cache-Control": "no-store, max-age=0" },
+      }
+    );
   } catch (error) {
     logger.error("Error in admin translations entity-detail GET", { error });
 

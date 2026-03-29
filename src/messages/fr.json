@@ -1986,7 +1986,8 @@
         "translateSelection": "Traduire la sélection",
         "translateAll": "Tout traduire",
         "cancel": "Annuler",
-        "save": "Sauvegarder"
+        "save": "Sauvegarder",
+        "syncStats": "Synchroniser les stats"
       },
       "batch": {
         "progress": "Progression",

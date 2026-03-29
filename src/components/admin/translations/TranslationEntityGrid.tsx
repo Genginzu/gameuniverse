@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import type { TranslationStats, EntityType } from "@/types/admin-translations";
@@ -8,7 +9,6 @@ interface TranslationEntityGridProps {
   stats: TranslationStats[];
   targetLang: string;
   isLoading: boolean;
-  onEntityClick: (type: EntityType) => void;
 }
 
 const ENTITY_ICONS: Record<EntityType, string> = {
@@ -28,7 +28,6 @@ export function TranslationEntityGrid({
   stats,
   targetLang,
   isLoading,
-  onEntityClick,
 }: TranslationEntityGridProps) {
   const t = useTranslations("admin.translations");
   const filteredStats = stats.filter((s) => s.language === targetLang);
@@ -50,13 +49,7 @@ export function TranslationEntityGrid({
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
       {filteredStats.map((stat) => (
-        <EntityCard
-          key={stat.entityType}
-          stat={stat}
-          icon={ENTITY_ICONS[stat.entityType]}
-          onClick={() => onEntityClick(stat.entityType)}
-          t={t}
-        />
+        <EntityCard key={stat.entityType} stat={stat} icon={ENTITY_ICONS[stat.entityType]} t={t} />
       ))}
     </div>
   );
@@ -65,19 +58,17 @@ export function TranslationEntityGrid({
 function EntityCard({
   stat,
   icon,
-  onClick,
   t,
 }: {
   stat: TranslationStats;
   icon: string;
-  onClick: () => void;
   t: ReturnType<typeof useTranslations>;
 }) {
   const untranslated = stat.total - stat.complete;
 
   return (
-    <button
-      onClick={onClick}
+    <Link
+      href={`/admin/translations/${stat.entityType}`}
       className="glass-card group cursor-pointer rounded-xl p-5 text-left transition-all duration-300 hover:shadow-lg hover:ring-1 hover:ring-cyan-500/30"
     >
       <div className="mb-3 flex items-center justify-between">
@@ -94,7 +85,6 @@ function EntityCard({
         {t(`entityTypes.${stat.entityType}`)}
       </h4>
 
-      {/* Coverage bar */}
       <div className="mb-2 h-1.5 w-full overflow-hidden rounded-full bg-gray-200/60 dark:bg-slate-700/60">
         <div
           className="h-full rounded-full bg-linear-to-r from-cyan-500 to-violet-500 transition-all duration-500"
@@ -117,6 +107,6 @@ function EntityCard({
           {t("stats.untranslated")}: {untranslated}
         </span>
       </div>
-    </button>
+    </Link>
   );
 }

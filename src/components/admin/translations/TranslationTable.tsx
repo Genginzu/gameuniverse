@@ -15,7 +15,7 @@ interface TranslationTableProps {
   onClearSelection: () => void;
   onTranslate: (item: TranslationMissingItem) => void;
   onTranslateAndReview: (item: TranslationMissingItem) => void;
-  onRowClick: (item: TranslationMissingItem) => void;
+  rowHref: (item: TranslationMissingItem) => string;
   onPageChange: (page: number) => void;
   onSearch: (query: string) => void;
   isLoading: boolean;
@@ -31,7 +31,7 @@ export function TranslationTable({
   onClearSelection,
   onTranslate,
   onTranslateAndReview,
-  onRowClick,
+  rowHref,
   onPageChange,
   onSearch,
   isLoading,
@@ -138,10 +138,10 @@ export function TranslationTable({
                     item={item}
                     isSelected={selectedIds.has(item.entityId)}
                     isTranslating={translatingIds.has(item.entityId)}
+                    href={rowHref(item)}
                     onToggleSelect={onToggleSelect}
                     onTranslate={onTranslate}
                     onTranslateAndReview={onTranslateAndReview}
-                    onRowClick={() => onRowClick(item)}
                   />
                 ))}
           </tbody>

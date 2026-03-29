@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import type { TranslationMissingItem } from "@/types/admin-translations";
@@ -8,31 +9,30 @@ interface TranslationTableRowProps {
   item: TranslationMissingItem;
   isSelected: boolean;
   isTranslating: boolean;
+  href: string;
   onToggleSelect: (id: string) => void;
   onTranslate: (item: TranslationMissingItem) => void;
   onTranslateAndReview: (item: TranslationMissingItem) => void;
-  onRowClick: () => void;
 }
 
 export function TranslationTableRow({
   item,
   isSelected,
   isTranslating,
+  href,
   onToggleSelect,
   onTranslate,
   onTranslateAndReview,
-  onRowClick,
 }: TranslationTableRowProps) {
   const t = useTranslations("admin.translations");
-
+  const router = useRouter();
   const sourcePreview = Object.values(item.sourceText)[0] ?? "—";
 
   return (
     <tr
       className="cursor-pointer border-b border-white/10 transition-all duration-300 hover:bg-white/20 dark:hover:bg-slate-700/30"
-      onClick={onRowClick}
+      onClick={() => router.push(href)}
     >
-      {/* Checkbox */}
       <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
         <input
           type="checkbox"
@@ -41,25 +41,17 @@ export function TranslationTableRow({
           className="size-4 rounded border-gray-300 text-cyan-500 focus:ring-cyan-500 dark:border-slate-600"
         />
       </td>
-
-      {/* Identifier */}
       <td className="max-w-[120px] truncate px-3 py-3 text-xs text-gray-500 dark:text-gray-400">
         {item.identifier}
       </td>
-
-      {/* Source text preview */}
       <td className="max-w-[200px] truncate px-3 py-3 text-sm text-gray-900 dark:text-white">
         {sourcePreview}
       </td>
-
-      {/* Source language badge */}
       <td className="px-3 py-3">
         <span className="inline-block rounded-full bg-emerald-100 px-2.5 py-0.5 text-[10px] font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
           {t(`languages.${item.sourceLang}`)}
         </span>
       </td>
-
-      {/* Missing languages */}
       <td className="px-3 py-3">
         <div className="flex flex-wrap gap-1">
           {item.missingLangs.map((lang) => (
@@ -72,8 +64,6 @@ export function TranslationTableRow({
           ))}
         </div>
       </td>
-
-      {/* Actions */}
       <td className="px-3 py-3" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center gap-1.5">
           <button
@@ -88,7 +78,6 @@ export function TranslationTableRow({
             )}
             {t("buttons.translate")}
           </button>
-
           <button
             onClick={() => onTranslateAndReview(item)}
             disabled={isTranslating}

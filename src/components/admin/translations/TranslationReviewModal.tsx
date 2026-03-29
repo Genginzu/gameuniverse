@@ -150,7 +150,7 @@ function FieldRow({
   error: boolean;
   t: ReturnType<typeof useTranslations>;
 }) {
-  const isLong = sourceValue.length > 120;
+  const isLong = sourceValue.length > 50;
 
   return (
     <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -164,7 +164,7 @@ function FieldRow({
             readOnly
             value={sourceValue}
             rows={3}
-            className="glass-input w-full resize-none rounded-lg px-3 py-2 text-sm opacity-70"
+            className="glass-input w-full rounded-lg px-3 py-2 text-sm opacity-70"
           />
         ) : (
           <input
@@ -184,7 +184,7 @@ function FieldRow({
           <textarea
             {...register(field)}
             rows={3}
-            className={`glass-input w-full resize-none rounded-lg px-3 py-2 text-sm ${error ? "border-red-500 ring-1 ring-red-500" : ""}`}
+            className={`glass-input w-full rounded-lg px-3 py-2 text-sm ${error ? "border-red-500 ring-1 ring-red-500" : ""}`}
           />
         ) : (
           <input

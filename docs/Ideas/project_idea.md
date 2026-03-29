@@ -32,6 +32,7 @@
 - Mettre la traduction automatique en place
 
 # Corrections
+- Revoir la partie admin avec la pagination et la traduction
 - Faire un footer
 - Faire la page d'accueil
 - Corriger le mode sombre

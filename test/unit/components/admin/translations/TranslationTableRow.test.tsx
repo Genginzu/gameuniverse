@@ -4,6 +4,9 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { TranslationTableRow } from "@/components/admin/translations/TranslationTableRow";
 import type { TranslationMissingItem } from "@/types/admin-translations";
 
+const mockPush = vi.fn();
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: mockPush }) }));
+
 function makeItem(overrides: Partial<TranslationMissingItem> = {}): TranslationMissingItem {
   return {
     entityId: "uuid-1",
@@ -26,10 +29,10 @@ function renderRow(ui: React.ReactElement) {
 const defaultProps = {
   isSelected: false,
   isTranslating: false,
+  href: "/admin/translations/games/uuid-1",
   onToggleSelect: vi.fn(),
   onTranslate: vi.fn(),
   onTranslateAndReview: vi.fn(),
-  onRowClick: vi.fn(),
 };
 
 describe("TranslationTableRow", () => {

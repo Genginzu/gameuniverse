@@ -3,7 +3,12 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { saveTranslationBodySchema } from "@/lib/validations/admin-translation";
 import { upsertTranslation } from "@/lib/services/translationService";
-import { ENTITY_TABLE_MAP } from "@/types/admin-translations";
+import {
+  ENTITY_TABLE_MAP,
+  TRANSLATION_TABLE_MAP,
+  FK_COLUMN_MAP,
+  REQUIRED_FIELDS,
+} from "@/types/admin-translations";
 import { logger } from "@/lib/logger";
 
 /**
@@ -48,6 +53,18 @@ export async function PUT(request: NextRequest) {
       targetLang,
       fields: translations,
     });
+
+    // Refresh stats cache in background
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (supabase as any)
+      .rpc("refresh_translation_stats_for_type", {
+        p_entity_type: entityType,
+        p_translation_table: TRANSLATION_TABLE_MAP[entityType],
+        p_fk_column: FK_COLUMN_MAP[entityType],
+        p_required_fields: REQUIRED_FIELDS[entityType],
+      })
+      .then(() => {})
+      .catch((e: unknown) => logger.error("Stats refresh failed", { error: e }));
 
     return NextResponse.json({ success: true });
   } catch (error) {

@@ -6,6 +6,8 @@ import { getMissingTranslations } from "@/lib/services/translationService";
 import { routing } from "@/i18n/routing";
 import { logger } from "@/lib/logger";
 
+export const dynamic = "force-dynamic";
+
 /**
  * GET /api/admin/translations/missing
  * Lists entities with missing translations in any supported language.
@@ -44,17 +46,22 @@ export async function GET(request: NextRequest) {
 
     const totalPages = Math.ceil(totalCount / limit);
 
-    return NextResponse.json({
-      items,
-      pagination: {
-        currentPage: page,
-        totalPages,
-        totalCount,
-        limit,
-        hasNextPage: page < totalPages,
-        hasPreviousPage: page > 1,
+    return NextResponse.json(
+      {
+        items,
+        pagination: {
+          currentPage: page,
+          totalPages,
+          totalCount,
+          limit,
+          hasNextPage: page < totalPages,
+          hasPreviousPage: page > 1,
+        },
       },
-    });
+      {
+        headers: { "Cache-Control": "no-store, max-age=0" },
+      }
+    );
   } catch (error) {
     logger.error("Error in admin translations missing GET", { error });
 

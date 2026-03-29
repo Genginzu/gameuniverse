@@ -144,7 +144,9 @@ export function useAdminTranslations(
     isLoading: isLoadingStats,
     error: statsError,
     mutate: rawMutateStats,
-  } = useSWR<{ stats: TranslationStats[] }>("/api/admin/translations/stats");
+  } = useSWR<{ stats: TranslationStats[] }>("/api/admin/translations/stats", {
+    revalidateOnMount: true,
+  });
 
   const statsData = statsResponse?.stats;
 
@@ -155,7 +157,9 @@ export function useAdminTranslations(
     isLoading: isLoadingItems,
     error: itemsError,
     mutate: rawMutateItems,
-  } = useSWR<{ items: TranslationMissingItem[]; pagination: PaginationInfo }>(missingKey);
+  } = useSWR<{ items: TranslationMissingItem[]; pagination: PaginationInfo }>(missingKey, {
+    revalidateOnMount: true,
+  });
 
   const mutateStats = useCallback(() => {
     rawMutateStats();

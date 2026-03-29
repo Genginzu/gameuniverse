@@ -1983,7 +1983,8 @@
         "translateSelection": "Translate Selection",
         "translateAll": "Translate All",
         "cancel": "Cancel",
-        "save": "Save"
+        "save": "Save",
+        "syncStats": "Sync stats"
       },
       "batch": {
         "progress": "Progress",
