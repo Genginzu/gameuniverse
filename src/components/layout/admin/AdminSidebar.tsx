@@ -266,6 +266,23 @@ function SidebarContent({
             </Link>
           </div>
         </div>
+
+        {/* Tools category */}
+        <div>
+          <p className="mb-1 px-3 text-xs font-semibold tracking-wider text-gray-400 uppercase dark:text-gray-500">
+            {t("nav.toolsCategory")}
+          </p>
+          <div className="space-y-1">
+            <Link
+              href="/admin/translations"
+              className={linkClasses("/admin/translations")}
+              onClick={onLinkClick}
+            >
+              <Icon icon="mdi:translate" className="mr-3 h-4 w-4" />
+              {t("nav.translations")}
+            </Link>
+          </div>
+        </div>
       </nav>
 
       {/* User Info */}

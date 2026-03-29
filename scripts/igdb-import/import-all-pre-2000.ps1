@@ -2,7 +2,7 @@
 $ErrorActionPreference = "Continue"
 
 $BASE = "bun run scripts/igdb-import/games/index.ts"
-$EXEC = "bun run scripts/igdb-import/execute-sql.ts"
+#$EXEC = "bun run scripts/igdb-import/execute-sql.ts"
 $SQL_DIR = "scripts/igdb-import/dumps/sqls"
 
 for ($YEAR = 1970; $YEAR -le 1999; $YEAR++) {

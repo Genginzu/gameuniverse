@@ -1116,7 +1116,9 @@
       "achievements": "Succès",
       "playerAchievements": "Succès joueurs",
       "igdbCategory": "IGDB",
-      "webhooks": "Webhooks"
+      "webhooks": "Webhooks",
+      "toolsCategory": "Outils",
+      "translations": "Traductions"
     },
     "closeSidebar": "Fermer le menu latéral",
     "lightMode": "Mode clair",
@@ -1944,6 +1946,79 @@
         "deleting": "Suppression...",
         "success": "Plateforme supprimée avec succès !",
         "errorGeneric": "Une erreur est survenue lors de la suppression."
+      }
+    },
+    "translations": {
+      "title": "Gestion des traductions",
+      "description": "Gérez les traductions de toutes les entités du site",
+      "targetLanguage": "Langue cible",
+      "entityType": "Type d'entité",
+      "stats": {
+        "total": "Total",
+        "translated": "Traduit",
+        "untranslated": "Non traduit",
+        "coverage": "Couverture"
+      },
+      "table": {
+        "source": "Texte source",
+        "target": "Texte cible",
+        "status": "Statut",
+        "actions": "Actions",
+        "noResults": "Aucun résultat",
+        "searchPlaceholder": "Rechercher par titre/nom...",
+        "selectAll": "Tout sélectionner",
+        "selected": "{count} sélectionné(s)",
+        "page": "Page {current} sur {total}",
+        "previous": "Précédent",
+        "next": "Suivant"
+      },
+      "status": {
+        "missing": "Manquant",
+        "partial": "Partiel",
+        "complete": "Complet"
+      },
+      "buttons": {
+        "translate": "Traduire",
+        "translateAndReview": "Traduire et relire",
+        "translateSelection": "Traduire la sélection",
+        "translateAll": "Tout traduire",
+        "cancel": "Annuler",
+        "save": "Sauvegarder"
+      },
+      "batch": {
+        "progress": "Progression",
+        "processing": "Traitement en cours...",
+        "completed": "Traitement terminé",
+        "succeeded": "Réussies",
+        "failed": "Échouées"
+      },
+      "review": {
+        "title": "Relecture de la traduction",
+        "sourceLabel": "Texte source",
+        "targetLabel": "Traduction",
+        "fieldRequired": "Ce champ est requis"
+      },
+      "messages": {
+        "translateSuccess": "Traduction réussie",
+        "translateError": "Erreur de traduction",
+        "saveSuccess": "Traduction sauvegardée",
+        "saveError": "Erreur de sauvegarde"
+      },
+      "languages": {
+        "fr": "Français",
+        "en": "Anglais"
+      },
+      "entityTypes": {
+        "games": "Jeux",
+        "characters": "Personnages",
+        "genres": "Genres",
+        "companies": "Entreprises",
+        "platforms": "Plateformes",
+        "character_roles": "Rôles",
+        "genders": "Genres de personnage",
+        "species": "Espèces",
+        "content_descriptors": "Descripteurs",
+        "ratings": "Classifications"
       }
     }
   },

@@ -1,0 +1,240 @@
+-- IGDB Game Dump Import
+-- Generated: 2026-03-28T22:59:52.183Z
+-- Games: 25
+
+BEGIN;
+
+-- Genres
+INSERT INTO genres (slug) VALUES ('simulator') ON CONFLICT (slug) DO NOTHING;
+INSERT INTO genre_translations (genre_id, language_code, name) SELECT id, 'en', 'Simulator' FROM genres WHERE slug = 'simulator' ON CONFLICT (genre_id, language_code) DO NOTHING;
+INSERT INTO genres (slug) VALUES ('sport') ON CONFLICT (slug) DO NOTHING;
+INSERT INTO genre_translations (genre_id, language_code, name) SELECT id, 'en', 'Sport' FROM genres WHERE slug = 'sport' ON CONFLICT (genre_id, language_code) DO NOTHING;
+INSERT INTO genres (slug) VALUES ('arcade') ON CONFLICT (slug) DO NOTHING;
+INSERT INTO genre_translations (genre_id, language_code, name) SELECT id, 'en', 'Arcade' FROM genres WHERE slug = 'arcade' ON CONFLICT (genre_id, language_code) DO NOTHING;
+INSERT INTO genres (slug) VALUES ('turn-based-strategy-tbs') ON CONFLICT (slug) DO NOTHING;
+INSERT INTO genre_translations (genre_id, language_code, name) SELECT id, 'en', 'Turn-based strategy (TBS)' FROM genres WHERE slug = 'turn-based-strategy-tbs' ON CONFLICT (genre_id, language_code) DO NOTHING;
+INSERT INTO genres (slug) VALUES ('racing') ON CONFLICT (slug) DO NOTHING;
+INSERT INTO genre_translations (genre_id, language_code, name) SELECT id, 'en', 'Racing' FROM genres WHERE slug = 'racing' ON CONFLICT (genre_id, language_code) DO NOTHING;
+INSERT INTO genres (slug) VALUES ('card-and-board-game') ON CONFLICT (slug) DO NOTHING;
+INSERT INTO genre_translations (genre_id, language_code, name) SELECT id, 'en', 'Card & Board Game' FROM genres WHERE slug = 'card-and-board-game' ON CONFLICT (genre_id, language_code) DO NOTHING;
+INSERT INTO genres (slug) VALUES ('shooter') ON CONFLICT (slug) DO NOTHING;
+INSERT INTO genre_translations (genre_id, language_code, name) SELECT id, 'en', 'Shooter' FROM genres WHERE slug = 'shooter' ON CONFLICT (genre_id, language_code) DO NOTHING;
+INSERT INTO genres (slug) VALUES ('strategy') ON CONFLICT (slug) DO NOTHING;
+INSERT INTO genre_translations (genre_id, language_code, name) SELECT id, 'en', 'Strategy' FROM genres WHERE slug = 'strategy' ON CONFLICT (genre_id, language_code) DO NOTHING;
+INSERT INTO genres (slug) VALUES ('adventure') ON CONFLICT (slug) DO NOTHING;
+INSERT INTO genre_translations (genre_id, language_code, name) SELECT id, 'en', 'Adventure' FROM genres WHERE slug = 'adventure' ON CONFLICT (genre_id, language_code) DO NOTHING;
+INSERT INTO genres (slug) VALUES ('point-and-click') ON CONFLICT (slug) DO NOTHING;
+INSERT INTO genre_translations (genre_id, language_code, name) SELECT id, 'en', 'Point-and-click' FROM genres WHERE slug = 'point-and-click' ON CONFLICT (genre_id, language_code) DO NOTHING;
+INSERT INTO genres (slug) VALUES ('puzzle') ON CONFLICT (slug) DO NOTHING;
+INSERT INTO genre_translations (genre_id, language_code, name) SELECT id, 'en', 'Puzzle' FROM genres WHERE slug = 'puzzle' ON CONFLICT (genre_id, language_code) DO NOTHING;
+
+-- Companies
+INSERT INTO companies (name, slug, company_type) VALUES ('Atari', 'atari', 'developer') ON CONFLICT (slug) DO NOTHING;
+INSERT INTO companies (name, slug, company_type) VALUES ('Namco', 'namco', 'developer') ON CONFLICT (slug) DO NOTHING;
+INSERT INTO companies (name, slug, company_type) VALUES ('Atari, Inc.', 'atari-inc', 'developer') ON CONFLICT (slug) DO NOTHING;
+INSERT INTO companies (name, slug, company_type) VALUES ('Sears', 'sears', 'developer') ON CONFLICT (slug) DO NOTHING;
+INSERT INTO companies (name, slug, company_type) VALUES ('Hunter Electronics', 'hunter-electronics', 'developer') ON CONFLICT (slug) DO NOTHING;
+INSERT INTO companies (name, slug, company_type) VALUES ('Azerion casual', 'azerion-casual', 'developer') ON CONFLICT (slug) DO NOTHING;
+INSERT INTO companies (name, slug, company_type) VALUES ('Eyepax', 'eyepax', 'developer') ON CONFLICT (slug) DO NOTHING;
+INSERT INTO companies (name, slug, company_type) VALUES ('TOPICS Entertainment', 'topics-entertainment', 'developer') ON CONFLICT (slug) DO NOTHING;
+INSERT INTO companies (name, slug, company_type) VALUES ('Digital Eclipse Software', 'digital-eclipse-software', 'developer') ON CONFLICT (slug) DO NOTHING;
+INSERT INTO companies (name, slug, company_type) VALUES ('Peter Langston', 'peter-langston', 'developer') ON CONFLICT (slug) DO NOTHING;
+INSERT INTO companies (name, slug, company_type) VALUES ('Magnavox', 'magnavox', 'developer') ON CONFLICT (slug) DO NOTHING;
+INSERT INTO companies (name, slug, company_type) VALUES ('Sega Enterprises, Ltd.', 'sega-enterprises-ltd', 'developer') ON CONFLICT (slug) DO NOTHING;
+INSERT INTO companies (name, slug, company_type) VALUES ('Gremlin Industries', 'gremlin-industries', 'developer') ON CONFLICT (slug) DO NOTHING;
+
+-- Platforms
+INSERT INTO platforms (slug, igdb_id) VALUES ('arcade', 52) ON CONFLICT (igdb_id) DO NOTHING;
+INSERT INTO platform_translations (platform_id, language_code, name) SELECT id, 'en', 'Arcade' FROM platforms WHERE igdb_id = 52 ON CONFLICT (platform_id, language_code) DO NOTHING;
+INSERT INTO platforms (slug, igdb_id) VALUES ('pc-microsoft-windows', 6) ON CONFLICT (igdb_id) DO NOTHING;
+INSERT INTO platform_translations (platform_id, language_code, name) SELECT id, 'en', 'PC (Microsoft Windows)' FROM platforms WHERE igdb_id = 6 ON CONFLICT (platform_id, language_code) DO NOTHING;
+INSERT INTO platforms (slug, igdb_id) VALUES ('plug-play', 377) ON CONFLICT (igdb_id) DO NOTHING;
+INSERT INTO platform_translations (platform_id, language_code, name) SELECT id, 'en', 'Plug & Play' FROM platforms WHERE igdb_id = 377 ON CONFLICT (platform_id, language_code) DO NOTHING;
+INSERT INTO platforms (slug, igdb_id) VALUES ('legacy-mobile-device', 55) ON CONFLICT (igdb_id) DO NOTHING;
+INSERT INTO platform_translations (platform_id, language_code, name) SELECT id, 'en', 'Legacy Mobile Device' FROM platforms WHERE igdb_id = 55 ON CONFLICT (platform_id, language_code) DO NOTHING;
+INSERT INTO platforms (slug, igdb_id) VALUES ('hp-2100', 104) ON CONFLICT (igdb_id) DO NOTHING;
+INSERT INTO platform_translations (platform_id, language_code, name) SELECT id, 'en', 'HP 2100' FROM platforms WHERE igdb_id = 104 ON CONFLICT (platform_id, language_code) DO NOTHING;
+INSERT INTO platforms (slug, igdb_id) VALUES ('odyssey', 88) ON CONFLICT (igdb_id) DO NOTHING;
+INSERT INTO platform_translations (platform_id, language_code, name) SELECT id, 'en', 'Odyssey' FROM platforms WHERE igdb_id = 88 ON CONFLICT (platform_id, language_code) DO NOTHING;
+
+-- Rating systems & ratings
+INSERT INTO rating_systems (code, name) VALUES ('ESRB', 'ESRB') ON CONFLICT (code) DO NOTHING;
+INSERT INTO ratings (rating_system_id, code, display_name, minimum_age) SELECT id, 'E', 'Everyone', 6 FROM rating_systems WHERE code = 'ESRB' ON CONFLICT (rating_system_id, code) DO NOTHING;
+
+-- Supported languages
+INSERT INTO supported_languages (code, name, native_name) VALUES ('en', 'English', 'English (US)') ON CONFLICT (code) DO NOTHING;
+
+INSERT INTO games (slug, igdb_id, release_date, metascore, cover_image_url, background_image_url, last_synced_at) VALUES ('pong', 1333, '1972-11-29', NULL, 'https://images.igdb.com/igdb/image/upload/t_cover_big/co2erg.jpg', 'https://images.igdb.com/igdb/image/upload/t_1080p/addqqwix9t6wx9dxipwy.jpg', NOW()) ON CONFLICT (igdb_id) DO NOTHING;
+INSERT INTO game_translations (game_id, language_code, title, description) SELECT id, 'en', 'Pong', 'Pong is a table tennis-themed twitch arcade video game with simple two-dimensional graphics. It was the first sports arcade video game and one of the earliest arcade video games in history, helping to establish the video game industry along with the Magnavox Odyssey. Soon after its release, several companies began producing games that closely mimicked its gameplay.' FROM games WHERE igdb_id = 1333 ON CONFLICT (game_id, language_code) DO NOTHING;
+INSERT INTO game_genres (game_id, genre_id) SELECT g.id, ge.id FROM games g, genres ge WHERE g.igdb_id = 1333 AND ge.slug = 'simulator' ON CONFLICT DO NOTHING;
+INSERT INTO game_genres (game_id, genre_id) SELECT g.id, ge.id FROM games g, genres ge WHERE g.igdb_id = 1333 AND ge.slug = 'sport' ON CONFLICT DO NOTHING;
+INSERT INTO game_genres (game_id, genre_id) SELECT g.id, ge.id FROM games g, genres ge WHERE g.igdb_id = 1333 AND ge.slug = 'arcade' ON CONFLICT DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 1333 AND c.slug = 'atari' ON CONFLICT DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 1333 AND c.slug = 'namco' ON CONFLICT DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 1333 AND c.slug = 'atari-inc' ON CONFLICT DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 1333 AND c.slug = 'sears' ON CONFLICT DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 1333 AND c.slug = 'hunter-electronics' ON CONFLICT DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 1333 AND c.slug = 'azerion-casual' ON CONFLICT DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 1333 AND c.slug = 'eyepax' ON CONFLICT DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 1333 AND c.slug = 'topics-entertainment' ON CONFLICT DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 1333 AND c.slug = 'digital-eclipse-software' ON CONFLICT DO NOTHING;
+INSERT INTO game_platforms (game_id, platform_id) SELECT g.id, p.id FROM games g, platforms p WHERE g.igdb_id = 1333 AND p.igdb_id = 52 ON CONFLICT DO NOTHING;
+INSERT INTO game_platforms (game_id, platform_id) SELECT g.id, p.id FROM games g, platforms p WHERE g.igdb_id = 1333 AND p.igdb_id = 6 ON CONFLICT DO NOTHING;
+INSERT INTO game_platforms (game_id, platform_id) SELECT g.id, p.id FROM games g, platforms p WHERE g.igdb_id = 1333 AND p.igdb_id = 377 ON CONFLICT DO NOTHING;
+INSERT INTO game_platforms (game_id, platform_id) SELECT g.id, p.id FROM games g, platforms p WHERE g.igdb_id = 1333 AND p.igdb_id = 55 ON CONFLICT DO NOTHING;
+INSERT INTO game_screenshots (game_id, url, display_order, is_featured) SELECT id, 'https://images.igdb.com/igdb/image/upload/t_1080p/addqqwix9t6wx9dxipwy.jpg', 0, true FROM games WHERE igdb_id = 1333 ON CONFLICT DO NOTHING;
+INSERT INTO game_screenshots (game_id, url, display_order, is_featured) SELECT id, 'https://images.igdb.com/igdb/image/upload/t_1080p/scpunv.jpg', 1, false FROM games WHERE igdb_id = 1333 ON CONFLICT DO NOTHING;
+INSERT INTO game_screenshots (game_id, url, display_order, is_featured) SELECT id, 'https://images.igdb.com/igdb/image/upload/t_1080p/scpunx.jpg', 2, false FROM games WHERE igdb_id = 1333 ON CONFLICT DO NOTHING;
+INSERT INTO game_screenshots (game_id, url, display_order, is_featured) SELECT id, 'https://images.igdb.com/igdb/image/upload/t_1080p/scpunw.jpg', 3, false FROM games WHERE igdb_id = 1333 ON CONFLICT DO NOTHING;
+INSERT INTO game_ratings (game_id, rating_id, is_primary) SELECT g.id, r.id, false FROM games g, ratings r JOIN rating_systems rs ON r.rating_system_id = rs.id WHERE g.igdb_id = 1333 AND rs.code = 'ESRB' AND r.code = 'E' ON CONFLICT DO NOTHING;
+INSERT INTO games (slug, igdb_id, release_date, metascore, cover_image_url, background_image_url, last_synced_at) VALUES ('empire', 11497, '1972-12-31', NULL, 'https://images.igdb.com/igdb/image/upload/t_cover_big/co4zng.jpg', NULL, NOW()) ON CONFLICT (igdb_id) DO NOTHING;
+INSERT INTO game_translations (game_id, language_code, title, description) SELECT id, 'en', 'Empire', 'Empire is a 4X wargame created in 1972 by Peter Langston, taking its name from a Reed College board game of the same name. It was initially created by Langston in BASIC on an HP2000 minicomputer at Evergreen State College. When the host computer was retired, the source code to the game was lost. Subsequently, two other authors each independently wrote a new version of the game, both named Empire. In the decades since, numerous other versions of Empire have been developed for a wide variety of platforms.
+
+The game is turn-based, with players giving orders at their convenience, and in some versions then executed simultaneously by the game server at set intervals ranging from a few hours to once per day. The game world consists of "sectors", which may be designated as agricultural, industrial, etc. There are dozens of unit types requiring a variety of raw and manufactured materials for their creation. "Blitz" games may last a few hours, typical games a few months, and some larger games up to a year.' FROM games WHERE igdb_id = 11497 ON CONFLICT (game_id, language_code) DO NOTHING;
+INSERT INTO game_genres (game_id, genre_id) SELECT g.id, ge.id FROM games g, genres ge WHERE g.igdb_id = 11497 AND ge.slug = 'turn-based-strategy-tbs' ON CONFLICT DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 11497 AND c.slug = 'peter-langston' ON CONFLICT DO NOTHING;
+INSERT INTO game_platforms (game_id, platform_id) SELECT g.id, p.id FROM games g, platforms p WHERE g.igdb_id = 11497 AND p.igdb_id = 104 ON CONFLICT DO NOTHING;
+INSERT INTO game_languages (game_id, language_code, language_name, has_audio, has_subtitles, has_interface) SELECT id, 'en', 'English', false, false, true FROM games WHERE igdb_id = 11497 ON CONFLICT DO NOTHING;
+INSERT INTO games (slug, igdb_id, release_date, metascore, cover_image_url, background_image_url, last_synced_at) VALUES ('wipeout--1', 109445, '1972-12-31', NULL, 'https://images.igdb.com/igdb/image/upload/t_cover_big/coa1k5.jpg', 'https://images.igdb.com/igdb/image/upload/t_1080p/ar3snx.jpg', NOW()) ON CONFLICT (igdb_id) DO NOTHING;
+INSERT INTO game_translations (game_id, language_code, title, description) SELECT id, 'en', 'Wipeout', 'Magnavox Odyssey launch title, sold separately. A racing game using both a track overlay and a game board; the game board keeps track of laps and the second player''s dot along with the ball dot keeps time. Uses game card number 5.' FROM games WHERE igdb_id = 109445 ON CONFLICT (game_id, language_code) DO NOTHING;
+INSERT INTO game_genres (game_id, genre_id) SELECT g.id, ge.id FROM games g, genres ge WHERE g.igdb_id = 109445 AND ge.slug = 'racing' ON CONFLICT DO NOTHING;
+INSERT INTO game_genres (game_id, genre_id) SELECT g.id, ge.id FROM games g, genres ge WHERE g.igdb_id = 109445 AND ge.slug = 'arcade' ON CONFLICT DO NOTHING;
+INSERT INTO game_genres (game_id, genre_id) SELECT g.id, ge.id FROM games g, genres ge WHERE g.igdb_id = 109445 AND ge.slug = 'card-and-board-game' ON CONFLICT DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 109445 AND c.slug = 'magnavox' ON CONFLICT DO NOTHING;
+INSERT INTO game_platforms (game_id, platform_id) SELECT g.id, p.id FROM games g, platforms p WHERE g.igdb_id = 109445 AND p.igdb_id = 88 ON CONFLICT DO NOTHING;
+INSERT INTO game_screenshots (game_id, url, display_order, is_featured) SELECT id, 'https://images.igdb.com/igdb/image/upload/t_1080p/scxpx9.jpg', 0, true FROM games WHERE igdb_id = 109445 ON CONFLICT DO NOTHING;
+INSERT INTO game_artwork (game_id, url, artwork_type, display_order, is_featured) SELECT id, 'https://images.igdb.com/igdb/image/upload/t_1080p/ar3snx.jpg', 'promotional', 0, true FROM games WHERE igdb_id = 109445 ON CONFLICT DO NOTHING;
+INSERT INTO game_artwork (game_id, url, artwork_type, display_order, is_featured) SELECT id, 'https://images.igdb.com/igdb/image/upload/t_1080p/ar3sny.jpg', 'promotional', 1, false FROM games WHERE igdb_id = 109445 ON CONFLICT DO NOTHING;
+INSERT INTO game_videos (game_id, url, thumbnail_url, title, video_type, display_order, is_featured) SELECT id, 'https://www.youtube.com/watch?v=ss9xf5Lb6yU', 'https://img.youtube.com/vi/ss9xf5Lb6yU/maxresdefault.jpg', 'Gameplay Video', 'trailer', 0, true FROM games WHERE igdb_id = 109445 ON CONFLICT DO NOTHING;
+INSERT INTO games (slug, igdb_id, release_date, metascore, cover_image_url, background_image_url, last_synced_at) VALUES ('shooting-gallery--1', 28363, '1972-09-01', NULL, 'https://images.igdb.com/igdb/image/upload/t_cover_big/co6icr.jpg', 'https://images.igdb.com/igdb/image/upload/t_1080p/scmlub.jpg', NOW()) ON CONFLICT (igdb_id) DO NOTHING;
+INSERT INTO game_translations (game_id, language_code, title, description) SELECT id, 'en', 'Shooting Gallery', 'Shooting Gallery was the very first collection of shooting games with a light gun for a home console system. It came on the Magnavox Odyssey Cartrdige No. 10, used a original sized rifle and four different screen overlays.' FROM games WHERE igdb_id = 28363 ON CONFLICT (game_id, language_code) DO NOTHING;
+INSERT INTO game_genres (game_id, genre_id) SELECT g.id, ge.id FROM games g, genres ge WHERE g.igdb_id = 28363 AND ge.slug = 'shooter' ON CONFLICT DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 28363 AND c.slug = 'magnavox' ON CONFLICT DO NOTHING;
+INSERT INTO game_platforms (game_id, platform_id) SELECT g.id, p.id FROM games g, platforms p WHERE g.igdb_id = 28363 AND p.igdb_id = 88 ON CONFLICT DO NOTHING;
+INSERT INTO game_screenshots (game_id, url, display_order, is_featured) SELECT id, 'https://images.igdb.com/igdb/image/upload/t_1080p/scmlub.jpg', 0, true FROM games WHERE igdb_id = 28363 ON CONFLICT DO NOTHING;
+INSERT INTO game_videos (game_id, url, thumbnail_url, title, video_type, display_order, is_featured) SELECT id, 'https://www.youtube.com/watch?v=wv_Y_jaT3xY', 'https://img.youtube.com/vi/wv_Y_jaT3xY/maxresdefault.jpg', 'Gameplay Video', 'trailer', 0, true FROM games WHERE igdb_id = 28363 ON CONFLICT DO NOTHING;
+INSERT INTO games (slug, igdb_id, release_date, metascore, cover_image_url, background_image_url, last_synced_at) VALUES ('killer-shark', 18203, '1972-05-01', NULL, 'https://images.igdb.com/igdb/image/upload/t_cover_big/co7e8w.jpg', 'https://images.igdb.com/igdb/image/upload/t_1080p/ar5ey9.jpg', NOW()) ON CONFLICT (igdb_id) DO NOTHING;
+INSERT INTO game_translations (game_id, language_code, title, description) SELECT id, 'en', 'Killer Shark', 'Killer Shark is a first-person light-gun shooter arcade game that was published by Sega in 1972. The objective of the game is for the player is to repeatedly shoot the approaching sharks. The arcade received moderate success, but gained considerable notoriety after it was featured in the 1975 movie Jaws, seen being played by a gamer at a local beachside arcade in the community of Amity Island. This bit of levity left a major impression on audiences and made Killer Shark the first, and most famous shark arcade game ever.' FROM games WHERE igdb_id = 18203 ON CONFLICT (game_id, language_code) DO NOTHING;
+INSERT INTO game_genres (game_id, genre_id) SELECT g.id, ge.id FROM games g, genres ge WHERE g.igdb_id = 18203 AND ge.slug = 'arcade' ON CONFLICT DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 18203 AND c.slug = 'sega-enterprises-ltd' ON CONFLICT DO NOTHING;
+INSERT INTO game_platforms (game_id, platform_id) SELECT g.id, p.id FROM games g, platforms p WHERE g.igdb_id = 18203 AND p.igdb_id = 52 ON CONFLICT DO NOTHING;
+INSERT INTO game_artwork (game_id, url, artwork_type, display_order, is_featured) SELECT id, 'https://images.igdb.com/igdb/image/upload/t_1080p/ar5ey9.jpg', 'promotional', 0, true FROM games WHERE igdb_id = 18203 ON CONFLICT DO NOTHING;
+INSERT INTO game_artwork (game_id, url, artwork_type, display_order, is_featured) SELECT id, 'https://images.igdb.com/igdb/image/upload/t_1080p/ar5eya.jpg', 'promotional', 1, false FROM games WHERE igdb_id = 18203 ON CONFLICT DO NOTHING;
+INSERT INTO games (slug, igdb_id, release_date, metascore, cover_image_url, background_image_url, last_synced_at) VALUES ('percepts', 18392, '1972-12-31', NULL, 'https://images.igdb.com/igdb/image/upload/t_cover_big/rmpkc9oxci5vcgl9tjng.jpg', 'https://images.igdb.com/igdb/image/upload/t_1080p/upuilswvwwgfocvvqsc7.jpg', NOW()) ON CONFLICT (igdb_id) DO NOTHING;
+INSERT INTO game_translations (game_id, language_code, title, description) SELECT id, 'en', 'Percepts', 'Percepts is the only known game that Magnavox gave away for free. When you purchased the Magnavox Odyssey in 1972 you could get a free game from Magnavox if you registered the purchase by mailing the "free bonus game" coupon to them. Worked with Cartridge #2.' FROM games WHERE igdb_id = 18392 ON CONFLICT (game_id, language_code) DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 18392 AND c.slug = 'magnavox' ON CONFLICT DO NOTHING;
+INSERT INTO game_platforms (game_id, platform_id) SELECT g.id, p.id FROM games g, platforms p WHERE g.igdb_id = 18392 AND p.igdb_id = 88 ON CONFLICT DO NOTHING;
+INSERT INTO game_screenshots (game_id, url, display_order, is_featured) SELECT id, 'https://images.igdb.com/igdb/image/upload/t_1080p/upuilswvwwgfocvvqsc7.jpg', 0, true FROM games WHERE igdb_id = 18392 ON CONFLICT DO NOTHING;
+INSERT INTO game_screenshots (game_id, url, display_order, is_featured) SELECT id, 'https://images.igdb.com/igdb/image/upload/t_1080p/euo84qa3ngushuwxxm12.jpg', 1, false FROM games WHERE igdb_id = 18392 ON CONFLICT DO NOTHING;
+INSERT INTO games (slug, igdb_id, release_date, metascore, cover_image_url, background_image_url, last_synced_at) VALUES ('shootout--1', 109450, '1972-12-31', NULL, 'https://images.igdb.com/igdb/image/upload/t_cover_big/qnv7h36wbczluivtbmw7.jpg', NULL, NOW()) ON CONFLICT (igdb_id) DO NOTHING;
+INSERT INTO game_translations (game_id, language_code, title, description) SELECT id, 'en', 'Shootout!', 'One of four games packed with Shooting Gallery, a Magnavox Odyssey peripheral. One player is a bandit in an Old West town, and moves along a path, stopping at windows for the other player to try to shoot with the light gun. Uses game card number 9.' FROM games WHERE igdb_id = 109450 ON CONFLICT (game_id, language_code) DO NOTHING;
+INSERT INTO game_genres (game_id, genre_id) SELECT g.id, ge.id FROM games g, genres ge WHERE g.igdb_id = 109450 AND ge.slug = 'shooter' ON CONFLICT DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 109450 AND c.slug = 'magnavox' ON CONFLICT DO NOTHING;
+INSERT INTO game_platforms (game_id, platform_id) SELECT g.id, p.id FROM games g, platforms p WHERE g.igdb_id = 109450 AND p.igdb_id = 88 ON CONFLICT DO NOTHING;
+INSERT INTO games (slug, igdb_id, release_date, metascore, cover_image_url, background_image_url, last_synced_at) VALUES ('handball', 18391, '1972-12-31', NULL, 'https://images.igdb.com/igdb/image/upload/t_cover_big/lq7b4cdrcvyhloypi9bd.jpg', NULL, NOW()) ON CONFLICT (igdb_id) DO NOTHING;
+INSERT INTO game_translations (game_id, language_code, title, description) SELECT id, 'en', 'Handball', 'Extra games released for the Magnavox Odyssey in 1972. Came in a six pack with Wipeout, Volleyball, Fun Zoo, Invasion and Baseball. Could be bought separately. Worked with Cartridge #8.' FROM games WHERE igdb_id = 18391 ON CONFLICT (game_id, language_code) DO NOTHING;
+INSERT INTO game_genres (game_id, genre_id) SELECT g.id, ge.id FROM games g, genres ge WHERE g.igdb_id = 18391 AND ge.slug = 'sport' ON CONFLICT DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 18391 AND c.slug = 'magnavox' ON CONFLICT DO NOTHING;
+INSERT INTO game_platforms (game_id, platform_id) SELECT g.id, p.id FROM games g, platforms p WHERE g.igdb_id = 18391 AND p.igdb_id = 88 ON CONFLICT DO NOTHING;
+INSERT INTO games (slug, igdb_id, release_date, metascore, cover_image_url, background_image_url, last_synced_at) VALUES ('invasion--6', 109448, '1972-09-01', NULL, 'https://images.igdb.com/igdb/image/upload/t_cover_big/o6fn6ml4guzv9vaej9dk.jpg', NULL, NOW()) ON CONFLICT (igdb_id) DO NOTHING;
+INSERT INTO game_translations (game_id, language_code, title, description) SELECT id, 'en', 'Invasion', 'Magnavox Odyssey launch title, sold separately. A combination of strategic moves made on a separate game board and tactical combat resolved on the screen; different assaults use different cards. Used game cards number 4, 5, and 6.' FROM games WHERE igdb_id = 109448 ON CONFLICT (game_id, language_code) DO NOTHING;
+INSERT INTO game_genres (game_id, genre_id) SELECT g.id, ge.id FROM games g, genres ge WHERE g.igdb_id = 109448 AND ge.slug = 'strategy' ON CONFLICT DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 109448 AND c.slug = 'magnavox' ON CONFLICT DO NOTHING;
+INSERT INTO game_platforms (game_id, platform_id) SELECT g.id, p.id FROM games g, platforms p WHERE g.igdb_id = 109448 AND p.igdb_id = 88 ON CONFLICT DO NOTHING;
+INSERT INTO games (slug, igdb_id, release_date, metascore, cover_image_url, background_image_url, last_synced_at) VALUES ('play-ball', 40401, '1972-06-01', NULL, 'https://images.igdb.com/igdb/image/upload/t_cover_big/jtyuuajmo08o9aoyclzv.jpg', 'https://images.igdb.com/igdb/image/upload/t_1080p/hao54gcdsv5zzykpylvx.jpg', NOW()) ON CONFLICT (igdb_id) DO NOTHING;
+INSERT INTO game_translations (game_id, language_code, title, description) SELECT id, 'en', 'Play Ball', 'Play Ball was produced by Gremlin in 1972. 
+From flyer: 
+"It''s the most versatile, smoothest-action wall game - completely programmable with plug-in serviceability. 
+Pitcher can throw Fast Ball, Curve, Slider or Change Up. Better scores points for Home Run, Triple, Double or Single. A Strike scores a point for the other team. 
+Play Ball has proven to be a true contest of skill and it simulates interest and competition in both players and spectators. "' FROM games WHERE igdb_id = 40401 ON CONFLICT (game_id, language_code) DO NOTHING;
+INSERT INTO game_genres (game_id, genre_id) SELECT g.id, ge.id FROM games g, genres ge WHERE g.igdb_id = 40401 AND ge.slug = 'sport' ON CONFLICT DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 40401 AND c.slug = 'gremlin-industries' ON CONFLICT DO NOTHING;
+INSERT INTO game_platforms (game_id, platform_id) SELECT g.id, p.id FROM games g, platforms p WHERE g.igdb_id = 40401 AND p.igdb_id = 52 ON CONFLICT DO NOTHING;
+INSERT INTO game_screenshots (game_id, url, display_order, is_featured) SELECT id, 'https://images.igdb.com/igdb/image/upload/t_1080p/hao54gcdsv5zzykpylvx.jpg', 0, true FROM games WHERE igdb_id = 40401 ON CONFLICT DO NOTHING;
+INSERT INTO game_screenshots (game_id, url, display_order, is_featured) SELECT id, 'https://images.igdb.com/igdb/image/upload/t_1080p/wty3mj9hqeduwgvybs9t.jpg', 1, false FROM games WHERE igdb_id = 40401 ON CONFLICT DO NOTHING;
+INSERT INTO game_screenshots (game_id, url, display_order, is_featured) SELECT id, 'https://images.igdb.com/igdb/image/upload/t_1080p/qnqurg27sfihjwvtloiq.jpg', 2, false FROM games WHERE igdb_id = 40401 ON CONFLICT DO NOTHING;
+INSERT INTO game_videos (game_id, url, thumbnail_url, title, video_type, display_order, is_featured) SELECT id, 'https://www.youtube.com/watch?v=20vBLce-QWo', 'https://img.youtube.com/vi/20vBLce-QWo/maxresdefault.jpg', 'Gameplay video', 'trailer', 0, true FROM games WHERE igdb_id = 40401 ON CONFLICT DO NOTHING;
+INSERT INTO games (slug, igdb_id, release_date, metascore, cover_image_url, background_image_url, last_synced_at) VALUES ('hockey', 11534, '1972-09-01', NULL, 'https://images.igdb.com/igdb/image/upload/t_cover_big/coa4gj.jpg', NULL, NOW()) ON CONFLICT (igdb_id) DO NOTHING;
+INSERT INTO game_translations (game_id, language_code, title, description) SELECT id, 'en', 'Hockey', 'Hockey is one of the 12 original games that were shipped with the Magnavox Odyssey system. It runs on Cartridge No.3 and uses a stadium scoreboard with an overlay.' FROM games WHERE igdb_id = 11534 ON CONFLICT (game_id, language_code) DO NOTHING;
+INSERT INTO game_genres (game_id, genre_id) SELECT g.id, ge.id FROM games g, genres ge WHERE g.igdb_id = 11534 AND ge.slug = 'sport' ON CONFLICT DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 11534 AND c.slug = 'magnavox' ON CONFLICT DO NOTHING;
+INSERT INTO game_platforms (game_id, platform_id) SELECT g.id, p.id FROM games g, platforms p WHERE g.igdb_id = 11534 AND p.igdb_id = 88 ON CONFLICT DO NOTHING;
+INSERT INTO games (slug, igdb_id, release_date, metascore, cover_image_url, background_image_url, last_synced_at) VALUES ('fun-zoo', 18360, '1972-09-01', NULL, 'https://images.igdb.com/igdb/image/upload/t_cover_big/wb4hxbtlatxxsnkv5rix.jpg', NULL, NOW()) ON CONFLICT (igdb_id) DO NOTHING;
+INSERT INTO game_translations (game_id, language_code, title, description) SELECT id, 'en', 'Fun Zoo', 'Extra game released for the Odyssey in 1972. Came in a pack of six with Wipeout ,Volleyball , Invasion , Handball and Baseball. Worked with Cartridge #2' FROM games WHERE igdb_id = 18360 ON CONFLICT (game_id, language_code) DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 18360 AND c.slug = 'magnavox' ON CONFLICT DO NOTHING;
+INSERT INTO game_platforms (game_id, platform_id) SELECT g.id, p.id FROM games g, platforms p WHERE g.igdb_id = 18360 AND p.igdb_id = 88 ON CONFLICT DO NOTHING;
+INSERT INTO games (slug, igdb_id, release_date, metascore, cover_image_url, background_image_url, last_synced_at) VALUES ('dogfight--1', 109451, '1972-12-31', NULL, 'https://images.igdb.com/igdb/image/upload/t_cover_big/poxpm5js1suncwparwha.jpg', NULL, NOW()) ON CONFLICT (igdb_id) DO NOTHING;
+INSERT INTO game_translations (game_id, language_code, title, description) SELECT id, 'en', 'Dogfight!', 'One of four games packed with Shooting Gallery, a Magnavox Odyssey peripheral. One player moves their dot along a flight path on the overlay, while the other player attempts to shoot it with the light gun. Uses game card number 9.' FROM games WHERE igdb_id = 109451 ON CONFLICT (game_id, language_code) DO NOTHING;
+INSERT INTO game_genres (game_id, genre_id) SELECT g.id, ge.id FROM games g, genres ge WHERE g.igdb_id = 109451 AND ge.slug = 'shooter' ON CONFLICT DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 109451 AND c.slug = 'magnavox' ON CONFLICT DO NOTHING;
+INSERT INTO game_platforms (game_id, platform_id) SELECT g.id, p.id FROM games g, platforms p WHERE g.igdb_id = 109451 AND p.igdb_id = 88 ON CONFLICT DO NOTHING;
+INSERT INTO games (slug, igdb_id, release_date, metascore, cover_image_url, background_image_url, last_synced_at) VALUES ('cat-and-mouse', 11533, '1972-09-01', NULL, 'https://images.igdb.com/igdb/image/upload/t_cover_big/coa4gk.jpg', NULL, NOW()) ON CONFLICT (igdb_id) DO NOTHING;
+INSERT INTO game_translations (game_id, language_code, title, description) SELECT id, 'en', 'Cat and Mouse', 'Cat and Mouse is one of the 12 original games that were shipped with the Magnavox Odyssey system. It runs on Cartridge No.4 and uses stick on numbers.' FROM games WHERE igdb_id = 11533 ON CONFLICT (game_id, language_code) DO NOTHING;
+INSERT INTO game_genres (game_id, genre_id) SELECT g.id, ge.id FROM games g, genres ge WHERE g.igdb_id = 11533 AND ge.slug = 'arcade' ON CONFLICT DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 11533 AND c.slug = 'magnavox' ON CONFLICT DO NOTHING;
+INSERT INTO game_platforms (game_id, platform_id) SELECT g.id, p.id FROM games g, platforms p WHERE g.igdb_id = 11533 AND p.igdb_id = 88 ON CONFLICT DO NOTHING;
+INSERT INTO games (slug, igdb_id, release_date, metascore, cover_image_url, background_image_url, last_synced_at) VALUES ('baseball--2', 7582, '1972-09-01', NULL, 'https://images.igdb.com/igdb/image/upload/t_cover_big/co843m.jpg', 'https://images.igdb.com/igdb/image/upload/t_1080p/sc7k2r.jpg', NOW()) ON CONFLICT (igdb_id) DO NOTHING;
+INSERT INTO game_translations (game_id, language_code, title, description) SELECT id, 'en', 'Baseball', 'Baseball is a combined board-video game for the Magnavox Odyssey system that runs with its Cartridge No.3.' FROM games WHERE igdb_id = 7582 ON CONFLICT (game_id, language_code) DO NOTHING;
+INSERT INTO game_genres (game_id, genre_id) SELECT g.id, ge.id FROM games g, genres ge WHERE g.igdb_id = 7582 AND ge.slug = 'sport' ON CONFLICT DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 7582 AND c.slug = 'magnavox' ON CONFLICT DO NOTHING;
+INSERT INTO game_platforms (game_id, platform_id) SELECT g.id, p.id FROM games g, platforms p WHERE g.igdb_id = 7582 AND p.igdb_id = 88 ON CONFLICT DO NOTHING;
+INSERT INTO game_screenshots (game_id, url, display_order, is_featured) SELECT id, 'https://images.igdb.com/igdb/image/upload/t_1080p/sc7k2r.jpg', 0, true FROM games WHERE igdb_id = 7582 ON CONFLICT DO NOTHING;
+INSERT INTO game_screenshots (game_id, url, display_order, is_featured) SELECT id, 'https://images.igdb.com/igdb/image/upload/t_1080p/sc7k2q.jpg', 1, false FROM games WHERE igdb_id = 7582 ON CONFLICT DO NOTHING;
+INSERT INTO game_screenshots (game_id, url, display_order, is_featured) SELECT id, 'https://images.igdb.com/igdb/image/upload/t_1080p/sc7k2s.jpg', 2, false FROM games WHERE igdb_id = 7582 ON CONFLICT DO NOTHING;
+INSERT INTO games (slug, igdb_id, release_date, metascore, cover_image_url, background_image_url, last_synced_at) VALUES ('roulette', 11521, '1972-12-31', NULL, 'https://images.igdb.com/igdb/image/upload/t_cover_big/coa4gm.jpg', NULL, NOW()) ON CONFLICT (igdb_id) DO NOTHING;
+INSERT INTO game_translations (game_id, language_code, title, description) SELECT id, 'en', 'Roulette', 'Roulette is one of the 12 original games that were shipped with the Magnavox Odyssey system. It runs on Cartridge No.6 and uses play-chips, play money and a layout board with an overlay.' FROM games WHERE igdb_id = 11521 ON CONFLICT (game_id, language_code) DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 11521 AND c.slug = 'magnavox' ON CONFLICT DO NOTHING;
+INSERT INTO game_platforms (game_id, platform_id) SELECT g.id, p.id FROM games g, platforms p WHERE g.igdb_id = 11521 AND p.igdb_id = 88 ON CONFLICT DO NOTHING;
+INSERT INTO games (slug, igdb_id, release_date, metascore, cover_image_url, background_image_url, last_synced_at) VALUES ('haunted-house--1', 11517, '1972-09-01', NULL, 'https://images.igdb.com/igdb/image/upload/t_cover_big/xikl6dvd81wgcy6b4wsg.jpg', 'https://images.igdb.com/igdb/image/upload/t_1080p/scphxj.jpg', NOW()) ON CONFLICT (igdb_id) DO NOTHING;
+INSERT INTO game_translations (game_id, language_code, title, description) SELECT id, 'en', 'Haunted House', 'Haunted House is one of the 12 original games that were shipped with the Magnavox Odyssey system. It runs on Cartridge No.4 and uses clue cards with an overlay.' FROM games WHERE igdb_id = 11517 ON CONFLICT (game_id, language_code) DO NOTHING;
+INSERT INTO game_genres (game_id, genre_id) SELECT g.id, ge.id FROM games g, genres ge WHERE g.igdb_id = 11517 AND ge.slug = 'adventure' ON CONFLICT DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 11517 AND c.slug = 'magnavox' ON CONFLICT DO NOTHING;
+INSERT INTO game_platforms (game_id, platform_id) SELECT g.id, p.id FROM games g, platforms p WHERE g.igdb_id = 11517 AND p.igdb_id = 88 ON CONFLICT DO NOTHING;
+INSERT INTO game_screenshots (game_id, url, display_order, is_featured) SELECT id, 'https://images.igdb.com/igdb/image/upload/t_1080p/scphxj.jpg', 0, true FROM games WHERE igdb_id = 11517 ON CONFLICT DO NOTHING;
+INSERT INTO game_videos (game_id, url, thumbnail_url, title, video_type, display_order, is_featured) SELECT id, 'https://www.youtube.com/watch?v=7SEeBdhe-bg', 'https://img.youtube.com/vi/7SEeBdhe-bg/maxresdefault.jpg', 'Gameplay Video', 'trailer', 0, true FROM games WHERE igdb_id = 11517 ON CONFLICT DO NOTHING;
+INSERT INTO games (slug, igdb_id, release_date, metascore, cover_image_url, background_image_url, last_synced_at) VALUES ('submarine', 11520, '1972-09-01', NULL, 'https://images.igdb.com/igdb/image/upload/t_cover_big/coa4gn.jpg', NULL, NOW()) ON CONFLICT (igdb_id) DO NOTHING;
+INSERT INTO game_translations (game_id, language_code, title, description) SELECT id, 'en', 'Submarine', 'Submarine is one of the 12 original games that were shipped with the Magnavox Odyssey system. It runs on Cartridge No.5.' FROM games WHERE igdb_id = 11520 ON CONFLICT (game_id, language_code) DO NOTHING;
+INSERT INTO game_genres (game_id, genre_id) SELECT g.id, ge.id FROM games g, genres ge WHERE g.igdb_id = 11520 AND ge.slug = 'simulator' ON CONFLICT DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 11520 AND c.slug = 'magnavox' ON CONFLICT DO NOTHING;
+INSERT INTO game_platforms (game_id, platform_id) SELECT g.id, p.id FROM games g, platforms p WHERE g.igdb_id = 11520 AND p.igdb_id = 88 ON CONFLICT DO NOTHING;
+INSERT INTO games (slug, igdb_id, release_date, metascore, cover_image_url, background_image_url, last_synced_at) VALUES ('ski', 11532, '1972-09-01', NULL, 'https://images.igdb.com/igdb/image/upload/t_cover_big/coa4gl.jpg', NULL, NOW()) ON CONFLICT (igdb_id) DO NOTHING;
+INSERT INTO game_translations (game_id, language_code, title, description) SELECT id, 'en', 'Ski', 'Ski is one of the 12 original games that were shipped with the Magnavox Odyssey system. It runs on Cartridge No.2 and uses stick on ski markers with an overlay.' FROM games WHERE igdb_id = 11532 ON CONFLICT (game_id, language_code) DO NOTHING;
+INSERT INTO game_genres (game_id, genre_id) SELECT g.id, ge.id FROM games g, genres ge WHERE g.igdb_id = 11532 AND ge.slug = 'racing' ON CONFLICT DO NOTHING;
+INSERT INTO game_genres (game_id, genre_id) SELECT g.id, ge.id FROM games g, genres ge WHERE g.igdb_id = 11532 AND ge.slug = 'sport' ON CONFLICT DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 11532 AND c.slug = 'magnavox' ON CONFLICT DO NOTHING;
+INSERT INTO game_platforms (game_id, platform_id) SELECT g.id, p.id FROM games g, platforms p WHERE g.igdb_id = 11532 AND p.igdb_id = 88 ON CONFLICT DO NOTHING;
+INSERT INTO games (slug, igdb_id, release_date, metascore, cover_image_url, background_image_url, last_synced_at) VALUES ('tennis', 11535, '1972-09-01', NULL, 'https://images.igdb.com/igdb/image/upload/t_cover_big/coa4gh.jpg', NULL, NOW()) ON CONFLICT (igdb_id) DO NOTHING;
+INSERT INTO game_translations (game_id, language_code, title, description) SELECT id, 'en', 'Tennis', 'Tennis is one of the 12 original games that were shipped with the Magnavox Odyssey system.' FROM games WHERE igdb_id = 11535 ON CONFLICT (game_id, language_code) DO NOTHING;
+INSERT INTO game_genres (game_id, genre_id) SELECT g.id, ge.id FROM games g, genres ge WHERE g.igdb_id = 11535 AND ge.slug = 'simulator' ON CONFLICT DO NOTHING;
+INSERT INTO game_genres (game_id, genre_id) SELECT g.id, ge.id FROM games g, genres ge WHERE g.igdb_id = 11535 AND ge.slug = 'sport' ON CONFLICT DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 11535 AND c.slug = 'magnavox' ON CONFLICT DO NOTHING;
+INSERT INTO game_platforms (game_id, platform_id) SELECT g.id, p.id FROM games g, platforms p WHERE g.igdb_id = 11535 AND p.igdb_id = 88 ON CONFLICT DO NOTHING;
+INSERT INTO games (slug, igdb_id, release_date, metascore, cover_image_url, background_image_url, last_synced_at) VALUES ('simon-says', 11505, '1972-09-01', NULL, 'https://images.igdb.com/igdb/image/upload/t_cover_big/delv0d2wx7m6ah7artnd.jpg', NULL, NOW()) ON CONFLICT (igdb_id) DO NOTHING;
+INSERT INTO game_translations (game_id, language_code, title, description) SELECT id, 'en', 'Simon Says', 'Simon Says is one of the 12 original games that was shipped with the Magnavox Odyssey system. It runs on Cartridge No.2 and uses cards with an overlay.' FROM games WHERE igdb_id = 11505 ON CONFLICT (game_id, language_code) DO NOTHING;
+INSERT INTO game_genres (game_id, genre_id) SELECT g.id, ge.id FROM games g, genres ge WHERE g.igdb_id = 11505 AND ge.slug = 'point-and-click' ON CONFLICT DO NOTHING;
+INSERT INTO game_platforms (game_id, platform_id) SELECT g.id, p.id FROM games g, platforms p WHERE g.igdb_id = 11505 AND p.igdb_id = 88 ON CONFLICT DO NOTHING;
+INSERT INTO games (slug, igdb_id, release_date, metascore, cover_image_url, background_image_url, last_synced_at) VALUES ('volleyball--2', 109446, '1972-09-01', NULL, 'https://images.igdb.com/igdb/image/upload/t_cover_big/coa4gg.jpg', NULL, NOW()) ON CONFLICT (igdb_id) DO NOTHING;
+INSERT INTO game_translations (game_id, language_code, title, description) SELECT id, 'en', 'Volleyball', 'Magnavox Odyssey launch title, sold separately. Two players use paddles to knock a ball back and forth on a screen; uses an overlay of a volleyball court, and players must knock the ball over the net for scores to count. Uses game card number 7.' FROM games WHERE igdb_id = 109446 ON CONFLICT (game_id, language_code) DO NOTHING;
+INSERT INTO game_genres (game_id, genre_id) SELECT g.id, ge.id FROM games g, genres ge WHERE g.igdb_id = 109446 AND ge.slug = 'sport' ON CONFLICT DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 109446 AND c.slug = 'magnavox' ON CONFLICT DO NOTHING;
+INSERT INTO game_platforms (game_id, platform_id) SELECT g.id, p.id FROM games g, platforms p WHERE g.igdb_id = 109446 AND p.igdb_id = 88 ON CONFLICT DO NOTHING;
+INSERT INTO games (slug, igdb_id, release_date, metascore, cover_image_url, background_image_url, last_synced_at) VALUES ('states', 11531, '1972-12-31', NULL, 'https://images.igdb.com/igdb/image/upload/t_cover_big/wpwt3alnwgvxtsygwfaf.jpg', NULL, NOW()) ON CONFLICT (igdb_id) DO NOTHING;
+INSERT INTO game_translations (game_id, language_code, title, description) SELECT id, 'en', 'States', 'States is one of the 12 original games that were shipped with the Magnavox Odyssey system. It runs on Cartridge No.6 and uses 50 state cards with a study map.' FROM games WHERE igdb_id = 11531 ON CONFLICT (game_id, language_code) DO NOTHING;
+INSERT INTO game_genres (game_id, genre_id) SELECT g.id, ge.id FROM games g, genres ge WHERE g.igdb_id = 11531 AND ge.slug = 'point-and-click' ON CONFLICT DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 11531 AND c.slug = 'magnavox' ON CONFLICT DO NOTHING;
+INSERT INTO game_platforms (game_id, platform_id) SELECT g.id, p.id FROM games g, platforms p WHERE g.igdb_id = 11531 AND p.igdb_id = 88 ON CONFLICT DO NOTHING;
+INSERT INTO games (slug, igdb_id, release_date, metascore, cover_image_url, background_image_url, last_synced_at) VALUES ('prehistoric-safari--1', 109452, '1972-12-31', NULL, 'https://images.igdb.com/igdb/image/upload/t_cover_big/zfgjitw7llenq3leimnp.jpg', NULL, NOW()) ON CONFLICT (igdb_id) DO NOTHING;
+INSERT INTO game_translations (game_id, language_code, title, description) SELECT id, 'en', 'Prehistoric Safari', 'One of four games packed with Shooting Gallery, a Magnavox Odyssey peripheral. One player sets their dot on overlays of prehistoric animals, while the other player attempts to shoot the dot with the light gun in as few shots as possible. Uses game card number 9.' FROM games WHERE igdb_id = 109452 ON CONFLICT (game_id, language_code) DO NOTHING;
+INSERT INTO game_genres (game_id, genre_id) SELECT g.id, ge.id FROM games g, genres ge WHERE g.igdb_id = 109452 AND ge.slug = 'shooter' ON CONFLICT DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 109452 AND c.slug = 'magnavox' ON CONFLICT DO NOTHING;
+INSERT INTO game_platforms (game_id, platform_id) SELECT g.id, p.id FROM games g, platforms p WHERE g.igdb_id = 109452 AND p.igdb_id = 88 ON CONFLICT DO NOTHING;
+INSERT INTO games (slug, igdb_id, release_date, metascore, cover_image_url, background_image_url, last_synced_at) VALUES ('analogic', 11506, '1972-09-01', NULL, 'https://images.igdb.com/igdb/image/upload/t_cover_big/uvqldbc4cwz51oihhuqq.jpg', 'https://images.igdb.com/igdb/image/upload/t_1080p/sc78a9.jpg', NOW()) ON CONFLICT (igdb_id) DO NOTHING;
+INSERT INTO game_translations (game_id, language_code, title, description) SELECT id, 'en', 'Analogic', 'Analogic is one of the 12 original games that were shipped with the Magnavox Odyssey system. It runs on Cartridge No.3 and uses play-chips with an overlay.
+A math game where players can move to either squares depicted on the overlay based on if the number on the square is even or odd and is the sum of the other player''s move and another number' FROM games WHERE igdb_id = 11506 ON CONFLICT (game_id, language_code) DO NOTHING;
+INSERT INTO game_genres (game_id, genre_id) SELECT g.id, ge.id FROM games g, genres ge WHERE g.igdb_id = 11506 AND ge.slug = 'puzzle' ON CONFLICT DO NOTHING;
+INSERT INTO game_companies (game_id, company_id, role, is_primary) SELECT g.id, c.id, 'developer', false FROM games g, companies c WHERE g.igdb_id = 11506 AND c.slug = 'magnavox' ON CONFLICT DO NOTHING;
+INSERT INTO game_platforms (game_id, platform_id) SELECT g.id, p.id FROM games g, platforms p WHERE g.igdb_id = 11506 AND p.igdb_id = 88 ON CONFLICT DO NOTHING;
+INSERT INTO game_screenshots (game_id, url, display_order, is_featured) SELECT id, 'https://images.igdb.com/igdb/image/upload/t_1080p/sc78a9.jpg', 0, true FROM games WHERE igdb_id = 11506 ON CONFLICT DO NOTHING;
+INSERT INTO game_videos (game_id, url, thumbnail_url, title, video_type, display_order, is_featured) SELECT id, 'https://www.youtube.com/watch?v=p-wvqusJEL8', 'https://img.youtube.com/vi/p-wvqusJEL8/maxresdefault.jpg', 'Gameplay video', 'trailer', 0, true FROM games WHERE igdb_id = 11506 ON CONFLICT DO NOTHING;
+
+COMMIT;
