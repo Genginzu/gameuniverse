@@ -1,14 +1,10 @@
 import { generateObject } from "ai";
-import { createOpenAI } from "@ai-sdk/openai";
 import { z } from "zod";
 
 import { logger } from "@/lib/logger";
 import { EDITABLE_FIELDS, type EntityType } from "@/types/admin-translations";
 
-/**
- * Builds a dynamic Zod schema from EDITABLE_FIELDS for the given entity type.
- * Each field becomes a z.string() entry in the schema.
- */
+/** Builds a dynamic Zod schema from EDITABLE_FIELDS for the given entity type. */
 function buildTranslationSchema(entityType: EntityType) {
   const fields = EDITABLE_FIELDS[entityType];
   const shape: Record<string, z.ZodString> = {};
@@ -19,11 +15,10 @@ function buildTranslationSchema(entityType: EntityType) {
 }
 
 /**
- * Translates a set of text fields from a source language to a target language
- * using Vercel AI Gateway with the GPT-5.4 Nano model.
+ * Translates text fields from a source language to a target language
+ * using Vercel AI SDK with openai/gpt-5.4-nano model.
  *
- * @throws Error if VERCEL_AI_GATEWAY_API_KEY is not configured
- * @throws Error if the AI call times out (30s) or fails
+ * Requires OPENAI_API_KEY env var (used automatically by Vercel AI SDK).
  */
 export async function translateFields(params: {
   sourceLang: string;
@@ -32,17 +27,6 @@ export async function translateFields(params: {
   fields: Record<string, string>;
 }): Promise<Record<string, string>> {
   const { sourceLang, targetLang, entityType, fields } = params;
-
-  const apiKey = process.env.VERCEL_AI_GATEWAY_API_KEY;
-  if (!apiKey) {
-    throw new Error("VERCEL_AI_GATEWAY_API_KEY is not configured");
-  }
-
-  const openai = createOpenAI({
-    apiKey,
-    baseURL: "https://gateway.ai.vercel.app/v1",
-  });
-
   const schema = buildTranslationSchema(entityType);
 
   const systemPrompt = [
@@ -63,7 +47,7 @@ export async function translateFields(params: {
 
   try {
     const { object } = await generateObject({
-      model: openai("openai/gpt-5.4-nano"),
+      model: "openai/gpt-5.4-nano" as Parameters<typeof generateObject>[0]["model"],
       schema,
       system: systemPrompt,
       prompt: userPrompt,
