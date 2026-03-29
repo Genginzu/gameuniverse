@@ -19,7 +19,7 @@ import {
 
 // --- Mock setup ---
 
-// Build a mock response for generateObject based on entity type and input fields
+// Build a mock response for generateText based on entity type and input fields
 function buildMockTranslation(entityType: EntityType): Record<string, string> {
   const fields = EDITABLE_FIELDS[entityType];
   const result: Record<string, string> = {};
@@ -33,13 +33,10 @@ function buildMockTranslation(entityType: EntityType): Record<string, string> {
 let capturedEntityType: EntityType = "games";
 
 vi.mock("ai", () => ({
-  generateObject: vi.fn(async () => ({
-    object: buildMockTranslation(capturedEntityType),
+  generateText: vi.fn(async () => ({
+    output: buildMockTranslation(capturedEntityType),
   })),
-}));
-
-vi.mock("@ai-sdk/openai", () => ({
-  createOpenAI: vi.fn(() => vi.fn(() => "mock-model")),
+  Output: { object: vi.fn(({ schema }: { schema: unknown }) => schema) },
 }));
 
 // --- Generators ---

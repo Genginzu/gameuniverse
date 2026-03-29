@@ -1,4 +1,4 @@
-import { generateObject } from "ai";
+import { generateText, Output } from "ai";
 import { z } from "zod";
 
 import { logger } from "@/lib/logger";
@@ -16,9 +16,9 @@ function buildTranslationSchema(entityType: EntityType) {
 
 /**
  * Translates text fields from a source language to a target language
- * using Vercel AI SDK with openai/gpt-5.4-nano model.
+ * using Vercel AI Gateway with openai/gpt-5.4-nano.
  *
- * Requires OPENAI_API_KEY env var (used automatically by Vercel AI SDK).
+ * Requires AI_GATEWAY_API_KEY env var (used automatically by the AI SDK).
  */
 export async function translateFields(params: {
   sourceLang: string;
@@ -46,15 +46,19 @@ export async function translateFields(params: {
   const timeout = setTimeout(() => controller.abort(), 30_000);
 
   try {
-    const { object } = await generateObject({
-      model: "openai/gpt-5.4-nano" as Parameters<typeof generateObject>[0]["model"],
-      schema,
+    const { output } = await generateText({
+      model: "openai/gpt-5.4-nano",
+      output: Output.object({ schema }),
       system: systemPrompt,
       prompt: userPrompt,
       abortSignal: controller.signal,
     });
 
-    return object as Record<string, string>;
+    if (!output) {
+      throw new Error("AI returned no structured output");
+    }
+
+    return output as Record<string, string>;
   } catch (error: unknown) {
     if (error instanceof Error && error.name === "AbortError") {
       logger.error("AI translation timed out", { entityType, sourceLang, targetLang });
