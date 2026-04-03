@@ -131,7 +131,9 @@ export function GameFormTabContent({
       case "images":
         return <GameFormImagesTab form={form} t={t} isIgdbField={isIgdbField} />;
       case "translations":
-        return <GameFormTranslationsTab form={form} t={t} isIgdbField={isIgdbField} />;
+        return (
+          <GameFormTranslationsTab form={form} t={t} isIgdbField={isIgdbField} gameId={gameId} />
+        );
       case "genres":
         return (
           <GameFormGenresTab

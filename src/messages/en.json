@@ -1158,6 +1158,11 @@
         "titlePlaceholder": "Game title",
         "description": "Description",
         "descriptionPlaceholder": "Game description...",
+        "translateWithAI": "Translate with AI",
+        "translating": "Translating...",
+        "translateSuccess": "Translation successful",
+        "translateError": "Translation error",
+        "translateNoGameId": "Save the game before translating",
         "coverImage": "Cover image (URL)",
         "coverImagePlaceholder": "https://example.com/image.jpg",
         "backgroundImage": "Background image (URL)",
@@ -2509,6 +2514,45 @@
       "registerError": "Failed to register webhook.",
       "deleteSuccess": "Webhook deleted successfully.",
       "deleteError": "Failed to delete webhook."
+    },
+    "viewDiff": "View diff",
+    "importSuccess": "Imported",
+    "viewGame": "View game",
+    "diff": {
+      "title": "Diff: {name}",
+      "back": "Back to webhooks",
+      "changedCount": "{count, plural, =0 {No changes} one {1 change} other {# changes}}",
+      "conflictCount": "{count, plural, one {1 conflict} other {# conflicts}}",
+      "noChanges": "No differences detected between IGDB and local data.",
+      "columns": {
+        "field": "Field",
+        "localValue": "Local value",
+        "igdbValue": "IGDB value",
+        "status": "Status",
+        "action": "Action"
+      },
+      "fields": {
+        "name": "Name (EN)",
+        "summary": "Description (EN)",
+        "slug": "Slug",
+        "releaseDate": "Release date",
+        "metascore": "Metascore",
+        "coverImage": "Cover image"
+      },
+      "statuses": {
+        "unchanged": "Unchanged",
+        "changed": "Changed",
+        "conflict": "Conflict"
+      },
+      "adminEdited": "Admin edited",
+      "autoApply": "Auto",
+      "overwrite": "Overwrite",
+      "willOverwrite": "Will overwrite",
+      "applyChanges": "Apply changes",
+      "applySuccess": "Changes applied successfully.",
+      "applyError": "Failed to apply changes.",
+      "applied": "Applied",
+      "skipped": "Skipped"
     }
   },
   "discussions": {

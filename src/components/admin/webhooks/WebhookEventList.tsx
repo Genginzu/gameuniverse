@@ -95,6 +95,12 @@ function EventRow({
         ? `/admin/characters/${event.character_id}`
         : null;
 
+  const canViewDiff = event.event_type === "update" && entityType === "games" && event.game_id;
+  const diffLink = canViewDiff ? `/admin/webhooks/events/${event.id}` : null;
+
+  const isCreateSuccess =
+    event.event_type === "create" && event.status === "processed" && event.game_id;
+
   const date = new Date(event.created_at);
   const formattedDate = date.toLocaleDateString("fr-FR", {
     day: "2-digit",
@@ -137,13 +143,41 @@ function EventRow({
         >
           {t(`statuses.${event.status}`)}
         </span>
+        {isCreateSuccess && (
+          <span className="ml-2 inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
+            <Icon icon="lucide:check-circle" className="h-3 w-3" />
+            {t("importSuccess")}
+          </span>
+        )}
         {event.error_message && (
           <p className="mt-1 max-w-xs truncate text-xs text-red-500" title={event.error_message}>
             {event.error_message}
           </p>
         )}
       </td>
-      <td className="px-4 py-3 text-xs text-gray-500 dark:text-gray-400">{formattedDate}</td>
+      <td className="px-4 py-3 text-xs text-gray-500 dark:text-gray-400">
+        <div className="flex items-center gap-2">
+          <span>{formattedDate}</span>
+          {isCreateSuccess && entityLink && (
+            <Link
+              href={entityLink}
+              className="inline-flex items-center gap-1 rounded-lg bg-green-50 px-2 py-1 text-xs font-medium text-green-700 transition-colors hover:bg-green-100 dark:bg-green-900/20 dark:text-green-400 dark:hover:bg-green-900/40"
+            >
+              <Icon icon="lucide:external-link" className="h-3 w-3" />
+              {t("viewGame")}
+            </Link>
+          )}
+          {diffLink && (
+            <Link
+              href={diffLink}
+              className="inline-flex items-center gap-1 rounded-lg bg-cyan-50 px-2 py-1 text-xs font-medium text-cyan-700 transition-colors hover:bg-cyan-100 dark:bg-cyan-900/20 dark:text-cyan-400 dark:hover:bg-cyan-900/40"
+            >
+              <Icon icon="lucide:git-compare" className="h-3 w-3" />
+              {t("viewDiff")}
+            </Link>
+          )}
+        </div>
+      </td>
     </tr>
   );
 }

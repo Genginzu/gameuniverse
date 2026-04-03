@@ -8,6 +8,7 @@
 
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { GameImportService } from "@/lib/services/gameImportService";
+import { applyWebhookPayload } from "@/lib/services/webhookDiffApplier";
 import { logger } from "@/lib/logger";
 import type { WebhookEventType, WebhookEventStatus } from "@/types/webhooks";
 
@@ -64,7 +65,11 @@ export async function processWebhookEvent(
       return await handleGameCreate(eventId, igdbId);
     }
 
-    // update and delete events: just log them
+    if (eventType === "update" && entityType === "games" && gameId) {
+      return await handleGameUpdate(eventId, gameId, payload);
+    }
+
+    // delete events and non-game entities: just log them
     await updateEventStatus(eventId, "processed");
     return { eventId, status: "processed" };
   } catch (error) {
@@ -94,6 +99,50 @@ async function handleGameCreate(eventId: string, igdbId: number): Promise<Proces
 
   await updateEventStatus(eventId, "processed");
   logger.info("Webhook: game auto-imported", { igdbId, slug: result.game?.slug });
+  return { eventId, status: "processed" };
+}
+
+/**
+ * Handle a game update from IGDB — auto-apply non-overridden fields.
+ * If conflicts exist (admin-overridden fields differ), the event stays
+ * as "received" so admins can review via the diff page.
+ */
+async function handleGameUpdate(
+  eventId: string,
+  gameId: string,
+  payload: WebhookPayload
+): Promise<ProcessResult> {
+  await updateEventStatus(eventId, "processing");
+
+  const supabase = getSupabaseAdmin();
+  const result = await applyWebhookPayload(supabase, {
+    gameId,
+    payload: payload as Record<string, unknown>,
+  });
+
+  if (result.error) {
+    await updateEventStatus(eventId, "failed", result.error);
+    return { eventId, status: "failed", error: result.error };
+  }
+
+  // If there are skipped fields (conflicts), mark as "received" for manual review
+  if (result.skippedFields.length > 0) {
+    await updateEventStatus(eventId, "received");
+    logger.info("Webhook: game update partially applied, conflicts pending", {
+      eventId,
+      gameId,
+      applied: result.appliedFields,
+      conflicts: result.skippedFields,
+    });
+    return { eventId, status: "received" };
+  }
+
+  await updateEventStatus(eventId, "processed");
+  logger.info("Webhook: game update fully applied", {
+    eventId,
+    gameId,
+    applied: result.appliedFields,
+  });
   return { eventId, status: "processed" };
 }
 

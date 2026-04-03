@@ -1161,6 +1161,11 @@
         "titlePlaceholder": "Titre du jeu",
         "description": "Description",
         "descriptionPlaceholder": "Description du jeu...",
+        "translateWithAI": "Traduire avec l'IA",
+        "translating": "Traduction en cours...",
+        "translateSuccess": "Traduction réussie",
+        "translateError": "Erreur de traduction",
+        "translateNoGameId": "Sauvegardez le jeu avant de traduire",
         "coverImage": "Image de couverture (URL)",
         "coverImagePlaceholder": "https://example.com/image.jpg",
         "backgroundImage": "Image de fond (URL)",
@@ -2512,6 +2517,45 @@
       "registerError": "Erreur lors de l'enregistrement du webhook.",
       "deleteSuccess": "Webhook supprimé avec succès.",
       "deleteError": "Erreur lors de la suppression du webhook."
+    },
+    "viewDiff": "Voir le diff",
+    "importSuccess": "Importé",
+    "viewGame": "Voir le jeu",
+    "diff": {
+      "title": "Diff : {name}",
+      "back": "Retour aux webhooks",
+      "changedCount": "{count, plural, =0 {Aucune modification} one {1 modification} other {# modifications}}",
+      "conflictCount": "{count, plural, one {1 conflit} other {# conflits}}",
+      "noChanges": "Aucune différence détectée entre les données IGDB et locales.",
+      "columns": {
+        "field": "Champ",
+        "localValue": "Valeur locale",
+        "igdbValue": "Valeur IGDB",
+        "status": "Statut",
+        "action": "Action"
+      },
+      "fields": {
+        "name": "Nom (EN)",
+        "summary": "Description (EN)",
+        "slug": "Slug",
+        "releaseDate": "Date de sortie",
+        "metascore": "Metascore",
+        "coverImage": "Image de couverture"
+      },
+      "statuses": {
+        "unchanged": "Identique",
+        "changed": "Modifié",
+        "conflict": "Conflit"
+      },
+      "adminEdited": "Modifié par un admin",
+      "autoApply": "Auto",
+      "overwrite": "Écraser",
+      "willOverwrite": "Sera écrasé",
+      "applyChanges": "Appliquer les modifications",
+      "applySuccess": "Modifications appliquées avec succès.",
+      "applyError": "Erreur lors de l'application des modifications.",
+      "applied": "Appliqués",
+      "skipped": "Ignorés"
     }
   },
   "discussions": {

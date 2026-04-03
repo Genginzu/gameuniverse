@@ -60,6 +60,8 @@ export interface GameFormTabProps {
   t: (key: string) => string;
   /** When provided, indicates whether a field still has original IGDB data */
   isIgdbField?: (fieldName: TrackableField) => boolean;
+  /** Game ID — needed for AI translation in the translations tab */
+  gameId?: string;
 }
 
 export type TabId =
