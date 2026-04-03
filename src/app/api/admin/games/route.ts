@@ -14,8 +14,8 @@ import {
 } from "@/lib/realtime-updates";
 import { logger } from "@/lib/logger";
 
-// Types for Supabase query results
-interface AdminGameRow {
+// Type for the RPC result rows from get_admin_games_listing()
+interface AdminGameFromRpc {
   id: string;
   slug: string;
   cover_image_url?: string;
@@ -26,33 +26,37 @@ interface AdminGameRow {
   system_requirements?: Record<string, unknown>;
   created_at: string;
   updated_at: string;
-  game_translations?: Array<{
+  title: string;
+  description?: string;
+  translations: Array<{
     id: string;
     title: string;
     description?: string;
     language_code: string;
   }>;
-  game_genres?: Array<{
-    genres?: {
+  genres: Array<{ id: string; slug: string; name: string }>;
+  companies: {
+    developers: Array<{
       id: string;
-      slug: string;
-      genre_translations?: Array<{ name: string }>;
-    };
-  }>;
-  game_companies?: Array<{
-    id: string;
-    role: string;
-    is_primary: boolean;
-    companies?: {
-      id: string;
+      company_id: string;
       name: string;
       slug: string;
-    };
-  }>;
-  game_screenshots?: Array<{ count: number }>;
-  game_artwork?: Array<{ count: number }>;
-  game_videos?: Array<{ count: number }>;
-  game_prices?: Array<{ count: number }>;
+      is_primary: boolean;
+    }>;
+    publishers: Array<{
+      id: string;
+      company_id: string;
+      name: string;
+      slug: string;
+      is_primary: boolean;
+    }>;
+  };
+  mediaCount: {
+    screenshots: number;
+    artwork: number;
+    videos: number;
+    prices: number;
+  };
 }
 
 /**
@@ -91,177 +95,46 @@ export async function GET(request: NextRequest) {
     const supabase = await createRouteHandlerClient();
     const offset = (page - 1) * limit;
 
-    // When searching, first find matching game IDs via game_translations,
-    // then fetch those games with ALL translations intact.
-    // This avoids PostgREST filtering joined translation rows by the search term,
-    // which would drop non-matching locale translations and cause "Untitled".
-    let matchingGameIds: string[] | null = null;
-
-    if (search?.trim()) {
-      const { data: matchingTranslations, error: searchError } = await supabase
-        .from("game_translations")
-        .select("game_id")
-        .ilike("title", `%${search.trim()}%`);
-
-      if (searchError) {
-        logger.error("Error searching game translations", { error: searchError });
-        return NextResponse.json({ error: "Failed to search games" }, { status: 500 });
-      }
-
-      matchingGameIds = [
-        ...new Set(
-          matchingTranslations?.map((t) => t.game_id).filter((id): id is string => id !== null) ??
-            []
-        ),
-      ];
-
-      if (matchingGameIds.length === 0) {
-        return NextResponse.json({
-          games: [],
-          pagination: {
-            currentPage: page,
-            totalPages: 0,
-            totalCount: 0,
-            limit,
-            hasNextPage: false,
-            hasPreviousPage: false,
-          },
-        });
-      }
-    }
-
-    // Build the base query with admin-specific fields
-    let query = supabase.from("games").select(
-      `
-        id,
-        slug,
-        cover_image_url,
-        background_image_url,
-        background_color,
-        release_date,
-        metascore,
-        system_requirements,
-        created_at,
-        updated_at,
-        game_translations(
-          id,
-          title,
-          description,
-          language_code
-        ),
-        game_genres(
-          genres(
-            id,
-            slug,
-            genre_translations(
-              name
-            )
-          )
-        ),
-        game_companies(
-          id,
-          role,
-          is_primary,
-          companies(
-            id,
-            name,
-            slug
-          )
-        ),
-        game_screenshots(count),
-        game_artwork(count),
-        game_videos(count),
-        game_prices(count)
-      `
-    );
-
-    // Filter by matching game IDs from the search step
-    if (matchingGameIds) {
-      query = query.in("id", matchingGameIds);
-    }
-
-    // Get total count for pagination
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let countQuery: any = supabase.from("games").select("id", { count: "exact", head: true });
-
-    if (matchingGameIds) {
-      countQuery = countQuery.in("id", matchingGameIds);
-    }
-
-    const { count: totalCount, error: countError } = await countQuery;
-
-    if (countError) {
-      logger.error("Error counting games", { error: countError });
-      return NextResponse.json({ error: "Failed to count games" }, { status: 500 });
-    }
-
-    // Apply sorting and pagination
-    // Note: sorting by joined table columns (game_translations.title) only orders
-    // the nested rows, not the parent. Use created_at as fallback for title sort.
-    const orderColumn = sort_by === "title" ? "created_at" : sort_by;
-    const { data: games, error } = await query
-      .order(orderColumn, {
-        ascending: sort_order === "asc",
-      })
-      .range(offset, offset + limit - 1);
+    // Single optimised RPC call — search, count, sort, paginate all happen
+    // server-side in get_admin_games_listing() to avoid PostgREST join timeouts.
+    const { data: rpcResult, error } = await supabase.rpc("get_admin_games_listing", {
+      p_locale: locale,
+      p_limit: limit,
+      p_offset: offset,
+      p_search: search?.trim() || null,
+      p_sort_by: sort_by,
+      p_sort_order: sort_order,
+    });
 
     if (error) {
       logger.error("Error fetching admin games", { error });
       return NextResponse.json({ error: "Failed to fetch games" }, { status: 500 });
     }
 
-    // Transform data for admin view
-    const transformedGames =
-      (games as AdminGameRow[] | null)?.map((game) => {
-        // Prefer translation matching the requested locale, fallback to first available
-        const translations = game.game_translations ?? [];
-        const translation =
-          translations.find((t) => t.language_code === locale) || translations[0] || null;
-        const genres =
-          game.game_genres?.map((gg) => ({
-            id: gg.genres?.id,
-            slug: gg.genres?.slug,
-            name: gg.genres?.genre_translations?.[0]?.name || "Unknown",
-          })) || [];
+    const result = rpcResult as { games: AdminGameFromRpc[]; totalCount: number };
+    const totalCount = result.totalCount ?? 0;
 
-        const companies = {
-          developers: game.game_companies?.filter((gc) => gc.role === "developer") || [],
-          publishers: game.game_companies?.filter((gc) => gc.role === "publisher") || [],
-        };
+    // Map DB column names to the camelCase shape the frontend expects
+    const transformedGames = (result.games ?? []).map((game) => ({
+      id: game.id,
+      slug: game.slug,
+      title: game.title,
+      description: game.description,
+      coverImage: game.cover_image_url,
+      backgroundImage: game.background_image_url,
+      backgroundColor: game.background_color,
+      releaseDate: game.release_date,
+      metascore: game.metascore,
+      systemRequirements: game.system_requirements,
+      genres: game.genres,
+      companies: game.companies,
+      mediaCount: game.mediaCount,
+      translations: game.translations,
+      createdAt: game.created_at,
+      updatedAt: game.updated_at,
+    }));
 
-        return {
-          id: game.id,
-          slug: game.slug,
-          title: translation?.title || "Untitled",
-          description: translation?.description,
-          coverImage: game.cover_image_url,
-          backgroundImage: game.background_image_url,
-          backgroundColor: game.background_color,
-          releaseDate: game.release_date,
-          metascore: game.metascore,
-          systemRequirements: game.system_requirements,
-          genres,
-          companies,
-          mediaCount: {
-            screenshots: game.game_screenshots?.[0]?.count || 0,
-            artwork: game.game_artwork?.[0]?.count || 0,
-            videos: game.game_videos?.[0]?.count || 0,
-            prices: game.game_prices?.[0]?.count || 0,
-          },
-          createdAt: game.created_at,
-          updatedAt: game.updated_at,
-        };
-      }) || [];
-
-    // Post-sort by title if requested (can't reliably sort by joined column in Supabase)
-    if (sort_by === "title") {
-      transformedGames.sort((a, b) => {
-        const cmp = a.title.localeCompare(b.title);
-        return sort_order === "asc" ? cmp : -cmp;
-      });
-    }
-
-    const totalPages = Math.ceil((totalCount || 0) / limit);
+    const totalPages = Math.ceil(totalCount / limit);
 
     return NextResponse.json({
       games: transformedGames,

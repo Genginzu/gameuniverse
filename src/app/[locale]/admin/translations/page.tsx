@@ -4,20 +4,17 @@ import { useMemo, useState, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import useSWR from "swr";
-import { routing } from "@/i18n/routing";
 import type { TranslationStats } from "@/types/admin-translations";
 import { TranslationEntityGrid } from "@/components/admin/translations/TranslationEntityGrid";
 import { TranslationProgressBar } from "@/components/admin/translations/TranslationProgressBar";
 
 export default function AdminTranslationsPage() {
   const t = useTranslations("admin.translations");
-  const defaultLang =
-    routing.locales.find((l) => l !== routing.defaultLocale) ?? routing.locales[0];
-  const [targetLang, setTargetLang] = useState(defaultLang);
   const [isSyncing, setIsSyncing] = useState(false);
 
   const { data, isLoading, mutate } = useSWR<{ stats: TranslationStats[] }>(
-    "/api/admin/translations/stats"
+    "/api/admin/translations/stats",
+    { revalidateOnMount: true, dedupingInterval: 0 }
   );
   const stats = data?.stats ?? [];
 
@@ -31,12 +28,14 @@ export default function AdminTranslationsPage() {
     }
   }, [mutate]);
 
+  // Cross-language stats (_all): an entity is "translated" when complete in every language
+  const crossLangStats = useMemo(() => stats.filter((s) => s.language === "_all"), [stats]);
+
   const globalProgress = useMemo(() => {
-    const filtered = stats.filter((s) => s.language === targetLang);
-    const total = filtered.reduce((sum, s) => sum + s.total, 0);
-    const translated = filtered.reduce((sum, s) => sum + s.complete, 0);
+    const total = crossLangStats.reduce((sum, s) => sum + s.total, 0);
+    const translated = crossLangStats.reduce((sum, s) => sum + s.complete, 0);
     return { translated, total };
-  }, [stats, targetLang]);
+  }, [crossLangStats]);
 
   return (
     <div className="space-y-6 p-4 lg:p-6">
@@ -59,27 +58,12 @@ export default function AdminTranslationsPage() {
             )}
             {t("buttons.syncStats")}
           </button>
-          <div className="flex items-center gap-2">
-            <Icon icon="mdi:translate" className="size-4 text-gray-400" />
-            <select
-              value={targetLang}
-              onChange={(e) => setTargetLang(e.target.value)}
-              className="glass-input rounded-lg px-3 py-1.5 text-sm"
-              aria-label={t("targetLanguage")}
-            >
-              {routing.locales.map((locale) => (
-                <option key={locale} value={locale}>
-                  {t(`languages.${locale}`)}
-                </option>
-              ))}
-            </select>
-          </div>
         </div>
       </div>
 
       <TranslationProgressBar translated={globalProgress.translated} total={globalProgress.total} />
 
-      <TranslationEntityGrid stats={stats} targetLang={targetLang} isLoading={isLoading} />
+      <TranslationEntityGrid stats={crossLangStats} isLoading={isLoading} />
     </div>
   );
 }

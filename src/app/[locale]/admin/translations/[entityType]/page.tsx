@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
-import { useParams } from "next/navigation";
-import Link from "next/link";
+import { useParams, useSearchParams } from "next/navigation";
+import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { routing } from "@/i18n/routing";
@@ -48,6 +48,27 @@ function InvalidEntity() {
   );
 }
 
+/** Build a Link-compatible href object with updated search params. */
+function buildHref(
+  entityType: string,
+  currentParams: URLSearchParams,
+  overrides: Record<string, string | null>
+): { pathname: string; query: Record<string, string> } {
+  const sp = new URLSearchParams(currentParams.toString());
+  for (const [key, value] of Object.entries(overrides)) {
+    if (value === null || value === "" || value === "1") {
+      sp.delete(key);
+    } else {
+      sp.set(key, value);
+    }
+  }
+  const query: Record<string, string> = {};
+  sp.forEach((v, k) => {
+    query[k] = v;
+  });
+  return { pathname: `/admin/translations/${entityType}`, query };
+}
+
 function EntityTableView({
   entityType,
   t,
@@ -55,11 +76,13 @@ function EntityTableView({
   entityType: EntityType;
   t: ReturnType<typeof useTranslations>;
 }) {
+  const searchParams = useSearchParams();
+  const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10) || 1);
+  const search = searchParams.get("search") ?? "";
+
   const defaultLang =
     routing.locales.find((l) => l !== routing.defaultLocale) ?? routing.locales[0];
   const [targetLang, setTargetLang] = useState(defaultLang);
-  const [page, setPage] = useState(1);
-  const [search, setSearch] = useState("");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [translatingIds, setTranslatingIds] = useState<Set<string>>(new Set());
   const [lastError, setLastError] = useState<string | null>(null);
@@ -84,11 +107,6 @@ function EntityTableView({
   }>({ isOpen: false, item: null, translatedFields: {}, isSaving: false, reviewTargetLang: "" });
 
   const swr = useAdminTranslations({ targetLang, entityType, page, search });
-
-  const handleSearch = useCallback((q: string) => {
-    setSearch(q);
-    setPage(1);
-  }, []);
 
   const toggleSelect = useCallback((id: string) => {
     setSelectedIds((prev) => {
@@ -190,7 +208,6 @@ function EntityTableView({
             value={targetLang}
             onChange={(e) => {
               setTargetLang(e.target.value);
-              setPage(1);
               setSelectedIds(new Set());
             }}
             className="glass-input rounded-lg px-3 py-1.5 text-sm"
@@ -238,8 +255,9 @@ function EntityTableView({
         onTranslate={handleTranslateOne}
         onTranslateAndReview={handleTranslateAndReview}
         rowHref={(item) => `/admin/translations/${entityType}/${item.entityId}`}
-        onPageChange={setPage}
-        onSearch={handleSearch}
+        buildPageUrl={(p) => buildHref(entityType, searchParams, { page: String(p) })}
+        buildSearchUrl={(q) => buildHref(entityType, searchParams, { search: q, page: null })}
+        currentSearch={search}
         isLoading={swr.isLoadingItems}
         translatingIds={translatingIds}
       />

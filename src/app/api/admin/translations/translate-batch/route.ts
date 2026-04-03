@@ -115,6 +115,14 @@ export async function POST(request: NextRequest) {
           }
         }
 
+        // Refresh stats cache after all entities are processed
+        try {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          await (supabase as any).rpc("refresh_translation_stats");
+        } catch (e) {
+          logger.error("Stats refresh failed after batch", { error: e });
+        }
+
         controller.close();
       },
     });

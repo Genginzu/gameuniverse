@@ -51,12 +51,3 @@ total_rating / total_rating_count — note combinée users+critiques
 rating / rating_count — note utilisateurs IGDB
 
 Peux-tu prendre <page> et faire une passe pour regarder ce qui pourrait être améliorer en terme de perfromance, de lazy loading et d'affichage skeleton ? Dans un premier temps fait moi un etat des lieux détaillés suivi d'un tableau recap et je te confirmerais les points à mettre en place par la suite. Il se peut que rien ne soit à faire dans ce cas ne pas inventer quoi que ce soit ou ne te force pas à trouver des points à améliorer.
-
-2000
-2001
-2002
-2003 - 2010
-2011
-2012
-2013
-2014 - 2016

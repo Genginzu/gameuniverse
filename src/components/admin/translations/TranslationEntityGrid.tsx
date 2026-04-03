@@ -1,13 +1,12 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import type { TranslationStats, EntityType } from "@/types/admin-translations";
 
 interface TranslationEntityGridProps {
   stats: TranslationStats[];
-  targetLang: string;
   isLoading: boolean;
 }
 
@@ -24,13 +23,8 @@ const ENTITY_ICONS: Record<EntityType, string> = {
   ratings: "mdi:star-circle",
 };
 
-export function TranslationEntityGrid({
-  stats,
-  targetLang,
-  isLoading,
-}: TranslationEntityGridProps) {
+export function TranslationEntityGrid({ stats, isLoading }: TranslationEntityGridProps) {
   const t = useTranslations("admin.translations");
-  const filteredStats = stats.filter((s) => s.language === targetLang);
 
   if (isLoading) {
     return (
@@ -48,7 +42,7 @@ export function TranslationEntityGrid({
 
   return (
     <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-      {filteredStats.map((stat) => (
+      {stats.map((stat) => (
         <EntityCard key={stat.entityType} stat={stat} icon={ENTITY_ICONS[stat.entityType]} t={t} />
       ))}
     </div>

@@ -4,6 +4,24 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { TranslationTable } from "@/components/admin/translations/TranslationTable";
 import type { TranslationMissingItem, PaginationInfo } from "@/types/admin-translations";
 
+// Mock i18n navigation
+const mockPush = vi.fn();
+vi.mock("@/i18n/navigation", () => ({
+  Link: ({
+    href,
+    children,
+    className,
+  }: {
+    href: string | object;
+    children: React.ReactNode;
+    className?: string;
+  }) => {
+    const hrefStr = typeof href === "string" ? href : JSON.stringify(href);
+    return React.createElement("a", { href: hrefStr, className }, children);
+  },
+  useRouter: () => ({ push: mockPush }),
+}));
+
 function makeItem(overrides: Partial<TranslationMissingItem> = {}): TranslationMissingItem {
   return {
     entityId: "uuid-1",
@@ -35,8 +53,15 @@ function makeProps(overrides: Record<string, unknown> = {}) {
     onTranslate: vi.fn(),
     onTranslateAndReview: vi.fn(),
     rowHref: (item: TranslationMissingItem) => `/admin/translations/games/${item.entityId}`,
-    onPageChange: vi.fn(),
-    onSearch: vi.fn(),
+    buildPageUrl: (page: number) => ({
+      pathname: "/admin/translations/games",
+      query: page > 1 ? { page: String(page) } : {},
+    }),
+    buildSearchUrl: (q: string) => ({
+      pathname: "/admin/translations/games",
+      query: q ? { search: q } : {},
+    }),
+    currentSearch: "",
     isLoading: false,
     translatingIds: new Set<string>(),
     ...overrides,
@@ -77,13 +102,15 @@ describe("TranslationTable", () => {
     expect(screen.getByText("table.noResults")).toBeInTheDocument();
   });
 
-  it("calls onSearch when Enter is pressed in search input", () => {
-    const onSearch = vi.fn();
-    render(<TranslationTable {...makeProps({ onSearch })} />);
+  it("navigates to search URL when Enter is pressed in search input", () => {
+    render(<TranslationTable {...makeProps()} />);
     const input = screen.getByPlaceholderText("table.searchPlaceholder");
     fireEvent.change(input, { target: { value: "zelda" } });
     fireEvent.keyDown(input, { key: "Enter" });
-    expect(onSearch).toHaveBeenCalledWith("zelda");
+    expect(mockPush).toHaveBeenCalledWith({
+      pathname: "/admin/translations/games",
+      query: { search: "zelda" },
+    });
   });
 
   it("shows 'Translate All' button", () => {
@@ -114,11 +141,14 @@ describe("TranslationTable", () => {
     expect(onClearSelection).toHaveBeenCalled();
   });
 
-  it("renders pagination when totalPages > 1", () => {
+  it("renders pagination links when totalPages > 1", () => {
     const pagination: PaginationInfo = { ...basePagination, totalPages: 3, hasNextPage: true };
     render(<TranslationTable {...makeProps({ pagination })} />);
     expect(screen.getByText("table.page")).toBeInTheDocument();
-    expect(screen.getByText("table.next")).toBeInTheDocument();
+    // next-intl Link receives an object href; the mock renders it as [object Object]
+    // Just verify the link exists
+    const nextLink = screen.getByText("table.next").closest("a");
+    expect(nextLink).toBeInTheDocument();
   });
 
   it("does not render pagination when totalPages is 1", () => {
@@ -126,11 +156,16 @@ describe("TranslationTable", () => {
     expect(screen.queryByText("table.previous")).not.toBeInTheDocument();
   });
 
-  it("calls onPageChange when next button is clicked", () => {
-    const onPageChange = vi.fn();
-    const pagination: PaginationInfo = { ...basePagination, totalPages: 3, hasNextPage: true };
-    render(<TranslationTable {...makeProps({ pagination, onPageChange })} />);
-    fireEvent.click(screen.getByText("table.next"));
-    expect(onPageChange).toHaveBeenCalledWith(2);
+  it("renders previous link when hasPreviousPage", () => {
+    const pagination: PaginationInfo = {
+      ...basePagination,
+      currentPage: 2,
+      totalPages: 3,
+      hasNextPage: true,
+      hasPreviousPage: true,
+    };
+    render(<TranslationTable {...makeProps({ pagination })} />);
+    const prevLink = screen.getByText("table.previous").closest("a");
+    expect(prevLink).toBeInTheDocument();
   });
 });

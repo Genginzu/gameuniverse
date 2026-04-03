@@ -56,8 +56,9 @@ export function classifyStatus(
 }
 
 /**
- * Retrieves entities with missing translations using SQL-level pagination.
- * Paginates entities first, then loads translations only for the current page.
+ * Retrieves entities with missing translations using SQL-level filtering and pagination.
+ * Uses the `get_missing_translations` RPC to filter at the database level,
+ * ensuring only entities with genuinely incomplete translations are returned.
  */
 export async function getMissingTranslations(params: {
   supabase: SupabaseClient;
@@ -69,41 +70,36 @@ export async function getMissingTranslations(params: {
 }): Promise<{ items: TranslationMissingItem[]; totalCount: number }> {
   const { supabase, entityType, languages, page, limit, search } = params;
   const client = db(supabase);
-  const entityTable = ENTITY_TABLE_MAP[entityType];
   const translationTable = TRANSLATION_TABLE_MAP[entityType];
   const fkColumn = FK_COLUMN_MAP[entityType];
-  const identifierField = IDENTIFIER_FIELD_MAP[entityType];
   const requiredFields = REQUIRED_FIELDS[entityType];
   const editableFields = EDITABLE_FIELDS[entityType];
 
-  // We over-fetch entities to account for filtering out fully-translated ones
-  // Fetch a larger window and filter in memory
-  const batchSize = limit * 5;
-  const offset = (page - 1) * limit;
+  // 1. Use the SQL function to get only entities with missing translations
+  const { data: rpcRows, error: rpcError } = await client.rpc("get_missing_translations", {
+    p_entity_type: entityType,
+    p_languages: languages,
+    p_required_fields: requiredFields,
+    p_page: page,
+    p_limit: limit,
+    p_search: search?.trim() || null,
+  });
 
-  // Build entity query with optional search
-  let entityQuery = client.from(entityTable).select(`id, ${identifierField}`, { count: "exact" });
-
-  if (search?.trim()) {
-    entityQuery = entityQuery.ilike(identifierField, `%${search.trim()}%`);
+  if (rpcError) {
+    logger.error("Error calling get_missing_translations RPC", { error: rpcError, entityType });
+    throw new Error("Failed to fetch missing translations");
   }
 
-  // Fetch entities that have at least one translation (inner join via fk)
-  // We get a larger batch to filter out complete ones
-  const {
-    data: entities,
-    count: entityCount,
-    error: entityError,
-  } = await entityQuery.order(identifierField).range(0, Math.max(batchSize * page, 1000) - 1);
+  if (!rpcRows || rpcRows.length === 0) return { items: [], totalCount: 0 };
 
-  if (entityError) {
-    logger.error("Error fetching entities", { error: entityError, entityType });
-    throw new Error("Failed to fetch entities");
-  }
-  if (!entities || entities.length === 0) return { items: [], totalCount: 0 };
+  // totalCount is returned on every row by the SQL function
+  const totalCount: number = Number(rpcRows[0].total_count) || 0;
+  const entityIds = rpcRows.map((r: { entity_id: string }) => r.entity_id);
+  const identifierById = new Map<string, string>(
+    rpcRows.map((r: { entity_id: string; identifier: string }) => [r.entity_id, r.identifier])
+  );
 
-  // Fetch translations for these entities in batches of 200 IDs
-  const entityIds = entities.map((e: { id: string }) => e.id);
+  // 2. Fetch translations for these entities (small set — only the current page)
   const translationSelect = [fkColumn, "language_code", ...editableFields].join(", ");
   const translationsByEntity = new Map<string, Map<string, Record<string, string | null>>>();
 
@@ -120,66 +116,52 @@ export async function getMissingTranslations(params: {
     }
   }
 
-  // Build missing items
-  const allItems: TranslationMissingItem[] = [];
-  for (const entity of entities) {
-    const langMap = translationsByEntity.get(entity.id);
-    if (!langMap || langMap.size === 0) continue;
+  // 3. Build missing items from the SQL-filtered entities
+  const items: TranslationMissingItem[] = [];
+  for (const eid of entityIds) {
+    const langMap = translationsByEntity.get(eid);
 
     // Find best source language
     let sourceLang = "";
     let sourceFields: Record<string, string> = {};
-    const enRow = langMap.get("en");
-    if (enRow) {
-      const fields = extractFields(enRow, editableFields);
-      if (Object.keys(fields).length > 0) {
-        sourceLang = "en";
-        sourceFields = fields;
-      }
-    }
-    if (!sourceLang) {
-      for (const [lang, row] of langMap) {
-        const fields = extractFields(row, editableFields);
+    if (langMap) {
+      const enRow = langMap.get("en");
+      if (enRow) {
+        const fields = extractFields(enRow, editableFields);
         if (Object.keys(fields).length > 0) {
-          sourceLang = lang;
+          sourceLang = "en";
           sourceFields = fields;
-          break;
+        }
+      }
+      if (!sourceLang) {
+        for (const [lang, row] of langMap) {
+          const fields = extractFields(row, editableFields);
+          if (Object.keys(fields).length > 0) {
+            sourceLang = lang;
+            sourceFields = fields;
+            break;
+          }
         }
       }
     }
-    if (!sourceLang) continue;
 
     // Find missing languages
     const missingLangs: string[] = [];
     for (const lang of languages) {
-      const row = langMap.get(lang) ?? null;
+      const row = langMap?.get(lang) ?? null;
       if (classifyStatus(row, requiredFields) !== "complete") missingLangs.push(lang);
     }
-    if (missingLangs.length === 0) continue;
 
-    allItems.push({
-      entityId: entity.id,
-      identifier: entity[identifierField] || entity.id,
+    items.push({
+      entityId: eid,
+      identifier: identifierById.get(eid) || eid,
       sourceText: sourceFields,
-      sourceLang,
+      sourceLang: sourceLang || languages[0],
       missingLangs,
     });
   }
 
-  // Apply pagination on the filtered results
-  const paginatedItems = allItems.slice(offset, offset + limit);
-
-  // Use stats cache for total count if available, otherwise estimate
-  const { data: statsRow } = await client
-    .from("translation_stats_cache")
-    .select("missing, partial")
-    .eq("entity_type", entityType)
-    .eq("language_code", languages.find((l) => l !== "en") ?? languages[0])
-    .single();
-
-  const totalCount = statsRow ? (statsRow.missing ?? 0) + (statsRow.partial ?? 0) : allItems.length;
-
-  return { items: paginatedItems, totalCount };
+  return { items, totalCount };
 }
 
 /** Extract non-empty editable fields from a translation row */

@@ -1,10 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { Link, useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import type { TranslationMissingItem, PaginationInfo } from "@/types/admin-translations";
 import { TranslationTableRow } from "./TranslationTableRow";
+
+/** Href object compatible with next-intl Link. */
+type LinkHref = { pathname: string; query: Record<string, string> };
 
 interface TranslationTableProps {
   items: TranslationMissingItem[];
@@ -16,8 +20,12 @@ interface TranslationTableProps {
   onTranslate: (item: TranslationMissingItem) => void;
   onTranslateAndReview: (item: TranslationMissingItem) => void;
   rowHref: (item: TranslationMissingItem) => string;
-  onPageChange: (page: number) => void;
-  onSearch: (query: string) => void;
+  /** Build the href for a given page number. */
+  buildPageUrl: (page: number) => LinkHref;
+  /** Build the href for a search query (resets to page 1). */
+  buildSearchUrl: (query: string) => LinkHref;
+  /** Current search value from URL. */
+  currentSearch: string;
   isLoading: boolean;
   translatingIds: Set<string>;
 }
@@ -32,19 +40,22 @@ export function TranslationTable({
   onTranslate,
   onTranslateAndReview,
   rowHref,
-  onPageChange,
-  onSearch,
+  buildPageUrl,
+  buildSearchUrl,
+  currentSearch,
   isLoading,
   translatingIds,
 }: TranslationTableProps) {
   const t = useTranslations("admin.translations");
-  const [searchValue, setSearchValue] = useState("");
+  const router = useRouter();
+  const [searchValue, setSearchValue] = useState(currentSearch);
 
   const allSelected = items.length > 0 && items.every((i) => selectedIds.has(i.entityId));
   const hasSelection = selectedIds.size > 0;
 
   const handleSearchSubmit = () => {
-    onSearch(searchValue);
+    const href = buildSearchUrl(searchValue);
+    router.push({ pathname: href.pathname, query: href.query } as never);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -158,7 +169,7 @@ export function TranslationTable({
 
       {/* Pagination */}
       {pagination.totalPages > 1 && (
-        <Pagination pagination={pagination} onPageChange={onPageChange} t={t} />
+        <Pagination pagination={pagination} buildPageUrl={buildPageUrl} t={t} />
       )}
     </div>
   );
@@ -180,11 +191,11 @@ function SkeletonRow() {
 
 function Pagination({
   pagination,
-  onPageChange,
+  buildPageUrl,
   t,
 }: {
   pagination: PaginationInfo;
-  onPageChange: (page: number) => void;
+  buildPageUrl: (page: number) => LinkHref;
   t: ReturnType<typeof useTranslations>;
 }) {
   const { currentPage, totalPages } = pagination;
@@ -195,22 +206,34 @@ function Pagination({
         {t("table.page", { current: currentPage, total: totalPages })}
       </span>
       <div className="flex items-center gap-1">
-        <button
-          onClick={() => onPageChange(currentPage - 1)}
-          disabled={!pagination.hasPreviousPage}
-          className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-medium text-gray-600 transition-all duration-300 hover:bg-white/20 disabled:opacity-40 dark:text-gray-300 dark:hover:bg-slate-700/40"
-        >
-          <Icon icon="mdi:chevron-left" className="size-4" />
-          {t("table.previous")}
-        </button>
-        <button
-          onClick={() => onPageChange(currentPage + 1)}
-          disabled={!pagination.hasNextPage}
-          className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-medium text-gray-600 transition-all duration-300 hover:bg-white/20 disabled:opacity-40 dark:text-gray-300 dark:hover:bg-slate-700/40"
-        >
-          {t("table.next")}
-          <Icon icon="mdi:chevron-right" className="size-4" />
-        </button>
+        {pagination.hasPreviousPage ? (
+          <Link
+            href={buildPageUrl(currentPage - 1)}
+            className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-medium text-gray-600 transition-all duration-300 hover:bg-white/20 dark:text-gray-300 dark:hover:bg-slate-700/40"
+          >
+            <Icon icon="mdi:chevron-left" className="size-4" />
+            {t("table.previous")}
+          </Link>
+        ) : (
+          <span className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-medium text-gray-600 opacity-40 dark:text-gray-300">
+            <Icon icon="mdi:chevron-left" className="size-4" />
+            {t("table.previous")}
+          </span>
+        )}
+        {pagination.hasNextPage ? (
+          <Link
+            href={buildPageUrl(currentPage + 1)}
+            className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-medium text-gray-600 transition-all duration-300 hover:bg-white/20 dark:text-gray-300 dark:hover:bg-slate-700/40"
+          >
+            {t("table.next")}
+            <Icon icon="mdi:chevron-right" className="size-4" />
+          </Link>
+        ) : (
+          <span className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1 text-xs font-medium text-gray-600 opacity-40 dark:text-gray-300">
+            {t("table.next")}
+            <Icon icon="mdi:chevron-right" className="size-4" />
+          </span>
+        )}
       </div>
     </div>
   );
