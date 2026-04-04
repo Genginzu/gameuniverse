@@ -13,6 +13,7 @@ import {
   esc,
   num,
   toDate,
+  slugify,
   collectGenres,
   collectCompanies,
   collectPlatforms,
@@ -106,9 +107,10 @@ function generateSingleGameSql(game: IGDBGame): string[] {
 
   const metascore = game.aggregated_rating ? num(Math.round(game.aggregated_rating)) : "NULL";
 
-  // Game row
+  // Game row — fallback slug from name if missing
+  const slug = game.slug || (game.name ? slugify(game.name) : `igdb-${game.id}`);
   lines.push(
-    `INSERT INTO games (slug, igdb_id, release_date, metascore, cover_image_url, background_image_url, last_synced_at) VALUES (${esc(game.slug)}, ${igdbId}, ${toDate(game.first_release_date)}, ${metascore}, ${esc(coverUrl)}, ${esc(bgUrl)}, NOW()) ON CONFLICT (igdb_id) DO NOTHING;`
+    `INSERT INTO games (slug, igdb_id, release_date, metascore, cover_image_url, background_image_url, last_synced_at) VALUES (${esc(slug)}, ${igdbId}, ${toDate(game.first_release_date)}, ${metascore}, ${esc(coverUrl)}, ${esc(bgUrl)}, NOW()) ON CONFLICT DO NOTHING;`
   );
 
   // Translation

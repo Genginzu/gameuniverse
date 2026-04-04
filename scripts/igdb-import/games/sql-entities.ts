@@ -5,11 +5,11 @@
 
 import { IGDB_RATING_CATEGORIES, IGDB_ALL_RATINGS, type IGDBGame } from "../../../src/types/igdb";
 
-/** Escape a string for SQL (single quotes) */
+/** Escape a string for SQL (single quotes and newlines) */
 export function esc(val: unknown): string {
   if (val === null || val === undefined) return "NULL";
   const str = String(val);
-  return `'${str.replace(/'/g, "''")}'`;
+  return `'${str.replace(/'/g, "''").replace(/\r?\n/g, " ")}'`;
 }
 
 /** Format a number or null for SQL */
@@ -135,7 +135,7 @@ export function generateCompaniesSql(map: Map<string, CompanyEntry>): string[] {
   const lines = ["-- Companies"];
   for (const [, c] of map) {
     lines.push(
-      `INSERT INTO companies (name, slug, company_type) VALUES (${esc(c.name)}, ${esc(c.slug)}, ${esc(c.type)}) ON CONFLICT (slug) DO NOTHING;`
+      `INSERT INTO companies (name, slug, company_type) VALUES (${esc(c.name)}, ${esc(c.slug)}, ${esc(c.type)}) ON CONFLICT DO NOTHING;`
     );
   }
   lines.push("");
