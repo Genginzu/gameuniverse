@@ -34,7 +34,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     const supabase = await createRouteHandlerClient();
 
     // Fetch the webhook event
-    const { data: event, error: eventError } = await supabase
+    const { data: event, error: eventError } = await (supabase as any)
       .from("igdb_webhook_events")
       .select("*")
       .eq("id", eventId)
@@ -58,7 +58,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     // Fetch local game data with EN translation
     const { data: game, error: gameError } = await supabase
       .from("games")
-      .select("*, game_translations(title, description, storyline, language_code)")
+      .select("*, game_translations(title, description, language_code)")
       .eq("id", gameId)
       .single();
 
@@ -69,17 +69,16 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     const translations = (game.game_translations ?? []) as Array<{
       title: string;
       description: string | null;
-      storyline: string | null;
       language_code: string;
     }>;
     const enTrans = translations.find((t) => t.language_code === "en");
 
     // Fetch admin overrides
-    const { data: overrides } = await supabase
+    const { data: overrides } = await (supabase as any)
       .from("game_field_overrides")
       .select("field_name")
       .eq("game_id", gameId);
-    const overrideSet = new Set((overrides ?? []).map((o) => o.field_name as string));
+    const overrideSet = new Set((overrides ?? []).map((o: any) => o.field_name as string));
 
     // Fetch relational data in parallel
     const [
@@ -127,13 +126,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
       enTrans?.description ?? null,
       "translations"
     );
-    add(
-      "storyline",
-      "fields.storyline",
-      payload.storyline ?? null,
-      enTrans?.storyline ?? null,
-      "translations"
-    );
+    add("storyline", "fields.storyline", payload.storyline ?? null, null, "translations");
     add("slug", "fields.slug", payload.slug ?? null, game.slug ?? null);
 
     const igdbDate = payload.first_release_date
@@ -165,13 +158,13 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     const rawArtworks = payload.artworks as Array<{ image_id: string } | number> | undefined;
     const rawScreenshots = payload.screenshots as Array<{ image_id: string } | number> | undefined;
     const firstArtworkId =
-      rawArtworks?.[0] != null
+      rawArtworks?.[0] !== null && rawArtworks?.[0] !== undefined
         ? typeof rawArtworks[0] === "number"
           ? null
           : rawArtworks[0].image_id
         : null;
     const firstScreenshotId =
-      rawScreenshots?.[0] != null
+      rawScreenshots?.[0] !== null && rawScreenshots?.[0] !== undefined
         ? typeof rawScreenshots[0] === "number"
           ? null
           : rawScreenshots[0].image_id

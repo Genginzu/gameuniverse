@@ -166,7 +166,7 @@ export function WebhookEventList({
       {showImportAll && (totalNotImported ?? 0) > 0 && (
         <div className="flex items-center justify-between rounded-xl border-2 border-violet-300 bg-violet-50 px-4 py-3 dark:border-violet-700 dark:bg-violet-900/20">
           <span className="text-sm font-medium text-violet-800 dark:text-violet-300">
-            {t("importAllHint", { count: totalNotImported })}
+            {t("importAllHint", { count: totalNotImported ?? 0 })}
           </span>
           <div className="flex shrink-0 items-center gap-2">
             <select

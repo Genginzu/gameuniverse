@@ -335,7 +335,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     let gameSimilarGames: SimilarGameRow[] = [];
 
     try {
-      const { data: similarData } = await supabase
+      const { data: similarData } = await (supabase as any)
         .from("game_similar_games")
         .select("similar_igdb_id, similar_game_id, display_order")
         .eq("game_id", game.id)
@@ -349,7 +349,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     // Resolve similar game details for those that exist locally
-    let similarGameDetailsMap = new Map<
+    const similarGameDetailsMap = new Map<
       string,
       {
         id: string;

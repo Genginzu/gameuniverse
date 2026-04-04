@@ -843,6 +843,7 @@ async function importSimilarGames(
       display_order: i,
     }));
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- table not yet in generated types
     const { error } = await (supabase as any)
       .from("game_similar_games")
       .upsert(rows, { onConflict: "game_id,similar_igdb_id" });

@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     let hasMore = true;
 
     while (hasMore && uniqueIds.length < limit) {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from("igdb_webhook_events")
         .select("igdb_id")
         .eq("entity_type", "games")

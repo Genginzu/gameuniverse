@@ -27,7 +27,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     const { id: gameId } = await params;
     const supabase = await createRouteHandlerClient();
 
-    const { data: rows, error } = await supabase
+    const { data: rows, error } = await (supabase as any)
       .from("game_similar_games")
       .select("id, similar_igdb_id, similar_game_id, display_order")
       .eq("game_id", gameId)
@@ -43,7 +43,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
       .map((r) => r.similar_game_id)
       .filter((id): id is string => id !== null);
 
-    let gameMap = new Map<
+    const gameMap = new Map<
       string,
       { id: string; slug: string; title: string; coverImage: string | null }
     >();
@@ -118,16 +118,16 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     }
 
     // Get current max display_order
-    const { data: existing } = await supabase
+    const { data: existing } = await (supabase as any)
       .from("game_similar_games")
       .select("display_order")
       .eq("game_id", gameId)
       .order("display_order", { ascending: false })
       .limit(1);
 
-    const nextOrder = existing && existing.length > 0 ? existing[0].display_order + 1 : 0;
+    const nextOrder = existing && existing.length > 0 ? (existing[0] as any).display_order + 1 : 0;
 
-    const { data: inserted, error: insertError } = await supabase
+    const { data: inserted, error: insertError } = await (supabase as any)
       .from("game_similar_games")
       .insert({
         game_id: gameId,
@@ -172,7 +172,7 @@ export async function DELETE(
 
     const supabase = await createRouteHandlerClient();
 
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from("game_similar_games")
       .delete()
       .eq("id", entryId)

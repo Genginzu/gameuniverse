@@ -18,7 +18,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
 
     const supabase = await createRouteHandlerClient();
 
-    const { data: overrides, error } = await supabase
+    const { data: overrides, error } = await (supabase as any)
       .from("game_field_overrides")
       .select("id, game_id, field_name, modified_by, modified_at")
       .eq("game_id", gameId);

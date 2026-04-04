@@ -1335,7 +1335,7 @@ export class GameImportService {
         display_order: index,
       }));
 
-      const { error } = await supabase.from("game_similar_games").upsert(rows, {
+      const { error } = await (supabase as any).from("game_similar_games").upsert(rows, {
         onConflict: "game_id,similar_igdb_id",
       });
 
@@ -1354,9 +1354,7 @@ export class GameImportService {
     try {
       const supabase = await createRouteHandlerClient();
 
-      await (supabase.from("game_similar_games") as ReturnType<typeof supabase.from>)
-        .delete()
-        .eq("game_id", gameId);
+      await (supabase as any).from("game_similar_games").delete().eq("game_id", gameId);
 
       await this.createSimilarGames(gameId, igdbGame);
     } catch (error) {

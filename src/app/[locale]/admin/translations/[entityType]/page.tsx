@@ -7,11 +7,7 @@ import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { routing } from "@/i18n/routing";
 import { useAdminTranslations } from "@/hooks/useAdminTranslations";
-import type {
-  EntityType,
-  TranslationMissingItem,
-  BatchProgressEvent,
-} from "@/types/admin-translations";
+import type { EntityType, TranslationMissingItem } from "@/types/admin-translations";
 import { TranslationTable } from "@/components/admin/translations/TranslationTable";
 import { TranslationBatchProgress } from "@/components/admin/translations/TranslationBatchProgress";
 import { TranslationReviewModal } from "@/components/admin/translations/TranslationReviewModal";
@@ -88,7 +84,7 @@ function EntityTableView({
   const [lastError, setLastError] = useState<string | null>(null);
 
   // Batch state
-  const [batch, setBatch] = useState({
+  const [batch, _setBatch] = useState({
     isRunning: false,
     processed: 0,
     total: 0,

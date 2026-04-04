@@ -35,9 +35,10 @@ export async function GET(request: NextRequest) {
     // Deduplicate by game_id, prefer requested locale
     const byGame = new Map<string, { title: string; langCode: string }>();
     for (const m of matches) {
+      if (!m.game_id) continue;
       const existing = byGame.get(m.game_id);
       if (!existing || m.language_code === locale) {
-        byGame.set(m.game_id, { title: m.title, langCode: m.language_code });
+        byGame.set(m.game_id, { title: m.title, langCode: m.language_code ?? "" });
       }
     }
 

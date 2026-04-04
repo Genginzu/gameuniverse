@@ -123,7 +123,7 @@ export async function fetchLocalSimilarGamesCount(
   supabase: SupabaseClient,
   gameId: string
 ): Promise<number> {
-  const { count } = await supabase
+  const { count } = await (supabase as any)
     .from("game_similar_games")
     .select("id", { count: "exact", head: true })
     .eq("game_id", gameId);

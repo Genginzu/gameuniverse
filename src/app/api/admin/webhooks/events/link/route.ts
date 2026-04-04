@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
 
     const supabase = await createRouteHandlerClient();
 
-    await supabase
+    await (supabase as any)
       .from("igdb_webhook_events")
       .update({ game_id: gameId })
       .eq("igdb_id", igdbId)

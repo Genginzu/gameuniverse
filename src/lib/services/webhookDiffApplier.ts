@@ -38,12 +38,12 @@ export async function applyWebhookPayload(
   supabase: SupabaseClient,
   { gameId, payload, forceFields = new Set() }: ApplyPayloadOptions
 ): Promise<ApplyPayloadResult> {
-  const { data: overrides } = await supabase
+  const { data: overrides } = await db(supabase)
     .from("game_field_overrides")
     .select("field_name")
     .eq("game_id", gameId);
 
-  const ov = new Set((overrides ?? []).map((o) => o.field_name as string));
+  const ov = new Set<string>((overrides ?? []).map((o: any) => o.field_name as string));
   const f = forceFields;
   const applied: string[] = [];
   const skipped: string[] = [];

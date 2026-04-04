@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
     const supabase = await createRouteHandlerClient();
 
     // Build query with filters
-    let query = supabase
+    let query = (supabase as any)
       .from("igdb_webhook_events")
       .select("*", { count: "exact" })
       .order("created_at", { ascending: false })

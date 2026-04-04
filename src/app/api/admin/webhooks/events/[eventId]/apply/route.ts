@@ -28,7 +28,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     const supabase = await createRouteHandlerClient();
 
     // Fetch the webhook event
-    const { data: event, error: eventError } = await supabase
+    const { data: event, error: eventError } = await (supabase as any)
       .from("igdb_webhook_events")
       .select("*")
       .eq("id", eventId)
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     }
 
     // Mark event as processed
-    await supabase
+    await (supabase as any)
       .from("igdb_webhook_events")
       .update({ status: "processed", processed_at: new Date().toISOString() })
       .eq("id", eventId);

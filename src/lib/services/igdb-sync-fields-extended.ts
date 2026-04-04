@@ -259,7 +259,7 @@ export async function syncSimilarGames(
 
   for (let i = 0; i < igdbGame.similar_games.length; i++) {
     const similarIgdbId = igdbGame.similar_games[i];
-    await supabase
+    await (supabase as any)
       .from("game_similar_games")
       .insert({
         game_id: gameId,

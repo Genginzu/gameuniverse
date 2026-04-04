@@ -50,6 +50,7 @@ const TAB_LABELS: Record<TabId, string> = {
   music: "Music",
   videos: "Videos",
   sync: "Sync",
+  similar_games: "Similar Games",
 };
 
 interface ErrorsByTab {

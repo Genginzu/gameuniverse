@@ -41,7 +41,7 @@ export function GameFormSimilarGamesTab({ gameId }: GameFormSimilarGamesTabProps
   const [addError, setAddError] = useState<string | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   // Debounced search
   useEffect(() => {

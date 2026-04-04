@@ -37,7 +37,9 @@ export async function processWebhookEvent(
   const igdbId = payload.id;
 
   // Resolve local entity — for games, auto-import if missing
-  let { gameId, characterId } = await resolveLocalEntity(entityType, igdbId);
+  const resolved = await resolveLocalEntity(entityType, igdbId);
+  let gameId = resolved.gameId;
+  const characterId = resolved.characterId;
 
   if (entityType === "games" && !gameId) {
     try {
@@ -58,7 +60,7 @@ export async function processWebhookEvent(
   }
 
   // Insert the event record (now with game_id resolved)
-  const { data: event, error: insertError } = await supabase
+  const { data: event, error: insertError } = await (supabase as any)
     .from("igdb_webhook_events")
     .insert({
       event_type: eventType,
@@ -206,7 +208,10 @@ async function linkEventToGame(eventId: string, gameSlug: string): Promise<void>
   const { data: game } = await supabase.from("games").select("id").eq("slug", gameSlug).single();
 
   if (game) {
-    await supabase.from("igdb_webhook_events").update({ game_id: game.id }).eq("id", eventId);
+    await (supabase as any)
+      .from("igdb_webhook_events")
+      .update({ game_id: game.id })
+      .eq("id", eventId);
   }
 }
 
@@ -228,5 +233,5 @@ async function updateEventStatus(
     update.error_message = errorMessage;
   }
 
-  await supabase.from("igdb_webhook_events").update(update).eq("id", eventId);
+  await (supabase as any).from("igdb_webhook_events").update(update).eq("id", eventId);
 }

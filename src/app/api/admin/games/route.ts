@@ -97,7 +97,7 @@ export async function GET(request: NextRequest) {
 
     // Single optimised RPC call — search, count, sort, paginate all happen
     // server-side in get_admin_games_listing() to avoid PostgREST join timeouts.
-    const { data: rpcResult, error } = await supabase.rpc("get_admin_games_listing", {
+    const { data: rpcResult, error } = await (supabase as any).rpc("get_admin_games_listing", {
       p_locale: locale,
       p_limit: limit,
       p_offset: offset,
