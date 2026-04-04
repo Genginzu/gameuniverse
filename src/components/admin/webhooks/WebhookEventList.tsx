@@ -256,8 +256,7 @@ function EventRow({
   const diffLink = canViewDiff ? `/admin/webhooks/events/${event.id}` : null;
 
   // Show import button when game is not in local DB
-  const canImport =
-    entityType === "games" && !event.game_id && event.igdb_id && event.status !== "failed";
+  const canImport = entityType === "games" && !event.game_id && event.igdb_id;
   const isImporting = importingIgdbIds?.has(event.igdb_id) ?? false;
 
   const isCreateSuccess =

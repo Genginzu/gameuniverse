@@ -165,6 +165,7 @@ export function GameSearchBar({
     async (item: SearchResultItem) => {
       if (item.source === "local") {
         // Navigate to local game page
+        // The useBackgroundSync hook on the game page will handle sync + refresh
         setIsOpen(false);
         setSearchQuery("");
 
@@ -172,17 +173,6 @@ export function GameSearchBar({
           onNavigateToGame(item.slug);
         } else {
           router.push(`/${locale}/games/${item.slug}`);
-        }
-
-        // Trigger background sync if game has igdbId
-        if (item.igdbId) {
-          try {
-            await fetch(`/api/games/${item.slug}/sync`, {
-              method: "POST",
-            });
-          } catch {
-            // Fire-and-forget — don't block navigation
-          }
         }
       } else {
         // Import IGDB game
@@ -294,7 +284,7 @@ export function GameSearchBar({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => isHybridMode && searchQuery.length >= 2 && setIsOpen(true)}
-            className="h-10 w-full rounded-xl border-2 border-blue-200 bg-blue-50/50 pl-11 pr-10 text-sm text-gray-900 placeholder-gray-500 shadow-xs transition-all duration-300 hover:border-blue-300 hover:bg-white hover:shadow-md focus:border-blue-500 focus:bg-white focus:shadow-lg focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400 dark:hover:border-gray-500 dark:hover:bg-gray-700 dark:focus:border-blue-500 dark:focus:bg-gray-700 sm:h-12 sm:pl-12 sm:pr-12 sm:text-base"
+            className="h-10 w-full rounded-xl border-2 border-blue-200 bg-blue-50/50 pr-10 pl-11 text-sm text-gray-900 placeholder-gray-500 shadow-xs transition-all duration-300 hover:border-blue-300 hover:bg-white hover:shadow-md focus:border-blue-500 focus:bg-white focus:shadow-lg focus:ring-2 focus:ring-blue-500/20 sm:h-12 sm:pr-12 sm:pl-12 sm:text-base dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400 dark:hover:border-gray-500 dark:hover:bg-gray-700 dark:focus:border-blue-500 dark:focus:bg-gray-700"
           />
 
           {/* Clear button */}
