@@ -46,6 +46,11 @@ export function GameFormTranslationsTab({ form, t, isIgdbField, gameId }: GameFo
               shouldDirty: true,
             });
           }
+          if (translatedFields.storyline) {
+            form.setValue(`translations.${index}.storyline`, translatedFields.storyline, {
+              shouldDirty: true,
+            });
+          }
         }
       } catch {
         // Error is visible via the loading state clearing — toast could be added later
@@ -115,6 +120,24 @@ export function GameFormTranslationsTab({ form, t, isIgdbField, gameId }: GameFo
                     <FormLabel>{t("description")}</FormLabel>
                     <FormControl>
                       <Textarea placeholder={t("descriptionPlaceholder")} rows={4} {...descField} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name={`translations.${index}.storyline`}
+                render={({ field: storylineField }) => (
+                  <FormItem>
+                    <FormLabel>{t("storyline")}</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder={t("storylinePlaceholder")}
+                        rows={4}
+                        {...storylineField}
+                        value={storylineField.value ?? ""}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

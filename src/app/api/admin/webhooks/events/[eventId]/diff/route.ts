@@ -8,76 +8,29 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { logger } from "@/lib/logger";
 import type { DiffField, DiffFieldStatus, WebhookDiffResult } from "@/types/webhook-diff";
+import {
+  igdbCoverUrl,
+  igdb1080pUrl,
+  unixToDate,
+  normalizeDate,
+  sorted,
+  fetchLocalGenres,
+  fetchLocalPlatforms,
+  fetchLocalCompanies,
+  fetchLocalScreenshots,
+  fetchLocalArtworks,
+  fetchLocalVideos,
+  fetchLocalSimilarGamesCount,
+} from "@/lib/services/webhook-diff-helpers";
 
 interface RouteParams {
   params: Promise<{ eventId: string }>;
 }
 
-/** Mapping of IGDB webhook payload fields to local games table columns */
-const FIELD_MAP: Array<{
-  field: string;
-  label: string;
-  fromPayload: (p: Record<string, unknown>) => unknown;
-  fromGame: (g: Record<string, unknown>) => unknown;
-  overrideField?: string;
-}> = [
-  {
-    field: "name",
-    label: "fields.name",
-    fromPayload: (p) => p.name,
-    fromGame: (g) => g.title_en,
-    overrideField: "translations",
-  },
-  {
-    field: "summary",
-    label: "fields.summary",
-    fromPayload: (p) => p.summary ?? null,
-    fromGame: (g) => g.description_en ?? null,
-    overrideField: "translations",
-  },
-  {
-    field: "slug",
-    label: "fields.slug",
-    fromPayload: (p) => p.slug,
-    fromGame: (g) => g.slug,
-  },
-  {
-    field: "release_date",
-    label: "fields.releaseDate",
-    fromPayload: (p) => {
-      if (!p.first_release_date) return null;
-      return new Date((p.first_release_date as number) * 1000).toISOString().split("T")[0];
-    },
-    fromGame: (g) => {
-      if (!g.release_date) return null;
-      const d = g.release_date as string;
-      return d.length > 10 ? d.split("T")[0] : d;
-    },
-  },
-  {
-    field: "metascore",
-    label: "fields.metascore",
-    fromPayload: (p) => (p.aggregated_rating ? Math.round(p.aggregated_rating as number) : null),
-    fromGame: (g) => g.metascore ?? null,
-  },
-  {
-    field: "cover_image",
-    label: "fields.coverImage",
-    fromPayload: (p) => {
-      const cover = p.cover as { image_id?: string } | undefined;
-      if (!cover?.image_id) return null;
-      return `https://images.igdb.com/igdb/image/upload/t_cover_big/${cover.image_id}.jpg`;
-    },
-    fromGame: (g) => g.cover_image_url ?? null,
-    overrideField: "cover_image",
-  },
-];
-
 export async function GET(_request: NextRequest, { params }: RouteParams) {
   try {
     await requireAdmin();
     const { eventId } = await params;
-
     const supabase = await createRouteHandlerClient();
 
     // Fetch the webhook event
@@ -90,82 +43,244 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     if (eventError || !event) {
       return NextResponse.json({ error: "Event not found" }, { status: 404 });
     }
-
     if (event.event_type !== "update") {
       return NextResponse.json(
         { error: "Diff is only available for update events" },
         { status: 400 }
       );
     }
-
     if (!event.game_id) {
       return NextResponse.json({ error: "No local game linked to this event" }, { status: 400 });
     }
 
+    const gameId = event.game_id as string;
+
     // Fetch local game data with EN translation
     const { data: game, error: gameError } = await supabase
       .from("games")
-      .select("*, game_translations(title, description, language_code)")
-      .eq("id", event.game_id)
+      .select("*, game_translations(title, description, storyline, language_code)")
+      .eq("id", gameId)
       .single();
 
     if (gameError || !game) {
       return NextResponse.json({ error: "Game not found" }, { status: 404 });
     }
 
-    // Flatten EN translation into game object for comparison
     const translations = (game.game_translations ?? []) as Array<{
       title: string;
       description: string | null;
+      storyline: string | null;
       language_code: string;
     }>;
-    const enTranslation = translations.find((t) => t.language_code === "en");
-    const gameFlat = {
-      ...game,
-      title_en: enTranslation?.title ?? null,
-      description_en: enTranslation?.description ?? null,
-    };
+    const enTrans = translations.find((t) => t.language_code === "en");
 
-    // Fetch admin overrides for this game
+    // Fetch admin overrides
     const { data: overrides } = await supabase
       .from("game_field_overrides")
       .select("field_name")
-      .eq("game_id", event.game_id);
-
+      .eq("game_id", gameId);
     const overrideSet = new Set((overrides ?? []).map((o) => o.field_name as string));
 
-    // Compute diff
+    // Fetch relational data in parallel
+    const [
+      localGenres,
+      localPlatforms,
+      localCompanies,
+      localScreenshots,
+      localArtworks,
+      localVideos,
+      localSimilarCount,
+    ] = await Promise.all([
+      fetchLocalGenres(supabase, gameId),
+      fetchLocalPlatforms(supabase, gameId),
+      fetchLocalCompanies(supabase, gameId),
+      fetchLocalScreenshots(supabase, gameId),
+      fetchLocalArtworks(supabase, gameId),
+      fetchLocalVideos(supabase, gameId),
+      fetchLocalSimilarGamesCount(supabase, gameId),
+    ]);
+
     const payload = event.payload as Record<string, unknown>;
-    const gameName = enTranslation?.title ?? (game.slug as string) ?? "Unknown";
+    const gameName = enTrans?.title ?? (game.slug as string) ?? "Unknown";
+    const fields: DiffField[] = [];
 
-    const fields: DiffField[] = FIELD_MAP.map((mapping) => {
-      const igdbValue = mapping.fromPayload(payload);
-      const localValue = mapping.fromGame(gameFlat);
-      const hasOverride = mapping.overrideField ? overrideSet.has(mapping.overrideField) : false;
-
+    const add = (
+      field: string,
+      label: string,
+      igdbValue: unknown,
+      localValue: unknown,
+      overrideField?: string
+    ) => {
+      const hasOverride = overrideField ? overrideSet.has(overrideField) : false;
       const valuesEqual = JSON.stringify(igdbValue) === JSON.stringify(localValue);
-
       let status: DiffFieldStatus = "unchanged";
-      if (!valuesEqual) {
-        status = hasOverride ? "conflict" : "changed";
-      }
+      if (!valuesEqual) status = hasOverride ? "conflict" : "changed";
+      fields.push({ field, label, igdbValue, localValue, status, hasOverride });
+    };
 
-      return {
-        field: mapping.field,
-        label: mapping.label,
-        igdbValue,
-        localValue,
-        status,
-        hasOverride,
-      };
+    // --- Direct fields ---
+    add("name", "fields.name", payload.name ?? null, enTrans?.title ?? null, "translations");
+    add(
+      "summary",
+      "fields.summary",
+      payload.summary ?? null,
+      enTrans?.description ?? null,
+      "translations"
+    );
+    add(
+      "storyline",
+      "fields.storyline",
+      payload.storyline ?? null,
+      enTrans?.storyline ?? null,
+      "translations"
+    );
+    add("slug", "fields.slug", payload.slug ?? null, game.slug ?? null);
+
+    const igdbDate = payload.first_release_date
+      ? unixToDate(payload.first_release_date as number)
+      : null;
+    const localDate = game.release_date ? normalizeDate(game.release_date as string) : null;
+    add("release_date", "fields.releaseDate", igdbDate, localDate, "release_date");
+
+    add(
+      "metascore",
+      "fields.metascore",
+      payload.aggregated_rating ? Math.round(payload.aggregated_rating as number) : null,
+      game.metascore ?? null,
+      "metascore"
+    );
+
+    const cover = payload.cover as { image_id?: string } | number | undefined;
+    const coverImageId = typeof cover === "number" ? null : cover?.image_id;
+    add(
+      "cover_image",
+      "fields.coverImage",
+      coverImageId ? igdbCoverUrl(coverImageId) : null,
+      game.cover_image_url ?? null,
+      "cover_image"
+    );
+
+    // Background image (derived from artworks/screenshots)
+    // Webhook sends raw ID arrays, API sends objects — handle both
+    const rawArtworks = payload.artworks as Array<{ image_id: string } | number> | undefined;
+    const rawScreenshots = payload.screenshots as Array<{ image_id: string } | number> | undefined;
+    const firstArtworkId =
+      rawArtworks?.[0] != null
+        ? typeof rawArtworks[0] === "number"
+          ? null
+          : rawArtworks[0].image_id
+        : null;
+    const firstScreenshotId =
+      rawScreenshots?.[0] != null
+        ? typeof rawScreenshots[0] === "number"
+          ? null
+          : rawScreenshots[0].image_id
+        : null;
+    let igdbBg: string | null = null;
+    if (firstArtworkId) igdbBg = igdb1080pUrl(firstArtworkId);
+    else if (firstScreenshotId) igdbBg = igdb1080pUrl(firstScreenshotId);
+    add(
+      "background_image",
+      "fields.backgroundImage",
+      igdbBg,
+      game.background_image_url ?? null,
+      "background_image"
+    );
+
+    // --- Relational fields ---
+    const igdbGenres = (payload.genres as Array<{ slug: string; name: string }> | undefined) ?? [];
+    add(
+      "genres",
+      "fields.genres",
+      sorted(igdbGenres.map((g) => g.name)).join(", ") || null,
+      sorted(localGenres).join(", ") || null,
+      "genres"
+    );
+
+    const igdbPlatforms =
+      (payload.platforms as Array<{ id: number; name: string } | number> | undefined) ?? [];
+    const platformNames = igdbPlatforms
+      .map((p) => (typeof p === "number" ? null : p.name))
+      .filter(Boolean) as string[];
+    add(
+      "platforms",
+      "fields.platforms",
+      sorted(platformNames).join(", ") || null,
+      sorted(localPlatforms).join(", ") || null,
+      "platforms"
+    );
+
+    const igdbCompanies =
+      (payload.involved_companies as
+        | Array<{ company: { name: string; slug: string }; developer: boolean; publisher: boolean }>
+        | undefined) ?? [];
+    const igdbCoList: string[] = [];
+    for (const ic of igdbCompanies) {
+      if (ic.developer) igdbCoList.push(`${ic.company.name} (dev)`);
+      if (ic.publisher) igdbCoList.push(`${ic.company.name} (pub)`);
+    }
+    const localCoList = sorted(localCompanies).map((c) => {
+      const [slug, role] = c.split(":");
+      return `${slug} (${role === "developer" ? "dev" : "pub"})`;
     });
+    add(
+      "companies",
+      "fields.companies",
+      sorted(igdbCoList).join(", ") || null,
+      localCoList.join(", ") || null,
+      "companies"
+    );
+
+    add(
+      "screenshots",
+      "fields.screenshots",
+      rawScreenshots?.length ? `${rawScreenshots.length} screenshot(s)` : null,
+      localScreenshots.length ? `${localScreenshots.length} screenshot(s)` : null,
+      "screenshots"
+    );
+    add(
+      "artworks",
+      "fields.artworks",
+      rawArtworks?.length ? `${rawArtworks.length} artwork(s)` : null,
+      localArtworks.length ? `${localArtworks.length} artwork(s)` : null,
+      "artworks"
+    );
+
+    const igdbVideos =
+      (payload.videos as Array<{ video_id: string; name?: string }> | undefined) ?? [];
+    add(
+      "videos",
+      "fields.videos",
+      igdbVideos.map((v) => v.name || v.video_id).join(", ") || null,
+      localVideos.map((v) => v.split(":")[1] || v).join(", ") || null,
+      "videos"
+    );
+
+    const igdbAgeRatings =
+      (payload.age_ratings as Array<{ rating_category: number }> | undefined) ?? [];
+    add(
+      "age_ratings",
+      "fields.ageRatings",
+      igdbAgeRatings.length ? `${igdbAgeRatings.length} rating(s)` : null,
+      null,
+      "age_ratings"
+    );
+
+    const igdbSimilar = (payload.similar_games as number[] | undefined) ?? [];
+    add(
+      "similar_games",
+      "fields.similarGames",
+      igdbSimilar.length ? `${igdbSimilar.length} jeu(x)` : null,
+      localSimilarCount > 0 ? `${localSimilarCount} jeu(x)` : null,
+      "similar_games"
+    );
 
     const changedCount = fields.filter((f) => f.status !== "unchanged").length;
     const conflictCount = fields.filter((f) => f.status === "conflict").length;
 
     const result: WebhookDiffResult = {
       eventId,
-      gameId: event.game_id as string,
+      gameId,
       gameName,
       igdbId: event.igdb_id as number,
       fields,

@@ -219,7 +219,6 @@ function DiffRow({
 
   const formatValue = (val: unknown): string => {
     if (val === null || val === undefined) return "—";
-    if (typeof val === "string" && val.length > 80) return val.slice(0, 80) + "…";
     return String(val);
   };
 
@@ -242,17 +241,17 @@ function DiffRow({
           </span>
         )}
       </td>
-      <td className="max-w-[200px] truncate px-4 py-3 text-gray-600 dark:text-gray-300">
-        {formatValue(field.localValue)}
+      <td className="px-4 py-3 text-gray-600 dark:text-gray-300">
+        <div className="break-words whitespace-pre-wrap">{formatValue(field.localValue)}</div>
       </td>
       <td
-        className={`max-w-[200px] truncate px-4 py-3 ${
+        className={`px-4 py-3 ${
           isChanged
             ? "font-medium text-cyan-700 dark:text-cyan-400"
             : "text-gray-600 dark:text-gray-300"
         }`}
       >
-        {formatValue(field.igdbValue)}
+        <div className="break-words whitespace-pre-wrap">{formatValue(field.igdbValue)}</div>
       </td>
       <td className="px-4 py-3">
         <span

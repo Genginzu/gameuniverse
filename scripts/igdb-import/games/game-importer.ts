@@ -141,6 +141,7 @@ export async function importGameFromIGDB(
       fetchAndSavePlaytime(newGame.id, igdbGame.id, verbose),
       importGameVersions(newGame.id, igdbGame.id, verbose, dryRun),
       importDlcExtensions(newGame.id, igdbGame, verbose, dryRun),
+      importSimilarGames(newGame.id, igdbGame, verbose),
     ]);
 
     return {
@@ -804,6 +805,59 @@ export async function importDlcExtensions(
       console.error(`[Importer] Error importing DLC/extensions for game ${igdbGame.name}:`, error);
     }
     return 0;
+  }
+}
+
+/**
+ * Imports similar games from IGDB for a given game.
+ * Stores IGDB IDs and resolves local game references when available.
+ */
+async function importSimilarGames(
+  gameId: string,
+  igdbGame: IGDBGame,
+  verbose: boolean
+): Promise<void> {
+  if (!igdbGame.similar_games || igdbGame.similar_games.length === 0) {
+    return;
+  }
+
+  try {
+    const supabase = createScriptClient();
+
+    // Resolve which similar games already exist locally
+    const { data: localGames } = await supabase
+      .from("games")
+      .select("id, igdb_id")
+      .in("igdb_id", igdbGame.similar_games);
+
+    const localMap = new Map(
+      (localGames ?? [])
+        .filter((g): g is typeof g & { igdb_id: number } => g.igdb_id !== null)
+        .map((g) => [g.igdb_id, g.id])
+    );
+
+    const rows = igdbGame.similar_games.map((similarIgdbId, i) => ({
+      game_id: gameId,
+      similar_igdb_id: similarIgdbId,
+      similar_game_id: localMap.get(similarIgdbId) ?? null,
+      display_order: i,
+    }));
+
+    const { error } = await supabase
+      .from("game_similar_games")
+      .upsert(rows, { onConflict: "game_id,similar_igdb_id" });
+
+    if (error) {
+      if (verbose) console.error(`[Importer] Error importing similar games:`, error.message);
+    } else if (verbose) {
+      console.log(
+        `[Importer] Imported ${rows.length} similar games (${localMap.size} resolved locally)`
+      );
+    }
+  } catch (error) {
+    if (verbose) {
+      console.error(`[Importer] Error importing similar games:`, error);
+    }
   }
 }
 

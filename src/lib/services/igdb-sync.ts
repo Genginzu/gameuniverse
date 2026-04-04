@@ -21,6 +21,7 @@ import {
   syncLanguages,
   syncPlaytime,
   syncVideos,
+  syncSimilarGames,
 } from "./igdb-sync-fields";
 
 // ---------------------------------------------------------------------------
@@ -117,6 +118,7 @@ const FIELD_SYNC_MAP: Record<TrackableField, FieldSyncFn> = {
   languages: (s, gid, game) => syncLanguages(s, gid, game),
   playtime: (s, gid, _game, igdbId) => syncPlaytime(s, gid, igdbId),
   videos: (s, gid, game) => syncVideos(s, gid, game),
+  similar_games: (s, gid, game) => syncSimilarGames(s, gid, game),
 };
 
 // ---------------------------------------------------------------------------

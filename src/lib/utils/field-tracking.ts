@@ -21,6 +21,7 @@ export const TRACKABLE_FIELDS: readonly TrackableField[] = [
   "languages",
   "playtime",
   "videos",
+  "similar_games",
 ] as const;
 
 /**

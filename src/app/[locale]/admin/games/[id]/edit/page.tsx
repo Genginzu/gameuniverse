@@ -81,13 +81,33 @@ function EditGameForm({
 
   return (
     <div className="p-4 lg:p-6">
-      <div className="mb-6 flex items-center gap-4">
-        <Button variant="ghost" size="sm" onClick={() => router.push("/admin/games")}>
-          <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3" />
-          {t("form.backToList")}
-        </Button>
-      </div>
       <div className="mx-auto max-w-7xl">
+        <div className="mb-6 flex items-center gap-4">
+          <Button variant="ghost" size="sm" onClick={() => router.push("/admin/games")}>
+            <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3" />
+            {t("form.backToList")}
+          </Button>
+          <a
+            href={`/fr/games/${initialData.slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+          >
+            <Icon icon="fa:external-link" className="h-3 w-3" />
+            {t("form.viewGame")}
+          </a>
+          {igdbId && (
+            <a
+              href={`https://www.igdb.com/games/${initialData.slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
+            >
+              <Icon icon="simple-icons:igdb" className="h-3 w-3" />
+              {t("form.viewOnIgdb")}
+            </a>
+          )}
+        </div>
         <GameForm
           mode="edit"
           form={form}

@@ -130,6 +130,7 @@ export interface IGDBGame {
   dlcs?: number[]; // IDs des DLC associés
   expansions?: number[]; // IDs des expansions associées
   bundles?: number[]; // IDs des bundles associés
+  similar_games?: number[]; // IDs des jeux similaires
   platforms?: Array<{ id: number; name: string }>;
   videos?: Array<{ video_id: string; name?: string }>;
 }

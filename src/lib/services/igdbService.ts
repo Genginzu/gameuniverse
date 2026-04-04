@@ -209,7 +209,7 @@ export class IGDBService {
              age_ratings.rating_content_descriptions,
              platforms.id, platforms.name,
              videos.video_id, videos.name,
-             dlcs, expansions, bundles;
+             dlcs, expansions, bundles, similar_games;
       where id = ${igdbId};
     `;
 

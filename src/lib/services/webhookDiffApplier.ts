@@ -1,8 +1,10 @@
 /**
  * Shared logic for applying IGDB webhook update payloads to local game data.
- * Used by:
- * - igdbWebhookService (auto-apply on webhook arrival)
- * - Admin API /apply endpoint (manual apply with force overrides)
+ *
+ * Each field is applied individually, respecting admin overrides:
+ * - No override → auto-apply
+ * - Override exists → skip (marked as conflict for admin review)
+ * - Force-applied → apply even if override exists
  */
 
 import { logger } from "@/lib/logger";
@@ -21,122 +23,404 @@ export interface ApplyPayloadResult {
   error?: string;
 }
 
+function can(field: string, overrides: Set<string>, force: Set<string>): boolean {
+  return !overrides.has(field) || force.has(field);
+}
+
+// Cast supabase to bypass generated types for dynamic table access
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const db = (s: SupabaseClient) => s as any;
+
 /**
  * Apply an IGDB webhook payload to a local game, respecting admin overrides.
- * Fields without admin overrides are applied automatically.
- * Fields with overrides are skipped unless listed in forceFields.
  */
 export async function applyWebhookPayload(
   supabase: SupabaseClient,
   { gameId, payload, forceFields = new Set() }: ApplyPayloadOptions
 ): Promise<ApplyPayloadResult> {
-  // Fetch admin overrides for this game
   const { data: overrides } = await supabase
     .from("game_field_overrides")
     .select("field_name")
     .eq("game_id", gameId);
 
-  const overrideSet = new Set((overrides ?? []).map((o) => o.field_name as string));
+  const ov = new Set((overrides ?? []).map((o) => o.field_name as string));
+  const f = forceFields;
+  const applied: string[] = [];
+  const skipped: string[] = [];
 
-  const appliedFields: string[] = [];
-  const skippedFields: string[] = [];
-
-  // --- Direct game table fields ---
+  // ── Scalar game table fields ────────────────────────────────────────
   const gameUpdate: Record<string, unknown> = {};
 
-  // Release date
   if (payload.first_release_date !== undefined) {
-    const canApply = !overrideSet.has("release_date") || forceFields.has("release_date");
-    if (canApply) {
+    if (can("release_date", ov, f)) {
       gameUpdate.release_date = payload.first_release_date
         ? new Date((payload.first_release_date as number) * 1000).toISOString().split("T")[0]
         : null;
-      appliedFields.push("release_date");
-    } else {
-      skippedFields.push("release_date");
-    }
+      applied.push("release_date");
+    } else skipped.push("release_date");
   }
 
-  // Metascore
   if (payload.aggregated_rating !== undefined) {
-    const canApply = !overrideSet.has("metascore") || forceFields.has("metascore");
-    if (canApply) {
+    if (can("metascore", ov, f)) {
       gameUpdate.metascore = payload.aggregated_rating
         ? Math.round(payload.aggregated_rating as number)
         : null;
-      appliedFields.push("metascore");
-    } else {
-      skippedFields.push("metascore");
-    }
+      applied.push("metascore");
+    } else skipped.push("metascore");
   }
 
-  // Cover image
-  const cover = payload.cover as { image_id?: string } | undefined;
-  if (cover !== undefined) {
-    const canApply = !overrideSet.has("cover_image") || forceFields.has("cover_image");
-    if (canApply) {
-      gameUpdate.cover_image_url = cover?.image_id
-        ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${cover.image_id}.jpg`
-        : null;
-      appliedFields.push("cover_image");
-    } else {
-      skippedFields.push("cover_image");
-    }
+  if (payload.cover !== undefined) {
+    if (can("cover_image", ov, f)) {
+      const raw = payload.cover;
+      let url: string | null = null;
+      if (typeof raw === "object" && raw !== null && "image_id" in raw) {
+        const id = (raw as { image_id?: string }).image_id;
+        if (id) url = `https://images.igdb.com/igdb/image/upload/t_cover_big/${id}.jpg`;
+      }
+      gameUpdate.cover_image_url = url;
+      applied.push("cover_image");
+    } else skipped.push("cover_image");
   }
 
-  // Slug
   if (payload.slug !== undefined) {
-    const canApply = !overrideSet.has("slug") || forceFields.has("slug");
-    if (canApply) {
+    if (can("slug", ov, f)) {
       gameUpdate.slug = payload.slug;
-      appliedFields.push("slug");
-    } else {
-      skippedFields.push("slug");
-    }
+      applied.push("slug");
+    } else skipped.push("slug");
   }
 
-  // Update game table
   if (Object.keys(gameUpdate).length > 0) {
     gameUpdate.last_synced_at = new Date().toISOString();
-    const { error: updateError } = await supabase.from("games").update(gameUpdate).eq("id", gameId);
-
-    if (updateError) {
-      logger.error("Failed to apply webhook game update", { gameId, error: updateError });
-      return { appliedFields: [], skippedFields: [], error: updateError.message };
+    const { error } = await supabase.from("games").update(gameUpdate).eq("id", gameId);
+    if (error) {
+      logger.error("Failed to apply webhook game update", { gameId, error });
+      return { appliedFields: [], skippedFields: [], error: error.message };
     }
   }
 
-  // --- Translations (EN) ---
-  if (payload.name !== undefined || payload.summary !== undefined) {
-    const canApply =
-      !overrideSet.has("translations") || forceFields.has("name") || forceFields.has("summary");
-    if (canApply) {
-      const translationUpdate: Record<string, unknown> = {};
-      if (payload.name !== undefined) translationUpdate.title = payload.name;
-      if (payload.summary !== undefined) translationUpdate.description = payload.summary ?? null;
+  // ── Translations (EN) ───────────────────────────────────────────────
+  if (
+    payload.name !== undefined ||
+    payload.summary !== undefined ||
+    payload.storyline !== undefined
+  ) {
+    if (can("translations", ov, f) || f.has("name") || f.has("summary") || f.has("storyline")) {
+      const tu: Record<string, unknown> = {};
+      if (payload.name !== undefined) tu.title = payload.name;
+      if (payload.summary !== undefined) tu.description = payload.summary ?? null;
+      if (payload.storyline !== undefined) tu.storyline = payload.storyline ?? null;
 
-      if (Object.keys(translationUpdate).length > 0) {
-        const { error: transError } = await supabase
+      if (Object.keys(tu).length > 0) {
+        const { error } = await supabase
           .from("game_translations")
-          .update(translationUpdate)
+          .update(tu)
           .eq("game_id", gameId)
           .eq("language_code", "en");
 
-        if (transError) {
-          logger.error("Failed to apply webhook translation update", {
-            gameId,
-            error: transError,
-          });
+        if (error) {
+          logger.error("Failed to apply webhook translation update", { gameId, error });
         } else {
-          if (payload.name !== undefined) appliedFields.push("name");
-          if (payload.summary !== undefined) appliedFields.push("summary");
+          if (payload.name !== undefined) applied.push("name");
+          if (payload.summary !== undefined) applied.push("summary");
+          if (payload.storyline !== undefined) applied.push("storyline");
         }
       }
     } else {
-      if (payload.name !== undefined) skippedFields.push("name");
-      if (payload.summary !== undefined) skippedFields.push("summary");
+      if (payload.name !== undefined) skipped.push("name");
+      if (payload.summary !== undefined) skipped.push("summary");
+      if (payload.storyline !== undefined) skipped.push("storyline");
     }
   }
 
-  return { appliedFields, skippedFields };
+  // ── Background image (derived from artworks / screenshots) ──────────
+  const pArtworks = payload.artworks as Array<{ image_id: string }> | undefined;
+  const pScreenshots = payload.screenshots as Array<{ image_id: string }> | undefined;
+
+  if (pArtworks !== undefined || pScreenshots !== undefined) {
+    if (can("background_image", ov, f)) {
+      let bgUrl: string | null = null;
+      const firstArt = pArtworks?.[0];
+      const firstSs = pScreenshots?.[0];
+      if (typeof firstArt === "object" && firstArt?.image_id)
+        bgUrl = `https://images.igdb.com/igdb/image/upload/t_1080p/${firstArt.image_id}.jpg`;
+      else if (typeof firstSs === "object" && firstSs?.image_id)
+        bgUrl = `https://images.igdb.com/igdb/image/upload/t_1080p/${firstSs.image_id}.jpg`;
+
+      if (bgUrl) {
+        await supabase.from("games").update({ background_image_url: bgUrl }).eq("id", gameId);
+        applied.push("background_image");
+      }
+    } else skipped.push("background_image");
+  }
+
+  // ── Screenshots ─────────────────────────────────────────────────────
+  if (pScreenshots !== undefined) {
+    if (can("screenshots", ov, f)) {
+      const items = pScreenshots
+        .filter((s) => typeof s === "object" && s?.image_id)
+        .map((s, i) => ({
+          game_id: gameId,
+          url: `https://images.igdb.com/igdb/image/upload/t_1080p/${s.image_id}.jpg`,
+          display_order: i,
+          is_featured: i === 0,
+        }));
+      if (items.length > 0) {
+        await db(supabase).from("game_screenshots").delete().eq("game_id", gameId);
+        await db(supabase).from("game_screenshots").insert(items);
+        applied.push("screenshots");
+      }
+    } else skipped.push("screenshots");
+  }
+
+  // ── Artworks ────────────────────────────────────────────────────────
+  if (pArtworks !== undefined) {
+    if (can("artworks", ov, f)) {
+      const items = pArtworks
+        .filter((a) => typeof a === "object" && a?.image_id)
+        .map((a, i) => ({
+          game_id: gameId,
+          url: `https://images.igdb.com/igdb/image/upload/t_1080p/${a.image_id}.jpg`,
+          artwork_type: "promotional",
+          display_order: i,
+          is_featured: i === 0,
+        }));
+      if (items.length > 0) {
+        await db(supabase).from("game_artwork").delete().eq("game_id", gameId);
+        await db(supabase).from("game_artwork").insert(items);
+        applied.push("artworks");
+      }
+    } else skipped.push("artworks");
+  }
+
+  // ── Videos ──────────────────────────────────────────────────────────
+  const pVideos = payload.videos as Array<{ video_id: string; name?: string }> | undefined;
+  if (pVideos !== undefined) {
+    if (can("videos", ov, f)) {
+      const items = pVideos
+        .filter((v) => typeof v === "object" && v?.video_id)
+        .map((v, i) => ({
+          game_id: gameId,
+          url: `https://www.youtube.com/watch?v=${v.video_id}`,
+          thumbnail_url: `https://img.youtube.com/vi/${v.video_id}/maxresdefault.jpg`,
+          title: v.name || "Video",
+          video_type: "trailer",
+          display_order: i,
+          is_featured: i === 0,
+        }));
+      if (items.length > 0) {
+        await db(supabase).from("game_videos").delete().eq("game_id", gameId);
+        await db(supabase).from("game_videos").insert(items);
+        applied.push("videos");
+      }
+    } else skipped.push("videos");
+  }
+
+  // ── Genres ──────────────────────────────────────────────────────────
+  const pGenres = payload.genres as Array<{ id: number; name: string; slug: string }> | undefined;
+  if (pGenres !== undefined) {
+    if (can("genres", ov, f)) {
+      const validGenres = pGenres.filter((g) => typeof g === "object" && g?.slug);
+      if (validGenres.length > 0) {
+        const genreIds: string[] = [];
+        for (const g of validGenres) {
+          const { data: existing } = await supabase
+            .from("genres")
+            .select("id")
+            .eq("slug", g.slug)
+            .single();
+          if (existing) {
+            genreIds.push(existing.id);
+          } else {
+            const { data: created } = await supabase
+              .from("genres")
+              .insert({ slug: g.slug })
+              .select("id")
+              .single();
+            if (created) {
+              genreIds.push(created.id);
+              await supabase
+                .from("genre_translations")
+                .insert({ genre_id: created.id, language_code: "en", name: g.name });
+            }
+          }
+        }
+        if (genreIds.length > 0) {
+          await supabase.from("game_genres").delete().eq("game_id", gameId);
+          await supabase
+            .from("game_genres")
+            .insert(genreIds.map((gid) => ({ game_id: gameId, genre_id: gid })));
+          applied.push("genres");
+        }
+      }
+    } else skipped.push("genres");
+  }
+
+  // ── Platforms ───────────────────────────────────────────────────────
+  const pPlatforms = payload.platforms as Array<{ id: number; name: string }> | undefined;
+  if (pPlatforms !== undefined) {
+    if (can("platforms", ov, f)) {
+      const valid = pPlatforms.filter((p) => typeof p === "object" && p?.id);
+      if (valid.length > 0) {
+        const platformIds: string[] = [];
+        for (const p of valid) {
+          const { data: existing } = await db(supabase)
+            .from("platforms")
+            .select("id")
+            .eq("igdb_id", p.id)
+            .single();
+          if (existing) {
+            platformIds.push(existing.id);
+          } else {
+            const slug = (p.name || `platform-${p.id}`)
+              .toLowerCase()
+              .replace(/\s+/g, "-")
+              .replace(/[^a-z0-9-]/g, "")
+              .replace(/-+/g, "-")
+              .replace(/^-|-$/g, "");
+            const { data: created } = await db(supabase)
+              .from("platforms")
+              .insert({ slug, igdb_id: p.id })
+              .select("id")
+              .single();
+            if (created) {
+              platformIds.push(created.id);
+              await db(supabase)
+                .from("platform_translations")
+                .insert({ platform_id: created.id, language_code: "en", name: p.name });
+            }
+          }
+        }
+        if (platformIds.length > 0) {
+          await db(supabase).from("game_platforms").delete().eq("game_id", gameId);
+          await db(supabase)
+            .from("game_platforms")
+            .insert(platformIds.map((pid) => ({ game_id: gameId, platform_id: pid })));
+          applied.push("platforms");
+        }
+      }
+    } else skipped.push("platforms");
+  }
+
+  // ── Companies ───────────────────────────────────────────────────────
+  const pCompanies = payload.involved_companies as
+    | Array<{
+        company: { id: number; name: string; slug: string };
+        developer: boolean;
+        publisher: boolean;
+      }>
+    | undefined;
+  if (pCompanies !== undefined) {
+    if (can("companies", ov, f)) {
+      const valid = pCompanies.filter((c) => typeof c === "object" && c?.company?.slug);
+      if (valid.length > 0) {
+        const rows: Array<{
+          game_id: string;
+          company_id: string;
+          role: string;
+          is_primary: boolean;
+        }> = [];
+        const devCount = { n: 0 };
+        const pubCount = { n: 0 };
+
+        for (const ic of valid) {
+          const { data: existing } = await supabase
+            .from("companies")
+            .select("id")
+            .eq("slug", ic.company.slug)
+            .single();
+
+          let companyId: string | null = null;
+          if (existing) {
+            companyId = existing.id;
+          } else {
+            const { data: created } = await supabase
+              .from("companies")
+              .insert({
+                name: ic.company.name,
+                slug: ic.company.slug,
+                company_type: ic.developer ? "developer" : ic.publisher ? "publisher" : null,
+              })
+              .select("id")
+              .single();
+            if (created) companyId = created.id;
+          }
+
+          if (companyId) {
+            if (ic.developer) {
+              rows.push({
+                game_id: gameId,
+                company_id: companyId,
+                role: "developer",
+                is_primary: devCount.n === 0,
+              });
+              devCount.n++;
+            }
+            if (ic.publisher) {
+              rows.push({
+                game_id: gameId,
+                company_id: companyId,
+                role: "publisher",
+                is_primary: pubCount.n === 0,
+              });
+              pubCount.n++;
+            }
+          }
+        }
+
+        if (rows.length > 0) {
+          await supabase.from("game_companies").delete().eq("game_id", gameId);
+          await supabase.from("game_companies").insert(rows);
+          applied.push("companies");
+        }
+      }
+    } else skipped.push("companies");
+  }
+
+  // ── Age ratings ─────────────────────────────────────────────────────
+  // Age ratings from webhooks are complex (need rating system resolution).
+  // We log them but don't auto-apply — they require the full import logic.
+  const pAgeRatings = payload.age_ratings as Array<{ rating_category: number }> | undefined;
+  if (pAgeRatings !== undefined && pAgeRatings.length > 0) {
+    if (can("age_ratings", ov, f)) {
+      // Age ratings need the full GameImportService logic to resolve
+      // rating systems, so we mark as applied only if we can delegate.
+      // For now, log and skip — the diff page shows them for admin review.
+      logger.info("Webhook: age_ratings present but require full import logic", { gameId });
+    } else {
+      skipped.push("age_ratings");
+    }
+  }
+
+  // ── Similar games ───────────────────────────────────────────────────
+  const pSimilar = payload.similar_games as number[] | undefined;
+  if (pSimilar !== undefined) {
+    if (can("similar_games", ov, f)) {
+      if (pSimilar.length > 0) {
+        // Resolve local game IDs
+        const { data: localGames } = await supabase
+          .from("games")
+          .select("id, igdb_id")
+          .in("igdb_id", pSimilar);
+
+        const igdbToLocal = new Map(
+          (localGames ?? []).map((g) => [g.igdb_id as number, g.id as string])
+        );
+
+        const rows = pSimilar.map((igdbId, i) => ({
+          game_id: gameId,
+          similar_igdb_id: igdbId,
+          similar_game_id: igdbToLocal.get(igdbId) ?? null,
+          display_order: i,
+        }));
+
+        await db(supabase).from("game_similar_games").delete().eq("game_id", gameId);
+        await db(supabase).from("game_similar_games").upsert(rows, {
+          onConflict: "game_id,similar_igdb_id",
+        });
+        applied.push("similar_games");
+      }
+    } else skipped.push("similar_games");
+  }
+
+  return { appliedFields: applied, skippedFields: skipped };
 }

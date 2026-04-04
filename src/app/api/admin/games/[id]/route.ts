@@ -418,7 +418,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         `
         id, cover_image_url, background_image_url, release_date, metascore,
         playtime_hastily, playtime_normally, playtime_completely,
-        game_translations(language_code, title, description),
+        game_translations(language_code, title, description, storyline),
         game_genres(genre_id),
         game_companies(company_id, role, is_primary),
         game_screenshots(url),
@@ -773,6 +773,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
           language_code: t.language_code ?? "",
           title: t.title ?? undefined,
           description: t.description ?? undefined,
+          storyline: t.storyline ?? undefined,
         })),
         genres: genres ?? currentGameData.genres,
         companies: companies ?? currentGameData.companies,

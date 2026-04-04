@@ -29,6 +29,7 @@ export interface RawGame {
   dlcs?: number[];
   expansions?: number[];
   bundles?: number[];
+  similar_games?: number[];
   [key: string]: unknown;
 }
 

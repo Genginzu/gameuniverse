@@ -216,3 +216,58 @@ export async function syncVideos(
       .single();
   }
 }
+
+/** Synchronise les jeux similaires — delete + re-insert depuis les données IGDB */
+export async function syncSimilarGames(
+  supabase: SyncSupabaseClient,
+  gameId: string,
+  igdbGame: IGDBGame
+): Promise<void> {
+  await deleteByGameId(supabase, "game_similar_games", gameId);
+  if (!igdbGame.similar_games || igdbGame.similar_games.length === 0) return;
+
+  // Resolve local game IDs for similar games that are already imported
+  const { data: localGames } = await supabase
+    .from("games")
+    .select("id, igdb_id")
+    .in("igdb_id", igdbGame.similar_games.map(String));
+
+  const localMap = new Map<number, string>();
+  for (const g of localGames ?? []) {
+    const igdbId = g.igdb_id as number | null;
+    if (igdbId !== null) localMap.set(igdbId, g.id as string);
+  }
+
+  // Import missing similar games from IGDB
+  const missingIds = igdbGame.similar_games.filter((id) => !localMap.has(id));
+  const importedNames: string[] = [];
+
+  if (missingIds.length > 0) {
+    const { GameImportService } = await import("./gameImportService");
+    for (const missingId of missingIds) {
+      try {
+        const result = await GameImportService.importFromIGDB(missingId);
+        if (result.success && result.game) {
+          localMap.set(missingId, result.game.id);
+          importedNames.push(result.game.title);
+        }
+      } catch {
+        // Non-critical: continue with other similar games
+      }
+    }
+  }
+
+  for (let i = 0; i < igdbGame.similar_games.length; i++) {
+    const similarIgdbId = igdbGame.similar_games[i];
+    await supabase
+      .from("game_similar_games")
+      .insert({
+        game_id: gameId,
+        similar_igdb_id: similarIgdbId,
+        similar_game_id: localMap.get(similarIgdbId) ?? null,
+        display_order: i,
+      })
+      .select("id")
+      .single();
+  }
+}

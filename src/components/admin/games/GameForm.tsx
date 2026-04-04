@@ -102,6 +102,11 @@ const BASE_TABS: Tab[] = [
     icon: <Icon icon="fa:video-camera" className="h-3.5 w-3.5" />,
     labelKey: "videos",
   },
+  {
+    id: "similar_games",
+    icon: <Icon icon="mdi:gamepad-variant-outline" className="h-3.5 w-3.5" />,
+    labelKey: "similarGames",
+  },
 ];
 
 const SYNC_TAB: Tab = {

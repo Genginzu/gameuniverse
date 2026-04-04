@@ -78,6 +78,7 @@ export type TabId =
   | "pricing"
   | "videos"
   | "music"
+  | "similar_games"
   | "sync";
 
 export interface Tab {
@@ -102,7 +103,8 @@ export type TrackableField =
   | "versions"
   | "languages"
   | "playtime"
-  | "videos";
+  | "videos"
+  | "similar_games";
 
 /** Entrée de suivi d'un champ modifié manuellement */
 export interface GameFieldOverride {

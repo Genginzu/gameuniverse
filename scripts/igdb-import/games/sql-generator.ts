@@ -180,6 +180,14 @@ function generateSingleGameSql(game: IGDBGame): string[] {
     );
   }
 
+  // Similar games
+  for (let i = 0; i < (game.similar_games?.length ?? 0); i++) {
+    const similarIgdbId = num(game.similar_games![i]);
+    lines.push(
+      `INSERT INTO game_similar_games (game_id, similar_igdb_id, similar_game_id, display_order) SELECT g.id, ${similarIgdbId}, sg.id, ${i} FROM games g LEFT JOIN games sg ON sg.igdb_id = ${similarIgdbId} WHERE g.igdb_id = ${igdbId} ON CONFLICT (game_id, similar_igdb_id) DO NOTHING;`
+    );
+  }
+
   // Languages
   if (game.language_supports?.length) {
     const langMap = new Map<string, { name: string; audio: boolean; subs: boolean; ui: boolean }>();

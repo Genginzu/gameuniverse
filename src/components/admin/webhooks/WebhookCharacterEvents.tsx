@@ -34,8 +34,10 @@ export function WebhookCharacterEvents() {
       <WebhookEventFilters
         eventType={eventType}
         status={status}
+        notImported={false}
         onEventTypeChange={handleEventTypeChange}
         onStatusChange={handleStatusChange}
+        onNotImportedChange={() => {}}
       />
       <WebhookEventList events={events} entityType="characters" loading={loading} />
       <WebhookPagination

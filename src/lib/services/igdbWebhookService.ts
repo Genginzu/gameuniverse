@@ -2,7 +2,7 @@
  * IGDB Webhook Service
  * Handles processing of incoming IGDB webhook events:
  * - create: auto-import new games, log characters
- * - update: log for manual review
+ * - update: auto-apply diff if game exists locally, auto-import if not
  * - delete: log only
  */
 
@@ -25,6 +25,8 @@ interface ProcessResult {
 
 /**
  * Log a webhook event to the database and process it.
+ * For games: ensures the game exists locally BEFORE logging the event,
+ * so the event always has a valid game_id and name.
  */
 export async function processWebhookEvent(
   entityType: string,
@@ -34,10 +36,28 @@ export async function processWebhookEvent(
   const supabase = getSupabaseAdmin();
   const igdbId = payload.id;
 
-  // Resolve local entity references
-  const { gameId, characterId } = await resolveLocalEntity(entityType, igdbId);
+  // Resolve local entity — for games, auto-import if missing
+  let { gameId, characterId } = await resolveLocalEntity(entityType, igdbId);
 
-  // Insert the event record
+  if (entityType === "games" && !gameId) {
+    try {
+      const importResult = await GameImportService.importFromIGDB(igdbId);
+      if (importResult.success && importResult.game) {
+        gameId = importResult.game.id;
+        logger.info("Webhook: auto-imported game before logging event", {
+          igdbId,
+          gameId,
+        });
+      }
+    } catch (error) {
+      logger.warn("Webhook: failed to auto-import game, event will have no game_id", {
+        igdbId,
+        error,
+      });
+    }
+  }
+
+  // Insert the event record (now with game_id resolved)
   const { data: event, error: insertError } = await supabase
     .from("igdb_webhook_events")
     .insert({
@@ -62,11 +82,21 @@ export async function processWebhookEvent(
   // Process based on event type
   try {
     if (eventType === "create" && entityType === "games") {
+      // Game was already imported above — just mark as processed
+      if (gameId) {
+        await updateEventStatus(eventId, "processed");
+        return { eventId, status: "processed" };
+      }
+      // Import failed earlier, try again
       return await handleGameCreate(eventId, igdbId);
     }
 
     if (eventType === "update" && entityType === "games" && gameId) {
       return await handleGameUpdate(eventId, gameId, payload);
+    }
+
+    if (eventType === "update" && entityType === "games" && !gameId) {
+      return await handleGameCreate(eventId, igdbId);
     }
 
     // delete events and non-game entities: just log them

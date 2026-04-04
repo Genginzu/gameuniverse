@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 import { GameMediaGallery } from "./GameMediaGallery";
 import { GameStatsGrid } from "./GameStatsGrid";
 import { GamePricingSection } from "./GamePricingSection";
@@ -125,10 +126,20 @@ function GameDetailsTabOverview({
   getMetascoreColor: (score?: number) => string;
   formatPrice: (price: number, currency: string) => string;
 }) {
+  const t = useTranslations("gameDetails");
+
   return (
     <>
       {game.description && (
         <p className="max-w-3xl text-base leading-relaxed text-white">{game.description}</p>
+      )}
+      {game.storyline && (
+        <div className="max-w-3xl space-y-2">
+          <h3 className="text-sm font-medium tracking-wider text-white/60 uppercase">
+            {t("storyline")}
+          </h3>
+          <p className="text-base leading-relaxed text-white/80">{game.storyline}</p>
+        </div>
       )}
       <GameStatsGrid
         game={game}

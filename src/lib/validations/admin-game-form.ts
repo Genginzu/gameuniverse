@@ -13,6 +13,12 @@ export const adminGameTranslationSchema = z.object({
     .max(5000, "Description must be less than 5000 characters")
     .optional()
     .or(z.literal("")),
+  storyline: z
+    .string()
+    .max(10000, "Storyline must be less than 10000 characters")
+    .optional()
+    .or(z.literal(""))
+    .nullable(),
 });
 
 export const adminGameGenreSchema = z.object({
@@ -137,7 +143,7 @@ export const adminGameFormSchema = z.object({
   languages: z.array(adminGameLanguageSchema).default([]),
   prices: z.array(adminGamePriceSchema).default([]),
   genres: z.array(adminGameGenreSchema).min(1, "At least one genre is required"),
-  companies: z.array(adminGameCompanySchema).min(1, "At least one company is required"),
+  companies: z.array(adminGameCompanySchema).default([]),
   game_platforms: z.array(adminGamePlatformSchema).default([]),
   videos: z.array(adminGameVideoSchema).default([]),
   music_composer: z.string().max(500).optional().or(z.literal("")),

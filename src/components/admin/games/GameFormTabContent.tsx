@@ -59,6 +59,9 @@ const GameFormVideosTab = lazy(() =>
 const GameFormSyncTab = lazy(() =>
   import("./GameFormSyncTab").then((m) => ({ default: m.GameFormSyncTab }))
 );
+const GameFormSimilarGamesTab = lazy(() =>
+  import("./GameFormSimilarGamesTab").then((m) => ({ default: m.GameFormSimilarGamesTab }))
+);
 
 function TabFallback() {
   return (
@@ -199,6 +202,11 @@ export function GameFormTabContent({
         return <GameFormMusicTab form={form} t={t} />;
       case "videos":
         return <GameFormVideosTab form={form} t={t} isIgdbField={isIgdbField} />;
+      case "similar_games":
+        if (mode === "edit" && gameId) {
+          return <GameFormSimilarGamesTab gameId={gameId} />;
+        }
+        return null;
       case "sync":
         if (mode === "edit" && gameId) {
           return (

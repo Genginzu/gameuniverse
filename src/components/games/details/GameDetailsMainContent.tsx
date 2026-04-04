@@ -9,9 +9,14 @@ import { Icon } from "@iconify/react";
 import { GameDetailsTabs, TabType } from "./GameDetailsTabs";
 import dynamic from "next/dynamic";
 
-// Lazy load — section en bas de page, non critique au premier rendu
+// Lazy load — sections en bas de page, non critiques au premier rendu
+const SimilarGamesSection = dynamic(
+  () => import("@/components/games/details/SimilarGamesSection").then((m) => m.SimilarGamesSection),
+  { ssr: false }
+);
 const RecommendationSection = dynamic(
-  () => import("@/components/games/details/RecommendationSection").then((m) => m.RecommendationSection),
+  () =>
+    import("@/components/games/details/RecommendationSection").then((m) => m.RecommendationSection),
   { ssr: false }
 );
 
@@ -32,6 +37,10 @@ export function GameDetailsMainContent({
   formatPrice,
 }: GameDetailsMainContentProps) {
   const [activeTab, setActiveTab] = useState<TabType>("overview");
+
+  // Utiliser les jeux similaires IGDB si disponibles, sinon fallback sur les recommandations algorithmiques
+  const hasSimilarGames = game.similarGames && game.similarGames.some((sg) => sg.game !== null);
+
   return (
     <div className="min-w-0 flex-1">
       {/* Platforms */}
@@ -68,9 +77,13 @@ export function GameDetailsMainContent({
         formatPrice={formatPrice}
       />
 
-      {/* Recommendations */}
+      {/* Similar games (IGDB) ou recommandations algorithmiques en fallback */}
       <div className="mt-12">
-        <RecommendationSection gameSlug={game.slug} locale={locale} />
+        {hasSimilarGames ? (
+          <SimilarGamesSection similarGames={game.similarGames!} locale={locale} />
+        ) : (
+          <RecommendationSection gameSlug={game.slug} locale={locale} />
+        )}
       </div>
     </div>
   );

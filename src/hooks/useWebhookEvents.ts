@@ -13,6 +13,7 @@ interface WebhookEventsFilters {
   entityType?: string;
   eventType?: WebhookEventType;
   status?: WebhookEventStatus;
+  notImported?: boolean;
   page?: number;
   limit?: number;
 }
@@ -34,6 +35,7 @@ function buildUrl(filters: WebhookEventsFilters): string {
   if (filters.entityType) params.set("entityType", filters.entityType);
   if (filters.eventType) params.set("eventType", filters.eventType);
   if (filters.status) params.set("status", filters.status);
+  if (filters.notImported) params.set("notImported", "true");
   if (filters.page) params.set("page", String(filters.page));
   if (filters.limit) params.set("limit", String(filters.limit));
   return `/api/admin/webhooks/events?${params.toString()}`;

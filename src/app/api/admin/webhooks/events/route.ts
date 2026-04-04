@@ -19,6 +19,7 @@ export async function GET(request: NextRequest) {
     const entityType = searchParams.get("entityType");
     const eventType = searchParams.get("eventType");
     const status = searchParams.get("status");
+    const notImported = searchParams.get("notImported") === "true";
     const page = Math.max(1, parseInt(searchParams.get("page") ?? "1", 10));
     const limit = Math.min(
       MAX_LIMIT,
@@ -38,6 +39,7 @@ export async function GET(request: NextRequest) {
     if (entityType) query = query.eq("entity_type", entityType);
     if (eventType) query = query.eq("event_type", eventType);
     if (status) query = query.eq("status", status);
+    if (notImported) query = query.is("game_id", null);
 
     const { data: events, count, error } = await query;
 
@@ -87,7 +89,11 @@ async function enrichEventsWithNames(
       .select("id, slug, game_translations(title)")
       .in("id", [...new Set(gameIds)]);
 
-    for (const game of (games ?? []) as { id: string; slug: string; game_translations: { title: string }[] }[]) {
+    for (const game of (games ?? []) as {
+      id: string;
+      slug: string;
+      game_translations: { title: string }[];
+    }[]) {
       const name = game.game_translations?.[0]?.title ?? game.slug;
       gameMap.set(game.id, { name, slug: game.slug });
     }
@@ -101,7 +107,11 @@ async function enrichEventsWithNames(
       .select("id, slug, character_translations(name)")
       .in("id", [...new Set(characterIds)]);
 
-    for (const char of (characters ?? []) as { id: string; slug: string; character_translations: { name: string }[] }[]) {
+    for (const char of (characters ?? []) as {
+      id: string;
+      slug: string;
+      character_translations: { name: string }[];
+    }[]) {
       const name = char.character_translations?.[0]?.name ?? char.slug;
       charMap.set(char.id, { name, slug: char.slug });
     }
@@ -111,9 +121,15 @@ async function enrichEventsWithNames(
     const gameInfo = event.game_id ? gameMap.get(event.game_id as string) : null;
     const charInfo = event.character_id ? charMap.get(event.character_id as string) : null;
 
+    // Fallback: extract name from webhook payload if game not in local DB
+    const payloadName =
+      !gameInfo && event.payload
+        ? (((event.payload as Record<string, unknown>).name as string | undefined) ?? null)
+        : null;
+
     return {
       ...event,
-      game_name: gameInfo?.name ?? null,
+      game_name: gameInfo?.name ?? payloadName,
       game_slug: gameInfo?.slug ?? null,
       character_name: charInfo?.name ?? null,
       character_slug: charInfo?.slug ?? null,

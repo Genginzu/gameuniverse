@@ -34,7 +34,7 @@ export const REQUIRED_FIELDS: Record<EntityType, string[]> = {
 
 /** Tous les champs éditables par type d'entité (pour la modale de relecture) */
 export const EDITABLE_FIELDS: Record<EntityType, string[]> = {
-  games: ["title", "description"],
+  games: ["title", "description", "storyline"],
   characters: ["name", "description", "biography"],
   genres: ["name", "description"],
   companies: ["description"],

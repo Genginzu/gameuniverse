@@ -127,7 +127,8 @@ export function TranslationLangCard({
       {/* Editable fields — stacked, description grows to fill */}
       <div className="flex flex-1 flex-col gap-2">
         {fields.map((field) => {
-          const isLargeField = field === "description" || field === "biography";
+          const isLargeField =
+            field === "description" || field === "biography" || field === "storyline";
           return (
             <div
               key={field}

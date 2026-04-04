@@ -118,6 +118,7 @@ export interface DatabaseGameData {
   game_translations: Array<{
     title: string;
     description: string | null;
+    storyline: string | null;
     language_code?: string;
   }>;
   game_genres: Array<{

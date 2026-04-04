@@ -250,7 +250,10 @@ describe("Property 1: Detection des modifications de champs", () => {
 
   it("modifier un seul champ produit un resultat contenant ce champ", () => {
     // "videos" is not detectable via admin form (no form field for videos)
-    const formComparableFields = TRACKABLE_FIELDS.filter((f) => f !== "videos");
+    // "similar_games" is not editable manually — data comes exclusively from IGDB
+    const formComparableFields = TRACKABLE_FIELDS.filter(
+      (f) => f !== "videos" && f !== "similar_games"
+    );
     fc.assert(
       fc.property(
         gameDataGen(),

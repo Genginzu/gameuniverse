@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useGameSync } from "@/hooks/useGameSync";
+import { toast } from "@/hooks/use-toast";
 import { TRACKABLE_FIELDS } from "@/lib/utils/field-tracking";
 import type { TrackableField } from "@/types/admin-games";
 import { Icon } from "@iconify/react";
@@ -33,6 +34,7 @@ const FIELD_LABEL_KEYS: Record<TrackableField, string> = {
   languages: "gameLanguages",
   playtime: "playtime",
   videos: "videos",
+  similar_games: "similarGames",
 };
 
 export function GameFormSyncTab({ gameId, igdbId, onSyncComplete }: GameFormSyncTabProps) {
@@ -62,8 +64,17 @@ export function GameFormSyncTab({ gameId, igdbId, onSyncComplete }: GameFormSync
           size="sm"
           disabled={isSyncing}
           onClick={async () => {
+            toast({
+              title: t("syncStarted"),
+              description: t("syncAllDescription"),
+            });
             const ok = await syncAll();
-            if (ok) onSyncComplete?.();
+            if (ok) {
+              toast({ title: t("syncSuccess"), variant: "success" });
+              onSyncComplete?.();
+            } else {
+              toast({ title: t("syncError"), variant: "destructive" });
+            }
           }}
           className="gap-2"
         >
@@ -125,8 +136,25 @@ export function GameFormSyncTab({ gameId, igdbId, onSyncComplete }: GameFormSync
                   size="sm"
                   disabled={isSyncing}
                   onClick={async () => {
+                    const fieldLabel = t(FIELD_LABEL_KEYS[field]);
+                    toast({
+                      title: t("syncFieldStarted", { field: fieldLabel }),
+                      description:
+                        field === "similar_games" ? t("syncSimilarGamesHint") : undefined,
+                    });
                     const ok = await syncField(field);
-                    if (ok) onSyncComplete?.();
+                    if (ok) {
+                      toast({
+                        title: t("syncFieldSuccess", { field: fieldLabel }),
+                        variant: "success",
+                      });
+                      onSyncComplete?.();
+                    } else {
+                      toast({
+                        title: t("syncFieldError", { field: fieldLabel }),
+                        variant: "destructive",
+                      });
+                    }
                   }}
                   className="gap-1.5 text-xs"
                 >

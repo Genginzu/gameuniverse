@@ -160,6 +160,9 @@ export class GameImportService {
       // Create DLC and extensions
       await this.createDlcExtensions(newGame.id, igdbGame);
 
+      // Create similar games
+      await this.createSimilarGames(newGame.id, igdbGame);
+
       // Import and link platforms
       const platformIds = await this.ensurePlatforms(igdbGame);
       if (platformIds.length > 0) {
@@ -272,6 +275,9 @@ export class GameImportService {
 
       // Update DLC and extensions
       await this.updateDlcExtensions(gameId, igdbGame);
+
+      // Update similar games
+      await this.updateSimilarGames(gameId, igdbGame);
 
       // Sync platforms (superset: add new, keep existing)
       await this.syncPlatforms(gameId, igdbGame);
@@ -579,8 +585,9 @@ export class GameImportService {
   private static async createTranslations(gameId: string, igdbGame: IGDBGame): Promise<void> {
     const supabase = await createRouteHandlerClient();
 
-    // Use summary or storyline as description
-    const description = igdbGame.summary || igdbGame.storyline || null;
+    // Use summary as description, storyline stored separately
+    const description = igdbGame.summary || null;
+    const storyline = igdbGame.storyline || null;
 
     // Only create English translation — IGDB data is English only
     await supabase.from("game_translations").insert({
@@ -588,6 +595,7 @@ export class GameImportService {
       language_code: "en",
       title: igdbGame.name,
       description,
+      storyline,
     });
   }
 
@@ -599,13 +607,14 @@ export class GameImportService {
    */
   private static async updateTranslations(gameId: string, igdbGame: IGDBGame): Promise<void> {
     const supabase = await createRouteHandlerClient();
-    const description = igdbGame.summary || igdbGame.storyline || null;
+    const description = igdbGame.summary || null;
+    const storyline = igdbGame.storyline || null;
 
     // Only update English translation — IGDB data is English only
     // French translations will be managed by a separate translation service
     await supabase
       .from("game_translations")
-      .update({ title: igdbGame.name, description })
+      .update({ title: igdbGame.name, description, storyline })
       .eq("game_id", gameId)
       .eq("language_code", "en");
   }
@@ -1296,6 +1305,62 @@ export class GameImportService {
       await this.createDlcExtensions(gameId, igdbGame);
     } catch (error) {
       logger.error("Error updating DLC extensions", { gameId, error });
+    }
+  }
+
+  /**
+   * Create similar games entries from IGDB similar_games IDs.
+   * Resolves local game references when available.
+   */
+  private static async createSimilarGames(gameId: string, igdbGame: IGDBGame): Promise<void> {
+    if (!igdbGame.similar_games || igdbGame.similar_games.length === 0) return;
+
+    try {
+      const supabase = await createRouteHandlerClient();
+
+      // Resolve local game IDs for the similar IGDB IDs
+      const { data: localGames } = await supabase
+        .from("games")
+        .select("id, igdb_id")
+        .in("igdb_id", igdbGame.similar_games);
+
+      const igdbToLocal = new Map(
+        (localGames ?? []).map((g) => [g.igdb_id as number, g.id as string])
+      );
+
+      const rows = igdbGame.similar_games.map((igdbId, index) => ({
+        game_id: gameId,
+        similar_igdb_id: igdbId,
+        similar_game_id: igdbToLocal.get(igdbId) ?? null,
+        display_order: index,
+      }));
+
+      const { error } = await supabase.from("game_similar_games").upsert(rows, {
+        onConflict: "game_id,similar_igdb_id",
+      });
+
+      if (error) {
+        logger.error("Failed to create similar games", { gameId, error });
+      }
+    } catch (error) {
+      logger.error("Error creating similar games", { gameId, error });
+    }
+  }
+
+  /**
+   * Update similar games — replace with fresh IGDB data.
+   */
+  private static async updateSimilarGames(gameId: string, igdbGame: IGDBGame): Promise<void> {
+    try {
+      const supabase = await createRouteHandlerClient();
+
+      await (supabase.from("game_similar_games") as ReturnType<typeof supabase.from>)
+        .delete()
+        .eq("game_id", gameId);
+
+      await this.createSimilarGames(gameId, igdbGame);
+    } catch (error) {
+      logger.error("Error updating similar games", { gameId, error });
     }
   }
 }

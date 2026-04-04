@@ -294,4 +294,5 @@ export {
   syncLanguages,
   syncPlaytime,
   syncVideos,
+  syncSimilarGames,
 } from "./igdb-sync-fields-extended";

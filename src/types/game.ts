@@ -166,11 +166,27 @@ export interface GameDlcExtension {
   gameSlug: string | null; // slug du jeu local si importé, pour le lien
 }
 
+/** Jeu similaire associé via IGDB similar_games */
+export interface SimilarGame {
+  igdbId: number;
+  /** Données du jeu local si importé, null sinon */
+  game: {
+    id: string;
+    slug: string;
+    title: string;
+    coverImage: string | null;
+    genres: Array<{ name: string }>;
+    developer: string;
+    metascore: number | null;
+  } | null;
+}
+
 export interface GameDetails {
   id: string;
   slug: string;
   title: string;
   description?: string;
+  storyline?: string;
   releaseDate?: string;
   releaseYear?: number;
   metascore?: number;
@@ -196,6 +212,7 @@ export interface GameDetails {
   lastSyncedAt?: string;
   versions?: GameVersion[];
   dlcExtensions?: GameDlcExtension[];
+  similarGames?: SimilarGame[];
   platforms: GamePlatform[];
 }
 

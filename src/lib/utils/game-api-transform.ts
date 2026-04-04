@@ -24,6 +24,7 @@ export interface GameApiResponse {
     language_code: string;
     title: string;
     description: string | null;
+    storyline: string | null;
   }>;
   genres: Array<{ genre_id: string }>;
   companies: Array<{
@@ -96,6 +97,7 @@ export function toFormData(game: GameApiResponse): AdminGameFormData {
       language_code: t.language_code,
       title: t.title,
       description: t.description ?? "",
+      storyline: t.storyline ?? "",
     })),
     cover_image_url: game.cover_image_url ?? "",
     background_image_url: game.background_image_url ?? "",
