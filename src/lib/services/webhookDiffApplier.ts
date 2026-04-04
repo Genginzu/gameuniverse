@@ -9,6 +9,7 @@
 
 import { logger } from "@/lib/logger";
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { IGDBService } from "./igdbService";
 
 export interface ApplyPayloadOptions {
   gameId: string;
@@ -69,6 +70,28 @@ export async function applyWebhookPayload(
     } else skipped.push("metascore");
   }
 
+  // ── Lazy-loaded IGDB game details ────────────────────────────────────
+  // IGDB webhooks send sub-entity fields (cover, artworks, screenshots,
+  // videos) as raw numeric IDs instead of expanded objects with image_id.
+  // We fetch the full game details once from IGDB when needed.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let _igdbGame: any = undefined;
+  async function getIgdbGame() {
+    if (_igdbGame !== undefined) return _igdbGame;
+    const igdbId = payload.id as number | undefined;
+    if (!igdbId) {
+      _igdbGame = null;
+      return null;
+    }
+    try {
+      _igdbGame = await IGDBService.getGameDetails(igdbId);
+    } catch {
+      logger.warn("Webhook: failed to fetch game details from IGDB", { igdbId });
+      _igdbGame = null;
+    }
+    return _igdbGame;
+  }
+
   if (payload.cover !== undefined) {
     if (can("cover_image", ov, f)) {
       const raw = payload.cover;
@@ -76,6 +99,11 @@ export async function applyWebhookPayload(
       if (typeof raw === "object" && raw !== null && "image_id" in raw) {
         const id = (raw as { image_id?: string }).image_id;
         if (id) url = `https://images.igdb.com/igdb/image/upload/t_cover_big/${id}.jpg`;
+      } else if (typeof raw === "number") {
+        const igdbGame = await getIgdbGame();
+        if (igdbGame?.cover?.image_id) {
+          url = IGDBService.buildImageUrl(igdbGame.cover.image_id, "cover_big");
+        }
       }
       gameUpdate.cover_image_url = url;
       applied.push("cover_image");
@@ -133,17 +161,54 @@ export async function applyWebhookPayload(
   }
 
   // ── Background image (derived from artworks / screenshots) ──────────
-  const pArtworks = payload.artworks as Array<{ image_id: string }> | undefined;
-  const pScreenshots = payload.screenshots as Array<{ image_id: string }> | undefined;
+  // IGDB webhooks may send artworks/screenshots as arrays of numeric IDs
+  // instead of expanded objects. We need to resolve them via the API.
+  let resolvedArtworks: Array<{ image_id: string }> | undefined;
+  let resolvedScreenshots: Array<{ image_id: string }> | undefined;
 
-  if (pArtworks !== undefined || pScreenshots !== undefined) {
+  const rawArtworks = payload.artworks as unknown;
+  const rawScreenshots = payload.screenshots as unknown;
+
+  // Resolve artworks: could be [{image_id: "x"}] or [123, 456]
+  if (Array.isArray(rawArtworks) && rawArtworks.length > 0) {
+    if (
+      typeof rawArtworks[0] === "object" &&
+      rawArtworks[0] !== null &&
+      "image_id" in rawArtworks[0]
+    ) {
+      resolvedArtworks = rawArtworks as Array<{ image_id: string }>;
+    } else if (typeof rawArtworks[0] === "number") {
+      const igdbGame = await getIgdbGame();
+      if (igdbGame?.artworks?.length) {
+        resolvedArtworks = igdbGame.artworks as Array<{ image_id: string }>;
+      }
+    }
+  }
+
+  // Resolve screenshots: same logic
+  if (Array.isArray(rawScreenshots) && rawScreenshots.length > 0) {
+    if (
+      typeof rawScreenshots[0] === "object" &&
+      rawScreenshots[0] !== null &&
+      "image_id" in rawScreenshots[0]
+    ) {
+      resolvedScreenshots = rawScreenshots as Array<{ image_id: string }>;
+    } else if (typeof rawScreenshots[0] === "number") {
+      const igdbGame = await getIgdbGame();
+      if (igdbGame?.screenshots?.length) {
+        resolvedScreenshots = igdbGame.screenshots as Array<{ image_id: string }>;
+      }
+    }
+  }
+
+  if (resolvedArtworks !== undefined || resolvedScreenshots !== undefined) {
     if (can("background_image", ov, f)) {
       let bgUrl: string | null = null;
-      const firstArt = pArtworks?.[0];
-      const firstSs = pScreenshots?.[0];
-      if (typeof firstArt === "object" && firstArt?.image_id)
+      const firstArt = resolvedArtworks?.[0];
+      const firstSs = resolvedScreenshots?.[0];
+      if (firstArt?.image_id)
         bgUrl = `https://images.igdb.com/igdb/image/upload/t_1080p/${firstArt.image_id}.jpg`;
-      else if (typeof firstSs === "object" && firstSs?.image_id)
+      else if (firstSs?.image_id)
         bgUrl = `https://images.igdb.com/igdb/image/upload/t_1080p/${firstSs.image_id}.jpg`;
 
       if (bgUrl) {
@@ -154,10 +219,10 @@ export async function applyWebhookPayload(
   }
 
   // ── Screenshots ─────────────────────────────────────────────────────
-  if (pScreenshots !== undefined) {
+  if (resolvedScreenshots !== undefined) {
     if (can("screenshots", ov, f)) {
-      const items = pScreenshots
-        .filter((s) => typeof s === "object" && s?.image_id)
+      const items = resolvedScreenshots
+        .filter((s) => s?.image_id)
         .map((s, i) => ({
           game_id: gameId,
           url: `https://images.igdb.com/igdb/image/upload/t_1080p/${s.image_id}.jpg`,
@@ -173,10 +238,10 @@ export async function applyWebhookPayload(
   }
 
   // ── Artworks ────────────────────────────────────────────────────────
-  if (pArtworks !== undefined) {
+  if (resolvedArtworks !== undefined) {
     if (can("artworks", ov, f)) {
-      const items = pArtworks
-        .filter((a) => typeof a === "object" && a?.image_id)
+      const items = resolvedArtworks
+        .filter((a) => a?.image_id)
         .map((a, i) => ({
           game_id: gameId,
           url: `https://images.igdb.com/igdb/image/upload/t_1080p/${a.image_id}.jpg`,
@@ -193,24 +258,42 @@ export async function applyWebhookPayload(
   }
 
   // ── Videos ──────────────────────────────────────────────────────────
-  const pVideos = payload.videos as Array<{ video_id: string; name?: string }> | undefined;
-  if (pVideos !== undefined) {
+  const rawVideos = payload.videos as unknown;
+  if (rawVideos !== undefined && Array.isArray(rawVideos)) {
     if (can("videos", ov, f)) {
-      const items = pVideos
-        .filter((v) => typeof v === "object" && v?.video_id)
-        .map((v, i) => ({
-          game_id: gameId,
-          url: `https://www.youtube.com/watch?v=${v.video_id}`,
-          thumbnail_url: `https://img.youtube.com/vi/${v.video_id}/maxresdefault.jpg`,
-          title: v.name || "Video",
-          video_type: "trailer",
-          display_order: i,
-          is_featured: i === 0,
-        }));
-      if (items.length > 0) {
-        await db(supabase).from("game_videos").delete().eq("game_id", gameId);
-        await db(supabase).from("game_videos").insert(items);
-        applied.push("videos");
+      let resolvedVideos: Array<{ video_id: string; name?: string }> | undefined;
+
+      if (
+        rawVideos.length > 0 &&
+        typeof rawVideos[0] === "object" &&
+        rawVideos[0] !== null &&
+        "video_id" in rawVideos[0]
+      ) {
+        resolvedVideos = rawVideos as Array<{ video_id: string; name?: string }>;
+      } else if (rawVideos.length > 0 && typeof rawVideos[0] === "number") {
+        const igdbGame = await getIgdbGame();
+        if (igdbGame?.videos?.length) {
+          resolvedVideos = igdbGame.videos as Array<{ video_id: string; name?: string }>;
+        }
+      }
+
+      if (resolvedVideos?.length) {
+        const items = resolvedVideos
+          .filter((v) => v?.video_id)
+          .map((v, i) => ({
+            game_id: gameId,
+            url: `https://www.youtube.com/watch?v=${v.video_id}`,
+            thumbnail_url: `https://img.youtube.com/vi/${v.video_id}/maxresdefault.jpg`,
+            title: v.name || "Video",
+            video_type: "trailer",
+            display_order: i,
+            is_featured: i === 0,
+          }));
+        if (items.length > 0) {
+          await db(supabase).from("game_videos").delete().eq("game_id", gameId);
+          await db(supabase).from("game_videos").insert(items);
+          applied.push("videos");
+        }
       }
     } else skipped.push("videos");
   }

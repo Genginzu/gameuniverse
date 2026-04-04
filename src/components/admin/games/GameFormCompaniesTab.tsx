@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 
@@ -74,7 +74,7 @@ export function GameFormCompaniesTab({
             return (
               <div
                 key={company.id}
-                className="flex items-center justify-between rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 dark:bg-primary/10"
+                className="border-primary/20 bg-primary/5 dark:bg-primary/10 flex items-center justify-between rounded-xl border px-4 py-3"
               >
                 <span className="text-sm font-semibold text-gray-900 dark:text-white">
                   {company.name}
@@ -102,7 +102,7 @@ export function GameFormCompaniesTab({
                     className="ml-1 rounded-md p-1 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20"
                     aria-label={`Remove ${company.name}`}
                   >
-                    <Icon icon="fa:times" className="h-3 w-3"  />
+                    <Icon icon="fa:times" className="h-3 w-3" />
                   </button>
                 </div>
               </div>
@@ -127,13 +127,13 @@ export function GameFormCompaniesTab({
           className="gap-1.5"
           disabled={availableCompanies.length === 0}
         >
-          <Icon icon="fa:plus" className="h-3 w-3"  />
+          <Icon icon="fa:plus" className="h-3 w-3" />
           {t("addCompany") ?? "Ajouter une entreprise"}
         </Button>
       )}
 
       {form.formState.errors.companies && (
-        <p className="text-sm font-medium text-destructive">
+        <p className="text-destructive text-sm font-medium">
           {form.formState.errors.companies.message}
         </p>
       )}
@@ -152,6 +152,17 @@ function CompanyPicker({
   onClose: () => void;
   t: (key: string) => string;
 }) {
+  const [search, setSearch] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
+  const filtered = availableCompanies.filter((c) =>
+    c.name.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <div className="rounded-xl border border-gray-200 bg-gray-50/60 p-4 dark:border-gray-700/30 dark:bg-gray-900/20">
       <div className="mb-2 flex items-center justify-between">
@@ -163,7 +174,7 @@ function CompanyPicker({
           onClick={onClose}
           className="rounded-md p-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
         >
-          <Icon icon="fa:times" className="h-3 w-3"  />
+          <Icon icon="fa:times" className="h-3 w-3" />
         </button>
       </div>
       {availableCompanies.length === 0 ? (
@@ -171,22 +182,41 @@ function CompanyPicker({
           {t("allCompaniesAdded") ?? "Toutes les entreprises sont déjà ajoutées"}
         </p>
       ) : (
-        <select
-          className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-900 focus:border-primary focus:outline-hidden focus:ring-1 focus:ring-primary dark:border-gray-700 dark:bg-gray-800 dark:text-white"
-          defaultValue=""
-          onChange={(e) => {
-            if (e.target.value) onSelect(e.target.value);
-          }}
-        >
-          <option value="" disabled>
-            {t("selectCompany") ?? "Sélectionner une entreprise..."}
-          </option>
-          {availableCompanies.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
+        <div className="space-y-2">
+          <div className="relative">
+            <Icon
+              icon="mdi:magnify"
+              className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400"
+            />
+            <input
+              ref={inputRef}
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={t("searchCompany") ?? "Rechercher une entreprise..."}
+              className="focus:border-primary focus:ring-primary w-full rounded-lg border border-gray-200 bg-white py-2 pr-3 pl-9 text-sm text-gray-900 focus:ring-1 focus:outline-hidden dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+            />
+          </div>
+          <ul className="max-h-48 overflow-y-auto rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
+            {filtered.length === 0 ? (
+              <li className="px-3 py-2 text-sm text-gray-400">
+                {t("noResultsCompany") ?? "Aucune entreprise trouvée"}
+              </li>
+            ) : (
+              filtered.map((c) => (
+                <li key={c.id}>
+                  <button
+                    type="button"
+                    onClick={() => onSelect(c.id)}
+                    className="hover:bg-primary/10 dark:hover:bg-primary/20 w-full px-3 py-2 text-left text-sm text-gray-900 transition-colors dark:text-white"
+                  >
+                    {c.name}
+                  </button>
+                </li>
+              ))
+            )}
+          </ul>
+        </div>
       )}
     </div>
   );

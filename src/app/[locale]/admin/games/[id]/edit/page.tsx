@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -11,8 +11,13 @@ import { AdminFormSkeleton } from "@/components/admin/shared/AdminFormSkeleton";
 import { toast } from "@/hooks/use-toast";
 
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
-import { type GameApiResponse, toFormData } from "@/lib/utils/game-api-transform";
+import {
+  type GameApiResponse,
+  toFormData,
+  extractCompaniesFromApi,
+} from "@/lib/utils/game-api-transform";
 import { Icon } from "@iconify/react";
+import type { Company } from "@/types/admin-games";
 
 /**
  * Inner component that mounts only when initialData is ready,
@@ -22,10 +27,12 @@ function EditGameForm({
   initialData,
   gameId,
   igdbId,
+  gameCompanies,
 }: {
   initialData: AdminGameFormData;
   gameId: string;
   igdbId: number | null;
+  gameCompanies: Company[];
 }) {
   const t = useTranslations("admin.games");
   const router = useRouter();
@@ -47,6 +54,17 @@ function EditGameForm({
     refreshGamePlatforms,
   } = useGameForm("edit", initialData, gameId);
 
+  // Track game-specific companies (may be updated after sync)
+  const [localGameCompanies, setLocalGameCompanies] = useState(gameCompanies);
+
+  // Merge reference companies with game-specific companies so assigned
+  // companies always appear even if they are inactive in the reference list
+  const mergedCompanies = useMemo(() => {
+    const refIds = new Set(companies.map((c) => c.id));
+    const missing = localGameCompanies.filter((gc) => !refIds.has(gc.id));
+    return [...companies, ...missing];
+  }, [companies, localGameCompanies]);
+
   const handleSubmit = useCallback(
     async (data: AdminGameFormData) => {
       try {
@@ -67,6 +85,7 @@ function EditGameForm({
       if (!res.ok) return;
       const data: GameApiResponse = await res.json();
       form.reset(toFormData(data));
+      setLocalGameCompanies(extractCompaniesFromApi(data));
       // Sync may have created new platforms — reload the reference list
       await refreshGamePlatforms();
     } catch {
@@ -112,7 +131,7 @@ function EditGameForm({
           mode="edit"
           form={form}
           genres={genres}
-          companies={companies}
+          companies={mergedCompanies}
           ratings={ratings}
           contentDescriptors={contentDescriptors}
           supportedLanguages={supportedLanguages}
@@ -140,6 +159,7 @@ export default function EditGamePage() {
 
   const [initialData, setInitialData] = useState<AdminGameFormData | undefined>(undefined);
   const [igdbId, setIgdbId] = useState<number | null>(null);
+  const [gameCompanies, setGameCompanies] = useState<Company[]>([]);
   const [loadingGame, setLoadingGame] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
 
@@ -161,6 +181,7 @@ export default function EditGamePage() {
         if (mounted) {
           setInitialData(toFormData(data));
           setIgdbId(data.igdb_id);
+          setGameCompanies(extractCompaniesFromApi(data));
         }
       } catch {
         if (mounted) setLoadError(t("editPage.loadError"));
@@ -196,6 +217,15 @@ export default function EditGamePage() {
   }
 
   return (
-    <>{initialData && <EditGameForm initialData={initialData} gameId={gameId} igdbId={igdbId} />}</>
+    <>
+      {initialData && (
+        <EditGameForm
+          initialData={initialData}
+          gameId={gameId}
+          igdbId={igdbId}
+          gameCompanies={gameCompanies}
+        />
+      )}
+    </>
   );
 }

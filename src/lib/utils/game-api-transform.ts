@@ -4,6 +4,7 @@
  */
 
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
+import type { Company } from "@/types/admin-games";
 
 export interface GameApiResponse {
   id: string;
@@ -31,6 +32,11 @@ export interface GameApiResponse {
     company_id: string;
     role: string;
     is_primary: boolean;
+    company?: {
+      id: string;
+      name: string;
+      slug: string;
+    };
   }>;
   screenshots: Array<{
     url: string;
@@ -172,4 +178,19 @@ export function toFormData(game: GameApiResponse): AdminGameFormData {
     music_spotify_embed_url: game.music?.spotify_embed_url ?? "",
     music_youtube_video_url: game.music?.youtube_video_url ?? "",
   };
+}
+
+/**
+ * Extract companies with their names from the API response.
+ * Used to enrich the reference company list so that assigned companies
+ * always appear even if they are inactive or missing from reference data.
+ */
+export function extractCompaniesFromApi(game: GameApiResponse): Company[] {
+  return game.companies
+    .filter((c) => c.company?.id && c.company?.name)
+    .map((c) => ({
+      id: c.company!.id,
+      name: c.company!.name,
+      slug: c.company!.slug ?? "",
+    }));
 }

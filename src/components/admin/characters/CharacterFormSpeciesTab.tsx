@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import type { CharacterFormTabProps } from "@/types/admin-characters";
 import { useAdminSpecies } from "@/hooks/useAdminSpecies";
 import { useLocale } from "next-intl";
@@ -9,6 +10,7 @@ import { cn } from "@/lib/utils";
 export function CharacterFormSpeciesTab({ form, t }: CharacterFormTabProps) {
   const locale = useLocale();
   const { species, loading } = useAdminSpecies();
+  const [search, setSearch] = useState("");
 
   const currentSpeciesId = form.watch("species_id") ?? null;
 
@@ -21,6 +23,10 @@ export function CharacterFormSpeciesTab({ form, t }: CharacterFormTabProps) {
     const tr = sp.translations.find((t) => t.language_code === locale);
     return tr?.name ?? sp.translations[0]?.name ?? sp.slug;
   };
+
+  const filtered = species.filter((sp) =>
+    getSpeciesName(sp).toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="space-y-6">
@@ -38,33 +44,53 @@ export function CharacterFormSpeciesTab({ form, t }: CharacterFormTabProps) {
             <Icon icon="fa:spinner" className="h-4 w-4 animate-spin" />
           </div>
         ) : (
-          <div
-            className="flex flex-wrap gap-2"
-            role="radiogroup"
-            aria-label={t("speciesTab.label")}
-          >
-            {species.map((sp) => {
-              const isSelected = currentSpeciesId === sp.id;
-              return (
-                <button
-                  key={sp.id}
-                  type="button"
-                  role="radio"
-                  aria-checked={isSelected}
-                  onClick={() => handleSelect(sp.id)}
-                  className={cn(
-                    "inline-flex items-center rounded-full border px-3 py-1.5 text-sm font-medium transition-all duration-200",
-                    isSelected
-                      ? "border-transparent bg-linear-to-r from-cyan-500 to-violet-500 text-white shadow-md shadow-violet-500/20"
-                      : "border-gray-200 bg-white/80 text-gray-700 hover:border-cyan-300 hover:bg-white dark:border-gray-600 dark:bg-gray-800/80 dark:text-gray-300 dark:hover:border-cyan-500"
-                  )}
-                >
-                  {getSpeciesName(sp)}
-                  {isSelected && <Icon icon="fa:check" className="ml-1.5 h-3 w-3" />}
-                </button>
-              );
-            })}
-          </div>
+          <>
+            <div className="relative mb-3">
+              <Icon
+                icon="mdi:magnify"
+                className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400"
+              />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={t("speciesTab.searchSpecies") ?? "Rechercher une espèce..."}
+                className="focus:border-primary focus:ring-primary w-full rounded-lg border border-gray-200 bg-white py-2 pr-3 pl-9 text-sm text-gray-900 focus:ring-1 focus:outline-hidden dark:border-gray-700 dark:bg-gray-800 dark:text-white"
+              />
+            </div>
+            <div
+              className="flex flex-wrap gap-2"
+              role="radiogroup"
+              aria-label={t("speciesTab.label")}
+            >
+              {filtered.map((sp) => {
+                const isSelected = currentSpeciesId === sp.id;
+                return (
+                  <button
+                    key={sp.id}
+                    type="button"
+                    role="radio"
+                    aria-checked={isSelected}
+                    onClick={() => handleSelect(sp.id)}
+                    className={cn(
+                      "inline-flex items-center rounded-full border px-3 py-1.5 text-sm font-medium transition-all duration-200",
+                      isSelected
+                        ? "border-transparent bg-linear-to-r from-cyan-500 to-violet-500 text-white shadow-md shadow-violet-500/20"
+                        : "border-gray-200 bg-white/80 text-gray-700 hover:border-cyan-300 hover:bg-white dark:border-gray-600 dark:bg-gray-800/80 dark:text-gray-300 dark:hover:border-cyan-500"
+                    )}
+                  >
+                    {getSpeciesName(sp)}
+                    {isSelected && <Icon icon="fa:check" className="ml-1.5 h-3 w-3" />}
+                  </button>
+                );
+              })}
+              {filtered.length === 0 && (
+                <p className="text-sm text-gray-400">
+                  {t("speciesTab.noResults") ?? "Aucune espèce trouvée"}
+                </p>
+              )}
+            </div>
+          </>
         )}
       </div>
     </div>

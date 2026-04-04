@@ -3,22 +3,31 @@
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 
-/** Minimum interval between syncs (1 hour in ms) */
-const SYNC_COOLDOWN_MS = 60 * 60 * 1000;
+/**
+ * Minimum interval between syncs (24 hours in ms).
+ *
+ * IGDB data rarely changes more than once a day for a given game.
+ * 24h strikes a good balance between freshness and API rate-limit
+ * conservation (Twitch free tier: 4 req/s).
+ */
+const SYNC_COOLDOWN_MS = 24 * 60 * 60 * 1000;
 
 /**
  * Delay before refreshing the page data after sync is initiated (in ms).
  * The sync endpoint returns 202 immediately while processing continues
  * in the background — we wait a bit for the DB to be updated.
  */
-const REFRESH_DELAY_MS = 4_000;
+const REFRESH_DELAY_MS = 5_000;
 
 /**
  * Triggers a background sync with IGDB when visiting a game page.
- * After the sync is initiated, waits briefly then refreshes the page data
- * so the user sees the updated information without a manual reload.
  *
- * Skips sync if the game was synced recently (within SYNC_COOLDOWN_MS).
+ * Strategy: stale-while-revalidate
+ * 1. The page renders immediately with existing DB data (server-side).
+ * 2. If the game hasn't been synced in the last 24 h, a background sync
+ *    is fired (POST /api/games/:slug/sync → 202 Accepted).
+ * 3. After a short delay the page data is refreshed via router.refresh()
+ *    so the user sees updated info without a manual reload.
  */
 export function useBackgroundSync(slug: string, igdbId?: number, lastSyncedAt?: string): void {
   const hasFired = useRef(false);

@@ -1173,11 +1173,17 @@
         "releaseDate": "Release date",
         "releaseDateNoData": "No release date provided",
         "genres": "Genres",
+        "searchGenre": "Search for a genre...",
+        "noResultsGenre": "No genre found",
         "companies": "Companies",
         "noCompanies": "No companies added.",
         "addCompany": "Add a company",
         "selectCompany": "Select a company...",
+        "searchCompany": "Search for a company...",
         "allCompaniesAdded": "All companies have been added",
+        "noResultsCompany": "No company found",
+        "searchPlatform": "Search for a platform...",
+        "noResultsPlatform": "No platform found",
         "developer": "Developer",
         "publisher": "Publisher",
         "create": "Create game",
@@ -1487,7 +1493,9 @@
           "label": "Character Species",
           "select": "Select a species",
           "none": "No species",
-          "description": "Select this character's species."
+          "description": "Select this character's species.",
+          "searchSpecies": "Search for a species...",
+          "noResults": "No species found"
         },
         "sync": "IGDB Sync"
       },

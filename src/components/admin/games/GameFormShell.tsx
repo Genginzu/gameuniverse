@@ -127,6 +127,8 @@ export function TabNavigation({
         return form.watch("languages").length;
       case "pricing":
         return form.watch("prices").length;
+      case "game_platforms":
+        return form.watch("game_platforms").length;
       default:
         return null;
     }

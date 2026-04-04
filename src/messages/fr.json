@@ -1176,11 +1176,17 @@
         "releaseDate": "Date de sortie",
         "releaseDateNoData": "Aucune date de sortie renseignée",
         "genres": "Genres",
+        "searchGenre": "Rechercher un genre...",
+        "noResultsGenre": "Aucun genre trouvé",
         "companies": "Entreprises",
         "noCompanies": "Aucune entreprise ajoutée.",
         "addCompany": "Ajouter une entreprise",
         "selectCompany": "Sélectionner une entreprise...",
+        "searchCompany": "Rechercher une entreprise...",
         "allCompaniesAdded": "Toutes les entreprises sont déjà ajoutées",
+        "noResultsCompany": "Aucune entreprise trouvée",
+        "searchPlatform": "Rechercher une plateforme...",
+        "noResultsPlatform": "Aucune plateforme trouvée",
         "developer": "Développeur",
         "publisher": "Éditeur",
         "create": "Créer le jeu",
@@ -1490,7 +1496,9 @@
           "label": "Espèce du personnage",
           "select": "Sélectionner une espèce",
           "none": "Aucune espèce",
-          "description": "Sélectionnez l'espèce de ce personnage."
+          "description": "Sélectionnez l'espèce de ce personnage.",
+          "searchSpecies": "Rechercher une espèce...",
+          "noResults": "Aucune espèce trouvée"
         },
         "sync": "Synchronisation IGDB"
       },
