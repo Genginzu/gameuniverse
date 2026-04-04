@@ -4,7 +4,6 @@
 -- Drop the HLTB ID column and index (no longer needed)
 DROP INDEX IF EXISTS idx_games_hltb_id;
 ALTER TABLE public.games DROP COLUMN IF EXISTS hltb_id;
-
 -- Add comment to clarify playtime source
 COMMENT ON COLUMN public.games.playtime_main IS 'Main story completion time in hours (from IGDB hastily)';
 COMMENT ON COLUMN public.games.playtime_main_extra IS 'Main story + extras completion time in hours (from IGDB normally)';

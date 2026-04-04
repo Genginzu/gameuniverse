@@ -14,7 +14,6 @@ CREATE TABLE IF NOT EXISTS public.game_sessions (
   duration_minutes INTEGER NOT NULL DEFAULT 0,
   CONSTRAINT game_sessions_valid_range CHECK (ended_at > started_at)
 );
-
 -- 2. Trigger function to compute duration_minutes from started_at / ended_at
 CREATE OR REPLACE FUNCTION public.compute_session_duration()
 RETURNS TRIGGER AS $$
@@ -23,44 +22,36 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-
 CREATE TRIGGER trg_compute_session_duration
   BEFORE INSERT OR UPDATE ON public.game_sessions
   FOR EACH ROW
   EXECUTE FUNCTION public.compute_session_duration();
-
 -- 3. Index on user_id for fast lookups by player
 CREATE INDEX IF NOT EXISTS idx_game_sessions_user_id
   ON public.game_sessions(user_id);
-
 -- 4. Enable RLS
 ALTER TABLE public.game_sessions ENABLE ROW LEVEL SECURITY;
-
 -- 5. RLS policy: public read (anyone can see a player's sessions)
 CREATE POLICY game_sessions_select_all
   ON public.game_sessions
   FOR SELECT
   USING (true);
-
 -- 6. RLS policy: owner insert
 CREATE POLICY game_sessions_insert_own
   ON public.game_sessions
   FOR INSERT
   WITH CHECK (auth.uid() = user_id);
-
 -- 7. RLS policy: owner update
 CREATE POLICY game_sessions_update_own
   ON public.game_sessions
   FOR UPDATE
   USING (auth.uid() = user_id)
   WITH CHECK (auth.uid() = user_id);
-
 -- 8. RLS policy: owner delete
 CREATE POLICY game_sessions_delete_own
   ON public.game_sessions
   FOR DELETE
   USING (auth.uid() = user_id);
-
 -- 9. Documentation
 COMMENT ON TABLE public.game_sessions IS 'Stores individual gaming sessions with start/end timestamps and computed duration';
 COMMENT ON COLUMN public.game_sessions.id IS 'Primary key (UUID, auto-generated)';

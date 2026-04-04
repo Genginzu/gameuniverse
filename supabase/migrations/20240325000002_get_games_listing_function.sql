@@ -126,6 +126,5 @@ BEGIN
   );
 END;
 $$;
-
 COMMENT ON FUNCTION public.get_games_listing IS
   'Optimized server-side function for the games listing API. Returns paginated games with translations, genres, and companies in a single query to avoid PostgREST nested-join timeouts.';

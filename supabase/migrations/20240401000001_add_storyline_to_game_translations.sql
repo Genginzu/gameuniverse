@@ -4,6 +4,5 @@
 
 ALTER TABLE public.game_translations
   ADD COLUMN IF NOT EXISTS storyline TEXT;
-
 COMMENT ON COLUMN public.game_translations.storyline IS
   'Scénario / histoire détaillée du jeu (champ storyline IGDB). Distinct de description qui stocke le résumé court (summary).';

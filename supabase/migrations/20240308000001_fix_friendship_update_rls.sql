@@ -6,7 +6,6 @@
 
 -- Drop the existing policy
 DROP POLICY IF EXISTS "Receiver can update pending requests" ON public.friendships;
-
 -- Recreate with explicit WITH CHECK
 CREATE POLICY "Receiver can update pending requests"
   ON public.friendships FOR UPDATE

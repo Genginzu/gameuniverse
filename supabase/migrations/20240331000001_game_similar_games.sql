@@ -15,55 +15,45 @@ CREATE TABLE IF NOT EXISTS public.game_similar_games (
   created_at TIMESTAMP DEFAULT NOW(),
   CONSTRAINT uq_game_similar_games_game_igdb UNIQUE (game_id, similar_igdb_id)
 );
-
 -- =============================================================================
 -- 2. Index
 -- =============================================================================
 CREATE INDEX IF NOT EXISTS idx_game_similar_games_game_id
   ON public.game_similar_games (game_id);
-
 CREATE INDEX IF NOT EXISTS idx_game_similar_games_similar_igdb_id
   ON public.game_similar_games (similar_igdb_id);
-
 CREATE INDEX IF NOT EXISTS idx_game_similar_games_similar_game_id
   ON public.game_similar_games (similar_game_id)
   WHERE similar_game_id IS NOT NULL;
-
 -- =============================================================================
 -- 3. Row Level Security
 -- =============================================================================
 ALTER TABLE public.game_similar_games ENABLE ROW LEVEL SECURITY;
-
 CREATE POLICY "game_similar_games_select_public"
   ON public.game_similar_games
   FOR SELECT
   USING (true);
-
 CREATE POLICY "game_similar_games_insert_service_role"
   ON public.game_similar_games
   FOR INSERT
   TO service_role
   WITH CHECK (true);
-
 CREATE POLICY "game_similar_games_update_service_role"
   ON public.game_similar_games
   FOR UPDATE
   TO service_role
   USING (true)
   WITH CHECK (true);
-
 CREATE POLICY "game_similar_games_delete_service_role"
   ON public.game_similar_games
   FOR DELETE
   TO service_role
   USING (true);
-
 -- =============================================================================
 -- 4. Documentation
 -- =============================================================================
 COMMENT ON TABLE public.game_similar_games IS
   'Jeux similaires associés à un jeu, importés depuis le champ similar_games de l''API IGDB.';
-
 COMMENT ON COLUMN public.game_similar_games.id IS
   'Identifiant unique UUID généré automatiquement.';
 COMMENT ON COLUMN public.game_similar_games.game_id IS

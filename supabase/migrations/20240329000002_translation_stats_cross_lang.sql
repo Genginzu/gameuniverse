@@ -76,7 +76,6 @@ BEGIN
     updated_at = EXCLUDED.updated_at;
 END;
 $fn$;
-
 -- Update the main refresh function to also compute cross-language stats
 CREATE OR REPLACE FUNCTION refresh_translation_stats()
 RETURNS void
@@ -110,9 +109,7 @@ BEGIN
   PERFORM refresh_translation_stats_cross_lang('ratings',             'rating_translations',             'rating_id',             ARRAY['description']);
 END;
 $fn$;
-
 COMMENT ON FUNCTION refresh_translation_stats_cross_lang IS
   'Computes cross-language translation stats: an entity is complete only when ALL required fields are filled in EVERY supported language.';
-
 -- Populate the new _all rows
 SELECT refresh_translation_stats();

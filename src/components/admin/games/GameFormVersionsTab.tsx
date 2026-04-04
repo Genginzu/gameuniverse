@@ -1,22 +1,58 @@
 "use client";
 
+import { useEffect } from "react";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
 import type { GameFormTabProps } from "@/types/admin-games";
+import { SUPPORTED_LANGUAGES } from "@/types/admin-games";
 import { IgdbFieldIndicator } from "./IgdbFieldIndicator";
 import { Icon } from "@iconify/react";
 
 export function GameFormVersionsTab({ form, t, isIgdbField }: GameFormTabProps) {
   const watchedVersions = form.watch("versions");
 
+  // Ensure every version has translation entries for all supported languages
+  useEffect(() => {
+    const versions = form.getValues("versions");
+    let changed = false;
+    const updated = versions.map((v) => {
+      const translations = v.translations ?? [];
+      const missing = SUPPORTED_LANGUAGES.filter(
+        (l) => !translations.some((tr) => tr.language_code === l.code)
+      );
+      if (missing.length > 0) {
+        changed = true;
+        return {
+          ...v,
+          translations: [
+            ...translations,
+            ...missing.map((l) => ({ language_code: l.code, title: "", description: "" })),
+          ],
+        };
+      }
+      return v;
+    });
+    if (changed) form.setValue("versions", updated);
+  }, [watchedVersions.length, form]);
+
   const addVersion = () => {
     const current = form.getValues("versions");
     form.setValue("versions", [
       ...current,
-      { version_title: "", description: "", cover_image_url: "", display_order: current.length },
+      {
+        version_title: "",
+        description: "",
+        cover_image_url: "",
+        display_order: current.length,
+        translations: SUPPORTED_LANGUAGES.map((l) => ({
+          language_code: l.code,
+          title: "",
+          description: "",
+        })),
+      },
     ]);
   };
 
@@ -42,12 +78,12 @@ export function GameFormVersionsTab({ form, t, isIgdbField }: GameFormTabProps) 
         </p>
       ) : (
         <div className="space-y-3">
-          {watchedVersions.map((_, idx) => (
+          {watchedVersions.map((version, idx) => (
             <div
               key={idx}
               className="rounded-xl border border-gray-100 bg-gray-50/60 p-4 dark:border-gray-700/30 dark:bg-gray-900/20"
             >
-              <div className="flex items-start gap-4">
+              <div className="mb-3 flex items-start gap-4">
                 {form.watch(`versions.${idx}.cover_image_url`) && (
                   <div className="relative h-24 w-16 shrink-0 rounded-lg border border-gray-200 dark:border-gray-700">
                     <Image
@@ -72,11 +108,6 @@ export function GameFormVersionsTab({ form, t, isIgdbField }: GameFormTabProps) 
                     placeholder={t("versionCoverUrl") ?? "URL de l'image de couverture"}
                     {...form.register(`versions.${idx}.cover_image_url`)}
                   />
-                  <Textarea
-                    placeholder={t("versionDescription") ?? "Description de la version..."}
-                    rows={2}
-                    {...form.register(`versions.${idx}.description`)}
-                  />
                 </div>
                 <button
                   type="button"
@@ -86,6 +117,30 @@ export function GameFormVersionsTab({ form, t, isIgdbField }: GameFormTabProps) 
                 >
                   <Icon icon="fa:times" className="h-3.5 w-3.5" />
                 </button>
+              </div>
+
+              {/* Translations per language */}
+              <div className="space-y-3 border-t border-gray-200/60 pt-3 dark:border-gray-700/30">
+                {(version.translations ?? []).map((tr, trIdx) => {
+                  const lang = SUPPORTED_LANGUAGES.find((l) => l.code === tr.language_code);
+                  if (!lang) return null;
+                  return (
+                    <div key={tr.language_code} className="space-y-1.5">
+                      <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                        {lang.flag} {lang.label}
+                      </span>
+                      <Input
+                        placeholder={`${t("versionTitle") ?? "Titre"} (${lang.label})`}
+                        {...form.register(`versions.${idx}.translations.${trIdx}.title`)}
+                      />
+                      <Textarea
+                        placeholder={`${t("versionDescription") ?? "Description"} (${lang.label})`}
+                        rows={2}
+                        {...form.register(`versions.${idx}.translations.${trIdx}.description`)}
+                      />
+                    </div>
+                  );
+                })}
               </div>
             </div>
           ))}

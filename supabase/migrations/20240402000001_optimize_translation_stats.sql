@@ -7,10 +7,8 @@
 -- =============================================================================
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_game_translations_game_lang
   ON public.game_translations(game_id, language_code);
-
 CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_character_translations_char_lang
   ON public.character_translations(character_id, language_code);
-
 -- =============================================================================
 -- 2. Rewrite the per-type helper to compute all languages in one query
 -- =============================================================================
@@ -119,7 +117,6 @@ BEGIN
   ) USING p_entity_type, v_total, v_langs, array_length(v_langs, 1);
 END;
 $fn$;
-
 -- =============================================================================
 -- 3. Simplify the main function (no more separate cross-lang calls)
 -- =============================================================================

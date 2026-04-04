@@ -50,11 +50,18 @@ export const adminGameArtworkSchema = z.object({
   is_featured: z.boolean().default(false),
 });
 
+export const adminGameVersionTranslationSchema = z.object({
+  language_code: z.string().length(2, "Language code must be 2 characters"),
+  title: z.string().max(255).optional().or(z.literal("")),
+  description: z.string().max(5000).optional().or(z.literal("")),
+});
+
 export const adminGameVersionSchema = z.object({
   version_title: z.string().min(1, "Version title is required").max(255),
   description: z.string().max(5000).optional().or(z.literal("")),
   cover_image_url: z.string().url("Invalid URL").optional().or(z.literal("")),
   display_order: z.number().int().min(0).optional().nullable(),
+  translations: z.array(adminGameVersionTranslationSchema).default([]),
 });
 
 export const adminGameLanguageSchema = z.object({
@@ -159,6 +166,7 @@ export type AdminGameScreenshot = z.infer<typeof adminGameScreenshotSchema>;
 export type AdminGameArtwork = z.infer<typeof adminGameArtworkSchema>;
 export type AdminGameRating = z.infer<typeof adminGameRatingSchema>;
 export type AdminGameVersion = z.infer<typeof adminGameVersionSchema>;
+export type AdminGameVersionTranslation = z.infer<typeof adminGameVersionTranslationSchema>;
 export type AdminGameLanguage = z.infer<typeof adminGameLanguageSchema>;
 export type AdminGamePrice = z.infer<typeof adminGamePriceSchema>;
 export type AdminGameVideo = z.infer<typeof adminGameVideoSchema>;

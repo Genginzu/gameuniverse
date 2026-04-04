@@ -48,7 +48,6 @@ BEGIN
   ORDER BY gp.price ASC, s.name ASC;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- Fonction pour récupérer le meilleur prix d'un jeu
 CREATE OR REPLACE FUNCTION public.get_best_price(game_uuid UUID)
 RETURNS TABLE (
@@ -91,7 +90,6 @@ BEGIN
   LIMIT 1;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- Fonction pour comparer les prix d'un jeu
 CREATE OR REPLACE FUNCTION public.compare_game_prices(game_uuid UUID)
 RETURNS TABLE (
@@ -146,17 +144,14 @@ BEGIN
   GROUP BY game_uuid;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- Commentaires pour documentation
 COMMENT ON FUNCTION public.get_game_prices(UUID, TEXT, TEXT) IS 'Récupère tous les prix disponibles pour un jeu avec filtres optionnels par magasin et plateforme';
 COMMENT ON FUNCTION public.get_best_price(UUID) IS 'Récupère le meilleur prix disponible pour un jeu';
 COMMENT ON FUNCTION public.compare_game_prices(UUID) IS 'Compare tous les prix disponibles pour un jeu et retourne des statistiques';
-
 -- Accorder les permissions appropriées
 GRANT EXECUTE ON FUNCTION public.get_game_prices(UUID, TEXT, TEXT) TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.get_best_price(UUID) TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.compare_game_prices(UUID) TO anon, authenticated;
-
 -- ========================================
 -- FONCTIONS DE GESTION DES MAGASINS
 -- ========================================
@@ -187,7 +182,6 @@ BEGIN
   ORDER BY s.name ASC;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- Fonction pour rechercher des magasins par nom
 CREATE OR REPLACE FUNCTION public.search_stores(search_term TEXT)
 RETURNS TABLE (
@@ -217,7 +211,6 @@ BEGIN
     s.name ASC;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- Fonction pour valider les données d'un magasin
 CREATE OR REPLACE FUNCTION public.validate_store_data(
   store_name TEXT,
@@ -263,7 +256,6 @@ BEGIN
   RETURN QUERY SELECT TRUE, 'Données valides'::TEXT;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- Fonction pour créer un nouveau magasin avec validation
 CREATE OR REPLACE FUNCTION public.create_store(
   store_name TEXT,
@@ -296,7 +288,6 @@ BEGIN
   RETURN QUERY SELECT TRUE, new_store_id, 'Magasin créé avec succès'::TEXT;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- Fonction pour mettre à jour un magasin
 CREATE OR REPLACE FUNCTION public.update_store(
   store_id UUID,
@@ -347,7 +338,6 @@ BEGIN
   RETURN QUERY SELECT TRUE, 'Magasin mis à jour avec succès'::TEXT;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- Fonction pour obtenir les statistiques d'un magasin
 CREATE OR REPLACE FUNCTION public.get_store_stats(store_uuid UUID)
 RETURNS TABLE (
@@ -375,7 +365,6 @@ BEGIN
   GROUP BY s.id, s.name;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- Commentaires pour documentation
 COMMENT ON FUNCTION public.get_active_stores() IS 'Récupère tous les magasins actifs';
 COMMENT ON FUNCTION public.search_stores(TEXT) IS 'Recherche des magasins par nom ou URL';
@@ -383,7 +372,6 @@ COMMENT ON FUNCTION public.validate_store_data(TEXT, TEXT, TEXT) IS 'Valide les 
 COMMENT ON FUNCTION public.create_store(TEXT, TEXT, TEXT) IS 'Crée un nouveau magasin avec validation';
 COMMENT ON FUNCTION public.update_store(UUID, TEXT, TEXT, TEXT, BOOLEAN) IS 'Met à jour un magasin existant';
 COMMENT ON FUNCTION public.get_store_stats(UUID) IS 'Récupère les statistiques d''un magasin';
-
 -- Accorder les permissions appropriées
 GRANT EXECUTE ON FUNCTION public.get_active_stores() TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.search_stores(TEXT) TO anon, authenticated;

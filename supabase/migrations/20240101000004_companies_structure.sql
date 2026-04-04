@@ -16,7 +16,6 @@ CREATE TABLE public.companies (
   created_at TIMESTAMP DEFAULT NOW(),
   updated_at TIMESTAMP DEFAULT NOW()
 );
-
 -- Table de liaison jeux-entreprises avec rôles
 CREATE TABLE public.game_companies (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -27,22 +26,18 @@ CREATE TABLE public.game_companies (
   created_at TIMESTAMP DEFAULT NOW(),
   UNIQUE(game_id, company_id, role)
 );
-
 -- Index pour les performances
 CREATE INDEX idx_companies_slug ON companies(slug);
 CREATE INDEX idx_companies_name ON companies(name);
 CREATE INDEX idx_companies_type ON companies(company_type);
 CREATE INDEX idx_companies_active ON companies(is_active) WHERE is_active = true;
-
 CREATE INDEX idx_game_companies_game_id ON game_companies(game_id);
 CREATE INDEX idx_game_companies_company_id ON game_companies(company_id);
 CREATE INDEX idx_game_companies_role ON game_companies(role);
 CREATE INDEX idx_game_companies_primary ON game_companies(game_id, role, is_primary) WHERE is_primary = true;
-
 -- Trigger pour updated_at
 CREATE TRIGGER update_companies_updated_at BEFORE UPDATE ON companies
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-
 -- Migrer les données existantes vers la nouvelle structure
 -- Créer les entreprises à partir des développeurs existants
 INSERT INTO companies (name, slug, company_type)
@@ -53,7 +48,6 @@ SELECT DISTINCT
 FROM games 
 WHERE developer IS NOT NULL
 ON CONFLICT (name) DO NOTHING;
-
 -- Créer les entreprises à partir des éditeurs existants
 INSERT INTO companies (name, slug, company_type)
 SELECT DISTINCT 
@@ -63,7 +57,6 @@ SELECT DISTINCT
 FROM games 
 WHERE publisher IS NOT NULL
 ON CONFLICT (name) DO UPDATE SET company_type = 'both' WHERE companies.company_type != 'both';
-
 -- Créer les relations développeur
 INSERT INTO game_companies (game_id, company_id, role, is_primary)
 SELECT 
@@ -75,7 +68,6 @@ FROM games g
 JOIN companies c ON c.name = g.developer
 WHERE g.developer IS NOT NULL
 ON CONFLICT (game_id, company_id, role) DO NOTHING;
-
 -- Créer les relations éditeur
 INSERT INTO game_companies (game_id, company_id, role, is_primary)
 SELECT 
@@ -87,36 +79,27 @@ FROM games g
 JOIN companies c ON c.name = g.publisher
 WHERE g.publisher IS NOT NULL
 ON CONFLICT (game_id, company_id, role) DO NOTHING;
-
 -- Supprimer les anciennes colonnes developer et publisher
 ALTER TABLE games DROP COLUMN IF EXISTS developer;
 ALTER TABLE games DROP COLUMN IF EXISTS publisher;
-
 -- RLS pour les nouvelles tables
 ALTER TABLE companies ENABLE ROW LEVEL SECURITY;
 ALTER TABLE game_companies ENABLE ROW LEVEL SECURITY;
-
 -- Politiques pour lecture publique
 CREATE POLICY "Companies are viewable by everyone" ON companies 
   FOR SELECT USING (true);
-
 CREATE POLICY "Game companies relations are viewable by everyone" ON game_companies 
   FOR SELECT USING (true);
-
 -- Politiques pour administration
 CREATE POLICY "Admins can manage companies" ON companies 
   FOR ALL USING (public.is_admin());
-
 CREATE POLICY "Admins can manage game companies" ON game_companies 
   FOR ALL USING (public.is_admin());
-
 -- Politiques pour développement (à supprimer en production)
 CREATE POLICY "Allow insert companies for development" ON companies 
   FOR INSERT WITH CHECK (true);
-
 CREATE POLICY "Allow insert game companies for development" ON game_companies 
   FOR INSERT WITH CHECK (true);
-
 -- Fonction utilitaire pour récupérer les entreprises d'un jeu par rôle
 CREATE OR REPLACE FUNCTION get_game_companies(game_uuid UUID, company_role TEXT DEFAULT NULL)
 RETURNS TABLE (

@@ -10,10 +10,8 @@
 -- friendships: Add indexes for activity feed queries
 CREATE INDEX IF NOT EXISTS idx_friendships_sender_created_desc
   ON public.friendships (sender_id, created_at DESC);
-
 CREATE INDEX IF NOT EXISTS idx_friendships_receiver_updated_desc
   ON public.friendships (receiver_id, updated_at DESC);
-
 -- ========================================
 -- FUNCTION get_player_activity (replace)
 -- ========================================
@@ -274,6 +272,5 @@ BEGIN
   RETURN result;
 END;
 $_fn$;
-
 COMMENT ON FUNCTION get_player_activity(UUID, TEXT, TEXT, INT, INT)
   IS 'Aggregates player activity from game_reviews, character_comments, user_library, character_favorites, game_collections and friendships into a paginated JSONB feed sorted by date descending. Supports optional filtering by event type and locale-aware game/character names.';

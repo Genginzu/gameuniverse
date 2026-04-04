@@ -72,7 +72,6 @@ BEGIN
   END LOOP;
 END;
 $$;
-
 -- Main function: refresh stats for all entity types
 CREATE OR REPLACE FUNCTION refresh_translation_stats()
 RETURNS void
@@ -93,6 +92,5 @@ BEGIN
   PERFORM refresh_translation_stats_for_type('ratings', 'rating_translations', 'rating_id', ARRAY['description']);
 END;
 $$;
-
 -- Run initial refresh to populate the cache
 SELECT refresh_translation_stats();

@@ -11,24 +11,19 @@ CREATE TABLE public.character_comments (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   UNIQUE(user_id, character_id)
 );
-
 -- Index pour les performances
 CREATE INDEX idx_character_comments_character_id ON character_comments(character_id);
 CREATE INDEX idx_character_comments_user_id ON character_comments(user_id);
 CREATE INDEX idx_character_comments_created_at ON character_comments(created_at DESC);
-
 -- RLS
 ALTER TABLE character_comments ENABLE ROW LEVEL SECURITY;
-
 -- Lecture publique
 CREATE POLICY "Comments are publicly readable"
   ON character_comments FOR SELECT USING (true);
-
 -- Insertion par l'auteur authentifié
 CREATE POLICY "Users can insert their own comments"
   ON character_comments FOR INSERT
   WITH CHECK (auth.uid() = user_id);
-
 -- Mise à jour par l'auteur
 CREATE POLICY "Users can update their own comments"
   ON character_comments FOR UPDATE

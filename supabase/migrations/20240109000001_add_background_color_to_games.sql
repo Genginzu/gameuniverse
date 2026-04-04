@@ -4,10 +4,8 @@
 -- Modify the existing background_color column to have proper type and default
 ALTER TABLE public.games ALTER COLUMN background_color TYPE VARCHAR(7);
 ALTER TABLE public.games ALTER COLUMN background_color SET DEFAULT '#000000';
-
 -- Update comment to explain the column
 COMMENT ON COLUMN public.games.background_color IS 'Hex color code for game background theme (e.g., #FF5733)';
-
 -- Update existing games with some default colors based on their genre or randomly
 -- This is optional - you can remove this section if you prefer to set colors manually
 UPDATE public.games 

@@ -13,19 +13,15 @@ CREATE TABLE public.game_versions (
   created_at TIMESTAMP DEFAULT NOW(),
   UNIQUE(game_id, igdb_id)
 );
-
 -- Index pour les performances
 CREATE INDEX idx_game_versions_game_id ON game_versions(game_id);
 CREATE INDEX idx_game_versions_igdb_id ON game_versions(igdb_id);
-
 -- Activation RLS
 ALTER TABLE game_versions ENABLE ROW LEVEL SECURITY;
-
 -- Politique de lecture publique
 CREATE POLICY "Allow public read access to game_versions"
   ON game_versions FOR SELECT
   USING (true);
-
 -- Politique d'écriture pour service_role uniquement
 CREATE POLICY "Allow service role full access to game_versions"
   ON game_versions FOR ALL

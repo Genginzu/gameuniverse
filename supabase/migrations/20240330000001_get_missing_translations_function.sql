@@ -19,7 +19,7 @@ LANGUAGE plpgsql
 STABLE
 SECURITY DEFINER
 SET search_path = public
-AS $func$
+AS $$
 DECLARE
   v_entity_table TEXT;
   v_translation_table TEXT;
@@ -29,6 +29,7 @@ DECLARE
   v_offset INT;
   v_sql TEXT;
 BEGIN
+  -- Map entity type to table names
   CASE p_entity_type
     WHEN 'games' THEN
       v_entity_table := 'games';
@@ -86,15 +87,21 @@ BEGIN
 
   v_offset := (p_page - 1) * p_limit;
 
+  -- Build the field completeness check:
+  -- For each required field, check it IS NOT NULL AND != ''
   SELECT string_agg(
     format('(%I IS NOT NULL AND %I <> '''')', f, f),
     ' AND '
   ) INTO v_field_check
   FROM unnest(p_required_fields) AS f;
 
+  -- Build the main query.
+  -- An entity is "complete" for a language if a translation row exists
+  -- with ALL required fields filled. An entity has missing translations
+  -- if the count of complete languages < total expected languages.
   v_sql := format(
     'WITH entity_base AS ('
-    '  SELECT e.id, e.%I::TEXT AS identifier'
+    '  SELECT e.id, e.%I AS identifier'
     '  FROM %I e'
     '  WHERE EXISTS ('
     '    SELECT 1 FROM %I t WHERE t.%I = e.id'
@@ -140,4 +147,4 @@ BEGIN
 
   RETURN QUERY EXECUTE v_sql USING p_languages;
 END;
-$func$;
+$$;

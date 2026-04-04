@@ -39,7 +39,7 @@ BEGIN
       'Untitled'
     )::TEXT AS title,
     COALESCE(
-      ARRAY_AGG(gnt.name::TEXT ORDER BY gnt.name) FILTER (WHERE gnt.name IS NOT NULL),
+      ARRAY_AGG(gnt.name ORDER BY gnt.name) FILTER (WHERE gnt.name IS NOT NULL),
       ARRAY[]::TEXT[]
     ) AS genre_names,
     COUNT(*) OVER() AS total_count
@@ -74,6 +74,5 @@ BEGIN
   OFFSET offset_val;
 END;
 $_fn$;
-
 COMMENT ON FUNCTION get_common_games(UUID, UUID, TEXT, INT, INT)
   IS 'Retourne les jeux en commun entre deux joueurs avec métadonnées (titre localisé, genres, image de couverture). Utilise une window function pour le total sans requête supplémentaire.';

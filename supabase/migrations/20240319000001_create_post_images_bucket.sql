@@ -15,7 +15,6 @@ VALUES (
   ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif']
 )
 ON CONFLICT (id) DO NOTHING;
-
 -- =============================================================================
 -- 2. Politiques RLS
 -- =============================================================================
@@ -24,7 +23,6 @@ ON CONFLICT (id) DO NOTHING;
 CREATE POLICY "Post images are publicly readable"
   ON storage.objects FOR SELECT
   USING (bucket_id = 'post-images');
-
 -- Upload réservé aux utilisateurs authentifiés, dans leur propre dossier
 CREATE POLICY "Authenticated users can upload post images"
   ON storage.objects FOR INSERT
@@ -33,7 +31,6 @@ CREATE POLICY "Authenticated users can upload post images"
     bucket_id = 'post-images'
     AND auth.uid()::text = (storage.foldername(name))[1]
   );
-
 -- Suppression réservée au propriétaire du fichier
 CREATE POLICY "Users can delete their own post images"
   ON storage.objects FOR DELETE

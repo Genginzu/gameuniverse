@@ -8,14 +8,12 @@ CREATE POLICY "game_similar_games_insert_authenticated"
   FOR INSERT
   TO authenticated
   WITH CHECK (true);
-
 CREATE POLICY "game_similar_games_update_authenticated"
   ON public.game_similar_games
   FOR UPDATE
   TO authenticated
   USING (true)
   WITH CHECK (true);
-
 CREATE POLICY "game_similar_games_delete_authenticated"
   ON public.game_similar_games
   FOR DELETE

@@ -260,12 +260,19 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       version_title: string;
       description: string | null;
       cover_image_url: string | null;
+      game_version_translations?: Array<{
+        language_code: string;
+        title: string;
+        description: string | null;
+      }>;
     }> = [];
 
     try {
       const { data: versionsData } = await supabase
         .from("game_versions")
-        .select("id, igdb_id, version_title, description, cover_image_url")
+        .select(
+          "id, igdb_id, version_title, description, cover_image_url, game_version_translations(language_code, title, description)"
+        )
         .eq("game_id", game.id)
         .order("display_order", { ascending: true });
 
@@ -697,14 +704,18 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           }
         : null;
 
-    // Process versions - map to GameVersion format (Requirements 5.2, 5.3)
-    const versions = gameVersions.map((v) => ({
-      id: v.id,
-      igdbId: v.igdb_id,
-      title: v.version_title,
-      description: v.description,
-      coverImageUrl: v.cover_image_url,
-    }));
+    // Process versions - map to GameVersion format with locale-aware translations
+    const versions = gameVersions.map((v) => {
+      const tr = v.game_version_translations?.find((t) => t.language_code === locale);
+      const fallbackTr = v.game_version_translations?.find((t) => t.language_code === "fr");
+      return {
+        id: v.id,
+        igdbId: v.igdb_id,
+        title: tr?.title || fallbackTr?.title || v.version_title,
+        description: tr?.description || fallbackTr?.description || v.description,
+        coverImageUrl: v.cover_image_url,
+      };
+    });
 
     // Process DLC/extensions - map to GameDlcExtension format (Requirements 6.1, 6.2, 7.5)
     const dlcExtensions = gameDlcExtensions.map((d) => ({

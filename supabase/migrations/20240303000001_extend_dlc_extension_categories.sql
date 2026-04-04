@@ -8,7 +8,6 @@
 -- =============================================================================
 ALTER TABLE public.game_dlc_extensions
   DROP CONSTRAINT IF EXISTS game_dlc_extensions_category_check;
-
 -- =============================================================================
 -- 2. Ajouter la nouvelle contrainte avec toutes les catégories
 -- =============================================================================
@@ -20,7 +19,6 @@ ALTER TABLE public.game_dlc_extensions
     'remake', 'remaster', 'expanded_game',
     'port', 'fork', 'pack', 'update'
   ));
-
 -- =============================================================================
 -- 3. Mise à jour de la documentation
 -- =============================================================================

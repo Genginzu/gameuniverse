@@ -163,6 +163,5 @@ BEGIN
   );
 END;
 $fn$;
-
 COMMENT ON FUNCTION public.get_admin_games_listing IS
   'Optimized server-side function for the admin games listing API. Returns paginated games with all translations, genres, companies, and media counts in a single query to avoid PostgREST nested-join timeouts.';

@@ -63,6 +63,11 @@ export interface GameApiResponse {
     description: string | null;
     cover_image_url: string | null;
     display_order: number | null;
+    translations?: Array<{
+      language_code: string;
+      title: string;
+      description: string | null;
+    }>;
   }>;
   languages: Array<{
     language_code: string;
@@ -147,6 +152,11 @@ export function toFormData(game: GameApiResponse): AdminGameFormData {
       description: v.description ?? "",
       cover_image_url: v.cover_image_url ?? "",
       display_order: v.display_order,
+      translations: (v.translations ?? []).map((t) => ({
+        language_code: t.language_code,
+        title: t.title ?? "",
+        description: t.description ?? "",
+      })),
     })),
     languages: (game.languages ?? []).map((l) => ({
       language_code: l.language_code,

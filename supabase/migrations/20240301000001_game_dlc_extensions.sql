@@ -19,34 +19,28 @@ CREATE TABLE IF NOT EXISTS public.game_dlc_extensions (
   created_at TIMESTAMP DEFAULT NOW(),
   CONSTRAINT uq_game_dlc_extensions_game_igdb UNIQUE (game_id, igdb_id)
 );
-
 -- =============================================================================
 -- 2. Index
 -- =============================================================================
 CREATE INDEX IF NOT EXISTS idx_game_dlc_extensions_game_id
   ON public.game_dlc_extensions (game_id);
-
 CREATE INDEX IF NOT EXISTS idx_game_dlc_extensions_igdb_id
   ON public.game_dlc_extensions (igdb_id);
-
 -- =============================================================================
 -- 3. Row Level Security
 -- =============================================================================
 ALTER TABLE public.game_dlc_extensions ENABLE ROW LEVEL SECURITY;
-
 -- Lecture publique pour tous les utilisateurs (authentifiés ou anonymes)
 CREATE POLICY "game_dlc_extensions_select_public"
   ON public.game_dlc_extensions
   FOR SELECT
   USING (true);
-
 -- Écriture complète réservée au service_role (via INSERT)
 CREATE POLICY "game_dlc_extensions_insert_service_role"
   ON public.game_dlc_extensions
   FOR INSERT
   TO service_role
   WITH CHECK (true);
-
 -- Mise à jour réservée au service_role
 CREATE POLICY "game_dlc_extensions_update_service_role"
   ON public.game_dlc_extensions
@@ -54,20 +48,17 @@ CREATE POLICY "game_dlc_extensions_update_service_role"
   TO service_role
   USING (true)
   WITH CHECK (true);
-
 -- Suppression réservée au service_role
 CREATE POLICY "game_dlc_extensions_delete_service_role"
   ON public.game_dlc_extensions
   FOR DELETE
   TO service_role
   USING (true);
-
 -- =============================================================================
 -- 4. Documentation
 -- =============================================================================
 COMMENT ON TABLE public.game_dlc_extensions IS
   'Contenus additionnels (DLC, expansions, bundles) associés à un jeu principal, importés depuis IGDB.';
-
 COMMENT ON COLUMN public.game_dlc_extensions.id IS
   'Identifiant unique UUID généré automatiquement.';
 COMMENT ON COLUMN public.game_dlc_extensions.game_id IS

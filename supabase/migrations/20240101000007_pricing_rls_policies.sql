@@ -4,37 +4,28 @@
 -- Activation RLS sur les nouvelles tables
 ALTER TABLE stores ENABLE ROW LEVEL SECURITY;
 ALTER TABLE game_prices ENABLE ROW LEVEL SECURITY;
-
 -- Politiques de lecture publique pour les magasins
 CREATE POLICY "Stores are viewable by everyone" ON stores 
   FOR SELECT USING (true);
-
 -- Politiques de lecture publique pour les prix de jeux
 CREATE POLICY "Game prices are viewable by everyone" ON game_prices 
   FOR SELECT USING (true);
-
 -- Politiques d'administration pour les magasins (rôle admin requis)
 CREATE POLICY "Admins can manage stores" ON stores 
   FOR ALL USING (public.is_admin());
-
 -- Politiques d'administration pour les prix de jeux (rôle admin requis)
 CREATE POLICY "Admins can manage game prices" ON game_prices 
   FOR ALL USING (public.is_admin());
-
 -- Politiques pour permettre l'insertion de données de test en développement
 -- Ces politiques peuvent être supprimées en production
 CREATE POLICY "Allow insert stores for development" ON stores 
   FOR INSERT WITH CHECK (true);
-
 CREATE POLICY "Allow insert game prices for development" ON game_prices 
   FOR INSERT WITH CHECK (true);
-
 CREATE POLICY "Allow update stores for development" ON stores 
   FOR UPDATE USING (true);
-
 CREATE POLICY "Allow update game prices for development" ON game_prices 
   FOR UPDATE USING (true);
-
 -- Fonction pour nettoyer les prix orphelins
 CREATE OR REPLACE FUNCTION public.cleanup_orphaned_prices()
 RETURNS VOID AS $$
@@ -54,7 +45,6 @@ BEGIN
     AND is_available = true;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- Fonction pour valider les données de prix
 CREATE OR REPLACE FUNCTION public.validate_price_data()
 RETURNS TABLE(
@@ -123,7 +113,6 @@ BEGIN
   HAVING COUNT(*) > 0;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
-
 -- Commentaires pour documentation
 COMMENT ON FUNCTION public.cleanup_orphaned_prices() IS 'Nettoie les prix orphelins et désactive les prix des magasins inactifs';
 COMMENT ON FUNCTION public.validate_price_data() IS 'Valide l''intégrité des données de prix et retourne les problèmes détectés';

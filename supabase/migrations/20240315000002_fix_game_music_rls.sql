@@ -5,7 +5,6 @@
 
 -- Drop the broken policy (may not exist if migration was re-applied)
 DROP POLICY IF EXISTS "game_music_admin_write" ON public.game_music;
-
 -- Recreate with the correct function
 DO $$
 BEGIN
@@ -19,7 +18,6 @@ BEGIN
       USING (public.is_admin());
   END IF;
 END $$;
-
 -- Add development insert/update policies if missing
 DO $$
 BEGIN

@@ -59,10 +59,8 @@ BEGIN
   ORDER BY gph.recorded_at ASC;
 END;
 $$;
-
 COMMENT ON FUNCTION public.get_price_history(UUID, TIMESTAMP, TIMESTAMP, TEXT, TEXT)
   IS 'Retourne l''historique de prix d''un jeu avec jointure sur stores. Période par défaut : 12 derniers mois. Filtres optionnels par magasin et plateforme.';
-
 -- ============================================================================
 -- Fonction : get_price_history_stats
 -- Retourne les statistiques agrégées (min, max, moyenne, devise, total)
@@ -92,16 +90,13 @@ BEGIN
   WHERE gph.game_id = game_uuid;
 END;
 $$;
-
 COMMENT ON FUNCTION public.get_price_history_stats(UUID)
   IS 'Retourne les statistiques agrégées de l''historique de prix d''un jeu : prix min, max, moyen, devise majoritaire et nombre total de snapshots.';
-
 -- ============================================================================
 -- Permissions : accès en exécution pour les rôles anon et authenticated
 -- ============================================================================
 
 GRANT EXECUTE ON FUNCTION public.get_price_history(UUID, TIMESTAMP, TIMESTAMP, TEXT, TEXT) TO anon;
 GRANT EXECUTE ON FUNCTION public.get_price_history(UUID, TIMESTAMP, TIMESTAMP, TEXT, TEXT) TO authenticated;
-
 GRANT EXECUTE ON FUNCTION public.get_price_history_stats(UUID) TO anon;
 GRANT EXECUTE ON FUNCTION public.get_price_history_stats(UUID) TO authenticated;

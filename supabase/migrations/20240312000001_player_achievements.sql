@@ -11,26 +11,21 @@ CREATE TABLE IF NOT EXISTS public.player_achievements (
   unlocked_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   UNIQUE(user_id, achievement_key)
 );
-
 -- 2. Index on user_id for fast lookups by player
 CREATE INDEX IF NOT EXISTS idx_player_achievements_user_id
   ON public.player_achievements(user_id);
-
 -- 3. Enable RLS
 ALTER TABLE public.player_achievements ENABLE ROW LEVEL SECURITY;
-
 -- 4. RLS policy: public read (anyone can see achievements)
 CREATE POLICY player_achievements_select_all
   ON public.player_achievements
   FOR SELECT
   USING (true);
-
 -- 5. RLS policy: owner insert (only the player can unlock their own achievements)
 CREATE POLICY player_achievements_insert_own
   ON public.player_achievements
   FOR INSERT
   WITH CHECK (auth.uid() = user_id);
-
 -- 6. Documentation
 COMMENT ON TABLE public.player_achievements IS 'Stores unlocked achievements/badges for each player';
 COMMENT ON COLUMN public.player_achievements.id IS 'Primary key (UUID, auto-generated)';

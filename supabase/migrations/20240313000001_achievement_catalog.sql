@@ -21,20 +21,16 @@ CREATE TABLE IF NOT EXISTS public.achievement_catalog (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   CONSTRAINT achievement_catalog_key_unique UNIQUE (key)
 );
-
 -- 2. Index on category for filtered queries
 CREATE INDEX IF NOT EXISTS idx_achievement_catalog_category
   ON public.achievement_catalog(category);
-
 -- 3. Enable RLS
 ALTER TABLE public.achievement_catalog ENABLE ROW LEVEL SECURITY;
-
 -- 4. RLS policy: public read (anyone can see the catalog)
 CREATE POLICY achievement_catalog_select_all
   ON public.achievement_catalog
   FOR SELECT
   USING (true);
-
 -- 5. Documentation
 COMMENT ON TABLE public.achievement_catalog IS 'Reference table of all available achievements with thresholds, XP values, and translations';
 COMMENT ON COLUMN public.achievement_catalog.id IS 'Primary key (UUID, auto-generated)';
@@ -50,7 +46,6 @@ COMMENT ON COLUMN public.achievement_catalog.description_fr IS 'Achievement desc
 COMMENT ON COLUMN public.achievement_catalog.description_en IS 'Achievement description in English';
 COMMENT ON COLUMN public.achievement_catalog.sort_order IS 'Display order within the category';
 COMMENT ON COLUMN public.achievement_catalog.created_at IS 'Timestamp when the catalog entry was created';
-
 -- 6. Seed data: 24 predefined achievements across 5 categories
 
 -- Category: library (6 achievements)
@@ -61,7 +56,6 @@ INSERT INTO public.achievement_catalog (key, category, tier, threshold, xp_value
   ('library_25',  'library', 'silver', 25,  100, 'Library',     'Collectionneur Averti',  'Seasoned Collector',   'Ajoutez 25 jeux à votre bibliothèque',                       'Add 25 games to your library',                        4),
   ('library_50',  'library', 'gold',   50,  200, 'BookMarked',  'Grand Collectionneur',  'Grand Collector',       'Ajoutez 50 jeux à votre bibliothèque',                       'Add 50 games to your library',                        5),
   ('library_100', 'library', 'gold',   100, 500, 'BookMarked',  'Maître Bibliothécaire', 'Master Librarian',      'Ajoutez 100 jeux à votre bibliothèque',                      'Add 100 games to your library',                       6);
-
 -- Category: playtime (5 achievements)
 INSERT INTO public.achievement_catalog (key, category, tier, threshold, xp_value, icon, name_fr, name_en, description_fr, description_en, sort_order) VALUES
   ('playtime_10h',   'playtime', 'bronze', 10,   25,  'Clock',     'Premiers Pas',         'First Steps',           'Jouez pendant 10 heures au total',                           'Play for a total of 10 hours',                        1),
@@ -69,7 +63,6 @@ INSERT INTO public.achievement_catalog (key, category, tier, threshold, xp_value
   ('playtime_100h',  'playtime', 'silver', 100,  100, 'Timer',     'Passionné',            'Enthusiast',            'Jouez pendant 100 heures au total',                          'Play for a total of 100 hours',                       3),
   ('playtime_500h',  'playtime', 'gold',   500,  250, 'Hourglass', 'Vétéran',              'Veteran',               'Jouez pendant 500 heures au total',                          'Play for a total of 500 hours',                       4),
   ('playtime_1000h', 'playtime', 'gold',   1000, 500, 'Hourglass', 'Légende Vivante',      'Living Legend',         'Jouez pendant 1000 heures au total',                         'Play for a total of 1000 hours',                      5);
-
 -- Category: reviews (5 achievements)
 INSERT INTO public.achievement_catalog (key, category, tier, threshold, xp_value, icon, name_fr, name_en, description_fr, description_en, sort_order) VALUES
   ('reviews_1',  'reviews', 'bronze', 1,  10,  'Star',          'Premier Avis',          'First Review',          'Rédigez votre premier avis',                                 'Write your first review',                             1),
@@ -77,14 +70,12 @@ INSERT INTO public.achievement_catalog (key, category, tier, threshold, xp_value
   ('reviews_10', 'reviews', 'silver', 10, 50,  'MessageSquare', 'Critique Confirmé',     'Confirmed Critic',      'Rédigez 10 avis',                                            'Write 10 reviews',                                    3),
   ('reviews_25', 'reviews', 'silver', 25, 100, 'MessageSquare', 'Critique Expert',       'Expert Critic',         'Rédigez 25 avis',                                            'Write 25 reviews',                                    4),
   ('reviews_50', 'reviews', 'gold',   50, 250, 'PenLine',       'Critique Légendaire',   'Legendary Critic',      'Rédigez 50 avis',                                            'Write 50 reviews',                                    5);
-
 -- Category: social (4 achievements)
 INSERT INTO public.achievement_catalog (key, category, tier, threshold, xp_value, icon, name_fr, name_en, description_fr, description_en, sort_order) VALUES
   ('social_1',  'social', 'bronze', 1,  10,  'UserPlus', 'Premier Ami',          'First Friend',          'Ajoutez votre premier ami',                                  'Add your first friend',                               1),
   ('social_5',  'social', 'bronze', 5,  25,  'UserPlus', 'Sociable',             'Sociable',              'Ajoutez 5 amis',                                             'Add 5 friends',                                       2),
   ('social_10', 'social', 'silver', 10, 50,  'Users',    'Populaire',            'Popular',               'Ajoutez 10 amis',                                            'Add 10 friends',                                      3),
   ('social_25', 'social', 'gold',   25, 100, 'Users',    'Star Sociale',         'Social Star',           'Ajoutez 25 amis',                                            'Add 25 friends',                                      4);
-
 -- Category: collections (4 achievements)
 INSERT INTO public.achievement_catalog (key, category, tier, threshold, xp_value, icon, name_fr, name_en, description_fr, description_en, sort_order) VALUES
   ('collections_1',  'collections', 'bronze', 1,  10,  'FolderPlus', 'Première Collection',   'First Collection',      'Créez votre première collection',                            'Create your first collection',                        1),

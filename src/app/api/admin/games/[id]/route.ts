@@ -184,7 +184,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           version_title,
           description,
           cover_image_url,
-          display_order
+          display_order,
+          game_version_translations(
+            language_code,
+            title,
+            description
+          )
         ),
         game_languages(
           id,
@@ -293,15 +298,25 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           ),
         })) || [],
       versions:
-        (game.game_versions as
-          | Array<{
-              id: string;
-              version_title: string;
-              description: string | null;
-              cover_image_url: string | null;
-              display_order: number | null;
-            }>
-          | undefined) ?? [],
+        (
+          game.game_versions as
+            | Array<{
+                id: string;
+                version_title: string;
+                description: string | null;
+                cover_image_url: string | null;
+                display_order: number | null;
+                game_version_translations?: Array<{
+                  language_code: string;
+                  title: string;
+                  description: string | null;
+                }>;
+              }>
+            | undefined
+        )?.map((v) => ({
+          ...v,
+          translations: v.game_version_translations ?? [],
+        })) ?? [],
       languages:
         (game.game_languages as
           | Array<{
@@ -623,22 +638,51 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     // Update versions if provided
     if (versions) {
+      // Delete existing version translations first (cascade will handle it via FK)
       await (supabase.from("game_versions") as ReturnType<typeof supabase.from>)
         .delete()
         .eq("game_id", gameId);
 
       if (versions.length > 0) {
-        const versionsWithGameId = versions.map((v) => ({
-          ...v,
-          game_id: gameId,
-          igdb_id: 0,
-        }));
-        const { error: versionsError } = await (
-          supabase.from("game_versions") as ReturnType<typeof supabase.from>
-        ).insert(versionsWithGameId);
+        for (const v of versions) {
+          const { translations: versionTranslations, ...versionData } = v;
+          const { data: inserted, error: versionError } = await (
+            supabase.from("game_versions") as ReturnType<typeof supabase.from>
+          )
+            .insert({
+              ...versionData,
+              game_id: gameId,
+              igdb_id: 0,
+            })
+            .select("id")
+            .single();
 
-        if (versionsError) {
-          logger.warn("Error updating versions", { error: versionsError });
+          if (versionError || !inserted) {
+            logger.warn("Error inserting version", { error: versionError });
+            continue;
+          }
+
+          // Insert translations for this version
+          if (versionTranslations && versionTranslations.length > 0) {
+            const translationRows = versionTranslations
+              .filter((t) => t.title || t.description)
+              .map((t) => ({
+                game_version_id: (inserted as { id: string }).id,
+                language_code: t.language_code,
+                title: t.title || "",
+                description: t.description || null,
+              }));
+
+            if (translationRows.length > 0) {
+              const { error: trError } = await (
+                supabase.from("game_version_translations") as ReturnType<typeof supabase.from>
+              ).insert(translationRows);
+
+              if (trError) {
+                logger.warn("Error inserting version translations", { error: trError });
+              }
+            }
+          }
         }
       }
     }

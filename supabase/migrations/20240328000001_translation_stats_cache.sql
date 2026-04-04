@@ -12,16 +12,13 @@ CREATE TABLE IF NOT EXISTS translation_stats_cache (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   PRIMARY KEY (entity_type, language_code)
 );
-
 COMMENT ON TABLE translation_stats_cache IS 'Pre-computed translation statistics for the admin dashboard';
 COMMENT ON COLUMN translation_stats_cache.entity_type IS 'Entity type (games, characters, genres, etc.)';
 COMMENT ON COLUMN translation_stats_cache.total IS 'Total entities with at least one translation row';
 COMMENT ON COLUMN translation_stats_cache.complete IS 'Entities with all required fields translated';
 COMMENT ON COLUMN translation_stats_cache.percentage IS 'Completion percentage (complete/total * 100)';
-
 -- RLS: admin read-only
 ALTER TABLE translation_stats_cache ENABLE ROW LEVEL SECURITY;
-
 CREATE POLICY "Admin can read translation stats cache"
   ON translation_stats_cache FOR SELECT
   USING (

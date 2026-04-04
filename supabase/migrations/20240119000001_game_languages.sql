@@ -13,31 +13,25 @@ CREATE TABLE public.game_languages (
   created_at TIMESTAMP DEFAULT NOW(),
   UNIQUE(game_id, language_code)
 );
-
 -- Index for performance
 CREATE INDEX idx_game_languages_game_id ON game_languages(game_id);
 CREATE INDEX idx_game_languages_language_code ON game_languages(language_code);
-
 -- RLS policies
 ALTER TABLE game_languages ENABLE ROW LEVEL SECURITY;
-
 -- Everyone can read game languages
 CREATE POLICY "Game languages are viewable by everyone"
   ON game_languages FOR SELECT
   USING (true);
-
 -- Only authenticated users can insert (for import)
 CREATE POLICY "Authenticated users can insert game languages"
   ON game_languages FOR INSERT
   TO authenticated
   WITH CHECK (true);
-
 -- Only authenticated users can update
 CREATE POLICY "Authenticated users can update game languages"
   ON game_languages FOR UPDATE
   TO authenticated
   USING (true);
-
 -- Only authenticated users can delete
 CREATE POLICY "Authenticated users can delete game languages"
   ON game_languages FOR DELETE

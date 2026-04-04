@@ -12,7 +12,6 @@ DROP FUNCTION IF EXISTS public.get_store_stats(UUID);
 DROP FUNCTION IF EXISTS public.get_active_stores();
 DROP FUNCTION IF EXISTS public.search_stores(TEXT);
 DROP FUNCTION IF EXISTS get_game_companies(UUID, TEXT);
-
 -- ========================================
 -- CORRECTION DES TYPES DE RETOUR
 -- ========================================
@@ -64,7 +63,6 @@ BEGIN
   ORDER BY gp.price ASC, s.name ASC;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = '';
-
 -- Fonction pour récupérer le meilleur prix d'un jeu
 CREATE OR REPLACE FUNCTION public.get_best_price(game_uuid UUID)
 RETURNS TABLE (
@@ -107,7 +105,6 @@ BEGIN
   LIMIT 1;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = '';
-
 -- Fonction pour mettre à jour un magasin (corriger l'ambiguïté des noms de colonnes)
 CREATE OR REPLACE FUNCTION public.update_store(
   store_id UUID,
@@ -158,7 +155,6 @@ BEGIN
   RETURN QUERY SELECT TRUE, 'Magasin mis à jour avec succès'::TEXT;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = '';
-
 -- Fonction pour obtenir les statistiques d'un magasin
 CREATE OR REPLACE FUNCTION public.get_store_stats(store_uuid UUID)
 RETURNS TABLE (
@@ -186,7 +182,6 @@ BEGIN
   GROUP BY s.id, s.name;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = '';
-
 -- Fonction pour récupérer tous les magasins actifs
 CREATE OR REPLACE FUNCTION public.get_active_stores()
 RETURNS TABLE (
@@ -213,7 +208,6 @@ BEGIN
   ORDER BY s.name ASC;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = '';
-
 -- Fonction pour rechercher des magasins par nom
 CREATE OR REPLACE FUNCTION public.search_stores(search_term TEXT)
 RETURNS TABLE (
@@ -243,7 +237,6 @@ BEGIN
     s.name ASC;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = '';
-
 -- Fonction utilitaire pour récupérer les entreprises d'un jeu par rôle
 CREATE OR REPLACE FUNCTION get_game_companies(game_uuid UUID, company_role TEXT DEFAULT NULL)
 RETURNS TABLE (
@@ -268,7 +261,6 @@ BEGIN
     ORDER BY gc.is_primary DESC, c.name;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = '';
-
 -- Commentaires pour documentation
 COMMENT ON FUNCTION public.get_game_prices(UUID, TEXT, TEXT) IS 'Récupère tous les prix disponibles pour un jeu avec filtres optionnels par magasin et plateforme';
 COMMENT ON FUNCTION public.get_best_price(UUID) IS 'Récupère le meilleur prix disponible pour un jeu';

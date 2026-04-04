@@ -13,7 +13,6 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = '';
-
 -- Fonction pour créer automatiquement un profil lors de l'inscription
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
@@ -28,7 +27,6 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = '';
-
 -- Fonction pour vérifier si un utilisateur est administrateur
 CREATE OR REPLACE FUNCTION public.is_admin(user_id UUID DEFAULT auth.uid())
 RETURNS BOOLEAN AS $$
@@ -40,7 +38,6 @@ BEGIN
   );
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = '';
-
 -- ========================================
 -- FONCTIONS DE NETTOYAGE
 -- ========================================
@@ -72,7 +69,6 @@ BEGIN
   WHERE rating_system_id NOT IN (SELECT id FROM public.rating_systems);
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = '';
-
 -- Fonction principale pour nettoyer les données orphelines
 CREATE OR REPLACE FUNCTION public.cleanup_orphaned_data()
 RETURNS VOID AS $$
@@ -94,7 +90,6 @@ BEGIN
      OR genre_id NOT IN (SELECT id FROM public.genres);
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = '';
-
 -- Fonction pour nettoyer les prix orphelins
 CREATE OR REPLACE FUNCTION public.cleanup_orphaned_prices()
 RETURNS VOID AS $$
@@ -114,7 +109,6 @@ BEGIN
     AND is_available = true;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = '';
-
 -- ========================================
 -- FONCTIONS DE VALIDATION
 -- ========================================
@@ -187,7 +181,6 @@ BEGIN
   HAVING COUNT(*) > 0;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = '';
-
 -- Fonction pour valider les données d'un magasin
 CREATE OR REPLACE FUNCTION public.validate_store_data(
   store_name TEXT,
@@ -233,7 +226,6 @@ BEGIN
   RETURN QUERY SELECT TRUE, 'Données valides'::TEXT;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = '';
-
 -- ========================================
 -- FONCTIONS DE GESTION DES PRIX
 -- ========================================
@@ -249,7 +241,6 @@ BEGIN
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = '';
-
 -- Fonction pour récupérer les prix d'un jeu avec filtres optionnels
 CREATE OR REPLACE FUNCTION public.get_game_prices(
   game_uuid UUID,
@@ -297,7 +288,6 @@ BEGIN
   ORDER BY gp.price ASC, s.name ASC;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = '';
-
 -- Fonction pour récupérer le meilleur prix d'un jeu
 CREATE OR REPLACE FUNCTION public.get_best_price(game_uuid UUID)
 RETURNS TABLE (
@@ -340,7 +330,6 @@ BEGIN
   LIMIT 1;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = '';
-
 -- Fonction pour comparer les prix d'un jeu
 CREATE OR REPLACE FUNCTION public.compare_game_prices(game_uuid UUID)
 RETURNS TABLE (
@@ -395,7 +384,6 @@ BEGIN
   GROUP BY game_uuid;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = '';
-
 -- ========================================
 -- FONCTIONS DE GESTION DES MAGASINS
 -- ========================================
@@ -426,7 +414,6 @@ BEGIN
   ORDER BY s.name ASC;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = '';
-
 -- Fonction pour rechercher des magasins par nom
 CREATE OR REPLACE FUNCTION public.search_stores(search_term TEXT)
 RETURNS TABLE (
@@ -456,7 +443,6 @@ BEGIN
     s.name ASC;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = '';
-
 -- Fonction pour créer un nouveau magasin avec validation
 CREATE OR REPLACE FUNCTION public.create_store(
   store_name TEXT,
@@ -489,7 +475,6 @@ BEGIN
   RETURN QUERY SELECT TRUE, new_store_id, 'Magasin créé avec succès'::TEXT;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = '';
-
 -- Fonction pour mettre à jour un magasin
 CREATE OR REPLACE FUNCTION public.update_store(
   store_id UUID,
@@ -540,7 +525,6 @@ BEGIN
   RETURN QUERY SELECT TRUE, 'Magasin mis à jour avec succès'::TEXT;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = '';
-
 -- Fonction pour obtenir les statistiques d'un magasin
 CREATE OR REPLACE FUNCTION public.get_store_stats(store_uuid UUID)
 RETURNS TABLE (
@@ -568,7 +552,6 @@ BEGIN
   GROUP BY s.id, s.name;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = '';
-
 -- ========================================
 -- FONCTIONS DE GESTION DES ENTREPRISES
 -- ========================================
@@ -597,7 +580,6 @@ BEGIN
     ORDER BY gc.is_primary DESC, c.name;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = '';
-
 -- ========================================
 -- FONCTIONS DE GESTION DES CLASSIFICATIONS
 -- ========================================
@@ -641,7 +623,6 @@ BEGIN
     LIMIT 1;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = '';
-
 -- Commentaires pour documentation
 COMMENT ON FUNCTION public.cleanup_orphaned_data() IS 'Nettoie toutes les données orphelines du système';
 COMMENT ON FUNCTION public.cleanup_orphaned_prices() IS 'Nettoie les prix orphelins et désactive les prix des magasins inactifs';

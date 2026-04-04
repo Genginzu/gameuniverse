@@ -6,7 +6,6 @@ CREATE TABLE public.supported_languages (
   name VARCHAR(100) NOT NULL,
   native_name VARCHAR(100) NOT NULL
 );
-
 -- Seed with common game languages (from IGDB and industry standards)
 INSERT INTO supported_languages (code, name, native_name) VALUES
   ('ar', 'Arabic', 'العربية'),
@@ -50,14 +49,11 @@ INSERT INTO supported_languages (code, name, native_name) VALUES
   ('zh-Hans', 'Chinese (Simplified)', '简体中文'),
   ('zh-Hant', 'Chinese (Traditional)', '繁體中文')
 ON CONFLICT (code) DO NOTHING;
-
 -- RLS
 ALTER TABLE supported_languages ENABLE ROW LEVEL SECURITY;
-
 CREATE POLICY "Supported languages are viewable by everyone"
   ON supported_languages FOR SELECT
   USING (true);
-
 CREATE POLICY "Admins can manage supported languages"
   ON supported_languages
   FOR ALL USING (public.is_admin());

@@ -19,19 +19,15 @@
 -- not DESC — add a DESC variant for the activity feed sort.
 CREATE INDEX IF NOT EXISTS idx_user_library_added_at_desc
   ON public.user_library (added_at DESC);
-
 -- character_favorites: idx_character_favorites_user_id and
 -- idx_character_favorites_created_at exist. Add a DESC variant.
 CREATE INDEX IF NOT EXISTS idx_character_favorites_created_at_desc
   ON public.character_favorites (created_at DESC);
-
 -- game_collections: idx_game_collections_user_id exists. Add created_at index.
 CREATE INDEX IF NOT EXISTS idx_game_collections_created_at
   ON public.game_collections (created_at);
-
 CREATE INDEX IF NOT EXISTS idx_game_collections_created_at_desc
   ON public.game_collections (created_at DESC);
-
 -- ========================================
 -- FUNCTION get_player_activity
 -- ========================================
@@ -66,7 +62,7 @@ BEGIN
         'gameSlug', g.slug,
         'gameName', COALESCE(gt_loc.title, gt_fb.title, 'Untitled'),
         'rating', gr.rating,
-        'contentExcerpt', LEFT(regexp_replace(gr.content, '<[^>]+>', '', 'g'), 200)
+        'contentExcerpt', LEFT(gr.content, 200)
       ) AS data
     FROM public.game_reviews gr
     INNER JOIN public.games g ON g.id = gr.game_id
@@ -93,7 +89,7 @@ BEGIN
         'characterId', cc.character_id,
         'characterSlug', c.slug,
         'characterName', COALESCE(ct_loc.name, ct_fb.name, 'Unknown'),
-        'contentExcerpt', LEFT(regexp_replace(cc.content, '<[^>]+>', '', 'g'), 200)
+        'contentExcerpt', LEFT(cc.content, 200)
       ) AS data
     FROM public.character_comments cc
     INNER JOIN public.characters c ON c.id = cc.character_id
@@ -254,6 +250,5 @@ BEGIN
   RETURN result;
 END;
 $_fn$;
-
 COMMENT ON FUNCTION get_player_activity(UUID, TEXT, TEXT, INT, INT)
   IS 'Aggregates player activity from game_reviews, character_comments, user_library, character_favorites and game_collections into a paginated JSONB feed sorted by date descending. Supports optional filtering by event type and locale-aware game/character names.';

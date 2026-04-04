@@ -18,39 +18,32 @@ CREATE TABLE IF NOT EXISTS public.player_goals (
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   deadline DATE
 );
-
 -- 2. Index on user_id for fast lookups by player
 CREATE INDEX IF NOT EXISTS idx_player_goals_user_id
   ON public.player_goals(user_id);
-
 -- 3. Enable RLS
 ALTER TABLE public.player_goals ENABLE ROW LEVEL SECURITY;
-
 -- 4. RLS policy: owner select (only the owner can see their own goals)
 CREATE POLICY player_goals_select_own
   ON public.player_goals
   FOR SELECT
   USING (auth.uid() = user_id);
-
 -- 5. RLS policy: owner insert
 CREATE POLICY player_goals_insert_own
   ON public.player_goals
   FOR INSERT
   WITH CHECK (auth.uid() = user_id);
-
 -- 6. RLS policy: owner update
 CREATE POLICY player_goals_update_own
   ON public.player_goals
   FOR UPDATE
   USING (auth.uid() = user_id)
   WITH CHECK (auth.uid() = user_id);
-
 -- 7. RLS policy: owner delete
 CREATE POLICY player_goals_delete_own
   ON public.player_goals
   FOR DELETE
   USING (auth.uid() = user_id);
-
 -- 8. Documentation
 COMMENT ON TABLE public.player_goals IS 'Stores personal goals set by players (e.g. games to complete, play time targets)';
 COMMENT ON COLUMN public.player_goals.id IS 'Primary key (UUID, auto-generated)';

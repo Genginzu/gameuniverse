@@ -11,7 +11,6 @@ CREATE TABLE public.rating_systems (
   website_url TEXT,
   created_at TIMESTAMP DEFAULT NOW()
 );
-
 -- Table des classifications (PEGI 3, PEGI 7, ESRB E, etc.)
 CREATE TABLE public.ratings (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -26,7 +25,6 @@ CREATE TABLE public.ratings (
   created_at TIMESTAMP DEFAULT NOW(),
   UNIQUE(rating_system_id, code)
 );
-
 -- Table des descripteurs de contenu (Violence, Langage, etc.)
 CREATE TABLE public.content_descriptors (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -36,7 +34,6 @@ CREATE TABLE public.content_descriptors (
   created_at TIMESTAMP DEFAULT NOW(),
   UNIQUE(rating_system_id, code)
 );
-
 -- Table des traductions pour les descripteurs de contenu
 CREATE TABLE public.content_descriptor_translations (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -46,7 +43,6 @@ CREATE TABLE public.content_descriptor_translations (
   description TEXT,
   UNIQUE(content_descriptor_id, language_code)
 );
-
 -- Table de liaison entre jeux et classifications
 CREATE TABLE public.game_ratings (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -57,21 +53,18 @@ CREATE TABLE public.game_ratings (
   created_at TIMESTAMP DEFAULT NOW(),
   UNIQUE(game_id, rating_id)
 );
-
 -- Table de liaison entre classifications de jeux et descripteurs de contenu
 CREATE TABLE public.game_rating_descriptors (
   game_rating_id UUID REFERENCES game_ratings(id) ON DELETE CASCADE,
   content_descriptor_id UUID REFERENCES content_descriptors(id) ON DELETE CASCADE,
   PRIMARY KEY (game_rating_id, content_descriptor_id)
 );
-
 -- Index pour les performances
 CREATE INDEX idx_ratings_system_id ON ratings(rating_system_id);
 CREATE INDEX idx_content_descriptors_system_id ON content_descriptors(rating_system_id);
 CREATE INDEX idx_game_ratings_game_id ON game_ratings(game_id);
 CREATE INDEX idx_game_ratings_rating_id ON game_ratings(rating_id);
 CREATE INDEX idx_game_ratings_primary ON game_ratings(game_id, is_primary);
-
 -- Fonction pour obtenir la classification principale d'un jeu
 CREATE OR REPLACE FUNCTION get_primary_game_rating(game_uuid UUID, lang_code VARCHAR(2) DEFAULT 'fr')
 RETURNS TABLE (

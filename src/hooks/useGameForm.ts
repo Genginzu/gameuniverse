@@ -245,6 +245,13 @@ export function useGameForm(
               description: v.description || null,
               cover_image_url: v.cover_image_url || null,
               display_order: i,
+              translations: (v.translations ?? [])
+                .filter((t) => t.title || t.description)
+                .map((t) => ({
+                  language_code: t.language_code,
+                  title: t.title || null,
+                  description: t.description || null,
+                })),
             })),
           languages: data.languages
             .filter((l) => l.language_code.trim().length > 0 && l.language_name.trim().length > 0)

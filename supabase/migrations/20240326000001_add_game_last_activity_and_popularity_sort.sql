@@ -13,10 +13,8 @@
 ALTER TABLE public.games
 ADD COLUMN IF NOT EXISTS last_activity_at TIMESTAMPTZ DEFAULT NULL,
 ADD COLUMN IF NOT EXISTS popularity_score INTEGER DEFAULT 0;
-
 COMMENT ON COLUMN public.games.last_activity_at IS 'Timestamp of the most recent community activity (review, library add, session) for this game';
 COMMENT ON COLUMN public.games.popularity_score IS 'Cached popularity score = count(reviews) + count(library entries) for sorting';
-
 -- ============================================================================
 -- 2. Backfill last_activity_at from existing data
 -- ============================================================================
@@ -28,12 +26,10 @@ SET last_activity_at = GREATEST(
   (SELECT MAX(ul.added_at) FROM user_library ul WHERE ul.game_id = g.id),
   (SELECT MAX(gs.started_at) FROM game_sessions gs WHERE gs.game_id = g.id)
 );
-
 -- Games with no activity: fall back to updated_at
 UPDATE public.games
 SET last_activity_at = updated_at
 WHERE last_activity_at IS NULL;
-
 -- ============================================================================
 -- 3. Backfill popularity_score from existing data
 -- ============================================================================
@@ -46,21 +42,17 @@ SET popularity_score = (
     (SELECT COUNT(*) FROM user_library ul WHERE ul.game_id = g.id), 0
   )
 );
-
 -- ============================================================================
 -- 4. Index for the new sort order
 -- ============================================================================
 
 CREATE INDEX IF NOT EXISTS idx_games_last_activity_at
   ON public.games (last_activity_at DESC NULLS LAST);
-
 CREATE INDEX IF NOT EXISTS idx_games_popularity_score
   ON public.games (popularity_score DESC);
-
 -- Composite index matching the new ORDER BY clause
 CREATE INDEX IF NOT EXISTS idx_games_activity_popularity
   ON public.games (last_activity_at DESC NULLS LAST, popularity_score DESC);
-
 -- ============================================================================
 -- 5. Trigger functions to keep last_activity_at and popularity_score in sync
 -- ============================================================================
@@ -75,7 +67,6 @@ BEGIN
   RETURN COALESCE(NEW, OLD);
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
-
 -- 5b. Increment popularity_score when a review or library entry is added
 CREATE OR REPLACE FUNCTION public.increment_game_popularity()
 RETURNS TRIGGER AS $$
@@ -86,7 +77,6 @@ BEGIN
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
-
 -- 5c. Decrement popularity_score when a review or library entry is removed
 CREATE OR REPLACE FUNCTION public.decrement_game_popularity()
 RETURNS TRIGGER AS $$
@@ -97,7 +87,6 @@ BEGIN
   RETURN OLD;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
-
 -- ============================================================================
 -- 6. Triggers on game_reviews
 -- ============================================================================
@@ -105,19 +94,15 @@ $$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 CREATE TRIGGER trg_review_activity
   AFTER INSERT OR UPDATE ON public.game_reviews
   FOR EACH ROW EXECUTE FUNCTION public.update_game_last_activity();
-
 CREATE TRIGGER trg_review_delete_activity
   AFTER DELETE ON public.game_reviews
   FOR EACH ROW EXECUTE FUNCTION public.update_game_last_activity();
-
 CREATE TRIGGER trg_review_insert_popularity
   AFTER INSERT ON public.game_reviews
   FOR EACH ROW EXECUTE FUNCTION public.increment_game_popularity();
-
 CREATE TRIGGER trg_review_delete_popularity
   AFTER DELETE ON public.game_reviews
   FOR EACH ROW EXECUTE FUNCTION public.decrement_game_popularity();
-
 -- ============================================================================
 -- 7. Triggers on user_library
 -- ============================================================================
@@ -125,19 +110,15 @@ CREATE TRIGGER trg_review_delete_popularity
 CREATE TRIGGER trg_library_activity
   AFTER INSERT OR UPDATE ON public.user_library
   FOR EACH ROW EXECUTE FUNCTION public.update_game_last_activity();
-
 CREATE TRIGGER trg_library_delete_activity
   AFTER DELETE ON public.user_library
   FOR EACH ROW EXECUTE FUNCTION public.update_game_last_activity();
-
 CREATE TRIGGER trg_library_insert_popularity
   AFTER INSERT ON public.user_library
   FOR EACH ROW EXECUTE FUNCTION public.increment_game_popularity();
-
 CREATE TRIGGER trg_library_delete_popularity
   AFTER DELETE ON public.user_library
   FOR EACH ROW EXECUTE FUNCTION public.decrement_game_popularity();
-
 -- ============================================================================
 -- 8. Triggers on game_sessions (activity only, no popularity impact)
 -- ============================================================================
@@ -145,7 +126,6 @@ CREATE TRIGGER trg_library_delete_popularity
 CREATE TRIGGER trg_session_activity
   AFTER INSERT OR UPDATE ON public.game_sessions
   FOR EACH ROW EXECUTE FUNCTION public.update_game_last_activity();
-
 -- ============================================================================
 -- 9. Update get_games_listing to sort by activity then popularity
 -- ============================================================================
@@ -274,6 +254,5 @@ BEGIN
   );
 END;
 $$;
-
 COMMENT ON FUNCTION public.get_games_listing IS
   'Optimized server-side function for the games listing API. Returns paginated games sorted by recent community activity then popularity, with translations, genres, and companies in a single query.';

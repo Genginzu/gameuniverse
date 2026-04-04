@@ -136,6 +136,12 @@ export const gameRatingLinkSchema = z.object({
   content_descriptors: z.array(z.string().uuid()).default([]),
 });
 
+export const gameVersionTranslationSchema = z.object({
+  language_code: z.string().length(2),
+  title: z.string().max(255).optional().nullable(),
+  description: z.string().max(5000).optional().nullable(),
+});
+
 export const gameVersionSchema = z.object({
   version_title: z
     .string()
@@ -148,6 +154,7 @@ export const gameVersionSchema = z.object({
     .nullable(),
   cover_image_url: z.string().url("Invalid cover image URL").optional().nullable(),
   display_order: z.number().int().min(0).optional().nullable(),
+  translations: z.array(gameVersionTranslationSchema).optional(),
 });
 
 export const gameLanguageSchema = z.object({

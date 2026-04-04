@@ -3,11 +3,9 @@
 
 -- Renommer la colonne
 ALTER TABLE profiles RENAME COLUMN full_name TO username;
-
 -- Mettre à jour l'index
 DROP INDEX IF EXISTS idx_profiles_full_name;
 CREATE INDEX idx_profiles_username ON profiles(username);
-
 -- Mettre à jour le trigger de création de profil
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER
