@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "vercel": {
+      "url": "https://mcp.vercel.com",
+      "disabled": false,
+      "autoApprove": [
+        "list_teams",
+        "list_projects",
+        "list_deployments",
+        "get_deployment_build_logs",
+        "get_deployment"
+      ]
+    }
+  }
+}

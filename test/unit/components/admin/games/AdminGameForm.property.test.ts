@@ -137,14 +137,14 @@ describe("Admin Game Form Validation Property Tests", () => {
       );
     });
 
-    it("form with empty companies array is rejected", () => {
+    it("form with empty companies array is accepted (companies default to empty)", () => {
       fc.assert(
         fc.property(validFormData(), emptyCompanies(), (formData, companies) => {
           const result = adminGameFormSchema.safeParse({
             ...formData,
             companies,
           });
-          return result.success === false;
+          return result.success === true;
         }),
         { numRuns: 30 }
       );

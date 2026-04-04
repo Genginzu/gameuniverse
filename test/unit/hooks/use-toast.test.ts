@@ -28,7 +28,6 @@ describe("use-toast", () => {
       });
 
       it("should add toast at the beginning of the list", () => {
-        // Note: TOAST_LIMIT is 1, so we can only verify the newest toast is first
         const initialState = { toasts: [] };
         const firstToast = createToast("1", "First Toast");
 
@@ -43,25 +42,23 @@ describe("use-toast", () => {
           toast: secondToast,
         });
 
-        // Due to TOAST_LIMIT=1, only the newest toast remains
+        // TOAST_LIMIT is 5, both toasts remain; newest is first
         expect(result.toasts[0].id).toBe("2");
-        expect(result.toasts).toHaveLength(1);
+        expect(result.toasts).toHaveLength(2);
       });
 
-      it("should limit toasts to TOAST_LIMIT (1)", () => {
-        const initialState = {
-          toasts: [createToast("1", "First Toast")],
-        };
-        const newToast = createToast("2", "Second Toast");
+      it("should limit toasts to TOAST_LIMIT (5)", () => {
+        let state = { toasts: [] as ReturnType<typeof createToast>[] };
+        for (let i = 1; i <= 6; i++) {
+          state = reducer(state, {
+            type: "ADD_TOAST",
+            toast: createToast(String(i), `Toast ${i}`),
+          });
+        }
 
-        const result = reducer(initialState, {
-          type: "ADD_TOAST",
-          toast: newToast,
-        });
-
-        // TOAST_LIMIT is 1, so only the newest toast should remain
-        expect(result.toasts).toHaveLength(1);
-        expect(result.toasts[0].id).toBe("2");
+        // TOAST_LIMIT is 5, so only the 5 newest toasts should remain
+        expect(state.toasts).toHaveLength(5);
+        expect(state.toasts[0].id).toBe("6");
       });
     });
 
@@ -373,8 +370,8 @@ describe("useToast hook", () => {
       result.current.toast({ title: "New Toast" });
     });
 
-    // Due to TOAST_LIMIT=1, there should be at most 1 toast
-    expect(result.current.toasts.length).toBeLessThanOrEqual(1);
+    // TOAST_LIMIT is 5, there should be at most 5 toasts
+    expect(result.current.toasts.length).toBeLessThanOrEqual(5);
   });
 
   it("should dismiss toast by ID", () => {

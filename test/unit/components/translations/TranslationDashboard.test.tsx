@@ -40,11 +40,9 @@ describe("AdminTranslationsPage (grid view)", () => {
     expect(screen.getByText("description")).toBeInTheDocument();
   });
 
-  it("renders language selector with all locales", () => {
+  it("renders sync button", () => {
     render(<AdminTranslationsPage />);
-    const langSelect = screen.getByLabelText("targetLanguage");
-    expect(langSelect).toBeInTheDocument();
-    expect(langSelect.querySelectorAll("option")).toHaveLength(2);
+    expect(screen.getByText("buttons.syncStats")).toBeInTheDocument();
   });
 
   it("renders the progress bar", () => {

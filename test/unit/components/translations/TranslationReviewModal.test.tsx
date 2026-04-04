@@ -116,12 +116,21 @@ describe("TranslationReviewModal", () => {
   });
 
   it("calls onSave with form data on submit", async () => {
-    render(<TranslationReviewModal {...defaultProps} />);
-    fireEvent.click(screen.getByText("buttons.save"));
-    await waitFor(() => {
-      expect(defaultProps.onSave).toHaveBeenCalledWith({
+    const propsWithStoryline = {
+      ...defaultProps,
+      translatedFields: {
         title: "Titre traduit",
         description: "Description traduite",
+        storyline: "Résumé de l'histoire",
+      },
+    };
+    render(<TranslationReviewModal {...propsWithStoryline} />);
+    fireEvent.click(screen.getByText("buttons.save"));
+    await waitFor(() => {
+      expect(propsWithStoryline.onSave).toHaveBeenCalledWith({
+        title: "Titre traduit",
+        description: "Description traduite",
+        storyline: "Résumé de l'histoire",
       });
     });
   });

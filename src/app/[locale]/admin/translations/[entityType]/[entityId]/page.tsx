@@ -3,7 +3,6 @@
 import { useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import useSWR from "swr";
-import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import type { EntityType, EntityTranslationDetail } from "@/types/admin-translations";
 import { TranslationEntityDetail } from "@/components/admin/translations/TranslationEntityDetail";
@@ -39,7 +38,6 @@ export default function TranslationEntityDetailPage() {
 }
 
 function DetailView({ entityType, entityId }: { entityType: EntityType; entityId: string }) {
-  const t = useTranslations("admin.translations");
   const [translatingLangs, setTranslatingLangs] = useState<Set<string>>(new Set());
   const [savingLangs, setSavingLangs] = useState<Set<string>>(new Set());
 
