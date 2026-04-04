@@ -207,7 +207,7 @@ function EntityTableView({
           <select
             value={targetLang}
             onChange={(e) => {
-              setTargetLang(e.target.value);
+              setTargetLang(e.target.value as (typeof routing.locales)[number]);
               setSelectedIds(new Set());
             }}
             className="glass-input rounded-lg px-3 py-1.5 text-sm"

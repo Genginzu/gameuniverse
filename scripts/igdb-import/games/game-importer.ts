@@ -843,7 +843,7 @@ async function importSimilarGames(
       display_order: i,
     }));
 
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from("game_similar_games")
       .upsert(rows, { onConflict: "game_id,similar_igdb_id" });
 
