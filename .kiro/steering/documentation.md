@@ -13,15 +13,17 @@ suppression de feature, etc.), **évaluer** si la documentation dans `docs/` doi
 
 ## Quand documenter
 
-- ✅ Ajout d'une nouvelle fonctionnalité → créer `docs/dev/README_{FEATURE}.md`
-- ✅ Modification d'une fonctionnalité existante → mettre à jour le README
-  correspondant dans `docs/dev/`
-- ✅ Changement d'architecture ou de stack → mettre à jour
-  `docs/dev/DEVELOPMENT.md`
-- ✅ Nouveau process de déploiement → mettre à jour
-  `docs/dev/DEPLOYMENT_CHECKLIST.md`
-- ✅ Suppression d'une fonctionnalité → archiver ou supprimer le README
+- ✅ Ajout d'une nouvelle fonctionnalité → créer un fichier dans le dossier
+  approprié sous `docs/features/`
+- ✅ Modification d'une fonctionnalité existante → mettre à jour le fichier
   correspondant
+- ✅ Changement d'architecture ou de stack → mettre à jour
+  `docs/setup/development.md`
+- ✅ Nouveau process de déploiement → mettre à jour
+  `docs/setup/deployment-checklist.md`
+- ✅ Nouveau système transversal → créer dans `docs/systems/`
+- ✅ Suppression d'une fonctionnalité → supprimer le fichier correspondant
+- ✅ Mettre à jour `docs/README.md` (index) quand un fichier est ajouté/supprimé
 - ⚠️ Correction de bug mineure, refactoring interne sans impact API/UI → pas de
   mise à jour nécessaire
 
@@ -29,17 +31,28 @@ suppression de feature, etc.), **évaluer** si la documentation dans `docs/` doi
 
 ```
 docs/
-├── dev/                  # Documentation technique des fonctionnalités
-│   ├── README_*.md       # Un fichier par fonctionnalité
-│   ├── DEVELOPMENT.md    # Setup, architecture, stack
-│   └── DEPLOYMENT_CHECKLIST.md
-├── igdb/                 # Documentation spécifique IGDB
-└── Ideas/                # Idées et réflexions projet
+├── README.md                    # Index général avec liens vers tout
+├── setup/                       # Setup, déploiement, architecture
+├── features/
+│   ├── games/                   # Fonctionnalités liées aux jeux
+│   ├── players/                 # Profil joueur, stats, social
+│   ├── characters/              # Personnages
+│   ├── admin/                   # Panneau d'administration
+│   ├── library/                 # Bibliothèque
+│   └── pricing/                 # Système de prix
+├── systems/                     # Systèmes transversaux (erreurs, search, etc.)
+├── igdb/                        # Documentation spécifique IGDB
+└── ideas/                       # Idées et réflexions projet
 ```
 
-## Contenu attendu d'un README fonctionnalité
+## Nommage des fichiers
 
-Chaque `docs/dev/README_{FEATURE}.md` doit contenir :
+- Utiliser le **kebab-case** : `mon-fichier.md`
+- Noms courts et descriptifs, pas de préfixe `README_`
+
+## Contenu attendu d'un fichier fonctionnalité
+
+Chaque fichier de fonctionnalité doit contenir :
 
 - **Description** : résumé de ce qui a été implémenté
 - **Accès** : comment accéder à la fonctionnalité (routes, URLs, navigation)

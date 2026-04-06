@@ -6,5 +6,7 @@
     "css.customData": [
         ".vscode/css_custom_data.json"
     ],
-    "typescript.autoClosingTags": false
+    "typescript.autoClosingTags": false,
+    "vitest.configSearchPatternExclude": "{**/node_modules/**,**/.next/**}",
+    "vitest.enable": true
 }
