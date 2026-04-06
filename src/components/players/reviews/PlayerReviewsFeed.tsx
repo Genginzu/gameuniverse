@@ -13,7 +13,10 @@ interface PlayerReviewsFeedProps {
   locale: string;
 }
 
-export const PlayerReviewsFeed = memo(function PlayerReviewsFeed({ playerId, locale }: PlayerReviewsFeedProps) {
+export const PlayerReviewsFeed = memo(function PlayerReviewsFeed({
+  playerId,
+  locale,
+}: PlayerReviewsFeedProps) {
   const t = useTranslations("players.reviews");
   const {
     reviews,
@@ -91,7 +94,7 @@ export const PlayerReviewsFeed = memo(function PlayerReviewsFeed({ playerId, loc
       </div>
     </section>
   );
-}
+});
 
 function SkeletonCard() {
   return (
@@ -132,4 +135,4 @@ function ReviewsFeedEmpty() {
       <p className="text-sm text-gray-500 dark:text-slate-400">{t("empty")}</p>
     </div>
   );
-});
+}

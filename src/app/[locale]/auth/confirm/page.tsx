@@ -19,7 +19,13 @@ interface ConfirmPageProps {
   searchParams: Promise<ConfirmSearchParams>;
 }
 
-function ErrorCard({ title, description, detail, showResend, t }: {
+function ErrorCard({
+  title,
+  description,
+  detail,
+  showResend,
+  t,
+}: {
   title: string;
   description: string;
   detail?: string;
@@ -27,8 +33,8 @@ function ErrorCard({ title, description, detail, showResend, t }: {
   t: (key: string) => string;
 }) {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-blue-50 to-indigo-100 p-4 dark:from-slate-950 dark:to-slate-900">
-      <Card className="mx-auto w-full max-w-md dark:bg-slate-800/95">
+    <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-slate-50 via-white to-slate-100 p-4 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+      <Card className="mx-auto w-full max-w-md border-0 bg-white/95 shadow-2xl backdrop-blur-xs dark:bg-slate-800/95">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
             <Icon icon="lucide:x-circle" className="h-6 w-6 text-red-600 dark:text-red-400" />
@@ -98,11 +104,7 @@ export default async function ConfirmPage({ searchParams }: ConfirmPageProps) {
   } catch (error) {
     logger.error("Unexpected error in confirm page", { error });
     return (
-      <ErrorCard
-        title={t("unexpectedTitle")}
-        description={t("unexpectedDescription")}
-        t={t}
-      />
+      <ErrorCard title={t("unexpectedTitle")} description={t("unexpectedDescription")} t={t} />
     );
   }
 }
