@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Icon } from "@iconify/react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -150,13 +150,13 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       <header className="relative">
-        <div className="absolute inset-0 bg-linear-to-r from-slate-900/5 to-slate-800/5 backdrop-blur-xs"></div>
+        <div className="absolute inset-0 bg-linear-to-r from-slate-900/5 to-slate-800/5 backdrop-blur-xs dark:from-slate-100/5 dark:to-slate-200/5"></div>
         <div className="relative flex items-center justify-between p-6">
           <Link href="/" className="flex items-center space-x-3">
             <GameUniverseLogo size="md" />
-            <span className="bg-linear-to-r from-gray-900 to-gray-700 bg-clip-text text-xl font-bold text-transparent">
+            <span className="bg-linear-to-r from-gray-900 to-gray-700 bg-clip-text text-xl font-bold text-transparent dark:from-gray-100 dark:to-gray-300">
               Game Universe
             </span>
           </Link>
@@ -169,28 +169,28 @@ export default function ResetPasswordPage() {
       <div className="flex flex-1 items-center justify-center p-6 py-12">
         <div className="w-full max-w-md">
           {isLoading ? (
-            <Card className="mx-auto w-full max-w-md border-0 bg-white/95 shadow-2xl backdrop-blur-xs">
+            <Card className="mx-auto w-full max-w-md border-0 bg-white/95 shadow-2xl backdrop-blur-xs dark:bg-slate-800/95">
               <CardContent className="flex items-center justify-center py-16">
                 <Icon icon="lucide:loader-2" className="h-8 w-8 animate-spin text-purple-600" />
               </CardContent>
             </Card>
           ) : error && !isAuthenticated ? (
-            <Card className="mx-auto w-full max-w-md border-0 bg-white/95 shadow-2xl backdrop-blur-xs">
+            <Card className="mx-auto w-full max-w-md border-0 bg-white/95 shadow-2xl backdrop-blur-xs dark:bg-slate-800/95">
               <CardHeader className="space-y-6 pb-8">
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
                   <Icon icon="lucide:x-circle" className="h-8 w-8 text-red-600" />
                 </div>
                 <div className="space-y-2 text-center">
                   <CardTitle className="bg-linear-to-r from-red-600 to-red-500 bg-clip-text text-3xl font-bold text-transparent">
                     {t("invalidLink")}
                   </CardTitle>
-                  <CardDescription className="text-base text-slate-600">
+                  <CardDescription className="text-base text-slate-600 dark:text-slate-400">
                     {t("invalidLinkDescription")}
                   </CardDescription>
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                <p className="text-center text-sm text-slate-600">{error}</p>
+                <p className="text-center text-sm text-slate-600 dark:text-slate-400">{error}</p>
                 <Button
                   asChild
                   className="h-12 w-full rounded-xl border-2 bg-linear-to-br from-blue-500 via-purple-600 to-purple-700 font-semibold text-white shadow-lg"
@@ -200,30 +200,30 @@ export default function ResetPasswordPage() {
                 <Button
                   asChild
                   variant="outline"
-                  className="h-12 w-full rounded-xl border-slate-200 font-semibold"
+                  className="h-12 w-full rounded-xl border-slate-200 font-semibold dark:border-slate-600"
                 >
                   <Link href="/auth/forgot-password">{t("requestNewLink")}</Link>
                 </Button>
               </CardContent>
             </Card>
           ) : success ? (
-            <Card className="mx-auto w-full max-w-md border-0 bg-white/95 shadow-2xl backdrop-blur-xs">
+            <Card className="mx-auto w-full max-w-md border-0 bg-white/95 shadow-2xl backdrop-blur-xs dark:bg-slate-800/95">
               <CardHeader className="space-y-6 pb-8">
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
                   <Icon icon="lucide:check-circle" className="h-8 w-8 text-green-600" />
                 </div>
                 <div className="space-y-2 text-center">
                   <CardTitle className="bg-linear-to-r from-green-600 to-green-500 bg-clip-text text-3xl font-bold text-transparent">
                     {t("success")}
                   </CardTitle>
-                  <CardDescription className="text-base text-slate-600">
+                  <CardDescription className="text-base text-slate-600 dark:text-slate-400">
                     {t("successDescription")}
                   </CardDescription>
                 </div>
               </CardHeader>
             </Card>
           ) : (
-            <Card className="mx-auto w-full max-w-md border-0 bg-white/95 shadow-2xl backdrop-blur-xs">
+            <Card className="mx-auto w-full max-w-md border-0 bg-white/95 shadow-2xl backdrop-blur-xs dark:bg-slate-800/95">
               <CardHeader className="space-y-6 pb-8">
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-linear-to-br from-blue-100 to-purple-100">
                   <Icon icon="lucide:key-round" className="h-8 w-8 text-purple-600" />
@@ -232,7 +232,7 @@ export default function ResetPasswordPage() {
                   <CardTitle className="bg-linear-to-r from-slate-900 to-slate-700 bg-clip-text text-3xl font-bold text-transparent">
                     {t("title")}
                   </CardTitle>
-                  <CardDescription className="text-base text-slate-600">
+                  <CardDescription className="text-base text-slate-600 dark:text-slate-400">
                     {t("description")}
                   </CardDescription>
                 </div>
@@ -240,12 +240,12 @@ export default function ResetPasswordPage() {
               <CardContent className="space-y-6">
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                   {error && (
-                    <Alert variant="destructive" className="rounded-xl border-red-200 bg-red-50">
-                      <AlertDescription className="text-red-800">{error}</AlertDescription>
+                    <Alert variant="destructive" className="rounded-xl border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/30">
+                      <AlertDescription className="text-red-800 dark:text-red-300">{error}</AlertDescription>
                     </Alert>
                   )}
                   <div className="space-y-3">
-                    <Label htmlFor="password" className="text-sm font-semibold text-slate-700">
+                    <Label htmlFor="password" className="text-sm font-semibold text-slate-700 dark:text-slate-300">
                       {t("newPassword")}
                     </Label>
                     <div className="relative">
@@ -254,7 +254,7 @@ export default function ResetPasswordPage() {
                         type={showPassword ? "text" : "password"}
                         placeholder={t("newPasswordPlaceholder")}
                         {...register("password")}
-                        className={`h-12 rounded-xl border-slate-200 bg-slate-50/50 pr-10 transition-all duration-200 focus:border-slate-400 focus:bg-white ${errors.password ? "border-red-500" : ""}`}
+                        className={`h-12 rounded-xl border-slate-200 bg-slate-50/50 dark:border-slate-600 dark:bg-slate-700/50 pr-10 transition-all duration-200 focus:border-slate-400 focus:bg-white ${errors.password ? "border-red-500" : ""}`}
                       />
                       <Button
                         type="button"
@@ -287,7 +287,7 @@ export default function ResetPasswordPage() {
                         type={showConfirmPassword ? "text" : "password"}
                         placeholder={t("confirmPasswordPlaceholder")}
                         {...register("confirmPassword")}
-                        className={`h-12 rounded-xl border-slate-200 bg-slate-50/50 pr-10 transition-all duration-200 focus:border-slate-400 focus:bg-white ${errors.confirmPassword ? "border-red-500" : ""}`}
+                        className={`h-12 rounded-xl border-slate-200 bg-slate-50/50 dark:border-slate-600 dark:bg-slate-700/50 pr-10 transition-all duration-200 focus:border-slate-400 focus:bg-white ${errors.confirmPassword ? "border-red-500" : ""}`}
                       />
                       <Button
                         type="button"
@@ -307,8 +307,8 @@ export default function ResetPasswordPage() {
                       <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>
                     )}
                   </div>
-                  <div className="rounded-xl bg-slate-50 p-3 text-xs text-slate-600">
-                    <p className="font-semibold text-slate-700">{t("requirements.title")}</p>
+                  <div className="rounded-xl bg-slate-50 p-3 text-xs text-slate-600 dark:bg-slate-700/50 dark:text-slate-400">
+                    <p className="font-semibold text-slate-700 dark:text-slate-300">{t("requirements.title")}</p>
                     <ul className="mt-1 list-inside list-disc space-y-0.5">
                       <li>{t("requirements.minLength")}</li>
                       <li>{t("requirements.uppercase")}</li>
@@ -330,11 +330,11 @@ export default function ResetPasswordPage() {
                     )}
                   </Button>
                 </form>
-                <div className="border-t border-slate-100 pt-4">
-                  <p className="text-center text-sm text-slate-600">
+                <div className="border-t border-slate-100 pt-4 dark:border-slate-700">
+                  <p className="text-center text-sm text-slate-600 dark:text-slate-400">
                     <Link
                       href="/auth"
-                      className="inline-flex items-center font-semibold text-slate-900 transition-colors duration-200 hover:text-purple-700"
+                      className="inline-flex items-center font-semibold text-slate-900 transition-colors duration-200 hover:text-purple-700 dark:text-slate-100 dark:hover:text-purple-400"
                     >
                       <Icon icon="lucide:arrow-left" className="mr-1 h-4 w-4" />
                       {t("backToLogin")}

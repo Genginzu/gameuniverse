@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
@@ -11,6 +11,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { useAuth } from "@/hooks/useAuth";
 import { AuthMode } from "@/types/auth";
 import { Icon } from "@iconify/react";
+import { Link } from "@/i18n/navigation";
 
 // Fonction pour traduire les erreurs Supabase
 function translateSupabaseError(message: string, t: (key: string) => string): string {
@@ -198,13 +199,12 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
                 {t("form.password")}
               </Label>
               {mode === "signin" && (
-                <button
-                  type="button"
-                  onClick={() => (window.location.href = "/auth/forgot-password")}
+                <Link
+                  href="/auth/forgot-password"
                   className="text-xs text-slate-500 transition-colors duration-200 hover:text-purple-700"
                 >
-                  Mot de passe oublié ?
-                </button>
+                  {t("forgotPassword.forgotPasswordLink")}
+                </Link>
               )}
             </div>
             <Input
