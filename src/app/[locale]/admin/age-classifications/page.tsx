@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import dynamic from "next/dynamic";
 import { useAdminRatingSystems } from "@/hooks/useAdminRatingSystems";
@@ -19,6 +20,7 @@ import type { AdminRatingSystem } from "@/types/admin-age-classifications";
 import { Icon } from "@iconify/react";
 
 export default function AdminAgeClassificationsPage() {
+  const t = useTranslations("admin.ageClassifications");
   const router = useRouter();
   const {
     ratingSystems,
@@ -103,10 +105,10 @@ export default function AdminAgeClassificationsPage() {
     setIsDeleting(true);
     try {
       await deleteRatingSystem(systemToDelete.id);
-      toast({ title: "Système supprimé avec succès", variant: "success" });
+      toast({ title: t("toast.systemDeleted"), variant: "success" });
       setSystemToDelete(null);
     } catch {
-      toast({ title: "Erreur lors de la suppression", variant: "destructive" });
+      toast({ title: t("toast.deleteError"), variant: "destructive" });
     } finally {
       setIsDeleting(false);
     }
@@ -123,11 +125,11 @@ export default function AdminAgeClassificationsPage() {
       <section>
         <div className="mb-6 flex items-center justify-between">
           <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">
-            Classifications d&apos;âge
+            {t("title")}
           </h1>
           <Button onClick={() => router.push("/admin/age-classifications/new")}>
             <Icon icon="fa:plus" className="h-4 w-4" />
-            Nouveau système
+            {t("newSystem")}
           </Button>
         </div>
 

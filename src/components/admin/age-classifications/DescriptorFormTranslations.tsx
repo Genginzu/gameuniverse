@@ -1,6 +1,7 @@
 "use client";
 
 import { type UseFormReturn, useFieldArray } from "react-hook-form";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,6 +15,7 @@ export interface DescriptorFormTranslationsProps {
 }
 
 export function DescriptorFormTranslations({ form }: DescriptorFormTranslationsProps) {
+  const t = useTranslations("admin.ageClassifications.descriptors.form");
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "translations",
@@ -26,24 +28,24 @@ export function DescriptorFormTranslations({ form }: DescriptorFormTranslationsP
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Traductions</h3>
+        <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+          {t("translations")}
+        </h3>
         <Button type="button" variant="outline" size="sm" onClick={handleAddTranslation}>
-          <Icon icon="fa:plus" className="mr-2 h-3 w-3"  />
-          Ajouter une traduction
+          <Icon icon="fa:plus" className="mr-2 h-3 w-3" />
+          {t("addTranslation")}
         </Button>
       </div>
 
       {/* Erreur globale sur le tableau de traductions */}
       {form.formState.errors.translations?.root && (
-        <p className="text-sm font-medium text-destructive">
+        <p className="text-destructive text-sm font-medium">
           {form.formState.errors.translations.root.message}
         </p>
       )}
 
       {fields.length === 0 && (
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          Aucune traduction. Cliquez sur « Ajouter une traduction » pour commencer.
-        </p>
+        <p className="text-sm text-gray-500 dark:text-gray-400">{t("noTranslations")}</p>
       )}
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -54,7 +56,7 @@ export function DescriptorFormTranslations({ form }: DescriptorFormTranslationsP
           >
             <div className="mb-4 flex items-center justify-between">
               <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
-                Traduction {index + 1}
+                {t("translationIndex", { index: index + 1 })}
               </span>
               {/* Ne pas permettre de supprimer si c'est la dernière traduction */}
               {fields.length > 1 && (
@@ -64,9 +66,9 @@ export function DescriptorFormTranslations({ form }: DescriptorFormTranslationsP
                   size="sm"
                   onClick={() => remove(index)}
                   className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
-                  aria-label={`Supprimer la traduction ${index + 1}`}
+                  aria-label={t("removeTranslation", { index: index + 1 })}
                 >
-                  <Icon icon="fa:trash" className="h-3 w-3"  />
+                  <Icon icon="fa:trash" className="h-3 w-3" />
                 </Button>
               )}
             </div>
@@ -78,9 +80,13 @@ export function DescriptorFormTranslations({ form }: DescriptorFormTranslationsP
                 name={`translations.${index}.language_code`}
                 render={({ field: formField }) => (
                   <FormItem>
-                    <FormLabel>Code de langue</FormLabel>
+                    <FormLabel>{t("languageCode")}</FormLabel>
                     <FormControl>
-                      <Input placeholder="fr, en, de…" {...formField} maxLength={10} />
+                      <Input
+                        placeholder={t("languageCodePlaceholder")}
+                        {...formField}
+                        maxLength={10}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -93,9 +99,9 @@ export function DescriptorFormTranslations({ form }: DescriptorFormTranslationsP
                 name={`translations.${index}.name`}
                 render={({ field: formField }) => (
                   <FormItem>
-                    <FormLabel>Nom</FormLabel>
+                    <FormLabel>{t("name")}</FormLabel>
                     <FormControl>
-                      <Input placeholder="Nom du descripteur" {...formField} maxLength={100} />
+                      <Input placeholder={t("namePlaceholder")} {...formField} maxLength={100} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -108,10 +114,10 @@ export function DescriptorFormTranslations({ form }: DescriptorFormTranslationsP
                 name={`translations.${index}.description`}
                 render={({ field: formField }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel>{t("description")}</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Description (optionnel)"
+                        placeholder={t("descriptionPlaceholder")}
                         {...formField}
                         value={formField.value ?? ""}
                         maxLength={500}

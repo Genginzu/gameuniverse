@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useAdminRatings } from "@/hooks/useAdminRatings";
 import { RatingsTable } from "./RatingsTable";
@@ -16,6 +17,7 @@ interface RatingsTabProps {
 }
 
 export function RatingsTab({ ratingSystemId }: RatingsTabProps) {
+  const t = useTranslations("admin.ageClassifications.ratings");
   const router = useRouter();
   const { ratings, loading, fetchRatings, deleteRating, checkRatingUsage } =
     useAdminRatings(ratingSystemId);
@@ -63,10 +65,10 @@ export function RatingsTab({ ratingSystemId }: RatingsTabProps) {
     setIsDeleting(true);
     try {
       await deleteRating(ratingToDelete.id);
-      toast({ title: "Note supprimée avec succès", variant: "success" });
+      toast({ title: t("toast.deleted"), variant: "success" });
       setRatingToDelete(null);
     } catch {
-      toast({ title: "Erreur lors de la suppression", variant: "destructive" });
+      toast({ title: t("toast.deleteError"), variant: "destructive" });
     } finally {
       setIsDeleting(false);
     }
@@ -79,10 +81,10 @@ export function RatingsTab({ ratingSystemId }: RatingsTabProps) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Notes</h2>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t("title")}</h2>
         <Button size="sm" onClick={handleCreate}>
-          <Icon icon="fa:plus" className="h-3 w-3"  />
-          Nouvelle note
+          <Icon icon="fa:plus" className="h-3 w-3" />
+          {t("newRating")}
         </Button>
       </div>
 

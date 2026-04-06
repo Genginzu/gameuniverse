@@ -1,6 +1,7 @@
 "use client";
 
 import { type UseFormReturn } from "react-hook-form";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -26,6 +27,8 @@ export interface DescriptorFormProps {
 }
 
 export function DescriptorForm({ mode, form, onSubmit, isSubmitting }: DescriptorFormProps) {
+  const t = useTranslations("admin.ageClassifications.descriptors.form");
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" noValidate>
@@ -37,17 +40,17 @@ export function DescriptorForm({ mode, form, onSubmit, isSubmitting }: Descripto
               name="code"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Code</FormLabel>
+                  <FormLabel>{t("code")}</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="VIOLENCE, LANGUAGE…"
+                      placeholder={t("codePlaceholder")}
                       {...field}
                       disabled={mode === "edit"}
                       className={mode === "edit" ? "bg-gray-50 dark:bg-gray-900/50" : ""}
                       maxLength={30}
                     />
                   </FormControl>
-                  <FormDescription>Code unique du descripteur (max 30 caractères)</FormDescription>
+                  <FormDescription>{t("codeDescription")}</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -59,16 +62,16 @@ export function DescriptorForm({ mode, form, onSubmit, isSubmitting }: Descripto
               name="icon_url"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>URL de l&apos;icône</FormLabel>
+                  <FormLabel>{t("iconUrl")}</FormLabel>
                   <FormControl>
                     <Input
                       type="url"
-                      placeholder="https://example.com/icon.png"
+                      placeholder={t("iconUrlPlaceholder")}
                       {...field}
                       value={field.value ?? ""}
                     />
                   </FormControl>
-                  <FormDescription>Optionnel — URL complète de l&apos;icône</FormDescription>
+                  <FormDescription>{t("iconUrlDescription")}</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -86,8 +89,8 @@ export function DescriptorForm({ mode, form, onSubmit, isSubmitting }: Descripto
               <LoadingSpinner size="sm" />
             ) : (
               <>
-                <Icon icon="fa:save" className="h-4 w-4"  />
-                {mode === "create" ? "Créer" : "Enregistrer"}
+                <Icon icon="fa:save" className="h-4 w-4" />
+                {mode === "create" ? t("create") : t("save")}
               </>
             )}
           </Button>
