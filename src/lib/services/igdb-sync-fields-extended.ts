@@ -8,6 +8,7 @@ import { IGDB_RATING_CATEGORIES, IGDB_ALL_RATINGS, type IGDBGame } from "@/types
 import type { SyncSupabaseClient } from "./igdb-sync";
 import { untypedTable } from "@/lib/utils/untypedTable";
 import { transformIgdbVideos } from "../../../scripts/igdb-import/games/video-transform";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 /** Supprime toutes les lignes d'une table pour un game_id donné */
 async function deleteByGameId(
@@ -260,7 +261,7 @@ export async function syncSimilarGames(
 
   for (let i = 0; i < igdbGame.similar_games.length; i++) {
     const similarIgdbId = igdbGame.similar_games[i];
-    await untypedTable(supabase, "game_similar_games")
+    await untypedTable(supabase as unknown as SupabaseClient, "game_similar_games")
       .insert({
         game_id: gameId,
         similar_igdb_id: similarIgdbId,

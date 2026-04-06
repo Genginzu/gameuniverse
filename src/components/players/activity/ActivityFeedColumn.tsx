@@ -12,7 +12,10 @@ interface ActivityFeedColumnProps {
   locale: string;
 }
 
-export const ActivityFeedColumn = memo(function ActivityFeedColumn({ playerId, locale }: ActivityFeedColumnProps) {
+export const ActivityFeedColumn = memo(function ActivityFeedColumn({
+  playerId,
+  locale,
+}: ActivityFeedColumnProps) {
   const t = useTranslations("players.activity");
   const {
     events,
@@ -80,7 +83,7 @@ export const ActivityFeedColumn = memo(function ActivityFeedColumn({ playerId, l
       </div>
     </div>
   );
-}
+});
 
 function ActivityFeedSkeleton() {
   return (
@@ -103,4 +106,4 @@ function ActivityFeedEmpty() {
       <p className="text-sm text-gray-500 dark:text-slate-400">{t("empty")}</p>
     </div>
   );
-});
+}

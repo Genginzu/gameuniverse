@@ -82,7 +82,7 @@ export const FriendList = memo(function FriendList({
       <div ref={sentinelRef} className="h-1" aria-hidden="true" />
     </div>
   );
-}
+});
 
 function FriendListSkeleton() {
   return (
@@ -105,4 +105,4 @@ function FriendListEmpty() {
       <p className="text-sm text-gray-500 dark:text-slate-400">{t("empty")}</p>
     </div>
   );
-});
+}
