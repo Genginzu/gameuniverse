@@ -1,0 +1,25 @@
+#!/bin/sh
+# Enforce conventional commit prefixes
+commit_msg=$(head -1 "$1")
+
+if ! echo "$commit_msg" | grep -qE "^(feat|fix|refactor|docs|ci|chore|style|test|perf)(\(.+\))?: .+"; then
+  echo "❌ Commit refusé : le message doit commencer par un préfixe valide."
+  echo ""
+  echo "Format : <type>: <description>"
+  echo ""
+  echo "Types autorisés :"
+  echo "  feat     — Nouvelle fonctionnalité"
+  echo "  fix      — Correction de bug"
+  echo "  refactor — Refactoring"
+  echo "  docs     — Documentation"
+  echo "  ci       — CI/CD"
+  echo "  chore    — Maintenance / dépendances"
+  echo "  style    — Formatage, style de code"
+  echo "  test     — Ajout ou modification de tests"
+  echo "  perf     — Amélioration de performance"
+  echo ""
+  echo "Exemples :"
+  echo "  feat: add user authentication"
+  echo "  fix(auth): resolve token expiration issue"
+  exit 1
+fi
