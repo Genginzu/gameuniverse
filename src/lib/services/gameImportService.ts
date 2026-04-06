@@ -8,6 +8,7 @@ import {
   transformIgdbToDlcExtensionRow,
 } from "@/lib/utils/dlcExtensionUtils";
 import { logger } from "@/lib/logger";
+import { untypedTable } from "@/lib/utils/untypedTable";
 
 /**
  * Result of an import or sync operation
@@ -1335,7 +1336,7 @@ export class GameImportService {
         display_order: index,
       }));
 
-      const { error } = await (supabase as any).from("game_similar_games").upsert(rows, {
+      const { error } = await untypedTable(supabase, "game_similar_games").upsert(rows, {
         onConflict: "game_id,similar_igdb_id",
       });
 
@@ -1354,7 +1355,7 @@ export class GameImportService {
     try {
       const supabase = await createRouteHandlerClient();
 
-      await (supabase as any).from("game_similar_games").delete().eq("game_id", gameId);
+      await untypedTable(supabase, "game_similar_games").delete().eq("game_id", gameId);
 
       await this.createSimilarGames(gameId, igdbGame);
     } catch (error) {

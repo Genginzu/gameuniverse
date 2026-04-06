@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
+import { untypedTable } from "@/lib/utils/untypedTable";
 
 interface SimilarGameRow {
   id: string;
@@ -27,8 +28,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     const { id: gameId } = await params;
     const supabase = await createRouteHandlerClient();
 
-    const { data: rows, error } = await (supabase as any)
-      .from("game_similar_games")
+    const { data: rows, error } = await untypedTable(supabase, "game_similar_games")
       .select("id, similar_igdb_id, similar_game_id, display_order")
       .eq("game_id", gameId)
       .order("display_order", { ascending: true });
@@ -118,17 +118,15 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     }
 
     // Get current max display_order
-    const { data: existing } = await (supabase as any)
-      .from("game_similar_games")
+    const { data: existing } = await untypedTable(supabase, "game_similar_games")
       .select("display_order")
       .eq("game_id", gameId)
       .order("display_order", { ascending: false })
       .limit(1);
 
-    const nextOrder = existing && existing.length > 0 ? (existing[0] as any).display_order + 1 : 0;
+    const nextOrder = existing && existing.length > 0 ? (existing[0] as { display_order: number }).display_order + 1 : 0;
 
-    const { data: inserted, error: insertError } = await (supabase as any)
-      .from("game_similar_games")
+    const { data: inserted, error: insertError } = await untypedTable(supabase, "game_similar_games")
       .insert({
         game_id: gameId,
         similar_igdb_id: targetGame.igdb_id ?? 0,
@@ -172,8 +170,7 @@ export async function DELETE(
 
     const supabase = await createRouteHandlerClient();
 
-    const { error } = await (supabase as any)
-      .from("game_similar_games")
+    const { error } = await untypedTable(supabase, "game_similar_games")
       .delete()
       .eq("id", entryId)
       .eq("game_id", gameId);

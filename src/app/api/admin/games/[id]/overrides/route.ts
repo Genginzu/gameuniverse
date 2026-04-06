@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { untypedTable } from "@/lib/utils/untypedTable";
 import { requireAdmin } from "@/lib/auth-admin";
 
 /**
@@ -18,8 +19,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
 
     const supabase = await createRouteHandlerClient();
 
-    const { data: overrides, error } = await (supabase as any)
-      .from("game_field_overrides")
+    const { data: overrides, error } = await untypedTable(supabase, "game_field_overrides")
       .select("id, game_id, field_name, modified_by, modified_at")
       .eq("game_id", gameId);
 

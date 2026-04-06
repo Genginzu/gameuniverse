@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect } from "react";
 import Image from "next/image";
@@ -6,8 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
-import type { GameFormTabProps } from "@/types/admin-games";
-import { SUPPORTED_LANGUAGES } from "@/types/admin-games";
+import { type GameFormTabProps, SUPPORTED_LANGUAGES } from "@/types/admin-games";
 import { IgdbFieldIndicator } from "./IgdbFieldIndicator";
 import { Icon } from "@iconify/react";
 
