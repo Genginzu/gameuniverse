@@ -56,7 +56,7 @@ bun run build
 
 ### 4. README de la Fonctionnalité
 
-- Créer un fichier `docs/README_{FEATURE_NAME}.md` documentant la fonctionnalité
+- Créer un fichier `docs/features/{domaine}/ma-feature.md (kebab-case)` documentant la fonctionnalité
 - Le README doit contenir :
   - **Description** : résumé de ce qui a été implémenté
   - **Accès** : comment accéder à la fonctionnalité (routes, URLs, navigation)
@@ -88,7 +88,7 @@ Ajouter ces tâches à la fin du fichier `tasks.md` :
 
 ## Task X+3: README de la fonctionnalité
 
-- [ ] Créer `docs/README_{FEATURE_NAME}.md`
+- [ ] Créer `docs/features/{domaine}/ma-feature.md (kebab-case)`
 - [ ] Documenter ce qui a été implémenté, comment y accéder, les prérequis et
       l'utilisation
 ```
