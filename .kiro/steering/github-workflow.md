@@ -10,25 +10,26 @@ inclusion: always
 - **Repo** : `gameuniverse`
 - **URL** : https://github.com/DarkenNights/gameuniverse
 
-## Workflow : Issue → Branche → PR → CI → Clôture
+## Workflow : Issue → dev → Clôture
 
 Quand l'utilisateur demande de travailler sur une issue GitHub :
 
-1. **Créer une branche** depuis `dev` nommée selon l'issue (ex :
-   `feat/42-nom-court` ou `fix/42-nom-court`)
-2. **Implémenter** les changements demandés dans l'issue
-3. **Commit & push** sur la branche créée
-4. **Créer une PR** vers `dev` en référençant l'issue dans le body
-   (`Closes #XX`)
-5. **Vérifier le CI** — attendre que les checks passent
-6. **Merger la PR** vers `dev` une fois le CI passé
-7. **Clôturer l'issue** après le merge
+1. **Implémenter** les changements demandés dans l'issue sur `dev`
+2. **Vérifier la qualité** — lancer lint, tests et build :
+   - `bun run lint` — corriger les erreurs/warnings si nécessaire
+   - `bun run test:all` — corriger les tests en échec si nécessaire
+   - `bun run build` — corriger les erreurs de compilation si nécessaire
+3. **Commit & push** sur `dev`
+4. **Clôturer l'issue**
+
+## CI
+
+Le CI se déclenche uniquement lors de la création d'une PR de `dev` vers `main`.
+Pas de CI sur les push directs sur `dev`.
 
 ## Règles
 
-- ✅ Toujours créer la PR vers `dev`, jamais vers `main`
-- ✅ Référencer l'issue dans le body de la PR (`Closes #XX`)
-- ✅ Ne clôturer l'issue que si le CI est passé et la PR mergée
-- ✅ Si le CI échoue, corriger les erreurs avant de clôturer
-- ❌ Ne **jamais** push directement sur `dev` ou `main` pour un travail lié à
-  une issue
+- ✅ Travailler directement sur `dev` pour les issues
+- ✅ Toujours lancer lint + tests + build avant de push
+- ✅ Corriger les erreurs détectées avant de commit
+- ❌ Ne **jamais** push directement sur `main`
