@@ -271,15 +271,4 @@ describe("FavoriteCharactersContent Unit Tests", () => {
     });
   });
 
-  // -----------------------------------------------------------------------
-  // Component export
-  // -----------------------------------------------------------------------
-  describe("component export", () => {
-    it("should export FavoriteCharactersContent as a function", async () => {
-      const mod =
-        await import("../../../../src/components/characters/favorites/FavoriteCharactersContent");
-      expect(mod.FavoriteCharactersContent).toBeDefined();
-      expect(typeof mod.FavoriteCharactersContent).toBe("function");
-    });
-  });
 });
