@@ -22,6 +22,30 @@ export default function AdminSidebar({
   setSidebarOpen,
 }: AdminSidebarProps) {
   const t = useTranslations("admin");
+  const sidebarRef = useRef<HTMLDivElement>(null);
+
+  // Focus trap for mobile sidebar
+  useEffect(() => {
+    if (!sidebarOpen) return;
+    const sidebar = sidebarRef.current;
+    if (!sidebar) return;
+    const sel = 'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") { setSidebarOpen(false); return; }
+      if (e.key !== "Tab") return;
+      const focusable = sidebar.querySelectorAll<HTMLElement>(sel);
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    const focusable = sidebar.querySelectorAll<HTMLElement>(sel);
+    if (focusable.length > 0) focusable[0].focus();
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [sidebarOpen, setSidebarOpen]);
+
   const handleLinkClick = () => {
     if (window.innerWidth < 1024) {
       setSidebarOpen(false);
@@ -38,6 +62,7 @@ export default function AdminSidebar({
       {/* Mobile Sidebar */}
       <div
         id="admin-mobile-sidebar"
+        ref={sidebarRef}
         className={`fixed inset-y-0 left-0 z-50 w-64 transform bg-white transition-transform duration-300 ease-in-out lg:hidden dark:bg-gray-900 ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}

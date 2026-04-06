@@ -118,12 +118,13 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         size="sm"
         className="fixed left-4 top-4 z-30 lg:hidden"
         onClick={() => setSidebarOpen(!sidebarOpen)}
+        aria-label={sidebarOpen ? t("closeSidebar") : t("openSidebar")}
       >
         {sidebarOpen ? <Icon icon="fa:times" className="h-5 w-5"  /> : <Icon icon="fa:bars" className="h-5 w-5"  />}
       </Button>
 
       {/* Mobile sidebar overlay */}
-      {sidebarOpen && <div className="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden" />}
+      {sidebarOpen && <div className="fixed inset-0 z-40 bg-black/50 lg:hidden" />}
 
       {adminUser && (
         <AdminSidebar
