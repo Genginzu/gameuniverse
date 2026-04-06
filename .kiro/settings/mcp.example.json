@@ -1,0 +1,33 @@
+{
+  "mcpServers": {
+    "vercel": {
+      "url": "https://mcp.vercel.com",
+      "disabled": false,
+      "autoApprove": [
+        "list_teams",
+        "list_projects",
+        "list_deployments",
+        "get_deployment_build_logs",
+        "get_deployment",
+        "search_vercel_documentation",
+        "get_runtime_logs",
+        "web_fetch_vercel_url"
+      ]
+    },
+    "notion": {
+      "command": "npx",
+      "args": ["-y", "@notionhq/notion-mcp-server"],
+      "env": {
+        "OPENAPI_MCP_HEADERS": "{\"Authorization\": \"Bearer <NOTION_API_TOKEN>\", \"Notion-Version\": \"2022-06-28\"}",
+        "NODE_TLS_REJECT_UNAUTHORIZED": "0"
+      }
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "<GITHUB_PERSONAL_ACCESS_TOKEN>"
+      }
+    }
+  }
+}

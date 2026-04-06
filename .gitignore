@@ -44,3 +44,6 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 #IGDB Mass import dump
 scripts/igdb-import/dumps/*.csv
+
+# Kiro MCP settings (contains API tokens)
+.kiro/settings/mcp.json
