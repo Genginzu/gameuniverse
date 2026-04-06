@@ -21,13 +21,14 @@ Quand l'utilisateur demande de travailler sur une issue GitHub :
 4. **Créer une PR** vers `dev` en référençant l'issue dans le body
    (`Closes #XX`)
 5. **Vérifier le CI** — attendre que les checks passent
-6. **Clôturer l'issue** une fois le CI passé avec succès
+6. **Merger la PR** vers `dev` une fois le CI passé
+7. **Clôturer l'issue** après le merge
 
 ## Règles
 
 - ✅ Toujours créer la PR vers `dev`, jamais vers `main`
 - ✅ Référencer l'issue dans le body de la PR (`Closes #XX`)
-- ✅ Ne clôturer l'issue que si le CI est passé
+- ✅ Ne clôturer l'issue que si le CI est passé et la PR mergée
 - ✅ Si le CI échoue, corriger les erreurs avant de clôturer
 - ❌ Ne **jamais** push directement sur `dev` ou `main` pour un travail lié à
   une issue
