@@ -1,6 +1,5 @@
 ---
-name: project-architecture
-description: Architecture globale du projet — structure, hooks, services, utils, composants, types, stack. Activer pour comprendre où trouver ou placer du code.
+inclusion: always
 ---
 
 # Skill : Architecture — GameUniverse
