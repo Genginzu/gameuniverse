@@ -13,6 +13,7 @@ import {
 } from "@/types/database";
 import { SupabaseError } from "@/types/api";
 import { logger } from "@/lib/logger";
+import { untypedTable } from "@/lib/utils/untypedTable";
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   try {
@@ -342,8 +343,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     let gameSimilarGames: SimilarGameRow[] = [];
 
     try {
-      const { data: similarData } = await (supabase as any)
-        .from("game_similar_games")
+      const { data: similarData } = await untypedTable(supabase, "game_similar_games")
         .select("similar_igdb_id, similar_game_id, display_order")
         .eq("game_id", game.id)
         .order("display_order", { ascending: true });
