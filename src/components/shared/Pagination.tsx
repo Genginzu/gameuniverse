@@ -178,7 +178,7 @@ export function Pagination({
                 disabled={loading}
                 className={`h-9 min-w-[36px] rounded-lg font-medium transition-all sm:h-10 sm:min-w-[44px] ${
                   isCurrentPage
-                    ? "pointer-events-none bg-linear-to-r from-blue-600 to-indigo-600 text-white shadow-lg"
+                    ? "pointer-events-none bg-linear-to-r from-cyan-500 to-violet-500 text-white shadow-lg"
                     : "border-gray-200 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 dark:border-gray-700 dark:hover:border-blue-600 dark:hover:bg-blue-900/20"
                 }`}
               >
