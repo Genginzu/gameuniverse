@@ -202,6 +202,38 @@
         "mismatch": "Les mots de passe ne correspondent pas"
       }
     },
+    "forgotPassword": {
+      "title": "Mot de passe oublié ?",
+      "description": "Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+      "emailLabel": "Adresse email",
+      "emailPlaceholder": "votre@email.com",
+      "submit": "Envoyer le lien",
+      "submitting": "Envoi en cours...",
+      "backToLogin": "Se connecter",
+      "rememberPassword": "Vous vous souvenez de votre mot de passe ?",
+      "unexpectedError": "Une erreur inattendue s'est produite",
+      "emailValidation": "Veuillez entrer une adresse email valide",
+      "successTitle": "Email envoyé !",
+      "successSubtitle": "Vérifiez votre boîte de réception",
+      "successSentTo": "Nous avons envoyé un lien de réinitialisation à :",
+      "successStepsTitle": "Étapes suivantes :",
+      "successStep1": "Vérifiez votre boîte de réception",
+      "successStep2": "Cliquez sur le lien dans l'email",
+      "successStep3": "Créez votre nouveau mot de passe",
+      "successSpam": "Vous ne voyez pas l'email ? Vérifiez vos spams ou",
+      "successRetry": "essayez avec une autre adresse",
+      "forgotPasswordLink": "Mot de passe oublié ?"
+    },
+    "confirm": {
+      "errorTitle": "Erreur de confirmation",
+      "errorDescription": "Une erreur s'est produite lors de la confirmation de votre compte.",
+      "failedTitle": "Confirmation échouée",
+      "failedDescription": "Le lien de confirmation est invalide ou a expiré.",
+      "unexpectedTitle": "Erreur inattendue",
+      "unexpectedDescription": "Une erreur inattendue s'est produite.",
+      "backToLogin": "Retour à la connexion",
+      "resendEmail": "Renvoyer l'email"
+    },
     "footer": {
       "text": "© 2024 Game Universe. Tous droits réservés."
     }
@@ -790,6 +822,7 @@
     "view": "Voir",
     "playNow": "Jouer maintenant",
     "addToWishlist": "Ajouter à la liste de souhaits",
+    "removeFromWishlist": "Retirer de la liste de souhaits",
     "statsGrid": {
       "globalScore": "Note critiques",
       "price": "Prix",
@@ -1122,6 +1155,7 @@
       "translations": "Traductions"
     },
     "closeSidebar": "Fermer le menu latéral",
+    "openSidebar": "Ouvrir le menu latéral",
     "lightMode": "Mode clair",
     "darkMode": "Mode sombre",
     "games": {

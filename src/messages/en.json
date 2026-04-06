@@ -202,6 +202,38 @@
         "mismatch": "Passwords do not match"
       }
     },
+    "forgotPassword": {
+      "title": "Forgot your password?",
+      "description": "Enter your email address and we'll send you a link to reset your password.",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "your@email.com",
+      "submit": "Send reset link",
+      "submitting": "Sending...",
+      "backToLogin": "Sign in",
+      "rememberPassword": "Remember your password?",
+      "unexpectedError": "An unexpected error occurred",
+      "emailValidation": "Please enter a valid email address",
+      "successTitle": "Email sent!",
+      "successSubtitle": "Check your inbox",
+      "successSentTo": "We've sent a reset link to:",
+      "successStepsTitle": "Next steps:",
+      "successStep1": "Check your inbox",
+      "successStep2": "Click the link in the email",
+      "successStep3": "Create your new password",
+      "successSpam": "Don't see the email? Check your spam folder or",
+      "successRetry": "try with a different address",
+      "forgotPasswordLink": "Forgot password?"
+    },
+    "confirm": {
+      "errorTitle": "Confirmation error",
+      "errorDescription": "An error occurred while confirming your account.",
+      "failedTitle": "Confirmation failed",
+      "failedDescription": "The confirmation link is invalid or has expired.",
+      "unexpectedTitle": "Unexpected error",
+      "unexpectedDescription": "An unexpected error occurred.",
+      "backToLogin": "Back to login",
+      "resendEmail": "Resend email"
+    },
     "footer": {
       "text": "© 2024 Game Universe. All rights reserved."
     }
@@ -790,6 +822,7 @@
     "view": "View",
     "playNow": "Play Now",
     "addToWishlist": "Add to Wishlist",
+    "removeFromWishlist": "Remove from Wishlist",
     "statsGrid": {
       "globalScore": "Critics Score",
       "price": "Price",
@@ -1122,6 +1155,7 @@
       "translations": "Translations"
     },
     "closeSidebar": "Close sidebar",
+    "openSidebar": "Open sidebar",
     "lightMode": "Light mode",
     "darkMode": "Dark mode",
     "games": {
