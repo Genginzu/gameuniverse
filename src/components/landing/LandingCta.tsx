@@ -1,10 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react";
-
+import { Link } from "@/i18n/navigation";
 
 /**
  * Bottom CTA section with dark gaming background and neon-styled buttons.
@@ -26,7 +25,7 @@ export function LandingCta() {
             asChild
           >
             <Link href="/auth?mode=signup">
-              <Icon icon="fa:users" className="mr-3 h-5 w-5"  />
+              <Icon icon="fa:users" className="mr-3 h-5 w-5" />
               {t("cta.signup")}
             </Link>
           </Button>

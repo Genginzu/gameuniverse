@@ -51,7 +51,6 @@ export function GameColorPreviewHero({
             alt=""
             fill
             className="object-cover object-center"
-            unoptimized
             onError={(e) => {
               (e.target as HTMLImageElement).style.display = "none";
             }}
@@ -84,7 +83,6 @@ export function GameColorPreviewHero({
                 alt=""
                 fill
                 className="object-cover"
-                unoptimized
                 onError={(e) => {
                   (e.target as HTMLImageElement).style.display = "none";
                 }}

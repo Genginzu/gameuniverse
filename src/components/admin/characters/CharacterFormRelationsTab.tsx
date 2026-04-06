@@ -165,7 +165,6 @@ function RelationRow({
               width={40}
               height={40}
               className="h-10 w-10 rounded-full border border-gray-200 object-cover dark:border-gray-700"
-              unoptimized
               onError={(e) => {
                 (e.target as HTMLImageElement).style.display = "none";
               }}
@@ -302,7 +301,6 @@ function CharacterSearchPicker({
                     width={32}
                     height={32}
                     className="h-8 w-8 shrink-0 rounded-full border border-gray-200 object-cover dark:border-gray-700"
-                    unoptimized
                     onError={(e) => {
                       (e.target as HTMLImageElement).style.display = "none";
                     }}

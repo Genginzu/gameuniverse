@@ -32,7 +32,6 @@ export function HeroBanner({
           alt=""
           fill
           className="object-cover opacity-40"
-          unoptimized
           onError={(e) => {
             (e.target as HTMLImageElement).style.display = "none";
           }}
@@ -49,7 +48,6 @@ export function HeroBanner({
               width={128}
               height={176}
               className="h-44 w-32 rounded-xl border-2 border-white/20 object-cover shadow-2xl ring-1 ring-black/10"
-              unoptimized
               onError={(e) => {
                 (e.target as HTMLImageElement).style.display = "none";
               }}

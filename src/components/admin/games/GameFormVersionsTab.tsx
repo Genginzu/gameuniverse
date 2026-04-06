@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect } from "react";
 import Image from "next/image";
@@ -90,7 +90,6 @@ export function GameFormVersionsTab({ form, t, isIgdbField }: GameFormTabProps) 
                       alt=""
                       fill
                       className="rounded-lg object-cover"
-                      unoptimized
                       onError={(e) => {
                         (e.target as HTMLImageElement).parentElement!.style.display = "none";
                       }}

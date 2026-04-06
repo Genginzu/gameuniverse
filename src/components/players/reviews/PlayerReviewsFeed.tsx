@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { usePlayerReviews } from "@/hooks/usePlayerReviews";
@@ -13,7 +13,7 @@ interface PlayerReviewsFeedProps {
   locale: string;
 }
 
-export function PlayerReviewsFeed({ playerId, locale }: PlayerReviewsFeedProps) {
+export const PlayerReviewsFeed = memo(function PlayerReviewsFeed({ playerId, locale }: PlayerReviewsFeedProps) {
   const t = useTranslations("players.reviews");
   const {
     reviews,
@@ -132,4 +132,4 @@ function ReviewsFeedEmpty() {
       <p className="text-sm text-gray-500 dark:text-slate-400">{t("empty")}</p>
     </div>
   );
-}
+});

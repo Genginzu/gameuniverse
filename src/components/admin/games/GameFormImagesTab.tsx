@@ -46,7 +46,6 @@ export function GameFormImagesTab({ form, t, isIgdbField }: GameFormTabProps) {
                 alt="Cover preview"
                 fill
                 className="rounded-xl object-contain"
-                unoptimized
                 onError={(e) => {
                   (e.target as HTMLImageElement).parentElement!.style.display = "none";
                 }}
@@ -86,7 +85,6 @@ export function GameFormImagesTab({ form, t, isIgdbField }: GameFormTabProps) {
                 alt="Background preview"
                 fill
                 className="object-contain"
-                unoptimized
                 onError={(e) => {
                   (e.target as HTMLImageElement).parentElement!.style.display = "none";
                 }}
@@ -214,7 +212,6 @@ function MediaListSection({
                       alt={form.watch(`${fieldName}.${idx}.alt_text`) || ""}
                       fill
                       className="rounded-lg object-cover"
-                      unoptimized
                       onError={(e) => {
                         (e.target as HTMLImageElement).parentElement!.style.display = "none";
                       }}

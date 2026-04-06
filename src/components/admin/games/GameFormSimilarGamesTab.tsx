@@ -158,7 +158,7 @@ export function GameFormSimilarGamesTab({ gameId }: GameFormSimilarGamesTabProps
               >
                 {game.coverImage ? (
                   <div className="relative h-10 w-7 shrink-0 overflow-hidden rounded border border-gray-200 dark:border-gray-600">
-                    <Image src={game.coverImage} alt="" fill className="object-cover" unoptimized />
+                    <Image src={game.coverImage} alt="" fill className="object-cover" />
                   </div>
                 ) : (
                   <div className="flex h-10 w-7 shrink-0 items-center justify-center rounded border border-gray-200 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
@@ -210,7 +210,6 @@ export function GameFormSimilarGamesTab({ gameId }: GameFormSimilarGamesTabProps
                         alt=""
                         fill
                         className="object-cover"
-                        unoptimized
                       />
                     </div>
                   ) : (

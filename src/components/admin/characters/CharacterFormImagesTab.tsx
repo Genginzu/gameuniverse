@@ -39,7 +39,6 @@ export function CharacterFormImagesTab({ form, t }: CharacterFormTabProps) {
                 alt="Main image preview"
                 fill
                 className="rounded-xl object-contain"
-                unoptimized
                 onError={(e) => {
                   (e.target as HTMLImageElement).parentElement!.style.display = "none";
                 }}
@@ -77,7 +76,6 @@ export function CharacterFormImagesTab({ form, t }: CharacterFormTabProps) {
                 alt="Background preview"
                 fill
                 className="object-contain"
-                unoptimized
                 onError={(e) => {
                   (e.target as HTMLImageElement).parentElement!.style.display = "none";
                 }}

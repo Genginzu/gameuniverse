@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -17,7 +17,7 @@ interface FriendListProps {
   locale: string;
 }
 
-export function FriendList({
+export const FriendList = memo(function FriendList({
   friends,
   isLoading,
   isLoadingMore,
@@ -105,4 +105,4 @@ function FriendListEmpty() {
       <p className="text-sm text-gray-500 dark:text-slate-400">{t("empty")}</p>
     </div>
   );
-}
+});

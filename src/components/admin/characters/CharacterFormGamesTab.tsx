@@ -129,7 +129,6 @@ function AssignedGameRow({
             width={32}
             height={40}
             className="h-10 w-8 rounded border border-gray-200 object-cover dark:border-gray-700"
-            unoptimized
             onError={(e) => {
               (e.target as HTMLImageElement).style.display = "none";
             }}
@@ -245,7 +244,6 @@ function GameSearchPicker({
                     width={24}
                     height={32}
                     className="h-8 w-6 shrink-0 rounded border border-gray-200 object-cover dark:border-gray-700"
-                    unoptimized
                     onError={(e) => {
                       (e.target as HTMLImageElement).style.display = "none";
                     }}

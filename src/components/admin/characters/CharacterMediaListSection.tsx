@@ -122,7 +122,6 @@ function MediaItemCard({
               alt={form.watch(`media.${index}.alt_text`) || ""}
               fill
               className="rounded-lg object-cover"
-              unoptimized
               onError={(e) => {
                 (e.target as HTMLImageElement).parentElement!.style.display = "none";
               }}

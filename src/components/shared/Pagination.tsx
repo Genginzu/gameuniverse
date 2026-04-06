@@ -94,7 +94,7 @@ export function Pagination({
             />
           </svg>
           <span>{t("page")}</span>
-          <span className="font-semibold text-blue-600 dark:text-blue-400">{currentPage}</span>
+          <span className="font-semibold text-cyan-500 dark:text-cyan-400">{currentPage}</span>
           <span>{t("of")}</span>
           <span className="font-semibold">{totalPages}</span>
         </div>
@@ -116,7 +116,7 @@ export function Pagination({
           size="sm"
           onClick={() => onPageChange(1)}
           disabled={currentPage === 1 || loading}
-          className="hidden rounded-lg border-gray-200 px-2 py-2 text-sm font-medium transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-50 md:inline-flex md:px-3 dark:border-gray-700 dark:hover:border-blue-600 dark:hover:bg-blue-900/20"
+          className="hidden rounded-lg border-gray-200 px-2 py-2 text-sm font-medium transition-all hover:border-violet-300 hover:bg-violet-50 hover:text-violet-600 disabled:opacity-50 md:inline-flex md:px-3 dark:border-gray-700 dark:hover:border-violet-500 dark:hover:bg-violet-900/20"
         >
           <svg className="h-4 w-4 md:mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -135,7 +135,7 @@ export function Pagination({
           size="sm"
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1 || loading}
-          className="rounded-lg border-gray-200 px-3 py-2 text-sm font-medium transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-50 sm:px-4 dark:border-gray-700 dark:hover:border-blue-600 dark:hover:bg-blue-900/20"
+          className="rounded-lg border-gray-200 px-3 py-2 text-sm font-medium transition-all hover:border-violet-300 hover:bg-violet-50 hover:text-violet-600 disabled:opacity-50 sm:px-4 dark:border-gray-700 dark:hover:border-violet-500 dark:hover:bg-violet-900/20"
         >
           <svg className="h-4 w-4 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -179,7 +179,7 @@ export function Pagination({
                 className={`h-9 min-w-[36px] rounded-lg font-medium transition-all sm:h-10 sm:min-w-[44px] ${
                   isCurrentPage
                     ? "pointer-events-none bg-linear-to-r from-cyan-500 to-violet-500 text-white shadow-lg"
-                    : "border-gray-200 hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 dark:border-gray-700 dark:hover:border-blue-600 dark:hover:bg-blue-900/20"
+                    : "border-gray-200 hover:border-violet-300 hover:bg-violet-50 hover:text-violet-600 dark:border-gray-700 dark:hover:border-violet-500 dark:hover:bg-violet-900/20"
                 }`}
               >
                 {pageNumber}
@@ -194,7 +194,7 @@ export function Pagination({
           size="sm"
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages || loading}
-          className="rounded-lg border-gray-200 px-3 py-2 text-sm font-medium transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-50 sm:px-4 dark:border-gray-700 dark:hover:border-blue-600 dark:hover:bg-blue-900/20"
+          className="rounded-lg border-gray-200 px-3 py-2 text-sm font-medium transition-all hover:border-violet-300 hover:bg-violet-50 hover:text-violet-600 disabled:opacity-50 sm:px-4 dark:border-gray-700 dark:hover:border-violet-500 dark:hover:bg-violet-900/20"
         >
           <span className="hidden sm:inline">{t("next")}</span>
           <svg className="h-4 w-4 sm:ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -208,7 +208,7 @@ export function Pagination({
           size="sm"
           onClick={() => onPageChange(totalPages)}
           disabled={currentPage === totalPages || loading}
-          className="hidden rounded-lg border-gray-200 px-2 py-2 text-sm font-medium transition-all hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-50 md:inline-flex md:px-3 dark:border-gray-700 dark:hover:border-blue-600 dark:hover:bg-blue-900/20"
+          className="hidden rounded-lg border-gray-200 px-2 py-2 text-sm font-medium transition-all hover:border-violet-300 hover:bg-violet-50 hover:text-violet-600 disabled:opacity-50 md:inline-flex md:px-3 dark:border-gray-700 dark:hover:border-violet-500 dark:hover:bg-violet-900/20"
         >
           <span className="hidden md:inline">{t("last")}</span>
           <svg className="h-4 w-4 md:ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -231,7 +231,7 @@ export function Pagination({
           value={currentPage}
           onChange={(e) => onPageChange(parseInt(e.target.value))}
           disabled={loading}
-          className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium shadow-xs focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+          className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium shadow-xs focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
         >
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
             <option key={page} value={page}>
