@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AdminTableSkeleton } from "@/components/admin/shared/AdminTableSkeleton";
@@ -36,6 +37,7 @@ export function RatingSystemsTable({
   currentSort,
   currentSearch = "",
 }: RatingSystemsTableProps) {
+  const t = useTranslations("admin.ageClassifications");
   const [searchInput, setSearchInput] = useState(currentSearch);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -64,7 +66,6 @@ export function RatingSystemsTable({
 
   return (
     <div className="space-y-4">
-      {/* Barre de recherche */}
       <form onSubmit={handleSearchSubmit} className="flex gap-2">
         <div className="relative flex-1">
           <Icon
@@ -73,33 +74,30 @@ export function RatingSystemsTable({
           />
           <Input
             type="text"
-            placeholder="Rechercher par code ou nom…"
+            placeholder={t("searchPlaceholder")}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="pl-10"
-            aria-label="Rechercher des systèmes de classification"
+            aria-label={t("searchPlaceholder")}
           />
         </div>
         <Button type="submit" variant="secondary">
-          Rechercher
+          {t("search")}
         </Button>
       </form>
 
-      {/* Nombre total */}
       <p className="text-sm text-gray-500 dark:text-gray-400">
-        {pagination.totalCount} système{pagination.totalCount !== 1 ? "s" : ""} de classification
+        {t("totalSystems", { count: pagination.totalCount })}
       </p>
 
-      {/* État de chargement */}
       {isLoading ? (
         <AdminTableSkeleton columns={3} rows={6} />
       ) : systems.length === 0 ? (
         <div className="rounded-xl border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800">
-          <p className="text-gray-500 dark:text-gray-400">Aucun système de classification trouvé</p>
+          <p className="text-gray-500 dark:text-gray-400">{t("noSystems")}</p>
         </div>
       ) : (
         <>
-          {/* Tableau */}
           <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
             <table className="w-full text-left text-sm" role="table">
               <thead className="border-b border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800">
@@ -109,9 +107,9 @@ export function RatingSystemsTable({
                       type="button"
                       className="inline-flex items-center gap-1 font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
                       onClick={() => handleSortClick("code")}
-                      aria-label="Trier par code"
+                      aria-label={t("sortByCode")}
                     >
-                      Code
+                      {t("columns.code")}
                       {renderSortIcon("code")}
                     </button>
                   </th>
@@ -120,9 +118,9 @@ export function RatingSystemsTable({
                       type="button"
                       className="inline-flex items-center gap-1 font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
                       onClick={() => handleSortClick("name")}
-                      aria-label="Trier par nom"
+                      aria-label={t("sortByName")}
                     >
-                      Nom
+                      {t("columns.name")}
                       {renderSortIcon("name")}
                     </button>
                   </th>
@@ -130,19 +128,19 @@ export function RatingSystemsTable({
                     scope="col"
                     className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300"
                   >
-                    Pays
+                    {t("columns.countries")}
                   </th>
                   <th
                     scope="col"
                     className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300"
                   >
-                    Site web
+                    {t("columns.website")}
                   </th>
                   <th
                     scope="col"
                     className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300"
                   >
-                    Actions
+                    {t("columns.actions")}
                   </th>
                 </tr>
               </thead>
@@ -172,7 +170,7 @@ export function RatingSystemsTable({
                           onClick={(e) => e.stopPropagation()}
                         >
                           <Icon icon="lucide:external-link" className="h-3 w-3" />
-                          Lien
+                          {t("link")}
                         </a>
                       ) : (
                         "—"
@@ -184,7 +182,7 @@ export function RatingSystemsTable({
                           variant="ghost"
                           size="sm"
                           onClick={() => onEdit(system.id)}
-                          aria-label={`Modifier ${system.name}`}
+                          aria-label={t("edit", { name: system.name })}
                         >
                           <Icon icon="fa:edit" className="h-4 w-4" />
                         </Button>
@@ -192,7 +190,7 @@ export function RatingSystemsTable({
                           variant="ghost"
                           size="sm"
                           onClick={() => onDelete(system)}
-                          aria-label={`Supprimer ${system.name}`}
+                          aria-label={t("delete", { name: system.name })}
                           className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                         >
                           <Icon icon="fa:trash" className="h-4 w-4" />
@@ -205,11 +203,10 @@ export function RatingSystemsTable({
             </table>
           </div>
 
-          {/* Pagination */}
           {pagination.totalPages > 1 && (
             <div className="flex items-center justify-between">
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Page {pagination.currentPage} sur {pagination.totalPages}
+                {t("page", { current: pagination.currentPage, total: pagination.totalPages })}
               </p>
               <div className="flex gap-2">
                 <Button
@@ -217,7 +214,7 @@ export function RatingSystemsTable({
                   size="sm"
                   disabled={!pagination.hasPreviousPage}
                   onClick={() => onPageChange(pagination.currentPage - 1)}
-                  aria-label="Page précédente"
+                  aria-label={t("previousPage")}
                 >
                   <Icon icon="fa:chevron-left" className="h-3 w-3" />
                 </Button>
@@ -226,7 +223,7 @@ export function RatingSystemsTable({
                   size="sm"
                   disabled={!pagination.hasNextPage}
                   onClick={() => onPageChange(pagination.currentPage + 1)}
-                  aria-label="Page suivante"
+                  aria-label={t("nextPage")}
                 >
                   <Icon icon="fa:chevron-right" className="h-3 w-3" />
                 </Button>

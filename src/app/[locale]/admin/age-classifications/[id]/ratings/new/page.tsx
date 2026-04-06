@@ -55,7 +55,7 @@ export default function NewRatingPage() {
           onClick={() => router.push(`/admin/age-classifications/${ratingSystemId}/edit`)}
         >
           <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3" />
-          Retour au système
+          {tParent("backToSystem")}
         </Button>
       </div>
 

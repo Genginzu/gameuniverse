@@ -1,14 +1,33 @@
 import type { TopGame } from "@/types/player-stats";
 import { computeTotalPlayTime, type LibraryEntryWithGenres } from "./playerStatsService";
 import { logger } from "@/lib/logger";
+import type { createRouteHandlerClient } from "@/lib/supabase-server";
+
+type SupabaseClient = Awaited<ReturnType<typeof createRouteHandlerClient>>;
+
+/** Shape of a library row returned by queryYearLibrary / extractGenreEntries */
+interface LibraryRow {
+  play_time_hours: number | null;
+  added_at?: string;
+  game_id?: string;
+  games?: {
+    id?: string;
+    cover_image_url?: string | null;
+    game_genres?: Array<{
+      genres?: {
+        genre_translations?: Array<{ language_code: string; name: string }>;
+      };
+    }>;
+    game_translations?: Array<{ title: string; language_code: string }>;
+  };
+}
 
 /**
  * Récupère les années distinctes ayant des entrées dans la bibliothèque du joueur.
  * Retourne un tableau trié par année décroissante.
  */
 export async function queryAvailableYears(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  supabase: any,
+  supabase: SupabaseClient,
   playerId: string
 ): Promise<number[]> {
   const { data, error } = await supabase
@@ -38,8 +57,7 @@ export async function queryAvailableYears(
  * avec les infos du jeu (titre traduit, cover image).
  */
 export async function queryYearLibrary(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  supabase: any,
+  supabase: SupabaseClient,
   playerId: string,
   year: number,
   _locale: string
@@ -82,8 +100,7 @@ export async function queryYearLibrary(
  * Compte les reviews d'un joueur pour une année donnée.
  */
 export async function queryYearReviewCount(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  supabase: any,
+  supabase: SupabaseClient,
   playerId: string,
   year: number
 ): Promise<number> {
@@ -108,11 +125,7 @@ export async function queryYearReviewCount(
 /**
  * Extrait le jeu le plus joué d'un ensemble d'entrées de bibliothèque annuelles.
  */
-export function extractTopGame(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  libraryData: any[],
-  locale: string
-): TopGame | null {
+export function extractTopGame(libraryData: LibraryRow[], locale: string): TopGame | null {
   if (libraryData.length === 0) return null;
 
   let topEntry: { id: string; title: string; coverImage: string | null; playTime: number } | null =
@@ -150,8 +163,7 @@ export function extractTopGame(
  * pour réutiliser computeFavoriteGenre.
  */
 export function extractGenreEntries(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  libraryData: any[],
+  libraryData: LibraryRow[],
   locale: string
 ): LibraryEntryWithGenres[] {
   return libraryData.map((entry) => {
@@ -178,10 +190,7 @@ export function extractGenreEntries(
 /**
  * Calcule le temps de jeu total et le nombre de jeux à partir des données de bibliothèque.
  */
-export function extractYearPlayStats(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  libraryData: any[]
-): {
+export function extractYearPlayStats(libraryData: LibraryRow[]): {
   totalPlayTime: number;
   gamesAdded: number;
 } {

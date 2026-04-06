@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AdminTableSkeleton } from "@/components/admin/shared/AdminTableSkeleton";
@@ -35,6 +35,8 @@ export function DescriptorsTable({
 }: DescriptorsTableProps) {
   const [searchInput, setSearchInput] = useState(currentSearch);
   const locale = useLocale();
+  const t = useTranslations("admin.ageClassifications.descriptors");
+  const tParent = useTranslations("admin.ageClassifications");
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,7 +45,6 @@ export function DescriptorsTable({
 
   return (
     <div className="space-y-4">
-      {/* Barre de recherche */}
       <form onSubmit={handleSearchSubmit} className="flex gap-2">
         <div className="relative flex-1">
           <Icon
@@ -52,29 +53,27 @@ export function DescriptorsTable({
           />
           <Input
             type="text"
-            placeholder="Rechercher par code ou nom…"
+            placeholder={t("searchPlaceholder")}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="pl-10"
-            aria-label="Rechercher des descripteurs"
+            aria-label={t("searchLabel")}
           />
         </div>
         <Button type="submit" variant="secondary">
-          Rechercher
+          {tParent("search")}
         </Button>
       </form>
 
-      {/* Nombre total */}
       <p className="text-sm text-gray-500 dark:text-gray-400">
-        {descriptors.length} descripteur{descriptors.length !== 1 ? "s" : ""}
+        {t("totalDescriptors", { count: descriptors.length })}
       </p>
 
-      {/* État de chargement */}
       {isLoading ? (
         <AdminTableSkeleton columns={3} rows={6} />
       ) : descriptors.length === 0 ? (
         <div className="rounded-xl border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800">
-          <p className="text-gray-500 dark:text-gray-400">Aucun descripteur trouvé</p>
+          <p className="text-gray-500 dark:text-gray-400">{t("noDescriptors")}</p>
         </div>
       ) : (
         <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
@@ -82,13 +81,13 @@ export function DescriptorsTable({
             <thead className="border-b border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800">
               <tr>
                 <th scope="col" className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">
-                  Code
+                  {tParent("columns.code")}
                 </th>
                 <th scope="col" className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">
-                  Nom
+                  {tParent("columns.name")}
                 </th>
                 <th scope="col" className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">
-                  Actions
+                  {tParent("columns.actions")}
                 </th>
               </tr>
             </thead>
@@ -111,7 +110,7 @@ export function DescriptorsTable({
                         variant="ghost"
                         size="sm"
                         onClick={() => onEdit(descriptor)}
-                        aria-label={`Modifier ${descriptor.code}`}
+                        aria-label={tParent("edit", { name: descriptor.code })}
                       >
                         <Icon icon="fa:edit" className="h-4 w-4" />
                       </Button>
@@ -119,7 +118,7 @@ export function DescriptorsTable({
                         variant="ghost"
                         size="sm"
                         onClick={() => onDelete(descriptor)}
-                        aria-label={`Supprimer ${descriptor.code}`}
+                        aria-label={tParent("delete", { name: descriptor.code })}
                         className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                       >
                         <Icon icon="fa:trash" className="h-4 w-4" />

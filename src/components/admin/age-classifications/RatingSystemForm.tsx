@@ -1,6 +1,7 @@
 "use client";
 
 import { type UseFormReturn } from "react-hook-form";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -26,6 +27,7 @@ export interface RatingSystemFormProps {
 }
 
 export function RatingSystemForm({ mode, form, onSubmit, isSubmitting }: RatingSystemFormProps) {
+  const t = useTranslations("admin.ageClassifications.form");
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" noValidate>
@@ -37,19 +39,17 @@ export function RatingSystemForm({ mode, form, onSubmit, isSubmitting }: RatingS
               name="code"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Code</FormLabel>
+                  <FormLabel>{t("code")}</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="PEGI, ESRB, CERO…"
+                      placeholder={t("codePlaceholder")}
                       {...field}
                       disabled={mode === "edit"}
                       className={mode === "edit" ? "bg-gray-50 dark:bg-gray-900/50" : ""}
                       maxLength={10}
                     />
                   </FormControl>
-                  <FormDescription>
-                    Majuscules, chiffres et underscores uniquement (ex : PEGI, USK, ACB_AU)
-                  </FormDescription>
+                  <FormDescription>{t("codeDescription")}</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -61,9 +61,9 @@ export function RatingSystemForm({ mode, form, onSubmit, isSubmitting }: RatingS
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nom</FormLabel>
+                  <FormLabel>{t("name")}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Pan European Game Information" {...field} maxLength={100} />
+                    <Input placeholder={t("namePlaceholder")} {...field} maxLength={100} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -76,17 +76,17 @@ export function RatingSystemForm({ mode, form, onSubmit, isSubmitting }: RatingS
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>{t("description")}</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Description du système de classification (optionnel)"
+                      placeholder={t("descriptionPlaceholder")}
                       {...field}
                       value={field.value ?? ""}
                       maxLength={500}
                       rows={3}
                     />
                   </FormControl>
-                  <FormDescription>Optionnel — 500 caractères maximum</FormDescription>
+                  <FormDescription>{t("descriptionHelp")}</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -98,10 +98,10 @@ export function RatingSystemForm({ mode, form, onSubmit, isSubmitting }: RatingS
               name="country_codes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Codes pays</FormLabel>
+                  <FormLabel>{t("countryCodes")}</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="FR, DE, ES, IT…"
+                      placeholder={t("countryCodesPlaceholder")}
                       value={(field.value ?? []).join(", ")}
                       onChange={(e) => {
                         const raw = e.target.value;
@@ -113,9 +113,7 @@ export function RatingSystemForm({ mode, form, onSubmit, isSubmitting }: RatingS
                       }}
                     />
                   </FormControl>
-                  <FormDescription>
-                    Codes ISO 3166-1 alpha-2 séparés par des virgules
-                  </FormDescription>
+                  <FormDescription>{t("countryCodesDescription")}</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -127,16 +125,16 @@ export function RatingSystemForm({ mode, form, onSubmit, isSubmitting }: RatingS
               name="website_url"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Site web</FormLabel>
+                  <FormLabel>{t("website")}</FormLabel>
                   <FormControl>
                     <Input
                       type="url"
-                      placeholder="https://pegi.info"
+                      placeholder={t("websitePlaceholder")}
                       {...field}
                       value={field.value ?? ""}
                     />
                   </FormControl>
-                  <FormDescription>Optionnel — URL complète du site officiel</FormDescription>
+                  <FormDescription>{t("websiteDescription")}</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -151,8 +149,8 @@ export function RatingSystemForm({ mode, form, onSubmit, isSubmitting }: RatingS
               <LoadingSpinner size="sm" />
             ) : (
               <>
-                <Icon icon="fa:save" className="h-4 w-4"  />
-                {mode === "create" ? "Créer" : "Enregistrer"}
+                <Icon icon="fa:save" className="h-4 w-4" />
+                {mode === "create" ? t("create") : t("save")}
               </>
             )}
           </Button>

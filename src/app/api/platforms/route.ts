@@ -2,6 +2,19 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 
+type SupabaseClient = Awaited<ReturnType<typeof createRouteHandlerClient>>;
+
+interface PlatformRow {
+  id: string;
+  slug: string;
+  icon_url: string | null;
+  created_at: string | null;
+  platform_translations?: Array<{
+    name: string;
+    abbreviation?: string | null;
+  }>;
+}
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -90,8 +103,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function buildResponse(supabase: any, platforms: any[], locale: string) {
+async function buildResponse(supabase: SupabaseClient, platforms: PlatformRow[], locale: string) {
   // Fetch game counts for all platforms
   const { data: gameCounts, error: countsError } = await supabase
     .from("game_platforms")
@@ -106,17 +118,6 @@ async function buildResponse(supabase: any, platforms: any[], locale: string) {
     gameCounts.forEach((item: { platform_id: string }) => {
       countsByPlatform[item.platform_id] = (countsByPlatform[item.platform_id] || 0) + 1;
     });
-  }
-
-  interface PlatformRow {
-    id: string;
-    slug: string;
-    icon_url: string | null;
-    created_at: string | null;
-    platform_translations?: Array<{
-      name: string;
-      abbreviation?: string | null;
-    }>;
   }
 
   const transformedPlatforms = (platforms as PlatformRow[]).map((platform) => {

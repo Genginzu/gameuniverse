@@ -1,20 +1,23 @@
 import { pickTranslation } from "@/lib/utils/pickTranslation";
+import type { createRouteHandlerClient } from "@/lib/supabase-server";
+import { untypedTable } from "@/lib/utils/untypedTable";
+
+type SupabaseClient = Awaited<ReturnType<typeof createRouteHandlerClient>>;
 
 /* ── Gender / Species ID fetcher (graceful if columns don't exist yet) ── */
 
 export async function fetchGenderSpeciesIds(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  supabase: any,
+  supabase: SupabaseClient,
   characterId: string
 ): Promise<{ genderId: string | null; speciesId: string | null } | null> {
   try {
-    const { data } = await supabase
-      .from("characters")
+    const { data } = await untypedTable(supabase, "characters")
       .select("gender_id, species_id")
       .eq("id", characterId)
       .single();
     if (!data) return null;
-    return { genderId: data.gender_id, speciesId: data.species_id };
+    const row = data as { gender_id: string | null; species_id: string | null };
+    return { genderId: row.gender_id, speciesId: row.species_id };
   } catch {
     // Columns may not exist if migration hasn't been applied
     return null;
@@ -24,48 +27,48 @@ export async function fetchGenderSpeciesIds(
 /* ── Gender / Species fetchers ── */
 
 export async function fetchGender(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  supabase: any,
+  supabase: SupabaseClient,
   genderId: string | null,
   locale: string
 ): Promise<{ id: string; slug: string; name: string } | undefined> {
   if (!genderId) return undefined;
   try {
-    const { data } = await supabase
-      .from("genders")
+    const { data } = await untypedTable(supabase, "genders")
       .select("id, slug, gender_translations(language_code, name)")
       .eq("id", genderId)
       .single();
     if (!data) return undefined;
-    const gt = pickTranslation(
-      data.gender_translations as { language_code: string; name: string }[],
-      locale
-    );
-    return gt ? { id: data.id, slug: data.slug, name: gt.name } : undefined;
+    const row = data as {
+      id: string;
+      slug: string;
+      gender_translations: { language_code: string; name: string }[];
+    };
+    const gt = pickTranslation(row.gender_translations, locale);
+    return gt ? { id: row.id, slug: row.slug, name: gt.name } : undefined;
   } catch {
     return undefined;
   }
 }
 
 export async function fetchSpecies(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  supabase: any,
+  supabase: SupabaseClient,
   speciesId: string | null,
   locale: string
 ): Promise<{ id: string; slug: string; name: string } | undefined> {
   if (!speciesId) return undefined;
   try {
-    const { data } = await supabase
-      .from("species")
+    const { data } = await untypedTable(supabase, "species")
       .select("id, slug, species_translations(language_code, name)")
       .eq("id", speciesId)
       .single();
     if (!data) return undefined;
-    const st = pickTranslation(
-      data.species_translations as { language_code: string; name: string }[],
-      locale
-    );
-    return st ? { id: data.id, slug: data.slug, name: st.name } : undefined;
+    const row = data as {
+      id: string;
+      slug: string;
+      species_translations: { language_code: string; name: string }[];
+    };
+    const st = pickTranslation(row.species_translations, locale);
+    return st ? { id: row.id, slug: row.slug, name: st.name } : undefined;
   } catch {
     return undefined;
   }
@@ -74,65 +77,99 @@ export async function fetchSpecies(
 /* ── Relationships fetcher ── */
 
 export async function fetchRelationships(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  supabase: any,
+  supabase: SupabaseClient,
   characterId: string,
   locale: string
 ) {
-  const { data: rels } = await supabase
-    .from("character_relationships")
+  const { data: rels } = await untypedTable(supabase, "character_relationships")
     .select("id, relationship_type, description, related_character_id")
     .eq("character_id", characterId);
 
   if (!rels || rels.length === 0) return [];
 
-  const relatedIds = rels.map((r: { related_character_id: string }) => r.related_character_id);
-  const { data: relatedChars } = await supabase
+  const typedRels = rels as Array<{
+    id: string;
+    relationship_type: string;
+    description: string | null;
+    related_character_id: string;
+  }>;
+  const relatedIds = typedRels.map((r) => r.related_character_id);
+  const { data: relatedCharsRaw } = await supabase
     .from("characters")
     .select("id, slug, main_image, character_translations(name, role, language_code)")
     .in("id", relatedIds);
 
-  return rels
-    .map(
-      (rel: {
-        id: string;
-        relationship_type: string;
-        description: string | null;
-        related_character_id: string;
-      }) => {
-        const related = relatedChars?.find(
-          (c: { id: string }) => c.id === rel.related_character_id
-        );
-        if (!related) return null;
-        const t = pickTranslation(
-          related.character_translations as {
-            language_code: string;
-            name: string;
-            role: string | null;
-          }[],
-          locale
-        );
-        return {
-          id: rel.id,
-          relatedCharacter: {
-            id: related.id,
-            slug: related.slug,
-            name: t?.name || "Unknown",
-            mainImage: related.main_image,
-            role: t?.role ?? null,
-          },
-          relationshipType: rel.relationship_type,
-          description: rel.description,
-        };
-      }
-    )
+  const relatedChars = (relatedCharsRaw ?? []) as Array<{
+    id: string;
+    slug: string;
+    main_image: string | null;
+    character_translations: Array<{ language_code: string; name: string; role: string | null }>;
+  }>;
+
+  return typedRels
+    .map((rel) => {
+      const related = relatedChars.find((c) => c.id === rel.related_character_id);
+      if (!related) return null;
+      const t = pickTranslation(related.character_translations, locale);
+      return {
+        id: rel.id,
+        relatedCharacter: {
+          id: related.id,
+          slug: related.slug,
+          name: t?.name || "Unknown",
+          mainImage: related.main_image,
+          role: t?.role ?? null,
+        },
+        relationshipType: rel.relationship_type,
+        description: rel.description,
+      };
+    })
     .filter(Boolean);
 }
 
 /* ── Data transformers ── */
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function buildGames(characterGames: any[]) {
+interface CharacterGameRow {
+  games?: {
+    id?: string;
+    slug?: string;
+    cover_image_url?: string | null;
+    background_image_url?: string | null;
+    release_date?: string | null;
+    game_translations?: Array<{ title: string }>;
+    game_platforms?: Array<{
+      platforms?: {
+        id: string;
+        slug: string;
+        icon_url?: string | null;
+        platform_translations?: Array<{
+          language_code: string;
+          name: string;
+          abbreviation?: string | null;
+        }>;
+      };
+    }>;
+  };
+  is_primary?: boolean;
+}
+
+interface CharacterRow {
+  main_image?: string | null;
+  background_image?: string | null;
+  character_media?: Array<{
+    id: string;
+    type: string;
+    url: string;
+    alt_text?: string | null;
+    description?: string | null;
+    title?: string | null;
+    is_featured?: boolean | null;
+    display_order?: number | null;
+    thumbnail_url?: string | null;
+  }>;
+}
+
+export function buildGames(characterGames: CharacterGameRow[]) {
   return (
     characterGames
       ?.map((cg) => ({
@@ -156,8 +193,7 @@ export function buildGames(characterGames: any[]) {
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function buildMedia(character: any) {
+export function buildMedia(character: CharacterRow) {
   const items = character.character_media || [];
   const sortByOrder = (a: { display_order: number | null }, b: { display_order: number | null }) =>
     (a.display_order || 0) - (b.display_order || 0);
@@ -227,8 +263,7 @@ export function buildMedia(character: any) {
   };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function buildPlatforms(characterGames: any[], locale: string) {
+export function buildPlatforms(characterGames: CharacterGameRow[], locale: string) {
   const map = new Map<
     string,
     { id: string; slug: string; name: string; abbreviation: string | null; iconUrl: string | null }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import {
   Dialog,
   DialogContent,
@@ -29,43 +30,37 @@ export function DeleteRatingSystemDialog({
   isDeleting,
   usageCount,
 }: DeleteRatingSystemDialogProps) {
+  const t = useTranslations("admin.ageClassifications.deleteSystem");
   const hasUsage = usageCount !== null && usageCount !== undefined && usageCount > 0;
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && !isDeleting && onClose()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Supprimer le système de classification</DialogTitle>
-          <DialogDescription>
-            Êtes-vous sûr de vouloir supprimer le système « {system?.name ?? ""} » ?
-          </DialogDescription>
+          <DialogTitle>{t("title")}</DialogTitle>
+          <DialogDescription>{t("confirm", { name: system?.name ?? "" })}</DialogDescription>
         </DialogHeader>
 
         {hasUsage && (
           <p className="text-sm font-medium text-orange-600 dark:text-orange-400">
-            Ce système possède {usageCount} note{(usageCount ?? 0) > 1 ? "s" : ""} ou descripteur
-            {(usageCount ?? 0) > 1 ? "s" : ""} associé
-            {(usageCount ?? 0) > 1 ? "s" : ""}. Il ne peut pas être supprimé tant que ces éléments
-            existent.
+            {t("usageWarning", { count: usageCount ?? 0 })}
           </p>
         )}
 
-        {!hasUsage && (
-          <p className="text-sm font-medium text-destructive">Cette action est irréversible.</p>
-        )}
+        {!hasUsage && <p className="text-destructive text-sm font-medium">{t("irreversible")}</p>}
 
         <DialogFooter>
           <Button variant="outline" onClick={onClose} disabled={isDeleting}>
-            Annuler
+            {t("cancel")}
           </Button>
           {!hasUsage && (
             <LoadingButton
               variant="destructive"
               onClick={onConfirm}
               loading={isDeleting}
-              loadingText="Suppression…"
+              loadingText={t("deleting")}
             >
-              Supprimer
+              {t("delete")}
             </LoadingButton>
           )}
         </DialogFooter>
