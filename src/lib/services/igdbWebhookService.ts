@@ -11,6 +11,7 @@ import { GameImportService } from "@/lib/services/gameImportService";
 import { applyWebhookPayload } from "@/lib/services/webhookDiffApplier";
 import { logger } from "@/lib/logger";
 import type { WebhookEventType, WebhookEventStatus } from "@/types/webhooks";
+import { untypedTable } from "@/lib/utils/untypedTable";
 
 interface WebhookPayload {
   id: number;
@@ -60,8 +61,7 @@ export async function processWebhookEvent(
   }
 
   // Insert the event record (now with game_id resolved)
-  const { data: event, error: insertError } = await (supabase as any)
-    .from("igdb_webhook_events")
+  const { data: event, error: insertError } = await untypedTable(supabase, "igdb_webhook_events")
     .insert({
       event_type: eventType,
       entity_type: entityType,
@@ -208,8 +208,7 @@ async function linkEventToGame(eventId: string, gameSlug: string): Promise<void>
   const { data: game } = await supabase.from("games").select("id").eq("slug", gameSlug).single();
 
   if (game) {
-    await (supabase as any)
-      .from("igdb_webhook_events")
+    await untypedTable(supabase, "igdb_webhook_events")
       .update({ game_id: game.id })
       .eq("id", eventId);
   }
@@ -233,5 +232,5 @@ async function updateEventStatus(
     update.error_message = errorMessage;
   }
 
-  await (supabase as any).from("igdb_webhook_events").update(update).eq("id", eventId);
+  await untypedTable(supabase, "igdb_webhook_events").update(update).eq("id", eventId);
 }

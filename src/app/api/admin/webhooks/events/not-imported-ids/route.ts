@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { requireAdmin } from "@/lib/auth-admin";
+import { untypedTable } from "@/lib/utils/untypedTable";
 
 /**
  * GET /api/admin/webhooks/events/not-imported-ids?limit=20
@@ -23,8 +24,7 @@ export async function GET(request: NextRequest) {
     let hasMore = true;
 
     while (hasMore && uniqueIds.length < limit) {
-      const { data, error } = await (supabase as any)
-        .from("igdb_webhook_events")
+      const { data, error } = await untypedTable(supabase, "igdb_webhook_events")
         .select("igdb_id")
         .eq("entity_type", "games")
         .is("game_id", null)

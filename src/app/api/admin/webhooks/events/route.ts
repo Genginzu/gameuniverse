@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { logger } from "@/lib/logger";
+import { untypedTable } from "@/lib/utils/untypedTable";
 
 const DEFAULT_LIMIT = 20;
 const MAX_LIMIT = 100;
@@ -30,8 +31,7 @@ export async function GET(request: NextRequest) {
     const supabase = await createRouteHandlerClient();
 
     // Build query with filters
-    let query = (supabase as any)
-      .from("igdb_webhook_events")
+    let query = untypedTable(supabase, "igdb_webhook_events")
       .select("*", { count: "exact" })
       .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);

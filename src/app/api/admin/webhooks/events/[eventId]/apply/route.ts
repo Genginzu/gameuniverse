@@ -13,6 +13,7 @@ import { requireAdmin } from "@/lib/auth-admin";
 import { logger } from "@/lib/logger";
 import { applyWebhookPayload } from "@/lib/services/webhookDiffApplier";
 import type { ApplyDiffRequest, ApplyDiffResult } from "@/types/webhook-diff";
+import { untypedTable } from "@/lib/utils/untypedTable";
 
 interface RouteParams {
   params: Promise<{ eventId: string }>;
@@ -28,8 +29,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     const supabase = await createRouteHandlerClient();
 
     // Fetch the webhook event
-    const { data: event, error: eventError } = await (supabase as any)
-      .from("igdb_webhook_events")
+    const { data: event, error: eventError } = await untypedTable(supabase, "igdb_webhook_events")
       .select("*")
       .eq("id", eventId)
       .single();
@@ -62,8 +62,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     }
 
     // Mark event as processed
-    await (supabase as any)
-      .from("igdb_webhook_events")
+    await untypedTable(supabase, "igdb_webhook_events")
       .update({ status: "processed", processed_at: new Date().toISOString() })
       .eq("id", eventId);
 

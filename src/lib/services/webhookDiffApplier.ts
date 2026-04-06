@@ -44,7 +44,7 @@ export async function applyWebhookPayload(
     .select("field_name")
     .eq("game_id", gameId);
 
-  const ov = new Set<string>((overrides ?? []).map((o: any) => o.field_name as string));
+  const ov = new Set<string>((overrides ?? []).map((o: { field_name: string }) => o.field_name));
   const f = forceFields;
   const applied: string[] = [];
   const skipped: string[] = [];

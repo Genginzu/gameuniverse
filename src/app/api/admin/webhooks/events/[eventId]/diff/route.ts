@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { logger } from "@/lib/logger";
+import { untypedTable } from "@/lib/utils/untypedTable";
 import type { DiffField, DiffFieldStatus, WebhookDiffResult } from "@/types/webhook-diff";
 import {
   igdbCoverUrl,
@@ -34,8 +35,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     const supabase = await createRouteHandlerClient();
 
     // Fetch the webhook event
-    const { data: event, error: eventError } = await (supabase as any)
-      .from("igdb_webhook_events")
+    const { data: event, error: eventError } = await untypedTable(supabase, "igdb_webhook_events")
       .select("*")
       .eq("id", eventId)
       .single();
@@ -74,11 +74,10 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     const enTrans = translations.find((t) => t.language_code === "en");
 
     // Fetch admin overrides
-    const { data: overrides } = await (supabase as any)
-      .from("game_field_overrides")
+    const { data: overrides } = await untypedTable(supabase, "game_field_overrides")
       .select("field_name")
       .eq("game_id", gameId);
-    const overrideSet = new Set((overrides ?? []).map((o: any) => o.field_name as string));
+    const overrideSet = new Set((overrides ?? []).map((o: { field_name: string }) => o.field_name as string));
 
     // Fetch relational data in parallel
     const [
