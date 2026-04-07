@@ -46,7 +46,7 @@ export default function MobileNavOverlay({
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 rounded-lg p-2 text-gray-400 hover:text-white motion-safe:transition-colors motion-safe:duration-200"
+          className="absolute top-4 right-4 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg text-gray-400 hover:text-white motion-safe:transition-colors motion-safe:duration-200"
           aria-label="Close navigation"
         >
           <Icon icon="fa:times" className="h-5 w-5" />

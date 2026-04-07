@@ -28,7 +28,7 @@ export default function Footer() {
       <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-cyan-500/50 to-transparent" />
 
       <div className="mx-auto max-w-7xl px-6 py-12 sm:px-8 lg:px-12">
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-10 lg:grid-cols-4">
           {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-2">
             <Link href="/" className="inline-flex items-center gap-2.5">
@@ -81,12 +81,12 @@ function FooterLinkGroup({
       <h3 className="text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-500">
         {title}
       </h3>
-      <ul className="mt-3 space-y-2">
+      <ul className="mt-3 space-y-3">
         {links.map(({ href, icon, labelKey }) => (
           <li key={href}>
             <Link
               href={href}
-              className="group hover:text-neon-violet dark:hover:text-neon-violet inline-flex items-center gap-2 text-sm text-gray-600 transition-colors dark:text-gray-400"
+              className="group hover:text-neon-violet dark:hover:text-neon-violet inline-flex min-h-[44px] items-center gap-2 text-sm text-gray-600 transition-colors dark:text-gray-400"
             >
               <Icon
                 icon={icon}

@@ -170,7 +170,7 @@ export default function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={onKeyDown}
-            className="h-16 w-full border-b-2 border-white bg-transparent text-3xl font-light text-white placeholder-white/40 caret-white focus:outline-hidden sm:text-4xl"
+            className="h-16 w-full border-b-2 border-white bg-transparent text-xl font-light text-white placeholder-white/40 caret-white focus:outline-hidden sm:text-4xl"
             aria-label={t("placeholder")}
             aria-autocomplete="list"
             role="combobox"
