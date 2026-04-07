@@ -1,5 +1,3 @@
-"use client";
-
 import { AllPlayersContent } from "@/components/players/AllPlayersContent";
 import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
