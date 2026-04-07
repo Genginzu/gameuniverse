@@ -25,7 +25,10 @@
     "supabase:reset": "bunx supabase db reset",
     "supabase:migrate": "bunx supabase db push",
     "supabase:seed": "bunx supabase db seed",
-    "supabase:types": "bunx supabase gen types typescript --local > src/lib/database.types.ts"
+    "supabase:types": "bunx supabase gen types typescript --local > src/lib/database.types.ts",
+    "test:e2e": "bunx playwright test",
+    "test:e2e:ui": "bunx playwright test --ui",
+    "test:e2e:headed": "bunx playwright test --headed"
   },
   "dependencies": {
     "@ai-sdk/openai": "3.0.48",
@@ -66,6 +69,7 @@
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
+    "@playwright/test": "1.59.1",
     "@tailwindcss/postcss": "4.2.2",
     "@testing-library/jest-dom": "6.9.1",
     "@testing-library/react": "16.3.2",
