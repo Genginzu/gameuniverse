@@ -5,7 +5,7 @@ import { useForm, type UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLocale } from "next-intl";
 import { adminGameFormSchema, type AdminGameFormData } from "@/lib/validations/admin-game-form";
-import { generateSlugFromTitle } from "@/lib/utils/slug-utils";
+import { buildGamePayload } from "./useGameFormSubmit";
 import type {
   AdminGenre,
   Company,
@@ -41,7 +41,6 @@ export interface UseGameFormReturn {
   submitGame: (data: AdminGameFormData) => Promise<void>;
   isSubmitting: boolean;
   submitError: string | null;
-  /** Reload gamePlatforms from the API (useful after IGDB sync creates new platforms) */
   refreshGamePlatforms: () => Promise<void>;
 }
 
@@ -102,32 +101,24 @@ export function useGameForm(
     },
   });
 
-  // Load reference data (genres + companies)
   useEffect(() => {
     let mounted = true;
-
     const loadOptions = async () => {
       try {
         const res = await fetch(
           `/api/admin/reference-data?locale=${locale}&include=genres,companies,ratings,contentDescriptors,supportedLanguages,stores,currencies,platforms,gamePlatforms`
         );
         if (!res.ok) throw new Error("Failed to load reference data");
-
         const json = await res.json();
         if (!mounted) return;
-
         setGenres(
           (json.data?.genres ?? []).map((g: { id: string; slug: string; name: string }) => ({
-            id: g.id,
-            slug: g.slug,
-            name: g.name,
+            id: g.id, slug: g.slug, name: g.name,
           }))
         );
         setCompanies(
           (json.data?.companies ?? []).map((c: { id: string; name: string; slug: string }) => ({
-            id: c.id,
-            name: c.name,
-            slug: c.slug,
+            id: c.id, name: c.name, slug: c.slug,
           }))
         );
         setRatings(json.data?.ratings ?? []);
@@ -138,26 +129,19 @@ export function useGameForm(
         setPlatforms(json.data?.platforms ?? []);
         setGamePlatforms(json.data?.gamePlatforms ?? []);
       } catch {
-        // Options will remain empty — form can still be used
+        // Options will remain empty
       } finally {
         if (mounted) setLoadingOptions(false);
       }
     };
-
     loadOptions();
-    return () => {
-      mounted = false;
-    };
+    return () => { mounted = false; };
   }, [locale]);
 
-  // Reset form when initialData changes (edit mode)
   useEffect(() => {
-    if (initialData) {
-      form.reset(initialData);
-    }
+    if (initialData) form.reset(initialData);
   }, [initialData, form]);
 
-  /** Reload only gamePlatforms from the API (after IGDB sync creates new platforms) */
   const refreshGamePlatforms = useCallback(async () => {
     try {
       const res = await fetch(`/api/admin/reference-data?locale=${locale}&include=gamePlatforms`);
@@ -165,7 +149,7 @@ export function useGameForm(
       const json = await res.json();
       setGamePlatforms(json.data?.gamePlatforms ?? []);
     } catch {
-      // Silently fail — existing list remains usable
+      // Silently fail
     }
   }, [locale]);
 
@@ -173,117 +157,15 @@ export function useGameForm(
     async (data: AdminGameFormData) => {
       setIsSubmitting(true);
       setSubmitError(null);
-
       try {
         const url = mode === "create" ? "/api/admin/games" : `/api/admin/games/${gameId}`;
-
         const method = mode === "create" ? "POST" : "PUT";
-
-        // Filter out translations with empty titles before sending
-        const validTranslations = data.translations
-          .filter((t) => t.title && t.title.trim().length > 0)
-          .map((t) => ({
-            language_code: t.language_code,
-            title: t.title!,
-            description: t.description || null,
-          }));
-
-        // Build the payload matching the API schema
-        const metascoreValue =
-          data.metascore === "" || data.metascore === undefined || data.metascore === null
-            ? null
-            : Number(data.metascore);
-
-        const toNum = (v: unknown) =>
-          v === "" || v === undefined || v === null ? null : Number(v);
-
-        const payload = {
-          game: {
-            slug:
-              mode === "edit"
-                ? data.slug
-                : generateSlugFromTitle(validTranslations[0]?.title || "untitled"),
-            cover_image_url: data.cover_image_url || null,
-            background_image_url: data.background_image_url || null,
-            background_color: data.background_color || null,
-            accent_color: data.accent_color || null,
-            label_color: data.label_color || null,
-            text_color: data.text_color || null,
-            release_date: data.release_date || null,
-            metascore: metascoreValue,
-            playtime_hastily: toNum(data.playtime_hastily),
-            playtime_normally: toNum(data.playtime_normally),
-            playtime_completely: toNum(data.playtime_completely),
-          },
-          translations: validTranslations,
-          genres: data.genres,
-          companies: data.companies,
-          screenshots: data.screenshots
-            .filter((s) => s.url.trim().length > 0)
-            .map((s, i) => ({
-              url: s.url,
-              alt_text: s.alt_text || null,
-              caption: s.caption || null,
-              display_order: i,
-              is_featured: s.is_featured,
-            })),
-          artwork: data.artwork
-            .filter((a) => a.url.trim().length > 0)
-            .map((a, i) => ({
-              url: a.url,
-              alt_text: a.alt_text || null,
-              caption: a.caption || null,
-              artwork_type: a.artwork_type || null,
-              display_order: i,
-              is_featured: a.is_featured,
-            })),
-          age_ratings: data.age_ratings,
-          versions: data.versions
-            .filter((v) => v.version_title.trim().length > 0)
-            .map((v, i) => ({
-              version_title: v.version_title,
-              description: v.description || null,
-              cover_image_url: v.cover_image_url || null,
-              display_order: i,
-              translations: (v.translations ?? [])
-                .filter((t) => t.title || t.description)
-                .map((t) => ({
-                  language_code: t.language_code,
-                  title: t.title || null,
-                  description: t.description || null,
-                })),
-            })),
-          languages: data.languages
-            .filter((l) => l.language_code.trim().length > 0 && l.language_name.trim().length > 0)
-            .map((l) => ({
-              language_code: l.language_code,
-              language_name: l.language_name,
-              has_audio: l.has_audio,
-              has_subtitles: l.has_subtitles,
-              has_interface: l.has_interface,
-            })),
-          prices: data.prices.map((p) => ({
-            store_id: p.store_id,
-            price: p.price,
-            currency: p.currency,
-            platform: p.platform,
-            store_url: p.store_url || null,
-            is_available: p.is_available,
-          })),
-          music: {
-            composer: data.music_composer || null,
-            spotify_embed_url: data.music_spotify_embed_url || null,
-            youtube_video_url: data.music_youtube_video_url || null,
-          },
-          game_platforms: data.game_platforms,
-        };
-
+        const payload = buildGamePayload(data, mode);
         const res = await fetch(url, {
           method,
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
-
         if (!res.ok) {
           const body = await res.json().catch(() => ({}));
           throw new Error(body.error || `Failed to ${mode} game`);
@@ -300,20 +182,8 @@ export function useGameForm(
   );
 
   return {
-    form,
-    genres,
-    companies,
-    ratings,
-    contentDescriptors,
-    supportedLanguages,
-    stores,
-    currencies,
-    platforms,
-    gamePlatforms,
-    loadingOptions,
-    submitGame,
-    isSubmitting,
-    submitError,
-    refreshGamePlatforms,
+    form, genres, companies, ratings, contentDescriptors, supportedLanguages,
+    stores, currencies, platforms, gamePlatforms, loadingOptions,
+    submitGame, isSubmitting, submitError, refreshGamePlatforms,
   };
 }

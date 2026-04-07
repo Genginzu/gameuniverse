@@ -70,66 +70,7 @@ function buildMissingKey(params: UseAdminTranslationsParams): string {
   return `/api/admin/translations/missing?${sp.toString()}`;
 }
 
-// ─── NDJSON stream parser ───────────────────────────────────────────
-
-async function parseNdjsonStream(
-  response: Response,
-  onProgress: (event: BatchProgressEvent) => void,
-  signal?: AbortSignal
-): Promise<BatchSummary> {
-  const reader = response.body?.getReader();
-  if (!reader) throw new Error("No response body");
-
-  const decoder = new TextDecoder();
-  let buffer = "";
-  let succeeded = 0;
-  let failed = 0;
-  let total = 0;
-
-  try {
-    while (true) {
-      if (signal?.aborted) {
-        await reader.cancel();
-        break;
-      }
-
-      const { done, value } = await reader.read();
-      if (done) break;
-
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split("\n");
-      // Keep the last (possibly incomplete) chunk in the buffer
-      buffer = lines.pop() ?? "";
-
-      for (const line of lines) {
-        const trimmed = line.trim();
-        if (!trimmed) continue;
-        const event: BatchProgressEvent = JSON.parse(trimmed);
-        total++;
-        if (event.status === "success") succeeded++;
-        else failed++;
-        onProgress(event);
-      }
-    }
-
-    // Process any remaining data in the buffer
-    if (buffer.trim()) {
-      const event: BatchProgressEvent = JSON.parse(buffer.trim());
-      total++;
-      if (event.status === "success") succeeded++;
-      else failed++;
-      onProgress(event);
-    }
-  } catch (err) {
-    if (signal?.aborted) {
-      // Cancellation is expected — return partial summary
-    } else {
-      throw err;
-    }
-  }
-
-  return { total, succeeded, failed };
-}
+import { parseNdjsonStream } from "./useAdminTranslationsStream";
 
 // ─── Hook ───────────────────────────────────────────────────────────
 
