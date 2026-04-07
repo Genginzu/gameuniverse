@@ -291,7 +291,7 @@ function TabNavigation({ activeTab, onTabChange, gamesCount, commentCount }: Tab
             onClick={() => onTabChange(key)}
             className={`rounded-xl px-6 py-3 text-sm font-medium transition-all ${
               activeTab === key
-                ? "bg-white text-slate-900 shadow-lg"
+                ? "bg-white text-slate-900 shadow-lg dark:bg-slate-700 dark:text-white"
                 : "text-slate-400 hover:bg-slate-700/50 hover:text-white"
             }`}
           >
