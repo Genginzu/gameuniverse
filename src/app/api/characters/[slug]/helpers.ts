@@ -195,8 +195,10 @@ export function buildGames(characterGames: CharacterGameRow[]) {
 
 export function buildMedia(character: CharacterRow) {
   const items = character.character_media || [];
-  const sortByOrder = (a: { display_order: number | null }, b: { display_order: number | null }) =>
-    (a.display_order || 0) - (b.display_order || 0);
+  const sortByOrder = (
+    a: { display_order?: number | null },
+    b: { display_order?: number | null }
+  ) => (a.display_order || 0) - (b.display_order || 0);
 
   return {
     mainImage: character.main_image,
