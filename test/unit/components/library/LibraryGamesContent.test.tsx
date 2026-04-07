@@ -478,7 +478,11 @@ describe("LibraryGamesContent Component Rendering", () => {
         },
       });
       const { container } = await act(async () => {
-        return render(<LibraryGamesContent locale="fr" />);
+        return render(
+          <SWRWrapper>
+            <LibraryGamesContent locale="fr" />
+          </SWRWrapper>
+        );
       });
       await waitFor(() => {
         expect(container.querySelector(".grid")).toBeTruthy();
@@ -510,7 +514,11 @@ describe("LibraryGamesContent Component Rendering", () => {
         },
       });
       const { container } = await act(async () => {
-        return render(<LibraryGamesContent locale="fr" />);
+        return render(
+          <SWRWrapper>
+            <LibraryGamesContent locale="fr" />
+          </SWRWrapper>
+        );
       });
       await waitFor(() => {
         expect(container.querySelector(".grid.grid-cols-1")).toBeTruthy();
