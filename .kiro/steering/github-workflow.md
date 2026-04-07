@@ -15,10 +15,11 @@ inclusion: always
 Quand l'utilisateur demande de travailler sur une issue GitHub :
 
 1. **Implémenter** les changements demandés dans l'issue sur `dev`
-2. **Vérifier la qualité** — lancer lint, tests et build :
+2. **Vérifier la qualité** — lancer lint et tests ciblés :
    - `bun run lint` — corriger les erreurs/warnings si nécessaire
-   - `bun run test:all` — corriger les tests en échec si nécessaire
-   - `bun run build` — corriger les erreurs de compilation si nécessaire
+   - `bunx vitest run test/unit/<dossiers-concernés>/` — lancer uniquement les
+     tests liés aux fichiers modifiés (voir `testing.md` pour la correspondance)
+   - Ne **pas** lancer `bun run test:all` (10+ min) sauf demande explicite
 3. **Commit & push** sur `dev`
 4. **Clôturer l'issue**
 
@@ -30,6 +31,7 @@ Pas de CI sur les push directs sur `dev`.
 ## Règles
 
 - ✅ Travailler directement sur `dev` pour les issues
-- ✅ Toujours lancer lint + tests + build avant de push
+- ✅ Toujours lancer lint + tests ciblés avant de push
 - ✅ Corriger les erreurs détectées avant de commit
+- ✅ `bun run test:all` uniquement sur demande explicite de l'utilisateur
 - ❌ Ne **jamais** push directement sur `main`
