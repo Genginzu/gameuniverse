@@ -319,7 +319,8 @@ export async function upsertFieldOverrides(
     modified_at: now,
   }));
 
-  const { error } = await untypedTable(supabase, "game_field_overrides")
+  const { error } = await (supabase as any)
+    .from("game_field_overrides")
     .upsert(rows, { onConflict: "game_id,field_name" })
     .select();
 

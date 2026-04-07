@@ -13,6 +13,9 @@ export default defineConfig({
     baseURL: "http://localhost:3000",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
+    launchOptions: {
+      timeout: 60_000,
+    },
   },
 
   projects: [
@@ -35,12 +38,9 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: process.env.CI ? "bun run build && bun run start" : "bun run dev",
+    command: "bun run build && bun run start",
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
-    env: {
-      NODE_ENV: process.env.CI ? "production" : "development",
-    },
   },
 });

@@ -15,10 +15,10 @@ interface LibraryRow {
     cover_image_url?: string | null;
     game_genres?: Array<{
       genres?: {
-        genre_translations?: Array<{ language_code: string; name: string }>;
+        genre_translations?: Array<{ language_code: string | null; name: string }>;
       };
     }>;
-    game_translations?: Array<{ title: string; language_code: string }>;
+    game_translations?: Array<{ title: string; language_code: string | null }>;
   };
 }
 
@@ -138,13 +138,13 @@ export function extractTopGame(libraryData: LibraryRow[], locale: string): TopGa
     const gameId = entry.games?.id ?? entry.game_id;
     const translations = entry.games?.game_translations ?? [];
     const translated = translations.find(
-      (t: { language_code: string; title: string }) => t.language_code === locale
+      (t: { language_code: string | null; title: string }) => t.language_code === locale
     );
     const title = translated?.title ?? "Unknown";
     const coverImage = entry.games?.cover_image_url ?? null;
 
     if (!topEntry || playTime > topEntry.playTime) {
-      topEntry = { id: gameId, title, coverImage, playTime };
+      topEntry = { id: gameId ?? "", title, coverImage, playTime };
     }
   }
 
@@ -173,7 +173,7 @@ export function extractGenreEntries(
     for (const gg of gameGenres) {
       const translations = gg.genres?.genre_translations ?? [];
       const translated = translations.find(
-        (t: { language_code: string; name: string }) => t.language_code === locale
+        (t: { language_code: string | null; name: string }) => t.language_code === locale
       );
       if (translated) {
         genres.push(translated.name);

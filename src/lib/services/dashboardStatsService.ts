@@ -260,7 +260,7 @@ export class DashboardStatsService {
       }>
     ).map((r) => ({
       id: r.id,
-      goalType: r.goal_type,
+      goalType: r.goal_type as PlayerGoal["goalType"],
       targetValue: r.target_value,
       currentValue: r.current_value,
       deadline: r.deadline ?? null,

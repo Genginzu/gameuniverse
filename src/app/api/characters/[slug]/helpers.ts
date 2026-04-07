@@ -207,13 +207,7 @@ export function buildMedia(character: CharacterRow) {
       .filter((m: { type: string }) => m.type === "screenshot")
       .sort(sortByOrder)
       .map(
-        (m: {
-          id: string;
-          url: string;
-          alt_text: string | null;
-          description: string | null;
-          is_featured: boolean | null;
-        }) => ({
+        (m) => ({
           id: m.id,
           url: m.url,
           altText: m.alt_text,
@@ -225,14 +219,7 @@ export function buildMedia(character: CharacterRow) {
       .filter((m: { type: string }) => m.type === "artwork")
       .sort(sortByOrder)
       .map(
-        (m: {
-          id: string;
-          url: string;
-          alt_text: string | null;
-          description: string | null;
-          title: string | null;
-          is_featured: boolean | null;
-        }) => ({
+        (m) => ({
           id: m.id,
           url: m.url,
           altText: m.alt_text,
@@ -245,14 +232,7 @@ export function buildMedia(character: CharacterRow) {
       .filter((m: { type: string }) => m.type === "video")
       .sort(sortByOrder)
       .map(
-        (m: {
-          id: string;
-          title: string | null;
-          description: string | null;
-          url: string;
-          thumbnail_url: string | null;
-          is_featured: boolean | null;
-        }) => ({
+        (m) => ({
           id: m.id,
           title: m.title || "Video",
           description: m.description,
@@ -285,7 +265,7 @@ export function buildPlatforms(characterGames: CharacterGameRow[], locale: strin
         slug: p.slug,
         name: tr?.name || p.slug,
         abbreviation: tr?.abbreviation || null,
-        iconUrl: p.icon_url,
+        iconUrl: p.icon_url ?? null,
       });
     }
   }
