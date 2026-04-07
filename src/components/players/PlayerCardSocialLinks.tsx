@@ -37,7 +37,7 @@ export function PlayerCardSocialLinks({ socialLinks }: PlayerCardSocialLinksProp
           rel="noopener noreferrer"
           aria-label={key}
           onClick={(e) => e.stopPropagation()}
-          className={`flex h-8 w-8 items-center justify-center rounded-full ${color} text-white transition-opacity hover:opacity-80`}
+          className={`flex h-10 w-10 items-center justify-center rounded-full ${color} text-white transition-opacity hover:opacity-80`}
         >
           <IconComp className="h-3.5 w-3.5" />
         </a>
