@@ -233,7 +233,7 @@ function EntityCardInner<T extends object>({
             <button
               onClick={library.handleToggle}
               disabled={library.adding || library.loading}
-              className="absolute top-3 left-3 z-20 cursor-pointer transition-transform hover:scale-110 disabled:opacity-50"
+              className="absolute top-2 left-2 z-20 flex min-h-[44px] min-w-[44px] cursor-pointer items-center justify-center rounded-full transition-transform hover:scale-110 disabled:opacity-50"
               aria-label={library.inLibrary ? t("removeFromLibrary") : t("addToLibrary")}
             >
               {library.adding ? (
@@ -251,7 +251,7 @@ function EntityCardInner<T extends object>({
             <button
               onClick={charFav.handleToggle}
               disabled={charFav.loading || charFav.toggling}
-              className="absolute top-3 left-3 z-20 cursor-pointer transition-transform hover:scale-110 disabled:opacity-50"
+              className="absolute top-2 left-2 z-20 flex min-h-[44px] min-w-[44px] cursor-pointer items-center justify-center rounded-full transition-transform hover:scale-110 disabled:opacity-50"
               aria-label={charFav.isFavorite ? t("removeFromFavorites") : t("addToFavorites")}
             >
               {charFav.toggling ? (

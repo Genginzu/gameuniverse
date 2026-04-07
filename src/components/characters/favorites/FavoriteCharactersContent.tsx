@@ -7,7 +7,7 @@ import { GridSkeleton } from "@/components/shared/GridSkeleton";
 import { characterSkeletonConfig } from "@/components/shared/EntitySkeleton";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import type { CharacterFavoriteSummary } from "@/types/character";
 
 /** Grille responsive partagée entre le skeleton et le rendu final */

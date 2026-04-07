@@ -15,7 +15,7 @@ import { LibraryStatsCards } from "./LibraryStatsCards";
 import { Button } from "@/components/ui/button";
 import { useLibraryGames } from "@/hooks/useLibraryGames";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Icon } from "@iconify/react";
 
 // Lazy load — visible uniquement après clic sur le bouton filtre

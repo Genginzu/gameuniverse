@@ -11,7 +11,7 @@ export function LibraryPageSkeleton() {
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
         {/* Stats Cards Skeleton — 4 cartes identiques au layout réel */}
-        <div className="mb-6 grid grid-cols-1 gap-4 sm:mb-8 sm:gap-6 md:grid-cols-4">
+        <div className="mb-6 grid grid-cols-2 gap-4 sm:mb-8 sm:gap-6 md:grid-cols-4">
           {Array.from({ length: 4 }).map((_, index) => (
             <Card key={index} className="rounded-2xl bg-white dark:bg-gray-800">
               <CardHeader className="pb-3">
