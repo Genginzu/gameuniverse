@@ -110,7 +110,7 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
           ) : (
             <div className="space-y-8">
               <LibraryStatusProvider gameIds={games.map((g) => g.id)}>
-                <div className="xs:grid-cols-2 grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                   {games.map((game, index) => (
                     <EntityCard
                       key={game.id}

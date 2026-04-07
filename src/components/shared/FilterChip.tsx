@@ -18,7 +18,7 @@ export function FilterChip({ label, selected, onClick, count, icon }: FilterChip
   return (
     <button
       onClick={onClick}
-      className={`inline-flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
+      className={`inline-flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-2 text-xs font-medium transition-all sm:py-1.5 ${
         selected
           ? "bg-linear-to-r from-cyan-500 to-violet-500 text-white shadow-xs"
           : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700/50 dark:text-gray-300 dark:hover:bg-slate-700"
@@ -49,10 +49,10 @@ export function ActiveFilterChip({
   return (
     <button
       onClick={onRemove}
-      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${colors}`}
+      className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1.5 text-xs font-medium transition-colors sm:py-1 ${colors}`}
     >
       {label}
-      <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
           strokeLinecap="round"
           strokeLinejoin="round"

@@ -87,7 +87,7 @@ export function GameFilters({
           </div>
           <button
             onClick={onClearFilters}
-            className="shrink-0 rounded-lg px-2.5 py-1 text-xs font-medium text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+            className="shrink-0 rounded-lg px-3 py-2 text-xs font-medium text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
           >
             {tFilters("clearAll")}
           </button>
