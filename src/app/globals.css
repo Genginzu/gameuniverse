@@ -328,17 +328,11 @@
   transition: box-shadow 200ms ease;
 }
 
-/* Neon border — gradient violet→cyan */
+/* Neon border — gradient violet→cyan via pseudo-element */
 .neon-border {
-  border: 2px solid transparent;
-  background:
-    linear-gradient(var(--neon-border-bg, transparent), var(--neon-border-bg, transparent)) padding-box,
-    linear-gradient(
-      135deg,
-      rgba(var(--neon-violet), var(--neon-border-opacity)),
-      rgba(var(--neon-cyan), var(--neon-border-opacity))
-    ) border-box;
-  transition: background 200ms ease;
+  position: relative;
+  border: 2px solid rgba(var(--neon-violet), var(--neon-border-opacity));
+  transition: border-color 200ms ease;
 }
 
 /* Neon text — text-shadow glow for h1 titles */
@@ -409,16 +403,11 @@ textarea:focus-visible,
 
 /* Base glass utility */
 .glass {
+  position: relative;
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid transparent;
-  background:
-    linear-gradient(rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.45)) padding-box,
-    linear-gradient(
-      135deg,
-      rgba(var(--neon-violet), var(--neon-border-opacity)),
-      rgba(var(--neon-cyan), var(--neon-border-opacity))
-    ) border-box;
+  border: 1px solid rgba(var(--neon-violet), var(--neon-border-opacity));
+  background: rgba(255, 255, 255, 0.45);
   border-radius: 1rem;
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.06),
@@ -439,14 +428,8 @@ textarea:focus-visible,
 }
 
 .dark .glass {
-  border: 1px solid transparent;
-  background:
-    linear-gradient(rgba(15, 23, 42, 0.5), rgba(15, 23, 42, 0.5)) padding-box,
-    linear-gradient(
-      135deg,
-      rgba(var(--neon-violet), var(--neon-border-opacity)),
-      rgba(var(--neon-cyan), var(--neon-border-opacity))
-    ) border-box;
+  border: 1px solid rgba(var(--neon-violet), var(--neon-border-opacity));
+  background: rgba(15, 23, 42, 0.5);
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.05),
@@ -464,16 +447,11 @@ textarea:focus-visible,
 
 /* Glass card — stats, info panels */
 .glass-card {
+  position: relative;
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border: 1px solid transparent;
-  background:
-    linear-gradient(rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.4)) padding-box,
-    linear-gradient(
-      135deg,
-      rgba(var(--neon-violet), var(--neon-border-opacity)),
-      rgba(var(--neon-cyan), var(--neon-border-opacity))
-    ) border-box;
+  border: 1px solid rgba(var(--neon-violet), var(--neon-border-opacity));
+  background: rgba(255, 255, 255, 0.4);
   border-radius: 1rem;
   box-shadow:
     0 4px 24px rgba(0, 0, 0, 0.04),
@@ -485,13 +463,7 @@ textarea:focus-visible,
 }
 
 .glass-card:hover {
-  background:
-    linear-gradient(rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.55)) padding-box,
-    linear-gradient(
-      135deg,
-      rgba(var(--neon-violet), var(--neon-border-opacity)),
-      rgba(var(--neon-cyan), var(--neon-border-opacity))
-    ) border-box;
+  background: rgba(255, 255, 255, 0.55);
   box-shadow:
     0 8px 40px rgba(0, 0, 0, 0.08),
     0 2px 4px rgba(0, 0, 0, 0.04),
@@ -502,14 +474,8 @@ textarea:focus-visible,
 }
 
 .dark .glass-card {
-  border: 1px solid transparent;
-  background:
-    linear-gradient(rgba(30, 41, 59, 0.4), rgba(30, 41, 59, 0.4)) padding-box,
-    linear-gradient(
-      135deg,
-      rgba(var(--neon-violet), var(--neon-border-opacity)),
-      rgba(var(--neon-cyan), var(--neon-border-opacity))
-    ) border-box;
+  border: 1px solid rgba(var(--neon-violet), var(--neon-border-opacity));
+  background: rgba(30, 41, 59, 0.4);
   box-shadow:
     0 4px 24px rgba(0, 0, 0, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.04),
@@ -518,13 +484,7 @@ textarea:focus-visible,
 }
 
 .dark .glass-card:hover {
-  background:
-    linear-gradient(rgba(30, 41, 59, 0.55), rgba(30, 41, 59, 0.55)) padding-box,
-    linear-gradient(
-      135deg,
-      rgba(var(--neon-violet), var(--neon-border-opacity)),
-      rgba(var(--neon-cyan), var(--neon-border-opacity))
-    ) border-box;
+  background: rgba(30, 41, 59, 0.55);
   box-shadow:
     0 8px 40px rgba(0, 0, 0, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.06),
@@ -610,14 +570,8 @@ textarea:focus-visible,
 }
 
 .dark .glass-dropdown {
-  border: 1px solid transparent;
-  background:
-    linear-gradient(rgba(30, 41, 59, 0.75), rgba(30, 41, 59, 0.75)) padding-box,
-    linear-gradient(
-      135deg,
-      rgba(var(--neon-violet), var(--neon-border-opacity)),
-      rgba(var(--neon-cyan), var(--neon-border-opacity))
-    ) border-box;
+  border: 1px solid rgba(var(--neon-violet), var(--neon-border-opacity));
+  background: rgba(30, 41, 59, 0.75);
   box-shadow:
     0 12px 40px rgba(0, 0, 0, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.05),
@@ -637,14 +591,8 @@ textarea:focus-visible,
 .glass-input {
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid transparent;
-  background:
-    linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)) padding-box,
-    linear-gradient(
-      135deg,
-      rgba(var(--neon-violet), var(--neon-border-opacity)),
-      rgba(var(--neon-cyan), var(--neon-border-opacity))
-    ) border-box;
+  border: 1px solid rgba(var(--neon-violet), var(--neon-border-opacity));
+  background: rgba(255, 255, 255, 0.5);
   border-radius: 1rem;
   box-shadow:
     inset 0 1px 2px rgba(0, 0, 0, 0.04),
@@ -671,14 +619,8 @@ textarea:focus-visible,
 }
 
 .dark .glass-input {
-  border: 1px solid transparent;
-  background:
-    linear-gradient(rgba(30, 41, 59, 0.4), rgba(30, 41, 59, 0.4)) padding-box,
-    linear-gradient(
-      135deg,
-      rgba(var(--neon-violet), var(--neon-border-opacity)),
-      rgba(var(--neon-cyan), var(--neon-border-opacity))
-    ) border-box;
+  border: 1px solid rgba(var(--neon-violet), var(--neon-border-opacity));
+  background: rgba(30, 41, 59, 0.4);
   box-shadow:
     inset 0 1px 2px rgba(0, 0, 0, 0.1),
     0 0 10px rgba(var(--neon-violet), calc(var(--neon-glow-opacity) * 0.5)),
