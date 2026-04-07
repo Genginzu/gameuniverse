@@ -91,7 +91,7 @@ export function RecentGamesSection() {
         {/* Section header */}
         <div className="mb-10 flex items-end justify-between">
           <div>
-            <h2 className="neon-text mb-2 text-3xl font-black text-gray-900 sm:text-4xl dark:text-white">
+            <h2 className="neon-text mb-2 text-2xl font-black text-gray-900 sm:text-3xl sm:text-4xl dark:text-white">
               {t("title")}
             </h2>
             <p className="text-gray-600 dark:text-gray-400">{t("subtitle")}</p>

@@ -32,10 +32,10 @@ export function LandingFeatures() {
     <section className="bg-slate-950/95 py-24">
       <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
         <div className="text-center">
-          <h2 className="neon-text mb-6 text-4xl font-bold text-white sm:text-5xl">
+          <h2 className="neon-text mb-6 text-3xl font-bold text-white sm:text-5xl">
             {t("features.mainTitle")}
           </h2>
-          <p className="mx-auto mb-20 max-w-2xl text-lg leading-relaxed text-slate-400">
+          <p className="mx-auto mb-10 max-w-2xl text-lg leading-relaxed text-slate-400 sm:mb-20">
             {t("features.mainSubtitle")}
           </p>
         </div>

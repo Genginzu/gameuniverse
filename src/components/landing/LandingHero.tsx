@@ -21,10 +21,10 @@ export function LandingHero() {
 
       <div className="relative mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
         <div className="text-center">
-          <h1 className="neon-text mb-8 text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
+          <h1 className="neon-text mb-8 text-3xl font-bold tracking-tight sm:text-5xl lg:text-7xl">
             {t("title")}
           </h1>
-          <p className="mx-auto mb-12 max-w-3xl text-xl leading-relaxed text-slate-300 sm:text-2xl">
+          <p className="mx-auto mb-12 max-w-3xl text-lg leading-relaxed text-slate-300 sm:text-2xl">
             {t("subtitle")}
           </p>
 
@@ -32,7 +32,7 @@ export function LandingHero() {
           <div className="flex flex-col items-center justify-center gap-6 sm:flex-row">
             <Button
               size="lg"
-              className="neon-btn rounded-xl bg-neon-violet/20 px-8 py-3 font-semibold text-white transition-all duration-200 hover:scale-105"
+              className="neon-btn rounded-xl bg-neon-violet/20 px-6 py-3 font-semibold text-white transition-all duration-200 hover:scale-105 sm:px-8"
               asChild
             >
               <Link href="/auth?mode=signup">
@@ -43,7 +43,7 @@ export function LandingHero() {
             <Button
               size="lg"
               variant="outline"
-              className="neon-btn rounded-xl border-2 border-neon-cyan/40 bg-transparent px-8 py-3 font-semibold text-white transition-all duration-200 hover:scale-105 hover:bg-neon-cyan/10"
+              className="neon-btn rounded-xl border-2 border-neon-cyan/40 bg-transparent px-6 py-3 font-semibold text-white transition-all duration-200 hover:scale-105 hover:bg-neon-cyan/10 sm:px-8"
               asChild
             >
               <Link href="/auth?mode=signin">{t("cta.login")}</Link>
