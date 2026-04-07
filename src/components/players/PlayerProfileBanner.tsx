@@ -52,9 +52,9 @@ export function PlayerProfileBanner({
         <ProgressRing
           progressPercent={xpStats?.progressPercent ?? 0}
           level={xpStats?.level ?? player.level}
-          size={140}
+          size={120}
         >
-          <div className="relative h-[132px] w-[132px] overflow-hidden rounded-xl bg-linear-to-br from-blue-100 to-indigo-100 shadow-xl">
+          <div className="relative h-[112px] w-[112px] overflow-hidden rounded-xl bg-linear-to-br from-blue-100 to-indigo-100 shadow-xl">
             {player.avatarUrl ? (
               <LazyImage
                 src={player.avatarUrl}
@@ -123,15 +123,15 @@ function ProfileCounters({
   ];
 
   return (
-    <div className="flex gap-3">
+    <div className="grid grid-cols-3 gap-2 sm:flex sm:gap-3">
       {counters.map((c) => (
         <div
           key={c.label}
-          className="flex items-center gap-2 rounded-xl bg-white/40 px-3 py-2 backdrop-blur-xs transition-all duration-300 hover:bg-white/60 dark:bg-slate-800/40 dark:hover:bg-slate-700/50"
+          className="flex items-center justify-center gap-1.5 rounded-xl bg-white/40 px-2 py-2 backdrop-blur-xs transition-all duration-300 hover:bg-white/60 sm:gap-2 sm:px-3 dark:bg-slate-800/40 dark:hover:bg-slate-700/50"
         >
-          <Icon icon={c.icon} className="h-5 w-5 text-purple-500 dark:text-purple-400" />
-          <span className="text-base font-bold text-gray-900 dark:text-white">{c.value}</span>
-          <span className="text-sm text-gray-500 dark:text-slate-400">{c.label}</span>
+          <Icon icon={c.icon} className="h-4 w-4 text-purple-500 sm:h-5 sm:w-5 dark:text-purple-400" />
+          <span className="text-sm font-bold text-gray-900 sm:text-base dark:text-white">{c.value}</span>
+          <span className="hidden text-sm text-gray-500 sm:inline dark:text-slate-400">{c.label}</span>
         </div>
       ))}
     </div>

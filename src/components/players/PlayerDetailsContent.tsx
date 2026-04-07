@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import useSWR from "swr";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Icon } from "@iconify/react";
 import { useAuth } from "@/hooks/useAuth";
 import { useFriendRelationship } from "@/hooks/useFriendRelationship";
@@ -54,11 +54,11 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
     <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
       {/* Back navigation */}
       <div className="absolute top-4 left-4 z-20">
-        <Link href={`/${locale}/players`}>
+        <Link href="/players">
           <Button
             variant="ghost"
             size="sm"
-            className="rounded-full bg-black/20 text-gray-700 backdrop-blur-xs hover:bg-black/30 hover:text-gray-900 dark:bg-black/30 dark:text-white dark:hover:bg-black/50 dark:hover:text-white"
+            className="min-h-[44px] min-w-[44px] rounded-full bg-black/20 text-gray-700 backdrop-blur-xs hover:bg-black/30 hover:text-gray-900 dark:bg-black/30 dark:text-white dark:hover:bg-black/50 dark:hover:text-white"
           >
             <Icon icon="lucide:arrow-left" className="mr-2 h-4 w-4" />
             {t("details.back")}
