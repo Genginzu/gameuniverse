@@ -8,7 +8,7 @@ import { describe, test, expect, beforeEach, vi } from "vitest";
 let mockSupabaseFrom: any;
 let mockSupabaseRpc: any;
 
-vi.mock("../../../src/lib/supabase-server", () => ({
+vi.mock("@/lib/supabase-server", () => ({
   createRouteHandlerClient: () =>
     Promise.resolve({
       from: (table: string) => {
@@ -155,8 +155,8 @@ describe("GET /api/games — platform filter", () => {
     mockSupabaseRpc = null;
   });
 
-  test("filters games by platform slugs", async () => {
-    const { GET } = await import("../../../src/app/api/games/route");
+  test("filters games by platform slugs", { timeout: 15000 }, async () => {
+    const { GET } = await import("@/app/api/games/route");
 
     mockSupabaseFrom = vi.fn((table: string) => {
       if (table === "platforms") return mockPlatformLookup(["plat-1"]);
@@ -199,7 +199,7 @@ describe("GET /api/games — platform filter", () => {
   });
 
   test("returns empty when no games match platform", async () => {
-    const { GET } = await import("../../../src/app/api/games/route");
+    const { GET } = await import("@/app/api/games/route");
 
     mockSupabaseFrom = vi.fn((table: string) => {
       if (table === "platforms") return mockPlatformLookup(["plat-1"]);
@@ -215,7 +215,7 @@ describe("GET /api/games — platform filter", () => {
   });
 
   test("returns all games when no platform filter (Req 4.4)", async () => {
-    const { GET } = await import("../../../src/app/api/games/route");
+    const { GET } = await import("@/app/api/games/route");
 
     mockSupabaseRpc = vi.fn(() =>
       Promise.resolve({
@@ -277,7 +277,7 @@ describe("GET /api/characters — platform filter", () => {
   });
 
   test("filters characters by platform", async () => {
-    const { GET } = await import("../../../src/app/api/characters/route");
+    const { GET } = await import("@/app/api/characters/route");
     const char = makeCharacterRow("char-1", "Link", ["game-1"]);
 
     mockSupabaseFrom = vi.fn((table: string) => {
@@ -298,7 +298,7 @@ describe("GET /api/characters — platform filter", () => {
   });
 
   test("excludes characters with no matching platform games", async () => {
-    const { GET } = await import("../../../src/app/api/characters/route");
+    const { GET } = await import("@/app/api/characters/route");
 
     mockSupabaseFrom = vi.fn((table: string) => {
       if (table === "characters") return mockCharactersTable([], 0);

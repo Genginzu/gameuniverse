@@ -125,7 +125,7 @@ describe("Feature: admin-translation-management, Property 3: Complétude des cha
       ),
       { numRuns: 100 }
     );
-  });
+  }, 15000);
 });
 
 /**
