@@ -34,18 +34,19 @@ Types autorisés : `feat`, `fix`, `refactor`, `docs`, `ci`, `chore`, `style`,
 ## Référence aux issues
 
 Si le travail en cours est lié à une issue GitHub, **toujours** inclure le
-numéro de l'issue dans le message de commit, quel que soit le nombre de commits
-effectués pour cette issue.
+numéro de l'issue dans le message de commit. GitHub rend `#N` cliquable
+automatiquement.
 
-Format : ajouter `(#<numéro>)` à la fin de la description.
+Format : placer `#N` au début du titre du commit, juste après le type.
 
 ```
-fix: replace next/link with i18n navigation (#27)
-perf: lazy load recharts components (#31)
-feat: add player stats dashboard (#42)
+fix: #27 replace next/link with i18n navigation
+perf: #31 lazy load recharts components
+feat: #42 add player stats dashboard
 ```
 
-- ✅ Chaque commit lié à une issue **doit** contenir `(#N)` dans le message
+- ✅ Chaque commit lié à une issue **doit** contenir `#N` dans le titre
+- ✅ Le `#N` se place juste après le `<type>:` pour être visible immédiatement
 - ✅ Si plusieurs commits sont nécessaires pour une même issue, chacun porte le
   numéro
 - ❌ Ne **jamais** omettre le numéro d'issue quand on travaille sur une issue
