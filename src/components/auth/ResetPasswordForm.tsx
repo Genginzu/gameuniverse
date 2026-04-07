@@ -254,7 +254,7 @@ export function ResetPasswordForm() {
                 type={showPassword ? "text" : "password"}
                 placeholder={t("newPasswordPlaceholder")}
                 {...register("password")}
-                className={`h-12 rounded-xl border-slate-200 bg-slate-50/50 pr-10 transition-all duration-200 focus:border-slate-400 focus:bg-white dark:border-slate-600 dark:bg-slate-700/50 dark:focus:border-slate-500 dark:focus:bg-slate-700 ${errors.password ? "border-red-500" : ""}`}
+                className={`h-12 rounded-xl border-slate-200 bg-slate-50/50 pr-10 text-base transition-all duration-200 focus:border-slate-400 focus:bg-white dark:border-slate-600 dark:bg-slate-700/50 dark:focus:border-slate-500 dark:focus:bg-slate-700 ${errors.password ? "border-red-500" : ""}`}
               />
               <Button
                 type="button"
@@ -285,7 +285,7 @@ export function ResetPasswordForm() {
                 type={showConfirmPassword ? "text" : "password"}
                 placeholder={t("confirmPasswordPlaceholder")}
                 {...register("confirmPassword")}
-                className={`h-12 rounded-xl border-slate-200 bg-slate-50/50 pr-10 transition-all duration-200 focus:border-slate-400 focus:bg-white dark:border-slate-600 dark:bg-slate-700/50 dark:focus:border-slate-500 dark:focus:bg-slate-700 ${errors.confirmPassword ? "border-red-500" : ""}`}
+                className={`h-12 rounded-xl border-slate-200 bg-slate-50/50 pr-10 text-base transition-all duration-200 focus:border-slate-400 focus:bg-white dark:border-slate-600 dark:bg-slate-700/50 dark:focus:border-slate-500 dark:focus:bg-slate-700 ${errors.confirmPassword ? "border-red-500" : ""}`}
               />
               <Button
                 type="button"
