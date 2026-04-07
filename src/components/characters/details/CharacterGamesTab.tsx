@@ -43,7 +43,7 @@ interface GameCardProps {
   colors: { primary: string };
 }
 
-function GameCard({ game, locale, colors }: GameCardProps) {
+function GameCard({ game, locale: _locale, colors }: GameCardProps) {
   const t = useTranslations();
 
   return (

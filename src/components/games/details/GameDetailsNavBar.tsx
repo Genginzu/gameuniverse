@@ -21,7 +21,7 @@ export function GameDetailsNavBar({ locale }: GameDetailsNavBarProps) {
           <Button
             variant="ghost"
             size="sm"
-            className="border border-white/10 bg-white/5 text-slate-300 backdrop-blur-xl hover:bg-white/10 hover:text-white"
+            className="min-h-[44px] border border-white/10 bg-white/5 px-4 text-slate-300 backdrop-blur-xl hover:bg-white/10 hover:text-white"
           >
             <Icon icon="lucide:arrow-left" className="mr-2 h-4 w-4" />
             {t("common.back")}

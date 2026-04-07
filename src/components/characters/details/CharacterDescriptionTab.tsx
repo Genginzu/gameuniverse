@@ -177,7 +177,7 @@ interface RelationshipsCardProps {
   accentColor: string;
 }
 
-function RelationshipsCard({ relationships, locale, accentColor }: RelationshipsCardProps) {
+function RelationshipsCard({ relationships, locale: _locale, accentColor }: RelationshipsCardProps) {
   const t = useTranslations();
 
   return (

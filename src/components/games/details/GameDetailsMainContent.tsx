@@ -63,7 +63,7 @@ export function GameDetailsMainContent({
       )}
 
       {/* Title */}
-      <h1 className="neon-text mb-6 text-3xl leading-tight font-bold text-white lg:text-5xl">
+      <h1 className="neon-text mb-4 text-2xl leading-tight font-bold text-white sm:mb-6 sm:text-3xl lg:text-5xl">
         {game.title}
       </h1>
 
