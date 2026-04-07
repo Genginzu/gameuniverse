@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { LazyImage } from "@/components/ui/lazy-image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import { CharacterPlatformsCard } from "./CharacterPlatformsCard";
@@ -193,7 +193,7 @@ function RelationshipsCard({ relationships, locale, accentColor }: Relationships
             return (
               <Link
                 key={rel.id}
-                href={`/${locale}/characters/${rel.relatedCharacter.slug}`}
+                href={`/characters/${rel.relatedCharacter.slug}`}
                 className="group flex items-center gap-4 rounded-xl border border-slate-700/50 bg-slate-900/50 p-4 transition-all hover:border-slate-600 hover:bg-slate-800/50"
               >
                 <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full border-2 border-slate-600">
