@@ -2835,7 +2835,8 @@
     "startConversation": "Start a conversation",
     "timeJustNow": "Just now",
     "timeMinutesAgo": "{min} min ago",
-    "timeHoursAgo": "{hours}h ago"
+    "timeHoursAgo": "{hours}h ago",
+    "backToConversations": "Back"
   },
   "platforms": {
     "title": "Platforms",

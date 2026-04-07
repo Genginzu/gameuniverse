@@ -43,6 +43,10 @@ export default function DiscussionsPage() {
     loadMoreMessages,
   } = useDiscussions();
 
+  const handleBackToList = useCallback(() => {
+    selectConversation("");
+  }, [selectConversation]);
+
   const [showNewConversationDialog, setShowNewConversationDialog] = useState(false);
   const [friends, setFriends] = useState<FriendEntry[]>([]);
   const [isLoadingFriends, setIsLoadingFriends] = useState(false);
@@ -128,15 +132,24 @@ export default function DiscussionsPage() {
             <div className="glass-card flex flex-1 flex-col rounded-2xl">
               {/* Thread header */}
               {selectedConversation && (
-                <div className="flex items-center gap-3 border-b border-white/20 px-5 py-4 dark:border-slate-700/50">
-                  <div className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-linear-to-br from-blue-500/30 via-purple-600/30 to-purple-700/30">
+                <div className="flex items-center gap-3 border-b border-white/20 px-4 py-3 md:px-5 md:py-4 dark:border-slate-700/50">
+                  {/* Back button — mobile only */}
+                  <button
+                    type="button"
+                    onClick={handleBackToList}
+                    className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl transition-colors hover:bg-white/30 md:hidden dark:hover:bg-slate-700/50"
+                    aria-label={t("backToConversations")}
+                  >
+                    <Icon icon="lucide:arrow-left" className="h-5 w-5 text-slate-600 dark:text-slate-300" />
+                  </button>
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-linear-to-br from-blue-500/30 via-purple-600/30 to-purple-700/30">
                     {selectedConversation.friend.avatarUrl ? (
                       <LazyImage
                         src={selectedConversation.friend.avatarUrl}
                         alt={selectedConversation.friend.displayName}
                         fill
                         className="object-cover"
-                        sizes="36px"
+                        sizes="40px"
                         showSkeleton
                       />
                     ) : (
@@ -161,7 +174,7 @@ export default function DiscussionsPage() {
               </div>
 
               {/* Input */}
-              <div className="border-t border-white/20 px-4 py-3 dark:border-slate-700/50">
+              <div className="border-t border-white/20 px-3 py-2 md:px-4 md:py-3 dark:border-slate-700/50">
                 <MessageInput onSend={sendMessage} isSending={isSending} maxLength={2000} />
               </div>
             </div>

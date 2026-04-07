@@ -64,7 +64,7 @@ export default function MessageThread({
   return (
     <div className="flex h-full flex-col" data-testid="message-thread">
       {/* Scrollable message area */}
-      <div ref={containerRef} className="flex flex-1 flex-col gap-3 overflow-y-auto px-5 py-4">
+      <div ref={containerRef} className="flex flex-1 flex-col gap-3 overflow-y-auto px-3 py-3 md:px-5 md:py-4">
         {/* Load more button */}
         {hasMore && (
           <div className="flex justify-center pb-2">
@@ -72,7 +72,7 @@ export default function MessageThread({
               type="button"
               onClick={onLoadMore}
               disabled={isLoading}
-              className="flex items-center gap-1.5 rounded-xl bg-white/30 px-4 py-2 text-sm font-medium text-slate-700 backdrop-blur-xs transition-all duration-300 hover:bg-white/50 disabled:opacity-50 dark:bg-slate-700/40 dark:text-slate-300 dark:hover:bg-slate-700/60"
+              className="flex min-h-[44px] items-center gap-1.5 rounded-xl bg-white/30 px-4 py-2 text-sm font-medium text-slate-700 backdrop-blur-xs transition-all duration-300 hover:bg-white/50 disabled:opacity-50 dark:bg-slate-700/40 dark:text-slate-300 dark:hover:bg-slate-700/60"
               data-testid="load-more-button"
             >
               {isLoading ? (
