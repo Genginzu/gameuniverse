@@ -153,8 +153,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       <Button
         id="admin-sidebar-toggle"
         variant="ghost"
-        size="sm"
-        className="fixed left-4 top-4 z-30 lg:hidden"
+        size="icon"
+        className="fixed left-3 top-3 z-30 min-h-[44px] min-w-[44px] lg:hidden"
         onClick={() => setSidebarOpen(!sidebarOpen)}
         aria-label={sidebarOpen ? t("closeSidebar") : t("openSidebar")}
       >

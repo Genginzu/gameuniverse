@@ -73,7 +73,7 @@ export function AdminSidebarNav({ onLinkClick }: AdminSidebarNavProps) {
   };
 
   const linkClasses = (path: string) =>
-    `flex items-center rounded-xl px-3 py-2 text-sm font-medium ${
+    `flex items-center rounded-xl px-3 py-2.5 text-sm font-medium min-h-[44px] ${
       isActive(path)
         ? "bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white"
         : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white"

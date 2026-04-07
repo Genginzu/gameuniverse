@@ -82,7 +82,7 @@ export default function AdminSidebar({
           <div className="flex items-center justify-end p-4 lg:hidden">
             <button
               onClick={() => setSidebarOpen(false)}
-              className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+              className="min-h-[44px] min-w-[44px] rounded-lg p-2 text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
               aria-label={t("closeSidebar")}
             >
               <Icon icon="fa:times" className="h-5 w-5" />

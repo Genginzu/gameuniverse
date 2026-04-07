@@ -66,7 +66,7 @@ export function RatingSystemsTable({
 
   return (
     <div className="space-y-4">
-      <form onSubmit={handleSearchSubmit} className="flex gap-2">
+      <form onSubmit={handleSearchSubmit} className="flex flex-col gap-2 sm:flex-row">
         <div className="relative flex-1">
           <Icon
             icon="fa:search"
@@ -213,6 +213,7 @@ export function RatingSystemsTable({
                   variant="outline"
                   size="sm"
                   disabled={!pagination.hasPreviousPage}
+                  className="min-h-[44px] min-w-[44px]"
                   onClick={() => onPageChange(pagination.currentPage - 1)}
                   aria-label={t("previousPage")}
                 >
@@ -222,6 +223,7 @@ export function RatingSystemsTable({
                   variant="outline"
                   size="sm"
                   disabled={!pagination.hasNextPage}
+                  className="min-h-[44px] min-w-[44px]"
                   onClick={() => onPageChange(pagination.currentPage + 1)}
                   aria-label={t("nextPage")}
                 >

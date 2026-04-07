@@ -37,7 +37,7 @@ export function RatingsTable({
 
   return (
     <div className="space-y-4">
-      <form onSubmit={handleSearchSubmit} className="flex gap-2">
+      <form onSubmit={handleSearchSubmit} className="flex flex-col gap-2 sm:flex-row">
         <div className="relative flex-1">
           <Icon
             icon="fa:search"
