@@ -52,9 +52,10 @@ test.describe("Authentication — #47", () => {
       const auth = new AuthPage(page);
       await auth.gotoRegister("fr");
 
+      await auth.usernameInput.fill("TestUser");
       await auth.emailInput.fill("not-an-email");
       await auth.passwordInput.fill("password123");
-      await auth.submitButton.click();
+      await auth.submitButton.click({ force: true });
 
       const isInvalid = await auth.emailInput.evaluate(
         (el) => !(el as HTMLInputElement).validity.valid
@@ -66,9 +67,10 @@ test.describe("Authentication — #47", () => {
       const auth = new AuthPage(page);
       await auth.gotoRegister("fr");
 
+      await auth.usernameInput.fill("TestUser");
       await auth.emailInput.fill("test@example.com");
       await auth.passwordInput.fill("12");
-      await auth.submitButton.click();
+      await auth.submitButton.click({ force: true });
 
       const hasError = await auth.errorMessage.isVisible().catch(() => false);
       const isInvalid = await auth.passwordInput.evaluate(

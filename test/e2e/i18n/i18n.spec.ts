@@ -126,16 +126,11 @@ test.describe("Navigation, routing i18n & responsive — #48", () => {
       });
       const page = await context.newPage();
       await page.goto("/fr");
-      await page.waitForLoadState("domcontentloaded");
+      await page.waitForLoadState("networkidle");
 
-      const hamburger = page
-        .locator('[class*="hamburger"], [aria-label*="menu"], button:has(svg)')
-        .first();
-      const isVisible = await hamburger.isVisible().catch(() => false);
-      expect(
-        isVisible ||
-          (await page.locator('[class*="mobile-nav"], [class*="bottom-nav"]').count()) > 0
-      ).toBeTruthy();
+      const hamburger = page.locator('button[aria-label="Open navigation menu"]');
+      const isVisible = await hamburger.isVisible({ timeout: 10_000 }).catch(() => false);
+      expect(isVisible).toBeTruthy();
       await context.close();
     });
   });
