@@ -7,7 +7,6 @@ import { ErrorFallback } from "@/components/shared/ErrorFallback";
 import { SeoBreadcrumb } from "@/components/shared/SeoBreadcrumb";
 import { getTranslations } from "next-intl/server";
 import { createServerClient } from "@/lib/supabase-server";
-import { createClient } from "@supabase/supabase-js";
 
 export const dynamicParams = true;
 
@@ -77,13 +76,8 @@ export async function generateMetadata({ params }: CharacterDetailsPageProps) {
   return await CharacterService.generateCharacterMetadata(slug, locale);
 }
 
+// Characters are always rendered dynamically (no-store fetch),
+// so pre-rendering at build time is pointless and generates noise.
 export async function generateStaticParams() {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
-  const { data } = await supabase.from("characters").select("slug").limit(50);
-
-  const characters = (data ?? []) as { slug: string }[];
-  return characters.map((c) => ({ slug: c.slug }));
+  return [];
 }
