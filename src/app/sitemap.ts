@@ -10,7 +10,7 @@ function entry(
   path: string,
   changeFrequency: Frequency,
   priority: number,
-  lastModified?: string
+  lastModified?: string | null
 ): MetadataRoute.Sitemap[number] {
   return {
     url: `${BASE_URL}/fr${path}`,
@@ -28,18 +28,14 @@ function entry(
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await createServerClient();
 
-  const [{ data: games }, { data: characters }, { data: players }] =
-    await Promise.all([
-      supabase
-        .from("games")
-        .select("slug, updated_at")
-        .eq("is_published", true),
-      supabase.from("characters").select("slug, updated_at"),
-      supabase
-        .from("profiles")
-        .select("id, updated_at")
-        .eq("is_public", true),
-    ]);
+  const [{ data: games }, { data: characters }, { data: players }] = await Promise.all([
+    supabase.from("games").select("slug, updated_at").eq("is_published", true),
+    supabase
+      .from("characters")
+      .select("slug, updated_at")
+      .returns<{ slug: string; updated_at: string | null }[]>(),
+    supabase.from("profiles").select("id, updated_at").eq("is_public", true),
+  ]);
 
   const staticPages = [
     entry("", "daily", 1.0),

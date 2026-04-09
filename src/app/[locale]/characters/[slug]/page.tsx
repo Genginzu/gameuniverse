@@ -81,7 +81,8 @@ export async function generateStaticParams() {
   const { data: characters } = await supabase
     .from("characters")
     .select("slug")
-    .limit(50);
+    .limit(50)
+    .returns<{ slug: string }[]>();
 
   return (characters ?? []).map((c) => ({ slug: c.slug }));
 }
