@@ -6,7 +6,6 @@ import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
 import { SeoBreadcrumb } from "@/components/shared/SeoBreadcrumb";
 import { getTranslations } from "next-intl/server";
-import { createServerClient } from "@/lib/supabase-server";
 
 export const dynamicParams = true;
 
