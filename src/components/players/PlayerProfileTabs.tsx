@@ -66,6 +66,7 @@ export function PlayerProfileTabs({ activeTab, onTabChange, isOwner }: PlayerPro
 
       <div
         ref={scrollRef}
+        role="tablist"
         className="scrollbar-hide flex overflow-x-auto px-6 md:justify-center md:px-0"
       >
         {visibleTabs.map(({ id, icon }) => {

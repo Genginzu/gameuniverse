@@ -25,7 +25,7 @@ export class PlayerDetailPage extends BasePage {
   }
 
   get tabs(): Locator {
-    return this.page.locator('[role="tab"]').first();
+    return this.page.getByRole("tablist");
   }
 
   getTab(name: string): Locator {
