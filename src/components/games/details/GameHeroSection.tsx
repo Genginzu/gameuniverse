@@ -25,7 +25,7 @@ interface GameHeroSectionProps {
 
 export function GameHeroSection({
   game,
-  locale,
+  locale: _locale,
   colors,
   isWishlisted,
   isWishlistToggling = false,
@@ -41,7 +41,7 @@ export function GameHeroSection({
       {/* Floating navigation buttons */}
       <div className="absolute top-0 right-0 left-0 z-20 px-4 py-4">
         <div className="container mx-auto flex items-center justify-between">
-          <Link href={`/${locale}/games`}>
+          <Link href="/games">
             <Button
               variant="ghost"
               size="sm"

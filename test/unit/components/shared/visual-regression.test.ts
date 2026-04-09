@@ -141,7 +141,7 @@ const simulateOriginalGameCard = (game: GameSummary, locale: string) => {
     badgeValue: game.metascore,
     badgeColor: getMetascoreColorOriginal(game.metascore),
     hasLibraryToggle: true,
-    linkHref: `/${locale}/games/${game.slug}`,
+    linkHref: `/games/${game.slug}`,
     hasHoverOverlay: true,
   };
 };
@@ -182,7 +182,7 @@ const simulateOriginalPlayerCard = (player: PlayerSummary, locale: string) => {
     badgePosition: "top-right",
     badgeValue: player.gamesCount,
     hasLibraryToggle: false,
-    linkHref: `/${locale}/players/${player.id}`,
+    linkHref: `/players/${player.id}`,
     hasHoverOverlay: true,
     hasInfoSection: true,
   };
@@ -220,7 +220,7 @@ const simulateOriginalCharacterCard = (character: CharacterSummary, locale: stri
     badgePosition: "top-right",
     badgeValue: character.role,
     hasLibraryToggle: false,
-    linkHref: `/${locale}/characters/${character.slug}`,
+    linkHref: `/characters/${character.slug}`,
     hasHoverOverlay: true,
   };
 };
@@ -448,7 +448,7 @@ describe("Visual Regression Tests", () => {
           (slug, locale) => {
             const game = { slug } as GameSummary;
             const link = gameCardConfig.linkTemplate(game, locale);
-            return link === `/${locale}/games/${slug}`;
+            return link === `/games/${slug}`;
           }
         ),
         { numRuns: 50 }
@@ -460,7 +460,7 @@ describe("Visual Regression Tests", () => {
         fc.property(fc.uuid(), fc.constantFrom("fr", "en"), (id, locale) => {
           const player = { id } as PlayerSummary;
           const link = playerCardConfig.linkTemplate(player, locale);
-          return link === `/${locale}/players/${id}`;
+          return link === `/players/${id}`;
         }),
         { numRuns: 50 }
       );
@@ -474,7 +474,7 @@ describe("Visual Regression Tests", () => {
           (slug, locale) => {
             const character = { slug } as CharacterSummary;
             const link = characterCardConfig.linkTemplate(character, locale);
-            return link === `/${locale}/characters/${slug}`;
+            return link === `/characters/${slug}`;
           }
         ),
         { numRuns: 50 }

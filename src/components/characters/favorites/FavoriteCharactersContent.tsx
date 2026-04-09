@@ -94,7 +94,7 @@ export function FavoriteCharactersContent() {
             {t("emptyDescription")}
           </p>
           <Button asChild className="bg-blue-600 hover:bg-blue-700">
-            <Link href={`/${locale}/characters`}>{t("exploreCharacters")}</Link>
+            <Link href="/characters">{t("exploreCharacters")}</Link>
           </Button>
         </div>
       </div>

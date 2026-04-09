@@ -33,20 +33,12 @@ jobs:
       - run: bun install --frozen-lockfile
       - run: bun run test:all
 
-  e2e:
-    name: E2E Tests
-    needs: [lint, type-check, unit-tests]
+  build:
+    name: Build
     runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/playwright:v1.59.1-noble
     steps:
       - uses: actions/checkout@v5
-
-      - name: Install system dependencies
-        run: apt-get update && apt-get install -y unzip
-
       - uses: oven-sh/setup-bun@v2
-
       - run: bun install --frozen-lockfile
 
       - name: Cache Next.js build
@@ -63,6 +55,34 @@ jobs:
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v5
+        with:
+          name: nextjs-build
+          path: .next/
+          retention-days: 1
+
+  e2e:
+    name: E2E Tests
+    needs: [lint, type-check, unit-tests, build]
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.59.1-noble
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install system dependencies
+        run: apt-get update && apt-get install -y unzip
+
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v5
+        with:
+          name: nextjs-build
+          path: .next/
 
       - name: Run E2E Tests
         run: npx playwright test
