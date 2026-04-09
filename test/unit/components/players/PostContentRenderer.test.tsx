@@ -83,7 +83,7 @@ describe("PostContentRenderer", () => {
     render(<PostContentRenderer {...defaultProps} content="Hello @Alice" mentions={mentions} />);
     const link = screen.getByRole("link");
     expect(link).toBeInTheDocument();
-    expect(link).toHaveAttribute("href", "/fr/players/uuid-123");
+    expect(link).toHaveAttribute("href", "/players/uuid-123");
     expect(link).toHaveTextContent("@Alice");
   });
 
@@ -118,7 +118,7 @@ describe("PostContentRenderer", () => {
     // Valid mention rendered as link
     const mentionLink = screen.getByRole("link");
     expect(mentionLink).toHaveTextContent("@Charlie");
-    expect(mentionLink).toHaveAttribute("href", "/fr/players/uuid-789");
+    expect(mentionLink).toHaveAttribute("href", "/players/uuid-789");
     // Invalid mention rendered as plain text (no second link)
     expect(screen.getByText("@Nobody")).toBeInTheDocument();
     expect(screen.queryAllByRole("link")).toHaveLength(1);

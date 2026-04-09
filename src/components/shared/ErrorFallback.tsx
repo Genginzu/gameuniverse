@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 interface ErrorFallbackProps {
   title?: string;
@@ -25,7 +25,6 @@ export function ErrorFallback({
   showHomeButton = false,
   backUrl,
   backLabel,
-  locale = "fr",
 }: ErrorFallbackProps) {
   const tErrors = useTranslations("errors");
   const tCommon = useTranslations("common");
@@ -55,7 +54,7 @@ export function ErrorFallback({
           )}
           {showHomeButton && (
             <Button asChild variant="outline">
-              <Link href={`/${locale}/dashboard`}>
+              <Link href="/dashboard">
                 <Icon icon="lucide:home" className="mr-2 h-4 w-4" />
                 {tCommon("backToHome")}
               </Link>

@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { LazyImage } from "@/components/ui/lazy-image";
 import { useLocale, useTranslations } from "next-intl";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import type { CollectionSummary } from "@/types/collection";
 
 interface CollectionCardProps {
@@ -34,8 +34,8 @@ export function CollectionCard({
 
   const coverImages = collection.coverImages.slice(0, 4);
   const href = basePath
-    ? `/${locale}${basePath}/${collection.slug}`
-    : `/${locale}/players/${playerId}/collections/${collection.slug}`;
+    ? `${basePath}/${collection.slug}`
+    : `/players/${playerId}/collections/${collection.slug}`;
 
   const cardContent = (
     <div className="relative cursor-pointer overflow-hidden rounded-xl bg-white shadow-xs transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-blue-500/10 dark:bg-gray-800">

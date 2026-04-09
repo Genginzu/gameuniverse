@@ -3,13 +3,10 @@
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Icon } from "@iconify/react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
+import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 
 export default function PlayerNotFound() {
-  const params = useParams();
-  const locale = (params?.locale as string) || "fr";
   const t = useTranslations("players.errors");
   const tCommon = useTranslations("common");
 
@@ -28,7 +25,7 @@ export default function PlayerNotFound() {
               variant="outline"
               className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white"
             >
-              <Link href={`/${locale}/players`}>
+              <Link href="/players">
                 <Icon icon="lucide:arrow-left" className="mr-2 h-4 w-4" />
                 {t("backToPlayers")}
               </Link>
@@ -38,7 +35,7 @@ export default function PlayerNotFound() {
               variant="outline"
               className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-white"
             >
-              <Link href={`/${locale}/dashboard`}>
+              <Link href="/dashboard">
                 <Icon icon="lucide:home" className="mr-2 h-4 w-4" />
                 {tCommon("backToHome")}
               </Link>

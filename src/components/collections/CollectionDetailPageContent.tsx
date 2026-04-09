@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
 import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -16,7 +15,7 @@ import { useCollectionDetail } from "@/hooks/useCollectionDetail";
 import { useCollectionMutations } from "@/hooks/useCollectionMutations";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "@/hooks/use-toast";
-import Link from "next/link";
+import { Link, useRouter } from "@/i18n/navigation";
 
 interface CollectionDetailPageContentProps {
   playerId: string;
@@ -91,7 +90,7 @@ export function CollectionDetailPageContent({
         description={t("notFoundDescription")}
         showRefresh={false}
         showBackButton
-        backUrl={`/${locale}/players/${playerId}/collections`}
+        backUrl={`/players/${playerId}/collections`}
         backLabel={t("backToCollections")}
         locale={locale}
       />
@@ -105,7 +104,7 @@ export function CollectionDetailPageContent({
         description={t("errorDescription")}
         showRefresh
         showBackButton
-        backUrl={`/${locale}/players/${playerId}/collections`}
+        backUrl={`/players/${playerId}/collections`}
         backLabel={t("backToCollections")}
         locale={locale}
       />
@@ -116,7 +115,7 @@ export function CollectionDetailPageContent({
     <div className="container mx-auto px-4 py-8">
       {/* Navigation */}
       <div className="mb-6 flex items-center gap-4">
-        <Link href={`/${locale}/players/${playerId}/collections`}>
+        <Link href={`/players/${playerId}/collections`}>
           <Button variant="ghost" size="sm">
             <Icon icon="lucide:arrow-left" className="mr-1.5 h-4 w-4" />
             {t("backToCollections")}

@@ -2,7 +2,7 @@
 
 import { LazyImage } from "@/components/ui/lazy-image";
 import { PlayerCardSocialLinks } from "./PlayerCardSocialLinks";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import type { PlayerSummary } from "@/types/player";
@@ -13,12 +13,12 @@ interface PlayerCardProps {
   priority?: boolean;
 }
 
-export function PlayerCard({ player, locale = "fr", priority = false }: PlayerCardProps) {
+export function PlayerCard({ player, locale: _locale = "fr", priority = false }: PlayerCardProps) {
   const t = useTranslations("players.card");
   const displayName = player.fullName || t("anonymousPlayer");
 
   return (
-    <Link href={`/${locale}/players/${player.id}`} className="group block">
+    <Link href={`/players/${player.id}`} className="group block">
       <div className="relative overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-xl dark:bg-gray-800">
         {/* Banner */}
         {player.bannerUrl ? (

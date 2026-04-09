@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import type { YearInReview } from "@/types/player-stats";
 import { YearInReviewCards } from "./YearInReviewCards";
 
@@ -31,7 +31,7 @@ export function YearInReviewContent({
 
   const backLink = (
     <Link
-      href={`/${locale}/players/${playerId}`}
+      href={`/players/${playerId}`}
       className="inline-flex items-center gap-1.5 text-sm text-slate-400 transition-colors hover:text-white"
     >
       <Icon icon="lucide:arrow-left" className="h-4 w-4" />

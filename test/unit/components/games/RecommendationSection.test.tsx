@@ -140,7 +140,7 @@ describe("RecommendationSection", () => {
     // GameCard renders links via next/link (mocked as <a>)
     const links = screen.getAllByRole("link");
     const hrefs = links.map((link) => link.getAttribute("href"));
-    expect(hrefs).toContain("/fr/games/zelda-totk");
-    expect(hrefs).toContain("/fr/games/elden-ring");
+    expect(hrefs).toContain("/games/zelda-totk");
+    expect(hrefs).toContain("/games/elden-ring");
   });
 });

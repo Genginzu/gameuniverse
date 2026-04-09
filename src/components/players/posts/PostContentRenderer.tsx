@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import type { PostMention } from "@/types/post";
 
@@ -40,7 +40,7 @@ function tokenize(content: string): string[] {
   return parts;
 }
 
-export function PostContentRenderer({ content, tags, mentions, locale }: PostContentRendererProps) {
+export function PostContentRenderer({ content, tags, mentions, locale: _locale }: PostContentRendererProps) {
   const t = useTranslations("players.posts");
 
   // Build a Set of valid tags (lowercase) for O(1) lookup
@@ -73,7 +73,7 @@ export function PostContentRenderer({ content, tags, mentions, locale }: PostCon
             return (
               <Link
                 key={index}
-                href={`/${locale}/players/${playerId}`}
+                href={`/players/${playerId}`}
                 aria-label={t("mentionAriaLabel", { username })}
                 className="text-cyan-500 transition-all duration-300 hover:underline dark:text-cyan-300"
               >

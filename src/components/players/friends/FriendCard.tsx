@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import { LazyImage } from "@/components/ui/lazy-image";
@@ -13,7 +13,7 @@ interface FriendCardProps {
   onRemove?: (friendshipId: string) => Promise<void>;
 }
 
-export function FriendCard({ friend, locale, onRemove }: FriendCardProps) {
+export function FriendCard({ friend, locale: _locale, onRemove }: FriendCardProps) {
   const t = useTranslations("friends.page");
   const [confirming, setConfirming] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
@@ -48,7 +48,7 @@ export function FriendCard({ friend, locale, onRemove }: FriendCardProps) {
   return (
     <div className="group flex items-center rounded-xl border border-gray-200 bg-white p-3 transition-all hover:shadow-md dark:border-slate-700/50 dark:bg-slate-800/50 dark:hover:bg-slate-800">
       <Link
-        href={`/${locale}/players/${friend.id}`}
+        href={`/players/${friend.id}`}
         className="flex min-w-0 flex-1 items-center gap-3"
       >
         {/* Avatar */}

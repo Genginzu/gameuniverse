@@ -1,23 +1,23 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import { GameColors } from "@/lib/utils/game-utils";
 
 interface GameDetailsNavBarProps {
-  locale: string;
-  colors: GameColors;
+  locale?: string;
+  colors?: GameColors;
 }
 
-export function GameDetailsNavBar({ locale }: GameDetailsNavBarProps) {
+export function GameDetailsNavBar(_props: GameDetailsNavBarProps = {}) {
   const t = useTranslations();
 
   return (
     <div className="absolute top-0 right-0 left-0 z-20 px-4 py-4">
       <div className="container mx-auto">
-        <Link href={`/${locale}/games`}>
+        <Link href="/games">
           <Button
             variant="ghost"
             size="sm"

@@ -3,7 +3,7 @@
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 import { cn } from "@/lib/utils";
 import { getRatingColor } from "@/lib/utils/ratingColor";
@@ -75,7 +75,7 @@ export function PlayerReviewCard({ review, locale }: PlayerReviewCardProps) {
       {/* Header: game cover + game name + rating */}
       <div className="mb-4 flex gap-4">
         {/* Game cover thumbnail */}
-        <Link href={`/${locale}/games/${review.gameSlug}`} className="shrink-0">
+        <Link href={`/games/${review.gameSlug}`} className="shrink-0">
           <div className="relative h-20 w-14 overflow-hidden rounded-lg bg-white/10 dark:bg-slate-700/50">
             {review.gameCoverUrl ? (
               <Image
@@ -98,7 +98,7 @@ export function PlayerReviewCard({ review, locale }: PlayerReviewCardProps) {
         <div className="flex min-w-0 flex-1 flex-col justify-between">
           <div>
             <Link
-              href={`/${locale}/games/${review.gameSlug}`}
+              href={`/games/${review.gameSlug}`}
               className="hover:text-neon-violet dark:hover:text-neon-cyan text-sm font-semibold text-gray-900 transition-colors dark:text-white"
             >
               {review.gameName}

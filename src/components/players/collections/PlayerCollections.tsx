@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { useCollections } from "@/hooks/useCollections";
 import { CollectionCard } from "@/components/collections/CollectionCard";
 import { Icon } from "@iconify/react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 const MAX_PREVIEW_COUNT = 4;
 
@@ -18,7 +18,7 @@ interface PlayerCollectionsProps {
  * Section collections publiques sur le profil d'un joueur.
  * Affiche un aperçu des collections avec lien "Voir tout".
  */
-export function PlayerCollections({ playerId, locale, isOwner = false }: PlayerCollectionsProps) {
+export function PlayerCollections({ playerId, locale: _locale, isOwner = false }: PlayerCollectionsProps) {
   const t = useTranslations("players.collections");
   const { collections, isLoading, error } = useCollections(playerId);
 
@@ -76,7 +76,7 @@ export function PlayerCollections({ playerId, locale, isOwner = false }: PlayerC
         </h2>
         {hasMore && (
           <Link
-            href={`/${locale}/players/${playerId}/collections`}
+            href={`/players/${playerId}/collections`}
             className="text-sm font-medium text-blue-400 transition-colors hover:text-blue-300"
           >
             {t("seeAll", { count: collections.length })}

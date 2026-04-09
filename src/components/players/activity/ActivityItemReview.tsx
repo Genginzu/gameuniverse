@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import type { ReviewEventData } from "@/types/activity";
@@ -10,7 +10,7 @@ interface ActivityItemReviewProps {
   locale: string;
 }
 
-export function ActivityItemReview({ data, locale }: ActivityItemReviewProps) {
+export function ActivityItemReview({ data, locale: _locale }: ActivityItemReviewProps) {
   const t = useTranslations("players.activity");
 
   return (
@@ -19,7 +19,7 @@ export function ActivityItemReview({ data, locale }: ActivityItemReviewProps) {
         {t.rich("reviewDescription", {
           game: () => (
             <Link
-              href={`/${locale}/games/${data.gameSlug}`}
+              href={`/games/${data.gameSlug}`}
               className="font-medium text-cyan-600 hover:underline dark:text-cyan-400"
             >
               {data.gameName}

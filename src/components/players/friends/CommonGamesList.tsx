@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { LazyImage } from "@/components/ui/lazy-image";
 import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Icon } from "@iconify/react";
 import type { CommonGame } from "@/types/player";
 
@@ -25,7 +25,7 @@ interface CommonGamesListProps {
  *
  * Requirements: 3.1, 3.2, 3.4
  */
-export function CommonGamesList({ games, locale, pagination, onPageChange }: CommonGamesListProps) {
+export function CommonGamesList({ games, locale: _locale, pagination, onPageChange }: CommonGamesListProps) {
   const t = useTranslations("players");
 
   if (games.length === 0) {
@@ -41,7 +41,7 @@ export function CommonGamesList({ games, locale, pagination, onPageChange }: Com
         {games.map((game) => (
           <Link
             key={game.gameId}
-            href={`/${locale}/games/${game.slug}`}
+            href={`/games/${game.slug}`}
             className="group relative overflow-hidden rounded-xl border border-slate-700/50 bg-slate-800/50 transition-all hover:scale-[1.02] hover:border-slate-600 hover:shadow-lg hover:shadow-indigo-500/10"
           >
             {/* Cover image */}

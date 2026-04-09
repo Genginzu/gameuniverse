@@ -5,8 +5,7 @@ import * as Sentry from "@sentry/nextjs";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Icon } from "@iconify/react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
+import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 
 interface ErrorProps {
@@ -15,8 +14,6 @@ interface ErrorProps {
 }
 
 export default function CharacterDetailsError({ error, reset }: ErrorProps) {
-  const params = useParams();
-  const locale = (params?.locale as string) || "fr";
   const t = useTranslations("characters.errors");
   const tCommon = useTranslations("common");
 
@@ -39,13 +36,13 @@ export default function CharacterDetailsError({ error, reset }: ErrorProps) {
               {t("retry")}
             </Button>
             <Button asChild variant="outline">
-              <Link href={`/${locale}/characters`}>
+              <Link href="//characters">
                 <Icon icon="lucide:arrow-left" className="mr-2 h-4 w-4" />
                 {t("backToCharacters")}
               </Link>
             </Button>
             <Button asChild variant="outline">
-              <Link href={`/${locale}/dashboard`}>
+              <Link href="//dashboard">
                 <Icon icon="lucide:home" className="mr-2 h-4 w-4" />
                 {tCommon("backToHome")}
               </Link>
