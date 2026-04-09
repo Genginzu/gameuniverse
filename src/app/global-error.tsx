@@ -1,20 +1,14 @@
 "use client";
 
-import * as Sentry from "@sentry/nextjs";
 import NextError from "next/error";
 import { useEffect, useState } from "react";
 
 const SUPPORTED_LOCALES = new Set(["fr", "en"]);
 
-export default function GlobalError({
-  error,
-}: {
-  error: Error & { digest?: string };
-}) {
+export default function GlobalError({ error }: { error: Error & { digest?: string } }) {
   const [locale, setLocale] = useState("fr");
 
   useEffect(() => {
-    Sentry.captureException(error);
     const segment = window.location.pathname.split("/").filter(Boolean)[0] ?? "fr";
     setLocale(SUPPORTED_LOCALES.has(segment) ? segment : "fr");
   }, [error]);
