@@ -6,8 +6,8 @@ Nettoyage effectué en 2 passes. Bilan :
 
 | Métrique | Avant | Après | Delta |
 |----------|-------|-------|-------|
-| Fichiers de tests unitaires | 877 | 800 | -77 |
-| Lignes supprimées | — | — | -11 563 |
+| Fichiers de tests unitaires | 877 | 535 | -342 (39%) |
+| Lignes supprimées | — | — | ~19 300 |
 
 ### Fichiers supprimés par catégorie
 
@@ -18,6 +18,7 @@ Nettoyage effectué en 2 passes. Bilan :
 | Stubs "export check" (UI) | 7 | Redondants avec les fichiers `.comprehensive.test` |
 | "module is importable" (composants) | 21 | Même pattern appliqué aux skeletons, empty states, etc. |
 | Property tests locaux | 22 | Définissent des fonctions locales et les testent, jamais le vrai code |
+| "module is importable" batch (265) | 265 | Pattern `import * as ComponentModule` identique sur 265 fichiers |
 | Consolidation (doublons) | 3 | button, form, lazy-image : N fichiers → 1 |
 
 ### Fichiers conservés (800)
