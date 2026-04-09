@@ -48,7 +48,7 @@ export function PlayerProfileBanner({
       </div>
 
       {/* Avatar overlapping the banner — centered, with ProgressRing */}
-      <div className="relative z-10 mx-auto -mt-32 flex flex-col items-center">
+      <div className="relative z-10 mx-auto -mt-20 flex flex-col items-center">
         <ProgressRing
           progressPercent={xpStats?.progressPercent ?? 0}
           level={xpStats?.level ?? player.level}
@@ -129,9 +129,16 @@ function ProfileCounters({
           key={c.label}
           className="flex items-center justify-center gap-1.5 rounded-xl bg-white/40 px-2 py-2 backdrop-blur-xs transition-all duration-300 hover:bg-white/60 sm:gap-2 sm:px-3 dark:bg-slate-800/40 dark:hover:bg-slate-700/50"
         >
-          <Icon icon={c.icon} className="h-4 w-4 text-purple-500 sm:h-5 sm:w-5 dark:text-purple-400" />
-          <span className="text-sm font-bold text-gray-900 sm:text-base dark:text-white">{c.value}</span>
-          <span className="hidden text-sm text-gray-500 sm:inline dark:text-slate-400">{c.label}</span>
+          <Icon
+            icon={c.icon}
+            className="h-4 w-4 text-purple-500 sm:h-5 sm:w-5 dark:text-purple-400"
+          />
+          <span className="text-sm font-bold text-gray-900 sm:text-base dark:text-white">
+            {c.value}
+          </span>
+          <span className="hidden text-sm text-gray-500 sm:inline dark:text-slate-400">
+            {c.label}
+          </span>
         </div>
       ))}
     </div>
