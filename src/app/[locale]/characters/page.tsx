@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { AllCharactersContent } from "@/components/characters/AllCharactersContent";
 import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
@@ -9,10 +11,22 @@ interface AllCharactersPageProps {
   params: Promise<{ locale: string }>;
 }
 
+export async function generateMetadata({ params }: AllCharactersPageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "metadata.characters" });
+
+  return {
+    title: t("title"),
+    description: t("description"),
+    alternates: {
+      languages: { fr: "/fr/characters", en: "/en/characters" },
+    },
+  };
+}
+
 export default async function AllCharactersPage({ params }: AllCharactersPageProps) {
   const { locale } = await params;
 
-  // Fetch initial data server-side pour un rendu immédiat sans skeleton
   let initialCharacters;
   let initialPagination;
 
@@ -25,7 +39,6 @@ export default async function AllCharactersPage({ params }: AllCharactersPagePro
     initialCharacters = result.characters;
     initialPagination = result.pagination;
   } catch (error) {
-    // En cas d'erreur serveur, le composant client fera le fetch en fallback
     logger.error("Failed to fetch initial characters server-side", { error });
   }
 
