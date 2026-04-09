@@ -46,7 +46,10 @@ export async function POST(request: NextRequest) {
   // Update the profile field
   const { data: updatedProfile, error: updateError } = await supabase
     .from("profiles")
-    .update({ [profileField]: publicUrl, updated_at: new Date().toISOString() })
+    .update({
+      [profileField]: publicUrl,
+      updated_at: new Date().toISOString(),
+    } as unknown as Record<string, never>)
     .eq("id", user.id)
     .select()
     .single();

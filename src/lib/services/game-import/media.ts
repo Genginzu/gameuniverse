@@ -69,7 +69,8 @@ export async function createTranslations(gameId: string, igdbGame: IGDBGame): Pr
   const description = igdbGame.summary || null;
   const storyline = igdbGame.storyline || null;
 
-  await supabase.from("game_translations").insert({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await (supabase.from("game_translations") as any).insert({
     game_id: gameId,
     language_code: "en",
     title: igdbGame.name,
@@ -88,7 +89,7 @@ export async function updateTranslations(gameId: string, igdbGame: IGDBGame): Pr
 
   await supabase
     .from("game_translations")
-    .update({ title: igdbGame.name, description, storyline })
+    .update({ title: igdbGame.name, description, storyline } as unknown as Record<string, never>)
     .eq("game_id", gameId)
     .eq("language_code", "en");
 }

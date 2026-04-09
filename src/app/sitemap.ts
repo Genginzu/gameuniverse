@@ -29,9 +29,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await createServerClient();
 
   const [{ data: games }, { data: rawCharacters }, { data: players }] = await Promise.all([
-    supabase.from("games").select("slug, updated_at").eq("is_published", true),
+    supabase
+      .from("games")
+      .select("slug, updated_at")
+      .eq("is_published" as string, true),
     supabase.from("characters").select("slug, updated_at"),
-    supabase.from("profiles").select("id, updated_at").eq("is_public", true),
+    supabase
+      .from("profiles")
+      .select("id, updated_at")
+      .eq("is_public" as string, true),
   ]);
 
   const characters = (rawCharacters ?? []) as { slug: string; updated_at: string | null }[];

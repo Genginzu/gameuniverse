@@ -441,7 +441,10 @@ export async function PATCH(request: NextRequest) {
       });
     } else if (operation === "update" && data) {
       // Bulk update games
-      const { error } = await supabase.from("games").update(data).in("id", game_ids);
+      const { error } = await supabase
+        .from("games")
+        .update(data as Record<string, never>)
+        .in("id", game_ids);
 
       if (error) {
         logger.error("Error bulk updating games", { error });
