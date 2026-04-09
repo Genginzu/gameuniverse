@@ -6,22 +6,36 @@ on:
   workflow_dispatch:
 
 jobs:
-  quality:
-    name: Lint, Types & Unit Tests
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
-      - name: Lint
-        run: bun run lint
-      - name: Type Check
-        run: bun run type-check
-      - name: Unit Tests
-        run: bun run test:all
+      - run: bun run lint
+
+  type-check:
+    name: Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun run type-check
+
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun run test:all
 
   e2e:
     name: E2E Tests
+    needs: [lint, type-check, unit-tests]
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.59.1-noble
