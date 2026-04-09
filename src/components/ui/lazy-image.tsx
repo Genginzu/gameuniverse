@@ -22,7 +22,7 @@ export function LazyImage({
   height,
   fill = false,
   className = "",
-  fallbackSrc = "/images/placeholder-game.jpg",
+  fallbackSrc = "",
   showSkeleton = true,
   sizes,
   priority = false,
