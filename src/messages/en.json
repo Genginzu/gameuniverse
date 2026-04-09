@@ -1,4 +1,38 @@
 {
+  "metadata": {
+    "home": {
+      "title": "Home",
+      "description": "Explore thousands of video games, discover iconic characters and join a community of enthusiasts"
+    },
+    "games": {
+      "title": "All games",
+      "description": "Browse our complete video game catalog with detailed pages, ratings and community reviews"
+    },
+    "characters": {
+      "title": "All characters",
+      "description": "Discover iconic video game characters with their biographies and appearances"
+    },
+    "players": {
+      "title": "All players",
+      "description": "Explore Game Universe community player profiles"
+    },
+    "discussions": {
+      "title": "Discussions",
+      "description": "Join Game Universe community discussions"
+    },
+    "library": {
+      "title": "My library",
+      "description": "Manage your personal video game collection"
+    },
+    "favorites": {
+      "title": "Favorite characters",
+      "description": "Your favorite video game characters"
+    },
+    "yearInReview": {
+      "title": "{player}'s {year} year in review",
+      "description": "Discover {player}'s {year} gaming year in review on Game Universe"
+    }
+  },
   "navigation": {
     "games": "Games",
     "characters": "Characters",

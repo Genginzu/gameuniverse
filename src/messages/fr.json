@@ -1,4 +1,38 @@
 {
+  "metadata": {
+    "home": {
+      "title": "Accueil",
+      "description": "Explorez des milliers de jeux vidéo, découvrez des personnages iconiques et rejoignez une communauté de passionnés"
+    },
+    "games": {
+      "title": "Tous les jeux",
+      "description": "Parcourez notre catalogue complet de jeux vidéo avec fiches détaillées, notes et avis de la communauté"
+    },
+    "characters": {
+      "title": "Tous les personnages",
+      "description": "Découvrez les personnages iconiques du jeu vidéo avec leurs biographies et apparitions"
+    },
+    "players": {
+      "title": "Tous les joueurs",
+      "description": "Explorez les profils des joueurs de la communauté Game Universe"
+    },
+    "discussions": {
+      "title": "Discussions",
+      "description": "Participez aux discussions de la communauté Game Universe"
+    },
+    "library": {
+      "title": "Ma bibliothèque",
+      "description": "Gérez votre collection de jeux vidéo personnelle"
+    },
+    "favorites": {
+      "title": "Personnages favoris",
+      "description": "Vos personnages de jeux vidéo favoris"
+    },
+    "yearInReview": {
+      "title": "Rétrospective {year} de {player}",
+      "description": "Découvrez la rétrospective gaming {year} de {player} sur Game Universe"
+    }
+  },
   "navigation": {
     "games": "Jeux",
     "characters": "Personnages",
