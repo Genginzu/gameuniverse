@@ -34,7 +34,7 @@ export function PlayerCollectionsListView({
   if (collections.length === 0) return <EmptyState />;
 
   return (
-    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+    <div className="xs:grid-cols-2 grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
       {collections.map((collection) => (
         <CollectionCard
           key={collection.id}
@@ -50,7 +50,7 @@ export function PlayerCollectionsListView({
 
 function ListSkeleton() {
   return (
-    <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+    <div className="xs:grid-cols-2 grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
       {Array.from({ length: 4 }).map((_, i) => (
         <div key={i} className="overflow-hidden rounded-xl">
           <Skeleton className="aspect-video w-full bg-gray-200 dark:bg-slate-700" />
