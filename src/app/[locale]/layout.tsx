@@ -6,6 +6,7 @@ import type { Metadata, Viewport } from "next";
 import { AuthErrorHandler } from "@/components/auth/AuthErrorHandler";
 import { ErrorProvider } from "@/components/providers/ErrorProvider";
 import { SWRProvider } from "@/components/providers/SWRProvider";
+import { JsonLd } from "@/components/shared/JsonLd";
 
 const LOCALE_MAP: Record<string, string> = { fr: "fr_FR", en: "en_US" };
 
@@ -70,6 +71,15 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
 
   return (
     <ErrorProvider>
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "Game Universe",
+          url: "https://gameuniverse.gg",
+          logo: "https://gameuniverse.gg/icon.png",
+        }}
+      />
       <NextIntlClientProvider locale={locale} messages={messages}>
         <SWRProvider>
           <AuthErrorHandler />

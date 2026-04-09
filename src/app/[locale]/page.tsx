@@ -4,6 +4,7 @@ import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
 import { HomeContent } from "@/components/home/HomeContent";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
+import { JsonLd } from "@/components/shared/JsonLd";
 
 interface HomePageProps {
   params: Promise<{ locale: string }>;
@@ -22,19 +23,39 @@ export async function generateMetadata({ params }: HomePageProps): Promise<Metad
   };
 }
 
-export default function Home() {
+export default async function Home({ params }: HomePageProps) {
+  const { locale } = await params;
+
   return (
-    <DashboardLayout>
-      <ErrorBoundary
-        fallback={
-          <ErrorFallback
-            description="Une erreur s'est produite lors du chargement de la page d'accueil."
-            showRefresh={true}
-          />
-        }
-      >
-        <HomeContent />
-      </ErrorBoundary>
-    </DashboardLayout>
+    <>
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "Game Universe",
+          url: "https://gameuniverse.gg",
+          potentialAction: {
+            "@type": "SearchAction",
+            target: {
+              "@type": "EntryPoint",
+              urlTemplate: `https://gameuniverse.gg/${locale}/games?q={search_term_string}`,
+            },
+            "query-input": "required name=search_term_string",
+          },
+        }}
+      />
+      <DashboardLayout>
+        <ErrorBoundary
+          fallback={
+            <ErrorFallback
+              description="Une erreur s'est produite lors du chargement de la page d'accueil."
+              showRefresh={true}
+            />
+          }
+        >
+          <HomeContent />
+        </ErrorBoundary>
+      </DashboardLayout>
+    </>
   );
 }
