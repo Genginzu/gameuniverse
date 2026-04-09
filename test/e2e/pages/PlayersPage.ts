@@ -1,0 +1,35 @@
+import type { Locator } from "@playwright/test";
+import { BasePage } from "./BasePage";
+
+/**
+ * Page Object for the players listing page.
+ */
+export class PlayersPage extends BasePage {
+  async goto(locale: string = "fr") {
+    await this.navigateTo(`/${locale}/players`);
+  }
+
+  get heading(): Locator {
+    return this.page.getByRole("heading", { level: 1 });
+  }
+
+  get playerCards(): Locator {
+    return this.page.locator('a[href*="/players/"]').filter({ hasText: /.+/ });
+  }
+
+  get searchInput(): Locator {
+    return this.page
+      .getByRole("searchbox")
+      .or(this.page.getByPlaceholder(/rechercher|search/i))
+      .first();
+  }
+
+  async search(query: string) {
+    await this.searchInput.fill(query);
+    await this.page.waitForTimeout(500);
+  }
+
+  async clickFirstPlayer() {
+    await this.playerCards.first().click();
+  }
+}
