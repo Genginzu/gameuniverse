@@ -6,7 +6,7 @@ export class HomePage extends BasePage {
   }
 
   get heading() {
-    return this.page.getByRole("heading", { level: 1 });
+    return this.page.getByRole("heading", { level: 1 }).first();
   }
 
   get navigation() {

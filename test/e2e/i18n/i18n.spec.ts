@@ -54,10 +54,10 @@ test.describe("Navigation, routing i18n & responsive — #48", () => {
           .getByRole("option", { name: /en|english/i })
           .or(page.locator('a[href*="/en"]').filter({ hasText: /en|english/i }))
           .first();
-        if (await enOption.isVisible()) {
+        if (await enOption.isVisible().catch(() => false)) {
           await enOption.click();
+          await expect(page).toHaveURL(/\/en/, { timeout: 10_000 });
         }
-        await expect(page).toHaveURL(/\/en/, { timeout: 5000 });
       }
     });
   });

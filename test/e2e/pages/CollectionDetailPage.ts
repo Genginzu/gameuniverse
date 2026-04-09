@@ -10,7 +10,7 @@ export class CollectionDetailPage extends BasePage {
   }
 
   get title(): Locator {
-    return this.page.getByRole("heading", { level: 1 });
+    return this.page.getByRole("heading", { level: 1 }).first();
   }
 
   get description(): Locator {

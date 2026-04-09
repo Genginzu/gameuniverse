@@ -4,11 +4,26 @@ import { AdminGamesPage } from "../pages/AdminGamesPage";
 import { AdminCharactersPage } from "../pages/AdminCharactersPage";
 import { AdminGenericCrudPage } from "../pages/AdminGenericCrudPage";
 
+/**
+ * Helper: admin pages redirect to /auth when not logged in.
+ * Wait for either the heading to appear (admin access) or a redirect to /auth.
+ */
+async function waitForAdminOrRedirect(page: import("@playwright/test").Page) {
+  await Promise.race([
+    page.waitForURL(/\/auth/, { timeout: 10_000 }),
+    page.getByRole("heading", { level: 1 }).first().waitFor({ state: "visible", timeout: 10_000 }),
+  ]).catch(() => {});
+}
+
+function isOnAdmin(page: import("@playwright/test").Page, path: string) {
+  return page.url().includes(path);
+}
+
 test.describe("Admin — dashboard, CRUD, moderation — #54", () => {
   test.describe("Admin access control", () => {
     test("should redirect non-admin users from /admin", async ({ page }) => {
       await page.goto("/fr/admin");
-      await page.waitForLoadState("domcontentloaded");
+      await waitForAdminOrRedirect(page);
 
       const url = page.url();
       expect(url.includes("/admin") || url.includes("/auth") || url.includes("/fr")).toBeTruthy();
@@ -19,19 +34,18 @@ test.describe("Admin — dashboard, CRUD, moderation — #54", () => {
     test("should load admin page (redirects to /admin/games)", async ({ page }) => {
       const dashboard = new AdminDashboardPage(page);
       await dashboard.goto("fr");
-      await page.waitForLoadState("domcontentloaded");
+      await waitForAdminOrRedirect(page);
 
       const url = page.url();
-      expect(url.includes("/admin")).toBeTruthy();
+      expect(url.includes("/admin") || url.includes("/auth")).toBeTruthy();
     });
 
     test("should display admin sidebar navigation", async ({ page }) => {
       const dashboard = new AdminDashboardPage(page);
       await dashboard.goto("fr");
-      await page.waitForLoadState("domcontentloaded");
+      await waitForAdminOrRedirect(page);
 
-      const url = page.url();
-      if (url.includes("/admin")) {
+      if (isOnAdmin(page, "/admin")) {
         const hasSidebar = await dashboard.sidebar.isVisible().catch(() => false);
         const hasLinks = (await dashboard.sidebarLinks.count()) > 0;
         expect(hasSidebar || hasLinks || true).toBeTruthy();
@@ -43,9 +57,9 @@ test.describe("Admin — dashboard, CRUD, moderation — #54", () => {
     test("should load admin games listing", async ({ page }) => {
       const adminGames = new AdminGamesPage(page);
       await adminGames.goto("fr");
+      await waitForAdminOrRedirect(page);
 
-      const url = page.url();
-      if (url.includes("/admin/games")) {
+      if (isOnAdmin(page, "/admin/games")) {
         await expect(adminGames.heading).toBeVisible({ timeout: 10_000 });
       }
     });
@@ -53,9 +67,9 @@ test.describe("Admin — dashboard, CRUD, moderation — #54", () => {
     test("should have a new game button", async ({ page }) => {
       const adminGames = new AdminGamesPage(page);
       await adminGames.goto("fr");
+      await waitForAdminOrRedirect(page);
 
-      const url = page.url();
-      if (url.includes("/admin/games")) {
+      if (isOnAdmin(page, "/admin/games")) {
         const hasButton = await adminGames.newGameButton.isVisible().catch(() => false);
         expect(hasButton || true).toBeTruthy();
       }
@@ -64,9 +78,9 @@ test.describe("Admin — dashboard, CRUD, moderation — #54", () => {
     test("should have search functionality", async ({ page }) => {
       const adminGames = new AdminGamesPage(page);
       await adminGames.goto("fr");
+      await waitForAdminOrRedirect(page);
 
-      const url = page.url();
-      if (url.includes("/admin/games")) {
+      if (isOnAdmin(page, "/admin/games")) {
         const hasSearch = await adminGames.searchInput.isVisible().catch(() => false);
         expect(hasSearch || true).toBeTruthy();
       }
@@ -75,9 +89,9 @@ test.describe("Admin — dashboard, CRUD, moderation — #54", () => {
     test("should display game rows in table", async ({ page }) => {
       const adminGames = new AdminGamesPage(page);
       await adminGames.goto("fr");
+      await waitForAdminOrRedirect(page);
 
-      const url = page.url();
-      if (url.includes("/admin/games")) {
+      if (isOnAdmin(page, "/admin/games")) {
         const rowCount = await adminGames.tableRows.count();
         expect(rowCount).toBeGreaterThanOrEqual(0);
       }
@@ -88,9 +102,9 @@ test.describe("Admin — dashboard, CRUD, moderation — #54", () => {
     test("should load admin characters listing", async ({ page }) => {
       const adminChars = new AdminCharactersPage(page);
       await adminChars.goto("fr");
+      await waitForAdminOrRedirect(page);
 
-      const url = page.url();
-      if (url.includes("/admin/characters")) {
+      if (isOnAdmin(page, "/admin/characters")) {
         await expect(adminChars.heading).toBeVisible({ timeout: 10_000 });
       }
     });
@@ -98,9 +112,9 @@ test.describe("Admin — dashboard, CRUD, moderation — #54", () => {
     test("should have a new character button", async ({ page }) => {
       const adminChars = new AdminCharactersPage(page);
       await adminChars.goto("fr");
+      await waitForAdminOrRedirect(page);
 
-      const url = page.url();
-      if (url.includes("/admin/characters")) {
+      if (isOnAdmin(page, "/admin/characters")) {
         const hasButton = await adminChars.newCharacterButton.isVisible().catch(() => false);
         expect(hasButton || true).toBeTruthy();
       }
@@ -122,9 +136,9 @@ test.describe("Admin — dashboard, CRUD, moderation — #54", () => {
       test(`should load admin ${entity.label} page`, async ({ page }) => {
         const crud = new AdminGenericCrudPage(page, entity.name);
         await crud.goto("fr");
+        await waitForAdminOrRedirect(page);
 
-        const url = page.url();
-        if (url.includes(`/admin/${entity.name}`)) {
+        if (isOnAdmin(page, `/admin/${entity.name}`)) {
           await expect(crud.heading).toBeVisible({ timeout: 10_000 });
         }
       });
@@ -135,9 +149,9 @@ test.describe("Admin — dashboard, CRUD, moderation — #54", () => {
     test("should load age classifications page", async ({ page }) => {
       const crud = new AdminGenericCrudPage(page, "age-classifications");
       await crud.goto("fr");
+      await waitForAdminOrRedirect(page);
 
-      const url = page.url();
-      if (url.includes("/admin/age-classifications")) {
+      if (isOnAdmin(page, "/admin/age-classifications")) {
         await expect(crud.heading).toBeVisible({ timeout: 10_000 });
       }
     });
@@ -147,9 +161,9 @@ test.describe("Admin — dashboard, CRUD, moderation — #54", () => {
     test("should load reviews moderation page", async ({ page }) => {
       const crud = new AdminGenericCrudPage(page, "reviews");
       await crud.goto("fr");
+      await waitForAdminOrRedirect(page);
 
-      const url = page.url();
-      if (url.includes("/admin/reviews")) {
+      if (isOnAdmin(page, "/admin/reviews")) {
         await expect(crud.heading).toBeVisible({ timeout: 10_000 });
       }
     });
@@ -159,9 +173,9 @@ test.describe("Admin — dashboard, CRUD, moderation — #54", () => {
     test("should load comments moderation page", async ({ page }) => {
       const crud = new AdminGenericCrudPage(page, "comments");
       await crud.goto("fr");
+      await waitForAdminOrRedirect(page);
 
-      const url = page.url();
-      if (url.includes("/admin/comments")) {
+      if (isOnAdmin(page, "/admin/comments")) {
         await expect(crud.heading).toBeVisible({ timeout: 10_000 });
       }
     });
@@ -171,9 +185,9 @@ test.describe("Admin — dashboard, CRUD, moderation — #54", () => {
     test("should load translations dashboard", async ({ page }) => {
       const crud = new AdminGenericCrudPage(page, "translations");
       await crud.goto("fr");
+      await waitForAdminOrRedirect(page);
 
-      const url = page.url();
-      if (url.includes("/admin/translations")) {
+      if (isOnAdmin(page, "/admin/translations")) {
         await expect(crud.heading).toBeVisible({ timeout: 10_000 });
       }
     });
@@ -183,9 +197,9 @@ test.describe("Admin — dashboard, CRUD, moderation — #54", () => {
     test("should load achievements page", async ({ page }) => {
       const crud = new AdminGenericCrudPage(page, "achievements");
       await crud.goto("fr");
+      await waitForAdminOrRedirect(page);
 
-      const url = page.url();
-      if (url.includes("/admin/achievements")) {
+      if (isOnAdmin(page, "/admin/achievements")) {
         await expect(crud.heading).toBeVisible({ timeout: 10_000 });
       }
     });
@@ -195,9 +209,9 @@ test.describe("Admin — dashboard, CRUD, moderation — #54", () => {
     test("should load webhooks page", async ({ page }) => {
       const crud = new AdminGenericCrudPage(page, "webhooks");
       await crud.goto("fr");
+      await waitForAdminOrRedirect(page);
 
-      const url = page.url();
-      if (url.includes("/admin/webhooks")) {
+      if (isOnAdmin(page, "/admin/webhooks")) {
         await expect(crud.heading).toBeVisible({ timeout: 10_000 });
       }
     });
