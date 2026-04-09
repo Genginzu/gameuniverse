@@ -36,7 +36,7 @@ export class SearchOverlay extends BasePage {
 
   async search(query: string) {
     await this.input.fill(query);
-    await this.page.waitForTimeout(500); // debounce
+    await this.page.waitForLoadState("networkidle");
   }
 
   async clickFirstResult() {

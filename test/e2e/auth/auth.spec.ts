@@ -56,7 +56,6 @@ test.describe("Authentication — #47", () => {
       await auth.passwordInput.fill("password123");
       await auth.submitButton.click();
 
-      // Browser validation or custom error
       const isInvalid = await auth.emailInput.evaluate(
         (el) => !(el as HTMLInputElement).validity.valid
       );
@@ -71,8 +70,6 @@ test.describe("Authentication — #47", () => {
       await auth.passwordInput.fill("12");
       await auth.submitButton.click();
 
-      // Wait for either form validation or server error
-      await page.waitForTimeout(1000);
       const hasError = await auth.errorMessage.isVisible().catch(() => false);
       const isInvalid = await auth.passwordInput.evaluate(
         (el) => !(el as HTMLInputElement).validity.valid
@@ -84,8 +81,8 @@ test.describe("Authentication — #47", () => {
   test.describe("Logout", () => {
     test("should redirect unauthenticated users from protected pages", async ({ page }) => {
       await page.goto("/fr/library");
-      // Should redirect to auth or show auth prompt
-      await page.waitForTimeout(3000);
+      await page.waitForLoadState("domcontentloaded");
+
       const url = page.url();
       const isRedirected = url.includes("/auth") || url.includes("/fr");
       expect(isRedirected).toBeTruthy();

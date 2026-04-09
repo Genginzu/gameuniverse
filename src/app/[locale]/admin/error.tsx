@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import * as Sentry from "@sentry/nextjs";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Icon } from "@iconify/react";
@@ -21,9 +20,7 @@ export default function AdminError({ error, reset }: ErrorProps) {
   const tAdmin = useTranslations("admin");
 
   useEffect(() => {
-    Sentry.captureException(error, {
-      tags: { section: "admin" },
-    });
+    console.error(error);
   }, [error]);
 
   return (

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { Component, ErrorInfo, ReactNode } from "react";
-import * as Sentry from "@sentry/nextjs";
 import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -48,13 +47,6 @@ export class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     this.setState({ error, errorInfo });
-
-    // Remonter à Sentry avec le component stack
-    Sentry.captureException(error, {
-      extra: {
-        componentStack: errorInfo.componentStack,
-      },
-    });
 
     // Appeler le callback d'erreur personnalisé si fourni
     if (this.props.onError) {
@@ -135,10 +127,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
 // Hook pour utiliser l'Error Boundary de manière déclarative
 export function useErrorBoundaryHandler() {
-  return (error: Error, errorInfo?: ErrorInfo) => {
-    Sentry.captureException(error, {
-      extra: { componentStack: errorInfo?.componentStack },
-    });
+  return (error: Error, _errorInfo?: ErrorInfo) => {
     throw error; // Re-throw pour que l'Error Boundary puisse l'attraper
   };
 }

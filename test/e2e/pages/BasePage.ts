@@ -11,7 +11,7 @@ export class BasePage {
   }
 
   async waitForPageLoad() {
-    await this.page.waitForLoadState("networkidle");
+    await this.page.waitForLoadState("domcontentloaded");
   }
 
   getByTestId(testId: string): Locator {

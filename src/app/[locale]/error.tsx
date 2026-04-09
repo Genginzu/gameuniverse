@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import * as Sentry from "@sentry/nextjs";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Icon } from "@iconify/react";
@@ -18,9 +17,7 @@ export default function LocaleError({ error, reset }: ErrorProps) {
   const locale = (params?.locale as string) || "fr";
 
   useEffect(() => {
-    Sentry.captureException(error, {
-      tags: { section: "root" },
-    });
+    console.error(error);
   }, [error]);
 
   return (

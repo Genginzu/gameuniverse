@@ -29,7 +29,6 @@ test.describe("Navigation, routing i18n & responsive — #48", () => {
       await page.goto("/fr");
       await page.waitForLoadState("domcontentloaded");
 
-      // Find any internal link and verify it keeps the /fr prefix
       const links = page.locator('a[href^="/fr/"]');
       const count = await links.count();
       if (count > 0) {
@@ -44,7 +43,6 @@ test.describe("Navigation, routing i18n & responsive — #48", () => {
       await page.goto("/fr");
       await page.waitForLoadState("domcontentloaded");
 
-      // Look for language switcher
       const switcher = page
         .locator('[class*="language"], [data-testid*="language"]')
         .or(page.getByRole("button", { name: /en|english|anglais/i }))
@@ -52,7 +50,6 @@ test.describe("Navigation, routing i18n & responsive — #48", () => {
 
       if (await switcher.isVisible()) {
         await switcher.click();
-        // If it's a dropdown, click the English option
         const enOption = page
           .getByRole("option", { name: /en|english/i })
           .or(page.locator('a[href*="/en"]').filter({ hasText: /en|english/i }))
@@ -60,8 +57,7 @@ test.describe("Navigation, routing i18n & responsive — #48", () => {
         if (await enOption.isVisible()) {
           await enOption.click();
         }
-        await page.waitForTimeout(2000);
-        await expect(page).toHaveURL(/\/en/);
+        await expect(page).toHaveURL(/\/en/, { timeout: 5000 });
       }
     });
   });
@@ -120,7 +116,7 @@ test.describe("Navigation, routing i18n & responsive — #48", () => {
 
       const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
       const clientWidth = await page.evaluate(() => document.documentElement.clientWidth);
-      expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 5); // 5px tolerance
+      expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 5);
       await context.close();
     });
 
@@ -132,12 +128,10 @@ test.describe("Navigation, routing i18n & responsive — #48", () => {
       await page.goto("/fr");
       await page.waitForLoadState("domcontentloaded");
 
-      // Look for hamburger menu button
       const hamburger = page
         .locator('[class*="hamburger"], [aria-label*="menu"], button:has(svg)')
         .first();
       const isVisible = await hamburger.isVisible().catch(() => false);
-      // On mobile, either a hamburger or bottom nav should be present
       expect(
         isVisible ||
           (await page.locator('[class*="mobile-nav"], [class*="bottom-nav"]').count()) > 0

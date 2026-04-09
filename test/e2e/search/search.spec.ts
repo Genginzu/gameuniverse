@@ -23,11 +23,9 @@ test.describe("Global search — #49", () => {
     if (triggerVisible) {
       await search.open();
       await search.search("a");
-      await page.waitForTimeout(2000);
 
       const resultCount = await search.results.count();
       const hasEmpty = await search.emptyState.isVisible().catch(() => false);
-      // Should show results or empty state
       expect(resultCount > 0 || hasEmpty).toBeTruthy();
     }
   });
@@ -41,14 +39,12 @@ test.describe("Global search — #49", () => {
     if (triggerVisible) {
       await search.open();
       await search.search("game");
-      await page.waitForTimeout(2000);
 
       const resultCount = await search.results.count();
       if (resultCount > 0) {
         const initialUrl = page.url();
         await search.clickFirstResult();
-        await page.waitForTimeout(2000);
-        // URL should have changed after clicking a result
+        await page.waitForURL((url) => url.toString() !== initialUrl, { timeout: 5000 });
         expect(page.url()).not.toBe(initialUrl);
       }
     }
@@ -63,11 +59,9 @@ test.describe("Global search — #49", () => {
     if (triggerVisible) {
       await search.open();
       await search.search("xyznonexistent12345");
-      await page.waitForTimeout(2000);
 
       const resultCount = await search.results.count();
       const hasEmpty = await search.emptyState.isVisible().catch(() => false);
-      // Should show empty state or no results
       expect(resultCount === 0 || hasEmpty).toBeTruthy();
     }
   });

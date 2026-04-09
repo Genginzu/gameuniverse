@@ -54,7 +54,7 @@ export class GamesPage extends BasePage {
 
   async search(query: string) {
     await this.searchInput.fill(query);
-    await this.page.waitForTimeout(500); // debounce
+    await this.page.waitForLoadState("networkidle");
   }
 
   async clickFirstGame() {

@@ -34,7 +34,7 @@ export class CharactersPage extends BasePage {
 
   async search(query: string) {
     await this.searchInput.fill(query);
-    await this.page.waitForTimeout(500);
+    await this.page.waitForLoadState("networkidle");
   }
 
   async clickFirstCharacter() {

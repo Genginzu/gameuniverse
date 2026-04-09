@@ -1,4 +1,3 @@
-import * as Sentry from "@sentry/nextjs";
 import { toast } from "@/hooks/use-toast";
 import { logger } from "@/lib/logger";
 
@@ -206,7 +205,7 @@ export function useErrorHandler() {
       description: appError.message,
     });
 
-    // Remonter à Sentry avec contexte
+    // Log error with context
     reportError(appError, context);
   };
 
@@ -214,23 +213,15 @@ export function useErrorHandler() {
 }
 
 /**
- * Report an error to Sentry with optional context.
- * Replaces the old placeholder — now actually sends data.
+ * Report an error to the console with optional context.
  */
 export function reportError(error: AppError | Error, context?: string) {
   const appError = "type" in error ? (error as AppError) : classifyError(error);
 
-  Sentry.captureException(error, {
-    tags: {
-      errorType: appError.type,
-      ...(appError.code ? { errorCode: appError.code } : {}),
-    },
-    extra: {
-      context,
-      statusCode: appError.statusCode,
-      details: appError.details,
-      retryable: appError.retryable,
-    },
+  logger.error(`[${appError.type}]${context ? ` (${context})` : ""} ${appError.message}`, {
+    statusCode: appError.statusCode,
+    details: appError.details,
+    retryable: appError.retryable,
   });
 }
 
