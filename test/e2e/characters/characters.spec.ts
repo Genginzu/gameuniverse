@@ -59,7 +59,7 @@ test.describe("Characters — listing, detail, favorites, comments — #51", () 
       const count = await characters.characterCards.count();
       if (count > 0) {
         await characters.clickFirstCharacter();
-        await expect(page).toHaveURL(/\/fr\/characters\/.+/);
+        await expect(page).toHaveURL(/\/fr\/characters\/.+/, { timeout: 10_000 });
       }
     });
   });

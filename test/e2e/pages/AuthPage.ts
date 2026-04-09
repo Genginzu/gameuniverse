@@ -34,9 +34,7 @@ export class AuthPage extends BasePage {
   }
 
   get submitButton(): Locator {
-    return this.page.getByRole("button", {
-      name: /se connecter|créer un compte|sign in|sign up|envoyer|send|en cours/i,
-    });
+    return this.page.locator('button[type="submit"]');
   }
 
   get forgotPasswordLink(): Locator {

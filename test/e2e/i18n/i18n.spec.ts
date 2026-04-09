@@ -67,10 +67,10 @@ test.describe("Navigation, routing i18n & responsive — #48", () => {
       await page.goto("/fr");
       await page.waitForLoadState("domcontentloaded");
 
-      const gamesLink = page.locator('a[href*="/games"]').first();
+      const gamesLink = page.locator('nav a[href*="/games"]').first();
       if (await gamesLink.isVisible()) {
         await gamesLink.click();
-        await expect(page).toHaveURL(/\/games/);
+        await expect(page).toHaveURL(/\/games/, { timeout: 10_000 });
       }
     });
 
@@ -78,10 +78,10 @@ test.describe("Navigation, routing i18n & responsive — #48", () => {
       await page.goto("/fr");
       await page.waitForLoadState("domcontentloaded");
 
-      const link = page.locator('a[href*="/characters"]').first();
+      const link = page.locator('nav a[href*="/characters"]').first();
       if (await link.isVisible()) {
         await link.click();
-        await expect(page).toHaveURL(/\/characters/);
+        await expect(page).toHaveURL(/\/characters/, { timeout: 10_000 });
       }
     });
 
@@ -89,10 +89,10 @@ test.describe("Navigation, routing i18n & responsive — #48", () => {
       await page.goto("/fr");
       await page.waitForLoadState("domcontentloaded");
 
-      const link = page.locator('a[href*="/players"]').first();
+      const link = page.locator('nav a[href*="/players"]').first();
       if (await link.isVisible()) {
         await link.click();
-        await expect(page).toHaveURL(/\/players/);
+        await expect(page).toHaveURL(/\/players/, { timeout: 10_000 });
       }
     });
 

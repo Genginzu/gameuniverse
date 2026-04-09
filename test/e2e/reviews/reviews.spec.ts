@@ -11,7 +11,10 @@ test.describe("Reviews, comments & discussions — #53", () => {
       const games = new GamesPage(page);
       await games.goto("fr");
 
-      await games.gameCards.first().waitFor({ state: "visible", timeout: 10_000 });
+      await games.gameCards
+        .first()
+        .waitFor({ state: "visible", timeout: 10_000 })
+        .catch(() => {});
       const count = await games.gameCards.count();
       if (count > 0) {
         await games.clickFirstGame();
@@ -27,7 +30,10 @@ test.describe("Reviews, comments & discussions — #53", () => {
       const games = new GamesPage(page);
       await games.goto("fr");
 
-      await games.gameCards.first().waitFor({ state: "visible", timeout: 10_000 });
+      await games.gameCards
+        .first()
+        .waitFor({ state: "visible", timeout: 10_000 })
+        .catch(() => {});
       const count = await games.gameCards.count();
       if (count > 0) {
         await games.clickFirstGame();

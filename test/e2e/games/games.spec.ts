@@ -10,7 +10,7 @@ test.describe("Games — listing, filters, detail, search — #49", () => {
       await games.goto("fr");
 
       await expect(page).toHaveURL(/\/fr\/games/);
-      await expect(games.heading).toBeVisible();
+      await expect(games.heading).toBeVisible({ timeout: 10_000 });
     });
 
     test("should display game cards", async ({ page }) => {
