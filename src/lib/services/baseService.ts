@@ -51,7 +51,7 @@ export abstract class BaseService<TDetails, TSummary> {
    * ISR revalidation period in seconds. Override in subclasses for custom values.
    * Set to 0 or false to disable caching (equivalent to no-store).
    */
-  protected readonly revalidate: number | false = 60;
+  protected readonly revalidate: number | false = 600;
 
   /**
    * Gets the base URL for API requests.
