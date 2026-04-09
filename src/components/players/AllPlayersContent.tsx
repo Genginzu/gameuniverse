@@ -20,6 +20,7 @@ interface AllPlayersContentProps {
 
 export function AllPlayersContent({ locale = "fr" }: AllPlayersContentProps) {
   const t = useTranslations("players");
+  const tNav = useTranslations("navigation");
   const tErrors = useTranslations("errors");
   // State management
   const [players, setPlayers] = useState<PlayerSummary[]>([]);
@@ -175,6 +176,8 @@ export function AllPlayersContent({ locale = "fr" }: AllPlayersContentProps) {
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
+        <h1 className="mb-6 text-xl font-bold text-gray-900 sm:text-2xl lg:text-3xl dark:text-white">{tNav("players")}</h1>
+
         {/* Search and Filters - Requirements 3.1, 4.1 */}
         <div className="mb-6 space-y-4 sm:mb-8">
           {/* Search bar with filter button - responsive layout */}
