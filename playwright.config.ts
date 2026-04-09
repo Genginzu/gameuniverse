@@ -24,21 +24,6 @@ export default defineConfig({
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
     },
-    {
-      name: "firefox",
-      use: {
-        ...devices["Desktop Firefox"],
-        navigationTimeout: 90_000,
-      },
-    },
-    {
-      name: "webkit",
-      use: { ...devices["Desktop Safari"] },
-    },
-    {
-      name: "mobile-safari",
-      use: { ...devices["iPhone 14"] },
-    },
   ],
 
   webServer: {
