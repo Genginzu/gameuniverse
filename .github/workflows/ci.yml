@@ -42,6 +42,9 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
+      - name: Install system dependencies
+        run: apt-get update && apt-get install -y unzip
+
       - uses: oven-sh/setup-bun@v2
 
       - run: bun install --frozen-lockfile
