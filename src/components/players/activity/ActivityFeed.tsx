@@ -72,9 +72,8 @@ export function ActivityFeed({
         />
       )}
 
-      {/* Two-column layout: activities left, posts right */}
+      {/* Two-column layout: posts left, activities right */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-        <ActivityFeedColumn playerId={playerId} locale={locale} />
         <PostsFeedColumn
           postHook={postHook}
           playerName={playerName}
@@ -82,6 +81,7 @@ export function ActivityFeed({
           locale={locale}
           isOwner={isOwner}
         />
+        <ActivityFeedColumn playerId={playerId} locale={locale} />
       </div>
     </section>
   );
