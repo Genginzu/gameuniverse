@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Tests ciblés agent",
+  "description": "Après chaque écriture de fichier par l'agent, lance automatiquement les tests Vitest correspondants au fichier modifié.",
+  "version": "1",
+  "when": {
+    "type": "postToolUse",
+    "toolTypes": [
+      "write"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Un fichier vient d'être modifié par l'agent. Si le fichier modifié est dans src/ ou test/, lance les tests Vitest ciblés correspondants :\n\n1. Si c'est un fichier test (dans test/), lance-le directement : `bunx vitest run <chemin-du-test>`\n2. Si c'est un fichier source (dans src/), lance `bunx vitest run --related <chemin-du-fichier>`\n3. Si le fichier n'est pas dans src/ ou test/ (ex: docs/, .kiro/, config), ne fais RIEN.\n4. Ne lance JAMAIS la suite complète.\n5. N'ajoute AUCUNE redirection à la commande.\n6. Rapporte brièvement : ✅ ou ❌ avec détails des échecs."
+  }
+}
