@@ -75,7 +75,10 @@ export function PlayerProfileTabs({ activeTab, onTabChange, isOwner }: PlayerPro
             <button
               key={id}
               type="button"
-              onClick={() => onTabChange(id)}
+              onClick={() => {
+                setTooltip(null);
+                onTabChange(id);
+              }}
               onMouseEnter={(e) => showTooltip(e, label)}
               onMouseLeave={() => setTooltip(null)}
               className={`relative flex shrink-0 cursor-pointer items-center justify-center px-5 py-3 transition-colors ${
