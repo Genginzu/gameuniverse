@@ -124,8 +124,10 @@ describe("PlayerCollectionsFeed", () => {
     const { container } = render(
       <PlayerCollectionsFeed playerId="player-1" locale="fr" isOwner={false} />
     );
-    const grid = container.querySelector(".grid-cols-2");
+    // The grid uses xs:grid-cols-2 (custom breakpoint) and grid-cols-1 as base
+    const grid = container.querySelector(".grid");
     expect(grid).toBeInTheDocument();
+    expect(grid).toHaveClass("grid-cols-1");
   });
 
   it("shows error message when error occurs", () => {
