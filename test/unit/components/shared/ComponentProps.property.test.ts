@@ -165,14 +165,16 @@ describe("Component Props Property-Based Tests", () => {
             fc.array(filterOptionIdGenerator, { minLength: 0, maxLength: 10 }),
             filterOptionIdGenerator,
             (currentValues, value) => {
-              const result = toggleFilterValue(currentValues, value, "checkbox");
+              // Deduplicate: toggleFilterValue uses filter() which removes ALL occurrences
+              const uniqueValues = [...new Set(currentValues)];
+              const result = toggleFilterValue(uniqueValues, value, "checkbox");
 
-              // If value was in currentValues, result should have one less
-              // If value was not in currentValues, result should have one more
-              const wasPresent = currentValues.includes(value);
+              // If value was in uniqueValues, result should have one less
+              // If value was not in uniqueValues, result should have one more
+              const wasPresent = uniqueValues.includes(value);
               const expectedLength = wasPresent
-                ? currentValues.length - 1
-                : currentValues.length + 1;
+                ? uniqueValues.length - 1
+                : uniqueValues.length + 1;
 
               return result.length === expectedLength;
             }

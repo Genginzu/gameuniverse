@@ -89,11 +89,15 @@ describe("supabase client", () => {
 
   describe("environment variable validation", () => {
     it("should validate that NEXT_PUBLIC_SUPABASE_URL is required", () => {
+      process.env.NEXT_PUBLIC_SUPABASE_URL = "https://test.supabase.co";
       expect(process.env.NEXT_PUBLIC_SUPABASE_URL).toBeDefined();
+      delete process.env.NEXT_PUBLIC_SUPABASE_URL;
     });
 
     it("should validate that NEXT_PUBLIC_SUPABASE_ANON_KEY is required", () => {
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = "test-anon-key";
       expect(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY).toBeDefined();
+      delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     });
   });
 });
