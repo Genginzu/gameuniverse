@@ -20,42 +20,42 @@ export function PlayerReviewsStats({ stats }: PlayerReviewsStatsProps) {
   return (
     <div className="glass-card rounded-2xl p-6 transition-all duration-300">
       {/* Metrics row */}
-      <div className="mb-6 grid grid-cols-2 gap-3 sm:gap-4">
+      <div className="xs:grid-cols-1 xs:gap-4 mb-6 grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-4">
         {/* Total reviews */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          <div className="bg-neon-violet/20 text-neon-violet flex h-8 w-8 shrink-0 items-center justify-center rounded-xl sm:h-10 sm:w-10">
-            <Icon icon="lucide:message-square" className="h-4 w-4 sm:h-5 sm:w-5" />
+        <div className="xs:ml-0 xs:gap-3 flex items-center gap-2 sm:gap-3">
+          <div className="bg-neon-violet/20 text-neon-violet xs:h-10 xs:w-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl sm:h-10 sm:w-10">
+            <Icon icon="lucide:message-square" className="xs:h-5 xs:w-5 h-4 w-4 sm:h-5 sm:w-5" />
           </div>
           <div className="min-w-0">
-            <p className="truncate text-xs text-gray-500 sm:text-sm dark:text-slate-400">
+            <p className="xs:text-sm truncate text-xs text-gray-500 sm:text-sm dark:text-slate-400">
               {t("stats.totalReviews")}
             </p>
-            <p className="text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">
+            <p className="xs:text-2xl text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">
               {stats.totalCount}
             </p>
           </div>
         </div>
 
-        {/* Average rating */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          <div className="bg-neon-cyan/20 text-neon-cyan flex h-8 w-8 shrink-0 items-center justify-center rounded-xl sm:h-10 sm:w-10">
-            <Icon icon="lucide:star" className="h-4 w-4 sm:h-5 sm:w-5" />
+        {/* Average rating — staggered (offset right) between xs and sm */}
+        <div className="xs:ml-auto xs:gap-3 flex items-center gap-2 sm:ml-0 sm:gap-3">
+          <div className="bg-neon-cyan/20 text-neon-cyan xs:h-10 xs:w-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl sm:h-10 sm:w-10">
+            <Icon icon="lucide:star" className="xs:h-5 xs:w-5 h-4 w-4 sm:h-5 sm:w-5" />
           </div>
           <div className="min-w-0">
-            <p className="truncate text-xs text-gray-500 sm:text-sm dark:text-slate-400">
+            <p className="xs:text-sm truncate text-xs text-gray-500 sm:text-sm dark:text-slate-400">
               {t("stats.averageRating")}
             </p>
             {stats.averageRating !== null ? (
-              <p className="text-xl font-bold sm:text-2xl">
+              <p className="xs:text-2xl text-xl font-bold sm:text-2xl">
                 <span className={getRatingColor(stats.averageRating)}>
                   {stats.averageRating.toFixed(1)}
                 </span>
-                <span className="text-sm font-normal text-gray-400 sm:text-base dark:text-slate-500">
+                <span className="xs:text-base text-sm font-normal text-gray-400 sm:text-base dark:text-slate-500">
                   /20
                 </span>
               </p>
             ) : (
-              <p className="text-xs text-gray-400 sm:text-sm dark:text-slate-500">
+              <p className="xs:text-sm text-xs text-gray-400 sm:text-sm dark:text-slate-500">
                 {t("stats.noRating")}
               </p>
             )}
