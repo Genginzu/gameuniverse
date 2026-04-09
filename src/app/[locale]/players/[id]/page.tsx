@@ -4,6 +4,7 @@ import { PlayerService } from "@/lib/services/playerService";
 import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
+import { SeoBreadcrumb } from "@/components/shared/SeoBreadcrumb";
 import { getTranslations } from "next-intl/server";
 
 interface PlayerDetailsPageProps {
@@ -16,6 +17,8 @@ interface PlayerDetailsPageProps {
 export default async function PlayerDetailsPage({ params }: PlayerDetailsPageProps) {
   const { locale, id } = await params;
   const t = await getTranslations({ locale, namespace: "players.errors" });
+  const tNav = await getTranslations({ locale, namespace: "navigation" });
+  const tPlayers = await getTranslations({ locale, namespace: "players.card" });
 
   // Validate player ID format - Requirements 5.3
   if (!PlayerService.validatePlayerId(id)) {
@@ -32,6 +35,13 @@ export default async function PlayerDetailsPage({ params }: PlayerDetailsPagePro
 
     return (
       <DashboardLayout>
+        <SeoBreadcrumb
+          items={[
+            { label: tNav("home"), href: "/" },
+            { label: tNav("players"), href: "/players" },
+            { label: player.fullName || tPlayers("anonymousPlayer") },
+          ]}
+        />
         <ErrorBoundary
           fallback={
             <ErrorFallback

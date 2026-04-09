@@ -6,6 +6,7 @@ import { GameService } from "@/lib/services/gameService";
 import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
+import { SeoBreadcrumb } from "@/components/shared/SeoBreadcrumb";
 import { JsonLd } from "@/components/shared/JsonLd";
 import { getTranslations } from "next-intl/server";
 
@@ -19,6 +20,7 @@ interface GameDetailsPageProps {
 /** Composant async qui fetch les données complètes du jeu */
 async function GameDetailsLoader({ slug, locale }: { slug: string; locale: string }) {
   const t = await getTranslations({ locale, namespace: "gameDetails.errors" });
+  const tNav = await getTranslations({ locale, namespace: "navigation" });
 
   try {
     const game = await GameService.fetchGameDetails(slug, locale);
@@ -49,6 +51,13 @@ async function GameDetailsLoader({ slug, locale }: { slug: string; locale: strin
     return (
       <>
         <JsonLd data={gameJsonLd} />
+        <SeoBreadcrumb
+          items={[
+            { label: tNav("home"), href: "/" },
+            { label: tNav("games"), href: "/games" },
+            { label: game.title },
+          ]}
+        />
         <ErrorBoundary
           fallback={
             <ErrorFallback
