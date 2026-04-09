@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import type { CommentEventData } from "@/types/activity";
 
@@ -9,7 +9,7 @@ interface ActivityItemCommentProps {
   locale: string;
 }
 
-export function ActivityItemComment({ data, locale }: ActivityItemCommentProps) {
+export function ActivityItemComment({ data, locale: _locale }: ActivityItemCommentProps) {
   const t = useTranslations("players.activity");
 
   return (
@@ -18,7 +18,7 @@ export function ActivityItemComment({ data, locale }: ActivityItemCommentProps) 
         {t.rich("commentDescription", {
           character: () => (
             <Link
-              href={`/${locale}/characters/${data.characterSlug}`}
+              href={`/characters/${data.characterSlug}`}
               className="font-medium text-cyan-600 hover:underline dark:text-cyan-400"
             >
               {data.characterName}

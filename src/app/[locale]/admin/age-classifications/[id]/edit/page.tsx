@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useMemo } from "react";
 import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useRatingSystemForm } from "@/hooks/useRatingSystemForm";
 import { RatingSystemForm } from "@/components/admin/age-classifications/RatingSystemForm";
@@ -33,6 +34,7 @@ function EditSystemForm({
   systemId: string;
   initialData: RatingSystemFormData;
 }) {
+  const t = useTranslations("admin.ageClassifications");
   const router = useRouter();
   const { form, submitRatingSystem, isSubmitting } = useRatingSystemForm(
     "edit",
@@ -44,14 +46,14 @@ function EditSystemForm({
     async (data: RatingSystemFormData) => {
       try {
         await submitRatingSystem(data);
-        toast({ title: "Système modifié avec succès", variant: "success" });
+        toast({ title: t("toast.systemUpdated"), variant: "success" });
         setTimeout(() => router.push("/admin/age-classifications"), 500);
       } catch (err) {
-        const message = err instanceof Error ? err.message : "Erreur lors de la modification";
+        const message = err instanceof Error ? err.message : t("toast.createError");
         toast({ title: message, variant: "destructive" });
       }
     },
-    [submitRatingSystem, router]
+    [submitRatingSystem, router, t]
   );
 
   return (
@@ -59,16 +61,20 @@ function EditSystemForm({
   );
 }
 
-const TABS: { id: TabId; label: string }[] = [
-  { id: "info", label: "Informations" },
-  { id: "ratings", label: "Notes" },
-  { id: "descriptors", label: "Descripteurs" },
-];
-
 export default function EditRatingSystemPage() {
+  const t = useTranslations("admin.ageClassifications");
   const router = useRouter();
   const params = useParams<{ id: string }>();
   const systemId = params.id;
+
+  const TABS: { id: TabId; label: string }[] = useMemo(
+    () => [
+      { id: "info", label: t("tabs.info") },
+      { id: "ratings", label: t("tabs.ratings") },
+      { id: "descriptors", label: t("tabs.descriptors") },
+    ],
+    [t]
+  );
 
   const [activeTab, setActiveTab] = useState<TabId>("info");
   const [initialData, setInitialData] = useState<RatingSystemFormData | undefined>(undefined);
@@ -85,12 +91,12 @@ export default function EditRatingSystemPage() {
         if (!res.ok) {
           if (res.status === 404) {
             if (mounted) {
-              toast({ title: "Système introuvable", variant: "destructive" });
+              toast({ title: t("toast.systemNotFound"), variant: "destructive" });
               router.push("/admin/age-classifications");
             }
             return;
           }
-          if (mounted) setLoadError("Erreur lors du chargement du système");
+          if (mounted) setLoadError(t("loadError"));
           return;
         }
         const json: { ratingSystem: RatingSystemApiResponse } = await res.json();
@@ -105,7 +111,7 @@ export default function EditRatingSystemPage() {
           });
         }
       } catch {
-        if (mounted) setLoadError("Erreur lors du chargement du système");
+        if (mounted) setLoadError(t("loadError"));
       } finally {
         if (mounted) setLoadingSystem(false);
       }
@@ -115,14 +121,14 @@ export default function EditRatingSystemPage() {
     return () => {
       mounted = false;
     };
-  }, [systemId, router]);
+  }, [systemId, router, t]);
 
   if (loadingSystem) {
     return (
       <div className="flex flex-1 items-center justify-center py-12">
         <div className="flex items-center gap-3">
           <LoadingSpinner size="lg" />
-          <span className="text-gray-500 dark:text-gray-400">Chargement…</span>
+          <span className="text-gray-500 dark:text-gray-400">{t("loading")}</span>
         </div>
       </div>
     );
@@ -137,8 +143,8 @@ export default function EditRatingSystemPage() {
             size="sm"
             onClick={() => router.push("/admin/age-classifications")}
           >
-            <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
-            Retour à la liste
+            <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3" />
+            {t("backToList")}
           </Button>
         </div>
         <div className="mx-auto max-w-2xl">
@@ -154,13 +160,13 @@ export default function EditRatingSystemPage() {
     <div className="p-4 lg:p-6">
       <div className="mb-2">
         <Button variant="ghost" size="sm" onClick={() => router.push("/admin/age-classifications")}>
-          <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
-          Retour à la liste
+          <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3" />
+          {t("backToList")}
         </Button>
       </div>
 
       <h1 className="neon-text mb-6 text-2xl font-bold text-gray-900 dark:text-white">
-        Modifier {systemName}
+        {t("editSystem", { name: systemName })}
       </h1>
 
       {/* Tab navigation */}

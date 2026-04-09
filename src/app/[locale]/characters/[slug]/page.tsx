@@ -4,7 +4,10 @@ import { CharacterService } from "@/lib/services/characterService";
 import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
+import { SeoBreadcrumb } from "@/components/shared/SeoBreadcrumb";
 import { getTranslations } from "next-intl/server";
+
+export const dynamicParams = true;
 
 interface CharacterDetailsPageProps {
   params: Promise<{
@@ -16,6 +19,7 @@ interface CharacterDetailsPageProps {
 export default async function CharacterDetailsPage({ params }: CharacterDetailsPageProps) {
   const { locale, slug } = await params;
   const t = await getTranslations({ locale, namespace: "characters.errors" });
+  const tNav = await getTranslations({ locale, namespace: "navigation" });
 
   try {
     const character = await CharacterService.fetchCharacterDetails(slug, locale);
@@ -26,6 +30,13 @@ export default async function CharacterDetailsPage({ params }: CharacterDetailsP
 
     return (
       <DashboardLayout>
+        <SeoBreadcrumb
+          items={[
+            { label: tNav("home"), href: "/" },
+            { label: tNav("characters"), href: "/characters" },
+            { label: character.name },
+          ]}
+        />
         <ErrorBoundary
           fallback={
             <ErrorFallback
@@ -43,7 +54,6 @@ export default async function CharacterDetailsPage({ params }: CharacterDetailsP
       </DashboardLayout>
     );
   } catch {
-    // Return error state
     return (
       <DashboardLayout>
         <ErrorFallback
@@ -59,9 +69,14 @@ export default async function CharacterDetailsPage({ params }: CharacterDetailsP
   }
 }
 
-// Generate metadata for SEO
 export async function generateMetadata({ params }: CharacterDetailsPageProps) {
   const { locale, slug } = await params;
 
   return await CharacterService.generateCharacterMetadata(slug, locale);
+}
+
+// Characters are always rendered dynamically (no-store fetch),
+// so pre-rendering at build time is pointless and generates noise.
+export async function generateStaticParams() {
+  return [];
 }

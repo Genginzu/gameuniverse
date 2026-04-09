@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import type { FavoriteEventData } from "@/types/activity";
 
@@ -9,7 +9,7 @@ interface ActivityItemFavoriteProps {
   locale: string;
 }
 
-export function ActivityItemFavorite({ data, locale }: ActivityItemFavoriteProps) {
+export function ActivityItemFavorite({ data, locale: _locale }: ActivityItemFavoriteProps) {
   const t = useTranslations("players.activity");
 
   return (
@@ -18,7 +18,7 @@ export function ActivityItemFavorite({ data, locale }: ActivityItemFavoriteProps
         {t.rich("favoriteDescription", {
           character: () => (
             <Link
-              href={`/${locale}/characters/${data.characterSlug}`}
+              href={`/characters/${data.characterSlug}`}
               className="font-medium text-cyan-600 hover:underline dark:text-cyan-400"
             >
               {data.characterName}

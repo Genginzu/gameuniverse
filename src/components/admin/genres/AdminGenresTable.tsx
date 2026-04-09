@@ -70,7 +70,7 @@ export function AdminGenresTable({
   return (
     <div className="space-y-4">
       {/* Search bar */}
-      <form onSubmit={handleSearchSubmit} className="flex gap-2">
+      <form onSubmit={handleSearchSubmit} className="flex flex-col gap-2 sm:flex-row">
         <div className="relative flex-1">
           <Icon
             icon="fa:search"
@@ -162,7 +162,7 @@ export function AdminGenresTable({
                       {t("gameCount", { count: genre.gameCount })}
                     </td>
                     <td className="px-4 py-3">
-                      <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                      <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -202,6 +202,7 @@ export function AdminGenresTable({
                   variant="outline"
                   size="sm"
                   disabled={!pagination.hasPreviousPage}
+                  className="min-h-[44px] min-w-[44px]"
                   onClick={() => onPageChange(pagination.currentPage - 1)}
                   aria-label={t("previousPage")}
                 >
@@ -211,6 +212,7 @@ export function AdminGenresTable({
                   variant="outline"
                   size="sm"
                   disabled={!pagination.hasNextPage}
+                  className="min-h-[44px] min-w-[44px]"
                   onClick={() => onPageChange(pagination.currentPage + 1)}
                   aria-label={t("nextPage")}
                 >

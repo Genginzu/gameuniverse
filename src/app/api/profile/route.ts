@@ -62,7 +62,7 @@ export async function PATCH(request: NextRequest) {
 
     const { data, error } = await supabase
       .from("profiles")
-      .update(filteredUpdates)
+      .update(filteredUpdates as Record<string, never>)
       .eq("id", user.id)
       .select()
       .single();

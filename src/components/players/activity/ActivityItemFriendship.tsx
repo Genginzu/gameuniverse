@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import type { FriendshipEventData } from "@/types/activity";
 
@@ -9,7 +9,7 @@ interface ActivityItemFriendshipProps {
   locale: string;
 }
 
-export function ActivityItemFriendship({ data, locale }: ActivityItemFriendshipProps) {
+export function ActivityItemFriendship({ data, locale: _locale }: ActivityItemFriendshipProps) {
   const t = useTranslations("players.activity");
 
   const descriptionKey = `friendshipDescription.${data.action}`;
@@ -20,7 +20,7 @@ export function ActivityItemFriendship({ data, locale }: ActivityItemFriendshipP
         {t.rich(descriptionKey, {
           player: () => (
             <Link
-              href={`/${locale}/players/${data.friendId}`}
+              href={`/players/${data.friendId}`}
               className="font-medium text-cyan-600 hover:underline dark:text-cyan-400"
             >
               {data.friendName}

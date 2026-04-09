@@ -48,6 +48,12 @@ export abstract class BaseService<TDetails, TSummary> {
   protected abstract readonly apiPath: string;
 
   /**
+   * ISR revalidation period in seconds. Override in subclasses for custom values.
+   * Set to 0 or false to disable caching (equivalent to no-store).
+   */
+  protected readonly revalidate: number | false = 600;
+
+  /**
    * Gets the base URL for API requests.
    * Uses NEXT_PUBLIC_BASE_URL environment variable or defaults to localhost.
    */
@@ -67,7 +73,8 @@ export abstract class BaseService<TDetails, TSummary> {
       const baseUrl = BaseService.getBaseUrl();
       const url = `${baseUrl}${this.apiPath}/${identifier}?locale=${locale}`;
       const response = await fetch(url, {
-        cache: "no-store",
+        next: { revalidate: this.revalidate || undefined },
+        ...(this.revalidate === false && { cache: "no-store" as const }),
       });
 
       if (!response.ok) {
@@ -116,7 +123,8 @@ export abstract class BaseService<TDetails, TSummary> {
       }
 
       const response = await fetch(`${baseUrl}${this.apiPath}?${searchParams.toString()}`, {
-        cache: "no-store",
+        next: { revalidate: this.revalidate || undefined },
+        ...(this.revalidate === false && { cache: "no-store" as const }),
       });
 
       if (!response.ok) {

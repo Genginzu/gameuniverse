@@ -56,6 +56,13 @@ export function useDiscussions(): UseDiscussionsReturn {
   }, [user?.id, loadConversations]);
 
   const selectConversation = useCallback(async (conversationId: string) => {
+    // Allow deselecting (back to list on mobile)
+    if (!conversationId) {
+      setSelectedConversationId(null);
+      setMessages([]);
+      setHasMoreMessages(false);
+      return;
+    }
     setSelectedConversationId(conversationId);
     setIsLoadingMessages(true);
     setError(null);

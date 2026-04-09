@@ -7,12 +7,14 @@ import {
 } from "./playerStatsService";
 import { extractGenreEntries } from "./playerStatsYearHelpers";
 import { logger } from "@/lib/logger";
+import type { createRouteHandlerClient } from "@/lib/supabase-server";
+
+type SupabaseClient = Awaited<ReturnType<typeof createRouteHandlerClient>>;
 
 /**
  * Vérifie si les stats d'un joueur sont privées.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function isStatsPrivate(supabase: any, playerId: string): Promise<boolean> {
+export async function isStatsPrivate(supabase: SupabaseClient, playerId: string): Promise<boolean> {
   const { data, error } = await supabase
     .from("profiles")
     .select("stats_private")
@@ -30,8 +32,10 @@ export async function isStatsPrivate(supabase: any, playerId: string): Promise<b
 /**
  * Récupère le temps de jeu total d'un joueur.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function fetchTotalPlayTime(supabase: any, playerId: string): Promise<number> {
+export async function fetchTotalPlayTime(
+  supabase: SupabaseClient,
+  playerId: string
+): Promise<number> {
   const { data, error } = await supabase
     .from("user_library")
     .select("play_time_hours")
@@ -55,8 +59,7 @@ export async function fetchTotalPlayTime(supabase: any, playerId: string): Promi
  * Récupère le genre favori via requête DB avec pondération multi-genre.
  */
 export async function fetchFavoriteGenreFromDB(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  supabase: any,
+  supabase: SupabaseClient,
   playerId: string,
   locale: string
 ): Promise<FavoriteGenre | null> {
@@ -93,8 +96,7 @@ export async function fetchFavoriteGenreFromDB(
  * Récupère les stats de reviews d'un joueur.
  */
 export async function fetchReviewStats(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  supabase: any,
+  supabase: SupabaseClient,
   playerId: string
 ): Promise<{ reviewCount: number; averageRating: number | null }> {
   const { data, error } = await supabase

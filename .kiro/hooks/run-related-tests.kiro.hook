@@ -1,0 +1,19 @@
+{
+  "enabled": true,
+  "name": "Tests ciblés auto",
+  "description": "Quand un fichier .ts/.tsx dans src/ ou test/ est modifié, lance automatiquement les tests Vitest correspondants au fichier modifié (pas la suite complète). Utilise la correspondance source → test définie dans le projet.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "src/**/*.ts",
+      "src/**/*.tsx",
+      "test/**/*.test.ts",
+      "test/**/*.test.tsx"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Un fichier vient d'être modifié. Lance uniquement les tests Vitest ciblés correspondant à ce fichier en suivant ces règles :\n\n1. Si le fichier modifié est un fichier test (dans test/), lance-le directement : `bunx vitest run <chemin-du-test>`\n2. Si le fichier modifié est un fichier source (dans src/), utilise `bunx vitest run --related <chemin-du-fichier>` pour lancer uniquement les tests liés.\n3. Ne lance JAMAIS la suite complète (`bun run test:all`).\n4. N'ajoute AUCUNE redirection à la commande (`2>&1`, `| tee`, etc.).\n5. Si la commande --related ne trouve aucun test, c'est normal, ne fais rien de plus.\n6. Rapporte le résultat brièvement : tests passés ✅ ou échecs ❌ avec les détails."
+  }
+}

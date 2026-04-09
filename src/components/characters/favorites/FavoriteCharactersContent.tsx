@@ -7,7 +7,7 @@ import { GridSkeleton } from "@/components/shared/GridSkeleton";
 import { characterSkeletonConfig } from "@/components/shared/EntitySkeleton";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import type { CharacterFavoriteSummary } from "@/types/character";
 
 /** Grille responsive partagée entre le skeleton et le rendu final */
@@ -106,9 +106,9 @@ export function FavoriteCharactersContent() {
   return (
     <div className="p-4 sm:p-6">
       <div className="mb-6">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+        <h1 className="text-xl font-bold text-gray-900 sm:text-2xl lg:text-3xl dark:text-white">
           {t("title", { count: characters.length })}
-        </h2>
+        </h1>
       </div>
 
       <div className={GRID_CLASS}>

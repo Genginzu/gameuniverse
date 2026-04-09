@@ -74,7 +74,7 @@ export function AdminCharactersTable({
   return (
     <div className="space-y-4">
       {/* Search bar */}
-      <form onSubmit={handleSearchSubmit} className="flex gap-2">
+      <form onSubmit={handleSearchSubmit} className="flex flex-col gap-2 sm:flex-row">
         <div className="relative flex-1">
           <Icon
             icon="fa:search"
@@ -143,11 +143,11 @@ export function AdminCharactersTable({
                   </th>
                   <th
                     scope="col"
-                    className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300"
+                    className="hidden px-4 py-3 font-medium text-gray-600 sm:table-cell dark:text-gray-300"
                   >
                     {t("columns.primaryGame")}
                   </th>
-                  <th scope="col" className="px-4 py-3">
+                  <th scope="col" className="hidden px-4 py-3 md:table-cell">
                     <button
                       type="button"
                       className="inline-flex items-center gap-1 font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
@@ -194,19 +194,20 @@ export function AdminCharactersTable({
                     <td className="px-4 py-3 text-gray-500 dark:text-gray-400">
                       {character.role ?? "—"}
                     </td>
-                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400">
+                    <td className="hidden px-4 py-3 text-gray-500 sm:table-cell dark:text-gray-400">
                       {character.primaryGame || "—"}
                     </td>
-                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400">
+                    <td className="hidden px-4 py-3 text-gray-500 md:table-cell dark:text-gray-400">
                       {formatDate(character.updatedAt)}
                     </td>
                     <td className="px-4 py-3">
-                      <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                      <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => onEdit(character.id)}
                           aria-label={t("editCharacter", { name: character.name })}
+                          className="min-h-[44px] min-w-[44px]"
                         >
                           <Icon icon="fa:edit" className="h-4 w-4" />
                         </Button>
@@ -216,7 +217,7 @@ export function AdminCharactersTable({
                             size="sm"
                             onClick={() => onDelete(character)}
                             aria-label={t("deleteCharacter", { name: character.name })}
-                            className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                          className="min-h-[44px] min-w-[44px] text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                           >
                             <Icon icon="fa:trash" className="h-4 w-4" />
                           </Button>
@@ -243,6 +244,7 @@ export function AdminCharactersTable({
                   variant="outline"
                   size="sm"
                   disabled={!pagination.hasPreviousPage}
+                  className="min-h-[44px] min-w-[44px]"
                   onClick={() => onPageChange(pagination.currentPage - 1)}
                   aria-label={t("previousPage")}
                 >
@@ -252,6 +254,7 @@ export function AdminCharactersTable({
                   variant="outline"
                   size="sm"
                   disabled={!pagination.hasNextPage}
+                  className="min-h-[44px] min-w-[44px]"
                   onClick={() => onPageChange(pagination.currentPage + 1)}
                   aria-label={t("nextPage")}
                 >

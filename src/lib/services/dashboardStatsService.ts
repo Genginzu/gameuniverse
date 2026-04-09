@@ -6,6 +6,8 @@ import { ACHIEVEMENT_DEFINITIONS, type AchievementData, type AchievementDefiniti
 import { computeOverviewMetrics, computeGenreDistribution, computeCompletionStats, computeReviewDistribution, computeReviewStatistics, computeActivityByMonth, computeAveragePlaytime, computeTopGame, computeAchievementProgress, computeSessionFrequency, computePlatformDistribution } from "@/lib/services/dashboardStatsCompute";
 import { untypedTable } from "@/lib/utils/untypedTable";
 
+type SupabaseClient = Awaited<ReturnType<typeof createRouteHandlerClient>>;
+
 function logAndThrow(ctx: string, err: { message: string }): Error {
   logger.error(`DashboardStatsService.${ctx} failed`, { error: err });
   return new Error(err.message);
@@ -13,8 +15,7 @@ function logAndThrow(ctx: string, err: { message: string }): Error {
 
 /** Helper: count query on a typed table with optional OR filter */
 async function countWhere(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  supabase: any,
+  supabase: SupabaseClient,
   table: string,
   filters: Record<string, string>,
   or?: string
@@ -62,12 +63,16 @@ export class DashboardStatsService {
       .select(`game_id, games(game_genres(genres(genre_translations(name))))`)
       .eq("user_id", playerId);
     if (error) throw logAndThrow("fetchGenreDistribution", error);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const libraryWithGenres = ((data ?? []) as any[]).map((row) => {
+    const libraryWithGenres = (
+      (data ?? []) as Array<{
+        games?: {
+          game_genres?: Array<{ genres?: { genre_translations?: Array<{ name: string }> } }>;
+        };
+      }>
+    ).map((row) => {
       const genres: string[] = [];
       for (const gg of row.games?.game_genres ?? []) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const match = (gg.genres?.genre_translations ?? []).find((t: any) => t.name);
+        const match = (gg.genres?.genre_translations ?? []).find((t) => t.name);
         if (match?.name) genres.push(match.name);
       }
       return { genres };
@@ -153,8 +158,15 @@ export class DashboardStatsService {
       .select(`play_time_hours, game_id, games(id, cover_image_url, game_translations(title))`)
       .eq("user_id", playerId);
     if (error) throw logAndThrow("fetchPlaytimeStats", error);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const rows = (data ?? []) as any[];
+    const rows = (data ?? []) as Array<{
+      play_time_hours: number | null;
+      game_id: string;
+      games?: {
+        id?: string;
+        cover_image_url?: string | null;
+        game_translations?: Array<{ title: string }>;
+      };
+    }>;
     const gamesForTop = rows.map((r) => ({
       id: r.games?.id ?? r.game_id,
       title: r.games?.game_translations?.[0]?.title ?? "",
@@ -188,9 +200,8 @@ export class DashboardStatsService {
       countWhere(supabase, "friendships", { status: "accepted" }, orFriend),
       countWhere(supabase, "game_collections", { user_id: playerId }),
     ]);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const unlockedKeys = ((achRes.data ?? []) as any[]).map(
-      (r: { achievement_key: string }) => r.achievement_key
+    const unlockedKeys = ((achRes.data ?? []) as Array<{ achievement_key: string }>).map(
+      (r) => r.achievement_key
     );
     const libData = (libRes.data ?? []) as Array<{ play_time_hours: number | null }>;
     const totalPlaytime = libData.reduce((s, e) => s + (e.play_time_hours ?? 0), 0);
@@ -211,8 +222,7 @@ export class DashboardStatsService {
       .select("started_at, duration_minutes")
       .eq("user_id", playerId);
     if (error && error.code !== "PGRST205") throw logAndThrow("fetchSessionStats", error);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const rows = (data ?? []) as any[];
+    const rows = (data ?? []) as Array<{ started_at: string; duration_minutes: number }>;
     if (rows.length === 0) {
       return {
         totalSessions: 0,
@@ -221,15 +231,13 @@ export class DashboardStatsService {
         frequencyByDayOfWeek: computeSessionFrequency([]),
       };
     }
-    const durations = rows.map((r: { duration_minutes: number }) => r.duration_minutes);
-    const sum = durations.reduce((a: number, b: number) => a + b, 0);
+    const durations = rows.map((r) => r.duration_minutes);
+    const sum = durations.reduce((a, b) => a + b, 0);
     return {
       totalSessions: durations.length,
       averageDurationMinutes: Math.round(sum / durations.length),
       longestSessionMinutes: Math.max(...durations),
-      frequencyByDayOfWeek: computeSessionFrequency(
-        rows.map((r: { started_at: string }) => ({ startedAt: r.started_at }))
-      ),
+      frequencyByDayOfWeek: computeSessionFrequency(rows.map((r) => ({ startedAt: r.started_at }))),
     };
   }
 
@@ -241,10 +249,18 @@ export class DashboardStatsService {
       .eq("user_id", playerId)
       .order("created_at", { ascending: false });
     if (error && error.code !== "PGRST205") throw logAndThrow("fetchPlayerGoals", error);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return ((data ?? []) as any[]).map((r) => ({
+    return (
+      (data ?? []) as Array<{
+        id: string;
+        goal_type: string;
+        target_value: number;
+        current_value: number;
+        created_at: string;
+        deadline: string | null;
+      }>
+    ).map((r) => ({
       id: r.id,
-      goalType: r.goal_type,
+      goalType: r.goal_type as PlayerGoal["goalType"],
       targetValue: r.target_value,
       currentValue: r.current_value,
       deadline: r.deadline ?? null,
@@ -260,12 +276,18 @@ export class DashboardStatsService {
       .select(`game_id, games(game_platforms(platforms(platform_translations(name))))`)
       .eq("user_id", playerId);
     if (error) throw logAndThrow("fetchPlatformDistribution", error);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const libraryWithPlatforms = ((data ?? []) as any[]).map((row) => {
+    const libraryWithPlatforms = (
+      (data ?? []) as Array<{
+        games?: {
+          game_platforms?: Array<{
+            platforms?: { platform_translations?: Array<{ name: string }> };
+          }>;
+        };
+      }>
+    ).map((row) => {
       const platforms: string[] = [];
       for (const gp of row.games?.game_platforms ?? []) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const match = (gp.platforms?.platform_translations ?? []).find((t: any) => t.name);
+        const match = (gp.platforms?.platform_translations ?? []).find((t) => t.name);
         if (match?.name) platforms.push(match.name);
       }
       return { platforms };

@@ -160,7 +160,7 @@ export function ForgotPasswordForm() {
               type="email"
               placeholder={t("emailPlaceholder")}
               {...register("email")}
-              className={`h-12 rounded-xl border-slate-200 bg-slate-50/50 transition-all duration-200 focus:border-slate-400 focus:bg-white dark:border-slate-600 dark:bg-slate-700/50 dark:focus:border-slate-500 dark:focus:bg-slate-700 ${errors.email ? "border-red-500" : ""}`}
+              className={`h-12 rounded-xl border-slate-200 bg-slate-50/50 text-base transition-all duration-200 focus:border-slate-400 focus:bg-white dark:border-slate-600 dark:bg-slate-700/50 dark:focus:border-slate-500 dark:focus:bg-slate-700 ${errors.email ? "border-red-500" : ""}`}
             />
             {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
           </div>

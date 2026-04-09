@@ -1,7 +1,5 @@
 import type { TrackableField } from "@/types/admin-games";
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
-import { untypedTable } from "@/lib/utils/untypedTable";
-
 /**
  * Les 15 catégories de champs synchronisables depuis IGDB.
  * Utilisé pour le suivi des modifications manuelles.
@@ -319,7 +317,8 @@ export async function upsertFieldOverrides(
     modified_at: now,
   }));
 
-  const { error } = await untypedTable(supabase, "game_field_overrides")
+  const { error } = await (supabase as unknown as Record<string, Function>)
+    .from("game_field_overrides")
     .upsert(rows, { onConflict: "game_id,field_name" })
     .select();
 

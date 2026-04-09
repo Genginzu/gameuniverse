@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { LazyImage } from "@/components/ui/lazy-image";
 import { Badge } from "@/components/ui/badge";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import type { PlayerLibraryGame } from "@/types/player";
 import { Icon } from "@iconify/react";
 
@@ -13,7 +13,7 @@ interface PlayerLibraryGridProps {
   locale: string;
 }
 
-export function PlayerLibraryGrid({ games, locale }: PlayerLibraryGridProps) {
+export function PlayerLibraryGrid({ games, locale: _locale }: PlayerLibraryGridProps) {
   const t = useTranslations("players");
 
   // Status badge colors and labels
@@ -70,7 +70,7 @@ export function PlayerLibraryGrid({ games, locale }: PlayerLibraryGridProps) {
         return (
           <Link
             key={game.id}
-            href={`/${locale}/games/${game.slug}`}
+            href={`/games/${game.slug}`}
             className="group relative overflow-hidden rounded-xl border border-slate-700/50 bg-slate-800/50 transition-all hover:scale-[1.02] hover:border-slate-600 hover:shadow-lg hover:shadow-blue-500/10"
           >
             {/* Cover image */}

@@ -1,6 +1,7 @@
 "use client";
 
 import { type UseFormReturn } from "react-hook-form";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -34,6 +35,7 @@ export function RatingForm({
   isSubmitting,
   supportedLanguages,
 }: RatingFormProps) {
+  const t = useTranslations("admin.ageClassifications.ratings.form");
   const colorHexValue = form.watch("color_hex");
 
   return (
@@ -47,17 +49,17 @@ export function RatingForm({
               name="code"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Code</FormLabel>
+                  <FormLabel>{t("code")}</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="PEGI_3, ESRB_E…"
+                      placeholder={t("codePlaceholder")}
                       {...field}
                       disabled={mode === "edit"}
                       className={mode === "edit" ? "bg-gray-50 dark:bg-gray-900/50" : ""}
                       maxLength={10}
                     />
                   </FormControl>
-                  <FormDescription>Code unique de la note (max 10 caractères)</FormDescription>
+                  <FormDescription>{t("codeDescription")}</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -69,9 +71,9 @@ export function RatingForm({
               name="display_name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nom d&apos;affichage</FormLabel>
+                  <FormLabel>{t("displayName")}</FormLabel>
                   <FormControl>
-                    <Input placeholder="PEGI 3, Everyone…" {...field} maxLength={50} />
+                    <Input placeholder={t("displayNamePlaceholder")} {...field} maxLength={50} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -84,11 +86,11 @@ export function RatingForm({
               name="minimum_age"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Âge minimum</FormLabel>
+                  <FormLabel>{t("minimumAge")}</FormLabel>
                   <FormControl>
                     <Input type="number" min={0} placeholder="0" {...field} />
                   </FormControl>
-                  <FormDescription>Âge minimum requis (0 ou plus)</FormDescription>
+                  <FormDescription>{t("minimumAgeDescription")}</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -100,11 +102,11 @@ export function RatingForm({
               name="color_hex"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Couleur</FormLabel>
+                  <FormLabel>{t("color")}</FormLabel>
                   <div className="flex items-center gap-3">
                     <FormControl>
                       <Input
-                        placeholder="#FF5733"
+                        placeholder={t("colorPlaceholder")}
                         {...field}
                         value={field.value ?? ""}
                         maxLength={7}
@@ -114,11 +116,11 @@ export function RatingForm({
                       <span
                         className="inline-block h-8 w-8 shrink-0 rounded-full border border-gray-300 dark:border-gray-600"
                         style={{ backgroundColor: colorHexValue }}
-                        aria-label={`Aperçu couleur ${colorHexValue}`}
+                        aria-label={t("colorPreview", { color: colorHexValue })}
                       />
                     )}
                   </div>
-                  <FormDescription>Optionnel — format #RRGGBB</FormDescription>
+                  <FormDescription>{t("colorDescription")}</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -130,16 +132,16 @@ export function RatingForm({
               name="icon_url"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>URL de l&apos;icône</FormLabel>
+                  <FormLabel>{t("iconUrl")}</FormLabel>
                   <FormControl>
                     <Input
                       type="url"
-                      placeholder="https://example.com/icon.png"
+                      placeholder={t("iconUrlPlaceholder")}
                       {...field}
                       value={field.value ?? ""}
                     />
                   </FormControl>
-                  <FormDescription>Optionnel — URL complète de l&apos;icône</FormDescription>
+                  <FormDescription>{t("iconUrlDescription")}</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -154,13 +156,11 @@ export function RatingForm({
               name="sort_order"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Ordre de tri</FormLabel>
+                  <FormLabel>{t("sortOrder")}</FormLabel>
                   <FormControl>
                     <Input type="number" min={0} placeholder="0" {...field} />
                   </FormControl>
-                  <FormDescription>
-                    Détermine l&apos;ordre d&apos;affichage (0 = premier)
-                  </FormDescription>
+                  <FormDescription>{t("sortOrderDescription")}</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -175,8 +175,8 @@ export function RatingForm({
               <LoadingSpinner size="sm" />
             ) : (
               <>
-                <Icon icon="fa:save" className="h-4 w-4"  />
-                {mode === "create" ? "Créer" : "Enregistrer"}
+                <Icon icon="fa:save" className="h-4 w-4" />
+                {mode === "create" ? t("create") : t("save")}
               </>
             )}
           </Button>

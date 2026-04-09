@@ -91,9 +91,9 @@ export function PlayerFilters({
                   <span className="mr-1 sm:mr-2">{option ? getLabel(option) : countValue}</span>
                   <button
                     onClick={() => handleGameCountToggle(countValue)}
-                    className="rounded-full p-0.5 text-gray-400 transition-colors hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/30"
+                    className="rounded-full p-1.5 text-gray-400 transition-colors hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/30"
                   >
-                    <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
                         strokeLinejoin="round"

@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { LazyImage } from "@/components/ui/lazy-image";
 import { Icon } from "@iconify/react";
@@ -11,7 +11,7 @@ interface ActivityItemLibraryProps {
   locale: string;
 }
 
-export function ActivityItemLibrary({ data, locale }: ActivityItemLibraryProps) {
+export function ActivityItemLibrary({ data, locale: _locale }: ActivityItemLibraryProps) {
   const t = useTranslations("players.activity");
 
   return (
@@ -37,7 +37,7 @@ export function ActivityItemLibrary({ data, locale }: ActivityItemLibraryProps) 
           {t.rich("libraryDescription", {
             game: () => (
               <Link
-                href={`/${locale}/games/${data.gameSlug}`}
+                href={`/games/${data.gameSlug}`}
                 className="font-medium text-cyan-600 hover:underline dark:text-cyan-400"
               >
                 {data.gameName}

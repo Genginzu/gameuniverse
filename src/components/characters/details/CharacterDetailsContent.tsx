@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { LazyImage } from "@/components/ui/lazy-image";
 import { Skeleton } from "@/components/ui/skeleton";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import dynamic from "next/dynamic";
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
@@ -135,7 +135,7 @@ interface HeroSectionProps {
 
 function HeroSection({
   character,
-  locale,
+  locale: _locale,
   colors,
   heroBackgroundImage,
   primaryGame,
@@ -180,11 +180,11 @@ function HeroSection({
       {/* Navigation flottante */}
       <div className="absolute top-0 right-0 left-0 z-20 px-4 py-4">
         <div className="container mx-auto flex items-center justify-between">
-          <Link href={`/${locale}/characters`}>
+          <Link href="/characters">
             <Button
               variant="ghost"
               size="sm"
-              className="bg-slate-900/60 text-slate-300 backdrop-blur-xs hover:bg-slate-900/80 hover:text-white"
+              className="min-h-[44px] bg-slate-900/60 text-slate-300 backdrop-blur-xs hover:bg-slate-900/80 hover:text-white"
             >
               <Icon icon="lucide:arrow-left" className="mr-2 h-4 w-4" />
               {t("common.back")}
@@ -203,7 +203,7 @@ function HeroSection({
               className={`absolute -inset-8 bg-linear-to-t ${colors.bg} rounded-full opacity-30 blur-3xl`}
             />
             <div className="relative">
-              <div className="relative h-[400px] w-[300px] lg:h-[480px] lg:w-[360px]">
+              <div className="relative h-[320px] w-[240px] sm:h-[400px] sm:w-[300px] lg:h-[480px] lg:w-[360px]">
                 <LazyImage
                   src={character.media.mainImage}
                   alt={character.name}
@@ -284,20 +284,20 @@ function TabNavigation({ activeTab, onTabChange, gamesCount, commentCount }: Tab
 
   return (
     <div className="mb-8 flex justify-center">
-      <div className="inline-flex gap-1 rounded-2xl border border-slate-700/50 bg-slate-800/80 p-1.5 backdrop-blur-xs">
+      <div className="flex max-w-full gap-1 overflow-x-auto rounded-2xl border border-slate-700/50 bg-slate-800/80 p-1.5 backdrop-blur-xs [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {tabs.map(({ key, icon, label, count }) => (
           <button
             key={key}
             onClick={() => onTabChange(key)}
-            className={`rounded-xl px-6 py-3 text-sm font-medium transition-all ${
+            className={`shrink-0 rounded-xl px-4 py-3 text-sm font-medium transition-all sm:px-6 ${
               activeTab === key
-                ? "bg-white text-slate-900 shadow-lg"
+                ? "bg-white text-slate-900 shadow-lg dark:bg-slate-700 dark:text-white"
                 : "text-slate-400 hover:bg-slate-700/50 hover:text-white"
             }`}
           >
-            <Icon icon={icon} className="mr-2 inline h-4 w-4" />
-            {label}
-            {count !== null && count !== undefined && ` (${count})`}
+            <Icon icon={icon} className="inline h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline">{label}</span>
+            {count !== null && count !== undefined && <span className="hidden sm:inline"> ({count})</span>}
           </button>
         ))}
       </div>

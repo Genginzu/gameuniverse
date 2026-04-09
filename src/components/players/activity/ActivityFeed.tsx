@@ -41,7 +41,7 @@ export function ActivityFeed({
   return (
     <section className="mb-8 space-y-6">
       {/* Top bar: search + new post button */}
-      <div className="flex items-center justify-between gap-3">
+      <div className="xs:flex-row xs:items-center xs:justify-between flex flex-col-reverse gap-3">
         <div className="min-w-0 flex-1">
           <SearchBar value={postHook.searchTerm} onChange={postHook.setSearchTerm} />
         </div>
@@ -49,7 +49,7 @@ export function ActivityFeed({
           <button
             type="button"
             onClick={() => setShowComposer((v) => !v)}
-            className="inline-flex shrink-0 items-center gap-2 rounded-2xl bg-linear-to-br from-violet-500 to-blue-500 px-5 py-3 text-sm font-medium text-white shadow-lg shadow-violet-500/20 transition-all duration-300 hover:opacity-90"
+            className="xs:w-auto xs:justify-start inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-2xl bg-linear-to-br from-violet-500 to-blue-500 px-5 py-3 text-sm font-medium text-white shadow-lg shadow-violet-500/20 transition-all duration-300 hover:opacity-90"
           >
             {showComposer ? (
               <Icon icon="lucide:x" className="h-4 w-4" />
@@ -72,9 +72,8 @@ export function ActivityFeed({
         />
       )}
 
-      {/* Two-column layout: activities left, posts right */}
+      {/* Two-column layout: posts left, activities right */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-        <ActivityFeedColumn playerId={playerId} locale={locale} />
         <PostsFeedColumn
           postHook={postHook}
           playerName={playerName}
@@ -82,6 +81,7 @@ export function ActivityFeed({
           locale={locale}
           isOwner={isOwner}
         />
+        <ActivityFeedColumn playerId={playerId} locale={locale} />
       </div>
     </section>
   );

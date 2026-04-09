@@ -1,11 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
-import * as Sentry from "@sentry/nextjs";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Icon } from "@iconify/react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useParams } from "next/navigation";
 
 interface ErrorProps {
@@ -18,9 +17,7 @@ export default function LocaleError({ error, reset }: ErrorProps) {
   const locale = (params?.locale as string) || "fr";
 
   useEffect(() => {
-    Sentry.captureException(error, {
-      tags: { section: "root" },
-    });
+    console.error(error);
   }, [error]);
 
   return (
@@ -42,7 +39,7 @@ export default function LocaleError({ error, reset }: ErrorProps) {
               {locale === "fr" ? "Réessayer" : "Retry"}
             </Button>
             <Button asChild variant="outline">
-              <Link href={`/${locale}/dashboard`}>
+              <Link href="/dashboard">
                 <Icon icon="lucide:home" className="mr-2 h-4 w-4" />
                 {locale === "fr" ? "Accueil" : "Home"}
               </Link>

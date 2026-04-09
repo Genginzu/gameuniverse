@@ -73,7 +73,7 @@ export function AdminGamesTable({
   return (
     <div className="space-y-4">
       {/* Search bar */}
-      <form onSubmit={handleSearchSubmit} className="flex gap-2">
+      <form onSubmit={handleSearchSubmit} className="flex flex-col gap-2 sm:flex-row">
         <div className="relative flex-1">
           <Icon
             icon="fa:search"
@@ -129,7 +129,7 @@ export function AdminGamesTable({
                       {renderSortIcon("title")}
                     </button>
                   </th>
-                  <th scope="col" className="px-4 py-3">
+                  <th scope="col" className="hidden px-4 py-3 sm:table-cell">
                     <button
                       type="button"
                       className="inline-flex items-center gap-1 font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
@@ -140,7 +140,7 @@ export function AdminGamesTable({
                       {renderSortIcon("release_date")}
                     </button>
                   </th>
-                  <th scope="col" className="px-4 py-3">
+                  <th scope="col" className="hidden px-4 py-3 md:table-cell">
                     <button
                       type="button"
                       className="inline-flex items-center gap-1 font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
@@ -184,19 +184,20 @@ export function AdminGamesTable({
                     <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">
                       {game.title}
                     </td>
-                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400">
+                    <td className="hidden px-4 py-3 text-gray-500 sm:table-cell dark:text-gray-400">
                       {formatDate(game.releaseDate)}
                     </td>
-                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400">
+                    <td className="hidden px-4 py-3 text-gray-500 md:table-cell dark:text-gray-400">
                       {formatDate(game.updatedAt)}
                     </td>
                     <td className="px-4 py-3">
-                      <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                      <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => onEdit(game.id)}
                           aria-label={t("editGame", { title: game.title })}
+                          className="min-h-[44px] min-w-[44px]"
                         >
                           <Icon icon="fa:edit" className="h-4 w-4" />
                         </Button>
@@ -206,7 +207,7 @@ export function AdminGamesTable({
                             size="sm"
                             onClick={() => onDelete(game)}
                             aria-label={t("deleteGame", { title: game.title })}
-                            className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                            className="min-h-[44px] min-w-[44px] text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                           >
                             <Icon icon="fa:trash" className="h-4 w-4" />
                           </Button>
@@ -235,6 +236,7 @@ export function AdminGamesTable({
                   disabled={!pagination.hasPreviousPage}
                   onClick={() => onPageChange(pagination.currentPage - 1)}
                   aria-label={t("previousPage")}
+                  className="min-h-[44px] min-w-[44px]"
                 >
                   <Icon icon="fa:chevron-left" className="h-3 w-3" />
                 </Button>
@@ -244,6 +246,7 @@ export function AdminGamesTable({
                   disabled={!pagination.hasNextPage}
                   onClick={() => onPageChange(pagination.currentPage + 1)}
                   aria-label={t("nextPage")}
+                  className="min-h-[44px] min-w-[44px]"
                 >
                   <Icon icon="fa:chevron-right" className="h-3 w-3" />
                 </Button>

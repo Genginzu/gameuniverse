@@ -22,7 +22,7 @@ export function AdminTableSkeleton({
     <div className="space-y-4">
       {/* Search bar skeleton */}
       {showSearch && (
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row">
           <Skeleton className="h-10 flex-1 rounded-md" />
           <Skeleton className="h-10 w-24 rounded-md" />
         </div>

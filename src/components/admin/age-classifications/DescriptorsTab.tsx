@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { useAdminDescriptors } from "@/hooks/useAdminDescriptors";
 import { useDescriptorForm } from "@/hooks/useDescriptorForm";
 import { DescriptorsTable } from "./DescriptorsTable";
@@ -18,6 +19,7 @@ interface DescriptorsTabProps {
 }
 
 export function DescriptorsTab({ ratingSystemId }: DescriptorsTabProps) {
+  const t = useTranslations("admin.ageClassifications.descriptors");
   const { descriptors, loading, fetchDescriptors, deleteDescriptor, checkDescriptorUsage } =
     useAdminDescriptors(ratingSystemId);
 
@@ -59,16 +61,14 @@ export function DescriptorsTab({ ratingSystemId }: DescriptorsTabProps) {
       try {
         await submitDescriptor(data);
         toast({
-          title: editingDescriptor
-            ? "Descripteur modifié avec succès"
-            : "Descripteur créé avec succès",
+          title: editingDescriptor ? t("toast.updated") : t("toast.created"),
           variant: "success",
         });
         setEditingDescriptor(null);
         setIsCreating(false);
         fetchDescriptors(currentSearch);
       } catch (err) {
-        const message = err instanceof Error ? err.message : "Erreur";
+        const message = err instanceof Error ? err.message : t("toast.error");
         toast({ title: message, variant: "destructive" });
       }
     },
@@ -114,10 +114,10 @@ export function DescriptorsTab({ ratingSystemId }: DescriptorsTabProps) {
     setIsDeleting(true);
     try {
       await deleteDescriptor(descriptorToDelete.id);
-      toast({ title: "Descripteur supprimé avec succès", variant: "success" });
+      toast({ title: t("toast.deleted"), variant: "success" });
       setDescriptorToDelete(null);
     } catch {
-      toast({ title: "Erreur lors de la suppression", variant: "destructive" });
+      toast({ title: t("toast.deleteError"), variant: "destructive" });
     } finally {
       setIsDeleting(false);
     }
@@ -132,13 +132,11 @@ export function DescriptorsTab({ ratingSystemId }: DescriptorsTabProps) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-          Descripteurs de contenu
-        </h2>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t("title")}</h2>
         {!showForm && (
           <Button size="sm" onClick={handleCreate}>
-            <Icon icon="fa:plus" className="h-3 w-3"  />
-            Nouveau descripteur
+            <Icon icon="fa:plus" className="h-3 w-3" />
+            {t("newDescriptor")}
           </Button>
         )}
       </div>
@@ -147,10 +145,10 @@ export function DescriptorsTab({ ratingSystemId }: DescriptorsTabProps) {
         <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="font-medium text-gray-900 dark:text-white">
-              {editingDescriptor ? `Modifier « ${editingDescriptor.code} »` : "Nouveau descripteur"}
+              {editingDescriptor ? t("editTitle", { code: editingDescriptor.code }) : t("newTitle")}
             </h3>
             <Button variant="ghost" size="sm" onClick={handleCancel}>
-              Annuler
+              {t("cancel")}
             </Button>
           </div>
           <DescriptorForm

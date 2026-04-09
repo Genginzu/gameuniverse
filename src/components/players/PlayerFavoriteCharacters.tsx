@@ -6,7 +6,7 @@ import { EntityCard, type EntityCardConfig } from "@/components/shared/EntityCar
 import { GridSkeleton } from "@/components/shared/GridSkeleton";
 import { characterSkeletonConfig } from "@/components/shared/EntitySkeleton";
 import { Icon } from "@iconify/react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import React from "react";
 import type { CharacterFavoriteSummary } from "@/types/character";
 
@@ -28,7 +28,7 @@ const favoriteCardConfig: EntityCardConfig<CharacterFavoriteSummary> = {
     fields: [],
   },
   actions: {},
-  linkTemplate: (character, locale) => `/${locale}/characters/${character.slug}`,
+  linkTemplate: (character, _locale) => `/characters/${character.slug}`,
   customHoverRenderer: (character, t) =>
     React.createElement(
       React.Fragment,
@@ -111,7 +111,7 @@ export function PlayerFavoriteCharacters({ playerId, locale }: PlayerFavoriteCha
         </h2>
         {hasMore && (
           <Link
-            href={`/${locale}/players/${playerId}/favorite-characters`}
+            href={`/players/${playerId}/favorite-characters`}
             className="text-sm font-medium text-blue-400 transition-colors hover:text-blue-300"
           >
             {t("seeAll", { count: characters.length })}

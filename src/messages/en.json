@@ -1,4 +1,40 @@
 {
+  "metadata": {
+    "description": "Explore thousands of video games, discover iconic characters and join a community of enthusiasts on Game Universe",
+    "keywords": "video games, gaming, characters, reviews, community, collection, Game Universe",
+    "home": {
+      "title": "Home",
+      "description": "Explore thousands of video games, discover iconic characters and join a community of enthusiasts"
+    },
+    "games": {
+      "title": "All games",
+      "description": "Browse our complete video game catalog with detailed pages, ratings and community reviews"
+    },
+    "characters": {
+      "title": "All characters",
+      "description": "Discover iconic video game characters with their biographies and appearances"
+    },
+    "players": {
+      "title": "All players",
+      "description": "Explore Game Universe community player profiles"
+    },
+    "discussions": {
+      "title": "Discussions",
+      "description": "Join Game Universe community discussions"
+    },
+    "library": {
+      "title": "My library",
+      "description": "Manage your personal video game collection"
+    },
+    "favorites": {
+      "title": "Favorite characters",
+      "description": "Your favorite video game characters"
+    },
+    "yearInReview": {
+      "title": "{player}'s {year} year in review",
+      "description": "Discover {player}'s {year} gaming year in review on Game Universe"
+    }
+  },
   "navigation": {
     "games": "Games",
     "characters": "Characters",
@@ -2012,6 +2048,180 @@
         "errorGeneric": "An error occurred while deleting."
       }
     },
+    "ageClassifications": {
+      "title": "Age Classifications",
+      "newSystem": "New System",
+      "searchPlaceholder": "Search by code or name…",
+      "search": "Search",
+      "totalSystems": "{count, plural, =0 {No classification systems} one {1 classification system} other {# classification systems}}",
+      "noSystems": "No classification system found",
+      "backToList": "Back to list",
+      "backToSystem": "Back to system",
+      "loading": "Loading…",
+      "loadError": "Error loading system",
+      "columns": {
+        "code": "Code",
+        "name": "Name",
+        "countries": "Countries",
+        "website": "Website",
+        "actions": "Actions",
+        "displayName": "Display Name",
+        "minimumAge": "Minimum Age",
+        "color": "Color",
+        "sortOrder": "Sort Order"
+      },
+      "sortByCode": "Sort by code",
+      "sortByName": "Sort by name",
+      "link": "Link",
+      "edit": "Edit {name}",
+      "delete": "Delete {name}",
+      "page": "Page {current} of {total}",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "tabs": {
+        "info": "Information",
+        "ratings": "Ratings",
+        "descriptors": "Descriptors"
+      },
+      "editSystem": "Edit {name}",
+      "newSystemTitle": "New Classification System",
+      "form": {
+        "code": "Code",
+        "codePlaceholder": "PEGI, ESRB, CERO…",
+        "codeDescription": "Uppercase letters, numbers and underscores only (e.g. PEGI, USK, ACB_AU)",
+        "name": "Name",
+        "namePlaceholder": "Pan European Game Information",
+        "description": "Description",
+        "descriptionPlaceholder": "Classification system description (optional)",
+        "descriptionHelp": "Optional — 500 characters maximum",
+        "countryCodes": "Country Codes",
+        "countryCodesPlaceholder": "FR, DE, ES, IT…",
+        "countryCodesDescription": "ISO 3166-1 alpha-2 codes separated by commas",
+        "website": "Website",
+        "websitePlaceholder": "https://pegi.info",
+        "websiteDescription": "Optional — Full URL of the official website",
+        "create": "Create",
+        "save": "Save"
+      },
+      "ratings": {
+        "title": "Ratings",
+        "newRating": "New Rating",
+        "searchPlaceholder": "Search by code or name…",
+        "searchLabel": "Search ratings",
+        "totalRatings": "{count, plural, =0 {No ratings} one {1 rating} other {# ratings}}",
+        "noRatings": "No rating found",
+        "newRatingTitle": "New Rating",
+        "editRatingTitle": "Edit Rating",
+        "notFound": "Rating not found",
+        "loadError": "Error loading rating",
+        "form": {
+          "code": "Code",
+          "codePlaceholder": "PEGI_3, ESRB_E…",
+          "codeDescription": "Unique rating code (max 10 characters)",
+          "displayName": "Display Name",
+          "displayNamePlaceholder": "PEGI 3, Everyone…",
+          "minimumAge": "Minimum Age",
+          "minimumAgeDescription": "Minimum required age (0 or more)",
+          "color": "Color",
+          "colorPlaceholder": "#FF5733",
+          "colorPreview": "Color preview {color}",
+          "colorDescription": "Optional — #RRGGBB format",
+          "iconUrl": "Icon URL",
+          "iconUrlPlaceholder": "https://example.com/icon.png",
+          "iconUrlDescription": "Optional — Full icon URL",
+          "sortOrder": "Sort Order",
+          "sortOrderDescription": "Determines display order (0 = first)",
+          "translations": "Translations",
+          "translationDescription": "Rating description",
+          "create": "Create",
+          "save": "Save"
+        },
+        "delete": {
+          "title": "Delete Rating",
+          "confirm": "Are you sure you want to delete the rating \"{name}\"?",
+          "usageWarning": "This rating is associated with {count, plural, one {1 game} other {# games}}. It cannot be deleted while these associations exist.",
+          "irreversible": "This action is irreversible.",
+          "cancel": "Cancel",
+          "delete": "Delete",
+          "deleting": "Deleting…"
+        },
+        "toast": {
+          "created": "Rating created successfully",
+          "updated": "Rating updated successfully",
+          "deleted": "Rating deleted successfully",
+          "deleteError": "Error deleting rating",
+          "duplicateCode": "A rating with this code already exists",
+          "createError": "Error creating rating",
+          "updateError": "Error updating rating"
+        }
+      },
+      "descriptors": {
+        "title": "Content Descriptors",
+        "newDescriptor": "New Descriptor",
+        "searchPlaceholder": "Search by code or name…",
+        "searchLabel": "Search descriptors",
+        "totalDescriptors": "{count, plural, =0 {No descriptors} one {1 descriptor} other {# descriptors}}",
+        "noDescriptors": "No descriptor found",
+        "editTitle": "Edit \"{code}\"",
+        "newTitle": "New Descriptor",
+        "cancel": "Cancel",
+        "form": {
+          "code": "Code",
+          "codePlaceholder": "VIOLENCE, LANGUAGE…",
+          "codeDescription": "Unique descriptor code (max 30 characters)",
+          "iconUrl": "Icon URL",
+          "iconUrlPlaceholder": "https://example.com/icon.png",
+          "iconUrlDescription": "Optional — Full icon URL",
+          "translations": "Translations",
+          "addTranslation": "Add translation",
+          "noTranslations": "No translations. Click \"Add translation\" to get started.",
+          "translationIndex": "Translation {index}",
+          "removeTranslation": "Remove translation {index}",
+          "languageCode": "Language Code",
+          "languageCodePlaceholder": "fr, en, de…",
+          "name": "Name",
+          "namePlaceholder": "Descriptor name",
+          "description": "Description",
+          "descriptionPlaceholder": "Description (optional)",
+          "create": "Create",
+          "save": "Save"
+        },
+        "delete": {
+          "title": "Delete Descriptor",
+          "confirm": "Are you sure you want to delete the descriptor \"{code}\"?",
+          "usageWarning": "This descriptor is associated with {count, plural, one {1 game} other {# games}}. It cannot be deleted while these associations exist.",
+          "irreversible": "This action is irreversible. Associated translations will also be deleted.",
+          "cancel": "Cancel",
+          "delete": "Delete",
+          "deleting": "Deleting…"
+        },
+        "toast": {
+          "created": "Descriptor created successfully",
+          "updated": "Descriptor updated successfully",
+          "deleted": "Descriptor deleted successfully",
+          "deleteError": "Error deleting descriptor",
+          "error": "Error"
+        }
+      },
+      "deleteSystem": {
+        "title": "Delete Classification System",
+        "confirm": "Are you sure you want to delete the system \"{name}\"?",
+        "usageWarning": "This system has {count, plural, one {1 associated rating or descriptor} other {# associated ratings or descriptors}}. It cannot be deleted while these items exist.",
+        "irreversible": "This action is irreversible.",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "deleting": "Deleting…"
+      },
+      "toast": {
+        "systemCreated": "System created successfully",
+        "systemUpdated": "System updated successfully",
+        "systemDeleted": "System deleted successfully",
+        "deleteError": "Error deleting system",
+        "createError": "Error creating system",
+        "duplicateCode": "A system with this code already exists",
+        "systemNotFound": "System not found"
+      }
+    },
     "translations": {
       "title": "Translation Management",
       "description": "Manage translations for all site entities",
@@ -2661,7 +2871,8 @@
     "startConversation": "Start a conversation",
     "timeJustNow": "Just now",
     "timeMinutesAgo": "{min} min ago",
-    "timeHoursAgo": "{hours}h ago"
+    "timeHoursAgo": "{hours}h ago",
+    "backToConversations": "Back"
   },
   "platforms": {
     "title": "Platforms",
@@ -2694,5 +2905,11 @@
     "clearAll": "Clear all",
     "roles": "Roles",
     "available": "{count} available"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page you are looking for does not exist or has been moved.",
+    "home": "Home",
+    "games": "Browse games"
   }
 }

@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { type UseFormReturn } from "react-hook-form";
+import { useTranslations } from "next-intl";
 import { Textarea } from "@/components/ui/textarea";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import type { RatingFormData } from "@/lib/validations/admin-rating-form";
@@ -13,6 +14,8 @@ export interface RatingFormTranslationsProps {
 }
 
 export function RatingFormTranslations({ form, supportedLanguages }: RatingFormTranslationsProps) {
+  const t = useTranslations("admin.ageClassifications.ratings.form");
+
   // Sync translations array with supported languages
   useEffect(() => {
     if (supportedLanguages.length === 0) return;
@@ -31,7 +34,9 @@ export function RatingFormTranslations({ form, supportedLanguages }: RatingFormT
 
   return (
     <div className="space-y-4">
-      <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Traductions</h3>
+      <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+        {t("translations")}
+      </h3>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {supportedLanguages.map((lang, index) => (
@@ -48,10 +53,10 @@ export function RatingFormTranslations({ form, supportedLanguages }: RatingFormT
               name={`translations.${index}.description`}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description</FormLabel>
+                  <FormLabel>{t("translationDescription")}</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Description de la note"
+                      placeholder={t("translationDescription")}
                       {...field}
                       maxLength={500}
                       rows={3}

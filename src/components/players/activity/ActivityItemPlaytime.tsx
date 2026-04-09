@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import type { PlaytimeEventData } from "@/types/activity";
 
@@ -9,7 +9,7 @@ interface ActivityItemPlaytimeProps {
   locale: string;
 }
 
-export function ActivityItemPlaytime({ data, locale }: ActivityItemPlaytimeProps) {
+export function ActivityItemPlaytime({ data, locale: _locale }: ActivityItemPlaytimeProps) {
   const t = useTranslations("players.activity");
 
   const durations = [
@@ -24,7 +24,7 @@ export function ActivityItemPlaytime({ data, locale }: ActivityItemPlaytimeProps
         {t.rich("playtimeDescription", {
           game: () => (
             <Link
-              href={`/${locale}/games/${data.gameSlug}`}
+              href={`/games/${data.gameSlug}`}
               className="font-medium text-cyan-600 hover:underline dark:text-cyan-400"
             >
               {data.gameName}

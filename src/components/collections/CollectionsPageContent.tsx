@@ -11,7 +11,7 @@ import { CollectionForm } from "./CollectionForm";
 import { useCollections } from "@/hooks/useCollections";
 import { useCollectionMutations } from "@/hooks/useCollectionMutations";
 import { useAuth } from "@/hooks/useAuth";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 interface CollectionsPageContentProps {
   playerId: string;
@@ -49,7 +49,7 @@ export function CollectionsPageContent({ playerId, locale }: CollectionsPageCont
         description={t("errorDescription")}
         showRefresh
         showBackButton
-        backUrl={`/${locale}/players/${playerId}`}
+        backUrl={`/players/${playerId}`}
         backLabel={t("backToPlayer")}
         locale={locale}
       />
@@ -61,7 +61,7 @@ export function CollectionsPageContent({ playerId, locale }: CollectionsPageCont
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Link href={`/${locale}/players/${playerId}`}>
+          <Link href={`/players/${playerId}`}>
             <Button variant="ghost" size="sm">
               <Icon icon="lucide:arrow-left" className="mr-1.5 h-4 w-4" />
               {t("backToPlayer")}

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import {
   Dialog,
   DialogContent,
@@ -29,41 +30,39 @@ export function DeleteRatingDialog({
   isDeleting,
   usageCount,
 }: DeleteRatingDialogProps) {
+  const t = useTranslations("admin.ageClassifications.ratings.delete");
   const hasUsage = usageCount !== null && usageCount !== undefined && usageCount > 0;
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && !isDeleting && onClose()}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Supprimer la note</DialogTitle>
+          <DialogTitle>{t("title")}</DialogTitle>
           <DialogDescription>
-            Êtes-vous sûr de vouloir supprimer la note « {rating?.display_name ?? ""} » ?
+            {t("confirm", { name: rating?.display_name ?? "" })}
           </DialogDescription>
         </DialogHeader>
 
         {hasUsage && (
           <p className="text-sm font-medium text-orange-600 dark:text-orange-400">
-            Cette note est associée à {usageCount} jeu{(usageCount ?? 0) > 1 ? "x" : ""}. Elle ne
-            peut pas être supprimée tant que ces associations existent.
+            {t("usageWarning", { count: usageCount ?? 0 })}
           </p>
         )}
 
-        {!hasUsage && (
-          <p className="text-sm font-medium text-destructive">Cette action est irréversible.</p>
-        )}
+        {!hasUsage && <p className="text-destructive text-sm font-medium">{t("irreversible")}</p>}
 
         <DialogFooter>
           <Button variant="outline" onClick={onClose} disabled={isDeleting}>
-            Annuler
+            {t("cancel")}
           </Button>
           {!hasUsage && (
             <LoadingButton
               variant="destructive"
               onClick={onConfirm}
               loading={isDeleting}
-              loadingText="Suppression…"
+              loadingText={t("deleting")}
             >
-              Supprimer
+              {t("delete")}
             </LoadingButton>
           )}
         </DialogFooter>

@@ -3,7 +3,7 @@
 import React, { createContext, useContext, ReactNode, useCallback } from "react";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { Toaster } from "@/components/ui/toaster";
-import { useErrorHandler, reportError as sentryReportError, AppError } from "@/lib/error-handling";
+import { useErrorHandler, reportError, AppError } from "@/lib/error-handling";
 
 interface ErrorContextType {
   handleError: (error: unknown, context?: string) => void;
@@ -22,7 +22,7 @@ export function ErrorProvider({ children, onError }: ErrorProviderProps) {
 
   const contextValue: ErrorContextType = {
     handleError,
-    reportError: sentryReportError,
+    reportError,
   };
 
   return (

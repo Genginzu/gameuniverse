@@ -31,6 +31,26 @@ Le message doit respecter le format imposé par le hook `commit-msg` :
 Types autorisés : `feat`, `fix`, `refactor`, `docs`, `ci`, `chore`, `style`,
 `test`, `perf`
 
+## Référence aux issues
+
+Si le travail en cours est lié à une issue GitHub, **toujours** inclure le
+numéro de l'issue dans le message de commit. GitHub rend `#N` cliquable
+automatiquement.
+
+Format : placer `#N` au début du titre du commit, juste après le type.
+
+```
+fix: #27 replace next/link with i18n navigation
+perf: #31 lazy load recharts components
+feat: #42 add player stats dashboard
+```
+
+- ✅ Chaque commit lié à une issue **doit** contenir `#N` dans le titre
+- ✅ Le `#N` se place juste après le `<type>:` pour être visible immédiatement
+- ✅ Si plusieurs commits sont nécessaires pour une même issue, chacun porte le
+  numéro
+- ❌ Ne **jamais** omettre le numéro d'issue quand on travaille sur une issue
+
 ## Règles
 
 - ✅ Ne commit que les fichiers liés à la modification en cours (pas de fichiers

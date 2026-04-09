@@ -15,7 +15,7 @@ import { LibraryStatsCards } from "./LibraryStatsCards";
 import { Button } from "@/components/ui/button";
 import { useLibraryGames } from "@/hooks/useLibraryGames";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Icon } from "@iconify/react";
 
 // Lazy load — visible uniquement après clic sur le bouton filtre
@@ -29,6 +29,7 @@ interface LibraryGamesContentProps {
 
 export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps) {
   const [showFilters, setShowFilters] = useState(false);
+  const t = useTranslations("userLibrary");
 
   const {
     games,
@@ -56,6 +57,8 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
+        <h1 className="mb-6 text-xl font-bold text-gray-900 sm:text-2xl lg:text-3xl dark:text-white">{t("title")}</h1>
+
         <LibraryStatsCards stats={stats} />
 
         {/* Search and Filters */}

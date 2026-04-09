@@ -151,21 +151,21 @@ describe("ActivityFeed", () => {
     setHookState({ isLoading: true });
     render(<ActivityFeed {...defaultProps} />);
     const feeds = screen.getAllByRole("feed");
-    // First feed is the activity column
-    expect(feeds[0]).toHaveAttribute("aria-busy", "true");
+    // Posts column is first (index 0), activity column is second (index 1)
+    expect(feeds[1]).toHaveAttribute("aria-busy", "true");
   });
 
   it("should set aria-busy=false when not loading", () => {
     setHookState({ isLoading: false, isLoadingMore: false });
     render(<ActivityFeed {...defaultProps} />);
     const feeds = screen.getAllByRole("feed");
-    expect(feeds[0]).toHaveAttribute("aria-busy", "false");
+    expect(feeds[1]).toHaveAttribute("aria-busy", "false");
   });
 
   it("should have aria-label on the feed containers", () => {
     render(<ActivityFeed {...defaultProps} />);
     const feeds = screen.getAllByRole("feed");
-    expect(feeds[0]).toHaveAttribute("aria-label", "feedLabel");
+    expect(feeds[1]).toHaveAttribute("aria-label", "feedLabel");
   });
 
   it("should pass playerId and locale to the activity hook", () => {

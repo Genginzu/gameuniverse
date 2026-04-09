@@ -9,15 +9,42 @@ import { Button } from "@/components/ui/button";
 import type { DashboardStatsResponse } from "@/types/dashboard-stats";
 import { StatsSectionTitle } from "@/components/players/stats/StatsSectionTitle";
 import { StatsOverviewCards } from "@/components/players/stats/StatsOverviewCards";
-import { GenreDistributionChart } from "@/components/players/stats/GenreDistributionChart";
-import { PlatformDistributionChart } from "@/components/players/stats/PlatformDistributionChart";
+import dynamic from "next/dynamic";
 import { CompletionTracker } from "@/components/players/stats/CompletionTracker";
-import { ReviewAnalytics } from "@/components/players/stats/ReviewAnalytics";
 import { SocialStats } from "@/components/players/stats/SocialStats";
-import { ActivityTimeline } from "@/components/players/stats/ActivityTimeline";
 import { PlaytimeStats } from "@/components/players/stats/PlaytimeStats";
-import { SessionStats } from "@/components/players/stats/SessionStats";
 import { PersonalGoals } from "@/components/players/stats/PersonalGoals";
+
+// Lazy-load recharts-heavy components to reduce initial bundle (~45 kB gzipped)
+const GenreDistributionChart = dynamic(
+  () =>
+    import("@/components/players/stats/GenreDistributionChart").then(
+      (m) => m.GenreDistributionChart
+    ),
+  { ssr: false }
+);
+const PlatformDistributionChart = dynamic(
+  () =>
+    import("@/components/players/stats/PlatformDistributionChart").then(
+      (m) => m.PlatformDistributionChart
+    ),
+  { ssr: false }
+);
+const ReviewAnalytics = dynamic(
+  () =>
+    import("@/components/players/stats/ReviewAnalytics").then((m) => m.ReviewAnalytics),
+  { ssr: false }
+);
+const ActivityTimeline = dynamic(
+  () =>
+    import("@/components/players/stats/ActivityTimeline").then((m) => m.ActivityTimeline),
+  { ssr: false }
+);
+const SessionStats = dynamic(
+  () =>
+    import("@/components/players/stats/SessionStats").then((m) => m.SessionStats),
+  { ssr: false }
+);
 
 interface StatsDashboardProps {
   playerId: string;

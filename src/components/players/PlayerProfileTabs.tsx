@@ -66,6 +66,7 @@ export function PlayerProfileTabs({ activeTab, onTabChange, isOwner }: PlayerPro
 
       <div
         ref={scrollRef}
+        role="tablist"
         className="scrollbar-hide flex overflow-x-auto px-6 md:justify-center md:px-0"
       >
         {visibleTabs.map(({ id, icon }) => {
@@ -75,7 +76,10 @@ export function PlayerProfileTabs({ activeTab, onTabChange, isOwner }: PlayerPro
             <button
               key={id}
               type="button"
-              onClick={() => onTabChange(id)}
+              onClick={() => {
+                setTooltip(null);
+                onTabChange(id);
+              }}
               onMouseEnter={(e) => showTooltip(e, label)}
               onMouseLeave={() => setTooltip(null)}
               className={`relative flex shrink-0 cursor-pointer items-center justify-center px-5 py-3 transition-colors ${

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import useSWR from "swr";
 import { createClient } from "@/lib/supabase";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useTranslations } from "next-intl";
@@ -13,39 +13,25 @@ interface GameCompaniesProps {
   gameTitle?: string;
 }
 
+async function fetchCompanies(gameId: string): Promise<GameCompany[]> {
+  const supabase = createClient();
+  const { data, error } = await supabase.rpc("get_game_companies", {
+    game_uuid: gameId,
+  });
+  if (error) throw error;
+  return data ?? [];
+}
+
 export default function GameCompanies({ gameId, gameTitle }: GameCompaniesProps) {
-  const [companies, setCompanies] = useState<GameCompany[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const t = useTranslations("game.companies");
-  const tCommon = useTranslations("common");
 
-  useEffect(() => {
-    async function fetchGameCompanies() {
-      try {
-        const supabase = createClient();
+  const { data: companies, error, isLoading } = useSWR(
+    `game-companies-${gameId}`,
+    () => fetchCompanies(gameId),
+    { revalidateOnFocus: false }
+  );
 
-        // Utiliser la fonction get_game_companies pour récupérer toutes les entreprises
-        const { data, error } = await supabase.rpc("get_game_companies", {
-          game_uuid: gameId,
-        });
-
-        if (error) {
-          throw error;
-        }
-
-        setCompanies(data || []);
-      } catch (fetchError) {
-        setError(fetchError instanceof Error ? fetchError.message : tCommon("error"));
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchGameCompanies();
-  }, [gameId, tCommon]);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex justify-center py-4">
         <LoadingSpinner size="sm" />
@@ -54,14 +40,13 @@ export default function GameCompanies({ gameId, gameTitle }: GameCompaniesProps)
   }
 
   if (error) {
-    return <div className="text-red-500">{error}</div>;
+    return <div className="text-red-500">{error.message}</div>;
   }
 
-  if (companies.length === 0) {
+  if (!companies || companies.length === 0) {
     return <div className="text-gray-500">{t("noCompanies")}</div>;
   }
 
-  // Grouper les entreprises par rôle
   const groupedCompanies = companies.reduce(
     (acc, company) => {
       if (!acc[company.role]) {
@@ -84,7 +69,6 @@ export default function GameCompanies({ gameId, gameTitle }: GameCompaniesProps)
       {Object.entries(groupedCompanies).map(([role, roleCompanies]) => (
         <div key={role} className="rounded-lg border p-4">
           <h4 className="mb-2 font-medium text-gray-700">{t(`roles.${role}`) || role}</h4>
-
           <div className="space-y-2">
             {roleCompanies.map((company) => (
               <div
@@ -101,7 +85,6 @@ export default function GameCompanies({ gameId, gameTitle }: GameCompaniesProps)
                     </span>
                   )}
                 </div>
-
                 <a
                   href={`/companies/${company.company_slug}`}
                   className="text-sm text-blue-600 hover:text-blue-800"
@@ -117,47 +100,36 @@ export default function GameCompanies({ gameId, gameTitle }: GameCompaniesProps)
   );
 }
 
-// Exemple d'utilisation avec des développeurs spécifiques
 export function GameDevelopers({ gameId }: { gameId: string }) {
-  const [developers, setDevelopers] = useState<GameCompany[]>([]);
-  const [loading, setLoading] = useState(true);
   const t = useTranslations("game.companies");
 
-  useEffect(() => {
-    async function fetchDevelopers() {
-      try {
-        const supabase = createClient();
+  const { data: developers, isLoading } = useSWR(
+    `game-developers-${gameId}`,
+    async () => {
+      const supabase = createClient();
+      const { data, error } = await supabase.rpc("get_game_companies", {
+        game_uuid: gameId,
+        company_role: "developer",
+      });
+      if (error) throw error;
+      return data ?? [];
+    },
+    { revalidateOnFocus: false }
+  );
 
-        // Récupérer seulement les développeurs
-        const { data, error } = await supabase.rpc("get_game_companies", {
-          game_uuid: gameId,
-          company_role: "developer",
-        });
-
-        if (error) throw error;
-        setDevelopers(data || []);
-      } catch {
-        setLoading(false);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchDevelopers();
-  }, [gameId]);
-
-  if (loading)
+  if (isLoading) {
     return (
       <div className="flex justify-center py-4">
         <LoadingSpinner size="sm" />
       </div>
     );
+  }
 
   return (
     <div>
       <h4 className="mb-2 font-medium">{t("developedBy")}:</h4>
       <div className="flex flex-wrap gap-2">
-        {developers.map((dev) => (
+        {(developers ?? []).map((dev) => (
           <span
             key={dev.company_id}
             className={`rounded-full px-3 py-1 text-sm ${

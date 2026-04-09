@@ -5,7 +5,7 @@ import { LazyImage } from "@/components/ui/lazy-image";
 import { useGameLibraryStatus } from "@/hooks/useGameLibraryStatus";
 import { useAuth } from "@/hooks/useAuth";
 import { useTranslations } from "next-intl";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Icon } from "@iconify/react";
 
 interface GameCardProps {
@@ -77,10 +77,10 @@ export function GameCard({
 
   return (
     <div className="group relative">
-      <Link href={`/${locale}/games/${game.slug}`}>
+      <Link href={`/games/${game.slug}`}>
         {/* Cover Image with Overlay */}
         <div
-          className="hover:ring-neon-violet/30 relative aspect-3/4 cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(var(--neon-violet),0.3),0_0_40px_rgba(var(--neon-cyan),0.15)] hover:ring-1 motion-reduce:transition-none motion-reduce:hover:scale-100"
+          className="hover:ring-neon-violet/30 relative aspect-3/4 cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(var(--neon-violet),0.3),0_0_40px_rgba(var(--neon-cyan),0.15)] hover:ring-1 motion-reduce:transition-none motion-reduce:hover:scale-100 dark:bg-gray-800"
           style={{
             backgroundColor: game.backgroundColor || "#f3f4f6", // Fallback to gray-100
           }}

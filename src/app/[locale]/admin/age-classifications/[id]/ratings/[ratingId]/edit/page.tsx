@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useRatingForm } from "@/hooks/useRatingForm";
 import { RatingForm } from "@/components/admin/age-classifications/RatingForm";
@@ -14,6 +15,8 @@ import type { AdminRating } from "@/types/admin-age-classifications";
 import { Icon } from "@iconify/react";
 
 export default function EditRatingPage() {
+  const t = useTranslations("admin.ageClassifications.ratings");
+  const tParent = useTranslations("admin.ageClassifications");
   const router = useRouter();
   const params = useParams<{ id: string; ratingId: string }>();
   const ratingSystemId = params.id;
@@ -33,10 +36,10 @@ export default function EditRatingPage() {
 
         if (!res.ok) {
           if (res.status === 404) {
-            if (mounted) setLoadError("Note introuvable");
+            if (mounted) setLoadError(t("notFound"));
             return;
           }
-          if (mounted) setLoadError("Erreur lors du chargement de la note");
+          if (mounted) setLoadError(t("loadError"));
           return;
         }
 
@@ -53,7 +56,7 @@ export default function EditRatingPage() {
           });
         }
       } catch {
-        if (mounted) setLoadError("Erreur lors du chargement de la note");
+        if (mounted) setLoadError(t("loadError"));
       } finally {
         if (mounted) setLoading(false);
       }
@@ -63,7 +66,7 @@ export default function EditRatingPage() {
     return () => {
       mounted = false;
     };
-  }, [ratingSystemId, ratingId]);
+  }, [ratingSystemId, ratingId, t]);
 
   const backUrl = `/admin/age-classifications/${ratingSystemId}/edit`;
 
@@ -72,7 +75,7 @@ export default function EditRatingPage() {
       <div className="flex flex-1 items-center justify-center py-12">
         <div className="flex items-center gap-3">
           <LoadingSpinner size="lg" />
-          <span className="text-gray-500 dark:text-gray-400">Chargement…</span>
+          <span className="text-gray-500 dark:text-gray-400">{tParent("loading")}</span>
         </div>
       </div>
     );
@@ -83,8 +86,8 @@ export default function EditRatingPage() {
       <div className="p-4 lg:p-6">
         <div className="mb-2">
           <Button variant="ghost" size="sm" onClick={() => router.push(backUrl)}>
-            <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
-            Retour au système
+            <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3" />
+            {tParent("backToSystem")}
           </Button>
         </div>
         <div className="mx-auto max-w-2xl">
@@ -118,6 +121,8 @@ function EditRatingFormWrapper({
   initialData: RatingFormData;
   backUrl: string;
 }) {
+  const t = useTranslations("admin.ageClassifications.ratings");
+  const tParent = useTranslations("admin.ageClassifications");
   const router = useRouter();
   const { form, submitRating, isSubmitting, supportedLanguages } = useRatingForm(
     "edit",
@@ -130,28 +135,28 @@ function EditRatingFormWrapper({
     async (data: RatingFormData) => {
       try {
         await submitRating(data);
-        toast({ title: "Note modifiée avec succès", variant: "success" });
+        toast({ title: t("toast.updated"), variant: "success" });
         setTimeout(() => router.push(backUrl), 500);
       } catch (err) {
-        const message = err instanceof Error ? err.message : "Erreur lors de la modification";
+        const message = err instanceof Error ? err.message : t("toast.updateError");
         toast({ title: message, variant: "destructive" });
       }
     },
-    [submitRating, router, backUrl]
+    [submitRating, router, backUrl, t]
   );
 
   return (
     <div className="p-4 lg:p-6">
       <div className="mb-2">
         <Button variant="ghost" size="sm" onClick={() => router.push(backUrl)}>
-          <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
-          Retour au système
+          <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3" />
+          {tParent("backToSystem")}
         </Button>
       </div>
 
       <div className="mx-auto max-w-4xl">
         <h1 className="neon-text mb-6 text-2xl font-bold text-gray-900 dark:text-white">
-          Modifier la note
+          {t("editRatingTitle")}
         </h1>
 
         <RatingForm

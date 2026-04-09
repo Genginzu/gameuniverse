@@ -64,7 +64,7 @@ export default function MessageInput({ onSend, isSending, maxLength }: MessageIn
           onKeyDown={handleKeyDown}
           placeholder={t("inputPlaceholder")}
           disabled={isSending}
-          className="glass-input flex-1 rounded-xl px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 disabled:opacity-50 dark:text-slate-100 dark:placeholder:text-slate-500"
+          className="glass-input flex-1 rounded-xl px-4 py-2.5 text-base text-slate-900 placeholder:text-slate-400 disabled:opacity-50 dark:text-slate-100 dark:placeholder:text-slate-500"
           data-testid="message-input"
           aria-label={t("inputPlaceholder")}
           aria-invalid={!!error}
@@ -74,7 +74,7 @@ export default function MessageInput({ onSend, isSending, maxLength }: MessageIn
           type="button"
           onClick={handleSend}
           disabled={isSending}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-blue-500 via-purple-600 to-purple-700 text-white shadow-lg transition-all duration-300 hover:opacity-90 disabled:opacity-50"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-blue-500 via-purple-600 to-purple-700 text-white shadow-lg transition-all duration-300 hover:opacity-90 disabled:opacity-50"
           data-testid="message-send-button"
           aria-label={t("send")}
         >

@@ -1,9 +1,26 @@
-"use client";
-
+import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { AllPlayersContent } from "@/components/players/AllPlayersContent";
 import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
+
+interface AllPlayersPageProps {
+  params: Promise<{ locale: string }>;
+}
+
+export async function generateMetadata({ params }: AllPlayersPageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "metadata.players" });
+
+  return {
+    title: t("title"),
+    description: t("description"),
+    alternates: {
+      languages: { fr: "/fr/players", en: "/en/players" },
+    },
+  };
+}
 
 export default function AllPlayersPage() {
   return (

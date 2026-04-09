@@ -51,7 +51,7 @@ export function LibraryStatsCards({ stats }: LibraryStatsCardsProps) {
   const t = useTranslations("userLibrary");
 
   return (
-    <div className="mb-6 grid grid-cols-1 gap-4 sm:mb-8 sm:gap-6 md:grid-cols-4">
+    <div className="mb-6 grid grid-cols-2 gap-4 sm:mb-8 sm:gap-6 md:grid-cols-4">
       <StatCard
         icon="fa:gamepad"
         iconColorClass="text-blue-600 dark:text-blue-400"

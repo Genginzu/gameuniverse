@@ -2,7 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { LazyImage } from "@/components/ui/lazy-image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import type { CharacterGame } from "@/types/character";
@@ -43,12 +43,12 @@ interface GameCardProps {
   colors: { primary: string };
 }
 
-function GameCard({ game, locale, colors }: GameCardProps) {
+function GameCard({ game, locale: _locale, colors }: GameCardProps) {
   const t = useTranslations();
 
   return (
     <Link
-      href={`/${locale}/games/${game.slug}`}
+      href={`/games/${game.slug}`}
       className={`group relative overflow-hidden rounded-2xl border transition-all hover:scale-[1.02] ${
         game.isPrimary
           ? "border-2 shadow-lg shadow-violet-500/20"

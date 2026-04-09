@@ -96,6 +96,7 @@ export default defineConfig({
     globals: true,
     css: false,
     reporters: ["default"],
+    exclude: ["test/e2e/**", "node_modules/**"],
     onConsoleLog: () => false,
     server: {
       deps: {

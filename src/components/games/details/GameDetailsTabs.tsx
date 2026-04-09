@@ -59,14 +59,14 @@ export function GameDetailsTabs({
     <>
       {/* Tab navigation — underline style */}
       <div className="mb-8 border-b border-white/10">
-        <div className="flex flex-wrap items-center gap-6">
+        <div className="-mb-px flex items-center gap-6 overflow-x-auto scrollbar-hide">
           {tabs
             .filter((t) => t.show)
             .map((tab) => (
               <button
                 key={tab.key}
                 onClick={() => onTabChange(tab.key)}
-                className={`relative whitespace-nowrap pb-3 text-sm font-medium transition-colors ${
+                className={`relative shrink-0 whitespace-nowrap pb-3 text-sm font-medium transition-colors ${
                   activeTab === tab.key ? "text-white" : "text-slate-400 hover:text-slate-200"
                 }`}
               >

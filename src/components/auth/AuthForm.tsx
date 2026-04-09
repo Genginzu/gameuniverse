@@ -176,7 +176,7 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
                 onChange={handleInputChange}
                 required
                 disabled={isSubmitting}
-                className="h-12 rounded-xl border-slate-200 bg-slate-50/50 transition-all duration-200 focus:border-slate-400 focus:bg-white dark:border-slate-600 dark:bg-slate-700/50 dark:focus:border-slate-500 dark:focus:bg-slate-700"
+                className="h-12 rounded-xl border-slate-200 bg-slate-50/50 text-base transition-all duration-200 focus:border-slate-400 focus:bg-white dark:border-slate-600 dark:bg-slate-700/50 dark:focus:border-slate-500 dark:focus:bg-slate-700"
               />
             </div>
           )}
@@ -197,7 +197,7 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
               onChange={handleInputChange}
               required
               disabled={isSubmitting}
-              className="h-12 rounded-xl border-slate-200 bg-slate-50/50 transition-all duration-200 focus:border-slate-400 focus:bg-white dark:border-slate-600 dark:bg-slate-700/50 dark:focus:border-slate-500 dark:focus:bg-slate-700"
+              className="h-12 rounded-xl border-slate-200 bg-slate-50/50 text-base transition-all duration-200 focus:border-slate-400 focus:bg-white dark:border-slate-600 dark:bg-slate-700/50 dark:focus:border-slate-500 dark:focus:bg-slate-700"
             />
           </div>
 
@@ -212,7 +212,7 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
               {mode === "signin" && (
                 <Link
                   href="/auth/forgot-password"
-                  className="text-xs text-slate-500 transition-colors duration-200 hover:text-purple-700 dark:text-slate-400 dark:hover:text-purple-400"
+                  className="inline-flex min-h-[44px] items-center text-xs text-slate-500 transition-colors duration-200 hover:text-purple-700 dark:text-slate-400 dark:hover:text-purple-400"
                 >
                   {t("forgotPassword.forgotPasswordLink")}
                 </Link>
@@ -228,7 +228,7 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
               required
               disabled={isSubmitting}
               minLength={6}
-              className="h-12 rounded-xl border-slate-200 bg-slate-50/50 transition-all duration-200 focus:border-slate-400 focus:bg-white dark:border-slate-600 dark:bg-slate-700/50 dark:focus:border-slate-500 dark:focus:bg-slate-700"
+              className="h-12 rounded-xl border-slate-200 bg-slate-50/50 text-base transition-all duration-200 focus:border-slate-400 focus:bg-white dark:border-slate-600 dark:bg-slate-700/50 dark:focus:border-slate-500 dark:focus:bg-slate-700"
             />
           </div>
 

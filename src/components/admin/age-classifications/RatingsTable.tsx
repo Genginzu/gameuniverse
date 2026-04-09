@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AdminTableSkeleton } from "@/components/admin/shared/AdminTableSkeleton";
@@ -25,6 +26,8 @@ export function RatingsTable({
   isLoading,
   currentSearch = "",
 }: RatingsTableProps) {
+  const t = useTranslations("admin.ageClassifications.ratings");
+  const tParent = useTranslations("admin.ageClassifications");
   const [searchInput, setSearchInput] = useState(currentSearch);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -34,8 +37,7 @@ export function RatingsTable({
 
   return (
     <div className="space-y-4">
-      {/* Barre de recherche */}
-      <form onSubmit={handleSearchSubmit} className="flex gap-2">
+      <form onSubmit={handleSearchSubmit} className="flex flex-col gap-2 sm:flex-row">
         <div className="relative flex-1">
           <Icon
             icon="fa:search"
@@ -43,29 +45,27 @@ export function RatingsTable({
           />
           <Input
             type="text"
-            placeholder="Rechercher par code ou nom…"
+            placeholder={t("searchPlaceholder")}
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             className="pl-10"
-            aria-label="Rechercher des notes"
+            aria-label={t("searchLabel")}
           />
         </div>
         <Button type="submit" variant="secondary">
-          Rechercher
+          {tParent("search")}
         </Button>
       </form>
 
-      {/* Nombre total */}
       <p className="text-sm text-gray-500 dark:text-gray-400">
-        {ratings.length} note{ratings.length !== 1 ? "s" : ""}
+        {t("totalRatings", { count: ratings.length })}
       </p>
 
-      {/* État de chargement */}
       {isLoading ? (
         <AdminTableSkeleton columns={3} rows={6} />
       ) : ratings.length === 0 ? (
         <div className="rounded-xl border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800">
-          <p className="text-gray-500 dark:text-gray-400">Aucune note trouvée</p>
+          <p className="text-gray-500 dark:text-gray-400">{t("noRatings")}</p>
         </div>
       ) : (
         <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
@@ -73,22 +73,22 @@ export function RatingsTable({
             <thead className="border-b border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800">
               <tr>
                 <th scope="col" className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">
-                  Code
+                  {tParent("columns.code")}
                 </th>
                 <th scope="col" className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">
-                  Nom d&apos;affichage
+                  {tParent("columns.displayName")}
                 </th>
                 <th scope="col" className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">
-                  Âge minimum
+                  {tParent("columns.minimumAge")}
                 </th>
                 <th scope="col" className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">
-                  Couleur
+                  {tParent("columns.color")}
                 </th>
                 <th scope="col" className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">
-                  Ordre de tri
+                  {tParent("columns.sortOrder")}
                 </th>
                 <th scope="col" className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">
-                  Actions
+                  {tParent("columns.actions")}
                 </th>
               </tr>
             </thead>
@@ -114,7 +114,7 @@ export function RatingsTable({
                         <span
                           className="inline-block h-4 w-4 rounded-full border border-gray-300 dark:border-gray-600"
                           style={{ backgroundColor: rating.color_hex }}
-                          aria-label={`Couleur ${rating.color_hex}`}
+                          aria-label={t("form.colorPreview", { color: rating.color_hex })}
                         />
                         <span className="font-mono text-xs text-gray-500 dark:text-gray-400">
                           {rating.color_hex}
@@ -133,7 +133,7 @@ export function RatingsTable({
                         variant="ghost"
                         size="sm"
                         onClick={() => onEdit(rating)}
-                        aria-label={`Modifier ${rating.display_name}`}
+                        aria-label={tParent("edit", { name: rating.display_name })}
                       >
                         <Icon icon="fa:edit" className="h-4 w-4" />
                       </Button>
@@ -141,7 +141,7 @@ export function RatingsTable({
                         variant="ghost"
                         size="sm"
                         onClick={() => onDelete(rating)}
-                        aria-label={`Supprimer ${rating.display_name}`}
+                        aria-label={tParent("delete", { name: rating.display_name })}
                         className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                       >
                         <Icon icon="fa:trash" className="h-4 w-4" />

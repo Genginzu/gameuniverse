@@ -3,7 +3,7 @@
 import { Icon } from "@iconify/react";
 import { useTranslations, useLocale } from "next-intl";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 import { groupDlcExtensionsByCategory } from "@/lib/utils/dlcExtensionUtils";
 import type { GameDlcExtension, DlcExtensionCategory } from "@/types/game";
@@ -125,7 +125,7 @@ function DlcCard({ item, accentColor, locale, viewGameLabel }: DlcCardProps) {
 
           {item.gameSlug && (
             <Link
-              href={`/${locale}/games/${item.gameSlug}`}
+              href={`/games/${item.gameSlug}`}
               className="mt-auto inline-flex items-center gap-1 pt-2 text-xs font-medium transition-colors hover:text-white"
               style={{ color: accentColor }}
             >

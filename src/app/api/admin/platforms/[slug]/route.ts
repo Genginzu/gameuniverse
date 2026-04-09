@@ -124,7 +124,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
 
     const { error: updateError } = await supabase
       .from("platforms")
-      .update(updateFields)
+      .update(updateFields as Record<string, never>)
       .eq("id", existing.id);
 
     if (updateError) {

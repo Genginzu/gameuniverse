@@ -54,7 +54,8 @@ export default function NewConversationDialog({
 
       {/* Dialog */}
       <div
-        className="glass-card relative z-10 mx-4 flex w-full max-w-md flex-col rounded-2xl shadow-lg shadow-black/10 dark:shadow-black/30"
+        className="glass-card relative z-10 flex w-full flex-col rounded-none shadow-lg shadow-black/10 sm:mx-4 sm:max-w-md sm:rounded-2xl dark:shadow-black/30"
+        style={{ maxHeight: "100dvh" }}
         data-testid="new-conversation-dialog"
         role="dialog"
         aria-modal="true"
@@ -68,7 +69,7 @@ export default function NewConversationDialog({
           <button
             type="button"
             onClick={handleClose}
-            className="rounded-lg p-1 transition-all duration-300 hover:bg-white/60 dark:hover:bg-slate-700/60"
+            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg transition-all duration-300 hover:bg-white/60 dark:hover:bg-slate-700/60"
             aria-label="Close"
           >
             <Icon icon="lucide:x" className="h-5 w-5 text-slate-500 dark:text-slate-400" />
@@ -87,14 +88,14 @@ export default function NewConversationDialog({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t("searchFriends")}
-              className="glass-input w-full rounded-xl py-2 pr-3 pl-9 text-sm"
+              className="glass-input w-full rounded-xl py-2.5 pr-3 pl-9 text-base"
               autoFocus
             />
           </div>
         </div>
 
         {/* Friend list */}
-        <div className="max-h-64 flex-1 overflow-y-auto px-2 pb-3">
+        <div className="max-h-[50vh] flex-1 overflow-y-auto px-2 pb-3 sm:max-h-64">
           {isLoadingFriends ? (
             <div className="flex items-center justify-center py-8">
               <Icon icon="lucide:loader-2" className="text-neon-violet h-6 w-6 animate-spin" />

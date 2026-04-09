@@ -251,7 +251,7 @@ export async function POST(
     if (existing) {
       const { error: updateError } = await supabase
         .from("user_library")
-        .update(updateFields)
+        .update(updateFields as Record<string, never>)
         .eq("user_id", user.id)
         .eq("game_id", gameId);
 

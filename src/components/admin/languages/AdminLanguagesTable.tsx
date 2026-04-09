@@ -62,7 +62,7 @@ export function AdminLanguagesTable({
   return (
     <div className="space-y-4">
       {/* Search bar */}
-      <form onSubmit={handleSearchSubmit} className="flex gap-2">
+      <form onSubmit={handleSearchSubmit} className="flex flex-col gap-2 sm:flex-row">
         <div className="relative flex-1">
           <Icon
             icon="fa:search"
@@ -154,12 +154,13 @@ export function AdminLanguagesTable({
                       {language.native_name || "—"}
                     </td>
                     <td className="px-4 py-3">
-                      <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                      <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => onEdit(language.code)}
                           aria-label={t("editLanguage", { name: language.name })}
+                          className="min-h-[44px] min-w-[44px]"
                         >
                           <Icon icon="fa:edit" className="h-4 w-4" />
                         </Button>
@@ -168,7 +169,7 @@ export function AdminLanguagesTable({
                           size="sm"
                           onClick={() => onDelete(language)}
                           aria-label={t("deleteLanguage", { name: language.name })}
-                          className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                          className="min-h-[44px] min-w-[44px] text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                         >
                           <Icon icon="fa:trash" className="h-4 w-4" />
                         </Button>
@@ -194,6 +195,7 @@ export function AdminLanguagesTable({
                   variant="outline"
                   size="sm"
                   disabled={!pagination.hasPreviousPage}
+                  className="min-h-[44px] min-w-[44px]"
                   onClick={() => onPageChange(pagination.currentPage - 1)}
                   aria-label={t("previousPage")}
                 >
@@ -203,6 +205,7 @@ export function AdminLanguagesTable({
                   variant="outline"
                   size="sm"
                   disabled={!pagination.hasNextPage}
+                  className="min-h-[44px] min-w-[44px]"
                   onClick={() => onPageChange(pagination.currentPage + 1)}
                   aria-label={t("nextPage")}
                 >

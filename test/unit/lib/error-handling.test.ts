@@ -299,7 +299,7 @@ describe("error-handling", () => {
       consoleErrorSpy.mockRestore();
     });
 
-    it("should not log to console (reporting is a placeholder)", () => {
+    it("should log error to console", () => {
       const error = createAppError("Test error", ErrorType.SERVER, {
         code: "ERR_001",
         statusCode: 500,
@@ -308,8 +308,7 @@ describe("error-handling", () => {
 
       reportError(error, "TestContext");
 
-      // console.error was removed — reportError is now a placeholder for monitoring
-      expect(consoleErrorSpy).not.toHaveBeenCalled();
+      expect(consoleErrorSpy).toHaveBeenCalled();
     });
   });
 
@@ -385,15 +384,13 @@ describe("useErrorHandler", () => {
     expect(typeof handleError).toBe("function");
   });
 
-  it("should show toast when handleError is called (no console.error)", async () => {
+  it("should show toast when handleError is called", async () => {
     const { useErrorHandler } = await import("../../../src/lib/error-handling");
     const { handleError } = useErrorHandler();
 
     const error = new Error("Test error");
     handleError(error, "TestComponent");
 
-    // console.error was removed — errors are shown via toast only
-    expect(consoleErrorSpy).not.toHaveBeenCalled();
     expect(toastMock).toHaveBeenCalledWith({
       variant: "destructive",
       title: "Erreur",
@@ -407,7 +404,6 @@ describe("useErrorHandler", () => {
 
     handleError(new Error("Test"));
 
-    expect(consoleErrorSpy).not.toHaveBeenCalled();
     expect(toastMock).toHaveBeenCalled();
   });
 });

@@ -10,6 +10,7 @@ import { useTranslations } from "next-intl";
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react";
+import Footer from "@/components/shared/Footer";
 
 
 interface AdminLayoutProps {
@@ -152,8 +153,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       <Button
         id="admin-sidebar-toggle"
         variant="ghost"
-        size="sm"
-        className="fixed left-4 top-4 z-30 lg:hidden"
+        size="icon"
+        className="fixed left-3 top-3 z-30 min-h-[44px] min-w-[44px] lg:hidden"
         onClick={() => setSidebarOpen(!sidebarOpen)}
         aria-label={sidebarOpen ? t("closeSidebar") : t("openSidebar")}
       >
@@ -175,7 +176,12 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         <div className="flex items-center justify-end border-b border-gray-200 bg-white px-4 py-2 dark:border-gray-700 dark:bg-gray-900">
           <LanguageSwitcher />
         </div>
-        <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900">{children}</main>
+        <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900">
+          <div className="flex min-h-full flex-col">
+            <div className="flex-1">{children}</div>
+            <Footer />
+          </div>
+        </main>
       </div>
     </div>
   );

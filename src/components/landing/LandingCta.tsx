@@ -16,12 +16,12 @@ export function LandingCta() {
       <div className="absolute inset-0 bg-linear-to-br from-neon-violet/10 via-transparent to-neon-cyan/10" />
 
       <div className="relative mx-auto max-w-4xl px-6 text-center sm:px-8 lg:px-12">
-        <h2 className="neon-text mb-6 text-4xl font-bold sm:text-5xl">{t("cta.title")}</h2>
-        <p className="mb-12 text-xl leading-relaxed text-slate-300">{t("cta.subtitle")}</p>
+        <h2 className="neon-text mb-6 text-3xl font-bold sm:text-4xl sm:text-5xl">{t("cta.title")}</h2>
+        <p className="mb-12 text-lg leading-relaxed text-slate-300 sm:text-xl">{t("cta.subtitle")}</p>
         <div className="flex flex-col items-center justify-center gap-6 sm:flex-row">
           <Button
             size="lg"
-            className="neon-btn rounded-xl bg-neon-violet/20 px-8 py-3 font-semibold text-white transition-all duration-200 hover:scale-105"
+            className="neon-btn rounded-xl bg-neon-violet/20 px-6 py-3 font-semibold text-white transition-all duration-200 hover:scale-105 sm:px-8"
             asChild
           >
             <Link href="/auth?mode=signup">
@@ -32,7 +32,7 @@ export function LandingCta() {
           <Button
             size="lg"
             variant="outline"
-            className="neon-btn rounded-xl border-2 border-neon-cyan/40 bg-transparent px-8 py-3 font-semibold text-white transition-all duration-200 hover:scale-105 hover:bg-neon-cyan/10"
+            className="neon-btn rounded-xl border-2 border-neon-cyan/40 bg-transparent px-6 py-3 font-semibold text-white transition-all duration-200 hover:scale-105 hover:bg-neon-cyan/10 sm:px-8"
             asChild
           >
             <Link href="/auth?mode=signin">{t("cta.login")}</Link>
