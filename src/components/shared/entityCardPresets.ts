@@ -31,7 +31,7 @@ export const gameCardConfig: EntityCardConfig<GameSummary> = {
   actions: {
     libraryToggle: true,
   },
-  linkTemplate: (game, locale) => `/${locale}/games/${game.slug}`,
+  linkTemplate: (game) => `/games/${game.slug}`,
   // Custom hover renderer to match exact GameCard behavior
   customHoverRenderer: (game, t) => {
     const formatReleaseDate = (dateString?: string, locale: string = "fr") => {
@@ -162,7 +162,7 @@ export const playerCardConfig: EntityCardConfig<PlayerSummary> = {
     fields: [],
   },
   actions: {},
-  linkTemplate: (player, locale) => `/${locale}/players/${player.id}`,
+  linkTemplate: (player) => `/players/${player.id}`,
   // Fallback avatar for players without avatar
   fallbackAvatarRenderer: () =>
     React.createElement(
@@ -237,7 +237,7 @@ export const characterCardConfig: EntityCardConfig<CharacterSummary> = {
   actions: {
     characterFavoriteToggle: true,
   },
-  linkTemplate: (character, locale) => `/${locale}/characters/${character.slug}`,
+  linkTemplate: (character) => `/characters/${character.slug}`,
   slugField: "slug",
   // Custom hover renderer for character card
   customHoverRenderer: (character, t) => {
