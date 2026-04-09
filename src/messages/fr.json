@@ -2906,5 +2906,11 @@
     "clearAll": "Tout effacer",
     "roles": "Rôles",
     "available": "{count} disponibles"
+  },
+  "notFound": {
+    "title": "Page introuvable",
+    "description": "La page que vous recherchez n'existe pas ou a ete deplacee.",
+    "home": "Accueil",
+    "games": "Voir les jeux"
   }
 }
