@@ -78,11 +78,8 @@ export async function generateMetadata({ params }: CharacterDetailsPageProps) {
 
 export async function generateStaticParams() {
   const supabase = await createServerClient();
-  const { data: characters } = await supabase
-    .from("characters")
-    .select("slug")
-    .limit(50)
-    .returns<{ slug: string }[]>();
+  const { data } = await supabase.from("characters").select("slug").limit(50);
 
-  return (characters ?? []).map((c) => ({ slug: c.slug }));
+  const characters = (data ?? []) as { slug: string }[];
+  return characters.map((c) => ({ slug: c.slug }));
 }
