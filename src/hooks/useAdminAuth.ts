@@ -98,7 +98,9 @@ export function useAdminAuth(): UseAdminAuthReturn {
     return () => {
       mounted = false;
     };
-  }, [supabase]);
+    // supabase is a singleton — no need to re-run on reference change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const role = user?.role ?? "user";
   const permissions = getPermissionsForRole(role);
