@@ -36,9 +36,9 @@ export async function GET(request: NextRequest) {
       .select("id, slug, igdb_id, cover_image_url, view_count, metascore", { count: "exact" })
       .not("igdb_id", "is", null);
 
-    // For metascore, include both NULL and -1 (sentinel for "no score available")
+    // For metascore, only show NULL (not yet checked), exclude -1 (already checked, no score)
     if (field === "metascore") {
-      query = query.or("metascore.is.null,metascore.eq.-1");
+      query = query.is("metascore", null);
     } else {
       query = query.is(column, null);
     }

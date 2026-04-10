@@ -29,13 +29,13 @@ export async function GET() {
         .not("igdb_id", "is", null)
         .is(column, null);
 
-      // For metascore, also exclude the -1 sentinel (no score available)
+      // For metascore, only count NULL (exclude -1 sentinel = already checked)
       if (key === "metascore") {
         query = supabase
           .from("games")
           .select("id", { count: "exact", head: true })
           .not("igdb_id", "is", null)
-          .or("metascore.is.null,metascore.eq.-1");
+          .is("metascore", null);
       }
 
       const { count, error } = await query;
