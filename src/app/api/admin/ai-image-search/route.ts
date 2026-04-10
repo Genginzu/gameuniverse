@@ -68,6 +68,27 @@ export async function POST(request: Request) {
         return NextResponse.json({ imageUrl: null, source: null });
       }
 
+      // Validate that the URL actually points to an existing image
+      try {
+        const headRes = await fetch(output.imageUrl, {
+          method: "HEAD",
+          signal: AbortSignal.timeout(5_000),
+          redirect: "follow",
+        });
+
+        if (!headRes.ok || !(headRes.headers.get("content-type") ?? "").startsWith("image/")) {
+          logger.warn("AI returned unreachable image URL", {
+            url: output.imageUrl,
+            status: headRes.status,
+            contentType: headRes.headers.get("content-type"),
+          });
+          return NextResponse.json({ imageUrl: null, source: null });
+        }
+      } catch {
+        logger.warn("AI image URL validation failed", { url: output.imageUrl });
+        return NextResponse.json({ imageUrl: null, source: null });
+      }
+
       return NextResponse.json({
         imageUrl: output.imageUrl,
         source: output.source || null,
