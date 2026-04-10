@@ -120,8 +120,8 @@ BEGIN
       AND (p_game_ids IS NULL OR g.id = ANY(p_game_ids))
     ORDER BY
       CASE WHEN g.cover_image_url IS NOT NULL THEN 0 ELSE 1 END,
-      g.view_count DESC,
       g.metascore DESC NULLS LAST,
+      g.view_count DESC,
       g.last_activity_at DESC NULLS LAST,
       g.popularity_score DESC,
       g.created_at DESC
