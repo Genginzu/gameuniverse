@@ -23,11 +23,22 @@ export async function GET() {
     const results: Record<string, number> = {};
 
     for (const [key, column] of Object.entries(IMPORTABLE_FIELDS)) {
-      const { count, error } = await supabase
+      let query = supabase
         .from("games")
         .select("id", { count: "exact", head: true })
         .not("igdb_id", "is", null)
         .is(column, null);
+
+      // For metascore, also exclude the -1 sentinel (no score available)
+      if (key === "metascore") {
+        query = supabase
+          .from("games")
+          .select("id", { count: "exact", head: true })
+          .not("igdb_id", "is", null)
+          .or("metascore.is.null,metascore.eq.-1");
+      }
+
+      const { count, error } = await query;
 
       if (error) {
         logger.warn(`Bulk import count failed for ${key}`, { error });

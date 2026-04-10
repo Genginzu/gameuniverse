@@ -117,7 +117,7 @@ export function GameCard({
           )}
 
           {/* Metascore badge - always visible */}
-          {game.metascore && (
+          {game.metascore && game.metascore > 0 && (
             <div className="absolute top-3 right-3 z-20">
               <div
                 className={`${getMetascoreColor(

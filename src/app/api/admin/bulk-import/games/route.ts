@@ -31,11 +31,19 @@ export async function GET(request: NextRequest) {
     const supabase = await createRouteHandlerClient();
     const column = IMPORTABLE_FIELDS[field];
 
-    const { data, count, error } = await supabase
+    let query = supabase
       .from("games")
       .select("id, slug, igdb_id, cover_image_url, view_count, metascore", { count: "exact" })
-      .not("igdb_id", "is", null)
-      .is(column, null)
+      .not("igdb_id", "is", null);
+
+    // For metascore, include both NULL and -1 (sentinel for "no score available")
+    if (field === "metascore") {
+      query = query.or("metascore.is.null,metascore.eq.-1");
+    } else {
+      query = query.is(column, null);
+    }
+
+    const { data, count, error } = await query
       .order("view_count", { ascending: false })
       .order("metascore", { ascending: false, nullsFirst: false })
       .range(offset, offset + limit - 1);

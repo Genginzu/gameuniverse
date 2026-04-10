@@ -40,9 +40,10 @@ export function GameStatsGrid({
   const stats = [
     {
       icon: "lucide:star",
-      value: game.metascore ? String(game.metascore) : "—",
+      value: game.metascore && game.metascore > 0 ? String(game.metascore) : "—",
       label: tDetails("statsGrid.globalScore"),
-      metascoreBg: game.metascore ? getMetascoreColor(game.metascore) : undefined,
+      metascoreBg:
+        game.metascore && game.metascore > 0 ? getMetascoreColor(game.metascore) : undefined,
       show: true,
     },
     {

@@ -8,9 +8,10 @@ const NO_COVER_FALLBACK = "/assets/no-cover.png";
 const NO_BACKGROUND_FALLBACK = "/assets/no-cover.png";
 
 /** Columns that get a fallback value when IGDB returns nothing */
-const FIELD_FALLBACKS: Record<string, { column: string; fallback: string }> = {
+const FIELD_FALLBACKS: Record<string, { column: string; fallback: string | number }> = {
   cover: { column: "cover_image_url", fallback: NO_COVER_FALLBACK },
   background: { column: "background_image_url", fallback: NO_BACKGROUND_FALLBACK },
+  metascore: { column: "metascore", fallback: -1 },
 };
 
 /**
@@ -120,7 +121,7 @@ export async function POST(request: NextRequest) {
 /**
  * Sets a fallback value on a game column only if it's still NULL.
  */
-async function applyFallback(gameId: string, column: string, fallback: string) {
+async function applyFallback(gameId: string, column: string, fallback: string | number) {
   try {
     const supabase = await createRouteHandlerClient();
     await supabase

@@ -96,7 +96,7 @@ export function GameOverviewSection({
         )}
 
         {/* Metascore */}
-        {game.metascore && (
+        {game.metascore && game.metascore > 0 && (
           <div className="rounded-xl border border-slate-700 bg-slate-800/50 p-4">
             <div className="mb-2 flex items-center gap-2">
               <Icon icon="lucide:star" className="h-4 w-4" style={{ color: colors.accent }} />
