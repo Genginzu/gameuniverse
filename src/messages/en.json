@@ -2868,7 +2868,13 @@
     "syncStarted": "Syncing {count, plural, one {1 game} other {# games}}…",
     "syncDone": "{success}/{total} game(s) synced",
     "syncFailed": "Sync failed",
-    "allSynced": "All games are up to date for this field."
+    "allSynced": "All games are up to date for this field.",
+    "abort": "Stop",
+    "progressLabel": "{done}/{total} processed",
+    "progressSuccess": "{count} ✓",
+    "progressFailed": "{count} ✗",
+    "gameSynced": "✓ {title}",
+    "gameSyncFailed": "✗ {title}"
   },
   "discussions": {
     "pageTitle": "Messages",

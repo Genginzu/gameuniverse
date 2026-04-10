@@ -2871,7 +2871,13 @@
     "syncStarted": "Synchronisation de {count, plural, one {1 jeu} other {# jeux}} lancée…",
     "syncDone": "{success}/{total} jeu(x) synchronisé(s)",
     "syncFailed": "Échec de la synchronisation",
-    "allSynced": "Tous les jeux sont à jour pour ce champ."
+    "allSynced": "Tous les jeux sont à jour pour ce champ.",
+    "abort": "Arrêter",
+    "progressLabel": "{done}/{total} traité(s)",
+    "progressSuccess": "{count} ✓",
+    "progressFailed": "{count} ✗",
+    "gameSynced": "✓ {title}",
+    "gameSyncFailed": "✗ {title}"
   },
   "discussions": {
     "pageTitle": "Discussions",
