@@ -65,6 +65,8 @@ export function useBulkImport(field: BulkImportField = "cover") {
     setGameStatuses(initialStatuses);
     setGameErrors({});
 
+    toast({ title: t("syncStarted", { count: games.length }) });
+
     try {
       // Use dedicated metascore endpoint or generic sync
       const endpoint =
@@ -127,7 +129,10 @@ export function useBulkImport(field: BulkImportField = "cover") {
               setGameErrors((prev) => ({ ...prev, [gameId]: event.error || "Unknown error" }));
               setProgress({ done: successCount, failed: failCount, total: games.length });
             } else if (event.type === "done") {
-              // Progress bar already shows the result
+              toast({
+                title: t("syncDone", { success: event.success, total: event.total }),
+                variant: event.failed > 0 ? "destructive" : "success",
+              });
             }
           } catch {
             // Skip malformed SSE lines
