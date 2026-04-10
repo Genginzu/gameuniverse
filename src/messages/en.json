@@ -1187,6 +1187,7 @@
       "playerAchievements": "Player Achievements",
       "igdbCategory": "IGDB",
       "webhooks": "Webhooks",
+      "bulkImport": "Bulk Import",
       "toolsCategory": "Tools",
       "translations": "Translations"
     },
@@ -2849,6 +2850,25 @@
       "applied": "Applied",
       "skipped": "Skipped"
     }
+  },
+  "bulkImport": {
+    "title": "Bulk Import",
+    "description": "Sync missing data from IGDB for your existing games.",
+    "fields": {
+      "cover": "Cover",
+      "background": "Background",
+      "playtime": "Playtime",
+      "metascore": "Metascore",
+      "releaseDate": "Release date"
+    },
+    "gamesCount": "{count, plural, =0 {No games} one {1 game} other {# games}} missing {field}",
+    "batchSize": "Batch size",
+    "syncButton": "Sync {count, plural, one {1 game} other {# games}}",
+    "syncing": "{done}/{total}…",
+    "syncStarted": "Syncing {count, plural, one {1 game} other {# games}}…",
+    "syncDone": "{success}/{total} game(s) synced",
+    "syncFailed": "Sync failed",
+    "allSynced": "All games are up to date for this field."
   },
   "discussions": {
     "pageTitle": "Messages",

@@ -1187,6 +1187,7 @@
       "playerAchievements": "Succès joueurs",
       "igdbCategory": "IGDB",
       "webhooks": "Webhooks",
+      "bulkImport": "Import en masse",
       "toolsCategory": "Outils",
       "translations": "Traductions"
     },
@@ -2852,6 +2853,25 @@
       "applied": "Appliqués",
       "skipped": "Ignorés"
     }
+  },
+  "bulkImport": {
+    "title": "Import en masse",
+    "description": "Synchronisez les données manquantes depuis IGDB pour vos jeux existants.",
+    "fields": {
+      "cover": "Couverture",
+      "background": "Fond",
+      "playtime": "Temps de jeu",
+      "metascore": "Metascore",
+      "releaseDate": "Date de sortie"
+    },
+    "gamesCount": "{count, plural, =0 {Aucun jeu} one {1 jeu} other {# jeux}} sans {field}",
+    "batchSize": "Quantité",
+    "syncButton": "Synchroniser {count, plural, one {1 jeu} other {# jeux}}",
+    "syncing": "{done}/{total}…",
+    "syncStarted": "Synchronisation de {count, plural, one {1 jeu} other {# jeux}} lancée…",
+    "syncDone": "{success}/{total} jeu(x) synchronisé(s)",
+    "syncFailed": "Échec de la synchronisation",
+    "allSynced": "Tous les jeux sont à jour pour ce champ."
   },
   "discussions": {
     "pageTitle": "Discussions",

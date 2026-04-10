@@ -24,7 +24,11 @@ const NAV_CATEGORIES: NavCategory[] = [
       { href: "/admin/companies", icon: "fa:building", labelKey: "nav.companies" },
       { href: "/admin/platforms", icon: "fa:desktop", labelKey: "nav.platforms" },
       { href: "/admin/languages", icon: "fa:globe", labelKey: "nav.languages" },
-      { href: "/admin/age-classifications", icon: "lucide:shield", labelKey: "nav.ageClassifications" },
+      {
+        href: "/admin/age-classifications",
+        icon: "lucide:shield",
+        labelKey: "nav.ageClassifications",
+      },
       { href: "/admin/reviews", icon: "fa:star", labelKey: "nav.reviews" },
     ],
   },
@@ -42,20 +46,23 @@ const NAV_CATEGORIES: NavCategory[] = [
     labelKey: "nav.playersCategory",
     items: [
       { href: "/admin/achievements", icon: "fa:trophy", labelKey: "nav.achievements" },
-      { href: "/admin/achievements/players", icon: "lucide:award", labelKey: "nav.playerAchievements" },
+      {
+        href: "/admin/achievements/players",
+        icon: "lucide:award",
+        labelKey: "nav.playerAchievements",
+      },
     ],
   },
   {
     labelKey: "nav.igdbCategory",
     items: [
       { href: "/admin/webhooks", icon: "lucide:webhook", labelKey: "nav.webhooks" },
+      { href: "/admin/bulk-import", icon: "lucide:download", labelKey: "nav.bulkImport" },
     ],
   },
   {
     labelKey: "nav.toolsCategory",
-    items: [
-      { href: "/admin/translations", icon: "mdi:translate", labelKey: "nav.translations" },
-    ],
+    items: [{ href: "/admin/translations", icon: "mdi:translate", labelKey: "nav.translations" }],
   },
 ];
 
