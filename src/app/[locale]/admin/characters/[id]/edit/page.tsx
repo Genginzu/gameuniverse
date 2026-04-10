@@ -186,7 +186,8 @@ export default function EditCharacterPage() {
     return () => {
       mounted = false;
     };
-  }, [characterId, t]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [characterId]);
 
   if (loadingCharacter) {
     return <AdminFormSkeleton showHeroBanner tabs={9} fields={4} />;

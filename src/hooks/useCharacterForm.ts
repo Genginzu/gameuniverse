@@ -153,7 +153,8 @@ export function useCharacterForm(
     if (initialData) {
       form.reset(initialData);
     }
-  }, [initialData, form]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialData]);
 
   const submitCharacter = useCallback(
     async (data: AdminCharacterFormData) => {
