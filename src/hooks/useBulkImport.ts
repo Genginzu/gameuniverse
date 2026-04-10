@@ -112,6 +112,14 @@ export function useBulkImport() {
             } else if (event.type === "success") {
               successCount++;
               setGameStatuses((prev) => ({ ...prev, [gameId]: "success" }));
+              // Decrement field count in real-time
+              refreshCounts(
+                (prev) =>
+                  prev
+                    ? { ...prev, [selectedField]: Math.max(0, (prev[selectedField] ?? 0) - 1) }
+                    : prev,
+                { revalidate: false }
+              );
               const game = gameById.get(gameId);
               if (game) {
                 toast({ title: t("gameSynced", { title: game.title }), variant: "success" });
@@ -153,7 +161,7 @@ export function useBulkImport() {
       setSyncing(false);
       abortControllerRef.current = null;
     }
-  }, [gamesData, t, refreshCounts, refreshGames]);
+  }, [gamesData, t, selectedField, refreshCounts, refreshGames]);
 
   const handleAbort = useCallback(() => {
     abortControllerRef.current?.abort();
