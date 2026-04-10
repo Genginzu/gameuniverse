@@ -7,10 +7,16 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import type { CharacterFormTabProps } from "@/types/admin-characters";
+import type { AvailableGame } from "@/hooks/useCharacterForm";
+
+interface CharacterFormImagesTabProps extends CharacterFormTabProps {
+  availableGames?: AvailableGame[];
+}
 
 function useAiImageSearch(
   form: CharacterFormTabProps["form"],
-  field: "main_image_url" | "background_image_url"
+  field: "main_image_url" | "background_image_url",
+  availableGames: AvailableGame[]
 ) {
   const [loading, setLoading] = useState(false);
   const [source, setSource] = useState<string | null>(null);
@@ -31,11 +37,11 @@ function useAiImageSearch(
       return;
     }
 
-    // Get primary game name if available
-    const games = form.getValues("games") ?? [];
-    const primaryGame = games.find((g) => g.is_primary);
-    // We don't have game names in form data, just IDs — pass undefined
-    void primaryGame;
+    // Resolve game names from selected IDs
+    const selectedGames = form.getValues("games") ?? [];
+    const gameNames = selectedGames
+      .map((g) => availableGames.find((ag) => ag.id === g.game_id)?.title)
+      .filter(Boolean) as string[];
 
     try {
       const res = await fetch("/api/admin/ai-image-search", {
@@ -43,6 +49,7 @@ function useAiImageSearch(
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           characterName: name,
+          gameNames: gameNames.length > 0 ? gameNames : undefined,
           imageType: field === "main_image_url" ? "main" : "background",
         }),
       });
@@ -66,12 +73,16 @@ function useAiImageSearch(
   return { search, loading, source, error };
 }
 
-export function CharacterFormImagesTab({ form, t }: CharacterFormTabProps) {
+export function CharacterFormImagesTab({
+  form,
+  t,
+  availableGames = [],
+}: CharacterFormImagesTabProps) {
   const mainImageUrl = form.watch("main_image_url");
   const backgroundImageUrl = form.watch("background_image_url");
 
-  const mainSearch = useAiImageSearch(form, "main_image_url");
-  const bgSearch = useAiImageSearch(form, "background_image_url");
+  const mainSearch = useAiImageSearch(form, "main_image_url", availableGames);
+  const bgSearch = useAiImageSearch(form, "background_image_url", availableGames);
 
   return (
     <div className="space-y-8">

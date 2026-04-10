@@ -7,7 +7,7 @@ import { requireAdmin } from "@/lib/auth-admin";
 
 const requestSchema = z.object({
   characterName: z.string().min(1).max(255),
-  gameName: z.string().max(255).optional(),
+  gameNames: z.array(z.string().max(255)).optional(),
   imageType: z.enum(["main", "background"]),
 });
 
@@ -26,8 +26,12 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });
     }
 
-    const { characterName, gameName, imageType } = parsed.data;
-    const context = gameName ? `${characterName} from the video game ${gameName}` : characterName;
+    const { characterName, gameNames, imageType } = parsed.data;
+    const gamesContext =
+      gameNames && gameNames.length > 0
+        ? ` from the video game${gameNames.length > 1 ? "s" : ""} ${gameNames.join(", ")}`
+        : "";
+    const context = `${characterName}${gamesContext}`;
 
     const systemPrompt =
       imageType === "main"
