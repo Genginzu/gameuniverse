@@ -17,7 +17,7 @@ LANGUAGE plpgsql
 STABLE
 SECURITY DEFINER
 SET search_path = public
-AS $
+AS $$
 DECLARE
   v_total_count INT;
   v_games JSON;
@@ -134,7 +134,7 @@ BEGIN
     'totalCount', v_total_count
   );
 END;
-$;
+$$;
 
 COMMENT ON FUNCTION public.get_games_listing IS
   'Optimized server-side function for the games listing API. Returns paginated games sorted by cover presence, then view count, then metascore, then activity/popularity, with translations, genres, and companies.';
