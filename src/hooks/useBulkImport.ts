@@ -72,6 +72,7 @@ export function useBulkImport() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           gameIds: games.map((g) => ({ id: g.id, igdbId: g.igdbId })),
+          field: selectedField,
         }),
         signal: controller.signal,
       });

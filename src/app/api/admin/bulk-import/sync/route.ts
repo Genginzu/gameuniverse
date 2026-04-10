@@ -1,21 +1,35 @@
 import { NextRequest } from "next/server";
 import { GameImportService } from "@/lib/services/gameImportService";
+import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 
 const CONCURRENCY = 5;
+const NO_COVER_FALLBACK = "/assets/no-cover.png";
+const NO_BACKGROUND_FALLBACK = "/assets/no-cover.png";
+
+/** Columns that get a fallback value when IGDB returns nothing */
+const FIELD_FALLBACKS: Record<string, { column: string; fallback: string }> = {
+  cover: { column: "cover_image_url", fallback: NO_COVER_FALLBACK },
+  background: { column: "background_image_url", fallback: NO_BACKGROUND_FALLBACK },
+};
 
 /**
  * POST /api/admin/bulk-import/sync
  * Streams sync progress via SSE with a worker pool (5 concurrent slots).
- * As soon as one game finishes, the next one starts immediately.
- * Body: { gameIds: Array<{ id: string; igdbId: number }> }
+ * Body: { gameIds: Array<{ id: string; igdbId: number }>, field?: string }
+ *
+ * When `field` is provided and has a fallback (cover, background), games
+ * that still have NULL after sync get the fallback value so they don't
+ * reappear in the "missing" list.
  */
 export async function POST(request: NextRequest) {
   let gameIds: Array<{ id: string; igdbId: number }>;
+  let field: string | undefined;
 
   try {
     const body = await request.json();
     gameIds = body.gameIds;
+    field = body.field;
 
     if (!Array.isArray(gameIds) || gameIds.length === 0) {
       return new Response(JSON.stringify({ error: "gameIds array is required" }), {
@@ -37,6 +51,8 @@ export async function POST(request: NextRequest) {
     });
   }
 
+  const fallbackConfig = field ? FIELD_FALLBACKS[field] : undefined;
+
   const stream = new ReadableStream({
     async start(controller) {
       const encoder = new TextEncoder();
@@ -47,13 +63,18 @@ export async function POST(request: NextRequest) {
         controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
       };
 
-      // Worker pool: maintain CONCURRENCY active tasks at all times
       let nextIndex = 0;
 
       const syncGame = async (id: string, igdbId: number) => {
         send({ type: "syncing", igdbId, gameId: id });
         try {
           const result = await GameImportService.syncWithIGDB(id, igdbId);
+
+          // Apply fallback if the field is still NULL after sync
+          if (fallbackConfig) {
+            await applyFallback(id, fallbackConfig.column, fallbackConfig.fallback);
+          }
+
           if (result.success) {
             successCount++;
             send({ type: "success", igdbId, gameId: id });
@@ -77,7 +98,6 @@ export async function POST(request: NextRequest) {
         }
       };
 
-      // Launch CONCURRENCY workers that each pull from the shared queue
       const workers = Array.from({ length: Math.min(CONCURRENCY, gameIds.length) }, () =>
         runWorker()
       );
@@ -102,4 +122,20 @@ export async function POST(request: NextRequest) {
       Connection: "keep-alive",
     },
   });
+}
+
+/**
+ * Sets a fallback value on a game column only if it's still NULL.
+ */
+async function applyFallback(gameId: string, column: string, fallback: string) {
+  try {
+    const supabase = await createRouteHandlerClient();
+    await supabase
+      .from("games")
+      .update({ [column]: fallback })
+      .eq("id", gameId)
+      .is(column, null);
+  } catch (error) {
+    logger.warn("Failed to apply fallback", { gameId, column, error });
+  }
 }
