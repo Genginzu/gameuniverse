@@ -36,7 +36,8 @@ export async function GET(request: NextRequest) {
       .select("id, slug, igdb_id, cover_image_url", { count: "exact" })
       .not("igdb_id", "is", null)
       .is(column, null)
-      .order("created_at", { ascending: false })
+      .order("view_count", { ascending: false })
+      .order("metascore", { ascending: false, nullsFirst: false })
       .range(offset, offset + limit - 1);
 
     if (error) {
