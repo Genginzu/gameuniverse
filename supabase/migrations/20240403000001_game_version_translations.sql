@@ -23,37 +23,44 @@ CREATE INDEX IF NOT EXISTS idx_game_version_translations_lang
 -- RLS
 ALTER TABLE public.game_version_translations ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Allow public read access to game_version_translations" ON public.game_version_translations;
 CREATE POLICY "Allow public read access to game_version_translations"
   ON public.game_version_translations FOR SELECT
   USING (true);
 
+DROP POLICY IF EXISTS "Allow authenticated insert to game_version_translations" ON public.game_version_translations;
 CREATE POLICY "Allow authenticated insert to game_version_translations"
   ON public.game_version_translations FOR INSERT
   TO authenticated
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Allow authenticated update to game_version_translations" ON public.game_version_translations;
 CREATE POLICY "Allow authenticated update to game_version_translations"
   ON public.game_version_translations FOR UPDATE
   TO authenticated
   USING (true)
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Allow authenticated delete to game_version_translations" ON public.game_version_translations;
 CREATE POLICY "Allow authenticated delete to game_version_translations"
   ON public.game_version_translations FOR DELETE
   TO authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "Allow anon insert to game_version_translations" ON public.game_version_translations;
 CREATE POLICY "Allow anon insert to game_version_translations"
   ON public.game_version_translations FOR INSERT
   TO anon
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Allow anon update to game_version_translations" ON public.game_version_translations;
 CREATE POLICY "Allow anon update to game_version_translations"
   ON public.game_version_translations FOR UPDATE
   TO anon
   USING (true)
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "Allow anon delete to game_version_translations" ON public.game_version_translations;
 CREATE POLICY "Allow anon delete to game_version_translations"
   ON public.game_version_translations FOR DELETE
   TO anon
