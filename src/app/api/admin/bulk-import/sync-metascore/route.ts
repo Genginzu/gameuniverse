@@ -60,15 +60,10 @@ export async function POST(request: NextRequest) {
             successCount++;
             send({ type: "success", gameId: game.id, igdbId: game.igdbId, score });
           } else {
-            // No score — set sentinel
+            // No score available — mark as checked (sentinel -1), still a success
             await updateMetascore(game.id, -1);
-            failCount++;
-            send({
-              type: "error",
-              gameId: game.id,
-              igdbId: game.igdbId,
-              error: "No aggregated_rating on IGDB",
-            });
+            successCount++;
+            send({ type: "success", gameId: game.id, igdbId: game.igdbId, score: null });
           }
         } catch (error) {
           failCount++;
