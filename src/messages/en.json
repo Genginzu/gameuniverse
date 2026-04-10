@@ -2876,7 +2876,9 @@
     "gameSynced": "✓ {title}",
     "gameSyncFailed": "✗ {title}",
     "syncAborted": "Sync aborted",
-    "all": "All"
+    "all": "All",
+    "invalidField": "Invalid field",
+    "backToFields": "Back to bulk import"
   },
   "discussions": {
     "pageTitle": "Messages",

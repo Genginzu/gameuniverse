@@ -2879,7 +2879,9 @@
     "gameSynced": "✓ {title}",
     "gameSyncFailed": "✗ {title}",
     "syncAborted": "Synchronisation interrompue",
-    "all": "Tout"
+    "all": "Tout",
+    "invalidField": "Champ invalide",
+    "backToFields": "Retour à l'import en masse"
   },
   "discussions": {
     "pageTitle": "Discussions",

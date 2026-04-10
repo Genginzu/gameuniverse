@@ -178,7 +178,7 @@ export function BulkImportGameList({
                   <p className="text-xs text-gray-500 dark:text-gray-400">
                     IGDB #{game.igdbId}
                     {game.viewCount > 0 && ` · 👁 ${game.viewCount}`}
-                    {game.metascore != null && ` · ★ ${game.metascore}`}
+                    {game.metascore !== null && ` · ★ ${game.metascore}`}
                   </p>
                   {status === "error" && gameErrors[game.id] && (
                     <p className="mt-0.5 truncate text-xs text-red-600 dark:text-red-400">

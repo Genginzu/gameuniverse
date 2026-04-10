@@ -24,9 +24,8 @@ interface GamesResponse {
   total: number;
 }
 
-export function useBulkImport() {
+export function useBulkImport(field: BulkImportField = "cover") {
   const t = useTranslations("bulkImport");
-  const [selectedField, setSelectedField] = useState<BulkImportField>("cover");
   const [batchSize, setBatchSize] = useState(20);
   const [syncing, setSyncing] = useState(false);
   const [progress, setProgress] = useState({ done: 0, failed: 0, total: 0 });
@@ -45,7 +44,7 @@ export function useBulkImport() {
     isLoading: gamesLoading,
     mutate: refreshGames,
   } = useSWR<GamesResponse>(
-    `/api/admin/bulk-import/games?field=${selectedField}&limit=${batchSize === 0 ? 99999 : batchSize}`,
+    `/api/admin/bulk-import/games?field=${field}&limit=${batchSize === 0 ? 99999 : batchSize}`,
     fetcher
   );
 
@@ -59,10 +58,8 @@ export function useBulkImport() {
     setSyncing(true);
     setProgress({ done: 0, failed: 0, total: games.length });
 
-    // Build a map of gameId -> game for quick lookup
     const gameById = new Map(games.map((g) => [g.id, g]));
 
-    // Initialize all games as pending
     const initialStatuses: Record<string, GameSyncStatus> = {};
     for (const g of games) initialStatuses[g.id] = "pending";
     setGameStatuses(initialStatuses);
@@ -76,7 +73,7 @@ export function useBulkImport() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           gameIds: games.map((g) => ({ id: g.id, igdbId: g.igdbId })),
-          field: selectedField,
+          field,
         }),
         signal: controller.signal,
       });
@@ -99,7 +96,6 @@ export function useBulkImport() {
 
         buffer += decoder.decode(value, { stream: true });
 
-        // Parse SSE events from buffer
         const lines = buffer.split("\n");
         buffer = lines.pop() || "";
 
@@ -114,12 +110,8 @@ export function useBulkImport() {
             } else if (event.type === "success") {
               successCount++;
               setGameStatuses((prev) => ({ ...prev, [gameId]: "success" }));
-              // Decrement field count in real-time
               refreshCounts(
-                (prev) =>
-                  prev
-                    ? { ...prev, [selectedField]: Math.max(0, (prev[selectedField] ?? 0) - 1) }
-                    : prev,
+                (prev) => (prev ? { ...prev, [field]: Math.max(0, (prev[field] ?? 0) - 1) } : prev),
                 { revalidate: false }
               );
               const game = gameById.get(gameId);
@@ -163,15 +155,13 @@ export function useBulkImport() {
       setSyncing(false);
       abortControllerRef.current = null;
     }
-  }, [gamesData, t, selectedField, refreshCounts, refreshGames]);
+  }, [gamesData, t, field, refreshCounts, refreshGames]);
 
   const handleAbort = useCallback(() => {
     abortControllerRef.current?.abort();
   }, []);
 
   return {
-    selectedField,
-    setSelectedField,
     batchSize,
     setBatchSize,
     fieldCounts,
