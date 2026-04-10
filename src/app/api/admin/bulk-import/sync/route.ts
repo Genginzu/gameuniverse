@@ -3,47 +3,53 @@ import { GameImportService } from "@/lib/services/gameImportService";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 
-const CONCURRENCY = 1;
 const DELAY_MS = 300;
+const PAGE_SIZE = 1000;
 const NO_COVER_FALLBACK = "/assets/no-cover.png";
 const NO_BACKGROUND_FALLBACK = "/assets/no-cover.png";
 
-/** Columns that get a fallback value when IGDB returns nothing */
 const FIELD_FALLBACKS: Record<string, { column: string; fallback: string | number }> = {
   cover: { column: "cover_image_url", fallback: NO_COVER_FALLBACK },
   background: { column: "background_image_url", fallback: NO_BACKGROUND_FALLBACK },
   metascore: { column: "metascore", fallback: -1 },
 };
 
+const IMPORTABLE_FIELDS: Record<string, string> = {
+  cover: "cover_image_url",
+  background: "background_image_url",
+  playtime: "playtime_normally",
+  metascore: "metascore",
+  releaseDate: "release_date",
+};
+
 /**
  * POST /api/admin/bulk-import/sync
- * Streams sync progress via SSE with a worker pool (5 concurrent slots).
- * Body: { gameIds: Array<{ id: string; igdbId: number }>, field?: string }
- *
- * When `field` is provided and has a fallback (cover, background), games
- * that still have NULL after sync get the fallback value so they don't
- * reappear in the "missing" list.
+ * Two modes:
+ * - Normal: { gameIds: [...], field } — sync provided games
+ * - All:    { all: true, field }      — server fetches & syncs all missing games
  */
 export async function POST(request: NextRequest) {
-  let gameIds: Array<{ id: string; igdbId: number }>;
+  let gameIds: Array<{ id: string; igdbId: number }> | null = null;
   let field: string | undefined;
+  let allMode = false;
 
   try {
     const body = await request.json();
-    gameIds = body.gameIds;
     field = body.field;
+    allMode = body.all === true;
 
-    if (!Array.isArray(gameIds) || gameIds.length === 0) {
-      return new Response(JSON.stringify({ error: "gameIds array is required" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
+    if (!allMode) {
+      gameIds = body.gameIds;
+      if (!Array.isArray(gameIds) || gameIds.length === 0) {
+        return jsonError("gameIds array is required");
+      }
+    }
+
+    if (allMode && (!field || !IMPORTABLE_FIELDS[field])) {
+      return jsonError("field is required for all mode");
     }
   } catch {
-    return new Response(JSON.stringify({ error: "Invalid JSON" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
+    return jsonError("Invalid JSON");
   }
 
   const fallbackConfig = field ? FIELD_FALLBACKS[field] : undefined;
@@ -58,18 +64,13 @@ export async function POST(request: NextRequest) {
         controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
       };
 
-      let nextIndex = 0;
-
       const syncGame = async (id: string, igdbId: number) => {
         send({ type: "syncing", igdbId, gameId: id });
         try {
           const result = await GameImportService.syncWithIGDB(id, igdbId);
-
-          // Apply fallback if the field is still NULL after sync
           if (fallbackConfig) {
             await applyFallback(id, fallbackConfig.column, fallbackConfig.fallback);
           }
-
           if (result.success) {
             successCount++;
             send({ type: "success", igdbId, gameId: id });
@@ -83,26 +84,50 @@ export async function POST(request: NextRequest) {
           send({ type: "error", igdbId, gameId: id, error: message });
           logger.error("Bulk sync failed for game", { igdbId, error });
         }
+        await new Promise((r) => setTimeout(r, DELAY_MS));
       };
 
-      const runWorker = async (): Promise<void> => {
-        while (nextIndex < gameIds.length) {
-          const idx = nextIndex++;
-          const { id, igdbId } = gameIds[idx];
-          await syncGame(id, igdbId);
-          await new Promise((r) => setTimeout(r, DELAY_MS));
+      if (allMode && field) {
+        // Server-side pagination: fetch and process page by page
+        const column = IMPORTABLE_FIELDS[field];
+        let offset = 0;
+
+        while (true) {
+          const supabase = await createRouteHandlerClient();
+          let query = supabase.from("games").select("id, igdb_id").not("igdb_id", "is", null);
+
+          if (field === "metascore") {
+            query = query.is("metascore", null);
+          } else {
+            query = query.is(column, null);
+          }
+
+          const { data } = await query
+            .order("view_count", { ascending: false })
+            .range(offset, offset + PAGE_SIZE - 1);
+
+          if (!data || data.length === 0) {
+            hasMore = false;
+            break;
+          }
+
+          for (const game of data) {
+            await syncGame(game.id, game.igdb_id);
+          }
+
+          offset += data.length;
+          if (data.length < PAGE_SIZE) break;
         }
-      };
-
-      const workers = Array.from({ length: Math.min(CONCURRENCY, gameIds.length) }, () =>
-        runWorker()
-      );
-
-      await Promise.all(workers);
+      } else if (gameIds) {
+        // Normal mode: sync provided list
+        for (const { id, igdbId } of gameIds) {
+          await syncGame(id, igdbId);
+        }
+      }
 
       send({
         type: "done",
-        total: gameIds.length,
+        total: successCount + failCount,
         success: successCount,
         failed: failCount,
       });
@@ -120,9 +145,13 @@ export async function POST(request: NextRequest) {
   });
 }
 
-/**
- * Sets a fallback value on a game column only if it's still NULL.
- */
+function jsonError(message: string) {
+  return new Response(JSON.stringify({ error: message }), {
+    status: 400,
+    headers: { "Content-Type": "application/json" },
+  });
+}
+
 async function applyFallback(gameId: string, column: string, fallback: string | number) {
   try {
     const supabase = await createRouteHandlerClient();

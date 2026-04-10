@@ -50,34 +50,47 @@ export function useBulkImport(field: BulkImportField = "cover") {
 
   const handleSync = useCallback(async () => {
     const games = gamesData?.games;
-    if (!games || games.length === 0) return;
+    const isAllMode = batchSize === 0;
+
+    if (!isAllMode && (!games || games.length === 0)) return;
 
     const controller = new AbortController();
     abortControllerRef.current = controller;
 
     setSyncing(true);
-    setProgress({ done: 0, failed: 0, total: games.length });
+    const totalEstimate = isAllMode ? (gamesData?.total ?? 0) : (games?.length ?? 0);
+    setProgress({ done: 0, failed: 0, total: totalEstimate });
 
-    const gameById = new Map(games.map((g) => [g.id, g]));
+    const _gameById = new Map((games || []).map((g) => [g.id, g]));
 
-    const initialStatuses: Record<string, GameSyncStatus> = {};
-    for (const g of games) initialStatuses[g.id] = "pending";
-    setGameStatuses(initialStatuses);
+    if (!isAllMode && games) {
+      const initialStatuses: Record<string, GameSyncStatus> = {};
+      for (const g of games) initialStatuses[g.id] = "pending";
+      setGameStatuses(initialStatuses);
+    } else {
+      setGameStatuses({});
+    }
     setGameErrors({});
 
-    toast({ title: t("syncStarted", { count: games.length }) });
+    toast({ title: t("syncStarted", { count: totalEstimate }) });
 
     try {
-      // Use dedicated metascore endpoint or generic sync
-      const endpoint =
-        field === "metascore"
-          ? "/api/admin/bulk-import/sync-metascore"
-          : "/api/admin/bulk-import/sync";
+      // Build endpoint and payload
+      let endpoint: string;
+      let payload: Record<string, unknown>;
 
-      const payload =
-        field === "metascore"
-          ? { games: games.map((g) => ({ id: g.id, igdbId: g.igdbId, slug: g.slug })) }
-          : { gameIds: games.map((g) => ({ id: g.id, igdbId: g.igdbId })), field };
+      if (field === "metascore" && !isAllMode) {
+        endpoint = "/api/admin/bulk-import/sync-metascore";
+        payload = {
+          games: (games || []).map((g) => ({ id: g.id, igdbId: g.igdbId, slug: g.slug })),
+        };
+      } else if (isAllMode) {
+        endpoint = "/api/admin/bulk-import/sync";
+        payload = { all: true, field };
+      } else {
+        endpoint = "/api/admin/bulk-import/sync";
+        payload = { gameIds: (games || []).map((g) => ({ id: g.id, igdbId: g.igdbId })), field };
+      }
 
       const res = await fetch(endpoint, {
         method: "POST",
@@ -122,12 +135,12 @@ export function useBulkImport(field: BulkImportField = "cover") {
                 (prev) => (prev ? { ...prev, [field]: Math.max(0, (prev[field] ?? 0) - 1) } : prev),
                 { revalidate: false }
               );
-              setProgress({ done: successCount, failed: failCount, total: games.length });
+              setProgress({ done: successCount, failed: failCount, total: totalEstimate });
             } else if (event.type === "error") {
               failCount++;
               setGameStatuses((prev) => ({ ...prev, [gameId]: "error" }));
               setGameErrors((prev) => ({ ...prev, [gameId]: event.error || "Unknown error" }));
-              setProgress({ done: successCount, failed: failCount, total: games.length });
+              setProgress({ done: successCount, failed: failCount, total: totalEstimate });
             } else if (event.type === "done") {
               toast({
                 title: t("syncDone", { success: event.success, total: event.total }),
@@ -152,7 +165,7 @@ export function useBulkImport(field: BulkImportField = "cover") {
       setSyncing(false);
       abortControllerRef.current = null;
     }
-  }, [gamesData, t, field, refreshCounts, refreshGames]);
+  }, [gamesData, t, field, batchSize, refreshCounts, refreshGames]);
 
   const handleAbort = useCallback(() => {
     abortControllerRef.current?.abort();
