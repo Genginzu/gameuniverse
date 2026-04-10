@@ -2,13 +2,15 @@ import { IGDBGame } from "@/types/igdb";
 import { IGDBService } from "../igdbService";
 import { GameInsertData } from "./types";
 
+const NO_COVER_FALLBACK = "/assets/no-cover.png";
+
 /**
  * Transforms IGDB game data to Supabase insert format
  */
 export function transformIGDBToSupabase(igdbGame: IGDBGame): GameInsertData {
   const coverUrl = igdbGame.cover?.image_id
     ? IGDBService.buildImageUrl(igdbGame.cover.image_id, "cover_big")
-    : null;
+    : NO_COVER_FALLBACK;
 
   let backgroundUrl: string | null = null;
   if (igdbGame.artworks && igdbGame.artworks.length > 0) {
