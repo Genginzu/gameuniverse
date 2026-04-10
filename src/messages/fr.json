@@ -1495,7 +1495,7 @@
         "mainImagePlaceholder": "https://example.com/image.jpg",
         "backgroundImage": "Image de fond (URL)",
         "backgroundImagePlaceholder": "https://example.com/background.jpg",
-        "aiSearchImage": "Rechercher une image via IA",
+        "searchImage": "Rechercher une image",
         "imageSource": "Source",
         "noCharacterName": "Veuillez d'abord saisir un nom de personnage dans l'onglet traductions.",
         "noImageFound": "Aucune image trouvée pour ce personnage.",

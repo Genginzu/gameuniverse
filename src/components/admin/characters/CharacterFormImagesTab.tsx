@@ -13,7 +13,7 @@ interface CharacterFormImagesTabProps extends CharacterFormTabProps {
   availableGames?: AvailableGame[];
 }
 
-function useAiImageSearch(
+function useImageSearch(
   form: CharacterFormTabProps["form"],
   field: "main_image_url" | "background_image_url",
   availableGames: AvailableGame[]
@@ -81,8 +81,8 @@ export function CharacterFormImagesTab({
   const mainImageUrl = form.watch("main_image_url");
   const backgroundImageUrl = form.watch("background_image_url");
 
-  const mainSearch = useAiImageSearch(form, "main_image_url", availableGames);
-  const bgSearch = useAiImageSearch(form, "background_image_url", availableGames);
+  const mainSearch = useImageSearch(form, "main_image_url", availableGames);
+  const bgSearch = useImageSearch(form, "background_image_url", availableGames);
 
   return (
     <div className="space-y-8">
@@ -110,13 +110,13 @@ export function CharacterFormImagesTab({
                     size="icon"
                     onClick={mainSearch.search}
                     disabled={mainSearch.loading}
-                    title={t("aiSearchImage")}
+                    title={t("searchImage")}
                     className="shrink-0"
                   >
                     {mainSearch.loading ? (
                       <Icon icon="mdi:loading" className="size-4 animate-spin" />
                     ) : (
-                      <Icon icon="mdi:auto-fix" className="size-4" />
+                      <Icon icon="mdi:image-search" className="size-4" />
                     )}
                   </Button>
                 </div>
@@ -169,13 +169,13 @@ export function CharacterFormImagesTab({
                     size="icon"
                     onClick={bgSearch.search}
                     disabled={bgSearch.loading}
-                    title={t("aiSearchImage")}
+                    title={t("searchImage")}
                     className="shrink-0"
                   >
                     {bgSearch.loading ? (
                       <Icon icon="mdi:loading" className="size-4 animate-spin" />
                     ) : (
-                      <Icon icon="mdi:auto-fix" className="size-4" />
+                      <Icon icon="mdi:image-search" className="size-4" />
                     )}
                   </Button>
                 </div>
