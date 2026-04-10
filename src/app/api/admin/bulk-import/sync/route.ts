@@ -1,9 +1,9 @@
 import { NextRequest } from "next/server";
-import { GameImportService } from "@/lib/services/gameImportService";
+import { syncSingleField } from "@/lib/services/bulkFieldSync";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 
-const DELAY_MS = 300;
+const DELAY_MS = 100;
 const PAGE_SIZE = 1000;
 const NO_COVER_FALLBACK = "/assets/no-cover.png";
 const NO_BACKGROUND_FALLBACK = "/assets/no-cover.png";
@@ -67,8 +67,8 @@ export async function POST(request: NextRequest) {
       const syncGame = async (id: string, igdbId: number) => {
         send({ type: "syncing", igdbId, gameId: id });
         try {
-          const result = await GameImportService.syncWithIGDB(id, igdbId);
-          if (fallbackConfig) {
+          const result = await syncSingleField(id, igdbId, field || "cover");
+          if (fallbackConfig && result.value === null) {
             await applyFallback(id, fallbackConfig.column, fallbackConfig.fallback);
           }
           if (result.success) {

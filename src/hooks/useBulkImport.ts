@@ -76,19 +76,12 @@ export function useBulkImport(field: BulkImportField = "cover") {
 
     try {
       // Build endpoint and payload
-      let endpoint: string;
+      const endpoint = "/api/admin/bulk-import/sync";
       let payload: Record<string, unknown>;
 
-      if (field === "metascore" && !isAllMode) {
-        endpoint = "/api/admin/bulk-import/sync-metascore";
-        payload = {
-          games: (games || []).map((g) => ({ id: g.id, igdbId: g.igdbId, slug: g.slug })),
-        };
-      } else if (isAllMode) {
-        endpoint = "/api/admin/bulk-import/sync";
+      if (isAllMode) {
         payload = { all: true, field };
       } else {
-        endpoint = "/api/admin/bulk-import/sync";
         payload = { gameIds: (games || []).map((g) => ({ id: g.id, igdbId: g.igdbId })), field };
       }
 
