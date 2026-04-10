@@ -122,26 +122,11 @@ export function useBulkImport(field: BulkImportField = "cover") {
                 (prev) => (prev ? { ...prev, [field]: Math.max(0, (prev[field] ?? 0) - 1) } : prev),
                 { revalidate: false }
               );
-              const game = gameById.get(gameId);
-              if (game) {
-                const scoreInfo = event.score ? ` (${event.score})` : "";
-                toast({
-                  title: t("gameSynced", { title: game.title }) + scoreInfo,
-                  variant: "success",
-                });
-              }
               setProgress({ done: successCount, failed: failCount, total: games.length });
             } else if (event.type === "error") {
               failCount++;
               setGameStatuses((prev) => ({ ...prev, [gameId]: "error" }));
               setGameErrors((prev) => ({ ...prev, [gameId]: event.error || "Unknown error" }));
-              const game = gameById.get(gameId);
-              if (game) {
-                toast({
-                  title: t("gameSyncFailed", { title: game.title }),
-                  variant: "destructive",
-                });
-              }
               setProgress({ done: successCount, failed: failCount, total: games.length });
             } else if (event.type === "done") {
               toast({
