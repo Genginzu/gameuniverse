@@ -30,6 +30,7 @@ const NAV_CATEGORIES: NavCategory[] = [
         labelKey: "nav.ageClassifications",
       },
       { href: "/admin/reviews", icon: "fa:star", labelKey: "nav.reviews" },
+      { href: "/admin/bulk-import", icon: "lucide:download", labelKey: "nav.bulkImport" },
     ],
   },
   {
@@ -40,6 +41,11 @@ const NAV_CATEGORIES: NavCategory[] = [
       { href: "/admin/genders", icon: "fa:venus-mars", labelKey: "nav.characterGenders" },
       { href: "/admin/species", icon: "fa:paw", labelKey: "nav.characterSpecies" },
       { href: "/admin/comments", icon: "lucide:message-circle", labelKey: "nav.comments" },
+      {
+        href: "/admin/bulk-import-characters",
+        icon: "lucide:download",
+        labelKey: "nav.bulkImportCharacters",
+      },
     ],
   },
   {
@@ -55,10 +61,7 @@ const NAV_CATEGORIES: NavCategory[] = [
   },
   {
     labelKey: "nav.igdbCategory",
-    items: [
-      { href: "/admin/webhooks", icon: "lucide:webhook", labelKey: "nav.webhooks" },
-      { href: "/admin/bulk-import", icon: "lucide:download", labelKey: "nav.bulkImport" },
-    ],
+    items: [{ href: "/admin/webhooks", icon: "lucide:webhook", labelKey: "nav.webhooks" }],
   },
   {
     labelKey: "nav.toolsCategory",

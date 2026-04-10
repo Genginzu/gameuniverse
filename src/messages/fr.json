@@ -1188,6 +1188,7 @@
       "igdbCategory": "IGDB",
       "webhooks": "Webhooks",
       "bulkImport": "Import en masse",
+      "bulkImportCharacters": "Import en masse",
       "toolsCategory": "Outils",
       "translations": "Traductions"
     },
@@ -2882,6 +2883,29 @@
     "all": "Tout",
     "invalidField": "Champ invalide",
     "backToFields": "Retour à l'import en masse"
+  },
+  "bulkImportCharacters": {
+    "title": "Import en masse des personnages",
+    "description": "Synchronisez les données manquantes depuis IGDB pour vos personnages existants.",
+    "fields": {
+      "image": "Image",
+      "background": "Fond"
+    },
+    "gamesCount": "{count, plural, =0 {Aucun personnage} one {1 personnage} other {# personnages}} sans {field}",
+    "batchSize": "Quantité",
+    "syncButton": "Synchroniser {count, plural, one {1 personnage} other {# personnages}}",
+    "syncStarted": "Synchronisation de {count, plural, one {1 personnage} other {# personnages}} lancée…",
+    "syncDone": "{success}/{total} personnage(s) synchronisé(s)",
+    "syncFailed": "Échec de la synchronisation",
+    "allSynced": "Tous les personnages sont à jour pour ce champ.",
+    "abort": "Arrêter",
+    "progressLabel": "{done}/{total} traité(s)",
+    "progressSuccess": "{count} ✓",
+    "progressFailed": "{count} ✗",
+    "syncAborted": "Synchronisation interrompue",
+    "all": "Tout",
+    "invalidField": "Champ invalide",
+    "backToFields": "Retour à l'import en masse des personnages"
   },
   "discussions": {
     "pageTitle": "Discussions",
