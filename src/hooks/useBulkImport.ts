@@ -13,6 +13,8 @@ export interface BulkGame {
   igdbId: number;
   title: string;
   coverImage: string | null;
+  viewCount: number;
+  metascore: number | null;
 }
 
 export type GameSyncStatus = "pending" | "syncing" | "success" | "error";

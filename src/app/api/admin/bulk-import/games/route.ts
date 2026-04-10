@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
 
     const { data, count, error } = await supabase
       .from("games")
-      .select("id, slug, igdb_id, cover_image_url", { count: "exact" })
+      .select("id, slug, igdb_id, cover_image_url, view_count, metascore", { count: "exact" })
       .not("igdb_id", "is", null)
       .is(column, null)
       .order("view_count", { ascending: false })
@@ -67,6 +67,8 @@ export async function GET(request: NextRequest) {
       igdbId: g.igdb_id,
       title: titles[g.id] || g.slug,
       coverImage: g.cover_image_url,
+      viewCount: g.view_count ?? 0,
+      metascore: g.metascore ?? null,
     }));
 
     return NextResponse.json({ games, total: count ?? 0 });
