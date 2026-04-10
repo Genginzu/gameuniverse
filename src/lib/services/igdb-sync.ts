@@ -107,7 +107,12 @@ const FIELD_SYNC_MAP: Record<TrackableField, FieldSyncFn> = {
   cover_image: (s, gid, game) => syncDirectFields(s, gid, game, ["cover_image"]),
   background_image: (s, gid, game) => syncDirectFields(s, gid, game, ["background_image"]),
   release_date: (s, gid, game) => syncDirectFields(s, gid, game, ["release_date"]),
-  metascore: (s, gid, game) => syncDirectFields(s, gid, game, ["metascore"]),
+  metascore: async (s, gid, game) => {
+    // Skip IGDB metascore sync if a value already exists (likely from Metacritic)
+    const { data } = await s.from("games").select("metascore").eq("id", gid).single();
+    if (data?.metascore && data.metascore > 0) return;
+    await syncDirectFields(s, gid, game, ["metascore"]);
+  },
   genres: (s, gid, game) => syncGenres(s, gid, game),
   companies: (s, gid, game) => syncCompanies(s, gid, game),
   platforms: (s, gid, game) => syncPlatforms(s, gid, game),
