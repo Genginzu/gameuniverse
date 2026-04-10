@@ -1,14 +1,14 @@
 import { NextRequest } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { IGDBService } from "@/lib/services/igdbService";
-import { fetchMetacriticScore } from "@/lib/services/metacriticService";
 import { logger } from "@/lib/logger";
+
+const CONCURRENCY = 5;
 
 /**
  * POST /api/admin/bulk-import/sync-metascore
- * Dedicated metascore sync: tries Metacritic scraping first,
- * then falls back to IGDB aggregated_rating.
- * Streams progress via SSE. Sequential (rate-limited for Metacritic).
+ * Dedicated metascore sync: uses IGDB aggregated_rating only.
+ * Streams progress via SSE with worker pool.
  *
  * Body: { games: Array<{ id: string; igdbId: number; slug: string }> }
  */
@@ -37,35 +37,37 @@ export async function POST(request: NextRequest) {
       const encoder = new TextEncoder();
       let successCount = 0;
       let failCount = 0;
+      let nextIndex = 0;
 
       const send = (data: Record<string, unknown>) => {
         controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
       };
 
-      for (const game of games) {
+      const syncGame = async (game: { id: string; igdbId: number; slug: string }) => {
         send({ type: "syncing", gameId: game.id, igdbId: game.igdbId });
 
         try {
-          const score = await resolveMetascore(game.igdbId, game.slug);
+          let score: number | null = null;
+
+          // Try IGDB aggregated_rating
+          const igdbGame = await IGDBService.getGameDetails(game.igdbId);
+          if (igdbGame?.aggregated_rating) {
+            score = Math.round(igdbGame.aggregated_rating);
+          }
 
           if (score !== null) {
             await updateMetascore(game.id, score);
             successCount++;
-            send({
-              type: "success",
-              gameId: game.id,
-              igdbId: game.igdbId,
-              score,
-            });
+            send({ type: "success", gameId: game.id, igdbId: game.igdbId, score });
           } else {
-            // No score found anywhere — set sentinel
+            // No score — set sentinel
             await updateMetascore(game.id, -1);
             failCount++;
             send({
               type: "error",
               gameId: game.id,
               igdbId: game.igdbId,
-              error: "No score on IGDB or Metacritic",
+              error: "No aggregated_rating on IGDB",
             });
           }
         } catch (error) {
@@ -74,7 +76,20 @@ export async function POST(request: NextRequest) {
           send({ type: "error", gameId: game.id, igdbId: game.igdbId, error: message });
           logger.error("Metascore sync failed", { gameId: game.id, error });
         }
-      }
+      };
+
+      const runWorker = async () => {
+        while (nextIndex < games.length) {
+          const idx = nextIndex++;
+          await syncGame(games[idx]);
+        }
+      };
+
+      const workers = Array.from({ length: Math.min(CONCURRENCY, games.length) }, () =>
+        runWorker()
+      );
+
+      await Promise.all(workers);
 
       send({
         type: "done",
@@ -94,31 +109,6 @@ export async function POST(request: NextRequest) {
       Connection: "keep-alive",
     },
   });
-}
-
-/**
- * Try Metacritic first, then IGDB aggregated_rating as fallback.
- */
-async function resolveMetascore(igdbId: number, slug: string): Promise<number | null> {
-  // 1. Try Metacritic scraping (real Metascore)
-  const metacriticScore = await fetchMetacriticScore(slug);
-  if (metacriticScore !== null) {
-    logger.info("Metascore found via Metacritic", { slug, score: metacriticScore });
-    return metacriticScore;
-  }
-
-  // 2. Fallback to IGDB aggregated_rating
-  try {
-    const igdbGame = await IGDBService.getGameDetails(igdbId);
-    if (igdbGame?.aggregated_rating) {
-      logger.info("Metascore found via IGDB", { igdbId, score: igdbGame.aggregated_rating });
-      return Math.round(igdbGame.aggregated_rating);
-    }
-  } catch (error) {
-    logger.warn("IGDB fetch failed for metascore", { igdbId, error });
-  }
-
-  return null;
 }
 
 async function updateMetascore(gameId: string, score: number) {
