@@ -159,17 +159,11 @@ export function BulkImportGameList({
                   </div>
                 ) : (
                   <div className="size-10 shrink-0 overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700">
-                    {game.coverImage ? (
-                      <img
-                        src={game.coverImage}
-                        alt={game.title}
-                        className="size-full object-cover"
-                      />
-                    ) : (
-                      <div className="flex size-full items-center justify-center">
-                        <Icon icon="lucide:image-off" className="size-5 text-gray-400" />
-                      </div>
-                    )}
+                    <img
+                      src={game.coverImage || "/assets/no-cover.png"}
+                      alt={game.title}
+                      className="size-full object-cover"
+                    />
                   </div>
                 )}
 
