@@ -6,7 +6,7 @@ import { logger } from "@/lib/logger";
 const DELAY_MS = 300;
 const PAGE_SIZE = 1000;
 const NO_COVER_FALLBACK = "/assets/no-cover.png";
-const NO_BACKGROUND_FALLBACK = "/assets/no-cover.png";
+const NO_BACKGROUND_FALLBACK = "none";
 
 const FIELD_FALLBACKS: Record<string, { column: string; fallback: string | number }> = {
   cover: { column: "cover_image_url", fallback: NO_COVER_FALLBACK },

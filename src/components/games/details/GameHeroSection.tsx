@@ -84,7 +84,7 @@ export function GameHeroSection({
       </div>
 
       {/* Background image - only for hero section */}
-      {game.media.backgroundImage && (
+      {game.media.backgroundImage && game.media.backgroundImage !== "none" && (
         <div className="absolute inset-0 z-0 h-[60vh] overflow-hidden">
           <LazyImage
             src={game.media.backgroundImage}

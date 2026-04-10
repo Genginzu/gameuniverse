@@ -44,7 +44,7 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
   return (
     <div className="relative min-h-screen" style={{ backgroundColor: colors.backgroundColor }}>
       {/* Background image — more visible for glassmorphism blur effect */}
-      {game.media.backgroundImage && (
+      {game.media.backgroundImage && game.media.backgroundImage !== "none" && (
         <div className="absolute inset-x-0 top-0 z-0 h-[70vh]">
           <Image
             src={game.media.backgroundImage}
