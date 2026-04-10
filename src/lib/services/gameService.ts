@@ -38,6 +38,7 @@ interface GamesResponse {
 class GameServiceImpl extends BaseService<GameDetails, GameSummary> {
   protected readonly entityName = "game";
   protected readonly apiPath = "/api/games";
+  protected readonly revalidate = 60;
 
   /**
    * Builds SEO metadata from a game entity
