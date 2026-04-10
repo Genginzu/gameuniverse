@@ -4,7 +4,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 
 const CONCURRENCY = 1;
-const DELAY_MS = 500;
+const DELAY_MS = 300;
 const NO_COVER_FALLBACK = "/assets/no-cover.png";
 const NO_BACKGROUND_FALLBACK = "/assets/no-cover.png";
 

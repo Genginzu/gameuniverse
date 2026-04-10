@@ -4,7 +4,7 @@ import { IGDBService } from "@/lib/services/igdbService";
 import { logger } from "@/lib/logger";
 
 const CONCURRENCY = 1;
-const DELAY_MS = 500;
+const DELAY_MS = 300;
 
 /**
  * POST /api/admin/bulk-import/sync-metascore
