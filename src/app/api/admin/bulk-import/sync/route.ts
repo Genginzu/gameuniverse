@@ -12,6 +12,7 @@ const FIELD_FALLBACKS: Record<string, { column: string; fallback: string | numbe
   cover: { column: "cover_image_url", fallback: NO_COVER_FALLBACK },
   background: { column: "background_image_url", fallback: NO_BACKGROUND_FALLBACK },
   metascore: { column: "metascore", fallback: -1 },
+  releaseDate: { column: "release_date", fallback: "1970-01-01" },
 };
 
 const IMPORTABLE_FIELDS: Record<string, string> = {
