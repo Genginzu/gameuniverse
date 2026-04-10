@@ -6,8 +6,8 @@ import { logger } from "@/lib/logger";
 
 /**
  * POST /api/admin/bulk-import/sync-metascore
- * Dedicated metascore sync: tries IGDB aggregated_rating first,
- * then falls back to Metacritic scraping.
+ * Dedicated metascore sync: tries Metacritic scraping first,
+ * then falls back to IGDB aggregated_rating.
  * Streams progress via SSE. Sequential (rate-limited for Metacritic).
  *
  * Body: { games: Array<{ id: string; igdbId: number; slug: string }> }
@@ -97,24 +97,25 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * Try IGDB first, then Metacritic.
+ * Try Metacritic first, then IGDB aggregated_rating as fallback.
  */
 async function resolveMetascore(igdbId: number, slug: string): Promise<number | null> {
-  // 1. Try IGDB aggregated_rating
-  try {
-    const igdbGame = await IGDBService.getGameDetails(igdbId);
-    if (igdbGame?.aggregated_rating) {
-      return Math.round(igdbGame.aggregated_rating);
-    }
-  } catch (error) {
-    logger.warn("IGDB fetch failed for metascore", { igdbId, error });
-  }
-
-  // 2. Fallback to Metacritic scraping
+  // 1. Try Metacritic scraping (real Metascore)
   const metacriticScore = await fetchMetacriticScore(slug);
   if (metacriticScore !== null) {
     logger.info("Metascore found via Metacritic", { slug, score: metacriticScore });
     return metacriticScore;
+  }
+
+  // 2. Fallback to IGDB aggregated_rating
+  try {
+    const igdbGame = await IGDBService.getGameDetails(igdbId);
+    if (igdbGame?.aggregated_rating) {
+      logger.info("Metascore found via IGDB", { igdbId, score: igdbGame.aggregated_rating });
+      return Math.round(igdbGame.aggregated_rating);
+    }
+  } catch (error) {
+    logger.warn("IGDB fetch failed for metascore", { igdbId, error });
   }
 
   return null;
