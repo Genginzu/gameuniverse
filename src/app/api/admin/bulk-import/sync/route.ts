@@ -6,11 +6,12 @@ const CONCURRENCY = 5;
 
 /**
  * POST /api/admin/bulk-import/sync
- * Streams sync progress via SSE with parallel processing (5 concurrent).
- * Body: { gameIds: Array<{ id: string; igdbId: number; title?: string }> }
+ * Streams sync progress via SSE with a worker pool (5 concurrent slots).
+ * As soon as one game finishes, the next one starts immediately.
+ * Body: { gameIds: Array<{ id: string; igdbId: number }> }
  */
 export async function POST(request: NextRequest) {
-  let gameIds: Array<{ id: string; igdbId: number; title?: string }>;
+  let gameIds: Array<{ id: string; igdbId: number }>;
 
   try {
     const body = await request.json();
@@ -46,32 +47,42 @@ export async function POST(request: NextRequest) {
         controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`));
       };
 
-      // Process games in chunks of CONCURRENCY
-      for (let i = 0; i < gameIds.length; i += CONCURRENCY) {
-        const chunk = gameIds.slice(i, i + CONCURRENCY);
+      // Worker pool: maintain CONCURRENCY active tasks at all times
+      let nextIndex = 0;
 
-        const promises = chunk.map(async ({ id, igdbId }) => {
-          send({ type: "syncing", igdbId, gameId: id });
-
-          try {
-            const result = await GameImportService.syncWithIGDB(id, igdbId);
-            if (result.success) {
-              successCount++;
-              send({ type: "success", igdbId, gameId: id });
-            } else {
-              failCount++;
-              send({ type: "error", igdbId, gameId: id, error: result.error });
-            }
-          } catch (error) {
+      const syncGame = async (id: string, igdbId: number) => {
+        send({ type: "syncing", igdbId, gameId: id });
+        try {
+          const result = await GameImportService.syncWithIGDB(id, igdbId);
+          if (result.success) {
+            successCount++;
+            send({ type: "success", igdbId, gameId: id });
+          } else {
             failCount++;
-            const message = error instanceof Error ? error.message : "Unknown error";
-            send({ type: "error", igdbId, gameId: id, error: message });
-            logger.error("Bulk sync failed for game", { igdbId, error });
+            send({ type: "error", igdbId, gameId: id, error: result.error });
           }
-        });
+        } catch (error) {
+          failCount++;
+          const message = error instanceof Error ? error.message : "Unknown error";
+          send({ type: "error", igdbId, gameId: id, error: message });
+          logger.error("Bulk sync failed for game", { igdbId, error });
+        }
+      };
 
-        await Promise.all(promises);
-      }
+      const runWorker = async (): Promise<void> => {
+        while (nextIndex < gameIds.length) {
+          const idx = nextIndex++;
+          const { id, igdbId } = gameIds[idx];
+          await syncGame(id, igdbId);
+        }
+      };
+
+      // Launch CONCURRENCY workers that each pull from the shared queue
+      const workers = Array.from({ length: Math.min(CONCURRENCY, gameIds.length) }, () =>
+        runWorker()
+      );
+
+      await Promise.all(workers);
 
       send({
         type: "done",
