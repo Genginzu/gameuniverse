@@ -68,13 +68,21 @@ export function useBulkImport(field: BulkImportField = "cover") {
     toast({ title: t("syncStarted", { count: games.length }) });
 
     try {
-      const res = await fetch("/api/admin/bulk-import/sync", {
+      // Use dedicated metascore endpoint or generic sync
+      const endpoint =
+        field === "metascore"
+          ? "/api/admin/bulk-import/sync-metascore"
+          : "/api/admin/bulk-import/sync";
+
+      const payload =
+        field === "metascore"
+          ? { games: games.map((g) => ({ id: g.id, igdbId: g.igdbId, slug: g.slug })) }
+          : { gameIds: games.map((g) => ({ id: g.id, igdbId: g.igdbId })), field };
+
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          gameIds: games.map((g) => ({ id: g.id, igdbId: g.igdbId })),
-          field,
-        }),
+        body: JSON.stringify(payload),
         signal: controller.signal,
       });
 
@@ -116,7 +124,11 @@ export function useBulkImport(field: BulkImportField = "cover") {
               );
               const game = gameById.get(gameId);
               if (game) {
-                toast({ title: t("gameSynced", { title: game.title }), variant: "success" });
+                const scoreInfo = event.score ? ` (${event.score})` : "";
+                toast({
+                  title: t("gameSynced", { title: game.title }) + scoreInfo,
+                  variant: "success",
+                });
               }
               setProgress({ done: successCount, failed: failCount, total: games.length });
             } else if (event.type === "error") {
