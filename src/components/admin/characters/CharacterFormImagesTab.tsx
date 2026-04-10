@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { Icon } from "@iconify/react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -132,12 +131,12 @@ export function CharacterFormImagesTab({
           />
           {mainImageUrl && (
             <div className="relative h-96 rounded-xl border border-gray-200 dark:border-gray-700">
-              <Image
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
                 key={mainImageUrl}
                 src={mainImageUrl}
                 alt="Main image preview"
-                fill
-                className="rounded-xl object-contain"
+                className="h-full w-full rounded-xl object-contain"
                 onError={(e) => {
                   (e.target as HTMLImageElement).parentElement!.style.display = "none";
                 }}
@@ -195,11 +194,11 @@ export function CharacterFormImagesTab({
               className="relative overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700"
               style={{ height: "360px" }}
             >
-              <Image
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
                 src={backgroundImageUrl}
                 alt="Background preview"
-                fill
-                className="object-contain"
+                className="h-full w-full object-contain"
                 onError={(e) => {
                   (e.target as HTMLImageElement).parentElement!.style.display = "none";
                 }}
