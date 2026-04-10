@@ -3,7 +3,7 @@ import { syncSingleField } from "@/lib/services/bulkFieldSync";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 
-const DELAY_MS = 100;
+const DELAY_MS = 300;
 const PAGE_SIZE = 1000;
 const NO_COVER_FALLBACK = "/assets/no-cover.png";
 const NO_BACKGROUND_FALLBACK = "/assets/no-cover.png";
