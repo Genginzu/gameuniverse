@@ -29,7 +29,7 @@ export function useBulkImport() {
   const [syncing, setSyncing] = useState(false);
   const [progress, setProgress] = useState({ done: 0, failed: 0, total: 0 });
   const [gameStatuses, setGameStatuses] = useState<Record<string, GameSyncStatus>>({});
-  const abortRef = useRef(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const {
     data: fieldCounts,
@@ -50,9 +50,14 @@ export function useBulkImport() {
     const games = gamesData?.games;
     if (!games || games.length === 0) return;
 
-    abortRef.current = false;
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
     setSyncing(true);
     setProgress({ done: 0, failed: 0, total: games.length });
+
+    // Build a map of gameId -> game for quick lookup
+    const gameById = new Map(games.map((g) => [g.id, g]));
 
     // Initialize all games as pending
     const initialStatuses: Record<string, GameSyncStatus> = {};
@@ -61,67 +66,93 @@ export function useBulkImport() {
 
     toast({ title: t("syncStarted", { count: games.length }) });
 
-    let successCount = 0;
-    let failCount = 0;
+    try {
+      const res = await fetch("/api/admin/bulk-import/sync", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          gameIds: games.map((g) => ({ id: g.id, igdbId: g.igdbId })),
+        }),
+        signal: controller.signal,
+      });
 
-    for (const game of games) {
-      if (abortRef.current) break;
-
-      // Mark current game as syncing
-      setGameStatuses((prev) => ({ ...prev, [game.id]: "syncing" }));
-
-      try {
-        const res = await fetch("/api/admin/bulk-import/sync", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            gameIds: [{ id: game.id, igdbId: game.igdbId }],
-          }),
-        });
-
-        const result = await res.json();
-        const ok = res.ok && result.success > 0;
-
-        if (ok) {
-          successCount++;
-          setGameStatuses((prev) => ({ ...prev, [game.id]: "success" }));
-          toast({
-            title: t("gameSynced", { title: game.title }),
-            variant: "success",
-          });
-        } else {
-          failCount++;
-          setGameStatuses((prev) => ({ ...prev, [game.id]: "error" }));
-          toast({
-            title: t("gameSyncFailed", { title: game.title }),
-            variant: "destructive",
-          });
-        }
-      } catch {
-        failCount++;
-        setGameStatuses((prev) => ({ ...prev, [game.id]: "error" }));
-        toast({
-          title: t("gameSyncFailed", { title: game.title }),
-          variant: "destructive",
-        });
+      if (!res.ok || !res.body) {
+        toast({ title: t("syncFailed"), variant: "destructive" });
+        setSyncing(false);
+        return;
       }
 
-      setProgress({ done: successCount, failed: failCount, total: games.length });
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let successCount = 0;
+      let failCount = 0;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+
+        // Parse SSE events from buffer
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || "";
+
+        for (const line of lines) {
+          if (!line.startsWith("data: ")) continue;
+          try {
+            const event = JSON.parse(line.slice(6));
+            const gameId = event.gameId as string;
+
+            if (event.type === "syncing") {
+              setGameStatuses((prev) => ({ ...prev, [gameId]: "syncing" }));
+            } else if (event.type === "success") {
+              successCount++;
+              setGameStatuses((prev) => ({ ...prev, [gameId]: "success" }));
+              const game = gameById.get(gameId);
+              if (game) {
+                toast({ title: t("gameSynced", { title: game.title }), variant: "success" });
+              }
+              setProgress({ done: successCount, failed: failCount, total: games.length });
+            } else if (event.type === "error") {
+              failCount++;
+              setGameStatuses((prev) => ({ ...prev, [gameId]: "error" }));
+              const game = gameById.get(gameId);
+              if (game) {
+                toast({
+                  title: t("gameSyncFailed", { title: game.title }),
+                  variant: "destructive",
+                });
+              }
+              setProgress({ done: successCount, failed: failCount, total: games.length });
+            } else if (event.type === "done") {
+              toast({
+                title: t("syncDone", { success: event.success, total: event.total }),
+                variant: event.failed > 0 ? "destructive" : "success",
+              });
+            }
+          } catch {
+            // Skip malformed SSE lines
+          }
+        }
+      }
+
+      refreshCounts();
+      refreshGames();
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") {
+        toast({ title: t("syncAborted"), variant: "destructive" });
+      } else {
+        toast({ title: t("syncFailed"), variant: "destructive" });
+      }
+    } finally {
+      setSyncing(false);
+      abortControllerRef.current = null;
     }
-
-    // Final summary toast
-    toast({
-      title: t("syncDone", { success: successCount, total: games.length }),
-      variant: failCount > 0 ? "destructive" : "success",
-    });
-
-    refreshCounts();
-    refreshGames();
-    setSyncing(false);
   }, [gamesData, t, refreshCounts, refreshGames]);
 
   const handleAbort = useCallback(() => {
-    abortRef.current = true;
+    abortControllerRef.current?.abort();
   }, []);
 
   return {

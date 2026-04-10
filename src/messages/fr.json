@@ -2877,7 +2877,8 @@
     "progressSuccess": "{count} ✓",
     "progressFailed": "{count} ✗",
     "gameSynced": "✓ {title}",
-    "gameSyncFailed": "✗ {title}"
+    "gameSyncFailed": "✗ {title}",
+    "syncAborted": "Synchronisation interrompue"
   },
   "discussions": {
     "pageTitle": "Discussions",
