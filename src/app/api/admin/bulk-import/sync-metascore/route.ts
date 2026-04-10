@@ -3,7 +3,8 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { IGDBService } from "@/lib/services/igdbService";
 import { logger } from "@/lib/logger";
 
-const CONCURRENCY = 2;
+const CONCURRENCY = 1;
+const DELAY_MS = 500;
 
 /**
  * POST /api/admin/bulk-import/sync-metascore
@@ -77,6 +78,7 @@ export async function POST(request: NextRequest) {
         while (nextIndex < games.length) {
           const idx = nextIndex++;
           await syncGame(games[idx]);
+          await new Promise((r) => setTimeout(r, DELAY_MS));
         }
       };
 

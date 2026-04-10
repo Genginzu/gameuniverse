@@ -3,7 +3,8 @@ import { GameImportService } from "@/lib/services/gameImportService";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 
-const CONCURRENCY = 2;
+const CONCURRENCY = 1;
+const DELAY_MS = 500;
 const NO_COVER_FALLBACK = "/assets/no-cover.png";
 const NO_BACKGROUND_FALLBACK = "/assets/no-cover.png";
 
@@ -89,6 +90,7 @@ export async function POST(request: NextRequest) {
           const idx = nextIndex++;
           const { id, igdbId } = gameIds[idx];
           await syncGame(id, igdbId);
+          await new Promise((r) => setTimeout(r, DELAY_MS));
         }
       };
 
