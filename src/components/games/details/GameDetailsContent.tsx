@@ -11,6 +11,7 @@ import { GameDetailsSidebar } from "./GameDetailsSidebar";
 import { GameDetailsMainContent } from "./GameDetailsMainContent";
 import { GameDetailsNavBar } from "./GameDetailsNavBar";
 import { useBackgroundSync } from "@/hooks/useBackgroundSync";
+import { useViewTracker } from "@/hooks/useViewTracker";
 import Image from "next/image";
 
 interface GameDetailsProps {
@@ -27,6 +28,7 @@ interface GameDetailsProps {
  */
 export function GameDetailsContent({ game, locale }: GameDetailsProps) {
   useBackgroundSync(game.slug, game.igdbId, game.lastSyncedAt);
+  useViewTracker("games", game.slug);
 
   const colors = buildGameColors({
     accentColor: game.accentColor,

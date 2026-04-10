@@ -173,8 +173,10 @@ export async function GET(request: NextRequest) {
     }
 
     // Apply pagination and execute main query
-    // Tri global par nom via la table jointe character_translations (inner join)
+    // Tri : personnages avec image d'abord (par view_count desc), puis sans image
     const { data: characters, error } = await query
+      .order("main_image", { ascending: false, nullsFirst: false })
+      .order("view_count", { ascending: false })
       .order("name", { referencedTable: "character_translations", ascending: true })
       .range(offset, offset + limit - 1);
 

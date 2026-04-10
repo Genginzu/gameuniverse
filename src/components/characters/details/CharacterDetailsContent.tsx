@@ -13,6 +13,7 @@ import { CharacterDescriptionTab } from "./CharacterDescriptionTab";
 import { CharacterGamesTab } from "./CharacterGamesTab";
 import { CharacterMediaTab } from "./CharacterMediaTab";
 import { FavoriteCharacterButton } from "./FavoriteCharacterButton";
+import { useViewTracker } from "@/hooks/useViewTracker";
 
 // Lazy load du tab commentaires — react-hook-form + zod ne sont chargés que si nécessaire
 const CharacterCommentsTab = dynamic(
@@ -71,6 +72,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
   const [activeTab, setActiveTab] = useState<TabKey>("description");
   // Le count commentaires est remonté par le tab quand il est chargé
   const [commentCount, setCommentCount] = useState<number | null>(null);
+  useViewTracker("characters", character.slug);
 
   const colors = getCharacterColors(character.role);
   const primaryGame = character.games.find((g) => g.isPrimary) || character.games[0];
@@ -297,7 +299,9 @@ function TabNavigation({ activeTab, onTabChange, gamesCount, commentCount }: Tab
           >
             <Icon icon={icon} className="inline h-4 w-4 sm:mr-2" />
             <span className="hidden sm:inline">{label}</span>
-            {count !== null && count !== undefined && <span className="hidden sm:inline"> ({count})</span>}
+            {count !== null && count !== undefined && (
+              <span className="hidden sm:inline"> ({count})</span>
+            )}
           </button>
         ))}
       </div>
