@@ -84,25 +84,17 @@ export async function POST(
           logger.error(`Background sync failed for game ${slug}`, { error: result.error });
         }
 
-        // After IGDB sync, check if metascore is still missing — try Metacritic
+        // After IGDB sync, always try Metacritic for a more accurate metascore
         if (!overriddenFields.includes("metascore" as TrackableField)) {
           try {
-            const freshSupabase = await createRouteHandlerClient();
-            const { data: updated } = await freshSupabase
-              .from("games")
-              .select("metascore")
-              .eq("id", game.id)
-              .single();
-
-            if (!updated?.metascore || updated.metascore <= 0) {
-              const metacriticScore = await fetchMetacriticScore(slug);
-              if (metacriticScore !== null) {
-                await freshSupabase
-                  .from("games")
-                  .update({ metascore: metacriticScore })
-                  .eq("id", game.id);
-                logger.info(`Metacritic score found for ${slug}`, { score: metacriticScore });
-              }
+            const metacriticScore = await fetchMetacriticScore(slug);
+            if (metacriticScore !== null) {
+              const freshSupabase = await createRouteHandlerClient();
+              await freshSupabase
+                .from("games")
+                .update({ metascore: metacriticScore })
+                .eq("id", game.id);
+              logger.info(`Metacritic score applied for ${slug}`, { score: metacriticScore });
             }
           } catch (error) {
             logger.warn(`Metacritic check failed for ${slug}`, { error });
