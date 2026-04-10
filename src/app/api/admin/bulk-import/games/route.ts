@@ -17,7 +17,7 @@ const IMPORTABLE_FIELDS: Record<string, string> = {
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
   const field = searchParams.get("field");
-  const limit = Math.min(parseInt(searchParams.get("limit") || "20", 10), 400);
+  const limit = parseInt(searchParams.get("limit") || "20", 10);
   const offset = parseInt(searchParams.get("offset") || "0", 10);
 
   if (!field || !IMPORTABLE_FIELDS[field]) {

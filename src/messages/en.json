@@ -2875,7 +2875,8 @@
     "progressFailed": "{count} ✗",
     "gameSynced": "✓ {title}",
     "gameSyncFailed": "✗ {title}",
-    "syncAborted": "Sync aborted"
+    "syncAborted": "Sync aborted",
+    "all": "All"
   },
   "discussions": {
     "pageTitle": "Messages",

@@ -37,13 +37,6 @@ export async function POST(request: NextRequest) {
         headers: { "Content-Type": "application/json" },
       });
     }
-
-    if (gameIds.length > 400) {
-      return new Response(JSON.stringify({ error: "Maximum 400 games per batch" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
   } catch {
     return new Response(JSON.stringify({ error: "Invalid JSON" }), {
       status: 400,

@@ -43,7 +43,7 @@ export function useBulkImport() {
     isLoading: gamesLoading,
     mutate: refreshGames,
   } = useSWR<GamesResponse>(
-    `/api/admin/bulk-import/games?field=${selectedField}&limit=${batchSize}`,
+    `/api/admin/bulk-import/games?field=${selectedField}&limit=${batchSize === 0 ? 99999 : batchSize}`,
     fetcher
   );
 

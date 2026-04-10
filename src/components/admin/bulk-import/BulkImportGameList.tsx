@@ -70,6 +70,7 @@ export function BulkImportGameList({
                 {size}
               </option>
             ))}
+            <option value={0}>{t("all")}</option>
           </select>
 
           {syncing ? (

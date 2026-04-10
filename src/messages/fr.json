@@ -2878,7 +2878,8 @@
     "progressFailed": "{count} ✗",
     "gameSynced": "✓ {title}",
     "gameSyncFailed": "✗ {title}",
-    "syncAborted": "Synchronisation interrompue"
+    "syncAborted": "Synchronisation interrompue",
+    "all": "Tout"
   },
   "discussions": {
     "pageTitle": "Discussions",
