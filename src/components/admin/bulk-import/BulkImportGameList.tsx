@@ -88,7 +88,7 @@ export function BulkImportGameList({
               className="flex min-h-[44px] items-center gap-2 rounded-xl bg-linear-to-r from-cyan-500 to-violet-500 px-4 py-2 text-sm font-medium text-white transition-all hover:opacity-90 disabled:opacity-50"
             >
               <Icon icon="lucide:download" className="size-4" />
-              {t("syncButton", { count: games.length })}
+              {t("syncButton", { count: batchSize === 0 ? total : games.length })}
             </button>
           )}
         </div>
