@@ -20,6 +20,7 @@ export default function AdminBulkImportPage() {
     syncing,
     progress,
     gameStatuses,
+    gameErrors,
     handleSync,
     handleAbort,
   } = useBulkImport();
@@ -47,6 +48,7 @@ export default function AdminBulkImportPage() {
         selectedField={selectedField}
         progress={progress}
         gameStatuses={gameStatuses}
+        gameErrors={gameErrors}
         onBatchSizeChange={setBatchSize}
         onSync={handleSync}
         onAbort={handleAbort}

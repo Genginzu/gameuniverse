@@ -23,6 +23,7 @@ interface BulkImportGameListProps {
   selectedField: BulkImportField;
   progress: { done: number; failed: number; total: number };
   gameStatuses: Record<string, GameSyncStatus>;
+  gameErrors: Record<string, string>;
   onBatchSizeChange: (size: number) => void;
   onSync: () => void;
   onAbort: () => void;
@@ -37,6 +38,7 @@ export function BulkImportGameList({
   selectedField,
   progress,
   gameStatuses,
+  gameErrors,
   onBatchSizeChange,
   onSync,
   onAbort,
@@ -158,7 +160,7 @@ export function BulkImportGameList({
                     <Icon icon={config.icon} className={`size-6 ${config.className}`} />
                   </div>
                 ) : (
-                  <div className="size-10 shrink-0 overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700">
+                  <div className="h-14 w-10 shrink-0 overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700">
                     <img
                       src={game.coverImage || "/assets/no-cover.png"}
                       alt={game.title}
@@ -173,6 +175,11 @@ export function BulkImportGameList({
                     {game.title}
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">IGDB #{game.igdbId}</p>
+                  {status === "error" && gameErrors[game.id] && (
+                    <p className="mt-0.5 truncate text-xs text-red-600 dark:text-red-400">
+                      {gameErrors[game.id]}
+                    </p>
+                  )}
                 </div>
 
                 {/* Link to game */}

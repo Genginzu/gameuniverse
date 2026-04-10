@@ -29,6 +29,7 @@ export function useBulkImport() {
   const [syncing, setSyncing] = useState(false);
   const [progress, setProgress] = useState({ done: 0, failed: 0, total: 0 });
   const [gameStatuses, setGameStatuses] = useState<Record<string, GameSyncStatus>>({});
+  const [gameErrors, setGameErrors] = useState<Record<string, string>>({});
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const {
@@ -63,6 +64,7 @@ export function useBulkImport() {
     const initialStatuses: Record<string, GameSyncStatus> = {};
     for (const g of games) initialStatuses[g.id] = "pending";
     setGameStatuses(initialStatuses);
+    setGameErrors({});
 
     toast({ title: t("syncStarted", { count: games.length }) });
 
@@ -118,6 +120,7 @@ export function useBulkImport() {
             } else if (event.type === "error") {
               failCount++;
               setGameStatuses((prev) => ({ ...prev, [gameId]: "error" }));
+              setGameErrors((prev) => ({ ...prev, [gameId]: event.error || "Unknown error" }));
               const game = gameById.get(gameId);
               if (game) {
                 toast({
@@ -169,6 +172,7 @@ export function useBulkImport() {
     syncing,
     progress,
     gameStatuses,
+    gameErrors,
     handleSync,
     handleAbort,
     refreshGames,
