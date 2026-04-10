@@ -3,7 +3,7 @@ import { GameImportService } from "@/lib/services/gameImportService";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 
-const CONCURRENCY = 5;
+const CONCURRENCY = 2;
 const NO_COVER_FALLBACK = "/assets/no-cover.png";
 const NO_BACKGROUND_FALLBACK = "/assets/no-cover.png";
 

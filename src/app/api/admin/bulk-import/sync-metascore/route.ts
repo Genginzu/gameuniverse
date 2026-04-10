@@ -3,12 +3,12 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { IGDBService } from "@/lib/services/igdbService";
 import { logger } from "@/lib/logger";
 
-const CONCURRENCY = 5;
+const CONCURRENCY = 2;
 
 /**
  * POST /api/admin/bulk-import/sync-metascore
  * Dedicated metascore sync: uses IGDB aggregated_rating only.
- * Streams progress via SSE with worker pool.
+ * Streams progress via SSE with worker pool (2 concurrent, rate-limited).
  *
  * Body: { games: Array<{ id: string; igdbId: number; slug: string }> }
  */
