@@ -29,7 +29,7 @@ interface DownloadState {
 export function useGlobalSync(page: number, search: string, filter: string) {
   const params = new URLSearchParams({
     page: String(page),
-    limit: "50",
+    limit: "1000",
     search,
     filter,
   });
