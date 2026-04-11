@@ -57,7 +57,7 @@ export function useGlobalSyncImport(onGameSynced?: () => void) {
 
         if (result.success) {
           synced++;
-          onGameSynced?.();
+          if (synced % 100 === 0) onGameSynced?.();
         } else {
           failed++;
         }
