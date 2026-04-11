@@ -83,7 +83,7 @@ export interface CharacterSummary {
   backgroundColor?: string;
   gender?: { id: string; slug: string; name: string };
   species?: { id: string; slug: string; name: string };
-  primaryGame: string;
+  primaryGame?: string;
   gamesCount: number;
 }
 

@@ -7,12 +7,8 @@ import {
 import type { PlatformSummary } from "@/types/platform";
 import { createServerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
-import { pickTranslation } from "@/lib/utils/pickTranslation";
-import type {
-  CharacterDetailsRow,
-  GameRow,
-  RelatedCharacterRow,
-} from "./characterService.types";
+import { pickTranslation, pickTranslationWithName } from "@/lib/utils/pickTranslation";
+import type { CharacterDetailsRow, GameRow, RelatedCharacterRow } from "./characterService.types";
 
 /**
  * Récupère les détails d'un personnage directement depuis la base de données
@@ -56,7 +52,7 @@ export async function fetchCharacterDetailsFromDB(
   if (!character) return null;
 
   const typedCharacter = character as unknown as CharacterDetailsRow;
-  const translation = pickTranslation(typedCharacter.character_translations, locale);
+  const translation = pickTranslationWithName(typedCharacter.character_translations, locale);
 
   const processedGames = processGames(typedCharacter);
   const primaryGame =
@@ -69,7 +65,7 @@ export async function fetchCharacterDetailsFromDB(
   return {
     id: typedCharacter.id,
     slug: typedCharacter.slug,
-    name: translation?.name || "Unnamed",
+    name: translation?.name || typedCharacter.slug,
     role: translation?.role || undefined,
     description: translation?.description || undefined,
     biography: translation?.biography || undefined,
@@ -123,29 +119,54 @@ function processMedia(typedCharacter: CharacterDetailsRow): CharacterMedia {
     screenshots: mediaItems
       .filter((m) => m.type === "screenshot")
       .sort(sortByOrder)
-      .map((m) => ({ id: m.id, url: m.url, altText: m.alt_text || undefined, caption: m.description || undefined, isFeatured: m.is_featured || false })),
+      .map((m) => ({
+        id: m.id,
+        url: m.url,
+        altText: m.alt_text || undefined,
+        caption: m.description || undefined,
+        isFeatured: m.is_featured || false,
+      })),
     artwork: mediaItems
       .filter((m) => m.type === "artwork")
       .sort(sortByOrder)
-      .map((m) => ({ id: m.id, url: m.url, altText: m.alt_text || undefined, caption: m.description || undefined, type: m.title || "artwork", isFeatured: m.is_featured || false })),
+      .map((m) => ({
+        id: m.id,
+        url: m.url,
+        altText: m.alt_text || undefined,
+        caption: m.description || undefined,
+        type: m.title || "artwork",
+        isFeatured: m.is_featured || false,
+      })),
     videos: mediaItems
       .filter((m) => m.type === "video")
       .sort(sortByOrder)
-      .map((m) => ({ id: m.id, title: m.title || "Video", description: m.description || undefined, url: m.url, thumbnailUrl: m.thumbnail_url || undefined, type: "video", isFeatured: m.is_featured || false })),
+      .map((m) => ({
+        id: m.id,
+        title: m.title || "Video",
+        description: m.description || undefined,
+        url: m.url,
+        thumbnailUrl: m.thumbnail_url || undefined,
+        type: "video",
+        isFeatured: m.is_featured || false,
+      })),
   };
 }
 
-function processRelationships(typedCharacter: CharacterDetailsRow, locale: string): CharacterRelationship[] {
+function processRelationships(
+  typedCharacter: CharacterDetailsRow,
+  locale: string
+): CharacterRelationship[] {
   const raw =
     typedCharacter.character_relationships?.map((rel) => {
       const related = rel.related_character as RelatedCharacterRow | null;
       if (!related) return null;
-      const relatedTranslation = pickTranslation(related.character_translations, locale);
+      const relatedTranslation = pickTranslationWithName(related.character_translations, locale);
       return {
         id: rel.id,
         relatedCharacter: {
-          id: related.id, slug: related.slug,
-          name: relatedTranslation?.name || "Unknown",
+          id: related.id,
+          slug: related.slug,
+          name: relatedTranslation?.name || related.slug,
           mainImage: related.main_image || undefined,
           role: relatedTranslation?.role || undefined,
         },
@@ -170,7 +191,8 @@ function processPlatforms(typedCharacter: CharacterDetailsRow, locale: string): 
         translations.find((t) => t.language_code === "en") ||
         translations[0];
       platformMap.set(platform.id, {
-        id: platform.id, slug: platform.slug,
+        id: platform.id,
+        slug: platform.slug,
         name: tr?.name || platform.slug,
         abbreviation: tr?.abbreviation || undefined,
         iconUrl: platform.icon_url || undefined,
