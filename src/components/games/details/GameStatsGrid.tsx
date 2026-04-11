@@ -54,7 +54,7 @@ export function GameStatsGrid({
       show: true,
     },
     {
-      icon: "lucide:trophy",
+      icon: "lucide:gamepad-2",
       value: "",
       label: tDetails("statsGrid.genres"),
       metascoreBg: undefined,
