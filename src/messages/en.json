@@ -2353,7 +2353,25 @@
       "totalEntries": "{count, plural, =0 {No entries} one {1 entry} other {# entries}}",
       "noEntries": "No entries. Start the download to populate the table.",
       "matched": "Matched",
-      "unmatched": "Unmatched"
+      "unmatched": "Unmatched",
+      "tabs": {
+        "download": "Download",
+        "sync": "Synchronization"
+      },
+      "syncTab": {
+        "title": "Sync Games",
+        "description": "Imports or updates each game in your database from IGDB, one by one.",
+        "startSync": "Start Sync",
+        "syncing": "Syncing...",
+        "stop": "Stop",
+        "currentGame": "Current: {name}",
+        "synced": "{count} synced",
+        "failed": "{count} failed",
+        "remaining": "{count} remaining",
+        "complete": "Sync complete: {count} games processed",
+        "infoResume": "You can stop and resume the sync at any time. It will automatically pick up where it left off.",
+        "infoRetry": "Failed games are not marked as synced and will be retried on the next run."
+      }
     }
   },
   "collections": {
