@@ -4,6 +4,64 @@ import { LazyImage } from "@/components/ui/lazy-image";
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+
+/** Thumbnail card for a video with native img fallback on error */
+function VideoThumbnailCard({
+  video,
+  index,
+  thumbnail,
+  isSelected,
+  onSelect,
+}: {
+  video: { title?: string };
+  index: number;
+  thumbnail: string | null;
+  isSelected: boolean;
+  onSelect: () => void;
+}) {
+  const [imgError, setImgError] = useState(false);
+  const showImage = thumbnail && !imgError;
+
+  return (
+    <button
+      onClick={onSelect}
+      className={`group relative overflow-hidden rounded-xl border transition-all ${
+        isSelected ? "border-white ring-2 ring-white/20" : "border-slate-700 hover:border-slate-600"
+      }`}
+    >
+      <div className="relative aspect-video">
+        {showImage ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={thumbnail}
+            alt={video.title || `Video ${index + 1}`}
+            className="h-full w-full object-cover"
+            loading="lazy"
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-slate-800">
+            <Icon icon="lucide:play" className="h-8 w-8 text-slate-400" />
+          </div>
+        )}
+
+        {/* Overlay play button */}
+        <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity group-hover:opacity-100">
+          <div className="rounded-full bg-white/20 p-3 backdrop-blur-xs">
+            <Icon icon="lucide:play" className="h-6 w-6 text-white" />
+          </div>
+        </div>
+      </div>
+
+      <div className="p-3">
+        <h4 className="line-clamp-2 text-left text-sm font-medium text-white">
+          {video.title || `Video ${index + 1}`}
+        </h4>
+      </div>
+    </button>
+  );
+}
+
 /** Extract YouTube video_id from a watch URL, returns null if not parseable */
 export function extractYouTubeVideoId(url: string): string | null {
   try {
@@ -113,45 +171,14 @@ export function GameMediaGallery({ media, gameTitle }: GameMediaGalleryProps) {
                   (videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : null);
 
                 return (
-                  <button
+                  <VideoThumbnailCard
                     key={video.id}
-                    onClick={() => setSelectedVideoIndex(index)}
-                    className={`group relative overflow-hidden rounded-xl border transition-all ${
-                      selectedVideoIndex === index
-                        ? "border-white ring-2 ring-white/20"
-                        : "border-slate-700 hover:border-slate-600"
-                    }`}
-                  >
-                    <div className="relative aspect-video">
-                      {thumbnail ? (
-                        <LazyImage
-                          src={thumbnail}
-                          alt={video.title || `Video ${index + 1}`}
-                          fill
-                          className="object-cover"
-                          sizes="300px"
-                          showSkeleton={true}
-                        />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center bg-slate-800">
-                          <Icon icon="lucide:play" className="h-8 w-8 text-slate-400" />
-                        </div>
-                      )}
-
-                      {/* Overlay play button */}
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity group-hover:opacity-100">
-                        <div className="rounded-full bg-white/20 p-3 backdrop-blur-xs">
-                          <Icon icon="lucide:play" className="h-6 w-6 text-white" />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="p-3">
-                      <h4 className="line-clamp-2 text-left text-sm font-medium text-white">
-                        {video.title || `Video ${index + 1}`}
-                      </h4>
-                    </div>
-                  </button>
+                    video={video}
+                    index={index}
+                    thumbnail={thumbnail}
+                    isSelected={selectedVideoIndex === index}
+                    onSelect={() => setSelectedVideoIndex(index)}
+                  />
                 );
               })}
             </div>
