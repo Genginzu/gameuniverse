@@ -131,12 +131,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       locale
     );
     const games = buildGames(character.character_games);
-    const primaryGame = games.find((g) => g.isPrimary)?.title || games[0]?.title || "Unknown";
+    const primaryGame = games.find((g) => g.isPrimary)?.title || games[0]?.title || undefined;
 
     const transformedCharacter = {
       id: character.id,
       slug: character.slug,
-      name: translation?.name || "Unnamed",
+      name: translation?.name || character.slug,
       role: translation?.role,
       description: translation?.description,
       biography: translation?.biography,
