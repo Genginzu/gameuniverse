@@ -97,10 +97,12 @@ export function GameMediaGallery({ media, gameTitle }: GameMediaGalleryProps) {
   const [selectedArtworkIndex, setSelectedArtworkIndex] = useState(0);
   const [selectedVideoIndex, setSelectedVideoIndex] = useState(0);
 
-  // Deduplicate videos by URL
-  const uniqueVideos = media.videos.filter(
-    (video, index, self) => index === self.findIndex((v) => v.url === video.url)
-  );
+  // Deduplicate videos by YouTube video ID (handles URL variations)
+  const uniqueVideos = media.videos.filter((video, index, self) => {
+    const videoId = extractYouTubeVideoId(video.url);
+    if (!videoId) return true; // keep non-YouTube videos
+    return index === self.findIndex((v) => extractYouTubeVideoId(v.url) === videoId);
+  });
 
   const currentVideoId = extractYouTubeVideoId(uniqueVideos[selectedVideoIndex]?.url ?? "");
 
