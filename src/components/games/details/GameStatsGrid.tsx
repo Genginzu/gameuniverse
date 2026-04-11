@@ -79,7 +79,7 @@ export function GameStatsGrid({
           return (
             <div
               key={index}
-              className={`flex flex-col justify-between rounded-xl border border-white/10 bg-white/5 p-4 shadow-lg shadow-black/10 backdrop-blur-xl`}
+              className={`flex flex-col justify-between rounded-xl border border-white/10 bg-white/5 p-4 shadow-lg shadow-black/10 backdrop-blur-xl will-change-transform`}
             >
               <div className="mb-2">
                 <Icon icon={StatIcon} className="h-4 w-4" style={{ color: colors.accent }} />
