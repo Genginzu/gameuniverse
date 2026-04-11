@@ -23,7 +23,7 @@ export function GameFormTranslationsTab({ form, t, isIgdbField, gameId }: GameFo
             entityType: "games",
             entityId: gameId,
             targetLang: targetLangCode,
-            saveToDb: false,
+            saveToDb: true,
           }),
         });
 
