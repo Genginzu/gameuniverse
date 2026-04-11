@@ -32,6 +32,10 @@ export async function GET(request: NextRequest) {
       query = query.not("matched_game_id", "is", null);
     } else if (filter === "unmatched") {
       query = query.is("matched_game_id", null);
+    } else if (filter === "unsynced") {
+      query = query.eq("is_synced", false);
+    } else if (filter === "synced") {
+      query = query.eq("is_synced", true);
     }
 
     const { data, count, error } = await query

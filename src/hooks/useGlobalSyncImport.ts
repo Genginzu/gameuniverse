@@ -19,7 +19,7 @@ interface SyncResponse {
   error?: string;
 }
 
-export function useGlobalSyncImport() {
+export function useGlobalSyncImport(onGameSynced?: () => void) {
   const [state, setState] = useState<SyncImportState>({
     isSyncing: false,
     totalSynced: 0,
@@ -51,11 +51,13 @@ export function useGlobalSyncImport() {
 
         if (result.done) {
           setState((prev) => ({ ...prev, isSyncing: false, currentGame: null }));
+          onGameSynced?.();
           return;
         }
 
         if (result.success) {
           synced++;
+          onGameSynced?.();
         } else {
           failed++;
         }
@@ -78,7 +80,7 @@ export function useGlobalSyncImport() {
     }
 
     setState((prev) => ({ ...prev, isSyncing: false }));
-  }, []);
+  }, [onGameSynced]);
 
   const stopSync = useCallback(() => {
     stopRef.current = true;

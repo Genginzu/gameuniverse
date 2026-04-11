@@ -2370,7 +2370,8 @@
         "remaining": "{count} remaining",
         "complete": "Sync complete: {count} games processed",
         "infoResume": "You can stop and resume the sync at any time. It will automatically pick up where it left off.",
-        "infoRetry": "Failed games are not marked as synced and will be retried on the next run."
+        "infoRetry": "Failed games are not marked as synced and will be retried on the next run.",
+        "allSynced": "All games have been synced."
       }
     }
   },
