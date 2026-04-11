@@ -3,16 +3,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import {
   getLinkedPlatforms,
-  upsertLinkedPlatform,
+  upsertManualPlatform,
   deleteLinkedPlatform,
 } from "@/lib/services/linkedPlatformService";
-import { GAMING_PLATFORMS, type GamingPlatform } from "@/types/linked-platforms";
+import { GAMING_PLATFORMS, PLATFORM_META, type GamingPlatform } from "@/types/linked-platforms";
 
 export async function GET() {
   const supabase = await createRouteHandlerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -27,11 +25,10 @@ export async function GET() {
   }
 }
 
+/** PUT — only for manual (pseudo) platforms */
 export async function PUT(request: NextRequest) {
   const supabase = await createRouteHandlerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -43,11 +40,18 @@ export async function PUT(request: NextRequest) {
     if (!platform || !GAMING_PLATFORMS.includes(platform as GamingPlatform)) {
       return NextResponse.json({ error: "Invalid platform" }, { status: 400 });
     }
+
+    // Only allow manual platforms through this endpoint
+    const meta = PLATFORM_META[platform as GamingPlatform];
+    if (meta.authType !== "manual") {
+      return NextResponse.json({ error: "Use OAuth flow for this platform" }, { status: 400 });
+    }
+
     if (!platformUsername?.trim()) {
       return NextResponse.json({ error: "Username is required" }, { status: 400 });
     }
 
-    const result = await upsertLinkedPlatform(supabase, user.id, platform, platformUsername);
+    const result = await upsertManualPlatform(supabase, user.id, platform, platformUsername);
     return NextResponse.json(result);
   } catch (error) {
     logger.error("Failed to upsert linked platform", { error });
@@ -57,9 +61,7 @@ export async function PUT(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   const supabase = await createRouteHandlerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

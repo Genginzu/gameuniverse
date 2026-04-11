@@ -2,37 +2,50 @@
 
 ## Description
 
-Permet aux joueurs de lier leurs comptes de plateformes gaming (Steam, Epic Games, Xbox, PlayStation, GOG, Nintendo, Battle.net, EA, Ubisoft Connect, itch.io) à leur profil GameUniverse. Chaque plateforme stocke un nom d'utilisateur/gamertag.
+Permet aux joueurs de connecter leurs comptes de plateformes gaming à leur profil GameUniverse. Trois modes de connexion selon la plateforme :
+
+- **OAuth** (Steam, Xbox) : connexion réelle via redirection OAuth, récupération automatique du profil
+- **NPSSO** (PlayStation) : l'utilisateur fournit son token NPSSO, échangé côté serveur via `psn-api` pour obtenir les données PSN
+- **Manuel** (Epic, GOG, Nintendo, Battle.net, EA, Ubisoft, itch.io) : saisie du pseudo uniquement
 
 ## Accès
 
-- Aller sur son profil joueur → onglet **Paramètres** (icône engrenage)
-- La section **Plateformes gaming** se trouve entre Apparence et Sécurité
+Profil joueur → onglet **Paramètres** → section **Plateformes gaming**
 
 ## Prérequis
 
 - Être connecté à son compte
-- Migration `20260405000001_player_linked_platforms.sql` appliquée
+- Migrations appliquées : `20260405000001` + `20260411000001`
+- Variables d'environnement :
+  - `STEAM_API_KEY` — clé API Steam Web (https://steamcommunity.com/dev/apikey)
+  - `XBOX_CLIENT_ID` — ID client Azure AD avec scope XboxLive.signin
+  - `XBOX_CLIENT_SECRET` — secret client Azure AD
 
 ## Utilisation
 
-- Cliquer sur le bouton **+** à côté d'une plateforme pour ajouter son pseudo
-- Cliquer sur le crayon pour modifier un pseudo existant
-- Cliquer sur la corbeille pour supprimer un lien
-- Les données sont sauvegardées immédiatement via l'API
+| Plateforme | Action |
+|---|---|
+| Steam | Cliquer sur l'icône de connexion → redirection vers Steam → retour automatique |
+| Xbox | Cliquer sur l'icône de connexion → redirection vers Microsoft → retour automatique |
+| PlayStation | Cliquer sur l'icône clé → coller le token NPSSO → validation |
+| Autres | Cliquer sur + → saisir le pseudo → valider |
+
+### Obtenir un token NPSSO (PlayStation)
+
+1. Se connecter sur https://www.playstation.com/
+2. Dans le même navigateur, aller sur https://ca.account.sony.com/api/v1/ssocookie
+3. Copier la valeur du champ `npsso`
 
 ## Architecture
 
 | Couche | Fichier |
 |--------|---------|
-| Migration | `supabase/migrations/20260405000001_player_linked_platforms.sql` |
+| Migrations | `supabase/migrations/20260405000001_*.sql` + `20260411000001_*.sql` |
 | Types | `src/types/linked-platforms.ts` |
 | Service | `src/lib/services/linkedPlatformService.ts` |
 | Route API | `src/app/api/profile/linked-platforms/route.ts` |
+| OAuth Steam | `src/app/api/auth/steam/route.ts` + `callback/route.ts` |
+| OAuth Xbox | `src/app/api/auth/xbox/route.ts` + `callback/route.ts` |
+| PSN | `src/app/api/auth/psn/route.ts` |
 | Hook | `src/hooks/useLinkedPlatforms.ts` |
-| Composant | `src/components/settings/LinkedPlatformsSection.tsx` |
-| Traductions | `src/messages/fr.json` / `en.json` → `settings.platforms` |
-
-## Plateformes supportées
-
-Steam, Epic Games, Xbox, PlayStation, GOG, Nintendo, Battle.net, EA, Ubisoft Connect, itch.io
+| Composants | `src/components/settings/LinkedPlatformsSection.tsx` + `PlatformRow.tsx` |

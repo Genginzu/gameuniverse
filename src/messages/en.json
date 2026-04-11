@@ -1151,11 +1151,13 @@
     },
     "platforms": {
       "title": "Gaming Platforms",
-      "description": "Link your gaming platform accounts",
+      "description": "Connect your gaming platform accounts to sync your data",
       "usernamePlaceholder": "Your username on this platform",
-      "notLinked": "Not linked",
-      "saved": "Platform saved",
-      "removed": "Platform removed",
+      "npssoPlaceholder": "Paste your NPSSO token here",
+      "notLinked": "Not connected",
+      "connected": "Connected",
+      "saved": "Platform connected",
+      "removed": "Platform disconnected",
       "names": {
         "steam": "Steam",
         "epic": "Epic Games",

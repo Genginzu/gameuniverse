@@ -1151,11 +1151,13 @@
     },
     "platforms": {
       "title": "Plateformes gaming",
-      "description": "Liez vos comptes de plateformes de jeux",
+      "description": "Connectez vos comptes de plateformes de jeux pour synchroniser vos données",
       "usernamePlaceholder": "Votre pseudo sur cette plateforme",
-      "notLinked": "Non lié",
-      "saved": "Plateforme enregistrée",
-      "removed": "Plateforme supprimée",
+      "npssoPlaceholder": "Collez votre token NPSSO ici",
+      "notLinked": "Non connecté",
+      "connected": "Connecté",
+      "saved": "Plateforme connectée",
+      "removed": "Plateforme déconnectée",
       "names": {
         "steam": "Steam",
         "epic": "Epic Games",
