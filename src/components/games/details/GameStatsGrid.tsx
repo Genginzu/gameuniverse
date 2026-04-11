@@ -62,13 +62,6 @@ export function GameStatsGrid({
       genres: game.genres,
     },
     {
-      icon: "lucide:monitor",
-      value: game.platforms?.length > 0 ? String(game.platforms.length) : "—",
-      label: tDetails("statsGrid.platforms"),
-      metascoreBg: undefined,
-      show: true,
-    },
-    {
       icon: "lucide:shield",
       value: ageDisplay || "—",
       label: tDetails("statsGrid.classification"),
