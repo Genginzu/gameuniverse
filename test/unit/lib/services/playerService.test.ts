@@ -360,7 +360,7 @@ describe("PlayerService", () => {
 
       const result = await PlayerService.generatePlayerMetadata("player-uuid-1234", "en");
 
-      expect(result.title).toBe("TestPlayer - Game Universe");
+      expect(result.title).toBe("TestPlayer - Gamers Universe");
       expect(result.description).toContain("TestPlayer");
       expect(result.description).toContain("games in library");
     });
@@ -388,7 +388,7 @@ describe("PlayerService", () => {
 
       const result = await PlayerService.generatePlayerMetadata("player-uuid-1234", "en");
 
-      expect(result.title).toBe("Player - Game Universe");
+      expect(result.title).toBe("Player - Gamers Universe");
     });
 
     it("should use French default name when locale is fr", async () => {
@@ -401,7 +401,7 @@ describe("PlayerService", () => {
 
       const result = await PlayerService.generatePlayerMetadata("player-uuid-1234", "fr");
 
-      expect(result.title).toBe("Joueur - Game Universe");
+      expect(result.title).toBe("Joueur - Gamers Universe");
     });
 
     it("should include avatar in openGraph images", async () => {

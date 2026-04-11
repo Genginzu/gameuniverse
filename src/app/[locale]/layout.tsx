@@ -20,13 +20,13 @@ export async function generateMetadata({
 
   return {
     metadataBase: new URL("https://gameuniverse.gg"),
-    title: { default: "Game Universe", template: "%s | Game Universe" },
+    title: { default: "Gamers Universe", template: "%s | Gamers Universe" },
     description: t("description"),
     keywords: t("keywords"),
     robots: { index: true, follow: true },
     openGraph: {
       type: "website",
-      siteName: "Game Universe",
+      siteName: "Gamers Universe",
       locale: LOCALE_MAP[locale] ?? "fr_FR",
     },
     twitter: { card: "summary_large_image" },
@@ -75,7 +75,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
         data={{
           "@context": "https://schema.org",
           "@type": "Organization",
-          name: "Game Universe",
+          name: "Gamers Universe",
           url: "https://gameuniverse.gg",
           logo: "https://gameuniverse.gg/icon.png",
         }}

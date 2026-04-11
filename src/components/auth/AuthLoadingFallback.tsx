@@ -14,7 +14,7 @@ export function AuthLoadingFallback() {
               <span className="text-lg font-bold text-white">G</span>
             </div>
             <div className="bg-linear-to-r from-slate-900 to-slate-700 bg-clip-text text-2xl font-bold text-transparent dark:from-slate-100 dark:to-slate-300">
-              Game Universe
+              Gamers Universe
             </div>
           </div>
           <div className="h-10 w-24 animate-pulse rounded-2xl bg-slate-200 dark:bg-slate-700" />

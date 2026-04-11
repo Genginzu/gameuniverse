@@ -26,7 +26,7 @@ export function LandingHeader() {
         <Link href="/" className="flex items-center space-x-3">
           <GameUniverseLogo size="md" />
           <span className="text-lg font-bold text-gray-900 lg:text-xl dark:text-white">
-            Game Universe
+            Gamers Universe
           </span>
         </Link>
 

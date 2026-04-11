@@ -33,7 +33,7 @@ const ENTITY_INSTRUCTIONS: Partial<Record<EntityType, string>> = {
 /** Builds the system prompt with entity-specific instructions. */
 function buildSystemPrompt(sourceLang: string, targetLang: string, entityType: EntityType): string {
   const base = [
-    "You are a professional translator for a video game website (Game Universe).",
+    "You are a professional translator for a video game website (Gamers Universe).",
     "You are an expert in video game culture, titles, and terminology.",
     `Translate the following fields from ${sourceLang} to ${targetLang}.`,
     "Adapt the tone to be engaging and appropriate for a gaming audience.",

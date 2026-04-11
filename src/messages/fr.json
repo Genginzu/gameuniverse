@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "description": "Explorez des milliers de jeux vidéo, découvrez des personnages iconiques et rejoignez une communauté de passionnés sur Game Universe",
-    "keywords": "jeux vidéo, gaming, personnages, avis, communauté, collection, Game Universe",
+    "description": "Explorez des milliers de jeux vidéo, découvrez des personnages iconiques et rejoignez une communauté de passionnés sur Gamers Universe",
+    "keywords": "jeux vidéo, gaming, personnages, avis, communauté, collection, Gamers Universe",
     "home": {
       "title": "Accueil",
       "description": "Explorez des milliers de jeux vidéo, découvrez des personnages iconiques et rejoignez une communauté de passionnés"
@@ -16,11 +16,11 @@
     },
     "players": {
       "title": "Tous les joueurs",
-      "description": "Explorez les profils des joueurs de la communauté Game Universe"
+      "description": "Explorez les profils des joueurs de la communauté Gamers Universe"
     },
     "discussions": {
       "title": "Discussions",
-      "description": "Participez aux discussions de la communauté Game Universe"
+      "description": "Participez aux discussions de la communauté Gamers Universe"
     },
     "library": {
       "title": "Ma bibliothèque",
@@ -32,7 +32,7 @@
     },
     "yearInReview": {
       "title": "Rétrospective {year} de {player}",
-      "description": "Découvrez la rétrospective gaming {year} de {player} sur Game Universe"
+      "description": "Découvrez la rétrospective gaming {year} de {player} sur Gamers Universe"
     }
   },
   "navigation": {
@@ -62,7 +62,7 @@
       "explore": "Explorer les jeux",
       "login": "Se connecter",
       "title": "Prêt à rejoindre l'aventure ?",
-      "subtitle": "Rejoignez des milliers de gamers qui utilisent déjà Game Universe pour découvrir leurs prochains jeux favoris"
+      "subtitle": "Rejoignez des milliers de gamers qui utilisent déjà Gamers Universe pour découvrir leurs prochains jeux favoris"
     },
     "features": {
       "mainTitle": "Tout pour les gamers",
@@ -168,14 +168,14 @@
   "auth": {
     "signin": {
       "title": "Connexion",
-      "description": "Connectez-vous à votre compte Game Universe",
+      "description": "Connectez-vous à votre compte Gamers Universe",
       "submit": "Se connecter",
       "switchText": "Pas encore de compte ?",
       "switchLink": "Créer un compte"
     },
     "signup": {
       "title": "Inscription",
-      "description": "Créez votre compte Game Universe",
+      "description": "Créez votre compte Gamers Universe",
       "submit": "Créer un compte",
       "switchText": "Déjà un compte ?",
       "switchLink": "Se connecter",
@@ -271,7 +271,7 @@
       "resendEmail": "Renvoyer l'email"
     },
     "footer": {
-      "text": "© 2024 Game Universe. Tous droits réservés."
+      "text": "© 2024 Gamers Universe. Tous droits réservés."
     }
   },
   "dashboard": {
@@ -503,7 +503,7 @@
   "players": {
     "title": "Joueurs",
     "heroTitle": "Découvrez la Communauté",
-    "heroTitleHighlight": "Game Universe",
+    "heroTitleHighlight": "Gamers Universe",
     "heroSubtitle": "Explorez les profils des joueurs et découvrez leurs collections",
     "availableCount": "{count} joueurs disponibles",
     "searchPlaceholder": "Rechercher un joueur...",
@@ -1061,7 +1061,7 @@
   },
   "footer": {
     "tagline": "La plateforme complète pour explorer l'univers du jeu vidéo",
-    "copyright": "© {year} Game Universe. Tous droits réservés.",
+    "copyright": "© {year} Gamers Universe. Tous droits réservés.",
     "explore": "Explorer",
     "community": "Communauté",
     "madeWith": "Fait avec",

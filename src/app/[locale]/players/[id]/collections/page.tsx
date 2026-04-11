@@ -44,6 +44,6 @@ export async function generateMetadata({ params }: CollectionsPageProps) {
   const t = await getTranslations({ locale, namespace: "collections.page" });
 
   return {
-    title: `${t("title")} | Game Universe`,
+    title: `${t("title")} | Gamers Universe`,
   };
 }

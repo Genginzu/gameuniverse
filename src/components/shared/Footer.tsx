@@ -34,7 +34,7 @@ export default function Footer() {
             <Link href="/" className="inline-flex items-center gap-2.5">
               <GameUniverseLogo size="sm" className="shadow-lg shadow-black/20" />
               <span className="text-lg font-bold tracking-widest text-gray-900 uppercase dark:text-white">
-                Game Universe
+                Gamers Universe
               </span>
             </Link>
             <p className="mt-3 max-w-sm text-sm leading-relaxed text-gray-500 dark:text-gray-400">

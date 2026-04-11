@@ -236,7 +236,7 @@ describe("GameService Property-Based Tests", () => {
         const metadataTitle = String(metadata.title);
         const gameTitle = String(gameDetails.title);
         expect(metadataTitle.includes(gameTitle)).toBe(true);
-        expect(metadataTitle.includes("Game Universe")).toBe(true);
+        expect(metadataTitle.includes("Gamers Universe")).toBe(true);
 
         // OpenGraph title must match game title
         expect(metadata.openGraph?.title).toBe(gameDetails.title);

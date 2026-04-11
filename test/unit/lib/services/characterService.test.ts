@@ -347,7 +347,7 @@ describe("CharacterService", () => {
 
       const result = await CharacterService.generateCharacterMetadata("test-character", "en");
 
-      expect(result.title).toBe("Test Character - Game Universe");
+      expect(result.title).toBe("Test Character - Gamers Universe");
       expect(result.description).toBe("A test character description");
       expect(result.openGraph?.title).toBe("Test Character");
     });

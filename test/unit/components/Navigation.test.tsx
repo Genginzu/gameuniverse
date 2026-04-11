@@ -28,9 +28,9 @@ describe("Navigation Component", () => {
       expect(expectedLinks).not.toContain("Dashboard");
     });
 
-    it("should display Game Universe brand link", () => {
-      const brandName = "Game Universe";
-      expect(brandName).toBe("Game Universe");
+    it("should display Gamers Universe brand link", () => {
+      const brandName = "Gamers Universe";
+      expect(brandName).toBe("Gamers Universe");
     });
   });
 

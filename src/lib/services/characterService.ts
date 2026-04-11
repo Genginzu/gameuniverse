@@ -15,7 +15,7 @@ class CharacterServiceImpl extends BaseService<CharacterDetails, CharacterSummar
 
   protected buildMetadata(character: CharacterDetails, locale: string): EntityMetadata {
     return {
-      title: `${character.name} - Game Universe`,
+      title: `${character.name} - Gamers Universe`,
       description:
         character.description ||
         (locale === "fr"

@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "description": "Explore thousands of video games, discover iconic characters and join a community of enthusiasts on Game Universe",
-    "keywords": "video games, gaming, characters, reviews, community, collection, Game Universe",
+    "description": "Explore thousands of video games, discover iconic characters and join a community of enthusiasts on Gamers Universe",
+    "keywords": "video games, gaming, characters, reviews, community, collection, Gamers Universe",
     "home": {
       "title": "Home",
       "description": "Explore thousands of video games, discover iconic characters and join a community of enthusiasts"
@@ -16,11 +16,11 @@
     },
     "players": {
       "title": "All players",
-      "description": "Explore Game Universe community player profiles"
+      "description": "Explore Gamers Universe community player profiles"
     },
     "discussions": {
       "title": "Discussions",
-      "description": "Join Game Universe community discussions"
+      "description": "Join Gamers Universe community discussions"
     },
     "library": {
       "title": "My library",
@@ -32,7 +32,7 @@
     },
     "yearInReview": {
       "title": "{player}'s {year} year in review",
-      "description": "Discover {player}'s {year} gaming year in review on Game Universe"
+      "description": "Discover {player}'s {year} gaming year in review on Gamers Universe"
     }
   },
   "navigation": {
@@ -62,7 +62,7 @@
       "explore": "Explore games",
       "login": "Sign in",
       "title": "Ready to join the adventure?",
-      "subtitle": "Join thousands of gamers already using Game Universe to discover their next favorite games"
+      "subtitle": "Join thousands of gamers already using Gamers Universe to discover their next favorite games"
     },
     "features": {
       "mainTitle": "Everything for gamers",
@@ -168,14 +168,14 @@
   "auth": {
     "signin": {
       "title": "Sign In",
-      "description": "Sign in to your Game Universe account",
+      "description": "Sign in to your Gamers Universe account",
       "submit": "Sign In",
       "switchText": "Don't have an account?",
       "switchLink": "Create account"
     },
     "signup": {
       "title": "Sign Up",
-      "description": "Create your Game Universe account",
+      "description": "Create your Gamers Universe account",
       "submit": "Create Account",
       "switchText": "Already have an account?",
       "switchLink": "Sign in",
@@ -271,7 +271,7 @@
       "resendEmail": "Resend email"
     },
     "footer": {
-      "text": "© 2024 Game Universe. All rights reserved."
+      "text": "© 2024 Gamers Universe. All rights reserved."
     }
   },
   "dashboard": {
@@ -503,7 +503,7 @@
   "players": {
     "title": "Players",
     "heroTitle": "Discover the Community",
-    "heroTitleHighlight": "Game Universe",
+    "heroTitleHighlight": "Gamers Universe",
     "heroSubtitle": "Explore player profiles and discover their collections",
     "availableCount": "{count} players available",
     "searchPlaceholder": "Search for a player...",
@@ -1061,7 +1061,7 @@
   },
   "footer": {
     "tagline": "The complete platform to explore the gaming universe",
-    "copyright": "© {year} Game Universe. All rights reserved.",
+    "copyright": "© {year} Gamers Universe. All rights reserved.",
     "explore": "Explore",
     "community": "Community",
     "madeWith": "Made with",
