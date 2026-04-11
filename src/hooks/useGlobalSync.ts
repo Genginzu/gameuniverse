@@ -27,17 +27,13 @@ interface DownloadState {
 }
 
 export function useGlobalSync(page: number, search: string, filter: string) {
-  const params = new URLSearchParams({
-    page: String(page),
-    limit: "1000",
-    search,
-    filter,
-  });
+  const swrKey = `/api/admin/global-sync?page=${page}&limit=1000&search=${encodeURIComponent(search)}&filter=${filter}`;
 
-  const { data, error, isLoading, mutate } = useSWR<GlobalSyncResponse>(
-    `/api/admin/global-sync?${params}`,
-    fetcher
-  );
+  const { data, error, isLoading, mutate } = useSWR<GlobalSyncResponse>(swrKey, fetcher, {
+    revalidateOnFocus: false,
+    revalidateOnReconnect: false,
+    dedupingInterval: 5000,
+  });
 
   const [downloadState, setDownloadState] = useState<DownloadState>({
     isDownloading: false,
