@@ -72,7 +72,7 @@ export function GlobalSyncTab() {
             <p className="text-xs text-gray-500 sm:text-sm dark:text-gray-400">
               {t("progress", {
                 inserted: downloadState.totalInserted,
-                offset: downloadState.currentOffset,
+                lastId: downloadState.lastId,
               })}
             </p>
           </div>

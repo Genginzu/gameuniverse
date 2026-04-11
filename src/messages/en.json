@@ -2342,7 +2342,7 @@
       "downloadDescription": "Fetches all games from IGDB in batches of 500 and automatically matches them to existing games in your database.",
       "startDownload": "Start Download",
       "downloading": "Downloading...",
-      "progress": "{inserted} games inserted (offset: {offset})",
+      "progress": "{inserted} games inserted (last ID: {lastId})",
       "downloadComplete": "Download complete: {count} games fetched",
       "searchPlaceholder": "Search a game...",
       "filter": {

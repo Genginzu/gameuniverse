@@ -8,22 +8,23 @@ const IGDB_BATCH_SIZE = 500;
 
 /**
  * POST /api/admin/global-sync/download
- * Fetches one batch of 500 games from IGDB at the given offset,
+ * Fetches one batch of 500 games from IGDB using cursor-based pagination,
  * matches them against our DB, and inserts into igdb_global_sync.
- * Body: { offset: number }
- * Returns: { inserted: number, hasMore: boolean, nextOffset: number }
+ * Body: { afterId: number }
+ * Returns: { inserted: number, hasMore: boolean, lastId: number }
  */
 export async function POST(request: NextRequest) {
   try {
     await requireAdmin();
     const body = await request.json();
-    const offset = parseInt(body.offset ?? "0", 10);
+    const afterId = parseInt(body.afterId ?? "0", 10);
 
-    const games = await IGDBService.getGamesBatch(offset, IGDB_BATCH_SIZE);
+    const games = await IGDBService.getGamesBatch(afterId, IGDB_BATCH_SIZE);
     const hasMore = games.length === IGDB_BATCH_SIZE;
+    const lastId = games.length > 0 ? games[games.length - 1].id : afterId;
 
     if (games.length === 0) {
-      return NextResponse.json({ inserted: 0, hasMore: false, nextOffset: offset });
+      return NextResponse.json({ inserted: 0, hasMore: false, lastId: afterId });
     }
 
     const supabase = getSupabaseAdmin();
@@ -55,14 +56,14 @@ export async function POST(request: NextRequest) {
       .upsert(rows, { onConflict: "igdb_id" });
 
     if (error) {
-      logger.error("Error inserting global sync batch", { error, offset });
+      logger.error("Error inserting global sync batch", { error, afterId });
       return NextResponse.json({ error: "Failed to insert batch" }, { status: 500 });
     }
 
     return NextResponse.json({
       inserted: games.length,
       hasMore,
-      nextOffset: offset + IGDB_BATCH_SIZE,
+      lastId,
     });
   } catch (error) {
     if (error instanceof Error && error.message === "Admin access required") {

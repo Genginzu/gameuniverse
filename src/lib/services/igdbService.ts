@@ -485,20 +485,19 @@ export class IGDBService {
 
   /**
    * Fetches a batch of games from IGDB with minimal fields (id, name, cover).
-   * Used for the global sync tool to download the full IGDB catalog.
-   * @param offset Pagination offset
+   * Uses cursor-based pagination (id > lastId) to avoid IGDB's 10k offset limit.
+   * @param afterId Fetch games with id greater than this value (0 for first batch)
    * @param limit Batch size (max 500)
-   * @returns Array of minimal game objects
+   * @returns Array of minimal game objects sorted by id asc
    */
   static async getGamesBatch(
-    offset: number,
+    afterId: number,
     limit: number = 500
   ): Promise<Array<{ id: number; name: string; cover?: { image_id: string } }>> {
     const body = `
       fields name, cover.image_id;
-      where version_parent = null & (game_type = 0 | game_type = 4);
+      where version_parent = null & (game_type = 0 | game_type = 4) & id > ${afterId};
       sort id asc;
-      offset ${offset};
       limit ${limit};
     `;
 

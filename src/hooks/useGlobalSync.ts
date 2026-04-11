@@ -21,7 +21,7 @@ interface GlobalSyncResponse {
 
 interface DownloadState {
   isDownloading: boolean;
-  currentOffset: number;
+  lastId: number;
   totalInserted: number;
   error: string | null;
 }
@@ -41,15 +41,15 @@ export function useGlobalSync(page: number, search: string, filter: string) {
 
   const [downloadState, setDownloadState] = useState<DownloadState>({
     isDownloading: false,
-    currentOffset: 0,
+    lastId: 0,
     totalInserted: 0,
     error: null,
   });
 
   const startDownload = useCallback(async () => {
-    setDownloadState({ isDownloading: true, currentOffset: 0, totalInserted: 0, error: null });
+    setDownloadState({ isDownloading: true, lastId: 0, totalInserted: 0, error: null });
 
-    let offset = 0;
+    let afterId = 0;
     let totalInserted = 0;
     let hasMore = true;
 
@@ -58,16 +58,16 @@ export function useGlobalSync(page: number, search: string, filter: string) {
         const result = await apiClient.post<{
           inserted: number;
           hasMore: boolean;
-          nextOffset: number;
-        }>("/api/admin/global-sync/download", { offset });
+          lastId: number;
+        }>("/api/admin/global-sync/download", { afterId });
 
         totalInserted += result.inserted;
         hasMore = result.hasMore;
-        offset = result.nextOffset;
+        afterId = result.lastId;
 
         setDownloadState((prev) => ({
           ...prev,
-          currentOffset: offset,
+          lastId: afterId,
           totalInserted,
         }));
       } catch (err) {

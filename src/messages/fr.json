@@ -2345,7 +2345,7 @@
       "downloadDescription": "Récupère tous les jeux depuis IGDB par lots de 500 et les associe automatiquement aux jeux existants dans votre base.",
       "startDownload": "Lancer le téléchargement",
       "downloading": "Téléchargement en cours...",
-      "progress": "{inserted} jeux insérés (offset : {offset})",
+      "progress": "{inserted} jeux insérés (dernier ID : {lastId})",
       "downloadComplete": "Téléchargement terminé : {count} jeux récupérés",
       "searchPlaceholder": "Rechercher un jeu...",
       "filter": {
