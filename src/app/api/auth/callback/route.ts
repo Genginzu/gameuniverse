@@ -25,7 +25,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    return NextResponse.redirect(new URL("/profile", baseUrl));
+    // Rediriger directement vers la page joueur pour éviter la race condition avec /profile
+    const { data: { user } } = await supabase.auth.getUser();
+    const redirectPath = user ? `/players/${user.id}` : "/profile";
+    return NextResponse.redirect(new URL(redirectPath, baseUrl));
   }
 
   // Handle code flow (PKCE)
@@ -39,7 +42,10 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    return NextResponse.redirect(new URL("/profile", baseUrl));
+    // Rediriger directement vers la page joueur pour éviter la race condition avec /profile
+    const { data: { user } } = await supabase.auth.getUser();
+    const redirectPath = user ? `/players/${user.id}` : "/profile";
+    return NextResponse.redirect(new URL(redirectPath, baseUrl));
   }
 
   // No code or token_hash provided

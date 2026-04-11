@@ -90,13 +90,15 @@ export function useAuth() {
         });
 
         // Handle auth events
-        if (event === "SIGNED_IN") {
-          // Ne rediriger vers le dashboard que si on vient d'une page d'authentification
+        if (event === "SIGNED_IN" && session?.user) {
+          // Ne rediriger vers le profil que si on vient d'une page d'authentification
           // mais PAS si on est sur la page de reset password
           const currentPath = window.location.pathname;
           const isResetPasswordPage = currentPath.includes("/reset-password");
           if (!isResetPasswordPage && (currentPath.includes("/auth") || currentPath === "/")) {
-            routerRef.current.push("/profile");
+            // Rediriger directement vers la page joueur pour éviter la race condition
+            // avec le server component /profile qui ne voit pas encore la session
+            routerRef.current.push(`/players/${session.user.id}`);
           }
         } else if (event === "SIGNED_OUT") {
           routerRef.current.push("/");
