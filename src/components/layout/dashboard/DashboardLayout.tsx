@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { LoadingSpinner } from "../../ui/loading-spinner";
+import { Skeleton } from "../../ui/skeleton";
 import { useAuth } from "@/hooks/useAuth";
 import { useSearchOverlay } from "@/hooks/useSearchOverlay";
 import TopBar from "./TopBar";
@@ -28,9 +28,31 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   if (loading) {
     return (
-      <div className="dashboard-bg flex min-h-screen items-center justify-center">
-        <div className="glass rounded-2xl p-8">
-          <LoadingSpinner size="lg" />
+      <div className="dashboard-bg flex h-screen flex-col">
+        {/* Top bar skeleton */}
+        <div className="glass-header flex h-14 items-center justify-between px-4">
+          <Skeleton className="h-8 w-32 rounded-lg bg-white/10" />
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-8 w-8 rounded-lg bg-white/10" />
+            <Skeleton className="h-8 w-8 rounded-full bg-white/10" />
+          </div>
+        </div>
+        <div className="flex min-h-0 flex-1">
+          {/* Sidebar skeleton */}
+          <div className="hidden w-[220px] shrink-0 border-r border-white/10 bg-white/5 p-4 lg:block">
+            <div className="space-y-3">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Skeleton key={i} className="h-8 w-full rounded-lg bg-white/10" />
+              ))}
+            </div>
+          </div>
+          {/* Main content skeleton */}
+          <div className="flex-1 p-6">
+            <Skeleton className="mb-4 h-8 w-48 rounded-lg bg-white/10" />
+            <Skeleton className="mb-2 h-4 w-full rounded bg-white/10" />
+            <Skeleton className="mb-2 h-4 w-3/4 rounded bg-white/10" />
+            <Skeleton className="h-4 w-1/2 rounded bg-white/10" />
+          </div>
         </div>
       </div>
     );
