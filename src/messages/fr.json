@@ -863,6 +863,7 @@
       "globalScore": "Note critiques",
       "price": "Prix",
       "genres": "Genres",
+      "platforms": "Plateformes",
       "classification": "Classification"
     },
     "errors": {

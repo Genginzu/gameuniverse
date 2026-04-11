@@ -863,6 +863,7 @@
       "globalScore": "Critics Score",
       "price": "Price",
       "genres": "Genres",
+      "platforms": "Platforms",
       "classification": "Classification"
     },
     "errors": {
