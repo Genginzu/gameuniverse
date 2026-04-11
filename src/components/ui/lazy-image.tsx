@@ -9,6 +9,7 @@ interface LazyImageProps {
   height?: number;
   fill?: boolean;
   className?: string;
+  wrapperClassName?: string;
   fallbackSrc?: string;
   showSkeleton?: boolean;
   sizes?: string;
@@ -22,6 +23,7 @@ export function LazyImage({
   height,
   fill = false,
   className = "",
+  wrapperClassName = "",
   fallbackSrc = "",
   showSkeleton = true,
   sizes,
@@ -55,7 +57,7 @@ export function LazyImage({
   }
 
   return (
-    <div className={fill ? "relative h-full w-full" : "relative"}>
+    <div className={`${fill ? "relative h-full w-full" : "relative"} ${wrapperClassName}`}>
       {showSkeleton && !imageLoaded && <Skeleton className={`absolute inset-0 ${className}`} />}
       <Image
         src={effectiveSrc}
