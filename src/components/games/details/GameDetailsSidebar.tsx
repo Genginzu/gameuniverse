@@ -36,7 +36,7 @@ export function GameDetailsSidebar({ game, colors, formatReleaseDate }: GameDeta
     <div className="w-full shrink-0 lg:w-[320px]">
       <div className="sticky top-24 space-y-4">
         {/* Cover image */}
-        <div className="group relative mx-auto max-w-[220px] overflow-hidden rounded-2xl border border-white/10 bg-white/5 shadow-lg shadow-black/20 backdrop-blur-xl lg:max-w-[240px]">
+        <div className="group relative mx-auto max-w-[220px] overflow-hidden rounded-2xl shadow-lg shadow-black/20 lg:max-w-[240px]">
           <div className="relative aspect-3/4">
             <LazyImage
               src={game.media.coverImage}
