@@ -3,7 +3,7 @@ import { createAppError, ErrorType, withRetry, RetryConfig } from "./error-handl
 // Configuration par défaut pour les appels API
 const DEFAULT_API_CONFIG = {
   baseURL: process.env.NEXT_PUBLIC_API_URL || "",
-  timeout: 10000,
+  timeout: process.env.NODE_ENV === "development" ? 30000 : 10000,
   retryConfig: {
     maxAttempts: 3,
     baseDelay: 1000,
@@ -91,9 +91,8 @@ export class ApiClient {
     }
 
     if (!response.ok) {
-      const errorMessage = data?.error as string || 
-                          data?.message as string || 
-                          `Erreur HTTP ${response.status}`;
+      const errorMessage =
+        (data?.error as string) || (data?.message as string) || `Erreur HTTP ${response.status}`;
 
       let errorType: ErrorType;
       switch (response.status) {
@@ -145,7 +144,7 @@ export class ApiClient {
     const operation = async (): Promise<T> => {
       try {
         const response = await this.fetchWithTimeout(url, fetchOptions, timeout);
-        return await this.processResponse(response) as T;
+        return (await this.processResponse(response)) as T;
       } catch (error) {
         if (skipErrorHandling) {
           throw error;
@@ -178,7 +177,10 @@ export class ApiClient {
   }
 
   // Méthodes de convenance pour les différents verbes HTTP
-  async get<T = ApiResponseData>(endpoint: string, options: Omit<ApiCallOptions, "method"> = {}): Promise<T> {
+  async get<T = ApiResponseData>(
+    endpoint: string,
+    options: Omit<ApiCallOptions, "method"> = {}
+  ): Promise<T> {
     return this.call<T>(endpoint, { ...options, method: "GET" });
   }
 
