@@ -47,14 +47,14 @@ function VideoThumbnailCard({
 
         {/* Overlay play button */}
         <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity group-hover:opacity-100">
-          <div className="rounded-full bg-white/20 p-3 backdrop-blur-xs">
-            <Icon icon="lucide:play" className="h-6 w-6 text-white" />
+          <div className="rounded-full bg-white/20 p-2 backdrop-blur-xs">
+            <Icon icon="lucide:play" className="h-4 w-4 text-white" />
           </div>
         </div>
       </div>
 
-      <div className="p-3">
-        <h4 className="line-clamp-2 text-left text-sm font-medium text-white">
+      <div className="p-2">
+        <h4 className="line-clamp-1 text-left text-xs font-medium text-white">
           {video.title || `Video ${index + 1}`}
         </h4>
       </div>
@@ -165,7 +165,7 @@ export function GameMediaGallery({ media, gameTitle }: GameMediaGalleryProps) {
             </div>
 
             {/* Video list */}
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
               {uniqueVideos.map((video, index) => {
                 const videoId = extractYouTubeVideoId(video.url);
                 const thumbnail =
