@@ -45,7 +45,8 @@ export function GameDetailsMainContent({
     <div className="min-w-0 flex-1">
       {/* Platforms */}
       {game.platforms?.length > 0 && (
-        <div className="mb-3 flex flex-wrap gap-2">
+        <div className="mb-3 flex flex-wrap items-center gap-2">
+          <span className="text-xs font-medium text-slate-400">{game.platforms.length}</span>
           {game.platforms.map((platform) => {
             const platformIconName = getPlatformIcon(platform.slug);
             return (
