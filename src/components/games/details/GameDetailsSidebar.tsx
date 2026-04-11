@@ -42,7 +42,7 @@ export function GameDetailsSidebar({ game, colors, formatReleaseDate }: GameDeta
               src={game.media.coverImage}
               alt={game.title}
               fill
-              className="object-contain transition-transform duration-500 group-hover:scale-105"
+              className="rounded-2xl object-contain transition-transform duration-500 group-hover:scale-105"
               sizes="(max-width: 1024px) 280px, 320px"
               priority
               showSkeleton={true}
