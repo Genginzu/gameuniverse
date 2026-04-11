@@ -1213,7 +1213,8 @@
       "bulkImport": "Import en masse",
       "bulkImportCharacters": "Import en masse",
       "toolsCategory": "Outils",
-      "translations": "Traductions"
+      "translations": "Traductions",
+      "globalSync": "Synchro globale"
     },
     "closeSidebar": "Fermer le menu latéral",
     "openSidebar": "Ouvrir le menu latéral",
@@ -2336,6 +2337,26 @@
         "content_descriptors": "Descripteurs",
         "ratings": "Classifications"
       }
+    },
+    "globalSync": {
+      "title": "Synchronisation globale IGDB",
+      "subtitle": "Téléchargez le catalogue complet IGDB et associez les jeux à votre base de données",
+      "downloadTitle": "Télécharger le catalogue IGDB",
+      "downloadDescription": "Récupère tous les jeux depuis IGDB par lots de 500 et les associe automatiquement aux jeux existants dans votre base.",
+      "startDownload": "Lancer le téléchargement",
+      "downloading": "Téléchargement en cours...",
+      "progress": "{inserted} jeux insérés (offset : {offset})",
+      "downloadComplete": "Téléchargement terminé : {count} jeux récupérés",
+      "searchPlaceholder": "Rechercher un jeu...",
+      "filter": {
+        "all": "Tous",
+        "matched": "Associés",
+        "unmatched": "Non associés"
+      },
+      "totalEntries": "{count, plural, =0 {Aucune entrée} one {1 entrée} other {# entrées}}",
+      "noEntries": "Aucune entrée. Lancez le téléchargement pour remplir la table.",
+      "matched": "Associé",
+      "unmatched": "Non associé"
     }
   },
   "collections": {

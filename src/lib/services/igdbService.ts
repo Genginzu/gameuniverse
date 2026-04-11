@@ -482,4 +482,33 @@ export class IGDBService {
   static getTokenCache(): IGDBAuthToken | null {
     return this.tokenCache;
   }
+
+  /**
+   * Fetches a batch of games from IGDB with minimal fields (id, name, cover).
+   * Used for the global sync tool to download the full IGDB catalog.
+   * @param offset Pagination offset
+   * @param limit Batch size (max 500)
+   * @returns Array of minimal game objects
+   */
+  static async getGamesBatch(
+    offset: number,
+    limit: number = 500
+  ): Promise<Array<{ id: number; name: string; cover?: { image_id: string } }>> {
+    const body = `
+      fields name, cover.image_id;
+      where version_parent = null & (game_type = 0 | game_type = 4);
+      sort id asc;
+      offset ${offset};
+      limit ${limit};
+    `;
+
+    const response = await this.igdbFetch("games", body);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`IGDB batch fetch failed: ${response.status} - ${errorText}`);
+    }
+
+    return response.json();
+  }
 }

@@ -1213,7 +1213,8 @@
       "bulkImport": "Bulk Import",
       "bulkImportCharacters": "Bulk Import",
       "toolsCategory": "Tools",
-      "translations": "Translations"
+      "translations": "Translations",
+      "globalSync": "Global Sync"
     },
     "closeSidebar": "Close sidebar",
     "openSidebar": "Open sidebar",
@@ -2333,6 +2334,26 @@
         "content_descriptors": "Descriptors",
         "ratings": "Ratings"
       }
+    },
+    "globalSync": {
+      "title": "IGDB Global Sync",
+      "subtitle": "Download the full IGDB catalog and match games to your database",
+      "downloadTitle": "Download IGDB Catalog",
+      "downloadDescription": "Fetches all games from IGDB in batches of 500 and automatically matches them to existing games in your database.",
+      "startDownload": "Start Download",
+      "downloading": "Downloading...",
+      "progress": "{inserted} games inserted (offset: {offset})",
+      "downloadComplete": "Download complete: {count} games fetched",
+      "searchPlaceholder": "Search a game...",
+      "filter": {
+        "all": "All",
+        "matched": "Matched",
+        "unmatched": "Unmatched"
+      },
+      "totalEntries": "{count, plural, =0 {No entries} one {1 entry} other {# entries}}",
+      "noEntries": "No entries. Start the download to populate the table.",
+      "matched": "Matched",
+      "unmatched": "Unmatched"
     }
   },
   "collections": {
