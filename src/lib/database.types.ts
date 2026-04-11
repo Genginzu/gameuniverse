@@ -1345,6 +1345,41 @@ export type Database = {
         };
         Relationships: [];
       };
+      player_linked_platforms: {
+        Row: {
+          id: string;
+          player_id: string;
+          platform: string;
+          platform_username: string;
+          created_at: string | null;
+          updated_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          player_id: string;
+          platform: string;
+          platform_username: string;
+          created_at?: string | null;
+          updated_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          player_id?: string;
+          platform?: string;
+          platform_username?: string;
+          created_at?: string | null;
+          updated_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "player_linked_platforms_player_id_fkey";
+            columns: ["player_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       player_achievements: {
         Row: {
           id: string;
