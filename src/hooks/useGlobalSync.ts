@@ -27,7 +27,7 @@ interface DownloadState {
 }
 
 export function useGlobalSync(page: number, search: string, filter: string) {
-  const swrKey = `/api/admin/global-sync?page=${page}&limit=1000&search=${encodeURIComponent(search)}&filter=${filter}`;
+  const swrKey = `/api/admin/global-sync?page=${page}&limit=100&search=${encodeURIComponent(search)}&filter=${filter}`;
 
   const { data, error, isLoading, mutate } = useSWR<GlobalSyncResponse>(swrKey, fetcher, {
     revalidateOnFocus: false,
