@@ -3,7 +3,6 @@
 import { cn } from "@/lib/utils";
 import type { GlobalSearchGameItem as GameItem } from "@/types/global-search";
 import { Icon } from "@iconify/react";
-import { useTranslations } from "next-intl";
 import Image from "next/image";
 
 interface GlobalSearchGameItemProps {
@@ -13,8 +12,6 @@ interface GlobalSearchGameItemProps {
 }
 
 export function GlobalSearchGameItem({ item, isActive, isImporting }: GlobalSearchGameItemProps) {
-  const _t = useTranslations("globalSearch");
-
   return (
     <div
       className={cn(
@@ -46,17 +43,11 @@ export function GlobalSearchGameItem({ item, isActive, isImporting }: GlobalSear
           </div>
         )}
 
-        {/* IGDB badge */}
-        {item.source === "igdb" && (
-          <span className="absolute top-1 right-1 rounded bg-blue-600/80 px-1.5 py-0.5 text-[9px] font-bold text-white uppercase backdrop-blur-xs">
-            IGDB
-          </span>
-        )}
-
         {/* Importing overlay */}
         {isImporting && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 bg-black/50">
             <Icon icon="lucide:loader-2" className="h-5 w-5 animate-spin text-white" />
+            <span className="text-xs font-medium text-white/80">Import...</span>
           </div>
         )}
       </div>
