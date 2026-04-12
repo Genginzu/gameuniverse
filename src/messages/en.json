@@ -2356,7 +2356,8 @@
       "unmatched": "Unmatched",
       "tabs": {
         "download": "Download",
-        "sync": "Synchronization"
+        "sync": "Synchronization",
+        "metascore": "Metascore"
       },
       "syncTab": {
         "title": "Sync Games",
@@ -2372,6 +2373,19 @@
         "infoResume": "You can stop and resume the sync at any time. It will automatically pick up where it left off.",
         "infoRetry": "Failed games are not marked as synced and will be retried on the next run.",
         "allSynced": "All games have been synced."
+      },
+      "metascoreTab": {
+        "title": "Metascore Sync",
+        "description": "Fetches the aggregated rating from IGDB for each synced game. Processes 10 games in parallel.",
+        "startSync": "Start",
+        "syncing": "Syncing...",
+        "stop": "Stop",
+        "currentGame": "Current: {name}",
+        "synced": "{count} processed",
+        "failed": "{count} failed",
+        "remaining": "{count} remaining",
+        "complete": "Complete: {count} games processed",
+        "info": "Fetches only the IGDB aggregated rating. Games without a score receive -1. You can stop and resume at any time."
       }
     }
   },

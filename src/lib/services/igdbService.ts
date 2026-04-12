@@ -510,4 +510,18 @@ export class IGDBService {
 
     return response.json();
   }
+
+  /**
+   * Fetches only the aggregated_rating for a game — lightweight IGDB call.
+   * @returns The rating or null if not available
+   */
+  static async getAggregatedRating(igdbId: number): Promise<number | null> {
+    const body = `fields aggregated_rating; where id = ${igdbId};`;
+    const response = await this.igdbFetch("games", body);
+
+    if (!response.ok) return null;
+
+    const games = await response.json();
+    return games.length > 0 && games[0].aggregated_rating ? games[0].aggregated_rating : null;
+  }
 }

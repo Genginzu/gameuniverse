@@ -5,8 +5,9 @@ import { useTranslations } from "next-intl";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { GlobalSyncTab } from "@/components/admin/global-sync/GlobalSyncTab";
 import { SyncImportTab } from "@/components/admin/global-sync/SyncImportTab";
+import { MetascoreSyncTab } from "@/components/admin/global-sync/MetascoreSyncTab";
 
-const TABS = ["download", "sync"] as const;
+const TABS = ["download", "sync", "metascore"] as const;
 type Tab = (typeof TABS)[number];
 
 export default function GlobalSyncPage() {
@@ -23,7 +24,6 @@ export default function GlobalSyncPage() {
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{t("subtitle")}</p>
       </div>
 
-      {/* Tabs */}
       <div className="flex gap-1 rounded-xl bg-gray-100 p-1 dark:bg-gray-800">
         {TABS.map((tab) => (
           <button
@@ -42,6 +42,7 @@ export default function GlobalSyncPage() {
 
       {activeTab === "download" && <GlobalSyncTab />}
       {activeTab === "sync" && <SyncImportTab />}
+      {activeTab === "metascore" && <MetascoreSyncTab />}
     </div>
   );
 }

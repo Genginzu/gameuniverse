@@ -2359,7 +2359,8 @@
       "unmatched": "Non associé",
       "tabs": {
         "download": "Téléchargement",
-        "sync": "Synchronisation"
+        "sync": "Synchronisation",
+        "metascore": "Metascore"
       },
       "syncTab": {
         "title": "Synchroniser les jeux",
@@ -2375,6 +2376,19 @@
         "infoResume": "Vous pouvez arrêter et reprendre la synchronisation à tout moment. Elle reprendra automatiquement là où elle s'est arrêtée.",
         "infoRetry": "Les jeux en erreur ne sont pas marqués comme synchronisés et seront réessayés lors du prochain lancement.",
         "allSynced": "Tous les jeux ont été synchronisés."
+      },
+      "metascoreTab": {
+        "title": "Synchronisation Metascore",
+        "description": "Récupère le score agrégé (aggregated_rating) depuis IGDB pour chaque jeu synchronisé. Traite 10 jeux en parallèle.",
+        "startSync": "Lancer",
+        "syncing": "En cours...",
+        "stop": "Arrêter",
+        "currentGame": "En cours : {name}",
+        "synced": "{count} traité(s)",
+        "failed": "{count} échoué(s)",
+        "remaining": "{count} restant(s)",
+        "complete": "Terminé : {count} jeux traités",
+        "info": "Récupère uniquement le score agrégé IGDB (aggregated_rating). Les jeux sans score reçoivent la valeur -1. Vous pouvez arrêter et reprendre à tout moment."
       }
     }
   },
