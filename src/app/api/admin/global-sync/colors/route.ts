@@ -20,7 +20,6 @@ export async function POST(_request: NextRequest) {
       .from("igdb_global_sync")
       .select("id, igdb_id, name, cover_image_id, matched_game_id")
       .eq("is_synced", true)
-      .eq("is_enriched", true)
       .eq("is_colors_synced", false)
       .not("matched_game_id", "is", null)
       .order("igdb_id", { ascending: true })
@@ -32,7 +31,6 @@ export async function POST(_request: NextRequest) {
         .from("igdb_global_sync")
         .select("id", { count: "exact", head: true })
         .eq("is_synced", true)
-        .eq("is_enriched", true)
         .eq("is_colors_synced", false)
         .not("matched_game_id", "is", null);
 
@@ -48,7 +46,6 @@ export async function POST(_request: NextRequest) {
       .from("igdb_global_sync")
       .select("id", { count: "exact", head: true })
       .eq("is_synced", true)
-      .eq("is_enriched", true)
       .eq("is_colors_synced", false)
       .not("matched_game_id", "is", null);
 
