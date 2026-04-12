@@ -19,6 +19,7 @@ export async function POST(_request: NextRequest) {
     const { data: entry, error: fetchError } = await supabase
       .from("igdb_global_sync")
       .select("id, igdb_id, name, cover_image_id, matched_game_id")
+      .eq("is_synced", true)
       .eq("is_enriched", true)
       .eq("is_colors_synced", false)
       .not("matched_game_id", "is", null)
@@ -30,6 +31,7 @@ export async function POST(_request: NextRequest) {
       const { count } = await supabase
         .from("igdb_global_sync")
         .select("id", { count: "exact", head: true })
+        .eq("is_synced", true)
         .eq("is_enriched", true)
         .eq("is_colors_synced", false)
         .not("matched_game_id", "is", null);
@@ -45,6 +47,7 @@ export async function POST(_request: NextRequest) {
     const { count: remaining } = await supabase
       .from("igdb_global_sync")
       .select("id", { count: "exact", head: true })
+      .eq("is_synced", true)
       .eq("is_enriched", true)
       .eq("is_colors_synced", false)
       .not("matched_game_id", "is", null);
