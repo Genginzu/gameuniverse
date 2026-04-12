@@ -11,12 +11,9 @@ interface ColorsState {
 }
 
 interface ColorsResponse {
-  success?: boolean;
+  results?: Array<{ success: boolean; igdbId: number; name: string }>;
   done?: boolean;
-  igdbId?: number;
-  name?: string;
   remaining?: number;
-  error?: string;
 }
 
 export function useGlobalColorsSync(onGameSynced?: () => void) {
@@ -44,6 +41,7 @@ export function useGlobalColorsSync(onGameSynced?: () => void) {
 
     let synced = 0;
     let failed = 0;
+    let batchCount = 0;
 
     while (!stopRef.current) {
       try {
@@ -55,20 +53,23 @@ export function useGlobalColorsSync(onGameSynced?: () => void) {
           return;
         }
 
-        if (res.success) {
-          synced++;
-          if (synced % 50 === 0) onGameSynced?.();
-        } else {
-          failed++;
+        for (const r of res.results ?? []) {
+          if (r.success) synced++;
+          else failed++;
         }
+
+        const lastName = res.results?.[res.results.length - 1]?.name ?? null;
+        batchCount++;
 
         setState((prev) => ({
           ...prev,
           totalSynced: synced,
           totalFailed: failed,
           remaining: res.remaining ?? 0,
-          currentGame: res.name ?? null,
+          currentGame: lastName,
         }));
+
+        if (batchCount % 10 === 0) onGameSynced?.();
       } catch (err) {
         setState((prev) => ({
           ...prev,
