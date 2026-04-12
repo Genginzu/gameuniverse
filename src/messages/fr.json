@@ -2360,6 +2360,7 @@
       "tabs": {
         "download": "Téléchargement",
         "sync": "Synchronisation",
+        "enrich": "Enrichissement",
         "metascore": "Metascore"
       },
       "syncTab": {
@@ -2376,6 +2377,19 @@
         "infoResume": "Vous pouvez arrêter et reprendre la synchronisation à tout moment. Elle reprendra automatiquement là où elle s'est arrêtée.",
         "infoRetry": "Les jeux en erreur ne sont pas marqués comme synchronisés et seront réessayés lors du prochain lancement.",
         "allSynced": "Tous les jeux ont été synchronisés."
+      },
+      "enrichTab": {
+        "title": "Enrichissement des jeux",
+        "description": "Ajoute les données lourdes : couleurs, screenshots, artworks, vidéos, classifications d'âge, versions, langues, playtime, jeux similaires. Traite 3 jeux en parallèle.",
+        "startSync": "Lancer",
+        "syncing": "En cours...",
+        "stop": "Arrêter",
+        "currentGame": "En cours : {name}",
+        "synced": "{count} enrichi(s)",
+        "failed": "{count} échoué(s)",
+        "remaining": "{count} restant(s)",
+        "complete": "Terminé : {count} jeux enrichis",
+        "info": "Enrichit les jeux déjà créés avec les données complètes depuis IGDB : extraction de couleurs depuis la cover, screenshots, artworks, vidéos, classifications d'âge, versions/éditions, langues supportées, temps de jeu et jeux similaires."
       },
       "metascoreTab": {
         "title": "Synchronisation Metascore",

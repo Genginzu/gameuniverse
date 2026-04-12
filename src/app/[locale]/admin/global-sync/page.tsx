@@ -5,9 +5,10 @@ import { useTranslations } from "next-intl";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { GlobalSyncTab } from "@/components/admin/global-sync/GlobalSyncTab";
 import { SyncImportTab } from "@/components/admin/global-sync/SyncImportTab";
+import { EnrichSyncTab } from "@/components/admin/global-sync/EnrichSyncTab";
 import { MetascoreSyncTab } from "@/components/admin/global-sync/MetascoreSyncTab";
 
-const TABS = ["download", "sync", "metascore"] as const;
+const TABS = ["download", "sync", "enrich", "metascore"] as const;
 type Tab = (typeof TABS)[number];
 
 export default function GlobalSyncPage() {
@@ -29,7 +30,7 @@ export default function GlobalSyncPage() {
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className={`flex-1 rounded-lg px-4 py-2.5 text-sm font-medium transition-all ${
+            className={`flex-1 rounded-lg px-3 py-2.5 text-xs font-medium transition-all sm:text-sm ${
               activeTab === tab
                 ? "bg-white text-gray-900 shadow-sm dark:bg-gray-700 dark:text-white"
                 : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
@@ -42,6 +43,7 @@ export default function GlobalSyncPage() {
 
       {activeTab === "download" && <GlobalSyncTab />}
       {activeTab === "sync" && <SyncImportTab />}
+      {activeTab === "enrich" && <EnrichSyncTab />}
       {activeTab === "metascore" && <MetascoreSyncTab />}
     </div>
   );
