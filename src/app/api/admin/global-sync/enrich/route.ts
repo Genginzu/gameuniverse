@@ -14,7 +14,7 @@ import {
 } from "@/lib/services/igdb-sync-fields";
 import { logger } from "@/lib/logger";
 
-const BATCH_SIZE = 3;
+const BATCH_SIZE = 2;
 
 /**
  * POST /api/admin/global-sync/enrich
