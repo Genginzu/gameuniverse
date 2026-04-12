@@ -22,7 +22,7 @@ interface EnrichResponse {
   remaining: number;
 }
 
-export function useGlobalEnrichSync() {
+export function useGlobalEnrichSync(onBatchDone?: () => void) {
   const [state, setState] = useState<EnrichState>({
     isSyncing: false,
     totalSynced: 0,
@@ -47,6 +47,7 @@ export function useGlobalEnrichSync() {
 
     let synced = 0;
     let failed = 0;
+    let batchCount = 0;
 
     while (!stopRef.current) {
       try {
@@ -54,6 +55,7 @@ export function useGlobalEnrichSync() {
 
         if (res.done) {
           setState((prev) => ({ ...prev, isSyncing: false, currentGame: null }));
+          onBatchDone?.();
           return;
         }
 
@@ -63,6 +65,7 @@ export function useGlobalEnrichSync() {
         }
 
         const lastName = res.results[res.results.length - 1]?.name ?? null;
+        batchCount++;
 
         setState((prev) => ({
           ...prev,
@@ -71,6 +74,8 @@ export function useGlobalEnrichSync() {
           remaining: res.remaining,
           currentGame: lastName,
         }));
+
+        if (batchCount % 20 === 0) onBatchDone?.();
       } catch (err) {
         setState((prev) => ({
           ...prev,
@@ -82,7 +87,8 @@ export function useGlobalEnrichSync() {
     }
 
     setState((prev) => ({ ...prev, isSyncing: false }));
-  }, []);
+    onBatchDone?.();
+  }, [onBatchDone]);
 
   const stopSync = useCallback(() => {
     stopRef.current = true;

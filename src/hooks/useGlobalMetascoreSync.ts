@@ -22,7 +22,7 @@ interface MetascoreResponse {
   error?: string;
 }
 
-export function useGlobalMetascoreSync() {
+export function useGlobalMetascoreSync(onGameSynced?: () => void) {
   const [state, setState] = useState<MetascoreState>({
     isSyncing: false,
     totalSynced: 0,
@@ -56,11 +56,14 @@ export function useGlobalMetascoreSync() {
 
         if (res.done) {
           setState((prev) => ({ ...prev, isSyncing: false, currentGame: null }));
+          onGameSynced?.();
           return;
         }
 
-        if (res.success) synced++;
-        else failed++;
+        if (res.success) {
+          synced++;
+          if (synced % 50 === 0) onGameSynced?.();
+        } else failed++;
 
         setState((prev) => ({
           ...prev,
@@ -81,7 +84,8 @@ export function useGlobalMetascoreSync() {
     }
 
     setState((prev) => ({ ...prev, isSyncing: false }));
-  }, []);
+    onGameSynced?.();
+  }, [onGameSynced]);
 
   const stopSync = useCallback(() => {
     stopRef.current = true;

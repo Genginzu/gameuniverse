@@ -2386,7 +2386,9 @@
         "failed": "{count} failed",
         "remaining": "{count} remaining",
         "complete": "Complete: {count} games enriched",
-        "info": "Enriches already created games with full IGDB data: color extraction from cover, screenshots, artworks, videos, age ratings, versions/editions, supported languages, playtime and similar games."
+        "info": "Enriches already created games with full IGDB data: color extraction from cover, screenshots, artworks, videos, age ratings, versions/editions, supported languages, playtime and similar games.",
+        "searchPlaceholder": "Search a game...",
+        "allDone": "All games have been enriched."
       },
       "metascoreTab": {
         "title": "Metascore Sync",
@@ -2400,7 +2402,9 @@
         "remaining": "{count} remaining",
         "complete": "Complete: {count} games processed",
         "source": "Last source: {source}",
-        "info": "Tries Metacritic first (scraping), then falls back to IGDB aggregated rating. Games without a score receive -1. One game at a time due to Metacritic rate limiting (~2.5s per game)."
+        "info": "Tries Metacritic first (scraping), then falls back to IGDB aggregated rating. Games without a score receive -1. One game at a time due to Metacritic rate limiting (~2.5s per game).",
+        "searchPlaceholder": "Search a game...",
+        "allDone": "All metascores have been synced."
       }
     }
   },

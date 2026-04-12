@@ -2389,7 +2389,9 @@
         "failed": "{count} échoué(s)",
         "remaining": "{count} restant(s)",
         "complete": "Terminé : {count} jeux enrichis",
-        "info": "Enrichit les jeux déjà créés avec les données complètes depuis IGDB : extraction de couleurs depuis la cover, screenshots, artworks, vidéos, classifications d'âge, versions/éditions, langues supportées, temps de jeu et jeux similaires."
+        "info": "Enrichit les jeux déjà créés avec les données complètes depuis IGDB : extraction de couleurs depuis la cover, screenshots, artworks, vidéos, classifications d'âge, versions/éditions, langues supportées, temps de jeu et jeux similaires.",
+        "searchPlaceholder": "Rechercher un jeu...",
+        "allDone": "Tous les jeux ont été enrichis."
       },
       "metascoreTab": {
         "title": "Synchronisation Metascore",
@@ -2403,7 +2405,9 @@
         "remaining": "{count} restant(s)",
         "complete": "Terminé : {count} jeux traités",
         "source": "Dernière source : {source}",
-        "info": "Essaie d'abord Metacritic (scraping), puis se rabat sur le score agrégé IGDB. Les jeux sans score reçoivent la valeur -1. Un jeu à la fois à cause du rate limiting Metacritic (~2,5s par jeu)."
+        "info": "Essaie d'abord Metacritic (scraping), puis se rabat sur le score agrégé IGDB. Les jeux sans score reçoivent la valeur -1. Un jeu à la fois à cause du rate limiting Metacritic (~2,5s par jeu).",
+        "searchPlaceholder": "Rechercher un jeu...",
+        "allDone": "Tous les metascores ont été synchronisés."
       }
     }
   },

@@ -1,13 +1,39 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useGlobalMetascoreSync } from "@/hooks/useGlobalMetascoreSync";
+import { useGlobalSync } from "@/hooks/useGlobalSync";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Pagination } from "@/components/shared/Pagination";
 import { Icon } from "@iconify/react";
+
+const IGDB_IMAGE_BASE = "https://images.igdb.com/igdb/image/upload";
 
 export function MetascoreSyncTab() {
   const t = useTranslations("admin.globalSync.metascoreTab");
-  const { metascoreState, startMetascoreSync, stopMetascoreSync } = useGlobalMetascoreSync();
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+
+  const { entries, total, totalPages, isLoading, refresh } = useGlobalSync(
+    page,
+    search,
+    "to_metascore"
+  );
+  const { metascoreState, startMetascoreSync, stopMetascoreSync } = useGlobalMetascoreSync(refresh);
+
+  const handleSearch = () => {
+    setSearch(searchInput);
+    setPage(1);
+  };
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") handleSearch();
+  };
+  const coverUrl = (id: string | null) =>
+    id ? `${IGDB_IMAGE_BASE}/t_cover_small/${id}.jpg` : null;
 
   return (
     <div className="space-y-4 md:space-y-6">
@@ -88,27 +114,74 @@ export function MetascoreSyncTab() {
             </div>
           </div>
         )}
-
         {metascoreState.error && (
           <p className="mt-3 text-sm text-red-500">{metascoreState.error}</p>
         )}
-
-        {!metascoreState.isSyncing && metascoreState.totalSynced > 0 && !metascoreState.error && (
-          <p className="mt-3 text-sm text-green-600 dark:text-green-400">
-            {t("complete", { count: metascoreState.totalSynced })}
-          </p>
-        )}
       </div>
 
-      {/* Info */}
-      <div className="glass-card rounded-xl p-4 md:p-6">
-        <div className="flex items-start gap-3">
-          <Icon icon="lucide:info" className="mt-0.5 size-5 shrink-0 text-cyan-500" />
-          <div className="text-xs text-gray-500 sm:text-sm dark:text-gray-400">
-            <p>{t("info")}</p>
-          </div>
+      {/* Search */}
+      <div className="flex gap-2">
+        <Input
+          value={searchInput}
+          onChange={(e) => setSearchInput(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={t("searchPlaceholder")}
+          className="text-base sm:text-sm"
+        />
+        <Button variant="outline" onClick={handleSearch} className="shrink-0">
+          <Icon icon="fa:search" className="size-4" />
+        </Button>
+      </div>
+
+      <p className="text-sm text-gray-500 dark:text-gray-400">{t("remaining", { count: total })}</p>
+
+      {/* List */}
+      {isLoading ? (
+        <div className="space-y-2">
+          {Array.from({ length: 10 }).map((_, i) => (
+            <Skeleton key={i} className="h-16 w-full rounded-xl" />
+          ))}
         </div>
-      </div>
+      ) : entries.length === 0 ? (
+        <div className="glass-card flex flex-col items-center justify-center rounded-xl p-8 text-center">
+          <Icon icon="lucide:check-circle-2" className="mb-3 size-10 text-green-500" />
+          <p className="text-sm text-gray-500 dark:text-gray-400">{t("allDone")}</p>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {entries.map((entry) => (
+            <div
+              key={entry.id}
+              className="glass-card flex items-center gap-3 rounded-xl p-3 md:gap-4 md:p-4"
+            >
+              <div className="size-10 shrink-0 overflow-hidden rounded-lg bg-gray-200 md:size-12 dark:bg-gray-700">
+                {coverUrl(entry.cover_image_id) ? (
+                  <img
+                    src={coverUrl(entry.cover_image_id)!}
+                    alt={entry.name}
+                    className="size-full object-cover"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="flex size-full items-center justify-center">
+                    <Icon icon="fa:gamepad" className="size-4 text-gray-400" />
+                  </div>
+                )}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
+                  {entry.name}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">IGDB #{entry.igdb_id}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {totalPages > 1 && (
+        <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+      )}
     </div>
   );
 }
