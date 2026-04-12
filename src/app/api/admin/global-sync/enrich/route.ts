@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { IGDBService } from "@/lib/services/igdbService";
-import { extractColorsFromCover } from "@/lib/utils/color-extraction";
 import {
   syncScreenshots,
   syncArtworks,
@@ -15,12 +14,12 @@ import {
 } from "@/lib/services/igdb-sync-fields";
 import { logger } from "@/lib/logger";
 
-const BATCH_SIZE = 3;
+const BATCH_SIZE = 5;
 
 /**
  * POST /api/admin/global-sync/enrich
- * Phase 2: Enriches synced games with heavy data (colors, media, relations).
- * Processes 3 games per request (heavier than phase 1).
+ * Phase 2: Enriches synced games with IGDB data (no color extraction).
+ * Screenshots, artworks, age ratings, versions, languages, playtime, videos, similar games.
  */
 export async function POST(_request: NextRequest) {
   try {
@@ -83,43 +82,13 @@ async function enrichOneGame(supabase: any, entry: EnrichEntry): Promise<EnrichR
   const base = { igdbId: entry.igdb_id, name: entry.name };
   try {
     const gameId = entry.matched_game_id;
-
-    // Single IGDB call — gets everything needed for enrichment
     const igdb = await IGDBService.getGameDetails(entry.igdb_id);
+
     if (!igdb) {
-      // Mark as enriched anyway to avoid retrying forever
       await supabase.from("igdb_global_sync").update({ is_enriched: true }).eq("id", entry.id);
       return { ...base, success: false, error: "Not found on IGDB" };
     }
 
-    // Extract colors from cover (the slow part)
-    const coverUrl = igdb.cover?.image_id
-      ? IGDBService.buildImageUrl(igdb.cover.image_id, "cover_big")
-      : null;
-
-    let colorUpdate: Record<string, unknown> = {};
-    if (coverUrl) {
-      try {
-        const colors = await extractColorsFromCover(coverUrl);
-        if (colors) {
-          colorUpdate = {
-            background_color: colors.background_color,
-            accent_color: colors.accent_color,
-            label_color: colors.label_color,
-            text_color: colors.text_color,
-          };
-        }
-      } catch {
-        // Color extraction failed — continue without colors
-      }
-    }
-
-    // Update colors on the game if we got them
-    if (Object.keys(colorUpdate).length > 0) {
-      await supabase.from("games").update(colorUpdate).eq("id", gameId);
-    }
-
-    // Run all enrichment syncs in parallel
     await Promise.all([
       syncScreenshots(supabase, gameId, igdb),
       syncArtworks(supabase, gameId, igdb),
@@ -131,9 +100,7 @@ async function enrichOneGame(supabase: any, entry: EnrichEntry): Promise<EnrichR
       syncSimilarGames(supabase, gameId, igdb),
     ]);
 
-    // Mark as enriched
     await supabase.from("igdb_global_sync").update({ is_enriched: true }).eq("id", entry.id);
-
     return { ...base, success: true };
   } catch (error) {
     const msg = error instanceof Error ? error.message : "Unknown error";

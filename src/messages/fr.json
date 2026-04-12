@@ -2361,6 +2361,7 @@
         "download": "Téléchargement",
         "sync": "Synchronisation",
         "enrich": "Enrichissement",
+        "colors": "Couleurs",
         "metascore": "Metascore"
       },
       "syncTab": {
@@ -2392,6 +2393,19 @@
         "info": "Enrichit les jeux déjà créés avec les données complètes depuis IGDB : extraction de couleurs depuis la cover, screenshots, artworks, vidéos, classifications d'âge, versions/éditions, langues supportées, temps de jeu et jeux similaires.",
         "searchPlaceholder": "Rechercher un jeu...",
         "allDone": "Tous les jeux ont été enrichis."
+      },
+      "colorsTab": {
+        "title": "Extraction des couleurs",
+        "description": "Extrait les couleurs d'accent, de fond, de label et de texte depuis les covers. Un jeu à la fois (téléchargement d'image + analyse).",
+        "startSync": "Lancer",
+        "syncing": "Extraction en cours...",
+        "stop": "Arrêter",
+        "currentGame": "En cours : {name}",
+        "synced": "{count} traité(s)",
+        "failed": "{count} échoué(s)",
+        "remaining": "{count} restant(s)",
+        "searchPlaceholder": "Rechercher un jeu...",
+        "allDone": "Toutes les couleurs ont été extraites."
       },
       "metascoreTab": {
         "title": "Synchronisation Metascore",

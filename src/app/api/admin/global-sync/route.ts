@@ -40,6 +40,8 @@ export async function GET(request: NextRequest) {
       query = query.eq("is_synced", true).eq("is_enriched", false);
     } else if (filter === "to_metascore") {
       query = query.eq("is_synced", true).eq("is_enriched", true).eq("is_metascore_synced", false);
+    } else if (filter === "to_colors") {
+      query = query.eq("is_enriched", true).eq("is_colors_synced", false);
     }
 
     const { data, count, error } = await query

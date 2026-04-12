@@ -2358,6 +2358,7 @@
         "download": "Download",
         "sync": "Synchronization",
         "enrich": "Enrichment",
+        "colors": "Colors",
         "metascore": "Metascore"
       },
       "syncTab": {
@@ -2389,6 +2390,19 @@
         "info": "Enriches already created games with full IGDB data: color extraction from cover, screenshots, artworks, videos, age ratings, versions/editions, supported languages, playtime and similar games.",
         "searchPlaceholder": "Search a game...",
         "allDone": "All games have been enriched."
+      },
+      "colorsTab": {
+        "title": "Color Extraction",
+        "description": "Extracts accent, background, label and text colors from game covers. One at a time (image download + analysis).",
+        "startSync": "Start",
+        "syncing": "Extracting...",
+        "stop": "Stop",
+        "currentGame": "Current: {name}",
+        "synced": "{count} processed",
+        "failed": "{count} failed",
+        "remaining": "{count} remaining",
+        "searchPlaceholder": "Search a game...",
+        "allDone": "All colors have been extracted."
       },
       "metascoreTab": {
         "title": "Metascore Sync",
