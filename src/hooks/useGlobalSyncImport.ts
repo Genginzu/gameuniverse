@@ -10,16 +10,20 @@ interface SyncImportState {
   error: string | null;
 }
 
-interface SyncResponse {
+interface SyncResult {
   success: boolean;
-  done?: boolean;
-  igdbId?: number;
-  name?: string;
-  remaining?: number;
+  igdbId: number;
+  name: string;
   error?: string;
 }
 
-export function useGlobalSyncImport(onGameSynced?: () => void) {
+interface SyncResponse {
+  results: SyncResult[];
+  done: boolean;
+  remaining: number;
+}
+
+export function useGlobalSyncImport(onBatchSynced?: () => void) {
   const [state, setState] = useState<SyncImportState>({
     isSyncing: false,
     totalSynced: 0,
@@ -44,31 +48,35 @@ export function useGlobalSyncImport(onGameSynced?: () => void) {
 
     let synced = 0;
     let failed = 0;
+    let batchCount = 0;
 
     while (!stopRef.current) {
       try {
-        const result = await apiClient.post<SyncResponse>("/api/admin/global-sync/sync", {});
+        const res = await apiClient.post<SyncResponse>("/api/admin/global-sync/sync", {});
 
-        if (result.done) {
+        if (res.done) {
           setState((prev) => ({ ...prev, isSyncing: false, currentGame: null }));
-          onGameSynced?.();
+          onBatchSynced?.();
           return;
         }
 
-        if (result.success) {
-          synced++;
-          if (synced % 100 === 0) onGameSynced?.();
-        } else {
-          failed++;
+        for (const r of res.results) {
+          if (r.success) synced++;
+          else failed++;
         }
+
+        const lastName = res.results[res.results.length - 1]?.name ?? null;
+        batchCount++;
 
         setState((prev) => ({
           ...prev,
           totalSynced: synced,
           totalFailed: failed,
-          remaining: result.remaining ?? 0,
-          currentGame: result.name ?? null,
+          remaining: res.remaining,
+          currentGame: lastName,
         }));
+
+        if (batchCount % 20 === 0) onBatchSynced?.();
       } catch (err) {
         setState((prev) => ({
           ...prev,
@@ -80,7 +88,8 @@ export function useGlobalSyncImport(onGameSynced?: () => void) {
     }
 
     setState((prev) => ({ ...prev, isSyncing: false }));
-  }, [onGameSynced]);
+    onBatchSynced?.();
+  }, [onBatchSynced]);
 
   const stopSync = useCallback(() => {
     stopRef.current = true;
