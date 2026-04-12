@@ -2402,7 +2402,8 @@
         "failed": "{count} échoué(s)",
         "remaining": "{count} restant(s)",
         "complete": "Terminé : {count} jeux traités",
-        "info": "Récupère uniquement le score agrégé IGDB (aggregated_rating). Les jeux sans score reçoivent la valeur -1. Vous pouvez arrêter et reprendre à tout moment."
+        "source": "Dernière source : {source}",
+        "info": "Essaie d'abord Metacritic (scraping), puis se rabat sur le score agrégé IGDB. Les jeux sans score reçoivent la valeur -1. Un jeu à la fois à cause du rate limiting Metacritic (~2,5s par jeu)."
       }
     }
   },

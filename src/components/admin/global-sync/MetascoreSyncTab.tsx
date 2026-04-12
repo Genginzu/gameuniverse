@@ -61,6 +61,14 @@ export function MetascoreSyncTab() {
                   {t("synced", { count: metascoreState.totalSynced })}
                 </span>
               </div>
+              {metascoreState.lastSource && (
+                <div className="flex items-center gap-1.5 text-sm">
+                  <Icon icon="lucide:database" className="size-4 text-cyan-500" />
+                  <span className="text-gray-700 dark:text-gray-300">
+                    {t("source", { source: metascoreState.lastSource })}
+                  </span>
+                </div>
+              )}
               {metascoreState.totalFailed > 0 && (
                 <div className="flex items-center gap-1.5 text-sm">
                   <Icon icon="lucide:x-circle" className="size-4 text-red-500" />

@@ -2399,7 +2399,8 @@
         "failed": "{count} failed",
         "remaining": "{count} remaining",
         "complete": "Complete: {count} games processed",
-        "info": "Fetches only the IGDB aggregated rating. Games without a score receive -1. You can stop and resume at any time."
+        "source": "Last source: {source}",
+        "info": "Tries Metacritic first (scraping), then falls back to IGDB aggregated rating. Games without a score receive -1. One game at a time due to Metacritic rate limiting (~2.5s per game)."
       }
     }
   },
