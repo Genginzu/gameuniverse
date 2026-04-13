@@ -3083,5 +3083,13 @@
     "description": "La page que vous recherchez n'existe pas ou a ete deplacee.",
     "home": "Accueil",
     "games": "Voir les jeux"
+  },
+  "notifications": {
+    "ariaLabel": "Notifications, {count} non lue(s)",
+    "noNotifications": "Aucune notification",
+    "markAllAsRead": "Tout marquer comme lu",
+    "typePostComment": "a commenté votre post",
+    "typeDiscussionMessage": "vous a envoyé un message",
+    "dismiss": "Marquer comme lue"
   }
 }

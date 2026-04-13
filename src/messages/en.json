@@ -3080,5 +3080,13 @@
     "description": "The page you are looking for does not exist or has been moved.",
     "home": "Home",
     "games": "Browse games"
+  },
+  "notifications": {
+    "ariaLabel": "Notifications, {count} unread",
+    "noNotifications": "No notifications",
+    "markAllAsRead": "Mark all as read",
+    "typePostComment": "commented on your post",
+    "typeDiscussionMessage": "sent you a message",
+    "dismiss": "Mark as read"
   }
 }
