@@ -3087,6 +3087,14 @@
     "markAllAsRead": "Mark all as read",
     "typePostComment": "commented on your post",
     "typeDiscussionMessage": "sent you a message",
-    "dismiss": "Mark as read"
+    "dismiss": "Dismiss"
+  },
+  "postComments": {
+    "title": "Comments",
+    "noComments": "No comments yet",
+    "placeholder": "Write a comment...",
+    "submit": "Submit",
+    "deleteLabel": "Delete comment",
+    "charCount": "{remaining} characters left"
   }
 }

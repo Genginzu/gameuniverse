@@ -3085,11 +3085,19 @@
     "games": "Voir les jeux"
   },
   "notifications": {
-    "ariaLabel": "Notifications, {count} non lue(s)",
+    "ariaLabel": "Notifications, {count} non lues",
     "noNotifications": "Aucune notification",
     "markAllAsRead": "Tout marquer comme lu",
     "typePostComment": "a commenté votre post",
     "typeDiscussionMessage": "vous a envoyé un message",
-    "dismiss": "Marquer comme lue"
+    "dismiss": "Fermer"
+  },
+  "postComments": {
+    "title": "Commentaires",
+    "noComments": "Aucun commentaire",
+    "placeholder": "Écrire un commentaire...",
+    "submit": "Envoyer",
+    "deleteLabel": "Supprimer le commentaire",
+    "charCount": "{remaining} caractères restants"
   }
 }
