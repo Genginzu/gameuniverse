@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Pagination } from "@/components/shared/Pagination";
 import { Icon } from "@iconify/react";
+import { SyncProgressBar } from "./SyncProgressBar";
 
 const IGDB_IMAGE_BASE = "https://images.igdb.com/igdb/image/upload";
 
@@ -71,9 +72,11 @@ export function SyncImportTab() {
         {(syncState.isSyncing || syncState.totalSynced > 0 || syncState.totalFailed > 0) && (
           <div className="mt-4 space-y-3">
             {syncState.isSyncing && (
-              <div className="h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
-                <div className="h-full animate-pulse rounded-full bg-linear-to-r from-cyan-500 to-violet-500" />
-              </div>
+              <SyncProgressBar
+                synced={syncState.totalSynced}
+                failed={syncState.totalFailed}
+                remaining={syncState.remaining}
+              />
             )}
             {syncState.currentGame && (
               <p className="text-xs text-gray-500 sm:text-sm dark:text-gray-400">
