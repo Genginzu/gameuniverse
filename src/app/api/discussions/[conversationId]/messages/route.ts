@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { DiscussionServerService } from "@/lib/services/discussionServerService";
+import { NotificationServerService } from "@/lib/services/notificationServerService";
 import { sendMessageSchema } from "@/lib/validations/discussion";
 import { logger } from "@/lib/logger";
 
@@ -72,6 +73,38 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
       user.id,
       parsed.data.content
     );
+
+    // Best-effort notification — failure must not block the 201 response
+    try {
+      const convSupabase = await createRouteHandlerClient();
+      const { data: conversation } = await convSupabase
+        .from("conversations")
+        .select("participant_1, participant_2")
+        .eq("id", conversationId)
+        .single();
+
+      if (conversation) {
+        const recipientId =
+          conversation.participant_1 === user.id
+            ? conversation.participant_2
+            : conversation.participant_1;
+
+        await NotificationServerService.create(
+          recipientId,
+          user.id,
+          "discussion_message",
+          conversationId,
+          parsed.data.content
+        );
+      }
+    } catch (notifError) {
+      logger.error("Failed to create discussion_message notification", {
+        error: notifError instanceof Error ? notifError.message : notifError,
+        conversationId,
+        userId: user.id,
+      });
+    }
+
     return NextResponse.json(msg, { status: 201 });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Internal server error";
