@@ -83,6 +83,8 @@ const HOOK_TESTS_NEEDING_DOM = [
   "test/unit/hooks/useAdminRoles.test.ts",
   "test/unit/hooks/useAdminSimilarGames.test.ts",
   "test/unit/hooks/useAdminSpecies.test.ts",
+  "test/unit/hooks/useNotifications.test.ts",
+  "test/unit/hooks/usePostComments.test.ts",
 ];
 
 export default defineConfig({
