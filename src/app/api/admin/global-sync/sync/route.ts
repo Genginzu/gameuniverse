@@ -139,19 +139,6 @@ async function syncOneGame(supabase: SupabaseAdmin, entry: SyncEntry): Promise<S
   } catch (error) {
     const msg = error instanceof Error ? error.message : "Unknown error";
     logger.warn("Global sync failed", { igdbId: entry.igdb_id, error: msg });
-
-    // Check if the game was partially created — if so, mark as synced
-    // so we don't lose track of it
-    const { data: partialGame } = await supabase
-      .from("games")
-      .select("id")
-      .eq("igdb_id", entry.igdb_id)
-      .single();
-
-    if (partialGame) {
-      await markSynced(supabase, entry.id, partialGame.id);
-    }
-
     return { ...base, success: false, error: msg };
   }
 }
