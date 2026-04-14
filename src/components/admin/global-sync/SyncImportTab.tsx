@@ -110,6 +110,11 @@ export function SyncImportTab() {
           </div>
         )}
         {syncState.error && <p className="mt-3 text-sm text-red-500">{syncState.error}</p>}
+        {syncState.lastError && (
+          <p className="mt-2 text-xs text-orange-500 dark:text-orange-400">
+            Dernière erreur : {syncState.lastError}
+          </p>
+        )}
       </div>
 
       {/* Search */}

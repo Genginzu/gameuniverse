@@ -7,6 +7,7 @@ interface SyncImportState {
   totalFailed: number;
   remaining: number;
   currentGame: string | null;
+  lastError: string | null;
   error: string | null;
 }
 
@@ -30,6 +31,7 @@ export function useGlobalSyncImport(onBatchSynced?: () => void) {
     totalFailed: 0,
     remaining: 0,
     currentGame: null,
+    lastError: null,
     error: null,
   });
 
@@ -43,6 +45,7 @@ export function useGlobalSyncImport(onBatchSynced?: () => void) {
       totalFailed: 0,
       remaining: 0,
       currentGame: null,
+      lastError: null,
       error: null,
     });
 
@@ -66,6 +69,7 @@ export function useGlobalSyncImport(onBatchSynced?: () => void) {
         }
 
         const lastName = res.results[res.results.length - 1]?.name ?? null;
+        const lastErr = res.results.filter((r) => !r.success).pop()?.error ?? null;
         batchCount++;
 
         setState((prev) => ({
@@ -74,6 +78,7 @@ export function useGlobalSyncImport(onBatchSynced?: () => void) {
           totalFailed: failed,
           remaining: res.remaining,
           currentGame: lastName,
+          lastError: lastErr ?? prev.lastError,
         }));
 
         if (batchCount % 20 === 0) onBatchSynced?.();
