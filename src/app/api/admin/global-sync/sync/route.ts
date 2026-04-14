@@ -102,18 +102,21 @@ async function syncOneGame(supabase: SupabaseAdmin, entry: SyncEntry): Promise<S
       : null;
     const metascore = igdb.aggregated_rating ? Math.round(igdb.aggregated_rating) : null;
 
-    // Insert game
+    // Upsert game (handles retries and slug conflicts)
     const { data: newGame, error: insertErr } = await supabase
       .from("games")
-      .insert({
-        slug: igdb.slug,
-        igdb_id: igdb.id,
-        release_date: releaseDate,
-        metascore,
-        cover_image_url: coverUrl,
-        background_image_url: bgUrl,
-        last_synced_at: new Date().toISOString(),
-      })
+      .upsert(
+        {
+          slug: igdb.slug,
+          igdb_id: igdb.id,
+          release_date: releaseDate,
+          metascore,
+          cover_image_url: coverUrl,
+          background_image_url: bgUrl,
+          last_synced_at: new Date().toISOString(),
+        },
+        { onConflict: "igdb_id" }
+      )
       .select("id")
       .single();
 
