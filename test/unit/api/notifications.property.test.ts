@@ -69,11 +69,13 @@ describe("Feature: notifications-system, Property 6: Notifications triées par d
   test("GET /api/notifications returns at most `limit` notifications sorted by createdAt DESC", async () => {
     await fc.assert(
       fc.asyncProperty(
-        // Generate N notifications (1-50) with random dates
-        fc.array(fc.date({ min: new Date("2020-01-01"), max: new Date("2030-01-01") }), {
-          minLength: 1,
-          maxLength: 50,
-        }),
+        // Generate N notifications (1-50) with random dates (filter out invalid dates)
+        fc.array(
+          fc
+            .date({ min: new Date("2020-01-01"), max: new Date("2030-01-01") })
+            .filter((d) => !isNaN(d.getTime())),
+          { minLength: 1, maxLength: 50 }
+        ),
         // Generate a limit (1-50)
         fc.integer({ min: 1, max: 50 }),
         async (dates, limit) => {

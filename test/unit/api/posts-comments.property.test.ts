@@ -72,10 +72,12 @@ describe("Feature: notifications-system, Property 2: Tri des commentaires par da
     await fc.assert(
       fc.asyncProperty(
         fc.uuid(),
-        fc.array(fc.date({ min: new Date("2020-01-01"), max: new Date("2030-01-01") }), {
-          minLength: 1,
-          maxLength: 30,
-        }),
+        fc.array(
+          fc
+            .date({ min: new Date("2020-01-01"), max: new Date("2030-01-01") })
+            .filter((d) => !isNaN(d.getTime())),
+          { minLength: 1, maxLength: 30 }
+        ),
         async (postId, dates) => {
           // Build comments sorted by date ASC (as the service would return)
           const comments = dates
