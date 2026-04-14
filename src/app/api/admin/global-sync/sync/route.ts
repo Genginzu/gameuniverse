@@ -4,7 +4,7 @@ import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { IGDBService } from "@/lib/services/igdbService";
 import { logger } from "@/lib/logger";
 
-const BATCH_SIZE = 4;
+const BATCH_SIZE = 3;
 
 /**
  * POST /api/admin/global-sync/sync
