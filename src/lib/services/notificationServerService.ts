@@ -1,4 +1,5 @@
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { logger } from "@/lib/logger";
 import type { Notification, NotificationType } from "@/types/notification";
 
@@ -16,7 +17,7 @@ interface NotificationRow {
   content_preview: string;
   is_read: boolean;
   created_at: string;
-  profiles: { username: string; avatar_url: string | null } | null;
+  sender: { username: string; avatar_url: string | null } | null;
 }
 
 function transformRow(row: NotificationRow): Notification {
@@ -29,8 +30,8 @@ function transformRow(row: NotificationRow): Notification {
     contentPreview: row.content_preview,
     isRead: row.is_read,
     createdAt: row.created_at,
-    sender: row.profiles
-      ? { username: row.profiles.username, avatarUrl: row.profiles.avatar_url }
+    sender: row.sender
+      ? { username: row.sender.username, avatarUrl: row.sender.avatar_url }
       : undefined,
   };
 }
@@ -50,7 +51,10 @@ export class NotificationServerService {
   ): Promise<Notification | null> {
     if (recipientId === senderId) return null;
 
-    const supabase = await createRouteHandlerClient();
+    // Use the admin client to bypass RLS: the insert is authored by the sender,
+    // but the notifications SELECT policy only grants reads to the recipient, so
+    // RLS would strip the RETURNING row when using a user-context client.
+    const supabase = getSupabaseAdmin();
     const truncatedPreview = contentPreview.slice(0, 100);
 
     const { data, error } = await supabase
@@ -72,7 +76,7 @@ export class NotificationServerService {
       return null;
     }
 
-    const row = data as unknown as Omit<NotificationRow, "profiles">;
+    const row = data as unknown as Omit<NotificationRow, "sender">;
     return {
       id: row.id,
       recipientId: row.recipient_id,
@@ -89,10 +93,12 @@ export class NotificationServerService {
   static async getUnread(recipientId: string, limit: number = 20): Promise<Notification[]> {
     const supabase = await createRouteHandlerClient();
 
+    // notifications has two FKs to profiles (sender_id + recipient_id), so the
+    // embed needs the `!<column>` hint to disambiguate which relationship to follow.
     const { data, error } = await supabase
       .from("notifications" as UntypedFrom)
       .select(
-        "id, recipient_id, sender_id, type, reference_id, content_preview, is_read, created_at, profiles:sender_id(username, avatar_url)"
+        "id, recipient_id, sender_id, type, reference_id, content_preview, is_read, created_at, sender:profiles!sender_id(username, avatar_url)"
       )
       .eq("recipient_id", recipientId)
       .eq("is_read", false)

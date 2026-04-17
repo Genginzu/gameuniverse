@@ -27,6 +27,14 @@ vi.mock("@/lib/supabase-server", () => ({
   }),
 }));
 
+vi.mock("@/lib/supabase-admin", () => ({
+  getSupabaseAdmin: vi.fn(() => ({
+    from: () => ({
+      insert: mockInsert,
+    }),
+  })),
+}));
+
 vi.mock("@/lib/logger", () => ({
   logger: { error: vi.fn(), info: vi.fn(), warn: vi.fn() },
 }));
