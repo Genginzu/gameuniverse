@@ -119,14 +119,13 @@ function mockCharactersTable(rows: any[], count: number) {
         countChain.catch = countResult.catch.bind(countResult);
         return countChain;
       }
-      // Main query: chain .eq()/.ilike()/.in() then .order().range()
+      // Main query: chain .eq()/.ilike()/.in() then .order().order().order().range()
       const mainChain: any = {};
       mainChain.eq = vi.fn(() => mainChain);
       mainChain.ilike = vi.fn(() => mainChain);
       mainChain.in = vi.fn(() => mainChain);
-      mainChain.order = vi.fn(() => ({
-        range: vi.fn(() => dataResult),
-      }));
+      mainChain.order = vi.fn(() => mainChain);
+      mainChain.range = vi.fn(() => dataResult);
       return mainChain;
     }),
   };

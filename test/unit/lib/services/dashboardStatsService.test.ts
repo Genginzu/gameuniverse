@@ -22,12 +22,7 @@ vi.mock('@/lib/services/dashboardStatsCompute', () => ({
   computePlatformDistribution: vi.fn(() => []),
 }));
 vi.mock('@/lib/utils/untypedTable', () => ({
-  untypedTable: vi.fn(() => {
-    const c: any = {};
-    c.select = vi.fn(() => c); c.eq = vi.fn(() => c); c.order = vi.fn(() => c);
-    c.then = (res: any) => Promise.resolve({ data: [], error: null }).then(res);
-    return c;
-  }),
+  untypedTable: (supabase: any, table: string) => supabase.from(table),
 }));
 
 import { DashboardStatsService } from '@/lib/services/dashboardStatsService';

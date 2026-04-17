@@ -40,7 +40,7 @@ const notificationArb = fc
     contentPreview: fc.string({ minLength: 1, maxLength: 100 }),
     isRead: fc.constant(false),
     createdAt: fc
-      .date({ min: new Date("2020-01-01"), max: new Date() })
+      .date({ min: new Date("2020-01-01"), max: new Date(), noInvalidDate: true })
       .map((d) => d.toISOString()),
     senderUsername: fc.stringMatching(/^[a-zA-Z0-9_]{3,20}$/),
   })

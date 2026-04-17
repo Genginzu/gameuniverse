@@ -113,7 +113,7 @@ describe("syncVideos", () => {
     expect(inserts[0]).toMatchObject({
       game_id: "game-uuid",
       url: "https://www.youtube.com/watch?v=vid1",
-      thumbnail_url: "https://img.youtube.com/vi/vid1/maxresdefault.jpg",
+      thumbnail_url: "https://img.youtube.com/vi/vid1/hqdefault.jpg",
       title: "Official Trailer",
       video_type: "trailer",
       display_order: 0,
@@ -124,7 +124,7 @@ describe("syncVideos", () => {
     expect(inserts[1]).toMatchObject({
       game_id: "game-uuid",
       url: "https://www.youtube.com/watch?v=vid2",
-      thumbnail_url: "https://img.youtube.com/vi/vid2/maxresdefault.jpg",
+      thumbnail_url: "https://img.youtube.com/vi/vid2/hqdefault.jpg",
       title: "Gameplay Demo",
       video_type: "trailer",
       display_order: 1,
