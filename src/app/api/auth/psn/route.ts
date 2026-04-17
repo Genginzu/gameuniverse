@@ -25,7 +25,13 @@ export async function POST(request: NextRequest) {
     const accessCode = await exchangeNpssoForAccessCode(npsso.trim());
     const authorization = await exchangeAccessCodeForAuthTokens(accessCode);
 
-    // Get PSN profile to retrieve username and accountId
+    // The accountId is encoded as `sub` in the idToken JWT returned by PSN
+    const accountId = decodeJwtSub(authorization.idToken);
+    if (!accountId) {
+      return NextResponse.json({ error: "Failed to resolve PSN account id" }, { status: 400 });
+    }
+
+    // Get PSN profile to retrieve onlineId
     const profile = await getProfileFromAccountId(authorization, "me");
 
     const tokenExpiresAt = new Date(
@@ -37,7 +43,7 @@ export async function POST(request: NextRequest) {
         player_id: user.id,
         platform: "playstation",
         auth_type: "npsso",
-        external_id: profile.accountId,
+        external_id: accountId,
         platform_username: profile.onlineId,
         access_token: authorization.accessToken,
         refresh_token: authorization.refreshToken ?? null,
@@ -50,11 +56,23 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       username: profile.onlineId,
-      accountId: profile.accountId,
+      accountId,
     });
   } catch (error) {
     logger.error("PSN auth error", { error });
     const message = error instanceof Error ? error.message : "PSN authentication failed";
     return NextResponse.json({ error: message }, { status: 400 });
+  }
+}
+
+function decodeJwtSub(token: string): string | null {
+  const parts = token.split(".");
+  if (parts.length < 2) return null;
+  try {
+    const payload = Buffer.from(parts[1], "base64url").toString("utf-8");
+    const parsed = JSON.parse(payload) as { sub?: string };
+    return parsed.sub ?? null;
+  } catch {
+    return null;
   }
 }
