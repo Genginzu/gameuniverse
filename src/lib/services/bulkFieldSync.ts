@@ -2,6 +2,7 @@ import { IGDBService } from "./igdbService";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { extractColorsFromCover } from "@/lib/utils/color-extraction";
 import { logger } from "@/lib/logger";
+import type { Database } from "@/lib/database.types";
 
 /**
  * Lightweight field-specific sync from IGDB.
@@ -85,7 +86,10 @@ async function syncCover(gameId: string, igdbId: number): Promise<SyncResult> {
     // Color extraction failed, still update cover
   }
 
-  await supabase.from("games").update(updateData).eq("id", gameId);
+  await supabase
+    .from("games")
+    .update(updateData as Database["public"]["Tables"]["games"]["Update"])
+    .eq("id", gameId);
   return { success: true, value: coverUrl };
 }
 

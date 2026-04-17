@@ -99,6 +99,7 @@ export async function POST(request: NextRequest) {
           if (!data || data.length === 0) break;
 
           for (const char of data) {
+            if (char.igdb_id === null) continue;
             await syncChar(char.id, char.igdb_id);
           }
 
@@ -143,6 +144,7 @@ async function applyFallback(charId: string, column: string, fallback: string) {
     const supabase = await createRouteHandlerClient();
     await supabase
       .from("characters")
+      // @ts-expect-error — column is dynamic; the caller guarantees a valid characters column
       .update({ [column]: fallback })
       .eq("id", charId)
       .is(column, null);

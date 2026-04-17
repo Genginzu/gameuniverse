@@ -109,11 +109,11 @@ export async function POST(request: NextRequest) {
             .range(offset, offset + PAGE_SIZE - 1);
 
           if (!data || data.length === 0) {
-            hasMore = false;
             break;
           }
 
           for (const game of data) {
+            if (game.igdb_id === null) continue;
             await syncGame(game.id, game.igdb_id);
           }
 
@@ -159,6 +159,7 @@ async function applyFallback(gameId: string, column: string, fallback: string | 
     const supabase = await createRouteHandlerClient();
     await supabase
       .from("games")
+      // @ts-expect-error — column is dynamic; the caller guarantees a valid games column
       .update({ [column]: fallback })
       .eq("id", gameId)
       .is(column, null);
