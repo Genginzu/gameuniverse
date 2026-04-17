@@ -2,7 +2,8 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/database.types";
 import { GAMING_PLATFORMS, type LinkedPlatform, type GamingPlatform, type AuthType } from "@/types/linked-platforms";
 
-type DbRow = Database["public"]["Tables"]["player_linked_platforms"]["Row"];
+type FullRow = Database["public"]["Tables"]["player_linked_platforms"]["Row"];
+type DbRow = Omit<FullRow, "access_token" | "refresh_token">;
 
 function toLinkedPlatform(row: DbRow): LinkedPlatform {
   return {

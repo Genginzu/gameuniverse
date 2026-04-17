@@ -224,7 +224,9 @@ export class PlayerStatsService {
     const { totalPlayTime, gamesAdded } = extractYearPlayStats(yearLibrary);
     const favoriteGenre = computeFavoriteGenre(extractGenreEntries(yearLibrary, locale));
     const topGame = extractTopGame(yearLibrary, locale);
-    const dateEntries = yearLibrary.map((e: { added_at: string }) => ({ addedAt: e.added_at }));
+    const dateEntries = yearLibrary
+      .map((e) => ({ addedAt: e.added_at ?? "" }))
+      .filter((e) => e.addedAt !== "");
     const mostActiveMonth = computeMostActiveMonth(dateEntries);
 
     return {

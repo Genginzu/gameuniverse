@@ -8,7 +8,7 @@ type SupabaseClient = Awaited<ReturnType<typeof createRouteHandlerClient>>;
 /** Shape of a library row returned by queryYearLibrary / extractGenreEntries */
 interface LibraryRow {
   play_time_hours: number | null;
-  added_at?: string;
+  added_at?: string | null;
   game_id?: string;
   games?: {
     id?: string;

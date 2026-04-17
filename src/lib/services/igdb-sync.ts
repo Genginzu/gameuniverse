@@ -110,7 +110,8 @@ const FIELD_SYNC_MAP: Record<TrackableField, FieldSyncFn> = {
   metascore: async (s, gid, game) => {
     // Skip IGDB metascore sync if a value already exists (likely from Metacritic)
     const { data } = await s.from("games").select("metascore").eq("id", gid).single();
-    if (data?.metascore && data.metascore > 0) return;
+    const existing = typeof data?.metascore === "number" ? data.metascore : 0;
+    if (existing > 0) return;
     await syncDirectFields(s, gid, game, ["metascore"]);
   },
   genres: (s, gid, game) => syncGenres(s, gid, game),

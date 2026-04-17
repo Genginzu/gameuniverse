@@ -58,7 +58,7 @@ export async function fetchLastMessages(
       map.set(row.conversation_id, {
         content: row.content,
         senderId: row.sender_id,
-        createdAt: row.created_at,
+        createdAt: row.created_at ?? new Date(0).toISOString(),
       });
     }
   }
