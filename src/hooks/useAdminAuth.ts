@@ -99,7 +99,6 @@ export function useAdminAuth(): UseAdminAuthReturn {
       mounted = false;
     };
     // supabase is a singleton — no need to re-run on reference change
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const role = user?.role ?? "user";

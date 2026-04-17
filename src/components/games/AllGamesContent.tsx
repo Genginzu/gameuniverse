@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 import { EntityCard } from "@/components/shared/EntityCard";
 import { gameCardConfig } from "@/components/shared/entityCardPresets";
@@ -22,7 +21,6 @@ interface AllGamesContentProps {
 }
 
 export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
-  const t = useTranslations("navigation");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [selectedPublishers, setSelectedPublishers] = useState<string[]>([]);

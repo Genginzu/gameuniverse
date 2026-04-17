@@ -31,7 +31,6 @@ function VideoThumbnailCard({
     >
       <div className="relative aspect-video">
         {showImage ? (
-          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={thumbnail}
             alt={video.title || `Video ${index + 1}`}

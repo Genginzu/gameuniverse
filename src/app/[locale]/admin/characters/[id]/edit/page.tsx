@@ -186,7 +186,6 @@ export default function EditCharacterPage() {
     return () => {
       mounted = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [characterId]);
 
   if (loadingCharacter) {

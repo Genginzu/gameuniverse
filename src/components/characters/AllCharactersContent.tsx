@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
-import { useTranslations } from "next-intl";
 import { EntityCard } from "@/components/shared/EntityCard";
 import { characterCardConfig } from "@/components/shared/entityCardPresets";
 import { CharacterFilters } from "./CharacterFilters";
@@ -28,7 +27,6 @@ export function AllCharactersContent({
   initialCharacters,
   initialPagination,
 }: AllCharactersContentProps) {
-  const t = useTranslations("navigation");
   // --- État local des filtres ---
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);

@@ -186,7 +186,6 @@ export function useCharacterForm(
     if (initialData) {
       form.reset(initialData);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialData]);
 
   const submitCharacter = useCallback(

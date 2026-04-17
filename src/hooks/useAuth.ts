@@ -121,7 +121,6 @@ export function useAuth() {
       }
     };
     // supabase is a singleton, router ref is used via routerRef
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const signIn = async (email: string, password: string) => {
