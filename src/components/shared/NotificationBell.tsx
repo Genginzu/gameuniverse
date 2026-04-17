@@ -45,7 +45,7 @@ export function NotificationBell() {
         className="relative flex min-h-[44px] min-w-[44px] items-center justify-center rounded-2xl p-2 transition-all hover:bg-white/40 hover:shadow-md dark:hover:bg-slate-700/40"
         aria-label={t("ariaLabel", { count: unreadCount })}
       >
-        <Icon icon="mdi:bell-outline" className="h-6 w-6 text-gray-700 dark:text-slate-200" />
+        <Icon icon="mdi:bell-outline" className="h-6 w-6 text-white" />
         {badgeText && (
           <span className="absolute top-1 right-1 flex min-h-[18px] min-w-[18px] items-center justify-center rounded-full bg-linear-to-r from-cyan-500 to-violet-500 px-1 text-[10px] leading-none font-bold text-white">
             {badgeText}

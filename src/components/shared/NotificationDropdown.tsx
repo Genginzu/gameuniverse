@@ -12,7 +12,7 @@ interface NotificationDropdownProps {
   onClose: () => void;
 }
 
-const MAX_VISIBLE = 5;
+const MAX_VISIBLE = 8;
 
 export function NotificationDropdown({
   notifications,
@@ -67,7 +67,7 @@ export function NotificationDropdown({
     <div
       ref={dropdownRef}
       role="menu"
-      className={`glass-dropdown absolute top-full right-0 z-50 mt-2 w-screen max-w-[360px] p-2 sm:w-[360px] ${
+      className={`glass-dropdown absolute top-full right-0 z-50 mt-2 w-screen max-w-[480px] p-2 sm:w-[480px] ${
         prefersReducedMotion ? "" : "animate-in fade-in slide-in-from-top-2 duration-200"
       }`}
     >
