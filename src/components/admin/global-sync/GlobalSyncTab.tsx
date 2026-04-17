@@ -187,7 +187,12 @@ export function GlobalSyncTab() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          totalCount={total}
+          onPageChange={setPage}
+        />
       )}
     </div>
   );

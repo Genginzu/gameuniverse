@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { Link } from "@/i18n/navigation";
 import type { BulkImportField, BulkGame, GameSyncStatus } from "@/hooks/useBulkImport";
+import type { CharacterImportField } from "@/hooks/useBulkImportCharacters";
 
 const BATCH_SIZES = [20, 40, 60, 80, 100, 200, 400];
 
@@ -20,7 +21,7 @@ interface BulkImportGameListProps {
   loading: boolean;
   syncing: boolean;
   batchSize: number;
-  selectedField: BulkImportField;
+  selectedField: BulkImportField | CharacterImportField;
   progress: { done: number; failed: number; total: number };
   gameStatuses: Record<string, GameSyncStatus>;
   gameErrors: Record<string, string>;
