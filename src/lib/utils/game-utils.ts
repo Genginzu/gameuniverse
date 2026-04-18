@@ -163,7 +163,7 @@ export function getGameColors(gameTitle: string, _genres: string[]): GameColors 
  * ```
  */
 export function formatReleaseDate(dateString: string | undefined, locale: string): string | null {
-  if (!dateString) return null;
+  if (!dateString || dateString === "1970-01-01") return null;
 
   const date = new Date(dateString);
   return new Intl.DateTimeFormat(locale, {

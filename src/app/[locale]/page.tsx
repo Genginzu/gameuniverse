@@ -32,7 +32,7 @@ export default async function Home({ params }: HomePageProps) {
         data={{
           "@context": "https://schema.org",
           "@type": "WebSite",
-          name: "Game Universe",
+          name: "Gamers Universe",
           url: "https://gameuniverse.gg",
           potentialAction: {
             "@type": "SearchAction",

@@ -15,7 +15,7 @@ export default async function ProfilePage({ params }: ProfilePageProps) {
   
   if (!user) {
     // Redirect to login if not authenticated
-    redirect(`/${locale}/auth/login`);
+    redirect(`/${locale}/auth`);
   }
   
   // Redirect to the user's player profile

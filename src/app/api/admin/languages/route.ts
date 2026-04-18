@@ -129,7 +129,7 @@ export async function POST(request: NextRequest) {
     // Insert the new language
     const { data: language, error } = await supabase
       .from("supported_languages")
-      .insert([{ code, name, native_name: native_name || null }])
+      .insert([{ code, name, native_name: native_name ?? "" }])
       .select("code, name, native_name")
       .single();
 

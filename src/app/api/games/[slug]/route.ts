@@ -560,11 +560,20 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       companies.publishers.find((pub: { isPrimary: boolean }) => pub.isPrimary) ||
       companies.publishers[0];
 
-    // Process media
+    // Process media — deduplicate by id (PostgREST can return duplicates with deep nested joins)
+    const dedup = <T extends { id: string }>(items: T[]): T[] => {
+      const seen = new Set<string>();
+      return items.filter((item) => {
+        if (seen.has(item.id)) return false;
+        seen.add(item.id);
+        return true;
+      });
+    };
+
     const media = {
       coverImage: game.cover_image_url,
       backgroundImage: game.background_image_url,
-      screenshots:
+      screenshots: dedup(
         game.game_screenshots
           ?.sort(
             (a: DatabaseGameScreenshot, b: DatabaseGameScreenshot) =>
@@ -576,8 +585,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             altText: screenshot.alt_text,
             caption: screenshot.caption,
             isFeatured: screenshot.is_featured || false,
-          })) || [],
-      artwork:
+          })) || []
+      ),
+      artwork: dedup(
         game.game_artwork
           ?.sort(
             (a: DatabaseGameArtwork, b: DatabaseGameArtwork) =>
@@ -590,8 +600,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             caption: art.caption,
             type: art.artwork_type || "unknown",
             isFeatured: art.is_featured || false,
-          })) || [],
-      videos:
+          })) || []
+      ),
+      videos: dedup(
         game.game_videos
           ?.sort(
             (a: DatabaseGameVideo, b: DatabaseGameVideo) =>
@@ -606,7 +617,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
             type: video.video_type || "unknown",
             duration: video.duration_seconds,
             isFeatured: video.is_featured || false,
-          })) || [],
+          })) || []
+      ),
     };
 
     // Process ratings - get all ratings, not just primary

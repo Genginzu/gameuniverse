@@ -99,6 +99,14 @@ export class IGDBService {
   }
 
   /**
+   * Authenticated POST to an arbitrary IGDB endpoint. Prefer one of the
+   * dedicated helpers above; use this for endpoints that don't have one.
+   */
+  static async rawQuery(endpoint: string, body: string): Promise<Response> {
+    return this.igdbFetch(endpoint, body);
+  }
+
+  /**
    * Makes an authenticated POST request to the IGDB API.
    * Uses cache: 'no-store' to prevent Next.js from caching responses.
    */
@@ -481,5 +489,47 @@ export class IGDBService {
    */
   static getTokenCache(): IGDBAuthToken | null {
     return this.tokenCache;
+  }
+
+  /**
+   * Fetches a batch of games from IGDB with minimal fields (id, name, cover).
+   * Uses cursor-based pagination (id > lastId) to avoid IGDB's 10k offset limit.
+   * @param afterId Fetch games with id greater than this value (0 for first batch)
+   * @param limit Batch size (max 500)
+   * @returns Array of minimal game objects sorted by id asc
+   */
+  static async getGamesBatch(
+    afterId: number,
+    limit: number = 500
+  ): Promise<Array<{ id: number; name: string; cover?: { image_id: string } }>> {
+    const body = `
+      fields name, cover.image_id;
+      where version_parent = null & (game_type = 0 | game_type = 4) & id > ${afterId};
+      sort id asc;
+      limit ${limit};
+    `;
+
+    const response = await this.igdbFetch("games", body);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`IGDB batch fetch failed: ${response.status} - ${errorText}`);
+    }
+
+    return response.json();
+  }
+
+  /**
+   * Fetches only the aggregated_rating for a game — lightweight IGDB call.
+   * @returns The rating or null if not available
+   */
+  static async getAggregatedRating(igdbId: number): Promise<number | null> {
+    const body = `fields aggregated_rating; where id = ${igdbId};`;
+    const response = await this.igdbFetch("games", body);
+
+    if (!response.ok) return null;
+
+    const games = await response.json();
+    return games.length > 0 && games[0].aggregated_rating ? games[0].aggregated_rating : null;
   }
 }

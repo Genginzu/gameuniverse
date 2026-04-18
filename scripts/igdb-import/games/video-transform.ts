@@ -28,7 +28,7 @@ export function transformIgdbVideos(videos: IGDBVideo[], gameId: string): GameVi
     .map((video, index) => ({
       game_id: gameId,
       url: `https://www.youtube.com/watch?v=${video.video_id}`,
-      thumbnail_url: `https://img.youtube.com/vi/${video.video_id}/maxresdefault.jpg`,
+      thumbnail_url: `https://img.youtube.com/vi/${video.video_id}/hqdefault.jpg`,
       title: video.name || "Trailer",
       video_type: "trailer",
       display_order: index,

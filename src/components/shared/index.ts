@@ -56,6 +56,3 @@ export {
 
 // ImageUploader - Reusable image upload component with drag & drop, preview, and S3 upload
 export { ImageUploader } from "./ImageUploader";
-
-// SeoBreadcrumb - SEO breadcrumb with JSON-LD structured data
-export { SeoBreadcrumb } from "./SeoBreadcrumb";

@@ -3,10 +3,14 @@ import { NextRequest } from "next/server";
 
 // Create mock functions
 const mockExchangeCodeForSession = vi.fn(() => Promise.resolve({ error: null }));
+const mockGetUser = vi.fn(() =>
+  Promise.resolve({ data: { user: { id: "user-123" } }, error: null })
+);
 
 const mockSupabase = {
   auth: {
     exchangeCodeForSession: mockExchangeCodeForSession,
+    getUser: mockGetUser,
   },
 };
 
@@ -22,6 +26,8 @@ import { GET } from "../../../../src/app/api/auth/callback/route";
 describe("/api/auth/callback", () => {
   beforeEach(() => {
     mockExchangeCodeForSession.mockReset();
+    mockGetUser.mockReset();
+    mockGetUser.mockResolvedValue({ data: { user: { id: "user-123" } }, error: null });
   });
 
   it("should handle successful auth callback", async () => {
@@ -35,7 +41,7 @@ describe("/api/auth/callback", () => {
 
     expect(mockExchangeCodeForSession).toHaveBeenCalledWith("auth_code_123");
     expect(response.status).toBe(307); // Redirect status
-    expect(response.headers.get("location")).toBe("http://localhost:3000/profile");
+    expect(response.headers.get("location")).toBe("http://localhost:3000/players/user-123");
   });
 
   it("should handle auth callback error", async () => {

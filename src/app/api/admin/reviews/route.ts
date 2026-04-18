@@ -98,15 +98,25 @@ export async function GET(request: NextRequest) {
     const supabase = await createRouteHandlerClient();
     const offset = (page - 1) * limit;
 
-    // --- Count query ---
-    const totalCount = await countReviews(supabase, search);
+    // Resolve matching IDs once when searching — used as both count and filter.
+    let matchingIds: string[] | undefined;
+    let totalCount: number | null;
 
-    if (totalCount === null) {
-      return NextResponse.json({ error: "Failed to count reviews" }, { status: 500 });
+    if (search?.trim()) {
+      const ids = await findMatchingReviewIds(supabase, search.trim());
+      if (ids === null) {
+        return NextResponse.json({ error: "Failed to search reviews" }, { status: 500 });
+      }
+      matchingIds = ids;
+      totalCount = ids.length;
+    } else {
+      totalCount = await countAllReviews(supabase);
+      if (totalCount === null) {
+        return NextResponse.json({ error: "Failed to count reviews" }, { status: 500 });
+      }
     }
 
-    // --- Data query ---
-    const reviews = await fetchReviews(supabase, { search, sort_by, sort_order, offset, limit });
+    const reviews = await fetchReviews(supabase, { matchingIds, sort_by, sort_order, offset, limit });
 
     if (reviews === null) {
       return NextResponse.json({ error: "Failed to fetch reviews" }, { status: 500 });
@@ -140,21 +150,12 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// ── Helper: count reviews (with optional search) ──
-
 type SupabaseClient = Awaited<ReturnType<typeof createRouteHandlerClient>>;
 
-async function countReviews(
-  supabase: SupabaseClient,
-  search: string | undefined
-): Promise<number | null> {
-  if (search?.trim()) {
-    return countReviewsWithSearch(supabase, search.trim());
-  }
-
+async function countAllReviews(supabase: SupabaseClient): Promise<number | null> {
   const { count, error } = await supabase
     .from("game_reviews")
-    .select("id", { count: "exact", head: true });
+    .select("id", { count: "estimated", head: true });
 
   if (error) {
     logger.error("Error counting reviews", { error });
@@ -164,66 +165,8 @@ async function countReviews(
   return count ?? 0;
 }
 
-/**
- * Count reviews matching a search term across player name or game title.
- *
- * We search profiles and game_translations separately, then merge matching
- * review IDs for a deduplicated total.
- */
-async function countReviewsWithSearch(
-  supabase: SupabaseClient,
-  term: string
-): Promise<number | null> {
-  const pattern = `%${term}%`;
-
-  // Find user IDs matching by username
-  const { data: matchingProfiles, error: profileError } = await supabase
-    .from("profiles")
-    .select("id")
-    .ilike("username", pattern);
-
-  if (profileError) {
-    logger.error("Error searching profiles", { error: profileError });
-    return null;
-  }
-
-  const matchingUserIds = (matchingProfiles ?? []).map((p) => p.id);
-
-  // Reviews matching by player name (via user_id)
-  const ids = new Set<string>();
-
-  if (matchingUserIds.length > 0) {
-    const { data: byPlayer, error: e1 } = await supabase
-      .from("game_reviews")
-      .select("id")
-      .in("user_id", matchingUserIds);
-
-    if (e1) {
-      logger.error("Error counting reviews by player", { error: e1 });
-      return null;
-    }
-    for (const r of byPlayer ?? []) ids.add(r.id);
-  }
-
-  // Reviews matching by game title
-  const { data: byGame, error: e2 } = await supabase
-    .from("game_reviews")
-    .select("id, games!inner(game_translations!inner(title))")
-    .ilike("games.game_translations.title", pattern);
-
-  if (e2) {
-    logger.error("Error counting reviews by game title", { error: e2 });
-    return null;
-  }
-  for (const r of byGame ?? []) ids.add(r.id);
-
-  return ids.size;
-}
-
-// ── Helper: fetch reviews page ──
-
 interface FetchParams {
-  search: string | undefined;
+  matchingIds: string[] | undefined;
   sort_by: string;
   sort_order: string;
   offset: number;
@@ -234,17 +177,9 @@ async function fetchReviews(
   supabase: SupabaseClient,
   params: FetchParams
 ): Promise<ReviewListRow[] | null> {
-  const { search, sort_by, sort_order, offset, limit } = params;
+  const { matchingIds, sort_by, sort_order, offset, limit } = params;
 
-  // When searching, find matching IDs first
-  let matchingIds: string[] | undefined;
-
-  if (search?.trim()) {
-    const ids = await findMatchingReviewIds(supabase, search.trim());
-    if (ids === null) return null;
-    if (ids.length === 0) return [];
-    matchingIds = ids;
-  }
+  if (matchingIds !== undefined && matchingIds.length === 0) return [];
 
   let query = supabase.from("game_reviews").select(
     `id, user_id, game_id, rating, content, created_at, updated_at,
@@ -285,22 +220,29 @@ async function findMatchingReviewIds(
 ): Promise<string[] | null> {
   const pattern = `%${term}%`;
 
-  // Find user IDs matching by username
-  const { data: matchingProfiles, error: profileError } = await supabase
-    .from("profiles")
-    .select("id")
-    .ilike("username", pattern);
+  // Profile lookup + game-title search run in parallel — they're independent.
+  const [profilesResult, byGameResult] = await Promise.all([
+    supabase.from("profiles").select("id").ilike("username", pattern),
+    supabase
+      .from("game_reviews")
+      .select("id, games!inner(game_translations!inner(title))")
+      .ilike("games.game_translations.title", pattern),
+  ]);
 
-  if (profileError) {
-    logger.error("Error searching profiles", { error: profileError });
+  if (profilesResult.error) {
+    logger.error("Error searching profiles", { error: profilesResult.error });
+    return null;
+  }
+  if (byGameResult.error) {
+    logger.error("Error searching reviews by game", { error: byGameResult.error });
     return null;
   }
 
-  const matchingUserIds = (matchingProfiles ?? []).map((p) => p.id);
-
+  const matchingUserIds = (profilesResult.data ?? []).map((p) => p.id);
   const ids = new Set<string>();
 
-  // Reviews by matching player
+  for (const r of byGameResult.data ?? []) ids.add(r.id);
+
   if (matchingUserIds.length > 0) {
     const { data: byPlayer, error: e1 } = await supabase
       .from("game_reviews")
@@ -313,18 +255,6 @@ async function findMatchingReviewIds(
     }
     for (const r of byPlayer ?? []) ids.add(r.id);
   }
-
-  // Reviews by matching game title
-  const { data: byGame, error: e2 } = await supabase
-    .from("game_reviews")
-    .select("id, games!inner(game_translations!inner(title))")
-    .ilike("games.game_translations.title", pattern);
-
-  if (e2) {
-    logger.error("Error searching reviews by game", { error: e2 });
-    return null;
-  }
-  for (const r of byGame ?? []) ids.add(r.id);
 
   return [...ids];
 }

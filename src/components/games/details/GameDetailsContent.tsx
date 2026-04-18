@@ -11,6 +11,7 @@ import { GameDetailsSidebar } from "./GameDetailsSidebar";
 import { GameDetailsMainContent } from "./GameDetailsMainContent";
 import { GameDetailsNavBar } from "./GameDetailsNavBar";
 import { useBackgroundSync } from "@/hooks/useBackgroundSync";
+import { useViewTracker } from "@/hooks/useViewTracker";
 import Image from "next/image";
 
 interface GameDetailsProps {
@@ -27,6 +28,7 @@ interface GameDetailsProps {
  */
 export function GameDetailsContent({ game, locale }: GameDetailsProps) {
   useBackgroundSync(game.slug, game.igdbId, game.lastSyncedAt);
+  useViewTracker("games", game.slug);
 
   const colors = buildGameColors({
     accentColor: game.accentColor,
@@ -42,7 +44,7 @@ export function GameDetailsContent({ game, locale }: GameDetailsProps) {
   return (
     <div className="relative min-h-screen" style={{ backgroundColor: colors.backgroundColor }}>
       {/* Background image — more visible for glassmorphism blur effect */}
-      {game.media.backgroundImage && (
+      {game.media.backgroundImage && game.media.backgroundImage !== "none" && (
         <div className="absolute inset-x-0 top-0 z-0 h-[70vh]">
           <Image
             src={game.media.backgroundImage}

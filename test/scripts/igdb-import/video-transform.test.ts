@@ -25,7 +25,7 @@ describe("transformIgdbVideos", () => {
     expect(result[0]).toEqual({
       game_id: GAME_ID,
       url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-      thumbnail_url: "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+      thumbnail_url: "https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
       title: "Trailer",
       video_type: "trailer",
       display_order: 0,
@@ -85,7 +85,7 @@ describe("transformIgdbVideos", () => {
     const result = transformIgdbVideos(videos, GAME_ID);
 
     expect(result[0].url).toBe("https://www.youtube.com/watch?v=a-B_c1.2");
-    expect(result[0].thumbnail_url).toBe("https://img.youtube.com/vi/a-B_c1.2/maxresdefault.jpg");
+    expect(result[0].thumbnail_url).toBe("https://img.youtube.com/vi/a-B_c1.2/hqdefault.jpg");
   });
 
   it("handles unicode characters in video name", () => {

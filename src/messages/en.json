@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "description": "Explore thousands of video games, discover iconic characters and join a community of enthusiasts on Game Universe",
-    "keywords": "video games, gaming, characters, reviews, community, collection, Game Universe",
+    "description": "Explore thousands of video games, discover iconic characters and join a community of enthusiasts on Gamers Universe",
+    "keywords": "video games, gaming, characters, reviews, community, collection, Gamers Universe",
     "home": {
       "title": "Home",
       "description": "Explore thousands of video games, discover iconic characters and join a community of enthusiasts"
@@ -16,11 +16,11 @@
     },
     "players": {
       "title": "All players",
-      "description": "Explore Game Universe community player profiles"
+      "description": "Explore Gamers Universe community player profiles"
     },
     "discussions": {
       "title": "Discussions",
-      "description": "Join Game Universe community discussions"
+      "description": "Join Gamers Universe community discussions"
     },
     "library": {
       "title": "My library",
@@ -32,7 +32,7 @@
     },
     "yearInReview": {
       "title": "{player}'s {year} year in review",
-      "description": "Discover {player}'s {year} gaming year in review on Game Universe"
+      "description": "Discover {player}'s {year} gaming year in review on Gamers Universe"
     }
   },
   "navigation": {
@@ -62,7 +62,7 @@
       "explore": "Explore games",
       "login": "Sign in",
       "title": "Ready to join the adventure?",
-      "subtitle": "Join thousands of gamers already using Game Universe to discover their next favorite games"
+      "subtitle": "Join thousands of gamers already using Gamers Universe to discover their next favorite games"
     },
     "features": {
       "mainTitle": "Everything for gamers",
@@ -168,14 +168,14 @@
   "auth": {
     "signin": {
       "title": "Sign In",
-      "description": "Sign in to your Game Universe account",
+      "description": "Sign in to your Gamers Universe account",
       "submit": "Sign In",
       "switchText": "Don't have an account?",
       "switchLink": "Create account"
     },
     "signup": {
       "title": "Sign Up",
-      "description": "Create your Game Universe account",
+      "description": "Create your Gamers Universe account",
       "submit": "Create Account",
       "switchText": "Already have an account?",
       "switchLink": "Sign in",
@@ -271,7 +271,7 @@
       "resendEmail": "Resend email"
     },
     "footer": {
-      "text": "© 2024 Game Universe. All rights reserved."
+      "text": "© 2024 Gamers Universe. All rights reserved."
     }
   },
   "dashboard": {
@@ -503,7 +503,7 @@
   "players": {
     "title": "Players",
     "heroTitle": "Discover the Community",
-    "heroTitleHighlight": "Game Universe",
+    "heroTitleHighlight": "Gamers Universe",
     "heroSubtitle": "Explore player profiles and discover their collections",
     "availableCount": "{count} players available",
     "searchPlaceholder": "Search for a player...",
@@ -863,6 +863,7 @@
       "globalScore": "Critics Score",
       "price": "Price",
       "genres": "Genres",
+      "platforms": "Platforms",
       "classification": "Classification"
     },
     "errors": {
@@ -1060,7 +1061,7 @@
   },
   "footer": {
     "tagline": "The complete platform to explore the gaming universe",
-    "copyright": "© {year} Game Universe. All rights reserved.",
+    "copyright": "© {year} Gamers Universe. All rights reserved.",
     "explore": "Explore",
     "community": "Community",
     "madeWith": "Made with",
@@ -1148,6 +1149,52 @@
       "updateFailed": "Failed to update. Please try again.",
       "connectionError": "Connection error. Please try again.",
       "genericError": "An error occurred. Please try again."
+    },
+    "platforms": {
+      "title": "Gaming Platforms",
+      "description": "Connect your gaming platform accounts to sync your data",
+      "connectedTitle": "Connected accounts",
+      "connectedDescription": "Accounts linked via OAuth — name, avatar and library imported automatically",
+      "manualTitle": "Manual usernames",
+      "manualDescription": "Platforms without an API: your username is just displayed on your profile",
+      "lastSyncedAt": "Synced {when} ago",
+      "makePublic": "Make public",
+      "makePrivate": "Make private",
+      "suggestionsTitle": "Accounts detected on Discord — link them?",
+      "suggestionLink": "Link",
+      "usernamePlaceholder": "Your username on this platform",
+      "friendCodePlaceholder": "SW-XXXX-XXXX-XXXX",
+      "npssoPlaceholder": "Paste your NPSSO token here",
+      "manualOnlyHint": "No public API — username saved without verification",
+      "errors": {
+        "empty": "Username is required",
+        "format": "Invalid format (e.g. SW-1234-5678-9012)",
+        "not_found": "Profile not found on this platform",
+        "unreachable": "Platform unreachable, please try again later"
+      },
+      "notLinked": "Not connected",
+      "connected": "Connected",
+      "saved": "Platform connected",
+      "removed": "Platform disconnected",
+      "syncLibrary": "Sync library",
+      "syncDone": "Library synced",
+      "syncSummary": "{matched}/{total} games matched ({unmatched} not found)",
+      "syncImported": "{imported} new games imported from IGDB",
+      "syncPrivateProfile": "Your Steam profile is private — make it public to sync",
+      "syncEmpty": "No games found in your Steam library",
+      "names": {
+        "steam": "Steam",
+        "epic": "Epic Games",
+        "xbox": "Xbox",
+        "playstation": "PlayStation",
+        "battlenet": "Battle.net",
+        "discord": "Discord",
+        "gog": "GOG",
+        "nintendo": "Nintendo",
+        "ea": "EA",
+        "ubisoft": "Ubisoft",
+        "itch": "itch.io"
+      }
     }
   },
   "admin": {
@@ -1187,8 +1234,11 @@
       "playerAchievements": "Player Achievements",
       "igdbCategory": "IGDB",
       "webhooks": "Webhooks",
+      "bulkImport": "Bulk Import",
+      "bulkImportCharacters": "Bulk Import",
       "toolsCategory": "Tools",
-      "translations": "Translations"
+      "translations": "Translations",
+      "globalSync": "Global Sync"
     },
     "closeSidebar": "Close sidebar",
     "openSidebar": "Open sidebar",
@@ -1490,6 +1540,11 @@
         "mainImagePlaceholder": "https://example.com/image.jpg",
         "backgroundImage": "Background image (URL)",
         "backgroundImagePlaceholder": "https://example.com/background.jpg",
+        "searchImage": "Search for an image",
+        "imageSource": "Source",
+        "noCharacterName": "Please enter a character name in the translations tab first.",
+        "noImageFound": "No image found for this character.",
+        "searchFailed": "Image search failed. Please try again.",
         "name": "Name",
         "namePlaceholder": "Character name",
         "role": "Roles",
@@ -2303,6 +2358,92 @@
         "content_descriptors": "Descriptors",
         "ratings": "Ratings"
       }
+    },
+    "globalSync": {
+      "title": "IGDB Global Sync",
+      "subtitle": "Download the full IGDB catalog and match games to your database",
+      "downloadTitle": "Download IGDB Catalog",
+      "downloadDescription": "Fetches all games from IGDB in batches of 500 and automatically matches them to existing games in your database.",
+      "startDownload": "Start Download",
+      "downloading": "Downloading...",
+      "progress": "{inserted} games inserted (last ID: {lastId})",
+      "downloadComplete": "Download complete: {count} games fetched",
+      "searchPlaceholder": "Search a game...",
+      "filter": {
+        "all": "All",
+        "matched": "Matched",
+        "unmatched": "Unmatched"
+      },
+      "totalEntries": "{count, plural, =0 {No entries} one {1 entry} other {# entries}}",
+      "noEntries": "No entries. Start the download to populate the table.",
+      "matched": "Matched",
+      "unmatched": "Unmatched",
+      "tabs": {
+        "download": "Download",
+        "sync": "Synchronization",
+        "enrich": "Enrichment",
+        "colors": "Colors",
+        "metascore": "Metascore"
+      },
+      "syncTab": {
+        "title": "Sync Games",
+        "description": "Imports or updates each game in your database from IGDB, one by one.",
+        "startSync": "Start Sync",
+        "syncing": "Syncing...",
+        "stop": "Stop",
+        "currentGame": "Current: {name}",
+        "synced": "{count} synced",
+        "failed": "{count} failed",
+        "remaining": "{count} remaining",
+        "complete": "Sync complete: {count} games processed",
+        "infoResume": "You can stop and resume the sync at any time. It will automatically pick up where it left off.",
+        "infoRetry": "Failed games are not marked as synced and will be retried on the next run.",
+        "allSynced": "All games have been synced."
+      },
+      "enrichTab": {
+        "title": "Game Enrichment",
+        "description": "Adds heavy data: colors, screenshots, artworks, videos, age ratings, versions, languages, playtime, similar games. Processes 3 games in parallel.",
+        "startSync": "Start",
+        "syncing": "Enriching...",
+        "stop": "Stop",
+        "currentGame": "Current: {name}",
+        "synced": "{count} enriched",
+        "failed": "{count} failed",
+        "remaining": "{count} remaining",
+        "complete": "Complete: {count} games enriched",
+        "info": "Enriches already created games with full IGDB data: color extraction from cover, screenshots, artworks, videos, age ratings, versions/editions, supported languages, playtime and similar games.",
+        "searchPlaceholder": "Search a game...",
+        "allDone": "All games have been enriched."
+      },
+      "colorsTab": {
+        "title": "Color Extraction",
+        "description": "Extracts accent, background, label and text colors from game covers. One at a time (image download + analysis).",
+        "startSync": "Start",
+        "syncing": "Extracting...",
+        "stop": "Stop",
+        "currentGame": "Current: {name}",
+        "synced": "{count} processed",
+        "failed": "{count} failed",
+        "remaining": "{count} remaining",
+        "searchPlaceholder": "Search a game...",
+        "allDone": "All colors have been extracted."
+      },
+      "metascoreTab": {
+        "title": "Metascore Sync",
+        "description": "Fetches the aggregated rating from IGDB for each synced game. Processes 10 games in parallel.",
+        "startSync": "Start",
+        "syncing": "Syncing...",
+        "stop": "Stop",
+        "currentGame": "Current: {name}",
+        "synced": "{count} processed",
+        "failed": "{count} failed",
+        "remaining": "{count} remaining",
+        "complete": "Complete: {count} games processed",
+        "source": "Last source: {source}",
+        "info": "Tries Metacritic first (scraping), then falls back to IGDB aggregated rating. Games without a score receive -1. One game at a time due to Metacritic rate limiting (~2.5s per game).",
+        "searchPlaceholder": "Search a game...",
+        "allDone": "All metascores have been synced."
+      }
     }
   },
   "collections": {
@@ -2850,6 +2991,58 @@
       "skipped": "Skipped"
     }
   },
+  "bulkImport": {
+    "title": "Bulk Import",
+    "description": "Sync missing data from IGDB for your existing games.",
+    "fields": {
+      "cover": "Cover",
+      "background": "Background",
+      "playtime": "Playtime",
+      "metascore": "Metascore",
+      "releaseDate": "Release date"
+    },
+    "gamesCount": "{count, plural, =0 {No games} one {1 game} other {# games}} missing {field}",
+    "batchSize": "Batch size",
+    "syncButton": "Sync {count, plural, one {1 game} other {# games}}",
+    "syncing": "{done}/{total}…",
+    "syncStarted": "Syncing {count, plural, one {1 game} other {# games}}…",
+    "syncDone": "{success}/{total} game(s) synced",
+    "syncFailed": "Sync failed",
+    "allSynced": "All games are up to date for this field.",
+    "abort": "Stop",
+    "progressLabel": "{done}/{total} processed",
+    "progressSuccess": "{count} ✓",
+    "progressFailed": "{count} ✗",
+    "gameSynced": "✓ {title}",
+    "gameSyncFailed": "✗ {title}",
+    "syncAborted": "Sync aborted",
+    "all": "All",
+    "invalidField": "Invalid field",
+    "backToFields": "Back to bulk import"
+  },
+  "bulkImportCharacters": {
+    "title": "Character Bulk Import",
+    "description": "Sync missing data from IGDB for your existing characters.",
+    "fields": {
+      "image": "Image",
+      "background": "Background"
+    },
+    "gamesCount": "{count, plural, =0 {No characters} one {1 character} other {# characters}} missing {field}",
+    "batchSize": "Batch size",
+    "syncButton": "Sync {count, plural, one {1 character} other {# characters}}",
+    "syncStarted": "Syncing {count, plural, one {1 character} other {# characters}}…",
+    "syncDone": "{success}/{total} character(s) synced",
+    "syncFailed": "Sync failed",
+    "allSynced": "All characters are up to date for this field.",
+    "abort": "Stop",
+    "progressLabel": "{done}/{total} processed",
+    "progressSuccess": "{count} ✓",
+    "progressFailed": "{count} ✗",
+    "syncAborted": "Sync aborted",
+    "all": "All",
+    "invalidField": "Invalid field",
+    "backToFields": "Back to character bulk import"
+  },
   "discussions": {
     "pageTitle": "Messages",
     "pageSubtitle": "Chat with your friends easily",
@@ -2911,5 +3104,21 @@
     "description": "The page you are looking for does not exist or has been moved.",
     "home": "Home",
     "games": "Browse games"
+  },
+  "notifications": {
+    "ariaLabel": "Notifications, {count} unread",
+    "noNotifications": "No notifications",
+    "markAllAsRead": "Mark all as read",
+    "typePostComment": "commented on your post",
+    "typeDiscussionMessage": "sent you a message",
+    "dismiss": "Dismiss"
+  },
+  "postComments": {
+    "title": "Comments",
+    "noComments": "No comments yet",
+    "placeholder": "Write a comment...",
+    "submit": "Submit",
+    "deleteLabel": "Delete comment",
+    "charCount": "{remaining} characters left"
   }
 }

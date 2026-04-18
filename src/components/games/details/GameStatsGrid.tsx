@@ -40,9 +40,10 @@ export function GameStatsGrid({
   const stats = [
     {
       icon: "lucide:star",
-      value: game.metascore ? String(game.metascore) : "—",
+      value: game.metascore && game.metascore > 0 ? String(game.metascore) : "—",
       label: tDetails("statsGrid.globalScore"),
-      metascoreBg: game.metascore ? getMetascoreColor(game.metascore) : undefined,
+      metascoreBg:
+        game.metascore && game.metascore > 0 ? getMetascoreColor(game.metascore) : undefined,
       show: true,
     },
     {
@@ -53,7 +54,7 @@ export function GameStatsGrid({
       show: true,
     },
     {
-      icon: "lucide:trophy",
+      icon: "lucide:gamepad-2",
       value: "",
       label: tDetails("statsGrid.genres"),
       metascoreBg: undefined,
@@ -78,7 +79,7 @@ export function GameStatsGrid({
           return (
             <div
               key={index}
-              className={`flex flex-col justify-between rounded-xl border border-white/10 bg-white/5 p-4 shadow-lg shadow-black/10 backdrop-blur-xl`}
+              className={`flex flex-col justify-between rounded-xl border border-white/10 bg-white/5 p-4 shadow-lg shadow-black/10 backdrop-blur-xl will-change-transform`}
             >
               <div className="mb-2">
                 <Icon icon={StatIcon} className="h-4 w-4" style={{ color: colors.accent }} />

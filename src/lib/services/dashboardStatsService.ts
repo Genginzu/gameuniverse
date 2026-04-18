@@ -20,7 +20,7 @@ async function countWhere(
   filters: Record<string, string>,
   or?: string
 ): Promise<number> {
-  let q = supabase.from(table).select("id", { count: "exact", head: true });
+  let q = untypedTable(supabase, table).select("id", { count: "exact", head: true });
   for (const [k, v] of Object.entries(filters)) q = q.eq(k, v);
   if (or) q = q.or(or);
   const { count } = await q;

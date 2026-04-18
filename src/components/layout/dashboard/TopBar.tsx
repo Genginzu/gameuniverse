@@ -5,6 +5,7 @@ import { Link } from "@/i18n/navigation";
 
 import { GameUniverseLogo } from "@/components/ui/game-universe-logo";
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
+import { NotificationBell } from "@/components/shared/NotificationBell";
 import { Icon } from "@iconify/react";
 
 interface TopBarProps {
@@ -20,8 +21,8 @@ export default function TopBar({ isAuthenticated, onSearchOpen }: TopBarProps) {
       {/* Left: Logo + App name */}
       <Link href="/" className="flex shrink-0 items-center gap-2.5">
         <GameUniverseLogo size="sm" className="shadow-lg shadow-black/20" />
-        <span className="hidden text-base font-bold uppercase tracking-widest text-white sm:inline">
-          Game Universe
+        <span className="hidden text-base font-bold tracking-widest text-white uppercase sm:inline">
+          Gamers Universe
         </span>
       </Link>
 
@@ -30,9 +31,9 @@ export default function TopBar({ isAuthenticated, onSearchOpen }: TopBarProps) {
         <button
           type="button"
           onClick={onSearchOpen}
-          className="flex w-full max-w-md items-center gap-2.5 rounded-xl bg-white/10 px-4 py-2 text-sm text-white/60 backdrop-blur-xs transition-all hover:bg-white/15 hover:text-white/80 focus:outline-hidden focus:ring-2 focus:ring-white/30"
+          className="flex w-full max-w-md items-center gap-2.5 rounded-xl bg-white/10 px-4 py-2 text-sm text-white/60 backdrop-blur-xs transition-all hover:bg-white/15 hover:text-white/80 focus:ring-2 focus:ring-white/30 focus:outline-hidden"
         >
-          <Icon icon="fa:search" className="h-3.5 w-3.5 shrink-0"  />
+          <Icon icon="fa:search" className="h-3.5 w-3.5 shrink-0" />
           <span className="hidden sm:inline">{t("search")}...</span>
           <kbd className="ml-auto hidden rounded bg-white/10 px-1.5 py-0.5 text-[10px] font-medium text-white/40 sm:inline">
             Ctrl+K
@@ -42,11 +43,12 @@ export default function TopBar({ isAuthenticated, onSearchOpen }: TopBarProps) {
 
       {/* Right: Language + Login */}
       <div className="flex shrink-0 items-center gap-3">
+        <NotificationBell />
         <LanguageSwitcher />
         {!isAuthenticated && (
           <Link
             href="/auth?mode=signin"
-            className="flex items-center rounded-xl bg-white px-5 py-2 text-sm font-bold text-indigo-600 shadow-md shadow-black/10 transition-all hover:bg-white/90 hover:shadow-lg focus:outline-hidden focus:ring-2 focus:ring-white/50"
+            className="flex items-center rounded-xl bg-white px-5 py-2 text-sm font-bold text-indigo-600 shadow-md shadow-black/10 transition-all hover:bg-white/90 hover:shadow-lg focus:ring-2 focus:ring-white/50 focus:outline-hidden"
           >
             {t("login")}
           </Link>

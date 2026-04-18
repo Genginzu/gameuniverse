@@ -4,11 +4,15 @@ import { NextRequest } from "next/server";
 // Create mock functions
 const mockExchangeCodeForSession = vi.fn(() => Promise.resolve({ error: null }));
 const mockVerifyOtp = vi.fn(() => Promise.resolve({ error: null }));
+const mockGetUser = vi.fn(() =>
+  Promise.resolve({ data: { user: { id: "user-456" } }, error: null })
+);
 
 const mockSupabase = {
   auth: {
     exchangeCodeForSession: mockExchangeCodeForSession,
     verifyOtp: mockVerifyOtp,
+    getUser: mockGetUser,
   },
 };
 
@@ -25,6 +29,8 @@ describe("/api/auth/callback - Comprehensive Coverage", () => {
   beforeEach(() => {
     mockExchangeCodeForSession.mockReset();
     mockVerifyOtp.mockReset();
+    mockGetUser.mockReset();
+    mockGetUser.mockResolvedValue({ data: { user: { id: "user-456" } }, error: null });
   });
 
   describe("Token Hash Flow (Email Templates)", () => {
@@ -42,7 +48,7 @@ describe("/api/auth/callback - Comprehensive Coverage", () => {
         type: "signup",
       });
       expect(response.status).toBe(307);
-      expect(response.headers.get("location")).toBe("http://localhost:3000/profile");
+      expect(response.headers.get("location")).toBe("http://localhost:3000/players/user-456");
     });
 
     it("should handle successful token_hash verification for recovery", async () => {
@@ -59,7 +65,7 @@ describe("/api/auth/callback - Comprehensive Coverage", () => {
         type: "recovery",
       });
       expect(response.status).toBe(307);
-      expect(response.headers.get("location")).toBe("http://localhost:3000/profile");
+      expect(response.headers.get("location")).toBe("http://localhost:3000/players/user-456");
     });
 
     it("should handle successful token_hash verification for email type", async () => {
@@ -76,7 +82,7 @@ describe("/api/auth/callback - Comprehensive Coverage", () => {
         type: "email",
       });
       expect(response.status).toBe(307);
-      expect(response.headers.get("location")).toBe("http://localhost:3000/profile");
+      expect(response.headers.get("location")).toBe("http://localhost:3000/players/user-456");
     });
 
     it("should redirect to error page when token_hash verification fails", async () => {
@@ -125,7 +131,7 @@ describe("/api/auth/callback - Comprehensive Coverage", () => {
 
       expect(mockExchangeCodeForSession).toHaveBeenCalledWith("pkce_code_123");
       expect(response.status).toBe(307);
-      expect(response.headers.get("location")).toBe("http://localhost:3000/profile");
+      expect(response.headers.get("location")).toBe("http://localhost:3000/players/user-456");
     });
 
     it("should redirect to error page when code exchange fails", async () => {
@@ -155,7 +161,7 @@ describe("/api/auth/callback - Comprehensive Coverage", () => {
       expect(mockVerifyOtp).toHaveBeenCalled();
       expect(mockExchangeCodeForSession).not.toHaveBeenCalled();
       expect(response.status).toBe(307);
-      expect(response.headers.get("location")).toBe("http://localhost:3000/profile");
+      expect(response.headers.get("location")).toBe("http://localhost:3000/players/user-456");
     });
   });
 

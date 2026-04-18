@@ -87,7 +87,7 @@ export function CharacterFormTabContent({
       case "general":
         return <CharacterFormGeneralTab form={form} t={t} mode={mode} />;
       case "images":
-        return <CharacterFormImagesTab form={form} t={t} />;
+        return <CharacterFormImagesTab form={form} t={t} availableGames={availableGames} />;
       case "translations":
         return <CharacterFormTranslationsTab form={form} t={t} />;
       case "roles":

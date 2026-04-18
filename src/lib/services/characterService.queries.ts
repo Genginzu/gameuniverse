@@ -1,12 +1,8 @@
 import { CharacterSummary } from "@/types/character";
 import { createServerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
-import { pickTranslation } from "@/lib/utils/pickTranslation";
-import type {
-  CharacterListRow,
-  CharactersResponse,
-  GameRow,
-} from "./characterService.types";
+import { pickTranslationWithName } from "@/lib/utils/pickTranslation";
+import type { CharacterListRow, CharactersResponse, GameRow } from "./characterService.types";
 
 // Re-export the details query from its own module
 export { fetchCharacterDetailsFromDB } from "./characterService.detailsQuery";
@@ -80,27 +76,32 @@ export async function fetchCharactersFromDB(
     });
   }
 
-  const transformedCharacters: CharacterSummary[] = filteredCharacters.map((character) => {
-    const translation = pickTranslation(character.character_translations, locale);
-    const primaryGameRelation = character.character_games?.find((cg) => cg.is_primary === true);
-    const primaryGame =
-      (primaryGameRelation?.games as GameRow | null)?.game_translations?.[0]?.title ||
-      (character.character_games?.[0]?.games as GameRow | null)?.game_translations?.[0]?.title ||
-      "Unknown";
-    const gamesCount = character.character_games?.length || 0;
+  const transformedCharacters: CharacterSummary[] = filteredCharacters
+    .map((character) => {
+      const translation = pickTranslationWithName(character.character_translations, locale);
+      // Skip characters with no usable name
+      if (!translation?.name?.trim()) return null;
 
-    return {
-      id: character.id,
-      slug: character.slug,
-      name: translation?.name || "Unnamed",
-      role: translation?.role || undefined,
-      description: translation?.description || undefined,
-      mainImage: character.main_image || undefined,
-      backgroundColor: character.background_color || undefined,
-      primaryGame,
-      gamesCount,
-    };
-  });
+      const primaryGameRelation = character.character_games?.find((cg) => cg.is_primary === true);
+      const primaryGame =
+        (primaryGameRelation?.games as GameRow | null)?.game_translations?.[0]?.title ||
+        (character.character_games?.[0]?.games as GameRow | null)?.game_translations?.[0]?.title ||
+        undefined;
+      const gamesCount = character.character_games?.length || 0;
+
+      return {
+        id: character.id,
+        slug: character.slug,
+        name: translation.name,
+        role: translation?.role || undefined,
+        description: translation?.description || undefined,
+        mainImage: character.main_image || undefined,
+        backgroundColor: character.background_color || undefined,
+        primaryGame,
+        gamesCount,
+      };
+    })
+    .filter((c): c is NonNullable<typeof c> => c !== null);
 
   const totalPages = Math.ceil((totalCount || 0) / limit);
   return {

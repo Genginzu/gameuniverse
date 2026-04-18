@@ -1,7 +1,7 @@
 {
   "metadata": {
-    "description": "Explorez des milliers de jeux vidéo, découvrez des personnages iconiques et rejoignez une communauté de passionnés sur Game Universe",
-    "keywords": "jeux vidéo, gaming, personnages, avis, communauté, collection, Game Universe",
+    "description": "Explorez des milliers de jeux vidéo, découvrez des personnages iconiques et rejoignez une communauté de passionnés sur Gamers Universe",
+    "keywords": "jeux vidéo, gaming, personnages, avis, communauté, collection, Gamers Universe",
     "home": {
       "title": "Accueil",
       "description": "Explorez des milliers de jeux vidéo, découvrez des personnages iconiques et rejoignez une communauté de passionnés"
@@ -16,11 +16,11 @@
     },
     "players": {
       "title": "Tous les joueurs",
-      "description": "Explorez les profils des joueurs de la communauté Game Universe"
+      "description": "Explorez les profils des joueurs de la communauté Gamers Universe"
     },
     "discussions": {
       "title": "Discussions",
-      "description": "Participez aux discussions de la communauté Game Universe"
+      "description": "Participez aux discussions de la communauté Gamers Universe"
     },
     "library": {
       "title": "Ma bibliothèque",
@@ -32,7 +32,7 @@
     },
     "yearInReview": {
       "title": "Rétrospective {year} de {player}",
-      "description": "Découvrez la rétrospective gaming {year} de {player} sur Game Universe"
+      "description": "Découvrez la rétrospective gaming {year} de {player} sur Gamers Universe"
     }
   },
   "navigation": {
@@ -62,7 +62,7 @@
       "explore": "Explorer les jeux",
       "login": "Se connecter",
       "title": "Prêt à rejoindre l'aventure ?",
-      "subtitle": "Rejoignez des milliers de gamers qui utilisent déjà Game Universe pour découvrir leurs prochains jeux favoris"
+      "subtitle": "Rejoignez des milliers de gamers qui utilisent déjà Gamers Universe pour découvrir leurs prochains jeux favoris"
     },
     "features": {
       "mainTitle": "Tout pour les gamers",
@@ -168,14 +168,14 @@
   "auth": {
     "signin": {
       "title": "Connexion",
-      "description": "Connectez-vous à votre compte Game Universe",
+      "description": "Connectez-vous à votre compte Gamers Universe",
       "submit": "Se connecter",
       "switchText": "Pas encore de compte ?",
       "switchLink": "Créer un compte"
     },
     "signup": {
       "title": "Inscription",
-      "description": "Créez votre compte Game Universe",
+      "description": "Créez votre compte Gamers Universe",
       "submit": "Créer un compte",
       "switchText": "Déjà un compte ?",
       "switchLink": "Se connecter",
@@ -271,7 +271,7 @@
       "resendEmail": "Renvoyer l'email"
     },
     "footer": {
-      "text": "© 2024 Game Universe. Tous droits réservés."
+      "text": "© 2024 Gamers Universe. Tous droits réservés."
     }
   },
   "dashboard": {
@@ -503,7 +503,7 @@
   "players": {
     "title": "Joueurs",
     "heroTitle": "Découvrez la Communauté",
-    "heroTitleHighlight": "Game Universe",
+    "heroTitleHighlight": "Gamers Universe",
     "heroSubtitle": "Explorez les profils des joueurs et découvrez leurs collections",
     "availableCount": "{count} joueurs disponibles",
     "searchPlaceholder": "Rechercher un joueur...",
@@ -863,6 +863,7 @@
       "globalScore": "Note critiques",
       "price": "Prix",
       "genres": "Genres",
+      "platforms": "Plateformes",
       "classification": "Classification"
     },
     "errors": {
@@ -1060,7 +1061,7 @@
   },
   "footer": {
     "tagline": "La plateforme complète pour explorer l'univers du jeu vidéo",
-    "copyright": "© {year} Game Universe. Tous droits réservés.",
+    "copyright": "© {year} Gamers Universe. Tous droits réservés.",
     "explore": "Explorer",
     "community": "Communauté",
     "madeWith": "Fait avec",
@@ -1148,6 +1149,52 @@
       "updateFailed": "Échec de la mise à jour. Veuillez réessayer.",
       "connectionError": "Erreur de connexion. Veuillez réessayer.",
       "genericError": "Une erreur s'est produite. Veuillez réessayer."
+    },
+    "platforms": {
+      "title": "Plateformes gaming",
+      "description": "Connectez vos comptes de plateformes de jeux pour synchroniser vos données",
+      "connectedTitle": "Comptes connectés",
+      "connectedDescription": "Comptes reliés via OAuth — nom, avatar et bibliothèque importés automatiquement",
+      "manualTitle": "Pseudos manuels",
+      "manualDescription": "Plateformes sans API : votre pseudo est affiché sur votre profil",
+      "lastSyncedAt": "Synchronisé il y a {when}",
+      "makePublic": "Rendre public",
+      "makePrivate": "Rendre privé",
+      "suggestionsTitle": "Comptes détectés via Discord — à lier ?",
+      "suggestionLink": "Lier",
+      "usernamePlaceholder": "Votre pseudo sur cette plateforme",
+      "friendCodePlaceholder": "SW-XXXX-XXXX-XXXX",
+      "npssoPlaceholder": "Collez votre token NPSSO ici",
+      "manualOnlyHint": "Aucune API publique — pseudo enregistré sans vérification",
+      "errors": {
+        "empty": "Le pseudo est requis",
+        "format": "Format invalide (ex : SW-1234-5678-9012)",
+        "not_found": "Profil introuvable sur cette plateforme",
+        "unreachable": "Impossible de joindre la plateforme, réessayez plus tard"
+      },
+      "notLinked": "Non connecté",
+      "connected": "Connecté",
+      "saved": "Plateforme connectée",
+      "removed": "Plateforme déconnectée",
+      "syncLibrary": "Synchroniser la bibliothèque",
+      "syncDone": "Bibliothèque synchronisée",
+      "syncSummary": "{matched}/{total} jeux associés ({unmatched} non trouvés)",
+      "syncImported": "{imported} nouveaux jeux importés depuis IGDB",
+      "syncPrivateProfile": "Votre profil Steam est privé — rendez-le public pour synchroniser",
+      "syncEmpty": "Aucun jeu trouvé dans votre bibliothèque Steam",
+      "names": {
+        "steam": "Steam",
+        "epic": "Epic Games",
+        "xbox": "Xbox",
+        "playstation": "PlayStation",
+        "battlenet": "Battle.net",
+        "discord": "Discord",
+        "gog": "GOG",
+        "nintendo": "Nintendo",
+        "ea": "EA",
+        "ubisoft": "Ubisoft",
+        "itch": "itch.io"
+      }
     }
   },
   "admin": {
@@ -1187,8 +1234,11 @@
       "playerAchievements": "Succès joueurs",
       "igdbCategory": "IGDB",
       "webhooks": "Webhooks",
+      "bulkImport": "Import en masse",
+      "bulkImportCharacters": "Import en masse",
       "toolsCategory": "Outils",
-      "translations": "Traductions"
+      "translations": "Traductions",
+      "globalSync": "Synchro globale"
     },
     "closeSidebar": "Fermer le menu latéral",
     "openSidebar": "Ouvrir le menu latéral",
@@ -1493,6 +1543,11 @@
         "mainImagePlaceholder": "https://example.com/image.jpg",
         "backgroundImage": "Image de fond (URL)",
         "backgroundImagePlaceholder": "https://example.com/background.jpg",
+        "searchImage": "Rechercher une image",
+        "imageSource": "Source",
+        "noCharacterName": "Veuillez d'abord saisir un nom de personnage dans l'onglet traductions.",
+        "noImageFound": "Aucune image trouvée pour ce personnage.",
+        "searchFailed": "La recherche d'image a échoué. Réessayez.",
         "name": "Nom",
         "namePlaceholder": "Nom du personnage",
         "role": "Rôles",
@@ -2306,6 +2361,92 @@
         "content_descriptors": "Descripteurs",
         "ratings": "Classifications"
       }
+    },
+    "globalSync": {
+      "title": "Synchronisation globale IGDB",
+      "subtitle": "Téléchargez le catalogue complet IGDB et associez les jeux à votre base de données",
+      "downloadTitle": "Télécharger le catalogue IGDB",
+      "downloadDescription": "Récupère tous les jeux depuis IGDB par lots de 500 et les associe automatiquement aux jeux existants dans votre base.",
+      "startDownload": "Lancer le téléchargement",
+      "downloading": "Téléchargement en cours...",
+      "progress": "{inserted} jeux insérés (dernier ID : {lastId})",
+      "downloadComplete": "Téléchargement terminé : {count} jeux récupérés",
+      "searchPlaceholder": "Rechercher un jeu...",
+      "filter": {
+        "all": "Tous",
+        "matched": "Associés",
+        "unmatched": "Non associés"
+      },
+      "totalEntries": "{count, plural, =0 {Aucune entrée} one {1 entrée} other {# entrées}}",
+      "noEntries": "Aucune entrée. Lancez le téléchargement pour remplir la table.",
+      "matched": "Associé",
+      "unmatched": "Non associé",
+      "tabs": {
+        "download": "Téléchargement",
+        "sync": "Synchronisation",
+        "enrich": "Enrichissement",
+        "colors": "Couleurs",
+        "metascore": "Metascore"
+      },
+      "syncTab": {
+        "title": "Synchroniser les jeux",
+        "description": "Importe ou met à jour chaque jeu dans votre base de données depuis IGDB, un par un.",
+        "startSync": "Lancer la synchronisation",
+        "syncing": "Synchronisation en cours...",
+        "stop": "Arrêter",
+        "currentGame": "En cours : {name}",
+        "synced": "{count} synchronisé(s)",
+        "failed": "{count} échoué(s)",
+        "remaining": "{count} restant(s)",
+        "complete": "Synchronisation terminée : {count} jeux traités",
+        "infoResume": "Vous pouvez arrêter et reprendre la synchronisation à tout moment. Elle reprendra automatiquement là où elle s'est arrêtée.",
+        "infoRetry": "Les jeux en erreur ne sont pas marqués comme synchronisés et seront réessayés lors du prochain lancement.",
+        "allSynced": "Tous les jeux ont été synchronisés."
+      },
+      "enrichTab": {
+        "title": "Enrichissement des jeux",
+        "description": "Ajoute les données lourdes : couleurs, screenshots, artworks, vidéos, classifications d'âge, versions, langues, playtime, jeux similaires. Traite 3 jeux en parallèle.",
+        "startSync": "Lancer",
+        "syncing": "En cours...",
+        "stop": "Arrêter",
+        "currentGame": "En cours : {name}",
+        "synced": "{count} enrichi(s)",
+        "failed": "{count} échoué(s)",
+        "remaining": "{count} restant(s)",
+        "complete": "Terminé : {count} jeux enrichis",
+        "info": "Enrichit les jeux déjà créés avec les données complètes depuis IGDB : extraction de couleurs depuis la cover, screenshots, artworks, vidéos, classifications d'âge, versions/éditions, langues supportées, temps de jeu et jeux similaires.",
+        "searchPlaceholder": "Rechercher un jeu...",
+        "allDone": "Tous les jeux ont été enrichis."
+      },
+      "colorsTab": {
+        "title": "Extraction des couleurs",
+        "description": "Extrait les couleurs d'accent, de fond, de label et de texte depuis les covers. Un jeu à la fois (téléchargement d'image + analyse).",
+        "startSync": "Lancer",
+        "syncing": "Extraction en cours...",
+        "stop": "Arrêter",
+        "currentGame": "En cours : {name}",
+        "synced": "{count} traité(s)",
+        "failed": "{count} échoué(s)",
+        "remaining": "{count} restant(s)",
+        "searchPlaceholder": "Rechercher un jeu...",
+        "allDone": "Toutes les couleurs ont été extraites."
+      },
+      "metascoreTab": {
+        "title": "Synchronisation Metascore",
+        "description": "Récupère le score agrégé (aggregated_rating) depuis IGDB pour chaque jeu synchronisé. Traite 10 jeux en parallèle.",
+        "startSync": "Lancer",
+        "syncing": "En cours...",
+        "stop": "Arrêter",
+        "currentGame": "En cours : {name}",
+        "synced": "{count} traité(s)",
+        "failed": "{count} échoué(s)",
+        "remaining": "{count} restant(s)",
+        "complete": "Terminé : {count} jeux traités",
+        "source": "Dernière source : {source}",
+        "info": "Essaie d'abord Metacritic (scraping), puis se rabat sur le score agrégé IGDB. Les jeux sans score reçoivent la valeur -1. Un jeu à la fois à cause du rate limiting Metacritic (~2,5s par jeu).",
+        "searchPlaceholder": "Rechercher un jeu...",
+        "allDone": "Tous les metascores ont été synchronisés."
+      }
     }
   },
   "collections": {
@@ -2853,6 +2994,58 @@
       "skipped": "Ignorés"
     }
   },
+  "bulkImport": {
+    "title": "Import en masse",
+    "description": "Synchronisez les données manquantes depuis IGDB pour vos jeux existants.",
+    "fields": {
+      "cover": "Couverture",
+      "background": "Fond",
+      "playtime": "Temps de jeu",
+      "metascore": "Metascore",
+      "releaseDate": "Date de sortie"
+    },
+    "gamesCount": "{count, plural, =0 {Aucun jeu} one {1 jeu} other {# jeux}} sans {field}",
+    "batchSize": "Quantité",
+    "syncButton": "Synchroniser {count, plural, one {1 jeu} other {# jeux}}",
+    "syncing": "{done}/{total}…",
+    "syncStarted": "Synchronisation de {count, plural, one {1 jeu} other {# jeux}} lancée…",
+    "syncDone": "{success}/{total} jeu(x) synchronisé(s)",
+    "syncFailed": "Échec de la synchronisation",
+    "allSynced": "Tous les jeux sont à jour pour ce champ.",
+    "abort": "Arrêter",
+    "progressLabel": "{done}/{total} traité(s)",
+    "progressSuccess": "{count} ✓",
+    "progressFailed": "{count} ✗",
+    "gameSynced": "✓ {title}",
+    "gameSyncFailed": "✗ {title}",
+    "syncAborted": "Synchronisation interrompue",
+    "all": "Tout",
+    "invalidField": "Champ invalide",
+    "backToFields": "Retour à l'import en masse"
+  },
+  "bulkImportCharacters": {
+    "title": "Import en masse des personnages",
+    "description": "Synchronisez les données manquantes depuis IGDB pour vos personnages existants.",
+    "fields": {
+      "image": "Image",
+      "background": "Fond"
+    },
+    "gamesCount": "{count, plural, =0 {Aucun personnage} one {1 personnage} other {# personnages}} sans {field}",
+    "batchSize": "Quantité",
+    "syncButton": "Synchroniser {count, plural, one {1 personnage} other {# personnages}}",
+    "syncStarted": "Synchronisation de {count, plural, one {1 personnage} other {# personnages}} lancée…",
+    "syncDone": "{success}/{total} personnage(s) synchronisé(s)",
+    "syncFailed": "Échec de la synchronisation",
+    "allSynced": "Tous les personnages sont à jour pour ce champ.",
+    "abort": "Arrêter",
+    "progressLabel": "{done}/{total} traité(s)",
+    "progressSuccess": "{count} ✓",
+    "progressFailed": "{count} ✗",
+    "syncAborted": "Synchronisation interrompue",
+    "all": "Tout",
+    "invalidField": "Champ invalide",
+    "backToFields": "Retour à l'import en masse des personnages"
+  },
   "discussions": {
     "pageTitle": "Discussions",
     "pageSubtitle": "Échangez avec vos amis en toute simplicité",
@@ -2914,5 +3107,21 @@
     "description": "La page que vous recherchez n'existe pas ou a ete deplacee.",
     "home": "Accueil",
     "games": "Voir les jeux"
+  },
+  "notifications": {
+    "ariaLabel": "Notifications, {count} non lues",
+    "noNotifications": "Aucune notification",
+    "markAllAsRead": "Tout marquer comme lu",
+    "typePostComment": "a commenté votre post",
+    "typeDiscussionMessage": "vous a envoyé un message",
+    "dismiss": "Fermer"
+  },
+  "postComments": {
+    "title": "Commentaires",
+    "noComments": "Aucun commentaire",
+    "placeholder": "Écrire un commentaire...",
+    "submit": "Envoyer",
+    "deleteLabel": "Supprimer le commentaire",
+    "charCount": "{remaining} caractères restants"
   }
 }

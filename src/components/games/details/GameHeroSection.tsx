@@ -84,7 +84,7 @@ export function GameHeroSection({
       </div>
 
       {/* Background image - only for hero section */}
-      {game.media.backgroundImage && (
+      {game.media.backgroundImage && game.media.backgroundImage !== "none" && (
         <div className="absolute inset-0 z-0 h-[60vh] overflow-hidden">
           <LazyImage
             src={game.media.backgroundImage}
@@ -137,7 +137,7 @@ export function GameHeroSection({
                   />
 
                   {/* Metascore badge */}
-                  {game.metascore && (
+                  {game.metascore && game.metascore > 0 && (
                     <div className="absolute top-4 right-4">
                       <div
                         className={`${getMetascoreColor(game.metascore)} rounded-full px-3 py-1 text-sm font-bold text-white shadow-lg`}

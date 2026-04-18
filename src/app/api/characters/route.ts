@@ -173,8 +173,10 @@ export async function GET(request: NextRequest) {
     }
 
     // Apply pagination and execute main query
-    // Tri global par nom via la table jointe character_translations (inner join)
+    // Tri : personnages avec image d'abord (par view_count desc), puis sans image
     const { data: characters, error } = await query
+      .order("main_image", { ascending: false, nullsFirst: false })
+      .order("view_count", { ascending: false })
       .order("name", { referencedTable: "character_translations", ascending: true })
       .range(offset, offset + limit - 1);
 
@@ -186,31 +188,36 @@ export async function GET(request: NextRequest) {
     const typedCharacters = (characters || []) as CharacterRowWithRelations[];
 
     // Transform the data to match the expected format
-    const transformedCharacters = typedCharacters.map((character) => {
-      const translation = pickTranslationWithName(character.character_translations, locale);
+    const transformedCharacters = typedCharacters
+      .map((character) => {
+        const translation = pickTranslationWithName(character.character_translations, locale);
 
-      // Get primary game
-      const primaryGameRelation = character.character_games?.find((cg) => cg.is_primary === true);
-      const primaryGame =
-        primaryGameRelation?.games?.game_translations?.[0]?.title ||
-        character.character_games?.[0]?.games?.game_translations?.[0]?.title ||
-        "Unknown";
+        // Skip characters with no usable name
+        if (!translation?.name?.trim()) return null;
 
-      // Count total games
-      const gamesCount = character.character_games?.length || 0;
+        // Get primary game
+        const primaryGameRelation = character.character_games?.find((cg) => cg.is_primary === true);
+        const primaryGame =
+          primaryGameRelation?.games?.game_translations?.[0]?.title ||
+          character.character_games?.[0]?.games?.game_translations?.[0]?.title ||
+          undefined;
 
-      return {
-        id: character.id,
-        slug: character.slug,
-        name: translation?.name || "Unnamed",
-        role: translation?.role,
-        description: translation?.description,
-        mainImage: character.main_image,
-        backgroundColor: character.background_color,
-        primaryGame,
-        gamesCount,
-      };
-    });
+        // Count total games
+        const gamesCount = character.character_games?.length || 0;
+
+        return {
+          id: character.id,
+          slug: character.slug,
+          name: translation.name,
+          role: translation?.role,
+          description: translation?.description,
+          mainImage: character.main_image,
+          backgroundColor: character.background_color,
+          primaryGame,
+          gamesCount,
+        };
+      })
+      .filter((c): c is NonNullable<typeof c> => c !== null);
 
     // Calculate pagination metadata
     const totalPages = Math.ceil((totalCount || 0) / limit);

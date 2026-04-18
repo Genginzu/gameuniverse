@@ -17,7 +17,7 @@ const SYNC_COOLDOWN_MS = 24 * 60 * 60 * 1000;
  * The sync endpoint returns 202 immediately while processing continues
  * in the background — we wait a bit for the DB to be updated.
  */
-const REFRESH_DELAY_MS = 5_000;
+const REFRESH_DELAY_MS = 12_000;
 
 /**
  * Triggers a background sync with IGDB when visiting a game page.

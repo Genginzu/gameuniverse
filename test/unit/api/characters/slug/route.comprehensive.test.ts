@@ -253,7 +253,7 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
       expect(data.primaryGame).toBe("The Legend of Zelda: Ocarina of Time");
     });
 
-    it("should handle character with no translation (fallback to Unnamed)", async () => {
+    it("should handle character with no translation (fallback to slug)", async () => {
       const mockCharacter = {
         id: "char-1",
         slug: "unknown",
@@ -300,7 +300,7 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.name).toBe("Unnamed");
+      expect(data.name).toBe("unknown");
       expect(data.backgroundColor).toBe("#0f172a"); // Default color
     });
 
@@ -429,7 +429,7 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.primaryGame).toBe("Unknown");
+      expect(data.primaryGame).toBeUndefined();
       expect(data.games).toHaveLength(0);
     });
 
@@ -689,7 +689,7 @@ describe("/api/characters/[slug] - Comprehensive Coverage", () => {
 
       expect(response.status).toBe(200);
       expect(data.relationships).toHaveLength(1);
-      expect(data.relationships[0].relatedCharacter.name).toBe("Unknown");
+      expect(data.relationships[0].relatedCharacter.name).toBe("luigi");
     });
 
     it("should handle unexpected error gracefully", async () => {

@@ -44,6 +44,6 @@ export async function generateMetadata({ params }: AchievementsPageProps) {
   const t = await getTranslations({ locale, namespace: "achievements" });
 
   return {
-    title: `${t("pageTitle")} | Game Universe`,
+    title: `${t("pageTitle")} | Gamers Universe`,
   };
 }

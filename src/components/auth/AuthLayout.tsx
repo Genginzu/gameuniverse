@@ -16,7 +16,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
           <Link href="/" className="flex items-center space-x-3">
             <GameUniverseLogo size="md" />
             <span className="bg-linear-to-r from-gray-900 to-gray-700 bg-clip-text text-xl font-bold text-transparent dark:from-gray-100 dark:to-gray-300">
-              Game Universe
+              Gamers Universe
             </span>
           </Link>
           <div className="rounded-2xl backdrop-blur-xs">

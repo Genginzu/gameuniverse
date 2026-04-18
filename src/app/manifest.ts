@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Game Universe",
+    name: "Gamers Universe",
     short_name: "GameUniverse",
     description: "Your gaming universe starts here",
     start_url: "/",

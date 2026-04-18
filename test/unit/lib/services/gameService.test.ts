@@ -273,7 +273,7 @@ describe("GameService", () => {
 
       const result = await GameService.generateGameMetadata("test-game", "en");
 
-      expect(result.title).toBe("Test Game - Game Universe");
+      expect(result.title).toBe("Test Game - Gamers Universe");
       expect(result.description).toBe("A test game description");
       expect(result.openGraph?.title).toBe("Test Game");
     });

@@ -235,7 +235,7 @@ export async function verifyGameDeletionConsistency(
         "game_artwork",
         "game_videos",
         "game_prices",
-      ];
+      ] as const;
 
       for (const table of relatedTables) {
         const { data: relatedData } = await supabase

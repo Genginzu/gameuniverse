@@ -384,7 +384,7 @@ describe("Admin Languages API", () => {
       expect(body.language).toEqual(newLang);
     });
 
-    test("creates language with empty native_name as null", async () => {
+    test("creates language with empty native_name as empty string (NOT NULL column)", async () => {
       const inputData = { code: "de", name: "German", native_name: "" };
       const expectedData = { code: "de", name: "German", native_name: null };
 
@@ -402,8 +402,8 @@ describe("Admin Languages API", () => {
       const res = await POST(req);
 
       expect(res.status).toBe(201);
-      // Verify insert was called with null for empty native_name
-      expect(insertMock).toHaveBeenCalledWith([{ code: "de", name: "German", native_name: null }]);
+      // Verify insert was called with empty string for empty native_name (NOT NULL column)
+      expect(insertMock).toHaveBeenCalledWith([{ code: "de", name: "German", native_name: "" }]);
     });
 
     test("returns 409 when language code already exists", async () => {

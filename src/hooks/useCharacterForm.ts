@@ -97,14 +97,47 @@ export function useCharacterForm(
 
         if (gamesRes.ok) {
           const gamesJson = await gamesRes.json();
-          setAvailableGames(
-            (gamesJson.games ?? []).map((g: Record<string, unknown>) => ({
+          const loadedGames: AvailableGame[] = (gamesJson.games ?? []).map(
+            (g: Record<string, unknown>) => ({
               id: g.id as string,
               title: g.title as string,
               slug: g.slug as string,
               coverImage: (g.coverImage as string) ?? null,
-            }))
+            })
           );
+
+          // In edit mode, ensure assigned games are included even if not in the top 100
+          const assignedGameIds = (initialData?.games ?? []).map((g) => g.game_id);
+          const loadedIds = new Set(loadedGames.map((g) => g.id));
+          const missingIds = assignedGameIds.filter((id) => !loadedIds.has(id));
+
+          if (missingIds.length > 0) {
+            const missingResults = await Promise.all(
+              missingIds.map((id) =>
+                fetch(`/api/admin/games/${id}?locale=${locale}`)
+                  .then((r) => (r.ok ? r.json() : null))
+                  .catch(() => null)
+              )
+            );
+            for (const g of missingResults) {
+              if (g) {
+                // The detail endpoint returns translations array + cover_image_url
+                const translations =
+                  (g.translations as Array<{ language_code: string; title: string }>) ?? [];
+                const tr =
+                  translations.find((t: { language_code: string }) => t.language_code === locale) ??
+                  translations[0];
+                loadedGames.push({
+                  id: g.id as string,
+                  title: tr?.title ?? (g.slug as string),
+                  slug: g.slug as string,
+                  coverImage: (g.cover_image_url as string) ?? null,
+                });
+              }
+            }
+          }
+
+          setAvailableGames(loadedGames);
         }
 
         if (charsRes.ok) {
@@ -153,7 +186,7 @@ export function useCharacterForm(
     if (initialData) {
       form.reset(initialData);
     }
-  }, [initialData, form]);
+  }, [initialData]);
 
   const submitCharacter = useCallback(
     async (data: AdminCharacterFormData) => {

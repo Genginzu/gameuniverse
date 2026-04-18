@@ -22,7 +22,9 @@ function formatHours(hours: number | null): string {
 export function GamePlaytimeOfficial({ playtime, accentColor }: GamePlaytimeOfficialProps) {
   const t = useTranslations("gameDetails.playtime");
 
-  const hasAnyData = playtime?.hastily || playtime?.normally || playtime?.completely;
+  const isValid = (v: number | null | undefined) => v !== null && v !== undefined && v > 0;
+  const hasAnyData =
+    isValid(playtime?.hastily) || isValid(playtime?.normally) || isValid(playtime?.completely);
 
   if (!playtime || !hasAnyData) {
     return (

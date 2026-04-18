@@ -4,6 +4,7 @@ import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/hooks/useAuth";
 import { LanguageSwitcher } from "../../shared/LanguageSwitcher";
+import { NotificationBell } from "@/components/shared/NotificationBell";
 import { Button } from "@/components/ui/button";
 import { GameUniverseLogo } from "@/components/ui/game-universe-logo";
 import { Icon } from "@iconify/react";
@@ -26,7 +27,7 @@ export function LandingHeader() {
         <Link href="/" className="flex items-center space-x-3">
           <GameUniverseLogo size="md" />
           <span className="text-lg font-bold text-gray-900 lg:text-xl dark:text-white">
-            Game Universe
+            Gamers Universe
           </span>
         </Link>
 
@@ -55,6 +56,7 @@ export function LandingHeader() {
       </div>
 
       <div className="flex items-center space-x-4">
+        <NotificationBell />
         <LanguageSwitcher />
 
         {loading ? (

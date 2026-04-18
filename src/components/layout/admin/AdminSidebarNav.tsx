@@ -24,8 +24,13 @@ const NAV_CATEGORIES: NavCategory[] = [
       { href: "/admin/companies", icon: "fa:building", labelKey: "nav.companies" },
       { href: "/admin/platforms", icon: "fa:desktop", labelKey: "nav.platforms" },
       { href: "/admin/languages", icon: "fa:globe", labelKey: "nav.languages" },
-      { href: "/admin/age-classifications", icon: "lucide:shield", labelKey: "nav.ageClassifications" },
+      {
+        href: "/admin/age-classifications",
+        icon: "lucide:shield",
+        labelKey: "nav.ageClassifications",
+      },
       { href: "/admin/reviews", icon: "fa:star", labelKey: "nav.reviews" },
+      { href: "/admin/bulk-import", icon: "lucide:download", labelKey: "nav.bulkImport" },
     ],
   },
   {
@@ -36,25 +41,33 @@ const NAV_CATEGORIES: NavCategory[] = [
       { href: "/admin/genders", icon: "fa:venus-mars", labelKey: "nav.characterGenders" },
       { href: "/admin/species", icon: "fa:paw", labelKey: "nav.characterSpecies" },
       { href: "/admin/comments", icon: "lucide:message-circle", labelKey: "nav.comments" },
+      {
+        href: "/admin/bulk-import-characters",
+        icon: "lucide:download",
+        labelKey: "nav.bulkImportCharacters",
+      },
     ],
   },
   {
     labelKey: "nav.playersCategory",
     items: [
       { href: "/admin/achievements", icon: "fa:trophy", labelKey: "nav.achievements" },
-      { href: "/admin/achievements/players", icon: "lucide:award", labelKey: "nav.playerAchievements" },
+      {
+        href: "/admin/achievements/players",
+        icon: "lucide:award",
+        labelKey: "nav.playerAchievements",
+      },
     ],
   },
   {
     labelKey: "nav.igdbCategory",
-    items: [
-      { href: "/admin/webhooks", icon: "lucide:webhook", labelKey: "nav.webhooks" },
-    ],
+    items: [{ href: "/admin/webhooks", icon: "lucide:webhook", labelKey: "nav.webhooks" }],
   },
   {
     labelKey: "nav.toolsCategory",
     items: [
       { href: "/admin/translations", icon: "mdi:translate", labelKey: "nav.translations" },
+      { href: "/admin/global-sync", icon: "lucide:refresh-cw", labelKey: "nav.globalSync" },
     ],
   },
 ];

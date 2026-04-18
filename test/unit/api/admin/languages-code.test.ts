@@ -224,7 +224,7 @@ describe("Admin Languages [code] API", () => {
       expect(body.language).toEqual(updatedLang);
     });
 
-    test("converts empty native_name to null", async () => {
+    test("converts empty native_name to empty string (NOT NULL column)", async () => {
       let updateCalledWith: unknown = null;
       let callCount = 0;
 
@@ -266,7 +266,7 @@ describe("Admin Languages [code] API", () => {
       const res = await PUT(req, makeParams("fr"));
 
       expect(res.status).toBe(200);
-      expect(updateCalledWith).toEqual({ name: "French", native_name: null });
+      expect(updateCalledWith).toEqual({ name: "French", native_name: "" });
     });
 
     test("returns 500 when update fails", async () => {

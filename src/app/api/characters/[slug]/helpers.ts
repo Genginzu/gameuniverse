@@ -1,4 +1,4 @@
-import { pickTranslation } from "@/lib/utils/pickTranslation";
+import { pickTranslation, pickTranslationWithName } from "@/lib/utils/pickTranslation";
 import type { createRouteHandlerClient } from "@/lib/supabase-server";
 import { untypedTable } from "@/lib/utils/untypedTable";
 
@@ -110,13 +110,13 @@ export async function fetchRelationships(
     .map((rel) => {
       const related = relatedChars.find((c) => c.id === rel.related_character_id);
       if (!related) return null;
-      const t = pickTranslation(related.character_translations, locale);
+      const t = pickTranslationWithName(related.character_translations, locale);
       return {
         id: rel.id,
         relatedCharacter: {
           id: related.id,
           slug: related.slug,
-          name: t?.name || "Unknown",
+          name: t?.name || related.slug,
           mainImage: related.main_image,
           role: t?.role ?? null,
         },
@@ -206,42 +206,36 @@ export function buildMedia(character: CharacterRow) {
     screenshots: items
       .filter((m: { type: string }) => m.type === "screenshot")
       .sort(sortByOrder)
-      .map(
-        (m) => ({
-          id: m.id,
-          url: m.url,
-          altText: m.alt_text,
-          caption: m.description,
-          isFeatured: m.is_featured || false,
-        })
-      ),
+      .map((m) => ({
+        id: m.id,
+        url: m.url,
+        altText: m.alt_text,
+        caption: m.description,
+        isFeatured: m.is_featured || false,
+      })),
     artwork: items
       .filter((m: { type: string }) => m.type === "artwork")
       .sort(sortByOrder)
-      .map(
-        (m) => ({
-          id: m.id,
-          url: m.url,
-          altText: m.alt_text,
-          caption: m.description,
-          type: m.title || "artwork",
-          isFeatured: m.is_featured || false,
-        })
-      ),
+      .map((m) => ({
+        id: m.id,
+        url: m.url,
+        altText: m.alt_text,
+        caption: m.description,
+        type: m.title || "artwork",
+        isFeatured: m.is_featured || false,
+      })),
     videos: items
       .filter((m: { type: string }) => m.type === "video")
       .sort(sortByOrder)
-      .map(
-        (m) => ({
-          id: m.id,
-          title: m.title || "Video",
-          description: m.description,
-          url: m.url,
-          thumbnailUrl: m.thumbnail_url,
-          type: "video",
-          isFeatured: m.is_featured || false,
-        })
-      ),
+      .map((m) => ({
+        id: m.id,
+        title: m.title || "Video",
+        description: m.description,
+        url: m.url,
+        thumbnailUrl: m.thumbnail_url,
+        type: "video",
+        isFeatured: m.is_featured || false,
+      })),
   };
 }
 

@@ -97,7 +97,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     // Update the language
     const { data: language, error } = await supabase
       .from("supported_languages")
-      .update({ name, native_name: native_name || null })
+      .update({ name, native_name: native_name ?? "" })
       .eq("code", code)
       .select("code, name, native_name")
       .single();

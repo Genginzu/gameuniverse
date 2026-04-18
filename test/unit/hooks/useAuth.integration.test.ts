@@ -53,6 +53,7 @@ vi.mock("react", () => ({
     const cleanup = callback();
     if (cleanup) cleanup();
   },
+  useRef: (initial: unknown) => ({ current: initial }),
 }));
 
 vi.mock("@/i18n/navigation", () => ({

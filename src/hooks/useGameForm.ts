@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useForm, type UseFormReturn } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLocale } from "next-intl";
@@ -113,12 +113,16 @@ export function useGameForm(
         if (!mounted) return;
         setGenres(
           (json.data?.genres ?? []).map((g: { id: string; slug: string; name: string }) => ({
-            id: g.id, slug: g.slug, name: g.name,
+            id: g.id,
+            slug: g.slug,
+            name: g.name,
           }))
         );
         setCompanies(
           (json.data?.companies ?? []).map((c: { id: string; name: string; slug: string }) => ({
-            id: c.id, name: c.name, slug: c.slug,
+            id: c.id,
+            name: c.name,
+            slug: c.slug,
           }))
         );
         setRatings(json.data?.ratings ?? []);
@@ -135,11 +139,20 @@ export function useGameForm(
       }
     };
     loadOptions();
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, [locale]);
 
+  // Reset form when initialData changes (e.g. loading a different game).
+  // Use a ref to track the last applied data and avoid spurious resets
+  // that would wipe user edits (e.g. after AI translation).
+  const lastResetDataRef = useRef<AdminGameFormData | undefined>(undefined);
   useEffect(() => {
-    if (initialData) form.reset(initialData);
+    if (initialData && initialData !== lastResetDataRef.current) {
+      lastResetDataRef.current = initialData;
+      form.reset(initialData);
+    }
   }, [initialData, form]);
 
   const refreshGamePlatforms = useCallback(async () => {
@@ -182,8 +195,20 @@ export function useGameForm(
   );
 
   return {
-    form, genres, companies, ratings, contentDescriptors, supportedLanguages,
-    stores, currencies, platforms, gamePlatforms, loadingOptions,
-    submitGame, isSubmitting, submitError, refreshGamePlatforms,
+    form,
+    genres,
+    companies,
+    ratings,
+    contentDescriptors,
+    supportedLanguages,
+    stores,
+    currencies,
+    platforms,
+    gamePlatforms,
+    loadingOptions,
+    submitGame,
+    isSubmitting,
+    submitError,
+    refreshGamePlatforms,
   };
 }

@@ -2,16 +2,17 @@
 inclusion: always
 ---
 
-# Git : Commit & Push automatique
+# Git : Commit automatique (sans push)
 
 ## Règle
 
 À la fin de chaque modification significative (nouvelle fonctionnalité, fix,
 refactoring structurant, mise à jour de documentation, changement de
-configuration), **commit et push** les changements sans attendre que
-l'utilisateur le demande.
+configuration), **commit** les changements sans attendre que l'utilisateur le
+demande. Ne **jamais** push automatiquement — l'utilisateur gère les push
+manuellement.
 
-## Quand commit & push
+## Quand commit
 
 - ✅ Fin d'une feature ou d'un fix complet
 - ✅ Modification structurante (réorganisation de fichiers, nouveau steering)
@@ -60,3 +61,5 @@ feat: #42 add player stats dashboard
 - ✅ Un commit par changement logique — ne pas mélanger feature + fix + docs
   dans un seul commit
 - ❌ Ne **jamais** commit de secrets, tokens ou fichiers sensibles
+- ❌ Ne **jamais** push automatiquement — le push est géré manuellement par
+  l'utilisateur

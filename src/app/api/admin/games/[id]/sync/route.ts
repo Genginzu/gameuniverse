@@ -3,6 +3,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { TRACKABLE_FIELDS } from "@/lib/utils/field-tracking";
 import { syncGameField, syncAllGameFields } from "@/lib/services/igdb-sync";
+import { fetchMetacriticScore } from "@/lib/services/metacriticService";
 import type { TrackableField } from "@/types/admin-games";
 
 /**
@@ -51,14 +52,33 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     }
 
     // Sync single field or all fields (forced — no override protection)
-    const result = field
-      ? await syncGameField(supabase as never, gameId, game.igdb_id, field as TrackableField)
-      : await syncAllGameFields(
-          supabase as never,
-          gameId,
-          game.igdb_id
-          // No overriddenFields → forced sync, removes all overrides
-        );
+    let result;
+    if (field === "metascore") {
+      // Use Metacritic for metascore instead of IGDB
+      const { data: gameData } = await supabase
+        .from("games")
+        .select("slug")
+        .eq("id", gameId)
+        .single();
+
+      const slug = gameData?.slug;
+      if (slug) {
+        const score = await fetchMetacriticScore(slug);
+        if (score !== null) {
+          await supabase.from("games").update({ metascore: score }).eq("id", gameId);
+          result = { success: true, syncedFields: ["metascore"] };
+        } else {
+          // Fallback to IGDB if Metacritic has no score
+          result = await syncGameField(supabase as never, gameId, game.igdb_id, "metascore");
+        }
+      } else {
+        result = await syncGameField(supabase as never, gameId, game.igdb_id, "metascore");
+      }
+    } else {
+      result = field
+        ? await syncGameField(supabase as never, gameId, game.igdb_id, field as TrackableField)
+        : await syncAllGameFields(supabase as never, gameId, game.igdb_id);
+    }
 
     if (!result.success) {
       // IGDB fetch failure → 502

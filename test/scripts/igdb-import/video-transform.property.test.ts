@@ -66,7 +66,7 @@ describe("Feature: igdb-video-sync, Property 1: Video transformation correctness
         const result = transformIgdbVideos(videos, gameId);
         for (let i = 0; i < videos.length; i++) {
           expect(result[i].thumbnail_url).toBe(
-            `https://img.youtube.com/vi/${videos[i].video_id}/maxresdefault.jpg`
+            `https://img.youtube.com/vi/${videos[i].video_id}/hqdefault.jpg`
           );
         }
       }),

@@ -38,13 +38,14 @@ interface GamesResponse {
 class GameServiceImpl extends BaseService<GameDetails, GameSummary> {
   protected readonly entityName = "game";
   protected readonly apiPath = "/api/games";
+  protected readonly revalidate = 60;
 
   /**
    * Builds SEO metadata from a game entity
    */
   protected buildMetadata(game: GameDetails, locale: string): EntityMetadata {
     return {
-      title: `${game.title} - Game Universe`,
+      title: `${game.title} - Gamers Universe`,
       description:
         game.description ||
         (locale === "fr"

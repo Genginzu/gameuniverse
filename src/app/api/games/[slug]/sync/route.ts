@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { syncAllGameFields } from "@/lib/services/igdb-sync";
+import { fetchMetacriticScore } from "@/lib/services/metacriticService";
 import type { TrackableField } from "@/types/admin-games";
 import { logger } from "@/lib/logger";
 
@@ -74,13 +75,30 @@ export async function POST(
 
     // Fire-and-forget: use the same sync engine as the admin panel
     syncAllGameFields(supabase as never, game.id, game.igdb_id, overriddenFields)
-      .then((result) => {
+      .then(async (result) => {
         if (result.success) {
           logger.info(`Background sync completed for game ${slug}`, {
             syncedFields: result.syncedFields,
           });
         } else {
           logger.error(`Background sync failed for game ${slug}`, { error: result.error });
+        }
+
+        // After IGDB sync, always try Metacritic for a more accurate metascore
+        if (!overriddenFields.includes("metascore" as TrackableField)) {
+          try {
+            const metacriticScore = await fetchMetacriticScore(slug);
+            if (metacriticScore !== null) {
+              const freshSupabase = await createRouteHandlerClient();
+              await freshSupabase
+                .from("games")
+                .update({ metascore: metacriticScore })
+                .eq("id", game.id);
+              logger.info(`Metacritic score applied for ${slug}`, { score: metacriticScore });
+            }
+          } catch (error) {
+            logger.warn(`Metacritic check failed for ${slug}`, { error });
+          }
         }
       })
       .catch((error) => {

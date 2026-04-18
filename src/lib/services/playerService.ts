@@ -22,7 +22,7 @@ class PlayerServiceImpl extends BaseService<PlayerDetails, PlayerSummary> {
     const displayName = player.fullName || (locale === "fr" ? "Joueur" : "Player");
     const totalGames = player.stats?.totalGames ?? 0;
     return {
-      title: `${displayName} - Game Universe`,
+      title: `${displayName} - Gamers Universe`,
       description:
         locale === "fr"
           ? `Profil de ${displayName} - ${totalGames} jeux dans sa bibliothèque`
