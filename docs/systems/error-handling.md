@@ -342,3 +342,87 @@ export default function MyPage() {
 
 Ce système fournit une gestion d'erreurs robuste et cohérente dans toute
 l'application, avec un minimum de code boilerplate pour les développeurs.
+
+## Error Boundaries au niveau des pages
+
+Chaque page majeure est isolée par son propre `ErrorBoundary` pour éviter les
+cascades d'erreurs :
+
+| Page                          | Composant enveloppé    | Options de récupération          |
+| ----------------------------- | ---------------------- | -------------------------------- |
+| `/dashboard`                  | `DashboardContent`     | Reload                           |
+| `/games`                      | `AllGamesContent`      | Reload + home                    |
+| `/library`                    | `UserLibraryContent`   | Home                             |
+| `/games/[slug]`               | `GameDetailsContent`   | Back vers `/games`               |
+
+## Composant ErrorFallback
+
+`src/components/shared/ErrorFallback.tsx` — UI d'erreur réutilisable, basée sur
+le composant `Alert` de shadcn/ui. Props :
+
+- `title`, `description` — texte personnalisable
+- `showRefresh` — bouton reload
+- `showBackButton`, `backUrl`, `backLabel` — navigation retour
+- `showHomeButton` — retour à l'accueil
+- `locale` — localisation FR/EN
+
+```tsx
+<ErrorBoundary
+  fallback={
+    <ErrorFallback
+      title="Titre personnalisé"
+      description="Description personnalisée"
+      showRefresh
+      showBackButton
+      backUrl="/games"
+      backLabel="Retour aux jeux"
+      locale="fr"
+    />
+  }
+>
+  <YourComponent />
+</ErrorBoundary>
+```
+
+## Loading states
+
+Squelettes disponibles pour toutes les sections majeures :
+
+| Composant               | Usage                                      |
+| ----------------------- | ------------------------------------------ |
+| `GameCardSkeleton`      | Carte de jeu individuelle                  |
+| `GameGridSkeleton`      | Grille de cartes                           |
+| `FiltersSkeleton`       | Section de filtres                         |
+| `SearchSkeleton`        | Page de recherche complète                 |
+| `GameDetailsSkeleton`   | Page de détails d'un jeu                   |
+| `MediaGallerySkeleton`  | Galerie de médias                          |
+| `LibrarySkeleton`       | Bibliothèque utilisateur                   |
+| `DashboardSkeleton`     | Dashboard                                  |
+
+**Patterns d'usage** :
+
+- `AllGamesContent` — `SearchSkeleton` au chargement initial, `GameGridSkeleton`
+  pendant pagination/filtrage, transitions fluides entre états
+- `UserLibraryContent` — `LibrarySkeleton` pendant chargement, gestion gracieuse
+  des états vides, affichage d'erreur avec retry
+- `GameDetailsContent` — SSR avec loading states, lazy loading images avec
+  placeholders, chargement progressif du contenu
+
+## Bonnes pratiques (récapitulatif)
+
+1. **Isolation** — chaque composant majeur a son propre `ErrorBoundary` pour
+   empêcher les cascades.
+2. **Messages user-friendly** — clairs, actionnables, traduits FR/EN, avec
+   options de récupération (reload, back, home).
+3. **Mode dev vs prod** — stack complet en dev, message court en prod, log
+   console systématique.
+4. **Test des boundaries** — composant `ErrorDemo` en dev (`/test-error`) pour
+   déclencher boundary errors, async errors, form errors et network errors.
+
+## Évolutions possibles
+
+- Intégration monitoring (Sentry, LogRocket)
+- Tracking analytics des erreurs
+- Collecte de feedback utilisateur
+- Gestion hors-ligne
+- Suggestions de récupération selon le type d'erreur
