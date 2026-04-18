@@ -11,32 +11,29 @@ interface PlatformRowProps {
   isEditing: boolean;
   editValue: string;
   saving: boolean;
-  t: (key: string) => string;
+  syncing: boolean;
+  t: (key: string, values?: Record<string, string | number>) => string;
   onStartEdit: () => void;
   onCancelEdit: () => void;
   onEditValueChange: (v: string) => void;
   onSaveManual: () => void;
   onConnectPsn: () => void;
+  onSyncLibrary: (platform: "steam" | "xbox") => void;
+  onToggleVisibility: () => void;
   onRemove: () => void;
 }
 
-export function PlatformRow({
-  platform, linked, isEditing, editValue, saving, t,
-  onStartEdit, onCancelEdit, onEditValueChange, onSaveManual, onConnectPsn, onRemove,
-}: PlatformRowProps) {
+export function PlatformRow(props: PlatformRowProps) {
+  const { platform, linked, isEditing, editValue, saving, t, onEditValueChange, onSaveManual, onConnectPsn, onCancelEdit } = props;
   const meta = PLATFORM_META[platform];
-  const isConnected = !!linked;
-  const displayName = linked?.platformUsername ?? linked?.externalId ?? null;
 
   return (
     <div className="flex items-center gap-3 rounded-xl bg-white/30 p-3 transition-all dark:bg-slate-700/30">
-      <Icon icon={meta.icon} className={`h-6 w-6 shrink-0 ${meta.color}`} />
-      <span className="w-24 shrink-0 text-sm font-medium text-gray-700 dark:text-gray-300">
-        {t(`names.${platform}`)}
-      </span>
+      <PlatformIdentity platform={platform} linked={linked} t={t} />
 
       {isEditing ? (
         <EditingRow
+          platform={platform}
           authType={meta.authType}
           editValue={editValue}
           saving={saving}
@@ -46,28 +43,51 @@ export function PlatformRow({
           onCancel={onCancelEdit}
         />
       ) : (
-        <DisplayRow
-          platform={platform}
-          authType={meta.authType}
-          isConnected={isConnected}
-          displayName={displayName}
-          saving={saving}
-          t={t}
-          onStartEdit={onStartEdit}
-          onRemove={onRemove}
-        />
+        <DisplayRow {...props} />
       )}
     </div>
   );
 }
 
-function EditingRow({
-  authType, editValue, saving, t, onEditValueChange, onSave, onCancel,
-}: {
-  authType: string; editValue: string; saving: boolean; t: (key: string) => string;
-  onEditValueChange: (v: string) => void; onSave: () => void; onCancel: () => void;
+function PlatformIdentity({ platform, linked, t }: {
+  platform: GamingPlatform;
+  linked: LinkedPlatform | null;
+  t: (key: string) => string;
 }) {
-  const placeholder = authType === "npsso" ? t("npssoPlaceholder") : t("usernamePlaceholder");
+  const meta = PLATFORM_META[platform];
+  const avatar = linked?.platformAvatarUrl;
+
+  return (
+    <div className="flex items-center gap-2 w-28 sm:w-32 shrink-0">
+      {avatar ? (
+        <img
+          src={avatar}
+          alt=""
+          className="h-6 w-6 shrink-0 rounded-full object-cover"
+        />
+      ) : (
+        <Icon icon={meta.icon} className={`h-6 w-6 shrink-0 ${meta.color}`} />
+      )}
+      <span className="truncate text-sm font-medium text-gray-700 dark:text-gray-300">
+        {t(`names.${platform}`)}
+      </span>
+    </div>
+  );
+}
+
+function EditingRow({
+  platform, authType, editValue, saving, t, onEditValueChange, onSave, onCancel,
+}: {
+  platform: GamingPlatform; authType: string; editValue: string; saving: boolean;
+  t: (key: string) => string; onEditValueChange: (v: string) => void;
+  onSave: () => void; onCancel: () => void;
+}) {
+  const placeholder =
+    authType === "npsso"
+      ? t("npssoPlaceholder")
+      : platform === "nintendo"
+        ? t("friendCodePlaceholder")
+        : t("usernamePlaceholder");
 
   return (
     <div className="flex flex-1 items-center gap-2">
@@ -90,32 +110,57 @@ function EditingRow({
 }
 
 function DisplayRow({
-  platform, authType, isConnected, displayName, saving, t, onStartEdit, onRemove,
-}: {
-  platform: GamingPlatform; authType: string; isConnected: boolean; displayName: string | null;
-  saving: boolean; t: (key: string) => string; onStartEdit: () => void; onRemove: () => void;
-}) {
+  platform, linked, saving, syncing, t,
+  onStartEdit, onSyncLibrary, onToggleVisibility, onRemove,
+}: PlatformRowProps) {
+  const meta = PLATFORM_META[platform];
+  const { authType } = meta;
+  const isConnected = !!linked;
+  const displayName = linked?.platformUsername ?? linked?.externalId ?? null;
+
   const handleOAuthConnect = () => {
-    if (platform === "steam") window.location.href = "/api/auth/steam";
-    if (platform === "xbox") window.location.href = "/api/auth/xbox";
+    const routes: Partial<Record<GamingPlatform, string>> = {
+      steam: "/api/auth/steam", xbox: "/api/auth/xbox", epic: "/api/auth/epic",
+      discord: "/api/auth/discord", battlenet: "/api/auth/battlenet", itch: "/api/auth/itch",
+    };
+    const route = routes[platform];
+    if (route) window.location.href = route;
   };
 
   const connectIcon = authType === "oauth" ? "lucide:log-in" : authType === "npsso" ? "lucide:key" : "lucide:plus";
   const handleConnect = authType === "oauth" ? handleOAuthConnect : onStartEdit;
 
+  const manualOnlyPlatforms: GamingPlatform[] = ["ubisoft", "ea"];
+  const showManualHint = manualOnlyPlatforms.includes(platform);
+  const canSync = isConnected && (platform === "steam" || platform === "xbox");
+
   return (
-    <div className="flex flex-1 items-center justify-between">
-      <span className="text-sm text-gray-500 dark:text-gray-400">
-        {isConnected ? (
-          <span className="flex items-center gap-1.5">
-            <Icon icon="lucide:check-circle" className="h-4 w-4 text-green-500" />
-            {displayName ?? t("connected")}
+    <div className="flex flex-1 items-center justify-between gap-2">
+      <div className="flex min-w-0 flex-col gap-0.5">
+        <span className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400">
+          {isConnected ? (
+            <>
+              <Icon icon="lucide:check-circle" className="h-4 w-4 shrink-0 text-green-500" />
+              <span className="truncate">{displayName ?? t("connected")}</span>
+            </>
+          ) : (
+            <>
+              {t("notLinked")}
+              {showManualHint && (
+                <span title={t("manualOnlyHint")} className="inline-flex">
+                  <Icon icon="lucide:info" className="h-3.5 w-3.5 text-amber-500" />
+                </span>
+              )}
+            </>
+          )}
+        </span>
+        {isConnected && linked?.lastSyncedAt && (
+          <span className="text-xs text-gray-400 dark:text-gray-500">
+            {t("lastSyncedAt", { when: formatRelative(linked.lastSyncedAt) })}
           </span>
-        ) : (
-          t("notLinked")
         )}
-      </span>
-      <div className="flex gap-1">
+      </div>
+      <div className="flex shrink-0 gap-1">
         {!isConnected && (
           <Button size="sm" variant="ghost" onClick={handleConnect} className="min-h-[44px] min-w-[44px]">
             <Icon icon={connectIcon} className="h-4 w-4" />
@@ -124,6 +169,31 @@ function DisplayRow({
         {isConnected && authType === "manual" && (
           <Button size="sm" variant="ghost" onClick={onStartEdit} className="min-h-[44px] min-w-[44px]">
             <Icon icon="lucide:pencil" className="h-4 w-4" />
+          </Button>
+        )}
+        {canSync && (
+          <Button
+            size="sm" variant="ghost"
+            onClick={() => onSyncLibrary(platform)}
+            disabled={syncing || saving}
+            className="min-h-[44px] min-w-[44px]" title={t("syncLibrary")}
+          >
+            <Icon
+              icon={syncing ? "lucide:loader-2" : "lucide:refresh-cw"}
+              className={`h-4 w-4 ${syncing ? "animate-spin" : ""}`}
+            />
+          </Button>
+        )}
+        {isConnected && (
+          <Button
+            size="sm" variant="ghost" onClick={onToggleVisibility} disabled={saving}
+            className="min-h-[44px] min-w-[44px]"
+            title={linked?.isPublic ? t("makePrivate") : t("makePublic")}
+          >
+            <Icon
+              icon={linked?.isPublic ? "lucide:eye" : "lucide:eye-off"}
+              className="h-4 w-4"
+            />
           </Button>
         )}
         {isConnected && (
@@ -137,4 +207,17 @@ function DisplayRow({
       </div>
     </div>
   );
+}
+
+function formatRelative(iso: string): string {
+  const then = new Date(iso).getTime();
+  if (Number.isNaN(then)) return "";
+  const diffMs = Date.now() - then;
+  const minutes = Math.round(diffMs / 60_000);
+  if (minutes < 1) return "just now";
+  if (minutes < 60) return `${minutes}m`;
+  const hours = Math.round(minutes / 60);
+  if (hours < 24) return `${hours}h`;
+  const days = Math.round(hours / 24);
+  return `${days}d`;
 }

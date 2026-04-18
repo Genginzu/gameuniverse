@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
+import { consumeOauthState } from "@/lib/services/oauthState";
 
 const STEAM_OPENID_URL = "https://steamcommunity.com/openid/login";
 const STEAM_ID_REGEX = /^https?:\/\/steamcommunity\.com\/openid\/id\/(\d+)$/;
@@ -22,7 +23,15 @@ async function verifySteamLogin(params: URLSearchParams): Promise<string | null>
   return match?.[1] ?? null;
 }
 
-async function getSteamProfile(steamId: string): Promise<{ personaname: string } | null> {
+interface SteamPlayerSummary {
+  personaname: string;
+  avatarfull?: string;
+  loccountrycode?: string;
+  profileurl?: string;
+  timecreated?: number;
+}
+
+async function getSteamProfile(steamId: string): Promise<SteamPlayerSummary | null> {
   const apiKey = process.env.STEAM_API_KEY;
   if (!apiKey) return null;
 
@@ -45,12 +54,25 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(`${baseUrl}/auth?error=unauthorized`);
     }
 
+    const stateValid = await consumeOauthState("steam", params.get("state"));
+    if (!stateValid) {
+      return NextResponse.redirect(`${baseUrl}/players/${user.id}?tab=settings&error=steam_state_mismatch`);
+    }
+
     const steamId = await verifySteamLogin(params);
     if (!steamId) {
       return NextResponse.redirect(`${baseUrl}/players/${user.id}?tab=settings&error=steam_auth_failed`);
     }
 
     const profile = await getSteamProfile(steamId);
+
+    const metadata = profile
+      ? {
+          country: profile.loccountrycode ?? null,
+          profile_url: profile.profileurl ?? null,
+          created_at: profile.timecreated ?? null,
+        }
+      : null;
 
     await supabase.from("player_linked_platforms").upsert(
       {
@@ -59,6 +81,8 @@ export async function GET(request: NextRequest) {
         auth_type: "oauth",
         external_id: steamId,
         platform_username: profile?.personaname ?? null,
+        platform_avatar_url: profile?.avatarfull ?? null,
+        platform_metadata: metadata,
         updated_at: new Date().toISOString(),
       },
       { onConflict: "player_id,platform" }

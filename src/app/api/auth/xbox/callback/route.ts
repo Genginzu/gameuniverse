@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
+import { encryptPlatformTokenOrNull } from "@/lib/services/platformTokens";
+import { consumeOauthState } from "@/lib/services/oauthState";
 
 async function exchangeCodeForToken(code: string, redirectUri: string) {
   const res = await fetch("https://login.live.com/oauth20_token.srf", {
@@ -44,10 +46,21 @@ async function getXstsToken(userToken: string) {
 }
 
 async function getXboxProfile(xstsToken: string, userHash: string) {
-  const res = await fetch("https://profile.xboxlive.com/users/me/profile/settings?settings=Gamertag", {
-    headers: { Authorization: `XBL3.0 x=${userHash};${xstsToken}`, "x-xbl-contract-version": "2" },
-  });
+  const settings = "Gamertag,GameDisplayPicRaw,Gamerscore,AccountTier,PublicGamerpic";
+  const res = await fetch(
+    `https://profile.xboxlive.com/users/me/profile/settings?settings=${settings}`,
+    {
+      headers: { Authorization: `XBL3.0 x=${userHash};${xstsToken}`, "x-xbl-contract-version": "2" },
+    }
+  );
   return res.json();
+}
+
+function pickXboxSetting(
+  settings: Array<{ id: string; value: string }> | undefined,
+  id: string
+): string | null {
+  return settings?.find((s) => s.id === id)?.value ?? null;
 }
 
 export async function GET(request: NextRequest) {
@@ -61,6 +74,11 @@ export async function GET(request: NextRequest) {
     if (!user) return NextResponse.redirect(`${baseUrl}/auth?error=unauthorized`);
     if (!code) return NextResponse.redirect(`${baseUrl}/players/${user.id}?tab=settings&error=xbox_no_code`);
 
+    const stateValid = await consumeOauthState("xbox", request.nextUrl.searchParams.get("state"));
+    if (!stateValid) {
+      return NextResponse.redirect(`${baseUrl}/players/${user.id}?tab=settings&error=xbox_state_mismatch`);
+    }
+
     const redirectUri = `${baseUrl}/api/auth/xbox/callback`;
     const tokenData = await exchangeCodeForToken(code, redirectUri);
     if (!tokenData.access_token) {
@@ -73,11 +91,19 @@ export async function GET(request: NextRequest) {
     const xuid = xstsData.DisplayClaims?.xui?.[0]?.xid;
 
     let gamertag: string | null = null;
+    let avatarUrl: string | null = null;
+    let metadata: Record<string, string | null> | null = null;
     if (userHash && xstsData.Token) {
       const profileData = await getXboxProfile(xstsData.Token, userHash);
-      gamertag = profileData?.profileUsers?.[0]?.settings?.find(
-        (s: { id: string; value: string }) => s.id === "Gamertag"
-      )?.value ?? null;
+      const settings = profileData?.profileUsers?.[0]?.settings as
+        | Array<{ id: string; value: string }>
+        | undefined;
+      gamertag = pickXboxSetting(settings, "Gamertag");
+      avatarUrl = pickXboxSetting(settings, "GameDisplayPicRaw");
+      metadata = {
+        gamerscore: pickXboxSetting(settings, "Gamerscore"),
+        account_tier: pickXboxSetting(settings, "AccountTier"),
+      };
     }
 
     const expiresIn = tokenData.expires_in ?? 3600;
@@ -90,8 +116,10 @@ export async function GET(request: NextRequest) {
         auth_type: "oauth",
         external_id: xuid ?? null,
         platform_username: gamertag,
-        access_token: tokenData.access_token,
-        refresh_token: tokenData.refresh_token ?? null,
+        platform_avatar_url: avatarUrl,
+        platform_metadata: metadata,
+        access_token: encryptPlatformTokenOrNull(tokenData.access_token),
+        refresh_token: encryptPlatformTokenOrNull(tokenData.refresh_token ?? null),
         token_expires_at: tokenExpiresAt,
         updated_at: new Date().toISOString(),
       },

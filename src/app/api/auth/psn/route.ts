@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
+import { encryptPlatformTokenOrNull } from "@/lib/services/platformTokens";
 import {
   exchangeNpssoForAccessCode,
   exchangeAccessCodeForAuthTokens,
@@ -45,8 +46,8 @@ export async function POST(request: NextRequest) {
         auth_type: "npsso",
         external_id: accountId,
         platform_username: profile.onlineId,
-        access_token: authorization.accessToken,
-        refresh_token: authorization.refreshToken ?? null,
+        access_token: encryptPlatformTokenOrNull(authorization.accessToken),
+        refresh_token: encryptPlatformTokenOrNull(authorization.refreshToken ?? null),
         token_expires_at: tokenExpiresAt,
         updated_at: new Date().toISOString(),
       },

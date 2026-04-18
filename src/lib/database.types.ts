@@ -1645,6 +1645,7 @@ export type Database = {
           popularity_score: number | null
           release_date: string | null
           slug: string
+          steam_appid: number | null
           system_requirements: Json | null
           text_color: string | null
           updated_at: string | null
@@ -1669,6 +1670,7 @@ export type Database = {
           popularity_score?: number | null
           release_date?: string | null
           slug: string
+          steam_appid?: number | null
           system_requirements?: Json | null
           text_color?: string | null
           updated_at?: string | null
@@ -1693,6 +1695,7 @@ export type Database = {
           popularity_score?: number | null
           release_date?: string | null
           slug?: string
+          steam_appid?: number | null
           system_requirements?: Json | null
           text_color?: string | null
           updated_at?: string | null
@@ -2149,7 +2152,11 @@ export type Database = {
           created_at: string | null
           external_id: string | null
           id: string
+          is_public: boolean
           platform: string
+          platform_avatar_url: string | null
+          platform_metadata: Json | null
+          platform_region: string | null
           platform_username: string | null
           player_id: string
           refresh_token: string | null
@@ -2162,7 +2169,11 @@ export type Database = {
           created_at?: string | null
           external_id?: string | null
           id?: string
+          is_public?: boolean
           platform: string
+          platform_avatar_url?: string | null
+          platform_metadata?: Json | null
+          platform_region?: string | null
           platform_username?: string | null
           player_id: string
           refresh_token?: string | null
@@ -2175,7 +2186,11 @@ export type Database = {
           created_at?: string | null
           external_id?: string | null
           id?: string
+          is_public?: boolean
           platform?: string
+          platform_avatar_url?: string | null
+          platform_metadata?: Json | null
+          platform_region?: string | null
           platform_username?: string | null
           player_id?: string
           refresh_token?: string | null
@@ -2680,6 +2695,7 @@ export type Database = {
       user_library: {
         Row: {
           added_at: string | null
+          external_playtime_seconds: number | null
           game_id: string
           id: string
           notes: string | null
@@ -2688,11 +2704,15 @@ export type Database = {
           play_time_hours: number | null
           play_time_normally: number | null
           rating: number | null
+          source_id: string | null
+          source_platform: string | null
           status: string | null
+          synced_at: string | null
           user_id: string
         }
         Insert: {
           added_at?: string | null
+          external_playtime_seconds?: number | null
           game_id: string
           id?: string
           notes?: string | null
@@ -2701,11 +2721,15 @@ export type Database = {
           play_time_hours?: number | null
           play_time_normally?: number | null
           rating?: number | null
+          source_id?: string | null
+          source_platform?: string | null
           status?: string | null
+          synced_at?: string | null
           user_id: string
         }
         Update: {
           added_at?: string | null
+          external_playtime_seconds?: number | null
           game_id?: string
           id?: string
           notes?: string | null
@@ -2714,7 +2738,10 @@ export type Database = {
           play_time_hours?: number | null
           play_time_normally?: number | null
           rating?: number | null
+          source_id?: string | null
+          source_platform?: string | null
           status?: string | null
+          synced_at?: string | null
           user_id?: string
         }
         Relationships: [

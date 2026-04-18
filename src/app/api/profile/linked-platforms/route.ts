@@ -5,7 +5,12 @@ import {
   getLinkedPlatforms,
   upsertManualPlatform,
   deleteLinkedPlatform,
+  setPlatformVisibility,
 } from "@/lib/services/linkedPlatformService";
+import {
+  validateManualUsername,
+  ManualPlatformValidationError,
+} from "@/lib/services/manualPlatformValidation";
 import { GAMING_PLATFORMS, PLATFORM_META, type GamingPlatform } from "@/types/linked-platforms";
 
 export async function GET() {
@@ -51,11 +56,50 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "Username is required" }, { status: 400 });
     }
 
-    const result = await upsertManualPlatform(supabase, user.id, platform, platformUsername);
+    let normalized: string;
+    try {
+      normalized = await validateManualUsername(
+        platform as GamingPlatform,
+        platformUsername
+      );
+    } catch (err) {
+      if (err instanceof ManualPlatformValidationError) {
+        return NextResponse.json(
+          { error: "Invalid username", code: err.code },
+          { status: 400 }
+        );
+      }
+      throw err;
+    }
+
+    const result = await upsertManualPlatform(supabase, user.id, platform, normalized);
     return NextResponse.json(result);
   } catch (error) {
     logger.error("Failed to upsert linked platform", { error });
     return NextResponse.json({ error: "Failed to save platform" }, { status: 500 });
+  }
+}
+
+export async function PATCH(request: NextRequest) {
+  const supabase = await createRouteHandlerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  try {
+    const { platform, isPublic } = await request.json();
+    if (!platform || !GAMING_PLATFORMS.includes(platform as GamingPlatform)) {
+      return NextResponse.json({ error: "Invalid platform" }, { status: 400 });
+    }
+    if (typeof isPublic !== "boolean") {
+      return NextResponse.json({ error: "isPublic must be boolean" }, { status: 400 });
+    }
+
+    await setPlatformVisibility(supabase, user.id, platform, isPublic);
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    logger.error("Failed to update platform visibility", { error });
+    return NextResponse.json({ error: "Failed to update visibility" }, { status: 500 });
   }
 }
 

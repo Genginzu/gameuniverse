@@ -99,6 +99,14 @@ export class IGDBService {
   }
 
   /**
+   * Authenticated POST to an arbitrary IGDB endpoint. Prefer one of the
+   * dedicated helpers above; use this for endpoints that don't have one.
+   */
+  static async rawQuery(endpoint: string, body: string): Promise<Response> {
+    return this.igdbFetch(endpoint, body);
+  }
+
+  /**
    * Makes an authenticated POST request to the IGDB API.
    * Uses cache: 'no-store' to prevent Next.js from caching responses.
    */
