@@ -22,7 +22,10 @@ interface CharacterRow {
   }>;
   character_games?: Array<{
     is_primary: boolean;
-    games?: { id: string; game_translations?: Array<{ title: string }> };
+    games?: {
+      id: string;
+      game_translations?: Array<{ title: string; language_code: string }>;
+    };
   }>;
 }
 
@@ -67,8 +70,12 @@ export async function GET(request: NextRequest) {
       ? "character_translations!inner"
       : "character_translations";
 
-    let query = db.from("characters").select(
-      `
+    // Filter character_games to primary link only — avoids fetching every game×lang row
+    // `!left` keeps characters that have no primary game link.
+    let query = db
+      .from("characters")
+      .select(
+        `
         id,
         slug,
         main_image,
@@ -79,15 +86,16 @@ export async function GET(request: NextRequest) {
           role,
           language_code
         ),
-        character_games(
+        character_games!left(
           is_primary,
           games(
             id,
-            game_translations(title)
+            game_translations(title, language_code)
           )
         )
       `
-    );
+      )
+      .eq("character_games.is_primary", true);
 
     if (search?.trim()) {
       query = query.ilike("character_translations.name", `%${search.trim()}%`);
@@ -132,7 +140,11 @@ export async function GET(request: NextRequest) {
           translations.find((t) => t.language_code === locale) || translations[0] || null;
 
         const primaryGameEntry = char.character_games?.find((cg) => cg.is_primary);
-        const primaryGameTitle = primaryGameEntry?.games?.game_translations?.[0]?.title ?? "";
+        const primaryGameTranslations = primaryGameEntry?.games?.game_translations ?? [];
+        const primaryGameTitle =
+          primaryGameTranslations.find((gt) => gt.language_code === locale)?.title ??
+          primaryGameTranslations[0]?.title ??
+          "";
 
         return {
           id: char.id,

@@ -12,101 +12,83 @@ import {
 } from "@/lib/admin-utils";
 import { logger } from "@/lib/logger";
 
+const STATIC_LANGUAGES = [
+  { code: "fr", name: "Français", nativeName: "Français", isDefault: true },
+  { code: "en", name: "English", nativeName: "English", isDefault: false },
+];
+
+const STATIC_CURRENCIES = [
+  { code: "EUR", name: "Euro", symbol: "€" },
+  { code: "USD", name: "US Dollar", symbol: "$" },
+  { code: "GBP", name: "British Pound", symbol: "£" },
+  { code: "CAD", name: "Canadian Dollar", symbol: "C$" },
+];
+
+const STATIC_PLATFORMS = [
+  "PC",
+  "PlayStation 5",
+  "PlayStation 4",
+  "Xbox Series X/S",
+  "Xbox One",
+  "Nintendo Switch",
+  "iOS",
+  "Android",
+  "Mac",
+  "Linux",
+];
+
+const STATIC_MEDIA_TYPES = {
+  artwork: ["concept", "promotional", "wallpaper", "character", "environment"],
+  video: ["trailer", "gameplay", "cutscene", "developer_diary", "review"],
+};
+
 /**
  * GET /api/admin/reference-data - Get reference data for admin forms
  */
 export async function GET(request: NextRequest) {
   try {
-    // Check admin access
     await requireAdmin();
 
     const { searchParams } = new URL(request.url);
     const locale = searchParams.get("locale") || "fr";
     const include = searchParams.get("include")?.split(",") || ["all"];
 
+    const wants = (key: string) => include.includes("all") || include.includes(key);
+
+    // Fire all DB-backed fetches in parallel; static data resolves immediately
+    const [
+      companies,
+      genres,
+      stores,
+      ratings,
+      contentDescriptors,
+      statistics,
+      supportedLanguages,
+      gamePlatforms,
+    ] = await Promise.all([
+      wants("companies") ? getAvailableCompanies() : undefined,
+      wants("genres") ? getAvailableGenres(locale) : undefined,
+      wants("stores") ? getAvailableStores() : undefined,
+      wants("ratings") ? getAvailableRatings() : undefined,
+      wants("contentDescriptors") ? getAvailableContentDescriptors(locale) : undefined,
+      wants("statistics") ? getGameStatistics() : undefined,
+      wants("supportedLanguages") ? getAvailableSupportedLanguages() : undefined,
+      wants("gamePlatforms") ? getAvailableGamePlatforms(locale) : undefined,
+    ]);
+
     const referenceData: Record<string, unknown> = {};
-
-    // Get companies if requested
-    if (include.includes("all") || include.includes("companies")) {
-      referenceData.companies = await getAvailableCompanies();
-    }
-
-    // Get genres if requested
-    if (include.includes("all") || include.includes("genres")) {
-      referenceData.genres = await getAvailableGenres(locale);
-    }
-
-    // Get stores if requested
-    if (include.includes("all") || include.includes("stores")) {
-      referenceData.stores = await getAvailableStores();
-    }
-
-    // Get ratings if requested
-    if (include.includes("all") || include.includes("ratings")) {
-      referenceData.ratings = await getAvailableRatings();
-    }
-
-    // Get content descriptors if requested
-    if (include.includes("all") || include.includes("contentDescriptors")) {
-      referenceData.contentDescriptors = await getAvailableContentDescriptors(locale);
-    }
-
-    // Get statistics if requested
-    if (include.includes("all") || include.includes("statistics")) {
-      referenceData.statistics = await getGameStatistics();
-    }
-
-    // Get supported languages for game language assignment
-    if (include.includes("all") || include.includes("supportedLanguages")) {
-      referenceData.supportedLanguages = await getAvailableSupportedLanguages();
-    }
-
-    // Get app languages (for translations)
-    if (include.includes("all") || include.includes("languages")) {
-      referenceData.languages = [
-        { code: "fr", name: "Français", nativeName: "Français", isDefault: true },
-        { code: "en", name: "English", nativeName: "English", isDefault: false },
-      ];
-    }
-
-    // Get supported currencies
-    if (include.includes("all") || include.includes("currencies")) {
-      referenceData.currencies = [
-        { code: "EUR", name: "Euro", symbol: "€" },
-        { code: "USD", name: "US Dollar", symbol: "$" },
-        { code: "GBP", name: "British Pound", symbol: "£" },
-        { code: "CAD", name: "Canadian Dollar", symbol: "C$" },
-      ];
-    }
-
-    // Get supported platforms (from DB)
-    if (include.includes("all") || include.includes("platforms")) {
-      referenceData.platforms = [
-        "PC",
-        "PlayStation 5",
-        "PlayStation 4",
-        "Xbox Series X/S",
-        "Xbox One",
-        "Nintendo Switch",
-        "iOS",
-        "Android",
-        "Mac",
-        "Linux",
-      ];
-    }
-
-    // Get game platforms (from platforms table)
-    if (include.includes("all") || include.includes("gamePlatforms")) {
-      referenceData.gamePlatforms = await getAvailableGamePlatforms(locale);
-    }
-
-    // Get media types
-    if (include.includes("all") || include.includes("mediaTypes")) {
-      referenceData.mediaTypes = {
-        artwork: ["concept", "promotional", "wallpaper", "character", "environment"],
-        video: ["trailer", "gameplay", "cutscene", "developer_diary", "review"],
-      };
-    }
+    if (companies !== undefined) referenceData.companies = companies;
+    if (genres !== undefined) referenceData.genres = genres;
+    if (stores !== undefined) referenceData.stores = stores;
+    if (ratings !== undefined) referenceData.ratings = ratings;
+    if (contentDescriptors !== undefined) referenceData.contentDescriptors = contentDescriptors;
+    if (statistics !== undefined) referenceData.statistics = statistics;
+    if (supportedLanguages !== undefined) referenceData.supportedLanguages = supportedLanguages;
+    if (gamePlatforms !== undefined) referenceData.gamePlatforms = gamePlatforms;
+    if (wants("languages")) referenceData.languages = STATIC_LANGUAGES;
+    if (wants("currencies")) referenceData.currencies = STATIC_CURRENCIES;
+    if (wants("platforms")) referenceData.platforms = STATIC_PLATFORMS;
+    if (wants("mediaTypes")) referenceData.mediaTypes = STATIC_MEDIA_TYPES;
 
     return NextResponse.json({
       data: referenceData,

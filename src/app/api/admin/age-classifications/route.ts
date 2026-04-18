@@ -72,32 +72,46 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Failed to fetch rating systems" }, { status: 500 });
     }
 
-    // Count ratings and descriptors per system
-    const systemsWithCounts = await Promise.all(
-      (systems || []).map(async (system) => {
-        const [ratingsResult, descriptorsResult] = await Promise.all([
-          supabase
-            .from("ratings")
-            .select("id", { count: "exact", head: true })
-            .eq("rating_system_id", system.id),
-          supabase
-            .from("content_descriptors")
-            .select("id", { count: "exact", head: true })
-            .eq("rating_system_id", system.id),
-        ]);
+    // Count ratings and descriptors per system — two batch queries instead of 2×N
+    const systemIds = (systems || []).map((s) => s.id);
+    const ratingsCountById = new Map<string, number>();
+    const descriptorsCountById = new Map<string, number>();
 
-        return {
-          id: system.id,
-          code: system.code,
-          name: system.name,
-          description: system.description,
-          country_codes: system.country_codes || [],
-          website_url: system.website_url,
-          ratingsCount: ratingsResult.count || 0,
-          descriptorsCount: descriptorsResult.count || 0,
-        };
-      })
-    );
+    if (systemIds.length > 0) {
+      const [{ data: ratingRows }, { data: descriptorRows }] = await Promise.all([
+        supabase.from("ratings").select("rating_system_id").in("rating_system_id", systemIds),
+        supabase
+          .from("content_descriptors")
+          .select("rating_system_id")
+          .in("rating_system_id", systemIds),
+      ]);
+
+      for (const row of ratingRows || []) {
+        if (!row.rating_system_id) continue;
+        ratingsCountById.set(
+          row.rating_system_id,
+          (ratingsCountById.get(row.rating_system_id) || 0) + 1
+        );
+      }
+      for (const row of descriptorRows || []) {
+        if (!row.rating_system_id) continue;
+        descriptorsCountById.set(
+          row.rating_system_id,
+          (descriptorsCountById.get(row.rating_system_id) || 0) + 1
+        );
+      }
+    }
+
+    const systemsWithCounts = (systems || []).map((system) => ({
+      id: system.id,
+      code: system.code,
+      name: system.name,
+      description: system.description,
+      country_codes: system.country_codes || [],
+      website_url: system.website_url,
+      ratingsCount: ratingsCountById.get(system.id) || 0,
+      descriptorsCount: descriptorsCountById.get(system.id) || 0,
+    }));
 
     const totalPages = Math.ceil((totalCount || 0) / limit);
 

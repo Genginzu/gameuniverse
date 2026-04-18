@@ -6,7 +6,6 @@ import {
   type EntityTranslationDetail,
   type EntityTranslationLangDetail,
   type TranslationMissingItem,
-  type TranslationStats,
   type TranslationStatus,
   TRANSLATION_TABLE_MAP,
   ENTITY_TABLE_MAP,
@@ -19,27 +18,6 @@ import {
 /** Cast supabase to bypass generated types for translation tables. */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const db = (supabase: SupabaseClient) => supabase as any;
-
-const PAGE_SIZE = 1000;
-
-/** Fetch all rows by paginating in batches of 1000 to bypass Supabase default limit. */
-async function fetchAllRows(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  buildQuery: () => any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): Promise<any[]> {
-  const allRows: unknown[] = [];
-  let from = 0;
-  while (true) {
-    const { data, error } = await buildQuery().range(from, from + PAGE_SIZE - 1);
-    if (error) throw error;
-    if (!data || data.length === 0) break;
-    allRows.push(...data);
-    if (data.length < PAGE_SIZE) break;
-    from += PAGE_SIZE;
-  }
-  return allRows;
-}
 
 /**
  * Determine translation status from a row's required fields.
@@ -174,91 +152,6 @@ function extractFields(
     if (row[f]) fields[f] = row[f]!;
   }
   return fields;
-}
-
-/** Helper: empty stats row for a given entity type and language. */
-function emptyStats(entityType: EntityType, lang: string): TranslationStats {
-  return {
-    entityType,
-    language: lang,
-    total: 0,
-    complete: 0,
-    partial: 0,
-    missing: 0,
-    percentage: 100, // Nothing to translate = 100% done
-  };
-}
-
-/** Compute stats for a single entity type across all languages. */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function statsForEntityType(client: any, entityType: EntityType, languages: string[]) {
-  const translationTable = TRANSLATION_TABLE_MAP[entityType];
-  const fkColumn = FK_COLUMN_MAP[entityType];
-  const requiredFields = REQUIRED_FIELDS[entityType];
-  const selectFields = [fkColumn, "language_code", ...EDITABLE_FIELDS[entityType]].join(", ");
-
-  // Fetch all translations — we derive entity count from entities that have at least one row
-  let allTranslations;
-  try {
-    allTranslations = await fetchAllRows(() => client.from(translationTable).select(selectFields));
-  } catch (err) {
-    logger.error("Error fetching translation stats", { error: err, entityType });
-    return languages.map((l) => emptyStats(entityType, l));
-  }
-
-  // Group by entity ID → { lang → row }
-  const byEntity = new Map<string, Map<string, Record<string, string | null>>>();
-  for (const row of allTranslations || []) {
-    const eid = row[fkColumn] as string;
-    if (!byEntity.has(eid)) byEntity.set(eid, new Map());
-    byEntity.get(eid)!.set(row.language_code, row);
-  }
-
-  // Only count entities that have at least one usable source translation
-  const entityIds = [...byEntity.keys()];
-  const totalCount = entityIds.length;
-  if (totalCount === 0) return languages.map((l) => emptyStats(entityType, l));
-
-  const results: TranslationStats[] = [];
-  for (const lang of languages) {
-    let complete = 0,
-      partial = 0,
-      missing = 0;
-    for (const eid of entityIds) {
-      const langMap = byEntity.get(eid)!;
-      const row = langMap.get(lang) ?? null;
-      const s = classifyStatus(row, requiredFields);
-      if (s === "complete") complete++;
-      else if (s === "partial") partial++;
-      else missing++;
-    }
-    results.push({
-      entityType,
-      language: lang,
-      total: totalCount,
-      complete,
-      partial,
-      missing,
-      percentage: totalCount > 0 ? Math.round((complete / totalCount) * 100) : 0,
-    });
-  }
-  return results;
-}
-
-/**
- * Computes translation statistics for all 10 entity types and each language.
- */
-export async function getTranslationStats(params: {
-  supabase: SupabaseClient;
-  languages: string[];
-}): Promise<TranslationStats[]> {
-  const client = db(params.supabase);
-  const entityTypes = Object.keys(ENTITY_TABLE_MAP) as EntityType[];
-  const results: TranslationStats[] = [];
-  for (const et of entityTypes) {
-    results.push(...(await statsForEntityType(client, et, params.languages)));
-  }
-  return results;
 }
 
 /**

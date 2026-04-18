@@ -170,33 +170,40 @@ async function linkGenresBatch(
   genres: Array<{ id: number; name: string; slug: string }>
 ) {
   if (genres.length === 0) return;
-  const ids = await Promise.all(genres.map((g) => ensureGenre(supabase, g)));
-  const rows = ids.filter(Boolean).map((gid) => ({ game_id: gameId, genre_id: gid }));
+
+  const slugs = genres.map((g) => g.slug);
+  const { data: existing } = await supabase.from("genres").select("id, slug").in("slug", slugs);
+
+  const idBySlug = new Map<string, string>();
+  for (const row of existing || []) idBySlug.set(row.slug, row.id);
+
+  const missing = genres.filter((g) => !idBySlug.has(g.slug));
+  if (missing.length > 0) {
+    const { data: created } = await supabase
+      .from("genres")
+      .insert(missing.map((g) => ({ slug: g.slug })))
+      .select("id, slug");
+
+    for (const row of created || []) idBySlug.set(row.slug, row.id);
+
+    const translations = (created || [])
+      .map((row: { id: string; slug: string }) => {
+        const src = missing.find((g) => g.slug === row.slug);
+        return src ? { genre_id: row.id, language_code: "en", name: src.name } : null;
+      })
+      .filter(Boolean);
+
+    if (translations.length > 0) {
+      await supabase.from("genre_translations").insert(translations);
+    }
+  }
+
+  const rows = genres
+    .map((g) => idBySlug.get(g.slug))
+    .filter((id): id is string => Boolean(id))
+    .map((genre_id) => ({ game_id: gameId, genre_id }));
+
   if (rows.length > 0) await supabase.from("game_genres").insert(rows);
-}
-
-async function ensureGenre(
-  supabase: SupabaseAdmin,
-  genre: { slug: string; name: string }
-): Promise<string | null> {
-  const { data: existing } = await supabase
-    .from("genres")
-    .select("id")
-    .eq("slug", genre.slug)
-    .single();
-  if (existing) return existing.id;
-
-  const { data: created } = await supabase
-    .from("genres")
-    .insert({ slug: genre.slug })
-    .select("id")
-    .single();
-  if (!created) return null;
-
-  await supabase
-    .from("genre_translations")
-    .insert({ genre_id: created.id, language_code: "en", name: genre.name });
-  return created.id;
 }
 
 async function linkCompaniesBatch(
@@ -209,49 +216,44 @@ async function linkCompaniesBatch(
   }>
 ) {
   if (companies.length === 0) return;
+
+  const uniqueBySlug = new Map<string, { id: number; name: string; slug: string }>();
+  for (const ic of companies) uniqueBySlug.set(ic.company.slug, ic.company);
+  const slugs = [...uniqueBySlug.keys()];
+
+  const { data: existing } = await supabase
+    .from("companies")
+    .select("id, slug")
+    .in("slug", slugs);
+
+  const idBySlug = new Map<string, string>();
+  for (const row of existing || []) idBySlug.set(row.slug, row.id);
+
+  const missing = [...uniqueBySlug.values()].filter((c) => !idBySlug.has(c.slug));
+  if (missing.length > 0) {
+    const { data: created } = await supabase
+      .from("companies")
+      .insert(missing.map((c) => ({ name: c.name, slug: c.slug })))
+      .select("id, slug");
+
+    for (const row of created || []) idBySlug.set(row.slug, row.id);
+  }
+
   const rows: Array<{ game_id: string; company_id: string; role: string; is_primary: boolean }> =
     [];
   let devIdx = 0,
     pubIdx = 0;
 
   for (const ic of companies) {
-    const cid = await ensureCompany(supabase, ic.company);
+    const cid = idBySlug.get(ic.company.slug);
     if (!cid) continue;
     if (ic.developer)
-      rows.push({
-        game_id: gameId,
-        company_id: cid,
-        role: "developer",
-        is_primary: devIdx++ === 0,
-      });
+      rows.push({ game_id: gameId, company_id: cid, role: "developer", is_primary: devIdx++ === 0 });
     if (ic.publisher)
-      rows.push({
-        game_id: gameId,
-        company_id: cid,
-        role: "publisher",
-        is_primary: pubIdx++ === 0,
-      });
+      rows.push({ game_id: gameId, company_id: cid, role: "publisher", is_primary: pubIdx++ === 0 });
   }
+
   if (rows.length > 0) await supabase.from("game_companies").insert(rows);
-}
-
-async function ensureCompany(
-  supabase: SupabaseAdmin,
-  company: { name: string; slug: string }
-): Promise<string | null> {
-  const { data: existing } = await supabase
-    .from("companies")
-    .select("id")
-    .eq("slug", company.slug)
-    .single();
-  if (existing) return existing.id;
-
-  const { data: created } = await supabase
-    .from("companies")
-    .insert({ name: company.name, slug: company.slug })
-    .select("id")
-    .single();
-  return created?.id ?? null;
 }
 
 async function linkPlatformsBatch(
@@ -260,38 +262,53 @@ async function linkPlatformsBatch(
   platforms: Array<{ id: number; name: string }>
 ) {
   if (platforms.length === 0) return;
-  const ids = await Promise.all(platforms.map((p) => ensurePlatform(supabase, p)));
-  const rows = ids.filter(Boolean).map((pid) => ({ game_id: gameId, platform_id: pid }));
-  if (rows.length > 0) await supabase.from("game_platforms").insert(rows);
-}
 
-async function ensurePlatform(
-  supabase: SupabaseAdmin,
-  platform: { id: number; name: string }
-): Promise<string | null> {
+  const igdbIds = platforms.map((p) => p.id);
   const { data: existing } = await supabase
     .from("platforms")
-    .select("id")
-    .eq("igdb_id", platform.id)
-    .single();
-  if (existing) return existing.id;
+    .select("id, igdb_id")
+    .in("igdb_id", igdbIds);
 
-  const name = platform.name || `platform-${platform.id}`;
-  const slug = name
-    .toLowerCase()
-    .replace(/\s+/g, "-")
-    .replace(/[^a-z0-9-]/g, "")
-    .replace(/-+/g, "-");
+  const idByIgdbId = new Map<number, string>();
+  for (const row of existing || []) idByIgdbId.set(row.igdb_id, row.id);
 
-  const { data: created } = await supabase
-    .from("platforms")
-    .insert({ slug, igdb_id: platform.id })
-    .select("id")
-    .single();
-  if (!created) return null;
+  const missing = platforms.filter((p) => !idByIgdbId.has(p.id));
+  if (missing.length > 0) {
+    const newRows = missing.map((p) => {
+      const name = p.name || `platform-${p.id}`;
+      const slug = name
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9-]/g, "")
+        .replace(/-+/g, "-");
+      return { slug, igdb_id: p.id };
+    });
 
-  await supabase
-    .from("platform_translations")
-    .insert({ platform_id: created.id, language_code: "en", name });
-  return created.id;
+    const { data: created } = await supabase
+      .from("platforms")
+      .insert(newRows)
+      .select("id, igdb_id");
+
+    for (const row of created || []) idByIgdbId.set(row.igdb_id, row.id);
+
+    const translations = (created || [])
+      .map((row: { id: string; igdb_id: number }) => {
+        const src = missing.find((p) => p.id === row.igdb_id);
+        if (!src) return null;
+        const name = src.name || `platform-${src.id}`;
+        return { platform_id: row.id, language_code: "en", name };
+      })
+      .filter(Boolean);
+
+    if (translations.length > 0) {
+      await supabase.from("platform_translations").insert(translations);
+    }
+  }
+
+  const rows = platforms
+    .map((p) => idByIgdbId.get(p.id))
+    .filter((id): id is string => Boolean(id))
+    .map((platform_id) => ({ game_id: gameId, platform_id }));
+
+  if (rows.length > 0) await supabase.from("game_platforms").insert(rows);
 }
