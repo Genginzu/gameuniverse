@@ -559,6 +559,7 @@
     "tabs": {
       "posts": "Posts",
       "library": "Library",
+      "feed": "Feed",
       "activity": "Activity",
       "friends": "Friends",
       "reviews": "Reviews",
@@ -567,6 +568,10 @@
       "stats": "Stats",
       "recommendations": "Recommendations",
       "settings": "Settings"
+    },
+    "feed": {
+      "feedLabel": "Subscribed feed",
+      "empty": "Subscribe to players to see their activity here."
     },
     "library": {
       "empty": "Empty library",
@@ -2583,6 +2588,11 @@
       "pendingBadgeLabel": "{count, plural, one {# pending friend request} other {# pending friend requests}}",
       "loadingError": "An error occurred while loading the friends page."
     }
+  },
+  "subscriptions": {
+    "subscribe": "Subscribe",
+    "unsubscribe": "Unsubscribe",
+    "confirmUnsubscribe": "Are you sure you want to unsubscribe from this player?"
   },
   "playerStats": {
     "dashboard": {

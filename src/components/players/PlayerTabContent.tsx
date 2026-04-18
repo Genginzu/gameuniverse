@@ -107,6 +107,11 @@ const LazySettingsContent = dynamic(
   { loading: () => <SettingsSkeleton /> }
 );
 
+const LazySubscribedFeedTab = dynamic(
+  () => import("./feed/SubscribedFeedTab").then((m) => ({ default: m.SubscribedFeedTab })),
+  { loading: () => <TabSkeleton /> }
+);
+
 // --- Types ---
 interface PlayerTabContentProps {
   activeTab: ProfileTab;
@@ -147,6 +152,12 @@ export function PlayerTabContent({
 
   return (
     <>
+      {isOwner && (
+        <TabPanel visible={activeTab === "feed"} mounted={visitedTabs.has("feed")}>
+          <LazySubscribedFeedTab viewerId={player.id} locale={locale} />
+        </TabPanel>
+      )}
+
       <TabPanel visible={activeTab === "activity"} mounted={visitedTabs.has("activity")}>
         <ActivityFeed
           playerId={player.id}

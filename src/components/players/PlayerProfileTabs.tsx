@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 
 export type ProfileTab =
+  | "feed"
   | "activity"
   | "library"
   | "friends"
@@ -14,6 +15,11 @@ export type ProfileTab =
   | "stats"
   | "recommendations"
   | "settings";
+
+/** Returns the default tab displayed when the profile page mounts. */
+export function getDefaultTab(isOwner: boolean): ProfileTab {
+  return isOwner ? "feed" : "activity";
+}
 
 interface PlayerProfileTabsProps {
   activeTab: ProfileTab;
@@ -26,6 +32,7 @@ const TAB_DEFINITIONS: {
   icon: string;
   ownerOnly?: boolean;
 }[] = [
+  { id: "feed", icon: "lucide:newspaper", ownerOnly: true },
   { id: "activity", icon: "lucide:smile" },
   { id: "library", icon: "lucide:gamepad-2" },
   { id: "friends", icon: "lucide:users" },

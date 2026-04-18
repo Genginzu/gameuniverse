@@ -85,6 +85,7 @@ const HOOK_TESTS_NEEDING_DOM = [
   "test/unit/hooks/useAdminSpecies.test.ts",
   "test/unit/hooks/useNotifications.test.ts",
   "test/unit/hooks/usePostComments.test.ts",
+  "test/unit/hooks/useSubscribedFeed.test.ts",
 ];
 
 export default defineConfig({
