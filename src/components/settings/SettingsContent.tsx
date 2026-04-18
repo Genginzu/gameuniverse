@@ -13,7 +13,7 @@ import { UsernameForm } from "./UsernameForm";
 import { EmailForm } from "./EmailForm";
 import { PasswordResetSection } from "./PasswordResetSection";
 import { AppearanceSection } from "./AppearanceSection";
-import { LinkedPlatformsSection } from "./LinkedPlatformsSection";
+// import { LinkedPlatformsSection } from "./LinkedPlatformsSection";
 import { createClient } from "@/lib/supabase";
 import { Icon } from "@iconify/react";
 
@@ -192,7 +192,7 @@ export function SettingsContent() {
 
 
         {/* Linked Gaming Platforms Section */}
-        <LinkedPlatformsSection />
+        {/* <LinkedPlatformsSection /> */}
 
         {/* Security Section */}
         <Card className="rounded-xl bg-white dark:bg-gray-800">
