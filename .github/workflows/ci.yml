@@ -26,6 +26,7 @@ jobs:
 
   unit-tests:
     name: Unit Tests
+    needs: [lint, type-check]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -35,6 +36,7 @@ jobs:
 
   build:
     name: Build
+    needs: [lint, type-check]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -66,7 +68,7 @@ jobs:
 
   e2e:
     name: E2E Tests
-    needs: [lint, type-check, unit-tests, build]
+    needs: [build]
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.59.1-noble
