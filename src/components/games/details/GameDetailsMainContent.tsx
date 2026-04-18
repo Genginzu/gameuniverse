@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { preload } from "swr";
 import { Badge } from "@/components/ui/badge";
 import { GameDetails } from "@/types/game";
 import { GameColors } from "@/lib/utils/game-utils";
 import { getPlatformIcon } from "@/lib/utils/platform-icons";
 import { Icon } from "@iconify/react";
+import { fetcher } from "@/lib/swr/fetcher";
+import { ReviewService } from "@/lib/services/reviewService";
 import { GameDetailsTabs, TabType } from "./GameDetailsTabs";
 import dynamic from "next/dynamic";
 
@@ -37,6 +40,17 @@ export function GameDetailsMainContent({
   formatPrice,
 }: GameDetailsMainContentProps) {
   const [activeTab, setActiveTab] = useState<TabType>("overview");
+
+  // Préchargement anticipé des onglets les plus consultés (reviews, playtime, versions).
+  // L'onglet Aperçu étant SSR, seuls ces endpoints ont un coût de latence au premier clic.
+  // Versions n'a pas d'API (données déjà SSR), mais son chunk JS est lazy-loadé : on le précharge.
+  useEffect(() => {
+    preload(["reviews", game.id], () => ReviewService.fetchReviews(game.id));
+    preload(`/api/games/${game.slug}/playtime`, fetcher);
+    if (game.versions?.length) {
+      import("./GameVersions");
+    }
+  }, [game.id, game.slug, game.versions?.length]);
 
   // Utiliser les jeux similaires IGDB si disponibles, sinon fallback sur les recommandations algorithmiques
   const hasSimilarGames = game.similarGames && game.similarGames.some((sg) => sg.game !== null);
