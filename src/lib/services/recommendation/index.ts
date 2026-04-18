@@ -8,3 +8,9 @@ export { computeReviewScore, type ReviewScoreInput } from "./reviewScorer";
 export { computeMetacriticScore, type MetacriticScoreInput } from "./metacriticScorer";
 export { DEFAULT_WEIGHTS, computeCombinedScore } from "./scoreCombiner";
 export { cacheGet, cacheSet, cacheInvalidate, cacheClear } from "./cache";
+export {
+  computeOwnershipOverlap,
+  getOwnershipOverlap,
+  type OwnershipOverlapInput,
+  type OwnershipOverlapResult,
+} from "./ownershipOverlap";
