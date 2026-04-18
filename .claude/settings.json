@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/run-related-tests.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": ["vercel", "notion", "github"],
+  "permissions": {
+    "allow": [
+      "mcp__vercel__list_teams",
+      "mcp__vercel__list_projects",
+      "mcp__vercel__list_deployments",
+      "mcp__vercel__get_deployment_build_logs",
+      "mcp__vercel__get_deployment",
+      "mcp__vercel__search_vercel_documentation",
+      "mcp__vercel__get_runtime_logs",
+      "mcp__vercel__web_fetch_vercel_url",
+      "mcp__github__get_issue",
+      "mcp__github__create_branch",
+      "mcp__github__create_pull_request",
+      "mcp__github__get_pull_request_status",
+      "mcp__github__update_issue",
+      "mcp__github__list_issues",
+      "mcp__github__merge_pull_request",
+      "mcp__github__get_pull_request",
+      "mcp__github__update_pull_request_branch"
+    ],
+    "deny": [
+      "mcp__notion__API-get-user",
+      "mcp__notion__API-get-users",
+      "mcp__notion__API-get-self",
+      "mcp__notion__API-post-search",
+      "mcp__notion__API-get-block-children",
+      "mcp__notion__API-patch-block-children",
+      "mcp__notion__API-retrieve-a-block",
+      "mcp__notion__API-update-a-block",
+      "mcp__notion__API-delete-a-block",
+      "mcp__notion__API-retrieve-a-page",
+      "mcp__notion__API-patch-page",
+      "mcp__notion__API-post-page",
+      "mcp__notion__API-retrieve-a-page-property",
+      "mcp__notion__API-retrieve-a-comment",
+      "mcp__notion__API-create-a-comment",
+      "mcp__notion__API-query-data-source",
+      "mcp__notion__API-retrieve-a-data-source",
+      "mcp__notion__API-update-a-data-source",
+      "mcp__notion__API-create-a-data-source",
+      "mcp__notion__API-list-data-source-templates",
+      "mcp__notion__API-retrieve-a-database",
+      "mcp__notion__API-move-page"
+    ]
+  }
+}
