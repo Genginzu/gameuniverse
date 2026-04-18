@@ -1,7 +1,6 @@
 import "./globals.css";
 import { Suspense } from "react";
 import { Inter } from "next/font/google";
-import { getLocale } from "next-intl/server";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { NavigationProgress } from "@/components/ui/NavigationProgress";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -13,11 +12,9 @@ interface RootLayoutProps {
   children: React.ReactNode;
 }
 
-export default async function RootLayout({ children }: RootLayoutProps) {
-  const locale = await getLocale();
-
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang="fr" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider>
           <Suspense fallback={null}>
