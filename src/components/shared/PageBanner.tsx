@@ -67,7 +67,10 @@ export function PageBanner() {
 
         {/* Title + description */}
         <div>
-          <p className="text-xl font-black text-white sm:text-2xl lg:text-3xl">
+          <p
+            data-testid="page-banner-title"
+            className="text-xl font-black text-white sm:text-2xl lg:text-3xl"
+          >
             {t(config.titleKey)}
           </p>
           <p className="mt-1 text-sm font-medium text-white/60 sm:text-base">

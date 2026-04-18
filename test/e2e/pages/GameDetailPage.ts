@@ -10,7 +10,7 @@ export class GameDetailPage extends BasePage {
   }
 
   get title(): Locator {
-    return this.page.getByRole("heading", { level: 1 }).first();
+    return this.page.getByRole("heading", { level: 2 }).first();
   }
 
   get description(): Locator {
