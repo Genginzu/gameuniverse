@@ -31,13 +31,21 @@ export function shouldShowComparison(
 interface PlayerDetailsContentProps {
   player: PlayerDetails;
   locale: string;
+  currentUserId: string | null;
 }
 
-export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentProps) {
+export function PlayerDetailsContent({
+  player,
+  locale,
+  currentUserId,
+}: PlayerDetailsContentProps) {
   const t = useTranslations("players");
   const tCommon = useTranslations("common");
   const { user } = useAuth();
-  const isOwner = user?.id === player.id;
+  // Prefer the server-resolved id so the default tab is correct on first render;
+  // fall back to the client-side session while it hydrates.
+  const viewerId = currentUserId ?? user?.id ?? null;
+  const isOwner = viewerId === player.id;
 
   // Lightweight hook: only fetches friend count + relationship status (not the full list)
   const relationship = useFriendRelationship(player.id);
