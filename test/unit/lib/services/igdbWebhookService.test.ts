@@ -42,6 +42,8 @@ vi.mock('@/lib/services/game-import/popularity', () => ({
 }));
 
 import { processWebhookEvent } from '@/lib/services/igdbWebhookService';
+import { GameImportService } from '@/lib/services/gameImportService';
+import { applyWebhookPayload } from '@/lib/services/webhookDiffApplier';
 
 describe('processWebhookEvent', () => {
   beforeEach(() => vi.clearAllMocks());
@@ -65,5 +67,13 @@ describe('processWebhookEvent', () => {
     mockSelectChain.single.mockResolvedValueOnce({ data: { id: 'char-1' }, error: null });
     const result = await processWebhookEvent('characters', 'update', { id: 789 });
     expect(result.eventId).toBe('evt-1');
+  });
+
+  it('applies diff (instead of re-importing) when create fires for an existing game', async () => {
+    const result = await processWebhookEvent('games', 'create', { id: 123, name: 'X' });
+    expect(result.status).toBe('processed');
+    // Must route through the override-aware diff applier, not re-trigger a full import
+    expect(applyWebhookPayload).toHaveBeenCalledTimes(1);
+    expect(GameImportService.importFromIGDB).not.toHaveBeenCalled();
   });
 });

@@ -51,10 +51,13 @@ export async function processWebhookEvent(
   // Resolve local entity — for games, auto-import if missing
   const resolved = await resolveLocalEntity(entityType, igdbId, popularityGameIgdbId);
   let gameId = resolved.gameId;
+  const preExistingGameId = resolved.gameId;
   const characterId = resolved.characterId;
 
-  // Skip auto-import for delete events — importing a game just to delete it would
-  // be wasteful and racy. If the game isn't present locally, the delete is a no-op.
+  // Auto-import is reserved for events that need a local row to act on (create,
+  // update). Delete events don't need the game (we'd just delete it) and
+  // re-importing an existing game for a create/update is handled via the diff
+  // applier below instead of a full re-import (less risky and override-aware).
   if (entityType === "games" && !gameId && eventType !== "delete") {
     try {
       const importResult = await GameImportService.importFromIGDB(igdbId);
@@ -97,7 +100,13 @@ export async function processWebhookEvent(
   // Process based on event type
   try {
     if (eventType === "create" && entityType === "games") {
-      // Game was already imported above — just mark as processed
+      // Game was pre-existing — apply payload to refresh non-admin-overridden
+      // fields. This keeps local data in sync with IGDB without clobbering
+      // manual edits (which would happen if we ran the full import pipeline).
+      if (preExistingGameId) {
+        return await handleGameUpdate(eventId, preExistingGameId, payload);
+      }
+      // Game was just auto-imported above — nothing more to do.
       if (gameId) {
         await updateEventStatus(eventId, "processed");
         return { eventId, status: "processed" };
