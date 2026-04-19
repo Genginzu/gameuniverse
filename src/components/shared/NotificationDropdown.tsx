@@ -80,7 +80,11 @@ export function NotificationDropdown({
           <div className="max-h-[360px] space-y-1 overflow-y-auto">
             {sorted.map((notification, index) => (
               <div key={notification.id} ref={index === 0 ? firstItemRef : undefined} tabIndex={0}>
-                <NotificationItem notification={notification} onDismiss={handleDismiss} />
+                <NotificationItem
+                  notification={notification}
+                  onDismiss={handleDismiss}
+                  onNavigate={onClose}
+                />
               </div>
             ))}
           </div>

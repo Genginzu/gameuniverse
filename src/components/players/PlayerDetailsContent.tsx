@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
@@ -11,6 +12,28 @@ import { useFriendRelationship } from "@/hooks/useFriendRelationship";
 import { PlayerProfileBanner } from "./PlayerProfileBanner";
 import type { PlayerXpStats } from "@/types/achievement";
 import { PlayerProfileTabs, type ProfileTab, getDefaultTab } from "./PlayerProfileTabs";
+
+const PROFILE_TABS = [
+  "feed",
+  "activity",
+  "library",
+  "friends",
+  "reviews",
+  "collections",
+  "achievements",
+  "stats",
+  "recommendations",
+  "settings",
+] as const satisfies readonly ProfileTab[];
+
+function parseTabParam(raw: string | null, isOwner: boolean): ProfileTab | null {
+  if (!raw) return null;
+  if (!(PROFILE_TABS as readonly string[]).includes(raw)) return null;
+  const tab = raw as ProfileTab;
+  const ownerOnly: ProfileTab[] = ["feed", "recommendations", "settings"];
+  if (ownerOnly.includes(tab) && !isOwner) return null;
+  return tab;
+}
 import { PlayerTabContent } from "./PlayerTabContent";
 import { FriendActionButton } from "./friends/FriendActionButton";
 import { SubscribeButton } from "./subscription/SubscribeButton";
@@ -50,7 +73,11 @@ export function PlayerDetailsContent({
   // Lightweight hook: only fetches friend count + relationship status (not the full list)
   const relationship = useFriendRelationship(player.id);
 
-  const [activeTab, setActiveTab] = useState<ProfileTab>(() => getDefaultTab(isOwner));
+  const searchParams = useSearchParams();
+  const requestedTab = parseTabParam(searchParams.get("tab"), isOwner);
+  const [activeTab, setActiveTab] = useState<ProfileTab>(
+    () => requestedTab ?? getDefaultTab(isOwner)
+  );
 
   // SWR-cached XP stats for the ProgressRing (Req 5.4, 5.5)
   const { data: xpStats } = useSWR<PlayerXpStats>(`/api/players/${player.id}/xp`, {
