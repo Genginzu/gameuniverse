@@ -11,6 +11,10 @@
 --   'rating'                — critic score (games.metascore)
 --   'recent'                — most recent release date
 
+-- Drop the prior 7-arg overload so CREATE OR REPLACE doesn't leave two
+-- versions side-by-side (which would make COMMENT ON FUNCTION ambiguous).
+DROP FUNCTION IF EXISTS public.get_games_listing(TEXT, INT, INT, UUID[], BOOLEAN, UUID, BOOLEAN);
+
 CREATE OR REPLACE FUNCTION public.get_games_listing(
   p_locale TEXT DEFAULT 'fr',
   p_limit INT DEFAULT 20,
