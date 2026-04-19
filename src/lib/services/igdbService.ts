@@ -235,6 +235,50 @@ export class IGDBService {
   }
 
   /**
+   * Fetches IGDB popularity primitives for a game. Returns the max observed
+   * value for each of types 1 (Visits), 2 (Want to Play), 3 (Playing).
+   * Returns null if the fetch fails; missing primitives come back as null
+   * fields rather than null result so the caller can still write a row.
+   * @param igdbId The IGDB game ID
+   */
+  static async getPopularityPrimitives(igdbId: number): Promise<{
+    visits: number | null;
+    wantToPlay: number | null;
+    playing: number | null;
+  } | null> {
+    const body = `
+      fields popularity_type, value;
+      where game_id = ${igdbId} & popularity_type = (1,2,3);
+      limit 50;
+    `;
+
+    const response = await this.igdbFetch("popularity_primitives", body);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      logger.error("IGDB getPopularityPrimitives failed", {
+        status: response.status,
+        statusText: response.statusText,
+        body: errorText,
+      });
+      return null;
+    }
+
+    const rows = (await response.json()) as Array<{ popularity_type: number; value: number }>;
+
+    const pickMax = (type: number): number | null => {
+      const vals = rows.filter((r) => r.popularity_type === type).map((r) => r.value);
+      return vals.length === 0 ? null : Math.max(...vals);
+    };
+
+    return {
+      visits: pickMax(1),
+      wantToPlay: pickMax(2),
+      playing: pickMax(3),
+    };
+  }
+
+  /**
    * Fetches time to beat data for a game from IGDB
    * @param igdbId The IGDB game ID
    * @returns Time to beat data or null if not found

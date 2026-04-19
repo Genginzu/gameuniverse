@@ -1,7 +1,7 @@
 "use client";
 
 import useSWR from "swr";
-import { GameSummary } from "@/types/game";
+import { GameSummary, GameListingSort, DEFAULT_GAME_LISTING_SORT } from "@/types/game";
 import { Genre } from "@/types/genre";
 import { PlatformFilterOption } from "@/types/platform";
 import { Pagination } from "@/types/pagination";
@@ -24,11 +24,13 @@ function buildGamesUrl(
   locale: string,
   page: number,
   genres: string[],
-  platforms: string[]
+  platforms: string[],
+  sort: GameListingSort
 ): string {
   const params = new URLSearchParams({ locale, page: String(page), limit: "20" });
   if (genres.length > 0) params.set("genres", genres.join(","));
   if (platforms.length > 0) params.set("platforms", platforms.join(","));
+  if (sort !== DEFAULT_GAME_LISTING_SORT) params.set("sort", sort);
   return `/api/games?${params.toString()}`;
 }
 
@@ -47,9 +49,10 @@ export function useGameListing(
   locale: string,
   page: number,
   genres: string[],
-  platforms: string[]
+  platforms: string[],
+  sort: GameListingSort = DEFAULT_GAME_LISTING_SORT
 ) {
-  const url = buildGamesUrl(locale, page, genres, platforms);
+  const url = buildGamesUrl(locale, page, genres, platforms, sort);
 
   const { data, error, isLoading, isValidating } = useSWR<GamesApiResponse>(url, apiFetcher, {
     // Garder les données précédentes pendant le chargement d'une nouvelle page/filtre

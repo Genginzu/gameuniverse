@@ -100,12 +100,13 @@ const FIELD_TO_TABLES: Record<TrackableField, string[]> = {
   versions: ["game_versions"],
   languages: ["game_languages", "supported_languages"],
   playtime: ["games"],
+  popularity: ["games"],
   videos: ["game_videos"],
   similar_games: ["game_similar_games"],
 };
 
 /**
- * Tables qui sont écrites par les champs "directs" (cover, background, release_date, metascore, playtime).
+ * Tables qui sont écrites par les champs "directs" (cover, background, release_date, metascore, playtime, popularity).
  * Comme ils partagent la table "games", on ne peut pas distinguer lequel a écrit.
  * On les regroupe pour la vérification.
  */
@@ -115,6 +116,7 @@ const DIRECT_GAME_FIELDS: TrackableField[] = [
   "release_date",
   "metascore",
   "playtime",
+  "popularity",
 ];
 
 /** Tables spécifiques à un seul champ (pas "games" qui est partagé) */
@@ -206,12 +208,14 @@ describe("Property 3: La synchronisation respecte les overrides", () => {
   let getGameDetailsSpy: ReturnType<typeof vi.spyOn>;
   let getTimeToBeatSpy: ReturnType<typeof vi.spyOn>;
   let getGameVersionsSpy: ReturnType<typeof vi.spyOn>;
+  let getPopularityPrimitivesSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     // Mock les appels IGDB pour éviter les vrais appels réseau
     getGameDetailsSpy = vi.spyOn(IGDBService, "getGameDetails");
     getTimeToBeatSpy = vi.spyOn(IGDBService, "getTimeToBeat");
     getGameVersionsSpy = vi.spyOn(IGDBService, "getGameVersions");
+    getPopularityPrimitivesSpy = vi.spyOn(IGDBService, "getPopularityPrimitives");
 
     getTimeToBeatSpy.mockResolvedValue({
       game_id: 1,
@@ -221,12 +225,18 @@ describe("Property 3: La synchronisation respecte les overrides", () => {
       count: 10,
     });
     getGameVersionsSpy.mockResolvedValue([]);
+    getPopularityPrimitivesSpy.mockResolvedValue({
+      visits: 1000,
+      wantToPlay: 100,
+      playing: 50,
+    });
   });
 
   afterEach(() => {
     getGameDetailsSpy.mockRestore();
     getTimeToBeatSpy.mockRestore();
     getGameVersionsSpy.mockRestore();
+    getPopularityPrimitivesSpy.mockRestore();
   });
 
   it("les champs overridés ne sont pas synchronisés, les autres le sont", async () => {
@@ -301,11 +311,13 @@ describe("Property 4: La synchronisation forcée supprime les overrides", () => 
   let getGameDetailsSpy: ReturnType<typeof vi.spyOn>;
   let getTimeToBeatSpy: ReturnType<typeof vi.spyOn>;
   let getGameVersionsSpy: ReturnType<typeof vi.spyOn>;
+  let getPopularityPrimitivesSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     getGameDetailsSpy = vi.spyOn(IGDBService, "getGameDetails");
     getTimeToBeatSpy = vi.spyOn(IGDBService, "getTimeToBeat");
     getGameVersionsSpy = vi.spyOn(IGDBService, "getGameVersions");
+    getPopularityPrimitivesSpy = vi.spyOn(IGDBService, "getPopularityPrimitives");
 
     getTimeToBeatSpy.mockResolvedValue({
       game_id: 1,
@@ -315,12 +327,18 @@ describe("Property 4: La synchronisation forcée supprime les overrides", () => 
       count: 10,
     });
     getGameVersionsSpy.mockResolvedValue([]);
+    getPopularityPrimitivesSpy.mockResolvedValue({
+      visits: 1000,
+      wantToPlay: 100,
+      playing: 50,
+    });
   });
 
   afterEach(() => {
     getGameDetailsSpy.mockRestore();
     getTimeToBeatSpy.mockRestore();
     getGameVersionsSpy.mockRestore();
+    getPopularityPrimitivesSpy.mockRestore();
   });
 
   it("syncAllGameFields sans overriddenFields supprime tous les overrides", async () => {

@@ -5,9 +5,11 @@ import dynamic from "next/dynamic";
 import { EntityCard } from "@/components/shared/EntityCard";
 import { gameCardConfig } from "@/components/shared/entityCardPresets";
 import { FilterButton } from "@/components/shared/FilterButton";
+import { GameSortMenu } from "./GameSortMenu";
 import { SearchSkeleton } from "./SearchSkeleton";
 import { LibraryStatusProvider } from "@/components/providers/LibraryStatusProvider";
 import { useGameListing, useGenres, usePlatforms } from "@/hooks/useGameListing";
+import { DEFAULT_GAME_LISTING_SORT, GameListingSort } from "@/types/game";
 
 // Lazy load des composants non visibles au premier rendu
 const GameFilters = dynamic(() => import("./GameFilters").then((m) => m.GameFilters));
@@ -26,6 +28,7 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
   const [selectedPublishers, setSelectedPublishers] = useState<string[]>([]);
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
+  const [sort, setSort] = useState<GameListingSort>(DEFAULT_GAME_LISTING_SORT);
 
   // SWR hooks — cache automatique, stale-while-revalidate, déduplication
   const { genres } = useGenres(locale);
@@ -34,7 +37,8 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
     locale,
     currentPage,
     selectedGenres,
-    selectedPlatforms
+    selectedPlatforms,
+    sort
   );
 
   // Le premier chargement est quand SWR n'a encore aucune donnée
@@ -53,6 +57,11 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
 
   const handlePlatformFilter = useCallback((platforms: string[]) => {
     setSelectedPlatforms(platforms);
+    setCurrentPage(1);
+  }, []);
+
+  const handleSortChange = useCallback((next: GameListingSort) => {
+    setSort(next);
     setCurrentPage(1);
   }, []);
 
@@ -81,11 +90,14 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
         {/* Filters */}
         <div className="mb-6 space-y-4 sm:mb-8">
-          <FilterButton
-            hasFilters={hasFilters}
-            filterCount={selectedGenres.length + selectedPlatforms.length}
-            onClick={() => setShowFilters(!showFilters)}
-          />
+          <div className="flex items-center justify-between gap-3">
+            <FilterButton
+              hasFilters={hasFilters}
+              filterCount={selectedGenres.length + selectedPlatforms.length}
+              onClick={() => setShowFilters(!showFilters)}
+            />
+            <GameSortMenu value={sort} onChange={handleSortChange} />
+          </div>
 
           <GameFilters
             genres={genres}

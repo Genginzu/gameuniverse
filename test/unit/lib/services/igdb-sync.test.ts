@@ -74,20 +74,24 @@ describe("igdb-sync", () => {
   let getGameDetailsSpy: ReturnType<typeof vi.spyOn>;
   let getTimeToBeatSpy: ReturnType<typeof vi.spyOn>;
   let getGameVersionsSpy: ReturnType<typeof vi.spyOn>;
+  let getPopularityPrimitivesSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     getGameDetailsSpy = vi.spyOn(IGDBService, "getGameDetails");
     getTimeToBeatSpy = vi.spyOn(IGDBService, "getTimeToBeat");
     getGameVersionsSpy = vi.spyOn(IGDBService, "getGameVersions");
+    getPopularityPrimitivesSpy = vi.spyOn(IGDBService, "getPopularityPrimitives");
 
     getTimeToBeatSpy.mockResolvedValue(null);
     getGameVersionsSpy.mockResolvedValue([]);
+    getPopularityPrimitivesSpy.mockResolvedValue(null);
   });
 
   afterEach(() => {
     getGameDetailsSpy.mockRestore();
     getTimeToBeatSpy.mockRestore();
     getGameVersionsSpy.mockRestore();
+    getPopularityPrimitivesSpy.mockRestore();
   });
 
   describe("syncGameField - erreur jeu introuvable dans IGDB", () => {

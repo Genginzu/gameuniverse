@@ -841,7 +841,15 @@
     "clearFilters": "Clear filters",
     "clearAll": "Clear all",
     "genres": "Genres",
-    "available": "{count} available"
+    "available": "{count} available",
+    "sort": {
+      "label": "Sort by",
+      "recommended": "Recommended",
+      "popularity": "Trending",
+      "activity": "Player activity",
+      "rating": "Top rated",
+      "recent": "Recent releases"
+    }
   },
   "search": {
     "placeholder": "Search for a game...",
@@ -1346,6 +1354,7 @@
         "playtimeCompletely": "Completionist",
         "playtimePreview": "Playtime preview",
         "playtimeNoData": "No playtime data entered",
+        "popularity": "IGDB Popularity",
         "colors": "Page colors",
         "backgroundColor": "Background color",
         "accentColor": "Accent color",

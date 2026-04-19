@@ -103,6 +103,7 @@ export type TrackableField =
   | "versions"
   | "languages"
   | "playtime"
+  | "popularity"
   | "videos"
   | "similar_games";
 

@@ -841,7 +841,15 @@
     "clearFilters": "Effacer les filtres",
     "clearAll": "Effacer tout",
     "genres": "Genres",
-    "available": "{count} disponibles"
+    "available": "{count} disponibles",
+    "sort": {
+      "label": "Trier par",
+      "recommended": "Recommandés",
+      "popularity": "Tendances",
+      "activity": "Activité des joueurs",
+      "rating": "Meilleures notes",
+      "recent": "Sorties récentes"
+    }
   },
   "search": {
     "placeholder": "Rechercher un jeu...",
@@ -1349,6 +1357,7 @@
         "playtimeCompletely": "Complétionniste",
         "playtimePreview": "Aperçu du temps de jeu",
         "playtimeNoData": "Aucun temps de jeu renseigné",
+        "popularity": "Popularité IGDB",
         "colors": "Couleurs de la page",
         "backgroundColor": "Couleur de fond",
         "accentColor": "Couleur d'accent",

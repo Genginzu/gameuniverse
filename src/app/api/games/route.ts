@@ -9,6 +9,7 @@ import {
 import { logger } from "@/lib/logger";
 import { buildEmptyGamesResponse, buildPaginationMeta } from "@/lib/services/gameListingHelpers";
 import { resolveGameIdFilters } from "@/lib/services/gameFilterResolvers";
+import { parseGameListingSort } from "@/types/game";
 
 export async function GET(request: NextRequest) {
   try {
@@ -22,6 +23,7 @@ export async function GET(request: NextRequest) {
     const locale = searchParams.get("locale") || "fr";
     const inLibrary = searchParams.get("inLibrary") === "true";
     const fields = parseArrayParam(searchParams.get("fields"));
+    const sort = parseGameListingSort(searchParams.get("sort"));
 
     const supabase = await createRouteHandlerClient();
 
@@ -40,7 +42,7 @@ export async function GET(request: NextRequest) {
     }
 
     const offset = calculateOffset(page, limit);
-    const filters = { search, genres, platforms, locale, inLibrary };
+    const filters = { search, genres, platforms, locale, inLibrary, sort };
 
     // Resolve search/platform/genre filters into game IDs
     const { gameIds: matchingGameIds, error: filterError } = await resolveGameIdFilters(supabase, {
@@ -68,6 +70,7 @@ export async function GET(request: NextRequest) {
       p_in_library: inLibrary,
       p_user_id: userId,
       p_include_description: fields.includes("description"),
+      p_sort_by: sort,
     });
 
     if (error) {
