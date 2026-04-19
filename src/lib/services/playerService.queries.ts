@@ -10,6 +10,7 @@ import { createServerClient } from "@/lib/supabase-server";
 import { isStatsPrivate } from "./playerStatsDbHelpers";
 import { logger } from "@/lib/logger";
 import { calculatePlayerStats } from "./playerService.stats";
+import { computeLevel } from "./levelSystem";
 import type { ProfileRow, LibraryEntry } from "./playerService.types";
 
 /**
@@ -53,6 +54,7 @@ export async function fetchPlayersFromDB(
   const profileIds = (allProfiles || []).map((p) => p.id);
   const gameCounts: Record<string, number> = {};
   const reviewCounts: Record<string, number> = {};
+  const xpTotals: Record<string, number> = {};
 
   if (profileIds.length > 0) {
     const { data: libraryCounts, error: countError } = await supabase
@@ -80,6 +82,19 @@ export async function fetchPlayersFromDB(
         reviewCounts[entry.user_id] = (reviewCounts[entry.user_id] || 0) + 1;
       }
     }
+
+    const { data: xpData, error: xpError } = await supabase
+      .from("player_xp")
+      .select("user_id, xp_total")
+      .in("user_id", profileIds);
+
+    if (xpError) {
+      logger.warn("Error fetching player XP", { error: xpError });
+    } else if (xpData) {
+      for (const entry of xpData) {
+        xpTotals[entry.user_id] = entry.xp_total ?? 0;
+      }
+    }
   }
 
   let transformedPlayers: PlayerSummary[] = ((allProfiles as unknown as ProfileRow[]) || []).map(
@@ -91,7 +106,7 @@ export async function fetchPlayersFromDB(
         avatarUrl: profile.avatar_url,
         bannerUrl: profile.banner_url,
         gamesCount,
-        level: 1,
+        level: computeLevel(xpTotals[profile.id] ?? 0),
         socialLinks: {},
         reviewCount: reviewCounts[profile.id] || 0,
         createdAt: profile.created_at || new Date().toISOString(),
@@ -250,13 +265,25 @@ export async function fetchPlayerDetailsFromDB(
 
   const statsPrivate = await isStatsPrivate(supabase, playerId);
 
+  const { data: xpRow, error: xpError } = await supabase
+    .from("player_xp")
+    .select("xp_total")
+    .eq("user_id", playerId)
+    .maybeSingle();
+
+  if (xpError) {
+    logger.warn("Error fetching player XP", { playerId, error: xpError });
+  }
+
+  const level = computeLevel(xpRow?.xp_total ?? 0);
+
   return {
     id: profile.id,
     fullName: profile.username,
     avatarUrl: profile.avatar_url,
     bannerUrl: profile.banner_url || null,
     socialLinks: {},
-    level: 1,
+    level,
     preferredLocale: profile.preferred_locale || "fr",
     createdAt: profile.created_at || new Date().toISOString(),
     updatedAt: profile.updated_at || new Date().toISOString(),
