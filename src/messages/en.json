@@ -3020,7 +3020,8 @@
       "background": "Background",
       "playtime": "Playtime",
       "metascore": "Metascore",
-      "releaseDate": "Release date"
+      "releaseDate": "Release date",
+      "popularity": "IGDB Popularity"
     },
     "gamesCount": "{count, plural, =0 {No games} one {1 game} other {# games}} missing {field}",
     "batchSize": "Batch size",

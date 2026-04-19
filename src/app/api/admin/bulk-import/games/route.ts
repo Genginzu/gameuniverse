@@ -8,6 +8,7 @@ const IMPORTABLE_FIELDS: Record<string, string> = {
   playtime: "playtime_normally",
   metascore: "metascore",
   releaseDate: "release_date",
+  popularity: "igdb_pop_updated_at",
 };
 
 /**

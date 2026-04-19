@@ -13,6 +13,7 @@ const VALID_FIELDS: BulkImportField[] = [
   "playtime",
   "metascore",
   "releaseDate",
+  "popularity",
 ];
 
 export default function BulkImportFieldPage() {

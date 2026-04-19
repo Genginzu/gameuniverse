@@ -10,6 +10,7 @@ const FIELD_ICONS: Record<BulkImportField, string> = {
   playtime: "lucide:clock",
   metascore: "lucide:star",
   releaseDate: "lucide:calendar",
+  popularity: "lucide:flame",
 };
 
 interface BulkImportFieldCardsProps {
@@ -19,7 +20,14 @@ interface BulkImportFieldCardsProps {
   loading: boolean;
 }
 
-const FIELDS: BulkImportField[] = ["cover", "background", "playtime", "metascore", "releaseDate"];
+const FIELDS: BulkImportField[] = [
+  "cover",
+  "background",
+  "playtime",
+  "metascore",
+  "releaseDate",
+  "popularity",
+];
 
 export function BulkImportFieldCards({
   fieldCounts,
@@ -30,7 +38,7 @@ export function BulkImportFieldCards({
   const t = useTranslations("bulkImport");
 
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-6">
       {FIELDS.map((field) => {
         const count = fieldCounts?.[field] ?? 0;
         const isActive = selectedField === field;

@@ -3023,7 +3023,8 @@
       "background": "Fond",
       "playtime": "Temps de jeu",
       "metascore": "Metascore",
-      "releaseDate": "Date de sortie"
+      "releaseDate": "Date de sortie",
+      "popularity": "Popularité IGDB"
     },
     "gamesCount": "{count, plural, =0 {Aucun jeu} one {1 jeu} other {# jeux}} sans {field}",
     "batchSize": "Quantité",

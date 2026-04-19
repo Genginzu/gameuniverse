@@ -5,7 +5,13 @@ import { useTranslations } from "next-intl";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
-export type BulkImportField = "cover" | "background" | "playtime" | "metascore" | "releaseDate";
+export type BulkImportField =
+  | "cover"
+  | "background"
+  | "playtime"
+  | "metascore"
+  | "releaseDate"
+  | "popularity";
 
 export interface BulkGame {
   id: string;
