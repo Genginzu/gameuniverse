@@ -10,10 +10,15 @@ mockUpdateChain.eq = vi.fn(() => Promise.resolve({ error: null }));
 const mockSelectChain: any = {};
 mockSelectChain.eq = vi.fn(() => mockSelectChain);
 mockSelectChain.single = vi.fn(() => Promise.resolve({ data: { id: 'local-g1' }, error: null }));
+const mockDeleteChain: any = {};
+mockDeleteChain.eq = vi.fn(() => Promise.resolve({ error: null }));
 
 const mockFrom = vi.fn((table: string) => {
   if (table === 'igdb_webhook_events') return { insert: vi.fn(() => mockInsertChain), update: vi.fn(() => mockUpdateChain) };
-  return { select: vi.fn(() => mockSelectChain) };
+  return {
+    select: vi.fn(() => mockSelectChain),
+    delete: vi.fn(() => mockDeleteChain),
+  };
 });
 
 vi.mock('@/lib/supabase-admin', () => ({
@@ -24,6 +29,16 @@ vi.mock('@/lib/services/gameImportService', () => ({
 }));
 vi.mock('@/lib/services/webhookDiffApplier', () => ({
   applyWebhookPayload: vi.fn(async () => ({ appliedFields: ['slug'], skippedFields: [], error: undefined })),
+}));
+vi.mock('@/lib/realtime-updates', () => ({
+  notifyGameDeleted: vi.fn(async () => {}),
+  invalidateGameCache: vi.fn(async () => {}),
+}));
+vi.mock('@/lib/services/recommendation/cache', () => ({
+  invalidateForDeletedGame: vi.fn(() => {}),
+}));
+vi.mock('@/lib/services/game-import/popularity', () => ({
+  fetchAndSavePopularity: vi.fn(async () => {}),
 }));
 
 import { processWebhookEvent } from '@/lib/services/igdbWebhookService';
@@ -37,10 +52,13 @@ describe('processWebhookEvent', () => {
     expect(result.status).toBe('processed');
   });
 
-  it('returns eventId for delete events', async () => {
+  it('returns eventId for delete events and deletes the local game', async () => {
     const result = await processWebhookEvent('games', 'delete', { id: 456 });
     expect(result.eventId).toBe('evt-1');
     expect(result.status).toBe('processed');
+    // The handler must issue a delete on the `games` table (cascades to related rows)
+    expect(mockFrom).toHaveBeenCalledWith('games');
+    expect(mockDeleteChain.eq).toHaveBeenCalledWith('id', 'local-g1');
   });
 
   it('handles character entity type', async () => {

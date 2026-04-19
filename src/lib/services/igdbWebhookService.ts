@@ -11,6 +11,8 @@ import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { GameImportService } from "@/lib/services/gameImportService";
 import { applyWebhookPayload } from "@/lib/services/webhookDiffApplier";
 import { fetchAndSavePopularity } from "@/lib/services/game-import/popularity";
+import { notifyGameDeleted, invalidateGameCache } from "@/lib/realtime-updates";
+import { invalidateForDeletedGame } from "@/lib/services/recommendation/cache";
 import { logger } from "@/lib/logger";
 import type { WebhookEventType, WebhookEventStatus } from "@/types/webhooks";
 import { untypedTable } from "@/lib/utils/untypedTable";
@@ -51,7 +53,9 @@ export async function processWebhookEvent(
   let gameId = resolved.gameId;
   const characterId = resolved.characterId;
 
-  if (entityType === "games" && !gameId) {
+  // Skip auto-import for delete events — importing a game just to delete it would
+  // be wasteful and racy. If the game isn't present locally, the delete is a no-op.
+  if (entityType === "games" && !gameId && eventType !== "delete") {
     try {
       const importResult = await GameImportService.importFromIGDB(igdbId);
       if (importResult.success && importResult.game) {
@@ -114,7 +118,11 @@ export async function processWebhookEvent(
       return await handlePopularityPrimitive(eventId, gameId, popularityGameIgdbId);
     }
 
-    // delete events and non-game entities: just log them
+    if (eventType === "delete" && entityType === "games" && gameId) {
+      return await handleGameDelete(eventId, gameId);
+    }
+
+    // Non-actionable events (delete of unknown game, character events, etc.) — log only
     await updateEventStatus(eventId, "processed");
     return { eventId, status: "processed" };
   } catch (error) {
@@ -188,6 +196,49 @@ async function handleGameUpdate(
     gameId,
     applied: result.appliedFields,
   });
+  return { eventId, status: "processed" };
+}
+
+/**
+ * Handle a game deletion from IGDB — cascade-delete the local game and related
+ * rows (genres, companies, screenshots, translations, platforms, characters,
+ * library entries, etc.). Related webhook events have `ON DELETE SET NULL` on
+ * `game_id`, so they are preserved in the audit log.
+ */
+async function handleGameDelete(eventId: string, gameId: string): Promise<ProcessResult> {
+  await updateEventStatus(eventId, "processing");
+
+  const supabase = getSupabaseAdmin();
+
+  // Fetch the slug before deletion for the realtime notification payload
+  const { data: existingGame } = await supabase
+    .from("games")
+    .select("slug")
+    .eq("id", gameId)
+    .single();
+
+  const { error: deleteError } = await supabase.from("games").delete().eq("id", gameId);
+
+  if (deleteError) {
+    await updateEventStatus(eventId, "failed", deleteError.message);
+    return { eventId, status: "failed", error: deleteError.message };
+  }
+
+  const slug = (existingGame?.slug as string | undefined) ?? "";
+
+  try {
+    await notifyGameDeleted(gameId, slug);
+    await invalidateGameCache(gameId);
+    invalidateForDeletedGame(gameId);
+  } catch (err) {
+    logger.warn("Webhook: game deleted but post-cleanup failed", {
+      gameId,
+      error: err instanceof Error ? err.message : String(err),
+    });
+  }
+
+  await updateEventStatus(eventId, "processed");
+  logger.info("Webhook: game deleted from local DB", { eventId, gameId, slug });
   return { eventId, status: "processed" };
 }
 

@@ -51,6 +51,40 @@ export function WebhookEventList({
   const [importingIds, setImportingIds] = useState<Set<number>>(new Set());
   const [importingAll, setImportingAll] = useState(false);
   const [importCount, setImportCount] = useState(20);
+  const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());
+
+  const handleDelete = useCallback(
+    async (gameId: string) => {
+      if (typeof window !== "undefined" && !window.confirm(t("deleteConfirm"))) return;
+
+      setDeletingIds((prev) => new Set(prev).add(gameId));
+      toast({ title: t("deleteStarted") });
+
+      try {
+        const res = await fetch(`/api/admin/games/${gameId}`, { method: "DELETE" });
+        if (res.ok) {
+          toast({ title: t("deleteDone"), variant: "success" });
+          onRefresh?.();
+        } else {
+          const body = await res.json().catch(() => ({}));
+          toast({
+            title: t("deleteFailed"),
+            description: body.error,
+            variant: "destructive",
+          });
+        }
+      } catch {
+        toast({ title: t("deleteFailed"), variant: "destructive" });
+      } finally {
+        setDeletingIds((prev) => {
+          const next = new Set(prev);
+          next.delete(gameId);
+          return next;
+        });
+      }
+    },
+    [t, onRefresh]
+  );
 
   const handleImport = useCallback(
     async (igdbId: number) => {
@@ -221,6 +255,8 @@ export function WebhookEventList({
                 entityType={entityType}
                 onImportStarted={handleImport}
                 importingIgdbIds={importingIds}
+                onDeleteGame={handleDelete}
+                deletingGameIds={deletingIds}
               />
             ))}
           </tbody>
@@ -235,29 +271,50 @@ function EventRow({
   entityType,
   onImportStarted,
   importingIgdbIds,
+  onDeleteGame,
+  deletingGameIds,
 }: {
   event: WebhookEventWithDetails;
   entityType: "games" | "characters";
   onImportStarted?: (igdbId: number) => void;
   importingIgdbIds?: Set<number>;
+  onDeleteGame?: (gameId: string) => void;
+  deletingGameIds?: Set<string>;
 }) {
   const t = useTranslations("webhooks");
 
-  const entityName = entityType === "games" ? event.game_name : event.character_name;
+  // For games: only display a name when the game still exists locally. If the
+  // local row is gone (cascade cleared `game_id`), we show "unknown entity"
+  // regardless of whatever name the IGDB payload carried.
+  const hasLocalEntity =
+    entityType === "games" ? Boolean(event.game_id) : Boolean(event.character_id);
+  const rawName = entityType === "games" ? event.game_name : event.character_name;
+  const entityName = hasLocalEntity ? rawName : null;
   const entitySlug = entityType === "games" ? event.game_slug : event.character_slug;
   const entityLink =
-    entityType === "games" && entitySlug
+    entityType === "games" && entitySlug && event.game_id
       ? `/admin/games/${event.game_id}/edit`
-      : entityType === "characters" && entitySlug
+      : entityType === "characters" && entitySlug && event.character_id
         ? `/admin/characters/${event.character_id}/edit`
         : null;
 
   const canViewDiff = event.event_type === "update" && entityType === "games" && event.game_id;
   const diffLink = canViewDiff ? `/admin/webhooks/events/${event.id}` : null;
 
-  // Show import button when game is not in local DB
-  const canImport = entityType === "games" && !event.game_id && event.igdb_id;
+  // Show import button when game is not in local DB (except for delete events,
+  // where importing wouldn't make sense — the upstream event says "delete").
+  const canImport =
+    entityType === "games" &&
+    !event.game_id &&
+    event.igdb_id &&
+    event.event_type !== "delete";
   const isImporting = importingIgdbIds?.has(event.igdb_id) ?? false;
+
+  // Manual delete button: only for delete webhooks where the game still exists
+  // locally (admin cleanup of events not yet auto-processed).
+  const canDelete =
+    entityType === "games" && event.event_type === "delete" && Boolean(event.game_id);
+  const isDeleting = event.game_id ? (deletingGameIds?.has(event.game_id) ?? false) : false;
 
   const isCreateSuccess =
     event.event_type === "create" && event.status === "processed" && event.game_id;
@@ -352,6 +409,21 @@ function EventRow({
                 <Icon icon="lucide:download" className="h-3 w-3" />
               )}
               {isImporting ? t("importing") : t("importGame")}
+            </button>
+          )}
+          {canDelete && event.game_id && (
+            <button
+              type="button"
+              disabled={isDeleting}
+              onClick={() => onDeleteGame?.(event.game_id!)}
+              className="inline-flex items-center gap-1 rounded-lg bg-red-50 px-2 py-1 text-xs font-medium text-red-700 transition-colors hover:bg-red-100 disabled:opacity-50 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/40"
+            >
+              {isDeleting ? (
+                <Icon icon="lucide:loader-2" className="h-3 w-3 animate-spin" />
+              ) : (
+                <Icon icon="lucide:trash-2" className="h-3 w-3" />
+              )}
+              {isDeleting ? t("deleting") : t("deleteGame")}
             </button>
           )}
         </div>
