@@ -18,8 +18,8 @@ export default function TopBar({ isAuthenticated, onSearchOpen }: TopBarProps) {
 
   return (
     <header className="topbar sticky top-0 z-30 flex h-[65px] shrink-0 items-center px-4 lg:px-6">
-      {/* Left: Logo + App name */}
-      <Link href="/" className="flex shrink-0 items-center gap-2.5">
+      {/* Left: Logo + App name — offset on <lg to clear the fixed hamburger button */}
+      <Link href="/" className="flex shrink-0 items-center gap-2.5 pl-14 lg:pl-0">
         <GameUniverseLogo size="sm" className="shadow-lg shadow-black/20" />
         <span className="hidden text-base font-bold tracking-widest text-white uppercase sm:inline">
           Gamers Universe
