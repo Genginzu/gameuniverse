@@ -12,6 +12,13 @@ interface NotificationItemProps {
 const TYPE_ICONS: Record<string, string> = {
   post_comment: "mdi:comment-outline",
   discussion_message: "mdi:message-outline",
+  post_created: "mdi:post-outline",
+};
+
+const TYPE_LABEL_KEYS: Record<string, string> = {
+  post_comment: "typePostComment",
+  discussion_message: "typeDiscussionMessage",
+  post_created: "typePostCreated",
 };
 
 export function NotificationItem({ notification, onDismiss }: NotificationItemProps) {
@@ -24,8 +31,7 @@ export function NotificationItem({ notification, onDismiss }: NotificationItemPr
   const relativeDate = format.relativeTime(safeDate, now);
 
   const senderName = notification.sender?.username ?? "?";
-  const typeLabel =
-    notification.type === "post_comment" ? t("typePostComment") : t("typeDiscussionMessage");
+  const typeLabel = t(TYPE_LABEL_KEYS[notification.type] ?? "typePostComment");
 
   return (
     <div

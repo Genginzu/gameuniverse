@@ -1,5 +1,6 @@
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
+import { NotificationServerService } from "@/lib/services/notificationServerService";
 import { extractTags, extractMentions } from "@/lib/utils/postContentParser";
 import type { Post, PostMention } from "@/types/post";
 
@@ -185,7 +186,10 @@ export class PlayerPostsServerService {
       }
     }
 
-    // 4. Build enriched response
+    // 4. Notify subscribers and accepted friends (best-effort, non-blocking)
+    await this.notifyFollowers(playerId, postId, content);
+
+    // 5. Build enriched response
     const row = data as unknown as PostRow;
     return {
       id: row.id,
@@ -197,6 +201,65 @@ export class PlayerPostsServerService {
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };
+  }
+
+  /**
+   * Notify all subscribers and accepted friends of a player that a new post was created.
+   * Best-effort: errors are logged but never thrown to keep post creation resilient.
+   */
+  private static async notifyFollowers(
+    authorId: string,
+    postId: string,
+    content: string
+  ): Promise<void> {
+    try {
+      const supabase = await createRouteHandlerClient();
+
+      const [subsResult, friendsAsSenderResult, friendsAsReceiverResult] = await Promise.all([
+        supabase
+          .from("player_subscriptions" as UntypedFrom)
+          .select("subscriber_id")
+          .eq("target_id", authorId),
+        supabase
+          .from("friendships" as UntypedFrom)
+          .select("receiver_id")
+          .eq("sender_id", authorId)
+          .eq("status", "accepted"),
+        supabase
+          .from("friendships" as UntypedFrom)
+          .select("sender_id")
+          .eq("receiver_id", authorId)
+          .eq("status", "accepted"),
+      ]);
+
+      const recipientIds = new Set<string>();
+      for (const r of (subsResult.data ?? []) as unknown as { subscriber_id: string }[]) {
+        recipientIds.add(r.subscriber_id);
+      }
+      for (const r of (friendsAsSenderResult.data ?? []) as unknown as { receiver_id: string }[]) {
+        recipientIds.add(r.receiver_id);
+      }
+      for (const r of (friendsAsReceiverResult.data ?? []) as unknown as {
+        sender_id: string;
+      }[]) {
+        recipientIds.add(r.sender_id);
+      }
+      recipientIds.delete(authorId);
+
+      if (recipientIds.size === 0) return;
+
+      await Promise.all(
+        Array.from(recipientIds).map((recipientId) =>
+          NotificationServerService.create(recipientId, authorId, "post_created", postId, content)
+        )
+      );
+    } catch (err) {
+      logger.error("Failed to create post_created notifications", {
+        error: err instanceof Error ? err.message : String(err),
+        authorId,
+        postId,
+      });
+    }
   }
 
   /** Delete a post by its ID. */

@@ -896,7 +896,9 @@
       "languages": "Languages",
       "music": "Music",
       "priceHistory": "Prices",
-      "dlcExtensions": "Extensions & DLC"
+      "dlcExtensions": "Extensions & DLC",
+      "scrollLeft": "Scroll tabs left",
+      "scrollRight": "Scroll tabs right"
     },
     "media": {
       "screenshots": "Screenshots",
@@ -3121,6 +3123,7 @@
     "markAllAsRead": "Mark all as read",
     "typePostComment": "commented on your post",
     "typeDiscussionMessage": "sent you a message",
+    "typePostCreated": "published a new post",
     "dismiss": "Dismiss"
   },
   "postComments": {

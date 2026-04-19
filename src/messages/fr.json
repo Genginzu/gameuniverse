@@ -896,7 +896,9 @@
       "languages": "Langues",
       "music": "Musique",
       "priceHistory": "Prix",
-      "dlcExtensions": "Extensions et DLC"
+      "dlcExtensions": "Extensions et DLC",
+      "scrollLeft": "Faire défiler les onglets vers la gauche",
+      "scrollRight": "Faire défiler les onglets vers la droite"
     },
     "media": {
       "screenshots": "Captures d'écran",
@@ -3124,6 +3126,7 @@
     "markAllAsRead": "Tout marquer comme lu",
     "typePostComment": "a commenté votre post",
     "typeDiscussionMessage": "vous a envoyé un message",
+    "typePostCreated": "a publié un nouveau post",
     "dismiss": "Fermer"
   },
   "postComments": {
