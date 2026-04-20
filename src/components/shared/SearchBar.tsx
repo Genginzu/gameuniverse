@@ -4,6 +4,8 @@ import { useState, useEffect, useRef, useCallback, ReactNode } from "react";
 import { Icon } from "@iconify/react";
 import { Input } from "@/components/ui/input";
 import { SearchBarDropdown } from "./SearchBarDropdown";
+import { useClickOutside } from "@/hooks/useClickOutside";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
 
 export interface SearchResultItem {
   id: string;
@@ -95,25 +97,10 @@ export function SearchBar<T extends SearchResultItem = SearchResultItem>({
     };
   }, [searchQuery, debounceMs, isHybridMode, hybridConfig, minQueryLength]);
 
-  useEffect(() => {
-    if (!isHybridMode) return;
-    const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isHybridMode]);
+  const closeDropdown = useCallback(() => setIsOpen(false), []);
 
-  useEffect(() => {
-    if (!isHybridMode) return;
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setIsOpen(false);
-    };
-    document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
-  }, [isHybridMode]);
+  useClickOutside(containerRef, isHybridMode ? closeDropdown : () => {});
+  useEscapeKey(isHybridMode ? closeDropdown : () => {});
 
   const handleClear = useCallback(() => {
     setSearchQuery("");

@@ -3,6 +3,8 @@
 import { useEffect, useRef, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { NotificationItem } from "@/components/shared/NotificationItem";
+import { useClickOutside } from "@/hooks/useClickOutside";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
 import type { Notification } from "@/types/notification";
 
 interface NotificationDropdownProps {
@@ -28,25 +30,8 @@ export function NotificationDropdown({
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, MAX_VISIBLE);
 
-  // Close on click outside
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        onClose();
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [onClose]);
-
-  // Close on Escape
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [onClose]);
+  useClickOutside(dropdownRef, onClose);
+  useEscapeKey(onClose);
 
   // Focus first item on open
   useEffect(() => {
