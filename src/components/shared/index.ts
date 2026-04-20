@@ -1,5 +1,4 @@
-// Shared UI Components
-// Phase 2: UI Component Consolidation
+// Shared UI Components — Barrel exports
 
 // EntityCard - Generic card component for games, players, characters
 export {
@@ -30,10 +29,12 @@ export {
 // GridSkeleton - Generic grid skeleton for loading states
 export { GridSkeleton, type GridSkeletonProps } from "./GridSkeleton";
 
-// Pagination - Generic pagination component for all entity types
+// Pagination
 export { Pagination, getVisiblePages, type PaginationProps } from "./Pagination";
+export { PaginationButton } from "./PaginationButton";
+export { MobilePageSelector } from "./MobilePageSelector";
 
-// SearchBar - Generic search bar component with simple and hybrid modes
+// SearchBar - Generic search bar with simple and hybrid modes
 export {
   SearchBar,
   shouldTriggerSearch,
@@ -42,8 +43,9 @@ export {
   type SearchResultItem,
   type HybridSearchConfig,
 } from "./SearchBar";
+export { SearchBarDropdown } from "./SearchBarDropdown";
 
-// FilterPanel - Generic filter panel component with checkbox-based multi-select
+// FilterPanel - Generic filter panel with checkbox-based multi-select
 export {
   FilterPanel,
   hasActiveFilters,
@@ -54,10 +56,38 @@ export {
   type FilterConfig,
   type FilterOption,
 } from "./FilterPanel";
-
-// FilterPanel sub-components
 export { ActiveFiltersDisplay } from "./ActiveFiltersDisplay";
 export { FilterOptionsGrid } from "./FilterOptionsGrid";
+export { FilterButton } from "./FilterButton";
+export { FilterChip, ActiveFilterChip } from "./FilterChip";
+export { FilterSection } from "./FilterSection";
 
-// ImageUploader - Reusable image upload component with drag & drop, preview, and S3 upload
+// ImageUploader - Reusable image upload with drag & drop, preview, and S3 upload
 export { ImageUploader } from "./ImageUploader";
+export { CropEditor } from "./CropEditor";
+export { IconPicker } from "./IconPicker";
+
+// Global Search
+export { GlobalSearchDropdown } from "./GlobalSearchDropdown";
+export { GlobalSearchGameItem } from "./GlobalSearchGameItem";
+export { GlobalSearchCharacterItem } from "./GlobalSearchCharacterItem";
+export { GlobalSearchPlayerItem } from "./GlobalSearchPlayerItem";
+export { GlobalSearchSkeleton } from "./GlobalSearchSkeleton";
+
+// Navigation & Layout
+export { NavigationProgress } from "./NavigationProgress";
+export { PageBanner } from "./PageBanner";
+export { LanguageSwitcher } from "./LanguageSwitcher";
+export { default as Footer } from "./Footer";
+export { JsonLd } from "./JsonLd";
+export { EmptyState } from "./EmptyState";
+
+// Notifications
+export { NotificationBell } from "./NotificationBell";
+export { NotificationDropdown } from "./NotificationDropdown";
+export { NotificationItem } from "./NotificationItem";
+
+// Error handling
+export { ErrorBoundary, useErrorBoundaryHandler } from "./ErrorBoundary";
+export { ErrorFallback } from "./ErrorFallback";
+export { ErrorDemo } from "./ErrorDemo";
