@@ -22,7 +22,7 @@ export function SpinnerWithPing({
     <div className="text-center">
       <div className="relative mb-4 inline-block">
         <LoadingSpinner size={size} />
-        <div className="absolute inset-0 animate-ping rounded-full bg-violet-500 opacity-20"></div>
+        <div className="absolute inset-0 animate-ping rounded-full bg-blue-400 opacity-20"></div>
       </div>
       {message && (
         <p className="text-sm text-gray-500 dark:text-gray-400">{message}</p>
@@ -60,8 +60,8 @@ export function LoadingState({
         className={`flex flex-col items-center justify-center ${sizeClasses[size]} ${className}`}
       >
         <div className="relative">
-          <div className="h-12 w-12 animate-pulse rounded-full bg-cyan-500/30"></div>
-          <div className="absolute inset-0 animate-ping rounded-full bg-violet-500 opacity-20"></div>
+          <div className="h-12 w-12 animate-pulse rounded-full bg-blue-200"></div>
+          <div className="absolute inset-0 animate-ping rounded-full bg-blue-400 opacity-20"></div>
         </div>
         {message && <p className="mt-4 text-sm text-gray-500">{message}</p>}
       </div>

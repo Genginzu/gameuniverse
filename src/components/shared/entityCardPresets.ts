@@ -4,10 +4,10 @@ import type { GameSummary } from "@/types/game";
 import type { PlayerSummary } from "@/types/player";
 import type { CharacterSummary } from "@/types/character";
 import { Badge } from "@/components/ui/badge";
+import { Icon } from "@iconify/react";
 import React from "react";
 
 // Game Card Configuration
-// Matches the current GameCard behavior exactly
 export const gameCardConfig: EntityCardConfig<GameSummary> = {
   aspectRatio: "3:4",
   imageField: "coverImage",
@@ -32,7 +32,6 @@ export const gameCardConfig: EntityCardConfig<GameSummary> = {
     libraryToggle: true,
   },
   linkTemplate: (game) => `/games/${game.slug}`,
-  // Custom hover renderer to match exact GameCard behavior
   customHoverRenderer: (game, t) => {
     const formatReleaseDate = (dateString?: string, locale: string = "fr") => {
       if (!dateString) return null;
@@ -47,14 +46,11 @@ export const gameCardConfig: EntityCardConfig<GameSummary> = {
     return React.createElement(
       React.Fragment,
       null,
-      // Title
       React.createElement(
         "h3",
         { className: "mb-2 line-clamp-2 text-lg font-bold text-white" },
         game.title
       ),
-
-      // Developer & Publisher
       React.createElement(
         "div",
         { className: "mb-3 space-y-1 text-xs" },
@@ -86,8 +82,6 @@ export const gameCardConfig: EntityCardConfig<GameSummary> = {
             )
           )
       ),
-
-      // Genres
       game.genres.length > 0 &&
         React.createElement(
           "div",
@@ -115,27 +109,14 @@ export const gameCardConfig: EntityCardConfig<GameSummary> = {
               `+${game.genres.length - 2}`
             )
         ),
-
-      // Release Date
       game.releaseDate &&
         React.createElement(
           "div",
           { className: "flex items-center text-xs text-gray-300" },
-          React.createElement(
-            "svg",
-            {
-              className: "mr-1 h-3 w-3",
-              fill: "none",
-              stroke: "currentColor",
-              viewBox: "0 0 24 24",
-            },
-            React.createElement("path", {
-              strokeLinecap: "round",
-              strokeLinejoin: "round",
-              strokeWidth: 2,
-              d: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z",
-            })
-          ),
+          React.createElement(Icon, {
+            icon: "lucide:calendar",
+            className: "mr-1 h-3 w-3",
+          }),
           game.releaseYear || formatReleaseDate(game.releaseDate)
         )
     );
@@ -143,7 +124,6 @@ export const gameCardConfig: EntityCardConfig<GameSummary> = {
 };
 
 // Player Card Configuration
-// Matches the current PlayerCard behavior exactly
 export const playerCardConfig: EntityCardConfig<PlayerSummary> = {
   aspectRatio: "1:1",
   imageField: "avatarUrl",
@@ -163,21 +143,12 @@ export const playerCardConfig: EntityCardConfig<PlayerSummary> = {
   },
   actions: {},
   linkTemplate: (player) => `/players/${player.id}`,
-  // Fallback avatar for players without avatar
   fallbackAvatarRenderer: () =>
-    React.createElement(
-      "svg",
-      {
-        className:
-          "h-20 w-20 text-blue-300 transition-transform duration-500 group-hover:scale-110",
-        fill: "currentColor",
-        viewBox: "0 0 24 24",
-      },
-      React.createElement("path", {
-        d: "M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z",
-      })
-    ),
-  // Custom hover renderer for player card
+    React.createElement(Icon, {
+      icon: "lucide:user",
+      className:
+        "h-20 w-20 text-blue-300 transition-transform duration-500 group-hover:scale-110",
+    }),
   customHoverRenderer: (player, t) => {
     const displayName = player.fullName || t("anonymousPlayer");
     return React.createElement(
@@ -190,21 +161,10 @@ export const playerCardConfig: EntityCardConfig<PlayerSummary> = {
         React.createElement(
           "span",
           { className: "flex items-center text-xs text-gray-300" },
-          React.createElement(
-            "svg",
-            {
-              className: "mr-1 h-3 w-3",
-              fill: "none",
-              stroke: "currentColor",
-              viewBox: "0 0 24 24",
-            },
-            React.createElement("path", {
-              strokeLinecap: "round",
-              strokeLinejoin: "round",
-              strokeWidth: 2,
-              d: "M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10",
-            })
-          ),
+          React.createElement(Icon, {
+            icon: "lucide:gamepad-2",
+            className: "mr-1 h-3 w-3",
+          }),
           player.gamesCount
         )
       ),
@@ -214,7 +174,6 @@ export const playerCardConfig: EntityCardConfig<PlayerSummary> = {
 };
 
 // Character Card Configuration
-// Matches the current CharacterCard behavior exactly
 export const characterCardConfig: EntityCardConfig<CharacterSummary> = {
   aspectRatio: "3:4",
   imageField: "mainImage",
@@ -239,41 +198,27 @@ export const characterCardConfig: EntityCardConfig<CharacterSummary> = {
   },
   linkTemplate: (character) => `/characters/${character.slug}`,
   slugField: "slug",
-  // Fallback avatar for characters without image
   fallbackAvatarRenderer: () =>
-    React.createElement(
-      "svg",
-      {
-        className:
-          "h-20 w-20 text-blue-300 transition-transform duration-500 group-hover:scale-110",
-        fill: "currentColor",
-        viewBox: "0 0 24 24",
-      },
-      React.createElement("path", {
-        d: "M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z",
-      })
-    ),
-  // Custom hover renderer for character card
+    React.createElement(Icon, {
+      icon: "lucide:user",
+      className:
+        "h-20 w-20 text-blue-300 transition-transform duration-500 group-hover:scale-110",
+    }),
   customHoverRenderer: (character, t) => {
     return React.createElement(
       React.Fragment,
       null,
-      // Name
       React.createElement(
         "h3",
         { className: "mb-2 line-clamp-2 text-lg font-bold text-white" },
         character.name
       ),
-
-      // Description
       character.description &&
         React.createElement(
           "p",
           { className: "mb-3 line-clamp-2 text-sm leading-relaxed text-gray-200" },
           character.description
         ),
-
-      // Primary Game
       React.createElement(
         "div",
         { className: "mb-3 space-y-1 text-xs" },
@@ -288,21 +233,13 @@ export const characterCardConfig: EntityCardConfig<CharacterSummary> = {
           )
         )
       ),
-
-      // Games count
       React.createElement(
         "div",
         { className: "flex items-center text-xs text-gray-300" },
-        React.createElement(
-          "svg",
-          { className: "mr-1 h-3 w-3", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24" },
-          React.createElement("path", {
-            strokeLinecap: "round",
-            strokeLinejoin: "round",
-            strokeWidth: 2,
-            d: "M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10",
-          })
-        ),
+        React.createElement(Icon, {
+          icon: "lucide:gamepad-2",
+          className: "mr-1 h-3 w-3",
+        }),
         t("games", { count: character.gamesCount })
       )
     );

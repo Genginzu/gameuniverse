@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { Icon } from "@iconify/react";
 
 /**
  * Individual filter option
@@ -57,24 +58,6 @@ const defaultLabels = {
 /**
  * Generic FilterPanel component that supports multiple filter sections
  * with checkbox-based multi-select filters.
- * 
- * @example
- * <FilterPanel
- *   filters={[
- *     {
- *       id: "genres",
- *       label: "Genres",
- *       type: "checkbox",
- *       options: [
- *         { id: "action", label: "Action", count: 42 },
- *         { id: "rpg", label: "RPG", count: 28 },
- *       ],
- *     },
- *   ]}
- *   activeFilters={{ genres: ["action"] }}
- *   onFilterChange={(filterId, values) => setFilters({ ...filters, [filterId]: values })}
- *   onClearAll={() => setFilters({})}
- * />
  */
 export function FilterPanel({
   filters,
@@ -87,7 +70,6 @@ export function FilterPanel({
 }: FilterPanelProps) {
   const labels = { ...defaultLabels, ...customLabels };
   
-  // Track expanded state for collapsible sections
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>(() => {
     const initial: Record<string, boolean> = {};
     filters.forEach((filter) => {
@@ -110,10 +92,8 @@ export function FilterPanel({
       const currentValues = activeFilters[filterId] || [];
       
       if (filterType === "radio") {
-        // Radio: single selection
         onFilterChange(filterId, [optionId]);
       } else {
-        // Checkbox: toggle selection
         const newValues = currentValues.includes(optionId)
           ? currentValues.filter((v) => v !== optionId)
           : [...currentValues, optionId];
@@ -132,7 +112,6 @@ export function FilterPanel({
     [activeFilters, onFilterChange]
   );
 
-  // Calculate total active filter count
   const totalActiveCount = Object.values(activeFilters).reduce(
     (sum, values) => sum + values.length,
     0
@@ -140,35 +119,26 @@ export function FilterPanel({
 
   const hasFilters = totalActiveCount > 0;
 
-  // Get label for an option by looking it up in the filter config
   const getOptionLabel = (filterId: string, optionId: string): string => {
     const filter = filters.find((f) => f.id === filterId);
     const option = filter?.options.find((o) => o.id === optionId);
     return option?.label || optionId;
   };
 
-  // Don't render anything if no filters are active and panel is closed
   if (!hasFilters && !showPanel) {
     return null;
   }
 
   return (
     <div className={`space-y-4 ${className}`}>
-      {/* Clear all button - positioned at the right */}
+      {/* Clear all button */}
       {hasFilters && (
         <div className="flex justify-end">
           <button
             onClick={onClearAll}
             className="inline-flex items-center rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-100 sm:px-4 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30"
           >
-            <svg className="mr-1 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <Icon icon="lucide:x" className="mr-1 h-4 w-4" />
             <span className="hidden sm:inline">{labels.clearAll}</span>
             <span className="sm:hidden">{labels.clear}</span>
           </button>
@@ -198,14 +168,7 @@ export function FilterPanel({
                     onClick={() => handleRemoveFilter(filterId, optionId)}
                     className="rounded-full p-0.5 text-gray-400 transition-colors hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/30"
                   >
-                    <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
+                    <Icon icon="lucide:x" className="h-3 w-3" />
                   </button>
                 </div>
               ))
@@ -232,19 +195,10 @@ export function FilterPanel({
                       className="flex items-center text-base font-semibold text-gray-900 sm:text-lg dark:text-white"
                     >
                       {filter.label}
-                      <svg
+                      <Icon
+                        icon="lucide:chevron-down"
                         className={`ml-2 h-4 w-4 transition-transform ${isExpanded ? "rotate-180" : ""}`}
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 9l-7 7-7-7"
-                        />
-                      </svg>
+                      />
                     </button>
                   ) : (
                     <h3 className="text-base font-semibold text-gray-900 sm:text-lg dark:text-white">
@@ -282,19 +236,7 @@ export function FilterPanel({
                             }`}
                           >
                             {isSelected && (
-                              <svg
-                                className="h-2.5 w-2.5 text-white sm:h-3 sm:w-3"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={3}
-                                  d="M5 13l4 4L19 7"
-                                />
-                              </svg>
+                              <Icon icon="lucide:check" className="h-2.5 w-2.5 text-white sm:h-3 sm:w-3" />
                             )}
                           </div>
                           <div className="ml-2 min-w-0 flex-1 sm:ml-3">

@@ -1,5 +1,6 @@
 "use client";
 
+import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
 
@@ -15,19 +16,6 @@ export interface PaginationProps {
 /**
  * Generic Pagination component that works for all entity types.
  * Supports configurable translation namespace for localized labels.
- *
- * @example
- * // For games (uses default "pagination" namespace)
- * <Pagination currentPage={1} totalPages={10} totalCount={100} onPageChange={setPage} />
- *
- * // For players (uses "players.pagination" namespace)
- * <Pagination
- *   currentPage={1}
- *   totalPages={10}
- *   totalCount={100}
- *   onPageChange={setPage}
- *   translationNamespace="players.pagination"
- * />
  */
 export function Pagination({
   currentPage,
@@ -44,11 +32,10 @@ export function Pagination({
   }
 
   const getVisiblePages = (): (number | string)[] => {
-    const delta = 2; // Number of pages to show on each side of current page
+    const delta = 2;
     const range: number[] = [];
     const rangeWithDots: (number | string)[] = [];
 
-    // Calculate the range of pages to show
     const start = Math.max(1, currentPage - delta);
     const end = Math.min(totalPages, currentPage + delta);
 
@@ -56,7 +43,6 @@ export function Pagination({
       range.push(i);
     }
 
-    // Add first page and dots if needed
     if (start > 1) {
       rangeWithDots.push(1);
       if (start > 2) {
@@ -64,10 +50,8 @@ export function Pagination({
       }
     }
 
-    // Add the main range
     rangeWithDots.push(...range);
 
-    // Add last page and dots if needed
     if (end < totalPages) {
       if (end < totalPages - 1) {
         rangeWithDots.push("...");
@@ -85,14 +69,6 @@ export function Pagination({
       {/* Page info */}
       <div className="flex flex-col items-center space-y-2 text-sm sm:flex-row sm:space-y-0 sm:space-x-2">
         <div className="flex items-center space-x-1 text-gray-600 dark:text-gray-300">
-          <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-1.009-5.824-2.562M15 6.5a3 3 0 11-6 0 3 3 0 016 0z"
-            />
-          </svg>
           <span>{t("page")}</span>
           <span className="font-semibold text-cyan-500 dark:text-cyan-400">{currentPage}</span>
           <span>{t("of")}</span>
@@ -118,14 +94,7 @@ export function Pagination({
           disabled={currentPage === 1 || loading}
           className="hidden rounded-lg border-gray-200 px-2 py-2 text-sm font-medium transition-all hover:border-violet-300 hover:bg-violet-50 hover:text-violet-600 disabled:opacity-50 md:inline-flex md:px-3 dark:border-gray-700 dark:hover:border-violet-500 dark:hover:bg-violet-900/20"
         >
-          <svg className="h-4 w-4 md:mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
-            />
-          </svg>
+          <Icon icon="lucide:chevrons-left" className="h-4 w-4 md:mr-1" />
           <span className="hidden md:inline">{t("first")}</span>
         </Button>
 
@@ -137,31 +106,17 @@ export function Pagination({
           disabled={currentPage === 1 || loading}
           className="min-h-[44px] rounded-lg border-gray-200 px-3 py-2 text-sm font-medium transition-all hover:border-violet-300 hover:bg-violet-50 hover:text-violet-600 disabled:opacity-50 sm:px-4 dark:border-gray-700 dark:hover:border-violet-500 dark:hover:bg-violet-900/20"
         >
-          <svg className="h-4 w-4 sm:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
+          <Icon icon="lucide:chevron-left" className="h-4 w-4 sm:mr-2" />
           <span className="hidden sm:inline">{t("previous")}</span>
         </Button>
 
-        {/* Page numbers - fewer on mobile */}
+        {/* Page numbers */}
         <div className="flex items-center space-x-1">
           {visiblePages.map((page, index) => {
             if (page === "...") {
               return (
                 <span key={`dots-${index}`} className="px-2 py-2 text-gray-400 sm:px-3">
-                  <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 12h.01M12 12h.01M19 12h.01"
-                    />
-                  </svg>
+                  <Icon icon="lucide:more-horizontal" className="h-4 w-4" />
                 </span>
               );
             }
@@ -197,9 +152,7 @@ export function Pagination({
           className="min-h-[44px] rounded-lg border-gray-200 px-3 py-2 text-sm font-medium transition-all hover:border-violet-300 hover:bg-violet-50 hover:text-violet-600 disabled:opacity-50 sm:px-4 dark:border-gray-700 dark:hover:border-violet-500 dark:hover:bg-violet-900/20"
         >
           <span className="hidden sm:inline">{t("next")}</span>
-          <svg className="h-4 w-4 sm:ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
+          <Icon icon="lucide:chevron-right" className="h-4 w-4 sm:ml-2" />
         </Button>
 
         {/* Last page button - hidden on mobile */}
@@ -211,14 +164,7 @@ export function Pagination({
           className="hidden rounded-lg border-gray-200 px-2 py-2 text-sm font-medium transition-all hover:border-violet-300 hover:bg-violet-50 hover:text-violet-600 disabled:opacity-50 md:inline-flex md:px-3 dark:border-gray-700 dark:hover:border-violet-500 dark:hover:bg-violet-900/20"
         >
           <span className="hidden md:inline">{t("last")}</span>
-          <svg className="h-4 w-4 md:ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M13 5l7 7-7 7M5 5l7 7-7 7"
-            />
-          </svg>
+          <Icon icon="lucide:chevrons-right" className="h-4 w-4 md:ml-1" />
         </Button>
       </div>
 
