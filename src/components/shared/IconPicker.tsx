@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useCallback, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { searchIcons } from "@/lib/utils/icon-registry";
-
+import { useIconSearch } from "@/hooks/useIconSearch";
 
 interface IconPickerProps {
   value: string | null;
@@ -17,47 +16,22 @@ interface IconPickerProps {
 
 export function IconPicker({ value, onChange, placeholder, className }: IconPickerProps) {
   const t = useTranslations("iconPicker");
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState<{ name: string }[]>([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>(null);
-
-  /* Debounced search against Iconify API */
-  useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-
-    if (!query.trim()) {
-      setResults([]);
-      setIsLoading(false);
-      return;
-    }
-
-    setIsLoading(true);
-    debounceRef.current = setTimeout(async () => {
-      const hits = await searchIcons(query);
-      setResults(hits);
-      setIsLoading(false);
-    }, 350);
-
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
-  }, [query]);
+  const { query, setQuery, results, isLoading, resetSearch } = useIconSearch();
 
   const handleSelect = useCallback(
     (iconName: string) => {
       onChange(iconName);
       setIsOpen(false);
-      setQuery("");
+      resetSearch();
     },
-    [onChange]
+    [onChange, resetSearch]
   );
 
   const handleClear = useCallback(() => {
     onChange(null);
-    setQuery("");
-  }, [onChange]);
+    resetSearch();
+  }, [onChange, resetSearch]);
 
   return (
     <div className={cn("relative", className)}>
