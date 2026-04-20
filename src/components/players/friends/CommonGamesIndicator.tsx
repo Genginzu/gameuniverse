@@ -31,7 +31,7 @@ export function CommonGamesIndicator({ count, isLoading, onClick }: CommonGamesI
   // Zero common games — informational message, not clickable
   if (count === 0) {
     return (
-      <div className="flex items-center gap-3 rounded-xl border border-slate-700/50 bg-slate-800/50 px-4 py-3 text-slate-400">
+      <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white/60 px-4 py-3 text-gray-500 backdrop-blur-sm dark:border-slate-700/50 dark:bg-slate-800/50 dark:text-slate-400">
         <Icon icon="lucide:gamepad-2" className="h-5 w-5" />
         <span className="text-sm font-medium">{t("noCommonGames")}</span>
       </div>
@@ -43,7 +43,7 @@ export function CommonGamesIndicator({ count, isLoading, onClick }: CommonGamesI
     <button
       type="button"
       onClick={onClick}
-      className="flex items-center gap-3 rounded-xl border border-indigo-500/30 bg-indigo-500/10 px-4 py-3 text-indigo-300 transition-colors hover:border-indigo-500/50 hover:bg-indigo-500/20"
+      className="flex items-center gap-3 rounded-xl border border-violet-500/30 bg-violet-500/10 px-4 py-3 text-violet-700 transition-colors hover:border-violet-500/50 hover:bg-violet-500/20 dark:text-violet-300"
     >
       <Icon icon="lucide:gamepad-2" className="h-5 w-5" />
       <span className="text-sm font-medium">{t("gamesInCommon", { count })}</span>

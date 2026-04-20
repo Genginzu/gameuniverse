@@ -42,7 +42,7 @@ export function CommonGamesList({ games, locale: _locale, pagination, onPageChan
           <Link
             key={game.gameId}
             href={`/games/${game.slug}`}
-            className="group relative overflow-hidden rounded-xl border border-slate-700/50 bg-slate-800/50 transition-all hover:scale-[1.02] hover:border-slate-600 hover:shadow-lg hover:shadow-indigo-500/10"
+            className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white/60 shadow-sm backdrop-blur-sm transition-all hover:scale-[1.02] hover:border-gray-300 hover:shadow-lg dark:border-slate-700/50 dark:bg-slate-800/50 dark:hover:border-slate-600 dark:hover:shadow-violet-500/10"
           >
             {/* Cover image */}
             <div className="relative aspect-3/4">
@@ -56,8 +56,8 @@ export function CommonGamesList({ games, locale: _locale, pagination, onPageChan
                   showSkeleton={true}
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center bg-slate-700">
-                  <Icon icon="lucide:gamepad-2" className="h-12 w-12 text-slate-500" />
+                <div className="flex h-full w-full items-center justify-center bg-gray-200 dark:bg-slate-700">
+                  <Icon icon="lucide:gamepad-2" className="h-12 w-12 text-gray-400 dark:text-slate-500" />
                 </div>
               )}
 
@@ -73,7 +73,7 @@ export function CommonGamesList({ games, locale: _locale, pagination, onPageChan
                       <Badge
                         key={genre}
                         variant="outline"
-                        className="border-slate-500/30 bg-slate-700/50 text-[10px] text-slate-300"
+                        className="border-white/30 bg-black/30 text-[10px] text-white backdrop-blur-sm"
                       >
                         {genre}
                       </Badge>
@@ -99,7 +99,7 @@ export function CommonGamesList({ games, locale: _locale, pagination, onPageChan
             {t("pagination.previous")}
           </button>
 
-          <span className="text-sm text-slate-400">
+          <span className="text-sm text-gray-500 dark:text-slate-400">
             {t("pagination.page")} {currentPage} {t("pagination.of")} {totalPages}
           </span>
 
