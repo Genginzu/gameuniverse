@@ -50,9 +50,14 @@ export {
   countActiveFilters,
   toggleFilterValue,
   type FilterPanelProps,
+  type FilterPanelLabels,
   type FilterConfig,
   type FilterOption,
 } from "./FilterPanel";
+
+// FilterPanel sub-components
+export { ActiveFiltersDisplay } from "./ActiveFiltersDisplay";
+export { FilterOptionsGrid } from "./FilterOptionsGrid";
 
 // ImageUploader - Reusable image upload component with drag & drop, preview, and S3 upload
 export { ImageUploader } from "./ImageUploader";
