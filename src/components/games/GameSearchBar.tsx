@@ -2,24 +2,20 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Input } from "@/components/ui/input";
 import { SearchResultsDropdown } from "./SearchResultsDropdown";
-import { SearchResultItem, HybridSearchResponse } from "@/types/search";
+import { SearchInputField } from "./SearchInputField";
+import type { SearchResultItem } from "@/types/search";
 import { useTranslations } from "next-intl";
+import { useHybridSearch } from "@/hooks/useHybridSearch";
 
 interface GameSearchBarProps {
-  /** Legacy mode: callback when search query changes (disables hybrid search) */
   onSearch?: (query: string) => void;
   placeholder?: string;
   initialValue?: string;
   debounceMs?: number;
   locale?: string;
-  /** Hybrid mode: callback when navigating to a game */
   onNavigateToGame?: (slug: string) => void;
 }
-
-const INITIAL_LIMIT = 5;
-const EXPANDED_LIMIT = 500;
 
 export function GameSearchBar({
   onSearch,
@@ -32,292 +28,116 @@ export function GameSearchBar({
   const t = useTranslations("search");
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState(initialValue);
-
-  // Hybrid search state (only used when onSearch is not provided)
-  const [results, setResults] = useState<SearchResultItem[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const [hasMore, setHasMore] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
   const [importingId, setImportingId] = useState<string | null>(null);
-  const [isExpanded, setIsExpanded] = useState(false);
-
   const containerRef = useRef<HTMLDivElement>(null);
-  const abortControllerRef = useRef<AbortController | null>(null);
 
-  // Determine if we're in hybrid mode (no onSearch callback)
   const isHybridMode = !onSearch;
+
+  const hybrid = useHybridSearch({
+    query: searchQuery,
+    locale,
+    debounceMs,
+    enabled: isHybridMode,
+  });
 
   // Legacy mode: debounced search callback
   useEffect(() => {
     if (!onSearch) return;
-
-    const timer = setTimeout(() => {
-      onSearch(searchQuery);
-    }, debounceMs);
-
+    const timer = setTimeout(() => onSearch(searchQuery), debounceMs);
     return () => clearTimeout(timer);
   }, [searchQuery, onSearch, debounceMs]);
 
-  // Hybrid mode: fetch search results with debounce
+  // Click outside to close
   useEffect(() => {
     if (!isHybridMode) return;
-
-    // Cancel previous request
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort();
-    }
-
-    // Don't search if query is too short
-    if (searchQuery.length < 2) {
-      setResults([]);
-      setIsOpen(false);
-      setIsLoading(false);
-      setIsExpanded(false);
-      return;
-    }
-
-    setIsLoading(true);
-    setIsOpen(true);
-    setIsExpanded(false);
-
-    const timer = setTimeout(async () => {
-      const controller = new AbortController();
-      abortControllerRef.current = controller;
-
-      try {
-        const params = new URLSearchParams({
-          query: searchQuery,
-          locale,
-          localLimit: String(INITIAL_LIMIT),
-          igdbLimit: String(INITIAL_LIMIT),
-        });
-
-        const response = await fetch(`/api/search/hybrid?${params}`, {
-          signal: controller.signal,
-        });
-
-        if (!response.ok) {
-          throw new Error("Search failed");
-        }
-
-        const data: HybridSearchResponse = await response.json();
-
-        if (!controller.signal.aborted) {
-          setResults(data.results);
-          setHasMore(data.hasMore);
-          setIsLoading(false);
-        }
-      } catch (error) {
-        if (error instanceof Error && error.name !== "AbortError") {
-          setResults([]);
-          setIsLoading(false);
-        }
-      }
-    }, debounceMs);
-
-    return () => {
-      clearTimeout(timer);
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-    };
-  }, [searchQuery, locale, debounceMs, isHybridMode]);
-
-  // Handle click outside to close dropdown (hybrid mode only)
-  useEffect(() => {
-    if (!isHybridMode) return;
-
     const handleClickOutside = (event: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
+        hybrid.close();
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isHybridMode]);
+  }, [isHybridMode, hybrid]);
 
-  // Handle escape key to close dropdown (hybrid mode only)
+  // Escape key to close
   useEffect(() => {
     if (!isHybridMode) return;
-
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setIsOpen(false);
-      }
+      if (event.key === "Escape") hybrid.close();
     };
-
     document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
-  }, [isHybridMode]);
+  }, [isHybridMode, hybrid]);
 
   const handleClear = () => {
     setSearchQuery("");
-    if (isHybridMode) {
-      setResults([]);
-      setIsOpen(false);
-      setIsExpanded(false);
-    }
+    if (isHybridMode) hybrid.clearResults();
   };
 
   const handleSelectGame = useCallback(
     async (item: SearchResultItem) => {
       if (item.source === "local") {
-        // Navigate to local game page
-        // The useBackgroundSync hook on the game page will handle sync + refresh
-        setIsOpen(false);
+        hybrid.close();
         setSearchQuery("");
-
-        if (onNavigateToGame) {
-          onNavigateToGame(item.slug);
-        } else {
-          router.push(`/${locale}/games/${item.slug}`);
-        }
+        if (onNavigateToGame) onNavigateToGame(item.slug);
+        else router.push(`/${locale}/games/${item.slug}`);
       } else {
-        // Import IGDB game
         if (!item.igdbId) return;
-
         setImportingId(item.id);
-
         try {
           const response = await fetch("/api/games/import", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ igdbId: item.igdbId }),
           });
-
           const data = await response.json();
-
           if (!response.ok) {
-            // Show user-friendly error
             alert(data.error || `Import failed with status ${response.status}`);
             throw new Error(data.error || `Import failed with status ${response.status}`);
           }
-
-          setIsOpen(false);
+          hybrid.close();
           setSearchQuery("");
           setImportingId(null);
-
-          // Navigate to the newly created game
           if (data.game?.slug) {
-            if (onNavigateToGame) {
-              onNavigateToGame(data.game.slug);
-            } else {
-              router.push(`/${locale}/games/${data.game.slug}`);
-            }
+            if (onNavigateToGame) onNavigateToGame(data.game.slug);
+            else router.push(`/${locale}/games/${data.game.slug}`);
           }
         } catch {
           setImportingId(null);
         }
       }
     },
-    [locale, router, onNavigateToGame]
+    [locale, router, onNavigateToGame, hybrid]
   );
 
-  const handleSeeAll = useCallback(async () => {
-    // Load more results instead of navigating
-    if (isExpanded || isLoadingMore) return;
-
-    setIsLoadingMore(true);
-
-    try {
-      const params = new URLSearchParams({
-        query: searchQuery,
-        locale,
-        localLimit: String(EXPANDED_LIMIT),
-        igdbLimit: String(EXPANDED_LIMIT),
-      });
-
-      const response = await fetch(`/api/search/hybrid?${params}`);
-
-      if (!response.ok) {
-        throw new Error("Search failed");
-      }
-
-      const data: HybridSearchResponse = await response.json();
-      setResults(data.results);
-      setHasMore(data.hasMore);
-      setIsExpanded(true);
-    } catch {
-      // Search expansion failed silently
-    } finally {
-      setIsLoadingMore(false);
-    }
-  }, [searchQuery, locale, isExpanded, isLoadingMore]);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = () => {
     if (onSearch) {
       onSearch(searchQuery);
     } else if (searchQuery.length >= 2) {
-      // Navigate to games page on form submit
-      setIsOpen(false);
+      hybrid.close();
       router.push(`/${locale}/games?search=${encodeURIComponent(searchQuery)}`);
     }
   };
 
   return (
     <div ref={containerRef} className="relative">
-      <form onSubmit={handleSubmit} className="relative">
-        <div className="group relative">
-          {/* Search icon */}
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-            <svg
-              className="h-5 w-5 text-blue-500 transition-colors group-focus-within:text-blue-600"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </div>
+      <SearchInputField
+        value={searchQuery}
+        onChange={setSearchQuery}
+        onFocus={() => isHybridMode && hybrid.open()}
+        onSubmit={handleSubmit}
+        onClear={handleClear}
+        placeholder={placeholder || t("placeholder")}
+      />
 
-          <Input
-            type="text"
-            placeholder={placeholder || t("placeholder")}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onFocus={() => isHybridMode && searchQuery.length >= 2 && setIsOpen(true)}
-            className="h-10 w-full rounded-xl border-2 border-blue-200 bg-blue-50/50 pr-10 pl-11 text-sm text-gray-900 placeholder-gray-500 shadow-xs transition-all duration-300 hover:border-blue-300 hover:bg-white hover:shadow-md focus:border-blue-500 focus:bg-white focus:shadow-lg focus:ring-2 focus:ring-blue-500/20 sm:h-12 sm:pr-12 sm:pl-12 sm:text-base dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400 dark:hover:border-gray-500 dark:hover:bg-gray-700 dark:focus:border-blue-500 dark:focus:bg-gray-700"
-          />
-
-          {/* Clear button */}
-          {searchQuery && (
-            <button
-              type="button"
-              onClick={handleClear}
-              className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400 transition-all duration-200 hover:scale-110 hover:text-red-500"
-            >
-              <div className="rounded-full bg-gray-100 p-1 transition-colors hover:bg-red-100 dark:bg-gray-700 dark:hover:bg-red-900/30">
-                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </div>
-            </button>
-          )}
-        </div>
-      </form>
-
-      {/* Hybrid mode: search results dropdown */}
-      {isHybridMode && isOpen && searchQuery.length >= 2 && (
+      {isHybridMode && hybrid.isOpen && searchQuery.length >= 2 && (
         <SearchResultsDropdown
-          results={results}
-          isLoading={isLoading}
-          isLoadingMore={isLoadingMore}
-          hasMore={hasMore && !isExpanded}
+          results={hybrid.results}
+          isLoading={hybrid.isLoading}
+          isLoadingMore={hybrid.isLoadingMore}
+          hasMore={hybrid.hasMore}
           onSelectGame={handleSelectGame}
-          onSeeAll={handleSeeAll}
+          onSeeAll={hybrid.loadMore}
           importingId={importingId}
         />
       )}
