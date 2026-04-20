@@ -146,20 +146,12 @@ export function PersonalGoals({
           </div>
         )}
 
-        {showForm ? (
+        {showForm && (
           <PersonalGoalForm
             playerId={playerId}
             onCreated={handleCreated}
             onCancel={handleCancel}
           />
-        ) : (
-          <button
-            onClick={() => setShowForm(true)}
-            className="hover:border-neon-violet hover:text-neon-violet dark:hover:border-neon-cyan dark:hover:text-neon-cyan mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-white/30 px-4 py-3 text-sm font-medium text-gray-600 transition-all duration-300 dark:border-slate-600 dark:text-slate-400"
-          >
-            <Icon icon="lucide:plus" className="h-4 w-4" />
-            {t("goals.addGoal")}
-          </button>
         )}
       </div>
     </section>
