@@ -9,6 +9,12 @@ import { PersonalGoals } from "../stats/PersonalGoals";
 import { usePlayerSessions } from "@/hooks/usePlayerSessions";
 import type { DashboardStatsResponse } from "@/types/dashboard-stats";
 import type { CreateGamingSessionPayload } from "@/types/gaming-session";
+import dynamic from "next/dynamic";
+
+const SessionStats = dynamic(
+  () => import("../stats/SessionStats").then((m) => m.SessionStats),
+  { ssr: false }
+);
 
 interface GoalsTabProps {
   playerId: string;
@@ -93,6 +99,9 @@ export function GoalsTab({ playerId, locale }: GoalsTabProps) {
         showFormExternal={showGoalForm}
         onFormClosed={() => setShowGoalForm(false)}
       />
+
+      {/* Session stats */}
+      {data?.sessions && <SessionStats sessions={data.sessions} />}
     </section>
   );
 }
