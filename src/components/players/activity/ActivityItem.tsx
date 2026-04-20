@@ -10,6 +10,7 @@ import { ActivityItemPlaytime } from "./ActivityItemPlaytime";
 import { ActivityItemFavorite } from "./ActivityItemFavorite";
 import { ActivityItemCollection } from "./ActivityItemCollection";
 import { ActivityItemFriendship } from "./ActivityItemFriendship";
+import { ActivityItemSession } from "./ActivityItemSession";
 
 /** Maps each ActivityEventType to an Iconify icon name — exported for property-based testing */
 export function getActivityIcon(type: ActivityEventType): string {
@@ -21,6 +22,7 @@ export function getActivityIcon(type: ActivityEventType): string {
     favorite: "lucide:heart",
     collection: "lucide:folder-open",
     friendship: "lucide:users",
+    session: "lucide:gamepad-2",
   };
   return iconMap[type];
 }
@@ -70,6 +72,8 @@ function ActivityItemContent({ event, locale }: { event: ActivityEvent; locale: 
       return <ActivityItemCollection data={event.data} locale={locale} />;
     case "friendship":
       return <ActivityItemFriendship data={event.data} locale={locale} />;
+    case "session":
+      return <ActivityItemSession data={event.data} locale={locale} />;
     default:
       return null;
   }

@@ -13,6 +13,7 @@ const FILTER_OPTIONS: { value: ActivityFilter; icon: string }[] = [
   { value: "favorite", icon: "lucide:heart" },
   { value: "collection", icon: "lucide:folder-open" },
   { value: "friendship", icon: "lucide:users" },
+  { value: "session", icon: "lucide:gamepad-2" },
 ];
 
 interface ActivityFiltersProps {

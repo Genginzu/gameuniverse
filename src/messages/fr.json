@@ -713,6 +713,10 @@
         "request_accepted": "Est devenu ami avec <player>{player}</player>",
         "friend_removed": "A retiré <player>{player}</player> de ses amis"
       },
+      "sessionDescription": "A joué à <game>{game}</game> pendant <duration>{duration}</duration>",
+      "durationHm": "{h}h{m}min",
+      "durationH": "{h}h",
+      "durationM": "{m}min",
       "playtimeHastily": "Histoire",
       "playtimeNormally": "Normal",
       "playtimeCompletely": "Complétionniste",
@@ -729,7 +733,8 @@
         "playtime": "Temps de jeu",
         "favorite": "Favori",
         "collection": "Collection",
-        "friendship": "Amitié"
+        "friendship": "Amitié",
+        "session": "Session de jeu"
       },
       "filters": {
         "label": "Filtrer par type d'activité",
@@ -740,8 +745,22 @@
         "playtime": "Temps de jeu",
         "favorite": "Favoris",
         "collection": "Collections",
-        "friendship": "Amis"
+        "friendship": "Amis",
+        "session": "Sessions"
       }
+    },
+    "sessions": {
+      "newSession": "Nouvelle session",
+      "gameLabel": "Jeu",
+      "gamePlaceholder": "Rechercher un jeu…",
+      "clearGame": "Changer de jeu",
+      "dateLabel": "Date",
+      "hoursLabel": "Heures",
+      "minutesLabel": "Minutes",
+      "submit": "Enregistrer la session",
+      "successCreate": "Session enregistrée",
+      "errorCreate": "Impossible d'enregistrer la session",
+      "noResults": "Aucun jeu trouvé"
     },
     "reviews": {
       "card": {

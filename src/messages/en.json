@@ -713,6 +713,10 @@
         "request_accepted": "Became friends with <player>{player}</player>",
         "friend_removed": "Removed <player>{player}</player> from friends"
       },
+      "sessionDescription": "Played <game>{game}</game> for <duration>{duration}</duration>",
+      "durationHm": "{h}h {m}min",
+      "durationH": "{h}h",
+      "durationM": "{m}min",
       "playtimeHastily": "Main Story",
       "playtimeNormally": "Normal",
       "playtimeCompletely": "Completionist",
@@ -729,7 +733,8 @@
         "playtime": "Playtime",
         "favorite": "Favorite",
         "collection": "Collection",
-        "friendship": "Friendship"
+        "friendship": "Friendship",
+        "session": "Gaming session"
       },
       "filters": {
         "label": "Filter by activity type",
@@ -740,8 +745,22 @@
         "playtime": "Playtime",
         "favorite": "Favorites",
         "collection": "Collections",
-        "friendship": "Friends"
+        "friendship": "Friends",
+        "session": "Sessions"
       }
+    },
+    "sessions": {
+      "newSession": "New session",
+      "gameLabel": "Game",
+      "gamePlaceholder": "Search for a game…",
+      "clearGame": "Change game",
+      "dateLabel": "Date",
+      "hoursLabel": "Hours",
+      "minutesLabel": "Minutes",
+      "submit": "Log session",
+      "successCreate": "Session logged",
+      "errorCreate": "Failed to log the session",
+      "noResults": "No games found"
     },
     "reviews": {
       "card": {
