@@ -2,8 +2,10 @@
 
 import { useState, useCallback } from "react";
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 import { EntityCard } from "@/components/shared/EntityCard";
 import { gameCardConfig } from "@/components/shared/entityCardPresets";
+import { EmptyState } from "@/components/shared/EmptyState";
 import { FilterButton } from "@/components/shared/FilterButton";
 import { GameSortMenu } from "./GameSortMenu";
 import { SearchSkeleton } from "./SearchSkeleton";
@@ -16,13 +18,13 @@ const GameFilters = dynamic(() => import("./GameFilters").then((m) => m.GameFilt
 const Pagination = dynamic(() =>
   import("@/components/shared/Pagination").then((m) => m.Pagination)
 );
-const GamesEmptyState = dynamic(() => import("./GamesEmptyState").then((m) => m.GamesEmptyState));
 
 interface AllGamesContentProps {
   locale?: string;
 }
 
 export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
+  const t = useTranslations("games");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [selectedPublishers, setSelectedPublishers] = useState<string[]>([]);
@@ -118,7 +120,12 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
           className={`transition-opacity duration-300 ${transitioning ? "opacity-50" : "opacity-100"}`}
         >
           {games.length === 0 && !validating ? (
-            <GamesEmptyState hasFilters={hasFilters} onClearFilters={handleClearFilters} />
+            <EmptyState
+              icon="lucide:gamepad-2"
+              title={t("noGamesFound")}
+              description={hasFilters ? t("modifySearch") : t("noGamesAvailable")}
+              action={hasFilters ? { label: t("clearFilters"), onClick: handleClearFilters } : undefined}
+            />
           ) : (
             <div className="space-y-8">
               <LibraryStatusProvider gameIds={games.map((g) => g.id)}>
