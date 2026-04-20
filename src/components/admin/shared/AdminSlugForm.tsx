@@ -23,8 +23,8 @@ import {
 
 interface AdminSlugFormProps {
   mode: "create" | "edit";
-  form: UseFormReturn<any>;
-  onSubmit: (data: any) => Promise<void>;
+  form: UseFormReturn<Record<string, unknown>>;
+  onSubmit: (data: Record<string, unknown>) => Promise<void>;
   isSubmitting: boolean;
   supportedLanguages: SupportedLanguage[];
   translationNamespace: string;

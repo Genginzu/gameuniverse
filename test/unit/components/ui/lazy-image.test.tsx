@@ -100,7 +100,7 @@ describe("LazyImage integration tests", () => {
       const html = renderToString(<LazyImage src="" alt="Test image" fallbackSrc="" />);
 
       expect(html).toContain("svg");
-      expect(html).toContain("bg-gray-100");
+      expect(html).toContain("bg-background");
     });
 
     it("should render image when loaded", () => {

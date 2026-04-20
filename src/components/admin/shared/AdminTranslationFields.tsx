@@ -16,7 +16,7 @@ export interface TranslationFieldConfig {
 }
 
 interface AdminTranslationFieldsProps {
-  form: UseFormReturn<any>;
+  form: UseFormReturn<Record<string, unknown>>;
   supportedLanguages: SupportedLanguage[];
   translationNamespace: string;
   fields: TranslationFieldConfig[];

@@ -50,7 +50,7 @@ export function AdminDeleteDialog({
   forceWarningKey,
 }: AdminDeleteDialogProps) {
   const t = useTranslations(translationNamespace);
-  const hasUsage = usageCount != null && usageCount > 0;
+  const hasUsage = usageCount !== null && usageCount !== undefined && usageCount > 0;
   const showDeleteButton = !blockOnUsage || !hasUsage;
   const buttonKey = hasUsage && forceConfirmKey ? forceConfirmKey : confirmKey;
 
