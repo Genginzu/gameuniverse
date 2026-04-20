@@ -2722,7 +2722,16 @@
       "averageDuration": "Durée moyenne",
       "longestSession": "Plus longue session",
       "minutes": "min",
-      "sessionsCount": "sessions"
+      "sessionsCount": "sessions",
+      "days": {
+        "monday": "Lun",
+        "tuesday": "Mar",
+        "wednesday": "Mer",
+        "thursday": "Jeu",
+        "friday": "Ven",
+        "saturday": "Sam",
+        "sunday": "Dim"
+      }
     },
     "goals": {
       "title": "Objectifs personnels",

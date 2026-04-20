@@ -2719,7 +2719,16 @@
       "averageDuration": "Average Duration",
       "longestSession": "Longest Session",
       "minutes": "min",
-      "sessionsCount": "sessions"
+      "sessionsCount": "sessions",
+      "days": {
+        "monday": "Mon",
+        "tuesday": "Tue",
+        "wednesday": "Wed",
+        "thursday": "Thu",
+        "friday": "Fri",
+        "saturday": "Sat",
+        "sunday": "Sun"
+      }
     },
     "goals": {
       "title": "Personal Goals",
