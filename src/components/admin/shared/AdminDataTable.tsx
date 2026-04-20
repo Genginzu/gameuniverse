@@ -1,37 +1,50 @@
 "use client";
 
-import { useTranslations, useLocale } from "next-intl";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AdminTableSkeleton } from "@/components/admin/shared/AdminTableSkeleton";
-import type { AdminRole } from "@/types/admin-roles";
-import type { PaginationInfo } from "@/types/pagination";
 import { Icon } from "@iconify/react";
+import type { PaginationInfo } from "@/types/pagination";
 
-export interface AdminRolesTableProps {
-  roles: AdminRole[];
+export interface AdminColumnDef<T> {
+  key: string;
+  labelKey: string;
+  sortable?: boolean;
+  /** Custom render function. Falls back to item[key] */
+  render?: (item: T) => React.ReactNode;
+  /** Additional className for the td */
+  className?: string;
+}
+
+interface AdminDataTableProps<T> {
+  items: T[];
+  columns: AdminColumnDef<T>[];
   pagination: PaginationInfo;
   onPageChange: (page: number) => void;
   onSearch: (query: string) => void;
   onSort: (field: string, order: "asc" | "desc") => void;
-  onEdit: (slug: string) => void;
-  onDelete: (role: AdminRole) => void;
+  onEdit: (item: T) => void;
+  onDelete: (item: T) => void;
   isLoading: boolean;
   currentSort: { field: string; order: "asc" | "desc" };
-  currentSearch: string;
+  currentSearch?: string;
+  /** i18n namespace for search/pagination/empty labels */
+  translationNamespace: string;
+  /** Key for the item's unique identifier */
+  idField?: keyof T;
+  /** Number of skeleton columns (defaults to columns.length + 1 for actions) */
+  skeletonColumns?: number;
+  /** i18n key for total count (default: "totalCount") */
+  totalCountKey?: string;
+  /** i18n key for empty state (default: "empty") */
+  emptyKey?: string;
 }
 
-type SortField = "slug" | "name";
-
-function getRoleName(role: AdminRole, locale: string): string {
-  const translation = role.translations.find((t) => t.language_code === locale);
-  if (translation?.name) return translation.name;
-  return role.translations[0]?.name ?? role.slug;
-}
-
-export function AdminRolesTable({
-  roles,
+export function AdminDataTable<T>({
+  items,
+  columns,
   pagination,
   onPageChange,
   onSearch,
@@ -41,9 +54,13 @@ export function AdminRolesTable({
   isLoading,
   currentSort,
   currentSearch = "",
-}: AdminRolesTableProps) {
-  const t = useTranslations("admin.characterRoles");
-  const locale = useLocale();
+  translationNamespace,
+  idField = "id" as keyof T,
+  skeletonColumns,
+  totalCountKey = "totalCount",
+  emptyKey = "empty",
+}: AdminDataTableProps<T>) {
+  const t = useTranslations(translationNamespace);
   const [searchInput, setSearchInput] = useState(currentSearch);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -51,13 +68,15 @@ export function AdminRolesTable({
     onSearch(searchInput);
   };
 
-  const handleSortClick = (field: SortField) => {
-    const newOrder = currentSort?.field === field && currentSort.order === "asc" ? "desc" : "asc";
+  const handleSortClick = (field: string) => {
+    const newOrder =
+      currentSort?.field === field && currentSort.order === "asc" ? "desc" : "asc";
     onSort(field, newOrder);
   };
 
-  const renderSortIcon = (field: SortField) => {
-    if (currentSort?.field !== field) return <Icon icon="fa:sort" className="h-3 w-3 opacity-40" />;
+  const renderSortIcon = (field: string) => {
+    if (currentSort?.field !== field)
+      return <Icon icon="fa:sort" className="h-3 w-3 opacity-40" />;
     return currentSort.order === "asc" ? (
       <Icon icon="fa:sort-up" className="h-3 w-3" />
     ) : (
@@ -65,8 +84,11 @@ export function AdminRolesTable({
     );
   };
 
+  const colCount = skeletonColumns ?? columns.length + 1;
+
   return (
     <div className="space-y-4">
+      {/* Search bar */}
       <form onSubmit={handleSearchSubmit} className="flex flex-col gap-2 sm:flex-row">
         <div className="relative flex-1">
           <Icon
@@ -87,15 +109,15 @@ export function AdminRolesTable({
         </Button>
       </form>
 
-      <p className="text-sm text-gray-500 dark:text-gray-400">
-        {t("totalRoles", { count: pagination.totalCount })}
-      </p>
+      {/* Total count */}
+      <p className="text-sm text-gray-500 dark:text-gray-400">{t(totalCountKey, { count: pagination.totalCount })}</p>
 
+      {/* Loading / Empty / Table */}
       {isLoading ? (
-        <AdminTableSkeleton columns={3} rows={8} />
-      ) : roles.length === 0 ? (
+        <AdminTableSkeleton columns={colCount} rows={8} />
+      ) : items.length === 0 ? (
         <div className="rounded-xl border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800">
-          <p className="text-gray-500 dark:text-gray-400">{t("noRoles")}</p>
+          <p className="text-gray-500 dark:text-gray-400">{t(emptyKey)}</p>
         </div>
       ) : (
         <>
@@ -103,73 +125,57 @@ export function AdminRolesTable({
             <table className="w-full text-left text-sm" role="table">
               <thead className="border-b border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800">
                 <tr>
-                  <th scope="col" className="px-4 py-3">
-                    <button
-                      type="button"
-                      className="inline-flex items-center gap-1 font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
-                      onClick={() => handleSortClick("slug")}
-                      aria-label={t("sortBy", { field: t("columns.slug") })}
-                    >
-                      {t("columns.slug")}
-                      {renderSortIcon("slug")}
-                    </button>
-                  </th>
-                  <th scope="col" className="px-4 py-3">
-                    <button
-                      type="button"
-                      className="inline-flex items-center gap-1 font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
-                      onClick={() => handleSortClick("name")}
-                      aria-label={t("sortBy", { field: t("columns.name") })}
-                    >
-                      {t("columns.name")}
-                      {renderSortIcon("name")}
-                    </button>
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300"
-                  >
-                    {t("columns.characterCount")}
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300"
-                  >
+                  {columns.map((col) => (
+                    <th key={col.key} scope="col" className="px-4 py-3">
+                      {col.sortable ? (
+                        <button
+                          type="button"
+                          className="inline-flex items-center gap-1 font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                          onClick={() => handleSortClick(col.key)}
+                          aria-label={t("sortBy", { field: t(col.labelKey) })}
+                        >
+                          {t(col.labelKey)}
+                          {renderSortIcon(col.key)}
+                        </button>
+                      ) : (
+                        <span className="font-medium text-gray-600 dark:text-gray-300">
+                          {t(col.labelKey)}
+                        </span>
+                      )}
+                    </th>
+                  ))}
+                  <th scope="col" className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">
                     {t("columns.actions")}
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
-                {roles.map((role) => (
+                {items.map((item) => (
                   <tr
-                    key={role.id}
+                    key={String(item[idField])}
                     className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50"
-                    onClick={() => onEdit(role.slug)}
+                    onClick={() => onEdit(item)}
                   >
-                    <td className="px-4 py-3 font-mono text-sm text-gray-900 dark:text-white">
-                      {role.slug}
-                    </td>
-                    <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">
-                      {getRoleName(role, locale)}
-                    </td>
-                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400">
-                      {t("characterCount", { count: role.characterCount })}
-                    </td>
+                    {columns.map((col) => (
+                      <td key={col.key} className={col.className ?? "px-4 py-3 text-gray-900 dark:text-white"}>
+                        {col.render ? col.render(item) : String((item as Record<string, unknown>)[col.key] ?? "")}
+                      </td>
+                    ))}
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => onEdit(role.slug)}
-                          aria-label={t("editRole", { name: getRoleName(role, locale) })}
+                          onClick={() => onEdit(item)}
+                          aria-label={t("edit")}
                         >
                           <Icon icon="fa:edit" className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => onDelete(role)}
-                          aria-label={t("deleteRole", { name: getRoleName(role, locale) })}
+                          onClick={() => onDelete(item)}
+                          aria-label={t("delete")}
                           className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                         >
                           <Icon icon="fa:trash" className="h-4 w-4" />
@@ -182,6 +188,7 @@ export function AdminRolesTable({
             </table>
           </div>
 
+          {/* Pagination */}
           {pagination.totalPages > 1 && (
             <div className="flex items-center justify-between">
               <p className="text-sm text-gray-500 dark:text-gray-400">

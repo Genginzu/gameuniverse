@@ -8,8 +8,8 @@ import { useAdminGames } from "@/hooks/useAdminGames";
 import dynamic from "next/dynamic";
 import type { AdminGame } from "@/types/admin-games";
 import { AdminGamesTable } from "@/components/admin/games/AdminGamesTable";
-const DeleteGameDialog = dynamic(
-  () => import("@/components/admin/games/DeleteGameDialog").then((m) => m.DeleteGameDialog),
+const AdminDeleteDialog = dynamic(
+  () => import("@/components/admin/shared/AdminDeleteDialog").then((m) => m.AdminDeleteDialog),
   { ssr: false }
 );
 import { Button } from "@/components/ui/button";
@@ -124,9 +124,10 @@ export default function AdminGamesPage() {
         currentSearch={currentSearch}
       />
 
-      <DeleteGameDialog
-        game={gameToDelete}
+      <AdminDeleteDialog
         isOpen={gameToDelete !== null}
+          translationNamespace="admin.games.deleteDialog"
+          warningParams={{ title: gameToDelete?.title ?? "" }}
         onClose={handleDeleteClose}
         onConfirm={handleDeleteConfirm}
         isDeleting={isDeleting}

@@ -6,10 +6,9 @@ import { useRouter } from "@/i18n/navigation";
 import dynamic from "next/dynamic";
 import { useAdminRatingSystems } from "@/hooks/useAdminRatingSystems";
 import { RatingSystemsTable } from "@/components/admin/age-classifications/RatingSystemsTable";
-const DeleteRatingSystemDialog = dynamic(
+const AdminDeleteDialog = dynamic(
   () =>
-    import("@/components/admin/age-classifications/DeleteRatingSystemDialog").then(
-      (m) => m.DeleteRatingSystemDialog
+    import("@/components/admin/shared/AdminDeleteDialog").then((m) => m.AdminDeleteDialog
     ),
   { ssr: false }
 );
@@ -146,9 +145,13 @@ export default function AdminAgeClassificationsPage() {
           currentSearch={currentSearch}
         />
 
-        <DeleteRatingSystemDialog
-          system={systemToDelete}
+        <AdminDeleteDialog
           isOpen={systemToDelete !== null}
+          translationNamespace="admin.ageClassifications.deleteSystem"
+          warningParams={{ name: systemToDelete?.name ?? "" }}
+          warningKey="confirm"
+          confirmKey="delete"
+          blockOnUsage
           onClose={handleDeleteClose}
           onConfirm={handleDeleteConfirm}
           isDeleting={isDeleting}

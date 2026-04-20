@@ -1,11 +1,11 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { PlayerCard } from "./PlayerCard";
 import { PlayerSearchBar } from "./PlayerSearchBar";
 import { PlayerFilters } from "./PlayerFilters";
-import { PlayerFilterButton } from "./PlayerFilterButton";
+import { FilterButton } from "@/components/shared/FilterButton";
 import { Pagination } from "@/components/shared/Pagination";
 import { GridSkeleton } from "@/components/shared/GridSkeleton";
 import { playerSkeletonConfig } from "@/components/shared/EntitySkeleton";
@@ -186,11 +186,10 @@ export function AllPlayersContent({ locale = "fr" }: AllPlayersContentProps) {
               <PlayerSearchBar onSearch={handleSearch} initialValue={searchQuery} />
             </div>
             <div className="shrink-0">
-              <PlayerFilterButton
+              <FilterButton
                 hasFilters={selectedGameCounts.length > 0}
                 filterCount={selectedGameCounts.length}
                 onClick={() => setShowFilters(!showFilters)}
-                locale={locale}
               />
             </div>
           </div>
@@ -201,7 +200,6 @@ export function AllPlayersContent({ locale = "fr" }: AllPlayersContentProps) {
             onGameCountChange={handleGameCountFilter}
             onClearFilters={handleClearFilters}
             showAllFilters={showFilters}
-            locale={locale}
           />
         </div>
 
@@ -256,7 +254,6 @@ export function AllPlayersContent({ locale = "fr" }: AllPlayersContentProps) {
                     <PlayerCard
                       key={player.id}
                       player={player}
-                      locale={locale}
                       priority={index < 4}
                     />
                   ))}

@@ -6,10 +6,9 @@ import { useTranslations } from "next-intl";
 import { useAdminLanguages } from "@/hooks/useAdminLanguages";
 import dynamic from "next/dynamic";
 import type { SupportedLanguage } from "@/types/admin-languages";
-import { AdminLanguagesTable } from "@/components/admin/languages/AdminLanguagesTable";
-const DeleteLanguageDialog = dynamic(
-  () =>
-    import("@/components/admin/languages/DeleteLanguageDialog").then((m) => m.DeleteLanguageDialog),
+import { AdminDataTable, type AdminColumnDef } from "@/components/admin/shared/AdminDataTable";
+const AdminDeleteDialog = dynamic(
+  () => import("@/components/admin/shared/AdminDeleteDialog").then((m) => m.AdminDeleteDialog),
   { ssr: false }
 );
 import {
@@ -20,22 +19,9 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { Icon } from "@iconify/react";
 
-// Site locales data derived from src/i18n/routing.ts and src/messages/*.json
 const SITE_LOCALES: SiteLocale[] = [
-  {
-    code: "fr",
-    name: "French",
-    nativeName: "Français",
-    isDefault: true,
-    translationKeyCount: 670,
-  },
-  {
-    code: "en",
-    name: "English",
-    nativeName: "English",
-    isDefault: false,
-    translationKeyCount: 670,
-  },
+  { code: "fr", name: "French", nativeName: "Français", isDefault: true, translationKeyCount: 670 },
+  { code: "en", name: "English", nativeName: "English", isDefault: false, translationKeyCount: 670 },
 ];
 
 export default function AdminLanguagesPage() {
@@ -45,11 +31,10 @@ export default function AdminLanguagesPage() {
     useAdminLanguages();
 
   const [currentSearch, setCurrentSearch] = useState("");
-  const [currentSort, setCurrentSort] = useState<{
-    field: string;
-    order: "asc" | "desc";
-  }>({ field: "code", order: "asc" });
-
+  const [currentSort, setCurrentSort] = useState<{ field: string; order: "asc" | "desc" }>({
+    field: "code",
+    order: "asc",
+  });
   const [languageToDelete, setLanguageToDelete] = useState<SupportedLanguage | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [usageCount, setUsageCount] = useState<number | undefined>(undefined);
@@ -57,12 +42,7 @@ export default function AdminLanguagesPage() {
   const handleSearch = useCallback(
     (query: string) => {
       setCurrentSearch(query);
-      fetchLanguages({
-        search: query,
-        sortBy: currentSort.field,
-        sortOrder: currentSort.order,
-        page: 1,
-      });
+      fetchLanguages({ search: query, sortBy: currentSort.field, sortOrder: currentSort.order, page: 1 });
     },
     [fetchLanguages, currentSort]
   );
@@ -70,31 +50,21 @@ export default function AdminLanguagesPage() {
   const handleSort = useCallback(
     (field: string, order: "asc" | "desc") => {
       setCurrentSort({ field, order });
-      fetchLanguages({
-        search: currentSearch,
-        sortBy: field,
-        sortOrder: order,
-        page: 1,
-      });
+      fetchLanguages({ search: currentSearch, sortBy: field, sortOrder: order, page: 1 });
     },
     [fetchLanguages, currentSearch]
   );
 
   const handlePageChange = useCallback(
     (page: number) => {
-      fetchLanguages({
-        search: currentSearch,
-        sortBy: currentSort.field,
-        sortOrder: currentSort.order,
-        page,
-      });
+      fetchLanguages({ search: currentSearch, sortBy: currentSort.field, sortOrder: currentSort.order, page });
     },
     [fetchLanguages, currentSearch, currentSort]
   );
 
   const handleEdit = useCallback(
-    (code: string) => {
-      router.push(`/admin/languages/${code}/edit`);
+    (language: SupportedLanguage) => {
+      router.push(`/admin/languages/${language.code}/edit`);
     },
     [router]
   );
@@ -107,7 +77,6 @@ export default function AdminLanguagesPage() {
         const count = await checkLanguageUsage(language.code);
         setUsageCount(count);
       } catch {
-        // If usage check fails, still show the dialog without usage info
         setUsageCount(undefined);
       }
     },
@@ -118,7 +87,6 @@ export default function AdminLanguagesPage() {
     if (!languageToDelete) return;
     setIsDeleting(true);
     try {
-      // If the language is in use, we need to force delete
       if (usageCount && usageCount > 0) {
         const response = await fetch(
           `/api/admin/languages/${encodeURIComponent(languageToDelete.code)}?force=true`,
@@ -128,7 +96,6 @@ export default function AdminLanguagesPage() {
           const body = await response.json().catch(() => ({}));
           throw new Error(body.error || `Failed to delete language (${response.status})`);
         }
-        // Refetch after force delete
         await fetchLanguages({
           search: currentSearch,
           sortBy: currentSort.field,
@@ -138,52 +105,39 @@ export default function AdminLanguagesPage() {
       } else {
         await deleteLanguage(languageToDelete.code);
       }
-      toast({
-        title: t("deleteDialog.success"),
-        variant: "success",
-      });
+      toast({ title: t("deleteDialog.success"), variant: "success" });
       setLanguageToDelete(null);
     } catch {
-      toast({
-        title: t("deleteDialog.errorGeneric"),
-        variant: "destructive",
-      });
+      toast({ title: t("deleteDialog.errorGeneric"), variant: "destructive" });
     } finally {
       setIsDeleting(false);
     }
-  }, [
-    languageToDelete,
-    usageCount,
-    deleteLanguage,
-    fetchLanguages,
-    currentSearch,
-    currentSort,
-    pagination.currentPage,
-    t,
-  ]);
+  }, [languageToDelete, usageCount, deleteLanguage, fetchLanguages, currentSearch, currentSort, pagination.currentPage, t]);
 
   const handleDeleteClose = useCallback(() => {
-    if (!isDeleting) {
-      setLanguageToDelete(null);
-    }
+    if (!isDeleting) setLanguageToDelete(null);
   }, [isDeleting]);
+
+  const languageColumns: AdminColumnDef<SupportedLanguage>[] = [
+    { key: "code", labelKey: "columns.code", sortable: true, className: "px-4 py-3 font-mono text-sm text-gray-900 dark:text-white" },
+    { key: "name", labelKey: "columns.name", sortable: true, className: "px-4 py-3 font-medium text-gray-900 dark:text-white" },
+    { key: "native_name", labelKey: "columns.nativeName", render: (l) => l.native_name || "—", className: "px-4 py-3 text-gray-500 dark:text-gray-400" },
+  ];
 
   return (
     <div className="space-y-8 p-4 lg:p-6">
-      {/* Game Languages Section */}
       <section>
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">
-            {t("title")}
-          </h1>
+          <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">{t("title")}</h1>
           <Button onClick={() => router.push("/admin/languages/new")}>
             <Icon icon="fa:plus" className="h-4 w-4" />
             {t("newLanguage")}
           </Button>
         </div>
 
-        <AdminLanguagesTable
-          languages={languages}
+        <AdminDataTable<SupportedLanguage>
+          items={languages}
+          columns={languageColumns}
           pagination={pagination}
           onPageChange={handlePageChange}
           onSearch={handleSearch}
@@ -193,11 +147,16 @@ export default function AdminLanguagesPage() {
           isLoading={loading}
           currentSort={currentSort}
           currentSearch={currentSearch}
+          translationNamespace="admin.languages"
+          idField="code"
+          totalCountKey="totalLanguages"
+          emptyKey="noLanguages"
         />
 
-        <DeleteLanguageDialog
-          language={languageToDelete}
+        <AdminDeleteDialog
           isOpen={languageToDelete !== null}
+          translationNamespace="admin.languages.deleteDialog"
+          warningParams={{ name: languageToDelete?.name ?? "" }}
           onClose={handleDeleteClose}
           onConfirm={handleDeleteConfirm}
           isDeleting={isDeleting}
@@ -205,7 +164,6 @@ export default function AdminLanguagesPage() {
         />
       </section>
 
-      {/* Site Locales Section */}
       <section>
         <SiteLocalesSection locales={SITE_LOCALES} />
       </section>

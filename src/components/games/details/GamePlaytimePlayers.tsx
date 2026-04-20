@@ -1,7 +1,7 @@
 "use client";
 
 import { Icon } from "@iconify/react";
-import { Spinner } from "@/components/ui/spinner";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Card, CardContent } from "@/components/ui/card";
 import { useTranslations } from "next-intl";
 import type { PlayerPlaytimeStats } from "@/types/game";
@@ -36,7 +36,7 @@ export function GamePlaytimePlayers({
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center gap-3 py-12 text-slate-400">
-        <Spinner size="sm" />
+        <LoadingSpinner size="sm" />
         <p className="text-sm">{t("loading")}</p>
       </div>
     );

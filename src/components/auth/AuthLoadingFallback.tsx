@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Spinner } from "@/components/ui/spinner";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 export function AuthLoadingFallback() {
   return (
@@ -31,7 +31,7 @@ export function AuthLoadingFallback() {
           </CardHeader>
           <CardContent className="flex justify-center py-12">
             <div className="flex flex-col items-center space-y-4">
-              <Spinner size="lg" className="text-slate-400 dark:text-slate-500" />
+              <LoadingSpinner size="lg" className="text-slate-400 dark:text-slate-500" />
               <div className="h-4 w-32 animate-pulse rounded-lg bg-slate-100 dark:bg-slate-700/50" />
             </div>
           </CardContent>

@@ -7,14 +7,20 @@ import { useAdminPlatforms } from "@/hooks/useAdminPlatforms";
 import type { AdminPlatform } from "@/types/admin-platforms";
 import { PlatformList } from "@/components/admin/platforms/PlatformList";
 import { PlatformForm } from "@/components/admin/platforms/PlatformForm";
-const DeletePlatformDialog = dynamic(
+const AdminDeleteDialog = dynamic(
   () =>
-    import("@/components/admin/platforms/DeletePlatformDialog").then((m) => m.DeletePlatformDialog),
+    import("@/components/admin/shared/AdminDeleteDialog").then((m) => m.AdminDeleteDialog),
   { ssr: false }
 );
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 import { Icon } from "@iconify/react";
+
+function getPlatformName(platform: AdminPlatform, locale: string): string {
+  const translation = platform.translations.find((t) => t.language_code === locale);
+  if (translation?.name) return translation.name;
+  return platform.translations[0]?.name ?? platform.slug;
+}
 
 export default function AdminPlatformsPage() {
   const t = useTranslations("admin.platforms");
@@ -164,9 +170,10 @@ export default function AdminPlatformsPage() {
           currentSearch={currentSearch}
         />
 
-        <DeletePlatformDialog
-          platform={platformToDelete}
+        <AdminDeleteDialog
           isOpen={platformToDelete !== null}
+          translationNamespace="admin.platforms.deleteDialog"
+          warningParams={{ name: platformToDelete ? getPlatformName(platformToDelete, locale) : "" }}
           onClose={handleDeleteClose}
           onConfirm={handleDeleteConfirm}
           isDeleting={isDeleting}

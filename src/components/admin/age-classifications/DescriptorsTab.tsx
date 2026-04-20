@@ -6,7 +6,7 @@ import { useAdminDescriptors } from "@/hooks/useAdminDescriptors";
 import { useDescriptorForm } from "@/hooks/useDescriptorForm";
 import { DescriptorsTable } from "./DescriptorsTable";
 import { DescriptorForm } from "./DescriptorForm";
-import { DeleteDescriptorDialog } from "./DeleteDescriptorDialog";
+import { AdminDeleteDialog } from "@/components/admin/shared/AdminDeleteDialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 
@@ -169,9 +169,13 @@ export function DescriptorsTab({ ratingSystemId }: DescriptorsTabProps) {
         currentSearch={currentSearch}
       />
 
-      <DeleteDescriptorDialog
-        descriptor={descriptorToDelete}
+      <AdminDeleteDialog
         isOpen={descriptorToDelete !== null}
+          translationNamespace="admin.ageClassifications.descriptors.delete"
+          warningParams={{ code: descriptorToDelete?.code ?? "" }}
+          warningKey="confirm"
+          confirmKey="delete"
+          blockOnUsage
         onClose={handleDeleteClose}
         onConfirm={handleDeleteConfirm}
         isDeleting={isDeleting}
