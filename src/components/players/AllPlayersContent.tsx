@@ -1,6 +1,6 @@
-﻿"use client";
+"use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { PlayerCard } from "./PlayerCard";
 import { SearchBar } from "@/components/shared/SearchBar";
@@ -9,48 +9,51 @@ import { FilterButton } from "@/components/shared/FilterButton";
 import { Pagination } from "@/components/shared/Pagination";
 import { GridSkeleton } from "@/components/shared/GridSkeleton";
 import { playerSkeletonConfig } from "@/components/shared/EntitySkeleton";
-import { PlayersEmptyState } from "./PlayersEmptyState";
+import { EmptyState } from "@/components/shared/EmptyState";
 import { usePlayersList } from "@/hooks/usePlayersList";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 
-interface AllPlayersContentProps {
-  locale?: string;
-}
-
-export function AllPlayersContent({ locale: _locale = "fr" }: AllPlayersContentProps) {
+export function AllPlayersContent() {
   const t = useTranslations("players");
   const tNav = useTranslations("navigation");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedGameCounts, setSelectedGameCounts] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
+  const [page, setPage] = useState(1);
 
-  const { players, pagination, loading, initialLoading, fetchPlayers } = usePlayersList();
-
-  const handleSearch = useCallback((query: string) => setSearchQuery(query), []);
-  const handleGameCountFilter = useCallback((counts: string[]) => setSelectedGameCounts(counts), []);
-
-  const handlePageChange = useCallback(
-    (page: number) => {
-      fetchPlayers(searchQuery, selectedGameCounts, page);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    },
-    [fetchPlayers, searchQuery, selectedGameCounts]
+  const debouncedSearch = useDebouncedValue(searchQuery, 300);
+  const { players, pagination, loading, initialLoading } = usePlayersList(
+    debouncedSearch,
+    selectedGameCounts,
+    page
   );
+
+  const handleSearch = useCallback((query: string) => {
+    setSearchQuery(query);
+    setPage(1);
+  }, []);
+
+  const handleGameCountFilter = useCallback((counts: string[]) => {
+    setSelectedGameCounts(counts);
+    setPage(1);
+  }, []);
+
+  const handlePageChange = useCallback((newPage: number) => {
+    setPage(newPage);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
   const handleClearFilters = useCallback(() => {
     setSearchQuery("");
     setSelectedGameCounts([]);
+    setPage(1);
   }, []);
 
-  // Filter changes with debounce
-  useEffect(() => {
-    if (initialLoading) return;
-    const timeoutId = setTimeout(() => fetchPlayers(searchQuery, selectedGameCounts, 1), 300);
-    return () => clearTimeout(timeoutId);
-  }, [searchQuery, selectedGameCounts, fetchPlayers, initialLoading]);
+  const hasFilters = searchQuery.length > 0 || selectedGameCounts.length > 0;
 
   if (initialLoading) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+      <div className="min-h-screen bg-linear-to-br from-slate-50 via-cyan-50 to-violet-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
           <GridSkeleton skeletonConfig={playerSkeletonConfig} count={20} />
         </div>
@@ -58,10 +61,8 @@ export function AllPlayersContent({ locale: _locale = "fr" }: AllPlayersContentP
     );
   }
 
-  const hasFilters = searchQuery.length > 0 || selectedGameCounts.length > 0;
-
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-cyan-50 to-violet-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
         <h1 className="mb-6 text-xl font-bold text-gray-900 sm:text-2xl lg:text-3xl dark:text-white">
           {tNav("players")}
@@ -102,12 +103,15 @@ export function AllPlayersContent({ locale: _locale = "fr" }: AllPlayersContentP
         {!loading && (
           <>
             {players.length === 0 ? (
-              <PlayersEmptyState
-                hasFilters={hasFilters}
+              <EmptyState
+                icon="mdi:account-group-outline"
                 title={t("empty.title")}
                 description={hasFilters ? t("empty.description") : t("empty.noPlayers")}
-                clearLabel={t("empty.clearFilters")}
-                onClear={handleClearFilters}
+                action={
+                  hasFilters
+                    ? { label: t("empty.clearFilters"), onClick: handleClearFilters }
+                    : undefined
+                }
               />
             ) : (
               <div className="space-y-8">
