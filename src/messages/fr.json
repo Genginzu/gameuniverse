@@ -3162,6 +3162,7 @@
     "typePostComment": "a commenté votre post",
     "typeDiscussionMessage": "vous a envoyé un message",
     "typePostCreated": "a publié un nouveau post",
+    "typePostMention": "vous a mentionné dans un post",
     "dismiss": "Fermer"
   },
   "postComments": {

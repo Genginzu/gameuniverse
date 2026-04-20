@@ -14,6 +14,7 @@ interface NotificationItemProps {
 /** Build the target path a notification should route to, or null if non-navigable. */
 function getNotificationHref(type: NotificationType, senderId: string): string | null {
   if (type === "post_created") return `/players/${senderId}?tab=activity`;
+  if (type === "post_mention") return `/players/${senderId}?tab=posts`;
   return null;
 }
 
@@ -21,12 +22,14 @@ const TYPE_ICONS: Record<string, string> = {
   post_comment: "mdi:comment-outline",
   discussion_message: "mdi:message-outline",
   post_created: "mdi:post-outline",
+  post_mention: "mdi:at",
 };
 
 const TYPE_LABEL_KEYS: Record<string, string> = {
   post_comment: "typePostComment",
   discussion_message: "typeDiscussionMessage",
   post_created: "typePostCreated",
+  post_mention: "typePostMention",
 };
 
 export function NotificationItem({ notification, onDismiss, onNavigate }: NotificationItemProps) {

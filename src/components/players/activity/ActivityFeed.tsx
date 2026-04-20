@@ -39,8 +39,8 @@ export function ActivityFeed({
   const [showSessionComposer, setShowSessionComposer] = useState(false);
   const [activityRefreshKey, setActivityRefreshKey] = useState(0);
 
-  const handlePostCreated = async (content: string, imageUrl?: string, tags?: string[]) => {
-    await postHook.createPost(content, imageUrl, tags);
+  const handlePostCreated = async (content: string, imageUrl?: string) => {
+    await postHook.createPost(content, imageUrl);
     setShowComposer(false);
   };
 

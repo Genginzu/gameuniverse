@@ -3159,6 +3159,7 @@
     "typePostComment": "commented on your post",
     "typeDiscussionMessage": "sent you a message",
     "typePostCreated": "published a new post",
+    "typePostMention": "mentioned you in a post",
     "dismiss": "Dismiss"
   },
   "postComments": {

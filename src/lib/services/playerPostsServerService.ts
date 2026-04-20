@@ -189,7 +189,7 @@ export class PlayerPostsServerService {
     // 4. Notify subscribers and accepted friends (best-effort, non-blocking)
     await this.notifyFollowers(playerId, postId, content);
 
-    // 5. Build enriched response
+    // 6. Build enriched response
     const row = data as unknown as PostRow;
     return {
       id: row.id,

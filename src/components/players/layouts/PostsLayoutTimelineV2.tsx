@@ -51,8 +51,8 @@ export function PostsLayoutTimelineV2(props: PostsLayoutProps) {
     sentinelRef,
   } = props;
 
-  const handlePostCreated = async (content: string, imageUrl?: string, tags?: string[]) => {
-    await createPost(content, imageUrl, tags);
+  const handlePostCreated = async (content: string, imageUrl?: string) => {
+    await createPost(content, imageUrl);
     setShowComposer(false);
   };
 

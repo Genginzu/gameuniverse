@@ -8,7 +8,6 @@ import { useToast } from "@/hooks/use-toast";
 import { usePostImageUpload } from "@/hooks/usePostImageUpload";
 import { useMentionAutocomplete } from "@/hooks/useMentionAutocomplete";
 import { MentionSuggestions } from "./MentionSuggestions";
-import { TagInput } from "./TagInput";
 import { PostComposerActions } from "./PostComposerActions";
 import { PostImagePreview } from "./PostImagePreview";
 import type { Post } from "@/types/post";
@@ -20,7 +19,7 @@ interface PostComposerProps {
   playerId: string;
   playerAvatar: string | null;
   isCreating: boolean;
-  onSubmit: (content: string, imageUrl?: string, tags?: string[]) => Promise<void>;
+  onSubmit: (content: string, imageUrl?: string) => Promise<void>;
 }
 
 export function PostComposer({
@@ -34,7 +33,6 @@ export function PostComposer({
   const [content, setContent] = useState("");
   const [cursorPos, setCursorPos] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [tags, setTags] = useState<string[]>([]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -66,9 +64,8 @@ export function PostComposer({
   const handleSubmit = async () => {
     if (isDisabled) return;
     try {
-      await onSubmit(content, imageUpload.uploadedUrl ?? undefined, tags);
+      await onSubmit(content, imageUpload.uploadedUrl ?? undefined);
       setContent("");
-      setTags([]);
       imageUpload.clearImage();
     } catch {
       toast({ variant: "destructive", title: t("errorCreate") });
@@ -118,9 +115,6 @@ export function PostComposer({
             <MentionSuggestions suggestions={suggestions} isLoading={isLoading} isOpen={isOpen} selectedIndex={selectedIndex} onSelect={handleSelectMention} />
           </div>
 
-          <div className="mt-2">
-            <TagInput tags={tags} onChange={setTags} />
-          </div>
 
           <PostImagePreview
             previewUrl={imageUpload.previewUrl ?? ""}

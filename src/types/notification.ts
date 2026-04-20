@@ -1,4 +1,4 @@
-export type NotificationType = "post_comment" | "discussion_message" | "post_created";
+export type NotificationType = "post_comment" | "discussion_message" | "post_created" | "post_mention";
 
 export interface Notification {
   id: string;
