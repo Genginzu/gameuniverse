@@ -61,3 +61,9 @@ export const LazySubscribedFeedTab = dynamic(
   () => import("./feed/SubscribedFeedTab").then((m) => ({ default: m.SubscribedFeedTab })),
   { loading: () => <TabSkeleton /> }
 );
+
+
+export const LazyGoalsTab = dynamic(
+  () => import("./goals/GoalsTab").then((m) => ({ default: m.GoalsTab })),
+  { loading: () => <TabSkeleton /> }
+);

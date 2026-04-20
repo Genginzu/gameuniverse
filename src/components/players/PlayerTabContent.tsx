@@ -10,6 +10,7 @@ import {
   LazyPersonalRecommendationSection,
   LazySettingsContent,
   LazySubscribedFeedTab,
+  LazyGoalsTab,
 } from "./PlayerLazyTabs";
 import { PlayerLibraryTab } from "./PlayerLibraryTab";
 import { ActivityFeed } from "./activity/ActivityFeed";
@@ -91,6 +92,12 @@ export function PlayerTabContent({
       <TabPanel visible={activeTab === "achievements"} mounted={visitedTabs.has("achievements")}>
         <LazyAchievementsPageContent playerId={player.id} />
       </TabPanel>
+
+      {isOwner && (
+        <TabPanel visible={activeTab === "goals"} mounted={visitedTabs.has("goals")}>
+          <LazyGoalsTab playerId={player.id} locale={locale} />
+        </TabPanel>
+      )}
 
       <TabPanel visible={activeTab === "friends"} mounted={visitedTabs.has("friends")}>
         <LazyFriendsTab playerId={player.id} locale={locale} />

@@ -567,7 +567,8 @@
       "achievements": "Succès",
       "stats": "Statistiques",
       "recommendations": "Recommandations",
-      "settings": "Paramètres"
+      "settings": "Paramètres",
+      "goals": "Objectifs"
     },
     "feed": {
       "feedLabel": "Fil d'actualité des abonnements",

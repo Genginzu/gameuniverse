@@ -12,6 +12,7 @@ export type ProfileTab =
   | "reviews"
   | "collections"
   | "achievements"
+  | "goals"
   | "stats"
   | "recommendations"
   | "settings";
@@ -39,6 +40,7 @@ const TAB_DEFINITIONS: {
   { id: "reviews", icon: "lucide:book-open" },
   { id: "collections", icon: "lucide:folder-open" },
   { id: "achievements", icon: "lucide:trophy" },
+  { id: "goals", icon: "lucide:target", ownerOnly: true },
   { id: "stats", icon: "lucide:bar-chart-3" },
   { id: "recommendations", icon: "lucide:globe", ownerOnly: true },
   { id: "settings", icon: "lucide:settings", ownerOnly: true },

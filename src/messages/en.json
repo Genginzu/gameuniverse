@@ -567,7 +567,8 @@
       "achievements": "Achievements",
       "stats": "Stats",
       "recommendations": "Recommendations",
-      "settings": "Settings"
+      "settings": "Settings",
+      "goals": "Goals"
     },
     "feed": {
       "feedLabel": "Subscribed feed",

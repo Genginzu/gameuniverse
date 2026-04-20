@@ -13,7 +13,6 @@ import dynamic from "next/dynamic";
 import { CompletionTracker } from "@/components/players/stats/CompletionTracker";
 import { SocialStats } from "@/components/players/stats/SocialStats";
 import { PlaytimeStats } from "@/components/players/stats/PlaytimeStats";
-import { PersonalGoals } from "@/components/players/stats/PersonalGoals";
 
 // Lazy-load recharts-heavy components to reduce initial bundle (~45 kB gzipped)
 const GenreDistributionChart = dynamic(
@@ -148,7 +147,6 @@ export function StatsDashboard({
         <ActivityTimeline timeline={data.activityTimeline} locale={locale} />
         <PlaytimeStats playtime={data.playtime} locale={locale} />
         <SessionStats sessions={data.sessions} />
-        <PersonalGoals goals={data.goals} isOwnProfile={isOwnProfile} playerId={playerId} />
       </div>
     </div>
   );
