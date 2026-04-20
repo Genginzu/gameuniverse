@@ -36,6 +36,7 @@ function parseTabParam(raw: string | null, isOwner: boolean): ProfileTab | null 
 }
 import { PlayerTabContent } from "./PlayerTabContent";
 import { FriendActionButton } from "./friends/FriendActionButton";
+import { LibraryComparisonSection } from "./friends/LibraryComparisonSection";
 import { SubscribeButton } from "./subscription/SubscribeButton";
 import type { PlayerDetails } from "@/types/player";
 
@@ -127,6 +128,13 @@ export function PlayerDetailsContent({
           </div>
         }
       />
+
+      {/* Library comparison — visible when viewing another player's profile */}
+      {shouldShowComparison(!!user, viewerId, player.id) && (
+        <div className="container mx-auto px-4 pt-6">
+          <LibraryComparisonSection playerId={player.id} locale={locale} />
+        </div>
+      )}
 
       {/* Tab navigation */}
       <PlayerProfileTabs activeTab={activeTab} onTabChange={setActiveTab} isOwner={isOwner} />
