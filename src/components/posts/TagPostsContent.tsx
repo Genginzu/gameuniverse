@@ -73,7 +73,7 @@ export function TagPostsContent({ tag }: TagPostsContentProps) {
 
       {/* Posts list */}
       {!isLoading && data && data.posts.length > 0 && (
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {data.posts.map((post) => (
             <PostCard
               key={post.id}
