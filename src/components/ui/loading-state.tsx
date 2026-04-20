@@ -8,6 +8,29 @@ interface LoadingStateProps {
   className?: string;
 }
 
+/**
+ * Spinner with ping animation — shared pattern used by LoadingState and PageLoading.
+ */
+export function SpinnerWithPing({
+  size = "md",
+  message,
+}: {
+  size?: "sm" | "md" | "lg";
+  message?: string;
+}) {
+  return (
+    <div className="text-center">
+      <div className="relative mb-4 inline-block">
+        <LoadingSpinner size={size} />
+        <div className="absolute inset-0 animate-ping rounded-full bg-violet-500 opacity-20"></div>
+      </div>
+      {message && (
+        <p className="text-sm text-gray-500 dark:text-gray-400">{message}</p>
+      )}
+    </div>
+  );
+}
+
 export function LoadingState({
   type = "spinner",
   size = "md",
@@ -37,22 +60,18 @@ export function LoadingState({
         className={`flex flex-col items-center justify-center ${sizeClasses[size]} ${className}`}
       >
         <div className="relative">
-          <div className="h-12 w-12 animate-pulse rounded-full bg-blue-200"></div>
-          <div className="absolute inset-0 animate-ping rounded-full bg-blue-400 opacity-20"></div>
+          <div className="h-12 w-12 animate-pulse rounded-full bg-cyan-500/30"></div>
+          <div className="absolute inset-0 animate-ping rounded-full bg-violet-500 opacity-20"></div>
         </div>
         {message && <p className="mt-4 text-sm text-gray-500">{message}</p>}
       </div>
     );
   }
 
-  // Default spinner type
+  // Spinner mode uses shared SpinnerWithPing
   return (
-    <div className={`flex flex-col items-center justify-center ${sizeClasses[size]} ${className}`}>
-      <div className="relative">
-        <LoadingSpinner size={size === "sm" ? "sm" : size === "lg" ? "lg" : "md"} />
-        <div className="absolute inset-0 animate-ping rounded-full bg-blue-400 opacity-20"></div>
-      </div>
-      {message && <p className="mt-4 text-sm text-gray-500">{message}</p>}
+    <div className={`flex items-center justify-center ${sizeClasses[size]} ${className}`}>
+      <SpinnerWithPing size={size} message={message} />
     </div>
   );
 }

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { PlayerCard } from "./PlayerCard";
-import { PlayerSearchBar } from "./PlayerSearchBar";
+import { SearchBar } from "@/components/shared/SearchBar";
 import { PlayerFilters } from "./PlayerFilters";
 import { FilterButton } from "@/components/shared/FilterButton";
 import { Pagination } from "@/components/shared/Pagination";
@@ -18,7 +18,7 @@ interface AllPlayersContentProps {
   locale?: string;
 }
 
-export function AllPlayersContent({ locale = "fr" }: AllPlayersContentProps) {
+export function AllPlayersContent({ locale: _locale = "fr" }: AllPlayersContentProps) {
   const t = useTranslations("players");
   const tNav = useTranslations("navigation");
   const tErrors = useTranslations("errors");
@@ -183,7 +183,13 @@ export function AllPlayersContent({ locale = "fr" }: AllPlayersContentProps) {
           {/* Search bar with filter button - responsive layout */}
           <div className="flex flex-col gap-4 sm:flex-row">
             <div className="flex-1">
-              <PlayerSearchBar onSearch={handleSearch} initialValue={searchQuery} />
+              <SearchBar
+                onSearch={handleSearch}
+                initialValue={searchQuery}
+                placeholder={t("searchPlaceholder")}
+                showSearchIndicator
+                searchIndicatorText={t("searchingFor")}
+              />
             </div>
             <div className="shrink-0">
               <FilterButton

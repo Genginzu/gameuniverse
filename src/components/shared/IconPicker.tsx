@@ -107,7 +107,7 @@ export function IconPicker({ value, onChange, placeholder, className }: IconPick
                   className={cn(
                     "flex h-9 w-full items-center justify-center rounded-lg transition-all",
                     isSelected
-                      ? "bg-linear-to-r from-[#615dfa] via-[#5b36d4] to-[#7c5cfc] text-white"
+                      ? "bg-linear-to-r from-cyan-500 to-violet-500 text-white"
                       : "text-gray-700 hover:bg-white/60 dark:text-gray-300 dark:hover:bg-slate-700/60"
                   )}
                 >
