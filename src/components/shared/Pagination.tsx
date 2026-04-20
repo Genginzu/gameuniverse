@@ -3,6 +3,12 @@
 import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
+import { PaginationButton } from "./PaginationButton";
+import { MobilePageSelector } from "./MobilePageSelector";
+import { getVisiblePages } from "./paginationUtils";
+
+// Re-export for backward compatibility
+export { getVisiblePages } from "./paginationUtils";
 
 export interface PaginationProps {
   currentPage: number;
@@ -31,38 +37,7 @@ export function Pagination({
     return null;
   }
 
-  const getVisiblePages = (): (number | string)[] => {
-    const delta = 2;
-    const range: number[] = [];
-    const rangeWithDots: (number | string)[] = [];
-
-    const start = Math.max(1, currentPage - delta);
-    const end = Math.min(totalPages, currentPage + delta);
-
-    for (let i = start; i <= end; i++) {
-      range.push(i);
-    }
-
-    if (start > 1) {
-      rangeWithDots.push(1);
-      if (start > 2) {
-        rangeWithDots.push("...");
-      }
-    }
-
-    rangeWithDots.push(...range);
-
-    if (end < totalPages) {
-      if (end < totalPages - 1) {
-        rangeWithDots.push("...");
-      }
-      rangeWithDots.push(totalPages);
-    }
-
-    return rangeWithDots;
-  };
-
-  const visiblePages = getVisiblePages();
+  const visiblePages = getVisiblePages(currentPage, totalPages);
 
   return (
     <div className="flex flex-col items-center space-y-4 rounded-2xl bg-white p-4 shadow-xs sm:space-y-6 sm:p-6 dark:bg-gray-800">
@@ -112,35 +87,15 @@ export function Pagination({
 
         {/* Page numbers */}
         <div className="flex items-center space-x-1">
-          {visiblePages.map((page, index) => {
-            if (page === "...") {
-              return (
-                <span key={`dots-${index}`} className="px-2 py-2 text-gray-400 sm:px-3">
-                  <Icon icon="lucide:more-horizontal" className="h-4 w-4" />
-                </span>
-              );
-            }
-
-            const pageNumber = page as number;
-            const isCurrentPage = pageNumber === currentPage;
-
-            return (
-              <Button
-                key={pageNumber}
-                variant={isCurrentPage ? "default" : "outline"}
-                size="sm"
-                onClick={() => onPageChange(pageNumber)}
-                disabled={loading}
-                className={`h-10 min-w-[44px] rounded-lg font-medium transition-all sm:h-10 sm:min-w-[44px] ${
-                  isCurrentPage
-                    ? "pointer-events-none bg-linear-to-r from-cyan-500 to-violet-500 text-white shadow-lg"
-                    : "border-gray-200 hover:border-violet-300 hover:bg-violet-50 hover:text-violet-600 dark:border-gray-700 dark:hover:border-violet-500 dark:hover:bg-violet-900/20"
-                }`}
-              >
-                {pageNumber}
-              </Button>
-            );
-          })}
+          {visiblePages.map((page, index) => (
+            <PaginationButton
+              key={page === "..." ? `dots-${index}` : page}
+              page={page}
+              currentPage={currentPage}
+              loading={loading}
+              onPageChange={onPageChange}
+            />
+          ))}
         </div>
 
         {/* Next page button */}
@@ -169,61 +124,13 @@ export function Pagination({
       </div>
 
       {/* Mobile-friendly page selector dropdown */}
-      <div className="flex items-center space-x-3 sm:hidden">
-        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-          {t("goToPage")}
-        </span>
-        <select
-          value={currentPage}
-          onChange={(e) => onPageChange(parseInt(e.target.value))}
-          disabled={loading}
-          className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-base font-medium shadow-xs focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-        >
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-            <option key={page} value={page}>
-              {page}
-            </option>
-          ))}
-        </select>
-        <span className="text-sm text-gray-500 dark:text-gray-400">
-          {t("of")} {totalPages}
-        </span>
-      </div>
+      <MobilePageSelector
+        currentPage={currentPage}
+        totalPages={totalPages}
+        loading={loading}
+        onPageChange={onPageChange}
+        labels={{ goToPage: t("goToPage"), of: t("of") }}
+      />
     </div>
   );
-}
-
-/**
- * Helper function to calculate visible pages with ellipsis.
- * Exported for testing purposes.
- */
-export function getVisiblePages(currentPage: number, totalPages: number): (number | string)[] {
-  const delta = 2;
-  const range: number[] = [];
-  const rangeWithDots: (number | string)[] = [];
-
-  const start = Math.max(1, currentPage - delta);
-  const end = Math.min(totalPages, currentPage + delta);
-
-  for (let i = start; i <= end; i++) {
-    range.push(i);
-  }
-
-  if (start > 1) {
-    rangeWithDots.push(1);
-    if (start > 2) {
-      rangeWithDots.push("...");
-    }
-  }
-
-  rangeWithDots.push(...range);
-
-  if (end < totalPages) {
-    if (end < totalPages - 1) {
-      rangeWithDots.push("...");
-    }
-    rangeWithDots.push(totalPages);
-  }
-
-  return rangeWithDots;
 }
