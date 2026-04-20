@@ -1,23 +1,15 @@
 "use client";
 
-import { useTranslations } from "next-intl";
 import { type UseFormReturn } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage,
-  FormDescription,
-} from "@/components/ui/form";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import type { RoleFormData } from "@/lib/validations/admin-role-form";
 import type { SupportedLanguage } from "@/types/admin-languages";
-import { RoleFormTranslations } from "./RoleFormTranslations";
-import { Icon } from "@iconify/react";
+import { AdminSlugForm } from "@/components/admin/shared/AdminSlugForm";
+import type { TranslationFieldConfig } from "@/components/admin/shared/AdminTranslationFields";
+
+const TRANSLATION_FIELDS: TranslationFieldConfig[] = [
+  { name: "name", type: "input", maxLength: 100 },
+  { name: "description", type: "textarea", maxLength: 500, rows: 3 },
+];
 
 export interface RoleFormProps {
   mode: "create" | "edit";
@@ -27,58 +19,12 @@ export interface RoleFormProps {
   supportedLanguages: SupportedLanguage[];
 }
 
-export function RoleForm({
-  mode,
-  form,
-  onSubmit,
-  isSubmitting,
-  supportedLanguages,
-}: RoleFormProps) {
-  const t = useTranslations("admin.characterRoles.form");
-
+export function RoleForm(props: RoleFormProps) {
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6" noValidate>
-        <div className="rounded-2xl border border-gray-200/60 bg-white p-6 shadow-xs dark:border-gray-700/40 dark:bg-gray-800/60">
-          <div className="space-y-5">
-            <FormField
-              control={form.control}
-              name="slug"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("slug")}</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder={t("slugPlaceholder")}
-                      {...field}
-                      disabled={mode === "edit"}
-                      className={mode === "edit" ? "bg-gray-50 dark:bg-gray-900/50" : ""}
-                      maxLength={50}
-                    />
-                  </FormControl>
-                  <FormDescription>{t("slugDescription")}</FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-        </div>
-
-        <RoleFormTranslations form={form} supportedLanguages={supportedLanguages} />
-
-        <div className="flex justify-end">
-          <Button type="submit" disabled={isSubmitting} className="min-w-[140px] gap-2">
-            {isSubmitting ? (
-              <LoadingSpinner size="sm" />
-            ) : (
-              <>
-                <Icon icon="fa:save" className="h-4 w-4" />
-                {mode === "create" ? t("create") : t("save")}
-              </>
-            )}
-          </Button>
-        </div>
-      </form>
-    </Form>
+    <AdminSlugForm
+      {...props}
+      translationNamespace="admin.characterRoles.form"
+      translationFields={TRANSLATION_FIELDS}
+    />
   );
 }
