@@ -24,7 +24,6 @@ function tokenize(content: string): string[] {
 
   for (const match of content.matchAll(TOKEN_REGEX)) {
     const matchIndex = match.index ?? 0;
-    // Push preceding plain text
     if (matchIndex > lastIndex) {
       parts.push(content.slice(lastIndex, matchIndex));
     }
@@ -32,7 +31,6 @@ function tokenize(content: string): string[] {
     lastIndex = matchIndex + match[0].length;
   }
 
-  // Push trailing plain text
   if (lastIndex < content.length) {
     parts.push(content.slice(lastIndex));
   }
@@ -43,10 +41,8 @@ function tokenize(content: string): string[] {
 export function PostContentRenderer({ content, tags, mentions, locale: _locale }: PostContentRendererProps) {
   const t = useTranslations("players.posts");
 
-  // Build a Set of valid tags (lowercase) for O(1) lookup
   const validTags = new Set(tags.map((tag) => tag.toLowerCase()));
 
-  // Build a Map of username → playerId for O(1) mention lookup
   const mentionMap = new Map<string, string>();
   for (const m of mentions) {
     mentionMap.set(m.username.toLowerCase(), m.playerId);
@@ -57,11 +53,20 @@ export function PostContentRenderer({ content, tags, mentions, locale: _locale }
   return (
     <span className="text-sm leading-relaxed whitespace-pre-wrap text-gray-700 dark:text-slate-200">
       {segments.map((segment, index) => {
-        // Tag token — skip rendering (tags are displayed as pills below content)
+        // Tag token: render as clickable link to tag page
         if (segment.startsWith("#")) {
           const tagName = segment.slice(1).toLowerCase();
           if (validTags.has(tagName)) {
-            return null;
+            return (
+              <Link
+                key={index}
+                href={`/posts/tags/${tagName}`}
+                aria-label={t("tagAriaLabel", { tag: tagName })}
+                className="text-violet-500 transition-all duration-300 hover:underline dark:text-violet-400"
+              >
+                #{tagName}
+              </Link>
+            );
           }
         }
 

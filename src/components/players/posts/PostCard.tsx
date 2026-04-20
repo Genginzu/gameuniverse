@@ -79,16 +79,6 @@ export function PostCard({ post, playerName, playerAvatar, locale, isOwner, onDe
         )}
 
         <PostContentRenderer content={post.content} tags={post.tags} mentions={post.mentions} locale={locale} />
-
-        {post.tags.length > 0 && (
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {post.tags.map((tag) => (
-              <span key={tag} className="inline-flex rounded-full bg-violet-500/10 px-2.5 py-0.5 text-xs font-medium text-violet-500 dark:bg-violet-400/10 dark:text-violet-300">
-                #{tag}
-              </span>
-            ))}
-          </div>
-        )}
       </div>
     </article>
   );

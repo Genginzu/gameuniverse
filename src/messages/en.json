@@ -3169,5 +3169,14 @@
     "submit": "Submit",
     "deleteLabel": "Delete comment",
     "charCount": "{remaining} characters left"
+  },
+  "posts": {
+    "tags": {
+      "metaTitle": "Posts tagged #{tag}",
+      "metaDescription": "All community posts tagged #{tag}",
+      "count": "{count, plural, =0 {No posts} one {1 post} other {# posts}}",
+      "empty": "No posts with this tag",
+      "back": "Back"
+    }
   }
 }
