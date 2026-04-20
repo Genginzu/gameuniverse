@@ -3,34 +3,34 @@
 import { type UseFormReturn } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
-import { SUPPORTED_LANGUAGES, type Tab, type TabId } from "@/types/admin-games";
+import type { AdminCharacterFormData } from "@/lib/validations/admin-character-form";
+import { SUPPORTED_LANGUAGES, type CharacterTabId, type CharacterTab } from "@/types/admin-characters";
 import { Icon } from "@iconify/react";
 
-// Re-export HeroBanner from its own file for backward compatibility
-export { HeroBanner } from "./GameFormHeroBanner";
-
 /** Tab navigation bar with badges */
-export function TabNavigation({
-  tabs, activeTab, setActiveTab, form, tabLabel,
+export function CharacterTabNavigation({
+  tabs,
+  activeTab,
+  setActiveTab,
+  form,
+  tabLabel,
 }: {
-  tabs: Tab[];
-  activeTab: TabId;
-  setActiveTab: (id: TabId) => void;
-  form: UseFormReturn<AdminGameFormData>;
-  tabLabel: (tab: Tab) => string;
+  tabs: CharacterTab[];
+  activeTab: CharacterTabId;
+  setActiveTab: (id: CharacterTabId) => void;
+  form: UseFormReturn<AdminCharacterFormData>;
+  tabLabel: (tab: CharacterTab) => string;
 }) {
-  const getBadge = (tabId: TabId): number | null => {
+  const getBadge = (tabId: CharacterTabId): number | null => {
+    const media = form.watch("media");
     switch (tabId) {
-      case "genres": return form.watch("genres").length;
-      case "companies": return form.watch("companies").length;
       case "translations": return SUPPORTED_LANGUAGES.length;
-      case "images": return form.watch("screenshots").length + form.watch("artwork").length;
-      case "age_ratings": return form.watch("age_ratings").length;
-      case "versions": return form.watch("versions").length;
-      case "languages": return form.watch("languages").length;
-      case "pricing": return form.watch("prices").length;
-      case "game_platforms": return form.watch("game_platforms").length;
+      case "roles": return (form.watch("role_ids") ?? []).length;
+      case "games": return form.watch("games").length;
+      case "relationships": return form.watch("relationships").length;
+      case "screenshots": return media.filter((m) => m.type === "screenshot").length;
+      case "artwork": return media.filter((m) => m.type === "artwork").length;
+      case "videos": return media.filter((m) => m.type === "video").length;
       default: return null;
     }
   };
@@ -41,11 +41,22 @@ export function TabNavigation({
         const isActive = activeTab === tab.id;
         const badge = getBadge(tab.id);
         return (
-          <button key={tab.id} type="button" onClick={() => setActiveTab(tab.id)} className={`flex cursor-pointer items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-all ${isActive ? "bg-primary text-primary-foreground shadow-xs" : "text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700/50 dark:hover:text-gray-300"}`}>
+          <button
+            key={tab.id}
+            type="button"
+            onClick={() => setActiveTab(tab.id)}
+            className={`flex cursor-pointer items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-all ${
+              isActive
+                ? "bg-primary text-primary-foreground shadow-xs"
+                : "text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700/50 dark:hover:text-gray-300"
+            }`}
+          >
             {tab.icon}
             <span className="hidden sm:inline">{tabLabel(tab)}</span>
             {badge !== null && badge > 0 && (
-              <span className={`rounded-full px-1.5 py-0.5 text-[10px] leading-none font-bold tabular-nums ${isActive ? "text-primary-foreground bg-white/20" : "bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400"}`}>{badge}</span>
+              <span className={`rounded-full px-1.5 py-0.5 text-[10px] leading-none font-bold tabular-nums ${isActive ? "text-primary-foreground bg-white/20" : "bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400"}`}>
+                {badge}
+              </span>
             )}
           </button>
         );
@@ -55,12 +66,17 @@ export function TabNavigation({
 }
 
 /** Sticky bottom bar with prev/next and submit */
-export function StickySubmitBar({
-  tabs, activeTab, setActiveTab, isSubmitting, mode, t,
+export function CharacterStickySubmitBar({
+  tabs,
+  activeTab,
+  setActiveTab,
+  isSubmitting,
+  mode,
+  t,
 }: {
-  tabs: Tab[];
-  activeTab: TabId;
-  setActiveTab: (id: TabId) => void;
+  tabs: CharacterTab[];
+  activeTab: CharacterTabId;
+  setActiveTab: (id: CharacterTabId) => void;
   isSubmitting: boolean;
   mode: "create" | "edit";
   t: (key: string) => string;
