@@ -235,6 +235,52 @@ export class IGDBService {
   }
 
   /**
+   * Fetches full game details for multiple IGDB IDs in a single API call.
+   * Same fields as getGameDetails but batched with `where id = (id1, id2, ...)`.
+   * @param igdbIds Array of IGDB game IDs (max ~50 recommended)
+   * @returns Map of igdbId → IGDBGame (missing IDs are absent from the map)
+   */
+  static async getGameDetailsBatch(igdbIds: number[]): Promise<Map<number, IGDBGame>> {
+    if (igdbIds.length === 0) return new Map();
+
+    const body = `
+      fields name, slug, summary, storyline, first_release_date, aggregated_rating,
+             cover.image_id,
+             screenshots.image_id,
+             artworks.image_id,
+             genres.id, genres.name, genres.slug,
+             involved_companies.company.id, involved_companies.company.name, involved_companies.company.slug,
+             involved_companies.developer, involved_companies.publisher,
+             language_supports.language.id, language_supports.language.name, language_supports.language.native_name, language_supports.language.locale,
+             language_supports.language_support_type.id, language_supports.language_support_type.name,
+             age_ratings.id, age_ratings.organization, age_ratings.rating_category, age_ratings.synopsis,
+             age_ratings.rating_content_descriptions,
+             platforms.id, platforms.name,
+             videos.video_id, videos.name,
+             dlcs, expansions, bundles, similar_games;
+      where id = (${igdbIds.join(",")});
+      limit ${igdbIds.length};
+    `;
+
+    const response = await this.igdbFetch("games", body);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(
+        `IGDB getGameDetailsBatch failed: ${response.status} ${response.statusText} - ${errorText}`
+      );
+    }
+
+    const games: IGDBGame[] = await response.json();
+    const map = new Map<number, IGDBGame>();
+    for (const game of games) {
+      map.set(game.id, game);
+    }
+    return map;
+  }
+
+
+  /**
    * Fetches IGDB popularity primitives for a game. Returns the max observed
    * value for each of types 1 (Visits), 2 (Want to Play), 3 (Playing).
    * Returns null if the fetch fails; missing primitives come back as null
