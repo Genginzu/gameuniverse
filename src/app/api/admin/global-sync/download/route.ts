@@ -10,6 +10,7 @@ const IGDB_BATCH_SIZE = 500;
  * POST /api/admin/global-sync/download
  * Fetches one batch of 500 games from IGDB using cursor-based pagination,
  * matches them against our DB, and inserts into igdb_global_sync.
+ * When afterId is 0, resumes from the highest igdb_id already downloaded.
  * Body: { afterId: number }
  * Returns: { inserted: number, hasMore: boolean, lastId: number }
  */
@@ -17,7 +18,22 @@ export async function POST(request: NextRequest) {
   try {
     await requireAdmin();
     const body = await request.json();
-    const afterId = parseInt(body.afterId ?? "0", 10);
+    let afterId = parseInt(body.afterId ?? "0", 10);
+
+    const supabase = getSupabaseAdmin();
+
+    // Resume from the last downloaded igdb_id instead of re-scanning everything
+    if (afterId === 0) {
+      const { data: maxRow } = await supabase
+        .from("igdb_global_sync")
+        .select("igdb_id")
+        .order("igdb_id", { ascending: false })
+        .limit(1)
+        .single();
+      if (maxRow?.igdb_id) {
+        afterId = maxRow.igdb_id as number;
+      }
+    }
 
     const games = await IGDBService.getGamesBatch(afterId, IGDB_BATCH_SIZE);
     const hasMore = games.length === IGDB_BATCH_SIZE;
@@ -26,8 +42,6 @@ export async function POST(request: NextRequest) {
     if (games.length === 0) {
       return NextResponse.json({ inserted: 0, hasMore: false, lastId: afterId });
     }
-
-    const supabase = getSupabaseAdmin();
 
     // Match against existing games in our DB by igdb_id
     const igdbIds = games.map((g) => g.id);
