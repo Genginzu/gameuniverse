@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import useSWR from "swr";
 import { fetcher } from "@/lib/swr/fetcher";
 import { apiClient } from "@/lib/api-client";
@@ -42,14 +42,17 @@ export function useGlobalSync(page: number, search: string, filter: string) {
     error: null,
   });
 
+  const stopRef = useRef(false);
+
   const startDownload = useCallback(async () => {
+    stopRef.current = false;
     setDownloadState({ isDownloading: true, lastId: 0, totalInserted: 0, error: null });
 
     let afterId = 0;
     let totalInserted = 0;
     let hasMore = true;
 
-    while (hasMore) {
+    while (hasMore && !stopRef.current) {
       try {
         const result = await apiClient.post<{
           inserted: number;
@@ -80,6 +83,10 @@ export function useGlobalSync(page: number, search: string, filter: string) {
     mutate();
   }, [mutate]);
 
+  const stopDownload = useCallback(() => {
+    stopRef.current = true;
+  }, []);
+
   return {
     entries: data?.entries ?? [],
     total: data?.total ?? 0,
@@ -88,6 +95,7 @@ export function useGlobalSync(page: number, search: string, filter: string) {
     error: error?.message ?? null,
     downloadState,
     startDownload,
+    stopDownload,
     refresh: mutate,
   };
 }

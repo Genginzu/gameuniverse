@@ -17,7 +17,7 @@ export function GlobalSyncTab() {
   const [searchInput, setSearchInput] = useState("");
   const [filter, setFilter] = useState<"all" | "matched" | "unmatched">("all");
 
-  const { entries, total, totalPages, isLoading, downloadState, startDownload } = useGlobalSync(page, search, filter);
+  const { entries, total, totalPages, isLoading, downloadState, startDownload, stopDownload } = useGlobalSync(page, search, filter);
 
   const handleSearch = () => { setSearch(searchInput); setPage(1); };
   const handleKeyDown = (e: React.KeyboardEvent) => { if (e.key === "Enter") handleSearch(); };
@@ -30,10 +30,18 @@ export function GlobalSyncTab() {
             <h3 className="text-base font-semibold text-gray-900 sm:text-lg dark:text-white">{t("downloadTitle")}</h3>
             <p className="mt-1 text-xs text-gray-500 sm:text-sm dark:text-gray-400">{t("downloadDescription")}</p>
           </div>
-          <Button onClick={startDownload} disabled={downloadState.isDownloading} className="w-full sm:w-auto">
-            <Icon icon={downloadState.isDownloading ? "svg-spinners:ring-resize" : "lucide:download"} className="mr-2 size-4" />
-            {downloadState.isDownloading ? t("downloading") : t("startDownload")}
-          </Button>
+          <div className="flex w-full gap-2 sm:w-auto">
+            <Button onClick={startDownload} disabled={downloadState.isDownloading} className="flex-1 sm:flex-initial">
+              <Icon icon={downloadState.isDownloading ? "svg-spinners:ring-resize" : "lucide:download"} className="mr-2 size-4" />
+              {downloadState.isDownloading ? t("downloading") : t("startDownload")}
+            </Button>
+            {downloadState.isDownloading && (
+              <Button variant="outline" onClick={stopDownload} className="shrink-0">
+                <Icon icon="lucide:square" className="mr-2 size-4" />
+                {t("stop")}
+              </Button>
+            )}
+          </div>
         </div>
         {downloadState.isDownloading && (
           <div className="mt-4 space-y-2">
