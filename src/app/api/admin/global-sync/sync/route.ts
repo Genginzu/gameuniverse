@@ -37,7 +37,7 @@ export async function POST(_request: NextRequest) {
     for (const e of entries) {
       results.push(await syncOneGame(supabase, e));
       if (entries.indexOf(e) < entries.length - 1) {
-        await new Promise((r) => setTimeout(r, 300));
+        await new Promise((r) => setTimeout(r, 100));
       }
     }
 
