@@ -9,6 +9,7 @@ import {
   syncVersions,
   syncLanguages,
   syncPlaytime,
+  syncPopularity,
   syncVideos,
 } from "@/lib/services/igdb-sync-fields";
 import { logger } from "@/lib/logger";
@@ -100,6 +101,7 @@ async function enrichOneGame(supabase: any, entry: EnrichEntry): Promise<EnrichR
       syncVersions(supabase, gameId, entry.igdb_id),
       syncLanguages(supabase, gameId, igdb),
       syncPlaytime(supabase, gameId, entry.igdb_id),
+      syncPopularity(supabase, gameId, entry.igdb_id),
       syncVideos(supabase, gameId, igdb),
     ]);
 
