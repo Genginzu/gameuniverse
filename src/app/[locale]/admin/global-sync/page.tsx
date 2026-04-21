@@ -42,22 +42,11 @@ export default function GlobalSyncPage() {
         ))}
       </div>
 
-      {/* All tabs mounted permanently to preserve state, hidden with CSS */}
-      <div className={activeTab === "download" ? "" : "hidden"}>
-        <GlobalSyncTab />
-      </div>
-      <div className={activeTab === "sync" ? "" : "hidden"}>
-        <SyncImportTab />
-      </div>
-      <div className={activeTab === "enrich" ? "" : "hidden"}>
-        <EnrichSyncTab />
-      </div>
-      <div className={activeTab === "colors" ? "" : "hidden"}>
-        <ColorsSyncTab />
-      </div>
-      <div className={activeTab === "metascore" ? "" : "hidden"}>
-        <MetascoreSyncTab />
-      </div>
+      {activeTab === "download" && <GlobalSyncTab />}
+      {activeTab === "sync" && <SyncImportTab />}
+      {activeTab === "enrich" && <EnrichSyncTab />}
+      {activeTab === "colors" && <ColorsSyncTab />}
+      {activeTab === "metascore" && <MetascoreSyncTab />}
     </div>
   );
 }
