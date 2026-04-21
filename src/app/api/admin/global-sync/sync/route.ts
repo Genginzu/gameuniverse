@@ -3,14 +3,14 @@ import { requireAdmin } from "@/lib/auth-admin";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { IGDBService } from "@/lib/services/igdbService";
 import { logger } from "@/lib/logger";
-import type { IGDBGame } from "@/types/igdb";
 
-const BATCH_SIZE = 50;
+const BATCH_SIZE = 3;
 
 /**
  * POST /api/admin/global-sync/sync
  * Phase 1: Lightweight import — game + translation + genres/companies/platforms.
- * Fetches up to 50 games from IGDB in a single batch call, then processes DB writes.
+ * No color extraction, no screenshots/artworks/videos/age ratings.
+ * Processes 5 games in parallel per request.
  */
 export async function POST(_request: NextRequest) {
   try {
@@ -33,29 +33,7 @@ export async function POST(_request: NextRequest) {
       return NextResponse.json({ results: [], done: true, remaining: 0 });
     }
 
-    // Check which games already exist in our DB
-    const igdbIds = entries.map((e) => e.igdb_id);
-    const { data: existingGames } = await supabase
-      .from("games")
-      .select("id, igdb_id")
-      .in("igdb_id", igdbIds);
-
-    const existingMap = new Map<number, string>();
-    for (const g of existingGames || []) {
-      if (g.igdb_id) existingMap.set(g.igdb_id, g.id);
-    }
-
-    // Only fetch from IGDB the games we don't already have locally
-    const needIgdb = entries.filter((e) => !existingMap.has(e.igdb_id));
-    let igdbMap = new Map<number, IGDBGame>();
-    if (needIgdb.length > 0) {
-      igdbMap = await IGDBService.getGameDetailsBatch(needIgdb.map((e) => e.igdb_id));
-    }
-
-    // Process all entries
-    const results = await Promise.all(
-      entries.map((e) => syncOneGame(supabase, e, existingMap, igdbMap))
-    );
+    const results = await Promise.all(entries.map((e) => syncOneGame(supabase, e)));
 
     const { count: remaining } = await supabase
       .from("igdb_global_sync")
@@ -89,23 +67,25 @@ interface SyncResult {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type SupabaseAdmin = any;
 
-async function syncOneGame(
-  supabase: SupabaseAdmin,
-  entry: SyncEntry,
-  existingMap: Map<number, string>,
-  igdbMap: Map<number, IGDBGame>
-): Promise<SyncResult> {
+async function syncOneGame(supabase: SupabaseAdmin, entry: SyncEntry): Promise<SyncResult> {
   const base = { igdbId: entry.igdb_id, name: entry.name };
   try {
     // Skip if already in our DB
-    const existingId = existingMap.get(entry.igdb_id);
-    if (existingId) {
-      await markSynced(supabase, entry.id, existingId);
+    const { data: existing } = await supabase
+      .from("games")
+      .select("id")
+      .eq("igdb_id", entry.igdb_id)
+      .single();
+
+    if (existing) {
+      await markSynced(supabase, entry.id, existing.id);
       return { ...base, success: true };
     }
 
-    const igdb = igdbMap.get(entry.igdb_id);
+    // Single IGDB call — gets everything
+    const igdb = await IGDBService.getGameDetails(entry.igdb_id);
     if (!igdb) {
+      // Game was deleted/merged on IGDB — remove from sync table
       logger.warn("Game not found on IGDB, removing from global sync", {
         igdbId: entry.igdb_id,
         name: entry.name,
@@ -130,6 +110,7 @@ async function syncOneGame(
       : null;
     const metascore = igdb.aggregated_rating ? Math.round(igdb.aggregated_rating) : null;
 
+    // Upsert game (handles retries and slug conflicts)
     const { data: newGame, error: insertErr } = await supabase
       .from("games")
       .upsert(
@@ -153,6 +134,7 @@ async function syncOneGame(
 
     const gameId = newGame.id as string;
 
+    // All DB writes in parallel — no dependencies between them
     await Promise.all([
       upsertTranslation(supabase, gameId, igdb.name, igdb.summary || null),
       linkGenresBatch(supabase, gameId, igdb.genres || []),
