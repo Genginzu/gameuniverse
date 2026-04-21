@@ -84,8 +84,13 @@ async function enrichOneGame(supabase: any, entry: EnrichEntry): Promise<EnrichR
     const igdb = await IGDBService.getGameDetails(entry.igdb_id);
 
     if (!igdb) {
-      await supabase.from("igdb_global_sync").update({ is_enriched: true }).eq("id", entry.id);
-      return { ...base, success: false, error: "Not found on IGDB" };
+      // Game was deleted/merged on IGDB — remove from sync table
+      logger.warn("Game not found on IGDB during enrichment, removing from global sync", {
+        igdbId: entry.igdb_id,
+        name: entry.name,
+      });
+      await supabase.from("igdb_global_sync").delete().eq("id", entry.id);
+      return { ...base, success: false, error: "Not found on IGDB (removed)" };
     }
 
     await Promise.all([

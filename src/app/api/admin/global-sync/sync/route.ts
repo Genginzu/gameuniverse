@@ -84,7 +84,15 @@ async function syncOneGame(supabase: SupabaseAdmin, entry: SyncEntry): Promise<S
 
     // Single IGDB call — gets everything
     const igdb = await IGDBService.getGameDetails(entry.igdb_id);
-    if (!igdb) return { ...base, success: false, error: "Not found on IGDB" };
+    if (!igdb) {
+      // Game was deleted/merged on IGDB — remove from sync table
+      logger.warn("Game not found on IGDB, removing from global sync", {
+        igdbId: entry.igdb_id,
+        name: entry.name,
+      });
+      await supabase.from("igdb_global_sync").delete().eq("id", entry.id);
+      return { ...base, success: false, error: "Not found on IGDB (removed)" };
+    }
 
     // Build cover/background URLs
     const coverUrl = igdb.cover?.image_id
