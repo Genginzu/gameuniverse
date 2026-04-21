@@ -44,7 +44,13 @@ export async function POST(_request: NextRequest) {
       return NextResponse.json({ results: [], done: true, remaining: 0 });
     }
 
-    const results = await Promise.all(entries.map((e) => enrichOneGame(supabase, e)));
+    const results: EnrichResult[] = [];
+    for (const e of entries) {
+      results.push(await enrichOneGame(supabase, e));
+      if (entries.indexOf(e) < entries.length - 1) {
+        await new Promise((r) => setTimeout(r, 500));
+      }
+    }
 
     const { count: remaining } = await supabase
       .from("igdb_global_sync")
