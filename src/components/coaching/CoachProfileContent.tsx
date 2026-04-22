@@ -9,7 +9,7 @@ import { Link } from "@/i18n/navigation";
 interface CoachProfileData {
   player: { username: string; avatarUrl: string | null; displayName: string | null };
   coach: { bio: string | null; experience: string | null; languages: string[]; averageRating: number; totalReviews: number; totalSessions: number; isVerified: boolean };
-  games: Array<{ id: string; gameId: string; title: string; slug: string; coverImage: string | null; specialties: string[]; pricing: Array<{ sessionType: string; priceAmount: number; priceCurrency: string; durationMinutes: number }> }>;
+  games: Array<{ id: string; gameId: string; title: string; slug: string; coverImage: string | null; coverImageUrl: string | null; specialties: string[]; pricing: Array<{ sessionType: string; priceAmount: number; priceCurrency: string; durationMinutes: number }> }>;
 }
 
 export function CoachProfileContent({ username }: { username: string }) {
@@ -97,7 +97,7 @@ export function CoachProfileContent({ username }: { username: string }) {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {games.map((game) => (
               <div key={game.id} className="glass-card flex gap-4 rounded-xl p-4">
-                {game.coverImage && <img src={game.coverImage} alt="" className="h-20 w-14 shrink-0 rounded-lg object-cover" />}
+                {(game.coverImageUrl || game.coverImage) && <img src={(game.coverImageUrl || game.coverImage)!} alt="" className="h-20 w-14 shrink-0 rounded-lg object-cover" />}
                 <div className="min-w-0 flex-1 space-y-2">
                   <Link href={`/games/${game.slug}`} className="font-medium text-gray-900 hover:text-cyan-400 dark:text-white">{game.title}</Link>
                   {game.specialties.length > 0 && (
