@@ -3284,5 +3284,16 @@
       "empty": "No posts with this tag",
       "back": "Back"
     }
+  },
+  "trending": {
+    "title": "Trending",
+    "subtitle": "Discover the most popular games right now",
+    "count": "{count} games",
+    "sections": {
+      "mostViewed": "Most Viewed",
+      "mostPopular": "Most Popular",
+      "bestRated": "Best Rated",
+      "recentlyAdded": "Recently Added"
+    }
   }
 }

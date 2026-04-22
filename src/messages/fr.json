@@ -3287,5 +3287,16 @@
       "empty": "Aucun post avec ce tag",
       "back": "Retour"
     }
+  },
+  "trending": {
+    "title": "Tendances",
+    "subtitle": "Découvrez les jeux les plus populaires du moment",
+    "count": "{count} jeux",
+    "sections": {
+      "mostViewed": "Les plus vus",
+      "mostPopular": "Les plus populaires",
+      "bestRated": "Les mieux notés",
+      "recentlyAdded": "Ajoutés récemment"
+    }
   }
 }
