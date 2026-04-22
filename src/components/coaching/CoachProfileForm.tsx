@@ -13,7 +13,7 @@ export function CoachProfileForm() {
   const [saving, setSaving] = useState(false);
   const [bio, setBio] = useState("");
   const [experience, setExperience] = useState("");
-  const [languages, setLanguages] = useState("");
+  const [languages, setLanguages] = useState<string[]>([]);
   const [initialized, setInitialized] = useState(false);
 
   const profile = data?.profile;
@@ -21,14 +21,14 @@ export function CoachProfileForm() {
   if (!initialized && profile) {
     setBio(profile.bio || "");
     setExperience(profile.experience || "");
-    setLanguages(profile.languages.join(", "));
+    setLanguages(profile.languages || []);
     setInitialized(true);
   }
 
   const handleSave = async () => {
     setSaving(true);
     try {
-      const body = { bio, experience, languages: languages.split(",").map((l) => l.trim()).filter(Boolean) };
+      const body = { bio, experience, languages };
       const method = profile ? "PATCH" : "POST";
       await fetch("/api/coaching/profile", { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
       await mutate();
@@ -80,9 +80,23 @@ export function CoachProfileForm() {
           <textarea value={experience} onChange={(e) => setExperience(e.target.value)} rows={3} className="glass-input w-full rounded-lg p-3 text-base" placeholder={t("experiencePlaceholder")} />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">{t("languagesLabel")}</label>
-          <input value={languages} onChange={(e) => setLanguages(e.target.value)} className="glass-input w-full rounded-lg p-3 text-base" placeholder={t("languagesPlaceholder")} />
-          <p className="mt-1 text-xs text-gray-500">{t("languagesHint")}</p>
+          <label className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">{t("languagesLabel")}</label>
+          <div className="flex gap-4">
+            {[{ value: "Français", label: "Français" }, { value: "English", label: "English" }].map((lang) => (
+              <label key={lang.value} className="flex cursor-pointer items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={languages.includes(lang.value)}
+                  onChange={(e) => {
+                    if (e.target.checked) setLanguages([...languages, lang.value]);
+                    else setLanguages(languages.filter((l) => l !== lang.value));
+                  }}
+                  className="size-4 rounded border-gray-300 text-cyan-500 focus:ring-cyan-500"
+                />
+                <span className="text-sm text-gray-700 dark:text-gray-300">{lang.label}</span>
+              </label>
+            ))}
+          </div>
         </div>
         <button onClick={handleSave} disabled={saving} className="w-full rounded-lg bg-linear-to-r from-cyan-500 to-violet-500 px-4 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50 sm:w-auto">
           {saving ? t("saving") : profile ? t("update") : t("create")}
