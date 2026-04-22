@@ -3350,16 +3350,20 @@
         "searchPlaceholder": "Rechercher un jeu...",
         "empty": "Aucun jeu ajouté. Ajoutez vos premiers jeux coachés.",
         "specialties": {
-          "ranked": "Ranked",
-          "speedrun": "Speedrun",
-          "strategy": "Stratégie",
           "beginner": "Débutant",
+          "casual": "Casual",
           "advanced": "Avancé",
           "competitive": "Compétitif",
-          "casual": "Casual",
-          "teamplay": "Jeu en équipe",
           "solo": "Solo",
-          "coaching_basics": "Bases du coaching"
+          "teamplay": "Jeu en équipe",
+          "ranked": "Ranked",
+          "battle_royale": "Battle Royale",
+          "mmo_raid": "MMO / Raid",
+          "mechanics_aim": "Mécanique / Aim",
+          "game_sense": "Game sense",
+          "strategy": "Stratégie",
+          "speedrun": "Speedrun",
+          "progression_build": "Progression / Build"
         }
       },
       "pricing": {
