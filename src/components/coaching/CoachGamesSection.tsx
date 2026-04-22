@@ -37,8 +37,12 @@ export function CoachGamesSection() {
 
   const toggleSpecialty = async (game: CoachGame, specialty: string) => {
     const newSpecialties = game.specialties.includes(specialty) ? game.specialties.filter((s) => s !== specialty) : [...game.specialties, specialty];
-    await fetch(`/api/coaching/games/${game.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ specialties: newSpecialties }) });
-    await mutate();
+    // Optimistic update
+    mutate((prev: { games: CoachGame[] } | undefined) => {
+      if (!prev) return prev;
+      return { games: prev.games.map((g) => g.id === game.id ? { ...g, specialties: newSpecialties } : g) };
+    }, false);
+    fetch(`/api/coaching/games/${game.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ specialties: newSpecialties }) });
   };
 
   if (isLoading) return <div className="h-40 animate-pulse rounded-xl bg-gray-200 dark:bg-gray-700" />;
