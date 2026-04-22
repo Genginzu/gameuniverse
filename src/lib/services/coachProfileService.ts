@@ -80,13 +80,14 @@ export async function create(
 export async function update(
   supabase: SupabaseClient,
   playerId: string,
-  data: Partial<Pick<CoachProfile, "bio" | "experience" | "languages" | "cancellationPolicy">>
+  data: Partial<Pick<CoachProfile, "bio" | "experience" | "languages" | "cancellationPolicy" | "isActive">>
 ): Promise<CoachProfile> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updates: Record<string, any> = {};
   if (data.bio !== undefined) updates.bio = data.bio;
   if (data.experience !== undefined) updates.experience = data.experience;
   if (data.languages !== undefined) updates.languages = data.languages;
+  if (data.isActive !== undefined) updates.is_active = data.isActive;
   if (data.cancellationPolicy !== undefined)
     updates.cancellation_policy = data.cancellationPolicy;
 
