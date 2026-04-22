@@ -2,11 +2,14 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import useSWR from "swr";
+import { fetcher } from "@/lib/swr/fetcher";
 import { useAuth } from "@/hooks/useAuth";
 import { Icon } from "@iconify/react";
 import { CoachProfileForm } from "./CoachProfileForm";
 import { CoachGamesSection } from "./CoachGamesSection";
 import { CoachPricingSection } from "./CoachPricingSection";
+import type { CoachProfile } from "@/types/coaching";
 
 const TABS = ["profile", "games", "pricing"] as const;
 type Tab = (typeof TABS)[number];
@@ -21,6 +24,9 @@ export function CoachSettingsContent() {
   const t = useTranslations("coaching.settings");
   const { user, loading } = useAuth();
   const [activeTab, setActiveTab] = useState<Tab>("profile");
+  const { data } = useSWR<{ profile: CoachProfile | null }>("/api/coaching/profile", fetcher);
+
+  const hasProfile = !!data?.profile;
 
   if (loading) return null;
   if (!user) return null;
@@ -35,25 +41,31 @@ export function CoachSettingsContent() {
       </div>
 
       <div className="flex gap-2 overflow-x-auto">
-        {TABS.map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium whitespace-nowrap transition-all ${
-              activeTab === tab
-                ? "bg-linear-to-r from-cyan-500 to-violet-500 text-white"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
-            }`}
-          >
-            <Icon icon={TAB_ICONS[tab]} className="size-4" />
-            {t(`tabs.${tab}`)}
-          </button>
-        ))}
+        {TABS.map((tab) => {
+          const disabled = tab !== "profile" && !hasProfile;
+          return (
+            <button
+              key={tab}
+              onClick={() => !disabled && setActiveTab(tab)}
+              disabled={disabled}
+              className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium whitespace-nowrap transition-all ${
+                activeTab === tab
+                  ? "bg-linear-to-r from-cyan-500 to-violet-500 text-white"
+                  : disabled
+                    ? "cursor-not-allowed bg-gray-100 text-gray-300 dark:bg-gray-800 dark:text-gray-600"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
+              }`}
+            >
+              <Icon icon={TAB_ICONS[tab]} className="size-4" />
+              {t(`tabs.${tab}`)}
+            </button>
+          );
+        })}
       </div>
 
       {activeTab === "profile" && <CoachProfileForm />}
-      {activeTab === "games" && <CoachGamesSection />}
-      {activeTab === "pricing" && <CoachPricingSection />}
+      {activeTab === "games" && hasProfile && <CoachGamesSection />}
+      {activeTab === "pricing" && hasProfile && <CoachPricingSection />}
     </div>
   );
 }
