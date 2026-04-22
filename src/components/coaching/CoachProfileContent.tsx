@@ -12,6 +12,11 @@ interface CoachProfileData {
   games: Array<{ id: string; gameId: string; title: string; slug: string; coverImage: string | null; coverImageUrl: string | null; specialties: string[]; pricing: Array<{ sessionType: string; priceAmount: number; priceCurrency: string; durationMinutes: number }> }>;
 }
 
+const LANGUAGE_LABELS: Record<string, string> = {
+  "Français": "Français", "Fr": "Français", "fr": "Français",
+  "English": "English", "En": "English", "en": "English",
+};
+
 export function CoachProfileContent({ username }: { username: string }) {
   const t = useTranslations("coaching.publicProfile");
   const tGames = useTranslations("coaching.settings.games");
@@ -79,10 +84,13 @@ export function CoachProfileContent({ username }: { username: string }) {
           {coach.bio && <div><h2 className="mb-2 text-sm font-semibold text-gray-900 dark:text-white">{t("bio")}</h2><p className="text-sm text-gray-600 dark:text-gray-300">{coach.bio}</p></div>}
           {coach.experience && <div><h2 className="mb-2 text-sm font-semibold text-gray-900 dark:text-white">{t("experience")}</h2><p className="text-sm text-gray-600 dark:text-gray-300">{coach.experience}</p></div>}
           {coach.languages.length > 0 && (
-            <div className="flex flex-wrap gap-1.5">
-              {coach.languages.map((l) => (
-                <span key={l} className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs text-gray-600 dark:bg-gray-800 dark:text-gray-400">{l}</span>
-              ))}
+            <div>
+              <h2 className="mb-2 text-sm font-semibold text-gray-900 dark:text-white">{t("languages")}</h2>
+              <div className="flex flex-wrap gap-1.5">
+                {coach.languages.map((l) => (
+                  <span key={l} className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs text-gray-600 dark:bg-gray-800 dark:text-gray-400">{LANGUAGE_LABELS[l] ?? l}</span>
+                ))}
+              </div>
             </div>
           )}
         </div>
