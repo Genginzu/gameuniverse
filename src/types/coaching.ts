@@ -47,17 +47,12 @@ export type SessionType = "single" | "pack_5" | "pack_10" | "monthly";
 
 export const SESSION_TYPES: SessionType[] = ["single", "pack_5", "pack_10", "monthly"];
 
-export const COACH_SPECIALTIES = [
-  "ranked",
-  "speedrun",
-  "strategy",
-  "beginner",
-  "advanced",
-  "competitive",
-  "casual",
-  "teamplay",
-  "solo",
-  "coaching_basics",
+export const COACH_SPECIALTY_GROUPS = [
+  { key: "level", specialties: ["beginner", "advanced", "competitive", "casual"] },
+  { key: "mode", specialties: ["ranked", "teamplay", "solo"] },
+  { key: "style", specialties: ["strategy", "speedrun", "coaching_basics"] },
 ] as const;
+
+export const COACH_SPECIALTIES = COACH_SPECIALTY_GROUPS.flatMap((g) => g.specialties);
 
 export type CoachSpecialty = (typeof COACH_SPECIALTIES)[number];

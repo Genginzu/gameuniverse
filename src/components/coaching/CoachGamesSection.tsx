@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import useSWR from "swr";
 import { fetcher } from "@/lib/swr/fetcher";
 import { Icon } from "@iconify/react";
-import { COACH_SPECIALTIES, type CoachGame } from "@/types/coaching";
+import { COACH_SPECIALTY_GROUPS, type CoachGame } from "@/types/coaching";
 
 export function CoachGamesSection() {
   const t = useTranslations("coaching.settings.games");
@@ -82,11 +82,15 @@ export function CoachGamesSection() {
                   <Icon icon="lucide:trash-2" className="size-4" />
                 </button>
               </div>
-              <div className="flex flex-wrap gap-1.5">
-                {COACH_SPECIALTIES.map((s) => (
-                  <button key={s} onClick={() => toggleSpecialty(game, s)} className={`rounded-full px-2.5 py-1 text-xs font-medium transition-all ${game.specialties.includes(s) ? "bg-cyan-500/20 text-cyan-400" : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"}`}>
-                    {t(`specialties.${s}`)}
-                  </button>
+              <div className="space-y-2">
+                {COACH_SPECIALTY_GROUPS.map((group) => (
+                  <div key={group.key} className="flex flex-wrap gap-1.5">
+                    {group.specialties.map((s) => (
+                      <button key={s} onClick={() => toggleSpecialty(game, s)} className={`rounded-full px-2.5 py-1 text-xs font-medium transition-all ${game.specialties.includes(s) ? "bg-cyan-500/20 text-cyan-400" : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"}`}>
+                        {t(`specialties.${s}`)}
+                      </button>
+                    ))}
+                  </div>
                 ))}
               </div>
             </div>
