@@ -5,6 +5,7 @@ import useSWR from "swr";
 import { fetcher } from "@/lib/swr/fetcher";
 import { EntityCard, gameCardConfig } from "@/components/shared";
 import { GridSkeleton } from "@/components/shared/GridSkeleton";
+import { gameSkeletonConfig } from "@/components/shared/EntitySkeleton";
 import { Icon } from "@iconify/react";
 import type { GameSummary } from "@/types/game";
 
@@ -62,7 +63,7 @@ export function TrendingContent() {
         {Array.from({ length: 4 }).map((_, i) => (
           <div key={i} className="space-y-4">
             <div className="h-8 w-48 animate-pulse rounded-lg bg-gray-200 dark:bg-gray-700" />
-            <GridSkeleton count={6} columns="grid-cols-2 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-6" />
+            <GridSkeleton count={6} columns="grid-cols-2 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-6" skeletonConfig={gameSkeletonConfig} />
           </div>
         ))}
       </div>
