@@ -2438,7 +2438,7 @@
       },
       "enrichTab": {
         "title": "Game Enrichment",
-        "description": "Adds heavy data: colors, screenshots, artworks, videos, age ratings, versions, languages, playtime, similar games. Processes 3 games in parallel.",
+        "description": "Adds complementary data: screenshots, artworks, videos, age ratings, versions, languages, playtime and popularity.",
         "startSync": "Start",
         "syncing": "Enriching...",
         "stop": "Stop",
@@ -2447,7 +2447,7 @@
         "failed": "{count} failed",
         "remaining": "{count} remaining",
         "complete": "Complete: {count} games enriched",
-        "info": "Enriches already created games with full IGDB data: color extraction from cover, screenshots, artworks, videos, age ratings, versions/editions, supported languages, playtime and similar games.",
+        "info": "Enriches already created games with full IGDB data: screenshots, artworks, videos, age ratings, versions/editions, supported languages, playtime, popularity and similar games.",
         "searchPlaceholder": "Search a game...",
         "allDone": "All games have been enriched."
       },

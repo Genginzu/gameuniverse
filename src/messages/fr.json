@@ -2441,7 +2441,7 @@
       },
       "enrichTab": {
         "title": "Enrichissement des jeux",
-        "description": "Ajoute les données lourdes : couleurs, screenshots, artworks, vidéos, classifications d'âge, versions, langues, playtime, jeux similaires. Traite 3 jeux en parallèle.",
+        "description": "Ajoute les données complémentaires : screenshots, artworks, vidéos, classifications d'âge, versions, langues, playtime et popularité.",
         "startSync": "Lancer",
         "syncing": "En cours...",
         "stop": "Arrêter",
