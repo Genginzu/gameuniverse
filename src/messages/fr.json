@@ -53,7 +53,8 @@
     "discussions": "Discussions",
     "coaching": "Coaching",
     "coachSettings": "Espace Coach",
-    "coachingHub": "Trouver un coach"
+    "coachingHub": "Trouver un coach",
+    "coachingSessions": "Mes sessions"
   },
   "landing": {
     "title": "Votre univers",
@@ -3420,6 +3421,32 @@
         "topRated": "Les mieux notés",
         "newest": "Nouveaux coachs",
         "popular": "Les plus populaires"
+      }
+    },
+    "sessions": {
+      "title": "Mes sessions",
+      "role": {
+        "student": "En tant qu'élève",
+        "coach": "En tant que coach"
+      },
+      "empty": "Aucune session pour le moment.",
+      "with": "Coach",
+      "student": "Élève",
+      "status": {
+        "requested": "En attente",
+        "confirmed": "Confirmée",
+        "in_progress": "En cours",
+        "completed": "Terminée",
+        "cancelled": "Annulée",
+        "disputed": "Litige"
+      },
+      "actions": {
+        "confirm": "Accepter",
+        "decline": "Refuser",
+        "start": "Démarrer",
+        "complete": "Terminer",
+        "cancel": "Annuler",
+        "chat": "Discussion"
       }
     }
   }

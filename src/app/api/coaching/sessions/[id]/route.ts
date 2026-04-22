@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
+import { createSessionConversation } from "@/lib/services/coachingConversationService";
+import { calculateRefund } from "@/lib/services/cancellationService";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnySupabase = any;
@@ -158,6 +160,14 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       if (body.cancellationReason) {
         updates.cancellation_reason = body.cancellationReason;
       }
+      // Calculate refund if payment exists
+      if (action === "cancel" && session.payment_amount) {
+        const { data: coach } = await supabase.from("coach_profiles").select("cancellation_policy").eq("id", session.coach_id).single();
+        if (coach?.cancellation_policy) {
+          const { refundAmount } = calculateRefund(coach.cancellation_policy, session.scheduled_at, session.payment_amount);
+          updates.refund_amount = refundAmount;
+        }
+      }
     }
 
     const { data: updated, error: updateError } = await supabase
@@ -170,6 +180,18 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     if (updateError) {
       logger.error("Error updating coaching session", { error: updateError });
       return NextResponse.json({ error: "Failed to update session" }, { status: 500 });
+    }
+
+    // Auto-create conversation on confirm
+    if (action === "confirm") {
+      try {
+        const coachPlayerId = await resolveCoachPlayerId(supabase, session.coach_id);
+        if (coachPlayerId) {
+          await createSessionConversation(supabase, coachPlayerId, session.student_id, id);
+        }
+      } catch (convError) {
+        logger.error("Error creating session conversation", { error: convError });
+      }
     }
 
     return NextResponse.json({ session: updated });

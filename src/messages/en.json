@@ -53,7 +53,8 @@
     "discussions": "Discussions",
     "coaching": "Coaching",
     "coachSettings": "Coach Settings",
-    "coachingHub": "Find a Coach"
+    "coachingHub": "Find a Coach",
+    "coachingSessions": "My Sessions"
   },
   "landing": {
     "title": "Your",
@@ -3417,6 +3418,32 @@
         "topRated": "Top Rated",
         "newest": "New Coaches",
         "popular": "Most Popular"
+      }
+    },
+    "sessions": {
+      "title": "My Sessions",
+      "role": {
+        "student": "As student",
+        "coach": "As coach"
+      },
+      "empty": "No sessions yet.",
+      "with": "Coach",
+      "student": "Student",
+      "status": {
+        "requested": "Pending",
+        "confirmed": "Confirmed",
+        "in_progress": "In Progress",
+        "completed": "Completed",
+        "cancelled": "Cancelled",
+        "disputed": "Disputed"
+      },
+      "actions": {
+        "confirm": "Accept",
+        "decline": "Decline",
+        "start": "Start",
+        "complete": "Complete",
+        "cancel": "Cancel",
+        "chat": "Chat"
       }
     }
   }
