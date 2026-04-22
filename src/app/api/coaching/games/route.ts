@@ -54,9 +54,9 @@ export async function GET() {
       return NextResponse.json({ error: "Coach profile not found" }, { status: 404 });
     }
 
-    const { data: rows, error } = await supabase
+    const { data: rows, error } = await (supabase as any)
       .from("coach_games")
-      .select("*, games(id, slug, cover_image_url, game_translations(title, language_code))")
+      .select("*, games:game_id(id, slug, cover_image_url, game_translations(title, language_code))")
       .eq("coach_id", profile.id);
 
     if (error) {
