@@ -3298,5 +3298,12 @@
       "bestRated": "Les mieux notés",
       "recentlyAdded": "Ajoutés récemment"
     }
+  },
+  "upcoming": {
+    "title": "Prochaines sorties",
+    "subtitle": "Les jeux qui arrivent bientôt",
+    "count": "{count} jeux à venir",
+    "allMonths": "Tous",
+    "empty": "Aucune sortie prévue pour cette période."
   }
 }
