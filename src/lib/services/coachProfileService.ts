@@ -64,6 +64,7 @@ export async function create(
       bio: data.bio ?? null,
       experience: data.experience ?? null,
       languages: data.languages ?? [],
+      is_active: true,
       cancellation_policy: data.cancellationPolicy ?? {
         free_until_hours: 24,
         partial_refund_percentage: 50,
