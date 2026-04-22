@@ -80,13 +80,13 @@ export function HomeDashboard() {
           </Link>
         </div>
         {isLoading ? (
-          <div className="space-y-2">
-            {Array.from({ length: 6 }).map((_, i) => (
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+            {Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="flex animate-pulse items-center gap-3 rounded-xl bg-white/40 p-3 dark:bg-slate-800/50">
                 <div className="h-12 w-9 shrink-0 rounded-lg bg-gray-200 dark:bg-gray-700" />
                 <div className="flex-1 space-y-1.5">
-                  <div className="h-4 w-40 rounded bg-gray-200 dark:bg-gray-700" />
-                  <div className="h-3 w-24 rounded bg-gray-200 dark:bg-gray-700" />
+                  <div className="h-4 w-32 rounded bg-gray-200 dark:bg-gray-700" />
+                  <div className="h-3 w-20 rounded bg-gray-200 dark:bg-gray-700" />
                 </div>
               </div>
             ))}
@@ -97,7 +97,7 @@ export function HomeDashboard() {
             <p className="text-sm text-gray-500 dark:text-gray-400">{t("noUpcoming")}</p>
           </div>
         ) : (
-          <div className="space-y-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
             {data?.upcoming.filter(Boolean).map((game) => (
               <Link
                 key={game.id}
