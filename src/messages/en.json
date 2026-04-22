@@ -3382,7 +3382,8 @@
           "pack_5": "5-session pack",
           "pack_10": "10-session pack",
           "monthly": "Monthly subscription"
-        }
+        },
+        "selectType": "Select a session type"
       }
     },
     "publicProfile": {

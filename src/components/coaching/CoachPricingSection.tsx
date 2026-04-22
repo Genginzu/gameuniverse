@@ -60,17 +60,17 @@ export function CoachPricingSection() {
   const { data: gamesData } = useSWR<{ games: CoachGame[] }>("/api/coaching/games", fetcher);
   const { data: pricingData, isLoading, mutate } = useSWR<{ pricing: CoachPricing[] }>("/api/coaching/pricing", fetcher);
   const [adding, setAdding] = useState(false);
-  const [form, setForm] = useState({ coachGameId: "", sessionType: "single" as SessionType, priceAmount: "", durationMinutes: "60" });
+  const [form, setForm] = useState({ coachGameId: "", sessionType: "" as string, priceAmount: "", durationMinutes: "" });
 
   const addPricing = async () => {
-    if (!form.coachGameId || !form.priceAmount) return;
+    if (!form.coachGameId || !form.sessionType || !form.priceAmount) return;
     await fetch("/api/coaching/pricing", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form, priceAmount: parseFloat(form.priceAmount), durationMinutes: parseInt(form.durationMinutes), priceCurrency: "EUR" }),
+      body: JSON.stringify({ ...form, priceAmount: parseFloat(form.priceAmount), durationMinutes: parseInt(form.durationMinutes) || 60, priceCurrency: "EUR" }),
     });
     setAdding(false);
-    setForm({ coachGameId: "", sessionType: "single", priceAmount: "", durationMinutes: "60" });
+    setForm({ coachGameId: "", sessionType: "", priceAmount: "", durationMinutes: "" });
     await mutate();
   };
 
@@ -107,12 +107,12 @@ export function CoachPricingSection() {
           <CustomSelect
             value={form.sessionType}
             onChange={(v) => setForm({ ...form, sessionType: v as SessionType })}
-            placeholder=""
+            placeholder={t("selectType")}
             options={SESSION_TYPES.map((st) => ({ value: st, label: t(`types.${st}`) }))}
           />
           <div className="grid grid-cols-2 gap-3">
-            <input type="number" value={form.priceAmount} onChange={(e) => setForm({ ...form, priceAmount: e.target.value })} className="glass-input rounded-lg p-3 text-base" placeholder={t("pricePlaceholder")} min="0" step="0.01" />
-            <input type="number" value={form.durationMinutes} onChange={(e) => setForm({ ...form, durationMinutes: e.target.value })} className="glass-input rounded-lg p-3 text-base" placeholder={t("durationPlaceholder")} min="15" step="15" />
+            <input type="number" value={form.priceAmount} onChange={(e) => setForm({ ...form, priceAmount: e.target.value })} className="glass-input rounded-lg p-3 text-base" placeholder={t("pricePlaceholder")} min="0" step="0.01" autoComplete="off" />
+            <input type="number" value={form.durationMinutes} onChange={(e) => setForm({ ...form, durationMinutes: e.target.value })} className="glass-input rounded-lg p-3 text-base" placeholder={t("durationPlaceholder")} min="15" step="15" autoComplete="off" />
           </div>
           <button onClick={addPricing} className="w-full rounded-lg bg-linear-to-r from-cyan-500 to-violet-500 px-4 py-2 text-sm font-medium text-white sm:w-auto">{t("save")}</button>
         </div>

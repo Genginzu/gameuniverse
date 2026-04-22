@@ -3385,7 +3385,8 @@
           "pack_5": "Pack 5 sessions",
           "pack_10": "Pack 10 sessions",
           "monthly": "Abonnement mensuel"
-        }
+        },
+        "selectType": "Sélectionner une formule"
       }
     },
     "publicProfile": {
