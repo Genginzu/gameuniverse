@@ -1,6 +1,5 @@
 
 
-
 export interface NavLink {
   href: string;
   icon: string;
@@ -28,6 +27,9 @@ export const PUBLIC_LINKS: NavLink[] = [
   { href: "/players", icon: "fa:user-friends", labelKey: "players" },
 ];
 
+/** Paths that should only highlight on exact match, not on sub-routes */
+const EXACT_MATCH_PATHS = new Set(["/coaching"]);
+
 /**
  * Determines if a navigation link is active based on the current pathname.
  * Strips the locale prefix (e.g. /fr, /en) before comparing.
@@ -50,5 +52,7 @@ export function isActive(pathname: string, linkPath: string, currentUserId?: str
     }
   }
 
-  return normalizedPathname === linkPath || normalizedPathname.startsWith(linkPath + "/");
+  if (normalizedPathname === linkPath) return true;
+  if (EXACT_MATCH_PATHS.has(linkPath)) return false;
+  return normalizedPathname.startsWith(linkPath + "/");
 }
