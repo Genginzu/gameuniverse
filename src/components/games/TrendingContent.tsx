@@ -39,7 +39,7 @@ function TrendingSection({ title, icon, games }: SectionProps) {
         </span>
       </div>
       <div className="grid grid-cols-2 gap-3 xs:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-6">
-        {games.map((game) => (
+        {games.filter(Boolean).map((game) => (
           <EntityCard key={game.id} item={game} config={gameCardConfig} />
         ))}
       </div>
