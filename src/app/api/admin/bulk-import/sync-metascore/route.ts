@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
             send({ type: "success", gameId: game.id, igdbId: game.igdbId, score });
           } else {
             // No score available — mark as checked (sentinel -1), still a success
-            await updateMetascore(game.id, -1);
+            await updateMetascore(game.id, null);
             successCount++;
             send({ type: "success", gameId: game.id, igdbId: game.igdbId, score: null });
           }

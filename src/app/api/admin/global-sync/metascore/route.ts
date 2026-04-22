@@ -109,10 +109,10 @@ async function syncMetascore(supabase: any, entry: MetascoreEntry): Promise<Meta
       }
     }
 
-    // Update game metascore (-1 sentinel if no score found)
+    // Update game metascore (null if no score found)
     await supabase
       .from("games")
-      .update({ metascore: score ?? -1 })
+      .update({ metascore: score ?? null })
       .eq("id", entry.matched_game_id);
 
     // Mark as synced

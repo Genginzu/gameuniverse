@@ -15,7 +15,7 @@ const NO_BACKGROUND_FALLBACK = "none";
 const FIELD_FALLBACKS: Record<string, { column: string; fallback: string | number }> = {
   cover: { column: "cover_image_url", fallback: NO_COVER_FALLBACK },
   background: { column: "background_image_url", fallback: NO_BACKGROUND_FALLBACK },
-  metascore: { column: "metascore", fallback: -1 },
+  metascore: { column: "metascore", fallback: null },
   releaseDate: { column: "release_date", fallback: "1970-01-01" },
   playtime: { column: "playtime_normally", fallback: -1 },
 };
