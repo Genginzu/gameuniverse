@@ -2443,20 +2443,6 @@
         "infoRetry": "Failed games are not marked as synced and will be retried on the next run.",
         "allSynced": "All games have been synced."
       },
-      "enrichTab": {
-        "title": "Game Enrichment",
-        "description": "Adds complementary data: screenshots, artworks, videos, age ratings, versions, languages, playtime and popularity.",
-        "startSync": "Start",
-        "syncing": "Enriching...",
-        "stop": "Stop",
-        "currentGame": "Current: {name}",
-        "synced": "{count} enriched",
-        "failed": "{count} failed",
-        "remaining": "{count} remaining",
-        "complete": "Complete: {count} games enriched",
-        "info": "Enriches already created games with full IGDB data: screenshots, artworks, videos, age ratings, versions/editions, supported languages, playtime, popularity and similar games.",
-        "searchPlaceholder": "Search a game...",
-        "allDone": "All games have been enriched."
       "screenshotsTab": {
         "title": "Screenshots",
         "description": "Syncs screenshots from IGDB in batches of 200.",
@@ -2560,7 +2546,6 @@
         "remaining": "{count} remaining",
         "searchPlaceholder": "Search a game...",
         "allDone": "All popularity data has been synced."
-      },
       },
       "colorsTab": {
         "title": "Color Extraction",

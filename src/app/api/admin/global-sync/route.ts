@@ -36,8 +36,6 @@ export async function GET(request: NextRequest) {
       query = query.eq("is_synced", false);
     } else if (filter === "synced") {
       query = query.eq("is_synced", true);
-    } else if (filter === "to_enrich") {
-      query = query.eq("is_synced", true).eq("is_enriched", false);
     } else if (filter === "to_colors") {
       query = query.eq("is_synced", true).eq("is_colors_synced", false);
     } else if (filter === "to_metascore") {

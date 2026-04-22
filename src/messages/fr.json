@@ -2446,20 +2446,6 @@
         "infoRetry": "Les jeux en erreur ne sont pas marqués comme synchronisés et seront réessayés lors du prochain lancement.",
         "allSynced": "Tous les jeux ont été synchronisés."
       },
-      "enrichTab": {
-        "title": "Enrichissement des jeux",
-        "description": "Ajoute les données complémentaires : screenshots, artworks, vidéos, classifications d'âge, versions, langues, playtime et popularité.",
-        "startSync": "Lancer",
-        "syncing": "En cours...",
-        "stop": "Arrêter",
-        "currentGame": "En cours : {name}",
-        "synced": "{count} enrichi(s)",
-        "failed": "{count} échoué(s)",
-        "remaining": "{count} restant(s)",
-        "complete": "Terminé : {count} jeux enrichis",
-        "info": "Enrichit les jeux déjà créés avec les données complètes depuis IGDB : extraction de couleurs depuis la cover, screenshots, artworks, vidéos, classifications d'âge, versions/éditions, langues supportées, temps de jeu et jeux similaires.",
-        "searchPlaceholder": "Rechercher un jeu...",
-        "allDone": "Tous les jeux ont été enrichis."
       "screenshotsTab": {
         "title": "Screenshots",
         "description": "Synchronise les captures d'écran depuis IGDB par lots de 200.",
@@ -2563,7 +2549,6 @@
         "remaining": "{count} restant(s)",
         "searchPlaceholder": "Rechercher un jeu...",
         "allDone": "Toutes les données de popularité ont été synchronisées."
-      },
       },
       "colorsTab": {
         "title": "Extraction des couleurs",
