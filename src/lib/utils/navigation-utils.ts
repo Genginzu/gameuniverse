@@ -17,6 +17,7 @@ export const NAV_LINKS: NavLink[] = [
 
 /** Coaching navigation links (authenticated only). */
 export const COACHING_LINKS: NavLink[] = [
+  { href: "/coaching", icon: "fa:users", labelKey: "coachingHub" },
   { href: "/coaching/settings", icon: "fa:graduation-cap", labelKey: "coachSettings" },
 ];
 

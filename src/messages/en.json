@@ -52,7 +52,8 @@
     "explore": "Explore",
     "discussions": "Discussions",
     "coaching": "Coaching",
-    "coachSettings": "Coach Settings"
+    "coachSettings": "Coach Settings",
+    "coachingHub": "Find a Coach"
   },
   "landing": {
     "title": "Your",
@@ -3373,6 +3374,38 @@
           "pack_10": "10-session pack",
           "monthly": "Monthly subscription"
         }
+      }
+    },
+    "publicProfile": {
+      "title": "Coach",
+      "verified": "Verified",
+      "sessions": "sessions",
+      "from": "From",
+      "bio": "About",
+      "experience": "Experience",
+      "gamesCoached": "Games Coached",
+      "noGames": "No games coached yet.",
+      "notFound": "This coach does not exist or is no longer active.",
+      "types": {
+        "single": "Single session",
+        "pack_5": "5-session pack",
+        "pack_10": "10-session pack",
+        "monthly": "Monthly"
+      }
+    },
+    "hub": {
+      "title": "Coaching",
+      "subtitle": "Find the perfect coach to level up in your favorite games",
+      "searchPlaceholder": "Search for a coach...",
+      "sortRating": "Best rated",
+      "sortSessions": "Most sessions",
+      "sortPrice": "Lowest price",
+      "sessions": "sessions",
+      "empty": "No coaches found.",
+      "featured": {
+        "topRated": "Top Rated",
+        "newest": "New Coaches",
+        "popular": "Most Popular"
       }
     }
   }
