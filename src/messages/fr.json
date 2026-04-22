@@ -3314,5 +3314,67 @@
     "upcoming": "Sorties du mois",
     "seeAllUpcoming": "Toutes les prochaines sorties",
     "noUpcoming": "Aucune sortie prévue ce mois-ci."
+  },
+  "coaching": {
+    "settings": {
+      "title": "Espace Coach",
+      "subtitle": "Gérez votre profil coach, vos jeux et vos tarifs",
+      "tabs": {
+        "profile": "Profil",
+        "games": "Jeux",
+        "pricing": "Tarifs"
+      },
+      "profile": {
+        "active": "Profil coach actif",
+        "inactive": "Profil coach inactif",
+        "verified": "Vérifié",
+        "activate": "Activer",
+        "deactivate": "Désactiver",
+        "bioLabel": "Bio",
+        "bioPlaceholder": "Décrivez-vous en tant que coach...",
+        "experienceLabel": "Expérience",
+        "experiencePlaceholder": "Votre expérience de coaching...",
+        "languagesLabel": "Langues parlées",
+        "languagesPlaceholder": "Français, Anglais",
+        "languagesHint": "Séparez les langues par des virgules",
+        "saving": "Enregistrement...",
+        "update": "Mettre à jour",
+        "create": "Devenir coach"
+      },
+      "games": {
+        "description": "Sélectionnez les jeux sur lesquels vous proposez du coaching.",
+        "addGame": "Ajouter un jeu",
+        "searchPlaceholder": "Rechercher un jeu...",
+        "empty": "Aucun jeu ajouté. Ajoutez vos premiers jeux coachés.",
+        "specialties": {
+          "ranked": "Ranked",
+          "speedrun": "Speedrun",
+          "strategy": "Stratégie",
+          "beginner": "Débutant",
+          "advanced": "Avancé",
+          "competitive": "Compétitif",
+          "casual": "Casual",
+          "teamplay": "Jeu en équipe",
+          "solo": "Solo",
+          "coaching_basics": "Bases du coaching"
+        }
+      },
+      "pricing": {
+        "description": "Définissez vos tarifs par jeu et par formule.",
+        "addPricing": "Ajouter un tarif",
+        "noGamesYet": "Ajoutez d'abord des jeux dans l'onglet Jeux.",
+        "selectGame": "Sélectionner un jeu",
+        "pricePlaceholder": "Prix (€)",
+        "durationPlaceholder": "Durée (min)",
+        "save": "Enregistrer",
+        "empty": "Aucun tarif défini.",
+        "types": {
+          "single": "Session unique",
+          "pack_5": "Pack 5 sessions",
+          "pack_10": "Pack 10 sessions",
+          "monthly": "Abonnement mensuel"
+        }
+      }
+    }
   }
 }

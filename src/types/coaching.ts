@@ -1,0 +1,63 @@
+export interface CoachProfile {
+  id: string;
+  playerId: string;
+  bio: string | null;
+  experience: string | null;
+  languages: string[];
+  isActive: boolean;
+  isVerified: boolean;
+  verifiedAt: string | null;
+  averageRating: number;
+  totalReviews: number;
+  totalSessions: number;
+  cancellationPolicy: CancellationPolicy;
+  createdAt: string;
+}
+
+export interface CancellationPolicy {
+  free_until_hours: number;
+  partial_refund_percentage: number;
+  no_refund_after_hours: number;
+}
+
+export interface CoachGame {
+  id: string;
+  coachId: string;
+  gameId: string;
+  rankLevel: string | null;
+  hoursExperience: number;
+  specialties: string[];
+  isActive: boolean;
+  createdAt: string;
+  game?: { id: string; slug: string; title: string; coverImage: string | null };
+}
+
+export interface CoachPricing {
+  id: string;
+  coachGameId: string;
+  sessionType: SessionType;
+  priceAmount: number;
+  priceCurrency: string;
+  durationMinutes: number;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export type SessionType = "single" | "pack_5" | "pack_10" | "monthly";
+
+export const SESSION_TYPES: SessionType[] = ["single", "pack_5", "pack_10", "monthly"];
+
+export const COACH_SPECIALTIES = [
+  "ranked",
+  "speedrun",
+  "strategy",
+  "beginner",
+  "advanced",
+  "competitive",
+  "casual",
+  "teamplay",
+  "solo",
+  "coaching_basics",
+] as const;
+
+export type CoachSpecialty = (typeof COACH_SPECIALTIES)[number];

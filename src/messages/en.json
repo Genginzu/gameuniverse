@@ -3311,5 +3311,67 @@
     "upcoming": "This Month Releases",
     "seeAllUpcoming": "All upcoming releases",
     "noUpcoming": "No releases planned this month."
+  },
+  "coaching": {
+    "settings": {
+      "title": "Coach Settings",
+      "subtitle": "Manage your coach profile, games and pricing",
+      "tabs": {
+        "profile": "Profile",
+        "games": "Games",
+        "pricing": "Pricing"
+      },
+      "profile": {
+        "active": "Coach profile active",
+        "inactive": "Coach profile inactive",
+        "verified": "Verified",
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "bioLabel": "Bio",
+        "bioPlaceholder": "Describe yourself as a coach...",
+        "experienceLabel": "Experience",
+        "experiencePlaceholder": "Your coaching experience...",
+        "languagesLabel": "Languages spoken",
+        "languagesPlaceholder": "English, French",
+        "languagesHint": "Separate languages with commas",
+        "saving": "Saving...",
+        "update": "Update",
+        "create": "Become a coach"
+      },
+      "games": {
+        "description": "Select the games you offer coaching for.",
+        "addGame": "Add a game",
+        "searchPlaceholder": "Search for a game...",
+        "empty": "No games added yet. Add your first coached games.",
+        "specialties": {
+          "ranked": "Ranked",
+          "speedrun": "Speedrun",
+          "strategy": "Strategy",
+          "beginner": "Beginner",
+          "advanced": "Advanced",
+          "competitive": "Competitive",
+          "casual": "Casual",
+          "teamplay": "Teamplay",
+          "solo": "Solo",
+          "coaching_basics": "Coaching Basics"
+        }
+      },
+      "pricing": {
+        "description": "Set your pricing per game and session type.",
+        "addPricing": "Add pricing",
+        "noGamesYet": "Add games first in the Games tab.",
+        "selectGame": "Select a game",
+        "pricePlaceholder": "Price (€)",
+        "durationPlaceholder": "Duration (min)",
+        "save": "Save",
+        "empty": "No pricing defined yet.",
+        "types": {
+          "single": "Single session",
+          "pack_5": "5-session pack",
+          "pack_10": "10-session pack",
+          "monthly": "Monthly subscription"
+        }
+      }
+    }
   }
 }
