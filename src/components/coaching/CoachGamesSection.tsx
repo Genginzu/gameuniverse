@@ -84,7 +84,8 @@ export function CoachGamesSection() {
               </div>
               <div className="space-y-2">
                 {COACH_SPECIALTY_GROUPS.map((group) => (
-                  <div key={group.key} className="flex flex-wrap gap-1.5">
+                  <div key={group.key} className="flex flex-wrap items-center gap-1.5">
+                    <span className="mr-1 text-xs font-semibold text-gray-500 dark:text-gray-400">{t(`categories.${group.key}`)}</span>
                     {group.specialties.map((s) => (
                       <button key={s} onClick={() => toggleSpecialty(game, s)} className={`rounded-full px-2.5 py-1 text-xs font-medium transition-all ${game.specialties.includes(s) ? "bg-cyan-500/20 text-cyan-400" : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"}`}>
                         {t(`specialties.${s}`)}

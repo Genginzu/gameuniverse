@@ -3364,6 +3364,11 @@
           "strategy": "Stratégie",
           "speedrun": "Speedrun",
           "progression_build": "Progression / Build"
+        },
+        "categories": {
+          "level": "Niveau",
+          "mode": "Mode",
+          "style": "Style"
         }
       },
       "pricing": {
