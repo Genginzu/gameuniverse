@@ -12,9 +12,12 @@ interface CoachGameRow {
   specialties: string[];
   is_active: boolean;
   created_at: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  games?: any;
 }
 
 function mapRow(row: CoachGameRow): CoachGame {
+  const gameData = row.games as { id: string; slug: string; cover_image_url: string | null; game_translations: Array<{ title: string }> } | undefined;
   return {
     id: row.id,
     coachId: row.coach_id,
@@ -24,6 +27,12 @@ function mapRow(row: CoachGameRow): CoachGame {
     specialties: row.specialties,
     isActive: row.is_active,
     createdAt: row.created_at,
+    game: gameData ? {
+      id: gameData.id,
+      slug: gameData.slug,
+      title: gameData.game_translations?.[0]?.title ?? gameData.slug,
+      coverImage: gameData.cover_image_url,
+    } : undefined,
   };
 }
 
@@ -47,7 +56,7 @@ export async function GET() {
 
     const { data: rows, error } = await supabase
       .from("coach_games")
-      .select("*")
+      .select("*, games(id, slug, cover_image_url, game_translations(title, language_code))")
       .eq("coach_id", profile.id);
 
     if (error) {
