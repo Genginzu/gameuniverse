@@ -3302,5 +3302,14 @@
     "count": "{count} upcoming games",
     "allMonths": "All",
     "empty": "No releases planned for this period."
+  },
+  "homeDashboard": {
+    "title": "Welcome",
+    "subtitle": "Your gaming dashboard",
+    "trending": "Trending Games",
+    "seeAllTrending": "See all trending",
+    "upcoming": "This Month Releases",
+    "seeAllUpcoming": "All upcoming releases",
+    "noUpcoming": "No releases planned this month."
   }
 }

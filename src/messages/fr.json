@@ -3305,5 +3305,14 @@
     "count": "{count} jeux à venir",
     "allMonths": "Tous",
     "empty": "Aucune sortie prévue pour cette période."
+  },
+  "homeDashboard": {
+    "title": "Bienvenue",
+    "subtitle": "Votre tableau de bord gaming",
+    "trending": "Jeux tendances",
+    "seeAllTrending": "Voir toutes les tendances",
+    "upcoming": "Sorties du mois",
+    "seeAllUpcoming": "Toutes les prochaines sorties",
+    "noUpcoming": "Aucune sortie prévue ce mois-ci."
   }
 }
