@@ -5,7 +5,7 @@ import { IGDBService } from "@/lib/services/igdbService";
 import { syncScreenshots } from "@/lib/services/igdb-sync-fields";
 import { logger } from "@/lib/logger";
 
-const BATCH_SIZE = 200;
+const BATCH_SIZE = 50;
 
 export async function POST(_request: NextRequest) {
   try {
