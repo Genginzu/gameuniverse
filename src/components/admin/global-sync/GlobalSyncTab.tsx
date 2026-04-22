@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useGlobalSync } from "@/hooks/useGlobalSync";
+import type { DownloadState } from "@/hooks/useGlobalDownload";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -10,14 +11,20 @@ import { Icon } from "@iconify/react";
 import { Pagination } from "@/components/shared/Pagination";
 import { GlobalSyncEntryRow } from "./GlobalSyncEntryRow";
 
-export function GlobalSyncTab() {
+interface GlobalSyncTabProps {
+  downloadState: DownloadState;
+  startDownload: () => void;
+  stopDownload: () => void;
+}
+
+export function GlobalSyncTab({ downloadState, startDownload, stopDownload }: GlobalSyncTabProps) {
   const t = useTranslations("admin.globalSync");
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [filter, setFilter] = useState<"all" | "matched" | "unmatched">("all");
 
-  const { entries, total, totalPages, isLoading, downloadState, startDownload, stopDownload } = useGlobalSync(page, search, filter);
+  const { entries, total, totalPages, isLoading } = useGlobalSync(page, search, filter);
 
   const handleSearch = () => { setSearch(searchInput); setPage(1); };
   const handleKeyDown = (e: React.KeyboardEvent) => { if (e.key === "Enter") handleSearch(); };
