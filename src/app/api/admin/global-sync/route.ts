@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
     }
 
     const { data, count, error } = await query
-      .order("name", { ascending: true })
+      .order("igdb_id", { ascending: true })
       .range(offset, offset + limit - 1);
 
     if (error) {
