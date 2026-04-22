@@ -2,10 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { IGDBService } from "@/lib/services/igdbService";
-import { syncScreenshots } from "@/lib/services/igdb-sync-fields";
 import { logger } from "@/lib/logger";
 
-const BATCH_SIZE = 50;
+const BATCH_SIZE = 200;
 
 export async function POST(_request: NextRequest) {
   try {
@@ -32,22 +31,34 @@ export async function POST(_request: NextRequest) {
     const igdbIds = entries.map((e) => e.igdb_id);
     const igdbMap = await IGDBService.getScreenshotsBatch(igdbIds);
 
-    const results = [];
+    // Bulk delete existing screenshots for all games at once
+    const gameIds = entries.map((e) => e.matched_game_id);
+    await supabase.from("game_screenshots").delete().in("game_id", gameIds);
+
+    // Build all insert rows at once
+    const allRows: Array<{ game_id: string; url: string; display_order: number; is_featured: boolean }> = [];
     for (const entry of entries) {
-      const base = { igdbId: entry.igdb_id, name: entry.name };
-      try {
-        const screenshots = igdbMap.get(entry.igdb_id);
-        if (screenshots !== undefined) {
-          const igdbGame = { screenshots } as Parameters<typeof syncScreenshots>[2];
-          await syncScreenshots(supabase, entry.matched_game_id, igdbGame);
-        }
-        await supabase.from("igdb_global_sync").update({ is_screenshots_synced: true }).eq("id", entry.id);
-        results.push({ ...base, success: true });
-      } catch (error) {
-        const msg = error instanceof Error ? error.message : "Unknown error";
-        results.push({ ...base, success: false, error: msg });
+      const screenshots = igdbMap.get(entry.igdb_id) ?? [];
+      for (let i = 0; i < screenshots.length; i++) {
+        allRows.push({
+          game_id: entry.matched_game_id,
+          url: IGDBService.buildImageUrl(screenshots[i].image_id, "1080p"),
+          display_order: i,
+          is_featured: i === 0,
+        });
       }
     }
+
+    // Single bulk insert
+    if (allRows.length > 0) {
+      await supabase.from("game_screenshots").insert(allRows);
+    }
+
+    // Mark all as synced in one update
+    const syncIds = entries.map((e) => e.id);
+    await supabase.from("igdb_global_sync").update({ is_screenshots_synced: true }).in("id", syncIds);
+
+    const results = entries.map((e) => ({ igdbId: e.igdb_id, name: e.name, success: true }));
 
     const { count: remaining } = await supabase
       .from("igdb_global_sync")

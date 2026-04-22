@@ -4,7 +4,7 @@ import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { IGDBService } from "@/lib/services/igdbService";
 import { logger } from "@/lib/logger";
 
-const BATCH_SIZE = 50;
+const BATCH_SIZE = 200;
 
 export async function POST(_request: NextRequest) {
   try {
@@ -31,38 +31,34 @@ export async function POST(_request: NextRequest) {
     const igdbIds = entries.map((e) => e.igdb_id);
     const versionsMap = await IGDBService.getVersionsBatch(igdbIds);
 
-    const results = [];
+    const gameIds = entries.map((e) => e.matched_game_id);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase as any).from("game_versions").delete().in("game_id", gameIds);
+
+    const allRows: Array<Record<string, unknown>> = [];
     for (const entry of entries) {
-      const base = { igdbId: entry.igdb_id, name: entry.name };
-      try {
-        const versions = versionsMap.get(entry.igdb_id) ?? [];
-        const gameId = entry.matched_game_id;
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (supabase as any).from("game_versions").delete().eq("game_id", gameId);
-
-        for (let i = 0; i < versions.length; i++) {
-          const v = versions[i];
-          const coverUrl = v.cover?.image_id
-            ? IGDBService.buildImageUrl(v.cover.image_id, "cover_big")
-            : null;
-          await supabase.from("game_versions").insert({
-            game_id: gameId,
-            igdb_id: v.id,
-            version_title: v.version_title || v.name,
-            description: v.summary || null,
-            cover_image_url: coverUrl,
-            display_order: i,
-          }).select("id").single();
-        }
-
-        await supabase.from("igdb_global_sync").update({ is_versions_synced: true }).eq("id", entry.id);
-        results.push({ ...base, success: true });
-      } catch (error) {
-        const msg = error instanceof Error ? error.message : "Unknown error";
-        results.push({ ...base, success: false, error: msg });
+      const versions = versionsMap.get(entry.igdb_id) ?? [];
+      for (let i = 0; i < versions.length; i++) {
+        const v = versions[i];
+        allRows.push({
+          game_id: entry.matched_game_id,
+          igdb_id: v.id,
+          version_title: v.version_title || v.name,
+          description: v.summary || null,
+          cover_image_url: v.cover?.image_id ? IGDBService.buildImageUrl(v.cover.image_id, "cover_big") : null,
+          display_order: i,
+        });
       }
     }
+
+    if (allRows.length > 0) {
+      await supabase.from("game_versions").insert(allRows);
+    }
+
+    const syncIds = entries.map((e) => e.id);
+    await supabase.from("igdb_global_sync").update({ is_versions_synced: true }).in("id", syncIds);
+
+    const results = entries.map((e) => ({ igdbId: e.igdb_id, name: e.name, success: true }));
 
     const { count: remaining } = await supabase
       .from("igdb_global_sync")

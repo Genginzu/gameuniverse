@@ -2,10 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { IGDBService } from "@/lib/services/igdbService";
-import { syncArtworks } from "@/lib/services/igdb-sync-fields";
 import { logger } from "@/lib/logger";
 
-const BATCH_SIZE = 50;
+const BATCH_SIZE = 200;
 
 export async function POST(_request: NextRequest) {
   try {
@@ -32,22 +31,31 @@ export async function POST(_request: NextRequest) {
     const igdbIds = entries.map((e) => e.igdb_id);
     const igdbMap = await IGDBService.getArtworksBatch(igdbIds);
 
-    const results = [];
+    const gameIds = entries.map((e) => e.matched_game_id);
+    await supabase.from("game_artwork").delete().in("game_id", gameIds);
+
+    const allRows: Array<{ game_id: string; url: string; artwork_type: string; display_order: number; is_featured: boolean }> = [];
     for (const entry of entries) {
-      const base = { igdbId: entry.igdb_id, name: entry.name };
-      try {
-        const artworks = igdbMap.get(entry.igdb_id);
-        if (artworks !== undefined) {
-          const igdbGame = { artworks } as Parameters<typeof syncArtworks>[2];
-          await syncArtworks(supabase, entry.matched_game_id, igdbGame);
-        }
-        await supabase.from("igdb_global_sync").update({ is_artworks_synced: true }).eq("id", entry.id);
-        results.push({ ...base, success: true });
-      } catch (error) {
-        const msg = error instanceof Error ? error.message : "Unknown error";
-        results.push({ ...base, success: false, error: msg });
+      const artworks = igdbMap.get(entry.igdb_id) ?? [];
+      for (let i = 0; i < artworks.length; i++) {
+        allRows.push({
+          game_id: entry.matched_game_id,
+          url: IGDBService.buildImageUrl(artworks[i].image_id, "1080p"),
+          artwork_type: "promotional",
+          display_order: i,
+          is_featured: i === 0,
+        });
       }
     }
+
+    if (allRows.length > 0) {
+      await supabase.from("game_artwork").insert(allRows);
+    }
+
+    const syncIds = entries.map((e) => e.id);
+    await supabase.from("igdb_global_sync").update({ is_artworks_synced: true }).in("id", syncIds);
+
+    const results = entries.map((e) => ({ igdbId: e.igdb_id, name: e.name, success: true }));
 
     const { count: remaining } = await supabase
       .from("igdb_global_sync")

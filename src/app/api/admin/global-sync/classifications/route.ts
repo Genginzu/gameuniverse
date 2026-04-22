@@ -5,7 +5,7 @@ import { IGDBService } from "@/lib/services/igdbService";
 import { syncAgeRatings } from "@/lib/services/igdb-sync-fields";
 import { logger } from "@/lib/logger";
 
-const BATCH_SIZE = 50;
+const BATCH_SIZE = 100;
 
 export async function POST(_request: NextRequest) {
   try {
@@ -32,20 +32,23 @@ export async function POST(_request: NextRequest) {
     const igdbIds = entries.map((e) => e.igdb_id);
     const igdbMap = await IGDBService.getClassificationsBatch(igdbIds);
 
-    const results = [];
-    for (const entry of entries) {
-      const base = { igdbId: entry.igdb_id, name: entry.name };
-      try {
-        const igdbGame = igdbMap.get(entry.igdb_id);
-        if (igdbGame) {
-          await syncAgeRatings(supabase, entry.matched_game_id, igdbGame);
-        }
-        await supabase.from("igdb_global_sync").update({ is_classifications_synced: true }).eq("id", entry.id);
-        results.push({ ...base, success: true });
-      } catch (error) {
-        const msg = error instanceof Error ? error.message : "Unknown error";
-        results.push({ ...base, success: false, error: msg });
-      }
+    // Process in parallel batches of 10
+    const results: Array<{ igdbId: number; name: string; success: boolean; error?: string }> = [];
+    for (let i = 0; i < entries.length; i += 10) {
+      const chunk = entries.slice(i, i + 10);
+      const chunkResults = await Promise.all(
+        chunk.map(async (entry) => {
+          try {
+            const igdbGame = igdbMap.get(entry.igdb_id);
+            if (igdbGame) await syncAgeRatings(supabase, entry.matched_game_id, igdbGame);
+            await supabase.from("igdb_global_sync").update({ is_classifications_synced: true }).eq("id", entry.id);
+            return { igdbId: entry.igdb_id, name: entry.name, success: true };
+          } catch (error) {
+            return { igdbId: entry.igdb_id, name: entry.name, success: false, error: (error as Error).message };
+          }
+        })
+      );
+      results.push(...chunkResults);
     }
 
     const { count: remaining } = await supabase
