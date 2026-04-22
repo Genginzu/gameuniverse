@@ -14,6 +14,7 @@ interface CoachProfileData {
 
 export function CoachProfileContent({ username }: { username: string }) {
   const t = useTranslations("coaching.publicProfile");
+  const tGames = useTranslations("coaching.settings.games");
   const locale = useLocale();
   const { data, isLoading, error } = useSWR<CoachProfileData>(`/api/coaching/${username}?locale=${locale}`, fetcher);
 
@@ -95,30 +96,28 @@ export function CoachProfileContent({ username }: { username: string }) {
         ) : (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {games.map((game) => (
-              <div key={game.id} className="glass-card space-y-3 rounded-xl p-4">
-                <div className="flex items-center gap-3">
-                  {game.coverImage && <img src={game.coverImage} alt="" className="h-14 w-10 rounded-lg object-cover" />}
-                  <div>
-                    <Link href={`/games/${game.slug}`} className="font-medium text-gray-900 hover:text-cyan-400 dark:text-white">{game.title}</Link>
-                    {game.specialties.length > 0 && (
-                      <div className="mt-1 flex flex-wrap gap-1">
-                        {game.specialties.map((s) => (
-                          <span key={s} className="rounded-full bg-cyan-500/10 px-2 py-0.5 text-xs text-cyan-400">{s}</span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
+              <div key={game.id} className="glass-card flex gap-4 rounded-xl p-4">
+                {game.coverImage && <img src={game.coverImage} alt="" className="h-20 w-14 shrink-0 rounded-lg object-cover" />}
+                <div className="min-w-0 flex-1 space-y-2">
+                  <Link href={`/games/${game.slug}`} className="font-medium text-gray-900 hover:text-cyan-400 dark:text-white">{game.title}</Link>
+                  {game.specialties.length > 0 && (
+                    <div className="flex flex-wrap gap-1">
+                      {game.specialties.map((s) => (
+                        <span key={s} className="rounded-full bg-cyan-500/10 px-2 py-0.5 text-xs text-cyan-400">{tGames(`specialties.${s}`)}</span>
+                      ))}
+                    </div>
+                  )}
+                  {game.pricing.length > 0 && (
+                    <div className="space-y-1">
+                      {game.pricing.map((p) => (
+                        <div key={p.sessionType} className="flex items-center justify-between text-sm">
+                          <span className="text-gray-500 dark:text-gray-400">{t(`types.${p.sessionType}`)}</span>
+                          <span className="font-medium text-gray-900 dark:text-white">{p.priceAmount}€ <span className="text-xs text-gray-400">/ {p.durationMinutes}min</span></span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                {game.pricing.length > 0 && (
-                  <div className="space-y-1">
-                    {game.pricing.map((p) => (
-                      <div key={p.sessionType} className="flex items-center justify-between text-sm">
-                        <span className="text-gray-500 dark:text-gray-400">{t(`types.${p.sessionType}`)}</span>
-                        <span className="font-medium text-gray-900 dark:text-white">{p.priceAmount}€ <span className="text-xs text-gray-400">/ {p.durationMinutes}min</span></span>
-                      </div>
-                    ))}
-                  </div>
-                )}
               </div>
             ))}
           </div>
