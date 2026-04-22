@@ -72,23 +72,26 @@ export function CoachGamesSection() {
       ) : (
         <div className="space-y-3">
           {data?.games.map((game) => (
-            <div key={game.id} className="glass-card space-y-3 rounded-xl p-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  {game.game?.coverImage && <img src={game.game.coverImage} alt="" className="h-12 w-9 rounded-lg object-cover" />}
+            <div key={game.id} className="glass-card flex flex-col gap-4 rounded-xl p-4 sm:flex-row sm:items-start">
+              <div className="flex shrink-0 items-center gap-3">
+                {game.game?.coverImage && <img src={game.game.coverImage} alt="" className="h-16 w-12 rounded-lg object-cover" />}
+                <div className="sm:hidden">
                   <span className="font-medium text-gray-900 dark:text-white">{game.game?.title ?? game.gameId}</span>
                 </div>
-                <button onClick={() => removeGame(game.id)} className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-red-500/10 hover:text-red-500">
-                  <Icon icon="lucide:trash-2" className="size-4" />
-                </button>
               </div>
-              <div className="flex flex-wrap gap-1.5">
+              <div className="hidden sm:block sm:w-36 sm:shrink-0">
+                <span className="font-medium text-gray-900 dark:text-white">{game.game?.title ?? game.gameId}</span>
+              </div>
+              <div className="flex flex-1 flex-wrap gap-1.5">
                 {COACH_SPECIALTIES.map((s) => (
                   <button key={s} onClick={() => toggleSpecialty(game, s)} className={`rounded-full px-2.5 py-1 text-xs font-medium transition-all ${game.specialties.includes(s) ? "bg-cyan-500/20 text-cyan-400" : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"}`}>
                     {t(`specialties.${s}`)}
                   </button>
                 ))}
               </div>
+              <button onClick={() => removeGame(game.id)} className="shrink-0 self-start rounded-lg p-2 text-gray-400 transition-colors hover:bg-red-500/10 hover:text-red-500">
+                <Icon icon="lucide:trash-2" className="size-4" />
+              </button>
             </div>
           ))}
         </div>
