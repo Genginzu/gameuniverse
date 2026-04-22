@@ -50,7 +50,9 @@
     "lightMode": "Mode clair",
     "darkMode": "Mode sombre",
     "explore": "Explorer",
-    "discussions": "Discussions"
+    "discussions": "Discussions",
+    "coaching": "Coaching",
+    "coachSettings": "Espace Coach"
   },
   "landing": {
     "title": "Votre univers",

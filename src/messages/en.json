@@ -50,7 +50,9 @@
     "lightMode": "Light mode",
     "darkMode": "Dark mode",
     "explore": "Explore",
-    "discussions": "Discussions"
+    "discussions": "Discussions",
+    "coaching": "Coaching",
+    "coachSettings": "Coach Settings"
   },
   "landing": {
     "title": "Your",

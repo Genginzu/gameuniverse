@@ -15,6 +15,11 @@ export const NAV_LINKS: NavLink[] = [
   { href: "/discussions", icon: "fa:comments", labelKey: "discussions" },
 ];
 
+/** Coaching navigation links (authenticated only). */
+export const COACHING_LINKS: NavLink[] = [
+  { href: "/coaching/settings", icon: "fa:graduation-cap", labelKey: "coachSettings" },
+];
+
 /** Public navigation links visible to all users. */
 export const PUBLIC_LINKS: NavLink[] = [
   { href: "/games", icon: "fa:dice", labelKey: "games" },
