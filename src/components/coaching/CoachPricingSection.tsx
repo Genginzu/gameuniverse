@@ -43,7 +43,7 @@ function CustomSelect({ value, onChange, placeholder, options }: {
               className={`flex w-full items-center px-4 py-2.5 text-left text-sm transition-colors ${
                 o.value === value
                   ? "bg-cyan-500/10 font-medium text-cyan-400"
-                  : "text-gray-700 hover:bg-white/60 dark:text-gray-300 dark:hover:bg-slate-700/60"
+                  : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-slate-700"
               }`}
             >
               {o.label}
