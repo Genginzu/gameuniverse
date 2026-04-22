@@ -80,16 +80,51 @@ export function HomeDashboard() {
           </Link>
         </div>
         {isLoading ? (
-          <GridSkeleton count={6} columns="grid-cols-2 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-6" skeletonConfig={gameSkeletonConfig} />
+          <div className="space-y-2">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="flex animate-pulse items-center gap-3 rounded-xl bg-white/40 p-3 dark:bg-slate-800/50">
+                <div className="h-12 w-9 shrink-0 rounded-lg bg-gray-200 dark:bg-gray-700" />
+                <div className="flex-1 space-y-1.5">
+                  <div className="h-4 w-40 rounded bg-gray-200 dark:bg-gray-700" />
+                  <div className="h-3 w-24 rounded bg-gray-200 dark:bg-gray-700" />
+                </div>
+              </div>
+            ))}
+          </div>
         ) : data?.upcoming.length === 0 ? (
           <div className="glass-card flex flex-col items-center justify-center rounded-xl p-8 text-center">
             <Icon icon="lucide:calendar-x" className="mb-3 size-10 text-gray-400" />
             <p className="text-sm text-gray-500 dark:text-gray-400">{t("noUpcoming")}</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-3 xs:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-6">
+          <div className="space-y-2">
             {data?.upcoming.filter(Boolean).map((game) => (
-              <EntityCard key={game.id} entity={game} config={gameCardConfig} />
+              <Link
+                key={game.id}
+                href={`/games/${game.slug}`}
+                className="flex items-center gap-3 rounded-xl bg-white/40 p-3 transition-all hover:bg-white/60 dark:bg-slate-800/50 dark:hover:bg-slate-700/60"
+              >
+                {game.coverImage ? (
+                  <img
+                    src={game.coverImage}
+                    alt={game.title}
+                    className="h-12 w-9 shrink-0 rounded-lg object-cover"
+                  />
+                ) : (
+                  <div className="flex h-12 w-9 shrink-0 items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700">
+                    <Icon icon="lucide:gamepad-2" className="size-4 text-gray-400" />
+                  </div>
+                )}
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-gray-900 dark:text-white">{game.title}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {game.releaseDate
+                      ? new Date(game.releaseDate).toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" })
+                      : "—"}
+                  </p>
+                </div>
+                <Icon icon="lucide:chevron-right" className="size-4 shrink-0 text-gray-400" />
+              </Link>
             ))}
           </div>
         )}
