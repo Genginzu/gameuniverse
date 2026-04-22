@@ -55,6 +55,7 @@ export async function GET() {
         isActive: row.is_active,
         createdAt: row.created_at,
         gameTitle: title,
+        gameCoverImage: game?.cover_image_url ?? null,
       };
     });
 
