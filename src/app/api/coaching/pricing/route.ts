@@ -34,7 +34,7 @@ export async function GET() {
 
     const { data, error } = await supabase
       .from("coach_pricing")
-      .select("*, coach_games!inner(id, coach_id)")
+      .select("*, coach_games!inner(id, coach_id, game_id, games:game_id(slug, cover_image_url, game_translations(title, language_code)))")
       .eq("coach_games.coach_id", profile.id);
 
     if (error) {
@@ -42,16 +42,21 @@ export async function GET() {
       return NextResponse.json({ error: "Failed to fetch pricing" }, { status: 500 });
     }
 
-    const pricing = (data || []).map((row: AnySupabase) => ({
-      id: row.id,
-      coachGameId: row.coach_game_id,
-      sessionType: row.session_type,
-      priceAmount: row.price_amount,
-      priceCurrency: row.price_currency,
-      durationMinutes: row.duration_minutes,
-      isActive: row.is_active,
-      createdAt: row.created_at,
-    }));
+    const pricing = (data || []).map((row: AnySupabase) => {
+      const game = row.coach_games?.games;
+      const title = game?.game_translations?.[0]?.title ?? game?.slug ?? "";
+      return {
+        id: row.id,
+        coachGameId: row.coach_game_id,
+        sessionType: row.session_type,
+        priceAmount: row.price_amount,
+        priceCurrency: row.price_currency,
+        durationMinutes: row.duration_minutes,
+        isActive: row.is_active,
+        createdAt: row.created_at,
+        gameTitle: title,
+      };
+    });
 
     return NextResponse.json({ pricing });
   } catch (error) {

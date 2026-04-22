@@ -129,9 +129,12 @@ export function CoachPricingSection() {
         {pricingData?.pricing.map((p) => (
           <div key={p.id} className="glass-card flex items-center justify-between rounded-xl p-4">
             <div>
-              <span className="text-sm font-medium text-gray-900 dark:text-white">{t(`types.${p.sessionType}`)}</span>
-              <span className="ml-2 text-lg font-bold text-cyan-400">{p.priceAmount}€</span>
-              <span className="ml-1 text-xs text-gray-500">/ {p.durationMinutes}min</span>
+              <span className="text-xs text-gray-500 dark:text-gray-400">{(p as any).gameTitle}</span>
+              <div>
+                <span className="text-sm font-medium text-gray-900 dark:text-white">{t(`types.${p.sessionType}`)}</span>
+                <span className="ml-2 text-lg font-bold text-cyan-400">{p.priceAmount}€</span>
+                <span className="ml-1 text-xs text-gray-500">/ {p.durationMinutes}min</span>
+              </div>
             </div>
             <button onClick={() => removePricing(p.id)} className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-red-500/10 hover:text-red-500">
               <Icon icon="lucide:trash-2" className="size-4" />
