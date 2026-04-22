@@ -234,6 +234,141 @@ export class IGDBService {
     return games.length === 0 ? null : games[0];
   }
 
+  // ---------------------------------------------------------------------------
+  // Batch methods for granular enrichment tabs
+  // ---------------------------------------------------------------------------
+
+  /** Batch fetch screenshots for multiple games */
+  static async getScreenshotsBatch(igdbIds: number[]): Promise<Map<number, Array<{ image_id: string }>>> {
+    return this.batchGameFields(igdbIds, "screenshots.image_id", "screenshots");
+  }
+
+  /** Batch fetch artworks for multiple games */
+  static async getArtworksBatch(igdbIds: number[]): Promise<Map<number, Array<{ image_id: string }>>> {
+    return this.batchGameFields(igdbIds, "artworks.image_id", "artworks");
+  }
+
+  /** Batch fetch videos for multiple games */
+  static async getVideosBatch(igdbIds: number[]): Promise<Map<number, Array<{ video_id: string; name?: string }>>> {
+    return this.batchGameFields(igdbIds, "videos.video_id, videos.name", "videos");
+  }
+
+  /** Batch fetch age ratings for multiple games */
+  static async getClassificationsBatch(igdbIds: number[]): Promise<Map<number, IGDBGame>> {
+    return this.batchGameFieldsRaw(igdbIds,
+      "age_ratings.id, age_ratings.organization, age_ratings.rating_category, age_ratings.synopsis, age_ratings.rating_content_descriptions"
+    );
+  }
+
+  /** Batch fetch language supports for multiple games */
+  static async getLanguagesBatch(igdbIds: number[]): Promise<Map<number, IGDBGame>> {
+    return this.batchGameFieldsRaw(igdbIds,
+      "language_supports.language.id, language_supports.language.name, language_supports.language.native_name, language_supports.language.locale, language_supports.language_support_type.id, language_supports.language_support_type.name"
+    );
+  }
+
+  /** Batch fetch game versions (editions) */
+  static async getVersionsBatch(igdbIds: number[]): Promise<Map<number, IGDBGameVersion[]>> {
+    const map = new Map<number, IGDBGameVersion[]>();
+    if (igdbIds.length === 0) return map;
+    const body = `
+      fields id, name, slug, version_title, summary, cover.image_id, version_parent;
+      where version_parent = (${igdbIds.join(",")});
+      limit 500;
+    `;
+    const response = await this.igdbFetch("games", body);
+    if (!response.ok) return map;
+    const results: (IGDBGameVersion & { version_parent: number })[] = await response.json();
+    for (const v of results) {
+      if (!map.has(v.version_parent)) map.set(v.version_parent, []);
+      map.get(v.version_parent)!.push(v);
+    }
+    return map;
+  }
+
+  /** Batch fetch time-to-beat for multiple games */
+  static async getPlaytimeBatch(igdbIds: number[]): Promise<Map<number, IGDBTimeToBeat>> {
+    const map = new Map<number, IGDBTimeToBeat>();
+    if (igdbIds.length === 0) return map;
+    const body = `
+      fields game_id, hastily, normally, completely, count;
+      where game_id = (${igdbIds.join(",")});
+      limit 500;
+    `;
+    const response = await this.igdbFetch("game_time_to_beats", body);
+    if (!response.ok) return map;
+    const results: IGDBTimeToBeat[] = await response.json();
+    for (const r of results) {
+      if (r.game_id && !map.has(r.game_id)) map.set(r.game_id, r);
+    }
+    return map;
+  }
+
+  /** Batch fetch popularity primitives for multiple games */
+  static async getPopularityBatch(igdbIds: number[]): Promise<Map<number, { visits: number | null; wantToPlay: number | null; playing: number | null }>> {
+    const map = new Map<number, { visits: number | null; wantToPlay: number | null; playing: number | null }>();
+    if (igdbIds.length === 0) return map;
+    const body = `
+      fields game_id, popularity_type, value;
+      where game_id = (${igdbIds.join(",")}) & popularity_type = (1,2,3);
+      limit 500;
+    `;
+    const response = await this.igdbFetch("popularity_primitives", body);
+    if (!response.ok) return map;
+    const rows = (await response.json()) as Array<{ game_id: number; popularity_type: number; value: number }>;
+    const grouped = new Map<number, Array<{ popularity_type: number; value: number }>>();
+    for (const r of rows) {
+      if (!grouped.has(r.game_id)) grouped.set(r.game_id, []);
+      grouped.get(r.game_id)!.push(r);
+    }
+    for (const [gameId, vals] of grouped) {
+      const pickMax = (type: number): number | null => {
+        const v = vals.filter((r) => r.popularity_type === type).map((r) => r.value);
+        return v.length === 0 ? null : Math.max(...v);
+      };
+      map.set(gameId, { visits: pickMax(1), wantToPlay: pickMax(2), playing: pickMax(3) });
+    }
+    return map;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Internal batch helpers
+  // ---------------------------------------------------------------------------
+
+  /** Generic batch: fetch a single array field from /games for multiple IDs */
+  private static async batchGameFields<T>(
+    igdbIds: number[],
+    fields: string,
+    key: string
+  ): Promise<Map<number, T[]>> {
+    const map = new Map<number, T[]>();
+    if (igdbIds.length === 0) return map;
+    const body = `fields ${fields}; where id = (${igdbIds.join(",")}); limit ${igdbIds.length};`;
+    const response = await this.igdbFetch("games", body);
+    if (!response.ok) return map;
+    const games = (await response.json()) as Array<{ id: number; [k: string]: unknown }>;
+    for (const g of games) {
+      map.set(g.id, (g[key] as T[]) ?? []);
+    }
+    return map;
+  }
+
+  /** Generic batch: fetch raw IGDBGame-like objects with specific fields */
+  private static async batchGameFieldsRaw(
+    igdbIds: number[],
+    fields: string
+  ): Promise<Map<number, IGDBGame>> {
+    const map = new Map<number, IGDBGame>();
+    if (igdbIds.length === 0) return map;
+    const body = `fields ${fields}; where id = (${igdbIds.join(",")}); limit ${igdbIds.length};`;
+    const response = await this.igdbFetch("games", body);
+    if (!response.ok) return map;
+    const games: IGDBGame[] = await response.json();
+    for (const g of games) map.set(g.id, g);
+    return map;
+  }
+
+
   /**
    * Fetches IGDB popularity primitives for a game. Returns the max observed
    * value for each of types 1 (Visits), 2 (Want to Play), 3 (Playing).
