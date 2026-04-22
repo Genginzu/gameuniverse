@@ -4,6 +4,10 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { useGlobalDownload } from "@/hooks/useGlobalDownload";
+import { useGlobalSyncImport } from "@/hooks/useGlobalSyncImport";
+import { useGlobalEnrichSync } from "@/hooks/useGlobalEnrichSync";
+import { useGlobalColorsSync } from "@/hooks/useGlobalColorsSync";
+import { useGlobalMetascoreSync } from "@/hooks/useGlobalMetascoreSync";
 import { GlobalSyncTab } from "@/components/admin/global-sync/GlobalSyncTab";
 import { SyncImportTab } from "@/components/admin/global-sync/SyncImportTab";
 import { EnrichSyncTab } from "@/components/admin/global-sync/EnrichSyncTab";
@@ -17,7 +21,12 @@ export default function GlobalSyncPage() {
   const t = useTranslations("admin.globalSync");
   useAdminAuth();
   const [activeTab, setActiveTab] = useState<Tab>("download");
+
   const { downloadState, startDownload, stopDownload } = useGlobalDownload();
+  const { syncState, startSync, stopSync } = useGlobalSyncImport();
+  const { enrichState, startEnrich, stopEnrich } = useGlobalEnrichSync();
+  const { colorsState, startColors, stopColors } = useGlobalColorsSync();
+  const { metascoreState, startMetascoreSync, stopMetascoreSync } = useGlobalMetascoreSync();
 
   return (
     <div className="space-y-4 p-4 md:space-y-6 md:p-6 lg:p-8">
@@ -51,10 +60,22 @@ export default function GlobalSyncPage() {
           stopDownload={stopDownload}
         />
       )}
-      {activeTab === "sync" && <SyncImportTab />}
-      {activeTab === "enrich" && <EnrichSyncTab />}
-      {activeTab === "colors" && <ColorsSyncTab />}
-      {activeTab === "metascore" && <MetascoreSyncTab />}
+      {activeTab === "sync" && (
+        <SyncImportTab syncState={syncState} startSync={startSync} stopSync={stopSync} />
+      )}
+      {activeTab === "enrich" && (
+        <EnrichSyncTab syncState={enrichState} startEnrich={startEnrich} stopEnrich={stopEnrich} />
+      )}
+      {activeTab === "colors" && (
+        <ColorsSyncTab syncState={colorsState} startColors={startColors} stopColors={stopColors} />
+      )}
+      {activeTab === "metascore" && (
+        <MetascoreSyncTab
+          syncState={metascoreState}
+          startMetascoreSync={startMetascoreSync}
+          stopMetascoreSync={stopMetascoreSync}
+        />
+      )}
     </div>
   );
 }

@@ -2,19 +2,31 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { useGlobalSyncImport } from "@/hooks/useGlobalSyncImport";
 import { useGlobalSync } from "@/hooks/useGlobalSync";
 import { SyncTabLayout } from "./SyncTabLayout";
 
-export function SyncImportTab() {
+interface SyncImportTabProps {
+  syncState: {
+    isSyncing: boolean;
+    totalSynced: number;
+    totalFailed: number;
+    remaining: number;
+    currentGame: string | null;
+    lastError: string | null;
+    error: string | null;
+  };
+  startSync: () => void;
+  stopSync: () => void;
+}
+
+export function SyncImportTab({ syncState, startSync, stopSync }: SyncImportTabProps) {
   const t = useTranslations("admin.globalSync.syncTab");
   const tCommon = useTranslations("admin.globalSync");
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");
 
-  const { entries, total, totalPages, isLoading, refresh } = useGlobalSync(page, search, "unsynced");
-  const { syncState, startSync, stopSync } = useGlobalSyncImport(refresh);
+  const { entries, total, totalPages, isLoading } = useGlobalSync(page, search, "unsynced");
 
   const handleSearch = () => { setSearch(searchInput); setPage(1); };
 

@@ -2,25 +2,37 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { useGlobalMetascoreSync } from "@/hooks/useGlobalMetascoreSync";
 import { useGlobalSync } from "@/hooks/useGlobalSync";
 import { SyncTabLayout, StatBadge } from "./SyncTabLayout";
 
-export function MetascoreSyncTab() {
+interface MetascoreSyncTabProps {
+  syncState: {
+    isSyncing: boolean;
+    totalSynced: number;
+    totalFailed: number;
+    remaining: number;
+    currentGame: string | null;
+    lastSource: string | null;
+    error: string | null;
+  };
+  startMetascoreSync: () => void;
+  stopMetascoreSync: () => void;
+}
+
+export function MetascoreSyncTab({ syncState, startMetascoreSync, stopMetascoreSync }: MetascoreSyncTabProps) {
   const t = useTranslations("admin.globalSync.metascoreTab");
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [searchInput, setSearchInput] = useState("");
 
-  const { entries, total, totalPages, isLoading, refresh } = useGlobalSync(page, search, "to_metascore");
-  const { metascoreState, startMetascoreSync, stopMetascoreSync } = useGlobalMetascoreSync(refresh);
+  const { entries, total, totalPages, isLoading } = useGlobalSync(page, search, "to_metascore");
 
   const handleSearch = () => { setSearch(searchInput); setPage(1); };
 
   return (
     <SyncTabLayout
       t={t}
-      syncState={metascoreState}
+      syncState={syncState}
       onStart={startMetascoreSync}
       onStop={stopMetascoreSync}
       startIcon="lucide:star"
@@ -36,8 +48,8 @@ export function MetascoreSyncTab() {
       searchPlaceholder={t("searchPlaceholder")}
       emptyKey="allDone"
       renderExtraStats={() =>
-        metascoreState.lastSource ? (
-          <StatBadge icon="lucide:database" color="text-cyan-500" label={t("source", { source: metascoreState.lastSource })} />
+        syncState.lastSource ? (
+          <StatBadge icon="lucide:database" color="text-cyan-500" label={t("source", { source: syncState.lastSource })} />
         ) : null
       }
     />
