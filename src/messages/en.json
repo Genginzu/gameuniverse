@@ -3535,7 +3535,8 @@
       "bookNow": "Book now",
       "booking": "Booking...",
       "success": "Request sent! The coach will confirm your slot.",
-      "loginRequired": "Sign in to book a session."
+      "loginRequired": "Sign in to book a session.",
+      "noSessions": "No sessions available for this game."
     }
   }
 }

@@ -3538,7 +3538,8 @@
       "bookNow": "Réserver",
       "booking": "Réservation...",
       "success": "Demande envoyée ! Le coach va confirmer votre créneau.",
-      "loginRequired": "Connectez-vous pour réserver une session."
+      "loginRequired": "Connectez-vous pour réserver une session.",
+      "noSessions": "Aucune session disponible pour ce jeu."
     }
   }
 }

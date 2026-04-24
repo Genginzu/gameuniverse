@@ -65,6 +65,11 @@ export function BookingModal({ coachId, gameId, gameTitle, pricing, onClose }: B
             <Icon icon="lucide:check-circle" className="size-10 text-green-500" />
             <p className="text-sm font-medium text-green-500">{t("success")}</p>
           </div>
+        ) : pricing.length === 0 ? (
+          <div className="flex flex-col items-center gap-2 py-4">
+            <Icon icon="lucide:calendar-x" className="size-10 text-gray-400" />
+            <p className="text-sm text-gray-500 dark:text-gray-400">{t("noSessions")}</p>
+          </div>
         ) : (
           <>
             <div className="space-y-2">
