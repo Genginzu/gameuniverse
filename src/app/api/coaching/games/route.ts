@@ -3,6 +3,9 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 import type { CoachGame } from "@/types/coaching";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnySupabase = any;
+
 interface CoachGameRow {
   id: string;
   coach_id: string;
@@ -44,7 +47,7 @@ export async function GET() {
     } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { data: profile } = await supabase
+    const { data: profile } = await (supabase as AnySupabase)
       .from("coach_profiles")
       .select("id")
       .eq("player_id", user.id)
@@ -54,6 +57,7 @@ export async function GET() {
       return NextResponse.json({ error: "Coach profile not found" }, { status: 404 });
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: rows, error } = await (supabase as any)
       .from("coach_games")
       .select("*, games:game_id(id, slug, cover_image_url, game_translations(title, language_code))")
@@ -79,7 +83,7 @@ export async function POST(request: NextRequest) {
     } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { data: profile } = await supabase
+    const { data: profile } = await (supabase as AnySupabase)
       .from("coach_profiles")
       .select("id")
       .eq("player_id", user.id)
@@ -90,7 +94,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { data: row, error } = await supabase
+    const { data: row, error } = await (supabase as AnySupabase)
       .from("coach_games")
       .insert({
         coach_id: profile.id,

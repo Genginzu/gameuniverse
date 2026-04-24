@@ -190,7 +190,7 @@ export async function GET(request: NextRequest) {
         .in("id", coachIds);
 
       const playerIds = (coachProfiles || []).map((c: AnySupabase) => c.player_id);
-      const coachIdToPlayerId = new Map(
+      const coachIdToPlayerId = new Map<string, string>(
         (coachProfiles || []).map((c: AnySupabase) => [c.id, c.player_id])
       );
 
@@ -200,7 +200,7 @@ export async function GET(request: NextRequest) {
           .select("id, username, avatar_url")
           .in("id", playerIds);
 
-        const playerProfileMap = new Map(
+        const playerProfileMap = new Map<string, { username: string | null; avatarUrl: string | null }>(
           (profiles || []).map((p: AnySupabase) => [
             p.id,
             { username: p.username, avatarUrl: p.avatar_url },

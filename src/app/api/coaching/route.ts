@@ -3,6 +3,9 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { parsePaginationParams } from "@/lib/api-utils";
 import { logger } from "@/lib/logger";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnySupabase = any;
+
 const FEATURED_LIMIT = 6;
 
 interface CoachRow {
@@ -106,12 +109,12 @@ export async function GET(request: NextRequest) {
           pagination: { currentPage: page, totalPages: 0, totalCount: 0, hasNextPage: false },
         });
       }
-      const { data: coachGames } = await supabase
+      const { data: coachGames } = await (supabase as AnySupabase)
         .from("coach_games")
         .select("coach_id")
         .eq("game_id", gameRow.id)
         .eq("is_active", true);
-      gameCoachIds = coachGames?.map((cg) => cg.coach_id) ?? [];
+      gameCoachIds = (coachGames?.map((cg: AnySupabase) => cg.coach_id) ?? []) as string[];
       if (gameCoachIds.length === 0) {
         return NextResponse.json({
           coaches: [],
@@ -132,7 +135,7 @@ export async function GET(request: NextRequest) {
 
     // Count
     const { count: totalCount } = await applyFilters(
-      supabase.from("coach_profiles").select("id", { count: "exact", head: true })
+      (supabase as AnySupabase).from("coach_profiles").select("id", { count: "exact", head: true })
     );
     const total = totalCount ?? 0;
     const totalPages = Math.ceil(total / limit);
@@ -147,7 +150,7 @@ export async function GET(request: NextRequest) {
 
     // Fetch page
     const { data, error } = await applyFilters(
-      supabase.from("coach_profiles").select(SELECT_FIELDS)
+      (supabase as AnySupabase).from("coach_profiles").select(SELECT_FIELDS)
     )
       .order(sort.col, { ascending: sort.asc })
       .range(offset, offset + limit - 1);
@@ -176,19 +179,19 @@ export async function GET(request: NextRequest) {
     // Featured sections on page 1 only
     if (page === 1) {
       const [topRated, newest, popular] = await Promise.all([
-        supabase
+        (supabase as AnySupabase)
           .from("coach_profiles")
           .select(SELECT_FIELDS)
           .eq("is_active", true)
           .order("average_rating", { ascending: false })
           .limit(FEATURED_LIMIT),
-        supabase
+        (supabase as AnySupabase)
           .from("coach_profiles")
           .select(SELECT_FIELDS)
           .eq("is_active", true)
           .order("created_at", { ascending: false })
           .limit(FEATURED_LIMIT),
-        supabase
+        (supabase as AnySupabase)
           .from("coach_profiles")
           .select(SELECT_FIELDS)
           .eq("is_active", true)

@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnySupabase = any;
+
 type RouteContext = { params: Promise<{ gameId: string }> };
 
 export async function PATCH(request: NextRequest, { params }: RouteContext) {
@@ -22,7 +25,7 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
     if (body.specialties !== undefined) updates.specialties = body.specialties;
     if (body.isActive !== undefined) updates.is_active = body.isActive;
 
-    const { data: row, error } = await supabase
+    const { data: row, error } = await (supabase as AnySupabase)
       .from("coach_games")
       .update(updates)
       .eq("id", gameId)
@@ -51,7 +54,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteContext) {
 
     const { gameId } = await params;
 
-    const { error } = await supabase.from("coach_games").delete().eq("id", gameId);
+    const { error } = await (supabase as AnySupabase).from("coach_games").delete().eq("id", gameId);
 
     if (error) {
       logger.error("Error deleting coach game", { error, gameId });
