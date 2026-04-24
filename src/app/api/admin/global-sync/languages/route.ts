@@ -2,10 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { IGDBService } from "@/lib/services/igdbService";
-import { syncLanguages } from "@/lib/services/igdb-sync-fields";
 import { logger } from "@/lib/logger";
 
-const BATCH_SIZE = 100;
+const BATCH_SIZE = 200;
 
 export async function POST(_request: NextRequest) {
   try {
@@ -32,24 +31,79 @@ export async function POST(_request: NextRequest) {
     const igdbIds = entries.map((e) => e.igdb_id);
     const igdbMap = await IGDBService.getLanguagesBatch(igdbIds);
 
-    const results: Array<{ igdbId: number; name: string; success: boolean; error?: string }> = [];
-    for (let i = 0; i < entries.length; i += 10) {
-      const chunk = entries.slice(i, i + 10);
-      const chunkResults = await Promise.all(
-        chunk.map(async (entry) => {
-          try {
-            const igdbGame = igdbMap.get(entry.igdb_id);
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            if (igdbGame) await syncLanguages(supabase as any, entry.matched_game_id, igdbGame);
-            await supabase.from("igdb_global_sync").update({ is_languages_synced: true }).eq("id", entry.id);
-            return { igdbId: entry.igdb_id, name: entry.name, success: true };
-          } catch (error) {
-            return { igdbId: entry.igdb_id, name: entry.name, success: false, error: (error as Error).message };
-          }
-        })
-      );
-      results.push(...chunkResults);
+    // Bulk delete all game_languages for these games
+    const gameIds = entries.map((e) => e.matched_game_id);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase as any).from("game_languages").delete().in("game_id", gameIds);
+
+    // Collect all supported_languages upserts and game_languages inserts
+    const supportedLangsMap = new Map<string, { name: string; native_name: string }>();
+    const allGameLangRows: Array<Record<string, unknown>> = [];
+
+    for (const entry of entries) {
+      const igdbGame = igdbMap.get(entry.igdb_id);
+      if (!igdbGame?.language_supports?.length) continue;
+
+      // Aggregate supports per language for this game
+      const languageMap = new Map<
+        string,
+        { name: string; nativeName: string; hasAudio: boolean; hasSubtitles: boolean; hasInterface: boolean }
+      >();
+
+      for (const ls of igdbGame.language_supports) {
+        if (!ls.language?.locale) continue;
+        const langCode = ls.language.locale.split("-")[0].toLowerCase();
+        const existing = languageMap.get(langCode) || {
+          name: ls.language.name || langCode,
+          nativeName: ls.language.native_name || langCode,
+          hasAudio: false,
+          hasSubtitles: false,
+          hasInterface: false,
+        };
+
+        const supportType = ls.language_support_type?.name?.toLowerCase() || "";
+        if (supportType.includes("audio")) existing.hasAudio = true;
+        else if (supportType.includes("subtitle")) existing.hasSubtitles = true;
+        else if (supportType.includes("interface")) existing.hasInterface = true;
+
+        languageMap.set(langCode, existing);
+      }
+
+      for (const [code, lang] of languageMap) {
+        supportedLangsMap.set(code, { name: lang.name, native_name: lang.nativeName });
+        allGameLangRows.push({
+          game_id: entry.matched_game_id,
+          language_code: code,
+          language_name: lang.name,
+          has_audio: lang.hasAudio,
+          has_subtitles: lang.hasSubtitles,
+          has_interface: lang.hasInterface,
+        });
+      }
     }
+
+    // Bulk upsert supported_languages
+    if (supportedLangsMap.size > 0) {
+      const supportedRows = Array.from(supportedLangsMap, ([code, v]) => ({
+        code,
+        name: v.name,
+        native_name: v.native_name,
+      }));
+      await supabase
+        .from("supported_languages")
+        .upsert(supportedRows, { onConflict: "code", ignoreDuplicates: true });
+    }
+
+    // Bulk insert game_languages
+    if (allGameLangRows.length > 0) {
+      await supabase.from("game_languages").insert(allGameLangRows);
+    }
+
+    // Bulk update sync flags
+    const syncIds = entries.map((e) => e.id);
+    await supabase.from("igdb_global_sync").update({ is_languages_synced: true }).in("id", syncIds);
+
+    const results = entries.map((e) => ({ igdbId: e.igdb_id, name: e.name, success: true }));
 
     const { count: remaining } = await supabase
       .from("igdb_global_sync")
