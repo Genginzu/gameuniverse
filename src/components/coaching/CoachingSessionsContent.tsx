@@ -97,8 +97,13 @@ export function CoachingSessionsContent() {
                       <button onClick={() => handleAction(s.id, "decline")} className="rounded-lg bg-red-500/10 px-3 py-1.5 text-xs font-medium text-red-400 hover:bg-red-500/20">{t("actions.decline")}</button>
                     </>
                   )}
-                  {role === "coach" && s.status === "confirmed" && (
+                  {role === "coach" && s.status === "confirmed" && s.paymentStatus === "paid" && (
                     <button onClick={() => handleAction(s.id, "start")} className="rounded-lg bg-blue-500/10 px-3 py-1.5 text-xs font-medium text-blue-500 hover:bg-blue-500/20">{t("actions.start")}</button>
+                  )}
+                  {role === "coach" && s.status === "confirmed" && s.paymentStatus !== "paid" && (
+                    <span className="flex items-center gap-1 rounded-lg bg-yellow-500/10 px-3 py-1.5 text-xs font-medium text-yellow-500">
+                      <Icon icon="lucide:clock" className="size-3.5" />{t("awaitingPayment")}
+                    </span>
                   )}
                   {role === "student" && s.status === "confirmed" && s.paymentStatus !== "paid" && (
                     <button onClick={() => handlePay(s.id)} className="rounded-lg bg-linear-to-r from-cyan-500 to-violet-500 px-3 py-1.5 text-xs font-medium text-white hover:opacity-90">{t("actions.pay")}</button>

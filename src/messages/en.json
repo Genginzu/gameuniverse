@@ -3508,7 +3508,8 @@
         "cancel": "Cancel",
         "chat": "Chat",
         "pay": "Pay"
-      }
+      },
+      "awaitingPayment": "Awaiting payment"
     },
     "reviews": {
       "empty": "No reviews yet.",

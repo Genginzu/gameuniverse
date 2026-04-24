@@ -3511,7 +3511,8 @@
         "cancel": "Annuler",
         "chat": "Discussion",
         "pay": "Payer"
-      }
+      },
+      "awaitingPayment": "En attente de paiement"
     },
     "reviews": {
       "empty": "Aucun avis pour le moment.",
