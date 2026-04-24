@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import useSWR from "swr";
