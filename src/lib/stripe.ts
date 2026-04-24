@@ -13,4 +13,4 @@ export function getStripe(): Stripe {
 }
 
 /** Platform commission rate (15%) */
-export const PLATFORM_FEE_RATE = 0.15;
+export const PLATFORM_FEE_RATE = 0.10;
