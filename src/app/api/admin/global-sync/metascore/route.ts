@@ -5,11 +5,9 @@ import { IGDBService } from "@/lib/services/igdbService";
 import { fetchMetacriticScore } from "@/lib/services/metacriticService";
 import { logger } from "@/lib/logger";
 
-const BATCH_SIZE = 3;
-
 /**
  * POST /api/admin/global-sync/metascore
- * Fetches metascore for a small batch in parallel.
+ * Fetches metascore one game at a time (Metacritic rate limit).
  * Priority: Metacritic scrape → IGDB aggregated_rating → null.
  */
 export async function POST(_request: NextRequest) {
@@ -17,25 +15,31 @@ export async function POST(_request: NextRequest) {
     await requireAdmin();
     const supabase = getSupabaseAdmin();
 
-    const { data: entries, error: fetchError } = await supabase
+    const { data: entry, error: fetchError } = await supabase
       .from("igdb_global_sync")
       .select("id, igdb_id, name, matched_game_id")
       .eq("is_synced", true)
       .eq("is_metascore_synced", false)
       .not("matched_game_id", "is", null)
       .order("igdb_id", { ascending: true })
-      .limit(BATCH_SIZE);
+      .limit(1)
+      .single();
 
-    if (fetchError) {
-      logger.error("Error fetching for metascore sync", { fetchError });
+    if (fetchError || !entry) {
+      const { count } = await supabase
+        .from("igdb_global_sync")
+        .select("id", { count: "exact", head: true })
+        .eq("is_synced", true)
+        .eq("is_metascore_synced", false)
+        .not("matched_game_id", "is", null);
+
+      if ((count ?? 0) === 0) {
+        return NextResponse.json({ done: true, remaining: 0 });
+      }
       return NextResponse.json({ error: "Failed to fetch" }, { status: 500 });
     }
 
-    if (!entries || entries.length === 0) {
-      return NextResponse.json({ results: [], done: true, remaining: 0 });
-    }
-
-    const results = await Promise.all(entries.map((e) => syncMetascore(supabase, e)));
+    const result = await syncMetascore(supabase, entry);
 
     const { count: remaining } = await supabase
       .from("igdb_global_sync")
@@ -44,7 +48,7 @@ export async function POST(_request: NextRequest) {
       .eq("is_metascore_synced", false)
       .not("matched_game_id", "is", null);
 
-    return NextResponse.json({ results, done: false, remaining: remaining ?? 0 });
+    return NextResponse.json({ ...result, remaining: remaining ?? 0 });
   } catch (error) {
     if (error instanceof Error && error.message === "Admin access required") {
       return NextResponse.json({ error: "Admin access required" }, { status: 403 });
