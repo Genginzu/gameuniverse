@@ -62,6 +62,18 @@ export async function GET() {
 
     let dashboardUrl: string | null = null;
     const stripe = getStripe();
+
+    // Sync onboarding status from Stripe if account exists but not yet marked complete
+    if (coach.stripe_account_id && !coach.stripe_onboarding_complete) {
+      const account = await stripe.accounts.retrieve(coach.stripe_account_id);
+      if (account.charges_enabled) {
+        await supabase.from("coach_profiles")
+          .update({ stripe_onboarding_complete: true })
+          .eq("player_id", user.id);
+        coach.stripe_onboarding_complete = true;
+      }
+    }
+
     if (coach.stripe_account_id && coach.stripe_onboarding_complete) {
       const loginLink = await stripe.accounts.createLoginLink(coach.stripe_account_id);
       dashboardUrl = loginLink.url;
