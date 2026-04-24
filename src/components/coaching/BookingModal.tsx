@@ -48,7 +48,7 @@ export function BookingModal({ coachId, gameId, gameTitle, pricing, onClose }: B
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
-      <div className="glass-card w-full max-w-md space-y-4 rounded-2xl p-6" onClick={(e) => e.stopPropagation()}>
+      <div className="w-full max-w-md space-y-4 rounded-2xl border border-white/20 bg-white p-6 shadow-xl dark:border-slate-700/50 dark:bg-slate-900" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold text-gray-900 dark:text-white">{t("title")}</h2>
           <button onClick={onClose} className="rounded-lg p-1 hover:bg-gray-100 dark:hover:bg-gray-800">
