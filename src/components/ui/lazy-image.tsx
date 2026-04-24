@@ -35,9 +35,6 @@ export function LazyImage({
   // Utiliser le fallback si pas de src ou si erreur de chargement
   const effectiveSrc = hasError || !src ? fallbackSrc : src;
 
-  // Skip Next.js Image Optimization for IGDB images (Cloudinary returns 403 to server-side fetches)
-  const isIgdbImage = effectiveSrc?.includes("images.igdb.com");
-
   // Pas de src et pas de fallback → placeholder SVG
   if (!effectiveSrc) {
     return (
@@ -68,7 +65,6 @@ export function LazyImage({
         width={width}
         height={height}
         fill={fill}
-        unoptimized={isIgdbImage}
         className={`${className} ${!imageLoaded ? "opacity-0" : "opacity-100"} transition-opacity duration-300`}
         onLoad={() => setImageLoaded(true)}
         onError={() => {
