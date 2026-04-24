@@ -37,25 +37,27 @@ export async function POST(_request: NextRequest) {
     const igdbIds = entries.map((e) => e.igdb_id);
     const playtimeMap = await IGDBService.getPlaytimeBatch(igdbIds);
 
-    const results = [];
-    for (const entry of entries) {
-      const base = { igdbId: entry.igdb_id, name: entry.name };
-      try {
-        const ttb = playtimeMap.get(entry.igdb_id);
-        await supabase.from("games").update({
-          playtime_hastily: ttb ? secondsToHours(ttb.hastily) : null,
-          playtime_normally: ttb ? secondsToHours(ttb.normally) : null,
-          playtime_completely: ttb ? secondsToHours(ttb.completely) : null,
-          playtime_updated_at: new Date().toISOString(),
-        }).eq("id", entry.matched_game_id);
+    // Bulk upsert games with playtime data
+    const now = new Date().toISOString();
+    const gameRows = entries.map((entry) => {
+      const ttb = playtimeMap.get(entry.igdb_id);
+      return {
+        id: entry.matched_game_id,
+        playtime_hastily: ttb ? secondsToHours(ttb.hastily) : null,
+        playtime_normally: ttb ? secondsToHours(ttb.normally) : null,
+        playtime_completely: ttb ? secondsToHours(ttb.completely) : null,
+        playtime_updated_at: now,
+      };
+    });
 
-        await supabase.from("igdb_global_sync").update({ is_playtime_synced: true }).eq("id", entry.id);
-        results.push({ ...base, success: true });
-      } catch (error) {
-        const msg = error instanceof Error ? error.message : "Unknown error";
-        results.push({ ...base, success: false, error: msg });
-      }
-    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase.from("games") as any).upsert(gameRows, { onConflict: "id", ignoreDuplicates: false });
+
+    // Bulk update sync flags
+    const syncIds = entries.map((e) => e.id);
+    await supabase.from("igdb_global_sync").update({ is_playtime_synced: true }).in("id", syncIds);
+
+    const results = entries.map((e) => ({ igdbId: e.igdb_id, name: e.name, success: true }));
 
     const { count: remaining } = await supabase
       .from("igdb_global_sync")

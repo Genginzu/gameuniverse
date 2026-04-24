@@ -31,26 +31,27 @@ export async function POST(_request: NextRequest) {
     const igdbIds = entries.map((e) => e.igdb_id);
     const popMap = await IGDBService.getPopularityBatch(igdbIds);
 
-    const results = [];
-    for (const entry of entries) {
-      const base = { igdbId: entry.igdb_id, name: entry.name };
-      try {
-        const data = popMap.get(entry.igdb_id);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (supabase.from("games") as any).update({
-          igdb_pop_visits: data?.visits ?? null,
-          igdb_pop_want_to_play: data?.wantToPlay ?? null,
-          igdb_pop_playing: data?.playing ?? null,
-          igdb_pop_updated_at: new Date().toISOString(),
-        }).eq("id", entry.matched_game_id);
+    // Bulk upsert games with popularity data
+    const now = new Date().toISOString();
+    const gameRows = entries.map((entry) => {
+      const data = popMap.get(entry.igdb_id);
+      return {
+        id: entry.matched_game_id,
+        igdb_pop_visits: data?.visits ?? null,
+        igdb_pop_want_to_play: data?.wantToPlay ?? null,
+        igdb_pop_playing: data?.playing ?? null,
+        igdb_pop_updated_at: now,
+      };
+    });
 
-        await supabase.from("igdb_global_sync").update({ is_popularity_synced: true }).eq("id", entry.id);
-        results.push({ ...base, success: true });
-      } catch (error) {
-        const msg = error instanceof Error ? error.message : "Unknown error";
-        results.push({ ...base, success: false, error: msg });
-      }
-    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase.from("games") as any).upsert(gameRows, { onConflict: "id", ignoreDuplicates: false });
+
+    // Bulk update sync flags
+    const syncIds = entries.map((e) => e.id);
+    await supabase.from("igdb_global_sync").update({ is_popularity_synced: true }).in("id", syncIds);
+
+    const results = entries.map((e) => ({ igdbId: e.igdb_id, name: e.name, success: true }));
 
     const { count: remaining } = await supabase
       .from("igdb_global_sync")
