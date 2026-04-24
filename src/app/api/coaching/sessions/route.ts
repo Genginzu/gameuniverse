@@ -161,7 +161,7 @@ export async function GET(request: NextRequest) {
       .select("id, cover_image_url, game_translations(title, language_code)")
       .in("id", gameIds);
 
-    const gameMap = new Map(
+    const gameMap = new Map<string, { title: string; coverImageUrl: string | null }>(
       (games || []).map((g: AnySupabase) => [
         g.id,
         {
@@ -243,7 +243,7 @@ export async function GET(request: NextRequest) {
         paymentStatus: s.payment_status,
         createdAt: s.created_at,
         gameTitle: game?.title ?? null,
-        gameCoverImage: game?.coverImage ?? null,
+        gameCoverImage: game?.coverImageUrl ?? null,
         otherParty: otherParty ?? null,
         conversationId: s.conversation_id ?? null,
       };
