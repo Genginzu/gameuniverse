@@ -3319,7 +3319,14 @@
     "typeDiscussionMessage": "sent you a message",
     "typePostCreated": "published a new post",
     "typePostMention": "mentioned you in a post",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "typeCoachingRequested": "requested a coaching session",
+    "typeCoachingConfirmed": "accepted your coaching session",
+    "typeCoachingDeclined": "declined your coaching session",
+    "typeCoachingStarted": "started your coaching session",
+    "typeCoachingCompleted": "completed your coaching session",
+    "typeCoachingCancelled": "cancelled a coaching session",
+    "typeCoachingPaid": "paid for your coaching session"
   },
   "postComments": {
     "title": "Comments",
