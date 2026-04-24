@@ -6,6 +6,8 @@ import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import UnreadBadge from "@/components/discussions/UnreadBadge";
 import { useUnreadCount } from "@/hooks/useUnreadCount";
+import useSWR from "swr";
+import { fetcher } from "@/lib/swr/fetcher";
 
 interface SidebarNavProps {
   isAuthenticated?: boolean;
@@ -22,6 +24,10 @@ export default function SidebarNav({
   const tNav = useTranslations("navigation");
   const pathname = usePathname();
   const { count: unreadCount } = useUnreadCount();
+  const { data: pendingData } = useSWR<{ count: number }>(
+    isAuthenticated ? "/api/coaching/sessions/pending-count" : null, fetcher, { refreshInterval: 30000 }
+  );
+  const pendingCount = pendingData?.count ?? 0;
 
   const linkClasses = (active: boolean) =>
     `group flex items-center rounded-lg px-3 py-2.5 text-sm font-medium focus:outline-hidden focus:ring-2 focus:ring-neon-violet/60 focus:ring-offset-1 focus:ring-offset-transparent motion-safe:transition-all motion-safe:duration-200 ${
@@ -80,6 +86,7 @@ export default function SidebarNav({
               <Link key={href} href={href} onClick={onLinkClick} className={linkClasses(active)}>
                 <Icon icon={icon} className={iconClasses(active)} />
                 <span>{tNav(labelKey)}</span>
+                {href === "/coaching/sessions" && pendingCount > 0 && <UnreadBadge count={pendingCount} />}
               </Link>
             );
           })}
