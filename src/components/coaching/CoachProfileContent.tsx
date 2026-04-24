@@ -5,10 +5,11 @@ import useSWR from "swr";
 import { fetcher } from "@/lib/swr/fetcher";
 import { Icon } from "@iconify/react";
 import { Link } from "@/i18n/navigation";
+import { CoachReviewsSection } from "./CoachReviewsSection";
 
 interface CoachProfileData {
   player: { username: string; avatarUrl: string | null; displayName: string | null };
-  coach: { bio: string | null; experience: string | null; languages: string[]; averageRating: number; totalReviews: number; totalSessions: number; isVerified: boolean };
+  coach: { id: string; bio: string | null; experience: string | null; languages: string[]; averageRating: number; totalReviews: number; totalSessions: number; isVerified: boolean };
   games: Array<{ id: string; gameId: string; title: string; slug: string; coverImage: string | null; coverImageUrl: string | null; specialties: string[]; pricing: Array<{ sessionType: string; priceAmount: number; priceCurrency: string; durationMinutes: number }> }>;
 }
 
@@ -130,6 +131,11 @@ export function CoachProfileContent({ username }: { username: string }) {
             ))}
           </div>
         )}
+      </div>
+      {/* Reviews */}
+      <div className="space-y-4">
+        <h2 className="text-lg font-bold text-gray-900 dark:text-white">{t("reviews")}</h2>
+        <CoachReviewsSection coachId={coach.id} />
       </div>
     </div>
   );

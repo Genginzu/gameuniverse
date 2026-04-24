@@ -3414,7 +3414,8 @@
         "pack_10": "10-session pack",
         "monthly": "Monthly"
       },
-      "languages": "Languages spoken"
+      "languages": "Languages spoken",
+      "reviews": "Reviews"
     },
     "hub": {
       "title": "Coaching",
@@ -3456,6 +3457,25 @@
         "cancel": "Cancel",
         "chat": "Chat"
       }
+    },
+    "reviews": {
+      "empty": "No reviews yet.",
+      "coachResponse": "Coach response",
+      "title": "Reviews",
+      "rateSession": "Rate this session",
+      "ratingLabel": "Rating",
+      "commentLabel": "Comment (optional)",
+      "commentPlaceholder": "Share your experience...",
+      "submit": "Submit review",
+      "sending": "Sending...",
+      "success": "Review submitted!",
+      "respondPlaceholder": "Respond to this review...",
+      "respond": "Respond"
+    },
+    "recommended": {
+      "title": "Recommended Coaches",
+      "subtitle": "Based on games in your library",
+      "empty": "Add games to your library to see recommendations."
     }
   }
 }

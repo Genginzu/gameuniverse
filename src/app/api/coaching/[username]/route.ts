@@ -89,6 +89,7 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
         avatarUrl: profile.avatar_url,
       },
       coach: {
+        id: coach.id,
         bio: coach.bio,
         experience: coach.experience,
         languages: coach.languages,
