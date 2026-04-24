@@ -3455,7 +3455,23 @@
         "resume": "Reprendre l'onboarding",
         "active": "Compte Stripe actif",
         "dashboard": "Dashboard Stripe",
-        "checking": "Vérification du statut Stripe..."
+        "checking": "Vérification du statut Stripe...",
+        "paymentHistory": "Historique des paiements"
+      },
+      "payments": {
+        "totalEarnings": "Revenus totaux",
+        "paidSessions": "sessions payées",
+        "requestPayout": "Transférer vers mon compte",
+        "payoutLoading": "Transfert en cours...",
+        "payoutSuccess": "Transfert de {amount} {currency} initié !",
+        "payoutError": "Erreur lors du transfert.",
+        "noFunds": "Aucun fonds disponible.",
+        "noPayments": "Aucun paiement pour le moment.",
+        "date": "Date",
+        "student": "Élève",
+        "amount": "Montant",
+        "fee": "Commission",
+        "net": "Net"
       }
     },
     "publicProfile": {

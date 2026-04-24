@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import useSWR from "swr";
 import { fetcher } from "@/lib/swr/fetcher";
 import { Icon } from "@iconify/react";
+import { PaymentHistory } from "./PaymentHistory";
 
 interface StripeStatus {
   hasAccount: boolean;
@@ -36,6 +37,7 @@ export function StripeConnectSection() {
   );
 
   return (
+  <>
     <div className="glass-card space-y-4 rounded-xl p-6">
       <div className="flex items-center gap-3">
         <Icon icon="lucide:credit-card" className="size-5 text-cyan-400" />
@@ -73,5 +75,16 @@ export function StripeConnectSection() {
         </div>
       )}
     </div>
+
+    {data?.onboardingComplete && (
+      <div className="glass-card space-y-4 rounded-xl p-6">
+        <div className="flex items-center gap-3">
+          <Icon icon="lucide:receipt" className="size-5 text-cyan-400" />
+          <h2 className="text-sm font-semibold text-gray-900 dark:text-white">{t("paymentHistory")}</h2>
+        </div>
+        <PaymentHistory />
+      </div>
+    )}
+  </>
   );
 }
