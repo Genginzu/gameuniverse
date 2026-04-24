@@ -108,7 +108,7 @@ export async function POST(request: NextRequest) {
   });
 }
 
-async function updateMetascore(gameId: string, score: number) {
+async function updateMetascore(gameId: string, score: number | null) {
   const supabase = await createRouteHandlerClient();
   await supabase.from("games").update({ metascore: score }).eq("id", gameId);
 }

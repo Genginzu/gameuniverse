@@ -41,6 +41,8 @@ export interface CoachPricing {
   durationMinutes: number;
   isActive: boolean;
   createdAt: string;
+  gameTitle?: string;
+  gameCoverImage?: string | null;
 }
 
 export type SessionType = "single" | "pack_5" | "pack_10" | "monthly";

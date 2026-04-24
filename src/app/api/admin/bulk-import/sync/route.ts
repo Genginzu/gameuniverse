@@ -12,7 +12,7 @@ const PAGE_SIZE = 1000;
 const NO_COVER_FALLBACK = "/assets/no-cover.png";
 const NO_BACKGROUND_FALLBACK = "none";
 
-const FIELD_FALLBACKS: Record<string, { column: string; fallback: string | number }> = {
+const FIELD_FALLBACKS: Record<string, { column: string; fallback: string | number | null }> = {
   cover: { column: "cover_image_url", fallback: NO_COVER_FALLBACK },
   background: { column: "background_image_url", fallback: NO_BACKGROUND_FALLBACK },
   metascore: { column: "metascore", fallback: null },
@@ -173,7 +173,7 @@ function jsonError(message: string) {
   });
 }
 
-async function applyFallback(gameId: string, column: string, fallback: string | number) {
+async function applyFallback(gameId: string, column: string, fallback: string | number | null) {
   try {
     const supabase = await createRouteHandlerClient();
     await supabase

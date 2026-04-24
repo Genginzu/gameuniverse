@@ -129,9 +129,9 @@ export function CoachPricingSection() {
         {pricingData?.pricing.map((p) => (
           <div key={p.id} className="glass-card flex items-center justify-between rounded-xl p-4">
             <div className="flex items-center gap-3">
-              {(p as any).gameCoverImage && <img src={(p as any).gameCoverImage} alt="" className="h-12 w-9 shrink-0 rounded-lg object-cover" />}
+              {p.gameCoverImage && <img src={p.gameCoverImage} alt="" className="h-12 w-9 shrink-0 rounded-lg object-cover" />}
               <div>
-                <span className="text-xs text-gray-500 dark:text-gray-400">{(p as any).gameTitle}</span>
+                <span className="text-xs text-gray-500 dark:text-gray-400">{p.gameTitle}</span>
                 <div>
                   <span className="text-sm font-medium text-gray-900 dark:text-white">{t(`types.${p.sessionType}`)}</span>
                   <span className="ml-2 text-lg font-bold text-cyan-400">{p.priceAmount}€</span>

@@ -39,7 +39,8 @@ export async function POST(_request: NextRequest) {
         chunk.map(async (entry) => {
           try {
             const igdbGame = igdbMap.get(entry.igdb_id);
-            if (igdbGame) await syncLanguages(supabase, entry.matched_game_id, igdbGame);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            if (igdbGame) await syncLanguages(supabase as any, entry.matched_game_id, igdbGame);
             await supabase.from("igdb_global_sync").update({ is_languages_synced: true }).eq("id", entry.id);
             return { igdbId: entry.igdb_id, name: entry.name, success: true };
           } catch (error) {
