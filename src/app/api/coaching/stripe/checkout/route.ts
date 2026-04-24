@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
         metadata: { coaching_session_id: sessionId },
       },
       metadata: { coaching_session_id: sessionId },
-      success_url: `${origin}/coaching/sessions?payment=success`,
+      success_url: `${origin}/coaching/sessions?payment=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/coaching/sessions?payment=cancelled`,
     });
 

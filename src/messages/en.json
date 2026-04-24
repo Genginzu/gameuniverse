@@ -3509,7 +3509,11 @@
         "chat": "Chat",
         "pay": "Pay"
       },
-      "awaitingPayment": "Awaiting payment"
+      "awaitingPayment": "Awaiting payment",
+      "paymentSuccess": "Payment successful!",
+      "paymentError": "Payment error.",
+      "paymentCancelled": "Payment cancelled.",
+      "paymentDone": "Payment done"
     },
     "reviews": {
       "empty": "No reviews yet.",

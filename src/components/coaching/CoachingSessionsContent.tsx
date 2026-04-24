@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations } from "next-intl";
 import useSWR from "swr";
 import { fetcher } from "@/lib/swr/fetcher";
@@ -28,10 +28,38 @@ export function CoachingSessionsContent() {
   const t = useTranslations("coaching.sessions");
   const { user, loading } = useAuth();
   const [role, setRole] = useState<"student" | "coach">("student");
+  const [paymentMessage, setPaymentMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   const { data, isLoading, mutate } = useSWR<{ sessions: Session[] }>(
     user ? `/api/coaching/sessions?role=${role}` : null, fetcher
   );
+
+  // Verify payment on return from Stripe
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const payment = params.get("payment");
+    const sessionId = params.get("session_id");
+
+    if (payment === "success" && sessionId) {
+      fetch("/api/coaching/stripe/verify", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ checkoutSessionId: sessionId }),
+      }).then(async (res) => {
+        if (res.ok) {
+          setPaymentMessage({ type: "success", text: t("paymentSuccess") });
+          await mutate();
+        } else {
+          const data = await res.json();
+          setPaymentMessage({ type: "error", text: data.error || t("paymentError") });
+        }
+        // Clean URL
+        window.history.replaceState({}, "", window.location.pathname);
+      });
+    } else if (payment === "cancelled") {
+      setPaymentMessage({ type: "error", text: t("paymentCancelled") });
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleAction = async (sessionId: string, action: string) => {
     await fetch(`/api/coaching/sessions/${sessionId}`, {
@@ -56,6 +84,14 @@ export function CoachingSessionsContent() {
   return (
     <div className="space-y-6 p-4 md:space-y-8 md:p-6 lg:p-8">
       <h1 className="text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">{t("title")}</h1>
+
+      {paymentMessage && (
+        <div className={`flex items-center gap-2 rounded-xl p-3 text-sm font-medium ${paymentMessage.type === "success" ? "bg-green-500/10 text-green-500" : "bg-red-500/10 text-red-400"}`}>
+          <Icon icon={paymentMessage.type === "success" ? "lucide:check-circle" : "lucide:alert-circle"} className="size-4" />
+          {paymentMessage.text}
+          <button onClick={() => setPaymentMessage(null)} className="ml-auto"><Icon icon="lucide:x" className="size-4" /></button>
+        </div>
+      )}
 
       <div className="flex gap-2">
         {(["student", "coach"] as const).map((r) => (
@@ -107,6 +143,11 @@ export function CoachingSessionsContent() {
                   )}
                   {role === "student" && s.status === "confirmed" && s.paymentStatus !== "paid" && (
                     <button onClick={() => handlePay(s.id)} className="rounded-lg bg-linear-to-r from-cyan-500 to-violet-500 px-3 py-1.5 text-xs font-medium text-white hover:opacity-90">{t("actions.pay")}</button>
+                  )}
+                  {s.status === "confirmed" && s.paymentStatus === "paid" && (
+                    <span className="flex items-center gap-1 rounded-lg bg-green-500/10 px-3 py-1.5 text-xs font-medium text-green-500">
+                      <Icon icon="lucide:check-circle" className="size-3.5" />{t("paymentDone")}
+                    </span>
                   )}
                   {role === "coach" && s.status === "in_progress" && (
                     <button onClick={() => handleAction(s.id, "complete")} className="rounded-lg bg-green-500/10 px-3 py-1.5 text-xs font-medium text-green-500 hover:bg-green-500/20">{t("actions.complete")}</button>
