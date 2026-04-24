@@ -28,7 +28,12 @@ export function StripeConnectSection() {
     }
   };
 
-  if (isLoading) return <div className="h-24 animate-pulse rounded-xl bg-gray-200 dark:bg-gray-700" />;
+  if (isLoading) return (
+    <div className="glass-card flex items-center gap-3 rounded-xl p-6">
+      <Icon icon="lucide:loader-2" className="size-5 animate-spin text-cyan-400" />
+      <span className="text-sm text-gray-500 dark:text-gray-400">{t("checking")}</span>
+    </div>
+  );
 
   return (
     <div className="glass-card space-y-4 rounded-xl p-6">

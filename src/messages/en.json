@@ -3444,7 +3444,8 @@
         "pending": "Onboarding in progress — complete your Stripe profile",
         "resume": "Resume onboarding",
         "active": "Stripe account active",
-        "dashboard": "Stripe Dashboard"
+        "dashboard": "Stripe Dashboard",
+        "checking": "Checking Stripe status..."
       }
     },
     "publicProfile": {
