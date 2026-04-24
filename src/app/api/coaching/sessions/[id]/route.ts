@@ -3,7 +3,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 import { createSessionConversation } from "@/lib/services/coachingConversationService";
 import { calculateRefund } from "@/lib/services/cancellationService";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnySupabase = any;
@@ -170,13 +170,16 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
           // Issue Stripe refund if payment was made
           if (refundAmount > 0 && session.payment_status === "paid") {
             try {
-              const payments = await stripe.paymentIntents.search({ query: `metadata["coaching_session_id"]:"${id}"` });
-              if (payments.data[0]) {
-                await stripe.refunds.create({
-                  payment_intent: payments.data[0].id,
-                  amount: Math.round(refundAmount * 100),
-                });
-                updates.payment_status = "refunded";
+              const stripe = getStripe();
+              if (stripe) {
+                const payments = await stripe.paymentIntents.search({ query: `metadata["coaching_session_id"]:"${id}"` });
+                if (payments.data[0]) {
+                  await stripe.refunds.create({
+                    payment_intent: payments.data[0].id,
+                    amount: Math.round(refundAmount * 100),
+                  });
+                  updates.payment_status = "refunded";
+                }
               }
             } catch (stripeErr) {
               logger.error("Stripe refund failed", { error: stripeErr, sessionId: id });

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-import { stripe, PLATFORM_FEE_RATE } from "@/lib/stripe";
+import { getStripe, PLATFORM_FEE_RATE } from "@/lib/stripe";
 import { logger } from "@/lib/logger";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -43,6 +43,9 @@ export async function POST(request: NextRequest) {
     const feeCents = Math.round(amountCents * PLATFORM_FEE_RATE);
 
     const origin = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+
+    const stripe = getStripe();
+    if (!stripe) return NextResponse.json({ error: "Stripe not configured" }, { status: 503 });
 
     const checkoutSession = await stripe.checkout.sessions.create({
       mode: "payment",
