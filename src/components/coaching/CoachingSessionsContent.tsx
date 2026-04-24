@@ -125,6 +125,9 @@ export function CoachingSessionsContent() {
               <div className="flex flex-1 items-center justify-between gap-3 sm:justify-end">
                 <span className={`flex items-center gap-1 text-xs font-medium ${STATUS_COLORS[s.status]}`}>
                   <Icon icon={STATUS_ICONS[s.status]} className="size-4" /> {t(`status.${s.status}`)}
+                  {role === "student" && s.status === "completed" && s.paymentAmount && (
+                    <span className="ml-1 text-gray-500">· {s.paymentAmount}€</span>
+                  )}
                 </span>
                 <div className="flex gap-1.5">
                   {role === "coach" && s.status === "requested" && (
