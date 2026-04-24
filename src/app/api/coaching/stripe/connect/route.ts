@@ -10,7 +10,6 @@ type S = any;
 export async function POST() {
   try {
     const stripe = getStripe();
-    if (!stripe) return NextResponse.json({ error: "Stripe not configured" }, { status: 503 });
 
     const supabase: S = await createRouteHandlerClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -63,7 +62,7 @@ export async function GET() {
 
     let dashboardUrl: string | null = null;
     const stripe = getStripe();
-    if (stripe && coach.stripe_account_id && coach.stripe_onboarding_complete) {
+    if (coach.stripe_account_id && coach.stripe_onboarding_complete) {
       const loginLink = await stripe.accounts.createLoginLink(coach.stripe_account_id);
       dashboardUrl = loginLink.url;
     }

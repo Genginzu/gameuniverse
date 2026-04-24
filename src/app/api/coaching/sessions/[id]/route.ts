@@ -171,15 +171,13 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
           if (refundAmount > 0 && session.payment_status === "paid") {
             try {
               const stripe = getStripe();
-              if (stripe) {
-                const payments = await stripe.paymentIntents.search({ query: `metadata["coaching_session_id"]:"${id}"` });
-                if (payments.data[0]) {
-                  await stripe.refunds.create({
-                    payment_intent: payments.data[0].id,
-                    amount: Math.round(refundAmount * 100),
-                  });
-                  updates.payment_status = "refunded";
-                }
+              const payments = await stripe.paymentIntents.search({ query: `metadata["coaching_session_id"]:"${id}"` });
+              if (payments.data[0]) {
+                await stripe.refunds.create({
+                  payment_intent: payments.data[0].id,
+                  amount: Math.round(refundAmount * 100),
+                });
+                updates.payment_status = "refunded";
               }
             } catch (stripeErr) {
               logger.error("Stripe refund failed", { error: stripeErr, sessionId: id });

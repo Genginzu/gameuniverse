@@ -9,7 +9,6 @@ type S = any;
 
 export async function POST(request: NextRequest) {
   const stripe = getStripe();
-  if (!stripe) return NextResponse.json({ error: "Stripe not configured" }, { status: 503 });
 
   const body = await request.text();
   const sig = request.headers.get("stripe-signature");

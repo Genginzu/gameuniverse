@@ -45,7 +45,6 @@ export async function POST(request: NextRequest) {
     const origin = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
     const stripe = getStripe();
-    if (!stripe) return NextResponse.json({ error: "Stripe not configured" }, { status: 503 });
 
     const checkoutSession = await stripe.checkout.sessions.create({
       mode: "payment",
