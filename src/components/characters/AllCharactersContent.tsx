@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
-import { useTranslations } from "next-intl";
 import { EntityCard } from "@/components/shared/EntityCard";
 import { characterCardConfig } from "@/components/shared/entityCardPresets";
 import { CharacterFilters } from "./CharacterFilters";

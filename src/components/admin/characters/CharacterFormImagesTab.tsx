@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { Icon } from "@iconify/react";
 import { Input } from "@/components/ui/input";
@@ -18,6 +19,9 @@ export function CharacterFormImagesTab({ form, t, availableGames = [] }: Charact
   const backgroundImageUrl = form.watch("background_image_url");
   const mainSearch = useCharacterImageSearch(form, "main_image_url", availableGames);
   const bgSearch = useCharacterImageSearch(form, "background_image_url", availableGames);
+
+  const mainSearch = useImageSearch(form, "main_image_url", availableGames);
+  const bgSearch = useImageSearch(form, "background_image_url", availableGames);
 
   return (
     <div className="space-y-8">
