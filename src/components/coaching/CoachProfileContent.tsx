@@ -1,11 +1,11 @@
-"use client";
-
+import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import useSWR from "swr";
 import { fetcher } from "@/lib/swr/fetcher";
 import { Icon } from "@iconify/react";
 import { Link } from "@/i18n/navigation";
 import { CoachReviewsSection } from "./CoachReviewsSection";
+import { BookingModal } from "./BookingModal";
 
 interface CoachProfileData {
   player: { username: string; avatarUrl: string | null; displayName: string | null };
@@ -23,6 +23,7 @@ export function CoachProfileContent({ username }: { username: string }) {
   const tGames = useTranslations("coaching.settings.games");
   const locale = useLocale();
   const { data, isLoading, error } = useSWR<CoachProfileData>(`/api/coaching/${username}?locale=${locale}`, fetcher);
+  const [bookingGame, setBookingGame] = useState<CoachProfileData["games"][0] | null>(null);
 
   if (isLoading) {
     return (
@@ -124,6 +125,9 @@ export function CoachProfileContent({ username }: { username: string }) {
                           <span className="font-medium text-gray-900 dark:text-white">{p.priceAmount}€ <span className="text-xs text-gray-400">/ {p.durationMinutes}min</span></span>
                         </div>
                       ))}
+                      <button onClick={() => setBookingGame(game)} className="mt-2 w-full rounded-lg bg-linear-to-r from-cyan-500 to-violet-500 py-2 text-xs font-medium text-white transition-opacity hover:opacity-90">
+                        <Icon icon="lucide:calendar-plus" className="mr-1 inline size-3.5" />{t("book")}
+                      </button>
                     </div>
                   )}
                 </div>
@@ -137,6 +141,10 @@ export function CoachProfileContent({ username }: { username: string }) {
         <h2 className="text-lg font-bold text-gray-900 dark:text-white">{t("reviews")}</h2>
         <CoachReviewsSection coachId={coach.id} />
       </div>
+
+      {bookingGame && (
+        <BookingModal coachId={coach.id} gameId={bookingGame.gameId} gameTitle={bookingGame.title} pricing={bookingGame.pricing} onClose={() => setBookingGame(null)} />
+      )}
     </div>
   );
 }

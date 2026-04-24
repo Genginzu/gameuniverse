@@ -3467,7 +3467,8 @@
         "monthly": "Mensuel"
       },
       "languages": "Langues parlées",
-      "reviews": "Avis"
+      "reviews": "Avis",
+      "book": "Réserver un créneau"
     },
     "hub": {
       "title": "Coaching",
@@ -3528,6 +3529,16 @@
       "title": "Coachs recommandés",
       "subtitle": "Basés sur les jeux de votre bibliothèque",
       "empty": "Ajoutez des jeux à votre bibliothèque pour voir des recommandations."
+    },
+    "booking": {
+      "title": "Réserver une session",
+      "selectFormula": "Choisir une formule",
+      "date": "Date",
+      "time": "Heure",
+      "bookNow": "Réserver",
+      "booking": "Réservation...",
+      "success": "Demande envoyée ! Le coach va confirmer votre créneau.",
+      "loginRequired": "Connectez-vous pour réserver une session."
     }
   }
 }

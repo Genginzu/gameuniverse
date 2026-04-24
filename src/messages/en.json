@@ -3464,7 +3464,8 @@
         "monthly": "Monthly"
       },
       "languages": "Languages spoken",
-      "reviews": "Reviews"
+      "reviews": "Reviews",
+      "book": "Book a session"
     },
     "hub": {
       "title": "Coaching",
@@ -3525,6 +3526,16 @@
       "title": "Recommended Coaches",
       "subtitle": "Based on games in your library",
       "empty": "Add games to your library to see recommendations."
+    },
+    "booking": {
+      "title": "Book a session",
+      "selectFormula": "Choose a plan",
+      "date": "Date",
+      "time": "Time",
+      "bookNow": "Book now",
+      "booking": "Booking...",
+      "success": "Request sent! The coach will confirm your slot.",
+      "loginRequired": "Sign in to book a session."
     }
   }
 }
