@@ -2580,6 +2580,55 @@
         "searchPlaceholder": "Search a game...",
         "allDone": "All metascores have been synced."
       }
+    },
+    "coaching": {
+      "title": "Coach Management",
+      "coaches": "coaches",
+      "reviews": "reviews",
+      "sessions": "sessions",
+      "verified": "Verified",
+      "suspended": "Suspended",
+      "filter": {
+        "all": "All",
+        "active": "Active",
+        "suspended": "Suspended"
+      },
+      "actions": {
+        "verify": "Verify",
+        "unverify": "Remove verification",
+        "suspend": "Suspend",
+        "unsuspend": "Unsuspend"
+      }
+    },
+    "disputes": {
+      "title": "Reports & Disputes",
+      "empty": "No reports.",
+      "adminNotes": "Admin notes",
+      "filter": {
+        "open": "Open",
+        "investigating": "Investigating",
+        "resolved": "Resolved",
+        "dismissed": "Dismissed",
+        "all": "All"
+      },
+      "status": {
+        "open": "Open",
+        "investigating": "Investigating",
+        "resolved": "Resolved",
+        "dismissed": "Dismissed"
+      },
+      "reason": {
+        "no_show": "No show",
+        "inappropriate": "Inappropriate behavior",
+        "fraud": "Fraud",
+        "quality": "Poor quality",
+        "other": "Other"
+      },
+      "actions": {
+        "investigate": "Investigate",
+        "resolve": "Resolve",
+        "dismiss": "Dismiss"
+      }
     }
   },
   "collections": {

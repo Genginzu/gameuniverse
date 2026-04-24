@@ -2583,6 +2583,55 @@
         "searchPlaceholder": "Rechercher un jeu...",
         "allDone": "Tous les metascores ont été synchronisés."
       }
+    },
+    "coaching": {
+      "title": "Gestion des coachs",
+      "coaches": "coachs",
+      "reviews": "avis",
+      "sessions": "sessions",
+      "verified": "Vérifié",
+      "suspended": "Suspendu",
+      "filter": {
+        "all": "Tous",
+        "active": "Actifs",
+        "suspended": "Suspendus"
+      },
+      "actions": {
+        "verify": "Vérifier",
+        "unverify": "Retirer vérification",
+        "suspend": "Suspendre",
+        "unsuspend": "Réactiver"
+      }
+    },
+    "disputes": {
+      "title": "Signalements & Litiges",
+      "empty": "Aucun signalement.",
+      "adminNotes": "Notes admin",
+      "filter": {
+        "open": "Ouverts",
+        "investigating": "En cours",
+        "resolved": "Résolus",
+        "dismissed": "Rejetés",
+        "all": "Tous"
+      },
+      "status": {
+        "open": "Ouvert",
+        "investigating": "En cours",
+        "resolved": "Résolu",
+        "dismissed": "Rejeté"
+      },
+      "reason": {
+        "no_show": "Absence",
+        "inappropriate": "Comportement inapproprié",
+        "fraud": "Fraude",
+        "quality": "Qualité insuffisante",
+        "other": "Autre"
+      },
+      "actions": {
+        "investigate": "Enquêter",
+        "resolve": "Résoudre",
+        "dismiss": "Rejeter"
+      }
     }
   },
   "collections": {
