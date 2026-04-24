@@ -3,7 +3,7 @@
 import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Icon } from "@iconify/react";
-import Image from "next/image";
+import { LazyImage } from "@/components/ui/lazy-image";
 import useSWR from "swr";
 import type { GameSummary } from "@/types/game";
 import { useRef } from "react";
@@ -31,13 +31,12 @@ function GameCard({ game, index }: { game: GameSummary; index: number }) {
       {/* Cover image */}
       <div className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl">
         {game.coverImage ? (
-          <Image
+          <LazyImage
             src={game.coverImage}
             alt={game.title}
             fill
             sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 25vw"
             className="object-cover transition-transform duration-500 group-hover:scale-110"
-            loading="lazy"
           />
         ) : (
           <div
