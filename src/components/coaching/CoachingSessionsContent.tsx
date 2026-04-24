@@ -38,6 +38,8 @@ export function CoachingSessionsContent() {
       method: "PATCH", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action }),
     });
+    await mutate();
+  };
 
   const handlePay = async (sessionId: string) => {
     const res = await fetch("/api/coaching/stripe/checkout", {
@@ -46,8 +48,6 @@ export function CoachingSessionsContent() {
     });
     const { url } = await res.json();
     if (url) window.location.href = url;
-  };
-    await mutate();
   };
 
   if (loading) return null;
