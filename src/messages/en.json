@@ -3323,7 +3323,8 @@
       "tabs": {
         "profile": "Profile",
         "games": "Games",
-        "pricing": "Pricing"
+        "pricing": "Pricing",
+        "stripe": "Payment"
       },
       "profile": {
         "active": "Coach profile active",
@@ -3385,6 +3386,16 @@
           "monthly": "Monthly subscription"
         },
         "selectType": "Select a session type"
+      },
+      "stripe": {
+        "title": "Stripe Connect",
+        "notConnected": "Connect your Stripe account to receive payments for your coaching sessions.",
+        "connect": "Connect Stripe",
+        "connecting": "Connecting...",
+        "pending": "Onboarding in progress — complete your Stripe profile",
+        "resume": "Resume onboarding",
+        "active": "Stripe account active",
+        "dashboard": "Stripe Dashboard"
       }
     },
     "publicProfile": {

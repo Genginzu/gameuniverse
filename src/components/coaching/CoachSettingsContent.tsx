@@ -9,15 +9,17 @@ import { Icon } from "@iconify/react";
 import { CoachProfileForm } from "./CoachProfileForm";
 import { CoachGamesSection } from "./CoachGamesSection";
 import { CoachPricingSection } from "./CoachPricingSection";
+import { StripeConnectSection } from "./StripeConnectSection";
 import type { CoachProfile } from "@/types/coaching";
 
-const TABS = ["profile", "games", "pricing"] as const;
+const TABS = ["profile", "games", "pricing", "stripe"] as const;
 type Tab = (typeof TABS)[number];
 
 const TAB_ICONS: Record<Tab, string> = {
   profile: "lucide:user",
   games: "lucide:gamepad-2",
   pricing: "lucide:credit-card",
+  stripe: "lucide:wallet",
 };
 
 export function CoachSettingsContent() {
@@ -66,6 +68,7 @@ export function CoachSettingsContent() {
       {activeTab === "profile" && <CoachProfileForm />}
       {activeTab === "games" && hasProfile && <CoachGamesSection />}
       {activeTab === "pricing" && hasProfile && <CoachPricingSection />}
+      {activeTab === "stripe" && hasProfile && <StripeConnectSection />}
     </div>
   );
 }
