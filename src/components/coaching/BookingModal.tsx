@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Icon } from "@iconify/react";
 
 interface Pricing {
+  id: string;
   sessionType: string;
   priceAmount: number;
   priceCurrency: string;
@@ -38,7 +39,7 @@ export function BookingModal({ coachId, gameId, gameTitle, pricing, onClose }: B
       const res = await fetch("/api/coaching/sessions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ coachId, gameId, scheduledAt, durationMinutes: selected.durationMinutes }),
+        body: JSON.stringify({ coachId, gameId, pricingId: selected.id, scheduledAt, durationMinutes: selected.durationMinutes }),
       });
       if (res.ok) setSuccess(true);
     } finally {

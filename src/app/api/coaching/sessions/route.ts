@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { coachId, gameId, pricingId, scheduledAt, durationMinutes } = body;
 
-    if (!coachId || !gameId || !pricingId || !scheduledAt || !durationMinutes) {
+    if (!coachId || !gameId || !scheduledAt || !durationMinutes) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 

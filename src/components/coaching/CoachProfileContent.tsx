@@ -12,7 +12,7 @@ import { BookingModal } from "./BookingModal";
 interface CoachProfileData {
   player: { username: string; avatarUrl: string | null; displayName: string | null };
   coach: { id: string; bio: string | null; experience: string | null; languages: string[]; averageRating: number; totalReviews: number; totalSessions: number; isVerified: boolean };
-  games: Array<{ id: string; gameId: string; title: string; slug: string; coverImage: string | null; coverImageUrl: string | null; specialties: string[]; pricing: Array<{ sessionType: string; priceAmount: number; priceCurrency: string; durationMinutes: number }> }>;
+  games: Array<{ id: string; gameId: string; title: string; slug: string; coverImage: string | null; coverImageUrl: string | null; specialties: string[]; pricing: Array<{ id: string; sessionType: string; priceAmount: number; priceCurrency: string; durationMinutes: number }> }>;
 }
 
 const LANGUAGE_LABELS: Record<string, string> = {
