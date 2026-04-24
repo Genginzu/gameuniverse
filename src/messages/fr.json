@@ -3509,7 +3509,8 @@
         "start": "Démarrer",
         "complete": "Terminer",
         "cancel": "Annuler",
-        "chat": "Discussion"
+        "chat": "Discussion",
+        "pay": "Payer"
       }
     },
     "reviews": {

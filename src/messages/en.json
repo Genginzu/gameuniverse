@@ -3506,7 +3506,8 @@
         "start": "Start",
         "complete": "Complete",
         "cancel": "Cancel",
-        "chat": "Chat"
+        "chat": "Chat",
+        "pay": "Pay"
       }
     },
     "reviews": {

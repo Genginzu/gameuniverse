@@ -230,9 +230,13 @@ export async function GET(request: NextRequest) {
         status: s.status,
         scheduledAt: s.scheduled_at,
         durationMinutes: s.duration_minutes,
+        paymentAmount: s.payment_amount,
+        paymentStatus: s.payment_status,
         createdAt: s.created_at,
-        game: game ?? null,
+        gameTitle: game?.title ?? null,
+        gameCoverImage: game?.coverImage ?? null,
         otherParty: otherParty ?? null,
+        conversationId: s.conversation_id ?? null,
       };
     });
 

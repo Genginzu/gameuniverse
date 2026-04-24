@@ -19,7 +19,7 @@ const STATUS_COLORS: Record<string, string> = {
 
 interface Session {
   id: string; status: string; scheduledAt: string; durationMinutes: number;
-  paymentAmount: number | null; gameTitle: string; gameCoverImage: string | null;
+  paymentAmount: number | null; paymentStatus: string | null; gameTitle: string; gameCoverImage: string | null;
   otherParty: { username: string; avatarUrl: string | null };
   conversationId: string | null;
 }
@@ -38,6 +38,15 @@ export function CoachingSessionsContent() {
       method: "PATCH", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action }),
     });
+
+  const handlePay = async (sessionId: string) => {
+    const res = await fetch("/api/coaching/stripe/checkout", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sessionId }),
+    });
+    const { url } = await res.json();
+    if (url) window.location.href = url;
+  };
     await mutate();
   };
 
@@ -90,6 +99,9 @@ export function CoachingSessionsContent() {
                   )}
                   {role === "coach" && s.status === "confirmed" && (
                     <button onClick={() => handleAction(s.id, "start")} className="rounded-lg bg-blue-500/10 px-3 py-1.5 text-xs font-medium text-blue-500 hover:bg-blue-500/20">{t("actions.start")}</button>
+                  )}
+                  {role === "student" && s.status === "confirmed" && s.paymentStatus !== "paid" && (
+                    <button onClick={() => handlePay(s.id)} className="rounded-lg bg-linear-to-r from-cyan-500 to-violet-500 px-3 py-1.5 text-xs font-medium text-white hover:opacity-90">{t("actions.pay")}</button>
                   )}
                   {role === "coach" && s.status === "in_progress" && (
                     <button onClick={() => handleAction(s.id, "complete")} className="rounded-lg bg-green-500/10 px-3 py-1.5 text-xs font-medium text-green-500 hover:bg-green-500/20">{t("actions.complete")}</button>
