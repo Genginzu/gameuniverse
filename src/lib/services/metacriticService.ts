@@ -5,7 +5,7 @@ const USER_AGENT =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36";
 
 /** Delay between requests to avoid being blocked */
-const RATE_LIMIT_MS = 1500;
+const RATE_LIMIT_MS = 500;
 
 let lastRequestAt = 0;
 
