@@ -127,11 +127,11 @@ export function CoachProfileContent({ username }: { username: string }) {
                           <span className="font-medium text-gray-900 dark:text-white">{p.priceAmount}€ <span className="text-xs text-gray-400">/ {p.durationMinutes}min</span></span>
                         </div>
                       ))}
-                      <button onClick={() => setBookingGame(game)} className="mt-2 w-full rounded-lg bg-linear-to-r from-cyan-500 to-violet-500 py-2 text-xs font-medium text-white transition-opacity hover:opacity-90">
-                        <Icon icon="lucide:calendar-plus" className="mr-1 inline size-3.5" />{t("book")}
-                      </button>
                     </div>
                   )}
+                  <button onClick={() => setBookingGame(game)} className="rounded-lg bg-linear-to-r from-cyan-500 to-violet-500 px-3 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-90">
+                    <Icon icon="lucide:calendar-plus" className="mr-1 inline size-3.5" />{t("book")}
+                  </button>
                 </div>
               </div>
             ))}
