@@ -7,7 +7,7 @@ import type { RatingFormData } from "@/lib/validations/admin-rating-form";
 import type { SupportedLanguage } from "@/types/admin-languages";
 import { RatingFormTranslations } from "./RatingFormTranslations";
 
-export function RatingFormFields({ form, t, supportedLanguages }: { form: UseFormReturn<RatingFormData>; t: (key: string) => string; supportedLanguages: SupportedLanguage[] }) {
+export function RatingFormFields({ form, t, supportedLanguages }: { form: UseFormReturn<RatingFormData>; t: (key: string, values?: Record<string, string>) => string; supportedLanguages: SupportedLanguage[] }) {
   const colorHexValue = form.watch("color_hex");
 
   return (

@@ -1,6 +1,7 @@
 "use client";
 
 interface WebhookImportAllBarProps {
+  totalNotImported: number;
   importCount: number;
   onImportCountChange: (count: number) => void;
   importingAll: boolean;

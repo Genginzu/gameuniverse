@@ -73,7 +73,7 @@ export function GameHeroSection({
         <div className="grid w-full grid-cols-1 items-start gap-8 lg:grid-cols-12">
           <div className="lg:col-span-4">
             <GameHeroCover
-              coverImage={game.media.coverImage}
+              coverImage={game.media.coverImage ?? ""}
               title={game.title}
               metascore={game.metascore}
               colors={colors}

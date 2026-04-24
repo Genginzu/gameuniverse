@@ -89,7 +89,7 @@ export function CoachingHubContent() {
             {data?.coaches.map((coach) => <CoachCard key={coach.id} coach={coach} />)}
           </div>
           {data && data.pagination.totalPages > 1 && (
-            <Pagination currentPage={data.pagination.currentPage} totalPages={data.pagination.totalPages} onPageChange={setPage} />
+            <Pagination currentPage={data.pagination.currentPage} totalPages={data.pagination.totalPages} totalCount={data.pagination.totalCount} onPageChange={setPage} />
           )}
         </>
       )}

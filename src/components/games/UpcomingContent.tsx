@@ -93,7 +93,7 @@ export function UpcomingContent() {
       )}
 
       {isLoading ? (
-        <GridSkeleton count={12} columns="grid-cols-2 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-6" skeletonConfig={gameSkeletonConfig} />
+        <GridSkeleton count={12} gridClassName="grid-cols-2 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-6" skeletonConfig={gameSkeletonConfig} />
       ) : data?.games.length === 0 ? (
         <div className="glass-card flex flex-col items-center justify-center rounded-xl p-8 text-center">
           <Icon icon="lucide:calendar-x" className="mb-3 size-10 text-gray-400" />
@@ -110,6 +110,7 @@ export function UpcomingContent() {
             <Pagination
               currentPage={data.pagination.currentPage}
               totalPages={data.pagination.totalPages}
+              totalCount={data.pagination.totalCount}
               onPageChange={setPage}
             />
           )}

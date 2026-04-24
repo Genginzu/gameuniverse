@@ -17,7 +17,7 @@
 export interface GameTranslationRow {
   title: string;
   description: string | null;
-  language_code?: string;
+  language_code?: string | null;
 }
 
 /**
@@ -25,7 +25,7 @@ export interface GameTranslationRow {
  */
 export interface GenreTranslationRow {
   name: string;
-  language_code?: string;
+  language_code?: string | null;
 }
 
 /**
@@ -59,9 +59,9 @@ export interface CompanyRow {
  */
 export interface GameCompanyRow {
   game_id?: string;
-  company_id: string;
+  company_id?: string;
   role: string;
-  is_primary: boolean;
+  is_primary: boolean | null;
   companies: CompanyRow | null;
 }
 
@@ -111,7 +111,7 @@ export interface GameRow {
   background_color: string | null;
   release_date: string | null;
   metascore: number | null;
-  created_at: string;
+  created_at: string | null;
   updated_at?: string;
 }
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { type UseFormReturn } from "react-hook-form";
+import { type UseFormReturn, type FieldValues, type FieldPath } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -21,17 +21,17 @@ import {
   type TranslationFieldConfig,
 } from "./AdminTranslationFields";
 
-interface AdminSlugFormProps {
+interface AdminSlugFormProps<T extends FieldValues = FieldValues> {
   mode: "create" | "edit";
-  form: UseFormReturn<Record<string, unknown>>;
-  onSubmit: (data: Record<string, unknown>) => Promise<void>;
+  form: UseFormReturn<T>;
+  onSubmit: (data: T) => Promise<void>;
   isSubmitting: boolean;
   supportedLanguages: SupportedLanguage[];
   translationNamespace: string;
   translationFields: TranslationFieldConfig[];
 }
 
-export function AdminSlugForm({
+export function AdminSlugForm<T extends FieldValues = FieldValues>({
   mode,
   form,
   onSubmit,
@@ -39,7 +39,7 @@ export function AdminSlugForm({
   supportedLanguages,
   translationNamespace,
   translationFields,
-}: AdminSlugFormProps) {
+}: AdminSlugFormProps<T>) {
   const t = useTranslations(translationNamespace);
 
   return (
@@ -49,7 +49,7 @@ export function AdminSlugForm({
           <div className="space-y-5">
             <FormField
               control={form.control}
-              name="slug"
+              name={"slug" as FieldPath<T>}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{t("slug")}</FormLabel>
@@ -71,7 +71,7 @@ export function AdminSlugForm({
         </div>
 
         <AdminTranslationFields
-          form={form}
+          form={form as UseFormReturn<FieldValues>}
           supportedLanguages={supportedLanguages}
           translationNamespace={translationNamespace}
           fields={translationFields}

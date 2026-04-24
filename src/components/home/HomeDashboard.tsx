@@ -52,7 +52,7 @@ export function HomeDashboard() {
           </Link>
         </div>
         {isLoading ? (
-          <GridSkeleton count={6} columns="grid-cols-2 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-6" skeletonConfig={gameSkeletonConfig} />
+          <GridSkeleton count={6} gridClassName="grid-cols-2 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-6" skeletonConfig={gameSkeletonConfig} />
         ) : (
           <div className="grid grid-cols-2 gap-3 xs:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-6">
             {data?.trending.filter(Boolean).map((game) => (

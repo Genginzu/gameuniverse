@@ -6,11 +6,12 @@ import { Icon } from "@iconify/react";
 const IGDB_IMAGE_BASE = "https://images.igdb.com/igdb/image/upload";
 
 interface GlobalSyncEntry {
-  id: string;
+  id: number;
   igdb_id: number;
   name: string;
   cover_image_id: string | null;
   matched_game_id: string | null;
+  created_at: string;
 }
 
 export function GlobalSyncEntryRow({ entry, t }: { entry: GlobalSyncEntry; t: (key: string) => string }) {

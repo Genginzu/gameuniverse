@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { type UseFormReturn } from "react-hook-form";
+import { type UseFormReturn, type FieldValues } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
@@ -16,7 +16,7 @@ export interface TranslationFieldConfig {
 }
 
 interface AdminTranslationFieldsProps {
-  form: UseFormReturn<Record<string, unknown>>;
+  form: UseFormReturn<FieldValues>;
   supportedLanguages: SupportedLanguage[];
   translationNamespace: string;
   fields: TranslationFieldConfig[];
@@ -34,7 +34,7 @@ export function AdminTranslationFields({
   useEffect(() => {
     if (supportedLanguages.length === 0) return;
 
-    const current = form.getValues("translations");
+    const current = form.getValues("translations") as Array<Record<string, string>>;
     const defaultTranslation = (langCode: string) => {
       const defaults: Record<string, string> = { language_code: langCode };
       for (const f of fields) defaults[f.name] = "";
@@ -42,7 +42,7 @@ export function AdminTranslationFields({
     };
 
     const updated = supportedLanguages.map((lang) => {
-      const existing = current.find((tr: { language_code: string }) => tr.language_code === lang.code);
+      const existing = current.find((tr) => tr.language_code === lang.code);
       return existing ?? defaultTranslation(lang.code);
     });
 
