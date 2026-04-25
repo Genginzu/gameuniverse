@@ -1,4 +1,4 @@
-import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { IGDBGame } from "@/types/igdb";
 import { IGDBService } from "./igdbService";
 import { extractColorsFromCover } from "@/lib/utils/color-extraction";
@@ -53,7 +53,7 @@ export class GameImportService {
         return { success: false, error: `Game with IGDB ID ${igdbId} not found` };
       }
 
-      const supabase = await createRouteHandlerClient();
+      const supabase = await getSupabaseAdmin();
 
       // Check if game already exists — sync instead of duplicate
       const { data: existingGame, error: checkError } = await supabase
@@ -122,7 +122,7 @@ export class GameImportService {
    */
   static async syncWithIGDB(gameId: string, igdbId: number): Promise<ImportResult> {
     try {
-      const supabase = await createRouteHandlerClient();
+      const supabase = await getSupabaseAdmin();
 
       const { data: currentGame, error: fetchError } = await supabase
         .from("games")

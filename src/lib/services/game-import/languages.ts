@@ -1,5 +1,5 @@
 import { IGDBGame } from "@/types/igdb";
-import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { logger } from "@/lib/logger";
 
 /**
@@ -10,7 +10,7 @@ export async function createLanguages(gameId: string, igdbGame: IGDBGame): Promi
     return;
   }
 
-  const supabase = await createRouteHandlerClient();
+  const supabase = await getSupabaseAdmin();
 
   // Group language supports by language to consolidate audio/subtitles/interface
   const languageMap = new Map<
@@ -97,7 +97,7 @@ export async function createLanguages(gameId: string, igdbGame: IGDBGame): Promi
  * Updates language support entries for an existing game.
  */
 export async function updateLanguages(gameId: string, igdbGame: IGDBGame): Promise<void> {
-  const supabase = await createRouteHandlerClient();
+  const supabase = await getSupabaseAdmin();
 
   await supabase.from("game_languages").delete().eq("game_id", gameId);
   await createLanguages(gameId, igdbGame);

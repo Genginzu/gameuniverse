@@ -1,12 +1,12 @@
 import { IGDBGame } from "@/types/igdb";
-import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { IGDBService } from "../igdbService";
 
 /**
  * Creates media entries (screenshots, artwork, videos) for a game.
  */
 export async function createMedia(gameId: string, igdbGame: IGDBGame): Promise<void> {
-  const supabase = await createRouteHandlerClient();
+  const supabase = await getSupabaseAdmin();
 
   if (igdbGame.screenshots && igdbGame.screenshots.length > 0) {
     const screenshots = igdbGame.screenshots.map((ss, index) => ({
@@ -51,7 +51,7 @@ export async function createMedia(gameId: string, igdbGame: IGDBGame): Promise<v
  * Replaces existing media with fresh data from IGDB.
  */
 export async function updateMedia(gameId: string, igdbGame: IGDBGame): Promise<void> {
-  const supabase = await createRouteHandlerClient();
+  const supabase = await getSupabaseAdmin();
 
   await supabase.from("game_screenshots").delete().eq("game_id", gameId);
   await supabase.from("game_artwork").delete().eq("game_id", gameId);
@@ -64,7 +64,7 @@ export async function updateMedia(gameId: string, igdbGame: IGDBGame): Promise<v
  * Creates translations for a game (EN only — IGDB data is English).
  */
 export async function createTranslations(gameId: string, igdbGame: IGDBGame): Promise<void> {
-  const supabase = await createRouteHandlerClient();
+  const supabase = await getSupabaseAdmin();
 
   const description = igdbGame.summary || null;
   const storyline = igdbGame.storyline || null;
@@ -83,7 +83,7 @@ export async function createTranslations(gameId: string, igdbGame: IGDBGame): Pr
  * Updates translations for an existing game.
  */
 export async function updateTranslations(gameId: string, igdbGame: IGDBGame): Promise<void> {
-  const supabase = await createRouteHandlerClient();
+  const supabase = await getSupabaseAdmin();
   const description = igdbGame.summary || null;
   const storyline = igdbGame.storyline || null;
 

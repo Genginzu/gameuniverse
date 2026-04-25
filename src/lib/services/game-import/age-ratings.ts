@@ -1,5 +1,5 @@
 import { IGDBGame, IGDB_RATING_CATEGORIES, IGDB_ALL_RATINGS } from "@/types/igdb";
-import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { IGDBService } from "../igdbService";
 import { logger } from "@/lib/logger";
 
@@ -21,7 +21,7 @@ export async function createAgeRatings(gameId: string, igdbGame: IGDBGame): Prom
     return;
   }
 
-  const supabase = await createRouteHandlerClient();
+  const supabase = await getSupabaseAdmin();
 
   for (let i = 0; i < ageRatings.length; i++) {
     const ageRating = ageRatings[i];
@@ -167,7 +167,7 @@ export async function createAgeRatings(gameId: string, igdbGame: IGDBGame): Prom
  * Updates age ratings for an existing game.
  */
 export async function updateAgeRatings(gameId: string, igdbGame: IGDBGame): Promise<void> {
-  const supabase = await createRouteHandlerClient();
+  const supabase = await getSupabaseAdmin();
 
   const { data: existingRatings } = await supabase
     .from("game_ratings")

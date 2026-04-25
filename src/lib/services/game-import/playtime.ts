@@ -1,4 +1,4 @@
-import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { IGDBService } from "../igdbService";
 import { logger } from "@/lib/logger";
 import { GameDetails } from "@/types/game";
@@ -22,7 +22,7 @@ export async function fetchAndSavePlaytime(gameId: string, igdbId: number): Prom
 
     if (hastily === null && normally === null && completely === null) return;
 
-    const supabase = await createRouteHandlerClient();
+    const supabase = await getSupabaseAdmin();
 
     const { data, error } = await supabase
       .from("games")
