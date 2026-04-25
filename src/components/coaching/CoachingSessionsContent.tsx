@@ -59,7 +59,7 @@ export function CoachingSessionsContent() {
       setPaymentMessage({ type: "error", text: t("paymentCancelled") });
       window.history.replaceState({}, "", window.location.pathname);
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleAction = async (sessionId: string, action: string) => {
     await fetch(`/api/coaching/sessions/${sessionId}`, {
