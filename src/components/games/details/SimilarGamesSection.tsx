@@ -38,7 +38,7 @@ export function SimilarGamesSection({ similarGames, locale }: SimilarGamesSectio
   return (
     <section className="mt-12 rounded-2xl border border-white/10 bg-white/5 p-6 shadow-lg shadow-black/20 backdrop-blur-xl">
       <div className="mb-6 flex items-center gap-2">
-        <Icon icon="mdi:gamepad-variant-outline" className="h-6 w-6 text-cyan-400" />
+        <Icon icon="mdi:gamepad-variant-outline" className="h-6 w-6 text-palette-secondary-400" />
         <h2 className="text-2xl font-bold text-white">{t("title")}</h2>
       </div>
 

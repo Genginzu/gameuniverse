@@ -93,7 +93,7 @@ export function PlayerProfileTabs({ activeTab, onTabChange, isOwner }: PlayerPro
               onMouseLeave={() => setTooltip(null)}
               className={`relative flex shrink-0 cursor-pointer items-center justify-center px-5 py-3 transition-colors ${
                 isActive
-                  ? "text-cyan-600 dark:text-cyan-400"
+                  ? "text-palette-secondary-600 dark:text-palette-secondary-400"
                   : "text-gray-400 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200"
               }`}
               aria-label={label}
@@ -104,7 +104,7 @@ export function PlayerProfileTabs({ activeTab, onTabChange, isOwner }: PlayerPro
               {isActive && (
                 <>
                   <span className="ml-2 hidden text-sm font-medium md:inline">{label}</span>
-                  <span className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-cyan-600 dark:bg-cyan-400" />
+                  <span className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-palette-secondary-600 dark:bg-palette-secondary-400" />
                 </>
               )}
             </button>

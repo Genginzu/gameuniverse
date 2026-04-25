@@ -40,7 +40,7 @@ export function DiffRow({ field, forced, onToggleForce, applied }: DiffRowProps)
       <td className="px-4 py-3 text-gray-600 dark:text-gray-300">
         <div className="break-words whitespace-pre-wrap">{formatValue(field.localValue)}</div>
       </td>
-      <td className={`px-4 py-3 ${isChanged ? "font-medium text-cyan-700 dark:text-cyan-400" : "text-gray-600 dark:text-gray-300"}`}>
+      <td className={`px-4 py-3 ${isChanged ? "font-medium text-palette-secondary-700 dark:text-palette-secondary-400" : "text-gray-600 dark:text-gray-300"}`}>
         <div className="break-words whitespace-pre-wrap">{formatValue(field.igdbValue)}</div>
       </td>
       <td className="px-4 py-3">

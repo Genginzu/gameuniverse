@@ -8,7 +8,7 @@ import { StatsSectionTitle } from "@/components/players/stats/StatsSectionTitle"
 
 const BAR_COLORS = [
   "from-[#615dfa] to-[#7c5cfc]", // violet gradient
-  "from-cyan-500 to-cyan-400",
+  "from-palette-secondary-500 to-palette-secondary-400",
   "from-blue-500 to-blue-400",
   "from-purple-500 to-purple-400",
   "from-pink-500 to-pink-400",

@@ -54,8 +54,8 @@ const EVENT_BUTTONS: {
     value: "notImported",
     icon: "lucide:download",
     labelKey: "filters.notImported",
-    color: "text-violet-600 dark:text-violet-400",
-    activeColor: "bg-violet-100 text-violet-800 dark:bg-violet-900/40 dark:text-violet-300",
+    color: "text-palette-primary-600 dark:text-palette-primary-400",
+    activeColor: "bg-palette-primary-100 text-palette-primary-800 dark:bg-palette-primary-900/40 dark:text-palette-primary-300",
   },
 ];
 

@@ -40,9 +40,9 @@ export default function SidebarUserSection({ user, signOut }: SidebarUserSection
     <div className="relative border-t border-gray-200 p-3 dark:border-white/10" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex w-full items-center gap-3 rounded-lg px-2 py-2 transition-all hover:bg-black/5 focus:ring-2 focus:ring-violet-400/50 focus:outline-hidden dark:hover:bg-white/10"
+        className="flex w-full items-center gap-3 rounded-lg px-2 py-2 transition-all hover:bg-black/5 focus:ring-2 focus:ring-palette-primary-400/50 focus:outline-hidden dark:hover:bg-white/10"
       >
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-violet-500 to-blue-500 shadow-lg shadow-violet-500/20">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-palette-primary-500 to-blue-500 shadow-lg shadow-palette-primary-500/20">
           <Icon icon="fa:user" className="h-3.5 w-3.5 text-white" />
         </div>
         <span className="truncate text-sm font-medium text-gray-900 dark:text-white">

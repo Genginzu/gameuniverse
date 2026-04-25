@@ -49,13 +49,13 @@ export function BulkImportFieldCards({
             onClick={() => onSelect(field)}
             className={`flex min-h-[44px] flex-col items-center gap-2 rounded-xl p-4 transition-all ${
               isActive
-                ? "border border-cyan-500/50 bg-linear-to-br from-cyan-500/20 to-violet-500/20 shadow-lg"
+                ? "border border-palette-secondary-500/50 bg-linear-to-br from-palette-secondary-500/20 to-palette-primary-500/20 shadow-lg"
                 : "glass-card hover:bg-white/60 dark:hover:bg-slate-700/60"
             }`}
           >
             <Icon
               icon={FIELD_ICONS[field]}
-              className={`size-6 ${isActive ? "text-cyan-500" : "text-gray-500 dark:text-gray-400"}`}
+              className={`size-6 ${isActive ? "text-palette-secondary-500" : "text-gray-500 dark:text-gray-400"}`}
             />
             <span className="text-sm font-medium text-gray-900 dark:text-white">
               {t(`fields.${field}`)}

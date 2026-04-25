@@ -104,7 +104,7 @@ export function WebhookEventDiff({ eventId }: WebhookEventDiffProps) {
 
       {hasChanges && !result?.success && (
         <div className="flex justify-end">
-          <button onClick={handleApply} disabled={applying} className="flex items-center gap-2 rounded-xl bg-linear-to-r from-cyan-500 to-violet-500 px-6 py-2.5 text-sm font-medium text-white shadow-lg transition-all hover:shadow-xl disabled:opacity-50">
+          <button onClick={handleApply} disabled={applying} className="flex items-center gap-2 rounded-xl bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 px-6 py-2.5 text-sm font-medium text-white shadow-lg transition-all hover:shadow-xl disabled:opacity-50">
             {applying ? <Icon icon="lucide:loader-2" className="h-4 w-4 animate-spin" /> : <Icon icon="lucide:check" className="h-4 w-4" />}
             {t("applyChanges")}
           </button>

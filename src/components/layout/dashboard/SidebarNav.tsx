@@ -30,17 +30,17 @@ export default function SidebarNav({
   const pendingCount = pendingData?.count ?? 0;
 
   const linkClasses = (active: boolean) =>
-    `group flex items-center rounded-lg px-3 py-2.5 text-sm font-medium focus:outline-hidden focus:ring-2 focus:ring-neon-violet/60 focus:ring-offset-1 focus:ring-offset-transparent motion-safe:transition-all motion-safe:duration-200 ${
+    `group flex items-center rounded-lg px-3 py-2.5 text-sm font-medium focus:outline-hidden focus:ring-2 focus:ring-neon-primary/60 focus:ring-offset-1 focus:ring-offset-transparent motion-safe:transition-all motion-safe:duration-200 ${
       active
-        ? "border-l-2 border-neon-violet bg-neon-violet/10 text-neon-violet shadow-[0_0_8px_rgb(var(--neon-violet)/0.6)]"
+        ? "border-l-2 border-neon-primary bg-neon-primary/10 text-neon-primary shadow-[0_0_8px_rgb(var(--neon-primary)/0.6)]"
         : "border-l-2 border-transparent text-gray-700 motion-safe:hover:bg-black/5 motion-safe:hover:text-gray-900 dark:text-gray-400 dark:motion-safe:hover:bg-white/10 dark:motion-safe:hover:text-white"
     }`;
 
   const iconClasses = (active: boolean) =>
     `mr-3 h-4 w-4 motion-safe:transition-all motion-safe:duration-200 ${
       active
-        ? "drop-shadow-[0_0_6px_rgb(var(--neon-violet)/0.6)]"
-        : "motion-safe:group-hover:drop-shadow-[0_0_4px_rgb(var(--neon-violet)/0.4)]"
+        ? "drop-shadow-[0_0_6px_rgb(var(--neon-primary)/0.6)]"
+        : "motion-safe:group-hover:drop-shadow-[0_0_4px_rgb(var(--neon-primary)/0.4)]"
     }`;
 
   return (

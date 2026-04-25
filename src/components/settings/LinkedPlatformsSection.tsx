@@ -198,8 +198,8 @@ function PlatformsCard({
     <Card className="overflow-hidden rounded-xl bg-white/40 backdrop-blur-xl dark:bg-slate-800/50">
       <CardHeader>
         <div className="flex items-center">
-          <div className="rounded-xl bg-cyan-100 p-2 dark:bg-cyan-900/30">
-            <Icon icon="lucide:gamepad-2" className="h-4 w-4 text-cyan-600 sm:h-5 sm:w-5 dark:text-cyan-400" />
+          <div className="rounded-xl bg-palette-secondary-100 p-2 dark:bg-palette-secondary-900/30">
+            <Icon icon="lucide:gamepad-2" className="h-4 w-4 text-palette-secondary-600 sm:h-5 sm:w-5 dark:text-palette-secondary-400" />
           </div>
           <div className="ml-3">
             <CardTitle className="text-base font-semibold text-gray-900 sm:text-lg dark:text-white">

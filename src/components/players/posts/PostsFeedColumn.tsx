@@ -68,10 +68,10 @@ export function PostsFeedColumn({
         !postHook.searchTerm && <PostsFeedEmpty />}
 
       {!postHook.isLoading && postHook.posts.length > 0 && (
-        <div className="relative ml-6 border-l-2 border-violet-300/50 pl-6 dark:border-violet-500/30">
+        <div className="relative ml-6 border-l-2 border-palette-primary-300/50 pl-6 dark:border-palette-primary-500/30">
           {postHook.posts.map((post) => (
             <div key={post.id} className="relative mb-6">
-              <div className="absolute -left-[33px] top-5 h-4 w-4 rounded-full border-2 border-violet-400 bg-white dark:border-violet-500 dark:bg-slate-800" />
+              <div className="absolute -left-[33px] top-5 h-4 w-4 rounded-full border-2 border-palette-primary-400 bg-white dark:border-palette-primary-500 dark:bg-slate-800" />
               <PostCard
                 post={post}
                 playerName={playerName}

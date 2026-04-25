@@ -38,7 +38,7 @@ export function ActivityItemLibrary({ data, locale: _locale }: ActivityItemLibra
             game: () => (
               <Link
                 href={`/games/${data.gameSlug}`}
-                className="font-medium text-cyan-600 hover:underline dark:text-cyan-400"
+                className="font-medium text-palette-secondary-600 hover:underline dark:text-palette-secondary-400"
               >
                 {data.gameName}
               </Link>

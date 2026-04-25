@@ -113,7 +113,7 @@ export function ImageUploader({
           {uploading && (
             <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-slate-700">
               <div
-                className="h-full rounded-full bg-linear-to-r from-violet-500 to-cyan-500 transition-all duration-300"
+                className="h-full rounded-full bg-linear-to-r from-palette-primary-500 to-palette-secondary-500 transition-all duration-300"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -129,7 +129,7 @@ export function ImageUploader({
               isAvatar
                 ? "glass-card mx-auto h-32 w-32 rounded-xl"
                 : `glass-card w-full rounded-xl ${dropZoneClassName ?? "h-28"}`
-            } ${isDragging ? "ring-2 ring-violet-500 ring-offset-2 dark:ring-offset-slate-900" : ""} ${
+            } ${isDragging ? "ring-2 ring-palette-primary-500 ring-offset-2 dark:ring-offset-slate-900" : ""} ${
               uploading ? "pointer-events-none opacity-70" : ""
             }`}
             onClick={() => !uploading && fileInputRef.current?.click()}
@@ -164,10 +164,10 @@ export function ImageUploader({
 
             {/* Drag overlay */}
             {isDragging && !uploading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-violet-500/20 backdrop-blur-xs">
+              <div className="absolute inset-0 flex items-center justify-center bg-palette-primary-500/20 backdrop-blur-xs">
                 <Icon
                   icon="lucide:upload"
-                  className="h-8 w-8 text-violet-600 dark:text-violet-400"
+                  className="h-8 w-8 text-palette-primary-600 dark:text-palette-primary-400"
                 />
               </div>
             )}

@@ -52,7 +52,7 @@ export function CoachProfileContent({ username }: { username: string }) {
     <div className="space-y-6 p-4 md:space-y-8 md:p-6 lg:p-8">
       {/* Header */}
       <div className="glass-card flex flex-col items-center gap-4 rounded-2xl p-6 sm:flex-row sm:items-start">
-        <div className="flex size-20 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-cyan-500 to-violet-500 text-2xl font-bold text-white">
+        <div className="flex size-20 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-palette-secondary-500 to-palette-primary-500 text-2xl font-bold text-white">
           {player.avatarUrl ? (
             <img src={player.avatarUrl} alt="" className="size-20 rounded-full object-cover" />
           ) : (
@@ -65,7 +65,7 @@ export function CoachProfileContent({ username }: { username: string }) {
               {player.displayName || player.username}
             </h1>
             {coach.isVerified && (
-              <span className="rounded-full bg-cyan-500/20 px-2 py-0.5 text-xs font-medium text-cyan-400">
+              <span className="rounded-full bg-palette-secondary-500/20 px-2 py-0.5 text-xs font-medium text-palette-secondary-400">
                 <Icon icon="lucide:badge-check" className="mr-1 inline size-3" />{t("verified")}
               </span>
             )}
@@ -77,7 +77,7 @@ export function CoachProfileContent({ username }: { username: string }) {
               <span className="text-gray-400">({coach.totalReviews})</span>
             </span>
             <span className="text-gray-500 dark:text-gray-400">{coach.totalSessions} {t("sessions")}</span>
-            {minPrice < Infinity && <span className="font-medium text-cyan-400">{t("from")} {minPrice}€</span>}
+            {minPrice < Infinity && <span className="font-medium text-palette-secondary-400">{t("from")} {minPrice}€</span>}
           </div>
         </div>
       </div>
@@ -111,15 +111,15 @@ export function CoachProfileContent({ username }: { username: string }) {
               <div key={game.id} className="glass-card flex gap-4 rounded-xl p-4">
                 {(game.coverImageUrl || game.coverImage) && <img src={(game.coverImageUrl || game.coverImage)!} alt="" className="h-20 w-14 shrink-0 rounded-lg object-cover" />}
                 <div className="min-w-0 flex-1 space-y-2">
-                  <Link href={`/games/${game.slug}`} className="font-medium text-gray-900 hover:text-cyan-400 dark:text-white">{game.title}</Link>
+                  <Link href={`/games/${game.slug}`} className="font-medium text-gray-900 hover:text-palette-secondary-400 dark:text-white">{game.title}</Link>
                   {game.specialties.length > 0 && (
                     <div className="flex flex-wrap gap-1">
                       {game.specialties.map((s) => (
-                        <span key={s} className="rounded-full bg-cyan-500/10 px-2 py-0.5 text-xs text-cyan-400">{tGames(`specialties.${s}`)}</span>
+                        <span key={s} className="rounded-full bg-palette-secondary-500/10 px-2 py-0.5 text-xs text-palette-secondary-400">{tGames(`specialties.${s}`)}</span>
                       ))}
                     </div>
                   )}
-                  <button onClick={() => setBookingGame(game)} className="rounded-lg bg-linear-to-r from-cyan-500 to-violet-500 px-3 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-90">
+                  <button onClick={() => setBookingGame(game)} className="rounded-lg bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 px-3 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-90">
                     <Icon icon="lucide:calendar-plus" className="mr-1 inline size-3.5" />{t("book")}
                   </button>
                 </div>

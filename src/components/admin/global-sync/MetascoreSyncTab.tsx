@@ -49,7 +49,7 @@ export function MetascoreSyncTab({ syncState, startMetascoreSync, stopMetascoreS
       emptyKey="allDone"
       renderExtraStats={() =>
         syncState.lastSource ? (
-          <StatBadge icon="lucide:database" color="text-cyan-500" label={t("source", { source: syncState.lastSource })} />
+          <StatBadge icon="lucide:database" color="text-palette-secondary-500" label={t("source", { source: syncState.lastSource })} />
         ) : null
       }
     />

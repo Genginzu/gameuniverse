@@ -27,7 +27,7 @@ function Section({ title, icon, coaches }: { title: string; icon: string; coache
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
-        <Icon icon={icon} className="size-5 text-cyan-400" />
+        <Icon icon={icon} className="size-5 text-palette-secondary-400" />
         <h2 className="text-sm font-semibold text-gray-900 dark:text-white">{title}</h2>
       </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">

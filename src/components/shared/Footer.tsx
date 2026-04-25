@@ -25,7 +25,7 @@ export default function Footer() {
   return (
     <footer className="relative border-t border-white/10 bg-white/5 backdrop-blur-xl dark:bg-slate-900/60">
       {/* Gradient accent line */}
-      <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-cyan-500/50 to-transparent" />
+      <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-palette-secondary-500/50 to-transparent" />
 
       <div className="mx-auto max-w-7xl px-6 py-12 sm:px-8 lg:px-12">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-10 lg:grid-cols-4">
@@ -56,7 +56,7 @@ export default function Footer() {
           </p>
           <p className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-500">
             {t("madeWith")}
-            <Icon icon="fa:heart" className="text-neon-violet h-3 w-3" />
+            <Icon icon="fa:heart" className="text-neon-primary h-3 w-3" />
             {t("forGamers")}
           </p>
         </div>
@@ -86,11 +86,11 @@ function FooterLinkGroup({
           <li key={href}>
             <Link
               href={href}
-              className="group hover:text-neon-violet dark:hover:text-neon-violet inline-flex min-h-[44px] items-center gap-2 text-sm text-gray-600 transition-colors dark:text-gray-400"
+              className="group hover:text-neon-primary dark:hover:text-neon-primary inline-flex min-h-[44px] items-center gap-2 text-sm text-gray-600 transition-colors dark:text-gray-400"
             >
               <Icon
                 icon={icon}
-                className="h-3.5 w-3.5 transition-all group-hover:drop-shadow-[0_0_4px_rgb(var(--neon-violet)/0.5)]"
+                className="h-3.5 w-3.5 transition-all group-hover:drop-shadow-[0_0_4px_rgb(var(--neon-primary)/0.5)]"
               />
               {tNav(labelKey)}
             </Link>

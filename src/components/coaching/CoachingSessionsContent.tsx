@@ -13,7 +13,7 @@ const STATUS_ICONS: Record<string, string> = {
   completed: "lucide:check-check", cancelled: "lucide:x-circle", disputed: "lucide:alert-triangle",
 };
 const STATUS_COLORS: Record<string, string> = {
-  requested: "text-yellow-500", confirmed: "text-cyan-400", in_progress: "text-blue-500",
+  requested: "text-yellow-500", confirmed: "text-palette-secondary-400", in_progress: "text-blue-500",
   completed: "text-green-500", cancelled: "text-red-400", disputed: "text-orange-500",
 };
 
@@ -59,7 +59,7 @@ export function CoachingSessionsContent() {
       setPaymentMessage({ type: "error", text: t("paymentCancelled") });
       window.history.replaceState({}, "", window.location.pathname);
     }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleAction = async (sessionId: string, action: string) => {
     await fetch(`/api/coaching/sessions/${sessionId}`, {
@@ -95,7 +95,7 @@ export function CoachingSessionsContent() {
 
       <div className="flex gap-2">
         {(["student", "coach"] as const).map((r) => (
-          <button key={r} onClick={() => setRole(r)} className={`rounded-lg px-4 py-2 text-sm font-medium transition-all ${role === r ? "bg-linear-to-r from-cyan-500 to-violet-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400"}`}>
+          <button key={r} onClick={() => setRole(r)} className={`rounded-lg px-4 py-2 text-sm font-medium transition-all ${role === r ? "bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400"}`}>
             {t(`role.${r}`)}
           </button>
         ))}
@@ -145,7 +145,7 @@ export function CoachingSessionsContent() {
                     </span>
                   )}
                   {role === "student" && s.status === "confirmed" && s.paymentStatus !== "paid" && (
-                    <button onClick={() => handlePay(s.id)} className="rounded-lg bg-linear-to-r from-cyan-500 to-violet-500 px-3 py-1.5 text-xs font-medium text-white hover:opacity-90">{t("actions.pay")}</button>
+                    <button onClick={() => handlePay(s.id)} className="rounded-lg bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 px-3 py-1.5 text-xs font-medium text-white hover:opacity-90">{t("actions.pay")}</button>
                   )}
                   {s.status === "confirmed" && s.paymentStatus === "paid" && (
                     <span className="flex items-center gap-1 rounded-lg bg-green-500/10 px-3 py-1.5 text-xs font-medium text-green-500">
@@ -159,7 +159,7 @@ export function CoachingSessionsContent() {
                     <button onClick={() => handleAction(s.id, "cancel")} className="rounded-lg bg-red-500/10 px-3 py-1.5 text-xs font-medium text-red-400 hover:bg-red-500/20">{t("actions.cancel")}</button>
                   )}
                   {s.conversationId && (
-                    <Link href="/discussions" className="rounded-lg bg-cyan-500/10 px-3 py-1.5 text-xs font-medium text-cyan-400 hover:bg-cyan-500/20">
+                    <Link href="/discussions" className="rounded-lg bg-palette-secondary-500/10 px-3 py-1.5 text-xs font-medium text-palette-secondary-400 hover:bg-palette-secondary-500/20">
                       <Icon icon="lucide:message-circle" className="inline size-3.5" /> {t("actions.chat")}
                     </Link>
                   )}

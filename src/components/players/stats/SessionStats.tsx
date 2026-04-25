@@ -51,12 +51,12 @@ export function SessionStats({ sessions }: SessionStatsProps) {
 
   const metrics = [
     {
-      icon: <Icon icon="lucide:activity" className="text-neon-violet h-5 w-5" />,
+      icon: <Icon icon="lucide:activity" className="text-neon-primary h-5 w-5" />,
       label: t("sessions.totalSessions"),
       value: formatLocalizedNumber(sessions.totalSessions, locale),
     },
     {
-      icon: <Icon icon="lucide:clock" className="text-neon-violet h-5 w-5" />,
+      icon: <Icon icon="lucide:clock" className="text-neon-primary h-5 w-5" />,
       label: t("sessions.averageDuration"),
       value:
         sessions.averageDurationMinutes !== null
@@ -64,7 +64,7 @@ export function SessionStats({ sessions }: SessionStatsProps) {
           : "—",
     },
     {
-      icon: <Icon icon="lucide:timer" className="text-neon-violet h-5 w-5" />,
+      icon: <Icon icon="lucide:timer" className="text-neon-primary h-5 w-5" />,
       label: t("sessions.longestSession"),
       value:
         sessions.longestSessionMinutes !== null

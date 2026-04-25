@@ -18,7 +18,7 @@ export function PageLoading({
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/40 backdrop-blur-xl dark:bg-slate-800/80">
         <div className="text-center">
-          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-violet-500 border-t-transparent"></div>
+          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-palette-primary-500 border-t-transparent"></div>
           {message && <p className="text-sm text-gray-600 dark:text-gray-400">{message}</p>}
         </div>
       </div>
@@ -77,7 +77,7 @@ export function PageLoading({
           <div className="mx-auto w-64">
             <div className="mb-2 h-2 rounded-full bg-white/30 dark:bg-slate-700/50">
               <div
-                className="h-2 rounded-full bg-linear-to-r from-cyan-500 to-violet-500 transition-all duration-300 ease-out"
+                className="h-2 rounded-full bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 transition-all duration-300 ease-out"
                 style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
               ></div>
             </div>

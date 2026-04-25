@@ -8,17 +8,17 @@ const FEATURES = [
   {
     key: "library" as const,
     icon: "fa:gamepad",
-    gradient: "from-neon-violet to-neon-cyan",
+    gradient: "from-neon-primary to-neon-secondary",
   },
   {
     key: "search" as const,
     icon: "fa:search",
-    gradient: "from-neon-cyan to-neon-magenta",
+    gradient: "from-neon-secondary to-neon-accent",
   },
   {
     key: "details" as const,
     icon: "fa:info-circle",
-    gradient: "from-neon-magenta to-neon-violet",
+    gradient: "from-neon-accent to-neon-primary",
   },
 ];
 
@@ -48,7 +48,7 @@ export function LandingFeatures() {
             >
               <CardHeader className="pb-6 text-center">
                 <div
-                  className={`mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-xl bg-linear-to-br ${gradient} shadow-xl transition-shadow duration-300 group-hover:shadow-neon-violet/30`}
+                  className={`mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-xl bg-linear-to-br ${gradient} shadow-xl transition-shadow duration-300 group-hover:shadow-neon-primary/30`}
                 >
                   <Icon icon={icon} className="h-10 w-10 text-white" />
                 </div>

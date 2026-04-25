@@ -63,10 +63,10 @@ export function NotificationItem({ notification, onDismiss, onNavigate }: Notifi
   const body = (
     <>
       {/* Type icon */}
-      <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-violet-500/10 dark:bg-violet-400/10">
+      <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-palette-primary-500/10 dark:bg-palette-primary-400/10">
         <Icon
           icon={TYPE_ICONS[notification.type] ?? "mdi:bell-outline"}
-          className="h-4 w-4 text-violet-500 dark:text-violet-300"
+          className="h-4 w-4 text-palette-primary-500 dark:text-palette-primary-300"
         />
       </div>
 

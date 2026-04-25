@@ -76,10 +76,10 @@ export function BookingModal({ coachId, gameId, gameTitle, pricing, onClose }: B
             <div className="space-y-2">
               <p className="text-xs font-medium text-gray-700 dark:text-gray-300">{t("selectFormula")}</p>
               {pricing.map((p) => (
-                <button key={p.sessionType} onClick={() => setSelected(p)} className={`w-full rounded-xl p-3 text-left transition-all ${selected?.sessionType === p.sessionType ? "bg-linear-to-r from-cyan-500/20 to-violet-500/20 ring-1 ring-cyan-400" : "bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700"}`}>
+                <button key={p.sessionType} onClick={() => setSelected(p)} className={`w-full rounded-xl p-3 text-left transition-all ${selected?.sessionType === p.sessionType ? "bg-linear-to-r from-palette-secondary-500/20 to-palette-primary-500/20 ring-1 ring-palette-secondary-400" : "bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700"}`}>
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-gray-900 dark:text-white">{tProfile(`types.${p.sessionType}`)}</span>
-                    <span className="text-sm font-bold text-cyan-400">{p.priceAmount}€</span>
+                    <span className="text-sm font-bold text-palette-secondary-400">{p.priceAmount}€</span>
                   </div>
                   <span className="text-xs text-gray-500">{p.durationMinutes} min</span>
                 </button>
@@ -97,7 +97,7 @@ export function BookingModal({ coachId, gameId, gameTitle, pricing, onClose }: B
               </div>
             </div>
 
-            <button onClick={handleBook} disabled={!selected || !date || !time || loading} className="w-full rounded-xl bg-linear-to-r from-cyan-500 to-violet-500 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50">
+            <button onClick={handleBook} disabled={!selected || !date || !time || loading} className="w-full rounded-xl bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50">
               {loading ? t("booking") : t("bookNow")}
             </button>
           </>

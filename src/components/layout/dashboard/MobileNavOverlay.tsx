@@ -75,13 +75,13 @@ export default function MobileNavOverlay({
                   onClick={onClose}
                   className={`flex items-center gap-3 rounded-xl px-4 py-3 text-base font-medium motion-safe:transition-all motion-safe:duration-200 ${
                     active
-                      ? "bg-neon-violet/10 text-neon-violet shadow-[0_0_12px_rgb(var(--neon-violet)/0.3)]"
+                      ? "bg-neon-primary/10 text-neon-primary shadow-[0_0_12px_rgb(var(--neon-primary)/0.3)]"
                       : "text-gray-300 hover:bg-white/5 hover:text-white"
                   }`}
                 >
                   <Icon
                     icon={icon}
-                    className={`h-5 w-5 ${active ? "drop-shadow-[0_0_6px_rgb(var(--neon-violet)/0.6)]" : ""}`}
+                    className={`h-5 w-5 ${active ? "drop-shadow-[0_0_6px_rgb(var(--neon-primary)/0.6)]" : ""}`}
                   />
                   <span>{tNav(labelKey)}</span>
                 </Link>
@@ -106,13 +106,13 @@ export default function MobileNavOverlay({
                       onClick={onClose}
                       className={`flex items-center gap-3 rounded-xl px-4 py-3 text-base font-medium motion-safe:transition-all motion-safe:duration-200 ${
                         active
-                          ? "bg-neon-violet/10 text-neon-violet shadow-[0_0_12px_rgb(var(--neon-violet)/0.3)]"
+                          ? "bg-neon-primary/10 text-neon-primary shadow-[0_0_12px_rgb(var(--neon-primary)/0.3)]"
                           : "text-gray-300 hover:bg-white/5 hover:text-white"
                       }`}
                     >
                       <Icon
                         icon={icon}
-                        className={`h-5 w-5 ${active ? "drop-shadow-[0_0_6px_rgb(var(--neon-violet)/0.6)]" : ""}`}
+                        className={`h-5 w-5 ${active ? "drop-shadow-[0_0_6px_rgb(var(--neon-primary)/0.6)]" : ""}`}
                       />
                       <span>{t(labelKey)}</span>
                     </Link>
@@ -129,7 +129,7 @@ export default function MobileNavOverlay({
             <Link
               href="/auth?mode=signin"
               onClick={onClose}
-              className="text-neon-violet hover:bg-neon-violet/10 flex items-center gap-3 rounded-xl px-4 py-3 text-base font-medium transition-all"
+              className="text-neon-primary hover:bg-neon-primary/10 flex items-center gap-3 rounded-xl px-4 py-3 text-base font-medium transition-all"
             >
               <Icon icon="lucide:log-in" className="h-5 w-5" />
               <span>{tNav("login")}</span>

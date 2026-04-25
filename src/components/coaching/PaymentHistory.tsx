@@ -64,7 +64,7 @@ export function PaymentHistory() {
           <p className="text-2xl font-bold text-gray-900 dark:text-white">{totalEarnings.toFixed(2)}€</p>
           <p className="text-xs text-gray-400">{data?.total ?? 0} {t("paidSessions")}</p>
         </div>
-        <button onClick={handlePayout} disabled={payoutLoading} className="w-full rounded-lg bg-linear-to-r from-cyan-500 to-violet-500 px-4 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50 sm:w-auto">
+        <button onClick={handlePayout} disabled={payoutLoading} className="w-full rounded-lg bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 px-4 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50 sm:w-auto">
           <Icon icon="lucide:banknote" className="mr-1.5 inline size-4" />
           {payoutLoading ? t("payoutLoading") : t("requestPayout")}
         </button>

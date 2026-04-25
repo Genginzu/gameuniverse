@@ -38,14 +38,14 @@ export function HomeDashboard() {
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex size-10 items-center justify-center rounded-xl bg-linear-to-br from-cyan-500/20 to-violet-500/20">
-              <Icon icon="lucide:flame" className="size-5 text-cyan-400" />
+            <div className="flex size-10 items-center justify-center rounded-xl bg-linear-to-br from-palette-secondary-500/20 to-palette-primary-500/20">
+              <Icon icon="lucide:flame" className="size-5 text-palette-secondary-400" />
             </div>
             <h2 className="text-lg font-bold text-gray-900 sm:text-xl dark:text-white">{t("trending")}</h2>
           </div>
           <Link
             href="/trending"
-            className="flex items-center gap-1.5 rounded-lg bg-linear-to-r from-cyan-500 to-violet-500 px-4 py-2 text-xs font-medium text-white transition-opacity hover:opacity-90 sm:text-sm"
+            className="flex items-center gap-1.5 rounded-lg bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 px-4 py-2 text-xs font-medium text-white transition-opacity hover:opacity-90 sm:text-sm"
           >
             {t("seeAllTrending")}
             <Icon icon="lucide:arrow-right" className="size-4" />
@@ -66,14 +66,14 @@ export function HomeDashboard() {
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex size-10 items-center justify-center rounded-xl bg-linear-to-br from-cyan-500/20 to-violet-500/20">
-              <Icon icon="lucide:calendar" className="size-5 text-cyan-400" />
+            <div className="flex size-10 items-center justify-center rounded-xl bg-linear-to-br from-palette-secondary-500/20 to-palette-primary-500/20">
+              <Icon icon="lucide:calendar" className="size-5 text-palette-secondary-400" />
             </div>
             <h2 className="text-lg font-bold text-gray-900 sm:text-xl dark:text-white">{t("upcoming")}</h2>
           </div>
           <Link
             href="/upcoming"
-            className="flex items-center gap-1.5 rounded-lg bg-linear-to-r from-cyan-500 to-violet-500 px-4 py-2 text-xs font-medium text-white transition-opacity hover:opacity-90 sm:text-sm"
+            className="flex items-center gap-1.5 rounded-lg bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 px-4 py-2 text-xs font-medium text-white transition-opacity hover:opacity-90 sm:text-sm"
           >
             {t("seeAllUpcoming")}
             <Icon icon="lucide:arrow-right" className="size-4" />

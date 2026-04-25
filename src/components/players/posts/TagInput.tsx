@@ -60,19 +60,19 @@ export function TagInput({ tags, onChange }: TagInputProps) {
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-1.5 rounded-xl border-2 border-violet-300 bg-white/60 px-3 py-2 shadow-xs backdrop-blur-xs transition-all duration-200 focus-within:border-violet-400 focus-within:ring-2 focus-within:ring-violet-400/20 dark:border-violet-500/50 dark:bg-slate-700/40 dark:focus-within:border-violet-400/60 dark:focus-within:ring-violet-400/15">
-      <Icon icon="lucide:hash" className="h-4 w-4 shrink-0 text-violet-400 dark:text-violet-300" />
+    <div className="flex flex-wrap items-center gap-1.5 rounded-xl border-2 border-palette-primary-300 bg-white/60 px-3 py-2 shadow-xs backdrop-blur-xs transition-all duration-200 focus-within:border-palette-primary-400 focus-within:ring-2 focus-within:ring-palette-primary-400/20 dark:border-palette-primary-500/50 dark:bg-slate-700/40 dark:focus-within:border-palette-primary-400/60 dark:focus-within:ring-palette-primary-400/15">
+      <Icon icon="lucide:hash" className="h-4 w-4 shrink-0 text-palette-primary-400 dark:text-palette-primary-300" />
 
       {tags.map((tag) => (
         <span
           key={tag}
-          className="inline-flex items-center gap-1 rounded-full bg-violet-500/10 px-2.5 py-0.5 text-xs font-medium text-violet-500 transition-colors dark:bg-violet-400/10 dark:text-violet-300"
+          className="inline-flex items-center gap-1 rounded-full bg-palette-primary-500/10 px-2.5 py-0.5 text-xs font-medium text-palette-primary-500 transition-colors dark:bg-palette-primary-400/10 dark:text-palette-primary-300"
         >
           #{tag}
           <button
             type="button"
             onClick={() => removeTag(tag)}
-            className="rounded-full p-0.5 hover:bg-violet-500/20 dark:hover:bg-violet-400/20"
+            className="rounded-full p-0.5 hover:bg-palette-primary-500/20 dark:hover:bg-palette-primary-400/20"
             aria-label={t("tagRemoveAriaLabel", { tag })}
           >
             <Icon icon="lucide:x" className="h-3 w-3" />

@@ -107,7 +107,7 @@ export function PostComposer({
               aria-label={t("placeholder")}
               maxLength={MAX_LENGTH}
               rows={3}
-              className="w-full resize-none rounded-xl border-2 border-violet-300 bg-white/60 p-3 pb-7 text-sm text-gray-800 placeholder-gray-400 backdrop-blur-xs transition-all duration-200 focus:border-violet-400 focus:ring-2 focus:ring-violet-400/20 focus:outline-hidden dark:border-violet-500/50 dark:bg-slate-700/40 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-violet-400/60 dark:focus:ring-violet-400/15"
+              className="w-full resize-none rounded-xl border-2 border-palette-primary-300 bg-white/60 p-3 pb-7 text-sm text-gray-800 placeholder-gray-400 backdrop-blur-xs transition-all duration-200 focus:border-palette-primary-400 focus:ring-2 focus:ring-palette-primary-400/20 focus:outline-hidden dark:border-palette-primary-500/50 dark:bg-slate-700/40 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-palette-primary-400/60 dark:focus:ring-palette-primary-400/15"
             />
             <span className={`absolute right-3 bottom-2 text-xs ${remaining < 0 ? "text-red-500" : "text-gray-400 dark:text-slate-500"}`}>
               {t("charCount", { remaining })}

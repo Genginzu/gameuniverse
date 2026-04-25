@@ -91,7 +91,7 @@ export function SessionComposer({ locale, isCreating, onSubmit }: SessionCompose
               value={date}
               max={today()}
               onChange={(e) => setDate(e.target.value)}
-              className="w-full rounded-xl border-2 border-violet-300 bg-white/60 p-3 text-base text-gray-800 focus:border-violet-400 focus:ring-2 focus:ring-violet-400/20 focus:outline-hidden dark:border-violet-500/50 dark:bg-slate-700/40 dark:text-slate-100"
+              className="w-full rounded-xl border-2 border-palette-primary-300 bg-white/60 p-3 text-base text-gray-800 focus:border-palette-primary-400 focus:ring-2 focus:ring-palette-primary-400/20 focus:outline-hidden dark:border-palette-primary-500/50 dark:bg-slate-700/40 dark:text-slate-100"
             />
           </div>
           <div>
@@ -112,7 +112,7 @@ export function SessionComposer({ locale, isCreating, onSubmit }: SessionCompose
                 const n = parseInt(e.target.value, 10);
                 setHours(Number.isFinite(n) ? Math.max(0, Math.min(MAX_HOURS, n)) : 0);
               }}
-              className="w-full rounded-xl border-2 border-violet-300 bg-white/60 p-3 text-base text-gray-800 focus:border-violet-400 focus:ring-2 focus:ring-violet-400/20 focus:outline-hidden dark:border-violet-500/50 dark:bg-slate-700/40 dark:text-slate-100"
+              className="w-full rounded-xl border-2 border-palette-primary-300 bg-white/60 p-3 text-base text-gray-800 focus:border-palette-primary-400 focus:ring-2 focus:ring-palette-primary-400/20 focus:outline-hidden dark:border-palette-primary-500/50 dark:bg-slate-700/40 dark:text-slate-100"
             />
           </div>
           <div>
@@ -134,7 +134,7 @@ export function SessionComposer({ locale, isCreating, onSubmit }: SessionCompose
                 const n = parseInt(e.target.value, 10);
                 setMinutes(Number.isFinite(n) ? Math.max(0, Math.min(59, n)) : 0);
               }}
-              className="w-full rounded-xl border-2 border-violet-300 bg-white/60 p-3 text-base text-gray-800 focus:border-violet-400 focus:ring-2 focus:ring-violet-400/20 focus:outline-hidden dark:border-violet-500/50 dark:bg-slate-700/40 dark:text-slate-100"
+              className="w-full rounded-xl border-2 border-palette-primary-300 bg-white/60 p-3 text-base text-gray-800 focus:border-palette-primary-400 focus:ring-2 focus:ring-palette-primary-400/20 focus:outline-hidden dark:border-palette-primary-500/50 dark:bg-slate-700/40 dark:text-slate-100"
             />
           </div>
         </div>
@@ -144,7 +144,7 @@ export function SessionComposer({ locale, isCreating, onSubmit }: SessionCompose
             type="button"
             onClick={handleSubmit}
             disabled={isDisabled}
-            className="inline-flex items-center gap-2 rounded-full bg-linear-to-br from-cyan-500 to-violet-500 px-5 py-2 text-sm font-medium text-white shadow-lg shadow-violet-500/20 transition-all duration-300 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex items-center gap-2 rounded-full bg-linear-to-br from-palette-secondary-500 to-palette-primary-500 px-5 py-2 text-sm font-medium text-white shadow-lg shadow-palette-primary-500/20 transition-all duration-300 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isCreating ? (
               <Icon icon="lucide:loader-2" className="h-4 w-4 animate-spin" />

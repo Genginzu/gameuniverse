@@ -6,12 +6,12 @@ import { useRef } from "react";
 import { useInView } from "@/hooks/useInView";
 
 const FEATURES = [
-  { key: "library", icon: "mdi:bookshelf", color: "from-violet-500 to-purple-600" },
-  { key: "characters", icon: "mdi:account-star", color: "from-cyan-500 to-blue-600" },
+  { key: "library", icon: "mdi:bookshelf", color: "from-palette-primary-500 to-purple-600" },
+  { key: "characters", icon: "mdi:account-star", color: "from-palette-secondary-500 to-blue-600" },
   { key: "community", icon: "mdi:account-group", color: "from-pink-500 to-rose-600" },
   { key: "search", icon: "mdi:magnify", color: "from-amber-500 to-orange-600" },
   { key: "tracking", icon: "mdi:chart-timeline-variant", color: "from-emerald-500 to-green-600" },
-  { key: "reviews", icon: "mdi:star-shooting", color: "from-indigo-500 to-violet-600" },
+  { key: "reviews", icon: "mdi:star-shooting", color: "from-indigo-500 to-palette-primary-600" },
 ] as const;
 
 function FeatureCard({

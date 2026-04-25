@@ -24,8 +24,8 @@ export function DashboardContent() {
       <div className="mb-6 grid grid-cols-1 gap-4 sm:mb-8 sm:gap-6 md:grid-cols-3">
         <DashboardStatCard
           icon={"fa:gamepad"}
-          iconBgClass="bg-neon-violet/10 dark:bg-neon-violet/15"
-          iconColorClass="text-neon-violet"
+          iconBgClass="bg-neon-primary/10 dark:bg-neon-primary/15"
+          iconColorClass="text-neon-primary"
           title={t("myGames")}
           description={t("myGamesDesc")}
           value={libraryLoading ? "..." : libraryStats.totalGames}
@@ -33,8 +33,8 @@ export function DashboardContent() {
         />
         <DashboardStatCard
           icon={"fa:users"}
-          iconBgClass="bg-neon-cyan/10 dark:bg-neon-cyan/15"
-          iconColorClass="text-neon-cyan"
+          iconBgClass="bg-neon-secondary/10 dark:bg-neon-secondary/15"
+          iconColorClass="text-neon-secondary"
           title={t("myTeams")}
           description={t("myTeamsDesc")}
           value={0}
@@ -42,8 +42,8 @@ export function DashboardContent() {
         />
         <DashboardStatCard
           icon={"fa:bolt"}
-          iconBgClass="bg-neon-magenta/10 dark:bg-neon-magenta/15"
-          iconColorClass="text-neon-magenta"
+          iconBgClass="bg-neon-accent/10 dark:bg-neon-accent/15"
+          iconColorClass="text-neon-accent"
           title={t("activity")}
           description={t("activityDesc")}
           value={0}
@@ -69,23 +69,23 @@ function QuickActionsCard({ t }: { t: (key: string) => string }) {
       <div className="space-y-3">
         <Link
           href="/library"
-          className="neon-btn flex w-full items-center rounded-xl bg-linear-to-r from-neon-violet/20 to-neon-cyan/20 px-4 py-3 font-semibold text-gray-900 transition-all duration-200 hover:from-neon-violet/30 hover:to-neon-cyan/30 dark:text-white"
+          className="neon-btn flex w-full items-center rounded-xl bg-linear-to-r from-neon-primary/20 to-neon-secondary/20 px-4 py-3 font-semibold text-gray-900 transition-all duration-200 hover:from-neon-primary/30 hover:to-neon-secondary/30 dark:text-white"
         >
-          <Icon icon="fa:gamepad" className="mr-3 h-5 w-5 text-neon-violet drop-shadow-[0_0_6px_currentColor]"  />
+          <Icon icon="fa:gamepad" className="mr-3 h-5 w-5 text-neon-primary drop-shadow-[0_0_6px_currentColor]"  />
           {t("exploreGames")}
         </Link>
         <Link
           href="/profile"
           className="neon-btn flex w-full items-center rounded-xl px-4 py-3 font-semibold text-gray-900 transition-all duration-200 dark:text-white"
         >
-          <Icon icon="fa:user" className="mr-3 h-5 w-5 text-neon-cyan drop-shadow-[0_0_6px_currentColor]"  />
+          <Icon icon="fa:user" className="mr-3 h-5 w-5 text-neon-secondary drop-shadow-[0_0_6px_currentColor]"  />
           {t("editProfile")}
         </Link>
         <Link
           href="/teams"
           className="neon-btn flex w-full items-center rounded-xl px-4 py-3 font-semibold text-gray-900 transition-all duration-200 dark:text-white"
         >
-          <Icon icon="fa:users" className="mr-3 h-5 w-5 text-neon-magenta drop-shadow-[0_0_6px_currentColor]"  />
+          <Icon icon="fa:users" className="mr-3 h-5 w-5 text-neon-accent drop-shadow-[0_0_6px_currentColor]"  />
           {t("joinTeam")}
         </Link>
       </div>

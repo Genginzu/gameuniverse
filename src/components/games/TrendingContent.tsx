@@ -30,8 +30,8 @@ function TrendingSection({ title, icon, games }: SectionProps) {
   return (
     <section className="space-y-4">
       <div className="flex items-center gap-3">
-        <div className="flex size-10 items-center justify-center rounded-xl bg-linear-to-br from-cyan-500/20 to-violet-500/20">
-          <Icon icon={icon} className="size-5 text-cyan-400" />
+        <div className="flex size-10 items-center justify-center rounded-xl bg-linear-to-br from-palette-secondary-500/20 to-palette-primary-500/20">
+          <Icon icon={icon} className="size-5 text-palette-secondary-400" />
         </div>
         <h2 className="text-lg font-bold text-gray-900 sm:text-xl dark:text-white">{title}</h2>
         <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-400">

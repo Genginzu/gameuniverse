@@ -37,7 +37,7 @@ export function PlaytimeStats({ playtime, locale }: PlaytimeStatsProps) {
       <div className="flex flex-col gap-4 md:flex-row">
         {/* Average play time card */}
         <div className="glass-card flex flex-1 items-center gap-4 rounded-xl p-5 transition-all duration-300">
-          <div className="bg-neon-violet/20 text-neon-violet flex h-12 w-12 shrink-0 items-center justify-center rounded-xl">
+          <div className="bg-neon-primary/20 text-neon-primary flex h-12 w-12 shrink-0 items-center justify-center rounded-xl">
             <Icon icon="lucide:clock" className="h-6 w-6" />
           </div>
           <div className="min-w-0">
@@ -79,7 +79,7 @@ export function PlaytimeStats({ playtime, locale }: PlaytimeStatsProps) {
               </div>
               <div className="min-w-0 flex-1">
                 <div className="mb-1 flex items-center gap-1.5">
-                  <Icon icon="lucide:trophy" className="text-neon-cyan h-4 w-4 shrink-0" />
+                  <Icon icon="lucide:trophy" className="text-neon-secondary h-4 w-4 shrink-0" />
                   <p className="truncate text-sm text-gray-500 dark:text-slate-400">
                     {t("playtime.topGame")}
                   </p>

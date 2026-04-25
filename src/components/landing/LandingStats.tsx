@@ -10,19 +10,19 @@ const STATS = [
     key: "gamesReferenced" as const,
     value: "10,000+",
     icon: "fa:gamepad",
-    color: "text-neon-cyan",
+    color: "text-neon-secondary",
   },
   {
     key: "ratings" as const,
     value: "50,000+",
     icon: "fa:star",
-    color: "text-neon-violet",
+    color: "text-neon-primary",
   },
   {
     key: "newGamesPerMonth" as const,
     value: "1,000+",
     icon: "fa:chart-line",
-    color: "text-neon-magenta",
+    color: "text-neon-accent",
   },
 ];
 
