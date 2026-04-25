@@ -1,6 +1,12 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
 // Create mock functions
+const mockXpQuery = () => ({
+  select: vi.fn(() => ({
+    in: vi.fn(() => Promise.resolve({ data: [], error: null })),
+  })),
+});
+
 const mockFrom = vi.fn(() => ({}));
 const mockRpc = vi.fn(() => Promise.resolve({ data: null, error: null }));
 
@@ -120,7 +126,8 @@ describe("PlayerService - Comprehensive Coverage", () => {
         .mockReturnValueOnce({
           select: vi.fn(() => mockLibraryQuery),
         })
-        .mockReturnValueOnce(mockReviewsQuery());
+        .mockReturnValueOnce(mockReviewsQuery())
+        .mockReturnValueOnce(mockXpQuery());
 
       const result = await PlayerService.fetchPlayersFromDB();
 
@@ -161,7 +168,8 @@ describe("PlayerService - Comprehensive Coverage", () => {
         .mockReturnValueOnce({
           select: vi.fn(() => mockLibraryQuery),
         })
-        .mockReturnValueOnce(mockReviewsQuery());
+        .mockReturnValueOnce(mockReviewsQuery())
+        .mockReturnValueOnce(mockXpQuery());
 
       const result = await PlayerService.fetchPlayersFromDB({ search: "searched" });
 
@@ -232,7 +240,8 @@ describe("PlayerService - Comprehensive Coverage", () => {
         .mockReturnValueOnce({
           select: vi.fn(() => mockLibraryQuery),
         })
-        .mockReturnValueOnce(mockReviewsQuery());
+        .mockReturnValueOnce(mockReviewsQuery())
+        .mockReturnValueOnce(mockXpQuery());
 
       // Filter for 1-5 games (user-1 has 5, user-2 has 15)
       const result = await PlayerService.fetchPlayersFromDB({ gameCountRange: "1-5" });
@@ -273,7 +282,8 @@ describe("PlayerService - Comprehensive Coverage", () => {
         .mockReturnValueOnce({
           select: vi.fn(() => mockLibraryQuery),
         })
-        .mockReturnValueOnce(mockReviewsQuery());
+        .mockReturnValueOnce(mockReviewsQuery())
+        .mockReturnValueOnce(mockXpQuery());
 
       const result = await PlayerService.fetchPlayersFromDB({ page: 2, limit: 10 });
 
@@ -335,7 +345,8 @@ describe("PlayerService - Comprehensive Coverage", () => {
         .mockReturnValueOnce({
           select: vi.fn(() => mockLibraryQuery),
         })
-        .mockReturnValueOnce(mockReviewsQuery());
+        .mockReturnValueOnce(mockReviewsQuery())
+        .mockReturnValueOnce(mockXpQuery());
 
       // Should not throw, just continue without counts
       const result = await PlayerService.fetchPlayersFromDB();
@@ -440,7 +451,8 @@ describe("PlayerService - Comprehensive Coverage", () => {
           ])
         ) // 3. stats
         .mockReturnValueOnce({ select: vi.fn(() => mockLibraryQuery) }) // 4. library page
-        .mockReturnValueOnce(mockStatsPrivateQuery()); // 5. stats_private
+        .mockReturnValueOnce(mockStatsPrivateQuery()) // 5. stats_private
+        .mockReturnValueOnce({ select: vi.fn(() => ({ eq: vi.fn(() => ({ maybeSingle: vi.fn(() => Promise.resolve({ data: null, error: null })) })) })) }); // 6. player_xp
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("user-1", "en");
 
@@ -555,7 +567,8 @@ describe("PlayerService - Comprehensive Coverage", () => {
         .mockReturnValueOnce(mockLibraryCountQuery(0))
         .mockReturnValueOnce(mockStatsDataQuery([]))
         .mockReturnValueOnce({ select: vi.fn(() => mockLibraryQuery) })
-        .mockReturnValueOnce(mockStatsPrivateQuery());
+        .mockReturnValueOnce(mockStatsPrivateQuery())
+        .mockReturnValueOnce({ select: vi.fn(() => ({ eq: vi.fn(() => ({ maybeSingle: vi.fn(() => Promise.resolve({ data: null, error: null })) })) })) });
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("user-1");
 
@@ -633,7 +646,8 @@ describe("PlayerService - Comprehensive Coverage", () => {
           ])
         )
         .mockReturnValueOnce({ select: vi.fn(() => mockLibraryQuery) })
-        .mockReturnValueOnce(mockStatsPrivateQuery());
+        .mockReturnValueOnce(mockStatsPrivateQuery())
+        .mockReturnValueOnce({ select: vi.fn(() => ({ eq: vi.fn(() => ({ maybeSingle: vi.fn(() => Promise.resolve({ data: null, error: null })) })) })) });
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("user-1", "fr");
 
@@ -730,7 +744,8 @@ describe("PlayerService - Comprehensive Coverage", () => {
           ])
         )
         .mockReturnValueOnce({ select: vi.fn(() => mockLibraryQuery) })
-        .mockReturnValueOnce(mockStatsPrivateQuery());
+        .mockReturnValueOnce(mockStatsPrivateQuery())
+        .mockReturnValueOnce({ select: vi.fn(() => ({ eq: vi.fn(() => ({ maybeSingle: vi.fn(() => Promise.resolve({ data: null, error: null })) })) })) });
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("user-1");
 
@@ -777,7 +792,8 @@ describe("PlayerService - Comprehensive Coverage", () => {
         .mockReturnValueOnce(mockLibraryCountQuery(0))
         .mockReturnValueOnce(mockStatsDataQuery([]))
         .mockReturnValueOnce({ select: vi.fn(() => mockLibraryQuery) })
-        .mockReturnValueOnce(mockStatsPrivateQuery());
+        .mockReturnValueOnce(mockStatsPrivateQuery())
+        .mockReturnValueOnce({ select: vi.fn(() => ({ eq: vi.fn(() => ({ maybeSingle: vi.fn(() => Promise.resolve({ data: null, error: null })) })) })) });
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("user-1");
 
@@ -856,7 +872,8 @@ describe("PlayerService - Comprehensive Coverage", () => {
           ])
         )
         .mockReturnValueOnce({ select: vi.fn(() => mockLibraryQuery) })
-        .mockReturnValueOnce(mockStatsPrivateQuery());
+        .mockReturnValueOnce(mockStatsPrivateQuery())
+        .mockReturnValueOnce({ select: vi.fn(() => ({ eq: vi.fn(() => ({ maybeSingle: vi.fn(() => Promise.resolve({ data: null, error: null })) })) })) });
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("user-1");
 

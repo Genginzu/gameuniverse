@@ -54,10 +54,10 @@ export function usePlayerPosts(playerId: string) {
   }, [hasNextPage, fetchPosts, debouncedSearch]);
 
   const createPost = useCallback(
-    async (content: string, imageUrl?: string, tags?: string[]) => {
+    async (content: string, imageUrl?: string) => {
       setIsCreating(true);
       try {
-        const newPost = await PlayerPostsService.createPost(playerId, content, imageUrl, tags);
+        const newPost = await PlayerPostsService.createPost(playerId, content, imageUrl);
         setPosts((prev) => [newPost, ...prev]);
       } finally {
         setIsCreating(false);

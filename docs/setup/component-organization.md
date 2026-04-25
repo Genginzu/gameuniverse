@@ -1,101 +1,115 @@
-# Organisation des Composants - Game Universe
+# Organisation des Composants — GameUniverse
 
-## Structure Finale Après Nettoyage
+## Structure
 
 ```
 src/components/
-├── shared/                    # Composants partagés (layouts, auth)
-│   ├── AuthenticatedPage.tsx  # Wrapper d'authentification pour toutes les pages connectées
-│   └── DashboardLayout.tsx    # Layout unifié avec sidebar et navigation
+├── admin/                     # Composants d'administration
+│   ├── shared/                # Composants admin génériques
+│   │   ├── AdminDataTable.tsx     # Table générique (colonnes, tri, recherche, pagination)
+│   │   ├── AdminDeleteDialog.tsx  # Dialog de suppression générique
+│   │   ├── AdminSlugForm.tsx      # Formulaire slug + traductions générique
+│   │   ├── AdminTranslationFields.tsx  # Champs de traduction par langue
+│   │   ├── AdminTableSkeleton.tsx # Skeleton de table
+│   │   ├── AdminSearchBar.tsx     # Barre de recherche admin
+│   │   └── AdminTablePagination.tsx # Pagination admin
+│   ├── games/                 # Composants admin jeux (formulaire, onglets)
+│   ├── characters/            # Composants admin personnages
+│   ├── age-classifications/   # Composants admin classifications d'âge
+│   ├── achievements/          # Composants admin succès
+│   ├── global-sync/           # Onglets de synchronisation IGDB
+│   │   └── SyncTabLayout.tsx  # Layout générique pour les onglets de sync
+│   ├── webhooks/              # Gestion des webhooks
+│   ├── translations/          # Gestion des traductions du site
+│   ├── bulk-import/           # Import en masse
+│   └── [entité]/              # genres, genders, species, roles, languages,
+│                              # companies, comments, reviews, platforms
 │
-├── dashboard/                 # Composants spécifiques au tableau de bord
-│   └── DashboardContent.tsx   # Contenu principal du dashboard
+├── shared/                    # Composants réutilisables entre pages
+│   ├── index.ts               # Barrel export (34 composants)
+│   ├── SearchBar.tsx          # Barre de recherche (simple + hybride IGDB)
+│   ├── Pagination.tsx         # Pagination générique
+│   ├── FilterPanel.tsx        # Panel de filtres multi-sections
+│   ├── FilterButton.tsx       # Bouton toggle filtres
+│   ├── EmptyState.tsx         # État vide générique (Iconify + gradient)
+│   ├── EntityCard.tsx         # Carte générique (jeux, joueurs, personnages)
+│   ├── entityCardPresets.tsx  # Presets de configuration EntityCard
+│   ├── EntitySkeleton.tsx     # Skeleton configurable par entité
+│   ├── GridSkeleton.tsx       # Grille de skeletons
+│   ├── PageBanner.tsx         # Bannière de page contextuelle
+│   ├── IconPicker.tsx         # Sélecteur d'icônes Iconify
+│   ├── NavigationProgress.tsx # Barre de progression navigation
+│   ├── ImageUploader.tsx      # Upload d'image avec drag & drop
+│   ├── CropEditor.tsx         # Éditeur de recadrage d'image
+│   ├── GlobalSearch*.tsx      # Composants de recherche globale
+│   ├── Notification*.tsx      # Composants de notifications
+│   ├── ErrorBoundary.tsx      # Error Boundary React
+│   └── ErrorFallback.tsx      # Fallback d'erreur déclaratif
 │
-├── games/                     # Composants pour la page "Tous les jeux" (/games)
-│   ├── AllGamesContent.tsx    # Contenu principal avec recherche et filtres
-│   ├── GameCard.tsx           # Carte de jeu (pointe vers /games/[slug])
-│   ├── GameSearchBar.tsx      # Barre de recherche spécialisée
-│   ├── GameFilters.tsx        # Filtres par genre, plateforme, éditeur
-│   └── GamePagination.tsx     # Pagination spécialisée
-│
-├── library/                   # Composants pour la bibliothèque utilisateur (/library)
-│   └── UserLibraryContent.tsx # Contenu de la bibliothèque personnelle
-│
-├── ui/                        # Composants UI de base (shadcn/ui)
-│   ├── button.tsx
-│   ├── card.tsx
-│   ├── input.tsx
+├── ui/                        # Primitives UI (shadcn/ui)
+│   ├── button.tsx, input.tsx, textarea.tsx, select.tsx
+│   ├── dialog.tsx, card.tsx, badge.tsx, form.tsx
+│   ├── loading-spinner.tsx, loading-state.tsx, loading-button.tsx
+│   ├── lazy-image.tsx, carousel.tsx, toast.tsx
 │   └── ...
 │
-├── providers/                 # Providers React
-│   └── IntlProvider.tsx
+├── games/                     # Composants page jeux publique
+│   ├── AllGamesContent.tsx    # Page liste des jeux
+│   ├── GameCard.tsx           # Carte de jeu (recommandations/similaires)
+│   ├── details/               # Sous-composants page détail jeu
+│   └── reviews/               # Composants reviews de jeux
 │
-├── __tests__/                 # Tests des composants
-│   ├── AuthForm.test.tsx
-│   ├── GameLibrary.property.test.ts
-│   └── Navigation.test.tsx
+├── players/                   # Composants page joueurs
+│   ├── AllPlayersContent.tsx  # Page liste des joueurs (SWR)
+│   ├── PlayerCard.tsx         # Carte joueur
+│   └── [sous-dossiers]/       # activity, posts, stats, collections, etc.
 │
-└── [Composants racine]        # Composants généraux
-    ├── Dashboard.tsx          # Dashboard principal (layout complet)
-    ├── DashboardWithAuth.tsx  # Dashboard avec authentification
-    ├── LandingPage.tsx        # Page d'accueil non connectée
-    ├── Navigation.tsx         # Navigation générale
-    ├── AuthForm.tsx           # Formulaires d'authentification
-    └── ...
+├── characters/                # Composants page personnages
+│   ├── AllCharactersContent.tsx
+│   └── details/               # Sous-composants page détail personnage
+│
+├── auth/                      # Composants d'authentification
+├── collections/               # Composants collections
+├── home/                      # Composants page d'accueil
+└── providers/                 # Providers React (Error, SWR, Theme)
 ```
 
-## Doublons Supprimés
+## Composants génériques admin
 
-### ✅ Composants supprimés (doublons)
+### AdminDeleteDialog
+Dialog de confirmation de suppression, utilisé par toutes les pages admin.
+Props : `translationNamespace`, `warningParams`, `usageCount`, `blockOnUsage`.
 
-- `src/components/GameCard.tsx` → Remplacé par
-  `src/components/games/GameCard.tsx`
-- `src/components/Pagination.tsx` → Remplacé par
-  `src/components/games/GamePagination.tsx`
-- `src/components/SearchBar.tsx` → Remplacé par
-  `src/components/games/GameSearchBar.tsx`
-- `src/components/AuthenticatedPage.tsx` → Remplacé par
-  `src/components/shared/AuthenticatedPage.tsx`
-- `src/components/DashboardLayout.tsx` → Remplacé par
-  `src/components/shared/DashboardLayout.tsx`
-- `src/components/GameLibrary.tsx` → Remplacé par
-  `src/components/games/AllGamesContent.tsx`
-- `src/components/GameLibraryPage.tsx` → Remplacé par
-  `src/components/games/AllGamesContent.tsx`
+### AdminDataTable
+Table générique avec colonnes configurables, tri, recherche, pagination.
+Props : `columns: AdminColumnDef<T>[]`, `translationNamespace`, `totalCountKey`, `emptyKey`.
 
-### ✅ Tests obsolètes supprimés
+### AdminSlugForm + AdminTranslationFields
+Formulaire slug + traductions par langue. Utilisé par genres, genders, species, roles.
+Props : `translationFields` (config des champs par langue).
 
-- `src/components/__tests__/GameLibrary.test.tsx` → Utilisait les anciens
-  composants supprimés
+### SyncTabLayout
+Layout générique pour les onglets de synchronisation IGDB.
+Props : `syncState`, `onStart/onStop`, `renderExtraStats`.
 
-## Architecture des Pages
+## Composants partagés
 
-### Pages utilisant le layout unifié (DashboardLayout)
+### EmptyState
+État vide générique avec icône Iconify, gradient cyan→violet, variantes glass/card.
 
-- `/dashboard` → `Dashboard.tsx` (layout complet intégré)
-- `/games` → `AuthenticatedPage` + `AllGamesContent`
-- `/library` → `AuthenticatedPage` + `UserLibraryContent`
-- `/profile` → `AuthenticatedPage` + contenu profil
-- `/settings` → `AuthenticatedPage` + contenu paramètres
+### SearchBar
+Barre de recherche avec mode simple (debounce) et mode hybride (IGDB).
 
-### Distinction claire
+### Pagination
+Pagination avec boutons, sélecteur mobile, et support i18n.
 
-- **"Jeux" (`/games`)** : Catalogue complet avec `AllGamesContent`
-- **"Ma bibliothèque" (`/library`)** : Collection personnelle avec
-  `UserLibraryContent`
+### FilterPanel
+Panel de filtres multi-sections avec chips actifs.
 
-## Avantages de cette organisation
+## Conventions
 
-1. **Pas de doublons** : Chaque composant a une responsabilité unique
-2. **Organisation claire** : Composants groupés par fonctionnalité
-3. **Réutilisabilité** : Composants spécialisés mais réutilisables
-4. **Maintenabilité** : Structure logique et prévisible
-5. **Scalabilité** : Facile d'ajouter de nouveaux composants dans les bons
-   dossiers
-
-## Navigation
-
-- **Header** : Navigation principale entre sections (Jeux, Personnages, etc.)
-- **Sidebar** : Navigation interne (Dashboard, Ma bibliothèque, Profil,
-  Paramètres)
-- **Layout unifié** : Toutes les pages connectées utilisent `DashboardLayout`
+- Chaque fichier ≤ 150 lignes (composants), ≤ 300 lignes (fichiers)
+- Icônes via `@iconify/react` uniquement
+- Gradient : `from-cyan-500 to-violet-500` (jamais de gradient custom)
+- Glassmorphism : `bg-white/40 backdrop-blur-xl` (pas de fonds opaques)
+- Tests dans `test/unit/components/` (pas dans `src/`)

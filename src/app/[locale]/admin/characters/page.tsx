@@ -8,10 +8,10 @@ import { useAdminCharacters } from "@/hooks/useAdminCharacters";
 import dynamic from "next/dynamic";
 import type { AdminCharacter } from "@/types/admin-characters";
 import { AdminCharactersTable } from "@/components/admin/characters/AdminCharactersTable";
-const DeleteCharacterDialog = dynamic(
+const AdminDeleteDialog = dynamic(
   () =>
-    import("@/components/admin/characters/DeleteCharacterDialog").then(
-      (m) => m.DeleteCharacterDialog
+    import("@/components/admin/shared/AdminDeleteDialog").then(
+      (m) => m.AdminDeleteDialog
     ),
   { ssr: false }
 );
@@ -128,9 +128,10 @@ export default function AdminCharactersPage() {
         currentSearch={currentSearch}
       />
 
-      <DeleteCharacterDialog
-        character={characterToDelete}
+      <AdminDeleteDialog
         isOpen={characterToDelete !== null}
+          translationNamespace="admin.characters.deleteDialog"
+          warningParams={{ name: characterToDelete?.name ?? "" }}
         onClose={handleDeleteClose}
         onConfirm={handleDeleteConfirm}
         isDeleting={isDeleting}

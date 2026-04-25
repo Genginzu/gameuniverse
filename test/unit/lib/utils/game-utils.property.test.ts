@@ -27,7 +27,7 @@ const genreGenerator = fc.array(fc.string({ minLength: 1, maxLength: 30 }), {
 const hexColorPattern = /^#[0-9a-fA-F]{6}$/;
 
 // Valid Tailwind gradient pattern
-const tailwindGradientPattern = /^from-[a-z]+-\d+\/\d+ to-[a-z]+-\d+\/\d+$/;
+const tailwindGradientPattern = /^from-[a-z-]+-\d+\/\d+ to-[a-z-]+-\d+\/\d+$/;
 
 // Valid date string generator (ISO format) - using integer-based approach for reliability
 const validDateGenerator = fc.integer({ min: 1970, max: 2050 }).chain((year) =>
@@ -126,8 +126,8 @@ describe("Game Utilities Property-Based Tests", () => {
 
         for (const title of cyberpunkTitles) {
           const colors = getGameColors(title, []);
-          expect(colors.primary).toBe("#06b6d4");
-          expect(colors.bg).toContain("cyan");
+          expect(colors.primary).toBe("#0697e0");
+          expect(colors.bg).toContain("palette-secondary");
         }
       });
 
@@ -146,8 +146,8 @@ describe("Game Utilities Property-Based Tests", () => {
 
         for (const title of unknownTitles) {
           const colors = getGameColors(title, []);
-          expect(colors.primary).toBe("#8b5cf6");
-          expect(colors.bg).toContain("violet");
+          expect(colors.primary).toBe("#0077e6");
+          expect(colors.bg).toContain("palette-primary");
         }
       });
 
@@ -417,7 +417,7 @@ describe("Game Utilities Property-Based Tests", () => {
 
             // Each field should equal the provided value or the default
             expect(colors.backgroundColor).toBe(bg || "#0f172a");
-            expect(colors.accent).toBe(accent || "#8b5cf6");
+            expect(colors.accent).toBe(accent || "#0077e6");
             expect(colors.labelColor).toBe(label || "#94a3b8");
             expect(colors.textColor).toBe(text || "#e2e8f0");
 

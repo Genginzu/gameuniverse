@@ -9,9 +9,9 @@ function FloatingOrbs() {
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
       {/* Large violet orb */}
-      <div className="absolute -top-32 -left-32 h-96 w-96 animate-[float_8s_ease-in-out_infinite] rounded-full bg-violet-500/20 blur-3xl dark:bg-violet-500/10" />
+      <div className="absolute -top-32 -left-32 h-96 w-96 animate-[float_8s_ease-in-out_infinite] rounded-full bg-palette-primary-500/20 blur-3xl dark:bg-palette-primary-500/10" />
       {/* Cyan orb */}
-      <div className="absolute top-1/4 -right-20 h-72 w-72 animate-[float_6s_ease-in-out_infinite_reverse] rounded-full bg-cyan-500/20 blur-3xl dark:bg-cyan-500/10" />
+      <div className="absolute top-1/4 -right-20 h-72 w-72 animate-[float_6s_ease-in-out_infinite_reverse] rounded-full bg-palette-secondary-500/20 blur-3xl dark:bg-palette-secondary-500/10" />
       {/* Small magenta orb */}
       <div className="absolute bottom-10 left-1/3 h-56 w-56 animate-[float_10s_ease-in-out_infinite] rounded-full bg-pink-500/15 blur-3xl dark:bg-pink-500/8" />
       {/* Grid pattern overlay */}
@@ -31,7 +31,7 @@ export function HeroSection() {
         {/* Main title with gradient highlight */}
         <h1 className="animate-slide-in-up mb-6 text-4xl font-black tracking-tight text-gray-900 sm:text-5xl lg:text-7xl dark:text-white">
           {t("title")}{" "}
-          <span className="bg-linear-to-r from-cyan-500 to-violet-500 bg-clip-text text-transparent">
+          <span className="bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 bg-clip-text text-transparent">
             {t("titleHighlight")}
           </span>
           <br />
@@ -47,7 +47,7 @@ export function HeroSection() {
         <div className="animate-fade-in flex flex-col items-center justify-center gap-4 sm:flex-row">
           <Link
             href="/auth?mode=signup"
-            className="group inline-flex items-center gap-2 rounded-2xl bg-linear-to-r from-cyan-500 to-violet-500 px-8 py-4 text-lg font-bold text-white shadow-lg shadow-violet-500/25 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-violet-500/30"
+            className="group inline-flex items-center gap-2 rounded-2xl bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 px-8 py-4 text-lg font-bold text-white shadow-lg shadow-palette-primary-500/25 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-palette-primary-500/30"
           >
             <Icon
               icon="mdi:rocket-launch"

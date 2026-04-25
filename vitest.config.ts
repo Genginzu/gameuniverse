@@ -40,6 +40,7 @@ const HOOK_TESTS_NEEDING_DOM = [
   "test/unit/hooks/usePlayerCollections.test.ts",
   "test/unit/hooks/usePlayerActivity.test.ts",
   "test/unit/hooks/usePlayerPlaytime.test.ts",
+  "test/unit/hooks/usePlayerSessions.test.ts",
   "test/unit/hooks/useDebouncedValue.test.ts",
   "test/unit/hooks/useDashboard.test.ts",
   "test/unit/hooks/useLocaleManager.test.ts",
@@ -85,6 +86,7 @@ const HOOK_TESTS_NEEDING_DOM = [
   "test/unit/hooks/useAdminSpecies.test.ts",
   "test/unit/hooks/useNotifications.test.ts",
   "test/unit/hooks/usePostComments.test.ts",
+  "test/unit/hooks/useSubscribedFeed.test.ts",
 ];
 
 export default defineConfig({

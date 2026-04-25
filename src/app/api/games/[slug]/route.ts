@@ -1,19 +1,84 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-import {
-  DatabaseGameGenre,
-  DatabaseGameCompany,
-  DatabaseGameCompanyRelation,
-  DatabaseGameScreenshot,
-  DatabaseGameArtwork,
-  DatabaseGameVideo,
-  DatabaseGameRating,
-  DatabaseGamePrice,
-  DatabaseGameData,
-} from "@/types/database";
 import { SupabaseError } from "@/types/api";
 import { logger } from "@/lib/logger";
 import { untypedTable } from "@/lib/utils/untypedTable";
+
+// Inline types for the deeply-nested Supabase query result
+interface DatabaseGameGenre {
+  id?: string;
+  slug?: string;
+  genre_translations: Array<{ name: string; description?: string; language_code?: string }>;
+}
+interface DatabaseGameCompany {
+  id?: string;
+  name?: string;
+  slug?: string;
+  website_url?: string;
+  company_translations?: Array<{ language_code?: string; description?: string }>;
+}
+interface DatabaseGameCompanyRelation {
+  role: string;
+  is_primary?: boolean;
+  companies?: DatabaseGameCompany;
+}
+interface DatabaseGameScreenshot {
+  id: string;
+  url: string;
+  alt_text?: string;
+  caption?: string;
+  display_order?: number;
+  is_featured?: boolean;
+}
+interface DatabaseGameArtwork {
+  id: string;
+  url: string;
+  alt_text?: string;
+  caption?: string;
+  artwork_type?: string;
+  display_order?: number;
+  is_featured?: boolean;
+}
+interface DatabaseGameVideo {
+  id: string;
+  title: string;
+  description?: string;
+  url: string;
+  thumbnail_url?: string;
+  video_type?: string;
+  duration_seconds?: number;
+  display_order?: number;
+  is_featured?: boolean;
+}
+interface DatabaseGameRating {
+  is_primary?: boolean;
+  assigned_date?: string;
+  ratings?: {
+    code?: string;
+    display_name?: string;
+    minimum_age?: number;
+    color_hex?: string;
+    icon_url?: string;
+    rating_systems?: { name?: string; code?: string };
+  };
+  game_rating_descriptors?: Array<{
+    content_descriptors: {
+      code: string;
+      content_descriptor_translations: Array<{ name: string; description: string | null; language_code?: string }>;
+    };
+  }>;
+}
+interface DatabaseGamePrice {
+  price: number;
+  currency: string;
+  platform: string;
+  is_available?: boolean;
+  last_updated?: string;
+  store_url?: string;
+  stores?: { name?: string; logo_url?: string; website_url?: string };
+}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type DatabaseGameData = Record<string, any>;
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   try {
@@ -527,7 +592,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const resolveCompanyDescription = (company: DatabaseGameCompany | undefined): string | null => {
       if (!company) return null;
       const translations = company.company_translations ?? [];
-      const localeTranslation = translations.find((t) => t.language_code === locale);
+      const localeTranslation = translations.find((t: { language_code?: string }) => t.language_code === locale);
       const fallbackTranslation = translations[0];
       return localeTranslation?.description ?? fallbackTranslation?.description ?? null;
     };

@@ -5,7 +5,8 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import useSWR from "swr";
 import { Icon } from "@iconify/react";
-import type { WebhookDiffResult, DiffField, ApplyDiffResult } from "@/types/webhook-diff";
+import type { WebhookDiffResult, ApplyDiffResult } from "@/types/webhook-diff";
+import { DiffRow } from "./WebhookDiffRow";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
@@ -20,29 +21,17 @@ export function WebhookEventDiff({ eventId }: WebhookEventDiffProps) {
   const [applying, setApplying] = useState(false);
   const [result, setResult] = useState<ApplyDiffResult | null>(null);
 
-  const { data, error, isLoading } = useSWR<WebhookDiffResult>(
-    `/api/admin/webhooks/events/${eventId}/diff`,
-    fetcher
-  );
+  const { data, error, isLoading } = useSWR<WebhookDiffResult>(`/api/admin/webhooks/events/${eventId}/diff`, fetcher);
 
   const toggleForce = (field: string) => {
-    setForceFields((prev) => {
-      const next = new Set(prev);
-      if (next.has(field)) next.delete(field);
-      else next.add(field);
-      return next;
-    });
+    setForceFields((prev) => { const next = new Set(prev); if (next.has(field)) next.delete(field); else next.add(field); return next; });
   };
 
   const handleApply = async () => {
     if (!data) return;
     setApplying(true);
     try {
-      const res = await fetch(`/api/admin/webhooks/events/${eventId}/apply`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ forceFields: Array.from(forceFields) }),
-      });
+      const res = await fetch(`/api/admin/webhooks/events/${eventId}/apply`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ forceFields: Array.from(forceFields) }) });
       const json = (await res.json()) as ApplyDiffResult;
       setResult(json);
     } catch {
@@ -53,23 +42,15 @@ export function WebhookEventDiff({ eventId }: WebhookEventDiffProps) {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <Icon icon="lucide:loader-2" className="h-8 w-8 animate-spin text-gray-400" />
-      </div>
-    );
+    return <div className="flex items-center justify-center py-20"><Icon icon="lucide:loader-2" className="h-8 w-8 animate-spin text-gray-400" /></div>;
   }
 
   if (error || !data || (data as unknown as { error: string }).error) {
     const msg = (data as unknown as { error: string })?.error ?? "Unknown error";
     return (
       <div className="p-6">
-        <button
-          onClick={() => router.push("/admin/webhooks")}
-          className="mb-4 flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-        >
-          <Icon icon="lucide:arrow-left" className="h-4 w-4" />
-          {t("back")}
+        <button onClick={() => router.push("/admin/webhooks")} className="mb-4 flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+          <Icon icon="lucide:arrow-left" className="h-4 w-4" />{t("back")}
         </button>
         <div className="rounded-xl border border-red-200 bg-red-50/50 p-6 text-center dark:border-red-800 dark:bg-red-900/20">
           <Icon icon="lucide:alert-circle" className="mx-auto h-8 w-8 text-red-500" />
@@ -83,106 +64,48 @@ export function WebhookEventDiff({ eventId }: WebhookEventDiffProps) {
 
   return (
     <div className="space-y-6 p-4 lg:p-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <button
-            onClick={() => router.push("/admin/webhooks")}
-            className="mb-2 flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-          >
-            <Icon icon="lucide:arrow-left" className="h-4 w-4" />
-            {t("back")}
+          <button onClick={() => router.push("/admin/webhooks")} className="mb-2 flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+            <Icon icon="lucide:arrow-left" className="h-4 w-4" />{t("back")}
           </button>
-          <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">
-            {t("title", { name: data.gameName })}
-          </h1>
+          <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">{t("title", { name: data.gameName })}</h1>
           <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
             IGDB #{data.igdbId} — {t("changedCount", { count: data.changedCount })}
-            {data.conflictCount > 0 && (
-              <span className="ml-2 text-amber-600 dark:text-amber-400">
-                ({t("conflictCount", { count: data.conflictCount })})
-              </span>
-            )}
+            {data.conflictCount > 0 && <span className="ml-2 text-amber-600 dark:text-amber-400">({t("conflictCount", { count: data.conflictCount })})</span>}
           </p>
         </div>
       </div>
 
-      {/* Result banner */}
       {result && (
-        <div
-          className={`rounded-xl border p-4 ${
-            result.success
-              ? "border-green-200 bg-green-50/50 dark:border-green-800 dark:bg-green-900/20"
-              : "border-red-200 bg-red-50/50 dark:border-red-800 dark:bg-red-900/20"
-          }`}
-        >
-          <p
-            className={`text-sm font-medium ${result.success ? "text-green-700 dark:text-green-400" : "text-red-700 dark:text-red-400"}`}
-          >
-            {result.success ? t("applySuccess") : t("applyError")}
-          </p>
-          {result.appliedFields.length > 0 && (
-            <p className="mt-1 text-xs text-green-600 dark:text-green-500">
-              {t("applied")}: {result.appliedFields.join(", ")}
-            </p>
-          )}
-          {result.skippedFields.length > 0 && (
-            <p className="mt-1 text-xs text-amber-600 dark:text-amber-500">
-              {t("skipped")}: {result.skippedFields.join(", ")}
-            </p>
-          )}
+        <div className={`rounded-xl border p-4 ${result.success ? "border-green-200 bg-green-50/50 dark:border-green-800 dark:bg-green-900/20" : "border-red-200 bg-red-50/50 dark:border-red-800 dark:bg-red-900/20"}`}>
+          <p className={`text-sm font-medium ${result.success ? "text-green-700 dark:text-green-400" : "text-red-700 dark:text-red-400"}`}>{result.success ? t("applySuccess") : t("applyError")}</p>
+          {result.appliedFields.length > 0 && <p className="mt-1 text-xs text-green-600 dark:text-green-500">{t("applied")}: {result.appliedFields.join(", ")}</p>}
+          {result.skippedFields.length > 0 && <p className="mt-1 text-xs text-amber-600 dark:text-amber-500">{t("skipped")}: {result.skippedFields.join(", ")}</p>}
         </div>
       )}
 
-      {/* Diff table */}
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white/40 backdrop-blur-xl dark:border-gray-700 dark:bg-slate-800/50">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-gray-200 bg-gray-50/50 dark:border-gray-700 dark:bg-gray-800/50">
             <tr>
-              <th className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400">
-                {t("columns.field")}
-              </th>
-              <th className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400">
-                {t("columns.localValue")}
-              </th>
-              <th className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400">
-                {t("columns.igdbValue")}
-              </th>
-              <th className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400">
-                {t("columns.status")}
-              </th>
-              <th className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400">
-                {t("columns.action")}
-              </th>
+              <th className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400">{t("columns.field")}</th>
+              <th className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400">{t("columns.localValue")}</th>
+              <th className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400">{t("columns.igdbValue")}</th>
+              <th className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400">{t("columns.status")}</th>
+              <th className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400">{t("columns.action")}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
-            {data.fields.map((field) => (
-              <DiffRow
-                key={field.field}
-                field={field}
-                forced={forceFields.has(field.field)}
-                onToggleForce={() => toggleForce(field.field)}
-                applied={result?.success ?? false}
-              />
-            ))}
+            {data.fields.map((field) => <DiffRow key={field.field} field={field} forced={forceFields.has(field.field)} onToggleForce={() => toggleForce(field.field)} applied={result?.success ?? false} />)}
           </tbody>
         </table>
       </div>
 
-      {/* Apply button */}
       {hasChanges && !result?.success && (
         <div className="flex justify-end">
-          <button
-            onClick={handleApply}
-            disabled={applying}
-            className="flex items-center gap-2 rounded-xl bg-linear-to-r from-cyan-500 to-violet-500 px-6 py-2.5 text-sm font-medium text-white shadow-lg transition-all hover:shadow-xl disabled:opacity-50"
-          >
-            {applying ? (
-              <Icon icon="lucide:loader-2" className="h-4 w-4 animate-spin" />
-            ) : (
-              <Icon icon="lucide:check" className="h-4 w-4" />
-            )}
+          <button onClick={handleApply} disabled={applying} className="flex items-center gap-2 rounded-xl bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 px-6 py-2.5 text-sm font-medium text-white shadow-lg transition-all hover:shadow-xl disabled:opacity-50">
+            {applying ? <Icon icon="lucide:loader-2" className="h-4 w-4 animate-spin" /> : <Icon icon="lucide:check" className="h-4 w-4" />}
             {t("applyChanges")}
           </button>
         </div>
@@ -195,91 +118,5 @@ export function WebhookEventDiff({ eventId }: WebhookEventDiffProps) {
         </div>
       )}
     </div>
-  );
-}
-
-function DiffRow({
-  field,
-  forced,
-  onToggleForce,
-  applied,
-}: {
-  field: DiffField;
-  forced: boolean;
-  onToggleForce: () => void;
-  applied: boolean;
-}) {
-  const t = useTranslations("webhooks.diff");
-
-  const statusStyles: Record<string, string> = {
-    unchanged: "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
-    changed: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
-    conflict: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
-  };
-
-  const formatValue = (val: unknown): string => {
-    if (val === null || val === undefined) return "—";
-    return String(val);
-  };
-
-  const isChanged = field.status !== "unchanged";
-
-  return (
-    <tr
-      className={`transition-colors ${
-        isChanged
-          ? "bg-yellow-50/30 dark:bg-yellow-900/5"
-          : "hover:bg-gray-50/50 dark:hover:bg-gray-800/30"
-      }`}
-    >
-      <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">
-        {t(field.label)}
-        {field.hasOverride && (
-          <span className="ml-2 inline-flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400">
-            <Icon icon="lucide:shield" className="h-3 w-3" />
-            {t("adminEdited")}
-          </span>
-        )}
-      </td>
-      <td className="px-4 py-3 text-gray-600 dark:text-gray-300">
-        <div className="break-words whitespace-pre-wrap">{formatValue(field.localValue)}</div>
-      </td>
-      <td
-        className={`px-4 py-3 ${
-          isChanged
-            ? "font-medium text-cyan-700 dark:text-cyan-400"
-            : "text-gray-600 dark:text-gray-300"
-        }`}
-      >
-        <div className="break-words whitespace-pre-wrap">{formatValue(field.igdbValue)}</div>
-      </td>
-      <td className="px-4 py-3">
-        <span
-          className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${statusStyles[field.status]}`}
-        >
-          {t(`statuses.${field.status}`)}
-        </span>
-      </td>
-      <td className="px-4 py-3">
-        {field.status === "conflict" && !applied && (
-          <button
-            onClick={onToggleForce}
-            className={`flex items-center gap-1 rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
-              forced
-                ? "bg-amber-500 text-white shadow-sm"
-                : "border border-amber-300 text-amber-700 hover:bg-amber-50 dark:border-amber-600 dark:text-amber-400 dark:hover:bg-amber-900/20"
-            }`}
-          >
-            <Icon icon={forced ? "lucide:check" : "lucide:replace"} className="h-3 w-3" />
-            {forced ? t("willOverwrite") : t("overwrite")}
-          </button>
-        )}
-        {field.status === "changed" && !applied && (
-          <span className="text-xs text-green-600 dark:text-green-400">
-            <Icon icon="lucide:arrow-right" className="inline h-3 w-3" /> {t("autoApply")}
-          </span>
-        )}
-      </td>
-    </tr>
   );
 }

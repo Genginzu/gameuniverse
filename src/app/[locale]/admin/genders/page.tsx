@@ -2,12 +2,12 @@
 
 import { useState, useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useAdminGenders, type AdminGenderListItem } from "@/hooks/useAdminGenders";
 import dynamic from "next/dynamic";
-import { AdminGendersTable } from "@/components/admin/genders/AdminGendersTable";
-const DeleteGenderDialog = dynamic(
-  () => import("@/components/admin/genders/DeleteGenderDialog").then((m) => m.DeleteGenderDialog),
+import { AdminDataTable, type AdminColumnDef } from "@/components/admin/shared/AdminDataTable";
+const AdminDeleteDialog = dynamic(
+  () => import("@/components/admin/shared/AdminDeleteDialog").then((m) => m.AdminDeleteDialog),
   { ssr: false }
 );
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ import { Icon } from "@iconify/react";
 
 export default function AdminGendersPage() {
   const t = useTranslations("admin.genders");
+  const locale = useLocale();
   const router = useRouter();
   const { genders, pagination, loading, fetchGenders, deleteGender, checkGenderUsage } =
     useAdminGenders();
@@ -32,12 +33,7 @@ export default function AdminGendersPage() {
   const handleSearch = useCallback(
     (query: string) => {
       setCurrentSearch(query);
-      fetchGenders({
-        search: query,
-        sortBy: currentSort.field,
-        sortOrder: currentSort.order,
-        page: 1,
-      });
+      fetchGenders({ search: query, sortBy: currentSort.field, sortOrder: currentSort.order, page: 1 });
     },
     [fetchGenders, currentSort]
   );
@@ -52,19 +48,14 @@ export default function AdminGendersPage() {
 
   const handlePageChange = useCallback(
     (page: number) => {
-      fetchGenders({
-        search: currentSearch,
-        sortBy: currentSort.field,
-        sortOrder: currentSort.order,
-        page,
-      });
+      fetchGenders({ search: currentSearch, sortBy: currentSort.field, sortOrder: currentSort.order, page });
     },
     [fetchGenders, currentSearch, currentSort]
   );
 
   const handleEdit = useCallback(
-    (id: string) => {
-      router.push(`/admin/genders/${id}/edit`);
+    (gender: AdminGenderListItem) => {
+      router.push(`/admin/genders/${gender.slug}/edit`);
     },
     [router]
   );
@@ -101,21 +92,33 @@ export default function AdminGendersPage() {
     if (!isDeleting) setGenderToDelete(null);
   }, [isDeleting]);
 
+  const genderColumns: AdminColumnDef<AdminGenderListItem>[] = [
+    { key: "slug", labelKey: "columns.slug", sortable: true, className: "px-4 py-3 font-mono text-sm text-gray-900 dark:text-white" },
+    {
+      key: "name", labelKey: "columns.name", sortable: true,
+      render: (g) => {
+        const tr = g.translations.find((t) => t.language_code === locale);
+        return tr?.name ?? g.translations[0]?.name ?? g.slug;
+      },
+      className: "px-4 py-3 font-medium text-gray-900 dark:text-white",
+    },
+    { key: "characterCount", labelKey: "columns.characterCount", render: (g) => t("characterCount", { count: g.characterCount }), className: "px-4 py-3 text-gray-500 dark:text-gray-400" },
+  ];
+
   return (
     <div className="space-y-8 p-4 lg:p-6">
       <section>
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">
-            {t("title")}
-          </h1>
+          <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">{t("title")}</h1>
           <Button onClick={() => router.push("/admin/genders/new")}>
             <Icon icon="fa:plus" className="h-4 w-4" />
             {t("newGender")}
           </Button>
         </div>
 
-        <AdminGendersTable
-          genders={genders}
+        <AdminDataTable<AdminGenderListItem>
+          items={genders}
+          columns={genderColumns}
           pagination={pagination}
           onPageChange={handlePageChange}
           onSearch={handleSearch}
@@ -125,11 +128,15 @@ export default function AdminGendersPage() {
           isLoading={loading}
           currentSort={currentSort}
           currentSearch={currentSearch}
+          translationNamespace="admin.genders"
+          totalCountKey="totalGenders"
+          emptyKey="noGenders"
         />
 
-        <DeleteGenderDialog
-          gender={genderToDelete}
+        <AdminDeleteDialog
           isOpen={genderToDelete !== null}
+          translationNamespace="admin.genders.deleteDialog"
+          warningParams={{ name: genderToDelete?.slug ?? "" }}
           onClose={handleDeleteClose}
           onConfirm={handleDeleteConfirm}
           isDeleting={isDeleting}

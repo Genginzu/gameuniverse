@@ -4,11 +4,15 @@
  * - create: auto-import new games, log characters
  * - update: auto-apply diff if game exists locally, auto-import if not
  * - delete: log only
+ * - popularity_primitives: refresh igdb_pop_* columns on the matching game
  */
 
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { GameImportService } from "@/lib/services/gameImportService";
 import { applyWebhookPayload } from "@/lib/services/webhookDiffApplier";
+import { fetchAndSavePopularity } from "@/lib/services/game-import/popularity";
+import { notifyGameDeleted, invalidateGameCache } from "@/lib/realtime-updates";
+import { invalidateForDeletedGame } from "@/lib/services/recommendation/cache";
 import { logger } from "@/lib/logger";
 import type { WebhookEventType, WebhookEventStatus } from "@/types/webhooks";
 import { untypedTable } from "@/lib/utils/untypedTable";
@@ -37,12 +41,24 @@ export async function processWebhookEvent(
   const supabase = getSupabaseAdmin();
   const igdbId = payload.id;
 
+  // popularity_primitives payloads reference the game via payload.game_id,
+  // not payload.id (which identifies the primitive row itself).
+  const popularityGameIgdbId =
+    entityType === "popularity_primitives" && typeof payload.game_id === "number"
+      ? (payload.game_id as number)
+      : null;
+
   // Resolve local entity — for games, auto-import if missing
-  const resolved = await resolveLocalEntity(entityType, igdbId);
+  const resolved = await resolveLocalEntity(entityType, igdbId, popularityGameIgdbId);
   let gameId = resolved.gameId;
+  const preExistingGameId = resolved.gameId;
   const characterId = resolved.characterId;
 
-  if (entityType === "games" && !gameId) {
+  // Auto-import is reserved for events that need a local row to act on (create,
+  // update). Delete events don't need the game (we'd just delete it) and
+  // re-importing an existing game for a create/update is handled via the diff
+  // applier below instead of a full re-import (less risky and override-aware).
+  if (entityType === "games" && !gameId && eventType !== "delete") {
     try {
       const importResult = await GameImportService.importFromIGDB(igdbId);
       if (importResult.success && importResult.game) {
@@ -84,7 +100,13 @@ export async function processWebhookEvent(
   // Process based on event type
   try {
     if (eventType === "create" && entityType === "games") {
-      // Game was already imported above — just mark as processed
+      // Game was pre-existing — apply payload to refresh non-admin-overridden
+      // fields. This keeps local data in sync with IGDB without clobbering
+      // manual edits (which would happen if we ran the full import pipeline).
+      if (preExistingGameId) {
+        return await handleGameUpdate(eventId, preExistingGameId, payload);
+      }
+      // Game was just auto-imported above — nothing more to do.
       if (gameId) {
         await updateEventStatus(eventId, "processed");
         return { eventId, status: "processed" };
@@ -101,7 +123,15 @@ export async function processWebhookEvent(
       return await handleGameCreate(eventId, igdbId);
     }
 
-    // delete events and non-game entities: just log them
+    if (entityType === "popularity_primitives") {
+      return await handlePopularityPrimitive(eventId, gameId, popularityGameIgdbId);
+    }
+
+    if (eventType === "delete" && entityType === "games" && gameId) {
+      return await handleGameDelete(eventId, gameId);
+    }
+
+    // Non-actionable events (delete of unknown game, character events, etc.) — log only
     await updateEventStatus(eventId, "processed");
     return { eventId, status: "processed" };
   } catch (error) {
@@ -179,11 +209,83 @@ async function handleGameUpdate(
 }
 
 /**
+ * Handle a game deletion from IGDB — cascade-delete the local game and related
+ * rows (genres, companies, screenshots, translations, platforms, characters,
+ * library entries, etc.). Related webhook events have `ON DELETE SET NULL` on
+ * `game_id`, so they are preserved in the audit log.
+ */
+async function handleGameDelete(eventId: string, gameId: string): Promise<ProcessResult> {
+  await updateEventStatus(eventId, "processing");
+
+  const supabase = getSupabaseAdmin();
+
+  // Fetch the slug before deletion for the realtime notification payload
+  const { data: existingGame } = await supabase
+    .from("games")
+    .select("slug")
+    .eq("id", gameId)
+    .single();
+
+  const { error: deleteError } = await supabase.from("games").delete().eq("id", gameId);
+
+  if (deleteError) {
+    await updateEventStatus(eventId, "failed", deleteError.message);
+    return { eventId, status: "failed", error: deleteError.message };
+  }
+
+  const slug = (existingGame?.slug as string | undefined) ?? "";
+
+  try {
+    await notifyGameDeleted(gameId, slug);
+    await invalidateGameCache(gameId);
+    invalidateForDeletedGame(gameId);
+  } catch (err) {
+    logger.warn("Webhook: game deleted but post-cleanup failed", {
+      gameId,
+      error: err instanceof Error ? err.message : String(err),
+    });
+  }
+
+  await updateEventStatus(eventId, "processed");
+  logger.info("Webhook: game deleted from local DB", { eventId, gameId, slug });
+  return { eventId, status: "processed" };
+}
+
+/**
+ * Handle a popularity_primitives webhook — refresh the IGDB pop columns on
+ * the matching local game. If the game isn't imported yet, skip rather than
+ * auto-import: a popularity event alone doesn't justify creating a stub row
+ * without cover/translations/etc.
+ */
+async function handlePopularityPrimitive(
+  eventId: string,
+  gameId: string | null,
+  popularityGameIgdbId: number | null
+): Promise<ProcessResult> {
+  if (!gameId || !popularityGameIgdbId) {
+    logger.info("Webhook: popularity_primitives for unknown game, skipping", {
+      eventId,
+      popularityGameIgdbId,
+    });
+    await updateEventStatus(eventId, "processed");
+    return { eventId, status: "processed" };
+  }
+
+  await updateEventStatus(eventId, "processing");
+  await fetchAndSavePopularity(gameId, popularityGameIgdbId);
+  await updateEventStatus(eventId, "processed");
+  return { eventId, status: "processed" };
+}
+
+/**
  * Resolve local game_id or character_id from an IGDB ID.
+ * For popularity_primitives events, uses `popularityGameIgdbId` (from
+ * payload.game_id) instead of the event's `igdbId` (the primitive row ID).
  */
 async function resolveLocalEntity(
   entityType: string,
-  igdbId: number
+  igdbId: number,
+  popularityGameIgdbId: number | null = null
 ): Promise<{ gameId: string | null; characterId: string | null }> {
   const supabase = getSupabaseAdmin();
 
@@ -195,6 +297,15 @@ async function resolveLocalEntity(
   if (entityType === "characters") {
     const { data } = await supabase.from("characters").select("id").eq("igdb_id", igdbId).single();
     return { gameId: null, characterId: (data?.id as string) ?? null };
+  }
+
+  if (entityType === "popularity_primitives" && popularityGameIgdbId !== null) {
+    const { data } = await supabase
+      .from("games")
+      .select("id")
+      .eq("igdb_id", popularityGameIgdbId)
+      .single();
+    return { gameId: (data?.id as string) ?? null, characterId: null };
   }
 
   return { gameId: null, characterId: null };

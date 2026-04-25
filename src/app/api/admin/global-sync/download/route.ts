@@ -10,6 +10,7 @@ const IGDB_BATCH_SIZE = 500;
  * POST /api/admin/global-sync/download
  * Fetches one batch of 500 games from IGDB using cursor-based pagination,
  * matches them against our DB, and inserts into igdb_global_sync.
+ * Existing entries are skipped (ignoreDuplicates) to preserve their sync state.
  * Body: { afterId: number }
  * Returns: { inserted: number, hasMore: boolean, lastId: number }
  */
@@ -19,6 +20,8 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const afterId = parseInt(body.afterId ?? "0", 10);
 
+    const supabase = getSupabaseAdmin();
+
     const games = await IGDBService.getGamesBatch(afterId, IGDB_BATCH_SIZE);
     const hasMore = games.length === IGDB_BATCH_SIZE;
     const lastId = games.length > 0 ? games[games.length - 1].id : afterId;
@@ -26,8 +29,6 @@ export async function POST(request: NextRequest) {
     if (games.length === 0) {
       return NextResponse.json({ inserted: 0, hasMore: false, lastId: afterId });
     }
-
-    const supabase = getSupabaseAdmin();
 
     // Match against existing games in our DB by igdb_id
     const igdbIds = games.map((g) => g.id);
@@ -43,7 +44,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Upsert to avoid duplicates on re-run
+    // Insert new entries only — skip existing ones to preserve their sync state
     const rows = games.map((game) => ({
       igdb_id: game.id,
       name: game.name,
@@ -53,7 +54,7 @@ export async function POST(request: NextRequest) {
 
     const { error } = await supabase
       .from("igdb_global_sync")
-      .upsert(rows, { onConflict: "igdb_id" });
+      .upsert(rows, { onConflict: "igdb_id", ignoreDuplicates: true });
 
     if (error) {
       logger.error("Error inserting global sync batch", { error, afterId });

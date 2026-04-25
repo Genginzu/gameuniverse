@@ -41,6 +41,8 @@ export async function syncSingleField(
         return await syncMetascore(gameId, igdbId);
       case "releaseDate":
         return await syncReleaseDate(gameId, igdbId);
+      case "popularity":
+        return await syncPopularity(gameId, igdbId);
       default:
         return { success: false, error: `Unknown field: ${field}` };
     }
@@ -155,4 +157,27 @@ async function syncReleaseDate(gameId: string, igdbId: number): Promise<SyncResu
   const supabase = await createRouteHandlerClient();
   await supabase.from("games").update({ release_date: date }).eq("id", gameId);
   return { success: true, value: date };
+}
+
+/**
+ * Sync IGDB popularity primitives. Always stamps igdb_pop_updated_at so a
+ * subsequent "missing" query won't pick the game up again even when IGDB
+ * returns no primitive rows (common for obscure games).
+ */
+async function syncPopularity(gameId: string, igdbId: number): Promise<SyncResult> {
+  const primitives = await IGDBService.getPopularityPrimitives(igdbId);
+  const supabase = await createRouteHandlerClient();
+
+  // Columns added by migration 20260420000001 but not yet in generated types.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await (supabase.from("games") as any)
+    .update({
+      igdb_pop_visits: primitives?.visits ?? null,
+      igdb_pop_want_to_play: primitives?.wantToPlay ?? null,
+      igdb_pop_playing: primitives?.playing ?? null,
+      igdb_pop_updated_at: new Date().toISOString(),
+    })
+    .eq("id", gameId);
+
+  return { success: true, value: primitives?.visits ?? null };
 }

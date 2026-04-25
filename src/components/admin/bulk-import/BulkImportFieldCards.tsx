@@ -10,6 +10,7 @@ const FIELD_ICONS: Record<BulkImportField, string> = {
   playtime: "lucide:clock",
   metascore: "lucide:star",
   releaseDate: "lucide:calendar",
+  popularity: "lucide:flame",
 };
 
 interface BulkImportFieldCardsProps {
@@ -19,7 +20,14 @@ interface BulkImportFieldCardsProps {
   loading: boolean;
 }
 
-const FIELDS: BulkImportField[] = ["cover", "background", "playtime", "metascore", "releaseDate"];
+const FIELDS: BulkImportField[] = [
+  "cover",
+  "background",
+  "playtime",
+  "metascore",
+  "releaseDate",
+  "popularity",
+];
 
 export function BulkImportFieldCards({
   fieldCounts,
@@ -30,7 +38,7 @@ export function BulkImportFieldCards({
   const t = useTranslations("bulkImport");
 
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-5">
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-6">
       {FIELDS.map((field) => {
         const count = fieldCounts?.[field] ?? 0;
         const isActive = selectedField === field;
@@ -41,13 +49,13 @@ export function BulkImportFieldCards({
             onClick={() => onSelect(field)}
             className={`flex min-h-[44px] flex-col items-center gap-2 rounded-xl p-4 transition-all ${
               isActive
-                ? "border border-cyan-500/50 bg-linear-to-br from-cyan-500/20 to-violet-500/20 shadow-lg"
+                ? "border border-palette-secondary-500/50 bg-linear-to-br from-palette-secondary-500/20 to-palette-primary-500/20 shadow-lg"
                 : "glass-card hover:bg-white/60 dark:hover:bg-slate-700/60"
             }`}
           >
             <Icon
               icon={FIELD_ICONS[field]}
-              className={`size-6 ${isActive ? "text-cyan-500" : "text-gray-500 dark:text-gray-400"}`}
+              className={`size-6 ${isActive ? "text-palette-secondary-500" : "text-gray-500 dark:text-gray-400"}`}
             />
             <span className="text-sm font-medium text-gray-900 dark:text-white">
               {t(`fields.${field}`)}

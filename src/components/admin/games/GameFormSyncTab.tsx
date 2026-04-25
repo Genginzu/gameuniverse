@@ -33,6 +33,7 @@ const FIELD_LABEL_KEYS: Record<TrackableField, string> = {
   versions: "versions",
   languages: "gameLanguages",
   playtime: "playtime",
+  popularity: "popularity",
   videos: "videos",
   similar_games: "similarGames",
 };

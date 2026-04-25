@@ -38,7 +38,7 @@ export function LazyImage({
   // Pas de src et pas de fallback → placeholder SVG
   if (!effectiveSrc) {
     return (
-      <div className={`flex items-center justify-center bg-gray-100 dark:bg-gray-800 ${className}`}>
+      <div className={`flex items-center justify-center bg-background ${className}`}>
         <svg
           className="h-12 w-12 text-gray-400 dark:text-gray-600"
           fill="none"

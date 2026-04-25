@@ -8,8 +8,8 @@ import { useAdminReviews } from "@/hooks/useAdminReviews";
 import dynamic from "next/dynamic";
 import type { AdminReview } from "@/types/admin-reviews";
 import { AdminReviewsTable } from "@/components/admin/reviews/AdminReviewsTable";
-const DeleteReviewDialog = dynamic(
-  () => import("@/components/admin/reviews/DeleteReviewDialog").then((m) => m.DeleteReviewDialog),
+const AdminDeleteDialog = dynamic(
+  () => import("@/components/admin/shared/AdminDeleteDialog").then((m) => m.AdminDeleteDialog),
   { ssr: false }
 );
 import { toast } from "@/hooks/use-toast";
@@ -118,9 +118,10 @@ export default function AdminReviewsPage() {
         currentSearch={currentSearch}
       />
 
-      <DeleteReviewDialog
-        review={reviewToDelete}
+      <AdminDeleteDialog
         isOpen={reviewToDelete !== null}
+          translationNamespace="admin.reviews.deleteDialog"
+          warningParams={{ player: reviewToDelete?.playerName ?? "", game: reviewToDelete?.gameTitle ?? "" }}
         onClose={handleDeleteClose}
         onConfirm={handleDeleteConfirm}
         isDeleting={isDeleting}

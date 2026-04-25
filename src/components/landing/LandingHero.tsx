@@ -32,7 +32,7 @@ export function LandingHero() {
           <div className="flex flex-col items-center justify-center gap-6 sm:flex-row">
             <Button
               size="lg"
-              className="neon-btn rounded-xl bg-neon-violet/20 px-6 py-3 font-semibold text-white transition-all duration-200 hover:scale-105 sm:px-8"
+              className="neon-btn rounded-xl bg-neon-primary/20 px-6 py-3 font-semibold text-white transition-all duration-200 hover:scale-105 sm:px-8"
               asChild
             >
               <Link href="/auth?mode=signup">
@@ -43,7 +43,7 @@ export function LandingHero() {
             <Button
               size="lg"
               variant="outline"
-              className="neon-btn rounded-xl border-2 border-neon-cyan/40 bg-transparent px-6 py-3 font-semibold text-white transition-all duration-200 hover:scale-105 hover:bg-neon-cyan/10 sm:px-8"
+              className="neon-btn rounded-xl border-2 border-neon-secondary/40 bg-transparent px-6 py-3 font-semibold text-white transition-all duration-200 hover:scale-105 hover:bg-neon-secondary/10 sm:px-8"
               asChild
             >
               <Link href="/auth?mode=signin">{t("cta.login")}</Link>

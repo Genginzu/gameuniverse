@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTranslations, useLocale } from "next-intl";
 import { Icon } from "@iconify/react";
 import type { PlayerGoal } from "@/types/dashboard-stats";
@@ -12,6 +12,9 @@ interface PersonalGoalsProps {
   goals: PlayerGoal[];
   isOwnProfile: boolean;
   playerId: string;
+  /** When provided, controls form visibility from parent (GoalsTab button) */
+  showFormExternal?: boolean;
+  onFormClosed?: () => void;
 }
 
 function formatDeadline(isoDate: string, locale: string): string {
@@ -22,14 +25,29 @@ function formatDeadline(isoDate: string, locale: string): string {
   }).format(new Date(isoDate));
 }
 
-export function PersonalGoals({ goals: initialGoals, isOwnProfile, playerId }: PersonalGoalsProps) {
+export function PersonalGoals({
+  goals: initialGoals,
+  isOwnProfile,
+  playerId,
+  showFormExternal,
+  onFormClosed,
+}: PersonalGoalsProps) {
   const t = useTranslations("playerStats");
   const locale = useLocale();
   const [goals, setGoals] = useState<PlayerGoal[]>(initialGoals);
   const [showForm, setShowForm] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  // Req 13.6 — hidden for visitors regardless of privacy setting
+  // Sync with external form toggle
+  useEffect(() => {
+    if (showFormExternal !== undefined) setShowForm(showFormExternal);
+  }, [showFormExternal]);
+
+  // Keep goals in sync when parent re-fetches
+  useEffect(() => {
+    setGoals(initialGoals);
+  }, [initialGoals]);
+
   if (!isOwnProfile) return null;
 
   async function handleDelete(goalId: string) {
@@ -49,6 +67,12 @@ export function PersonalGoals({ goals: initialGoals, isOwnProfile, playerId }: P
   function handleCreated(goal: PlayerGoal) {
     setGoals((prev) => [...prev, goal]);
     setShowForm(false);
+    onFormClosed?.();
+  }
+
+  function handleCancel() {
+    setShowForm(false);
+    onFormClosed?.();
   }
 
   return (
@@ -99,10 +123,9 @@ export function PersonalGoals({ goals: initialGoals, isOwnProfile, playerId }: P
                     </div>
                   </div>
 
-                  {/* Progress bar */}
                   <div className="mb-1 h-2.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-slate-700">
                     <div
-                      className="from-neon-violet to-neon-cyan h-full rounded-full bg-linear-to-r transition-all duration-500"
+                      className="from-neon-primary to-neon-secondary h-full rounded-full bg-linear-to-r transition-all duration-500"
                       style={{ width: `${percent}%` }}
                     />
                   </div>
@@ -123,21 +146,12 @@ export function PersonalGoals({ goals: initialGoals, isOwnProfile, playerId }: P
           </div>
         )}
 
-        {/* Create form or add button */}
-        {showForm ? (
+        {showForm && (
           <PersonalGoalForm
             playerId={playerId}
             onCreated={handleCreated}
-            onCancel={() => setShowForm(false)}
+            onCancel={handleCancel}
           />
-        ) : (
-          <button
-            onClick={() => setShowForm(true)}
-            className="hover:border-neon-violet hover:text-neon-violet dark:hover:border-neon-cyan dark:hover:text-neon-cyan mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-white/30 px-4 py-3 text-sm font-medium text-gray-600 transition-all duration-300 dark:border-slate-600 dark:text-slate-400"
-          >
-            <Icon icon="lucide:plus" className="h-4 w-4" />
-            {t("goals.addGoal")}
-          </button>
         )}
       </div>
     </section>

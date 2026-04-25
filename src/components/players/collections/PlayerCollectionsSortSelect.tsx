@@ -36,7 +36,7 @@ export function PlayerCollectionsSortSelect({ value, onChange }: PlayerCollectio
     <Select value={value} onValueChange={(v) => onChange(v as CollectionSortOption)}>
       <SelectTrigger
         aria-label={t("sort.label")}
-        className="glass-dropdown w-auto cursor-pointer gap-2 rounded-xl border-0 px-4 py-2 text-sm font-medium text-gray-700 transition-all duration-300 focus:ring-2 focus:ring-neon-violet/30 focus:ring-offset-0 dark:text-slate-200 dark:focus:ring-neon-violet/40"
+        className="glass-dropdown w-auto cursor-pointer gap-2 rounded-xl border-0 px-4 py-2 text-sm font-medium text-gray-700 transition-all duration-300 focus:ring-2 focus:ring-neon-primary/30 focus:ring-offset-0 dark:text-slate-200 dark:focus:ring-neon-primary/40"
       >
         <SelectValue />
       </SelectTrigger>
@@ -45,7 +45,7 @@ export function PlayerCollectionsSortSelect({ value, onChange }: PlayerCollectio
           <SelectItem
             key={option}
             value={option}
-            className="cursor-pointer rounded-lg py-2 pl-3 pr-3 text-sm font-medium text-gray-700 transition-colors hover:bg-white/60 focus:bg-white/60 data-[state=checked]:bg-neon-violet/10 data-[state=checked]:text-neon-violet dark:text-slate-200 dark:hover:bg-slate-700/60 dark:focus:bg-slate-700/60 dark:data-[state=checked]:bg-neon-violet/20 dark:data-[state=checked]:text-violet-300 [&>span:first-child]:hidden"
+            className="cursor-pointer rounded-lg py-2 pl-3 pr-3 text-sm font-medium text-gray-700 transition-colors hover:bg-white/60 focus:bg-white/60 data-[state=checked]:bg-neon-primary/10 data-[state=checked]:text-neon-primary dark:text-slate-200 dark:hover:bg-slate-700/60 dark:focus:bg-slate-700/60 dark:data-[state=checked]:bg-neon-primary/20 dark:data-[state=checked]:text-palette-primary-300 [&>span:first-child]:hidden"
           >
             {t(SORT_KEYS[option])}
           </SelectItem>

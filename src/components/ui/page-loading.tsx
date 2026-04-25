@@ -1,5 +1,5 @@
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Skeleton } from "@/components/ui/skeleton";
+import { SpinnerWithPing } from "@/components/ui/loading-state";
 
 interface PageLoadingProps {
   type?: "spinner" | "skeleton" | "minimal";
@@ -16,9 +16,9 @@ export function PageLoading({
 }: PageLoadingProps) {
   if (type === "minimal") {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-xs dark:bg-gray-900/80">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/40 backdrop-blur-xl dark:bg-slate-800/80">
         <div className="text-center">
-          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-blue-600 border-t-transparent"></div>
+          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-palette-primary-500 border-t-transparent"></div>
           {message && <p className="text-sm text-gray-600 dark:text-gray-400">{message}</p>}
         </div>
       </div>
@@ -27,7 +27,7 @@ export function PageLoading({
 
   if (type === "skeleton") {
     return (
-      <div className="min-h-screen bg-gray-50 p-4 dark:bg-gray-900">
+      <div className="min-h-screen bg-white/40 p-4 backdrop-blur-xl dark:bg-slate-800/50">
         <div className="mx-auto max-w-7xl">
           {/* Header skeleton */}
           <div className="mb-8">
@@ -39,7 +39,7 @@ export function PageLoading({
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             <div className="space-y-6 md:col-span-2">
               {Array.from({ length: 3 }).map((_, index) => (
-                <div key={index} className="rounded-lg bg-white p-6 shadow-xs dark:bg-gray-800">
+                <div key={index} className="rounded-lg bg-white/40 p-6 shadow-xs dark:bg-slate-800/50">
                   <Skeleton className="mb-4 h-6 w-32" />
                   <div className="space-y-2">
                     <Skeleton className="h-4 w-full" />
@@ -52,7 +52,7 @@ export function PageLoading({
 
             <div className="space-y-6">
               {Array.from({ length: 2 }).map((_, index) => (
-                <div key={index} className="rounded-lg bg-white p-6 shadow-xs dark:bg-gray-800">
+                <div key={index} className="rounded-lg bg-white/40 p-6 shadow-xs dark:bg-slate-800/50">
                   <Skeleton className="mb-4 h-6 w-24" />
                   <div className="space-y-2">
                     <Skeleton className="h-4 w-full" />
@@ -67,22 +67,17 @@ export function PageLoading({
     );
   }
 
-  // Default spinner type
+  // Default spinner type — uses shared SpinnerWithPing
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/90 backdrop-blur-xs dark:bg-gray-900/90">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/40 backdrop-blur-xl dark:bg-slate-800/90">
       <div className="text-center">
-        <div className="relative mb-6">
-          <LoadingSpinner size="lg" />
-          <div className="absolute inset-0 animate-ping rounded-full bg-blue-400 opacity-20"></div>
-        </div>
-
-        {message && <h3 className="mb-2 text-lg font-medium text-gray-900 dark:text-white">{message}</h3>}
+        <SpinnerWithPing size="lg" message={message} />
 
         {showProgress && (
           <div className="mx-auto w-64">
-            <div className="mb-2 h-2 rounded-full bg-gray-200 dark:bg-gray-700">
+            <div className="mb-2 h-2 rounded-full bg-white/30 dark:bg-slate-700/50">
               <div
-                className="h-2 rounded-full bg-blue-600 transition-all duration-300 ease-out"
+                className="h-2 rounded-full bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 transition-all duration-300 ease-out"
                 style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
               ></div>
             </div>

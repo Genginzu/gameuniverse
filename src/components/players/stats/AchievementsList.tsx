@@ -39,7 +39,7 @@ export function AchievementsList({ achievements, totalCount }: AchievementsListP
         <div className="mb-6">
           <div className="mb-2 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Icon icon="lucide:trophy" className="text-neon-violet h-5 w-5" />
+              <Icon icon="lucide:trophy" className="text-neon-primary h-5 w-5" />
               <span className="text-sm font-medium text-gray-700 dark:text-slate-300">
                 {t("achievements.progress", {
                   count: unlockedCount,
@@ -47,11 +47,11 @@ export function AchievementsList({ achievements, totalCount }: AchievementsListP
                 })}
               </span>
             </div>
-            <span className="text-neon-violet text-sm font-bold">{progressPercent}%</span>
+            <span className="text-neon-primary text-sm font-bold">{progressPercent}%</span>
           </div>
           <div className="h-3 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-slate-700">
             <div
-              className="from-neon-violet to-neon-cyan h-full rounded-full bg-linear-to-r transition-all duration-500"
+              className="from-neon-primary to-neon-secondary h-full rounded-full bg-linear-to-r transition-all duration-500"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
@@ -76,7 +76,7 @@ export function AchievementsList({ achievements, totalCount }: AchievementsListP
                 <div
                   className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
                     isUnlocked
-                      ? "from-neon-violet to-neon-cyan bg-linear-to-br text-white"
+                      ? "from-neon-primary to-neon-secondary bg-linear-to-br text-white"
                       : "bg-gray-200 text-gray-400 dark:bg-slate-700 dark:text-slate-500"
                   }`}
                 >

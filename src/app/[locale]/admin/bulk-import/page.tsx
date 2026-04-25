@@ -14,6 +14,7 @@ const FIELDS: { key: BulkImportField; icon: string }[] = [
   { key: "playtime", icon: "lucide:clock" },
   { key: "metascore", icon: "lucide:star" },
   { key: "releaseDate", icon: "lucide:calendar" },
+  { key: "popularity", icon: "lucide:flame" },
 ];
 
 export default function AdminBulkImportPage() {
@@ -30,7 +31,7 @@ export default function AdminBulkImportPage() {
         <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">{t("description")}</p>
       </div>
 
-      <div className="xs:grid-cols-2 grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-5">
+      <div className="xs:grid-cols-2 grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-6">
         {FIELDS.map(({ key, icon }) => {
           const count = fieldCounts?.[key] ?? 0;
 
@@ -40,7 +41,7 @@ export default function AdminBulkImportPage() {
               href={`/admin/bulk-import/${key}`}
               className="glass-card flex flex-col items-center gap-3 rounded-2xl p-6 transition-all hover:bg-white/60 hover:shadow-lg dark:hover:bg-slate-700/60"
             >
-              <Icon icon={icon} className="size-8 text-cyan-500" />
+              <Icon icon={icon} className="size-8 text-palette-secondary-500" />
               <span className="text-sm font-medium text-gray-900 dark:text-white">
                 {t(`fields.${key}`)}
               </span>

@@ -36,7 +36,7 @@ export function PostCommentForm({ onSubmit, isSubmitting }: PostCommentFormProps
         maxLength={MAX_CHARS}
         rows={2}
         disabled={isSubmitting}
-        className="w-full resize-none rounded-xl border border-white/20 bg-white/50 p-3 text-base text-gray-900 placeholder-gray-400 backdrop-blur-sm transition-colors focus:border-violet-400 focus:ring-1 focus:ring-violet-400 focus:outline-none disabled:opacity-50 dark:border-slate-600/50 dark:bg-slate-700/40 dark:text-white dark:placeholder-slate-500 dark:focus:border-violet-500 dark:focus:ring-violet-500"
+        className="w-full resize-none rounded-xl border border-white/20 bg-white/50 p-3 text-base text-gray-900 placeholder-gray-400 backdrop-blur-sm transition-colors focus:border-palette-primary-400 focus:ring-1 focus:ring-palette-primary-400 focus:outline-none disabled:opacity-50 dark:border-slate-600/50 dark:bg-slate-700/40 dark:text-white dark:placeholder-slate-500 dark:focus:border-palette-primary-500 dark:focus:ring-palette-primary-500"
       />
 
       <div className="flex items-center justify-between">
@@ -49,7 +49,7 @@ export function PostCommentForm({ onSubmit, isSubmitting }: PostCommentFormProps
         <button
           type="submit"
           disabled={!canSubmit}
-          className="inline-flex items-center gap-1.5 rounded-lg bg-violet-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-violet-700 disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex items-center gap-1.5 rounded-lg bg-palette-primary-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-palette-primary-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isSubmitting && <Icon icon="lucide:loader-2" className="h-3.5 w-3.5 animate-spin" />}
           {t("submit")}

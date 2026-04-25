@@ -25,7 +25,7 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
 
   return (
     <div className="glass-card rounded-lg border border-white/20 px-3 py-2 shadow-lg dark:border-slate-700/50">
-      <p className="text-sm font-semibold text-gray-900 dark:text-white">{data.label}</p>
+      <p className="text-sm font-semibold text-gray-900 dark:text-white">{t(`sessions.days.${data.label}`)}</p>
       <p className="text-xs text-gray-500 dark:text-slate-400">
         {data.sessionCount} {t("sessions.sessionsCount")}
       </p>
@@ -51,12 +51,12 @@ export function SessionStats({ sessions }: SessionStatsProps) {
 
   const metrics = [
     {
-      icon: <Icon icon="lucide:activity" className="text-neon-violet h-5 w-5" />,
+      icon: <Icon icon="lucide:activity" className="text-neon-primary h-5 w-5" />,
       label: t("sessions.totalSessions"),
       value: formatLocalizedNumber(sessions.totalSessions, locale),
     },
     {
-      icon: <Icon icon="lucide:clock" className="text-neon-violet h-5 w-5" />,
+      icon: <Icon icon="lucide:clock" className="text-neon-primary h-5 w-5" />,
       label: t("sessions.averageDuration"),
       value:
         sessions.averageDurationMinutes !== null
@@ -64,7 +64,7 @@ export function SessionStats({ sessions }: SessionStatsProps) {
           : "—",
     },
     {
-      icon: <Icon icon="lucide:timer" className="text-neon-violet h-5 w-5" />,
+      icon: <Icon icon="lucide:timer" className="text-neon-primary h-5 w-5" />,
       label: t("sessions.longestSession"),
       value:
         sessions.longestSessionMinutes !== null
@@ -98,6 +98,7 @@ export function SessionStats({ sessions }: SessionStatsProps) {
             <BarChart data={sessions.frequencyByDayOfWeek}>
               <XAxis
                 dataKey="label"
+                tickFormatter={(label) => t(`sessions.days.${label}`)}
                 tick={{ fontSize: 11 }}
                 className="text-gray-600 dark:text-slate-400"
               />

@@ -11,6 +11,7 @@ const IMPORTABLE_FIELDS: Record<string, string> = {
   playtime: "playtime_normally",
   metascore: "metascore",
   releaseDate: "release_date",
+  popularity: "igdb_pop_updated_at",
 };
 
 /**
@@ -29,7 +30,7 @@ export async function GET() {
         .not("igdb_id", "is", null)
         .is(column, null);
 
-      // For metascore, only count NULL (exclude -1 sentinel = already checked)
+      // For metascore, count games with NULL metascore that have an igdb_id
       if (key === "metascore") {
         query = supabase
           .from("games")

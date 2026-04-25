@@ -293,6 +293,7 @@ export {
   syncVersions,
   syncLanguages,
   syncPlaytime,
+  syncPopularity,
   syncVideos,
   syncSimilarGames,
 } from "./igdb-sync-fields-extended";

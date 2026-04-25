@@ -47,6 +47,20 @@ vi.mock("@/hooks/usePlayerPosts", () => ({
   }),
 }));
 
+vi.mock("@/hooks/usePlayerSessions", () => ({
+  usePlayerSessions: () => ({
+    sessions: [],
+    isLoading: false,
+    isLoadingMore: false,
+    isCreating: false,
+    hasNextPage: false,
+    error: null,
+    loadMore: vi.fn(),
+    createSession: vi.fn(),
+    deleteSession: vi.fn(),
+  }),
+}));
+
 // Override the global next-intl mock to add useFormatter and t.rich support
 vi.mock("next-intl", () => {
   const createTranslator = () => {

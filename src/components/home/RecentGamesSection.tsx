@@ -41,7 +41,7 @@ function GameCard({ game, index }: { game: GameSummary; index: number }) {
           />
         ) : (
           <div
-            className="flex h-full w-full items-center justify-center bg-linear-to-br from-violet-500/20 to-cyan-500/20"
+            className="flex h-full w-full items-center justify-center bg-linear-to-br from-palette-primary-500/20 to-palette-secondary-500/20"
             style={{ backgroundColor: game.backgroundColor || undefined }}
           >
             <Icon icon="mdi:gamepad-variant" className="h-12 w-12 text-gray-400" />
@@ -98,7 +98,7 @@ export function RecentGamesSection() {
           </div>
           <Link
             href="/games"
-            className="hidden items-center gap-1 text-sm font-semibold text-violet-600 transition-colors hover:text-violet-500 sm:inline-flex dark:text-violet-400"
+            className="hidden items-center gap-1 text-sm font-semibold text-palette-primary-600 transition-colors hover:text-palette-primary-500 sm:inline-flex dark:text-palette-primary-400"
           >
             {t("viewAll")}
             <Icon icon="mdi:arrow-right" className="h-4 w-4" />
@@ -116,7 +116,7 @@ export function RecentGamesSection() {
         <div className="mt-8 text-center sm:hidden">
           <Link
             href="/games"
-            className="inline-flex items-center gap-1 text-sm font-semibold text-violet-600 dark:text-violet-400"
+            className="inline-flex items-center gap-1 text-sm font-semibold text-palette-primary-600 dark:text-palette-primary-400"
           >
             {t("viewAll")}
             <Icon icon="mdi:arrow-right" className="h-4 w-4" />

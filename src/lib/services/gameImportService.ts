@@ -32,6 +32,7 @@ import {
   updateSimilarGames,
 } from "./game-import/extras";
 import { fetchAndSavePlaytime, fetchGameDetails } from "./game-import/playtime";
+import { fetchAndSavePopularity } from "./game-import/popularity";
 
 export type { ImportResult } from "./game-import/types";
 
@@ -215,6 +216,7 @@ export class GameImportService {
     }
 
     await fetchAndSavePlaytime(gameId, igdbGame.id);
+    await fetchAndSavePopularity(gameId, igdbGame.id);
   }
 
   /**
@@ -233,5 +235,6 @@ export class GameImportService {
     await updateSimilarGames(gameId, igdbGame);
     await syncPlatforms(gameId, igdbGame);
     await fetchAndSavePlaytime(gameId, igdbGame.id);
+    await fetchAndSavePopularity(gameId, igdbGame.id);
   }
 }

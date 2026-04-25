@@ -1,105 +1,18 @@
 "use client";
 
-import Image from "next/image";
 import { type UseFormReturn } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
-import { SUPPORTED_LANGUAGES, type AdminGenre, type Tab, type TabId } from "@/types/admin-games";
-import { generateSlugFromTitle } from "@/lib/utils/slug-utils";
+import { SUPPORTED_LANGUAGES, type Tab, type TabId } from "@/types/admin-games";
 import { Icon } from "@iconify/react";
 
-/** Hero banner showing cover, title, slug and genres */
-export function HeroBanner({
-  form,
-  genres,
-  coverImageUrl,
-  backgroundImageUrl,
-  t,
-}: {
-  form: UseFormReturn<AdminGameFormData>;
-  genres: AdminGenre[];
-  coverImageUrl: string | undefined;
-  backgroundImageUrl: string | undefined;
-  t: (key: string) => string;
-}) {
-  return (
-    <div className="relative overflow-hidden rounded-2xl border border-gray-200/60 bg-linear-to-br from-gray-900 to-gray-800 shadow-lg dark:border-gray-700/40">
-      {backgroundImageUrl ? (
-        <Image
-          src={backgroundImageUrl}
-          alt=""
-          fill
-          className="object-cover opacity-40"
-          onError={(e) => {
-            (e.target as HTMLImageElement).style.display = "none";
-          }}
-        />
-      ) : (
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-gray-700/30 via-transparent to-transparent" />
-      )}
-      <div className="relative z-10 flex flex-col gap-6 p-6 sm:flex-row sm:items-end sm:gap-8">
-        <div className="shrink-0">
-          {coverImageUrl ? (
-            <Image
-              src={coverImageUrl}
-              alt="Cover"
-              width={128}
-              height={176}
-              className="h-44 w-32 rounded-xl border-2 border-white/20 object-cover shadow-2xl ring-1 ring-black/10"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = "none";
-              }}
-            />
-          ) : (
-            <div className="flex h-44 w-32 items-center justify-center rounded-xl border-2 border-dashed border-white/20 bg-white/5 backdrop-blur-xs">
-              <Icon icon="fa:image" className="h-8 w-8 text-white/30" />
-            </div>
-          )}
-        </div>
-        <div className="min-w-0 flex-1 pb-1">
-          <p className="truncate text-2xl font-bold text-white drop-shadow-md">
-            {form.watch("translations.0.title") || (
-              <span className="text-white/40 italic">{t("titlePlaceholder")}</span>
-            )}
-          </p>
-          <p className="mt-1 text-sm text-white/50">
-            {form.watch("slug") ||
-              generateSlugFromTitle(form.watch("translations.0.title") || "") ||
-              "slug"}
-            {form.watch("release_date") && (
-              <span className="ml-3">· {new Date(form.watch("release_date")!).getFullYear()}</span>
-            )}
-          </p>
-          {form.watch("genres").length > 0 && (
-            <div className="mt-3 flex flex-wrap gap-1.5">
-              {form.watch("genres").map((g) => {
-                const genre = genres.find((gn) => gn.id === g.genre_id);
-                return genre ? (
-                  <span
-                    key={g.genre_id}
-                    className="rounded-full bg-white/10 px-2.5 py-0.5 text-xs font-medium text-white/80 backdrop-blur-xs"
-                  >
-                    {genre.name}
-                  </span>
-                ) : null;
-              })}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
+// Re-export HeroBanner from its own file for backward compatibility
+export { HeroBanner } from "./GameFormHeroBanner";
 
 /** Tab navigation bar with badges */
 export function TabNavigation({
-  tabs,
-  activeTab,
-  setActiveTab,
-  form,
-  tabLabel,
+  tabs, activeTab, setActiveTab, form, tabLabel,
 }: {
   tabs: Tab[];
   activeTab: TabId;
@@ -109,26 +22,16 @@ export function TabNavigation({
 }) {
   const getBadge = (tabId: TabId): number | null => {
     switch (tabId) {
-      case "genres":
-        return form.watch("genres").length;
-      case "companies":
-        return form.watch("companies").length;
-      case "translations":
-        return SUPPORTED_LANGUAGES.length;
-      case "images":
-        return form.watch("screenshots").length + form.watch("artwork").length;
-      case "age_ratings":
-        return form.watch("age_ratings").length;
-      case "versions":
-        return form.watch("versions").length;
-      case "languages":
-        return form.watch("languages").length;
-      case "pricing":
-        return form.watch("prices").length;
-      case "game_platforms":
-        return form.watch("game_platforms").length;
-      default:
-        return null;
+      case "genres": return form.watch("genres").length;
+      case "companies": return form.watch("companies").length;
+      case "translations": return SUPPORTED_LANGUAGES.length;
+      case "images": return form.watch("screenshots").length + form.watch("artwork").length;
+      case "age_ratings": return form.watch("age_ratings").length;
+      case "versions": return form.watch("versions").length;
+      case "languages": return form.watch("languages").length;
+      case "pricing": return form.watch("prices").length;
+      case "game_platforms": return form.watch("game_platforms").length;
+      default: return null;
     }
   };
 
@@ -138,28 +41,11 @@ export function TabNavigation({
         const isActive = activeTab === tab.id;
         const badge = getBadge(tab.id);
         return (
-          <button
-            key={tab.id}
-            type="button"
-            onClick={() => setActiveTab(tab.id)}
-            className={`flex cursor-pointer items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-all ${
-              isActive
-                ? "bg-primary text-primary-foreground shadow-xs"
-                : "text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700/50 dark:hover:text-gray-300"
-            }`}
-          >
+          <button key={tab.id} type="button" onClick={() => setActiveTab(tab.id)} className={`flex cursor-pointer items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-all ${isActive ? "bg-primary text-primary-foreground shadow-xs" : "text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700/50 dark:hover:text-gray-300"}`}>
             {tab.icon}
             <span className="hidden sm:inline">{tabLabel(tab)}</span>
             {badge !== null && badge > 0 && (
-              <span
-                className={`rounded-full px-1.5 py-0.5 text-[10px] leading-none font-bold tabular-nums ${
-                  isActive
-                    ? "text-primary-foreground bg-white/20"
-                    : "bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400"
-                }`}
-              >
-                {badge}
-              </span>
+              <span className={`rounded-full px-1.5 py-0.5 text-[10px] leading-none font-bold tabular-nums ${isActive ? "text-primary-foreground bg-white/20" : "bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400"}`}>{badge}</span>
             )}
           </button>
         );
@@ -170,12 +56,7 @@ export function TabNavigation({
 
 /** Sticky bottom bar with prev/next and submit */
 export function StickySubmitBar({
-  tabs,
-  activeTab,
-  setActiveTab,
-  isSubmitting,
-  mode,
-  t,
+  tabs, activeTab, setActiveTab, isSubmitting, mode, t,
 }: {
   tabs: Tab[];
   activeTab: TabId;
@@ -188,45 +69,15 @@ export function StickySubmitBar({
     <div className="fixed right-0 bottom-0 left-0 z-20 border-t border-gray-200/60 bg-white/80 backdrop-blur-xl lg:left-64 dark:border-gray-700/40 dark:bg-gray-900/80">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
         <div className="flex gap-2">
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            disabled={activeTab === tabs[0].id}
-            onClick={() => {
-              const idx = tabs.findIndex((tab) => tab.id === activeTab);
-              if (idx > 0) setActiveTab(tabs[idx - 1].id);
-            }}
-          >
+          <Button type="button" variant="ghost" size="sm" disabled={activeTab === tabs[0].id} onClick={() => { const idx = tabs.findIndex((tab) => tab.id === activeTab); if (idx > 0) setActiveTab(tabs[idx - 1].id); }}>
             ← {t("previous") ?? "Précédent"}
           </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            disabled={activeTab === tabs[tabs.length - 1].id}
-            onClick={() => {
-              const idx = tabs.findIndex((tab) => tab.id === activeTab);
-              if (idx < tabs.length - 1) setActiveTab(tabs[idx + 1].id);
-            }}
-          >
+          <Button type="button" variant="ghost" size="sm" disabled={activeTab === tabs[tabs.length - 1].id} onClick={() => { const idx = tabs.findIndex((tab) => tab.id === activeTab); if (idx < tabs.length - 1) setActiveTab(tabs[idx + 1].id); }}>
             {t("next") ?? "Suivant"} →
           </Button>
         </div>
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-          size="lg"
-          className="min-w-[140px] gap-2 shadow-lg"
-        >
-          {isSubmitting ? (
-            <LoadingSpinner size="sm" />
-          ) : (
-            <>
-              <Icon icon="fa:save" className="h-4 w-4" />
-              {mode === "create" ? t("create") : t("save")}
-            </>
-          )}
+        <Button type="submit" disabled={isSubmitting} size="lg" className="min-w-[140px] gap-2 shadow-lg">
+          {isSubmitting ? <LoadingSpinner size="sm" /> : (<><Icon icon="fa:save" className="h-4 w-4" />{mode === "create" ? t("create") : t("save")}</>)}
         </Button>
       </div>
     </div>

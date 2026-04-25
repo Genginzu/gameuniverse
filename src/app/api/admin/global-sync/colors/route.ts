@@ -98,6 +98,8 @@ async function extractOneColor(supabase: any, entry: ColorEntry): Promise<ColorR
   } catch (error) {
     const msg = error instanceof Error ? error.message : "Unknown error";
     logger.warn("Color extraction failed", { igdbId: entry.igdb_id, error: msg });
+    // Mark as synced even on failure to prevent infinite retry loop
+    await supabase.from("igdb_global_sync").update({ is_colors_synced: true }).eq("id", entry.id);
     return { ...base, success: false, hasColors: false, error: msg };
   }
 }

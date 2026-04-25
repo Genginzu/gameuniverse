@@ -56,28 +56,26 @@ describe("PostContentRenderer", () => {
     vi.clearAllMocks();
   });
 
-  // Req 2.3, 2.7 — renders plain text without tags or mentions
   it("renders plain text content without tags or mentions", () => {
     render(<PostContentRenderer {...defaultProps} content="Hello world, just text" />);
     expect(screen.getByText("Hello world, just text")).toBeInTheDocument();
   });
 
-  // Req 2.3, 2.7 — valid tags are stripped from inline content (rendered as pills by PostCard)
-  it("does not render valid tags inline (they are displayed as pills by PostCard)", () => {
+  // Tags are now rendered as clickable links to /posts/tags/[tag]
+  it("renders valid tags as clickable links to tag page", () => {
     render(<PostContentRenderer {...defaultProps} content="Check out #rpg" tags={["rpg"]} />);
-    expect(screen.queryByRole("button")).not.toBeInTheDocument();
-    expect(screen.queryByText("#rpg")).not.toBeInTheDocument();
+    const tagLink = screen.getByRole("link");
+    expect(tagLink).toHaveTextContent("#rpg");
+    expect(tagLink).toHaveAttribute("href", "/posts/tags/rpg");
     expect(screen.getByText("Check out")).toBeInTheDocument();
   });
 
-  // Unrecognized hashtags (not in tags array) are rendered as plain text
   it("renders unrecognized hashtags as plain text", () => {
     render(<PostContentRenderer {...defaultProps} content="Play #speedrun" tags={[]} />);
-    expect(screen.queryByRole("button")).not.toBeInTheDocument();
+    expect(screen.queryByRole("link")).not.toBeInTheDocument();
     expect(screen.getByText("#speedrun")).toBeInTheDocument();
   });
 
-  // Req 3.4 — renders valid mentions as links to player profile
   it("renders valid mentions as links to player profile", () => {
     const mentions: PostMention[] = [{ playerId: "uuid-123", username: "Alice" }];
     render(<PostContentRenderer {...defaultProps} content="Hello @Alice" mentions={mentions} />);
@@ -87,7 +85,6 @@ describe("PostContentRenderer", () => {
     expect(link).toHaveTextContent("@Alice");
   });
 
-  // Req 9.4 — mentions have aria-label
   it("mentions have aria-label", () => {
     const mentions: PostMention[] = [{ playerId: "uuid-456", username: "Bob" }];
     render(<PostContentRenderer {...defaultProps} content="Hey @Bob" mentions={mentions} />);
@@ -95,14 +92,12 @@ describe("PostContentRenderer", () => {
     expect(link).toHaveAttribute("aria-label");
   });
 
-  // Req 3.5 — renders invalid mentions (not in mentions array) as plain text
   it("renders invalid mentions as plain text", () => {
     render(<PostContentRenderer {...defaultProps} content="Hello @Unknown" mentions={[]} />);
     expect(screen.queryByRole("link")).not.toBeInTheDocument();
     expect(screen.getByText("@Unknown")).toBeInTheDocument();
   });
 
-  // Req 2.3, 3.4, 3.5 — renders mixed content (text + tags + mentions)
   it("renders mixed content with text, tags, and mentions correctly", () => {
     const mentions: PostMention[] = [{ playerId: "uuid-789", username: "Charlie" }];
     render(
@@ -113,22 +108,25 @@ describe("PostContentRenderer", () => {
         mentions={mentions}
       />
     );
-    // Valid tag is stripped from inline content (rendered as pill by PostCard)
-    expect(screen.queryByRole("button")).not.toBeInTheDocument();
-    // Valid mention rendered as link
-    const mentionLink = screen.getByRole("link");
+    const links = screen.getAllByRole("link");
+    // Tag link + mention link = 2 links
+    expect(links).toHaveLength(2);
+    // Tag link
+    const tagLink = links.find((l) => l.getAttribute("href")?.startsWith("/posts/tags/"));
+    expect(tagLink).toHaveTextContent("#rpg");
+    // Mention link
+    const mentionLink = links.find((l) => l.getAttribute("href")?.startsWith("/players/"));
     expect(mentionLink).toHaveTextContent("@Charlie");
     expect(mentionLink).toHaveAttribute("href", "/players/uuid-789");
-    // Invalid mention rendered as plain text (no second link)
+    // Invalid mention rendered as plain text
     expect(screen.getByText("@Nobody")).toBeInTheDocument();
-    expect(screen.queryAllByRole("link")).toHaveLength(1);
   });
 
-  // Req 2.2 — valid tags are stripped from inline rendering
-  it("strips valid tags from inline content regardless of case", () => {
+  // Tags are normalized to lowercase
+  it("renders valid tags as links regardless of case", () => {
     render(<PostContentRenderer {...defaultProps} content="Check #RPG" tags={["rpg"]} />);
-    expect(screen.queryByRole("button")).not.toBeInTheDocument();
-    expect(screen.queryByText("#RPG")).not.toBeInTheDocument();
-    expect(screen.queryByText("#rpg")).not.toBeInTheDocument();
+    const tagLink = screen.getByRole("link");
+    expect(tagLink).toHaveTextContent("#rpg");
+    expect(tagLink).toHaveAttribute("href", "/posts/tags/rpg");
   });
 });

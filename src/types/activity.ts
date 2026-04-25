@@ -9,7 +9,8 @@ export type ActivityEventType =
   | "playtime"
   | "favorite"
   | "collection"
-  | "friendship";
+  | "friendship"
+  | "session";
 
 /** Données d'une review publiée */
 export interface ReviewEventData {
@@ -77,6 +78,17 @@ export interface FriendshipEventData {
   action: "request_sent" | "request_accepted" | "friend_removed";
 }
 
+/** Données d'une session de jeu (issue #2) */
+export interface SessionEventData {
+  type: "session";
+  gameId: string;
+  gameSlug: string;
+  gameName: string;
+  coverImage: string | null;
+  durationMinutes: number;
+  startedAt: string;
+}
+
 /** Union discriminée des données par type d'événement */
 export type ActivityEventData =
   | ReviewEventData
@@ -85,7 +97,8 @@ export type ActivityEventData =
   | PlaytimeEventData
   | FavoriteEventData
   | CollectionEventData
-  | FriendshipEventData;
+  | FriendshipEventData
+  | SessionEventData;
 
 /** Événement d'activité générique */
 export interface ActivityEvent {

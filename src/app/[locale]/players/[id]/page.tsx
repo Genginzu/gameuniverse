@@ -5,6 +5,7 @@ import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
 import { getTranslations } from "next-intl/server";
+import { createServerClient } from "@/lib/supabase-server";
 
 interface PlayerDetailsPageProps {
   params: Promise<{
@@ -23,7 +24,11 @@ export default async function PlayerDetailsPage({ params }: PlayerDetailsPagePro
   }
 
   try {
-    const player = await PlayerService.fetchPlayerDetailsFromDB(id, locale);
+    const supabase = await createServerClient();
+    const [{ data: playerData }, player] = await Promise.all([
+      supabase.auth.getUser(),
+      PlayerService.fetchPlayerDetailsFromDB(id, locale),
+    ]);
 
     // Handle 404 if player not found - Requirements 5.3
     if (!player) {
@@ -44,7 +49,11 @@ export default async function PlayerDetailsPage({ params }: PlayerDetailsPagePro
             />
           }
         >
-          <PlayerDetailsContent player={player} locale={locale} />
+          <PlayerDetailsContent
+            player={player}
+            locale={locale}
+            currentUserId={playerData.user?.id ?? null}
+          />
         </ErrorBoundary>
       </DashboardLayout>
     );

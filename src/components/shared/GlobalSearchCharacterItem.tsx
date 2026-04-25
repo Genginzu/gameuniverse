@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import type { GlobalSearchCharacterItem as CharacterItem } from "@/types/global-search";
+import { Icon } from "@iconify/react";
 import Image from "next/image";
 
 interface GlobalSearchCharacterItemProps {
@@ -23,14 +24,7 @@ export function GlobalSearchCharacterItem({ item, isActive }: GlobalSearchCharac
           <Image src={item.mainImage} alt={item.name} fill className="object-cover" sizes="44px" />
         ) : (
           <div className="flex h-full w-full items-center justify-center text-white/30">
-            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-              />
-            </svg>
+            <Icon icon="lucide:user" className="h-5 w-5" />
           </div>
         )}
       </div>

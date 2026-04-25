@@ -136,9 +136,10 @@ export async function importGameFromIGDB(
 
     await Promise.all(writeOps);
 
-    // Parallelize the 3 remaining IGDB-dependent operations
+    // Parallelize the remaining IGDB-dependent operations
     await Promise.all([
       fetchAndSavePlaytime(newGame.id, igdbGame.id, verbose),
+      fetchAndSavePopularity(newGame.id, igdbGame.id, verbose),
       importGameVersions(newGame.id, igdbGame.id, verbose, dryRun),
       importDlcExtensions(newGame.id, igdbGame, verbose, dryRun),
       importSimilarGames(newGame.id, igdbGame, verbose),
@@ -858,6 +859,32 @@ async function importSimilarGames(
   } catch (error) {
     if (verbose) {
       console.error(`[Importer] Error importing similar games:`, error);
+    }
+  }
+}
+
+async function fetchAndSavePopularity(
+  gameId: string,
+  igdbId: number,
+  verbose: boolean
+): Promise<void> {
+  try {
+    const primitives = await IGDBService.getPopularityPrimitives(igdbId);
+    const supabase = createScriptClient();
+
+    // Columns added by migration 20260420000001 but not yet in generated types.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase.from("games") as any)
+      .update({
+        igdb_pop_visits: primitives?.visits ?? null,
+        igdb_pop_want_to_play: primitives?.wantToPlay ?? null,
+        igdb_pop_playing: primitives?.playing ?? null,
+        igdb_pop_updated_at: new Date().toISOString(),
+      })
+      .eq("id", gameId);
+  } catch (error) {
+    if (verbose) {
+      console.error(`[Importer] Error fetching popularity for IGDB ID ${igdbId}:`, error);
     }
   }
 }

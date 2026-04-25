@@ -23,7 +23,7 @@ export function PlayerReviewsStats({ stats }: PlayerReviewsStatsProps) {
       <div className="mb-6 flex flex-col gap-3 sm:grid sm:grid-cols-2 sm:gap-4">
         {/* Total reviews — aligned left */}
         <div className="flex items-center gap-2 sm:gap-3">
-          <div className="bg-neon-violet/20 text-neon-violet flex h-8 w-8 shrink-0 items-center justify-center rounded-xl sm:h-10 sm:w-10">
+          <div className="bg-neon-primary/20 text-neon-primary flex h-8 w-8 shrink-0 items-center justify-center rounded-xl sm:h-10 sm:w-10">
             <Icon icon="lucide:message-square" className="h-4 w-4 sm:h-5 sm:w-5" />
           </div>
           <div className="min-w-0">
@@ -38,7 +38,7 @@ export function PlayerReviewsStats({ stats }: PlayerReviewsStatsProps) {
 
         {/* Average rating — staggered right on mobile */}
         <div className="flex items-center gap-2 self-end sm:gap-3 sm:self-auto">
-          <div className="bg-neon-cyan/20 text-neon-cyan flex h-8 w-8 shrink-0 items-center justify-center rounded-xl sm:h-10 sm:w-10">
+          <div className="bg-neon-secondary/20 text-neon-secondary flex h-8 w-8 shrink-0 items-center justify-center rounded-xl sm:h-10 sm:w-10">
             <Icon icon="lucide:star" className="h-4 w-4 sm:h-5 sm:w-5" />
           </div>
           <div className="min-w-0">

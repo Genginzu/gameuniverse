@@ -2,12 +2,12 @@
 
 import { useState, useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useAdminSpecies, type AdminSpeciesListItem } from "@/hooks/useAdminSpecies";
 import dynamic from "next/dynamic";
-import { AdminSpeciesTable } from "@/components/admin/species/AdminSpeciesTable";
-const DeleteSpeciesDialog = dynamic(
-  () => import("@/components/admin/species/DeleteSpeciesDialog").then((m) => m.DeleteSpeciesDialog),
+import { AdminDataTable, type AdminColumnDef } from "@/components/admin/shared/AdminDataTable";
+const AdminDeleteDialog = dynamic(
+  () => import("@/components/admin/shared/AdminDeleteDialog").then((m) => m.AdminDeleteDialog),
   { ssr: false }
 );
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ import { Icon } from "@iconify/react";
 
 export default function AdminSpeciesPage() {
   const t = useTranslations("admin.species");
+  const locale = useLocale();
   const router = useRouter();
   const { species, pagination, loading, fetchSpecies, deleteSpecies, checkSpeciesUsage } =
     useAdminSpecies();
@@ -32,12 +33,7 @@ export default function AdminSpeciesPage() {
   const handleSearch = useCallback(
     (query: string) => {
       setCurrentSearch(query);
-      fetchSpecies({
-        search: query,
-        sortBy: currentSort.field,
-        sortOrder: currentSort.order,
-        page: 1,
-      });
+      fetchSpecies({ search: query, sortBy: currentSort.field, sortOrder: currentSort.order, page: 1 });
     },
     [fetchSpecies, currentSort]
   );
@@ -52,19 +48,14 @@ export default function AdminSpeciesPage() {
 
   const handlePageChange = useCallback(
     (page: number) => {
-      fetchSpecies({
-        search: currentSearch,
-        sortBy: currentSort.field,
-        sortOrder: currentSort.order,
-        page,
-      });
+      fetchSpecies({ search: currentSearch, sortBy: currentSort.field, sortOrder: currentSort.order, page });
     },
     [fetchSpecies, currentSearch, currentSort]
   );
 
   const handleEdit = useCallback(
-    (id: string) => {
-      router.push(`/admin/species/${id}/edit`);
+    (sp: AdminSpeciesListItem) => {
+      router.push(`/admin/species/${sp.slug}/edit`);
     },
     [router]
   );
@@ -101,21 +92,33 @@ export default function AdminSpeciesPage() {
     if (!isDeleting) setSpeciesToDelete(null);
   }, [isDeleting]);
 
+  const speciesColumns: AdminColumnDef<AdminSpeciesListItem>[] = [
+    { key: "slug", labelKey: "columns.slug", sortable: true, className: "px-4 py-3 font-mono text-sm text-gray-900 dark:text-white" },
+    {
+      key: "name", labelKey: "columns.name", sortable: true,
+      render: (sp) => {
+        const tr = sp.translations.find((t) => t.language_code === locale);
+        return tr?.name ?? sp.translations[0]?.name ?? sp.slug;
+      },
+      className: "px-4 py-3 font-medium text-gray-900 dark:text-white",
+    },
+    { key: "characterCount", labelKey: "columns.characterCount", render: (sp) => t("characterCount", { count: sp.characterCount }), className: "px-4 py-3 text-gray-500 dark:text-gray-400" },
+  ];
+
   return (
     <div className="space-y-8 p-4 lg:p-6">
       <section>
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">
-            {t("title")}
-          </h1>
+          <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">{t("title")}</h1>
           <Button onClick={() => router.push("/admin/species/new")}>
             <Icon icon="fa:plus" className="h-4 w-4" />
             {t("newSpecies")}
           </Button>
         </div>
 
-        <AdminSpeciesTable
-          species={species}
+        <AdminDataTable<AdminSpeciesListItem>
+          items={species}
+          columns={speciesColumns}
           pagination={pagination}
           onPageChange={handlePageChange}
           onSearch={handleSearch}
@@ -125,11 +128,15 @@ export default function AdminSpeciesPage() {
           isLoading={loading}
           currentSort={currentSort}
           currentSearch={currentSearch}
+          translationNamespace="admin.species"
+          totalCountKey="totalSpecies"
+          emptyKey="noSpecies"
         />
 
-        <DeleteSpeciesDialog
-          species={speciesToDelete}
+        <AdminDeleteDialog
           isOpen={speciesToDelete !== null}
+          translationNamespace="admin.species.deleteDialog"
+          warningParams={{ name: speciesToDelete?.slug ?? "" }}
           onClose={handleDeleteClose}
           onConfirm={handleDeleteConfirm}
           isDeleting={isDeleting}

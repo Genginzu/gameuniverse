@@ -51,38 +51,51 @@ hover:bg-slate-700/60 transition-all  (dark)
 
 ## Palette de couleurs
 
-Le projet utilise des couleurs néon comme accents :
+Le projet utilise un système de couleurs sémantiques défini dans
+`src/app/globals.css` via des échelles `palette-primary-*`,
+`palette-secondary-*` et `palette-accent-*` (50 à 950).
 
-- Violet néon : `neon-violet` / `rgba(139, 92, 246, ...)`
-- Cyan néon : `neon-cyan` / classes `text-cyan-*`, `bg-cyan-*`
-- Utiliser `bg-linear-to-br from-neon-violet to-neon-cyan` pour les accents
-  forts
+Palette actuelle (marine) :
+
+- **Primary** (marine, H:209) : `palette-primary-{50..950}` — couleur dominante
+- **Secondary** (ocean, H:200) : `palette-secondary-{50..950}` — couleur
+  complémentaire
+- **Accent** (bright blue, H:215) : `palette-accent-{50..950}` — accents vifs
+
+Variables néon pour les effets glow/border :
+
+- `neon-primary` — glow principal (box-shadow, text-shadow)
+- `neon-secondary` — glow secondaire
+- `neon-accent` — glow accent
+
+Pour changer les couleurs du site, modifier uniquement les valeurs hex des
+`--color-palette-*` dans le `@theme` de `globals.css` + les valeurs RGB des
+`--neon-*` dans `:root`.
 
 ## Gradient principal (obligatoire)
 
 Lorsqu'un gradient est utilisé (bannières, boutons d'accent, barres de
-progression, badges, cercles, etc.), il **doit** reprendre le gradient cyan →
-violet utilisé dans les cercles d'avis de l'onglet stats joueur
-(`ReviewMetricsRadial`) :
+progression, badges, cercles, etc.), il **doit** utiliser le gradient
+secondary → primary :
 
 ```css
 /* CSS — direction adaptable selon le contexte */
-background: linear-gradient(to right, rgb(6, 182, 212), rgb(139, 92, 246));
+background: linear-gradient(to right, #0697e0, #0077e6);
 
 /* SVG (linearGradient) */
-<stop offset="0%" stop-color="rgb(6, 182, 212)" />   /* cyan */
-<stop offset="100%" stop-color="rgb(139, 92, 246)" /> /* violet */
+<stop offset="0%" stop-color="#0697e0" />   /* secondary-500 */
+<stop offset="100%" stop-color="#0077e6" /> /* primary-500 */
 
 /* Équivalent Tailwind */
-bg-linear-to-r from-cyan-500 to-violet-500
+bg-linear-to-r from-palette-secondary-500 to-palette-primary-500
 /* ou avec les custom colors du projet */
-bg-linear-to-r from-neon-cyan to-neon-violet
+bg-linear-to-r from-neon-secondary to-neon-primary
 ```
 
-- ✅ Utiliser ce gradient cyan → violet comme référence unique pour tout nouvel
-  élément.
+- ✅ Utiliser ce gradient secondary → primary comme référence unique pour tout
+  nouvel élément.
 - ❌ Ne **jamais** inventer un gradient custom différent (ex : rouge-orange,
-  vert-jaune, violet monochrome, etc.) sans validation explicite.
+  vert-jaune, etc.) sans validation explicite.
 
 ## Règles obligatoires
 
@@ -130,6 +143,6 @@ import { Icon } from "@iconify/react";
 2. Supporte le dark mode
 3. Coins arrondis cohérents (`rounded-xl` / `rounded-2xl`)
 4. Transitions fluides sur les interactions
-5. Couleurs d'accent cohérentes (néon violet/cyan)
+5. Couleurs d'accent cohérentes (palette-primary/secondary)
 6. Icônes via Iconify (`@iconify/react`)
 7. Vérifié visuellement à côté des pages existantes

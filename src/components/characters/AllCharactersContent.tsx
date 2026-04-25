@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useMemo, useCallback } from "react";
+import { useTranslations } from "next-intl";
 import { EntityCard } from "@/components/shared/EntityCard";
 import { characterCardConfig } from "@/components/shared/entityCardPresets";
 import { CharacterFilters } from "./CharacterFilters";
-import { CharactersEmptyState } from "./CharactersEmptyState";
+import { EmptyState } from "@/components/shared/EmptyState";
 import { FilterButton } from "@/components/shared/FilterButton";
 import { Pagination } from "@/components/shared/Pagination";
 import { GridSkeleton } from "@/components/shared/GridSkeleton";
@@ -27,6 +28,8 @@ export function AllCharactersContent({
   initialCharacters,
   initialPagination,
 }: AllCharactersContentProps) {
+  const t = useTranslations("characters");
+
   // --- État local des filtres ---
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
@@ -86,6 +89,8 @@ export function AllCharactersContent({
   // Premier chargement sans données SSR
   const initialLoading = isLoading && characters.length === 0;
 
+  const hasFilters = !!searchQuery || selectedRoles.length > 0 || selectedPlatforms.length > 0;
+
   if (initialLoading) {
     return (
       <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
@@ -125,11 +130,11 @@ export function AllCharactersContent({
             className={`transition-opacity duration-200 ${isValidating && !isLoading ? "pointer-events-none opacity-40" : ""}`}
           >
             {characters.length === 0 && !isLoading ? (
-              <CharactersEmptyState
-                hasFilters={
-                  !!searchQuery || selectedRoles.length > 0 || selectedPlatforms.length > 0
-                }
-                onClearFilters={handleClearFilters}
+              <EmptyState
+                icon="lucide:user"
+                title={t("empty.title")}
+                description={hasFilters ? t("empty.description") : t("empty.noCharacters")}
+                action={hasFilters ? { label: t("empty.clearFilters"), onClick: handleClearFilters } : undefined}
               />
             ) : characters.length > 0 ? (
               <div className="space-y-8">

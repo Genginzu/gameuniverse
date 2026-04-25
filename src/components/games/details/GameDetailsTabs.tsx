@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
+import { Icon } from "@iconify/react";
 import { GameDetailsTabContent } from "./GameDetailsTabContent";
 import { useTranslations } from "next-intl";
 import { GameDetails } from "@/types/game";
@@ -38,6 +40,36 @@ export function GameDetailsTabs({
   formatPrice,
 }: GameDetailsTabsProps) {
   const tDetails = useTranslations("gameDetails");
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const updateScrollState = () => {
+      const { scrollLeft, scrollWidth, clientWidth } = el;
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 1);
+    };
+
+    updateScrollState();
+    el.addEventListener("scroll", updateScrollState, { passive: true });
+    const resizeObserver = new ResizeObserver(updateScrollState);
+    resizeObserver.observe(el);
+    return () => {
+      el.removeEventListener("scroll", updateScrollState);
+      resizeObserver.disconnect();
+    };
+  }, []);
+
+  const scroll = (direction: "left" | "right") => {
+    scrollRef.current?.scrollBy({
+      left: direction === "left" ? -160 : 160,
+      behavior: "smooth",
+    });
+  };
 
   const tabs: { key: TabType; label: string; show: boolean }[] = [
     { key: "overview", label: tDetails("tabs.overview"), show: true },
@@ -58,8 +90,22 @@ export function GameDetailsTabs({
   return (
     <>
       {/* Tab navigation — underline style */}
-      <div className="mb-8 border-b border-white/10">
-        <div className="-mb-px flex items-center gap-6 overflow-x-auto scrollbar-hide">
+      <div className="relative mb-8 border-b border-white/10">
+        {canScrollLeft && (
+          <button
+            type="button"
+            onClick={() => scroll("left")}
+            aria-label={tDetails("tabs.scrollLeft")}
+            className="absolute top-0 bottom-0 left-0 z-10 flex items-center bg-gradient-to-r from-black/60 to-transparent pr-6 text-white/80 hover:text-white"
+          >
+            <Icon icon="lucide:chevron-left" className="h-5 w-5" />
+          </button>
+        )}
+
+        <div
+          ref={scrollRef}
+          className="-mb-px flex items-center gap-6 overflow-x-auto scrollbar-hide"
+        >
           {tabs
             .filter((t) => t.show)
             .map((tab) => (
@@ -77,6 +123,17 @@ export function GameDetailsTabs({
               </button>
             ))}
         </div>
+
+        {canScrollRight && (
+          <button
+            type="button"
+            onClick={() => scroll("right")}
+            aria-label={tDetails("tabs.scrollRight")}
+            className="absolute top-0 bottom-0 right-0 z-10 flex items-center bg-gradient-to-l from-black/60 to-transparent pl-6 text-white/80 hover:text-white"
+          >
+            <Icon icon="lucide:chevron-right" className="h-5 w-5" />
+          </button>
+        )}
       </div>
 
       {/* Tab content */}

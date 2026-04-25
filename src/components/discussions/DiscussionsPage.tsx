@@ -153,7 +153,7 @@ export default function DiscussionsPage() {
                         showSkeleton
                       />
                     ) : (
-                      <Icon icon="lucide:user" className="text-neon-violet h-4 w-4" />
+                      <Icon icon="lucide:user" className="text-neon-primary h-4 w-4" />
                     )}
                   </div>
                   <span className="text-sm font-semibold text-slate-900 dark:text-white">

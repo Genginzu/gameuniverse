@@ -165,7 +165,7 @@ describe("GameColorPreview", () => {
 
     // Default colors from buildGameColors
     expect(html).toContain("#0f172a"); // default background
-    expect(html).toContain("#8b5cf6"); // default accent
+    expect(html).toContain("#0077e6"); // default accent
     expect(html).toContain("#94a3b8"); // default label
     expect(html).toContain("#e2e8f0"); // default text
   });

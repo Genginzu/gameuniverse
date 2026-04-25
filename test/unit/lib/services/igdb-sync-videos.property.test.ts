@@ -10,6 +10,7 @@ vi.mock("@/lib/services/igdbService", () => ({
     getGameDetails: vi.fn(),
     getGameVersions: vi.fn().mockResolvedValue([]),
     getTimeToBeat: vi.fn().mockResolvedValue(null),
+    getPopularityPrimitives: vi.fn().mockResolvedValue(null),
     buildImageUrl: vi.fn().mockReturnValue("https://images.igdb.com/mock.jpg"),
   },
 }));

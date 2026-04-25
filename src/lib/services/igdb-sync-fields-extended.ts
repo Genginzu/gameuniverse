@@ -185,7 +185,8 @@ export async function syncPlaytime(
 
   const secondsToHours = (seconds: number | null | undefined): number | null => {
     if (seconds === null || seconds === undefined || seconds === 0 || isNaN(seconds)) return null;
-    return Math.round((seconds / 3600) * 10) / 10;
+    const hours = Math.round((seconds / 3600) * 10) / 10;
+        return hours > 99999.9 ? null : hours;
   };
 
   const { error } = await supabase
@@ -198,6 +199,30 @@ export async function syncPlaytime(
     })
     .eq("id", gameId);
   if (error) throw new Error(`Failed to sync playtime: ${error.message}`);
+}
+
+/**
+ * Synchronise le PopScore IGDB — alimente igdb_pop_visits / want_to_play / playing.
+ * Le trigger trg_games_hybrid_popularity recalcule hybrid_popularity_score.
+ */
+export async function syncPopularity(
+  supabase: SyncSupabaseClient,
+  gameId: string,
+  igdbId: number
+): Promise<void> {
+  const primitives = await IGDBService.getPopularityPrimitives(igdbId);
+
+  // Columns added by migration 20260420000001 but not yet in generated types.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (supabase.from("games") as any)
+    .update({
+      igdb_pop_visits: primitives?.visits ?? null,
+      igdb_pop_want_to_play: primitives?.wantToPlay ?? null,
+      igdb_pop_playing: primitives?.playing ?? null,
+      igdb_pop_updated_at: new Date().toISOString(),
+    })
+    .eq("id", gameId);
+  if (error) throw new Error(`Failed to sync popularity: ${error.message}`);
 }
 
 /** Synchronise les vidéos — delete + re-insert depuis les données IGDB */

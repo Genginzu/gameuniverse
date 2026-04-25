@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 import { useAdminRatings } from "@/hooks/useAdminRatings";
 import { RatingsTable } from "./RatingsTable";
-import { DeleteRatingDialog } from "./DeleteRatingDialog";
+import { AdminDeleteDialog } from "@/components/admin/shared/AdminDeleteDialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
 
@@ -97,9 +97,13 @@ export function RatingsTab({ ratingSystemId }: RatingsTabProps) {
         currentSearch={currentSearch}
       />
 
-      <DeleteRatingDialog
-        rating={ratingToDelete}
+      <AdminDeleteDialog
         isOpen={ratingToDelete !== null}
+          translationNamespace="admin.ageClassifications.ratings.delete"
+          warningParams={{ name: ratingToDelete?.display_name ?? "" }}
+          warningKey="confirm"
+          confirmKey="delete"
+          blockOnUsage
         onClose={handleDeleteClose}
         onConfirm={handleDeleteConfirm}
         isDeleting={isDeleting}

@@ -50,7 +50,11 @@
     "lightMode": "Mode clair",
     "darkMode": "Mode sombre",
     "explore": "Explorer",
-    "discussions": "Discussions"
+    "discussions": "Discussions",
+    "coaching": "Coaching",
+    "coachSettings": "Espace Coach",
+    "coachingHub": "Trouver un coach",
+    "coachingSessions": "Mes sessions"
   },
   "landing": {
     "title": "Votre univers",
@@ -559,6 +563,7 @@
     "tabs": {
       "posts": "Posts",
       "library": "Bibliothèque",
+      "feed": "Fil d'actualité",
       "activity": "Activité",
       "friends": "Amis",
       "reviews": "Avis",
@@ -566,7 +571,12 @@
       "achievements": "Succès",
       "stats": "Statistiques",
       "recommendations": "Recommandations",
-      "settings": "Paramètres"
+      "settings": "Paramètres",
+      "goals": "Objectifs"
+    },
+    "feed": {
+      "feedLabel": "Fil d'actualité des abonnements",
+      "empty": "Abonnez-vous à des joueurs pour voir leurs activités ici."
     },
     "library": {
       "empty": "Bibliothèque vide",
@@ -708,6 +718,10 @@
         "request_accepted": "Est devenu ami avec <player>{player}</player>",
         "friend_removed": "A retiré <player>{player}</player> de ses amis"
       },
+      "sessionDescription": "A joué à <game>{game}</game> pendant <duration>{duration}</duration>",
+      "durationHm": "{h}h{m}min",
+      "durationH": "{h}h",
+      "durationM": "{m}min",
       "playtimeHastily": "Histoire",
       "playtimeNormally": "Normal",
       "playtimeCompletely": "Complétionniste",
@@ -724,7 +738,8 @@
         "playtime": "Temps de jeu",
         "favorite": "Favori",
         "collection": "Collection",
-        "friendship": "Amitié"
+        "friendship": "Amitié",
+        "session": "Session de jeu"
       },
       "filters": {
         "label": "Filtrer par type d'activité",
@@ -735,8 +750,22 @@
         "playtime": "Temps de jeu",
         "favorite": "Favoris",
         "collection": "Collections",
-        "friendship": "Amis"
+        "friendship": "Amis",
+        "session": "Sessions"
       }
+    },
+    "sessions": {
+      "newSession": "Nouvelle session",
+      "gameLabel": "Jeu",
+      "gamePlaceholder": "Rechercher un jeu…",
+      "clearGame": "Changer de jeu",
+      "dateLabel": "Date",
+      "hoursLabel": "Heures",
+      "minutesLabel": "Minutes",
+      "submit": "Enregistrer la session",
+      "successCreate": "Session enregistrée",
+      "errorCreate": "Impossible d'enregistrer la session",
+      "noResults": "Aucun jeu trouvé"
     },
     "reviews": {
       "card": {
@@ -836,7 +865,15 @@
     "clearFilters": "Effacer les filtres",
     "clearAll": "Effacer tout",
     "genres": "Genres",
-    "available": "{count} disponibles"
+    "available": "{count} disponibles",
+    "sort": {
+      "label": "Trier par",
+      "recommended": "Recommandés",
+      "popularity": "Tendances",
+      "activity": "Activité des joueurs",
+      "rating": "Meilleures notes",
+      "recent": "Sorties récentes"
+    }
   },
   "search": {
     "placeholder": "Rechercher un jeu...",
@@ -891,7 +928,9 @@
       "languages": "Langues",
       "music": "Musique",
       "priceHistory": "Prix",
-      "dlcExtensions": "Extensions et DLC"
+      "dlcExtensions": "Extensions et DLC",
+      "scrollLeft": "Faire défiler les onglets vers la gauche",
+      "scrollRight": "Faire défiler les onglets vers la droite"
     },
     "media": {
       "screenshots": "Captures d'écran",
@@ -1232,7 +1271,6 @@
       "playersCategory": "Joueurs",
       "achievements": "Succès",
       "playerAchievements": "Succès joueurs",
-      "igdbCategory": "IGDB",
       "webhooks": "Webhooks",
       "bulkImport": "Import en masse",
       "bulkImportCharacters": "Import en masse",
@@ -1342,6 +1380,7 @@
         "playtimeCompletely": "Complétionniste",
         "playtimePreview": "Aperçu du temps de jeu",
         "playtimeNoData": "Aucun temps de jeu renseigné",
+        "popularity": "Popularité IGDB",
         "colors": "Couleurs de la page",
         "backgroundColor": "Couleur de fond",
         "accentColor": "Couleur d'accent",
@@ -2369,6 +2408,7 @@
       "downloadDescription": "Récupère tous les jeux depuis IGDB par lots de 500 et les associe automatiquement aux jeux existants dans votre base.",
       "startDownload": "Lancer le téléchargement",
       "downloading": "Téléchargement en cours...",
+      "stop": "Arrêter",
       "progress": "{inserted} jeux insérés (dernier ID : {lastId})",
       "downloadComplete": "Téléchargement terminé : {count} jeux récupérés",
       "searchPlaceholder": "Rechercher un jeu...",
@@ -2384,7 +2424,14 @@
       "tabs": {
         "download": "Téléchargement",
         "sync": "Synchronisation",
-        "enrich": "Enrichissement",
+        "screenshots": "Screenshots",
+        "artworks": "Artworks",
+        "videos": "Vidéos",
+        "classifications": "Classifications",
+        "languages": "Langues",
+        "versions": "Versions",
+        "playtime": "Playtime",
+        "popularity": "Popularité",
         "colors": "Couleurs",
         "metascore": "Metascore"
       },
@@ -2403,20 +2450,109 @@
         "infoRetry": "Les jeux en erreur ne sont pas marqués comme synchronisés et seront réessayés lors du prochain lancement.",
         "allSynced": "Tous les jeux ont été synchronisés."
       },
-      "enrichTab": {
-        "title": "Enrichissement des jeux",
-        "description": "Ajoute les données lourdes : couleurs, screenshots, artworks, vidéos, classifications d'âge, versions, langues, playtime, jeux similaires. Traite 3 jeux en parallèle.",
+      "screenshotsTab": {
+        "title": "Screenshots",
+        "description": "Synchronise les captures d'écran depuis IGDB par lots de 200.",
         "startSync": "Lancer",
         "syncing": "En cours...",
         "stop": "Arrêter",
         "currentGame": "En cours : {name}",
-        "synced": "{count} enrichi(s)",
+        "synced": "{count} synchronisé(s)",
         "failed": "{count} échoué(s)",
         "remaining": "{count} restant(s)",
-        "complete": "Terminé : {count} jeux enrichis",
-        "info": "Enrichit les jeux déjà créés avec les données complètes depuis IGDB : extraction de couleurs depuis la cover, screenshots, artworks, vidéos, classifications d'âge, versions/éditions, langues supportées, temps de jeu et jeux similaires.",
         "searchPlaceholder": "Rechercher un jeu...",
-        "allDone": "Tous les jeux ont été enrichis."
+        "allDone": "Tous les screenshots ont été synchronisés."
+      },
+      "artworksTab": {
+        "title": "Artworks",
+        "description": "Synchronise les artworks depuis IGDB par lots de 200.",
+        "startSync": "Lancer",
+        "syncing": "En cours...",
+        "stop": "Arrêter",
+        "currentGame": "En cours : {name}",
+        "synced": "{count} synchronisé(s)",
+        "failed": "{count} échoué(s)",
+        "remaining": "{count} restant(s)",
+        "searchPlaceholder": "Rechercher un jeu...",
+        "allDone": "Tous les artworks ont été synchronisés."
+      },
+      "videosTab": {
+        "title": "Vidéos",
+        "description": "Synchronise les vidéos depuis IGDB par lots de 200.",
+        "startSync": "Lancer",
+        "syncing": "En cours...",
+        "stop": "Arrêter",
+        "currentGame": "En cours : {name}",
+        "synced": "{count} synchronisé(s)",
+        "failed": "{count} échoué(s)",
+        "remaining": "{count} restant(s)",
+        "searchPlaceholder": "Rechercher un jeu...",
+        "allDone": "Toutes les vidéos ont été synchronisées."
+      },
+      "classificationsTab": {
+        "title": "Classifications d'âge",
+        "description": "Synchronise les classifications d'âge (PEGI, ESRB, etc.) depuis IGDB par lots de 200.",
+        "startSync": "Lancer",
+        "syncing": "En cours...",
+        "stop": "Arrêter",
+        "currentGame": "En cours : {name}",
+        "synced": "{count} synchronisé(s)",
+        "failed": "{count} échoué(s)",
+        "remaining": "{count} restant(s)",
+        "searchPlaceholder": "Rechercher un jeu...",
+        "allDone": "Toutes les classifications ont été synchronisées."
+      },
+      "languagesTab": {
+        "title": "Langues",
+        "description": "Synchronise les langues supportées depuis IGDB par lots de 200.",
+        "startSync": "Lancer",
+        "syncing": "En cours...",
+        "stop": "Arrêter",
+        "currentGame": "En cours : {name}",
+        "synced": "{count} synchronisé(s)",
+        "failed": "{count} échoué(s)",
+        "remaining": "{count} restant(s)",
+        "searchPlaceholder": "Rechercher un jeu...",
+        "allDone": "Toutes les langues ont été synchronisées."
+      },
+      "versionsTab": {
+        "title": "Versions / Éditions",
+        "description": "Synchronise les versions et éditions depuis IGDB par lots de 200.",
+        "startSync": "Lancer",
+        "syncing": "En cours...",
+        "stop": "Arrêter",
+        "currentGame": "En cours : {name}",
+        "synced": "{count} synchronisé(s)",
+        "failed": "{count} échoué(s)",
+        "remaining": "{count} restant(s)",
+        "searchPlaceholder": "Rechercher un jeu...",
+        "allDone": "Toutes les versions ont été synchronisées."
+      },
+      "playtimeTab": {
+        "title": "Playtime",
+        "description": "Synchronise les temps de jeu depuis IGDB par lots de 200.",
+        "startSync": "Lancer",
+        "syncing": "En cours...",
+        "stop": "Arrêter",
+        "currentGame": "En cours : {name}",
+        "synced": "{count} synchronisé(s)",
+        "failed": "{count} échoué(s)",
+        "remaining": "{count} restant(s)",
+        "searchPlaceholder": "Rechercher un jeu...",
+        "allDone": "Tous les playtimes ont été synchronisés."
+      },
+      "popularityTab": {
+        "title": "Popularité",
+        "description": "Synchronise les données de popularité IGDB (visites, want to play, playing) par lots de 200.",
+        "startSync": "Lancer",
+        "syncing": "En cours...",
+        "stop": "Arrêter",
+        "currentGame": "En cours : {name}",
+        "synced": "{count} synchronisé(s)",
+        "failed": "{count} échoué(s)",
+        "remaining": "{count} restant(s)",
+        "searchPlaceholder": "Rechercher un jeu...",
+        "allDone": "Toutes les données de popularité ont été synchronisées."
       },
       "colorsTab": {
         "title": "Extraction des couleurs",
@@ -2446,6 +2582,55 @@
         "info": "Essaie d'abord Metacritic (scraping), puis se rabat sur le score agrégé IGDB. Les jeux sans score reçoivent la valeur -1. Un jeu à la fois à cause du rate limiting Metacritic (~2,5s par jeu).",
         "searchPlaceholder": "Rechercher un jeu...",
         "allDone": "Tous les metascores ont été synchronisés."
+      }
+    },
+    "coaching": {
+      "title": "Gestion des coachs",
+      "coaches": "coachs",
+      "reviews": "avis",
+      "sessions": "sessions",
+      "verified": "Vérifié",
+      "suspended": "Suspendu",
+      "filter": {
+        "all": "Tous",
+        "active": "Actifs",
+        "suspended": "Suspendus"
+      },
+      "actions": {
+        "verify": "Vérifier",
+        "unverify": "Retirer vérification",
+        "suspend": "Suspendre",
+        "unsuspend": "Réactiver"
+      }
+    },
+    "disputes": {
+      "title": "Signalements & Litiges",
+      "empty": "Aucun signalement.",
+      "adminNotes": "Notes admin",
+      "filter": {
+        "open": "Ouverts",
+        "investigating": "En cours",
+        "resolved": "Résolus",
+        "dismissed": "Rejetés",
+        "all": "Tous"
+      },
+      "status": {
+        "open": "Ouvert",
+        "investigating": "En cours",
+        "resolved": "Résolu",
+        "dismissed": "Rejeté"
+      },
+      "reason": {
+        "no_show": "Absence",
+        "inappropriate": "Comportement inapproprié",
+        "fraud": "Fraude",
+        "quality": "Qualité insuffisante",
+        "other": "Autre"
+      },
+      "actions": {
+        "investigate": "Enquêter",
+        "resolve": "Résoudre",
+        "dismiss": "Rejeter"
       }
     }
   },
@@ -2587,6 +2772,11 @@
       "loadingError": "Une erreur est survenue lors du chargement de la page amis."
     }
   },
+  "subscriptions": {
+    "subscribe": "S'abonner",
+    "unsubscribe": "Se désabonner",
+    "confirmUnsubscribe": "Voulez-vous vraiment vous désabonner de ce joueur ?"
+  },
   "playerStats": {
     "dashboard": {
       "title": "Statistiques détaillées",
@@ -2681,7 +2871,16 @@
       "averageDuration": "Durée moyenne",
       "longestSession": "Plus longue session",
       "minutes": "min",
-      "sessionsCount": "sessions"
+      "sessionsCount": "sessions",
+      "days": {
+        "monday": "Lun",
+        "tuesday": "Mar",
+        "wednesday": "Mer",
+        "thursday": "Jeu",
+        "friday": "Ven",
+        "saturday": "Sam",
+        "sunday": "Dim"
+      }
     },
     "goals": {
       "title": "Objectifs personnels",
@@ -2935,6 +3134,12 @@
     "viewDiff": "Voir le diff",
     "importGame": "Importer",
     "importing": "Import…",
+    "deleteGame": "Supprimer",
+    "deleting": "Suppression…",
+    "deleteConfirm": "Supprimer définitivement ce jeu de la base ?",
+    "deleteStarted": "Suppression du jeu en cours…",
+    "deleteDone": "Jeu supprimé avec succès",
+    "deleteFailed": "Échec de la suppression du jeu",
     "importStarted": "Import du jeu IGDB #{id} lancé…",
     "importDone": "Jeu IGDB #{id} importé avec succès",
     "importFailed": "Échec de l'import du jeu IGDB #{id}",
@@ -3002,7 +3207,8 @@
       "background": "Fond",
       "playtime": "Temps de jeu",
       "metascore": "Metascore",
-      "releaseDate": "Date de sortie"
+      "releaseDate": "Date de sortie",
+      "popularity": "Popularité IGDB"
     },
     "gamesCount": "{count, plural, =0 {Aucun jeu} one {1 jeu} other {# jeux}} sans {field}",
     "batchSize": "Quantité",
@@ -3114,7 +3320,16 @@
     "markAllAsRead": "Tout marquer comme lu",
     "typePostComment": "a commenté votre post",
     "typeDiscussionMessage": "vous a envoyé un message",
-    "dismiss": "Fermer"
+    "typePostCreated": "a publié un nouveau post",
+    "typePostMention": "vous a mentionné dans un post",
+    "dismiss": "Fermer",
+    "typeCoachingRequested": "vous a demandé une session de coaching",
+    "typeCoachingConfirmed": "a accepté votre session de coaching",
+    "typeCoachingDeclined": "a refusé votre session de coaching",
+    "typeCoachingStarted": "a démarré votre session de coaching",
+    "typeCoachingCompleted": "a terminé votre session de coaching",
+    "typeCoachingCancelled": "a annulé une session de coaching",
+    "typeCoachingPaid": "a payé votre session de coaching"
   },
   "postComments": {
     "title": "Commentaires",
@@ -3123,5 +3338,238 @@
     "submit": "Envoyer",
     "deleteLabel": "Supprimer le commentaire",
     "charCount": "{remaining} caractères restants"
+  },
+  "posts": {
+    "tags": {
+      "metaTitle": "Posts avec le tag #{tag}",
+      "metaDescription": "Tous les posts de la communauté avec le tag #{tag}",
+      "count": "{count, plural, =0 {Aucun post} one {1 post} other {# posts}}",
+      "empty": "Aucun post avec ce tag",
+      "back": "Retour"
+    }
+  },
+  "trending": {
+    "title": "Tendances",
+    "subtitle": "Découvrez les jeux les plus populaires du moment",
+    "count": "{count} jeux",
+    "sections": {
+      "mostViewed": "Les plus vus",
+      "mostPopular": "Les plus populaires",
+      "bestRated": "Les mieux notés",
+      "recentlyAdded": "Ajoutés récemment"
+    }
+  },
+  "upcoming": {
+    "title": "Prochaines sorties",
+    "subtitle": "Les jeux qui arrivent bientôt",
+    "count": "{count} jeux à venir",
+    "allMonths": "Tous",
+    "empty": "Aucune sortie prévue pour cette période."
+  },
+  "homeDashboard": {
+    "title": "Bienvenue",
+    "subtitle": "Votre tableau de bord gaming",
+    "trending": "Jeux tendances",
+    "seeAllTrending": "Voir toutes les tendances",
+    "upcoming": "Sorties du mois",
+    "seeAllUpcoming": "Toutes les prochaines sorties",
+    "noUpcoming": "Aucune sortie prévue ce mois-ci."
+  },
+  "coaching": {
+    "settings": {
+      "title": "Espace Coach",
+      "subtitle": "Gérez votre profil coach, vos jeux et vos tarifs",
+      "tabs": {
+        "profile": "Profil",
+        "games": "Jeux",
+        "pricing": "Tarifs",
+        "stripe": "Paiement"
+      },
+      "profile": {
+        "active": "Profil coach actif",
+        "inactive": "Profil coach inactif",
+        "verified": "Vérifié",
+        "activate": "Activer",
+        "deactivate": "Désactiver",
+        "bioLabel": "Bio",
+        "bioPlaceholder": "Décrivez-vous en tant que coach...",
+        "experienceLabel": "Expérience",
+        "experiencePlaceholder": "Votre expérience de coaching...",
+        "languagesLabel": "Langues parlées",
+        "languagesPlaceholder": "Français, Anglais",
+        "languagesHint": "Séparez les langues par des virgules",
+        "saving": "Enregistrement...",
+        "update": "Mettre à jour",
+        "create": "Devenir coach"
+      },
+      "games": {
+        "description": "Sélectionnez les jeux sur lesquels vous proposez du coaching.",
+        "addGame": "Ajouter un jeu",
+        "searchPlaceholder": "Rechercher un jeu...",
+        "empty": "Aucun jeu ajouté. Ajoutez vos premiers jeux coachés.",
+        "specialties": {
+          "beginner": "Débutant",
+          "casual": "Casual",
+          "advanced": "Avancé",
+          "competitive": "Compétitif",
+          "solo": "Solo",
+          "teamplay": "Jeu en équipe",
+          "ranked": "Ranked",
+          "battle_royale": "Battle Royale",
+          "mmo_raid": "MMO / Raid",
+          "mechanics_aim": "Mécanique / Aim",
+          "game_sense": "Game sense",
+          "strategy": "Stratégie",
+          "speedrun": "Speedrun",
+          "progression_build": "Progression / Build"
+        },
+        "categories": {
+          "level": "Niveau",
+          "mode": "Mode",
+          "style": "Style"
+        }
+      },
+      "pricing": {
+        "description": "Définissez vos tarifs par jeu et par formule.",
+        "addPricing": "Ajouter un tarif",
+        "noGamesYet": "Ajoutez d'abord des jeux dans l'onglet Jeux.",
+        "selectGame": "Sélectionner un jeu",
+        "pricePlaceholder": "Prix (€)",
+        "durationPlaceholder": "Durée (min)",
+        "save": "Enregistrer",
+        "empty": "Aucun tarif défini.",
+        "types": {
+          "single": "Session unique",
+          "pack_5": "Pack 5 sessions",
+          "pack_10": "Pack 10 sessions",
+          "monthly": "Abonnement mensuel"
+        },
+        "selectType": "Sélectionner une formule"
+      },
+      "stripe": {
+        "title": "Stripe Connect",
+        "notConnected": "Connectez votre compte Stripe pour recevoir les paiements de vos sessions de coaching.",
+        "connect": "Connecter Stripe",
+        "connecting": "Connexion...",
+        "pending": "Onboarding en cours — complétez votre profil Stripe",
+        "resume": "Reprendre l'onboarding",
+        "active": "Compte Stripe actif",
+        "dashboard": "Dashboard Stripe",
+        "checking": "Vérification du statut Stripe...",
+        "paymentHistory": "Historique des paiements"
+      },
+      "payments": {
+        "totalEarnings": "Revenus totaux",
+        "paidSessions": "sessions payées",
+        "requestPayout": "Transférer vers mon compte",
+        "payoutLoading": "Transfert en cours...",
+        "payoutSuccess": "Transfert de {amount} {currency} initié !",
+        "payoutError": "Erreur lors du transfert.",
+        "noFunds": "Aucun fonds disponible.",
+        "noPayments": "Aucun paiement pour le moment.",
+        "date": "Date",
+        "student": "Élève",
+        "amount": "Montant",
+        "fee": "Commission",
+        "net": "Net"
+      }
+    },
+    "publicProfile": {
+      "title": "Coach",
+      "verified": "Vérifié",
+      "sessions": "sessions",
+      "from": "À partir de",
+      "bio": "À propos",
+      "experience": "Expérience",
+      "gamesCoached": "Jeux coachés",
+      "noGames": "Aucun jeu coaché pour le moment.",
+      "notFound": "Ce coach n'existe pas ou n'est plus actif.",
+      "types": {
+        "single": "Session unique",
+        "pack_5": "Pack 5 sessions",
+        "pack_10": "Pack 10 sessions",
+        "monthly": "Mensuel"
+      },
+      "languages": "Langues parlées",
+      "reviews": "Avis",
+      "book": "Réserver un créneau"
+    },
+    "hub": {
+      "title": "Coaching",
+      "subtitle": "Trouvez le coach idéal pour progresser dans vos jeux préférés",
+      "searchPlaceholder": "Rechercher un coach...",
+      "sortRating": "Meilleure note",
+      "sortSessions": "Plus de sessions",
+      "sortPrice": "Prix croissant",
+      "sessions": "sessions",
+      "empty": "Aucun coach trouvé.",
+      "featured": {
+        "topRated": "Les mieux notés",
+        "newest": "Nouveaux coachs",
+        "popular": "Les plus populaires"
+      }
+    },
+    "sessions": {
+      "title": "Mes sessions",
+      "role": {
+        "student": "En tant qu'élève",
+        "coach": "En tant que coach"
+      },
+      "empty": "Aucune session pour le moment.",
+      "with": "Coach",
+      "student": "Élève",
+      "status": {
+        "requested": "En attente",
+        "confirmed": "Confirmée",
+        "in_progress": "En cours",
+        "completed": "Terminée",
+        "cancelled": "Annulée",
+        "disputed": "Litige"
+      },
+      "actions": {
+        "confirm": "Accepter",
+        "decline": "Refuser",
+        "start": "Démarrer",
+        "complete": "Terminer",
+        "cancel": "Annuler",
+        "chat": "Discussion",
+        "pay": "Payer"
+      },
+      "awaitingPayment": "En attente de paiement",
+      "paymentSuccess": "Paiement effectué avec succès !",
+      "paymentError": "Erreur lors du paiement.",
+      "paymentCancelled": "Paiement annulé.",
+      "paymentDone": "Paiement effectué"
+    },
+    "reviews": {
+      "empty": "Aucun avis pour le moment.",
+      "coachResponse": "Réponse du coach",
+      "title": "Avis",
+      "rateSession": "Noter cette session",
+      "ratingLabel": "Note",
+      "commentLabel": "Commentaire (optionnel)",
+      "commentPlaceholder": "Partagez votre expérience...",
+      "submit": "Envoyer l'avis",
+      "sending": "Envoi...",
+      "success": "Avis envoyé !",
+      "respondPlaceholder": "Répondre à cet avis...",
+      "respond": "Répondre"
+    },
+    "recommended": {
+      "title": "Coachs recommandés",
+      "subtitle": "Basés sur les jeux de votre bibliothèque",
+      "empty": "Ajoutez des jeux à votre bibliothèque pour voir des recommandations."
+    },
+    "booking": {
+      "title": "Réserver une session",
+      "selectFormula": "Choisir une formule",
+      "date": "Date",
+      "time": "Heure",
+      "bookNow": "Réserver",
+      "booking": "Réservation...",
+      "success": "Demande envoyée ! Le coach va confirmer votre créneau.",
+      "loginRequired": "Connectez-vous pour réserver une session.",
+      "noSessions": "Aucune session disponible pour ce jeu."
+    }
   }
 }

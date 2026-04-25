@@ -38,6 +38,7 @@
 | [friends-page.md](features/players/friends-page.md)             | Page de gestion des amis                    |
 | [linked-platforms.md](features/players/linked-platforms.md)     | Plateformes liées                           |
 | [notifications.md](features/players/notifications.md)           | Notifications & commentaires de posts       |
+| [tag-navigation.md](features/players/tag-navigation.md)         | Navigation par tag des posts                |
 
 ## 🧙 Features — Personnages
 

@@ -2,13 +2,13 @@
 
 import { useState, useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useAdminGenres } from "@/hooks/useAdminGenres";
 import dynamic from "next/dynamic";
 import type { AdminGenre } from "@/types/admin-genres";
-import { AdminGenresTable } from "@/components/admin/genres/AdminGenresTable";
-const DeleteGenreDialog = dynamic(
-  () => import("@/components/admin/genres/DeleteGenreDialog").then((m) => m.DeleteGenreDialog),
+import { AdminDataTable, type AdminColumnDef } from "@/components/admin/shared/AdminDataTable";
+const AdminDeleteDialog = dynamic(
+  () => import("@/components/admin/shared/AdminDeleteDialog").then((m) => m.AdminDeleteDialog),
   { ssr: false }
 );
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,7 @@ import { Icon } from "@iconify/react";
 
 export default function AdminGenresPage() {
   const t = useTranslations("admin.genres");
+  const locale = useLocale();
   const router = useRouter();
   const { genres, pagination, loading, fetchGenres, deleteGenre, checkGenreUsage } =
     useAdminGenres();
@@ -70,8 +71,8 @@ export default function AdminGenresPage() {
   );
 
   const handleEdit = useCallback(
-    (slug: string) => {
-      router.push(`/admin/genres/${slug}/edit`);
+    (genre: AdminGenre) => {
+      router.push(`/admin/genres/${genre.slug}/edit`);
     },
     [router]
   );
@@ -110,6 +111,12 @@ export default function AdminGenresPage() {
     }
   }, [isDeleting]);
 
+  const genreColumns: AdminColumnDef<AdminGenre>[] = [
+    { key: "slug", labelKey: "columns.slug", sortable: true, className: "px-4 py-3 font-mono text-sm text-gray-900 dark:text-white" },
+    { key: "name", labelKey: "columns.name", sortable: true, render: (g) => { const tr = g.translations.find((t) => t.language_code === locale); return tr?.name ?? g.translations[0]?.name ?? g.slug; }, className: "px-4 py-3 font-medium text-gray-900 dark:text-white" },
+    { key: "gameCount", labelKey: "columns.gameCount", render: (g) => t("gameCount", { count: g.gameCount }), className: "px-4 py-3 text-gray-500 dark:text-gray-400" },
+  ];
+
   return (
     <div className="space-y-8 p-4 lg:p-6">
       <section>
@@ -123,8 +130,9 @@ export default function AdminGenresPage() {
           </Button>
         </div>
 
-        <AdminGenresTable
-          genres={genres}
+        <AdminDataTable<AdminGenre>
+          items={genres}
+          columns={genreColumns}
           pagination={pagination}
           onPageChange={handlePageChange}
           onSearch={handleSearch}
@@ -134,11 +142,15 @@ export default function AdminGenresPage() {
           isLoading={loading}
           currentSort={currentSort}
           currentSearch={currentSearch}
+          translationNamespace="admin.genres"
+          totalCountKey="totalGenres"
+          emptyKey="noGenres"
         />
 
-        <DeleteGenreDialog
-          genre={genreToDelete}
+        <AdminDeleteDialog
           isOpen={genreToDelete !== null}
+          translationNamespace="admin.genres.deleteDialog"
+          warningParams={{ name: genreToDelete?.slug ?? "" }}
           onClose={handleDeleteClose}
           onConfirm={handleDeleteConfirm}
           isDeleting={isDeleting}

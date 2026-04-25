@@ -7,10 +7,9 @@ import { useAdminAchievements } from "@/hooks/useAdminAchievements";
 import dynamic from "next/dynamic";
 import type { AdminAchievement } from "@/types/admin-achievements";
 import { AchievementsTable } from "@/components/admin/achievements/AchievementsTable";
-const DeleteAchievementDialog = dynamic(
+const AdminDeleteDialog = dynamic(
   () =>
-    import("@/components/admin/achievements/DeleteAchievementDialog").then(
-      (m) => m.DeleteAchievementDialog
+    import("@/components/admin/shared/AdminDeleteDialog").then((m) => m.AdminDeleteDialog
     ),
   { ssr: false }
 );
@@ -145,9 +144,12 @@ export default function AdminAchievementsPage() {
           currentSearch={currentSearch}
         />
 
-        <DeleteAchievementDialog
-          achievement={achievementToDelete}
+        <AdminDeleteDialog
           isOpen={achievementToDelete !== null}
+          translationNamespace="adminAchievements.deleteDialog"
+          warningParams={{ name: achievementToDelete?.key ?? "" }}
+          forceConfirmKey="forceConfirm"
+          forceWarningKey="forceWarning"
           onClose={handleDeleteClose}
           onConfirm={handleDeleteConfirm}
           isDeleting={isDeleting}

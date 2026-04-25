@@ -1,9 +1,5 @@
 // Types pour les composants UI de base (sans props)
 
-export interface SpinnerConfig {
-  size?: "sm" | "md" | "lg";
-}
-
 export interface LoadingSpinnerConfig {
   size?: "sm" | "md" | "lg" | "xl";
   text?: string;

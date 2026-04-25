@@ -29,3 +29,18 @@ export interface CreatePostPayload {
   imageUrl?: string;
   tags?: string[];
 }
+
+export interface PostWithAuthor extends Post {
+  authorName: string | null;
+  authorAvatar: string | null;
+}
+
+export interface TagPostsResponse {
+  posts: PostWithAuthor[];
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalCount: number;
+    hasNextPage: boolean;
+  };
+}

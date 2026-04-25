@@ -62,25 +62,25 @@ export function SocialStats({ social, locale }: SocialStatsProps) {
       icon: <Icon icon="lucide:users" className="h-5 w-5" />,
       label: t("social.friends"),
       value: formatLocalizedNumber(social.friendsCount, locale),
-      iconColorClass: "bg-neon-violet/20 text-neon-violet",
+      iconColorClass: "bg-neon-primary/20 text-neon-primary",
     },
     {
       icon: <Icon icon="lucide:message-circle" className="h-5 w-5" />,
       label: t("social.comments"),
       value: formatLocalizedNumber(social.commentsCount, locale),
-      iconColorClass: "bg-neon-cyan/20 text-neon-cyan",
+      iconColorClass: "bg-neon-secondary/20 text-neon-secondary",
     },
     {
       icon: <Icon icon="lucide:heart" className="h-5 w-5" />,
       label: t("social.favorites"),
       value: formatLocalizedNumber(social.favoritesCount, locale),
-      iconColorClass: "bg-neon-violet/20 text-neon-violet",
+      iconColorClass: "bg-neon-primary/20 text-neon-primary",
     },
     {
       icon: <Icon icon="lucide:folder-open" className="h-5 w-5" />,
       label: t("social.collections"),
       value: formatLocalizedNumber(social.collectionsCount, locale),
-      iconColorClass: "bg-neon-cyan/20 text-neon-cyan",
+      iconColorClass: "bg-neon-secondary/20 text-neon-secondary",
     },
   ];
 

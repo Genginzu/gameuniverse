@@ -11,13 +11,18 @@ interface MetascoreState {
   error: string | null;
 }
 
+interface MetascoreResult {
+  success: boolean;
+  igdbId: number;
+  name: string;
+  score: number | null;
+  source: string;
+  error?: string;
+}
+
 interface MetascoreResponse {
-  success?: boolean;
+  results?: MetascoreResult[];
   done?: boolean;
-  igdbId?: number;
-  name?: string;
-  score?: number | null;
-  source?: string;
   remaining?: number;
   error?: string;
 }
@@ -60,18 +65,22 @@ export function useGlobalMetascoreSync(onGameSynced?: () => void) {
           return;
         }
 
-        if (res.success) {
-          synced++;
-          if (synced % 50 === 0) onGameSynced?.();
-        } else failed++;
+        const results = res.results ?? [];
+        for (const r of results) {
+          if (r.success) synced++;
+          else failed++;
+        }
+
+        const last = results[results.length - 1];
+        if (synced % 50 < results.length) onGameSynced?.();
 
         setState((prev) => ({
           ...prev,
           totalSynced: synced,
           totalFailed: failed,
           remaining: res.remaining ?? 0,
-          currentGame: res.name ?? null,
-          lastSource: res.source ?? null,
+          currentGame: last?.name ?? null,
+          lastSource: last?.source ?? null,
         }));
       } catch (err) {
         setState((prev) => ({

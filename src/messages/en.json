@@ -50,7 +50,11 @@
     "lightMode": "Light mode",
     "darkMode": "Dark mode",
     "explore": "Explore",
-    "discussions": "Discussions"
+    "discussions": "Discussions",
+    "coaching": "Coaching",
+    "coachSettings": "Coach Settings",
+    "coachingHub": "Find a Coach",
+    "coachingSessions": "My Sessions"
   },
   "landing": {
     "title": "Your",
@@ -559,6 +563,7 @@
     "tabs": {
       "posts": "Posts",
       "library": "Library",
+      "feed": "Feed",
       "activity": "Activity",
       "friends": "Friends",
       "reviews": "Reviews",
@@ -566,7 +571,12 @@
       "achievements": "Achievements",
       "stats": "Stats",
       "recommendations": "Recommendations",
-      "settings": "Settings"
+      "settings": "Settings",
+      "goals": "Goals"
+    },
+    "feed": {
+      "feedLabel": "Subscribed feed",
+      "empty": "Subscribe to players to see their activity here."
     },
     "library": {
       "empty": "Empty library",
@@ -708,6 +718,10 @@
         "request_accepted": "Became friends with <player>{player}</player>",
         "friend_removed": "Removed <player>{player}</player> from friends"
       },
+      "sessionDescription": "Played <game>{game}</game> for <duration>{duration}</duration>",
+      "durationHm": "{h}h {m}min",
+      "durationH": "{h}h",
+      "durationM": "{m}min",
       "playtimeHastily": "Main Story",
       "playtimeNormally": "Normal",
       "playtimeCompletely": "Completionist",
@@ -724,7 +738,8 @@
         "playtime": "Playtime",
         "favorite": "Favorite",
         "collection": "Collection",
-        "friendship": "Friendship"
+        "friendship": "Friendship",
+        "session": "Gaming session"
       },
       "filters": {
         "label": "Filter by activity type",
@@ -735,8 +750,22 @@
         "playtime": "Playtime",
         "favorite": "Favorites",
         "collection": "Collections",
-        "friendship": "Friends"
+        "friendship": "Friends",
+        "session": "Sessions"
       }
+    },
+    "sessions": {
+      "newSession": "New session",
+      "gameLabel": "Game",
+      "gamePlaceholder": "Search for a game…",
+      "clearGame": "Change game",
+      "dateLabel": "Date",
+      "hoursLabel": "Hours",
+      "minutesLabel": "Minutes",
+      "submit": "Log session",
+      "successCreate": "Session logged",
+      "errorCreate": "Failed to log the session",
+      "noResults": "No games found"
     },
     "reviews": {
       "card": {
@@ -836,7 +865,15 @@
     "clearFilters": "Clear filters",
     "clearAll": "Clear all",
     "genres": "Genres",
-    "available": "{count} available"
+    "available": "{count} available",
+    "sort": {
+      "label": "Sort by",
+      "recommended": "Recommended",
+      "popularity": "Trending",
+      "activity": "Player activity",
+      "rating": "Top rated",
+      "recent": "Recent releases"
+    }
   },
   "search": {
     "placeholder": "Search for a game...",
@@ -891,7 +928,9 @@
       "languages": "Languages",
       "music": "Music",
       "priceHistory": "Prices",
-      "dlcExtensions": "Extensions & DLC"
+      "dlcExtensions": "Extensions & DLC",
+      "scrollLeft": "Scroll tabs left",
+      "scrollRight": "Scroll tabs right"
     },
     "media": {
       "screenshots": "Screenshots",
@@ -1232,7 +1271,6 @@
       "playersCategory": "Players",
       "achievements": "Achievements",
       "playerAchievements": "Player Achievements",
-      "igdbCategory": "IGDB",
       "webhooks": "Webhooks",
       "bulkImport": "Bulk Import",
       "bulkImportCharacters": "Bulk Import",
@@ -1339,6 +1377,7 @@
         "playtimeCompletely": "Completionist",
         "playtimePreview": "Playtime preview",
         "playtimeNoData": "No playtime data entered",
+        "popularity": "IGDB Popularity",
         "colors": "Page colors",
         "backgroundColor": "Background color",
         "accentColor": "Accent color",
@@ -2366,6 +2405,7 @@
       "downloadDescription": "Fetches all games from IGDB in batches of 500 and automatically matches them to existing games in your database.",
       "startDownload": "Start Download",
       "downloading": "Downloading...",
+      "stop": "Stop",
       "progress": "{inserted} games inserted (last ID: {lastId})",
       "downloadComplete": "Download complete: {count} games fetched",
       "searchPlaceholder": "Search a game...",
@@ -2381,7 +2421,14 @@
       "tabs": {
         "download": "Download",
         "sync": "Synchronization",
-        "enrich": "Enrichment",
+        "screenshots": "Screenshots",
+        "artworks": "Artworks",
+        "videos": "Videos",
+        "classifications": "Classifications",
+        "languages": "Languages",
+        "versions": "Versions",
+        "playtime": "Playtime",
+        "popularity": "Popularity",
         "colors": "Colors",
         "metascore": "Metascore"
       },
@@ -2400,20 +2447,109 @@
         "infoRetry": "Failed games are not marked as synced and will be retried on the next run.",
         "allSynced": "All games have been synced."
       },
-      "enrichTab": {
-        "title": "Game Enrichment",
-        "description": "Adds heavy data: colors, screenshots, artworks, videos, age ratings, versions, languages, playtime, similar games. Processes 3 games in parallel.",
+      "screenshotsTab": {
+        "title": "Screenshots",
+        "description": "Syncs screenshots from IGDB in batches of 200.",
         "startSync": "Start",
-        "syncing": "Enriching...",
+        "syncing": "Syncing...",
         "stop": "Stop",
         "currentGame": "Current: {name}",
-        "synced": "{count} enriched",
+        "synced": "{count} synced",
         "failed": "{count} failed",
         "remaining": "{count} remaining",
-        "complete": "Complete: {count} games enriched",
-        "info": "Enriches already created games with full IGDB data: color extraction from cover, screenshots, artworks, videos, age ratings, versions/editions, supported languages, playtime and similar games.",
         "searchPlaceholder": "Search a game...",
-        "allDone": "All games have been enriched."
+        "allDone": "All screenshots have been synced."
+      },
+      "artworksTab": {
+        "title": "Artworks",
+        "description": "Syncs artworks from IGDB in batches of 200.",
+        "startSync": "Start",
+        "syncing": "Syncing...",
+        "stop": "Stop",
+        "currentGame": "Current: {name}",
+        "synced": "{count} synced",
+        "failed": "{count} failed",
+        "remaining": "{count} remaining",
+        "searchPlaceholder": "Search a game...",
+        "allDone": "All artworks have been synced."
+      },
+      "videosTab": {
+        "title": "Videos",
+        "description": "Syncs videos from IGDB in batches of 200.",
+        "startSync": "Start",
+        "syncing": "Syncing...",
+        "stop": "Stop",
+        "currentGame": "Current: {name}",
+        "synced": "{count} synced",
+        "failed": "{count} failed",
+        "remaining": "{count} remaining",
+        "searchPlaceholder": "Search a game...",
+        "allDone": "All videos have been synced."
+      },
+      "classificationsTab": {
+        "title": "Age Classifications",
+        "description": "Syncs age ratings (PEGI, ESRB, etc.) from IGDB in batches of 200.",
+        "startSync": "Start",
+        "syncing": "Syncing...",
+        "stop": "Stop",
+        "currentGame": "Current: {name}",
+        "synced": "{count} synced",
+        "failed": "{count} failed",
+        "remaining": "{count} remaining",
+        "searchPlaceholder": "Search a game...",
+        "allDone": "All classifications have been synced."
+      },
+      "languagesTab": {
+        "title": "Languages",
+        "description": "Syncs supported languages from IGDB in batches of 200.",
+        "startSync": "Start",
+        "syncing": "Syncing...",
+        "stop": "Stop",
+        "currentGame": "Current: {name}",
+        "synced": "{count} synced",
+        "failed": "{count} failed",
+        "remaining": "{count} remaining",
+        "searchPlaceholder": "Search a game...",
+        "allDone": "All languages have been synced."
+      },
+      "versionsTab": {
+        "title": "Versions / Editions",
+        "description": "Syncs game versions and editions from IGDB in batches of 200.",
+        "startSync": "Start",
+        "syncing": "Syncing...",
+        "stop": "Stop",
+        "currentGame": "Current: {name}",
+        "synced": "{count} synced",
+        "failed": "{count} failed",
+        "remaining": "{count} remaining",
+        "searchPlaceholder": "Search a game...",
+        "allDone": "All versions have been synced."
+      },
+      "playtimeTab": {
+        "title": "Playtime",
+        "description": "Syncs playtime data from IGDB in batches of 200.",
+        "startSync": "Start",
+        "syncing": "Syncing...",
+        "stop": "Stop",
+        "currentGame": "Current: {name}",
+        "synced": "{count} synced",
+        "failed": "{count} failed",
+        "remaining": "{count} remaining",
+        "searchPlaceholder": "Search a game...",
+        "allDone": "All playtime data has been synced."
+      },
+      "popularityTab": {
+        "title": "Popularity",
+        "description": "Syncs IGDB popularity data (visits, want to play, playing) in batches of 200.",
+        "startSync": "Start",
+        "syncing": "Syncing...",
+        "stop": "Stop",
+        "currentGame": "Current: {name}",
+        "synced": "{count} synced",
+        "failed": "{count} failed",
+        "remaining": "{count} remaining",
+        "searchPlaceholder": "Search a game...",
+        "allDone": "All popularity data has been synced."
       },
       "colorsTab": {
         "title": "Color Extraction",
@@ -2443,6 +2579,55 @@
         "info": "Tries Metacritic first (scraping), then falls back to IGDB aggregated rating. Games without a score receive -1. One game at a time due to Metacritic rate limiting (~2.5s per game).",
         "searchPlaceholder": "Search a game...",
         "allDone": "All metascores have been synced."
+      }
+    },
+    "coaching": {
+      "title": "Coach Management",
+      "coaches": "coaches",
+      "reviews": "reviews",
+      "sessions": "sessions",
+      "verified": "Verified",
+      "suspended": "Suspended",
+      "filter": {
+        "all": "All",
+        "active": "Active",
+        "suspended": "Suspended"
+      },
+      "actions": {
+        "verify": "Verify",
+        "unverify": "Remove verification",
+        "suspend": "Suspend",
+        "unsuspend": "Unsuspend"
+      }
+    },
+    "disputes": {
+      "title": "Reports & Disputes",
+      "empty": "No reports.",
+      "adminNotes": "Admin notes",
+      "filter": {
+        "open": "Open",
+        "investigating": "Investigating",
+        "resolved": "Resolved",
+        "dismissed": "Dismissed",
+        "all": "All"
+      },
+      "status": {
+        "open": "Open",
+        "investigating": "Investigating",
+        "resolved": "Resolved",
+        "dismissed": "Dismissed"
+      },
+      "reason": {
+        "no_show": "No show",
+        "inappropriate": "Inappropriate behavior",
+        "fraud": "Fraud",
+        "quality": "Poor quality",
+        "other": "Other"
+      },
+      "actions": {
+        "investigate": "Investigate",
+        "resolve": "Resolve",
+        "dismiss": "Dismiss"
       }
     }
   },
@@ -2584,6 +2769,11 @@
       "loadingError": "An error occurred while loading the friends page."
     }
   },
+  "subscriptions": {
+    "subscribe": "Subscribe",
+    "unsubscribe": "Unsubscribe",
+    "confirmUnsubscribe": "Are you sure you want to unsubscribe from this player?"
+  },
   "playerStats": {
     "dashboard": {
       "title": "Detailed Statistics",
@@ -2678,7 +2868,16 @@
       "averageDuration": "Average Duration",
       "longestSession": "Longest Session",
       "minutes": "min",
-      "sessionsCount": "sessions"
+      "sessionsCount": "sessions",
+      "days": {
+        "monday": "Mon",
+        "tuesday": "Tue",
+        "wednesday": "Wed",
+        "thursday": "Thu",
+        "friday": "Fri",
+        "saturday": "Sat",
+        "sunday": "Sun"
+      }
     },
     "goals": {
       "title": "Personal Goals",
@@ -2932,6 +3131,12 @@
     "viewDiff": "View diff",
     "importGame": "Import",
     "importing": "Importing…",
+    "deleteGame": "Delete",
+    "deleting": "Deleting…",
+    "deleteConfirm": "Permanently delete this game from the database?",
+    "deleteStarted": "Deleting game…",
+    "deleteDone": "Game deleted successfully",
+    "deleteFailed": "Failed to delete game",
     "importStarted": "Importing IGDB game #{id}…",
     "importDone": "IGDB game #{id} imported successfully",
     "importFailed": "Failed to import IGDB game #{id}",
@@ -2999,7 +3204,8 @@
       "background": "Background",
       "playtime": "Playtime",
       "metascore": "Metascore",
-      "releaseDate": "Release date"
+      "releaseDate": "Release date",
+      "popularity": "IGDB Popularity"
     },
     "gamesCount": "{count, plural, =0 {No games} one {1 game} other {# games}} missing {field}",
     "batchSize": "Batch size",
@@ -3111,7 +3317,16 @@
     "markAllAsRead": "Mark all as read",
     "typePostComment": "commented on your post",
     "typeDiscussionMessage": "sent you a message",
-    "dismiss": "Dismiss"
+    "typePostCreated": "published a new post",
+    "typePostMention": "mentioned you in a post",
+    "dismiss": "Dismiss",
+    "typeCoachingRequested": "requested a coaching session",
+    "typeCoachingConfirmed": "accepted your coaching session",
+    "typeCoachingDeclined": "declined your coaching session",
+    "typeCoachingStarted": "started your coaching session",
+    "typeCoachingCompleted": "completed your coaching session",
+    "typeCoachingCancelled": "cancelled a coaching session",
+    "typeCoachingPaid": "paid for your coaching session"
   },
   "postComments": {
     "title": "Comments",
@@ -3120,5 +3335,238 @@
     "submit": "Submit",
     "deleteLabel": "Delete comment",
     "charCount": "{remaining} characters left"
+  },
+  "posts": {
+    "tags": {
+      "metaTitle": "Posts tagged #{tag}",
+      "metaDescription": "All community posts tagged #{tag}",
+      "count": "{count, plural, =0 {No posts} one {1 post} other {# posts}}",
+      "empty": "No posts with this tag",
+      "back": "Back"
+    }
+  },
+  "trending": {
+    "title": "Trending",
+    "subtitle": "Discover the most popular games right now",
+    "count": "{count} games",
+    "sections": {
+      "mostViewed": "Most Viewed",
+      "mostPopular": "Most Popular",
+      "bestRated": "Best Rated",
+      "recentlyAdded": "Recently Added"
+    }
+  },
+  "upcoming": {
+    "title": "Upcoming Releases",
+    "subtitle": "Games coming soon",
+    "count": "{count} upcoming games",
+    "allMonths": "All",
+    "empty": "No releases planned for this period."
+  },
+  "homeDashboard": {
+    "title": "Welcome",
+    "subtitle": "Your gaming dashboard",
+    "trending": "Trending Games",
+    "seeAllTrending": "See all trending",
+    "upcoming": "This Month Releases",
+    "seeAllUpcoming": "All upcoming releases",
+    "noUpcoming": "No releases planned this month."
+  },
+  "coaching": {
+    "settings": {
+      "title": "Coach Settings",
+      "subtitle": "Manage your coach profile, games and pricing",
+      "tabs": {
+        "profile": "Profile",
+        "games": "Games",
+        "pricing": "Pricing",
+        "stripe": "Payment"
+      },
+      "profile": {
+        "active": "Coach profile active",
+        "inactive": "Coach profile inactive",
+        "verified": "Verified",
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "bioLabel": "Bio",
+        "bioPlaceholder": "Describe yourself as a coach...",
+        "experienceLabel": "Experience",
+        "experiencePlaceholder": "Your coaching experience...",
+        "languagesLabel": "Languages spoken",
+        "languagesPlaceholder": "English, French",
+        "languagesHint": "Separate languages with commas",
+        "saving": "Saving...",
+        "update": "Update",
+        "create": "Become a coach"
+      },
+      "games": {
+        "description": "Select the games you offer coaching for.",
+        "addGame": "Add a game",
+        "searchPlaceholder": "Search for a game...",
+        "empty": "No games added yet. Add your first coached games.",
+        "specialties": {
+          "beginner": "Beginner",
+          "casual": "Casual",
+          "advanced": "Advanced",
+          "competitive": "Competitive",
+          "solo": "Solo",
+          "teamplay": "Teamplay",
+          "ranked": "Ranked",
+          "battle_royale": "Battle Royale",
+          "mmo_raid": "MMO / Raid",
+          "mechanics_aim": "Mechanics / Aim",
+          "game_sense": "Game Sense",
+          "strategy": "Strategy",
+          "speedrun": "Speedrun",
+          "progression_build": "Progression / Build"
+        },
+        "categories": {
+          "level": "Level",
+          "mode": "Mode",
+          "style": "Style"
+        }
+      },
+      "pricing": {
+        "description": "Set your pricing per game and session type.",
+        "addPricing": "Add pricing",
+        "noGamesYet": "Add games first in the Games tab.",
+        "selectGame": "Select a game",
+        "pricePlaceholder": "Price (€)",
+        "durationPlaceholder": "Duration (min)",
+        "save": "Save",
+        "empty": "No pricing defined yet.",
+        "types": {
+          "single": "Single session",
+          "pack_5": "5-session pack",
+          "pack_10": "10-session pack",
+          "monthly": "Monthly subscription"
+        },
+        "selectType": "Select a session type"
+      },
+      "stripe": {
+        "title": "Stripe Connect",
+        "notConnected": "Connect your Stripe account to receive payments for your coaching sessions.",
+        "connect": "Connect Stripe",
+        "connecting": "Connecting...",
+        "pending": "Onboarding in progress — complete your Stripe profile",
+        "resume": "Resume onboarding",
+        "active": "Stripe account active",
+        "dashboard": "Stripe Dashboard",
+        "checking": "Checking Stripe status...",
+        "paymentHistory": "Payment history"
+      },
+      "payments": {
+        "totalEarnings": "Total earnings",
+        "paidSessions": "paid sessions",
+        "requestPayout": "Transfer to my account",
+        "payoutLoading": "Transferring...",
+        "payoutSuccess": "Transfer of {amount} {currency} initiated!",
+        "payoutError": "Transfer error.",
+        "noFunds": "No funds available.",
+        "noPayments": "No payments yet.",
+        "date": "Date",
+        "student": "Student",
+        "amount": "Amount",
+        "fee": "Fee",
+        "net": "Net"
+      }
+    },
+    "publicProfile": {
+      "title": "Coach",
+      "verified": "Verified",
+      "sessions": "sessions",
+      "from": "From",
+      "bio": "About",
+      "experience": "Experience",
+      "gamesCoached": "Games Coached",
+      "noGames": "No games coached yet.",
+      "notFound": "This coach does not exist or is no longer active.",
+      "types": {
+        "single": "Single session",
+        "pack_5": "5-session pack",
+        "pack_10": "10-session pack",
+        "monthly": "Monthly"
+      },
+      "languages": "Languages spoken",
+      "reviews": "Reviews",
+      "book": "Book a session"
+    },
+    "hub": {
+      "title": "Coaching",
+      "subtitle": "Find the perfect coach to level up in your favorite games",
+      "searchPlaceholder": "Search for a coach...",
+      "sortRating": "Best rated",
+      "sortSessions": "Most sessions",
+      "sortPrice": "Lowest price",
+      "sessions": "sessions",
+      "empty": "No coaches found.",
+      "featured": {
+        "topRated": "Top Rated",
+        "newest": "New Coaches",
+        "popular": "Most Popular"
+      }
+    },
+    "sessions": {
+      "title": "My Sessions",
+      "role": {
+        "student": "As student",
+        "coach": "As coach"
+      },
+      "empty": "No sessions yet.",
+      "with": "Coach",
+      "student": "Student",
+      "status": {
+        "requested": "Pending",
+        "confirmed": "Confirmed",
+        "in_progress": "In Progress",
+        "completed": "Completed",
+        "cancelled": "Cancelled",
+        "disputed": "Disputed"
+      },
+      "actions": {
+        "confirm": "Accept",
+        "decline": "Decline",
+        "start": "Start",
+        "complete": "Complete",
+        "cancel": "Cancel",
+        "chat": "Chat",
+        "pay": "Pay"
+      },
+      "awaitingPayment": "Awaiting payment",
+      "paymentSuccess": "Payment successful!",
+      "paymentError": "Payment error.",
+      "paymentCancelled": "Payment cancelled.",
+      "paymentDone": "Payment done"
+    },
+    "reviews": {
+      "empty": "No reviews yet.",
+      "coachResponse": "Coach response",
+      "title": "Reviews",
+      "rateSession": "Rate this session",
+      "ratingLabel": "Rating",
+      "commentLabel": "Comment (optional)",
+      "commentPlaceholder": "Share your experience...",
+      "submit": "Submit review",
+      "sending": "Sending...",
+      "success": "Review submitted!",
+      "respondPlaceholder": "Respond to this review...",
+      "respond": "Respond"
+    },
+    "recommended": {
+      "title": "Recommended Coaches",
+      "subtitle": "Based on games in your library",
+      "empty": "Add games to your library to see recommendations."
+    },
+    "booking": {
+      "title": "Book a session",
+      "selectFormula": "Choose a plan",
+      "date": "Date",
+      "time": "Time",
+      "bookNow": "Book now",
+      "booking": "Booking...",
+      "success": "Request sent! The coach will confirm your slot.",
+      "loginRequired": "Sign in to book a session.",
+      "noSessions": "No sessions available for this game."
+    }
   }
 }

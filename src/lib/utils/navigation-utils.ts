@@ -1,6 +1,5 @@
 
 
-
 export interface NavLink {
   href: string;
   icon: string;
@@ -15,12 +14,22 @@ export const NAV_LINKS: NavLink[] = [
   { href: "/discussions", icon: "fa:comments", labelKey: "discussions" },
 ];
 
+/** Coaching navigation links (authenticated only). */
+export const COACHING_LINKS: NavLink[] = [
+  { href: "/coaching", icon: "fa:users", labelKey: "coachingHub" },
+  { href: "/coaching/sessions", icon: "fa:calendar", labelKey: "coachingSessions" },
+  { href: "/coaching/settings", icon: "fa:graduation-cap", labelKey: "coachSettings" },
+];
+
 /** Public navigation links visible to all users. */
 export const PUBLIC_LINKS: NavLink[] = [
   { href: "/games", icon: "fa:dice", labelKey: "games" },
   { href: "/characters", icon: "fa:mask", labelKey: "characters" },
   { href: "/players", icon: "fa:user-friends", labelKey: "players" },
 ];
+
+/** Paths that should only highlight on exact match, not on sub-routes */
+const EXACT_MATCH_PATHS = new Set(["/coaching"]);
 
 /**
  * Determines if a navigation link is active based on the current pathname.
@@ -44,5 +53,7 @@ export function isActive(pathname: string, linkPath: string, currentUserId?: str
     }
   }
 
-  return normalizedPathname === linkPath || normalizedPathname.startsWith(linkPath + "/");
+  if (normalizedPathname === linkPath) return true;
+  if (EXACT_MATCH_PATHS.has(linkPath)) return false;
+  return normalizedPathname.startsWith(linkPath + "/");
 }

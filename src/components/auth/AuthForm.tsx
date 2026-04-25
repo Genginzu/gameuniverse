@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { useTranslations, useLocale } from "next-intl";
@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Spinner } from "@/components/ui/spinner";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useAuth } from "@/hooks/useAuth";
 import { AuthMode } from "@/types/auth";
 import { Icon } from "@iconify/react";
@@ -256,7 +256,7 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
             className="h-12 w-full rounded-xl border-2 border-transparent bg-linear-to-br from-blue-500 via-purple-600 to-purple-700 font-semibold text-white shadow-lg transition-all duration-200 hover:border-purple-500 hover:from-white hover:via-white hover:to-white hover:text-purple-700 hover:shadow-xl"
             disabled={!isFormValid() || isSubmitting}
           >
-            {isSubmitting && <Spinner size="sm" className="mr-2" />}
+            {isSubmitting && <LoadingSpinner size="sm" className="mr-2" />}
             {isSubmitting
               ? t("form.submitting")
               : mode === "signin"

@@ -5,15 +5,22 @@ import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 
 export type ProfileTab =
+  | "feed"
   | "activity"
   | "library"
   | "friends"
   | "reviews"
   | "collections"
   | "achievements"
+  | "goals"
   | "stats"
   | "recommendations"
   | "settings";
+
+/** Returns the default tab displayed when the profile page mounts. */
+export function getDefaultTab(isOwner: boolean): ProfileTab {
+  return isOwner ? "feed" : "activity";
+}
 
 interface PlayerProfileTabsProps {
   activeTab: ProfileTab;
@@ -26,12 +33,14 @@ const TAB_DEFINITIONS: {
   icon: string;
   ownerOnly?: boolean;
 }[] = [
+  { id: "feed", icon: "lucide:newspaper", ownerOnly: true },
   { id: "activity", icon: "lucide:smile" },
   { id: "library", icon: "lucide:gamepad-2" },
   { id: "friends", icon: "lucide:users" },
   { id: "reviews", icon: "lucide:book-open" },
   { id: "collections", icon: "lucide:folder-open" },
   { id: "achievements", icon: "lucide:trophy" },
+  { id: "goals", icon: "lucide:target", ownerOnly: true },
   { id: "stats", icon: "lucide:bar-chart-3" },
   { id: "recommendations", icon: "lucide:globe", ownerOnly: true },
   { id: "settings", icon: "lucide:settings", ownerOnly: true },
@@ -84,7 +93,7 @@ export function PlayerProfileTabs({ activeTab, onTabChange, isOwner }: PlayerPro
               onMouseLeave={() => setTooltip(null)}
               className={`relative flex shrink-0 cursor-pointer items-center justify-center px-5 py-3 transition-colors ${
                 isActive
-                  ? "text-cyan-600 dark:text-cyan-400"
+                  ? "text-palette-secondary-600 dark:text-palette-secondary-400"
                   : "text-gray-400 hover:text-gray-700 dark:text-slate-400 dark:hover:text-slate-200"
               }`}
               aria-label={label}
@@ -95,7 +104,7 @@ export function PlayerProfileTabs({ activeTab, onTabChange, isOwner }: PlayerPro
               {isActive && (
                 <>
                   <span className="ml-2 hidden text-sm font-medium md:inline">{label}</span>
-                  <span className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-cyan-600 dark:bg-cyan-400" />
+                  <span className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-palette-secondary-600 dark:bg-palette-secondary-400" />
                 </>
               )}
             </button>

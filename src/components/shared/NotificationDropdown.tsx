@@ -3,6 +3,8 @@
 import { useEffect, useRef, useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { NotificationItem } from "@/components/shared/NotificationItem";
+import { useClickOutside } from "@/hooks/useClickOutside";
+import { useEscapeKey } from "@/hooks/useEscapeKey";
 import type { Notification } from "@/types/notification";
 
 interface NotificationDropdownProps {
@@ -28,25 +30,8 @@ export function NotificationDropdown({
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, MAX_VISIBLE);
 
-  // Close on click outside
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        onClose();
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [onClose]);
-
-  // Close on Escape
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [onClose]);
+  useClickOutside(dropdownRef, onClose);
+  useEscapeKey(onClose);
 
   // Focus first item on open
   useEffect(() => {
@@ -80,7 +65,11 @@ export function NotificationDropdown({
           <div className="max-h-[360px] space-y-1 overflow-y-auto">
             {sorted.map((notification, index) => (
               <div key={notification.id} ref={index === 0 ? firstItemRef : undefined} tabIndex={0}>
-                <NotificationItem notification={notification} onDismiss={handleDismiss} />
+                <NotificationItem
+                  notification={notification}
+                  onDismiss={handleDismiss}
+                  onNavigate={onClose}
+                />
               </div>
             ))}
           </div>
@@ -88,7 +77,7 @@ export function NotificationDropdown({
             <button
               type="button"
               onClick={onDismissAll}
-              className="w-full rounded-lg px-3 py-2 text-center text-sm font-medium text-violet-600 transition-colors hover:bg-violet-50 dark:text-violet-400 dark:hover:bg-violet-900/20"
+              className="w-full rounded-lg px-3 py-2 text-center text-sm font-medium text-palette-primary-600 transition-colors hover:bg-palette-primary-50 dark:text-palette-primary-400 dark:hover:bg-palette-primary-900/20"
             >
               {t("markAllAsRead")}
             </button>

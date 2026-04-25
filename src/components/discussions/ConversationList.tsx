@@ -70,7 +70,7 @@ export default function ConversationList({
         ) : conversations.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-3 py-12 text-center">
             <div className="rounded-2xl bg-linear-to-br from-blue-500/20 via-purple-600/20 to-purple-700/20 p-4">
-              <Icon icon="lucide:message-square" className="text-neon-violet h-8 w-8" />
+              <Icon icon="lucide:message-square" className="text-neon-primary h-8 w-8" />
             </div>
             <p className="text-sm text-slate-500 dark:text-slate-400">{t("noConversations")}</p>
           </div>

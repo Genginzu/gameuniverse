@@ -97,7 +97,7 @@ describe("Sidebar", () => {
 
       const nav = screen.getByRole("navigation", { name: "Main navigation" });
       const links = nav.querySelectorAll("a");
-      expect(links).toHaveLength(7);
+      expect(links).toHaveLength(10);
     });
   });
 

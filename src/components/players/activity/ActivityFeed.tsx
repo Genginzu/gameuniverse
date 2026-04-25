@@ -33,8 +33,8 @@ export function ActivityFeed({
   const postHook = usePlayerPosts(playerId);
   const [showComposer, setShowComposer] = useState(false);
 
-  const handlePostCreated = async (content: string, imageUrl?: string, tags?: string[]) => {
-    await postHook.createPost(content, imageUrl, tags);
+  const handlePostCreated = async (content: string, imageUrl?: string) => {
+    await postHook.createPost(content, imageUrl);
     setShowComposer(false);
   };
 
@@ -46,22 +46,24 @@ export function ActivityFeed({
           <SearchBar value={postHook.searchTerm} onChange={postHook.setSearchTerm} />
         </div>
         {isOwner && (
-          <button
-            type="button"
-            onClick={() => setShowComposer((v) => !v)}
-            className="xs:w-auto xs:justify-start inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-2xl bg-linear-to-br from-violet-500 to-blue-500 px-5 py-3 text-sm font-medium text-white shadow-lg shadow-violet-500/20 transition-all duration-300 hover:opacity-90"
-          >
-            {showComposer ? (
-              <Icon icon="lucide:x" className="h-4 w-4" />
-            ) : (
-              <Icon icon="lucide:plus" className="h-4 w-4" />
-            )}
-            {t("newPost")}
-          </button>
+          <div className="xs:w-auto flex shrink-0">
+            <button
+              type="button"
+              onClick={() => setShowComposer((v) => !v)}
+              className="inline-flex items-center justify-center gap-2 rounded-2xl bg-linear-to-br from-palette-primary-500 to-blue-500 px-5 py-3 text-sm font-medium text-white shadow-lg shadow-palette-primary-500/20 transition-all duration-300 hover:opacity-90"
+            >
+              {showComposer ? (
+                <Icon icon="lucide:x" className="h-4 w-4" />
+              ) : (
+                <Icon icon="lucide:plus" className="h-4 w-4" />
+              )}
+              {t("newPost")}
+            </button>
+          </div>
         )}
       </div>
 
-      {/* Composer (toggled) */}
+      {/* Post composer (toggled) */}
       {isOwner && showComposer && (
         <PostComposer
           playerId={playerId}

@@ -3,15 +3,19 @@ import { syncSingleField } from "@/lib/services/bulkFieldSync";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 
-const DELAY_MS = 300;
+const WORKERS = 2;
+// With 2 workers each waiting 500ms per sync, combined throughput stays at ~4
+// IGDB requests/s — the documented rate limit. Increase WORKERS only if
+// DELAY_MS is raised proportionally.
+const DELAY_MS = 500;
 const PAGE_SIZE = 1000;
 const NO_COVER_FALLBACK = "/assets/no-cover.png";
 const NO_BACKGROUND_FALLBACK = "none";
 
-const FIELD_FALLBACKS: Record<string, { column: string; fallback: string | number }> = {
+const FIELD_FALLBACKS: Record<string, { column: string; fallback: string | number | null }> = {
   cover: { column: "cover_image_url", fallback: NO_COVER_FALLBACK },
   background: { column: "background_image_url", fallback: NO_BACKGROUND_FALLBACK },
-  metascore: { column: "metascore", fallback: -1 },
+  metascore: { column: "metascore", fallback: null },
   releaseDate: { column: "release_date", fallback: "1970-01-01" },
   playtime: { column: "playtime_normally", fallback: -1 },
 };
@@ -22,6 +26,7 @@ const IMPORTABLE_FIELDS: Record<string, string> = {
   playtime: "playtime_normally",
   metascore: "metascore",
   releaseDate: "release_date",
+  popularity: "igdb_pop_updated_at",
 };
 
 /**
@@ -89,8 +94,24 @@ export async function POST(request: NextRequest) {
         await new Promise((r) => setTimeout(r, DELAY_MS));
       };
 
+      /**
+       * Drain a queue with N concurrent workers. Each worker pops from the
+       * same array via .shift() — safe in single-threaded JS between awaits.
+       */
+      const drainQueue = async (queue: Array<{ id: string; igdbId: number }>) => {
+        const worker = async () => {
+          for (;;) {
+            const next = queue.shift();
+            if (!next) return;
+            await syncGame(next.id, next.igdbId);
+          }
+        };
+        await Promise.all(Array.from({ length: WORKERS }, () => worker()));
+      };
+
       if (allMode && field) {
-        // Server-side pagination: fetch and process page by page
+        // Server-side pagination: fetch and process page by page.
+        // Pages are sequential but games within a page drain in parallel.
         const column = IMPORTABLE_FIELDS[field];
         let offset = 0;
 
@@ -112,19 +133,17 @@ export async function POST(request: NextRequest) {
             break;
           }
 
-          for (const game of data) {
-            if (game.igdb_id === null) continue;
-            await syncGame(game.id, game.igdb_id);
-          }
+          const pageQueue = data
+            .filter((g): g is { id: string; igdb_id: number } => g.igdb_id !== null)
+            .map((g) => ({ id: g.id, igdbId: g.igdb_id }));
+          await drainQueue(pageQueue);
 
           offset += data.length;
           if (data.length < PAGE_SIZE) break;
         }
       } else if (gameIds) {
-        // Normal mode: sync provided list
-        for (const { id, igdbId } of gameIds) {
-          await syncGame(id, igdbId);
-        }
+        // Normal mode: sync provided list with N parallel workers
+        await drainQueue([...gameIds]);
       }
 
       send({
@@ -154,7 +173,7 @@ function jsonError(message: string) {
   });
 }
 
-async function applyFallback(gameId: string, column: string, fallback: string | number) {
+async function applyFallback(gameId: string, column: string, fallback: string | number | null) {
   try {
     const supabase = await createRouteHandlerClient();
     await supabase

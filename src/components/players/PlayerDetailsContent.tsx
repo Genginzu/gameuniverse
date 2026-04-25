@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
@@ -10,9 +11,33 @@ import { useAuth } from "@/hooks/useAuth";
 import { useFriendRelationship } from "@/hooks/useFriendRelationship";
 import { PlayerProfileBanner } from "./PlayerProfileBanner";
 import type { PlayerXpStats } from "@/types/achievement";
-import { PlayerProfileTabs, type ProfileTab } from "./PlayerProfileTabs";
+import { PlayerProfileTabs, type ProfileTab, getDefaultTab } from "./PlayerProfileTabs";
+
+const PROFILE_TABS = [
+  "feed",
+  "activity",
+  "library",
+  "friends",
+  "reviews",
+  "collections",
+  "achievements",
+  "stats",
+  "recommendations",
+  "settings",
+] as const satisfies readonly ProfileTab[];
+
+function parseTabParam(raw: string | null, isOwner: boolean): ProfileTab | null {
+  if (!raw) return null;
+  if (!(PROFILE_TABS as readonly string[]).includes(raw)) return null;
+  const tab = raw as ProfileTab;
+  const ownerOnly: ProfileTab[] = ["feed", "recommendations", "settings"];
+  if (ownerOnly.includes(tab) && !isOwner) return null;
+  return tab;
+}
 import { PlayerTabContent } from "./PlayerTabContent";
 import { FriendActionButton } from "./friends/FriendActionButton";
+import { LibraryComparisonSection } from "./friends/LibraryComparisonSection";
+import { SubscribeButton } from "./subscription/SubscribeButton";
 import type { PlayerDetails } from "@/types/player";
 
 /**
@@ -30,18 +55,30 @@ export function shouldShowComparison(
 interface PlayerDetailsContentProps {
   player: PlayerDetails;
   locale: string;
+  currentUserId: string | null;
 }
 
-export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentProps) {
+export function PlayerDetailsContent({
+  player,
+  locale,
+  currentUserId,
+}: PlayerDetailsContentProps) {
   const t = useTranslations("players");
   const tCommon = useTranslations("common");
   const { user } = useAuth();
-  const isOwner = user?.id === player.id;
+  // Prefer the server-resolved id so the default tab is correct on first render;
+  // fall back to the client-side session while it hydrates.
+  const viewerId = currentUserId ?? user?.id ?? null;
+  const isOwner = viewerId === player.id;
 
   // Lightweight hook: only fetches friend count + relationship status (not the full list)
   const relationship = useFriendRelationship(player.id);
 
-  const [activeTab, setActiveTab] = useState<ProfileTab>("activity");
+  const searchParams = useSearchParams();
+  const requestedTab = parseTabParam(searchParams.get("tab"), isOwner);
+  const [activeTab, setActiveTab] = useState<ProfileTab>(
+    () => requestedTab ?? getDefaultTab(isOwner)
+  );
 
   // SWR-cached XP stats for the ProgressRing (Req 5.4, 5.5)
   const { data: xpStats } = useSWR<PlayerXpStats>(`/api/players/${player.id}/xp`, {
@@ -75,19 +112,29 @@ export function PlayerDetailsContent({ player, locale }: PlayerDetailsContentPro
         commentCount={0}
         xpStats={xpStats ?? null}
         friendActionSlot={
-          <FriendActionButton
-            playerId={player.id}
-            isAuthenticated={!!user}
-            isOwner={isOwner}
-            relationshipStatus={relationship.relationshipStatus}
-            friendshipId={relationship.relationshipFriendshipId}
-            sendRequest={relationship.sendRequest}
-            acceptRequest={relationship.acceptRequest}
-            declineRequest={relationship.declineRequest}
-            removeFriend={relationship.removeFriend}
-          />
+          <div className="flex items-center gap-2">
+            <FriendActionButton
+              playerId={player.id}
+              isAuthenticated={!!user}
+              isOwner={isOwner}
+              relationshipStatus={relationship.relationshipStatus}
+              friendshipId={relationship.relationshipFriendshipId}
+              sendRequest={relationship.sendRequest}
+              acceptRequest={relationship.acceptRequest}
+              declineRequest={relationship.declineRequest}
+              removeFriend={relationship.removeFriend}
+            />
+            <SubscribeButton targetId={player.id} isAuthenticated={!!user} isOwner={isOwner} />
+          </div>
         }
       />
+
+      {/* Library comparison — visible when viewing another player's profile */}
+      {shouldShowComparison(!!user, viewerId, player.id) && (
+        <div className="container mx-auto px-4 pt-6">
+          <LibraryComparisonSection playerId={player.id} locale={locale} />
+        </div>
+      )}
 
       {/* Tab navigation */}
       <PlayerProfileTabs activeTab={activeTab} onTabChange={setActiveTab} isOwner={isOwner} />
