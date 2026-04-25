@@ -3728,6 +3728,12 @@
       },
       "noLeagues": "No leagues available",
       "noLeaguesDescription": "No fantasy league is open at the moment"
+    },
+    "discussion": {
+      "title": "Discussion",
+      "noComments": "No comments yet. Be the first to react!",
+      "placeholder": "Write a comment...",
+      "loginRequired": "Log in to join the discussion"
     }
   }
 }
