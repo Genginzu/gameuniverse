@@ -306,7 +306,7 @@
 
 /* Styles pour les états de focus améliorés */
 .focus-visible:focus {
-  outline: 2px solid #0077e6;
+  outline: 2px solid var(--color-palette-primary-500);
   outline-offset: 2px;
   border-radius: 8px;
 }
@@ -546,7 +546,7 @@ textarea:focus-visible,
 .glass-sidebar {
   background: #fff;
   border-right: 1px solid #eaeaf5;
-  box-shadow: 3px 0 16px rgba(0, 53, 102, 0.06);
+  box-shadow: 3px 0 16px rgba(var(--neon-primary), 0.04);
 }
 
 .dark .glass-sidebar {
@@ -557,16 +557,16 @@ textarea:focus-visible,
 
 /* Top bar — Vikinger-style gradient header */
 .topbar {
-  background: linear-gradient(135deg, #003566 0%, #0353a4 50%, #0466c8 100%);
+  background: linear-gradient(135deg, var(--color-palette-primary-800) 0%, var(--color-palette-primary-600) 50%, var(--color-palette-accent-500) 100%);
   box-shadow:
-    0 4px 20px rgba(0, 53, 102, 0.35),
+    0 4px 20px rgba(var(--neon-primary), 0.35),
     0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 .dark .topbar {
-  background: linear-gradient(135deg, #001d3d 0%, #003566 50%, #0353a4 100%);
+  background: linear-gradient(135deg, var(--color-palette-primary-950) 0%, var(--color-palette-primary-800) 50%, var(--color-palette-primary-600) 100%);
   box-shadow:
-    0 4px 20px rgba(0, 29, 61, 0.5),
+    0 4px 20px rgba(var(--neon-primary), 0.5),
     0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
@@ -660,10 +660,10 @@ textarea:focus-visible,
 
 .glass-input:focus {
   background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(0, 119, 230, 0.4);
+  border: 1px solid rgba(var(--neon-primary), 0.4);
   box-shadow:
     inset 0 1px 2px rgba(0, 0, 0, 0.04),
-    0 0 0 3px rgba(0, 119, 230, 0.1),
+    0 0 0 3px rgba(var(--neon-primary), 0.1),
     0 0 15px rgba(var(--neon-primary), var(--neon-glow-opacity)),
     0 0 30px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.5));
 }
@@ -686,10 +686,10 @@ textarea:focus-visible,
 
 .dark .glass-input:focus {
   background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(0, 119, 230, 0.4);
+  border: 1px solid rgba(var(--neon-primary), 0.4);
   box-shadow:
     inset 0 1px 2px rgba(0, 0, 0, 0.1),
-    0 0 0 3px rgba(0, 119, 230, 0.15),
+    0 0 0 3px rgba(var(--neon-primary), 0.15),
     0 0 15px rgba(var(--neon-primary), var(--neon-glow-opacity)),
     0 0 30px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.5));
 }
