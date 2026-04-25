@@ -34,6 +34,10 @@
       "title": "Rétrospective {year} de {player}",
       "description": "Découvrez la rétrospective gaming {year} de {player} sur Gamers Universe"
     }
+    "esportCalendar": {
+      "title": "Calendrier Esport",
+      "description": "Suivez les tournois esport professionnels à venir et en cours"
+    },
   },
   "navigation": {
     "games": "Jeux",
@@ -3628,4 +3632,17 @@
       "playerTransactions": "Transactions de {username}"
     }
   }
+  "esport": {
+    "calendar": {
+      "metaTitle": "Calendrier Esport",
+      "metaDescription": "Suivez les tournois esport professionnels à venir et en cours",
+      "title": "Calendrier Esport",
+      "subtitle": "Tournois professionnels à venir et en cours",
+      "noTournaments": "Aucun tournoi trouvé",
+      "noTournamentsDescription": "Aucun tournoi esport n'est prévu pour le moment",
+      "tier": "Tier",
+      "live": "En direct",
+      "upcoming": "À venir"
+    }
+  },
 }

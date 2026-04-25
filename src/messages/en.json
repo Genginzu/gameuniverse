@@ -34,6 +34,10 @@
       "title": "{player}'s {year} year in review",
       "description": "Discover {player}'s {year} gaming year in review on Gamers Universe"
     }
+    "esportCalendar": {
+      "title": "Esport Calendar",
+      "description": "Follow upcoming and ongoing professional esport tournaments"
+    },
   },
   "navigation": {
     "games": "Games",
@@ -3625,4 +3629,17 @@
       "playerTransactions": "{username} transactions"
     }
   }
+  "esport": {
+    "calendar": {
+      "metaTitle": "Esport Calendar",
+      "metaDescription": "Follow upcoming and ongoing professional esport tournaments",
+      "title": "Esport Calendar",
+      "subtitle": "Upcoming and ongoing professional tournaments",
+      "noTournaments": "No tournaments found",
+      "noTournamentsDescription": "No esport tournaments are scheduled at the moment",
+      "tier": "Tier",
+      "live": "Live",
+      "upcoming": "Upcoming"
+    }
+  },
 }
