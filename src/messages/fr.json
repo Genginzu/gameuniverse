@@ -3632,6 +3632,12 @@
       "playerTransactions": "Transactions de {username}"
     }
   }
+  "player": {
+    "gameRanks": {
+      "title": "Rangs compétitifs",
+      "points": "pts"
+    }
+  },
   "esport": {
     "calendar": {
       "metaTitle": "Calendrier Esport",
