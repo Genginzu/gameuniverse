@@ -3689,6 +3689,23 @@
       "liveNow": "Live",
       "mainStream": "Main",
       "watchStream": "Watch stream"
+    },
+    "predictions": {
+      "metaTitle": "Esport Predictions",
+      "metaDescription": "Bet your GU Coins on professional esport matches",
+      "title": "Esport Predictions",
+      "subtitle": "Bet your GU Coins on pro match outcomes",
+      "myPredictions": "My predictions",
+      "leaderboardTab": "Leaderboard",
+      "noPredictions": "No predictions",
+      "noPredictionsDescription": "You haven't placed any predictions yet",
+      "noLeaderboard": "Empty leaderboard",
+      "noLeaderboardDescription": "No predictions have been resolved yet",
+      "bet": "Bet",
+      "pending": "Pending",
+      "won": "Won",
+      "lost": "Lost",
+      "cancelled": "Cancelled"
     }
   }
 }

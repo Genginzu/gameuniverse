@@ -3692,6 +3692,23 @@
       "liveNow": "En direct",
       "mainStream": "Principal",
       "watchStream": "Regarder le stream"
+    },
+    "predictions": {
+      "metaTitle": "Pronostics Esport",
+      "metaDescription": "Pariez vos GU Coins sur les matchs esport professionnels",
+      "title": "Pronostics Esport",
+      "subtitle": "Pariez vos GU Coins sur les résultats des matchs pro",
+      "myPredictions": "Mes pronostics",
+      "leaderboardTab": "Classement",
+      "noPredictions": "Aucun pronostic",
+      "noPredictionsDescription": "Vous n'avez pas encore placé de pronostic",
+      "noLeaderboard": "Classement vide",
+      "noLeaderboardDescription": "Aucun pronostic n'a encore été résolu",
+      "bet": "Pari",
+      "pending": "En attente",
+      "won": "Gagné",
+      "lost": "Perdu",
+      "cancelled": "Annulé"
     }
   }
 }
