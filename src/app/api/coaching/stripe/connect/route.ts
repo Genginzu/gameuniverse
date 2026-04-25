@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { logger } from "@/lib/logger";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -26,7 +26,7 @@ export async function GET() {
     let dashboardUrl: string | null = null;
     if (coach.stripe_account_id && coach.stripe_onboarding_complete) {
       try {
-        const loginLink = await stripe.accounts.createLoginLink(coach.stripe_account_id);
+        const loginLink = await getStripe().accounts.createLoginLink(coach.stripe_account_id);
         dashboardUrl = loginLink.url;
       } catch (err) {
         logger.error("Failed to create Stripe login link", { error: err });
@@ -65,7 +65,7 @@ export async function POST() {
 
     // Create Stripe Express account if none exists
     if (!accountId) {
-      const account = await stripe.accounts.create({
+      const account = await getStripe().accounts.create({
         type: "express",
         metadata: { coach_profile_id: coach.id, player_id: user.id },
       });
@@ -78,7 +78,7 @@ export async function POST() {
 
     // Create onboarding link
     const origin = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-    const accountLink = await stripe.accountLinks.create({
+    const accountLink = await getStripe().accountLinks.create({
       account: accountId,
       refresh_url: `${origin}/coaching/settings?stripe=refresh`,
       return_url: `${origin}/coaching/settings?stripe=complete`,
