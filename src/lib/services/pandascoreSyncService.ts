@@ -12,10 +12,25 @@ import { logger } from "@/lib/logger";
 
 type SyncResult = { synced: number; errors: number };
 
-function buildParams(game?: string): PandaScoreListParams {
-  const params: PandaScoreListParams = { page: 1, per_page: 100 };
+function buildParams(game?: string, page = 1): PandaScoreListParams {
+  const params: PandaScoreListParams = { page, per_page: 100 };
   if (game) params["filter[videogame_title]"] = game;
   return params;
+}
+
+async function fetchAllPages<T>(
+  fetcher: (p: PandaScoreListParams) => Promise<T[]>,
+  game?: string,
+): Promise<T[]> {
+  const all: T[] = [];
+  let page = 1;
+  while (true) {
+    const batch = await fetcher(buildParams(game, page));
+    all.push(...batch);
+    if (batch.length < 100) break;
+    page++;
+  }
+  return all;
 }
 
 async function resolveId(table: string, pandaId?: number | null) {
@@ -30,7 +45,7 @@ async function resolveId(table: string, pandaId?: number | null) {
 
 export async function syncTeams(game?: string): Promise<SyncResult> {
   const supabase = getSupabaseAdmin();
-  const teams = await getTeams(buildParams(game));
+  const teams = await fetchAllPages(getTeams, game);
   let synced = 0;
   let errors = 0;
 
@@ -60,7 +75,7 @@ export async function syncTeams(game?: string): Promise<SyncResult> {
 
 export async function syncPlayers(game?: string): Promise<SyncResult> {
   const supabase = getSupabaseAdmin();
-  const players = await getPlayers(buildParams(game));
+  const players = await fetchAllPages(getPlayers, game);
   let synced = 0;
   let errors = 0;
 
@@ -95,10 +110,9 @@ export async function syncPlayers(game?: string): Promise<SyncResult> {
 
 export async function syncTournaments(game?: string): Promise<SyncResult> {
   const supabase = getSupabaseAdmin();
-  const params = buildParams(game);
   const [running, upcoming] = await Promise.all([
-    getRunningTournaments(params),
-    getUpcomingTournaments(params),
+    fetchAllPages(getRunningTournaments, game),
+    fetchAllPages(getUpcomingTournaments, game),
   ]);
   const tournaments = [...running, ...upcoming];
   let synced = 0;
@@ -134,10 +148,9 @@ export async function syncTournaments(game?: string): Promise<SyncResult> {
 
 export async function syncMatches(game?: string): Promise<SyncResult> {
   const supabase = getSupabaseAdmin();
-  const params = buildParams(game);
   const [past, running] = await Promise.all([
-    getPastMatches(params),
-    getRunningMatches(params),
+    fetchAllPages(getPastMatches, game),
+    fetchAllPages(getRunningMatches, game),
   ]);
   const matches = [...past, ...running];
   let synced = 0;
