@@ -3662,5 +3662,16 @@
       "roster": "Roster",
       "loadError": "Failed to load team details"
     }
+    "players": {
+      "metaTitle": "Pro Esport Players",
+      "metaDescription": "Discover professional esport players, their teams and achievements",
+      "detailMetaTitle": "Esport Player Profile",
+      "title": "Pro Esport Players",
+      "subtitle": "Professional players from the competitive scene",
+      "searchPlaceholder": "Search for a player...",
+      "noPlayers": "No players found",
+      "noPlayersDescription": "No esport player matches your search",
+      "loadError": "Failed to load player details"
+    }
   },
 }

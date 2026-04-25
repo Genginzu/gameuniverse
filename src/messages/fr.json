@@ -3665,5 +3665,16 @@
       "roster": "Roster",
       "loadError": "Impossible de charger les détails de l'équipe"
     }
+    "players": {
+      "metaTitle": "Joueurs Esport Pro",
+      "metaDescription": "Découvrez les joueurs esport professionnels, leurs équipes et palmarès",
+      "detailMetaTitle": "Fiche Joueur Esport",
+      "title": "Joueurs Esport Pro",
+      "subtitle": "Joueurs professionnels de la scène compétitive",
+      "searchPlaceholder": "Rechercher un joueur...",
+      "noPlayers": "Aucun joueur trouvé",
+      "noPlayersDescription": "Aucun joueur esport ne correspond à votre recherche",
+      "loadError": "Impossible de charger les détails du joueur"
+    }
   },
 }
