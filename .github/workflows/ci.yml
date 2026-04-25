@@ -111,7 +111,14 @@ jobs:
         run: apt-get update && apt-get install -y unzip
 
       - uses: oven-sh/setup-bun@v2
-      - run: bun install --frozen-lockfile
+      - name: Restore node_modules
+        id: cache
+        uses: actions/cache/restore@v5
+        with:
+          path: node_modules
+          key: modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+      - if: steps.cache.outputs.cache-hit != 'true'
+        run: bun install --frozen-lockfile
 
       - name: Download build artifact
         uses: actions/download-artifact@v5
