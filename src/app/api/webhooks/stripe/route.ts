@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe";
+import { getStripe } from "@/lib/stripe";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { logger } from "@/lib/logger";
 import type Stripe from "stripe";
@@ -8,6 +8,8 @@ import type Stripe from "stripe";
 type S = any;
 
 export async function POST(request: NextRequest) {
+  const stripe = getStripe();
+
   const body = await request.text();
   const sig = request.headers.get("stripe-signature");
 

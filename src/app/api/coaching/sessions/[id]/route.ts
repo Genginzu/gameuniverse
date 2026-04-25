@@ -3,7 +3,9 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 import { createSessionConversation } from "@/lib/services/coachingConversationService";
 import { calculateRefund } from "@/lib/services/cancellationService";
-import { stripe } from "@/lib/stripe";
+import { NotificationServerService } from "@/lib/services/notificationServerService";
+import type { NotificationType } from "@/types/notification";
+import { getStripe } from "@/lib/stripe";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnySupabase = any;
@@ -170,6 +172,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
           // Issue Stripe refund if payment was made
           if (refundAmount > 0 && session.payment_status === "paid") {
             try {
+              const stripe = getStripe();
               const payments = await stripe.paymentIntents.search({ query: `metadata["coaching_session_id"]:"${id}"` });
               if (payments.data[0]) {
                 await stripe.refunds.create({
@@ -208,6 +211,24 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       } catch (convError) {
         logger.error("Error creating session conversation", { error: convError });
       }
+    }
+
+    // Send notifications
+    try {
+      const coachPlayerId = await resolveCoachPlayerId(supabase, session.coach_id);
+      const notifMap: Record<SessionAction, { recipientId: string; type: NotificationType }> = {
+        confirm:  { recipientId: session.student_id, type: "coaching_confirmed" },
+        decline:  { recipientId: session.student_id, type: "coaching_declined" },
+        start:    { recipientId: session.student_id, type: "coaching_started" },
+        complete: { recipientId: session.student_id, type: "coaching_completed" },
+        cancel:   { recipientId: role === "student" ? (coachPlayerId || "") : session.student_id, type: "coaching_cancelled" },
+      };
+      const notif = notifMap[action];
+      if (notif.recipientId) {
+        await NotificationServerService.create(notif.recipientId, user.id, notif.type, id, notif.type);
+      }
+    } catch (notifError) {
+      logger.error("Error sending coaching notification", { error: notifError });
     }
 
     return NextResponse.json({ session: updated });

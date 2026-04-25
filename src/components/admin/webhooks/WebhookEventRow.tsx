@@ -84,7 +84,7 @@ export function WebhookEventRow({
       </td>
       <td className="px-4 py-3">
         {entityLink ? (
-          <Link href={entityLink} className="text-cyan-600 hover:underline dark:text-cyan-400">{entityName ?? t("unknownEntity")}</Link>
+          <Link href={entityLink} className="text-palette-secondary-600 hover:underline dark:text-palette-secondary-400">{entityName ?? t("unknownEntity")}</Link>
         ) : (
           <span className="text-gray-500 dark:text-gray-400">{entityName ?? t("unknownEntity")}</span>
         )}
@@ -108,12 +108,12 @@ export function WebhookEventRow({
             </Link>
           )}
           {diffLink && (
-            <Link href={diffLink} className="inline-flex items-center gap-1 rounded-lg bg-cyan-50 px-2 py-1 text-xs font-medium text-cyan-700 transition-colors hover:bg-cyan-100 dark:bg-cyan-900/20 dark:text-cyan-400 dark:hover:bg-cyan-900/40">
+            <Link href={diffLink} className="inline-flex items-center gap-1 rounded-lg bg-palette-secondary-50 px-2 py-1 text-xs font-medium text-palette-secondary-700 transition-colors hover:bg-palette-secondary-100 dark:bg-palette-secondary-900/20 dark:text-palette-secondary-400 dark:hover:bg-palette-secondary-900/40">
               <Icon icon="lucide:git-compare" className="h-3 w-3" />{t("viewDiff")}
             </Link>
           )}
           {canImport && (
-            <button type="button" disabled={isImporting} onClick={() => onImportStarted?.(event.igdb_id)} className="inline-flex items-center gap-1 rounded-lg bg-violet-50 px-2 py-1 text-xs font-medium text-violet-700 transition-colors hover:bg-violet-100 disabled:opacity-50 dark:bg-violet-900/20 dark:text-violet-400 dark:hover:bg-violet-900/40">
+            <button type="button" disabled={isImporting} onClick={() => onImportStarted?.(event.igdb_id)} className="inline-flex items-center gap-1 rounded-lg bg-palette-primary-50 px-2 py-1 text-xs font-medium text-palette-primary-700 transition-colors hover:bg-palette-primary-100 disabled:opacity-50 dark:bg-palette-primary-900/20 dark:text-palette-primary-400 dark:hover:bg-palette-primary-900/40">
               {isImporting ? <Icon icon="lucide:loader-2" className="h-3 w-3 animate-spin" /> : <Icon icon="lucide:download" className="h-3 w-3" />}
               {isImporting ? t("importing") : t("importGame")}
             </button>

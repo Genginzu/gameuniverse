@@ -64,8 +64,8 @@ export function GameSearchPicker({
 
   if (selectedLabel) {
     return (
-      <div className="flex items-center gap-2 rounded-xl border-2 border-violet-300 bg-white/60 p-3 dark:border-violet-500/50 dark:bg-slate-700/40">
-        <Icon icon="lucide:gamepad-2" className="h-4 w-4 text-violet-500 dark:text-violet-300" />
+      <div className="flex items-center gap-2 rounded-xl border-2 border-palette-primary-300 bg-white/60 p-3 dark:border-palette-primary-500/50 dark:bg-slate-700/40">
+        <Icon icon="lucide:gamepad-2" className="h-4 w-4 text-palette-primary-500 dark:text-palette-primary-300" />
         <span className="flex-1 truncate text-sm text-gray-800 dark:text-slate-100">
           {selectedLabel}
         </span>
@@ -83,7 +83,7 @@ export function GameSearchPicker({
 
   return (
     <div className="relative">
-      <div className="flex items-center gap-2 rounded-xl border-2 border-violet-300 bg-white/60 p-3 focus-within:border-violet-400 focus-within:ring-2 focus-within:ring-violet-400/20 dark:border-violet-500/50 dark:bg-slate-700/40">
+      <div className="flex items-center gap-2 rounded-xl border-2 border-palette-primary-300 bg-white/60 p-3 focus-within:border-palette-primary-400 focus-within:ring-2 focus-within:ring-palette-primary-400/20 dark:border-palette-primary-500/50 dark:bg-slate-700/40">
         <Icon icon="lucide:search" className="h-4 w-4 text-gray-400 dark:text-slate-500" />
         <input
           type="search"
@@ -112,7 +112,7 @@ export function GameSearchPicker({
                   setQuery("");
                   setIsOpen(false);
                 }}
-                className="flex w-full items-center gap-3 px-3 py-2 text-left text-sm text-gray-800 transition-colors hover:bg-violet-50 dark:text-slate-100 dark:hover:bg-slate-700/60"
+                className="flex w-full items-center gap-3 px-3 py-2 text-left text-sm text-gray-800 transition-colors hover:bg-palette-primary-50 dark:text-slate-100 dark:hover:bg-slate-700/60"
               >
                 {game.coverImage ? (
                   <img

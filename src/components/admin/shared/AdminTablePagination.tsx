@@ -7,7 +7,7 @@ import type { PaginationInfo } from "@/types/pagination";
 interface AdminTablePaginationProps {
   pagination: PaginationInfo;
   onPageChange: (page: number) => void;
-  t: (key: string, values?: Record<string, unknown>) => string;
+  t: (key: string, values?: Record<string, string | number | Date>) => string;
 }
 
 export function AdminTablePagination({ pagination, onPageChange, t }: AdminTablePaginationProps) {

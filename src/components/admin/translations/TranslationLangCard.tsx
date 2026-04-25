@@ -112,7 +112,7 @@ export function TranslationLangCard({
           <button
             onClick={onTranslate}
             disabled={isTranslating}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-linear-to-r from-cyan-500 to-violet-500 px-3 py-1.5 text-xs font-medium text-white transition-all duration-300 hover:opacity-90 disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 px-3 py-1.5 text-xs font-medium text-white transition-all duration-300 hover:opacity-90 disabled:opacity-50"
           >
             {isTranslating ? (
               <Icon icon="mdi:loading" className="size-3.5 animate-spin" />
@@ -142,7 +142,7 @@ export function TranslationLangCard({
                 rows={isLargeField ? 12 : 2}
                 onChange={(e) => handleFieldChange(field, e.target.value)}
                 placeholder={t("detail.empty")}
-                className={`w-full resize-y rounded-lg border border-gray-300/60 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 focus:outline-none dark:border-slate-600/60 dark:bg-slate-800 dark:text-white dark:placeholder:text-gray-500 ${isLargeField ? "flex-1" : ""}`}
+                className={`w-full resize-y rounded-lg border border-gray-300/60 bg-white px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:border-palette-secondary-500 focus:ring-1 focus:ring-palette-secondary-500 focus:outline-none dark:border-slate-600/60 dark:bg-slate-800 dark:text-white dark:placeholder:text-gray-500 ${isLargeField ? "flex-1" : ""}`}
               />
             </div>
           );

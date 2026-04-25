@@ -15,6 +15,7 @@ interface NotificationItemProps {
 function getNotificationHref(type: NotificationType, senderId: string): string | null {
   if (type === "post_created") return `/players/${senderId}?tab=activity`;
   if (type === "post_mention") return `/players/${senderId}?tab=posts`;
+  if (type.startsWith("coaching_")) return "/coaching/sessions";
   return null;
 }
 
@@ -23,6 +24,13 @@ const TYPE_ICONS: Record<string, string> = {
   discussion_message: "mdi:message-outline",
   post_created: "mdi:post-outline",
   post_mention: "mdi:at",
+  coaching_requested: "lucide:calendar-plus",
+  coaching_confirmed: "lucide:check-circle",
+  coaching_declined: "lucide:x-circle",
+  coaching_started: "lucide:play-circle",
+  coaching_completed: "lucide:check-check",
+  coaching_cancelled: "lucide:x-circle",
+  coaching_paid: "lucide:credit-card",
 };
 
 const TYPE_LABEL_KEYS: Record<string, string> = {
@@ -30,6 +38,13 @@ const TYPE_LABEL_KEYS: Record<string, string> = {
   discussion_message: "typeDiscussionMessage",
   post_created: "typePostCreated",
   post_mention: "typePostMention",
+  coaching_requested: "typeCoachingRequested",
+  coaching_confirmed: "typeCoachingConfirmed",
+  coaching_declined: "typeCoachingDeclined",
+  coaching_started: "typeCoachingStarted",
+  coaching_completed: "typeCoachingCompleted",
+  coaching_cancelled: "typeCoachingCancelled",
+  coaching_paid: "typeCoachingPaid",
 };
 
 export function NotificationItem({ notification, onDismiss, onNavigate }: NotificationItemProps) {
@@ -48,10 +63,10 @@ export function NotificationItem({ notification, onDismiss, onNavigate }: Notifi
   const body = (
     <>
       {/* Type icon */}
-      <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-violet-500/10 dark:bg-violet-400/10">
+      <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-palette-primary-500/10 dark:bg-palette-primary-400/10">
         <Icon
           icon={TYPE_ICONS[notification.type] ?? "mdi:bell-outline"}
-          className="h-4 w-4 text-violet-500 dark:text-violet-300"
+          className="h-4 w-4 text-palette-primary-500 dark:text-palette-primary-300"
         />
       </div>
 
@@ -61,7 +76,7 @@ export function NotificationItem({ notification, onDismiss, onNavigate }: Notifi
           <span className="font-semibold">{senderName}</span>{" "}
           <span className="text-gray-600 dark:text-slate-400">{typeLabel}</span>
         </p>
-        {notification.contentPreview && (
+        {notification.contentPreview && !notification.type.startsWith("coaching_") && (
           <p className="mt-0.5 truncate text-xs text-gray-500 dark:text-slate-400">
             {notification.contentPreview}
           </p>

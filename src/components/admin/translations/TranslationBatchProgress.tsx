@@ -29,7 +29,7 @@ export function TranslationBatchProgress({
       {/* Header */}
       <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          {isRunning && <Icon icon="mdi:loading" className="size-4 animate-spin text-cyan-500" />}
+          {isRunning && <Icon icon="mdi:loading" className="size-4 animate-spin text-palette-secondary-500" />}
           {isComplete && <Icon icon="mdi:check-circle" className="size-4 text-emerald-500" />}
           <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
             {isRunning
@@ -58,7 +58,7 @@ export function TranslationBatchProgress({
       {/* Progress bar */}
       <div className="h-2.5 w-full overflow-hidden rounded-full bg-gray-200/60 dark:bg-slate-700/60">
         <div
-          className="h-full rounded-full bg-linear-to-r from-cyan-500 to-violet-500 transition-all duration-300 ease-out"
+          className="h-full rounded-full bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 transition-all duration-300 ease-out"
           style={{ width: `${percentage}%` }}
         />
       </div>

@@ -48,7 +48,7 @@ export function MentionSuggestions({
           onClick={() => onSelect(player.username)}
           className={`flex w-full items-center gap-2.5 px-3 py-2 text-left transition-colors ${
             index === selectedIndex
-              ? "bg-violet-500/10 dark:bg-violet-400/10"
+              ? "bg-palette-primary-500/10 dark:bg-palette-primary-400/10"
               : "hover:bg-white/40 dark:hover:bg-slate-700/40"
           }`}
         >

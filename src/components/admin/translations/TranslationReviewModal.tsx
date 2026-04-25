@@ -55,7 +55,7 @@ export function TranslationReviewModal({ isOpen, onClose, item, translatedFields
           ))}
           <div className="flex items-center justify-end gap-3 pt-2">
             <button type="button" onClick={onClose} disabled={isSaving} className="rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-gray-700 transition-all duration-300 hover:bg-white/20 disabled:opacity-50 dark:border-slate-700/50 dark:text-gray-300 dark:hover:bg-slate-700/40">{t("buttons.cancel")}</button>
-            <button type="submit" disabled={isSaving} className="inline-flex items-center gap-2 rounded-lg bg-linear-to-r from-cyan-500 to-violet-500 px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:opacity-90 disabled:opacity-50">
+            <button type="submit" disabled={isSaving} className="inline-flex items-center gap-2 rounded-lg bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 px-4 py-2 text-sm font-medium text-white transition-all duration-300 hover:opacity-90 disabled:opacity-50">
               {isSaving && <Icon icon="mdi:loading" className="size-4 animate-spin" />}{t("buttons.save")}
             </button>
           </div>

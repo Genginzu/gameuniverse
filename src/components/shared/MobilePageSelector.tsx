@@ -22,7 +22,7 @@ export function MobilePageSelector({
         value={currentPage}
         onChange={(e) => onPageChange(parseInt(e.target.value))}
         disabled={loading}
-        className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-base font-medium shadow-xs focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
+        className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-base font-medium shadow-xs focus:border-palette-primary-500 focus:ring-2 focus:ring-palette-primary-500/20 dark:border-gray-600 dark:bg-gray-700 dark:text-white"
       >
         {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
           <option key={page} value={page}>

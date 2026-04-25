@@ -39,7 +39,7 @@ export function AdminCoachingContent() {
 
       <div className="flex gap-2">
         {FILTERS.map((f) => (
-          <button key={f} onClick={() => setFilter(f)} className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${filter === f ? "bg-linear-to-r from-cyan-500 to-violet-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400"}`}>
+          <button key={f} onClick={() => setFilter(f)} className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${filter === f ? "bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400"}`}>
             {t(`filter.${f}`)}
           </button>
         ))}
@@ -52,7 +52,7 @@ export function AdminCoachingContent() {
           {data?.coaches.map((c) => (
             <div key={c.id} className="glass-card flex flex-col gap-3 rounded-xl p-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-3">
-                <div className="flex size-10 items-center justify-center rounded-full bg-linear-to-br from-cyan-500 to-violet-500 text-sm font-bold text-white">
+                <div className="flex size-10 items-center justify-center rounded-full bg-linear-to-br from-palette-secondary-500 to-palette-primary-500 text-sm font-bold text-white">
                   {c.avatarUrl ? <img src={c.avatarUrl} alt="" className="size-10 rounded-full object-cover" /> : c.username?.[0]?.toUpperCase()}
                 </div>
                 <div>
@@ -60,7 +60,7 @@ export function AdminCoachingContent() {
                   <div className="flex flex-wrap gap-1.5">
                     {c.isVerified && <span className="rounded-full bg-green-500/10 px-2 py-0.5 text-xs text-green-500">{t("verified")}</span>}
                     {c.isSuspended && <span className="rounded-full bg-red-500/10 px-2 py-0.5 text-xs text-red-400">{t("suspended")}</span>}
-                    {c.stripeComplete && <span className="rounded-full bg-cyan-500/10 px-2 py-0.5 text-xs text-cyan-400">Stripe ✓</span>}
+                    {c.stripeComplete && <span className="rounded-full bg-palette-secondary-500/10 px-2 py-0.5 text-xs text-palette-secondary-400">Stripe ✓</span>}
                     <span className="text-xs text-gray-400">⭐ {c.averageRating.toFixed(1)} · {c.totalReviews} {t("reviews")} · {c.totalSessions} {t("sessions")}</span>
                   </div>
                 </div>
@@ -80,7 +80,7 @@ export function AdminCoachingContent() {
                     <Icon icon="lucide:ban" className="mr-1 inline size-3.5" />{t("actions.suspend")}
                   </button>
                 ) : (
-                  <button onClick={() => handleAction(c.id, "unsuspend")} className="rounded-lg bg-cyan-500/10 px-3 py-1.5 text-xs font-medium text-cyan-400 hover:bg-cyan-500/20">
+                  <button onClick={() => handleAction(c.id, "unsuspend")} className="rounded-lg bg-palette-secondary-500/10 px-3 py-1.5 text-xs font-medium text-palette-secondary-400 hover:bg-palette-secondary-500/20">
                     {t("actions.unsuspend")}
                   </button>
                 )}

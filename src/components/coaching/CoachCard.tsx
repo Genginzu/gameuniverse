@@ -29,7 +29,7 @@ export function CoachCard({ coach }: CoachCardProps) {
       className="glass-card group flex flex-col rounded-xl p-4 transition-all hover:bg-white/60 dark:hover:bg-slate-700/60"
     >
       <div className="flex items-start gap-3">
-        <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-cyan-500 to-violet-500 text-sm font-bold text-white">
+        <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-palette-secondary-500 to-palette-primary-500 text-sm font-bold text-white">
           {coach.avatarUrl ? (
             <img src={coach.avatarUrl} alt="" className="size-12 rounded-full object-cover" />
           ) : (
@@ -41,7 +41,7 @@ export function CoachCard({ coach }: CoachCardProps) {
             <span className="truncate font-medium text-gray-900 dark:text-white">
               {coach.displayName || coach.username}
             </span>
-            {coach.isVerified && <Icon icon="lucide:badge-check" className="size-4 shrink-0 text-cyan-400" />}
+            {coach.isVerified && <Icon icon="lucide:badge-check" className="size-4 shrink-0 text-palette-secondary-400" />}
           </div>
           <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
             <span className="flex items-center gap-0.5 text-yellow-500">
@@ -51,7 +51,7 @@ export function CoachCard({ coach }: CoachCardProps) {
           </div>
         </div>
         {coach.minPrice !== null && (
-          <span className="shrink-0 text-sm font-semibold text-cyan-400">{coach.minPrice}€</span>
+          <span className="shrink-0 text-sm font-semibold text-palette-secondary-400">{coach.minPrice}€</span>
         )}
       </div>
 

@@ -64,7 +64,7 @@ export function LandingHeader() {
         ) : user ? (
           <div className="flex items-center space-x-3">
             <div className="glass flex items-center space-x-3 rounded-xl px-4 py-2 text-sm text-gray-600 dark:text-gray-300">
-              <div className="from-neon-violet to-neon-cyan flex h-8 w-8 items-center justify-center rounded-xl bg-linear-to-br">
+              <div className="from-neon-primary to-neon-secondary flex h-8 w-8 items-center justify-center rounded-xl bg-linear-to-br">
                 <Icon icon="fa:user" className="h-4 w-4 text-white" />
               </div>
               <span className="hidden font-medium sm:inline">
@@ -92,7 +92,7 @@ export function LandingHeader() {
             </Button>
             <Button
               asChild
-              className="neon-btn bg-neon-violet/10 text-neon-violet dark:bg-neon-violet/20 rounded-xl px-5 py-2 font-semibold transition-all dark:text-white"
+              className="neon-btn bg-neon-primary/10 text-neon-primary dark:bg-neon-primary/20 rounded-xl px-5 py-2 font-semibold transition-all dark:text-white"
             >
               <Link href="/auth?mode=signup">{t("signup")}</Link>
             </Button>

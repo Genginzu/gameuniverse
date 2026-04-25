@@ -45,7 +45,7 @@ export function Pagination({
       <div className="flex flex-col items-center space-y-2 text-sm sm:flex-row sm:space-y-0 sm:space-x-2">
         <div className="flex items-center space-x-1 text-gray-600 dark:text-gray-300">
           <span>{t("page")}</span>
-          <span className="font-semibold text-cyan-500 dark:text-cyan-400">{currentPage}</span>
+          <span className="font-semibold text-palette-secondary-500 dark:text-palette-secondary-400">{currentPage}</span>
           <span>{t("of")}</span>
           <span className="font-semibold">{totalPages}</span>
         </div>
@@ -67,7 +67,7 @@ export function Pagination({
           size="sm"
           onClick={() => onPageChange(1)}
           disabled={currentPage === 1 || loading}
-          className="hidden rounded-lg border-gray-200 px-2 py-2 text-sm font-medium transition-all hover:border-violet-300 hover:bg-violet-50 hover:text-violet-600 disabled:opacity-50 md:inline-flex md:px-3 dark:border-gray-700 dark:hover:border-violet-500 dark:hover:bg-violet-900/20"
+          className="hidden rounded-lg border-gray-200 px-2 py-2 text-sm font-medium transition-all hover:border-palette-primary-300 hover:bg-palette-primary-50 hover:text-palette-primary-600 disabled:opacity-50 md:inline-flex md:px-3 dark:border-gray-700 dark:hover:border-palette-primary-500 dark:hover:bg-palette-primary-900/20"
         >
           <Icon icon="lucide:chevrons-left" className="h-4 w-4 md:mr-1" />
           <span className="hidden md:inline">{t("first")}</span>
@@ -79,7 +79,7 @@ export function Pagination({
           size="sm"
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1 || loading}
-          className="min-h-[44px] rounded-lg border-gray-200 px-3 py-2 text-sm font-medium transition-all hover:border-violet-300 hover:bg-violet-50 hover:text-violet-600 disabled:opacity-50 sm:px-4 dark:border-gray-700 dark:hover:border-violet-500 dark:hover:bg-violet-900/20"
+          className="min-h-[44px] rounded-lg border-gray-200 px-3 py-2 text-sm font-medium transition-all hover:border-palette-primary-300 hover:bg-palette-primary-50 hover:text-palette-primary-600 disabled:opacity-50 sm:px-4 dark:border-gray-700 dark:hover:border-palette-primary-500 dark:hover:bg-palette-primary-900/20"
         >
           <Icon icon="lucide:chevron-left" className="h-4 w-4 sm:mr-2" />
           <span className="hidden sm:inline">{t("previous")}</span>
@@ -104,7 +104,7 @@ export function Pagination({
           size="sm"
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages || loading}
-          className="min-h-[44px] rounded-lg border-gray-200 px-3 py-2 text-sm font-medium transition-all hover:border-violet-300 hover:bg-violet-50 hover:text-violet-600 disabled:opacity-50 sm:px-4 dark:border-gray-700 dark:hover:border-violet-500 dark:hover:bg-violet-900/20"
+          className="min-h-[44px] rounded-lg border-gray-200 px-3 py-2 text-sm font-medium transition-all hover:border-palette-primary-300 hover:bg-palette-primary-50 hover:text-palette-primary-600 disabled:opacity-50 sm:px-4 dark:border-gray-700 dark:hover:border-palette-primary-500 dark:hover:bg-palette-primary-900/20"
         >
           <span className="hidden sm:inline">{t("next")}</span>
           <Icon icon="lucide:chevron-right" className="h-4 w-4 sm:ml-2" />
@@ -116,7 +116,7 @@ export function Pagination({
           size="sm"
           onClick={() => onPageChange(totalPages)}
           disabled={currentPage === totalPages || loading}
-          className="hidden rounded-lg border-gray-200 px-2 py-2 text-sm font-medium transition-all hover:border-violet-300 hover:bg-violet-50 hover:text-violet-600 disabled:opacity-50 md:inline-flex md:px-3 dark:border-gray-700 dark:hover:border-violet-500 dark:hover:bg-violet-900/20"
+          className="hidden rounded-lg border-gray-200 px-2 py-2 text-sm font-medium transition-all hover:border-palette-primary-300 hover:bg-palette-primary-50 hover:text-palette-primary-600 disabled:opacity-50 md:inline-flex md:px-3 dark:border-gray-700 dark:hover:border-palette-primary-500 dark:hover:bg-palette-primary-900/20"
         >
           <span className="hidden md:inline">{t("last")}</span>
           <Icon icon="lucide:chevrons-right" className="h-4 w-4 md:ml-1" />

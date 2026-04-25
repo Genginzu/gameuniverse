@@ -61,7 +61,7 @@ export function CoachProfileForm() {
               {profile.isActive ? t("active") : t("inactive")}
             </span>
             {profile.isVerified && (
-              <span className="rounded-full bg-cyan-500/20 px-2 py-0.5 text-xs font-medium text-cyan-400">{t("verified")}</span>
+              <span className="rounded-full bg-palette-secondary-500/20 px-2 py-0.5 text-xs font-medium text-palette-secondary-400">{t("verified")}</span>
             )}
           </div>
           <button onClick={handleToggle} className="rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700">
@@ -91,14 +91,14 @@ export function CoachProfileForm() {
                     if (e.target.checked) setLanguages([...languages, lang.value]);
                     else setLanguages(languages.filter((l) => l !== lang.value));
                   }}
-                  className="size-4 rounded border-gray-300 text-cyan-500 focus:ring-cyan-500"
+                  className="size-4 rounded border-gray-300 text-palette-secondary-500 focus:ring-palette-secondary-500"
                 />
                 <span className="text-sm text-gray-700 dark:text-gray-300">{lang.label}</span>
               </label>
             ))}
           </div>
         </div>
-        <button onClick={handleSave} disabled={saving} className="w-full rounded-lg bg-linear-to-r from-cyan-500 to-violet-500 px-4 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50 sm:w-auto">
+        <button onClick={handleSave} disabled={saving} className="w-full rounded-lg bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 px-4 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50 sm:w-auto">
           {saving ? t("saving") : profile ? t("update") : t("create")}
         </button>
       </div>

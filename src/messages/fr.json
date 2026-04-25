@@ -3322,7 +3322,14 @@
     "typeDiscussionMessage": "vous a envoyé un message",
     "typePostCreated": "a publié un nouveau post",
     "typePostMention": "vous a mentionné dans un post",
-    "dismiss": "Fermer"
+    "dismiss": "Fermer",
+    "typeCoachingRequested": "vous a demandé une session de coaching",
+    "typeCoachingConfirmed": "a accepté votre session de coaching",
+    "typeCoachingDeclined": "a refusé votre session de coaching",
+    "typeCoachingStarted": "a démarré votre session de coaching",
+    "typeCoachingCompleted": "a terminé votre session de coaching",
+    "typeCoachingCancelled": "a annulé une session de coaching",
+    "typeCoachingPaid": "a payé votre session de coaching"
   },
   "postComments": {
     "title": "Commentaires",
@@ -3447,7 +3454,24 @@
         "pending": "Onboarding en cours — complétez votre profil Stripe",
         "resume": "Reprendre l'onboarding",
         "active": "Compte Stripe actif",
-        "dashboard": "Dashboard Stripe"
+        "dashboard": "Dashboard Stripe",
+        "checking": "Vérification du statut Stripe...",
+        "paymentHistory": "Historique des paiements"
+      },
+      "payments": {
+        "totalEarnings": "Revenus totaux",
+        "paidSessions": "sessions payées",
+        "requestPayout": "Transférer vers mon compte",
+        "payoutLoading": "Transfert en cours...",
+        "payoutSuccess": "Transfert de {amount} {currency} initié !",
+        "payoutError": "Erreur lors du transfert.",
+        "noFunds": "Aucun fonds disponible.",
+        "noPayments": "Aucun paiement pour le moment.",
+        "date": "Date",
+        "student": "Élève",
+        "amount": "Montant",
+        "fee": "Commission",
+        "net": "Net"
       }
     },
     "publicProfile": {
@@ -3508,8 +3532,14 @@
         "start": "Démarrer",
         "complete": "Terminer",
         "cancel": "Annuler",
-        "chat": "Discussion"
-      }
+        "chat": "Discussion",
+        "pay": "Payer"
+      },
+      "awaitingPayment": "En attente de paiement",
+      "paymentSuccess": "Paiement effectué avec succès !",
+      "paymentError": "Erreur lors du paiement.",
+      "paymentCancelled": "Paiement annulé.",
+      "paymentDone": "Paiement effectué"
     },
     "reviews": {
       "empty": "Aucun avis pour le moment.",

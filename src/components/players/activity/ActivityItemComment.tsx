@@ -19,7 +19,7 @@ export function ActivityItemComment({ data, locale: _locale }: ActivityItemComme
           character: () => (
             <Link
               href={`/characters/${data.characterSlug}`}
-              className="font-medium text-cyan-600 hover:underline dark:text-cyan-400"
+              className="font-medium text-palette-secondary-600 hover:underline dark:text-palette-secondary-400"
             >
               {data.characterName}
             </Link>

@@ -52,7 +52,7 @@ export function GlobalSyncTab({ downloadState, startDownload, stopDownload }: Gl
         </div>
         {downloadState.isDownloading && (
           <div className="mt-4 space-y-2">
-            <div className="h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700"><div className="h-full animate-pulse rounded-full bg-linear-to-r from-cyan-500 to-violet-500" /></div>
+            <div className="h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700"><div className="h-full animate-pulse rounded-full bg-linear-to-r from-palette-secondary-500 to-palette-primary-500" /></div>
             <p className="text-xs text-gray-500 sm:text-sm dark:text-gray-400">{t("progress", { inserted: downloadState.totalInserted, lastId: downloadState.lastId })}</p>
           </div>
         )}
@@ -67,7 +67,7 @@ export function GlobalSyncTab({ downloadState, startDownload, stopDownload }: Gl
         </div>
         <div className="flex gap-2">
           {(["all", "matched", "unmatched"] as const).map((f) => (
-            <button key={f} onClick={() => { setFilter(f); setPage(1); }} className={`rounded-lg px-3 py-2 text-xs font-medium transition-all sm:text-sm ${filter === f ? "bg-linear-to-r from-cyan-500 to-violet-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"}`}>
+            <button key={f} onClick={() => { setFilter(f); setPage(1); }} className={`rounded-lg px-3 py-2 text-xs font-medium transition-all sm:text-sm ${filter === f ? "bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"}`}>
               {t(`filter.${f}`)}
             </button>
           ))}

@@ -57,7 +57,7 @@ export default memo(function ConversationItem({
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
-            <Icon icon="lucide:user" className="text-neon-violet/70 h-5 w-5" />
+            <Icon icon="lucide:user" className="text-neon-primary/70 h-5 w-5" />
           </div>
         )}
       </div>

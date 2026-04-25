@@ -125,7 +125,7 @@ export function PersonalGoals({
 
                   <div className="mb-1 h-2.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-slate-700">
                     <div
-                      className="from-neon-violet to-neon-cyan h-full rounded-full bg-linear-to-r transition-all duration-500"
+                      className="from-neon-primary to-neon-secondary h-full rounded-full bg-linear-to-r transition-all duration-500"
                       style={{ width: `${percent}%` }}
                     />
                   </div>

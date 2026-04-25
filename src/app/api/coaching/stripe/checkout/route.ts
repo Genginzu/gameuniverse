@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-import { stripe, PLATFORM_FEE_RATE } from "@/lib/stripe";
+import { getStripe, PLATFORM_FEE_RATE } from "@/lib/stripe";
 import { logger } from "@/lib/logger";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -44,6 +44,8 @@ export async function POST(request: NextRequest) {
 
     const origin = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
+    const stripe = getStripe();
+
     const checkoutSession = await stripe.checkout.sessions.create({
       mode: "payment",
       line_items: [{
@@ -60,7 +62,7 @@ export async function POST(request: NextRequest) {
         metadata: { coaching_session_id: sessionId },
       },
       metadata: { coaching_session_id: sessionId },
-      success_url: `${origin}/coaching/sessions?payment=success`,
+      success_url: `${origin}/coaching/sessions?payment=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/coaching/sessions?payment=cancelled`,
     });
 

@@ -43,7 +43,7 @@ export function TagPostsContent({ tag }: TagPostsContentProps) {
         </Link>
         <div className="min-w-0">
           <h1 className="flex items-center gap-2 text-xl font-bold text-gray-900 sm:text-2xl lg:text-3xl dark:text-white">
-            <Icon icon="lucide:hash" className="size-5 shrink-0 text-violet-500 sm:size-6" />
+            <Icon icon="lucide:hash" className="size-5 shrink-0 text-palette-primary-500 sm:size-6" />
             <span className="truncate">{tag}</span>
           </h1>
           {data && (

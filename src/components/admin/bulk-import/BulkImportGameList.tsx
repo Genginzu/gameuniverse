@@ -40,7 +40,7 @@ export function BulkImportGameList({ games, total, loading, syncing, batchSize, 
           {syncing ? (
             <button onClick={onAbort} className="flex min-h-[44px] items-center gap-2 rounded-xl bg-red-500 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-red-600"><Icon icon="lucide:square" className="size-4" />{t("abort")}</button>
           ) : (
-            <button onClick={onSync} disabled={games.length === 0} className="flex min-h-[44px] items-center gap-2 rounded-xl bg-linear-to-r from-cyan-500 to-violet-500 px-4 py-2 text-sm font-medium text-white transition-all hover:opacity-90 disabled:opacity-50"><Icon icon="lucide:download" className="size-4" />{t("syncButton", { count: batchSize === 0 ? total : games.length })}</button>
+            <button onClick={onSync} disabled={games.length === 0} className="flex min-h-[44px] items-center gap-2 rounded-xl bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 px-4 py-2 text-sm font-medium text-white transition-all hover:opacity-90 disabled:opacity-50"><Icon icon="lucide:download" className="size-4" />{t("syncButton", { count: batchSize === 0 ? total : games.length })}</button>
           )}
         </div>
       </div>
@@ -55,7 +55,7 @@ export function BulkImportGameList({ games, total, loading, syncing, batchSize, 
             </span>
           </div>
           <div className="h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
-            <div className="h-full rounded-full bg-linear-to-r from-cyan-500 to-violet-500 transition-all duration-300" style={{ width: `${(processed / progress.total) * 100}%` }} />
+            <div className="h-full rounded-full bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 transition-all duration-300" style={{ width: `${(processed / progress.total) * 100}%` }} />
           </div>
         </div>
       )}

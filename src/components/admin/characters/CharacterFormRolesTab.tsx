@@ -34,7 +34,7 @@ export function CharacterFormRolesTab({ form, t, availableRoles }: CharacterForm
                 onClick={() => toggleRole(role.id)}
                 className={`inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm font-medium transition-all ${
                   isSelected
-                    ? "border-cyan-500/50 bg-linear-to-r from-cyan-500/10 to-violet-500/10 text-cyan-700 dark:text-cyan-300"
+                    ? "border-palette-secondary-500/50 bg-linear-to-r from-palette-secondary-500/10 to-palette-primary-500/10 text-palette-secondary-700 dark:text-palette-secondary-300"
                     : "border-gray-200 bg-white text-gray-600 hover:border-gray-300 hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:border-gray-500"
                 }`}
               >

@@ -3319,7 +3319,14 @@
     "typeDiscussionMessage": "sent you a message",
     "typePostCreated": "published a new post",
     "typePostMention": "mentioned you in a post",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "typeCoachingRequested": "requested a coaching session",
+    "typeCoachingConfirmed": "accepted your coaching session",
+    "typeCoachingDeclined": "declined your coaching session",
+    "typeCoachingStarted": "started your coaching session",
+    "typeCoachingCompleted": "completed your coaching session",
+    "typeCoachingCancelled": "cancelled a coaching session",
+    "typeCoachingPaid": "paid for your coaching session"
   },
   "postComments": {
     "title": "Comments",
@@ -3444,7 +3451,24 @@
         "pending": "Onboarding in progress — complete your Stripe profile",
         "resume": "Resume onboarding",
         "active": "Stripe account active",
-        "dashboard": "Stripe Dashboard"
+        "dashboard": "Stripe Dashboard",
+        "checking": "Checking Stripe status...",
+        "paymentHistory": "Payment history"
+      },
+      "payments": {
+        "totalEarnings": "Total earnings",
+        "paidSessions": "paid sessions",
+        "requestPayout": "Transfer to my account",
+        "payoutLoading": "Transferring...",
+        "payoutSuccess": "Transfer of {amount} {currency} initiated!",
+        "payoutError": "Transfer error.",
+        "noFunds": "No funds available.",
+        "noPayments": "No payments yet.",
+        "date": "Date",
+        "student": "Student",
+        "amount": "Amount",
+        "fee": "Fee",
+        "net": "Net"
       }
     },
     "publicProfile": {
@@ -3505,8 +3529,14 @@
         "start": "Start",
         "complete": "Complete",
         "cancel": "Cancel",
-        "chat": "Chat"
-      }
+        "chat": "Chat",
+        "pay": "Pay"
+      },
+      "awaitingPayment": "Awaiting payment",
+      "paymentSuccess": "Payment successful!",
+      "paymentError": "Payment error.",
+      "paymentCancelled": "Payment cancelled.",
+      "paymentDone": "Payment done"
     },
     "reviews": {
       "empty": "No reviews yet.",

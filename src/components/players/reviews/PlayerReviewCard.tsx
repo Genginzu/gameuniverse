@@ -99,7 +99,7 @@ export function PlayerReviewCard({ review, locale }: PlayerReviewCardProps) {
           <div>
             <Link
               href={`/games/${review.gameSlug}`}
-              className="hover:text-neon-violet dark:hover:text-neon-cyan text-sm font-semibold text-gray-900 transition-colors dark:text-white"
+              className="hover:text-neon-primary dark:hover:text-neon-secondary text-sm font-semibold text-gray-900 transition-colors dark:text-white"
             >
               {review.gameName}
             </Link>

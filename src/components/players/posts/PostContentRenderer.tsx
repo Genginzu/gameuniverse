@@ -62,7 +62,7 @@ export function PostContentRenderer({ content, tags, mentions, locale: _locale }
                 key={index}
                 href={`/posts/tags/${tagName}`}
                 aria-label={t("tagAriaLabel", { tag: tagName })}
-                className="text-violet-500 transition-all duration-300 hover:underline dark:text-violet-400"
+                className="text-palette-primary-500 transition-all duration-300 hover:underline dark:text-palette-primary-400"
               >
                 #{tagName}
               </Link>
@@ -80,7 +80,7 @@ export function PostContentRenderer({ content, tags, mentions, locale: _locale }
                 key={index}
                 href={`/players/${playerId}`}
                 aria-label={t("mentionAriaLabel", { username })}
-                className="text-cyan-500 transition-all duration-300 hover:underline dark:text-cyan-300"
+                className="text-palette-secondary-500 transition-all duration-300 hover:underline dark:text-palette-secondary-300"
               >
                 @{username}
               </Link>

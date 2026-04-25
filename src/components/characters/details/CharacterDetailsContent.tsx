@@ -54,7 +54,7 @@ const getCharacterColors = (role?: string) => {
     primary: "#8b5cf6",
     secondary: "#7c3aed",
     accent: "#a78bfa",
-    bg: "from-violet-500/20 to-blue-500/20",
+    bg: "from-palette-primary-500/20 to-blue-500/20",
   };
 };
 

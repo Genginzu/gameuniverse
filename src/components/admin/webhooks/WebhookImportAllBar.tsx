@@ -21,8 +21,8 @@ export function WebhookImportAllBar({
   t,
 }: WebhookImportAllBarProps) {
   return (
-    <div className="flex items-center justify-between rounded-xl border-2 border-violet-300 bg-violet-50 px-4 py-3 dark:border-violet-700 dark:bg-violet-900/20">
-      <span className="text-sm font-medium text-violet-800 dark:text-violet-300">
+    <div className="flex items-center justify-between rounded-xl border-2 border-palette-primary-300 bg-palette-primary-50 px-4 py-3 dark:border-palette-primary-700 dark:bg-palette-primary-900/20">
+      <span className="text-sm font-medium text-palette-primary-800 dark:text-palette-primary-300">
         {t("importAllHint")}
       </span>
       <div className="flex shrink-0 items-center gap-2">
@@ -30,7 +30,7 @@ export function WebhookImportAllBar({
           value={importCount}
           onChange={(e) => onImportCountChange(Number(e.target.value))}
           disabled={importingAll}
-          className="rounded-md border border-violet-300 bg-white px-2 py-1.5 text-sm text-violet-800 dark:border-violet-600 dark:bg-violet-900/40 dark:text-violet-200"
+          className="rounded-md border border-palette-primary-300 bg-white px-2 py-1.5 text-sm text-palette-primary-800 dark:border-palette-primary-600 dark:bg-palette-primary-900/40 dark:text-palette-primary-200"
         >
           {IMPORT_COUNTS.map((n) => (
             <option key={n} value={n}>
@@ -42,7 +42,7 @@ export function WebhookImportAllBar({
           type="button"
           disabled={importingAll || importingAny}
           onClick={onImportAll}
-          className="shrink-0 rounded-lg bg-linear-to-r from-cyan-500 to-violet-500 px-5 py-2 text-sm font-semibold text-white shadow-md transition-opacity hover:opacity-90 disabled:opacity-50"
+          className="shrink-0 rounded-lg bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 px-5 py-2 text-sm font-semibold text-white shadow-md transition-opacity hover:opacity-90 disabled:opacity-50"
         >
           {importingAll ? t("importingAll") : t("importAll")}
         </button>
