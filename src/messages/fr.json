@@ -58,7 +58,14 @@
     "coaching": "Coaching",
     "coachSettings": "Espace Coach",
     "coachingHub": "Trouver un coach",
-    "coachingSessions": "Mes sessions"
+    "coachingSessions": "Mes sessions",
+    "esport": "Esport",
+    "esportCalendar": "Calendrier",
+    "esportLive": "En direct",
+    "esportResults": "Résultats",
+    "esportTeams": "Équipes",
+    "esportPlayers": "Joueurs pro",
+    "esportPredictions": "Pronostics"
   },
   "landing": {
     "title": "Votre univers",

@@ -58,7 +58,14 @@
     "coaching": "Coaching",
     "coachSettings": "Coach Settings",
     "coachingHub": "Find a Coach",
-    "coachingSessions": "My Sessions"
+    "coachingSessions": "My Sessions",
+    "esport": "Esport",
+    "esportCalendar": "Calendar",
+    "esportLive": "Live",
+    "esportResults": "Results",
+    "esportTeams": "Teams",
+    "esportPlayers": "Pro Players",
+    "esportPredictions": "Predictions"
   },
   "landing": {
     "title": "Your",

@@ -1,7 +1,7 @@
 "use client";
 
 import { Link, usePathname } from "@/i18n/navigation";
-import { NAV_LINKS, PUBLIC_LINKS, COACHING_LINKS, isActive } from "@/lib/utils/navigation-utils";
+import { NAV_LINKS, PUBLIC_LINKS, COACHING_LINKS, ESPORT_LINKS, isActive } from "@/lib/utils/navigation-utils";
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import UnreadBadge from "@/components/discussions/UnreadBadge";
@@ -52,6 +52,20 @@ export default function SidebarNav({
         {tNav("explore")}
       </p>
       {PUBLIC_LINKS.map(({ href, icon, labelKey }) => {
+        const active = isActive(pathname, href, currentUserId);
+        return (
+          <Link key={href} href={href} onClick={onLinkClick} className={linkClasses(active)}>
+            <Icon icon={icon} className={iconClasses(active)} />
+            <span>{tNav(labelKey)}</span>
+          </Link>
+        );
+      })}
+
+      {/* Category: Esport */}
+      <p className="px-3 pt-4 pb-1 text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-500">
+        {tNav("esport")}
+      </p>
+      {ESPORT_LINKS.map(({ href, icon, labelKey }) => {
         const active = isActive(pathname, href, currentUserId);
         return (
           <Link key={href} href={href} onClick={onLinkClick} className={linkClasses(active)}>
