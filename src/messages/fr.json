@@ -1289,6 +1289,8 @@
       "bulkImport": "Import en masse",
       "bulkImportCharacters": "Import en masse",
       "toolsCategory": "Outils",
+      "esportCategory": "Esport",
+      "esport": "Gestion Esport",
       "translations": "Traductions",
       "globalSync": "Synchro globale"
     },
@@ -2646,6 +2648,65 @@
         "investigate": "Enquêter",
         "resolve": "Résoudre",
         "dismiss": "Rejeter"
+      }
+    },
+    "esport": {
+      "title": "Gestion Esport",
+      "subtitle": "Gérez les équipes, joueurs, tournois et résultats esport",
+      "tabs": {
+        "teams": "Équipes",
+        "players": "Joueurs",
+        "tournaments": "Tournois",
+        "matches": "Résultats"
+      },
+      "teams": {
+        "name": "Nom",
+        "acronym": "Acronyme",
+        "game": "Jeu",
+        "location": "Localisation",
+        "image": "Image",
+        "pandascoreId": "PandaScore ID",
+        "noTeams": "Aucune équipe",
+        "deleteConfirm": "Supprimer cette équipe ?",
+        "searchPlaceholder": "Rechercher une équipe..."
+      },
+      "players": {
+        "name": "Nom",
+        "role": "Rôle",
+        "team": "Équipe",
+        "nationality": "Nationalité",
+        "game": "Jeu",
+        "noPlayers": "Aucun joueur",
+        "deleteConfirm": "Supprimer ce joueur ?",
+        "searchPlaceholder": "Rechercher un joueur..."
+      },
+      "tournaments": {
+        "name": "Nom",
+        "game": "Jeu",
+        "tier": "Tier",
+        "league": "Ligue",
+        "dates": "Dates",
+        "prizepool": "Prizepool",
+        "noTournaments": "Aucun tournoi",
+        "deleteConfirm": "Supprimer ce tournoi ?",
+        "searchPlaceholder": "Rechercher un tournoi..."
+      },
+      "matches": {
+        "name": "Nom",
+        "status": "Statut",
+        "opponents": "Adversaires",
+        "score": "Score",
+        "tournament": "Tournoi",
+        "date": "Date",
+        "noMatches": "Aucun match",
+        "deleteConfirm": "Supprimer ce match ?",
+        "searchPlaceholder": "Rechercher un match..."
+      },
+      "sync": {
+        "button": "Synchroniser depuis PandaScore",
+        "syncing": "Synchronisation en cours...",
+        "success": "Synchronisation terminée",
+        "error": "Erreur de synchronisation"
       }
     }
   },

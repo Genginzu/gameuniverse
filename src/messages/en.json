@@ -1289,6 +1289,8 @@
       "bulkImport": "Bulk Import",
       "bulkImportCharacters": "Bulk Import",
       "toolsCategory": "Tools",
+      "esportCategory": "Esport",
+      "esport": "Esport Management",
       "translations": "Translations",
       "globalSync": "Global Sync"
     },
@@ -2643,6 +2645,65 @@
         "investigate": "Investigate",
         "resolve": "Resolve",
         "dismiss": "Dismiss"
+      }
+    },
+    "esport": {
+      "title": "Esport Management",
+      "subtitle": "Manage esport teams, players, tournaments and results",
+      "tabs": {
+        "teams": "Teams",
+        "players": "Players",
+        "tournaments": "Tournaments",
+        "matches": "Results"
+      },
+      "teams": {
+        "name": "Name",
+        "acronym": "Acronym",
+        "game": "Game",
+        "location": "Location",
+        "image": "Image",
+        "pandascoreId": "PandaScore ID",
+        "noTeams": "No teams",
+        "deleteConfirm": "Delete this team?",
+        "searchPlaceholder": "Search teams..."
+      },
+      "players": {
+        "name": "Name",
+        "role": "Role",
+        "team": "Team",
+        "nationality": "Nationality",
+        "game": "Game",
+        "noPlayers": "No players",
+        "deleteConfirm": "Delete this player?",
+        "searchPlaceholder": "Search players..."
+      },
+      "tournaments": {
+        "name": "Name",
+        "game": "Game",
+        "tier": "Tier",
+        "league": "League",
+        "dates": "Dates",
+        "prizepool": "Prizepool",
+        "noTournaments": "No tournaments",
+        "deleteConfirm": "Delete this tournament?",
+        "searchPlaceholder": "Search tournaments..."
+      },
+      "matches": {
+        "name": "Name",
+        "status": "Status",
+        "opponents": "Opponents",
+        "score": "Score",
+        "tournament": "Tournament",
+        "date": "Date",
+        "noMatches": "No matches",
+        "deleteConfirm": "Delete this match?",
+        "searchPlaceholder": "Search matches..."
+      },
+      "sync": {
+        "button": "Sync from PandaScore",
+        "syncing": "Syncing...",
+        "success": "Sync completed",
+        "error": "Sync error"
       }
     }
   },
