@@ -6,27 +6,19 @@ on:
   workflow_dispatch:
 
 jobs:
-  lint:
-    name: Lint
+  quality:
+    name: Lint & Type Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
       - run: bun run lint
-
-  type-check:
-    name: Type Check
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - uses: oven-sh/setup-bun@v2
-      - run: bun install --frozen-lockfile
       - run: bun run type-check
 
   unit-tests:
     name: Unit Tests
-    needs: [lint, type-check]
+    needs: [quality]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -36,7 +28,7 @@ jobs:
 
   build:
     name: Build
-    needs: [lint, type-check]
+    needs: [quality]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
