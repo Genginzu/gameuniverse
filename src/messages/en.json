@@ -2665,7 +2665,8 @@
         "pandascoreId": "PandaScore ID",
         "noTeams": "No teams",
         "deleteConfirm": "Delete this team?",
-        "searchPlaceholder": "Search teams..."
+        "searchPlaceholder": "Search teams...",
+        "actions": "Actions"
       },
       "players": {
         "name": "Name",
@@ -2675,7 +2676,8 @@
         "game": "Game",
         "noPlayers": "No players",
         "deleteConfirm": "Delete this player?",
-        "searchPlaceholder": "Search players..."
+        "searchPlaceholder": "Search players...",
+        "actions": "Actions"
       },
       "tournaments": {
         "name": "Name",
@@ -2686,7 +2688,8 @@
         "prizepool": "Prizepool",
         "noTournaments": "No tournaments",
         "deleteConfirm": "Delete this tournament?",
-        "searchPlaceholder": "Search tournaments..."
+        "searchPlaceholder": "Search tournaments...",
+        "actions": "Actions"
       },
       "matches": {
         "name": "Name",
@@ -2697,14 +2700,25 @@
         "date": "Date",
         "noMatches": "No matches",
         "deleteConfirm": "Delete this match?",
-        "searchPlaceholder": "Search matches..."
+        "searchPlaceholder": "Search matches...",
+        "actions": "Actions"
       },
       "sync": {
         "button": "Sync from PandaScore",
         "syncing": "Syncing...",
         "success": "Sync completed",
         "error": "Sync error"
-      }
+      },
+      "totalCount": "{count, plural, =0 {No results} one {# result} other {# results}}",
+      "empty": "No data found",
+      "page": "Page {current} / {total}",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "deleteError": "Error while deleting",
+      "actions": "Actions",
+      "edit": "Edit",
+      "delete": "Delete",
+      "search": "Search"
     }
   },
   "collections": {

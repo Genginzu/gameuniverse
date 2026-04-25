@@ -2668,7 +2668,8 @@
         "pandascoreId": "PandaScore ID",
         "noTeams": "Aucune équipe",
         "deleteConfirm": "Supprimer cette équipe ?",
-        "searchPlaceholder": "Rechercher une équipe..."
+        "searchPlaceholder": "Rechercher une équipe...",
+        "actions": "Actions"
       },
       "players": {
         "name": "Nom",
@@ -2678,7 +2679,8 @@
         "game": "Jeu",
         "noPlayers": "Aucun joueur",
         "deleteConfirm": "Supprimer ce joueur ?",
-        "searchPlaceholder": "Rechercher un joueur..."
+        "searchPlaceholder": "Rechercher un joueur...",
+        "actions": "Actions"
       },
       "tournaments": {
         "name": "Nom",
@@ -2689,7 +2691,8 @@
         "prizepool": "Prizepool",
         "noTournaments": "Aucun tournoi",
         "deleteConfirm": "Supprimer ce tournoi ?",
-        "searchPlaceholder": "Rechercher un tournoi..."
+        "searchPlaceholder": "Rechercher un tournoi...",
+        "actions": "Actions"
       },
       "matches": {
         "name": "Nom",
@@ -2700,14 +2703,25 @@
         "date": "Date",
         "noMatches": "Aucun match",
         "deleteConfirm": "Supprimer ce match ?",
-        "searchPlaceholder": "Rechercher un match..."
+        "searchPlaceholder": "Rechercher un match...",
+        "actions": "Actions"
       },
       "sync": {
         "button": "Synchroniser depuis PandaScore",
         "syncing": "Synchronisation en cours...",
         "success": "Synchronisation terminée",
         "error": "Erreur de synchronisation"
-      }
+      },
+      "totalCount": "{count, plural, =0 {Aucun résultat} one {# résultat} other {# résultats}}",
+      "empty": "Aucune donnée trouvée",
+      "page": "Page {current} / {total}",
+      "previousPage": "Page précédente",
+      "nextPage": "Page suivante",
+      "deleteError": "Erreur lors de la suppression",
+      "actions": "Actions",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "search": "Rechercher"
     }
   },
   "collections": {
