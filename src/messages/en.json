@@ -3673,5 +3673,16 @@
       "noPlayersDescription": "No esport player matches your search",
       "loadError": "Failed to load player details"
     }
+    "live": {
+      "metaTitle": "Esport Live",
+      "metaDescription": "Watch live esport streams from professional tournaments",
+      "title": "Live Now",
+      "subtitle": "Streams from ongoing esport tournaments",
+      "noStreams": "No live streams",
+      "noStreamsDescription": "No esport tournament is being broadcast live at the moment",
+      "liveNow": "Live",
+      "mainStream": "Main",
+      "watchStream": "Watch stream"
+    }
   },
 }

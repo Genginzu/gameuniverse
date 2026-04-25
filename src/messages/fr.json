@@ -3676,5 +3676,16 @@
       "noPlayersDescription": "Aucun joueur esport ne correspond à votre recherche",
       "loadError": "Impossible de charger les détails du joueur"
     }
+    "live": {
+      "metaTitle": "Esport en direct",
+      "metaDescription": "Regardez les streams esport en direct des tournois professionnels",
+      "title": "En direct",
+      "subtitle": "Streams des tournois esport en cours",
+      "noStreams": "Aucun stream en direct",
+      "noStreamsDescription": "Aucun tournoi esport n'est diffusé en direct pour le moment",
+      "liveNow": "En direct",
+      "mainStream": "Principal",
+      "watchStream": "Regarder le stream"
+    }
   },
 }
