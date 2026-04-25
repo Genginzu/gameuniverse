@@ -33,11 +33,11 @@
     "yearInReview": {
       "title": "Rétrospective {year} de {player}",
       "description": "Découvrez la rétrospective gaming {year} de {player} sur Gamers Universe"
-    }
+    },
     "esportCalendar": {
       "title": "Calendrier Esport",
       "description": "Suivez les tournois esport professionnels à venir et en cours"
-    },
+    }
   },
   "navigation": {
     "games": "Jeux",
@@ -3631,7 +3631,7 @@
       "enabled": "Actif",
       "playerTransactions": "Transactions de {username}"
     }
-  }
+  },
   "player": {
     "gameRanks": {
       "title": "Rangs compétitifs",
@@ -3649,7 +3649,7 @@
       "tier": "Tier",
       "live": "En direct",
       "upcoming": "À venir"
-    }
+    },
     "results": {
       "metaTitle": "Résultats Esport",
       "metaDescription": "Consultez les résultats récents des compétitions esport professionnelles",
@@ -3670,7 +3670,7 @@
       "noTeamsDescription": "Aucune équipe esport ne correspond à votre recherche",
       "roster": "Roster",
       "loadError": "Impossible de charger les détails de l'équipe"
-    }
+    },
     "players": {
       "metaTitle": "Joueurs Esport Pro",
       "metaDescription": "Découvrez les joueurs esport professionnels, leurs équipes et palmarès",
@@ -3681,7 +3681,7 @@
       "noPlayers": "Aucun joueur trouvé",
       "noPlayersDescription": "Aucun joueur esport ne correspond à votre recherche",
       "loadError": "Impossible de charger les détails du joueur"
-    }
+    },
     "live": {
       "metaTitle": "Esport en direct",
       "metaDescription": "Regardez les streams esport en direct des tournois professionnels",
@@ -3693,5 +3693,5 @@
       "mainStream": "Principal",
       "watchStream": "Regarder le stream"
     }
-  },
+  }
 }

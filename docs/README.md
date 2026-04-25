@@ -55,6 +55,14 @@
 | [setup.md](features/library/setup.md)           | Setup de la bibliothèque     |
 | [comparison.md](features/library/comparison.md) | Comparaison de bibliothèques |
 
+## 🏆 Features — Esport
+
+| Document                                    | Description                                    |
+| ------------------------------------------- | ---------------------------------------------- |
+| [esport.md](features/esport/esport.md)      | Module esport complet (PandaScore + rangs)     |
+
+
+
 ## ⚙️ Features — Admin
 
 | Document                                                                | Description               |

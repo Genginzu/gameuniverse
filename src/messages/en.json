@@ -33,11 +33,11 @@
     "yearInReview": {
       "title": "{player}'s {year} year in review",
       "description": "Discover {player}'s {year} gaming year in review on Gamers Universe"
-    }
+    },
     "esportCalendar": {
       "title": "Esport Calendar",
       "description": "Follow upcoming and ongoing professional esport tournaments"
-    },
+    }
   },
   "navigation": {
     "games": "Games",
@@ -3628,7 +3628,7 @@
       "enabled": "Active",
       "playerTransactions": "{username} transactions"
     }
-  }
+  },
   "player": {
     "gameRanks": {
       "title": "Competitive Ranks",
@@ -3646,7 +3646,7 @@
       "tier": "Tier",
       "live": "Live",
       "upcoming": "Upcoming"
-    }
+    },
     "results": {
       "metaTitle": "Esport Results",
       "metaDescription": "View recent results from professional esport competitions",
@@ -3667,7 +3667,7 @@
       "noTeamsDescription": "No esport team matches your search",
       "roster": "Roster",
       "loadError": "Failed to load team details"
-    }
+    },
     "players": {
       "metaTitle": "Pro Esport Players",
       "metaDescription": "Discover professional esport players, their teams and achievements",
@@ -3678,7 +3678,7 @@
       "noPlayers": "No players found",
       "noPlayersDescription": "No esport player matches your search",
       "loadError": "Failed to load player details"
-    }
+    },
     "live": {
       "metaTitle": "Esport Live",
       "metaDescription": "Watch live esport streams from professional tournaments",
@@ -3690,5 +3690,5 @@
       "mainStream": "Main",
       "watchStream": "Watch stream"
     }
-  },
+  }
 }
