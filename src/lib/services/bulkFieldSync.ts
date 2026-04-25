@@ -7,6 +7,7 @@ import type { Database } from "@/lib/database.types";
 /**
  * Lightweight field-specific sync from IGDB.
  * Only fetches and updates the requested field, not a full game sync.
+ * Respects manual overrides: if an admin edited the field, it is skipped.
  */
 
 interface SyncResult {
@@ -24,12 +25,38 @@ const FIELD_QUERIES: Record<string, string> = {
   releaseDate: "fields first_release_date; where id = {id};",
 };
 
+/** Maps bulk-import field keys to TrackableField override names */
+export const BULK_FIELD_TO_OVERRIDE: Record<string, string> = {
+  cover: "cover_image",
+  background: "background_image",
+  playtime: "playtime",
+  metascore: "metascore",
+  releaseDate: "release_date",
+  popularity: "popularity",
+};
+
+async function isFieldOverridden(gameId: string, field: string): Promise<boolean> {
+  const overrideName = BULK_FIELD_TO_OVERRIDE[field];
+  if (!overrideName) return false;
+  const supabase = await createRouteHandlerClient();
+  const { count } = await supabase
+    .from("game_field_overrides")
+    .select("id", { count: "exact", head: true })
+    .eq("game_id", gameId)
+    .eq("field_name", overrideName);
+  return (count ?? 0) > 0;
+}
+
 export async function syncSingleField(
   gameId: string,
   igdbId: number,
   field: string
 ): Promise<SyncResult> {
   try {
+    if (await isFieldOverridden(gameId, field)) {
+      return { success: true, value: null, error: "skipped:override" };
+    }
+
     switch (field) {
       case "cover":
         return await syncCover(gameId, igdbId);
