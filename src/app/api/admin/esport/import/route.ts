@@ -67,6 +67,19 @@ export async function POST(request: NextRequest) {
         controller.enqueue(enc.encode(`data: ${JSON.stringify(d)}\n\n`));
 
       const supabase = getSupabaseAdmin();
+      const start = Date.now();
+      const counts: Record<string, { synced: number; errors: number }> = {
+        teams: { synced: 0, errors: 0 }, players: { synced: 0, errors: 0 },
+        tournaments: { synced: 0, errors: 0 }, matches: { synced: 0, errors: 0 },
+      };
+
+      // Create log entry
+      const { data: log } = await supabase
+        .from("pandascore_sync_logs")
+        .insert({ trigger: "manual", status: "running" })
+        .select("id")
+        .single();
+      const logId = log?.id;
 
       try {
         if (entities.includes("teams")) {
@@ -88,6 +101,7 @@ export async function POST(request: NextRequest) {
             send({ type: "progress", entity: "teams", done: synced, total: teams.length, name: t.name });
           }
           send({ type: "phase", entity: "teams", status: "done", synced });
+          counts.teams.synced = synced;
         }
 
         if (entities.includes("players")) {
@@ -112,6 +126,7 @@ export async function POST(request: NextRequest) {
             send({ type: "progress", entity: "players", done: synced, total: players.length, name: p.name });
           }
           send({ type: "phase", entity: "players", status: "done", synced });
+          counts.players.synced = synced;
         }
 
         if (entities.includes("tournaments")) {
@@ -139,6 +154,7 @@ export async function POST(request: NextRequest) {
             send({ type: "progress", entity: "tournaments", done: synced, total: tournaments.length, name: t.name });
           }
           send({ type: "phase", entity: "tournaments", status: "done", synced });
+          counts.tournaments.synced = synced;
         }
 
         if (entities.includes("matches")) {
@@ -174,13 +190,30 @@ export async function POST(request: NextRequest) {
             send({ type: "progress", entity: "matches", done: synced, total: matches.length, name: m.name });
           }
           send({ type: "phase", entity: "matches", status: "done", synced });
+          counts.matches.synced = synced;
         }
 
         send({ type: "complete" });
+        if (logId) {
+          await supabase.from("pandascore_sync_logs").update({
+            status: "completed",
+            teams_synced: counts.teams.synced, teams_errors: counts.teams.errors,
+            players_synced: counts.players.synced, players_errors: counts.players.errors,
+            tournaments_synced: counts.tournaments.synced, tournaments_errors: counts.tournaments.errors,
+            matches_synced: counts.matches.synced, matches_errors: counts.matches.errors,
+            duration_ms: Date.now() - start, completed_at: new Date().toISOString(),
+          }).eq("id", logId);
+        }
       } catch (error) {
         const msg = error instanceof Error ? error.message : "Unknown error";
         send({ type: "error", error: msg });
         logger.error("Esport import stream error", { error });
+        if (logId) {
+          await supabase.from("pandascore_sync_logs").update({
+            status: "failed", error_message: msg,
+            duration_ms: Date.now() - start, completed_at: new Date().toISOString(),
+          }).eq("id", logId);
+        }
       }
 
       controller.close();
