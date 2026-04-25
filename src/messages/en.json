@@ -3706,6 +3706,28 @@
       "won": "Won",
       "lost": "Lost",
       "cancelled": "Cancelled"
+    },
+    "fantasy": {
+      "metaTitle": "Fantasy Esport",
+      "metaDescription": "Build your pro player team and earn points",
+      "title": "Fantasy Esport",
+      "subtitle": "Build your virtual team of professional players",
+      "steps": {
+        "draft": {
+          "title": "Draft",
+          "description": "Select your pro players within the budget"
+        },
+        "score": {
+          "title": "Score",
+          "description": "Earn points based on real performances"
+        },
+        "compete": {
+          "title": "Compete",
+          "description": "Climb the leaderboard and win rewards"
+        }
+      },
+      "noLeagues": "No leagues available",
+      "noLeaguesDescription": "No fantasy league is open at the moment"
     }
   }
 }

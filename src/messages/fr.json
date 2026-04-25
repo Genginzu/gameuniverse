@@ -3709,6 +3709,28 @@
       "won": "Gagné",
       "lost": "Perdu",
       "cancelled": "Annulé"
+    },
+    "fantasy": {
+      "metaTitle": "Fantasy Esport",
+      "metaDescription": "Composez votre équipe de joueurs pro et gagnez des points",
+      "title": "Fantasy Esport",
+      "subtitle": "Composez votre équipe virtuelle de joueurs professionnels",
+      "steps": {
+        "draft": {
+          "title": "Draftez",
+          "description": "Sélectionnez vos joueurs pro dans la limite du budget"
+        },
+        "score": {
+          "title": "Scorez",
+          "description": "Gagnez des points selon les performances réelles"
+        },
+        "compete": {
+          "title": "Compétez",
+          "description": "Grimpez dans le classement et gagnez des récompenses"
+        }
+      },
+      "noLeagues": "Aucune ligue disponible",
+      "noLeaguesDescription": "Aucune ligue fantasy n'est ouverte pour le moment"
     }
   }
 }
