@@ -2710,6 +2710,19 @@
         "success": "Sync completed",
         "error": "Sync error"
       },
+      "import": {
+        "title": "Esport Bulk Import",
+        "subtitle": "Sync data from PandaScore",
+        "syncAll": "Sync All",
+        "syncing": "Syncing...",
+        "stop": "Stop",
+        "syncOne": "Sync",
+        "idle": "Idle",
+        "fetching": "Fetching...",
+        "done": "{count} synced",
+        "error": "Sync error",
+        "aborted": "Sync aborted"
+      },
       "totalCount": "{count, plural, =0 {No results} one {# result} other {# results}}",
       "empty": "No data found",
       "page": "Page {current} / {total}",

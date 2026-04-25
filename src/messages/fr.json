@@ -2713,6 +2713,19 @@
         "success": "Synchronisation terminée",
         "error": "Erreur de synchronisation"
       },
+      "import": {
+        "title": "Import en masse Esport",
+        "subtitle": "Synchronisez les données depuis PandaScore",
+        "syncAll": "Tout synchroniser",
+        "syncing": "Synchronisation...",
+        "stop": "Arrêter",
+        "syncOne": "Synchroniser",
+        "idle": "En attente",
+        "fetching": "Récupération...",
+        "done": "{count} synchronisés",
+        "error": "Erreur de synchronisation",
+        "aborted": "Synchronisation annulée"
+      },
       "totalCount": "{count, plural, =0 {Aucun résultat} one {# résultat} other {# résultats}}",
       "empty": "Aucune donnée trouvée",
       "page": "Page {current} / {total}",
