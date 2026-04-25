@@ -1292,6 +1292,7 @@
       "esportCategory": "Esport",
       "esport": "Esport Management",
       "esportImport": "Esport Import",
+      "esportSync": "PandaScore Sync",
       "translations": "Translations",
       "globalSync": "Global Sync"
     },
@@ -2722,6 +2723,22 @@
         "done": "{count} synced",
         "error": "Sync error",
         "aborted": "Sync aborted"
+      },
+      "syncPage": {
+        "title": "PandaScore Sync",
+        "subtitle": "Automatic sync every 6 hours via cron",
+        "cronInfo": "Automatic sync",
+        "cronDescription": "PandaScore data is synced automatically every 6 hours. You can also trigger a manual sync.",
+        "triggerSync": "Trigger sync",
+        "syncing": "Syncing...",
+        "date": "Date",
+        "trigger": "Trigger",
+        "status": "Status",
+        "synced": "Synced",
+        "errors": "Errors",
+        "duration": "Duration",
+        "details": "Details",
+        "noLogs": "No sync history"
       },
       "totalCount": "{count, plural, =0 {No results} one {# result} other {# results}}",
       "empty": "No data found",
