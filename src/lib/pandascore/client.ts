@@ -66,6 +66,10 @@ export function getRunningTournaments(params?: PandaScoreListParams) {
   return request<PandaScoreTournament[]>("/tournaments/running", params);
 }
 
+export function getPastTournaments(params?: PandaScoreListParams) {
+  return request<PandaScoreTournament[]>("/tournaments/past", params);
+}
+
 export function getTournamentById(id: number) {
   return request<PandaScoreTournament>(`/tournaments/${id}`);
 }
@@ -80,6 +84,10 @@ export function getUpcomingMatches(params?: PandaScoreListParams) {
 
 export function getRunningMatches(params?: PandaScoreListParams) {
   return request<PandaScoreMatch[]>("/matches/running", params);
+}
+
+export function getPastMatches(params?: PandaScoreListParams) {
+  return request<PandaScoreMatch[]>("/matches/past", params);
 }
 
 export function getMatchById(id: number) {

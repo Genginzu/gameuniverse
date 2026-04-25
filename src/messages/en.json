@@ -3641,5 +3641,14 @@
       "live": "Live",
       "upcoming": "Upcoming"
     }
+    "results": {
+      "metaTitle": "Esport Results",
+      "metaDescription": "View recent results from professional esport competitions",
+      "title": "Esport Results",
+      "subtitle": "Recent results from professional competitions",
+      "noResults": "No results found",
+      "noResultsDescription": "No esport match results available at the moment",
+      "finished": "Finished"
+    },
   },
 }

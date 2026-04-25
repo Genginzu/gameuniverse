@@ -3644,5 +3644,14 @@
       "live": "En direct",
       "upcoming": "À venir"
     }
+    "results": {
+      "metaTitle": "Résultats Esport",
+      "metaDescription": "Consultez les résultats récents des compétitions esport professionnelles",
+      "title": "Résultats Esport",
+      "subtitle": "Résultats récents des compétitions professionnelles",
+      "noResults": "Aucun résultat trouvé",
+      "noResultsDescription": "Aucun résultat de match esport disponible pour le moment",
+      "finished": "Terminé"
+    },
   },
 }
