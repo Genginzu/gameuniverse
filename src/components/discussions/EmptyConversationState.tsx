@@ -12,7 +12,7 @@ export default function EmptyConversationState() {
       data-testid="empty-conversation-state"
     >
       <div className="rounded-2xl bg-linear-to-br from-blue-500/20 via-purple-600/20 to-purple-700/20 p-5 shadow-[0_0_20px_rgba(139,92,246,0.15)] transition-all duration-300">
-        <Icon icon="lucide:message-square" className="text-neon-violet h-10 w-10" />
+        <Icon icon="lucide:message-square" className="text-neon-primary h-10 w-10" />
       </div>
       <div className="text-center">
         <p className="text-sm font-medium text-slate-600 dark:text-slate-300">

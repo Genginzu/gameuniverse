@@ -49,7 +49,7 @@ export default function AdminTranslationsPage() {
           <button
             onClick={handleSync}
             disabled={isSyncing}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-cyan-500/30 px-3 py-1.5 text-xs font-medium text-cyan-600 transition-all duration-300 hover:bg-cyan-50 disabled:opacity-50 dark:text-cyan-400 dark:hover:bg-cyan-900/20"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-palette-secondary-500/30 px-3 py-1.5 text-xs font-medium text-palette-secondary-600 transition-all duration-300 hover:bg-palette-secondary-50 disabled:opacity-50 dark:text-palette-secondary-400 dark:hover:bg-palette-secondary-900/20"
           >
             {isSyncing ? (
               <Icon icon="mdi:loading" className="size-4 animate-spin" />

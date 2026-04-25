@@ -63,15 +63,15 @@ function EntityCard({
   return (
     <Link
       href={`/admin/translations/${stat.entityType}`}
-      className="glass-card group cursor-pointer rounded-xl p-5 text-left transition-all duration-300 hover:shadow-lg hover:ring-1 hover:ring-cyan-500/30"
+      className="glass-card group cursor-pointer rounded-xl p-5 text-left transition-all duration-300 hover:shadow-lg hover:ring-1 hover:ring-palette-secondary-500/30"
     >
       <div className="mb-3 flex items-center justify-between">
-        <div className="flex size-10 items-center justify-center rounded-lg bg-linear-to-br from-cyan-500/20 to-violet-500/20">
-          <Icon icon={icon} className="size-5 text-cyan-500" />
+        <div className="flex size-10 items-center justify-center rounded-lg bg-linear-to-br from-palette-secondary-500/20 to-palette-primary-500/20">
+          <Icon icon={icon} className="size-5 text-palette-secondary-500" />
         </div>
         <Icon
           icon="mdi:chevron-right"
-          className="size-5 text-gray-400 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-cyan-500"
+          className="size-5 text-gray-400 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-palette-secondary-500"
         />
       </div>
 
@@ -81,7 +81,7 @@ function EntityCard({
 
       <div className="mb-2 h-1.5 w-full overflow-hidden rounded-full bg-gray-200/60 dark:bg-slate-700/60">
         <div
-          className="h-full rounded-full bg-linear-to-r from-cyan-500 to-violet-500 transition-all duration-500"
+          className="h-full rounded-full bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 transition-all duration-500"
           style={{ width: `${stat.percentage}%` }}
         />
       </div>

@@ -50,7 +50,7 @@ export function GameSortMenu({ value, onChange }: GameSortMenuProps) {
       >
         <Icon icon={SORT_ICONS[value]} className="size-4 sm:size-5" />
         <span className="hidden sm:inline">{t("label")}</span>
-        <span className="hidden text-cyan-600 sm:inline dark:text-cyan-400">{t(value)}</span>
+        <span className="hidden text-palette-secondary-600 sm:inline dark:text-palette-secondary-400">{t(value)}</span>
         <Icon
           icon="mdi:chevron-down"
           className={`size-4 transition-transform ${open ? "rotate-180" : ""}`}
@@ -76,7 +76,7 @@ export function GameSortMenu({ value, onChange }: GameSortMenuProps) {
                 }}
                 className={`flex w-full items-center gap-3 px-4 py-3 text-left text-sm transition-colors ${
                   active
-                    ? "bg-linear-to-r from-cyan-500/10 to-violet-500/10 text-cyan-600 dark:text-cyan-400"
+                    ? "bg-linear-to-r from-palette-secondary-500/10 to-palette-primary-500/10 text-palette-secondary-600 dark:text-palette-secondary-400"
                     : "text-gray-700 hover:bg-gray-100 dark:text-slate-200 dark:hover:bg-slate-800"
                 }`}
               >

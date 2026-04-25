@@ -31,7 +31,7 @@ export function StripeConnectSection() {
 
   if (isLoading) return (
     <div className="glass-card flex items-center gap-3 rounded-xl p-6">
-      <Icon icon="lucide:loader-2" className="size-5 animate-spin text-cyan-400" />
+      <Icon icon="lucide:loader-2" className="size-5 animate-spin text-palette-secondary-400" />
       <span className="text-sm text-gray-500 dark:text-gray-400">{t("checking")}</span>
     </div>
   );
@@ -40,14 +40,14 @@ export function StripeConnectSection() {
   <>
     <div className="glass-card space-y-4 rounded-xl p-6">
       <div className="flex items-center gap-3">
-        <Icon icon="lucide:credit-card" className="size-5 text-cyan-400" />
+        <Icon icon="lucide:credit-card" className="size-5 text-palette-secondary-400" />
         <h2 className="text-sm font-semibold text-gray-900 dark:text-white">{t("title")}</h2>
       </div>
 
       {!data?.hasAccount ? (
         <div className="space-y-3">
           <p className="text-sm text-gray-500 dark:text-gray-400">{t("notConnected")}</p>
-          <button onClick={startOnboarding} disabled={loading} className="w-full rounded-lg bg-linear-to-r from-cyan-500 to-violet-500 px-4 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50 sm:w-auto">
+          <button onClick={startOnboarding} disabled={loading} className="w-full rounded-lg bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 px-4 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50 sm:w-auto">
             {loading ? t("connecting") : t("connect")}
           </button>
         </div>
@@ -79,7 +79,7 @@ export function StripeConnectSection() {
     {data?.onboardingComplete && (
       <div className="glass-card space-y-4 rounded-xl p-6">
         <div className="flex items-center gap-3">
-          <Icon icon="lucide:receipt" className="size-5 text-cyan-400" />
+          <Icon icon="lucide:receipt" className="size-5 text-palette-secondary-400" />
           <h2 className="text-sm font-semibold text-gray-900 dark:text-white">{t("paymentHistory")}</h2>
         </div>
         <PaymentHistory />

@@ -56,7 +56,7 @@ export function GoalsTab({ playerId, locale }: GoalsTabProps) {
             setShowSessionComposer((v) => !v);
             if (!showSessionComposer) setShowGoalForm(false);
           }}
-          className="inline-flex items-center justify-center gap-2 rounded-2xl bg-linear-to-br from-cyan-500 to-violet-500 px-5 py-3 text-sm font-medium text-white shadow-lg shadow-cyan-500/20 transition-all duration-300 hover:opacity-90"
+          className="inline-flex items-center justify-center gap-2 rounded-2xl bg-linear-to-br from-palette-secondary-500 to-palette-primary-500 px-5 py-3 text-sm font-medium text-white shadow-lg shadow-palette-secondary-500/20 transition-all duration-300 hover:opacity-90"
         >
           {showSessionComposer ? (
             <Icon icon="lucide:x" className="h-4 w-4" />
@@ -71,7 +71,7 @@ export function GoalsTab({ playerId, locale }: GoalsTabProps) {
             setShowGoalForm((v) => !v);
             if (!showGoalForm) setShowSessionComposer(false);
           }}
-          className="inline-flex items-center justify-center gap-2 rounded-2xl bg-linear-to-br from-violet-500 to-blue-500 px-5 py-3 text-sm font-medium text-white shadow-lg shadow-violet-500/20 transition-all duration-300 hover:opacity-90"
+          className="inline-flex items-center justify-center gap-2 rounded-2xl bg-linear-to-br from-palette-primary-500 to-blue-500 px-5 py-3 text-sm font-medium text-white shadow-lg shadow-palette-primary-500/20 transition-all duration-300 hover:opacity-90"
         >
           {showGoalForm ? (
             <Icon icon="lucide:x" className="h-4 w-4" />

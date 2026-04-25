@@ -28,8 +28,8 @@ export function PaginationButton({ page, currentPage, loading, onPageChange }: P
       disabled={loading}
       className={`h-10 min-w-[44px] rounded-lg font-medium transition-all sm:h-10 sm:min-w-[44px] ${
         isCurrentPage
-          ? "pointer-events-none bg-linear-to-r from-cyan-500 to-violet-500 text-white shadow-lg"
-          : "border-gray-200 hover:border-violet-300 hover:bg-violet-50 hover:text-violet-600 dark:border-gray-700 dark:hover:border-violet-500 dark:hover:bg-violet-900/20"
+          ? "pointer-events-none bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 text-white shadow-lg"
+          : "border-gray-200 hover:border-palette-primary-300 hover:bg-palette-primary-50 hover:text-palette-primary-600 dark:border-gray-700 dark:hover:border-palette-primary-500 dark:hover:bg-palette-primary-900/20"
       }`}
     >
       {pageNumber}

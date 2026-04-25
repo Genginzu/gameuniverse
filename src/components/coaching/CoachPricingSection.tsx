@@ -42,7 +42,7 @@ function CustomSelect({ value, onChange, placeholder, options }: {
               onClick={() => { onChange(o.value); setOpen(false); }}
               className={`flex w-full items-center px-4 py-2.5 text-left text-sm transition-colors ${
                 o.value === value
-                  ? "bg-cyan-500/10 font-medium text-cyan-400"
+                  ? "bg-palette-secondary-500/10 font-medium text-palette-secondary-400"
                   : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-slate-700"
               }`}
             >
@@ -87,7 +87,7 @@ export function CoachPricingSection() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-sm text-gray-500 dark:text-gray-400">{t("description")}</p>
-        <button onClick={() => setAdding(!adding)} disabled={games.length === 0} className="flex items-center gap-1.5 rounded-lg bg-linear-to-r from-cyan-500 to-violet-500 px-3 py-1.5 text-xs font-medium text-white disabled:opacity-50">
+        <button onClick={() => setAdding(!adding)} disabled={games.length === 0} className="flex items-center gap-1.5 rounded-lg bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 px-3 py-1.5 text-xs font-medium text-white disabled:opacity-50">
           <Icon icon="lucide:plus" className="size-4" /> {t("addPricing")}
         </button>
       </div>
@@ -114,7 +114,7 @@ export function CoachPricingSection() {
             <input type="number" value={form.priceAmount} onChange={(e) => setForm({ ...form, priceAmount: e.target.value })} className="glass-input rounded-lg p-3 text-base" placeholder={t("pricePlaceholder")} min="0" step="0.01" autoComplete="off" />
             <input type="number" value={form.durationMinutes} onChange={(e) => setForm({ ...form, durationMinutes: e.target.value })} className="glass-input rounded-lg p-3 text-base" placeholder={t("durationPlaceholder")} min="15" step="15" autoComplete="off" />
           </div>
-          <button onClick={addPricing} className="w-full rounded-lg bg-linear-to-r from-cyan-500 to-violet-500 px-4 py-2 text-sm font-medium text-white sm:w-auto">{t("save")}</button>
+          <button onClick={addPricing} className="w-full rounded-lg bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 px-4 py-2 text-sm font-medium text-white sm:w-auto">{t("save")}</button>
         </div>
       )}
 
@@ -134,7 +134,7 @@ export function CoachPricingSection() {
                 <span className="text-xs text-gray-500 dark:text-gray-400">{p.gameTitle}</span>
                 <div>
                   <span className="text-sm font-medium text-gray-900 dark:text-white">{t(`types.${p.sessionType}`)}</span>
-                  <span className="ml-2 text-lg font-bold text-cyan-400">{p.priceAmount}€</span>
+                  <span className="ml-2 text-lg font-bold text-palette-secondary-400">{p.priceAmount}€</span>
                   <span className="ml-1 text-xs text-gray-500">/ {p.durationMinutes}min</span>
                 </div>
               </div>

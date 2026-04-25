@@ -98,7 +98,7 @@ export default function NewConversationDialog({
         <div className="max-h-[50vh] flex-1 overflow-y-auto px-2 pb-3 sm:max-h-64">
           {isLoadingFriends ? (
             <div className="flex items-center justify-center py-8">
-              <Icon icon="lucide:loader-2" className="text-neon-violet h-6 w-6 animate-spin" />
+              <Icon icon="lucide:loader-2" className="text-neon-primary h-6 w-6 animate-spin" />
             </div>
           ) : filteredFriends.length === 0 ? (
             <p className="py-8 text-center text-sm text-slate-500 dark:text-slate-400">

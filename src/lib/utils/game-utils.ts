@@ -51,7 +51,7 @@ export function getContrastTextColor(hexColor: string): string {
 /** Default colors when no custom color is set */
 const DEFAULT_COLORS = {
   backgroundColor: "#0f172a",
-  accent: "#8b5cf6",
+  accent: "#0077e6",
   labelColor: "#94a3b8",
   textColor: "#e2e8f0",
 } as const;
@@ -110,10 +110,10 @@ export function getGameColors(gameTitle: string, _genres: string[]): GameColors 
 
   if (title.includes("cyberpunk")) {
     return {
-      primary: "#06b6d4", // cyan-500
-      secondary: "#8b5cf6", // violet-500
-      accent: "#22d3ee", // cyan-400
-      bg: "from-cyan-500/10 to-violet-500/10",
+      primary: "#0697e0", // palette-secondary-500
+      secondary: "#0077e6", // palette-primary-500
+      accent: "#2eb6fa", // palette-secondary-400
+      bg: "from-palette-secondary-500/10 to-palette-primary-500/10",
       backgroundColor: DEFAULT_COLORS.backgroundColor,
       labelColor: DEFAULT_COLORS.labelColor,
       textColor: DEFAULT_COLORS.textColor,
@@ -134,10 +134,10 @@ export function getGameColors(gameTitle: string, _genres: string[]): GameColors 
 
   // Default color scheme
   return {
-    primary: "#8b5cf6", // violet-500
-    secondary: "#7c3aed", // violet-600
-    accent: "#a78bfa", // violet-400
-    bg: "from-violet-500/10 to-blue-500/10",
+    primary: "#0077e6", // palette-primary-500
+    secondary: "#0061bd", // palette-primary-600
+    accent: "#2997ff", // palette-primary-400
+    bg: "from-palette-primary-500/10 to-blue-500/10",
     backgroundColor: DEFAULT_COLORS.backgroundColor,
     labelColor: DEFAULT_COLORS.labelColor,
     textColor: DEFAULT_COLORS.textColor,

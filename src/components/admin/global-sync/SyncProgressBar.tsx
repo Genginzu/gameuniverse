@@ -14,7 +14,7 @@ export function SyncProgressBar({ synced, failed, remaining }: SyncProgressBarPr
     <div className="space-y-1">
       <div className="h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
         <div
-          className="h-full rounded-full bg-linear-to-r from-cyan-500 to-violet-500 transition-all duration-500"
+          className="h-full rounded-full bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 transition-all duration-500"
           style={{ width: `${percent}%` }}
         />
       </div>

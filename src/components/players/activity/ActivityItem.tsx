@@ -42,7 +42,7 @@ export function ActivityItem({ event, locale }: ActivityItemProps) {
   return (
     <article className="flex gap-3 rounded-xl border border-gray-200 bg-white p-4 dark:border-slate-700/50 dark:bg-slate-800/50">
       <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 dark:bg-slate-700/50">
-        <Icon icon={activityIcon} className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
+        <Icon icon={activityIcon} className="h-4 w-4 text-palette-secondary-600 dark:text-palette-secondary-400" />
       </div>
       <div className="min-w-0 flex-1">
         <div className="mb-1 flex items-center gap-2 text-xs text-gray-500 dark:text-slate-400">

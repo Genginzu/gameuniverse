@@ -54,37 +54,37 @@ export function StatsOverviewCards({ metrics, locale }: StatsOverviewCardsProps)
       icon: <Icon icon="lucide:gamepad-2" className="h-5 w-5" />,
       label: t("overview.totalGames"),
       value: formatLocalizedNumber(metrics.totalGames, locale),
-      iconColorClass: "bg-neon-violet/20 text-neon-violet",
+      iconColorClass: "bg-neon-primary/20 text-neon-primary",
     },
     {
       icon: <Icon icon="lucide:clock" className="h-5 w-5" />,
       label: t("overview.totalPlayTime"),
       value: `${formatLocalizedNumber(metrics.totalPlayTimeHours, locale)}h`,
-      iconColorClass: "bg-neon-cyan/20 text-neon-cyan",
+      iconColorClass: "bg-neon-secondary/20 text-neon-secondary",
     },
     {
       icon: <Icon icon="lucide:message-square" className="h-5 w-5" />,
       label: t("overview.reviews"),
       value: formatLocalizedNumber(metrics.reviewCount, locale),
-      iconColorClass: "bg-neon-violet/20 text-neon-violet",
+      iconColorClass: "bg-neon-primary/20 text-neon-primary",
     },
     {
       icon: <Icon icon="lucide:star" className="h-5 w-5" />,
       label: t("overview.averageRating"),
       value: formattedRating,
-      iconColorClass: "bg-neon-cyan/20 text-neon-cyan",
+      iconColorClass: "bg-neon-secondary/20 text-neon-secondary",
     },
     {
       icon: <Icon icon="lucide:folder-open" className="h-5 w-5" />,
       label: t("overview.collections"),
       value: formatLocalizedNumber(metrics.collectionsCount, locale),
-      iconColorClass: "bg-neon-violet/20 text-neon-violet",
+      iconColorClass: "bg-neon-primary/20 text-neon-primary",
     },
     {
       icon: <Icon icon="lucide:users" className="h-5 w-5" />,
       label: t("overview.friends"),
       value: formatLocalizedNumber(metrics.friendsCount, locale),
-      iconColorClass: "bg-neon-cyan/20 text-neon-cyan",
+      iconColorClass: "bg-neon-secondary/20 text-neon-secondary",
     },
   ];
 

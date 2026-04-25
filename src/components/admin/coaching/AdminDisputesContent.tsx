@@ -39,7 +39,7 @@ export function AdminDisputesContent() {
 
       <div className="flex flex-wrap gap-2">
         {FILTERS.map((f) => (
-          <button key={f} onClick={() => setFilter(f)} className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${filter === f ? "bg-linear-to-r from-cyan-500 to-violet-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400"}`}>
+          <button key={f} onClick={() => setFilter(f)} className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${filter === f ? "bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400"}`}>
             {t(`filter.${f}`)}
           </button>
         ))}
@@ -70,8 +70,8 @@ export function AdminDisputesContent() {
                 </div>
               </div>
               {d.adminNotes && (
-                <div className="rounded-lg border-l-2 border-cyan-400 bg-cyan-500/5 p-3">
-                  <p className="text-xs font-medium text-cyan-400">{t("adminNotes")}</p>
+                <div className="rounded-lg border-l-2 border-palette-secondary-400 bg-palette-secondary-500/5 p-3">
+                  <p className="text-xs font-medium text-palette-secondary-400">{t("adminNotes")}</p>
                   <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">{d.adminNotes}</p>
                 </div>
               )}

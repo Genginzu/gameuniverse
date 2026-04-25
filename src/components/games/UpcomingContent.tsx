@@ -31,7 +31,7 @@ function MonthSelector({ value, onChange }: { value: string; onChange: (v: strin
         onClick={() => onChange("")}
         className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
           !value
-            ? "bg-linear-to-r from-cyan-500 to-violet-500 text-white"
+            ? "bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 text-white"
             : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
         }`}
       >
@@ -46,7 +46,7 @@ function MonthSelector({ value, onChange }: { value: string; onChange: (v: strin
             onClick={() => onChange(m)}
             className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
               value === m
-                ? "bg-linear-to-r from-cyan-500 to-violet-500 text-white"
+                ? "bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 text-white"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
             }`}
           >

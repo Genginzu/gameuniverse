@@ -47,7 +47,7 @@ export function NotificationBell() {
       >
         <Icon icon="mdi:bell-outline" className="h-6 w-6 text-white" />
         {badgeText && (
-          <span className="absolute top-1 right-1 flex min-h-[18px] min-w-[18px] items-center justify-center rounded-full bg-linear-to-r from-cyan-500 to-violet-500 px-1 text-[10px] leading-none font-bold text-white">
+          <span className="absolute top-1 right-1 flex min-h-[18px] min-w-[18px] items-center justify-center rounded-full bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 px-1 text-[10px] leading-none font-bold text-white">
             {badgeText}
           </span>
         )}

@@ -20,7 +20,7 @@ export function FilterChip({ label, selected, onClick, count, icon }: FilterChip
       onClick={onClick}
       className={`inline-flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-2 text-xs font-medium transition-all sm:py-1.5 ${
         selected
-          ? "bg-linear-to-r from-cyan-500 to-violet-500 text-white shadow-xs"
+          ? "bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 text-white shadow-xs"
           : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700/50 dark:text-gray-300 dark:hover:bg-slate-700"
       }`}
     >
@@ -44,7 +44,7 @@ export function ActiveFilterChip({
   const colors =
     variant === "blue"
       ? "bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50"
-      : "bg-violet-100 text-violet-800 hover:bg-violet-200 dark:bg-violet-900/30 dark:text-violet-300 dark:hover:bg-violet-900/50";
+      : "bg-palette-primary-100 text-palette-primary-800 hover:bg-palette-primary-200 dark:bg-palette-primary-900/30 dark:text-palette-primary-300 dark:hover:bg-palette-primary-900/50";
 
   return (
     <button

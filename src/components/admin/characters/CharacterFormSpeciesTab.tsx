@@ -75,8 +75,8 @@ export function CharacterFormSpeciesTab({ form, t }: CharacterFormTabProps) {
                     className={cn(
                       "inline-flex items-center rounded-full border px-3 py-1.5 text-sm font-medium transition-all duration-200",
                       isSelected
-                        ? "border-transparent bg-linear-to-r from-cyan-500 to-violet-500 text-white shadow-md shadow-violet-500/20"
-                        : "border-gray-200 bg-white/80 text-gray-700 hover:border-cyan-300 hover:bg-white dark:border-gray-600 dark:bg-gray-800/80 dark:text-gray-300 dark:hover:border-cyan-500"
+                        ? "border-transparent bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 text-white shadow-md shadow-palette-primary-500/20"
+                        : "border-gray-200 bg-white/80 text-gray-700 hover:border-palette-secondary-300 hover:bg-white dark:border-gray-600 dark:bg-gray-800/80 dark:text-gray-300 dark:hover:border-palette-secondary-500"
                     )}
                   >
                     {getSpeciesName(sp)}

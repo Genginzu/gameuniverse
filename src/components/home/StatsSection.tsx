@@ -66,7 +66,7 @@ function StatCard({
       }`}
       style={{ transitionDelay: `${index * 150}ms` }}
     >
-      <div className="mb-3 inline-flex rounded-xl bg-linear-to-br from-cyan-500 to-violet-500 p-3">
+      <div className="mb-3 inline-flex rounded-xl bg-linear-to-br from-palette-secondary-500 to-palette-primary-500 p-3">
         <Icon icon={icon} className="h-6 w-6 text-white" />
       </div>
       <span className="mb-1 text-3xl font-black text-gray-900 sm:text-4xl dark:text-white">
@@ -87,7 +87,7 @@ export function StatsSection() {
     <section ref={sectionRef} className="relative px-4 py-20 sm:px-6 lg:px-8">
       {/* Background accent */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-violet-500/5 blur-3xl dark:bg-violet-500/10" />
+        <div className="absolute top-1/2 left-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-palette-primary-500/5 blur-3xl dark:bg-palette-primary-500/10" />
       </div>
 
       <div className="relative mx-auto max-w-5xl">

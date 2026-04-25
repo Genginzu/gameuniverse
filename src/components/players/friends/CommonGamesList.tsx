@@ -42,7 +42,7 @@ export function CommonGamesList({ games, locale: _locale, pagination, onPageChan
           <Link
             key={game.gameId}
             href={`/games/${game.slug}`}
-            className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white/60 shadow-sm backdrop-blur-sm transition-all hover:scale-[1.02] hover:border-gray-300 hover:shadow-lg dark:border-slate-700/50 dark:bg-slate-800/50 dark:hover:border-slate-600 dark:hover:shadow-violet-500/10"
+            className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white/60 shadow-sm backdrop-blur-sm transition-all hover:scale-[1.02] hover:border-gray-300 hover:shadow-lg dark:border-slate-700/50 dark:bg-slate-800/50 dark:hover:border-slate-600 dark:hover:shadow-palette-primary-500/10"
           >
             {/* Cover image */}
             <div className="relative aspect-3/4">

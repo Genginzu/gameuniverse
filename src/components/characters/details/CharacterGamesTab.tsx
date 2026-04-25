@@ -51,7 +51,7 @@ function GameCard({ game, locale: _locale, colors }: GameCardProps) {
       href={`/games/${game.slug}`}
       className={`group relative overflow-hidden rounded-2xl border transition-all hover:scale-[1.02] ${
         game.isPrimary
-          ? "border-2 shadow-lg shadow-violet-500/20"
+          ? "border-2 shadow-lg shadow-palette-primary-500/20"
           : "border-slate-700/50 hover:border-slate-600"
       }`}
       style={{ borderColor: game.isPrimary ? colors.primary : undefined }}

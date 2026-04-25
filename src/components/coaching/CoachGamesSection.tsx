@@ -51,7 +51,7 @@ export function CoachGamesSection() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <p className="text-sm text-gray-500 dark:text-gray-400">{t("description")}</p>
-        <button onClick={() => setAdding(!adding)} className="flex items-center gap-1.5 rounded-lg bg-linear-to-r from-cyan-500 to-violet-500 px-3 py-1.5 text-xs font-medium text-white">
+        <button onClick={() => setAdding(!adding)} className="flex items-center gap-1.5 rounded-lg bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 px-3 py-1.5 text-xs font-medium text-white">
           <Icon icon="lucide:plus" className="size-4" /> {t("addGame")}
         </button>
       </div>
@@ -92,7 +92,7 @@ export function CoachGamesSection() {
                     <span className="text-xs font-semibold text-gray-500 dark:text-gray-400">{t(`categories.${group.key}`)}</span>
                     <div className="flex flex-wrap gap-1.5">
                     {group.specialties.map((s) => (
-                      <button key={s} onClick={() => toggleSpecialty(game, s)} className={`rounded-full px-2.5 py-1 text-xs font-medium transition-all ${game.specialties.includes(s) ? "bg-cyan-500/20 text-cyan-400" : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"}`}>
+                      <button key={s} onClick={() => toggleSpecialty(game, s)} className={`rounded-full px-2.5 py-1 text-xs font-medium transition-all ${game.specialties.includes(s) ? "bg-palette-secondary-500/20 text-palette-secondary-400" : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"}`}>
                         {t(`specialties.${s}`)}
                       </button>
                     ))}
