@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import { GameUniverseLogo } from "@/components/ui/game-universe-logo";
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher";
 import { NotificationBell } from "@/components/shared/NotificationBell";
+import { CoinBalance } from "@/components/shared/CoinBalance";
 import { Icon } from "@iconify/react";
 
 interface TopBarProps {
@@ -44,6 +45,7 @@ export default function TopBar({ isAuthenticated, onSearchOpen }: TopBarProps) {
       {/* Right: Language + Login */}
       <div className="flex shrink-0 items-center gap-3">
         <NotificationBell />
+        <CoinBalance />
         <LanguageSwitcher />
         {!isAuthenticated && (
           <Link

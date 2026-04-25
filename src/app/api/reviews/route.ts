@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { reviewSchema } from "@/lib/validations/review";
 import { AchievementEngine } from "@/lib/services/achievementEngine";
+import { CoinService } from "@/lib/services/coinService";
 import type { Review, ReviewsResponse, VoteType } from "@/types/review";
 import {
   fetchVoteCountsMap,
@@ -281,6 +282,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       await AchievementEngine.evaluate(user.id, "reviews");
     } catch (error) {
       console.error("Achievement evaluation failed:", error);
+
+    // Reward GU Coins (non-blocking)
+    CoinService.rewardActivity(user.id, "review", review.id).catch((err) =>
+      logger.error("Coin reward failed", { error: err })
+    );
     }
 
     return NextResponse.json({ success: true, review }, { status: 201 });

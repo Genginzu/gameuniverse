@@ -3568,5 +3568,57 @@
       "loginRequired": "Sign in to book a session.",
       "noSessions": "No sessions available for this game."
     }
+  },
+  "coins": {
+    "balance": "Balance",
+    "totalEarned": "Total earned",
+    "totalSpent": "Total spent",
+    "history": "History",
+    "myWallet": "My wallet",
+    "noTransactions": "No transactions",
+    "toast": {
+      "rewarded": "+{amount} GU Coins — {reason}"
+    },
+    "reward": {
+      "review": "Review published",
+      "library_add": "Game added to library",
+      "library_status_change": "Game status changed",
+      "playtime_log": "Gaming session logged",
+      "collection_add": "Game added to collection",
+      "game_rating": "Game rated",
+      "character_favorite": "Character favorited",
+      "character_vote": "Character vote",
+      "post_create": "Post published",
+      "post_comment": "Comment published",
+      "discussion_message": "Message sent",
+      "friend_add": "Friend added"
+    },
+    "type": {
+      "signup_bonus": "Signup bonus",
+      "activity_reward": "Activity reward",
+      "achievement_reward": "Achievement unlocked",
+      "prediction_bet": "Prediction bet",
+      "prediction_win": "Prediction win",
+      "purchase": "Purchase",
+      "admin_grant": "Admin adjustment"
+    },
+    "admin": {
+      "title": "GU Coins",
+      "rewardConfig": "Reward configuration",
+      "wallets": "Player wallets",
+      "searchPlaceholder": "Search player...",
+      "grantCoins": "Credit/Debit",
+      "grantAmount": "Amount",
+      "grantDescription": "Reason (required)",
+      "grantSubmit": "Apply",
+      "grantSuccess": "Coins adjusted successfully",
+      "grantError": "Error adjusting coins",
+      "activityType": "Activity",
+      "amount": "Amount",
+      "cooldown": "Cooldown (s)",
+      "dailyCap": "Daily limit",
+      "enabled": "Active",
+      "playerTransactions": "{username} transactions"
+    }
   }
 }

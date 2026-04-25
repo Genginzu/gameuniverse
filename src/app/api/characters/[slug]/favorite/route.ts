@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { CharacterFavoriteService } from "@/lib/services/characterFavoriteService";
 import { logger } from "@/lib/logger";
+import { CoinService } from "@/lib/services/coinService";
 
 type RouteContext = { params: Promise<{ slug: string }> };
 
@@ -51,7 +52,12 @@ export async function POST(_request: NextRequest, { params }: RouteContext) {
 
     await CharacterFavoriteService.addFavorite(characterId, user.id);
 
+    CoinService.rewardActivity(user.id, "character_favorite", characterId).catch((err) =>
+      logger.error("Coin reward failed", { error: err })
+    );
+
     return NextResponse.json({ success: true });
+
   } catch (error: unknown) {
     const pgError = error as { code?: string };
     if (pgError.code === "23505") {

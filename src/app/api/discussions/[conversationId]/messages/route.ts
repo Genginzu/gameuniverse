@@ -4,6 +4,7 @@ import { DiscussionServerService } from "@/lib/services/discussionServerService"
 import { NotificationServerService } from "@/lib/services/notificationServerService";
 import { sendMessageSchema } from "@/lib/validations/discussion";
 import { logger } from "@/lib/logger";
+import { CoinService } from "@/lib/services/coinService";
 
 type RouteContext = { params: Promise<{ conversationId: string }> };
 
@@ -105,7 +106,12 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
       });
     }
 
+    CoinService.rewardActivity(user.id, "discussion_message", msg.id).catch((err) =>
+      logger.error("Coin reward failed", { error: err })
+    );
+
     return NextResponse.json(msg, { status: 201 });
+
   } catch (error) {
     const message = error instanceof Error ? error.message : "Internal server error";
     if (message === "Conversation not found") {

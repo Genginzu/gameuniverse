@@ -3571,5 +3571,57 @@
       "loginRequired": "Connectez-vous pour réserver une session.",
       "noSessions": "Aucune session disponible pour ce jeu."
     }
+  },
+  "coins": {
+    "balance": "Solde",
+    "totalEarned": "Total gagné",
+    "totalSpent": "Total dépensé",
+    "history": "Historique",
+    "myWallet": "Mon portefeuille",
+    "noTransactions": "Aucune transaction",
+    "toast": {
+      "rewarded": "+{amount} GU Coins — {reason}"
+    },
+    "reward": {
+      "review": "Review publiée",
+      "library_add": "Jeu ajouté à la bibliothèque",
+      "library_status_change": "Statut de jeu modifié",
+      "playtime_log": "Session de jeu enregistrée",
+      "collection_add": "Jeu ajouté à une collection",
+      "game_rating": "Jeu noté",
+      "character_favorite": "Personnage ajouté en favori",
+      "character_vote": "Vote pour un personnage",
+      "post_create": "Post publié",
+      "post_comment": "Commentaire publié",
+      "discussion_message": "Message envoyé",
+      "friend_add": "Ami ajouté"
+    },
+    "type": {
+      "signup_bonus": "Bonus d'inscription",
+      "activity_reward": "Récompense d'activité",
+      "achievement_reward": "Succès débloqué",
+      "prediction_bet": "Mise pronostic",
+      "prediction_win": "Gain pronostic",
+      "purchase": "Achat",
+      "admin_grant": "Ajustement admin"
+    },
+    "admin": {
+      "title": "GU Coins",
+      "rewardConfig": "Configuration des récompenses",
+      "wallets": "Portefeuilles joueurs",
+      "searchPlaceholder": "Rechercher un joueur...",
+      "grantCoins": "Créditer/Débiter",
+      "grantAmount": "Montant",
+      "grantDescription": "Motif (obligatoire)",
+      "grantSubmit": "Appliquer",
+      "grantSuccess": "Coins ajustés avec succès",
+      "grantError": "Erreur lors de l'ajustement",
+      "activityType": "Activité",
+      "amount": "Montant",
+      "cooldown": "Cooldown (s)",
+      "dailyCap": "Limite/jour",
+      "enabled": "Actif",
+      "playerTransactions": "Transactions de {username}"
+    }
   }
 }

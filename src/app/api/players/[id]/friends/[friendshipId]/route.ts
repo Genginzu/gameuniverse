@@ -3,6 +3,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { FriendServerService } from "@/lib/services/friendServerService";
 import { AchievementEngine } from "@/lib/services/achievementEngine";
 import { logger } from "@/lib/logger";
+import { CoinService } from "@/lib/services/coinService";
 
 type RouteContext = { params: Promise<{ id: string; friendshipId: string }> };
 
@@ -33,7 +34,12 @@ export async function PATCH(_request: NextRequest, { params }: RouteContext) {
       console.error("Achievement evaluation failed:", error);
     }
 
+    CoinService.rewardActivity(user.id, "friend_add", friendshipId).catch((err) =>
+      logger.error("Coin reward failed", { error: err })
+    );
+
     return NextResponse.json(updated);
+
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
 
