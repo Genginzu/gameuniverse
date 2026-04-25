@@ -3653,5 +3653,17 @@
       "noResultsDescription": "Aucun résultat de match esport disponible pour le moment",
       "finished": "Terminé"
     },
+    "teams": {
+      "metaTitle": "Équipes Esport",
+      "metaDescription": "Découvrez les équipes esport professionnelles, leurs rosters et palmarès",
+      "detailMetaTitle": "Fiche Équipe Esport",
+      "title": "Équipes Esport",
+      "subtitle": "Équipes professionnelles de la scène compétitive",
+      "searchPlaceholder": "Rechercher une équipe...",
+      "noTeams": "Aucune équipe trouvée",
+      "noTeamsDescription": "Aucune équipe esport ne correspond à votre recherche",
+      "roster": "Roster",
+      "loadError": "Impossible de charger les détails de l'équipe"
+    }
   },
 }
