@@ -109,3 +109,25 @@ export function getPlayers(params?: PandaScoreListParams) {
 export function getPlayerById(id: number) {
   return request<PandaScorePlayer>(`/players/${id}`);
 }
+
+// -- Incidents API (for incremental sync) --
+
+export interface PandaScoreIncident {
+  id: number;
+  modified_at: string;
+  type: string;
+  change_type: "addition" | "change" | "deletion";
+  object: Record<string, unknown>;
+}
+
+export function getAdditions(params?: PandaScoreListParams) {
+  return request<PandaScoreIncident[]>("/additions", params);
+}
+
+export function getChanges(params?: PandaScoreListParams) {
+  return request<PandaScoreIncident[]>("/changes", params);
+}
+
+export function getDeletions(params?: PandaScoreListParams) {
+  return request<PandaScoreIncident[]>("/deletions", params);
+}
