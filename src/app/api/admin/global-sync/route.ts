@@ -37,9 +37,15 @@ export async function GET(request: NextRequest) {
     } else if (filter === "synced") {
       query = query.eq("is_synced", true);
     } else if (filter === "to_colors") {
-      query = query.eq("is_synced", true).eq("is_colors_synced", false);
+      query = query
+        .eq("is_synced", true)
+        .eq("is_colors_synced", false)
+        .not("matched_game_id", "is", null);
     } else if (filter === "to_metascore") {
-      query = query.eq("is_synced", true).eq("is_metascore_synced", false);
+      query = query
+        .eq("is_synced", true)
+        .eq("is_metascore_synced", false)
+        .not("matched_game_id", "is", null);
     } else if (filter === "to_screenshots") {
       query = query
         .eq("is_synced", true)
