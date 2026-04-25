@@ -7,7 +7,12 @@ import { ActiveFiltersDisplay } from "./ActiveFiltersDisplay";
 import { FilterOptionsGrid } from "./FilterOptionsGrid";
 
 // Re-export types and utils for backward compatibility
-export type { FilterOption, FilterConfig, FilterPanelProps, FilterPanelLabels } from "@/types/filters";
+export type {
+  FilterOption,
+  FilterConfig,
+  FilterPanelProps,
+  FilterPanelLabels,
+} from "@/types/filters";
 export { hasActiveFilters, countActiveFilters, toggleFilterValue } from "@/lib/utils/filter-utils";
 
 const defaultLabels = {
@@ -99,7 +104,7 @@ export function FilterPanel({
         <div className="space-y-6 rounded-xl bg-white p-4 shadow-lg ring-1 ring-gray-200 sm:p-6 dark:bg-gray-800 dark:ring-gray-700">
           {filters.map((filter) => {
             const isExpanded = filter.collapsible
-              ? expandedSections[filter.id] ?? filter.defaultExpanded ?? true
+              ? (expandedSections[filter.id] ?? filter.defaultExpanded ?? true)
               : true;
 
             return (

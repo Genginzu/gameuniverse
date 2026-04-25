@@ -3,7 +3,9 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 
 async function requireAdmin() {
   const supabase = await createRouteHandlerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return null;
   const { data } = await supabase.rpc("is_admin", { user_id: user.id });
   return data ? user : null;
@@ -23,7 +25,9 @@ export async function GET(request: NextRequest) {
 
   let query = supabase
     .from("player_wallets")
-    .select("player_id, balance, total_earned, total_spent, profiles!inner(username, avatar_url)", { count: "exact" });
+    .select("player_id, balance, total_earned, total_spent, profiles!inner(username, avatar_url)", {
+      count: "exact",
+    });
 
   if (search) {
     query = query.ilike("profiles.username", `%${search}%`);

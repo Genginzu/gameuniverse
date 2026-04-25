@@ -15,9 +15,18 @@ import { ColorsSyncTab } from "@/components/admin/global-sync/ColorsSyncTab";
 import { MetascoreSyncTab } from "@/components/admin/global-sync/MetascoreSyncTab";
 
 const TABS = [
-  "download", "sync",
-  "screenshots", "artworks", "videos", "classifications", "languages", "versions", "playtime", "popularity",
-  "colors", "metascore",
+  "download",
+  "sync",
+  "screenshots",
+  "artworks",
+  "videos",
+  "classifications",
+  "languages",
+  "versions",
+  "playtime",
+  "popularity",
+  "colors",
+  "metascore",
 ] as const;
 type Tab = (typeof TABS)[number];
 
@@ -67,40 +76,104 @@ export default function GlobalSyncPage() {
       </div>
 
       {activeTab === "download" && (
-        <GlobalSyncTab downloadState={downloadState} startDownload={startDownload} stopDownload={stopDownload} />
+        <GlobalSyncTab
+          downloadState={downloadState}
+          startDownload={startDownload}
+          stopDownload={stopDownload}
+        />
       )}
       {activeTab === "sync" && (
         <SyncImportTab syncState={syncState} startSync={startSync} stopSync={stopSync} />
       )}
       {activeTab === "screenshots" && (
-        <BatchSyncTab ns={`${NS}.screenshotsTab`} filter="to_screenshots" startIcon="lucide:image" syncState={screenshots.syncState} onStart={screenshots.start} onStop={screenshots.stop} />
+        <BatchSyncTab
+          ns={`${NS}.screenshotsTab`}
+          filter="to_screenshots"
+          startIcon="lucide:image"
+          syncState={screenshots.syncState}
+          onStart={screenshots.start}
+          onStop={screenshots.stop}
+        />
       )}
       {activeTab === "artworks" && (
-        <BatchSyncTab ns={`${NS}.artworksTab`} filter="to_artworks" startIcon="lucide:palette" syncState={artworks.syncState} onStart={artworks.start} onStop={artworks.stop} />
+        <BatchSyncTab
+          ns={`${NS}.artworksTab`}
+          filter="to_artworks"
+          startIcon="lucide:palette"
+          syncState={artworks.syncState}
+          onStart={artworks.start}
+          onStop={artworks.stop}
+        />
       )}
       {activeTab === "videos" && (
-        <BatchSyncTab ns={`${NS}.videosTab`} filter="to_videos" startIcon="lucide:video" syncState={videos.syncState} onStart={videos.start} onStop={videos.stop} />
+        <BatchSyncTab
+          ns={`${NS}.videosTab`}
+          filter="to_videos"
+          startIcon="lucide:video"
+          syncState={videos.syncState}
+          onStart={videos.start}
+          onStop={videos.stop}
+        />
       )}
       {activeTab === "classifications" && (
-        <BatchSyncTab ns={`${NS}.classificationsTab`} filter="to_classifications" startIcon="lucide:shield" syncState={classifications.syncState} onStart={classifications.start} onStop={classifications.stop} />
+        <BatchSyncTab
+          ns={`${NS}.classificationsTab`}
+          filter="to_classifications"
+          startIcon="lucide:shield"
+          syncState={classifications.syncState}
+          onStart={classifications.start}
+          onStop={classifications.stop}
+        />
       )}
       {activeTab === "languages" && (
-        <BatchSyncTab ns={`${NS}.languagesTab`} filter="to_languages" startIcon="lucide:globe" syncState={languages.syncState} onStart={languages.start} onStop={languages.stop} />
+        <BatchSyncTab
+          ns={`${NS}.languagesTab`}
+          filter="to_languages"
+          startIcon="lucide:globe"
+          syncState={languages.syncState}
+          onStart={languages.start}
+          onStop={languages.stop}
+        />
       )}
       {activeTab === "versions" && (
-        <BatchSyncTab ns={`${NS}.versionsTab`} filter="to_versions" startIcon="lucide:layers" syncState={versions.syncState} onStart={versions.start} onStop={versions.stop} />
+        <BatchSyncTab
+          ns={`${NS}.versionsTab`}
+          filter="to_versions"
+          startIcon="lucide:layers"
+          syncState={versions.syncState}
+          onStart={versions.start}
+          onStop={versions.stop}
+        />
       )}
       {activeTab === "playtime" && (
-        <BatchSyncTab ns={`${NS}.playtimeTab`} filter="to_playtime" startIcon="lucide:clock" syncState={playtime.syncState} onStart={playtime.start} onStop={playtime.stop} />
+        <BatchSyncTab
+          ns={`${NS}.playtimeTab`}
+          filter="to_playtime"
+          startIcon="lucide:clock"
+          syncState={playtime.syncState}
+          onStart={playtime.start}
+          onStop={playtime.stop}
+        />
       )}
       {activeTab === "popularity" && (
-        <BatchSyncTab ns={`${NS}.popularityTab`} filter="to_popularity" startIcon="lucide:trending-up" syncState={popularity.syncState} onStart={popularity.start} onStop={popularity.stop} />
+        <BatchSyncTab
+          ns={`${NS}.popularityTab`}
+          filter="to_popularity"
+          startIcon="lucide:trending-up"
+          syncState={popularity.syncState}
+          onStart={popularity.start}
+          onStop={popularity.stop}
+        />
       )}
       {activeTab === "colors" && (
         <ColorsSyncTab syncState={colorsState} startColors={startColors} stopColors={stopColors} />
       )}
       {activeTab === "metascore" && (
-        <MetascoreSyncTab syncState={metascoreState} startMetascoreSync={startMetascoreSync} stopMetascoreSync={stopMetascoreSync} />
+        <MetascoreSyncTab
+          syncState={metascoreState}
+          startMetascoreSync={startMetascoreSync}
+          stopMetascoreSync={stopMetascoreSync}
+        />
       )}
     </div>
   );

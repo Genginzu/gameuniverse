@@ -12,10 +12,23 @@ vi.mock("@/lib/pandascore/client", () => ({
 
 function makePlayer(overrides: Record<string, unknown> = {}) {
   return {
-    id: 1, name: "Faker", slug: "faker",
-    first_name: "Sang-hyeok", last_name: "Lee",
-    nationality: "KR", image_url: "https://faker.png", role: "Mid",
-    current_team: { id: 10, name: "T1", slug: "t1", acronym: "T1", image_url: "https://t1.png", location: "KR", current_videogame: null },
+    id: 1,
+    name: "Faker",
+    slug: "faker",
+    first_name: "Sang-hyeok",
+    last_name: "Lee",
+    nationality: "KR",
+    image_url: "https://faker.png",
+    role: "Mid",
+    current_team: {
+      id: 10,
+      name: "T1",
+      slug: "t1",
+      acronym: "T1",
+      image_url: "https://t1.png",
+      location: "KR",
+      current_videogame: null,
+    },
     current_videogame: { id: 1, name: "League of Legends", slug: "lol" },
     ...overrides,
   };
@@ -38,10 +51,16 @@ describe("esportPlayerService", () => {
 
     expect(players).toHaveLength(1);
     expect(players[0]).toEqual({
-      id: 1, name: "Faker", slug: "faker",
-      firstName: "Sang-hyeok", lastName: "Lee",
-      nationality: "KR", imageUrl: "https://faker.png", role: "Mid",
-      teamName: "T1", game: "League of Legends",
+      id: 1,
+      name: "Faker",
+      slug: "faker",
+      firstName: "Sang-hyeok",
+      lastName: "Lee",
+      nationality: "KR",
+      imageUrl: "https://faker.png",
+      role: "Mid",
+      teamName: "T1",
+      game: "League of Legends",
     });
   });
 
@@ -51,7 +70,7 @@ describe("esportPlayerService", () => {
     await getPlayersList({ search: "caps" });
 
     expect(mockGetPlayers).toHaveBeenCalledWith(
-      expect.objectContaining({ "search[name]": "caps" }),
+      expect.objectContaining({ "search[name]": "caps" })
     );
   });
 

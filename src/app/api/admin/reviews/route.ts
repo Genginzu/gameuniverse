@@ -116,7 +116,13 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    const reviews = await fetchReviews(supabase, { matchingIds, sort_by, sort_order, offset, limit });
+    const reviews = await fetchReviews(supabase, {
+      matchingIds,
+      sort_by,
+      sort_order,
+      offset,
+      limit,
+    });
 
     if (reviews === null) {
       return NextResponse.json({ error: "Failed to fetch reviews" }, { status: 500 });

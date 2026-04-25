@@ -18,7 +18,14 @@ interface PostCardProps {
   onDelete: (postId: string) => void;
 }
 
-export function PostCard({ post, playerName, playerAvatar, locale, isOwner, onDelete }: PostCardProps) {
+export function PostCard({
+  post,
+  playerName,
+  playerAvatar,
+  locale,
+  isOwner,
+  onDelete,
+}: PostCardProps) {
   const t = useTranslations("players.posts");
   const format = useFormatter();
   const [isDeleting, setIsDeleting] = useState(false);
@@ -33,7 +40,12 @@ export function PostCard({ post, playerName, playerAvatar, locale, isOwner, onDe
 
   const handleDelete = async () => {
     setIsDeleting(true);
-    try { await onDelete(post.id); } finally { setIsDeleting(false); setShowMenu(false); }
+    try {
+      await onDelete(post.id);
+    } finally {
+      setIsDeleting(false);
+      setShowMenu(false);
+    }
   };
 
   return (
@@ -42,7 +54,14 @@ export function PostCard({ post, playerName, playerAvatar, locale, isOwner, onDe
         <div className="flex items-center gap-3">
           <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-linear-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30">
             {playerAvatar ? (
-              <LazyImage src={playerAvatar} alt={displayName} fill className="object-cover" sizes="40px" showSkeleton />
+              <LazyImage
+                src={playerAvatar}
+                alt={displayName}
+                fill
+                className="object-cover"
+                sizes="40px"
+                showSkeleton
+              />
             ) : (
               <div className="flex h-full w-full items-center justify-center">
                 <Icon icon="lucide:user" className="h-5 w-5 text-blue-300" />
@@ -50,8 +69,14 @@ export function PostCard({ post, playerName, playerAvatar, locale, isOwner, onDe
             )}
           </div>
           <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">{displayName}</p>
-            <time dateTime={post.createdAt} className="text-xs text-gray-400 dark:text-slate-500" suppressHydrationWarning>
+            <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">
+              {displayName}
+            </p>
+            <time
+              dateTime={post.createdAt}
+              className="text-xs text-gray-400 dark:text-slate-500"
+              suppressHydrationWarning
+            >
               {relativeDate}
             </time>
           </div>
@@ -74,11 +99,23 @@ export function PostCard({ post, playerName, playerAvatar, locale, isOwner, onDe
       <div className="pl-[52px]">
         {post.imageUrl && !imageError && (
           <div className="relative mb-3 aspect-video w-full overflow-hidden rounded-xl">
-            <Image src={post.imageUrl} alt="" fill onError={() => setImageError(true)} className="object-cover" sizes="(max-width: 768px) 100vw, 600px" />
+            <Image
+              src={post.imageUrl}
+              alt=""
+              fill
+              onError={() => setImageError(true)}
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 600px"
+            />
           </div>
         )}
 
-        <PostContentRenderer content={post.content} tags={post.tags} mentions={post.mentions} locale={locale} />
+        <PostContentRenderer
+          content={post.content}
+          tags={post.tags}
+          mentions={post.mentions}
+          locale={locale}
+        />
       </div>
     </article>
   );

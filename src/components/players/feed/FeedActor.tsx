@@ -20,10 +20,7 @@ export function FeedActor({ actor, date }: FeedActorProps) {
 
   return (
     <div className="mb-2 flex items-center gap-2 text-xs text-gray-500 dark:text-slate-400">
-      <Link
-        href={`/players/${actor.id}`}
-        className="flex items-center gap-2 hover:underline"
-      >
+      <Link href={`/players/${actor.id}`} className="flex items-center gap-2 hover:underline">
         {actor.avatarUrl ? (
           <img
             src={actor.avatarUrl}

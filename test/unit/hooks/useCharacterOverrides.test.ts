@@ -5,8 +5,20 @@ import { useCharacterOverrides } from "@/hooks/useCharacterOverrides";
 const originalFetch = globalThis.fetch;
 
 const mockOverrides = [
-  { id: "o1", character_id: "c1", field_name: "name", overridden_by: "user1", overridden_at: "2025-01-01" },
-  { id: "o2", character_id: "c1", field_name: "description", overridden_by: null, overridden_at: "2025-01-02" },
+  {
+    id: "o1",
+    character_id: "c1",
+    field_name: "name",
+    overridden_by: "user1",
+    overridden_at: "2025-01-01",
+  },
+  {
+    id: "o2",
+    character_id: "c1",
+    field_name: "description",
+    overridden_by: null,
+    overridden_at: "2025-01-02",
+  },
 ];
 
 function jsonOk(body: unknown) {

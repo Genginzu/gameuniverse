@@ -74,10 +74,7 @@ export function GameFormGeneralTab({ form, t, isIgdbField }: GameFormTabProps) {
         render={({ field }) => (
           <FormItem className="flex items-center gap-3">
             <FormControl>
-              <Checkbox
-                checked={field.value}
-                onCheckedChange={field.onChange}
-              />
+              <Checkbox checked={field.value} onCheckedChange={field.onChange} />
             </FormControl>
             <FormLabel className="!mt-0 cursor-pointer text-sm font-medium">
               {t("isEsport")}

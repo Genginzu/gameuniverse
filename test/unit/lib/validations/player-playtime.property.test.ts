@@ -19,28 +19,19 @@ import {
 // --- Generators ---
 
 /** Generates a valid playtime: positive, <= 50000, at most 1 decimal place */
-const validPlaytimeGenerator = fc
-  .integer({ min: 1, max: 500000 })
-  .map((n) => n / 10);
+const validPlaytimeGenerator = fc.integer({ min: 1, max: 500000 }).map((n) => n / 10);
 
 /** Generates null or undefined (optional field) */
-const emptyFieldGenerator = fc.oneof(
-  fc.constant(null),
-  fc.constant(undefined)
-);
+const emptyFieldGenerator = fc.oneof(fc.constant(null), fc.constant(undefined));
 
 /** Generates a valid or empty field */
 const optionalValidField = fc.oneof(validPlaytimeGenerator, emptyFieldGenerator);
 
 /** Generates negative numbers */
-const negativeGenerator = fc
-  .integer({ min: 1, max: 500000 })
-  .map((n) => -n / 10);
+const negativeGenerator = fc.integer({ min: 1, max: 500000 }).map((n) => -n / 10);
 
 /** Generates numbers > 50000 with at most 1 decimal */
-const tooLargeGenerator = fc
-  .integer({ min: 500001, max: 1000000 })
-  .map((n) => n / 10);
+const tooLargeGenerator = fc.integer({ min: 500001, max: 1000000 }).map((n) => n / 10);
 
 /** Generates numbers with more than 1 decimal place */
 const tooManyDecimalsGenerator = fc

@@ -16,12 +16,16 @@ export function CharacterFormGamesTab({ form, t, availableGames }: GamesTabProps
   const watchedGames = form.watch("games");
 
   const assignedIds = watchedGames.map((g) => g.game_id);
-  const assignedGames = assignedIds.map((id) => availableGames.find((g) => g.id === id)).filter(Boolean) as AvailableGame[];
+  const assignedGames = assignedIds
+    .map((id) => availableGames.find((g) => g.id === id))
+    .filter(Boolean) as AvailableGame[];
   const unassignedGames = availableGames.filter((g) => !assignedIds.includes(g.id));
 
   const addGame = (gameId: string) => {
     const current = form.getValues("games");
-    form.setValue("games", [...current, { game_id: gameId, is_primary: current.length === 0 }], { shouldValidate: true });
+    form.setValue("games", [...current, { game_id: gameId, is_primary: current.length === 0 }], {
+      shouldValidate: true,
+    });
     setShowPicker(false);
   };
 
@@ -34,29 +38,61 @@ export function CharacterFormGamesTab({ form, t, availableGames }: GamesTabProps
 
   const togglePrimary = (gameId: string) => {
     const current = form.getValues("games");
-    form.setValue("games", current.map((g) => ({ ...g, is_primary: g.game_id === gameId })), { shouldValidate: true });
+    form.setValue(
+      "games",
+      current.map((g) => ({ ...g, is_primary: g.game_id === gameId })),
+      { shouldValidate: true }
+    );
   };
 
   return (
     <div className="space-y-4">
       {assignedGames.length === 0 ? (
-        <p className="py-6 text-center text-sm text-gray-400 dark:text-gray-500">{t("noGames") ?? "Aucun jeu associé"}</p>
+        <p className="py-6 text-center text-sm text-gray-400 dark:text-gray-500">
+          {t("noGames") ?? "Aucun jeu associé"}
+        </p>
       ) : (
         <div className="space-y-2">
           {assignedGames.map((game) => {
             const isPrimary = watchedGames.some((g) => g.game_id === game.id && g.is_primary);
-            return <AssignedGameRow key={game.id} game={game} isPrimary={isPrimary} onTogglePrimary={() => togglePrimary(game.id)} onRemove={() => removeGame(game.id)} t={t} />;
+            return (
+              <AssignedGameRow
+                key={game.id}
+                game={game}
+                isPrimary={isPrimary}
+                onTogglePrimary={() => togglePrimary(game.id)}
+                onRemove={() => removeGame(game.id)}
+                t={t}
+              />
+            );
           })}
         </div>
       )}
       {showPicker ? (
-        <GameSearchPicker availableGames={unassignedGames} onSelect={addGame} onClose={() => setShowPicker(false)} t={t} />
+        <GameSearchPicker
+          availableGames={unassignedGames}
+          onSelect={addGame}
+          onClose={() => setShowPicker(false)}
+          t={t}
+        />
       ) : (
-        <Button type="button" variant="outline" size="sm" onClick={() => setShowPicker(true)} className="gap-1.5" disabled={unassignedGames.length === 0}>
-          <Icon icon="fa:plus" className="h-3 w-3" />{t("addGame") ?? "Ajouter un jeu"}
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => setShowPicker(true)}
+          className="gap-1.5"
+          disabled={unassignedGames.length === 0}
+        >
+          <Icon icon="fa:plus" className="h-3 w-3" />
+          {t("addGame") ?? "Ajouter un jeu"}
         </Button>
       )}
-      {form.formState.errors.games && <p className="text-destructive text-sm font-medium">{form.formState.errors.games.message}</p>}
+      {form.formState.errors.games && (
+        <p className="text-destructive text-sm font-medium">
+          {form.formState.errors.games.message}
+        </p>
+      )}
     </div>
   );
 }

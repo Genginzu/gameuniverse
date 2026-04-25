@@ -75,8 +75,8 @@ Pour changer les couleurs du site, modifier uniquement les valeurs hex des
 ## Gradient principal (obligatoire)
 
 Lorsqu'un gradient est utilisé (bannières, boutons d'accent, barres de
-progression, badges, cercles, etc.), il **doit** utiliser le gradient
-secondary → primary :
+progression, badges, cercles, etc.), il **doit** utiliser le gradient secondary
+→ primary :
 
 ```css
 /* CSS — direction adaptable selon le contexte */

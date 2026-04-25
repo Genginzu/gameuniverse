@@ -20,7 +20,15 @@ function makeTournament(overrides: Record<string, unknown> = {}) {
     serie_id: 1,
     league_id: 1,
     league: { id: 1, name: "LEC", slug: "lec", image_url: null, url: null },
-    serie: { id: 1, name: null, slug: "s1", begin_at: null, end_at: null, full_name: "Season 1", year: 2026 },
+    serie: {
+      id: 1,
+      name: null,
+      slug: "s1",
+      begin_at: null,
+      end_at: null,
+      full_name: "Season 1",
+      year: 2026,
+    },
     videogame: { id: 1, name: "League of Legends", slug: "league-of-legends" },
     prizepool: "$1,000,000",
     tier: "s",
@@ -80,7 +88,7 @@ describe("esportCalendarService", () => {
     await getCalendarTournaments({ game: "Valorant" });
 
     expect(mockGetUpcoming).toHaveBeenCalledWith(
-      expect.objectContaining({ "filter[videogame_title]": "Valorant" }),
+      expect.objectContaining({ "filter[videogame_title]": "Valorant" })
     );
   });
 

@@ -20,7 +20,7 @@ export function FilterButton({ hasFilters, filterCount, onClick }: FilterButtonP
   return (
     <button
       onClick={onClick}
-      className="inline-flex h-12 cursor-pointer items-center rounded-xl bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 px-4 text-sm font-semibold text-white shadow-lg transition-all hover:from-palette-secondary-600 hover:to-palette-primary-600 hover:shadow-xl sm:h-14 sm:px-6 sm:text-base"
+      className="from-palette-secondary-500 to-palette-primary-500 hover:from-palette-secondary-600 hover:to-palette-primary-600 inline-flex h-12 cursor-pointer items-center rounded-xl bg-linear-to-r px-4 text-sm font-semibold text-white shadow-lg transition-all hover:shadow-xl sm:h-14 sm:px-6 sm:text-base"
     >
       <Icon icon="mdi:filter-variant" className="size-4 sm:mr-2 sm:size-5" />
       <span className="hidden sm:inline">{t("filter")}</span>

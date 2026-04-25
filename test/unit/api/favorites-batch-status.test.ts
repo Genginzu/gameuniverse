@@ -37,9 +37,7 @@ vi.mock("../../../src/lib/logger", () => ({
   logger: { error: vi.fn(), info: vi.fn(), warn: vi.fn(), debug: vi.fn() },
 }));
 
-const { POST } = await import(
-  "../../../src/app/api/favorites/characters/batch-status/route"
-);
+const { POST } = await import("../../../src/app/api/favorites/characters/batch-status/route");
 
 function makeRequest(body: unknown) {
   return new NextRequest("http://localhost/api/favorites/characters/batch-status", {

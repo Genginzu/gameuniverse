@@ -186,7 +186,7 @@ export async function syncPlaytime(
   const secondsToHours = (seconds: number | null | undefined): number | null => {
     if (seconds === null || seconds === undefined || seconds === 0 || isNaN(seconds)) return null;
     const hours = Math.round((seconds / 3600) * 10) / 10;
-        return hours > 99999.9 ? null : hours;
+    return hours > 99999.9 ? null : hours;
   };
 
   const { error } = await supabase

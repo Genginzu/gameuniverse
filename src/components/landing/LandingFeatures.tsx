@@ -48,7 +48,7 @@ export function LandingFeatures() {
             >
               <CardHeader className="pb-6 text-center">
                 <div
-                  className={`mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-xl bg-linear-to-br ${gradient} shadow-xl transition-shadow duration-300 group-hover:shadow-neon-primary/30`}
+                  className={`mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-xl bg-linear-to-br ${gradient} group-hover:shadow-neon-primary/30 shadow-xl transition-shadow duration-300`}
                 >
                   <Icon icon={icon} className="h-10 w-10 text-white" />
                 </div>

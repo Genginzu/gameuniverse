@@ -64,12 +64,25 @@ export async function POST(request: NextRequest) {
 
     // Notify coach of new session request
     try {
-      const { data: coach } = await supabase.from("coach_profiles").select("player_id").eq("id", coachId).single();
+      const { data: coach } = await supabase
+        .from("coach_profiles")
+        .select("player_id")
+        .eq("id", coachId)
+        .single();
       if (coach?.player_id) {
-        const { NotificationServerService } = await import("@/lib/services/notificationServerService");
-        await NotificationServerService.create(coach.player_id, user.id, "coaching_requested", data.id, "coaching_requested");
+        const { NotificationServerService } =
+          await import("@/lib/services/notificationServerService");
+        await NotificationServerService.create(
+          coach.player_id,
+          user.id,
+          "coaching_requested",
+          data.id,
+          "coaching_requested"
+        );
       }
-    } catch { /* non-blocking */ }
+    } catch {
+      /* non-blocking */
+    }
 
     return NextResponse.json({ session: data }, { status: 201 });
   } catch (error) {
@@ -111,9 +124,7 @@ export async function GET(request: NextRequest) {
     const limit = Math.min(50, Math.max(1, Number(searchParams.get("limit")) || 20));
     const offset = (page - 1) * limit;
 
-    let query = supabase
-      .from("coaching_sessions")
-      .select("*", { count: "exact" });
+    let query = supabase.from("coaching_sessions").select("*", { count: "exact" });
 
     if (role === "coach") {
       const coachId = await resolveCoachId(supabase, user.id);
@@ -146,14 +157,11 @@ export async function GET(request: NextRequest) {
     const gameIds = [...new Set(sessions.map((s: AnySupabase) => s.game_id))];
     const otherPartyIds = [
       ...new Set(
-        sessions.map((s: AnySupabase) =>
-          role === "coach" ? s.student_id : null
-        ).filter(Boolean)
+        sessions.map((s: AnySupabase) => (role === "coach" ? s.student_id : null)).filter(Boolean)
       ),
     ];
-    const coachIds = role === "student"
-      ? [...new Set(sessions.map((s: AnySupabase) => s.coach_id))]
-      : [];
+    const coachIds =
+      role === "student" ? [...new Set(sessions.map((s: AnySupabase) => s.coach_id))] : [];
 
     // Fetch game info
     const { data: games } = await supabase
@@ -191,7 +199,10 @@ export async function GET(request: NextRequest) {
     }
 
     // For role=student, resolve coach player_ids then fetch profiles
-    const coachProfileMap = new Map<string, { username: string | null; avatarUrl: string | null }>();
+    const coachProfileMap = new Map<
+      string,
+      { username: string | null; avatarUrl: string | null }
+    >();
     if (role === "student" && coachIds.length > 0) {
       const { data: coachProfiles } = await supabase
         .from("coach_profiles")
@@ -209,7 +220,10 @@ export async function GET(request: NextRequest) {
           .select("id, username, avatar_url")
           .in("id", playerIds);
 
-        const playerProfileMap = new Map<string, { username: string | null; avatarUrl: string | null }>(
+        const playerProfileMap = new Map<
+          string,
+          { username: string | null; avatarUrl: string | null }
+        >(
           (profiles || []).map((p: AnySupabase) => [
             p.id,
             { username: p.username, avatarUrl: p.avatar_url },
@@ -226,9 +240,7 @@ export async function GET(request: NextRequest) {
     const enriched = sessions.map((s: AnySupabase) => {
       const game = gameMap.get(s.game_id);
       const otherParty =
-        role === "coach"
-          ? profileMap.get(s.student_id)
-          : coachProfileMap.get(s.coach_id);
+        role === "coach" ? profileMap.get(s.student_id) : coachProfileMap.get(s.coach_id);
 
       return {
         id: s.id,

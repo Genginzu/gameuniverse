@@ -3,7 +3,9 @@ import { renderHook, waitFor } from "@testing-library/react";
 import { usePlayerCollections } from "@/hooks/usePlayerCollections";
 
 const mockCollectionsResponse = {
-  collections: [{ id: "c1", name: "Favorites", gamesCount: 5, isPublic: true, updatedAt: "2024-01-01" }],
+  collections: [
+    { id: "c1", name: "Favorites", gamesCount: 5, isPublic: true, updatedAt: "2024-01-01" },
+  ],
   stats: { totalCollections: 1, totalGames: 5, largestCollection: "Favorites" },
   pagination: { currentPage: 1, totalPages: 1, hasNextPage: false },
 };

@@ -1,11 +1,18 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from "vitest";
 
-vi.mock('@/lib/logger', () => ({ logger: { error: vi.fn(), info: vi.fn(), warn: vi.fn(), debug: vi.fn() } }));
-vi.mock('@/lib/services/igdbService', () => ({
-  IGDBService: { getGameDetails: vi.fn(), buildImageUrl: vi.fn((id: string, s: string) => `https://images.igdb.com/igdb/image/upload/t_${s}/${id}.jpg`) },
+vi.mock("@/lib/logger", () => ({
+  logger: { error: vi.fn(), info: vi.fn(), warn: vi.fn(), debug: vi.fn() },
+}));
+vi.mock("@/lib/services/igdbService", () => ({
+  IGDBService: {
+    getGameDetails: vi.fn(),
+    buildImageUrl: vi.fn(
+      (id: string, s: string) => `https://images.igdb.com/igdb/image/upload/t_${s}/${id}.jpg`
+    ),
+  },
 }));
 
-import { applyWebhookPayload } from '@/lib/services/webhookDiffApplier';
+import { applyWebhookPayload } from "@/lib/services/webhookDiffApplier";
 
 function chainMock(data: unknown, error: unknown = null) {
   const chain: any = {};
@@ -24,40 +31,40 @@ function chainMock(data: unknown, error: unknown = null) {
 }
 
 function makeSupa(overrides: string[] = []) {
-  const overrideData = overrides.map(f => ({ field_name: f }));
+  const overrideData = overrides.map((f) => ({ field_name: f }));
   return {
     from: vi.fn((t: string) =>
-      t === 'game_field_overrides' ? chainMock(overrideData) : chainMock(null)
+      t === "game_field_overrides" ? chainMock(overrideData) : chainMock(null)
     ),
   } as any;
 }
 
-describe('applyWebhookPayload', () => {
-  it('applies fields when no overrides exist', async () => {
+describe("applyWebhookPayload", () => {
+  it("applies fields when no overrides exist", async () => {
     const result = await applyWebhookPayload(makeSupa([]), {
-      gameId: 'g1',
-      payload: { slug: 'test-game', aggregated_rating: 85.3 },
+      gameId: "g1",
+      payload: { slug: "test-game", aggregated_rating: 85.3 },
     });
-    expect(result.appliedFields).toContain('slug');
-    expect(result.appliedFields).toContain('metascore');
+    expect(result.appliedFields).toContain("slug");
+    expect(result.appliedFields).toContain("metascore");
     expect(result.skippedFields).toHaveLength(0);
   });
 
-  it('skips overridden fields', async () => {
-    const result = await applyWebhookPayload(makeSupa(['slug']), {
-      gameId: 'g1',
-      payload: { slug: 'new-slug' },
+  it("skips overridden fields", async () => {
+    const result = await applyWebhookPayload(makeSupa(["slug"]), {
+      gameId: "g1",
+      payload: { slug: "new-slug" },
     });
-    expect(result.skippedFields).toContain('slug');
-    expect(result.appliedFields).not.toContain('slug');
+    expect(result.skippedFields).toContain("slug");
+    expect(result.appliedFields).not.toContain("slug");
   });
 
-  it('force-applies when field is in forceFields set', async () => {
-    const result = await applyWebhookPayload(makeSupa(['slug']), {
-      gameId: 'g1',
-      payload: { slug: 'forced-slug' },
-      forceFields: new Set(['slug']),
+  it("force-applies when field is in forceFields set", async () => {
+    const result = await applyWebhookPayload(makeSupa(["slug"]), {
+      gameId: "g1",
+      payload: { slug: "forced-slug" },
+      forceFields: new Set(["slug"]),
     });
-    expect(result.appliedFields).toContain('slug');
+    expect(result.appliedFields).toContain("slug");
   });
 });

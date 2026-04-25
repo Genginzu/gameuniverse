@@ -60,9 +60,7 @@ describe("gameTranslationSchema", () => {
   });
 
   it("rejects empty title", () => {
-    expect(
-      gameTranslationSchema.safeParse({ language_code: "fr", title: "" }).success
-    ).toBe(false);
+    expect(gameTranslationSchema.safeParse({ language_code: "fr", title: "" }).success).toBe(false);
   });
 });
 
@@ -78,15 +76,13 @@ describe("gameCompanySchema", () => {
   });
 
   it("rejects invalid role", () => {
-    expect(
-      gameCompanySchema.safeParse({ ...validCompany, role: "designer" }).success
-    ).toBe(false);
+    expect(gameCompanySchema.safeParse({ ...validCompany, role: "designer" }).success).toBe(false);
   });
 
   it("rejects non-uuid company_id", () => {
-    expect(
-      gameCompanySchema.safeParse({ ...validCompany, company_id: "not-a-uuid" }).success
-    ).toBe(false);
+    expect(gameCompanySchema.safeParse({ ...validCompany, company_id: "not-a-uuid" }).success).toBe(
+      false
+    );
   });
 });
 

@@ -107,9 +107,7 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
             <FilterButton
               hasFilters={hasFilters}
               filterCount={
-                selectedGenres.length +
-                selectedPlatforms.length +
-                (esportFilter !== null ? 1 : 0)
+                selectedGenres.length + selectedPlatforms.length + (esportFilter !== null ? 1 : 0)
               }
               onClick={() => setShowFilters(!showFilters)}
             />
@@ -141,7 +139,9 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
               icon="lucide:gamepad-2"
               title={t("noGamesFound")}
               description={hasFilters ? t("modifySearch") : t("noGamesAvailable")}
-              action={hasFilters ? { label: t("clearFilters"), onClick: handleClearFilters } : undefined}
+              action={
+                hasFilters ? { label: t("clearFilters"), onClick: handleClearFilters } : undefined
+              }
             />
           ) : (
             <div className="space-y-8">

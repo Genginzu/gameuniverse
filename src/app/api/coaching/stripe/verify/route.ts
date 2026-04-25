@@ -12,43 +12,74 @@ type S = any;
 export async function POST(request: NextRequest) {
   try {
     const supabase: S = await createRouteHandlerClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { checkoutSessionId } = await request.json();
-    if (!checkoutSessionId) return NextResponse.json({ error: "checkoutSessionId required" }, { status: 400 });
+    if (!checkoutSessionId)
+      return NextResponse.json({ error: "checkoutSessionId required" }, { status: 400 });
 
     const stripe = getStripe();
     const checkoutSession = await stripe.checkout.sessions.retrieve(checkoutSessionId);
 
     if (checkoutSession.payment_status !== "paid") {
-      return NextResponse.json({ error: "Payment not completed", status: checkoutSession.payment_status }, { status: 400 });
+      return NextResponse.json(
+        { error: "Payment not completed", status: checkoutSession.payment_status },
+        { status: 400 }
+      );
     }
 
     const coachingSessionId = checkoutSession.metadata?.coaching_session_id;
-    if (!coachingSessionId) return NextResponse.json({ error: "No session linked" }, { status: 400 });
+    if (!coachingSessionId)
+      return NextResponse.json({ error: "No session linked" }, { status: 400 });
 
     // Verify the user is the student
-    const { data: session } = await supabase.from("coaching_sessions").select("student_id, payment_status").eq("id", coachingSessionId).single();
-    if (!session || session.student_id !== user.id) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    const { data: session } = await supabase
+      .from("coaching_sessions")
+      .select("student_id, payment_status")
+      .eq("id", coachingSessionId)
+      .single();
+    if (!session || session.student_id !== user.id)
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     // Already paid — idempotent
     if (session.payment_status === "paid") {
       return NextResponse.json({ success: true, alreadyPaid: true });
     }
 
-    await supabase.from("coaching_sessions").update({ payment_status: "paid" }).eq("id", coachingSessionId);
+    await supabase
+      .from("coaching_sessions")
+      .update({ payment_status: "paid" })
+      .eq("id", coachingSessionId);
 
     // Notify coach that payment was received
     try {
-      const { data: fullSession } = await supabase.from("coaching_sessions").select("coach_id").eq("id", coachingSessionId).single();
+      const { data: fullSession } = await supabase
+        .from("coaching_sessions")
+        .select("coach_id")
+        .eq("id", coachingSessionId)
+        .single();
       if (fullSession) {
-        const { data: coach } = await supabase.from("coach_profiles").select("player_id").eq("id", fullSession.coach_id).single();
+        const { data: coach } = await supabase
+          .from("coach_profiles")
+          .select("player_id")
+          .eq("id", fullSession.coach_id)
+          .single();
         if (coach?.player_id) {
-          await NotificationServerService.create(coach.player_id, user.id, "coaching_paid", coachingSessionId, "coaching_paid");
+          await NotificationServerService.create(
+            coach.player_id,
+            user.id,
+            "coaching_paid",
+            coachingSessionId,
+            "coaching_paid"
+          );
         }
       }
-    } catch { /* non-blocking */ }
+    } catch {
+      /* non-blocking */
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {

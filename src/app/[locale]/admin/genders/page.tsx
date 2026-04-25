@@ -33,7 +33,12 @@ export default function AdminGendersPage() {
   const handleSearch = useCallback(
     (query: string) => {
       setCurrentSearch(query);
-      fetchGenders({ search: query, sortBy: currentSort.field, sortOrder: currentSort.order, page: 1 });
+      fetchGenders({
+        search: query,
+        sortBy: currentSort.field,
+        sortOrder: currentSort.order,
+        page: 1,
+      });
     },
     [fetchGenders, currentSort]
   );
@@ -48,7 +53,12 @@ export default function AdminGendersPage() {
 
   const handlePageChange = useCallback(
     (page: number) => {
-      fetchGenders({ search: currentSearch, sortBy: currentSort.field, sortOrder: currentSort.order, page });
+      fetchGenders({
+        search: currentSearch,
+        sortBy: currentSort.field,
+        sortOrder: currentSort.order,
+        page,
+      });
     },
     [fetchGenders, currentSearch, currentSort]
   );
@@ -93,23 +103,37 @@ export default function AdminGendersPage() {
   }, [isDeleting]);
 
   const genderColumns: AdminColumnDef<AdminGenderListItem>[] = [
-    { key: "slug", labelKey: "columns.slug", sortable: true, className: "px-4 py-3 font-mono text-sm text-gray-900 dark:text-white" },
     {
-      key: "name", labelKey: "columns.name", sortable: true,
+      key: "slug",
+      labelKey: "columns.slug",
+      sortable: true,
+      className: "px-4 py-3 font-mono text-sm text-gray-900 dark:text-white",
+    },
+    {
+      key: "name",
+      labelKey: "columns.name",
+      sortable: true,
       render: (g) => {
         const tr = g.translations.find((t) => t.language_code === locale);
         return tr?.name ?? g.translations[0]?.name ?? g.slug;
       },
       className: "px-4 py-3 font-medium text-gray-900 dark:text-white",
     },
-    { key: "characterCount", labelKey: "columns.characterCount", render: (g) => t("characterCount", { count: g.characterCount }), className: "px-4 py-3 text-gray-500 dark:text-gray-400" },
+    {
+      key: "characterCount",
+      labelKey: "columns.characterCount",
+      render: (g) => t("characterCount", { count: g.characterCount }),
+      className: "px-4 py-3 text-gray-500 dark:text-gray-400",
+    },
   ];
 
   return (
     <div className="space-y-8 p-4 lg:p-6">
       <section>
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">{t("title")}</h1>
+          <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">
+            {t("title")}
+          </h1>
           <Button onClick={() => router.push("/admin/genders/new")}>
             <Icon icon="fa:plus" className="h-4 w-4" />
             {t("newGender")}

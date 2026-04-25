@@ -12,8 +12,12 @@ vi.mock("@/lib/pandascore/client", () => ({
 
 function makeTeam(overrides: Record<string, unknown> = {}) {
   return {
-    id: 1, name: "T1", slug: "t1", acronym: "T1",
-    image_url: "https://t1.png", location: "KR",
+    id: 1,
+    name: "T1",
+    slug: "t1",
+    acronym: "T1",
+    image_url: "https://t1.png",
+    location: "KR",
     current_videogame: { id: 1, name: "League of Legends", slug: "lol" },
     ...overrides,
   };
@@ -36,8 +40,12 @@ describe("esportTeamService", () => {
 
     expect(teams).toHaveLength(1);
     expect(teams[0]).toEqual({
-      id: 1, name: "T1", slug: "t1", acronym: "T1",
-      imageUrl: "https://t1.png", location: "KR",
+      id: 1,
+      name: "T1",
+      slug: "t1",
+      acronym: "T1",
+      imageUrl: "https://t1.png",
+      location: "KR",
       game: "League of Legends",
     });
   });
@@ -48,7 +56,7 @@ describe("esportTeamService", () => {
     await getTeamsList({ search: "fnatic" });
 
     expect(mockGetTeams).toHaveBeenCalledWith(
-      expect.objectContaining({ "search[name]": "fnatic" }),
+      expect.objectContaining({ "search[name]": "fnatic" })
     );
   });
 
@@ -64,7 +72,15 @@ describe("esportTeamService", () => {
     mockGetTeamById.mockResolvedValue({
       ...makeTeam(),
       players: [
-        { id: 10, name: "Faker", first_name: "Sang-hyeok", last_name: "Lee", image_url: "https://faker.png", role: "Mid", nationality: "KR" },
+        {
+          id: 10,
+          name: "Faker",
+          first_name: "Sang-hyeok",
+          last_name: "Lee",
+          image_url: "https://faker.png",
+          role: "Mid",
+          nationality: "KR",
+        },
       ],
     });
 

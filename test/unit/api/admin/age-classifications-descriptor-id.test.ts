@@ -1,15 +1,17 @@
-import { describe, test, expect, beforeEach, vi } from 'vitest';
-import { NextRequest } from 'next/server';
+import { describe, test, expect, beforeEach, vi } from "vitest";
+import { NextRequest } from "next/server";
 
 let mockRequireAdmin: ReturnType<typeof vi.fn>;
-vi.mock('@/lib/auth-admin', () => ({ requireAdmin: () => mockRequireAdmin() }));
-vi.mock('@/lib/logger', () => ({ logger: { error: vi.fn(), info: vi.fn(), warn: vi.fn(), debug: vi.fn() } }));
-vi.mock('@/lib/validations/admin-descriptor-form', () => ({
+vi.mock("@/lib/auth-admin", () => ({ requireAdmin: () => mockRequireAdmin() }));
+vi.mock("@/lib/logger", () => ({
+  logger: { error: vi.fn(), info: vi.fn(), warn: vi.fn(), debug: vi.fn() },
+}));
+vi.mock("@/lib/validations/admin-descriptor-form", () => ({
   adminDescriptorFormSchema: { safeParse: (d: any) => ({ success: true, data: d }) },
 }));
 
 const mockFrom = vi.fn();
-vi.mock('@/lib/supabase-server', () => ({
+vi.mock("@/lib/supabase-server", () => ({
   createRouteHandlerClient: vi.fn(async () => ({ from: mockFrom })),
 }));
 
@@ -27,48 +29,66 @@ function chainMock(data: unknown, error: unknown = null, count: number | null = 
   return chain;
 }
 
-import { GET, DELETE } from '@/app/api/admin/age-classifications/[id]/descriptors/[descriptorId]/route';
+import {
+  GET,
+  DELETE,
+} from "@/app/api/admin/age-classifications/[id]/descriptors/[descriptorId]/route";
 
-const params = { params: Promise.resolve({ id: 'sys1', descriptorId: 'd1' }) };
-const url = 'http://localhost/api/admin/age-classifications/sys1/descriptors/d1';
+const params = { params: Promise.resolve({ id: "sys1", descriptorId: "d1" }) };
+const url = "http://localhost/api/admin/age-classifications/sys1/descriptors/d1";
 
-describe('GET /api/admin/age-classifications/[id]/descriptors/[descriptorId]', () => {
-  beforeEach(() => { vi.clearAllMocks(); mockRequireAdmin = vi.fn(); });
+describe("GET /api/admin/age-classifications/[id]/descriptors/[descriptorId]", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockRequireAdmin = vi.fn();
+  });
 
-  test('returns 403 when not admin', async () => {
-    mockRequireAdmin = vi.fn(() => { throw new Error('Admin access required'); });
+  test("returns 403 when not admin", async () => {
+    mockRequireAdmin = vi.fn(() => {
+      throw new Error("Admin access required");
+    });
     const res = await GET(new NextRequest(url), params);
     expect(res.status).toBe(403);
   });
 
-  test('returns 200 with descriptor', async () => {
+  test("returns 200 with descriptor", async () => {
     let callCount = 0;
     mockFrom.mockImplementation(() => {
       callCount++;
-      if (callCount === 1) return chainMock({ id: 'd1', rating_system_id: 'sys1', code: 'VIOLENCE', icon_url: null, content_descriptor_translations: [] });
+      if (callCount === 1)
+        return chainMock({
+          id: "d1",
+          rating_system_id: "sys1",
+          code: "VIOLENCE",
+          icon_url: null,
+          content_descriptor_translations: [],
+        });
       return chainMock(null, null, 2); // game count
     });
     const res = await GET(new NextRequest(url), params);
     expect(res.status).toBe(200);
     const json = await res.json();
-    expect(json.descriptor.id).toBe('d1');
+    expect(json.descriptor.id).toBe("d1");
   });
 });
 
-describe('DELETE /api/admin/age-classifications/[id]/descriptors/[descriptorId]', () => {
-  beforeEach(() => { vi.clearAllMocks(); mockRequireAdmin = vi.fn(); });
+describe("DELETE /api/admin/age-classifications/[id]/descriptors/[descriptorId]", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockRequireAdmin = vi.fn();
+  });
 
-  test('returns 409 when in use', async () => {
+  test("returns 409 when in use", async () => {
     let callCount = 0;
     mockFrom.mockImplementation(() => {
       callCount++;
-      if (callCount === 1) return chainMock({ id: 'd1' }); // exists
+      if (callCount === 1) return chainMock({ id: "d1" }); // exists
       return chainMock(null, null, 3); // usage count
     });
-    const req = new NextRequest(url, { method: 'DELETE' });
+    const req = new NextRequest(url, { method: "DELETE" });
     const res = await DELETE(req, params);
     expect(res.status).toBe(409);
     const json = await res.json();
-    expect(json.type).toBe('IN_USE');
+    expect(json.type).toBe("IN_USE");
   });
 });

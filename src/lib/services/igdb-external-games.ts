@@ -28,7 +28,8 @@ export const EXTERNAL_GAME_CATEGORY = {
   GAMEJOLT: 55,
 } as const;
 
-export type ExternalGameCategory = (typeof EXTERNAL_GAME_CATEGORY)[keyof typeof EXTERNAL_GAME_CATEGORY];
+export type ExternalGameCategory =
+  (typeof EXTERNAL_GAME_CATEGORY)[keyof typeof EXTERNAL_GAME_CATEGORY];
 
 interface ExternalGameRow {
   uid: string;

@@ -12,7 +12,6 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react";
 import Footer from "@/components/shared/Footer";
 
-
 interface AdminLayoutProps {
   children: React.ReactNode;
 }
@@ -116,7 +115,6 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [sidebarOpen]);
 
-
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
@@ -154,11 +152,15 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         id="admin-sidebar-toggle"
         variant="ghost"
         size="icon"
-        className="fixed left-3 top-3 z-30 min-h-[44px] min-w-[44px] lg:hidden"
+        className="fixed top-3 left-3 z-30 min-h-[44px] min-w-[44px] lg:hidden"
         onClick={() => setSidebarOpen(!sidebarOpen)}
         aria-label={sidebarOpen ? t("closeSidebar") : t("openSidebar")}
       >
-        {sidebarOpen ? <Icon icon="fa:times" className="h-5 w-5"  /> : <Icon icon="fa:bars" className="h-5 w-5"  />}
+        {sidebarOpen ? (
+          <Icon icon="fa:times" className="h-5 w-5" />
+        ) : (
+          <Icon icon="fa:bars" className="h-5 w-5" />
+        )}
       </Button>
 
       {/* Mobile sidebar overlay */}

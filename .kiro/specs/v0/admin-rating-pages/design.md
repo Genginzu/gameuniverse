@@ -229,8 +229,8 @@ correction vérifiables par la machine._
 ### Property 1 : Validation du schéma — données valides acceptées, données invalides rejetées
 
 _Pour tout_ objet de formulaire de note généré aléatoirement avec des
-traductions valides (language_code non vide, description entre 1 et 500
-caractères), le schéma Zod doit accepter l'objet. _Pour tout_ objet avec un
+traductions valides (language*code non vide, description entre 1 et 500
+caractères), le schéma Zod doit accepter l'objet. \_Pour tout* objet avec un
 language_code vide ou une description dépassant 500 caractères, le schéma doit
 le rejeter.
 

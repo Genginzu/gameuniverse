@@ -25,8 +25,7 @@ export const playerPlaytimeSchema = z
     (data) =>
       (data.playTimeHastily !== null && data.playTimeHastily !== undefined) ||
       (data.playTimeNormally !== null && data.playTimeNormally !== undefined) ||
-      (data.playTimeCompletely !== null &&
-        data.playTimeCompletely !== undefined),
+      (data.playTimeCompletely !== null && data.playTimeCompletely !== undefined),
     "Au moins un temps de jeu doit être renseigné"
   );
 

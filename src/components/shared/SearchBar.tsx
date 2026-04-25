@@ -104,26 +104,38 @@ export function SearchBar<T extends SearchResultItem = SearchResultItem>({
 
   const handleClear = useCallback(() => {
     setSearchQuery("");
-    if (isHybridMode) { setResults([]); setIsOpen(false); }
+    if (isHybridMode) {
+      setResults([]);
+      setIsOpen(false);
+    }
   }, [isHybridMode]);
 
-  const handleSelectResult = useCallback((result: T) => {
-    if (!hybridConfig) return;
-    setImportingId(result.id);
-    hybridConfig.onSelect(result);
-    setIsOpen(false);
-    setSearchQuery("");
-    setImportingId(null);
-  }, [hybridConfig]);
+  const handleSelectResult = useCallback(
+    (result: T) => {
+      if (!hybridConfig) return;
+      setImportingId(result.id);
+      hybridConfig.onSelect(result);
+      setIsOpen(false);
+      setSearchQuery("");
+      setImportingId(null);
+    },
+    [hybridConfig]
+  );
 
-  const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); onSearch(searchQuery); };
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSearch(searchQuery);
+  };
 
   return (
     <div ref={containerRef} className={`relative ${className}`}>
       <form onSubmit={handleSubmit} className="relative">
         <div className="group relative">
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-            <Icon icon="mdi:magnify" className="size-5 text-gray-400 transition-colors group-focus-within:text-blue-500" />
+            <Icon
+              icon="mdi:magnify"
+              className="size-5 text-gray-400 transition-colors group-focus-within:text-blue-500"
+            />
           </div>
           <Input
             type="text"
@@ -131,10 +143,14 @@ export function SearchBar<T extends SearchResultItem = SearchResultItem>({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => isHybridMode && searchQuery.length >= minQueryLength && setIsOpen(true)}
-            className="h-12 w-full rounded-2xl border-0 bg-white pl-12 pr-12 text-sm text-gray-900 placeholder-gray-400 shadow-lg ring-1 ring-gray-200 transition-all duration-300 hover:shadow-xl focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-gray-800 dark:text-white dark:placeholder-gray-500 dark:ring-gray-700 sm:h-14 sm:text-base"
+            className="h-12 w-full rounded-2xl border-0 bg-white pr-12 pl-12 text-sm text-gray-900 placeholder-gray-400 shadow-lg ring-1 ring-gray-200 transition-all duration-300 hover:shadow-xl focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:h-14 sm:text-base dark:bg-gray-800 dark:text-white dark:placeholder-gray-500 dark:ring-gray-700"
           />
           {searchQuery && (
-            <button type="button" onClick={handleClear} className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400 transition-all duration-200 hover:scale-110 hover:text-red-500">
+            <button
+              type="button"
+              onClick={handleClear}
+              className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400 transition-all duration-200 hover:scale-110 hover:text-red-500"
+            >
               <div className="rounded-full bg-gray-100 p-1 transition-colors hover:bg-red-100 dark:bg-gray-700 dark:hover:bg-red-900/30">
                 <Icon icon="mdi:close" className="size-4" />
               </div>
@@ -142,7 +158,7 @@ export function SearchBar<T extends SearchResultItem = SearchResultItem>({
           )}
         </div>
         {showSearchIndicator && searchQuery && !isHybridMode && (
-          <div className="absolute left-0 right-0 top-full z-10 mt-2 rounded-xl bg-white shadow-lg ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700">
+          <div className="absolute top-full right-0 left-0 z-10 mt-2 rounded-xl bg-white shadow-lg ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700">
             <div className="p-3">
               <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
                 <Icon icon="mdi:flash" className="mr-2 size-4" />
@@ -180,8 +196,16 @@ export function createDebouncedCallback<T extends (...args: Parameters<T>) => vo
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
   const debouncedFn = ((...args: Parameters<T>) => {
     if (timeoutId) clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => { callback(...args); timeoutId = null; }, delay);
+    timeoutId = setTimeout(() => {
+      callback(...args);
+      timeoutId = null;
+    }, delay);
   }) as T;
-  const cancel = () => { if (timeoutId) { clearTimeout(timeoutId); timeoutId = null; } };
+  const cancel = () => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      timeoutId = null;
+    }
+  };
   return { debouncedFn, cancel };
 }

@@ -1,4 +1,3 @@
-
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { useDashboard } from "@/hooks/useDashboard";
@@ -69,23 +68,32 @@ function QuickActionsCard({ t }: { t: (key: string) => string }) {
       <div className="space-y-3">
         <Link
           href="/library"
-          className="neon-btn flex w-full items-center rounded-xl bg-linear-to-r from-neon-primary/20 to-neon-secondary/20 px-4 py-3 font-semibold text-gray-900 transition-all duration-200 hover:from-neon-primary/30 hover:to-neon-secondary/30 dark:text-white"
+          className="neon-btn from-neon-primary/20 to-neon-secondary/20 hover:from-neon-primary/30 hover:to-neon-secondary/30 flex w-full items-center rounded-xl bg-linear-to-r px-4 py-3 font-semibold text-gray-900 transition-all duration-200 dark:text-white"
         >
-          <Icon icon="fa:gamepad" className="mr-3 h-5 w-5 text-neon-primary drop-shadow-[0_0_6px_currentColor]"  />
+          <Icon
+            icon="fa:gamepad"
+            className="text-neon-primary mr-3 h-5 w-5 drop-shadow-[0_0_6px_currentColor]"
+          />
           {t("exploreGames")}
         </Link>
         <Link
           href="/profile"
           className="neon-btn flex w-full items-center rounded-xl px-4 py-3 font-semibold text-gray-900 transition-all duration-200 dark:text-white"
         >
-          <Icon icon="fa:user" className="mr-3 h-5 w-5 text-neon-secondary drop-shadow-[0_0_6px_currentColor]"  />
+          <Icon
+            icon="fa:user"
+            className="text-neon-secondary mr-3 h-5 w-5 drop-shadow-[0_0_6px_currentColor]"
+          />
           {t("editProfile")}
         </Link>
         <Link
           href="/teams"
           className="neon-btn flex w-full items-center rounded-xl px-4 py-3 font-semibold text-gray-900 transition-all duration-200 dark:text-white"
         >
-          <Icon icon="fa:users" className="mr-3 h-5 w-5 text-neon-accent drop-shadow-[0_0_6px_currentColor]"  />
+          <Icon
+            icon="fa:users"
+            className="text-neon-accent mr-3 h-5 w-5 drop-shadow-[0_0_6px_currentColor]"
+          />
           {t("joinTeam")}
         </Link>
       </div>
@@ -108,7 +116,7 @@ function AccountInfoCard({
       <div className="space-y-4">
         <div>
           <p className="text-sm font-medium text-gray-900 dark:text-white">{t("email")}</p>
-          <p className="break-all text-sm text-gray-600 dark:text-gray-400">{user.email}</p>
+          <p className="text-sm break-all text-gray-600 dark:text-gray-400">{user.email}</p>
         </div>
         <div>
           <p className="text-sm font-medium text-gray-900 dark:text-white">{t("memberSince")}</p>

@@ -99,20 +99,23 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Failed to create availability" }, { status: 500 });
     }
 
-    return NextResponse.json({
-      availability: {
-        id: data.id,
-        coachId: data.coach_id,
-        dayOfWeek: data.day_of_week,
-        startTime: data.start_time,
-        endTime: data.end_time,
-        timezone: data.timezone,
-        isRecurring: data.is_recurring,
-        specificDate: data.specific_date,
-        isActive: data.is_active,
-        createdAt: data.created_at,
+    return NextResponse.json(
+      {
+        availability: {
+          id: data.id,
+          coachId: data.coach_id,
+          dayOfWeek: data.day_of_week,
+          startTime: data.start_time,
+          endTime: data.end_time,
+          timezone: data.timezone,
+          isRecurring: data.is_recurring,
+          specificDate: data.specific_date,
+          isActive: data.is_active,
+          createdAt: data.created_at,
+        },
       },
-    }, { status: 201 });
+      { status: 201 }
+    );
   } catch (error) {
     logger.error("Error in coaching availability POST", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

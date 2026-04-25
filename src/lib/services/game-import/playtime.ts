@@ -12,8 +12,7 @@ export async function fetchAndSavePlaytime(gameId: string, igdbId: number): Prom
     if (!timeToBeat) return;
 
     const secondsToHours = (seconds: number | null | undefined): number | null => {
-      if (seconds === null || seconds === undefined || seconds === 0 || isNaN(seconds))
-        return null;
+      if (seconds === null || seconds === undefined || seconds === 0 || isNaN(seconds)) return null;
       return Math.round((seconds / 3600) * 10) / 10;
     };
 

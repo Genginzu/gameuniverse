@@ -9,9 +9,7 @@ import { RelatedEntities } from "./types";
  */
 export async function ensureRelatedEntities(igdbGame: IGDBGame): Promise<RelatedEntities> {
   const genreIds = await ensureGenres(igdbGame.genres || []);
-  const { developerIds, publisherIds } = await ensureCompanies(
-    igdbGame.involved_companies || []
-  );
+  const { developerIds, publisherIds } = await ensureCompanies(igdbGame.involved_companies || []);
 
   return { genreIds, developerIds, publisherIds };
 }

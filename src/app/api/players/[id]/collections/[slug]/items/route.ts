@@ -49,7 +49,6 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     );
 
     return NextResponse.json({ success: true }, { status: 201 });
-
   } catch (error) {
     // Handle unique constraint violation (duplicate game in collection)
     if (error instanceof Error && "code" in error && (error as { code: string }).code === "23505") {

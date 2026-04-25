@@ -103,7 +103,9 @@ export function EntitySkeleton({ config, className = "" }: EntitySkeletonProps) 
   // Standard card skeleton (games, characters)
   return (
     <div className={`group relative ${className}`}>
-      <div className={`relative ${aspectRatioClass} overflow-hidden rounded-2xl bg-white shadow-md dark:bg-gray-800`}>
+      <div
+        className={`relative ${aspectRatioClass} overflow-hidden rounded-2xl bg-white shadow-md dark:bg-gray-800`}
+      >
         {/* Cover Image Skeleton */}
         <Skeleton className="h-full w-full rounded-2xl" />
 

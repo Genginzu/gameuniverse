@@ -41,21 +41,45 @@ export async function GET(request: NextRequest) {
     } else if (filter === "to_metascore") {
       query = query.eq("is_synced", true).eq("is_metascore_synced", false);
     } else if (filter === "to_screenshots") {
-      query = query.eq("is_synced", true).eq("is_screenshots_synced", false).not("matched_game_id", "is", null);
+      query = query
+        .eq("is_synced", true)
+        .eq("is_screenshots_synced", false)
+        .not("matched_game_id", "is", null);
     } else if (filter === "to_artworks") {
-      query = query.eq("is_synced", true).eq("is_artworks_synced", false).not("matched_game_id", "is", null);
+      query = query
+        .eq("is_synced", true)
+        .eq("is_artworks_synced", false)
+        .not("matched_game_id", "is", null);
     } else if (filter === "to_videos") {
-      query = query.eq("is_synced", true).eq("is_videos_synced", false).not("matched_game_id", "is", null);
+      query = query
+        .eq("is_synced", true)
+        .eq("is_videos_synced", false)
+        .not("matched_game_id", "is", null);
     } else if (filter === "to_classifications") {
-      query = query.eq("is_synced", true).eq("is_classifications_synced", false).not("matched_game_id", "is", null);
+      query = query
+        .eq("is_synced", true)
+        .eq("is_classifications_synced", false)
+        .not("matched_game_id", "is", null);
     } else if (filter === "to_languages") {
-      query = query.eq("is_synced", true).eq("is_languages_synced", false).not("matched_game_id", "is", null);
+      query = query
+        .eq("is_synced", true)
+        .eq("is_languages_synced", false)
+        .not("matched_game_id", "is", null);
     } else if (filter === "to_versions") {
-      query = query.eq("is_synced", true).eq("is_versions_synced", false).not("matched_game_id", "is", null);
+      query = query
+        .eq("is_synced", true)
+        .eq("is_versions_synced", false)
+        .not("matched_game_id", "is", null);
     } else if (filter === "to_playtime") {
-      query = query.eq("is_synced", true).eq("is_playtime_synced", false).not("matched_game_id", "is", null);
+      query = query
+        .eq("is_synced", true)
+        .eq("is_playtime_synced", false)
+        .not("matched_game_id", "is", null);
     } else if (filter === "to_popularity") {
-      query = query.eq("is_synced", true).eq("is_popularity_synced", false).not("matched_game_id", "is", null);
+      query = query
+        .eq("is_synced", true)
+        .eq("is_popularity_synced", false)
+        .not("matched_game_id", "is", null);
     }
 
     const { data, count, error } = await query

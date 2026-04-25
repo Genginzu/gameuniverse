@@ -53,13 +53,16 @@ export function EsportPlayersContent() {
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
         <div className="mb-6">
           <div className="relative max-w-md">
-            <Icon icon="mdi:magnify" className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+            <Icon
+              icon="mdi:magnify"
+              className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400"
+            />
             <input
               type="text"
               value={search}
               onChange={handleSearch}
               placeholder={t("searchPlaceholder")}
-              className="glass-input w-full rounded-xl py-2.5 pl-10 pr-4 text-base"
+              className="glass-input w-full rounded-xl py-2.5 pr-4 pl-10 text-base"
             />
           </div>
         </div>
@@ -73,7 +76,7 @@ export function EsportPlayersContent() {
             description={t("noPlayersDescription")}
           />
         ) : (
-          <div className="grid gap-4 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          <div className="xs:grid-cols-2 grid gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {players.map((player) => (
               <PlayerCard key={player.id} player={player} />
             ))}
@@ -90,17 +93,27 @@ function PlayerCard({ player }: { player: PlayerSummary }) {
       <div className="glass-card group flex flex-col items-center rounded-2xl p-4 text-center transition-all duration-300 hover:scale-[1.03] hover:shadow-lg sm:p-5">
         <div className="relative mb-3 h-16 w-16 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
           {player.imageUrl ? (
-            <LazyImage src={player.imageUrl} alt={player.name} fill className="object-cover" sizes="64px" />
+            <LazyImage
+              src={player.imageUrl}
+              alt={player.name}
+              fill
+              className="object-cover"
+              sizes="64px"
+            />
           ) : (
             <div className="flex h-full w-full items-center justify-center">
               <Icon icon="mdi:account" className="h-8 w-8 text-gray-400" />
             </div>
           )}
         </div>
-        <h3 className="line-clamp-1 text-sm font-bold text-gray-900 dark:text-white">{player.name}</h3>
-        {player.role && <span className="text-xs text-gray-500 dark:text-gray-400">{player.role}</span>}
+        <h3 className="line-clamp-1 text-sm font-bold text-gray-900 dark:text-white">
+          {player.name}
+        </h3>
+        {player.role && (
+          <span className="text-xs text-gray-500 dark:text-gray-400">{player.role}</span>
+        )}
         {player.teamName && (
-          <span className="mt-1 text-xs text-palette-primary-500">{player.teamName}</span>
+          <span className="text-palette-primary-500 mt-1 text-xs">{player.teamName}</span>
         )}
         {player.nationality && (
           <span className="mt-0.5 flex items-center gap-1 text-xs text-gray-400">
@@ -115,7 +128,7 @@ function PlayerCard({ player }: { player: PlayerSummary }) {
 
 function PlayersSkeleton() {
   return (
-    <div className="grid gap-4 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+    <div className="xs:grid-cols-2 grid gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
       {Array.from({ length: 10 }).map((_, i) => (
         <div key={i} className="glass-card flex flex-col items-center rounded-2xl p-5">
           <Skeleton className="mb-3 h-16 w-16 rounded-full" />

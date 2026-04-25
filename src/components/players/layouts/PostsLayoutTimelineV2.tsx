@@ -67,7 +67,7 @@ export function PostsLayoutTimelineV2(props: PostsLayoutProps) {
           <button
             type="button"
             onClick={() => setShowComposer((v) => !v)}
-            className="inline-flex shrink-0 items-center gap-2 rounded-2xl bg-linear-to-br from-palette-primary-500 to-blue-500 px-5 py-3 text-sm font-medium text-white shadow-lg shadow-palette-primary-500/20 transition-all duration-300 hover:opacity-90"
+            className="from-palette-primary-500 shadow-palette-primary-500/20 inline-flex shrink-0 items-center gap-2 rounded-2xl bg-linear-to-br to-blue-500 px-5 py-3 text-sm font-medium text-white shadow-lg transition-all duration-300 hover:opacity-90"
           >
             {showComposer ? (
               <Icon icon="lucide:x" className="h-4 w-4" />
@@ -109,11 +109,11 @@ export function PostsLayoutTimelineV2(props: PostsLayoutProps) {
         {!isLoading && !error && posts.length === 0 && !searchTerm && <PostsFeedEmpty />}
 
         {!isLoading && posts.length > 0 && (
-          <div className="relative ml-6 border-l-2 border-palette-primary-300/50 pl-6 dark:border-palette-primary-500/30">
+          <div className="border-palette-primary-300/50 dark:border-palette-primary-500/30 relative ml-6 border-l-2 pl-6">
             {posts.map((post) => (
               <div key={post.id} className="relative mb-6">
                 {/* Timeline dot */}
-                <div className="absolute top-5 -left-[33px] h-4 w-4 rounded-full border-2 border-palette-primary-400 bg-white dark:border-palette-primary-500 dark:bg-slate-800" />
+                <div className="border-palette-primary-400 dark:border-palette-primary-500 absolute top-5 -left-[33px] h-4 w-4 rounded-full border-2 bg-white dark:bg-slate-800" />
                 <PostCard
                   post={post}
                   playerName={playerName}

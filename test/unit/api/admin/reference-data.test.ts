@@ -25,9 +25,11 @@ vi.mock("../../../../src/lib/admin-utils", () => ({
   getAvailableGenres: (...args: unknown[]) => mockGetAvailableGenres(...args),
   getAvailableStores: (...args: unknown[]) => mockGetAvailableStores(...args),
   getAvailableRatings: (...args: unknown[]) => mockGetAvailableRatings(...args),
-  getAvailableContentDescriptors: (...args: unknown[]) => mockGetAvailableContentDescriptors(...args),
+  getAvailableContentDescriptors: (...args: unknown[]) =>
+    mockGetAvailableContentDescriptors(...args),
   getGameStatistics: (...args: unknown[]) => mockGetGameStatistics(...args),
-  getAvailableSupportedLanguages: (...args: unknown[]) => mockGetAvailableSupportedLanguages(...args),
+  getAvailableSupportedLanguages: (...args: unknown[]) =>
+    mockGetAvailableSupportedLanguages(...args),
   getAvailableGamePlatforms: (...args: unknown[]) => mockGetAvailableGamePlatforms(...args),
 }));
 

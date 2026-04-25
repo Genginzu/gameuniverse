@@ -31,12 +31,10 @@ export async function createSessionConversation(
 
   const newId: string = conversation.id;
 
-  const { error: partError } = await supabase
-    .from("conversation_participants")
-    .insert([
-      { conversation_id: newId, player_id: coachPlayerId },
-      { conversation_id: newId, player_id: studentId },
-    ]);
+  const { error: partError } = await supabase.from("conversation_participants").insert([
+    { conversation_id: newId, player_id: coachPlayerId },
+    { conversation_id: newId, player_id: studentId },
+  ]);
 
   if (partError) throw partError;
 
@@ -44,9 +42,7 @@ export async function createSessionConversation(
   return newId;
 }
 
-function findSharedConversation(
-  rows: { conversation_id: string }[] | null
-): string | null {
+function findSharedConversation(rows: { conversation_id: string }[] | null): string | null {
   if (!rows || rows.length < 2) return null;
 
   const counts = new Map<string, number>();

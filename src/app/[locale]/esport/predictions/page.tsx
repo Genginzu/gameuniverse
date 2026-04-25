@@ -19,7 +19,9 @@ export default function EsportPredictionsPage() {
   return (
     <DashboardLayout>
       <ErrorBoundary
-        fallback={<ErrorFallback description="Error loading predictions." showRefresh showHomeButton />}
+        fallback={
+          <ErrorFallback description="Error loading predictions." showRefresh showHomeButton />
+        }
       >
         <EsportPredictionsContent />
       </ErrorBoundary>

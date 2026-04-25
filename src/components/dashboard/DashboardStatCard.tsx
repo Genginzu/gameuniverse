@@ -33,7 +33,7 @@ export function DashboardStatCard({
           <p className="text-xs text-gray-500 dark:text-gray-400">{description}</p>
         </div>
       </div>
-      <div className="neon-text text-xl font-bold text-gray-900 dark:text-white sm:text-2xl">
+      <div className="neon-text text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">
         {value}
       </div>
       <p className="text-xs text-gray-500 dark:text-gray-400">{subtitle}</p>

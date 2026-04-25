@@ -5,7 +5,9 @@ import type { CoinTransactionType, CoinActivityType } from "@/types/coins";
 
 export async function GET(request: NextRequest) {
   const supabase = await createRouteHandlerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -18,7 +20,13 @@ export async function GET(request: NextRequest) {
   const activityType = searchParams.get("activityType") as CoinActivityType | undefined;
 
   try {
-    const result = await CoinService.getTransactionHistory(user.id, page, limit, type || undefined, activityType || undefined);
+    const result = await CoinService.getTransactionHistory(
+      user.id,
+      page,
+      limit,
+      type || undefined,
+      activityType || undefined
+    );
     return NextResponse.json(result);
   } catch {
     return NextResponse.json({ error: "Failed to fetch transactions" }, { status: 500 });

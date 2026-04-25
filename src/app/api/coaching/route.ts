@@ -173,7 +173,12 @@ export async function GET(request: NextRequest) {
 
     const response: Record<string, unknown> = {
       coaches,
-      pagination: { currentPage: page, totalPages, totalCount: total, hasNextPage: page < totalPages },
+      pagination: {
+        currentPage: page,
+        totalPages,
+        totalCount: total,
+        hasNextPage: page < totalPages,
+      },
     };
 
     // Featured sections on page 1 only

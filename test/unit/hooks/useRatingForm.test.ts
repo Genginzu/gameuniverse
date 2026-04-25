@@ -29,33 +29,59 @@ describe("useRatingForm", () => {
   it("submits POST to /api/admin/age-classifications/{id}/ratings in create mode", async () => {
     globalThis.fetch = vi.fn().mockResolvedValue({ ok: true });
     const { result } = renderHook(() => useRatingForm("create", SYSTEM_ID));
-    const data = { code: "E", display_name: "Everyone", minimum_age: 0, color_hex: "", icon_url: "", sort_order: 0, translations: [] };
+    const data = {
+      code: "E",
+      display_name: "Everyone",
+      minimum_age: 0,
+      color_hex: "",
+      icon_url: "",
+      sort_order: 0,
+      translations: [],
+    };
 
     await act(() => result.current.submitRating(data));
 
     expect(globalThis.fetch).toHaveBeenCalledWith(
       `/api/admin/age-classifications/${SYSTEM_ID}/ratings`,
-      expect.objectContaining({ method: "POST" }),
+      expect.objectContaining({ method: "POST" })
     );
   });
 
   it("submits PUT in edit mode", async () => {
     globalThis.fetch = vi.fn().mockResolvedValue({ ok: true });
     const { result } = renderHook(() => useRatingForm("edit", SYSTEM_ID, "r-1"));
-    const data = { code: "E", display_name: "Everyone", minimum_age: 0, color_hex: "", icon_url: "", sort_order: 0, translations: [] };
+    const data = {
+      code: "E",
+      display_name: "Everyone",
+      minimum_age: 0,
+      color_hex: "",
+      icon_url: "",
+      sort_order: 0,
+      translations: [],
+    };
 
     await act(() => result.current.submitRating(data));
 
     expect(globalThis.fetch).toHaveBeenCalledWith(
       `/api/admin/age-classifications/${SYSTEM_ID}/ratings/r-1`,
-      expect.objectContaining({ method: "PUT" }),
+      expect.objectContaining({ method: "PUT" })
     );
   });
 
   it("handles error", async () => {
-    globalThis.fetch = vi.fn().mockResolvedValue({ ok: false, json: () => Promise.resolve({ error: "Bad data" }) });
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValue({ ok: false, json: () => Promise.resolve({ error: "Bad data" }) });
     const { result } = renderHook(() => useRatingForm("create", SYSTEM_ID));
-    const data = { code: "E", display_name: "Everyone", minimum_age: 0, color_hex: "", icon_url: "", sort_order: 0, translations: [] };
+    const data = {
+      code: "E",
+      display_name: "Everyone",
+      minimum_age: 0,
+      color_hex: "",
+      icon_url: "",
+      sort_order: 0,
+      translations: [],
+    };
 
     await act(async () => {
       await result.current.submitRating(data).catch(() => {});

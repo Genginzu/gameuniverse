@@ -25,7 +25,12 @@ interface CommonGamesListProps {
  *
  * Requirements: 3.1, 3.2, 3.4
  */
-export function CommonGamesList({ games, locale: _locale, pagination, onPageChange }: CommonGamesListProps) {
+export function CommonGamesList({
+  games,
+  locale: _locale,
+  pagination,
+  onPageChange,
+}: CommonGamesListProps) {
   const t = useTranslations("players");
 
   if (games.length === 0) {
@@ -42,7 +47,7 @@ export function CommonGamesList({ games, locale: _locale, pagination, onPageChan
           <Link
             key={game.gameId}
             href={`/games/${game.slug}`}
-            className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white/60 shadow-sm backdrop-blur-sm transition-all hover:scale-[1.02] hover:border-gray-300 hover:shadow-lg dark:border-slate-700/50 dark:bg-slate-800/50 dark:hover:border-slate-600 dark:hover:shadow-palette-primary-500/10"
+            className="group dark:hover:shadow-palette-primary-500/10 relative overflow-hidden rounded-xl border border-gray-200 bg-white/60 shadow-sm backdrop-blur-sm transition-all hover:scale-[1.02] hover:border-gray-300 hover:shadow-lg dark:border-slate-700/50 dark:bg-slate-800/50 dark:hover:border-slate-600"
           >
             {/* Cover image */}
             <div className="relative aspect-3/4">
@@ -57,7 +62,10 @@ export function CommonGamesList({ games, locale: _locale, pagination, onPageChan
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center bg-gray-200 dark:bg-slate-700">
-                  <Icon icon="lucide:gamepad-2" className="h-12 w-12 text-gray-400 dark:text-slate-500" />
+                  <Icon
+                    icon="lucide:gamepad-2"
+                    className="h-12 w-12 text-gray-400 dark:text-slate-500"
+                  />
                 </div>
               )}
 

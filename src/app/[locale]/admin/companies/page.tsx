@@ -17,10 +17,14 @@ import { Icon } from "@iconify/react";
 
 function companyTypeKey(type: string): string {
   switch (type) {
-    case "developer": return "typeDeveloper";
-    case "publisher": return "typePublisher";
-    case "both": return "typeBoth";
-    default: return "typeBoth";
+    case "developer":
+      return "typeDeveloper";
+    case "publisher":
+      return "typePublisher";
+    case "both":
+      return "typeBoth";
+    default:
+      return "typeBoth";
   }
 }
 
@@ -42,7 +46,12 @@ export default function AdminCompaniesPage() {
   const handleSearch = useCallback(
     (query: string) => {
       setCurrentSearch(query);
-      fetchCompanies({ search: query, sortBy: currentSort.field, sortOrder: currentSort.order, page: 1 });
+      fetchCompanies({
+        search: query,
+        sortBy: currentSort.field,
+        sortOrder: currentSort.order,
+        page: 1,
+      });
     },
     [fetchCompanies, currentSort]
   );
@@ -57,7 +66,12 @@ export default function AdminCompaniesPage() {
 
   const handlePageChange = useCallback(
     (page: number) => {
-      fetchCompanies({ search: currentSearch, sortBy: currentSort.field, sortOrder: currentSort.order, page });
+      fetchCompanies({
+        search: currentSearch,
+        sortBy: currentSort.field,
+        sortOrder: currentSort.order,
+        page,
+      });
     },
     [fetchCompanies, currentSearch, currentSort]
   );
@@ -102,17 +116,39 @@ export default function AdminCompaniesPage() {
   }, [isDeleting]);
 
   const companyColumns: AdminColumnDef<AdminCompany>[] = [
-    { key: "name", labelKey: "columns.name", sortable: true, className: "px-4 py-3 font-medium text-gray-900 dark:text-white" },
-    { key: "slug", labelKey: "columns.slug", sortable: true, className: "px-4 py-3 font-mono text-sm text-gray-900 dark:text-white" },
-    { key: "company_type", labelKey: "columns.type", render: (c) => t(companyTypeKey(c.company_type)), className: "px-4 py-3 text-gray-500 dark:text-gray-400" },
-    { key: "gameCount", labelKey: "columns.gameCount", render: (c) => t("gameCount", { count: c.gameCount }), className: "px-4 py-3 text-gray-500 dark:text-gray-400" },
+    {
+      key: "name",
+      labelKey: "columns.name",
+      sortable: true,
+      className: "px-4 py-3 font-medium text-gray-900 dark:text-white",
+    },
+    {
+      key: "slug",
+      labelKey: "columns.slug",
+      sortable: true,
+      className: "px-4 py-3 font-mono text-sm text-gray-900 dark:text-white",
+    },
+    {
+      key: "company_type",
+      labelKey: "columns.type",
+      render: (c) => t(companyTypeKey(c.company_type)),
+      className: "px-4 py-3 text-gray-500 dark:text-gray-400",
+    },
+    {
+      key: "gameCount",
+      labelKey: "columns.gameCount",
+      render: (c) => t("gameCount", { count: c.gameCount }),
+      className: "px-4 py-3 text-gray-500 dark:text-gray-400",
+    },
   ];
 
   return (
     <div className="space-y-8 p-4 lg:p-6">
       <section>
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">{t("title")}</h1>
+          <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">
+            {t("title")}
+          </h1>
           <Button onClick={() => router.push("/admin/companies/new")}>
             <Icon icon="fa:plus" className="h-4 w-4" />
             {t("newCompany")}

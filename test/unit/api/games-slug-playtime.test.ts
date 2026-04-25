@@ -9,9 +9,7 @@ vi.mock("@/lib/supabase-server", () => ({
       from: (t: string) => mockSupabaseFrom?.(t) ?? {},
       auth: {
         getUser: () =>
-          mockGetUser
-            ? mockGetUser()
-            : Promise.resolve({ data: { user: null }, error: null }),
+          mockGetUser ? mockGetUser() : Promise.resolve({ data: { user: null }, error: null }),
       },
     }),
 }));
@@ -62,16 +60,12 @@ beforeEach(() => {
 
 describe("GET /api/games/[slug]/playtime", () => {
   test("returns playtime data", async () => {
-    mockGetUser = () =>
-      Promise.resolve({ data: { user: { id: "u1" } }, error: null });
+    mockGetUser = () => Promise.resolve({ data: { user: { id: "u1" } }, error: null });
 
     mockSupabaseFrom = (table: string) => {
-      if (table === "games")
-        return singleChain({ data: { id: "g1" }, error: null });
-      if (table === "user_library")
-        return supaChain({ data: [], error: null });
-      if (table === "profiles")
-        return supaChain({ data: [], error: null });
+      if (table === "games") return singleChain({ data: { id: "g1" }, error: null });
+      if (table === "user_library") return supaChain({ data: [], error: null });
+      if (table === "profiles") return supaChain({ data: [], error: null });
       return supaChain({ data: null, error: null });
     };
 
@@ -87,12 +81,10 @@ describe("GET /api/games/[slug]/playtime", () => {
   });
 
   test("returns 404 when game not found", async () => {
-    mockGetUser = () =>
-      Promise.resolve({ data: { user: null }, error: null });
+    mockGetUser = () => Promise.resolve({ data: { user: null }, error: null });
 
     mockSupabaseFrom = (table: string) => {
-      if (table === "games")
-        return singleChain({ data: null, error: { code: "PGRST116" } });
+      if (table === "games") return singleChain({ data: null, error: { code: "PGRST116" } });
       return supaChain({ data: null, error: null });
     };
 
@@ -106,8 +98,7 @@ describe("GET /api/games/[slug]/playtime", () => {
 
 describe("POST /api/games/[slug]/playtime", () => {
   test("returns 401 when not authenticated", async () => {
-    mockGetUser = () =>
-      Promise.resolve({ data: { user: null }, error: { message: "no auth" } });
+    mockGetUser = () => Promise.resolve({ data: { user: null }, error: { message: "no auth" } });
 
     const res = await POST(
       makeRequest("http://localhost/api/games/test-game/playtime", {

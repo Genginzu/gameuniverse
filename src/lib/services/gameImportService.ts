@@ -222,10 +222,7 @@ export class GameImportService {
   /**
    * Updates all related data for an existing game during sync.
    */
-  private static async updateAllRelatedData(
-    gameId: string,
-    igdbGame: IGDBGame
-  ): Promise<void> {
+  private static async updateAllRelatedData(gameId: string, igdbGame: IGDBGame): Promise<void> {
     await updateTranslations(gameId, igdbGame);
     await updateMedia(gameId, igdbGame);
     await updateLanguages(gameId, igdbGame);

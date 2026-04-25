@@ -16,10 +16,7 @@ import {
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Icon } from "@iconify/react";
 import type { SupportedLanguage } from "@/types/admin-languages";
-import {
-  AdminTranslationFields,
-  type TranslationFieldConfig,
-} from "./AdminTranslationFields";
+import { AdminTranslationFields, type TranslationFieldConfig } from "./AdminTranslationFields";
 
 interface AdminSlugFormProps<T extends FieldValues = FieldValues> {
   mode: "create" | "edit";

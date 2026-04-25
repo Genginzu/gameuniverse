@@ -52,7 +52,9 @@ describe("useAdminGames", () => {
     await act(() => result.current.fetchGames({ search: "zelda" }));
 
     await waitFor(() => expect(result.current.loading).toBe(false));
-    const lastCall = (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls.at(-1)?.[0] as string;
+    const lastCall = (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls.at(
+      -1
+    )?.[0] as string;
     expect(lastCall).toContain("search=zelda");
   });
 

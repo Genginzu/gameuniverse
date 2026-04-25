@@ -45,7 +45,7 @@ export function RevokeAchievementDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <p className="text-sm font-medium text-destructive">
+        <p className="text-destructive text-sm font-medium">
           {t("xpInfo", { xp: achievement?.xpValue ?? 0 })}
         </p>
 

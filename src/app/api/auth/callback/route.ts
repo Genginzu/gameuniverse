@@ -26,7 +26,9 @@ export async function GET(request: NextRequest) {
     }
 
     // Rediriger directement vers la page joueur pour éviter la race condition avec /profile
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     const redirectPath = user ? `/players/${user.id}` : "/profile";
     return NextResponse.redirect(new URL(redirectPath, baseUrl));
   }
@@ -43,7 +45,9 @@ export async function GET(request: NextRequest) {
     }
 
     // Rediriger directement vers la page joueur pour éviter la race condition avec /profile
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     const redirectPath = user ? `/players/${user.id}` : "/profile";
     return NextResponse.redirect(new URL(redirectPath, baseUrl));
   }

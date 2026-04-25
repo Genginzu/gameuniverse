@@ -5,7 +5,9 @@ import type { CoinTransactionType, CoinActivityType } from "@/types/coins";
 
 async function requireAdmin() {
   const supabase = await createRouteHandlerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return null;
   const { data } = await supabase.rpc("is_admin", { user_id: user.id });
   return data ? user : null;
@@ -26,7 +28,13 @@ export async function GET(
   const activityType = searchParams.get("activityType") as CoinActivityType | undefined;
 
   try {
-    const result = await CoinService.getTransactionHistory(playerId, page, limit, type || undefined, activityType || undefined);
+    const result = await CoinService.getTransactionHistory(
+      playerId,
+      page,
+      limit,
+      type || undefined,
+      activityType || undefined
+    );
     return NextResponse.json(result);
   } catch {
     return NextResponse.json({ error: "Failed to fetch transactions" }, { status: 500 });

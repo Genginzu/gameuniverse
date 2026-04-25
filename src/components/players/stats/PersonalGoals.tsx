@@ -147,11 +147,7 @@ export function PersonalGoals({
         )}
 
         {showForm && (
-          <PersonalGoalForm
-            playerId={playerId}
-            onCreated={handleCreated}
-            onCancel={handleCancel}
-          />
+          <PersonalGoalForm playerId={playerId} onCreated={handleCreated} onCancel={handleCancel} />
         )}
       </div>
     </section>

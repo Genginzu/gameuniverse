@@ -224,7 +224,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     );
 
     return NextResponse.json({ success: true, comment }, { status: 201 });
-
   } catch (error) {
     logger.error("Error in comments POST", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

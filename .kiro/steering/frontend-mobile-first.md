@@ -15,15 +15,15 @@ complexité via les préfixes Tailwind (`sm:`, `md:`, `lg:`, `xl:`).
 Le projet définit un breakpoint custom `xs: 475px` en plus des breakpoints
 Tailwind par défaut :
 
-| Préfixe | Largeur min | Usage                          |
-| ------- | ----------- | ------------------------------ |
-| (base)  | 0px         | Mobile portrait                |
-| `xs:`   | 475px       | Mobile paysage / grand mobile  |
-| `sm:`   | 640px       | Petit tablet                   |
-| `md:`   | 768px       | Tablet                         |
-| `lg:`   | 1024px      | Desktop / sidebar visible      |
-| `xl:`   | 1280px      | Grand desktop                  |
-| `2xl:`  | 1536px      | Très grand écran               |
+| Préfixe | Largeur min | Usage                         |
+| ------- | ----------- | ----------------------------- |
+| (base)  | 0px         | Mobile portrait               |
+| `xs:`   | 475px       | Mobile paysage / grand mobile |
+| `sm:`   | 640px       | Petit tablet                  |
+| `md:`   | 768px       | Tablet                        |
+| `lg:`   | 1024px      | Desktop / sidebar visible     |
+| `xl:`   | 1280px      | Grand desktop                 |
+| `2xl:`  | 1536px      | Très grand écran              |
 
 ## Approche mobile-first obligatoire
 
@@ -177,8 +177,8 @@ Sur mobile, les zones cliquables doivent être suffisamment grandes :
 
 - ✅ Tout nouveau composant/page **doit** être testé visuellement à 375px, 768px
   et 1280px minimum.
-- ✅ Les classes Tailwind **doivent** être écrites en mobile-first (base →
-  `sm:` → `md:` → `lg:`).
+- ✅ Les classes Tailwind **doivent** être écrites en mobile-first (base → `sm:`
+  → `md:` → `lg:`).
 - ✅ Les grilles **doivent** commencer à `grid-cols-1` et augmenter avec les
   breakpoints.
 - ✅ Les inputs **doivent** avoir `text-base` minimum (16px) pour éviter le zoom
@@ -192,8 +192,8 @@ Sur mobile, les zones cliquables doivent être suffisamment grandes :
   mobile).
 - ❌ Ne **jamais** utiliser de largeurs/hauteurs fixes sans alternative
   responsive.
-- ❌ Ne **jamais** masquer du contenu important sur mobile avec `hidden md:block`
-  sans alternative mobile.
+- ❌ Ne **jamais** masquer du contenu important sur mobile avec
+  `hidden md:block` sans alternative mobile.
 - ❌ Ne **jamais** ignorer le test mobile. Si un composant casse à 375px, c'est
   un bug.
 - ❌ Ne **jamais** utiliser `max-md:`, `max-lg:` etc. comme approche principale.

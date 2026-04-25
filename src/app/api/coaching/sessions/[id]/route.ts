@@ -165,15 +165,25 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       }
       // Calculate refund if payment exists
       if (action === "cancel" && session.payment_amount) {
-        const { data: coach } = await supabase.from("coach_profiles").select("cancellation_policy").eq("id", session.coach_id).single();
+        const { data: coach } = await supabase
+          .from("coach_profiles")
+          .select("cancellation_policy")
+          .eq("id", session.coach_id)
+          .single();
         if (coach?.cancellation_policy) {
-          const { refundAmount } = calculateRefund(coach.cancellation_policy, session.scheduled_at, session.payment_amount);
+          const { refundAmount } = calculateRefund(
+            coach.cancellation_policy,
+            session.scheduled_at,
+            session.payment_amount
+          );
           updates.refund_amount = refundAmount;
           // Issue Stripe refund if payment was made
           if (refundAmount > 0 && session.payment_status === "paid") {
             try {
               const stripe = getStripe();
-              const payments = await stripe.paymentIntents.search({ query: `metadata["coaching_session_id"]:"${id}"` });
+              const payments = await stripe.paymentIntents.search({
+                query: `metadata["coaching_session_id"]:"${id}"`,
+              });
               if (payments.data[0]) {
                 await stripe.refunds.create({
                   payment_intent: payments.data[0].id,
@@ -217,15 +227,24 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     try {
       const coachPlayerId = await resolveCoachPlayerId(supabase, session.coach_id);
       const notifMap: Record<SessionAction, { recipientId: string; type: NotificationType }> = {
-        confirm:  { recipientId: session.student_id, type: "coaching_confirmed" },
-        decline:  { recipientId: session.student_id, type: "coaching_declined" },
-        start:    { recipientId: session.student_id, type: "coaching_started" },
+        confirm: { recipientId: session.student_id, type: "coaching_confirmed" },
+        decline: { recipientId: session.student_id, type: "coaching_declined" },
+        start: { recipientId: session.student_id, type: "coaching_started" },
         complete: { recipientId: session.student_id, type: "coaching_completed" },
-        cancel:   { recipientId: role === "student" ? (coachPlayerId || "") : session.student_id, type: "coaching_cancelled" },
+        cancel: {
+          recipientId: role === "student" ? coachPlayerId || "" : session.student_id,
+          type: "coaching_cancelled",
+        },
       };
       const notif = notifMap[action];
       if (notif.recipientId) {
-        await NotificationServerService.create(notif.recipientId, user.id, notif.type, id, notif.type);
+        await NotificationServerService.create(
+          notif.recipientId,
+          user.id,
+          notif.type,
+          id,
+          notif.type
+        );
       }
     } catch (notifError) {
       logger.error("Error sending coaching notification", { error: notifError });

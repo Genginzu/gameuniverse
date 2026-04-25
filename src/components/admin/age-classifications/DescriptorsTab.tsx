@@ -171,11 +171,11 @@ export function DescriptorsTab({ ratingSystemId }: DescriptorsTabProps) {
 
       <AdminDeleteDialog
         isOpen={descriptorToDelete !== null}
-          translationNamespace="admin.ageClassifications.descriptors.delete"
-          warningParams={{ code: descriptorToDelete?.code ?? "" }}
-          warningKey="confirm"
-          confirmKey="delete"
-          blockOnUsage
+        translationNamespace="admin.ageClassifications.descriptors.delete"
+        warningParams={{ code: descriptorToDelete?.code ?? "" }}
+        warningKey="confirm"
+        confirmKey="delete"
+        blockOnUsage
         onClose={handleDeleteClose}
         onConfirm={handleDeleteConfirm}
         isDeleting={isDeleting}

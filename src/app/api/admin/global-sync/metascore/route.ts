@@ -110,12 +110,18 @@ async function syncMetascore(supabase: any, entry: MetascoreEntry): Promise<Meta
       .update({ metascore: score ?? null })
       .eq("id", entry.matched_game_id);
 
-    await supabase.from("igdb_global_sync").update({ is_metascore_synced: true }).eq("id", entry.id);
+    await supabase
+      .from("igdb_global_sync")
+      .update({ is_metascore_synced: true })
+      .eq("id", entry.id);
     return { ...base, success: true, score, source };
   } catch (error) {
     const msg = error instanceof Error ? error.message : "Unknown error";
     logger.warn("Metascore sync failed", { igdbId: entry.igdb_id, error: msg });
-    await supabase.from("igdb_global_sync").update({ is_metascore_synced: true }).eq("id", entry.id);
+    await supabase
+      .from("igdb_global_sync")
+      .update({ is_metascore_synced: true })
+      .eq("id", entry.id);
     return { ...base, success: false, score: null, source: "none", error: msg };
   }
 }

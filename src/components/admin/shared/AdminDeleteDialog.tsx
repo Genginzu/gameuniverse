@@ -68,15 +68,13 @@ export function AdminDeleteDialog({
               {t("usageWarning", { count: usageCount })}
             </p>
             {forceWarningKey && (
-              <p className="text-sm text-orange-600 dark:text-orange-400">
-                {t(forceWarningKey)}
-              </p>
+              <p className="text-sm text-orange-600 dark:text-orange-400">{t(forceWarningKey)}</p>
             )}
           </div>
         )}
 
         {(!blockOnUsage || !hasUsage) && (
-          <p className="text-sm font-medium text-destructive">{t("irreversible")}</p>
+          <p className="text-destructive text-sm font-medium">{t("irreversible")}</p>
         )}
 
         <DialogFooter>

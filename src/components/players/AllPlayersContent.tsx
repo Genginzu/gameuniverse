@@ -53,7 +53,7 @@ export function AllPlayersContent() {
 
   if (initialLoading) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-slate-50 via-palette-secondary-50 to-palette-primary-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+      <div className="via-palette-secondary-50 to-palette-primary-100 min-h-screen bg-linear-to-br from-slate-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
         <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
           <GridSkeleton skeletonConfig={playerSkeletonConfig} count={20} />
         </div>
@@ -62,7 +62,7 @@ export function AllPlayersContent() {
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-palette-secondary-50 to-palette-primary-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+    <div className="via-palette-secondary-50 to-palette-primary-100 min-h-screen bg-linear-to-br from-slate-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
         <h1 className="mb-6 text-xl font-bold text-gray-900 sm:text-2xl lg:text-3xl dark:text-white">
           {tNav("players")}
@@ -115,7 +115,7 @@ export function AllPlayersContent() {
               />
             ) : (
               <div className="space-y-8">
-                <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                <div className="xs:grid-cols-2 grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                   {players.map((player, index) => (
                     <PlayerCard key={player.id} player={player} priority={index < 4} />
                   ))}

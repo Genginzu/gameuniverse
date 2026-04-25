@@ -39,7 +39,13 @@ export function BookingModal({ coachId, gameId, gameTitle, pricing, onClose }: B
       const res = await fetch("/api/coaching/sessions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ coachId, gameId, pricingId: selected.id, scheduledAt, durationMinutes: selected.durationMinutes }),
+        body: JSON.stringify({
+          coachId,
+          gameId,
+          pricingId: selected.id,
+          scheduledAt,
+          durationMinutes: selected.durationMinutes,
+        }),
       });
       if (res.ok) setSuccess(true);
     } finally {
@@ -48,11 +54,20 @@ export function BookingModal({ coachId, gameId, gameTitle, pricing, onClose }: B
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
-      <div className="w-full max-w-md space-y-4 rounded-2xl border border-white/20 bg-white p-6 shadow-xl dark:border-slate-700/50 dark:bg-slate-900" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-md space-y-4 rounded-2xl border border-white/20 bg-white p-6 shadow-xl dark:border-slate-700/50 dark:bg-slate-900"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold text-gray-900 dark:text-white">{t("title")}</h2>
-          <button onClick={onClose} className="rounded-lg p-1 hover:bg-gray-100 dark:hover:bg-gray-800">
+          <button
+            onClick={onClose}
+            className="rounded-lg p-1 hover:bg-gray-100 dark:hover:bg-gray-800"
+          >
             <Icon icon="lucide:x" className="size-5 text-gray-500" />
           </button>
         </div>
@@ -74,12 +89,22 @@ export function BookingModal({ coachId, gameId, gameTitle, pricing, onClose }: B
         ) : (
           <>
             <div className="space-y-2">
-              <p className="text-xs font-medium text-gray-700 dark:text-gray-300">{t("selectFormula")}</p>
+              <p className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                {t("selectFormula")}
+              </p>
               {pricing.map((p) => (
-                <button key={p.sessionType} onClick={() => setSelected(p)} className={`w-full rounded-xl p-3 text-left transition-all ${selected?.sessionType === p.sessionType ? "bg-linear-to-r from-palette-secondary-500/20 to-palette-primary-500/20 ring-1 ring-palette-secondary-400" : "bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700"}`}>
+                <button
+                  key={p.sessionType}
+                  onClick={() => setSelected(p)}
+                  className={`w-full rounded-xl p-3 text-left transition-all ${selected?.sessionType === p.sessionType ? "from-palette-secondary-500/20 to-palette-primary-500/20 ring-palette-secondary-400 bg-linear-to-r ring-1" : "bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700"}`}
+                >
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">{tProfile(`types.${p.sessionType}`)}</span>
-                    <span className="text-sm font-bold text-palette-secondary-400">{p.priceAmount}€</span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">
+                      {tProfile(`types.${p.sessionType}`)}
+                    </span>
+                    <span className="text-palette-secondary-400 text-sm font-bold">
+                      {p.priceAmount}€
+                    </span>
                   </div>
                   <span className="text-xs text-gray-500">{p.durationMinutes} min</span>
                 </button>
@@ -88,16 +113,35 @@ export function BookingModal({ coachId, gameId, gameTitle, pricing, onClose }: B
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300">{t("date")}</label>
-                <input type="date" value={date} onChange={(e) => setDate(e.target.value)} min={new Date().toISOString().split("T")[0]} className="glass-input w-full rounded-lg px-3 py-2 text-sm" />
+                <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300">
+                  {t("date")}
+                </label>
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  min={new Date().toISOString().split("T")[0]}
+                  className="glass-input w-full rounded-lg px-3 py-2 text-sm"
+                />
               </div>
               <div>
-                <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300">{t("time")}</label>
-                <input type="time" value={time} onChange={(e) => setTime(e.target.value)} className="glass-input w-full rounded-lg px-3 py-2 text-sm" />
+                <label className="mb-1 block text-xs font-medium text-gray-700 dark:text-gray-300">
+                  {t("time")}
+                </label>
+                <input
+                  type="time"
+                  value={time}
+                  onChange={(e) => setTime(e.target.value)}
+                  className="glass-input w-full rounded-lg px-3 py-2 text-sm"
+                />
               </div>
             </div>
 
-            <button onClick={handleBook} disabled={!selected || !date || !time || loading} className="w-full rounded-xl bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50">
+            <button
+              onClick={handleBook}
+              disabled={!selected || !date || !time || loading}
+              className="from-palette-secondary-500 to-palette-primary-500 w-full rounded-xl bg-linear-to-r py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+            >
               {loading ? t("booking") : t("bookNow")}
             </button>
           </>

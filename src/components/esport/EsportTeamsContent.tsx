@@ -51,13 +51,16 @@ export function EsportTeamsContent() {
         {/* Search */}
         <div className="mb-6">
           <div className="relative max-w-md">
-            <Icon icon="mdi:magnify" className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+            <Icon
+              icon="mdi:magnify"
+              className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400"
+            />
             <input
               type="text"
               value={search}
               onChange={handleSearch}
               placeholder={t("searchPlaceholder")}
-              className="glass-input w-full rounded-xl py-2.5 pl-10 pr-4 text-base"
+              className="glass-input w-full rounded-xl py-2.5 pr-4 pl-10 text-base"
             />
           </div>
         </div>
@@ -71,7 +74,7 @@ export function EsportTeamsContent() {
             description={t("noTeamsDescription")}
           />
         ) : (
-          <div className="grid gap-4 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          <div className="xs:grid-cols-2 grid gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {teams.map((team) => (
               <TeamCard key={team.id} team={team} />
             ))}
@@ -107,9 +110,7 @@ function TeamCard({ team }: { team: TeamSummary }) {
         {team.acronym && (
           <span className="text-xs text-gray-500 dark:text-gray-400">{team.acronym}</span>
         )}
-        {team.game && (
-          <span className="mt-1 text-xs text-palette-primary-500">{team.game}</span>
-        )}
+        {team.game && <span className="text-palette-primary-500 mt-1 text-xs">{team.game}</span>}
         {team.location && (
           <span className="mt-0.5 flex items-center gap-1 text-xs text-gray-400">
             <Icon icon="mdi:map-marker" className="h-3 w-3" />
@@ -123,7 +124,7 @@ function TeamCard({ team }: { team: TeamSummary }) {
 
 function TeamsSkeleton() {
   return (
-    <div className="grid gap-4 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+    <div className="xs:grid-cols-2 grid gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
       {Array.from({ length: 10 }).map((_, i) => (
         <div key={i} className="glass-card flex flex-col items-center rounded-2xl p-5">
           <Skeleton className="mb-3 h-16 w-16 rounded-full" />

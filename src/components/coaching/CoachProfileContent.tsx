@@ -11,20 +11,51 @@ import { BookingModal } from "./BookingModal";
 
 interface CoachProfileData {
   player: { username: string; avatarUrl: string | null; displayName: string | null };
-  coach: { id: string; bio: string | null; experience: string | null; languages: string[]; averageRating: number; totalReviews: number; totalSessions: number; isVerified: boolean };
-  games: Array<{ id: string; gameId: string; title: string; slug: string; coverImage: string | null; coverImageUrl: string | null; specialties: string[]; pricing: Array<{ id: string; sessionType: string; priceAmount: number; priceCurrency: string; durationMinutes: number }> }>;
+  coach: {
+    id: string;
+    bio: string | null;
+    experience: string | null;
+    languages: string[];
+    averageRating: number;
+    totalReviews: number;
+    totalSessions: number;
+    isVerified: boolean;
+  };
+  games: Array<{
+    id: string;
+    gameId: string;
+    title: string;
+    slug: string;
+    coverImage: string | null;
+    coverImageUrl: string | null;
+    specialties: string[];
+    pricing: Array<{
+      id: string;
+      sessionType: string;
+      priceAmount: number;
+      priceCurrency: string;
+      durationMinutes: number;
+    }>;
+  }>;
 }
 
 const LANGUAGE_LABELS: Record<string, string> = {
-  "Français": "Français", "Fr": "Français", "fr": "Français",
-  "English": "English", "En": "English", "en": "English",
+  Français: "Français",
+  Fr: "Français",
+  fr: "Français",
+  English: "English",
+  En: "English",
+  en: "English",
 };
 
 export function CoachProfileContent({ username }: { username: string }) {
   const t = useTranslations("coaching.publicProfile");
   const tGames = useTranslations("coaching.settings.games");
   const locale = useLocale();
-  const { data, isLoading, error } = useSWR<CoachProfileData>(`/api/coaching/${username}?locale=${locale}`, fetcher);
+  const { data, isLoading, error } = useSWR<CoachProfileData>(
+    `/api/coaching/${username}?locale=${locale}`,
+    fetcher
+  );
   const [bookingGame, setBookingGame] = useState<CoachProfileData["games"][0] | null>(null);
 
   if (isLoading) {
@@ -52,7 +83,7 @@ export function CoachProfileContent({ username }: { username: string }) {
     <div className="space-y-6 p-4 md:space-y-8 md:p-6 lg:p-8">
       {/* Header */}
       <div className="glass-card flex flex-col items-center gap-4 rounded-2xl p-6 sm:flex-row sm:items-start">
-        <div className="flex size-20 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-palette-secondary-500 to-palette-primary-500 text-2xl font-bold text-white">
+        <div className="from-palette-secondary-500 to-palette-primary-500 flex size-20 shrink-0 items-center justify-center rounded-full bg-linear-to-br text-2xl font-bold text-white">
           {player.avatarUrl ? (
             <img src={player.avatarUrl} alt="" className="size-20 rounded-full object-cover" />
           ) : (
@@ -65,8 +96,9 @@ export function CoachProfileContent({ username }: { username: string }) {
               {player.displayName || player.username}
             </h1>
             {coach.isVerified && (
-              <span className="rounded-full bg-palette-secondary-500/20 px-2 py-0.5 text-xs font-medium text-palette-secondary-400">
-                <Icon icon="lucide:badge-check" className="mr-1 inline size-3" />{t("verified")}
+              <span className="bg-palette-secondary-500/20 text-palette-secondary-400 rounded-full px-2 py-0.5 text-xs font-medium">
+                <Icon icon="lucide:badge-check" className="mr-1 inline size-3" />
+                {t("verified")}
               </span>
             )}
           </div>
@@ -76,8 +108,14 @@ export function CoachProfileContent({ username }: { username: string }) {
               <Icon icon="lucide:star" className="size-4" /> {coach.averageRating.toFixed(1)}
               <span className="text-gray-400">({coach.totalReviews})</span>
             </span>
-            <span className="text-gray-500 dark:text-gray-400">{coach.totalSessions} {t("sessions")}</span>
-            {minPrice < Infinity && <span className="font-medium text-palette-secondary-400">{t("from")} {minPrice}€</span>}
+            <span className="text-gray-500 dark:text-gray-400">
+              {coach.totalSessions} {t("sessions")}
+            </span>
+            {minPrice < Infinity && (
+              <span className="text-palette-secondary-400 font-medium">
+                {t("from")} {minPrice}€
+              </span>
+            )}
           </div>
         </div>
       </div>
@@ -85,14 +123,35 @@ export function CoachProfileContent({ username }: { username: string }) {
       {/* Bio & Experience */}
       {(coach.bio || coach.experience) && (
         <div className="glass-card space-y-4 rounded-2xl p-6">
-          {coach.bio && <div><h2 className="mb-2 text-sm font-semibold text-gray-900 dark:text-white">{t("bio")}</h2><p className="text-sm text-gray-600 dark:text-gray-300">{coach.bio}</p></div>}
-          {coach.experience && <div><h2 className="mb-2 text-sm font-semibold text-gray-900 dark:text-white">{t("experience")}</h2><p className="text-sm text-gray-600 dark:text-gray-300">{coach.experience}</p></div>}
+          {coach.bio && (
+            <div>
+              <h2 className="mb-2 text-sm font-semibold text-gray-900 dark:text-white">
+                {t("bio")}
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-300">{coach.bio}</p>
+            </div>
+          )}
+          {coach.experience && (
+            <div>
+              <h2 className="mb-2 text-sm font-semibold text-gray-900 dark:text-white">
+                {t("experience")}
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-300">{coach.experience}</p>
+            </div>
+          )}
           {coach.languages.length > 0 && (
             <div>
-              <h2 className="mb-2 text-sm font-semibold text-gray-900 dark:text-white">{t("languages")}</h2>
+              <h2 className="mb-2 text-sm font-semibold text-gray-900 dark:text-white">
+                {t("languages")}
+              </h2>
               <div className="flex flex-wrap gap-1.5">
                 {coach.languages.map((l) => (
-                  <span key={l} className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs text-gray-600 dark:bg-gray-800 dark:text-gray-400">{LANGUAGE_LABELS[l] ?? l}</span>
+                  <span
+                    key={l}
+                    className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs text-gray-600 dark:bg-gray-800 dark:text-gray-400"
+                  >
+                    {LANGUAGE_LABELS[l] ?? l}
+                  </span>
                 ))}
               </div>
             </div>
@@ -109,18 +168,38 @@ export function CoachProfileContent({ username }: { username: string }) {
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {games.map((game) => (
               <div key={game.id} className="glass-card flex gap-4 rounded-xl p-4">
-                {(game.coverImageUrl || game.coverImage) && <img src={(game.coverImageUrl || game.coverImage)!} alt="" className="h-20 w-14 shrink-0 rounded-lg object-cover" />}
+                {(game.coverImageUrl || game.coverImage) && (
+                  <img
+                    src={(game.coverImageUrl || game.coverImage)!}
+                    alt=""
+                    className="h-20 w-14 shrink-0 rounded-lg object-cover"
+                  />
+                )}
                 <div className="min-w-0 flex-1 space-y-2">
-                  <Link href={`/games/${game.slug}`} className="font-medium text-gray-900 hover:text-palette-secondary-400 dark:text-white">{game.title}</Link>
+                  <Link
+                    href={`/games/${game.slug}`}
+                    className="hover:text-palette-secondary-400 font-medium text-gray-900 dark:text-white"
+                  >
+                    {game.title}
+                  </Link>
                   {game.specialties.length > 0 && (
                     <div className="flex flex-wrap gap-1">
                       {game.specialties.map((s) => (
-                        <span key={s} className="rounded-full bg-palette-secondary-500/10 px-2 py-0.5 text-xs text-palette-secondary-400">{tGames(`specialties.${s}`)}</span>
+                        <span
+                          key={s}
+                          className="bg-palette-secondary-500/10 text-palette-secondary-400 rounded-full px-2 py-0.5 text-xs"
+                        >
+                          {tGames(`specialties.${s}`)}
+                        </span>
                       ))}
                     </div>
                   )}
-                  <button onClick={() => setBookingGame(game)} className="rounded-lg bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 px-3 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-90">
-                    <Icon icon="lucide:calendar-plus" className="mr-1 inline size-3.5" />{t("book")}
+                  <button
+                    onClick={() => setBookingGame(game)}
+                    className="from-palette-secondary-500 to-palette-primary-500 rounded-lg bg-linear-to-r px-3 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-90"
+                  >
+                    <Icon icon="lucide:calendar-plus" className="mr-1 inline size-3.5" />
+                    {t("book")}
                   </button>
                 </div>
               </div>
@@ -135,7 +214,13 @@ export function CoachProfileContent({ username }: { username: string }) {
       </div>
 
       {bookingGame && (
-        <BookingModal coachId={coach.id} gameId={bookingGame.gameId} gameTitle={bookingGame.title} pricing={bookingGame.pricing} onClose={() => setBookingGame(null)} />
+        <BookingModal
+          coachId={coach.id}
+          gameId={bookingGame.gameId}
+          gameTitle={bookingGame.title}
+          pricing={bookingGame.pricing}
+          onClose={() => setBookingGame(null)}
+        />
       )}
     </div>
   );

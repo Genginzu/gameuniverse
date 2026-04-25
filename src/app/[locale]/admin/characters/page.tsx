@@ -9,10 +9,7 @@ import dynamic from "next/dynamic";
 import type { AdminCharacter } from "@/types/admin-characters";
 import { AdminCharactersTable } from "@/components/admin/characters/AdminCharactersTable";
 const AdminDeleteDialog = dynamic(
-  () =>
-    import("@/components/admin/shared/AdminDeleteDialog").then(
-      (m) => m.AdminDeleteDialog
-    ),
+  () => import("@/components/admin/shared/AdminDeleteDialog").then((m) => m.AdminDeleteDialog),
   { ssr: false }
 );
 import { Button } from "@/components/ui/button";
@@ -130,8 +127,8 @@ export default function AdminCharactersPage() {
 
       <AdminDeleteDialog
         isOpen={characterToDelete !== null}
-          translationNamespace="admin.characters.deleteDialog"
-          warningParams={{ name: characterToDelete?.name ?? "" }}
+        translationNamespace="admin.characters.deleteDialog"
+        warningParams={{ name: characterToDelete?.name ?? "" }}
         onClose={handleDeleteClose}
         onConfirm={handleDeleteConfirm}
         isDeleting={isDeleting}

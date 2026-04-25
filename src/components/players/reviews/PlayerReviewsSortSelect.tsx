@@ -25,7 +25,7 @@ export function PlayerReviewsSortSelect({ value, onChange }: PlayerReviewsSortSe
       value={value}
       onChange={(e) => onChange(e.target.value as ReviewSortOption)}
       aria-label={t("sort.label")}
-      className="cursor-pointer rounded-xl border border-white/20 bg-white/40 px-4 py-2 text-sm font-medium text-gray-700 backdrop-blur-xl transition-all duration-300 hover:bg-white/60 focus:outline-hidden focus:ring-2 focus:ring-neon-primary/30 dark:border-slate-700/50 dark:bg-slate-800/50 dark:text-slate-200 dark:hover:bg-slate-700/60 dark:focus:ring-neon-primary/40"
+      className="focus:ring-neon-primary/30 dark:focus:ring-neon-primary/40 cursor-pointer rounded-xl border border-white/20 bg-white/40 px-4 py-2 text-sm font-medium text-gray-700 backdrop-blur-xl transition-all duration-300 hover:bg-white/60 focus:ring-2 focus:outline-hidden dark:border-slate-700/50 dark:bg-slate-800/50 dark:text-slate-200 dark:hover:bg-slate-700/60"
     >
       {SORT_OPTIONS.map((option) => (
         <option key={option} value={option}>

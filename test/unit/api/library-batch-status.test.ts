@@ -66,9 +66,7 @@ describe("POST /api/library/batch-status", () => {
 
   test("returns statuses map with correct boolean values", async () => {
     mockGetUser = vi.fn(() => Promise.resolve({ data: { user: { id: "u1" } }, error: null }));
-    mockSupabaseFrom = vi.fn(() =>
-      supaChain({ data: [{ game_id: "g1" }], error: null })
-    );
+    mockSupabaseFrom = vi.fn(() => supaChain({ data: [{ game_id: "g1" }], error: null }));
 
     const res = await POST(makeRequest({ gameIds: ["g1", "g2"] }));
     expect(res.status).toBe(200);

@@ -1,6 +1,7 @@
 # Statistiques Joueur
 
-Documentation du système de statistiques du profil joueur. Deux surfaces coexistent :
+Documentation du système de statistiques du profil joueur. Deux surfaces
+coexistent :
 
 - **Stats enrichies** (legacy) — section historique sur le profil avec temps de
   jeu total, genre favori, reviews, et page « Année en Revue ».
@@ -8,28 +9,28 @@ Documentation du système de statistiques du profil joueur. Deux surfaces coexis
   sections thématiques (graphiques, succès, objectifs personnels…). Remplace
   l'ancien onglet « Aperçu ».
 
-Les deux exposent leurs propres endpoints API et composants. Le dashboard est
-la surface principale ; les stats enrichies restent exposées sur la section
+Les deux exposent leurs propres endpoints API et composants. Le dashboard est la
+surface principale ; les stats enrichies restent exposées sur la section
 overview du profil et pour la rétrocompatibilité de la page « Année en Revue ».
 
 ## Accès
 
-| Surface                | Route                                         | Onglet / Section         |
-| ---------------------- | --------------------------------------------- | ------------------------ |
-| Dashboard (actuel)     | `/{locale}/players/{playerId}`                | Onglet **Stats**         |
-| Stats enrichies        | `/{locale}/players/{playerId}`                | Section profil           |
-| Année en Revue         | `/{locale}/players/{playerId}/year/{year}`    | Page dédiée              |
+| Surface            | Route                                      | Onglet / Section |
+| ------------------ | ------------------------------------------ | ---------------- |
+| Dashboard (actuel) | `/{locale}/players/{playerId}`             | Onglet **Stats** |
+| Stats enrichies    | `/{locale}/players/{playerId}`             | Section profil   |
+| Année en Revue     | `/{locale}/players/{playerId}/year/{year}` | Page dédiée      |
 
 ## Endpoints API
 
 ### Dashboard
 
-| Méthode | Route                                       | Paramètres          | Description           |
-| ------- | ------------------------------------------- | ------------------- | --------------------- |
-| GET     | `/api/players/{id}/stats/dashboard`         | `locale` (fr\|en)   | Données complètes     |
-| POST    | `/api/players/{id}/stats/dashboard/goals`   | Body JSON           | Créer un objectif     |
-| PUT     | `/api/players/{id}/stats/dashboard/goals`   | Body JSON (avec id) | Modifier un objectif  |
-| DELETE  | `/api/players/{id}/stats/dashboard/goals`   | Body JSON (avec id) | Supprimer un objectif |
+| Méthode | Route                                     | Paramètres          | Description           |
+| ------- | ----------------------------------------- | ------------------- | --------------------- |
+| GET     | `/api/players/{id}/stats/dashboard`       | `locale` (fr\|en)   | Données complètes     |
+| POST    | `/api/players/{id}/stats/dashboard/goals` | Body JSON           | Créer un objectif     |
+| PUT     | `/api/players/{id}/stats/dashboard/goals` | Body JSON (avec id) | Modifier un objectif  |
+| DELETE  | `/api/players/{id}/stats/dashboard/goals` | Body JSON (avec id) | Supprimer un objectif |
 
 ### Stats enrichies / Année en Revue
 
@@ -42,12 +43,12 @@ overview du profil et pour la rétrocompatibilité de la page « Année en Revue
 
 ### Migrations base de données
 
-| Migration                                           | Table                 | Description                          |
-| --------------------------------------------------- | --------------------- | ------------------------------------ |
-| `20240227000001_player_stats_privacy.sql`           | `profiles.stats_private` | Flag de confidentialité (enriched) |
-| `20240310000001_player_achievements.sql`            | `player_achievements` | Succès débloqués par joueur          |
-| `20240310000002_game_sessions.sql`                  | `game_sessions`       | Sessions de jeu avec durée           |
-| `20240310000003_player_goals.sql`                   | `player_goals`        | Objectifs personnels                 |
+| Migration                                 | Table                    | Description                        |
+| ----------------------------------------- | ------------------------ | ---------------------------------- |
+| `20240227000001_player_stats_privacy.sql` | `profiles.stats_private` | Flag de confidentialité (enriched) |
+| `20240310000001_player_achievements.sql`  | `player_achievements`    | Succès débloqués par joueur        |
+| `20240310000002_game_sessions.sql`        | `game_sessions`          | Sessions de jeu avec durée         |
+| `20240310000003_player_goals.sql`         | `player_goals`           | Objectifs personnels               |
 
 ### Dépendances
 
@@ -72,18 +73,18 @@ Contrôlée par le champ `stats_private` (BOOLEAN, défaut FALSE) sur `profiles`
 
 ## Dashboard — 10 sections
 
-| Section                   | Contenu                                                                 |
-| ------------------------- | ----------------------------------------------------------------------- |
-| **Vue d'ensemble**        | Grille de 6 métriques clés (jeux, temps, avis, note, collections, amis) |
-| **Répartition par genre** | Donut chart Recharts des 5 genres principaux + « Autres »               |
-| **Progression complétion** | Barre colorée par statut (completed, playing, owned, wishlist)         |
-| **Analyse des avis**      | Histogramme par tranches + moyenne, médiane, mode, votes helpful        |
-| **Statistiques sociales** | Amis, commentaires, favoris, collections                                |
-| **Chronologie d'activité** | Barres activité 12 derniers mois                                       |
-| **Temps de jeu**          | Temps moyen par jeu + top game avec couverture                          |
-| **Succès**                | 10 badges prédéfinis avec progression globale                           |
-| **Sessions de jeu**       | Total, durée moyenne, plus longue, fréquence par jour de la semaine     |
-| **Objectifs personnels**  | CRUD privés avec barres de progression                                  |
+| Section                    | Contenu                                                                 |
+| -------------------------- | ----------------------------------------------------------------------- |
+| **Vue d'ensemble**         | Grille de 6 métriques clés (jeux, temps, avis, note, collections, amis) |
+| **Répartition par genre**  | Donut chart Recharts des 5 genres principaux + « Autres »               |
+| **Progression complétion** | Barre colorée par statut (completed, playing, owned, wishlist)          |
+| **Analyse des avis**       | Histogramme par tranches + moyenne, médiane, mode, votes helpful        |
+| **Statistiques sociales**  | Amis, commentaires, favoris, collections                                |
+| **Chronologie d'activité** | Barres activité 12 derniers mois                                        |
+| **Temps de jeu**           | Temps moyen par jeu + top game avec couverture                          |
+| **Succès**                 | 10 badges prédéfinis avec progression globale                           |
+| **Sessions de jeu**        | Total, durée moyenne, plus longue, fréquence par jour de la semaine     |
+| **Objectifs personnels**   | CRUD privés avec barres de progression                                  |
 
 ### Objectifs personnels
 

@@ -270,5 +270,4 @@ describe("FavoriteCharactersContent Unit Tests", () => {
       expect(shouldShowGrid(characters, loading, error)).toBe(true);
     });
   });
-
 });

@@ -36,7 +36,12 @@ export async function POST(_request: NextRequest) {
     await supabase.from("game_screenshots").delete().in("game_id", gameIds);
 
     // Build all insert rows at once
-    const allRows: Array<{ game_id: string; url: string; display_order: number; is_featured: boolean }> = [];
+    const allRows: Array<{
+      game_id: string;
+      url: string;
+      display_order: number;
+      is_featured: boolean;
+    }> = [];
     for (const entry of entries) {
       const screenshots = igdbMap.get(entry.igdb_id) ?? [];
       for (let i = 0; i < screenshots.length; i++) {
@@ -56,7 +61,10 @@ export async function POST(_request: NextRequest) {
 
     // Mark all as synced in one update
     const syncIds = entries.map((e) => e.id);
-    await supabase.from("igdb_global_sync").update({ is_screenshots_synced: true }).in("id", syncIds);
+    await supabase
+      .from("igdb_global_sync")
+      .update({ is_screenshots_synced: true })
+      .in("id", syncIds);
 
     const results = entries.map((e) => ({ igdbId: e.igdb_id, name: e.name, success: true }));
 

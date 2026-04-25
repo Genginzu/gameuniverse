@@ -2,10 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getPlayerGameRanks } from "@/lib/services/gameRankService";
 import { logger } from "@/lib/logger";
 
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
 

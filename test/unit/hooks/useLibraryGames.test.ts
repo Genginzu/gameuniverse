@@ -60,8 +60,6 @@ describe("useLibraryGames", () => {
 
     await waitFor(() => expect(result.current.initialLoading).toBe(false));
 
-    expect(globalThis.fetch).toHaveBeenCalledWith(
-      expect.stringContaining("inLibrary=true")
-    );
+    expect(globalThis.fetch).toHaveBeenCalledWith(expect.stringContaining("inLibrary=true"));
   });
 });

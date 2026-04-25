@@ -39,7 +39,6 @@ export async function PATCH(_request: NextRequest, { params }: RouteContext) {
     );
 
     return NextResponse.json(updated);
-
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
 

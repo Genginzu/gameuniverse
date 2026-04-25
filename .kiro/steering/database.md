@@ -61,8 +61,8 @@ supabase/seeds/NN_description.sql
 
 ### Contenu actuel
 
-| Fichier | Contenu |
-|---------|---------|
+| Fichier            | Contenu                                          |
+| ------------------ | ------------------------------------------------ |
 | `01_languages.sql` | Langues du site (fr, en) dans `public.languages` |
 
 ### Règles
@@ -71,8 +71,8 @@ supabase/seeds/NN_description.sql
   fonctionnement de l'app (langues, rôles, catalogues, etc.).
 - ✅ Utiliser `ON CONFLICT DO NOTHING` pour l'idempotence.
 - ✅ Les données de référence déjà seedées dans les migrations (character_roles,
-  achievement_catalog, supported_languages, storage buckets) n'ont **pas** besoin
-  d'être dupliquées dans les seeds.
+  achievement_catalog, supported_languages, storage buckets) n'ont **pas**
+  besoin d'être dupliquées dans les seeds.
 - ❌ Ne **jamais** mettre de données sample/fictives dans les seeds. Les données
   réelles viennent du dump de production.
 - ❌ Ne **jamais** mettre de seeds dans les migrations. Les migrations gèrent le

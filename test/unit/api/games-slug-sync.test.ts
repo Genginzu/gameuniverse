@@ -14,9 +14,7 @@ vi.mock("@/lib/logger", () => ({
 }));
 
 vi.mock("@/lib/services/igdb-sync", () => ({
-  syncAllGameFields: vi.fn(() =>
-    Promise.resolve({ success: true, syncedFields: [] })
-  ),
+  syncAllGameFields: vi.fn(() => Promise.resolve({ success: true, syncedFields: [] })),
 }));
 
 const { POST } = await import("@/app/api/games/[slug]/sync/route");
@@ -57,10 +55,8 @@ beforeEach(() => {
 describe("POST /api/games/[slug]/sync", () => {
   test("returns 202 accepted when sync initiated", async () => {
     mockSupabaseFrom = (table: string) => {
-      if (table === "games")
-        return singleChain({ data: { id: "g1", igdb_id: 123 }, error: null });
-      if (table === "game_field_overrides")
-        return supaChain({ data: [], error: null });
+      if (table === "games") return singleChain({ data: { id: "g1", igdb_id: 123 }, error: null });
+      if (table === "game_field_overrides") return supaChain({ data: [], error: null });
       return supaChain({ data: null, error: null });
     };
 
@@ -76,8 +72,7 @@ describe("POST /api/games/[slug]/sync", () => {
 
   test("returns 404 when game not found", async () => {
     mockSupabaseFrom = (table: string) => {
-      if (table === "games")
-        return singleChain({ data: null, error: { code: "PGRST116" } });
+      if (table === "games") return singleChain({ data: null, error: { code: "PGRST116" } });
       return supaChain({ data: null, error: null });
     };
 
@@ -90,8 +85,7 @@ describe("POST /api/games/[slug]/sync", () => {
 
   test("returns 400 when game has no IGDB ID", async () => {
     mockSupabaseFrom = (table: string) => {
-      if (table === "games")
-        return singleChain({ data: { id: "g1", igdb_id: null }, error: null });
+      if (table === "games") return singleChain({ data: { id: "g1", igdb_id: null }, error: null });
       return supaChain({ data: null, error: null });
     };
 

@@ -68,7 +68,10 @@ export function ErrorDemo() {
       title: t("sessionExpired"),
       description: error.message,
       action: (
-        <ToastAction altText={t("reconnect")} onClick={() => console.warn("Redirection vers login")}>
+        <ToastAction
+          altText={t("reconnect")}
+          onClick={() => console.warn("Redirection vers login")}
+        >
           {t("reconnect")}
         </ToastAction>
       ),
@@ -168,7 +171,7 @@ export function ErrorDemo() {
           </div>
         </div>
 
-        <div className="mt-6 rounded-lg bg-muted p-4">
+        <div className="bg-muted mt-6 rounded-lg p-4">
           <h4 className="mb-2 font-semibold">{t("howToUse")}</h4>
           <ul className="list-inside list-disc space-y-1 text-sm">
             <li>

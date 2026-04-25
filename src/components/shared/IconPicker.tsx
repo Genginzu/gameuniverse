@@ -42,7 +42,7 @@ export function IconPicker({ value, onChange, placeholder, className }: IconPick
         className={cn(
           "flex h-10 w-full items-center gap-2 rounded-xl border px-3 py-2 text-sm transition-all",
           "border-input bg-background hover:border-ring/50",
-          "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          "focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden"
         )}
       >
         {value ? (
@@ -54,7 +54,8 @@ export function IconPicker({ value, onChange, placeholder, className }: IconPick
           <span className="text-muted-foreground">{placeholder ?? t("placeholder")}</span>
         )}
         {value && (
-          <Icon icon="fa:times"
+          <Icon
+            icon="fa:times"
             className="ml-auto h-3.5 w-3.5 shrink-0 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
             onClick={(e) => {
               e.stopPropagation();
@@ -75,7 +76,10 @@ export function IconPicker({ value, onChange, placeholder, className }: IconPick
         >
           {/* Search input */}
           <div className="relative mb-2">
-            <Icon icon="fa:search" className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400"  />
+            <Icon
+              icon="fa:search"
+              className="absolute top-1/2 left-3 h-3.5 w-3.5 -translate-y-1/2 text-gray-400"
+            />
             <Input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -86,7 +90,7 @@ export function IconPicker({ value, onChange, placeholder, className }: IconPick
           </div>
 
           {/* Status line */}
-          <p className="mb-2 text-xs text-muted-foreground">
+          <p className="text-muted-foreground mb-2 text-xs">
             {isLoading
               ? t("loading")
               : query.trim()
@@ -107,7 +111,7 @@ export function IconPicker({ value, onChange, placeholder, className }: IconPick
                   className={cn(
                     "flex h-9 w-full items-center justify-center rounded-lg transition-all",
                     isSelected
-                      ? "bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 text-white"
+                      ? "from-palette-secondary-500 to-palette-primary-500 bg-linear-to-r text-white"
                       : "text-gray-700 hover:bg-white/60 dark:text-gray-300 dark:hover:bg-slate-700/60"
                   )}
                 >
@@ -118,7 +122,7 @@ export function IconPicker({ value, onChange, placeholder, className }: IconPick
           </div>
 
           {!isLoading && query.trim() && results.length === 0 && (
-            <p className="py-4 text-center text-sm text-muted-foreground">{t("noResults")}</p>
+            <p className="text-muted-foreground py-4 text-center text-sm">{t("noResults")}</p>
           )}
         </div>
       )}

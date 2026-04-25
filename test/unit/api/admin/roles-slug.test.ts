@@ -4,8 +4,7 @@ let mockRequireAdmin: any;
 let mockSupabaseFrom: any;
 
 vi.mock("../../../../src/lib/auth-admin", () => ({
-  requireAdmin: () =>
-    mockRequireAdmin ? mockRequireAdmin() : Promise.resolve(true),
+  requireAdmin: () => (mockRequireAdmin ? mockRequireAdmin() : Promise.resolve(true)),
 }));
 
 vi.mock("../../../../src/lib/supabase-server", () => ({
@@ -19,9 +18,11 @@ vi.mock("../../../../src/lib/logger", () => ({
   logger: { error: vi.fn(), warn: vi.fn(), info: vi.fn() },
 }));
 
-const { GET, PUT, DELETE: DELETE_HANDLER } = await import(
-  "../../../../src/app/api/admin/roles/[slug]/route"
-);
+const {
+  GET,
+  PUT,
+  DELETE: DELETE_HANDLER,
+} = await import("../../../../src/app/api/admin/roles/[slug]/route");
 
 function makeRequest(url: string, init?: RequestInit) {
   return new Request(url, init) as any;
@@ -92,10 +93,7 @@ describe("GET /api/admin/roles/[slug]", () => {
   test("returns 404 when role not found", async () => {
     mockSupabaseFrom = () => supaChain({ data: null, error: { code: "PGRST116" } });
 
-    const res = await GET(
-      makeRequest("http://localhost/api/admin/roles/nope"),
-      makeParams("nope")
-    );
+    const res = await GET(makeRequest("http://localhost/api/admin/roles/nope"), makeParams("nope"));
     expect(res.status).toBe(404);
   });
 });

@@ -38,7 +38,7 @@ describe("GET /api/games — esport filter", () => {
     expect(res.status).toBe(200);
     expect(mockRpc).toHaveBeenCalledWith(
       "get_games_listing",
-      expect.objectContaining({ p_esport: true }),
+      expect.objectContaining({ p_esport: true })
     );
   });
 
@@ -47,7 +47,7 @@ describe("GET /api/games — esport filter", () => {
     expect(res.status).toBe(200);
     expect(mockRpc).toHaveBeenCalledWith(
       "get_games_listing",
-      expect.objectContaining({ p_esport: false }),
+      expect.objectContaining({ p_esport: false })
     );
   });
 
@@ -56,7 +56,7 @@ describe("GET /api/games — esport filter", () => {
     expect(res.status).toBe(200);
     expect(mockRpc).toHaveBeenCalledWith(
       "get_games_listing",
-      expect.objectContaining({ p_esport: null }),
+      expect.objectContaining({ p_esport: null })
     );
   });
 
@@ -65,20 +65,32 @@ describe("GET /api/games — esport filter", () => {
     expect(res.status).toBe(200);
     expect(mockRpc).toHaveBeenCalledWith(
       "get_games_listing",
-      expect.objectContaining({ p_esport: null }),
+      expect.objectContaining({ p_esport: null })
     );
   });
 
   test("includes isEsport in response games", async () => {
     mockRpc.mockResolvedValue({
       data: {
-        games: [{
-          id: "1", slug: "lol", igdb_id: null, cover_image_url: null,
-          background_image_url: null, background_color: null, release_date: null,
-          metascore: null, created_at: "2024-01-01", title: "LoL",
-          description: null, genres: [], developer: "Riot", publisher: "Riot",
-          is_esport: true,
-        }],
+        games: [
+          {
+            id: "1",
+            slug: "lol",
+            igdb_id: null,
+            cover_image_url: null,
+            background_image_url: null,
+            background_color: null,
+            release_date: null,
+            metascore: null,
+            created_at: "2024-01-01",
+            title: "LoL",
+            description: null,
+            genres: [],
+            developer: "Riot",
+            publisher: "Riot",
+            is_esport: true,
+          },
+        ],
         totalCount: 1,
       },
       error: null,

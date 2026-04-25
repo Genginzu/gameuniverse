@@ -5,7 +5,9 @@ import { syncSteamLibrary } from "@/lib/services/steamLibrarySync";
 
 export async function POST() {
   const supabase = await createRouteHandlerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

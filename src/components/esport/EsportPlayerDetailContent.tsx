@@ -48,7 +48,13 @@ export function EsportPlayerDetailContent({ playerId }: { playerId: string }) {
         <div className="glass-card flex flex-col items-center gap-4 rounded-2xl p-6 sm:flex-row sm:items-start sm:p-8">
           <div className="relative h-28 w-28 shrink-0 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
             {player.imageUrl ? (
-              <LazyImage src={player.imageUrl} alt={player.name} fill className="object-cover" sizes="112px" />
+              <LazyImage
+                src={player.imageUrl}
+                alt={player.name}
+                fill
+                className="object-cover"
+                sizes="112px"
+              />
             ) : (
               <div className="flex h-full w-full items-center justify-center">
                 <Icon icon="mdi:account" className="h-14 w-14 text-gray-400" />
@@ -57,16 +63,14 @@ export function EsportPlayerDetailContent({ playerId }: { playerId: string }) {
           </div>
 
           <div className="text-center sm:text-left">
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl lg:text-3xl">
+            <h1 className="text-xl font-bold text-gray-900 sm:text-2xl lg:text-3xl dark:text-white">
               {player.name}
             </h1>
-            {fullName && (
-              <p className="text-sm text-gray-500 dark:text-gray-400">{fullName}</p>
-            )}
+            {fullName && <p className="text-sm text-gray-500 dark:text-gray-400">{fullName}</p>}
 
             <div className="mt-3 flex flex-wrap justify-center gap-2 sm:justify-start">
               {player.role && (
-                <Badge className="rounded-full bg-palette-primary-100 px-3 py-1 text-xs text-palette-primary-700 dark:bg-palette-primary-900/30 dark:text-palette-primary-300">
+                <Badge className="bg-palette-primary-100 text-palette-primary-700 dark:bg-palette-primary-900/30 dark:text-palette-primary-300 rounded-full px-3 py-1 text-xs">
                   {player.role}
                 </Badge>
               )}
@@ -87,7 +91,13 @@ export function EsportPlayerDetailContent({ playerId }: { playerId: string }) {
               <div className="mt-4 flex items-center justify-center gap-2 sm:justify-start">
                 {player.teamImageUrl && (
                   <div className="relative h-6 w-6 overflow-hidden rounded-full">
-                    <LazyImage src={player.teamImageUrl} alt={player.teamName} fill className="object-contain" sizes="24px" />
+                    <LazyImage
+                      src={player.teamImageUrl}
+                      alt={player.teamName}
+                      fill
+                      className="object-contain"
+                      sizes="24px"
+                    />
                   </div>
                 )}
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">

@@ -151,7 +151,9 @@ function TeamScore({
   align?: "left" | "right";
 }) {
   return (
-    <div className={`flex flex-1 items-center gap-2 ${align === "right" ? "flex-row-reverse text-right" : ""}`}>
+    <div
+      className={`flex flex-1 items-center gap-2 ${align === "right" ? "flex-row-reverse text-right" : ""}`}
+    >
       <span
         className={`text-sm font-semibold ${isWinner ? "text-green-600 dark:text-green-400" : "text-gray-700 dark:text-gray-300"}`}
       >

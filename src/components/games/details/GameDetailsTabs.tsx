@@ -104,7 +104,7 @@ export function GameDetailsTabs({
 
         <div
           ref={scrollRef}
-          className="-mb-px flex items-center gap-6 overflow-x-auto scrollbar-hide"
+          className="scrollbar-hide -mb-px flex items-center gap-6 overflow-x-auto"
         >
           {tabs
             .filter((t) => t.show)
@@ -112,13 +112,13 @@ export function GameDetailsTabs({
               <button
                 key={tab.key}
                 onClick={() => onTabChange(tab.key)}
-                className={`relative shrink-0 whitespace-nowrap pb-3 text-sm font-medium transition-colors ${
+                className={`relative shrink-0 pb-3 text-sm font-medium whitespace-nowrap transition-colors ${
                   activeTab === tab.key ? "text-white" : "text-slate-400 hover:text-slate-200"
                 }`}
               >
                 {tab.label}
                 {activeTab === tab.key && (
-                  <span className="absolute bottom-0 left-0 right-0 h-[2px] rounded-full bg-white" />
+                  <span className="absolute right-0 bottom-0 left-0 h-[2px] rounded-full bg-white" />
                 )}
               </button>
             ))}
@@ -129,7 +129,7 @@ export function GameDetailsTabs({
             type="button"
             onClick={() => scroll("right")}
             aria-label={tDetails("tabs.scrollRight")}
-            className="absolute top-0 bottom-0 right-0 z-10 flex items-center bg-gradient-to-l from-black/60 to-transparent pl-6 text-white/80 hover:text-white"
+            className="absolute top-0 right-0 bottom-0 z-10 flex items-center bg-gradient-to-l from-black/60 to-transparent pl-6 text-white/80 hover:text-white"
           >
             <Icon icon="lucide:chevron-right" className="h-5 w-5" />
           </button>

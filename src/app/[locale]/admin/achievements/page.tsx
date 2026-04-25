@@ -8,9 +8,7 @@ import dynamic from "next/dynamic";
 import type { AdminAchievement } from "@/types/admin-achievements";
 import { AchievementsTable } from "@/components/admin/achievements/AchievementsTable";
 const AdminDeleteDialog = dynamic(
-  () =>
-    import("@/components/admin/shared/AdminDeleteDialog").then((m) => m.AdminDeleteDialog
-    ),
+  () => import("@/components/admin/shared/AdminDeleteDialog").then((m) => m.AdminDeleteDialog),
   { ssr: false }
 );
 import { Button } from "@/components/ui/button";

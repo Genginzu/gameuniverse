@@ -111,7 +111,6 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     );
 
     return NextResponse.json(msg, { status: 201 });
-
   } catch (error) {
     const message = error instanceof Error ? error.message : "Internal server error";
     if (message === "Conversation not found") {

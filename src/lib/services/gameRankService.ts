@@ -141,9 +141,17 @@ const faceitAdapter: RankAdapter = {
 // -- Registry --
 
 export const adapters: RankAdapter[] = [
-  createRiotAdapter("League of Legends", "league-of-legends", "https://euw1.api.riotgames.com/lol/league/v4/entries/by-summoner"),
+  createRiotAdapter(
+    "League of Legends",
+    "league-of-legends",
+    "https://euw1.api.riotgames.com/lol/league/v4/entries/by-summoner"
+  ),
   createRiotAdapter("Valorant", "valorant", "https://api.henrikdev.xyz/valorant/v1/mmr"),
-  createRiotAdapter("TFT", "tft", "https://euw1.api.riotgames.com/tft/league/v1/entries/by-summoner"),
+  createRiotAdapter(
+    "TFT",
+    "tft",
+    "https://euw1.api.riotgames.com/tft/league/v1/entries/by-summoner"
+  ),
   blizzardAdapter,
   faceitAdapter,
 ];

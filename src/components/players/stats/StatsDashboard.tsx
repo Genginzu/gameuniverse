@@ -30,18 +30,15 @@ const PlatformDistributionChart = dynamic(
   { ssr: false }
 );
 const ReviewAnalytics = dynamic(
-  () =>
-    import("@/components/players/stats/ReviewAnalytics").then((m) => m.ReviewAnalytics),
+  () => import("@/components/players/stats/ReviewAnalytics").then((m) => m.ReviewAnalytics),
   { ssr: false }
 );
 const ActivityTimeline = dynamic(
-  () =>
-    import("@/components/players/stats/ActivityTimeline").then((m) => m.ActivityTimeline),
+  () => import("@/components/players/stats/ActivityTimeline").then((m) => m.ActivityTimeline),
   { ssr: false }
 );
 const SessionStats = dynamic(
-  () =>
-    import("@/components/players/stats/SessionStats").then((m) => m.SessionStats),
+  () => import("@/components/players/stats/SessionStats").then((m) => m.SessionStats),
   { ssr: false }
 );
 

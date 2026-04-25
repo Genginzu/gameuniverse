@@ -89,7 +89,11 @@ export function EsportPredictionsContent() {
         ) : lbLoading ? (
           <PredictionsSkeleton />
         ) : leaderboard.length === 0 ? (
-          <EmptyState icon="mdi:podium" title={t("noLeaderboard")} description={t("noLeaderboardDescription")} />
+          <EmptyState
+            icon="mdi:podium"
+            title={t("noLeaderboard")}
+            description={t("noLeaderboardDescription")}
+          />
         ) : (
           <div className="space-y-2">
             {leaderboard.map((entry, idx) => (
@@ -115,12 +119,16 @@ function PredictionCard({ prediction: p }: { prediction: Prediction }) {
     <div className="glass-card rounded-2xl p-4 sm:p-5">
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
-          <h3 className="text-sm font-bold text-gray-900 dark:text-white sm:text-base">{p.matchName}</h3>
+          <h3 className="text-sm font-bold text-gray-900 sm:text-base dark:text-white">
+            {p.matchName}
+          </h3>
           <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
             {p.game} · {t("bet")}: {p.predictedWinnerName}
           </p>
         </div>
-        <Badge className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${statusColors[p.status]}`}>
+        <Badge
+          className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${statusColors[p.status]}`}
+        >
           {t(p.status)}
         </Badge>
       </div>
@@ -131,8 +139,7 @@ function PredictionCard({ prediction: p }: { prediction: Prediction }) {
         </span>
         {p.payout > 0 && (
           <span className="flex items-center gap-1 font-medium text-green-600 dark:text-green-400">
-            <Icon icon="mdi:arrow-up" className="h-3.5 w-3.5" />
-            +{p.payout} GU
+            <Icon icon="mdi:arrow-up" className="h-3.5 w-3.5" />+{p.payout} GU
           </span>
         )}
         <span>{new Date(p.createdAt).toLocaleDateString()}</span>
@@ -163,8 +170,11 @@ function LeaderboardRow({ entry, rank }: { entry: LeaderboardEntry; rank: number
           {entry.accuracyRate !== null && ` (${entry.accuracyRate}%)`}
         </p>
       </div>
-      <span className={`text-sm font-bold ${entry.totalProfit >= 0 ? "text-green-600 dark:text-green-400" : "text-red-500"}`}>
-        {entry.totalProfit >= 0 ? "+" : ""}{entry.totalProfit} GU
+      <span
+        className={`text-sm font-bold ${entry.totalProfit >= 0 ? "text-green-600 dark:text-green-400" : "text-red-500"}`}
+      >
+        {entry.totalProfit >= 0 ? "+" : ""}
+        {entry.totalProfit} GU
       </span>
     </div>
   );

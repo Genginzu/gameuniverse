@@ -348,12 +348,12 @@ l'application, avec un minimum de code boilerplate pour les développeurs.
 Chaque page majeure est isolée par son propre `ErrorBoundary` pour éviter les
 cascades d'erreurs :
 
-| Page                          | Composant enveloppé    | Options de récupération          |
-| ----------------------------- | ---------------------- | -------------------------------- |
-| `/dashboard`                  | `DashboardContent`     | Reload                           |
-| `/games`                      | `AllGamesContent`      | Reload + home                    |
-| `/library`                    | `UserLibraryContent`   | Home                             |
-| `/games/[slug]`               | `GameDetailsContent`   | Back vers `/games`               |
+| Page            | Composant enveloppé  | Options de récupération |
+| --------------- | -------------------- | ----------------------- |
+| `/dashboard`    | `DashboardContent`   | Reload                  |
+| `/games`        | `AllGamesContent`    | Reload + home           |
+| `/library`      | `UserLibraryContent` | Home                    |
+| `/games/[slug]` | `GameDetailsContent` | Back vers `/games`      |
 
 ## Composant ErrorFallback
 
@@ -388,16 +388,16 @@ le composant `Alert` de shadcn/ui. Props :
 
 Squelettes disponibles pour toutes les sections majeures :
 
-| Composant               | Usage                                      |
-| ----------------------- | ------------------------------------------ |
-| `GameCardSkeleton`      | Carte de jeu individuelle                  |
-| `GameGridSkeleton`      | Grille de cartes                           |
-| `FiltersSkeleton`       | Section de filtres                         |
-| `SearchSkeleton`        | Page de recherche complète                 |
-| `GameDetailsSkeleton`   | Page de détails d'un jeu                   |
-| `MediaGallerySkeleton`  | Galerie de médias                          |
-| `LibrarySkeleton`       | Bibliothèque utilisateur                   |
-| `DashboardSkeleton`     | Dashboard                                  |
+| Composant              | Usage                      |
+| ---------------------- | -------------------------- |
+| `GameCardSkeleton`     | Carte de jeu individuelle  |
+| `GameGridSkeleton`     | Grille de cartes           |
+| `FiltersSkeleton`      | Section de filtres         |
+| `SearchSkeleton`       | Page de recherche complète |
+| `GameDetailsSkeleton`  | Page de détails d'un jeu   |
+| `MediaGallerySkeleton` | Galerie de médias          |
+| `LibrarySkeleton`      | Bibliothèque utilisateur   |
+| `DashboardSkeleton`    | Dashboard                  |
 
 **Patterns d'usage** :
 

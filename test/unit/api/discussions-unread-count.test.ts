@@ -25,9 +25,7 @@ vi.mock("../../../src/lib/services/discussionServerService", () => ({
   },
 }));
 
-const { GET } = await import(
-  "../../../src/app/api/discussions/unread-count/route"
-);
+const { GET } = await import("../../../src/app/api/discussions/unread-count/route");
 
 describe("GET /api/discussions/unread-count", () => {
   beforeEach(() => {
@@ -36,17 +34,13 @@ describe("GET /api/discussions/unread-count", () => {
   });
 
   test("returns 401 when not authenticated", async () => {
-    mockGetUser = vi.fn(() =>
-      Promise.resolve({ data: { user: null }, error: { message: "no" } })
-    );
+    mockGetUser = vi.fn(() => Promise.resolve({ data: { user: null }, error: { message: "no" } }));
     const res = await GET();
     expect(res.status).toBe(401);
   });
 
   test("returns count from DiscussionServerService.getUnreadCount", async () => {
-    mockGetUser = vi.fn(() =>
-      Promise.resolve({ data: { user: { id: "u1" } }, error: null })
-    );
+    mockGetUser = vi.fn(() => Promise.resolve({ data: { user: { id: "u1" } }, error: null }));
     mockGetUnreadCount.mockResolvedValue(7);
 
     const res = await GET();
@@ -57,9 +51,7 @@ describe("GET /api/discussions/unread-count", () => {
   });
 
   test("returns 500 on error", async () => {
-    mockGetUser = vi.fn(() =>
-      Promise.resolve({ data: { user: { id: "u1" } }, error: null })
-    );
+    mockGetUser = vi.fn(() => Promise.resolve({ data: { user: { id: "u1" } }, error: null }));
     mockGetUnreadCount.mockRejectedValue(new Error("DB down"));
 
     const res = await GET();

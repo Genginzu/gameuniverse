@@ -37,7 +37,10 @@ describe("useEntityCharacterFavorite", () => {
   it("handleToggle calls individual toggleFavorite when no batch", async () => {
     const { result } = renderHook(() => useEntityCharacterFavorite("char-slug", true));
 
-    const mockEvent = { preventDefault: vi.fn(), stopPropagation: vi.fn() } as unknown as React.MouseEvent;
+    const mockEvent = {
+      preventDefault: vi.fn(),
+      stopPropagation: vi.fn(),
+    } as unknown as React.MouseEvent;
 
     await act(async () => {
       await result.current.handleToggle(mockEvent);

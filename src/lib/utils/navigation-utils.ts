@@ -1,5 +1,3 @@
-
-
 export interface NavLink {
   href: string;
   icon: string;

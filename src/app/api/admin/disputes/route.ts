@@ -6,7 +6,9 @@ import { logger } from "@/lib/logger";
 type S = any;
 
 async function getUser(supabase: S) {
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   return user;
 }
 
@@ -20,13 +22,16 @@ export async function GET(request: NextRequest) {
   try {
     const supabase: S = await createRouteHandlerClient();
     const user = await getUser(supabase);
-    if (!user || !(await isAdmin(supabase, user.id))) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    if (!user || !(await isAdmin(supabase, user.id)))
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const status = request.nextUrl.searchParams.get("status") || "open";
 
     let query = supabase
       .from("coaching_disputes")
-      .select("id, session_id, reason, description, status, admin_notes, created_at, resolved_at, reporter:reporter_id(username, avatar_url), reported:reported_id(username, avatar_url)");
+      .select(
+        "id, session_id, reason, description, status, admin_notes, created_at, resolved_at, reporter:reporter_id(username, avatar_url), reported:reported_id(username, avatar_url)"
+      );
 
     if (status !== "all") query = query.eq("status", status);
 
@@ -38,8 +43,14 @@ export async function GET(request: NextRequest) {
     }
 
     const disputes = (data || []).map((d: S) => ({
-      id: d.id, sessionId: d.session_id, reason: d.reason, description: d.description,
-      status: d.status, adminNotes: d.admin_notes, createdAt: d.created_at, resolvedAt: d.resolved_at,
+      id: d.id,
+      sessionId: d.session_id,
+      reason: d.reason,
+      description: d.description,
+      status: d.status,
+      adminNotes: d.admin_notes,
+      createdAt: d.created_at,
+      resolvedAt: d.resolved_at,
       reporter: { username: d.reporter?.username, avatarUrl: d.reporter?.avatar_url },
       reported: { username: d.reported?.username, avatarUrl: d.reported?.avatar_url },
     }));
@@ -59,12 +70,20 @@ export async function POST(request: NextRequest) {
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { sessionId, reportedId, reason, description } = await request.json();
-    if (!reportedId || !reason) return NextResponse.json({ error: "reportedId and reason required" }, { status: 400 });
+    if (!reportedId || !reason)
+      return NextResponse.json({ error: "reportedId and reason required" }, { status: 400 });
 
     const { data, error } = await supabase
       .from("coaching_disputes")
-      .insert({ session_id: sessionId || null, reporter_id: user.id, reported_id: reportedId, reason, description: description || null })
-      .select("id").single();
+      .insert({
+        session_id: sessionId || null,
+        reporter_id: user.id,
+        reported_id: reportedId,
+        reason,
+        description: description || null,
+      })
+      .select("id")
+      .single();
 
     if (error) {
       logger.error("Error creating dispute", { error });

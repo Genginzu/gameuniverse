@@ -59,7 +59,7 @@ export function TopGamesPlaytime({ games, locale }: TopGamesPlaytimeProps) {
                 </p>
                 <div className="h-2 w-full overflow-hidden rounded-full bg-gray-200/60 dark:bg-slate-700/60">
                   <div
-                    className="h-full rounded-full bg-linear-to-r from-palette-primary-500 to-palette-secondary-500 transition-all duration-700"
+                    className="from-palette-primary-500 to-palette-secondary-500 h-full rounded-full bg-linear-to-r transition-all duration-700"
                     style={{ width: `${ratio}%` }}
                   />
                 </div>

@@ -108,7 +108,6 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     );
 
     return NextResponse.json(post, { status: 201 });
-
   } catch (error) {
     logger.error("Error in player posts POST", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

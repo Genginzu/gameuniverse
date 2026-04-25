@@ -68,7 +68,7 @@ function StatsCard({
   return (
     <div className="glass-card rounded-xl p-4 transition-all duration-300 hover:shadow-lg">
       <div className="mb-2 flex items-center gap-2">
-        <Icon icon={icon} className="size-5 text-palette-secondary-500" />
+        <Icon icon={icon} className="text-palette-secondary-500 size-5" />
         <h4 className="truncate text-xs font-medium text-gray-700 dark:text-gray-300">
           {t(`entityTypes.${stat.entityType}`)}
         </h4>
@@ -77,7 +77,7 @@ function StatsCard({
       {/* Coverage bar */}
       <div className="mb-2 h-1.5 w-full overflow-hidden rounded-full bg-gray-200/60 dark:bg-slate-700/60">
         <div
-          className="h-full rounded-full bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 transition-all duration-500"
+          className="from-palette-secondary-500 to-palette-primary-500 h-full rounded-full bg-linear-to-r transition-all duration-500"
           style={{ width: `${stat.percentage}%` }}
         />
       </div>

@@ -148,7 +148,9 @@ export function GameFilters({
                 selected={selectedPlatforms.includes(platform.slug)}
                 onClick={() => handlePlatformToggle(platform.slug)}
                 count={platform.gameCount}
-                icon={<Icon icon={getPlatformIcon(platform.slug)} className="h-3.5 w-3.5 shrink-0" />}
+                icon={
+                  <Icon icon={getPlatformIcon(platform.slug)} className="h-3.5 w-3.5 shrink-0" />
+                }
               />
             ))}
           </FilterSection>

@@ -87,7 +87,7 @@ export function GameFormTranslationsTab({ form, t, isIgdbField, gameId }: GameFo
                   type="button"
                   disabled={isTranslating || translatingLang !== null}
                   onClick={() => handleTranslate(lang.code)}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 px-3 py-1.5 text-xs font-medium text-white transition-all duration-300 hover:opacity-90 disabled:opacity-50"
+                  className="from-palette-secondary-500 to-palette-primary-500 inline-flex items-center gap-1.5 rounded-lg bg-linear-to-r px-3 py-1.5 text-xs font-medium text-white transition-all duration-300 hover:opacity-90 disabled:opacity-50"
                 >
                   <Icon
                     icon={isTranslating ? "mdi:loading" : "mdi:translate"}

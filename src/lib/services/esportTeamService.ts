@@ -97,15 +97,17 @@ export async function getTeamDetail(id: number): Promise<EsportTeamDetail> {
     const detail: EsportTeamDetail = {
       ...mapTeamSummary(team),
       players: (team as Record<string, unknown>).players
-        ? ((team as Record<string, unknown>).players as Array<Record<string, unknown>>).map((p) => ({
-            id: p.id as number,
-            name: p.name as string,
-            firstName: (p.first_name as string) ?? null,
-            lastName: (p.last_name as string) ?? null,
-            imageUrl: (p.image_url as string) ?? null,
-            role: (p.role as string) ?? null,
-            nationality: (p.nationality as string) ?? null,
-          }))
+        ? ((team as Record<string, unknown>).players as Array<Record<string, unknown>>).map(
+            (p) => ({
+              id: p.id as number,
+              name: p.name as string,
+              firstName: (p.first_name as string) ?? null,
+              lastName: (p.last_name as string) ?? null,
+              imageUrl: (p.image_url as string) ?? null,
+              role: (p.role as string) ?? null,
+              nationality: (p.nationality as string) ?? null,
+            })
+          )
         : [],
     };
     setCache(cacheKey, detail);

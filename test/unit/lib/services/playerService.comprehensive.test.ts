@@ -452,7 +452,13 @@ describe("PlayerService - Comprehensive Coverage", () => {
         ) // 3. stats
         .mockReturnValueOnce({ select: vi.fn(() => mockLibraryQuery) }) // 4. library page
         .mockReturnValueOnce(mockStatsPrivateQuery()) // 5. stats_private
-        .mockReturnValueOnce({ select: vi.fn(() => ({ eq: vi.fn(() => ({ maybeSingle: vi.fn(() => Promise.resolve({ data: null, error: null })) })) })) }); // 6. player_xp
+        .mockReturnValueOnce({
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              maybeSingle: vi.fn(() => Promise.resolve({ data: null, error: null })),
+            })),
+          })),
+        }); // 6. player_xp
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("user-1", "en");
 
@@ -568,7 +574,13 @@ describe("PlayerService - Comprehensive Coverage", () => {
         .mockReturnValueOnce(mockStatsDataQuery([]))
         .mockReturnValueOnce({ select: vi.fn(() => mockLibraryQuery) })
         .mockReturnValueOnce(mockStatsPrivateQuery())
-        .mockReturnValueOnce({ select: vi.fn(() => ({ eq: vi.fn(() => ({ maybeSingle: vi.fn(() => Promise.resolve({ data: null, error: null })) })) })) });
+        .mockReturnValueOnce({
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              maybeSingle: vi.fn(() => Promise.resolve({ data: null, error: null })),
+            })),
+          })),
+        });
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("user-1");
 
@@ -647,7 +659,13 @@ describe("PlayerService - Comprehensive Coverage", () => {
         )
         .mockReturnValueOnce({ select: vi.fn(() => mockLibraryQuery) })
         .mockReturnValueOnce(mockStatsPrivateQuery())
-        .mockReturnValueOnce({ select: vi.fn(() => ({ eq: vi.fn(() => ({ maybeSingle: vi.fn(() => Promise.resolve({ data: null, error: null })) })) })) });
+        .mockReturnValueOnce({
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              maybeSingle: vi.fn(() => Promise.resolve({ data: null, error: null })),
+            })),
+          })),
+        });
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("user-1", "fr");
 
@@ -745,7 +763,13 @@ describe("PlayerService - Comprehensive Coverage", () => {
         )
         .mockReturnValueOnce({ select: vi.fn(() => mockLibraryQuery) })
         .mockReturnValueOnce(mockStatsPrivateQuery())
-        .mockReturnValueOnce({ select: vi.fn(() => ({ eq: vi.fn(() => ({ maybeSingle: vi.fn(() => Promise.resolve({ data: null, error: null })) })) })) });
+        .mockReturnValueOnce({
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              maybeSingle: vi.fn(() => Promise.resolve({ data: null, error: null })),
+            })),
+          })),
+        });
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("user-1");
 
@@ -793,7 +817,13 @@ describe("PlayerService - Comprehensive Coverage", () => {
         .mockReturnValueOnce(mockStatsDataQuery([]))
         .mockReturnValueOnce({ select: vi.fn(() => mockLibraryQuery) })
         .mockReturnValueOnce(mockStatsPrivateQuery())
-        .mockReturnValueOnce({ select: vi.fn(() => ({ eq: vi.fn(() => ({ maybeSingle: vi.fn(() => Promise.resolve({ data: null, error: null })) })) })) });
+        .mockReturnValueOnce({
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              maybeSingle: vi.fn(() => Promise.resolve({ data: null, error: null })),
+            })),
+          })),
+        });
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("user-1");
 
@@ -873,7 +903,13 @@ describe("PlayerService - Comprehensive Coverage", () => {
         )
         .mockReturnValueOnce({ select: vi.fn(() => mockLibraryQuery) })
         .mockReturnValueOnce(mockStatsPrivateQuery())
-        .mockReturnValueOnce({ select: vi.fn(() => ({ eq: vi.fn(() => ({ maybeSingle: vi.fn(() => Promise.resolve({ data: null, error: null })) })) })) });
+        .mockReturnValueOnce({
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              maybeSingle: vi.fn(() => Promise.resolve({ data: null, error: null })),
+            })),
+          })),
+        });
 
       const result = await PlayerService.fetchPlayerDetailsFromDB("user-1");
 

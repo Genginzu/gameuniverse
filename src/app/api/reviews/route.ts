@@ -283,10 +283,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     } catch (error) {
       console.error("Achievement evaluation failed:", error);
 
-    // Reward GU Coins (non-blocking)
-    CoinService.rewardActivity(user.id, "review", review.id).catch((err) =>
-      logger.error("Coin reward failed", { error: err })
-    );
+      // Reward GU Coins (non-blocking)
+      CoinService.rewardActivity(user.id, "review", review.id).catch((err) =>
+        logger.error("Coin reward failed", { error: err })
+      );
     }
 
     return NextResponse.json({ success: true, review }, { status: 201 });

@@ -6,11 +6,7 @@ import { Icon } from "@iconify/react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLinkedPlatforms } from "@/hooks/useLinkedPlatforms";
 import { useToast } from "@/hooks/use-toast";
-import {
-  GAMING_PLATFORMS,
-  PLATFORM_META,
-  type GamingPlatform,
-} from "@/types/linked-platforms";
+import { GAMING_PLATFORMS, PLATFORM_META, type GamingPlatform } from "@/types/linked-platforms";
 import { PlatformRow } from "./PlatformRow";
 import { SuggestionsBanner } from "./SuggestionsBanner";
 
@@ -51,7 +47,13 @@ export function LinkedPlatformsSection() {
     } catch (err) {
       const code = (err as { code?: string } | null)?.code;
       const title = code
-        ? t(`errors.${code}` as "errors.empty" | "errors.format" | "errors.not_found" | "errors.unreachable")
+        ? t(
+            `errors.${code}` as
+              | "errors.empty"
+              | "errors.format"
+              | "errors.not_found"
+              | "errors.unreachable"
+          )
         : tErrors("updateFailed");
       toast({ title, variant: "destructive" });
     } finally {
@@ -159,23 +161,20 @@ export function LinkedPlatformsSection() {
     />
   );
 
-  const connectedPlatforms = GAMING_PLATFORMS.filter(
-    (p) => PLATFORM_META[p].authType !== "manual"
-  );
-  const manualPlatforms = GAMING_PLATFORMS.filter(
-    (p) => PLATFORM_META[p].authType === "manual"
-  );
+  const connectedPlatforms = GAMING_PLATFORMS.filter((p) => PLATFORM_META[p].authType !== "manual");
+  const manualPlatforms = GAMING_PLATFORMS.filter((p) => PLATFORM_META[p].authType === "manual");
 
   if (isLoading) {
-    return <PlatformsCard t={t}><PlatformsSkeleton /></PlatformsCard>;
+    return (
+      <PlatformsCard t={t}>
+        <PlatformsSkeleton />
+      </PlatformsCard>
+    );
   }
 
   return (
     <div className="space-y-4">
-      <SuggestionsBanner
-        linked={new Set(platforms.map((p) => p.platform))}
-        t={t}
-      />
+      <SuggestionsBanner linked={new Set(platforms.map((p) => p.platform))} t={t} />
       <PlatformsCard t={t} titleKey="connectedTitle" descriptionKey="connectedDescription">
         <div className="space-y-2">{connectedPlatforms.map(renderRow)}</div>
       </PlatformsCard>
@@ -187,7 +186,10 @@ export function LinkedPlatformsSection() {
 }
 
 function PlatformsCard({
-  t, titleKey = "title", descriptionKey = "description", children,
+  t,
+  titleKey = "title",
+  descriptionKey = "description",
+  children,
 }: {
   t: SectionT;
   titleKey?: string;
@@ -198,8 +200,11 @@ function PlatformsCard({
     <Card className="overflow-hidden rounded-xl bg-white/40 backdrop-blur-xl dark:bg-slate-800/50">
       <CardHeader>
         <div className="flex items-center">
-          <div className="rounded-xl bg-palette-secondary-100 p-2 dark:bg-palette-secondary-900/30">
-            <Icon icon="lucide:gamepad-2" className="h-4 w-4 text-palette-secondary-600 sm:h-5 sm:w-5 dark:text-palette-secondary-400" />
+          <div className="bg-palette-secondary-100 dark:bg-palette-secondary-900/30 rounded-xl p-2">
+            <Icon
+              icon="lucide:gamepad-2"
+              className="text-palette-secondary-600 dark:text-palette-secondary-400 h-4 w-4 sm:h-5 sm:w-5"
+            />
           </div>
           <div className="ml-3">
             <CardTitle className="text-base font-semibold text-gray-900 sm:text-lg dark:text-white">
@@ -220,7 +225,10 @@ function PlatformsSkeleton() {
   return (
     <div className="space-y-2">
       {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="h-14 animate-pulse rounded-xl bg-gray-200/50 dark:bg-slate-700/30" />
+        <div
+          key={i}
+          className="h-14 animate-pulse rounded-xl bg-gray-200/50 dark:bg-slate-700/30"
+        />
       ))}
     </div>
   );

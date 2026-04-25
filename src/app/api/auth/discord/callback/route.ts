@@ -23,7 +23,10 @@ interface DiscordUser {
   avatar?: string | null;
 }
 
-async function exchangeCodeForToken(code: string, redirectUri: string): Promise<DiscordTokenResponse> {
+async function exchangeCodeForToken(
+  code: string,
+  redirectUri: string
+): Promise<DiscordTokenResponse> {
   const res = await fetch(DISCORD_TOKEN_URL, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -46,9 +49,14 @@ async function getDiscordUser(accessToken: string): Promise<DiscordUser | null> 
   return res.json();
 }
 
-async function getDiscordConnections(accessToken: string): Promise<Array<{
-  type: string; id: string; name: string; verified?: boolean;
-}>> {
+async function getDiscordConnections(accessToken: string): Promise<
+  Array<{
+    type: string;
+    id: string;
+    name: string;
+    verified?: boolean;
+  }>
+> {
   const res = await fetch(DISCORD_CONNECTIONS_URL, {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
@@ -69,27 +77,37 @@ export async function GET(request: NextRequest) {
 
   try {
     const supabase = await createRouteHandlerClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (!user) return NextResponse.redirect(`${baseUrl}/auth?error=unauthorized`);
 
     const stateValid = await consumeOauthState("discord", state);
     if (!stateValid) {
-      return NextResponse.redirect(`${baseUrl}/players/${user.id}?tab=settings&error=discord_state_mismatch`);
+      return NextResponse.redirect(
+        `${baseUrl}/players/${user.id}?tab=settings&error=discord_state_mismatch`
+      );
     }
     if (!code) {
-      return NextResponse.redirect(`${baseUrl}/players/${user.id}?tab=settings&error=discord_no_code`);
+      return NextResponse.redirect(
+        `${baseUrl}/players/${user.id}?tab=settings&error=discord_no_code`
+      );
     }
 
     const redirectUri = `${baseUrl}/api/auth/discord/callback`;
     const tokenData = await exchangeCodeForToken(code, redirectUri);
     if (!tokenData.access_token) {
-      return NextResponse.redirect(`${baseUrl}/players/${user.id}?tab=settings&error=discord_token_failed`);
+      return NextResponse.redirect(
+        `${baseUrl}/players/${user.id}?tab=settings&error=discord_token_failed`
+      );
     }
 
     const discordUser = await getDiscordUser(tokenData.access_token);
     if (!discordUser) {
-      return NextResponse.redirect(`${baseUrl}/players/${user.id}?tab=settings&error=discord_profile_failed`);
+      return NextResponse.redirect(
+        `${baseUrl}/players/${user.id}?tab=settings&error=discord_profile_failed`
+      );
     }
 
     const connections = await getDiscordConnections(tokenData.access_token);
@@ -115,7 +133,9 @@ export async function GET(request: NextRequest) {
       { onConflict: "player_id,platform" }
     );
 
-    return NextResponse.redirect(`${baseUrl}/players/${user.id}?tab=settings&platform=discord&success=true`);
+    return NextResponse.redirect(
+      `${baseUrl}/players/${user.id}?tab=settings&platform=discord&success=true`
+    );
   } catch (error) {
     logger.error("Discord callback error", { error });
     return NextResponse.redirect(`${baseUrl}?error=discord_callback_failed`);

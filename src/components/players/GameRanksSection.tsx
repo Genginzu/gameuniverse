@@ -38,7 +38,7 @@ export function GameRanksSection({ playerId }: { playerId: string }) {
     return (
       <div className="glass-card rounded-2xl p-4 sm:p-5">
         <Skeleton className="mb-3 h-5 w-40" />
-        <div className="grid gap-3 xs:grid-cols-2">
+        <div className="xs:grid-cols-2 grid gap-3">
           {Array.from({ length: 2 }).map((_, i) => (
             <Skeleton key={i} className="h-16 rounded-xl" />
           ))}
@@ -51,12 +51,12 @@ export function GameRanksSection({ playerId }: { playerId: string }) {
 
   return (
     <div className="glass-card rounded-2xl p-4 sm:p-5">
-      <h3 className="mb-3 flex items-center gap-2 text-sm font-bold text-gray-900 dark:text-white sm:text-base">
-        <Icon icon="mdi:trophy-variant" className="h-5 w-5 text-palette-primary-500" />
+      <h3 className="mb-3 flex items-center gap-2 text-sm font-bold text-gray-900 sm:text-base dark:text-white">
+        <Icon icon="mdi:trophy-variant" className="text-palette-primary-500 h-5 w-5" />
         {t("title")}
       </h3>
 
-      <div className="grid gap-3 xs:grid-cols-2">
+      <div className="xs:grid-cols-2 grid gap-3">
         {ranks.map((rank) => (
           <div
             key={rank.gameSlug}
@@ -72,7 +72,7 @@ export function GameRanksSection({ playerId }: { playerId: string }) {
                 {rank.tier} {rank.rank}
               </p>
               {rank.points !== null && (
-                <p className="text-xs text-palette-primary-500">
+                <p className="text-palette-primary-500 text-xs">
                   {rank.points} {t("points")}
                 </p>
               )}

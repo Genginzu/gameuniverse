@@ -56,7 +56,7 @@ export function TranslationTableActions({
       <button
         onClick={onTranslateSelection}
         disabled={selectedCount === 0 || isBusy}
-        className="inline-flex items-center gap-1.5 rounded-xl bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 px-3 py-2 text-xs font-medium text-white transition-all duration-300 hover:opacity-90 disabled:opacity-40"
+        className="from-palette-secondary-500 to-palette-primary-500 inline-flex items-center gap-1.5 rounded-xl bg-linear-to-r px-3 py-2 text-xs font-medium text-white transition-all duration-300 hover:opacity-90 disabled:opacity-40"
       >
         <Icon icon="mdi:translate" className="size-4" />
         {t("buttons.translateSelection")}
@@ -65,7 +65,7 @@ export function TranslationTableActions({
       <button
         onClick={onTranslateAll}
         disabled={!hasItems || isBusy}
-        className="inline-flex items-center gap-1.5 rounded-xl border border-palette-secondary-500/30 px-3 py-2 text-xs font-medium text-palette-secondary-600 transition-all duration-300 hover:bg-palette-secondary-50 disabled:opacity-40 dark:text-palette-secondary-400 dark:hover:bg-palette-secondary-900/20"
+        className="border-palette-secondary-500/30 text-palette-secondary-600 hover:bg-palette-secondary-50 dark:text-palette-secondary-400 dark:hover:bg-palette-secondary-900/20 inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-medium transition-all duration-300 disabled:opacity-40"
       >
         <Icon icon="mdi:translate-variant" className="size-4" />
         {t("buttons.translateAll")}

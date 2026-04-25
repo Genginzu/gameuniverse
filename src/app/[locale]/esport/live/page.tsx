@@ -19,7 +19,9 @@ export default function EsportLivePage() {
   return (
     <DashboardLayout>
       <ErrorBoundary
-        fallback={<ErrorFallback description="Error loading live streams." showRefresh showHomeButton />}
+        fallback={
+          <ErrorFallback description="Error loading live streams." showRefresh showHomeButton />
+        }
       >
         <EsportLiveContent />
       </ErrorBoundary>

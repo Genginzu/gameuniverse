@@ -2,10 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getPlayerDetail } from "@/lib/services/esportPlayerService";
 import { logger } from "@/lib/logger";
 
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const playerId = parseInt(id, 10);

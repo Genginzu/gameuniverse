@@ -19,7 +19,9 @@ export default function EsportResultsPage() {
   return (
     <DashboardLayout>
       <ErrorBoundary
-        fallback={<ErrorFallback description="Error loading esport results." showRefresh showHomeButton />}
+        fallback={
+          <ErrorFallback description="Error loading esport results." showRefresh showHomeButton />
+        }
       >
         <EsportResultsContent />
       </ErrorBoundary>

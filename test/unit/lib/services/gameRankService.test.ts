@@ -41,9 +41,7 @@ describe("gameRankService", () => {
 
   it("skips unknown games", async () => {
     const { getPlayerGameRanks } = await loadService();
-    const ranks = await getPlayerGameRanks([
-      { game: "unknown-game", accountId: "abc" },
-    ]);
+    const ranks = await getPlayerGameRanks([{ game: "unknown-game", accountId: "abc" }]);
     expect(ranks).toEqual([]);
   });
 
@@ -84,9 +82,7 @@ describe("gameRankService", () => {
     vi.stubGlobal("fetch", mockFetch);
 
     const { getPlayerGameRanks } = await loadService();
-    const ranks = await getPlayerGameRanks([
-      { game: "league-of-legends", accountId: "s1" },
-    ]);
+    const ranks = await getPlayerGameRanks([{ game: "league-of-legends", accountId: "s1" }]);
 
     expect(ranks).toEqual([]);
     expect(mockFetch).not.toHaveBeenCalled();

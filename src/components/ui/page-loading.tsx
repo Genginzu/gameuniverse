@@ -18,7 +18,7 @@ export function PageLoading({
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/40 backdrop-blur-xl dark:bg-slate-800/80">
         <div className="text-center">
-          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-palette-primary-500 border-t-transparent"></div>
+          <div className="border-palette-primary-500 mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-t-transparent"></div>
           {message && <p className="text-sm text-gray-600 dark:text-gray-400">{message}</p>}
         </div>
       </div>
@@ -39,7 +39,10 @@ export function PageLoading({
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             <div className="space-y-6 md:col-span-2">
               {Array.from({ length: 3 }).map((_, index) => (
-                <div key={index} className="rounded-lg bg-white/40 p-6 shadow-xs dark:bg-slate-800/50">
+                <div
+                  key={index}
+                  className="rounded-lg bg-white/40 p-6 shadow-xs dark:bg-slate-800/50"
+                >
                   <Skeleton className="mb-4 h-6 w-32" />
                   <div className="space-y-2">
                     <Skeleton className="h-4 w-full" />
@@ -52,7 +55,10 @@ export function PageLoading({
 
             <div className="space-y-6">
               {Array.from({ length: 2 }).map((_, index) => (
-                <div key={index} className="rounded-lg bg-white/40 p-6 shadow-xs dark:bg-slate-800/50">
+                <div
+                  key={index}
+                  className="rounded-lg bg-white/40 p-6 shadow-xs dark:bg-slate-800/50"
+                >
                   <Skeleton className="mb-4 h-6 w-24" />
                   <div className="space-y-2">
                     <Skeleton className="h-4 w-full" />
@@ -77,7 +83,7 @@ export function PageLoading({
           <div className="mx-auto w-64">
             <div className="mb-2 h-2 rounded-full bg-white/30 dark:bg-slate-700/50">
               <div
-                className="h-2 rounded-full bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 transition-all duration-300 ease-out"
+                className="from-palette-secondary-500 to-palette-primary-500 h-2 rounded-full bg-linear-to-r transition-all duration-300 ease-out"
                 style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
               ></div>
             </div>

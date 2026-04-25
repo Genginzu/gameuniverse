@@ -57,13 +57,17 @@ export async function GET(request: NextRequest) {
 
   try {
     const supabase = await createRouteHandlerClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (!user) return NextResponse.redirect(`${baseUrl}/auth?error=unauthorized`);
 
     const stateValid = await consumeOauthState("epic", state);
     if (!stateValid) {
-      return NextResponse.redirect(`${baseUrl}/players/${user.id}?tab=settings&error=epic_state_mismatch`);
+      return NextResponse.redirect(
+        `${baseUrl}/players/${user.id}?tab=settings&error=epic_state_mismatch`
+      );
     }
     if (!code) {
       return NextResponse.redirect(`${baseUrl}/players/${user.id}?tab=settings&error=epic_no_code`);
@@ -72,7 +76,9 @@ export async function GET(request: NextRequest) {
     const redirectUri = `${baseUrl}/api/auth/epic/callback`;
     const tokenData = await exchangeCodeForToken(code, redirectUri);
     if (!tokenData.access_token) {
-      return NextResponse.redirect(`${baseUrl}/players/${user.id}?tab=settings&error=epic_token_failed`);
+      return NextResponse.redirect(
+        `${baseUrl}/players/${user.id}?tab=settings&error=epic_token_failed`
+      );
     }
 
     const accountId = tokenData.account_id ?? null;
@@ -100,7 +106,9 @@ export async function GET(request: NextRequest) {
       { onConflict: "player_id,platform" }
     );
 
-    return NextResponse.redirect(`${baseUrl}/players/${user.id}?tab=settings&platform=epic&success=true`);
+    return NextResponse.redirect(
+      `${baseUrl}/players/${user.id}?tab=settings&platform=epic&success=true`
+    );
   } catch (error) {
     logger.error("Epic callback error", { error });
     return NextResponse.redirect(`${baseUrl}?error=epic_callback_failed`);

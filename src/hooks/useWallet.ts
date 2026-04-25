@@ -26,6 +26,8 @@ export function useWallet(): UseWalletReturn {
     wallet: data?.wallet ?? null,
     isLoading,
     error: error ? "Failed to fetch wallet" : null,
-    mutate: async () => { await mutate(); },
+    mutate: async () => {
+      await mutate();
+    },
   };
 }

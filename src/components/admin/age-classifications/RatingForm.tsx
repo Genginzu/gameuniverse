@@ -18,7 +18,13 @@ export interface RatingFormProps {
   supportedLanguages: SupportedLanguage[];
 }
 
-export function RatingForm({ mode, form, onSubmit, isSubmitting, supportedLanguages }: RatingFormProps) {
+export function RatingForm({
+  mode,
+  form,
+  onSubmit,
+  isSubmitting,
+  supportedLanguages,
+}: RatingFormProps) {
   const t = useTranslations("admin.ageClassifications.ratings.form");
 
   return (
@@ -27,7 +33,14 @@ export function RatingForm({ mode, form, onSubmit, isSubmitting, supportedLangua
         <RatingFormFields form={form} t={t} supportedLanguages={supportedLanguages} />
         <div className="flex justify-end">
           <Button type="submit" disabled={isSubmitting} className="min-w-[140px] gap-2">
-            {isSubmitting ? <LoadingSpinner size="sm" /> : <><Icon icon="fa:save" className="h-4 w-4" />{mode === "create" ? t("create") : t("save")}</>}
+            {isSubmitting ? (
+              <LoadingSpinner size="sm" />
+            ) : (
+              <>
+                <Icon icon="fa:save" className="h-4 w-4" />
+                {mode === "create" ? t("create") : t("save")}
+              </>
+            )}
           </Button>
         </div>
       </form>

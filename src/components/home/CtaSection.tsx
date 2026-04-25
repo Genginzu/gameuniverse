@@ -19,19 +19,19 @@ export function CtaSection() {
         }`}
       >
         {/* Gradient accent top border */}
-        <div className="h-1 w-full bg-linear-to-r from-palette-secondary-500 to-palette-primary-500" />
+        <div className="from-palette-secondary-500 to-palette-primary-500 h-1 w-full bg-linear-to-r" />
 
         <div className="relative px-6 py-14 text-center sm:px-12">
           {/* Background orbs */}
           <div className="pointer-events-none absolute inset-0 overflow-hidden">
-            <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-palette-primary-500/10 blur-3xl" />
-            <div className="absolute -bottom-20 -left-20 h-40 w-40 rounded-full bg-palette-secondary-500/10 blur-3xl" />
+            <div className="bg-palette-primary-500/10 absolute -top-20 -right-20 h-40 w-40 rounded-full blur-3xl" />
+            <div className="bg-palette-secondary-500/10 absolute -bottom-20 -left-20 h-40 w-40 rounded-full blur-3xl" />
           </div>
 
           <div className="relative z-10">
             <Icon
               icon="mdi:controller"
-              className="mx-auto mb-4 h-12 w-12 text-palette-primary-500 dark:text-palette-primary-400"
+              className="text-palette-primary-500 dark:text-palette-primary-400 mx-auto mb-4 h-12 w-12"
             />
             <h2 className="neon-text mb-3 text-3xl font-black text-gray-900 sm:text-4xl dark:text-white">
               {t("title")}
@@ -41,7 +41,7 @@ export function CtaSection() {
             </p>
             <Link
               href="/auth?mode=signup"
-              className="group inline-flex items-center gap-2 rounded-2xl bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 px-8 py-4 text-lg font-bold text-white shadow-lg shadow-palette-primary-500/25 transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-palette-primary-500/30"
+              className="group from-palette-secondary-500 to-palette-primary-500 shadow-palette-primary-500/25 hover:shadow-palette-primary-500/30 inline-flex items-center gap-2 rounded-2xl bg-linear-to-r px-8 py-4 text-lg font-bold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
             >
               <Icon
                 icon="mdi:rocket-launch"

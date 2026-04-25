@@ -10,7 +10,10 @@ const fetcher = (url: string) => fetch(url).then((r) => r.json());
 export function RewardConfigTable() {
   const t = useTranslations("coins.admin");
   const tReward = useTranslations("coins.reward");
-  const { data, mutate } = useSWR<{ config: CoinRewardConfig[] }>("/api/admin/coins/config", fetcher);
+  const { data, mutate } = useSWR<{ config: CoinRewardConfig[] }>(
+    "/api/admin/coins/config",
+    fetcher
+  );
   const [saving, setSaving] = useState<string | null>(null);
 
   const updateConfig = async (activityType: string, field: string, value: unknown) => {
@@ -33,7 +36,7 @@ export function RewardConfigTable() {
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-white/10 text-left text-xs uppercase text-slate-500 dark:text-slate-400">
+          <tr className="border-b border-white/10 text-left text-xs text-slate-500 uppercase dark:text-slate-400">
             <th className="px-3 py-2">{t("activityType")}</th>
             <th className="px-3 py-2">{t("amount")}</th>
             <th className="px-3 py-2">{t("cooldown")}</th>
@@ -52,7 +55,9 @@ export function RewardConfigTable() {
                   type="number"
                   defaultValue={cfg.amount}
                   className="glass-input w-20 rounded px-2 py-1 text-sm"
-                  onBlur={(e) => updateConfig(cfg.activityType, "amount", parseInt(e.target.value, 10))}
+                  onBlur={(e) =>
+                    updateConfig(cfg.activityType, "amount", parseInt(e.target.value, 10))
+                  }
                   disabled={saving === cfg.activityType}
                 />
               </td>
@@ -62,7 +67,13 @@ export function RewardConfigTable() {
                   defaultValue={cfg.cooldownSeconds ?? ""}
                   placeholder="—"
                   className="glass-input w-20 rounded px-2 py-1 text-sm"
-                  onBlur={(e) => updateConfig(cfg.activityType, "cooldownSeconds", e.target.value ? parseInt(e.target.value, 10) : null)}
+                  onBlur={(e) =>
+                    updateConfig(
+                      cfg.activityType,
+                      "cooldownSeconds",
+                      e.target.value ? parseInt(e.target.value, 10) : null
+                    )
+                  }
                   disabled={saving === cfg.activityType}
                 />
               </td>
@@ -72,7 +83,13 @@ export function RewardConfigTable() {
                   defaultValue={cfg.dailyCap ?? ""}
                   placeholder="—"
                   className="glass-input w-20 rounded px-2 py-1 text-sm"
-                  onBlur={(e) => updateConfig(cfg.activityType, "dailyCap", e.target.value ? parseInt(e.target.value, 10) : null)}
+                  onBlur={(e) =>
+                    updateConfig(
+                      cfg.activityType,
+                      "dailyCap",
+                      e.target.value ? parseInt(e.target.value, 10) : null
+                    )
+                  }
                   disabled={saving === cfg.activityType}
                 />
               </td>

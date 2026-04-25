@@ -49,7 +49,7 @@ describe("PandaScore client", () => {
         headers: expect.objectContaining({
           Authorization: `Bearer ${FAKE_KEY}`,
         }),
-      }),
+      })
     );
   });
 
@@ -75,21 +75,30 @@ describe("PandaScore client", () => {
     mockFetchOk([]);
     const client = await loadClient();
     await client.getUpcomingTournaments();
-    expect(fetch).toHaveBeenCalledWith(expect.stringContaining("/tournaments/upcoming"), expect.any(Object));
+    expect(fetch).toHaveBeenCalledWith(
+      expect.stringContaining("/tournaments/upcoming"),
+      expect.any(Object)
+    );
   });
 
   it("getRunningMatches calls /matches/running", async () => {
     mockFetchOk([]);
     const client = await loadClient();
     await client.getRunningMatches();
-    expect(fetch).toHaveBeenCalledWith(expect.stringContaining("/matches/running"), expect.any(Object));
+    expect(fetch).toHaveBeenCalledWith(
+      expect.stringContaining("/matches/running"),
+      expect.any(Object)
+    );
   });
 
   it("getTournamentById calls /tournaments/:id", async () => {
     mockFetchOk({ id: 42 });
     const client = await loadClient();
     await client.getTournamentById(42);
-    expect(fetch).toHaveBeenCalledWith(expect.stringContaining("/tournaments/42"), expect.any(Object));
+    expect(fetch).toHaveBeenCalledWith(
+      expect.stringContaining("/tournaments/42"),
+      expect.any(Object)
+    );
   });
 
   it("getMatchById calls /matches/:id", async () => {
@@ -118,6 +127,9 @@ describe("PandaScore client", () => {
     const { logger } = await import("@/lib/logger");
     const client = await loadClient();
     await expect(client.getTeams()).rejects.toThrow("PandaScore API error: 401");
-    expect(logger.error).toHaveBeenCalledWith("PandaScore API error", expect.objectContaining({ status: 401 }));
+    expect(logger.error).toHaveBeenCalledWith(
+      "PandaScore API error",
+      expect.objectContaining({ status: 401 })
+    );
   });
 });

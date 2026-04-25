@@ -37,7 +37,14 @@ export class CoinService {
   }
 
   private static async initializeWallet(playerId: string): Promise<PlayerWallet> {
-    await this.creditCoins(playerId, SIGNUP_BONUS, "signup_bonus", undefined, undefined, "Bonus d'inscription");
+    await this.creditCoins(
+      playerId,
+      SIGNUP_BONUS,
+      "signup_bonus",
+      undefined,
+      undefined,
+      "Bonus d'inscription"
+    );
     const supabase = await createRouteHandlerClient();
     const { data } = await supabase
       .from("player_wallets")
@@ -45,7 +52,9 @@ export class CoinService {
       .eq("player_id", playerId)
       .single();
 
-    return data ? mapWallet(data) : { playerId, balance: SIGNUP_BONUS, totalEarned: SIGNUP_BONUS, totalSpent: 0 };
+    return data
+      ? mapWallet(data)
+      : { playerId, balance: SIGNUP_BONUS, totalEarned: SIGNUP_BONUS, totalSpent: 0 };
   }
 
   static async creditCoins(

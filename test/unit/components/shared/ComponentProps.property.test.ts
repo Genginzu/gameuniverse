@@ -172,9 +172,7 @@ describe("Component Props Property-Based Tests", () => {
               // If value was in uniqueValues, result should have one less
               // If value was not in uniqueValues, result should have one more
               const wasPresent = uniqueValues.includes(value);
-              const expectedLength = wasPresent
-                ? uniqueValues.length - 1
-                : uniqueValues.length + 1;
+              const expectedLength = wasPresent ? uniqueValues.length - 1 : uniqueValues.length + 1;
 
               return result.length === expectedLength;
             }

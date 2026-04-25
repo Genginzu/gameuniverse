@@ -4,8 +4,7 @@ let mockRequireAdmin: any;
 let mockSupabaseFrom: any;
 
 vi.mock("../../../../src/lib/auth-admin", () => ({
-  requireAdmin: () =>
-    mockRequireAdmin ? mockRequireAdmin() : Promise.resolve(true),
+  requireAdmin: () => (mockRequireAdmin ? mockRequireAdmin() : Promise.resolve(true)),
 }));
 
 vi.mock("../../../../src/lib/supabase-server", () => ({
@@ -19,9 +18,7 @@ vi.mock("../../../../src/lib/logger", () => ({
   logger: { error: vi.fn(), warn: vi.fn(), info: vi.fn() },
 }));
 
-const { GET } = await import(
-  "../../../../src/app/api/admin/games/search/route"
-);
+const { GET } = await import("../../../../src/app/api/admin/games/search/route");
 
 function makeRequest(url: string) {
   return new Request(url) as any;

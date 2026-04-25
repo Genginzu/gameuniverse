@@ -30,7 +30,10 @@ describe("useRoleForm", () => {
 
     await act(() => result.current.submitRole(data));
 
-    expect(globalThis.fetch).toHaveBeenCalledWith("/api/admin/roles", expect.objectContaining({ method: "POST" }));
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      "/api/admin/roles",
+      expect.objectContaining({ method: "POST" })
+    );
   });
 
   it("submits PUT to /api/admin/roles/{slug} in edit mode", async () => {
@@ -40,11 +43,16 @@ describe("useRoleForm", () => {
 
     await act(() => result.current.submitRole(data));
 
-    expect(globalThis.fetch).toHaveBeenCalledWith("/api/admin/roles/director", expect.objectContaining({ method: "PUT" }));
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      "/api/admin/roles/director",
+      expect.objectContaining({ method: "PUT" })
+    );
   });
 
   it("sets submitError on failure", async () => {
-    globalThis.fetch = vi.fn().mockResolvedValue({ ok: false, json: () => Promise.resolve({ error: "Not found" }) });
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValue({ ok: false, json: () => Promise.resolve({ error: "Not found" }) });
     const { result } = renderHook(() => useRoleForm("create"));
     const data = { slug: "director", translations: [{ language_code: "fr", name: "Réalisateur" }] };
 

@@ -95,7 +95,7 @@ describe("GameUniverseLogo component rendering", () => {
     });
 
     it("should handle multiple custom classes", () => {
-      const html = renderToString(<GameUniverseLogo className="mb-2 mt-4" />);
+      const html = renderToString(<GameUniverseLogo className="mt-4 mb-2" />);
       expect(html).toContain("mt-4");
       expect(html).toContain("mb-2");
     });

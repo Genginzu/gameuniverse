@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { CoinService } from "@/lib/services/coinService";
 
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
   try {

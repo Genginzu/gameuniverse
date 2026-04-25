@@ -41,15 +41,15 @@ describe("validateManualUsername", () => {
   });
 
   it("normalizes valid Nintendo friend codes", async () => {
-    await expect(
-      validateManualUsername("nintendo", "sw-1234-5678-9012")
-    ).resolves.toBe("SW-1234-5678-9012");
+    await expect(validateManualUsername("nintendo", "sw-1234-5678-9012")).resolves.toBe(
+      "SW-1234-5678-9012"
+    );
   });
 
   it("throws 'format' on invalid friend codes", async () => {
-    await expect(
-      validateManualUsername("nintendo", "1234-5678-9012")
-    ).rejects.toMatchObject({ code: "format" });
+    await expect(validateManualUsername("nintendo", "1234-5678-9012")).rejects.toMatchObject({
+      code: "format",
+    });
   });
 
   describe("gog", () => {
@@ -61,9 +61,7 @@ describe("validateManualUsername", () => {
       (globalThis.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
         status: 200,
       } as Response);
-      await expect(validateManualUsername("gog", "someuser")).resolves.toBe(
-        "someuser"
-      );
+      await expect(validateManualUsername("gog", "someuser")).resolves.toBe("someuser");
     });
 
     it("rejects a missing profile (HTTP 302)", async () => {
@@ -76,18 +74,14 @@ describe("validateManualUsername", () => {
     });
 
     it("surfaces 'unreachable' when fetch throws", async () => {
-      (globalThis.fetch as ReturnType<typeof vi.fn>).mockRejectedValue(
-        new Error("network")
+      (globalThis.fetch as ReturnType<typeof vi.fn>).mockRejectedValue(new Error("network"));
+      await expect(validateManualUsername("gog", "someuser")).rejects.toBeInstanceOf(
+        ManualPlatformValidationError
       );
-      await expect(
-        validateManualUsername("gog", "someuser")
-      ).rejects.toBeInstanceOf(ManualPlatformValidationError);
     });
   });
 
   it("returns trimmed input for free-text platforms", async () => {
-    await expect(validateManualUsername("ubisoft", "  CoolGamer  ")).resolves.toBe(
-      "CoolGamer"
-    );
+    await expect(validateManualUsername("ubisoft", "  CoolGamer  ")).resolves.toBe("CoolGamer");
   });
 });

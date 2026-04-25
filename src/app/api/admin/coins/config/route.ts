@@ -5,7 +5,9 @@ import type { CoinActivityType } from "@/types/coins";
 
 async function requireAdmin() {
   const supabase = await createRouteHandlerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return null;
 
   const { data } = await supabase.rpc("is_admin", { user_id: user.id });

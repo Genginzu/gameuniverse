@@ -65,7 +65,7 @@ export function GameFormLanguagesTab({
       ) : (
         <div className="space-y-3">
           {/* Header row */}
-          <div className="hidden items-center gap-4 px-4 text-xs font-medium text-gray-500 dark:text-gray-400 sm:flex">
+          <div className="hidden items-center gap-4 px-4 text-xs font-medium text-gray-500 sm:flex dark:text-gray-400">
             <div className="flex-1">{t("langName") ?? "Langue"}</div>
             <div className="w-20 text-center">{t("langInterface") ?? "Interface"}</div>
             <div className="w-20 text-center">{t("langSubtitles") ?? "Sous-titres"}</div>
@@ -75,7 +75,7 @@ export function GameFormLanguagesTab({
           {watchedLanguages.map((lang, idx) => (
             <div
               key={lang.language_code || idx}
-              className="flex flex-col gap-3 rounded-xl border border-gray-100 bg-gray-50/60 p-4 dark:border-gray-700/30 dark:bg-gray-900/20 sm:flex-row sm:items-center sm:gap-4"
+              className="flex flex-col gap-3 rounded-xl border border-gray-100 bg-gray-50/60 p-4 sm:flex-row sm:items-center sm:gap-4 dark:border-gray-700/30 dark:bg-gray-900/20"
             >
               <div className="flex-1 text-sm font-medium text-gray-700 dark:text-gray-200">
                 <span className="mr-2 inline-block rounded bg-gray-200/80 px-1.5 py-0.5 font-mono text-xs text-gray-500 dark:bg-gray-700/60 dark:text-gray-400">
@@ -110,7 +110,7 @@ export function GameFormLanguagesTab({
                 className="shrink-0 rounded-md p-1.5 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20"
                 aria-label="Supprimer"
               >
-                <Icon icon="fa:times" className="h-3.5 w-3.5"  />
+                <Icon icon="fa:times" className="h-3.5 w-3.5" />
               </button>
             </div>
           ))}
@@ -119,7 +119,7 @@ export function GameFormLanguagesTab({
 
       {availableLanguages.length > 0 && (
         <select
-          className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 shadow-xs transition-colors hover:border-gray-300 focus:border-blue-500 focus:outline-hidden focus:ring-1 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:border-gray-600"
+          className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 shadow-xs transition-colors hover:border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-hidden dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 dark:hover:border-gray-600"
           value=""
           onChange={(e) => {
             if (e.target.value) addLanguage(e.target.value);
@@ -135,7 +135,7 @@ export function GameFormLanguagesTab({
       )}
 
       {form.formState.errors.languages && (
-        <p className="text-sm font-medium text-destructive">
+        <p className="text-destructive text-sm font-medium">
           {form.formState.errors.languages.message}
         </p>
       )}

@@ -15,7 +15,9 @@ import { GAMING_PLATFORMS, PLATFORM_META, type GamingPlatform } from "@/types/li
 
 export async function GET() {
   const supabase = await createRouteHandlerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -33,7 +35,9 @@ export async function GET() {
 /** PUT — only for manual (pseudo) platforms */
 export async function PUT(request: NextRequest) {
   const supabase = await createRouteHandlerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -58,16 +62,10 @@ export async function PUT(request: NextRequest) {
 
     let normalized: string;
     try {
-      normalized = await validateManualUsername(
-        platform as GamingPlatform,
-        platformUsername
-      );
+      normalized = await validateManualUsername(platform as GamingPlatform, platformUsername);
     } catch (err) {
       if (err instanceof ManualPlatformValidationError) {
-        return NextResponse.json(
-          { error: "Invalid username", code: err.code },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: "Invalid username", code: err.code }, { status: 400 });
       }
       throw err;
     }
@@ -82,7 +80,9 @@ export async function PUT(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   const supabase = await createRouteHandlerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -105,7 +105,9 @@ export async function PATCH(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   const supabase = await createRouteHandlerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

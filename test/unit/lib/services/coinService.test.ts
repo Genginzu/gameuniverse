@@ -76,15 +76,22 @@ describe("CoinService", () => {
     });
 
     it("inserts a positive transaction", async () => {
-      const singleFn = vi.fn()
+      const singleFn = vi
+        .fn()
         // First call: get current balance
         .mockResolvedValueOnce({ data: { balance: 100 }, error: null })
         // Second call: insert transaction
         .mockResolvedValueOnce({
           data: {
-            id: "tx-1", player_id: "user-1", amount: 50, type: "activity_reward",
-            activity_type: "review", reference_id: null, description: null,
-            balance_after: 150, created_at: new Date().toISOString(),
+            id: "tx-1",
+            player_id: "user-1",
+            amount: 50,
+            type: "activity_reward",
+            activity_type: "review",
+            reference_id: null,
+            description: null,
+            balance_after: 150,
+            created_at: new Date().toISOString(),
           },
           error: null,
         });
@@ -124,7 +131,13 @@ describe("CoinService", () => {
     it("returns not rewarded when config is disabled", async () => {
       const mock = createMockSupabase({
         single: vi.fn().mockResolvedValue({
-          data: { activity_type: "review", amount: 50, cooldown_seconds: null, daily_cap: 5, enabled: false },
+          data: {
+            activity_type: "review",
+            amount: 50,
+            cooldown_seconds: null,
+            daily_cap: 5,
+            enabled: false,
+          },
           error: null,
         }),
       });
@@ -138,11 +151,19 @@ describe("CoinService", () => {
 
   describe("getTransactionHistory", () => {
     it("returns paginated transactions", async () => {
-      const txData = [{
-        id: "tx-1", player_id: "user-1", amount: 50, type: "activity_reward",
-        activity_type: "review", reference_id: null, description: null,
-        balance_after: 550, created_at: new Date().toISOString(),
-      }];
+      const txData = [
+        {
+          id: "tx-1",
+          player_id: "user-1",
+          amount: 50,
+          type: "activity_reward",
+          activity_type: "review",
+          reference_id: null,
+          description: null,
+          balance_after: 550,
+          created_at: new Date().toISOString(),
+        },
+      ];
 
       const mock = createMockSupabase({
         range: vi.fn().mockResolvedValue({ data: txData, count: 1, error: null }),

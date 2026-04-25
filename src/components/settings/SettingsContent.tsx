@@ -190,7 +190,6 @@ export function SettingsContent() {
           onBannerDelete={handleBannerDelete}
         />
 
-
         {/* Linked Gaming Platforms Section */}
         {/* <LinkedPlatformsSection /> */}
 

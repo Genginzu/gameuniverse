@@ -19,10 +19,24 @@ export function AdminTablePagination({ pagination, onPageChange, t }: AdminTable
         {t("page", { current: pagination.currentPage, total: pagination.totalPages })}
       </p>
       <div className="flex gap-2">
-        <Button variant="outline" size="sm" disabled={!pagination.hasPreviousPage} className="min-h-[44px] min-w-[44px]" onClick={() => onPageChange(pagination.currentPage - 1)} aria-label={t("previousPage")}>
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={!pagination.hasPreviousPage}
+          className="min-h-[44px] min-w-[44px]"
+          onClick={() => onPageChange(pagination.currentPage - 1)}
+          aria-label={t("previousPage")}
+        >
           <Icon icon="fa:chevron-left" className="h-3 w-3" />
         </Button>
-        <Button variant="outline" size="sm" disabled={!pagination.hasNextPage} className="min-h-[44px] min-w-[44px]" onClick={() => onPageChange(pagination.currentPage + 1)} aria-label={t("nextPage")}>
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={!pagination.hasNextPage}
+          className="min-h-[44px] min-w-[44px]"
+          onClick={() => onPageChange(pagination.currentPage + 1)}
+          aria-label={t("nextPage")}
+        >
           <Icon icon="fa:chevron-right" className="h-3 w-3" />
         </Button>
       </div>

@@ -38,7 +38,12 @@ function tokenize(content: string): string[] {
   return parts;
 }
 
-export function PostContentRenderer({ content, tags, mentions, locale: _locale }: PostContentRendererProps) {
+export function PostContentRenderer({
+  content,
+  tags,
+  mentions,
+  locale: _locale,
+}: PostContentRendererProps) {
   const t = useTranslations("players.posts");
 
   const validTags = new Set(tags.map((tag) => tag.toLowerCase()));
@@ -62,7 +67,7 @@ export function PostContentRenderer({ content, tags, mentions, locale: _locale }
                 key={index}
                 href={`/posts/tags/${tagName}`}
                 aria-label={t("tagAriaLabel", { tag: tagName })}
-                className="text-palette-primary-500 transition-all duration-300 hover:underline dark:text-palette-primary-400"
+                className="text-palette-primary-500 dark:text-palette-primary-400 transition-all duration-300 hover:underline"
               >
                 #{tagName}
               </Link>
@@ -80,7 +85,7 @@ export function PostContentRenderer({ content, tags, mentions, locale: _locale }
                 key={index}
                 href={`/players/${playerId}`}
                 aria-label={t("mentionAriaLabel", { username })}
-                className="text-palette-secondary-500 transition-all duration-300 hover:underline dark:text-palette-secondary-300"
+                className="text-palette-secondary-500 dark:text-palette-secondary-300 transition-all duration-300 hover:underline"
               >
                 @{username}
               </Link>

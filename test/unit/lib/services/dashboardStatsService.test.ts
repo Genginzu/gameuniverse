@@ -1,14 +1,16 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from "vitest";
 
-vi.mock('@/lib/logger', () => ({ logger: { error: vi.fn(), info: vi.fn(), warn: vi.fn(), debug: vi.fn() } }));
+vi.mock("@/lib/logger", () => ({
+  logger: { error: vi.fn(), info: vi.fn(), warn: vi.fn(), debug: vi.fn() },
+}));
 
 const mockFrom = vi.fn();
-vi.mock('@/lib/supabase-server', () => ({
+vi.mock("@/lib/supabase-server", () => ({
   createRouteHandlerClient: vi.fn(async () => ({ from: mockFrom, rpc: vi.fn() })),
 }));
 
 const mockComputeOverview = vi.fn();
-vi.mock('@/lib/services/dashboardStatsCompute', () => ({
+vi.mock("@/lib/services/dashboardStatsCompute", () => ({
   computeOverviewMetrics: (...args: any[]) => mockComputeOverview(...args),
   computeGenreDistribution: vi.fn(() => []),
   computeCompletionStats: vi.fn(() => ({})),
@@ -21,11 +23,11 @@ vi.mock('@/lib/services/dashboardStatsCompute', () => ({
   computeSessionFrequency: vi.fn(() => []),
   computePlatformDistribution: vi.fn(() => []),
 }));
-vi.mock('@/lib/utils/untypedTable', () => ({
+vi.mock("@/lib/utils/untypedTable", () => ({
   untypedTable: (supabase: any, table: string) => supabase.from(table),
 }));
 
-import { DashboardStatsService } from '@/lib/services/dashboardStatsService';
+import { DashboardStatsService } from "@/lib/services/dashboardStatsService";
 
 /** Build a fully chainable mock that resolves when awaited */
 function supaChain(data: unknown, error: unknown = null, count = 0) {
@@ -38,25 +40,32 @@ function supaChain(data: unknown, error: unknown = null, count = 0) {
   return c;
 }
 
-describe('DashboardStatsService.fetchOverviewMetrics', () => {
+describe("DashboardStatsService.fetchOverviewMetrics", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockComputeOverview.mockReturnValue({ totalGames: 5, totalPlayTimeHours: 100, reviewCount: 3, averageRating: 4.2, collectionsCount: 1, friendsCount: 2 });
+    mockComputeOverview.mockReturnValue({
+      totalGames: 5,
+      totalPlayTimeHours: 100,
+      reviewCount: 3,
+      averageRating: 4.2,
+      collectionsCount: 1,
+      friendsCount: 2,
+    });
   });
 
-  it('returns overview metrics', async () => {
+  it("returns overview metrics", async () => {
     mockFrom.mockImplementation((table: string) => {
-      if (table === 'user_library') return supaChain([{ play_time_hours: 10 }]);
-      if (table === 'game_reviews') return supaChain([{ rating: 4 }]);
+      if (table === "user_library") return supaChain([{ play_time_hours: 10 }]);
+      if (table === "game_reviews") return supaChain([{ rating: 4 }]);
       return supaChain(null, null, 2);
     });
-    const result = await DashboardStatsService.fetchOverviewMetrics('player-1');
+    const result = await DashboardStatsService.fetchOverviewMetrics("player-1");
     expect(result.totalGames).toBe(5);
     expect(mockComputeOverview).toHaveBeenCalled();
   });
 
-  it('throws on supabase error', async () => {
-    mockFrom.mockImplementation(() => supaChain(null, { message: 'fail' }));
-    await expect(DashboardStatsService.fetchOverviewMetrics('p1')).rejects.toThrow('fail');
+  it("throws on supabase error", async () => {
+    mockFrom.mockImplementation(() => supaChain(null, { message: "fail" }));
+    await expect(DashboardStatsService.fetchOverviewMetrics("p1")).rejects.toThrow("fail");
   });
 });

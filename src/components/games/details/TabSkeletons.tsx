@@ -3,5 +3,15 @@
  * Re-exports from split files for backward compatibility.
  */
 
-export { AgeRatingsSkeleton, VersionsSkeleton, DlcExtensionsSkeleton, MusicSkeleton } from "./TabSkeletonsMedia";
-export { ReviewsSkeleton, PlaytimeSkeleton, LanguagesSkeleton, PriceHistorySkeleton } from "./TabSkeletonsData";
+export {
+  AgeRatingsSkeleton,
+  VersionsSkeleton,
+  DlcExtensionsSkeleton,
+  MusicSkeleton,
+} from "./TabSkeletonsMedia";
+export {
+  ReviewsSkeleton,
+  PlaytimeSkeleton,
+  LanguagesSkeleton,
+  PriceHistorySkeleton,
+} from "./TabSkeletonsData";

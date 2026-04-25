@@ -1,11 +1,16 @@
 ---
 name: spec-final-validation
-description: Required final tasks for any feature spec — full test run, lint, production build, and a feature README under `docs/features/`. Activate when writing or reviewing `.kiro/specs/**/tasks.md`, or when the user asks to finalize/close a spec.
+description:
+  Required final tasks for any feature spec — full test run, lint, production
+  build, and a feature README under `docs/features/`. Activate when writing or
+  reviewing `.kiro/specs/**/tasks.md`, or when the user asks to finalize/close a
+  spec.
 ---
 
 # Skill: Spec Final Validation
 
-Full rules: `.kiro/steering/spec-final-validation.md`. Every spec's `tasks.md` must end with the four tasks below, in order.
+Full rules: `.kiro/steering/spec-final-validation.md`. Every spec's `tasks.md`
+must end with the four tasks below, in order.
 
 ## Mandatory final tasks
 
@@ -18,7 +23,8 @@ bun run test:all
 - Runs all tests (parallel + isolated)
 - Fix failing tests before continuing
 - **Never** append `2>&1` or any redirection
-- **Anti-duplicate**: if the last implementation task already runs `bun run test:all`, skip this task and go straight to lint.
+- **Anti-duplicate**: if the last implementation task already runs
+  `bun run test:all`, skip this task and go straight to lint.
 
 ### 2. Lint
 
@@ -71,7 +77,8 @@ Create `docs/features/{domain}/{feature-name}.md` (kebab-case) containing:
 ## Task X+3: README de la fonctionnalité
 
 - [ ] Créer `docs/features/{domaine}/ma-feature.md` (kebab-case)
-- [ ] Documenter ce qui a été implémenté, comment y accéder, les prérequis et l'utilisation
+- [ ] Documenter ce qui a été implémenté, comment y accéder, les prérequis et
+      l'utilisation
 ```
 
 ## Why

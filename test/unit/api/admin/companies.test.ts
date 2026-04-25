@@ -4,10 +4,7 @@ let mockRequireAdmin: any;
 let mockSupabaseFrom: any;
 
 vi.mock("../../../../src/lib/auth-admin", () => ({
-  requireAdmin: () =>
-    mockRequireAdmin
-      ? mockRequireAdmin()
-      : Promise.resolve(true),
+  requireAdmin: () => (mockRequireAdmin ? mockRequireAdmin() : Promise.resolve(true)),
 }));
 
 vi.mock("../../../../src/lib/supabase-server", () => ({
@@ -21,9 +18,7 @@ vi.mock("../../../../src/lib/logger", () => ({
   logger: { error: vi.fn(), warn: vi.fn(), info: vi.fn() },
 }));
 
-const { GET, POST } = await import(
-  "../../../../src/app/api/admin/companies/route"
-);
+const { GET, POST } = await import("../../../../src/app/api/admin/companies/route");
 
 function makeRequest(url: string, init?: RequestInit) {
   return new Request(url, init) as any;
@@ -68,9 +63,7 @@ describe("GET /api/admin/companies", () => {
       headquarters: null,
       company_type: "developer",
       is_active: true,
-      company_translations: [
-        { company_id: "c1", language_code: "fr", description: "Desc FR" },
-      ],
+      company_translations: [{ company_id: "c1", language_code: "fr", description: "Desc FR" }],
     };
 
     mockSupabaseFrom = (table: string) => {

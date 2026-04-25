@@ -43,7 +43,10 @@ describe("useEntityLibraryToggle", () => {
   it("handleToggle calls addToLibrary when not in library", async () => {
     const { result } = renderHook(() => useEntityLibraryToggle("game-1", true));
 
-    const mockEvent = { preventDefault: vi.fn(), stopPropagation: vi.fn() } as unknown as React.MouseEvent;
+    const mockEvent = {
+      preventDefault: vi.fn(),
+      stopPropagation: vi.fn(),
+    } as unknown as React.MouseEvent;
 
     await act(async () => {
       await result.current.handleToggle(mockEvent);

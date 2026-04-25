@@ -31,8 +31,7 @@ describe("useFriendRelationship", () => {
       if (typeof url === "string" && url.includes("/friends/status")) {
         return Promise.resolve({
           ok: true,
-          json: () =>
-            Promise.resolve({ status: "accepted", friendshipId: "fs-1" }),
+          json: () => Promise.resolve({ status: "accepted", friendshipId: "fs-1" }),
         });
       }
       return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });

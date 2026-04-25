@@ -12,9 +12,7 @@ describe("adminGameFormSchema", () => {
   });
 
   it("rejects empty translations", () => {
-    expect(
-      adminGameFormSchema.safeParse({ ...valid, translations: [] }).success
-    ).toBe(false);
+    expect(adminGameFormSchema.safeParse({ ...valid, translations: [] }).success).toBe(false);
   });
 
   it("rejects translations without any title", () => {
@@ -26,9 +24,7 @@ describe("adminGameFormSchema", () => {
   });
 
   it("rejects empty genres", () => {
-    expect(
-      adminGameFormSchema.safeParse({ ...valid, genres: [] }).success
-    ).toBe(false);
+    expect(adminGameFormSchema.safeParse({ ...valid, genres: [] }).success).toBe(false);
   });
 
   it("accepts valid hex color for background_color", () => {
@@ -51,9 +47,7 @@ describe("adminGameFormSchema", () => {
   });
 
   it("rejects metascore above 100", () => {
-    expect(
-      adminGameFormSchema.safeParse({ ...valid, metascore: 101 }).success
-    ).toBe(false);
+    expect(adminGameFormSchema.safeParse({ ...valid, metascore: 101 }).success).toBe(false);
   });
 
   it("accepts valid screenshot with url", () => {

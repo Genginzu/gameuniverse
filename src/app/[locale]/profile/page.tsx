@@ -10,14 +10,16 @@ interface ProfilePageProps {
 export default async function ProfilePage({ params }: ProfilePageProps) {
   const { locale } = await params;
   const supabase = await createServerClient();
-  
-  const { data: { user } } = await supabase.auth.getUser();
-  
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   if (!user) {
     // Redirect to login if not authenticated
     redirect(`/${locale}/auth`);
   }
-  
+
   // Redirect to the user's player profile
   redirect(`/${locale}/players/${user.id}`);
 }

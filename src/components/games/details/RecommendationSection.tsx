@@ -41,7 +41,7 @@ export function RecommendationSection({ gameSlug, locale = "fr" }: Recommendatio
       <h2 className="mb-6 text-2xl font-bold text-white">{t("title")}</h2>
 
       {loading && (
-        <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="xs:grid-cols-2 grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {Array.from({ length: MAX_RECOMMENDATIONS }).map((_, index) => (
             <GameCardSkeleton key={index} />
           ))}
@@ -51,7 +51,7 @@ export function RecommendationSection({ gameSlug, locale = "fr" }: Recommendatio
       {!loading && !hasRecommendations && <p className="text-slate-400">{t("empty")}</p>}
 
       {!loading && hasRecommendations && (
-        <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="xs:grid-cols-2 grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {recommendations.slice(0, MAX_RECOMMENDATIONS).map((rec) => (
             <GameCard key={rec.id} game={toGameCardProps(rec)} locale={locale} />
           ))}

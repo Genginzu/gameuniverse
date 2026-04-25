@@ -10,19 +10,33 @@ vi.mock("@/lib/pandascore/client", () => ({
 
 function makeMatch(overrides: Record<string, unknown> = {}) {
   return {
-    id: 1, name: "Grand Final", slug: "grand-final",
-    status: "running", match_type: "best_of", number_of_games: 5,
-    begin_at: "2026-04-25T18:00:00Z", end_at: null,
+    id: 1,
+    name: "Grand Final",
+    slug: "grand-final",
+    status: "running",
+    match_type: "best_of",
+    number_of_games: 5,
+    begin_at: "2026-04-25T18:00:00Z",
+    end_at: null,
     tournament_id: 1,
     tournament: { id: 1, name: "Worlds", slug: "worlds" },
     opponents: [
       { type: "Team", opponent: { id: 100, name: "T1", slug: "t1" } },
       { type: "Team", opponent: { id: 200, name: "Gen.G", slug: "geng" } },
     ],
-    winner_id: null, winner_type: null,
+    winner_id: null,
+    winner_type: null,
     videogame: { id: 1, name: "League of Legends", slug: "lol" },
     league: { id: 1, name: "Worlds", slug: "worlds", image_url: null, url: null },
-    serie: { id: 1, name: null, slug: "s1", begin_at: null, end_at: null, full_name: "2026", year: 2026 },
+    serie: {
+      id: 1,
+      name: null,
+      slug: "s1",
+      begin_at: null,
+      end_at: null,
+      full_name: "2026",
+      year: 2026,
+    },
     results: [],
     streams_list: [
       { language: "en", main: true, raw_url: "https://twitch.tv/riotgames" },
@@ -76,7 +90,7 @@ describe("esportLiveService", () => {
     await getLiveStreams({ game: "Valorant" });
 
     expect(mockGetRunningMatches).toHaveBeenCalledWith(
-      expect.objectContaining({ "filter[videogame_title]": "Valorant" }),
+      expect.objectContaining({ "filter[videogame_title]": "Valorant" })
     );
   });
 

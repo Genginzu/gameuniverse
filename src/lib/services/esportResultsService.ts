@@ -75,15 +75,11 @@ function mapResultTournament(t: PandaScoreTournament): ResultTournament {
 }
 
 function opponentName(o: PandaScoreOpponent): string {
-  return o.type === "Team"
-    ? (o.opponent as PandaScoreTeam).name
-    : o.opponent.name;
+  return o.type === "Team" ? (o.opponent as PandaScoreTeam).name : o.opponent.name;
 }
 
 function opponentImage(o: PandaScoreOpponent): string | null {
-  return o.type === "Team"
-    ? (o.opponent as PandaScoreTeam).image_url
-    : null;
+  return o.type === "Team" ? (o.opponent as PandaScoreTeam).image_url : null;
 }
 
 function mapResultMatch(m: PandaScoreMatch): ResultMatch {

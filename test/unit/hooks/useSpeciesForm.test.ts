@@ -32,7 +32,10 @@ describe("useSpeciesForm", () => {
 
     await act(() => result.current.submitSpecies(data));
 
-    expect(globalThis.fetch).toHaveBeenCalledWith("/api/admin/species", expect.objectContaining({ method: "POST" }));
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      "/api/admin/species",
+      expect.objectContaining({ method: "POST" })
+    );
   });
 
   it("submits PUT in edit mode", async () => {
@@ -42,11 +45,16 @@ describe("useSpeciesForm", () => {
 
     await act(() => result.current.submitSpecies(data));
 
-    expect(globalThis.fetch).toHaveBeenCalledWith("/api/admin/species/sp-1", expect.objectContaining({ method: "PUT" }));
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      "/api/admin/species/sp-1",
+      expect.objectContaining({ method: "PUT" })
+    );
   });
 
   it("sets submitError on failure", async () => {
-    globalThis.fetch = vi.fn().mockResolvedValue({ ok: false, json: () => Promise.resolve({ error: "Server error" }) });
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValue({ ok: false, json: () => Promise.resolve({ error: "Server error" }) });
     const { result } = renderHook(() => useSpeciesForm("create"));
     const data = { slug: "human", translations: [{ language_code: "fr", name: "Humain" }] };
 

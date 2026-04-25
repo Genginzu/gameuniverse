@@ -42,10 +42,18 @@ export async function POST(_request: NextRequest) {
             const igdbGame = igdbMap.get(entry.igdb_id);
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             if (igdbGame) await syncAgeRatings(supabase as any, entry.matched_game_id, igdbGame);
-            await supabase.from("igdb_global_sync").update({ is_classifications_synced: true }).eq("id", entry.id);
+            await supabase
+              .from("igdb_global_sync")
+              .update({ is_classifications_synced: true })
+              .eq("id", entry.id);
             return { igdbId: entry.igdb_id, name: entry.name, success: true };
           } catch (error) {
-            return { igdbId: entry.igdb_id, name: entry.name, success: false, error: (error as Error).message };
+            return {
+              igdbId: entry.igdb_id,
+              name: entry.name,
+              success: false,
+              error: (error as Error).message,
+            };
           }
         })
       );

@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  getCalendarTournaments,
-  getCalendarGames,
-} from "@/lib/services/esportCalendarService";
+import { getCalendarTournaments, getCalendarGames } from "@/lib/services/esportCalendarService";
 import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
@@ -20,9 +17,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ tournaments });
   } catch (error) {
     logger.error("Error in esport calendar API", { error });
-    return NextResponse.json(
-      { error: "Failed to fetch esport calendar" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to fetch esport calendar" }, { status: 500 });
   }
 }

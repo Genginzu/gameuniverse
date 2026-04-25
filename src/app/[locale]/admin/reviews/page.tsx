@@ -120,8 +120,11 @@ export default function AdminReviewsPage() {
 
       <AdminDeleteDialog
         isOpen={reviewToDelete !== null}
-          translationNamespace="admin.reviews.deleteDialog"
-          warningParams={{ player: reviewToDelete?.playerName ?? "", game: reviewToDelete?.gameTitle ?? "" }}
+        translationNamespace="admin.reviews.deleteDialog"
+        warningParams={{
+          player: reviewToDelete?.playerName ?? "",
+          game: reviewToDelete?.gameTitle ?? "",
+        }}
         onClose={handleDeleteClose}
         onConfirm={handleDeleteConfirm}
         isDeleting={isDeleting}

@@ -4,7 +4,6 @@ import { useTranslations } from "next-intl";
 import { Card, CardContent } from "@/components/ui/card";
 import { Icon } from "@iconify/react";
 
-
 const STATS = [
   {
     key: "gamesReferenced" as const,

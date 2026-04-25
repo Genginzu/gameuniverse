@@ -41,10 +41,13 @@ export function SuggestionsBanner({
   if (suggestions.length === 0) return null;
 
   return (
-    <div className="flex flex-col gap-2 rounded-xl border border-palette-secondary-200/60 bg-palette-secondary-50/70 p-3 backdrop-blur-xl dark:border-palette-secondary-900/40 dark:bg-palette-secondary-900/20">
+    <div className="border-palette-secondary-200/60 bg-palette-secondary-50/70 dark:border-palette-secondary-900/40 dark:bg-palette-secondary-900/20 flex flex-col gap-2 rounded-xl border p-3 backdrop-blur-xl">
       <div className="flex items-center gap-2">
-        <Icon icon="lucide:sparkles" className="h-4 w-4 text-palette-secondary-600 dark:text-palette-secondary-400" />
-        <p className="text-sm text-palette-secondary-900 dark:text-palette-secondary-100">
+        <Icon
+          icon="lucide:sparkles"
+          className="text-palette-secondary-600 dark:text-palette-secondary-400 h-4 w-4"
+        />
+        <p className="text-palette-secondary-900 dark:text-palette-secondary-100 text-sm">
           {t("suggestionsTitle")}
         </p>
       </div>
@@ -65,7 +68,9 @@ export function SuggestionsBanner({
                   size="sm"
                   variant="ghost"
                   className="h-7 px-2 text-xs"
-                  onClick={() => { window.location.href = oauthRoute; }}
+                  onClick={() => {
+                    window.location.href = oauthRoute;
+                  }}
                 >
                   {t("suggestionLink")}
                 </Button>

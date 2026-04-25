@@ -30,7 +30,8 @@ export async function POST(request: NextRequest) {
         const session = event.data.object as Stripe.Checkout.Session;
         const sessionId = session.metadata?.coaching_session_id;
         if (sessionId) {
-          await supabase.from("coaching_sessions")
+          await supabase
+            .from("coaching_sessions")
             .update({ payment_status: "paid" })
             .eq("id", sessionId);
           logger.info("Payment completed for session", { sessionId });
@@ -41,7 +42,8 @@ export async function POST(request: NextRequest) {
       case "account.updated": {
         const account = event.data.object as Stripe.Account;
         if (account.charges_enabled && account.details_submitted) {
-          await supabase.from("coach_profiles")
+          await supabase
+            .from("coach_profiles")
             .update({ stripe_onboarding_complete: true })
             .eq("stripe_account_id", account.id);
           logger.info("Stripe onboarding complete", { accountId: account.id });
@@ -51,12 +53,16 @@ export async function POST(request: NextRequest) {
 
       case "charge.refunded": {
         const charge = event.data.object as Stripe.Charge;
-        const pi = typeof charge.payment_intent === "string" ? charge.payment_intent : charge.payment_intent?.id;
+        const pi =
+          typeof charge.payment_intent === "string"
+            ? charge.payment_intent
+            : charge.payment_intent?.id;
         if (pi) {
           const paymentIntent = await stripe.paymentIntents.retrieve(pi);
           const sessionId = paymentIntent.metadata?.coaching_session_id;
           if (sessionId) {
-            await supabase.from("coaching_sessions")
+            await supabase
+              .from("coaching_sessions")
               .update({ payment_status: "refunded" })
               .eq("id", sessionId);
             logger.info("Refund processed for session", { sessionId });

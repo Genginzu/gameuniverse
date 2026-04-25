@@ -32,7 +32,10 @@ describe("useGenderForm", () => {
 
     await act(() => result.current.submitGender(data));
 
-    expect(globalThis.fetch).toHaveBeenCalledWith("/api/admin/genders", expect.objectContaining({ method: "POST" }));
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      "/api/admin/genders",
+      expect.objectContaining({ method: "POST" })
+    );
   });
 
   it("submits PUT to /api/admin/genders/{id} in edit mode", async () => {
@@ -42,11 +45,16 @@ describe("useGenderForm", () => {
 
     await act(() => result.current.submitGender(data));
 
-    expect(globalThis.fetch).toHaveBeenCalledWith("/api/admin/genders/g-123", expect.objectContaining({ method: "PUT" }));
+    expect(globalThis.fetch).toHaveBeenCalledWith(
+      "/api/admin/genders/g-123",
+      expect.objectContaining({ method: "PUT" })
+    );
   });
 
   it("sets submitError on failure", async () => {
-    globalThis.fetch = vi.fn().mockResolvedValue({ ok: false, json: () => Promise.resolve({ error: "Conflict" }) });
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValue({ ok: false, json: () => Promise.resolve({ error: "Conflict" }) });
     const { result } = renderHook(() => useGenderForm("create"));
     const data = { slug: "male", translations: [{ language_code: "fr", name: "Masculin" }] };
 

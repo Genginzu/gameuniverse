@@ -30,10 +30,9 @@ describe("useWebhookEvents", () => {
   });
 
   it("fetches /api/admin/webhooks/events with filters", async () => {
-    const { result } = renderHook(
-      () => useWebhookEvents({ entityType: "game", page: 2 }),
-      { wrapper: createSWRWrapper() }
-    );
+    const { result } = renderHook(() => useWebhookEvents({ entityType: "game", page: 2 }), {
+      wrapper: createSWRWrapper(),
+    });
 
     await waitFor(() => expect(result.current.loading).toBe(false));
 

@@ -15,7 +15,5 @@ export async function GET() {
     state,
   });
 
-  return NextResponse.redirect(
-    `https://login.live.com/oauth20_authorize.srf?${params.toString()}`
-  );
+  return NextResponse.redirect(`https://login.live.com/oauth20_authorize.srf?${params.toString()}`);
 }

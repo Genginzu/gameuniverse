@@ -22,7 +22,10 @@ interface BattleNetUserInfo {
   battletag?: string;
 }
 
-async function exchangeCodeForToken(code: string, redirectUri: string): Promise<BattleNetTokenResponse> {
+async function exchangeCodeForToken(
+  code: string,
+  redirectUri: string
+): Promise<BattleNetTokenResponse> {
   const basic = Buffer.from(
     `${process.env.BATTLENET_CLIENT_ID}:${process.env.BATTLENET_CLIENT_SECRET}`
   ).toString("base64");
@@ -57,16 +60,22 @@ export async function GET(request: NextRequest) {
 
   try {
     const supabase = await createRouteHandlerClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (!user) return NextResponse.redirect(`${baseUrl}/auth?error=unauthorized`);
 
     const stateValid = await consumeOauthState("battlenet", state);
     if (!stateValid) {
-      return NextResponse.redirect(`${baseUrl}/players/${user.id}?tab=settings&error=battlenet_state_mismatch`);
+      return NextResponse.redirect(
+        `${baseUrl}/players/${user.id}?tab=settings&error=battlenet_state_mismatch`
+      );
     }
     if (!code) {
-      return NextResponse.redirect(`${baseUrl}/players/${user.id}?tab=settings&error=battlenet_no_code`);
+      return NextResponse.redirect(
+        `${baseUrl}/players/${user.id}?tab=settings&error=battlenet_no_code`
+      );
     }
 
     const cookieStore = await cookies();
@@ -76,12 +85,16 @@ export async function GET(request: NextRequest) {
     const redirectUri = `${baseUrl}/api/auth/battlenet/callback`;
     const tokenData = await exchangeCodeForToken(code, redirectUri);
     if (!tokenData.access_token) {
-      return NextResponse.redirect(`${baseUrl}/players/${user.id}?tab=settings&error=battlenet_token_failed`);
+      return NextResponse.redirect(
+        `${baseUrl}/players/${user.id}?tab=settings&error=battlenet_token_failed`
+      );
     }
 
     const userInfo = await getUserInfo(tokenData.access_token);
     if (!userInfo?.sub) {
-      return NextResponse.redirect(`${baseUrl}/players/${user.id}?tab=settings&error=battlenet_profile_failed`);
+      return NextResponse.redirect(
+        `${baseUrl}/players/${user.id}?tab=settings&error=battlenet_profile_failed`
+      );
     }
 
     const expiresIn = tokenData.expires_in ?? 86400;
@@ -103,7 +116,9 @@ export async function GET(request: NextRequest) {
       { onConflict: "player_id,platform" }
     );
 
-    return NextResponse.redirect(`${baseUrl}/players/${user.id}?tab=settings&platform=battlenet&success=true`);
+    return NextResponse.redirect(
+      `${baseUrl}/players/${user.id}?tab=settings&platform=battlenet&success=true`
+    );
   } catch (error) {
     logger.error("Battle.net callback error", { error });
     return NextResponse.redirect(`${baseUrl}?error=battlenet_callback_failed`);

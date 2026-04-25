@@ -54,7 +54,13 @@ export function EsportTeamDetailContent({ teamId }: { teamId: string }) {
         <div className="glass-card mb-6 flex flex-col items-center gap-4 rounded-2xl p-6 sm:flex-row sm:items-start sm:p-8">
           <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-full bg-white/50 dark:bg-gray-700/50">
             {team.imageUrl ? (
-              <LazyImage src={team.imageUrl} alt={team.name} fill className="object-contain p-2" sizes="96px" />
+              <LazyImage
+                src={team.imageUrl}
+                alt={team.name}
+                fill
+                className="object-contain p-2"
+                sizes="96px"
+              />
             ) : (
               <div className="flex h-full w-full items-center justify-center">
                 <Icon icon="mdi:shield-account" className="h-12 w-12 text-gray-400" />
@@ -62,7 +68,7 @@ export function EsportTeamDetailContent({ teamId }: { teamId: string }) {
             )}
           </div>
           <div className="text-center sm:text-left">
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white sm:text-2xl lg:text-3xl">
+            <h1 className="text-xl font-bold text-gray-900 sm:text-2xl lg:text-3xl dark:text-white">
               {team.name}
             </h1>
             {team.acronym && (
@@ -70,7 +76,7 @@ export function EsportTeamDetailContent({ teamId }: { teamId: string }) {
             )}
             <div className="mt-2 flex flex-wrap justify-center gap-2 sm:justify-start">
               {team.game && (
-                <Badge className="rounded-full bg-palette-primary-100 px-3 py-1 text-xs text-palette-primary-700 dark:bg-palette-primary-900/30 dark:text-palette-primary-300">
+                <Badge className="bg-palette-primary-100 text-palette-primary-700 dark:bg-palette-primary-900/30 dark:text-palette-primary-300 rounded-full px-3 py-1 text-xs">
                   {team.game}
                 </Badge>
               )}
@@ -87,10 +93,10 @@ export function EsportTeamDetailContent({ teamId }: { teamId: string }) {
         {/* Roster */}
         {team.players.length > 0 && (
           <div>
-            <h2 className="mb-4 text-lg font-bold text-gray-900 dark:text-white sm:text-xl">
+            <h2 className="mb-4 text-lg font-bold text-gray-900 sm:text-xl dark:text-white">
               {t("roster")}
             </h2>
-            <div className="grid gap-3 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
+            <div className="xs:grid-cols-2 grid gap-3 sm:grid-cols-3 lg:grid-cols-4">
               {team.players.map((player) => (
                 <div
                   key={player.id}
@@ -98,7 +104,13 @@ export function EsportTeamDetailContent({ teamId }: { teamId: string }) {
                 >
                   <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
                     {player.imageUrl ? (
-                      <LazyImage src={player.imageUrl} alt={player.name} fill className="object-cover" sizes="40px" />
+                      <LazyImage
+                        src={player.imageUrl}
+                        alt={player.name}
+                        fill
+                        className="object-cover"
+                        sizes="40px"
+                      />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center">
                         <Icon icon="mdi:account" className="h-5 w-5 text-gray-400" />
@@ -137,7 +149,7 @@ function TeamDetailSkeleton() {
         </div>
       </div>
       <Skeleton className="mb-4 h-6 w-32" />
-      <div className="grid gap-3 xs:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
+      <div className="xs:grid-cols-2 grid gap-3 sm:grid-cols-3 lg:grid-cols-4">
         {Array.from({ length: 5 }).map((_, i) => (
           <div key={i} className="glass-card flex items-center gap-3 rounded-xl p-4">
             <Skeleton className="h-10 w-10 rounded-full" />

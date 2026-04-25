@@ -8,7 +8,7 @@ export function GameCardSkeleton() {
         <Skeleton className="h-full w-full rounded-2xl" />
 
         {/* Metascore badge skeleton */}
-        <div className="absolute right-3 top-3 z-20">
+        <div className="absolute top-3 right-3 z-20">
           <Skeleton className="h-8 w-8 rounded-full" />
         </div>
       </div>

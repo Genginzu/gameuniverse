@@ -2,10 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getTeamDetail } from "@/lib/services/esportTeamService";
 import { logger } from "@/lib/logger";
 
-export async function GET(
-  _request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
     const teamId = parseInt(id, 10);

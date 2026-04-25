@@ -44,7 +44,9 @@ describe("useGameListing", () => {
 
     await waitFor(() => expect(result.current.loading).toBe(false));
 
-    const calledUrl = mockFetch.mock.calls.find((c: string[]) => c[0].startsWith("/api/games"))?.[0];
+    const calledUrl = mockFetch.mock.calls.find((c: string[]) =>
+      c[0].startsWith("/api/games")
+    )?.[0];
     expect(calledUrl).toContain("locale=fr");
     expect(calledUrl).toContain("page=1");
     expect(calledUrl).toContain("limit=20");
@@ -68,7 +70,9 @@ describe("useGameListing", () => {
 
     await waitFor(() => expect(result.current.loading).toBe(false));
 
-    const calledUrl = mockFetch.mock.calls.find((c: string[]) => c[0].startsWith("/api/games"))?.[0];
+    const calledUrl = mockFetch.mock.calls.find((c: string[]) =>
+      c[0].startsWith("/api/games")
+    )?.[0];
     expect(calledUrl).toContain("genres=rpg");
     expect(calledUrl).toContain("platforms=pc");
   });

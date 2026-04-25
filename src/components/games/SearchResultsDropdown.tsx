@@ -29,7 +29,7 @@ export function SearchResultsDropdown({
   // Loading state
   if (isLoading) {
     return (
-      <div className="absolute left-0 right-0 top-full z-50 mt-2 rounded-xl bg-white shadow-lg ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700">
+      <div className="absolute top-full right-0 left-0 z-50 mt-2 rounded-xl bg-white shadow-lg ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700">
         <div className="flex items-center justify-center p-4">
           <div className="h-5 w-5 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
           <span className="ml-2 text-sm text-gray-600 dark:text-gray-300">{t("loading")}</span>
@@ -41,7 +41,7 @@ export function SearchResultsDropdown({
   // No results state
   if (results.length === 0) {
     return (
-      <div className="absolute left-0 right-0 top-full z-50 mt-2 rounded-xl bg-white shadow-lg ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700">
+      <div className="absolute top-full right-0 left-0 z-50 mt-2 rounded-xl bg-white shadow-lg ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700">
         <div className="p-4 text-center text-sm text-gray-500 dark:text-gray-400">
           {t("noResults")}
         </div>
@@ -50,7 +50,7 @@ export function SearchResultsDropdown({
   }
 
   return (
-    <div className="absolute left-0 right-0 top-full z-50 mt-2 max-h-[70vh] overflow-y-auto rounded-xl bg-white shadow-lg ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700">
+    <div className="absolute top-full right-0 left-0 z-50 mt-2 max-h-[70vh] overflow-y-auto rounded-xl bg-white shadow-lg ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700">
       <ul className="divide-y divide-gray-100 dark:divide-gray-700">
         {results.map((item) => {
           const isImporting = importingId === item.id;

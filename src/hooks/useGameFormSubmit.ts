@@ -13,8 +13,7 @@ export function buildGamePayload(data: AdminGameFormData, mode: "create" | "edit
       description: t.description || null,
     }));
 
-  const toNum = (v: unknown) =>
-    v === "" || v === undefined || v === null ? null : Number(v);
+  const toNum = (v: unknown) => (v === "" || v === undefined || v === null ? null : Number(v));
 
   const metascoreValue =
     data.metascore === "" || data.metascore === undefined || data.metascore === null

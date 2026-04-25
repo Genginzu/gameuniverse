@@ -26,9 +26,7 @@ const mockFrom = vi.fn(() => ({
 }));
 
 vi.mock("@/lib/supabase-server", () => ({
-  createRouteHandlerClient: vi.fn(() =>
-    Promise.resolve({ from: mockFrom })
-  ),
+  createRouteHandlerClient: vi.fn(() => Promise.resolve({ from: mockFrom })),
 }));
 
 vi.mock("@/lib/services/coinService", () => ({
@@ -71,7 +69,12 @@ describe("esportPredictionService", () => {
     const result = await placePrediction("user-1", 100, "Final", "LoL", 10, "T1", 50);
 
     expect(CoinService.debitCoins).toHaveBeenCalledWith(
-      "user-1", 50, "prediction", undefined, undefined, expect.any(String)
+      "user-1",
+      50,
+      "prediction",
+      undefined,
+      undefined,
+      expect.any(String)
     );
     expect(result.matchId).toBe(100);
     expect(result.amount).toBe(50);
@@ -86,8 +89,20 @@ describe("esportPredictionService", () => {
           limit: vi.fn(() =>
             Promise.resolve({
               data: [
-                { player_id: "p1", total_predictions: 10, correct_predictions: 7, total_profit: 500, accuracy_rate: 70 },
-                { player_id: "p2", total_predictions: 5, correct_predictions: 2, total_profit: -100, accuracy_rate: 40 },
+                {
+                  player_id: "p1",
+                  total_predictions: 10,
+                  correct_predictions: 7,
+                  total_profit: 500,
+                  accuracy_rate: 70,
+                },
+                {
+                  player_id: "p2",
+                  total_predictions: 5,
+                  correct_predictions: 2,
+                  total_profit: -100,
+                  accuracy_rate: 40,
+                },
               ],
               error: null,
             })

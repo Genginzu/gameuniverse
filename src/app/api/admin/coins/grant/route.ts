@@ -4,7 +4,9 @@ import { CoinService } from "@/lib/services/coinService";
 
 async function requireAdmin() {
   const supabase = await createRouteHandlerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return null;
   const { data } = await supabase.rpc("is_admin", { user_id: user.id });
   return data ? user : null;
@@ -18,7 +20,10 @@ export async function POST(request: NextRequest) {
     const { playerId, amount, description } = await request.json();
 
     if (!playerId || !amount || !description) {
-      return NextResponse.json({ error: "playerId, amount, and description are required" }, { status: 400 });
+      return NextResponse.json(
+        { error: "playerId, amount, and description are required" },
+        { status: 400 }
+      );
     }
 
     if (typeof amount !== "number" || amount === 0) {

@@ -18,7 +18,9 @@ export async function GET(request: NextRequest) {
     }
 
     const supabase = await createRouteHandlerClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -34,7 +36,9 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createRouteHandlerClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -47,7 +51,13 @@ export async function POST(request: NextRequest) {
     }
 
     const prediction = await placePrediction(
-      user.id, matchId, matchName, game, predictedWinnerId, predictedWinnerName, amount
+      user.id,
+      matchId,
+      matchName,
+      game,
+      predictedWinnerId,
+      predictedWinnerName,
+      amount
     );
     return NextResponse.json({ prediction }, { status: 201 });
   } catch (error) {

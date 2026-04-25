@@ -52,7 +52,10 @@ export const SESSION_TYPES: SessionType[] = ["single", "pack_5", "pack_10", "mon
 export const COACH_SPECIALTY_GROUPS = [
   { key: "level", specialties: ["beginner", "casual", "advanced", "competitive"] },
   { key: "mode", specialties: ["solo", "teamplay", "ranked", "battle_royale", "mmo_raid"] },
-  { key: "style", specialties: ["mechanics_aim", "game_sense", "strategy", "speedrun", "progression_build"] },
+  {
+    key: "style",
+    specialties: ["mechanics_aim", "game_sense", "strategy", "speedrun", "progression_build"],
+  },
 ] as const;
 
 export const COACH_SPECIALTIES = COACH_SPECIALTY_GROUPS.flatMap((g) => g.specialties);

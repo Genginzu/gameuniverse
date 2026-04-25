@@ -41,19 +41,25 @@ export async function GET(request: NextRequest) {
 
     // Genre filter by slug
     if (genre) {
-      const { data: genreIds } = await supabase
-        .from("genres")
-        .select("id")
-        .eq("slug", genre);
+      const { data: genreIds } = await supabase.from("genres").select("id").eq("slug", genre);
       if (genreIds && genreIds.length > 0) {
         const { data: gameIds } = await supabase
           .from("game_genres")
           .select("game_id")
-          .in("genre_id", genreIds.map((g) => g.id));
+          .in(
+            "genre_id",
+            genreIds.map((g) => g.id)
+          );
         if (gameIds && gameIds.length > 0) {
-          query = query.in("id", gameIds.map((g) => g.game_id));
+          query = query.in(
+            "id",
+            gameIds.map((g) => g.game_id)
+          );
         } else {
-          return NextResponse.json({ games: [], pagination: { currentPage: page, totalPages: 0, totalCount: 0 } });
+          return NextResponse.json({
+            games: [],
+            pagination: { currentPage: page, totalPages: 0, totalCount: 0 },
+          });
         }
       }
     }
@@ -68,11 +74,20 @@ export async function GET(request: NextRequest) {
         const { data: gameIds } = await supabase
           .from("game_platforms")
           .select("game_id")
-          .in("platform_id", platformIds.map((p) => p.id));
+          .in(
+            "platform_id",
+            platformIds.map((p) => p.id)
+          );
         if (gameIds && gameIds.length > 0) {
-          query = query.in("id", gameIds.map((g) => g.game_id));
+          query = query.in(
+            "id",
+            gameIds.map((g) => g.game_id)
+          );
         } else {
-          return NextResponse.json({ games: [], pagination: { currentPage: page, totalPages: 0, totalCount: 0 } });
+          return NextResponse.json({
+            games: [],
+            pagination: { currentPage: page, totalPages: 0, totalCount: 0 },
+          });
         }
       }
     }

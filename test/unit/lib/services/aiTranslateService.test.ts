@@ -20,7 +20,9 @@ beforeEach(() => {
 
 describe("translateFields", () => {
   it("translates fields successfully", async () => {
-    mockGenerateText.mockResolvedValue({ output: { title: "Translated Title", description: "Translated Desc" } } as any);
+    mockGenerateText.mockResolvedValue({
+      output: { title: "Translated Title", description: "Translated Desc" },
+    } as any);
     const result = await translateFields({
       sourceLang: "fr",
       targetLang: "en",
@@ -33,14 +35,24 @@ describe("translateFields", () => {
   it("throws when AI returns no output", async () => {
     mockGenerateText.mockResolvedValue({ output: null } as any);
     await expect(
-      translateFields({ sourceLang: "fr", targetLang: "en", entityType: "games", fields: { title: "T" } })
+      translateFields({
+        sourceLang: "fr",
+        targetLang: "en",
+        entityType: "games",
+        fields: { title: "T" },
+      })
     ).rejects.toThrow("AI returned no structured output");
   });
 
   it("throws on AI failure", async () => {
     mockGenerateText.mockRejectedValue(new Error("API down"));
     await expect(
-      translateFields({ sourceLang: "fr", targetLang: "en", entityType: "games", fields: { title: "T" } })
+      translateFields({
+        sourceLang: "fr",
+        targetLang: "en",
+        entityType: "games",
+        fields: { title: "T" },
+      })
     ).rejects.toThrow("AI translation failed: API down");
   });
 });

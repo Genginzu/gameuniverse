@@ -1,8 +1,5 @@
 import { logger } from "@/lib/logger";
-import {
-  getUpcomingTournaments,
-  getRunningTournaments,
-} from "@/lib/pandascore/client";
+import { getUpcomingTournaments, getRunningTournaments } from "@/lib/pandascore/client";
 import type { PandaScoreTournament } from "@/lib/pandascore/types";
 
 const CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes

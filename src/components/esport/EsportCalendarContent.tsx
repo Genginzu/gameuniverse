@@ -40,11 +40,10 @@ export function EsportCalendarContent() {
   const { data: gamesData } = useSWR<{ games: string[] }>(gamesUrl, fetcher, {
     revalidateOnFocus: false,
   });
-  const { data, isLoading } = useSWR<{ tournaments: CalendarTournament[] }>(
-    calendarUrl,
-    fetcher,
-    { revalidateOnFocus: false, keepPreviousData: true }
-  );
+  const { data, isLoading } = useSWR<{ tournaments: CalendarTournament[] }>(calendarUrl, fetcher, {
+    revalidateOnFocus: false,
+    keepPreviousData: true,
+  });
 
   const games = gamesData?.games ?? [];
   const tournaments = data?.tournaments ?? [];
@@ -56,11 +55,7 @@ export function EsportCalendarContent() {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-      <PageBanner
-        title={t("title")}
-        subtitle={t("subtitle")}
-        icon="mdi:trophy-outline"
-      />
+      <PageBanner title={t("title")} subtitle={t("subtitle")} icon="mdi:trophy-outline" />
 
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
         {/* Game filter */}
@@ -121,7 +116,7 @@ function TournamentCard({ tournament }: { tournament: CalendarTournament }) {
     <div className="glass-card group rounded-2xl p-4 transition-all duration-300 hover:shadow-lg sm:p-5">
       <div className="mb-3 flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
-          <h3 className="line-clamp-2 text-sm font-bold text-gray-900 dark:text-white sm:text-base">
+          <h3 className="line-clamp-2 text-sm font-bold text-gray-900 sm:text-base dark:text-white">
             {tournament.name}
           </h3>
           <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">

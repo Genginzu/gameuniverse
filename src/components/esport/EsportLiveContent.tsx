@@ -110,7 +110,7 @@ function StreamCard({ stream }: { stream: LiveStream }) {
         )}
       </div>
 
-      <h3 className="mb-1 line-clamp-2 text-sm font-bold text-gray-900 dark:text-white sm:text-base">
+      <h3 className="mb-1 line-clamp-2 text-sm font-bold text-gray-900 sm:text-base dark:text-white">
         {stream.matchName}
       </h3>
 
@@ -135,7 +135,7 @@ function StreamCard({ stream }: { stream: LiveStream }) {
         </div>
       </div>
 
-      <div className="mt-3 flex items-center gap-1 text-xs font-medium text-palette-primary-500 group-hover:underline">
+      <div className="text-palette-primary-500 mt-3 flex items-center gap-1 text-xs font-medium group-hover:underline">
         <Icon icon="mdi:open-in-new" className="h-3.5 w-3.5" />
         {t("watchStream")}
       </div>

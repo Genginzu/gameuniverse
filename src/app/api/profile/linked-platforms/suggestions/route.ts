@@ -9,7 +9,9 @@ import type { GamingPlatform } from "@/types/linked-platforms";
 
 export async function GET() {
   const supabase = await createRouteHandlerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 

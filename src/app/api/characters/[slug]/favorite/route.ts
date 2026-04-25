@@ -57,7 +57,6 @@ export async function POST(_request: NextRequest, { params }: RouteContext) {
     );
 
     return NextResponse.json({ success: true });
-
   } catch (error: unknown) {
     const pgError = error as { code?: string };
     if (pgError.code === "23505") {

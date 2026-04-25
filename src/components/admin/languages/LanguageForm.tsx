@@ -100,7 +100,7 @@ export function LanguageForm({ mode, form, onSubmit, isSubmitting }: LanguageFor
               <LoadingSpinner size="sm" />
             ) : (
               <>
-                <Icon icon="fa:save" className="h-4 w-4"  />
+                <Icon icon="fa:save" className="h-4 w-4" />
                 {mode === "create" ? t("create") : t("save")}
               </>
             )}

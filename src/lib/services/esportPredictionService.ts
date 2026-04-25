@@ -37,7 +37,14 @@ export async function placePrediction(
   const supabase = await createRouteHandlerClient();
 
   // Deduct coins
-  await CoinService.debitCoins(playerId, amount, "prediction", undefined, undefined, `Pronostic: ${matchName}`);
+  await CoinService.debitCoins(
+    playerId,
+    amount,
+    "prediction",
+    undefined,
+    undefined,
+    `Pronostic: ${matchName}`
+  );
 
   const { data, error } = await supabase
     .from("esport_predictions")
@@ -111,7 +118,11 @@ export async function resolvePrediction(matchId: number): Promise<number> {
 
     if (won) {
       await CoinService.creditCoins(
-        pred.player_id, payout, "prediction_win", undefined, undefined,
+        pred.player_id,
+        payout,
+        "prediction_win",
+        undefined,
+        undefined,
         `Gain pronostic: ${pred.match_name}`
       );
     }

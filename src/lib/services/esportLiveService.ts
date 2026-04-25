@@ -54,9 +54,7 @@ function extractStreams(match: PandaScoreMatch): LiveStream[] {
   }));
 }
 
-export async function getLiveStreams(filters?: {
-  game?: string;
-}): Promise<LiveStream[]> {
+export async function getLiveStreams(filters?: { game?: string }): Promise<LiveStream[]> {
   const gameFilter = filters?.game;
   const cacheKey = `live:${gameFilter ?? "all"}`;
 

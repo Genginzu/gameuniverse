@@ -59,7 +59,6 @@ export async function POST(
     );
 
     return NextResponse.json(comment, { status: 201 });
-
   } catch (error) {
     if (
       error instanceof Error &&
