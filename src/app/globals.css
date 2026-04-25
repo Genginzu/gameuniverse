@@ -108,6 +108,16 @@
   }
 }
 
+/* Prevent user-agent disabled styles from overriding custom button backgrounds */
+@layer base {
+  button:disabled {
+    background-color: unset;
+    color: unset;
+    border-color: unset;
+  }
+}
+
+
 /* stylelint-enable at-rule-no-unknown */
 
 @layer base {
