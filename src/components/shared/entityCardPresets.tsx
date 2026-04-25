@@ -30,6 +30,14 @@ export const gameCardConfig: EntityCardConfig<GameSummary> = {
   actions: {
     libraryToggle: true,
   },
+  customBadgeRenderer: (game) =>
+    game.isEsport ? (
+      <div className="absolute left-3 top-3 z-20">
+        <Badge className="rounded-full bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 px-2 py-0.5 text-xs font-bold text-white shadow-lg">
+          Esport
+        </Badge>
+      </div>
+    ) : null,
   linkTemplate: (game) => `/games/${game.slug}`,
   customHoverRenderer: (game, t) => {
     const formatReleaseDate = (dateString?: string, locale: string = "fr") => {

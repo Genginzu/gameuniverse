@@ -866,6 +866,9 @@
     "clearAll": "Effacer tout",
     "genres": "Genres",
     "available": "{count} disponibles",
+    "esportFilter": "Esport",
+    "esportSection": "Esport",
+    "esportOnly": "Jeux esport uniquement",
     "sort": {
       "label": "Trier par",
       "recommended": "Recommandés",
@@ -1381,6 +1384,7 @@
         "playtimePreview": "Aperçu du temps de jeu",
         "playtimeNoData": "Aucun temps de jeu renseigné",
         "popularity": "Popularité IGDB",
+        "isEsport": "Jeu esport (scène compétitive)",
         "colors": "Couleurs de la page",
         "backgroundColor": "Couleur de fond",
         "accentColor": "Couleur d'accent",

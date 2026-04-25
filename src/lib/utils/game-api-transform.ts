@@ -98,6 +98,7 @@ export interface GameApiResponse {
     spotify_embed_url: string | null;
     youtube_video_url: string | null;
   } | null;
+  is_esport?: boolean;
 }
 
 /** Convert a raw API game response to the form's data shape */
@@ -187,6 +188,7 @@ export function toFormData(game: GameApiResponse): AdminGameFormData {
     music_composer: game.music?.composer ?? "",
     music_spotify_embed_url: game.music?.spotify_embed_url ?? "",
     music_youtube_video_url: game.music?.youtube_video_url ?? "",
+    is_esport: game.is_esport ?? false,
   };
 }
 

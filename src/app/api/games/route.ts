@@ -24,6 +24,8 @@ export async function GET(request: NextRequest) {
     const inLibrary = searchParams.get("inLibrary") === "true";
     const fields = parseArrayParam(searchParams.get("fields"));
     const sort = parseGameListingSort(searchParams.get("sort"));
+    const esportParam = searchParams.get("esport");
+    const esport = esportParam === "true" ? true : esportParam === "false" ? false : null;
 
     const supabase = await createRouteHandlerClient();
 
@@ -71,6 +73,7 @@ export async function GET(request: NextRequest) {
       p_user_id: userId,
       p_include_description: fields.includes("description"),
       p_sort_by: sort,
+      p_esport: esport,
     });
 
     if (error) {
@@ -93,6 +96,7 @@ export async function GET(request: NextRequest) {
         description: string | null;
         genres: Array<{ name: string }>;
         developer: string;
+        is_esport: boolean;
         publisher: string;
       }>;
       totalCount: number;
@@ -115,6 +119,7 @@ export async function GET(request: NextRequest) {
       publisher: game.publisher,
       metascore: game.metascore,
       createdAt: game.created_at,
+      isEsport: game.is_esport,
     }));
 
     const pagination = buildPaginationMeta(totalCount || 0, page, limit, offset);

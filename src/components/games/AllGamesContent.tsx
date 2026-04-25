@@ -29,6 +29,7 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const [selectedPublishers, setSelectedPublishers] = useState<string[]>([]);
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
+  const [esportFilter, setEsportFilter] = useState<boolean | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [sort, setSort] = useState<GameListingSort>(DEFAULT_GAME_LISTING_SORT);
 
@@ -40,7 +41,8 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
     currentPage,
     selectedGenres,
     selectedPlatforms,
-    sort
+    sort,
+    esportFilter
   );
 
   // Le premier chargement est quand SWR n'a encore aucune donnée
@@ -62,6 +64,11 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
     setCurrentPage(1);
   }, []);
 
+  const handleEsportFilter = useCallback((value: boolean | null) => {
+    setEsportFilter(value);
+    setCurrentPage(1);
+  }, []);
+
   const handleSortChange = useCallback((next: GameListingSort) => {
     setSort(next);
     setCurrentPage(1);
@@ -76,11 +83,15 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
     setSelectedGenres([]);
     setSelectedPublishers([]);
     setSelectedPlatforms([]);
+    setEsportFilter(null);
     setCurrentPage(1);
   }, []);
 
   const hasFilters =
-    selectedGenres.length > 0 || selectedPublishers.length > 0 || selectedPlatforms.length > 0;
+    selectedGenres.length > 0 ||
+    selectedPublishers.length > 0 ||
+    selectedPlatforms.length > 0 ||
+    esportFilter !== null;
 
   // Skeleton complet au premier chargement
   if (initialLoading) {
@@ -95,7 +106,11 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
           <div className="flex items-center justify-between gap-3">
             <FilterButton
               hasFilters={hasFilters}
-              filterCount={selectedGenres.length + selectedPlatforms.length}
+              filterCount={
+                selectedGenres.length +
+                selectedPlatforms.length +
+                (esportFilter !== null ? 1 : 0)
+              }
               onClick={() => setShowFilters(!showFilters)}
             />
             <GameSortMenu value={sort} onChange={handleSortChange} />
@@ -107,9 +122,11 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
             selectedGenres={selectedGenres}
             selectedPublishers={selectedPublishers}
             selectedPlatforms={selectedPlatforms}
+            esportFilter={esportFilter}
             onGenreChange={handleGenreFilter}
             onPublisherChange={handlePublisherFilter}
             onPlatformsChange={handlePlatformFilter}
+            onEsportChange={handleEsportFilter}
             onClearFilters={handleClearFilters}
             showAllGenres={showFilters}
           />

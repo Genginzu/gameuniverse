@@ -97,6 +97,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
         system_requirements,
         created_at,
         updated_at,
+        is_esport,
         game_translations(
           id,
           language_code,
@@ -248,6 +249,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       system_requirements: game.system_requirements,
       created_at: game.created_at,
       updated_at: game.updated_at,
+      is_esport: game.is_esport ?? false,
       translations: game.game_translations || [],
       genres:
         (game.game_genres as AdminGameGenre[] | undefined)?.map((gg) => ({

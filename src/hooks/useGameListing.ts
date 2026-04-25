@@ -25,12 +25,14 @@ function buildGamesUrl(
   page: number,
   genres: string[],
   platforms: string[],
-  sort: GameListingSort
+  sort: GameListingSort,
+  esport: boolean | null = null
 ): string {
   const params = new URLSearchParams({ locale, page: String(page), limit: "20" });
   if (genres.length > 0) params.set("genres", genres.join(","));
   if (platforms.length > 0) params.set("platforms", platforms.join(","));
   if (sort !== DEFAULT_GAME_LISTING_SORT) params.set("sort", sort);
+  if (esport !== null) params.set("esport", String(esport));
   return `/api/games?${params.toString()}`;
 }
 
@@ -50,9 +52,10 @@ export function useGameListing(
   page: number,
   genres: string[],
   platforms: string[],
-  sort: GameListingSort = DEFAULT_GAME_LISTING_SORT
+  sort: GameListingSort = DEFAULT_GAME_LISTING_SORT,
+  esport: boolean | null = null
 ) {
-  const url = buildGamesUrl(locale, page, genres, platforms, sort);
+  const url = buildGamesUrl(locale, page, genres, platforms, sort, esport);
 
   const { data, error, isLoading, isValidating } = useSWR<GamesApiResponse>(url, apiFetcher, {
     // Garder les données précédentes pendant le chargement d'une nouvelle page/filtre

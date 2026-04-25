@@ -15,9 +15,11 @@ interface GameFiltersProps {
   selectedGenres: string[];
   selectedPublishers: string[];
   selectedPlatforms: string[];
+  esportFilter: boolean | null;
   onGenreChange: (genres: string[]) => void;
   onPublisherChange: (publishers: string[]) => void;
   onPlatformsChange: (platforms: string[]) => void;
+  onEsportChange: (value: boolean | null) => void;
   onClearFilters: () => void;
   showAllGenres: boolean;
 }
@@ -28,9 +30,11 @@ export function GameFilters({
   selectedGenres,
   selectedPublishers: _selectedPublishers,
   selectedPlatforms,
+  esportFilter,
   onGenreChange,
   onPublisherChange: _onPublisherChange,
   onPlatformsChange,
+  onEsportChange,
   onClearFilters,
   showAllGenres,
 }: GameFiltersProps) {
@@ -59,7 +63,10 @@ export function GameFilters({
   };
 
   const hasFilters =
-    selectedGenres.length > 0 || _selectedPublishers.length > 0 || selectedPlatforms.length > 0;
+    selectedGenres.length > 0 ||
+    _selectedPublishers.length > 0 ||
+    selectedPlatforms.length > 0 ||
+    esportFilter !== null;
 
   if (!hasFilters && !showAllGenres) return null;
 
@@ -68,6 +75,13 @@ export function GameFilters({
       {hasFilters && (
         <div className="flex items-center gap-2">
           <div className="flex flex-1 flex-wrap items-center gap-1.5">
+            {esportFilter !== null && (
+              <ActiveFilterChip
+                label={t("esportFilter")}
+                onRemove={() => onEsportChange(null)}
+                variant="blue"
+              />
+            )}
             {selectedGenres.map((genre) => (
               <ActiveFilterChip
                 key={genre}
@@ -95,41 +109,50 @@ export function GameFilters({
       )}
 
       {showAllGenres && (
-        <FilterSection
-          title={t("genres")}
-          availableLabel={genres.length > 0 ? t("available", { count: genres.length }) : ""}
-          loading={genres.length === 0}
-          skeletonWidths={[72, 88, 64, 96, 80, 68, 92, 76, 84, 60, 100, 72]}
-        >
-          {genres.map((genre) => (
+        <>
+          <FilterSection title={t("esportSection")} loading={false}>
             <FilterChip
-              key={genre.id}
-              label={genre.name}
-              selected={selectedGenres.includes(genre.name)}
-              onClick={() => handleGenreToggle(genre.name)}
-              count={genre.gameCount}
+              label={t("esportOnly")}
+              selected={esportFilter === true}
+              onClick={() => onEsportChange(esportFilter === true ? null : true)}
+              icon={<Icon icon="mdi:trophy" className="h-3.5 w-3.5 shrink-0" />}
             />
-          ))}
-        </FilterSection>
-      )}
+          </FilterSection>
 
-      {showAllGenres && (
-        <FilterSection
-          title={tPlatforms("filter.title")}
-          availableLabel={`${platforms.length} ${tPlatforms("filter.available")}`}
-          loading={platforms.length === 0}
-        >
-          {platforms.map((platform) => (
-            <FilterChip
-              key={platform.id}
-              label={platform.name}
-              selected={selectedPlatforms.includes(platform.slug)}
-              onClick={() => handlePlatformToggle(platform.slug)}
-              count={platform.gameCount}
-              icon={<Icon icon={getPlatformIcon(platform.slug)} className="h-3.5 w-3.5 shrink-0" />}
-            />
-          ))}
-        </FilterSection>
+          <FilterSection
+            title={t("genres")}
+            availableLabel={genres.length > 0 ? t("available", { count: genres.length }) : ""}
+            loading={genres.length === 0}
+            skeletonWidths={[72, 88, 64, 96, 80, 68, 92, 76, 84, 60, 100, 72]}
+          >
+            {genres.map((genre) => (
+              <FilterChip
+                key={genre.id}
+                label={genre.name}
+                selected={selectedGenres.includes(genre.name)}
+                onClick={() => handleGenreToggle(genre.name)}
+                count={genre.gameCount}
+              />
+            ))}
+          </FilterSection>
+
+          <FilterSection
+            title={tPlatforms("filter.title")}
+            availableLabel={`${platforms.length} ${tPlatforms("filter.available")}`}
+            loading={platforms.length === 0}
+          >
+            {platforms.map((platform) => (
+              <FilterChip
+                key={platform.id}
+                label={platform.name}
+                selected={selectedPlatforms.includes(platform.slug)}
+                onClick={() => handlePlatformToggle(platform.slug)}
+                count={platform.gameCount}
+                icon={<Icon icon={getPlatformIcon(platform.slug)} className="h-3.5 w-3.5 shrink-0" />}
+              />
+            ))}
+          </FilterSection>
+        </>
       )}
     </div>
   );

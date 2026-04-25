@@ -99,6 +99,7 @@ export function useGameForm(
       music_youtube_video_url: "",
       game_platforms: [],
     },
+      is_esport: false,
   });
 
   useEffect(() => {
