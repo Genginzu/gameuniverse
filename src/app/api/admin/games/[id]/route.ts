@@ -17,6 +17,7 @@ import {
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
 import { logger } from "@/lib/logger";
 import { invalidateForDeletedGame } from "@/lib/services/recommendation/cache";
+import { untypedTable } from "@/lib/utils/untypedTable";
 
 // Types for Supabase query results
 interface AdminGameGenre {
@@ -76,8 +77,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const supabase = await createRouteHandlerClient();
 
     // Fetch complete game data for editing
-    const { data: game, error } = await supabase
-      .from("games")
+    const { data: game, error } = await untypedTable(supabase, "games")
       .select(
         `
         id,
@@ -456,8 +456,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     // Update main game data if provided
     if (game && Object.keys(game).length > 0) {
       const updatePayload = { ...game, updated_at: new Date().toISOString() };
-      const { error: gameError } = await supabase
-        .from("games")
+      const { error: gameError } = await untypedTable(supabase, "games")
         .update(updatePayload)
         .eq("id", gameId);
 
