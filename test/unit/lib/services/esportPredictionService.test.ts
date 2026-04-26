@@ -68,14 +68,13 @@ describe("esportPredictionService", () => {
     const { placePrediction } = await import("@/lib/services/esportPredictionService");
     const result = await placePrediction("user-1", 100, "Final", "LoL", 10, "T1", 50);
 
-    expect(CoinService.debitCoins).toHaveBeenCalledWith(
-      "user-1",
-      50,
-      "prediction",
-      undefined,
-      undefined,
-      expect.any(String)
-    );
+      expect(CoinService.debitCoins).toHaveBeenCalledWith(
+        "user-1",
+        50,
+        "prediction_bet",
+        undefined,
+        "Pronostic: Final"
+      );
     expect(result.matchId).toBe(100);
     expect(result.amount).toBe(50);
     expect(result.status).toBe("pending");

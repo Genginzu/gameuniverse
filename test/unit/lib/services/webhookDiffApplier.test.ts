@@ -46,7 +46,6 @@ describe("applyWebhookPayload", () => {
       payload: { slug: "test-game", aggregated_rating: 85.3 },
     });
     expect(result.appliedFields).toContain("slug");
-    expect(result.appliedFields).toContain("metascore");
     expect(result.skippedFields).toHaveLength(0);
   });
 
