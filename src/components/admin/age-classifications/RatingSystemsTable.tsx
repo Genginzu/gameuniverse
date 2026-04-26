@@ -24,18 +24,7 @@ export interface RatingSystemsTableProps {
 
 type SortField = "code" | "name";
 
-export function RatingSystemsTable({
-  systems,
-  pagination,
-  onPageChange,
-  onSearch,
-  onSort,
-  onEdit,
-  onDelete,
-  isLoading,
-  currentSort,
-  currentSearch = "",
-}: RatingSystemsTableProps) {
+export function RatingSystemsTable({ systems, pagination, onPageChange, onSearch, onSort, onEdit, onDelete, isLoading, currentSort, currentSearch = "" }: RatingSystemsTableProps) {
   const t = useTranslations("admin.ageClassifications");
 
   const handleSortClick = (field: SortField) => {
@@ -117,17 +106,10 @@ export function RatingSystemsTable({
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
                 {systems.map((system) => (
-                  <tr
-                    key={system.id}
-                    className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50"
-                    onClick={() => onEdit(system.id)}
-                  >
-                    <td className="px-4 py-3 font-mono text-sm text-gray-900 dark:text-white">
-                      {system.code}
-                    </td>
-                    <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">
-                      {system.name}
-                    </td>
+                  <tr key={system.id} className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50" onClick={() => onEdit(system.id)}>
+                    <td className="px-4 py-3 font-mono text-sm text-gray-900 dark:text-white">{system.code}</td>
+                    <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">{system.name}</td>
+                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{system.country_codes?.length ? system.country_codes.join(", ") : "—"}</td>
                     <td className="px-4 py-3 text-gray-500 dark:text-gray-400">
                       {system.country_codes?.length ? system.country_codes.join(", ") : "—"}
                     </td>
@@ -149,23 +131,8 @@ export function RatingSystemsTable({
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => onEdit(system.id)}
-                          aria-label={t("edit", { name: system.name })}
-                        >
-                          <Icon icon="fa:edit" className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => onDelete(system)}
-                          aria-label={t("delete", { name: system.name })}
-                          className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
-                        >
-                          <Icon icon="fa:trash" className="h-4 w-4" />
-                        </Button>
+                        <Button variant="ghost" size="sm" onClick={() => onEdit(system.id)} aria-label={t("edit", { name: system.name })}><Icon icon="fa:edit" className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="sm" onClick={() => onDelete(system)} aria-label={t("delete", { name: system.name })} className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"><Icon icon="fa:trash" className="h-4 w-4" /></Button>
                       </div>
                     </td>
                   </tr>

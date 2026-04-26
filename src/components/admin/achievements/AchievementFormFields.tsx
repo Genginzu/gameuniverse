@@ -4,20 +4,9 @@ import { useTranslations } from "next-intl";
 import { type UseFormReturn } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import {
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormDescription,
-  FormMessage,
-} from "@/components/ui/form";
+import { FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from "@/components/ui/form";
 import type { AchievementFormData } from "@/lib/validations/admin-achievement-form";
 import {
   AchievementTranslationsSection,

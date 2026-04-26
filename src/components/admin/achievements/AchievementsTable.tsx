@@ -28,18 +28,7 @@ function getAchievementName(achievement: AdminAchievement, locale: string): stri
   return locale === "en" ? achievement.nameEn : achievement.nameFr;
 }
 
-export function AchievementsTable({
-  achievements,
-  pagination,
-  onPageChange,
-  onSearch,
-  onSort,
-  onEdit,
-  onDelete,
-  isLoading,
-  currentSort,
-  currentSearch = "",
-}: AchievementsTableProps) {
+export function AchievementsTable({ achievements, pagination, onPageChange, onSearch, onSort, onEdit, onDelete, isLoading, currentSort, currentSearch = "" }: AchievementsTableProps) {
   const t = useTranslations("adminAchievements");
   const locale = useLocale();
 
@@ -57,12 +46,9 @@ export function AchievementsTable({
   };
 
   const sortableColumns: { field: SortField; label: string }[] = [
-    { field: "key", label: t("columns.key") },
-    { field: "category", label: t("columns.category") },
-    { field: "tier", label: t("columns.tier") },
-    { field: "threshold", label: t("columns.threshold") },
-    { field: "xp_value", label: t("columns.xpValue") },
-    { field: "name", label: t("columns.name") },
+    { field: "key", label: t("columns.key") }, { field: "category", label: t("columns.category") },
+    { field: "tier", label: t("columns.tier") }, { field: "threshold", label: t("columns.threshold") },
+    { field: "xp_value", label: t("columns.xpValue") }, { field: "name", label: t("columns.name") },
   ];
 
   return (
@@ -101,62 +87,22 @@ export function AchievementsTable({
                       </button>
                     </th>
                   ))}
-                  <th
-                    scope="col"
-                    className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300"
-                  >
-                    {t("columns.actions")}
-                  </th>
+                  <th scope="col" className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">{t("columns.actions")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
                 {achievements.map((achievement) => (
-                  <tr
-                    key={achievement.id}
-                    className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50"
-                    onClick={() => onEdit(achievement.id)}
-                  >
-                    <td className="px-4 py-3 font-mono text-sm text-gray-900 dark:text-white">
-                      {achievement.key}
-                    </td>
-                    <td className="px-4 py-3 text-gray-900 dark:text-white">
-                      {t(`categories.${achievement.category}`)}
-                    </td>
-                    <td className="px-4 py-3 text-gray-900 dark:text-white">
-                      {t(`tiers.${achievement.tier}`)}
-                    </td>
-                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400">
-                      {achievement.threshold}
-                    </td>
-                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400">
-                      {achievement.xpValue}
-                    </td>
-                    <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">
-                      {getAchievementName(achievement, locale)}
-                    </td>
+                  <tr key={achievement.id} className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50" onClick={() => onEdit(achievement.id)}>
+                    <td className="px-4 py-3 font-mono text-sm text-gray-900 dark:text-white">{achievement.key}</td>
+                    <td className="px-4 py-3 text-gray-900 dark:text-white">{t(`categories.${achievement.category}`)}</td>
+                    <td className="px-4 py-3 text-gray-900 dark:text-white">{t(`tiers.${achievement.tier}`)}</td>
+                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{achievement.threshold}</td>
+                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{achievement.xpValue}</td>
+                    <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">{getAchievementName(achievement, locale)}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => onEdit(achievement.id)}
-                          aria-label={t("editAchievement", {
-                            name: getAchievementName(achievement, locale),
-                          })}
-                        >
-                          <Icon icon="fa:edit" className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => onDelete(achievement)}
-                          aria-label={t("deleteAchievement", {
-                            name: getAchievementName(achievement, locale),
-                          })}
-                          className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
-                        >
-                          <Icon icon="fa:trash" className="h-4 w-4" />
-                        </Button>
+                        <Button variant="ghost" size="sm" onClick={() => onEdit(achievement.id)} aria-label={t("editAchievement", { name: getAchievementName(achievement, locale) })}><Icon icon="fa:edit" className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="sm" onClick={() => onDelete(achievement)} aria-label={t("deleteAchievement", { name: getAchievementName(achievement, locale) })} className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"><Icon icon="fa:trash" className="h-4 w-4" /></Button>
                       </div>
                     </td>
                   </tr>

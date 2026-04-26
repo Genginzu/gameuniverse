@@ -109,14 +109,7 @@ export function PostComposer({
       <div className="flex gap-3">
         <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-linear-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30">
           {playerAvatar ? (
-            <LazyImage
-              src={playerAvatar}
-              alt=""
-              fill
-              className="object-cover"
-              sizes="40px"
-              showSkeleton
-            />
+            <LazyImage src={playerAvatar} alt="" fill className="object-cover" sizes="40px" showSkeleton />
           ) : (
             <div className="flex h-full w-full items-center justify-center">
               <Icon icon="lucide:user" className="h-5 w-5 text-blue-300" />
@@ -142,9 +135,7 @@ export function PostComposer({
               rows={3}
               className="border-palette-primary-300 focus:border-palette-primary-400 focus:ring-palette-primary-400/20 dark:border-palette-primary-500/50 dark:focus:border-palette-primary-400/60 dark:focus:ring-palette-primary-400/15 w-full resize-none rounded-xl border-2 bg-white/60 p-3 pb-7 text-sm text-gray-800 placeholder-gray-400 backdrop-blur-xs transition-all duration-200 focus:ring-2 focus:outline-hidden dark:bg-slate-700/40 dark:text-slate-100 dark:placeholder-slate-500"
             />
-            <span
-              className={`absolute right-3 bottom-2 text-xs ${remaining < 0 ? "text-red-500" : "text-gray-400 dark:text-slate-500"}`}
-            >
+            <span className={`absolute right-3 bottom-2 text-xs ${remaining < 0 ? "text-red-500" : "text-gray-400 dark:text-slate-500"}`}>
               {t("charCount", { remaining })}
             </span>
             <MentionSuggestions

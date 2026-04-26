@@ -43,18 +43,8 @@ export function PlatformForm({ platform, onSuccess, onCancel }: PlatformFormProp
       slug: platform?.slug ?? "",
       iconUrl: platform?.iconUrl ?? "",
       translations: [
-        {
-          language_code: "fr",
-          name: platform?.translations.find((tr) => tr.language_code === "fr")?.name ?? "",
-          abbreviation:
-            platform?.translations.find((tr) => tr.language_code === "fr")?.abbreviation ?? "",
-        },
-        {
-          language_code: "en",
-          name: platform?.translations.find((tr) => tr.language_code === "en")?.name ?? "",
-          abbreviation:
-            platform?.translations.find((tr) => tr.language_code === "en")?.abbreviation ?? "",
-        },
+        { language_code: "fr", name: platform?.translations.find((tr) => tr.language_code === "fr")?.name ?? "", abbreviation: platform?.translations.find((tr) => tr.language_code === "fr")?.abbreviation ?? "" },
+        { language_code: "en", name: platform?.translations.find((tr) => tr.language_code === "en")?.name ?? "", abbreviation: platform?.translations.find((tr) => tr.language_code === "en")?.abbreviation ?? "" },
       ],
     },
   });
@@ -72,19 +62,12 @@ export function PlatformForm({ platform, onSuccess, onCancel }: PlatformFormProp
       });
       if (!response.ok) {
         const body = await response.json().catch(() => ({}));
-        if (response.status === 409) {
-          form.setError("slug", { message: t("errorDuplicate") });
-          return;
-        }
+        if (response.status === 409) { form.setError("slug", { message: t("errorDuplicate") }); return; }
         throw new Error(body.error || "Failed to save platform");
       }
       toast({ title: t("success"), variant: "success" });
       onSuccess();
-    } catch {
-      toast({ title: t("errorGeneric"), variant: "destructive" });
-    } finally {
-      setIsSubmitting(false);
-    }
+    } catch { toast({ title: t("errorGeneric"), variant: "destructive" }); } finally { setIsSubmitting(false); }
   };
 
   return (

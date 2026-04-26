@@ -27,19 +27,7 @@ export interface AdminReviewsTableProps {
 
 type SortField = "created_at" | "rating" | "player_name" | "game_title";
 
-export function AdminReviewsTable({
-  reviews,
-  pagination,
-  onPageChange,
-  onSearch,
-  onSort,
-  onEdit,
-  onDelete,
-  canDelete,
-  isLoading,
-  currentSort,
-  currentSearch = "",
-}: AdminReviewsTableProps) {
+export function AdminReviewsTable({ reviews, pagination, onPageChange, onSearch, onSort, onEdit, onDelete, canDelete, isLoading, currentSort, currentSearch = "" }: AdminReviewsTableProps) {
   const t = useTranslations("admin.reviews");
 
   const handleSortClick = (field: SortField) => {
@@ -131,49 +119,16 @@ export function AdminReviewsTable({
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
                 {reviews.map((review) => (
-                  <tr
-                    key={review.id}
-                    className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50"
-                    onClick={() => onEdit(review.id)}
-                  >
-                    <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">
-                      {playerName(review)}
-                    </td>
-                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400">
-                      {review.gameTitle}
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className={cn("font-semibold", getRatingColor(review.rating, 20))}>
-                        {t("ratingOutOf", { rating: review.rating })}
-                      </span>
-                    </td>
-                    <td className="max-w-xs truncate px-4 py-3 text-gray-500 dark:text-gray-400">
-                      {review.contentExcerpt}
-                    </td>
-                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400">
-                      {formatDate(review.createdAt)}
-                    </td>
+                  <tr key={review.id} className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50" onClick={() => onEdit(review.id)}>
+                    <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">{playerName(review)}</td>
+                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{review.gameTitle}</td>
+                    <td className="px-4 py-3"><span className={cn("font-semibold", getRatingColor(review.rating, 20))}>{t("ratingOutOf", { rating: review.rating })}</span></td>
+                    <td className="max-w-xs truncate px-4 py-3 text-gray-500 dark:text-gray-400">{review.contentExcerpt}</td>
+                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{formatDate(review.createdAt)}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => onEdit(review.id)}
-                          aria-label={t("editReview", { player: playerName(review) })}
-                        >
-                          <Icon icon="fa:edit" className="h-4 w-4" />
-                        </Button>
-                        {canDelete && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => onDelete(review)}
-                            aria-label={t("deleteReview", { player: playerName(review) })}
-                            className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
-                          >
-                            <Icon icon="fa:trash" className="h-4 w-4" />
-                          </Button>
-                        )}
+                        <Button variant="ghost" size="sm" onClick={() => onEdit(review.id)} aria-label={t("editReview", { player: playerName(review) })}><Icon icon="fa:edit" className="h-4 w-4" /></Button>
+                        {canDelete && <Button variant="ghost" size="sm" onClick={() => onDelete(review)} aria-label={t("deleteReview", { player: playerName(review) })} className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"><Icon icon="fa:trash" className="h-4 w-4" /></Button>}
                       </div>
                     </td>
                   </tr>

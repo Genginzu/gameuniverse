@@ -29,12 +29,7 @@ export default function AdminCommentsPage() {
   const handleSearch = useCallback(
     (query: string) => {
       setCurrentSearch(query);
-      fetchComments({
-        search: query,
-        sortBy: currentSort.field,
-        sortOrder: currentSort.order,
-        page: 1,
-      });
+      fetchComments({ search: query, sortBy: currentSort.field, sortOrder: currentSort.order, page: 1 });
     },
     [fetchComments, currentSort]
   );
@@ -49,12 +44,7 @@ export default function AdminCommentsPage() {
 
   const handlePageChange = useCallback(
     (page: number) => {
-      fetchComments({
-        search: currentSearch,
-        sortBy: currentSort.field,
-        sortOrder: currentSort.order,
-        page,
-      });
+      fetchComments({ search: currentSearch, sortBy: currentSort.field, sortOrder: currentSort.order, page });
     },
     [fetchComments, currentSearch, currentSort]
   );

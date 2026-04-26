@@ -31,26 +31,12 @@ function buildSchema(entityType: EntityType) {
   return z.object(shape);
 }
 
-export function TranslationReviewModal({
-  isOpen,
-  onClose,
-  item,
-  translatedFields,
-  entityType,
-  targetLang,
-  onSave,
-  isSaving,
-}: TranslationReviewModalProps) {
+export function TranslationReviewModal({ isOpen, onClose, item, translatedFields, entityType, targetLang, onSave, isSaving }: TranslationReviewModalProps) {
   const t = useTranslations("admin.translations");
   const fields = EDITABLE_FIELDS[entityType];
   const schema = useMemo(() => buildSchema(entityType), [entityType]);
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<Record<string, string>>({
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<Record<string, string>>({
     resolver: zodResolver(schema),
     defaultValues: translatedFields,
   });
@@ -71,15 +57,8 @@ export function TranslationReviewModal({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="mb-5 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-            {t("review.title")}
-          </h2>
-          <button
-            onClick={onClose}
-            className="rounded-lg p-1.5 text-gray-500 transition-all duration-300 hover:bg-white/20 dark:text-gray-400 dark:hover:bg-slate-700/40"
-          >
-            <Icon icon="mdi:close" className="size-5" />
-          </button>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t("review.title")}</h2>
+          <button onClick={onClose} className="rounded-lg p-1.5 text-gray-500 transition-all duration-300 hover:bg-white/20 dark:text-gray-400 dark:hover:bg-slate-700/40"><Icon icon="mdi:close" className="size-5" /></button>
         </div>
         <div className="mb-4 text-xs text-gray-500 dark:text-gray-400">
           {item.identifier} — {t(`entityTypes.${entityType}`)} — {t(`languages.${targetLang}`)}

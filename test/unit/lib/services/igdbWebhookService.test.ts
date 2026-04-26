@@ -49,6 +49,16 @@ vi.mock("@/lib/services/recommendation/cache", () => ({
 vi.mock("@/lib/services/game-import/popularity", () => ({
   fetchAndSavePopularity: vi.fn(async () => {}),
 }));
+vi.mock('@/lib/realtime-updates', () => ({
+  notifyGameDeleted: vi.fn(async () => {}),
+  invalidateGameCache: vi.fn(async () => {}),
+}));
+vi.mock('@/lib/services/recommendation/cache', () => ({
+  invalidateForDeletedGame: vi.fn(() => {}),
+}));
+vi.mock('@/lib/services/game-import/popularity', () => ({
+  fetchAndSavePopularity: vi.fn(async () => {}),
+}));
 
 import { processWebhookEvent } from "@/lib/services/igdbWebhookService";
 import { GameImportService } from "@/lib/services/gameImportService";
@@ -81,6 +91,14 @@ describe("processWebhookEvent", () => {
   it("applies diff (instead of re-importing) when create fires for an existing game", async () => {
     const result = await processWebhookEvent("games", "create", { id: 123, name: "X" });
     expect(result.status).toBe("processed");
+    // Must route through the override-aware diff applier, not re-trigger a full import
+    expect(applyWebhookPayload).toHaveBeenCalledTimes(1);
+    expect(GameImportService.importFromIGDB).not.toHaveBeenCalled();
+  });
+
+  it('applies diff (instead of re-importing) when create fires for an existing game', async () => {
+    const result = await processWebhookEvent('games', 'create', { id: 123, name: 'X' });
+    expect(result.status).toBe('processed');
     // Must route through the override-aware diff applier, not re-trigger a full import
     expect(applyWebhookPayload).toHaveBeenCalledTimes(1);
     expect(GameImportService.importFromIGDB).not.toHaveBeenCalled();

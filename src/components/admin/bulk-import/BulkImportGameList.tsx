@@ -23,20 +23,7 @@ interface BulkImportGameListProps {
   onAbort: () => void;
 }
 
-export function BulkImportGameList({
-  games,
-  total,
-  loading,
-  syncing,
-  batchSize,
-  selectedField,
-  progress,
-  gameStatuses,
-  gameErrors,
-  onBatchSizeChange,
-  onSync,
-  onAbort,
-}: BulkImportGameListProps) {
+export function BulkImportGameList({ games, total, loading, syncing, batchSize, selectedField, progress, gameStatuses, gameErrors, onBatchSizeChange, onSync, onAbort }: BulkImportGameListProps) {
   const t = useTranslations("bulkImport");
   const processed = progress.done + progress.failed;
 
@@ -47,31 +34,13 @@ export function BulkImportGameList({
           {t("gamesCount", { count: total, field: t(`fields.${selectedField}`) })}
         </p>
         <div className="flex items-center gap-3">
-          <label htmlFor="batch-size" className="text-sm text-gray-600 dark:text-gray-400">
-            {t("batchSize")}
-          </label>
-          <select
-            id="batch-size"
-            value={batchSize}
-            onChange={(e) => onBatchSizeChange(Number(e.target.value))}
-            disabled={syncing}
-            className="glass-input min-h-[44px] rounded-lg px-3 py-2 text-sm"
-          >
-            {BATCH_SIZES.map((size) => (
-              <option key={size} value={size}>
-                {size}
-              </option>
-            ))}
+          <label htmlFor="batch-size" className="text-sm text-gray-600 dark:text-gray-400">{t("batchSize")}</label>
+          <select id="batch-size" value={batchSize} onChange={(e) => onBatchSizeChange(Number(e.target.value))} disabled={syncing} className="glass-input min-h-[44px] rounded-lg px-3 py-2 text-sm">
+            {BATCH_SIZES.map((size) => <option key={size} value={size}>{size}</option>)}
             <option value={0}>{t("all")}</option>
           </select>
           {syncing ? (
-            <button
-              onClick={onAbort}
-              className="flex min-h-[44px] items-center gap-2 rounded-xl bg-red-500 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-red-600"
-            >
-              <Icon icon="lucide:square" className="size-4" />
-              {t("abort")}
-            </button>
+            <button onClick={onAbort} className="flex min-h-[44px] items-center gap-2 rounded-xl bg-red-500 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-red-600"><Icon icon="lucide:square" className="size-4" />{t("abort")}</button>
           ) : (
             <button
               onClick={onSync}
@@ -88,21 +57,10 @@ export function BulkImportGameList({
       {syncing && progress.total > 0 && (
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-600 dark:text-gray-400">
-              {t("progressLabel", { done: processed, total: progress.total })}
-            </span>
+            <span className="text-gray-600 dark:text-gray-400">{t("progressLabel", { done: processed, total: progress.total })}</span>
             <span className="font-medium">
-              <span className="text-green-600 dark:text-green-400">
-                {t("progressSuccess", { count: progress.done })}
-              </span>
-              {progress.failed > 0 && (
-                <>
-                  {" · "}
-                  <span className="text-red-600 dark:text-red-400">
-                    {t("progressFailed", { count: progress.failed })}
-                  </span>
-                </>
-              )}
+              <span className="text-green-600 dark:text-green-400">{t("progressSuccess", { count: progress.done })}</span>
+              {progress.failed > 0 && <>{" · "}<span className="text-red-600 dark:text-red-400">{t("progressFailed", { count: progress.failed })}</span></>}
             </span>
           </div>
           <div className="h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
@@ -115,16 +73,9 @@ export function BulkImportGameList({
       )}
 
       {loading ? (
-        <div className="space-y-2">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="h-16 animate-pulse rounded-xl bg-gray-200 dark:bg-gray-700" />
-          ))}
-        </div>
+        <div className="space-y-2">{Array.from({ length: 5 }).map((_, i) => <div key={i} className="h-16 animate-pulse rounded-xl bg-gray-200 dark:bg-gray-700" />)}</div>
       ) : games.length === 0 ? (
-        <div className="glass-card flex flex-col items-center gap-2 rounded-xl p-8 text-center">
-          <Icon icon="lucide:check-circle" className="size-10 text-green-500" />
-          <p className="text-gray-600 dark:text-gray-400">{t("allSynced")}</p>
-        </div>
+        <div className="glass-card flex flex-col items-center gap-2 rounded-xl p-8 text-center"><Icon icon="lucide:check-circle" className="size-10 text-green-500" /><p className="text-gray-600 dark:text-gray-400">{t("allSynced")}</p></div>
       ) : (
         <div className="space-y-2">
           {games.map((game) => (

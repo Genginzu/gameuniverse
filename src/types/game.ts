@@ -255,3 +255,22 @@ export function parseGameListingSort(value: string | null | undefined): GameList
     ? (value as GameListingSort)
     : DEFAULT_GAME_LISTING_SORT;
 }
+
+export const GAME_LISTING_SORT_OPTIONS = [
+  "recommended",
+  "popularity",
+  "activity",
+  "rating",
+  "recent",
+] as const;
+
+export type GameListingSort = (typeof GAME_LISTING_SORT_OPTIONS)[number];
+
+export const DEFAULT_GAME_LISTING_SORT: GameListingSort = "recommended";
+
+export function parseGameListingSort(value: string | null | undefined): GameListingSort {
+  if (!value) return DEFAULT_GAME_LISTING_SORT;
+  return (GAME_LISTING_SORT_OPTIONS as readonly string[]).includes(value)
+    ? (value as GameListingSort)
+    : DEFAULT_GAME_LISTING_SORT;
+}

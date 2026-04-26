@@ -14,39 +14,23 @@ interface CompaniesTabProps extends GameFormTabProps {
   toggleCompany: (companyId: string, role: "developer" | "publisher") => void;
 }
 
-export function GameFormCompaniesTab({
-  form,
-  companies,
-  toggleCompany,
-  t,
-  isIgdbField,
-}: CompaniesTabProps) {
+export function GameFormCompaniesTab({ form, companies, toggleCompany, t, isIgdbField }: CompaniesTabProps) {
   const [showPicker, setShowPicker] = useState(false);
   const watchedCompanies = form.watch("companies");
 
   const assignedIds = [...new Set(watchedCompanies.map((c) => c.company_id))];
-  const assignedCompanies = assignedIds
-    .map((id) => companies.find((c) => c.id === id))
-    .filter(Boolean) as Company[];
+  const assignedCompanies = assignedIds.map((id) => companies.find((c) => c.id === id)).filter(Boolean) as Company[];
   const availableCompanies = companies.filter((c) => !assignedIds.includes(c.id));
 
   const addCompany = (companyId: string) => {
     const current = form.getValues("companies");
-    form.setValue(
-      "companies",
-      [...current, { company_id: companyId, role: "developer", is_primary: false }],
-      { shouldValidate: true }
-    );
+    form.setValue("companies", [...current, { company_id: companyId, role: "developer", is_primary: false }], { shouldValidate: true });
     setShowPicker(false);
   };
 
   const removeCompany = (companyId: string) => {
     const current = form.getValues("companies");
-    form.setValue(
-      "companies",
-      current.filter((c) => c.company_id !== companyId),
-      { shouldValidate: true }
-    );
+    form.setValue("companies", current.filter((c) => c.company_id !== companyId), { shouldValidate: true });
   };
 
   return (
@@ -59,49 +43,23 @@ export function GameFormCompaniesTab({
       <GameCompaniesPreview form={form} companies={companies} />
 
       {assignedCompanies.length === 0 ? (
-        <p className="py-6 text-center text-sm text-gray-400 dark:text-gray-500">
-          {t("noCompanies")}
-        </p>
+        <p className="py-6 text-center text-sm text-gray-400 dark:text-gray-500">{t("noCompanies")}</p>
       ) : (
         <div className="space-y-2">
           {assignedCompanies.map((company) => {
-            const isDev = watchedCompanies.some(
-              (c) => c.company_id === company.id && c.role === "developer"
-            );
-            const isPub = watchedCompanies.some(
-              (c) => c.company_id === company.id && c.role === "publisher"
-            );
+            const isDev = watchedCompanies.some((c) => c.company_id === company.id && c.role === "developer");
+            const isPub = watchedCompanies.some((c) => c.company_id === company.id && c.role === "publisher");
             return (
-              <div
-                key={company.id}
-                className="border-primary/20 bg-primary/5 dark:bg-primary/10 flex items-center justify-between rounded-xl border px-4 py-3"
-              >
-                <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                  {company.name}
-                </span>
+              <div key={company.id} className="border-primary/20 bg-primary/5 dark:bg-primary/10 flex items-center justify-between rounded-xl border px-4 py-3">
+                <span className="text-sm font-semibold text-gray-900 dark:text-white">{company.name}</span>
                 <div className="flex items-center gap-4">
                   <label className="inline-flex cursor-pointer items-center gap-1.5 text-xs font-medium text-gray-600 dark:text-gray-300">
-                    <Checkbox
-                      checked={isDev}
-                      onCheckedChange={() => toggleCompany(company.id, "developer")}
-                      aria-label={`${company.name} - ${t("developer")}`}
-                    />
-                    {t("developer")}
+                    <Checkbox checked={isDev} onCheckedChange={() => toggleCompany(company.id, "developer")} aria-label={`${company.name} - ${t("developer")}`} />{t("developer")}
                   </label>
                   <label className="inline-flex cursor-pointer items-center gap-1.5 text-xs font-medium text-gray-600 dark:text-gray-300">
-                    <Checkbox
-                      checked={isPub}
-                      onCheckedChange={() => toggleCompany(company.id, "publisher")}
-                      aria-label={`${company.name} - ${t("publisher")}`}
-                    />
-                    {t("publisher")}
+                    <Checkbox checked={isPub} onCheckedChange={() => toggleCompany(company.id, "publisher")} aria-label={`${company.name} - ${t("publisher")}`} />{t("publisher")}
                   </label>
-                  <button
-                    type="button"
-                    onClick={() => removeCompany(company.id)}
-                    className="ml-1 rounded-md p-1 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20"
-                    aria-label={`Remove ${company.name}`}
-                  >
+                  <button type="button" onClick={() => removeCompany(company.id)} className="ml-1 rounded-md p-1 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20" aria-label={`Remove ${company.name}`}>
                     <Icon icon="fa:times" className="h-3 w-3" />
                   </button>
                 </div>
@@ -112,23 +70,10 @@ export function GameFormCompaniesTab({
       )}
 
       {showPicker ? (
-        <CompanyPicker
-          availableCompanies={availableCompanies}
-          onSelect={addCompany}
-          onClose={() => setShowPicker(false)}
-          t={t}
-        />
+        <CompanyPicker availableCompanies={availableCompanies} onSelect={addCompany} onClose={() => setShowPicker(false)} t={t} />
       ) : (
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          onClick={() => setShowPicker(true)}
-          className="gap-1.5"
-          disabled={availableCompanies.length === 0}
-        >
-          <Icon icon="fa:plus" className="h-3 w-3" />
-          {t("addCompany") ?? "Ajouter une entreprise"}
+        <Button type="button" variant="outline" size="sm" onClick={() => setShowPicker(true)} className="gap-1.5" disabled={availableCompanies.length === 0}>
+          <Icon icon="fa:plus" className="h-3 w-3" />{t("addCompany") ?? "Ajouter une entreprise"}
         </Button>
       )}
 

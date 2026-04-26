@@ -4,22 +4,8 @@ import { useTranslations } from "next-intl";
 import { type UseFormReturn } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage,
-  FormDescription,
-} from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage, FormDescription } from "@/components/ui/form";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import type { CompanyFormData } from "@/lib/validations/admin-company-form";
 import type { SupportedLanguage } from "@/types/admin-languages";
@@ -37,13 +23,7 @@ export interface CompanyFormProps {
 
 const COMPANY_TYPES = ["developer", "publisher", "both"] as const;
 
-export function CompanyForm({
-  mode,
-  form,
-  onSubmit,
-  isSubmitting,
-  supportedLanguages,
-}: CompanyFormProps) {
+export function CompanyForm({ mode, form, onSubmit, isSubmitting, supportedLanguages }: CompanyFormProps) {
   const t = useTranslations("admin.companies.form");
 
   return (

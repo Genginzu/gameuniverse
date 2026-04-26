@@ -33,12 +33,7 @@ export default function AdminSpeciesPage() {
   const handleSearch = useCallback(
     (query: string) => {
       setCurrentSearch(query);
-      fetchSpecies({
-        search: query,
-        sortBy: currentSort.field,
-        sortOrder: currentSort.order,
-        page: 1,
-      });
+      fetchSpecies({ search: query, sortBy: currentSort.field, sortOrder: currentSort.order, page: 1 });
     },
     [fetchSpecies, currentSort]
   );
@@ -53,12 +48,7 @@ export default function AdminSpeciesPage() {
 
   const handlePageChange = useCallback(
     (page: number) => {
-      fetchSpecies({
-        search: currentSearch,
-        sortBy: currentSort.field,
-        sortOrder: currentSort.order,
-        page,
-      });
+      fetchSpecies({ search: currentSearch, sortBy: currentSort.field, sortOrder: currentSort.order, page });
     },
     [fetchSpecies, currentSearch, currentSort]
   );
@@ -131,9 +121,7 @@ export default function AdminSpeciesPage() {
     <div className="space-y-8 p-4 lg:p-6">
       <section>
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">
-            {t("title")}
-          </h1>
+          <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">{t("title")}</h1>
           <Button onClick={() => router.push("/admin/species/new")}>
             <Icon icon="fa:plus" className="h-4 w-4" />
             {t("newSpecies")}

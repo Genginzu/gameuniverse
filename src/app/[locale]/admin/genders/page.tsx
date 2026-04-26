@@ -33,12 +33,7 @@ export default function AdminGendersPage() {
   const handleSearch = useCallback(
     (query: string) => {
       setCurrentSearch(query);
-      fetchGenders({
-        search: query,
-        sortBy: currentSort.field,
-        sortOrder: currentSort.order,
-        page: 1,
-      });
+      fetchGenders({ search: query, sortBy: currentSort.field, sortOrder: currentSort.order, page: 1 });
     },
     [fetchGenders, currentSort]
   );
@@ -53,12 +48,7 @@ export default function AdminGendersPage() {
 
   const handlePageChange = useCallback(
     (page: number) => {
-      fetchGenders({
-        search: currentSearch,
-        sortBy: currentSort.field,
-        sortOrder: currentSort.order,
-        page,
-      });
+      fetchGenders({ search: currentSearch, sortBy: currentSort.field, sortOrder: currentSort.order, page });
     },
     [fetchGenders, currentSearch, currentSort]
   );
@@ -131,9 +121,7 @@ export default function AdminGendersPage() {
     <div className="space-y-8 p-4 lg:p-6">
       <section>
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">
-            {t("title")}
-          </h1>
+          <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">{t("title")}</h1>
           <Button onClick={() => router.push("/admin/genders/new")}>
             <Icon icon="fa:plus" className="h-4 w-4" />
             {t("newGender")}

@@ -28,20 +28,9 @@ interface TranslationTableProps {
 }
 
 export function TranslationTable({
-  items,
-  pagination,
-  selectedIds,
-  onToggleSelect,
-  onSelectAll,
-  onClearSelection,
-  onTranslate,
-  onTranslateAndReview,
-  rowHref,
-  buildPageUrl,
-  buildSearchUrl,
-  currentSearch,
-  isLoading,
-  translatingIds,
+  items, pagination, selectedIds, onToggleSelect, onSelectAll, onClearSelection,
+  onTranslate, onTranslateAndReview, rowHref, buildPageUrl, buildSearchUrl,
+  currentSearch, isLoading, translatingIds,
 }: TranslationTableProps) {
   const t = useTranslations("admin.translations");
   const router = useRouter();
@@ -66,20 +55,11 @@ export function TranslationTable({
     <div className="glass-card overflow-hidden rounded-2xl">
       <div className="flex flex-col gap-3 border-b border-white/10 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative max-w-xs flex-1">
-          <Icon
-            icon="mdi:magnify"
-            className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-gray-400"
-          />
-          <input
-            type="text"
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder={t("table.searchPlaceholder")}
-            className="glass-input w-full rounded-lg py-2 pr-3 pl-9 text-sm"
-          />
+          <Icon icon="mdi:magnify" className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-gray-400" />
+          <input type="text" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} onKeyDown={handleKeyDown} placeholder={t("table.searchPlaceholder")} className="glass-input w-full rounded-lg py-2 pr-3 pl-9 text-sm" />
         </div>
         <div className="flex items-center gap-2">
+          {hasSelection && <span className="mr-1 text-xs text-gray-500 dark:text-gray-400">{t("table.selected", { count: selectedIds.size })}</span>}
           {hasSelection && (
             <span className="mr-1 text-xs text-gray-500 dark:text-gray-400">
               {t("table.selected", { count: selectedIds.size })}
@@ -130,16 +110,7 @@ export function TranslationTable({
             {isLoading
               ? Array.from({ length: 5 }).map((_, i) => <TranslationSkeletonRow key={i} />)
               : items.map((item) => (
-                  <TranslationTableRow
-                    key={item.entityId}
-                    item={item}
-                    isSelected={selectedIds.has(item.entityId)}
-                    isTranslating={translatingIds.has(item.entityId)}
-                    href={rowHref(item)}
-                    onToggleSelect={onToggleSelect}
-                    onTranslate={onTranslate}
-                    onTranslateAndReview={onTranslateAndReview}
-                  />
+                  <TranslationTableRow key={item.entityId} item={item} isSelected={selectedIds.has(item.entityId)} isTranslating={translatingIds.has(item.entityId)} href={rowHref(item)} onToggleSelect={onToggleSelect} onTranslate={onTranslate} onTranslateAndReview={onTranslateAndReview} />
                 ))}
           </tbody>
         </table>
@@ -147,8 +118,7 @@ export function TranslationTable({
 
       {!isLoading && items.length === 0 && (
         <div className="flex flex-col items-center justify-center py-12 text-gray-500 dark:text-gray-400">
-          <Icon icon="mdi:translate-off" className="mb-3 size-10 opacity-40" />
-          <p className="text-sm">{t("table.noResults")}</p>
+          <Icon icon="mdi:translate-off" className="mb-3 size-10 opacity-40" /><p className="text-sm">{t("table.noResults")}</p>
         </div>
       )}
 

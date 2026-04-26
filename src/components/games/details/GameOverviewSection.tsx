@@ -15,21 +15,14 @@ interface GameOverviewSectionProps {
   getMetascoreColor: (score?: number) => string;
 }
 
-export function GameOverviewSection({
-  game,
-  colors,
-  formatReleaseDate,
-  getMetascoreColor,
-}: GameOverviewSectionProps) {
+export function GameOverviewSection({ game, colors, formatReleaseDate, getMetascoreColor }: GameOverviewSectionProps) {
   const t = useTranslations();
   const tDetails = useTranslations("gameDetails");
   const textStyle = { color: colors.textColor };
 
   return (
     <div>
-      <h2 className="mb-6 text-2xl font-bold" style={textStyle}>
-        {tDetails("overview")}
-      </h2>
+      <h2 className="mb-6 text-2xl font-bold" style={textStyle}>{tDetails("overview")}</h2>
       <div className="grid grid-cols-1 items-start gap-4 md:grid-cols-2 lg:grid-cols-4">
         <OverviewInfoCard
           icon="lucide:users"
@@ -38,17 +31,9 @@ export function GameOverviewSection({
           labelColor={colors.labelColor}
         >
           <div className="space-y-1">
-            {game.companies?.developers?.length > 0 ? (
-              game.companies.developers.map((dev) => (
-                <div key={dev.id} className="font-medium" style={textStyle}>
-                  {dev.name}
-                </div>
-              ))
-            ) : (
-              <div className="font-medium" style={textStyle}>
-                {game.developer}
-              </div>
-            )}
+            {game.companies?.developers?.length > 0
+              ? game.companies.developers.map((dev) => <div key={dev.id} className="font-medium" style={textStyle}>{dev.name}</div>)
+              : <div className="font-medium" style={textStyle}>{game.developer}</div>}
           </div>
         </OverviewInfoCard>
 
@@ -60,17 +45,9 @@ export function GameOverviewSection({
             labelColor={colors.labelColor}
           >
             <div className="space-y-1">
-              {game.companies?.publishers?.length > 0 ? (
-                game.companies.publishers.map((pub) => (
-                  <div key={pub.id} className="font-medium" style={textStyle}>
-                    {pub.name}
-                  </div>
-                ))
-              ) : (
-                <div className="font-medium" style={textStyle}>
-                  {game.publisher}
-                </div>
-              )}
+              {game.companies?.publishers?.length > 0
+                ? game.companies.publishers.map((pub) => <div key={pub.id} className="font-medium" style={textStyle}>{pub.name}</div>)
+                : <div className="font-medium" style={textStyle}>{game.publisher}</div>}
             </div>
           </OverviewInfoCard>
         )}

@@ -33,12 +33,7 @@ export default function AdminRolesPage() {
   const handleSearch = useCallback(
     (query: string) => {
       setCurrentSearch(query);
-      fetchRoles({
-        search: query,
-        sortBy: currentSort.field,
-        sortOrder: currentSort.order,
-        page: 1,
-      });
+      fetchRoles({ search: query, sortBy: currentSort.field, sortOrder: currentSort.order, page: 1 });
     },
     [fetchRoles, currentSort]
   );
@@ -53,12 +48,7 @@ export default function AdminRolesPage() {
 
   const handlePageChange = useCallback(
     (page: number) => {
-      fetchRoles({
-        search: currentSearch,
-        sortBy: currentSort.field,
-        sortOrder: currentSort.order,
-        page,
-      });
+      fetchRoles({ search: currentSearch, sortBy: currentSort.field, sortOrder: currentSort.order, page });
     },
     [fetchRoles, currentSearch, currentSort]
   );
@@ -131,9 +121,7 @@ export default function AdminRolesPage() {
     <div className="space-y-8 p-4 lg:p-6">
       <section>
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">
-            {t("title")}
-          </h1>
+          <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">{t("title")}</h1>
           <Button onClick={() => router.push("/admin/roles/new")}>
             <Icon icon="fa:plus" className="h-4 w-4" />
             {t("newRole")}

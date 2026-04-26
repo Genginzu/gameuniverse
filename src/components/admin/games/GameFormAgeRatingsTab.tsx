@@ -13,32 +13,17 @@ interface AgeRatingsTabProps extends GameFormTabProps {
   contentDescriptors: ContentDescriptor[];
 }
 
-export function GameFormAgeRatingsTab({
-  form,
-  ratings,
-  contentDescriptors,
-  t,
-  isIgdbField,
-}: AgeRatingsTabProps) {
+export function GameFormAgeRatingsTab({ form, ratings, contentDescriptors, t, isIgdbField }: AgeRatingsTabProps) {
   const [showPicker, setShowPicker] = useState(false);
   const watchedRatings = form.watch("age_ratings");
 
   const assignedIds = watchedRatings.map((r) => r.rating_id);
-  const assignedRatings = assignedIds
-    .map((id) => ratings.find((r) => r.id === id))
-    .filter(Boolean) as Rating[];
+  const assignedRatings = assignedIds.map((id) => ratings.find((r) => r.id === id)).filter(Boolean) as Rating[];
   const availableRatings = ratings.filter((r) => !assignedIds.includes(r.id));
 
   const addRating = (ratingId: string) => {
     const current = form.getValues("age_ratings");
-    form.setValue(
-      "age_ratings",
-      [
-        ...current,
-        { rating_id: ratingId, is_primary: current.length === 0, content_descriptors: [] },
-      ],
-      { shouldValidate: true }
-    );
+    form.setValue("age_ratings", [...current, { rating_id: ratingId, is_primary: current.length === 0, content_descriptors: [] }], { shouldValidate: true });
     setShowPicker(false);
   };
 
@@ -51,29 +36,16 @@ export function GameFormAgeRatingsTab({
 
   const setPrimary = (ratingId: string) => {
     const current = form.getValues("age_ratings");
-    form.setValue(
-      "age_ratings",
-      current.map((r) => ({ ...r, is_primary: r.rating_id === ratingId })),
-      { shouldValidate: true }
-    );
+    form.setValue("age_ratings", current.map((r) => ({ ...r, is_primary: r.rating_id === ratingId })), { shouldValidate: true });
   };
 
   const toggleDescriptor = (ratingId: string, descriptorId: string) => {
     const current = form.getValues("age_ratings");
-    form.setValue(
-      "age_ratings",
-      current.map((r) => {
-        if (r.rating_id !== ratingId) return r;
-        const has = r.content_descriptors.includes(descriptorId);
-        return {
-          ...r,
-          content_descriptors: has
-            ? r.content_descriptors.filter((d) => d !== descriptorId)
-            : [...r.content_descriptors, descriptorId],
-        };
-      }),
-      { shouldValidate: true }
-    );
+    form.setValue("age_ratings", current.map((r) => {
+      if (r.rating_id !== ratingId) return r;
+      const has = r.content_descriptors.includes(descriptorId);
+      return { ...r, content_descriptors: has ? r.content_descriptors.filter((d) => d !== descriptorId) : [...r.content_descriptors, descriptorId] };
+    }), { shouldValidate: true });
   };
 
   const getDescriptorsForRating = (rating: Rating) => {
@@ -89,9 +61,7 @@ export function GameFormAgeRatingsTab({
         </div>
       )}
       {assignedRatings.length === 0 ? (
-        <p className="py-6 text-center text-sm text-gray-400 dark:text-gray-500">
-          {t("noAgeRatings") ?? "Aucune classification d'âge"}
-        </p>
+        <p className="py-6 text-center text-sm text-gray-400 dark:text-gray-500">{t("noAgeRatings") ?? "Aucune classification d'âge"}</p>
       ) : (
         <div className="space-y-4">
           {assignedRatings.map((rating) => (
@@ -106,24 +76,14 @@ export function GameFormAgeRatingsTab({
                 t={t}
               />
               <div className="lg:self-start">
-                <SingleAgeRatingPreview
-                  form={form}
-                  ratingId={rating.id}
-                  ratings={ratings}
-                  contentDescriptors={contentDescriptors}
-                />
+                <SingleAgeRatingPreview form={form} ratingId={rating.id} ratings={ratings} contentDescriptors={contentDescriptors} />
               </div>
             </div>
           ))}
         </div>
       )}
       {showPicker ? (
-        <AgeRatingPicker
-          availableRatings={availableRatings}
-          onSelect={addRating}
-          onClose={() => setShowPicker(false)}
-          t={t}
-        />
+        <AgeRatingPicker availableRatings={availableRatings} onSelect={addRating} onClose={() => setShowPicker(false)} t={t} />
       ) : (
         <Button
           type="button"

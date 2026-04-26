@@ -32,11 +32,7 @@ export interface CharacterFormProps {
 }
 
 const TABS: CharacterTab[] = [
-  {
-    id: "general",
-    icon: <Icon icon="fa:info-circle" className="h-3.5 w-3.5" />,
-    labelKey: "generalInfo",
-  },
+  { id: "general", icon: <Icon icon="fa:info-circle" className="h-3.5 w-3.5" />, labelKey: "generalInfo" },
   { id: "images", icon: <Icon icon="fa:image" className="h-3.5 w-3.5" />, labelKey: "images" },
   {
     id: "translations",
@@ -47,36 +43,16 @@ const TABS: CharacterTab[] = [
   { id: "gender", icon: <Icon icon="lucide:user" className="h-3.5 w-3.5" />, labelKey: "gender" },
   { id: "species", icon: <Icon icon="lucide:dna" className="h-3.5 w-3.5" />, labelKey: "species" },
   { id: "games", icon: <Icon icon="fa:gamepad" className="h-3.5 w-3.5" />, labelKey: "games" },
-  {
-    id: "relationships",
-    icon: <Icon icon="fa:users" className="h-3.5 w-3.5" />,
-    labelKey: "relationships",
-  },
-  {
-    id: "screenshots",
-    icon: <Icon icon="fa:camera" className="h-3.5 w-3.5" />,
-    labelKey: "screenshots",
-  },
-  {
-    id: "artwork",
-    icon: <Icon icon="fa:paint-brush" className="h-3.5 w-3.5" />,
-    labelKey: "artwork",
-  },
+  { id: "relationships", icon: <Icon icon="fa:users" className="h-3.5 w-3.5" />, labelKey: "relationships" },
+  { id: "screenshots", icon: <Icon icon="fa:camera" className="h-3.5 w-3.5" />, labelKey: "screenshots" },
+  { id: "artwork", icon: <Icon icon="fa:paint-brush" className="h-3.5 w-3.5" />, labelKey: "artwork" },
   { id: "videos", icon: <Icon icon="fa:video" className="h-3.5 w-3.5" />, labelKey: "videos" },
   { id: "sync", icon: <Icon icon="fa:sync" className="h-3.5 w-3.5" />, labelKey: "sync" },
 ];
 
 export function CharacterForm({
-  mode,
-  form,
-  availableGames,
-  availableCharacters,
-  availableRoles,
-  loadingOptions,
-  onSubmit,
-  isSubmitting,
-  currentCharacterId,
-  igdbId,
+  mode, form, availableGames, availableCharacters, availableRoles,
+  loadingOptions, onSubmit, isSubmitting, currentCharacterId, igdbId,
 }: CharacterFormProps) {
   const t = useTranslations("admin.characters.form");
   const tCommon = useTranslations("common");
@@ -91,14 +67,7 @@ export function CharacterForm({
       if (missing.length > 0) {
         form.setValue("translations", [
           ...currentTranslations,
-          ...missing.map((l) => ({
-            language_code: l.code,
-            name: "",
-            role: "",
-            description: "",
-            biography: "",
-            weapons: "",
-          })),
+          ...missing.map((l) => ({ language_code: l.code, name: "", role: "", description: "", biography: "", weapons: "" })),
         ]);
       }
     }
@@ -115,13 +84,7 @@ export function CharacterForm({
     );
   }
 
-  const tabLabel = (tab: CharacterTab) => {
-    try {
-      return t(tab.labelKey);
-    } catch {
-      return tab.id;
-    }
-  };
+  const tabLabel = (tab: CharacterTab) => { try { return t(tab.labelKey); } catch { return tab.id; } };
 
   const navigateToErrorTab = () => {
     const errors = form.formState.errors;
@@ -143,11 +106,7 @@ export function CharacterForm({
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit, () => navigateToErrorTab())}
-        className="space-y-5 pb-24"
-        noValidate
-      >
+      <form onSubmit={form.handleSubmit(onSubmit, () => navigateToErrorTab())} className="space-y-5 pb-24" noValidate>
         <CharacterHeroBanner form={form} t={t} />
         <CharacterTabNavigation
           tabs={visibleTabs}
@@ -157,17 +116,7 @@ export function CharacterForm({
           tabLabel={tabLabel}
         />
         <div className="rounded-2xl border border-gray-200/60 bg-white p-6 shadow-xs dark:border-gray-700/40 dark:bg-gray-800/60">
-          <CharacterFormTabContent
-            activeTab={activeTab}
-            mode={mode}
-            form={form}
-            t={t}
-            availableGames={availableGames}
-            availableCharacters={availableCharacters}
-            availableRoles={availableRoles}
-            currentCharacterId={currentCharacterId}
-            characterIgdbId={igdbId}
-          />
+          <CharacterFormTabContent activeTab={activeTab} mode={mode} form={form} t={t} availableGames={availableGames} availableCharacters={availableCharacters} availableRoles={availableRoles} currentCharacterId={currentCharacterId} characterIgdbId={igdbId} />
         </div>
         <CharacterStickySubmitBar
           tabs={visibleTabs}

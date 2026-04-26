@@ -31,18 +31,7 @@ function getPlatformName(platform: AdminPlatform, locale: string): string {
   return platform.translations[0]?.name ?? platform.slug;
 }
 
-export function PlatformList({
-  platforms,
-  pagination,
-  onPageChange,
-  onSearch,
-  onSort,
-  onEdit,
-  onDelete,
-  isLoading,
-  currentSort,
-  currentSearch = "",
-}: PlatformListProps) {
+export function PlatformList({ platforms, pagination, onPageChange, onSearch, onSort, onEdit, onDelete, isLoading, currentSort, currentSearch = "" }: PlatformListProps) {
   const t = useTranslations("admin.platforms");
   const locale = useLocale();
 
@@ -131,17 +120,11 @@ export function PlatformList({
                 {platforms.map((platform) => {
                   const name = getPlatformName(platform, locale);
                   return (
-                    <tr
-                      key={platform.id}
-                      className="cursor-pointer transition-all hover:bg-white/60 dark:hover:bg-slate-700/60"
-                      onClick={() => onEdit(platform)}
-                    >
-                      <td className="px-4 py-3 font-mono text-sm text-gray-900 dark:text-white">
-                        {platform.slug}
-                      </td>
-                      <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">
-                        {name}
-                      </td>
+                    <tr key={platform.id} className="cursor-pointer transition-all hover:bg-white/60 dark:hover:bg-slate-700/60" onClick={() => onEdit(platform)}>
+                      <td className="px-4 py-3 font-mono text-sm text-gray-900 dark:text-white">{platform.slug}</td>
+                      <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">{name}</td>
+                      <td className="px-4 py-3">{platform.iconUrl ? <Image src={platform.iconUrl} alt={name} width={24} height={24} className="h-6 w-6 rounded object-contain" /> : <span className="text-gray-400">—</span>}</td>
+                      <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{t("gameCount", { count: platform.gameCount })}</td>
                       <td className="px-4 py-3">
                         {platform.iconUrl ? (
                           <Image

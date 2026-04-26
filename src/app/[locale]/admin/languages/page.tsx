@@ -48,12 +48,7 @@ export default function AdminLanguagesPage() {
   const handleSearch = useCallback(
     (query: string) => {
       setCurrentSearch(query);
-      fetchLanguages({
-        search: query,
-        sortBy: currentSort.field,
-        sortOrder: currentSort.order,
-        page: 1,
-      });
+      fetchLanguages({ search: query, sortBy: currentSort.field, sortOrder: currentSort.order, page: 1 });
     },
     [fetchLanguages, currentSort]
   );
@@ -68,12 +63,7 @@ export default function AdminLanguagesPage() {
 
   const handlePageChange = useCallback(
     (page: number) => {
-      fetchLanguages({
-        search: currentSearch,
-        sortBy: currentSort.field,
-        sortOrder: currentSort.order,
-        page,
-      });
+      fetchLanguages({ search: currentSearch, sortBy: currentSort.field, sortOrder: currentSort.order, page });
     },
     [fetchLanguages, currentSearch, currentSort]
   );
@@ -128,16 +118,7 @@ export default function AdminLanguagesPage() {
     } finally {
       setIsDeleting(false);
     }
-  }, [
-    languageToDelete,
-    usageCount,
-    deleteLanguage,
-    fetchLanguages,
-    currentSearch,
-    currentSort,
-    pagination.currentPage,
-    t,
-  ]);
+  }, [languageToDelete, usageCount, deleteLanguage, fetchLanguages, currentSearch, currentSort, pagination.currentPage, t]);
 
   const handleDeleteClose = useCallback(() => {
     if (!isDeleting) setLanguageToDelete(null);
@@ -168,9 +149,7 @@ export default function AdminLanguagesPage() {
     <div className="space-y-8 p-4 lg:p-6">
       <section>
         <div className="mb-6 flex items-center justify-between">
-          <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">
-            {t("title")}
-          </h1>
+          <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">{t("title")}</h1>
           <Button onClick={() => router.push("/admin/languages/new")}>
             <Icon icon="fa:plus" className="h-4 w-4" />
             {t("newLanguage")}

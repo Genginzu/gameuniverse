@@ -18,14 +18,7 @@ interface PostCardProps {
   onDelete: (postId: string) => void;
 }
 
-export function PostCard({
-  post,
-  playerName,
-  playerAvatar,
-  locale,
-  isOwner,
-  onDelete,
-}: PostCardProps) {
+export function PostCard({ post, playerName, playerAvatar, locale, isOwner, onDelete }: PostCardProps) {
   const t = useTranslations("players.posts");
   const format = useFormatter();
   const [isDeleting, setIsDeleting] = useState(false);
@@ -40,12 +33,7 @@ export function PostCard({
 
   const handleDelete = async () => {
     setIsDeleting(true);
-    try {
-      await onDelete(post.id);
-    } finally {
-      setIsDeleting(false);
-      setShowMenu(false);
-    }
+    try { await onDelete(post.id); } finally { setIsDeleting(false); setShowMenu(false); }
   };
 
   return (
@@ -69,14 +57,8 @@ export function PostCard({
             )}
           </div>
           <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">
-              {displayName}
-            </p>
-            <time
-              dateTime={post.createdAt}
-              className="text-xs text-gray-400 dark:text-slate-500"
-              suppressHydrationWarning
-            >
+            <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">{displayName}</p>
+            <time dateTime={post.createdAt} className="text-xs text-gray-400 dark:text-slate-500" suppressHydrationWarning>
               {relativeDate}
             </time>
           </div>
@@ -99,14 +81,7 @@ export function PostCard({
       <div className="pl-[52px]">
         {post.imageUrl && !imageError && (
           <div className="relative mb-3 aspect-video w-full overflow-hidden rounded-xl">
-            <Image
-              src={post.imageUrl}
-              alt=""
-              fill
-              onError={() => setImageError(true)}
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 600px"
-            />
+            <Image src={post.imageUrl} alt="" fill onError={() => setImageError(true)} className="object-cover" sizes="(max-width: 768px) 100vw, 600px" />
           </div>
         )}
 

@@ -132,57 +132,17 @@ export function AdminGamesTable({
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
                 {games.map((game) => (
-                  <tr
-                    key={game.id}
-                    className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50"
-                    onClick={() => onEdit(game.id)}
-                  >
+                  <tr key={game.id} className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50" onClick={() => onEdit(game.id)}>
                     <td className="px-4 py-3">
-                      {game.coverImage ? (
-                        <Image
-                          src={game.coverImage}
-                          alt={game.title}
-                          width={40}
-                          height={40}
-                          className="h-10 w-10 rounded-lg object-cover"
-                        />
-                      ) : (
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700">
-                          <Icon icon="fa:image" className="h-4 w-4 text-gray-400" />
-                        </div>
-                      )}
+                      {game.coverImage ? <Image src={game.coverImage} alt={game.title} width={40} height={40} className="h-10 w-10 rounded-lg object-cover" /> : <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700"><Icon icon="fa:image" className="h-4 w-4 text-gray-400" /></div>}
                     </td>
-                    <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">
-                      {game.title}
-                    </td>
-                    <td className="hidden px-4 py-3 text-gray-500 sm:table-cell dark:text-gray-400">
-                      {formatDate(game.releaseDate)}
-                    </td>
-                    <td className="hidden px-4 py-3 text-gray-500 md:table-cell dark:text-gray-400">
-                      {formatDate(game.updatedAt)}
-                    </td>
+                    <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">{game.title}</td>
+                    <td className="hidden px-4 py-3 text-gray-500 sm:table-cell dark:text-gray-400">{formatDate(game.releaseDate)}</td>
+                    <td className="hidden px-4 py-3 text-gray-500 md:table-cell dark:text-gray-400">{formatDate(game.updatedAt)}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => onEdit(game.id)}
-                          aria-label={t("editGame", { title: game.title })}
-                          className="min-h-[44px] min-w-[44px]"
-                        >
-                          <Icon icon="fa:edit" className="h-4 w-4" />
-                        </Button>
-                        {canDelete && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => onDelete(game)}
-                            aria-label={t("deleteGame", { title: game.title })}
-                            className="min-h-[44px] min-w-[44px] text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
-                          >
-                            <Icon icon="fa:trash" className="h-4 w-4" />
-                          </Button>
-                        )}
+                        <Button variant="ghost" size="sm" onClick={() => onEdit(game.id)} aria-label={t("editGame", { title: game.title })} className="min-h-[44px] min-w-[44px]"><Icon icon="fa:edit" className="h-4 w-4" /></Button>
+                        {canDelete && <Button variant="ghost" size="sm" onClick={() => onDelete(game)} aria-label={t("deleteGame", { title: game.title })} className="min-h-[44px] min-w-[44px] text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"><Icon icon="fa:trash" className="h-4 w-4" /></Button>}
                       </div>
                     </td>
                   </tr>

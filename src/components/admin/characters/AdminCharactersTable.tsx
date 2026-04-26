@@ -26,19 +26,7 @@ export interface AdminCharactersTableProps {
 
 type SortField = "name" | "role" | "updated_at";
 
-export function AdminCharactersTable({
-  characters,
-  pagination,
-  onPageChange,
-  onSearch,
-  onSort,
-  onEdit,
-  onDelete,
-  canDelete,
-  isLoading,
-  currentSort,
-  currentSearch = "",
-}: AdminCharactersTableProps) {
+export function AdminCharactersTable({ characters, pagination, onPageChange, onSearch, onSort, onEdit, onDelete, canDelete, isLoading, currentSort, currentSearch = "" }: AdminCharactersTableProps) {
   const t = useTranslations("admin.characters");
 
   const handleSortClick = (field: SortField) => {
@@ -48,21 +36,10 @@ export function AdminCharactersTable({
 
   const renderSortIcon = (field: SortField) => {
     if (currentSort?.field !== field) return <Icon icon="fa:sort" className="h-3 w-3 opacity-40" />;
-    return currentSort.order === "asc" ? (
-      <Icon icon="fa:sort-up" className="h-3 w-3" />
-    ) : (
-      <Icon icon="fa:sort-down" className="h-3 w-3" />
-    );
+    return currentSort.order === "asc" ? <Icon icon="fa:sort-up" className="h-3 w-3" /> : <Icon icon="fa:sort-down" className="h-3 w-3" />;
   };
 
-  const formatDate = (dateStr: string | null) => {
-    if (!dateStr) return "—";
-    try {
-      return new Date(dateStr).toLocaleDateString();
-    } catch {
-      return "—";
-    }
-  };
+  const formatDate = (dateStr: string | null) => { if (!dateStr) return "—"; try { return new Date(dateStr).toLocaleDateString(); } catch { return "—"; } };
 
   return (
     <div className="space-y-4">
@@ -79,9 +56,7 @@ export function AdminCharactersTable({
       {isLoading ? (
         <AdminTableSkeleton columns={5} rows={8} showImage />
       ) : characters.length === 0 ? (
-        <div className="rounded-xl border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800">
-          <p className="text-gray-500 dark:text-gray-400">{t("noCharacters")}</p>
-        </div>
+        <div className="rounded-xl border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800"><p className="text-gray-500 dark:text-gray-400">{t("noCharacters")}</p></div>
       ) : (
         <>
           <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
@@ -140,38 +115,14 @@ export function AdminCharactersTable({
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
                 {characters.map((character) => (
-                  <tr
-                    key={character.id}
-                    className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50"
-                    onClick={() => onEdit(character.id)}
-                  >
+                  <tr key={character.id} className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800/50" onClick={() => onEdit(character.id)}>
                     <td className="px-4 py-3">
-                      {character.mainImage ? (
-                        <Image
-                          src={character.mainImage}
-                          alt={character.name}
-                          width={40}
-                          height={40}
-                          className="h-10 w-10 rounded-lg object-cover"
-                        />
-                      ) : (
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700">
-                          <Icon icon="fa:image" className="h-4 w-4 text-gray-400" />
-                        </div>
-                      )}
+                      {character.mainImage ? <Image src={character.mainImage} alt={character.name} width={40} height={40} className="h-10 w-10 rounded-lg object-cover" /> : <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700"><Icon icon="fa:image" className="h-4 w-4 text-gray-400" /></div>}
                     </td>
-                    <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">
-                      {character.name}
-                    </td>
-                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400">
-                      {character.role ?? "—"}
-                    </td>
-                    <td className="hidden px-4 py-3 text-gray-500 sm:table-cell dark:text-gray-400">
-                      {character.primaryGame || "—"}
-                    </td>
-                    <td className="hidden px-4 py-3 text-gray-500 md:table-cell dark:text-gray-400">
-                      {formatDate(character.updatedAt)}
-                    </td>
+                    <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">{character.name}</td>
+                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{character.role ?? "—"}</td>
+                    <td className="hidden px-4 py-3 text-gray-500 sm:table-cell dark:text-gray-400">{character.primaryGame || "—"}</td>
+                    <td className="hidden px-4 py-3 text-gray-500 md:table-cell dark:text-gray-400">{formatDate(character.updatedAt)}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
                         <Button

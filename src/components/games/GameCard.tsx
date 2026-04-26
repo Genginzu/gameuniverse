@@ -36,19 +36,13 @@ export function GameCard({
   onRemovedFromLibrary,
 }: GameCardProps) {
   const { user } = useAuth();
-  const { inLibrary, loading, adding, addToLibrary, removeFromLibrary } = useGameLibraryStatus(
-    game.id
-  );
+  const { inLibrary, loading, adding, addToLibrary, removeFromLibrary } = useGameLibraryStatus(game.id);
   const t = useTranslations("game");
 
   const formatReleaseDate = (dateString?: string) => {
     if (!dateString) return null;
     const date = new Date(dateString);
-    return new Intl.DateTimeFormat(locale, {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    }).format(date);
+    return new Intl.DateTimeFormat(locale, { year: "numeric", month: "long", day: "numeric" }).format(date);
   };
 
   const getMetascoreColor = (score?: number) => {
@@ -96,10 +90,7 @@ export function GameCard({
               aria-label={inLibrary ? t("removeFromLibrary") : t("addToLibrary")}
             >
               {adding ? (
-                <Icon
-                  icon="svg-spinners:ring-resize"
-                  className="h-6 w-6 text-white drop-shadow-lg"
-                />
+                <Icon icon="svg-spinners:ring-resize" className="h-6 w-6 text-white drop-shadow-lg" />
               ) : inLibrary ? (
                 <Icon icon="fa:heart" className="h-6 w-6 text-red-500 drop-shadow-lg" />
               ) : (

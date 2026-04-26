@@ -39,12 +39,20 @@ export function GlobalSyncTab({ downloadState, startDownload, stopDownload }: Gl
       <div className="glass-card rounded-xl p-4 md:p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h3 className="text-base font-semibold text-gray-900 sm:text-lg dark:text-white">
-              {t("downloadTitle")}
-            </h3>
-            <p className="mt-1 text-xs text-gray-500 sm:text-sm dark:text-gray-400">
-              {t("downloadDescription")}
-            </p>
+            <h3 className="text-base font-semibold text-gray-900 sm:text-lg dark:text-white">{t("downloadTitle")}</h3>
+            <p className="mt-1 text-xs text-gray-500 sm:text-sm dark:text-gray-400">{t("downloadDescription")}</p>
+          </div>
+          <div className="flex w-full gap-2 sm:w-auto">
+            <Button onClick={startDownload} disabled={downloadState.isDownloading} className="flex-1 sm:flex-initial">
+              <Icon icon={downloadState.isDownloading ? "svg-spinners:ring-resize" : "lucide:download"} className="mr-2 size-4" />
+              {downloadState.isDownloading ? t("downloading") : t("startDownload")}
+            </Button>
+            {downloadState.isDownloading && (
+              <Button variant="outline" onClick={stopDownload} className="shrink-0">
+                <Icon icon="lucide:square" className="mr-2 size-4" />
+                {t("stop")}
+              </Button>
+            )}
           </div>
           <div className="flex w-full gap-2 sm:w-auto">
             <Button
@@ -89,16 +97,8 @@ export function GlobalSyncTab({ downloadState, startDownload, stopDownload }: Gl
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="flex flex-1 gap-2">
-          <Input
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder={t("searchPlaceholder")}
-            className="text-base sm:text-sm"
-          />
-          <Button variant="outline" onClick={handleSearch} className="shrink-0">
-            <Icon icon="fa:search" className="size-4" />
-          </Button>
+          <Input value={searchInput} onChange={(e) => setSearchInput(e.target.value)} onKeyDown={handleKeyDown} placeholder={t("searchPlaceholder")} className="text-base sm:text-sm" />
+          <Button variant="outline" onClick={handleSearch} className="shrink-0"><Icon icon="fa:search" className="size-4" /></Button>
         </div>
         <div className="flex gap-2">
           {(["all", "matched", "unmatched"] as const).map((f) => (
@@ -121,16 +121,9 @@ export function GlobalSyncTab({ downloadState, startDownload, stopDownload }: Gl
       </div>
 
       {isLoading ? (
-        <div className="space-y-2">
-          {Array.from({ length: 10 }).map((_, i) => (
-            <Skeleton key={i} className="h-16 w-full rounded-xl" />
-          ))}
-        </div>
+        <div className="space-y-2">{Array.from({ length: 10 }).map((_, i) => <Skeleton key={i} className="h-16 w-full rounded-xl" />)}</div>
       ) : entries.length === 0 ? (
-        <div className="glass-card flex flex-col items-center justify-center rounded-xl p-8 text-center">
-          <Icon icon="lucide:database" className="mb-3 size-10 text-gray-400" />
-          <p className="text-sm text-gray-500 dark:text-gray-400">{t("noEntries")}</p>
-        </div>
+        <div className="glass-card flex flex-col items-center justify-center rounded-xl p-8 text-center"><Icon icon="lucide:database" className="mb-3 size-10 text-gray-400" /><p className="text-sm text-gray-500 dark:text-gray-400">{t("noEntries")}</p></div>
       ) : (
         <div className="space-y-2">
           {entries.map((entry) => (

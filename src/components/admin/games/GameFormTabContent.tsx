@@ -4,16 +4,7 @@ import { Suspense } from "react";
 import { type UseFormReturn } from "react-hook-form";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
-import type {
-  AdminGenre,
-  Company,
-  Rating,
-  ContentDescriptor,
-  TabId,
-  TrackableField,
-  AdminStore,
-  AdminCurrency,
-} from "@/types/admin-games";
+import type { AdminGenre, Company, Rating, ContentDescriptor, TabId, TrackableField, AdminStore, AdminCurrency } from "@/types/admin-games";
 import type { SupportedLanguage } from "@/types/admin-languages";
 import {
   GameFormDesignTab,
@@ -34,11 +25,7 @@ import {
 } from "./GameFormLazyTabs";
 
 function TabFallback() {
-  return (
-    <div className="flex justify-center py-8">
-      <LoadingSpinner size="sm" />
-    </div>
-  );
+  return <div className="flex justify-center py-8"><LoadingSpinner size="sm" /></div>;
 }
 
 interface GameFormTabContentProps {
@@ -65,26 +52,9 @@ interface GameFormTabContentProps {
 }
 
 export function GameFormTabContent({
-  activeTab,
-  mode,
-  form,
-  t,
-  genres,
-  companies,
-  ratings,
-  contentDescriptors,
-  supportedLanguages,
-  stores,
-  currencies,
-  platforms,
-  gamePlatforms,
-  toggleGenre,
-  toggleCompany,
-  togglePlatform,
-  isIgdbField,
-  gameId,
-  igdbId,
-  onSyncComplete,
+  activeTab, mode, form, t, genres, companies, ratings, contentDescriptors,
+  supportedLanguages, stores, currencies, platforms, gamePlatforms,
+  toggleGenre, toggleCompany, togglePlatform, isIgdbField, gameId, igdbId, onSyncComplete,
 }: GameFormTabContentProps) {
   const renderTab = () => {
     switch (activeTab) {

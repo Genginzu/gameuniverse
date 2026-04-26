@@ -81,20 +81,12 @@ export function WebhookEventList({
           onRefresh?.();
         } else {
           const body = await res.json().catch(() => ({}));
-          toast({
-            title: t("importFailed", { id: igdbId }),
-            description: body.error,
-            variant: "destructive",
-          });
+          toast({ title: t("importFailed", { id: igdbId }), description: body.error, variant: "destructive" });
         }
       } catch {
         toast({ title: t("importFailed", { id: igdbId }), variant: "destructive" });
       } finally {
-        setImportingIds((prev) => {
-          const next = new Set(prev);
-          next.delete(igdbId);
-          return next;
-        });
+        setImportingIds((prev) => { const next = new Set(prev); next.delete(igdbId); return next; });
       }
     },
     [t, onRefresh]
@@ -119,14 +111,7 @@ export function WebhookEventList({
       for (let i = 0; i < igdbIds.length; i++) {
         const igdbId = igdbIds[i];
         const delay = i * 1000;
-        promises.push(
-          new Promise<void>((resolve) => {
-            setTimeout(async () => {
-              await handleImport(igdbId);
-              resolve();
-            }, delay);
-          })
-        );
+        promises.push(new Promise<void>((resolve) => { setTimeout(async () => { await handleImport(igdbId); resolve(); }, delay); }));
       }
       await Promise.all(promises);
       toast({ title: t("importAllDone", { count: igdbIds.length }), variant: "success" });
@@ -172,21 +157,11 @@ export function WebhookEventList({
         <table className="w-full text-left text-sm">
           <thead className="border-b border-gray-200 bg-gray-50/50 dark:border-gray-700 dark:bg-gray-800/50">
             <tr>
-              <th className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400">
-                {t("columns.event")}
-              </th>
-              <th className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400">
-                {t("columns.entity")}
-              </th>
-              <th className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400">
-                {t("columns.igdbId")}
-              </th>
-              <th className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400">
-                {t("columns.status")}
-              </th>
-              <th className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400">
-                {t("columns.date")}
-              </th>
+              <th className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400">{t("columns.event")}</th>
+              <th className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400">{t("columns.entity")}</th>
+              <th className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400">{t("columns.igdbId")}</th>
+              <th className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400">{t("columns.status")}</th>
+              <th className="px-4 py-3 font-medium text-gray-500 dark:text-gray-400">{t("columns.date")}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
