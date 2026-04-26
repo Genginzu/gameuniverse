@@ -79,17 +79,19 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
           </div>
 
           <GameFilters
-            genres={genres}
-            platforms={[]}
-            selectedGenres={selectedGenres}
-            selectedPublishers={selectedPublishers}
-            selectedPlatforms={[]}
-            onGenreChange={handleGenreFilter}
-            onPublisherChange={handlePublisherFilter}
-            onPlatformsChange={() => {}}
-            onClearFilters={handleClearFilters}
-            showAllGenres={showFilters}
-          />
+                      genres={genres}
+                      platforms={[]}
+                      selectedGenres={selectedGenres}
+                      selectedPublishers={selectedPublishers}
+                      selectedPlatforms={[]}
+                      esportFilter={null}
+                      onGenreChange={handleGenreFilter}
+                      onPublisherChange={handlePublisherFilter}
+                      onPlatformsChange={() => {}}
+                      onEsportChange={() => {}}
+                      onClearFilters={handleClearFilters}
+                      showAllGenres={showFilters}
+                    />
         </div>
 
         {/* Loading state lors d'un changement de filtre/page */}

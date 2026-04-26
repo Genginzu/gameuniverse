@@ -98,8 +98,8 @@ export function useGameForm(
       music_spotify_embed_url: "",
       music_youtube_video_url: "",
       game_platforms: [],
+      is_esport: false,
     },
-    is_esport: false,
   });
 
   useEffect(() => {

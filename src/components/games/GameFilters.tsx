@@ -110,7 +110,7 @@ export function GameFilters({
 
       {showAllGenres && (
         <>
-          <FilterSection title={t("esportSection")} loading={false}>
+          <FilterSection title={t("esportSection")} availableLabel="" loading={false}>
             <FilterChip
               label={t("esportOnly")}
               selected={esportFilter === true}

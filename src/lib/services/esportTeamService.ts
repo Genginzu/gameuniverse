@@ -96,8 +96,8 @@ export async function getTeamDetail(id: number): Promise<EsportTeamDetail> {
     const team = await getTeamById(id);
     const detail: EsportTeamDetail = {
       ...mapTeamSummary(team),
-      players: (team as Record<string, unknown>).players
-        ? ((team as Record<string, unknown>).players as Array<Record<string, unknown>>).map(
+      players: (team as unknown as Record<string, unknown>).players
+        ? ((team as unknown as Record<string, unknown>).players as Array<Record<string, unknown>>).map(
             (p) => ({
               id: p.id as number,
               name: p.name as string,
