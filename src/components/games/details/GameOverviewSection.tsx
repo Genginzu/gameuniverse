@@ -88,13 +88,13 @@ export function GameOverviewSection({
           </OverviewInfoCard>
         )}
 
-        {game.metascore && game.metascore > 0 && (
-          <OverviewInfoCard
-            icon="lucide:star"
-            label="Metascore"
-            accentColor={colors.accent}
-            labelColor={colors.labelColor}
-          >
+        <OverviewInfoCard
+          icon="lucide:star"
+          label="Metascore"
+          accentColor={colors.accent}
+          labelColor={colors.labelColor}
+        >
+          {game.metascore && game.metascore > 0 ? (
             <div className="flex items-center gap-2">
               <div
                 className={`${getMetascoreColor(game.metascore)} rounded-lg px-3 py-1 text-lg font-bold text-white`}
@@ -113,8 +113,10 @@ export function GameOverviewSection({
                         : tDetails("metascoreRatings.poor")}
               </div>
             </div>
-          </OverviewInfoCard>
-        )}
+          ) : (
+            <div className="text-lg font-bold" style={{ color: colors.textColor }}>—</div>
+          )}
+        </OverviewInfoCard>
 
         {game.pricing.length > 0 && (
           <OverviewInfoCard
