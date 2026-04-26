@@ -33,6 +33,7 @@ import {
 } from "./game-import/extras";
 import { fetchAndSavePlaytime, fetchGameDetails } from "./game-import/playtime";
 import { fetchAndSavePopularity } from "./game-import/popularity";
+import { fetchMetacriticScore } from "./metacriticService";
 
 export type { ImportResult } from "./game-import/types";
 
@@ -103,6 +104,15 @@ export class GameImportService {
 
       // Create all related data
       await this.createAllRelatedData(newGame.id, igdbGame, relatedEntities);
+
+
+      // Fetch metascore from Metacritic (best-effort, don't fail import)
+      try {
+        const mcScore = await fetchMetacriticScore(newGame.slug);
+        if (mcScore !== null) {
+          await supabase.from("games").update({ metascore: mcScore }).eq("id", newGame.id);
+        }
+      } catch { /* Metacritic fetch is best-effort */ }
 
       const gameDetails = await fetchGameDetails(newGame.slug);
       logger.info("IGDB import complete", { slug: newGame.slug, igdbId });
