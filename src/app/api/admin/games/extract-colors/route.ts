@@ -4,17 +4,17 @@ import { extractColorsFromCover } from "@/lib/utils/color-extraction";
 
 /**
  * POST /api/admin/games/extract-colors
- * Body: { coverUrl: string }
- * Returns extracted colors from the cover image.
+ * Body: { coverUrl: string, hueShift?: number }
+ * Returns extracted colors from the cover image, optionally with a hue shift.
  */
 export async function POST(request: NextRequest) {
   try {
     await requireAdmin();
-    const { coverUrl } = await request.json();
+    const { coverUrl, hueShift } = await request.json();
     if (!coverUrl) {
       return NextResponse.json({ error: "coverUrl is required" }, { status: 400 });
     }
-    const colors = await extractColorsFromCover(coverUrl);
+    const colors = await extractColorsFromCover(coverUrl, false, hueShift ?? 0);
     if (!colors) {
       return NextResponse.json({ error: "Failed to extract colors" }, { status: 422 });
     }

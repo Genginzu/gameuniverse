@@ -55,7 +55,7 @@ export async function extractColorsFromCover(
       return null;
     }
 
-    const colors = deriveGameColors(palette);
+    const colors = deriveGameColors(palette, hueShift);
 
     return colors;
   } catch (error) {
@@ -178,12 +178,15 @@ function getColorRange(pixels: RGB[]): { channel: 0 | 1 | 2; maxRange: number } 
  * - label: muted version of the vibrant hue
  * - text: near-white tinted slightly with the dominant hue
  */
-function deriveGameColors(palette: RGB[]): ExtractedGameColors {
+function deriveGameColors(palette: RGB[], hueShift = 0): ExtractedGameColors {
   const dominantHsl = rgbToHsl(palette[0]);
   const vibrant = findMostVibrant(palette);
   const vibrantHsl = rgbToHsl(vibrant);
 
-  const background = hslToRgb(vibrantHsl[0], clamp(vibrantHsl[1] * 0.5, 0.15, 0.45), 0.1);
+  const vh = (vibrantHsl[0] + hueShift / 360 + 1) % 1;
+  const dh = (dominantHsl[0] + hueShift / 360 + 1) % 1;
+
+  const background = hslToRgb(vh, clamp(vibrantHsl[1] * 0.5, 0.15, 0.45), 0.1);
 
   const accent = hslToRgb(
     vibrantHsl[0],
@@ -191,8 +194,8 @@ function deriveGameColors(palette: RGB[]): ExtractedGameColors {
     clamp(vibrantHsl[2], 0.45, 0.6)
   );
 
-  const label = hslToRgb(vibrantHsl[0], 0.2, 0.55);
-  const text = hslToRgb(dominantHsl[0], 0.08, 0.9);
+  const label = hslToRgb(vh, 0.2, 0.55);
+  const text = hslToRgb(dh, 0.08, 0.9);
 
   return {
     background_color: rgbToHex(background),

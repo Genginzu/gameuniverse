@@ -23,34 +23,6 @@ const COLOR_FIELDS: Array<{ name: ColorFieldName; labelKey: string }> = [
   { name: "text_color", labelKey: "textColor" },
 ];
 
-function shiftHue(hex: string, degrees: number): string {
-  const r = parseInt(hex.slice(1, 3), 16) / 255;
-  const g = parseInt(hex.slice(3, 5), 16) / 255;
-  const b = parseInt(hex.slice(5, 7), 16) / 255;
-  const max = Math.max(r, g, b), min = Math.min(r, g, b);
-  const l = (max + min) / 2;
-  if (max === min) return hex;
-  const d = max - min;
-  const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-  let h: number;
-  if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
-  else if (max === g) h = ((b - r) / d + 2) / 6;
-  else h = ((r - g) / d + 4) / 6;
-  h = (h + degrees / 360) % 1;
-  if (h < 0) h += 1;
-  const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-  const p = 2 * l - q;
-  const hue2rgb = (pp: number, qq: number, t: number) => {
-    let tt = t; if (tt < 0) tt += 1; if (tt > 1) tt -= 1;
-    if (tt < 1/6) return pp + (qq - pp) * 6 * tt;
-    if (tt < 1/2) return qq;
-    if (tt < 2/3) return pp + (qq - pp) * (2/3 - tt) * 6;
-    return pp;
-  };
-  const toHex = (v: number) => Math.round(Math.max(0, Math.min(255, v * 255))).toString(16).padStart(2, "0");
-  return `#${toHex(hue2rgb(p, q, h + 1/3))}${toHex(hue2rgb(p, q, h))}${toHex(hue2rgb(p, q, h - 1/3))}`;
-}
-
 export function GameFormColorFields({ form, t }: GameFormTabProps) {
   const [extracting, setExtracting] = useState(false);
 
@@ -75,12 +47,28 @@ export function GameFormColorFields({ form, t }: GameFormTabProps) {
     setExtracting(false);
   };
 
-  const generateAlternative = () => {
-    const shift = 30 + Math.floor(Math.random() * 60); // 30-90° shift
-    for (const { name } of COLOR_FIELDS) {
-      const current = form.getValues(name) || COLOR_DEFAULTS[name];
-      form.setValue(name, shiftHue(current, shift), { shouldDirty: true });
-    }
+  const [alternating, setAlternating] = useState(false);
+
+  const generateAlternative = async () => {
+    const coverUrl = form.getValues("cover_image_url");
+    if (!coverUrl) return;
+    setAlternating(true);
+    try {
+      const shift = 30 + Math.floor(Math.random() * 300); // 30-330° shift
+      const res = await fetch("/api/admin/games/extract-colors", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ coverUrl, hueShift: shift }),
+      });
+      if (res.ok) {
+        const colors = await res.json();
+        form.setValue("background_color", colors.background_color, { shouldDirty: true });
+        form.setValue("accent_color", colors.accent_color, { shouldDirty: true });
+        form.setValue("label_color", colors.label_color, { shouldDirty: true });
+        form.setValue("text_color", colors.text_color, { shouldDirty: true });
+      }
+    } catch { /* best effort */ }
+    setAlternating(false);
   };
 
   return (
@@ -106,9 +94,10 @@ export function GameFormColorFields({ form, t }: GameFormTabProps) {
             variant="outline"
             size="sm"
             onClick={generateAlternative}
+            disabled={alternating || !form.getValues("cover_image_url")}
             className="min-h-[44px] text-xs sm:min-h-0"
           >
-            <Icon icon="mdi:palette-swatch-variant" className="mr-1.5 size-4" />
+            <Icon icon={alternating ? "mdi:loading" : "mdi:palette-swatch-variant"} className={`mr-1.5 size-4 ${alternating ? "animate-spin" : ""}`} />
             {t("alternativeColors") ?? "Palette alternative"}
           </Button>
         </div>
