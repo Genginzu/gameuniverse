@@ -73,18 +73,14 @@ export function GameDetailsTabs({
 
   const tabs: { key: TabType; label: string; show: boolean }[] = [
     { key: "overview", label: tDetails("tabs.overview"), show: true },
-    { key: "ageRatings", label: tDetails("tabs.ageRatings"), show: true },
-    { key: "versions", label: tDetails("tabs.versions"), show: !!game.versions?.length },
-    {
-      key: "dlcExtensions",
-      label: tDetails("tabs.dlcExtensions"),
-      show: !!game.dlcExtensions?.length,
-    },
     { key: "reviews", label: tDetails("tabs.reviews"), show: true },
     { key: "playtime", label: tDetails("tabs.playtime"), show: true },
+    { key: "ageRatings", label: tDetails("tabs.ageRatings"), show: true },
     { key: "languages", label: tDetails("tabs.languages"), show: true },
     { key: "music", label: tDetails("tabs.music"), show: true },
     { key: "priceHistory", label: tDetails("tabs.priceHistory"), show: true },
+    { key: "versions", label: tDetails("tabs.versions"), show: !!game.versions?.length },
+    { key: "dlcExtensions", label: tDetails("tabs.dlcExtensions"), show: !!game.dlcExtensions?.length },
   ];
 
   return (
