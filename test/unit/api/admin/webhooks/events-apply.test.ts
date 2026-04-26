@@ -25,8 +25,13 @@ const mockFrom = vi.fn((table: string) => {
   }
   return { select: vi.fn() };
 });
-vi.mock("@/lib/supabase-server", () => ({
-  createRouteHandlerClient: vi.fn(async () => ({ from: mockFrom })),
+
+
+vi.mock("@/lib/supabase-admin", () => ({
+  getSupabaseAdmin: vi.fn(() => ({ from: mockFrom })),
+}));
+vi.mock("@/lib/utils/untypedTable", () => ({
+  untypedTable: vi.fn((s: { from: Function }, name: string) => s.from(name)),
 }));
 
 import { POST } from "@/app/api/admin/webhooks/events/[eventId]/apply/route";
