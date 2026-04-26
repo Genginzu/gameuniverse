@@ -1401,6 +1401,8 @@
         "popularity": "Popularité IGDB",
         "isEsport": "Jeu esport (scène compétitive)",
         "colors": "Couleurs de la page",
+        "extractColors": "Extraire de la cover",
+        "alternativeColors": "Palette alternative",
         "backgroundColor": "Couleur de fond",
         "accentColor": "Couleur d'accent",
         "labelColor": "Couleur des labels",

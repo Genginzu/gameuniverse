@@ -1398,6 +1398,8 @@
         "popularity": "IGDB Popularity",
         "isEsport": "Esport game (competitive scene)",
         "colors": "Page colors",
+        "extractColors": "Extract from cover",
+        "alternativeColors": "Alternative palette",
         "backgroundColor": "Background color",
         "accentColor": "Accent color",
         "labelColor": "Label color",
