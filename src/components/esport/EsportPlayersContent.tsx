@@ -6,7 +6,6 @@ import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/shared/EmptyState";
-import { PageBanner } from "@/components/shared/PageBanner";
 import { Link } from "@/i18n/navigation";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { LazyImage } from "@/components/ui/lazy-image";
@@ -48,7 +47,6 @@ export function EsportPlayersContent() {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-      <PageBanner />
 
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
         <div className="mb-6">
