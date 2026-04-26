@@ -1,4 +1,5 @@
 import { IGDBService } from "./igdbService";
+import { fetchMetacriticScore } from "./metacriticService";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { extractColorsFromCover } from "@/lib/utils/color-extraction";
 import { logger } from "@/lib/logger";
@@ -162,14 +163,14 @@ async function syncPlaytime(gameId: string, igdbId: number): Promise<SyncResult>
   return { success: true, value: ttb.normally };
 }
 
-async function syncMetascore(gameId: string, igdbId: number): Promise<SyncResult> {
-  const game = await fetchIGDBField(igdbId, FIELD_QUERIES.metascore);
-  const rating = game?.aggregated_rating as number | undefined;
-
-  if (!rating) return { success: true, value: null };
-
-  const score = Math.round(rating);
+async function syncMetascore(gameId: string, _igdbId: number): Promise<SyncResult> {
   const supabase = await createRouteHandlerClient();
+  const { data: game } = await supabase.from("games").select("slug").eq("id", gameId).single();
+  if (!game?.slug) return { success: false, value: null };
+
+  const score = await fetchMetacriticScore(game.slug as string);
+  if (score === null) return { success: true, value: null };
+
   await supabase.from("games").update({ metascore: score }).eq("id", gameId);
   return { success: true, value: score };
 }
