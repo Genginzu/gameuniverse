@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
-import { IGDBService } from "@/lib/services/igdbService";
 import { fetchMetacriticScore } from "@/lib/services/metacriticService";
 import { logger } from "@/lib/logger";
 
@@ -10,7 +9,7 @@ const BATCH_SIZE = 3;
 /**
  * POST /api/admin/global-sync/metascore
  * Fetches metascore for a small batch sequentially (Metacritic rate limit).
- * Priority: Metacritic scrape → IGDB aggregated_rating → null.
+ * Fetches metascore from Metacritic only.
  */
 export async function POST(_request: NextRequest) {
   try {
@@ -70,7 +69,7 @@ interface MetascoreResult {
   igdbId: number;
   name: string;
   score: number | null;
-  source: "metacritic" | "igdb" | "none";
+  source: "metacritic" | "none";
   error?: string;
 }
 
@@ -87,7 +86,7 @@ async function syncMetascore(supabase: any, entry: MetascoreEntry): Promise<Meta
 
     const slug = game?.slug as string | undefined;
     let score: number | null = null;
-    let source: "metacritic" | "igdb" | "none" = "none";
+    let source: "metacritic" | "none" = "none";
 
     if (slug) {
       const metacriticScore = await fetchMetacriticScore(slug);
@@ -96,14 +95,7 @@ async function syncMetascore(supabase: any, entry: MetascoreEntry): Promise<Meta
         source = "metacritic";
       }
     }
-
-    if (score === null) {
-      const igdbScore = await IGDBService.getAggregatedRating(entry.igdb_id);
-      if (igdbScore !== null) {
-        score = Math.round(igdbScore);
-        source = "igdb";
-      }
-    }
+
 
     await supabase
       .from("games")

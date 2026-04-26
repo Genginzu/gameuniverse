@@ -114,7 +114,7 @@ async function syncOneGame(supabase: SupabaseAdmin, entry: SyncEntry): Promise<S
     const releaseDate = igdb.first_release_date
       ? new Date(igdb.first_release_date * 1000).toISOString().split("T")[0]
       : null;
-    const metascore = igdb.aggregated_rating ? Math.round(igdb.aggregated_rating) : null;
+    const metascore = null; // Fetched separately from Metacritic via metascore sync
 
     // Upsert game (handles retries and slug conflicts)
     const { data: newGame, error: insertErr } = await supabase
