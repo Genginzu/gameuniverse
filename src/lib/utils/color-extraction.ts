@@ -36,7 +36,8 @@ function upgradeImageUrl(coverUrl: string): string {
  */
 export async function extractColorsFromCover(
   coverUrl: string,
-  _verbose: boolean = false
+  _verbose: boolean = false,
+  variantIndex: number = 0,
 ): Promise<ExtractedGameColors | null> {
   try {
     const largeUrl = upgradeImageUrl(coverUrl);
@@ -178,15 +179,13 @@ function getColorRange(pixels: RGB[]): { channel: 0 | 1 | 2; maxRange: number } 
  * - label: muted version of the vibrant hue
  * - text: near-white tinted slightly with the dominant hue
  */
-function deriveGameColors(palette: RGB[], hueShift = 0): ExtractedGameColors {
+function deriveGameColors(palette: RGB[], variantIndex = 0): ExtractedGameColors {
   const dominantHsl = rgbToHsl(palette[0]);
-  const vibrant = findMostVibrant(palette);
+  const ranked = rankByVibrancy(palette);
+  const vibrant = ranked[Math.min(variantIndex, ranked.length - 1)];
   const vibrantHsl = rgbToHsl(vibrant);
 
-  const vh = (vibrantHsl[0] + hueShift / 360 + 1) % 1;
-  const dh = (dominantHsl[0] + hueShift / 360 + 1) % 1;
-
-  const background = hslToRgb(vh, clamp(vibrantHsl[1] * 0.5, 0.15, 0.45), 0.1);
+  const background = hslToRgb(vibrantHsl[0], clamp(vibrantHsl[1] * 0.5, 0.15, 0.45), 0.1);
 
   const accent = hslToRgb(
     vibrantHsl[0],
@@ -194,8 +193,8 @@ function deriveGameColors(palette: RGB[], hueShift = 0): ExtractedGameColors {
     clamp(vibrantHsl[2], 0.45, 0.6)
   );
 
-  const label = hslToRgb(vh, 0.2, 0.55);
-  const text = hslToRgb(dh, 0.08, 0.9);
+  const label = hslToRgb(vibrantHsl[0], 0.2, 0.55);
+  const text = hslToRgb(dominantHsl[0], 0.08, 0.9);
 
   return {
     background_color: rgbToHex(background),
@@ -206,29 +205,18 @@ function deriveGameColors(palette: RGB[], hueShift = 0): ExtractedGameColors {
 }
 
 /**
- * Finds the palette color with the highest vibrancy.
- * Squares saturation to strongly prefer saturated colors.
- * Skips very dark or very light colors.
+ * Ranks palette colors by vibrancy (most vibrant first).
  */
-function findMostVibrant(palette: RGB[]): RGB {
-  let bestIndex = 0;
-  let bestScore = -1;
-
-  for (let i = 0; i < palette.length; i++) {
-    const [, s, l] = rgbToHsl(palette[i]);
-    if (l < 0.1 || l > 0.9) continue;
-
+function rankByVibrancy(palette: RGB[]): RGB[] {
+  const scored = palette.map((color) => {
+    const [, s, l] = rgbToHsl(color);
+    if (l < 0.1 || l > 0.9) return { color, score: -1 };
     const satWeight = s * s;
     const lightBonus = 1 - Math.abs(l - 0.5) * 1.6;
-    const score = satWeight * (0.5 + 0.5 * Math.max(lightBonus, 0));
-
-    if (score > bestScore) {
-      bestScore = score;
-      bestIndex = i;
-    }
-  }
-
-  return palette[bestIndex];
+    return { color, score: satWeight * (0.5 + 0.5 * Math.max(lightBonus, 0)) };
+  });
+  scored.sort((a, b) => b.score - a.score);
+  return scored.map((s) => s.color);
 }
 
 function clamp(value: number, min: number, max: number): number {
