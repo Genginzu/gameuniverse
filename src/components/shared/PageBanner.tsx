@@ -21,6 +21,12 @@ const BANNER_CONFIG: Record<string, BannerConfig> = {
   "/library": { icon: "mdi:bookshelf", titleKey: "library", descriptionKey: "libraryDesc" },
   "/favorites": { icon: "mdi:heart", titleKey: "myCharacters", descriptionKey: "favoritesDesc" },
   "/profile": { icon: "mdi:account", titleKey: "profile", descriptionKey: "profileDesc" },
+  "/esport/live": { icon: "mdi:broadcast", titleKey: "esportLive", descriptionKey: "esportLiveDesc" },
+  "/esport/calendar": { icon: "mdi:trophy-outline", titleKey: "esportCalendar", descriptionKey: "esportCalendarDesc" },
+  "/esport/results": { icon: "mdi:podium", titleKey: "esportResults", descriptionKey: "esportResultsDesc" },
+  "/esport/teams": { icon: "mdi:account-group", titleKey: "esportTeams", descriptionKey: "esportTeamsDesc" },
+  "/esport/players": { icon: "mdi:account-star", titleKey: "esportPlayers", descriptionKey: "esportPlayersDesc" },
+  "/esport/predictions": { icon: "mdi:crystal-ball", titleKey: "esportPredictions", descriptionKey: "esportPredictionsDesc" },
 };
 
 const EXCLUDED_ROUTES = ["/", "/auth", "/admin"];

@@ -2873,7 +2873,19 @@
     "profile": "Profile",
     "profileDesc": "View and manage your information",
     "settings": "Settings",
-    "settingsDesc": "Configure your preferences"
+    "settingsDesc": "Configure your preferences",
+    "esportLive": "Esport Live",
+    "esportLiveDesc": "Watch live matches",
+    "esportCalendar": "Esport Calendar",
+    "esportCalendarDesc": "Upcoming matches and tournaments",
+    "esportResults": "Esport Results",
+    "esportResultsDesc": "Recent scores and standings",
+    "esportTeams": "Esport Teams",
+    "esportTeamsDesc": "Discover professional teams",
+    "esportPlayers": "Esport Players",
+    "esportPlayersDesc": "Professional players",
+    "esportPredictions": "Esport Predictions",
+    "esportPredictionsDesc": "Bet on match outcomes"
   },
   "friends": {
     "searchPlaceholder": "Search for a friend…",

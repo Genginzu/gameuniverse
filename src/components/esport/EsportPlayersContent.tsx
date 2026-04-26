@@ -48,7 +48,7 @@ export function EsportPlayersContent() {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-      <PageBanner title={t("title")} subtitle={t("subtitle")} icon="mdi:account-star" />
+      <PageBanner />
 
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
         <div className="mb-6">

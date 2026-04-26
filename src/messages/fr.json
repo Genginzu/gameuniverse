@@ -2876,7 +2876,19 @@
     "profile": "Profil",
     "profileDesc": "Consultez et gérez vos informations",
     "settings": "Paramètres",
-    "settingsDesc": "Configurez vos préférences"
+    "settingsDesc": "Configurez vos préférences",
+    "esportLive": "Live Esport",
+    "esportLiveDesc": "Suivez les matchs en direct",
+    "esportCalendar": "Calendrier Esport",
+    "esportCalendarDesc": "Les prochains matchs et tournois",
+    "esportResults": "Résultats Esport",
+    "esportResultsDesc": "Scores et classements récents",
+    "esportTeams": "Équipes Esport",
+    "esportTeamsDesc": "Découvrez les équipes professionnelles",
+    "esportPlayers": "Joueurs Esport",
+    "esportPlayersDesc": "Les joueurs professionnels",
+    "esportPredictions": "Prédictions Esport",
+    "esportPredictionsDesc": "Pariez sur les résultats des matchs"
   },
   "friends": {
     "searchPlaceholder": "Rechercher un ami…",
