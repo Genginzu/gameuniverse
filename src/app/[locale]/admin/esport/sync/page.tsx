@@ -106,6 +106,11 @@ export default function EsportSyncPage() {
                 ...prev,
                 [evt.entity]: { ...prev[evt.entity as Entity], status: evt.status, total: evt.total ?? prev[evt.entity as Entity].total, done: evt.synced ?? prev[evt.entity as Entity].done },
               }));
+            } else if (evt.type === "fetch-progress") {
+              setStates((prev) => ({
+                ...prev,
+                [evt.entity]: { ...prev[evt.entity as Entity], current: `${evt.items} items (p.${evt.pages})` },
+              }));
             } else if (evt.type === "progress") {
               setStates((prev) => ({
                 ...prev,
@@ -204,7 +209,7 @@ export default function EsportSyncPage() {
               <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
                 <span>
                   {s.status === "idle" && t("idle")}
-                  {s.status === "fetching" && t("fetching")}
+                  {s.status === "fetching" && (s.current || t("fetching"))}
                   {s.status === "syncing" && `${s.done} / ${s.total}`}
                   {s.status === "done" && t("done", { count: s.done })}
                 </span>

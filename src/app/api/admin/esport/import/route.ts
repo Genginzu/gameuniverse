@@ -16,8 +16,12 @@ type Entity = "teams" | "players" | "tournaments" | "matches";
 
 const PAGE_DELAY_MS = 300;
 
+type SendFn = (d: Record<string, unknown>) => void;
+
 async function fetchAllPages<T>(
   fetcher: (p: PandaScoreListParams) => Promise<T[]>,
+  entity: string,
+  send: SendFn,
   game?: string,
   extra?: Record<string, string | number>,
 ): Promise<T[]> {
@@ -26,9 +30,16 @@ async function fetchAllPages<T>(
   while (true) {
     const p: PandaScoreListParams = { page, per_page: 100, ...extra };
     if (game) p["filter[videogame_title]"] = game;
-    const batch = await fetcher(p);
-    all.push(...batch);
-    if (batch.length < 100) break;
+    try {
+      const batch = await fetcher(p);
+      all.push(...batch);
+      send({ type: "fetch-progress", entity, pages: page, items: all.length });
+      if (batch.length < 100) break;
+    } catch (error) {
+      logger.warn("fetchAllPages stopped early", { entity, page, error });
+      send({ type: "fetch-progress", entity, pages: page, items: all.length, partial: true });
+      break;
+    }
     page++;
     await new Promise((r) => setTimeout(r, PAGE_DELAY_MS));
   }
@@ -87,7 +98,7 @@ export async function POST(request: NextRequest) {
       try {
         if (entities.includes("teams")) {
           send({ type: "phase", entity: "teams", status: "fetching" });
-          const teams = await fetchAllPages(getTeams, game);
+          const teams = await fetchAllPages(getTeams, "teams", send, game);
           send({ type: "phase", entity: "teams", status: "syncing", total: teams.length });
           let synced = 0;
           for (const t of teams) {
@@ -109,7 +120,7 @@ export async function POST(request: NextRequest) {
 
         if (entities.includes("players")) {
           send({ type: "phase", entity: "players", status: "fetching" });
-          const players = await fetchAllPages(getPlayers, game);
+          const players = await fetchAllPages(getPlayers, "players", send, game);
           send({ type: "phase", entity: "players", status: "syncing", total: players.length });
           let synced = 0;
           for (const p of players) {
@@ -135,8 +146,8 @@ export async function POST(request: NextRequest) {
         if (entities.includes("tournaments")) {
           send({ type: "phase", entity: "tournaments", status: "fetching" });
           const [running, upcoming] = await Promise.all([
-            fetchAllPages(getRunningTournaments, game),
-            fetchAllPages(getUpcomingTournaments, game),
+            fetchAllPages(getRunningTournaments, "tournaments", send, game),
+            fetchAllPages(getUpcomingTournaments, "tournaments", send, game),
           ]);
           const tournaments = [...running, ...upcoming];
           send({ type: "phase", entity: "tournaments", status: "syncing", total: tournaments.length });
@@ -163,8 +174,8 @@ export async function POST(request: NextRequest) {
         if (entities.includes("matches")) {
           send({ type: "phase", entity: "matches", status: "fetching" });
           const [past, running] = await Promise.all([
-            fetchAllPages(getPastMatches, game),
-            fetchAllPages(getRunningMatches, game),
+            fetchAllPages(getPastMatches, "matches", send, game),
+            fetchAllPages(getRunningMatches, "matches", send, game),
           ]);
           const matches = [...past, ...running];
           send({ type: "phase", entity: "matches", status: "syncing", total: matches.length });
