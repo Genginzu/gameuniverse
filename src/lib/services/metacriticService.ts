@@ -27,10 +27,9 @@ async function rateLimitedFetch(url: string): Promise<Response> {
 
 /**
  * Attempts to scrape the Metascore from metacritic.com for a given game slug.
- * Returns the score (0-100) or null if not found.
+ * Returns the score (0-100) or null if not found / TBD.
  */
 export async function fetchMetacriticScore(slug: string): Promise<number | null> {
-  // Metacritic slugs use hyphens, same as IGDB in most cases
   const url = `${METACRITIC_BASE}/${slug}`;
 
   try {
@@ -55,9 +54,15 @@ export async function fetchMetacriticScore(slug: string): Promise<number | null>
 
 /**
  * Parse the metascore from Metacritic HTML.
- * Looks for patterns like "Metascore X out of 100" in the page content.
+ * Only extracts the score for the main game — ignores related games.
+ * Returns null if the score is TBD or unavailable.
  */
 function parseMetascore(html: string): number | null {
+  // If the page says "Critic reviews are not available yet", it's TBD
+  if (html.includes("Critic reviews are not available yet")) {
+    return null;
+  }
+
   // Pattern 1: JSON-LD structured data (most reliable)
   const jsonLdMatch = html.match(
     /<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/i
@@ -69,19 +74,16 @@ function parseMetascore(html: string): number | null {
       if (typeof rating === "number" && rating >= 0 && rating <= 100) {
         return Math.round(rating);
       }
+      if (typeof rating === "string") {
+        const parsed = parseInt(rating, 10);
+        if (!isNaN(parsed) && parsed >= 0 && parsed <= 100) return parsed;
+      }
     } catch {
       // JSON-LD parse failed, try other patterns
     }
   }
 
-  // Pattern 2: "ratingValue" in any script tag
-  const ratingMatch = html.match(/"ratingValue"\s*:\s*"?(\d+)"?/);
-  if (ratingMatch) {
-    const score = parseInt(ratingMatch[1], 10);
-    if (score >= 0 && score <= 100) return score;
-  }
-
-  // Pattern 3: Meta tag with metascore
+  // Pattern 2: "Metascore X out of 100" text (specific to the main game section)
   const metaMatch = html.match(/Metascore\s+(\d+)\s+out\s+of\s+100/i);
   if (metaMatch) {
     const score = parseInt(metaMatch[1], 10);
