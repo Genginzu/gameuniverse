@@ -8,7 +8,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { requireAdmin } from "@/lib/auth-admin";
 import { logger } from "@/lib/logger";
 import { applyWebhookPayload } from "@/lib/services/webhookDiffApplier";
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     const body = (await request.json()) as ApplyDiffRequest;
     const forceFields = new Set(body.forceFields ?? []);
 
-    const supabase = await createRouteHandlerClient();
+    const supabase = getSupabaseAdmin();
 
     // Fetch the webhook event
     const { data: event, error: eventError } = await untypedTable(supabase, "igdb_webhook_events")

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { requireAdmin } from "@/lib/auth-admin";
 import { untypedTable } from "@/lib/utils/untypedTable";
 
@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "igdbId and gameId required" }, { status: 400 });
     }
 
-    const supabase = await createRouteHandlerClient();
+    const supabase = getSupabaseAdmin();
 
     await untypedTable(supabase, "igdb_webhook_events")
       .update({ game_id: gameId })

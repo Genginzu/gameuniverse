@@ -54,7 +54,7 @@ export class GameImportService {
         return { success: false, error: `Game with IGDB ID ${igdbId} not found` };
       }
 
-      const supabase = await getSupabaseAdmin();
+      const supabase = getSupabaseAdmin();
 
       // Check if game already exists — sync instead of duplicate
       const { data: existingGame, error: checkError } = await supabase
@@ -132,7 +132,7 @@ export class GameImportService {
    */
   static async syncWithIGDB(gameId: string, igdbId: number): Promise<ImportResult> {
     try {
-      const supabase = await getSupabaseAdmin();
+      const supabase = getSupabaseAdmin();
 
       const { data: currentGame, error: fetchError } = await supabase
         .from("games")
