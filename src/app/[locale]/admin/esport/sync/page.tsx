@@ -269,7 +269,7 @@ export default function EsportSyncPage() {
         </div>
         {(logsData?.totalPages ?? 0) > 1 && (
           <div className="mt-4">
-            <Pagination currentPage={logPage} totalPages={logsData?.totalPages ?? 0} onPageChange={setLogPage} />
+            <Pagination currentPage={logPage} totalPages={logsData?.totalPages ?? 0} totalCount={logsData?.total ?? 0} onPageChange={setLogPage} />
           </div>
         )}
       </div>

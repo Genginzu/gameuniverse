@@ -92,12 +92,12 @@ describe("Sidebar", () => {
       expect(screen.getByText("TestPlayer")).toBeInTheDocument();
     });
 
-    it("renders all 7 navigation links (4 main + 3 public) as anchors", () => {
+    it("renders all 16 navigation links (4 main + 3 public + 6 esport + 3 coaching) as anchors", () => {
       render(<Sidebar isAuthenticated={true} user={mockUser} signOut={mockSignOut} />);
 
       const nav = screen.getByRole("navigation", { name: "Main navigation" });
       const links = nav.querySelectorAll("a");
-      expect(links).toHaveLength(10);
+      expect(links).toHaveLength(16);
     });
   });
 
