@@ -78,10 +78,24 @@ export function WebhookEventDiff({ eventId }: WebhookEventDiffProps) {
       </div>
 
       {result && (
-        <div className={`rounded-xl border p-4 ${result.success ? "border-green-200 bg-green-50/50 dark:border-green-800 dark:bg-green-900/20" : "border-red-200 bg-red-50/50 dark:border-red-800 dark:bg-red-900/20"}`}>
-          <p className={`text-sm font-medium ${result.success ? "text-green-700 dark:text-green-400" : "text-red-700 dark:text-red-400"}`}>{result.success ? t("applySuccess") : t("applyError")}</p>
-          {result.appliedFields.length > 0 && <p className="mt-1 text-xs text-green-600 dark:text-green-500">{t("applied")}: {result.appliedFields.join(", ")}</p>}
-          {result.skippedFields.length > 0 && <p className="mt-1 text-xs text-amber-600 dark:text-amber-500">{t("skipped")}: {result.skippedFields.join(", ")}</p>}
+        <div
+          className={`rounded-xl border p-4 ${result.success ? "border-green-200 bg-green-50/50 dark:border-green-800 dark:bg-green-900/20" : "border-red-200 bg-red-50/50 dark:border-red-800 dark:bg-red-900/20"}`}
+        >
+          <p
+            className={`text-sm font-medium ${result.success ? "text-green-700 dark:text-green-400" : "text-red-700 dark:text-red-400"}`}
+          >
+            {result.success ? t("applySuccess") : t("applyError")}
+          </p>
+          {result.appliedFields.length > 0 && (
+            <p className="mt-1 text-xs text-green-600 dark:text-green-500">
+              {t("applied")}: {result.appliedFields.join(", ")}
+            </p>
+          )}
+          {result.skippedFields.length > 0 && (
+            <p className="mt-1 text-xs text-amber-600 dark:text-amber-500">
+              {t("skipped")}: {result.skippedFields.join(", ")}
+            </p>
+          )}
         </div>
       )}
 
@@ -104,8 +118,16 @@ export function WebhookEventDiff({ eventId }: WebhookEventDiffProps) {
 
       {hasChanges && !result?.success && (
         <div className="flex justify-end">
-          <button onClick={handleApply} disabled={applying} className="flex items-center gap-2 rounded-xl bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 px-6 py-2.5 text-sm font-medium text-white shadow-lg transition-all hover:shadow-xl disabled:opacity-50">
-            {applying ? <Icon icon="lucide:loader-2" className="h-4 w-4 animate-spin" /> : <Icon icon="lucide:check" className="h-4 w-4" />}
+          <button
+            onClick={handleApply}
+            disabled={applying}
+            className="from-palette-secondary-500 to-palette-primary-500 flex items-center gap-2 rounded-xl bg-linear-to-r px-6 py-2.5 text-sm font-medium text-white shadow-lg transition-all hover:shadow-xl disabled:opacity-50"
+          >
+            {applying ? (
+              <Icon icon="lucide:loader-2" className="h-4 w-4 animate-spin" />
+            ) : (
+              <Icon icon="lucide:check" className="h-4 w-4" />
+            )}
             {t("applyChanges")}
           </button>
         </div>

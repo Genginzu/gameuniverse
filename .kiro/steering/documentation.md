@@ -6,10 +6,10 @@ inclusion: always
 
 ## Règle
 
-À la fin de chaque modification significative du projet (nouvelle fonctionnalité,
-changement d'architecture, modification de configuration, nouveau workflow,
-suppression de feature, etc.), **évaluer** si la documentation dans `docs/` doit
-être mise à jour ou créée.
+À la fin de chaque modification significative du projet (nouvelle
+fonctionnalité, changement d'architecture, modification de configuration,
+nouveau workflow, suppression de feature, etc.), **évaluer** si la documentation
+dans `docs/` doit être mise à jour ou créée.
 
 ## Quand documenter
 
@@ -65,5 +65,5 @@ Chaque fichier de fonctionnalité doit contenir :
   majeure.
 - ❌ Ne **jamais** créer de documentation en dehors de `docs/` (pas de `.md`
   éparpillés dans `src/`).
-- ❌ Ne **jamais** documenter uniquement en commentaires de code ce qui mérite un
-  README.
+- ❌ Ne **jamais** documenter uniquement en commentaires de code ce qui mérite
+  un README.

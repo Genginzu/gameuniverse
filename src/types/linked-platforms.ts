@@ -46,18 +46,61 @@ export interface LinkedPlatform {
 }
 
 /** Platform metadata for UI display */
-export const PLATFORM_META: Record<GamingPlatform, { icon: string; color: string; authType: AuthType }> = {
+export const PLATFORM_META: Record<
+  GamingPlatform,
+  { icon: string; color: string; authType: AuthType }
+> = {
   steam: { icon: "mdi:steam", color: "text-gray-800 dark:text-gray-200", authType: "oauth" },
-  xbox: { icon: "mdi:microsoft-xbox", color: "text-green-600 dark:text-green-400", authType: "oauth" },
-  playstation: { icon: "mdi:sony-playstation", color: "text-blue-600 dark:text-blue-400", authType: "npsso" },
-  epic: { icon: "simple-icons:epicgames", color: "text-gray-800 dark:text-gray-200", authType: "oauth" },
-  battlenet: { icon: "simple-icons:battledotnet", color: "text-blue-500 dark:text-blue-300", authType: "oauth" },
-  discord: { icon: "simple-icons:discord", color: "text-indigo-500 dark:text-indigo-400", authType: "oauth" },
-  itch: { icon: "simple-icons:itchdotio", color: "text-red-500 dark:text-red-400", authType: "oauth" },
-  gog: { icon: "simple-icons:gogdotcom", color: "text-purple-600 dark:text-purple-400", authType: "manual" },
-  nintendo: { icon: "mdi:nintendo-switch", color: "text-red-600 dark:text-red-400", authType: "manual" },
-  ea: { icon: "simple-icons:ea", color: "text-orange-600 dark:text-orange-400", authType: "manual" },
-  ubisoft: { icon: "simple-icons:ubisoft", color: "text-blue-700 dark:text-blue-300", authType: "manual" },
+  xbox: {
+    icon: "mdi:microsoft-xbox",
+    color: "text-green-600 dark:text-green-400",
+    authType: "oauth",
+  },
+  playstation: {
+    icon: "mdi:sony-playstation",
+    color: "text-blue-600 dark:text-blue-400",
+    authType: "npsso",
+  },
+  epic: {
+    icon: "simple-icons:epicgames",
+    color: "text-gray-800 dark:text-gray-200",
+    authType: "oauth",
+  },
+  battlenet: {
+    icon: "simple-icons:battledotnet",
+    color: "text-blue-500 dark:text-blue-300",
+    authType: "oauth",
+  },
+  discord: {
+    icon: "simple-icons:discord",
+    color: "text-indigo-500 dark:text-indigo-400",
+    authType: "oauth",
+  },
+  itch: {
+    icon: "simple-icons:itchdotio",
+    color: "text-red-500 dark:text-red-400",
+    authType: "oauth",
+  },
+  gog: {
+    icon: "simple-icons:gogdotcom",
+    color: "text-purple-600 dark:text-purple-400",
+    authType: "manual",
+  },
+  nintendo: {
+    icon: "mdi:nintendo-switch",
+    color: "text-red-600 dark:text-red-400",
+    authType: "manual",
+  },
+  ea: {
+    icon: "simple-icons:ea",
+    color: "text-orange-600 dark:text-orange-400",
+    authType: "manual",
+  },
+  ubisoft: {
+    icon: "simple-icons:ubisoft",
+    color: "text-blue-700 dark:text-blue-300",
+    authType: "manual",
+  },
 };
 
 export function isConnectedPlatform(platform: GamingPlatform): boolean {

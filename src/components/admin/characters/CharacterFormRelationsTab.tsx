@@ -82,7 +82,9 @@ export function CharacterFormRelationsTab({
       )}
 
       {form.formState.errors.relationships && (
-        <p className="text-destructive text-sm font-medium">{form.formState.errors.relationships.message}</p>
+        <p className="text-destructive text-sm font-medium">
+          {form.formState.errors.relationships.message}
+        </p>
       )}
     </div>
   );

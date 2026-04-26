@@ -34,7 +34,11 @@ export interface CharacterFormProps {
 const TABS: CharacterTab[] = [
   { id: "general", icon: <Icon icon="fa:info-circle" className="h-3.5 w-3.5" />, labelKey: "generalInfo" },
   { id: "images", icon: <Icon icon="fa:image" className="h-3.5 w-3.5" />, labelKey: "images" },
-  { id: "translations", icon: <Icon icon="fa:globe" className="h-3.5 w-3.5" />, labelKey: "translations" },
+  {
+    id: "translations",
+    icon: <Icon icon="fa:globe" className="h-3.5 w-3.5" />,
+    labelKey: "translations",
+  },
   { id: "roles", icon: <Icon icon="fa:id-badge" className="h-3.5 w-3.5" />, labelKey: "roles" },
   { id: "gender", icon: <Icon icon="lucide:user" className="h-3.5 w-3.5" />, labelKey: "gender" },
   { id: "species", icon: <Icon icon="lucide:dna" className="h-3.5 w-3.5" />, labelKey: "species" },
@@ -104,11 +108,24 @@ export function CharacterForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit, () => navigateToErrorTab())} className="space-y-5 pb-24" noValidate>
         <CharacterHeroBanner form={form} t={t} />
-        <CharacterTabNavigation tabs={visibleTabs} activeTab={activeTab} setActiveTab={setActiveTab} form={form} tabLabel={tabLabel} />
+        <CharacterTabNavigation
+          tabs={visibleTabs}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          form={form}
+          tabLabel={tabLabel}
+        />
         <div className="rounded-2xl border border-gray-200/60 bg-white p-6 shadow-xs dark:border-gray-700/40 dark:bg-gray-800/60">
           <CharacterFormTabContent activeTab={activeTab} mode={mode} form={form} t={t} availableGames={availableGames} availableCharacters={availableCharacters} availableRoles={availableRoles} currentCharacterId={currentCharacterId} characterIgdbId={igdbId} />
         </div>
-        <CharacterStickySubmitBar tabs={visibleTabs} activeTab={activeTab} setActiveTab={setActiveTab} isSubmitting={isSubmitting} mode={mode} t={t} />
+        <CharacterStickySubmitBar
+          tabs={visibleTabs}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          isSubmitting={isSubmitting}
+          mode={mode}
+          t={t}
+        />
       </form>
     </Form>
   );

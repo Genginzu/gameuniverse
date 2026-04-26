@@ -30,7 +30,7 @@ export function SearchBarDropdown<T extends SearchResultItem>({
 
   if (isLoading) {
     return (
-      <div className="absolute left-0 right-0 top-full z-50 mt-2 rounded-xl bg-white shadow-lg ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700">
+      <div className="absolute top-full right-0 left-0 z-50 mt-2 rounded-xl bg-white shadow-lg ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700">
         {hybridConfig?.loadingComponent || (
           <div className="flex items-center justify-center p-4">
             <Icon icon="svg-spinners:ring-resize" className="h-5 w-5 text-blue-500" />
@@ -43,7 +43,7 @@ export function SearchBarDropdown<T extends SearchResultItem>({
 
   if (results.length === 0) {
     return (
-      <div className="absolute left-0 right-0 top-full z-50 mt-2 rounded-xl bg-white shadow-lg ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700">
+      <div className="absolute top-full right-0 left-0 z-50 mt-2 rounded-xl bg-white shadow-lg ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700">
         {hybridConfig?.noResultsComponent || (
           <div className="p-4 text-center text-sm text-gray-500 dark:text-gray-400">
             No results found
@@ -54,7 +54,7 @@ export function SearchBarDropdown<T extends SearchResultItem>({
   }
 
   return (
-    <div className="absolute left-0 right-0 top-full z-50 mt-2 max-h-[70vh] overflow-y-auto rounded-xl bg-white shadow-lg ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700">
+    <div className="absolute top-full right-0 left-0 z-50 mt-2 max-h-[70vh] overflow-y-auto rounded-xl bg-white shadow-lg ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700">
       <ul className="divide-y divide-gray-100 dark:divide-gray-700">
         {results.map((result) => (
           <li key={result.id}>

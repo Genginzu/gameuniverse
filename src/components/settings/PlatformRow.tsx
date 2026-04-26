@@ -24,7 +24,18 @@ interface PlatformRowProps {
 }
 
 export function PlatformRow(props: PlatformRowProps) {
-  const { platform, linked, isEditing, editValue, saving, t, onEditValueChange, onSaveManual, onConnectPsn, onCancelEdit } = props;
+  const {
+    platform,
+    linked,
+    isEditing,
+    editValue,
+    saving,
+    t,
+    onEditValueChange,
+    onSaveManual,
+    onConnectPsn,
+    onCancelEdit,
+  } = props;
   const meta = PLATFORM_META[platform];
 
   return (
@@ -49,7 +60,11 @@ export function PlatformRow(props: PlatformRowProps) {
   );
 }
 
-function PlatformIdentity({ platform, linked, t }: {
+function PlatformIdentity({
+  platform,
+  linked,
+  t,
+}: {
   platform: GamingPlatform;
   linked: LinkedPlatform | null;
   t: (key: string) => string;
@@ -58,13 +73,9 @@ function PlatformIdentity({ platform, linked, t }: {
   const avatar = linked?.platformAvatarUrl;
 
   return (
-    <div className="flex items-center gap-2 w-28 sm:w-32 shrink-0">
+    <div className="flex w-28 shrink-0 items-center gap-2 sm:w-32">
       {avatar ? (
-        <img
-          src={avatar}
-          alt=""
-          className="h-6 w-6 shrink-0 rounded-full object-cover"
-        />
+        <img src={avatar} alt="" className="h-6 w-6 shrink-0 rounded-full object-cover" />
       ) : (
         <Icon icon={meta.icon} className={`h-6 w-6 shrink-0 ${meta.color}`} />
       )}
@@ -76,11 +87,23 @@ function PlatformIdentity({ platform, linked, t }: {
 }
 
 function EditingRow({
-  platform, authType, editValue, saving, t, onEditValueChange, onSave, onCancel,
+  platform,
+  authType,
+  editValue,
+  saving,
+  t,
+  onEditValueChange,
+  onSave,
+  onCancel,
 }: {
-  platform: GamingPlatform; authType: string; editValue: string; saving: boolean;
-  t: (key: string) => string; onEditValueChange: (v: string) => void;
-  onSave: () => void; onCancel: () => void;
+  platform: GamingPlatform;
+  authType: string;
+  editValue: string;
+  saving: boolean;
+  t: (key: string) => string;
+  onEditValueChange: (v: string) => void;
+  onSave: () => void;
+  onCancel: () => void;
 }) {
   const placeholder =
     authType === "npsso"
@@ -110,8 +133,15 @@ function EditingRow({
 }
 
 function DisplayRow({
-  platform, linked, saving, syncing, t,
-  onStartEdit, onSyncLibrary, onToggleVisibility, onRemove,
+  platform,
+  linked,
+  saving,
+  syncing,
+  t,
+  onStartEdit,
+  onSyncLibrary,
+  onToggleVisibility,
+  onRemove,
 }: PlatformRowProps) {
   const meta = PLATFORM_META[platform];
   const { authType } = meta;
@@ -120,14 +150,19 @@ function DisplayRow({
 
   const handleOAuthConnect = () => {
     const routes: Partial<Record<GamingPlatform, string>> = {
-      steam: "/api/auth/steam", xbox: "/api/auth/xbox", epic: "/api/auth/epic",
-      discord: "/api/auth/discord", battlenet: "/api/auth/battlenet", itch: "/api/auth/itch",
+      steam: "/api/auth/steam",
+      xbox: "/api/auth/xbox",
+      epic: "/api/auth/epic",
+      discord: "/api/auth/discord",
+      battlenet: "/api/auth/battlenet",
+      itch: "/api/auth/itch",
     };
     const route = routes[platform];
     if (route) window.location.href = route;
   };
 
-  const connectIcon = authType === "oauth" ? "lucide:log-in" : authType === "npsso" ? "lucide:key" : "lucide:plus";
+  const connectIcon =
+    authType === "oauth" ? "lucide:log-in" : authType === "npsso" ? "lucide:key" : "lucide:plus";
   const handleConnect = authType === "oauth" ? handleOAuthConnect : onStartEdit;
 
   const manualOnlyPlatforms: GamingPlatform[] = ["ubisoft", "ea"];
@@ -162,21 +197,33 @@ function DisplayRow({
       </div>
       <div className="flex shrink-0 gap-1">
         {!isConnected && (
-          <Button size="sm" variant="ghost" onClick={handleConnect} className="min-h-[44px] min-w-[44px]">
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={handleConnect}
+            className="min-h-[44px] min-w-[44px]"
+          >
             <Icon icon={connectIcon} className="h-4 w-4" />
           </Button>
         )}
         {isConnected && authType === "manual" && (
-          <Button size="sm" variant="ghost" onClick={onStartEdit} className="min-h-[44px] min-w-[44px]">
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={onStartEdit}
+            className="min-h-[44px] min-w-[44px]"
+          >
             <Icon icon="lucide:pencil" className="h-4 w-4" />
           </Button>
         )}
         {canSync && (
           <Button
-            size="sm" variant="ghost"
+            size="sm"
+            variant="ghost"
             onClick={() => onSyncLibrary(platform)}
             disabled={syncing || saving}
-            className="min-h-[44px] min-w-[44px]" title={t("syncLibrary")}
+            className="min-h-[44px] min-w-[44px]"
+            title={t("syncLibrary")}
           >
             <Icon
               icon={syncing ? "lucide:loader-2" : "lucide:refresh-cw"}
@@ -186,19 +233,22 @@ function DisplayRow({
         )}
         {isConnected && (
           <Button
-            size="sm" variant="ghost" onClick={onToggleVisibility} disabled={saving}
+            size="sm"
+            variant="ghost"
+            onClick={onToggleVisibility}
+            disabled={saving}
             className="min-h-[44px] min-w-[44px]"
             title={linked?.isPublic ? t("makePrivate") : t("makePublic")}
           >
-            <Icon
-              icon={linked?.isPublic ? "lucide:eye" : "lucide:eye-off"}
-              className="h-4 w-4"
-            />
+            <Icon icon={linked?.isPublic ? "lucide:eye" : "lucide:eye-off"} className="h-4 w-4" />
           </Button>
         )}
         {isConnected && (
           <Button
-            size="sm" variant="ghost" onClick={onRemove} disabled={saving}
+            size="sm"
+            variant="ghost"
+            onClick={onRemove}
+            disabled={saving}
             className="min-h-[44px] min-w-[44px] text-red-500 hover:text-red-600"
           >
             <Icon icon="lucide:trash-2" className="h-4 w-4" />

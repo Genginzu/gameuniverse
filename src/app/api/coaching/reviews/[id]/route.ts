@@ -11,7 +11,9 @@ type RouteParams = { params: Promise<{ id: string }> };
 export async function PATCH(request: NextRequest, { params }: RouteParams) {
   try {
     const supabase: S = await createRouteHandlerClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { id } = await params;
@@ -20,11 +22,18 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
     // Verify user is the coach
     const { data: review } = await supabase
-      .from("coaching_reviews").select("id, coach_id").eq("id", id).single();
+      .from("coaching_reviews")
+      .select("id, coach_id")
+      .eq("id", id)
+      .single();
     if (!review) return NextResponse.json({ error: "Review not found" }, { status: 404 });
 
     const { data: coach } = await supabase
-      .from("coach_profiles").select("id").eq("id", review.coach_id).eq("player_id", user.id).single();
+      .from("coach_profiles")
+      .select("id")
+      .eq("id", review.coach_id)
+      .eq("player_id", user.id)
+      .single();
     if (!coach) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const { error } = await supabase

@@ -33,6 +33,10 @@
     "yearInReview": {
       "title": "Rétrospective {year} de {player}",
       "description": "Découvrez la rétrospective gaming {year} de {player} sur Gamers Universe"
+    },
+    "esportCalendar": {
+      "title": "Calendrier Esport",
+      "description": "Suivez les tournois esport professionnels à venir et en cours"
     }
   },
   "navigation": {
@@ -54,7 +58,14 @@
     "coaching": "Coaching",
     "coachSettings": "Espace Coach",
     "coachingHub": "Trouver un coach",
-    "coachingSessions": "Mes sessions"
+    "coachingSessions": "Mes sessions",
+    "esport": "Esport",
+    "esportCalendar": "Calendrier",
+    "esportLive": "En direct",
+    "esportResults": "Résultats",
+    "esportTeams": "Équipes",
+    "esportPlayers": "Joueurs pro",
+    "esportPredictions": "Pronostics"
   },
   "landing": {
     "title": "Votre univers",
@@ -866,6 +877,9 @@
     "clearAll": "Effacer tout",
     "genres": "Genres",
     "available": "{count} disponibles",
+    "esportFilter": "Esport",
+    "esportSection": "Esport",
+    "esportOnly": "Jeux esport uniquement",
     "sort": {
       "label": "Trier par",
       "recommended": "Recommandés",
@@ -1275,6 +1289,10 @@
       "bulkImport": "Import en masse",
       "bulkImportCharacters": "Import en masse",
       "toolsCategory": "Outils",
+      "esportCategory": "Esport",
+      "esport": "Gestion Esport",
+      "esportImport": "Import Esport",
+      "esportSync": "Sync PandaScore",
       "translations": "Traductions",
       "globalSync": "Synchro globale"
     },
@@ -1381,7 +1399,10 @@
         "playtimePreview": "Aperçu du temps de jeu",
         "playtimeNoData": "Aucun temps de jeu renseigné",
         "popularity": "Popularité IGDB",
+        "isEsport": "Jeu esport (scène compétitive)",
         "colors": "Couleurs de la page",
+        "extractColors": "Extraire de la cover",
+        "alternativeColors": "Palette alternative",
         "backgroundColor": "Couleur de fond",
         "accentColor": "Couleur d'accent",
         "labelColor": "Couleur des labels",
@@ -2632,6 +2653,116 @@
         "resolve": "Résoudre",
         "dismiss": "Rejeter"
       }
+    },
+    "esport": {
+      "title": "Gestion Esport",
+      "subtitle": "Gérez les équipes, joueurs, tournois et résultats esport",
+      "tabs": {
+        "teams": "Équipes",
+        "players": "Joueurs",
+        "tournaments": "Tournois",
+        "matches": "Résultats"
+      },
+      "teams": {
+        "name": "Nom",
+        "acronym": "Acronyme",
+        "game": "Jeu",
+        "location": "Localisation",
+        "image": "Image",
+        "pandascoreId": "PandaScore ID",
+        "noTeams": "Aucune équipe",
+        "deleteConfirm": "Supprimer cette équipe ?",
+        "searchPlaceholder": "Rechercher une équipe...",
+        "actions": "Actions"
+      },
+      "players": {
+        "name": "Nom",
+        "role": "Rôle",
+        "team": "Équipe",
+        "nationality": "Nationalité",
+        "game": "Jeu",
+        "noPlayers": "Aucun joueur",
+        "deleteConfirm": "Supprimer ce joueur ?",
+        "searchPlaceholder": "Rechercher un joueur...",
+        "actions": "Actions"
+      },
+      "tournaments": {
+        "name": "Nom",
+        "game": "Jeu",
+        "tier": "Tier",
+        "league": "Ligue",
+        "dates": "Dates",
+        "prizepool": "Prizepool",
+        "noTournaments": "Aucun tournoi",
+        "deleteConfirm": "Supprimer ce tournoi ?",
+        "searchPlaceholder": "Rechercher un tournoi...",
+        "actions": "Actions"
+      },
+      "matches": {
+        "name": "Nom",
+        "status": "Statut",
+        "opponents": "Adversaires",
+        "score": "Score",
+        "tournament": "Tournoi",
+        "date": "Date",
+        "noMatches": "Aucun match",
+        "deleteConfirm": "Supprimer ce match ?",
+        "searchPlaceholder": "Rechercher un match...",
+        "actions": "Actions"
+      },
+      "sync": {
+        "button": "Synchroniser depuis PandaScore",
+        "syncing": "Synchronisation en cours...",
+        "success": "Synchronisation terminée",
+        "error": "Erreur de synchronisation"
+      },
+      "import": {
+        "title": "Import en masse Esport",
+        "subtitle": "Synchronisez les données depuis PandaScore",
+        "syncAll": "Tout synchroniser",
+        "syncing": "Synchronisation...",
+        "stop": "Arrêter",
+        "syncOne": "Synchroniser",
+        "idle": "En attente",
+        "fetching": "Récupération...",
+        "done": "{count} synchronisés",
+        "error": "Erreur de synchronisation",
+        "aborted": "Synchronisation annulée"
+      },
+      "syncPage": {
+        "title": "Sync PandaScore",
+        "subtitle": "Synchronisation automatique toutes les 6 heures via cron",
+        "cronInfo": "Synchronisation automatique",
+        "cronDescription": "Les données PandaScore sont synchronisées automatiquement toutes les 6 heures. Vous pouvez aussi lancer une synchronisation manuelle.",
+        "triggerSync": "Lancer la synchronisation",
+        "syncing": "Synchronisation...",
+        "stop": "Arrêter",
+        "syncOne": "Synchroniser",
+        "idle": "En attente",
+        "fetching": "Récupération...",
+        "done": "{count} synchronisés",
+        "error": "Erreur de synchronisation",
+        "aborted": "Synchronisation annulée",
+        "history": "Historique des synchronisations",
+        "date": "Date",
+        "triggerCol": "Déclencheur",
+        "status": "Statut",
+        "synced": "Synchronisés",
+        "errors": "Erreurs",
+        "duration": "Durée",
+        "details": "Détails",
+        "noLogs": "Aucun historique de synchronisation"
+      },
+      "totalCount": "{count, plural, =0 {Aucun résultat} one {# résultat} other {# résultats}}",
+      "empty": "Aucune donnée trouvée",
+      "page": "Page {current} / {total}",
+      "previousPage": "Page précédente",
+      "nextPage": "Page suivante",
+      "deleteError": "Erreur lors de la suppression",
+      "actions": "Actions",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "search": "Rechercher"
     }
   },
   "collections": {
@@ -2745,7 +2876,19 @@
     "profile": "Profil",
     "profileDesc": "Consultez et gérez vos informations",
     "settings": "Paramètres",
-    "settingsDesc": "Configurez vos préférences"
+    "settingsDesc": "Configurez vos préférences",
+    "esportLive": "Live Esport",
+    "esportLiveDesc": "Suivez les matchs en direct",
+    "esportCalendar": "Calendrier Esport",
+    "esportCalendarDesc": "Les prochains matchs et tournois",
+    "esportResults": "Résultats Esport",
+    "esportResultsDesc": "Scores et classements récents",
+    "esportTeams": "Équipes Esport",
+    "esportTeamsDesc": "Découvrez les équipes professionnelles",
+    "esportPlayers": "Joueurs Esport",
+    "esportPlayersDesc": "Les joueurs professionnels",
+    "esportPredictions": "Prédictions Esport",
+    "esportPredictionsDesc": "Pariez sur les résultats des matchs"
   },
   "friends": {
     "searchPlaceholder": "Rechercher un ami…",
@@ -3570,6 +3713,165 @@
       "success": "Demande envoyée ! Le coach va confirmer votre créneau.",
       "loginRequired": "Connectez-vous pour réserver une session.",
       "noSessions": "Aucune session disponible pour ce jeu."
+    }
+  },
+  "coins": {
+    "balance": "Solde",
+    "totalEarned": "Total gagné",
+    "totalSpent": "Total dépensé",
+    "history": "Historique",
+    "myWallet": "Mon portefeuille",
+    "noTransactions": "Aucune transaction",
+    "toast": {
+      "rewarded": "+{amount} GU Coins — {reason}"
+    },
+    "reward": {
+      "review": "Review publiée",
+      "library_add": "Jeu ajouté à la bibliothèque",
+      "library_status_change": "Statut de jeu modifié",
+      "playtime_log": "Session de jeu enregistrée",
+      "collection_add": "Jeu ajouté à une collection",
+      "game_rating": "Jeu noté",
+      "character_favorite": "Personnage ajouté en favori",
+      "character_vote": "Vote pour un personnage",
+      "post_create": "Post publié",
+      "post_comment": "Commentaire publié",
+      "discussion_message": "Message envoyé",
+      "friend_add": "Ami ajouté"
+    },
+    "type": {
+      "signup_bonus": "Bonus d'inscription",
+      "activity_reward": "Récompense d'activité",
+      "achievement_reward": "Succès débloqué",
+      "prediction_bet": "Mise pronostic",
+      "prediction_win": "Gain pronostic",
+      "purchase": "Achat",
+      "admin_grant": "Ajustement admin"
+    },
+    "admin": {
+      "title": "GU Coins",
+      "rewardConfig": "Configuration des récompenses",
+      "wallets": "Portefeuilles joueurs",
+      "searchPlaceholder": "Rechercher un joueur...",
+      "grantCoins": "Créditer/Débiter",
+      "grantAmount": "Montant",
+      "grantDescription": "Motif (obligatoire)",
+      "grantSubmit": "Appliquer",
+      "grantSuccess": "Coins ajustés avec succès",
+      "grantError": "Erreur lors de l'ajustement",
+      "activityType": "Activité",
+      "amount": "Montant",
+      "cooldown": "Cooldown (s)",
+      "dailyCap": "Limite/jour",
+      "enabled": "Actif",
+      "playerTransactions": "Transactions de {username}"
+    }
+  },
+  "player": {
+    "gameRanks": {
+      "title": "Rangs compétitifs",
+      "points": "pts"
+    }
+  },
+  "esport": {
+    "calendar": {
+      "metaTitle": "Calendrier Esport",
+      "metaDescription": "Suivez les tournois esport professionnels à venir et en cours",
+      "title": "Calendrier Esport",
+      "subtitle": "Tournois professionnels à venir et en cours",
+      "noTournaments": "Aucun tournoi trouvé",
+      "noTournamentsDescription": "Aucun tournoi esport n'est prévu pour le moment",
+      "tier": "Tier",
+      "live": "En direct",
+      "upcoming": "À venir"
+    },
+    "results": {
+      "metaTitle": "Résultats Esport",
+      "metaDescription": "Consultez les résultats récents des compétitions esport professionnelles",
+      "title": "Résultats Esport",
+      "subtitle": "Résultats récents des compétitions professionnelles",
+      "noResults": "Aucun résultat trouvé",
+      "noResultsDescription": "Aucun résultat de match esport disponible pour le moment",
+      "finished": "Terminé"
+    },
+    "teams": {
+      "metaTitle": "Équipes Esport",
+      "metaDescription": "Découvrez les équipes esport professionnelles, leurs rosters et palmarès",
+      "detailMetaTitle": "Fiche Équipe Esport",
+      "title": "Équipes Esport",
+      "subtitle": "Équipes professionnelles de la scène compétitive",
+      "searchPlaceholder": "Rechercher une équipe...",
+      "noTeams": "Aucune équipe trouvée",
+      "noTeamsDescription": "Aucune équipe esport ne correspond à votre recherche",
+      "roster": "Roster",
+      "loadError": "Impossible de charger les détails de l'équipe"
+    },
+    "players": {
+      "metaTitle": "Joueurs Esport Pro",
+      "metaDescription": "Découvrez les joueurs esport professionnels, leurs équipes et palmarès",
+      "detailMetaTitle": "Fiche Joueur Esport",
+      "title": "Joueurs Esport Pro",
+      "subtitle": "Joueurs professionnels de la scène compétitive",
+      "searchPlaceholder": "Rechercher un joueur...",
+      "noPlayers": "Aucun joueur trouvé",
+      "noPlayersDescription": "Aucun joueur esport ne correspond à votre recherche",
+      "loadError": "Impossible de charger les détails du joueur"
+    },
+    "live": {
+      "metaTitle": "Esport en direct",
+      "metaDescription": "Regardez les streams esport en direct des tournois professionnels",
+      "title": "En direct",
+      "subtitle": "Streams des tournois esport en cours",
+      "noStreams": "Aucun stream en direct",
+      "noStreamsDescription": "Aucun tournoi esport n'est diffusé en direct pour le moment",
+      "liveNow": "En direct",
+      "mainStream": "Principal",
+      "watchStream": "Regarder le stream"
+    },
+    "predictions": {
+      "metaTitle": "Pronostics Esport",
+      "metaDescription": "Pariez vos GU Coins sur les matchs esport professionnels",
+      "title": "Pronostics Esport",
+      "subtitle": "Pariez vos GU Coins sur les résultats des matchs pro",
+      "myPredictions": "Mes pronostics",
+      "leaderboardTab": "Classement",
+      "noPredictions": "Aucun pronostic",
+      "noPredictionsDescription": "Vous n'avez pas encore placé de pronostic",
+      "noLeaderboard": "Classement vide",
+      "noLeaderboardDescription": "Aucun pronostic n'a encore été résolu",
+      "bet": "Pari",
+      "pending": "En attente",
+      "won": "Gagné",
+      "lost": "Perdu",
+      "cancelled": "Annulé"
+    },
+    "fantasy": {
+      "metaTitle": "Fantasy Esport",
+      "metaDescription": "Composez votre équipe de joueurs pro et gagnez des points",
+      "title": "Fantasy Esport",
+      "subtitle": "Composez votre équipe virtuelle de joueurs professionnels",
+      "steps": {
+        "draft": {
+          "title": "Draftez",
+          "description": "Sélectionnez vos joueurs pro dans la limite du budget"
+        },
+        "score": {
+          "title": "Scorez",
+          "description": "Gagnez des points selon les performances réelles"
+        },
+        "compete": {
+          "title": "Compétez",
+          "description": "Grimpez dans le classement et gagnez des récompenses"
+        }
+      },
+      "noLeagues": "Aucune ligue disponible",
+      "noLeaguesDescription": "Aucune ligue fantasy n'est ouverte pour le moment"
+    },
+    "discussion": {
+      "title": "Discussion",
+      "noComments": "Aucun commentaire pour le moment. Soyez le premier à réagir !",
+      "placeholder": "Écrire un commentaire...",
+      "loginRequired": "Connectez-vous pour participer à la discussion"
     }
   }
 }

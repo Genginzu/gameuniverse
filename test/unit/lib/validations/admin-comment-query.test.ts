@@ -28,9 +28,7 @@ describe("adminCommentQuerySchema", () => {
   });
 
   it("rejects invalid sort_by", () => {
-    expect(() =>
-      adminCommentQuerySchema.parse({ sort_by: "invalid" })
-    ).toThrow();
+    expect(() => adminCommentQuerySchema.parse({ sort_by: "invalid" })).toThrow();
   });
 
   it("rejects page 0 (min 1)", () => {

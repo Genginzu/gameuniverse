@@ -4,6 +4,7 @@ import { PlayerService } from "@/lib/services/playerService";
 import { PlayerPostsServerService } from "@/lib/services/playerPostsServerService";
 import { isValidImageUrl } from "@/lib/utils/postContentParser";
 import { logger } from "@/lib/logger";
+import { CoinService } from "@/lib/services/coinService";
 import type { PostsResponse } from "@/types/post";
 
 const PAGE_SIZE = 20;
@@ -102,6 +103,10 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       imageUrl,
       explicitTags
     );
+    CoinService.rewardActivity(user.id, "post_create", post.id).catch((err) =>
+      logger.error("Coin reward failed", { error: err })
+    );
+
     return NextResponse.json(post, { status: 201 });
   } catch (error) {
     logger.error("Error in player posts POST", { error });

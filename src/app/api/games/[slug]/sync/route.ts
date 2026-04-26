@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { syncAllGameFields } from "@/lib/services/igdb-sync";
-import { fetchMetacriticScore } from "@/lib/services/metacriticService";
 import type { TrackableField } from "@/types/admin-games";
 import { logger } from "@/lib/logger";
 
@@ -12,13 +11,8 @@ import { logger } from "@/lib/logger";
  * Uses the same sync engine as the admin panel (igdb-sync) so results
  * are identical regardless of the entry point.
  *
+ * Metascore is fetched from Metacritic (handled by igdb-sync metascore field).
  * Overridden fields (manually edited by admins) are preserved.
- *
- * Returns:
- * - 202: Sync initiated (fire-and-forget)
- * - 400: Game has no IGDB ID
- * - 404: Game not found
- * - 500: Internal server error
  */
 export async function POST(
   request: NextRequest,
@@ -33,7 +27,6 @@ export async function POST(
 
     const supabase = await createRouteHandlerClient();
 
-    // Fetch the game to get its ID and IGDB ID
     const { data: game, error: fetchError } = await supabase
       .from("games")
       .select("id, igdb_id")
@@ -55,7 +48,6 @@ export async function POST(
       );
     }
 
-    // Fetch overridden fields so we don't overwrite admin edits
     let overriddenFields: TrackableField[] = [];
     try {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -73,32 +65,15 @@ export async function POST(
       // Table may not exist yet — sync all fields
     }
 
-    // Fire-and-forget: use the same sync engine as the admin panel
+    // Fire-and-forget: sync all fields (metascore fetched from Metacritic via igdb-sync)
     syncAllGameFields(supabase as never, game.id, game.igdb_id, overriddenFields)
-      .then(async (result) => {
+      .then((result) => {
         if (result.success) {
           logger.info(`Background sync completed for game ${slug}`, {
             syncedFields: result.syncedFields,
           });
         } else {
           logger.error(`Background sync failed for game ${slug}`, { error: result.error });
-        }
-
-        // After IGDB sync, always try Metacritic for a more accurate metascore
-        if (!overriddenFields.includes("metascore" as TrackableField)) {
-          try {
-            const metacriticScore = await fetchMetacriticScore(slug);
-            if (metacriticScore !== null) {
-              const freshSupabase = await createRouteHandlerClient();
-              await freshSupabase
-                .from("games")
-                .update({ metascore: metacriticScore })
-                .eq("id", game.id);
-              logger.info(`Metacritic score applied for ${slug}`, { score: metacriticScore });
-            }
-          } catch (error) {
-            logger.warn(`Metacritic check failed for ${slug}`, { error });
-          }
         }
       })
       .catch((error) => {

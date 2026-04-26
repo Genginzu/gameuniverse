@@ -45,11 +45,17 @@ export async function POST(_request: NextRequest) {
     });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (supabase.from("games") as any).upsert(gameRows, { onConflict: "id", ignoreDuplicates: false });
+    await (supabase.from("games") as any).upsert(gameRows, {
+      onConflict: "id",
+      ignoreDuplicates: false,
+    });
 
     // Bulk update sync flags
     const syncIds = entries.map((e) => e.id);
-    await supabase.from("igdb_global_sync").update({ is_popularity_synced: true }).in("id", syncIds);
+    await supabase
+      .from("igdb_global_sync")
+      .update({ is_popularity_synced: true })
+      .in("id", syncIds);
 
     const results = entries.map((e) => ({ igdbId: e.igdb_id, name: e.name, success: true }));
 

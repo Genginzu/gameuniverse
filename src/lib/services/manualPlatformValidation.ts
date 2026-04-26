@@ -2,11 +2,7 @@ import type { GamingPlatform } from "@/types/linked-platforms";
 
 export const FRIEND_CODE_REGEX = /^SW-\d{4}-\d{4}-\d{4}$/;
 
-export type ValidationErrorCode =
-  | "empty"
-  | "format"
-  | "not_found"
-  | "unreachable";
+export type ValidationErrorCode = "empty" | "format" | "not_found" | "unreachable";
 
 export class ManualPlatformValidationError extends Error {
   code: ValidationErrorCode;

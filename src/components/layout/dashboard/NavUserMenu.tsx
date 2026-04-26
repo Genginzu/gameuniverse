@@ -36,9 +36,9 @@ export default function NavUserMenu({ user, signOut, theme, setTheme }: NavUserM
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 rounded-xl px-2 py-1.5 transition-all hover:bg-white/20 focus:ring-2 focus:ring-palette-primary-400/50 focus:outline-hidden dark:hover:bg-white/5"
+        className="focus:ring-palette-primary-400/50 flex items-center gap-2 rounded-xl px-2 py-1.5 transition-all hover:bg-white/20 focus:ring-2 focus:outline-hidden dark:hover:bg-white/5"
       >
-        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-linear-to-br from-palette-primary-500 to-blue-500 shadow-lg shadow-palette-primary-500/20">
+        <div className="from-palette-primary-500 shadow-palette-primary-500/20 flex h-7 w-7 items-center justify-center rounded-full bg-linear-to-br to-blue-500 shadow-lg">
           <Icon icon="fa:user" className="h-3 w-3 text-white" />
         </div>
         {isOpen ? (

@@ -14,7 +14,9 @@ type S = any;
 export async function GET() {
   try {
     const supabase: S = await createRouteHandlerClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ count: 0 });
 
     let count = 0;

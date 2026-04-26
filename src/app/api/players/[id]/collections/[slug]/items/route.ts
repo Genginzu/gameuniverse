@@ -3,6 +3,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { addItem } from "@/lib/services/collectionService";
 import { addCollectionItemSchema } from "@/lib/validations/collection";
 import { logger } from "@/lib/logger";
+import { CoinService } from "@/lib/services/coinService";
 
 type RouteContext = { params: Promise<{ id: string; slug: string }> };
 
@@ -42,6 +43,10 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     }
 
     await addItem(user.id, slug, parsed.data);
+
+    CoinService.rewardActivity(user.id, "collection_add", parsed.data.gameId).catch((err) =>
+      logger.error("Coin reward failed", { error: err })
+    );
 
     return NextResponse.json({ success: true }, { status: 201 });
   } catch (error) {

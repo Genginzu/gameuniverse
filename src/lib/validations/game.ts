@@ -41,6 +41,7 @@ export const gameBaseSchema = z.object({
   playtime_normally: z.number().min(0).optional().nullable(),
   playtime_completely: z.number().min(0).optional().nullable(),
   system_requirements: z.record(z.string(), z.any()).optional().nullable(),
+  is_esport: z.boolean().optional().nullable(),
 });
 
 // Game translation validation schema

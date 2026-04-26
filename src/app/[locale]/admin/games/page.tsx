@@ -126,8 +126,8 @@ export default function AdminGamesPage() {
 
       <AdminDeleteDialog
         isOpen={gameToDelete !== null}
-          translationNamespace="admin.games.deleteDialog"
-          warningParams={{ title: gameToDelete?.title ?? "" }}
+        translationNamespace="admin.games.deleteDialog"
+        warningParams={{ title: gameToDelete?.title ?? "" }}
         onClose={handleDeleteClose}
         onConfirm={handleDeleteConfirm}
         isDeleting={isDeleting}

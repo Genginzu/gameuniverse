@@ -28,7 +28,10 @@ export function SyncImportTab({ syncState, startSync, stopSync }: SyncImportTabP
 
   const { entries, total, totalPages, isLoading } = useGlobalSync(page, search, "unsynced");
 
-  const handleSearch = () => { setSearch(searchInput); setPage(1); };
+  const handleSearch = () => {
+    setSearch(searchInput);
+    setPage(1);
+  };
 
   return (
     <SyncTabLayout

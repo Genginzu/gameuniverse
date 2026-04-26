@@ -19,7 +19,7 @@ export function ActivityItemFavorite({ data, locale: _locale }: ActivityItemFavo
           character: () => (
             <Link
               href={`/characters/${data.characterSlug}`}
-              className="font-medium text-palette-secondary-600 hover:underline dark:text-palette-secondary-400"
+              className="text-palette-secondary-600 dark:text-palette-secondary-400 font-medium hover:underline"
             >
               {data.characterName}
             </Link>

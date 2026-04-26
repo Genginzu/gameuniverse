@@ -27,16 +27,25 @@ export default function AdminSidebar({
     if (!sidebarOpen) return;
     const sidebar = sidebarRef.current;
     if (!sidebar) return;
-    const sel = 'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    const sel =
+      'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])';
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") { setSidebarOpen(false); return; }
+      if (e.key === "Escape") {
+        setSidebarOpen(false);
+        return;
+      }
       if (e.key !== "Tab") return;
       const focusable = sidebar.querySelectorAll<HTMLElement>(sel);
       if (focusable.length === 0) return;
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
-      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     };
     document.addEventListener("keydown", handleKeyDown);
     const focusable = sidebar.querySelectorAll<HTMLElement>(sel);
@@ -57,7 +66,9 @@ export default function AdminSidebar({
     <div className="flex h-full flex-col">
       <div className="border-b border-gray-200 p-4 dark:border-gray-700">
         <h2 className="text-lg font-bold text-gray-900 dark:text-white">{t("title")}</h2>
-        <span className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium ${roleBadgeClasses}`}>
+        <span
+          className={`mt-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium ${roleBadgeClasses}`}
+        >
           {t(`roles.${user.role}`)}
         </span>
       </div>

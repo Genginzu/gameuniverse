@@ -10,8 +10,7 @@ export function calculateRefund(
   scheduledAt: string,
   paymentAmount: number
 ): RefundResult {
-  const hoursUntilSession =
-    (new Date(scheduledAt).getTime() - Date.now()) / (1000 * 60 * 60);
+  const hoursUntilSession = (new Date(scheduledAt).getTime() - Date.now()) / (1000 * 60 * 60);
 
   if (hoursUntilSession >= cancellationPolicy.free_until_hours) {
     return { refundAmount: paymentAmount, refundPercentage: 100 };

@@ -214,6 +214,7 @@ export interface GameDetails {
   dlcExtensions?: GameDlcExtension[];
   similarGames?: SimilarGame[];
   platforms: GamePlatform[];
+  isEsport?: boolean;
 }
 
 export interface GameSummary {
@@ -233,6 +234,7 @@ export interface GameSummary {
   igdbId?: number;
   source?: "local" | "igdb";
   platforms?: GameSummaryPlatform[];
+  isEsport?: boolean;
 }
 
 export const GAME_LISTING_SORT_OPTIONS = [

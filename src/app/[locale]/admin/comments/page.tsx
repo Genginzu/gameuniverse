@@ -79,18 +79,41 @@ export default function AdminCommentsPage() {
   }, [isDeleting]);
 
   const formatDate = (dateStr: string) => {
-    try { return new Date(dateStr).toLocaleDateString(); } catch { return "—"; }
+    try {
+      return new Date(dateStr).toLocaleDateString();
+    } catch {
+      return "—";
+    }
   };
 
   const commentColumns: AdminColumnDef<AdminComment>[] = [
     {
-      key: "player_name", labelKey: "columns.player", sortable: true,
+      key: "player_name",
+      labelKey: "columns.player",
+      sortable: true,
       render: (c) => c.playerName ?? t("anonymousPlayer"),
       className: "px-4 py-3 font-medium text-gray-900 dark:text-white",
     },
-    { key: "character_name", labelKey: "columns.character", sortable: true, render: (c) => c.characterName, className: "px-4 py-3 text-gray-500 dark:text-gray-400" },
-    { key: "content", labelKey: "columns.content", render: (c) => c.contentExcerpt, className: "max-w-xs truncate px-4 py-3 text-gray-500 dark:text-gray-400" },
-    { key: "created_at", labelKey: "columns.date", sortable: true, render: (c) => formatDate(c.createdAt), className: "px-4 py-3 text-gray-500 dark:text-gray-400" },
+    {
+      key: "character_name",
+      labelKey: "columns.character",
+      sortable: true,
+      render: (c) => c.characterName,
+      className: "px-4 py-3 text-gray-500 dark:text-gray-400",
+    },
+    {
+      key: "content",
+      labelKey: "columns.content",
+      render: (c) => c.contentExcerpt,
+      className: "max-w-xs truncate px-4 py-3 text-gray-500 dark:text-gray-400",
+    },
+    {
+      key: "created_at",
+      labelKey: "columns.date",
+      sortable: true,
+      render: (c) => formatDate(c.createdAt),
+      className: "px-4 py-3 text-gray-500 dark:text-gray-400",
+    },
   ];
 
   return (
@@ -119,7 +142,10 @@ export default function AdminCommentsPage() {
       <AdminDeleteDialog
         isOpen={commentToDelete !== null}
         translationNamespace="admin.comments.deleteDialog"
-        warningParams={{ player: commentToDelete?.playerName ?? "", character: commentToDelete?.characterName ?? "" }}
+        warningParams={{
+          player: commentToDelete?.playerName ?? "",
+          character: commentToDelete?.characterName ?? "",
+        }}
         onClose={handleDeleteClose}
         onConfirm={handleDeleteConfirm}
         isDeleting={isDeleting}

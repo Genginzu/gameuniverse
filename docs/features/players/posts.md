@@ -16,16 +16,16 @@ enrichis d'images, tags et mentions. Les visiteurs consultent et recherchent.
 ### Enrichissements
 
 - **Image URL** — image HTTPS optionnelle via toggle dans le PostComposer.
-  Affichée sous le contenu avec coins arrondis. Gestion gracieuse des erreurs
-  de chargement (masquée si URL cassée).
+  Affichée sous le contenu avec coins arrondis. Gestion gracieuse des erreurs de
+  chargement (masquée si URL cassée).
 - **Tags (`#hashtags`)** — extraits côté serveur depuis le contenu, normalisés
   en minuscules, dédupliqués, max 10 par post, stockés dans `post_tags`.
   Affichés comme badges néon violet/cyan.
 - **Mentions (`@joueur`)** — extraites côté serveur, résolues contre
   `profiles.full_name`, stockées dans `post_mentions`. Les mentions valides
   deviennent des liens cliquables ; les invalides restent en texte brut.
-- **Recherche** — SearchBar avec debounce 300ms, filtre ILIKE côté serveur
-  avec index GIN trigram. Couvre contenu, tags et mentions.
+- **Recherche** — SearchBar avec debounce 300ms, filtre ILIKE côté serveur avec
+  index GIN trigram. Couvre contenu, tags et mentions.
 
 ## Accès
 
@@ -37,10 +37,10 @@ enrichis d'images, tags et mentions. Les visiteurs consultent et recherchent.
 - `supabase/migrations/20240310000001_player_posts.sql` — table `player_posts`
   avec RLS
 - `supabase/migrations/20240311000001_enhanced_player_posts.sql` — colonne
-  `image_url`, tables `post_tags` / `post_mentions`, extension `pg_trgm`,
-  index GIN
-- Utilisateur authentifié pour créer/supprimer ; publication possible
-  uniquement sur son propre profil
+  `image_url`, tables `post_tags` / `post_mentions`, extension `pg_trgm`, index
+  GIN
+- Utilisateur authentifié pour créer/supprimer ; publication possible uniquement
+  sur son propre profil
 
 ## Utilisation
 
@@ -81,30 +81,30 @@ Supprime un post appartenant à l'utilisateur authentifié (204).
 
 ### Base (player-posts)
 
-| Fichier                                               | Rôle                                       |
-| ----------------------------------------------------- | ------------------------------------------ |
-| `src/types/post.ts`                                   | Types partagés (Post, PostsResponse)       |
-| `src/lib/services/playerPostsServerService.ts`        | Service serveur (requêtes Supabase)        |
-| `src/lib/services/playerPostsService.ts`              | Service client                             |
-| `src/app/api/players/[id]/posts/route.ts`             | Routes API GET + POST                      |
-| `src/app/api/players/[id]/posts/[postId]/route.ts`    | Route API DELETE                           |
-| `src/hooks/usePlayerPosts.ts`                         | Hook React                                 |
-| `src/components/players/PostComposer.tsx`             | Formulaire de création                     |
-| `src/components/players/PostCard.tsx`                 | Carte d'affichage                          |
-| `src/components/players/PostsFeed.tsx`                | Feed + scroll infini                       |
-| `supabase/migrations/20240310000001_player_posts.sql` | Migration : table, index, RLS              |
+| Fichier                                               | Rôle                                 |
+| ----------------------------------------------------- | ------------------------------------ |
+| `src/types/post.ts`                                   | Types partagés (Post, PostsResponse) |
+| `src/lib/services/playerPostsServerService.ts`        | Service serveur (requêtes Supabase)  |
+| `src/lib/services/playerPostsService.ts`              | Service client                       |
+| `src/app/api/players/[id]/posts/route.ts`             | Routes API GET + POST                |
+| `src/app/api/players/[id]/posts/[postId]/route.ts`    | Route API DELETE                     |
+| `src/hooks/usePlayerPosts.ts`                         | Hook React                           |
+| `src/components/players/PostComposer.tsx`             | Formulaire de création               |
+| `src/components/players/PostCard.tsx`                 | Carte d'affichage                    |
+| `src/components/players/PostsFeed.tsx`                | Feed + scroll infini                 |
+| `supabase/migrations/20240310000001_player_posts.sql` | Migration : table, index, RLS        |
 
 ### Enrichissements (enhanced-posts)
 
-| Fichier                                                        | Rôle                                            |
-| -------------------------------------------------------------- | ----------------------------------------------- |
-| `supabase/migrations/20240311000001_enhanced_player_posts.sql` | `image_url`, `post_tags`, `post_mentions`, GIN  |
+| Fichier                                                        | Rôle                                                |
+| -------------------------------------------------------------- | --------------------------------------------------- |
+| `supabase/migrations/20240311000001_enhanced_player_posts.sql` | `image_url`, `post_tags`, `post_mentions`, GIN      |
 | `src/lib/utils/postContentParser.ts`                           | `extractTags`, `extractMentions`, `isValidImageUrl` |
-| `src/components/players/SearchBar.tsx`                         | Barre de recherche glassmorphism                |
-| `src/components/players/PostContentRenderer.tsx`               | Rendu tags/mentions stylisés                    |
+| `src/components/players/SearchBar.tsx`                         | Barre de recherche glassmorphism                    |
+| `src/components/players/PostContentRenderer.tsx`               | Rendu tags/mentions stylisés                        |
 
-Les services, routes, hooks et composants de base ont été étendus pour
-supporter `search`, `imageUrl`, `tags`, `mentions`.
+Les services, routes, hooks et composants de base ont été étendus pour supporter
+`search`, `imageUrl`, `tags`, `mentions`.
 
 ## Intégration profil
 

@@ -33,7 +33,7 @@ export function CollectionGameCard({ item }: CollectionGameCardProps) {
 
             {/* Owner note — compact inline */}
             {item.note && (
-              <p className="mt-0.5 line-clamp-1 text-[10px] italic text-blue-600 dark:text-blue-300">
+              <p className="mt-0.5 line-clamp-1 text-[10px] text-blue-600 italic dark:text-blue-300">
                 {item.note}
               </p>
             )}

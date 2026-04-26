@@ -22,16 +22,26 @@ interface Props {
   featured: { topRated: CoachSummary[]; newest: CoachSummary[]; popular: CoachSummary[] };
 }
 
-function Section({ title, icon, coaches }: { title: string; icon: string; coaches: CoachSummary[] }) {
+function Section({
+  title,
+  icon,
+  coaches,
+}: {
+  title: string;
+  icon: string;
+  coaches: CoachSummary[];
+}) {
   if (coaches.length === 0) return null;
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
-        <Icon icon={icon} className="size-5 text-palette-secondary-400" />
+        <Icon icon={icon} className="text-palette-secondary-400 size-5" />
         <h2 className="text-sm font-semibold text-gray-900 dark:text-white">{title}</h2>
       </div>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {coaches.map((c) => <CoachCard key={c.id} coach={c} />)}
+        {coaches.map((c) => (
+          <CoachCard key={c.id} coach={c} />
+        ))}
       </div>
     </div>
   );

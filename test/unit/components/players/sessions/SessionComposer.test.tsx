@@ -44,7 +44,9 @@ vi.mock("@/components/players/sessions/GameSearchPicker", () => ({
         <button
           type="button"
           data-testid="mock-pick-game"
-          onClick={() => onSelect({ id: "22222222-2222-2222-2222-222222222222", title: "Elden Ring" })}
+          onClick={() =>
+            onSelect({ id: "22222222-2222-2222-2222-222222222222", title: "Elden Ring" })
+          }
         >
           pick-game
         </button>

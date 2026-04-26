@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { BULK_FIELD_TO_OVERRIDE } from "@/lib/services/bulkFieldSync";
 import { logger } from "@/lib/logger";
 
 /**
@@ -16,27 +17,39 @@ const IMPORTABLE_FIELDS: Record<string, string> = {
 
 /**
  * GET /api/admin/bulk-import/fields
- * Returns the count of IGDB-linked games missing data for each importable field.
+ * Returns the count of IGDB-linked games missing data for each importable field,
+ * excluding games where the field has been manually overridden by an admin.
  */
 export async function GET() {
   try {
     const supabase = await createRouteHandlerClient();
+
+    // Fetch all overridden game+field pairs in one query
+    const { data: overrides } = await supabase
+      .from("game_field_overrides")
+      .select("game_id, field_name");
+
+    const overridesByField = new Map<string, string[]>();
+    for (const o of overrides ?? []) {
+      const list = overridesByField.get(o.field_name) ?? [];
+      list.push(o.game_id);
+      overridesByField.set(o.field_name, list);
+    }
+
     const results: Record<string, number> = {};
 
     for (const [key, column] of Object.entries(IMPORTABLE_FIELDS)) {
+      const overrideName = BULK_FIELD_TO_OVERRIDE[key];
+      const excludedIds = overrideName ? (overridesByField.get(overrideName) ?? []) : [];
+
       let query = supabase
         .from("games")
         .select("id", { count: "exact", head: true })
         .not("igdb_id", "is", null)
         .is(column, null);
 
-      // For metascore, count games with NULL metascore that have an igdb_id
-      if (key === "metascore") {
-        query = supabase
-          .from("games")
-          .select("id", { count: "exact", head: true })
-          .not("igdb_id", "is", null)
-          .is("metascore", null);
+      if (excludedIds.length > 0) {
+        query = query.not("id", "in", `(${excludedIds.join(",")})`);
       }
 
       const { count, error } = await query;

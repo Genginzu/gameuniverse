@@ -21,7 +21,9 @@ export function CharacterFormGamesTab({ form, t, availableGames }: GamesTabProps
 
   const addGame = (gameId: string) => {
     const current = form.getValues("games");
-    form.setValue("games", [...current, { game_id: gameId, is_primary: current.length === 0 }], { shouldValidate: true });
+    form.setValue("games", [...current, { game_id: gameId, is_primary: current.length === 0 }], {
+      shouldValidate: true,
+    });
     setShowPicker(false);
   };
 
@@ -56,7 +58,11 @@ export function CharacterFormGamesTab({ form, t, availableGames }: GamesTabProps
           <Icon icon="fa:plus" className="h-3 w-3" />{t("addGame") ?? "Ajouter un jeu"}
         </Button>
       )}
-      {form.formState.errors.games && <p className="text-destructive text-sm font-medium">{form.formState.errors.games.message}</p>}
+      {form.formState.errors.games && (
+        <p className="text-destructive text-sm font-medium">
+          {form.formState.errors.games.message}
+        </p>
+      )}
     </div>
   );
 }

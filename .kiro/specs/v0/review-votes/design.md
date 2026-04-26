@@ -253,7 +253,7 @@ correction vérifiables par une machine._
 
 ### Property 1 : Cohérence des transitions de vote
 
-_For any_ état de vote initial (null, "helpful", ou "not_helpful"), _for any_
+_For any_ état de vote initial (null, "helpful", ou "not*helpful"), \_for any*
 type de vote cliqué, et _for any_ compteurs initiaux non-négatifs :
 
 - `resolveVoteAfterClick(currentVote, clickedType)` retourne null si

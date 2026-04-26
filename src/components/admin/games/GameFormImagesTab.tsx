@@ -44,9 +44,58 @@ export function GameFormImagesTab({ form, t, isIgdbField }: GameFormTabProps) {
         </div>
       </div>
 
-      <MediaListSection form={form} t={t} isIgdbField={isIgdbField} fieldName="screenshots" trackableField="screenshots" titleKey="screenshots" fallbackTitle="Captures d'écran" addKey="addScreenshot" emptyKey="noScreenshots" fallbackEmpty="Aucune capture d'écran" onAdd={() => { const current = form.getValues("screenshots"); form.setValue("screenshots", [...current, { url: "", alt_text: "", caption: "", display_order: current.length, is_featured: false }]); }} />
+      <MediaListSection
+        form={form}
+        t={t}
+        isIgdbField={isIgdbField}
+        fieldName="screenshots"
+        trackableField="screenshots"
+        titleKey="screenshots"
+        fallbackTitle="Captures d'écran"
+        addKey="addScreenshot"
+        emptyKey="noScreenshots"
+        fallbackEmpty="Aucune capture d'écran"
+        onAdd={() => {
+          const current = form.getValues("screenshots");
+          form.setValue("screenshots", [
+            ...current,
+            {
+              url: "",
+              alt_text: "",
+              caption: "",
+              display_order: current.length,
+              is_featured: false,
+            },
+          ]);
+        }}
+      />
 
-      <MediaListSection form={form} t={t} isIgdbField={isIgdbField} fieldName="artwork" trackableField="artworks" titleKey="artwork" fallbackTitle="Illustrations" addKey="addArtwork" emptyKey="noArtwork" fallbackEmpty="Aucune illustration" onAdd={() => { const current = form.getValues("artwork"); form.setValue("artwork", [...current, { url: "", alt_text: "", caption: "", artwork_type: "", display_order: current.length, is_featured: false }]); }} />
+      <MediaListSection
+        form={form}
+        t={t}
+        isIgdbField={isIgdbField}
+        fieldName="artwork"
+        trackableField="artworks"
+        titleKey="artwork"
+        fallbackTitle="Illustrations"
+        addKey="addArtwork"
+        emptyKey="noArtwork"
+        fallbackEmpty="Aucune illustration"
+        onAdd={() => {
+          const current = form.getValues("artwork");
+          form.setValue("artwork", [
+            ...current,
+            {
+              url: "",
+              alt_text: "",
+              caption: "",
+              artwork_type: "",
+              display_order: current.length,
+              is_featured: false,
+            },
+          ]);
+        }}
+      />
     </div>
   );
 }

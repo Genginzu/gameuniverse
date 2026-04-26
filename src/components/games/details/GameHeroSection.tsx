@@ -116,7 +116,11 @@ export function GameHeroSection({
                 </p>
               )}
 
-              <GamePricingSection pricing={game.pricing} colors={colors} formatPrice={formatPrice} />
+              <GamePricingSection
+                pricing={game.pricing}
+                colors={colors}
+                formatPrice={formatPrice}
+              />
             </div>
           </div>
         </div>

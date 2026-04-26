@@ -30,23 +30,19 @@ describe("useCharacters", () => {
   });
 
   it("fetches /api/characters with correct params", async () => {
-    const { result } = renderHook(
-      () => useCharacters({ locale: "fr", page: 1, limit: 20 }),
-      { wrapper: createSWRWrapper() }
-    );
+    const { result } = renderHook(() => useCharacters({ locale: "fr", page: 1, limit: 20 }), {
+      wrapper: createSWRWrapper(),
+    });
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
 
-    expect(mockFetch).toHaveBeenCalledWith(
-      "/api/characters?locale=fr&page=1&limit=20"
-    );
+    expect(mockFetch).toHaveBeenCalledWith("/api/characters?locale=fr&page=1&limit=20");
   });
 
   it("returns characters array after fetch", async () => {
-    const { result } = renderHook(
-      () => useCharacters({ locale: "fr", page: 1, limit: 20 }),
-      { wrapper: createSWRWrapper() }
-    );
+    const { result } = renderHook(() => useCharacters({ locale: "fr", page: 1, limit: 20 }), {
+      wrapper: createSWRWrapper(),
+    });
 
     await waitFor(() => expect(result.current.isLoading).toBe(false));
     expect(result.current.characters).toEqual(mockResponse.characters);
@@ -54,10 +50,9 @@ describe("useCharacters", () => {
   });
 
   it("returns null key when no locale (no fetch)", () => {
-    const { result } = renderHook(
-      () => useCharacters({ locale: "", page: 1, limit: 20 }),
-      { wrapper: createSWRWrapper() }
-    );
+    const { result } = renderHook(() => useCharacters({ locale: "", page: 1, limit: 20 }), {
+      wrapper: createSWRWrapper(),
+    });
 
     expect(result.current.characters).toEqual([]);
     expect(mockFetch).not.toHaveBeenCalled();

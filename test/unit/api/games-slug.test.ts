@@ -91,8 +91,7 @@ describe("GET /api/games/[slug]", () => {
 
   test("returns 404 when game not found", async () => {
     mockSupabaseFrom = (table: string) => {
-      if (table === "games")
-        return supaChain({ data: null, error: { code: "PGRST116" } });
+      if (table === "games") return supaChain({ data: null, error: { code: "PGRST116" } });
       return supaChain({ data: null, error: null });
     };
 
@@ -110,10 +109,7 @@ describe("GET /api/games/[slug]", () => {
       return supaChain({ data: null, error: null });
     };
 
-    const res = await GET(
-      makeRequest("http://localhost/api/games/broken"),
-      makeParams("broken")
-    );
+    const res = await GET(makeRequest("http://localhost/api/games/broken"), makeParams("broken"));
     expect(res.status).toBe(500);
   });
 });

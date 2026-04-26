@@ -34,7 +34,13 @@ export async function POST(_request: NextRequest) {
     const gameIds = entries.map((e) => e.matched_game_id);
     await supabase.from("game_artwork").delete().in("game_id", gameIds);
 
-    const allRows: Array<{ game_id: string; url: string; artwork_type: string; display_order: number; is_featured: boolean }> = [];
+    const allRows: Array<{
+      game_id: string;
+      url: string;
+      artwork_type: string;
+      display_order: number;
+      is_featured: boolean;
+    }> = [];
     for (const entry of entries) {
       const artworks = igdbMap.get(entry.igdb_id) ?? [];
       for (let i = 0; i < artworks.length; i++) {

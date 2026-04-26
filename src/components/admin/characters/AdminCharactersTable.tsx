@@ -43,8 +43,15 @@ export function AdminCharactersTable({ characters, pagination, onPageChange, onS
 
   return (
     <div className="space-y-4">
-      <AdminSearchBar currentSearch={currentSearch} onSearch={onSearch} placeholder={t("searchPlaceholder")} buttonLabel={t("search")} />
-      <p className="text-sm text-gray-500 dark:text-gray-400">{t("totalCharacters", { count: pagination.totalCount })}</p>
+      <AdminSearchBar
+        currentSearch={currentSearch}
+        onSearch={onSearch}
+        placeholder={t("searchPlaceholder")}
+        buttonLabel={t("search")}
+      />
+      <p className="text-sm text-gray-500 dark:text-gray-400">
+        {t("totalCharacters", { count: pagination.totalCount })}
+      </p>
 
       {isLoading ? (
         <AdminTableSkeleton columns={5} rows={8} showImage />
@@ -56,12 +63,54 @@ export function AdminCharactersTable({ characters, pagination, onPageChange, onS
             <table className="w-full text-left text-sm" role="table">
               <thead className="border-b border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800">
                 <tr>
-                  <th scope="col" className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">{t("columns.image")}</th>
-                  <th scope="col" className="px-4 py-3"><button type="button" className="inline-flex items-center gap-1 font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white" onClick={() => handleSortClick("name")}>{t("columns.name")}{renderSortIcon("name")}</button></th>
-                  <th scope="col" className="px-4 py-3"><button type="button" className="inline-flex items-center gap-1 font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white" onClick={() => handleSortClick("role")}>{t("columns.role")}{renderSortIcon("role")}</button></th>
-                  <th scope="col" className="hidden px-4 py-3 font-medium text-gray-600 sm:table-cell dark:text-gray-300">{t("columns.primaryGame")}</th>
-                  <th scope="col" className="hidden px-4 py-3 md:table-cell"><button type="button" className="inline-flex items-center gap-1 font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white" onClick={() => handleSortClick("updated_at")}>{t("columns.updatedAt")}{renderSortIcon("updated_at")}</button></th>
-                  <th scope="col" className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">{t("columns.actions")}</th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300"
+                  >
+                    {t("columns.image")}
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    <button
+                      type="button"
+                      className="inline-flex items-center gap-1 font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                      onClick={() => handleSortClick("name")}
+                    >
+                      {t("columns.name")}
+                      {renderSortIcon("name")}
+                    </button>
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    <button
+                      type="button"
+                      className="inline-flex items-center gap-1 font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                      onClick={() => handleSortClick("role")}
+                    >
+                      {t("columns.role")}
+                      {renderSortIcon("role")}
+                    </button>
+                  </th>
+                  <th
+                    scope="col"
+                    className="hidden px-4 py-3 font-medium text-gray-600 sm:table-cell dark:text-gray-300"
+                  >
+                    {t("columns.primaryGame")}
+                  </th>
+                  <th scope="col" className="hidden px-4 py-3 md:table-cell">
+                    <button
+                      type="button"
+                      className="inline-flex items-center gap-1 font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                      onClick={() => handleSortClick("updated_at")}
+                    >
+                      {t("columns.updatedAt")}
+                      {renderSortIcon("updated_at")}
+                    </button>
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300"
+                  >
+                    {t("columns.actions")}
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
@@ -76,8 +125,26 @@ export function AdminCharactersTable({ characters, pagination, onPageChange, onS
                     <td className="hidden px-4 py-3 text-gray-500 md:table-cell dark:text-gray-400">{formatDate(character.updatedAt)}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-                        <Button variant="ghost" size="sm" onClick={() => onEdit(character.id)} aria-label={t("editCharacter", { name: character.name })} className="min-h-[44px] min-w-[44px]"><Icon icon="fa:edit" className="h-4 w-4" /></Button>
-                        {canDelete && <Button variant="ghost" size="sm" onClick={() => onDelete(character)} aria-label={t("deleteCharacter", { name: character.name })} className="min-h-[44px] min-w-[44px] text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"><Icon icon="fa:trash" className="h-4 w-4" /></Button>}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => onEdit(character.id)}
+                          aria-label={t("editCharacter", { name: character.name })}
+                          className="min-h-[44px] min-w-[44px]"
+                        >
+                          <Icon icon="fa:edit" className="h-4 w-4" />
+                        </Button>
+                        {canDelete && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => onDelete(character)}
+                            aria-label={t("deleteCharacter", { name: character.name })}
+                            className="min-h-[44px] min-w-[44px] text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                          >
+                            <Icon icon="fa:trash" className="h-4 w-4" />
+                          </Button>
+                        )}
                       </div>
                     </td>
                   </tr>

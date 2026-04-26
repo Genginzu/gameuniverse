@@ -26,7 +26,10 @@ export function ColorsSyncTab({ syncState, startColors, stopColors }: ColorsSync
 
   const { entries, total, totalPages, isLoading } = useGlobalSync(page, search, "to_colors");
 
-  const handleSearch = () => { setSearch(searchInput); setPage(1); };
+  const handleSearch = () => {
+    setSearch(searchInput);
+    setPage(1);
+  };
 
   return (
     <SyncTabLayout

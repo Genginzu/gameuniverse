@@ -11,7 +11,9 @@ function getKey(): Buffer {
   }
   const key = Buffer.from(raw, "base64");
   if (key.length !== KEY_LENGTH) {
-    throw new Error(`PLATFORM_TOKEN_ENCRYPTION_KEY must decode to ${KEY_LENGTH} bytes (base64-encoded)`);
+    throw new Error(
+      `PLATFORM_TOKEN_ENCRYPTION_KEY must decode to ${KEY_LENGTH} bytes (base64-encoded)`
+    );
   }
   return key;
 }

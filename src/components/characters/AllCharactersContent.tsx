@@ -134,7 +134,11 @@ export function AllCharactersContent({
                 icon="lucide:user"
                 title={t("empty.title")}
                 description={hasFilters ? t("empty.description") : t("empty.noCharacters")}
-                action={hasFilters ? { label: t("empty.clearFilters"), onClick: handleClearFilters } : undefined}
+                action={
+                  hasFilters
+                    ? { label: t("empty.clearFilters"), onClick: handleClearFilters }
+                    : undefined
+                }
               />
             ) : characters.length > 0 ? (
               <div className="space-y-8">

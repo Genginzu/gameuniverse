@@ -72,12 +72,12 @@ export function PlayerAchievementList({
                 <span className="truncate font-medium text-gray-900 dark:text-white">{name}</span>
                 {isUnlocked ? (
                   <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300">
-                    <Icon icon="fa:unlock" className="h-2.5 w-2.5"  />
+                    <Icon icon="fa:unlock" className="h-2.5 w-2.5" />
                     {t("unlocked")}
                   </span>
                 ) : (
                   <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500 dark:bg-gray-700 dark:text-gray-400">
-                    <Icon icon="fa:lock" className="h-2.5 w-2.5"  />
+                    <Icon icon="fa:lock" className="h-2.5 w-2.5" />
                     {t("locked")}
                   </span>
                 )}

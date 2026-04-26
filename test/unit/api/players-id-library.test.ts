@@ -21,11 +21,7 @@ function makeRequest(url: string) {
 
 const makeParams = (id: string) => ({ params: Promise.resolve({ id }) });
 
-function libraryFromMock(opts: {
-  count: number | null;
-  data: any[] | null;
-  error?: any;
-}) {
+function libraryFromMock(opts: { count: number | null; data: any[] | null; error?: any }) {
   return {
     select: (_cols: string, selectOpts?: { count?: string; head?: boolean }) => {
       const chain: any = {
@@ -67,15 +63,11 @@ describe("GET /api/players/[id]/library", () => {
     };
 
     mockSupabaseFrom = (table: string) => {
-      if (table === "user_library")
-        return libraryFromMock({ count: 1, data: [libraryEntry] });
+      if (table === "user_library") return libraryFromMock({ count: 1, data: [libraryEntry] });
       return {};
     };
 
-    const res = await GET(
-      makeRequest("http://localhost/api/players/u1/library"),
-      makeParams("u1")
-    );
+    const res = await GET(makeRequest("http://localhost/api/players/u1/library"), makeParams("u1"));
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body).toHaveProperty("games");
@@ -91,24 +83,17 @@ describe("GET /api/players/[id]/library", () => {
       return {};
     };
 
-    const res = await GET(
-      makeRequest("http://localhost/api/players/u1/library"),
-      makeParams("u1")
-    );
+    const res = await GET(makeRequest("http://localhost/api/players/u1/library"), makeParams("u1"));
     expect(res.status).toBe(500);
   });
 
   test("returns empty games when player has no library entries", async () => {
     mockSupabaseFrom = (table: string) => {
-      if (table === "user_library")
-        return libraryFromMock({ count: 0, data: [] });
+      if (table === "user_library") return libraryFromMock({ count: 0, data: [] });
       return {};
     };
 
-    const res = await GET(
-      makeRequest("http://localhost/api/players/u1/library"),
-      makeParams("u1")
-    );
+    const res = await GET(makeRequest("http://localhost/api/players/u1/library"), makeParams("u1"));
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.games).toHaveLength(0);

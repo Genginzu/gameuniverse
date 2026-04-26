@@ -3,6 +3,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { commentSchema } from "@/lib/validations/comment";
 import type { Comment, CommentsResponse } from "@/types/comment";
 import { logger } from "@/lib/logger";
+import { CoinService } from "@/lib/services/coinService";
 
 interface CommentRow {
   id: string;
@@ -217,6 +218,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       logger.error("Error inserting comment", { error: insertError });
       return NextResponse.json({ error: "Failed to create comment" }, { status: 500 });
     }
+
+    CoinService.rewardActivity(user.id, "post_comment", comment.id).catch((err) =>
+      logger.error("Coin reward failed", { error: err })
+    );
 
     return NextResponse.json({ success: true, comment }, { status: 201 });
   } catch (error) {

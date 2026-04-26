@@ -19,7 +19,11 @@ interface MetascoreSyncTabProps {
   stopMetascoreSync: () => void;
 }
 
-export function MetascoreSyncTab({ syncState, startMetascoreSync, stopMetascoreSync }: MetascoreSyncTabProps) {
+export function MetascoreSyncTab({
+  syncState,
+  startMetascoreSync,
+  stopMetascoreSync,
+}: MetascoreSyncTabProps) {
   const t = useTranslations("admin.globalSync.metascoreTab");
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -27,7 +31,10 @@ export function MetascoreSyncTab({ syncState, startMetascoreSync, stopMetascoreS
 
   const { entries, total, totalPages, isLoading } = useGlobalSync(page, search, "to_metascore");
 
-  const handleSearch = () => { setSearch(searchInput); setPage(1); };
+  const handleSearch = () => {
+    setSearch(searchInput);
+    setPage(1);
+  };
 
   return (
     <SyncTabLayout
@@ -49,7 +56,11 @@ export function MetascoreSyncTab({ syncState, startMetascoreSync, stopMetascoreS
       emptyKey="allDone"
       renderExtraStats={() =>
         syncState.lastSource ? (
-          <StatBadge icon="lucide:database" color="text-palette-secondary-500" label={t("source", { source: syncState.lastSource })} />
+          <StatBadge
+            icon="lucide:database"
+            color="text-palette-secondary-500"
+            label={t("source", { source: syncState.lastSource })}
+          />
         ) : null
       }
     />

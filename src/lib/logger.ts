@@ -63,7 +63,6 @@ function formatError(err: unknown): Record<string, unknown> {
   return { message: String(err) };
 }
 
-
 function log(level: LogLevel, message: string, data?: LogPayload) {
   if (!shouldLog(level)) return;
 

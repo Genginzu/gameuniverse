@@ -117,7 +117,6 @@
   }
 }
 
-
 /* stylelint-enable at-rule-no-unknown */
 
 @layer base {
@@ -557,14 +556,24 @@ textarea:focus-visible,
 
 /* Top bar — Vikinger-style gradient header */
 .topbar {
-  background: linear-gradient(135deg, var(--color-palette-primary-800) 0%, var(--color-palette-primary-600) 50%, var(--color-palette-accent-500) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-palette-primary-800) 0%,
+    var(--color-palette-primary-600) 50%,
+    var(--color-palette-accent-500) 100%
+  );
   box-shadow:
     0 4px 20px rgba(var(--neon-primary), 0.35),
     0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 .dark .topbar {
-  background: linear-gradient(135deg, var(--color-palette-primary-950) 0%, var(--color-palette-primary-800) 50%, var(--color-palette-primary-600) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-palette-primary-950) 0%,
+    var(--color-palette-primary-800) 50%,
+    var(--color-palette-primary-600) 100%
+  );
   box-shadow:
     0 4px 20px rgba(var(--neon-primary), 0.5),
     0 1px 3px rgba(0, 0, 0, 0.3);

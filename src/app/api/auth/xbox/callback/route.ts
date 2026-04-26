@@ -24,7 +24,11 @@ async function getXboxUserToken(accessToken: string) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      Properties: { AuthMethod: "RPS", SiteName: "user.auth.xboxlive.com", RpsTicket: `d=${accessToken}` },
+      Properties: {
+        AuthMethod: "RPS",
+        SiteName: "user.auth.xboxlive.com",
+        RpsTicket: `d=${accessToken}`,
+      },
       RelyingParty: "http://auth.xboxlive.com",
       TokenType: "JWT",
     }),
@@ -50,7 +54,10 @@ async function getXboxProfile(xstsToken: string, userHash: string) {
   const res = await fetch(
     `https://profile.xboxlive.com/users/me/profile/settings?settings=${settings}`,
     {
-      headers: { Authorization: `XBL3.0 x=${userHash};${xstsToken}`, "x-xbl-contract-version": "2" },
+      headers: {
+        Authorization: `XBL3.0 x=${userHash};${xstsToken}`,
+        "x-xbl-contract-version": "2",
+      },
     }
   );
   return res.json();
@@ -69,20 +76,27 @@ export async function GET(request: NextRequest) {
 
   try {
     const supabase = await createRouteHandlerClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (!user) return NextResponse.redirect(`${baseUrl}/auth?error=unauthorized`);
-    if (!code) return NextResponse.redirect(`${baseUrl}/players/${user.id}?tab=settings&error=xbox_no_code`);
+    if (!code)
+      return NextResponse.redirect(`${baseUrl}/players/${user.id}?tab=settings&error=xbox_no_code`);
 
     const stateValid = await consumeOauthState("xbox", request.nextUrl.searchParams.get("state"));
     if (!stateValid) {
-      return NextResponse.redirect(`${baseUrl}/players/${user.id}?tab=settings&error=xbox_state_mismatch`);
+      return NextResponse.redirect(
+        `${baseUrl}/players/${user.id}?tab=settings&error=xbox_state_mismatch`
+      );
     }
 
     const redirectUri = `${baseUrl}/api/auth/xbox/callback`;
     const tokenData = await exchangeCodeForToken(code, redirectUri);
     if (!tokenData.access_token) {
-      return NextResponse.redirect(`${baseUrl}/players/${user.id}?tab=settings&error=xbox_token_failed`);
+      return NextResponse.redirect(
+        `${baseUrl}/players/${user.id}?tab=settings&error=xbox_token_failed`
+      );
     }
 
     const xblData = await getXboxUserToken(tokenData.access_token);
@@ -126,7 +140,9 @@ export async function GET(request: NextRequest) {
       { onConflict: "player_id,platform" }
     );
 
-    return NextResponse.redirect(`${baseUrl}/players/${user.id}?tab=settings&platform=xbox&success=true`);
+    return NextResponse.redirect(
+      `${baseUrl}/players/${user.id}?tab=settings&platform=xbox&success=true`
+    );
   } catch (error) {
     logger.error("Xbox callback error", { error });
     return NextResponse.redirect(`${baseUrl}?error=xbox_callback_failed`);

@@ -10,13 +10,16 @@ type S = any;
 export async function POST() {
   try {
     const supabase: S = await createRouteHandlerClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { data: coach } = await supabase
       .from("coach_profiles")
       .select("id, stripe_account_id, stripe_onboarding_complete")
-      .eq("player_id", user.id).single();
+      .eq("player_id", user.id)
+      .single();
 
     if (!coach?.stripe_account_id || !coach.stripe_onboarding_complete) {
       return NextResponse.json({ error: "Stripe not configured" }, { status: 400 });

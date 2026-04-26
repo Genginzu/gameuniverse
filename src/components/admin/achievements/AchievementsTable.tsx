@@ -32,8 +32,18 @@ export function AchievementsTable({ achievements, pagination, onPageChange, onSe
   const t = useTranslations("adminAchievements");
   const locale = useLocale();
 
-  const handleSortClick = (field: SortField) => { const newOrder = currentSort?.field === field && currentSort.order === "asc" ? "desc" : "asc"; onSort(field, newOrder); };
-  const renderSortIcon = (field: SortField) => { if (currentSort?.field !== field) return <Icon icon="fa:sort" className="h-3 w-3 opacity-40" />; return currentSort.order === "asc" ? <Icon icon="fa:sort-up" className="h-3 w-3" /> : <Icon icon="fa:sort-down" className="h-3 w-3" />; };
+  const handleSortClick = (field: SortField) => {
+    const newOrder = currentSort?.field === field && currentSort.order === "asc" ? "desc" : "asc";
+    onSort(field, newOrder);
+  };
+  const renderSortIcon = (field: SortField) => {
+    if (currentSort?.field !== field) return <Icon icon="fa:sort" className="h-3 w-3 opacity-40" />;
+    return currentSort.order === "asc" ? (
+      <Icon icon="fa:sort-up" className="h-3 w-3" />
+    ) : (
+      <Icon icon="fa:sort-down" className="h-3 w-3" />
+    );
+  };
 
   const sortableColumns: { field: SortField; label: string }[] = [
     { field: "key", label: t("columns.key") }, { field: "category", label: t("columns.category") },
@@ -43,11 +53,22 @@ export function AchievementsTable({ achievements, pagination, onPageChange, onSe
 
   return (
     <div className="space-y-4">
-      <AdminSearchBar currentSearch={currentSearch} onSearch={onSearch} placeholder={t("searchPlaceholder")} buttonLabel={t("search")} />
-      <p className="text-sm text-gray-500 dark:text-gray-400">{t("totalAchievements", { count: pagination.totalCount })}</p>
+      <AdminSearchBar
+        currentSearch={currentSearch}
+        onSearch={onSearch}
+        placeholder={t("searchPlaceholder")}
+        buttonLabel={t("search")}
+      />
+      <p className="text-sm text-gray-500 dark:text-gray-400">
+        {t("totalAchievements", { count: pagination.totalCount })}
+      </p>
 
-      {isLoading ? <AdminTableSkeleton columns={6} rows={8} /> : achievements.length === 0 ? (
-        <div className="rounded-xl border border-gray-200 bg-white/40 p-12 text-center dark:border-gray-700 dark:bg-gray-800/50"><p className="text-gray-500 dark:text-gray-400">{t("noAchievements")}</p></div>
+      {isLoading ? (
+        <AdminTableSkeleton columns={6} rows={8} />
+      ) : achievements.length === 0 ? (
+        <div className="rounded-xl border border-gray-200 bg-white/40 p-12 text-center dark:border-gray-700 dark:bg-gray-800/50">
+          <p className="text-gray-500 dark:text-gray-400">{t("noAchievements")}</p>
+        </div>
       ) : (
         <>
           <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
@@ -55,7 +76,16 @@ export function AchievementsTable({ achievements, pagination, onPageChange, onSe
               <thead className="border-b border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800">
                 <tr>
                   {sortableColumns.map((col) => (
-                    <th key={col.field} scope="col" className="px-4 py-3"><button type="button" className="inline-flex items-center gap-1 font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white" onClick={() => handleSortClick(col.field)}>{col.label}{renderSortIcon(col.field)}</button></th>
+                    <th key={col.field} scope="col" className="px-4 py-3">
+                      <button
+                        type="button"
+                        className="inline-flex items-center gap-1 font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                        onClick={() => handleSortClick(col.field)}
+                      >
+                        {col.label}
+                        {renderSortIcon(col.field)}
+                      </button>
+                    </th>
                   ))}
                   <th scope="col" className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">{t("columns.actions")}</th>
                 </tr>

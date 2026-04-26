@@ -47,7 +47,13 @@ export async function POST(_request: NextRequest) {
       // Aggregate supports per language for this game
       const languageMap = new Map<
         string,
-        { name: string; nativeName: string; hasAudio: boolean; hasSubtitles: boolean; hasInterface: boolean }
+        {
+          name: string;
+          nativeName: string;
+          hasAudio: boolean;
+          hasSubtitles: boolean;
+          hasInterface: boolean;
+        }
       >();
 
       for (const ls of igdbGame.language_supports) {

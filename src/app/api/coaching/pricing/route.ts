@@ -34,7 +34,9 @@ export async function GET() {
 
     const { data, error } = await supabase
       .from("coach_pricing")
-      .select("*, coach_games!inner(id, coach_id, game_id, games:game_id(slug, cover_image_url, game_translations(title, language_code)))")
+      .select(
+        "*, coach_games!inner(id, coach_id, game_id, games:game_id(slug, cover_image_url, game_translations(title, language_code)))"
+      )
       .eq("coach_games.coach_id", profile.id);
 
     if (error) {
@@ -122,18 +124,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Failed to create pricing" }, { status: 500 });
     }
 
-    return NextResponse.json({
-      pricing: {
-        id: data.id,
-        coachGameId: data.coach_game_id,
-        sessionType: data.session_type,
-        priceAmount: data.price_amount,
-        priceCurrency: data.price_currency,
-        durationMinutes: data.duration_minutes,
-        isActive: data.is_active,
-        createdAt: data.created_at,
+    return NextResponse.json(
+      {
+        pricing: {
+          id: data.id,
+          coachGameId: data.coach_game_id,
+          sessionType: data.session_type,
+          priceAmount: data.price_amount,
+          priceCurrency: data.price_currency,
+          durationMinutes: data.duration_minutes,
+          isActive: data.is_active,
+          createdAt: data.created_at,
+        },
       },
-    }, { status: 201 });
+      { status: 201 }
+    );
   } catch (error) {
     logger.error("Error in coaching pricing POST", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

@@ -11,9 +11,7 @@ vi.mock("../../../src/lib/supabase-server", () => ({
         return {};
       },
       auth: {
-        getUser: () =>
-          mockGetUser?.() ??
-          Promise.resolve({ data: { user: null }, error: null }),
+        getUser: () => mockGetUser?.() ?? Promise.resolve({ data: { user: null }, error: null }),
       },
     }),
 }));
@@ -26,9 +24,7 @@ vi.mock("../../../src/lib/logger", () => ({
   logger: { error: vi.fn(), warn: vi.fn(), info: vi.fn() },
 }));
 
-const { POST, DELETE } = await import(
-  "../../../src/app/api/review-votes/route"
-);
+const { POST, DELETE } = await import("../../../src/app/api/review-votes/route");
 
 function makeRequest(url: string, init?: RequestInit) {
   return new Request(url, init) as unknown as import("next/server").NextRequest;
@@ -56,34 +52,34 @@ describe("POST /api/review-votes", () => {
     );
 
     const res = await POST(
-      makeRequest("http://localhost/api/review-votes", jsonBody({ reviewId: "r1", voteType: "helpful" }))
+      makeRequest(
+        "http://localhost/api/review-votes",
+        jsonBody({ reviewId: "r1", voteType: "helpful" })
+      )
     );
     expect(res.status).toBe(401);
   });
 
   test("returns 400 for invalid vote type", async () => {
-    mockGetUser = vi.fn(() =>
-      Promise.resolve({ data: { user: USER }, error: null })
-    );
+    mockGetUser = vi.fn(() => Promise.resolve({ data: { user: USER }, error: null }));
 
     const res = await POST(
-      makeRequest("http://localhost/api/review-votes", jsonBody({ reviewId: "r1", voteType: "invalid" }))
+      makeRequest(
+        "http://localhost/api/review-votes",
+        jsonBody({ reviewId: "r1", voteType: "invalid" })
+      )
     );
     expect(res.status).toBe(400);
   });
 
   test("returns 404 when review not found", async () => {
-    mockGetUser = vi.fn(() =>
-      Promise.resolve({ data: { user: USER }, error: null })
-    );
+    mockGetUser = vi.fn(() => Promise.resolve({ data: { user: USER }, error: null }));
     mockSupabaseFrom = vi.fn((table: string) => {
       if (table === "game_reviews") {
         return {
           select: vi.fn(() => ({
             eq: vi.fn(() => ({
-              single: vi.fn(() =>
-                Promise.resolve({ data: null, error: { message: "not found" } })
-              ),
+              single: vi.fn(() => Promise.resolve({ data: null, error: { message: "not found" } })),
             })),
           })),
         };
@@ -92,15 +88,16 @@ describe("POST /api/review-votes", () => {
     });
 
     const res = await POST(
-      makeRequest("http://localhost/api/review-votes", jsonBody({ reviewId: "r1", voteType: "helpful" }))
+      makeRequest(
+        "http://localhost/api/review-votes",
+        jsonBody({ reviewId: "r1", voteType: "helpful" })
+      )
     );
     expect(res.status).toBe(404);
   });
 
   test("returns 403 when voting on own review", async () => {
-    mockGetUser = vi.fn(() =>
-      Promise.resolve({ data: { user: USER }, error: null })
-    );
+    mockGetUser = vi.fn(() => Promise.resolve({ data: { user: USER }, error: null }));
     mockSupabaseFrom = vi.fn((table: string) => {
       if (table === "game_reviews") {
         return {
@@ -117,15 +114,16 @@ describe("POST /api/review-votes", () => {
     });
 
     const res = await POST(
-      makeRequest("http://localhost/api/review-votes", jsonBody({ reviewId: "r1", voteType: "helpful" }))
+      makeRequest(
+        "http://localhost/api/review-votes",
+        jsonBody({ reviewId: "r1", voteType: "helpful" })
+      )
     );
     expect(res.status).toBe(403);
   });
 
   test("creates vote when none exists", async () => {
-    mockGetUser = vi.fn(() =>
-      Promise.resolve({ data: { user: USER }, error: null })
-    );
+    mockGetUser = vi.fn(() => Promise.resolve({ data: { user: USER }, error: null }));
     mockSupabaseFrom = vi.fn((table: string) => {
       if (table === "game_reviews") {
         return {
@@ -143,9 +141,7 @@ describe("POST /api/review-votes", () => {
           select: vi.fn(() => ({
             eq: vi.fn(() => ({
               eq: vi.fn(() => ({
-                single: vi.fn(() =>
-                  Promise.resolve({ data: null, error: null })
-                ),
+                single: vi.fn(() => Promise.resolve({ data: null, error: null })),
               })),
             })),
           })),
@@ -156,7 +152,10 @@ describe("POST /api/review-votes", () => {
     });
 
     const res = await POST(
-      makeRequest("http://localhost/api/review-votes", jsonBody({ reviewId: "r1", voteType: "helpful" }))
+      makeRequest(
+        "http://localhost/api/review-votes",
+        jsonBody({ reviewId: "r1", voteType: "helpful" })
+      )
     );
     expect(res.status).toBe(200);
     const body = await res.json();
@@ -165,9 +164,7 @@ describe("POST /api/review-votes", () => {
   });
 
   test("toggles off when same vote type exists", async () => {
-    mockGetUser = vi.fn(() =>
-      Promise.resolve({ data: { user: USER }, error: null })
-    );
+    mockGetUser = vi.fn(() => Promise.resolve({ data: { user: USER }, error: null }));
     mockSupabaseFrom = vi.fn((table: string) => {
       if (table === "game_reviews") {
         return {
@@ -203,7 +200,10 @@ describe("POST /api/review-votes", () => {
     });
 
     const res = await POST(
-      makeRequest("http://localhost/api/review-votes", jsonBody({ reviewId: "r1", voteType: "helpful" }))
+      makeRequest(
+        "http://localhost/api/review-votes",
+        jsonBody({ reviewId: "r1", voteType: "helpful" })
+      )
     );
     expect(res.status).toBe(200);
     const body = await res.json();
@@ -233,9 +233,7 @@ describe("DELETE /api/review-votes", () => {
   });
 
   test("deletes vote successfully", async () => {
-    mockGetUser = vi.fn(() =>
-      Promise.resolve({ data: { user: USER }, error: null })
-    );
+    mockGetUser = vi.fn(() => Promise.resolve({ data: { user: USER }, error: null }));
     mockSupabaseFrom = vi.fn((table: string) => {
       if (table === "review_votes") {
         return {

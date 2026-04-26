@@ -1,4 +1,4 @@
-import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { IGDBService } from "../igdbService";
 import { logger } from "@/lib/logger";
 import { GameDetails } from "@/types/game";
@@ -12,8 +12,7 @@ export async function fetchAndSavePlaytime(gameId: string, igdbId: number): Prom
     if (!timeToBeat) return;
 
     const secondsToHours = (seconds: number | null | undefined): number | null => {
-      if (seconds === null || seconds === undefined || seconds === 0 || isNaN(seconds))
-        return null;
+      if (seconds === null || seconds === undefined || seconds === 0 || isNaN(seconds)) return null;
       return Math.round((seconds / 3600) * 10) / 10;
     };
 
@@ -23,7 +22,7 @@ export async function fetchAndSavePlaytime(gameId: string, igdbId: number): Prom
 
     if (hastily === null && normally === null && completely === null) return;
 
-    const supabase = await createRouteHandlerClient();
+    const supabase = await getSupabaseAdmin();
 
     const { data, error } = await supabase
       .from("games")

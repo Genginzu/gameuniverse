@@ -30,6 +30,14 @@ export const gameCardConfig: EntityCardConfig<GameSummary> = {
   actions: {
     libraryToggle: true,
   },
+  customBadgeRenderer: (game) =>
+    game.isEsport ? (
+      <div className="absolute top-3 left-3 z-20">
+        <Badge className="from-palette-secondary-500 to-palette-primary-500 rounded-full bg-linear-to-r px-2 py-0.5 text-xs font-bold text-white shadow-lg">
+          Esport
+        </Badge>
+      </div>
+    ) : null,
   linkTemplate: (game) => `/games/${game.slug}`,
   customHoverRenderer: (game, t) => {
     const formatReleaseDate = (dateString?: string, locale: string = "fr") => {
@@ -47,16 +55,12 @@ export const gameCardConfig: EntityCardConfig<GameSummary> = {
         <h3 className="mb-2 line-clamp-2 text-lg font-bold text-white">{game.title}</h3>
         <div className="mb-3 space-y-1 text-xs">
           <div className="flex items-center text-gray-300">
-            <span className="font-medium text-gray-400">
-              {t("developerShort")}:
-            </span>
+            <span className="font-medium text-gray-400">{t("developerShort")}:</span>
             <span className="ml-1 font-medium text-white">{game.developer}</span>
           </div>
           {game.publisher !== game.developer && (
             <div className="flex items-center text-gray-300">
-              <span className="font-medium text-gray-400">
-                {t("publisherShort")}:
-              </span>
+              <span className="font-medium text-gray-400">{t("publisherShort")}:</span>
               <span className="ml-1 font-medium text-white">{game.publisher}</span>
             </div>
           )}

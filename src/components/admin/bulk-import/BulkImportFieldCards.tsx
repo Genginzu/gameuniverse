@@ -49,7 +49,7 @@ export function BulkImportFieldCards({
             onClick={() => onSelect(field)}
             className={`flex min-h-[44px] flex-col items-center gap-2 rounded-xl p-4 transition-all ${
               isActive
-                ? "border border-palette-secondary-500/50 bg-linear-to-br from-palette-secondary-500/20 to-palette-primary-500/20 shadow-lg"
+                ? "border-palette-secondary-500/50 from-palette-secondary-500/20 to-palette-primary-500/20 border bg-linear-to-br shadow-lg"
                 : "glass-card hover:bg-white/60 dark:hover:bg-slate-700/60"
             }`}
           >

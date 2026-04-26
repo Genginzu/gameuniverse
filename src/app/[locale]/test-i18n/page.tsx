@@ -59,7 +59,7 @@ export default function TestI18nPage() {
               <div className="space-y-4">
                 <p>Change language using the switcher below:</p>
                 <LanguageSwitcher />
-                <p className="text-sm text-muted-foreground">
+                <p className="text-muted-foreground text-sm">
                   The page should update immediately when you change the language.
                 </p>
               </div>
@@ -191,7 +191,7 @@ export default function TestI18nPage() {
               <Button variant="outline">{tCommon("save")}</Button>
               <Button variant="outline">{tCommon("cancel")}</Button>
             </div>
-            <p className="mt-4 text-sm text-muted-foreground">
+            <p className="text-muted-foreground mt-4 text-sm">
               All text on this page should update immediately when you change the language.
             </p>
           </div>

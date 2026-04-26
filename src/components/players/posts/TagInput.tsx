@@ -60,19 +60,22 @@ export function TagInput({ tags, onChange }: TagInputProps) {
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-1.5 rounded-xl border-2 border-palette-primary-300 bg-white/60 px-3 py-2 shadow-xs backdrop-blur-xs transition-all duration-200 focus-within:border-palette-primary-400 focus-within:ring-2 focus-within:ring-palette-primary-400/20 dark:border-palette-primary-500/50 dark:bg-slate-700/40 dark:focus-within:border-palette-primary-400/60 dark:focus-within:ring-palette-primary-400/15">
-      <Icon icon="lucide:hash" className="h-4 w-4 shrink-0 text-palette-primary-400 dark:text-palette-primary-300" />
+    <div className="border-palette-primary-300 focus-within:border-palette-primary-400 focus-within:ring-palette-primary-400/20 dark:border-palette-primary-500/50 dark:focus-within:border-palette-primary-400/60 dark:focus-within:ring-palette-primary-400/15 flex flex-wrap items-center gap-1.5 rounded-xl border-2 bg-white/60 px-3 py-2 shadow-xs backdrop-blur-xs transition-all duration-200 focus-within:ring-2 dark:bg-slate-700/40">
+      <Icon
+        icon="lucide:hash"
+        className="text-palette-primary-400 dark:text-palette-primary-300 h-4 w-4 shrink-0"
+      />
 
       {tags.map((tag) => (
         <span
           key={tag}
-          className="inline-flex items-center gap-1 rounded-full bg-palette-primary-500/10 px-2.5 py-0.5 text-xs font-medium text-palette-primary-500 transition-colors dark:bg-palette-primary-400/10 dark:text-palette-primary-300"
+          className="bg-palette-primary-500/10 text-palette-primary-500 dark:bg-palette-primary-400/10 dark:text-palette-primary-300 inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors"
         >
           #{tag}
           <button
             type="button"
             onClick={() => removeTag(tag)}
-            className="rounded-full p-0.5 hover:bg-palette-primary-500/20 dark:hover:bg-palette-primary-400/20"
+            className="hover:bg-palette-primary-500/20 dark:hover:bg-palette-primary-400/20 rounded-full p-0.5"
             aria-label={t("tagRemoveAriaLabel", { tag })}
           >
             <Icon icon="lucide:x" className="h-3 w-3" />

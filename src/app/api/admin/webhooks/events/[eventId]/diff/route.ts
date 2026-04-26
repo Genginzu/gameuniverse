@@ -77,7 +77,9 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     const { data: overrides } = await untypedTable(supabase, "game_field_overrides")
       .select("field_name")
       .eq("game_id", gameId);
-    const overrideSet = new Set((overrides ?? []).map((o: { field_name: string }) => o.field_name as string));
+    const overrideSet = new Set(
+      (overrides ?? []).map((o: { field_name: string }) => o.field_name as string)
+    );
 
     // Fetch relational data in parallel
     const [

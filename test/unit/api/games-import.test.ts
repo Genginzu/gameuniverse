@@ -67,16 +67,14 @@ describe("POST /api/games/import", () => {
   });
 
   test("returns 404 when game not found on IGDB", async () => {
-    mockImportFromIGDB = () =>
-      Promise.resolve({ success: false, error: "Game not found on IGDB" });
+    mockImportFromIGDB = () => Promise.resolve({ success: false, error: "Game not found on IGDB" });
 
     const res = await POST(makeRequest({ igdbId: 999999 }));
     expect(res.status).toBe(404);
   });
 
   test("returns 500 on import failure", async () => {
-    mockImportFromIGDB = () =>
-      Promise.resolve({ success: false, error: "Connection timeout" });
+    mockImportFromIGDB = () => Promise.resolve({ success: false, error: "Connection timeout" });
 
     const res = await POST(makeRequest({ igdbId: 123 }));
     expect(res.status).toBe(500);

@@ -33,6 +33,10 @@
     "yearInReview": {
       "title": "{player}'s {year} year in review",
       "description": "Discover {player}'s {year} gaming year in review on Gamers Universe"
+    },
+    "esportCalendar": {
+      "title": "Esport Calendar",
+      "description": "Follow upcoming and ongoing professional esport tournaments"
     }
   },
   "navigation": {
@@ -54,7 +58,14 @@
     "coaching": "Coaching",
     "coachSettings": "Coach Settings",
     "coachingHub": "Find a Coach",
-    "coachingSessions": "My Sessions"
+    "coachingSessions": "My Sessions",
+    "esport": "Esport",
+    "esportCalendar": "Calendar",
+    "esportLive": "Live",
+    "esportResults": "Results",
+    "esportTeams": "Teams",
+    "esportPlayers": "Pro Players",
+    "esportPredictions": "Predictions"
   },
   "landing": {
     "title": "Your",
@@ -866,6 +877,9 @@
     "clearAll": "Clear all",
     "genres": "Genres",
     "available": "{count} available",
+    "esportFilter": "Esport",
+    "esportSection": "Esport",
+    "esportOnly": "Esport games only",
     "sort": {
       "label": "Sort by",
       "recommended": "Recommended",
@@ -1275,6 +1289,10 @@
       "bulkImport": "Bulk Import",
       "bulkImportCharacters": "Bulk Import",
       "toolsCategory": "Tools",
+      "esportCategory": "Esport",
+      "esport": "Esport Management",
+      "esportImport": "Esport Import",
+      "esportSync": "PandaScore Sync",
       "translations": "Translations",
       "globalSync": "Global Sync"
     },
@@ -1378,7 +1396,10 @@
         "playtimePreview": "Playtime preview",
         "playtimeNoData": "No playtime data entered",
         "popularity": "IGDB Popularity",
+        "isEsport": "Esport game (competitive scene)",
         "colors": "Page colors",
+        "extractColors": "Extract from cover",
+        "alternativeColors": "Alternative palette",
         "backgroundColor": "Background color",
         "accentColor": "Accent color",
         "labelColor": "Label color",
@@ -2629,6 +2650,116 @@
         "resolve": "Resolve",
         "dismiss": "Dismiss"
       }
+    },
+    "esport": {
+      "title": "Esport Management",
+      "subtitle": "Manage esport teams, players, tournaments and results",
+      "tabs": {
+        "teams": "Teams",
+        "players": "Players",
+        "tournaments": "Tournaments",
+        "matches": "Results"
+      },
+      "teams": {
+        "name": "Name",
+        "acronym": "Acronym",
+        "game": "Game",
+        "location": "Location",
+        "image": "Image",
+        "pandascoreId": "PandaScore ID",
+        "noTeams": "No teams",
+        "deleteConfirm": "Delete this team?",
+        "searchPlaceholder": "Search teams...",
+        "actions": "Actions"
+      },
+      "players": {
+        "name": "Name",
+        "role": "Role",
+        "team": "Team",
+        "nationality": "Nationality",
+        "game": "Game",
+        "noPlayers": "No players",
+        "deleteConfirm": "Delete this player?",
+        "searchPlaceholder": "Search players...",
+        "actions": "Actions"
+      },
+      "tournaments": {
+        "name": "Name",
+        "game": "Game",
+        "tier": "Tier",
+        "league": "League",
+        "dates": "Dates",
+        "prizepool": "Prizepool",
+        "noTournaments": "No tournaments",
+        "deleteConfirm": "Delete this tournament?",
+        "searchPlaceholder": "Search tournaments...",
+        "actions": "Actions"
+      },
+      "matches": {
+        "name": "Name",
+        "status": "Status",
+        "opponents": "Opponents",
+        "score": "Score",
+        "tournament": "Tournament",
+        "date": "Date",
+        "noMatches": "No matches",
+        "deleteConfirm": "Delete this match?",
+        "searchPlaceholder": "Search matches...",
+        "actions": "Actions"
+      },
+      "sync": {
+        "button": "Sync from PandaScore",
+        "syncing": "Syncing...",
+        "success": "Sync completed",
+        "error": "Sync error"
+      },
+      "import": {
+        "title": "Esport Bulk Import",
+        "subtitle": "Sync data from PandaScore",
+        "syncAll": "Sync All",
+        "syncing": "Syncing...",
+        "stop": "Stop",
+        "syncOne": "Sync",
+        "idle": "Idle",
+        "fetching": "Fetching...",
+        "done": "{count} synced",
+        "error": "Sync error",
+        "aborted": "Sync aborted"
+      },
+      "syncPage": {
+        "title": "PandaScore Sync",
+        "subtitle": "Automatic sync every 6 hours via cron",
+        "cronInfo": "Automatic sync",
+        "cronDescription": "PandaScore data is synced automatically every 6 hours. You can also trigger a manual sync.",
+        "triggerSync": "Trigger sync",
+        "syncing": "Syncing...",
+        "stop": "Stop",
+        "syncOne": "Sync",
+        "idle": "Idle",
+        "fetching": "Fetching...",
+        "done": "{count} synced",
+        "error": "Sync error",
+        "aborted": "Sync aborted",
+        "history": "Sync history",
+        "date": "Date",
+        "triggerCol": "Trigger",
+        "status": "Status",
+        "synced": "Synced",
+        "errors": "Errors",
+        "duration": "Duration",
+        "details": "Details",
+        "noLogs": "No sync history"
+      },
+      "totalCount": "{count, plural, =0 {No results} one {# result} other {# results}}",
+      "empty": "No data found",
+      "page": "Page {current} / {total}",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "deleteError": "Error while deleting",
+      "actions": "Actions",
+      "edit": "Edit",
+      "delete": "Delete",
+      "search": "Search"
     }
   },
   "collections": {
@@ -2742,7 +2873,19 @@
     "profile": "Profile",
     "profileDesc": "View and manage your information",
     "settings": "Settings",
-    "settingsDesc": "Configure your preferences"
+    "settingsDesc": "Configure your preferences",
+    "esportLive": "Esport Live",
+    "esportLiveDesc": "Watch live matches",
+    "esportCalendar": "Esport Calendar",
+    "esportCalendarDesc": "Upcoming matches and tournaments",
+    "esportResults": "Esport Results",
+    "esportResultsDesc": "Recent scores and standings",
+    "esportTeams": "Esport Teams",
+    "esportTeamsDesc": "Discover professional teams",
+    "esportPlayers": "Esport Players",
+    "esportPlayersDesc": "Professional players",
+    "esportPredictions": "Esport Predictions",
+    "esportPredictionsDesc": "Bet on match outcomes"
   },
   "friends": {
     "searchPlaceholder": "Search for a friend…",
@@ -3567,6 +3710,165 @@
       "success": "Request sent! The coach will confirm your slot.",
       "loginRequired": "Sign in to book a session.",
       "noSessions": "No sessions available for this game."
+    }
+  },
+  "coins": {
+    "balance": "Balance",
+    "totalEarned": "Total earned",
+    "totalSpent": "Total spent",
+    "history": "History",
+    "myWallet": "My wallet",
+    "noTransactions": "No transactions",
+    "toast": {
+      "rewarded": "+{amount} GU Coins — {reason}"
+    },
+    "reward": {
+      "review": "Review published",
+      "library_add": "Game added to library",
+      "library_status_change": "Game status changed",
+      "playtime_log": "Gaming session logged",
+      "collection_add": "Game added to collection",
+      "game_rating": "Game rated",
+      "character_favorite": "Character favorited",
+      "character_vote": "Character vote",
+      "post_create": "Post published",
+      "post_comment": "Comment published",
+      "discussion_message": "Message sent",
+      "friend_add": "Friend added"
+    },
+    "type": {
+      "signup_bonus": "Signup bonus",
+      "activity_reward": "Activity reward",
+      "achievement_reward": "Achievement unlocked",
+      "prediction_bet": "Prediction bet",
+      "prediction_win": "Prediction win",
+      "purchase": "Purchase",
+      "admin_grant": "Admin adjustment"
+    },
+    "admin": {
+      "title": "GU Coins",
+      "rewardConfig": "Reward configuration",
+      "wallets": "Player wallets",
+      "searchPlaceholder": "Search player...",
+      "grantCoins": "Credit/Debit",
+      "grantAmount": "Amount",
+      "grantDescription": "Reason (required)",
+      "grantSubmit": "Apply",
+      "grantSuccess": "Coins adjusted successfully",
+      "grantError": "Error adjusting coins",
+      "activityType": "Activity",
+      "amount": "Amount",
+      "cooldown": "Cooldown (s)",
+      "dailyCap": "Daily limit",
+      "enabled": "Active",
+      "playerTransactions": "{username} transactions"
+    }
+  },
+  "player": {
+    "gameRanks": {
+      "title": "Competitive Ranks",
+      "points": "pts"
+    }
+  },
+  "esport": {
+    "calendar": {
+      "metaTitle": "Esport Calendar",
+      "metaDescription": "Follow upcoming and ongoing professional esport tournaments",
+      "title": "Esport Calendar",
+      "subtitle": "Upcoming and ongoing professional tournaments",
+      "noTournaments": "No tournaments found",
+      "noTournamentsDescription": "No esport tournaments are scheduled at the moment",
+      "tier": "Tier",
+      "live": "Live",
+      "upcoming": "Upcoming"
+    },
+    "results": {
+      "metaTitle": "Esport Results",
+      "metaDescription": "View recent results from professional esport competitions",
+      "title": "Esport Results",
+      "subtitle": "Recent results from professional competitions",
+      "noResults": "No results found",
+      "noResultsDescription": "No esport match results available at the moment",
+      "finished": "Finished"
+    },
+    "teams": {
+      "metaTitle": "Esport Teams",
+      "metaDescription": "Discover professional esport teams, their rosters and achievements",
+      "detailMetaTitle": "Esport Team Profile",
+      "title": "Esport Teams",
+      "subtitle": "Professional teams from the competitive scene",
+      "searchPlaceholder": "Search for a team...",
+      "noTeams": "No teams found",
+      "noTeamsDescription": "No esport team matches your search",
+      "roster": "Roster",
+      "loadError": "Failed to load team details"
+    },
+    "players": {
+      "metaTitle": "Pro Esport Players",
+      "metaDescription": "Discover professional esport players, their teams and achievements",
+      "detailMetaTitle": "Esport Player Profile",
+      "title": "Pro Esport Players",
+      "subtitle": "Professional players from the competitive scene",
+      "searchPlaceholder": "Search for a player...",
+      "noPlayers": "No players found",
+      "noPlayersDescription": "No esport player matches your search",
+      "loadError": "Failed to load player details"
+    },
+    "live": {
+      "metaTitle": "Esport Live",
+      "metaDescription": "Watch live esport streams from professional tournaments",
+      "title": "Live Now",
+      "subtitle": "Streams from ongoing esport tournaments",
+      "noStreams": "No live streams",
+      "noStreamsDescription": "No esport tournament is being broadcast live at the moment",
+      "liveNow": "Live",
+      "mainStream": "Main",
+      "watchStream": "Watch stream"
+    },
+    "predictions": {
+      "metaTitle": "Esport Predictions",
+      "metaDescription": "Bet your GU Coins on professional esport matches",
+      "title": "Esport Predictions",
+      "subtitle": "Bet your GU Coins on pro match outcomes",
+      "myPredictions": "My predictions",
+      "leaderboardTab": "Leaderboard",
+      "noPredictions": "No predictions",
+      "noPredictionsDescription": "You haven't placed any predictions yet",
+      "noLeaderboard": "Empty leaderboard",
+      "noLeaderboardDescription": "No predictions have been resolved yet",
+      "bet": "Bet",
+      "pending": "Pending",
+      "won": "Won",
+      "lost": "Lost",
+      "cancelled": "Cancelled"
+    },
+    "fantasy": {
+      "metaTitle": "Fantasy Esport",
+      "metaDescription": "Build your pro player team and earn points",
+      "title": "Fantasy Esport",
+      "subtitle": "Build your virtual team of professional players",
+      "steps": {
+        "draft": {
+          "title": "Draft",
+          "description": "Select your pro players within the budget"
+        },
+        "score": {
+          "title": "Score",
+          "description": "Earn points based on real performances"
+        },
+        "compete": {
+          "title": "Compete",
+          "description": "Climb the leaderboard and win rewards"
+        }
+      },
+      "noLeagues": "No leagues available",
+      "noLeaguesDescription": "No fantasy league is open at the moment"
+    },
+    "discussion": {
+      "title": "Discussion",
+      "noComments": "No comments yet. Be the first to react!",
+      "placeholder": "Write a comment...",
+      "loginRequired": "Log in to join the discussion"
     }
   }
 }

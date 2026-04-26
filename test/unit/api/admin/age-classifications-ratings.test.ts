@@ -1,15 +1,17 @@
-import { describe, test, expect, beforeEach, vi } from 'vitest';
-import { NextRequest } from 'next/server';
+import { describe, test, expect, beforeEach, vi } from "vitest";
+import { NextRequest } from "next/server";
 
 let mockRequireAdmin: ReturnType<typeof vi.fn>;
-vi.mock('@/lib/auth-admin', () => ({ requireAdmin: () => mockRequireAdmin() }));
-vi.mock('@/lib/logger', () => ({ logger: { error: vi.fn(), info: vi.fn(), warn: vi.fn(), debug: vi.fn() } }));
-vi.mock('@/lib/validations/admin-rating-form', () => ({
+vi.mock("@/lib/auth-admin", () => ({ requireAdmin: () => mockRequireAdmin() }));
+vi.mock("@/lib/logger", () => ({
+  logger: { error: vi.fn(), info: vi.fn(), warn: vi.fn(), debug: vi.fn() },
+}));
+vi.mock("@/lib/validations/admin-rating-form", () => ({
   adminRatingFormSchema: { safeParse: (d: any) => ({ success: true, data: d }) },
 }));
 
 const mockFrom = vi.fn();
-vi.mock('@/lib/supabase-server', () => ({
+vi.mock("@/lib/supabase-server", () => ({
   createRouteHandlerClient: vi.fn(async () => ({ from: mockFrom })),
 }));
 
@@ -25,26 +27,44 @@ function chainMock(data: unknown, error: unknown = null) {
   return chain;
 }
 
-import { GET, POST } from '@/app/api/admin/age-classifications/[id]/ratings/route';
+import { GET, POST } from "@/app/api/admin/age-classifications/[id]/ratings/route";
 
-const params = { params: Promise.resolve({ id: 'sys1' }) };
-const url = 'http://localhost/api/admin/age-classifications/sys1/ratings';
+const params = { params: Promise.resolve({ id: "sys1" }) };
+const url = "http://localhost/api/admin/age-classifications/sys1/ratings";
 
-describe('GET /api/admin/age-classifications/[id]/ratings', () => {
-  beforeEach(() => { vi.clearAllMocks(); mockRequireAdmin = vi.fn(); });
+describe("GET /api/admin/age-classifications/[id]/ratings", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockRequireAdmin = vi.fn();
+  });
 
-  test('returns 403 when not admin', async () => {
-    mockRequireAdmin = vi.fn(() => { throw new Error('Admin access required'); });
+  test("returns 403 when not admin", async () => {
+    mockRequireAdmin = vi.fn(() => {
+      throw new Error("Admin access required");
+    });
     const res = await GET(new NextRequest(url), params);
     expect(res.status).toBe(403);
   });
 
-  test('returns 200 with ratings', async () => {
+  test("returns 200 with ratings", async () => {
     let callCount = 0;
     mockFrom.mockImplementation(() => {
       callCount++;
-      if (callCount === 1) return chainMock({ id: 'sys1' }); // system exists
-      if (callCount === 2) return chainMock([{ id: 'r1', rating_system_id: 'sys1', code: '3', display_name: 'PEGI 3', minimum_age: 3, color_hex: null, icon_url: null, sort_order: 0, rating_translations: [] }]);
+      if (callCount === 1) return chainMock({ id: "sys1" }); // system exists
+      if (callCount === 2)
+        return chainMock([
+          {
+            id: "r1",
+            rating_system_id: "sys1",
+            code: "3",
+            display_name: "PEGI 3",
+            minimum_age: 3,
+            color_hex: null,
+            icon_url: null,
+            sort_order: 0,
+            rating_translations: [],
+          },
+        ]);
       return chainMock([]); // game_ratings
     });
     const res = await GET(new NextRequest(url), params);
@@ -54,20 +74,43 @@ describe('GET /api/admin/age-classifications/[id]/ratings', () => {
   });
 });
 
-describe('POST /api/admin/age-classifications/[id]/ratings', () => {
-  beforeEach(() => { vi.clearAllMocks(); mockRequireAdmin = vi.fn(); });
+describe("POST /api/admin/age-classifications/[id]/ratings", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockRequireAdmin = vi.fn();
+  });
 
-  test('returns 201 on create', async () => {
+  test("returns 201 on create", async () => {
     let callCount = 0;
     mockFrom.mockImplementation(() => {
       callCount++;
-      if (callCount === 1) return chainMock({ id: 'sys1' }); // system exists
-      if (callCount === 2) return chainMock(null);             // no duplicate
-      if (callCount === 3) return chainMock({ id: 'r-new', rating_system_id: 'sys1', code: '7', display_name: 'PEGI 7', minimum_age: 7, color_hex: null, icon_url: null, sort_order: 1 });
+      if (callCount === 1) return chainMock({ id: "sys1" }); // system exists
+      if (callCount === 2) return chainMock(null); // no duplicate
+      if (callCount === 3)
+        return chainMock({
+          id: "r-new",
+          rating_system_id: "sys1",
+          code: "7",
+          display_name: "PEGI 7",
+          minimum_age: 7,
+          color_hex: null,
+          icon_url: null,
+          sort_order: 1,
+        });
       return chainMock(null); // translations insert
     });
-    const body = { code: '7', display_name: 'PEGI 7', minimum_age: 7, sort_order: 1, translations: [{ language_code: 'fr', description: 'Desc' }] };
-    const req = new NextRequest(url, { method: 'POST', body: JSON.stringify(body), headers: { 'Content-Type': 'application/json' } });
+    const body = {
+      code: "7",
+      display_name: "PEGI 7",
+      minimum_age: 7,
+      sort_order: 1,
+      translations: [{ language_code: "fr", description: "Desc" }],
+    };
+    const req = new NextRequest(url, {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: { "Content-Type": "application/json" },
+    });
     const res = await POST(req, params);
     expect(res.status).toBe(201);
   });

@@ -59,7 +59,7 @@ export function CharacterRelationshipsCard({
                   )}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-white transition-colors group-hover:text-palette-primary-300">
+                  <p className="group-hover:text-palette-primary-300 font-semibold text-white transition-colors">
                     {rel.relatedCharacter.name}
                   </p>
                   <Badge

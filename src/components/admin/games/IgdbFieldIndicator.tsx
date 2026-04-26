@@ -24,7 +24,7 @@ export function IgdbFieldIndicator({ isIgdbField }: IgdbFieldIndicatorProps) {
   return (
     <span
       title={t("igdbFieldTooltip")}
-      className="ml-1.5 inline-flex items-center rounded bg-blue-100 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-blue-700 dark:bg-blue-900/40 dark:text-blue-300"
+      className="ml-1.5 inline-flex items-center rounded bg-blue-100 px-1.5 py-0.5 text-[10px] leading-none font-semibold text-blue-700 dark:bg-blue-900/40 dark:text-blue-300"
       aria-label={t("igdbFieldTooltip")}
     >
       IGDB

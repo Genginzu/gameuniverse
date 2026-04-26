@@ -31,7 +31,10 @@ export async function issueOauthState(provider: string): Promise<string> {
  * Verify the state value from the OAuth callback matches the cookie we issued.
  * Always clears the cookie afterwards.
  */
-export async function consumeOauthState(provider: string, received: string | null): Promise<boolean> {
+export async function consumeOauthState(
+  provider: string,
+  received: string | null
+): Promise<boolean> {
   const store = await cookies();
   const cookieName = `${COOKIE_PREFIX}${provider}`;
   const expected = store.get(cookieName)?.value ?? null;

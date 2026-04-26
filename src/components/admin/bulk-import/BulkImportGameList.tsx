@@ -30,7 +30,9 @@ export function BulkImportGameList({ games, total, loading, syncing, batchSize, 
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm text-gray-600 dark:text-gray-400">{t("gamesCount", { count: total, field: t(`fields.${selectedField}`) })}</p>
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          {t("gamesCount", { count: total, field: t(`fields.${selectedField}`) })}
+        </p>
         <div className="flex items-center gap-3">
           <label htmlFor="batch-size" className="text-sm text-gray-600 dark:text-gray-400">{t("batchSize")}</label>
           <select id="batch-size" value={batchSize} onChange={(e) => onBatchSizeChange(Number(e.target.value))} disabled={syncing} className="glass-input min-h-[44px] rounded-lg px-3 py-2 text-sm">
@@ -40,7 +42,14 @@ export function BulkImportGameList({ games, total, loading, syncing, batchSize, 
           {syncing ? (
             <button onClick={onAbort} className="flex min-h-[44px] items-center gap-2 rounded-xl bg-red-500 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-red-600"><Icon icon="lucide:square" className="size-4" />{t("abort")}</button>
           ) : (
-            <button onClick={onSync} disabled={games.length === 0} className="flex min-h-[44px] items-center gap-2 rounded-xl bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 px-4 py-2 text-sm font-medium text-white transition-all hover:opacity-90 disabled:opacity-50"><Icon icon="lucide:download" className="size-4" />{t("syncButton", { count: batchSize === 0 ? total : games.length })}</button>
+            <button
+              onClick={onSync}
+              disabled={games.length === 0}
+              className="from-palette-secondary-500 to-palette-primary-500 flex min-h-[44px] items-center gap-2 rounded-xl bg-linear-to-r px-4 py-2 text-sm font-medium text-white transition-all hover:opacity-90 disabled:opacity-50"
+            >
+              <Icon icon="lucide:download" className="size-4" />
+              {t("syncButton", { count: batchSize === 0 ? total : games.length })}
+            </button>
           )}
         </div>
       </div>
@@ -55,7 +64,10 @@ export function BulkImportGameList({ games, total, loading, syncing, batchSize, 
             </span>
           </div>
           <div className="h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
-            <div className="h-full rounded-full bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 transition-all duration-300" style={{ width: `${(processed / progress.total) * 100}%` }} />
+            <div
+              className="from-palette-secondary-500 to-palette-primary-500 h-full rounded-full bg-linear-to-r transition-all duration-300"
+              style={{ width: `${(processed / progress.total) * 100}%` }}
+            />
           </div>
         </div>
       )}
@@ -66,7 +78,14 @@ export function BulkImportGameList({ games, total, loading, syncing, batchSize, 
         <div className="glass-card flex flex-col items-center gap-2 rounded-xl p-8 text-center"><Icon icon="lucide:check-circle" className="size-10 text-green-500" /><p className="text-gray-600 dark:text-gray-400">{t("allSynced")}</p></div>
       ) : (
         <div className="space-y-2">
-          {games.map((game) => <BulkImportGameRow key={game.id} game={game} status={gameStatuses[game.id]} errorMsg={gameErrors[game.id]} />)}
+          {games.map((game) => (
+            <BulkImportGameRow
+              key={game.id}
+              game={game}
+              status={gameStatuses[game.id]}
+              errorMsg={gameErrors[game.id]}
+            />
+          ))}
         </div>
       )}
     </div>

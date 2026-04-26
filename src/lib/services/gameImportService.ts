@@ -1,4 +1,4 @@
-import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { IGDBGame } from "@/types/igdb";
 import { IGDBService } from "./igdbService";
 import { extractColorsFromCover } from "@/lib/utils/color-extraction";
@@ -33,6 +33,7 @@ import {
 } from "./game-import/extras";
 import { fetchAndSavePlaytime, fetchGameDetails } from "./game-import/playtime";
 import { fetchAndSavePopularity } from "./game-import/popularity";
+import { fetchMetacriticScore } from "./metacriticService";
 
 export type { ImportResult } from "./game-import/types";
 
@@ -53,7 +54,7 @@ export class GameImportService {
         return { success: false, error: `Game with IGDB ID ${igdbId} not found` };
       }
 
-      const supabase = await createRouteHandlerClient();
+      const supabase = await getSupabaseAdmin();
 
       // Check if game already exists — sync instead of duplicate
       const { data: existingGame, error: checkError } = await supabase
@@ -104,6 +105,15 @@ export class GameImportService {
       // Create all related data
       await this.createAllRelatedData(newGame.id, igdbGame, relatedEntities);
 
+
+      // Fetch metascore from Metacritic (best-effort, don't fail import)
+      try {
+        const mcScore = await fetchMetacriticScore(newGame.slug);
+        if (mcScore !== null) {
+          await supabase.from("games").update({ metascore: mcScore }).eq("id", newGame.id);
+        }
+      } catch { /* Metacritic fetch is best-effort */ }
+
       const gameDetails = await fetchGameDetails(newGame.slug);
       logger.info("IGDB import complete", { slug: newGame.slug, igdbId });
 
@@ -122,7 +132,7 @@ export class GameImportService {
    */
   static async syncWithIGDB(gameId: string, igdbId: number): Promise<ImportResult> {
     try {
-      const supabase = await createRouteHandlerClient();
+      const supabase = await getSupabaseAdmin();
 
       const { data: currentGame, error: fetchError } = await supabase
         .from("games")
@@ -222,10 +232,7 @@ export class GameImportService {
   /**
    * Updates all related data for an existing game during sync.
    */
-  private static async updateAllRelatedData(
-    gameId: string,
-    igdbGame: IGDBGame
-  ): Promise<void> {
+  private static async updateAllRelatedData(gameId: string, igdbGame: IGDBGame): Promise<void> {
     await updateTranslations(gameId, igdbGame);
     await updateMedia(gameId, igdbGame);
     await updateLanguages(gameId, igdbGame);

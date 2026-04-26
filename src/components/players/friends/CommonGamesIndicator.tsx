@@ -43,7 +43,7 @@ export function CommonGamesIndicator({ count, isLoading, onClick }: CommonGamesI
     <button
       type="button"
       onClick={onClick}
-      className="flex items-center gap-3 rounded-xl border border-palette-primary-500/30 bg-palette-primary-500/10 px-4 py-3 text-palette-primary-700 transition-colors hover:border-palette-primary-500/50 hover:bg-palette-primary-500/20 dark:text-palette-primary-300"
+      className="border-palette-primary-500/30 bg-palette-primary-500/10 text-palette-primary-700 hover:border-palette-primary-500/50 hover:bg-palette-primary-500/20 dark:text-palette-primary-300 flex items-center gap-3 rounded-xl border px-4 py-3 transition-colors"
     >
       <Icon icon="lucide:gamepad-2" className="h-5 w-5" />
       <span className="text-sm font-medium">{t("gamesInCommon", { count })}</span>

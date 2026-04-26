@@ -60,9 +60,9 @@ export function NavigationProgress() {
   if (!isLoading) return null;
 
   return (
-    <div className="fixed left-0 right-0 top-0 z-9999 h-1">
+    <div className="fixed top-0 right-0 left-0 z-9999 h-1">
       <div
-        className="h-full bg-linear-to-r from-palette-secondary-500 via-palette-primary-500 to-palette-secondary-400 transition-all duration-200 ease-out"
+        className="from-palette-secondary-500 via-palette-primary-500 to-palette-secondary-400 h-full bg-linear-to-r transition-all duration-200 ease-out"
         style={{ width: `${progress}%` }}
       />
     </div>

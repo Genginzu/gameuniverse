@@ -1,8 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  adminRoleFormSchema,
-  roleQuerySchema,
-} from "@/lib/validations/admin-role-form";
+import { adminRoleFormSchema, roleQuerySchema } from "@/lib/validations/admin-role-form";
 
 describe("adminRoleFormSchema", () => {
   it("passes with valid data", () => {
@@ -33,9 +30,7 @@ describe("adminRoleFormSchema", () => {
   });
 
   it("rejects empty translations array", () => {
-    expect(() =>
-      adminRoleFormSchema.parse({ slug: "hero", translations: [] })
-    ).toThrow();
+    expect(() => adminRoleFormSchema.parse({ slug: "hero", translations: [] })).toThrow();
   });
 
   it("rejects translation without name", () => {

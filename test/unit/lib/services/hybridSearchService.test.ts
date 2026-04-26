@@ -83,9 +83,9 @@ describe("HybridSearchService", () => {
     });
 
     it("should handle local search failure gracefully", async () => {
-      const fetchGamesSpy = vi.spyOn(GameService, "fetchGames").mockRejectedValue(
-        new Error("Database error")
-      );
+      const fetchGamesSpy = vi
+        .spyOn(GameService, "fetchGames")
+        .mockRejectedValue(new Error("Database error"));
 
       const searchGamesSpy = vi.spyOn(IGDBService, "searchGames").mockResolvedValue(mockIgdbGames);
 
@@ -111,9 +111,9 @@ describe("HybridSearchService", () => {
         },
       });
 
-      const searchGamesSpy = vi.spyOn(IGDBService, "searchGames").mockRejectedValue(
-        new Error("IGDB API error")
-      );
+      const searchGamesSpy = vi
+        .spyOn(IGDBService, "searchGames")
+        .mockRejectedValue(new Error("IGDB API error"));
 
       const result = await HybridSearchService.search({ query: "test" });
 
@@ -126,13 +126,13 @@ describe("HybridSearchService", () => {
     });
 
     it("should handle both sources failing gracefully", async () => {
-      const fetchGamesSpy = vi.spyOn(GameService, "fetchGames").mockRejectedValue(
-        new Error("Database error")
-      );
+      const fetchGamesSpy = vi
+        .spyOn(GameService, "fetchGames")
+        .mockRejectedValue(new Error("Database error"));
 
-      const searchGamesSpy = vi.spyOn(IGDBService, "searchGames").mockRejectedValue(
-        new Error("IGDB API error")
-      );
+      const searchGamesSpy = vi
+        .spyOn(IGDBService, "searchGames")
+        .mockRejectedValue(new Error("IGDB API error"));
 
       const result = await HybridSearchService.search({ query: "test" });
 

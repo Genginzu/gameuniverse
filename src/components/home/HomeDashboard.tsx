@@ -19,11 +19,10 @@ export function HomeDashboard() {
   const t = useTranslations("homeDashboard");
   const locale = useLocale();
 
-  const { data, isLoading } = useSWR<HomeData>(
-    `/api/home?locale=${locale}`,
-    fetcher,
-    { revalidateOnFocus: false, dedupingInterval: 60000 }
-  );
+  const { data, isLoading } = useSWR<HomeData>(`/api/home?locale=${locale}`, fetcher, {
+    revalidateOnFocus: false,
+    dedupingInterval: 60000,
+  });
 
   return (
     <div className="space-y-8 p-4 md:space-y-10 md:p-6 lg:p-8">
@@ -38,23 +37,29 @@ export function HomeDashboard() {
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex size-10 items-center justify-center rounded-xl bg-linear-to-br from-palette-secondary-500/20 to-palette-primary-500/20">
-              <Icon icon="lucide:flame" className="size-5 text-palette-secondary-400" />
+            <div className="from-palette-secondary-500/20 to-palette-primary-500/20 flex size-10 items-center justify-center rounded-xl bg-linear-to-br">
+              <Icon icon="lucide:flame" className="text-palette-secondary-400 size-5" />
             </div>
-            <h2 className="text-lg font-bold text-gray-900 sm:text-xl dark:text-white">{t("trending")}</h2>
+            <h2 className="text-lg font-bold text-gray-900 sm:text-xl dark:text-white">
+              {t("trending")}
+            </h2>
           </div>
           <Link
             href="/trending"
-            className="flex items-center gap-1.5 rounded-lg bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 px-4 py-2 text-xs font-medium text-white transition-opacity hover:opacity-90 sm:text-sm"
+            className="from-palette-secondary-500 to-palette-primary-500 flex items-center gap-1.5 rounded-lg bg-linear-to-r px-4 py-2 text-xs font-medium text-white transition-opacity hover:opacity-90 sm:text-sm"
           >
             {t("seeAllTrending")}
             <Icon icon="lucide:arrow-right" className="size-4" />
           </Link>
         </div>
         {isLoading ? (
-          <GridSkeleton count={6} gridClassName="grid-cols-2 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-6" skeletonConfig={gameSkeletonConfig} />
+          <GridSkeleton
+            count={6}
+            gridClassName="grid-cols-2 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-6"
+            skeletonConfig={gameSkeletonConfig}
+          />
         ) : (
-          <div className="grid grid-cols-2 gap-3 xs:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-6">
+          <div className="xs:grid-cols-3 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-6">
             {data?.trending.filter(Boolean).map((game) => (
               <EntityCard key={game.id} entity={game} config={gameCardConfig} />
             ))}
@@ -66,14 +71,16 @@ export function HomeDashboard() {
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex size-10 items-center justify-center rounded-xl bg-linear-to-br from-palette-secondary-500/20 to-palette-primary-500/20">
-              <Icon icon="lucide:calendar" className="size-5 text-palette-secondary-400" />
+            <div className="from-palette-secondary-500/20 to-palette-primary-500/20 flex size-10 items-center justify-center rounded-xl bg-linear-to-br">
+              <Icon icon="lucide:calendar" className="text-palette-secondary-400 size-5" />
             </div>
-            <h2 className="text-lg font-bold text-gray-900 sm:text-xl dark:text-white">{t("upcoming")}</h2>
+            <h2 className="text-lg font-bold text-gray-900 sm:text-xl dark:text-white">
+              {t("upcoming")}
+            </h2>
           </div>
           <Link
             href="/upcoming"
-            className="flex items-center gap-1.5 rounded-lg bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 px-4 py-2 text-xs font-medium text-white transition-opacity hover:opacity-90 sm:text-sm"
+            className="from-palette-secondary-500 to-palette-primary-500 flex items-center gap-1.5 rounded-lg bg-linear-to-r px-4 py-2 text-xs font-medium text-white transition-opacity hover:opacity-90 sm:text-sm"
           >
             {t("seeAllUpcoming")}
             <Icon icon="lucide:arrow-right" className="size-4" />
@@ -82,7 +89,10 @@ export function HomeDashboard() {
         {isLoading ? (
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
             {Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="flex animate-pulse items-center gap-3 rounded-xl bg-white/40 p-3 dark:bg-slate-800/50">
+              <div
+                key={i}
+                className="flex animate-pulse items-center gap-3 rounded-xl bg-white/40 p-3 dark:bg-slate-800/50"
+              >
                 <div className="h-12 w-9 shrink-0 rounded-lg bg-gray-200 dark:bg-gray-700" />
                 <div className="flex-1 space-y-1.5">
                   <div className="h-4 w-32 rounded bg-gray-200 dark:bg-gray-700" />
@@ -116,10 +126,16 @@ export function HomeDashboard() {
                   </div>
                 )}
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-gray-900 dark:text-white">{game.title}</p>
+                  <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
+                    {game.title}
+                  </p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
                     {game.releaseDate
-                      ? new Date(game.releaseDate).toLocaleDateString(locale, { day: "numeric", month: "long", year: "numeric" })
+                      ? new Date(game.releaseDate).toLocaleDateString(locale, {
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                        })
                       : "—"}
                   </p>
                 </div>

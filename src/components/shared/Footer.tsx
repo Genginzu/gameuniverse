@@ -25,7 +25,7 @@ export default function Footer() {
   return (
     <footer className="relative border-t border-white/10 bg-white/5 backdrop-blur-xl dark:bg-slate-900/60">
       {/* Gradient accent line */}
-      <div className="absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-palette-secondary-500/50 to-transparent" />
+      <div className="via-palette-secondary-500/50 absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent to-transparent" />
 
       <div className="mx-auto max-w-7xl px-6 py-12 sm:px-8 lg:px-12">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-10 lg:grid-cols-4">

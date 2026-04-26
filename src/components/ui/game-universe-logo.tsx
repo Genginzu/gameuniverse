@@ -30,7 +30,7 @@ export function GameUniverseLogo({
     >
       <span
         className={cn(
-          "select-none font-bold text-white",
+          "font-bold text-white select-none",
           size === "sm" && "text-sm",
           size === "md" && "text-lg",
           size === "lg" && "text-2xl",

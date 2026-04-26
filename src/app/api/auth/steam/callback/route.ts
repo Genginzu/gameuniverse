@@ -48,7 +48,9 @@ export async function GET(request: NextRequest) {
 
   try {
     const supabase = await createRouteHandlerClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
     if (!user) {
       return NextResponse.redirect(`${baseUrl}/auth?error=unauthorized`);
@@ -56,12 +58,16 @@ export async function GET(request: NextRequest) {
 
     const stateValid = await consumeOauthState("steam", params.get("state"));
     if (!stateValid) {
-      return NextResponse.redirect(`${baseUrl}/players/${user.id}?tab=settings&error=steam_state_mismatch`);
+      return NextResponse.redirect(
+        `${baseUrl}/players/${user.id}?tab=settings&error=steam_state_mismatch`
+      );
     }
 
     const steamId = await verifySteamLogin(params);
     if (!steamId) {
-      return NextResponse.redirect(`${baseUrl}/players/${user.id}?tab=settings&error=steam_auth_failed`);
+      return NextResponse.redirect(
+        `${baseUrl}/players/${user.id}?tab=settings&error=steam_auth_failed`
+      );
     }
 
     const profile = await getSteamProfile(steamId);
@@ -88,7 +94,9 @@ export async function GET(request: NextRequest) {
       { onConflict: "player_id,platform" }
     );
 
-    return NextResponse.redirect(`${baseUrl}/players/${user.id}?tab=settings&platform=steam&success=true`);
+    return NextResponse.redirect(
+      `${baseUrl}/players/${user.id}?tab=settings&platform=steam&success=true`
+    );
   } catch (error) {
     logger.error("Steam callback error", { error });
     return NextResponse.redirect(`${baseUrl}?error=steam_callback_failed`);

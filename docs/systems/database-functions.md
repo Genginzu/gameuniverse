@@ -2,7 +2,9 @@
 
 ## Vue d'ensemble
 
-Ce document présente toutes les fonctions de base de données disponibles pour le système de prix de jeux, avec leurs signatures, paramètres, valeurs de retour et exemples d'utilisation.
+Ce document présente toutes les fonctions de base de données disponibles pour le
+système de prix de jeux, avec leurs signatures, paramètres, valeurs de retour et
+exemples d'utilisation.
 
 ## Fonctions de Récupération de Prix
 
@@ -38,8 +40,10 @@ RETURNS TABLE (
 #### Paramètres
 
 - `game_uuid` (UUID, requis) : Identifiant unique du jeu
-- `store_filter` (TEXT, optionnel) : Filtre par nom de magasin (recherche partielle insensible à la casse)
-- `platform_filter` (TEXT, optionnel) : Filtre par plateforme (recherche partielle insensible à la casse)
+- `store_filter` (TEXT, optionnel) : Filtre par nom de magasin (recherche
+  partielle insensible à la casse)
+- `platform_filter` (TEXT, optionnel) : Filtre par plateforme (recherche
+  partielle insensible à la casse)
 
 #### Comportement
 
@@ -132,7 +136,7 @@ SELECT EXISTS(
 ) as has_price;
 
 -- Récupérer juste le prix et le magasin
-SELECT price, store_name 
+SELECT price, store_name
 FROM get_best_price('550e8400-e29b-41d4-a716-446655440000');
 ```
 
@@ -147,7 +151,8 @@ FROM get_best_price('550e8400-e29b-41d4-a716-446655440000');
 
 ### `compare_game_prices(game_uuid)`
 
-Compare tous les prix disponibles pour un jeu et retourne des statistiques complètes.
+Compare tous les prix disponibles pour un jeu et retourne des statistiques
+complètes.
 
 #### Signature
 
@@ -201,7 +206,7 @@ RETURNS TABLE (
 SELECT * FROM compare_game_prices('550e8400-e29b-41d4-a716-446655440000');
 
 -- Juste les statistiques de prix
-SELECT 
+SELECT
   best_price,
   worst_price,
   average_price,
@@ -210,7 +215,7 @@ SELECT
 FROM compare_game_prices('550e8400-e29b-41d4-a716-446655440000');
 
 -- Extraire les détails des magasins depuis le JSON
-SELECT 
+SELECT
   game_id,
   json_array_elements(stores_with_prices) as store_detail
 FROM compare_game_prices('550e8400-e29b-41d4-a716-446655440000');
@@ -430,7 +435,7 @@ DECLARE
   result RECORD;
 BEGIN
   SELECT * INTO result FROM create_store('Test Store', 'https://test.com');
-  
+
   IF result.success THEN
     RAISE NOTICE 'Magasin créé avec ID: %', result.store_id;
   ELSE
@@ -552,7 +557,7 @@ RETURNS TABLE (
 SELECT * FROM get_store_stats('550e8400-e29b-41d4-a716-446655440000');
 
 -- Comparer les statistiques de plusieurs magasins
-SELECT 
+SELECT
   store_name,
   total_games,
   average_price,
@@ -560,7 +565,7 @@ SELECT
   highest_price
 FROM get_store_stats('steam-id')
 UNION ALL
-SELECT 
+SELECT
   store_name,
   total_games,
   average_price,
@@ -660,7 +665,8 @@ GRANT EXECUTE ON FUNCTION update_store(UUID, TEXT, TEXT, TEXT, BOOLEAN) TO authe
 
 #### Administrateurs
 
-Les fonctions de maintenance sont généralement réservées aux administrateurs via des politiques RLS spécifiques.
+Les fonctions de maintenance sont généralement réservées aux administrateurs via
+des politiques RLS spécifiques.
 
 ### Sécurité des Fonctions
 
@@ -691,7 +697,8 @@ CREATE INDEX idx_game_prices_game_platform ON game_prices(game_id, platform);
 
 ### Conseils de Performance
 
-1. **Filtrage précoce** : Utilisez les filtres `store_filter` et `platform_filter`
+1. **Filtrage précoce** : Utilisez les filtres `store_filter` et
+   `platform_filter`
 2. **Cache des résultats** : Les statistiques changent peu fréquemment
 3. **Pagination** : Pour les listes de magasins importantes
 4. **Monitoring** : Surveillez les temps de réponse des fonctions
@@ -712,15 +719,15 @@ CREATE INDEX idx_game_prices_game_platform ON game_prices(game_id, platform);
 ```typescript
 // Récupération typée des prix
 const { data: prices, error } = await supabase
-  .rpc('get_game_prices', { 
+  .rpc("get_game_prices", {
     game_uuid: gameId,
-    store_filter: 'Steam'
+    store_filter: "Steam",
   })
   .returns<GamePriceResponse[]>();
 
 // Gestion des erreurs
 if (error) {
-  console.error('Erreur lors de la récupération des prix:', error);
+  console.error("Erreur lors de la récupération des prix:", error);
   return [];
 }
 
@@ -731,7 +738,7 @@ return prices || [];
 
 ```sql
 -- Jeux avec les plus grandes différences de prix
-SELECT 
+SELECT
   g.slug,
   c.best_price,
   c.worst_price,
@@ -744,4 +751,7 @@ ORDER BY c.price_range DESC
 LIMIT 10;
 ```
 
-Cette référence complète vous permet d'utiliser efficacement toutes les fonctions du système de prix de jeux. Chaque fonction est optimisée pour des cas d'usage spécifiques et respecte les bonnes pratiques de sécurité et de performance.
+Cette référence complète vous permet d'utiliser efficacement toutes les
+fonctions du système de prix de jeux. Chaque fonction est optimisée pour des cas
+d'usage spécifiques et respecte les bonnes pratiques de sécurité et de
+performance.

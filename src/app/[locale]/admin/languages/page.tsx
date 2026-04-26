@@ -21,7 +21,13 @@ import { Icon } from "@iconify/react";
 
 const SITE_LOCALES: SiteLocale[] = [
   { code: "fr", name: "French", nativeName: "Français", isDefault: true, translationKeyCount: 670 },
-  { code: "en", name: "English", nativeName: "English", isDefault: false, translationKeyCount: 670 },
+  {
+    code: "en",
+    name: "English",
+    nativeName: "English",
+    isDefault: false,
+    translationKeyCount: 670,
+  },
 ];
 
 export default function AdminLanguagesPage() {
@@ -119,9 +125,24 @@ export default function AdminLanguagesPage() {
   }, [isDeleting]);
 
   const languageColumns: AdminColumnDef<SupportedLanguage>[] = [
-    { key: "code", labelKey: "columns.code", sortable: true, className: "px-4 py-3 font-mono text-sm text-gray-900 dark:text-white" },
-    { key: "name", labelKey: "columns.name", sortable: true, className: "px-4 py-3 font-medium text-gray-900 dark:text-white" },
-    { key: "native_name", labelKey: "columns.nativeName", render: (l) => l.native_name || "—", className: "px-4 py-3 text-gray-500 dark:text-gray-400" },
+    {
+      key: "code",
+      labelKey: "columns.code",
+      sortable: true,
+      className: "px-4 py-3 font-mono text-sm text-gray-900 dark:text-white",
+    },
+    {
+      key: "name",
+      labelKey: "columns.name",
+      sortable: true,
+      className: "px-4 py-3 font-medium text-gray-900 dark:text-white",
+    },
+    {
+      key: "native_name",
+      labelKey: "columns.nativeName",
+      render: (l) => l.native_name || "—",
+      className: "px-4 py-3 text-gray-500 dark:text-gray-400",
+    },
   ];
 
   return (

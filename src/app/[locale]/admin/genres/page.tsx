@@ -112,9 +112,28 @@ export default function AdminGenresPage() {
   }, [isDeleting]);
 
   const genreColumns: AdminColumnDef<AdminGenre>[] = [
-    { key: "slug", labelKey: "columns.slug", sortable: true, className: "px-4 py-3 font-mono text-sm text-gray-900 dark:text-white" },
-    { key: "name", labelKey: "columns.name", sortable: true, render: (g) => { const tr = g.translations.find((t) => t.language_code === locale); return tr?.name ?? g.translations[0]?.name ?? g.slug; }, className: "px-4 py-3 font-medium text-gray-900 dark:text-white" },
-    { key: "gameCount", labelKey: "columns.gameCount", render: (g) => t("gameCount", { count: g.gameCount }), className: "px-4 py-3 text-gray-500 dark:text-gray-400" },
+    {
+      key: "slug",
+      labelKey: "columns.slug",
+      sortable: true,
+      className: "px-4 py-3 font-mono text-sm text-gray-900 dark:text-white",
+    },
+    {
+      key: "name",
+      labelKey: "columns.name",
+      sortable: true,
+      render: (g) => {
+        const tr = g.translations.find((t) => t.language_code === locale);
+        return tr?.name ?? g.translations[0]?.name ?? g.slug;
+      },
+      className: "px-4 py-3 font-medium text-gray-900 dark:text-white",
+    },
+    {
+      key: "gameCount",
+      labelKey: "columns.gameCount",
+      render: (g) => t("gameCount", { count: g.gameCount }),
+      className: "px-4 py-3 text-gray-500 dark:text-gray-400",
+    },
   ];
 
   return (

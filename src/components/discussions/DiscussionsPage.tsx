@@ -140,7 +140,10 @@ export default function DiscussionsPage() {
                     className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl transition-colors hover:bg-white/30 md:hidden dark:hover:bg-slate-700/50"
                     aria-label={t("backToConversations")}
                   >
-                    <Icon icon="lucide:arrow-left" className="h-5 w-5 text-slate-600 dark:text-slate-300" />
+                    <Icon
+                      icon="lucide:arrow-left"
+                      className="h-5 w-5 text-slate-600 dark:text-slate-300"
+                    />
                   </button>
                   <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-linear-to-br from-blue-500/30 via-purple-600/30 to-purple-700/30">
                     {selectedConversation.friend.avatarUrl ? (

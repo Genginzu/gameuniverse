@@ -10,6 +10,7 @@
 import { logger } from "@/lib/logger";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { IGDBService } from "./igdbService";
+import { fetchMetacriticScore } from "./metacriticService";
 
 export interface ApplyPayloadOptions {
   gameId: string;
@@ -63,10 +64,14 @@ export async function applyWebhookPayload(
 
   if (payload.aggregated_rating !== undefined) {
     if (can("metascore", ov, f)) {
-      gameUpdate.metascore = payload.aggregated_rating
-        ? Math.round(payload.aggregated_rating as number)
-        : null;
-      applied.push("metascore");
+      const { data: gameRow } = await supabase.from("games").select("slug").eq("id", gameId).single();
+      if (gameRow?.slug) {
+        const mcScore = await fetchMetacriticScore(gameRow.slug as string);
+        if (mcScore !== null) {
+          gameUpdate.metascore = mcScore;
+          applied.push("metascore");
+        }
+      }
     } else skipped.push("metascore");
   }
 

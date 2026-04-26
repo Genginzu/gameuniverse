@@ -81,7 +81,9 @@ export async function create(
 export async function update(
   supabase: SupabaseClient,
   playerId: string,
-  data: Partial<Pick<CoachProfile, "bio" | "experience" | "languages" | "cancellationPolicy" | "isActive">>
+  data: Partial<
+    Pick<CoachProfile, "bio" | "experience" | "languages" | "cancellationPolicy" | "isActive">
+  >
 ): Promise<CoachProfile> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const updates: Record<string, any> = {};
@@ -89,8 +91,7 @@ export async function update(
   if (data.experience !== undefined) updates.experience = data.experience;
   if (data.languages !== undefined) updates.languages = data.languages;
   if (data.isActive !== undefined) updates.is_active = data.isActive;
-  if (data.cancellationPolicy !== undefined)
-    updates.cancellation_policy = data.cancellationPolicy;
+  if (data.cancellationPolicy !== undefined) updates.cancellation_policy = data.cancellationPolicy;
 
   const { data: row, error } = await supabase
     .from("coach_profiles")

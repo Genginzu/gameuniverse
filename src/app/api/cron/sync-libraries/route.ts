@@ -52,14 +52,30 @@ export async function POST(request: NextRequest) {
           continue;
         }
         const r = await syncSteamLibrary(supabase, row.player_id, row.external_id);
-        outcomes.push({ playerId: row.player_id, platform, ok: true, matched: r.matched, total: r.total });
+        outcomes.push({
+          playerId: row.player_id,
+          platform,
+          ok: true,
+          matched: r.matched,
+          total: r.total,
+        });
       } else {
         const r = await syncXboxLibrary(supabase, row.player_id);
-        outcomes.push({ playerId: row.player_id, platform, ok: true, matched: r.matched, total: r.total });
+        outcomes.push({
+          playerId: row.player_id,
+          platform,
+          ok: true,
+          matched: r.matched,
+          total: r.total,
+        });
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : "sync failed";
-      logger.error("cron sync-libraries user failed", { playerId: row.player_id, platform, message });
+      logger.error("cron sync-libraries user failed", {
+        playerId: row.player_id,
+        platform,
+        message,
+      });
       outcomes.push({ playerId: row.player_id, platform, ok: false, error: message });
     }
   }

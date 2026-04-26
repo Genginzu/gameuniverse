@@ -53,10 +53,10 @@ export function GameFormPricingTab({ form, t, stores, currencies, platforms }: P
               <button
                 type="button"
                 onClick={() => removePrice(idx)}
-                className="absolute right-2 top-2 rounded p-1 text-gray-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20"
+                className="absolute top-2 right-2 rounded p-1 text-gray-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-900/20"
                 aria-label={t("removePrice")}
               >
-                <Icon icon="fa:times" className="h-3 w-3"  />
+                <Icon icon="fa:times" className="h-3 w-3" />
               </button>
 
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">

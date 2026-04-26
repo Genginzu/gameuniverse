@@ -65,7 +65,7 @@ export function AdminReviewForm({ review, onSubmit, isSubmitting }: AdminReviewF
 
       {/* Rating */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-foreground">
+        <label className="text-foreground text-sm font-medium">
           {t("ratingLabel")} <span className="text-destructive">*</span>
         </label>
         <Controller
@@ -75,12 +75,12 @@ export function AdminReviewForm({ review, onSubmit, isSubmitting }: AdminReviewF
             <RatingInput value={field.value} onChange={field.onChange} max={20} />
           )}
         />
-        {errors.rating && <p className="text-sm text-destructive">{errors.rating.message}</p>}
+        {errors.rating && <p className="text-destructive text-sm">{errors.rating.message}</p>}
       </div>
 
       {/* Content */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-foreground">
+        <label className="text-foreground text-sm font-medium">
           {t("contentLabel")} <span className="text-destructive">*</span>
         </label>
         <Controller
@@ -88,7 +88,7 @@ export function AdminReviewForm({ review, onSubmit, isSubmitting }: AdminReviewF
           name="content"
           render={({ field }) => <RichTextEditor content={field.value} onChange={field.onChange} />}
         />
-        {errors.content && <p className="text-sm text-destructive">{errors.content.message}</p>}
+        {errors.content && <p className="text-destructive text-sm">{errors.content.message}</p>}
       </div>
 
       {/* Points */}
@@ -107,7 +107,7 @@ export function AdminReviewForm({ review, onSubmit, isSubmitting }: AdminReviewF
             )}
           />
           {errors.positivePoints && (
-            <p className="mt-2 text-sm text-destructive">
+            <p className="text-destructive mt-2 text-sm">
               {errors.positivePoints.message ?? errors.positivePoints.root?.message}
             </p>
           )}
@@ -127,7 +127,7 @@ export function AdminReviewForm({ review, onSubmit, isSubmitting }: AdminReviewF
             )}
           />
           {errors.negativePoints && (
-            <p className="mt-2 text-sm text-destructive">
+            <p className="text-destructive mt-2 text-sm">
               {errors.negativePoints.message ?? errors.negativePoints.root?.message}
             </p>
           )}

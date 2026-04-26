@@ -17,7 +17,7 @@ export function CharacterFormVideosTab({ form, t }: CharacterFormTabProps) {
       />
 
       {form.formState.errors.media && (
-        <p className="text-sm font-medium text-destructive">
+        <p className="text-destructive text-sm font-medium">
           {form.formState.errors.media.message}
         </p>
       )}

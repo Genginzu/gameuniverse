@@ -77,33 +77,43 @@ src/components/
 ## Composants génériques admin
 
 ### AdminDeleteDialog
-Dialog de confirmation de suppression, utilisé par toutes les pages admin.
-Props : `translationNamespace`, `warningParams`, `usageCount`, `blockOnUsage`.
+
+Dialog de confirmation de suppression, utilisé par toutes les pages admin. Props
+: `translationNamespace`, `warningParams`, `usageCount`, `blockOnUsage`.
 
 ### AdminDataTable
-Table générique avec colonnes configurables, tri, recherche, pagination.
-Props : `columns: AdminColumnDef<T>[]`, `translationNamespace`, `totalCountKey`, `emptyKey`.
+
+Table générique avec colonnes configurables, tri, recherche, pagination. Props :
+`columns: AdminColumnDef<T>[]`, `translationNamespace`, `totalCountKey`,
+`emptyKey`.
 
 ### AdminSlugForm + AdminTranslationFields
-Formulaire slug + traductions par langue. Utilisé par genres, genders, species, roles.
-Props : `translationFields` (config des champs par langue).
+
+Formulaire slug + traductions par langue. Utilisé par genres, genders, species,
+roles. Props : `translationFields` (config des champs par langue).
 
 ### SyncTabLayout
-Layout générique pour les onglets de synchronisation IGDB.
-Props : `syncState`, `onStart/onStop`, `renderExtraStats`.
+
+Layout générique pour les onglets de synchronisation IGDB. Props : `syncState`,
+`onStart/onStop`, `renderExtraStats`.
 
 ## Composants partagés
 
 ### EmptyState
-État vide générique avec icône Iconify, gradient cyan→violet, variantes glass/card.
+
+État vide générique avec icône Iconify, gradient cyan→violet, variantes
+glass/card.
 
 ### SearchBar
+
 Barre de recherche avec mode simple (debounce) et mode hybride (IGDB).
 
 ### Pagination
+
 Pagination avec boutons, sélecteur mobile, et support i18n.
 
 ### FilterPanel
+
 Panel de filtres multi-sections avec chips actifs.
 
 ## Conventions

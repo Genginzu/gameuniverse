@@ -2,8 +2,8 @@
 
 ## Description
 
-Fonctionnalité permettant aux joueurs authentifiés de soumettre leur temps de jeu
-pour un jeu, réparti en 3 catégories alignées sur la structure IGDB :
+Fonctionnalité permettant aux joueurs authentifiés de soumettre leur temps de
+jeu pour un jeu, réparti en 3 catégories alignées sur la structure IGDB :
 
 - **Rapidement** (hastily) — temps pour finir l'histoire principale
 - **Normalement** (normally) — temps pour un parcours standard
@@ -46,14 +46,14 @@ détails d'un jeu (`/[locale]/games/[slug]`).
 
 ## Architecture
 
-| Fichier | Rôle |
-|---|---|
-| `src/types/game.ts` | Types `PlayerPlaytimeEntry`, `PlayerPlaytimeStats` |
-| `src/lib/validations/player-playtime.ts` | Schéma Zod 3 champs |
-| `src/lib/services/player-playtime-utils.ts` | Calcul de moyenne |
-| `src/app/api/games/[slug]/playtime/route.ts` | API GET/POST |
-| `src/hooks/usePlayerPlaytime.ts` | Hook React |
-| `src/components/games/GamePlaytime.tsx` | Orchestrateur |
-| `src/components/games/GamePlaytimeOfficial.tsx` | Cartes IGDB |
-| `src/components/games/GamePlaytimePlayers.tsx` | Section communautaire |
-| `src/components/games/PlayerPlaytimeForm.tsx` | Dialog de saisie |
+| Fichier                                         | Rôle                                               |
+| ----------------------------------------------- | -------------------------------------------------- |
+| `src/types/game.ts`                             | Types `PlayerPlaytimeEntry`, `PlayerPlaytimeStats` |
+| `src/lib/validations/player-playtime.ts`        | Schéma Zod 3 champs                                |
+| `src/lib/services/player-playtime-utils.ts`     | Calcul de moyenne                                  |
+| `src/app/api/games/[slug]/playtime/route.ts`    | API GET/POST                                       |
+| `src/hooks/usePlayerPlaytime.ts`                | Hook React                                         |
+| `src/components/games/GamePlaytime.tsx`         | Orchestrateur                                      |
+| `src/components/games/GamePlaytimeOfficial.tsx` | Cartes IGDB                                        |
+| `src/components/games/GamePlaytimePlayers.tsx`  | Section communautaire                              |
+| `src/components/games/PlayerPlaytimeForm.tsx`   | Dialog de saisie                                   |

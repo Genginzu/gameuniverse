@@ -53,16 +53,14 @@ const tooShortSlug = fc.oneof(
 );
 
 /** Slug too long (51+ chars) */
-const tooLongSlug = fc
-  .integer({ min: 51, max: 80 })
-  .chain((len) =>
-    fc
-      .array(fc.constantFrom(..."abcdefghijklmnopqrstuvwxyz".split("")), {
-        minLength: len - 1,
-        maxLength: len - 1,
-      })
-      .map((chars) => `a${chars.join("")}`)
-  );
+const tooLongSlug = fc.integer({ min: 51, max: 80 }).chain((len) =>
+  fc
+    .array(fc.constantFrom(..."abcdefghijklmnopqrstuvwxyz".split("")), {
+      minLength: len - 1,
+      maxLength: len - 1,
+    })
+    .map((chars) => `a${chars.join("")}`)
+);
 
 /** Slug starting with digit or hyphen */
 const invalidStartSlug = fc

@@ -21,7 +21,7 @@ export function ActivityItemFriendship({ data, locale: _locale }: ActivityItemFr
           player: () => (
             <Link
               href={`/players/${data.friendId}`}
-              className="font-medium text-palette-secondary-600 hover:underline dark:text-palette-secondary-400"
+              className="text-palette-secondary-600 dark:text-palette-secondary-400 font-medium hover:underline"
             >
               {data.friendName}
             </Link>

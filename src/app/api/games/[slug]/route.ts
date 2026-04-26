@@ -64,7 +64,11 @@ interface DatabaseGameRating {
   game_rating_descriptors?: Array<{
     content_descriptors: {
       code: string;
-      content_descriptor_translations: Array<{ name: string; description: string | null; language_code?: string }>;
+      content_descriptor_translations: Array<{
+        name: string;
+        description: string | null;
+        language_code?: string;
+      }>;
     };
   }>;
 }
@@ -592,7 +596,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const resolveCompanyDescription = (company: DatabaseGameCompany | undefined): string | null => {
       if (!company) return null;
       const translations = company.company_translations ?? [];
-      const localeTranslation = translations.find((t: { language_code?: string }) => t.language_code === locale);
+      const localeTranslation = translations.find(
+        (t: { language_code?: string }) => t.language_code === locale
+      );
       const fallbackTranslation = translations[0];
       return localeTranslation?.description ?? fallbackTranslation?.description ?? null;
     };

@@ -5,6 +5,7 @@
  */
 
 import { IGDBService } from "./igdbService";
+import { fetchMetacriticScore } from "./metacriticService";
 import { TRACKABLE_FIELDS } from "@/lib/utils/field-tracking";
 import type { TrackableField } from "@/types/admin-games";
 import type { IGDBGame } from "@/types/igdb";
@@ -108,12 +109,13 @@ const FIELD_SYNC_MAP: Record<TrackableField, FieldSyncFn> = {
   cover_image: (s, gid, game) => syncDirectFields(s, gid, game, ["cover_image"]),
   background_image: (s, gid, game) => syncDirectFields(s, gid, game, ["background_image"]),
   release_date: (s, gid, game) => syncDirectFields(s, gid, game, ["release_date"]),
-  metascore: async (s, gid, game) => {
-    // Skip IGDB metascore sync if a value already exists (likely from Metacritic)
-    const { data } = await s.from("games").select("metascore").eq("id", gid).single();
-    const existing = typeof data?.metascore === "number" ? data.metascore : 0;
-    if (existing > 0) return;
-    await syncDirectFields(s, gid, game, ["metascore"]);
+  metascore: async (s, gid) => {
+    const { data: g } = await s.from("games").select("slug").eq("id", gid).single();
+    if (!g?.slug) return;
+    const score = await fetchMetacriticScore(g.slug as string);
+    if (score !== null) {
+      await s.from("games").update({ metascore: score }).eq("id", gid);
+    }
   },
   genres: (s, gid, game) => syncGenres(s, gid, game),
   companies: (s, gid, game) => syncCompanies(s, gid, game),

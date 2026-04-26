@@ -21,7 +21,19 @@ interface PreviewHeroProps {
   t: (key: string) => string;
 }
 
-export function GameColorPreviewHero({ colors, title, coverUrl, backgroundUrl, description, genres, developers, publishers, formattedDate, prices, t }: PreviewHeroProps) {
+export function GameColorPreviewHero({
+  colors,
+  title,
+  coverUrl,
+  backgroundUrl,
+  description,
+  genres,
+  developers,
+  publishers,
+  formattedDate,
+  prices,
+  t,
+}: PreviewHeroProps) {
   return (
     <div className="relative overflow-hidden" style={{ minHeight: 220 }}>
       {backgroundUrl && (
@@ -29,8 +41,18 @@ export function GameColorPreviewHero({ colors, title, coverUrl, backgroundUrl, d
           <Image src={backgroundUrl} alt="" fill className="object-cover object-center" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
         </div>
       )}
-      <div className="absolute inset-0 z-1" style={{ background: `linear-gradient(to bottom, ${colors.backgroundColor}20 0%, ${colors.backgroundColor}60 40%, ${colors.backgroundColor}90 70%, ${colors.backgroundColor} 100%)` }} />
-      <div className="absolute inset-0 z-1" style={{ background: `radial-gradient(ellipse at center, transparent 0%, ${colors.backgroundColor}40 70%, ${colors.backgroundColor}80 100%)` }} />
+      <div
+        className="absolute inset-0 z-1"
+        style={{
+          background: `linear-gradient(to bottom, ${colors.backgroundColor}20 0%, ${colors.backgroundColor}60 40%, ${colors.backgroundColor}90 70%, ${colors.backgroundColor} 100%)`,
+        }}
+      />
+      <div
+        className="absolute inset-0 z-1"
+        style={{
+          background: `radial-gradient(ellipse at center, transparent 0%, ${colors.backgroundColor}40 70%, ${colors.backgroundColor}80 100%)`,
+        }}
+      />
 
       <div className="relative z-10 flex items-start gap-5 p-5">
         <div className="shrink-0">
@@ -44,7 +66,17 @@ export function GameColorPreviewHero({ colors, title, coverUrl, backgroundUrl, d
             </div>
           )}
         </div>
-        <GameColorPreviewHeroInfo colors={colors} title={title} description={description} genres={genres} developers={developers} publishers={publishers} formattedDate={formattedDate} prices={prices} t={t} />
+        <GameColorPreviewHeroInfo
+          colors={colors}
+          title={title}
+          description={description}
+          genres={genres}
+          developers={developers}
+          publishers={publishers}
+          formattedDate={formattedDate}
+          prices={prices}
+          t={t}
+        />
       </div>
     </div>
   );

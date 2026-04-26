@@ -31,7 +31,9 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
 
     // 2. Fetch active coach profile
     const { data: coach, error: coachError } = await untypedTable(supabase, "coach_profiles")
-      .select("id, bio, experience, languages, is_verified, average_rating, total_reviews, total_sessions")
+      .select(
+        "id, bio, experience, languages, is_verified, average_rating, total_reviews, total_sessions"
+      )
       .eq("player_id", profile.id)
       .eq("is_active", true)
       .single();

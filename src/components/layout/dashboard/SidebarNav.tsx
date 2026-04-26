@@ -1,7 +1,7 @@
 "use client";
 
 import { Link, usePathname } from "@/i18n/navigation";
-import { NAV_LINKS, PUBLIC_LINKS, COACHING_LINKS, isActive } from "@/lib/utils/navigation-utils";
+import { NAV_LINKS, PUBLIC_LINKS, COACHING_LINKS, ESPORT_LINKS, isActive } from "@/lib/utils/navigation-utils";
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import UnreadBadge from "@/components/discussions/UnreadBadge";
@@ -25,7 +25,9 @@ export default function SidebarNav({
   const pathname = usePathname();
   const { count: unreadCount } = useUnreadCount();
   const { data: pendingData } = useSWR<{ count: number }>(
-    isAuthenticated ? "/api/coaching/sessions/pending-count" : null, fetcher, { refreshInterval: 30000 }
+    isAuthenticated ? "/api/coaching/sessions/pending-count" : null,
+    fetcher,
+    { refreshInterval: 30000 }
   );
   const pendingCount = pendingData?.count ?? 0;
 
@@ -44,9 +46,9 @@ export default function SidebarNav({
     }`;
 
   return (
-    <nav className="flex-1 space-y-1 overflow-y-auto px-4 pb-4 pt-4" aria-label="Main navigation">
+    <nav className="flex-1 space-y-1 overflow-y-auto px-4 pt-4 pb-4" aria-label="Main navigation">
       {/* Category: Explorer */}
-      <p className="px-3 pb-1 pt-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-500">
+      <p className="px-3 pt-2 pb-1 text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-500">
         {tNav("explore")}
       </p>
       {PUBLIC_LINKS.map(({ href, icon, labelKey }) => {
@@ -59,10 +61,24 @@ export default function SidebarNav({
         );
       })}
 
+      {/* Category: Esport */}
+      <p className="px-3 pt-4 pb-1 text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-500">
+        {tNav("esport")}
+      </p>
+      {ESPORT_LINKS.map(({ href, icon, labelKey }) => {
+        const active = isActive(pathname, href, currentUserId);
+        return (
+          <Link key={href} href={href} onClick={onLinkClick} className={linkClasses(active)}>
+            <Icon icon={icon} className={iconClasses(active)} />
+            <span>{tNav(labelKey)}</span>
+          </Link>
+        );
+      })}
+
       {/* Category: Mon espace — authenticated only */}
       {isAuthenticated && (
         <>
-          <p className="px-3 pb-1 pt-4 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-500">
+          <p className="px-3 pt-4 pb-1 text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-500">
             {t("mySpace")}
           </p>
           {NAV_LINKS.map(({ href, icon, labelKey }) => {
@@ -77,7 +93,7 @@ export default function SidebarNav({
           })}
 
           {/* Category: Coaching */}
-          <p className="px-3 pb-1 pt-4 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-500">
+          <p className="px-3 pt-4 pb-1 text-xs font-semibold tracking-wider text-gray-500 uppercase dark:text-gray-500">
             {tNav("coaching")}
           </p>
           {COACHING_LINKS.map(({ href, icon, labelKey }) => {
@@ -86,7 +102,9 @@ export default function SidebarNav({
               <Link key={href} href={href} onClick={onLinkClick} className={linkClasses(active)}>
                 <Icon icon={icon} className={iconClasses(active)} />
                 <span>{tNav(labelKey)}</span>
-                {href === "/coaching/sessions" && pendingCount > 0 && <UnreadBadge count={pendingCount} />}
+                {href === "/coaching/sessions" && pendingCount > 0 && (
+                  <UnreadBadge count={pendingCount} />
+                )}
               </Link>
             );
           })}

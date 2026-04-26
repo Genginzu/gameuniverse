@@ -52,7 +52,7 @@ export function CoachSettingsContent() {
               disabled={disabled}
               className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium whitespace-nowrap transition-all ${
                 activeTab === tab
-                  ? "bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 text-white"
+                  ? "from-palette-secondary-500 to-palette-primary-500 bg-linear-to-r text-white"
                   : disabled
                     ? "cursor-not-allowed bg-gray-100 text-gray-300 dark:bg-gray-800 dark:text-gray-600"
                     : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"

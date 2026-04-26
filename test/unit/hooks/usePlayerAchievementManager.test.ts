@@ -145,9 +145,7 @@ describe("usePlayerAchievementManager", () => {
     });
 
     const calls = (globalThis.fetch as ReturnType<typeof vi.fn>).mock.calls;
-    const postCall = calls.find(
-      (call) => call[1] && (call[1] as RequestInit).method === "POST"
-    );
+    const postCall = calls.find((call) => call[1] && (call[1] as RequestInit).method === "POST");
     expect(postCall).toBeDefined();
     const body = JSON.parse((postCall![1] as RequestInit).body as string);
     expect(body).toEqual({ userId: "u1", achievementKey: "new_achievement" });

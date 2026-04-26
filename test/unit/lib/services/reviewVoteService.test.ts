@@ -13,13 +13,19 @@ describe("ReviewVoteService", () => {
     });
     const result = await ReviewVoteService.submitVote("r1", "helpful");
     expect(result).toEqual({ vote: "helpful" });
-    expect(fetch).toHaveBeenCalledWith("/api/review-votes", expect.objectContaining({ method: "POST" }));
+    expect(fetch).toHaveBeenCalledWith(
+      "/api/review-votes",
+      expect.objectContaining({ method: "POST" })
+    );
   });
 
   it("removeVote sends DELETE", async () => {
     globalThis.fetch = vi.fn().mockResolvedValue({ ok: true });
     await ReviewVoteService.removeVote("r1");
-    expect(fetch).toHaveBeenCalledWith("/api/review-votes", expect.objectContaining({ method: "DELETE" }));
+    expect(fetch).toHaveBeenCalledWith(
+      "/api/review-votes",
+      expect.objectContaining({ method: "DELETE" })
+    );
   });
 
   it("submitVote throws on error response", async () => {

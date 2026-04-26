@@ -61,9 +61,7 @@ describe("useGameDetails", () => {
   });
 
   it("returns error message on fetch failure", async () => {
-    mockFetch.mockImplementation(() =>
-      Promise.resolve(jsonResponse({ error: "Not found" }, 404))
-    );
+    mockFetch.mockImplementation(() => Promise.resolve(jsonResponse({ error: "Not found" }, 404)));
 
     const { result } = renderHook(() => useGameDetails("bad-slug"), {
       wrapper: createSWRWrapper(),

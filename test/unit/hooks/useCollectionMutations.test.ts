@@ -12,11 +12,7 @@ vi.mock("@/lib/services/collectionApi", () => ({
 }));
 
 import { useCollectionMutations } from "@/hooks/useCollectionMutations";
-import {
-  apiCreateCollection,
-  apiDeleteCollection,
-  apiAddItem,
-} from "@/lib/services/collectionApi";
+import { apiCreateCollection, apiDeleteCollection, apiAddItem } from "@/lib/services/collectionApi";
 
 describe("useCollectionMutations", () => {
   const refetchCollections = vi.fn(async () => {});

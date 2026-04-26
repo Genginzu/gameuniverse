@@ -39,14 +39,21 @@ export function CoachingHubContent() {
   const params = new URLSearchParams({ locale, page: String(page), limit: "12", sort });
   if (search) params.set("search", search);
 
-  const { data, isLoading } = useSWR<HubResponse>(`/api/coaching?${params}`, fetcher, { revalidateOnFocus: false });
+  const { data, isLoading } = useSWR<HubResponse>(`/api/coaching?${params}`, fetcher, {
+    revalidateOnFocus: false,
+  });
 
-  const handleSearch = (q: string) => { setSearch(q); setPage(1); };
+  const handleSearch = (q: string) => {
+    setSearch(q);
+    setPage(1);
+  };
 
   return (
     <div className="space-y-6 p-4 md:space-y-8 md:p-6 lg:p-8">
       <div>
-        <h1 className="text-xl font-bold text-gray-900 sm:text-2xl lg:text-3xl dark:text-white">{t("title")}</h1>
+        <h1 className="text-xl font-bold text-gray-900 sm:text-2xl lg:text-3xl dark:text-white">
+          {t("title")}
+        </h1>
         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{t("subtitle")}</p>
       </div>
 
@@ -56,15 +63,25 @@ export function CoachingHubContent() {
       {/* Search & Sort */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative flex-1 sm:max-w-sm">
-          <Icon icon="lucide:search" className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-gray-400" />
+          <Icon
+            icon="lucide:search"
+            className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-gray-400"
+          />
           <input
             value={search}
             onChange={(e) => handleSearch(e.target.value)}
-            className="glass-input w-full rounded-lg py-2.5 pl-10 pr-3 text-base"
+            className="glass-input w-full rounded-lg py-2.5 pr-3 pl-10 text-base"
             placeholder={t("searchPlaceholder")}
           />
         </div>
-        <select value={sort} onChange={(e) => { setSort(e.target.value); setPage(1); }} className="glass-input rounded-lg px-3 py-2.5 text-sm">
+        <select
+          value={sort}
+          onChange={(e) => {
+            setSort(e.target.value);
+            setPage(1);
+          }}
+          className="glass-input rounded-lg px-3 py-2.5 text-sm"
+        >
           <option value="rating">{t("sortRating")}</option>
           <option value="sessions">{t("sortSessions")}</option>
           <option value="price">{t("sortPrice")}</option>
@@ -86,10 +103,17 @@ export function CoachingHubContent() {
       ) : (
         <>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {data?.coaches.map((coach) => <CoachCard key={coach.id} coach={coach} />)}
+            {data?.coaches.map((coach) => (
+              <CoachCard key={coach.id} coach={coach} />
+            ))}
           </div>
           {data && data.pagination.totalPages > 1 && (
-            <Pagination currentPage={data.pagination.currentPage} totalPages={data.pagination.totalPages} totalCount={data.pagination.totalCount} onPageChange={setPage} />
+            <Pagination
+              currentPage={data.pagination.currentPage}
+              totalPages={data.pagination.totalPages}
+              totalCount={data.pagination.totalCount}
+              onPageChange={setPage}
+            />
           )}
         </>
       )}

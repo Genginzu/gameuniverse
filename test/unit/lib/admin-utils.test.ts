@@ -37,7 +37,13 @@ describe("getAvailableGenres", () => {
   it("returns genres with translated names", async () => {
     mockSelect.mockReturnValue({
       order: vi.fn().mockResolvedValue({
-        data: [{ id: "1", slug: "rpg", genre_translations: [{ name: "RPG", description: null, language_code: "fr" }] }],
+        data: [
+          {
+            id: "1",
+            slug: "rpg",
+            genre_translations: [{ name: "RPG", description: null, language_code: "fr" }],
+          },
+        ],
         error: null,
       }),
     });

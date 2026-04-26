@@ -12,7 +12,15 @@ interface SearchResult { id: string; slug: string; title: string; coverImage: st
 
 export function GameFormSimilarGamesTab({ gameId }: { gameId: string }) {
   const t = useTranslations("admin.games.form");
-  const { similarGames: rawData, loading, error, adding, removing, addSimilarGame, removeSimilarGame } = useAdminSimilarGames(gameId);
+  const {
+    similarGames: rawData,
+    loading,
+    error,
+    adding,
+    removing,
+    addSimilarGame,
+    removeSimilarGame,
+  } = useAdminSimilarGames(gameId);
   const similarGames = Array.isArray(rawData) ? rawData : [];
 
   const [query, setQuery] = useState("");
@@ -25,7 +33,11 @@ export function GameFormSimilarGamesTab({ gameId }: { gameId: string }) {
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
-    if (query.trim().length < 2) { setResults([]); setShowDropdown(false); return; }
+    if (query.trim().length < 2) {
+      setResults([]);
+      setShowDropdown(false);
+      return;
+    }
     setSearching(true);
     debounceRef.current = setTimeout(async () => {
       try {
@@ -33,11 +45,16 @@ export function GameFormSimilarGamesTab({ gameId }: { gameId: string }) {
         if (res.ok) { const data = await res.json(); setResults(Array.isArray(data) ? data : []); setShowDropdown(true); }
       } catch { setResults([]); } finally { setSearching(false); }
     }, 300);
-    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
   }, [query]);
 
   useEffect(() => {
-    const handleClick = (e: MouseEvent) => { if (containerRef.current && !containerRef.current.contains(e.target as Node)) setShowDropdown(false); };
+    const handleClick = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node))
+        setShowDropdown(false);
+    };
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
@@ -51,7 +68,12 @@ export function GameFormSimilarGamesTab({ gameId }: { gameId: string }) {
   const existingIds = new Set(similarGames.map((sg) => sg.game?.id).filter(Boolean));
   const filteredResults = results.filter((r) => r.id !== gameId && !existingIds.has(r.id));
 
-  if (loading) return <div className="flex justify-center py-8"><LoadingSpinner size="md" /></div>;
+  if (loading)
+    return (
+      <div className="flex justify-center py-8">
+        <LoadingSpinner size="md" />
+      </div>
+    );
 
   return (
     <div className="space-y-4">
@@ -64,7 +86,16 @@ export function GameFormSimilarGamesTab({ gameId }: { gameId: string }) {
           <Input placeholder={t("similarGamesSearchPlaceholder")} value={query} onChange={(e) => { setQuery(e.target.value); setAddError(null); }} onFocus={() => query.trim().length >= 2 && results.length > 0 && setShowDropdown(true)} className="pl-9" disabled={adding} />
           {searching && <div className="absolute top-1/2 right-3 -translate-y-1/2"><LoadingSpinner size="sm" /></div>}
         </div>
-        {showDropdown && <SimilarGameSearchDropdown results={filteredResults} searching={searching} query={query} onSelect={handleSelect} adding={adding} t={t} />}
+        {showDropdown && (
+          <SimilarGameSearchDropdown
+            results={filteredResults}
+            searching={searching}
+            query={query}
+            onSelect={handleSelect}
+            adding={adding}
+            t={t}
+          />
+        )}
       </div>
 
       {addError && <p className="text-sm text-red-600 dark:text-red-400">{addError}</p>}
@@ -73,7 +104,15 @@ export function GameFormSimilarGamesTab({ gameId }: { gameId: string }) {
         <p className="py-6 text-center text-sm text-gray-400 dark:text-gray-500">{t("similarGamesEmpty")}</p>
       ) : (
         <div className="space-y-2">
-          {similarGames.map((sg) => <SimilarGameRow key={sg.id} sg={sg} removing={removing} onRemove={removeSimilarGame} t={t} />)}
+          {similarGames.map((sg) => (
+            <SimilarGameRow
+              key={sg.id}
+              sg={sg}
+              removing={removing}
+              onRemove={removeSimilarGame}
+              t={t}
+            />
+          ))}
         </div>
       )}
 

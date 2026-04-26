@@ -94,7 +94,7 @@ export default function EditReviewPage() {
       <div className="p-4 lg:p-6">
         <div className="mb-6 flex items-center gap-4">
           <Button variant="ghost" size="sm" onClick={() => router.push("/admin/reviews")}>
-            <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
+            <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3" />
             {t("editPage.backToList")}
           </Button>
         </div>
@@ -111,7 +111,7 @@ export default function EditReviewPage() {
     <div className="p-4 lg:p-6">
       <div className="mb-6 flex items-center gap-4">
         <Button variant="ghost" size="sm" onClick={() => router.push("/admin/reviews")}>
-          <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
+          <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3" />
           {t("editPage.backToList")}
         </Button>
         <h1 className="neon-text text-2xl font-bold text-gray-900 dark:text-white">

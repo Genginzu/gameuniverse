@@ -58,11 +58,7 @@ interface PlayerDetailsContentProps {
   currentUserId: string | null;
 }
 
-export function PlayerDetailsContent({
-  player,
-  locale,
-  currentUserId,
-}: PlayerDetailsContentProps) {
+export function PlayerDetailsContent({ player, locale, currentUserId }: PlayerDetailsContentProps) {
   const t = useTranslations("players");
   const tCommon = useTranslations("common");
   const { user } = useAuth();

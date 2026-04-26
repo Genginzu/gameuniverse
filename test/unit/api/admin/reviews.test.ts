@@ -164,7 +164,9 @@ describe("Admin Reviews API", () => {
         select: vi.fn((_cols: string, opts?: { count?: string; head?: boolean }) => {
           if (opts?.head) return Promise.resolve({ count: null, error: { message: "DB error" } });
           return {
-            order: vi.fn(() => ({ range: vi.fn(() => Promise.resolve({ data: [], error: null })) })),
+            order: vi.fn(() => ({
+              range: vi.fn(() => Promise.resolve({ data: [], error: null })),
+            })),
           };
         }),
       }));
@@ -212,7 +214,9 @@ describe("Admin Reviews API", () => {
           return {
             select: vi.fn(() => ({
               eq: vi.fn(() => ({
-                single: vi.fn(() => Promise.resolve({ data: { username: "player1" }, error: null })),
+                single: vi.fn(() =>
+                  Promise.resolve({ data: { username: "player1" }, error: null })
+                ),
               })),
             })),
           };
@@ -327,7 +331,9 @@ describe("Admin Reviews API", () => {
           return {
             select: vi.fn(() => ({
               eq: vi.fn(() => ({
-                single: vi.fn(() => Promise.resolve({ data: { username: "player1" }, error: null })),
+                single: vi.fn(() =>
+                  Promise.resolve({ data: { username: "player1" }, error: null })
+                ),
               })),
             })),
           };

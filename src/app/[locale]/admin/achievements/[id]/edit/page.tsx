@@ -106,7 +106,7 @@ export default function EditAchievementPage() {
       <div className="p-4 lg:p-6">
         <div className="mb-2">
           <Button variant="ghost" size="sm" onClick={() => router.push("/admin/achievements")}>
-            <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
+            <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3" />
             {t("form.backToList")}
           </Button>
         </div>
@@ -123,7 +123,7 @@ export default function EditAchievementPage() {
     <div className="p-4 lg:p-6">
       <div className="mb-2">
         <Button variant="ghost" size="sm" onClick={() => router.push("/admin/achievements")}>
-          <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
+          <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3" />
           {t("form.backToList")}
         </Button>
       </div>

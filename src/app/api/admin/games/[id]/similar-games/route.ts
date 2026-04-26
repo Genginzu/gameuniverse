@@ -124,9 +124,15 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       .order("display_order", { ascending: false })
       .limit(1);
 
-    const nextOrder = existing && existing.length > 0 ? (existing[0] as { display_order: number }).display_order + 1 : 0;
+    const nextOrder =
+      existing && existing.length > 0
+        ? (existing[0] as { display_order: number }).display_order + 1
+        : 0;
 
-    const { data: inserted, error: insertError } = await untypedTable(supabase, "game_similar_games")
+    const { data: inserted, error: insertError } = await untypedTable(
+      supabase,
+      "game_similar_games"
+    )
       .insert({
         game_id: gameId,
         similar_igdb_id: targetGame.igdb_id ?? 0,

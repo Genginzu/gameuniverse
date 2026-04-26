@@ -1,4 +1,4 @@
-import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { IGDBService } from "../igdbService";
 import { logger } from "@/lib/logger";
 
@@ -9,7 +9,7 @@ import { logger } from "@/lib/logger";
 export async function fetchAndSavePopularity(gameId: string, igdbId: number): Promise<void> {
   try {
     const primitives = await IGDBService.getPopularityPrimitives(igdbId);
-    const supabase = await createRouteHandlerClient();
+    const supabase = await getSupabaseAdmin();
 
     // Columns added by migration 20260420000001 but not yet in generated types.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

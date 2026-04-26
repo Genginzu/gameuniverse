@@ -43,7 +43,10 @@ export function TagPostsContent({ tag }: TagPostsContentProps) {
         </Link>
         <div className="min-w-0">
           <h1 className="flex items-center gap-2 text-xl font-bold text-gray-900 sm:text-2xl lg:text-3xl dark:text-white">
-            <Icon icon="lucide:hash" className="size-5 shrink-0 text-palette-primary-500 sm:size-6" />
+            <Icon
+              icon="lucide:hash"
+              className="text-palette-primary-500 size-5 shrink-0 sm:size-6"
+            />
             <span className="truncate">{tag}</span>
           </h1>
           {data && (
@@ -58,7 +61,10 @@ export function TagPostsContent({ tag }: TagPostsContentProps) {
       {isLoading && (
         <div className="space-y-4">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="h-32 animate-pulse rounded-2xl bg-white/40 dark:bg-slate-800/40" />
+            <div
+              key={i}
+              className="h-32 animate-pulse rounded-2xl bg-white/40 dark:bg-slate-800/40"
+            />
           ))}
         </div>
       )}

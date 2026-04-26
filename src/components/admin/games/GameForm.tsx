@@ -51,8 +51,14 @@ export function GameForm({
   );
   const igdbFieldProp = mode === "edit" && igdbId ? isIgdbField : undefined;
 
-  const handleSubmit = async (data: AdminGameFormData) => { await onSubmit(data); await refetchOverrides(); };
-  const handleSyncComplete = async () => { await onSyncComplete?.(); await refetchOverrides(); };
+  const handleSubmit = async (data: AdminGameFormData) => {
+    await onSubmit(data);
+    await refetchOverrides();
+  };
+  const handleSyncComplete = async () => {
+    await onSyncComplete?.();
+    await refetchOverrides();
+  };
 
   const currentTranslations = form.watch("translations");
   useEffect(() => {
@@ -86,8 +92,17 @@ export function GameForm({
     return <div className="flex flex-1 items-center justify-center py-12"><div className="flex items-center gap-3"><LoadingSpinner size="lg" /><span className="text-gray-500 dark:text-gray-400">{tCommon("loading")}</span></div></div>;
   }
 
-  const tabLabel = (tab: Tab) => { try { return t(tab.labelKey); } catch { return tab.id; } };
-  const tabLabelById = (tabId: TabId) => { const tab = TABS.find((tab) => tab.id === tabId); return tab ? tabLabel(tab) : tabId; };
+  const tabLabel = (tab: Tab) => {
+    try {
+      return t(tab.labelKey);
+    } catch {
+      return tab.id;
+    }
+  };
+  const tabLabelById = (tabId: TabId) => {
+    const tab = TABS.find((tab) => tab.id === tabId);
+    return tab ? tabLabel(tab) : tabId;
+  };
 
   const navigateToErrorTab = () => {
     setHasSubmitted(true);
@@ -106,14 +121,43 @@ export function GameForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit, () => navigateToErrorTab())} className="space-y-5 pb-24" noValidate>
-        <HeroBanner form={form} genres={genres} coverImageUrl={form.watch("cover_image_url")} backgroundImageUrl={form.watch("background_image_url")} t={t} />
-        {hasSubmitted && Object.keys(form.formState.errors).length > 0 && <GameFormErrorSummary errors={form.formState.errors} onNavigateToTab={setActiveTab} tabLabel={tabLabelById} />}
-        <TabNavigation tabs={TABS} activeTab={activeTab} setActiveTab={setActiveTab} form={form} tabLabel={tabLabel} />
+      <form
+        onSubmit={form.handleSubmit(handleSubmit, () => navigateToErrorTab())}
+        className="space-y-5 pb-24"
+        noValidate
+      >
+        <HeroBanner
+          form={form}
+          genres={genres}
+          coverImageUrl={form.watch("cover_image_url")}
+          backgroundImageUrl={form.watch("background_image_url")}
+          t={t}
+        />
+        {hasSubmitted && Object.keys(form.formState.errors).length > 0 && (
+          <GameFormErrorSummary
+            errors={form.formState.errors}
+            onNavigateToTab={setActiveTab}
+            tabLabel={tabLabelById}
+          />
+        )}
+        <TabNavigation
+          tabs={TABS}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          form={form}
+          tabLabel={tabLabel}
+        />
         <div className="rounded-2xl border border-gray-200/60 bg-white p-6 shadow-xs dark:border-gray-700/40 dark:bg-gray-800/60">
           <GameFormTabContent activeTab={activeTab} mode={mode} form={form} t={t} genres={genres} companies={companies} ratings={ratings} contentDescriptors={contentDescriptors} supportedLanguages={supportedLanguages} stores={stores} currencies={currencies} platforms={platforms} gamePlatforms={gamePlatforms} toggleGenre={toggleGenre} toggleCompany={toggleCompany} togglePlatform={togglePlatform} isIgdbField={igdbFieldProp} gameId={gameId} igdbId={igdbId} onSyncComplete={handleSyncComplete} />
         </div>
-        <StickySubmitBar tabs={TABS} activeTab={activeTab} setActiveTab={setActiveTab} isSubmitting={isSubmitting} mode={mode} t={t} />
+        <StickySubmitBar
+          tabs={TABS}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          isSubmitting={isSubmitting}
+          mode={mode}
+          t={t}
+        />
       </form>
     </Form>
   );

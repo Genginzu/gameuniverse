@@ -40,9 +40,7 @@ describe("useWebhookRegistrations", () => {
     await waitFor(() => expect(result.current.loading).toBe(false));
 
     expect(result.current.webhooks).toEqual(mockRegistrations.webhooks);
-    expect(mockFetch).toHaveBeenCalledWith(
-      "/api/admin/webhooks/registrations"
-    );
+    expect(mockFetch).toHaveBeenCalledWith("/api/admin/webhooks/registrations");
   });
 
   it("registerWebhook POSTs to registrations endpoint", async () => {

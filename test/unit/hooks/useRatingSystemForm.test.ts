@@ -28,33 +28,53 @@ describe("useRatingSystemForm", () => {
   it("submits POST to /api/admin/age-classifications in create mode", async () => {
     globalThis.fetch = vi.fn().mockResolvedValue({ ok: true });
     const { result } = renderHook(() => useRatingSystemForm("create"));
-    const data = { code: "PEGI", name: "PEGI", description: "", country_codes: [], website_url: "" };
+    const data = {
+      code: "PEGI",
+      name: "PEGI",
+      description: "",
+      country_codes: [],
+      website_url: "",
+    };
 
     await act(() => result.current.submitRatingSystem(data));
 
     expect(globalThis.fetch).toHaveBeenCalledWith(
       "/api/admin/age-classifications",
-      expect.objectContaining({ method: "POST" }),
+      expect.objectContaining({ method: "POST" })
     );
   });
 
   it("submits PUT in edit mode", async () => {
     globalThis.fetch = vi.fn().mockResolvedValue({ ok: true });
     const { result } = renderHook(() => useRatingSystemForm("edit", "sys-1"));
-    const data = { code: "PEGI", name: "PEGI", description: "", country_codes: [], website_url: "" };
+    const data = {
+      code: "PEGI",
+      name: "PEGI",
+      description: "",
+      country_codes: [],
+      website_url: "",
+    };
 
     await act(() => result.current.submitRatingSystem(data));
 
     expect(globalThis.fetch).toHaveBeenCalledWith(
       "/api/admin/age-classifications/sys-1",
-      expect.objectContaining({ method: "PUT" }),
+      expect.objectContaining({ method: "PUT" })
     );
   });
 
   it("sets submitError on failure", async () => {
-    globalThis.fetch = vi.fn().mockResolvedValue({ ok: false, json: () => Promise.resolve({ error: "Duplicate" }) });
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValue({ ok: false, json: () => Promise.resolve({ error: "Duplicate" }) });
     const { result } = renderHook(() => useRatingSystemForm("create"));
-    const data = { code: "PEGI", name: "PEGI", description: "", country_codes: [], website_url: "" };
+    const data = {
+      code: "PEGI",
+      name: "PEGI",
+      description: "",
+      country_codes: [],
+      website_url: "",
+    };
 
     await act(async () => {
       await result.current.submitRatingSystem(data).catch(() => {});

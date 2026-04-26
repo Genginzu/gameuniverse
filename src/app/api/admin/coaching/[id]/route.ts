@@ -8,9 +8,15 @@ type S = any;
 type RouteParams = { params: Promise<{ id: string }> };
 
 async function requireAdmin(supabase: S) {
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return null;
-  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
   return profile?.role === "admin" ? user : null;
 }
 

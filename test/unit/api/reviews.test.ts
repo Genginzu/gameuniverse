@@ -40,7 +40,8 @@ vi.mock("../../../src/lib/logger", () => ({
 vi.mock("../../../src/lib/validations/review", () => ({
   reviewSchema: {
     safeParse: vi.fn((data: any) => {
-      if (!data.rating && data.rating !== 0) return { success: false, error: { issues: [{ message: "rating required" }] } };
+      if (!data.rating && data.rating !== 0)
+        return { success: false, error: { issues: [{ message: "rating required" }] } };
       return {
         success: true,
         data: {
@@ -66,13 +67,8 @@ vi.mock("../../../src/lib/utils/reviewVoteQueries", () => ({
   ),
 }));
 
-const {
-  GET,
-  POST,
-  PUT,
-  computeAverageRating,
-  sortReviewsByHelpfulVotes,
-} = await import("../../../src/app/api/reviews/route");
+const { GET, POST, PUT, computeAverageRating, sortReviewsByHelpfulVotes } =
+  await import("../../../src/app/api/reviews/route");
 
 function makeRequest(url: string, init?: RequestInit) {
   const req = new Request(url, init) as unknown as import("next/server").NextRequest;
@@ -138,16 +134,20 @@ describe("POST /api/reviews", () => {
     const res = await POST(
       makeRequest("http://localhost/api/reviews", {
         method: "POST",
-        body: JSON.stringify({ gameId: "g1", rating: 10, content: "ok", positivePoints: [], negativePoints: [] }),
+        body: JSON.stringify({
+          gameId: "g1",
+          rating: 10,
+          content: "ok",
+          positivePoints: [],
+          negativePoints: [],
+        }),
       })
     );
     expect(res.status).toBe(401);
   });
 
   test("returns 400 for invalid body", async () => {
-    mockGetUser = vi.fn(() =>
-      Promise.resolve({ data: { user: { id: "user-1" } }, error: null })
-    );
+    mockGetUser = vi.fn(() => Promise.resolve({ data: { user: { id: "user-1" } }, error: null }));
     const res = await POST(
       makeRequest("http://localhost/api/reviews", {
         method: "POST",

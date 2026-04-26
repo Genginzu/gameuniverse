@@ -2,9 +2,10 @@ const withNextIntl = require("next-intl/plugin")("./src/i18n.ts");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Enable TypeScript strict mode
+  // TypeScript checking done separately via `bun run type-check`
+  // Disabled in build to avoid OOM on large codebases
   typescript: {
-    ignoreBuildErrors: false,
+    ignoreBuildErrors: true,
   },
   // Optimize images
   images: {

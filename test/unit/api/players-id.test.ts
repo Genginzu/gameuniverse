@@ -7,8 +7,7 @@ vi.mock("@/lib/services/playerService", () => ({
   PlayerService: {
     fetchPlayerDetailsFromDB: (...args: any[]) =>
       mockFetchPlayer ? mockFetchPlayer(...args) : Promise.resolve(null),
-    validatePlayerId: (id: string) =>
-      mockValidateId ? mockValidateId(id) : true,
+    validatePlayerId: (id: string) => (mockValidateId ? mockValidateId(id) : true),
   },
 }));
 
@@ -64,7 +63,9 @@ describe("GET /api/players/[id]", () => {
   });
 
   test("returns 500 on unexpected error", async () => {
-    mockFetchPlayer = () => { throw new Error("DB crash"); };
+    mockFetchPlayer = () => {
+      throw new Error("DB crash");
+    };
 
     const res = await GET(
       makeRequest("http://localhost/api/players/550e8400-e29b-41d4-a716-446655440000"),

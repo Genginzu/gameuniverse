@@ -37,7 +37,10 @@ export function PostComposer({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const imageUpload = usePostImageUpload();
-  const { suggestions, isLoading, isOpen, mentionQuery } = useMentionAutocomplete(content, cursorPos);
+  const { suggestions, isLoading, isOpen, mentionQuery } = useMentionAutocomplete(
+    content,
+    cursorPos
+  );
 
   const trimmed = content.trim();
   const isDisabled = !trimmed || isCreating || imageUpload.uploading;
@@ -74,12 +77,31 @@ export function PostComposer({
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (isOpen && suggestions.length > 0) {
-      if (e.key === "ArrowDown") { e.preventDefault(); setSelectedIndex((i) => (i + 1) % suggestions.length); return; }
-      if (e.key === "ArrowUp") { e.preventDefault(); setSelectedIndex((i) => (i - 1 + suggestions.length) % suggestions.length); return; }
-      if (e.key === "Enter" || e.key === "Tab") { e.preventDefault(); handleSelectMention(suggestions[selectedIndex].username); return; }
-      if (e.key === "Escape") { e.preventDefault(); setCursorPos(0); return; }
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setSelectedIndex((i) => (i + 1) % suggestions.length);
+        return;
+      }
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setSelectedIndex((i) => (i - 1 + suggestions.length) % suggestions.length);
+        return;
+      }
+      if (e.key === "Enter" || e.key === "Tab") {
+        e.preventDefault();
+        handleSelectMention(suggestions[selectedIndex].username);
+        return;
+      }
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setCursorPos(0);
+        return;
+      }
     }
-    if (e.key === "Enter" && (e.ctrlKey || e.metaKey) && !isDisabled) { e.preventDefault(); handleSubmit(); }
+    if (e.key === "Enter" && (e.ctrlKey || e.metaKey) && !isDisabled) {
+      e.preventDefault();
+      handleSubmit();
+    }
   };
 
   return (
@@ -100,21 +122,30 @@ export function PostComposer({
             <textarea
               ref={textareaRef}
               value={content}
-              onChange={(e) => { setContent(e.target.value); setCursorPos(e.target.selectionStart ?? 0); setSelectedIndex(0); }}
+              onChange={(e) => {
+                setContent(e.target.value);
+                setCursorPos(e.target.selectionStart ?? 0);
+                setSelectedIndex(0);
+              }}
               onSelect={(e) => setCursorPos((e.target as HTMLTextAreaElement).selectionStart ?? 0)}
               onKeyDown={handleKeyDown}
               placeholder={t("placeholder")}
               aria-label={t("placeholder")}
               maxLength={MAX_LENGTH}
               rows={3}
-              className="w-full resize-none rounded-xl border-2 border-palette-primary-300 bg-white/60 p-3 pb-7 text-sm text-gray-800 placeholder-gray-400 backdrop-blur-xs transition-all duration-200 focus:border-palette-primary-400 focus:ring-2 focus:ring-palette-primary-400/20 focus:outline-hidden dark:border-palette-primary-500/50 dark:bg-slate-700/40 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:border-palette-primary-400/60 dark:focus:ring-palette-primary-400/15"
+              className="border-palette-primary-300 focus:border-palette-primary-400 focus:ring-palette-primary-400/20 dark:border-palette-primary-500/50 dark:focus:border-palette-primary-400/60 dark:focus:ring-palette-primary-400/15 w-full resize-none rounded-xl border-2 bg-white/60 p-3 pb-7 text-sm text-gray-800 placeholder-gray-400 backdrop-blur-xs transition-all duration-200 focus:ring-2 focus:outline-hidden dark:bg-slate-700/40 dark:text-slate-100 dark:placeholder-slate-500"
             />
             <span className={`absolute right-3 bottom-2 text-xs ${remaining < 0 ? "text-red-500" : "text-gray-400 dark:text-slate-500"}`}>
               {t("charCount", { remaining })}
             </span>
-            <MentionSuggestions suggestions={suggestions} isLoading={isLoading} isOpen={isOpen} selectedIndex={selectedIndex} onSelect={handleSelectMention} />
+            <MentionSuggestions
+              suggestions={suggestions}
+              isLoading={isLoading}
+              isOpen={isOpen}
+              selectedIndex={selectedIndex}
+              onSelect={handleSelectMention}
+            />
           </div>
-
 
           <PostImagePreview
             previewUrl={imageUpload.previewUrl ?? ""}
@@ -131,7 +162,11 @@ export function PostComposer({
             type="file"
             accept="image/jpeg,image/png,image/webp,image/gif"
             className="hidden"
-            onChange={(e) => { const file = e.target.files?.[0]; if (file) imageUpload.handleFileSelect(file); e.target.value = ""; }}
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) imageUpload.handleFileSelect(file);
+              e.target.value = "";
+            }}
           />
 
           <PostComposerActions

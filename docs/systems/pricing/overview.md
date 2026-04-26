@@ -21,13 +21,14 @@ autour des tables `stores` et `game_prices`.
 
 ## Documentation associée
 
-| Document                                     | Contenu                                      |
-| -------------------------------------------- | -------------------------------------------- |
-| [api-examples.md](./api-examples.md)         | Exemples TypeScript, hooks React, tests      |
-| [migration-guide.md](./migration-guide.md)   | Migration depuis l'ancien schéma             |
-| [price-history.md](./price-history.md)       | Historique des prix (feature dédiée)         |
+| Document                                   | Contenu                                 |
+| ------------------------------------------ | --------------------------------------- |
+| [api-examples.md](./api-examples.md)       | Exemples TypeScript, hooks React, tests |
+| [migration-guide.md](./migration-guide.md) | Migration depuis l'ancien schéma        |
+| [price-history.md](./price-history.md)     | Historique des prix (feature dédiée)    |
 
-Référence des fonctions DB : [../database-functions.md](../database-functions.md).
+Référence des fonctions DB :
+[../database-functions.md](../database-functions.md).
 
 ## Architecture
 
@@ -70,29 +71,29 @@ CREATE TABLE public.game_prices (
 `(game_id, store_id, platform)`, `store_url` en `http(s)://`.
 
 **Index** : `game_id`, `store_id`, `platform`, `is_available`, `price`,
-`last_updated`, plus composites `(game_id, is_available)`, `(game_id, platform)`,
-`(game_id, store_id, platform)`.
+`last_updated`, plus composites `(game_id, is_available)`,
+`(game_id, platform)`, `(game_id, store_id, platform)`.
 
 ## Fonctions DB principales
 
 ### Récupération de prix
 
-| Fonction                                                     | Description                       |
-| ------------------------------------------------------------ | --------------------------------- |
-| `get_game_prices(game_uuid, store_filter?, platform_filter?)` | Tous les prix disponibles         |
-| `get_best_price(game_uuid)`                                  | Prix le plus bas (LIMIT 1)        |
-| `compare_game_prices(game_uuid)`                             | Statistiques (min/max/moyenne)    |
+| Fonction                                                      | Description                    |
+| ------------------------------------------------------------- | ------------------------------ |
+| `get_game_prices(game_uuid, store_filter?, platform_filter?)` | Tous les prix disponibles      |
+| `get_best_price(game_uuid)`                                   | Prix le plus bas (LIMIT 1)     |
+| `compare_game_prices(game_uuid)`                              | Statistiques (min/max/moyenne) |
 
 ### Gestion des magasins
 
-| Fonction                                                    | Description                    |
-| ----------------------------------------------------------- | ------------------------------ |
-| `get_active_stores()`                                       | Magasins actifs                |
-| `search_stores(search_term)`                                | Recherche par nom ou URL       |
-| `validate_store_data(name, website_url?, logo_url?)`        | Validation avant création      |
-| `create_store(name, website_url?, logo_url?)`               | Création avec validation       |
-| `update_store(id, name?, website_url?, logo_url?, active?)` | Mise à jour                    |
-| `get_store_stats(store_uuid)`                               | Statistiques d'un magasin      |
+| Fonction                                                    | Description               |
+| ----------------------------------------------------------- | ------------------------- |
+| `get_active_stores()`                                       | Magasins actifs           |
+| `search_stores(search_term)`                                | Recherche par nom ou URL  |
+| `validate_store_data(name, website_url?, logo_url?)`        | Validation avant création |
+| `create_store(name, website_url?, logo_url?)`               | Création avec validation  |
+| `update_store(id, name?, website_url?, logo_url?, active?)` | Mise à jour               |
+| `get_store_stats(store_uuid)`                               | Statistiques d'un magasin |
 
 ### Maintenance
 

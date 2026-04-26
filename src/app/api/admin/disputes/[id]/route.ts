@@ -11,11 +11,18 @@ type RouteParams = { params: Promise<{ id: string }> };
 export async function PATCH(request: NextRequest, { params }: RouteParams) {
   try {
     const supabase: S = await createRouteHandlerClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
-    if (profile?.role !== "admin") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+    if (profile?.role !== "admin")
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const { id } = await params;
     const { action, adminNotes } = await request.json();
@@ -24,7 +31,11 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: "Invalid action" }, { status: 400 });
     }
 
-    const statusMap: Record<string, string> = { resolve: "resolved", dismiss: "dismissed", investigate: "investigating" };
+    const statusMap: Record<string, string> = {
+      resolve: "resolved",
+      dismiss: "dismissed",
+      investigate: "investigating",
+    };
     const updates: Record<string, unknown> = { status: statusMap[action] };
 
     if (adminNotes) updates.admin_notes = adminNotes;

@@ -40,21 +40,34 @@ export function CharacterDescriptionTab({
       <CharacterPlatformsCard platforms={character.platforms} accentColor={colors.accent} />
 
       {character.weapons && (
-        <SectionCard icon="lucide:swords" title={t("characters.details.weaponsEquipment")} accentColor={colors.accent}>
+        <SectionCard
+          icon="lucide:swords"
+          title={t("characters.details.weaponsEquipment")}
+          accentColor={colors.accent}
+        >
           <p className="leading-relaxed whitespace-pre-wrap text-slate-300">{character.weapons}</p>
         </SectionCard>
       )}
 
       {character.biography && (
-        <SectionCard icon="lucide:book-open" title={t("characters.details.biography")} accentColor={colors.accent}>
+        <SectionCard
+          icon="lucide:book-open"
+          title={t("characters.details.biography")}
+          accentColor={colors.accent}
+        >
           <div className="prose prose-invert max-w-none">
-            <p className="leading-relaxed whitespace-pre-wrap text-slate-300">{character.biography}</p>
+            <p className="leading-relaxed whitespace-pre-wrap text-slate-300">
+              {character.biography}
+            </p>
           </div>
         </SectionCard>
       )}
 
       {character.relationships && character.relationships.length > 0 && (
-        <CharacterRelationshipsCard relationships={character.relationships} accentColor={colors.accent} />
+        <CharacterRelationshipsCard
+          relationships={character.relationships}
+          accentColor={colors.accent}
+        />
       )}
 
       {isEmpty && (
@@ -67,7 +80,17 @@ export function CharacterDescriptionTab({
   );
 }
 
-function SectionCard({ icon, title, accentColor, children }: { icon: string; title: string; accentColor: string; children: React.ReactNode }) {
+function SectionCard({
+  icon,
+  title,
+  accentColor,
+  children,
+}: {
+  icon: string;
+  title: string;
+  accentColor: string;
+  children: React.ReactNode;
+}) {
   return (
     <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-xs">
       <CardContent className="p-6">
@@ -81,7 +104,19 @@ function SectionCard({ icon, title, accentColor, children }: { icon: string; tit
   );
 }
 
-function InfoCards({ role, primaryGameName, primaryGameYear, gamesCount, accentColor }: { role?: string; primaryGameName: string; primaryGameYear?: number; gamesCount: number; accentColor: string }) {
+function InfoCards({
+  role,
+  primaryGameName,
+  primaryGameYear,
+  gamesCount,
+  accentColor,
+}: {
+  role?: string;
+  primaryGameName: string;
+  primaryGameYear?: number;
+  gamesCount: number;
+  accentColor: string;
+}) {
   const t = useTranslations();
 
   return (

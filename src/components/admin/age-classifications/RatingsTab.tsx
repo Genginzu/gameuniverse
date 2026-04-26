@@ -99,11 +99,11 @@ export function RatingsTab({ ratingSystemId }: RatingsTabProps) {
 
       <AdminDeleteDialog
         isOpen={ratingToDelete !== null}
-          translationNamespace="admin.ageClassifications.ratings.delete"
-          warningParams={{ name: ratingToDelete?.display_name ?? "" }}
-          warningKey="confirm"
-          confirmKey="delete"
-          blockOnUsage
+        translationNamespace="admin.ageClassifications.ratings.delete"
+        warningParams={{ name: ratingToDelete?.display_name ?? "" }}
+        warningKey="confirm"
+        confirmKey="delete"
+        blockOnUsage
         onClose={handleDeleteClose}
         onConfirm={handleDeleteConfirm}
         isDeleting={isDeleting}

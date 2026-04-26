@@ -42,7 +42,14 @@ export function PostCard({ post, playerName, playerAvatar, locale, isOwner, onDe
         <div className="flex items-center gap-3">
           <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-linear-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30">
             {playerAvatar ? (
-              <LazyImage src={playerAvatar} alt={displayName} fill className="object-cover" sizes="40px" showSkeleton />
+              <LazyImage
+                src={playerAvatar}
+                alt={displayName}
+                fill
+                className="object-cover"
+                sizes="40px"
+                showSkeleton
+              />
             ) : (
               <div className="flex h-full w-full items-center justify-center">
                 <Icon icon="lucide:user" className="h-5 w-5 text-blue-300" />
@@ -78,7 +85,12 @@ export function PostCard({ post, playerName, playerAvatar, locale, isOwner, onDe
           </div>
         )}
 
-        <PostContentRenderer content={post.content} tags={post.tags} mentions={post.mentions} locale={locale} />
+        <PostContentRenderer
+          content={post.content}
+          tags={post.tags}
+          mentions={post.mentions}
+          locale={locale}
+        />
       </div>
     </article>
   );

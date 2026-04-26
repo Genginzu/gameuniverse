@@ -21,7 +21,11 @@ describe("ReviewService", () => {
       ok: true,
       json: async () => ({ success: true }),
     });
-    const result = await ReviewService.submitReview("g1", { rating: 5, title: "Great", content: "Nice" } as any);
+    const result = await ReviewService.submitReview("g1", {
+      rating: 5,
+      title: "Great",
+      content: "Nice",
+    } as any);
     expect(result).toEqual({ success: true });
     expect(fetch).toHaveBeenCalledWith("/api/reviews", expect.objectContaining({ method: "POST" }));
   });
@@ -31,7 +35,11 @@ describe("ReviewService", () => {
       ok: true,
       json: async () => ({ success: true }),
     });
-    const result = await ReviewService.updateReview("g1", { rating: 4, title: "OK", content: "Fine" } as any);
+    const result = await ReviewService.updateReview("g1", {
+      rating: 4,
+      title: "OK",
+      content: "Fine",
+    } as any);
     expect(result).toEqual({ success: true });
     expect(fetch).toHaveBeenCalledWith("/api/reviews", expect.objectContaining({ method: "PUT" }));
   });

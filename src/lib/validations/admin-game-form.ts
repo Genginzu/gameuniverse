@@ -156,6 +156,7 @@ export const adminGameFormSchema = z.object({
   music_composer: z.string().max(500).optional().or(z.literal("")),
   music_spotify_embed_url: z.string().url("Invalid URL").optional().or(z.literal("")),
   music_youtube_video_url: z.string().url("Invalid URL").optional().or(z.literal("")),
+  is_esport: z.boolean().default(false),
 });
 
 export type AdminGameFormData = z.infer<typeof adminGameFormSchema>;

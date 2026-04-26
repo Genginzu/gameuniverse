@@ -287,7 +287,9 @@ describe("Admin Languages [code] API", () => {
           update: vi.fn(() => ({
             eq: vi.fn(() => ({
               select: vi.fn(() => ({
-                single: vi.fn(() => Promise.resolve({ data: null, error: { message: "DB error" } })),
+                single: vi.fn(() =>
+                  Promise.resolve({ data: null, error: { message: "DB error" } })
+                ),
               })),
             })),
           })),

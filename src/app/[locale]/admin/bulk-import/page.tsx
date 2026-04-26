@@ -41,7 +41,7 @@ export default function AdminBulkImportPage() {
               href={`/admin/bulk-import/${key}`}
               className="glass-card flex flex-col items-center gap-3 rounded-2xl p-6 transition-all hover:bg-white/60 hover:shadow-lg dark:hover:bg-slate-700/60"
             >
-              <Icon icon={icon} className="size-8 text-palette-secondary-500" />
+              <Icon icon={icon} className="text-palette-secondary-500 size-8" />
               <span className="text-sm font-medium text-gray-900 dark:text-white">
                 {t(`fields.${key}`)}
               </span>

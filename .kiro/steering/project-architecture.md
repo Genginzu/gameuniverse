@@ -6,21 +6,21 @@ inclusion: always
 
 ## Stack technique
 
-| Techno | Version/Détail |
-|--------|---------------|
-| Framework | Next.js 16 (App Router, React 19) |
-| Runtime | Bun |
-| BDD | Supabase (PostgreSQL) |
-| Styling | Tailwind CSS 4 + glassmorphism |
-| i18n | next-intl (FR/EN) |
-| Data fetching | SWR (client), API routes (server) |
-| Forms | react-hook-form + Zod |
-| Tests | Vitest + Testing Library + fast-check |
-| Icônes | @iconify/react |
-| Rich text | TipTap |
-| Charts | Recharts |
-| Monitoring | Sentry |
-| Hébergement | Vercel |
+| Techno        | Version/Détail                        |
+| ------------- | ------------------------------------- |
+| Framework     | Next.js 16 (App Router, React 19)     |
+| Runtime       | Bun                                   |
+| BDD           | Supabase (PostgreSQL)                 |
+| Styling       | Tailwind CSS 4 + glassmorphism        |
+| i18n          | next-intl (FR/EN)                     |
+| Data fetching | SWR (client), API routes (server)     |
+| Forms         | react-hook-form + Zod                 |
+| Tests         | Vitest + Testing Library + fast-check |
+| Icônes        | @iconify/react                        |
+| Rich text     | TipTap                                |
+| Charts        | Recharts                              |
+| Monitoring    | Sentry                                |
+| Hébergement   | Vercel                                |
 
 ## Structure src/
 
@@ -50,6 +50,7 @@ src/
 ## Hooks disponibles (72)
 
 ### Admin (16)
+
 useAdminAchievements, useAdminAuth, useAdminCharacters, useAdminComments,
 useAdminCompanies, useAdminDescriptors, useAdminGames, useAdminGenders,
 useAdminGenres, useAdminLanguages, useAdminPlatforms, useAdminRatings,
@@ -57,34 +58,42 @@ useAdminRatingSystems, useAdminReviews, useAdminRoles, useAdminSpecies,
 useAdminTranslations
 
 ### Formulaires (11)
-useCharacterForm, useCompanyForm, useDescriptorForm, useGameForm,
-useGenderForm, useGenreForm, useLanguageForm, useRatingForm,
-useRatingSystemForm, useRoleForm, useSpeciesForm
+
+useCharacterForm, useCompanyForm, useDescriptorForm, useGameForm, useGenderForm,
+useGenreForm, useLanguageForm, useRatingForm, useRatingSystemForm, useRoleForm,
+useSpeciesForm
 
 ### Jeux (6)
+
 useGameDetails, useGameListing, useGameLibraryStatus, useGameOverrides,
 useGameSync, useBackgroundSync
 
 ### Personnages (6)
+
 useCharacterFavorite, useCharacterFavorites, useCharacterFilters,
 useCharacterOverrides, useCharacters, useCharacterSync
 
 ### Joueurs (8)
+
 usePlayerActivity, usePlayerAchievementManager, usePlayerCollections,
 usePlayerPlaytime, usePlayerPosts, usePlayerReviews, usePostImageUpload,
 useProfile
 
 ### Social (4)
+
 useFriendRelationship, useFriends, usePendingRequestCount, useDiscussions
 
 ### Bibliothèque (6)
+
 useCollectionDetail, useCollectionMutations, useCollections,
 useEntityLibraryToggle, useLibraryGames, useUserLibrary
 
 ### Reviews & Comments (4)
+
 useComments, useReviews, useReviewVote, useMentionAutocomplete
 
 ### UI & Utilitaires
+
 useAuth, useCropEditor, useDashboard, useDebouncedValue, useImageLoading,
 useImageUpload, useInView, useLocaleManager, usePriceHistory, useGlobalSearch,
 useSearchOverlay, useWebhookEvents, useWebhookRegistrations, useAchievements,
@@ -105,18 +114,18 @@ ErrorBoundary, ErrorFallback, LanguageSwitcher, GlobalSearchDropdown, Footer
 
 ## Services clés (`src/lib/services/`)
 
-| Domaine | Services |
-|---------|----------|
-| IGDB | igdbService, igdb-sync, igdb-sync-fields, gameImportService |
-| Jeux | gameService, gameFilterResolvers, translationService |
-| Personnages | characterService, characterFavoriteService |
-| Joueurs | playerService, playerStatsService, playerPostsService |
-| Social | friendService, discussionService |
-| Collections | collectionService, collectionQueries, collectionMutations |
-| Reviews | reviewService, reviewVoteService, commentService |
-| Recherche | globalSearchService, hybridSearchService |
-| Succès | achievementEngine, achievementService |
-| Recommandations | recommendationService (+ sous-modules scorers) |
+| Domaine         | Services                                                    |
+| --------------- | ----------------------------------------------------------- |
+| IGDB            | igdbService, igdb-sync, igdb-sync-fields, gameImportService |
+| Jeux            | gameService, gameFilterResolvers, translationService        |
+| Personnages     | characterService, characterFavoriteService                  |
+| Joueurs         | playerService, playerStatsService, playerPostsService       |
+| Social          | friendService, discussionService                            |
+| Collections     | collectionService, collectionQueries, collectionMutations   |
+| Reviews         | reviewService, reviewVoteService, commentService            |
+| Recherche       | globalSearchService, hybridSearchService                    |
+| Succès          | achievementEngine, achievementService                       |
+| Recommandations | recommendationService (+ sous-modules scorers)              |
 
 ## Commandes
 

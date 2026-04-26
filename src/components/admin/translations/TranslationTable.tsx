@@ -39,9 +39,17 @@ export function TranslationTable({
   const allSelected = items.length > 0 && items.every((i) => selectedIds.has(i.entityId));
   const hasSelection = selectedIds.size > 0;
 
-  const handleSearchSubmit = () => { const href = buildSearchUrl(searchValue); router.push({ pathname: href.pathname, query: href.query } as never); };
-  const handleKeyDown = (e: React.KeyboardEvent) => { if (e.key === "Enter") handleSearchSubmit(); };
-  const handleSelectAllToggle = () => { if (allSelected) onClearSelection(); else onSelectAll(items.map((i) => i.entityId)); };
+  const handleSearchSubmit = () => {
+    const href = buildSearchUrl(searchValue);
+    router.push({ pathname: href.pathname, query: href.query } as never);
+  };
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") handleSearchSubmit();
+  };
+  const handleSelectAllToggle = () => {
+    if (allSelected) onClearSelection();
+    else onSelectAll(items.map((i) => i.entityId));
+  };
 
   return (
     <div className="glass-card overflow-hidden rounded-2xl">
@@ -53,12 +61,27 @@ export function TranslationTable({
         <div className="flex items-center gap-2">
           {hasSelection && <span className="mr-1 text-xs text-gray-500 dark:text-gray-400">{t("table.selected", { count: selectedIds.size })}</span>}
           {hasSelection && (
-            <button onClick={() => { items.filter((i) => selectedIds.has(i.entityId)).forEach(onTranslate); }} className="inline-flex items-center gap-1.5 rounded-lg bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 px-3 py-1.5 text-xs font-medium text-white transition-all duration-300 hover:opacity-90">
-              <Icon icon="mdi:translate" className="size-4" />{t("buttons.translateSelection")}
+            <span className="mr-1 text-xs text-gray-500 dark:text-gray-400">
+              {t("table.selected", { count: selectedIds.size })}
+            </span>
+          )}
+          {hasSelection && (
+            <button
+              onClick={() => {
+                items.filter((i) => selectedIds.has(i.entityId)).forEach(onTranslate);
+              }}
+              className="from-palette-secondary-500 to-palette-primary-500 inline-flex items-center gap-1.5 rounded-lg bg-linear-to-r px-3 py-1.5 text-xs font-medium text-white transition-all duration-300 hover:opacity-90"
+            >
+              <Icon icon="mdi:translate" className="size-4" />
+              {t("buttons.translateSelection")}
             </button>
           )}
-          <button onClick={() => items.forEach(onTranslate)} className="inline-flex items-center gap-1.5 rounded-lg border border-palette-secondary-500/30 px-3 py-1.5 text-xs font-medium text-palette-secondary-600 transition-all duration-300 hover:bg-palette-secondary-50 dark:text-palette-secondary-400 dark:hover:bg-palette-secondary-900/20">
-            <Icon icon="mdi:translate-variant" className="size-4" />{t("buttons.translateAll")}
+          <button
+            onClick={() => items.forEach(onTranslate)}
+            className="border-palette-secondary-500/30 text-palette-secondary-600 hover:bg-palette-secondary-50 dark:text-palette-secondary-400 dark:hover:bg-palette-secondary-900/20 inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-all duration-300"
+          >
+            <Icon icon="mdi:translate-variant" className="size-4" />
+            {t("buttons.translateAll")}
           </button>
         </div>
       </div>
@@ -67,7 +90,15 @@ export function TranslationTable({
         <table className="w-full text-left">
           <thead>
             <tr className="border-b border-white/10 text-xs font-medium text-gray-500 dark:text-gray-400">
-              <th className="px-3 py-3"><input type="checkbox" checked={allSelected} onChange={handleSelectAllToggle} className="size-4 rounded border-gray-300 text-palette-secondary-500 focus:ring-palette-secondary-500 dark:border-slate-600" aria-label={t("table.selectAll")} /></th>
+              <th className="px-3 py-3">
+                <input
+                  type="checkbox"
+                  checked={allSelected}
+                  onChange={handleSelectAllToggle}
+                  className="text-palette-secondary-500 focus:ring-palette-secondary-500 size-4 rounded border-gray-300 dark:border-slate-600"
+                  aria-label={t("table.selectAll")}
+                />
+              </th>
               <th className="px-3 py-3">ID</th>
               <th className="px-3 py-3">{t("table.source")}</th>
               <th className="px-3 py-3">{t("table.sourceLang")}</th>
@@ -91,7 +122,9 @@ export function TranslationTable({
         </div>
       )}
 
-      {pagination.totalPages > 1 && <TranslationPagination pagination={pagination} buildPageUrl={buildPageUrl} t={t} />}
+      {pagination.totalPages > 1 && (
+        <TranslationPagination pagination={pagination} buildPageUrl={buildPageUrl} t={t} />
+      )}
     </div>
   );
 }

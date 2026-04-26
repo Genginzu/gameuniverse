@@ -13,6 +13,7 @@ import {
   verifyGameDeletionConsistency,
 } from "@/lib/realtime-updates";
 import { logger } from "@/lib/logger";
+import { untypedTable } from "@/lib/utils/untypedTable";
 
 // Type for the RPC result rows from get_admin_games_listing()
 interface AdminGameFromRpc {
@@ -193,8 +194,7 @@ export async function POST(request: NextRequest) {
     const supabase = await createRouteHandlerClient();
 
     // Start transaction by creating the game first
-    const { data: createdGame, error: gameError } = await supabase
-      .from("games")
+    const { data: createdGame, error: gameError } = await untypedTable(supabase, "games")
       .insert([game])
       .select("id, slug")
       .single();

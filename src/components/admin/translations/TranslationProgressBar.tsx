@@ -22,7 +22,7 @@ export function TranslationProgressBar({ translated, total }: TranslationProgres
 
       <div className="h-3 w-full overflow-hidden rounded-full bg-gray-200/60 dark:bg-slate-700/60">
         <div
-          className="h-full rounded-full bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 transition-all duration-500 ease-out"
+          className="from-palette-secondary-500 to-palette-primary-500 h-full rounded-full bg-linear-to-r transition-all duration-500 ease-out"
           style={{ width: `${percentage}%` }}
         />
       </div>

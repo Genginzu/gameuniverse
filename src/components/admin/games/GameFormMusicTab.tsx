@@ -40,7 +40,7 @@ export function GameFormMusicTab({ form, t }: GameFormTabProps) {
                 value={field.value ?? ""}
               />
             </FormControl>
-            <p className="text-xs text-muted-foreground">{t("musicSpotifyHint")}</p>
+            <p className="text-muted-foreground text-xs">{t("musicSpotifyHint")}</p>
             <FormMessage />
           </FormItem>
         )}

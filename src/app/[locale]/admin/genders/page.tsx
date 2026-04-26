@@ -93,16 +93,28 @@ export default function AdminGendersPage() {
   }, [isDeleting]);
 
   const genderColumns: AdminColumnDef<AdminGenderListItem>[] = [
-    { key: "slug", labelKey: "columns.slug", sortable: true, className: "px-4 py-3 font-mono text-sm text-gray-900 dark:text-white" },
     {
-      key: "name", labelKey: "columns.name", sortable: true,
+      key: "slug",
+      labelKey: "columns.slug",
+      sortable: true,
+      className: "px-4 py-3 font-mono text-sm text-gray-900 dark:text-white",
+    },
+    {
+      key: "name",
+      labelKey: "columns.name",
+      sortable: true,
       render: (g) => {
         const tr = g.translations.find((t) => t.language_code === locale);
         return tr?.name ?? g.translations[0]?.name ?? g.slug;
       },
       className: "px-4 py-3 font-medium text-gray-900 dark:text-white",
     },
-    { key: "characterCount", labelKey: "columns.characterCount", render: (g) => t("characterCount", { count: g.characterCount }), className: "px-4 py-3 text-gray-500 dark:text-gray-400" },
+    {
+      key: "characterCount",
+      labelKey: "columns.characterCount",
+      render: (g) => t("characterCount", { count: g.characterCount }),
+      className: "px-4 py-3 text-gray-500 dark:text-gray-400",
+    },
   ];
 
   return (

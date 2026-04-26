@@ -19,7 +19,14 @@ interface BatchSyncTabProps {
   onStop: () => void;
 }
 
-export function BatchSyncTab({ ns, filter, startIcon, syncState, onStart, onStop }: BatchSyncTabProps) {
+export function BatchSyncTab({
+  ns,
+  filter,
+  startIcon,
+  syncState,
+  onStart,
+  onStop,
+}: BatchSyncTabProps) {
   const t = useTranslations(ns);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -27,7 +34,10 @@ export function BatchSyncTab({ ns, filter, startIcon, syncState, onStart, onStop
 
   const { entries, total, totalPages, isLoading } = useGlobalSync(page, search, filter);
 
-  const handleSearch = () => { setSearch(searchInput); setPage(1); };
+  const handleSearch = () => {
+    setSearch(searchInput);
+    setPage(1);
+  };
 
   return (
     <SyncTabLayout

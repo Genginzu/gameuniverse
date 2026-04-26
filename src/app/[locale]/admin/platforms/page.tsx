@@ -8,8 +8,7 @@ import type { AdminPlatform } from "@/types/admin-platforms";
 import { PlatformList } from "@/components/admin/platforms/PlatformList";
 import { PlatformForm } from "@/components/admin/platforms/PlatformForm";
 const AdminDeleteDialog = dynamic(
-  () =>
-    import("@/components/admin/shared/AdminDeleteDialog").then((m) => m.AdminDeleteDialog),
+  () => import("@/components/admin/shared/AdminDeleteDialog").then((m) => m.AdminDeleteDialog),
   { ssr: false }
 );
 import { Button } from "@/components/ui/button";
@@ -173,7 +172,9 @@ export default function AdminPlatformsPage() {
         <AdminDeleteDialog
           isOpen={platformToDelete !== null}
           translationNamespace="admin.platforms.deleteDialog"
-          warningParams={{ name: platformToDelete ? getPlatformName(platformToDelete, locale) : "" }}
+          warningParams={{
+            name: platformToDelete ? getPlatformName(platformToDelete, locale) : "",
+          }}
           onClose={handleDeleteClose}
           onConfirm={handleDeleteConfirm}
           isDeleting={isDeleting}

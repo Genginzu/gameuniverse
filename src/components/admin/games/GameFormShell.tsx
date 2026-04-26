@@ -41,11 +41,20 @@ export function TabNavigation({
         const isActive = activeTab === tab.id;
         const badge = getBadge(tab.id);
         return (
-          <button key={tab.id} type="button" onClick={() => setActiveTab(tab.id)} className={`flex cursor-pointer items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-all ${isActive ? "bg-primary text-primary-foreground shadow-xs" : "text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700/50 dark:hover:text-gray-300"}`}>
+          <button
+            key={tab.id}
+            type="button"
+            onClick={() => setActiveTab(tab.id)}
+            className={`flex cursor-pointer items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-all ${isActive ? "bg-primary text-primary-foreground shadow-xs" : "text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700/50 dark:hover:text-gray-300"}`}
+          >
             {tab.icon}
             <span className="hidden sm:inline">{tabLabel(tab)}</span>
             {badge !== null && badge > 0 && (
-              <span className={`rounded-full px-1.5 py-0.5 text-[10px] leading-none font-bold tabular-nums ${isActive ? "text-primary-foreground bg-white/20" : "bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400"}`}>{badge}</span>
+              <span
+                className={`rounded-full px-1.5 py-0.5 text-[10px] leading-none font-bold tabular-nums ${isActive ? "text-primary-foreground bg-white/20" : "bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400"}`}
+              >
+                {badge}
+              </span>
             )}
           </button>
         );

@@ -19,7 +19,7 @@ export function ActivityItemComment({ data, locale: _locale }: ActivityItemComme
           character: () => (
             <Link
               href={`/characters/${data.characterSlug}`}
-              className="font-medium text-palette-secondary-600 hover:underline dark:text-palette-secondary-400"
+              className="text-palette-secondary-600 dark:text-palette-secondary-400 font-medium hover:underline"
             >
               {data.characterName}
             </Link>
@@ -27,7 +27,7 @@ export function ActivityItemComment({ data, locale: _locale }: ActivityItemComme
         })}
       </p>
       {data.contentExcerpt && (
-        <p className="mt-1.5 line-clamp-2 text-sm italic text-gray-500 dark:text-slate-400">
+        <p className="mt-1.5 line-clamp-2 text-sm text-gray-500 italic dark:text-slate-400">
           &ldquo;{data.contentExcerpt.replace(/<[^>]+>/g, "")}&rdquo;
         </p>
       )}

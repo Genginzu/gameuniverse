@@ -63,10 +63,10 @@ export function NotificationItem({ notification, onDismiss, onNavigate }: Notifi
   const body = (
     <>
       {/* Type icon */}
-      <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-palette-primary-500/10 dark:bg-palette-primary-400/10">
+      <div className="bg-palette-primary-500/10 dark:bg-palette-primary-400/10 mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full">
         <Icon
           icon={TYPE_ICONS[notification.type] ?? "mdi:bell-outline"}
-          className="h-4 w-4 text-palette-primary-500 dark:text-palette-primary-300"
+          className="text-palette-primary-500 dark:text-palette-primary-300 h-4 w-4"
         />
       </div>
 
@@ -106,7 +106,7 @@ export function NotificationItem({ notification, onDismiss, onNavigate }: Notifi
         <Link
           href={href}
           onClick={handleNavigate}
-          className={`${containerClass} pr-10 cursor-pointer`}
+          className={`${containerClass} cursor-pointer pr-10`}
         >
           {body}
         </Link>

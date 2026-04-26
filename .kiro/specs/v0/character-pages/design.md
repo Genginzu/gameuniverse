@@ -248,7 +248,7 @@ const [showFilters, setShowFilters] = useState(false);
 
     {/* Characters grid */}
     {!loading && (
-      <div className="grid grid-cols-1 gap-4 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <div className="xs:grid-cols-2 grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
         {characters.map((character) => (
           <CharacterCard
             key={character.id}
@@ -417,16 +417,16 @@ interface CharacterCardProps {
 
       {/* Role badge */}
       {character.role && (
-        <Badge className="absolute right-2 top-2">{character.role}</Badge>
+        <Badge className="absolute top-2 right-2">{character.role}</Badge>
       )}
     </div>
 
     <CardContent>
       <h3 className="font-bold">{character.name}</h3>
-      <p className="text-sm text-muted">{character.primaryGame}</p>
+      <p className="text-muted text-sm">{character.primaryGame}</p>
 
       {/* Games count */}
-      <div className="text-xs text-muted">{character.gamesCount} jeu(x)</div>
+      <div className="text-muted text-xs">{character.gamesCount} jeu(x)</div>
     </CardContent>
   </Card>
 </Link>
@@ -530,7 +530,9 @@ const AVAILABLE_ROLES = [
       {games.map((game) => (
         <Badge
           key={game.id}
-          variant={selectedGames.includes(game.id) ? "default" : "outline-solid"}
+          variant={
+            selectedGames.includes(game.id) ? "default" : "outline-solid"
+          }
           onClick={() => toggleGameFilter(game.id)}
           className="cursor-pointer"
         >
@@ -547,7 +549,9 @@ const AVAILABLE_ROLES = [
       {AVAILABLE_ROLES.map((role) => (
         <Badge
           key={role.value}
-          variant={selectedRoles.includes(role.value) ? "default" : "outline-solid"}
+          variant={
+            selectedRoles.includes(role.value) ? "default" : "outline-solid"
+          }
           onClick={() => toggleRoleFilter(role.value)}
           className="cursor-pointer"
         >

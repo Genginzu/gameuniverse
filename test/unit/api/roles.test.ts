@@ -63,11 +63,7 @@ describe("GET /api/roles", () => {
           select: vi.fn(() => ({
             in: vi.fn(() =>
               Promise.resolve({
-                data: [
-                  { role_id: "r1" },
-                  { role_id: "r1" },
-                  { role_id: "r2" },
-                ],
+                data: [{ role_id: "r1" }, { role_id: "r1" }, { role_id: "r2" }],
                 error: null,
               })
             ),
@@ -92,9 +88,7 @@ describe("GET /api/roles", () => {
       if (table === "character_roles") {
         return {
           select: vi.fn(() => ({
-            order: vi.fn(() =>
-              Promise.resolve({ data: null, error: { message: "DB error" } })
-            ),
+            order: vi.fn(() => Promise.resolve({ data: null, error: { message: "DB error" } })),
           })),
         };
       }

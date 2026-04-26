@@ -77,7 +77,11 @@ export function GameFormCompaniesTab({ form, companies, toggleCompany, t, isIgdb
         </Button>
       )}
 
-      {form.formState.errors.companies && <p className="text-destructive text-sm font-medium">{form.formState.errors.companies.message}</p>}
+      {form.formState.errors.companies && (
+        <p className="text-destructive text-sm font-medium">
+          {form.formState.errors.companies.message}
+        </p>
+      )}
     </div>
   );
 }

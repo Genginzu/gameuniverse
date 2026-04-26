@@ -31,7 +31,7 @@ function MonthSelector({ value, onChange }: { value: string; onChange: (v: strin
         onClick={() => onChange("")}
         className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
           !value
-            ? "bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 text-white"
+            ? "from-palette-secondary-500 to-palette-primary-500 bg-linear-to-r text-white"
             : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
         }`}
       >
@@ -39,14 +39,17 @@ function MonthSelector({ value, onChange }: { value: string; onChange: (v: strin
       </button>
       {months.map((m) => {
         const [y, mo] = m.split("-");
-        const label = new Date(parseInt(y), parseInt(mo) - 1).toLocaleDateString("fr", { month: "short", year: "numeric" });
+        const label = new Date(parseInt(y), parseInt(mo) - 1).toLocaleDateString("fr", {
+          month: "short",
+          year: "numeric",
+        });
         return (
           <button
             key={m}
             onClick={() => onChange(m)}
             className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
               value === m
-                ? "bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 text-white"
+                ? "from-palette-secondary-500 to-palette-primary-500 bg-linear-to-r text-white"
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
             }`}
           >
@@ -67,13 +70,15 @@ export function UpcomingContent() {
   const params = new URLSearchParams({ locale, page: String(page), limit: "24" });
   if (month) params.set("month", month);
 
-  const { data, isLoading } = useSWR<UpcomingResponse>(
-    `/api/games/upcoming?${params}`,
-    fetcher,
-    { revalidateOnFocus: false, dedupingInterval: 60000 }
-  );
+  const { data, isLoading } = useSWR<UpcomingResponse>(`/api/games/upcoming?${params}`, fetcher, {
+    revalidateOnFocus: false,
+    dedupingInterval: 60000,
+  });
 
-  const handleMonthChange = (m: string) => { setMonth(m); setPage(1); };
+  const handleMonthChange = (m: string) => {
+    setMonth(m);
+    setPage(1);
+  };
 
   return (
     <div className="space-y-6 p-4 md:space-y-8 md:p-6 lg:p-8">
@@ -93,7 +98,11 @@ export function UpcomingContent() {
       )}
 
       {isLoading ? (
-        <GridSkeleton count={12} gridClassName="grid-cols-2 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-6" skeletonConfig={gameSkeletonConfig} />
+        <GridSkeleton
+          count={12}
+          gridClassName="grid-cols-2 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-6"
+          skeletonConfig={gameSkeletonConfig}
+        />
       ) : data?.games.length === 0 ? (
         <div className="glass-card flex flex-col items-center justify-center rounded-xl p-8 text-center">
           <Icon icon="lucide:calendar-x" className="mb-3 size-10 text-gray-400" />
@@ -101,7 +110,7 @@ export function UpcomingContent() {
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-2 gap-3 xs:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-6">
+          <div className="xs:grid-cols-3 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-6">
             {data?.games.filter(Boolean).map((game) => (
               <EntityCard key={game.id} entity={game} config={gameCardConfig} />
             ))}

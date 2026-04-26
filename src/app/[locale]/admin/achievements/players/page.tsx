@@ -6,7 +6,6 @@ import { PlayerAchievementManager } from "@/components/admin/achievements/Player
 import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react";
 
-
 export default function PlayerAchievementsPage() {
   const t = useTranslations("adminAchievements");
   const router = useRouter();
@@ -15,7 +14,7 @@ export default function PlayerAchievementsPage() {
     <div className="p-4 lg:p-6">
       <div className="mb-2">
         <Button variant="ghost" size="sm" onClick={() => router.push("/admin/achievements")}>
-          <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3"  />
+          <Icon icon="fa:arrow-left" className="mr-1 h-3 w-3" />
           {t("form.backToList")}
         </Button>
       </div>

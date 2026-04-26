@@ -2,7 +2,11 @@
 
 ## Overview
 
-La page paramètres permet aux utilisateurs authentifiés de gérer leurs informations de compte. Elle est organisée en deux sections principales : Profil (username, email) et Sécurité (mot de passe). La page utilise le système d'authentification Supabase existant et suit les patterns de design de l'application.
+La page paramètres permet aux utilisateurs authentifiés de gérer leurs
+informations de compte. Elle est organisée en deux sections principales : Profil
+(username, email) et Sécurité (mot de passe). La page utilise le système
+d'authentification Supabase existant et suit les patterns de design de
+l'application.
 
 ## Architecture
 
@@ -15,31 +19,31 @@ graph TB
         EF[EmailForm]
         PR[PasswordResetButton]
     end
-    
+
     subgraph "Hooks"
         UP[useProfile]
         UA[useAuth]
         UT[useToast]
     end
-    
+
     subgraph "API Routes"
         PA[/api/profile PATCH]
     end
-    
+
     subgraph "Supabase"
         AUTH[Auth Service]
         DB[(profiles table)]
     end
-    
+
     SP --> SC
     SC --> UF
     SC --> EF
     SC --> PR
-    
+
     UF --> UP
     EF --> AUTH
     PR --> UA
-    
+
     UP --> PA
     PA --> DB
     UA --> AUTH
@@ -137,44 +141,55 @@ interface Profile {
 ```typescript
 // Username validation schema
 const usernameSchema = z.object({
-  username: z.string()
+  username: z
+    .string()
     .min(1, "Le nom d'utilisateur est requis")
-    .transform(val => val.trim())
-    .refine(val => val.length > 0, "Le nom d'utilisateur ne peut pas être vide")
+    .transform((val) => val.trim())
+    .refine(
+      (val) => val.length > 0,
+      "Le nom d'utilisateur ne peut pas être vide"
+    ),
 });
 
 // Email validation schema
 const emailSchema = z.object({
-  email: z.string()
-    .email("Format d'email invalide")
+  email: z.string().email("Format d'email invalide"),
 });
 ```
 
 ## Correctness Properties
 
-*A property is a characteristic or behavior that should hold true across all valid executions of a system—essentially, a formal statement about what the system should do. Properties serve as the bridge between human-readable specifications and machine-verifiable correctness guarantees.*
+_A property is a characteristic or behavior that should hold true across all
+valid executions of a system—essentially, a formal statement about what the
+system should do. Properties serve as the bridge between human-readable
+specifications and machine-verifiable correctness guarantees._
 
 ### Property 1: Username validation rejects empty inputs
 
-*For any* string input that is empty or contains only whitespace characters, the username form SHALL reject the submission and not call the update API.
+_For any_ string input that is empty or contains only whitespace characters, the
+username form SHALL reject the submission and not call the update API.
 
 **Validates: Requirements 2.1**
 
 ### Property 2: Username update round-trip consistency
 
-*For any* valid username (non-empty, trimmed string), after a successful update, fetching the profile SHALL return the same username value.
+_For any_ valid username (non-empty, trimmed string), after a successful update,
+fetching the profile SHALL return the same username value.
 
 **Validates: Requirements 2.2**
 
 ### Property 3: Email validation rejects invalid formats
 
-*For any* string input that does not match a valid email format (missing @, invalid domain, etc.), the email form SHALL reject the submission and not call the update API.
+_For any_ string input that does not match a valid email format (missing @,
+invalid domain, etc.), the email form SHALL reject the submission and not call
+the update API.
 
 **Validates: Requirements 3.1**
 
 ### Property 4: Loading state during form submission
 
-*For any* form submission (username or email), WHILE the async operation is in progress, the submit button SHALL display a loading indicator and be disabled.
+_For any_ form submission (username or email), WHILE the async operation is in
+progress, the submit button SHALL display a loading indicator and be disabled.
 
 **Validates: Requirements 5.1**
 
@@ -189,15 +204,19 @@ const emailSchema = z.object({
 ### API Errors
 
 - Network errors: Toast notification "Erreur de connexion. Veuillez réessayer."
-- Email already in use: Toast notification "Cette adresse email est déjà utilisée"
-- Generic server error: Toast notification "Une erreur s'est produite. Veuillez réessayer."
+- Email already in use: Toast notification "Cette adresse email est déjà
+  utilisée"
+- Generic server error: Toast notification "Une erreur s'est produite. Veuillez
+  réessayer."
 - Password reset failure: Toast notification with Supabase error message
 
 ### Success Feedback
 
 - Username updated: Toast notification "Nom d'utilisateur mis à jour"
-- Email update initiated: Toast notification "Un email de confirmation a été envoyé à votre nouvelle adresse"
-- Password reset sent: Toast notification "Un email de réinitialisation a été envoyé"
+- Email update initiated: Toast notification "Un email de confirmation a été
+  envoyé à votre nouvelle adresse"
+- Password reset sent: Toast notification "Un email de réinitialisation a été
+  envoyé"
 
 ## Testing Strategy
 

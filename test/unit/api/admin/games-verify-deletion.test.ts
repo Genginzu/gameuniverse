@@ -4,8 +4,7 @@ let mockRequireAdmin: any;
 let mockVerifyConsistency: any;
 
 vi.mock("../../../../src/lib/auth-admin", () => ({
-  requireAdmin: () =>
-    mockRequireAdmin ? mockRequireAdmin() : Promise.resolve(true),
+  requireAdmin: () => (mockRequireAdmin ? mockRequireAdmin() : Promise.resolve(true)),
 }));
 
 vi.mock("../../../../src/lib/logger", () => ({
@@ -17,9 +16,7 @@ vi.mock("../../../../src/lib/realtime-updates", () => ({
     mockVerifyConsistency ? mockVerifyConsistency(...args) : Promise.resolve({ consistent: true }),
 }));
 
-const { POST } = await import(
-  "../../../../src/app/api/admin/games/verify-deletion/route"
-);
+const { POST } = await import("../../../../src/app/api/admin/games/verify-deletion/route");
 
 function makeRequest(url: string, body: any) {
   return new Request(url, {
@@ -49,9 +46,7 @@ describe("POST /api/admin/games/verify-deletion", () => {
   });
 
   test("returns 400 for missing game_ids", async () => {
-    const res = await POST(
-      makeRequest("http://localhost/api/admin/games/verify-deletion", {})
-    );
+    const res = await POST(makeRequest("http://localhost/api/admin/games/verify-deletion", {}));
     expect(res.status).toBe(400);
     expect((await res.json()).error).toBe("Invalid input data");
   });

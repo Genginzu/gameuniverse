@@ -13,8 +13,7 @@ export function buildGamePayload(data: AdminGameFormData, mode: "create" | "edit
       description: t.description || null,
     }));
 
-  const toNum = (v: unknown) =>
-    v === "" || v === undefined || v === null ? null : Number(v);
+  const toNum = (v: unknown) => (v === "" || v === undefined || v === null ? null : Number(v));
 
   const metascoreValue =
     data.metascore === "" || data.metascore === undefined || data.metascore === null
@@ -37,6 +36,7 @@ export function buildGamePayload(data: AdminGameFormData, mode: "create" | "edit
       metascore: metascoreValue,
       playtime_hastily: toNum(data.playtime_hastily),
       playtime_normally: toNum(data.playtime_normally),
+      is_esport: data.is_esport ?? false,
       playtime_completely: toNum(data.playtime_completely),
     },
     translations: validTranslations,

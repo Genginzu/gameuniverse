@@ -77,7 +77,7 @@ export function NotificationDropdown({
             <button
               type="button"
               onClick={onDismissAll}
-              className="w-full rounded-lg px-3 py-2 text-center text-sm font-medium text-palette-primary-600 transition-colors hover:bg-palette-primary-50 dark:text-palette-primary-400 dark:hover:bg-palette-primary-900/20"
+              className="text-palette-primary-600 hover:bg-palette-primary-50 dark:text-palette-primary-400 dark:hover:bg-palette-primary-900/20 w-full rounded-lg px-3 py-2 text-center text-sm font-medium transition-colors"
             >
               {t("markAllAsRead")}
             </button>

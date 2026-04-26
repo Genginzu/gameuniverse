@@ -103,9 +103,7 @@ describe("GET /api/genres", () => {
       if (table === "genres") {
         return {
           select: vi.fn(() => ({
-            eq: vi.fn(() =>
-              Promise.resolve({ data: null, error: { message: "DB error" } })
-            ),
+            eq: vi.fn(() => Promise.resolve({ data: null, error: { message: "DB error" } })),
           })),
         };
       }

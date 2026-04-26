@@ -4,8 +4,7 @@ let mockRequireAdmin: any;
 let mockSupabaseFrom: any;
 
 vi.mock("@/lib/auth-admin", () => ({
-  requireAdmin: () =>
-    mockRequireAdmin ? mockRequireAdmin() : Promise.resolve(true),
+  requireAdmin: () => (mockRequireAdmin ? mockRequireAdmin() : Promise.resolve(true)),
 }));
 
 vi.mock("@/lib/supabase-server", () => ({
@@ -19,9 +18,7 @@ vi.mock("@/lib/logger", () => ({
   logger: { error: vi.fn(), warn: vi.fn(), info: vi.fn() },
 }));
 
-const { GET, POST } = await import(
-  "@/app/api/admin/age-classifications/route"
-);
+const { GET, POST } = await import("@/app/api/admin/age-classifications/route");
 
 function makeRequest(url: string, init?: RequestInit) {
   return new Request(url, init) as any;
@@ -50,9 +47,7 @@ describe("GET /api/admin/age-classifications", () => {
     mockRequireAdmin = () => {
       throw new Error("Admin access required");
     };
-    const res = await GET(
-      makeRequest("http://localhost/api/admin/age-classifications")
-    );
+    const res = await GET(makeRequest("http://localhost/api/admin/age-classifications"));
     expect(res.status).toBe(403);
     expect(await res.json()).toEqual({ error: "Admin access required" });
   });
@@ -68,16 +63,13 @@ describe("GET /api/admin/age-classifications", () => {
     };
 
     mockSupabaseFrom = (table: string) => {
-      if (table === "rating_systems")
-        return supaChain({ data: [system], error: null, count: 1 });
+      if (table === "rating_systems") return supaChain({ data: [system], error: null, count: 1 });
       if (table === "ratings" || table === "content_descriptors")
         return supaChain({ count: 2, error: null });
       return {};
     };
 
-    const res = await GET(
-      makeRequest("http://localhost/api/admin/age-classifications")
-    );
+    const res = await GET(makeRequest("http://localhost/api/admin/age-classifications"));
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body).toHaveProperty("ratingSystems");
@@ -87,12 +79,9 @@ describe("GET /api/admin/age-classifications", () => {
   });
 
   test("returns 500 when count query fails", async () => {
-    mockSupabaseFrom = () =>
-      supaChain({ count: null, error: { message: "DB error" } });
+    mockSupabaseFrom = () => supaChain({ count: null, error: { message: "DB error" } });
 
-    const res = await GET(
-      makeRequest("http://localhost/api/admin/age-classifications")
-    );
+    const res = await GET(makeRequest("http://localhost/api/admin/age-classifications"));
     expect(res.status).toBe(500);
   });
 });

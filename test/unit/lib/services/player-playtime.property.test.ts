@@ -16,9 +16,7 @@ import { computePlaytimeAverage } from "../../../../src/lib/services/player-play
 // --- Generators ---
 
 /** Generates a strictly positive playtime value with at most 1 decimal */
-const positivePlaytime = fc
-  .integer({ min: 1, max: 500000 })
-  .map((n) => n / 10);
+const positivePlaytime = fc.integer({ min: 1, max: 500000 }).map((n) => n / 10);
 
 /** Generates a non-empty array of positive playtime values */
 const positivePlaytimeArray = fc.array(positivePlaytime, {
@@ -48,8 +46,7 @@ describe("Player Playtime Average - Property-Based Tests", () => {
           expect(count).toBe(values.length);
           expect(average).not.toBeNull();
 
-          const expectedAvg =
-            values.reduce((a, b) => a + b, 0) / values.length;
+          const expectedAvg = values.reduce((a, b) => a + b, 0) / values.length;
           expect(Math.abs(average! - expectedAvg)).toBeLessThan(1e-9);
         }),
         { numRuns: 200 }
@@ -73,8 +70,7 @@ describe("Player Playtime Average - Property-Based Tests", () => {
           if (positiveOnly.length === 0) {
             expect(average).toBeNull();
           } else {
-            const expectedAvg =
-              positiveOnly.reduce((a, b) => a + b, 0) / positiveOnly.length;
+            const expectedAvg = positiveOnly.reduce((a, b) => a + b, 0) / positiveOnly.length;
             expect(Math.abs(average! - expectedAvg)).toBeLessThan(1e-9);
           }
         }),

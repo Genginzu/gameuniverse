@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { AchievementEngine } from "@/lib/services/achievementEngine";
+import { CoinService } from "@/lib/services/coinService";
 import { logger } from "@/lib/logger";
 
 // Type definitions for Supabase query results
@@ -323,6 +324,11 @@ export async function POST(request: NextRequest) {
     } catch (error) {
       console.error("Achievement evaluation failed:", error);
     }
+
+    // Reward GU Coins (non-blocking)
+    CoinService.rewardActivity(user.id, "library_add", gameId).catch((err) =>
+      logger.error("Coin reward failed", { error: err })
+    );
 
     return NextResponse.json({ success: true, data });
   } catch (error) {

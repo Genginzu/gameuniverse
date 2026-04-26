@@ -27,8 +27,13 @@ export function GameStatsGrid({
   const labelStyle = { color: colors.labelColor };
 
   // Determine age rating display
-  const ageRating = game.ageRating || game.ageRatings?.[0];
-  const ageDisplay = ageRating?.minimumAge ? `${ageRating.minimumAge}+` : ageRating?.rating || null;
+  const pegiRating = game.ageRatings?.find((r) => r.system?.toUpperCase().includes("PEGI"));
+  const ageRating = pegiRating || game.ageRating || game.ageRatings?.[0];
+  const ageDisplay = ageRating
+    ? ageRating.system
+      ? `${ageRating.system} ${ageRating.minimumAge !== null ? ageRating.minimumAge + "+" : ageRating.rating}`
+      : ageRating.minimumAge !== null ? `${ageRating.minimumAge}+` : ageRating.rating || null
+    : null;
 
   // Cheapest price across all stores
   const cheapest =

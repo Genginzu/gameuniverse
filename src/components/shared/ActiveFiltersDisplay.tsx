@@ -55,9 +55,7 @@ export function ActiveFiltersDisplay({
                 key={`${filterId}-${optionId}`}
                 className="inline-flex items-center rounded-lg bg-white px-2 py-1 text-xs font-medium text-gray-700 shadow-xs ring-1 ring-gray-200 sm:px-3 sm:py-1.5 sm:text-sm dark:bg-gray-800 dark:text-gray-200 dark:ring-gray-700"
               >
-                <span className="mr-1 sm:mr-2">
-                  {getOptionLabel(filters, filterId, optionId)}
-                </span>
+                <span className="mr-1 sm:mr-2">{getOptionLabel(filters, filterId, optionId)}</span>
                 <button
                   onClick={() => onRemoveFilter(filterId, optionId)}
                   className="rounded-full p-0.5 text-gray-400 transition-colors hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/30"

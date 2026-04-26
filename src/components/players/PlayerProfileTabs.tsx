@@ -104,7 +104,7 @@ export function PlayerProfileTabs({ activeTab, onTabChange, isOwner }: PlayerPro
               {isActive && (
                 <>
                   <span className="ml-2 hidden text-sm font-medium md:inline">{label}</span>
-                  <span className="absolute inset-x-2 bottom-0 h-0.5 rounded-full bg-palette-secondary-600 dark:bg-palette-secondary-400" />
+                  <span className="bg-palette-secondary-600 dark:bg-palette-secondary-400 absolute inset-x-2 bottom-0 h-0.5 rounded-full" />
                 </>
               )}
             </button>

@@ -93,16 +93,28 @@ export default function AdminSpeciesPage() {
   }, [isDeleting]);
 
   const speciesColumns: AdminColumnDef<AdminSpeciesListItem>[] = [
-    { key: "slug", labelKey: "columns.slug", sortable: true, className: "px-4 py-3 font-mono text-sm text-gray-900 dark:text-white" },
     {
-      key: "name", labelKey: "columns.name", sortable: true,
+      key: "slug",
+      labelKey: "columns.slug",
+      sortable: true,
+      className: "px-4 py-3 font-mono text-sm text-gray-900 dark:text-white",
+    },
+    {
+      key: "name",
+      labelKey: "columns.name",
+      sortable: true,
       render: (sp) => {
         const tr = sp.translations.find((t) => t.language_code === locale);
         return tr?.name ?? sp.translations[0]?.name ?? sp.slug;
       },
       className: "px-4 py-3 font-medium text-gray-900 dark:text-white",
     },
-    { key: "characterCount", labelKey: "columns.characterCount", render: (sp) => t("characterCount", { count: sp.characterCount }), className: "px-4 py-3 text-gray-500 dark:text-gray-400" },
+    {
+      key: "characterCount",
+      labelKey: "columns.characterCount",
+      render: (sp) => t("characterCount", { count: sp.characterCount }),
+      className: "px-4 py-3 text-gray-500 dark:text-gray-400",
+    },
   ];
 
   return (

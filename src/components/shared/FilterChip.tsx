@@ -20,7 +20,7 @@ export function FilterChip({ label, selected, onClick, count, icon }: FilterChip
       onClick={onClick}
       className={`inline-flex cursor-pointer items-center gap-1.5 rounded-full px-3 py-2 text-xs font-medium transition-all sm:py-1.5 ${
         selected
-          ? "bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 text-white shadow-xs"
+          ? "from-palette-secondary-500 to-palette-primary-500 bg-linear-to-r text-white shadow-xs"
           : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-slate-700/50 dark:text-gray-300 dark:hover:bg-slate-700"
       }`}
     >

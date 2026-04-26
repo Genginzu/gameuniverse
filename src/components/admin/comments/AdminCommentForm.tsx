@@ -63,19 +63,19 @@ export function AdminCommentForm({ comment, onSubmit, isSubmitting }: AdminComme
 
       {/* Content */}
       <div className="space-y-2">
-        <label htmlFor="comment-content" className="text-sm font-medium text-foreground">
+        <label htmlFor="comment-content" className="text-foreground text-sm font-medium">
           {t("contentLabel")} <span className="text-destructive">*</span>
         </label>
         <textarea
           id="comment-content"
           {...register("content")}
           rows={6}
-          className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring"
+          className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-hidden"
           placeholder={t("contentPlaceholder")}
         />
         <div className="flex items-center justify-between">
           {errors.content ? (
-            <p className="text-sm text-destructive">{errors.content.message}</p>
+            <p className="text-destructive text-sm">{errors.content.message}</p>
           ) : (
             <span />
           )}

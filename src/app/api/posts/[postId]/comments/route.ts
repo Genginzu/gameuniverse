@@ -3,6 +3,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { PostCommentServerService } from "@/lib/services/postCommentServerService";
 import { PlayerPostsServerService } from "@/lib/services/playerPostsServerService";
 import { logger } from "@/lib/logger";
+import { CoinService } from "@/lib/services/coinService";
 
 /**
  * GET /api/posts/[postId]/comments — Fetch comments for a post.
@@ -52,6 +53,10 @@ export async function POST(
     }
 
     const comment = await PostCommentServerService.createComment(postId, user.id, content);
+
+    CoinService.rewardActivity(user.id, "post_comment", comment.id).catch((err) =>
+      logger.error("Coin reward failed", { error: err })
+    );
 
     return NextResponse.json(comment, { status: 201 });
   } catch (error) {

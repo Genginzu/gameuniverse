@@ -1,5 +1,5 @@
 import { IGDBGame } from "@/types/igdb";
-import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { logger } from "@/lib/logger";
 import { RelatedEntities } from "./types";
 
@@ -9,9 +9,7 @@ import { RelatedEntities } from "./types";
  */
 export async function ensureRelatedEntities(igdbGame: IGDBGame): Promise<RelatedEntities> {
   const genreIds = await ensureGenres(igdbGame.genres || []);
-  const { developerIds, publisherIds } = await ensureCompanies(
-    igdbGame.involved_companies || []
-  );
+  const { developerIds, publisherIds } = await ensureCompanies(igdbGame.involved_companies || []);
 
   return { genreIds, developerIds, publisherIds };
 }
@@ -24,7 +22,7 @@ async function ensureGenres(
 ): Promise<string[]> {
   if (igdbGenres.length === 0) return [];
 
-  const supabase = await createRouteHandlerClient();
+  const supabase = await getSupabaseAdmin();
   const genreIds: string[] = [];
 
   for (const igdbGenre of igdbGenres) {
@@ -57,7 +55,7 @@ async function ensureGenres(
  * Creates translations for a genre (EN only — IGDB data is English).
  */
 async function createGenreTranslations(
-  supabase: Awaited<ReturnType<typeof createRouteHandlerClient>>,
+  supabase: ReturnType<typeof getSupabaseAdmin>,
   genreId: string,
   name: string
 ): Promise<void> {
@@ -85,7 +83,7 @@ async function ensureCompanies(
     return { developerIds, publisherIds };
   }
 
-  const supabase = await createRouteHandlerClient();
+  const supabase = await getSupabaseAdmin();
 
   for (const ic of involvedCompanies) {
     const { data: existingCompany } = await supabase
@@ -128,7 +126,7 @@ async function ensureCompanies(
  * Links genres to a game.
  */
 export async function linkGenres(gameId: string, genreIds: string[]): Promise<void> {
-  const supabase = await createRouteHandlerClient();
+  const supabase = await getSupabaseAdmin();
 
   const gameGenres = genreIds.map((genreId) => ({
     game_id: gameId,
@@ -146,7 +144,7 @@ export async function linkCompanies(
   companyIds: string[],
   role: "developer" | "publisher"
 ): Promise<void> {
-  const supabase = await createRouteHandlerClient();
+  const supabase = await getSupabaseAdmin();
 
   const gameCompanies = companyIds.map((companyId, index) => ({
     game_id: gameId,
@@ -165,7 +163,7 @@ export async function linkCompanies(
 export async function ensurePlatforms(igdbGame: IGDBGame): Promise<string[]> {
   if (!igdbGame.platforms || igdbGame.platforms.length === 0) return [];
 
-  const supabase = await createRouteHandlerClient();
+  const supabase = await getSupabaseAdmin();
   const platformIds: string[] = [];
 
   for (const igdbPlatform of igdbGame.platforms) {
@@ -215,7 +213,7 @@ export async function ensurePlatforms(igdbGame: IGDBGame): Promise<string[]> {
 export async function linkPlatforms(gameId: string, platformIds: string[]): Promise<void> {
   if (platformIds.length === 0) return;
 
-  const supabase = await createRouteHandlerClient();
+  const supabase = await getSupabaseAdmin();
 
   const rows = platformIds.map((platformId) => ({
     game_id: gameId,
@@ -236,7 +234,7 @@ export async function syncPlatforms(gameId: string, igdbGame: IGDBGame): Promise
   const platformIds = await ensurePlatforms(igdbGame);
   if (platformIds.length === 0) return;
 
-  const supabase = await createRouteHandlerClient();
+  const supabase = await getSupabaseAdmin();
 
   const { data: existingLinks } = await supabase
     .from("game_platforms")

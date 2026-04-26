@@ -45,7 +45,9 @@ export async function POST(_request: NextRequest) {
           igdb_id: v.id,
           version_title: v.version_title || v.name,
           description: v.summary || null,
-          cover_image_url: v.cover?.image_id ? IGDBService.buildImageUrl(v.cover.image_id, "cover_big") : null,
+          cover_image_url: v.cover?.image_id
+            ? IGDBService.buildImageUrl(v.cover.image_id, "cover_big")
+            : null,
           display_order: i,
         });
       }

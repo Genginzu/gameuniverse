@@ -114,7 +114,7 @@ async function syncOneGame(supabase: SupabaseAdmin, entry: SyncEntry): Promise<S
     const releaseDate = igdb.first_release_date
       ? new Date(igdb.first_release_date * 1000).toISOString().split("T")[0]
       : null;
-    const metascore = igdb.aggregated_rating ? Math.round(igdb.aggregated_rating) : null;
+    const metascore = null; // Fetched separately from Metacritic via metascore sync
 
     // Upsert game (handles retries and slug conflicts)
     const { data: newGame, error: insertErr } = await supabase
@@ -235,10 +235,7 @@ async function linkCompaniesBatch(
   for (const ic of companies) uniqueBySlug.set(ic.company.slug, ic.company);
   const slugs = [...uniqueBySlug.keys()];
 
-  const { data: existing } = await supabase
-    .from("companies")
-    .select("id, slug")
-    .in("slug", slugs);
+  const { data: existing } = await supabase.from("companies").select("id, slug").in("slug", slugs);
 
   const idBySlug = new Map<string, string>();
   for (const row of existing || []) idBySlug.set(row.slug, row.id);
@@ -262,9 +259,19 @@ async function linkCompaniesBatch(
     const cid = idBySlug.get(ic.company.slug);
     if (!cid) continue;
     if (ic.developer)
-      rows.push({ game_id: gameId, company_id: cid, role: "developer", is_primary: devIdx++ === 0 });
+      rows.push({
+        game_id: gameId,
+        company_id: cid,
+        role: "developer",
+        is_primary: devIdx++ === 0,
+      });
     if (ic.publisher)
-      rows.push({ game_id: gameId, company_id: cid, role: "publisher", is_primary: pubIdx++ === 0 });
+      rows.push({
+        game_id: gameId,
+        company_id: cid,
+        role: "publisher",
+        is_primary: pubIdx++ === 0,
+      });
   }
 
   if (rows.length > 0) await supabase.from("game_companies").insert(rows);

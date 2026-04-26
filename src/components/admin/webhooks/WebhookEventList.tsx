@@ -48,7 +48,11 @@ export function WebhookEventList({
       } catch {
         toast({ title: t("deleteFailed"), variant: "destructive" });
       } finally {
-        setDeletingIds((prev) => { const next = new Set(prev); next.delete(gameId); return next; });
+        setDeletingIds((prev) => {
+          const next = new Set(prev);
+          next.delete(gameId);
+          return next;
+        });
       }
     },
     [t, onRefresh]
@@ -98,7 +102,10 @@ export function WebhookEventList({
         return;
       }
       const { igdbIds } = (await res.json()) as { igdbIds: number[] };
-      if (igdbIds.length === 0) { setImportingAll(false); return; }
+      if (igdbIds.length === 0) {
+        setImportingAll(false);
+        return;
+      }
       toast({ title: t("importAllStarted", { count: igdbIds.length }) });
       const promises: Promise<void>[] = [];
       for (let i = 0; i < igdbIds.length; i++) {

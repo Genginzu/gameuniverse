@@ -21,7 +21,7 @@ export function transformIGDBToSupabase(igdbGame: IGDBGame): GameInsertData {
     ? new Date(igdbGame.first_release_date * 1000).toISOString().split("T")[0]
     : null;
 
-  const metascore = igdbGame.aggregated_rating ? Math.round(igdbGame.aggregated_rating) : null;
+  const metascore = null; // Fetched from Metacritic after insert, not from IGDB
 
   return {
     slug: igdbGame.slug,

@@ -14,7 +14,11 @@ describe("useDashboard", () => {
 
   it("returns context value when inside provider", () => {
     const wrapper = ({ children }: { children: React.ReactNode }) =>
-      React.createElement(DashboardContext.Provider, { value: { user: mockUser, loading: false } }, children);
+      React.createElement(
+        DashboardContext.Provider,
+        { value: { user: mockUser, loading: false } },
+        children
+      );
 
     const { result } = renderHook(() => useDashboard(), { wrapper });
 

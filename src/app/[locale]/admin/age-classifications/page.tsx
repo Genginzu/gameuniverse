@@ -7,9 +7,7 @@ import dynamic from "next/dynamic";
 import { useAdminRatingSystems } from "@/hooks/useAdminRatingSystems";
 import { RatingSystemsTable } from "@/components/admin/age-classifications/RatingSystemsTable";
 const AdminDeleteDialog = dynamic(
-  () =>
-    import("@/components/admin/shared/AdminDeleteDialog").then((m) => m.AdminDeleteDialog
-    ),
+  () => import("@/components/admin/shared/AdminDeleteDialog").then((m) => m.AdminDeleteDialog),
   { ssr: false }
 );
 import { Button } from "@/components/ui/button";

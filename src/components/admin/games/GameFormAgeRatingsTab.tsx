@@ -66,7 +66,15 @@ export function GameFormAgeRatingsTab({ form, ratings, contentDescriptors, t, is
         <div className="space-y-4">
           {assignedRatings.map((rating) => (
             <div key={rating.id} className="grid gap-4 lg:grid-cols-2">
-              <AgeRatingCard rating={rating} formRating={watchedRatings.find((r) => r.rating_id === rating.id)!} descriptors={getDescriptorsForRating(rating)} onRemove={removeRating} onSetPrimary={setPrimary} onToggleDescriptor={toggleDescriptor} t={t} />
+              <AgeRatingCard
+                rating={rating}
+                formRating={watchedRatings.find((r) => r.rating_id === rating.id)!}
+                descriptors={getDescriptorsForRating(rating)}
+                onRemove={removeRating}
+                onSetPrimary={setPrimary}
+                onToggleDescriptor={toggleDescriptor}
+                t={t}
+              />
               <div className="lg:self-start">
                 <SingleAgeRatingPreview form={form} ratingId={rating.id} ratings={ratings} contentDescriptors={contentDescriptors} />
               </div>
@@ -77,7 +85,14 @@ export function GameFormAgeRatingsTab({ form, ratings, contentDescriptors, t, is
       {showPicker ? (
         <AgeRatingPicker availableRatings={availableRatings} onSelect={addRating} onClose={() => setShowPicker(false)} t={t} />
       ) : (
-        <Button type="button" variant="outline" size="sm" onClick={() => setShowPicker(true)} className="gap-1.5" disabled={availableRatings.length === 0}>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => setShowPicker(true)}
+          className="gap-1.5"
+          disabled={availableRatings.length === 0}
+        >
           <Icon icon="fa:plus" className="h-3 w-3" />
           {t("addAgeRating") ?? "Ajouter une classification"}
         </Button>

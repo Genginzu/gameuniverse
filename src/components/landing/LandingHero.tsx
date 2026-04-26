@@ -5,7 +5,6 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react";
 
-
 /**
  * Hero section with dark gaming background, animated CSS grid,
  * bold typography with neon accents, and CTA buttons with neon style.
@@ -32,18 +31,18 @@ export function LandingHero() {
           <div className="flex flex-col items-center justify-center gap-6 sm:flex-row">
             <Button
               size="lg"
-              className="neon-btn rounded-xl bg-neon-primary/20 px-6 py-3 font-semibold text-white transition-all duration-200 hover:scale-105 sm:px-8"
+              className="neon-btn bg-neon-primary/20 rounded-xl px-6 py-3 font-semibold text-white transition-all duration-200 hover:scale-105 sm:px-8"
               asChild
             >
               <Link href="/auth?mode=signup">
-                <Icon icon="fa:users" className="mr-3 h-5 w-5"  />
+                <Icon icon="fa:users" className="mr-3 h-5 w-5" />
                 {t("cta.signup")}
               </Link>
             </Button>
             <Button
               size="lg"
               variant="outline"
-              className="neon-btn rounded-xl border-2 border-neon-secondary/40 bg-transparent px-6 py-3 font-semibold text-white transition-all duration-200 hover:scale-105 hover:bg-neon-secondary/10 sm:px-8"
+              className="neon-btn border-neon-secondary/40 hover:bg-neon-secondary/10 rounded-xl border-2 bg-transparent px-6 py-3 font-semibold text-white transition-all duration-200 hover:scale-105 sm:px-8"
               asChild
             >
               <Link href="/auth?mode=signin">{t("cta.login")}</Link>

@@ -30,15 +30,15 @@ function TrendingSection({ title, icon, games }: SectionProps) {
   return (
     <section className="space-y-4">
       <div className="flex items-center gap-3">
-        <div className="flex size-10 items-center justify-center rounded-xl bg-linear-to-br from-palette-secondary-500/20 to-palette-primary-500/20">
-          <Icon icon={icon} className="size-5 text-palette-secondary-400" />
+        <div className="from-palette-secondary-500/20 to-palette-primary-500/20 flex size-10 items-center justify-center rounded-xl bg-linear-to-br">
+          <Icon icon={icon} className="text-palette-secondary-400 size-5" />
         </div>
         <h2 className="text-lg font-bold text-gray-900 sm:text-xl dark:text-white">{title}</h2>
         <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-400">
           {t("count", { count: games.length })}
         </span>
       </div>
-      <div className="grid grid-cols-2 gap-3 xs:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-6">
+      <div className="xs:grid-cols-3 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-6">
         {games.filter(Boolean).map((game) => (
           <EntityCard key={game.id} entity={game} config={gameCardConfig} />
         ))}
@@ -63,7 +63,11 @@ export function TrendingContent() {
         {Array.from({ length: 4 }).map((_, i) => (
           <div key={i} className="space-y-4">
             <div className="h-8 w-48 animate-pulse rounded-lg bg-gray-200 dark:bg-gray-700" />
-            <GridSkeleton count={6} gridClassName="grid-cols-2 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-6" skeletonConfig={gameSkeletonConfig} />
+            <GridSkeleton
+              count={6}
+              gridClassName="grid-cols-2 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-6"
+              skeletonConfig={gameSkeletonConfig}
+            />
           </div>
         ))}
       </div>

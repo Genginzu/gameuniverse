@@ -1,15 +1,8 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/database.types";
 import { logger } from "@/lib/logger";
-import {
-  EXTERNAL_GAME_CATEGORY,
-  resolveIgdbIdsByExternalUids,
-} from "./igdb-external-games";
-import {
-  getXboxAuthForPlayer,
-  xboxAuthorizationHeader,
-  type XboxAuthContext,
-} from "./xboxAuth";
+import { EXTERNAL_GAME_CATEGORY, resolveIgdbIdsByExternalUids } from "./igdb-external-games";
+import { getXboxAuthForPlayer, xboxAuthorizationHeader, type XboxAuthContext } from "./xboxAuth";
 
 const TITLE_HISTORY_URL = (xuid: string) =>
   `https://titlehub.xboxlive.com/users/xuid(${xuid})/titles/titleHistory/decoration/detail`;

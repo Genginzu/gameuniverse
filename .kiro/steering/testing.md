@@ -24,11 +24,11 @@ import { renderHook } from "@testing-library/react";
 
 ## Mocking
 
-| API          | Usage                        |
-| ------------ | ---------------------------- |
-| `vi.fn()`    | Créer une fonction mock      |
-| `vi.spyOn()` | Espionner une méthode        |
-| `vi.mock()`  | Mocker un module entier      |
+| API          | Usage                   |
+| ------------ | ----------------------- |
+| `vi.fn()`    | Créer une fonction mock |
+| `vi.spyOn()` | Espionner une méthode   |
+| `vi.mock()`  | Mocker un module entier |
 
 ## Structure des tests
 
@@ -79,13 +79,13 @@ modifiés.
 
 #### Correspondance fichier source → fichier test
 
-| Fichier source modifié                    | Tests à lancer                                          |
-| ----------------------------------------- | ------------------------------------------------------- |
-| `src/components/games/GameCard.tsx`       | `bunx vitest run test/unit/components/games/`           |
-| `src/hooks/useGameForm.ts`               | `bunx vitest run test/unit/hooks/useGameForm.test.ts`   |
-| `src/lib/services/playerService.ts`      | `bunx vitest run test/unit/lib/services/playerService*` |
-| `src/lib/utils/slug-utils.ts`            | `bunx vitest run test/unit/lib/utils/slug*`             |
-| `src/app/api/admin/games/route.ts`       | `bunx vitest run test/unit/api/admin*`                  |
+| Fichier source modifié              | Tests à lancer                                          |
+| ----------------------------------- | ------------------------------------------------------- |
+| `src/components/games/GameCard.tsx` | `bunx vitest run test/unit/components/games/`           |
+| `src/hooks/useGameForm.ts`          | `bunx vitest run test/unit/hooks/useGameForm.test.ts`   |
+| `src/lib/services/playerService.ts` | `bunx vitest run test/unit/lib/services/playerService*` |
+| `src/lib/utils/slug-utils.ts`       | `bunx vitest run test/unit/lib/utils/slug*`             |
+| `src/app/api/admin/games/route.ts`  | `bunx vitest run test/unit/api/admin*`                  |
 
 #### Règles d'exécution
 

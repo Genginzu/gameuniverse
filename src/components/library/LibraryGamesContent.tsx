@@ -57,7 +57,9 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
-        <h1 className="mb-6 text-xl font-bold text-gray-900 sm:text-2xl lg:text-3xl dark:text-white">{t("title")}</h1>
+        <h1 className="mb-6 text-xl font-bold text-gray-900 sm:text-2xl lg:text-3xl dark:text-white">
+          {t("title")}
+        </h1>
 
         <LibraryStatsCards stats={stats} />
 
@@ -77,17 +79,19 @@ export function LibraryGamesContent({ locale = "fr" }: LibraryGamesContentProps)
           </div>
 
           <GameFilters
-            genres={genres}
-            platforms={[]}
-            selectedGenres={selectedGenres}
-            selectedPublishers={selectedPublishers}
-            selectedPlatforms={[]}
-            onGenreChange={handleGenreFilter}
-            onPublisherChange={handlePublisherFilter}
-            onPlatformsChange={() => {}}
-            onClearFilters={handleClearFilters}
-            showAllGenres={showFilters}
-          />
+                      genres={genres}
+                      platforms={[]}
+                      selectedGenres={selectedGenres}
+                      selectedPublishers={selectedPublishers}
+                      selectedPlatforms={[]}
+                      esportFilter={null}
+                      onGenreChange={handleGenreFilter}
+                      onPublisherChange={handlePublisherFilter}
+                      onPlatformsChange={() => {}}
+                      onEsportChange={() => {}}
+                      onClearFilters={handleClearFilters}
+                      showAllGenres={showFilters}
+                    />
         </div>
 
         {/* Loading state lors d'un changement de filtre/page */}
@@ -151,8 +155,11 @@ function LibraryEmptyState({
 
   return (
     <div className="flex flex-col items-center justify-center rounded-2xl border border-white/20 bg-white/40 py-16 text-center shadow-lg shadow-black/5 backdrop-blur-xl transition-all duration-300 dark:border-slate-700/50 dark:bg-slate-800/50 dark:shadow-black/20">
-      <div className="mb-6 rounded-full bg-linear-to-br from-palette-secondary-100 to-palette-primary-100 p-6 dark:from-palette-secondary-900/30 dark:to-palette-primary-900/30">
-        <Icon icon="lucide:gamepad-2" className="h-12 w-12 text-palette-secondary-500 dark:text-palette-secondary-400" />
+      <div className="from-palette-secondary-100 to-palette-primary-100 dark:from-palette-secondary-900/30 dark:to-palette-primary-900/30 mb-6 rounded-full bg-linear-to-br p-6">
+        <Icon
+          icon="lucide:gamepad-2"
+          className="text-palette-secondary-500 dark:text-palette-secondary-400 h-12 w-12"
+        />
       </div>
       <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
         {hasFilters ? t("empty.noGamesFound") : t("empty.title")}
@@ -163,14 +170,14 @@ function LibraryEmptyState({
       {hasFilters ? (
         <Button
           onClick={onClearFilters}
-          className="bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 text-white hover:from-palette-secondary-600 hover:to-palette-primary-600"
+          className="from-palette-secondary-500 to-palette-primary-500 hover:from-palette-secondary-600 hover:to-palette-primary-600 bg-linear-to-r text-white"
         >
           {t("empty.clearFilters")}
         </Button>
       ) : (
         <Button
           asChild
-          className="bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 text-white hover:from-palette-secondary-600 hover:to-palette-primary-600"
+          className="from-palette-secondary-500 to-palette-primary-500 hover:from-palette-secondary-600 hover:to-palette-primary-600 bg-linear-to-r text-white"
         >
           <Link href="/games">
             <Icon icon="lucide:plus" className="mr-2 h-4 w-4" />

@@ -47,10 +47,7 @@ export function FriendCard({ friend, locale: _locale, onRemove }: FriendCardProp
 
   return (
     <div className="group flex items-center rounded-xl border border-gray-200 bg-white p-3 transition-all hover:shadow-md dark:border-slate-700/50 dark:bg-slate-800/50 dark:hover:bg-slate-800">
-      <Link
-        href={`/players/${friend.id}`}
-        className="flex min-w-0 flex-1 items-center gap-3"
-      >
+      <Link href={`/players/${friend.id}`} className="flex min-w-0 flex-1 items-center gap-3">
         {/* Avatar */}
         <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-linear-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30">
           {friend.avatarUrl ? (

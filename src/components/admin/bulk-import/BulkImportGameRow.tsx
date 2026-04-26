@@ -12,7 +12,9 @@ const STATUS_CONFIG: Record<GameSyncStatus, { icon: string; className: string }>
 };
 
 export function BulkImportGameRow({
-  game, status, errorMsg,
+  game,
+  status,
+  errorMsg,
 }: {
   game: BulkGame;
   status?: GameSyncStatus;
@@ -21,16 +23,28 @@ export function BulkImportGameRow({
   const config = status ? STATUS_CONFIG[status] : null;
 
   return (
-    <div className={`glass-card flex items-center gap-3 rounded-xl p-3 transition-all ${
-      status === "success" ? "border border-green-500/30 bg-green-50/30 dark:bg-green-900/10"
-        : status === "error" ? "border border-red-500/30 bg-red-50/30 dark:bg-red-900/10"
-        : status === "syncing" ? "border border-palette-secondary-500/30 bg-palette-secondary-50/30 dark:bg-palette-secondary-900/10" : ""
-    }`}>
+    <div
+      className={`glass-card flex items-center gap-3 rounded-xl p-3 transition-all ${
+        status === "success"
+          ? "border border-green-500/30 bg-green-50/30 dark:bg-green-900/10"
+          : status === "error"
+            ? "border border-red-500/30 bg-red-50/30 dark:bg-red-900/10"
+            : status === "syncing"
+              ? "border-palette-secondary-500/30 bg-palette-secondary-50/30 dark:bg-palette-secondary-900/10 border"
+              : ""
+      }`}
+    >
       {config ? (
-        <div className="flex size-10 shrink-0 items-center justify-center"><Icon icon={config.icon} className={`size-6 ${config.className}`} /></div>
+        <div className="flex size-10 shrink-0 items-center justify-center">
+          <Icon icon={config.icon} className={`size-6 ${config.className}`} />
+        </div>
       ) : (
         <div className="h-14 w-10 shrink-0 overflow-hidden rounded-lg bg-gray-200 dark:bg-gray-700">
-          <img src={game.coverImage || "/assets/no-cover.png"} alt={game.title} className="size-full object-cover" />
+          <img
+            src={game.coverImage || "/assets/no-cover.png"}
+            alt={game.title}
+            className="size-full object-cover"
+          />
         </div>
       )}
       <div className="min-w-0 flex-1">
@@ -40,9 +54,14 @@ export function BulkImportGameRow({
           {game.viewCount > 0 && ` · 👁 ${game.viewCount}`}
           {game.metascore !== null && ` · ★ ${game.metascore}`}
         </p>
-        {status === "error" && errorMsg && <p className="mt-0.5 truncate text-xs text-red-600 dark:text-red-400">{errorMsg}</p>}
+        {status === "error" && errorMsg && (
+          <p className="mt-0.5 truncate text-xs text-red-600 dark:text-red-400">{errorMsg}</p>
+        )}
       </div>
-      <Link href={`/games/${game.slug}`} className="flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-lg p-2 text-gray-400 transition-colors hover:text-gray-600 dark:hover:text-gray-200">
+      <Link
+        href={`/games/${game.slug}`}
+        className="flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-lg p-2 text-gray-400 transition-colors hover:text-gray-600 dark:hover:text-gray-200"
+      >
         <Icon icon="lucide:external-link" className="size-4" />
       </Link>
     </div>

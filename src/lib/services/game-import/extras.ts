@@ -1,5 +1,5 @@
 import { IGDBGame } from "@/types/igdb";
-import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { IGDBService } from "../igdbService";
 import {
   collectDlcExtensionIds,
@@ -19,7 +19,7 @@ export async function createVersions(gameId: string, igdbId: number): Promise<vo
       return;
     }
 
-    const supabase = await createRouteHandlerClient();
+    const supabase = await getSupabaseAdmin();
 
     const versionEntries = versions.map((version, index) => ({
       game_id: gameId,
@@ -48,7 +48,7 @@ export async function createVersions(gameId: string, igdbId: number): Promise<vo
  * Updates game versions for an existing game.
  */
 export async function updateVersions(gameId: string, igdbId: number): Promise<void> {
-  const supabase = await createRouteHandlerClient();
+  const supabase = await getSupabaseAdmin();
 
   await (supabase.from("game_versions") as ReturnType<typeof supabase.from>)
     .delete()
@@ -84,7 +84,7 @@ export async function createDlcExtensions(gameId: string, igdbGame: IGDBGame): P
       return transformIgdbToDlcExtensionRow(ext, gameId, sourceCategory, index);
     });
 
-    const supabase = await createRouteHandlerClient();
+    const supabase = await getSupabaseAdmin();
 
     const { error } = await (
       supabase.from("game_dlc_extensions") as ReturnType<typeof supabase.from>
@@ -103,7 +103,7 @@ export async function createDlcExtensions(gameId: string, igdbGame: IGDBGame): P
  */
 export async function updateDlcExtensions(gameId: string, igdbGame: IGDBGame): Promise<void> {
   try {
-    const supabase = await createRouteHandlerClient();
+    const supabase = await getSupabaseAdmin();
 
     await (supabase.from("game_dlc_extensions") as ReturnType<typeof supabase.from>)
       .delete()
@@ -122,7 +122,7 @@ export async function createSimilarGames(gameId: string, igdbGame: IGDBGame): Pr
   if (!igdbGame.similar_games || igdbGame.similar_games.length === 0) return;
 
   try {
-    const supabase = await createRouteHandlerClient();
+    const supabase = await getSupabaseAdmin();
 
     const { data: localGames } = await supabase
       .from("games")
@@ -157,7 +157,7 @@ export async function createSimilarGames(gameId: string, igdbGame: IGDBGame): Pr
  */
 export async function updateSimilarGames(gameId: string, igdbGame: IGDBGame): Promise<void> {
   try {
-    const supabase = await createRouteHandlerClient();
+    const supabase = await getSupabaseAdmin();
 
     await untypedTable(supabase, "game_similar_games").delete().eq("game_id", gameId);
 

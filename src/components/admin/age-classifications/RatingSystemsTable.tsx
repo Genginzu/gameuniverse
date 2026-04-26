@@ -27,27 +27,81 @@ type SortField = "code" | "name";
 export function RatingSystemsTable({ systems, pagination, onPageChange, onSearch, onSort, onEdit, onDelete, isLoading, currentSort, currentSearch = "" }: RatingSystemsTableProps) {
   const t = useTranslations("admin.ageClassifications");
 
-  const handleSortClick = (field: SortField) => { const newOrder = currentSort?.field === field && currentSort.order === "asc" ? "desc" : "asc"; onSort(field, newOrder); };
-  const renderSortIcon = (field: SortField) => { if (currentSort?.field !== field) return <Icon icon="fa:sort" className="h-3 w-3 opacity-40" />; return currentSort.order === "asc" ? <Icon icon="fa:sort-up" className="h-3 w-3" /> : <Icon icon="fa:sort-down" className="h-3 w-3" />; };
+  const handleSortClick = (field: SortField) => {
+    const newOrder = currentSort?.field === field && currentSort.order === "asc" ? "desc" : "asc";
+    onSort(field, newOrder);
+  };
+  const renderSortIcon = (field: SortField) => {
+    if (currentSort?.field !== field) return <Icon icon="fa:sort" className="h-3 w-3 opacity-40" />;
+    return currentSort.order === "asc" ? (
+      <Icon icon="fa:sort-up" className="h-3 w-3" />
+    ) : (
+      <Icon icon="fa:sort-down" className="h-3 w-3" />
+    );
+  };
 
   return (
     <div className="space-y-4">
-      <AdminSearchBar currentSearch={currentSearch} onSearch={onSearch} placeholder={t("searchPlaceholder")} buttonLabel={t("search")} />
-      <p className="text-sm text-gray-500 dark:text-gray-400">{t("totalSystems", { count: pagination.totalCount })}</p>
+      <AdminSearchBar
+        currentSearch={currentSearch}
+        onSearch={onSearch}
+        placeholder={t("searchPlaceholder")}
+        buttonLabel={t("search")}
+      />
+      <p className="text-sm text-gray-500 dark:text-gray-400">
+        {t("totalSystems", { count: pagination.totalCount })}
+      </p>
 
-      {isLoading ? <AdminTableSkeleton columns={3} rows={6} /> : systems.length === 0 ? (
-        <div className="rounded-xl border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800"><p className="text-gray-500 dark:text-gray-400">{t("noSystems")}</p></div>
+      {isLoading ? (
+        <AdminTableSkeleton columns={3} rows={6} />
+      ) : systems.length === 0 ? (
+        <div className="rounded-xl border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800">
+          <p className="text-gray-500 dark:text-gray-400">{t("noSystems")}</p>
+        </div>
       ) : (
         <>
           <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
             <table className="w-full text-left text-sm" role="table">
               <thead className="border-b border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800">
                 <tr>
-                  <th scope="col" className="px-4 py-3"><button type="button" className="inline-flex items-center gap-1 font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white" onClick={() => handleSortClick("code")}>{t("columns.code")}{renderSortIcon("code")}</button></th>
-                  <th scope="col" className="px-4 py-3"><button type="button" className="inline-flex items-center gap-1 font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white" onClick={() => handleSortClick("name")}>{t("columns.name")}{renderSortIcon("name")}</button></th>
-                  <th scope="col" className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">{t("columns.countries")}</th>
-                  <th scope="col" className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">{t("columns.website")}</th>
-                  <th scope="col" className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">{t("columns.actions")}</th>
+                  <th scope="col" className="px-4 py-3">
+                    <button
+                      type="button"
+                      className="inline-flex items-center gap-1 font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                      onClick={() => handleSortClick("code")}
+                    >
+                      {t("columns.code")}
+                      {renderSortIcon("code")}
+                    </button>
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    <button
+                      type="button"
+                      className="inline-flex items-center gap-1 font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                      onClick={() => handleSortClick("name")}
+                    >
+                      {t("columns.name")}
+                      {renderSortIcon("name")}
+                    </button>
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300"
+                  >
+                    {t("columns.countries")}
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300"
+                  >
+                    {t("columns.website")}
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300"
+                  >
+                    {t("columns.actions")}
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">
@@ -57,7 +111,23 @@ export function RatingSystemsTable({ systems, pagination, onPageChange, onSearch
                     <td className="px-4 py-3 font-medium text-gray-900 dark:text-white">{system.name}</td>
                     <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{system.country_codes?.length ? system.country_codes.join(", ") : "—"}</td>
                     <td className="px-4 py-3 text-gray-500 dark:text-gray-400">
-                      {system.website_url ? <a href={system.website_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-blue-600 hover:underline dark:text-blue-400" onClick={(e) => e.stopPropagation()}><Icon icon="lucide:external-link" className="h-3 w-3" />{t("link")}</a> : "—"}
+                      {system.country_codes?.length ? system.country_codes.join(", ") : "—"}
+                    </td>
+                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400">
+                      {system.website_url ? (
+                        <a
+                          href={system.website_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-blue-600 hover:underline dark:text-blue-400"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Icon icon="lucide:external-link" className="h-3 w-3" />
+                          {t("link")}
+                        </a>
+                      ) : (
+                        "—"
+                      )}
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>

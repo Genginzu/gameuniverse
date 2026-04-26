@@ -1,10 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/database.types";
 import { logger } from "@/lib/logger";
-import {
-  EXTERNAL_GAME_CATEGORY,
-  resolveIgdbIdsByExternalUids,
-} from "./igdb-external-games";
+import { EXTERNAL_GAME_CATEGORY, resolveIgdbIdsByExternalUids } from "./igdb-external-games";
 import { GameImportService } from "./gameImportService";
 
 const STEAM_OWNED_GAMES_URL = "https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/";
@@ -144,10 +141,7 @@ async function resolveAppidsToGameIds(
   for (const appid of missing) {
     const gameId = resolved.get(appid);
     if (!gameId) continue;
-    const { error } = await supabase
-      .from("games")
-      .update({ steam_appid: appid })
-      .eq("id", gameId);
+    const { error } = await supabase.from("games").update({ steam_appid: appid }).eq("id", gameId);
     if (error) {
       logger.error("Failed to back-fill games.steam_appid", { error, id: gameId });
     }
@@ -213,9 +207,7 @@ export async function syncSteamLibrary(
 
   // Priority: most-played first (so the 30-import budget goes to what the
   // user actually cares about).
-  const ordered = [...games].sort(
-    (a, b) => (b.playtime_forever ?? 0) - (a.playtime_forever ?? 0)
-  );
+  const ordered = [...games].sort((a, b) => (b.playtime_forever ?? 0) - (a.playtime_forever ?? 0));
 
   const { resolved, imported } = await resolveAppidsToGameIds(
     supabase,

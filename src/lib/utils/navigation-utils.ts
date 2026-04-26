@@ -1,5 +1,3 @@
-
-
 export interface NavLink {
   href: string;
   icon: string;
@@ -26,6 +24,16 @@ export const PUBLIC_LINKS: NavLink[] = [
   { href: "/games", icon: "fa:dice", labelKey: "games" },
   { href: "/characters", icon: "fa:mask", labelKey: "characters" },
   { href: "/players", icon: "fa:user-friends", labelKey: "players" },
+];
+
+/** Esport navigation links visible to all users. */
+export const ESPORT_LINKS: NavLink[] = [
+  { href: "/esport/calendar", icon: "fa:calendar", labelKey: "esportCalendar" },
+  { href: "/esport/live", icon: "fa:bolt", labelKey: "esportLive" },
+  { href: "/esport/results", icon: "fa:trophy", labelKey: "esportResults" },
+  { href: "/esport/teams", icon: "fa:users", labelKey: "esportTeams" },
+  { href: "/esport/players", icon: "fa:user", labelKey: "esportPlayers" },
+  { href: "/esport/predictions", icon: "fa:chart-bar", labelKey: "esportPredictions" },
 ];
 
 /** Paths that should only highlight on exact match, not on sub-routes */

@@ -32,9 +32,7 @@ describe("POST /api/auth/signout", () => {
   });
 
   test("returns 500 when signOut has error", async () => {
-    mockSignOut = vi.fn(() =>
-      Promise.resolve({ error: { message: "Sign out failed" } })
-    );
+    mockSignOut = vi.fn(() => Promise.resolve({ error: { message: "Sign out failed" } }));
 
     const res = await POST();
     expect(res.status).toBe(500);

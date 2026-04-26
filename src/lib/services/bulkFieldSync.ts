@@ -1,4 +1,5 @@
 import { IGDBService } from "./igdbService";
+import { fetchMetacriticScore } from "./metacriticService";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { extractColorsFromCover } from "@/lib/utils/color-extraction";
 import { logger } from "@/lib/logger";
@@ -7,6 +8,7 @@ import type { Database } from "@/lib/database.types";
 /**
  * Lightweight field-specific sync from IGDB.
  * Only fetches and updates the requested field, not a full game sync.
+ * Respects manual overrides: if an admin edited the field, it is skipped.
  */
 
 interface SyncResult {
@@ -24,12 +26,38 @@ const FIELD_QUERIES: Record<string, string> = {
   releaseDate: "fields first_release_date; where id = {id};",
 };
 
+/** Maps bulk-import field keys to TrackableField override names */
+export const BULK_FIELD_TO_OVERRIDE: Record<string, string> = {
+  cover: "cover_image",
+  background: "background_image",
+  playtime: "playtime",
+  metascore: "metascore",
+  releaseDate: "release_date",
+  popularity: "popularity",
+};
+
+async function isFieldOverridden(gameId: string, field: string): Promise<boolean> {
+  const overrideName = BULK_FIELD_TO_OVERRIDE[field];
+  if (!overrideName) return false;
+  const supabase = await createRouteHandlerClient();
+  const { count } = await supabase
+    .from("game_field_overrides")
+    .select("id", { count: "exact", head: true })
+    .eq("game_id", gameId)
+    .eq("field_name", overrideName);
+  return (count ?? 0) > 0;
+}
+
 export async function syncSingleField(
   gameId: string,
   igdbId: number,
   field: string
 ): Promise<SyncResult> {
   try {
+    if (await isFieldOverridden(gameId, field)) {
+      return { success: true, value: null, error: "skipped:override" };
+    }
+
     switch (field) {
       case "cover":
         return await syncCover(gameId, igdbId);
@@ -135,14 +163,14 @@ async function syncPlaytime(gameId: string, igdbId: number): Promise<SyncResult>
   return { success: true, value: ttb.normally };
 }
 
-async function syncMetascore(gameId: string, igdbId: number): Promise<SyncResult> {
-  const game = await fetchIGDBField(igdbId, FIELD_QUERIES.metascore);
-  const rating = game?.aggregated_rating as number | undefined;
-
-  if (!rating) return { success: true, value: null };
-
-  const score = Math.round(rating);
+async function syncMetascore(gameId: string, _igdbId: number): Promise<SyncResult> {
   const supabase = await createRouteHandlerClient();
+  const { data: game } = await supabase.from("games").select("slug").eq("id", gameId).single();
+  if (!game?.slug) return { success: false, value: null };
+
+  const score = await fetchMetacriticScore(game.slug as string);
+  if (score === null) return { success: true, value: null };
+
   await supabase.from("games").update({ metascore: score }).eq("id", gameId);
   return { success: true, value: score };
 }

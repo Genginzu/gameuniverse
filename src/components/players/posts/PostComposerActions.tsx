@@ -26,7 +26,7 @@ export function PostComposerActions({
         type="button"
         onClick={onImageClick}
         disabled={isUploading}
-        className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border-2 border-palette-primary-300 bg-white/60 px-3 py-2 text-xs text-palette-primary-500 transition-all duration-200 hover:bg-palette-primary-50 disabled:opacity-50 dark:border-palette-primary-500/50 dark:bg-slate-700/40 dark:text-palette-primary-300 dark:hover:bg-slate-700/60"
+        className="border-palette-primary-300 text-palette-primary-500 hover:bg-palette-primary-50 dark:border-palette-primary-500/50 dark:text-palette-primary-300 inline-flex cursor-pointer items-center gap-1.5 rounded-full border-2 bg-white/60 px-3 py-2 text-xs transition-all duration-200 disabled:opacity-50 dark:bg-slate-700/40 dark:hover:bg-slate-700/60"
         aria-label={t("imageUploadLabel")}
       >
         <Icon icon="lucide:image" className="h-4 w-4" />
@@ -39,7 +39,7 @@ export function PostComposerActions({
         type="button"
         onClick={onSubmit}
         disabled={isDisabled}
-        className="inline-flex shrink-0 items-center gap-2 rounded-full bg-linear-to-br from-palette-primary-500 to-blue-500 px-5 py-2 text-sm font-medium text-white shadow-lg shadow-palette-primary-500/20 transition-all duration-300 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+        className="from-palette-primary-500 shadow-palette-primary-500/20 inline-flex shrink-0 items-center gap-2 rounded-full bg-linear-to-br to-blue-500 px-5 py-2 text-sm font-medium text-white shadow-lg transition-all duration-300 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isCreating ? (
           <Icon icon="lucide:loader-2" className="h-4 w-4 animate-spin" />

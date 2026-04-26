@@ -58,7 +58,7 @@ export function CollectionCard({
 
         {/* Visibility badge for owner */}
         {isOwner && (
-          <div className="absolute left-2 top-2 z-20">
+          <div className="absolute top-2 left-2 z-20">
             <Badge
               variant={collection.isPublic ? "default" : "secondary"}
               className="px-1.5 py-0 text-[10px]"
@@ -69,7 +69,7 @@ export function CollectionCard({
         )}
 
         {/* Games count badge */}
-        <div className="absolute right-2 top-2 z-20">
+        <div className="absolute top-2 right-2 z-20">
           <div className="rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-medium text-gray-900 shadow-sm backdrop-blur-xs">
             {t("gamesCount", { count: collection.gamesCount })}
           </div>
@@ -81,7 +81,7 @@ export function CollectionCard({
         <h3 className="line-clamp-1 text-sm font-semibold text-gray-900 transition-colors group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400">
           {collection.name}
         </h3>
-        <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">
+        <p className="text-muted-foreground mt-0.5 line-clamp-1 text-xs">
           {collection.description || t("noDescription")}
         </p>
         <p className="mt-1 text-[10px] text-gray-500 dark:text-gray-400">

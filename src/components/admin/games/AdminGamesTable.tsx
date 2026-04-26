@@ -26,31 +26,108 @@ export interface AdminGamesTableProps {
 
 type SortField = "title" | "release_date" | "updated_at";
 
-export function AdminGamesTable({ games, pagination, onPageChange, onSearch, onSort, onEdit, onDelete, canDelete, isLoading, currentSort, currentSearch = "" }: AdminGamesTableProps) {
+export function AdminGamesTable({
+  games,
+  pagination,
+  onPageChange,
+  onSearch,
+  onSort,
+  onEdit,
+  onDelete,
+  canDelete,
+  isLoading,
+  currentSort,
+  currentSearch = "",
+}: AdminGamesTableProps) {
   const t = useTranslations("admin.games");
 
-  const handleSortClick = (field: SortField) => { const newOrder = currentSort?.field === field && currentSort.order === "asc" ? "desc" : "asc"; onSort(field, newOrder); };
-  const renderSortIcon = (field: SortField) => { if (currentSort?.field !== field) return <Icon icon="fa:sort" className="h-3 w-3 opacity-40" />; return currentSort.order === "asc" ? <Icon icon="fa:sort-up" className="h-3 w-3" /> : <Icon icon="fa:sort-down" className="h-3 w-3" />; };
-  const formatDate = (dateStr: string | null) => { if (!dateStr) return "—"; try { return new Date(dateStr).toLocaleDateString(); } catch { return "—"; } };
+  const handleSortClick = (field: SortField) => {
+    const newOrder = currentSort?.field === field && currentSort.order === "asc" ? "desc" : "asc";
+    onSort(field, newOrder);
+  };
+  const renderSortIcon = (field: SortField) => {
+    if (currentSort?.field !== field) return <Icon icon="fa:sort" className="h-3 w-3 opacity-40" />;
+    return currentSort.order === "asc" ? (
+      <Icon icon="fa:sort-up" className="h-3 w-3" />
+    ) : (
+      <Icon icon="fa:sort-down" className="h-3 w-3" />
+    );
+  };
+  const formatDate = (dateStr: string | null) => {
+    if (!dateStr) return "—";
+    try {
+      return new Date(dateStr).toLocaleDateString();
+    } catch {
+      return "—";
+    }
+  };
 
   return (
     <div className="space-y-4">
-      <AdminSearchBar currentSearch={currentSearch} onSearch={onSearch} placeholder={t("searchPlaceholder")} buttonLabel={t("search")} />
-      <p className="text-sm text-gray-500 dark:text-gray-400">{t("totalGames", { count: pagination.totalCount })}</p>
+      <AdminSearchBar
+        currentSearch={currentSearch}
+        onSearch={onSearch}
+        placeholder={t("searchPlaceholder")}
+        buttonLabel={t("search")}
+      />
+      <p className="text-sm text-gray-500 dark:text-gray-400">
+        {t("totalGames", { count: pagination.totalCount })}
+      </p>
 
-      {isLoading ? <AdminTableSkeleton columns={4} rows={8} showImage /> : games.length === 0 ? (
-        <div className="rounded-xl border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800"><p className="text-gray-500 dark:text-gray-400">{t("noGames")}</p></div>
+      {isLoading ? (
+        <AdminTableSkeleton columns={4} rows={8} showImage />
+      ) : games.length === 0 ? (
+        <div className="rounded-xl border border-gray-200 bg-white p-12 text-center dark:border-gray-700 dark:bg-gray-800">
+          <p className="text-gray-500 dark:text-gray-400">{t("noGames")}</p>
+        </div>
       ) : (
         <>
           <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
             <table className="w-full text-left text-sm" role="table">
               <thead className="border-b border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800">
                 <tr>
-                  <th scope="col" className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">{t("columns.image")}</th>
-                  <th scope="col" className="px-4 py-3"><button type="button" className="inline-flex items-center gap-1 font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white" onClick={() => handleSortClick("title")}>{t("columns.title")}{renderSortIcon("title")}</button></th>
-                  <th scope="col" className="hidden px-4 py-3 sm:table-cell"><button type="button" className="inline-flex items-center gap-1 font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white" onClick={() => handleSortClick("release_date")}>{t("columns.releaseDate")}{renderSortIcon("release_date")}</button></th>
-                  <th scope="col" className="hidden px-4 py-3 md:table-cell"><button type="button" className="inline-flex items-center gap-1 font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white" onClick={() => handleSortClick("updated_at")}>{t("columns.updatedAt")}{renderSortIcon("updated_at")}</button></th>
-                  <th scope="col" className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300">{t("columns.actions")}</th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300"
+                  >
+                    {t("columns.image")}
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    <button
+                      type="button"
+                      className="inline-flex items-center gap-1 font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                      onClick={() => handleSortClick("title")}
+                    >
+                      {t("columns.title")}
+                      {renderSortIcon("title")}
+                    </button>
+                  </th>
+                  <th scope="col" className="hidden px-4 py-3 sm:table-cell">
+                    <button
+                      type="button"
+                      className="inline-flex items-center gap-1 font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                      onClick={() => handleSortClick("release_date")}
+                    >
+                      {t("columns.releaseDate")}
+                      {renderSortIcon("release_date")}
+                    </button>
+                  </th>
+                  <th scope="col" className="hidden px-4 py-3 md:table-cell">
+                    <button
+                      type="button"
+                      className="inline-flex items-center gap-1 font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                      onClick={() => handleSortClick("updated_at")}
+                    >
+                      {t("columns.updatedAt")}
+                      {renderSortIcon("updated_at")}
+                    </button>
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-3 font-medium text-gray-600 dark:text-gray-300"
+                  >
+                    {t("columns.actions")}
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900">

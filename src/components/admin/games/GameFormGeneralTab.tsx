@@ -1,6 +1,7 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import type { GameFormTabProps } from "@/types/admin-games";
 import { GamePlaytimePreview } from "./GamePlaytimePreview";
@@ -65,6 +66,22 @@ export function GameFormGeneralTab({ form, t, isIgdbField }: GameFormTabProps) {
           )}
         />
       </div>
+
+      {/* Esport toggle */}
+      <FormField
+        control={form.control}
+        name="is_esport"
+        render={({ field }) => (
+          <FormItem className="flex items-center gap-3">
+            <FormControl>
+              <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+            </FormControl>
+            <FormLabel className="!mt-0 cursor-pointer text-sm font-medium">
+              {t("isEsport")}
+            </FormLabel>
+          </FormItem>
+        )}
+      />
 
       {/* Playtime */}
       <div className="mt-2">

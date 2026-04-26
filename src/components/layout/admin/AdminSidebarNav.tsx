@@ -60,6 +60,13 @@ const NAV_CATEGORIES: NavCategory[] = [
     ],
   },
   {
+    labelKey: "nav.esportCategory",
+    items: [
+      { href: "/admin/esport", icon: "lucide:trophy", labelKey: "nav.esport" },
+      { href: "/admin/esport/sync", icon: "lucide:refresh-cw", labelKey: "nav.esportSync" },
+    ],
+  },
+  {
     labelKey: "nav.toolsCategory",
     items: [
       { href: "/admin/translations", icon: "mdi:translate", labelKey: "nav.translations" },

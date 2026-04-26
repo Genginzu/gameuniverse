@@ -18,7 +18,11 @@ interface PlayerCollectionsProps {
  * Section collections publiques sur le profil d'un joueur.
  * Affiche un aperçu des collections avec lien "Voir tout".
  */
-export function PlayerCollections({ playerId, locale: _locale, isOwner = false }: PlayerCollectionsProps) {
+export function PlayerCollections({
+  playerId,
+  locale: _locale,
+  isOwner = false,
+}: PlayerCollectionsProps) {
   const t = useTranslations("players.collections");
   const { collections, isLoading, error } = useCollections(playerId);
 

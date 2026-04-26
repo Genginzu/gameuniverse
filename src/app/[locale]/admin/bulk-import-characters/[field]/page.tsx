@@ -39,7 +39,10 @@ export default function BulkImportCharacterFieldPage() {
       <div className="flex flex-col items-center gap-4 p-8">
         <Icon icon="lucide:alert-circle" className="size-12 text-red-500" />
         <p className="text-gray-600 dark:text-gray-400">{t("invalidField")}</p>
-        <Link href="/admin/bulk-import-characters" className="text-palette-secondary-500 hover:underline">
+        <Link
+          href="/admin/bulk-import-characters"
+          className="text-palette-secondary-500 hover:underline"
+        >
           {t("backToFields")}
         </Link>
       </div>

@@ -25,11 +25,13 @@ async function fetchCompanies(gameId: string): Promise<GameCompany[]> {
 export default function GameCompanies({ gameId, gameTitle }: GameCompaniesProps) {
   const t = useTranslations("game.companies");
 
-  const { data: companies, error, isLoading } = useSWR(
-    `game-companies-${gameId}`,
-    () => fetchCompanies(gameId),
-    { revalidateOnFocus: false }
-  );
+  const {
+    data: companies,
+    error,
+    isLoading,
+  } = useSWR(`game-companies-${gameId}`, () => fetchCompanies(gameId), {
+    revalidateOnFocus: false,
+  });
 
   if (isLoading) {
     return (
