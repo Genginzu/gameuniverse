@@ -23,6 +23,13 @@ export async function createAgeRatings(gameId: string, igdbGame: IGDBGame): Prom
 
   const supabase = await getSupabaseAdmin();
 
+  // Sort to prioritize PEGI as primary
+  ageRatings.sort((a, b) => {
+    const aIsPegi = IGDB_RATING_CATEGORIES[a.organization ?? -1] === "PEGI" ? 0 : 1;
+    const bIsPegi = IGDB_RATING_CATEGORIES[b.organization ?? -1] === "PEGI" ? 0 : 1;
+    return aIsPegi - bIsPegi;
+  });
+
   for (let i = 0; i < ageRatings.length; i++) {
     const ageRating = ageRatings[i];
     const organization = ageRating.organization;
