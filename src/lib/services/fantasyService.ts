@@ -44,7 +44,7 @@ export async function createTeam(
       player_id: playerId,
       league_id: leagueId,
       name,
-      budget_remaining: (league as Record<string, unknown>)?.budget_cap ?? 10000,
+      budget_remaining: (league as Record<string, unknown>)?.budget_cap as number ?? 10000,
     })
     .select()
     .single();
@@ -71,7 +71,7 @@ export async function addPlayer(
     .eq("id", teamId)
     .single();
 
-  if (!team || (team as Record<string, unknown>).budget_remaining < price) {
+  if (!team || (team as Record<string, unknown>).budget_remaining as number < price) {
     throw new Error("Insufficient budget");
   }
 
@@ -88,7 +88,7 @@ export async function addPlayer(
   }
 
   await untypedTable(supabase, "fantasy_teams")
-    .update({ budget_remaining: (team as Record<string, unknown>).budget_remaining - price })
+    .update({ budget_remaining: (team as Record<string, unknown>).budget_remaining as number - price })
     .eq("id", teamId);
 }
 
@@ -112,7 +112,7 @@ export async function removePlayer(teamId: string, teamPlayerId: string): Promis
 
   if (team) {
     await untypedTable(supabase, "fantasy_teams")
-      .update({ budget_remaining: (team as Record<string, unknown>).budget_remaining + (tp as Record<string, unknown>).purchase_price })
+      .update({ budget_remaining: ((team as Record<string, unknown>).budget_remaining as number) + ((tp as Record<string, unknown>).purchase_price as number) })
       .eq("id", teamId);
   }
 }
@@ -130,7 +130,7 @@ export async function getMyTeam(playerId: string, leagueId: string): Promise<Fan
 
   const { data: players } = await untypedTable(supabase, "fantasy_team_players")
     .select("*")
-    .eq("team_id", (team as Record<string, unknown>).id);
+    .eq("team_id", (team as Record<string, unknown>).id as string);
 
   return {
     ...mapTeam(team),
