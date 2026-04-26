@@ -48,17 +48,17 @@ export function GameFormColorFields({ form, t }: GameFormTabProps) {
   };
 
   const [alternating, setAlternating] = useState(false);
+  const [variantIndex, setVariantIndex] = useState(1);
 
   const generateAlternative = async () => {
     const coverUrl = form.getValues("cover_image_url");
     if (!coverUrl) return;
     setAlternating(true);
     try {
-      const shift = 30 + Math.floor(Math.random() * 300); // 30-330° shift
       const res = await fetch("/api/admin/games/extract-colors", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ coverUrl, hueShift: shift }),
+        body: JSON.stringify({ coverUrl, variant: variantIndex }),
       });
       if (res.ok) {
         const colors = await res.json();
@@ -66,6 +66,7 @@ export function GameFormColorFields({ form, t }: GameFormTabProps) {
         form.setValue("accent_color", colors.accent_color, { shouldDirty: true });
         form.setValue("label_color", colors.label_color, { shouldDirty: true });
         form.setValue("text_color", colors.text_color, { shouldDirty: true });
+        setVariantIndex((prev) => (prev >= 9 ? 1 : prev + 1));
       }
     } catch { /* best effort */ }
     setAlternating(false);

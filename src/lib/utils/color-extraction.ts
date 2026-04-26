@@ -55,7 +55,7 @@ export async function extractColorsFromCover(
       return null;
     }
 
-    const colors = deriveGameColors(palette, hueShift);
+    const colors = deriveGameColors(palette, variantIndex);
 
     return colors;
   } catch (error) {
