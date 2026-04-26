@@ -20,7 +20,11 @@ export function getSupabaseAdmin(): SupabaseClient {
     }
 
     _adminClient = createClient(url, serviceRoleKey, {
-      auth: { autoRefreshToken: false, persistSession: false },
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+      db: { schema: "public" },
     });
   }
 
