@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Failed to fetch wallets" }, { status: 500 });
   }
 
-  const wallets = ((data ?? []) as any[]).map((row: Record<string, unknown>) => {
+  const wallets = ((data ?? []) as Record<string, unknown>[]).map((row: Record<string, unknown>) => {
     const profile = row.profiles as Record<string, unknown> | null;
     return {
       playerId: row.player_id,

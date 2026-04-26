@@ -44,7 +44,7 @@ export async function createTeam(
       player_id: playerId,
       league_id: leagueId,
       name,
-      budget_remaining: (league as any)?.budget_cap ?? 10000,
+      budget_remaining: (league as Record<string, unknown>)?.budget_cap ?? 10000,
     })
     .select()
     .single();
@@ -71,7 +71,7 @@ export async function addPlayer(
     .eq("id", teamId)
     .single();
 
-  if (!team || (team as any).budget_remaining < price) {
+  if (!team || (team as Record<string, unknown>).budget_remaining < price) {
     throw new Error("Insufficient budget");
   }
 
@@ -88,7 +88,7 @@ export async function addPlayer(
   }
 
   await untypedTable(supabase, "fantasy_teams")
-    .update({ budget_remaining: (team as any).budget_remaining - price })
+    .update({ budget_remaining: (team as Record<string, unknown>).budget_remaining - price })
     .eq("id", teamId);
 }
 
@@ -112,7 +112,7 @@ export async function removePlayer(teamId: string, teamPlayerId: string): Promis
 
   if (team) {
     await untypedTable(supabase, "fantasy_teams")
-      .update({ budget_remaining: (team as any).budget_remaining + (tp as any).purchase_price })
+      .update({ budget_remaining: (team as Record<string, unknown>).budget_remaining + (tp as Record<string, unknown>).purchase_price })
       .eq("id", teamId);
   }
 }
@@ -130,11 +130,11 @@ export async function getMyTeam(playerId: string, leagueId: string): Promise<Fan
 
   const { data: players } = await untypedTable(supabase, "fantasy_team_players")
     .select("*")
-    .eq("team_id", (team as any).id);
+    .eq("team_id", (team as Record<string, unknown>).id);
 
   return {
     ...mapTeam(team),
-    players: ((players ?? []) as any[]).map(mapTeamPlayer),
+    players: ((players ?? []) as Record<string, unknown>[]).map(mapTeamPlayer),
   };
 }
 
@@ -152,7 +152,7 @@ export async function getLeaderboard(leagueId: string): Promise<FantasyLeaderboa
     return [];
   }
 
-  return ((data ?? []) as any[]).map((row: Record<string, unknown>) => ({
+  return ((data ?? []) as Record<string, unknown>[]).map((row: Record<string, unknown>) => ({
     teamId: row.id as string,
     teamName: row.name as string,
     playerId: row.player_id as string,
