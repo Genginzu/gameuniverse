@@ -9,6 +9,7 @@ import type {
 } from "./types";
 
 const BASE_URL = "https://api.pandascore.co";
+const RETRY_DELAYS = [1000, 3000, 8000];
 
 function getApiKey(): string {
   const key = process.env.PANDASCORE_API_KEY;
@@ -28,24 +29,33 @@ function buildUrl(path: string, params?: PandaScoreListParams): string {
   return url.toString();
 }
 
+function sleep(ms: number) {
+  return new Promise<void>((r) => setTimeout(r, ms));
+}
+
 async function request<T>(path: string, params?: PandaScoreListParams): Promise<T> {
   const url = buildUrl(path, params);
+  const headers = { Authorization: `Bearer ${getApiKey()}`, Accept: "application/json" };
 
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${getApiKey()}`,
-      Accept: "application/json",
-    },
-    cache: "no-store",
-  });
+  for (let attempt = 0; attempt <= RETRY_DELAYS.length; attempt++) {
+    const response = await fetch(url, { headers, cache: "no-store" });
 
-  if (!response.ok) {
+    if (response.ok) return response.json() as Promise<T>;
+
+    if ((response.status === 429 || response.status === 500) && attempt < RETRY_DELAYS.length) {
+      const retryAfter = parseInt(response.headers.get("retry-after") || "0", 10) * 1000;
+      const delay = response.status === 429 && retryAfter > 0 ? retryAfter : RETRY_DELAYS[attempt];
+      logger.warn("PandaScore retry", { status: response.status, path, attempt: attempt + 1, delay });
+      await sleep(delay);
+      continue;
+    }
+
     const body = await response.text().catch(() => "");
     logger.error("PandaScore API error", { status: response.status, path, body });
     throw new Error(`PandaScore API error: ${response.status} ${response.statusText}`);
   }
 
-  return response.json() as Promise<T>;
+  throw new Error("PandaScore API: max retries exceeded");
 }
 
 // -- Public API --

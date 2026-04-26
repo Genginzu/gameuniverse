@@ -14,6 +14,8 @@ import { logger } from "@/lib/logger";
 
 type Entity = "teams" | "players" | "tournaments" | "matches";
 
+const PAGE_DELAY_MS = 300;
+
 async function fetchAllPages<T>(
   fetcher: (p: PandaScoreListParams) => Promise<T[]>,
   game?: string,
@@ -28,6 +30,7 @@ async function fetchAllPages<T>(
     all.push(...batch);
     if (batch.length < 100) break;
     page++;
+    await new Promise((r) => setTimeout(r, PAGE_DELAY_MS));
   }
   return all;
 }
