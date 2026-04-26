@@ -2,6 +2,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 import { CoinService } from "@/lib/services/coinService";
 import { getMatchById } from "@/lib/pandascore/client";
+import { untypedTable } from "@/lib/utils/untypedTable";
 
 export interface EsportPrediction {
   id: string;
@@ -40,14 +41,12 @@ export async function placePrediction(
   await CoinService.debitCoins(
     playerId,
     amount,
-    "prediction",
-    undefined,
+    "prediction_bet",
     undefined,
     `Pronostic: ${matchName}`
   );
 
-  const { data, error } = await supabase
-    .from("esport_predictions")
+  const { data, error } = await untypedTable(supabase, "esport_predictions")
     .insert({
       player_id: playerId,
       match_id: matchId,
@@ -70,8 +69,7 @@ export async function placePrediction(
 
 export async function getMyPredictions(playerId: string): Promise<EsportPrediction[]> {
   const supabase = await createRouteHandlerClient();
-  const { data, error } = await supabase
-    .from("esport_predictions")
+  const { data, error } = await untypedTable(supabase, "esport_predictions")
     .select("*")
     .eq("player_id", playerId)
     .order("created_at", { ascending: false });
@@ -81,7 +79,8 @@ export async function getMyPredictions(playerId: string): Promise<EsportPredicti
     throw new Error("Failed to fetch predictions");
   }
 
-  return (data ?? []).map(mapPrediction);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return ((data ?? []) as any[]).map(mapPrediction);
 }
 
 export async function resolvePrediction(matchId: number): Promise<number> {
@@ -94,8 +93,7 @@ export async function resolvePrediction(matchId: number): Promise<number> {
   const winnerId = match.winner_id;
 
   // Get all pending predictions for this match
-  const { data: predictions, error } = await supabase
-    .from("esport_predictions")
+  const { data: predictions, error } = await untypedTable(supabase, "esport_predictions")
     .select("*")
     .eq("match_id", matchId)
     .eq("status", "pending");
@@ -103,12 +101,12 @@ export async function resolvePrediction(matchId: number): Promise<number> {
   if (error || !predictions?.length) return 0;
 
   let resolved = 0;
-  for (const pred of predictions) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  for (const pred of predictions as any[]) {
     const won = pred.predicted_winner_id === winnerId;
     const payout = won ? pred.amount * 2 : 0;
 
-    await supabase
-      .from("esport_predictions")
+    await untypedTable(supabase, "esport_predictions")
       .update({
         status: won ? "won" : "lost",
         payout,
@@ -134,8 +132,7 @@ export async function resolvePrediction(matchId: number): Promise<number> {
 
 export async function getLeaderboard(): Promise<PredictionLeaderboardEntry[]> {
   const supabase = await createRouteHandlerClient();
-  const { data, error } = await supabase
-    .from("esport_prediction_leaderboard")
+  const { data, error } = await untypedTable(supabase, "esport_prediction_leaderboard")
     .select("*")
     .order("total_profit", { ascending: false })
     .limit(50);
@@ -145,7 +142,8 @@ export async function getLeaderboard(): Promise<PredictionLeaderboardEntry[]> {
     return [];
   }
 
-  return (data ?? []).map((row: Record<string, unknown>) => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return ((data ?? []) as any[]).map((row: Record<string, unknown>) => ({
     playerId: row.player_id as string,
     totalPredictions: row.total_predictions as number,
     correctPredictions: row.correct_predictions as number,

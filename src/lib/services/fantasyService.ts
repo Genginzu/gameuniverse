@@ -1,4 +1,5 @@
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { untypedTable } from "@/lib/utils/untypedTable";
 import { logger } from "@/lib/logger";
 
 export interface FantasyTeam {
@@ -33,19 +34,17 @@ export async function createTeam(
   const supabase = await createRouteHandlerClient();
 
   // Get league budget cap
-  const { data: league } = await supabase
-    .from("fantasy_leagues")
+  const { data: league } = await untypedTable(supabase, "fantasy_leagues")
     .select("budget_cap")
     .eq("id", leagueId)
     .single();
 
-  const { data, error } = await supabase
-    .from("fantasy_teams")
+  const { data, error } = await untypedTable(supabase, "fantasy_teams")
     .insert({
       player_id: playerId,
       league_id: leagueId,
       name,
-      budget_remaining: league?.budget_cap ?? 10000,
+      budget_remaining: (league as any)?.budget_cap ?? 10000,
     })
     .select()
     .single();
@@ -67,17 +66,16 @@ export async function addPlayer(
   const supabase = await createRouteHandlerClient();
 
   // Check budget
-  const { data: team } = await supabase
-    .from("fantasy_teams")
+  const { data: team } = await untypedTable(supabase, "fantasy_teams")
     .select("budget_remaining")
     .eq("id", teamId)
     .single();
 
-  if (!team || team.budget_remaining < price) {
+  if (!team || (team as any).budget_remaining < price) {
     throw new Error("Insufficient budget");
   }
 
-  const { error } = await supabase.from("fantasy_team_players").insert({
+  const { error } = await untypedTable(supabase, "fantasy_team_players").insert({
     team_id: teamId,
     pro_player_id: proPlayerId,
     pro_player_name: proPlayerName,
@@ -89,17 +87,15 @@ export async function addPlayer(
     throw new Error("Failed to add player");
   }
 
-  await supabase
-    .from("fantasy_teams")
-    .update({ budget_remaining: team.budget_remaining - price })
+  await untypedTable(supabase, "fantasy_teams")
+    .update({ budget_remaining: (team as any).budget_remaining - price })
     .eq("id", teamId);
 }
 
 export async function removePlayer(teamId: string, teamPlayerId: string): Promise<void> {
   const supabase = await createRouteHandlerClient();
 
-  const { data: tp } = await supabase
-    .from("fantasy_team_players")
+  const { data: tp } = await untypedTable(supabase, "fantasy_team_players")
     .select("purchase_price")
     .eq("id", teamPlayerId)
     .eq("team_id", teamId)
@@ -107,18 +103,16 @@ export async function removePlayer(teamId: string, teamPlayerId: string): Promis
 
   if (!tp) throw new Error("Player not found in team");
 
-  await supabase.from("fantasy_team_players").delete().eq("id", teamPlayerId);
+  await untypedTable(supabase, "fantasy_team_players").delete().eq("id", teamPlayerId);
 
-  const { data: team } = await supabase
-    .from("fantasy_teams")
+  const { data: team } = await untypedTable(supabase, "fantasy_teams")
     .select("budget_remaining")
     .eq("id", teamId)
     .single();
 
   if (team) {
-    await supabase
-      .from("fantasy_teams")
-      .update({ budget_remaining: team.budget_remaining + tp.purchase_price })
+    await untypedTable(supabase, "fantasy_teams")
+      .update({ budget_remaining: (team as any).budget_remaining + (tp as any).purchase_price })
       .eq("id", teamId);
   }
 }
@@ -126,8 +120,7 @@ export async function removePlayer(teamId: string, teamPlayerId: string): Promis
 export async function getMyTeam(playerId: string, leagueId: string): Promise<FantasyTeam | null> {
   const supabase = await createRouteHandlerClient();
 
-  const { data: team } = await supabase
-    .from("fantasy_teams")
+  const { data: team } = await untypedTable(supabase, "fantasy_teams")
     .select("*")
     .eq("player_id", playerId)
     .eq("league_id", leagueId)
@@ -135,22 +128,20 @@ export async function getMyTeam(playerId: string, leagueId: string): Promise<Fan
 
   if (!team) return null;
 
-  const { data: players } = await supabase
-    .from("fantasy_team_players")
+  const { data: players } = await untypedTable(supabase, "fantasy_team_players")
     .select("*")
-    .eq("team_id", team.id);
+    .eq("team_id", (team as any).id);
 
   return {
     ...mapTeam(team),
-    players: (players ?? []).map(mapTeamPlayer),
+    players: ((players ?? []) as any[]).map(mapTeamPlayer),
   };
 }
 
 export async function getLeaderboard(leagueId: string): Promise<FantasyLeaderboardEntry[]> {
   const supabase = await createRouteHandlerClient();
 
-  const { data, error } = await supabase
-    .from("fantasy_teams")
+  const { data, error } = await untypedTable(supabase, "fantasy_teams")
     .select("id, name, player_id, total_points")
     .eq("league_id", leagueId)
     .order("total_points", { ascending: false })
@@ -161,7 +152,7 @@ export async function getLeaderboard(leagueId: string): Promise<FantasyLeaderboa
     return [];
   }
 
-  return (data ?? []).map((row: Record<string, unknown>) => ({
+  return ((data ?? []) as any[]).map((row: Record<string, unknown>) => ({
     teamId: row.id as string,
     teamName: row.name as string,
     playerId: row.player_id as string,

@@ -252,7 +252,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       is_esport: game.is_esport ?? false,
       translations: game.game_translations || [],
       genres:
-        (game.game_genres as AdminGameGenre[] | undefined)?.map((gg) => ({
+        (game.game_genres as unknown as AdminGameGenre[] | undefined)?.map((gg) => ({
           genre_id: gg.genre_id,
           genre: {
             id: gg.genres?.id,
@@ -261,7 +261,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           },
         })) || [],
       companies:
-        (game.game_companies as AdminGameCompany[] | undefined)?.map((gc) => ({
+        (game.game_companies as unknown as AdminGameCompany[] | undefined)?.map((gc) => ({
           id: gc.id,
           company_id: gc.company_id,
           role: gc.role,
@@ -277,7 +277,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       artwork: game.game_artwork || [],
       videos: game.game_videos || [],
       prices:
-        (game.game_prices as AdminGamePrice[] | undefined)?.map((gp) => ({
+        (game.game_prices as unknown as AdminGamePrice[] | undefined)?.map((gp) => ({
           ...gp,
           store: gp.stores,
         })) || [],
@@ -332,7 +332,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           | undefined) ?? [],
       game_platforms:
         (
-          game.game_platforms as
+          game.game_platforms as unknown as
             | Array<{
                 platform_id: string;
                 platforms: {

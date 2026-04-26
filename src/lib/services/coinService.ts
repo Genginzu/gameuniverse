@@ -1,4 +1,5 @@
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { untypedTable } from "@/lib/utils/untypedTable";
 import { logger } from "@/lib/logger";
 import type {
   PlayerWallet,
@@ -18,8 +19,7 @@ const SIGNUP_BONUS = 500;
 export class CoinService {
   static async getWallet(playerId: string): Promise<PlayerWallet> {
     const supabase = await createRouteHandlerClient();
-    const { data, error } = await supabase
-      .from("player_wallets")
+    const { data, error } = await untypedTable(supabase, "player_wallets")
       .select("player_id, balance, total_earned, total_spent")
       .eq("player_id", playerId)
       .single();
@@ -46,8 +46,7 @@ export class CoinService {
       "Bonus d'inscription"
     );
     const supabase = await createRouteHandlerClient();
-    const { data } = await supabase
-      .from("player_wallets")
+    const { data } = await untypedTable(supabase, "player_wallets")
       .select("player_id, balance, total_earned, total_spent")
       .eq("player_id", playerId)
       .single();
@@ -94,8 +93,7 @@ export class CoinService {
     const supabase = await createRouteHandlerClient();
 
     // Load config for this activity
-    const { data: config } = await supabase
-      .from("coin_reward_config")
+    const { data: config } = await untypedTable(supabase, "coin_reward_config")
       .select("*")
       .eq("activity_type", activityType)
       .single();
@@ -107,8 +105,7 @@ export class CoinService {
     // Check cooldown
     if (config.cooldown_seconds) {
       const cooldownCutoff = new Date(Date.now() - config.cooldown_seconds * 1000).toISOString();
-      const { count } = await supabase
-        .from("coin_transactions")
+      const { count } = await untypedTable(supabase, "coin_transactions")
         .select("id", { count: "exact", head: true })
         .eq("player_id", playerId)
         .eq("activity_type", activityType)
@@ -123,8 +120,7 @@ export class CoinService {
     if (config.daily_cap) {
       const todayStart = new Date();
       todayStart.setHours(0, 0, 0, 0);
-      const { count } = await supabase
-        .from("coin_transactions")
+      const { count } = await untypedTable(supabase, "coin_transactions")
         .select("id", { count: "exact", head: true })
         .eq("player_id", playerId)
         .eq("activity_type", activityType)
@@ -149,8 +145,7 @@ export class CoinService {
     const supabase = await createRouteHandlerClient();
     const offset = (page - 1) * limit;
 
-    let query = supabase
-      .from("coin_transactions")
+    let query = untypedTable(supabase, "coin_transactions")
       .select("*", { count: "exact" })
       .eq("player_id", playerId);
 
@@ -174,8 +169,7 @@ export class CoinService {
 
   static async getRewardConfig(): Promise<CoinRewardConfig[]> {
     const supabase = await createRouteHandlerClient();
-    const { data, error } = await supabase
-      .from("coin_reward_config")
+    const { data, error } = await untypedTable(supabase, "coin_reward_config")
       .select("*")
       .order("activity_type");
 
@@ -198,8 +192,7 @@ export class CoinService {
     if (updates.dailyCap !== undefined) dbUpdates.daily_cap = updates.dailyCap;
     if (updates.enabled !== undefined) dbUpdates.enabled = updates.enabled;
 
-    const { data, error } = await supabase
-      .from("coin_reward_config")
+    const { data, error } = await untypedTable(supabase, "coin_reward_config")
       .update(dbUpdates)
       .eq("activity_type", activityType)
       .select("*")
@@ -241,8 +234,7 @@ export class CoinService {
     const supabase = await createRouteHandlerClient();
 
     // Get current balance to compute balance_after
-    const { data: wallet } = await supabase
-      .from("player_wallets")
+    const { data: wallet } = await untypedTable(supabase, "player_wallets")
       .select("balance")
       .eq("player_id", playerId)
       .single();
@@ -250,8 +242,7 @@ export class CoinService {
     const currentBalance = wallet?.balance ?? 0;
     const balanceAfter = currentBalance + amount;
 
-    const { data, error } = await supabase
-      .from("coin_transactions")
+    const { data, error } = await untypedTable(supabase, "coin_transactions")
       .insert({
         player_id: playerId,
         amount,
