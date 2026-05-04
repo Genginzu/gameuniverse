@@ -216,4 +216,82 @@ test.describe("Admin — dashboard, CRUD, moderation — #54", () => {
       }
     });
   });
+
+  test.describe("Admin esport", () => {
+    test("should load esport admin page", async ({ page }) => {
+      const crud = new AdminGenericCrudPage(page, "esport");
+      await crud.goto("fr");
+      await waitForAdminOrRedirect(page);
+
+      if (isOnAdmin(page, "/admin/esport")) {
+        await expect(crud.heading).toBeVisible({ timeout: 10_000 });
+      }
+    });
+
+    test("should load esport sync page", async ({ page }) => {
+      await page.goto("/fr/admin/esport/sync");
+      await waitForAdminOrRedirect(page);
+
+      if (isOnAdmin(page, "/admin/esport/sync")) {
+        const heading = page.getByRole("heading", { level: 1 });
+        await expect(heading).toBeVisible({ timeout: 10_000 });
+      }
+    });
+  });
+
+  test.describe("Admin global sync", () => {
+    test("should load global sync page", async ({ page }) => {
+      const crud = new AdminGenericCrudPage(page, "global-sync");
+      await crud.goto("fr");
+      await waitForAdminOrRedirect(page);
+
+      if (isOnAdmin(page, "/admin/global-sync")) {
+        await expect(crud.heading).toBeVisible({ timeout: 10_000 });
+      }
+    });
+  });
+
+  test.describe("Admin bulk import", () => {
+    test("should load bulk import page", async ({ page }) => {
+      const crud = new AdminGenericCrudPage(page, "bulk-import");
+      await crud.goto("fr");
+      await waitForAdminOrRedirect(page);
+
+      if (isOnAdmin(page, "/admin/bulk-import")) {
+        await expect(crud.heading).toBeVisible({ timeout: 10_000 });
+      }
+    });
+
+    test("should load bulk import characters page", async ({ page }) => {
+      const crud = new AdminGenericCrudPage(page, "bulk-import-characters");
+      await crud.goto("fr");
+      await waitForAdminOrRedirect(page);
+
+      if (isOnAdmin(page, "/admin/bulk-import-characters")) {
+        await expect(crud.heading).toBeVisible({ timeout: 10_000 });
+      }
+    });
+  });
+
+  test.describe("Admin coins & disputes", () => {
+    test("should load coins page", async ({ page }) => {
+      const crud = new AdminGenericCrudPage(page, "coins");
+      await crud.goto("fr");
+      await waitForAdminOrRedirect(page);
+
+      if (isOnAdmin(page, "/admin/coins")) {
+        await expect(crud.heading).toBeVisible({ timeout: 10_000 });
+      }
+    });
+
+    test("should load disputes page", async ({ page }) => {
+      const crud = new AdminGenericCrudPage(page, "disputes");
+      await crud.goto("fr");
+      await waitForAdminOrRedirect(page);
+
+      if (isOnAdmin(page, "/admin/disputes")) {
+        await expect(crud.heading).toBeVisible({ timeout: 10_000 });
+      }
+    });
+  });
 });
