@@ -23,7 +23,10 @@ function isAuthorized(request: NextRequest): boolean {
   return bearer === secret || request.headers.get("x-cron-secret") === secret;
 }
 
-export async function POST(request: NextRequest) {
+export const GET = handler;
+export const POST = handler;
+
+async function handler(request: NextRequest) {
   if (!isAuthorized(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
