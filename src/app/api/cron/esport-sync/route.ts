@@ -25,11 +25,15 @@ const TABLE_MAP: Record<EntityType, string> = {
 };
 
 /**
- * POST /api/cron/esport-sync
+ * GET/POST /api/cron/esport-sync
  * Incremental sync: uses PandaScore Incidents API to only fetch what changed
  * since the last successful sync. Falls back to full sync on first run.
+ * GET is used by Vercel Cron, POST for manual triggers.
  */
-export async function POST(request: NextRequest) {
+export const GET = handler;
+export const POST = handler;
+
+async function handler(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
   const cronSecret = process.env.CRON_SECRET;
   const trigger = request.nextUrl.searchParams.get("trigger") === "manual" ? "manual" : "cron";
