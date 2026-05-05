@@ -7,8 +7,8 @@ test.describe("Esport — calendar, live, teams, players, results", () => {
       await page.waitForLoadState("domcontentloaded");
 
       await expect(page).toHaveURL(/\/fr\/esport\/calendar/);
-      const heading = page.getByRole("heading", { level: 1 });
-      await expect(heading).toBeVisible({ timeout: 10_000 });
+      const title = page.getByTestId("page-banner-title");
+      await expect(title).toBeVisible({ timeout: 10_000 });
     });
 
     test("should display tournament cards or empty state", async ({ page }) => {
@@ -16,7 +16,7 @@ test.describe("Esport — calendar, live, teams, players, results", () => {
       await page.waitForLoadState("domcontentloaded");
 
       const cards = page.locator('[data-testid="tournament-card"], [class*="card"]');
-      const emptyState = page.getByText(/aucun|no.*tournament|empty/i);
+      const emptyState = page.getByText(/aucun.*tournoi|no.*tournament/i).first();
 
       await Promise.race([
         cards.first().waitFor({ state: "visible", timeout: 10_000 }),
@@ -34,8 +34,8 @@ test.describe("Esport — calendar, live, teams, players, results", () => {
       await page.waitForLoadState("domcontentloaded");
 
       await expect(page).toHaveURL(/\/fr\/esport\/live/);
-      const heading = page.getByRole("heading", { level: 1 });
-      await expect(heading).toBeVisible({ timeout: 10_000 });
+      const title = page.getByTestId("page-banner-title");
+      await expect(title).toBeVisible({ timeout: 10_000 });
     });
   });
 
@@ -45,8 +45,8 @@ test.describe("Esport — calendar, live, teams, players, results", () => {
       await page.waitForLoadState("domcontentloaded");
 
       await expect(page).toHaveURL(/\/fr\/esport\/teams/);
-      const heading = page.getByRole("heading", { level: 1 });
-      await expect(heading).toBeVisible({ timeout: 10_000 });
+      const title = page.getByTestId("page-banner-title");
+      await expect(title).toBeVisible({ timeout: 10_000 });
     });
 
     test("should display team cards or empty state", async ({ page }) => {
@@ -54,7 +54,7 @@ test.describe("Esport — calendar, live, teams, players, results", () => {
       await page.waitForLoadState("domcontentloaded");
 
       const cards = page.locator('[data-testid="team-card"], [class*="card"]');
-      const emptyState = page.getByText(/aucun|no.*team|empty/i);
+      const emptyState = page.getByRole("heading", { name: /aucune.*équipe/i });
 
       await Promise.race([
         cards.first().waitFor({ state: "visible", timeout: 10_000 }),
@@ -72,8 +72,8 @@ test.describe("Esport — calendar, live, teams, players, results", () => {
       await page.waitForLoadState("domcontentloaded");
 
       await expect(page).toHaveURL(/\/fr\/esport\/players/);
-      const heading = page.getByRole("heading", { level: 1 });
-      await expect(heading).toBeVisible({ timeout: 10_000 });
+      const title = page.getByTestId("page-banner-title");
+      await expect(title).toBeVisible({ timeout: 10_000 });
     });
   });
 
@@ -83,8 +83,8 @@ test.describe("Esport — calendar, live, teams, players, results", () => {
       await page.waitForLoadState("domcontentloaded");
 
       await expect(page).toHaveURL(/\/fr\/esport\/results/);
-      const heading = page.getByRole("heading", { level: 1 });
-      await expect(heading).toBeVisible({ timeout: 10_000 });
+      const title = page.getByTestId("page-banner-title");
+      await expect(title).toBeVisible({ timeout: 10_000 });
     });
   });
 
