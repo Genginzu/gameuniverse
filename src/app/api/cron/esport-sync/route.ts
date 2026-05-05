@@ -74,6 +74,16 @@ async function handler(request: NextRequest) {
       // Incremental sync via Incidents API
       logger.info("PandaScore cron: incremental sync since", { since });
       results = await incrementalSync(since);
+
+      // Fallback: if incremental returned nothing and tables are empty, do full sync
+      const totalSynced = results.teams.synced + results.players.synced + results.tournaments.synced + results.matches.synced;
+      if (totalSynced === 0) {
+        const { count } = await supabase.from("esport_teams").select("id", { count: "exact", head: true });
+        if (!count || count === 0) {
+          logger.info("PandaScore cron: tables empty after incremental, falling back to full sync");
+          results = await syncAll();
+        }
+      }
     }
 
     const duration = Date.now() - start;
