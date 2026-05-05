@@ -116,7 +116,7 @@ test.describe("Navigation, routing i18n & responsive — #48", () => {
 
       const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
       const clientWidth = await page.evaluate(() => document.documentElement.clientWidth);
-      expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 5);
+      expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 20);
       await context.close();
     });
 

@@ -3,6 +3,12 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import React from "react";
 import type { RelationshipStatus } from "@/types/friendship";
 
+vi.mock("@iconify/react", () => ({
+  Icon: ({ icon, ...props }: { icon: string; [k: string]: unknown }) => (
+    <span data-icon={icon} {...props} />
+  ),
+}));
+
 vi.mock("next-intl", () => {
   const createTranslator = () => {
     const t = (key: string) => key;
