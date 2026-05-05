@@ -247,7 +247,7 @@ export default function EsportSyncPage() {
                 ) : logs.length === 0 ? (
                   <tr><td colSpan={7} className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">{t("noLogs")}</td></tr>
                 ) : logs.map((log) => (
-                  <tr key={log.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                  <tr key={log.id} className="hover:bg-white/40 dark:hover:bg-white/5">
                     <td className="whitespace-nowrap px-4 py-3 text-gray-900 dark:text-white">{fmtDate(log.started_at)}</td>
                     <td className="px-4 py-3">
                       <Badge className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600 dark:bg-gray-800 dark:text-gray-400">{log.trigger}</Badge>
