@@ -154,19 +154,19 @@ export async function getLeaderboard(): Promise<PredictionLeaderboardEntry[]> {
 
   let namesMap: Record<string, string> = {};
   if (playerIds.length > 0) {
-    const { data: players } = await untypedTable(supabase, "players")
-      .select("id, username")
+    const { data: players } = await untypedTable(supabase, "profiles")
+      .select("id, full_name")
       .in("id", playerIds);
     if (players) {
       namesMap = Object.fromEntries(
-        (players as { id: string; username: string }[]).map((p) => [p.id, p.username])
+        (players as { id: string; full_name: string | null }[]).map((p) => [p.id, p.full_name ?? ""])
       );
     }
   }
 
   return rows.map((row) => ({
     playerId: row.player_id as string,
-    playerName: namesMap[row.player_id as string] ?? (row.player_id as string).slice(0, 8) + "...",
+    playerName: namesMap[row.player_id as string] || (row.player_id as string).slice(0, 8) + "...",
     totalPredictions: row.total_predictions as number,
     correctPredictions: row.correct_predictions as number,
     totalProfit: row.total_profit as number,
