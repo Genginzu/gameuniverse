@@ -138,7 +138,7 @@ export function EsportCalendarMonthly() {
             </div>
 
             {/* Days grid */}
-            <div className="grid grid-cols-7">
+            <div className="grid auto-rows-[1fr] grid-cols-7">
               {calendarDays.map((day, idx) => (
                 <CalendarCell
                   key={idx}
