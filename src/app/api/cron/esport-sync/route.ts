@@ -30,6 +30,8 @@ const TABLE_MAP: Record<EntityType, string> = {
  * since the last successful sync. Falls back to full sync on first run.
  * GET is used by Vercel Cron, POST for manual triggers.
  */
+export const maxDuration = 60;
+
 export const GET = handler;
 export const POST = handler;
 
