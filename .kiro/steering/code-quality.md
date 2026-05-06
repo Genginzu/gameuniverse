@@ -118,6 +118,81 @@ Le projet utilise **SWR** (`swr`) pour le fetching de données côté client.
 - ❌ Ne **jamais** réimplémenter manuellement un mécanisme de cache ou de
   revalidation que SWR fournit déjà.
 
+## ISR (Incremental Static Regeneration) : obligatoire sur les pages publiques
+
+Toute page publique affichant des données **doit** utiliser le pattern ISR
+hybrid pour améliorer le SEO et la performance perçue (FCP/LCP).
+
+### Pattern ISR hybrid
+
+```
+Page Server Component (async)
+  → fetch données via API interne avec next: { revalidate }
+  → passe initialData au Client Component
+    → SWR utilise fallbackData pour rendu immédiat
+    → Filtres/pagination restent côté client via SWR
+```
+
+### Durées de revalidation
+
+| Type de données          | Revalidate | Exemple                          |
+| ------------------------ | ---------- | -------------------------------- |
+| Données très dynamiques  | 60s        | Détail d'un jeu, personnage     |
+| Listings / trending      | 300s (5m)  | Liste jeux, trending, upcoming   |
+| Données peu volatiles    | 3600s (1h) | Esport (rafraîchi 1x/jour)      |
+
+### Règles
+
+- ✅ Toute nouvelle page publique **doit** avoir `export const revalidate = N`
+  avec une durée adaptée à la volatilité des données.
+- ✅ Fetch les données initiales côté serveur via un appel API interne
+  (`fetch(baseUrl + '/api/...')` avec `next: { revalidate }`).
+- ✅ Passer les données en prop `initialData` / `initialGames` /
+  `initialCharacters` au composant client.
+- ✅ Le composant client utilise `fallbackData` de SWR pour un rendu immédiat
+  (pas de skeleton au premier chargement).
+- ✅ Le `fallbackData` ne s'applique que sur la vue par défaut (page 1, pas de
+  filtres). Dès que l'utilisateur filtre/pagine, SWR fetch normalement.
+- ❌ Ne **jamais** utiliser `createServerClient` (cookies) dans une page ISR —
+  cela force le rendu dynamique. Utiliser un appel API interne à la place.
+- ❌ Ne **jamais** utiliser `export const dynamic = "force-dynamic"` sur une
+  page publique sauf cas exceptionnel justifié (données temps réel, auth
+  requise).
+- ❌ Ne **jamais** laisser une page publique rendre un shell vide côté serveur
+  avec 100% du fetch côté client — c'est mauvais pour le SEO et la performance.
+
+### Exemple minimal
+
+```tsx
+// page.tsx (Server Component)
+export const revalidate = 300;
+
+export default async function MyPage({ params }) {
+  const { locale } = await params;
+  let initialData;
+
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const res = await fetch(`${baseUrl}/api/my-data?locale=${locale}`, {
+      next: { revalidate: 300 },
+    });
+    if (res.ok) initialData = await res.json();
+  } catch (error) {
+    logger.error("Failed to fetch data server-side", { error });
+  }
+
+  return <MyContent initialData={initialData} />;
+}
+
+// MyContent.tsx (Client Component)
+export function MyContent({ initialData }) {
+  const { data } = useSWR(url, fetcher, { fallbackData: initialData });
+  // ...
+}
+```
+
+
+
 ## Bonnes pratiques
 
 - ❌ Pas de logique métier dans les composants de page (`page.tsx`). Déléguer
