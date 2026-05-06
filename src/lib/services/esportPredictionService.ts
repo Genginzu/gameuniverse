@@ -84,8 +84,6 @@ export async function getMyPredictions(playerId: string): Promise<EsportPredicti
 }
 
 export async function resolvePrediction(matchId: number): Promise<number> {
-  const supabase = await createRouteHandlerClient();
-
   // Fetch match result from PandaScore
   const match = await getMatchById(matchId);
   if (match.status !== "finished" || !match.winner_id) return 0;
