@@ -44,13 +44,13 @@ const GAME_ICONS: Record<string, string> = {
   "CS2": "simple-icons:counterstrike",
   "Valorant": "simple-icons:valorant",
   "Dota 2": "simple-icons:dota2",
-  "Overwatch": "simple-icons:overwatch",
+  "Overwatch": "mdi:shield-sword",
   "Call of Duty": "simple-icons:activision",
   "Rainbow 6 Siege": "simple-icons:ubisoft",
   "Rocket League": "simple-icons:epicgames",
   "StarCraft 2": "simple-icons:blizzard",
   "King of Glory": "mdi:crown",
-  "Mobile Legends: Bang Bang": "mdi:cellphone",
+  "Mobile Legends: Bang Bang": "mdi:cellphone-play",
 };
 
 export function EsportCalendarContent({ initialData }: EsportCalendarContentProps) {
