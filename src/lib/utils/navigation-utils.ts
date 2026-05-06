@@ -33,7 +33,7 @@ export const ESPORT_LINKS: NavLink[] = [
   { href: "/esport/results", icon: "fa:trophy", labelKey: "esportResults" },
   { href: "/esport/teams", icon: "fa:users", labelKey: "esportTeams" },
   { href: "/esport/players", icon: "fa:user", labelKey: "esportPlayers" },
-  { href: "/esport/predictions", icon: "fa:chart-bar", labelKey: "esportPredictions" },
+  { href: "/esport/predictions", icon: "fa:bar-chart", labelKey: "esportPredictions" },
 ];
 
 /** Paths that should only highlight on exact match, not on sub-routes */
