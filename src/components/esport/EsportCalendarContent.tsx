@@ -157,10 +157,10 @@ function TournamentCard({ tournament, onBet }: { tournament: CalendarTournament;
       <div className="mb-3 flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
           <h3 className="line-clamp-2 text-sm font-bold text-gray-900 sm:text-base dark:text-white">
-            {tournament.name}
+            {tournament.league}
           </h3>
           <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
-            {tournament.league} · {tournament.serie}
+            {tournament.name}{tournament.serie ? ` · ${tournament.serie}` : ""}
           </p>
         </div>
         {tournament.tier !== "unranked" && (
