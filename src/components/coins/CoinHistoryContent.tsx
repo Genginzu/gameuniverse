@@ -27,7 +27,7 @@ const TYPE_ICONS: Record<CoinTransactionType, string> = {
 };
 
 const ACTIVITY_ICONS: Record<CoinActivityType, string> = {
-  review: "mdi:star-edit",
+  review: "mdi:text-box-edit",
   library_add: "mdi:bookshelf",
   library_status_change: "mdi:swap-horizontal",
   playtime_log: "mdi:timer",
