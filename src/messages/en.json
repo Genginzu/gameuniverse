@@ -37,6 +37,10 @@
     "esportCalendar": {
       "title": "Esport Calendar",
       "description": "Follow upcoming and ongoing professional esport tournaments"
+    },
+    "coins": {
+      "title": "GU Coins History",
+      "description": "View your GU Coins earning and spending history"
     }
   },
   "navigation": {
@@ -3716,9 +3720,11 @@
     "balance": "Balance",
     "totalEarned": "Total earned",
     "totalSpent": "Total spent",
-    "history": "History",
+    "history": "GU Coins History",
     "myWallet": "My wallet",
     "noTransactions": "No transactions",
+    "filterAll": "All types",
+    "errorLoading": "Failed to load GU Coins history.",
     "toast": {
       "rewarded": "+{amount} GU Coins — {reason}"
     },
