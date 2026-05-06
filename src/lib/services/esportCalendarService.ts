@@ -1,28 +1,8 @@
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { logger } from "@/lib/logger";
-import { getUpcomingTournaments, getRunningTournaments } from "@/lib/pandascore/client";
-import type { PandaScoreTournament } from "@/lib/pandascore/types";
 
-const CACHE_TTL_MS = 15 * 60 * 1000; // 15 minutes
-
-interface CacheEntry<T> {
-  data: T;
-  expiresAt: number;
-}
-
-const cache = new Map<string, CacheEntry<unknown>>();
-
-function getCached<T>(key: string): T | null {
-  const entry = cache.get(key);
-  if (!entry || Date.now() > entry.expiresAt) {
-    cache.delete(key);
-    return null;
-  }
-  return entry.data as T;
-}
-
-function setCache<T>(key: string, data: T): void {
-  cache.set(key, { data, expiresAt: Date.now() + CACHE_TTL_MS });
-}
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type UntypedFrom = any;
 
 export interface CalendarTournament {
   id: number;
@@ -40,67 +20,58 @@ export interface CalendarTournament {
   status: "upcoming" | "running";
 }
 
-function mapTournament(
-  t: PandaScoreTournament,
-  status: "upcoming" | "running"
-): CalendarTournament {
-  return {
-    id: t.id,
-    name: t.name,
-    slug: t.slug,
-    beginAt: t.begin_at,
-    endAt: t.end_at,
-    game: t.videogame.name,
-    gameSlug: t.videogame.slug,
-    league: t.league.name,
-    leagueImageUrl: t.league.image_url,
-    serie: t.serie.full_name,
-    prizepool: t.prizepool,
-    tier: t.tier,
-    status,
-  };
-}
-
-/** Fetch upcoming + running tournaments, merged and sorted by begin_at */
+/** Fetch upcoming + running tournaments from local DB */
 export async function getCalendarTournaments(filters?: {
   game?: string;
-  per_page?: number;
 }): Promise<CalendarTournament[]> {
-  const gameFilter = filters?.game;
-  const perPage = filters?.per_page ?? 50;
-  const cacheKey = `calendar:${gameFilter ?? "all"}:${perPage}`;
-
-  const cached = getCached<CalendarTournament[]>(cacheKey);
-  if (cached) return cached;
+  const supabase = getSupabaseAdmin();
+  const now = new Date().toISOString();
 
   try {
-    const params: Record<string, string | number> = {
-      per_page: perPage,
-      sort: "begin_at",
-    };
-    if (gameFilter) params["filter[videogame_title]"] = gameFilter;
+    let query = supabase
+      .from("esport_tournaments" as UntypedFrom)
+      .select("*")
+      .or(`end_at.is.null,end_at.gte.${now}`)
+      .order("begin_at", { ascending: true })
+      .limit(100);
 
-    const [upcoming, running] = await Promise.all([
-      getUpcomingTournaments(params),
-      getRunningTournaments(params),
-    ]);
+    if (filters?.game) {
+      query = query.eq("game", filters.game);
+    }
 
-    const tournaments = [
-      ...running.map((t) => mapTournament(t, "running")),
-      ...upcoming.map((t) => mapTournament(t, "upcoming")),
-    ];
+    const { data, error } = await query;
+    if (error) throw error;
 
-    setCache(cacheKey, tournaments);
-    return tournaments;
+    return (data ?? []).map((t: Record<string, unknown>) => {
+      const beginAt = t.begin_at as string | null;
+      const status: "upcoming" | "running" =
+        beginAt && new Date(beginAt) <= new Date() ? "running" : "upcoming";
+
+      return {
+        id: t.pandascore_id ?? t.id,
+        name: t.name as string,
+        slug: t.slug as string,
+        beginAt: beginAt,
+        endAt: t.end_at as string | null,
+        game: t.game as string,
+        gameSlug: (t.game as string).toLowerCase().replace(/\s+/g, "-"),
+        league: (t.league_name as string) ?? "",
+        leagueImageUrl: (t.league_image_url as string) ?? null,
+        serie: (t.serie_name as string) ?? "",
+        prizepool: (t.prizepool as string) ?? null,
+        tier: (t.tier as string) ?? "unranked",
+        status,
+      };
+    });
   } catch (error) {
-    logger.error("Failed to fetch calendar tournaments", { error });
+    logger.error("Failed to fetch calendar tournaments from DB", { error });
     throw error;
   }
 }
 
 /** Get the list of videogame names present in the current calendar */
 export async function getCalendarGames(): Promise<string[]> {
-  const tournaments = await getCalendarTournaments({ per_page: 100 });
+  const tournaments = await getCalendarTournaments();
   const games = [...new Set(tournaments.map((t) => t.game))];
   return games.sort();
 }
