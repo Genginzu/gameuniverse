@@ -3790,7 +3790,21 @@
       "noTournamentsDescription": "Aucun tournoi esport n'est prévu pour le moment",
       "tier": "Tier",
       "live": "En direct",
-      "upcoming": "À venir"
+      "upcoming": "À venir",
+      "bet": "Parier",
+      "prediction": {
+        "title": "Placer un pronostic",
+        "selectMatch": "Choisissez un match",
+        "noMatches": "Aucun match disponible pour ce tournoi",
+        "chooseWinner": "Qui va gagner ?",
+        "amount": "Mise (GU Coins)",
+        "balanceLabel": "Solde",
+        "placeBet": "Miser {amount} GU Coins",
+        "placing": "Mise en cours...",
+        "success": "Pronostic placé avec succès !",
+        "error": "Erreur lors du placement du pronostic",
+        "back": "Retour"
+      }
     },
     "results": {
       "metaTitle": "Résultats Esport",

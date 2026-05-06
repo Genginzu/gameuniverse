@@ -8,6 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { FilterChip } from "@/components/shared/FilterChip";
+import { PredictionDialog } from "@/components/esport/PredictionDialog";
+import { useAuth } from "@/hooks/useAuth";
 
 interface CalendarTournament {
   id: number;
@@ -37,7 +39,9 @@ const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 export function EsportCalendarContent({ initialData }: EsportCalendarContentProps) {
   const t = useTranslations("esport.calendar");
+  const { user } = useAuth();
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
+  const [betTournament, setBetTournament] = useState<{ id: number; name: string } | null>(null);
 
   const gamesUrl = "/api/esport/calendar?games_only=true";
   const calendarUrl = selectedGame
@@ -90,16 +94,29 @@ export function EsportCalendarContent({ initialData }: EsportCalendarContentProp
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {tournaments.map((tournament) => (
-              <TournamentCard key={tournament.id} tournament={tournament} />
+              <TournamentCard
+                key={tournament.id}
+                tournament={tournament}
+                onBet={user ? () => setBetTournament({ id: tournament.id, name: tournament.name }) : undefined}
+              />
             ))}
           </div>
+        )}
+
+        {betTournament && (
+          <PredictionDialog
+            open={!!betTournament}
+            onOpenChange={(open) => { if (!open) setBetTournament(null); }}
+            tournamentId={betTournament.id}
+            tournamentName={betTournament.name}
+          />
         )}
       </div>
     </div>
   );
 }
 
-function TournamentCard({ tournament }: { tournament: CalendarTournament }) {
+function TournamentCard({ tournament, onBet }: { tournament: CalendarTournament; onBet?: () => void }) {
   const t = useTranslations("esport.calendar");
 
   const formatDate = (dateStr: string | null) => {
@@ -158,7 +175,7 @@ function TournamentCard({ tournament }: { tournament: CalendarTournament }) {
         )}
       </div>
 
-      <div className="mt-3">
+      <div className="mt-3 flex items-center justify-between">
         <Badge
           className={`rounded-full px-2 py-0.5 text-xs font-medium ${
             tournament.status === "running"
@@ -168,6 +185,16 @@ function TournamentCard({ tournament }: { tournament: CalendarTournament }) {
         >
           {tournament.status === "running" ? t("live") : t("upcoming")}
         </Badge>
+        {onBet && (
+          <button
+            type="button"
+            onClick={onBet}
+            className="flex min-h-[44px] items-center gap-1 rounded-lg bg-amber-500/10 px-3 py-2 text-xs font-medium text-amber-600 transition-all hover:bg-amber-500/20 dark:text-amber-400"
+          >
+            <Icon icon="mdi:dice-multiple" className="size-3.5" />
+            {t("bet")}
+          </button>
+        )}
       </div>
     </div>
   );

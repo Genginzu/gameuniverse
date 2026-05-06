@@ -3787,7 +3787,21 @@
       "noTournamentsDescription": "No esport tournaments are scheduled at the moment",
       "tier": "Tier",
       "live": "Live",
-      "upcoming": "Upcoming"
+      "upcoming": "Upcoming",
+      "bet": "Bet",
+      "prediction": {
+        "title": "Place a prediction",
+        "selectMatch": "Choose a match",
+        "noMatches": "No matches available for this tournament",
+        "chooseWinner": "Who will win?",
+        "amount": "Bet (GU Coins)",
+        "balanceLabel": "Balance",
+        "placeBet": "Bet {amount} GU Coins",
+        "placing": "Placing bet...",
+        "success": "Prediction placed successfully!",
+        "error": "Error placing prediction",
+        "back": "Back"
+      }
     },
     "results": {
       "metaTitle": "Esport Results",
