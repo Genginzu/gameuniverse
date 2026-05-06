@@ -210,7 +210,7 @@ function CalendarCell({
 
       {/* Match indicators */}
       {hasMatches && (
-        <div className="mt-auto space-y-0.5">
+        <div className="mt-1 space-y-0.5">
           <span className="inline-flex items-center gap-1 rounded-md bg-palette-primary-500/10 px-1.5 py-0.5 text-[10px] font-medium text-palette-primary-600 sm:text-xs dark:text-palette-primary-400">
             <Icon icon="mdi:sword-cross" className="size-3" />
             {matches.length}
