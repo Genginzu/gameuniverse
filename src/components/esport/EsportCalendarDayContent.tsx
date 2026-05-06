@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import useSWR from "swr";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
@@ -7,13 +8,16 @@ import { Link } from "@/i18n/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { Badge } from "@/components/ui/badge";
+import { CalendarMatchDetail } from "@/components/esport/CalendarMatchDetail";
 
 interface CalendarMatch {
   id: string;
+  pandascoreId: number | null;
   name: string;
   status: string;
   beginAt: string;
   game: string;
+  tournamentId: string | null;
   opponent1: { name: string; acronym: string | null; image_url: string | null } | null;
   opponent2: { name: string; acronym: string | null; image_url: string | null } | null;
   opponent1Score: number | null;
@@ -25,6 +29,7 @@ const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 export function EsportCalendarDayContent({ date }: { date: string }) {
   const t = useTranslations("esport.calendar");
+  const [selectedMatch, setSelectedMatch] = useState<CalendarMatch | null>(null);
 
   // Extract month from date (YYYY-MM-DD -> YYYY-MM)
   const monthKey = date.slice(0, 7);
@@ -79,16 +84,24 @@ export function EsportCalendarDayContent({ date }: { date: string }) {
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {dayMatches.map((match) => (
-              <MatchCard key={match.id} match={match} />
+              <MatchCard key={match.id} match={match} onClick={() => setSelectedMatch(match)} />
             ))}
           </div>
+        )}
+
+        {selectedMatch && (
+          <CalendarMatchDetail
+            match={selectedMatch}
+            open={!!selectedMatch}
+            onOpenChange={(open) => { if (!open) setSelectedMatch(null); }}
+          />
         )}
       </div>
     </div>
   );
 }
 
-function MatchCard({ match }: { match: CalendarMatch }) {
+function MatchCard({ match, onClick }: { match: CalendarMatch; onClick: () => void }) {
   const t = useTranslations("esport.calendar");
 
   const time = new Date(match.beginAt).toLocaleTimeString(undefined, {
@@ -111,7 +124,7 @@ function MatchCard({ match }: { match: CalendarMatch }) {
         : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400";
 
   return (
-    <div className="glass-card rounded-2xl p-4 transition-all duration-300 hover:shadow-lg sm:p-5">
+    <button type="button" onClick={onClick} className="glass-card w-full cursor-pointer rounded-2xl p-4 text-left transition-all duration-300 hover:shadow-lg sm:p-5">
       {/* Header: time + status + game */}
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -136,7 +149,7 @@ function MatchCard({ match }: { match: CalendarMatch }) {
           {match.game}
         </span>
       </div>
-    </div>
+    </button>
   );
 }
 
