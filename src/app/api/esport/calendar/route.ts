@@ -41,18 +41,18 @@ export async function GET(request: NextRequest) {
       if (match.opponent2_id) teamIds.add(match.opponent2_id);
     }
 
-    let teamsMap: Record<string, { name: string; acronym: string | null; image_url: string | null }> = {};
+    let teamsMap: Record<string, { name: string; acronym: string | null; image_url: string | null; pandascoreId: number | null }> = {};
     if (teamIds.size > 0) {
       const { data: teams } = await supabase
         .from("esport_teams" as UntypedFrom)
-        .select("id, name, acronym, image_url")
+        .select("id, name, acronym, image_url, pandascore_id")
         .in("id", [...teamIds]);
 
       if (teams) {
         teamsMap = Object.fromEntries(
           teams.map((t: Record<string, unknown>) => [
             t.id as string,
-            { name: t.name as string, acronym: t.acronym as string | null, image_url: t.image_url as string | null },
+            { name: t.name as string, acronym: t.acronym as string | null, image_url: t.image_url as string | null, pandascoreId: t.pandascore_id as number | null },
           ])
         );
       }

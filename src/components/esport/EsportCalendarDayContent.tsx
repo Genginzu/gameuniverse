@@ -18,8 +18,8 @@ interface CalendarMatch {
   beginAt: string;
   game: string;
   tournamentId: string | null;
-  opponent1: { name: string; acronym: string | null; image_url: string | null } | null;
-  opponent2: { name: string; acronym: string | null; image_url: string | null } | null;
+  opponent1: { name: string; acronym: string | null; image_url: string | null; pandascoreId: number | null } | null;
+  opponent2: { name: string; acronym: string | null; image_url: string | null; pandascoreId: number | null } | null;
   opponent1Score: number | null;
   opponent2Score: number | null;
   winnerId: string | null;

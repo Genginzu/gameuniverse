@@ -11,6 +11,7 @@ interface MatchTeam {
   name: string;
   acronym: string | null;
   image_url: string | null;
+  pandascoreId: number | null;
 }
 
 interface CalendarMatch {
@@ -46,6 +47,9 @@ export function CalendarMatchDetail({ match, open, onOpenChange }: CalendarMatch
 
   const handlePlaceBet = async () => {
     if (!selectedWinner || !user) return;
+    const winner = selectedWinner === "opponent1" ? match.opponent1 : match.opponent2;
+    if (!winner?.pandascoreId) return;
+
     setPlacing(true);
     setBetResult(null);
 
@@ -57,8 +61,8 @@ export function CalendarMatchDetail({ match, open, onOpenChange }: CalendarMatch
           matchId: match.pandascoreId ?? match.id,
           matchName: match.name,
           game: match.game,
-          predictedWinnerId: selectedWinner,
-          predictedWinnerName: selectedWinner === "opponent1" ? match.opponent1?.name : match.opponent2?.name,
+          predictedWinnerId: winner.pandascoreId,
+          predictedWinnerName: winner.name,
           amount,
         }),
       });

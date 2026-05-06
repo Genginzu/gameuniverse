@@ -14,8 +14,8 @@ interface CalendarMatch {
   status: string;
   beginAt: string;
   game: string;
-  opponent1: { name: string; acronym: string | null; image_url: string | null } | null;
-  opponent2: { name: string; acronym: string | null; image_url: string | null } | null;
+  opponent1: { name: string; acronym: string | null; image_url: string | null; pandascoreId: number | null } | null;
+  opponent2: { name: string; acronym: string | null; image_url: string | null; pandascoreId: number | null } | null;
 }
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
