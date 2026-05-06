@@ -37,20 +37,20 @@ interface EsportCalendarContentProps {
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
-const GAME_ICONS: Record<string, string> = {
-  "LoL": "simple-icons:leagueoflegends",
-  "League of Legends": "simple-icons:leagueoflegends",
-  "Counter-Strike": "simple-icons:counterstrike",
-  "CS2": "simple-icons:counterstrike",
-  "Valorant": "simple-icons:valorant",
-  "Dota 2": "simple-icons:dota2",
-  "Overwatch": "mdi:shield-sword",
-  "Call of Duty": "simple-icons:activision",
-  "Rainbow 6 Siege": "simple-icons:ubisoft",
-  "Rocket League": "simple-icons:epicgames",
-  "StarCraft 2": "simple-icons:blizzard",
-  "King of Glory": "mdi:crown",
-  "Mobile Legends: Bang Bang": "mdi:cellphone-play",
+const GAME_LOGOS: Record<string, { icon: string; color: string }> = {
+  "LoL": { icon: "simple-icons:leagueoflegends", color: "#C8AA6E" },
+  "League of Legends": { icon: "simple-icons:leagueoflegends", color: "#C8AA6E" },
+  "Counter-Strike": { icon: "simple-icons:counterstrike", color: "#F5A623" },
+  "CS2": { icon: "simple-icons:counterstrike", color: "#F5A623" },
+  "Valorant": { icon: "simple-icons:valorant", color: "#FF4655" },
+  "Dota 2": { icon: "simple-icons:dota2", color: "#E23B28" },
+  "Overwatch": { icon: "mdi:shield-sword", color: "#F99E1A" },
+  "Call of Duty": { icon: "game-icons:crosshair", color: "#4CAF50" },
+  "Rainbow 6 Siege": { icon: "simple-icons:ubisoft", color: "#0070FF" },
+  "Rocket League": { icon: "game-icons:rocket-flight", color: "#0078F2" },
+  "StarCraft 2": { icon: "game-icons:rocket", color: "#00AEFF" },
+  "King of Glory": { icon: "mdi:crown", color: "#FFD700" },
+  "Mobile Legends: Bang Bang": { icon: "mdi:sword-cross", color: "#FF6B00" },
 };
 
 export function EsportCalendarContent({ initialData }: EsportCalendarContentProps) {
@@ -92,7 +92,7 @@ export function EsportCalendarContent({ initialData }: EsportCalendarContentProp
               <FilterChip
                 key={game}
                 label={game}
-                icon={GAME_ICONS[game] ? <Icon icon={GAME_ICONS[game]} className="size-3.5" /> : undefined}
+                icon={GAME_LOGOS[game] ? <Icon icon={GAME_LOGOS[game].icon} className="size-4" style={{ color: GAME_LOGOS[game].color }} /> : undefined}
                 selected={selectedGame === game}
                 onClick={() => handleGameFilter(game)}
               />
@@ -174,7 +174,11 @@ function TournamentCard({ tournament, onBet }: { tournament: CalendarTournament;
 
       <div className="space-y-2 text-xs text-gray-600 dark:text-gray-300">
         <div className="flex items-center gap-1.5">
-          <Icon icon={GAME_ICONS[tournament.game] ?? "mdi:gamepad-variant"} className="h-3.5 w-3.5 shrink-0" />
+          {GAME_LOGOS[tournament.game] ? (
+            <Icon icon={GAME_LOGOS[tournament.game].icon} className="h-4 w-4 shrink-0" style={{ color: GAME_LOGOS[tournament.game].color }} />
+          ) : (
+            <Icon icon="mdi:gamepad-variant" className="h-3.5 w-3.5 shrink-0" />
+          )}
           <span className="font-medium">{tournament.game}</span>
         </div>
         <div className="flex items-center gap-1.5">
