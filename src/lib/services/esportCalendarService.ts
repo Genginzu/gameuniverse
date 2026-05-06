@@ -48,7 +48,7 @@ export async function getCalendarTournaments(filters?: {
         beginAt && new Date(beginAt) <= new Date() ? "running" : "upcoming";
 
       return {
-        id: t.pandascore_id ?? t.id,
+        id: (t.pandascore_id ?? t.id) as number,
         name: t.name as string,
         slug: t.slug as string,
         beginAt: beginAt,
