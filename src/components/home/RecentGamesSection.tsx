@@ -13,6 +13,10 @@ interface GamesApiResponse {
   games: GameSummary[];
 }
 
+interface RecentGamesSectionProps {
+  initialGames?: GameSummary[];
+}
+
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 function GameCard({ game, index }: { game: GameSummary; index: number }) {
@@ -28,7 +32,6 @@ function GameCard({ game, index }: { game: GameSummary; index: number }) {
       }`}
       style={{ transitionDelay: `${index * 80}ms` }}
     >
-      {/* Cover image */}
       <div className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl">
         {game.coverImage ? (
           <Image
@@ -49,7 +52,6 @@ function GameCard({ game, index }: { game: GameSummary; index: number }) {
         )}
       </div>
 
-      {/* Hover overlay with game info */}
       <div className="absolute inset-0 flex flex-col justify-end rounded-2xl bg-linear-to-t from-black/80 via-black/30 to-transparent p-4 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
         <h3 className="line-clamp-2 text-sm font-bold text-white">{game.title}</h3>
         {game.genres.length > 0 && (
@@ -57,7 +59,6 @@ function GameCard({ game, index }: { game: GameSummary; index: number }) {
         )}
       </div>
 
-      {/* Metascore badge */}
       {game.metascore && (
         <div className="absolute top-2 right-2 rounded-lg bg-black/60 px-2 py-1 text-xs font-bold text-white backdrop-blur-sm">
           {game.metascore}
@@ -73,14 +74,16 @@ function GameCardSkeleton() {
   );
 }
 
-export function RecentGamesSection() {
+export function RecentGamesSection({ initialGames }: RecentGamesSectionProps) {
   const t = useTranslations("landing.recentGames");
   const locale = useLocale();
+
+  const fallbackData = initialGames ? { games: initialGames } : undefined;
 
   const { data, isLoading } = useSWR<GamesApiResponse>(
     `/api/games?limit=8&locale=${locale}`,
     fetcher,
-    { revalidateOnFocus: false }
+    { fallbackData, revalidateOnFocus: false }
   );
 
   const games = data?.games ?? [];
@@ -88,7 +91,6 @@ export function RecentGamesSection() {
   return (
     <section className="relative px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-6xl">
-        {/* Section header */}
         <div className="mb-10 flex items-end justify-between">
           <div>
             <h2 className="neon-text mb-2 text-2xl font-black text-gray-900 sm:text-3xl sm:text-4xl dark:text-white">
@@ -105,14 +107,12 @@ export function RecentGamesSection() {
           </Link>
         </div>
 
-        {/* Games grid */}
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:gap-6">
           {isLoading
             ? Array.from({ length: 8 }).map((_, i) => <GameCardSkeleton key={i} />)
             : games.map((game, index) => <GameCard key={game.id} game={game} index={index} />)}
         </div>
 
-        {/* Mobile "view all" link */}
         <div className="mt-8 text-center sm:hidden">
           <Link
             href="/games"

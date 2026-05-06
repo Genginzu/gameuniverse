@@ -20,14 +20,26 @@ interface PlayerDetail {
   game: string | null;
 }
 
+export interface EsportPlayerDetailData {
+  player: PlayerDetail;
+}
+
+interface EsportPlayerDetailContentProps {
+  playerId: string;
+  initialData?: EsportPlayerDetailData;
+}
+
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
-export function EsportPlayerDetailContent({ playerId }: { playerId: string }) {
+export function EsportPlayerDetailContent({
+  playerId,
+  initialData,
+}: EsportPlayerDetailContentProps) {
   const t = useTranslations("esport.players");
-  const { data, isLoading, error } = useSWR<{ player: PlayerDetail }>(
+  const { data, isLoading, error } = useSWR<EsportPlayerDetailData>(
     `/api/esport/players/${playerId}`,
     fetcher,
-    { revalidateOnFocus: false }
+    { fallbackData: initialData, revalidateOnFocus: false }
   );
 
   if (isLoading) return <PlayerDetailSkeleton />;

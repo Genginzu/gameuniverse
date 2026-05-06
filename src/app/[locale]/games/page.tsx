@@ -4,6 +4,9 @@ import { AllGamesContent } from "@/components/games/AllGamesContent";
 import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
+import { logger } from "@/lib/logger";
+
+export const revalidate = 300;
 
 interface AllGamesPageProps {
   params: Promise<{ locale: string }>;
@@ -22,7 +25,27 @@ export async function generateMetadata({ params }: AllGamesPageProps): Promise<M
   };
 }
 
-export default function AllGamesPage() {
+export default async function AllGamesPage({ params }: AllGamesPageProps) {
+  const { locale } = await params;
+
+  let initialGames;
+  let initialPagination;
+
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const res = await fetch(`${baseUrl}/api/games?locale=${locale}&page=1&limit=20`, {
+      next: { revalidate: 300 },
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      initialGames = data.games;
+      initialPagination = data.pagination;
+    }
+  } catch (error) {
+    logger.error("Failed to fetch initial games server-side", { error });
+  }
+
   return (
     <DashboardLayout>
       <ErrorBoundary
@@ -34,7 +57,11 @@ export default function AllGamesPage() {
           />
         }
       >
-        <AllGamesContent />
+        <AllGamesContent
+          locale={locale}
+          initialGames={initialGames}
+          initialPagination={initialPagination}
+        />
       </ErrorBoundary>
     </DashboardLayout>
   );

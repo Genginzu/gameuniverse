@@ -25,9 +25,17 @@ interface CalendarTournament {
   status: "upcoming" | "running";
 }
 
+export interface EsportCalendarData {
+  tournaments: CalendarTournament[];
+}
+
+interface EsportCalendarContentProps {
+  initialData?: EsportCalendarData;
+}
+
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
-export function EsportCalendarContent() {
+export function EsportCalendarContent({ initialData }: EsportCalendarContentProps) {
   const t = useTranslations("esport.calendar");
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
 
@@ -36,10 +44,13 @@ export function EsportCalendarContent() {
     ? `/api/esport/calendar?game=${encodeURIComponent(selectedGame)}`
     : "/api/esport/calendar";
 
+  const fallbackCalendar = !selectedGame ? initialData : undefined;
+
   const { data: gamesData } = useSWR<{ games: string[] }>(gamesUrl, fetcher, {
     revalidateOnFocus: false,
   });
-  const { data, isLoading } = useSWR<{ tournaments: CalendarTournament[] }>(calendarUrl, fetcher, {
+  const { data, isLoading } = useSWR<EsportCalendarData>(calendarUrl, fetcher, {
+    fallbackData: fallbackCalendar,
     revalidateOnFocus: false,
     keepPreviousData: true,
   });
@@ -54,9 +65,7 @@ export function EsportCalendarContent() {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
-        {/* Game filter */}
         {games.length > 0 && (
           <div className="mb-6 flex flex-wrap gap-2">
             {games.map((game) => (
@@ -70,7 +79,6 @@ export function EsportCalendarContent() {
           </div>
         )}
 
-        {/* Content */}
         {isLoading && tournaments.length === 0 ? (
           <CalendarSkeleton />
         ) : tournaments.length === 0 ? (
@@ -135,7 +143,6 @@ function TournamentCard({ tournament }: { tournament: CalendarTournament }) {
           <Icon icon="mdi:gamepad-variant" className="h-3.5 w-3.5 shrink-0" />
           <span className="font-medium">{tournament.game}</span>
         </div>
-
         <div className="flex items-center gap-1.5">
           <Icon icon="mdi:calendar" className="h-3.5 w-3.5 shrink-0" />
           <span>
@@ -143,7 +150,6 @@ function TournamentCard({ tournament }: { tournament: CalendarTournament }) {
             {tournament.endAt && ` — ${formatDate(tournament.endAt)}`}
           </span>
         </div>
-
         {tournament.prizepool && (
           <div className="flex items-center gap-1.5">
             <Icon icon="mdi:cash" className="h-3.5 w-3.5 shrink-0" />
@@ -152,7 +158,7 @@ function TournamentCard({ tournament }: { tournament: CalendarTournament }) {
         )}
       </div>
 
-      <div className="mt-3 flex items-center justify-between">
+      <div className="mt-3">
         <Badge
           className={`rounded-full px-2 py-0.5 text-xs font-medium ${
             tournament.status === "running"

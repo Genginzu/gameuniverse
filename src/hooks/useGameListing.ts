@@ -6,7 +6,7 @@ import { Genre } from "@/types/genre";
 import { PlatformFilterOption } from "@/types/platform";
 import { Pagination } from "@/types/pagination";
 
-interface GamesApiResponse {
+export interface GamesApiResponse {
   games: GameSummary[];
   pagination: Pagination;
 }
@@ -45,7 +45,7 @@ async function apiFetcher<T>(url: string): Promise<T> {
 
 /**
  * Hook SWR pour le listing des jeux avec filtres et pagination.
- * Fournit cache entre navigations et stale-while-revalidate.
+ * `fallbackData` permet d'injecter les données SSR pour un rendu immédiat sans skeleton.
  */
 export function useGameListing(
   locale: string,
@@ -53,12 +53,13 @@ export function useGameListing(
   genres: string[],
   platforms: string[],
   sort: GameListingSort = DEFAULT_GAME_LISTING_SORT,
-  esport: boolean | null = null
+  esport: boolean | null = null,
+  fallbackData?: GamesApiResponse
 ) {
   const url = buildGamesUrl(locale, page, genres, platforms, sort, esport);
 
   const { data, error, isLoading, isValidating } = useSWR<GamesApiResponse>(url, apiFetcher, {
-    // Garder les données précédentes pendant le chargement d'une nouvelle page/filtre
+    fallbackData,
     keepPreviousData: true,
     revalidateOnFocus: false,
   });

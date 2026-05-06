@@ -20,9 +20,17 @@ interface TeamSummary {
   game: string | null;
 }
 
+export interface EsportTeamsData {
+  teams: TeamSummary[];
+}
+
+interface EsportTeamsContentProps {
+  initialData?: EsportTeamsData;
+}
+
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
-export function EsportTeamsContent() {
+export function EsportTeamsContent({ initialData }: EsportTeamsContentProps) {
   const t = useTranslations("esport.teams");
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebouncedValue(search, 300);
@@ -31,7 +39,10 @@ export function EsportTeamsContent() {
     ? `/api/esport/teams?search=${encodeURIComponent(debouncedSearch)}`
     : "/api/esport/teams";
 
-  const { data, isLoading } = useSWR<{ teams: TeamSummary[] }>(url, fetcher, {
+  const fallbackData = !debouncedSearch ? initialData : undefined;
+
+  const { data, isLoading } = useSWR<EsportTeamsData>(url, fetcher, {
+    fallbackData,
     revalidateOnFocus: false,
     keepPreviousData: true,
   });
@@ -44,9 +55,7 @@ export function EsportTeamsContent() {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
-        {/* Search */}
         <div className="mb-6">
           <div className="relative max-w-md">
             <Icon

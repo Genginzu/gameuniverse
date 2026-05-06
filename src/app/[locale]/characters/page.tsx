@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { AllCharactersContent } from "@/components/characters/AllCharactersContent";
-
-export const dynamic = "force-dynamic";
 import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
 import { CharacterService } from "@/lib/services/characterService";
 import { logger } from "@/lib/logger";
+
+export const revalidate = 300;
 
 interface AllCharactersPageProps {
   params: Promise<{ locale: string }>;
