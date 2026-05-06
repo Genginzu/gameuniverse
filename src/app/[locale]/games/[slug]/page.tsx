@@ -100,3 +100,9 @@ export async function generateMetadata({ params }: GameDetailsPageProps) {
   const { locale, slug } = await params;
   return await GameService.generateGameMetadata(slug, locale);
 }
+
+
+// Return empty array: pages are generated on-demand with ISR (revalidate: 60s)
+export async function generateStaticParams() {
+  return [];
+}
