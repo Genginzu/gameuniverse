@@ -50,7 +50,7 @@ export function PredictionDialog({ open, onOpenChange, tournamentId, tournamentN
   const [success, setSuccess] = useState(false);
 
   const { data, isLoading } = useSWR<{ matches: Match[] }>(
-    open ? `/api/esport/calendar/${tournamentId}/matches` : null,
+    open ? `/api/esport/tournaments/${tournamentId}/matches` : null,
     fetcher
   );
 

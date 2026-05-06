@@ -3,8 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
-import { EsportCalendarContent, type EsportCalendarData } from "@/components/esport/EsportCalendarContent";
-import { logger } from "@/lib/logger";
+import { EsportCalendarMonthly } from "@/components/esport/EsportCalendarMonthly";
 
 export const revalidate = 3600;
 
@@ -19,20 +18,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function EsportCalendarPage() {
-  let initialData: EsportCalendarData | undefined;
-
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-    const res = await fetch(`${baseUrl}/api/esport/calendar`, {
-      next: { revalidate: 3600 },
-    });
-    if (res.ok) {
-      initialData = await res.json();
-    }
-  } catch (error) {
-    logger.error("Failed to fetch esport calendar server-side", { error });
-  }
-
   return (
     <DashboardLayout>
       <ErrorBoundary
@@ -44,7 +29,7 @@ export default async function EsportCalendarPage() {
           />
         }
       >
-        <EsportCalendarContent initialData={initialData} />
+        <EsportCalendarMonthly />
       </ErrorBoundary>
     </DashboardLayout>
   );

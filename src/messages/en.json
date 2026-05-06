@@ -65,6 +65,7 @@
     "coachingSessions": "My Sessions",
     "esport": "Esport",
     "esportCalendar": "Calendar",
+    "esportTournaments": "Tournaments",
     "esportLive": "Live",
     "esportResults": "Results",
     "esportTeams": "Teams",
@@ -2882,6 +2883,8 @@
     "esportLiveDesc": "Watch live matches",
     "esportCalendar": "Esport Calendar",
     "esportCalendarDesc": "Upcoming matches and tournaments",
+    "esportTournaments": "Esport Tournaments",
+    "esportTournamentsDesc": "Upcoming and ongoing professional tournaments",
     "esportResults": "Esport Results",
     "esportResultsDesc": "Recent scores and standings",
     "esportTeams": "Esport Teams",
@@ -3783,8 +3786,12 @@
       "metaDescription": "Follow upcoming and ongoing professional esport tournaments",
       "title": "Esport Calendar",
       "subtitle": "Upcoming and ongoing professional tournaments",
-      "noTournaments": "No tournaments found",
-      "noTournamentsDescription": "No esport tournaments are scheduled at the moment",
+      "noMatches": "No matches this month",
+      "noMatchesDescription": "No esport matches are scheduled for this month",
+      "today": "Today",
+      "matchLive": "Live",
+      "matchFinished": "Finished",
+      "matchUpcoming": "Upcoming",
       "tier": "Tier",
       "live": "Live",
       "upcoming": "Upcoming",
@@ -3802,6 +3809,16 @@
         "error": "Error placing prediction",
         "back": "Back"
       }
+    },
+    "tournaments": {
+      "metaTitle": "Esport Tournaments",
+      "metaDescription": "Follow upcoming and ongoing professional esport tournaments",
+      "noTournaments": "No tournaments found",
+      "noTournamentsDescription": "No esport tournaments are scheduled at the moment",
+      "tier": "Tier",
+      "live": "Live",
+      "upcoming": "Upcoming",
+      "bet": "Bet"
     },
     "results": {
       "metaTitle": "Esport Results",

@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 test.describe("Esport — calendar, live, teams, players, results", () => {
   test.describe("Esport calendar", () => {
     test("should load the esport calendar page", async ({ page }) => {
-      await page.goto("/fr/esport/calendar");
+      await page.goto("/fr/esport/tournaments");
       await page.waitForLoadState("domcontentloaded");
 
       await expect(page).toHaveURL(/\/fr\/esport\/calendar/);
@@ -12,7 +12,7 @@ test.describe("Esport — calendar, live, teams, players, results", () => {
     });
 
     test("should display tournament cards or empty state", async ({ page }) => {
-      await page.goto("/fr/esport/calendar");
+      await page.goto("/fr/esport/tournaments");
       await page.waitForLoadState("domcontentloaded");
 
       const cards = page.locator('[data-testid="tournament-card"], [class*="card"]');
