@@ -11,9 +11,13 @@ import { Pagination } from "@/components/shared/Pagination";
 import { Icon } from "@iconify/react";
 import type { GameSummary } from "@/types/game";
 
-interface UpcomingResponse {
+export interface UpcomingResponse {
   games: GameSummary[];
   pagination: { currentPage: number; totalPages: number; totalCount: number };
+}
+
+interface UpcomingContentProps {
+  initialData?: UpcomingResponse;
 }
 
 function MonthSelector({ value, onChange }: { value: string; onChange: (v: string) => void }) {
@@ -61,7 +65,7 @@ function MonthSelector({ value, onChange }: { value: string; onChange: (v: strin
   );
 }
 
-export function UpcomingContent() {
+export function UpcomingContent({ initialData }: UpcomingContentProps) {
   const t = useTranslations("upcoming");
   const locale = useLocale();
   const [page, setPage] = useState(1);
@@ -70,7 +74,12 @@ export function UpcomingContent() {
   const params = new URLSearchParams({ locale, page: String(page), limit: "24" });
   if (month) params.set("month", month);
 
+  // Use initialData as fallback only when on default view (page 1, no month filter)
+  const isDefaultView = page === 1 && !month;
+  const fallbackData = isDefaultView ? initialData : undefined;
+
   const { data, isLoading } = useSWR<UpcomingResponse>(`/api/games/upcoming?${params}`, fetcher, {
+    fallbackData,
     revalidateOnFocus: false,
     dedupingInterval: 60000,
   });

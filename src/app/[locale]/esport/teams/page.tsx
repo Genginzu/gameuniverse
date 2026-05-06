@@ -3,7 +3,10 @@ import { getTranslations } from "next-intl/server";
 import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
-import { EsportTeamsContent } from "@/components/esport/EsportTeamsContent";
+import { EsportTeamsContent, type EsportTeamsData } from "@/components/esport/EsportTeamsContent";
+import { logger } from "@/lib/logger";
+
+export const revalidate = 3600;
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -15,7 +18,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: t("metaTitle"), description: t("metaDescription") };
 }
 
-export default function EsportTeamsPage() {
+export default async function EsportTeamsPage() {
+  let initialData: EsportTeamsData | undefined;
+
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const res = await fetch(`${baseUrl}/api/esport/teams`, {
+      next: { revalidate: 3600 },
+    });
+    if (res.ok) {
+      initialData = await res.json();
+    }
+  } catch (error) {
+    logger.error("Failed to fetch esport teams server-side", { error });
+  }
+
   return (
     <DashboardLayout>
       <ErrorBoundary
@@ -23,7 +40,7 @@ export default function EsportTeamsPage() {
           <ErrorFallback description="Error loading esport teams." showRefresh showHomeButton />
         }
       >
-        <EsportTeamsContent />
+        <EsportTeamsContent initialData={initialData} />
       </ErrorBoundary>
     </DashboardLayout>
   );

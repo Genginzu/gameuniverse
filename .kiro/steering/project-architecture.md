@@ -138,12 +138,3 @@ bun run type-check   # TypeScript check
 bun run format       # Prettier
 bun run supabase:types  # Régénérer les types DB
 ```
-
-## Conventions
-
-- Composants : `PascalCase.tsx`, regroupés par feature
-- Hooks : `useCamelCase.ts`, un par fichier dans `src/hooks/`
-- Services : `camelCase.ts` dans `src/lib/services/`
-- Types partagés : dans `src/types/`, par domaine
-- Pages : dans `src/app/[locale]/` (public) ou `src/app/[locale]/admin/`
-- Max 300 lignes par fichier, 150 pour les composants, 100 pour les hooks

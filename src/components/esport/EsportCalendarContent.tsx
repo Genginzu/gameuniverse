@@ -8,6 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { FilterChip } from "@/components/shared/FilterChip";
+import { PredictionDialog } from "@/components/esport/PredictionDialog";
+import { useAuth } from "@/hooks/useAuth";
 
 interface CalendarTournament {
   id: number;
@@ -25,21 +27,34 @@ interface CalendarTournament {
   status: "upcoming" | "running";
 }
 
+export interface EsportCalendarData {
+  tournaments: CalendarTournament[];
+}
+
+interface EsportCalendarContentProps {
+  initialData?: EsportCalendarData;
+}
+
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
-export function EsportCalendarContent() {
+export function EsportCalendarContent({ initialData }: EsportCalendarContentProps) {
   const t = useTranslations("esport.calendar");
+  const { user } = useAuth();
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
+  const [betTournament, setBetTournament] = useState<{ id: number; name: string } | null>(null);
 
   const gamesUrl = "/api/esport/calendar?games_only=true";
   const calendarUrl = selectedGame
     ? `/api/esport/calendar?game=${encodeURIComponent(selectedGame)}`
     : "/api/esport/calendar";
 
+  const fallbackCalendar = !selectedGame ? initialData : undefined;
+
   const { data: gamesData } = useSWR<{ games: string[] }>(gamesUrl, fetcher, {
     revalidateOnFocus: false,
   });
-  const { data, isLoading } = useSWR<{ tournaments: CalendarTournament[] }>(calendarUrl, fetcher, {
+  const { data, isLoading } = useSWR<EsportCalendarData>(calendarUrl, fetcher, {
+    fallbackData: fallbackCalendar,
     revalidateOnFocus: false,
     keepPreviousData: true,
   });
@@ -54,9 +69,7 @@ export function EsportCalendarContent() {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
-        {/* Game filter */}
         {games.length > 0 && (
           <div className="mb-6 flex flex-wrap gap-2">
             {games.map((game) => (
@@ -70,7 +83,6 @@ export function EsportCalendarContent() {
           </div>
         )}
 
-        {/* Content */}
         {isLoading && tournaments.length === 0 ? (
           <CalendarSkeleton />
         ) : tournaments.length === 0 ? (
@@ -82,16 +94,29 @@ export function EsportCalendarContent() {
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {tournaments.map((tournament) => (
-              <TournamentCard key={tournament.id} tournament={tournament} />
+              <TournamentCard
+                key={tournament.id}
+                tournament={tournament}
+                onBet={user ? () => setBetTournament({ id: tournament.id, name: tournament.name }) : undefined}
+              />
             ))}
           </div>
+        )}
+
+        {betTournament && (
+          <PredictionDialog
+            open={!!betTournament}
+            onOpenChange={(open) => { if (!open) setBetTournament(null); }}
+            tournamentId={betTournament.id}
+            tournamentName={betTournament.name}
+          />
         )}
       </div>
     </div>
   );
 }
 
-function TournamentCard({ tournament }: { tournament: CalendarTournament }) {
+function TournamentCard({ tournament, onBet }: { tournament: CalendarTournament; onBet?: () => void }) {
   const t = useTranslations("esport.calendar");
 
   const formatDate = (dateStr: string | null) => {
@@ -135,7 +160,6 @@ function TournamentCard({ tournament }: { tournament: CalendarTournament }) {
           <Icon icon="mdi:gamepad-variant" className="h-3.5 w-3.5 shrink-0" />
           <span className="font-medium">{tournament.game}</span>
         </div>
-
         <div className="flex items-center gap-1.5">
           <Icon icon="mdi:calendar" className="h-3.5 w-3.5 shrink-0" />
           <span>
@@ -143,7 +167,6 @@ function TournamentCard({ tournament }: { tournament: CalendarTournament }) {
             {tournament.endAt && ` — ${formatDate(tournament.endAt)}`}
           </span>
         </div>
-
         {tournament.prizepool && (
           <div className="flex items-center gap-1.5">
             <Icon icon="mdi:cash" className="h-3.5 w-3.5 shrink-0" />
@@ -162,6 +185,16 @@ function TournamentCard({ tournament }: { tournament: CalendarTournament }) {
         >
           {tournament.status === "running" ? t("live") : t("upcoming")}
         </Badge>
+        {onBet && (
+          <button
+            type="button"
+            onClick={onBet}
+            className="flex min-h-[44px] items-center gap-1 rounded-lg bg-amber-500/10 px-3 py-2 text-xs font-medium text-amber-600 transition-all hover:bg-amber-500/20 dark:text-amber-400"
+          >
+            <Icon icon="mdi:dice-multiple" className="size-3.5" />
+            {t("bet")}
+          </button>
+        )}
       </div>
     </div>
   );

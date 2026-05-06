@@ -49,9 +49,13 @@ jobs:
       - run: bun run type-check
 
   unit-tests:
-    name: Unit Tests
+    name: Unit Tests (${{ matrix.shard }})
     needs: [lint, type-check]
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [api, components, hooks, lib, scripts]
     steps:
       - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
@@ -60,7 +64,7 @@ jobs:
         with:
           path: node_modules
           key: modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
-      - run: bun run test:all
+      - run: bunx vitest run test/unit/${{ matrix.shard }}/
 
   build:
     name: Build
@@ -99,9 +103,13 @@ jobs:
           include-hidden-files: true
 
   e2e:
-    name: E2E Tests
+    name: E2E Tests (${{ matrix.shard }}/${{ strategy.job-total }})
     needs: [build]
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
     container:
       image: mcr.microsoft.com/playwright:v1.59.1-noble
     steps:
@@ -127,7 +135,7 @@ jobs:
           path: .next/
 
       - name: Run E2E Tests
-        run: npx playwright test
+        run: npx playwright test --shard=${{ matrix.shard }}/4
         env:
           HOME: /root
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
@@ -137,6 +145,6 @@ jobs:
         uses: actions/upload-artifact@v5
         if: ${{ !cancelled() }}
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.shard }}
           path: playwright-report/
           retention-days: 30

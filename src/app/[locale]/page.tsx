@@ -5,6 +5,9 @@ import { HomeContent } from "@/components/home/HomeContent";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
 import { JsonLd } from "@/components/shared/JsonLd";
+import { logger } from "@/lib/logger";
+
+export const revalidate = 300;
 
 interface HomePageProps {
   params: Promise<{ locale: string }>;
@@ -25,6 +28,22 @@ export async function generateMetadata({ params }: HomePageProps): Promise<Metad
 
 export default async function Home({ params }: HomePageProps) {
   const { locale } = await params;
+
+  let initialGames;
+
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const res = await fetch(`${baseUrl}/api/games?limit=8&locale=${locale}`, {
+      next: { revalidate: 300 },
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      initialGames = data.games;
+    }
+  } catch (error) {
+    logger.error("Failed to fetch initial games for home page", { error });
+  }
 
   return (
     <>
@@ -53,7 +72,7 @@ export default async function Home({ params }: HomePageProps) {
             />
           }
         >
-          <HomeContent />
+          <HomeContent initialGames={initialGames} />
         </ErrorBoundary>
       </DashboardLayout>
     </>

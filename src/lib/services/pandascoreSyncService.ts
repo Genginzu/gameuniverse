@@ -21,10 +21,11 @@ function buildParams(game?: string, page = 1): PandaScoreListParams {
 async function fetchAllPages<T>(
   fetcher: (p: PandaScoreListParams) => Promise<T[]>,
   game?: string,
+  maxPages = 5,
 ): Promise<T[]> {
   const all: T[] = [];
   let page = 1;
-  while (true) {
+  while (page <= maxPages) {
     const batch = await fetcher(buildParams(game, page));
     all.push(...batch);
     if (batch.length < 100) break;

@@ -10,10 +10,10 @@ import { FilterButton } from "@/components/shared/FilterButton";
 import { GameSortMenu } from "./GameSortMenu";
 import { SearchSkeleton } from "./SearchSkeleton";
 import { LibraryStatusProvider } from "@/components/providers/LibraryStatusProvider";
-import { useGameListing, useGenres, usePlatforms } from "@/hooks/useGameListing";
-import { DEFAULT_GAME_LISTING_SORT, GameListingSort } from "@/types/game";
+import { useGameListing, useGenres, usePlatforms, GamesApiResponse } from "@/hooks/useGameListing";
+import { DEFAULT_GAME_LISTING_SORT, GameListingSort, GameSummary } from "@/types/game";
+import { Pagination as PaginationType } from "@/types/pagination";
 
-// Lazy load des composants non visibles au premier rendu
 const GameFilters = dynamic(() => import("./GameFilters").then((m) => m.GameFilters));
 const Pagination = dynamic(() =>
   import("@/components/shared/Pagination").then((m) => m.Pagination)
@@ -21,9 +21,15 @@ const Pagination = dynamic(() =>
 
 interface AllGamesContentProps {
   locale?: string;
+  initialGames?: GameSummary[];
+  initialPagination?: PaginationType | null;
 }
 
-export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
+export function AllGamesContent({
+  locale = "fr",
+  initialGames,
+  initialPagination,
+}: AllGamesContentProps) {
   const t = useTranslations("games");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
@@ -33,7 +39,20 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
   const [showFilters, setShowFilters] = useState(false);
   const [sort, setSort] = useState<GameListingSort>(DEFAULT_GAME_LISTING_SORT);
 
-  // SWR hooks — cache automatique, stale-while-revalidate, déduplication
+  // Données SSR comme fallback SWR (page 1, pas de filtres, tri par défaut)
+  const isDefaultView =
+    currentPage === 1 &&
+    selectedGenres.length === 0 &&
+    selectedPlatforms.length === 0 &&
+    esportFilter === null &&
+    sort === DEFAULT_GAME_LISTING_SORT;
+
+  const fallbackData: GamesApiResponse | undefined =
+    isDefaultView && initialGames && initialPagination
+      ? { games: initialGames, pagination: initialPagination }
+      : undefined;
+
+  // SWR hooks
   const { genres } = useGenres(locale);
   const { platforms } = usePlatforms(locale);
   const { games, pagination, loading, validating } = useGameListing(
@@ -42,12 +61,11 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
     selectedGenres,
     selectedPlatforms,
     sort,
-    esportFilter
+    esportFilter,
+    fallbackData
   );
 
-  // Le premier chargement est quand SWR n'a encore aucune donnée
   const initialLoading = loading && games.length === 0;
-  // Transition : SWR revalide (changement de filtre/page) mais a des données précédentes
   const transitioning = validating && !loading;
 
   const handleGenreFilter = useCallback((genres: string[]) => {
@@ -93,7 +111,6 @@ export function AllGamesContent({ locale = "fr" }: AllGamesContentProps) {
     selectedPlatforms.length > 0 ||
     esportFilter !== null;
 
-  // Skeleton complet au premier chargement
   if (initialLoading) {
     return <SearchSkeleton />;
   }

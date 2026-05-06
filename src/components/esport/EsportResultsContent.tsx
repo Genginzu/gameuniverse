@@ -22,14 +22,18 @@ interface ResultMatch {
   winnerId: number | null;
 }
 
-interface ResultsResponse {
+export interface EsportResultsData {
   tournaments: unknown[];
   matches: ResultMatch[];
 }
 
+interface EsportResultsContentProps {
+  initialData?: EsportResultsData;
+}
+
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
-export function EsportResultsContent() {
+export function EsportResultsContent({ initialData }: EsportResultsContentProps) {
   const t = useTranslations("esport.results");
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
 
@@ -38,10 +42,13 @@ export function EsportResultsContent() {
     ? `/api/esport/results?game=${encodeURIComponent(selectedGame)}`
     : "/api/esport/results";
 
+  const fallbackData = !selectedGame ? initialData : undefined;
+
   const { data: gamesData } = useSWR<{ games: string[] }>(calendarGamesUrl, fetcher, {
     revalidateOnFocus: false,
   });
-  const { data, isLoading } = useSWR<ResultsResponse>(resultsUrl, fetcher, {
+  const { data, isLoading } = useSWR<EsportResultsData>(resultsUrl, fetcher, {
+    fallbackData,
     revalidateOnFocus: false,
     keepPreviousData: true,
   });
@@ -56,7 +63,6 @@ export function EsportResultsContent() {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
         {games.length > 0 && (
           <div className="mb-6 flex flex-wrap gap-2">

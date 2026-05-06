@@ -26,14 +26,23 @@ interface TeamDetail {
   }>;
 }
 
+export interface EsportTeamDetailData {
+  team: TeamDetail;
+}
+
+interface EsportTeamDetailContentProps {
+  teamId: string;
+  initialData?: EsportTeamDetailData;
+}
+
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
-export function EsportTeamDetailContent({ teamId }: { teamId: string }) {
+export function EsportTeamDetailContent({ teamId, initialData }: EsportTeamDetailContentProps) {
   const t = useTranslations("esport.teams");
-  const { data, isLoading, error } = useSWR<{ team: TeamDetail }>(
+  const { data, isLoading, error } = useSWR<EsportTeamDetailData>(
     `/api/esport/teams/${teamId}`,
     fetcher,
-    { revalidateOnFocus: false }
+    { fallbackData: initialData, revalidateOnFocus: false }
   );
 
   if (isLoading) return <TeamDetailSkeleton />;
@@ -50,7 +59,6 @@ export function EsportTeamDetailContent({ teamId }: { teamId: string }) {
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
       <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
-        {/* Header */}
         <div className="glass-card mb-6 flex flex-col items-center gap-4 rounded-2xl p-6 sm:flex-row sm:items-start sm:p-8">
           <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-full bg-white/50 dark:bg-gray-700/50">
             {team.imageUrl ? (
@@ -90,7 +98,6 @@ export function EsportTeamDetailContent({ teamId }: { teamId: string }) {
           </div>
         </div>
 
-        {/* Roster */}
         {team.players.length > 0 && (
           <div>
             <h2 className="mb-4 text-lg font-bold text-gray-900 sm:text-xl dark:text-white">

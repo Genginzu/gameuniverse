@@ -90,6 +90,7 @@
 | [security-fixes.md](systems/security-fixes.md)                         | Correctifs sécurité            |
 | [resend-configuration.md](systems/resend-configuration.md)             | Configuration Resend (email)   |
 | [supabase-storage-migration.md](systems/supabase-storage-migration.md) | Migration storage Supabase     |
+| [isr-hybrid.md](systems/isr-hybrid.md)                                 | ISR hybrid pages publiques     |
 
 ### 💰 Pricing
 

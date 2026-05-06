@@ -84,13 +84,19 @@ export async function getMyPredictions(playerId: string): Promise<EsportPredicti
 }
 
 export async function resolvePrediction(matchId: number): Promise<number> {
-  const supabase = await createRouteHandlerClient();
-
   // Fetch match result from PandaScore
   const match = await getMatchById(matchId);
   if (match.status !== "finished" || !match.winner_id) return 0;
 
-  const winnerId = match.winner_id;
+  return resolvePredictionsForMatch(matchId, match.winner_id);
+}
+
+/**
+ * Resolve all pending predictions for a finished match.
+ * Can be called from cron without re-fetching from PandaScore.
+ */
+export async function resolvePredictionsForMatch(matchId: number, winnerId: number): Promise<number> {
+  const supabase = await createRouteHandlerClient();
 
   // Get all pending predictions for this match
   const { data: predictions, error } = await untypedTable(supabase, "esport_predictions")

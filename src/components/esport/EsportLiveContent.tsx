@@ -21,9 +21,17 @@ interface LiveStream {
   opponents: string[];
 }
 
+export interface EsportLiveData {
+  streams: LiveStream[];
+}
+
+interface EsportLiveContentProps {
+  initialData?: EsportLiveData;
+}
+
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
-export function EsportLiveContent() {
+export function EsportLiveContent({ initialData }: EsportLiveContentProps) {
   const t = useTranslations("esport.live");
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
 
@@ -32,12 +40,15 @@ export function EsportLiveContent() {
     ? `/api/esport/live?game=${encodeURIComponent(selectedGame)}`
     : "/api/esport/live";
 
+  const fallbackData = !selectedGame ? initialData : undefined;
+
   const { data: gamesData } = useSWR<{ games: string[] }>(gamesUrl, fetcher, {
     revalidateOnFocus: false,
   });
-  const { data, isLoading } = useSWR<{ streams: LiveStream[] }>(liveUrl, fetcher, {
+  const { data, isLoading } = useSWR<EsportLiveData>(liveUrl, fetcher, {
+    fallbackData,
     revalidateOnFocus: false,
-    refreshInterval: 120_000, // Refresh every 2 min
+    refreshInterval: 120_000,
     keepPreviousData: true,
   });
 
@@ -51,7 +62,6 @@ export function EsportLiveContent() {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
         {games.length > 0 && (
           <div className="mb-6 flex flex-wrap gap-2">

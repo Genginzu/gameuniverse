@@ -37,6 +37,10 @@
     "esportCalendar": {
       "title": "Calendrier Esport",
       "description": "Suivez les tournois esport professionnels à venir et en cours"
+    },
+    "coins": {
+      "title": "Historique GU Coins",
+      "description": "Consultez l'historique de vos GU Coins gagnés et dépensés"
     }
   },
   "navigation": {
@@ -3719,9 +3723,12 @@
     "balance": "Solde",
     "totalEarned": "Total gagné",
     "totalSpent": "Total dépensé",
-    "history": "Historique",
+    "history": "Historique GU Coins",
     "myWallet": "Mon portefeuille",
     "noTransactions": "Aucune transaction",
+    "filterAll": "Tous les types",
+    "errorLoading": "Impossible de charger l'historique des GU Coins.",
+    "earnTitle": "Comment gagner des GU Coins",
     "toast": {
       "rewarded": "+{amount} GU Coins — {reason}"
     },
@@ -3783,7 +3790,21 @@
       "noTournamentsDescription": "Aucun tournoi esport n'est prévu pour le moment",
       "tier": "Tier",
       "live": "En direct",
-      "upcoming": "À venir"
+      "upcoming": "À venir",
+      "bet": "Parier",
+      "prediction": {
+        "title": "Placer un pronostic",
+        "selectMatch": "Choisissez un match",
+        "noMatches": "Aucun match disponible pour ce tournoi",
+        "chooseWinner": "Qui va gagner ?",
+        "amount": "Mise (GU Coins)",
+        "balanceLabel": "Solde",
+        "placeBet": "Miser {amount} GU Coins",
+        "placing": "Mise en cours...",
+        "success": "Pronostic placé avec succès !",
+        "error": "Erreur lors du placement du pronostic",
+        "back": "Retour"
+      }
     },
     "results": {
       "metaTitle": "Résultats Esport",

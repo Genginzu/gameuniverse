@@ -7,12 +7,17 @@ import { RecentGamesSection } from "./RecentGamesSection";
 import { StatsSection } from "./StatsSection";
 import { CtaSection } from "./CtaSection";
 import { HomeDashboard } from "./HomeDashboard";
+import type { GameSummary } from "@/types/game";
+
+interface HomeContentProps {
+  initialGames?: GameSummary[];
+}
 
 /**
  * Home page content — shows dashboard for authenticated users,
  * immersive landing page for visitors.
  */
-export function HomeContent() {
+export function HomeContent({ initialGames }: HomeContentProps) {
   const { user, loading } = useAuth();
   const isAuthenticated = !loading && !!user;
 
@@ -26,7 +31,7 @@ export function HomeContent() {
     <div className="flex-1">
       <HeroSection />
       <FeaturesSection />
-      <RecentGamesSection />
+      <RecentGamesSection initialGames={initialGames} />
       <StatsSection />
       <CtaSection />
     </div>

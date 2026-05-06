@@ -23,9 +23,17 @@ interface PlayerSummary {
   game: string | null;
 }
 
+export interface EsportPlayersData {
+  players: PlayerSummary[];
+}
+
+interface EsportPlayersContentProps {
+  initialData?: EsportPlayersData;
+}
+
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
-export function EsportPlayersContent() {
+export function EsportPlayersContent({ initialData }: EsportPlayersContentProps) {
   const t = useTranslations("esport.players");
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebouncedValue(search, 300);
@@ -34,7 +42,10 @@ export function EsportPlayersContent() {
     ? `/api/esport/players?search=${encodeURIComponent(debouncedSearch)}`
     : "/api/esport/players";
 
-  const { data, isLoading } = useSWR<{ players: PlayerSummary[] }>(url, fetcher, {
+  const fallbackData = !debouncedSearch ? initialData : undefined;
+
+  const { data, isLoading } = useSWR<EsportPlayersData>(url, fetcher, {
+    fallbackData,
     revalidateOnFocus: false,
     keepPreviousData: true,
   });
@@ -47,7 +58,6 @@ export function EsportPlayersContent() {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
         <div className="mb-6">
           <div className="relative max-w-md">

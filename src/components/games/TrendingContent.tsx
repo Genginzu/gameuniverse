@@ -9,11 +9,15 @@ import { gameSkeletonConfig } from "@/components/shared/EntitySkeleton";
 import { Icon } from "@iconify/react";
 import type { GameSummary } from "@/types/game";
 
-interface TrendingData {
+export interface TrendingData {
   mostViewed: GameSummary[];
   mostPopular: GameSummary[];
   bestRated: GameSummary[];
   recentlyAdded: GameSummary[];
+}
+
+interface TrendingContentProps {
+  initialData?: TrendingData;
 }
 
 interface SectionProps {
@@ -47,14 +51,14 @@ function TrendingSection({ title, icon, games }: SectionProps) {
   );
 }
 
-export function TrendingContent() {
+export function TrendingContent({ initialData }: TrendingContentProps) {
   const t = useTranslations("trending");
   const locale = useLocale();
 
   const { data, isLoading } = useSWR<TrendingData>(
     `/api/games/trending?locale=${locale}&limit=12`,
     fetcher,
-    { revalidateOnFocus: false, dedupingInterval: 60000 }
+    { fallbackData: initialData, revalidateOnFocus: false, dedupingInterval: 60000 }
   );
 
   if (isLoading) {

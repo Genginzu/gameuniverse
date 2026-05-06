@@ -3,7 +3,10 @@ import { getTranslations } from "next-intl/server";
 import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
-import { EsportTeamDetailContent } from "@/components/esport/EsportTeamDetailContent";
+import { EsportTeamDetailContent, type EsportTeamDetailData } from "@/components/esport/EsportTeamDetailContent";
+import { logger } from "@/lib/logger";
+
+export const revalidate = 3600;
 
 interface Props {
   params: Promise<{ locale: string; id: string }>;
@@ -17,12 +20,27 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function EsportTeamDetailPage({ params }: Props) {
   const { id } = await params;
+
+  let initialData: EsportTeamDetailData | undefined;
+
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const res = await fetch(`${baseUrl}/api/esport/teams/${id}`, {
+      next: { revalidate: 3600 },
+    });
+    if (res.ok) {
+      initialData = await res.json();
+    }
+  } catch (error) {
+    logger.error("Failed to fetch esport team detail server-side", { error });
+  }
+
   return (
     <DashboardLayout>
       <ErrorBoundary
         fallback={<ErrorFallback description="Error loading team." showRefresh showHomeButton />}
       >
-        <EsportTeamDetailContent teamId={id} />
+        <EsportTeamDetailContent teamId={id} initialData={initialData} />
       </ErrorBoundary>
     </DashboardLayout>
   );
