@@ -126,7 +126,7 @@ export function EsportCalendarMonthly() {
         ) : (
           <div className="glass-card overflow-hidden rounded-2xl">
             {/* Week day headers */}
-            <div className="grid grid-cols-7 border-b border-white/20 dark:border-slate-700/50">
+            <div className="grid grid-cols-7 divide-x divide-white/20 border-b border-white/30 dark:divide-slate-700/50 dark:border-slate-600/50">
               {weekDays.map((day) => (
                 <div
                   key={day}
@@ -182,7 +182,7 @@ function CalendarCell({
 }) {
   if (day === null) {
     return (
-      <div className="min-h-[80px] border-b border-r border-white/10 bg-white/10 sm:min-h-[100px] dark:border-slate-700/30 dark:bg-slate-800/20" />
+      <div className="min-h-[80px] border-b border-r border-white/30 bg-white/10 sm:min-h-[100px] dark:border-slate-600/50 dark:bg-slate-800/20" />
     );
   }
 
@@ -191,7 +191,7 @@ function CalendarCell({
 
   const content = (
     <div
-      className={`flex min-h-[80px] flex-col border-b border-r border-white/10 p-1 transition-all sm:min-h-[100px] sm:p-2 dark:border-slate-700/30 ${
+      className={`flex min-h-[80px] flex-col border-b border-r border-white/30 p-1 transition-all sm:min-h-[100px] sm:p-2 dark:border-slate-600/50 ${
         hasMatches
           ? "cursor-pointer bg-white/30 hover:bg-white/60 dark:bg-slate-700/20 dark:hover:bg-slate-700/50"
           : "bg-white/10 dark:bg-slate-800/10"
@@ -245,7 +245,7 @@ function CalendarCell({
 function CalendarGridSkeleton() {
   return (
     <div className="glass-card overflow-hidden rounded-2xl">
-      <div className="grid grid-cols-7 border-b border-white/20 dark:border-slate-700/50">
+      <div className="grid grid-cols-7 divide-x divide-white/20 border-b border-white/30 dark:divide-slate-700/50 dark:border-slate-600/50">
         {Array.from({ length: 7 }).map((_, i) => (
           <div key={i} className="px-3 py-3">
             <Skeleton className="mx-auto h-4 w-8" />
@@ -254,7 +254,7 @@ function CalendarGridSkeleton() {
       </div>
       <div className="grid grid-cols-7">
         {Array.from({ length: 35 }).map((_, i) => (
-          <div key={i} className="min-h-[100px] border-b border-r border-white/10 p-2 dark:border-slate-700/30">
+          <div key={i} className="min-h-[100px] border-b border-r border-white/30 p-2 dark:border-slate-600/50">
             <Skeleton className="h-5 w-5 rounded-full" />
           </div>
         ))}
