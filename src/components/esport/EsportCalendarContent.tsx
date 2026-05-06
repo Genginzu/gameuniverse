@@ -37,6 +37,22 @@ interface EsportCalendarContentProps {
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
+const GAME_ICONS: Record<string, string> = {
+  "LoL": "simple-icons:leagueoflegends",
+  "League of Legends": "simple-icons:leagueoflegends",
+  "Counter-Strike": "simple-icons:counterstrike",
+  "CS2": "simple-icons:counterstrike",
+  "Valorant": "simple-icons:valorant",
+  "Dota 2": "simple-icons:dota2",
+  "Overwatch": "simple-icons:overwatch",
+  "Call of Duty": "simple-icons:activision",
+  "Rainbow 6 Siege": "simple-icons:ubisoft",
+  "Rocket League": "simple-icons:epicgames",
+  "StarCraft 2": "simple-icons:blizzard",
+  "King of Glory": "mdi:crown",
+  "Mobile Legends: Bang Bang": "mdi:cellphone",
+};
+
 export function EsportCalendarContent({ initialData }: EsportCalendarContentProps) {
   const t = useTranslations("esport.calendar");
   const { user } = useAuth();
@@ -76,6 +92,7 @@ export function EsportCalendarContent({ initialData }: EsportCalendarContentProp
               <FilterChip
                 key={game}
                 label={game}
+                icon={GAME_ICONS[game] ? <Icon icon={GAME_ICONS[game]} className="size-3.5" /> : undefined}
                 selected={selectedGame === game}
                 onClick={() => handleGameFilter(game)}
               />
@@ -157,7 +174,7 @@ function TournamentCard({ tournament, onBet }: { tournament: CalendarTournament;
 
       <div className="space-y-2 text-xs text-gray-600 dark:text-gray-300">
         <div className="flex items-center gap-1.5">
-          <Icon icon="mdi:gamepad-variant" className="h-3.5 w-3.5 shrink-0" />
+          <Icon icon={GAME_ICONS[tournament.game] ?? "mdi:gamepad-variant"} className="h-3.5 w-3.5 shrink-0" />
           <span className="font-medium">{tournament.game}</span>
         </div>
         <div className="flex items-center gap-1.5">
