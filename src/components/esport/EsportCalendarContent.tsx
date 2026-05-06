@@ -37,6 +37,22 @@ interface EsportCalendarContentProps {
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
+const GAME_LOGOS: Record<string, string> = {
+  "LoL": "/assets/games/lol.png",
+  "League of Legends": "/assets/games/lol.png",
+  "Counter-Strike": "/assets/games/cs2.png",
+  "CS2": "/assets/games/cs2.png",
+  "Valorant": "/assets/games/valorant.png",
+  "Dota 2": "/assets/games/dota2.png",
+  "Overwatch": "/assets/games/overwatch.png",
+  "Call of Duty": "/assets/games/cod.png",
+  "Rainbow 6 Siege": "/assets/games/r6.png",
+  "Rocket League": "/assets/games/rocket-league.png",
+  "StarCraft 2": "/assets/games/starcraft2.png",
+  "King of Glory": "/assets/games/kog.png",
+  "Mobile Legends: Bang Bang": "/assets/games/mlbb.png",
+};
+
 export function EsportCalendarContent({ initialData }: EsportCalendarContentProps) {
   const t = useTranslations("esport.calendar");
   const { user } = useAuth();
@@ -76,6 +92,7 @@ export function EsportCalendarContent({ initialData }: EsportCalendarContentProp
               <FilterChip
                 key={game}
                 label={game}
+                icon={GAME_LOGOS[game] ? <img src={GAME_LOGOS[game]} alt="" className="size-4 rounded-sm object-contain" /> : undefined}
                 selected={selectedGame === game}
                 onClick={() => handleGameFilter(game)}
               />
@@ -140,10 +157,10 @@ function TournamentCard({ tournament, onBet }: { tournament: CalendarTournament;
       <div className="mb-3 flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
           <h3 className="line-clamp-2 text-sm font-bold text-gray-900 sm:text-base dark:text-white">
-            {tournament.name}
+            {tournament.league}
           </h3>
           <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
-            {tournament.league} · {tournament.serie}
+            {tournament.name}{tournament.serie ? ` · ${tournament.serie}` : ""}
           </p>
         </div>
         {tournament.tier !== "unranked" && (
@@ -157,7 +174,11 @@ function TournamentCard({ tournament, onBet }: { tournament: CalendarTournament;
 
       <div className="space-y-2 text-xs text-gray-600 dark:text-gray-300">
         <div className="flex items-center gap-1.5">
-          <Icon icon="mdi:gamepad-variant" className="h-3.5 w-3.5 shrink-0" />
+          {GAME_LOGOS[tournament.game] ? (
+            <img src={GAME_LOGOS[tournament.game]} alt="" className="h-4 w-4 rounded-sm object-contain" />
+          ) : (
+            <Icon icon="mdi:gamepad-variant" className="h-3.5 w-3.5 shrink-0" />
+          )}
           <span className="font-medium">{tournament.game}</span>
         </div>
         <div className="flex items-center gap-1.5">

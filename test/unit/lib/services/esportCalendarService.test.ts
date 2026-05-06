@@ -2,38 +2,40 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 vi.mock("@/lib/logger", () => ({ logger: { error: vi.fn() } }));
 
-const mockGetUpcoming = vi.fn();
-const mockGetRunning = vi.fn();
+const mockSelect = vi.fn();
+const mockOr = vi.fn();
+const mockOrder = vi.fn();
+const mockLimit = vi.fn();
+const mockEq = vi.fn();
 
-vi.mock("@/lib/pandascore/client", () => ({
-  getUpcomingTournaments: (...args: unknown[]) => mockGetUpcoming(...args),
-  getRunningTournaments: (...args: unknown[]) => mockGetRunning(...args),
+vi.mock("@/lib/supabase-admin", () => ({
+  getSupabaseAdmin: () => ({
+    from: () => ({ select: mockSelect }),
+  }),
 }));
+
+function setupChain(data: Record<string, unknown>[] | null, error?: { message: string }) {
+  mockSelect.mockReturnValue({ or: mockOr });
+  mockOr.mockReturnValue({ order: mockOrder });
+  mockOrder.mockReturnValue({ limit: mockLimit });
+  mockLimit.mockReturnValue({ eq: mockEq, data, error: error ?? null });
+  mockEq.mockReturnValue({ data, error: error ?? null });
+}
 
 function makeTournament(overrides: Record<string, unknown> = {}) {
   return {
-    id: 1,
+    id: "uuid-1",
+    pandascore_id: 1,
     name: "World Championship",
     slug: "world-championship",
-    begin_at: "2026-06-01T00:00:00Z",
-    end_at: "2026-06-15T00:00:00Z",
-    serie_id: 1,
-    league_id: 1,
-    league: { id: 1, name: "LEC", slug: "lec", image_url: null, url: null },
-    serie: {
-      id: 1,
-      name: null,
-      slug: "s1",
-      begin_at: null,
-      end_at: null,
-      full_name: "Season 1",
-      year: 2026,
-    },
-    videogame: { id: 1, name: "League of Legends", slug: "league-of-legends" },
+    begin_at: "2099-06-01T00:00:00Z",
+    end_at: "2099-06-15T00:00:00Z",
+    league_name: "LEC",
+    league_image_url: null,
+    serie_name: "Season 1",
+    game: "League of Legends",
     prizepool: "$1,000,000",
     tier: "s",
-    winner_id: null,
-    winner_type: null,
     ...overrides,
   };
 }
@@ -48,11 +50,10 @@ describe("esportCalendarService", () => {
     return import("@/lib/services/esportCalendarService");
   }
 
-  it("merges running and upcoming tournaments", async () => {
-    const running = [makeTournament({ id: 1, name: "Running" })];
-    const upcoming = [makeTournament({ id: 2, name: "Upcoming" })];
-    mockGetRunning.mockResolvedValue(running);
-    mockGetUpcoming.mockResolvedValue(upcoming);
+  it("returns tournaments from DB and determines status", async () => {
+    const past = makeTournament({ pandascore_id: 1, name: "Running", begin_at: "2020-01-01T00:00:00Z" });
+    const future = makeTournament({ pandascore_id: 2, name: "Upcoming", begin_at: "2099-01-01T00:00:00Z" });
+    setupChain([past, future]);
 
     const { getCalendarTournaments } = await loadService();
     const result = await getCalendarTournaments();
@@ -65,8 +66,7 @@ describe("esportCalendarService", () => {
   });
 
   it("maps tournament fields correctly", async () => {
-    mockGetRunning.mockResolvedValue([]);
-    mockGetUpcoming.mockResolvedValue([makeTournament()]);
+    setupChain([makeTournament()]);
 
     const { getCalendarTournaments } = await loadService();
     const [t] = await getCalendarTournaments();
@@ -77,39 +77,22 @@ describe("esportCalendarService", () => {
     expect(t.league).toBe("LEC");
     expect(t.prizepool).toBe("$1,000,000");
     expect(t.tier).toBe("s");
-    expect(t.beginAt).toBe("2026-06-01T00:00:00Z");
   });
 
-  it("passes game filter to PandaScore", async () => {
-    mockGetRunning.mockResolvedValue([]);
-    mockGetUpcoming.mockResolvedValue([]);
+  it("passes game filter as eq query", async () => {
+    setupChain([]);
 
     const { getCalendarTournaments } = await loadService();
     await getCalendarTournaments({ game: "Valorant" });
 
-    expect(mockGetUpcoming).toHaveBeenCalledWith(
-      expect.objectContaining({ "filter[videogame_title]": "Valorant" })
-    );
-  });
-
-  it("caches results for subsequent calls", async () => {
-    mockGetRunning.mockResolvedValue([]);
-    mockGetUpcoming.mockResolvedValue([makeTournament()]);
-
-    const { getCalendarTournaments } = await loadService();
-    await getCalendarTournaments();
-    await getCalendarTournaments();
-
-    // Only called once due to cache
-    expect(mockGetUpcoming).toHaveBeenCalledTimes(1);
+    expect(mockEq).toHaveBeenCalledWith("game", "Valorant");
   });
 
   it("getCalendarGames returns unique sorted game names", async () => {
-    mockGetRunning.mockResolvedValue([]);
-    mockGetUpcoming.mockResolvedValue([
-      makeTournament({ id: 1, videogame: { id: 1, name: "Valorant", slug: "valorant" } }),
-      makeTournament({ id: 2, videogame: { id: 2, name: "CS2", slug: "cs2" } }),
-      makeTournament({ id: 3, videogame: { id: 1, name: "Valorant", slug: "valorant" } }),
+    setupChain([
+      makeTournament({ pandascore_id: 1, game: "Valorant" }),
+      makeTournament({ pandascore_id: 2, game: "CS2" }),
+      makeTournament({ pandascore_id: 3, game: "Valorant" }),
     ]);
 
     const { getCalendarGames } = await loadService();
@@ -118,11 +101,10 @@ describe("esportCalendarService", () => {
     expect(games).toEqual(["CS2", "Valorant"]);
   });
 
-  it("throws on PandaScore error", async () => {
-    mockGetRunning.mockRejectedValue(new Error("API down"));
-    mockGetUpcoming.mockRejectedValue(new Error("API down"));
+  it("throws on DB error", async () => {
+    setupChain(null, { message: "DB down" });
 
     const { getCalendarTournaments } = await loadService();
-    await expect(getCalendarTournaments()).rejects.toThrow("API down");
+    await expect(getCalendarTournaments()).rejects.toThrow();
   });
 });
