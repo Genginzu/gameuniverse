@@ -3725,6 +3725,7 @@
     "noTransactions": "No transactions",
     "filterAll": "All types",
     "errorLoading": "Failed to load GU Coins history.",
+    "earnTitle": "How to earn GU Coins",
     "toast": {
       "rewarded": "+{amount} GU Coins — {reason}"
     },

@@ -3728,6 +3728,7 @@
     "noTransactions": "Aucune transaction",
     "filterAll": "Tous les types",
     "errorLoading": "Impossible de charger l'historique des GU Coins.",
+    "earnTitle": "Comment gagner des GU Coins",
     "toast": {
       "rewarded": "+{amount} GU Coins — {reason}"
     },

@@ -9,6 +9,7 @@ import { Pagination } from "@/components/shared/Pagination";
 import type {
   CoinTransaction,
   CoinTransactionType,
+  CoinActivityType,
   TransactionsResponse,
 } from "@/types/coins";
 
@@ -25,6 +26,26 @@ const TYPE_ICONS: Record<CoinTransactionType, string> = {
   admin_grant: "mdi:shield-account",
 };
 
+const ACTIVITY_ICONS: Record<CoinActivityType, string> = {
+  review: "mdi:star-edit",
+  library_add: "mdi:bookshelf",
+  library_status_change: "mdi:swap-horizontal",
+  playtime_log: "mdi:timer",
+  collection_add: "mdi:folder-plus",
+  game_rating: "mdi:star",
+  character_favorite: "mdi:heart",
+  character_vote: "mdi:thumb-up",
+  post_create: "mdi:pencil-plus",
+  post_comment: "mdi:comment-plus",
+  discussion_message: "mdi:message-text",
+  friend_add: "mdi:account-plus",
+};
+
+interface RewardItem {
+  activityType: CoinActivityType;
+  amount: number;
+}
+
 export function CoinHistoryContent() {
   const t = useTranslations("coins");
   const { wallet } = useWallet();
@@ -36,6 +57,11 @@ export function CoinHistoryContent() {
 
   const { data, isLoading } = useSWR<TransactionsResponse>(
     `/api/players/me/wallet/transactions?${params}`,
+    fetcher
+  );
+
+  const { data: rewardsData } = useSWR<{ rewards: RewardItem[] }>(
+    "/api/players/me/wallet/rewards",
     fetcher
   );
 
@@ -82,6 +108,11 @@ export function CoinHistoryContent() {
         </div>
       </div>
 
+      {/* How to earn section */}
+      {rewardsData?.rewards && rewardsData.rewards.length > 0 && (
+        <EarnSection rewards={rewardsData.rewards} t={t} />
+      )}
+
       {/* Filter */}
       <div className="flex items-center gap-2">
         <select
@@ -122,6 +153,40 @@ export function CoinHistoryContent() {
           loading={isLoading}
         />
       )}
+    </div>
+  );
+}
+
+function EarnSection({ rewards, t }: { rewards: RewardItem[]; t: (key: string) => string }) {
+  return (
+    <div className="glass-card rounded-2xl p-4 md:p-6">
+      <div className="mb-4 flex items-center gap-2">
+        <Icon icon="mdi:target" className="size-5 text-amber-500" />
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{t("earnTitle")}</h2>
+      </div>
+      <div className="grid grid-cols-1 gap-2 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        {rewards.map((reward) => (
+          <div
+            key={reward.activityType}
+            className="flex items-center gap-2.5 rounded-xl bg-white/40 p-3 transition-all hover:bg-white/60 dark:bg-slate-800/50 dark:hover:bg-slate-700/60"
+          >
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-amber-500/10">
+              <Icon
+                icon={ACTIVITY_ICONS[reward.activityType]}
+                className="size-4 text-amber-600 dark:text-amber-400"
+              />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-xs font-medium text-gray-700 dark:text-gray-300">
+                {t(`reward.${reward.activityType}`)}
+              </p>
+              <p className="text-xs font-bold text-amber-600 dark:text-amber-400">
+                +{reward.amount} GU
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
