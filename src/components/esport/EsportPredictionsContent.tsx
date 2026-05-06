@@ -21,6 +21,7 @@ interface Prediction {
 
 interface LeaderboardEntry {
   playerId: string;
+  playerName: string;
   totalPredictions: number;
   correctPredictions: number;
   totalProfit: number;
@@ -161,7 +162,7 @@ function LeaderboardRow({ entry, rank }: { entry: LeaderboardEntry; rank: number
       </div>
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">
-          {entry.playerId.slice(0, 8)}…
+          {entry.playerName}
         </p>
         <p className="text-xs text-gray-500 dark:text-gray-400">
           {entry.correctPredictions}/{entry.totalPredictions}
