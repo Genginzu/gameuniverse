@@ -4,7 +4,6 @@ import { AllCharactersContent } from "@/components/characters/AllCharactersConte
 import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
-import { CharacterService } from "@/lib/services/characterService";
 import { logger } from "@/lib/logger";
 
 export const revalidate = 300;
@@ -33,13 +32,16 @@ export default async function AllCharactersPage({ params }: AllCharactersPagePro
   let initialPagination;
 
   try {
-    const result = await CharacterService.fetchCharactersFromDB({
-      locale,
-      page: 1,
-      limit: 20,
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const res = await fetch(`${baseUrl}/api/characters?locale=${locale}&page=1&limit=20`, {
+      next: { revalidate: 300 },
     });
-    initialCharacters = result.characters;
-    initialPagination = result.pagination;
+
+    if (res.ok) {
+      const data = await res.json();
+      initialCharacters = data.characters;
+      initialPagination = data.pagination;
+    }
   } catch (error) {
     logger.error("Failed to fetch initial characters server-side", { error });
   }
