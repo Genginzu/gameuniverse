@@ -138,7 +138,7 @@ export function EsportCalendarMonthly() {
             </div>
 
             {/* Days grid */}
-            <div className="grid auto-rows-[1fr] grid-cols-7">
+            <div className="grid auto-rows-[120px] grid-cols-7 sm:auto-rows-[140px]">
               {calendarDays.map((day, idx) => (
                 <CalendarCell
                   key={idx}
@@ -182,7 +182,7 @@ function CalendarCell({
 }) {
   if (day === null) {
     return (
-      <div className="min-h-[80px] border-b border-r border-gray-200 bg-white/10 sm:min-h-[100px] dark:border-slate-600/50 dark:bg-slate-800/20" />
+      <div className="h-full border-b border-r border-gray-200 bg-white/10 p-1 sm:p-2 dark:border-slate-600/50 dark:bg-slate-800/20" />
     );
   }
 
@@ -191,7 +191,7 @@ function CalendarCell({
 
   const content = (
     <div
-      className={`flex min-h-[80px] flex-col border-b border-r border-gray-200 p-1 transition-all sm:min-h-[100px] sm:p-2 dark:border-slate-600/50 ${
+      className={`flex h-full flex-col overflow-hidden border-b border-r border-gray-200 p-1 transition-all sm:p-2 dark:border-slate-600/50 ${
         hasMatches
           ? "cursor-pointer bg-white/30 hover:bg-white/60 dark:bg-slate-700/20 dark:hover:bg-slate-700/50"
           : "bg-white/10 dark:bg-slate-800/10"
@@ -233,7 +233,7 @@ function CalendarCell({
 
   if (hasMatches) {
     return (
-      <Link href={`/esport/calendar/${dateStr}`}>
+      <Link href={`/esport/calendar/${dateStr}`} className="h-full">
         {content}
       </Link>
     );
