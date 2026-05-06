@@ -37,20 +37,20 @@ interface EsportCalendarContentProps {
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
-const GAME_LOGOS: Record<string, { icon: string; color: string }> = {
-  "LoL": { icon: "simple-icons:leagueoflegends", color: "#C8AA6E" },
-  "League of Legends": { icon: "simple-icons:leagueoflegends", color: "#C8AA6E" },
-  "Counter-Strike": { icon: "simple-icons:counterstrike", color: "#F5A623" },
-  "CS2": { icon: "simple-icons:counterstrike", color: "#F5A623" },
-  "Valorant": { icon: "simple-icons:valorant", color: "#FF4655" },
-  "Dota 2": { icon: "simple-icons:dota2", color: "#E23B28" },
-  "Overwatch": { icon: "mdi:shield-sword", color: "#F99E1A" },
-  "Call of Duty": { icon: "game-icons:crosshair", color: "#4CAF50" },
-  "Rainbow 6 Siege": { icon: "simple-icons:ubisoft", color: "#0070FF" },
-  "Rocket League": { icon: "game-icons:rocket-flight", color: "#0078F2" },
-  "StarCraft 2": { icon: "game-icons:rocket", color: "#00AEFF" },
-  "King of Glory": { icon: "mdi:crown", color: "#FFD700" },
-  "Mobile Legends: Bang Bang": { icon: "mdi:sword-cross", color: "#FF6B00" },
+const GAME_LOGOS: Record<string, string> = {
+  "LoL": "/assets/games/lol.png",
+  "League of Legends": "/assets/games/lol.png",
+  "Counter-Strike": "/assets/games/cs2.png",
+  "CS2": "/assets/games/cs2.png",
+  "Valorant": "/assets/games/valorant.png",
+  "Dota 2": "/assets/games/dota2.png",
+  "Overwatch": "/assets/games/overwatch.png",
+  "Call of Duty": "/assets/games/cod.png",
+  "Rainbow 6 Siege": "/assets/games/r6.png",
+  "Rocket League": "/assets/games/rocket-league.png",
+  "StarCraft 2": "/assets/games/starcraft2.png",
+  "King of Glory": "/assets/games/kog.png",
+  "Mobile Legends: Bang Bang": "/assets/games/mlbb.png",
 };
 
 export function EsportCalendarContent({ initialData }: EsportCalendarContentProps) {
@@ -92,7 +92,7 @@ export function EsportCalendarContent({ initialData }: EsportCalendarContentProp
               <FilterChip
                 key={game}
                 label={game}
-                icon={GAME_LOGOS[game] ? <Icon icon={GAME_LOGOS[game].icon} className="size-4" style={{ color: GAME_LOGOS[game].color }} /> : undefined}
+                icon={GAME_LOGOS[game] ? <img src={GAME_LOGOS[game]} alt="" className="size-4 rounded-sm object-contain" /> : undefined}
                 selected={selectedGame === game}
                 onClick={() => handleGameFilter(game)}
               />
@@ -175,7 +175,7 @@ function TournamentCard({ tournament, onBet }: { tournament: CalendarTournament;
       <div className="space-y-2 text-xs text-gray-600 dark:text-gray-300">
         <div className="flex items-center gap-1.5">
           {GAME_LOGOS[tournament.game] ? (
-            <Icon icon={GAME_LOGOS[tournament.game].icon} className="h-4 w-4 shrink-0" style={{ color: GAME_LOGOS[tournament.game].color }} />
+            <img src={GAME_LOGOS[tournament.game]} alt="" className="h-4 w-4 rounded-sm object-contain" />
           ) : (
             <Icon icon="mdi:gamepad-variant" className="h-3.5 w-3.5 shrink-0" />
           )}
