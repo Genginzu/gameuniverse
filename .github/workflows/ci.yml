@@ -103,9 +103,13 @@ jobs:
           include-hidden-files: true
 
   e2e:
-    name: E2E Tests
+    name: E2E Tests (${{ matrix.shard }}/${{ strategy.job-total }})
     needs: [build]
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
     container:
       image: mcr.microsoft.com/playwright:v1.59.1-noble
     steps:
@@ -131,7 +135,7 @@ jobs:
           path: .next/
 
       - name: Run E2E Tests
-        run: npx playwright test
+        run: npx playwright test --shard=${{ matrix.shard }}/4
         env:
           HOME: /root
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
@@ -141,6 +145,6 @@ jobs:
         uses: actions/upload-artifact@v5
         if: ${{ !cancelled() }}
         with:
-          name: playwright-report
+          name: playwright-report-${{ matrix.shard }}
           path: playwright-report/
           retention-days: 30
