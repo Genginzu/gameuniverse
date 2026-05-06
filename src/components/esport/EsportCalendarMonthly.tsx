@@ -4,23 +4,18 @@ import { useState, useMemo } from "react";
 import useSWR from "swr";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
+import { Link } from "@/i18n/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/shared/EmptyState";
-import { CalendarMatchDetail } from "@/components/esport/CalendarMatchDetail";
 
 interface CalendarMatch {
   id: string;
-  pandascoreId: number | null;
   name: string;
   status: string;
   beginAt: string;
   game: string;
-  tournamentId: string | null;
   opponent1: { name: string; acronym: string | null; image_url: string | null } | null;
   opponent2: { name: string; acronym: string | null; image_url: string | null } | null;
-  opponent1Score: number | null;
-  opponent2Score: number | null;
-  winnerId: string | null;
 }
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
@@ -28,7 +23,6 @@ const fetcher = (url: string) => fetch(url).then((r) => r.json());
 export function EsportCalendarMonthly() {
   const t = useTranslations("esport.calendar");
   const [currentDate, setCurrentDate] = useState(() => new Date());
-  const [selectedMatch, setSelectedMatch] = useState<CalendarMatch | null>(null);
 
   const monthKey = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, "0")}`;
 
@@ -40,7 +34,6 @@ export function EsportCalendarMonthly() {
 
   const matches = data?.matches ?? [];
 
-  // Group matches by day
   const matchesByDay = useMemo(() => {
     const grouped: Record<number, CalendarMatch[]> = {};
     for (const match of matches) {
@@ -51,32 +44,50 @@ export function EsportCalendarMonthly() {
     return grouped;
   }, [matches]);
 
-  // Get days that have matches
-  const daysWithMatches = useMemo(
-    () => Object.keys(matchesByDay).map(Number).sort((a, b) => a - b),
-    [matchesByDay]
-  );
+  // Build calendar grid
+  const calendarDays = useMemo(() => {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    const firstDay = new Date(year, month, 1).getDay();
+    // Adjust to Monday start (0=Mon, 6=Sun)
+    const startOffset = firstDay === 0 ? 6 : firstDay - 1;
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-  const goToPrevMonth = () => {
-    setCurrentDate((d) => new Date(d.getFullYear(), d.getMonth() - 1, 1));
-  };
+    const days: (number | null)[] = [];
+    for (let i = 0; i < startOffset; i++) days.push(null);
+    for (let d = 1; d <= daysInMonth; d++) days.push(d);
+    // Fill remaining cells to complete last row
+    while (days.length % 7 !== 0) days.push(null);
+    return days;
+  }, [currentDate]);
 
-  const goToNextMonth = () => {
-    setCurrentDate((d) => new Date(d.getFullYear(), d.getMonth() + 1, 1));
-  };
+  const goToPrevMonth = () => setCurrentDate((d) => new Date(d.getFullYear(), d.getMonth() - 1, 1));
+  const goToNextMonth = () => setCurrentDate((d) => new Date(d.getFullYear(), d.getMonth() + 1, 1));
+  const goToToday = () => setCurrentDate(new Date());
 
-  const goToToday = () => {
-    setCurrentDate(new Date());
-  };
+  const todayDate = new Date();
+  const isCurrentMonth =
+    todayDate.getFullYear() === currentDate.getFullYear() &&
+    todayDate.getMonth() === currentDate.getMonth();
 
   const monthLabel = currentDate.toLocaleDateString(undefined, {
     month: "long",
     year: "numeric",
   });
 
+  const weekDays = [
+    t("weekMon"),
+    t("weekTue"),
+    t("weekWed"),
+    t("weekThu"),
+    t("weekFri"),
+    t("weekSat"),
+    t("weekSun"),
+  ];
+
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-      <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
+      <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
         {/* Month navigation */}
         <div className="mb-6 flex items-center justify-between">
           <button
@@ -109,178 +120,145 @@ export function EsportCalendarMonthly() {
           </button>
         </div>
 
-        {/* Content */}
+        {/* Calendar grid */}
         {isLoading && matches.length === 0 ? (
-          <CalendarSkeleton />
-        ) : daysWithMatches.length === 0 ? (
-          <EmptyState
-            icon="mdi:calendar-blank"
-            title={t("noMatches")}
-            description={t("noMatchesDescription")}
-          />
+          <CalendarGridSkeleton />
         ) : (
-          <div className="space-y-4">
-            {daysWithMatches.map((day) => (
-              <DaySection
-                key={day}
-                day={day}
-                month={currentDate.getMonth()}
-                year={currentDate.getFullYear()}
-                matches={matchesByDay[day]}
-                onMatchClick={setSelectedMatch}
-              />
-            ))}
+          <div className="glass-card overflow-hidden rounded-2xl">
+            {/* Week day headers */}
+            <div className="grid grid-cols-7 border-b border-white/20 dark:border-slate-700/50">
+              {weekDays.map((day) => (
+                <div
+                  key={day}
+                  className="px-1 py-2 text-center text-xs font-semibold uppercase text-gray-500 sm:px-3 sm:py-3 sm:text-sm dark:text-gray-400"
+                >
+                  {day}
+                </div>
+              ))}
+            </div>
+
+            {/* Days grid */}
+            <div className="grid grid-cols-7">
+              {calendarDays.map((day, idx) => (
+                <CalendarCell
+                  key={idx}
+                  day={day}
+                  isToday={isCurrentMonth && day === todayDate.getDate()}
+                  matches={day ? matchesByDay[day] ?? [] : []}
+                  year={currentDate.getFullYear()}
+                  month={currentDate.getMonth()}
+                />
+              ))}
+            </div>
           </div>
         )}
 
-        {/* Match detail dialog */}
-        {selectedMatch && (
-          <CalendarMatchDetail
-            match={selectedMatch}
-            open={!!selectedMatch}
-            onOpenChange={(open) => { if (!open) setSelectedMatch(null); }}
-          />
+        {!isLoading && matches.length === 0 && (
+          <div className="mt-6">
+            <EmptyState
+              icon="mdi:calendar-blank"
+              title={t("noMatches")}
+              description={t("noMatchesDescription")}
+            />
+          </div>
         )}
       </div>
     </div>
   );
 }
 
-function DaySection({
+function CalendarCell({
   day,
-  month,
-  year,
+  isToday,
   matches,
-  onMatchClick,
+  year,
+  month,
 }: {
-  day: number;
-  month: number;
-  year: number;
+  day: number | null;
+  isToday: boolean;
   matches: CalendarMatch[];
-  onMatchClick: (match: CalendarMatch) => void;
+  year: number;
+  month: number;
 }) {
-  const date = new Date(year, month, day);
-  const isToday =
-    date.toDateString() === new Date().toDateString();
+  if (day === null) {
+    return (
+      <div className="min-h-[80px] border-b border-r border-white/10 bg-white/10 sm:min-h-[100px] dark:border-slate-700/30 dark:bg-slate-800/20" />
+    );
+  }
 
-  const dayLabel = date.toLocaleDateString(undefined, {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-  });
+  const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  const hasMatches = matches.length > 0;
 
-  return (
-    <div className="glass-card rounded-2xl p-4 sm:p-5">
-      <div className="mb-3 flex items-center gap-2">
-        <div
-          className={`flex size-8 items-center justify-center rounded-full text-sm font-bold ${
-            isToday
-              ? "bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 text-white"
-              : "bg-white/60 text-gray-700 dark:bg-slate-700/60 dark:text-gray-200"
-          }`}
-        >
-          {day}
+  const content = (
+    <div
+      className={`flex min-h-[80px] flex-col border-b border-r border-white/10 p-1 transition-all sm:min-h-[100px] sm:p-2 dark:border-slate-700/30 ${
+        hasMatches
+          ? "cursor-pointer bg-white/30 hover:bg-white/60 dark:bg-slate-700/20 dark:hover:bg-slate-700/50"
+          : "bg-white/10 dark:bg-slate-800/10"
+      }`}
+    >
+      {/* Day number */}
+      <span
+        className={`mb-1 inline-flex size-6 items-center justify-center rounded-full text-xs font-bold sm:size-7 sm:text-sm ${
+          isToday
+            ? "bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 text-white"
+            : "text-gray-700 dark:text-gray-300"
+        }`}
+      >
+        {day}
+      </span>
+
+      {/* Match indicators */}
+      {hasMatches && (
+        <div className="mt-auto space-y-0.5">
+          <span className="inline-flex items-center gap-1 rounded-md bg-palette-primary-500/10 px-1.5 py-0.5 text-[10px] font-medium text-palette-primary-600 sm:text-xs dark:text-palette-primary-400">
+            <Icon icon="mdi:sword-cross" className="size-3" />
+            {matches.length}
+          </span>
+          {/* Show first match teams on larger screens */}
+          <div className="hidden sm:block">
+            {matches.slice(0, 2).map((m) => (
+              <p key={m.id} className="truncate text-[10px] text-gray-500 dark:text-gray-400">
+                {m.opponent1?.acronym ?? "?"} vs {m.opponent2?.acronym ?? "?"}
+              </p>
+            ))}
+            {matches.length > 2 && (
+              <p className="text-[10px] text-gray-400">+{matches.length - 2}</p>
+            )}
+          </div>
         </div>
-        <span className="text-sm font-medium capitalize text-gray-600 dark:text-gray-300">
-          {dayLabel}
-        </span>
-        <span className="ml-auto text-xs text-gray-400">
-          {matches.length} match{matches.length > 1 ? "es" : ""}
-        </span>
-      </div>
+      )}
+    </div>
+  );
 
-      <div className="space-y-2">
-        {matches.map((match) => (
-          <MatchRow key={match.id} match={match} onClick={() => onMatchClick(match)} />
+  if (hasMatches) {
+    return (
+      <Link href={`/esport/calendar/${dateStr}`}>
+        {content}
+      </Link>
+    );
+  }
+
+  return content;
+}
+
+function CalendarGridSkeleton() {
+  return (
+    <div className="glass-card overflow-hidden rounded-2xl">
+      <div className="grid grid-cols-7 border-b border-white/20 dark:border-slate-700/50">
+        {Array.from({ length: 7 }).map((_, i) => (
+          <div key={i} className="px-3 py-3">
+            <Skeleton className="mx-auto h-4 w-8" />
+          </div>
         ))}
       </div>
-    </div>
-  );
-}
-
-function MatchRow({ match, onClick }: { match: CalendarMatch; onClick: () => void }) {
-  const time = new Date(match.beginAt).toLocaleTimeString(undefined, {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-
-  const statusColor =
-    match.status === "running"
-      ? "bg-green-500"
-      : match.status === "finished"
-        ? "bg-gray-400"
-        : "bg-blue-500";
-
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="flex w-full items-center gap-3 rounded-xl bg-white/40 p-3 text-left transition-all hover:bg-white/70 dark:bg-slate-700/30 dark:hover:bg-slate-700/60"
-    >
-      {/* Time */}
-      <span className="w-12 shrink-0 text-xs font-medium text-gray-500 dark:text-gray-400">
-        {time}
-      </span>
-
-      {/* Status dot */}
-      <span className={`size-2 shrink-0 rounded-full ${statusColor}`} />
-
-      {/* Teams */}
-      <div className="flex min-w-0 flex-1 items-center gap-2">
-        <TeamBadge team={match.opponent1} isWinner={match.winnerId !== null && match.opponent1 !== null} />
-        <span className="shrink-0 text-xs font-bold text-gray-400">vs</span>
-        <TeamBadge team={match.opponent2} isWinner={match.winnerId !== null && match.opponent2 !== null} />
-      </div>
-
-      {/* Score (if finished) */}
-      {match.status === "finished" && match.opponent1Score !== null && (
-        <span className="shrink-0 text-sm font-bold text-gray-700 dark:text-gray-200">
-          {match.opponent1Score} - {match.opponent2Score}
-        </span>
-      )}
-
-      {/* Game badge */}
-      <span className="hidden shrink-0 rounded-md bg-palette-primary-500/10 px-2 py-0.5 text-xs font-medium text-palette-primary-600 sm:inline dark:text-palette-primary-400">
-        {match.game}
-      </span>
-
-      <Icon icon="mdi:chevron-right" className="size-4 shrink-0 text-gray-400" />
-    </button>
-  );
-}
-
-function TeamBadge({
-  team,
-}: {
-  team: { name: string; acronym: string | null; image_url: string | null } | null;
-  isWinner: boolean;
-}) {
-  if (!team) return <span className="text-xs text-gray-400">TBD</span>;
-
-  return (
-    <div className="flex min-w-0 items-center gap-1.5">
-      {team.image_url && (
-        <img src={team.image_url} alt="" className="size-5 shrink-0 rounded-sm object-contain" />
-      )}
-      <span className="truncate text-xs font-medium text-gray-800 sm:text-sm dark:text-gray-100">
-        {team.acronym || team.name}
-      </span>
-    </div>
-  );
-}
-
-function CalendarSkeleton() {
-  return (
-    <div className="space-y-4">
-      {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="glass-card rounded-2xl p-5">
-          <Skeleton className="mb-3 h-5 w-32" />
-          <div className="space-y-2">
-            <Skeleton className="h-12 w-full rounded-xl" />
-            <Skeleton className="h-12 w-full rounded-xl" />
+      <div className="grid grid-cols-7">
+        {Array.from({ length: 35 }).map((_, i) => (
+          <div key={i} className="min-h-[100px] border-b border-r border-white/10 p-2 dark:border-slate-700/30">
+            <Skeleton className="h-5 w-5 rounded-full" />
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
