@@ -12,6 +12,7 @@ import {
 } from "@/lib/pandascore/client";
 import type { PandaScoreListParams } from "@/lib/pandascore/types";
 import { syncAll } from "@/lib/services/pandascoreSyncService";
+import { resolvePredictionsForMatch } from "@/lib/services/esportPredictionService";
 import { logger } from "@/lib/logger";
 
 const ENTITY_TYPES = ["team", "player", "tournament", "match"] as const;
@@ -235,6 +236,15 @@ async function upsertFromIncident(entityType: EntityType, pandascoreId: number):
       { pandascore_id: m.id, name: m.name, status: m.status, match_type: m.match_type, number_of_games: m.number_of_games, begin_at: m.begin_at, end_at: m.end_at, tournament_id: tournamentId, opponent1_id: opp1, opponent2_id: opp2, opponent1_score: m.results?.[0]?.score ?? null, opponent2_score: m.results?.[1]?.score ?? null, winner_id: winnerId, game: m.videogame.name },
       { onConflict: "pandascore_id" }
     );
+
+    // Resolve predictions if match is finished with a winner
+    if (m.status === "finished" && m.winner_id) {
+      try {
+        await resolvePredictionsForMatch(m.id, m.winner_id);
+      } catch (err) {
+        logger.warn("Failed to resolve predictions for match", { matchId: m.id, err });
+      }
+    }
   }
 }
 
