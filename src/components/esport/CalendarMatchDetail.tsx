@@ -56,7 +56,9 @@ export function CalendarMatchDetail({ match, open, onOpenChange }: CalendarMatch
         body: JSON.stringify({
           matchId: match.pandascoreId ?? match.id,
           matchName: match.name,
-          predictedWinner: selectedWinner === "opponent1" ? match.opponent1?.name : match.opponent2?.name,
+          game: match.game,
+          predictedWinnerId: selectedWinner,
+          predictedWinnerName: selectedWinner === "opponent1" ? match.opponent1?.name : match.opponent2?.name,
           amount,
         }),
       });
