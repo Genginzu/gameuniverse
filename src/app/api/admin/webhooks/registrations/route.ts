@@ -2,6 +2,10 @@
  * Admin API: Manage IGDB webhook registrations
  * GET  /api/admin/webhooks/registrations — list all registered webhooks
  * POST /api/admin/webhooks/registrations — register a new webhook
+ *
+ * Webhooks now point to the Supabase Edge Function `igdb-webhook`
+ * instead of the previous Vercel route. The URL is built from
+ * NEXT_PUBLIC_SUPABASE_URL.
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -59,16 +63,16 @@ export async function POST(request: NextRequest) {
     }
 
     const webhookSecret = process.env.IGDB_WEBHOOK_SECRET;
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_BASE_URL;
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 
-    if (!webhookSecret || !siteUrl) {
+    if (!webhookSecret || !supabaseUrl) {
       return NextResponse.json(
-        { error: "IGDB_WEBHOOK_SECRET or NEXT_PUBLIC_SITE_URL not configured" },
+        { error: "IGDB_WEBHOOK_SECRET or NEXT_PUBLIC_SUPABASE_URL not configured" },
         { status: 500 }
       );
     }
 
-    const webhookUrl = `${siteUrl}/api/webhooks/igdb?entity=${endpoint}&method=${method}`;
+    const webhookUrl = `${supabaseUrl}/functions/v1/igdb-webhook?entity=${endpoint}&method=${method}`;
 
     // Force a fresh token — cached tokens may be stale for webhook operations
     IGDBService.clearTokenCache();
@@ -92,19 +96,6 @@ export async function POST(request: NextRequest) {
     if (!response.ok) {
       const text = await response.text();
       logger.error("Failed to register IGDB webhook", { status: response.status, body: text });
-
-      // IGDB rejects localhost/non-public URLs with 403
-      const isLocalUrl = webhookUrl.includes("localhost") || webhookUrl.includes("127.0.0.1");
-      if (response.status === 403 && isLocalUrl) {
-        return NextResponse.json(
-          {
-            error:
-              "IGDB rejects localhost URLs. Use a public URL or a tunnel (ngrok, cloudflared).",
-          },
-          { status: 422 }
-        );
-      }
-
       return NextResponse.json({ error: "Failed to register webhook with IGDB" }, { status: 502 });
     }
 

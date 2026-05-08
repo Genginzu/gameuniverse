@@ -60,3 +60,6 @@ playwright-report/
 blob-report/
 playwright/.cache/
 dump_prod.sql
+
+# Deno lockfile (Supabase Edge Functions — generated locally on `deno check`)
+deno.lock
