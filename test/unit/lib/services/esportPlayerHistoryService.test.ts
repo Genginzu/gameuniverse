@@ -14,7 +14,7 @@ let lastChain: Chain;
 function buildChain(table: string, result: ChainResult) {
   lastChain = { table, filters: [], result };
   const proxy: Record<string, unknown> = {};
-  for (const m of ["select", "order", "limit", "range", "not", "or", "is"]) {
+  for (const m of ["select", "order", "limit", "range", "not", "or", "is", "in"]) {
     proxy[m] = (...args: unknown[]) => {
       lastChain.filters.push({ op: m, col: String(args[0] ?? ""), value: args[1] });
       return proxy;
@@ -45,7 +45,6 @@ describe("esportPlayerHistoryService.getPlayerTeamHistory", () => {
   }
 
   it("returns memberships sorted by started_at desc, with isCurrent flag", async () => {
-    // 1st call → resolvePlayerLocalId; 2nd call → history query
     mockFrom
       .mockReturnValueOnce(
         buildChain("esport_players", { data: [{ id: "uuid-player" }], error: null })
@@ -101,7 +100,6 @@ describe("esportPlayerHistoryService.getPlayerTeamHistory", () => {
     const { getPlayerTeamHistory } = await load();
     await getPlayerTeamHistory(7);
     await getPlayerTeamHistory(7);
-    // First call: 2 (player + history). Second call: 0 (cache hit on full response).
     expect(mockFrom).toHaveBeenCalledTimes(2);
   });
 });
@@ -116,12 +114,19 @@ describe("esportPlayerHistoryService.getPlayerStats", () => {
       buildChain("esport_players", { data: [], error: null })
     );
     const { getPlayerStats } = await load();
-    expect(await getPlayerStats(404)).toEqual({
+    const stats = await getPlayerStats(404);
+    expect(stats).toMatchObject({
       wins: 0,
       losses: 0,
       totalMatches: 0,
       winRate: 0,
       teamsCount: 0,
+      titles: 0,
+      currentStreak: { type: null, length: 0 },
+      activity30d: { days: 30, matches: 0, wins: 0, losses: 0 },
+      bestOpponent: null,
+      worstOpponent: null,
+      gameBreakdown: [],
     });
   });
 
@@ -134,10 +139,11 @@ describe("esportPlayerHistoryService.getPlayerStats", () => {
         buildChain("esport_player_team_history", { data: [], error: null })
       );
     const { getPlayerStats } = await load();
-    expect(await getPlayerStats(1)).toMatchObject({ wins: 0, losses: 0, teamsCount: 0 });
+    const stats = await getPlayerStats(1);
+    expect(stats).toMatchObject({ wins: 0, losses: 0, teamsCount: 0, titles: 0 });
   });
 
-  it("computes wins, losses and win rate over matches in the membership period", async () => {
+  it("computes wins/losses, titles, streak and game breakdown over the membership period", async () => {
     mockFrom
       .mockReturnValueOnce(
         buildChain("esport_players", { data: [{ id: "p" }], error: null })
@@ -145,50 +151,58 @@ describe("esportPlayerHistoryService.getPlayerStats", () => {
       .mockReturnValueOnce(
         buildChain("esport_player_team_history", {
           data: [
+            { team_id: "team-A", started_at: "2024-01-01T00:00:00Z", ended_at: null },
+          ],
+          error: null,
+        })
+      )
+      // Matches query (most-recent-first; service ORDER BYs begin_at desc)
+      .mockReturnValueOnce(
+        buildChain("esport_matches", {
+          data: [
+            // recent win
             {
-              team_id: "team-A",
-              started_at: "2024-01-01T00:00:00Z",
-              ended_at: null,
+              status: "finished",
+              begin_at: "2024-06-02T00:00:00Z",
+              game: "LoL",
+              opponent1_id: "team-A",
+              opponent2_id: "team-B",
+              winner_id: "team-A",
+              opponent1: { name: "T1" },
+              opponent2: { name: "Gen.G" },
+            },
+            // earlier loss
+            {
+              status: "finished",
+              begin_at: "2024-06-01T00:00:00Z",
+              game: "LoL",
+              opponent1_id: "team-B",
+              opponent2_id: "team-A",
+              winner_id: "team-B",
+              opponent1: { name: "Gen.G" },
+              opponent2: { name: "T1" },
+            },
+            // outside the membership period — must be filtered
+            {
+              status: "finished",
+              begin_at: "2023-01-01T00:00:00Z",
+              game: "LoL",
+              opponent1_id: "team-A",
+              opponent2_id: "team-B",
+              winner_id: "team-A",
+              opponent1: { name: "T1" },
+              opponent2: { name: "Gen.G" },
             },
           ],
           error: null,
         })
       )
+      // Tournaments query: 1 title in the period, 1 outside
       .mockReturnValueOnce(
-        buildChain("esport_matches", {
+        buildChain("esport_tournaments", {
           data: [
-            // win in period
-            {
-              status: "finished",
-              begin_at: "2024-06-01T00:00:00Z",
-              opponent1_id: "team-A",
-              opponent2_id: "team-B",
-              winner_id: "team-A",
-            },
-            // loss in period
-            {
-              status: "finished",
-              begin_at: "2024-06-02T00:00:00Z",
-              opponent1_id: "team-B",
-              opponent2_id: "team-A",
-              winner_id: "team-B",
-            },
-            // before player joined → excluded
-            {
-              status: "finished",
-              begin_at: "2023-01-01T00:00:00Z",
-              opponent1_id: "team-A",
-              opponent2_id: "team-B",
-              winner_id: "team-A",
-            },
-            // draw / no winner → not counted
-            {
-              status: "finished",
-              begin_at: "2024-07-01T00:00:00Z",
-              opponent1_id: "team-A",
-              opponent2_id: "team-B",
-              winner_id: null,
-            },
+            { begin_at: "2024-04-01T00:00:00Z", end_at: "2024-05-01T00:00:00Z", winner_id: "team-A" },
+            { begin_at: "2023-01-01T00:00:00Z", end_at: "2023-02-01T00:00:00Z", winner_id: "team-A" },
           ],
           error: null,
         })
@@ -196,10 +210,18 @@ describe("esportPlayerHistoryService.getPlayerStats", () => {
 
     const { getPlayerStats } = await load();
     const stats = await getPlayerStats(1);
+
     expect(stats.wins).toBe(1);
     expect(stats.losses).toBe(1);
     expect(stats.totalMatches).toBe(2);
     expect(stats.winRate).toBe(0.5);
     expect(stats.teamsCount).toBe(1);
+    expect(stats.titles).toBe(1);
+    // Most recent decided match is a win → streak is 1 win
+    expect(stats.currentStreak).toEqual({ type: "win", length: 1 });
+    // gameBreakdown contains LoL with 1W 1L
+    expect(stats.gameBreakdown).toEqual([
+      { game: "LoL", matches: 2, wins: 1, losses: 1, winRate: 0.5 },
+    ]);
   });
 });

@@ -3894,7 +3894,14 @@
         "losses": "Défaites",
         "winRate": "Ratio de victoires",
         "teamsCount": "Équipes",
-        "totalMatches": "{count, plural, =0 {Aucun match comptabilisé} =1 {Sur 1 match} other {Sur # matchs}}"
+        "titles": "Titres",
+        "streak": "Série actuelle",
+        "totalMatches": "{count, plural, =0 {Aucun match comptabilisé} =1 {Sur 1 match} other {Sur # matchs}}",
+        "activity30d": "Activité (30 derniers jours)",
+        "activityDetails": "{matches, plural, =1 {1 match} other {# matchs}} · {wins} V – {losses} D",
+        "bestOpponent": "Meilleur adversaire",
+        "worstOpponent": "Pire adversaire",
+        "gameBreakdown": "Répartition par jeu"
       },
       "teamHistory": {
         "heading": "Historique des équipes",
