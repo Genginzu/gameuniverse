@@ -2,46 +2,53 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 vi.mock("@/lib/logger", () => ({ logger: { error: vi.fn() } }));
 
-const mockGetRunningMatches = vi.fn();
+type Chain = {
+  table: string;
+  filters: Array<{ op: string; col: string; value: unknown }>;
+  result: { data: unknown; error: unknown };
+};
 
-vi.mock("@/lib/pandascore/client", () => ({
-  getRunningMatches: (...args: unknown[]) => mockGetRunningMatches(...args),
+let lastChain: Chain;
+
+function buildChain(table: string, result: { data: unknown; error: unknown }) {
+  lastChain = { table, filters: [], result };
+  const proxy: Record<string, unknown> = {};
+
+  for (const m of ["select", "order", "limit"]) {
+    proxy[m] = (...args: unknown[]) => {
+      lastChain.filters.push({ op: m, col: String(args[0] ?? ""), value: args[1] });
+      return proxy;
+    };
+  }
+  proxy.eq = (col: string, value: unknown) => {
+    lastChain.filters.push({ op: "eq", col, value });
+    return proxy;
+  };
+  proxy.then = (
+    onFulfilled: (v: { data: unknown; error: unknown }) => unknown
+  ) => Promise.resolve(result).then(onFulfilled);
+
+  return proxy;
+}
+
+const mockFrom = vi.fn();
+
+vi.mock("@/lib/supabase-admin", () => ({
+  getSupabaseAdmin: () => ({ from: (table: string) => mockFrom(table) }),
 }));
 
-function makeMatch(overrides: Record<string, unknown> = {}) {
+function makeLiveMatchRow(overrides: Record<string, unknown> = {}) {
   return {
-    id: 1,
+    id: "uuid-match-1",
+    pandascore_id: 1,
     name: "Grand Final",
-    slug: "grand-final",
-    status: "running",
-    match_type: "best_of",
-    number_of_games: 5,
     begin_at: "2026-04-25T18:00:00Z",
-    end_at: null,
-    tournament_id: 1,
-    tournament: { id: 1, name: "Worlds", slug: "worlds" },
-    opponents: [
-      { type: "Team", opponent: { id: 100, name: "T1", slug: "t1" } },
-      { type: "Team", opponent: { id: 200, name: "Gen.G", slug: "geng" } },
-    ],
-    winner_id: null,
-    winner_type: null,
-    videogame: { id: 1, name: "League of Legends", slug: "lol" },
-    league: { id: 1, name: "Worlds", slug: "worlds", image_url: null, url: null },
-    serie: {
-      id: 1,
-      name: null,
-      slug: "s1",
-      begin_at: null,
-      end_at: null,
-      full_name: "2026",
-      year: 2026,
-    },
-    results: [],
-    streams_list: [
-      { language: "en", main: true, raw_url: "https://twitch.tv/riotgames" },
-      { language: "fr", main: false, raw_url: "https://twitch.tv/otplol" },
-    ],
+    game: "League of Legends",
+    opponent1_score: 1,
+    opponent2_score: 0,
+    esport_tournaments: { name: "Worlds", league_name: "Worlds Championship" },
+    opponent1: { id: "uuid-team-100", name: "T1", image_url: "https://t1.png", pandascore_id: 100 },
+    opponent2: { id: "uuid-team-200", name: "Gen.G", image_url: "https://geng.png", pandascore_id: 200 },
     ...overrides,
   };
 }
@@ -51,60 +58,80 @@ beforeEach(() => {
   vi.resetModules();
 });
 
-describe("esportLiveService", () => {
+describe("esportLiveService (DB-backed)", () => {
   async function loadService() {
     return import("@/lib/services/esportLiveService");
   }
 
-  it("extracts streams from running matches", async () => {
-    mockGetRunningMatches.mockResolvedValue([makeMatch()]);
-    const { getLiveStreams } = await loadService();
-    const streams = await getLiveStreams();
-
-    expect(streams).toHaveLength(2);
-    expect(streams[0].isMain).toBe(true);
-    expect(streams[0].streamUrl).toBe("https://twitch.tv/riotgames");
-    expect(streams[0].opponents).toEqual(["T1", "Gen.G"]);
-  });
-
-  it("sorts main streams first", async () => {
-    mockGetRunningMatches.mockResolvedValue([makeMatch()]);
-    const { getLiveStreams } = await loadService();
-    const streams = await getLiveStreams();
-
-    expect(streams[0].isMain).toBe(true);
-    expect(streams[1].isMain).toBe(false);
-  });
-
-  it("returns empty for matches without streams", async () => {
-    mockGetRunningMatches.mockResolvedValue([makeMatch({ streams_list: [] })]);
-    const { getLiveStreams } = await loadService();
-    const streams = await getLiveStreams();
-
-    expect(streams).toHaveLength(0);
-  });
-
-  it("passes game filter", async () => {
-    mockGetRunningMatches.mockResolvedValue([]);
-    const { getLiveStreams } = await loadService();
-    await getLiveStreams({ game: "Valorant" });
-
-    expect(mockGetRunningMatches).toHaveBeenCalledWith(
-      expect.objectContaining({ "filter[videogame_title]": "Valorant" })
+  it("returns running matches from DB", async () => {
+    mockFrom.mockReturnValueOnce(
+      buildChain("esport_matches", { data: [makeLiveMatchRow()], error: null })
     );
+    const { getLiveMatches } = await loadService();
+    const matches = await getLiveMatches();
+
+    expect(matches).toHaveLength(1);
+    expect(matches[0].id).toBe(1);
+    expect(matches[0].name).toBe("Grand Final");
+    expect(matches[0].league).toBe("Worlds Championship");
+    expect(matches[0].opponents).toHaveLength(2);
+    expect(matches[0].opponents[0]).toEqual({
+      id: 100,
+      name: "T1",
+      imageUrl: "https://t1.png",
+      score: 1,
+    });
   });
 
-  it("caches results", async () => {
-    mockGetRunningMatches.mockResolvedValue([makeMatch()]);
-    const { getLiveStreams } = await loadService();
-    await getLiveStreams();
-    await getLiveStreams();
-    expect(mockGetRunningMatches).toHaveBeenCalledTimes(1);
+  it("filters by status='running' on the query", async () => {
+    mockFrom.mockReturnValueOnce(
+      buildChain("esport_matches", { data: [], error: null })
+    );
+    const { getLiveMatches } = await loadService();
+    await getLiveMatches();
+    expect(
+      lastChain.filters.some((f) => f.op === "eq" && f.col === "status" && f.value === "running")
+    ).toBe(true);
   });
 
-  it("throws on error", async () => {
-    mockGetRunningMatches.mockRejectedValue(new Error("fail"));
-    const { getLiveStreams } = await loadService();
-    await expect(getLiveStreams()).rejects.toThrow("fail");
+  it("filters out matches without pandascore_id", async () => {
+    mockFrom.mockReturnValueOnce(
+      buildChain("esport_matches", {
+        data: [makeLiveMatchRow(), makeLiveMatchRow({ pandascore_id: null })],
+        error: null,
+      })
+    );
+    const { getLiveMatches } = await loadService();
+    const matches = await getLiveMatches();
+    expect(matches).toHaveLength(1);
+  });
+
+  it("passes the game filter", async () => {
+    mockFrom.mockReturnValueOnce(
+      buildChain("esport_matches", { data: [], error: null })
+    );
+    const { getLiveMatches } = await loadService();
+    await getLiveMatches({ game: "Valorant" });
+    expect(
+      lastChain.filters.some((f) => f.op === "eq" && f.col === "game" && f.value === "Valorant")
+    ).toBe(true);
+  });
+
+  it("caches results across calls", async () => {
+    mockFrom.mockReturnValue(
+      buildChain("esport_matches", { data: [makeLiveMatchRow()], error: null })
+    );
+    const { getLiveMatches } = await loadService();
+    await getLiveMatches();
+    await getLiveMatches();
+    expect(mockFrom).toHaveBeenCalledTimes(1);
+  });
+
+  it("throws on DB error", async () => {
+    mockFrom.mockReturnValueOnce(
+      buildChain("esport_matches", { data: null, error: new Error("DB down") })
+    );
+    const { getLiveMatches } = await loadService();
+    await expect(getLiveMatches()).rejects.toThrow();
   });
 });

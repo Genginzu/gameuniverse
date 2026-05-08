@@ -11,6 +11,9 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     }
 
     const team = await getTeamDetail(teamId);
+    if (!team) {
+      return NextResponse.json({ error: "Team not found" }, { status: 404 });
+    }
     return NextResponse.json({ team });
   } catch (error) {
     logger.error("Error in esport team detail API", { error });

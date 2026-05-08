@@ -1,6 +1,8 @@
 import { logger } from "@/lib/logger";
-import { getRunningMatches } from "@/lib/pandascore/client";
-import type { PandaScoreMatch, PandaScoreStream } from "@/lib/pandascore/types";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type UntypedFrom = any;
 
 const CACHE_TTL_MS = 2 * 60 * 1000; // 2 minutes for live data
 
@@ -24,60 +26,116 @@ function setCache<T>(key: string, data: T): void {
   cache.set(key, { data, expiresAt: Date.now() + CACHE_TTL_MS });
 }
 
-export interface LiveStream {
-  matchId: number;
-  matchName: string;
+/**
+ * A match currently running, exposed to the public live page.
+ * The local DB does not store stream URLs (PandaScore-only data) so the
+ * `live` page now shows ongoing matches with their score, without an
+ * external stream link. Stream URLs may be added later via a dedicated
+ * column or table if needed.
+ */
+export interface LiveMatch {
+  id: number;
+  name: string;
+  beginAt: string | null;
   game: string;
   gameSlug: string;
   league: string;
-  streamUrl: string;
-  language: string;
-  isMain: boolean;
-  opponents: string[];
+  tournament: string;
+  opponents: Array<{ id: number | null; name: string; imageUrl: string | null; score: number }>;
 }
 
-function extractStreams(match: PandaScoreMatch): LiveStream[] {
-  if (!match.streams_list?.length) return [];
+interface LiveMatchRow {
+  id: string;
+  pandascore_id: number | null;
+  name: string;
+  begin_at: string | null;
+  game: string | null;
+  opponent1_score: number | null;
+  opponent2_score: number | null;
+  esport_tournaments: { name: string | null; league_name: string | null } | null;
+  opponent1: { id: string; name: string; image_url: string | null; pandascore_id: number | null } | null;
+  opponent2: { id: string; name: string; image_url: string | null; pandascore_id: number | null } | null;
+}
 
-  const opponents = match.opponents.map((o) => o.opponent.name);
+function gameSlugFor(game: string | null): string {
+  return (game ?? "").toLowerCase().replace(/\s+/g, "-");
+}
 
-  return match.streams_list.map((stream: PandaScoreStream) => ({
-    matchId: match.id,
-    matchName: match.name,
-    game: match.videogame.name,
-    gameSlug: match.videogame.slug,
-    league: match.league.name,
-    streamUrl: stream.raw_url,
-    language: stream.language,
-    isMain: stream.main,
+function mapLiveMatch(row: LiveMatchRow): LiveMatch | null {
+  if (row.pandascore_id === null || row.pandascore_id === undefined) return null;
+
+  const opponents: LiveMatch["opponents"] = [];
+  if (row.opponent1) {
+    opponents.push({
+      id: row.opponent1.pandascore_id,
+      name: row.opponent1.name,
+      imageUrl: row.opponent1.image_url,
+      score: row.opponent1_score ?? 0,
+    });
+  }
+  if (row.opponent2) {
+    opponents.push({
+      id: row.opponent2.pandascore_id,
+      name: row.opponent2.name,
+      imageUrl: row.opponent2.image_url,
+      score: row.opponent2_score ?? 0,
+    });
+  }
+
+  return {
+    id: row.pandascore_id,
+    name: row.name,
+    beginAt: row.begin_at,
+    game: row.game ?? "",
+    gameSlug: gameSlugFor(row.game),
+    league: row.esport_tournaments?.league_name ?? "",
+    tournament: row.esport_tournaments?.name ?? "",
     opponents,
-  }));
+  };
 }
 
-export async function getLiveStreams(filters?: { game?: string }): Promise<LiveStream[]> {
+/**
+ * Fetch matches currently running (`status = 'running'`) from the local DB.
+ *
+ * @param filters.game Case-insensitive exact match on the videogame name.
+ */
+export async function getLiveMatches(filters?: { game?: string }): Promise<LiveMatch[]> {
   const gameFilter = filters?.game;
   const cacheKey = `live:${gameFilter ?? "all"}`;
 
-  const cached = getCached<LiveStream[]>(cacheKey);
+  const cached = getCached<LiveMatch[]>(cacheKey);
   if (cached) return cached;
 
   try {
-    const params: Record<string, string | number> = {
-      per_page: 50,
-      sort: "-begin_at",
-    };
-    if (gameFilter) params["filter[videogame_title]"] = gameFilter;
+    const supabase = getSupabaseAdmin();
+    let query = supabase
+      .from("esport_matches" as UntypedFrom)
+      .select(
+        `id, pandascore_id, name, begin_at, game,
+         opponent1_score, opponent2_score,
+         esport_tournaments(name, league_name),
+         opponent1:esport_teams!esport_matches_opponent1_id_fkey(id, name, image_url, pandascore_id),
+         opponent2:esport_teams!esport_matches_opponent2_id_fkey(id, name, image_url, pandascore_id)`
+      )
+      .eq("status", "running")
+      .order("begin_at", { ascending: true, nullsFirst: false })
+      .limit(50);
 
-    const matches = await getRunningMatches(params);
-    const streams = matches.flatMap(extractStreams);
+    if (gameFilter) {
+      query = query.eq("game", gameFilter);
+    }
 
-    // Main streams first
-    streams.sort((a, b) => (b.isMain ? 1 : 0) - (a.isMain ? 1 : 0));
+    const { data, error } = await query;
+    if (error) throw error;
 
-    setCache(cacheKey, streams);
-    return streams;
+    const matches = ((data as LiveMatchRow[] | null) ?? [])
+      .map(mapLiveMatch)
+      .filter((m): m is LiveMatch => m !== null);
+
+    setCache(cacheKey, matches);
+    return matches;
   } catch (error) {
-    logger.error("Failed to fetch live streams", { error });
+    logger.error("Failed to fetch live matches from DB", { error });
     throw error;
   }
 }
