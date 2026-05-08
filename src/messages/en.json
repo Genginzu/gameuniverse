@@ -2753,7 +2753,11 @@
         "errors": "Errors",
         "duration": "Duration",
         "details": "Details",
-        "noLogs": "No sync history"
+        "noLogs": "No sync history",
+        "viewErrors": "View error details",
+        "errorsDialogTitle": "{count, plural, =0 {No errors} one {# error} other {# errors}}",
+        "errorsDialogEmpty": "No error details available",
+        "errorsDialogId": "ID"
       },
       "totalCount": "{count, plural, =0 {No results} one {# result} other {# results}}",
       "empty": "No data found",

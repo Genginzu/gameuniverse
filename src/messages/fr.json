@@ -2756,7 +2756,11 @@
         "errors": "Erreurs",
         "duration": "Durée",
         "details": "Détails",
-        "noLogs": "Aucun historique de synchronisation"
+        "noLogs": "Aucun historique de synchronisation",
+        "viewErrors": "Voir le détail des erreurs",
+        "errorsDialogTitle": "{count, plural, =0 {Aucune erreur} one {# erreur} other {# erreurs}}",
+        "errorsDialogEmpty": "Aucun détail d'erreur disponible",
+        "errorsDialogId": "ID"
       },
       "totalCount": "{count, plural, =0 {Aucun résultat} one {# résultat} other {# résultats}}",
       "empty": "Aucune donnée trouvée",
