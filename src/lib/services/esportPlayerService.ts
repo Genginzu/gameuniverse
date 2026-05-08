@@ -102,6 +102,11 @@ export async function getPlayersList(filters?: {
         "id, pandascore_id, name, slug, first_name, last_name, nationality, image_url, role, game, esport_teams(name, image_url)",
         { count: "exact" }
       )
+      // Players with an image first, then alphabetical by name. Postgres
+      // sorts NULLs last by default with ASC, but image_url is a TEXT column
+      // where missing values can be NULL; we make the intent explicit so the
+      // ordering is deterministic regardless of the storage representation.
+      .order("image_url", { ascending: false, nullsFirst: false })
       .order("name", { ascending: true })
       .range(from, to);
 
