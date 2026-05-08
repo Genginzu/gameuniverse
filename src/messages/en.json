@@ -3882,6 +3882,19 @@
         "finished": "Finished",
         "canceled": "Canceled",
         "postponed": "Postponed"
+      },
+      "stats": {
+        "heading": "Statistics",
+        "wins": "Wins",
+        "losses": "Losses",
+        "winRate": "Win rate",
+        "teamsCount": "Teams",
+        "totalMatches": "{count, plural, =0 {No counted matches} =1 {Across 1 match} other {Across # matches}}"
+      },
+      "teamHistory": {
+        "heading": "Team history",
+        "currentBadge": "Current",
+        "unknownTeam": "Unknown team"
       }
     },
     "live": {

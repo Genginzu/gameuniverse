@@ -3887,6 +3887,19 @@
         "finished": "Terminé",
         "canceled": "Annulé",
         "postponed": "Reporté"
+      },
+      "stats": {
+        "heading": "Statistiques",
+        "wins": "Victoires",
+        "losses": "Défaites",
+        "winRate": "Ratio de victoires",
+        "teamsCount": "Équipes",
+        "totalMatches": "{count, plural, =0 {Aucun match comptabilisé} =1 {Sur 1 match} other {Sur # matchs}}"
+      },
+      "teamHistory": {
+        "heading": "Historique des équipes",
+        "currentBadge": "Actuelle",
+        "unknownTeam": "Équipe inconnue"
       }
     },
     "live": {

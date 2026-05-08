@@ -4,22 +4,37 @@ import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { Link } from "@/i18n/navigation";
 import { LazyImage } from "@/components/ui/lazy-image";
+import { Pagination } from "@/components/shared/Pagination";
 import { getGameIcon, getMatchStatusInfo } from "@/lib/utils/esport-utils";
 import type { PlayerMatch } from "@/lib/services/esportPlayerMatchesService";
 
 interface PlayerRecentMatchesProps {
   matches: PlayerMatch[];
+  total: number;
+  page: number;
+  limit: number;
+  onPageChange: (page: number) => void;
   isLoading: boolean;
 }
 
 /**
- * List of recent matches for a player, displayed as compact rows.
- * Renders a skeleton while loading and nothing if the list is empty.
+ * Paginated list of matches the player participated in. The parent owns
+ * `page` state so it can be wired to SWR; this component is purely
+ * presentational.
  */
-export function PlayerRecentMatches({ matches, isLoading }: PlayerRecentMatchesProps) {
+export function PlayerRecentMatches({
+  matches,
+  total,
+  page,
+  limit,
+  onPageChange,
+  isLoading,
+}: PlayerRecentMatchesProps) {
   const t = useTranslations("esport.players");
 
-  if (isLoading) {
+  const totalPages = limit > 0 ? Math.ceil(total / limit) : 1;
+
+  if (isLoading && matches.length === 0) {
     return (
       <section className="glass-card rounded-2xl p-5 sm:p-6">
         <h2 className="mb-4 text-lg font-bold text-gray-900 dark:text-white">
@@ -55,6 +70,18 @@ export function PlayerRecentMatches({ matches, isLoading }: PlayerRecentMatchesP
           </li>
         ))}
       </ul>
+
+      {totalPages > 1 && (
+        <div className="mt-6">
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            totalCount={total}
+            onPageChange={onPageChange}
+            loading={isLoading}
+          />
+        </div>
+      )}
     </section>
   );
 }

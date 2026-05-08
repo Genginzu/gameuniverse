@@ -12,6 +12,7 @@ import {
   preloadIdMap,
   DEFAULT_MAX_PAGES,
 } from "./pandascore-sync-helpers";
+import { reconcilePlayerTeamHistory } from "./esport/playerTeamHistory";
 
 type SyncResult = { synced: number; errors: number };
 
@@ -50,7 +51,22 @@ export async function syncPlayers(game?: string): Promise<SyncResult> {
     team_id: p.current_team?.id ? teamMap.get(p.current_team.id) ?? null : null,
     game: p.current_videogame?.name ?? null,
   }));
-  return bulkUpsert("esport_players", rows, "pandascore_id");
+  const result = await bulkUpsert("esport_players", rows, "pandascore_id");
+
+  // After upsert, resolve local UUIDs to update the team history table.
+  const playerPandaIds = players.map((p) => p.id);
+  const playerLocalMap = await preloadIdMap("esport_players", playerPandaIds);
+  const historyInputs = players
+    .map((p) => {
+      const playerLocalId = playerLocalMap.get(p.id);
+      if (!playerLocalId) return null;
+      const newTeamLocalId = p.current_team?.id ? teamMap.get(p.current_team.id) ?? null : null;
+      return { playerLocalId, newTeamLocalId };
+    })
+    .filter((x): x is { playerLocalId: string; newTeamLocalId: string | null } => x !== null);
+  await reconcilePlayerTeamHistory(historyInputs);
+
+  return result;
 }
 
 export async function syncTournaments(game?: string): Promise<SyncResult> {

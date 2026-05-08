@@ -1,30 +1,14 @@
 import { logger } from "@/lib/logger";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
+import { TtlCache } from "./esport/ttlCache";
+import { resolvePlayerLocalId } from "./esport/resolvePlayer";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type UntypedFrom = any;
 
-const CACHE_TTL_MS = 5 * 60 * 1000;
-
-interface CacheEntry<T> {
-  data: T;
-  expiresAt: number;
-}
-
-const cache = new Map<string, CacheEntry<unknown>>();
-
-function getCached<T>(key: string): T | null {
-  const entry = cache.get(key);
-  if (!entry || Date.now() > entry.expiresAt) {
-    cache.delete(key);
-    return null;
-  }
-  return entry.data as T;
-}
-
-function setCache<T>(key: string, data: T): void {
-  cache.set(key, { data, expiresAt: Date.now() + CACHE_TTL_MS });
-}
+const cache = new TtlCache(5 * 60 * 1000);
+const DEFAULT_PAGE_SIZE = 10;
+const MAX_PAGE_SIZE = 50;
 
 export interface PlayerMatch {
   id: number;
@@ -37,6 +21,15 @@ export interface PlayerMatch {
   tournament: string;
   opponents: Array<{ id: number; name: string; imageUrl: string | null; score: number }>;
   winnerId: number | null;
+  /** Local team UUID (DB) the player was on for this match. Used to highlight the player's side. */
+  playerTeamId: string | null;
+}
+
+export interface PlayerMatchesPage {
+  matches: PlayerMatch[];
+  total: number;
+  page: number;
+  limit: number;
 }
 
 interface MatchRow {
@@ -56,12 +49,43 @@ interface MatchRow {
   opponent2: { id: string; name: string; image_url: string | null; pandascore_id: number | null } | null;
 }
 
-function teamPublicId(team: { id: string; pandascore_id: number | null } | null): number | null {
+interface MembershipPeriod {
+  team_id: string;
+  started_at: string;
+  ended_at: string | null;
+}
+
+function teamPublicId(team: { pandascore_id: number | null } | null): number | null {
   if (!team || team.pandascore_id === null || team.pandascore_id === undefined) return null;
   return team.pandascore_id;
 }
 
-function mapMatch(row: MatchRow): PlayerMatch | null {
+/**
+ * Pick the team the player was on for this match, restricted to the
+ * membership period that covers the match date. Returns the local team UUID
+ * or null when no membership covers it.
+ */
+function playerTeamForMatch(row: MatchRow, periods: MembershipPeriod[]): string | null {
+  const candidates = [row.opponent1?.id, row.opponent2?.id].filter(
+    (id): id is string => typeof id === "string"
+  );
+  if (candidates.length === 0) return null;
+  const matchDate = row.begin_at ? new Date(row.begin_at).getTime() : null;
+
+  for (const teamId of candidates) {
+    const cover = periods.find((p) => {
+      if (p.team_id !== teamId) return false;
+      if (matchDate === null) return true;
+      const start = new Date(p.started_at).getTime();
+      const end = p.ended_at ? new Date(p.ended_at).getTime() : Infinity;
+      return matchDate >= start && matchDate <= end;
+    });
+    if (cover) return teamId;
+  }
+  return null;
+}
+
+function mapMatch(row: MatchRow, playerTeamId: string): PlayerMatch | null {
   // We rely on PandaScore numeric IDs for stable links. A row without one
   // (rare admin-created entry) is filtered out from public listings.
   const matchId = row.pandascore_id;
@@ -104,73 +128,96 @@ function mapMatch(row: MatchRow): PlayerMatch | null {
     tournament: row.esport_tournaments?.name ?? "",
     opponents: [o1, o2].filter((o): o is NonNullable<typeof o> => o !== null),
     winnerId: winnerPublicId,
+    playerTeamId,
   };
 }
 
+const MATCH_SELECT = `id, pandascore_id, name, status, begin_at, game, winner_id,
+  opponent1_id, opponent1_score, opponent2_id, opponent2_score,
+  esport_tournaments(name, league_name),
+  opponent1:esport_teams!esport_matches_opponent1_id_fkey(id, name, image_url, pandascore_id),
+  opponent2:esport_teams!esport_matches_opponent2_id_fkey(id, name, image_url, pandascore_id)`;
+
 /**
- * Recent matches involving a given player, fetched from the local DB.
- * Resolves the player's team first, then returns matches where that team
- * appears as opponent1 or opponent2.
+ * Paginated list of matches the player participated in, attributed via the
+ * team membership periods (`esport_player_team_history`). A match is
+ * included when one of its opponents is a team the player was on **at the
+ * time of the match**.
  *
- * @param playerId PandaScore numeric ID (preferred) or local UUID.
- * @param perPage Maximum number of matches to return (default 5).
+ * @param pandascoreId Player's PandaScore numeric ID.
+ * @param page 1-based page index (default 1).
+ * @param limit Page size (default 10, capped at 50).
  */
 export async function getPlayerRecentMatches(
-  playerId: number | string,
-  perPage = 5
-): Promise<PlayerMatch[]> {
-  const cacheKey = `esport-player-matches:${playerId}:${perPage}`;
-  const cached = getCached<PlayerMatch[]>(cacheKey);
+  pandascoreId: number,
+  page = 1,
+  limit = DEFAULT_PAGE_SIZE
+): Promise<PlayerMatchesPage> {
+  const safePage = Math.max(1, page);
+  const safeLimit = Math.min(MAX_PAGE_SIZE, Math.max(1, limit));
+  const cacheKey = `esport-player-matches:${pandascoreId}:${safePage}:${safeLimit}`;
+  const cached = cache.get<PlayerMatchesPage>(cacheKey);
   if (cached) return cached;
 
   try {
-    const supabase = getSupabaseAdmin();
-    const numericId = typeof playerId === "number" ? playerId : parseInt(playerId, 10);
-    const isNumeric = !isNaN(numericId);
-
-    // 1. Resolve the player's team_id
-    const { data: playerData, error: playerError } = await (isNumeric
-      ? supabase
-          .from("esport_players" as UntypedFrom)
-          .select("team_id")
-          .eq("pandascore_id", numericId)
-          .limit(1)
-      : supabase
-          .from("esport_players" as UntypedFrom)
-          .select("team_id")
-          .eq("id", playerId)
-          .limit(1));
-
-    if (playerError) throw playerError;
-    const teamId = (playerData as { team_id: string | null }[] | null)?.[0]?.team_id;
-    if (!teamId) {
-      setCache(cacheKey, []);
-      return [];
+    const playerLocalId = await resolvePlayerLocalId(pandascoreId);
+    if (!playerLocalId) {
+      const empty: PlayerMatchesPage = { matches: [], total: 0, page: safePage, limit: safeLimit };
+      cache.set(cacheKey, empty);
+      return empty;
     }
 
-    // 2. Fetch recent matches where the team is one of the opponents
-    const { data: matchData, error: matchError } = await supabase
+    const supabase = getSupabaseAdmin();
+
+    // 1. Fetch all team memberships in one query.
+    const { data: memberships, error: memErr } = await supabase
+      .from("esport_player_team_history" as UntypedFrom)
+      .select("team_id, started_at, ended_at")
+      .eq("player_id", playerLocalId);
+    if (memErr) throw memErr;
+
+    const periods = (memberships as MembershipPeriod[] | null) ?? [];
+    if (periods.length === 0) {
+      const empty: PlayerMatchesPage = { matches: [], total: 0, page: safePage, limit: safeLimit };
+      cache.set(cacheKey, empty);
+      return empty;
+    }
+
+    const teamIds = Array.from(new Set(periods.map((p) => p.team_id)));
+    const from = (safePage - 1) * safeLimit;
+    const to = from + safeLimit - 1;
+
+    // 2. Fetch matches where any of the player's teams played, paginated.
+    const { data, count, error } = await supabase
       .from("esport_matches" as UntypedFrom)
-      .select(
-        `id, pandascore_id, name, status, begin_at, game, winner_id,
-         opponent1_id, opponent1_score, opponent2_id, opponent2_score,
-         esport_tournaments(name, league_name),
-         opponent1:esport_teams!esport_matches_opponent1_id_fkey(id, name, image_url, pandascore_id),
-         opponent2:esport_teams!esport_matches_opponent2_id_fkey(id, name, image_url, pandascore_id)`
-      )
-      .or(`opponent1_id.eq.${teamId},opponent2_id.eq.${teamId}`)
+      .select(MATCH_SELECT, { count: "exact" })
+      .or(`opponent1_id.in.(${teamIds.join(",")}),opponent2_id.in.(${teamIds.join(",")})`)
       .order("begin_at", { ascending: false, nullsFirst: false })
-      .limit(perPage);
+      .range(from, to);
+    if (error) throw error;
 
-    if (matchError) throw matchError;
+    const rows = (data as MatchRow[] | null) ?? [];
 
-    const mapped = (matchData as MatchRow[] | null ?? [])
-      .map(mapMatch)
-      .filter((m): m is PlayerMatch => m !== null);
-    setCache(cacheKey, mapped);
-    return mapped;
+    // 3. Filter rows that don't intersect any membership period for this team
+    //    (e.g. the player's old team played a match before the player joined).
+    const mapped: PlayerMatch[] = [];
+    for (const row of rows) {
+      const playerTeamId = playerTeamForMatch(row, periods);
+      if (!playerTeamId) continue;
+      const m = mapMatch(row, playerTeamId);
+      if (m) mapped.push(m);
+    }
+
+    const result: PlayerMatchesPage = {
+      matches: mapped,
+      total: count ?? mapped.length,
+      page: safePage,
+      limit: safeLimit,
+    };
+    cache.set(cacheKey, result);
+    return result;
   } catch (error) {
-    logger.error("Failed to fetch player recent matches from DB", { error, playerId });
+    logger.error("Failed to fetch player matches from DB", { error, pandascoreId });
     throw error;
   }
 }

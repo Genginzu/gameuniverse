@@ -19,6 +19,7 @@ import {
   SyncErrorCollector,
 } from "@/lib/services/pandascore-sync-helpers";
 import { resolvePredictionsForMatch } from "@/lib/services/esportPredictionService";
+import { reconcilePlayerTeamHistory } from "@/lib/services/esport/playerTeamHistory";
 import { logger } from "@/lib/logger";
 
 const ENTITY_TYPES = ["team", "player", "tournament", "match"] as const;
@@ -303,6 +304,19 @@ async function syncPlayersIncremental(ids: number[], errors: SyncErrorCollector)
     game: p.current_videogame?.name ?? null,
   }));
   const result = await bulkUpsert("esport_players", rows, "pandascore_id", { errorCollector: errors, errorType: "player" });
+
+  // Reconcile the team history table for the players we just upserted.
+  const playerLocalMap = await preloadIdMap("esport_players", players.map((p) => p.id));
+  const historyInputs = players
+    .map((p) => {
+      const playerLocalId = playerLocalMap.get(p.id);
+      if (!playerLocalId) return null;
+      const newTeamLocalId = p.current_team?.id ? teamMap.get(p.current_team.id) ?? null : null;
+      return { playerLocalId, newTeamLocalId };
+    })
+    .filter((x): x is { playerLocalId: string; newTeamLocalId: string | null } => x !== null);
+  await reconcilePlayerTeamHistory(historyInputs);
+
   return { ...result, errors: result.errors + (ids.length - players.length) };
 }
 

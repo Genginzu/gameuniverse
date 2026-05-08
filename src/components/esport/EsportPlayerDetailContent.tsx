@@ -1,13 +1,20 @@
 "use client";
 
+import { useState } from "react";
 import useSWR from "swr";
 import { useTranslations } from "next-intl";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PlayerHero } from "./PlayerHero";
 import { PlayerAboutCard, PlayerTeamCard } from "./PlayerInfoCards";
 import { PlayerRecentMatches } from "./PlayerRecentMatches";
+import { PlayerStats } from "./PlayerStats";
+import { PlayerTeamHistory } from "./PlayerTeamHistory";
 import type { PlayerDetail } from "./player-detail-types";
-import type { PlayerMatch } from "@/lib/services/esportPlayerMatchesService";
+import type { PlayerMatchesPage } from "@/lib/services/esportPlayerMatchesService";
+import type {
+  PlayerStats as PlayerStatsType,
+  PlayerTeamMembership,
+} from "@/lib/services/esportPlayerHistoryService";
 
 export interface EsportPlayerDetailData {
   player: PlayerDetail;
@@ -25,6 +32,7 @@ export function EsportPlayerDetailContent({
   initialData,
 }: EsportPlayerDetailContentProps) {
   const t = useTranslations("esport.players");
+  const [matchesPage, setMatchesPage] = useState(1);
 
   const { data, isLoading, error } = useSWR<EsportPlayerDetailData>(
     `/api/esport/players/${playerId}`,
@@ -32,10 +40,22 @@ export function EsportPlayerDetailContent({
     { fallbackData: initialData, revalidateOnFocus: false }
   );
 
-  const { data: matchesData, isLoading: matchesLoading } = useSWR<{ matches: PlayerMatch[] }>(
-    `/api/esport/players/${playerId}/matches`,
+  const { data: statsData, isLoading: statsLoading } = useSWR<{ stats: PlayerStatsType }>(
+    `/api/esport/players/${playerId}/stats`,
     fetcher,
     { revalidateOnFocus: false }
+  );
+
+  const { data: historyData, isLoading: historyLoading } = useSWR<{
+    history: PlayerTeamMembership[];
+  }>(`/api/esport/players/${playerId}/team-history`, fetcher, {
+    revalidateOnFocus: false,
+  });
+
+  const { data: matchesData, isLoading: matchesLoading } = useSWR<PlayerMatchesPage>(
+    `/api/esport/players/${playerId}/matches?page=${matchesPage}`,
+    fetcher,
+    { revalidateOnFocus: false, keepPreviousData: true }
   );
 
   if (isLoading) return <PlayerDetailSkeleton />;
@@ -49,19 +69,32 @@ export function EsportPlayerDetailContent({
 
   const player = data.player;
   const matches = matchesData?.matches ?? [];
+  const total = matchesData?.total ?? 0;
+  const limit = matchesData?.limit ?? 10;
+  const history = historyData?.history ?? [];
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-      <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-8">
+      <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
         <PlayerHero player={player} />
+
+        <PlayerStats stats={statsData?.stats} isLoading={statsLoading} />
 
         <div className="mt-6 grid gap-6 lg:grid-cols-5">
           <div className="space-y-6 lg:col-span-2">
             <PlayerAboutCard player={player} />
             {player.teamName && <PlayerTeamCard player={player} />}
+            <PlayerTeamHistory history={history} isLoading={historyLoading} />
           </div>
           <div className="lg:col-span-3">
-            <PlayerRecentMatches matches={matches} isLoading={matchesLoading} />
+            <PlayerRecentMatches
+              matches={matches}
+              total={total}
+              page={matchesPage}
+              limit={limit}
+              onPageChange={setMatchesPage}
+              isLoading={matchesLoading}
+            />
           </div>
         </div>
       </div>
@@ -71,7 +104,7 @@ export function EsportPlayerDetailContent({
 
 function PlayerDetailSkeleton() {
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
       <div className="from-palette-secondary-500/40 to-palette-primary-500/40 mb-6 rounded-3xl bg-linear-to-br p-8">
         <div className="flex flex-col items-center gap-6 sm:flex-row">
           <Skeleton className="h-32 w-32 rounded-full sm:h-40 sm:w-40" />
@@ -86,10 +119,13 @@ function PlayerDetailSkeleton() {
         </div>
       </div>
 
+      <Skeleton className="mb-6 h-32 rounded-2xl" />
+
       <div className="grid gap-6 lg:grid-cols-5">
         <div className="space-y-6 lg:col-span-2">
           <Skeleton className="h-48 rounded-2xl" />
           <Skeleton className="h-32 rounded-2xl" />
+          <Skeleton className="h-48 rounded-2xl" />
         </div>
         <Skeleton className="h-72 rounded-2xl lg:col-span-3" />
       </div>
