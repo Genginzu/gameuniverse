@@ -1,0 +1,174 @@
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
+import type { PandaScoreListParams } from "@/lib/pandascore/types";
+import { logger } from "@/lib/logger";
+
+/**
+ * Helpers shared by the cron and admin PandaScore sync routes.
+ *
+ * Performance notes:
+ * - Bulk upserts (BULK_UPSERT_SIZE rows per request) instead of one-by-one.
+ * - Preload reference IDs (teams, tournaments) into in-memory maps to avoid
+ *   N round-trips to Supabase.
+ * - Page caps to bound runtime; PandaScore returns thousands of entities.
+ */
+
+export const BULK_UPSERT_SIZE = 100;
+
+/** Default cap for paginated PandaScore fetches (per_page=100 → 2 000 rows max). */
+export const DEFAULT_MAX_PAGES = 20;
+
+/** Stale `running` sync logs older than this are auto-marked failed at sync start. */
+export const STALE_SYNC_THRESHOLD_MS = 10 * 60 * 1000; // 10 minutes
+
+/**
+ * Fetches all pages of a paginated PandaScore endpoint, stopping when:
+ * - the API returns less than `per_page` (last page reached), or
+ * - `maxPages` is reached (safety cap).
+ *
+ * Errors are caught and the partial result returned (sync continues).
+ */
+export async function fetchAllPages<T>(
+  fetcher: (p: PandaScoreListParams) => Promise<T[]>,
+  options: {
+    game?: string;
+    maxPages?: number;
+    perPage?: number;
+    extra?: Record<string, string | number>;
+    onPage?: (info: { page: number; items: number; total: number }) => void;
+    label?: string;
+  } = {},
+): Promise<T[]> {
+  const { game, maxPages = DEFAULT_MAX_PAGES, perPage = 100, extra, onPage, label } = options;
+  const all: T[] = [];
+  let page = 1;
+
+  while (page <= maxPages) {
+    const params: PandaScoreListParams = { page, per_page: perPage, ...extra };
+    if (game) params["filter[videogame_title]"] = game;
+
+    let batch: T[];
+    try {
+      batch = await fetcher(params);
+    } catch (error) {
+      logger.warn("fetchAllPages stopped early", { label, page, error });
+      break;
+    }
+
+    all.push(...batch);
+    onPage?.({ page, items: batch.length, total: all.length });
+
+    if (batch.length < perPage) break;
+    page++;
+  }
+
+  if (page > maxPages) {
+    logger.warn("fetchAllPages reached maxPages cap", { label, maxPages, total: all.length });
+  }
+
+  return all;
+}
+
+/**
+ * Splits an array into chunks of `size` items.
+ */
+export function chunk<T>(items: T[], size: number): T[][] {
+  if (size <= 0) return [items];
+  const chunks: T[][] = [];
+  for (let i = 0; i < items.length; i += size) {
+    chunks.push(items.slice(i, i + size));
+  }
+  return chunks;
+}
+
+/**
+ * Bulk upsert into a Supabase table by chunks of `BULK_UPSERT_SIZE`.
+ * Returns the number of rows successfully written and the number of errors.
+ */
+export async function bulkUpsert(
+  table: string,
+  rows: Record<string, unknown>[],
+  onConflict: string,
+  options: {
+    onProgress?: (info: { synced: number; total: number; lastName?: string }) => void;
+    nameField?: string;
+  } = {},
+): Promise<{ synced: number; errors: number }> {
+  if (rows.length === 0) return { synced: 0, errors: 0 };
+
+  const supabase = getSupabaseAdmin();
+  let synced = 0;
+  let errors = 0;
+
+  for (const batch of chunk(rows, BULK_UPSERT_SIZE)) {
+    const { error } = await supabase.from(table).upsert(batch, { onConflict });
+    if (error) {
+      logger.warn("bulkUpsert error", { table, batchSize: batch.length, error: error.message });
+      errors += batch.length;
+    } else {
+      synced += batch.length;
+    }
+    const last = batch[batch.length - 1];
+    const lastName = options.nameField ? (last?.[options.nameField] as string | undefined) : undefined;
+    options.onProgress?.({ synced, total: rows.length, lastName });
+  }
+
+  return { synced, errors };
+}
+
+/**
+ * Loads pandascore_id → uuid maps for a given table, in one query.
+ * Used to resolve foreign keys (team_id, tournament_id) without N RTTs.
+ */
+export async function preloadIdMap(
+  table: string,
+  pandaIds: number[],
+): Promise<Map<number, string>> {
+  const map = new Map<number, string>();
+  if (pandaIds.length === 0) return map;
+
+  const supabase = getSupabaseAdmin();
+  const uniqueIds = Array.from(new Set(pandaIds));
+
+  // Supabase .in() supports up to ~1000 values per query — chunk for safety.
+  for (const batch of chunk(uniqueIds, 500)) {
+    const { data, error } = await supabase
+      .from(table)
+      .select("id, pandascore_id")
+      .in("pandascore_id", batch);
+
+    if (error) {
+      logger.warn("preloadIdMap error", { table, error: error.message });
+      continue;
+    }
+
+    for (const row of (data ?? []) as { id: string; pandascore_id: number }[]) {
+      map.set(row.pandascore_id, row.id);
+    }
+  }
+
+  return map;
+}
+
+/**
+ * Marks any `running` sync logs older than STALE_SYNC_THRESHOLD_MS as failed.
+ * Called at the start of a new sync to clean up orphaned entries (e.g. from
+ * killed serverless invocations).
+ */
+export async function cleanupStaleSyncLogs(): Promise<void> {
+  const supabase = getSupabaseAdmin();
+  const cutoff = new Date(Date.now() - STALE_SYNC_THRESHOLD_MS).toISOString();
+
+  const { error } = await supabase
+    .from("pandascore_sync_logs")
+    .update({
+      status: "failed",
+      error_message: "Auto-marked as failed (stale running entry)",
+      completed_at: new Date().toISOString(),
+    })
+    .eq("status", "running")
+    .lt("started_at", cutoff);
+
+  if (error) {
+    logger.warn("cleanupStaleSyncLogs error", { error: error.message });
+  }
+}
