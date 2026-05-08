@@ -3870,7 +3870,44 @@
       "searchPlaceholder": "Rechercher un joueur...",
       "noPlayers": "Aucun joueur trouvé",
       "noPlayersDescription": "Aucun joueur esport ne correspond à votre recherche",
-      "loadError": "Impossible de charger les détails du joueur"
+      "loadError": "Impossible de charger les détails du joueur",
+      "totalPlayers": "{count, plural, =0 {Aucun joueur} =1 {1 joueur} other {# joueurs}}",
+      "matchingPlayers": "{count, plural, =0 {Aucun joueur correspondant} =1 {1 joueur correspondant} other {# joueurs correspondants}}",
+      "allGames": "Tous les jeux",
+      "about": "À propos",
+      "fullName": "Nom complet",
+      "role": "Rôle",
+      "nationality": "Nationalité",
+      "game": "Jeu",
+      "currentTeam": "Équipe actuelle",
+      "recentMatches": "Matchs récents",
+      "matchStatus": {
+        "live": "En direct",
+        "upcoming": "À venir",
+        "finished": "Terminé",
+        "canceled": "Annulé",
+        "postponed": "Reporté"
+      },
+      "stats": {
+        "heading": "Statistiques",
+        "wins": "Victoires",
+        "losses": "Défaites",
+        "winRate": "Ratio de victoires",
+        "teamsCount": "Équipes",
+        "titles": "Titres",
+        "streak": "Série actuelle",
+        "totalMatches": "{count, plural, =0 {Aucun match comptabilisé} =1 {Sur 1 match} other {Sur # matchs}}",
+        "activity30d": "Activité (30 derniers jours)",
+        "activityDetails": "{matches, plural, =1 {1 match} other {# matchs}} · {wins} V – {losses} D",
+        "bestOpponent": "Meilleur adversaire",
+        "worstOpponent": "Pire adversaire",
+        "gameBreakdown": "Répartition par jeu"
+      },
+      "teamHistory": {
+        "heading": "Historique des équipes",
+        "currentBadge": "Actuelle",
+        "unknownTeam": "Équipe inconnue"
+      }
     },
     "live": {
       "metaTitle": "Esport en direct",

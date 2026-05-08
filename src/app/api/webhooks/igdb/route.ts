@@ -1,63 +1,36 @@
 /**
- * IGDB Webhook Receiver
+ * IGDB Webhook Receiver — DECOMMISSIONED
  *
- * POST /api/webhooks/igdb?entity={games|characters}&method={create|update|delete}
+ * This route used to receive IGDB webhooks. Webhook reception has been
+ * migrated to a Supabase Edge Function:
  *
- * IGDB sends a POST with the entity JSON in the body.
- * The X-Secret header is validated against IGDB_WEBHOOK_SECRET.
- * Must respond 200 within 15 seconds or IGDB will retry (5 failures = deactivation).
+ *   POST https://<project-ref>.supabase.co/functions/v1/igdb-webhook
+ *
+ * The route is kept temporarily as a kill switch so that any straggler
+ * webhook still pointing at the old URL gets a clean error response
+ * instead of being silently lost. Once all IGDB registrations have been
+ * recreated against the Edge Function URL, this file can be deleted.
+ *
+ * Anything that was previously imported in this file (igdbWebhookService,
+ * webhookDiffApplier, etc.) now lives in supabase/functions/_shared/.
  */
 
-import { NextRequest, NextResponse } from "next/server";
-import { processWebhookEvent } from "@/lib/services/igdbWebhookService";
+import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
-import { IGDB_ENDPOINTS, type WebhookEventType } from "@/types/webhooks";
 
-const VALID_METHODS: WebhookEventType[] = ["create", "update", "delete"];
+export function POST(request: Request) {
+  // Best-effort logging so we know which webhooks are still hitting the old endpoint.
+  const url = new URL(request.url);
+  logger.warn("Legacy IGDB webhook endpoint hit — registration must be recreated", {
+    entity: url.searchParams.get("entity"),
+    method: url.searchParams.get("method"),
+  });
 
-export async function POST(request: NextRequest) {
-  try {
-    // Validate secret
-    const secret = request.headers.get("x-secret");
-    const expectedSecret = process.env.IGDB_WEBHOOK_SECRET;
-
-    if (!expectedSecret) {
-      logger.error("IGDB_WEBHOOK_SECRET not configured");
-      return NextResponse.json({ error: "Server misconfigured" }, { status: 500 });
-    }
-
-    if (secret !== expectedSecret) {
-      logger.warn("Webhook: invalid secret", { received: secret?.slice(0, 4) });
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    // Parse query params
-    const { searchParams } = new URL(request.url);
-    const entityType = searchParams.get("entity");
-    const method = searchParams.get("method") as WebhookEventType | null;
-
-    if (!entityType || !IGDB_ENDPOINTS.includes(entityType as (typeof IGDB_ENDPOINTS)[number])) {
-      return NextResponse.json({ error: "Invalid entity type" }, { status: 400 });
-    }
-    if (!method || !VALID_METHODS.includes(method)) {
-      return NextResponse.json({ error: "Invalid method" }, { status: 400 });
-    }
-
-    // Parse body
-    const payload = await request.json();
-    if (!payload || typeof payload.id !== "number") {
-      return NextResponse.json({ error: "Invalid payload: missing id" }, { status: 400 });
-    }
-
-    logger.info("Webhook received", { entityType, method, igdbId: payload.id });
-
-    // Process the event (non-blocking for create, synchronous logging for others)
-    const result = await processWebhookEvent(entityType, method, payload);
-
-    return NextResponse.json({ ok: true, eventId: result.eventId, status: result.status });
-  } catch (error) {
-    logger.error("Webhook processing error", { error });
-    // Always return 200 to avoid IGDB deactivating the webhook on transient errors
-    return NextResponse.json({ ok: false, error: "Internal error" }, { status: 200 });
-  }
+  return NextResponse.json(
+    {
+      error:
+        "This webhook endpoint has been decommissioned. Webhook reception is now handled by the Supabase Edge Function at /functions/v1/igdb-webhook. Re-register the webhook against the new URL.",
+    },
+    { status: 410 }
+  );
 }

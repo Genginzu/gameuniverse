@@ -3865,7 +3865,44 @@
       "searchPlaceholder": "Search for a player...",
       "noPlayers": "No players found",
       "noPlayersDescription": "No esport player matches your search",
-      "loadError": "Failed to load player details"
+      "loadError": "Failed to load player details",
+      "totalPlayers": "{count, plural, =0 {No players} =1 {1 player} other {# players}}",
+      "matchingPlayers": "{count, plural, =0 {No matching players} =1 {1 matching player} other {# matching players}}",
+      "allGames": "All games",
+      "about": "About",
+      "fullName": "Full name",
+      "role": "Role",
+      "nationality": "Nationality",
+      "game": "Game",
+      "currentTeam": "Current team",
+      "recentMatches": "Recent matches",
+      "matchStatus": {
+        "live": "Live",
+        "upcoming": "Upcoming",
+        "finished": "Finished",
+        "canceled": "Canceled",
+        "postponed": "Postponed"
+      },
+      "stats": {
+        "heading": "Statistics",
+        "wins": "Wins",
+        "losses": "Losses",
+        "winRate": "Win rate",
+        "teamsCount": "Teams",
+        "titles": "Titles",
+        "streak": "Current streak",
+        "totalMatches": "{count, plural, =0 {No counted matches} =1 {Across 1 match} other {Across # matches}}",
+        "activity30d": "Activity (last 30 days)",
+        "activityDetails": "{matches, plural, =1 {1 match} other {# matches}} · {wins} W – {losses} L",
+        "bestOpponent": "Best opponent",
+        "worstOpponent": "Worst opponent",
+        "gameBreakdown": "Per-game breakdown"
+      },
+      "teamHistory": {
+        "heading": "Team history",
+        "currentBadge": "Current",
+        "unknownTeam": "Unknown team"
+      }
     },
     "live": {
       "metaTitle": "Esport Live",

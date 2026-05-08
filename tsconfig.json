@@ -38,6 +38,7 @@
     "**/*.test.tsx",
     "test/**/*",
     "test-resend.js",
-    "vitest.config.ts"
+    "vitest.config.ts",
+    "supabase/functions/**/*"
   ]
 }
