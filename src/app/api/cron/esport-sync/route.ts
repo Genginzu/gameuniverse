@@ -16,6 +16,7 @@ import {
   bulkUpsert,
   cleanupStaleSyncLogs,
   preloadIdMap,
+  SyncErrorCollector,
 } from "@/lib/services/pandascore-sync-helpers";
 import { resolvePredictionsForMatch } from "@/lib/services/esportPredictionService";
 import { logger } from "@/lib/logger";
@@ -69,6 +70,7 @@ async function handler(request: NextRequest) {
 
   const supabase = getSupabaseAdmin();
   const start = Date.now();
+  const errors = new SyncErrorCollector();
 
   // Best-effort cleanup of orphan running logs before starting (e.g. from
   // killed serverless invocations that never marked themselves completed).
@@ -102,7 +104,7 @@ async function handler(request: NextRequest) {
     } else {
       // Incremental sync via Incidents API
       logger.info("PandaScore cron: incremental sync since", { since });
-      results = await incrementalSync(since);
+      results = await incrementalSync(since, errors);
 
       // Fallback: if incremental returned nothing and tables are empty, do full sync
       const totalSynced = results.teams.synced + results.players.synced + results.tournaments.synced + results.matches.synced;
@@ -130,19 +132,26 @@ async function handler(request: NextRequest) {
           matches_synced: results.matches.synced,
           matches_errors: results.matches.errors,
           duration_ms: duration,
+          error_details: errors.toJSON(),
           completed_at: new Date().toISOString(),
         })
         .eq("id", logId);
     }
 
-    logger.info("PandaScore sync completed", { trigger, duration, since: since ?? "full", results });
-    return NextResponse.json({ ok: true, trigger, incremental: !!since, duration, results });
+    logger.info("PandaScore sync completed", { trigger, duration, since: since ?? "full", results, errorCount: errors.count });
+    return NextResponse.json({ ok: true, trigger, incremental: !!since, duration, results, errors: errors.count });
   } catch (error) {
     const msg = error instanceof Error ? error.message : "Unknown error";
     if (logId) {
       await supabase
         .from("pandascore_sync_logs")
-        .update({ status: "failed", error_message: msg, duration_ms: Date.now() - start, completed_at: new Date().toISOString() })
+        .update({
+          status: "failed",
+          error_message: msg,
+          duration_ms: Date.now() - start,
+          error_details: errors.toJSON(),
+          completed_at: new Date().toISOString(),
+        })
         .eq("id", logId);
     }
     logger.error("PandaScore sync failed", { trigger, error });
@@ -159,7 +168,7 @@ type AllResults = { teams: SyncResult; players: SyncResult; tournaments: SyncRes
  * volume, fetches details with bounded concurrency, then bulk upserts with
  * preloaded FK maps. Designed to stay well under the 5 min serverless timeout.
  */
-async function incrementalSync(since: string): Promise<AllResults> {
+async function incrementalSync(since: string, errors: SyncErrorCollector): Promise<AllResults> {
   const results: AllResults = {
     teams: { synced: 0, errors: 0 },
     players: { synced: 0, errors: 0 },
@@ -175,9 +184,9 @@ async function incrementalSync(since: string): Promise<AllResults> {
 
   // Fetch additions, changes, deletions in parallel.
   const [additions, changes, deletions] = await Promise.all([
-    fetchAllIncidents(getAdditions, baseParams, "additions"),
-    fetchAllIncidents(getChanges, baseParams, "changes"),
-    fetchAllIncidents(getDeletions, baseParams, "deletions"),
+    fetchAllIncidents(getAdditions, baseParams, "additions", errors),
+    fetchAllIncidents(getChanges, baseParams, "changes", errors),
+    fetchAllIncidents(getDeletions, baseParams, "deletions", errors),
   ]);
 
   logger.info("PandaScore incremental incidents fetched", {
@@ -198,10 +207,10 @@ async function incrementalSync(since: string): Promise<AllResults> {
   }
 
   // Sync in dependency order: teams → tournaments (independent) → players → matches
-  results.teams = await syncTeamsIncremental(takeIds(upsertIdsByType, "team"));
-  results.tournaments = await syncTournamentsIncremental(takeIds(upsertIdsByType, "tournament"));
-  results.players = await syncPlayersIncremental(takeIds(upsertIdsByType, "player"));
-  results.matches = await syncMatchesIncremental(takeIds(upsertIdsByType, "match"));
+  results.teams = await syncTeamsIncremental(takeIds(upsertIdsByType, "team"), errors);
+  results.tournaments = await syncTournamentsIncremental(takeIds(upsertIdsByType, "tournament"), errors);
+  results.players = await syncPlayersIncremental(takeIds(upsertIdsByType, "player"), errors);
+  results.matches = await syncMatchesIncremental(takeIds(upsertIdsByType, "match"), errors);
 
   // Apply deletions. Group by table for one delete query per table.
   const deletionsByType = new Map<EntityType, number[]>();
@@ -223,6 +232,9 @@ async function incrementalSync(since: string): Promise<AllResults> {
     if (error) {
       logger.warn("Bulk delete error", { table, count: ids.length, error: error.message });
       results[key].errors += ids.length;
+      for (const id of ids) {
+        errors.add({ type, id, phase: "delete", error: error.message });
+      }
     } else {
       results[key].synced += ids.length;
     }
@@ -246,21 +258,21 @@ function entityKey(type: EntityType): keyof AllResults {
 
 // -- Per-type incremental sync helpers --
 
-async function syncTeamsIncremental(ids: number[]): Promise<SyncResult> {
+async function syncTeamsIncremental(ids: number[], errors: SyncErrorCollector): Promise<SyncResult> {
   if (ids.length === 0) return { synced: 0, errors: 0 };
-  const teams = await fetchInBatches(ids, getTeamById);
+  const teams = await fetchInBatches(ids, getTeamById, "team", errors);
   const rows = teams.map((t) => ({
     pandascore_id: t.id, name: t.name, slug: t.slug,
     acronym: t.acronym, image_url: t.image_url, location: t.location,
     game: t.current_videogame?.name ?? null,
   }));
-  const result = await bulkUpsert("esport_teams", rows, "pandascore_id");
+  const result = await bulkUpsert("esport_teams", rows, "pandascore_id", { errorCollector: errors, errorType: "team" });
   return { ...result, errors: result.errors + (ids.length - teams.length) };
 }
 
-async function syncTournamentsIncremental(ids: number[]): Promise<SyncResult> {
+async function syncTournamentsIncremental(ids: number[], errors: SyncErrorCollector): Promise<SyncResult> {
   if (ids.length === 0) return { synced: 0, errors: 0 };
-  const tournaments = await fetchInBatches(ids, getTournamentById);
+  const tournaments = await fetchInBatches(ids, getTournamentById, "tournament", errors);
   const rows = tournaments.map((t) => ({
     pandascore_id: t.id, name: t.name, slug: t.slug,
     begin_at: t.begin_at, end_at: t.end_at, prizepool: t.prizepool,
@@ -268,13 +280,13 @@ async function syncTournamentsIncremental(ids: number[]): Promise<SyncResult> {
     league_image_url: t.league.image_url,
     serie_name: t.serie.name, game: t.videogame.name,
   }));
-  const result = await bulkUpsert("esport_tournaments", rows, "pandascore_id");
+  const result = await bulkUpsert("esport_tournaments", rows, "pandascore_id", { errorCollector: errors, errorType: "tournament" });
   return { ...result, errors: result.errors + (ids.length - tournaments.length) };
 }
 
-async function syncPlayersIncremental(ids: number[]): Promise<SyncResult> {
+async function syncPlayersIncremental(ids: number[], errors: SyncErrorCollector): Promise<SyncResult> {
   if (ids.length === 0) return { synced: 0, errors: 0 };
-  const players = await fetchInBatches(ids, getPlayerById);
+  const players = await fetchInBatches(ids, getPlayerById, "player", errors);
 
   // Preload teams referenced by these players in one query.
   const teamPandaIds = players
@@ -290,13 +302,13 @@ async function syncPlayersIncremental(ids: number[]): Promise<SyncResult> {
     team_id: p.current_team?.id ? teamMap.get(p.current_team.id) ?? null : null,
     game: p.current_videogame?.name ?? null,
   }));
-  const result = await bulkUpsert("esport_players", rows, "pandascore_id");
+  const result = await bulkUpsert("esport_players", rows, "pandascore_id", { errorCollector: errors, errorType: "player" });
   return { ...result, errors: result.errors + (ids.length - players.length) };
 }
 
-async function syncMatchesIncremental(ids: number[]): Promise<SyncResult> {
+async function syncMatchesIncremental(ids: number[], errors: SyncErrorCollector): Promise<SyncResult> {
   if (ids.length === 0) return { synced: 0, errors: 0 };
-  const matches = await fetchInBatches(ids, getMatchById);
+  const matches = await fetchInBatches(ids, getMatchById, "match", errors);
 
   // Preload tournament and team FKs in two queries.
   const tournamentPandaIds = matches.map((m) => m.tournament_id).filter((id): id is number => typeof id === "number");
@@ -323,7 +335,7 @@ async function syncMatchesIncremental(ids: number[]): Promise<SyncResult> {
     winner_id: m.winner_id ? teamMap.get(m.winner_id) ?? null : null,
     game: m.videogame.name,
   }));
-  const result = await bulkUpsert("esport_matches", rows, "pandascore_id");
+  const result = await bulkUpsert("esport_matches", rows, "pandascore_id", { errorCollector: errors, errorType: "match" });
 
   // Resolve predictions for newly finished matches with a winner.
   const finished = matches.filter((m) => m.status === "finished" && m.winner_id);
@@ -342,11 +354,14 @@ async function syncMatchesIncremental(ids: number[]): Promise<SyncResult> {
 
 /**
  * Fetches a list of PandaScore objects by id with bounded concurrency.
- * Skips items that fail (partial result), logs a warning.
+ * Skips items that fail (partial result) and records the failure in the
+ * error collector.
  */
 async function fetchInBatches<T>(
   ids: number[],
   fetcher: (id: number) => Promise<T>,
+  type: string,
+  errors: SyncErrorCollector,
 ): Promise<T[]> {
   const results: T[] = [];
   for (let i = 0; i < ids.length; i += FETCH_CONCURRENCY) {
@@ -354,10 +369,12 @@ async function fetchInBatches<T>(
     const settled = await Promise.allSettled(batch.map((id) => fetcher(id)));
     for (let j = 0; j < settled.length; j++) {
       const r = settled[j];
+      const id = batch[j];
       if (r.status === "fulfilled") {
         results.push(r.value);
       } else {
-        logger.warn("PandaScore detail fetch failed", { id: batch[j], reason: r.reason });
+        const msg = r.reason instanceof Error ? r.reason.message : String(r.reason);
+        errors.add({ type, id, phase: "fetch", error: msg });
       }
     }
   }
@@ -368,6 +385,7 @@ async function fetchAllIncidents(
   fetcher: (p: PandaScoreListParams) => Promise<PandaScoreIncident[]>,
   baseParams: PandaScoreListParams,
   label: string,
+  errors: SyncErrorCollector,
 ): Promise<PandaScoreIncident[]> {
   const all: PandaScoreIncident[] = [];
   let page = 1;
@@ -376,7 +394,14 @@ async function fetchAllIncidents(
     try {
       batch = await fetcher({ ...baseParams, page });
     } catch (error) {
-      logger.warn("fetchAllIncidents stopped early", { label, page, error });
+      const msg = error instanceof Error ? error.message : String(error);
+      logger.warn("fetchAllIncidents stopped early", { label, page, error: msg });
+      errors.add({
+        type: "incidents",
+        id: null,
+        phase: "fetch",
+        error: `${label} page ${page}: ${msg}`,
+      });
       break;
     }
     all.push(...batch);

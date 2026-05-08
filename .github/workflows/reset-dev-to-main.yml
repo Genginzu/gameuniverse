@@ -1,0 +1,36 @@
+name: Reset dev → main
+
+# Triggered after every push to main (typically a squash-merged PR).
+# Resets `dev` to match `main` exactly so subsequent PRs only show new commits
+# instead of accumulating squashed history.
+#
+# Solo workflow: dev is the working branch, main is what's deployed. After a
+# squash-merge, dev's commits have already been collapsed into one commit on
+# main. Without this reset, those original commits would keep showing up in
+# every future PR (478 commits in PR #195 was the wake-up call).
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  reset:
+    runs-on: ubuntu-latest
+    # Skip when the push was made by the bot itself (force-push reset below)
+    # to avoid an infinite trigger loop.
+    if: github.actor != 'github-actions[bot]'
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          ref: main
+
+      - name: Reset dev to main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -B dev origin/main
+          git push --force-with-lease origin dev

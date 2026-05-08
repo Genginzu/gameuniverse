@@ -9,6 +9,7 @@ import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Pagination } from "@/components/shared/Pagination";
+import { SyncErrorsDialog, type SyncErrorDetail } from "@/components/admin/esport/SyncErrorsDialog";
 
 type Entity = "teams" | "players" | "tournaments" | "matches";
 
@@ -32,6 +33,7 @@ interface SyncLog {
   matches_synced: number;
   matches_errors: number;
   error_message: string | null;
+  error_details: SyncErrorDetail[] | null;
   duration_ms: number | null;
   started_at: string;
 }
@@ -57,12 +59,14 @@ export default function EsportSyncPage() {
   useAdminAuth();
 
   const [syncing, setSyncing] = useState(false);
+  const [incrementalSyncing, setIncrementalSyncing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [states, setStates] = useState<Record<Entity, EntityState>>({
     teams: INITIAL, players: INITIAL, tournaments: INITIAL, matches: INITIAL,
   });
   const abortRef = useRef<AbortController | null>(null);
   const [logPage, setLogPage] = useState(1);
+  const [errorsLog, setErrorsLog] = useState<SyncLog | null>(null);
 
   const { data: logsData, isLoading: logsLoading, mutate } = useSWR<LogsResponse>(
     `/api/admin/esport/sync-logs?page=${logPage}&limit=10`,
@@ -132,6 +136,23 @@ export default function EsportSyncPage() {
     }
   }, [t, mutate]);
 
+  const runIncrementalSync = useCallback(async () => {
+    setIncrementalSyncing(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/cron/esport-sync?trigger=manual", { method: "POST" });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(data.error ?? t("error"));
+      }
+    } catch {
+      setError(t("error"));
+    } finally {
+      setIncrementalSyncing(false);
+      mutate();
+    }
+  }, [t, mutate]);
+
   const pct = (s: EntityState) => s.total > 0 ? Math.round((s.done / s.total) * 100) : 0;
   const logs = logsData?.logs ?? [];
   const totalSynced = (l: SyncLog) => l.teams_synced + l.players_synced + l.tournaments_synced + l.matches_synced;
@@ -160,11 +181,22 @@ export default function EsportSyncPage() {
             <p className="text-xs text-gray-500 dark:text-gray-400">{t("cronDescription")}</p>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            onClick={runIncrementalSync}
+            disabled={syncing || incrementalSyncing}
+            className="min-h-[44px]"
+            title={t("triggerIncrementalSyncDescription")}
+          >
+            <Icon icon={incrementalSyncing ? "mdi:loading" : "mdi:refresh"} className={`mr-2 size-5 ${incrementalSyncing ? "animate-spin" : ""}`} />
+            {incrementalSyncing ? t("syncing") : t("triggerIncrementalSync")}
+          </Button>
           <Button
             onClick={() => startSync()}
-            disabled={syncing}
+            disabled={syncing || incrementalSyncing}
             className="from-palette-secondary-500 to-palette-primary-500 min-h-[44px] bg-linear-to-r text-white"
+            title={t("triggerFullSyncDescription")}
           >
             <Icon icon={syncing ? "mdi:loading" : "mdi:cloud-download"} className={`mr-2 size-5 ${syncing ? "animate-spin" : ""}`} />
             {syncing ? t("syncing") : t("triggerSync")}
@@ -256,7 +288,25 @@ export default function EsportSyncPage() {
                       <Badge className={`rounded-full px-2 py-0.5 text-xs ${log.status === "completed" ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" : log.status === "failed" ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400" : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"}`}>{log.status}</Badge>
                     </td>
                     <td className="px-4 py-3 font-medium text-green-600 dark:text-green-400">{totalSynced(log)}</td>
-                    <td className="px-4 py-3">{totalErrors(log) > 0 ? <span className="font-medium text-red-600 dark:text-red-400">{totalErrors(log)}</span> : <span className="text-gray-400">0</span>}</td>
+                    <td className="px-4 py-3">
+                      {totalErrors(log) > 0 ? (
+                        log.error_details && log.error_details.length > 0 ? (
+                          <button
+                            type="button"
+                            onClick={() => setErrorsLog(log)}
+                            className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 font-medium text-red-600 hover:bg-red-50 hover:underline dark:text-red-400 dark:hover:bg-red-900/20"
+                            title={t("viewErrors")}
+                          >
+                            <Icon icon="mdi:alert-circle-outline" className="size-3.5" />
+                            {totalErrors(log)}
+                          </button>
+                        ) : (
+                          <span className="font-medium text-red-600 dark:text-red-400">{totalErrors(log)}</span>
+                        )
+                      ) : (
+                        <span className="text-gray-400">0</span>
+                      )}
+                    </td>
                     <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{fmtDuration(log.duration_ms)}</td>
                     <td className="hidden px-4 py-3 text-xs text-gray-500 lg:table-cell dark:text-gray-400">
                       {log.error_message ? <span className="text-red-500">{log.error_message}</span> : `T:${log.teams_synced} P:${log.players_synced} To:${log.tournaments_synced} M:${log.matches_synced}`}
@@ -273,6 +323,15 @@ export default function EsportSyncPage() {
           </div>
         )}
       </div>
+
+      {errorsLog && (
+        <SyncErrorsDialog
+          open={!!errorsLog}
+          onOpenChange={(o) => { if (!o) setErrorsLog(null); }}
+          errors={errorsLog.error_details ?? []}
+          startedAt={errorsLog.started_at}
+        />
+      )}
     </div>
   );
 }

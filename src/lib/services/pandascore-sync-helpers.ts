@@ -10,6 +10,11 @@ import { logger } from "@/lib/logger";
  * - Preload reference IDs (teams, tournaments) into in-memory maps to avoid
  *   N round-trips to Supabase.
  * - Page caps to bound runtime; PandaScore returns thousands of entities.
+ *
+ * Error reporting:
+ * - SyncErrorCollector captures per-item errors (fetch, upsert, delete) and
+ *   caps them at MAX_ERROR_DETAILS to avoid bloating the log row. Admin UI
+ *   reads `error_details` JSONB to show what failed and why.
  */
 
 export const BULK_UPSERT_SIZE = 100;
@@ -19,6 +24,58 @@ export const DEFAULT_MAX_PAGES = 20;
 
 /** Stale `running` sync logs older than this are auto-marked failed at sync start. */
 export const STALE_SYNC_THRESHOLD_MS = 10 * 60 * 1000; // 10 minutes
+
+/** Maximum per-item error entries kept on a single sync log row. */
+export const MAX_ERROR_DETAILS = 50;
+
+/** Phase of the sync at which an error occurred. */
+export type SyncErrorPhase = "fetch" | "upsert" | "delete";
+
+/** Single error entry stored in pandascore_sync_logs.error_details (JSONB). */
+export interface SyncErrorDetail {
+  type: string;
+  id: number | null;
+  phase: SyncErrorPhase;
+  error: string;
+}
+
+/**
+ * Collects per-item sync errors with a hard cap. Once the cap is reached,
+ * subsequent errors are dropped (counted in `dropped`) and only the first
+ * MAX_ERROR_DETAILS are persisted. Always logs to `logger` for full visibility
+ * in Vercel logs even when entries are dropped.
+ */
+export class SyncErrorCollector {
+  private entries: SyncErrorDetail[] = [];
+  private dropped = 0;
+
+  add(detail: SyncErrorDetail): void {
+    if (this.entries.length < MAX_ERROR_DETAILS) {
+      this.entries.push(detail);
+    } else {
+      this.dropped++;
+    }
+    logger.warn("Sync error", { ...detail });
+  }
+
+  /** Returns the captured entries plus a synthetic summary entry if any were dropped. */
+  toJSON(): SyncErrorDetail[] {
+    if (this.dropped === 0) return this.entries;
+    return [
+      ...this.entries,
+      {
+        type: "summary",
+        id: null,
+        phase: "fetch",
+        error: `${this.dropped} additional errors omitted (cap: ${MAX_ERROR_DETAILS})`,
+      },
+    ];
+  }
+
+  get count(): number {
+    return this.entries.length + this.dropped;
+  }
+}
 
 /**
  * Fetches all pages of a paginated PandaScore endpoint, stopping when:
@@ -36,9 +93,20 @@ export async function fetchAllPages<T>(
     extra?: Record<string, string | number>;
     onPage?: (info: { page: number; items: number; total: number }) => void;
     label?: string;
+    errorCollector?: SyncErrorCollector;
+    errorType?: string;
   } = {},
 ): Promise<T[]> {
-  const { game, maxPages = DEFAULT_MAX_PAGES, perPage = 100, extra, onPage, label } = options;
+  const {
+    game,
+    maxPages = DEFAULT_MAX_PAGES,
+    perPage = 100,
+    extra,
+    onPage,
+    label,
+    errorCollector,
+    errorType,
+  } = options;
   const all: T[] = [];
   let page = 1;
 
@@ -50,7 +118,14 @@ export async function fetchAllPages<T>(
     try {
       batch = await fetcher(params);
     } catch (error) {
-      logger.warn("fetchAllPages stopped early", { label, page, error });
+      const msg = error instanceof Error ? error.message : String(error);
+      logger.warn("fetchAllPages stopped early", { label, page, error: msg });
+      errorCollector?.add({
+        type: errorType ?? label ?? "unknown",
+        id: null,
+        phase: "fetch",
+        error: `Page ${page}: ${msg}`,
+      });
       break;
     }
 
@@ -91,6 +166,8 @@ export async function bulkUpsert(
   options: {
     onProgress?: (info: { synced: number; total: number; lastName?: string }) => void;
     nameField?: string;
+    errorCollector?: SyncErrorCollector;
+    errorType?: string;
   } = {},
 ): Promise<{ synced: number; errors: number }> {
   if (rows.length === 0) return { synced: 0, errors: 0 };
@@ -104,6 +181,15 @@ export async function bulkUpsert(
     if (error) {
       logger.warn("bulkUpsert error", { table, batchSize: batch.length, error: error.message });
       errors += batch.length;
+      // Capture one error entry per failed row so the admin UI can list ids.
+      for (const row of batch) {
+        options.errorCollector?.add({
+          type: options.errorType ?? table,
+          id: typeof row.pandascore_id === "number" ? row.pandascore_id : null,
+          phase: "upsert",
+          error: error.message,
+        });
+      }
     } else {
       synced += batch.length;
     }

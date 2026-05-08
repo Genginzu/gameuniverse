@@ -15,6 +15,7 @@ import {
   fetchAllPages,
   preloadIdMap,
   DEFAULT_MAX_PAGES,
+  SyncErrorCollector,
 } from "@/lib/services/pandascore-sync-helpers";
 import { logger } from "@/lib/logger";
 
@@ -51,6 +52,7 @@ export async function POST(request: NextRequest) {
     async start(controller) {
       const enc = new TextEncoder();
       const send: SendFn = (d) => controller.enqueue(enc.encode(`data: ${JSON.stringify(d)}\n\n`));
+      const errors = new SyncErrorCollector();
 
       // Best-effort cleanup of orphan running logs before starting.
       await cleanupStaleSyncLogs();
@@ -73,19 +75,19 @@ export async function POST(request: NextRequest) {
 
       try {
         if (entities.includes("teams")) {
-          counts.teams = await syncTeamsStream(send, game);
+          counts.teams = await syncTeamsStream(send, game, errors);
         }
         if (entities.includes("players")) {
-          counts.players = await syncPlayersStream(send, game);
+          counts.players = await syncPlayersStream(send, game, errors);
         }
         if (entities.includes("tournaments")) {
-          counts.tournaments = await syncTournamentsStream(send, game);
+          counts.tournaments = await syncTournamentsStream(send, game, errors);
         }
         if (entities.includes("matches")) {
-          counts.matches = await syncMatchesStream(send, game);
+          counts.matches = await syncMatchesStream(send, game, errors);
         }
 
-        send({ type: "complete" });
+        send({ type: "complete", errors: errors.count });
 
         if (logId) {
           await supabase.from("pandascore_sync_logs").update({
@@ -95,6 +97,7 @@ export async function POST(request: NextRequest) {
             tournaments_synced: counts.tournaments.synced, tournaments_errors: counts.tournaments.errors,
             matches_synced: counts.matches.synced, matches_errors: counts.matches.errors,
             duration_ms: Date.now() - start,
+            error_details: errors.toJSON(),
             completed_at: new Date().toISOString(),
           }).eq("id", logId);
         }
@@ -106,6 +109,7 @@ export async function POST(request: NextRequest) {
           await supabase.from("pandascore_sync_logs").update({
             status: "failed", error_message: msg,
             duration_ms: Date.now() - start,
+            error_details: errors.toJSON(),
             completed_at: new Date().toISOString(),
           }).eq("id", logId);
         }
@@ -126,12 +130,14 @@ export async function POST(request: NextRequest) {
 
 // -- Per-entity sync helpers --
 
-async function syncTeamsStream(send: SendFn, game?: string) {
+async function syncTeamsStream(send: SendFn, game: string | undefined, errors: SyncErrorCollector) {
   send({ type: "phase", entity: "teams", status: "fetching" });
   const teams = await fetchAllPages(getTeams, {
     game,
     maxPages: DEFAULT_MAX_PAGES,
     label: "teams",
+    errorCollector: errors,
+    errorType: "team",
     onPage: (info) => send({ type: "fetch-progress", entity: "teams", pages: info.page, items: info.total }),
   });
 
@@ -143,18 +149,22 @@ async function syncTeamsStream(send: SendFn, game?: string) {
   }));
   const result = await bulkUpsert("esport_teams", rows, "pandascore_id", {
     nameField: "name",
+    errorCollector: errors,
+    errorType: "team",
     onProgress: (p) => send({ type: "progress", entity: "teams", done: p.synced, total: p.total, name: p.lastName }),
   });
   send({ type: "phase", entity: "teams", status: "done", synced: result.synced });
   return result;
 }
 
-async function syncPlayersStream(send: SendFn, game?: string) {
+async function syncPlayersStream(send: SendFn, game: string | undefined, errors: SyncErrorCollector) {
   send({ type: "phase", entity: "players", status: "fetching" });
   const players = await fetchAllPages(getPlayers, {
     game,
     maxPages: DEFAULT_MAX_PAGES,
     label: "players",
+    errorCollector: errors,
+    errorType: "player",
     onPage: (info) => send({ type: "fetch-progress", entity: "players", pages: info.page, items: info.total }),
   });
 
@@ -173,21 +183,25 @@ async function syncPlayersStream(send: SendFn, game?: string) {
   }));
   const result = await bulkUpsert("esport_players", rows, "pandascore_id", {
     nameField: "name",
+    errorCollector: errors,
+    errorType: "player",
     onProgress: (p) => send({ type: "progress", entity: "players", done: p.synced, total: p.total, name: p.lastName }),
   });
   send({ type: "phase", entity: "players", status: "done", synced: result.synced });
   return result;
 }
 
-async function syncTournamentsStream(send: SendFn, game?: string) {
+async function syncTournamentsStream(send: SendFn, game: string | undefined, errors: SyncErrorCollector) {
   send({ type: "phase", entity: "tournaments", status: "fetching" });
   const [running, upcoming] = await Promise.all([
     fetchAllPages(getRunningTournaments, {
       game, maxPages: DEFAULT_MAX_PAGES, label: "tournaments-running",
+      errorCollector: errors, errorType: "tournament",
       onPage: (info) => send({ type: "fetch-progress", entity: "tournaments", pages: info.page, items: info.total }),
     }),
     fetchAllPages(getUpcomingTournaments, {
       game, maxPages: DEFAULT_MAX_PAGES, label: "tournaments-upcoming",
+      errorCollector: errors, errorType: "tournament",
       onPage: (info) => send({ type: "fetch-progress", entity: "tournaments", pages: info.page, items: info.total }),
     }),
   ]);
@@ -203,21 +217,25 @@ async function syncTournamentsStream(send: SendFn, game?: string) {
   }));
   const result = await bulkUpsert("esport_tournaments", rows, "pandascore_id", {
     nameField: "name",
+    errorCollector: errors,
+    errorType: "tournament",
     onProgress: (p) => send({ type: "progress", entity: "tournaments", done: p.synced, total: p.total, name: p.lastName }),
   });
   send({ type: "phase", entity: "tournaments", status: "done", synced: result.synced });
   return result;
 }
 
-async function syncMatchesStream(send: SendFn, game?: string) {
+async function syncMatchesStream(send: SendFn, game: string | undefined, errors: SyncErrorCollector) {
   send({ type: "phase", entity: "matches", status: "fetching" });
   const [past, running] = await Promise.all([
     fetchAllPages(getPastMatches, {
       game, maxPages: DEFAULT_MAX_PAGES, label: "matches-past",
+      errorCollector: errors, errorType: "match",
       onPage: (info) => send({ type: "fetch-progress", entity: "matches", pages: info.page, items: info.total }),
     }),
     fetchAllPages(getRunningMatches, {
       game, maxPages: DEFAULT_MAX_PAGES, label: "matches-running",
+      errorCollector: errors, errorType: "match",
       onPage: (info) => send({ type: "fetch-progress", entity: "matches", pages: info.page, items: info.total }),
     }),
   ]);
@@ -251,6 +269,8 @@ async function syncMatchesStream(send: SendFn, game?: string) {
   }));
   const result = await bulkUpsert("esport_matches", rows, "pandascore_id", {
     nameField: "name",
+    errorCollector: errors,
+    errorType: "match",
     onProgress: (p) => send({ type: "progress", entity: "matches", done: p.synced, total: p.total, name: p.lastName }),
   });
   send({ type: "phase", entity: "matches", status: "done", synced: result.synced });
