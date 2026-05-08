@@ -12,6 +12,7 @@ import {
 } from "@/lib/pandascore/client";
 import type { PandaScoreListParams } from "@/lib/pandascore/types";
 import { syncAll } from "@/lib/services/pandascoreSyncService";
+import { cleanupStaleSyncLogs } from "@/lib/services/pandascore-sync-helpers";
 import { resolvePredictionsForMatch } from "@/lib/services/esportPredictionService";
 import { logger } from "@/lib/logger";
 
@@ -31,7 +32,7 @@ const TABLE_MAP: Record<EntityType, string> = {
  * since the last successful sync. Falls back to full sync on first run.
  * GET is used by Vercel Cron, POST for manual triggers.
  */
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 export const GET = handler;
 export const POST = handler;
@@ -47,6 +48,10 @@ async function handler(request: NextRequest) {
 
   const supabase = getSupabaseAdmin();
   const start = Date.now();
+
+  // Best-effort cleanup of orphan running logs before starting (e.g. from
+  // killed serverless invocations that never marked themselves completed).
+  await cleanupStaleSyncLogs();
 
   // Create log entry
   const { data: log } = await supabase
