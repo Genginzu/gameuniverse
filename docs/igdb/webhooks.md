@@ -27,9 +27,9 @@ massive de l'enveloppe Vercel par les ~7 000 events IGDB quotidiens.
        │   Postgres table    │
        │ igdb_webhook_events │
        └──────────┬──────────┘
-                  │  Trigger AFTER INSERT OR UPDATE OF status
-                  │  WHEN status='received'
-                  │  → pg_net.http_post(...)
+                  │  Database Webhook Supabase
+                  │  (configuré dans le dashboard)
+                  │  → INSERT/UPDATE déclenche
                   ▼
        ┌─────────────────────┐
        │  Edge Function      │  Router → handlers/
@@ -126,7 +126,7 @@ en Deno qui vit en parallèle.
 | Comportement                  | Vercel (avant)              | Edge Function (après)       |
 | ----------------------------- | --------------------------- | --------------------------- |
 | Réception webhook IGDB        | `/api/webhooks/igdb`        | `/functions/v1/igdb-webhook` |
-| Insertion + traitement        | Synchrone dans la même req. | Insert puis trigger DB      |
+| Insertion + traitement        | Synchrone dans la même req. | Insert puis Database Webhook|
 | Couleurs des covers (Jimp)    | Extraites à l'import        | **Non** (best-effort skip)  |
 | Retour `GameDetails` complet  | Oui (refetch via API)       | Non (juste {gameId, slug})  |
 | Apply manuel admin            | Code local                  | Délègue à `igdb-processor`  |
@@ -167,21 +167,53 @@ supabase secrets set IGDB_CLIENT_SECRET=...
 # SUPABASE_URL et SUPABASE_SERVICE_ROLE_KEY sont injectées automatiquement
 ```
 
-### Configuration du trigger Postgres
+### Configuration du Database Webhook (déclenchement du processor)
 
-Pour que le trigger sache où invoquer l'Edge Function processor, deux
-GUC parameters doivent être posés sur la base :
+Le déclenchement de `igdb-processor` à chaque INSERT/UPDATE dans
+`igdb_webhook_events` se fait via les **Database Webhooks** intégrés à
+Supabase, configurés depuis le dashboard.
 
-```sql
-ALTER DATABASE postgres SET app.settings.processor_url
-  = 'https://<project-ref>.supabase.co/functions/v1/igdb-processor';
-ALTER DATABASE postgres SET app.settings.service_role_key
-  = '<your-service-role-jwt>';
+> ℹ️ L'approche initiale était un trigger Postgres custom appelant
+> `pg_net.http_post(...)` avec la service role key stockée dans des
+> GUCs `app.settings.*`. Cette approche **ne fonctionne pas sur Supabase
+> managed** car la commande `ALTER DATABASE postgres SET app.settings.*`
+> requiert des droits superuser que Supabase n'expose pas (erreur
+> `42501: permission denied`). Les Database Webhooks UI résolvent cela
+> en utilisant le service role en interne.
+
+**Procédure** (à faire **après** le déploiement des Edge Functions, sinon
+`igdb-processor` n'apparaîtra pas dans la liste de fonctions) :
+
+1. Dashboard Supabase → **Database** → **Webhooks** → **Create a new hook**
+2. Remplir :
+   - **Name** : `igdb_webhook_event_to_processor`
+   - **Table** : `public.igdb_webhook_events`
+   - **Events** : ☑ Insert ☑ Update
+   - **Type** : *Supabase Edge Functions*
+   - **Edge Function** : `igdb-processor`
+   - **HTTP Method** : POST
+   - **HTTP Headers** : `Content-Type: application/json`
+3. Sauvegarder.
+
+Le webhook s'exécute sur **tous** les inserts/updates de la table.
+Le filtrage `status='received'` est fait dans le code du processor :
+si l'event a déjà été processé ou est en `failed`, le router le détecte
+et ne fait rien.
+
+Le body envoyé par le Database Webhook Supabase a la forme :
+
+```json
+{
+  "type": "INSERT",
+  "table": "igdb_webhook_events",
+  "record": { "id": "...", "status": "received", ... },
+  "schema": "public",
+  "old_record": null
+}
 ```
 
-Si ces GUC ne sont pas configurés, le trigger logge un warning et laisse
-passer l'INSERT (pas de blocage). Les events restent en `received` et
-peuvent être traités manuellement via l'admin.
+Le router `igdb-processor/index.ts` lit `body.record.id` (en plus de
+`body.eventId` envoyé par la route admin Vercel pour l'apply manuel).
 
 ## Déploiement
 
@@ -195,11 +227,10 @@ supabase secrets set IGDB_WEBHOOK_SECRET=... \
                      IGDB_CLIENT_ID=... \
                      IGDB_CLIENT_SECRET=...
 
-# 3. Appliquer la migration qui pose le trigger
+# 3. Appliquer les migrations (cleanup d'éventuels triggers legacy)
 supabase db push
 
-# 4. Configurer les GUC (via le SQL Editor ou psql)
-# (voir bloc SQL ci-dessus)
+# 4. Configurer le Database Webhook via l'UI (cf. ci-dessus)
 
 # 5. Re-créer les registrations IGDB côté Vercel
 #    Admin > IGDB > Webhooks > Gestion :
@@ -259,10 +290,9 @@ Les événements se rafraîchissent toutes les 30 secondes (SWR).
 ### Aucun event ne se traite (status reste à `received`)
 
 Vérifier que :
-- L'extension `pg_net` est bien activée
-- Les GUC `app.settings.processor_url` et `app.settings.service_role_key`
-  sont configurés sur la base
+- Le Database Webhook est bien configuré dans **Database → Webhooks**
 - L'Edge Function `igdb-processor` est déployée et accessible
+- Les logs du Database Webhook (Database → Webhooks → cliquer sur le hook)
 - Les logs de l'Edge Function dans le dashboard Supabase
 
 ### IGDB renvoie 401 lors de l'enregistrement d'un webhook
@@ -277,3 +307,12 @@ Consulter le `error_message` dans la table. Causes fréquentes :
 - IGDB renvoie un payload incomplet (sub-entity non expandée) → réessayer
 - Conflit FK (genre/company/platform supprimés en local) → corriger en DB
 - L'admin peut relancer via la page diff (force=true)
+
+### Erreur `42501: permission denied to set parameter "app.settings.*"`
+
+C'est l'erreur qui a fait basculer du trigger Postgres custom vers les
+Database Webhooks UI. Si tu rencontres cette erreur, c'est que tu
+essaies d'appliquer une vieille version de la migration
+`20260508000002_igdb_webhook_processor_trigger.sql`. La version
+actuelle de cette migration est un simple cleanup (DROP IF EXISTS) qui
+n'a pas besoin de droits superuser.
