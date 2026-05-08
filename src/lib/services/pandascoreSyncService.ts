@@ -116,6 +116,7 @@ export async function syncMatches(game?: string): Promise<SyncResult> {
       scores,
       winner_id: m.winner_id ? teamMap.get(m.winner_id) ?? null : null,
       game: m.videogame.name,
+      streams: m.streams_list ?? null,
     };
   });
 

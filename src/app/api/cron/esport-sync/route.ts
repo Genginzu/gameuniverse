@@ -334,6 +334,7 @@ async function syncMatchesIncremental(ids: number[], errors: SyncErrorCollector)
     opponent2_score: m.results?.[1]?.score ?? null,
     winner_id: m.winner_id ? teamMap.get(m.winner_id) ?? null : null,
     game: m.videogame.name,
+    streams: m.streams_list ?? null,
   }));
   const result = await bulkUpsert("esport_matches", rows, "pandascore_id", { errorCollector: errors, errorType: "match" });
 

@@ -28,11 +28,15 @@ function setCache<T>(key: string, data: T): void {
 
 /**
  * A match currently running, exposed to the public live page.
- * The local DB does not store stream URLs (PandaScore-only data) so the
- * `live` page now shows ongoing matches with their score, without an
- * external stream link. Stream URLs may be added later via a dedicated
- * column or table if needed.
+ * Streams come from `esport_matches.streams`, populated by the PandaScore
+ * sync (`streams_list`).
  */
+export interface LiveStream {
+  language: string;
+  main: boolean;
+  rawUrl: string;
+}
+
 export interface LiveMatch {
   id: number;
   name: string;
@@ -42,6 +46,13 @@ export interface LiveMatch {
   league: string;
   tournament: string;
   opponents: Array<{ id: number | null; name: string; imageUrl: string | null; score: number }>;
+  streams: LiveStream[];
+}
+
+interface RawStream {
+  language?: string | null;
+  main?: boolean | null;
+  raw_url?: string | null;
 }
 
 interface LiveMatchRow {
@@ -52,6 +63,7 @@ interface LiveMatchRow {
   game: string | null;
   opponent1_score: number | null;
   opponent2_score: number | null;
+  streams: RawStream[] | null;
   esport_tournaments: { name: string | null; league_name: string | null } | null;
   opponent1: { id: string; name: string; image_url: string | null; pandascore_id: number | null } | null;
   opponent2: { id: string; name: string; image_url: string | null; pandascore_id: number | null } | null;
@@ -59,6 +71,19 @@ interface LiveMatchRow {
 
 function gameSlugFor(game: string | null): string {
   return (game ?? "").toLowerCase().replace(/\s+/g, "-");
+}
+
+function mapStreams(raw: RawStream[] | null): LiveStream[] {
+  if (!raw || !Array.isArray(raw)) return [];
+  return raw
+    .filter((s) => typeof s?.raw_url === "string" && s.raw_url.length > 0)
+    .map((s) => ({
+      language: s.language ?? "",
+      main: Boolean(s.main),
+      rawUrl: s.raw_url as string,
+    }))
+    // Main streams first, then by language for stability
+    .sort((a, b) => Number(b.main) - Number(a.main) || a.language.localeCompare(b.language));
 }
 
 function mapLiveMatch(row: LiveMatchRow): LiveMatch | null {
@@ -91,6 +116,7 @@ function mapLiveMatch(row: LiveMatchRow): LiveMatch | null {
     league: row.esport_tournaments?.league_name ?? "",
     tournament: row.esport_tournaments?.name ?? "",
     opponents,
+    streams: mapStreams(row.streams),
   };
 }
 
@@ -112,7 +138,7 @@ export async function getLiveMatches(filters?: { game?: string }): Promise<LiveM
       .from("esport_matches" as UntypedFrom)
       .select(
         `id, pandascore_id, name, begin_at, game,
-         opponent1_score, opponent2_score,
+         opponent1_score, opponent2_score, streams,
          esport_tournaments(name, league_name),
          opponent1:esport_teams!esport_matches_opponent1_id_fkey(id, name, image_url, pandascore_id),
          opponent2:esport_teams!esport_matches_opponent2_id_fkey(id, name, image_url, pandascore_id)`

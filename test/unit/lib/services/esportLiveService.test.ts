@@ -46,6 +46,10 @@ function makeLiveMatchRow(overrides: Record<string, unknown> = {}) {
     game: "League of Legends",
     opponent1_score: 1,
     opponent2_score: 0,
+    streams: [
+      { language: "en", main: true, raw_url: "https://twitch.tv/riotgames" },
+      { language: "fr", main: false, raw_url: "https://twitch.tv/otplol" },
+    ],
     esport_tournaments: { name: "Worlds", league_name: "Worlds Championship" },
     opponent1: { id: "uuid-team-100", name: "T1", image_url: "https://t1.png", pandascore_id: 100 },
     opponent2: { id: "uuid-team-200", name: "Gen.G", image_url: "https://geng.png", pandascore_id: 200 },
@@ -81,6 +85,51 @@ describe("esportLiveService (DB-backed)", () => {
       imageUrl: "https://t1.png",
       score: 1,
     });
+  });
+
+  it("exposes streams sorted with main first", async () => {
+    mockFrom.mockReturnValueOnce(
+      buildChain("esport_matches", { data: [makeLiveMatchRow()], error: null })
+    );
+    const { getLiveMatches } = await loadService();
+    const matches = await getLiveMatches();
+    expect(matches[0].streams).toHaveLength(2);
+    expect(matches[0].streams[0].main).toBe(true);
+    expect(matches[0].streams[0].rawUrl).toBe("https://twitch.tv/riotgames");
+    expect(matches[0].streams[1].main).toBe(false);
+  });
+
+  it("filters streams without raw_url", async () => {
+    mockFrom.mockReturnValueOnce(
+      buildChain("esport_matches", {
+        data: [
+          makeLiveMatchRow({
+            streams: [
+              { language: "en", main: true, raw_url: "https://twitch.tv/x" },
+              { language: "fr", main: false, raw_url: "" },
+              { language: "es", main: false, raw_url: null },
+            ],
+          }),
+        ],
+        error: null,
+      })
+    );
+    const { getLiveMatches } = await loadService();
+    const matches = await getLiveMatches();
+    expect(matches[0].streams).toHaveLength(1);
+    expect(matches[0].streams[0].language).toBe("en");
+  });
+
+  it("returns empty streams when streams column is null", async () => {
+    mockFrom.mockReturnValueOnce(
+      buildChain("esport_matches", {
+        data: [makeLiveMatchRow({ streams: null })],
+        error: null,
+      })
+    );
+    const { getLiveMatches } = await loadService();
+    const matches = await getLiveMatches();
+    expect(matches[0].streams).toEqual([]);
   });
 
   it("filters by status='running' on the query", async () => {

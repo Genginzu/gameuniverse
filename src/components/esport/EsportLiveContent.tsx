@@ -21,6 +21,7 @@ interface LiveMatch {
   league: string;
   tournament: string;
   opponents: Array<{ id: number | null; name: string; imageUrl: string | null; score: number }>;
+  streams: Array<{ language: string; main: boolean; rawUrl: string }>;
 }
 
 export interface EsportLiveData {
@@ -128,6 +129,29 @@ function LiveMatchCard({ match }: { match: LiveMatch }) {
         </div>
       ) : (
         <p className="text-sm text-gray-700 dark:text-gray-200">{match.name}</p>
+      )}
+
+      {match.streams.length > 0 && (
+        <div className="mt-4 border-t border-white/30 pt-3 dark:border-gray-700/40">
+          <div className="flex flex-wrap gap-1.5">
+            {match.streams.slice(0, 3).map((stream) => (
+              <a
+                key={stream.rawUrl}
+                href={stream.rawUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+                  stream.main
+                    ? "from-palette-secondary-500 to-palette-primary-500 bg-linear-to-r text-white hover:opacity-90"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+                }`}
+              >
+                <Icon icon="mdi:play-circle" className="h-3.5 w-3.5" />
+                <span className="uppercase">{stream.language || t("watchStream")}</span>
+              </a>
+            ))}
+          </div>
+        </div>
       )}
     </div>
   );
