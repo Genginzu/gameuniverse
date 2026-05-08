@@ -3872,7 +3872,7 @@
       "noPlayersDescription": "Aucun joueur esport ne correspond à votre recherche",
       "loadError": "Impossible de charger les détails du joueur",
       "totalPlayers": "{count, plural, =0 {Aucun joueur} =1 {1 joueur} other {# joueurs}}",
-      "showingPlayers": "{shown} sur {total} joueurs",
+      "matchingPlayers": "{count, plural, =0 {Aucun joueur correspondant} =1 {1 joueur correspondant} other {# joueurs correspondants}}",
       "allGames": "Tous les jeux",
       "about": "À propos",
       "fullName": "Nom complet",

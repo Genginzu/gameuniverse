@@ -2,21 +2,26 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 
 vi.mock("@/lib/logger", () => ({ logger: { error: vi.fn() } }));
 
-// In-memory state for the chained query builder
+type ChainResult = { data: unknown; error: unknown; count?: number };
+
 type Chain = {
   table: string;
   filters: Array<{ op: string; col: string; value: unknown }>;
-  result: { data: unknown; error: unknown };
+  result: ChainResult;
 };
 
 let lastChain: Chain;
 
-function buildChain(table: string, result: { data: unknown; error: unknown }) {
+/**
+ * Minimal Supabase chained query builder mock. Every chained method is
+ * recorded and returns the same proxy. The chain resolves to `result` when
+ * awaited (via the `then` trap), no matter how it's terminated.
+ */
+function buildChain(table: string, result: ChainResult) {
   lastChain = { table, filters: [], result };
   const proxy: Record<string, unknown> = {};
 
-  const passthrough = ["select", "order", "limit"];
-  for (const m of passthrough) {
+  for (const m of ["select", "order", "limit", "range", "not"]) {
     proxy[m] = (...args: unknown[]) => {
       lastChain.filters.push({ op: m, col: String(args[0] ?? ""), value: args[1] });
       return proxy;
@@ -29,11 +34,10 @@ function buildChain(table: string, result: { data: unknown; error: unknown }) {
   };
   proxy.eq = (col: string, value: unknown) => {
     lastChain.filters.push({ op: "eq", col, value });
-    return Promise.resolve(result);
+    return proxy;
   };
-  proxy.then = (
-    onFulfilled: (v: { data: unknown; error: unknown }) => unknown
-  ) => Promise.resolve(result).then(onFulfilled);
+  proxy.then = (onFulfilled: (v: ChainResult) => unknown) =>
+    Promise.resolve(result).then(onFulfilled);
 
   return proxy;
 }
@@ -71,15 +75,22 @@ describe("esportPlayerService (DB-backed)", () => {
     return import("@/lib/services/esportPlayerService");
   }
 
-  it("maps player list correctly from DB rows", async () => {
+  it("maps the paginated player list correctly", async () => {
     mockFrom.mockReturnValueOnce(
-      buildChain("esport_players", { data: [makePlayerRow()], error: null })
+      buildChain("esport_players", {
+        data: [makePlayerRow()],
+        error: null,
+        count: 42,
+      })
     );
     const { getPlayersList } = await loadService();
-    const players = await getPlayersList();
+    const result = await getPlayersList();
 
-    expect(players).toHaveLength(1);
-    expect(players[0]).toEqual({
+    expect(result.players).toHaveLength(1);
+    expect(result.total).toBe(42);
+    expect(result.page).toBe(1);
+    expect(result.limit).toBe(24);
+    expect(result.players[0]).toEqual({
       id: 1,
       name: "Faker",
       slug: "faker",
@@ -98,31 +109,78 @@ describe("esportPlayerService (DB-backed)", () => {
       buildChain("esport_players", {
         data: [makePlayerRow(), makePlayerRow({ pandascore_id: null, name: "Ghost" })],
         error: null,
+        count: 2,
       })
     );
     const { getPlayersList } = await loadService();
-    const players = await getPlayersList();
-    expect(players).toHaveLength(1);
-    expect(players[0].name).toBe("Faker");
+    const result = await getPlayersList();
+    expect(result.players).toHaveLength(1);
+    expect(result.players[0].name).toBe("Faker");
   });
 
   it("applies a name search via ilike", async () => {
     mockFrom.mockReturnValueOnce(
-      buildChain("esport_players", { data: [], error: null })
+      buildChain("esport_players", { data: [], error: null, count: 0 })
     );
     const { getPlayersList } = await loadService();
     await getPlayersList({ search: "caps" });
     expect(lastChain.filters.some((f) => f.op === "ilike" && f.col === "name")).toBe(true);
   });
 
-  it("caches the player list across calls", async () => {
+  it("applies a game filter via eq('game', ...)", async () => {
+    mockFrom.mockReturnValueOnce(
+      buildChain("esport_players", { data: [], error: null, count: 0 })
+    );
+    const { getPlayersList } = await loadService();
+    await getPlayersList({ game: "Valorant" });
+    expect(
+      lastChain.filters.some((f) => f.op === "eq" && f.col === "game" && f.value === "Valorant")
+    ).toBe(true);
+  });
+
+  it("computes the correct range from page/limit", async () => {
+    mockFrom.mockReturnValueOnce(
+      buildChain("esport_players", { data: [], error: null, count: 0 })
+    );
+    const { getPlayersList } = await loadService();
+    await getPlayersList({ page: 3, limit: 10 });
+
+    const rangeCall = lastChain.filters.find((f) => f.op === "range");
+    // range(from, to) → page 3, limit 10 ⇒ from=20, to=29
+    expect(rangeCall).toEqual({ op: "range", col: "20", value: 29 });
+  });
+
+  it("caps the limit to MAX_PAGE_SIZE", async () => {
+    mockFrom.mockReturnValueOnce(
+      buildChain("esport_players", { data: [], error: null, count: 0 })
+    );
+    const { getPlayersList } = await loadService();
+    const result = await getPlayersList({ limit: 9999 });
+    expect(result.limit).toBe(100);
+  });
+
+  it("caches the listing across identical calls", async () => {
     mockFrom.mockReturnValue(
-      buildChain("esport_players", { data: [makePlayerRow()], error: null })
+      buildChain("esport_players", { data: [makePlayerRow()], error: null, count: 1 })
     );
     const { getPlayersList } = await loadService();
     await getPlayersList();
     await getPlayersList();
     expect(mockFrom).toHaveBeenCalledTimes(1);
+  });
+
+  it("uses a different cache key per game filter", async () => {
+    mockFrom
+      .mockReturnValueOnce(
+        buildChain("esport_players", { data: [makePlayerRow()], error: null, count: 1 })
+      )
+      .mockReturnValueOnce(
+        buildChain("esport_players", { data: [], error: null, count: 0 })
+      );
+    const { getPlayersList } = await loadService();
+    await getPlayersList();
+    await getPlayersList({ game: "Valorant" });
+    expect(mockFrom).toHaveBeenCalledTimes(2);
   });
 
   it("fetches player detail with team image", async () => {
@@ -153,5 +211,23 @@ describe("esportPlayerService (DB-backed)", () => {
     );
     const { getPlayersList } = await loadService();
     await expect(getPlayersList()).rejects.toThrow();
+  });
+
+  it("returns the distinct list of games sorted alphabetically", async () => {
+    mockFrom.mockReturnValueOnce(
+      buildChain("esport_players", {
+        data: [
+          { game: "Valorant" },
+          { game: "League of Legends" },
+          { game: "Valorant" },
+          { game: "Dota 2" },
+          { game: null },
+        ],
+        error: null,
+      })
+    );
+    const { getPlayersGames } = await loadService();
+    const games = await getPlayersGames();
+    expect(games).toEqual(["Dota 2", "League of Legends", "Valorant"]);
   });
 });

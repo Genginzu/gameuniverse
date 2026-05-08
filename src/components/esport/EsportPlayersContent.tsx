@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import useSWR from "swr";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { FilterChip } from "@/components/shared/FilterChip";
+import { Pagination } from "@/components/shared/Pagination";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { getGameIcon } from "@/lib/utils/esport-utils";
 import { EsportPlayerCard, type EsportPlayerCardData } from "./EsportPlayerCard";
@@ -19,6 +20,9 @@ interface PlayerSummary extends EsportPlayerCardData {
 
 export interface EsportPlayersData {
   players: PlayerSummary[];
+  total: number;
+  page: number;
+  limit: number;
 }
 
 interface EsportPlayersContentProps {
@@ -31,24 +35,33 @@ export function EsportPlayersContent({ initialData }: EsportPlayersContentProps)
   const t = useTranslations("esport.players");
   const [search, setSearch] = useState("");
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
   const debouncedSearch = useDebouncedValue(search, 300);
 
-  // Available games for filters (reuses the tournaments aggregator)
+  // Available games for the filter chips, sourced from the players table.
   const { data: gamesData } = useSWR<{ games: string[] }>(
-    "/api/esport/tournaments?games_only=true",
+    "/api/esport/players?games_only=true",
     fetcher,
     { revalidateOnFocus: false }
   );
 
-  const playersUrl = useMemo(() => {
-    if (debouncedSearch) {
-      return `/api/esport/players?search=${encodeURIComponent(debouncedSearch)}`;
-    }
-    return "/api/esport/players";
-  }, [debouncedSearch]);
+  // Reset to page 1 whenever the filters change.
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch, selectedGame]);
 
-  // initialData is only valid for the unsearched view
-  const fallbackData = !debouncedSearch ? initialData : undefined;
+  const playersUrl = useMemo(() => {
+    const params = new URLSearchParams();
+    if (debouncedSearch) params.set("search", debouncedSearch);
+    if (selectedGame) params.set("game", selectedGame);
+    if (page > 1) params.set("page", String(page));
+    const qs = params.toString();
+    return qs ? `/api/esport/players?${qs}` : "/api/esport/players";
+  }, [debouncedSearch, selectedGame, page]);
+
+  // initialData is only valid for the unfiltered, unsearched, first-page view.
+  const fallbackData =
+    !debouncedSearch && !selectedGame && page === 1 ? initialData : undefined;
 
   const { data, isLoading } = useSWR<EsportPlayersData>(playersUrl, fetcher, {
     fallbackData,
@@ -56,16 +69,11 @@ export function EsportPlayersContent({ initialData }: EsportPlayersContentProps)
     keepPreviousData: true,
   });
 
-  const allPlayers = data?.players ?? [];
+  const players = data?.players ?? [];
+  const total = data?.total ?? 0;
+  const limit = data?.limit ?? 24;
+  const totalPages = limit > 0 ? Math.ceil(total / limit) : 1;
   const games = gamesData?.games ?? [];
-
-  // Client-side game filtering — the /players endpoint doesn't reliably filter
-  // by game, and the dataset is small enough to filter in memory.
-  const players = useMemo(() => {
-    if (!selectedGame) return allPlayers;
-    const target = selectedGame.toLowerCase();
-    return allPlayers.filter((p) => p.game?.toLowerCase() === target);
-  }, [allPlayers, selectedGame]);
 
   const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
@@ -76,10 +84,15 @@ export function EsportPlayersContent({ initialData }: EsportPlayersContentProps)
     []
   );
 
-  const totalCount = allPlayers.length;
-  const filteredCount = players.length;
+  const handlePageChange = useCallback((p: number) => {
+    setPage(p);
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, []);
+
+  const showSkeleton = isLoading && players.length === 0;
   const isFiltered = Boolean(selectedGame || debouncedSearch);
-  const showSkeleton = isLoading && allPlayers.length === 0;
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
@@ -87,8 +100,7 @@ export function EsportPlayersContent({ initialData }: EsportPlayersContentProps)
         <PlayersToolbar
           search={search}
           onSearch={handleSearch}
-          totalCount={totalCount}
-          filteredCount={filteredCount}
+          total={total}
           isFiltered={isFiltered}
         />
 
@@ -120,11 +132,25 @@ export function EsportPlayersContent({ initialData }: EsportPlayersContentProps)
             description={t("noPlayersDescription")}
           />
         ) : (
-          <div className="xs:grid-cols-2 grid gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-            {players.map((player) => (
-              <EsportPlayerCard key={player.id} player={player} />
-            ))}
-          </div>
+          <>
+            <div className="xs:grid-cols-2 grid gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+              {players.map((player) => (
+                <EsportPlayerCard key={player.id} player={player} />
+              ))}
+            </div>
+
+            {totalPages > 1 && (
+              <div className="mt-8">
+                <Pagination
+                  currentPage={page}
+                  totalPages={totalPages}
+                  totalCount={total}
+                  onPageChange={handlePageChange}
+                  loading={isLoading}
+                />
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>
@@ -134,18 +160,11 @@ export function EsportPlayersContent({ initialData }: EsportPlayersContentProps)
 interface PlayersToolbarProps {
   search: string;
   onSearch: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  totalCount: number;
-  filteredCount: number;
+  total: number;
   isFiltered: boolean;
 }
 
-function PlayersToolbar({
-  search,
-  onSearch,
-  totalCount,
-  filteredCount,
-  isFiltered,
-}: PlayersToolbarProps) {
+function PlayersToolbar({ search, onSearch, total, isFiltered }: PlayersToolbarProps) {
   const t = useTranslations("esport.players");
   return (
     <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -163,11 +182,11 @@ function PlayersToolbar({
         />
       </div>
 
-      {totalCount > 0 && (
+      {total > 0 && (
         <div className="text-sm text-gray-600 dark:text-gray-400">
-          {isFiltered && filteredCount !== totalCount
-            ? t("showingPlayers", { shown: filteredCount, total: totalCount })
-            : t("totalPlayers", { count: totalCount })}
+          {isFiltered
+            ? t("matchingPlayers", { count: total })
+            : t("totalPlayers", { count: total })}
         </div>
       )}
     </div>

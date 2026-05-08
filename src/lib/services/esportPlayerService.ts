@@ -1,30 +1,13 @@
 import { logger } from "@/lib/logger";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
+import { TtlCache } from "./esport/ttlCache";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type UntypedFrom = any;
 
-const CACHE_TTL_MS = 5 * 60 * 1000;
-
-interface CacheEntry<T> {
-  data: T;
-  expiresAt: number;
-}
-
-const cache = new Map<string, CacheEntry<unknown>>();
-
-function getCached<T>(key: string): T | null {
-  const entry = cache.get(key);
-  if (!entry || Date.now() > entry.expiresAt) {
-    cache.delete(key);
-    return null;
-  }
-  return entry.data as T;
-}
-
-function setCache<T>(key: string, data: T): void {
-  cache.set(key, { data, expiresAt: Date.now() + CACHE_TTL_MS });
-}
+const cache = new TtlCache(5 * 60 * 1000);
+const DEFAULT_PAGE_SIZE = 24;
+const MAX_PAGE_SIZE = 100;
 
 /** Public-facing summary used on the listing page. */
 export interface EsportPlayerSummary {
@@ -44,6 +27,14 @@ export interface EsportPlayerSummary {
 /** Detail page payload, including the team's image. */
 export interface EsportPlayerDetail extends EsportPlayerSummary {
   teamImageUrl: string | null;
+}
+
+/** Paginated listing response. */
+export interface EsportPlayerListing {
+  players: EsportPlayerSummary[];
+  total: number;
+  page: number;
+  limit: number;
 }
 
 interface PlayerRow {
@@ -77,43 +68,61 @@ function mapPlayerSummary(row: PlayerRow): EsportPlayerSummary | null {
 }
 
 /**
- * Fetch the public list of esport players from the local DB (synced from
- * PandaScore by the admin sync workflow).
+ * Fetch a paginated, optionally filtered list of esport players from the DB.
+ * Total count is computed via `count: 'exact'` in the same query.
  *
  * @param filters.search Case-insensitive partial match on the player's name.
- * @param filters.per_page Maximum number of results (default 100).
+ * @param filters.game Case-insensitive exact match on the player's game.
+ * @param filters.page 1-based page index (default 1).
+ * @param filters.limit Page size (default 24, capped at 100).
  */
 export async function getPlayersList(filters?: {
   search?: string;
-  per_page?: number;
-}): Promise<EsportPlayerSummary[]> {
+  game?: string;
+  page?: number;
+  limit?: number;
+}): Promise<EsportPlayerListing> {
   const search = filters?.search?.trim();
-  const perPage = filters?.per_page ?? 100;
-  const cacheKey = `esport-players:${search ?? "all"}:${perPage}`;
+  const game = filters?.game?.trim();
+  const page = Math.max(1, filters?.page ?? 1);
+  const limit = Math.min(MAX_PAGE_SIZE, Math.max(1, filters?.limit ?? DEFAULT_PAGE_SIZE));
 
-  const cached = getCached<EsportPlayerSummary[]>(cacheKey);
+  const cacheKey = `esport-players:${search ?? ""}:${game ?? ""}:${page}:${limit}`;
+  const cached = cache.get<EsportPlayerListing>(cacheKey);
   if (cached) return cached;
 
   try {
     const supabase = getSupabaseAdmin();
+    const from = (page - 1) * limit;
+    const to = from + limit - 1;
+
     let query = supabase
       .from("esport_players" as UntypedFrom)
-      .select("id, pandascore_id, name, slug, first_name, last_name, nationality, image_url, role, game, esport_teams(name, image_url)")
+      .select(
+        "id, pandascore_id, name, slug, first_name, last_name, nationality, image_url, role, game, esport_teams(name, image_url)",
+        { count: "exact" }
+      )
       .order("name", { ascending: true })
-      .limit(perPage);
+      .range(from, to);
 
-    if (search) {
-      query = query.ilike("name", `%${search}%`);
-    }
+    if (search) query = query.ilike("name", `%${search}%`);
+    if (game) query = query.eq("game", game);
 
-    const { data, error } = await query;
+    const { data, count, error } = await query;
     if (error) throw error;
 
-    const mapped = (data as PlayerRow[] | null ?? [])
+    const players = ((data as PlayerRow[] | null) ?? [])
       .map(mapPlayerSummary)
       .filter((p): p is EsportPlayerSummary => p !== null);
-    setCache(cacheKey, mapped);
-    return mapped;
+
+    const result: EsportPlayerListing = {
+      players,
+      total: count ?? 0,
+      page,
+      limit,
+    };
+    cache.set(cacheKey, result);
+    return result;
   } catch (error) {
     logger.error("Failed to fetch esport players from DB", { error });
     throw error;
@@ -126,7 +135,7 @@ export async function getPlayersList(filters?: {
  */
 export async function getPlayerDetail(id: number | string): Promise<EsportPlayerDetail | null> {
   const cacheKey = `esport-player:${id}`;
-  const cached = getCached<EsportPlayerDetail>(cacheKey);
+  const cached = cache.get<EsportPlayerDetail>(cacheKey);
   if (cached) return cached;
 
   try {
@@ -155,10 +164,46 @@ export async function getPlayerDetail(id: number | string): Promise<EsportPlayer
       ...summary,
       teamImageUrl: rows[0].esport_teams?.image_url ?? null,
     };
-    setCache(cacheKey, detail);
+    cache.set(cacheKey, detail);
     return detail;
   } catch (error) {
     logger.error("Failed to fetch esport player detail from DB", { error, id });
+    throw error;
+  }
+}
+
+/**
+ * Get the distinct list of games represented in the players table.
+ * Used to populate the filter chips on the listing page.
+ */
+export async function getPlayersGames(): Promise<string[]> {
+  const cacheKey = "esport-players:games";
+  const cached = cache.get<string[]>(cacheKey);
+  if (cached) return cached;
+
+  try {
+    const supabase = getSupabaseAdmin();
+    // PostgREST has no DISTINCT, so we pull the column and dedupe in memory.
+    // The dataset is small (a few thousand rows max) and cached for 5 minutes.
+    const { data, error } = await supabase
+      .from("esport_players" as UntypedFrom)
+      .select("game")
+      .not("game", "is", null);
+
+    if (error) throw error;
+
+    const games = Array.from(
+      new Set(
+        ((data as { game: string | null }[] | null) ?? [])
+          .map((r) => r.game)
+          .filter((g): g is string => typeof g === "string" && g.length > 0)
+      )
+    ).sort((a, b) => a.localeCompare(b));
+
+    cache.set(cacheKey, games);
+    return games;
+  } catch (error) {
+    logger.error("Failed to fetch player games from DB", { error });
     throw error;
   }
 }

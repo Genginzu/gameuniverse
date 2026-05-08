@@ -3867,7 +3867,7 @@
       "noPlayersDescription": "No esport player matches your search",
       "loadError": "Failed to load player details",
       "totalPlayers": "{count, plural, =0 {No players} =1 {1 player} other {# players}}",
-      "showingPlayers": "{shown} of {total} players",
+      "matchingPlayers": "{count, plural, =0 {No matching players} =1 {1 matching player} other {# matching players}}",
       "allGames": "All games",
       "about": "About",
       "fullName": "Full name",
