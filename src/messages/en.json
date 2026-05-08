@@ -3865,7 +3865,24 @@
       "searchPlaceholder": "Search for a player...",
       "noPlayers": "No players found",
       "noPlayersDescription": "No esport player matches your search",
-      "loadError": "Failed to load player details"
+      "loadError": "Failed to load player details",
+      "totalPlayers": "{count, plural, =0 {No players} =1 {1 player} other {# players}}",
+      "showingPlayers": "{shown} of {total} players",
+      "allGames": "All games",
+      "about": "About",
+      "fullName": "Full name",
+      "role": "Role",
+      "nationality": "Nationality",
+      "game": "Game",
+      "currentTeam": "Current team",
+      "recentMatches": "Recent matches",
+      "matchStatus": {
+        "live": "Live",
+        "upcoming": "Upcoming",
+        "finished": "Finished",
+        "canceled": "Canceled",
+        "postponed": "Postponed"
+      }
     },
     "live": {
       "metaTitle": "Esport Live",

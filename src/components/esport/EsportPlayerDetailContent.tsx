@@ -2,23 +2,12 @@
 
 import useSWR from "swr";
 import { useTranslations } from "next-intl";
-import { Icon } from "@iconify/react";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { LazyImage } from "@/components/ui/lazy-image";
-
-interface PlayerDetail {
-  id: number;
-  name: string;
-  firstName: string | null;
-  lastName: string | null;
-  nationality: string | null;
-  imageUrl: string | null;
-  role: string | null;
-  teamName: string | null;
-  teamImageUrl: string | null;
-  game: string | null;
-}
+import { PlayerHero } from "./PlayerHero";
+import { PlayerAboutCard, PlayerTeamCard } from "./PlayerInfoCards";
+import { PlayerRecentMatches } from "./PlayerRecentMatches";
+import type { PlayerDetail } from "./player-detail-types";
+import type { PlayerMatch } from "@/lib/services/esportPlayerMatchesService";
 
 export interface EsportPlayerDetailData {
   player: PlayerDetail;
@@ -36,10 +25,17 @@ export function EsportPlayerDetailContent({
   initialData,
 }: EsportPlayerDetailContentProps) {
   const t = useTranslations("esport.players");
+
   const { data, isLoading, error } = useSWR<EsportPlayerDetailData>(
     `/api/esport/players/${playerId}`,
     fetcher,
     { fallbackData: initialData, revalidateOnFocus: false }
+  );
+
+  const { data: matchesData, isLoading: matchesLoading } = useSWR<{ matches: PlayerMatch[] }>(
+    `/api/esport/players/${playerId}/matches`,
+    fetcher,
+    { revalidateOnFocus: false }
   );
 
   if (isLoading) return <PlayerDetailSkeleton />;
@@ -52,71 +48,20 @@ export function EsportPlayerDetailContent({
   }
 
   const player = data.player;
-  const fullName = [player.firstName, player.lastName].filter(Boolean).join(" ");
+  const matches = matchesData?.matches ?? [];
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-      <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-8">
-        <div className="glass-card flex flex-col items-center gap-4 rounded-2xl p-6 sm:flex-row sm:items-start sm:p-8">
-          <div className="relative h-28 w-28 shrink-0 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
-            {player.imageUrl ? (
-              <LazyImage
-                src={player.imageUrl}
-                alt={player.name}
-                fill
-                className="object-cover"
-                sizes="112px"
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center">
-                <Icon icon="mdi:account" className="h-14 w-14 text-gray-400" />
-              </div>
-            )}
+      <div className="mx-auto max-w-4xl px-4 py-6 sm:px-6 sm:py-8">
+        <PlayerHero player={player} />
+
+        <div className="mt-6 grid gap-6 lg:grid-cols-5">
+          <div className="space-y-6 lg:col-span-2">
+            <PlayerAboutCard player={player} />
+            {player.teamName && <PlayerTeamCard player={player} />}
           </div>
-
-          <div className="text-center sm:text-left">
-            <h1 className="text-xl font-bold text-gray-900 sm:text-2xl lg:text-3xl dark:text-white">
-              {player.name}
-            </h1>
-            {fullName && <p className="text-sm text-gray-500 dark:text-gray-400">{fullName}</p>}
-
-            <div className="mt-3 flex flex-wrap justify-center gap-2 sm:justify-start">
-              {player.role && (
-                <Badge className="bg-palette-primary-100 text-palette-primary-700 dark:bg-palette-primary-900/30 dark:text-palette-primary-300 rounded-full px-3 py-1 text-xs">
-                  {player.role}
-                </Badge>
-              )}
-              {player.nationality && (
-                <Badge className="rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-600 dark:bg-gray-800 dark:text-gray-400">
-                  <Icon icon="mdi:flag" className="mr-1 inline h-3 w-3" />
-                  {player.nationality}
-                </Badge>
-              )}
-              {player.game && (
-                <Badge className="rounded-full bg-blue-100 px-3 py-1 text-xs text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
-                  {player.game}
-                </Badge>
-              )}
-            </div>
-
-            {player.teamName && (
-              <div className="mt-4 flex items-center justify-center gap-2 sm:justify-start">
-                {player.teamImageUrl && (
-                  <div className="relative h-6 w-6 overflow-hidden rounded-full">
-                    <LazyImage
-                      src={player.teamImageUrl}
-                      alt={player.teamName}
-                      fill
-                      className="object-contain"
-                      sizes="24px"
-                    />
-                  </div>
-                )}
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {player.teamName}
-                </span>
-              </div>
-            )}
+          <div className="lg:col-span-3">
+            <PlayerRecentMatches matches={matches} isLoading={matchesLoading} />
           </div>
         </div>
       </div>
@@ -126,17 +71,27 @@ export function EsportPlayerDetailContent({
 
 function PlayerDetailSkeleton() {
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
-      <div className="glass-card flex flex-col items-center gap-4 rounded-2xl p-8 sm:flex-row sm:items-start">
-        <Skeleton className="h-28 w-28 rounded-full" />
-        <div>
-          <Skeleton className="mb-2 h-7 w-40" />
-          <Skeleton className="mb-3 h-4 w-28" />
-          <div className="flex gap-2">
-            <Skeleton className="h-6 w-16 rounded-full" />
-            <Skeleton className="h-6 w-16 rounded-full" />
+    <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+      <div className="from-palette-secondary-500/40 to-palette-primary-500/40 mb-6 rounded-3xl bg-linear-to-br p-8">
+        <div className="flex flex-col items-center gap-6 sm:flex-row">
+          <Skeleton className="h-32 w-32 rounded-full sm:h-40 sm:w-40" />
+          <div className="flex-1 space-y-3">
+            <Skeleton className="h-9 w-48" />
+            <Skeleton className="h-4 w-32" />
+            <div className="flex gap-2">
+              <Skeleton className="h-6 w-20 rounded-full" />
+              <Skeleton className="h-6 w-20 rounded-full" />
+            </div>
           </div>
         </div>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-5">
+        <div className="space-y-6 lg:col-span-2">
+          <Skeleton className="h-48 rounded-2xl" />
+          <Skeleton className="h-32 rounded-2xl" />
+        </div>
+        <Skeleton className="h-72 rounded-2xl lg:col-span-3" />
       </div>
     </div>
   );
