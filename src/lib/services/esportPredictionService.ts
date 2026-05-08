@@ -20,6 +20,7 @@ export interface EsportPrediction {
 
 export interface PredictionLeaderboardEntry {
   playerId: string;
+  playerName: string;
   totalPredictions: number;
   correctPredictions: number;
   totalProfit: number;
@@ -148,9 +149,24 @@ export async function getLeaderboard(): Promise<PredictionLeaderboardEntry[]> {
     return [];
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return ((data ?? []) as any[]).map((row: Record<string, unknown>) => ({
+  const rows = (data ?? []) as Record<string, unknown>[];
+  const playerIds = rows.map((r) => r.player_id as string);
+
+  let namesMap: Record<string, string> = {};
+  if (playerIds.length > 0) {
+    const { data: players } = await untypedTable(supabase, "profiles")
+      .select("id, username")
+      .in("id", playerIds);
+    if (players) {
+      namesMap = Object.fromEntries(
+        (players as { id: string; username: string | null }[]).map((p) => [p.id, p.username ?? ""])
+      );
+    }
+  }
+
+  return rows.map((row) => ({
     playerId: row.player_id as string,
+    playerName: namesMap[row.player_id as string] || "Anonymous",
     totalPredictions: row.total_predictions as number,
     correctPredictions: row.correct_predictions as number,
     totalProfit: row.total_profit as number,

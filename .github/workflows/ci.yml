@@ -3,7 +3,17 @@ name: CI
 on:
   pull_request:
     branches: [main]
+    paths-ignore:
+      - "docs/**"
+      - "**/*.md"
+      - ".kiro/**"
+      - ".vscode/**"
   workflow_dispatch:
+
+# Cancel previous runs on the same ref when a new one starts
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   install:
@@ -11,6 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          show-progress: false
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
 
@@ -26,6 +38,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          show-progress: false
       - uses: oven-sh/setup-bun@v2
       - name: Restore node_modules
         uses: actions/cache/restore@v5
@@ -40,6 +54,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          show-progress: false
       - uses: oven-sh/setup-bun@v2
       - name: Restore node_modules
         uses: actions/cache/restore@v5
@@ -50,7 +66,8 @@ jobs:
 
   unit-tests:
     name: Unit Tests (${{ matrix.shard }})
-    needs: [lint, type-check]
+    # Run unit tests in parallel with lint/type-check (only depend on install)
+    needs: [install]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -58,6 +75,8 @@ jobs:
         shard: [api, components, hooks, lib, scripts]
     steps:
       - uses: actions/checkout@v5
+        with:
+          show-progress: false
       - uses: oven-sh/setup-bun@v2
       - name: Restore node_modules
         uses: actions/cache/restore@v5
@@ -68,10 +87,13 @@ jobs:
 
   build:
     name: Build
-    needs: [lint, type-check]
+    # Build can start as soon as deps are installed; lint/type-check run in parallel
+    needs: [install]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          show-progress: false
       - uses: oven-sh/setup-bun@v2
       - name: Restore node_modules
         uses: actions/cache/restore@v5
@@ -79,13 +101,17 @@ jobs:
           path: node_modules
           key: modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
 
+      # Cache the Next.js build cache. Saving with github.sha guarantees a fresh
+      # save every run, while restore-keys lets us reuse the latest available
+      # incremental cache. Hashing src/** would invalidate on every commit and
+      # defeat the purpose.
       - name: Cache Next.js build
         uses: actions/cache@v5
         with:
           path: .next/cache
-          key: nextjs-${{ runner.os }}-${{ hashFiles('bun.lock') }}-${{ hashFiles('src/**/*') }}
+          key: nextjs-${{ runner.os }}-${{ hashFiles('bun.lock', 'next.config.*', 'tsconfig.json') }}-${{ github.sha }}
           restore-keys: |
-            nextjs-${{ runner.os }}-${{ hashFiles('bun.lock') }}-
+            nextjs-${{ runner.os }}-${{ hashFiles('bun.lock', 'next.config.*', 'tsconfig.json') }}-
             nextjs-${{ runner.os }}-
 
       - name: Build
@@ -113,7 +139,21 @@ jobs:
     container:
       image: mcr.microsoft.com/playwright:v1.59.1-noble
     steps:
+      # Sparse checkout: E2E only needs test/e2e + Playwright/build config files,
+      # not the entire src/ tree. Cuts checkout from ~57s to a few seconds.
       - uses: actions/checkout@v5
+        with:
+          show-progress: false
+          sparse-checkout: |
+            test/e2e
+            playwright.config.ts
+            package.json
+            bun.lock
+            tsconfig.json
+            next.config.ts
+            next.config.js
+            next.config.mjs
+          sparse-checkout-cone-mode: false
 
       - name: Install system dependencies
         run: apt-get update && apt-get install -y unzip

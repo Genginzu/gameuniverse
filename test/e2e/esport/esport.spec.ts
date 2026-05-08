@@ -1,18 +1,18 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Esport — calendar, live, teams, players, results", () => {
-  test.describe("Esport calendar", () => {
-    test("should load the esport calendar page", async ({ page }) => {
-      await page.goto("/fr/esport/calendar");
+  test.describe("Esport tournaments", () => {
+    test("should load the esport tournaments page", async ({ page }) => {
+      await page.goto("/fr/esport/tournaments");
       await page.waitForLoadState("domcontentloaded");
 
-      await expect(page).toHaveURL(/\/fr\/esport\/calendar/);
+      await expect(page).toHaveURL(/\/fr\/esport\/tournaments/);
       const title = page.getByTestId("page-banner-title");
       await expect(title).toBeVisible({ timeout: 10_000 });
     });
 
     test("should display tournament cards or empty state", async ({ page }) => {
-      await page.goto("/fr/esport/calendar");
+      await page.goto("/fr/esport/tournaments");
       await page.waitForLoadState("domcontentloaded");
 
       const cards = page.locator('[data-testid="tournament-card"], [class*="card"]');

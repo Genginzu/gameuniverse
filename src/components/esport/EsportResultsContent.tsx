@@ -37,7 +37,7 @@ export function EsportResultsContent({ initialData }: EsportResultsContentProps)
   const t = useTranslations("esport.results");
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
 
-  const calendarGamesUrl = "/api/esport/calendar?games_only=true";
+  const calendarGamesUrl = "/api/esport/tournaments?games_only=true";
   const resultsUrl = selectedGame
     ? `/api/esport/results?game=${encodeURIComponent(selectedGame)}`
     : "/api/esport/results";

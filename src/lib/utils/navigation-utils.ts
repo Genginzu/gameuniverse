@@ -29,6 +29,7 @@ export const PUBLIC_LINKS: NavLink[] = [
 /** Esport navigation links visible to all users. */
 export const ESPORT_LINKS: NavLink[] = [
   { href: "/esport/calendar", icon: "fa:calendar", labelKey: "esportCalendar" },
+  { href: "/esport/tournaments", icon: "mdi:trophy-outline", labelKey: "esportTournaments" },
   { href: "/esport/live", icon: "fa:bolt", labelKey: "esportLive" },
   { href: "/esport/results", icon: "fa:trophy", labelKey: "esportResults" },
   { href: "/esport/teams", icon: "fa:users", labelKey: "esportTeams" },

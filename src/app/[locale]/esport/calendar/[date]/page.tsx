@@ -3,33 +3,38 @@ import { getTranslations } from "next-intl/server";
 import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
-import { EsportCalendarMonthly } from "@/components/esport/EsportCalendarMonthly";
+import { EsportCalendarDayContent } from "@/components/esport/EsportCalendarDayContent";
 
 export const revalidate = 3600;
 
 interface Props {
-  params: Promise<{ locale: string }>;
+  params: Promise<{ locale: string; date: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { locale } = await params;
+  const { locale, date } = await params;
   const t = await getTranslations({ locale, namespace: "esport.calendar" });
-  return { title: t("metaTitle"), description: t("metaDescription") };
+  return {
+    title: `${t("metaTitle")} - ${date}`,
+    description: t("metaDescription"),
+  };
 }
 
-export default async function EsportCalendarPage() {
+export default async function EsportCalendarDayPage({ params }: Props) {
+  const { date } = await params;
+
   return (
     <DashboardLayout>
       <ErrorBoundary
         fallback={
           <ErrorFallback
-            description="An error occurred while loading the esport calendar."
+            description="An error occurred while loading the day matches."
             showRefresh={true}
             showHomeButton={true}
           />
         }
       >
-        <EsportCalendarMonthly />
+        <EsportCalendarDayContent date={date} />
       </ErrorBoundary>
     </DashboardLayout>
   );

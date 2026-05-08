@@ -35,7 +35,7 @@ export function EsportLiveContent({ initialData }: EsportLiveContentProps) {
   const t = useTranslations("esport.live");
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
 
-  const gamesUrl = "/api/esport/calendar?games_only=true";
+  const gamesUrl = "/api/esport/tournaments?games_only=true";
   const liveUrl = selectedGame
     ? `/api/esport/live?game=${encodeURIComponent(selectedGame)}`
     : "/api/esport/live";
