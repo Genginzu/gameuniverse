@@ -11,6 +11,9 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     }
 
     const player = await getPlayerDetail(playerId);
+    if (!player) {
+      return NextResponse.json({ error: "Player not found" }, { status: 404 });
+    }
     return NextResponse.json({ player });
   } catch (error) {
     logger.error("Error in esport player detail API", { error });
