@@ -6,7 +6,7 @@ import { TtlCache } from "./esport/ttlCache";
 type UntypedFrom = any;
 
 const cache = new TtlCache(5 * 60 * 1000);
-const DEFAULT_PAGE_SIZE = 24;
+const DEFAULT_PAGE_SIZE = 25;
 const MAX_PAGE_SIZE = 100;
 
 /** Public-facing summary used on the listing page. */
@@ -74,7 +74,7 @@ function mapPlayerSummary(row: PlayerRow): EsportPlayerSummary | null {
  * @param filters.search Case-insensitive partial match on the player's name.
  * @param filters.game Case-insensitive exact match on the player's game.
  * @param filters.page 1-based page index (default 1).
- * @param filters.limit Page size (default 24, capped at 100).
+ * @param filters.limit Page size (default 25, capped at 100).
  */
 export async function getPlayersList(filters?: {
   search?: string;

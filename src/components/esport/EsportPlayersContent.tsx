@@ -71,7 +71,7 @@ export function EsportPlayersContent({ initialData }: EsportPlayersContentProps)
 
   const players = data?.players ?? [];
   const total = data?.total ?? 0;
-  const limit = data?.limit ?? 24;
+  const limit = data?.limit ?? 25;
   const totalPages = limit > 0 ? Math.ceil(total / limit) : 1;
   const games = gamesData?.games ?? [];
 

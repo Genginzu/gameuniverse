@@ -89,7 +89,7 @@ describe("esportPlayerService (DB-backed)", () => {
     expect(result.players).toHaveLength(1);
     expect(result.total).toBe(42);
     expect(result.page).toBe(1);
-    expect(result.limit).toBe(24);
+    expect(result.limit).toBe(25);
     expect(result.players[0]).toEqual({
       id: 1,
       name: "Faker",
