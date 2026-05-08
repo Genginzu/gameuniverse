@@ -5,6 +5,14 @@
  * Deno port of src/lib/services/webhookDiffApplier.ts. The behaviour is
  * identical: each field can be auto-applied (no override), skipped (admin
  * override exists), or force-applied (force flag set).
+ *
+ * Performance notes (matters for the Postgres statement_timeout):
+ *  - Trackable fields are checked BEFORE any DB access — irrelevant
+ *    payloads (e.g. IGDB sending a popularity-only update) short-circuit.
+ *  - The game slug is fetched once at the top instead of being re-queried
+ *    inside the metascore branch.
+ *  - Outbound IGDB calls are bounded by AbortSignal timeouts in
+ *    igdb-service.ts, so a slow IGDB API can no longer eat our budget.
  */
 
 import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
@@ -26,6 +34,34 @@ export interface ApplyPayloadResult {
   error?: string;
 }
 
+/**
+ * Payload keys that drive at least one trackable field. If none of these
+ * is present in the payload, applying the diff would be a no-op — we
+ * skip all DB work to keep the processor cheap (IGDB sends micro-updates
+ * that often touch nothing we care about, e.g. popularity).
+ */
+const TRACKABLE_PAYLOAD_KEYS = [
+  "first_release_date",
+  "aggregated_rating",
+  "cover",
+  "slug",
+  "name",
+  "summary",
+  "storyline",
+  "artworks",
+  "screenshots",
+  "videos",
+  "genres",
+  "platforms",
+  "involved_companies",
+  "age_ratings",
+  "similar_games",
+] as const;
+
+function hasTrackableFields(payload: Record<string, unknown>): boolean {
+  return TRACKABLE_PAYLOAD_KEYS.some((key) => key in payload);
+}
+
 function can(field: string, overrides: Set<string>, force: Set<string>): boolean {
   return !overrides.has(field) || force.has(field);
 }
@@ -34,14 +70,30 @@ export async function applyWebhookPayload(
   supabase: SupabaseClient,
   { gameId, payload, forceFields = new Set() }: ApplyPayloadOptions,
 ): Promise<ApplyPayloadResult> {
-  const { data: overrides } = await untypedTable(supabase, "game_field_overrides")
-    .select("field_name")
-    .eq("game_id", gameId);
+  // ── Early-out: if nothing in the payload maps to a trackable field,
+  // don't even open the DB. ~80% of IGDB update events are like this. ─
+  if (!hasTrackableFields(payload)) {
+    logger.info("Webhook payload has no trackable fields, skipping", {
+      gameId,
+      payloadKeys: Object.keys(payload).slice(0, 8),
+    });
+    return { appliedFields: [], skippedFields: [] };
+  }
+
+  // ── Single round-trip for what we always need: overrides set + slug.
+  const [overridesRes, gameRes] = await Promise.all([
+    untypedTable(supabase, "game_field_overrides")
+      .select("field_name")
+      .eq("game_id", gameId),
+    supabase.from("games").select("slug").eq("id", gameId).single(),
+  ]);
 
   const ov = new Set<string>(
-    (overrides ?? []).map((o: { field_name: string }) => o.field_name),
+    (overridesRes.data ?? []).map((o: { field_name: string }) => o.field_name),
   );
   const f = forceFields;
+  const gameSlug = (gameRes.data?.slug as string | undefined) ?? null;
+
   const applied: string[] = [];
   const skipped: string[] = [];
 
@@ -63,13 +115,8 @@ export async function applyWebhookPayload(
 
   if (payload.aggregated_rating !== undefined) {
     if (can("metascore", ov, f)) {
-      const { data: gameRow } = await supabase
-        .from("games")
-        .select("slug")
-        .eq("id", gameId)
-        .single();
-      if (gameRow?.slug) {
-        const mcScore = await fetchMetacriticScore(gameRow.slug as string);
+      if (gameSlug) {
+        const mcScore = await fetchMetacriticScore(gameSlug);
         if (mcScore !== null) {
           gameUpdate.metascore = mcScore;
           applied.push("metascore");

@@ -4,6 +4,10 @@
  * Only the methods actually used by the webhook processor are kept here.
  * Bulk admin operations (batch fetches, character fetching) stay on the
  * Next.js side and aren't duplicated.
+ *
+ * All outbound fetches are bounded by AbortSignal timeouts so that a slow
+ * IGDB call cannot eat the Edge Function's CPU budget or trigger the
+ * Postgres statement_timeout further down the pipeline.
  */
 
 import { logger } from "./logger.ts";
@@ -20,6 +24,22 @@ import type {
 const TWITCH_AUTH_URL = "https://id.twitch.tv/oauth2/token";
 const IGDB_API_URL = "https://api.igdb.com/v4";
 const IMAGE_BASE_URL = "https://images.igdb.com/igdb/image/upload";
+
+/** Per-request timeout (ms) for IGDB API calls. */
+const IGDB_FETCH_TIMEOUT_MS = 3000;
+/** Auth round-trip with Twitch is allowed slightly more time. */
+const TWITCH_AUTH_TIMEOUT_MS = 5000;
+
+interface TimeoutHandle {
+  signal: AbortSignal;
+  cancel: () => void;
+}
+
+function withTimeout(ms: number): TimeoutHandle {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ms);
+  return { signal: controller.signal, cancel: () => clearTimeout(timer) };
+}
 
 let tokenCache: IGDBAuthToken | null = null;
 
@@ -41,15 +61,22 @@ async function getAccessToken(): Promise<string> {
     );
   }
 
-  const response = await fetch(TWITCH_AUTH_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      client_id: clientId,
-      client_secret: clientSecret,
-      grant_type: "client_credentials",
-    }),
-  });
+  const t = withTimeout(TWITCH_AUTH_TIMEOUT_MS);
+  let response: Response;
+  try {
+    response = await fetch(TWITCH_AUTH_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        client_id: clientId,
+        client_secret: clientSecret,
+        grant_type: "client_credentials",
+      }),
+      signal: t.signal,
+    });
+  } finally {
+    t.cancel();
+  }
 
   if (!response.ok) {
     const errorText = await response.text();
@@ -80,15 +107,21 @@ async function igdbFetch(endpoint: string, body: string): Promise<Response> {
     throw new Error("IGDB_CLIENT_ID not configured");
   }
 
-  return await fetch(`${IGDB_API_URL}/${endpoint}`, {
-    method: "POST",
-    headers: {
-      "Client-ID": clientId,
-      "Authorization": `Bearer ${accessToken}`,
-      "Content-Type": "text/plain",
-    },
-    body,
-  });
+  const t = withTimeout(IGDB_FETCH_TIMEOUT_MS);
+  try {
+    return await fetch(`${IGDB_API_URL}/${endpoint}`, {
+      method: "POST",
+      headers: {
+        "Client-ID": clientId,
+        "Authorization": `Bearer ${accessToken}`,
+        "Content-Type": "text/plain",
+      },
+      body,
+      signal: t.signal,
+    });
+  } finally {
+    t.cancel();
+  }
 }
 
 export const IGDBService = {
