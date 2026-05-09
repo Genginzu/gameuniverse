@@ -2763,6 +2763,30 @@
         "viewErrors": "Voir le détail des erreurs",
         "errorsDialogTitle": "{count, plural, =0 {Aucune erreur} one {# erreur} other {# erreurs}}",
         "errorsDialogEmpty": "Aucun détail d'erreur disponible",
+        "starting": "Démarrage...",
+        "job": {
+          "titleFull": "Synchronisation globale en cours",
+          "titleEntity": "Synchronisation {entity} en cours",
+          "status": {
+            "pending": "En attente",
+            "running": "En cours",
+            "completed": "Terminée",
+            "failed": "Échec",
+            "cancelled": "Annulée"
+          },
+          "entities": {
+            "teams": "Équipes",
+            "tournaments": "Tournois",
+            "players": "Joueurs",
+            "matches": "Matchs"
+          },
+          "page": "Page {page}",
+          "done": "Terminé",
+          "elapsed": "Écoulé : {duration}",
+          "totalSynced": "{count} synchronisés",
+          "totalErrors": "{count} erreurs",
+          "lastChunk": "Dernier chunk : {date}"
+        },
         "errorsDialogId": "ID"
       },
       "totalCount": "{count, plural, =0 {Aucun résultat} one {# résultat} other {# résultats}}",
