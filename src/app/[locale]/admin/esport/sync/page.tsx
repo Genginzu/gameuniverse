@@ -11,25 +11,22 @@ import { Pagination } from "@/components/shared/Pagination";
 import { SyncErrorsDialog, type SyncErrorDetail } from "@/components/admin/esport/SyncErrorsDialog";
 import { SyncJobCard, type SyncJob } from "@/components/admin/esport/SyncJobCard";
 
-interface SyncLog {
+interface SyncHistoryEntry {
   id: string;
+  kind: "incremental" | "full";
   trigger: string;
   status: string;
-  teams_synced: number;
-  teams_errors: number;
-  players_synced: number;
-  players_errors: number;
-  tournaments_synced: number;
-  tournaments_errors: number;
-  matches_synced: number;
-  matches_errors: number;
-  error_message: string | null;
-  error_details: SyncErrorDetail[] | null;
+  total_synced: number;
+  total_errors: number;
   duration_ms: number | null;
   started_at: string;
+  completed_at: string | null;
+  error_message: string | null;
+  error_details: SyncErrorDetail[] | null;
+  entity?: string | null;
 }
 
-interface LogsResponse { logs: SyncLog[]; total: number; totalPages: number }
+interface HistoryResponse { entries: SyncHistoryEntry[]; total: number; totalPages: number }
 interface JobsResponse { jobs: SyncJob[] }
 
 export default function EsportSyncPage() {
@@ -40,13 +37,10 @@ export default function EsportSyncPage() {
   const [incrementalSyncing, setIncrementalSyncing] = useState(false);
   const [fullSyncStarting, setFullSyncStarting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [logPage, setLogPage] = useState(1);
-  const [errorsLog, setErrorsLog] = useState<SyncLog | null>(null);
+  const [historyPage, setHistoryPage] = useState(1);
+  const [errorsEntry, setErrorsEntry] = useState<SyncHistoryEntry | null>(null);
 
-  // Adaptive polling: 2s while a job is active (pending/running), 10s
-  // otherwise. SWR `refreshInterval` accepts a function that receives
-  // the latest data, so we re-evaluate on each tick without setState
-  // bouncing.
+  // Adaptive polling: 2s while a job is active, 10s otherwise.
   const { data: jobsData, mutate: mutateJobs } = useSWR<JobsResponse>(
     "/api/admin/esport/sync-jobs?limit=10",
     {
@@ -61,8 +55,9 @@ export default function EsportSyncPage() {
   const jobs = jobsData?.jobs ?? [];
   const activeJob = jobs.find((j) => j.status === "pending" || j.status === "running") ?? null;
 
-  const { data: logsData, isLoading: logsLoading, mutate: mutateLogs } = useSWR<LogsResponse>(
-    `/api/admin/esport/sync-logs?page=${logPage}&limit=10`,
+  // Unified history (incremental sync_logs + full sync_jobs).
+  const { data: historyData, isLoading: historyLoading, mutate: mutateHistory } = useSWR<HistoryResponse>(
+    `/api/admin/esport/sync-history?page=${historyPage}&limit=10`,
     { refreshInterval: 30000 },
   );
 
@@ -75,13 +70,13 @@ export default function EsportSyncPage() {
         const data = await res.json().catch(() => ({}));
         setError(data.error ?? t("error"));
       }
-      mutateLogs();
+      mutateHistory();
     } catch {
       setError(t("error"));
     } finally {
       setIncrementalSyncing(false);
     }
-  }, [t, mutateLogs]);
+  }, [t, mutateHistory]);
 
   const startFullSync = useCallback(async () => {
     setFullSyncStarting(true);
@@ -97,17 +92,17 @@ export default function EsportSyncPage() {
         setError(data.error ?? t("error"));
       }
       mutateJobs();
+      mutateHistory();
     } catch {
       setError(t("error"));
     } finally {
       setFullSyncStarting(false);
     }
-  }, [t, mutateJobs]);
+  }, [t, mutateJobs, mutateHistory]);
 
-  const logs = logsData?.logs ?? [];
-  const totalSynced = (l: SyncLog) => l.teams_synced + l.players_synced + l.tournaments_synced + l.matches_synced;
-  const totalErrors = (l: SyncLog) => l.teams_errors + l.players_errors + l.tournaments_errors + l.matches_errors;
-  const fmtDuration = (ms: number | null) => !ms ? "—" : ms < 1000 ? `${ms}ms` : `${(ms / 1000).toFixed(1)}s`;
+  const entries = historyData?.entries ?? [];
+  const fmtDuration = (ms: number | null) =>
+    !ms ? "—" : ms < 1000 ? `${ms}ms` : ms < 60000 ? `${(ms / 1000).toFixed(1)}s` : `${Math.floor(ms / 60000)}m ${Math.floor((ms % 60000) / 1000)}s`;
   const fmtDate = (d: string) => new Date(d).toLocaleString(undefined, {
     month: "short", day: "numeric", hour: "2-digit", minute: "2-digit",
   });
@@ -171,12 +166,12 @@ export default function EsportSyncPage() {
       {/* Active full-sync job */}
       {activeJob && <SyncJobCard job={activeJob} />}
 
-      {/* History */}
+      {/* Unified history */}
       <div className="glass-card rounded-2xl p-5">
         <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">{t("history")}</h2>
-        {logsLoading && logs.length === 0 ? (
+        {historyLoading && entries.length === 0 ? (
           <p className="text-sm text-gray-500 dark:text-gray-400">{t("fetching")}</p>
-        ) : logs.length === 0 ? (
+        ) : entries.length === 0 ? (
           <p className="text-sm text-gray-500 dark:text-gray-400">{t("noLogs")}</p>
         ) : (
           <div className="overflow-x-auto">
@@ -184,6 +179,7 @@ export default function EsportSyncPage() {
               <thead>
                 <tr className="border-b border-gray-200 text-left text-xs uppercase text-gray-500 dark:border-gray-700 dark:text-gray-400">
                   <th className="px-3 py-2 font-medium">{t("date")}</th>
+                  <th className="px-3 py-2 font-medium">{t("kind")}</th>
                   <th className="px-3 py-2 font-medium">{t("triggerCol")}</th>
                   <th className="px-3 py-2 font-medium">{t("status")}</th>
                   <th className="px-3 py-2 font-medium">{t("synced")}</th>
@@ -193,32 +189,56 @@ export default function EsportSyncPage() {
                 </tr>
               </thead>
               <tbody>
-                {logs.map((log) => (
-                  <tr key={log.id} className="border-b border-gray-100 dark:border-gray-800">
-                    <td className="px-3 py-2 text-gray-700 dark:text-gray-300">{fmtDate(log.started_at)}</td>
-                    <td className="px-3 py-2 text-gray-700 dark:text-gray-300">{log.trigger}</td>
+                {entries.map((entry) => (
+                  <tr key={entry.id} className="border-b border-gray-100 dark:border-gray-800">
+                    <td className="px-3 py-2 text-gray-700 dark:text-gray-300">
+                      {fmtDate(entry.started_at)}
+                    </td>
                     <td className="px-3 py-2">
                       <span
                         className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                          log.status === "completed"
-                            ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                            : log.status === "failed"
-                              ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
-                              : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
+                          entry.kind === "full"
+                            ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                            : "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400"
                         }`}
                       >
-                        {log.status}
+                        {t(`kindLabel.${entry.kind}`)}
+                        {entry.entity && ` (${entry.entity})`}
                       </span>
                     </td>
-                    <td className="px-3 py-2 text-gray-700 dark:text-gray-300">{totalSynced(log)}</td>
-                    <td className="px-3 py-2 text-gray-700 dark:text-gray-300">{totalErrors(log)}</td>
-                    <td className="px-3 py-2 text-gray-700 dark:text-gray-300">{fmtDuration(log.duration_ms)}</td>
+                    <td className="px-3 py-2 text-gray-700 dark:text-gray-300">
+                      {entry.trigger}
+                    </td>
                     <td className="px-3 py-2">
-                      {log.error_details && log.error_details.length > 0 && (
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                          entry.status === "completed"
+                            ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                            : entry.status === "failed"
+                              ? "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400"
+                              : entry.status === "running" || entry.status === "pending"
+                                ? "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400"
+                                : "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400"
+                        }`}
+                      >
+                        {entry.status}
+                      </span>
+                    </td>
+                    <td className="px-3 py-2 text-gray-700 dark:text-gray-300 tabular-nums">
+                      {entry.total_synced.toLocaleString()}
+                    </td>
+                    <td className="px-3 py-2 text-gray-700 dark:text-gray-300 tabular-nums">
+                      {entry.total_errors.toLocaleString()}
+                    </td>
+                    <td className="px-3 py-2 text-gray-700 dark:text-gray-300">
+                      {fmtDuration(entry.duration_ms)}
+                    </td>
+                    <td className="px-3 py-2">
+                      {entry.error_details && entry.error_details.length > 0 && (
                         <button
                           type="button"
                           className="text-palette-primary-600 hover:underline"
-                          onClick={() => setErrorsLog(log)}
+                          onClick={() => setErrorsEntry(entry)}
                         >
                           {t("viewErrors")}
                         </button>
@@ -228,12 +248,12 @@ export default function EsportSyncPage() {
                 ))}
               </tbody>
             </table>
-            {logsData && logsData.totalPages > 1 && (
+            {historyData && historyData.totalPages > 1 && (
               <div className="mt-4">
                 <Pagination
-                  currentPage={logPage}
-                  totalPages={logsData.totalPages}
-                  onPageChange={setLogPage}
+                  currentPage={historyPage}
+                  totalPages={historyData.totalPages}
+                  onPageChange={setHistoryPage}
                 />
               </div>
             )}
@@ -241,11 +261,11 @@ export default function EsportSyncPage() {
         )}
       </div>
 
-      {errorsLog && (
+      {errorsEntry && (
         <SyncErrorsDialog
           isOpen={true}
-          onClose={() => setErrorsLog(null)}
-          errors={errorsLog.error_details ?? []}
+          onClose={() => setErrorsEntry(null)}
+          errors={errorsEntry.error_details ?? []}
         />
       )}
     </div>

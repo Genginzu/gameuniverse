@@ -2755,6 +2755,11 @@
         "date": "Date",
         "triggerCol": "Déclencheur",
         "status": "Statut",
+        "kind": "Type",
+        "kindLabel": {
+          "incremental": "Incrémentale",
+          "full": "Complète"
+        },
         "synced": "Synchronisés",
         "errors": "Erreurs",
         "duration": "Durée",

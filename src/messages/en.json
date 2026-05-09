@@ -2752,6 +2752,11 @@
         "date": "Date",
         "triggerCol": "Trigger",
         "status": "Status",
+        "kind": "Type",
+        "kindLabel": {
+          "incremental": "Incremental",
+          "full": "Full"
+        },
         "synced": "Synced",
         "errors": "Errors",
         "duration": "Duration",
