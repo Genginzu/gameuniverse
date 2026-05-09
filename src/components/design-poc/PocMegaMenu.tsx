@@ -134,11 +134,18 @@ const CATEGORIES: MegaCategory[] = [
 
 interface PocMegaMenuProps {
   locale: string;
-  /** Callback pour ouvrir la command palette */
+  /** Callback pour ouvrir la command palette (mode "palette") */
   onOpenPalette?: () => void;
+  /**
+   * Mode du search dans le header :
+   * - "palette" (défaut) : bouton qui ouvre la command palette ⌘K
+   * - "input"            : champ de recherche visible (pas de modale)
+   * - "none"             : pas de search du tout
+   */
+  searchMode?: "palette" | "input" | "none";
 }
 
-export function PocMegaMenu({ locale, onOpenPalette }: PocMegaMenuProps) {
+export function PocMegaMenu({ locale, onOpenPalette, searchMode = "palette" }: PocMegaMenuProps) {
   const [active, setActive] = useState<CategoryKey>(null);
 
   return (
@@ -176,18 +183,33 @@ export function PocMegaMenu({ locale, onOpenPalette }: PocMegaMenuProps) {
           ))}
         </nav>
 
-        {/* Search button (proéminent) */}
-        <button
-          type="button"
-          onClick={onOpenPalette}
-          className="ml-auto flex h-10 w-72 items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 text-sm text-zinc-400 transition hover:border-white/20 hover:bg-white/10 hover:text-white"
-        >
-          <Icon icon="lucide:search" className="size-4" />
-          <span className="flex-1 text-left">Search anything…</span>
-          <span className="poc-mono rounded border border-white/10 px-1.5 py-0.5 text-[10px] text-zinc-400">
-            ⌘K
-          </span>
-        </button>
+        {/* Search — mode dépendant */}
+        {searchMode === "palette" && (
+          <button
+            type="button"
+            onClick={onOpenPalette}
+            className="ml-auto flex h-10 w-72 items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 text-sm text-zinc-400 transition hover:border-white/20 hover:bg-white/10 hover:text-white"
+          >
+            <Icon icon="lucide:search" className="size-4" />
+            <span className="flex-1 text-left">Search anything…</span>
+            <span className="poc-mono rounded border border-white/10 px-1.5 py-0.5 text-[10px] text-zinc-400">
+              ⌘K
+            </span>
+          </button>
+        )}
+
+        {searchMode === "input" && (
+          <div className="ml-auto flex h-10 w-80 items-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 text-sm text-zinc-200 focus-within:border-[var(--poc-accent-400)] focus-within:bg-white/10">
+            <Icon icon="lucide:search" className="size-4 text-zinc-400" />
+            <input
+              type="text"
+              placeholder="Search games, players, tournaments…"
+              className="flex-1 bg-transparent text-sm text-white outline-none placeholder:text-zinc-500"
+            />
+          </div>
+        )}
+
+        {searchMode === "none" && <div className="ml-auto" />}
 
         {/* Avatar */}
         <button

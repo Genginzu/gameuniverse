@@ -16,6 +16,7 @@ import { PocSidebar } from "@/components/design-poc/PocSidebar";
 import { HybridShell } from "@/components/design-poc/HybridShell";
 import { DiscordShell } from "@/components/design-poc/DiscordShell";
 import { SpotifyShell } from "@/components/design-poc/SpotifyShell";
+import { HybridDiscordShell } from "@/components/design-poc/HybridDiscordShell";
 import { GameService } from "@/lib/services/gameService";
 import { POC_GAMES, type PocGameData } from "./game-data";
 import { adaptGameDetailsToPoc } from "./real-data-adapter";
@@ -35,7 +36,14 @@ import {
   SimilarGamesSection,
 } from "./DetailEcommerce";
 
-type LayoutVariant = "immersive" | "sidebar" | "collapsible" | "hybrid" | "discord" | "spotify";
+type LayoutVariant =
+  | "immersive"
+  | "sidebar"
+  | "collapsible"
+  | "hybrid"
+  | "discord"
+  | "spotify"
+  | "hybrid-discord";
 
 interface PageProps {
   params: Promise<{ locale: string }>;
@@ -55,6 +63,7 @@ export default async function DesignPocGameDetailPage({ params, searchParams }: 
     "hybrid",
     "discord",
     "spotify",
+    "hybrid-discord",
   ];
   const layout: LayoutVariant =
     requested && (validLayouts as string[]).includes(requested)
@@ -118,6 +127,11 @@ export default async function DesignPocGameDetailPage({ params, searchParams }: 
         <SpotifyLayout locale={locale} switchers={switchers}>
           {pageBody}
         </SpotifyLayout>
+      )}
+      {layout === "hybrid-discord" && (
+        <HybridDiscordLayout locale={locale} switchers={switchers}>
+          {pageBody}
+        </HybridDiscordLayout>
       )}
     </DynamicAccent>
   );
@@ -272,6 +286,28 @@ function SpotifyLayout({
 }
 
 /* ============================================================================
+ * Variante G — Hybrid + Discord : mega-menu top + rail + sub-sidebar toggle
+ * ============================================================================ */
+
+function HybridDiscordLayout({
+  locale,
+  switchers,
+  children,
+}: {
+  locale: string;
+  switchers: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <HybridDiscordShell locale={locale}>
+      {switchers}
+      {children}
+      <PocFooter />
+    </HybridDiscordShell>
+  );
+}
+
+/* ============================================================================
  * Topbar compact pour les variantes sidebar
  * ============================================================================ */
 
@@ -378,6 +414,7 @@ function ModeSwitchers({
             { key: "hybrid", label: "D — Hybrid (mega + ⌘K)" },
             { key: "discord", label: "E — Discord-like" },
             { key: "spotify", label: "F — Spotify-like" },
+            { key: "hybrid-discord", label: "G — Mega + Discord rail" },
           ] as const
         ).map((l) => (
           <Link
