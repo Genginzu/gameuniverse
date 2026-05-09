@@ -13,6 +13,9 @@ import { DynamicAccent } from "@/components/design-poc/DynamicAccent";
 import { PocHeader } from "@/components/design-poc/PocHeader";
 import { PocFooter } from "@/components/design-poc/PocFooter";
 import { PocSidebar } from "@/components/design-poc/PocSidebar";
+import { HybridShell } from "@/components/design-poc/HybridShell";
+import { DiscordShell } from "@/components/design-poc/DiscordShell";
+import { SpotifyShell } from "@/components/design-poc/SpotifyShell";
 import { GameService } from "@/lib/services/gameService";
 import { POC_GAMES, type PocGameData } from "./game-data";
 import { adaptGameDetailsToPoc } from "./real-data-adapter";
@@ -32,7 +35,7 @@ import {
   SimilarGamesSection,
 } from "./DetailEcommerce";
 
-type LayoutVariant = "immersive" | "sidebar" | "collapsible";
+type LayoutVariant = "immersive" | "sidebar" | "collapsible" | "hybrid" | "discord" | "spotify";
 
 interface PageProps {
   params: Promise<{ locale: string }>;
@@ -44,8 +47,19 @@ export default async function DesignPocGameDetailPage({ params, searchParams }: 
   const sp = await searchParams;
 
   // Déterminer la variante de layout (défaut : immersive)
+  const requested = sp.layout;
+  const validLayouts: LayoutVariant[] = [
+    "immersive",
+    "sidebar",
+    "collapsible",
+    "hybrid",
+    "discord",
+    "spotify",
+  ];
   const layout: LayoutVariant =
-    sp.layout === "sidebar" || sp.layout === "collapsible" ? sp.layout : "immersive";
+    requested && (validLayouts as string[]).includes(requested)
+      ? (requested as LayoutVariant)
+      : "immersive";
 
   // Charger le jeu (mocké ou réel)
   let game: PocGameData;
@@ -89,6 +103,21 @@ export default async function DesignPocGameDetailPage({ params, searchParams }: 
         <CollapsibleLayout locale={locale} pageLabel={pageLabel} switchers={switchers}>
           {pageBody}
         </CollapsibleLayout>
+      )}
+      {layout === "hybrid" && (
+        <HybridLayout locale={locale} switchers={switchers}>
+          {pageBody}
+        </HybridLayout>
+      )}
+      {layout === "discord" && (
+        <DiscordLayout locale={locale} switchers={switchers}>
+          {pageBody}
+        </DiscordLayout>
+      )}
+      {layout === "spotify" && (
+        <SpotifyLayout locale={locale} switchers={switchers}>
+          {pageBody}
+        </SpotifyLayout>
       )}
     </DynamicAccent>
   );
@@ -173,6 +202,72 @@ function CollapsibleLayout({
         <PocFooter />
       </div>
     </div>
+  );
+}
+
+/* ============================================================================
+ * Variante D — Hybrid : top mega-menu + Cmd+K command palette
+ * ============================================================================ */
+
+function HybridLayout({
+  locale,
+  switchers,
+  children,
+}: {
+  locale: string;
+  switchers: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <HybridShell locale={locale}>
+      {switchers}
+      {children}
+      <PocFooter />
+    </HybridShell>
+  );
+}
+
+/* ============================================================================
+ * Variante E — Discord-like : double sidebar (rail + sub-side)
+ * ============================================================================ */
+
+function DiscordLayout({
+  locale,
+  switchers,
+  children,
+}: {
+  locale: string;
+  switchers: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <DiscordShell locale={locale} defaultSpace="games">
+      {switchers}
+      {children}
+      <PocFooter />
+    </DiscordShell>
+  );
+}
+
+/* ============================================================================
+ * Variante F — Spotify-like : search-first
+ * ============================================================================ */
+
+function SpotifyLayout({
+  locale,
+  switchers,
+  children,
+}: {
+  locale: string;
+  switchers: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <SpotifyShell locale={locale}>
+      {switchers}
+      {children}
+      <PocFooter />
+    </SpotifyShell>
   );
 }
 
@@ -277,9 +372,12 @@ function ModeSwitchers({
         <span className="poc-kicker mr-2">Layout</span>
         {(
           [
-            { key: "immersive", label: "A — Immersive (no sidebar)" },
-            { key: "sidebar", label: "B — Sidebar permanente" },
+            { key: "immersive", label: "A — Immersive" },
+            { key: "sidebar", label: "B — Sidebar fixe" },
             { key: "collapsible", label: "C — Sidebar collapsible" },
+            { key: "hybrid", label: "D — Hybrid (mega + ⌘K)" },
+            { key: "discord", label: "E — Discord-like" },
+            { key: "spotify", label: "F — Spotify-like" },
           ] as const
         ).map((l) => (
           <Link
