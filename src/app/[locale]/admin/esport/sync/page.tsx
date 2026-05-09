@@ -263,9 +263,12 @@ export default function EsportSyncPage() {
 
       {errorsEntry && (
         <SyncErrorsDialog
-          isOpen={true}
-          onClose={() => setErrorsEntry(null)}
+          open={true}
+          onOpenChange={(o) => {
+            if (!o) setErrorsEntry(null);
+          }}
           errors={errorsEntry.error_details ?? []}
+          startedAt={errorsEntry.started_at}
         />
       )}
     </div>
