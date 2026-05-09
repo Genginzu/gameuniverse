@@ -39,7 +39,7 @@ Ce document acte la décision d'adopter cette direction sur l'ensemble de l'app
 | Système de couleurs (palette) | ✅ Conservation de la palette marine actuelle |
 | Typographie | ✅ Ajout de **Tomorrow** pour les titres display, conservation de **Geist** pour le corps |
 | Composants UI primitifs (Button, Input, Card…) | ✅ Ajustements ponctuels pour intégrer les nouveaux patterns |
-| Glassmorphism | ✅ Combiné : conservation sur les composants utilitaires, style éditorial sur les pages contenu |
+| Glassmorphism | ❌ **Retrait du `backdrop-blur` partout**. Les transparences blanches très légères (2-5%) sur les cards/badges restent autorisées (ce ne sont pas du glassmorphism stricto sensu, juste de la hiérarchie visuelle sur fond sombre). Voir détails section 3. |
 | Pages publiques | ✅ Toutes |
 | Pages auth | ✅ Refonte légère (cohérence visuelle) |
 
@@ -108,6 +108,40 @@ POC, pour la perf).
 Ces composants existent déjà dans le POC (`src/components/design-poc/`) et
 seront migrés/durcis en composants de production dans `src/components/shared/`
 en Phase 0.
+
+### Glassmorphism : retrait
+
+Le projet utilisait jusqu'ici un design system glassmorphism (classes `.glass`,
+`.glass-card`, `.glass-header`, `.glass-sidebar`, etc. dans `globals.css` +
+patterns Tailwind `backdrop-blur-xl`). **Cette refonte retire le
+glassmorphism**.
+
+**À retirer** :
+
+- ❌ Toutes les classes `.glass-*` dans `src/app/globals.css`
+- ❌ Tout usage de `backdrop-blur-*` sur les surfaces de chrome (header, rail,
+  sidebars)
+- ❌ Le steering `.kiro/steering/glassmorphism.md` (à remplacer par un steering
+  éditorial)
+
+**À conserver** (n'est pas du glassmorphism technique) :
+
+- ✅ Les transparences blanches très légères (`bg-white/[0.02]`,
+  `bg-white/[0.05]`, `bg-white/10`) sur les **cards de contenu**, **badges**,
+  **bordures**. Ces transparences servent à créer une hiérarchie visuelle sur
+  fond sombre, comme le font Linear / Vercel / Resend.
+- ✅ Le pattern radial-gradient subtil de `SpotlightCard` (effet halo qui suit
+  le curseur).
+- ✅ Les dégradés sombres au-dessus d'images plein cadre (Hero), qui ne sont
+  pas du blur mais de simples dégradés vers la couleur de fond.
+
+**Surfaces opaques** :
+
+Les sidebars (rail 56px, sub-sidebar 220px), le top header (mega-menu) et la
+sidebar `--editorial-bg-2` (`#1a0f2e`) sont **plein opaques**, sans
+`backdrop-blur`. Si un effet de séparation est nécessaire au-dessus de
+l'image hero d'une page game detail, on utilise un dégradé classique vers
+`--editorial-bg`, pas un blur.
 
 ## 4. Layout retenu
 
@@ -302,8 +336,15 @@ tests.
 
 ### Risque 5 — Composants admin qui partagent du code avec les pages publiques
 
-**Mitigation** : éviter de toucher aux composants admin. Si un composant
-partagé doit évoluer, vérifier qu'il fonctionne dans les deux contextes.
+L'admin utilise les classes `.glass-*` qu'on retire. Mitigation :
+
+- L'admin (out of scope) garde `DashboardLayout` et continuera d'utiliser les
+  classes `.glass-*` tant qu'on ne refait pas l'admin.
+- **On déprécie** les `.glass-*` dans `globals.css` mais on ne les supprime
+  pas tout de suite — leur retrait définitif sera fait après la refonte de
+  l'admin (autre projet).
+- Tout nouveau composant éditorial **ne doit pas** utiliser `backdrop-blur` ni
+  les classes `.glass-*`.
 
 ### Risque 6 — Mobile cassé
 
@@ -342,6 +383,7 @@ mega-menu et le command palette doivent être navigables au clavier.
 | F0-10 | Mobile : hamburger overlay full-screen | Variante mobile du layout (rail caché, mega-menu = liste expandable, sub-sidebar = section). |
 | F0-11 | Setup i18n des nouveaux composants | Ajouter les clés FR/EN pour mega-menu, rail, sub-sidebar, search input. |
 | F0-12 | Documentation des composants éditoriaux | `docs/design/editorial-components.md` avec API et exemples. |
+| F0-13 | Retirer le glassmorphism du POC promu et déprécier les `.glass-*` | Quand on migre les composants `design-poc/*` vers `shared/`, retirer toutes les occurrences de `backdrop-blur-*`. Marquer les classes `.glass-*` comme dépréciées dans `globals.css` (commentaire + interdiction d'usage dans les nouveaux composants). |
 
 ### Phase 1 — Pages prioritaires
 
