@@ -1,7 +1,7 @@
 /**
  * Per-entity page processor for the full-sync chunked flow.
  *
- * Each call fetches ONE page from the matching PandaScore list endpoint,
+ * Each call fetches ONE page from a specific PandaScore list endpoint,
  * resolves any FKs it references, and bulk-upserts the rows. Returns
  * `{ pageItems, failed, synced, errors }` so the caller can advance the
  * cursor:
@@ -9,6 +9,11 @@
  *     by the next chunk)
  *   - else if pageItems < per_page → entity is done
  *   - else → bump page by 1 and continue
+ *
+ * Each SyncEntity maps 1:1 to a PandaScore endpoint. No alternation
+ * inside a single entity — entities that span two endpoints (matches
+ * past/running, tournaments upcoming/running) get split into two
+ * SyncEntity values in job-cursor.ts.
  */
 
 import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
@@ -63,12 +68,44 @@ export async function processEntityPage(
   switch (entity) {
     case "teams":
       return processTeamsPage(supabase, page, game, errors);
-    case "tournaments":
-      return processTournamentsPage(supabase, page, game, errors);
+    case "tournaments_upcoming":
+      return processTournamentsPage(
+        supabase,
+        page,
+        game,
+        errors,
+        getUpcomingTournaments,
+        "upcoming",
+      );
+    case "tournaments_running":
+      return processTournamentsPage(
+        supabase,
+        page,
+        game,
+        errors,
+        getRunningTournaments,
+        "running",
+      );
     case "players":
       return processPlayersPage(supabase, page, game, errors);
-    case "matches":
-      return processMatchesPage(supabase, page, game, errors);
+    case "matches_past":
+      return processMatchesPage(
+        supabase,
+        page,
+        game,
+        errors,
+        getPastMatches,
+        "past",
+      );
+    case "matches_running":
+      return processMatchesPage(
+        supabase,
+        page,
+        game,
+        errors,
+        getRunningMatches,
+        "running",
+      );
   }
 }
 
@@ -104,19 +141,14 @@ async function processTournamentsPage(
   page: number,
   game: string | null,
   errors: SyncErrorCollector,
+  fetcher: typeof getUpcomingTournaments,
+  variant: "upcoming" | "running",
 ): Promise<PageResult> {
-  // PandaScore /tournaments/upcoming + /tournaments/running interleaved by
-  // page. To stay simple and chunk-friendly, alternate within the cursor:
-  // odd pages fetch upcoming, even pages fetch running. Both endpoints are
-  // small enough (typically <500 rows total) to converge quickly.
-  const fetcher = page % 2 === 1 ? getUpcomingTournaments : getRunningTournaments;
-  const realPage = Math.ceil(page / 2);
-
   const fetched = await fetchOnePage<PandaScoreTournament>(fetcher, {
-    page: realPage,
+    page,
     perPage: PER_PAGE,
     game: game ?? undefined,
-    label: `tournaments-${page % 2 === 1 ? "upcoming" : "running"}-p${realPage}`,
+    label: `tournaments-${variant}-p${page}`,
     errorCollector: errors,
     errorType: "tournament",
   });
@@ -171,18 +203,14 @@ async function processMatchesPage(
   page: number,
   game: string | null,
   errors: SyncErrorCollector,
+  fetcher: typeof getPastMatches,
+  variant: "past" | "running",
 ): Promise<PageResult> {
-  // Like tournaments: alternate between past and running. Past dominates
-  // by far, but the alternation ensures running matches stay fresh through
-  // a long-running global sync.
-  const fetcher = page % 2 === 1 ? getPastMatches : getRunningMatches;
-  const realPage = Math.ceil(page / 2);
-
   const fetched = await fetchOnePage<PandaScoreMatch>(fetcher, {
-    page: realPage,
+    page,
     perPage: PER_PAGE,
     game: game ?? undefined,
-    label: `matches-${page % 2 === 1 ? "past" : "running"}-p${realPage}`,
+    label: `matches-${variant}-p${page}`,
     errorCollector: errors,
     errorType: "match",
   });

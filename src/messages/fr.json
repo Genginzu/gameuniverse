@@ -2785,6 +2785,11 @@
             "players": "Joueurs",
             "matches": "Matchs"
           },
+          "variants": {
+            "upcoming": "À venir",
+            "running": "En cours",
+            "past": "Passés"
+          },
           "page": "Page {page}",
           "done": "Terminé",
           "elapsed": "Écoulé : {duration}",

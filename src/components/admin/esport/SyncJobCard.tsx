@@ -4,18 +4,29 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 
+/**
+ * The cursor on the job row uses 6 keys (matches and tournaments split
+ * into past/running and upcoming/running) so each PandaScore endpoint
+ * can be paginated to exhaustion independently. The UI groups them into
+ * 4 logical entities for readability.
+ */
+type SubEntityKey =
+  | "teams"
+  | "tournaments_upcoming"
+  | "tournaments_running"
+  | "players"
+  | "matches_past"
+  | "matches_running";
+
+type EntityCursor = { page: number; done: boolean };
+
 export interface SyncJob {
   id: string;
   kind: "full" | "entity";
-  entity: "teams" | "players" | "tournaments" | "matches" | null;
+  entity: string | null;
   game: string | null;
   status: "pending" | "running" | "completed" | "failed" | "cancelled";
-  cursor: Partial<
-    Record<
-      "teams" | "players" | "tournaments" | "matches",
-      { page: number; done: boolean }
-    >
-  >;
+  cursor: Partial<Record<SubEntityKey, EntityCursor>>;
   total_synced: number;
   total_errors: number;
   error_message: string | null;
@@ -25,55 +36,69 @@ export interface SyncJob {
   created_at: string;
 }
 
-const ENTITIES = ["teams", "tournaments", "players", "matches"] as const;
-type Entity = (typeof ENTITIES)[number];
+interface SubBar {
+  key: SubEntityKey;
+  /** Set when a logical entity has two PandaScore endpoints (upcoming +
+   *  running for tournaments, past + running for matches). */
+  variantLabelKey?: "upcoming" | "running" | "past";
+  /** Page count estimate used to draw the progress bar. */
+  estimate: number;
+}
 
-const ENTITY_ICONS: Record<Entity, string> = {
-  teams: "mdi:account-group",
-  tournaments: "mdi:trophy",
-  players: "mdi:account",
-  matches: "mdi:sword-cross",
-};
+interface LogicalEntity {
+  key: "teams" | "tournaments" | "players" | "matches";
+  icon: string;
+  bars: SubBar[];
+}
 
 /**
- * Rough page estimates used to draw progress bars. PandaScore returns 100
- * items per page, so these are derived from observed totals (~14k teams,
- * ~46k players, ~100k matches) plus a margin. They're advisory only — the
- * Edge Function knows the entity is done when a page returns < 100 items,
- * not when we hit the estimated page count.
+ * Logical entity layout for the UI. Each logical entity renders one row
+ * with one or more bars stacked side-by-side (when it spans multiple
+ * PandaScore endpoints). Estimates are rough — used purely for the
+ * progress bar fill, the actual "done" decision happens server-side
+ * when PandaScore returns a short page.
  *
- * tournaments uses `runningInterleaved` because the cursor alternates
- * upcoming/running pages; both feeds are small so 10 pages cap is plenty.
+ * Numbers come from observed PandaScore traffic on the GameUniverse
+ * project: ~14k teams (140 pages), ~46k players (460 pages), ~100k past
+ * matches (1000 pages), and small running/upcoming feeds (<10 pages).
  */
-const PAGE_ESTIMATES: Record<Entity, number> = {
-  teams: 150,
-  tournaments: 10,
-  players: 500,
-  matches: 1100,
-};
+const LOGICAL_ENTITIES: LogicalEntity[] = [
+  {
+    key: "teams",
+    icon: "mdi:account-group",
+    bars: [{ key: "teams", estimate: 150 }],
+  },
+  {
+    key: "tournaments",
+    icon: "mdi:trophy",
+    bars: [
+      { key: "tournaments_upcoming", variantLabelKey: "upcoming", estimate: 10 },
+      { key: "tournaments_running", variantLabelKey: "running", estimate: 5 },
+    ],
+  },
+  {
+    key: "players",
+    icon: "mdi:account",
+    bars: [{ key: "players", estimate: 500 }],
+  },
+  {
+    key: "matches",
+    icon: "mdi:sword-cross",
+    bars: [
+      { key: "matches_past", variantLabelKey: "past", estimate: 1100 },
+      { key: "matches_running", variantLabelKey: "running", estimate: 5 },
+    ],
+  },
+];
 
 interface SyncJobCardProps {
   job: SyncJob;
 }
 
-/**
- * Active full-sync progress card.
- *
- * The Edge Function chunks page-by-page and persists the cursor between
- * chunks. We show:
- *   - which entity is currently being processed (spinner)
- *   - estimated progress bar per entity (current page / estimate)
- *   - cumulative synced / errors counters
- *   - relative time since last chunk write (so a stuck job is obvious)
- *
- * The whole component re-renders on a 1s tick so the relative time stays
- * fresh between SWR polls.
- */
 export function SyncJobCard({ job }: SyncJobCardProps) {
   const t = useTranslations("admin.esport.syncPage.job");
   const [now, setNow] = useState(() => Date.now());
 
-  // Tick every second so "elapsed" and "last chunk ago" stay live.
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
@@ -82,12 +107,10 @@ export function SyncJobCard({ job }: SyncJobCardProps) {
   const isActive = job.status === "pending" || job.status === "running";
   const startedAt = job.started_at ? new Date(job.started_at).getTime() : null;
   const elapsed = startedAt ? formatDuration(now - startedAt) : "—";
-
   const lastChunkAgo = job.last_chunk_at
     ? formatRelative(now - new Date(job.last_chunk_at).getTime(), t)
     : null;
-
-  const currentEntity = pickCurrentEntity(job);
+  const currentSubEntity = pickCurrentSubEntity(job);
 
   return (
     <div className="glass-card rounded-2xl p-5">
@@ -119,12 +142,12 @@ export function SyncJobCard({ job }: SyncJobCardProps) {
       </div>
 
       <div className="space-y-3">
-        {ENTITIES.map((entity) => (
+        {LOGICAL_ENTITIES.map((entity) => (
           <EntityRow
-            key={entity}
+            key={entity.key}
             entity={entity}
-            cursor={job.cursor[entity]}
-            isCurrent={isActive && entity === currentEntity}
+            cursor={job.cursor}
+            currentSubEntity={isActive ? currentSubEntity : null}
             t={t}
           />
         ))}
@@ -157,54 +180,105 @@ export function SyncJobCard({ job }: SyncJobCardProps) {
 }
 
 interface EntityRowProps {
-  entity: Entity;
-  cursor: { page: number; done: boolean } | undefined;
-  isCurrent: boolean;
+  entity: LogicalEntity;
+  cursor: SyncJob["cursor"];
+  currentSubEntity: SubEntityKey | null;
   t: ReturnType<typeof useTranslations>;
 }
 
-function EntityRow({ entity, cursor, isCurrent, t }: EntityRowProps) {
-  const c = cursor ?? { page: 1, done: false };
-  const estimate = PAGE_ESTIMATES[entity];
-  // page is 1-based and increments BEFORE the next page is fetched, so
-  // "completed pages" is page-1 while a chunk is in progress, page when
-  // done is true.
-  const completedPages = c.done ? estimate : Math.max(0, c.page - 1);
-  const pct = c.done
-    ? 100
-    : Math.min(99, Math.round((completedPages / estimate) * 100));
+function EntityRow({ entity, cursor, currentSubEntity, t }: EntityRowProps) {
+  const allBarsDone = entity.bars.every((b) => cursor[b.key]?.done === true);
+  const isCurrentEntity = entity.bars.some((b) => b.key === currentSubEntity);
 
   return (
     <div className="rounded-xl border border-gray-200 bg-white/40 p-3 backdrop-blur-xl dark:border-gray-700 dark:bg-slate-800/40">
       <div className="mb-2 flex items-center gap-2">
-        <Icon
-          icon={ENTITY_ICONS[entity]}
-          className="text-palette-primary-500 size-5"
-        />
+        <Icon icon={entity.icon} className="text-palette-primary-500 size-5" />
         <span className="flex-1 text-sm font-medium text-gray-900 dark:text-white">
-          {t(`entities.${entity}`)}
+          {t(`entities.${entity.key}`)}
         </span>
-        {c.done ? (
+        {allBarsDone ? (
           <Icon
             icon="mdi:check-circle"
             className="size-5 text-green-500 dark:text-green-400"
           />
-        ) : isCurrent ? (
+        ) : isCurrentEntity ? (
           <Icon
             icon="mdi:loading"
             className="text-palette-secondary-500 size-4 animate-spin"
           />
         ) : null}
-        <span className="text-xs tabular-nums text-gray-500 dark:text-gray-400">
-          {c.done
-            ? t("done")
-            : t("pageProgress", { page: c.page, estimate })}
-        </span>
       </div>
+      <div
+        className={
+          entity.bars.length > 1
+            ? "grid grid-cols-1 gap-2 sm:grid-cols-2"
+            : ""
+        }
+      >
+        {entity.bars.map((bar) => (
+          <SubBarRow
+            key={bar.key}
+            bar={bar}
+            cursor={cursor[bar.key] ?? { page: 1, done: false }}
+            isCurrent={bar.key === currentSubEntity}
+            t={t}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SubBarRow({
+  bar,
+  cursor,
+  isCurrent,
+  t,
+}: {
+  bar: SubBar;
+  cursor: EntityCursor;
+  isCurrent: boolean;
+  t: ReturnType<typeof useTranslations>;
+}) {
+  const completedPages = cursor.done ? bar.estimate : Math.max(0, cursor.page - 1);
+  const pct = cursor.done
+    ? 100
+    : Math.min(99, Math.round((completedPages / bar.estimate) * 100));
+
+  return (
+    <div>
+      {bar.variantLabelKey && (
+        <div className="mb-1 flex items-center justify-between text-xs">
+          <span className="flex items-center gap-1 text-gray-600 dark:text-gray-400">
+            {t(`variants.${bar.variantLabelKey}`)}
+            {isCurrent && !cursor.done && (
+              <Icon
+                icon="mdi:loading"
+                className="text-palette-secondary-500 size-3 animate-spin"
+              />
+            )}
+          </span>
+          <span className="tabular-nums text-gray-500 dark:text-gray-400">
+            {cursor.done
+              ? t("done")
+              : t("pageProgress", { page: cursor.page, estimate: bar.estimate })}
+          </span>
+        </div>
+      )}
+      {!bar.variantLabelKey && (
+        <div className="mb-1 flex justify-end text-xs">
+          <span className="tabular-nums text-gray-500 dark:text-gray-400">
+            {cursor.done
+              ? t("done")
+              : t("pageProgress", { page: cursor.page, estimate: bar.estimate })}
+          </span>
+        </div>
+      )}
       <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
         <div
           className={`h-full rounded-full transition-all duration-500 ${
-            c.done
+            cursor.done
               ? "bg-green-500"
               : "from-palette-secondary-500 to-palette-primary-500 bg-linear-to-r"
           }`}
@@ -215,10 +289,18 @@ function EntityRow({ entity, cursor, isCurrent, t }: EntityRowProps) {
   );
 }
 
-function pickCurrentEntity(job: SyncJob): Entity | null {
-  for (const e of ENTITIES) {
-    const c = job.cursor[e];
-    if (!c?.done) return e;
+function pickCurrentSubEntity(job: SyncJob): SubEntityKey | null {
+  const order: SubEntityKey[] = [
+    "teams",
+    "tournaments_upcoming",
+    "tournaments_running",
+    "players",
+    "matches_past",
+    "matches_running",
+  ];
+  for (const key of order) {
+    const c = job.cursor[key];
+    if (!c?.done) return key;
   }
   return null;
 }

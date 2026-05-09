@@ -36,9 +36,8 @@ import {
   markJobFailed,
   markJobPending,
   persistJobProgress,
-  SYNC_ENTITIES,
+  pickNextEntity,
   type JobRow,
-  type SyncEntity,
 } from "./lib/job-cursor.ts";
 import { rescheduleNextChunk } from "./lib/reschedule.ts";
 import { processEntityPage } from "./handlers/process-page.ts";
@@ -281,11 +280,4 @@ Deno.serve(async (req) => {
   }
 });
 
-function pickNextEntity(
-  cursor: Record<SyncEntity, { page: number; done: boolean }>,
-): SyncEntity | null {
-  for (const e of SYNC_ENTITIES) {
-    if (!cursor[e].done) return e;
-  }
-  return null;
-}
+

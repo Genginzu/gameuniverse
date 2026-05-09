@@ -2782,6 +2782,11 @@
             "players": "Players",
             "matches": "Matches"
           },
+          "variants": {
+            "upcoming": "Upcoming",
+            "running": "Running",
+            "past": "Past"
+          },
           "page": "Page {page}",
           "done": "Done",
           "elapsed": "Elapsed: {duration}",
