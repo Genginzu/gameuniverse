@@ -6,8 +6,12 @@
  *
  * Body:
  *   { "jobId": "<uuid>" }     — from admin route or self-reschedule
- *   { "record": { "id": ... } } — from Database Webhook UI on
- *                                  pandascore_sync_jobs INSERT/UPDATE
+ *
+ * Triggers:
+ *   1. /api/admin/esport/full-sync (Vercel) POSTs here right after
+ *      inserting the job row.
+ *   2. The function POSTs back to itself (lib/reschedule.ts) to start
+ *      the next chunk after persisting cursor + status='pending'.
  *
  * Behaviour:
  *   - Atomically claims the job (status pending → running).

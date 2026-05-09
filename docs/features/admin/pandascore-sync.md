@@ -32,7 +32,7 @@ matchs) depuis l'API PandaScore. Toute la logique de sync est hébergée sur
    │ → INSERT pandascore_sync_jobs (pending) │
    └─────────────────────┬───────────────────┘
                          │
-                         ▼ Database Webhook
+                         ▼ POST direct (service-role)
          ┌──────────────────────────────┐
          │ pandascore-full-sync         │  Edge Function
          │  - claim job (status=running)│
@@ -79,7 +79,8 @@ sync ne peut pas tenir dans une seule invocation Edge Function (limite
 
 1. L'admin clique "Sync complète" → insertion dans `pandascore_sync_jobs`
    avec `status='pending'`, `cursor={}`.
-2. Un Database Webhook UI sur la table déclenche la fonction
+2. La route Vercel POST directement la fonction
+   `pandascore-full-sync` avec le `jobId` (fire-and-forget).
    `pandascore-full-sync`.
 3. La fonction claim atomiquement le job (transition `pending` → `running`),
    puis boucle pendant ≤350s :
@@ -145,19 +146,10 @@ SELECT cron.schedule(
 
 ### Database Webhook UI (déclencheur du full-sync)
 
-À configurer **après** le déploiement de la fonction `pandascore-full-sync`,
-même procédure que pour `igdb-processor` :
-
-1. Dashboard Supabase → **Database** → **Webhooks** → **Create a new hook**
-2. Nom : `pandascore_sync_jobs_to_full_sync`
-3. Table : `public.pandascore_sync_jobs`
-4. Events : ☑ Insert ☑ Update
-5. Type : Supabase Edge Functions
-6. Edge Function : `pandascore-full-sync`
-7. Method : POST, headers : `Content-Type: application/json`
-
-Le router de la fonction filtre côté code : si le job n'est pas `pending`,
-il retourne immédiatement.
+Non requis. La route Vercel `/api/admin/esport/full-sync` invoque
+directement l'Edge Function après avoir inséré le job (fire-and-forget,
+service-role bearer). Les chunks suivants sont auto-déclenchés par
+l'Edge Function elle-même via `lib/reschedule.ts`.
 
 ## Structure du code
 

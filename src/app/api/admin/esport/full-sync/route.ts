@@ -2,9 +2,10 @@
  * POST /api/admin/esport/full-sync
  *
  * Inserts a new full-sync job row in `pandascore_sync_jobs` with
- * status='pending'. A Database Webhook on this table picks it up and
- * triggers the `pandascore-full-sync` Edge Function, which processes
- * the job in chunks (≤350s each) and self-reschedules until completion.
+ * status='pending', then immediately invokes the
+ * `pandascore-full-sync` Edge Function with the job id so the first
+ * chunk starts right away. Subsequent chunks are self-rescheduled by
+ * the Edge Function itself.
  *
  * Returns the jobId so the admin UI can poll its progress via
  * GET /api/admin/esport/sync-jobs.
@@ -83,5 +84,35 @@ export async function POST(request: NextRequest) {
   }
 
   logger.info("Sync job created", { jobId: job.id, kind: entity ? "entity" : "full", entity, game });
+
+  // Fire-and-forget the first chunk. The Edge Function self-reschedules
+  // after each chunk, so we don't need to await this. If the call fails
+  // the job stays in `pending` and a manual re-trigger from the admin
+  // UI will pick it up.
+  triggerFirstChunk(job.id as string).catch((err) => {
+    logger.warn("Failed to trigger first chunk", { jobId: job.id, error: err });
+  });
+
   return NextResponse.json({ jobId: job.id }, { status: 201 });
+}
+
+async function triggerFirstChunk(jobId: string): Promise<void> {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!supabaseUrl || !serviceKey) {
+    logger.warn("triggerFirstChunk: Supabase URL or service key missing");
+    return;
+  }
+
+  const url = `${supabaseUrl.replace(/\/+$/, "")}/functions/v1/pandascore-full-sync`;
+
+  // Don't await the body — we just want the function to start.
+  await fetch(url, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      Authorization: `Bearer ${serviceKey}`,
+    },
+    body: JSON.stringify({ jobId }),
+  });
 }

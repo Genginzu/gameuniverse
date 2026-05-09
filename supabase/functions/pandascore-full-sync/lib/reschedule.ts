@@ -2,9 +2,9 @@
  * Self-rescheduling helper for the full-sync flow.
  *
  * When a chunk runs out of time budget but the cursor isn't done yet, we
- * leave the row as `pending` (status update on Database Webhook UI will
- * re-fire the function). We also POST directly to ourselves so the next
- * chunk starts immediately rather than waiting on the Webhook UI fanout.
+ * leave the row as `pending` and POST back to ourselves with the jobId
+ * so the next chunk starts immediately. Fire-and-forget HTTP, the
+ * caller doesn't block on the response.
  *
  * The fire-and-forget request uses the function's own URL with the
  * service-role bearer.

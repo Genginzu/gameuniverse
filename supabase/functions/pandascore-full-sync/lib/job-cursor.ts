@@ -65,8 +65,8 @@ export function isCursorComplete(cursor: Cursor): boolean {
 /**
  * Loads the job and atomically transitions it to `running`. Returns null
  * if the job is not in a processable state, so concurrent invocations
- * (Database Webhook can fire on every UPDATE) don't process the same
- * chunk twice.
+ * (e.g. an admin manual trigger overlapping with a self-reschedule)
+ * don't process the same chunk twice.
  */
 export async function claimJob(
   supabase: SupabaseClient,
