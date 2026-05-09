@@ -43,9 +43,20 @@ export default function EsportSyncPage() {
   const [logPage, setLogPage] = useState(1);
   const [errorsLog, setErrorsLog] = useState<SyncLog | null>(null);
 
+  // Adaptive polling: 2s while a job is active (pending/running), 10s
+  // otherwise. SWR `refreshInterval` accepts a function that receives
+  // the latest data, so we re-evaluate on each tick without setState
+  // bouncing.
   const { data: jobsData, mutate: mutateJobs } = useSWR<JobsResponse>(
     "/api/admin/esport/sync-jobs?limit=10",
-    { refreshInterval: 5000 },
+    {
+      refreshInterval: (latest) => {
+        const hasActive = (latest?.jobs ?? []).some(
+          (j) => j.status === "pending" || j.status === "running",
+        );
+        return hasActive ? 2000 : 10000;
+      },
+    },
   );
   const jobs = jobsData?.jobs ?? [];
   const activeJob = jobs.find((j) => j.status === "pending" || j.status === "running") ?? null;
