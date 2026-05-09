@@ -253,6 +253,7 @@ export default function EsportSyncPage() {
                 <Pagination
                   currentPage={historyPage}
                   totalPages={historyData.totalPages}
+                  totalCount={historyData.total}
                   onPageChange={setHistoryPage}
                 />
               </div>
