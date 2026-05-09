@@ -2,23 +2,29 @@
  * Applicative lock on pandascore_sync_state to prevent concurrent
  * incremental runs (5-min cron + manual admin button).
  *
- * Strategy: a single row (id=1) has a `incremental_running_since` column.
- * `acquireLock()` does a conditional UPDATE that succeeds only when no
- * lock is held *or* the existing lock is older than LOCK_TTL_MS (auto
- * release after a crashed run). The conditional UPDATE returns the
- * previous `last_incremental_at` so the caller can use it as the `since`
- * cursor for PandaScore Incidents API.
+ * The lock is a single row (id=1) with `incremental_running_since`. We
+ * never touch the table directly through PostgREST anymore — Supabase
+ * managed PostgREST sometimes refuses to refresh its column cache when
+ * a column is added, causing 42703 errors for hours. Two SQL RPCs do
+ * the work atomically server-side:
+ *
+ *   - pandascore_acquire_lock(stale_after) → SELECT FOR UPDATE then
+ *     conditional UPDATE; returns acquired/since/held_since
+ *   - pandascore_release_lock(advance_cursor_to) → clears the lock and
+ *     optionally bumps last_incremental_at
+ *
+ * PostgREST exposes them as POST /rpc/<name> and only needs to know the
+ * function names (cached in pg_proc, refreshed independently from the
+ * column cache).
  */
 
 import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
 import { logger } from "../../_shared/logger.ts";
-import { untypedTable } from "../../_shared/untyped-table.ts";
 
-/** Stale lock auto-release threshold. Must be larger than the 400s wall
- *  clock limit to avoid racing a still-running invocation. 6 minutes is
- *  comfortable: cron runs every 5 minutes, so a stuck run is detected
- *  on the next tick. */
-const LOCK_TTL_MS = 6 * 60 * 1000;
+/** Stale lock auto-release threshold. Larger than the 400s wall clock
+ *  budget so we don't race a still-running invocation. 6 minutes lets
+ *  a crashed run be detected on the next 5-minute cron tick. */
+const STALE_AFTER = "6 minutes";
 
 export interface AcquireLockResult {
   acquired: boolean;
@@ -27,70 +33,55 @@ export interface AcquireLockResult {
   since: string | null;
   /** When the existing lock was first acquired, if not acquired. */
   heldSince: string | null;
+  /** Error message when the RPC call failed (network / auth / SQL). */
+  error?: string;
+}
+
+interface AcquireLockRow {
+  acquired: boolean;
+  since: string | null;
+  held_since: string | null;
 }
 
 export async function acquireLock(
   supabase: SupabaseClient,
 ): Promise<AcquireLockResult> {
-  const now = new Date();
-  const staleCutoff = new Date(now.getTime() - LOCK_TTL_MS).toISOString();
-
-  // Conditional update: take the lock if free OR stale.
-  const { data, error } = await untypedTable(supabase, "pandascore_sync_state")
-    .update({
-      incremental_running_since: now.toISOString(),
-      updated_at: now.toISOString(),
-    })
-    .eq("id", 1)
-    .or(`incremental_running_since.is.null,incremental_running_since.lt.${staleCutoff}`)
-    .select("last_incremental_at")
-    .maybeSingle();
+  const { data, error } = await supabase.rpc("pandascore_acquire_lock", {
+    stale_after: STALE_AFTER,
+  });
 
   if (error) {
     logger.error("acquireLock error", { error });
-    return { acquired: false, since: null, heldSince: null };
+    return { acquired: false, since: null, heldSince: null, error: error.message };
   }
 
-  if (!data) {
-    // Lock is held by someone else and not stale: read the holder timestamp.
-    const { data: state } = await untypedTable(supabase, "pandascore_sync_state")
-      .select("incremental_running_since")
-      .eq("id", 1)
-      .single();
-    return {
-      acquired: false,
-      since: null,
-      heldSince: (state?.incremental_running_since as string | null) ?? null,
-    };
+  // Postgres TABLE-returning functions yield an array of rows over
+  // PostgREST. We expect exactly one row.
+  const row = Array.isArray(data) ? (data[0] as AcquireLockRow | undefined) : undefined;
+  if (!row) {
+    logger.warn("acquireLock returned no rows", { data });
+    return { acquired: false, since: null, heldSince: null, error: "no rows" };
   }
 
   return {
-    acquired: true,
-    since: (data.last_incremental_at as string | null) ?? null,
-    heldSince: null,
+    acquired: row.acquired,
+    since: row.since ?? null,
+    heldSince: row.held_since ?? null,
   };
 }
 
 /**
  * Releases the lock and stamps the new `last_incremental_at` cursor on
- * success. On failure, releases the lock but does NOT advance the cursor
- * so the next run retries the same delta.
+ * success. On failure, pass `advanceCursorTo: null` so the next run
+ * retries the same delta.
  */
 export async function releaseLock(
   supabase: SupabaseClient,
   options: { advanceCursorTo: string | null },
 ): Promise<void> {
-  const update: Record<string, unknown> = {
-    incremental_running_since: null,
-    updated_at: new Date().toISOString(),
-  };
-  if (options.advanceCursorTo) {
-    update.last_incremental_at = options.advanceCursorTo;
-  }
-
-  const { error } = await untypedTable(supabase, "pandascore_sync_state")
-    .update(update)
-    .eq("id", 1);
+  const { error } = await supabase.rpc("pandascore_release_lock", {
+    advance_cursor_to: options.advanceCursorTo,
+  });
 
   if (error) {
     logger.error("releaseLock error", { error });

@@ -100,7 +100,7 @@ Deno.serve(async (req) => {
     logger.info("pandascore-incremental: lock held, skipping", {
       heldSince: lock.heldSince,
     });
-    return jsonResponse({ ok: true, skipped: true, reason: "locked", heldSince: lock.heldSince });
+    return jsonResponse({ ok: true, skipped: true, reason: "locked", heldSince: lock.heldSince, error: lock.error });
   }
 
   // The cursor used as the `since` parameter for PandaScore Incidents API.
