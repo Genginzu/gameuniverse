@@ -27,6 +27,12 @@ const DEMOS = [
     accent: "Cyberpunk yellow / Valorant red / Cyan / Magenta",
   },
   {
+    href: "game-detail",
+    label: "Game detail (full)",
+    desc: "Refonte complète de la fiche jeu existante : conserve TOUTES les infos (description, storyline, stats bento, screenshots, vidéos, langues, age ratings, playtime IGDB+joueurs, pricing multi-store, price history, versions, DLC, music, reviews, similar games) en layout éditorial dense.",
+    accent: "Couleur extraite du jeu",
+  },
+  {
     href: "player",
     label: "Player",
     desc: "Profil joueur asymétrique : hero avatar + identité, bento (recent games, achievements, win rate, post, friends).",
@@ -60,7 +66,7 @@ export default async function DesignPocIndexPage({ params }: PageProps) {
       </section>
 
       <section className="mx-auto w-full max-w-[1600px] px-6 pb-32 lg:px-12">
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-2">
           {DEMOS.map((demo, i) => (
             <SpotlightCard
               key={demo.href}
