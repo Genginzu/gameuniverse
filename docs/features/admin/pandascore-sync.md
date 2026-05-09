@@ -144,6 +144,35 @@ SELECT cron.schedule(
 > Supabase managed. Préférer la création via le Dashboard UI qui injecte la
 > service-role en interne.
 
+Un second cron de **watchdog** (1 minute) doit aussi être configuré pour
+éviter qu'un job de full-sync reste bloqué si le self-rescheduling de
+l'Edge Function échoue (CPU limit, redémarrage edge, etc.) :
+
+```sql
+SELECT cron.schedule(
+  'pandascore-full-sync-watchdog-1min',
+  '* * * * *',
+  `$`$
+    SELECT net.http_post(
+      url := 'https://<project-ref>.supabase.co/functions/v1/pandascore-full-sync',
+      headers := jsonb_build_object(
+        'Content-Type', 'application/json',
+        'Authorization', 'Bearer ' || current_setting('app.settings.service_role_key', true)
+      ),
+      body := jsonb_build_object('jobId', j.id)
+    )
+    FROM public.pandascore_sync_jobs j
+    WHERE j.status = 'pending'
+      AND (j.last_chunk_at IS NULL OR j.last_chunk_at < now() - interval '90 seconds')
+    LIMIT 1;
+  `$`$
+);
+```r
+
+Le `WHERE` filtre les jobs `pending` dont le dernier chunk date de plus
+de 90 secondes. Si le self-reschedule a marché, `last_chunk_at` aura été
+avancé et le watchdog ne fait rien.
+
 ### Database Webhook UI (déclencheur du full-sync)
 
 Non requis. La route Vercel `/api/admin/esport/full-sync` invoque

@@ -170,7 +170,7 @@ Deno.serve(async (req) => {
 
     // Not done: reset to pending and self-reschedule.
     await markJobPending(supabase, jobId);
-    rescheduleNextChunk(jobId);
+    await rescheduleNextChunk(jobId);
     return jsonResponse({
       ok: true,
       jobId,
