@@ -128,9 +128,19 @@ Deno.serve(async (req) => {
       totalErrorsDelta += result.errors;
       pagesThisChunk++;
 
-      // Advance cursor: if PandaScore returned a partial page, this entity
-      // is done.
-      if (result.pageItems < 100) {
+      // Advance cursor unless the fetch failed: a failed page must be
+      // retried by the next chunk (e.g. transient PandaScore 5xx). A
+      // legitimate short page (< 100) means end-of-data → entity done.
+      if (result.failed) {
+        logger.warn("pandascore-full-sync: page failed, leaving cursor and breaking chunk", {
+          jobId,
+          entity,
+          page,
+        });
+        // Break out of the chunk so the watchdog re-triggers us after
+        // 90s instead of looping on the same broken page right away.
+        break;
+      } else if (result.pageItems < 100) {
         cursor[entity].done = true;
         logger.info("pandascore-full-sync: entity done", {
           jobId,

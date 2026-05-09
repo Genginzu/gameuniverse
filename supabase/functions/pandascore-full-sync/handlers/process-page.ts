@@ -3,8 +3,11 @@
  *
  * Each call fetches ONE page from the matching PandaScore list endpoint,
  * resolves any FKs it references, and bulk-upserts the rows. Returns
- * `{ pageItems, synced, errors }` so the caller can advance the cursor:
- *   - if pageItems < per_page → entity is done
+ * `{ pageItems, failed, synced, errors }` so the caller can advance the
+ * cursor:
+ *   - if `failed` is true → keep cursor on the same page (will be retried
+ *     by the next chunk)
+ *   - else if pageItems < per_page → entity is done
  *   - else → bump page by 1 and continue
  */
 
@@ -35,13 +38,17 @@ import type {
   PandaScoreTeam,
   PandaScoreTournament,
 } from "../../_shared/pandascore/types.ts";
-import type { SyncEntity } from "./job-cursor.ts";
+import type { SyncEntity } from "../lib/job-cursor.ts";
 
 const PER_PAGE = 100;
 
 export interface PageResult {
-  /** Items returned by PandaScore for the page. < PER_PAGE means done. */
+  /** Items returned by PandaScore for the page. < PER_PAGE means done IF !failed. */
   pageItems: number;
+  /** True when the fetch threw (network / 5xx / timeout). The cursor must
+   *  NOT advance on a failed fetch — a subsequent chunk should retry the
+   *  same page rather than mark the entity prematurely done. */
+  failed: boolean;
   synced: number;
   errors: number;
 }
@@ -71,7 +78,7 @@ async function processTeamsPage(
   game: string | null,
   errors: SyncErrorCollector,
 ): Promise<PageResult> {
-  const items = await fetchOnePage<PandaScoreTeam>(getTeams, {
+  const fetched = await fetchOnePage<PandaScoreTeam>(getTeams, {
     page,
     perPage: PER_PAGE,
     game: game ?? undefined,
@@ -79,12 +86,17 @@ async function processTeamsPage(
     errorCollector: errors,
     errorType: "team",
   });
-  const rows = items.map(mapTeam);
+  const rows = fetched.items.map(mapTeam);
   const result = await bulkUpsert(supabase, "esport_teams", rows, "pandascore_id", {
     errorCollector: errors,
     errorType: "team",
   });
-  return { pageItems: items.length, synced: result.synced, errors: result.errors };
+  return {
+    pageItems: fetched.items.length,
+    failed: fetched.failed,
+    synced: result.synced,
+    errors: result.errors,
+  };
 }
 
 async function processTournamentsPage(
@@ -100,7 +112,7 @@ async function processTournamentsPage(
   const fetcher = page % 2 === 1 ? getUpcomingTournaments : getRunningTournaments;
   const realPage = Math.ceil(page / 2);
 
-  const items = await fetchOnePage<PandaScoreTournament>(fetcher, {
+  const fetched = await fetchOnePage<PandaScoreTournament>(fetcher, {
     page: realPage,
     perPage: PER_PAGE,
     game: game ?? undefined,
@@ -108,12 +120,17 @@ async function processTournamentsPage(
     errorCollector: errors,
     errorType: "tournament",
   });
-  const rows = items.map(mapTournament);
+  const rows = fetched.items.map(mapTournament);
   const result = await bulkUpsert(supabase, "esport_tournaments", rows, "pandascore_id", {
     errorCollector: errors,
     errorType: "tournament",
   });
-  return { pageItems: items.length, synced: result.synced, errors: result.errors };
+  return {
+    pageItems: fetched.items.length,
+    failed: fetched.failed,
+    synced: result.synced,
+    errors: result.errors,
+  };
 }
 
 async function processPlayersPage(
@@ -122,7 +139,7 @@ async function processPlayersPage(
   game: string | null,
   errors: SyncErrorCollector,
 ): Promise<PageResult> {
-  const items = await fetchOnePage<PandaScorePlayer>(getPlayers, {
+  const fetched = await fetchOnePage<PandaScorePlayer>(getPlayers, {
     page,
     perPage: PER_PAGE,
     game: game ?? undefined,
@@ -131,17 +148,22 @@ async function processPlayersPage(
     errorType: "player",
   });
 
-  const teamPandaIds = items
+  const teamPandaIds = fetched.items
     .map((p) => p.current_team?.id)
     .filter((id): id is number => typeof id === "number");
   const teamMap = await preloadIdMap(supabase, "esport_teams", teamPandaIds);
 
-  const rows = items.map((p) => mapPlayer(p, teamMap));
+  const rows = fetched.items.map((p) => mapPlayer(p, teamMap));
   const result = await bulkUpsert(supabase, "esport_players", rows, "pandascore_id", {
     errorCollector: errors,
     errorType: "player",
   });
-  return { pageItems: items.length, synced: result.synced, errors: result.errors };
+  return {
+    pageItems: fetched.items.length,
+    failed: fetched.failed,
+    synced: result.synced,
+    errors: result.errors,
+  };
 }
 
 async function processMatchesPage(
@@ -156,7 +178,7 @@ async function processMatchesPage(
   const fetcher = page % 2 === 1 ? getPastMatches : getRunningMatches;
   const realPage = Math.ceil(page / 2);
 
-  const items = await fetchOnePage<PandaScoreMatch>(fetcher, {
+  const fetched = await fetchOnePage<PandaScoreMatch>(fetcher, {
     page: realPage,
     perPage: PER_PAGE,
     game: game ?? undefined,
@@ -165,10 +187,10 @@ async function processMatchesPage(
     errorType: "match",
   });
 
-  const tournamentPandaIds = items
+  const tournamentPandaIds = fetched.items
     .map((m) => m.tournament_id)
     .filter((id): id is number => typeof id === "number");
-  const teamPandaIds = items
+  const teamPandaIds = fetched.items
     .flatMap((m) => [
       m.opponents[0]?.opponent?.id,
       m.opponents[1]?.opponent?.id,
@@ -181,10 +203,15 @@ async function processMatchesPage(
     preloadIdMap(supabase, "esport_teams", teamPandaIds),
   ]);
 
-  const rows = items.map((m) => mapMatch(m, tournamentMap, teamMap));
+  const rows = fetched.items.map((m) => mapMatch(m, tournamentMap, teamMap));
   const result = await bulkUpsert(supabase, "esport_matches", rows, "pandascore_id", {
     errorCollector: errors,
     errorType: "match",
   });
-  return { pageItems: items.length, synced: result.synced, errors: result.errors };
+  return {
+    pageItems: fetched.items.length,
+    failed: fetched.failed,
+    synced: result.synced,
+    errors: result.errors,
+  };
 }
