@@ -3,7 +3,8 @@
  */
 
 import Link from "next/link";
-import { DynamicAccent, MAGENTA_PALETTE } from "@/components/design-poc/DynamicAccent";
+import { DynamicAccent } from "@/components/design-poc/DynamicAccent";
+import { MAGENTA_PALETTE } from "@/components/design-poc/palettes";
 import { PocHeader } from "@/components/design-poc/PocHeader";
 import { PocFooter } from "@/components/design-poc/PocFooter";
 import { SpotlightCard } from "@/components/design-poc/SpotlightCard";

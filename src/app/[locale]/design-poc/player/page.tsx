@@ -5,7 +5,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { DynamicAccent, GOLD_PALETTE } from "@/components/design-poc/DynamicAccent";
+import { DynamicAccent } from "@/components/design-poc/DynamicAccent";
+import { GOLD_PALETTE } from "@/components/design-poc/palettes";
 import { PocHeader } from "@/components/design-poc/PocHeader";
 import { PocFooter } from "@/components/design-poc/PocFooter";
 import { SpotlightCard } from "@/components/design-poc/SpotlightCard";
