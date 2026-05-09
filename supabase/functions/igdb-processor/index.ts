@@ -23,7 +23,11 @@ import { getSupabaseAdmin } from "../_shared/supabase-admin.ts";
 import { untypedTable } from "../_shared/untyped-table.ts";
 import type { WebhookEventType } from "../_shared/igdb-types.ts";
 import { resolveLocalEntity } from "./lib/resolve-entity.ts";
-import { updateEventStatus } from "./lib/event-status.ts";
+import {
+  linkEventToCharacterId,
+  linkEventToGameId,
+  updateEventStatus,
+} from "./lib/event-status.ts";
 import { handleGameCreate } from "./handlers/games-create.ts";
 import { handleGameUpdate } from "./handlers/games-update.ts";
 import { handleGameDelete } from "./handlers/games-delete.ts";
@@ -108,6 +112,17 @@ Deno.serve(async (req) => {
       row.igdb_id,
       popularityGameIgdbId,
     );
+
+    // Persist the local entity link on the event row as soon as we resolved
+    // it, so the admin UI can display the linked game/character even when
+    // the handler short-circuits (e.g. no trackable fields in payload).
+    // Only link if not already set, to avoid useless writes.
+    if (resolved.gameId && !row.game_id) {
+      await linkEventToGameId(row.id, resolved.gameId);
+    }
+    if (resolved.characterId && !row.character_id) {
+      await linkEventToCharacterId(row.id, resolved.characterId);
+    }
 
     const dispatchKey = `${row.entity_type}:${row.event_type}`;
 
