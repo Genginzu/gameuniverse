@@ -9,6 +9,12 @@ import { requireAdmin } from "@/lib/auth-admin";
 import { logger } from "@/lib/logger";
 import { untypedTable } from "@/lib/utils/untypedTable";
 
+// La table igdb_webhook_events grossit très vite (un INSERT par webhook IGDB).
+// On force le rendu dynamique et on accorde une marge confortable au Edge runtime
+// pour absorber les éventuels pics de latence sur Supabase.
+export const dynamic = "force-dynamic";
+export const maxDuration = 30;
+
 const DEFAULT_LIMIT = 20;
 const MAX_LIMIT = 100;
 
@@ -30,9 +36,12 @@ export async function GET(request: NextRequest) {
 
     const supabase = await createRouteHandlerClient();
 
-    // Build query with filters
+    // Build query with filters.
+    // count: "estimated" évite un COUNT(*) complet sur la table (qui peut faire timeout
+    // sur statement_timeout). L'estimation pgstat suffit largement pour piloter
+    // la pagination de l'admin.
     let query = untypedTable(supabase, "igdb_webhook_events")
-      .select("*", { count: "exact" })
+      .select("*", { count: "estimated" })
       .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
 
@@ -44,12 +53,31 @@ export async function GET(request: NextRequest) {
     const { data: events, count, error } = await query;
 
     if (error) {
-      logger.error("Failed to fetch webhook events", { error });
-      return NextResponse.json({ error: "Failed to fetch events" }, { status: 500 });
+      logger.error("Failed to fetch webhook events", {
+        error,
+        filters: { entityType, eventType, status, notImported, page, limit },
+      });
+      return NextResponse.json(
+        { error: "Failed to fetch events", details: error.message },
+        { status: 500 }
+      );
     }
 
-    // Enrich events with game/character names
-    const enriched = await enrichEventsWithNames(supabase, events ?? []);
+    // L'enrichissement (jointure games/characters) est best-effort : si ça échoue
+    // on retourne quand même la liste brute plutôt que de casser l'UI complète.
+    let enriched: Awaited<ReturnType<typeof enrichEventsWithNames>>;
+    try {
+      enriched = await enrichEventsWithNames(supabase, events ?? []);
+    } catch (enrichError) {
+      logger.error("Failed to enrich webhook events with names", { error: enrichError });
+      enriched = (events ?? []).map((event) => ({
+        ...event,
+        game_name: null,
+        game_slug: null,
+        character_name: null,
+        character_slug: null,
+      }));
+    }
 
     return NextResponse.json({
       events: enriched,
