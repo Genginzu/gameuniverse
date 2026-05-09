@@ -384,3 +384,10 @@ s3_region = "env(S3_REGION)"
 s3_access_key = "env(S3_ACCESS_KEY)"
 # Configures AWS_SECRET_ACCESS_KEY for S3 bucket
 s3_secret_key = "env(S3_SECRET_KEY)"
+
+
+# IGDB webhook receiver — called by IGDB without an Authorization header.
+# Authentication is done via the X-Secret header validated against
+# IGDB_WEBHOOK_SECRET inside the function. Disable Supabase's JWT check.
+[functions.igdb-webhook]
+verify_jwt = false

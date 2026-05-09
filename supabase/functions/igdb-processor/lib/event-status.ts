@@ -35,3 +35,13 @@ export async function linkEventToGameId(eventId: string, gameId: string): Promis
     .update({ game_id: gameId })
     .eq("id", eventId);
 }
+
+export async function linkEventToCharacterId(
+  eventId: string,
+  characterId: string,
+): Promise<void> {
+  const supabase = getSupabaseAdmin();
+  await untypedTable(supabase, "igdb_webhook_events")
+    .update({ character_id: characterId })
+    .eq("id", eventId);
+}

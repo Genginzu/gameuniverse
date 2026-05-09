@@ -1,6 +1,11 @@
 /**
  * Genres, companies and platforms management for IGDB imports.
  * Deno port of src/lib/services/game-import/entities.ts.
+ *
+ * Defensive filtering: IGDB sometimes sends partially expanded objects
+ * (e.g. `involved_companies` with no `company` field, or genres with
+ * a missing slug). We skip those entries instead of crashing the
+ * whole import.
  */
 
 import { getSupabaseAdmin } from "../supabase-admin.ts";
@@ -22,14 +27,20 @@ export async function ensureRelatedEntities(igdbGame: IGDBGame): Promise<Related
 }
 
 async function ensureGenres(
-  igdbGenres: Array<{ id: number; name: string; slug: string }>,
+  igdbGenres: Array<{ id: number; name: string; slug: string } | null | undefined>,
 ): Promise<string[]> {
-  if (igdbGenres.length === 0) return [];
+  // Filter out genres without a usable slug — IGDB occasionally sends
+  // a numeric ID instead of the expanded object.
+  const valid = igdbGenres.filter(
+    (g): g is { id: number; name: string; slug: string } =>
+      g != null && typeof g === "object" && typeof g.slug === "string" && g.slug.length > 0,
+  );
+  if (valid.length === 0) return [];
 
   const supabase = getSupabaseAdmin();
   const genreIds: string[] = [];
 
-  for (const igdbGenre of igdbGenres) {
+  for (const igdbGenre of valid) {
     const { data: existing } = await supabase
       .from("genres")
       .select("id")
@@ -65,21 +76,40 @@ async function ensureGenres(
 
 async function ensureCompanies(
   involvedCompanies: Array<{
-    company: { id: number; name: string; slug: string };
-    developer: boolean;
-    publisher: boolean;
-  }>,
+    company?: { id: number; name: string; slug: string } | null;
+    developer?: boolean;
+    publisher?: boolean;
+  } | null | undefined>,
 ): Promise<{ developerIds: string[]; publisherIds: string[] }> {
   const developerIds: string[] = [];
   const publisherIds: string[] = [];
 
-  if (involvedCompanies.length === 0) {
+  // Filter out entries where `company` isn't expanded with a slug —
+  // IGDB sends raw IDs sometimes, especially right after a game is
+  // created on their side.
+  const valid = involvedCompanies.filter(
+    (
+      ic,
+    ): ic is {
+      company: { id: number; name: string; slug: string };
+      developer?: boolean;
+      publisher?: boolean;
+    } =>
+      ic != null &&
+      typeof ic === "object" &&
+      ic.company != null &&
+      typeof ic.company === "object" &&
+      typeof ic.company.slug === "string" &&
+      ic.company.slug.length > 0,
+  );
+
+  if (valid.length === 0) {
     return { developerIds, publisherIds };
   }
 
   const supabase = getSupabaseAdmin();
 
-  for (const ic of involvedCompanies) {
+  for (const ic of valid) {
     const { data: existing } = await supabase
       .from("companies")
       .select("id")
@@ -148,10 +178,17 @@ export async function linkCompanies(
 export async function ensurePlatforms(igdbGame: IGDBGame): Promise<string[]> {
   if (!igdbGame.platforms || igdbGame.platforms.length === 0) return [];
 
+  // Defensive filter: keep only platforms with a usable id.
+  const valid = igdbGame.platforms.filter(
+    (p): p is { id: number; name: string } =>
+      p != null && typeof p === "object" && typeof p.id === "number",
+  );
+  if (valid.length === 0) return [];
+
   const supabase = getSupabaseAdmin();
   const platformIds: string[] = [];
 
-  for (const igdbPlatform of igdbGame.platforms) {
+  for (const igdbPlatform of valid) {
     const name = igdbPlatform.name || `platform-${igdbPlatform.id}`;
     const slug = name
       .toLowerCase()
