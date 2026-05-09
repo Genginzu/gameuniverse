@@ -65,11 +65,16 @@ export function mapMatch(
   tournamentMap: Map<number, string>,
   teamMap: Map<number, string>,
 ): Record<string, unknown> {
-  const scores =
-    m.results?.reduce(
-      (acc, r) => ({ ...acc, [String(r.team_id)]: r.score }),
-      {} as Record<string, number>,
-    ) ?? null;
+  // PandaScore returns scores as `[{team_id, score}, ...]`. Our table
+  // stores them per slot (opponent1_score, opponent2_score) so we look
+  // up each side's PandaScore team id and pull the matching score.
+  const opp1PandaId = m.opponents[0]?.opponent?.id ?? null;
+  const opp2PandaId = m.opponents[1]?.opponent?.id ?? null;
+  const findScore = (pandaId: number | null): number | null => {
+    if (pandaId === null) return null;
+    const r = m.results?.find((x) => x.team_id === pandaId);
+    return r?.score ?? null;
+  };
 
   return {
     pandascore_id: m.id,
@@ -80,13 +85,10 @@ export function mapMatch(
     begin_at: m.begin_at,
     end_at: m.end_at,
     tournament_id: tournamentMap.get(m.tournament_id) ?? null,
-    opponent1_id: m.opponents[0]?.opponent?.id
-      ? teamMap.get(m.opponents[0].opponent.id) ?? null
-      : null,
-    opponent2_id: m.opponents[1]?.opponent?.id
-      ? teamMap.get(m.opponents[1].opponent.id) ?? null
-      : null,
-    scores,
+    opponent1_id: opp1PandaId ? teamMap.get(opp1PandaId) ?? null : null,
+    opponent1_score: findScore(opp1PandaId),
+    opponent2_id: opp2PandaId ? teamMap.get(opp2PandaId) ?? null : null,
+    opponent2_score: findScore(opp2PandaId),
     winner_id: m.winner_id ? teamMap.get(m.winner_id) ?? null : null,
     game: m.videogame.name,
     streams: m.streams_list ?? null,
