@@ -6,10 +6,10 @@
 -- but in practice it can get cancelled (CPU limits, edge runtime
 -- restarts, network issues). This pg_cron job runs every minute and
 -- POSTs the Edge Function for any job that's been `pending` for more
--- than 90 seconds, ensuring no full sync ever stalls.
+-- than 30 seconds, ensuring no full sync ever stalls.
 --
--- 90s threshold: a healthy chunk takes 30-60s including the time to
--- write the cursor. After 90s with no progression, something's wrong.
+-- 30s threshold: a healthy chunk takes 30-60s including the time to
+-- write the cursor. After 30s with no progression, something's wrong.
 --
 -- Configure via the Supabase Dashboard (Database → Cron) rather than
 -- here — the SQL below is the reference for what to set up.
@@ -26,7 +26,7 @@
 --   )
 --   FROM public.pandascore_sync_jobs j
 --   WHERE j.status = 'pending'
---     AND (j.last_chunk_at IS NULL OR j.last_chunk_at < now() - interval '90 seconds')
+--     AND (j.last_chunk_at IS NULL OR j.last_chunk_at < now() - interval '30 seconds')
 --   LIMIT 1;
 --
 -- (LIMIT 1 because only one full-sync job can be active at a time per

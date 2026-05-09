@@ -163,7 +163,7 @@ SELECT cron.schedule(
     )
     FROM public.pandascore_sync_jobs j
     WHERE j.status = 'pending'
-      AND (j.last_chunk_at IS NULL OR j.last_chunk_at < now() - interval '90 seconds')
+      AND (j.last_chunk_at IS NULL OR j.last_chunk_at < now() - interval '30 seconds')
     LIMIT 1;
   `$`$
 );

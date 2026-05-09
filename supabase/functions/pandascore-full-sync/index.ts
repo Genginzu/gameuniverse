@@ -55,6 +55,11 @@ const CHUNK_BUDGET_MS = 350_000;
  *  ultra-fast loops if PandaScore returns empty pages. */
 const MAX_PAGES_PER_CHUNK = 200;
 
+/** How often to persist the cursor + counters during a chunk. Smaller =
+ *  smoother UI feedback but more DB writes. With ~6 pages/s, every 5
+ *  pages = ~1 write/s, plenty for a 2s SWR poll. */
+const PERSIST_EVERY_N_PAGES = 5;
+
 function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
@@ -150,9 +155,25 @@ Deno.serve(async (req) => {
       } else {
         cursor[entity].page = page + 1;
       }
+
+      // Persist intermediate progress every PERSIST_EVERY_N_PAGES so the
+      // admin UI sees the cursor advance during a long chunk, not just
+      // at chunk boundaries. We pass the running delta and reset it
+      // after persisting so we don't double-count.
+      if (pagesThisChunk % PERSIST_EVERY_N_PAGES === 0) {
+        await persistJobProgress(supabase, {
+          jobId,
+          cursor,
+          totalSyncedDelta,
+          totalErrorsDelta,
+          errorDetails: errors.toJSON(),
+        });
+        totalSyncedDelta = 0;
+        totalErrorsDelta = 0;
+      }
     }
 
-    // Persist progress whatever the exit reason.
+    // Persist any remaining delta + the final cursor state.
     await persistJobProgress(supabase, {
       jobId,
       cursor,
