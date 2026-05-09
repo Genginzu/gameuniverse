@@ -2752,6 +2752,11 @@
         "date": "Date",
         "triggerCol": "Trigger",
         "status": "Status",
+        "kind": "Type",
+        "kindLabel": {
+          "incremental": "Incremental",
+          "full": "Full"
+        },
         "synced": "Synced",
         "errors": "Errors",
         "duration": "Duration",
@@ -2760,6 +2765,42 @@
         "viewErrors": "View error details",
         "errorsDialogTitle": "{count, plural, =0 {No errors} one {# error} other {# errors}}",
         "errorsDialogEmpty": "No error details available",
+        "starting": "Starting...",
+        "job": {
+          "titleFull": "Full sync in progress",
+          "titleEntity": "{entity} sync in progress",
+          "status": {
+            "pending": "Pending",
+            "running": "Running",
+            "completed": "Completed",
+            "failed": "Failed",
+            "cancelled": "Cancelled"
+          },
+          "entities": {
+            "teams": "Teams",
+            "tournaments": "Tournaments",
+            "players": "Players",
+            "matches": "Matches"
+          },
+          "variants": {
+            "upcoming": "Upcoming",
+            "running": "Running",
+            "past": "Past"
+          },
+          "page": "Page {page}",
+          "done": "Done",
+          "elapsed": "Elapsed: {duration}",
+          "totalSynced": "{count} synced",
+          "totalErrors": "{count} errors",
+          "lastChunk": "Last chunk: {date}",
+          "lastChunkAgo": "Last chunk {ago} ago",
+          "pageProgress": "Page {page} / ~{estimate}",
+          "seconds": "{count, plural, =0 {0 s} one {# s} other {# s}}",
+          "minutes": "{count, plural, =0 {0 min} one {# min} other {# min}}",
+          "hours": "{count, plural, =0 {0 h} one {# h} other {# h}}",
+          "errorTitle": "Sync failed",
+          "errorGeneric": "An error occurred during the sync. Check the logs for details."
+        },
         "errorsDialogId": "ID"
       },
       "totalCount": "{count, plural, =0 {No results} one {# result} other {# results}}",

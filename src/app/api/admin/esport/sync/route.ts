@@ -1,21 +1,29 @@
-import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/auth-admin";
-import { syncAll } from "@/lib/services/pandascoreSyncService";
+/**
+ * PandaScore admin sync — DECOMMISSIONED
+ *
+ * Replaced by:
+ *   - POST /api/admin/esport/incremental-sync  → invokes the Edge Function
+ *   - POST /api/admin/esport/full-sync         → enqueues a chunked job
+ *
+ * Reasons: the previous full sync was capped at ~2000 entities/endpoint to
+ * fit within Vercel's serverless timeout, which silently truncated 90+%
+ * of the matches table. The new Edge Functions flow has no such cap.
+ */
+
+import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 
-export async function POST(request: NextRequest) {
-  try {
-    await requireAdmin();
-    const body = await request.json().catch(() => ({}));
-    const game = typeof body.game === "string" ? body.game : undefined;
+export const dynamic = "force-dynamic";
 
-    const results = await syncAll(game);
-    return NextResponse.json(results);
-  } catch (error) {
-    logger.error("Error in admin esport sync POST", { error });
-    if (error instanceof Error && error.message === "Admin access required") {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
-  }
+export function POST() {
+  logger.warn(
+    "Legacy /api/admin/esport/sync hit — use /api/admin/esport/incremental-sync or /api/admin/esport/full-sync",
+  );
+  return NextResponse.json(
+    {
+      error:
+        "This route has been decommissioned. Use /api/admin/esport/incremental-sync (delta) or /api/admin/esport/full-sync (full).",
+    },
+    { status: 410 },
+  );
 }

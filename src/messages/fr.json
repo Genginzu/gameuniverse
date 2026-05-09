@@ -2755,6 +2755,11 @@
         "date": "Date",
         "triggerCol": "Déclencheur",
         "status": "Statut",
+        "kind": "Type",
+        "kindLabel": {
+          "incremental": "Incrémentale",
+          "full": "Complète"
+        },
         "synced": "Synchronisés",
         "errors": "Erreurs",
         "duration": "Durée",
@@ -2763,6 +2768,42 @@
         "viewErrors": "Voir le détail des erreurs",
         "errorsDialogTitle": "{count, plural, =0 {Aucune erreur} one {# erreur} other {# erreurs}}",
         "errorsDialogEmpty": "Aucun détail d'erreur disponible",
+        "starting": "Démarrage...",
+        "job": {
+          "titleFull": "Synchronisation globale en cours",
+          "titleEntity": "Synchronisation {entity} en cours",
+          "status": {
+            "pending": "En attente",
+            "running": "En cours",
+            "completed": "Terminée",
+            "failed": "Échec",
+            "cancelled": "Annulée"
+          },
+          "entities": {
+            "teams": "Équipes",
+            "tournaments": "Tournois",
+            "players": "Joueurs",
+            "matches": "Matchs"
+          },
+          "variants": {
+            "upcoming": "À venir",
+            "running": "En cours",
+            "past": "Passés"
+          },
+          "page": "Page {page}",
+          "done": "Terminé",
+          "elapsed": "Écoulé : {duration}",
+          "totalSynced": "{count} synchronisés",
+          "totalErrors": "{count} erreurs",
+          "lastChunk": "Dernier chunk : {date}",
+          "lastChunkAgo": "Dernier chunk il y a {ago}",
+          "pageProgress": "Page {page} / ~{estimate}",
+          "seconds": "{count, plural, =0 {0 s} one {# s} other {# s}}",
+          "minutes": "{count, plural, =0 {0 min} one {# min} other {# min}}",
+          "hours": "{count, plural, =0 {0 h} one {# h} other {# h}}",
+          "errorTitle": "La synchronisation a échoué",
+          "errorGeneric": "Une erreur est survenue pendant la synchronisation. Consultez les logs pour plus de détails."
+        },
         "errorsDialogId": "ID"
       },
       "totalCount": "{count, plural, =0 {Aucun résultat} one {# résultat} other {# résultats}}",

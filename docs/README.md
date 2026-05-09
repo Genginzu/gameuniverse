@@ -72,6 +72,7 @@
 | [game-color-preview.md](features/admin/game-color-preview.md)           | Prévisualisation couleurs |
 | [genre-management.md](features/admin/genre-management.md)               | Gestion des genres        |
 | [language-management.md](features/admin/language-management.md)         | Gestion des langues       |
+| [pandascore-sync.md](features/admin/pandascore-sync.md)                 | Sync esport PandaScore (Edge Functions) |
 | [review-management.md](features/admin/review-management.md)             | Gestion des avis          |
 | [translation-management.md](features/admin/translation-management.md)   | Gestion des traductions   |
 

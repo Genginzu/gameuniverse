@@ -63,3 +63,6 @@ dump_prod.sql
 
 # Deno lockfile (Supabase Edge Functions — generated locally on `deno check`)
 deno.lock
+
+# Design references (kept locally for design POC discussions, not committed)
+public/design/
