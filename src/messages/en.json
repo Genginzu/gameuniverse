@@ -2792,7 +2792,9 @@
           "pageProgress": "Page {page} / ~{estimate}",
           "seconds": "{count, plural, =0 {0 s} one {# s} other {# s}}",
           "minutes": "{count, plural, =0 {0 min} one {# min} other {# min}}",
-          "hours": "{count, plural, =0 {0 h} one {# h} other {# h}}"
+          "hours": "{count, plural, =0 {0 h} one {# h} other {# h}}",
+          "errorTitle": "Sync failed",
+          "errorGeneric": "An error occurred during the sync. Check the logs for details."
         },
         "errorsDialogId": "ID"
       },

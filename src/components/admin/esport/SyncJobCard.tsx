@@ -141,10 +141,16 @@ export function SyncJobCard({ job }: SyncJobCardProps) {
         )}
       </div>
 
-      {job.error_message && (
-        <p className="mt-3 rounded-lg border border-red-200 bg-red-50 p-3 text-xs text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
-          {job.error_message}
-        </p>
+      {(job.status === "failed" || job.error_message) && (
+        <div className="mt-4 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-red-700 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
+          <Icon icon="mdi:alert-circle" className="mt-0.5 size-5 shrink-0" />
+          <div className="flex-1 space-y-1">
+            <p className="text-sm font-semibold">{t("errorTitle")}</p>
+            <p className="text-xs leading-relaxed">
+              {job.error_message ?? t("errorGeneric")}
+            </p>
+          </div>
+        </div>
       )}
     </div>
   );

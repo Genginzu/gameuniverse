@@ -56,9 +56,15 @@ const CHUNK_BUDGET_MS = 350_000;
 const MAX_PAGES_PER_CHUNK = 200;
 
 /** How often to persist the cursor + counters during a chunk. Smaller =
- *  smoother UI feedback but more DB writes. With ~6 pages/s, every 5
+ *  smoother UI feedback but more DB writes. With ~5 pages/s, every 5
  *  pages = ~1 write/s, plenty for a 2s SWR poll. */
 const PERSIST_EVERY_N_PAGES = 5;
+
+/** Min delay between two PandaScore page fetches in a single chunk.
+ *  PandaScore's published rate limit is ~4 req/s on standard plans;
+ *  we keep ourselves at 5 req/s max (200ms) to leave headroom for the
+ *  incremental cron that runs alongside. */
+const MIN_DELAY_BETWEEN_PAGES_MS = 200;
 
 function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -120,6 +126,7 @@ Deno.serve(async (req) => {
       const entity = pickNextEntity(cursor);
       if (!entity) break; // all done
 
+      const pageStartedAt = Date.now();
       const page = cursor[entity].page;
       const result = await processEntityPage(
         supabase,
@@ -137,13 +144,49 @@ Deno.serve(async (req) => {
       // retried by the next chunk (e.g. transient PandaScore 5xx). A
       // legitimate short page (< 100) means end-of-data → entity done.
       if (result.failed) {
-        logger.warn("pandascore-full-sync: page failed, leaving cursor and breaking chunk", {
+        // Inspect the latest collector entry to decide between two
+        // failure modes:
+        //   - 429 rate limit  -> hard fail the job. Looping on the same
+        //     page only wastes more quota; the admin must wait or
+        //     upgrade the plan.
+        //   - other (network, 5xx) -> break the chunk and let the
+        //     watchdog retry after the cooldown.
+        const lastError = errors.toJSON().slice(-1)[0]?.error ?? "";
+        const isRateLimit = lastError.includes("429");
+        logger.warn("pandascore-full-sync: page failed", {
           jobId,
           entity,
           page,
+          isRateLimit,
+          lastError,
         });
-        // Break out of the chunk so the watchdog re-triggers us after
-        // 90s instead of looping on the same broken page right away.
+        if (isRateLimit) {
+          // Persist what we have so the cursor reflects the last
+          // successfully fetched page, then mark failed.
+          await persistJobProgress(supabase, {
+            jobId,
+            cursor,
+            totalSyncedDelta,
+            totalErrorsDelta,
+            errorDetails: errors.toJSON(),
+          });
+          await markJobFailed(
+            supabase,
+            jobId,
+            `Rate limit PandaScore atteint sur ${entity} page ${page}. La synchronisation est interrompue. Réessayez dans quelques minutes ou contactez PandaScore pour augmenter votre quota.`,
+          );
+          return jsonResponse({
+            ok: false,
+            jobId,
+            failed: true,
+            reason: "rate_limit",
+            chunkSynced: totalSyncedDelta,
+            chunkErrors: totalErrorsDelta,
+            pagesThisChunk,
+          });
+        }
+        // Non-rate-limit failure: break the chunk so the watchdog
+        // retries after the cooldown.
         break;
       } else if (result.pageItems < 100) {
         cursor[entity].done = true;
@@ -170,6 +213,15 @@ Deno.serve(async (req) => {
         });
         totalSyncedDelta = 0;
         totalErrorsDelta = 0;
+      }
+
+      // Throttle between pages so we never exceed PandaScore's rate
+      // limit on a fast chunk. The fetch already includes 429 backoff,
+      // but a proactive delay prevents hitting the limit in the first
+      // place and avoids burning retry budget.
+      const elapsed = Date.now() - pageStartedAt;
+      if (elapsed < MIN_DELAY_BETWEEN_PAGES_MS) {
+        await new Promise((r) => setTimeout(r, MIN_DELAY_BETWEEN_PAGES_MS - elapsed));
       }
     }
 

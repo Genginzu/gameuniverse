@@ -22,7 +22,11 @@ import type {
 } from "./types.ts";
 
 const BASE_URL = "https://api.pandascore.co";
-const RETRY_DELAYS = [1000, 3000, 8000];
+// 429 backoff: PandaScore's free/standard plans are limited to ~2-4 req/s.
+// When we hit 429 we honour Retry-After if present, otherwise back off
+// 5s -> 15s -> 30s. Three retries gives us ~50s total which is enough to
+// let any rolling-window rate limit reset.
+const RETRY_DELAYS = [5000, 15000, 30000];
 /** Per-request timeout. Two-thirds of a typical chunk budget so a single
  *  slow page can't dominate. */
 const REQUEST_TIMEOUT_MS = 30_000;
