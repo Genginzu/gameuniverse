@@ -49,10 +49,16 @@ function buildResults(
     games,
     characters,
     players,
+    teams: [],
+    proPlayers: [],
+    coaches: [],
     counts: {
       games: games.length,
       characters: characters.length,
       players: players.length,
+      teams: 0,
+      proPlayers: 0,
+      coaches: 0,
     },
   };
 }

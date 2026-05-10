@@ -13,7 +13,17 @@ const EMPTY_RESULTS: GlobalSearchResponse = {
   games: [],
   characters: [],
   players: [],
-  counts: { games: 0, characters: 0, players: 0 },
+  teams: [],
+  proPlayers: [],
+  coaches: [],
+  counts: {
+    games: 0,
+    characters: 0,
+    players: 0,
+    teams: 0,
+    proPlayers: 0,
+    coaches: 0,
+  },
 };
 
 interface SearchOverlayProps {
