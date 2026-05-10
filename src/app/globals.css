@@ -521,6 +521,101 @@ textarea:focus-visible,
   }
 }
 
+/*
+ * Typographies éditoriales — kicker mono + display Tomorrow.
+ * Utilisées par les composants partagés EditorialHero, KickerLabel, StatXL,
+ * et n'importe quel titre de page.
+ */
+.editorial-display {
+  font-family: var(--font-display, "Tomorrow"), system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+}
+
+.editorial-display-light {
+  font-family: var(--font-display, "Tomorrow"), system-ui, sans-serif;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+}
+
+.editorial-kicker {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--editorial-muted, #a89dbf);
+}
+
+.editorial-divider {
+  height: 1px;
+  background: rgb(var(--neon-secondary));
+}
+
+/*
+ * Scanlines — superposition subtile sur les hero images plein cadre.
+ * Pas de backdrop-blur, juste un repeating-linear-gradient en mix-blend-mode.
+ */
+.editorial-scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    180deg,
+    transparent,
+    transparent 3px,
+    rgba(0, 0, 0, 0.06) 3px,
+    rgba(0, 0, 0, 0.06) 4px
+  );
+  mix-blend-mode: overlay;
+  opacity: 0.5;
+}
+
+/*
+ * Hero éditorial : conteneur de section avec hauteur min responsive et
+ * débordement caché. Le gradient et l'image sont gérés par le composant.
+ */
+.editorial-hero {
+  position: relative;
+  min-height: 640px;
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .editorial-hero {
+    min-height: 720px;
+  }
+}
+
+/*
+ * Marquee : défilement infini horizontal. Le composant React duplique le
+ * contenu pour boucler sans saut visuel.
+ */
+.marquee {
+  display: flex;
+  gap: 4rem;
+  animation: marquee-scroll 30s linear infinite;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    animation: none;
+  }
+}
+
 /* ===== Glassmorphism Design System ===== */
 
 /* Base glass utility */
