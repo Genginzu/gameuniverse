@@ -371,6 +371,15 @@
       "title": "Navigation",
       "spacesAriaLabel": "Espaces"
     },
+    "languageSwitcher": {
+      "ariaLabel": "Changer la langue",
+      "currentLanguage": "Langue actuelle : {language}",
+      "listboxAriaLabel": "Langues disponibles"
+    },
+    "languages": {
+      "fr": "Français",
+      "en": "Anglais"
+    },
     "spaces": {
       "games": "Jeux",
       "esport": "Esport",
