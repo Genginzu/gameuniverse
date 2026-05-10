@@ -11,11 +11,12 @@
 2. [Périmètre](#2-périmètre)
 3. [Direction artistique](#3-direction-artistique)
 4. [Layout retenu](#4-layout-retenu)
-5. [Stratégie de migration](#5-stratégie-de-migration)
-6. [Pages à refondre](#6-pages-à-refondre)
-7. [Definition of Done par page](#7-definition-of-done-par-page)
-8. [Risques et points d'attention](#8-risques-et-points-dattention)
-9. [Découpage en issues](#9-découpage-en-issues)
+5. [Mega-menu et recherche full-page](#5-mega-menu-et-recherche-full-page)
+6. [Stratégie de migration](#6-stratégie-de-migration)
+7. [Pages à refondre](#7-pages-à-refondre)
+8. [Definition of Done par page](#8-definition-of-done-par-page)
+9. [Risques et points d'attention](#9-risques-et-points-dattention)
+10. [Découpage en issues](#10-découpage-en-issues)
 
 ---
 
@@ -160,9 +161,12 @@ l'image hero d'une page game detail, on utilise un dégradé classique vers
 
 ### Comportement
 
-- **Mega-menu top, full width, sticky** : 5 catégories qui ouvrent au hover
-  un panel riche avec sous-liens à gauche et featured cards à droite. Input
-  search visible (pas de Cmd+K). Avatar + dropdown utilisateur à droite.
+- **Mega-menu top, full width, sticky** : **3 entrées** (Jeux, Personnages,
+  Joueurs) qui ouvrent au hover un panel riche avec sous-liens à gauche et
+  featured cards à droite. Barre de recherche compacte à droite servant de
+  **trigger** : au clic ou via `Ctrl K` / `Cmd K`, elle ouvre un **overlay de
+  recherche full-page**. Avatar + dropdown utilisateur à droite. Spec
+  détaillée en section 5.
 - **Rail gauche 56px, toujours visible** : 5 icônes des grands espaces
   (Games, Esport, Library, Community, Coaching). L'icône active reflète
   l'espace courant via l'URL.
@@ -172,7 +176,10 @@ l'image hero d'une page game detail, on utilise un dégradé classique vers
 
 ### Mobile
 
-- Mega-menu remplacé par un header simple + bouton hamburger
+- Mega-menu remplacé par un header simple + bouton hamburger ; les 3 entrées
+  deviennent des sections accordéon dans l'overlay (voir section 5.10)
+- Barre de recherche : icône loupe seule, ouvre directement l'overlay
+  full-page
 - Rail caché, ouvert via overlay full-screen au tap hamburger
 - Sub-sidebar dans le même overlay, accessible via tab/swipe
 
@@ -181,7 +188,318 @@ l'image hero d'une page game detail, on utilise un dégradé classique vers
 L'admin garde son layout actuel (`DashboardLayout`). La nouvelle nav s'applique
 uniquement aux pages hors `/admin/*`.
 
-## 5. Stratégie de migration
+## 5. Mega-menu et recherche full-page
+
+Cette section détaille la structure et le comportement du mega-menu, de la
+barre de recherche et de l'overlay de recherche full-page. Elle complète la
+section 4 (layout général) et sert de spécification pour les issues F0-07,
+F0-07b et F0-07c.
+
+### 5.1 Structure du top header
+
+Le top header (full width, sticky) contient trois zones :
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│ [LOGO]   [Jeux ▾]  [Personnages ▾]  [Joueurs ▾]   ┃  [🔍 Search…]  [👤▾]│
+└────────────────────────────────────────────────────────────────────────┘
+   gauche            mega-menu (3 entrées)                 droite
+```
+
+| Zone | Contenu | Largeur |
+|---|---|---|
+| Gauche | Logo Gamers Universe (link vers `/`) | auto |
+| Centre | 3 entrées de mega-menu : **Jeux**, **Personnages**, **Joueurs** | flex-1, centré |
+| Droite | Barre de recherche (input réduit) + dropdown utilisateur | auto, fin de ligne |
+
+### 5.2 Les 3 entrées du mega-menu
+
+Le mega-menu n'expose que **3 catégories**, alignées avec les grands espaces
+de contenu de Gamers Universe :
+
+#### 1. Jeux
+
+Panneau riche avec :
+
+- **Colonne gauche — sous-liens** :
+  - Tous les jeux (`/games`)
+  - Tendances (`/trending`)
+  - Sorties à venir (`/upcoming`)
+  - Par genre (lien vers `/games?genre=…` filtres rapides : Action, RPG, FPS, Indé, Stratégie)
+  - Par plateforme (PS5, Xbox, PC, Switch)
+- **Colonne droite — featured cards** :
+  - 1 carte XL « Trending now » (jeu le plus tendance, image, titre, accentColor)
+  - 2 cartes M « À surveiller » (sorties imminentes)
+
+#### 2. Personnages
+
+Panneau riche avec :
+
+- **Colonne gauche — sous-liens** :
+  - Tous les personnages (`/characters`)
+  - Mes favoris (`/favorites/characters`, visible uniquement si connecté)
+  - Par espèce (filtres rapides : Humain, Elfe, Mécanique…)
+  - Par genre (filtres rapides)
+- **Colonne droite — featured cards** :
+  - 1 carte XL « Personnage du moment »
+  - 2 cartes M « Récemment ajoutés »
+
+#### 3. Joueurs
+
+Cette entrée regroupe **toutes les personnes** présentes sur Gamers Universe,
+qu'elles soient utilisateurs du site, joueurs pros ou équipes esport.
+
+- **Colonne gauche — sous-liens** :
+  - Tous les joueurs Gamers Universe (`/players`)
+  - Joueurs pros (`/esport/players`)
+  - Équipes esport (`/esport/teams`)
+  - Coachs (`/coaching`)
+  - Discussions (`/discussions`)
+- **Colonne droite — featured cards** :
+  - 1 carte XL « Joueur en vue » (joueur GU mis en avant, ou pro player trending)
+  - 2 cartes M : 1 équipe esport active + 1 coach disponible
+
+### 5.3 Comportement du mega-menu
+
+| Aspect | Comportement |
+|---|---|
+| Ouverture | Hover sur une entrée (desktop) ou tap (touch). Délai d'apparition 80 ms pour éviter les ouvertures parasites. |
+| Fermeture | Mouseleave hors du panel (avec délai 200 ms), ou clic en dehors, ou touche `Escape`, ou clic sur un sous-lien. |
+| Animation | Fade + translate-y de 4 px, duration 200 ms, easing `ease-out`. |
+| Largeur du panel | Pleine largeur du header (`max-w-screen-2xl`, padded). |
+| Position | Absolute sous le header, `top: 100%` du header sticky. |
+| Background | `bg-[--editorial-bg-2]` opaque, bordure inférieure `--editorial-line`, ombre subtile. |
+| Indicateur visuel | Bouton de l'entrée active : underline néon (gradient `secondary → primary`) animé. |
+| Accessibilité | `role="menu"` sur le panel, `role="menuitem"` sur les liens, focus trap quand ouvert au clavier, navigation flèches ↓ ↑ entre sous-liens, `Escape` ferme. |
+| Mobile | Pas de mega-menu : remplacé par accordéon dans l'overlay hamburger (voir section 4 — Mobile). |
+
+### 5.4 Barre de recherche du header (état réduit)
+
+L'input de recherche dans le header est volontairement compact : un trigger
+visuel qui invite au clic, pas un champ pleinement fonctionnel.
+
+| Aspect | Spécification |
+|---|---|
+| Largeur | 240 px sur desktop, icône seule sur tablet `< md` |
+| Placeholder | « Rechercher un jeu, un personnage, un joueur… » (i18n) |
+| Icône | Loupe `mdi:magnify` à gauche |
+| Raccourci visible | Badge `Ctrl K` à droite de l'input (desktop uniquement) |
+| Comportement focus | Au clic / focus / `Ctrl K` → bascule en mode **overlay full-page** (voir 5.5) |
+| Saisie inline | ❌ Aucune saisie ne se fait dans cet input réduit. Il sert uniquement de trigger. |
+
+### 5.5 Overlay de recherche full-page
+
+Au clic sur la barre de recherche (ou via `Ctrl+K` / `Cmd+K`), un overlay
+plein écran s'ouvre. Toute la saisie et l'affichage des résultats se font
+dans cet overlay.
+
+#### Structure visuelle
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│ ╳ Fermer                                                          Esc  │
+│                                                                        │
+│   ┌──────────────────────────────────────────────────────────────┐    │
+│   │ 🔍  Rechercher…                                               │    │
+│   └──────────────────────────────────────────────────────────────┘    │
+│                                                                        │
+│   ── État vide ──                                                      │
+│   • Recherches récentes (5 dernières, persistées en localStorage)      │
+│   • Suggestions populaires (jeux trending, personnages du moment)      │
+│                                                                        │
+│   ── Résultats (après saisie) ──                                       │
+│   ┌─ JEUX ─────────────────────────────────────────────────────┐      │
+│   │  [🖼️] Cyberpunk 2077          PC, PS5, Xbox       2020   → │      │
+│   │  [🖼️] The Witcher 3            PC, PS4, Switch     2015   → │      │
+│   └────────────────────────────────────────────────────────────┘      │
+│   ┌─ PERSONNAGES ──────────────────────────────────────────────┐      │
+│   │  [🖼️] Geralt of Rivia          The Witcher                → │      │
+│   └────────────────────────────────────────────────────────────┘      │
+│   ┌─ JOUEURS GAMERS UNIVERSE ──────────────────────────────────┐      │
+│   │  [🖼️] @darkennights             Active il y a 2h           → │      │
+│   └────────────────────────────────────────────────────────────┘      │
+│   ┌─ ÉQUIPES ESPORT ───────────────────────────────────────────┐      │
+│   │  [🖼️] G2 Esports                LoL, CS2, Valorant         → │      │
+│   └────────────────────────────────────────────────────────────┘      │
+│   ┌─ JOUEURS PROS ─────────────────────────────────────────────┐      │
+│   │  [🖼️] Caps                      G2 Esports — LoL           → │      │
+│   └────────────────────────────────────────────────────────────┘      │
+│   ┌─ COACHS ───────────────────────────────────────────────────┐      │
+│   │  [🖼️] Coach Mendo               LoL — 5 ★                  → │      │
+│   └────────────────────────────────────────────────────────────┘      │
+│                                                                        │
+│   ↑↓ Naviguer   ⏎ Ouvrir   Esc Fermer                                  │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+#### Comportement
+
+| Aspect | Spécification |
+|---|---|
+| Ouverture | Trigger : clic sur l'input header, `Ctrl+K` / `Cmd+K`, ou bouton mobile dédié. Animation : fade-in + scale 98%→100%, 200 ms. |
+| Backdrop | `bg-[--editorial-bg]/95`, pas de blur (cohérence avec retrait glassmorphism). Couvre tout le viewport, par-dessus le header sticky. |
+| Position de l'input | Centré horizontalement, `max-w-2xl`, à `~120 px` du haut sur desktop, `~64 px` sur mobile. |
+| Taille de l'input | Hauteur 64 px, font display Tomorrow, taille `text-2xl` sur desktop / `text-xl` sur mobile. |
+| Auto-focus | L'input prend le focus à l'ouverture. Sur mobile, le clavier virtuel s'ouvre automatiquement. |
+| Saisie | Debounce 300 ms (réutilise le hook `useGlobalSearch` existant). Indicateur de chargement (spinner discret à droite de l'input) pendant la requête. |
+| Fermeture | Touche `Escape`, clic sur le bouton ╳, ou clic sur backdrop hors zone résultats. Reset de la query au close. |
+| Scroll | Si les résultats dépassent la hauteur viewport, scroll interne de la zone résultats (l'input reste sticky en haut). |
+| Persistance | Recherches récentes stockées dans `localStorage` (clé `gu.search.recent`, max 5 entrées, dédupliquées). |
+| Accessibilité | `role="dialog"`, `aria-modal="true"`, focus trap, `aria-live="polite"` sur la zone résultats pour annoncer le nombre de résultats. |
+
+#### État vide (avant saisie)
+
+Quand l'overlay s'ouvre sans query :
+
+- **Recherches récentes** (si `localStorage` non vide) : liste cliquable avec icône horloge, croix pour supprimer une entrée individuelle, lien « Effacer tout » en bas.
+- **Tendances** : 4-6 cartes compactes mixant jeux trending et personnages du moment (alimentées par les API `/api/games/trending` et un endpoint similaire pour personnages).
+
+#### Résultats : groupement par type d'entité
+
+Dès qu'une query ≥ 2 caractères est saisie, les résultats sont **toujours
+groupés par type d'entité**, dans un ordre fixe et stable :
+
+1. **Jeux** (locaux + IGDB fusionnés)
+2. **Personnages**
+3. **Joueurs Gamers Universe** (utilisateurs du site)
+4. **Équipes esport**
+5. **Joueurs pros**
+6. **Coachs**
+
+Règles d'affichage par groupe :
+
+- Chaque groupe a un en-tête uppercase mono (`KickerLabel`) avec nom de la catégorie + compteur (ex: « JEUX · 12 »).
+- Limite par groupe : **5 résultats** dans l'overlay (via `gamesLimit`, `charactersLimit`, etc.).
+- Si > 5 résultats existent, lien « Voir tous les jeux pour "query" → » en bas du groupe, qui navigue vers la page listing avec la query pré-remplie.
+- Un groupe **vide est masqué** (pas d'en-tête « JEUX (0) »).
+- Si **tous les groupes sont vides** : message centré « Aucun résultat pour "query" » + suggestions (recherches populaires).
+
+#### Ligne de résultat
+
+Chaque ligne respecte un gabarit cohérent par type :
+
+| Type | Avatar | Titre | Sous-titre | Meta |
+|---|---|---|---|---|
+| Jeu | Cover 40×56 | Nom + année | Plateformes (3 max + « +N ») | Note moyenne |
+| Personnage | Portrait carré 48×48 | Nom | Jeu d'origine | — |
+| Joueur GU | Avatar rond 40×40 | Pseudo | Statut (en ligne / dernière connexion) | Badge si premium |
+| Équipe esport | Logo carré 48×48 | Nom de l'équipe | Jeux pratiqués (3 max) | Pays |
+| Joueur pro | Portrait rond 40×40 | Pseudo + vrai nom | Équipe — Jeu | Rôle (top, mid, etc.) |
+| Coach | Avatar rond 40×40 | Pseudo | Jeu coaché | Note ★ + tarif |
+
+Hover : fond `bg-white/[0.05]`, accent latéral gauche 2 px en gradient
+`secondary → primary`. Ligne sélectionnée au clavier : même style + outline
+focus.
+
+#### Navigation clavier
+
+| Touche | Action |
+|---|---|
+| `↓` | Résultat suivant (traverse les groupes) |
+| `↑` | Résultat précédent (traverse les groupes) |
+| `Tab` / `Shift+Tab` | Idem ↓ / ↑, mais reste dans le focus trap |
+| `⏎` | Ouvre la page de l'entité sélectionnée, ferme l'overlay |
+| `⌘/Ctrl + ⏎` | Ouvre dans un nouvel onglet |
+| `Esc` | Ferme l'overlay |
+
+### 5.6 API et services réutilisés
+
+L'overlay s'appuie sur l'infrastructure de recherche existante (voir
+`docs/systems/global-search.md`), **étendue** pour couvrir les nouveaux types :
+
+- ✅ Réutiliser : `globalSearchService`, hook `useGlobalSearch`, route
+  `/api/search/global`, types `GlobalSearchResponse` et items.
+- ⚠️ **Étendre** : ajouter dans la réponse les groupes `teams` (équipes
+  esport), `proPlayers` (joueurs pros) et `coaches`. Ajouter les paramètres
+  `teamsLimit`, `proPlayersLimit`, `coachesLimit` (défaut 5).
+- ⚠️ **Nouveaux types** dans `src/types/global-search.ts` :
+  `GlobalSearchTeamItem`, `GlobalSearchProPlayerItem`,
+  `GlobalSearchCoachItem`. Tous étendent un type discriminé `type:
+  'team' | 'proPlayer' | 'coach'`.
+- ⚠️ **Nouveau service** : étendre `globalSearchService` pour interroger en
+  parallèle les tables esport (`teams`, `pro_players`) et coaching
+  (`coach_profiles`) via `Promise.allSettled` (tolérance aux pannes
+  partielles préservée).
+
+### 5.7 Composants à créer
+
+Tous dans `src/components/layout/editorial/` (sauf composants déjà partagés) :
+
+| Composant | Responsabilité |
+|---|---|
+| `EditorialMegaMenu` | Conteneur du top header, orchestration des 3 entrées |
+| `MegaMenuTrigger` | Bouton d'entrée avec underline néon actif |
+| `MegaMenuPanel` | Panneau riche (sous-liens + featured cards) |
+| `MegaMenuFeaturedCard` | Card image + titre dans la colonne droite |
+| `HeaderSearchTrigger` | Input réduit du header, ouvre l'overlay |
+| `SearchOverlay` | Overlay full-page (dialog) |
+| `SearchOverlayInput` | Input de saisie XL avec spinner |
+| `SearchOverlayResults` | Liste des groupes de résultats |
+| `SearchOverlayGroup` | En-tête + lignes d'un groupe |
+| `SearchOverlayItem` | Ligne générique (variantes par type) |
+| `SearchOverlayEmptyState` | Recherches récentes + suggestions |
+| `SearchRecentList` | Liste des recherches récentes (`localStorage`) |
+
+### 5.8 i18n — clés à ajouter
+
+Dans `src/messages/{fr,en}.json`, namespace `header.megaMenu` et
+`globalSearch` :
+
+```json
+{
+  "header": {
+    "megaMenu": {
+      "games": { "label": "Jeux", "all": "Tous les jeux", "trending": "Tendances", "upcoming": "À venir", "byGenre": "Par genre", "byPlatform": "Par plateforme", "featuredTitle": "Trending now" },
+      "characters": { "label": "Personnages", "all": "Tous les personnages", "favorites": "Mes favoris", "bySpecies": "Par espèce", "byGender": "Par genre", "featuredTitle": "Personnage du moment" },
+      "players": { "label": "Joueurs", "all": "Joueurs Gamers Universe", "pros": "Joueurs pros", "teams": "Équipes esport", "coaches": "Coachs", "discussions": "Discussions", "featuredTitle": "Joueur en vue" }
+    }
+  },
+  "globalSearch": {
+    "trigger": { "placeholder": "Rechercher un jeu, un personnage, un joueur…", "shortcut": "Ctrl K" },
+    "overlay": {
+      "title": "Recherche",
+      "inputPlaceholder": "Rechercher…",
+      "close": "Fermer",
+      "recent": "Recherches récentes",
+      "clearRecent": "Effacer tout",
+      "trending": "Tendances",
+      "noResults": "Aucun résultat pour « {query} »",
+      "viewAll": "Voir tous les {category} pour « {query} »",
+      "groups": { "games": "Jeux", "characters": "Personnages", "players": "Joueurs Gamers Universe", "teams": "Équipes esport", "proPlayers": "Joueurs pros", "coaches": "Coachs" },
+      "hints": { "navigate": "Naviguer", "open": "Ouvrir", "close": "Fermer" }
+    }
+  }
+}
+```
+
+Toutes les clés doivent être traduites en EN simultanément.
+
+### 5.9 Performance et UX
+
+- **Debounce** : 300 ms (déjà en place dans `useGlobalSearch`).
+- **AbortController** : annulation automatique des requêtes obsolètes (déjà
+  géré).
+- **Skeletons** : afficher un squelette discret par groupe pendant le premier
+  load. Ne pas faire clignoter les résultats lors du retyping.
+- **Cache SWR** : la même query déjà fetchée est renvoyée immédiatement par
+  le cache.
+- **Préchargement** : au hover/focus du trigger header, précharger les
+  bundles JS de l'overlay (`prefetch` Next/dynamic).
+- **Tendances** : les cartes trending de l'état vide sont chargées une seule
+  fois par session (cache mémoire, TTL 5 min).
+
+### 5.10 Mobile
+
+| Élément | Comportement mobile |
+|---|---|
+| Top header | Logo + icône loupe + bouton hamburger. Pas de mega-menu visible. |
+| Mega-menu | Replié dans l'overlay hamburger : 3 sections accordéon (Jeux, Personnages, Joueurs) listant les sous-liens. Pas de featured cards (économie d'espace). |
+| Barre de recherche | Icône loupe seule dans le header, ouvre directement l'overlay full-page. |
+| Overlay full-page | Couvre 100% du viewport, input en haut (sticky), zone résultats en scroll natif. Bouton ╳ en haut à droite. |
+| Touch targets | Toutes les lignes de résultat ≥ 56 px de haut sur mobile. |
+| Clavier virtuel | Pas de bouton « Recherche » sur le clavier (un input simple suffit, la recherche est live). |
+
+## 6. Stratégie de migration
 
 ### Approche : page par page (option B)
 
@@ -215,7 +533,7 @@ métier). Le code refondu doit toujours fonctionner avec les dernières API.
 **Total estimé** : ~10 semaines de travail à temps partiel (estimations
 indicatives, à ajuster).
 
-## 6. Pages à refondre
+## 7. Pages à refondre
 
 ### Phase 1 — Pages prioritaires
 
@@ -269,7 +587,7 @@ indicatives, à ajuster).
 
 - ❌ `/admin/*` — Admin (priorité basse, à traiter séparément plus tard)
 
-## 7. Definition of Done par page
+## 8. Definition of Done par page
 
 Pour qu'une page soit considérée comme migrée, **toutes** les cases
 suivantes doivent être cochées :
@@ -310,7 +628,7 @@ suivantes doivent être cochées :
 - [ ] Mise à jour `docs/features/...` si la fonctionnalité est documentée
 - [ ] Capture d'écran avant/après ajoutée à la PR de la page
 
-## 8. Risques et points d'attention
+## 9. Risques et points d'attention
 
 ### Risque 1 — Branche qui dérive trop de dev
 
@@ -356,7 +674,7 @@ systématique à 375px.
 **Mitigation** : DoD inclut contraste WCAG AA, focus visible, ARIA. Le
 mega-menu et le command palette doivent être navigables au clavier.
 
-## 9. Découpage en issues
+## 10. Découpage en issues
 
 ### Organisation GitHub
 
@@ -377,7 +695,10 @@ mega-menu et le command palette doivent être navigables au clavier.
 | F0-04 | Promouvoir EditorialHero, Marquee, KickerLabel, StatXL | Migrer ces composants depuis `design-poc/` vers `shared/`, durcir API, ajouter tests. |
 | F0-05 | Implémenter le système d'accent dynamique réutilisable | `DynamicAccent` + `palettes.ts` + algorithme `paletteFromHex` (depuis le POC). Hook `useGameAccent` pour les pages contenu. |
 | F0-06 | Layout shell : mega-menu + rail + sub-sidebar | Créer `src/components/layout/editorial/EditorialLayout.tsx` qui remplace `DashboardLayout` sur les pages publiques refondues. Inclut MegaMenu, Rail, SubSidebar. |
-| F0-07 | Mega-menu : nav + featured panels | Composant `EditorialMegaMenu` avec catégories Games/Characters/Esport/Community/Library, panels riches, search input. |
+| F0-07 | Mega-menu : 3 entrées + featured panels | Composant `EditorialMegaMenu` avec **3 entrées** Jeux / Personnages / Joueurs (ce dernier regroupe joueurs GU, joueurs pros, équipes esport, coachs). Panels riches : sous-liens à gauche + featured cards à droite. Voir spec détaillée section 5.1 à 5.3. |
+| F0-07b | Header search trigger (input réduit) | Composant `HeaderSearchTrigger` placé à droite du header, sert uniquement de trigger (pas de saisie inline). Ouvre l'overlay full-page au clic, focus, ou raccourci `Ctrl K` / `Cmd K`. Affiche un badge raccourci à droite. Voir spec détaillée section 5.4. |
+| F0-07c | SearchOverlay full-page | Overlay plein viewport (`role="dialog"`, focus trap, `Esc` ferme) avec input XL, état vide (recherches récentes + tendances) et résultats groupés par type d'entité : **Jeux, Personnages, Joueurs GU, Équipes esport, Joueurs pros, Coachs**. Réutilise `useGlobalSearch`. Persistance des recherches récentes via `localStorage` (max 5). Voir spec détaillée section 5.5. |
+| F0-07d | Étendre `globalSearchService` aux entités esport et coaching | Ajouter dans `GlobalSearchResponse` les groupes `teams`, `proPlayers`, `coaches`. Ajouter les types `GlobalSearchTeamItem`, `GlobalSearchProPlayerItem`, `GlobalSearchCoachItem` dans `src/types/global-search.ts`. Étendre la route `/api/search/global` avec les paramètres `teamsLimit`, `proPlayersLimit`, `coachesLimit`. Tolérance aux pannes via `Promise.allSettled`. Tests property-based. |
 | F0-08 | Rail vertical 56px persistant | Composant `EditorialRail` avec icônes des 5 espaces, indicateur actif basé sur l'URL. |
 | F0-09 | Sub-sidebar toggle avec persistance localStorage | Composant `EditorialSubSidebar` qui slide-in/out, persiste l'espace ouvert. |
 | F0-10 | Mobile : hamburger overlay full-screen | Variante mobile du layout (rail caché, mega-menu = liste expandable, sub-sidebar = section). |
