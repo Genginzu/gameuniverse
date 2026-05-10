@@ -934,6 +934,81 @@ textarea:focus-visible,
   .editorial-mobile-link {
     transition: none;
   }
+
+/*
+ * EditorialLayout: shell layout combining sticky header + rail + sub-sidebar
+ * + main content. The mobile nav is positioned absolutely (top-left) and
+ * shown only under lg.
+ */
+.editorial-layout {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--editorial-bg);
+  color: #fff;
+}
+
+.editorial-layout-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: var(--editorial-bg);
+  border-bottom: 1px solid var(--editorial-line);
+}
+
+.editorial-layout-body {
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+  min-height: 0;
+}
+
+/* Rail — only visible >= lg */
+.editorial-layout-rail {
+  display: none;
+  flex-shrink: 0;
+}
+
+@media (min-width: 1024px) {
+  .editorial-layout-rail {
+    display: block;
+  }
+}
+
+/* Sub-sidebar — only visible >= lg, slides 0 <-> 220px */
+.editorial-layout-sub-sidebar {
+  display: none;
+  flex-shrink: 0;
+}
+
+@media (min-width: 1024px) {
+  .editorial-layout-sub-sidebar {
+    display: block;
+  }
+}
+
+/* Main content takes the remaining space */
+.editorial-layout-main {
+  flex: 1;
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+/* Mobile hamburger trigger — absolute top-left, only visible < lg */
+.editorial-layout-mobile-nav {
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 40;
+}
+
+@media (min-width: 1024px) {
+  .editorial-layout-mobile-nav {
+    display: none;
+  }
+}
+
 }
 
 
