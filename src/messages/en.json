@@ -3019,6 +3019,32 @@
       "ariaLabel": "Open search",
       "shortcutHint": "Ctrl K"
     },
+    "overlay": {
+      "dialogAriaLabel": "Global search",
+      "inputPlaceholder": "Search for a game, character, player…",
+      "inputAriaLabel": "Enter your search",
+      "closeAriaLabel": "Close search",
+      "clearAriaLabel": "Clear input",
+      "resultsAriaLabel": "Search results",
+      "loading": "Searching…",
+      "noResults": "No results for “{query}”",
+      "noResultsHint": "Try different keywords.",
+      "groups": {
+        "games": "Games",
+        "characters": "Characters",
+        "players": "Players",
+        "teams": "Esport teams",
+        "proPlayers": "Pro players",
+        "coaches": "Coaches"
+      },
+      "seeAll": "See all {category} for “{query}” →",
+      "recent": {
+        "title": "Recent searches",
+        "clearAll": "Clear all",
+        "removeAriaLabel": "Remove search “{query}”"
+      },
+      "emptyHint": "Start typing to see results."
+    },
     "placeholder": "Search games, characters, players...",
     "noResults": "No results found",
     "loading": "Searching...",

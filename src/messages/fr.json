@@ -3022,6 +3022,32 @@
       "ariaLabel": "Ouvrir la recherche",
       "shortcutHint": "Ctrl K"
     },
+    "overlay": {
+      "dialogAriaLabel": "Recherche globale",
+      "inputPlaceholder": "Rechercher un jeu, un personnage, un joueur…",
+      "inputAriaLabel": "Saisir votre recherche",
+      "closeAriaLabel": "Fermer la recherche",
+      "clearAriaLabel": "Effacer la saisie",
+      "resultsAriaLabel": "Résultats de recherche",
+      "loading": "Recherche en cours…",
+      "noResults": "Aucun résultat pour « {query} »",
+      "noResultsHint": "Essayez avec d'autres mots-clés.",
+      "groups": {
+        "games": "Jeux",
+        "characters": "Personnages",
+        "players": "Joueurs",
+        "teams": "Équipes esport",
+        "proPlayers": "Joueurs pros",
+        "coaches": "Coachs"
+      },
+      "seeAll": "Voir tous les {category} pour « {query} » →",
+      "recent": {
+        "title": "Recherches récentes",
+        "clearAll": "Effacer tout",
+        "removeAriaLabel": "Supprimer la recherche « {query} »"
+      },
+      "emptyHint": "Commencez à saisir pour voir les résultats."
+    },
     "placeholder": "Rechercher jeux, personnages, joueurs...",
     "noResults": "Aucun résultat trouvé",
     "loading": "Recherche en cours...",
