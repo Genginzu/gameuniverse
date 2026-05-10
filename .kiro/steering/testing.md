@@ -115,6 +115,53 @@ bun run test:all
 bun run test:ui
 ```
 
+## Maintenance des tests
+
+### Supprimer les tests obsolètes
+
+Avant d'exécuter les tests, **toujours** vérifier et supprimer les anciens
+tests qui ne correspondent plus à du code existant. Un test obsolète est :
+
+- ❌ Un test qui cible un fichier source supprimé ou déplacé
+- ❌ Un test qui couvre une fonction/méthode/composant supprimé
+- ❌ Un test qui valide un comportement abandonné (feature retirée, API
+  changée)
+- ❌ Un test commenté ou systématiquement skip (`it.skip`, `describe.skip`)
+  sans raison documentée
+
+### Quand supprimer
+
+- ✅ **Avant** de lancer `bun run test:all` ou les tests ciblés au moment de
+  la validation finale
+- ✅ Lors d'un refactoring : si le code source est supprimé/renommé, le test
+  associé doit être supprimé/renommé en même temps
+- ✅ Lors d'une suppression de feature : retirer les tests de la feature
+  retirée dans le même commit que la feature
+
+### Procédure
+
+1. Identifier le fichier source modifié/supprimé
+2. Trouver les fichiers de test correspondants (`test/unit/...`,
+   `test/integration/...`)
+3. Si la cible n'existe plus, **supprimer** le fichier de test entier
+4. Si seules certaines fonctions ont disparu, **supprimer** uniquement les
+   `it()` / `describe()` correspondants
+5. Vérifier qu'aucun mock/fixture orphelin ne reste dans `test/` après la
+   suppression
+6. Lancer les tests ciblés pour confirmer qu'aucune régression n'a été
+   introduite
+
+### Règles
+
+- ✅ Ne **jamais** laisser un test qui ne compile pas ou qui échoue parce que
+  le code testé n'existe plus — supprimer le test
+- ✅ Ne **jamais** « commenter » un test pour le faire passer — le supprimer
+  ou le corriger
+- ❌ Ne **jamais** garder un `it.skip` sans commentaire expliquant la raison
+  et un TODO daté pour le réactiver
+- ❌ Ne **jamais** push des tests qui référencent des chemins ou symboles
+  inexistants
+
 ## Patterns interdits
 
 - ❌ Importer depuis `bun:test`
