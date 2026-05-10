@@ -354,6 +354,65 @@
     "friends": "Friends",
     "discussions": "Messages"
   },
+  "editorial": {
+    "rail": {
+      "ariaLabel": "Editorial navigation rail",
+      "logoAriaLabel": "Gamers Universe — home",
+      "spacesAriaLabel": "Spaces"
+    },
+    "subSidebar": {
+      "closeAriaLabel": "Close sub-sidebar",
+      "navAriaLabel": "{space} links"
+    },
+    "mobileNav": {
+      "openAriaLabel": "Open navigation",
+      "closeAriaLabel": "Close navigation",
+      "dialogAriaLabel": "Mobile navigation",
+      "title": "Navigation",
+      "spacesAriaLabel": "Spaces"
+    },
+    "spaces": {
+      "games": "Games",
+      "esport": "Esports",
+      "library": "Library",
+      "community": "Community",
+      "coaching": "Coaching"
+    },
+    "links": {
+      "games": {
+        "all": "All games",
+        "trending": "Trending",
+        "upcoming": "Upcoming",
+        "characters": "Characters",
+        "favoriteCharacters": "My favorites"
+      },
+      "esport": {
+        "live": "Live now",
+        "calendar": "Calendar",
+        "tournaments": "Tournaments",
+        "results": "Results",
+        "teams": "Teams",
+        "players": "Pro players",
+        "predictions": "Predictions",
+        "fantasy": "Fantasy"
+      },
+      "library": {
+        "myLibrary": "My library",
+        "collections": "My collections",
+        "profile": "My profile"
+      },
+      "community": {
+        "players": "Players",
+        "discussions": "Discussions",
+        "friends": "My friends"
+      },
+      "coaching": {
+        "hub": "Coaching hub",
+        "sessions": "My sessions",
+        "settings": "Coach settings"
+      }
+    }
+  },
   "common": {
     "loading": "Loading...",
     "error": "An error occurred",

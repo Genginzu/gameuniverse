@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 
-// Mock @/i18n/navigation BEFORE importing the SUT.
+// Mock @/i18n/navigation
 const mockUsePathname = vi.fn<[], string>(() => "/");
 vi.mock("@/i18n/navigation", () => ({
   usePathname: () => mockUsePathname(),
@@ -32,6 +32,46 @@ vi.mock("@/i18n/navigation", () => ({
     ),
 }));
 
+// Mock useTranslations with a deterministic dictionary tailored to the
+// editorial namespace (rail, subSidebar, spaces, links).
+const editorialTranslations: Record<string, string> = {
+  "subSidebar.closeAriaLabel": "Close sub-sidebar",
+  // navAriaLabel uses interpolation: "{space} links"
+  "subSidebar.navAriaLabel": "{space} links",
+  "spaces.games": "Games",
+  "spaces.esport": "Esport",
+  "spaces.library": "Library",
+  "spaces.community": "Community",
+  "spaces.coaching": "Coaching",
+  // Games links
+  "links.games.all": "All games",
+  "links.games.trending": "Trending",
+  "links.games.upcoming": "Upcoming",
+  "links.games.characters": "Characters",
+  "links.games.favoriteCharacters": "My favorites",
+  // Esport links
+  "links.esport.live": "Live now",
+  "links.esport.calendar": "Calendar",
+  "links.esport.tournaments": "Tournaments",
+  "links.esport.results": "Results",
+  "links.esport.teams": "Teams",
+  "links.esport.players": "Pro players",
+  "links.esport.predictions": "Predictions",
+  "links.esport.fantasy": "Fantasy",
+};
+
+vi.mock("next-intl", () => ({
+  useTranslations: () => (key: string, params?: Record<string, string>) => {
+    let value = editorialTranslations[key] ?? key;
+    if (params) {
+      for (const [paramKey, paramValue] of Object.entries(params)) {
+        value = value.replace(`{${paramKey}}`, paramValue);
+      }
+    }
+    return value;
+  },
+}));
+
 import { EditorialSubSidebar } from "@/components/layout/editorial/EditorialSubSidebar";
 import { EDITORIAL_SPACES } from "@/components/layout/editorial/EditorialRail";
 
@@ -52,21 +92,29 @@ describe("EditorialSubSidebar", () => {
       expect(aside?.className).toContain("editorial-sub-sidebar");
       expect(aside?.className).not.toContain("is-open");
       expect(aside?.getAttribute("aria-hidden")).toBe("true");
-      // No link rendered when closed.
       expect(container.querySelector("nav")).toBeNull();
     });
 
-    it("renders the space label as the header h2", () => {
+    it("renders the i18n space label as the header h2", () => {
       render(<EditorialSubSidebar space={gamesSpace} onClose={() => {}} />);
       const heading = screen.getByRole("heading", { level: 2 });
-      expect(heading.textContent).toBe(gamesSpace.label);
+      expect(heading.textContent).toBe("Games");
     });
 
-    it("renders one link per space.links entry", () => {
+    it("renders one link per space.links entry, with translated labels", () => {
       render(<EditorialSubSidebar space={esportSpace} onClose={() => {}} />);
-      esportSpace.links.forEach((link) => {
-        expect(screen.getByText(link.label)).toBeDefined();
-      });
+      // Spot-check a few labels via the test dictionary above.
+      expect(screen.getByText("Live now")).toBeDefined();
+      expect(screen.getByText("Calendar")).toBeDefined();
+      expect(screen.getByText("Pro players")).toBeDefined();
+    });
+
+    it("uses the i18n nav aria-label with interpolated space name", () => {
+      render(<EditorialSubSidebar space={gamesSpace} onClose={() => {}} />);
+      // Two roles named "{space} links" actually: the aside (aria-label) and
+      // the inner nav. getAllByRole returns both.
+      const navs = screen.getAllByRole("navigation", { name: "Games links" });
+      expect(navs.length).toBe(1);
     });
 
     it("adds is-open class when open", () => {
@@ -112,7 +160,7 @@ describe("EditorialSubSidebar", () => {
   });
 
   describe("close button", () => {
-    it("calls onClose when the X button is clicked", () => {
+    it("calls onClose when the X button is clicked (label via i18n)", () => {
       const onClose = vi.fn();
       render(<EditorialSubSidebar space={gamesSpace} onClose={onClose} />);
       fireEvent.click(screen.getByLabelText("Close sub-sidebar"));
@@ -207,7 +255,7 @@ describe("EditorialSubSidebar", () => {
     it("closes when clicking a link by default (closeOnNavigate=true)", () => {
       const onClose = vi.fn();
       render(<EditorialSubSidebar space={gamesSpace} onClose={onClose} />);
-      fireEvent.click(screen.getByText("Tendances"));
+      fireEvent.click(screen.getByText("Trending"));
       expect(onClose).toHaveBeenCalledTimes(1);
     });
 
@@ -220,7 +268,7 @@ describe("EditorialSubSidebar", () => {
           closeOnNavigate={false}
         />
       );
-      fireEvent.click(screen.getByText("Tendances"));
+      fireEvent.click(screen.getByText("Trending"));
       expect(onClose).not.toHaveBeenCalled();
     });
   });

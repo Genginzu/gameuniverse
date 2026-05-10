@@ -25,6 +25,22 @@ vi.mock("@/i18n/navigation", () => ({
     ),
 }));
 
+// Mock useTranslations with a deterministic dictionary tailored to the rail.
+// Using the editorial namespace structure agreed in F0-11.
+const editorialTranslations: Record<string, string> = {
+  "rail.ariaLabel": "Editorial rail",
+  "rail.logoAriaLabel": "Gamers Universe — home",
+  "rail.spacesAriaLabel": "Spaces",
+  "spaces.games": "Games",
+  "spaces.esport": "Esport",
+  "spaces.library": "Library",
+  "spaces.community": "Community",
+  "spaces.coaching": "Coaching",
+};
+vi.mock("next-intl", () => ({
+  useTranslations: () => (key: string) => editorialTranslations[key] ?? key,
+}));
+
 import {
   EditorialRail,
   EDITORIAL_SPACES,
@@ -78,9 +94,7 @@ describe("spaceFromPathname (helper)", () => {
   });
 
   it("does not match a prefix that only shares the same start", () => {
-    // /gamesettings is NOT under /games — must not match.
     expect(spaceFromPathname("/gamesettings")).toBeNull();
-    // /coachingExtra is NOT /coaching/something either.
     expect(spaceFromPathname("/coachingExtra")).toBeNull();
   });
 });
@@ -96,11 +110,26 @@ describe("EDITORIAL_SPACES", () => {
     ]);
   });
 
-  it("each space has a label, an icon and at least one path prefix", () => {
+  it("each space has an icon, at least one path prefix, and links with labelKey", () => {
     EDITORIAL_SPACES.forEach((space) => {
-      expect(space.label.length).toBeGreaterThan(0);
       expect(space.icon).toMatch(/^[a-z]+:/);
       expect(space.pathPrefixes.length).toBeGreaterThan(0);
+      expect(space.links.length).toBeGreaterThan(0);
+      space.links.forEach((link) => {
+        expect(link.href).toMatch(/^\//);
+        expect(link.labelKey.length).toBeGreaterThan(0);
+      });
+    });
+  });
+
+  it("does not expose any hardcoded label string on the space (i18n contract)", () => {
+    EDITORIAL_SPACES.forEach((space) => {
+      // The legacy `label` field has been removed in F0-11. Any non-undefined
+      // value here would be a regression.
+      expect((space as { label?: unknown }).label).toBeUndefined();
+      space.links.forEach((link) => {
+        expect((link as { label?: unknown }).label).toBeUndefined();
+      });
     });
   });
 });
@@ -111,17 +140,24 @@ describe("EditorialRail", () => {
     mockUsePathname.mockReturnValue("/");
   });
 
-  it("renders the logo link to '/' and 5 space buttons", () => {
+  it("renders the logo link to '/' and 5 space buttons (labels via i18n)", () => {
     render(<EditorialRail />);
 
-    const logo = screen.getByLabelText(/Gamers Universe/i);
+    const logo = screen.getByLabelText("Gamers Universe — home");
     expect(logo.getAttribute("href")).toBe("/");
 
     EDITORIAL_SPACES.forEach((space) => {
-      const button = screen.getByRole("button", { name: space.label });
+      const expectedLabel = editorialTranslations[`spaces.${space.key}`];
+      const button = screen.getByRole("button", { name: expectedLabel });
       expect(button).toBeDefined();
       expect(button.getAttribute("data-space")).toBe(space.key);
     });
+  });
+
+  it("uses i18n keys for the rail aria-label and the spaces nav aria-label", () => {
+    render(<EditorialRail />);
+    expect(screen.getByRole("complementary", { name: "Editorial rail" })).toBeDefined();
+    expect(screen.getByRole("navigation", { name: "Spaces" })).toBeDefined();
   });
 
   it("marks the active space based on the current pathname", () => {
@@ -142,14 +178,13 @@ describe("EditorialRail", () => {
     render(<EditorialRail />);
 
     EDITORIAL_SPACES.forEach((space) => {
-      const button = screen.getByRole("button", { name: space.label });
+      const expectedLabel = editorialTranslations[`spaces.${space.key}`];
+      const button = screen.getByRole("button", { name: expectedLabel });
       expect(button.getAttribute("aria-pressed")).toBe("false");
     });
   });
 
   it("openSpace prop overrides the pathname-derived active space", () => {
-    // Even when the URL points to /games, if the parent says coaching is open,
-    // the rail must indicate coaching (the sub-sidebar drives the active state).
     mockUsePathname.mockReturnValue("/games");
     render(<EditorialRail openSpace="coaching" />);
 
@@ -189,18 +224,13 @@ describe("EditorialRail", () => {
     ).not.toThrow();
   });
 
-  it("exposes the rail as a labelled aside for assistive tech", () => {
-    render(<EditorialRail />);
-    const aside = screen.getByRole("complementary", { name: "Editorial rail" });
-    expect(aside).toBeDefined();
-  });
-
   it("each space button has a tooltip via title and an aria-label", () => {
     render(<EditorialRail />);
     EDITORIAL_SPACES.forEach((space) => {
-      const button = screen.getByRole("button", { name: space.label });
-      expect(button.getAttribute("title")).toBe(space.label);
-      expect(button.getAttribute("aria-label")).toBe(space.label);
+      const expectedLabel = editorialTranslations[`spaces.${space.key}`];
+      const button = screen.getByRole("button", { name: expectedLabel });
+      expect(button.getAttribute("title")).toBe(expectedLabel);
+      expect(button.getAttribute("aria-label")).toBe(expectedLabel);
     });
   });
 
@@ -212,7 +242,6 @@ describe("EditorialRail", () => {
   });
 
   it("maintains the EditorialSpaceKey type contract", () => {
-    // Type-level assertion only — fails to compile if the type changes.
     const keys: readonly EditorialSpaceKey[] = [
       "games",
       "esport",

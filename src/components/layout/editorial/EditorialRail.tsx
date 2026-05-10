@@ -14,11 +14,14 @@
  * ne contient pas de mega-menu (voir F0-07). Il expose un callback
  * `onToggleSpace` pour que le parent décide quoi faire.
  *
+ * Tous les libellés visibles passent par next-intl (`useTranslations`).
+ *
  * Voir docs/design/editorial-refonte-plan.md.
  */
 
 import { useMemo } from "react";
 import { Icon } from "@iconify/react";
+import { useTranslations } from "next-intl";
 
 import { Link, usePathname } from "@/i18n/navigation";
 
@@ -33,11 +36,23 @@ export type EditorialSpaceKey =
   | "community"
   | "coaching";
 
+/**
+ * Lien d'un espace, identifié par une `labelKey` qui pointe vers une clé
+ * i18n sous `editorial.links.{spaceKey}.{labelKey}`.
+ */
+export interface EditorialSpaceLink {
+  href: string;
+  /** Sous-clé i18n dans `editorial.links.{spaceKey}`. */
+  labelKey: string;
+}
+
+/**
+ * Espace de navigation. Toutes les chaînes visibles sont des clés i18n
+ * résolues côté composant. La structure est purement déclarative.
+ */
 export interface EditorialSpace {
   /** Identifiant stable du space (clé de routage interne). */
   key: EditorialSpaceKey;
-  /** Label court, utilisé pour le tooltip et l'a11y. */
-  label: string;
   /** Icône Iconify (préfixe `fa:`, `mdi:`, `lucide:`…). */
   icon: string;
   /**
@@ -47,73 +62,68 @@ export interface EditorialSpace {
    */
   pathPrefixes: string[];
   /**
-   * Liens affichés dans la sub-sidebar (F0-09). Les labels seront
-   * remplacés par des clés i18n quand F0-11 sera en place.
+   * Liens affichés dans la sub-sidebar (F0-09). Les labels sont résolus
+   * via `editorial.links.{key}.{labelKey}`.
    */
-  links: { href: string; label: string }[];
+  links: EditorialSpaceLink[];
 }
 
 export const EDITORIAL_SPACES: readonly EditorialSpace[] = [
   {
     key: "games",
-    label: "Games",
     icon: "fa:dice",
     pathPrefixes: ["/games", "/trending", "/upcoming", "/characters", "/favorites/characters"],
     links: [
-      { href: "/games", label: "Tous les jeux" },
-      { href: "/trending", label: "Tendances" },
-      { href: "/upcoming", label: "À venir" },
-      { href: "/characters", label: "Personnages" },
-      { href: "/favorites/characters", label: "Mes favoris" },
+      { href: "/games", labelKey: "all" },
+      { href: "/trending", labelKey: "trending" },
+      { href: "/upcoming", labelKey: "upcoming" },
+      { href: "/characters", labelKey: "characters" },
+      { href: "/favorites/characters", labelKey: "favoriteCharacters" },
     ],
   },
   {
     key: "esport",
-    label: "Esport",
     icon: "fa:bolt",
     pathPrefixes: ["/esport"],
     links: [
-      { href: "/esport/live", label: "En direct" },
-      { href: "/esport/calendar", label: "Calendrier" },
-      { href: "/esport/tournaments", label: "Tournois" },
-      { href: "/esport/results", label: "Résultats" },
-      { href: "/esport/teams", label: "Équipes" },
-      { href: "/esport/players", label: "Joueurs pros" },
-      { href: "/esport/predictions", label: "Pronostics" },
-      { href: "/esport/fantasy", label: "Fantasy" },
+      { href: "/esport/live", labelKey: "live" },
+      { href: "/esport/calendar", labelKey: "calendar" },
+      { href: "/esport/tournaments", labelKey: "tournaments" },
+      { href: "/esport/results", labelKey: "results" },
+      { href: "/esport/teams", labelKey: "teams" },
+      { href: "/esport/players", labelKey: "players" },
+      { href: "/esport/predictions", labelKey: "predictions" },
+      { href: "/esport/fantasy", labelKey: "fantasy" },
     ],
   },
   {
     key: "library",
-    label: "Library",
     icon: "fa:gamepad",
     pathPrefixes: ["/library", "/collections", "/profile"],
     links: [
-      { href: "/library", label: "Ma bibliothèque" },
-      { href: "/collections", label: "Mes collections" },
-      { href: "/profile", label: "Mon profil" },
+      { href: "/library", labelKey: "myLibrary" },
+      { href: "/collections", labelKey: "collections" },
+      { href: "/profile", labelKey: "profile" },
     ],
   },
   {
     key: "community",
-    label: "Community",
     icon: "fa:user-friends",
     pathPrefixes: ["/players", "/discussions", "/friends"],
     links: [
-      { href: "/players", label: "Joueurs" },
-      { href: "/discussions", label: "Discussions" },
-      { href: "/friends", label: "Mes amis" },
+      { href: "/players", labelKey: "players" },
+      { href: "/discussions", labelKey: "discussions" },
+      { href: "/friends", labelKey: "friends" },
     ],
   },
   {
     key: "coaching",
-    label: "Coaching",
     icon: "fa:graduation-cap",
     pathPrefixes: ["/coaching"],
     links: [
-      { href: "/coaching", label: "Hub coaching" },
-      { href: "/coaching/sessions", label: "Mes sessions" },
-      { href: "/coaching/settings", label: "Paramètres coach" },
+      { href: "/coaching", labelKey: "hub" },
+      { href: "/coaching/sessions", labelKey: "sessions" },
+      { href: "/coaching/settings", labelKey: "settings" },
     ],
   },
 ];
@@ -158,6 +168,7 @@ export function EditorialRail({
   className = "",
 }: EditorialRailProps) {
   const pathname = usePathname();
+  const t = useTranslations("editorial");
 
   // L'indicateur visuel suit la sub-sidebar ouverte si elle l'est, sinon le
   // space dérivé de l'URL courante.
@@ -168,13 +179,13 @@ export function EditorialRail({
 
   return (
     <aside
-      aria-label="Editorial rail"
+      aria-label={t("rail.ariaLabel")}
       className={`editorial-rail ${className}`.trim()}
     >
       {/* Logo en haut */}
       <Link
         href="/"
-        aria-label="Gamers Universe — home"
+        aria-label={t("rail.logoAriaLabel")}
         className="editorial-rail-logo"
       >
         <Icon icon="fa:gamepad" className="size-5" />
@@ -184,19 +195,20 @@ export function EditorialRail({
       <span aria-hidden className="editorial-rail-divider" />
 
       {/* 5 espaces */}
-      <nav aria-label="Spaces" className="flex flex-col items-center gap-1">
+      <nav aria-label={t("rail.spacesAriaLabel")} className="flex flex-col items-center gap-1">
         {EDITORIAL_SPACES.map((space) => {
           const isActive = activeSpace === space.key;
+          const label = t(`spaces.${space.key}`);
           return (
             <button
               key={space.key}
               type="button"
               onClick={() => onToggleSpace?.(space.key)}
               className={`editorial-rail-button ${isActive ? "is-active" : ""}`.trim()}
-              aria-label={space.label}
+              aria-label={label}
               aria-pressed={isActive}
               data-space={space.key}
-              title={space.label}
+              title={label}
             >
               <Icon icon={space.icon} className="size-4" />
               {isActive && (

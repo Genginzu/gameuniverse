@@ -31,6 +31,36 @@ vi.mock("@/i18n/navigation", () => ({
     ),
 }));
 
+const editorialTranslations: Record<string, string> = {
+  "mobileNav.openAriaLabel": "Open navigation",
+  "mobileNav.closeAriaLabel": "Close navigation",
+  "mobileNav.dialogAriaLabel": "Mobile navigation",
+  "mobileNav.title": "Navigation",
+  "mobileNav.spacesAriaLabel": "Spaces",
+  "spaces.games": "Games",
+  "spaces.esport": "Esport",
+  "spaces.library": "Library",
+  "spaces.community": "Community",
+  "spaces.coaching": "Coaching",
+  "links.games.all": "All games",
+  "links.games.trending": "Trending",
+  "links.games.upcoming": "Upcoming",
+  "links.games.characters": "Characters",
+  "links.games.favoriteCharacters": "My favorites",
+  "links.esport.live": "Live now",
+  "links.esport.calendar": "Calendar",
+  "links.esport.tournaments": "Tournaments",
+  "links.esport.results": "Results",
+  "links.esport.teams": "Teams",
+  "links.esport.players": "Pro players",
+  "links.esport.predictions": "Predictions",
+  "links.esport.fantasy": "Fantasy",
+};
+
+vi.mock("next-intl", () => ({
+  useTranslations: () => (key: string) => editorialTranslations[key] ?? key,
+}));
+
 import { EditorialMobileNav } from "@/components/layout/editorial/EditorialMobileNav";
 import { EDITORIAL_SPACES } from "@/components/layout/editorial/EditorialRail";
 
@@ -71,13 +101,19 @@ describe("EditorialMobileNav", () => {
       expect(dialog.getAttribute("aria-modal")).toBe("true");
     });
 
+    it("renders the i18n title in the header", () => {
+      render(<EditorialMobileNav />);
+      fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
+      // The header title is the dictionary value of mobileNav.title.
+      expect(screen.getByText("Navigation")).toBeDefined();
+    });
+
     it("renders all 5 spaces as accordion triggers when open", () => {
       render(<EditorialMobileNav />);
       fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
       EDITORIAL_SPACES.forEach((space) => {
-        // Each section trigger has aria-expanded; use that to disambiguate from
-        // the close button.
-        const trigger = screen.getByRole("button", { name: new RegExp(space.label, "i") });
+        const expectedLabel = editorialTranslations[`spaces.${space.key}`];
+        const trigger = screen.getByRole("button", { name: new RegExp(expectedLabel, "i") });
         expect(trigger.getAttribute("aria-expanded")).toBe("false");
       });
     });
@@ -98,7 +134,7 @@ describe("EditorialMobileNav", () => {
   });
 
   describe("accordion sections", () => {
-    it("expands a section on click and shows its links", () => {
+    it("expands a section on click and shows its translated links", () => {
       render(<EditorialMobileNav />);
       fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
 
@@ -106,8 +142,8 @@ describe("EditorialMobileNav", () => {
       fireEvent.click(gamesTrigger);
 
       expect(gamesTrigger.getAttribute("aria-expanded")).toBe("true");
-      expect(screen.getByText("Tendances")).toBeDefined();
-      expect(screen.getByText("À venir")).toBeDefined();
+      expect(screen.getByText("Trending")).toBeDefined();
+      expect(screen.getByText("Upcoming")).toBeDefined();
     });
 
     it("collapses an expanded section when clicked again", () => {
@@ -119,7 +155,7 @@ describe("EditorialMobileNav", () => {
       fireEvent.click(gamesTrigger);
 
       expect(gamesTrigger.getAttribute("aria-expanded")).toBe("false");
-      expect(screen.queryByText("Tendances")).toBeNull();
+      expect(screen.queryByText("Trending")).toBeNull();
     });
 
     it("only one section can be expanded at a time (accordion behaviour)", () => {
@@ -127,7 +163,6 @@ describe("EditorialMobileNav", () => {
       fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
 
       fireEvent.click(screen.getByRole("button", { name: /Games/i }));
-      // Switch to Esport
       fireEvent.click(screen.getByRole("button", { name: /Esport/i }));
 
       expect(
@@ -137,10 +172,8 @@ describe("EditorialMobileNav", () => {
         screen.getByRole("button", { name: /Esport/i }).getAttribute("aria-expanded")
       ).toBe("true");
 
-      // Tendances (Games link) should no longer be visible.
-      expect(screen.queryByText("Tendances")).toBeNull();
-      // En direct (Esport link) should now be visible.
-      expect(screen.getByText("En direct")).toBeDefined();
+      expect(screen.queryByText("Trending")).toBeNull();
+      expect(screen.getByText("Live now")).toBeDefined();
     });
 
     it("marks a link active when its href matches the current pathname", () => {
@@ -156,7 +189,7 @@ describe("EditorialMobileNav", () => {
   });
 
   describe("closing the overlay", () => {
-    it("closes on the X button click", () => {
+    it("closes on the X button click (label via i18n)", () => {
       render(<EditorialMobileNav />);
       fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
       fireEvent.click(screen.getByRole("button", { name: "Close navigation" }));
@@ -174,7 +207,7 @@ describe("EditorialMobileNav", () => {
       render(<EditorialMobileNav />);
       fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
       fireEvent.click(screen.getByRole("button", { name: /Games/i }));
-      fireEvent.click(screen.getByText("Tendances"));
+      fireEvent.click(screen.getByText("Trending"));
       expect(screen.queryByRole("dialog")).toBeNull();
     });
 
@@ -191,7 +224,6 @@ describe("EditorialMobileNav", () => {
       fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
       fireEvent.click(screen.getByRole("button", { name: /Games/i }));
       fireEvent.click(screen.getByRole("button", { name: "Close navigation" }));
-      // Re-open
       fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
       expect(
         screen.getByRole("button", { name: /Games/i }).getAttribute("aria-expanded")
@@ -200,7 +232,6 @@ describe("EditorialMobileNav", () => {
 
     it("ignores Escape when the overlay is closed", () => {
       render(<EditorialMobileNav />);
-      // Should not throw nor have any side-effect
       fireEvent.keyDown(window, { key: "Escape" });
       expect(screen.queryByRole("dialog")).toBeNull();
       expect(document.body.style.overflow).toBe("");

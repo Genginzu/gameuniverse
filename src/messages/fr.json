@@ -354,6 +354,65 @@
     "friends": "Amis",
     "discussions": "Discussions"
   },
+  "editorial": {
+    "rail": {
+      "ariaLabel": "Barre de navigation éditoriale",
+      "logoAriaLabel": "Gamers Universe — accueil",
+      "spacesAriaLabel": "Espaces"
+    },
+    "subSidebar": {
+      "closeAriaLabel": "Fermer la sous-barre",
+      "navAriaLabel": "Liens {space}"
+    },
+    "mobileNav": {
+      "openAriaLabel": "Ouvrir la navigation",
+      "closeAriaLabel": "Fermer la navigation",
+      "dialogAriaLabel": "Navigation mobile",
+      "title": "Navigation",
+      "spacesAriaLabel": "Espaces"
+    },
+    "spaces": {
+      "games": "Jeux",
+      "esport": "Esport",
+      "library": "Bibliothèque",
+      "community": "Communauté",
+      "coaching": "Coaching"
+    },
+    "links": {
+      "games": {
+        "all": "Tous les jeux",
+        "trending": "Tendances",
+        "upcoming": "À venir",
+        "characters": "Personnages",
+        "favoriteCharacters": "Mes favoris"
+      },
+      "esport": {
+        "live": "En direct",
+        "calendar": "Calendrier",
+        "tournaments": "Tournois",
+        "results": "Résultats",
+        "teams": "Équipes",
+        "players": "Joueurs pros",
+        "predictions": "Pronostics",
+        "fantasy": "Fantasy"
+      },
+      "library": {
+        "myLibrary": "Ma bibliothèque",
+        "collections": "Mes collections",
+        "profile": "Mon profil"
+      },
+      "community": {
+        "players": "Joueurs",
+        "discussions": "Discussions",
+        "friends": "Mes amis"
+      },
+      "coaching": {
+        "hub": "Hub coaching",
+        "sessions": "Mes sessions",
+        "settings": "Paramètres coach"
+      }
+    }
+  },
   "common": {
     "loading": "Chargement...",
     "error": "Une erreur est survenue",

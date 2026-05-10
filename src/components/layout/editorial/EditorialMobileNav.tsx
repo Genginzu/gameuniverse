@@ -11,12 +11,14 @@
  * - Body scroll lock pendant que l'overlay est ouvert
  * - Fermeture : Escape, ╳, clic sur un lien
  * - Pas de backdrop-blur (refonte éditoriale)
+ * - Tous les libellés visibles passent par next-intl
  *
  * Voir docs/design/editorial-refonte-plan.md.
  */
 
 import { useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
+import { useTranslations } from "next-intl";
 
 import { Link, usePathname } from "@/i18n/navigation";
 
@@ -34,6 +36,7 @@ export function EditorialMobileNav({ className = "" }: EditorialMobileNavProps) 
   const [isOpen, setIsOpen] = useState(false);
   const [expandedSpace, setExpandedSpace] = useState<EditorialSpaceKey | null>(null);
   const pathname = usePathname();
+  const t = useTranslations("editorial");
 
   const open = () => setIsOpen(true);
   const close = () => {
@@ -69,7 +72,7 @@ export function EditorialMobileNav({ className = "" }: EditorialMobileNavProps) 
       <button
         type="button"
         onClick={open}
-        aria-label="Open navigation"
+        aria-label={t("mobileNav.openAriaLabel")}
         aria-expanded={isOpen}
         aria-controls="editorial-mobile-nav-overlay"
         className={`editorial-mobile-toggle ${className}`.trim()}
@@ -82,24 +85,30 @@ export function EditorialMobileNav({ className = "" }: EditorialMobileNavProps) 
           id="editorial-mobile-nav-overlay"
           role="dialog"
           aria-modal="true"
-          aria-label="Mobile navigation"
+          aria-label={t("mobileNav.dialogAriaLabel")}
           className="editorial-mobile-overlay"
         >
           <header className="editorial-mobile-overlay-header">
-            <span className="editorial-display text-xl text-white">Navigation</span>
+            <span className="editorial-display text-xl text-white">
+              {t("mobileNav.title")}
+            </span>
             <button
               type="button"
               onClick={close}
-              aria-label="Close navigation"
+              aria-label={t("mobileNav.closeAriaLabel")}
               className="editorial-mobile-overlay-close"
             >
               <Icon icon="lucide:x" className="size-5" />
             </button>
           </header>
 
-          <nav aria-label="Spaces" className="editorial-mobile-overlay-nav">
+          <nav
+            aria-label={t("mobileNav.spacesAriaLabel")}
+            className="editorial-mobile-overlay-nav"
+          >
             {EDITORIAL_SPACES.map((space) => {
               const isExpanded = expandedSpace === space.key;
+              const spaceLabel = t(`spaces.${space.key}`);
               return (
                 <section
                   key={space.key}
@@ -117,7 +126,7 @@ export function EditorialMobileNav({ className = "" }: EditorialMobileNavProps) 
                   >
                     <span className="flex items-center gap-3">
                       <Icon icon={space.icon} className="size-5" />
-                      <span>{space.label}</span>
+                      <span>{spaceLabel}</span>
                     </span>
                     <Icon
                       icon="lucide:chevron-down"
@@ -140,7 +149,7 @@ export function EditorialMobileNav({ className = "" }: EditorialMobileNavProps) 
                               aria-current={active ? "page" : undefined}
                               className={`editorial-mobile-link ${active ? "is-active" : ""}`.trim()}
                             >
-                              {link.label}
+                              {t(`links.${space.key}.${link.labelKey}`)}
                             </Link>
                           </li>
                         );

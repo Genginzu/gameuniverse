@@ -13,13 +13,15 @@
  * - Pas de backdrop-blur (refonte éditoriale)
  *
  * L'état d'ouverture est géré par le parent via `useEditorialRailState`
- * (ce composant est purement contrôlé).
+ * (ce composant est purement contrôlé). Tous les libellés visibles
+ * passent par next-intl.
  *
  * Voir docs/design/editorial-refonte-plan.md.
  */
 
 import { useEffect, useRef } from "react";
 import { Icon } from "@iconify/react";
+import { useTranslations } from "next-intl";
 
 import { Link, usePathname } from "@/i18n/navigation";
 
@@ -45,6 +47,7 @@ export function EditorialSubSidebar({
   const isOpen = space !== null;
   const pathname = usePathname();
   const asideRef = useRef<HTMLElement>(null);
+  const t = useTranslations("editorial");
 
   // Escape closes
   useEffect(() => {
@@ -76,10 +79,12 @@ export function EditorialSubSidebar({
     return () => window.removeEventListener("pointerdown", handlePointerDown);
   }, [isOpen, onClose]);
 
+  const spaceLabel = space ? t(`spaces.${space.key}`) : "";
+
   return (
     <aside
       ref={asideRef}
-      aria-label={space ? `${space.label} navigation` : undefined}
+      aria-label={space ? t("subSidebar.navAriaLabel", { space: spaceLabel }) : undefined}
       aria-hidden={!isOpen}
       className={`editorial-sub-sidebar ${isOpen ? "is-open" : ""}`.trim()}
       data-space={space?.key}
@@ -87,18 +92,21 @@ export function EditorialSubSidebar({
       {space && (
         <div className="editorial-sub-sidebar-inner">
           <header className="editorial-sub-sidebar-header">
-            <h2 className="editorial-display text-lg text-white">{space.label}</h2>
+            <h2 className="editorial-display text-lg text-white">{spaceLabel}</h2>
             <button
               type="button"
               onClick={onClose}
               className="editorial-sub-sidebar-close"
-              aria-label="Close sub-sidebar"
+              aria-label={t("subSidebar.closeAriaLabel")}
             >
               <Icon icon="lucide:x" className="size-4" />
             </button>
           </header>
 
-          <nav aria-label={`${space.label} links`} className="editorial-sub-sidebar-nav">
+          <nav
+            aria-label={t("subSidebar.navAriaLabel", { space: spaceLabel })}
+            className="editorial-sub-sidebar-nav"
+          >
             {space.links.map((link) => {
               const active = pathname === link.href;
               return (
@@ -113,7 +121,7 @@ export function EditorialSubSidebar({
                     }
                   }}
                 >
-                  {link.label}
+                  {t(`links.${space.key}.${link.labelKey}`)}
                 </Link>
               );
             })}
