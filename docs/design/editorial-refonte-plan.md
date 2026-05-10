@@ -598,7 +598,8 @@ suivantes doivent être cochées :
 - [ ] Direction éditoriale respectée (kicker, typo display, numérotation)
 - [ ] Couleur d'accent dynamique branchée (si page liée à un jeu/persona avec
       `accentColor`)
-- [ ] Glassmorphism conservé sur les composants utilitaires
+- [ ] Glassmorphism retiré : aucune classe `.glass-*` ni `backdrop-blur-*` sur
+      les composants de la page (voir section 3)
 - [ ] Cohérence visuelle avec les autres pages déjà migrées
 
 ### Fonctionnel
