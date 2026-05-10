@@ -704,6 +704,96 @@ textarea:focus-visible,
   }
 }
 
+/*
+ * EditorialSubSidebar: 220px panel that slides in from the rail.
+ * Width transitions to 0 when closed (collapsed but still in flow).
+ * No backdrop-blur. Background is opaque editorial-bg-2.
+ */
+.editorial-sub-sidebar {
+  width: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--editorial-bg-2);
+  border-right: 1px solid transparent;
+  transition: width 250ms ease, border-color 250ms ease;
+}
+
+.editorial-sub-sidebar.is-open {
+  width: 220px;
+  border-right-color: var(--editorial-line);
+}
+
+.editorial-sub-sidebar-inner {
+  display: flex;
+  flex-direction: column;
+  width: 220px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.editorial-sub-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  padding: 0 1rem 0 1.25rem;
+  border-bottom: 1px solid var(--editorial-line);
+  flex-shrink: 0;
+}
+
+.editorial-sub-sidebar-close {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 0.375rem;
+  color: var(--editorial-muted);
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+.editorial-sub-sidebar-close:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.editorial-sub-sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  padding: 1rem 0.75rem;
+}
+
+.editorial-sub-sidebar-link {
+  display: block;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--editorial-muted);
+  text-decoration: none;
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+.editorial-sub-sidebar-link:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.editorial-sub-sidebar-link.is-active {
+  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.15);
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editorial-sub-sidebar,
+  .editorial-sub-sidebar-close,
+  .editorial-sub-sidebar-link {
+    transition: none;
+  }
+}
+
+
 
 /* ===== Glassmorphism Design System ===== */
 

@@ -46,6 +46,7 @@ const HOOK_TESTS_NEEDING_DOM = [
   "test/unit/hooks/useLocaleManager.test.ts",
   "test/unit/hooks/useGameDetails.test.ts",
   "test/unit/hooks/useGameAccent.test.ts",
+  "test/unit/hooks/useEditorialRailState.test.ts",
   "test/unit/hooks/useCharacterFilters.test.ts",
   "test/unit/hooks/useReviews.test.ts",
   "test/unit/hooks/useComments.test.ts",

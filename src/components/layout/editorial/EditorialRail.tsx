@@ -46,6 +46,11 @@ export interface EditorialSpace {
    * l'icône sans sub-sidebar (ex pour la nav mobile).
    */
   pathPrefixes: string[];
+  /**
+   * Liens affichés dans la sub-sidebar (F0-09). Les labels seront
+   * remplacés par des clés i18n quand F0-11 sera en place.
+   */
+  links: { href: string; label: string }[];
 }
 
 export const EDITORIAL_SPACES: readonly EditorialSpace[] = [
@@ -54,30 +59,62 @@ export const EDITORIAL_SPACES: readonly EditorialSpace[] = [
     label: "Games",
     icon: "fa:dice",
     pathPrefixes: ["/games", "/trending", "/upcoming", "/characters", "/favorites/characters"],
+    links: [
+      { href: "/games", label: "Tous les jeux" },
+      { href: "/trending", label: "Tendances" },
+      { href: "/upcoming", label: "À venir" },
+      { href: "/characters", label: "Personnages" },
+      { href: "/favorites/characters", label: "Mes favoris" },
+    ],
   },
   {
     key: "esport",
     label: "Esport",
     icon: "fa:bolt",
     pathPrefixes: ["/esport"],
+    links: [
+      { href: "/esport/live", label: "En direct" },
+      { href: "/esport/calendar", label: "Calendrier" },
+      { href: "/esport/tournaments", label: "Tournois" },
+      { href: "/esport/results", label: "Résultats" },
+      { href: "/esport/teams", label: "Équipes" },
+      { href: "/esport/players", label: "Joueurs pros" },
+      { href: "/esport/predictions", label: "Pronostics" },
+      { href: "/esport/fantasy", label: "Fantasy" },
+    ],
   },
   {
     key: "library",
     label: "Library",
     icon: "fa:gamepad",
     pathPrefixes: ["/library", "/collections", "/profile"],
+    links: [
+      { href: "/library", label: "Ma bibliothèque" },
+      { href: "/collections", label: "Mes collections" },
+      { href: "/profile", label: "Mon profil" },
+    ],
   },
   {
     key: "community",
     label: "Community",
     icon: "fa:user-friends",
     pathPrefixes: ["/players", "/discussions", "/friends"],
+    links: [
+      { href: "/players", label: "Joueurs" },
+      { href: "/discussions", label: "Discussions" },
+      { href: "/friends", label: "Mes amis" },
+    ],
   },
   {
     key: "coaching",
     label: "Coaching",
     icon: "fa:graduation-cap",
     pathPrefixes: ["/coaching"],
+    links: [
+      { href: "/coaching", label: "Hub coaching" },
+      { href: "/coaching/sessions", label: "Mes sessions" },
+      { href: "/coaching/settings", label: "Paramètres coach" },
+    ],
   },
 ];
 
