@@ -939,8 +939,27 @@ textarea:focus-visible,
 
 
 /* ===== Glassmorphism Design System ===== */
+/*
+ * @deprecated Pour les pages éditoriales refondues (cf F0-13 / issue #258).
+ *
+ * Les classes .glass, .glass-card, .glass-header, .glass-sidebar,
+ * .glass-dropdown, .glass-input, .glass-overlay, .glass-nav-active et
+ * .glass-nav-hover ci-dessous **ne doivent plus être utilisées** dans les
+ * nouveaux composants. La direction artistique de la refonte éditoriale
+ * (Imba-inspired) retire le glassmorphism : pas de `backdrop-blur`, fonds
+ * opaques `--editorial-bg` / `--editorial-bg-2`, bordures fines via
+ * `--editorial-line`. Voir :
+ *
+ *   - docs/design/editorial-refonte-plan.md (section 3 « Glassmorphism : retrait »)
+ *   - docs/design/editorial-components.md (composants de remplacement)
+ *
+ * Ces classes sont **conservées** pour le moment car elles sont encore
+ * utilisées par /admin et par d'anciennes pages publiques non encore
+ * refondues. La suppression définitive aura lieu après la refonte de
+ * l'admin (hors scope de cette milestone).
+ */
 
-/* Base glass utility */
+/* @deprecated Base glass utility */
 .glass {
   position: relative;
   backdrop-filter: blur(20px) saturate(180%);
@@ -984,7 +1003,7 @@ textarea:focus-visible,
     0 0 40px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.8));
 }
 
-/* Glass card — stats, info panels */
+/* @deprecated Glass card */
 .glass-card {
   position: relative;
   backdrop-filter: blur(16px) saturate(180%);
@@ -1031,7 +1050,7 @@ textarea:focus-visible,
     0 0 40px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.8));
 }
 
-/* Glass sidebar — Vikinger-style clean white panel */
+/* @deprecated Glass sidebar */
 .glass-sidebar {
   background: #fff;
   border-right: 1px solid #eaeaf5;
@@ -1069,7 +1088,7 @@ textarea:focus-visible,
     0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
-/* Glass header — used by landing page */
+/* @deprecated Glass header — used by landing page */
 .glass-header {
   background: rgba(255, 255, 255, 0.4);
   backdrop-filter: blur(24px) saturate(200%);
@@ -1095,7 +1114,7 @@ textarea:focus-visible,
     0 0 30px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.5));
 }
 
-/* Glass dropdown */
+/* @deprecated Glass dropdown */
 .glass-dropdown {
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(20px) saturate(180%);
@@ -1136,7 +1155,7 @@ textarea:focus-visible,
     0 0 40px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.8));
 }
 
-/* Glass input fields */
+/* @deprecated Glass input fields */
 .glass-input {
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -1193,7 +1212,7 @@ textarea:focus-visible,
     0 0 30px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.5));
 }
 
-/* Glass nav link — active state */
+/* @deprecated Glass nav link — active state */
 .glass-nav-active {
   background: rgba(255, 255, 255, 0.55);
   box-shadow:
@@ -1208,7 +1227,7 @@ textarea:focus-visible,
     inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-/* Glass nav link — hover state */
+/* @deprecated Glass nav link — hover state */
 .glass-nav-hover:hover {
   background: rgba(255, 255, 255, 0.35);
 }
@@ -1217,7 +1236,7 @@ textarea:focus-visible,
   background: rgba(255, 255, 255, 0.05);
 }
 
-/* Glass overlay for mobile sidebar */
+/* @deprecated Glass overlay for mobile sidebar */
 .glass-overlay {
   background: rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(4px);

@@ -2,17 +2,49 @@
 inclusion: always
 ---
 
-# Design : Glassmorphism & Cohérence Visuelle
+# Design : Glassmorphism (admin & legacy uniquement)
 
-## Règle principale
+> **⚠️ Périmètre restreint depuis la refonte éditoriale (#258 / F0-13).**
+>
+> Ce steering ne s'applique **plus** aux pages éditoriales refondues. Il est
+> conservé pour deux périmètres uniquement :
+>
+> - **`/admin/*`** — pas encore refondu (hors scope de la milestone éditoriale).
+> - **Pages publiques legacy** — celles non encore migrées vers le nouveau
+>   layout (cf docs/design/editorial-refonte-plan.md).
+>
+> ## Pour tout nouveau composant éditorial / public refondu
+>
+> Suivre la direction artistique éditoriale **à la place** :
+>
+> - 📘 **Plan** : [`docs/design/editorial-refonte-plan.md`](../../docs/design/editorial-refonte-plan.md)
+> - 📘 **Composants** : [`docs/design/editorial-components.md`](../../docs/design/editorial-components.md)
+>
+> Les classes `.glass-*` sont marquées `@deprecated` dans `globals.css` :
+> elles fonctionnent encore mais ne doivent plus être utilisées dans les
+> nouveaux composants. Suppression définitive après la refonte de l'admin.
+>
+> ## Quand utiliser ce steering vs l'éditorial
+>
+> | Contexte                                                  | Steering à suivre               |
+> | --------------------------------------------------------- | ------------------------------- |
+> | Nouvelle page / composant **public** ou éditorial         | Editorial (plan + composants)   |
+> | Nouvelle page / composant **dans `/admin`**               | Glassmorphism (ce fichier)      |
+> | Modification d'une page legacy non encore refondue        | Glassmorphism (compat)          |
+> | Composants `src/components/layout/editorial/*`            | Editorial — pas de `.glass-*`   |
+> | Composants `src/components/admin/*`                       | Glassmorphism                   |
 
-Tout composant ou page créé doit respecter le style **glassmorphism** établi
-dans le projet et maintenir une **cohérence visuelle globale** avec l'existant.
+## Règle principale (admin & legacy)
+
+Tout composant ou page d'**admin** ou de **legacy** doit respecter le style
+**glassmorphism** établi dans le projet et maintenir une **cohérence visuelle
+globale** avec l'existant.
 
 ## Classes utilitaires glassmorphism
 
 Le projet définit un design system glassmorphism complet dans
-`src/app/globals.css`. Utiliser ces classes en priorité :
+`src/app/globals.css`. Utiliser ces classes en priorité **dans le périmètre
+admin/legacy** :
 
 | Classe              | Usage                                   |
 | ------------------- | --------------------------------------- |
@@ -25,6 +57,9 @@ Le projet définit un design system glassmorphism complet dans
 | `.glass-nav-active` | Lien de navigation actif                |
 | `.glass-nav-hover`  | Lien de navigation au survol            |
 | `.glass-overlay`    | Overlay mobile                          |
+
+> ⚠️ Ces classes sont marquées `@deprecated` dans `globals.css` pour le
+> périmètre éditorial mais restent utilisables dans `/admin`.
 
 ## Patterns Tailwind complémentaires
 
@@ -72,6 +107,10 @@ Pour changer les couleurs du site, modifier uniquement les valeurs hex des
 `--color-palette-*` dans le `@theme` de `globals.css` + les valeurs RGB des
 `--neon-*` dans `:root`.
 
+> Pour le périmètre éditorial, voir le système d'accent dynamique
+> (`paletteFromHex`, `useGameAccent`, `DynamicAccent`) dans
+> [`docs/design/editorial-components.md`](../../docs/design/editorial-components.md).
+
 ## Gradient principal (obligatoire)
 
 Lorsqu'un gradient est utilisé (bannières, boutons d'accent, barres de
@@ -97,7 +136,7 @@ bg-linear-to-r from-neon-secondary to-neon-primary
 - ❌ Ne **jamais** inventer un gradient custom différent (ex : rouge-orange,
   vert-jaune, etc.) sans validation explicite.
 
-## Règles obligatoires
+## Règles obligatoires (admin & legacy)
 
 - ✅ Toujours supporter le **dark mode** (`dark:` prefix Tailwind).
 - ✅ Utiliser les classes `.glass-*` existantes plutôt que recréer les effets
@@ -112,13 +151,17 @@ bg-linear-to-r from-neon-secondary to-neon-primary
 ## Interdictions
 
 - ❌ Ne **jamais** utiliser de fonds opaques plats (`bg-white`, `bg-gray-900`)
-  pour les conteneurs principaux. Préférer les fonds semi-transparents.
+  pour les conteneurs principaux d'admin/legacy. Préférer les fonds
+  semi-transparents.
 - ❌ Ne **jamais** ignorer le dark mode. Chaque style light doit avoir son
   équivalent dark.
 - ❌ Ne **jamais** introduire une nouvelle palette de couleurs sans cohérence
   avec l'existant.
 - ❌ Ne **jamais** créer de composant UI sans vérifier la cohérence avec les
   composants similaires déjà en place.
+- ❌ Ne **jamais** réutiliser une classe `.glass-*` dans un composant
+  éditorial (`src/components/layout/editorial/*` ou les composants éditoriaux
+  de `src/components/shared/`).
 
 ## Icônes : Iconify uniquement
 
@@ -137,7 +180,7 @@ import { Icon } from "@iconify/react";
 - ⚠️ Si dans un cas précis une autre librairie semble plus adaptée, **proposer
   l'alternative à l'utilisateur** et attendre sa validation avant de l'utiliser.
 
-## Checklist pour tout nouveau composant/page
+## Checklist pour tout nouveau composant/page (admin & legacy)
 
 1. Utilise les classes `.glass-*` ou les patterns Tailwind semi-transparents
 2. Supporte le dark mode
@@ -146,3 +189,7 @@ import { Icon } from "@iconify/react";
 5. Couleurs d'accent cohérentes (palette-primary/secondary)
 6. Icônes via Iconify (`@iconify/react`)
 7. Vérifié visuellement à côté des pages existantes
+
+> 📘 **Pour les composants éditoriaux**, suivre la checklist de
+> [`docs/design/editorial-components.md`](../../docs/design/editorial-components.md)
+> à la place.
