@@ -7,6 +7,9 @@
 @theme {
   --breakpoint-xs: 475px;
 
+  /* Editorial display font (Tomorrow loaded via next/font, see src/app/layout.tsx) */
+  --font-display: var(--font-tomorrow), system-ui, sans-serif;
+
   /* Palette primary — marine (#003566) */
   --color-palette-primary-50: #f0f8ff;
   --color-palette-primary-100: #dbeeff;
