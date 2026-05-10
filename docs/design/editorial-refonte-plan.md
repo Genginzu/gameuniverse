@@ -177,7 +177,7 @@ l'image hero d'une page game detail, on utilise un dégradé classique vers
 ### Mobile
 
 - Mega-menu remplacé par un header simple + bouton hamburger ; les 3 entrées
-  deviennent des sections accordéon dans l'overlay (voir section 5.10)
+  deviennent des sections accordéon dans l'overlay (voir section 5.11)
 - Barre de recherche : icône loupe seule, ouvre directement l'overlay
   full-page
 - Rail caché, ouvert via overlay full-screen au tap hamburger
@@ -190,27 +190,31 @@ uniquement aux pages hors `/admin/*`.
 
 ## 5. Mega-menu et recherche full-page
 
-Cette section détaille la structure et le comportement du mega-menu, de la
-barre de recherche et de l'overlay de recherche full-page. Elle complète la
-section 4 (layout général) et sert de spécification pour les issues F0-07,
-F0-07b et F0-07c.
+Cette section détaille la structure et le comportement du mega-menu, du
+sélecteur de langue, de la barre de recherche et de l'overlay de recherche
+full-page. Elle complète la section 4 (layout général) et sert de
+spécification pour les issues F0-07, F0-07b, F0-07c, F0-07d et F0-07e.
 
 ### 5.1 Structure du top header
 
 Le top header (full width, sticky) contient trois zones :
 
 ```
-┌────────────────────────────────────────────────────────────────────────┐
-│ [LOGO]   [Jeux ▾]  [Personnages ▾]  [Joueurs ▾]   ┃  [🔍 Search…]  [👤▾]│
-└────────────────────────────────────────────────────────────────────────┘
-   gauche            mega-menu (3 entrées)                 droite
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ [LOGO]  [Jeux ▾] [Personnages ▾] [Joueurs ▾]   ┃  [🔍 Search…] [🌐 FR ▾] [👤▾]│
+└──────────────────────────────────────────────────────────────────────────────┘
+   gauche          mega-menu (3 entrées)                       droite
 ```
 
 | Zone | Contenu | Largeur |
 |---|---|---|
 | Gauche | Logo Gamers Universe (link vers `/`) | auto |
 | Centre | 3 entrées de mega-menu : **Jeux**, **Personnages**, **Joueurs** | flex-1, centré |
-| Droite | Barre de recherche (input réduit) + dropdown utilisateur | auto, fin de ligne |
+| Droite | Barre de recherche (input réduit) + sélecteur de langue + dropdown utilisateur | auto, fin de ligne |
+
+L'ordre des éléments dans la zone droite (de gauche à droite) est :
+**Search → Sélecteur de langue → User dropdown**. Les trois sont séparés
+par un espacement `gap-2` et alignés verticalement.
 
 ### 5.2 Les 3 entrées du mega-menu
 
@@ -284,10 +288,73 @@ visuel qui invite au clic, pas un champ pleinement fonctionnel.
 | Placeholder | « Rechercher un jeu, un personnage, un joueur… » (i18n) |
 | Icône | Loupe `mdi:magnify` à gauche |
 | Raccourci visible | Badge `Ctrl K` à droite de l'input (desktop uniquement) |
-| Comportement focus | Au clic / focus / `Ctrl K` → bascule en mode **overlay full-page** (voir 5.5) |
+| Comportement focus | Au clic / focus / `Ctrl K` → bascule en mode **overlay full-page** (voir 5.6) |
 | Saisie inline | ❌ Aucune saisie ne se fait dans cet input réduit. Il sert uniquement de trigger. |
 
-### 5.5 Overlay de recherche full-page
+### 5.5 Sélecteur de langue
+
+Le sélecteur de langue est intégré dans la zone droite du header, **entre la
+barre de recherche et le dropdown utilisateur**. Il permet de basculer entre
+les deux langues supportées (`fr` / `en`) à tout moment, depuis n'importe
+quelle page.
+
+#### Composant
+
+Réutiliser le composant existant `LanguageSwitcher`
+(`src/components/shared/LanguageSwitcher.tsx`) qui repose sur `next-intl` et
+gère déjà la persistance de la langue + la préservation du chemin courant
+lors du changement.
+
+Une variante visuelle « header » est à ajouter pour l'aligner avec le style
+éditorial (suppression du `backdrop-blur` éventuel, fond transparent ou
+`bg-white/[0.05]` au hover, bordure `--editorial-line`).
+
+#### Affichage
+
+| Aspect | Spécification |
+|---|---|
+| Trigger | Bouton compact avec icône `mdi:translate` + code de la langue active en uppercase mono (ex : `FR` / `EN`) + chevron `mdi:chevron-down` |
+| Largeur | `~64 px` (icône + 2 caractères + chevron). Sur mobile, icône seule (le code disparaît si `< sm`). |
+| Hauteur | Identique au header search trigger pour aligner les éléments (40 px) |
+| Hover | Fond `bg-white/[0.05]`, transition 200 ms |
+| État ouvert | Dropdown aligné à droite du trigger, largeur `~160 px`, fond `bg-[--editorial-bg-2]`, bordure `--editorial-line`, ombre subtile |
+| Items du dropdown | 1 ligne par langue : drapeau (emoji 🇫🇷 / 🇬🇧) + nom complet (« Français » / « English ») + check `mdi:check` à droite si langue active |
+| Langue active | Mise en évidence par `bg-white/[0.05]` + check à droite |
+
+#### Comportement
+
+| Aspect | Spécification |
+|---|---|
+| Ouverture | Clic sur le trigger. Animation fade + translate-y 4 px, 200 ms. |
+| Sélection | Au clic sur une langue, naviguer vers la même URL avec la nouvelle locale (gestion existante via `useLocaleManager` / `next-intl` router). Le dropdown se ferme. |
+| Fermeture | Clic en dehors, touche `Escape`, ou sélection d'une langue. |
+| Persistance | Gérée par `next-intl` (cookie `NEXT_LOCALE`). Aucune logique custom à ajouter. |
+| Préservation du contexte | La page courante doit être préservée. Si l'URL contient des params (filtres, search query), ils sont conservés. La query d'un overlay de recherche **n'est pas** persistée (cohérent avec la fermeture lors d'une navigation). |
+| Accessibilité | `aria-haspopup="listbox"`, `aria-expanded`, `role="listbox"` sur le menu, `role="option"` + `aria-selected` sur les items. Navigation clavier : `↓` / `↑` entre items, `Enter` valide, `Esc` ferme. |
+
+#### Mobile
+
+Sur mobile, le sélecteur de langue **n'est pas affiché dans le header**
+(économie d'espace : seuls le logo, l'icône loupe et le hamburger sont
+visibles). Il est accessible :
+
+- Dans le menu hamburger, en bas de la liste de navigation (au-dessus du
+  bouton de déconnexion / profil), avec le même composant `LanguageSwitcher`
+  en variante « inline ».
+- Aussi disponible dans la page `/settings` (déjà en place).
+
+#### Migration depuis la sidebar actuelle
+
+Le `LanguageSwitcher` est aujourd'hui placé dans le dropdown utilisateur de
+la sidebar (cf. `docs/systems/navigation-sidebar.md`). Avec la refonte :
+
+- ✅ Sortir le `LanguageSwitcher` du dropdown utilisateur et le **promouvoir**
+  comme élément de header à part entière (visibilité accrue).
+- ✅ Conserver la navigation préservée (URL + locale) telle qu'implémentée.
+- ❌ Ne **pas** dupliquer : retirer l'entrée « Langue » du dropdown
+  utilisateur pour éviter la redondance.
+
+### 5.6 Overlay de recherche full-page
 
 Au clic sur la barre de recherche (ou via `Ctrl+K` / `Cmd+K`), un overlay
 plein écran s'ouvre. Toute la saisie et l'affichage des résultats se font
@@ -402,7 +469,7 @@ focus.
 | `⌘/Ctrl + ⏎` | Ouvre dans un nouvel onglet |
 | `Esc` | Ferme l'overlay |
 
-### 5.6 API et services réutilisés
+### 5.7 API et services réutilisés
 
 L'overlay s'appuie sur l'infrastructure de recherche existante (voir
 `docs/systems/global-search.md`), **étendue** pour couvrir les nouveaux types :
@@ -421,7 +488,7 @@ L'overlay s'appuie sur l'infrastructure de recherche existante (voir
   (`coach_profiles`) via `Promise.allSettled` (tolérance aux pannes
   partielles préservée).
 
-### 5.7 Composants à créer
+### 5.8 Composants à créer
 
 Tous dans `src/components/layout/editorial/` (sauf composants déjà partagés) :
 
@@ -432,6 +499,7 @@ Tous dans `src/components/layout/editorial/` (sauf composants déjà partagés) 
 | `MegaMenuPanel` | Panneau riche (sous-liens + featured cards) |
 | `MegaMenuFeaturedCard` | Card image + titre dans la colonne droite |
 | `HeaderSearchTrigger` | Input réduit du header, ouvre l'overlay |
+| `HeaderLanguageSwitcher` | Variante « header » du `LanguageSwitcher` partagé : trigger compact (icône + code de langue + chevron) avec dropdown éditorial. Réutilise la logique de navigation locale existante. |
 | `SearchOverlay` | Overlay full-page (dialog) |
 | `SearchOverlayInput` | Input de saisie XL avec spinner |
 | `SearchOverlayResults` | Liste des groupes de résultats |
@@ -440,10 +508,10 @@ Tous dans `src/components/layout/editorial/` (sauf composants déjà partagés) 
 | `SearchOverlayEmptyState` | Recherches récentes + suggestions |
 | `SearchRecentList` | Liste des recherches récentes (`localStorage`) |
 
-### 5.8 i18n — clés à ajouter
+### 5.9 i18n — clés à ajouter
 
-Dans `src/messages/{fr,en}.json`, namespace `header.megaMenu` et
-`globalSearch` :
+Dans `src/messages/{fr,en}.json`, namespaces `header.megaMenu`,
+`header.languageSwitcher` et `globalSearch` :
 
 ```json
 {
@@ -452,6 +520,13 @@ Dans `src/messages/{fr,en}.json`, namespace `header.megaMenu` et
       "games": { "label": "Jeux", "all": "Tous les jeux", "trending": "Tendances", "upcoming": "À venir", "byGenre": "Par genre", "byPlatform": "Par plateforme", "featuredTitle": "Trending now" },
       "characters": { "label": "Personnages", "all": "Tous les personnages", "favorites": "Mes favoris", "bySpecies": "Par espèce", "byGender": "Par genre", "featuredTitle": "Personnage du moment" },
       "players": { "label": "Joueurs", "all": "Joueurs Gamers Universe", "pros": "Joueurs pros", "teams": "Équipes esport", "coaches": "Coachs", "discussions": "Discussions", "featuredTitle": "Joueur en vue" }
+    },
+    "languageSwitcher": {
+      "label": "Langue",
+      "current": "Langue actuelle",
+      "fr": "Français",
+      "en": "English",
+      "ariaLabel": "Changer de langue"
     }
   },
   "globalSearch": {
@@ -474,7 +549,7 @@ Dans `src/messages/{fr,en}.json`, namespace `header.megaMenu` et
 
 Toutes les clés doivent être traduites en EN simultanément.
 
-### 5.9 Performance et UX
+### 5.10 Performance et UX
 
 - **Debounce** : 300 ms (déjà en place dans `useGlobalSearch`).
 - **AbortController** : annulation automatique des requêtes obsolètes (déjà
@@ -488,13 +563,14 @@ Toutes les clés doivent être traduites en EN simultanément.
 - **Tendances** : les cartes trending de l'état vide sont chargées une seule
   fois par session (cache mémoire, TTL 5 min).
 
-### 5.10 Mobile
+### 5.11 Mobile
 
 | Élément | Comportement mobile |
 |---|---|
 | Top header | Logo + icône loupe + bouton hamburger. Pas de mega-menu visible. |
 | Mega-menu | Replié dans l'overlay hamburger : 3 sections accordéon (Jeux, Personnages, Joueurs) listant les sous-liens. Pas de featured cards (économie d'espace). |
 | Barre de recherche | Icône loupe seule dans le header, ouvre directement l'overlay full-page. |
+| Sélecteur de langue | **Pas dans le header** sur mobile. Disponible dans l'overlay hamburger (en bas de la liste) et dans `/settings`. |
 | Overlay full-page | Couvre 100% du viewport, input en haut (sticky), zone résultats en scroll natif. Bouton ╳ en haut à droite. |
 | Touch targets | Toutes les lignes de résultat ≥ 56 px de haut sur mobile. |
 | Clavier virtuel | Pas de bouton « Recherche » sur le clavier (un input simple suffit, la recherche est live). |
@@ -698,12 +774,13 @@ mega-menu et le command palette doivent être navigables au clavier.
 | F0-06 | Layout shell : mega-menu + rail + sub-sidebar | Créer `src/components/layout/editorial/EditorialLayout.tsx` qui remplace `DashboardLayout` sur les pages publiques refondues. Inclut MegaMenu, Rail, SubSidebar. |
 | F0-07 | Mega-menu : 3 entrées + featured panels | Composant `EditorialMegaMenu` avec **3 entrées** Jeux / Personnages / Joueurs (ce dernier regroupe joueurs GU, joueurs pros, équipes esport, coachs). Panels riches : sous-liens à gauche + featured cards à droite. Voir spec détaillée section 5.1 à 5.3. |
 | F0-07b | Header search trigger (input réduit) | Composant `HeaderSearchTrigger` placé à droite du header, sert uniquement de trigger (pas de saisie inline). Ouvre l'overlay full-page au clic, focus, ou raccourci `Ctrl K` / `Cmd K`. Affiche un badge raccourci à droite. Voir spec détaillée section 5.4. |
-| F0-07c | SearchOverlay full-page | Overlay plein viewport (`role="dialog"`, focus trap, `Esc` ferme) avec input XL, état vide (recherches récentes + tendances) et résultats groupés par type d'entité : **Jeux, Personnages, Joueurs GU, Équipes esport, Joueurs pros, Coachs**. Réutilise `useGlobalSearch`. Persistance des recherches récentes via `localStorage` (max 5). Voir spec détaillée section 5.5. |
+| F0-07c | SearchOverlay full-page | Overlay plein viewport (`role="dialog"`, focus trap, `Esc` ferme) avec input XL, état vide (recherches récentes + tendances) et résultats groupés par type d'entité : **Jeux, Personnages, Joueurs GU, Équipes esport, Joueurs pros, Coachs**. Réutilise `useGlobalSearch`. Persistance des recherches récentes via `localStorage` (max 5). Voir spec détaillée section 5.6. |
 | F0-07d | Étendre `globalSearchService` aux entités esport et coaching | Ajouter dans `GlobalSearchResponse` les groupes `teams`, `proPlayers`, `coaches`. Ajouter les types `GlobalSearchTeamItem`, `GlobalSearchProPlayerItem`, `GlobalSearchCoachItem` dans `src/types/global-search.ts`. Étendre la route `/api/search/global` avec les paramètres `teamsLimit`, `proPlayersLimit`, `coachesLimit`. Tolérance aux pannes via `Promise.allSettled`. Tests property-based. |
+| F0-07e | Header language switcher | Composant `HeaderLanguageSwitcher` dans la zone droite du header (entre search et user dropdown). Réutilise le `LanguageSwitcher` partagé avec une variante visuelle « header » (trigger compact icône + code + chevron, dropdown éditorial). Retirer la duplication dans le dropdown utilisateur. Sur mobile, déplacer dans l'overlay hamburger. Voir spec détaillée section 5.5. |
 | F0-08 | Rail vertical 56px persistant | Composant `EditorialRail` avec icônes des 5 espaces, indicateur actif basé sur l'URL. |
 | F0-09 | Sub-sidebar toggle avec persistance localStorage | Composant `EditorialSubSidebar` qui slide-in/out, persiste l'espace ouvert. |
 | F0-10 | Mobile : hamburger overlay full-screen | Variante mobile du layout (rail caché, mega-menu = liste expandable, sub-sidebar = section). |
-| F0-11 | Setup i18n des nouveaux composants | Ajouter les clés FR/EN pour mega-menu, rail, sub-sidebar, search input. |
+| F0-11 | Setup i18n des nouveaux composants | Ajouter les clés FR/EN pour mega-menu, rail, sub-sidebar, search input et language switcher (voir section 5.9). |
 | F0-12 | Documentation des composants éditoriaux | `docs/design/editorial-components.md` avec API et exemples. |
 | F0-13 | Retirer le glassmorphism du POC promu et déprécier les `.glass-*` | Quand on migre les composants `design-poc/*` vers `shared/`, retirer toutes les occurrences de `backdrop-blur-*`. Marquer les classes `.glass-*` comme dépréciées dans `globals.css` (commentaire + interdiction d'usage dans les nouveaux composants). |
 
