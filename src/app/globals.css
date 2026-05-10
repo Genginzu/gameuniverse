@@ -148,6 +148,14 @@
     --neon-accent: 5 96 225;
     --neon-glow-opacity: 0.15;
     --neon-border-opacity: 0.3;
+
+    /* Editorial design tokens — surfaces sombres pour la refonte éditoriale (dark-only)
+       Voir docs/design/editorial-refonte-plan.md section 3 */
+    --editorial-bg: #120821;
+    --editorial-bg-2: #1a0f2e;
+    --editorial-bg-3: #251745;
+    --editorial-line: rgba(255, 255, 255, 0.08);
+    --editorial-muted: #a89dbf;
   }
 
   .dark {
