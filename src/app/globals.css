@@ -616,6 +616,95 @@ textarea:focus-visible,
   }
 }
 
+/*
+ * EditorialRail: vertical 56px persistent rail (Discord-style).
+ * Logo on top + divider + 5 space buttons.
+ *
+ * No backdrop-blur (glassmorphism removal). Opaque dark background
+ * for contrast, right border via --editorial-line.
+ */
+.editorial-rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  width: 56px;
+  height: 100%;
+  padding: 1rem 0;
+  background: var(--editorial-bg);
+  border-right: 1px solid var(--editorial-line);
+}
+
+.editorial-rail-logo {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 0.75rem;
+  color: rgb(var(--neon-primary));
+  background: rgba(255, 255, 255, 0.04);
+  transition:
+    background-color 200ms ease,
+    color 200ms ease;
+}
+
+.editorial-rail-logo:hover {
+  background: rgba(var(--neon-primary), 0.18);
+  color: rgb(var(--neon-secondary));
+}
+
+.editorial-rail-divider {
+  display: block;
+  width: 24px;
+  height: 1px;
+  margin: 0.5rem 0 0.75rem;
+  background: var(--editorial-line);
+}
+
+.editorial-rail-button {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 0.75rem;
+  color: var(--editorial-muted);
+  background: transparent;
+  cursor: pointer;
+  transition:
+    background-color 200ms ease,
+    color 200ms ease;
+}
+
+.editorial-rail-button:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.editorial-rail-button.is-active {
+  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.2);
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+}
+
+.editorial-rail-active-pill {
+  position: absolute;
+  top: 50%;
+  left: -0.25rem;
+  width: 4px;
+  height: 24px;
+  border-radius: 0 9999px 9999px 0;
+  background: rgb(var(--accent-rgb, var(--neon-primary)));
+  transform: translateY(-50%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editorial-rail-logo,
+  .editorial-rail-button {
+    transition: none;
+  }
+}
+
+
 /* ===== Glassmorphism Design System ===== */
 
 /* Base glass utility */
