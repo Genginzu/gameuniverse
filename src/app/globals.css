@@ -794,6 +794,149 @@ textarea:focus-visible,
 }
 
 
+/*
+ * EditorialMobileNav: hamburger button + full-screen overlay.
+ * Hidden on desktop (>= lg) where the rail+sub-sidebar take over.
+ */
+.editorial-mobile-toggle {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 0.5rem;
+  color: var(--editorial-muted);
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+@media (min-width: 1024px) {
+  .editorial-mobile-toggle {
+    display: none;
+  }
+}
+
+.editorial-mobile-toggle:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.editorial-mobile-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  background: var(--editorial-bg);
+  animation: editorial-mobile-fade-in 200ms ease-out;
+}
+
+@keyframes editorial-mobile-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.editorial-mobile-overlay-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  padding: 0 1rem 0 1.5rem;
+  border-bottom: 1px solid var(--editorial-line);
+  flex-shrink: 0;
+}
+
+.editorial-mobile-overlay-close {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 0.5rem;
+  color: var(--editorial-muted);
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+.editorial-mobile-overlay-close:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.editorial-mobile-overlay-nav {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem 0;
+}
+
+.editorial-mobile-section {
+  border-bottom: 1px solid var(--editorial-line);
+}
+
+.editorial-mobile-section-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 1rem 1.5rem;
+  font-family: var(--font-display, "Tomorrow"), system-ui, sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+  text-align: left;
+  color: #fff;
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 200ms ease;
+}
+
+.editorial-mobile-section-trigger:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.editorial-mobile-section.is-expanded .editorial-mobile-section-trigger {
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+}
+
+.editorial-mobile-section-list {
+  list-style: none;
+  margin: 0;
+  padding: 0 1.5rem 1rem 3.5rem;
+}
+
+.editorial-mobile-link {
+  display: block;
+  padding: 0.75rem 0;
+  font-size: 0.95rem;
+  color: var(--editorial-muted);
+  text-decoration: none;
+  transition: color 200ms ease;
+}
+
+.editorial-mobile-link:hover {
+  color: #fff;
+}
+
+.editorial-mobile-link.is-active {
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editorial-mobile-overlay {
+    animation: none;
+  }
+  .editorial-mobile-toggle,
+  .editorial-mobile-overlay-close,
+  .editorial-mobile-section-trigger,
+  .editorial-mobile-link {
+    transition: none;
+  }
+}
+
+
 
 /* ===== Glassmorphism Design System ===== */
 
