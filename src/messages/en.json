@@ -2953,6 +2953,12 @@
     }
   },
   "globalSearch": {
+    "trigger": {
+      "placeholder": "Search for a game, character, player…",
+      "placeholderShort": "Search…",
+      "ariaLabel": "Open search",
+      "shortcutHint": "Ctrl K"
+    },
     "placeholder": "Search games, characters, players...",
     "noResults": "No results found",
     "loading": "Searching...",

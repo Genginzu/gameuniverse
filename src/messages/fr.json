@@ -2956,6 +2956,12 @@
     }
   },
   "globalSearch": {
+    "trigger": {
+      "placeholder": "Rechercher un jeu, un personnage, un joueur…",
+      "placeholderShort": "Rechercher…",
+      "ariaLabel": "Ouvrir la recherche",
+      "shortcutHint": "Ctrl K"
+    },
     "placeholder": "Rechercher jeux, personnages, joueurs...",
     "noResults": "Aucun résultat trouvé",
     "loading": "Recherche en cours...",
