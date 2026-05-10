@@ -695,6 +695,9 @@ suivantes doivent être cochées :
 
 ### Tests
 
+- [ ] Tests obsolètes supprimés : tout test ciblant un composant/hook/service
+      supprimé ou déplacé pendant la migration de la page a été retiré (fichier
+      ou `it()` individuel), avec ses mocks/fixtures orphelins
 - [ ] Tests unitaires pour les nouveaux composants
 - [ ] Pas de régression sur les tests existants
 - [ ] `bun run lint` et `bun run type-check` passent
