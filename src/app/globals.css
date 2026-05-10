@@ -459,6 +459,68 @@ textarea:focus-visible,
   }
 }
 
+/* ===== Editorial Components ===== */
+
+/*
+ * SpotlightCard — halo lumineux qui suit le curseur.
+ * Le composant React met à jour --spotlight-mx / --spotlight-my via mousemove.
+ * --spotlight-glow accepte un override par carte (triplet RGB), sinon utilise
+ * la couleur primaire neon du thème.
+ *
+ * Pas de backdrop-blur : variante editoriale, voir docs/design/editorial-refonte-plan.md
+ */
+.spotlight-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 1.5rem;
+  border: 1px solid var(--editorial-line);
+  background:
+    radial-gradient(
+      600px circle at var(--spotlight-mx, 50%) var(--spotlight-my, 50%),
+      rgba(var(--spotlight-glow, var(--neon-primary)), 0.12),
+      transparent 40%
+    ),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
+  transition: border-color 300ms ease;
+}
+
+.spotlight-card:hover {
+  border-color: rgba(var(--spotlight-glow, var(--neon-primary)), 0.35);
+}
+
+.spotlight-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(
+    400px circle at var(--spotlight-mx, 50%) var(--spotlight-my, 50%),
+    rgba(var(--spotlight-glow, var(--neon-primary)), 0.4),
+    transparent 50%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.spotlight-card:hover::before {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spotlight-card,
+  .spotlight-card::before {
+    transition: none;
+  }
+}
+
 /* ===== Glassmorphism Design System ===== */
 
 /* Base glass utility */
