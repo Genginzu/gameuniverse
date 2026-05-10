@@ -380,6 +380,57 @@
       "fr": "Français",
       "en": "Anglais"
     },
+    "megaMenu": {
+      "entries": {
+        "games": "Jeux",
+        "characters": "Personnages",
+        "players": "Joueurs"
+      },
+      "panel": {
+        "ariaLabel": "Sous-menu {entry}"
+      },
+      "sections": {
+        "games": {
+          "explore": "Explorer",
+          "featured": "À la une",
+          "library": "Mes contenus"
+        },
+        "characters": {
+          "explore": "Explorer",
+          "library": "Mes contenus"
+        },
+        "players": {
+          "community": "Communauté",
+          "esport": "Esport",
+          "coaching": "Coaching"
+        }
+      },
+      "links": {
+        "games": {
+          "all": "Tous les jeux",
+          "trending": "Tendances",
+          "upcoming": "À venir",
+          "library": "Ma bibliothèque",
+          "collections": "Mes collections"
+        },
+        "characters": {
+          "all": "Tous les personnages",
+          "favorites": "Mes favoris"
+        },
+        "players": {
+          "all": "Joueurs Gamers Universe",
+          "discussions": "Discussions",
+          "friends": "Mes amis",
+          "teams": "Équipes esport",
+          "proPlayers": "Joueurs pros",
+          "esportLive": "En direct",
+          "coachingHub": "Hub coaching",
+          "coachingSessions": "Mes sessions"
+        }
+      },
+      "logoAriaLabel": "Gamers Universe — accueil",
+      "primaryNavAriaLabel": "Navigation principale"
+    },
     "spaces": {
       "games": "Jeux",
       "esport": "Esport",
