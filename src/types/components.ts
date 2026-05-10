@@ -39,9 +39,6 @@ export interface GameDetailsProps {
   locale: string;
 }
 
-export interface AllGamesContentProps {
-  locale?: string;
-}
 
 export interface GameSearchBarProps {
   onSearch: (query: string) => void;

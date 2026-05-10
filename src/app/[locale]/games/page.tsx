@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { AllGamesContent } from "@/components/games/AllGamesContent";
-import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
+
+import { EditorialLayout } from "@/components/layout/editorial/EditorialLayout";
+import { GamesListingEditorial } from "@/components/games/GamesListingEditorial";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
 import { logger } from "@/lib/logger";
@@ -47,7 +48,7 @@ export default async function AllGamesPage({ params }: AllGamesPageProps) {
   }
 
   return (
-    <DashboardLayout>
+    <EditorialLayout>
       <ErrorBoundary
         fallback={
           <ErrorFallback
@@ -57,12 +58,12 @@ export default async function AllGamesPage({ params }: AllGamesPageProps) {
           />
         }
       >
-        <AllGamesContent
+        <GamesListingEditorial
           locale={locale}
           initialGames={initialGames}
           initialPagination={initialPagination}
         />
       </ErrorBoundary>
-    </DashboardLayout>
+    </EditorialLayout>
   );
 }
