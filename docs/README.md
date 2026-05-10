@@ -8,6 +8,14 @@
 | [deployment-checklist.md](setup/deployment-checklist.md)     | Checklist de déploiement                   |
 | [component-organization.md](setup/component-organization.md) | Organisation des composants React          |
 
+## 🎨 Design
+
+| Document                                                      | Description                                                     |
+| ------------------------------------------------------------- | --------------------------------------------------------------- |
+| [editorial-refonte-plan.md](design/editorial-refonte-plan.md) | Plan de la refonte éditoriale (Imba-inspired) — phases & DoD    |
+| [editorial-components.md](design/editorial-components.md)     | Composants éditoriaux : API, tokens, système d'accent dynamique |
+
+
 ## 🎮 Features — Jeux
 
 | Document                                                            | Description                    |
