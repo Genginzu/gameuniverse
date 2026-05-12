@@ -1458,6 +1458,17 @@ textarea:focus-visible,
   font-weight: 500;
 }
 
+/*
+ * Override de la règle globale `input:focus-visible` (l. ~413) : le wrapper
+ * gère déjà le retour visuel via `:focus-within` qui peint la bordure en
+ * accent. Un outline en plus créerait un double encadré disgracieux.
+ */
+.search-overlay-input:focus,
+.search-overlay-input:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
 @media (min-width: 768px) {
   .search-overlay-input {
     font-size: 1.75rem;
