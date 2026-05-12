@@ -197,28 +197,34 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     [hasResults, query]
   );
 
-  // Loading "first time" : la requête est lancée mais aucun résultat n'est
-  // encore arrivé. On évite ainsi d'afficher un container vide pendant le
-  // fetch initial.
+  // `hasResults` (alias de `isOpen` du hook) bascule à `true` dès que la
+  // query atteint MIN_QUERY_LENGTH, *avant* que le fetch ne soit terminé.
+  // On distingue donc deux cas :
+  //   1. `results === null` → on est en train de chercher (fetch en cours
+  //      ou pas encore renvoyé) → afficher le placeholder spinner.
+  //   2. `results !== null` → afficher la liste (qui peut être vide → le
+  //      composant Results gère le « Aucun résultat »).
+  const hasFetchedResults = results !== null;
   const isSearching = useMemo(
     () =>
-      !showResults &&
+      !hasFetchedResults &&
       isLoading &&
       query.trim().length >= MIN_QUERY_LENGTH,
-    [showResults, isLoading, query]
+    [hasFetchedResults, isLoading, query]
   );
 
   // État qui détermine le styling du container : avec border+bg ("filled")
   // pour les listes (résultats, récents) et "loading", ou bien sans
   // (juste le hint centré "Commencez à saisir…") pour ne pas laisser un
   // panneau vide quand il n'y a rien à montrer.
-  const contentState: "results" | "loading" | "recent" | "hint" = showResults
-    ? "results"
-    : isSearching
-      ? "loading"
-      : recentSearches.length > 0
-        ? "recent"
-        : "hint";
+  const contentState: "results" | "loading" | "recent" | "hint" =
+    showResults && hasFetchedResults
+      ? "results"
+      : isSearching
+        ? "loading"
+        : recentSearches.length > 0
+          ? "recent"
+          : "hint";
 
   if (!isOpen) return null;
 
@@ -260,7 +266,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
           data-loading={isLoading || undefined}
           data-state={contentState}
         >
-          {showResults ? (
+          {showResults && hasFetchedResults ? (
             <SearchOverlayResults
               results={results}
               activeIndex={activeIndex}
