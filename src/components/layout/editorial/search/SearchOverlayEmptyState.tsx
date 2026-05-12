@@ -60,8 +60,10 @@ export function SearchOverlayEmptyState({
               onClick={() => onSelectRecent(query)}
               className="search-overlay-recent-button"
             >
-              <Icon icon="lucide:clock" className="size-4 shrink-0" aria-hidden />
-              <span>{query}</span>
+              <span className="search-overlay-recent-icon" aria-hidden>
+                <Icon icon="lucide:clock" className="size-3.5" />
+              </span>
+              <span className="search-overlay-recent-label">{query}</span>
             </button>
             <button
               type="button"

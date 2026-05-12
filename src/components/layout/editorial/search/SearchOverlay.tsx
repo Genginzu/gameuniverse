@@ -234,6 +234,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
           id={resultsId}
           aria-live="polite"
           className="search-overlay-content"
+          data-loading={isLoading || undefined}
         >
           {showResults ? (
             <SearchOverlayResults

@@ -12,6 +12,7 @@
  */
 
 import type { ReactNode } from "react";
+import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 
 import { Link } from "@/i18n/navigation";
@@ -211,7 +212,12 @@ function SeeAllLink({ groupKey, query, label }: SeeAllLinkProps) {
 
   return (
     <Link href={href} className="search-overlay-see-all">
-      {label}
+      <span className="search-overlay-see-all-label">{label}</span>
+      <Icon
+        icon="lucide:arrow-right"
+        className="search-overlay-see-all-arrow size-4"
+        aria-hidden
+      />
     </Link>
   );
 }

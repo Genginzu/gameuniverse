@@ -26,6 +26,11 @@ interface SearchOverlayItemProps {
 }
 
 export function SearchOverlayItem({ item, active, index, onSelect }: SearchOverlayItemProps) {
+  // Stagger fade-in : on plafonne `--i` à 8 pour que les items plus loin
+  // apparaissent immédiatement (évite un délai cumulé excessif sur les
+  // longs résultats).
+  const staggerIndex = Math.min(index, 8);
+
   return (
     <li
       role="option"
@@ -34,6 +39,7 @@ export function SearchOverlayItem({ item, active, index, onSelect }: SearchOverl
       onClick={onSelect}
       className={`search-overlay-item ${active ? "is-active" : ""}`.trim()}
       data-type={item.type}
+      style={{ "--stagger-index": staggerIndex } as React.CSSProperties}
     >
       {renderItemContent(item)}
     </li>
