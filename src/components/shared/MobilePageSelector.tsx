@@ -1,9 +1,13 @@
+import type { PaginationVariant } from "./Pagination";
+
 interface MobilePageSelectorProps {
   currentPage: number;
   totalPages: number;
   loading: boolean;
   onPageChange: (page: number) => void;
   labels: { goToPage: string; of: string };
+  /** Variante visuelle. Default: `"default"` (legacy). */
+  variant?: PaginationVariant;
 }
 
 export function MobilePageSelector({
@@ -12,7 +16,33 @@ export function MobilePageSelector({
   loading,
   onPageChange,
   labels,
+  variant = "default",
 }: MobilePageSelectorProps) {
+  if (variant === "editorial") {
+    return (
+      <div className="editorial-pagination-mobile-selector">
+        <span className="editorial-pagination-mobile-selector-label">
+          {labels.goToPage}
+        </span>
+        <select
+          value={currentPage}
+          onChange={(e) => onPageChange(parseInt(e.target.value))}
+          disabled={loading}
+          className="editorial-pagination-mobile-selector-select"
+        >
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <option key={page} value={page}>
+              {page}
+            </option>
+          ))}
+        </select>
+        <span className="editorial-pagination-mobile-selector-suffix">
+          {labels.of} {totalPages}
+        </span>
+      </div>
+    );
+  }
+
   return (
     <div className="flex items-center space-x-3 sm:hidden">
       <span className="text-sm font-medium text-gray-700 dark:text-gray-300">

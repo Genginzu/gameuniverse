@@ -1,11 +1,14 @@
 import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
+import type { PaginationVariant } from "./Pagination";
 
 interface PaginationButtonProps {
   page: number | string;
   currentPage: number;
   loading: boolean;
   onPageChange: (page: number) => void;
+  /** Variante visuelle. Default: `"default"` (legacy). */
+  variant?: PaginationVariant;
 }
 
 export function PaginationButton({
@@ -13,8 +16,16 @@ export function PaginationButton({
   currentPage,
   loading,
   onPageChange,
+  variant = "default",
 }: PaginationButtonProps) {
   if (page === "...") {
+    if (variant === "editorial") {
+      return (
+        <span className="editorial-pagination-dots" aria-hidden>
+          <Icon icon="lucide:more-horizontal" className="h-4 w-4" />
+        </span>
+      );
+    }
     return (
       <span className="px-2 py-2 text-gray-400 sm:px-3">
         <Icon icon="lucide:more-horizontal" className="h-4 w-4" />
@@ -24,6 +35,20 @@ export function PaginationButton({
 
   const pageNumber = page as number;
   const isCurrentPage = pageNumber === currentPage;
+
+  if (variant === "editorial") {
+    return (
+      <button
+        type="button"
+        onClick={() => onPageChange(pageNumber)}
+        disabled={loading || isCurrentPage}
+        className={`editorial-pagination-number ${isCurrentPage ? "is-current" : ""}`.trim()}
+        aria-current={isCurrentPage ? "page" : undefined}
+      >
+        {pageNumber}
+      </button>
+    );
+  }
 
   return (
     <Button

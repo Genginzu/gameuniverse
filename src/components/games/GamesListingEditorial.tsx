@@ -235,6 +235,7 @@ export function GamesListingEditorial({
                 onPageChange={handlePageChange}
                 loading={validating}
                 translationNamespace="pagination"
+                variant="editorial"
               />
             </div>
           )}
