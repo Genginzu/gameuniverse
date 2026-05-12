@@ -2606,12 +2606,19 @@ label[for],
 
 .editorial-pagination-number.is-current {
   color: #fff;
-  background: rgb(var(--accent-rgb, var(--neon-primary)));
-  border-color: rgb(var(--accent-rgb, var(--neon-primary)));
+  background: linear-gradient(
+    135deg,
+    rgba(var(--accent-rgb, var(--neon-primary)), 1) 0%,
+    rgba(var(--accent-rgb, var(--neon-primary)), 0.75) 100%
+  );
+  border-color: rgba(var(--accent-rgb, var(--neon-primary)), 0.9);
+  box-shadow:
+    0 0 0 1px rgba(var(--accent-rgb, var(--neon-primary)), 0.35),
+    0 0 16px rgba(var(--accent-rgb, var(--neon-primary)), 0.45);
   pointer-events: none;
 }
 
-.editorial-pagination-number:disabled {
+.editorial-pagination-number:disabled:not(.is-current) {
   opacity: 0.4;
   cursor: not-allowed;
 }
