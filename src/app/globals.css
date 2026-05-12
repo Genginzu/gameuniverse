@@ -965,7 +965,18 @@ textarea:focus-visible,
   min-height: 0;
 }
 
-/* Rail — only visible >= lg */
+/*
+ * Rail & sub-sidebar — only visible >= lg.
+ *
+ * Both are sticky just below the 64px sticky header so they stay visible
+ * while the page scrolls. `align-self: flex-start` is required because the
+ * parent `.editorial-layout-body` uses `align-items: stretch`, which would
+ * otherwise force them to span the full body height and break sticky.
+ *
+ * Each column has its own `overflow-y: auto` to handle the rare case where
+ * the rail/sub-sidebar contents exceed the viewport (many spaces, long sub
+ * navigation list).
+ */
 .editorial-layout-rail {
   display: none;
   flex-shrink: 0;
@@ -974,6 +985,11 @@ textarea:focus-visible,
 @media (min-width: 1024px) {
   .editorial-layout-rail {
     display: block;
+    position: sticky;
+    top: 64px;
+    align-self: flex-start;
+    height: calc(100vh - 64px);
+    overflow-y: auto;
   }
 }
 
@@ -986,6 +1002,10 @@ textarea:focus-visible,
 @media (min-width: 1024px) {
   .editorial-layout-sub-sidebar {
     display: block;
+    position: sticky;
+    top: 64px;
+    align-self: flex-start;
+    height: calc(100vh - 64px);
   }
 }
 
