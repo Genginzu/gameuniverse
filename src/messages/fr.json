@@ -43,6 +43,16 @@
       "description": "Consultez l'historique de vos GU Coins gagnés et dépensés"
     }
   },
+  "header": {
+    "userDropdown": {
+      "dropdownAriaLabel": "Menu utilisateur",
+      "avatarAlt": "Avatar de {username}",
+      "signIn": "Se connecter",
+      "signOut": "Se déconnecter",
+      "profile": "Profil",
+      "library": "Bibliothèque"
+    }
+  },
   "navigation": {
     "games": "Jeux",
     "characters": "Personnages",

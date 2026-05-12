@@ -43,6 +43,16 @@
       "description": "View your GU Coins earning and spending history"
     }
   },
+  "header": {
+    "userDropdown": {
+      "dropdownAriaLabel": "User menu",
+      "avatarAlt": "Avatar of {username}",
+      "signIn": "Sign in",
+      "signOut": "Sign out",
+      "profile": "Profile",
+      "library": "Library"
+    }
+  },
   "navigation": {
     "games": "Games",
     "characters": "Characters",
