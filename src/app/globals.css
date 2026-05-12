@@ -1578,6 +1578,21 @@ textarea:focus-visible,
   border-radius: 0.75rem;
   background: var(--editorial-bg-2);
   padding: 0.75rem;
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease,
+    padding 200ms ease;
+}
+
+/*
+ * Quand il n'y a rien à montrer (pas de query, pas de récents), on retire
+ * la bordure et le fond pour ne pas laisser un panneau vide visuellement
+ * agressif. Seul le texte hint reste, centré.
+ */
+.search-overlay-content[data-state="hint"] {
+  border-color: transparent;
+  background: transparent;
+  padding: 1.5rem 0.5rem;
 }
 
 /* Barre de loading hairline en haut du panel des résultats. Visible quand
@@ -1634,6 +1649,36 @@ textarea:focus-visible,
   text-align: center;
   color: var(--editorial-muted);
   font-size: 0.95rem;
+}
+
+/*
+ * Searching state : pendant le fetch initial (avant que des résultats ne
+ * soient arrivés), on remplace le panneau vide par un spinner + texte
+ * centrés. Anime un fade-in léger pour ne pas flasher.
+ */
+.search-overlay-searching {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  padding: 2rem 1rem;
+  color: var(--editorial-muted);
+  font-size: 0.9rem;
+  animation: search-overlay-searching-fade-in 200ms ease-out both;
+}
+
+.search-overlay-searching-spinner {
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+}
+
+@keyframes search-overlay-searching-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .search-overlay-recent-header {
@@ -1995,6 +2040,9 @@ textarea:focus-visible,
     animation: none;
   }
   .search-overlay-content[data-loading="true"]::before {
+    animation: none;
+  }
+  .search-overlay-searching {
     animation: none;
   }
   .search-overlay-recent-button:hover,

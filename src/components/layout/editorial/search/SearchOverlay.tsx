@@ -197,6 +197,29 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     [hasResults, query]
   );
 
+  // Loading "first time" : la requête est lancée mais aucun résultat n'est
+  // encore arrivé. On évite ainsi d'afficher un container vide pendant le
+  // fetch initial.
+  const isSearching = useMemo(
+    () =>
+      !showResults &&
+      isLoading &&
+      query.trim().length >= MIN_QUERY_LENGTH,
+    [showResults, isLoading, query]
+  );
+
+  // État qui détermine le styling du container : avec border+bg ("filled")
+  // pour les listes (résultats, récents) et "loading", ou bien sans
+  // (juste le hint centré "Commencez à saisir…") pour ne pas laisser un
+  // panneau vide quand il n'y a rien à montrer.
+  const contentState: "results" | "loading" | "recent" | "hint" = showResults
+    ? "results"
+    : isSearching
+      ? "loading"
+      : recentSearches.length > 0
+        ? "recent"
+        : "hint";
+
   if (!isOpen) return null;
 
   return (
@@ -235,6 +258,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
           aria-live="polite"
           className="search-overlay-content"
           data-loading={isLoading || undefined}
+          data-state={contentState}
         >
           {showResults ? (
             <SearchOverlayResults
@@ -243,6 +267,15 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
               query={query}
               onSelect={handleItemSelect}
             />
+          ) : isSearching ? (
+            <div className="search-overlay-searching" role="status" aria-live="polite">
+              <Icon
+                icon="lucide:loader-2"
+                className="search-overlay-searching-spinner size-6 animate-spin"
+                aria-hidden
+              />
+              <span>{t("loading")}</span>
+            </div>
           ) : (
             <SearchOverlayEmptyState
               recentSearches={recentSearches}
