@@ -5,7 +5,10 @@ import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { Genre } from "@/types/genre";
 import { PlatformFilterOption } from "@/types/platform";
-import { FilterSection } from "@/components/shared/FilterSection";
+import {
+  FilterSection,
+  type FilterVariant,
+} from "@/components/shared/FilterSection";
 import { FilterChip, ActiveFilterChip } from "@/components/shared/FilterChip";
 import { getPlatformIcon } from "@/lib/utils/platform-icons";
 
@@ -22,6 +25,8 @@ interface GameFiltersProps {
   onEsportChange: (value: boolean | null) => void;
   onClearFilters: () => void;
   showAllGenres: boolean;
+  /** Variante visuelle. Default: `"default"` (legacy). */
+  variant?: FilterVariant;
 }
 
 export function GameFilters({
@@ -37,6 +42,7 @@ export function GameFilters({
   onEsportChange,
   onClearFilters,
   showAllGenres,
+  variant = "default",
 }: GameFiltersProps) {
   const t = useTranslations("games");
   const tPlatforms = useTranslations("platforms");
@@ -70,6 +76,11 @@ export function GameFilters({
 
   if (!hasFilters && !showAllGenres) return null;
 
+  const isEditorial = variant === "editorial";
+  const clearButtonClass = isEditorial
+    ? "editorial-filter-clear"
+    : "shrink-0 rounded-lg px-3 py-2 text-xs font-medium text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20";
+
   return (
     <div className="space-y-3">
       {hasFilters && (
@@ -80,6 +91,7 @@ export function GameFilters({
                 label={t("esportFilter")}
                 onRemove={() => onEsportChange(null)}
                 variant="blue"
+                themeVariant={variant}
               />
             )}
             {selectedGenres.map((genre) => (
@@ -88,21 +100,22 @@ export function GameFilters({
                 label={genre}
                 onRemove={() => handleGenreToggle(genre)}
                 variant="blue"
+                themeVariant={variant}
               />
             ))}
             {selectedPlatforms.map((slug) => (
               <ActiveFilterChip
                 key={slug}
                 label={platformMap.get(slug) || slug}
-                onRemove={() => onPlatformsChange(selectedPlatforms.filter((s) => s !== slug))}
+                onRemove={() =>
+                  onPlatformsChange(selectedPlatforms.filter((s) => s !== slug))
+                }
                 variant="violet"
+                themeVariant={variant}
               />
             ))}
           </div>
-          <button
-            onClick={onClearFilters}
-            className="shrink-0 rounded-lg px-3 py-2 text-xs font-medium text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
-          >
+          <button onClick={onClearFilters} className={clearButtonClass}>
             {tFilters("clearAll")}
           </button>
         </div>
@@ -110,20 +123,29 @@ export function GameFilters({
 
       {showAllGenres && (
         <>
-          <FilterSection title={t("esportSection")} availableLabel="" loading={false}>
+          <FilterSection
+            title={t("esportSection")}
+            availableLabel=""
+            loading={false}
+            variant={variant}
+          >
             <FilterChip
               label={t("esportOnly")}
               selected={esportFilter === true}
               onClick={() => onEsportChange(esportFilter === true ? null : true)}
               icon={<Icon icon="mdi:trophy" className="h-3.5 w-3.5 shrink-0" />}
+              variant={variant}
             />
           </FilterSection>
 
           <FilterSection
             title={t("genres")}
-            availableLabel={genres.length > 0 ? t("available", { count: genres.length }) : ""}
+            availableLabel={
+              genres.length > 0 ? t("available", { count: genres.length }) : ""
+            }
             loading={genres.length === 0}
             skeletonWidths={[72, 88, 64, 96, 80, 68, 92, 76, 84, 60, 100, 72]}
+            variant={variant}
           >
             {genres.map((genre) => (
               <FilterChip
@@ -132,6 +154,7 @@ export function GameFilters({
                 selected={selectedGenres.includes(genre.name)}
                 onClick={() => handleGenreToggle(genre.name)}
                 count={genre.gameCount}
+                variant={variant}
               />
             ))}
           </FilterSection>
@@ -140,6 +163,7 @@ export function GameFilters({
             title={tPlatforms("filter.title")}
             availableLabel={`${platforms.length} ${tPlatforms("filter.available")}`}
             loading={platforms.length === 0}
+            variant={variant}
           >
             {platforms.map((platform) => (
               <FilterChip
@@ -149,8 +173,12 @@ export function GameFilters({
                 onClick={() => handlePlatformToggle(platform.slug)}
                 count={platform.gameCount}
                 icon={
-                  <Icon icon={getPlatformIcon(platform.slug)} className="h-3.5 w-3.5 shrink-0" />
+                  <Icon
+                    icon={getPlatformIcon(platform.slug)}
+                    className="h-3.5 w-3.5 shrink-0"
+                  />
                 }
+                variant={variant}
               />
             ))}
           </FilterSection>

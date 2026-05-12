@@ -190,6 +190,7 @@ export function GamesListingEditorial({
             onEsportChange={handleEsportFilter}
             onClearFilters={handleClearFilters}
             showAllGenres={showFilters}
+            variant="editorial"
           />
         </div>
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { ReactNode } from "react";
+import type { FilterVariant } from "./FilterSection";
 
 interface FilterChipProps {
   label: string;
@@ -8,13 +9,38 @@ interface FilterChipProps {
   onClick: () => void;
   count?: number;
   icon?: ReactNode;
+  /** Variante visuelle. Default: `"default"` (legacy). */
+  variant?: FilterVariant;
 }
 
 /**
  * Shared chip component for filter items (genres, roles, platforms, etc.).
- * Uses the cyan→violet gradient when selected, consistent across all filter panels.
+ * Supports a legacy gradient variant and an editorial outlined variant.
  */
-export function FilterChip({ label, selected, onClick, count, icon }: FilterChipProps) {
+export function FilterChip({
+  label,
+  selected,
+  onClick,
+  count,
+  icon,
+  variant = "default",
+}: FilterChipProps) {
+  if (variant === "editorial") {
+    return (
+      <button
+        onClick={onClick}
+        className={`editorial-filter-chip ${selected ? "is-selected" : ""}`.trim()}
+        aria-pressed={selected}
+      >
+        {icon}
+        {label}
+        {count !== undefined && (
+          <span className="editorial-filter-chip-count">{count}</span>
+        )}
+      </button>
+    );
+  }
+
   return (
     <button
       onClick={onClick}
@@ -31,16 +57,40 @@ export function FilterChip({ label, selected, onClick, count, icon }: FilterChip
   );
 }
 
+interface ActiveFilterChipProps {
+  label: string;
+  onRemove: () => void;
+  variant?: "blue" | "violet";
+  /**
+   * Variante visuelle globale. `editorial` ignore la prop `variant`
+   * (couleur unique basée sur l'accent dynamique).
+   */
+  themeVariant?: FilterVariant;
+}
+
 /** Chip displaying an active filter with a remove button */
 export function ActiveFilterChip({
   label,
   onRemove,
   variant = "blue",
-}: {
-  label: string;
-  onRemove: () => void;
-  variant?: "blue" | "violet";
-}) {
+  themeVariant = "default",
+}: ActiveFilterChipProps) {
+  if (themeVariant === "editorial") {
+    return (
+      <button onClick={onRemove} className="editorial-active-filter-chip">
+        {label}
+        <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+    );
+  }
+
   const colors =
     variant === "blue"
       ? "bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-900/50"
