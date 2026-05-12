@@ -2,11 +2,7 @@
 
 /**
  * HeaderUserDropdown : dropdown utilisateur compact dans le header éditorial
- * (minimal, pour le slot `userSlot` de `EditorialMegaMenu`).
- *
- * Version minimale qui couvre les 3 actions essentielles : Profile, Library,
- * Sign out. La version complète (avec Settings, paramètres, etc.) est
- * tracée dans l'issue #264.
+ * (slot `userSlot` de `EditorialMegaMenu`).
  *
  * Connecté :
  *   [Avatar 32px] [chevron]
@@ -14,13 +10,14 @@
  *   ┌────────────────┐
  *   │ Profile        │
  *   │ Library        │
+ *   │ Settings       │
  *   │ ───────────── │
  *   │ Sign out       │
  *   └────────────────┘
  *
  * Non connecté : bouton "Sign in" qui pointe vers /auth.
  *
- * Voir docs/design/editorial-refonte-plan.md.
+ * Voir docs/design/editorial-refonte-plan.md (issue #264).
  */
 
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
@@ -43,6 +40,7 @@ interface MenuLink {
 const MENU_LINKS: readonly MenuLink[] = [
   { href: "/profile", labelKey: "profile", icon: "lucide:user" },
   { href: "/library", labelKey: "library", icon: "lucide:library" },
+  { href: "/settings", labelKey: "settings", icon: "lucide:settings" },
 ];
 
 export function HeaderUserDropdown({ className = "" }: HeaderUserDropdownProps) {

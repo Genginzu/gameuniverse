@@ -50,7 +50,8 @@
       "signIn": "Se connecter",
       "signOut": "Se déconnecter",
       "profile": "Profil",
-      "library": "Bibliothèque"
+      "library": "Bibliothèque",
+      "settings": "Paramètres"
     }
   },
   "navigation": {
@@ -379,7 +380,15 @@
       "closeAriaLabel": "Fermer la navigation",
       "dialogAriaLabel": "Navigation mobile",
       "title": "Navigation",
-      "spacesAriaLabel": "Espaces"
+      "spacesAriaLabel": "Espaces",
+      "account": {
+        "title": "Compte",
+        "signIn": "Se connecter",
+        "signOut": "Se déconnecter",
+        "profile": "Profil",
+        "library": "Bibliothèque",
+        "settings": "Paramètres"
+      }
     },
     "languageSwitcher": {
       "ariaLabel": "Changer la langue",

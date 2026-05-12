@@ -6,6 +6,14 @@ import { render, screen, fireEvent } from "@testing-library/react";
 const mockUsePathname = vi.fn<[], string>(() => "/");
 vi.mock("@/i18n/navigation", () => ({
   usePathname: () => mockUsePathname(),
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    back: vi.fn(),
+    forward: vi.fn(),
+    refresh: vi.fn(),
+    prefetch: vi.fn(),
+  }),
   Link: ({
     children,
     href,
@@ -13,6 +21,7 @@ vi.mock("@/i18n/navigation", () => ({
     className,
     "aria-label": ariaLabel,
     "aria-current": ariaCurrent,
+    "data-testid": dataTestId,
   }: {
     children: React.ReactNode;
     href: string;
@@ -20,6 +29,7 @@ vi.mock("@/i18n/navigation", () => ({
     className?: string;
     "aria-label"?: string;
     "aria-current"?: string;
+    "data-testid"?: string;
   }) =>
     React.createElement(
       "a",
@@ -29,10 +39,15 @@ vi.mock("@/i18n/navigation", () => ({
         className,
         "aria-label": ariaLabel,
         "aria-current": ariaCurrent,
-        "data-testid": `link-${href}`,
+        "data-testid": dataTestId ?? `link-${href}`,
       },
       children
     ),
+}));
+
+// Mock useAuth — EditorialMobileNav reads it for the account section (#264).
+vi.mock("@/hooks/useAuth", () => ({
+  useAuth: () => ({ user: null, loading: false, signOut: vi.fn() }),
 }));
 
 // Mock useTranslations with a deterministic dictionary covering rail,
@@ -48,6 +63,12 @@ const editorialTranslations: Record<string, string> = {
   "mobileNav.dialogAriaLabel": "Mobile navigation",
   "mobileNav.title": "Navigation",
   "mobileNav.spacesAriaLabel": "Spaces",
+  "mobileNav.account.title": "Account",
+  "mobileNav.account.signIn": "Sign in",
+  "mobileNav.account.signOut": "Sign out",
+  "mobileNav.account.profile": "Profile",
+  "mobileNav.account.library": "Library",
+  "mobileNav.account.settings": "Settings",
   "spaces.games": "Games",
   "spaces.esport": "Esport",
   "spaces.library": "Library",
@@ -62,8 +83,13 @@ const editorialTranslations: Record<string, string> = {
 };
 
 vi.mock("next-intl", () => ({
-  useTranslations: () => (key: string, params?: Record<string, string>) => {
-    let value = editorialTranslations[key] ?? key;
+  useTranslations: (namespace?: string) => (key: string, params?: Record<string, string>) => {
+    // EditorialMobileNav uses both useTranslations("editorial") and
+    // useTranslations("editorial.mobileNav.account"). Strip the deepest
+    // namespace prefix so the flat dictionary above resolves both.
+    const fullKey =
+      namespace === "editorial.mobileNav.account" ? `mobileNav.account.${key}` : key;
+    let value = editorialTranslations[fullKey] ?? fullKey;
     if (params) {
       for (const [paramKey, paramValue] of Object.entries(params)) {
         value = value.replace(`{${paramKey}}`, paramValue);

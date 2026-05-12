@@ -11,12 +11,14 @@ vi.mock("@/i18n/navigation", () => ({
     onClick,
     className,
     "aria-current": ariaCurrent,
+    "data-testid": dataTestId,
   }: {
     children: React.ReactNode;
     href: string;
     onClick?: () => void;
     className?: string;
     "aria-current"?: string;
+    "data-testid"?: string;
   }) =>
     React.createElement(
       "a",
@@ -25,7 +27,7 @@ vi.mock("@/i18n/navigation", () => ({
         onClick,
         className,
         "aria-current": ariaCurrent,
-        "data-testid": `link-${href}`,
+        "data-testid": dataTestId ?? `link-${href}`,
       },
       children
     ),
@@ -37,6 +39,12 @@ const editorialTranslations: Record<string, string> = {
   "mobileNav.dialogAriaLabel": "Mobile navigation",
   "mobileNav.title": "Navigation",
   "mobileNav.spacesAriaLabel": "Spaces",
+  "mobileNav.account.title": "Account",
+  "mobileNav.account.signIn": "Sign in",
+  "mobileNav.account.signOut": "Sign out",
+  "mobileNav.account.profile": "Profile",
+  "mobileNav.account.library": "Library",
+  "mobileNav.account.settings": "Settings",
   "spaces.games": "Games",
   "spaces.esport": "Esport",
   "spaces.library": "Library",
@@ -58,7 +66,22 @@ const editorialTranslations: Record<string, string> = {
 };
 
 vi.mock("next-intl", () => ({
-  useTranslations: () => (key: string) => editorialTranslations[key] ?? key,
+  useTranslations: (namespace?: string) => (key: string) => {
+    // The component calls useTranslations("editorial") and
+    // useTranslations("editorial.mobileNav.account"). We strip the namespace
+    // prefix from our flat dictionary keys so both calls resolve correctly.
+    if (namespace === "editorial.mobileNav.account") {
+      const fullKey = `mobileNav.account.${key}`;
+      return editorialTranslations[fullKey] ?? fullKey;
+    }
+    return editorialTranslations[key] ?? key;
+  },
+}));
+
+// useAuth mock (loading=false + no user by default).
+const mockUseAuth = vi.fn();
+vi.mock("@/hooks/useAuth", () => ({
+  useAuth: () => mockUseAuth(),
 }));
 
 import { EditorialMobileNav } from "@/components/layout/editorial/EditorialMobileNav";
@@ -68,6 +91,9 @@ describe("EditorialMobileNav", () => {
   beforeEach(() => {
     mockUsePathname.mockReset();
     mockUsePathname.mockReturnValue("/");
+    mockUseAuth.mockReset();
+    // default : user not authenticated, not loading
+    mockUseAuth.mockReturnValue({ user: null, loading: false, signOut: vi.fn() });
     document.body.style.overflow = "";
   });
 
@@ -235,6 +261,87 @@ describe("EditorialMobileNav", () => {
       fireEvent.keyDown(window, { key: "Escape" });
       expect(screen.queryByRole("dialog")).toBeNull();
       expect(document.body.style.overflow).toBe("");
+    });
+  });
+
+  describe("account section (#264)", () => {
+    function makeUser() {
+      return {
+        id: "user-1",
+        email: "alice@example.com",
+        user_metadata: { username: "alice", avatar_url: null },
+      };
+    }
+
+    it("does not render the account section while auth is loading", () => {
+      mockUseAuth.mockReturnValue({ user: null, loading: true, signOut: vi.fn() });
+      render(<EditorialMobileNav />);
+      fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
+      expect(screen.queryByTestId("editorial-mobile-account")).toBeNull();
+    });
+
+    it("renders a Sign in CTA when not authenticated", () => {
+      render(<EditorialMobileNav />);
+      fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
+      const cta = screen.getByTestId("editorial-mobile-account-signin");
+      expect(cta.getAttribute("href")).toBe("/auth");
+      expect(cta.textContent).toContain("Sign in");
+      // No authenticated links rendered
+      expect(screen.queryByTestId("editorial-mobile-account-profile")).toBeNull();
+      expect(screen.queryByTestId("editorial-mobile-account-signout")).toBeNull();
+    });
+
+    it("renders Profile / Library / Settings + Sign out when authenticated", () => {
+      mockUseAuth.mockReturnValue({
+        user: makeUser(),
+        loading: false,
+        signOut: vi.fn(),
+      });
+      render(<EditorialMobileNav />);
+      fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
+
+      const profile = screen.getByTestId("editorial-mobile-account-profile");
+      const library = screen.getByTestId("editorial-mobile-account-library");
+      const settings = screen.getByTestId("editorial-mobile-account-settings");
+      expect(profile.getAttribute("href")).toBe("/profile");
+      expect(library.getAttribute("href")).toBe("/library");
+      expect(settings.getAttribute("href")).toBe("/settings");
+      expect(screen.getByTestId("editorial-mobile-account-signout")).toBeDefined();
+      expect(screen.queryByTestId("editorial-mobile-account-signin")).toBeNull();
+    });
+
+    it("Sign out triggers signOut and closes the overlay", async () => {
+      const signOut = vi.fn();
+      mockUseAuth.mockReturnValue({ user: makeUser(), loading: false, signOut });
+      render(<EditorialMobileNav />);
+      fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
+
+      fireEvent.click(screen.getByTestId("editorial-mobile-account-signout"));
+      // Wait a tick for the async handler to run
+      await Promise.resolve();
+      expect(signOut).toHaveBeenCalledTimes(1);
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+
+    it("clicking on a Sign in CTA closes the overlay", () => {
+      render(<EditorialMobileNav />);
+      fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
+      fireEvent.click(screen.getByTestId("editorial-mobile-account-signin"));
+      expect(screen.queryByRole("dialog")).toBeNull();
+    });
+
+    it("marks an account link active when its href matches the pathname", () => {
+      mockUsePathname.mockReturnValue("/settings");
+      mockUseAuth.mockReturnValue({
+        user: makeUser(),
+        loading: false,
+        signOut: vi.fn(),
+      });
+      render(<EditorialMobileNav />);
+      fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
+      const settings = screen.getByTestId("editorial-mobile-account-settings");
+      expect(settings.className).toContain("is-active");
+      expect(settings.getAttribute("aria-current")).toBe("page");
     });
   });
 });

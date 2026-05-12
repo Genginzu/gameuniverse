@@ -492,12 +492,17 @@ function Shell({ children }) {
 | `className` | `string` | —      | Classes additionnelles sur le bouton hamburger. |
 
 Le composant est **auto-contenu** : il gère son propre state d'ouverture
-et l'accordéon des spaces.
+et l'accordéon des spaces. Il consomme `useAuth` pour rendre la section
+**Compte** en bas de l'overlay.
 
 #### Comportement
 
 - Hamburger affiché uniquement `< lg`.
 - Overlay full-screen avec accordéon des 5 spaces (un seul ouvert à la fois).
+- Section **Compte** en bas de l'overlay (#264) :
+  - Connecté : Profile / Library / Settings / Sign out (déclenche `signOut`)
+  - Non connecté : CTA Sign in vers `/auth`
+  - Pas rendue tant que `useAuth` est en `loading` (évite layout shift).
 - Body scroll lock pendant l'overlay.
 - Fermeture sur **Escape**, **╳**, ou clic sur un lien.
 

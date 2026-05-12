@@ -50,7 +50,8 @@
       "signIn": "Sign in",
       "signOut": "Sign out",
       "profile": "Profile",
-      "library": "Library"
+      "library": "Library",
+      "settings": "Settings"
     }
   },
   "navigation": {
@@ -379,7 +380,15 @@
       "closeAriaLabel": "Close navigation",
       "dialogAriaLabel": "Mobile navigation",
       "title": "Navigation",
-      "spacesAriaLabel": "Spaces"
+      "spacesAriaLabel": "Spaces",
+      "account": {
+        "title": "Account",
+        "signIn": "Sign in",
+        "signOut": "Sign out",
+        "profile": "Profile",
+        "library": "Library",
+        "settings": "Settings"
+      }
     },
     "languageSwitcher": {
       "ariaLabel": "Change language",

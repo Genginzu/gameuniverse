@@ -6,7 +6,9 @@
  * Sur mobile (< lg), le rail vertical et la sub-sidebar (F0-08, F0-09)
  * sont cachés, remplacés par ce composant. Au clic sur le hamburger,
  * un overlay plein écran s'ouvre avec un accordéon des 5 spaces. Chaque
- * space déplie ses liens.
+ * space déplie ses liens. Une section "Compte" en bas regroupe les
+ * actions utilisateur (Profile / Library / Settings / Sign out, ou
+ * Sign in si non connecté). Voir issue #264.
  *
  * - Body scroll lock pendant que l'overlay est ouvert
  * - Fermeture : Escape, ╳, clic sur un lien
@@ -21,6 +23,7 @@ import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 
 import { Link, usePathname } from "@/i18n/navigation";
+import { useAuth } from "@/hooks/useAuth";
 
 import {
   EDITORIAL_SPACES,
@@ -32,11 +35,25 @@ interface EditorialMobileNavProps {
   className?: string;
 }
 
+interface AccountLink {
+  href: string;
+  labelKey: "profile" | "library" | "settings";
+  icon: string;
+}
+
+const ACCOUNT_LINKS: readonly AccountLink[] = [
+  { href: "/profile", labelKey: "profile", icon: "lucide:user" },
+  { href: "/library", labelKey: "library", icon: "lucide:library" },
+  { href: "/settings", labelKey: "settings", icon: "lucide:settings" },
+];
+
 export function EditorialMobileNav({ className = "" }: EditorialMobileNavProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [expandedSpace, setExpandedSpace] = useState<EditorialSpaceKey | null>(null);
   const pathname = usePathname();
   const t = useTranslations("editorial");
+  const tAccount = useTranslations("editorial.mobileNav.account");
+  const { user, loading, signOut } = useAuth();
 
   const open = () => setIsOpen(true);
   const close = () => {
@@ -160,6 +177,62 @@ export function EditorialMobileNav({ className = "" }: EditorialMobileNavProps) 
               );
             })}
           </nav>
+
+          {!loading && (
+            <section
+              aria-label={tAccount("title")}
+              className="editorial-mobile-account"
+              data-testid="editorial-mobile-account"
+            >
+              <h2 className="editorial-mobile-account-title">{tAccount("title")}</h2>
+
+              {user ? (
+                <ul className="editorial-mobile-account-list">
+                  {ACCOUNT_LINKS.map((link) => {
+                    const active = pathname === link.href;
+                    return (
+                      <li key={link.href}>
+                        <Link
+                          href={link.href}
+                          onClick={close}
+                          aria-current={active ? "page" : undefined}
+                          className={`editorial-mobile-account-link ${active ? "is-active" : ""}`.trim()}
+                          data-testid={`editorial-mobile-account-${link.labelKey}`}
+                        >
+                          <Icon icon={link.icon} className="size-4" aria-hidden />
+                          <span>{tAccount(link.labelKey)}</span>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                  <li>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        close();
+                        await signOut();
+                      }}
+                      className="editorial-mobile-account-link editorial-mobile-account-link-danger"
+                      data-testid="editorial-mobile-account-signout"
+                    >
+                      <Icon icon="lucide:log-out" className="size-4" aria-hidden />
+                      <span>{tAccount("signOut")}</span>
+                    </button>
+                  </li>
+                </ul>
+              ) : (
+                <Link
+                  href="/auth"
+                  onClick={close}
+                  className="editorial-mobile-account-cta"
+                  data-testid="editorial-mobile-account-signin"
+                >
+                  <Icon icon="lucide:log-in" className="size-4" aria-hidden />
+                  <span>{tAccount("signIn")}</span>
+                </Link>
+              )}
+            </section>
+          )}
         </div>
       )}
     </>

@@ -13,6 +13,7 @@ const translations: Record<string, string> = {
   "header.userDropdown.signOut": "Sign out",
   "header.userDropdown.profile": "Profile",
   "header.userDropdown.library": "Library",
+  "header.userDropdown.settings": "Settings",
 };
 
 vi.mock("next-intl", () => ({
@@ -230,17 +231,20 @@ describe("HeaderUserDropdown", () => {
       expect(screen.getByText("alice")).toBeDefined();
     });
 
-    it("renders Profile and Library menu items pointing to the right routes", () => {
+    it("renders Profile, Library and Settings menu items pointing to the right routes", () => {
       setAuth({ user: makeUser() });
       render(<HeaderUserDropdown />);
       fireEvent.click(screen.getByTestId("header-user-trigger"));
 
       const profile = screen.getByTestId("header-user-menu-profile");
       const library = screen.getByTestId("header-user-menu-library");
+      const settings = screen.getByTestId("header-user-menu-settings");
       expect(profile.getAttribute("href")).toBe("/profile");
       expect(library.getAttribute("href")).toBe("/library");
+      expect(settings.getAttribute("href")).toBe("/settings");
       expect(profile.getAttribute("role")).toBe("menuitem");
       expect(library.getAttribute("role")).toBe("menuitem");
+      expect(settings.getAttribute("role")).toBe("menuitem");
     });
 
     it("marks the active menu item based on the current pathname", () => {

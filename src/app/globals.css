@@ -924,6 +924,91 @@ textarea:focus-visible,
   color: rgb(var(--accent-rgb, var(--neon-primary)));
 }
 
+/*
+ * Account section : footer du mobile nav avec actions utilisateur (#264).
+ */
+
+.editorial-mobile-account {
+  border-top: 1px solid var(--editorial-line);
+  padding: 1.25rem 1.5rem 1.5rem;
+}
+
+.editorial-mobile-account-title {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-mono, ui-monospace), monospace;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--editorial-muted);
+}
+
+.editorial-mobile-account-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.editorial-mobile-account-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 0.5rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: var(--editorial-muted);
+  text-decoration: none;
+  background: transparent;
+  border: 0;
+  border-radius: 0.5rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+.editorial-mobile-account-link:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.editorial-mobile-account-link.is-active {
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+}
+
+.editorial-mobile-account-link-danger {
+  color: var(--editorial-muted);
+}
+
+.editorial-mobile-account-link-danger:hover {
+  color: #fca5a5;
+}
+
+.editorial-mobile-account-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #fff;
+  background: linear-gradient(
+    135deg,
+    rgb(var(--neon-secondary)),
+    rgb(var(--neon-primary))
+  );
+  border-radius: 0.5rem;
+  text-decoration: none;
+  transition: opacity 200ms ease;
+}
+
+.editorial-mobile-account-cta:hover {
+  opacity: 0.9;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .editorial-mobile-overlay {
     animation: none;
