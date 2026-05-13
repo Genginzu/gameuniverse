@@ -36,6 +36,7 @@
 @import "./styles/editorial/sort-menu.css";
 @import "./styles/editorial/filters.css";
 @import "./styles/editorial/home.css";
+@import "./styles/editorial/game-detail.css";
 
 @custom-variant dark (&:is(.dark *));
 

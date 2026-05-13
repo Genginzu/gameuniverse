@@ -1,19 +1,12 @@
 /**
- * Game Details Sub-Components
+ * Game details — public exports.
  *
- * This module exports all sub-components used by GameDetailsContent.
+ * L'orchestrateur principal `GameDetailsContent` compose les sections
+ * éditoriales (voir `./sections/`). Cette barrel n'expose que les
+ * composants utilisés en dehors du dossier (page racine, players profile,
+ * etc.).
  */
 
-export { GameDetailsNavBar } from "./GameDetailsNavBar";
-export { GameDetailsSidebar } from "./GameDetailsSidebar";
-export { GameDetailsSidebarMeta } from "./GameDetailsSidebarMeta";
-export { GameDetailsMainContent } from "./GameDetailsMainContent";
-export { GameStatsGrid } from "./GameStatsGrid";
-export { GameOverviewSection } from "./GameOverviewSection";
-export { GameMediaGallery } from "./GameMediaGallery";
-export { GameDetailsTabs, type TabType } from "./GameDetailsTabs";
-export { GameDetailsTabContent } from "./GameDetailsTabContent";
-export { GameDetailsTabDetails } from "./GameDetailsTabDetails";
-export { GameDetailsTabLanguages } from "./GameDetailsTabLanguages";
-export { GameDetailsTabMusic } from "./GameDetailsTabMusic";
-export { GamePricingSection } from "./GamePricingSection";
+export { GameDetailsContent } from "./GameDetailsContent";
+export { GameDetailsSkeleton } from "./GameDetailsSkeleton";
+export { PersonalRecommendationSection } from "./PersonalRecommendationSection";

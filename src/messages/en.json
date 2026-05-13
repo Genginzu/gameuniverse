@@ -1281,6 +1281,76 @@
       "empty": "No price history available for this game.",
       "error": "Unable to load price history.",
       "retry": "Retry"
+    },
+    "editorial": {
+      "heroPlatformsCount": "{count} platforms",
+      "heroPlatformsOne": "1 platform",
+      "liveTicker": "{players} playing now · {streams} streams · {tournaments} tournaments this week",
+      "score": "Score",
+      "from": "From",
+      "lowestPrice": "Lowest price",
+      "allTimeLow": "All-time low",
+      "current": "Current",
+      "highest": "Highest",
+      "ninetyDayChange": "90 day change",
+      "platforms": "Platforms",
+      "released": "Released",
+      "metascoreRating": {
+        "exceptional": "Exceptional — among the best of the year.",
+        "excellent": "Excellent — broadly acclaimed by press and players.",
+        "good": "Good — solid recommendations from the press.",
+        "mixed": "Mixed — read multiple reviews before committing."
+      },
+      "sections": {
+        "about": "About",
+        "aboutTitle": "The <accent>story</accent>",
+        "atGlance": "At a glance",
+        "ageRatings": "Age ratings",
+        "ageRatingsTitle": "Mature <accent>audiences</accent>",
+        "languages": "Languages",
+        "languagesTitle": "Available <accent>worldwide</accent>",
+        "languagesSupported": "{count} languages supported",
+        "playtime": "How long is this game?",
+        "media": "Media",
+        "mediaTitle": "See it in <accent>action</accent>",
+        "mediaCount": "{screenshots} screenshots · {videos} videos",
+        "editions": "Editions",
+        "editionsTitle": "Pick your <accent>version</accent>",
+        "expansions": "Expansions",
+        "expansionsTitle": "DLC &amp; <accent>extensions</accent>",
+        "soundtrack": "Soundtrack",
+        "soundtrackTitle": "Original <accent>score</accent>",
+        "whereToBuy": "Where to buy",
+        "whereToBuyTitle": "Best <accent>deals</accent> right now",
+        "priceHistory": "Price history",
+        "priceHistoryTitle": "Last 90 days",
+        "communityVoice": "Community voice",
+        "communityVoiceTitle": "What players <accent>say</accent>",
+        "reviewsCount": "{count} reviews · avg {avg}/10",
+        "youMightAlsoLike": "You might also like",
+        "similarTitle": "Similar <accent>games</accent>",
+        "viewAll": "View all"
+      },
+      "playtime": {
+        "officialKicker": "Source: HowLongToBeat",
+        "officialTitle": "Estimated duration",
+        "communityKicker": "Community average",
+        "communityFromPlayers": "From {count} players",
+        "topContributors": "Top contributors"
+      },
+      "languages": {
+        "language": "Language",
+        "interface": "Interface",
+        "audio": "Audio",
+        "subtitles": "Subtitles"
+      },
+      "review": {
+        "best": "Best deal",
+        "buy": "Buy on {store}"
+      },
+      "ageRating": {
+        "contentDescriptors": "Content descriptors"
+      }
     }
   },
   "footer": {
