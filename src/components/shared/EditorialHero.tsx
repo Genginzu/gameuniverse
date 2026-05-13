@@ -58,10 +58,10 @@ export function EditorialHero({
       <div className="absolute inset-0 bg-gradient-to-b from-[var(--editorial-bg)]/70 via-[var(--editorial-bg)]/40 to-[var(--editorial-bg)]" />
       <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-[var(--editorial-bg)] to-transparent" />
 
-      <div className="relative z-10 mx-auto flex h-full w-full max-w-[1600px] flex-col px-6 pb-16 pt-32 lg:px-12 lg:pb-24 lg:pt-44">
+      <div className="relative z-10 mx-auto flex h-full w-full max-w-[1600px] flex-col px-6 pt-32 pb-16 lg:px-12 lg:pt-44 lg:pb-24">
         <p className="editorial-kicker mb-6">{kicker}</p>
 
-        <h1 className="editorial-display text-[clamp(3rem,8vw,7.5rem)] leading-[0.92]">
+        <h1 className="editorial-display pb-2 text-[clamp(3rem,8vw,7.5rem)] leading-[1.05]">
           <span className="flex flex-wrap items-center gap-x-4 gap-y-2 text-white">
             {parts.map((part, idx) => {
               if (part.type === "text") {
