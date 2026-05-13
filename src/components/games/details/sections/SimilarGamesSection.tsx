@@ -12,7 +12,7 @@ import { useTranslations } from "next-intl";
 import { EditorialGameCard } from "@/components/games/EditorialGameCard";
 import { KickerLabel } from "@/components/shared/KickerLabel";
 import type { GameDetails, GameSummary } from "@/types/game";
-import { renderAccentSegments } from "../utils/render-accent-segments";
+import { accentRich } from "../utils/accent-rich";
 
 // Lazy load le hook de recommandations algo si besoin (cas sans similar_games).
 const AlgorithmicRecommendations = dynamic(
@@ -56,7 +56,7 @@ export function SimilarGamesSection({ game, locale }: SimilarGamesSectionProps) 
       <div className="editorial-game-detail-section-header">
         <div>
           <KickerLabel className="mb-3">13 — {tEd("sections.youMightAlsoLike")}</KickerLabel>
-          <h2>{renderAccentSegments(tEd("sections.similarTitle"))}</h2>
+          <h2>{tEd.rich("sections.similarTitle", accentRich)}</h2>
         </div>
       </div>
 

@@ -9,7 +9,7 @@
 import { useTranslations } from "next-intl";
 import { KickerLabel } from "@/components/shared/KickerLabel";
 import type { GameDetails } from "@/types/game";
-import { renderAccentSegments } from "../utils/render-accent-segments";
+import { accentRich } from "../utils/accent-rich";
 
 interface AboutSectionProps {
   game: GameDetails;
@@ -25,7 +25,7 @@ export function AboutSection({ game }: AboutSectionProps) {
       <div className="editorial-game-detail-section-grid">
         <div className="editorial-game-detail-section-heading">
           <KickerLabel className="mb-3">01 — {tEd("sections.about")}</KickerLabel>
-          <h2>{renderAccentSegments(tEd("sections.aboutTitle"))}</h2>
+          <h2>{tEd.rich("sections.aboutTitle", accentRich)}</h2>
         </div>
         <div className="editorial-game-detail-about-text">
           {game.description && (

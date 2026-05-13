@@ -10,7 +10,7 @@ import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
 import { KickerLabel } from "@/components/shared/KickerLabel";
 import type { GameDetails } from "@/types/game";
-import { renderAccentSegments } from "../utils/render-accent-segments";
+import { accentRich } from "../utils/accent-rich";
 
 const GameReviewsTab = dynamic(
   () => import("../../reviews/GameReviewsTab").then((m) => m.GameReviewsTab),
@@ -29,7 +29,7 @@ export function ReviewsSection({ game }: ReviewsSectionProps) {
       <div className="editorial-game-detail-section-header">
         <div>
           <KickerLabel className="mb-3">12 — {tEd("sections.communityVoice")}</KickerLabel>
-          <h2>{renderAccentSegments(tEd("sections.communityVoiceTitle"))}</h2>
+          <h2>{tEd.rich("sections.communityVoiceTitle", accentRich)}</h2>
         </div>
       </div>
       <GameReviewsTab gameId={game.id} gameTitle={game.title} accentColor={game.accentColor} />

@@ -13,7 +13,7 @@ import { Icon } from "@iconify/react";
 import { SpotlightCard } from "@/components/shared/SpotlightCard";
 import { KickerLabel } from "@/components/shared/KickerLabel";
 import type { GameDetails } from "@/types/game";
-import { renderAccentSegments } from "../utils/render-accent-segments";
+import { accentRich } from "../utils/accent-rich";
 
 interface MusicSectionProps {
   game: GameDetails;
@@ -48,7 +48,7 @@ export function MusicSection({ game }: MusicSectionProps) {
       <div className="editorial-game-detail-section-grid">
         <div className="editorial-game-detail-section-heading">
           <KickerLabel className="mb-3">09 — {tEd("sections.soundtrack")}</KickerLabel>
-          <h2>{renderAccentSegments(tEd("sections.soundtrackTitle"))}</h2>
+          <h2>{tEd.rich("sections.soundtrackTitle", accentRich)}</h2>
         </div>
         <div>
           <SpotlightCard className="editorial-game-detail-playtime-card">

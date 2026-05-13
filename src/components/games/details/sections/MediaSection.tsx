@@ -18,7 +18,7 @@ import { Icon } from "@iconify/react";
 import { SpotlightCard } from "@/components/shared/SpotlightCard";
 import { KickerLabel } from "@/components/shared/KickerLabel";
 import type { GameDetails } from "@/types/game";
-import { renderAccentSegments } from "../utils/render-accent-segments";
+import { accentRich } from "../utils/accent-rich";
 
 interface MediaSectionProps {
   game: GameDetails;
@@ -67,7 +67,7 @@ export function MediaSection({ game }: MediaSectionProps) {
       <div className="editorial-game-detail-section-header">
         <div>
           <KickerLabel className="mb-3">06 — {tEd("sections.media")}</KickerLabel>
-          <h2>{renderAccentSegments(tEd("sections.mediaTitle"))}</h2>
+          <h2>{tEd.rich("sections.mediaTitle", accentRich)}</h2>
         </div>
         <p className="editorial-game-detail-section-header-meta">
           {tEd("sections.mediaCount", {

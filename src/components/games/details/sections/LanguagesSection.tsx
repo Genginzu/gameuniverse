@@ -10,7 +10,7 @@ import { Icon } from "@iconify/react";
 import { SpotlightCard } from "@/components/shared/SpotlightCard";
 import { KickerLabel } from "@/components/shared/KickerLabel";
 import type { GameDetails } from "@/types/game";
-import { renderAccentSegments } from "../utils/render-accent-segments";
+import { accentRich } from "../utils/accent-rich";
 
 interface LanguagesSectionProps {
   game: GameDetails;
@@ -27,7 +27,7 @@ export function LanguagesSection({ game }: LanguagesSectionProps) {
       <div className="editorial-game-detail-section-grid">
         <div className="editorial-game-detail-section-heading">
           <KickerLabel className="mb-3">04 — {tEd("sections.languages")}</KickerLabel>
-          <h2>{renderAccentSegments(tEd("sections.languagesTitle"))}</h2>
+          <h2>{tEd.rich("sections.languagesTitle", accentRich)}</h2>
           <p className="editorial-game-detail-section-heading-meta">
             {tEd("sections.languagesSupported", { count: languages.length })}
           </p>

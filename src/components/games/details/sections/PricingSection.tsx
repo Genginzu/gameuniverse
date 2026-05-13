@@ -14,6 +14,7 @@ import { Icon } from "@iconify/react";
 import { SpotlightCard } from "@/components/shared/SpotlightCard";
 import { KickerLabel } from "@/components/shared/KickerLabel";
 import type { GameDetails } from "@/types/game";
+import { accentRich } from "../utils/accent-rich";
 
 interface PricingSectionProps {
   game: GameDetails;
@@ -30,20 +31,7 @@ export function PricingSection({ game, formatPrice }: PricingSectionProps) {
     <section className="editorial-game-detail-section editorial-game-detail-section--tight">
       <KickerLabel className="mb-3">10 — {tEd("sections.whereToBuy")}</KickerLabel>
       <h2 className="editorial-game-detail-bento-display editorial-game-detail-bento-display-md mb-10">
-        {tEd("sections.whereToBuyTitle")
-          .split("<accent>")
-          .map((part, i) => {
-            if (i === 0) return <span key={i}>{part}</span>;
-            const [accent, rest] = part.split("</accent>");
-            return (
-              <span key={i}>
-                <span className="accent" style={{ color: "rgb(var(--accent-rgb))" }}>
-                  {accent}
-                </span>
-                {rest}
-              </span>
-            );
-          })}
+        {tEd.rich("sections.whereToBuyTitle", accentRich)}
       </h2>
 
       <div className="editorial-game-detail-price-grid">
