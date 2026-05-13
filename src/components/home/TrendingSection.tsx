@@ -33,13 +33,18 @@ export function TrendingSection({ initialData }: TrendingSectionProps) {
   const t = useTranslations("landing.trending");
   const locale = useLocale();
 
-  const { data } = useSWR<HomeApiResponse>(`/api/home?locale=${locale}`, fetcher, {
-    fallbackData: initialData,
-    revalidateOnFocus: false,
-    dedupingInterval: 60000,
-  });
+  const { data, isLoading, isValidating } = useSWR<HomeApiResponse>(
+    `/api/home?locale=${locale}`,
+    fetcher,
+    {
+      fallbackData: initialData,
+      revalidateOnFocus: false,
+      dedupingInterval: 60000,
+    }
+  );
 
   const trending = (data?.trending ?? []).filter(Boolean).slice(0, 4);
+  const isFetching = isLoading || isValidating;
 
   return (
     <section className="editorial-home-section">
@@ -59,7 +64,17 @@ export function TrendingSection({ initialData }: TrendingSectionProps) {
         </div>
 
         {trending.length === 0 ? (
-          <div className="editorial-home-trending-empty">{t("empty")}</div>
+          <div className="editorial-home-trending-empty">
+            {isFetching ? (
+              <Icon
+                icon="mdi:loading"
+                className="size-6 animate-spin text-[color:var(--editorial-muted)]"
+                aria-label={t("kicker")}
+              />
+            ) : (
+              t("empty")
+            )}
+          </div>
         ) : (
           <div className="editorial-home-trending-grid">
             {trending.map((game, index) => (

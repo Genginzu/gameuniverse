@@ -3734,9 +3734,13 @@ label[for],
   border: 1px dashed var(--editorial-line);
   border-radius: 1rem;
   padding: 3rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   color: var(--editorial-muted);
   font-size: 0.875rem;
+  min-height: 6rem;
 }
 
 /* ── Stats row ─────────────────────────────────────────────────────── */
@@ -4082,9 +4086,13 @@ label[for],
   border: 1px dashed var(--editorial-line);
   border-radius: 1rem;
   padding: 2.5rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   color: var(--editorial-muted);
   font-size: 0.875rem;
+  min-height: 6rem;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -20,8 +20,6 @@ import Image from "next/image";
 import useSWR from "swr";
 
 import { EditorialGameCard } from "@/components/games/EditorialGameCard";
-import { GridSkeleton } from "@/components/shared/GridSkeleton";
-import { gameSkeletonConfig } from "@/components/shared/EntitySkeleton";
 import { KickerLabel } from "@/components/shared/KickerLabel";
 import { fetcher } from "@/lib/swr/fetcher";
 import { Link } from "@/i18n/navigation";
@@ -41,14 +39,19 @@ export function HomeDashboard({ initialData }: HomeDashboardProps) {
   const t = useTranslations("homeDashboard");
   const locale = useLocale();
 
-  const { data, isLoading } = useSWR<HomeApiResponse>(`/api/home?locale=${locale}`, fetcher, {
-    fallbackData: initialData,
-    revalidateOnFocus: false,
-    dedupingInterval: 60000,
-  });
+  const { data, isLoading, isValidating } = useSWR<HomeApiResponse>(
+    `/api/home?locale=${locale}`,
+    fetcher,
+    {
+      fallbackData: initialData,
+      revalidateOnFocus: false,
+      dedupingInterval: 60000,
+    }
+  );
 
   const trending = (data?.trending ?? []).filter(Boolean).slice(0, 6);
   const upcoming = (data?.upcoming ?? []).filter(Boolean).slice(0, 6);
+  const isFetching = isLoading || isValidating;
 
   return (
     <div className="editorial-home-dashboard">
@@ -72,14 +75,18 @@ export function HomeDashboard({ initialData }: HomeDashboardProps) {
             </Link>
           </div>
 
-          {isLoading && trending.length === 0 ? (
-            <GridSkeleton
-              count={6}
-              gridClassName="editorial-home-dashboard-grid"
-              skeletonConfig={gameSkeletonConfig}
-            />
-          ) : trending.length === 0 ? (
-            <div className="editorial-home-dashboard-empty">{t("noTrending")}</div>
+          {trending.length === 0 ? (
+            <div className="editorial-home-dashboard-empty">
+              {isFetching ? (
+                <Icon
+                  icon="mdi:loading"
+                  className="size-6 animate-spin text-[color:var(--editorial-muted)]"
+                  aria-label={t("trendingKicker")}
+                />
+              ) : (
+                t("noTrending")
+              )}
+            </div>
           ) : (
             <div className="editorial-home-dashboard-grid">
               {trending.map((game, index) => (
@@ -103,7 +110,17 @@ export function HomeDashboard({ initialData }: HomeDashboardProps) {
           </div>
 
           {upcoming.length === 0 ? (
-            <div className="editorial-home-dashboard-empty">{t("noUpcoming")}</div>
+            <div className="editorial-home-dashboard-empty">
+              {isFetching ? (
+                <Icon
+                  icon="mdi:loading"
+                  className="size-6 animate-spin text-[color:var(--editorial-muted)]"
+                  aria-label={t("upcomingKicker")}
+                />
+              ) : (
+                t("noUpcoming")
+              )}
+            </div>
           ) : (
             <ul className="editorial-home-dashboard-upcoming-list">
               {upcoming.map((game) => (
