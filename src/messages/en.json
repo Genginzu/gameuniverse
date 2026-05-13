@@ -1063,7 +1063,20 @@
     },
     "yourGames": "Your games ({count})",
     "loadingError": "Loading error",
-    "retry": "Retry"
+    "retry": "Retry",
+    "editorial": {
+      "kicker": "Library",
+      "titlePrefix": "Your",
+      "titleAccent": "collection",
+      "subtitle": "Your entire gaming world in one place. Filter, search, explore your titles.",
+      "stats": {
+        "games": "Games",
+        "completed": "Completed",
+        "playtime": "Hours played",
+        "rating": "Avg rating"
+      },
+      "searchPlaceholder": "Search your library…"
+    }
   },
   "games": {
     "heroTitle": "Discover",

@@ -1063,7 +1063,20 @@
     },
     "yourGames": "Vos jeux ({count})",
     "loadingError": "Erreur de chargement",
-    "retry": "Réessayer"
+    "retry": "Réessayer",
+    "editorial": {
+      "kicker": "Bibliothèque",
+      "titlePrefix": "Votre",
+      "titleAccent": "collection",
+      "subtitle": "Tout votre univers gaming en un seul endroit. Filtrez, recherchez, explorez vos titres.",
+      "stats": {
+        "games": "Jeux",
+        "completed": "Terminés",
+        "playtime": "Heures jouées",
+        "rating": "Note moyenne"
+      },
+      "searchPlaceholder": "Rechercher dans votre bibliothèque…"
+    }
   },
   "games": {
     "heroTitle": "Découvrez des Jeux",

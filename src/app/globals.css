@@ -38,6 +38,7 @@
 @import "./styles/editorial/home.css";
 @import "./styles/editorial/game-detail.css";
 @import "./styles/editorial/player-detail.css";
+@import "./styles/editorial/library.css";
 
 @custom-variant dark (&:is(.dark *));
 

@@ -69,8 +69,10 @@ class MockApiClient {
 }
 
 /**
- * Pure function that builds the API URL for fetching library games
- * This mirrors the logic in LibraryGamesContent.fetchLibraryGames
+ * Pure function that builds the API URL for fetching library games.
+ *
+ * Mirrors the logic in `useLibraryGames.buildGamesKey`
+ * (src/hooks/useLibraryGames.ts).
  */
 function buildLibraryGamesUrl(
   locale: string,

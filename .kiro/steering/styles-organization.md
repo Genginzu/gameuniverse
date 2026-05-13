@@ -38,7 +38,8 @@ src/app/
         ├── filters.css      # FilterChip, ActiveFilterChip, FilterSection editorial variants
         ├── home.css         # .editorial-home-* (P1-01)
         ├── game-detail.css  # .editorial-game-detail-* (P1-03)
-        └── player-detail.css # .editorial-player-detail-* (P2-01)
+        ├── player-detail.css # .editorial-player-detail-* (P2-01)
+        └── library.css      # .editorial-library-* (P2-02)
 ```
 
 ## Règles obligatoires
