@@ -18,7 +18,7 @@ interface AlgorithmicRecommendationsProps {
   locale: string;
 }
 
-const MAX_RECS = 8;
+const MAX_RECS = 10;
 
 function toGameSummary(rec: GameRecommendation): GameSummary {
   return {
@@ -42,7 +42,7 @@ export function AlgorithmicRecommendations({ gameSlug }: AlgorithmicRecommendati
   if (loading) {
     return (
       <div className="editorial-game-detail-similar-grid">
-        {Array.from({ length: 4 }).map((_, i) => (
+        {Array.from({ length: 5 }).map((_, i) => (
           <GameCardSkeleton key={i} />
         ))}
       </div>

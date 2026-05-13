@@ -1081,6 +1081,12 @@
   }
 }
 
+@media (min-width: 1280px) {
+  .editorial-game-detail-similar-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
 /* ===== Common helpers ===== */
 .editorial-game-detail-section-header {
   display: flex;

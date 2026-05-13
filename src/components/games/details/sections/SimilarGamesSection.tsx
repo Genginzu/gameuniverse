@@ -25,7 +25,7 @@ interface SimilarGamesSectionProps {
   locale: string;
 }
 
-const MAX_SIMILAR = 8;
+const MAX_SIMILAR = 10;
 
 function toGameSummary(s: NonNullable<GameDetails["similarGames"]>[number]): GameSummary | null {
   if (!s.game) return null;
