@@ -530,14 +530,14 @@ textarea:focus-visible,
   font-family: var(--font-display, "Tomorrow"), system-ui, sans-serif;
   font-weight: 700;
   letter-spacing: -0.02em;
-  line-height: 0.95;
+  line-height: 1.05;
 }
 
 .editorial-display-light {
   font-family: var(--font-display, "Tomorrow"), system-ui, sans-serif;
   font-weight: 300;
   letter-spacing: -0.02em;
-  line-height: 0.95;
+  line-height: 1.05;
 }
 
 .editorial-kicker {
