@@ -1,0 +1,62 @@
+﻿/* Neon utility classes (glow / border / text / focus / button). Voir docs/setup/styles-organization.md */
+
+/* ===== Neon Utility Classes ===== */
+
+/* Neon glow — box-shadow violet/cyan */
+.neon-glow {
+  box-shadow:
+    0 0 15px rgba(var(--neon-primary), var(--neon-glow-opacity)),
+    0 0 30px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.5));
+  transition: box-shadow 200ms ease;
+}
+
+/* Neon border — gradient violet→cyan via pseudo-element */
+.neon-border {
+  position: relative;
+  border: 2px solid rgba(var(--neon-primary), var(--neon-border-opacity));
+  transition: border-color 200ms ease;
+}
+
+/* Neon text — text-shadow glow for h1 titles */
+.neon-text {
+  text-shadow:
+    0 0 10px rgba(var(--neon-primary), var(--neon-glow-opacity)),
+    0 0 20px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.5));
+}
+
+/* Neon focus — accessible violet focus ring */
+.neon-focus:focus-visible {
+  outline: 2px solid rgb(var(--neon-primary));
+  outline-offset: 3px;
+  transition: outline-color 200ms ease;
+}
+
+/* Global neon focus on all interactive elements (Req 8.3) */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid rgb(var(--neon-primary));
+  outline-offset: 3px;
+  transition: outline-color 200ms ease;
+}
+
+/* Neon button — luminous border + glow on hover */
+.neon-btn {
+  border: 1px solid rgba(var(--neon-primary), var(--neon-border-opacity));
+  box-shadow: 0 0 8px rgba(var(--neon-primary), calc(var(--neon-glow-opacity) * 0.5));
+  transition:
+    box-shadow 200ms ease,
+    border-color 200ms ease;
+}
+
+.neon-btn:hover {
+  border-color: rgba(var(--neon-primary), calc(var(--neon-border-opacity) * 1.5));
+  box-shadow:
+    0 0 15px rgba(var(--neon-primary), var(--neon-glow-opacity)),
+    0 0 30px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.5));
+}
+

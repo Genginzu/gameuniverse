@@ -1,0 +1,160 @@
+﻿/* Editorial : SpotlightCard, typographies, scanlines, hero, marquee. Voir docs/setup/styles-organization.md */
+
+/* ===== Editorial Components ===== */
+
+/*
+ * SpotlightCard — halo lumineux qui suit le curseur.
+ * Le composant React met à jour --spotlight-mx / --spotlight-my via mousemove.
+ * --spotlight-glow accepte un override par carte (triplet RGB), sinon utilise
+ * la couleur primaire neon du thème.
+ *
+ * Pas de backdrop-blur : variante editoriale, voir docs/design/editorial-refonte-plan.md
+ */
+.spotlight-card {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 1.5rem;
+  border: 1px solid var(--editorial-line);
+  background:
+    radial-gradient(
+      600px circle at var(--spotlight-mx, 50%) var(--spotlight-my, 50%),
+      rgba(var(--spotlight-glow, var(--neon-primary)), 0.12),
+      transparent 40%
+    ),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
+  transition: border-color 300ms ease;
+}
+
+.spotlight-card:hover {
+  border-color: rgba(var(--spotlight-glow, var(--neon-primary)), 0.35);
+}
+
+.spotlight-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(
+    400px circle at var(--spotlight-mx, 50%) var(--spotlight-my, 50%),
+    rgba(var(--spotlight-glow, var(--neon-primary)), 0.4),
+    transparent 50%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.spotlight-card:hover::before {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spotlight-card,
+  .spotlight-card::before {
+    transition: none;
+  }
+}
+
+/*
+ * Typographies éditoriales — kicker mono + display Tomorrow.
+ * Utilisées par les composants partagés EditorialHero, KickerLabel, StatXL,
+ * et n'importe quel titre de page.
+ */
+.editorial-display {
+  font-family: var(--font-display, "Tomorrow"), system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+.editorial-display-light {
+  font-family: var(--font-display, "Tomorrow"), system-ui, sans-serif;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+
+.editorial-kicker {
+  font-family:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--editorial-muted, #a89dbf);
+}
+
+.editorial-divider {
+  height: 1px;
+  background: rgb(var(--neon-secondary));
+}
+
+/*
+ * Scanlines — superposition subtile sur les hero images plein cadre.
+ * Pas de backdrop-blur, juste un repeating-linear-gradient en mix-blend-mode.
+ */
+.editorial-scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    180deg,
+    transparent,
+    transparent 3px,
+    rgba(0, 0, 0, 0.06) 3px,
+    rgba(0, 0, 0, 0.06) 4px
+  );
+  mix-blend-mode: overlay;
+  opacity: 0.5;
+}
+
+/*
+ * Hero éditorial : conteneur de section avec hauteur min responsive et
+ * débordement caché. Le gradient et l'image sont gérés par le composant.
+ */
+.editorial-hero {
+  position: relative;
+  min-height: 640px;
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .editorial-hero {
+    min-height: 720px;
+  }
+}
+
+/*
+ * Marquee : défilement infini horizontal. Le composant React duplique le
+ * contenu pour boucler sans saut visuel.
+ */
+.marquee {
+  display: flex;
+  gap: 4rem;
+  animation: marquee-scroll 30s linear infinite;
+  white-space: nowrap;
+  will-change: transform;
+}
+
+@keyframes marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    animation: none;
+  }
+}
+

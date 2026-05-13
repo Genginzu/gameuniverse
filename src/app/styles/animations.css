@@ -1,0 +1,188 @@
+﻿/* Animations + utilitaires legacy (pulse, slide, fade, scale, shimmer, float, hover-lift, glow-effect). Voir docs/setup/styles-organization.md */
+
+/* Animation pulse ralentie pour un effet de chargement plus doux */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Animations modernes pour les pages de jeux */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Floating animation for hero orbs */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-30px) scale(1.05);
+  }
+}
+
+/* Classes utilitaires pour les animations */
+.animate-slide-in-up {
+  animation: slideInUp 0.6s ease-out;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-out;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Page entry animation — fade-in combined with slide-up (Req 8.1) */
+.animate-page-enter {
+  animation:
+    fadeIn 0.3s ease-out,
+    slideInUp 0.3s ease-out;
+}
+
+/* Effets de survol modernes */
+.hover-lift {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.3),
+    0 10px 10px -5px rgba(0, 0, 0, 0.1);
+}
+
+/* Effets de glow personnalisés */
+.glow-effect {
+  position: relative;
+}
+
+.glow-effect::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+
+/* Styles pour les états de focus améliorés */
+.focus-visible:focus {
+  outline: 2px solid var(--color-palette-primary-500);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* Responsive design amélioré */
+@media (max-width: 768px) {
+  .game-hero-title {
+    font-size: 2rem;
+    line-height: 1.1;
+  }
+}
+
+/* Amélioration de l'accessibilité */
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse,
+  .animate-slide-in-up,
+  .animate-fade-in,
+  .animate-scale-in,
+  .animate-shimmer,
+  .animate-page-enter,
+  .dashboard-bg,
+  .landing-grid-bg {
+    animation: none;
+  }
+
+  /* Disable float animation on orbs */
+  [class*="animate-\\[float"] {
+    animation: none;
+  }
+
+  .hover-lift {
+    transition: none;
+  }
+
+  /* Neon utility classes — disable transitions */
+  .neon-glow {
+    transition: none;
+  }
+
+  .neon-border {
+    transition: none;
+  }
+
+  .neon-btn {
+    transition: none;
+  }
+
+  .neon-btn:hover {
+    box-shadow: none;
+  }
+
+  /* Glass classes — disable transitions */
+  .glass,
+  .glass-card,
+  .glass-header,
+  .glass-dropdown,
+  .glass-input {
+    transition: none;
+  }
+}

@@ -1,0 +1,138 @@
+﻿/* Editorial filters (FilterSection, FilterChip, ActiveFilterChip, clear). Voir docs/setup/styles-organization.md */
+
+/*
+ * Editorial Filters (FilterSection, FilterChip, ActiveFilterChip).
+ *
+ * Section : surface sombre `--editorial-bg-2`, bordure `--editorial-line`,
+ * coins arrondis 1rem.
+ *
+ * Chip : pill transparent avec bordure fine, hover/selected en accent
+ * dynamique. Pas de gradient (FilterChip "default" en a un, on garde ça
+ * pour le legacy uniquement).
+ *
+ * ActiveChip : badge avec accent dynamique en surbrillance, bouton ╳ pour
+ * retirer le filtre.
+ */
+.editorial-filter-section {
+  border-radius: 1rem;
+  padding: 1rem;
+  background: var(--editorial-bg-2);
+  border: 1px solid var(--editorial-line);
+}
+
+.editorial-filter-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.editorial-filter-section-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.editorial-filter-section-available {
+  font-size: 0.75rem;
+  color: var(--editorial-muted);
+}
+
+.editorial-filter-section-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+/* Chip de filtre (sélectionnable). */
+.editorial-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--editorial-muted);
+  background: transparent;
+  border: 1px solid var(--editorial-line);
+  cursor: pointer;
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease,
+    color 200ms ease;
+}
+
+@media (min-width: 640px) {
+  .editorial-filter-chip {
+    padding: 0.375rem 0.75rem;
+  }
+}
+
+.editorial-filter-chip:hover:not(.is-selected) {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.editorial-filter-chip.is-selected {
+  color: #fff;
+  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.18);
+  border-color: rgba(var(--accent-rgb, var(--neon-primary)), 0.55);
+}
+
+.editorial-filter-chip-count {
+  opacity: 0.7;
+}
+
+/* Chip de filtre actif (avec ╳). */
+.editorial-active-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.375rem 0.625rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.12);
+  border: 1px solid rgba(var(--accent-rgb, var(--neon-primary)), 0.35);
+  cursor: pointer;
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease;
+}
+
+.editorial-active-filter-chip:hover {
+  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.2);
+  border-color: rgba(var(--accent-rgb, var(--neon-primary)), 0.55);
+}
+
+/* Bouton "Effacer tout" en accent rouge subtil. */
+.editorial-filter-clear {
+  flex-shrink: 0;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #f87171;
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition:
+    background-color 200ms ease,
+    color 200ms ease;
+}
+
+.editorial-filter-clear:hover {
+  color: #fca5a5;
+  background: rgba(248, 113, 113, 0.1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editorial-filter-chip,
+  .editorial-active-filter-chip,
+  .editorial-filter-clear {
+    transition: none;
+  }
+}
