@@ -37,7 +37,8 @@ src/app/
         ├── sort-menu.css    # .editorial-sort-menu-*
         ├── filters.css      # FilterChip, ActiveFilterChip, FilterSection editorial variants
         ├── home.css         # .editorial-home-* (P1-01)
-        └── game-detail.css  # .editorial-game-detail-* (P1-03)
+        ├── game-detail.css  # .editorial-game-detail-* (P1-03)
+        └── player-detail.css # .editorial-player-detail-* (P2-01)
 ```
 
 ## Règles obligatoires

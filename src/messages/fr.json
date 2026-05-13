@@ -736,6 +736,39 @@
         "posts": "Posts",
         "friends": "Amis",
         "comments": "Commentaires"
+      },
+      "editorial": {
+        "kicker": "Profil joueur · Niv. {level}",
+        "kickerNoLevel": "Profil joueur",
+        "rankBadge": "◆ Niv. {level}",
+        "inGame": "En jeu",
+        "online": "En ligne",
+        "stats": {
+          "games": "Jeux",
+          "completed": "Terminés",
+          "playtime": "Heures",
+          "rating": "Note moyenne",
+          "trophies": "Trophées"
+        },
+        "bento": {
+          "recentTitle": "Bibliothèque récente",
+          "recentKicker": "Récemment ajoutés",
+          "recentLink": "Voir la bibliothèque",
+          "recentEmpty": "Aucun jeu récent.",
+          "achievementsTitle": "Derniers",
+          "achievementsKicker": "Succès",
+          "achievementsEmpty": "Aucun succès débloqué.",
+          "winRateKicker": "Note moyenne",
+          "winRateHelper": "Sur les {count} avis publiés.",
+          "winRateNoData": "Pas encore d'avis publié.",
+          "postKicker": "Dernier post",
+          "postEmpty": "Aucun post pour le moment.",
+          "postHours": "il y a {hours}h",
+          "postDays": "il y a {days}j",
+          "friendsKicker": "Amis",
+          "friendsHelper": "{count, plural, =0 {Aucun ami} =1 {1 ami} other {# amis}}",
+          "noTagline": "« Joueur de la communauté Gamers Universe. »"
+        }
       }
     },
     "tabs": {
