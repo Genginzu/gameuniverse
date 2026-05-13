@@ -84,57 +84,81 @@
     "esportPredictions": "Pronostics"
   },
   "landing": {
-    "title": "Votre univers",
-    "titleHighlight": "gaming",
-    "titleEnd": "commence ici",
-    "subtitle": "Explorez des milliers de jeux, découvrez des personnages iconiques et rejoignez une communauté de passionnés",
-    "cta": {
-      "signup": "Commencer gratuitement",
-      "explore": "Explorer les jeux",
-      "login": "Se connecter",
-      "title": "Prêt à rejoindre l'aventure ?",
-      "subtitle": "Rejoignez des milliers de gamers qui utilisent déjà Gamers Universe pour découvrir leurs prochains jeux favoris"
+    "hero": {
+      "kicker": "ÉDITION 2026 · UNIVERS GAMING",
+      "titlePart1": "Votre",
+      "titlePart2": "univers",
+      "titlePart3": "gaming",
+      "titlePart4": "commence ici",
+      "imageAlt": "Cover du jeu en avant",
+      "description": "Explorez des milliers de jeux, suivez les personnages emblématiques et rejoignez une communauté de passionnés sans filtre.",
+      "ctaSignup": "Commencer gratuitement",
+      "ctaExplore": "Explorer les jeux",
+      "fallbackBackgroundAlt": "Univers gaming Gamers Universe"
+    },
+    "marquee": {
+      "trending": "Trending now",
+      "esport": "Esport · Live",
+      "characters": "Personnages",
+      "reviews": "Reviews communauté",
+      "coaching": "Coaching",
+      "library": "Bibliothèque"
     },
     "features": {
-      "mainTitle": "Tout pour les gamers",
-      "mainSubtitle": "Une plateforme pensée pour enrichir votre expérience gaming",
-      "library": {
-        "title": "Bibliothèque immense",
-        "description": "Des milliers de jeux avec fiches détaillées, notes, médias et prix comparés"
-      },
-      "characters": {
-        "title": "Personnages iconiques",
-        "description": "Explorez les héros et vilains de vos jeux préférés avec leurs biographies complètes"
-      },
-      "community": {
-        "title": "Communauté active",
-        "description": "Partagez vos avis, créez des collections et connectez-vous avec d'autres joueurs"
-      },
-      "search": {
-        "title": "Recherche avancée",
-        "description": "Trouvez facilement vos jeux préférés grâce à notre système de recherche et filtres"
-      },
-      "tracking": {
-        "title": "Suivi de collection",
-        "description": "Gérez votre bibliothèque, suivez votre temps de jeu et vos progressions"
-      },
-      "reviews": {
-        "title": "Avis détaillés",
-        "description": "Rédigez et consultez des avis complets avec points positifs et négatifs"
+      "kicker": "CE QUE GAMERS UNIVERSE FAIT",
+      "title": "Tout l'univers du jeu",
+      "titleAccent": "en un seul endroit",
+      "description": "Six piliers pensés pour les passionnés : du suivi de collection à la communauté, en passant par l'esport et les personnages iconiques.",
+      "items": {
+        "library": {
+          "title": "Bibliothèque immense",
+          "description": "Des milliers de jeux avec fiches détaillées, notes, médias et prix comparés."
+        },
+        "characters": {
+          "title": "Personnages iconiques",
+          "description": "Explorez les héros et vilains de vos jeux préférés avec leurs biographies complètes."
+        },
+        "community": {
+          "title": "Communauté active",
+          "description": "Partagez vos avis, créez des collections et connectez-vous avec d'autres joueurs."
+        },
+        "search": {
+          "title": "Recherche avancée",
+          "description": "Trouvez facilement vos jeux préférés grâce à un moteur de recherche pensé pour le gaming."
+        },
+        "tracking": {
+          "title": "Suivi de collection",
+          "description": "Gérez votre bibliothèque, suivez votre temps de jeu et vos progressions."
+        },
+        "reviews": {
+          "title": "Avis détaillés",
+          "description": "Rédigez et consultez des avis complets avec points positifs et négatifs."
+        }
       }
     },
-    "recentGames": {
-      "title": "Derniers jeux ajoutés",
-      "subtitle": "Les dernières pépites ajoutées à notre catalogue",
-      "viewAll": "Voir tous les jeux"
+    "trending": {
+      "kicker": "TENDANCES DU MOMENT",
+      "title": "Les jeux qui",
+      "titleAccent": "font vibrer la communauté",
+      "viewAll": "Voir toutes les tendances",
+      "empty": "Aucun jeu tendance pour le moment."
     },
     "stats": {
-      "title": "Une communauté qui grandit",
-      "subtitle": "Des chiffres qui parlent d'eux-mêmes",
-      "gamesReferenced": "Jeux référencés",
-      "characters": "Personnages",
-      "players": "Joueurs actifs",
-      "reviews": "Avis publiés"
+      "kicker": "UNE COMMUNAUTÉ QUI GRANDIT",
+      "title": "Des chiffres qui",
+      "titleAccent": "parlent d'eux-mêmes",
+      "gamesReferenced": "JEUX RÉFÉRENCÉS",
+      "characters": "PERSONNAGES",
+      "players": "JOUEURS ACTIFS",
+      "reviews": "AVIS PUBLIÉS"
+    },
+    "cta": {
+      "kicker": "PRÊT À EMBARQUER ?",
+      "title": "Rejoignez l'univers",
+      "titleAccent": "Gamers Universe",
+      "description": "Des milliers de joueurs explorent déjà leurs prochains coups de cœur. Créez votre compte en moins d'une minute, gardez la trace de vos jeux et discutez avec la communauté.",
+      "signup": "Commencer gratuitement",
+      "login": "J'ai déjà un compte"
     }
   },
   "library": {
@@ -3739,13 +3763,17 @@
     "empty": "Aucune sortie prévue pour cette période."
   },
   "homeDashboard": {
+    "kicker": "TABLEAU DE BORD",
     "title": "Bienvenue",
     "subtitle": "Votre tableau de bord gaming",
     "trending": "Jeux tendances",
+    "trendingKicker": "TENDANCES",
     "seeAllTrending": "Voir toutes les tendances",
     "upcoming": "Sorties du mois",
+    "upcomingKicker": "SORTIES À VENIR",
     "seeAllUpcoming": "Toutes les prochaines sorties",
-    "noUpcoming": "Aucune sortie prévue ce mois-ci."
+    "noUpcoming": "Aucune sortie prévue ce mois-ci.",
+    "noTrending": "Aucun jeu tendance pour le moment."
   },
   "coaching": {
     "settings": {

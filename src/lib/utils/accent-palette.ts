@@ -173,10 +173,7 @@ const LIGHTNESS_TARGETS: Record<keyof AccentScale, number> = {
  * @param hex Format `#rgb`, `#rrggbb`, `rgb`, ou `rrggbb`.
  * @param name Identifiant optionnel (debug). Défaut : `"custom"`.
  */
-export function paletteFromHex(
-  hex: string | null | undefined,
-  name = "custom"
-): AccentPalette {
+export function paletteFromHex(hex: string | null | undefined, name = "custom"): AccentPalette {
   if (!hex || typeof hex !== "string") return DEFAULT_PALETTE;
 
   const rgb = parseHex(hex);
@@ -185,7 +182,7 @@ export function paletteFromHex(
   const [h, s] = rgbToHsl(rgb);
 
   const scale = {} as AccentScale;
-  (Object.keys(LIGHTNESS_TARGETS) as Array<keyof AccentScale>).forEach((key) => {
+  (Object.keys(LIGHTNESS_TARGETS) as unknown as Array<keyof AccentScale>).forEach((key) => {
     const targetL = LIGHTNESS_TARGETS[key];
     const rgbForKey = hslToRgb(h, s, targetL);
     scale[key] = rgbToHexString(rgbForKey);
@@ -280,10 +277,5 @@ function hueToChannel(p: number, q: number, t: number): number {
 
 function rgbToHexString([r, g, b]: Rgb): string {
   const clamp = (v: number) => Math.max(0, Math.min(255, v));
-  return (
-    "#" +
-    [clamp(r), clamp(g), clamp(b)]
-      .map((v) => v.toString(16).padStart(2, "0"))
-      .join("")
-  );
+  return "#" + [clamp(r), clamp(g), clamp(b)].map((v) => v.toString(16).padStart(2, "0")).join("");
 }

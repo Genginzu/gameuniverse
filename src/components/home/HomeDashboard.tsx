@@ -1,150 +1,155 @@
 "use client";
 
-import { useTranslations, useLocale } from "next-intl";
+/**
+ * HomeDashboard : page d'accueil pour les utilisateurs connectés.
+ *
+ * Refonte éditoriale :
+ *   - Header sobre (kicker + titre display)
+ *   - Section Trending : grille `EditorialGameCard`
+ *   - Section Upcoming : liste éditoriale (cover + titre + date)
+ *
+ * Pas de glassmorphism, surfaces sombres `--editorial-bg-*`, accent
+ * dynamique disponible via `--accent-rgb` (fallback `--neon-primary`).
+ *
+ * Voir docs/design/editorial-refonte-plan.md.
+ */
+
+import { useLocale, useTranslations } from "next-intl";
+import { Icon } from "@iconify/react";
+import Image from "next/image";
 import useSWR from "swr";
-import { fetcher } from "@/lib/swr/fetcher";
-import { EntityCard, gameCardConfig } from "@/components/shared";
+
+import { EditorialGameCard } from "@/components/games/EditorialGameCard";
 import { GridSkeleton } from "@/components/shared/GridSkeleton";
 import { gameSkeletonConfig } from "@/components/shared/EntitySkeleton";
+import { KickerLabel } from "@/components/shared/KickerLabel";
+import { fetcher } from "@/lib/swr/fetcher";
 import { Link } from "@/i18n/navigation";
-import { Icon } from "@iconify/react";
 import type { GameSummary } from "@/types/game";
 
-interface HomeData {
+interface HomeApiResponse {
   trending: GameSummary[];
   upcoming: GameSummary[];
 }
 
-export function HomeDashboard() {
+interface HomeDashboardProps {
+  /** Données initiales hydratées server-side via ISR. */
+  initialData?: HomeApiResponse;
+}
+
+export function HomeDashboard({ initialData }: HomeDashboardProps) {
   const t = useTranslations("homeDashboard");
   const locale = useLocale();
 
-  const { data, isLoading } = useSWR<HomeData>(`/api/home?locale=${locale}`, fetcher, {
+  const { data, isLoading } = useSWR<HomeApiResponse>(`/api/home?locale=${locale}`, fetcher, {
+    fallbackData: initialData,
     revalidateOnFocus: false,
     dedupingInterval: 60000,
   });
 
+  const trending = (data?.trending ?? []).filter(Boolean).slice(0, 6);
+  const upcoming = (data?.upcoming ?? []).filter(Boolean).slice(0, 6);
+
   return (
-    <div className="space-y-8 p-4 md:space-y-10 md:p-6 lg:p-8">
-      <div>
-        <h1 className="text-xl font-bold text-gray-900 sm:text-2xl lg:text-3xl dark:text-white">
-          {t("title")}
-        </h1>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{t("subtitle")}</p>
+    <div className="editorial-home-dashboard">
+      <div className="editorial-home-dashboard-inner">
+        <header className="editorial-home-dashboard-hello">
+          <KickerLabel>{t("kicker")}</KickerLabel>
+          <h1 className="editorial-home-dashboard-hello-title">{t("title")}</h1>
+          <p className="editorial-home-dashboard-hello-subtitle">{t("subtitle")}</p>
+        </header>
+
+        {/* Trending */}
+        <section className="editorial-home-dashboard-block">
+          <div className="editorial-home-dashboard-block-header">
+            <div className="editorial-home-dashboard-block-titles">
+              <KickerLabel>{t("trendingKicker")}</KickerLabel>
+              <h2 className="editorial-home-dashboard-block-title">{t("trending")}</h2>
+            </div>
+            <Link href="/trending" className="editorial-home-trending-link">
+              {t("seeAllTrending")}
+              <Icon icon="mdi:arrow-top-right" className="size-4" aria-hidden />
+            </Link>
+          </div>
+
+          {isLoading && trending.length === 0 ? (
+            <GridSkeleton
+              count={6}
+              gridClassName="editorial-home-dashboard-grid"
+              skeletonConfig={gameSkeletonConfig}
+            />
+          ) : trending.length === 0 ? (
+            <div className="editorial-home-dashboard-empty">{t("noTrending")}</div>
+          ) : (
+            <div className="editorial-home-dashboard-grid">
+              {trending.map((game, index) => (
+                <EditorialGameCard key={game.id} game={game} priority={index < 3} />
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* Upcoming */}
+        <section className="editorial-home-dashboard-block">
+          <div className="editorial-home-dashboard-block-header">
+            <div className="editorial-home-dashboard-block-titles">
+              <KickerLabel>{t("upcomingKicker")}</KickerLabel>
+              <h2 className="editorial-home-dashboard-block-title">{t("upcoming")}</h2>
+            </div>
+            <Link href="/upcoming" className="editorial-home-trending-link">
+              {t("seeAllUpcoming")}
+              <Icon icon="mdi:arrow-top-right" className="size-4" aria-hidden />
+            </Link>
+          </div>
+
+          {upcoming.length === 0 ? (
+            <div className="editorial-home-dashboard-empty">{t("noUpcoming")}</div>
+          ) : (
+            <ul className="editorial-home-dashboard-upcoming-list">
+              {upcoming.map((game) => (
+                <li key={game.id}>
+                  <Link
+                    href={`/games/${game.slug}`}
+                    className="editorial-home-dashboard-upcoming-item"
+                  >
+                    <span className="editorial-home-dashboard-upcoming-cover">
+                      {game.coverImage ? (
+                        <Image
+                          src={game.coverImage}
+                          alt=""
+                          width={36}
+                          height={48}
+                          loading="lazy"
+                          className="size-full object-cover"
+                        />
+                      ) : (
+                        <Icon
+                          icon="lucide:gamepad-2"
+                          className="size-4 text-white/40"
+                          aria-hidden
+                        />
+                      )}
+                    </span>
+                    <span className="editorial-home-dashboard-upcoming-meta">
+                      <span className="editorial-home-dashboard-upcoming-title">{game.title}</span>
+                      <span className="editorial-home-dashboard-upcoming-date">
+                        {game.releaseDate
+                          ? new Date(game.releaseDate).toLocaleDateString(locale, {
+                              day: "numeric",
+                              month: "short",
+                              year: "numeric",
+                            })
+                          : "—"}
+                      </span>
+                    </span>
+                    <Icon icon="mdi:arrow-top-right" className="size-4 text-white/40" aria-hidden />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
       </div>
-
-      {/* Trending section */}
-      <section className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="from-palette-secondary-500/20 to-palette-primary-500/20 flex size-10 items-center justify-center rounded-xl bg-linear-to-br">
-              <Icon icon="lucide:flame" className="text-palette-secondary-400 size-5" />
-            </div>
-            <h2 className="text-lg font-bold text-gray-900 sm:text-xl dark:text-white">
-              {t("trending")}
-            </h2>
-          </div>
-          <Link
-            href="/trending"
-            className="from-palette-secondary-500 to-palette-primary-500 flex items-center gap-1.5 rounded-lg bg-linear-to-r px-4 py-2 text-xs font-medium text-white transition-opacity hover:opacity-90 sm:text-sm"
-          >
-            {t("seeAllTrending")}
-            <Icon icon="lucide:arrow-right" className="size-4" />
-          </Link>
-        </div>
-        {isLoading ? (
-          <GridSkeleton
-            count={6}
-            gridClassName="grid-cols-2 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-6"
-            skeletonConfig={gameSkeletonConfig}
-          />
-        ) : (
-          <div className="xs:grid-cols-3 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-6">
-            {data?.trending.filter(Boolean).map((game) => (
-              <EntityCard key={game.id} entity={game} config={gameCardConfig} />
-            ))}
-          </div>
-        )}
-      </section>
-
-      {/* Upcoming section */}
-      <section className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="from-palette-secondary-500/20 to-palette-primary-500/20 flex size-10 items-center justify-center rounded-xl bg-linear-to-br">
-              <Icon icon="lucide:calendar" className="text-palette-secondary-400 size-5" />
-            </div>
-            <h2 className="text-lg font-bold text-gray-900 sm:text-xl dark:text-white">
-              {t("upcoming")}
-            </h2>
-          </div>
-          <Link
-            href="/upcoming"
-            className="from-palette-secondary-500 to-palette-primary-500 flex items-center gap-1.5 rounded-lg bg-linear-to-r px-4 py-2 text-xs font-medium text-white transition-opacity hover:opacity-90 sm:text-sm"
-          >
-            {t("seeAllUpcoming")}
-            <Icon icon="lucide:arrow-right" className="size-4" />
-          </Link>
-        </div>
-        {isLoading ? (
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <div
-                key={i}
-                className="flex animate-pulse items-center gap-3 rounded-xl bg-white/40 p-3 dark:bg-slate-800/50"
-              >
-                <div className="h-12 w-9 shrink-0 rounded-lg bg-gray-200 dark:bg-gray-700" />
-                <div className="flex-1 space-y-1.5">
-                  <div className="h-4 w-32 rounded bg-gray-200 dark:bg-gray-700" />
-                  <div className="h-3 w-20 rounded bg-gray-200 dark:bg-gray-700" />
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : data?.upcoming.length === 0 ? (
-          <div className="glass-card flex flex-col items-center justify-center rounded-xl p-8 text-center">
-            <Icon icon="lucide:calendar-x" className="mb-3 size-10 text-gray-400" />
-            <p className="text-sm text-gray-500 dark:text-gray-400">{t("noUpcoming")}</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
-            {data?.upcoming.filter(Boolean).map((game) => (
-              <Link
-                key={game.id}
-                href={`/games/${game.slug}`}
-                className="flex items-center gap-3 rounded-xl bg-white/40 p-3 transition-all hover:bg-white/60 dark:bg-slate-800/50 dark:hover:bg-slate-700/60"
-              >
-                {game.coverImage ? (
-                  <img
-                    src={game.coverImage}
-                    alt={game.title}
-                    className="h-12 w-9 shrink-0 rounded-lg object-cover"
-                  />
-                ) : (
-                  <div className="flex h-12 w-9 shrink-0 items-center justify-center rounded-lg bg-gray-200 dark:bg-gray-700">
-                    <Icon icon="lucide:gamepad-2" className="size-4 text-gray-400" />
-                  </div>
-                )}
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
-                    {game.title}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {game.releaseDate
-                      ? new Date(game.releaseDate).toLocaleDateString(locale, {
-                          day: "numeric",
-                          month: "long",
-                          year: "numeric",
-                        })
-                      : "—"}
-                  </p>
-                </div>
-                <Icon icon="lucide:chevron-right" className="size-4 shrink-0 text-gray-400" />
-              </Link>
-            ))}
-          </div>
-        )}
-      </section>
     </div>
   );
 }

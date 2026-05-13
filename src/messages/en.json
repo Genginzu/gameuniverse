@@ -84,57 +84,81 @@
     "esportPredictions": "Predictions"
   },
   "landing": {
-    "title": "Your",
-    "titleHighlight": "gaming",
-    "titleEnd": "universe starts here",
-    "subtitle": "Explore thousands of games, discover iconic characters and join a community of passionate gamers",
-    "cta": {
-      "signup": "Get started for free",
-      "explore": "Explore games",
-      "login": "Sign in",
-      "title": "Ready to join the adventure?",
-      "subtitle": "Join thousands of gamers already using Gamers Universe to discover their next favorite games"
+    "hero": {
+      "kicker": "EDITION 2026 · GAMING UNIVERSE",
+      "titlePart1": "Your",
+      "titlePart2": "gaming",
+      "titlePart3": "universe",
+      "titlePart4": "starts here",
+      "imageAlt": "Featured game cover",
+      "description": "Explore thousands of games, follow iconic characters and join an unfiltered community of passionate players.",
+      "ctaSignup": "Get started for free",
+      "ctaExplore": "Explore games",
+      "fallbackBackgroundAlt": "Gamers Universe gaming world"
+    },
+    "marquee": {
+      "trending": "Trending now",
+      "esport": "Esport · Live",
+      "characters": "Characters",
+      "reviews": "Community reviews",
+      "coaching": "Coaching",
+      "library": "Library"
     },
     "features": {
-      "mainTitle": "Everything for gamers",
-      "mainSubtitle": "A platform designed to enrich your gaming experience",
-      "library": {
-        "title": "Massive library",
-        "description": "Thousands of games with detailed info, ratings, media and price comparisons"
-      },
-      "characters": {
-        "title": "Iconic characters",
-        "description": "Explore the heroes and villains of your favorite games with full biographies"
-      },
-      "community": {
-        "title": "Active community",
-        "description": "Share your reviews, create collections and connect with other players"
-      },
-      "search": {
-        "title": "Advanced search",
-        "description": "Easily find your favorite games with our powerful search and filter system"
-      },
-      "tracking": {
-        "title": "Collection tracking",
-        "description": "Manage your library, track your playtime and progress"
-      },
-      "reviews": {
-        "title": "Detailed reviews",
-        "description": "Write and read comprehensive reviews with pros and cons"
+      "kicker": "WHAT GAMERS UNIVERSE DELIVERS",
+      "title": "The whole gaming world",
+      "titleAccent": "in one place",
+      "description": "Six pillars built for passionate players: from collection tracking to community, esport and iconic characters.",
+      "items": {
+        "library": {
+          "title": "Massive library",
+          "description": "Thousands of games with detailed info, ratings, media and price comparisons."
+        },
+        "characters": {
+          "title": "Iconic characters",
+          "description": "Explore the heroes and villains of your favorite games with full biographies."
+        },
+        "community": {
+          "title": "Active community",
+          "description": "Share your reviews, create collections and connect with other players."
+        },
+        "search": {
+          "title": "Advanced search",
+          "description": "Easily find your favorite games with a search engine built for gaming."
+        },
+        "tracking": {
+          "title": "Collection tracking",
+          "description": "Manage your library, track your playtime and progress."
+        },
+        "reviews": {
+          "title": "Detailed reviews",
+          "description": "Write and read full-length reviews with pros and cons."
+        }
       }
     },
-    "recentGames": {
-      "title": "Recently added games",
-      "subtitle": "The latest gems added to our catalog",
-      "viewAll": "View all games"
+    "trending": {
+      "kicker": "TRENDING RIGHT NOW",
+      "title": "The games making",
+      "titleAccent": "the community vibe",
+      "viewAll": "See all trending games",
+      "empty": "No trending games at the moment."
     },
     "stats": {
-      "title": "A growing community",
-      "subtitle": "Numbers that speak for themselves",
-      "gamesReferenced": "Games referenced",
-      "characters": "Characters",
-      "players": "Active players",
-      "reviews": "Published reviews"
+      "kicker": "A GROWING COMMUNITY",
+      "title": "Numbers that",
+      "titleAccent": "speak for themselves",
+      "gamesReferenced": "GAMES REFERENCED",
+      "characters": "CHARACTERS",
+      "players": "ACTIVE PLAYERS",
+      "reviews": "PUBLISHED REVIEWS"
+    },
+    "cta": {
+      "kicker": "READY TO JUMP IN?",
+      "title": "Join the Gamers",
+      "titleAccent": "Universe community",
+      "description": "Thousands of players are already exploring their next favorites. Create your account in under a minute, keep track of your games and chat with the community.",
+      "signup": "Get started for free",
+      "login": "I already have an account"
     }
   },
   "library": {
@@ -3736,13 +3760,17 @@
     "empty": "No releases planned for this period."
   },
   "homeDashboard": {
+    "kicker": "DASHBOARD",
     "title": "Welcome",
     "subtitle": "Your gaming dashboard",
     "trending": "Trending Games",
+    "trendingKicker": "TRENDING",
     "seeAllTrending": "See all trending",
     "upcoming": "This Month Releases",
+    "upcomingKicker": "UPCOMING RELEASES",
     "seeAllUpcoming": "All upcoming releases",
-    "noUpcoming": "No releases planned this month."
+    "noUpcoming": "No releases planned this month.",
+    "noTrending": "No trending games at the moment."
   },
   "coaching": {
     "settings": {

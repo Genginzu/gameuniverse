@@ -146,10 +146,12 @@ export default function TestI18nPage() {
               <h2 className="mb-4 text-xl font-semibold">Landing Page Translations</h2>
               <div className="space-y-2">
                 <p>
-                  <strong>Title:</strong> {t("landing.title")}
+                  <strong>Hero Title:</strong> {t("landing.hero.titlePart1")}{" "}
+                  {t("landing.hero.titlePart2")} {t("landing.hero.titlePart3")}{" "}
+                  {t("landing.hero.titlePart4")}
                 </p>
                 <p>
-                  <strong>Subtitle:</strong> {t("landing.subtitle")}
+                  <strong>Description:</strong> {t("landing.hero.description")}
                 </p>
                 <p>
                   <strong>CTA Signup:</strong> {t("landing.cta.signup")}

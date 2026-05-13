@@ -1,16 +1,23 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
+
+import { EditorialShell } from "@/components/layout/editorial/EditorialShell";
 import { HomeContent } from "@/components/home/HomeContent";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
 import { JsonLd } from "@/components/shared/JsonLd";
 import { logger } from "@/lib/logger";
+import type { GameSummary } from "@/types/game";
 
 export const revalidate = 300;
 
 interface HomePageProps {
   params: Promise<{ locale: string }>;
+}
+
+interface HomeApiResponse {
+  trending: GameSummary[];
+  upcoming: GameSummary[];
 }
 
 export async function generateMetadata({ params }: HomePageProps): Promise<Metadata> {
@@ -29,20 +36,19 @@ export async function generateMetadata({ params }: HomePageProps): Promise<Metad
 export default async function Home({ params }: HomePageProps) {
   const { locale } = await params;
 
-  let initialGames;
+  let initialHomeData: HomeApiResponse | undefined;
 
   try {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-    const res = await fetch(`${baseUrl}/api/games?limit=8&locale=${locale}`, {
+    const res = await fetch(`${baseUrl}/api/home?locale=${locale}`, {
       next: { revalidate: 300 },
     });
 
     if (res.ok) {
-      const data = await res.json();
-      initialGames = data.games;
+      initialHomeData = (await res.json()) as HomeApiResponse;
     }
   } catch (error) {
-    logger.error("Failed to fetch initial games for home page", { error });
+    logger.error("Failed to fetch initial home data server-side", { error });
   }
 
   return (
@@ -63,7 +69,7 @@ export default async function Home({ params }: HomePageProps) {
           },
         }}
       />
-      <DashboardLayout>
+      <EditorialShell>
         <ErrorBoundary
           fallback={
             <ErrorFallback
@@ -72,9 +78,9 @@ export default async function Home({ params }: HomePageProps) {
             />
           }
         >
-          <HomeContent initialGames={initialGames} />
+          <HomeContent initialHomeData={initialHomeData} />
         </ErrorBoundary>
-      </DashboardLayout>
+      </EditorialShell>
     </>
   );
 }
