@@ -25,6 +25,12 @@ interface GameFiltersProps {
   onEsportChange: (value: boolean | null) => void;
   onClearFilters: () => void;
   showAllGenres: boolean;
+  /**
+   * Affiche la section Plateformes. Default: `true`.
+   * À mettre à `false` quand le hook parent ne gère pas le filtre plateforme
+   * (ex: `useLibraryGames`) pour éviter un skeleton infini.
+   */
+  showPlatforms?: boolean;
   /** Variante visuelle. Default: `"default"` (legacy). */
   variant?: FilterVariant;
 }
@@ -43,6 +49,7 @@ export function GameFilters({
   onClearFilters,
   showAllGenres,
   variant = "default",
+  showPlatforms = true,
 }: GameFiltersProps) {
   const t = useTranslations("games");
   const tPlatforms = useTranslations("platforms");
@@ -159,29 +166,31 @@ export function GameFilters({
             ))}
           </FilterSection>
 
-          <FilterSection
-            title={tPlatforms("filter.title")}
-            availableLabel={`${platforms.length} ${tPlatforms("filter.available")}`}
-            loading={platforms.length === 0}
-            variant={variant}
-          >
-            {platforms.map((platform) => (
-              <FilterChip
-                key={platform.id}
-                label={platform.name}
-                selected={selectedPlatforms.includes(platform.slug)}
-                onClick={() => handlePlatformToggle(platform.slug)}
-                count={platform.gameCount}
-                icon={
-                  <Icon
-                    icon={getPlatformIcon(platform.slug)}
-                    className="h-3.5 w-3.5 shrink-0"
-                  />
-                }
-                variant={variant}
-              />
-            ))}
-          </FilterSection>
+          {showPlatforms && (
+            <FilterSection
+              title={tPlatforms("filter.title")}
+              availableLabel={`${platforms.length} ${tPlatforms("filter.available")}`}
+              loading={platforms.length === 0}
+              variant={variant}
+            >
+              {platforms.map((platform) => (
+                <FilterChip
+                  key={platform.id}
+                  label={platform.name}
+                  selected={selectedPlatforms.includes(platform.slug)}
+                  onClick={() => handlePlatformToggle(platform.slug)}
+                  count={platform.gameCount}
+                  icon={
+                    <Icon
+                      icon={getPlatformIcon(platform.slug)}
+                      className="h-3.5 w-3.5 shrink-0"
+                    />
+                  }
+                  variant={variant}
+                />
+              ))}
+            </FilterSection>
+          )}
         </>
       )}
     </div>

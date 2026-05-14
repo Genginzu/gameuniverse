@@ -1075,7 +1075,10 @@
         "playtime": "Hours played",
         "rating": "Avg rating"
       },
-      "searchPlaceholder": "Search your library…"
+      "searchPlaceholder": "Search your library…",
+      "loading": {
+        "status": "Searching"
+      }
     }
   },
   "games": {

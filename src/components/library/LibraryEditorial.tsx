@@ -25,13 +25,12 @@ import { GameSearchBar } from "@/components/games/GameSearchBar";
 import { EditorialGameCard } from "@/components/games/EditorialGameCard";
 import { FilterButton } from "@/components/shared/FilterButton";
 import { KickerLabel } from "@/components/shared/KickerLabel";
-import { GridSkeleton } from "@/components/shared/GridSkeleton";
-import { gameSkeletonConfig } from "@/components/shared/EntitySkeleton";
 import { LibraryStatusProvider } from "@/components/providers/LibraryStatusProvider";
 
 import { useLibraryGames } from "@/hooks/useLibraryGames";
 
 import { LibraryPageSkeleton } from "./LibraryPageSkeleton";
+import { LibraryLoadingState } from "./LibraryLoadingState";
 
 const GameFilters = dynamic(() =>
   import("@/components/games/GameFilters").then((m) => m.GameFilters)
@@ -132,6 +131,7 @@ export function LibraryEditorial({ locale = "fr" }: LibraryEditorialProps) {
               onSearch={handleSearch}
               initialValue={searchQuery}
               placeholder={t("editorial.searchPlaceholder")}
+              variant="editorial"
             />
           </div>
           <FilterButton
@@ -157,20 +157,18 @@ export function LibraryEditorial({ locale = "fr" }: LibraryEditorialProps) {
             onClearFilters={handleClearFilters}
             showAllGenres={showFilters}
             variant="editorial"
+            showPlatforms={false}
           />
         </div>
-
-        {/* Loading state during filter/page change */}
-        {loading && !initialLoading && games.length === 0 && (
-          <GridSkeleton skeletonConfig={gameSkeletonConfig} count={20} />
-        )}
 
         {/* Content */}
         <div
           className="editorial-library-content"
           data-revalidating={loading && games.length > 0 ? "true" : "false"}
         >
-          {!loading && games.length === 0 ? (
+          {loading && games.length === 0 ? (
+            <LibraryLoadingState />
+          ) : !loading && games.length === 0 ? (
             <LibraryEmptyState hasFilters={hasActiveFilters} onClearFilters={handleClearFilters} />
           ) : (
             <LibraryStatusProvider gameIds={games.map((g) => g.id)}>

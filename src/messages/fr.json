@@ -1075,7 +1075,10 @@
         "playtime": "Heures jouées",
         "rating": "Note moyenne"
       },
-      "searchPlaceholder": "Rechercher dans votre bibliothèque…"
+      "searchPlaceholder": "Rechercher dans votre bibliothèque…",
+      "loading": {
+        "status": "Recherche en cours"
+      }
     }
   },
   "games": {
