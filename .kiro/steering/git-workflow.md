@@ -10,26 +10,64 @@ inclusion: always
 - **Repo** : `gameuniverse`
 - **URL** : https://github.com/DarkenNights/gameuniverse
 
-## Commit automatique (sans push)
+## Workflow en 3 phases : modification → validation → push
 
-### Règle
+Le travail suit **toujours** trois phases distinctes, dans cet ordre. Ne
+**jamais** sauter une phase.
 
-À la fin de chaque modification significative (nouvelle fonctionnalité, fix,
-refactoring structurant, mise à jour de documentation, changement de
-configuration), **commit** les changements sans attendre que l'utilisateur le
-demande. Ne **jamais** push automatiquement — l'utilisateur gère les push
-manuellement.
+### Phase 1 — Modification
 
-### Quand commit
+Implémenter les changements demandés (feature, fix, refactor, doc, etc.).
 
-- ✅ Fin d'une feature ou d'un fix complet
-- ✅ Modification structurante (réorganisation de fichiers, nouveau steering)
-- ✅ Mise à jour de configuration (CI, hooks, package.json)
-- ✅ Mise à jour de documentation
-- ✅ Migration de base de données
-- ⚠️ Ne **pas** commit un travail en cours ou incomplet
+- ✅ Modifier les fichiers nécessaires
+- ✅ Vérifier les diagnostics TypeScript inline (via `code` get_diagnostics)
+- ❌ Ne **pas** lancer `lint`, `test`, `type-check` ou `build` à ce stade
+- ❌ Ne **pas** commit à ce stade
 
-### Convention de commit
+### Phase 2 — Validation utilisateur (obligatoire)
+
+Une fois la modification effectuée, **demander explicitement à l'utilisateur
+si la modification lui convient** avant toute étape de validation technique.
+
+- ✅ Résumer brièvement ce qui a été fait
+- ✅ Inviter l'utilisateur à tester visuellement / fonctionnellement
+- ✅ Attendre une réponse de l'utilisateur (validation, ajustements, ou push)
+- ✅ Si l'utilisateur demande des ajustements → retour Phase 1 (sans
+  lint/test/build entre-temps), puis nouvelle demande de validation
+- ❌ Ne **jamais** enchaîner automatiquement sur lint/test/build/commit/push
+  juste après une modification
+- ❌ Ne **jamais** présumer que la modif est validée parce qu'elle compile
+
+Phrase type pour clore la phase :
+
+> « Teste visuellement et dis-moi si ça te convient. Si tu veux des
+> ajustements je les fais avant de passer aux vérifications et au commit. »
+
+### Phase 3 — Push (déclenché par l'utilisateur uniquement)
+
+Quand **et seulement quand** l'utilisateur demande explicitement de push (ou
+emploie un terme équivalent : « push », « envoie », « commit + push », « tu
+peux pousser »), exécuter dans cet ordre **strict** :
+
+1. **`bun run lint`** — corriger les erreurs/warnings éventuels
+2. **`bunx vitest run test/unit/<dossiers-concernés>/`** — tests ciblés sur
+   les fichiers modifiés (voir `testing.md` pour la correspondance). Ne
+   **pas** lancer `bun run test:all` sauf demande explicite
+3. **`bun run type-check`** — vérifier qu'il n'y a pas d'erreurs TypeScript
+4. **`bun run build`** — vérifier que le build de production passe
+5. **`git status`** + **`git add`** ciblé + **`git commit`** avec message
+   conventionnel (incluant `#N` si lié à une issue)
+6. **`git push`** sur la branche courante (jamais sur `main` sans demande
+   explicite)
+
+Si une étape échoue, **corriger** l'erreur, puis **reprendre à l'étape qui a
+échoué**. Ne pas push tant que toutes les étapes ne passent pas.
+
+> ⚠️ Phase 3 = uniquement après une demande explicite. Si l'utilisateur dit
+> simplement « ok » ou « ça marche », c'est une validation Phase 2, pas un
+> ordre de push.
+
+## Convention de commit
 
 Le message doit respecter le format imposé par le hook `commit-msg` :
 
@@ -58,26 +96,25 @@ feat: #42 add player stats dashboard
   numéro
 - ❌ Ne **jamais** omettre le numéro d'issue quand on travaille sur une issue
 
-### Règles de commit
+## Règles de commit
 
 - ✅ Ne commit que les fichiers liés à la modification en cours
 - ✅ Vérifier `git status` avant de commit pour éviter des changements parasites
 - ✅ Un commit par changement logique — ne pas mélanger feature + fix + docs
 - ❌ Ne **jamais** commit de secrets, tokens ou fichiers sensibles
-- ❌ Ne **jamais** push automatiquement
+- ❌ Ne **jamais** push automatiquement (sans demande utilisateur)
+- ❌ Ne **jamais** commit avant la validation utilisateur (Phase 2)
 
-## Workflow : Issue → dev → Clôture
+## Workflow : Issue GitHub
 
 Quand l'utilisateur demande de travailler sur une issue GitHub :
 
-1. **Implémenter** les changements demandés dans l'issue sur `dev`
-2. **Vérifier la qualité** — lancer lint et tests ciblés :
-   - `bun run lint` — corriger les erreurs/warnings si nécessaire
-   - `bunx vitest run test/unit/<dossiers-concernés>/` — lancer uniquement les
-     tests liés aux fichiers modifiés (voir `testing.md` pour la correspondance)
-   - Ne **pas** lancer `bun run test:all` (10+ min) sauf demande explicite
-3. **Commit & push** sur `dev`
-4. **Clôturer l'issue**
+1. **Phase 1** — Implémenter les changements demandés dans l'issue sur `dev`
+2. **Phase 2** — Demander la validation utilisateur (le développement n'est
+   considéré terminé qu'après validation visuelle/fonctionnelle)
+3. **Phase 3** — Sur demande utilisateur : lint + tests ciblés + type-check +
+   build + commit + push sur `dev`
+4. **Clôturer l'issue** uniquement après push réussi
 
 ## CI
 
@@ -87,7 +124,9 @@ Pas de CI sur les push directs sur `dev`.
 ## Règles générales
 
 - ✅ Travailler directement sur `dev` pour les issues
-- ✅ Toujours lancer lint + tests ciblés avant de push
-- ✅ Corriger les erreurs détectées avant de commit
+- ✅ Toujours obtenir la validation utilisateur (Phase 2) avant Phase 3
+- ✅ Toujours enchaîner lint + tests ciblés + type-check + build avant push
+- ✅ Corriger les erreurs détectées avant de commit/push
 - ✅ `bun run test:all` uniquement sur demande explicite de l'utilisateur
 - ❌ Ne **jamais** push directement sur `main`
+- ❌ Ne **jamais** lancer lint/test/build entre Phase 1 et Phase 2
