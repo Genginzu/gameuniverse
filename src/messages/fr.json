@@ -26,6 +26,10 @@
       "title": "Ma bibliothèque",
       "description": "Gérez votre collection de jeux vidéo personnelle"
     },
+    "collections": {
+      "title": "Mes collections",
+      "description": "Organisez vos jeux en collections personnalisées et partagez-les avec la communauté"
+    },
     "favorites": {
       "title": "Personnages favoris",
       "description": "Vos personnages de jeux vidéo favoris"
@@ -1090,6 +1094,7 @@
     "listingTitle": "Tous les jeux",
     "listingDescription": "Explorez la bibliothèque complète de Gamers Universe.",
     "listingCount": "{count} titres",
+    "readMore": "Découvrir",
     "noGamesFound": "Aucun jeu trouvé",
     "modifySearch": "Essayez de modifier vos critères de recherche ou explorez d'autres catégories",
     "noGamesAvailable": "Aucun jeu disponible pour le moment",
@@ -3179,6 +3184,29 @@
       "deleteSuccess": "Collection supprimée avec succès.",
       "addGameSuccess": "Jeu ajouté à la collection.",
       "updateSuccess": "Collection mise à jour."
+    },
+    "editorial": {
+      "kicker": "Collections",
+      "titlePrefix": "Vos",
+      "titleAccent": "univers",
+      "subtitle": "Rassemblez vos jeux en sélections, partagez-les avec la communauté et retrouvez-les en un coup d'œil.",
+      "createButton": "Créer une collection",
+      "stats": {
+        "collections": "Collections",
+        "games": "Jeux rassemblés",
+        "largest": "Plus grande collection"
+      },
+      "listKicker": "{count, plural, =0 {Aucune collection} one {# collection} other {# collections}}",
+      "empty": {
+        "title": "Aucune collection pour le moment",
+        "description": "Créez votre première collection pour regrouper vos jeux par thème, par envie ou par projet.",
+        "cta": "Créer ma première collection"
+      },
+      "authRequired": {
+        "title": "Vos collections vous attendent",
+        "description": "Connectez-vous pour créer et organiser vos collections de jeux.",
+        "signIn": "Se connecter"
+      }
     }
   },
   "globalSearch": {

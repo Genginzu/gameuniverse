@@ -26,6 +26,10 @@
       "title": "My library",
       "description": "Manage your personal video game collection"
     },
+    "collections": {
+      "title": "My collections",
+      "description": "Organize your games into custom collections and share them with the community"
+    },
     "favorites": {
       "title": "Favorite characters",
       "description": "Your favorite video game characters"
@@ -1090,6 +1094,7 @@
     "listingTitle": "All games",
     "listingDescription": "Explore the complete Gamers Universe library.",
     "listingCount": "{count} titles",
+    "readMore": "Discover",
     "noGamesFound": "No games found",
     "modifySearch": "Try modifying your search criteria or explore other categories",
     "noGamesAvailable": "No games available at the moment",
@@ -3176,6 +3181,29 @@
       "deleteSuccess": "Collection deleted successfully.",
       "addGameSuccess": "Game added to collection.",
       "updateSuccess": "Collection updated."
+    },
+    "editorial": {
+      "kicker": "Collections",
+      "titlePrefix": "Your",
+      "titleAccent": "universes",
+      "subtitle": "Curate your games into selections, share them with the community and find them at a glance.",
+      "createButton": "Create a collection",
+      "stats": {
+        "collections": "Collections",
+        "games": "Games curated",
+        "largest": "Largest collection"
+      },
+      "listKicker": "{count, plural, =0 {No collection} one {# collection} other {# collections}}",
+      "empty": {
+        "title": "No collection yet",
+        "description": "Create your first collection to group games by theme, mood or project.",
+        "cta": "Create my first collection"
+      },
+      "authRequired": {
+        "title": "Your collections await",
+        "description": "Sign in to create and organize your game collections.",
+        "signIn": "Sign in"
+      }
     }
   },
   "globalSearch": {
