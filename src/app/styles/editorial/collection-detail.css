@@ -360,6 +360,11 @@
   }
 }
 
+/* Game card wrapper (positioning context for the remove button) */
+.editorial-collection-game-card-wrapper {
+  position: relative;
+}
+
 /* Game card */
 .editorial-collection-game-card {
   display: flex;
@@ -424,6 +429,71 @@
   -webkit-line-clamp: 1;
   line-clamp: 1;
   overflow: hidden;
+}
+
+/* Remove button (owner-only, hover desktop, always visible mobile) */
+.editorial-collection-game-card-remove {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 9999px;
+  background: rgba(20, 4, 4, 0.78);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(220, 38, 38, 0.4);
+  color: #fca5a5;
+  cursor: pointer;
+  z-index: 2;
+  /* Desktop : caché par défaut, révélé au hover */
+  opacity: 0;
+  transform: scale(0.92);
+  pointer-events: none;
+  transition:
+    opacity 150ms ease,
+    transform 150ms ease,
+    background-color 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease;
+}
+
+.editorial-collection-game-card-wrapper:hover .editorial-collection-game-card-remove,
+.editorial-collection-game-card-wrapper:focus-within .editorial-collection-game-card-remove {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+.editorial-collection-game-card-remove:hover {
+  background: rgba(220, 38, 38, 0.92);
+  color: #fff;
+  border-color: rgba(220, 38, 38, 0.9);
+}
+
+.editorial-collection-game-card-remove:focus-visible {
+  outline: 2px solid #ef4444;
+  outline-offset: 2px;
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+}
+
+/* Mobile / tactile : toujours visible (pas de hover) */
+@media (hover: none), (pointer: coarse) {
+  .editorial-collection-game-card-remove {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editorial-collection-game-card-remove {
+    transition: none;
+  }
 }
 
 /* ===== Empty state ===== */

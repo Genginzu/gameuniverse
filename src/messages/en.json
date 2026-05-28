@@ -3215,7 +3215,16 @@
         "emptyDescriptionViewer": "The owner hasn't added any games to this collection yet.",
         "emptyCta": "Add a game",
         "authRequiredTitle": "Sign in required",
-        "authRequiredDescription": "Sign in to access this collection."
+        "authRequiredDescription": "Sign in to access this collection.",
+        "removeItem": {
+          "ariaLabel": "Remove {title} from this collection",
+          "confirmTitle": "Remove this game?",
+          "confirmDescription": "Are you sure you want to remove \"{title}\" from this collection? You can add it back later.",
+          "confirmCancel": "Cancel",
+          "confirmAction": "Remove",
+          "removing": "Removing…",
+          "successToast": "Game removed from the collection."
+        }
       }
     }
   },

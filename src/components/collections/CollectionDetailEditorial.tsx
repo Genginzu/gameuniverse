@@ -43,6 +43,7 @@ import type { CollectionDetail, CollectionItem } from "@/types/collection";
 import { CollectionForm } from "./CollectionForm";
 import { AddGameToCollection } from "./AddGameToCollection";
 import { CollectionDetailEditorialSkeleton } from "./CollectionDetailEditorialSkeleton";
+import { CollectionGameCardEditorial } from "./CollectionGameCardEditorial";
 
 interface CollectionDetailEditorialProps {
   slug: string;
@@ -59,10 +60,11 @@ export function CollectionDetailEditorial({ slug, locale }: CollectionDetailEdit
 
   const { collection, isLoading, error, notFound, refetch } = useCollectionDetail(playerId, slug);
 
-  const { updateCollection, deleteCollection, toggleVisibility, addItem } = useCollectionMutations({
-    playerId,
-    refetchDetail: refetch,
-  });
+  const { updateCollection, deleteCollection, toggleVisibility, addItem, removeItem } =
+    useCollectionMutations({
+      playerId,
+      refetchDetail: refetch,
+    });
 
   const [showEditDialog, setShowEditDialog] = useState(false);
   const [showAddGameDialog, setShowAddGameDialog] = useState(false);
@@ -70,6 +72,8 @@ export function CollectionDetailEditorial({ slug, locale }: CollectionDetailEdit
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAddingGame, setIsAddingGame] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [itemToRemove, setItemToRemove] = useState<CollectionItem | null>(null);
+  const [isRemovingItem, setIsRemovingItem] = useState(false);
 
   if (authLoading || isLoading) return <CollectionDetailEditorialSkeleton />;
 
@@ -159,6 +163,18 @@ export function CollectionDetailEditorial({ slug, locale }: CollectionDetailEdit
       toast({ title: tPage("addGameSuccess") });
     } finally {
       setIsAddingGame(false);
+    }
+  };
+
+  const handleConfirmRemoveItem = async () => {
+    if (!itemToRemove) return;
+    setIsRemovingItem(true);
+    try {
+      await removeItem(slug, itemToRemove.gameId);
+      toast({ title: t("removeItem.successToast") });
+      setItemToRemove(null);
+    } finally {
+      setIsRemovingItem(false);
     }
   };
 
@@ -275,7 +291,11 @@ export function CollectionDetailEditorial({ slug, locale }: CollectionDetailEdit
           ) : (
             <div className="editorial-collection-detail-games-grid">
               {sortedItems.map((item) => (
-                <CollectionGameCardEditorial key={item.id} item={item} />
+                <CollectionGameCardEditorial
+                  key={item.id}
+                  item={item}
+                  onRemove={isOwner ? () => setItemToRemove(item) : undefined}
+                />
               ))}
             </div>
           )}
@@ -338,6 +358,39 @@ export function CollectionDetailEditorial({ slug, locale }: CollectionDetailEdit
                     loadingText={tActions("deleting")}
                   >
                     {tActions("deleteConfirm")}
+                  </LoadingButton>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            <Dialog
+              open={itemToRemove !== null}
+              onOpenChange={(open) => !open && !isRemovingItem && setItemToRemove(null)}
+            >
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>{t("removeItem.confirmTitle")}</DialogTitle>
+                  <DialogDescription>
+                    {t("removeItem.confirmDescription", {
+                      title: itemToRemove?.title ?? "",
+                    })}
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <Button
+                    variant="outline"
+                    onClick={() => setItemToRemove(null)}
+                    disabled={isRemovingItem}
+                  >
+                    {t("removeItem.confirmCancel")}
+                  </Button>
+                  <LoadingButton
+                    variant="destructive"
+                    onClick={handleConfirmRemoveItem}
+                    loading={isRemovingItem}
+                    loadingText={t("removeItem.removing")}
+                  >
+                    {t("removeItem.confirmAction")}
                   </LoadingButton>
                 </DialogFooter>
               </DialogContent>
@@ -441,31 +494,6 @@ function OwnerBadge({
         </div>
       )}
       <span className="editorial-collection-detail-owner-name">{ownerName}</span>
-    </Link>
-  );
-}
-
-/* ───────────── Game card ───────────── */
-
-function CollectionGameCardEditorial({ item }: { item: CollectionItem }) {
-  return (
-    <Link
-      href={`/games/${item.slug}`}
-      className="editorial-collection-game-card"
-      aria-label={item.title}
-    >
-      <div className="editorial-collection-game-card-cover">
-        <LazyImage
-          src={item.coverImage ?? undefined}
-          alt=""
-          fill
-          className="object-cover"
-          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 14vw"
-          showSkeleton
-        />
-      </div>
-      <h3 className="editorial-collection-game-card-title">{item.title}</h3>
-      {item.note && <p className="editorial-collection-game-card-note">{item.note}</p>}
     </Link>
   );
 }

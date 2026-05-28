@@ -3218,7 +3218,16 @@
         "emptyDescriptionViewer": "Le propriétaire n'a pas encore ajouté de jeu à cette collection.",
         "emptyCta": "Ajouter un jeu",
         "authRequiredTitle": "Connexion requise",
-        "authRequiredDescription": "Connectez-vous pour accéder à cette collection."
+        "authRequiredDescription": "Connectez-vous pour accéder à cette collection.",
+        "removeItem": {
+          "ariaLabel": "Retirer {title} de la collection",
+          "confirmTitle": "Retirer ce jeu ?",
+          "confirmDescription": "Êtes-vous sûr de vouloir retirer « {title} » de la collection ? Vous pourrez le ré-ajouter plus tard.",
+          "confirmCancel": "Annuler",
+          "confirmAction": "Retirer",
+          "removing": "Suppression…",
+          "successToast": "Jeu retiré de la collection."
+        }
       }
     }
   },
