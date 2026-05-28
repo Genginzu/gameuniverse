@@ -3206,6 +3206,19 @@
         "title": "Vos collections vous attendent",
         "description": "Connectez-vous pour créer et organiser vos collections de jeux.",
         "signIn": "Se connecter"
+      },
+      "detail": {
+        "kicker": "Collection",
+        "gamesLabel": "jeux",
+        "updatedLabel": "Mise à jour",
+        "gamesKicker": "Sélection",
+        "gamesTitle": "Les jeux de cette collection",
+        "emptyTitle": "Aucun jeu pour le moment",
+        "emptyDescriptionOwner": "Ajoutez vos premiers jeux pour donner vie à cette collection.",
+        "emptyDescriptionViewer": "Le propriétaire n'a pas encore ajouté de jeu à cette collection.",
+        "emptyCta": "Ajouter un jeu",
+        "authRequiredTitle": "Connexion requise",
+        "authRequiredDescription": "Connectez-vous pour accéder à cette collection."
       }
     }
   },

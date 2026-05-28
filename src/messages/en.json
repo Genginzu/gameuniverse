@@ -3203,6 +3203,19 @@
         "title": "Your collections await",
         "description": "Sign in to create and organize your game collections.",
         "signIn": "Sign in"
+      },
+      "detail": {
+        "kicker": "Collection",
+        "gamesLabel": "games",
+        "updatedLabel": "Updated",
+        "gamesKicker": "Selection",
+        "gamesTitle": "Games in this collection",
+        "emptyTitle": "No games yet",
+        "emptyDescriptionOwner": "Add your first games to bring this collection to life.",
+        "emptyDescriptionViewer": "The owner hasn't added any games to this collection yet.",
+        "emptyCta": "Add a game",
+        "authRequiredTitle": "Sign in required",
+        "authRequiredDescription": "Sign in to access this collection."
       }
     }
   },
