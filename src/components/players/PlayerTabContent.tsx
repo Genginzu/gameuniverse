@@ -108,7 +108,7 @@ export function PlayerTabContent({
           visible={activeTab === "recommendations"}
           mounted={visitedTabs.has("recommendations")}
         >
-          <LazyPersonalRecommendationSection locale={locale} />
+          <LazyPersonalRecommendationSection />
         </TabPanel>
       )}
 

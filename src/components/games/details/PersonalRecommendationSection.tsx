@@ -7,10 +7,6 @@ import { GameCardSkeleton } from "@/components/games/GameCardSkeleton";
 import { Icon } from "@iconify/react";
 import type { GameRecommendation } from "@/types/recommendation";
 
-interface PersonalRecommendationSectionProps {
-  locale?: string;
-}
-
 const SKELETON_COUNT = 4;
 
 /** Mappe un GameRecommendation vers les props attendues par GameCard */
@@ -27,9 +23,7 @@ function toGameCardProps(rec: GameRecommendation) {
   };
 }
 
-export function PersonalRecommendationSection({
-  locale = "fr",
-}: PersonalRecommendationSectionProps) {
+export function PersonalRecommendationSection() {
   const t = useTranslations("recommendations");
   const { recommendations, basedOnGameCount, loading, error } = usePersonalRecommendations();
 
@@ -69,7 +63,7 @@ export function PersonalRecommendationSection({
       {!loading && hasRecommendations && (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
           {recommendations.map((rec) => (
-            <GameCard key={rec.id} game={toGameCardProps(rec)} locale={locale} />
+            <GameCard key={rec.id} game={toGameCardProps(rec)} />
           ))}
         </div>
       )}
