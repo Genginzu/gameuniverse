@@ -20,9 +20,9 @@ interface StatCardProps {
 
 function StatCard({ icon, label, children }: StatCardProps) {
   return (
-    <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-xs">
+    <Card className="rounded-2xl border-[var(--editorial-line)] bg-[var(--editorial-bg-3)]">
       <CardContent className="p-6">
-        <div className="mb-2 flex items-center gap-2 text-slate-400">
+        <div className="mb-2 flex items-center gap-2 text-[var(--editorial-muted)]">
           {icon}
           <span className="text-sm font-medium">{label}</span>
         </div>

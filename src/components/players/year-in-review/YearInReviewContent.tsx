@@ -42,26 +42,30 @@ export function YearInReviewContent({
   // No-data state — Req 6.4
   if (noData) {
     return (
-      <div className="mx-auto max-w-4xl px-4 py-8">
-        {backLink}
-        <h1 className="neon-text mt-6 text-3xl font-bold text-white">
-          {t("title", { year: yearReview.year })}
-        </h1>
-        <div className="mt-12 flex flex-col items-center justify-center text-center">
-          <p className="text-muted-foreground text-lg font-semibold">{noDataMessage}</p>
-          <p className="text-muted-foreground mt-2 text-sm">{noDataDescription}</p>
+      <div className="min-h-screen bg-[var(--editorial-bg)]">
+        <div className="mx-auto max-w-4xl px-4 py-8">
+          {backLink}
+          <h1 className="editorial-display mt-6 text-3xl font-bold text-white">
+            {t("title", { year: yearReview.year })}
+          </h1>
+          <div className="mt-12 flex flex-col items-center justify-center text-center">
+            <p className="text-lg font-semibold text-[var(--editorial-muted)]">{noDataMessage}</p>
+            <p className="mt-2 text-sm text-[var(--editorial-muted)]">{noDataDescription}</p>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8">
-      {backLink}
-      <h1 className="neon-text mt-6 mb-8 text-3xl font-bold text-white">
-        {t("title", { year: yearReview.year })}
-      </h1>
-      <YearInReviewCards yearReview={yearReview} locale={locale} t={t} />
+    <div className="min-h-screen bg-[var(--editorial-bg)]">
+      <div className="mx-auto max-w-4xl px-4 py-8">
+        {backLink}
+        <h1 className="editorial-display mt-6 mb-8 text-3xl font-bold text-white">
+          {t("title", { year: yearReview.year })}
+        </h1>
+        <YearInReviewCards yearReview={yearReview} locale={locale} t={t} />
+      </div>
     </div>
   );
 }

@@ -83,3 +83,53 @@
 .editorial-goals .text-gray-900 {
   color: #fff;
 }
+
+/* ===== Override remaining legacy form surfaces ===== */
+/* SessionComposer, GameSearchPicker, PersonalGoalForm utilisent encore des
+   inputs glass / fonds bg-white + backdrop-blur : on les ramène sur des
+   surfaces sombres éditoriales sans toucher au markup. */
+.editorial-goals input,
+.editorial-goals select,
+.editorial-goals textarea,
+.editorial-goals .glass-input {
+  background-color: var(--editorial-bg-2);
+  border-color: var(--editorial-line);
+  color: #fff;
+  backdrop-filter: none;
+}
+
+.editorial-goals input::placeholder,
+.editorial-goals textarea::placeholder {
+  color: var(--editorial-muted);
+}
+
+.editorial-goals input[type="date"] {
+  color-scheme: dark;
+}
+
+.editorial-goals option {
+  background-color: var(--editorial-bg-2);
+  color: #fff;
+}
+
+/* Conteneurs blancs / blur (carte composer, picker) — on exclut les boutons
+   pour ne pas remplir les boutons fantômes (hover:bg-white). */
+.editorial-goals :not(button)[class*="bg-white"] {
+  background-color: var(--editorial-bg-3) !important;
+  backdrop-filter: none;
+}
+
+/* Dropdown de résultats du GameSearchPicker */
+.editorial-goals [role="listbox"] {
+  background-color: var(--editorial-bg-2) !important;
+  border-color: var(--editorial-line) !important;
+}
+
+.editorial-goals .text-gray-400 {
+  color: var(--editorial-muted);
+}
+
+.editorial-goals .text-gray-700,
+.editorial-goals .text-gray-800 {
+  color: rgba(255, 255, 255, 0.85);
+}

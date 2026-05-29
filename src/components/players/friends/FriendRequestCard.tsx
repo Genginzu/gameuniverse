@@ -24,9 +24,9 @@ export function FriendRequestCard({
   const { sender } = request;
 
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-3 dark:border-slate-700/50 dark:bg-slate-800/50">
+    <div className="editorial-friend-request">
       {/* Sender avatar */}
-      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-linear-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30">
+      <div className="editorial-friend-card-avatar">
         {sender.avatarUrl ? (
           <LazyImage
             src={sender.avatarUrl}
@@ -38,17 +38,15 @@ export function FriendRequestCard({
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
-            <Icon icon="lucide:user" className="h-5 w-5 text-blue-300" />
+            <Icon icon="lucide:user" className="h-5 w-5" />
           </div>
         )}
       </div>
 
       {/* Sender name + date */}
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">
-          {sender.displayName}
-        </p>
-        <p className="text-xs text-gray-400 dark:text-slate-500">
+        <p className="editorial-friend-request-name">{sender.displayName}</p>
+        <p className="editorial-friend-request-date">
           {new Date(request.createdAt).toLocaleDateString()}
         </p>
       </div>

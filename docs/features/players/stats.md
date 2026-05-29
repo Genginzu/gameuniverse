@@ -168,8 +168,6 @@ données, sinon vers l'année la plus récente.
 
 | Composant             | Fichier                                          | Rôle                               |
 | --------------------- | ------------------------------------------------ | ---------------------------------- |
-| `PlayerEnrichedStats` | `src/components/players/PlayerEnrichedStats.tsx` | Section stats sur le profil        |
-| `EnrichedStatCards`   | `src/components/players/EnrichedStatCards.tsx`   | Cartes individuelles des stats     |
 | `YearInReviewLink`    | `src/components/players/YearInReviewLink.tsx`    | Lien vers le résumé annuel         |
 | `YearInReviewContent` | `src/components/players/YearInReviewContent.tsx` | Contenu principal du résumé annuel |
 | `YearInReviewCards`   | `src/components/players/YearInReviewCards.tsx`   | Cartes visuelles du résumé annuel  |

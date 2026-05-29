@@ -100,3 +100,34 @@
 .editorial-player-collections .text-gray-400 {
   color: var(--editorial-muted);
 }
+
+/* ===== Cartes de collection legacy (CollectionCard) ===== */
+/* Surfaces blanches (carte + badge count) -> surfaces sombres bordées. */
+.editorial-player-collections :not(button)[class*="bg-white"] {
+  background-color: var(--editorial-bg-3) !important;
+  border: 1px solid var(--editorial-line);
+  backdrop-filter: none;
+}
+
+/* Cover sans image : dégradé accent (bleu) au lieu du bleu clair legacy. */
+.editorial-player-collections [class*="from-blue-100"] {
+  background-image: linear-gradient(
+    135deg,
+    rgba(var(--accent-rgb, var(--neon-primary)), 0.22),
+    rgba(var(--accent-rgb, var(--neon-primary)), 0.06)
+  ) !important;
+}
+
+/* Icône placeholder (EmptyCovers) -> accent. */
+.editorial-player-collections .text-blue-300 {
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+}
+
+/* Texte legacy mode clair -> clair sur surface sombre. */
+.editorial-player-collections .text-gray-900 {
+  color: #fff;
+}
+
+.editorial-player-collections .text-muted-foreground {
+  color: var(--editorial-muted);
+}

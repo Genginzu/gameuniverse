@@ -59,7 +59,6 @@ Sans paramètre `page`, l'endpoint conserve son comportement d'origine
 | `src/lib/services/playerCollectionsService.ts`           | Service client + fonctions pures           |
 | `src/hooks/usePlayerCollections.ts`                      | Hook React                                 |
 | `src/components/players/PlayerCollectionsStats.tsx`      | Composant statistiques                     |
-| `src/components/players/PlayerCollectionsSortSelect.tsx` | Sélecteur de tri                           |
 | `src/components/players/PlayerCollectionsFeed.tsx`       | Composant principal (feed + scroll infini) |
 
 ## Fichiers modifiés

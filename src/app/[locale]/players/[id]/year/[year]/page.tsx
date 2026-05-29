@@ -3,7 +3,9 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { PlayerService } from "@/lib/services/playerService";
 import { PlayerStatsService } from "@/lib/services/playerStatsService";
-import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
+import { EditorialShell } from "@/components/layout/editorial/EditorialShell";
+import { DynamicAccent } from "@/components/shared/DynamicAccent";
+import { paletteFromHex } from "@/lib/utils/accent-palette";
 import { YearInReviewContent } from "@/components/players/year-in-review/YearInReviewContent";
 
 interface YearInReviewPageProps {
@@ -61,16 +63,18 @@ export default async function YearInReviewPage({ params }: YearInReviewPageProps
     const hasData = yearReview.gamesAdded > 0 || yearReview.totalPlayTime > 0;
 
     return (
-      <DashboardLayout>
-        <YearInReviewContent
-          yearReview={yearReview}
-          playerId={id}
-          locale={locale}
-          noData={!hasData}
-          noDataMessage={t("noData")}
-          noDataDescription={t("noDataDescription")}
-        />
-      </DashboardLayout>
+      <EditorialShell>
+        <DynamicAccent palette={paletteFromHex("#0077e6", "blue")} as="div">
+          <YearInReviewContent
+            yearReview={yearReview}
+            playerId={id}
+            locale={locale}
+            noData={!hasData}
+            noDataMessage={t("noData")}
+            noDataDescription={t("noDataDescription")}
+          />
+        </DynamicAccent>
+      </EditorialShell>
     );
   } catch {
     notFound();
