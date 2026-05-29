@@ -1,0 +1,89 @@
+/*
+ * Editorial : onglet Stats (StatsDashboard) de la page joueur.
+ * Voir docs/design/editorial-refonte-plan.md
+ *
+ * Approche minimal-touch : un wrapper `.editorial-stats` autour du dashboard
+ * qui (1) re-style les titres de section, (2) écrase les surfaces glass-card
+ * legacy en surfaces sombres éditoriales, (3) harmonise les barres de progression.
+ */
+
+.editorial-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ===== Section title ===== */
+.editorial-stats-section-title {
+  margin: 0 0 1.25rem;
+  font-family: var(--font-display, "Tomorrow"), system-ui, sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #fff;
+  position: relative;
+  padding-bottom: 0.625rem;
+}
+
+.editorial-stats-section-title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 3rem;
+  height: 2px;
+  background: rgb(var(--accent-rgb, var(--neon-primary)));
+  border-radius: 9999px;
+}
+
+/* ===== Card override (used by StatsDashboard for empty/error/private states) ===== */
+.editorial-stats-card {
+  border-radius: 1rem;
+  border: 1px solid var(--editorial-line);
+  background: var(--editorial-bg-3);
+  color: #fff;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+/* ===== Override legacy glass surfaces inside Stats ===== */
+.editorial-stats .glass-card {
+  background: var(--editorial-bg-3);
+  border: 1px solid var(--editorial-line);
+  backdrop-filter: none;
+  color: #fff;
+  transition:
+    border-color 150ms ease,
+    box-shadow 200ms ease;
+}
+
+.editorial-stats .glass-card:hover {
+  border-color: rgba(var(--accent-rgb, var(--neon-primary)), 0.4);
+  box-shadow: 0 8px 24px -12px rgba(var(--accent-rgb, var(--neon-primary)), 0.25);
+}
+
+/* Override Card chrome under .editorial-stats so all sub-sections look consistent */
+.editorial-stats [data-slot="card"] {
+  background: var(--editorial-bg-3);
+  border: 1px solid var(--editorial-line);
+  color: #fff;
+}
+
+/* Progress bars + dividers under dark surfaces */
+.editorial-stats .bg-gray-200,
+.editorial-stats .dark\:bg-slate-700,
+.editorial-stats [class*="bg-gray-200"],
+.editorial-stats [class*="bg-slate-700"] {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Make sure muted text reads on dark surfaces */
+.editorial-stats .text-gray-500,
+.editorial-stats .text-gray-600,
+.editorial-stats .text-gray-700 {
+  color: var(--editorial-muted);
+}
+
+.editorial-stats .text-gray-900 {
+  color: #fff;
+}

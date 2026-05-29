@@ -1,0 +1,177 @@
+/*
+ * Editorial : onglet Settings (component SettingsContent dans la page joueur).
+ * Voir docs/design/editorial-refonte-plan.md
+ *
+ * Layout : header de section éditorial (kicker + titre display + subtitle),
+ * puis sections-cards en surfaces sombres avec kicker + titre + description
+ * et un body qui contient les forms existants. Pas de gradient — uniquement
+ * les tokens éditoriaux (--editorial-bg-2, --editorial-line, accent).
+ */
+
+.editorial-settings {
+  width: 100%;
+  padding: 1.5rem 1rem 4rem;
+}
+
+@media (min-width: 768px) {
+  .editorial-settings {
+    padding: 2rem 1.5rem 5rem;
+  }
+}
+
+/* ===== Page header ===== */
+.editorial-settings-header {
+  margin-bottom: 2.5rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--editorial-line);
+}
+
+.editorial-settings-title {
+  margin: 0.5rem 0 0;
+  font-family: var(--font-display, "Tomorrow"), system-ui, sans-serif;
+  font-size: clamp(1.5rem, 2.5vw + 0.5rem, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: #fff;
+}
+
+.editorial-settings-title .accent {
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+}
+
+.editorial-settings-subtitle {
+  margin: 0.75rem 0 0;
+  font-size: 0.95rem;
+  color: var(--editorial-muted);
+  max-width: 60ch;
+}
+
+/* ===== Sections (cards) ===== */
+.editorial-settings-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.editorial-settings-section {
+  border-radius: 1rem;
+  border: 1px solid var(--editorial-line);
+  background: var(--editorial-bg-3);
+  overflow: hidden;
+}
+
+.editorial-settings-section-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.5rem 1.5rem 0;
+}
+
+@media (min-width: 768px) {
+  .editorial-settings-section-header {
+    padding: 1.75rem 2rem 0;
+  }
+}
+
+.editorial-settings-section-icon {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.625rem;
+  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.12);
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+  flex-shrink: 0;
+}
+
+.editorial-settings-section-heading {
+  flex: 1;
+  min-width: 0;
+}
+
+.editorial-settings-section-title {
+  margin: 0.375rem 0 0;
+  font-family: var(--font-display, "Tomorrow"), system-ui, sans-serif;
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+
+.editorial-settings-section-description {
+  margin: 0.375rem 0 0;
+  font-size: 0.875rem;
+  color: var(--editorial-muted);
+  line-height: 1.5;
+}
+
+.editorial-settings-section-body {
+  padding: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .editorial-settings-section-body {
+    padding: 1.75rem 2rem 2rem;
+  }
+}
+
+/* Strip the visual chrome from any nested shadcn Card so the editorial
+   section stays clean. The forms inside still keep their inputs/buttons. */
+.editorial-settings-section-body > [data-slot="card"] {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  backdrop-filter: none !important;
+}
+
+.editorial-settings-section-body > [data-slot="card"] > [data-slot="card-header"],
+.editorial-settings-section-body > [data-slot="card"] > [data-slot="card-content"] {
+  padding: 0 !important;
+}
+
+/* When a sub-component renders its own internal Card header (e.g. legacy
+   AppearanceSection), hide it because we now provide a clean editorial header. */
+.editorial-settings-section-body > [data-slot="card"] > [data-slot="card-header"] {
+  display: none;
+}
+
+/* ===== Form labels & inputs (theming for surfaces sombres) ===== */
+.editorial-settings-section-body label {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.editorial-settings-section-body input[type="text"],
+.editorial-settings-section-body input[type="email"],
+.editorial-settings-section-body input[type="password"],
+.editorial-settings-section-body input[type="url"] {
+  /* Inputs un cran plus sombres que la section pour ressortir sur le fond bg-3 */
+  background: var(--editorial-bg-2);
+  border: 1px solid var(--editorial-line);
+  color: #fff;
+  font-size: 1rem; /* >=16px to prevent iOS zoom */
+  height: 44px;
+  border-radius: 10px;
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.editorial-settings-section-body input::placeholder {
+  color: var(--editorial-muted);
+  opacity: 1;
+}
+
+.editorial-settings-section-body input:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.editorial-settings-section-body input:focus,
+.editorial-settings-section-body input:focus-visible {
+  outline: none;
+  border-color: rgb(var(--accent-rgb, var(--neon-primary)));
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb, var(--neon-primary)), 0.15);
+}

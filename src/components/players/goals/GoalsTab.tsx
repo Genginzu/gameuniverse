@@ -46,21 +46,21 @@ export function GoalsTab({ playerId, locale }: GoalsTabProps) {
   };
 
   return (
-    <section className="space-y-6">
+    <section className="editorial-goals space-y-6">
       {/* Action buttons */}
-      <div className="xs:flex-row xs:items-center flex flex-col gap-2">
+      <div className="editorial-goals-actions">
         <button
           type="button"
           onClick={() => {
             setShowSessionComposer((v) => !v);
             if (!showSessionComposer) setShowGoalForm(false);
           }}
-          className="from-palette-secondary-500 to-palette-primary-500 shadow-palette-secondary-500/20 inline-flex items-center justify-center gap-2 rounded-2xl bg-linear-to-br px-5 py-3 text-sm font-medium text-white shadow-lg transition-all duration-300 hover:opacity-90"
+          className="editorial-goals-action primary"
         >
           {showSessionComposer ? (
-            <Icon icon="lucide:x" className="h-4 w-4" />
+            <Icon icon="lucide:x" className="h-4 w-4" aria-hidden="true" />
           ) : (
-            <Icon icon="lucide:gamepad-2" className="h-4 w-4" />
+            <Icon icon="lucide:gamepad-2" className="h-4 w-4" aria-hidden="true" />
           )}
           {t("newSession")}
         </button>
@@ -70,12 +70,12 @@ export function GoalsTab({ playerId, locale }: GoalsTabProps) {
             setShowGoalForm((v) => !v);
             if (!showGoalForm) setShowSessionComposer(false);
           }}
-          className="from-palette-primary-500 shadow-palette-primary-500/20 inline-flex items-center justify-center gap-2 rounded-2xl bg-linear-to-br to-blue-500 px-5 py-3 text-sm font-medium text-white shadow-lg transition-all duration-300 hover:opacity-90"
+          className="editorial-goals-action"
         >
           {showGoalForm ? (
-            <Icon icon="lucide:x" className="h-4 w-4" />
+            <Icon icon="lucide:x" className="h-4 w-4" aria-hidden="true" />
           ) : (
-            <Icon icon="lucide:target" className="h-4 w-4" />
+            <Icon icon="lucide:target" className="h-4 w-4" aria-hidden="true" />
           )}
           {tGoals("create.title")}
         </button>

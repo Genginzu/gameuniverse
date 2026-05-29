@@ -36,13 +36,17 @@ export function PlayerLibraryTab({ player, locale, t, tCommon }: PlayerLibraryTa
   }, [games.length, hasMore, isLoadingMore, player.id, locale]);
 
   return (
-    <div className="mb-8">
-      <div className="mb-6 flex items-center justify-between">
-        <h2 className="flex items-center gap-2 text-2xl font-bold text-gray-900 dark:text-white">
-          <Icon icon="lucide:gamepad-2" className="h-6 w-6 text-blue-500 dark:text-blue-400" />
+    <div className="editorial-player-library mb-8">
+      <div className="editorial-player-library-header">
+        <h2 className="editorial-player-library-title">
+          <Icon
+            icon="lucide:gamepad-2"
+            className="editorial-player-library-icon"
+            aria-hidden="true"
+          />
           {t("details.library")}
         </h2>
-        <span className="rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-600 dark:bg-slate-700/50 dark:text-slate-300">
+        <span className="editorial-player-library-count">
           {totalCount} {tCommon("games")} {t("details.inLibrary")}
         </span>
       </div>
@@ -53,12 +57,12 @@ export function PlayerLibraryTab({ player, locale, t, tCommon }: PlayerLibraryTa
             type="button"
             onClick={loadMore}
             disabled={isLoadingMore}
-            className="inline-flex items-center gap-2 rounded-xl bg-white/60 px-6 py-3 text-sm font-medium text-gray-700 shadow-sm transition-all hover:bg-white/80 dark:bg-slate-800/60 dark:text-slate-300 dark:hover:bg-slate-700/60"
+            className="editorial-player-library-load-more"
           >
             {isLoadingMore ? (
-              <Icon icon="lucide:loader-2" className="h-4 w-4 animate-spin" />
+              <Icon icon="lucide:loader-2" className="h-4 w-4 animate-spin" aria-hidden="true" />
             ) : (
-              <Icon icon="lucide:chevron-down" className="h-4 w-4" />
+              <Icon icon="lucide:chevron-down" className="h-4 w-4" aria-hidden="true" />
             )}
             {isLoadingMore
               ? t("details.loadingMore")

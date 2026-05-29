@@ -52,7 +52,7 @@ export const PlayerReviewsFeed = memo(function PlayerReviewsFeed({
   const isBusy = isLoading || isLoadingMore;
 
   return (
-    <section className="mb-8 space-y-6">
+    <section className="editorial-reviews mb-8 space-y-6">
       {/* Stats block — shown once loaded */}
       {stats && <PlayerReviewsStats stats={stats} />}
 

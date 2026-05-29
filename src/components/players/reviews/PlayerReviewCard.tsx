@@ -41,17 +41,14 @@ function ReviewPoints({
     : "text-red-500 dark:text-red-400";
 
   return (
-    <div className="space-y-1.5">
-      <div className={cn("flex items-center gap-1.5 text-sm font-medium", colorClass)}>
-        <Icon icon={iconName} className="h-3.5 w-3.5" />
+    <div className="editorial-review-card-points-group">
+      <div className={cn("editorial-review-card-points-label", colorClass)}>
+        <Icon icon={iconName} className="h-3.5 w-3.5" aria-hidden="true" />
         <span>{label}</span>
       </div>
-      <ul className="space-y-1">
+      <ul className="editorial-review-card-points-list">
         {points.map((point, index) => (
-          <li
-            key={index}
-            className="flex items-start gap-2 text-sm text-gray-600 dark:text-slate-300"
-          >
+          <li key={index} className="editorial-review-card-points-item">
             <span className={cn("mt-0.5 shrink-0", colorClass)}>{isPositive ? "+" : "−"}</span>
             <span>{point}</span>
           </li>
@@ -71,12 +68,12 @@ export function PlayerReviewCard({ review, locale }: PlayerReviewCardProps) {
   });
 
   return (
-    <article className="rounded-xl border border-gray-200/80 bg-white/50 p-5 shadow-md backdrop-blur-xl transition-all duration-300 hover:shadow-lg dark:border-slate-600/60 dark:bg-slate-800/50 dark:shadow-black/20">
+    <article className="editorial-review-card">
       {/* Header: game cover + game name + rating */}
-      <div className="mb-4 flex gap-4">
+      <div className="editorial-review-card-header">
         {/* Game cover thumbnail */}
         <Link href={`/games/${review.gameSlug}`} className="shrink-0">
-          <div className="relative h-20 w-14 overflow-hidden rounded-lg bg-white/10 dark:bg-slate-700/50">
+          <div className="editorial-review-card-cover">
             {review.gameCoverUrl ? (
               <Image
                 src={review.gameCoverUrl}
@@ -88,7 +85,7 @@ export function PlayerReviewCard({ review, locale }: PlayerReviewCardProps) {
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center">
-                <Icon icon="lucide:gamepad-2" className="h-5 w-5 text-slate-400" />
+                <Icon icon="lucide:gamepad-2" className="h-5 w-5" aria-hidden="true" />
               </div>
             )}
           </div>
@@ -97,18 +94,15 @@ export function PlayerReviewCard({ review, locale }: PlayerReviewCardProps) {
         {/* Game name, date, rating */}
         <div className="flex min-w-0 flex-1 flex-col justify-between">
           <div>
-            <Link
-              href={`/games/${review.gameSlug}`}
-              className="hover:text-neon-primary dark:hover:text-neon-secondary text-sm font-semibold text-gray-900 transition-colors dark:text-white"
-            >
+            <Link href={`/games/${review.gameSlug}`} className="editorial-review-card-game">
               {review.gameName}
             </Link>
-            <div className="mt-1 flex items-center gap-1.5 text-xs text-gray-500 dark:text-slate-400">
-              <Icon icon="lucide:calendar" className="h-3 w-3" />
+            <div className="editorial-review-card-date">
+              <Icon icon="lucide:calendar" className="h-3 w-3" aria-hidden="true" />
               <time dateTime={review.createdAt}>{formattedDate}</time>
             </div>
           </div>
-          <span className={cn("text-xl font-bold", getRatingColor(review.rating))}>
+          <span className={cn("editorial-review-card-rating", getRatingColor(review.rating))}>
             {review.rating}/20
           </span>
         </div>
@@ -116,14 +110,12 @@ export function PlayerReviewCard({ review, locale }: PlayerReviewCardProps) {
 
       {/* Content excerpt */}
       {review.content && (
-        <p className="mb-4 text-sm leading-relaxed text-gray-600 dark:text-slate-300">
-          {getExcerpt(review.content)}
-        </p>
+        <p className="editorial-review-card-content">{getExcerpt(review.content)}</p>
       )}
 
       {/* Positive / negative points */}
       {(review.positivePoints.length > 0 || review.negativePoints.length > 0) && (
-        <div className="grid gap-4 border-t border-white/20 pt-4 sm:grid-cols-2 dark:border-slate-700/50">
+        <div className="editorial-review-card-points">
           <ReviewPoints
             points={review.positivePoints}
             type="positive"

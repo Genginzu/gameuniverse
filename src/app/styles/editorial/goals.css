@@ -1,0 +1,85 @@
+/*
+ * Editorial : onglet Goals (GoalsTab) de la page joueur — owner only.
+ */
+
+.editorial-goals {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Actions row */
+.editorial-goals-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+@media (min-width: 475px) {
+  .editorial-goals-actions {
+    flex-direction: row;
+    align-items: center;
+  }
+}
+
+.editorial-goals-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 44px;
+  padding: 0 1.25rem;
+  border-radius: 12px;
+  background: var(--editorial-bg-3);
+  border: 1px solid var(--editorial-line);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color 150ms ease,
+    box-shadow 200ms ease;
+}
+
+.editorial-goals-action:hover {
+  border-color: rgba(var(--accent-rgb, var(--neon-primary)), 0.4);
+  box-shadow: 0 8px 24px -12px rgba(var(--accent-rgb, var(--neon-primary)), 0.25);
+}
+
+.editorial-goals-action.primary {
+  background: rgb(var(--accent-rgb, var(--neon-primary)));
+  color: #0a0418;
+  border-color: transparent;
+}
+
+.editorial-goals-action.primary:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 8px 24px -8px rgba(var(--accent-rgb, var(--neon-primary)), 0.5);
+}
+
+.editorial-goals-action:focus-visible {
+  outline: 2px solid rgb(var(--accent-rgb, var(--neon-primary)));
+  outline-offset: 3px;
+}
+
+/* Override legacy surfaces inside Goals (PersonalGoals, SessionComposer, etc.) */
+.editorial-goals .glass-card {
+  background: var(--editorial-bg-3);
+  border: 1px solid var(--editorial-line);
+  backdrop-filter: none;
+  color: #fff;
+}
+
+.editorial-goals [class*="bg-gray-200"],
+.editorial-goals [class*="bg-slate-700"] {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.editorial-goals .text-gray-500,
+.editorial-goals .text-gray-600 {
+  color: var(--editorial-muted);
+}
+
+.editorial-goals .text-gray-900 {
+  color: #fff;
+}

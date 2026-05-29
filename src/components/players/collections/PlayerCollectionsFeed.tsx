@@ -64,7 +64,7 @@ export function PlayerCollectionsFeed({ playerId, locale, isOwner }: PlayerColle
 
   // List view
   return (
-    <section className="mb-8 space-y-4">
+    <section className="editorial-player-collections mb-8 space-y-4">
       {/* Create button — owner only */}
       {isOwner && (
         <div className="flex justify-end">

@@ -40,17 +40,14 @@ export function ActivityItem({ event, locale }: ActivityItemProps) {
   const relativeDate = format.relativeTime(new Date(event.date), new Date());
 
   return (
-    <article className="flex gap-3 rounded-xl border border-gray-200 bg-white p-4 dark:border-slate-700/50 dark:bg-slate-800/50">
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 dark:bg-slate-700/50">
-        <Icon
-          icon={activityIcon}
-          className="text-palette-secondary-600 dark:text-palette-secondary-400 h-4 w-4"
-        />
+    <article className="editorial-activity-item">
+      <div className="editorial-activity-item-icon">
+        <Icon icon={activityIcon} className="h-4 w-4" />
       </div>
       <div className="min-w-0 flex-1">
-        <div className="mb-1 flex items-center gap-2 text-xs text-gray-500 dark:text-slate-400">
+        <div className="editorial-activity-item-meta">
           <span>{t(event.type)}</span>
-          <span>·</span>
+          <span aria-hidden="true">·</span>
           <time dateTime={event.date}>{relativeDate}</time>
         </div>
         <ActivityItemContent event={event} locale={locale} />

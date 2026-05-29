@@ -1543,6 +1543,12 @@
         "ubisoft": "Ubisoft",
         "itch": "itch.io"
       }
+    },
+    "editorial": {
+      "kicker": "Paramètres",
+      "titlePrefix": "Votre",
+      "titleAccent": "compte",
+      "subtitle": "Gérez vos informations personnelles, votre apparence, vos plateformes liées et la sécurité de votre compte."
     }
   },
   "admin": {

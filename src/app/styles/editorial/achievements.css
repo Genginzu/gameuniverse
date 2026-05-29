@@ -1,0 +1,62 @@
+/*
+ * Editorial : onglet Achievements (AchievementsPageContent) de la page joueur.
+ * Wrapper qui homogénéise les surfaces glass-card legacy en surfaces sombres.
+ */
+
+.editorial-achievements {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Override legacy glass surfaces inside Achievements */
+.editorial-achievements .glass-card {
+  background: var(--editorial-bg-3);
+  border: 1px solid var(--editorial-line);
+  backdrop-filter: none;
+  color: #fff;
+  transition:
+    border-color 150ms ease,
+    box-shadow 200ms ease;
+}
+
+.editorial-achievements .glass-card:hover {
+  border-color: rgba(var(--accent-rgb, var(--neon-primary)), 0.4);
+  box-shadow: 0 8px 24px -12px rgba(var(--accent-rgb, var(--neon-primary)), 0.25);
+}
+
+/* Skeleton + progress bar adjustments */
+.editorial-achievements [class*="bg-gray-200"],
+.editorial-achievements [class*="bg-slate-700"] {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.editorial-achievements .text-gray-500 {
+  color: var(--editorial-muted);
+}
+
+.editorial-achievements .text-gray-900 {
+  color: #fff;
+}
+
+/* Empty state */
+.editorial-achievements-empty {
+  padding: 2rem 1.5rem;
+  border-radius: 1rem;
+  border: 1px dashed var(--editorial-line);
+  background: var(--editorial-bg-3);
+  text-align: center;
+  color: var(--editorial-muted);
+  font-size: 0.875rem;
+}
+
+/* Error state */
+.editorial-achievements-error {
+  padding: 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(220, 38, 38, 0.4);
+  background: rgba(220, 38, 38, 0.08);
+  text-align: center;
+  color: #fca5a5;
+  font-size: 0.875rem;
+}

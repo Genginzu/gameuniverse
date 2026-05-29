@@ -2,23 +2,36 @@
 
 import { useState } from "react";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { Icon } from "@iconify/react";
+
 import { useProfile } from "@/hooks/useProfile";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { createClient } from "@/lib/supabase";
+
+import { KickerLabel } from "@/components/shared/KickerLabel";
+
 import { SettingsSkeleton } from "./SettingsSkeleton";
 import { UsernameForm } from "./UsernameForm";
 import { EmailForm } from "./EmailForm";
 import { PasswordResetSection } from "./PasswordResetSection";
 import { AppearanceSection } from "./AppearanceSection";
-// import { LinkedPlatformsSection } from "./LinkedPlatformsSection";
-import { createClient } from "@/lib/supabase";
-import { Icon } from "@iconify/react";
+import { LinkedPlatformsSection } from "./LinkedPlatformsSection";
 
+/**
+ * SettingsContent : onglet Settings de la page joueur (`/players/[id]`).
+ * Look éditorial : header avec kicker + titre, sections-cards en surfaces
+ * sombres avec icône + kicker + titre + description.
+ *
+ * Conserve toute la logique métier intacte — seules les surfaces visuelles
+ * passent en mode éditorial. Les forms (UsernameForm, EmailForm, etc.) sont
+ * réutilisés tels quels et héritent du theming via `.editorial-settings-section-body`.
+ */
 export function SettingsContent() {
   const t = useTranslations("settings");
+  const tEditorial = useTranslations("settings.editorial");
   const router = useRouter();
   const { profile, loading: profileLoading, updateProfile, refreshProfile } = useProfile();
   const { user, loading: authLoading, resetPassword } = useAuth();
@@ -36,14 +49,9 @@ export function SettingsContent() {
     setIsUpdatingUsername(true);
     try {
       await updateProfile({ username });
-      toast({
-        title: t("profile.usernameUpdated"),
-      });
+      toast({ title: t("profile.usernameUpdated") });
     } catch {
-      toast({
-        title: t("errors.updateFailed"),
-        variant: "destructive",
-      });
+      toast({ title: t("errors.updateFailed"), variant: "destructive" });
     } finally {
       setIsUpdatingUsername(false);
     }
@@ -54,28 +62,16 @@ export function SettingsContent() {
     try {
       const { error } = await supabase.auth.updateUser({ email });
       if (error) {
-        // Check if email is already in use
         if (error.message.includes("already") || error.message.includes("exists")) {
-          toast({
-            title: t("profile.emailInUse"),
-            variant: "destructive",
-          });
+          toast({ title: t("profile.emailInUse"), variant: "destructive" });
         } else {
-          toast({
-            title: t("errors.updateFailed"),
-            variant: "destructive",
-          });
+          toast({ title: t("errors.updateFailed"), variant: "destructive" });
         }
         return;
       }
-      toast({
-        title: t("profile.emailUpdateSent"),
-      });
+      toast({ title: t("profile.emailUpdateSent") });
     } catch {
-      toast({
-        title: t("errors.connectionError"),
-        variant: "destructive",
-      });
+      toast({ title: t("errors.connectionError"), variant: "destructive" });
     } finally {
       setIsUpdatingEmail(false);
     }
@@ -87,14 +83,9 @@ export function SettingsContent() {
     setIsRequestingReset(true);
     try {
       await resetPassword(user.email);
-      toast({
-        title: t("security.resetSent"),
-      });
+      toast({ title: t("security.resetSent") });
     } catch {
-      toast({
-        title: t("security.resetError"),
-        variant: "destructive",
-      });
+      toast({ title: t("security.resetError"), variant: "destructive" });
     } finally {
       setIsRequestingReset(false);
     }
@@ -102,7 +93,6 @@ export function SettingsContent() {
 
   const handleAvatarChange = () => {
     refreshProfile();
-    // Invalidate Next.js Router Cache so the profile page shows the new image
     router.refresh();
   };
 
@@ -132,96 +122,98 @@ export function SettingsContent() {
   };
 
   return (
-    <div className="flex-1 p-4 sm:p-6">
-      {/* Page Header */}
-      <div className="mb-6 sm:mb-8">
-        <h1 className="neon-text mb-2 text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">
-          {t("title")}
+    <section className="editorial-settings">
+      <header className="editorial-settings-header">
+        <KickerLabel>{tEditorial("kicker")}</KickerLabel>
+        <h1 className="editorial-settings-title">
+          {tEditorial("titlePrefix")}{" "}
+          <span className="accent">{tEditorial("titleAccent")}</span>
         </h1>
-        <p className="text-sm text-gray-600 sm:text-base dark:text-gray-400">{t("subtitle")}</p>
-      </div>
+        <p className="editorial-settings-subtitle">{tEditorial("subtitle")}</p>
+      </header>
 
-      {/* Settings Sections */}
-      <div className="space-y-6">
-        {/* Profile Section */}
-        <Card className="rounded-xl bg-white dark:bg-gray-800">
-          <CardHeader>
-            <div className="flex items-center">
-              <div className="rounded-xl bg-blue-100 p-2 dark:bg-blue-900/30">
-                <Icon
-                  icon="fa:user"
-                  className="h-4 w-4 text-blue-600 sm:h-5 sm:w-5 dark:text-blue-400"
-                />
-              </div>
-              <div className="ml-3">
-                <CardTitle className="text-base font-semibold text-gray-900 sm:text-lg dark:text-white">
-                  {t("profile.title")}
-                </CardTitle>
-                <CardDescription className="text-sm text-gray-500 dark:text-gray-400">
-                  {t("profile.description")}
-                </CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Username Section */}
+      <div className="editorial-settings-sections">
+        <SettingsSection
+          icon="lucide:user"
+          title={t("profile.title")}
+          description={t("profile.description")}
+        >
+          <div className="space-y-6">
             <UsernameForm
               currentUsername={profile?.username || null}
               onUpdate={handleUsernameUpdate}
               isLoading={isUpdatingUsername}
             />
-
-            {/* Email Section */}
             <EmailForm
               currentEmail={user?.email || ""}
               onUpdate={handleEmailUpdate}
               isLoading={isUpdatingEmail}
             />
-          </CardContent>
-        </Card>
+          </div>
+        </SettingsSection>
 
-        {/* Appearance Section */}
-        <AppearanceSection
-          avatarUrl={profile?.avatar_url ?? null}
-          bannerUrl={profile?.banner_url ?? null}
-          onAvatarChange={handleAvatarChange}
-          onBannerChange={handleBannerChange}
-          onAvatarDelete={handleAvatarDelete}
-          onBannerDelete={handleBannerDelete}
-        />
+        <SettingsSection
+          icon="lucide:palette"
+          title={t("appearance.title")}
+          description={t("appearance.description")}
+        >
+          <AppearanceSection
+            avatarUrl={profile?.avatar_url ?? null}
+            bannerUrl={profile?.banner_url ?? null}
+            onAvatarChange={handleAvatarChange}
+            onBannerChange={handleBannerChange}
+            onAvatarDelete={handleAvatarDelete}
+            onBannerDelete={handleBannerDelete}
+          />
+        </SettingsSection>
 
-        {/* Linked Gaming Platforms Section */}
-        {/* <LinkedPlatformsSection /> */}
+        <SettingsSection
+          icon="lucide:gamepad-2"
+          title={t("platforms.title")}
+          description={t("platforms.description")}
+        >
+          <LinkedPlatformsSection />
+        </SettingsSection>
 
-        {/* Security Section */}
-        <Card className="rounded-xl bg-white dark:bg-gray-800">
-          <CardHeader>
-            <div className="flex items-center">
-              <div className="rounded-xl bg-purple-100 p-2 dark:bg-purple-900/30">
-                <Icon
-                  icon="lucide:shield"
-                  className="h-4 w-4 text-purple-600 sm:h-5 sm:w-5 dark:text-purple-400"
-                />
-              </div>
-              <div className="ml-3">
-                <CardTitle className="text-base font-semibold text-gray-900 sm:text-lg dark:text-white">
-                  {t("security.title")}
-                </CardTitle>
-                <CardDescription className="text-sm text-gray-500 dark:text-gray-400">
-                  {t("security.description")}
-                </CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <PasswordResetSection
-              userEmail={user?.email || ""}
-              onRequestReset={handlePasswordReset}
-              isLoading={isRequestingReset}
-            />
-          </CardContent>
-        </Card>
+        <SettingsSection
+          icon="lucide:shield"
+          title={t("security.title")}
+          description={t("security.description")}
+        >
+          <PasswordResetSection
+            userEmail={user?.email || ""}
+            onRequestReset={handlePasswordReset}
+            isLoading={isRequestingReset}
+          />
+        </SettingsSection>
       </div>
-    </div>
+    </section>
+  );
+}
+
+function SettingsSection({
+  icon,
+  title,
+  description,
+  children,
+}: {
+  icon: string;
+  title: string;
+  description: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="editorial-settings-section">
+      <header className="editorial-settings-section-header">
+        <div className="editorial-settings-section-icon" aria-hidden="true">
+          <Icon icon={icon} className="h-5 w-5" />
+        </div>
+        <div className="editorial-settings-section-heading">
+          <h2 className="editorial-settings-section-title">{title}</h2>
+          <p className="editorial-settings-section-description">{description}</p>
+        </div>
+      </header>
+      <div className="editorial-settings-section-body">{children}</div>
+    </section>
   );
 }

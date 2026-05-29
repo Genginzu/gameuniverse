@@ -1,0 +1,102 @@
+/*
+ * Editorial : onglets Library + Collections de la page joueur.
+ * Habillage léger : titres, count badge, load more button.
+ */
+
+/* ===== Library tab ===== */
+.editorial-player-library-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--editorial-line);
+}
+
+.editorial-player-library-title {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  margin: 0;
+  font-family: var(--font-display, "Tomorrow"), system-ui, sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #fff;
+}
+
+.editorial-player-library-icon {
+  width: 1.5rem;
+  height: 1.5rem;
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+}
+
+.editorial-player-library-count {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.12);
+  border: 1px solid rgba(var(--accent-rgb, var(--neon-primary)), 0.25);
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.editorial-player-library-load-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 44px;
+  padding: 0 1.5rem;
+  border-radius: 12px;
+  background: var(--editorial-bg-3);
+  border: 1px solid var(--editorial-line);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    border-color 150ms ease,
+    box-shadow 200ms ease,
+    color 150ms ease;
+}
+
+.editorial-player-library-load-more:hover:not(:disabled) {
+  border-color: rgba(var(--accent-rgb, var(--neon-primary)), 0.4);
+  box-shadow: 0 8px 24px -12px rgba(var(--accent-rgb, var(--neon-primary)), 0.25);
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+}
+
+.editorial-player-library-load-more:focus-visible {
+  outline: 2px solid rgb(var(--accent-rgb, var(--neon-primary)));
+  outline-offset: 3px;
+}
+
+.editorial-player-library-load-more:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ===== Collections tab ===== */
+.editorial-player-collections .glass-card {
+  background: var(--editorial-bg-3);
+  border: 1px solid var(--editorial-line);
+  backdrop-filter: none;
+  color: #fff;
+}
+
+.editorial-player-collections [class*="bg-gray-200"],
+.editorial-player-collections [class*="bg-slate-700"] {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.editorial-player-collections .text-gray-500,
+.editorial-player-collections .text-gray-400 {
+  color: var(--editorial-muted);
+}

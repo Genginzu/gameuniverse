@@ -41,6 +41,15 @@
 @import "./styles/editorial/library.css";
 @import "./styles/editorial/collections.css";
 @import "./styles/editorial/collection-detail.css";
+@import "./styles/editorial/settings.css";
+@import "./styles/editorial/activity.css";
+@import "./styles/editorial/stats.css";
+@import "./styles/editorial/achievements.css";
+@import "./styles/editorial/friends.css";
+@import "./styles/editorial/reviews.css";
+@import "./styles/editorial/goals.css";
+@import "./styles/editorial/recommendations.css";
+@import "./styles/editorial/player-tabs.css";
 
 @custom-variant dark (&:is(.dark *));
 

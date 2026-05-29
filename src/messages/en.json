@@ -1543,6 +1543,12 @@
         "ubisoft": "Ubisoft",
         "itch": "itch.io"
       }
+    },
+    "editorial": {
+      "kicker": "Settings",
+      "titlePrefix": "Your",
+      "titleAccent": "account",
+      "subtitle": "Manage your personal information, appearance, linked platforms and account security."
     }
   },
   "admin": {

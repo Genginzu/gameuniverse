@@ -18,7 +18,7 @@ interface FeedItemProps {
  */
 export function FeedItem({ event, locale }: FeedItemProps) {
   return (
-    <article className="rounded-xl border border-gray-200 bg-white p-4 dark:border-slate-700/50 dark:bg-slate-800/50">
+    <article className="editorial-feed-item">
       <FeedActor actor={event.data.actor} date={event.date} />
       <FeedItemContent event={event} locale={locale} />
     </article>

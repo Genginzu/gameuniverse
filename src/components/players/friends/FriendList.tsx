@@ -73,7 +73,7 @@ export const FriendList = memo(function FriendList({
       {isLoadingMore && (
         <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 3 }).map((_, i) => (
-            <Skeleton key={i} className="h-16 w-full rounded-xl bg-gray-200 dark:bg-slate-700/50" />
+            <Skeleton key={i} className="editorial-friend-skeleton" />
           ))}
         </div>
       )}
@@ -88,7 +88,7 @@ function FriendListSkeleton() {
   return (
     <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
       {Array.from({ length: 6 }).map((_, i) => (
-        <Skeleton key={i} className="h-16 w-full rounded-xl bg-gray-200 dark:bg-slate-700/50" />
+        <Skeleton key={i} className="editorial-friend-skeleton" />
       ))}
     </div>
   );
@@ -98,11 +98,11 @@ function FriendListEmpty() {
   const t = useTranslations("friends");
 
   return (
-    <div className="flex flex-col items-center justify-center rounded-2xl border border-gray-200 bg-white py-12 text-center dark:border-slate-700/50 dark:bg-slate-800/50">
-      <div className="mb-4 rounded-full bg-gray-100 p-4 dark:bg-slate-700/50">
-        <Icon icon="lucide:users" className="h-10 w-10 text-gray-400 dark:text-slate-400" />
+    <div className="editorial-friends-empty">
+      <div className="editorial-friends-empty-icon">
+        <Icon icon="lucide:users" className="h-10 w-10" aria-hidden="true" />
       </div>
-      <p className="text-sm text-gray-500 dark:text-slate-400">{t("empty")}</p>
+      <p className="editorial-friends-empty-text">{t("empty")}</p>
     </div>
   );
 }
