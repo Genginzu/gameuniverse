@@ -13,6 +13,10 @@ import type { CharacterFavoriteSummary } from "@/types/character";
 /** Grille responsive partagée entre le skeleton et le rendu final */
 const GRID_CLASS =
   "grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6";
+
+/** Conteneurs éditoriaux (fond sombre + largeur de page) */
+const PAGE_WRAP = "min-h-screen bg-[var(--editorial-bg)]";
+const INNER = "mx-auto max-w-[1600px] px-4 py-8 sm:px-6 lg:px-12";
 const favoriteCardConfig: EntityCardConfig<CharacterFavoriteSummary> = {
   aspectRatio: "3:4",
   imageField: "mainImage",
@@ -53,27 +57,29 @@ export function FavoriteCharactersContent() {
 
   if (loading) {
     return (
-      <div className="p-4 sm:p-6">
-        <GridSkeleton
-          skeletonConfig={characterSkeletonConfig}
-          count={8}
-          gridClassName={GRID_CLASS}
-        />
+      <div className={PAGE_WRAP}>
+        <div className={INNER}>
+          <GridSkeleton
+            skeletonConfig={characterSkeletonConfig}
+            count={8}
+            gridClassName={GRID_CLASS}
+          />
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-4 sm:p-6">
-        <div className="flex flex-col items-center justify-center rounded-2xl bg-white py-12 text-center shadow-xs dark:bg-gray-800">
-          <div className="mb-4 rounded-full bg-red-100 p-4 dark:bg-red-900/30">
-            <Icon icon="lucide:heart" className="h-8 w-8 text-red-400" />
+      <div className={PAGE_WRAP}>
+        <div className={INNER}>
+          <div className="flex flex-col items-center justify-center rounded-2xl border border-[var(--editorial-line)] bg-[var(--editorial-bg-2)] py-12 text-center">
+            <div className="mb-4 grid h-16 w-16 place-items-center rounded-full bg-red-500/15 text-red-400">
+              <Icon icon="lucide:heart" className="h-8 w-8" />
+            </div>
+            <h3 className="mb-2 text-lg font-medium text-white">{t("errorTitle")}</h3>
+            <p className="max-w-md text-sm text-[var(--editorial-muted)]">{error}</p>
           </div>
-          <h3 className="mb-2 text-lg font-medium text-gray-900 dark:text-white">
-            {t("errorTitle")}
-          </h3>
-          <p className="max-w-md text-sm text-gray-500 dark:text-gray-400">{error}</p>
         </div>
       </div>
     );
@@ -82,20 +88,22 @@ export function FavoriteCharactersContent() {
   // Req 3.3: empty state with link to /characters
   if (characters.length === 0) {
     return (
-      <div className="p-4 sm:p-6">
-        <div className="flex flex-col items-center justify-center rounded-2xl bg-white py-16 text-center shadow-xs dark:bg-gray-800">
-          <div className="mb-6 rounded-full bg-gray-100 p-6 dark:bg-gray-700">
-            <Icon icon="lucide:heart" className="h-12 w-12 text-gray-400" />
+      <div className={PAGE_WRAP}>
+        <div className={INNER}>
+          <div className="flex flex-col items-center justify-center rounded-2xl border border-[var(--editorial-line)] bg-[var(--editorial-bg-2)] py-16 text-center">
+            <div className="mb-6 grid h-20 w-20 place-items-center rounded-full bg-[rgba(var(--neon-primary),0.12)] text-[rgb(var(--neon-primary))]">
+              <Icon icon="lucide:heart" className="h-10 w-10" />
+            </div>
+            <h3 className="editorial-display mb-2 text-xl font-bold text-white">
+              {t("emptyTitle")}
+            </h3>
+            <p className="mb-6 max-w-md text-sm text-[var(--editorial-muted)]">
+              {t("emptyDescription")}
+            </p>
+            <Button asChild>
+              <Link href="/characters">{t("exploreCharacters")}</Link>
+            </Button>
           </div>
-          <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white">
-            {t("emptyTitle")}
-          </h3>
-          <p className="mb-6 max-w-md text-sm text-gray-500 dark:text-gray-400">
-            {t("emptyDescription")}
-          </p>
-          <Button asChild className="bg-blue-600 hover:bg-blue-700">
-            <Link href="/characters">{t("exploreCharacters")}</Link>
-          </Button>
         </div>
       </div>
     );
@@ -104,23 +112,25 @@ export function FavoriteCharactersContent() {
   // Req 3.1: characters sorted by date added (desc) — handled by API
   // Req 3.2: grid showing image, name, role, primary game
   return (
-    <div className="p-4 sm:p-6">
-      <div className="mb-6">
-        <h1 className="text-xl font-bold text-gray-900 sm:text-2xl lg:text-3xl dark:text-white">
-          {t("title", { count: characters.length })}
-        </h1>
-      </div>
+    <div className={PAGE_WRAP}>
+      <div className={INNER}>
+        <header className="mb-8">
+          <h1 className="editorial-display text-3xl font-bold text-white sm:text-4xl lg:text-5xl">
+            {t("title", { count: characters.length })}
+          </h1>
+        </header>
 
-      <div className={GRID_CLASS}>
-        {characters.map((character, index) => (
-          <EntityCard
-            key={character.id}
-            entity={character}
-            config={favoriteCardConfig}
-            locale={locale}
-            priority={index < 8}
-          />
-        ))}
+        <div className={GRID_CLASS}>
+          {characters.map((character, index) => (
+            <EntityCard
+              key={character.id}
+              entity={character}
+              config={favoriteCardConfig}
+              locale={locale}
+              priority={index < 8}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
