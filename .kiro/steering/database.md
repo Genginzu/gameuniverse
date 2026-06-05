@@ -86,5 +86,5 @@ supabase/seeds/NN_description.sql
 1. `npx supabase db reset` — applique migrations + seeds (base vierge)
 2. Import du dump de prod si nécessaire :
    ```bash
-   cmd /c "docker exec -i supabase_db_gameuniverse psql -U postgres -d postgres < dump_prod.sql"
+   cmd /c "docker exec -i supabase_db_gameuniverse psql -U postgres -d postgres < scripts/dumps/dump_prod.sql"
    ```

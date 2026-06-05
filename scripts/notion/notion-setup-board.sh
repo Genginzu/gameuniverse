@@ -1,10 +1,10 @@
 #!/bin/bash
 # Script pour créer le Board Kanban dans Notion + tâches initiales
-# Usage: NOTION_TOKEN=ntn_xxx bash scripts/notion-setup-board.sh
+# Usage: NOTION_TOKEN=ntn_xxx bash scripts/notion/notion-setup-board.sh
 
 if [ -z "$NOTION_TOKEN" ]; then
   echo "❌ Variable NOTION_TOKEN manquante."
-  echo "Usage: NOTION_TOKEN=ntn_xxx bash scripts/notion-setup-board.sh"
+  echo "Usage: NOTION_TOKEN=ntn_xxx bash scripts/notion/notion-setup-board.sh"
   exit 1
 fi
 

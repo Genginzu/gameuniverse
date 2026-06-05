@@ -1,6 +1,6 @@
 #!/bin/bash
 # Bash script to run all development checks with Bun
-# Usage: ./scripts/check-all.sh
+# Usage: ./scripts/dev/check-all.sh
 
 set -e
 

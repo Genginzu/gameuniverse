@@ -1,6 +1,6 @@
 /**
  * Script de test pour récupérer toutes les infos age_ratings d'Outer Wilds depuis IGDB
- * Usage: node scripts/test-igdb-age-ratings.js
+ * Usage: node scripts/dev/test-igdb-age-ratings.js
  */
 
 const IGDB_CLIENT_ID = "1d2tejj63z747buefo0l53qjvlvq7r";

@@ -1,11 +1,11 @@
 # Script pour creer le Board Kanban dans Notion + taches initiales
-# Usage: $env:NOTION_TOKEN="ntn_xxx"; .\scripts\notion-setup-board.ps1
+# Usage: $env:NOTION_TOKEN="ntn_xxx"; .\scripts\notion\notion-setup-board.ps1
 
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 if (-not $env:NOTION_TOKEN) {
     Write-Host "Variable NOTION_TOKEN manquante." -ForegroundColor Red
-    Write-Host '$env:NOTION_TOKEN="ntn_xxx"; .\scripts\notion-setup-board.ps1'
+    Write-Host '$env:NOTION_TOKEN="ntn_xxx"; .\scripts\notion\notion-setup-board.ps1'
     exit 1
 }
 

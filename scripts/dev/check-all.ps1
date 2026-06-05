@@ -1,5 +1,5 @@
 # PowerShell script to run all development checks with Bun
-# Usage: .\scripts\check-all.ps1
+# Usage: .\scripts\dev\check-all.ps1
 
 Write-Host "🔍 Running ESLint..." -ForegroundColor Blue
 bun run lint

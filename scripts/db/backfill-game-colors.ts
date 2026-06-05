@@ -5,7 +5,7 @@
  * extracts colors from the cover using colorthief, and updates the DB.
  *
  * Usage:
- *   bun scripts/backfill-game-colors.ts [--verbose] [--dry-run] [--force]
+ *   bun scripts/db/backfill-game-colors.ts [--verbose] [--dry-run] [--force]
  *
  * Options:
  *   --verbose   Show detailed logs
@@ -13,8 +13,8 @@
  *   --force     Re-extract colors even if already set
  */
 
-import { createScriptClient } from "./igdb-import/shared/supabase-client";
-import { extractColorsFromCover } from "../src/lib/utils/color-extraction";
+import { createScriptClient } from "../igdb-import/shared/supabase-client";
+import { extractColorsFromCover } from "../../src/lib/utils/color-extraction";
 
 const args = process.argv.slice(2);
 const verbose = args.includes("--verbose");

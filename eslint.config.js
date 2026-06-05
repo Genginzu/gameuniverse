@@ -143,7 +143,7 @@ export default [
       ".husky/",
       "public/",
       "test-resend.js",
-      "scripts/test-igdb-age-ratings.js",
+      "scripts/dev/test-igdb-age-ratings.js",
       "supabase/functions/",
     ],
   },

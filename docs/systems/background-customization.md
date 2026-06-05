@@ -60,13 +60,13 @@ fields to the existing games table.
 **Windows (PowerShell):**
 
 ```powershell
-.\scripts\update-backgrounds.ps1
+.\scripts\backgrounds\update-backgrounds.ps1
 ```
 
 **Unix/Linux/macOS:**
 
 ```bash
-./scripts/update-backgrounds.sh
+./scripts/backgrounds/update-backgrounds.sh
 ```
 
 ### Option 2: Manual Steps
