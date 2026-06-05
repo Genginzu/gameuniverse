@@ -1,0 +1,101 @@
+/*
+ * Editorial : pages Esport (calendar, live, tournaments, results, teams,
+ * players, predictions, fantasy).
+ *
+ * Wrapper minimal-touch `.editorial-esport` qui pose le fond sombre éditorial
+ * et neutralise les surfaces glassmorphism legacy des composants
+ * `src/components/esport/*` (glass-card, glass-input, bg-white/*, badges gris,
+ * backdrop-blur) sans réécrire chaque composant. Pas de blur.
+ *
+ * La classe est aussi appliquée sur les DialogContent portalisés (ex :
+ * PredictionDialog) pour que l'override atteigne le portal.
+ */
+
+.editorial-esport {
+  min-height: 100vh;
+  background: var(--editorial-bg);
+  color: #fff;
+}
+
+/* Fond de page legacy (dégradé clair from-slate-50) -> transparent :
+   le wrapper fournit déjà le fond sombre. N'affecte pas les gradients
+   d'accent (from-palette-*). */
+.editorial-esport [class*="from-slate-50"] {
+  background-image: none !important;
+}
+
+/* ===== Cards / sections glass -> surfaces sombres bordées ===== */
+.editorial-esport .glass-card {
+  background: var(--editorial-bg-3);
+  border: 1px solid var(--editorial-line);
+  backdrop-filter: none;
+  color: #fff;
+  transition:
+    border-color 150ms ease,
+    box-shadow 200ms ease;
+}
+
+.editorial-esport .glass-card:hover {
+  border-color: rgba(var(--accent-rgb, var(--neon-primary)), 0.4);
+  box-shadow: 0 8px 24px -12px rgba(var(--accent-rgb, var(--neon-primary)), 0.25);
+}
+
+/* ===== Inputs glass -> input sombre ===== */
+.editorial-esport .glass-input,
+.editorial-esport .glass {
+  background: var(--editorial-bg-2);
+  border: 1px solid var(--editorial-line);
+  color: #fff;
+  backdrop-filter: none;
+}
+
+.editorial-esport .glass-input::placeholder {
+  color: var(--editorial-muted);
+}
+
+.editorial-esport .glass-input:focus,
+.editorial-esport .glass-input:focus-visible {
+  outline: none;
+  border-color: rgb(var(--accent-rgb, var(--neon-primary)));
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb, var(--neon-primary)), 0.15);
+}
+
+/* ===== Surfaces blanches internes (lignes, boutons, avatars) -> sombres ===== */
+.editorial-esport :not(button)[class*="bg-white"] {
+  background-color: var(--editorial-bg-2) !important;
+}
+
+.editorial-esport button[class*="bg-white"] {
+  background-color: var(--editorial-bg-2) !important;
+}
+
+/* ===== Badges / pills gris clair -> surface subtile ===== */
+.editorial-esport [class*="bg-gray-100"] {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* ===== Bordures legacy claires -> ligne éditoriale ===== */
+.editorial-esport [class*="border-gray-200"] {
+  border-color: var(--editorial-line) !important;
+}
+
+/* ===== Plus de blur ===== */
+.editorial-esport [class*="backdrop-blur"] {
+  backdrop-filter: none !important;
+}
+
+/* ===== Textes legacy mode clair -> clair / muted ===== */
+.editorial-esport .text-gray-900 {
+  color: #fff;
+}
+
+.editorial-esport .text-gray-700,
+.editorial-esport .text-gray-800 {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.editorial-esport .text-gray-400,
+.editorial-esport .text-gray-500,
+.editorial-esport .text-gray-600 {
+  color: var(--editorial-muted);
+}

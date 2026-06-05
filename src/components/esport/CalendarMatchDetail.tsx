@@ -107,7 +107,7 @@ export function CalendarMatchDetail({ match, open, onOpenChange }: CalendarMatch
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] w-[95vw] overflow-y-auto sm:max-w-md">
+      <DialogContent className="editorial-esport max-h-[90vh] w-[95vw] overflow-y-auto sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-base font-bold">{match.name}</DialogTitle>
         </DialogHeader>

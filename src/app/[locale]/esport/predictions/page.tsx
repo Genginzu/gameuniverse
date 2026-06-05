@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
+import { EsportShell } from "@/components/esport/EsportShell";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
 import { EsportPredictionsContent } from "@/components/esport/EsportPredictionsContent";
@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default function EsportPredictionsPage() {
   return (
-    <DashboardLayout>
+    <EsportShell>
       <ErrorBoundary
         fallback={
           <ErrorFallback description="Error loading predictions." showRefresh showHomeButton />
@@ -25,6 +25,6 @@ export default function EsportPredictionsPage() {
       >
         <EsportPredictionsContent />
       </ErrorBoundary>
-    </DashboardLayout>
+    </EsportShell>
   );
 }

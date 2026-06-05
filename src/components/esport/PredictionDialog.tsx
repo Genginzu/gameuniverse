@@ -106,7 +106,7 @@ export function PredictionDialog({ open, onOpenChange, tournamentId, tournamentN
 
   return (
     <Dialog open={open} onOpenChange={(v) => { onOpenChange(v); if (!v) resetState(); }}>
-      <DialogContent className="max-h-[90vh] w-[95vw] overflow-y-auto sm:max-w-lg">
+      <DialogContent className="editorial-esport max-h-[90vh] w-[95vw] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Icon icon="mdi:dice-multiple" className="size-5 text-amber-500" />
