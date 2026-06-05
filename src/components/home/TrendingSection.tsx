@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * TrendingSection : grille de 4 jeux tendances en `EditorialGameCard`.
+ * TrendingSection : grille de 4 jeux tendances en `GameCard`.
  *
  * Remplace l'ancien `RecentGamesSection`. Branchée sur l'API `/api/home`
  * (qui retourne `trending` + `upcoming`). Données initiales hydratées
@@ -14,7 +14,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import useSWR from "swr";
 
-import { EditorialGameCard } from "@/components/games/EditorialGameCard";
+import { GameCard } from "@/components/games/GameCard";
 import { KickerLabel } from "@/components/shared/KickerLabel";
 import { fetcher } from "@/lib/swr/fetcher";
 import { Link } from "@/i18n/navigation";
@@ -78,7 +78,7 @@ export function TrendingSection({ initialData }: TrendingSectionProps) {
         ) : (
           <div className="editorial-home-trending-grid">
             {trending.map((game, index) => (
-              <EditorialGameCard key={game.id} game={game} priority={index < 2} />
+              <GameCard key={game.id} game={game} priority={index < 2} />
             ))}
           </div>
         )}

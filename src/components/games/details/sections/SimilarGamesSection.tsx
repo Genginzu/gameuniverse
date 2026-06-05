@@ -4,12 +4,12 @@
  * Section "Similar games" : utilise les similar_games IGDB si dispo,
  * sinon les recommandations algorithmiques (RecommendationSection).
  *
- * Affichage : grille 4 cols d'EditorialGameCard.
+ * Affichage : grille 4 cols d'GameCard.
  */
 
 import dynamic from "next/dynamic";
 import { useTranslations } from "next-intl";
-import { EditorialGameCard } from "@/components/games/EditorialGameCard";
+import { GameCard } from "@/components/games/GameCard";
 import { KickerLabel } from "@/components/shared/KickerLabel";
 import type { GameDetails, GameSummary } from "@/types/game";
 import { accentRich } from "../utils/accent-rich";
@@ -63,7 +63,7 @@ export function SimilarGamesSection({ game, locale }: SimilarGamesSectionProps) 
       {hasResolved ? (
         <div className="editorial-game-detail-similar-grid">
           {resolved.map((g) => (
-            <EditorialGameCard key={g.id} game={g} />
+            <GameCard key={g.id} game={g} />
           ))}
         </div>
       ) : (

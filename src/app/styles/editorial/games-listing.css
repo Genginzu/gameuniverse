@@ -1,4 +1,4 @@
-﻿/* Editorial games listing : hero + filters wrapper + grid + content. Voir docs/setup/styles-organization.md */
+/* Editorial games listing : hero + filters wrapper + grid + content. Voir docs/setup/styles-organization.md */
 
 /*
  * Editorial games listing: hero + filters + grid wrapper.
@@ -93,6 +93,13 @@
   }
 }
 
+@media (min-width: 1536px) {
+  .editorial-games-listing-grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1.25rem;
+  }
+}
+
 .editorial-games-listing-content {
   transition: opacity 200ms ease;
 }
@@ -106,15 +113,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .editorial-game-card,
-  .editorial-game-card-arrow,
   .editorial-games-listing-content {
     transition: none;
-  }
-  .editorial-game-card:hover {
-    transform: none;
-  }
-  .editorial-game-card:hover .editorial-game-card-arrow {
-    transform: none;
   }
 }

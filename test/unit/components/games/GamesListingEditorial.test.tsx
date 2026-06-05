@@ -51,12 +51,12 @@ vi.mock("@/hooks/useGameListing", () => ({
 // Lightweight stubs for sub-components (focus on orchestration)
 // ---------------------------------------------------------------------------
 
-vi.mock("@/components/games/EditorialGameCard", () => ({
-  EditorialGameCard: ({ game }: { game: GameSummary }) =>
+vi.mock("@/components/games/GameCard", () => ({
+  GameCard: ({ game }: { game: GameSummary }) =>
     React.createElement(
       "a",
       {
-        "data-testid": "editorial-game-card",
+        "data-testid": "editorial-card",
         "data-game-id": game.id,
         href: `/games/${game.slug}`,
       },
@@ -297,7 +297,7 @@ describe("GamesListingEditorial", () => {
   });
 
   describe("grid", () => {
-    it("renders one EditorialGameCard per game", () => {
+    it("renders one GameCard per game", () => {
       setHookDefaults({
         games: [
           makeGame({ id: "a", slug: "a", title: "Alpha" }),
@@ -306,7 +306,7 @@ describe("GamesListingEditorial", () => {
         ],
       });
       render(<GamesListingEditorial />);
-      const cards = screen.getAllByTestId("editorial-game-card");
+      const cards = screen.getAllByTestId("editorial-card");
       expect(cards).toHaveLength(3);
       expect(cards.map((c) => c.getAttribute("data-game-id"))).toEqual(["a", "b", "c"]);
     });

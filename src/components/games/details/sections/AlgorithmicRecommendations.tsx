@@ -3,12 +3,12 @@
 /**
  * Fallback de SimilarGamesSection : recommandations algorithmiques quand
  * IGDB ne fournit pas de similar_games utilisables. Charge via
- * `useRecommendations` et rend les jeux dans une grille EditorialGameCard.
+ * `useRecommendations` et rend les jeux dans une grille GameCard.
  */
 
 import { useTranslations } from "next-intl";
 import { useRecommendations } from "@/hooks/useRecommendations";
-import { EditorialGameCard } from "@/components/games/EditorialGameCard";
+import { GameCard } from "@/components/games/GameCard";
 import { GameCardSkeleton } from "@/components/games/GameCardSkeleton";
 import type { GameRecommendation } from "@/types/recommendation";
 import type { GameSummary } from "@/types/game";
@@ -56,7 +56,7 @@ export function AlgorithmicRecommendations({ gameSlug }: AlgorithmicRecommendati
   return (
     <div className="editorial-game-detail-similar-grid">
       {recommendations.slice(0, MAX_RECS).map((rec) => (
-        <EditorialGameCard key={rec.id} game={toGameSummary(rec)} />
+        <GameCard key={rec.id} game={toGameSummary(rec)} />
       ))}
     </div>
   );

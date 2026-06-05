@@ -8,7 +8,7 @@
  * Design :
  *   - Barre de progression fine qui scanne en haut (accent dynamique)
  *   - Statut "Recherche en cours" en kicker avec 3 dots qui pulsent
- *   - 5 cartes ghost (silhouettes des EditorialGameCard) qui respirent
+ *   - 5 cartes ghost (silhouettes des GameCard) qui respirent
  *     avec un délai décalé par index pour un effet "wave"
  *
  * Reste cohérent avec la grille `.editorial-library-grid` (mêmes

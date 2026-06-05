@@ -50,6 +50,7 @@
 @import "./styles/editorial/goals.css";
 @import "./styles/editorial/recommendations.css";
 @import "./styles/editorial/player-tabs.css";
+@import "./styles/editorial/esport.css";
 
 @custom-variant dark (&:is(.dark *));
 

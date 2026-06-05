@@ -12,7 +12,7 @@
  *
  * Change uniquement la coquille visuelle :
  *   - Hero léger (kicker + titre display + count)
- *   - Grille de `EditorialGameCard` (cover plein + footer + arrow)
+ *   - Grille de `GameCard` (cover full-bleed + slide-up description)
  *   - Couleurs éditoriales (`--editorial-*`)
  */
 
@@ -34,7 +34,7 @@ import {
 } from "@/types/game";
 import type { Pagination as PaginationType } from "@/types/pagination";
 
-import { EditorialGameCard } from "./EditorialGameCard";
+import { GameCard } from "./GameCard";
 
 const GameFilters = dynamic(() =>
   import("./GameFilters").then((m) => m.GameFilters)
@@ -165,7 +165,7 @@ export function GamesListingEditorial({
           </p>
         </header>
 
-        {/* Contrôles : filter button + sort menu */}
+        {/* Contrôles : filter button + sort menu + style switcher */}
         <div className="editorial-games-listing-controls">
           <FilterButton
             hasFilters={hasFilters}
@@ -217,7 +217,7 @@ export function GamesListingEditorial({
                 data-testid="editorial-games-listing-grid"
               >
                 {games.map((game, index) => (
-                  <EditorialGameCard
+                  <GameCard
                     key={game.id}
                     game={game}
                     priority={index < 5}

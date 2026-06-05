@@ -1,125 +1,278 @@
 "use client";
 
-import { LazyImage } from "@/components/ui/lazy-image";
-import { useGameLibraryStatus } from "@/hooks/useGameLibraryStatus";
-import { useAuth } from "@/hooks/useAuth";
-import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
+/**
+ * GameCard : carte de jeu unique pour la refonte éditoriale.
+ *
+ * Utilisée sur toutes les pages éditoriales refondues : `/`,
+ * `/library`, `/games`, `/games/[slug]` (similaires, recommandations),
+ * `/trending`, `/upcoming`, `/players/[id]` (library + common games).
+ *
+ * Design (mode par défaut) :
+ *   - Cover 3/4 full-bleed
+ *   - Plateformes en haut à gauche (toujours visibles)
+ *   - Métascore en haut à droite (visible au hover uniquement)
+ *   - Gradient sombre localisé sur la moitié basse (lisibilité du footer)
+ *   - Footer : titre + studio + année (visible au repos)
+ *   - Au hover : description tronquée + bouton "Découvrir" qui slide
+ *     depuis le bas par-dessus le footer
+ *
+ * Variantes via le prop `overlay` :
+ *   - `library` : badge status + rating étoile + playtime dans le footer
+ *     (remplace plateformes + métascore + studio·année)
+ *   - `common`  : chips genres dans le footer (remplace studio·année)
+ *
+ * Toutes les classes CSS utilisent le préfixe `editorial-card-*`.
+ */
+
+import Image from "next/image";
 import { Icon } from "@iconify/react";
-import { GameCardOverlay } from "./GameCardOverlay";
+import { useTranslations } from "next-intl";
+
+import { Link } from "@/i18n/navigation";
+import { getDistinctPlatformIcons } from "@/lib/utils/platform-icons";
+import type { GameSummary } from "@/types/game";
+
+/**
+ * Overlay contextuel optionnel. Permet à `GameCard` de rester un composant
+ * unique tout en s'adaptant aux contextes spécifiques (bibliothèque d'un
+ * joueur, comparaison de bibliothèques, etc.).
+ */
+export type GameCardOverlay =
+  | {
+      type: "library";
+      status: "owned" | "wishlist" | "completed" | "playing";
+      rating: number | null;
+      playtimeHours: number;
+    }
+  | {
+      type: "common";
+      genres: string[];
+    };
 
 interface GameCardProps {
-  game: {
-    id: string;
-    slug: string;
-    title: string;
-    description?: string;
-    coverImage?: string;
-    backgroundImage?: string;
-    backgroundColor?: string;
-    releaseDate?: string;
-    releaseYear?: number;
-    genres: Array<{ name: string; id?: string }>;
-    developer: string;
-    publisher: string;
-    metascore?: number;
-  };
-  locale?: string;
+  game: GameSummary;
+  /** Hint Next/Image priority (au-dessus du fold). */
   priority?: boolean;
-  onRemovedFromLibrary?: (gameId: string) => void;
+  /** Classes additionnelles. */
+  className?: string;
+  /** Overlay contextuel optionnel (bibliothèque, comparaison, etc.). */
+  overlay?: GameCardOverlay;
+}
+
+function getMetascoreColor(score: number): string {
+  if (score >= 75) return "rgb(74, 222, 128)";
+  if (score >= 50) return "rgb(250, 204, 21)";
+  return "rgb(248, 113, 113)";
 }
 
 export function GameCard({
   game,
-  locale = "fr",
   priority = false,
-  onRemovedFromLibrary,
+  className = "",
+  overlay,
 }: GameCardProps) {
-  const { user } = useAuth();
-  const { inLibrary, loading, adding, addToLibrary, removeFromLibrary } = useGameLibraryStatus(game.id);
-  const t = useTranslations("game");
-
-  const formatReleaseDate = (dateString?: string) => {
-    if (!dateString) return null;
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat(locale, { year: "numeric", month: "long", day: "numeric" }).format(date);
-  };
-
-  const getMetascoreColor = (score?: number) => {
-    if (!score) return "bg-gray-500";
-    if (score >= 90) return "bg-green-600";
-    if (score >= 75) return "bg-green-500";
-    if (score >= 60) return "bg-yellow-500";
-    if (score >= 40) return "bg-orange-500";
-    return "bg-red-500";
-  };
-
-  const handleLibraryToggle = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (inLibrary) {
-      const success = await removeFromLibrary();
-      if (success && onRemovedFromLibrary) onRemovedFromLibrary(game.id);
-    } else {
-      await addToLibrary();
-    }
-  };
+  const t = useTranslations("games");
+  const description = game.description?.trim() ?? "";
 
   return (
-    <div className="group relative">
-      <Link href={`/games/${game.slug}`}>
-        <div
-          className="hover:ring-neon-primary/30 relative aspect-3/4 cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(var(--neon-primary),0.3),0_0_40px_rgba(var(--neon-secondary),0.15)] hover:ring-1 motion-reduce:transition-none motion-reduce:hover:scale-100 dark:bg-gray-800"
-          style={{ backgroundColor: game.backgroundColor || "#f3f4f6" }}
-        >
-          <LazyImage
+    <Link
+      href={`/games/${game.slug}`}
+      className={`editorial-card ${className}`.trim()}
+      data-testid="editorial-card"
+      data-game-id={game.id}
+      data-overlay={overlay?.type ?? "default"}
+    >
+      <div className="editorial-card-media">
+        {game.coverImage ? (
+          <Image
             src={game.coverImage}
             alt={game.title}
             fill
-            className="rounded-2xl object-cover transition-all duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-            sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, (max-width: 1280px) 20vw, 16vw"
-            showSkeleton={true}
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
             priority={priority}
+            className="editorial-card-image"
           />
+        ) : (
+          <div className="editorial-card-placeholder">
+            <Icon icon="lucide:gamepad-2" className="size-12" aria-hidden />
+          </div>
+        )}
 
-          {user && (
-            <button
-              onClick={handleLibraryToggle}
-              disabled={adding || loading}
-              className="absolute top-3 left-3 z-20 cursor-pointer transition-transform hover:scale-110 disabled:opacity-50"
-              aria-label={inLibrary ? t("removeFromLibrary") : t("addToLibrary")}
-            >
-              {adding ? (
-                <Icon icon="svg-spinners:ring-resize" className="h-6 w-6 text-white drop-shadow-lg" />
-              ) : inLibrary ? (
-                <Icon icon="fa:heart" className="h-6 w-6 text-red-500 drop-shadow-lg" />
-              ) : (
-                <Icon icon="fa-regular:heart" className="h-6 w-6 text-white drop-shadow-lg" />
-              )}
-            </button>
-          )}
+        {/* Gradient localisé sur la moitié basse pour la lisibilité du footer */}
+        <div className="editorial-card-gradient" aria-hidden="true" />
 
-          {game.metascore && game.metascore > 0 && (
-            <div className="absolute top-3 right-3 z-20">
-              <div
-                className={`${getMetascoreColor(game.metascore)} flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold text-white shadow-[0_0_10px_currentColor] ring-2 ring-white/20 backdrop-blur-xs`}
-              >
-                {game.metascore}
-              </div>
-            </div>
-          )}
+        <CardTopLeft game={game} overlay={overlay} />
+        <CardTopRight game={game} overlay={overlay} />
 
-          <GameCardOverlay
-            title={game.title}
-            developer={game.developer}
-            publisher={game.publisher}
-            genres={game.genres}
-            releaseDate={game.releaseDate}
-            releaseYear={game.releaseYear}
-            formatReleaseDate={formatReleaseDate}
-          />
-        </div>
-      </Link>
+        {game.isEsport && (
+          <span className="editorial-card-badge" aria-label="Esport">
+            ESPORT
+          </span>
+        )}
+
+        <CardFooter game={game} overlay={overlay} />
+
+        {/* Hover panel : description + CTA (slide depuis le bas).
+            Désactivé pour les overlays métier qui occupent déjà l'espace. */}
+        {description && !overlay && (
+          <div className="editorial-card-hover" aria-hidden="true">
+            <p className="editorial-card-description">{description}</p>
+            <span className="editorial-card-cta">
+              <span>{t("readMore", { defaultValue: "Découvrir" })}</span>
+              <Icon icon="lucide:arrow-up-right" className="size-3.5" />
+            </span>
+          </div>
+        )}
+      </div>
+    </Link>
+  );
+}
+
+/** Top-left : plateformes (default) ou badge status (library). */
+function CardTopLeft({
+  game,
+  overlay,
+}: {
+  game: GameSummary;
+  overlay?: GameCardOverlay;
+}) {
+  const t = useTranslations("players.library.status");
+
+  if (overlay?.type === "library") {
+    return (
+      <span
+        className="editorial-card-status-badge"
+        data-status={overlay.status}
+        title={t(overlay.status, { defaultValue: overlay.status })}
+      >
+        {t(overlay.status, { defaultValue: overlay.status })}
+      </span>
+    );
+  }
+
+  if (overlay?.type === "common") {
+    // Pas de plateformes en mode "common" — l'info n'est pas disponible.
+    return null;
+  }
+
+  const platformIcons = game.platforms
+    ? getDistinctPlatformIcons(game.platforms, 3)
+    : [];
+
+  if (platformIcons.length === 0) return null;
+
+  return (
+    <div className="editorial-card-platforms" aria-hidden="true">
+      {platformIcons.map((p) => (
+        <span
+          key={p.icon}
+          className="editorial-card-platform-chip"
+          title={p.name}
+        >
+          <Icon icon={p.icon} className="size-3" />
+        </span>
+      ))}
+    </div>
+  );
+}
+
+/** Top-right : métascore (default, hover) ou rating étoile (library, toujours visible). */
+function CardTopRight({
+  game,
+  overlay,
+}: {
+  game: GameSummary;
+  overlay?: GameCardOverlay;
+}) {
+  if (overlay?.type === "library") {
+    if (overlay.rating === null) return null;
+    return (
+      <span className="editorial-card-rating" title={`Rating ${overlay.rating}/5`}>
+        <Icon icon="lucide:star" className="size-3 fill-current" />
+        {overlay.rating}
+      </span>
+    );
+  }
+
+  if (overlay?.type === "common") {
+    return null;
+  }
+
+  const metascore = game.metascore ?? null;
+  if (metascore === null) return null;
+
+  return (
+    <span
+      className="editorial-card-score"
+      style={{ color: getMetascoreColor(metascore) }}
+      title={`Metascore ${metascore}`}
+    >
+      {metascore}
+    </span>
+  );
+}
+
+/** Footer : titre + sous-ligne adaptée au contexte. */
+function CardFooter({
+  game,
+  overlay,
+}: {
+  game: GameSummary;
+  overlay?: GameCardOverlay;
+}) {
+  return (
+    <div className="editorial-card-footer">
+      <h3 className="editorial-card-title">{game.title}</h3>
+      <CardByline game={game} overlay={overlay} />
+    </div>
+  );
+}
+
+function CardByline({
+  game,
+  overlay,
+}: {
+  game: GameSummary;
+  overlay?: GameCardOverlay;
+}) {
+  if (overlay?.type === "library") {
+    if (overlay.playtimeHours <= 0) return null;
+    return (
+      <div className="editorial-card-byline">
+        <Icon icon="lucide:clock" className="size-3" aria-hidden />
+        <span>{overlay.playtimeHours}h</span>
+      </div>
+    );
+  }
+
+  if (overlay?.type === "common") {
+    if (overlay.genres.length === 0) return null;
+    return (
+      <div className="editorial-card-byline editorial-card-byline-genres">
+        {overlay.genres.slice(0, 2).map((genre) => (
+          <span key={genre} className="editorial-card-genre-chip">
+            {genre}
+          </span>
+        ))}
+      </div>
+    );
+  }
+
+  // Default : studio · année
+  const releaseYear = game.releaseYear ?? null;
+  const studio = game.developer || game.publisher || null;
+
+  if (!studio && !releaseYear) return null;
+
+  return (
+    <div className="editorial-card-byline">
+      {studio && <span>{studio}</span>}
+      {studio && releaseYear && (
+        <span aria-hidden className="editorial-card-byline-sep">
+          ·
+        </span>
+      )}
+      {releaseYear && <span>{releaseYear}</span>}
     </div>
   );
 }

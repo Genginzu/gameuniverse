@@ -10,7 +10,7 @@
  * Change uniquement la coquille visuelle :
  *   - Hero éditorial 5/7 (kicker + titre display + subtitle | stats inline)
  *   - Search + filter button
- *   - Grille `EditorialGameCard` (cohérent avec /games)
+ *   - Grille `GameCard` (cohérent avec /games)
  *   - Surfaces sombres `--editorial-bg-2`, accent dynamique magenta default
  */
 
@@ -22,7 +22,7 @@ import { Icon } from "@iconify/react";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { GameSearchBar } from "@/components/games/GameSearchBar";
-import { EditorialGameCard } from "@/components/games/EditorialGameCard";
+import { GameCard } from "@/components/games/GameCard";
 import { FilterButton } from "@/components/shared/FilterButton";
 import { KickerLabel } from "@/components/shared/KickerLabel";
 import { LibraryStatusProvider } from "@/components/providers/LibraryStatusProvider";
@@ -174,7 +174,7 @@ export function LibraryEditorial({ locale = "fr" }: LibraryEditorialProps) {
             <LibraryStatusProvider gameIds={games.map((g) => g.id)}>
               <div className="editorial-library-grid" data-testid="editorial-library-grid">
                 {games.map((game, index) => (
-                  <EditorialGameCard key={game.id} game={game} priority={index < 5} />
+                  <GameCard key={game.id} game={game} priority={index < 5} />
                 ))}
               </div>
             </LibraryStatusProvider>

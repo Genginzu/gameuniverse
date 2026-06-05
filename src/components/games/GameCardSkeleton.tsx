@@ -1,17 +1,9 @@
-import { Skeleton } from "@/components/ui/skeleton";
-
+/**
+ * GameCardSkeleton : silhouette d'une `GameCard` pendant le loading.
+ *
+ * Réutilise la classe utilitaire `editorial-card-skeleton` définie dans
+ * `editorial/game-card.css` (aspect 3/4, fond sombre, shimmer).
+ */
 export function GameCardSkeleton() {
-  return (
-    <div className="group relative">
-      <div className="relative aspect-3/4 overflow-hidden rounded-2xl bg-white shadow-md dark:bg-gray-800">
-        {/* Cover Image Skeleton */}
-        <Skeleton className="h-full w-full rounded-2xl" />
-
-        {/* Metascore badge skeleton */}
-        <div className="absolute top-3 right-3 z-20">
-          <Skeleton className="h-8 w-8 rounded-full" />
-        </div>
-      </div>
-    </div>
-  );
+  return <div className="editorial-card-skeleton" aria-hidden="true" />;
 }

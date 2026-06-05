@@ -107,3 +107,199 @@
   line-height: 1;
 }
 
+
+/* ============================================================
+ * Trending link + grid + empty state (utilisés par TrendingSection
+ * et HomeDashboard).
+ * ============================================================ */
+
+.editorial-home-trending-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+  text-decoration: none;
+  border-bottom: 1px solid rgba(var(--accent-rgb, var(--neon-primary)), 0.5);
+  padding-bottom: 0.25rem;
+  transition:
+    color 200ms ease,
+    border-color 200ms ease;
+  min-height: 44px;
+}
+
+.editorial-home-trending-link:hover {
+  color: #fff;
+  border-color: #fff;
+}
+
+.editorial-home-trending-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .editorial-home-trending-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+.editorial-home-trending-empty {
+  border: 1px dashed var(--editorial-line);
+  border-radius: 1rem;
+  padding: 3rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--editorial-muted);
+  font-size: 0.875rem;
+  min-height: 6rem;
+}
+
+/* ============================================================
+ * Editorial Home Dashboard (page d'accueil utilisateur connecté).
+ * Layout : header hello + sections (Trending / Upcoming).
+ * ============================================================ */
+
+.editorial-home-dashboard {
+  background: var(--editorial-bg);
+  color: #fff;
+  padding: 3rem 1rem 5rem;
+  min-height: calc(100vh - 64px);
+}
+
+@media (min-width: 768px) {
+  .editorial-home-dashboard {
+    padding: 4rem 2rem 6rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .editorial-home-dashboard {
+    padding: 5rem 2.5rem 7rem;
+  }
+}
+
+.editorial-home-dashboard-inner {
+  width: 100%;
+  max-width: 1536px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 3.5rem;
+}
+
+.editorial-home-dashboard-hello {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.editorial-home-dashboard-hello-title {
+  font-family: var(--font-display, "Tomorrow"), system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: #fff;
+}
+
+.editorial-home-dashboard-hello-subtitle {
+  font-size: 1rem;
+  color: var(--editorial-muted);
+  margin: 0;
+}
+
+.editorial-home-dashboard-block {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.editorial-home-dashboard-block-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.editorial-home-dashboard-block-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.editorial-home-dashboard-block-title {
+  font-family: var(--font-display, "Tomorrow"), system-ui, sans-serif;
+  font-weight: 600;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  line-height: 1.1;
+  margin: 0;
+  color: #fff;
+}
+
+/*
+ * Grille responsive de GameCard.
+ * Aligne sur la grille `/games` et `/library` :
+ *   2 → 3 → 4 → 5 → 6 colonnes selon les breakpoints.
+ */
+.editorial-home-dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .editorial-home-dashboard-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .editorial-home-dashboard-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .editorial-home-dashboard-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+@media (min-width: 1536px) {
+  .editorial-home-dashboard-grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+.editorial-home-dashboard-empty {
+  border: 1px dashed var(--editorial-line);
+  border-radius: 1rem;
+  padding: 2.5rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: var(--editorial-muted);
+  font-size: 0.875rem;
+  min-height: 6rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editorial-home-trending-link,
+  .editorial-home-dashboard-upcoming-item {
+    transition: none;
+  }
+}

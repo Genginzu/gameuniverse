@@ -24,6 +24,9 @@ global, la direction artistique et les choix de design.
   - [`EditorialSubSidebar`](#editorialsubsidebar)
   - [`EditorialMobileNav`](#editorialmobilenav)
   - [`useEditorialRailState`](#useeditorialrailstate)
+- [Composants jeux (`src/components/games/`)](#composants-jeux)
+  - [`GameCard`](#gamecard)
+  - [`GameCardSkeleton`](#gamecardskeleton)
 - [Composants encore à venir](#composants-encore-a-venir)
 - [Conventions générales](#conventions-generales)
 
@@ -546,8 +549,104 @@ function MobileHeader() {
   via `localStorage` après mount → pas de mismatch d'hydratation Next.js.
 - Storage key : `gu.editorial.openSpace.v1`.
 - Tolère les erreurs (mode privé, quota dépassé, JSON corrompu).
-- Valide la valeur stockée contre `EDITORIAL_SPACES` — ignore les clés
-  inconnues.
+- Valide la valeur stockée contre `EDITORIAL_SPACES` — ignore les clés inconnues.
+
+---
+
+## Composants jeux <a id="composants-jeux"></a>
+
+### `GameCard`
+
+**Fichier :** `src/components/games/GameCard.tsx`
+**Rôle :** Carte canonique d'un jeu utilisée sur **toutes les pages
+éditoriales** : home (`/`), library (`/library`), games listing
+(`/games`), game detail (`/games/[slug]` — sections similaires +
+recommandations), trending (`/trending`), upcoming (`/upcoming`).
+
+#### Design
+
+- Cover en aspect 3/4 full-bleed (`Image fill` Next).
+- **Plateformes** chip-stack en haut à gauche, **toujours visibles**.
+- **Métascore** en haut à droite, **visible au hover uniquement**.
+- Gradient sombre localisé sur la moitié basse pour la lisibilité du
+  footer (titre + studio + année).
+- Au hover : panneau qui slide depuis le bas avec la description tronquée
+  + CTA « Découvrir ».
+
+Toutes les classes CSS utilisent le préfixe `editorial-card-*` et sont
+définies dans `src/app/styles/editorial/game-card.css`.
+
+#### API
+
+| Prop        | Type           | Défaut  | Description                                                |
+| ----------- | -------------- | ------- | ---------------------------------------------------------- |
+| `game`      | `GameSummary`  | requis  | Données du jeu (cover, titre, studio, plateformes, etc.).  |
+| `priority`  | `boolean`      | `false` | Hint Next/Image `priority` (cartes au-dessus du fold).     |
+| `className` | `string`       | —       | Classes additionnelles sur le `<a>` racine.                |
+
+#### Exemple
+
+```tsx
+import { GameCard } from "@/components/games/GameCard";
+
+<div className="editorial-games-listing-grid">
+  {games.map((game, idx) => (
+    <GameCard
+      key={game.id}
+      game={game}
+      priority={idx < 6} // 6 premières cartes au-dessus du fold
+    />
+  ))}
+</div>
+```
+
+#### Quand l'utiliser
+
+- ✅ Toute liste / grille de jeux dans une page éditoriale refondue.
+- ✅ Sections « Similaires » et « Recommandations » d'un détail jeu.
+- ❌ Pages legacy non refondues qui utilisent encore le glassmorphism.
+- ❌ Tableaux d'admin (`AdminGamesTable` reste sur son design dédié).
+
+#### Notes
+
+- Le composant utilise `next-intl` pour la clé `games.readMore` (CTA hover).
+- L'aspect 3/4 + le placeholder gamepad gèrent les jeux sans cover.
+- `data-testid="editorial-card"` et `data-game-id={game.id}` sont
+  exposés pour les tests (cf `GamesListingEditorial.test.tsx`).
+
+---
+
+### `GameCardSkeleton`
+
+**Fichier :** `src/components/games/GameCardSkeleton.tsx`
+**Rôle :** Silhouette d'une `GameCard` pendant le loading, avec le **même
+aspect 3/4** et un shimmer subtil. À utiliser dans toutes les grilles
+qui rendent des `GameCard` pour éviter le layout shift au premier
+chargement.
+
+#### API
+
+Pas de props — composant statique. Réutilise la classe utilitaire
+`editorial-card-skeleton` définie dans
+`src/app/styles/editorial/game-card.css`.
+
+#### Exemple
+
+```tsx
+import { GameCardSkeleton } from "@/components/games/GameCardSkeleton";
+
+<div className="editorial-games-listing-grid">
+  {Array.from({ length: 12 }).map((_, i) => (
+    <GameCardSkeleton key={i} />
+  ))}
+</div>
+```
+
+#### Quand l'utiliser
+
+- ✅ Skeleton d'une grille de jeux pendant le fetch initial.
+- ✅ Suspense fallback côté serveur d'une page éditoriale.
+- ❌ Skeleton d'une carte non-`GameCard` (créer un skeleton dédié).
 
 ---
 

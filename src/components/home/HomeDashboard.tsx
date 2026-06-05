@@ -5,8 +5,8 @@
  *
  * Refonte éditoriale :
  *   - Header sobre (kicker + titre display)
- *   - Section Trending : grille `EditorialGameCard`
- *   - Section Upcoming : liste éditoriale (cover + titre + date)
+ *   - Section Trending : grille `GameCard`
+ *   - Section Upcoming : grille `GameCard` (cohérence avec Trending)
  *
  * Pas de glassmorphism, surfaces sombres `--editorial-bg-*`, accent
  * dynamique disponible via `--accent-rgb` (fallback `--neon-primary`).
@@ -16,10 +16,9 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
-import Image from "next/image";
 import useSWR from "swr";
 
-import { EditorialGameCard } from "@/components/games/EditorialGameCard";
+import { GameCard } from "@/components/games/GameCard";
 import { KickerLabel } from "@/components/shared/KickerLabel";
 import { fetcher } from "@/lib/swr/fetcher";
 import { Link } from "@/i18n/navigation";
@@ -90,7 +89,7 @@ export function HomeDashboard({ initialData }: HomeDashboardProps) {
           ) : (
             <div className="editorial-home-dashboard-grid">
               {trending.map((game, index) => (
-                <EditorialGameCard key={game.id} game={game} priority={index < 3} />
+                <GameCard key={game.id} game={game} priority={index < 3} />
               ))}
             </div>
           )}
@@ -122,48 +121,11 @@ export function HomeDashboard({ initialData }: HomeDashboardProps) {
               )}
             </div>
           ) : (
-            <ul className="editorial-home-dashboard-upcoming-list">
-              {upcoming.map((game) => (
-                <li key={game.id}>
-                  <Link
-                    href={`/games/${game.slug}`}
-                    className="editorial-home-dashboard-upcoming-item"
-                  >
-                    <span className="editorial-home-dashboard-upcoming-cover">
-                      {game.coverImage ? (
-                        <Image
-                          src={game.coverImage}
-                          alt=""
-                          width={36}
-                          height={48}
-                          loading="lazy"
-                          className="size-full object-cover"
-                        />
-                      ) : (
-                        <Icon
-                          icon="lucide:gamepad-2"
-                          className="size-4 text-white/40"
-                          aria-hidden
-                        />
-                      )}
-                    </span>
-                    <span className="editorial-home-dashboard-upcoming-meta">
-                      <span className="editorial-home-dashboard-upcoming-title">{game.title}</span>
-                      <span className="editorial-home-dashboard-upcoming-date">
-                        {game.releaseDate
-                          ? new Date(game.releaseDate).toLocaleDateString(locale, {
-                              day: "numeric",
-                              month: "short",
-                              year: "numeric",
-                            })
-                          : "—"}
-                      </span>
-                    </span>
-                    <Icon icon="mdi:arrow-top-right" className="size-4 text-white/40" aria-hidden />
-                  </Link>
-                </li>
+            <div className="editorial-home-dashboard-grid">
+              {upcoming.map((game, index) => (
+                <GameCard key={game.id} game={game} priority={index < 3} />
               ))}
-            </ul>
+            </div>
           )}
         </section>
       </div>

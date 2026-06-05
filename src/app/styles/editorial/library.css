@@ -3,7 +3,7 @@
  * Voir docs/design/editorial-refonte-plan.md
  *
  * Layout : hero éditorial avec stats inline (chiffres XL display + kicker),
- * search + filtres, grille EditorialGameCard. Réutilise les classes
+ * search + filtres, grille GameCard. Réutilise les classes
  * `.editorial-games-listing-*` pour l'uniformité visuelle avec le catalogue.
  */
 
@@ -245,6 +245,13 @@
   }
 }
 
+@media (min-width: 1536px) {
+  .editorial-library-grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1.25rem;
+  }
+}
+
 .editorial-library-content {
   transition: opacity 200ms ease;
 }
@@ -354,7 +361,7 @@
   }
 }
 
-/* Grille de cartes ghost (silhouettes des EditorialGameCard) */
+/* Grille de cartes ghost (silhouettes des GameCard) */
 .editorial-library-loading-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -384,6 +391,13 @@
 @media (min-width: 1280px) {
   .editorial-library-loading-grid {
     grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+@media (min-width: 1536px) {
+  .editorial-library-loading-grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1.25rem;
   }
 }
 
