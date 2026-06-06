@@ -3913,6 +3913,7 @@
     }
   },
   "trending": {
+    "kicker": "Spotlight",
     "title": "Trending",
     "subtitle": "Discover the most popular games right now",
     "count": "{count} games",
@@ -3924,6 +3925,7 @@
     }
   },
   "upcoming": {
+    "kicker": "Calendar",
     "title": "Upcoming Releases",
     "subtitle": "Games coming soon",
     "count": "{count} upcoming games",
