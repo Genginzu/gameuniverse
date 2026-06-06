@@ -154,7 +154,9 @@
 }
 
 .editorial-sub-sidebar-link {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
   padding: 0.5rem 0.75rem;
   border-radius: 0.5rem;
   font-size: 0.875rem;
@@ -266,6 +268,17 @@
   padding: 1rem 0;
 }
 
+.editorial-mobile-group-title {
+  margin: 0;
+  padding: 1rem 1.5rem 0.5rem;
+  font-family: var(--font-mono, ui-monospace), monospace;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--editorial-muted);
+}
+
 .editorial-mobile-section {
   border-bottom: 1px solid var(--editorial-line);
 }
@@ -301,7 +314,9 @@
 }
 
 .editorial-mobile-link {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
   padding: 0.75rem 0;
   font-size: 0.95rem;
   color: var(--editorial-muted);
@@ -506,3 +521,29 @@
   }
 }
 
+
+/* =============================================================
+ * Skeletons : neutraliser les surfaces claires legacy (EntitySkeleton,
+ * Skeleton UI `bg-muted`, glass-card, bg-gray/bg-slate) afin qu'aucun
+ * skeleton n'apparaisse blanc sur le fond sombre éditorial — quel que soit
+ * l'état du thème (.dark présent ou non) dès le premier paint.
+ *
+ * Scopé à `.editorial-layout-main` : ne touche que les pages refondues, pas
+ * les pages legacy qui partagent ces mêmes composants (trending, players…).
+ *
+ * NB : `.bg-white` (opaque) ne matche pas `bg-white/10` (token distinct), donc
+ * les transparences blanches autorisées de la DA éditoriale sont préservées.
+ * ============================================================= */
+.editorial-layout-main .bg-white,
+.editorial-layout-main [class*="bg-gray-800"],
+.editorial-layout-main .glass-card {
+  background-color: var(--editorial-bg-2) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+.editorial-layout-main .bg-muted,
+.editorial-layout-main [class*="bg-gray-200"],
+.editorial-layout-main [class*="bg-slate-700"] {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}

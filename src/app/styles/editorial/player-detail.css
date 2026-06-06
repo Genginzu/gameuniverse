@@ -487,18 +487,3 @@
   border-radius: 0.5rem;
   display: block;
 }
-
-/* ===== Skeletons d'onglets : forcer le style sombre éditorial dès le
- * premier paint (évite le flash blanc des classes legacy glass-card /
- * bg-gray-200 / bg-slate-700 / bg-muted avant chargement du contenu). ===== */
-.editorial-player-detail .glass-card {
-  background: var(--editorial-bg-2);
-  border: 1px solid var(--editorial-line);
-  backdrop-filter: none;
-}
-
-.editorial-player-detail [class*="bg-gray-200"],
-.editorial-player-detail [class*="bg-slate-700"],
-.editorial-player-detail .bg-muted {
-  background-color: rgba(255, 255, 255, 0.08) !important;
-}
