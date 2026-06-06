@@ -178,7 +178,7 @@ export function EditorialMegaMenu({
   const [openEntry, setOpenEntry] = useState<MegaMenuEntryKey | null>(null);
   const openTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const navRef = useRef<HTMLElement>(null);
+  const navRef = useRef<HTMLDivElement>(null);
 
   const activeEntry = useMemo<MegaMenuEntryKey | null>(() => {
     if (openEntry) return openEntry;
@@ -246,12 +246,8 @@ export function EditorialMegaMenu({
   }, [openEntry]);
 
   return (
-    <div className={`editorial-mega-menu ${className}`.trim()}>
-      <nav
-        ref={navRef}
-        aria-label={t("primaryNavAriaLabel")}
-        className="editorial-mega-menu-bar"
-      >
+    <div ref={navRef} className={`editorial-mega-menu ${className}`.trim()}>
+      <nav aria-label={t("primaryNavAriaLabel")} className="editorial-mega-menu-bar">
         {/* Logo */}
         <Link
           href="/"
