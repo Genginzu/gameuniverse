@@ -689,20 +689,20 @@ indicatives, à ajuster).
 
 ### Phase 4 — Community / Coaching / Divers
 
-- [ ] `/characters` — Characters listing
-- [ ] `/characters/[slug]` — Character detail
-- [ ] `/players` — Players listing
-- [ ] `/discussions` — Discussions
-- [ ] `/coaching` — Coaching hub
-- [ ] `/coaching/sessions` — My sessions
-- [ ] `/coaching/settings` — Coach settings
-- [ ] `/coaching/[username]` — Coach profile
-- [ ] `/trending` — Trending
-- [ ] `/upcoming` — Upcoming
-- [ ] `/posts/tags/[tag]` — Posts by tag
-- [ ] `/auth` — Sign in
-- [ ] `/auth/forgot-password` — Forgot password
-- [ ] `/auth/reset-password` — Reset password
+- [x] `/characters` — Characters listing
+- [x] `/characters/[slug]` — Character detail
+- [x] `/players` — Players listing
+- [x] `/discussions` — Discussions
+- [x] `/coaching` — Coaching hub
+- [x] `/coaching/sessions` — My sessions
+- [x] `/coaching/settings` — Coach settings
+- [x] `/coaching/[username]` — Coach profile
+- [x] `/trending` — Trending
+- [x] `/upcoming` — Upcoming
+- [x] `/posts/tags/[tag]` — Posts by tag
+- [x] `/auth` — Sign in
+- [x] `/auth/forgot-password` — Forgot password
+- [x] `/auth/reset-password` — Reset password
 
 ### Out of scope
 
