@@ -25,8 +25,8 @@ export function CharacterMediaTab({ media, characterName }: CharacterMediaTabPro
   if (hasNoMedia) {
     return (
       <div className="py-16 text-center">
-        <Icon icon="lucide:eye" className="mx-auto mb-4 h-12 w-12 text-slate-500" />
-        <p className="text-slate-400">{t("characters.media.noMedia")}</p>
+        <Icon icon="lucide:eye" className="text-editorial-muted mx-auto mb-4 h-12 w-12" />
+        <p className="text-editorial-muted">{t("characters.media.noMedia")}</p>
       </div>
     );
   }
@@ -96,7 +96,7 @@ function ImageGallerySection({
             onClick={() => onSelect(index)}
             className={`relative aspect-video overflow-hidden rounded-lg transition-all ${
               selectedIndex === index
-                ? "ring-2 ring-white ring-offset-2 ring-offset-slate-900"
+                ? "ring-2 ring-white ring-offset-2 ring-offset-[var(--editorial-bg)]"
                 : "opacity-60 hover:opacity-100"
             }`}
           >

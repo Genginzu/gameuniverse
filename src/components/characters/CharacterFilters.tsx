@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 import { PlatformFilterOption } from "@/types/platform";
 import { RoleFilterOption } from "@/types/character";
-import { FilterSection } from "@/components/shared/FilterSection";
+import { FilterSection, type FilterVariant } from "@/components/shared/FilterSection";
 import { FilterChip, ActiveFilterChip } from "@/components/shared/FilterChip";
 import { getPlatformIcon } from "@/lib/utils/platform-icons";
 
@@ -24,6 +24,8 @@ interface CharacterFiltersProps {
   onPlatformsChange: (slugs: string[]) => void;
   onClearFilters: () => void;
   showAllFilters: boolean;
+  /** Variante visuelle. Default: `"default"` (legacy). */
+  variant?: FilterVariant;
 }
 
 export function CharacterFilters({
@@ -35,6 +37,7 @@ export function CharacterFilters({
   onPlatformsChange,
   onClearFilters,
   showAllFilters,
+  variant = "default",
 }: CharacterFiltersProps) {
   const tPlatforms = useTranslations("platforms");
   const tFilters = useTranslations("filters");
@@ -80,6 +83,7 @@ export function CharacterFilters({
                 label={roleMap.get(slug) || slug}
                 onRemove={() => handleRoleToggle(slug)}
                 variant="blue"
+                themeVariant={variant}
               />
             ))}
             {selectedPlatforms.map((slug) => (
@@ -88,12 +92,17 @@ export function CharacterFilters({
                 label={platformMap.get(slug) || slug}
                 onRemove={() => onPlatformsChange(selectedPlatforms.filter((s) => s !== slug))}
                 variant="violet"
+                themeVariant={variant}
               />
             ))}
           </div>
           <button
             onClick={onClearFilters}
-            className="shrink-0 rounded-lg px-2.5 py-1 text-xs font-medium text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+            className={
+              variant === "editorial"
+                ? "shrink-0 rounded-lg px-2.5 py-1 text-xs font-medium text-red-400 transition-colors hover:bg-red-500/10"
+                : "shrink-0 rounded-lg px-2.5 py-1 text-xs font-medium text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20"
+            }
           >
             {tFilters("clearAll")}
           </button>
@@ -105,6 +114,7 @@ export function CharacterFilters({
           title={tFilters("roles")}
           availableLabel={tFilters("available", { count: roles.length })}
           loading={roles.length === 0}
+          variant={variant}
         >
           {roles.map((role) => (
             <FilterChip
@@ -113,6 +123,7 @@ export function CharacterFilters({
               selected={selectedRoles.includes(role.slug)}
               onClick={() => handleRoleToggle(role.slug)}
               count={role.characterCount}
+              variant={variant}
             />
           ))}
         </FilterSection>
@@ -123,6 +134,7 @@ export function CharacterFilters({
           title={tPlatforms("filter.title")}
           availableLabel={`${platforms.length} ${tPlatforms("filter.available")}`}
           loading={platforms.length === 0}
+          variant={variant}
         >
           {platforms.map((platform) => (
             <FilterChip
@@ -131,6 +143,7 @@ export function CharacterFilters({
               selected={selectedPlatforms.includes(platform.slug)}
               onClick={() => handlePlatformToggle(platform.slug)}
               count={platform.gameCount}
+              variant={variant}
               icon={<Icon icon={getPlatformIcon(platform.slug)} className="h-3.5 w-3.5 shrink-0" />}
             />
           ))}

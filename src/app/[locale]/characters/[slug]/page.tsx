@@ -1,7 +1,9 @@
 import { notFound } from "next/navigation";
 import { CharacterDetailsContent } from "@/components/characters/details/CharacterDetailsContent";
 import { CharacterService } from "@/lib/services/characterService";
-import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
+import { EditorialShell } from "@/components/layout/editorial/EditorialShell";
+import { DynamicAccent } from "@/components/shared/DynamicAccent";
+import { paletteFromHex } from "@/lib/utils/accent-palette";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
 import { getTranslations } from "next-intl/server";
@@ -27,26 +29,31 @@ export default async function CharacterDetailsPage({ params }: CharacterDetailsP
     }
 
     return (
-      <DashboardLayout>
-        <ErrorBoundary
-          fallback={
-            <ErrorFallback
-              title={t("loadingTitle")}
-              description={t("detailsLoadingDescription")}
-              showBackButton={true}
-              backUrl={`/${locale}/characters`}
-              backLabel={t("backToCharacters")}
-              locale={locale}
-            />
-          }
+      <EditorialShell>
+        <DynamicAccent
+          palette={paletteFromHex(character.backgroundColor ?? "#0077e6", "blue")}
+          as="div"
         >
-          <CharacterDetailsContent character={character} locale={locale} />
-        </ErrorBoundary>
-      </DashboardLayout>
+          <ErrorBoundary
+            fallback={
+              <ErrorFallback
+                title={t("loadingTitle")}
+                description={t("detailsLoadingDescription")}
+                showBackButton={true}
+                backUrl={`/${locale}/characters`}
+                backLabel={t("backToCharacters")}
+                locale={locale}
+              />
+            }
+          >
+            <CharacterDetailsContent character={character} locale={locale} />
+          </ErrorBoundary>
+        </DynamicAccent>
+      </EditorialShell>
     );
   } catch {
     return (
-      <DashboardLayout>
+      <EditorialShell>
         <ErrorFallback
           title={t("loadingTitle")}
           description={t("unableToLoad")}
@@ -55,7 +62,7 @@ export default async function CharacterDetailsPage({ params }: CharacterDetailsP
           backLabel={t("backToCharacters")}
           locale={locale}
         />
-      </DashboardLayout>
+      </EditorialShell>
     );
   }
 }

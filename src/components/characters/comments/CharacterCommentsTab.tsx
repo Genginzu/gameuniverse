@@ -19,10 +19,14 @@ function CommentCount({ count }: { count: number }) {
   const t = useTranslations("characters.comments");
 
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-slate-700/50 bg-slate-800/30 px-5 py-4">
-      <Icon icon="lucide:message-circle" className="h-6 w-6 text-indigo-400" />
-      <span className="text-2xl font-bold text-slate-200">{count}</span>
-      <span className="text-sm text-slate-400">{t("count", { count })}</span>
+    <div className="border-editorial-line bg-editorial-2 flex items-center gap-3 rounded-xl border px-5 py-4">
+      <Icon
+        icon="lucide:message-circle"
+        className="h-6 w-6"
+        style={{ color: "rgb(var(--accent-rgb, var(--neon-primary)))" }}
+      />
+      <span className="text-2xl font-bold text-white">{count}</span>
+      <span className="text-editorial-muted text-sm">{t("count", { count })}</span>
     </div>
   );
 }
@@ -31,9 +35,9 @@ function LoginPrompt() {
   const t = useTranslations("characters.comments");
 
   return (
-    <div className="rounded-xl border border-dashed border-slate-700 p-6 text-center">
-      <Icon icon="lucide:log-in" className="mx-auto mb-3 h-8 w-8 text-slate-500" />
-      <p className="text-sm text-slate-400">{t("loginPrompt")}</p>
+    <div className="border-editorial-line rounded-xl border border-dashed p-6 text-center">
+      <Icon icon="lucide:log-in" className="text-editorial-muted mx-auto mb-3 h-8 w-8" />
+      <p className="text-editorial-muted text-sm">{t("loginPrompt")}</p>
     </div>
   );
 }
@@ -43,14 +47,14 @@ function CommentsSkeleton() {
   return (
     <div className="space-y-6">
       {/* Count skeleton */}
-      <div className="flex items-center gap-3 rounded-xl border border-slate-700/50 bg-slate-800/30 px-5 py-4">
+      <div className="border-editorial-line bg-editorial-2 flex items-center gap-3 rounded-xl border px-5 py-4">
         <Skeleton className="h-6 w-6 rounded-full" />
         <Skeleton className="h-7 w-10" />
         <Skeleton className="h-4 w-24" />
       </div>
       {/* Comment cards skeleton */}
       {[1, 2, 3].map((i) => (
-        <div key={i} className="rounded-xl border border-slate-700/50 bg-slate-800/30 p-5">
+        <div key={i} className="border-editorial-line bg-editorial-2 rounded-xl border p-5">
           <div className="mb-3 flex items-center gap-3">
             <Skeleton className="h-10 w-10 rounded-full" />
             <div className="space-y-1.5">

@@ -39,15 +39,15 @@ export function CharacterTabNavigation({
 
   return (
     <div className="mb-8 flex justify-center">
-      <div className="flex max-w-full gap-1 overflow-x-auto rounded-2xl border border-slate-700/50 bg-slate-800/80 p-1.5 backdrop-blur-xs [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="border-editorial-line bg-editorial-2 flex max-w-full gap-1 overflow-x-auto rounded-2xl border p-1.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {tabs.map(({ key, icon, label, count }) => (
           <button
             key={key}
             onClick={() => onTabChange(key)}
             className={`shrink-0 rounded-xl px-4 py-3 text-sm font-medium transition-all sm:px-6 ${
               activeTab === key
-                ? "bg-white text-slate-900 shadow-lg dark:bg-slate-700 dark:text-white"
-                : "text-slate-400 hover:bg-slate-700/50 hover:text-white"
+                ? "bg-editorial-accent/[0.18] text-white"
+                : "text-editorial-muted hover:bg-white/[0.04] hover:text-white"
             }`}
           >
             <Icon icon={icon} className="inline h-4 w-4 sm:mr-2" />

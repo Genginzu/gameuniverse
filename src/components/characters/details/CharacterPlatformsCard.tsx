@@ -1,57 +1,42 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { useTranslations } from "next-intl";
 import type { PlatformSummary } from "@/types/platform";
 import { Icon } from "@iconify/react";
 import { getPlatformIcon } from "@/lib/utils/platform-icons";
 
+const ACCENT = "rgb(var(--accent-rgb, var(--neon-primary)))";
+
 interface CharacterPlatformsCardProps {
   platforms: PlatformSummary[];
-  accentColor: string;
 }
 
-export function CharacterPlatformsCard({ platforms, accentColor }: CharacterPlatformsCardProps) {
+export function CharacterPlatformsCard({ platforms }: CharacterPlatformsCardProps) {
   const t = useTranslations();
 
-  if (platforms.length === 0) {
-    return (
-      <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-xs">
-        <CardContent className="p-6">
-          <h4 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
-            <Icon icon="lucide:monitor" className="h-5 w-5" style={{ color: accentColor }} />
-            {t("characters.details.platforms")}
-          </h4>
-          <p className="text-sm text-slate-400">{t("characters.details.noPlatforms")}</p>
-        </CardContent>
-      </Card>
-    );
-  }
-
   return (
-    <Card className="rounded-2xl border-slate-700/50 bg-slate-800/50 backdrop-blur-xs">
-      <CardContent className="p-6">
-        <h4 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
-          <Icon icon="lucide:monitor" className="h-5 w-5" style={{ color: accentColor }} />
-          {t("characters.details.platforms")}
-        </h4>
+    <div className="border-editorial-line bg-editorial-2 rounded-2xl border p-6">
+      <h4 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
+        <Icon icon="lucide:monitor" className="h-5 w-5" style={{ color: ACCENT }} />
+        {t("characters.details.platforms")}
+      </h4>
+      {platforms.length === 0 ? (
+        <p className="text-editorial-muted text-sm">{t("characters.details.noPlatforms")}</p>
+      ) : (
         <div className="flex flex-wrap gap-2">
-          {platforms.map((platform) => {
-            const platformIconName = getPlatformIcon(platform.slug);
-            return (
-              <Badge
-                key={platform.id}
-                variant="secondary"
-                className="inline-flex items-center gap-1.5 border-slate-600 bg-slate-900/50 px-3 py-1.5 text-sm text-slate-300 backdrop-blur-xs transition-all hover:bg-slate-700/60"
-              >
-                <Icon icon={platformIconName} className="h-3.5 w-3.5 shrink-0" />
-                {platform.abbreviation || platform.name}
-              </Badge>
-            );
-          })}
+          {platforms.map((platform) => (
+            <Badge
+              key={platform.id}
+              variant="secondary"
+              className="border-editorial-line bg-editorial-3 text-editorial-muted inline-flex items-center gap-1.5 px-3 py-1.5 text-sm transition-colors hover:text-white"
+            >
+              <Icon icon={getPlatformIcon(platform.slug)} className="h-3.5 w-3.5 shrink-0" />
+              {platform.abbreviation || platform.name}
+            </Badge>
+          ))}
         </div>
-      </CardContent>
-    </Card>
+      )}
+    </div>
   );
 }
