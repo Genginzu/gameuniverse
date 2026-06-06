@@ -660,17 +660,17 @@ indicatives, à ajuster).
 
 - [x] `/` — Home
 - [x] `/games` — Games listing
-- [ ] `/games/[slug]` — Game detail
+- [x] `/games/[slug]` — Game detail
 
 ### Phase 2 — Espaces utilisateur
 
-- [ ] `/players/[id]` — Player profile
-- [ ] `/library` — Library
-- [ ] `/collections` — Collections list
-- [ ] `/collections/[slug]` — Collection detail
-- [ ] `/profile` — My profile
-- [ ] `/settings` — Settings
-- [ ] `/favorites/characters` — Favorite characters
+- [x] `/players/[id]` — Player profile
+- [x] `/library` — Library
+- [x] `/collections` — Collections list
+- [x] `/collections/[slug]` — Collection detail
+- [x] `/profile` — My profile (redirige vers `/players/[id]`)
+- [x] `/settings` — Settings (onglet du profil joueur)
+- [x] `/favorites/characters` — Favorite characters
 - [ ] `/dashboard` — Dashboard (si encore actif)
 
 ### Phase 3 — Esport
