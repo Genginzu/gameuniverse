@@ -19,6 +19,12 @@
   }
 }
 
+/* ===== Skeleton block (loader éditorial, theme-independent) ===== */
+.editorial-settings-skeleton-block {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 0.5rem;
+}
+
 /* ===== Page header ===== */
 .editorial-settings-header {
   margin-bottom: 2.5rem;
