@@ -891,7 +891,7 @@ et le command palette doivent être navigables au clavier.
 | P5-02 | Audit performance Lighthouse sur toutes les pages migrées                 |
 | P5-03 | Tests E2E sur les principaux parcours (login → home → game → library)     |
 | P5-04 | Mise à jour finale de `docs/setup/development.md` (mention de la refonte) |
-| P5-05 | Préparer la PR finale `design/editorial-refonte` → `dev`                  |
+| P5-05 | Préparer la PR finale `design/editorial-refonte` → `main`                 |
 | P5-06 | Plan de communication / changelog utilisateur                             |
 
 ### Issue épique
