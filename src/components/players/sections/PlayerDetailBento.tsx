@@ -40,14 +40,14 @@ export function PlayerDetailBento({ player, locale, friendCount }: PlayerDetailB
   const recentGames = player.library.slice(0, 4);
 
   return (
-    <section className="editorial-player-detail-bento-section">
-      <div className="editorial-player-detail-bento">
+    <section className="mx-auto w-full max-w-[1600px] px-6 pt-4 pb-16 lg:px-12 lg:pb-20">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {/* Recent games (XL) */}
-        <SpotlightCard className="editorial-player-detail-bento-cell editorial-player-detail-bento-cell--xl">
+        <SpotlightCard className="p-6 md:col-span-2 lg:row-span-2 lg:p-8">
           <div className="mb-6 flex items-center justify-between gap-3">
             <div>
               <KickerLabel className="mb-2">{t("recentKicker")}</KickerLabel>
-              <h2 className="editorial-player-detail-bento-display editorial-player-detail-bento-display-md">
+              <h2 className="font-display text-3xl leading-none font-bold tracking-tight text-white">
                 {t("recentTitle")}
               </h2>
             </div>
@@ -60,16 +60,19 @@ export function PlayerDetailBento({ player, locale, friendCount }: PlayerDetailB
           </div>
 
           {recentGames.length > 0 ? (
-            <ul className="editorial-player-detail-recent-list">
+            <ul className="m-0 list-none p-0">
               {recentGames.map((g) => (
-                <li key={g.id} className="editorial-player-detail-recent-row">
+                <li
+                  key={g.id}
+                  className="border-editorial-line flex items-center gap-5 border-t py-4 first:border-t-0"
+                >
                   <Link
                     href={`/games/${g.slug}`}
-                    className="editorial-player-detail-recent-cover"
+                    className="bg-editorial-3 relative size-16 flex-shrink-0 overflow-hidden rounded-[0.875rem]"
                     aria-label={g.title}
                   >
                     {g.coverImage ? (
-                      <Image src={g.coverImage} alt={g.title} fill sizes="64px" />
+                      <Image src={g.coverImage} alt={g.title} fill sizes="64px" className="object-cover" />
                     ) : (
                       <Icon
                         icon="lucide:gamepad-2"
@@ -77,9 +80,9 @@ export function PlayerDetailBento({ player, locale, friendCount }: PlayerDetailB
                       />
                     )}
                   </Link>
-                  <div className="editorial-player-detail-recent-info">
-                    <p className="editorial-player-detail-recent-title">{g.title}</p>
-                    <p className="editorial-player-detail-recent-meta">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-display truncate text-lg text-white">{g.title}</p>
+                    <p className="mt-1 font-mono text-xs text-white/50">
                       {g.playTimeHours > 0
                         ? `${g.playTimeHours.toFixed(0)}h · ${g.status}`
                         : g.status}
@@ -94,22 +97,27 @@ export function PlayerDetailBento({ player, locale, friendCount }: PlayerDetailB
         </SpotlightCard>
 
         {/* Achievements */}
-        <SpotlightCard className="editorial-player-detail-bento-cell">
+        <SpotlightCard className="p-6 lg:p-8">
           <KickerLabel className="mb-2">{t("achievementsKicker")}</KickerLabel>
-          <h2 className="editorial-player-detail-bento-display editorial-player-detail-bento-display-md mb-5">
+          <h2 className="mb-5 font-display text-3xl leading-none font-bold tracking-tight text-white">
             {t("achievementsTitle")}
           </h2>
 
           {unlocked.length > 0 ? (
-            <ul className="editorial-player-detail-achievement-list">
+            <ul className="m-0 flex list-none flex-col gap-3 p-0">
               {unlocked.slice(0, 3).map((a) => (
-                <li key={a.key} className="editorial-player-detail-achievement">
-                  <span className="editorial-player-detail-achievement-icon">
+                <li
+                  key={a.key}
+                  className="border-editorial-line flex items-center gap-3 rounded-[0.875rem] border bg-white/[0.02] p-3"
+                >
+                  <span className="bg-editorial-accent/20 text-editorial-accent grid size-10 flex-shrink-0 place-items-center rounded-full">
                     <Icon icon={a.icon} className="h-5 w-5" />
                   </span>
-                  <div className="editorial-player-detail-achievement-info">
-                    <p className="editorial-player-detail-achievement-name">{a.name}</p>
-                    <p className="editorial-player-detail-achievement-game">{a.category}</p>
+                  <div className="min-w-0">
+                    <p className="font-display truncate text-[0.95rem] text-white">{a.name}</p>
+                    <p className="text-editorial-muted mt-0.5 truncate font-mono text-[0.7rem]">
+                      {a.category}
+                    </p>
                   </div>
                 </li>
               ))}
@@ -120,11 +128,11 @@ export function PlayerDetailBento({ player, locale, friendCount }: PlayerDetailB
         </SpotlightCard>
 
         {/* Average rating (replaces win rate) */}
-        <SpotlightCard className="editorial-player-detail-bento-cell">
+        <SpotlightCard className="p-6 lg:p-8">
           <KickerLabel className="mb-3">{t("winRateKicker")}</KickerLabel>
           {player.stats.averageRating !== null ? (
             <>
-              <p className="editorial-player-detail-bento-display editorial-player-detail-bento-display-xl accent">
+              <p className="text-editorial-accent font-display text-[clamp(3.5rem,6vw,5.5rem)] leading-none font-bold tracking-tight">
                 {player.stats.averageRating.toFixed(1)}
                 <span className="text-3xl text-zinc-500">/20</span>
               </p>
@@ -138,14 +146,14 @@ export function PlayerDetailBento({ player, locale, friendCount }: PlayerDetailB
         </SpotlightCard>
 
         {/* Latest post (wide) */}
-        <SpotlightCard className="editorial-player-detail-bento-cell editorial-player-detail-bento-cell--wide">
+        <SpotlightCard className="p-6 md:col-span-2 lg:p-8">
           <KickerLabel className="mb-2">{t("postKicker")}</KickerLabel>
           {latestPost ? (
             <>
-              <p className="editorial-player-detail-post-quote">
+              <p className="font-display text-2xl leading-snug font-light text-white italic">
                 « {truncate(latestPost.content, 240)} »
               </p>
-              <p className="editorial-player-detail-post-meta">
+              <p className="text-editorial-muted mt-4 font-mono text-xs">
                 {formatRelative(latestPost.createdAt, t)}
               </p>
             </>
@@ -155,9 +163,9 @@ export function PlayerDetailBento({ player, locale, friendCount }: PlayerDetailB
         </SpotlightCard>
 
         {/* Friends count */}
-        <SpotlightCard className="editorial-player-detail-bento-cell">
+        <SpotlightCard className="p-6 lg:p-8">
           <KickerLabel className="mb-3">{t("friendsKicker")}</KickerLabel>
-          <p className="editorial-player-detail-bento-display editorial-player-detail-bento-display-lg">
+          <p className="font-display text-5xl leading-none font-bold tracking-tight text-white">
             {friendCount}
           </p>
           <p className="mt-2 font-mono text-xs tracking-widest text-zinc-500 uppercase">

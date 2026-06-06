@@ -20,15 +20,13 @@ export function MobilePageSelector({
 }: MobilePageSelectorProps) {
   if (variant === "editorial") {
     return (
-      <div className="editorial-pagination-mobile-selector">
-        <span className="editorial-pagination-mobile-selector-label">
-          {labels.goToPage}
-        </span>
+      <div className="flex items-center gap-3 sm:hidden">
+        <span className="text-sm font-medium text-white">{labels.goToPage}</span>
         <select
           value={currentPage}
           onChange={(e) => onPageChange(parseInt(e.target.value))}
           disabled={loading}
-          className="editorial-pagination-mobile-selector-select"
+          className="bg-editorial-3 border-editorial-line focus:border-editorial-accent cursor-pointer rounded-lg border px-3 py-2 text-base font-medium text-white focus:shadow-[0_0_0_2px_rgba(var(--accent-rgb,var(--neon-primary)),0.2)] focus:outline-none"
         >
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
             <option key={page} value={page}>
@@ -36,7 +34,7 @@ export function MobilePageSelector({
             </option>
           ))}
         </select>
-        <span className="editorial-pagination-mobile-selector-suffix">
+        <span className="text-editorial-muted text-sm">
           {labels.of} {totalPages}
         </span>
       </div>

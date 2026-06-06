@@ -90,17 +90,19 @@ export function StatsSection() {
   const isVisible = useInView(ref, { threshold: 0.3 });
 
   return (
-    <section ref={ref} className="editorial-home-section">
-      <div className="editorial-home-section-inner">
-        <header className="editorial-home-section-header">
+    <section ref={ref} className="w-full px-4 py-16 md:px-8 md:py-24 lg:px-10 lg:py-28">
+      <div className="mx-auto w-full max-w-[1536px]">
+        <header className="mb-10 flex max-w-[720px] flex-col gap-3 md:mb-14">
           <KickerLabel>{t("kicker")}</KickerLabel>
-          <h2 className="editorial-home-section-title">
+          <h2 className="font-display text-[clamp(2rem,5vw,3.75rem)] leading-none font-bold tracking-tight text-white">
             {t("title")}{" "}
-            <span className="editorial-home-section-title-accent">{t("titleAccent")}</span>
+            <span className="from-neon-secondary to-neon-primary bg-gradient-to-r bg-clip-text text-transparent">
+              {t("titleAccent")}
+            </span>
           </h2>
         </header>
 
-        <div className="editorial-home-stats-grid">
+        <div className="grid grid-cols-2 gap-6 md:grid-cols-4 md:gap-8">
           {STATS.map((stat) => (
             <AnimatedStat
               key={stat.key}

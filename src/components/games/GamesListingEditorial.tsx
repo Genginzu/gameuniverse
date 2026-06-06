@@ -150,23 +150,25 @@ export function GamesListingEditorial({
   const totalCount = pagination?.totalCount ?? games.length;
 
   return (
-    <section className="editorial-games-listing">
-      <div className="editorial-games-listing-inner">
+    <section className="w-full">
+      <div className="mx-auto max-w-[1536px] px-4 pt-8 pb-16 md:px-8 md:pt-12 md:pb-20">
         {/* Hero léger */}
-        <header className="editorial-games-listing-hero">
+        <header className="mb-10 flex flex-col gap-3">
           <KickerLabel>{t("listingKicker")}</KickerLabel>
-          <h1 className="editorial-games-listing-title">{t("listingTitle")}</h1>
-          <p className="editorial-games-listing-meta">
+          <h1 className="font-display text-[clamp(2rem,4vw+1rem,3.5rem)] leading-[1.05] font-bold tracking-tight text-white">
+            {t("listingTitle")}
+          </h1>
+          <p className="text-editorial-muted flex flex-wrap items-baseline gap-5 text-sm">
             <span>{t("listingDescription")}</span>
             <span>·</span>
-            <span className="editorial-games-listing-count">
+            <span className="text-editorial-accent font-mono">
               {t("listingCount", { count: totalCount })}
             </span>
           </p>
         </header>
 
-        {/* Contrôles : filter button + sort menu + style switcher */}
-        <div className="editorial-games-listing-controls">
+        {/* Contrôles : filter button + sort menu */}
+        <div className="mb-5 flex items-center justify-between gap-3">
           <FilterButton
             hasFilters={hasFilters}
             filterCount={filterCount}
@@ -176,7 +178,7 @@ export function GamesListingEditorial({
         </div>
 
         {/* Filtres collapsibles */}
-        <div className="editorial-games-listing-filters">
+        <div className="mb-6">
           <GameFilters
             genres={genres}
             platforms={platforms}
@@ -196,7 +198,7 @@ export function GamesListingEditorial({
 
         {/* Grille / état vide */}
         <div
-          className="editorial-games-listing-content"
+          className="transition-opacity duration-200 motion-reduce:transition-none data-[revalidating=true]:opacity-50"
           data-revalidating={transitioning ? "true" : "false"}
         >
           {games.length === 0 && !validating ? (
@@ -213,22 +215,18 @@ export function GamesListingEditorial({
           ) : (
             <LibraryStatusProvider gameIds={games.map((g) => g.id)}>
               <div
-                className="editorial-games-listing-grid"
+                className="grid grid-cols-1 gap-4 min-[475px]:grid-cols-2 md:grid-cols-3 md:gap-6 lg:grid-cols-4 xl:grid-cols-5 min-[1536px]:grid-cols-6 min-[1536px]:gap-5"
                 data-testid="editorial-games-listing-grid"
               >
                 {games.map((game, index) => (
-                  <GameCard
-                    key={game.id}
-                    game={game}
-                    priority={index < 5}
-                  />
+                  <GameCard key={game.id} game={game} priority={index < 5} />
                 ))}
               </div>
             </LibraryStatusProvider>
           )}
 
           {pagination && pagination.totalPages > 1 && (
-            <div className="editorial-games-listing-pagination">
+            <div className="mt-12">
               <Pagination
                 currentPage={pagination.currentPage}
                 totalPages={pagination.totalPages}

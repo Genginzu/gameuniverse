@@ -15,7 +15,7 @@ const GRID_CLASS =
   "grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6";
 
 /** Conteneurs éditoriaux (fond sombre + largeur de page) */
-const PAGE_WRAP = "min-h-screen bg-[var(--editorial-bg)]";
+const PAGE_WRAP = "bg-editorial-bg min-h-screen";
 const INNER = "mx-auto max-w-[1600px] px-4 py-8 sm:px-6 lg:px-12";
 const favoriteCardConfig: EntityCardConfig<CharacterFavoriteSummary> = {
   aspectRatio: "3:4",
@@ -73,12 +73,12 @@ export function FavoriteCharactersContent() {
     return (
       <div className={PAGE_WRAP}>
         <div className={INNER}>
-          <div className="flex flex-col items-center justify-center rounded-2xl border border-[var(--editorial-line)] bg-[var(--editorial-bg-2)] py-12 text-center">
+          <div className="border-editorial-line bg-editorial-2 flex flex-col items-center justify-center rounded-2xl border py-12 text-center">
             <div className="mb-4 grid h-16 w-16 place-items-center rounded-full bg-red-500/15 text-red-400">
               <Icon icon="lucide:heart" className="h-8 w-8" />
             </div>
             <h3 className="mb-2 text-lg font-medium text-white">{t("errorTitle")}</h3>
-            <p className="max-w-md text-sm text-[var(--editorial-muted)]">{error}</p>
+            <p className="text-editorial-muted max-w-md text-sm">{error}</p>
           </div>
         </div>
       </div>
@@ -90,16 +90,14 @@ export function FavoriteCharactersContent() {
     return (
       <div className={PAGE_WRAP}>
         <div className={INNER}>
-          <div className="flex flex-col items-center justify-center rounded-2xl border border-[var(--editorial-line)] bg-[var(--editorial-bg-2)] py-16 text-center">
+          <div className="border-editorial-line bg-editorial-2 flex flex-col items-center justify-center rounded-2xl border py-16 text-center">
             <div className="mb-6 grid h-20 w-20 place-items-center rounded-full bg-[rgba(var(--neon-primary),0.12)] text-[rgb(var(--neon-primary))]">
               <Icon icon="lucide:heart" className="h-10 w-10" />
             </div>
             <h3 className="editorial-display mb-2 text-xl font-bold text-white">
               {t("emptyTitle")}
             </h3>
-            <p className="mb-6 max-w-md text-sm text-[var(--editorial-muted)]">
-              {t("emptyDescription")}
-            </p>
+            <p className="text-editorial-muted mb-6 max-w-md text-sm">{t("emptyDescription")}</p>
             <Button asChild>
               <Link href="/characters">{t("exploreCharacters")}</Link>
             </Button>

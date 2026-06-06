@@ -31,21 +31,12 @@
 @import "./styles/editorial/header-user.css";
 @import "./styles/editorial/search.css";
 @import "./styles/editorial/game-card.css";
-@import "./styles/editorial/games-listing.css";
-@import "./styles/editorial/pagination.css";
-@import "./styles/editorial/sort-menu.css";
-@import "./styles/editorial/filters.css";
-@import "./styles/editorial/home.css";
 @import "./styles/editorial/game-detail.css";
-@import "./styles/editorial/player-detail.css";
 @import "./styles/editorial/library.css";
-@import "./styles/editorial/collections.css";
-@import "./styles/editorial/collection-detail.css";
 @import "./styles/editorial/settings.css";
 @import "./styles/editorial/activity.css";
 @import "./styles/editorial/stats.css";
 @import "./styles/editorial/achievements.css";
-@import "./styles/editorial/friends.css";
 @import "./styles/editorial/reviews.css";
 @import "./styles/editorial/goals.css";
 @import "./styles/editorial/recommendations.css";
@@ -103,6 +94,16 @@
   --color-neon-primary: rgb(var(--neon-primary));
   --color-neon-secondary: rgb(var(--neon-secondary));
   --color-neon-accent: rgb(var(--neon-accent));
+
+  /* Editorial tokens exposés comme utilities Tailwind (bg-editorial-2, text-editorial-muted,
+     text-editorial-accent…). Pointent vers les variables :root pour rester non destructifs :
+     les modules CSS éditoriaux existants continuent d'utiliser var(--editorial-*). */
+  --color-editorial-bg: var(--editorial-bg);
+  --color-editorial-2: var(--editorial-bg-2);
+  --color-editorial-3: var(--editorial-bg-3);
+  --color-editorial-line: var(--editorial-line);
+  --color-editorial-muted: var(--editorial-muted);
+  --color-editorial-accent: rgb(var(--accent-rgb, var(--neon-primary)));
 
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));

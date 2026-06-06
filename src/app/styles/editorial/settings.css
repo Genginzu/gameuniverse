@@ -1,126 +1,14 @@
 /*
- * Editorial : onglet Settings (component SettingsContent dans la page joueur).
+ * Editorial : onglet Settings — THEMING DES COMPOSANTS LEGACY IMBRIQUÉS UNIQUEMENT.
  * Voir docs/design/editorial-refonte-plan.md
  *
- * Layout : header de section éditorial (kicker + titre display + subtitle),
- * puis sections-cards en surfaces sombres avec kicker + titre + description
- * et un body qui contient les forms existants. Pas de gradient — uniquement
- * les tokens éditoriaux (--editorial-bg-2, --editorial-line, accent).
+ * La structure de la page (header, sections-cards, icônes) est écrite en
+ * Tailwind inline dans SettingsContent.tsx / SettingsSkeleton.tsx.
+ * Ce module ne conserve QUE les overrides descendants que Tailwind ne peut pas
+ * exprimer inline : ils reteignent les forms shadcn et la LinkedPlatformsSection
+ * (Card, inputs, boutons, couleurs legacy gray/secondary) pour les rendre
+ * lisibles sur les surfaces sombres éditoriales. Hook : `.editorial-settings-section-body`.
  */
-
-.editorial-settings {
-  width: 100%;
-  padding: 1.5rem 1rem 4rem;
-}
-
-@media (min-width: 768px) {
-  .editorial-settings {
-    padding: 2rem 1.5rem 5rem;
-  }
-}
-
-/* ===== Skeleton block (loader éditorial, theme-independent) ===== */
-.editorial-settings-skeleton-block {
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 0.5rem;
-}
-
-/* ===== Page header ===== */
-.editorial-settings-header {
-  margin-bottom: 2.5rem;
-  padding-bottom: 2rem;
-  border-bottom: 1px solid var(--editorial-line);
-}
-
-.editorial-settings-title {
-  margin: 0.5rem 0 0;
-  font-family: var(--font-display, "Tomorrow"), system-ui, sans-serif;
-  font-size: clamp(1.5rem, 2.5vw + 0.5rem, 2.25rem);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
-  color: #fff;
-}
-
-.editorial-settings-title .accent {
-  color: rgb(var(--accent-rgb, var(--neon-primary)));
-}
-
-.editorial-settings-subtitle {
-  margin: 0.75rem 0 0;
-  font-size: 0.95rem;
-  color: var(--editorial-muted);
-  max-width: 60ch;
-}
-
-/* ===== Sections (cards) ===== */
-.editorial-settings-sections {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.editorial-settings-section {
-  border-radius: 1rem;
-  border: 1px solid var(--editorial-line);
-  background: var(--editorial-bg-3);
-  overflow: hidden;
-}
-
-.editorial-settings-section-header {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-  padding: 1.5rem 1.5rem 0;
-}
-
-@media (min-width: 768px) {
-  .editorial-settings-section-header {
-    padding: 1.75rem 2rem 0;
-  }
-}
-
-.editorial-settings-section-icon {
-  display: grid;
-  place-items: center;
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 0.625rem;
-  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.12);
-  color: rgb(var(--accent-rgb, var(--neon-primary)));
-  flex-shrink: 0;
-}
-
-.editorial-settings-section-heading {
-  flex: 1;
-  min-width: 0;
-}
-
-.editorial-settings-section-title {
-  margin: 0.375rem 0 0;
-  font-family: var(--font-display, "Tomorrow"), system-ui, sans-serif;
-  font-size: 1.125rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: #fff;
-}
-
-.editorial-settings-section-description {
-  margin: 0.375rem 0 0;
-  font-size: 0.875rem;
-  color: var(--editorial-muted);
-  line-height: 1.5;
-}
-
-.editorial-settings-section-body {
-  padding: 1.5rem;
-}
-
-@media (min-width: 768px) {
-  .editorial-settings-section-body {
-    padding: 1.75rem 2rem 2rem;
-  }
-}
 
 /* Strip the visual chrome from any nested shadcn Card so the editorial
    section stays clean. The forms inside still keep their inputs/buttons. */
@@ -183,8 +71,6 @@
   box-shadow: 0 0 0 3px rgba(var(--accent-rgb, var(--neon-primary)), 0.15);
 }
 
-
-
 /* ===== Surfaces & textes legacy imbriqués (LinkedPlatformsSection) ===== */
 /* Sous-cards non directes (PlatformsCard) : surfaces sombres bordées —
    leur header reste visible (contrairement aux cards directes). */
@@ -217,10 +103,6 @@
 }
 
 /* Texte legacy mode clair -> clair / muted sur surfaces sombres. */
-.editorial-settings-section-body input {
-  color: #fff;
-}
-
 .editorial-settings-section-body .text-gray-900 {
   color: #fff;
 }
@@ -238,7 +120,6 @@
   color: rgb(var(--accent-rgb, var(--neon-primary)));
 }
 
-
 /* ===== Boutons d'action ghost en fin de ligne (PlatformRow) ===== */
 /* Icônes connexion / sync / visibilité : lisibles au repos, accent au survol.
    La corbeille (text-red) garde sa couleur ; les boutons primaires (variant
@@ -252,7 +133,6 @@
   color: rgb(var(--accent-rgb, var(--neon-primary)));
   background-color: rgba(var(--accent-rgb, var(--neon-primary)), 0.12);
 }
-
 
 /* ===== Boutons outline (ex : PasswordResetSection) ===== */
 /* `variant="outline"` rend `bg-background` (blanc en thème clair) -> on le

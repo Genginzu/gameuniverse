@@ -57,21 +57,21 @@ export function Pagination({
   const visiblePages = getVisiblePages(currentPage, totalPages);
 
   if (variant === "editorial") {
+    const edgeBtn =
+      "border-editorial-line text-editorial-muted hover:not-disabled:bg-editorial-accent/10 hover:not-disabled:border-editorial-accent/40 hover:not-disabled:text-white hidden min-h-11 min-w-11 items-center justify-center rounded-lg border px-3 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-40 md:inline-flex md:px-4";
+    const navBtn =
+      "border-editorial-line text-editorial-muted hover:not-disabled:bg-editorial-accent/10 hover:not-disabled:border-editorial-accent/40 hover:not-disabled:text-white inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border px-3 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-40 sm:px-4";
     return (
-      <div className="editorial-pagination">
+      <div className="bg-editorial-2 border-editorial-line flex flex-col items-center gap-4 rounded-2xl border p-4 sm:gap-5 sm:px-6 sm:py-5">
         {/* Page info */}
-        <div className="editorial-pagination-info">
+        <div className="text-editorial-muted flex flex-col items-center gap-1 text-sm sm:flex-row sm:gap-2">
           <span>
-            {t("page")}{" "}
-            <span className="editorial-pagination-info-current">
-              {currentPage}
-            </span>{" "}
-            {t("of")}{" "}
-            <span className="editorial-pagination-info-total">{totalPages}</span>
+            {t("page")} <span className="text-editorial-accent font-semibold">{currentPage}</span>{" "}
+            {t("of")} <span className="font-semibold text-white">{totalPages}</span>
           </span>
           {totalCount > 0 && (
             <>
-              <span aria-hidden className="editorial-pagination-info-separator">
+              <span aria-hidden className="hidden sm:inline">
                 ·
               </span>
               <span>
@@ -82,36 +82,29 @@ export function Pagination({
         </div>
 
         {/* Pagination controls */}
-        <div className="editorial-pagination-controls">
-          {/* First page button */}
+        <div className="flex items-center gap-1.5 sm:gap-2">
           <button
             type="button"
             onClick={() => onPageChange(1)}
             disabled={currentPage === 1 || loading}
-            className="editorial-pagination-button is-edge"
+            className={edgeBtn}
             aria-label={t("first")}
           >
             <Icon icon="lucide:chevrons-left" className="size-4" />
-            <span className="editorial-pagination-button-label">
-              {t("first")}
-            </span>
+            <span className="hidden md:mx-1 md:inline">{t("first")}</span>
           </button>
 
-          {/* Previous page button */}
           <button
             type="button"
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 1 || loading}
-            className="editorial-pagination-button"
+            className={navBtn}
             aria-label={t("previous")}
           >
             <Icon icon="lucide:chevron-left" className="size-4" />
-            <span className="editorial-pagination-button-label">
-              {t("previous")}
-            </span>
+            <span className="hidden sm:mx-1 sm:inline">{t("previous")}</span>
           </button>
 
-          {/* Page numbers */}
           {visiblePages.map((page, index) => (
             <PaginationButton
               key={page === "..." ? `dots-${index}` : page}
@@ -123,31 +116,25 @@ export function Pagination({
             />
           ))}
 
-          {/* Next page button */}
           <button
             type="button"
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage === totalPages || loading}
-            className="editorial-pagination-button"
+            className={navBtn}
             aria-label={t("next")}
           >
-            <span className="editorial-pagination-button-label">
-              {t("next")}
-            </span>
+            <span className="hidden sm:mx-1 sm:inline">{t("next")}</span>
             <Icon icon="lucide:chevron-right" className="size-4" />
           </button>
 
-          {/* Last page button */}
           <button
             type="button"
             onClick={() => onPageChange(totalPages)}
             disabled={currentPage === totalPages || loading}
-            className="editorial-pagination-button is-edge"
+            className={edgeBtn}
             aria-label={t("last")}
           >
-            <span className="editorial-pagination-button-label">
-              {t("last")}
-            </span>
+            <span className="hidden md:mx-1 md:inline">{t("last")}</span>
             <Icon icon="lucide:chevrons-right" className="size-4" />
           </button>
         </div>

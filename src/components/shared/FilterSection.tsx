@@ -36,8 +36,8 @@ export function FilterSection({
 }: FilterSectionProps) {
   if (variant === "editorial") {
     return (
-      <div className="editorial-filter-section">
-        <div className="editorial-filter-section-header">
+      <div className="bg-editorial-2 border-editorial-line rounded-2xl border p-4">
+        <div className="mb-3 flex items-center justify-between">
           {loading ? (
             <>
               <Skeleton className="h-4 w-24 rounded" />
@@ -45,21 +45,15 @@ export function FilterSection({
             </>
           ) : (
             <>
-              <h3 className="editorial-filter-section-title">{title}</h3>
-              <span className="editorial-filter-section-available">
-                {availableLabel}
-              </span>
+              <h3 className="text-sm font-semibold text-white">{title}</h3>
+              <span className="text-editorial-muted text-xs">{availableLabel}</span>
             </>
           )}
         </div>
-        <div className="editorial-filter-section-content">
+        <div className="flex flex-wrap gap-1.5">
           {loading
             ? skeletonWidths.map((w, i) => (
-                <Skeleton
-                  key={i}
-                  className="h-7 rounded-full"
-                  style={{ width: `${w}px` }}
-                />
+                <Skeleton key={i} className="h-7 rounded-full" style={{ width: `${w}px` }} />
               ))
             : children}
         </div>

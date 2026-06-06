@@ -116,7 +116,7 @@ export function PlayerDetailsContent({ player, locale, currentUserId }: PlayerDe
   );
 
   return (
-    <div className="editorial-player-detail">
+    <div className="bg-editorial-bg relative min-h-screen text-white">
       <PlayerDetailHero
         player={player}
         displayName={displayName}
@@ -136,7 +136,7 @@ export function PlayerDetailsContent({ player, locale, currentUserId }: PlayerDe
       )}
 
       {/* Tabs section : éditorial header + lazy content */}
-      <section className="editorial-player-detail-tabs-section">
+      <section className="mx-auto w-full max-w-[1600px] px-6 pb-20 lg:px-12 lg:pb-24">
         <PlayerDetailEditorialTabs
           activeTab={activeTab}
           onTabChange={setActiveTab}

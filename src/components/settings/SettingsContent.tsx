@@ -122,17 +122,19 @@ export function SettingsContent() {
   };
 
   return (
-    <section className="editorial-settings">
-      <header className="editorial-settings-header">
+    <section className="w-full px-4 pt-6 pb-16 md:px-6 md:pt-8 md:pb-20">
+      <header className="border-editorial-line mb-10 border-b pb-8">
         <KickerLabel>{tEditorial("kicker")}</KickerLabel>
-        <h1 className="editorial-settings-title">
+        <h1 className="mt-2 font-display text-[clamp(1.5rem,2.5vw+0.5rem,2.25rem)] leading-tight font-bold tracking-tight text-white">
           {tEditorial("titlePrefix")}{" "}
-          <span className="accent">{tEditorial("titleAccent")}</span>
+          <span className="text-editorial-accent">{tEditorial("titleAccent")}</span>
         </h1>
-        <p className="editorial-settings-subtitle">{tEditorial("subtitle")}</p>
+        <p className="text-editorial-muted mt-3 max-w-[60ch] text-[0.95rem]">
+          {tEditorial("subtitle")}
+        </p>
       </header>
 
-      <div className="editorial-settings-sections">
+      <div className="flex flex-col gap-6">
         <SettingsSection
           icon="lucide:user"
           title={t("profile.title")}
@@ -203,17 +205,22 @@ function SettingsSection({
   children: React.ReactNode;
 }) {
   return (
-    <section className="editorial-settings-section">
-      <header className="editorial-settings-section-header">
-        <div className="editorial-settings-section-icon" aria-hidden="true">
+    <section className="border-editorial-line bg-editorial-3 overflow-hidden rounded-2xl border">
+      <header className="flex items-start gap-4 px-6 pt-6 md:px-8 md:pt-7">
+        <div
+          className="bg-editorial-accent/12 text-editorial-accent grid size-10 shrink-0 place-items-center rounded-[0.625rem]"
+          aria-hidden="true"
+        >
           <Icon icon={icon} className="h-5 w-5" />
         </div>
-        <div className="editorial-settings-section-heading">
-          <h2 className="editorial-settings-section-title">{title}</h2>
-          <p className="editorial-settings-section-description">{description}</p>
+        <div className="min-w-0 flex-1">
+          <h2 className="mt-1.5 font-display text-lg font-bold tracking-tight text-white">
+            {title}
+          </h2>
+          <p className="text-editorial-muted mt-1.5 text-sm leading-normal">{description}</p>
         </div>
       </header>
-      <div className="editorial-settings-section-body">{children}</div>
+      <div className="editorial-settings-section-body p-6 md:px-8 md:pt-7 md:pb-8">{children}</div>
     </section>
   );
 }

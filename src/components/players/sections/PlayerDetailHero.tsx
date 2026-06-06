@@ -49,10 +49,10 @@ export function PlayerDetailHero({
   const titleWords = displayName.split(/\s+/).filter(Boolean);
 
   return (
-    <section className="editorial-player-detail-hero">
-      <div className="editorial-player-detail-hero-grid">
+    <section className="mx-auto w-full max-w-[1600px] px-6 pt-16 pb-8 lg:px-12 lg:pt-24 lg:pb-12">
+      <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[5fr_7fr] lg:gap-16">
         {/* Avatar + frame */}
-        <div className="editorial-player-detail-avatar">
+        <div className="relative mx-auto aspect-square w-full max-w-[460px] overflow-hidden rounded-3xl border border-white/10 lg:mx-0">
           {player.avatarUrl ? (
             <LazyImage
               src={player.avatarUrl}
@@ -64,51 +64,59 @@ export function PlayerDetailHero({
               showSkeleton={true}
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-[var(--editorial-bg-2)]">
+            <div className="bg-editorial-2 flex h-full w-full items-center justify-center">
               <Icon icon="lucide:user" className="h-24 w-24 text-zinc-500" />
             </div>
           )}
 
+          {/* Glow interne */}
+          <span
+            className="pointer-events-none absolute inset-0 rounded-[inherit] shadow-[inset_0_0_60px_rgba(var(--accent-rgb,var(--neon-primary)),0.25)]"
+            aria-hidden="true"
+          />
+
           {/* Rank badge */}
           {player.level > 0 && (
-            <div className="editorial-player-detail-avatar-rank">
+            <div className="text-editorial-accent absolute right-4 bottom-4 z-[1] rounded-full border border-[rgb(var(--accent-rgb,var(--neon-primary)))] bg-[rgba(var(--accent-rgb,var(--neon-primary)),0.2)] px-4 py-2 font-mono text-[0.7rem] tracking-[0.18em] uppercase backdrop-blur-md">
               {t("rankBadge", { level: player.level })}
             </div>
           )}
         </div>
 
         {/* Identité */}
-        <div className="editorial-player-detail-identity">
+        <div className="flex flex-col justify-center">
           <KickerLabel>
             {player.level > 0 ? t("kicker", { level: player.level }) : t("kickerNoLevel")}
           </KickerLabel>
 
-          <h1 className="editorial-player-detail-name">
+          <h1 className="mt-2 font-display text-[clamp(2.5rem,7vw,5.5rem)] leading-[0.92] font-bold tracking-tight break-words text-white">
             {titleWords.length === 0 ? (
-              <span className="accent">{displayName}</span>
+              <span className={ACCENT_TEXT}>{displayName}</span>
             ) : titleWords.length === 1 ? (
-              <span className="accent">{titleWords[0]}</span>
+              <span className={ACCENT_TEXT}>{titleWords[0]}</span>
             ) : (
               titleWords.map((word, i) => (
                 <span key={i}>
-                  {i === titleWords.length - 1 ? <span className="accent">{word}</span> : word}
+                  {i === titleWords.length - 1 ? <span className={ACCENT_TEXT}>{word}</span> : word}
                   {i < titleWords.length - 1 ? " " : ""}
                 </span>
               ))
             )}
           </h1>
 
-          <p className="editorial-player-detail-tagline">{t("bento.noTagline")}</p>
+          <p className="font-display mt-6 max-w-[56ch] text-[clamp(1.25rem,1.6vw,1.625rem)] leading-snug font-light text-white/[0.78] italic">
+            {t("bento.noTagline")}
+          </p>
 
           {(friendActionSlot || socialLinksSlot) && (
-            <div className="editorial-player-detail-actions">
+            <div className="mt-8 flex flex-wrap gap-3">
               {friendActionSlot}
               {socialLinksSlot}
             </div>
           )}
 
           {/* Mini stats */}
-          <div className="editorial-player-detail-stats">
+          <div className="border-editorial-line mt-10 grid grid-cols-3 gap-4 border-y py-5">
             <Stat label={t("stats.games")} value={String(player.stats.totalGames)} />
             <Stat label={t("stats.playtime")} value={formatHours(player.stats.totalPlayTime)} />
             <Stat
@@ -136,10 +144,17 @@ export function PlayerDetailHero({
   );
 }
 
+const ACCENT_TEXT =
+  "bg-gradient-to-r from-[rgb(var(--accent-rgb,var(--neon-primary)))] to-[rgba(var(--accent-rgb,var(--neon-primary)),0.6)] bg-clip-text text-transparent";
+
 function Stat({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (
     <div>
-      <p className={`editorial-player-detail-stat-value${accent ? "accent" : ""}`}>{value}</p>
+      <p
+        className={`font-display text-3xl leading-none font-bold tracking-tight ${accent ? "text-editorial-accent" : "text-white"}`}
+      >
+        {value}
+      </p>
       <KickerLabel className="mt-1">{label}</KickerLabel>
     </div>
   );

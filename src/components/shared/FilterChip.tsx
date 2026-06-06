@@ -29,14 +29,16 @@ export function FilterChip({
     return (
       <button
         onClick={onClick}
-        className={`editorial-filter-chip ${selected ? "is-selected" : ""}`.trim()}
+        className={`inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-3 py-2 text-xs font-medium transition sm:py-1.5 ${
+          selected
+            ? "bg-editorial-accent/[0.18] border-editorial-accent/55 text-white"
+            : "text-editorial-muted border-editorial-line hover:bg-white/[0.04] hover:border-white/[0.16] hover:text-white"
+        }`}
         aria-pressed={selected}
       >
         {icon}
         {label}
-        {count !== undefined && (
-          <span className="editorial-filter-chip-count">{count}</span>
-        )}
+        {count !== undefined && <span className="opacity-70">{count}</span>}
       </button>
     );
   }
@@ -77,7 +79,10 @@ export function ActiveFilterChip({
 }: ActiveFilterChipProps) {
   if (themeVariant === "editorial") {
     return (
-      <button onClick={onRemove} className="editorial-active-filter-chip">
+      <button
+        onClick={onRemove}
+        className="text-editorial-accent bg-editorial-accent/12 border-editorial-accent/35 hover:bg-editorial-accent/20 hover:border-editorial-accent/55 inline-flex items-center gap-1 rounded-full border px-2.5 py-1.5 text-xs font-medium transition"
+      >
         {label}
         <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path

@@ -7,13 +7,10 @@
  *   - Hook `useCollections(user.id)` pour la liste
  *   - Hook `useCollectionMutations` pour la création
  *
- * Look :
- *   - Hero éditorial 5/7 (kicker + titre display + subtitle | stats inline)
- *   - CTA « Créer une collection » à hauteur 56px alignée
- *   - Grille de `CollectionCardEditorial` (cover composite + count + last update)
+ * Style : Tailwind inline + tokens éditoriaux (cf steering styles-organization).
  */
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 
@@ -49,7 +46,7 @@ export function CollectionsEditorial() {
     const totalCollections = collections.length;
     const totalGames = collections.reduce((sum, c) => sum + c.gamesCount, 0);
     const publicCollections = collections.filter((c) => c.isPublic).length;
-    const largest = collections.reduce<typeof collections[number] | null>(
+    const largest = collections.reduce<(typeof collections)[number] | null>(
       (top, c) => (top === null || c.gamesCount > top.gamesCount ? c : top),
       null
     );
@@ -72,16 +69,14 @@ export function CollectionsEditorial() {
 
   if (!user) {
     return (
-      <section className="editorial-collections">
-        <div className="editorial-collections-inner">
-          <div className="editorial-collections-auth-required">
+      <section className="w-full">
+        <div className="mx-auto max-w-[1536px] px-4 pt-8 pb-16 md:px-8 md:pt-12 md:pb-20">
+          <div className="flex flex-col items-center justify-center gap-4 px-8 py-20 text-center">
             <KickerLabel>{t("kicker")}</KickerLabel>
-            <h1 className="editorial-collections-auth-required-title">
+            <h1 className="font-display text-[1.75rem] font-bold text-white">
               {t("authRequired.title")}
             </h1>
-            <p className="editorial-collections-auth-required-text">
-              {t("authRequired.description")}
-            </p>
+            <p className="text-editorial-muted max-w-[50ch]">{t("authRequired.description")}</p>
             <Button asChild>
               <Link href="/auth">{t("authRequired.signIn")}</Link>
             </Button>
@@ -96,30 +91,26 @@ export function CollectionsEditorial() {
   }
 
   return (
-    <section className="editorial-collections">
-      <div className="editorial-collections-inner">
+    <section className="w-full">
+      <div className="mx-auto max-w-[1536px] px-4 pt-8 pb-16 md:px-8 md:pt-12 md:pb-20">
         {/* Hero */}
-        <header className="editorial-collections-hero">
+        <header className="mb-12 grid grid-cols-1 gap-4 lg:grid-cols-[5fr_7fr] lg:items-end lg:gap-12">
           <div>
             <KickerLabel>{t("kicker")}</KickerLabel>
-            <h1 className="editorial-collections-hero-title">
-              {t("titlePrefix")} <span className="accent">{t("titleAccent")}</span>
+            <h1 className="mt-2 font-display text-[clamp(2rem,4vw+1rem,3.5rem)] leading-[1.05] font-bold tracking-tight text-white">
+              {t("titlePrefix")} <span className="text-editorial-accent">{t("titleAccent")}</span>
             </h1>
-            <p className="editorial-collections-hero-subtitle">{t("subtitle")}</p>
+            <p className="text-editorial-muted mt-4 max-w-[60ch] text-base">{t("subtitle")}</p>
           </div>
 
-          <div className="editorial-collections-stats">
-            <Stat
-              label={t("stats.collections")}
-              value={String(stats.totalCollections)}
-              accent
-            />
+          <div className="border-editorial-line grid grid-cols-2 gap-6 border-y py-6 md:grid-cols-3">
+            <Stat label={t("stats.collections")} value={String(stats.totalCollections)} accent />
             <Stat label={t("stats.games")} value={String(stats.totalGames)} />
             <Stat
               label={t("stats.largest")}
               value={
                 stats.largest ? (
-                  <span className="editorial-collections-stat-largest">
+                  <span className="font-display text-xl leading-tight font-bold text-white line-clamp-2">
                     {stats.largest.name}
                   </span>
                 ) : (
@@ -131,14 +122,12 @@ export function CollectionsEditorial() {
         </header>
 
         {/* Controls */}
-        <div className="editorial-collections-controls">
-          <KickerLabel>
-            {t("listKicker", { count: stats.totalCollections })}
-          </KickerLabel>
+        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <KickerLabel>{t("listKicker", { count: stats.totalCollections })}</KickerLabel>
           <button
             type="button"
             onClick={() => setShowCreateDialog(true)}
-            className="editorial-collections-create-btn"
+            className="bg-editorial-accent inline-flex h-14 items-center gap-2 rounded-[14px] px-6 text-[0.95rem] font-semibold text-[#0a0418] transition hover:-translate-y-px hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
           >
             <Icon icon="lucide:plus" className="h-4 w-4" aria-hidden="true" />
             {t("createButton")}
@@ -149,7 +138,7 @@ export function CollectionsEditorial() {
         {collections.length === 0 ? (
           <CollectionsEmptyState onCreate={() => setShowCreateDialog(true)} />
         ) : (
-          <div className="editorial-collections-grid">
+          <div className="grid grid-cols-1 gap-4 min-[475px]:grid-cols-2 md:grid-cols-3 md:gap-6 xl:grid-cols-4">
             {collections.map((collection) => (
               <CollectionCardEditorial
                 key={collection.id}
@@ -175,18 +164,16 @@ export function CollectionsEditorial() {
   );
 }
 
-function Stat({
-  label,
-  value,
-  accent,
-}: {
-  label: string;
-  value: React.ReactNode;
-  accent?: boolean;
-}) {
+function Stat({ label, value, accent }: { label: string; value: ReactNode; accent?: boolean }) {
   return (
     <div>
-      <p className={`editorial-collections-stat-value${accent ? " accent" : ""}`}>{value}</p>
+      <p
+        className={`font-display text-3xl leading-none font-bold tracking-tight ${
+          accent ? "text-editorial-accent" : "text-white"
+        }`}
+      >
+        {value}
+      </p>
       <KickerLabel className="mt-2">{label}</KickerLabel>
     </div>
   );
@@ -196,12 +183,12 @@ function CollectionsEmptyState({ onCreate }: { onCreate: () => void }) {
   const t = useTranslations("collections.editorial");
 
   return (
-    <div className="editorial-collections-empty">
-      <div className="editorial-collections-empty-icon">
+    <div className="border-editorial-line bg-editorial-2 flex flex-col items-center justify-center gap-5 rounded-3xl border px-8 py-16 text-center">
+      <div className="bg-editorial-accent/15 text-editorial-accent grid size-16 place-items-center rounded-full">
         <Icon icon="lucide:layers" className="h-7 w-7" aria-hidden="true" />
       </div>
-      <h3 className="editorial-collections-empty-title">{t("empty.title")}</h3>
-      <p className="editorial-collections-empty-text">{t("empty.description")}</p>
+      <h3 className="font-display text-2xl font-bold text-white">{t("empty.title")}</h3>
+      <p className="text-editorial-muted max-w-[50ch]">{t("empty.description")}</p>
       <Button onClick={onCreate}>
         <Icon icon="lucide:plus" className="mr-2 h-4 w-4" aria-hidden="true" />
         {t("empty.cta")}

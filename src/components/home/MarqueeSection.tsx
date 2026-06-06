@@ -26,15 +26,25 @@ export function MarqueeSection() {
   const t = useTranslations("landing.marquee");
 
   return (
-    <Marquee className="editorial-home-marquee" gapClassName="gap-12">
+    <Marquee
+      className="border-editorial-line bg-editorial-bg border-y py-5"
+      gapClassName="gap-12"
+    >
       {MARQUEE_KEYS.map((key, idx) => (
         <Fragment key={key}>
-          <span className="editorial-home-marquee-item">{t(key)}</span>
-          <span className="editorial-home-marquee-dot" aria-hidden>
+          <span className="font-display text-[clamp(1.25rem,3vw,1.75rem)] font-semibold tracking-tight text-white uppercase">
+            {t(key)}
+          </span>
+          <span
+            className="text-neon-primary font-display text-[clamp(1.25rem,3vw,1.75rem)] leading-none"
+            aria-hidden
+          >
             ·
           </span>
           {idx === MARQUEE_KEYS.length - 1 && (
-            <span className="editorial-home-marquee-item">{t(MARQUEE_KEYS[0])}</span>
+            <span className="font-display text-[clamp(1.25rem,3vw,1.75rem)] font-semibold tracking-tight text-white uppercase">
+              {t(MARQUEE_KEYS[0])}
+            </span>
           )}
         </Fragment>
       ))}

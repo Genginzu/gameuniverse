@@ -36,17 +36,17 @@ export function PlayerLibraryTab({ player, locale, t, tCommon }: PlayerLibraryTa
   }, [games.length, hasMore, isLoadingMore, player.id, locale]);
 
   return (
-    <div className="editorial-player-library mb-8">
-      <div className="editorial-player-library-header">
-        <h2 className="editorial-player-library-title">
+    <div className="mb-8">
+      <div className="border-editorial-line mb-6 flex items-center justify-between gap-4 border-b pb-4">
+        <h2 className="font-display flex items-center gap-2.5 text-2xl font-bold tracking-tight text-white">
           <Icon
             icon="lucide:gamepad-2"
-            className="editorial-player-library-icon"
+            className="text-editorial-accent h-6 w-6"
             aria-hidden="true"
           />
           {t("details.library")}
         </h2>
-        <span className="editorial-player-library-count">
+        <span className="bg-editorial-accent/12 text-editorial-accent inline-flex items-center rounded-full border border-[rgba(var(--accent-rgb,var(--neon-primary)),0.25)] px-3 py-1 font-mono text-[0.7rem] font-semibold tracking-[0.1em] whitespace-nowrap uppercase">
           {totalCount} {tCommon("games")} {t("details.inLibrary")}
         </span>
       </div>
@@ -57,7 +57,7 @@ export function PlayerLibraryTab({ player, locale, t, tCommon }: PlayerLibraryTa
             type="button"
             onClick={loadMore}
             disabled={isLoadingMore}
-            className="editorial-player-library-load-more"
+            className="bg-editorial-3 border-editorial-line inline-flex h-11 items-center gap-2 rounded-xl border px-6 text-sm font-medium text-white transition hover:not-disabled:border-[rgba(var(--accent-rgb,var(--neon-primary)),0.4)] hover:not-disabled:text-[rgb(var(--accent-rgb,var(--neon-primary)))] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isLoadingMore ? (
               <Icon icon="lucide:loader-2" className="h-4 w-4 animate-spin" aria-hidden="true" />

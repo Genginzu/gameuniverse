@@ -6,30 +6,17 @@
  *   - Hook `useCollectionDetail` (fetch via slug)
  *   - Hook `useCollectionMutations` (edit / delete / toggle visibility / add game)
  *
- * Look :
- *   - Lien retour mono kicker
- *   - Hero 5/7 : cover composite à gauche / titre display + meta + actions à droite
- *   - Grille de jeux compacte (`CollectionGameCardEditorial`)
- *   - Empty state cohérent avec le reste de l'éditorial
+ * Orchestration : la coquille visuelle est déléguée à `CollectionDetailHero`
+ * (en-tête) et `CollectionDetailDialogs` (dialogs owner).
+ * Style : Tailwind inline + tokens éditoriaux.
  */
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
-import Image from "next/image";
 
 import { Link, useRouter } from "@/i18n/navigation";
-import { LazyImage } from "@/components/ui/lazy-image";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { LoadingButton } from "@/components/ui/loading-button";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
 import { KickerLabel } from "@/components/shared/KickerLabel";
 
@@ -38,11 +25,11 @@ import { useCollectionDetail } from "@/hooks/useCollectionDetail";
 import { useCollectionMutations } from "@/hooks/useCollectionMutations";
 import { toast } from "@/hooks/use-toast";
 
-import type { CollectionDetail, CollectionItem } from "@/types/collection";
+import type { CollectionItem } from "@/types/collection";
 
-import { CollectionForm } from "./CollectionForm";
-import { AddGameToCollection } from "./AddGameToCollection";
 import { CollectionDetailEditorialSkeleton } from "./CollectionDetailEditorialSkeleton";
+import { CollectionDetailHero } from "./CollectionDetailHero";
+import { CollectionDetailDialogs } from "./CollectionDetailDialogs";
 import { CollectionGameCardEditorial } from "./CollectionGameCardEditorial";
 
 interface CollectionDetailEditorialProps {
@@ -185,111 +172,44 @@ export function CollectionDetailEditorial({ slug, locale }: CollectionDetailEdit
   }).format(new Date(collection.updatedAt));
 
   return (
-    <section className="editorial-collection-detail">
-      <div className="editorial-collection-detail-inner">
-        <Link href="/collections" className="editorial-collection-detail-back">
+    <section className="w-full">
+      <div className="mx-auto max-w-[1536px] px-4 pt-6 pb-16 md:px-8 md:pt-10 md:pb-20">
+        <Link
+          href="/collections"
+          className="text-editorial-muted hover:text-editorial-accent mb-6 inline-flex items-center gap-1.5 font-mono text-[0.7rem] font-semibold tracking-[0.14em] uppercase transition-colors focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
+        >
           <Icon icon="lucide:arrow-left" className="h-3.5 w-3.5" aria-hidden="true" />
           {tPage("backToCollections")}
         </Link>
 
-        {/* Hero */}
-        <header className="editorial-collection-detail-hero">
-          <CollectionCover collection={collection} items={sortedItems} />
-
-          <div className="editorial-collection-detail-body">
-            <div>
-              <KickerLabel>{t("kicker")}</KickerLabel>
-              <h1 className="editorial-collection-detail-title">{collection.name}</h1>
-              {collection.description && (
-                <p className="editorial-collection-detail-description">{collection.description}</p>
-              )}
-            </div>
-
-            <div className="editorial-collection-detail-meta">
-              <OwnerBadge owner={collection.owner} userId={collection.userId} locale={locale} />
-              <span className="editorial-collection-detail-meta-divider" aria-hidden="true" />
-              <span className="editorial-collection-detail-meta-stat">
-                <span className="editorial-collection-detail-meta-stat-value">
-                  {sortedItems.length}
-                </span>
-                {t("gamesLabel")}
-              </span>
-              <span className="editorial-collection-detail-meta-divider" aria-hidden="true" />
-              <span className="editorial-collection-detail-meta-stat">
-                {t("updatedLabel")}
-                <span className="editorial-collection-detail-meta-stat-value">
-                  {updatedAtFormatted}
-                </span>
-              </span>
-            </div>
-
-            {isOwner && (
-              <div className="editorial-collection-detail-actions">
-                <button
-                  type="button"
-                  onClick={() => setShowAddGameDialog(true)}
-                  className="editorial-collection-detail-action primary"
-                >
-                  <Icon icon="lucide:plus" className="h-4 w-4" aria-hidden="true" />
-                  {tPage("addGame")}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowEditDialog(true)}
-                  className="editorial-collection-detail-action"
-                >
-                  <Icon icon="lucide:pencil" className="h-4 w-4" aria-hidden="true" />
-                  {tActions("edit")}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleToggleVisibility}
-                  className="editorial-collection-detail-action"
-                >
-                  <Icon
-                    icon={collection.isPublic ? "lucide:eye-off" : "lucide:eye"}
-                    className="h-4 w-4"
-                    aria-hidden="true"
-                  />
-                  {collection.isPublic ? tActions("makePrivate") : tActions("makePublic")}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleCopyLink}
-                  className="editorial-collection-detail-action"
-                >
-                  <Icon icon="lucide:link-2" className="h-4 w-4" aria-hidden="true" />
-                  {tActions("copyLink")}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowDeleteDialog(true)}
-                  className="editorial-collection-detail-action danger"
-                >
-                  <Icon icon="lucide:trash-2" className="h-4 w-4" aria-hidden="true" />
-                  {tActions("delete")}
-                </button>
-              </div>
-            )}
-          </div>
-        </header>
+        <CollectionDetailHero
+          collection={collection}
+          items={sortedItems}
+          isOwner={isOwner}
+          updatedAtFormatted={updatedAtFormatted}
+          locale={locale}
+          onAddGame={() => setShowAddGameDialog(true)}
+          onEdit={() => setShowEditDialog(true)}
+          onToggleVisibility={handleToggleVisibility}
+          onCopyLink={handleCopyLink}
+          onDelete={() => setShowDeleteDialog(true)}
+        />
 
         {/* Games */}
         <section>
-          <header className="editorial-collection-detail-games-header">
+          <header className="mb-6 flex items-end justify-between gap-4">
             <div>
               <KickerLabel>{t("gamesKicker")}</KickerLabel>
-              <h2 className="editorial-collection-detail-games-title">{t("gamesTitle")}</h2>
+              <h2 className="mt-2 font-display text-2xl font-bold tracking-tight text-white">
+                {t("gamesTitle")}
+              </h2>
             </div>
           </header>
 
           {sortedItems.length === 0 ? (
-            <CollectionDetailEmptyState
-              isOwner={isOwner}
-              onAdd={() => setShowAddGameDialog(true)}
-            />
+            <CollectionDetailEmptyState isOwner={isOwner} onAdd={() => setShowAddGameDialog(true)} />
           ) : (
-            <div className="editorial-collection-detail-games-grid">
+            <div className="grid grid-cols-2 gap-4 min-[475px]:grid-cols-3 md:grid-cols-4 md:gap-5 lg:grid-cols-5 xl:grid-cols-6 min-[1536px]:grid-cols-7">
               {sortedItems.map((item) => (
                 <CollectionGameCardEditorial
                   key={item.id}
@@ -301,221 +221,42 @@ export function CollectionDetailEditorial({ slug, locale }: CollectionDetailEdit
           )}
         </section>
 
-        {/* Owner-only dialogs */}
         {isOwner && (
-          <>
-            <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>{tPage("editCollection")}</DialogTitle>
-                </DialogHeader>
-                <CollectionForm
-                  mode="edit"
-                  defaultValues={{
-                    name: collection.name,
-                    description: collection.description ?? "",
-                    isPublic: collection.isPublic,
-                    coverImageUrl: collection.coverImageUrl ?? "",
-                  }}
-                  onSubmit={handleEdit}
-                  isSubmitting={isSubmitting}
-                />
-              </DialogContent>
-            </Dialog>
-
-            <Dialog open={showAddGameDialog} onOpenChange={setShowAddGameDialog}>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>{tPage("addGame")}</DialogTitle>
-                </DialogHeader>
-                <AddGameToCollection onAdd={handleAddGame} isAdding={isAddingGame} />
-              </DialogContent>
-            </Dialog>
-
-            <Dialog
-              open={showDeleteDialog}
-              onOpenChange={(open) => !open && !isDeleting && setShowDeleteDialog(false)}
-            >
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>{tActions("deleteTitle")}</DialogTitle>
-                  <DialogDescription>
-                    {tActions("deleteDescription", { name: collection.name })}
-                  </DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowDeleteDialog(false)}
-                    disabled={isDeleting}
-                  >
-                    {tActions("deleteCancel")}
-                  </Button>
-                  <LoadingButton
-                    variant="destructive"
-                    onClick={handleDelete}
-                    loading={isDeleting}
-                    loadingText={tActions("deleting")}
-                  >
-                    {tActions("deleteConfirm")}
-                  </LoadingButton>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-
-            <Dialog
-              open={itemToRemove !== null}
-              onOpenChange={(open) => !open && !isRemovingItem && setItemToRemove(null)}
-            >
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>{t("removeItem.confirmTitle")}</DialogTitle>
-                  <DialogDescription>
-                    {t("removeItem.confirmDescription", {
-                      title: itemToRemove?.title ?? "",
-                    })}
-                  </DialogDescription>
-                </DialogHeader>
-                <DialogFooter>
-                  <Button
-                    variant="outline"
-                    onClick={() => setItemToRemove(null)}
-                    disabled={isRemovingItem}
-                  >
-                    {t("removeItem.confirmCancel")}
-                  </Button>
-                  <LoadingButton
-                    variant="destructive"
-                    onClick={handleConfirmRemoveItem}
-                    loading={isRemovingItem}
-                    loadingText={t("removeItem.removing")}
-                  >
-                    {t("removeItem.confirmAction")}
-                  </LoadingButton>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </>
+          <CollectionDetailDialogs
+            collection={collection}
+            showEditDialog={showEditDialog}
+            setShowEditDialog={setShowEditDialog}
+            showAddGameDialog={showAddGameDialog}
+            setShowAddGameDialog={setShowAddGameDialog}
+            showDeleteDialog={showDeleteDialog}
+            setShowDeleteDialog={setShowDeleteDialog}
+            itemToRemove={itemToRemove}
+            setItemToRemove={setItemToRemove}
+            isSubmitting={isSubmitting}
+            isAddingGame={isAddingGame}
+            isDeleting={isDeleting}
+            isRemovingItem={isRemovingItem}
+            onEdit={handleEdit}
+            onAddGame={handleAddGame}
+            onDelete={handleDelete}
+            onConfirmRemoveItem={handleConfirmRemoveItem}
+          />
         )}
       </div>
     </section>
   );
 }
 
-/* ───────────── Cover ───────────── */
-
-function CollectionCover({
-  collection,
-  items,
-}: {
-  collection: CollectionDetail;
-  items: CollectionItem[];
-}) {
-  const t = useTranslations("collections.card");
-  const covers = items.slice(0, 4).map((it) => it.coverImage).filter((c): c is string => Boolean(c));
-
-  return (
-    <div className="editorial-collection-detail-cover">
-      {collection.coverImageUrl ? (
-        <LazyImage
-          src={collection.coverImageUrl}
-          alt=""
-          fill
-          className="object-cover"
-          sizes="(max-width: 1024px) 100vw, 41vw"
-          showSkeleton
-        />
-      ) : covers.length > 0 ? (
-        <div className="editorial-collection-detail-cover-grid">
-          {covers.map((src, i) => (
-            <div key={i} className="editorial-collection-detail-cover-cell">
-              <LazyImage
-                src={src}
-                alt=""
-                fill
-                className="object-cover"
-                sizes="(max-width: 1024px) 50vw, 21vw"
-                showSkeleton
-              />
-            </div>
-          ))}
-          {Array.from({ length: 4 - covers.length }).map((_, i) => (
-            <div key={`empty-${i}`} className="editorial-collection-detail-cover-cell" />
-          ))}
-        </div>
-      ) : (
-        <div className="editorial-collection-detail-cover-empty">
-          <Icon icon="lucide:layers" className="h-14 w-14" aria-hidden="true" />
-        </div>
-      )}
-
-      <div className="editorial-collection-detail-cover-overlay" aria-hidden="true" />
-      <span
-        className={`editorial-collection-detail-cover-tag${collection.isPublic ? " public" : ""}`}
-      >
-        <Icon
-          icon={collection.isPublic ? "lucide:globe" : "lucide:lock"}
-          className="h-3.5 w-3.5"
-          aria-hidden="true"
-        />
-        {collection.isPublic ? t("public") : t("private")}
-      </span>
-    </div>
-  );
-}
-
-/* ───────────── Owner badge ───────────── */
-
-function OwnerBadge({
-  owner,
-  userId,
-  locale,
-}: {
-  owner: CollectionDetail["owner"];
-  userId: string;
-  locale: string;
-}) {
-  const ownerName = owner.fullName ?? "—";
-  const initial = ownerName.charAt(0).toUpperCase();
-
-  return (
-    <Link href={`/players/${userId}`} className="editorial-collection-detail-owner" locale={locale}>
-      {owner.avatarUrl ? (
-        <Image
-          src={owner.avatarUrl}
-          alt=""
-          width={32}
-          height={32}
-          className="editorial-collection-detail-owner-avatar"
-        />
-      ) : (
-        <div className="editorial-collection-detail-owner-fallback" aria-hidden="true">
-          {initial}
-        </div>
-      )}
-      <span className="editorial-collection-detail-owner-name">{ownerName}</span>
-    </Link>
-  );
-}
-
-/* ───────────── Empty state ───────────── */
-
-function CollectionDetailEmptyState({
-  isOwner,
-  onAdd,
-}: {
-  isOwner: boolean;
-  onAdd: () => void;
-}) {
+function CollectionDetailEmptyState({ isOwner, onAdd }: { isOwner: boolean; onAdd: () => void }) {
   const t = useTranslations("collections.editorial.detail");
 
   return (
-    <div className="editorial-collection-detail-empty">
-      <div className="editorial-collection-detail-empty-icon">
+    <div className="border-editorial-line bg-editorial-2 flex flex-col items-center justify-center gap-5 rounded-3xl border border-dashed px-8 py-16 text-center">
+      <div className="bg-editorial-accent/15 text-editorial-accent grid size-16 place-items-center rounded-full">
         <Icon icon="lucide:gamepad-2" className="h-7 w-7" aria-hidden="true" />
       </div>
-      <h3 className="editorial-collection-detail-empty-title">{t("emptyTitle")}</h3>
-      <p className="editorial-collection-detail-empty-text">
+      <h3 className="font-display text-2xl font-bold text-white">{t("emptyTitle")}</h3>
+      <p className="text-editorial-muted max-w-[50ch]">
         {isOwner ? t("emptyDescriptionOwner") : t("emptyDescriptionViewer")}
       </p>
       {isOwner && (

@@ -46,10 +46,10 @@ export function FriendCard({ friend, locale: _locale, onRemove }: FriendCardProp
   };
 
   return (
-    <div className="editorial-friend-card group">
+    <div className="border-editorial-line bg-editorial-3 group flex items-center rounded-[0.875rem] border p-3 text-white transition hover:border-[rgba(var(--accent-rgb,var(--neon-primary)),0.4)] hover:shadow-[0_8px_24px_-12px_rgba(var(--accent-rgb,var(--neon-primary)),0.25)]">
       <Link href={`/players/${friend.id}`} className="flex min-w-0 flex-1 items-center gap-3">
         {/* Avatar */}
-        <div className="editorial-friend-card-avatar">
+        <div className="bg-editorial-accent/[0.18] text-editorial-accent relative size-10 flex-shrink-0 overflow-hidden rounded-full">
           {friend.avatarUrl ? (
             <LazyImage
               src={friend.avatarUrl}
@@ -68,12 +68,16 @@ export function FriendCard({ friend, locale: _locale, onRemove }: FriendCardProp
 
         {/* Name */}
         <div className="min-w-0 flex-1">
-          <p className="editorial-friend-card-name">{friend.displayName}</p>
+          <p className="group-hover:text-editorial-accent m-0 truncate text-sm font-semibold text-white transition-colors">
+            {friend.displayName}
+          </p>
         </div>
 
         {/* Level badge */}
         {friend.level > 0 && (
-          <span className="editorial-friend-card-level">{friend.level}</span>
+          <span className="flex size-6 flex-shrink-0 items-center justify-center rounded-full bg-[rgb(var(--accent-rgb,var(--neon-primary)))] text-[0.65rem] font-bold text-[#0a0418]">
+            {friend.level}
+          </span>
         )}
       </Link>
 
@@ -84,7 +88,11 @@ export function FriendCard({ friend, locale: _locale, onRemove }: FriendCardProp
           type="button"
           onClick={handleClick}
           disabled={isRemoving}
-          className={`editorial-friend-card-remove${confirming ? " confirming" : ""}`}
+          className={`ml-2 flex-shrink-0 rounded-lg transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500 disabled:cursor-not-allowed disabled:opacity-50 ${
+            confirming
+              ? "bg-red-600/90 px-3 py-1 text-[0.7rem] font-semibold text-white hover:bg-red-700"
+              : "text-editorial-muted p-1.5 hover:bg-red-600/12 hover:text-red-300"
+          }`}
           aria-label={confirming ? t("confirmRemoveConfirm") : t("removeFriend")}
         >
           {confirming ? (

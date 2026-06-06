@@ -37,15 +37,13 @@ export function SearchInputField({
           e.preventDefault();
           onSubmit();
         }}
-        className="editorial-search-input"
+        className="group bg-editorial-2 border-editorial-line hover:bg-editorial-3 focus-within:border-editorial-accent relative flex h-14 w-full items-center rounded-[14px] border transition hover:border-white/[0.18] focus-within:shadow-[0_0_0_3px_rgba(var(--accent-rgb,var(--neon-primary)),0.15)]"
       >
-        <span className="editorial-search-input-icon" aria-hidden="true">
-          <svg
-            className="h-5 w-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
+        <span
+          className="text-editorial-muted group-focus-within:text-editorial-accent pointer-events-none grid h-full w-12 place-items-center"
+          aria-hidden="true"
+        >
+          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -61,14 +59,14 @@ export function SearchInputField({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onFocus={onFocus}
-          className="editorial-search-input-field"
+          className="placeholder:text-editorial-muted h-full min-w-0 flex-1 border-0 bg-transparent pr-4 text-base text-white outline-none"
         />
 
         {value && (
           <button
             type="button"
             onClick={onClear}
-            className="editorial-search-input-clear"
+            className="text-editorial-muted mr-1 grid size-11 place-items-center rounded-full transition-colors hover:bg-white/[0.08] hover:text-white"
             aria-label="Clear search"
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

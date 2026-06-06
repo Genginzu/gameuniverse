@@ -1,264 +1,11 @@
 /*
- * Editorial : page Library (/library).
- * Voir docs/design/editorial-refonte-plan.md
+ * Editorial : loader animé de /library (LibraryLoadingState).
+ * Voir steering styles-organization (approche hybride).
  *
- * Layout : hero éditorial avec stats inline (chiffres XL display + kicker),
- * search + filtres, grille GameCard. Réutilise les classes
- * `.editorial-games-listing-*` pour l'uniformité visuelle avec le catalogue.
+ * Toute la structure /library est en Tailwind inline. Ce module ne conserve
+ * QUE les animations keyframes (scan/breath/wave) du loader, que Tailwind ne
+ * sait pas exprimer inline.
  */
-
-.editorial-library {
-  width: 100%;
-}
-
-.editorial-library-inner {
-  max-width: 1536px;
-  margin: 0 auto;
-  padding: 2rem 1rem 4rem;
-}
-
-@media (min-width: 768px) {
-  .editorial-library-inner {
-    padding: 3rem 2rem 5rem;
-  }
-}
-
-/* ===== Hero ===== */
-.editorial-library-hero {
-  margin-bottom: 3rem;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-}
-
-@media (min-width: 1024px) {
-  .editorial-library-hero {
-    grid-template-columns: 5fr 7fr;
-    gap: 3rem;
-    align-items: end;
-  }
-}
-
-.editorial-library-hero-title {
-  margin: 0.5rem 0 0;
-  font-family: var(--font-display, "Tomorrow"), system-ui, sans-serif;
-  font-size: clamp(2rem, 4vw + 1rem, 3.5rem);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1.05;
-  color: #fff;
-}
-
-.editorial-library-hero-title .accent {
-  color: rgb(var(--accent-rgb, var(--neon-primary)));
-}
-
-.editorial-library-hero-subtitle {
-  margin: 1rem 0 0;
-  font-size: 1rem;
-  color: var(--editorial-muted);
-  max-width: 60ch;
-}
-
-/* Stats inline (right side of hero) */
-.editorial-library-stats {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
-  padding: 1.5rem 0;
-  border-top: 1px solid var(--editorial-line);
-  border-bottom: 1px solid var(--editorial-line);
-}
-
-@media (min-width: 768px) {
-  .editorial-library-stats {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-.editorial-library-stat-value {
-  font-family: var(--font-display, "Tomorrow"), system-ui, sans-serif;
-  font-weight: 700;
-  font-size: 2rem;
-  letter-spacing: -0.01em;
-  line-height: 1;
-  color: #fff;
-}
-
-.editorial-library-stat-value.accent {
-  color: rgb(var(--accent-rgb, var(--neon-primary)));
-}
-
-.editorial-library-stat-suffix {
-  font-weight: 300;
-  color: rgba(255, 255, 255, 0.4);
-  font-size: 0.875em;
-}
-
-/* ===== Controls ===== */
-.editorial-library-controls {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
-}
-
-@media (min-width: 640px) {
-  .editorial-library-controls {
-    flex-direction: row;
-    align-items: center;
-  }
-}
-
-.editorial-library-search {
-  flex: 1;
-  min-width: 0;
-}
-
-/* ===== Editorial search input ===== */
-/*
- * Variante éditoriale du composant `SearchInputField` (exposée via la prop
- * `variant="editorial"` de `GameSearchBar`). Surface sombre, bordure fine,
- * accent dynamique au focus, hauteur 56px alignée sur `FilterButton`.
- */
-.editorial-search-input {
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 100%;
-  height: 56px;
-  border-radius: 14px;
-  background: var(--editorial-bg-2);
-  border: 1px solid var(--editorial-line);
-  transition:
-    border-color 200ms ease,
-    background-color 200ms ease,
-    box-shadow 200ms ease;
-}
-
-.editorial-search-input:hover {
-  background: var(--editorial-bg-3, rgba(255, 255, 255, 0.04));
-  border-color: rgba(255, 255, 255, 0.18);
-}
-
-.editorial-search-input:focus-within {
-  border-color: rgb(var(--accent-rgb, var(--neon-primary)));
-  box-shadow: 0 0 0 3px rgba(var(--accent-rgb, var(--neon-primary)), 0.15);
-}
-
-.editorial-search-input-icon {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: 48px;
-  height: 100%;
-  color: var(--editorial-muted);
-  pointer-events: none;
-}
-
-.editorial-search-input:focus-within .editorial-search-input-icon {
-  color: rgb(var(--accent-rgb, var(--neon-primary)));
-}
-
-.editorial-search-input-field {
-  flex: 1;
-  min-width: 0;
-  height: 100%;
-  padding-right: 1rem;
-  background: transparent;
-  border: none;
-  outline: none;
-  box-shadow: none;
-  font-size: 1rem; /* 16px — évite le zoom auto iOS */
-  color: #fff;
-  font-family: inherit;
-}
-
-.editorial-search-input-field:focus,
-.editorial-search-input-field:focus-visible {
-  outline: none;
-  box-shadow: none;
-  border: none;
-}
-
-.editorial-search-input-field::placeholder {
-  color: var(--editorial-muted);
-  opacity: 1;
-}
-
-.editorial-search-input-clear {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: 44px;
-  height: 44px;
-  margin-right: 0.25rem;
-  border-radius: 9999px;
-  background: transparent;
-  border: none;
-  color: var(--editorial-muted);
-  cursor: pointer;
-  transition:
-    color 150ms ease,
-    background-color 150ms ease;
-}
-
-.editorial-search-input-clear:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.editorial-search-input-clear:focus-visible {
-  outline: 2px solid rgb(var(--accent-rgb, var(--neon-primary)));
-  outline-offset: 2px;
-}
-
-/* ===== Grid (reuse same look as games listing) ===== */
-.editorial-library-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-}
-
-@media (min-width: 475px) {
-  .editorial-library-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 768px) {
-  .editorial-library-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1.5rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .editorial-library-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-@media (min-width: 1280px) {
-  .editorial-library-grid {
-    grid-template-columns: repeat(5, 1fr);
-  }
-}
-
-@media (min-width: 1536px) {
-  .editorial-library-grid {
-    grid-template-columns: repeat(6, 1fr);
-    gap: 1.25rem;
-  }
-}
-
-.editorial-library-content {
-  transition: opacity 200ms ease;
-}
-
-.editorial-library-content[data-revalidating="true"] {
-  opacity: 0.5;
-}
 
 .editorial-library-loading {
   position: relative;
@@ -272,7 +19,6 @@
   overflow: hidden;
 }
 
-/* Barre de progression fine en haut (scan animé) */
 .editorial-library-loading-bar {
   position: absolute;
   top: 0;
@@ -307,7 +53,6 @@
   }
 }
 
-/* Statut : kicker + dots animés */
 .editorial-library-loading-status {
   display: flex;
   align-items: center;
@@ -361,7 +106,6 @@
   }
 }
 
-/* Grille de cartes ghost (silhouettes des GameCard) */
 .editorial-library-loading-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -461,44 +205,4 @@
   .editorial-library-loading-ghost {
     opacity: 0.7;
   }
-}
-
-.editorial-library-pagination {
-  margin-top: 3rem;
-}
-
-/* ===== Empty state ===== */
-.editorial-library-empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1.25rem;
-  padding: 4rem 2rem;
-  border-radius: 1.5rem;
-  border: 1px solid var(--editorial-line);
-  background: var(--editorial-bg-2);
-  text-align: center;
-}
-
-.editorial-library-empty-icon {
-  display: grid;
-  place-items: center;
-  width: 4rem;
-  height: 4rem;
-  border-radius: 9999px;
-  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.15);
-  color: rgb(var(--accent-rgb, var(--neon-primary)));
-}
-
-.editorial-library-empty-title {
-  font-family: var(--font-display, "Tomorrow"), system-ui, sans-serif;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #fff;
-}
-
-.editorial-library-empty-text {
-  max-width: 50ch;
-  color: var(--editorial-muted);
 }

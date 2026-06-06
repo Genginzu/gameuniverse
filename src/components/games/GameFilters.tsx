@@ -85,7 +85,7 @@ export function GameFilters({
 
   const isEditorial = variant === "editorial";
   const clearButtonClass = isEditorial
-    ? "editorial-filter-clear"
+    ? "shrink-0 rounded-lg border border-transparent px-3 py-2 text-xs font-medium text-red-400 transition-colors hover:bg-red-400/10 hover:text-red-300"
     : "shrink-0 rounded-lg px-3 py-2 text-xs font-medium text-red-600 transition-colors hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20";
 
   return (

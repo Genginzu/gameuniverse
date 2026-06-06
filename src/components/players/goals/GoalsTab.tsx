@@ -48,14 +48,14 @@ export function GoalsTab({ playerId, locale }: GoalsTabProps) {
   return (
     <section className="editorial-goals space-y-6">
       {/* Action buttons */}
-      <div className="editorial-goals-actions">
+      <div className="flex flex-col gap-2 min-[475px]:flex-row min-[475px]:items-center">
         <button
           type="button"
           onClick={() => {
             setShowSessionComposer((v) => !v);
             if (!showSessionComposer) setShowGoalForm(false);
           }}
-          className="editorial-goals-action primary"
+          className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-transparent bg-[rgb(var(--accent-rgb,var(--neon-primary)))] px-5 text-[0.9rem] font-semibold text-[#0a0418] transition hover:brightness-110 hover:shadow-[0_8px_24px_-8px_rgba(var(--accent-rgb,var(--neon-primary)),0.5)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
         >
           {showSessionComposer ? (
             <Icon icon="lucide:x" className="h-4 w-4" aria-hidden="true" />
@@ -70,7 +70,7 @@ export function GoalsTab({ playerId, locale }: GoalsTabProps) {
             setShowGoalForm((v) => !v);
             if (!showGoalForm) setShowSessionComposer(false);
           }}
-          className="editorial-goals-action"
+          className="bg-editorial-3 border-editorial-line inline-flex h-11 items-center justify-center gap-2 rounded-xl border px-5 text-[0.9rem] font-semibold text-white transition hover:border-[rgba(var(--accent-rgb,var(--neon-primary)),0.4)] hover:shadow-[0_8px_24px_-12px_rgba(var(--accent-rgb,var(--neon-primary)),0.25)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
         >
           {showGoalForm ? (
             <Icon icon="lucide:x" className="h-4 w-4" aria-hidden="true" />

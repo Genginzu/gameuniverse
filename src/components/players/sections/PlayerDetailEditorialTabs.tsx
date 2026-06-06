@@ -43,8 +43,11 @@ export function PlayerDetailEditorialTabs({
   const visibleTabs = TAB_DEFINITIONS.filter((tab) => !tab.ownerOnly || isOwner);
 
   return (
-    <div className="editorial-player-detail-tabs-header">
-      <div className="editorial-player-detail-tabs-scroll" role="tablist">
+    <div className="border-editorial-line mb-10 border-b">
+      <div
+        className="-mb-px flex items-center gap-6 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        role="tablist"
+      >
         {visibleTabs.map(({ id, icon }) => {
           const isActive = activeTab === id;
           const label = t(id);
@@ -56,7 +59,7 @@ export function PlayerDetailEditorialTabs({
               aria-selected={isActive}
               data-active={isActive ? "true" : "false"}
               onClick={() => onTabChange(id)}
-              className="editorial-player-detail-tab"
+              className="text-editorial-muted after:bg-editorial-accent relative inline-flex flex-shrink-0 items-center gap-2 pb-3.5 font-mono text-xs font-medium tracking-[0.12em] whitespace-nowrap uppercase transition-colors after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:rounded after:opacity-0 hover:text-white/85 data-[active=true]:text-white data-[active=true]:after:opacity-100"
               aria-label={label}
             >
               <Icon icon={icon} className="h-4 w-4" />

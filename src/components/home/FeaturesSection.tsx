@@ -29,30 +29,36 @@ export function FeaturesSection() {
   const t = useTranslations("landing.features");
 
   return (
-    <section className="editorial-home-section">
-      <div className="editorial-home-section-inner">
-        <header className="editorial-home-section-header">
+    <section className="w-full px-4 py-16 md:px-8 md:py-24 lg:px-10 lg:py-28">
+      <div className="mx-auto w-full max-w-[1536px]">
+        <header className="mb-10 flex max-w-[720px] flex-col gap-3 md:mb-14">
           <KickerLabel>{t("kicker")}</KickerLabel>
-          <h2 className="editorial-home-section-title">
+          <h2 className="font-display text-[clamp(2rem,5vw,3.75rem)] leading-none font-bold tracking-tight text-white">
             {t("title")}{" "}
-            <span className="editorial-home-section-title-accent">{t("titleAccent")}</span>
+            <span className="from-neon-secondary to-neon-primary bg-gradient-to-r bg-clip-text text-transparent">
+              {t("titleAccent")}
+            </span>
           </h2>
-          <p className="editorial-home-section-description">{t("description")}</p>
+          <p className="text-editorial-muted text-[0.95rem] leading-relaxed md:text-base">
+            {t("description")}
+          </p>
         </header>
 
-        <div className="editorial-home-features-grid">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map((feature, index) => (
-            <SpotlightCard key={feature.key} className="editorial-home-feature">
+            <SpotlightCard key={feature.key} className="flex flex-col gap-3 p-6">
               <div className="flex items-center justify-between">
-                <span className="editorial-home-feature-icon">
+                <span className="bg-editorial-accent/15 text-editorial-accent grid size-10 place-items-center rounded-xl">
                   <Icon icon={feature.icon} className="size-5" aria-hidden />
                 </span>
-                <span className="editorial-home-feature-number">
+                <span className="text-editorial-muted font-mono text-sm">
                   {String(index + 1).padStart(2, "0")}
                 </span>
               </div>
-              <h3 className="editorial-home-feature-title">{t(`items.${feature.key}.title`)}</h3>
-              <p className="editorial-home-feature-description">
+              <h3 className="font-display text-lg font-bold text-white">
+                {t(`items.${feature.key}.title`)}
+              </h3>
+              <p className="text-editorial-muted text-sm leading-relaxed">
                 {t(`items.${feature.key}.description`)}
               </p>
             </SpotlightCard>

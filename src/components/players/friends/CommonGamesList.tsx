@@ -55,7 +55,7 @@ export function CommonGamesList({
 
   return (
     <div className="space-y-4">
-      <div className="editorial-library-grid">
+      <div className="grid grid-cols-1 gap-4 min-[475px]:grid-cols-2 md:grid-cols-3 md:gap-6 lg:grid-cols-4 xl:grid-cols-5 min-[1536px]:grid-cols-6 min-[1536px]:gap-5">
         {games.map((game, index) => (
           <GameCard
             key={game.gameId}

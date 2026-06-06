@@ -48,7 +48,7 @@ export function HomeContent({ initialHomeData }: HomeContentProps) {
   const featuredGame = initialHomeData?.trending?.[0];
 
   return (
-    <div className="editorial-home">
+    <div className="bg-editorial-bg min-h-screen text-white">
       <HeroSection featuredGame={featuredGame} />
       <MarqueeSection />
       <FeaturesSection />

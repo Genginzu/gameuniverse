@@ -47,24 +47,29 @@ export function TrendingSection({ initialData }: TrendingSectionProps) {
   const isFetching = isLoading || isValidating;
 
   return (
-    <section className="editorial-home-section">
-      <div className="editorial-home-section-inner">
-        <div className="editorial-home-trending-header">
-          <div className="editorial-home-trending-title-group">
+    <section className="w-full px-4 py-16 md:px-8 md:py-24 lg:px-10 lg:py-28">
+      <div className="mx-auto w-full max-w-[1536px]">
+        <div className="mb-10 flex flex-wrap items-end justify-between gap-4 md:mb-14">
+          <div className="flex flex-col gap-3">
             <KickerLabel>{t("kicker")}</KickerLabel>
-            <h2 className="editorial-home-section-title">
+            <h2 className="font-display text-[clamp(2rem,5vw,3.75rem)] leading-none font-bold tracking-tight text-white">
               {t("title")}{" "}
-              <span className="editorial-home-section-title-accent">{t("titleAccent")}</span>
+              <span className="from-neon-secondary to-neon-primary bg-gradient-to-r bg-clip-text text-transparent">
+                {t("titleAccent")}
+              </span>
             </h2>
           </div>
-          <Link href="/trending" className="editorial-home-trending-link">
+          <Link
+            href="/trending"
+            className="text-editorial-accent border-editorial-accent/50 inline-flex min-h-11 items-center gap-2 border-b pb-1 font-mono text-xs tracking-[0.16em] uppercase transition-colors hover:border-white hover:text-white"
+          >
             {t("viewAll")}
             <Icon icon="mdi:arrow-top-right" className="size-4" aria-hidden />
           </Link>
         </div>
 
         {trending.length === 0 ? (
-          <div className="editorial-home-trending-empty">
+          <div className="border-editorial-line text-editorial-muted flex min-h-24 items-center justify-center rounded-2xl border border-dashed px-6 py-12 text-center text-sm">
             {isFetching ? (
               <Icon
                 icon="mdi:loading"
@@ -76,7 +81,7 @@ export function TrendingSection({ initialData }: TrendingSectionProps) {
             )}
           </div>
         ) : (
-          <div className="editorial-home-trending-grid">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
             {trending.map((game, index) => (
               <GameCard key={game.id} game={game} priority={index < 2} />
             ))}
