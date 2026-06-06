@@ -35,11 +35,6 @@ describe("HeaderSearchTrigger", () => {
       expect(screen.getByText("Search for a game, character, player")).toBeDefined();
     });
 
-    it("renders the Ctrl K shortcut badge", () => {
-      render(<HeaderSearchTrigger onActivate={() => {}} />);
-      expect(screen.getByText("Ctrl K")).toBeDefined();
-    });
-
     it("renders the magnify icon (hidden from a11y tree)", () => {
       const { container } = render(<HeaderSearchTrigger onActivate={() => {}} />);
       // The Iconify component renders an svg/span with the icon name; we only

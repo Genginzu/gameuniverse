@@ -10,7 +10,7 @@
  * (l'EditorialMegaMenu) ouvre l'overlay.
  *
  * - 240px sur desktop, icône seule sur tablet/mobile (< md)
- * - Loupe à gauche, placeholder traduit, badge `Ctrl K` à droite (>= md)
+ * - Loupe à gauche, placeholder traduit (>= md)
  * - Le raccourci global est ignoré quand le focus est dans un input/textarea
  *   ou un élément contenteditable (pas de capture intempestive en saisie).
  *
@@ -75,9 +75,6 @@ export function HeaderSearchTrigger({
       <Icon icon="mdi:magnify" className="size-4 shrink-0" aria-hidden />
       <span className="header-search-trigger-placeholder hidden md:inline">
         {t("placeholder")}
-      </span>
-      <span className="header-search-trigger-shortcut hidden md:inline" aria-hidden>
-        {t("shortcutHint")}
       </span>
     </button>
   );
