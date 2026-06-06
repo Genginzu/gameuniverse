@@ -38,6 +38,8 @@ interface SpotlightCardDivProps extends SpotlightCardBaseProps {
 interface SpotlightCardAnchorProps extends SpotlightCardBaseProps {
   as: "a";
   href: string;
+  target?: string;
+  rel?: string;
 }
 
 export type SpotlightCardProps = SpotlightCardDivProps | SpotlightCardAnchorProps;
@@ -70,6 +72,8 @@ export function SpotlightCard(props: SpotlightCardProps) {
         onMouseMove={handleMouseMove}
         className={`spotlight-card ${className}`.trim()}
         href={(props as SpotlightCardAnchorProps).href}
+        target={(props as SpotlightCardAnchorProps).target}
+        rel={(props as SpotlightCardAnchorProps).rel}
         style={style}
       >
         {children}

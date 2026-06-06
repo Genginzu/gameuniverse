@@ -7,9 +7,8 @@
  * compacte 2x2 pour les autres screenshots. Les vidéos suivent dans une
  * grille 2 cols avec play button accent.
  *
- * Cliquer sur une vidéo ouvre l'URL d'origine (YouTube). Pour rester
- * simple, pas de modal player ici (la version onglet le faisait déjà,
- * on garde le comportement mais visuellement différent).
+ * Cliquer sur une vidéo ouvre l'URL d'origine (YouTube) dans un nouvel
+ * onglet. Pour rester simple, pas de modal player ici.
  */
 
 import Image from "next/image";
@@ -117,6 +116,8 @@ export function MediaSection({ game }: MediaSectionProps) {
                 key={video.id}
                 as="a"
                 href={video.url}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="editorial-game-detail-video-card"
               >
                 {thumb && (
