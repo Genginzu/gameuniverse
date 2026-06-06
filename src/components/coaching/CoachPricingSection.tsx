@@ -40,7 +40,7 @@ function CustomSelect({
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="glass-input flex w-full items-center justify-between rounded-lg p-3 text-left text-base"
+        className="border border-editorial-line bg-editorial-3 text-white placeholder:text-editorial-muted flex w-full items-center justify-between rounded-lg p-3 text-left text-base"
       >
         <span className={selected ? "text-gray-900 dark:text-white" : "text-gray-400"}>
           {selected?.label || placeholder}
@@ -62,7 +62,7 @@ function CustomSelect({
               }}
               className={`flex w-full items-center px-4 py-2.5 text-left text-sm transition-colors ${
                 o.value === value
-                  ? "bg-palette-secondary-500/10 text-palette-secondary-400 font-medium"
+                  ? "bg-editorial-accent/15 text-editorial-accent font-medium"
                   : "text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-slate-700"
               }`}
             >
@@ -132,13 +132,13 @@ export function CoachPricingSection() {
       </div>
 
       {games.length === 0 && (
-        <div className="glass-card rounded-xl p-4 text-center text-sm text-gray-500 dark:text-gray-400">
+        <div className="border border-editorial-line bg-editorial-2 rounded-xl p-4 text-center text-sm text-gray-500 dark:text-gray-400">
           {t("noGamesYet")}
         </div>
       )}
 
       {adding && (
-        <div className="glass-card space-y-3 rounded-xl p-4">
+        <div className="border border-editorial-line bg-editorial-2 space-y-3 rounded-xl p-4">
           <CustomSelect
             value={form.coachGameId}
             onChange={(v) => setForm({ ...form, coachGameId: v })}
@@ -156,7 +156,7 @@ export function CoachPricingSection() {
               type="number"
               value={form.priceAmount}
               onChange={(e) => setForm({ ...form, priceAmount: e.target.value })}
-              className="glass-input rounded-lg p-3 text-base"
+              className="border border-editorial-line bg-editorial-3 text-white placeholder:text-editorial-muted rounded-lg p-3 text-base"
               placeholder={t("pricePlaceholder")}
               min="0"
               step="0.01"
@@ -166,7 +166,7 @@ export function CoachPricingSection() {
               type="number"
               value={form.durationMinutes}
               onChange={(e) => setForm({ ...form, durationMinutes: e.target.value })}
-              className="glass-input rounded-lg p-3 text-base"
+              className="border border-editorial-line bg-editorial-3 text-white placeholder:text-editorial-muted rounded-lg p-3 text-base"
               placeholder={t("durationPlaceholder")}
               min="15"
               step="15"
@@ -183,7 +183,7 @@ export function CoachPricingSection() {
       )}
 
       {(pricingData?.pricing.length ?? 0) === 0 && games.length > 0 && !adding && (
-        <div className="glass-card flex flex-col items-center justify-center rounded-xl p-8 text-center">
+        <div className="border border-editorial-line bg-editorial-2 flex flex-col items-center justify-center rounded-xl p-8 text-center">
           <Icon icon="lucide:credit-card" className="mb-3 size-10 text-gray-400" />
           <p className="text-sm text-gray-500 dark:text-gray-400">{t("empty")}</p>
         </div>
@@ -191,7 +191,7 @@ export function CoachPricingSection() {
 
       <div className="space-y-2">
         {pricingData?.pricing.map((p) => (
-          <div key={p.id} className="glass-card flex items-center justify-between rounded-xl p-4">
+          <div key={p.id} className="border border-editorial-line bg-editorial-2 flex items-center justify-between rounded-xl p-4">
             <div className="flex items-center gap-3">
               {p.gameCoverImage && (
                 <img
@@ -206,7 +206,7 @@ export function CoachPricingSection() {
                   <span className="text-sm font-medium text-gray-900 dark:text-white">
                     {t(`types.${p.sessionType}`)}
                   </span>
-                  <span className="text-palette-secondary-400 ml-2 text-lg font-bold">
+                  <span className="text-editorial-accent ml-2 text-lg font-bold">
                     {p.priceAmount}€
                   </span>
                   <span className="ml-1 text-xs text-gray-500">/ {p.durationMinutes}min</span>

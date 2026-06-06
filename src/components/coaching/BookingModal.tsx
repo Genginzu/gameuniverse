@@ -96,13 +96,13 @@ export function BookingModal({ coachId, gameId, gameTitle, pricing, onClose }: B
                 <button
                   key={p.sessionType}
                   onClick={() => setSelected(p)}
-                  className={`w-full rounded-xl p-3 text-left transition-all ${selected?.sessionType === p.sessionType ? "from-palette-secondary-500/20 to-palette-primary-500/20 ring-palette-secondary-400 bg-linear-to-r ring-1" : "bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700"}`}
+                  className={`w-full rounded-xl p-3 text-left transition-all ${selected?.sessionType === p.sessionType ? "bg-editorial-accent/15 ring-editorial-accent ring-1" : "border border-editorial-line bg-editorial-3 hover:border-editorial-accent/50"}`}
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-gray-900 dark:text-white">
                       {tProfile(`types.${p.sessionType}`)}
                     </span>
-                    <span className="text-palette-secondary-400 text-sm font-bold">
+                    <span className="text-editorial-accent text-sm font-bold">
                       {p.priceAmount}€
                     </span>
                   </div>
@@ -121,7 +121,7 @@ export function BookingModal({ coachId, gameId, gameTitle, pricing, onClose }: B
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
                   min={new Date().toISOString().split("T")[0]}
-                  className="glass-input w-full rounded-lg px-3 py-2 text-sm"
+                  className="border border-editorial-line bg-editorial-3 text-white placeholder:text-editorial-muted w-full rounded-lg px-3 py-2 text-sm"
                 />
               </div>
               <div>
@@ -132,7 +132,7 @@ export function BookingModal({ coachId, gameId, gameTitle, pricing, onClose }: B
                   type="time"
                   value={time}
                   onChange={(e) => setTime(e.target.value)}
-                  className="glass-input w-full rounded-lg px-3 py-2 text-sm"
+                  className="border border-editorial-line bg-editorial-3 text-white placeholder:text-editorial-muted w-full rounded-lg px-3 py-2 text-sm"
                 />
               </div>
             </div>

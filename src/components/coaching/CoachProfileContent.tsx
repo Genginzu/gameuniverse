@@ -61,8 +61,8 @@ export function CoachProfileContent({ username }: { username: string }) {
   if (isLoading) {
     return (
       <div className="space-y-6 p-4 md:p-6 lg:p-8">
-        <div className="h-32 animate-pulse rounded-2xl bg-gray-200 dark:bg-gray-700" />
-        <div className="h-48 animate-pulse rounded-2xl bg-gray-200 dark:bg-gray-700" />
+        <div className="h-32 animate-pulse rounded-2xl bg-white/[0.06]" />
+        <div className="h-48 animate-pulse rounded-2xl bg-white/[0.06]" />
       </div>
     );
   }
@@ -70,8 +70,8 @@ export function CoachProfileContent({ username }: { username: string }) {
   if (error || !data) {
     return (
       <div className="flex flex-col items-center justify-center p-8 text-center">
-        <Icon icon="lucide:user-x" className="mb-3 size-12 text-gray-400" />
-        <p className="text-gray-500 dark:text-gray-400">{t("notFound")}</p>
+        <Icon icon="lucide:user-x" className="text-editorial-muted mb-3 size-12" />
+        <p className="text-editorial-muted">{t("notFound")}</p>
       </div>
     );
   }
@@ -82,7 +82,7 @@ export function CoachProfileContent({ username }: { username: string }) {
   return (
     <div className="space-y-6 p-4 md:space-y-8 md:p-6 lg:p-8">
       {/* Header */}
-      <div className="glass-card flex flex-col items-center gap-4 rounded-2xl p-6 sm:flex-row sm:items-start">
+      <div className="border-editorial-line bg-editorial-2 flex flex-col items-center gap-4 rounded-2xl border p-6 sm:flex-row sm:items-start">
         <div className="from-palette-secondary-500 to-palette-primary-500 flex size-20 shrink-0 items-center justify-center rounded-full bg-linear-to-br text-2xl font-bold text-white">
           {player.avatarUrl ? (
             <img src={player.avatarUrl} alt="" className="size-20 rounded-full object-cover" />
@@ -92,27 +92,27 @@ export function CoachProfileContent({ username }: { username: string }) {
         </div>
         <div className="flex-1 text-center sm:text-left">
           <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
-            <h1 className="text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">
+            <h1 className="font-display text-xl font-bold tracking-tight text-white sm:text-2xl">
               {player.displayName || player.username}
             </h1>
             {coach.isVerified && (
-              <span className="bg-palette-secondary-500/20 text-palette-secondary-400 rounded-full px-2 py-0.5 text-xs font-medium">
+              <span className="bg-editorial-accent/15 text-editorial-accent rounded-full px-2 py-0.5 text-xs font-medium">
                 <Icon icon="lucide:badge-check" className="mr-1 inline size-3" />
                 {t("verified")}
               </span>
             )}
           </div>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">@{player.username}</p>
+          <p className="text-editorial-muted mt-1 text-sm">@{player.username}</p>
           <div className="mt-2 flex flex-wrap items-center justify-center gap-4 text-sm sm:justify-start">
-            <span className="flex items-center gap-1 text-yellow-500">
+            <span className="flex items-center gap-1 text-amber-400">
               <Icon icon="lucide:star" className="size-4" /> {coach.averageRating.toFixed(1)}
-              <span className="text-gray-400">({coach.totalReviews})</span>
+              <span className="text-editorial-muted">({coach.totalReviews})</span>
             </span>
-            <span className="text-gray-500 dark:text-gray-400">
+            <span className="text-editorial-muted">
               {coach.totalSessions} {t("sessions")}
             </span>
             {minPrice < Infinity && (
-              <span className="text-palette-secondary-400 font-medium">
+              <span className="text-editorial-accent font-medium">
                 {t("from")} {minPrice}€
               </span>
             )}
@@ -122,33 +122,27 @@ export function CoachProfileContent({ username }: { username: string }) {
 
       {/* Bio & Experience */}
       {(coach.bio || coach.experience) && (
-        <div className="glass-card space-y-4 rounded-2xl p-6">
+        <div className="border-editorial-line bg-editorial-2 space-y-4 rounded-2xl border p-6">
           {coach.bio && (
             <div>
-              <h2 className="mb-2 text-sm font-semibold text-gray-900 dark:text-white">
-                {t("bio")}
-              </h2>
-              <p className="text-sm text-gray-600 dark:text-gray-300">{coach.bio}</p>
+              <h2 className="mb-2 text-sm font-semibold text-white">{t("bio")}</h2>
+              <p className="text-editorial-muted text-sm">{coach.bio}</p>
             </div>
           )}
           {coach.experience && (
             <div>
-              <h2 className="mb-2 text-sm font-semibold text-gray-900 dark:text-white">
-                {t("experience")}
-              </h2>
-              <p className="text-sm text-gray-600 dark:text-gray-300">{coach.experience}</p>
+              <h2 className="mb-2 text-sm font-semibold text-white">{t("experience")}</h2>
+              <p className="text-editorial-muted text-sm">{coach.experience}</p>
             </div>
           )}
           {coach.languages.length > 0 && (
             <div>
-              <h2 className="mb-2 text-sm font-semibold text-gray-900 dark:text-white">
-                {t("languages")}
-              </h2>
+              <h2 className="mb-2 text-sm font-semibold text-white">{t("languages")}</h2>
               <div className="flex flex-wrap gap-1.5">
                 {coach.languages.map((l) => (
                   <span
                     key={l}
-                    className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs text-gray-600 dark:bg-gray-800 dark:text-gray-400"
+                    className="text-editorial-muted rounded-full bg-white/10 px-2.5 py-0.5 text-xs"
                   >
                     {LANGUAGE_LABELS[l] ?? l}
                   </span>
@@ -161,13 +155,13 @@ export function CoachProfileContent({ username }: { username: string }) {
 
       {/* Games & Pricing */}
       <div className="space-y-4">
-        <h2 className="text-lg font-bold text-gray-900 dark:text-white">{t("gamesCoached")}</h2>
+        <h2 className="font-display text-lg font-bold tracking-tight text-white">{t("gamesCoached")}</h2>
         {games.length === 0 ? (
-          <p className="text-sm text-gray-500 dark:text-gray-400">{t("noGames")}</p>
+          <p className="text-editorial-muted text-sm">{t("noGames")}</p>
         ) : (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {games.map((game) => (
-              <div key={game.id} className="glass-card flex gap-4 rounded-xl p-4">
+              <div key={game.id} className="border-editorial-line bg-editorial-2 flex gap-4 rounded-xl border p-4">
                 {(game.coverImageUrl || game.coverImage) && (
                   <img
                     src={(game.coverImageUrl || game.coverImage)!}
@@ -178,7 +172,7 @@ export function CoachProfileContent({ username }: { username: string }) {
                 <div className="min-w-0 flex-1 space-y-2">
                   <Link
                     href={`/games/${game.slug}`}
-                    className="hover:text-palette-secondary-400 font-medium text-gray-900 dark:text-white"
+                    className="hover:text-editorial-accent font-medium text-white"
                   >
                     {game.title}
                   </Link>
@@ -187,7 +181,7 @@ export function CoachProfileContent({ username }: { username: string }) {
                       {game.specialties.map((s) => (
                         <span
                           key={s}
-                          className="bg-palette-secondary-500/10 text-palette-secondary-400 rounded-full px-2 py-0.5 text-xs"
+                          className="bg-editorial-accent/15 text-editorial-accent rounded-full px-2 py-0.5 text-xs"
                         >
                           {tGames(`specialties.${s}`)}
                         </span>
@@ -209,7 +203,7 @@ export function CoachProfileContent({ username }: { username: string }) {
       </div>
       {/* Reviews */}
       <div className="space-y-4">
-        <h2 className="text-lg font-bold text-gray-900 dark:text-white">{t("reviews")}</h2>
+        <h2 className="font-display text-lg font-bold tracking-tight text-white">{t("reviews")}</h2>
         <CoachReviewsSection coachId={coach.id} />
       </div>
 

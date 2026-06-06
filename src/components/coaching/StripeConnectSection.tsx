@@ -31,17 +31,17 @@ export function StripeConnectSection() {
 
   if (isLoading)
     return (
-      <div className="glass-card flex items-center gap-3 rounded-xl p-6">
-        <Icon icon="lucide:loader-2" className="text-palette-secondary-400 size-5 animate-spin" />
+      <div className="border border-editorial-line bg-editorial-2 flex items-center gap-3 rounded-xl p-6">
+        <Icon icon="lucide:loader-2" className="text-editorial-accent size-5 animate-spin" />
         <span className="text-sm text-gray-500 dark:text-gray-400">{t("checking")}</span>
       </div>
     );
 
   return (
     <>
-      <div className="glass-card space-y-4 rounded-xl p-6">
+      <div className="border border-editorial-line bg-editorial-2 space-y-4 rounded-xl p-6">
         <div className="flex items-center gap-3">
-          <Icon icon="lucide:credit-card" className="text-palette-secondary-400 size-5" />
+          <Icon icon="lucide:credit-card" className="text-editorial-accent size-5" />
           <h2 className="text-sm font-semibold text-gray-900 dark:text-white">{t("title")}</h2>
         </div>
 
@@ -91,9 +91,9 @@ export function StripeConnectSection() {
       </div>
 
       {data?.onboardingComplete && (
-        <div className="glass-card space-y-4 rounded-xl p-6">
+        <div className="border border-editorial-line bg-editorial-2 space-y-4 rounded-xl p-6">
           <div className="flex items-center gap-3">
-            <Icon icon="lucide:receipt" className="text-palette-secondary-400 size-5" />
+            <Icon icon="lucide:receipt" className="text-editorial-accent size-5" />
             <h2 className="text-sm font-semibold text-gray-900 dark:text-white">
               {t("paymentHistory")}
             </h2>

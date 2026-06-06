@@ -89,11 +89,11 @@ export function CoachGamesSection() {
       </div>
 
       {adding && (
-        <div className="glass-card space-y-2 rounded-xl p-4">
+        <div className="border border-editorial-line bg-editorial-2 space-y-2 rounded-xl p-4">
           <input
             value={search}
             onChange={(e) => searchGames(e.target.value)}
-            className="glass-input w-full rounded-lg p-3 text-base"
+            className="border border-editorial-line bg-editorial-3 text-white placeholder:text-editorial-muted w-full rounded-lg p-3 text-base"
             placeholder={t("searchPlaceholder")}
           />
           {searchResults.map((game) => (
@@ -112,14 +112,14 @@ export function CoachGamesSection() {
       )}
 
       {data?.games.length === 0 ? (
-        <div className="glass-card flex flex-col items-center justify-center rounded-xl p-8 text-center">
+        <div className="border border-editorial-line bg-editorial-2 flex flex-col items-center justify-center rounded-xl p-8 text-center">
           <Icon icon="lucide:gamepad-2" className="mb-3 size-10 text-gray-400" />
           <p className="text-sm text-gray-500 dark:text-gray-400">{t("empty")}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
           {data?.games.map((game) => (
-            <div key={game.id} className="glass-card space-y-3 rounded-xl p-4">
+            <div key={game.id} className="border border-editorial-line bg-editorial-2 space-y-3 rounded-xl p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   {game.game?.coverImage && (
@@ -151,7 +151,7 @@ export function CoachGamesSection() {
                         <button
                           key={s}
                           onClick={() => toggleSpecialty(game, s)}
-                          className={`rounded-full px-2.5 py-1 text-xs font-medium transition-all ${game.specialties.includes(s) ? "bg-palette-secondary-500/20 text-palette-secondary-400" : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"}`}
+                          className={`rounded-full px-2.5 py-1 text-xs font-medium transition-all ${game.specialties.includes(s) ? "bg-editorial-accent/20 text-editorial-accent" : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"}`}
                         >
                           {t(`specialties.${s}`)}
                         </button>

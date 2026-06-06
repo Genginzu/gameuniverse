@@ -51,10 +51,10 @@ export function CoachingHubContent() {
   return (
     <div className="space-y-6 p-4 md:space-y-8 md:p-6 lg:p-8">
       <div>
-        <h1 className="text-xl font-bold text-gray-900 sm:text-2xl lg:text-3xl dark:text-white">
+        <h1 className="font-display text-xl font-bold tracking-tight text-white sm:text-2xl lg:text-3xl">
           {t("title")}
         </h1>
-        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{t("subtitle")}</p>
+        <p className="text-editorial-muted mt-1 text-sm">{t("subtitle")}</p>
       </div>
 
       {/* Featured sections (page 1 only) */}
@@ -65,12 +65,12 @@ export function CoachingHubContent() {
         <div className="relative flex-1 sm:max-w-sm">
           <Icon
             icon="lucide:search"
-            className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-gray-400"
+            className="text-editorial-muted absolute top-1/2 left-3 size-4 -translate-y-1/2"
           />
           <input
             value={search}
             onChange={(e) => handleSearch(e.target.value)}
-            className="glass-input w-full rounded-lg py-2.5 pr-3 pl-10 text-base"
+            className="border-editorial-line bg-editorial-3 w-full rounded-lg border py-2.5 pr-3 pl-10 text-base text-white placeholder:text-editorial-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
             placeholder={t("searchPlaceholder")}
           />
         </div>
@@ -80,7 +80,7 @@ export function CoachingHubContent() {
             setSort(e.target.value);
             setPage(1);
           }}
-          className="glass-input rounded-lg px-3 py-2.5 text-sm"
+          className="border-editorial-line bg-editorial-3 rounded-lg border px-3 py-2.5 text-sm text-white"
         >
           <option value="rating">{t("sortRating")}</option>
           <option value="sessions">{t("sortSessions")}</option>
@@ -92,13 +92,13 @@ export function CoachingHubContent() {
       {isLoading ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-48 animate-pulse rounded-xl bg-gray-200 dark:bg-gray-700" />
+            <div key={i} className="h-48 animate-pulse rounded-xl bg-white/[0.06]" />
           ))}
         </div>
       ) : data?.coaches.length === 0 ? (
-        <div className="glass-card flex flex-col items-center justify-center rounded-xl p-8 text-center">
-          <Icon icon="lucide:users" className="mb-3 size-10 text-gray-400" />
-          <p className="text-sm text-gray-500 dark:text-gray-400">{t("empty")}</p>
+        <div className="border-editorial-line bg-editorial-2 flex flex-col items-center justify-center rounded-xl border p-8 text-center">
+          <Icon icon="lucide:users" className="text-editorial-muted mb-3 size-10" />
+          <p className="text-editorial-muted text-sm">{t("empty")}</p>
         </div>
       ) : (
         <>

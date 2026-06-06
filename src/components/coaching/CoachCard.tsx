@@ -26,7 +26,7 @@ export function CoachCard({ coach }: CoachCardProps) {
   return (
     <Link
       href={`/coaching/${coach.username}`}
-      className="glass-card group flex flex-col rounded-xl p-4 transition-all hover:bg-white/60 dark:hover:bg-slate-700/60"
+      className="border-editorial-line bg-editorial-2 hover:border-editorial-accent/50 hover:bg-editorial-3 group flex flex-col rounded-xl border p-4 transition-all"
     >
       <div className="flex items-start gap-3">
         <div className="from-palette-secondary-500 to-palette-primary-500 flex size-12 shrink-0 items-center justify-center rounded-full bg-linear-to-br text-sm font-bold text-white">
@@ -38,18 +38,18 @@ export function CoachCard({ coach }: CoachCardProps) {
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-1.5">
-            <span className="truncate font-medium text-gray-900 dark:text-white">
+            <span className="truncate font-medium text-white">
               {coach.displayName || coach.username}
             </span>
             {coach.isVerified && (
               <Icon
                 icon="lucide:badge-check"
-                className="text-palette-secondary-400 size-4 shrink-0"
+                className="text-editorial-accent size-4 shrink-0"
               />
             )}
           </div>
-          <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
-            <span className="flex items-center gap-0.5 text-yellow-500">
+          <div className="text-editorial-muted flex items-center gap-3 text-xs">
+            <span className="flex items-center gap-0.5 text-amber-400">
               <Icon icon="lucide:star" className="size-3" /> {coach.averageRating.toFixed(1)}
             </span>
             <span>
@@ -58,14 +58,14 @@ export function CoachCard({ coach }: CoachCardProps) {
           </div>
         </div>
         {coach.minPrice !== null && (
-          <span className="text-palette-secondary-400 shrink-0 text-sm font-semibold">
+          <span className="text-editorial-accent shrink-0 text-sm font-semibold">
             {coach.minPrice}€
           </span>
         )}
       </div>
 
       {coach.bio && (
-        <p className="mt-3 line-clamp-2 text-xs text-gray-500 dark:text-gray-400">{coach.bio}</p>
+        <p className="text-editorial-muted mt-3 line-clamp-2 text-xs">{coach.bio}</p>
       )}
 
       {coach.games.length > 0 && (
@@ -73,13 +73,13 @@ export function CoachCard({ coach }: CoachCardProps) {
           {coach.games.slice(0, 3).map((g) => (
             <span
               key={g.slug}
-              className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600 dark:bg-gray-800 dark:text-gray-400"
+              className="text-editorial-muted rounded-full bg-white/10 px-2 py-0.5 text-xs"
             >
               {g.title}
             </span>
           ))}
           {coach.games.length > 3 && (
-            <span className="text-xs text-gray-400">+{coach.games.length - 3}</span>
+            <span className="text-editorial-muted text-xs">+{coach.games.length - 3}</span>
           )}
         </div>
       )}
