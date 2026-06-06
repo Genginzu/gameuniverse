@@ -675,17 +675,17 @@ indicatives, à ajuster).
 
 ### Phase 3 — Esport
 
-- [ ] `/esport/calendar` — Calendar
-- [ ] `/esport/calendar/[date]` — Day detail
-- [ ] `/esport/live` — Live matches
-- [ ] `/esport/tournaments` — Tournaments listing
-- [ ] `/esport/results` — Results
-- [ ] `/esport/teams` — Teams listing
-- [ ] `/esport/teams/[id]` — Team detail
-- [ ] `/esport/players` — Pro players listing
-- [ ] `/esport/players/[id]` — Pro player detail
-- [ ] `/esport/predictions` — Predictions
-- [ ] `/esport/fantasy` — Fantasy
+- [x] `/esport/calendar` — Calendar
+- [x] `/esport/calendar/[date]` — Day detail
+- [x] `/esport/live` — Live matches
+- [x] `/esport/tournaments` — Tournaments listing
+- [x] `/esport/results` — Results
+- [x] `/esport/teams` — Teams listing
+- [x] `/esport/teams/[id]` — Team detail
+- [x] `/esport/players` — Pro players listing
+- [x] `/esport/players/[id]` — Pro player detail
+- [x] `/esport/predictions` — Predictions
+- [x] `/esport/fantasy` — Fantasy
 
 ### Phase 4 — Community / Coaching / Divers
 
