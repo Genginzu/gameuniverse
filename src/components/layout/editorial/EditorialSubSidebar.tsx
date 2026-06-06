@@ -121,7 +121,8 @@ export function EditorialSubSidebar({
                     }
                   }}
                 >
-                  {t(`links.${space.key}.${link.labelKey}`)}
+                  <Icon icon={link.icon} className="size-4" aria-hidden />
+                  <span>{t(`links.${space.key}.${link.labelKey}`)}</span>
                 </Link>
               );
             })}

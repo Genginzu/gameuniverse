@@ -30,6 +30,10 @@
       "title": "Mes collections",
       "description": "Organisez vos jeux en collections personnalisées et partagez-les avec la communauté"
     },
+    "dashboard": {
+      "title": "Tableau de bord",
+      "description": "Votre espace personnel : bibliothèque, collections et accès rapides"
+    },
     "favorites": {
       "title": "Personnages favoris",
       "description": "Vos personnages de jeux vidéo favoris"
@@ -341,7 +345,7 @@
     "collections": "Mes collections",
     "profile": "Profil",
     "settings": "Paramètres",
-    "welcome": "Bienvenue, {name}",
+    "welcome": "Bienvenue, <name></name>",
     "subtitle": "Votre espace personnel pour explorer l'univers du jeu vidéo",
     "overview": "Vue d'ensemble",
     "favorites": "Favoris",
@@ -391,7 +395,13 @@
     "logout": "Déconnexion",
     "mySpace": "Mon espace",
     "friends": "Amis",
-    "discussions": "Discussions"
+    "discussions": "Discussions",
+    "editorial": {
+      "kicker": "Mon espace",
+      "statGames": "Jeux",
+      "statCompleted": "Terminés",
+      "statPlaytime": "Temps de jeu"
+    }
   },
   "editorial": {
     "rail": {
@@ -409,6 +419,8 @@
       "dialogAriaLabel": "Navigation mobile",
       "title": "Navigation",
       "spacesAriaLabel": "Espaces",
+      "discoverTitle": "Découvrir",
+      "myAreaTitle": "Mon espace",
       "account": {
         "title": "Compte",
         "signIn": "Se connecter",
@@ -431,92 +443,76 @@
       "entries": {
         "games": "Jeux",
         "characters": "Personnages",
-        "players": "Joueurs"
+        "players": "Joueurs",
+        "esport": "E-sport"
       },
       "panel": {
         "ariaLabel": "Sous-menu {entry}"
       },
       "sections": {
         "games": {
-          "explore": "Explorer",
-          "featured": "À la une",
-          "library": "Mes contenus"
+          "explore": "Explorer"
         },
         "characters": {
-          "explore": "Explorer",
-          "library": "Mes contenus"
+          "explore": "Explorer"
         },
         "players": {
-          "community": "Communauté",
-          "esport": "Esport",
-          "coaching": "Coaching"
+          "community": "Communauté"
+        },
+        "esport": {
+          "competitions": "Compétitions",
+          "proScene": "Équipes & joueurs"
         }
       },
       "links": {
         "games": {
           "all": "Tous les jeux",
           "trending": "Tendances",
-          "upcoming": "À venir",
-          "library": "Ma bibliothèque",
-          "collections": "Mes collections"
+          "upcoming": "À venir"
         },
         "characters": {
-          "all": "Tous les personnages",
-          "favorites": "Mes favoris"
+          "all": "Tous les personnages"
         },
         "players": {
-          "all": "Joueurs Gamers Universe",
-          "discussions": "Discussions",
-          "friends": "Mes amis",
-          "teams": "Équipes esport",
-          "proPlayers": "Joueurs pros",
-          "esportLive": "En direct",
-          "coachingHub": "Hub coaching",
-          "coachingSessions": "Mes sessions"
+          "all": "Joueurs Gamers Universe"
+        },
+        "esport": {
+          "live": "En direct",
+          "calendar": "Calendrier",
+          "tournaments": "Tournois",
+          "results": "Résultats",
+          "teams": "Équipes",
+          "proPlayers": "Joueurs pros"
         }
       },
       "logoAriaLabel": "Gamers Universe — accueil",
       "primaryNavAriaLabel": "Navigation principale"
     },
     "spaces": {
-      "games": "Jeux",
-      "esport": "Esport",
-      "library": "Bibliothèque",
-      "community": "Communauté",
-      "coaching": "Coaching"
+      "library": "Ma bibliothèque",
+      "esport": "Pronostics",
+      "coaching": "Coaching",
+      "account": "Mon compte"
     },
     "links": {
-      "games": {
-        "all": "Tous les jeux",
-        "trending": "Tendances",
-        "upcoming": "À venir",
-        "characters": "Personnages",
-        "favoriteCharacters": "Mes favoris"
-      },
-      "esport": {
-        "live": "En direct",
-        "calendar": "Calendrier",
-        "tournaments": "Tournois",
-        "results": "Résultats",
-        "teams": "Équipes",
-        "players": "Joueurs pros",
-        "predictions": "Pronostics",
-        "fantasy": "Fantasy"
-      },
       "library": {
         "myLibrary": "Ma bibliothèque",
         "collections": "Mes collections",
-        "profile": "Mon profil"
+        "favoriteCharacters": "Personnages favoris"
       },
-      "community": {
-        "players": "Joueurs",
-        "discussions": "Discussions",
-        "friends": "Mes amis"
+      "esport": {
+        "predictions": "Pronostics",
+        "fantasy": "Fantasy"
       },
       "coaching": {
         "hub": "Hub coaching",
         "sessions": "Mes sessions",
         "settings": "Paramètres coach"
+      },
+      "account": {
+        "friends": "Mes amis",
+        "discussions": "Discussions",
+        "coins": "Mes coins"
       }
     }
   },

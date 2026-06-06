@@ -328,7 +328,9 @@
 }
 
 .editorial-mega-menu-link {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   padding: 0.5rem 0;
   font-size: 0.95rem;
   color: #fff;

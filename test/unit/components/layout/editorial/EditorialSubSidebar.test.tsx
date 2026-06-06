@@ -33,29 +33,20 @@ vi.mock("@/i18n/navigation", () => ({
 }));
 
 // Mock useTranslations with a deterministic dictionary tailored to the
-// editorial namespace (rail, subSidebar, spaces, links).
+// editorial namespace (subSidebar, spaces, links). The sidebar now exposes
+// user-specific spaces only.
 const editorialTranslations: Record<string, string> = {
   "subSidebar.closeAriaLabel": "Close sub-sidebar",
-  // navAriaLabel uses interpolation: "{space} links"
   "subSidebar.navAriaLabel": "{space} links",
-  "spaces.games": "Games",
-  "spaces.esport": "Esport",
-  "spaces.library": "Library",
-  "spaces.community": "Community",
+  "spaces.library": "My library",
+  "spaces.esport": "Predictions",
   "spaces.coaching": "Coaching",
-  // Games links
-  "links.games.all": "All games",
-  "links.games.trending": "Trending",
-  "links.games.upcoming": "Upcoming",
-  "links.games.characters": "Characters",
-  "links.games.favoriteCharacters": "My favorites",
+  "spaces.account": "My account",
+  // Library links
+  "links.library.myLibrary": "My library",
+  "links.library.collections": "My collections",
+  "links.library.favoriteCharacters": "Favorite characters",
   // Esport links
-  "links.esport.live": "Live now",
-  "links.esport.calendar": "Calendar",
-  "links.esport.tournaments": "Tournaments",
-  "links.esport.results": "Results",
-  "links.esport.teams": "Teams",
-  "links.esport.players": "Pro players",
   "links.esport.predictions": "Predictions",
   "links.esport.fantasy": "Fantasy",
 };
@@ -75,7 +66,7 @@ vi.mock("next-intl", () => ({
 import { EditorialSubSidebar } from "@/components/layout/editorial/EditorialSubSidebar";
 import { EDITORIAL_SPACES } from "@/components/layout/editorial/EditorialRail";
 
-const gamesSpace = EDITORIAL_SPACES.find((s) => s.key === "games")!;
+const librarySpace = EDITORIAL_SPACES.find((s) => s.key === "library")!;
 const esportSpace = EDITORIAL_SPACES.find((s) => s.key === "esport")!;
 
 describe("EditorialSubSidebar", () => {
@@ -96,30 +87,26 @@ describe("EditorialSubSidebar", () => {
     });
 
     it("renders the i18n space label as the header h2", () => {
-      render(<EditorialSubSidebar space={gamesSpace} onClose={() => {}} />);
+      render(<EditorialSubSidebar space={librarySpace} onClose={() => {}} />);
       const heading = screen.getByRole("heading", { level: 2 });
-      expect(heading.textContent).toBe("Games");
+      expect(heading.textContent).toBe("My library");
     });
 
     it("renders one link per space.links entry, with translated labels", () => {
       render(<EditorialSubSidebar space={esportSpace} onClose={() => {}} />);
-      // Spot-check a few labels via the test dictionary above.
-      expect(screen.getByText("Live now")).toBeDefined();
-      expect(screen.getByText("Calendar")).toBeDefined();
-      expect(screen.getByText("Pro players")).toBeDefined();
+      expect(screen.getByTestId("link-/esport/predictions").textContent).toContain("Predictions");
+      expect(screen.getByTestId("link-/esport/fantasy").textContent).toContain("Fantasy");
     });
 
     it("uses the i18n nav aria-label with interpolated space name", () => {
-      render(<EditorialSubSidebar space={gamesSpace} onClose={() => {}} />);
-      // Two roles named "{space} links" actually: the aside (aria-label) and
-      // the inner nav. getAllByRole returns both.
-      const navs = screen.getAllByRole("navigation", { name: "Games links" });
+      render(<EditorialSubSidebar space={librarySpace} onClose={() => {}} />);
+      const navs = screen.getAllByRole("navigation", { name: "My library links" });
       expect(navs.length).toBe(1);
     });
 
     it("adds is-open class when open", () => {
       const { container } = render(
-        <EditorialSubSidebar space={gamesSpace} onClose={() => {}} />
+        <EditorialSubSidebar space={librarySpace} onClose={() => {}} />
       );
       const aside = container.querySelector("aside");
       expect(aside?.className).toContain("is-open");
@@ -128,31 +115,31 @@ describe("EditorialSubSidebar", () => {
 
     it("sets data-space attribute for testing/debug", () => {
       const { container } = render(
-        <EditorialSubSidebar space={gamesSpace} onClose={() => {}} />
+        <EditorialSubSidebar space={librarySpace} onClose={() => {}} />
       );
       const aside = container.querySelector("aside");
-      expect(aside?.getAttribute("data-space")).toBe("games");
+      expect(aside?.getAttribute("data-space")).toBe("library");
     });
   });
 
   describe("active link indicator", () => {
     it("marks the link matching the current pathname as active", () => {
-      mockUsePathname.mockReturnValue("/trending");
-      render(<EditorialSubSidebar space={gamesSpace} onClose={() => {}} />);
+      mockUsePathname.mockReturnValue("/collections");
+      render(<EditorialSubSidebar space={librarySpace} onClose={() => {}} />);
 
-      const trending = screen.getByTestId("link-/trending");
-      expect(trending.className).toContain("is-active");
-      expect(trending.getAttribute("aria-current")).toBe("page");
+      const collections = screen.getByTestId("link-/collections");
+      expect(collections.className).toContain("is-active");
+      expect(collections.getAttribute("aria-current")).toBe("page");
 
-      const games = screen.getByTestId("link-/games");
-      expect(games.className).not.toContain("is-active");
-      expect(games.getAttribute("aria-current")).toBeNull();
+      const library = screen.getByTestId("link-/library");
+      expect(library.className).not.toContain("is-active");
+      expect(library.getAttribute("aria-current")).toBeNull();
     });
 
     it("does not mark any link active when pathname is unrelated", () => {
       mockUsePathname.mockReturnValue("/somewhere/else");
-      render(<EditorialSubSidebar space={gamesSpace} onClose={() => {}} />);
-      gamesSpace.links.forEach((link) => {
+      render(<EditorialSubSidebar space={librarySpace} onClose={() => {}} />);
+      librarySpace.links.forEach((link) => {
         const node = screen.getByTestId(`link-${link.href}`);
         expect(node.className).not.toContain("is-active");
       });
@@ -162,7 +149,7 @@ describe("EditorialSubSidebar", () => {
   describe("close button", () => {
     it("calls onClose when the X button is clicked (label via i18n)", () => {
       const onClose = vi.fn();
-      render(<EditorialSubSidebar space={gamesSpace} onClose={onClose} />);
+      render(<EditorialSubSidebar space={librarySpace} onClose={onClose} />);
       fireEvent.click(screen.getByLabelText("Close sub-sidebar"));
       expect(onClose).toHaveBeenCalledTimes(1);
     });
@@ -171,7 +158,7 @@ describe("EditorialSubSidebar", () => {
   describe("Escape key", () => {
     it("calls onClose on Escape when open", () => {
       const onClose = vi.fn();
-      render(<EditorialSubSidebar space={gamesSpace} onClose={onClose} />);
+      render(<EditorialSubSidebar space={librarySpace} onClose={onClose} />);
       fireEvent.keyDown(window, { key: "Escape" });
       expect(onClose).toHaveBeenCalledTimes(1);
     });
@@ -185,7 +172,7 @@ describe("EditorialSubSidebar", () => {
 
     it("ignores other keys", () => {
       const onClose = vi.fn();
-      render(<EditorialSubSidebar space={gamesSpace} onClose={onClose} />);
+      render(<EditorialSubSidebar space={librarySpace} onClose={onClose} />);
       fireEvent.keyDown(window, { key: "Enter" });
       fireEvent.keyDown(window, { key: "a" });
       expect(onClose).not.toHaveBeenCalled();
@@ -194,7 +181,7 @@ describe("EditorialSubSidebar", () => {
     it("removes the listener on unmount", () => {
       const onClose = vi.fn();
       const { unmount } = render(
-        <EditorialSubSidebar space={gamesSpace} onClose={onClose} />
+        <EditorialSubSidebar space={librarySpace} onClose={onClose} />
       );
       unmount();
       fireEvent.keyDown(window, { key: "Escape" });
@@ -208,7 +195,7 @@ describe("EditorialSubSidebar", () => {
       render(
         <div>
           <div data-testid="outside" style={{ width: 100, height: 100 }} />
-          <EditorialSubSidebar space={gamesSpace} onClose={onClose} />
+          <EditorialSubSidebar space={librarySpace} onClose={onClose} />
         </div>
       );
       const outside = screen.getByTestId("outside");
@@ -218,7 +205,7 @@ describe("EditorialSubSidebar", () => {
 
     it("does NOT call onClose when clicking inside the sub-sidebar", () => {
       const onClose = vi.fn();
-      render(<EditorialSubSidebar space={gamesSpace} onClose={onClose} />);
+      render(<EditorialSubSidebar space={librarySpace} onClose={onClose} />);
       const heading = screen.getByRole("heading", { level: 2 });
       fireEvent.pointerDown(heading);
       expect(onClose).not.toHaveBeenCalled();
@@ -231,7 +218,7 @@ describe("EditorialSubSidebar", () => {
           <aside className="editorial-rail">
             <button data-testid="rail-button" type="button">Rail</button>
           </aside>
-          <EditorialSubSidebar space={gamesSpace} onClose={onClose} />
+          <EditorialSubSidebar space={librarySpace} onClose={onClose} />
         </div>
       );
       fireEvent.pointerDown(screen.getByTestId("rail-button"));
@@ -254,8 +241,8 @@ describe("EditorialSubSidebar", () => {
   describe("link click behaviour", () => {
     it("closes when clicking a link by default (closeOnNavigate=true)", () => {
       const onClose = vi.fn();
-      render(<EditorialSubSidebar space={gamesSpace} onClose={onClose} />);
-      fireEvent.click(screen.getByText("Trending"));
+      render(<EditorialSubSidebar space={librarySpace} onClose={onClose} />);
+      fireEvent.click(screen.getByText("My collections"));
       expect(onClose).toHaveBeenCalledTimes(1);
     });
 
@@ -263,12 +250,12 @@ describe("EditorialSubSidebar", () => {
       const onClose = vi.fn();
       render(
         <EditorialSubSidebar
-          space={gamesSpace}
+          space={librarySpace}
           onClose={onClose}
           closeOnNavigate={false}
         />
       );
-      fireEvent.click(screen.getByText("Trending"));
+      fireEvent.click(screen.getByText("My collections"));
       expect(onClose).not.toHaveBeenCalled();
     });
   });

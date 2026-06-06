@@ -63,30 +63,27 @@ const editorialTranslations: Record<string, string> = {
   "mobileNav.dialogAriaLabel": "Mobile navigation",
   "mobileNav.title": "Navigation",
   "mobileNav.spacesAriaLabel": "Spaces",
+  "mobileNav.discoverTitle": "Discover",
+  "mobileNav.myAreaTitle": "My area",
   "mobileNav.account.title": "Account",
   "mobileNav.account.signIn": "Sign in",
   "mobileNav.account.signOut": "Sign out",
   "mobileNav.account.profile": "Profile",
   "mobileNav.account.library": "Library",
   "mobileNav.account.settings": "Settings",
-  "spaces.games": "Games",
-  "spaces.esport": "Esport",
   "spaces.library": "Library",
-  "spaces.community": "Community",
+  "spaces.esport": "Predictions",
   "spaces.coaching": "Coaching",
-  "links.games.all": "All games",
-  "links.games.trending": "Trending",
-  "links.games.upcoming": "Upcoming",
-  "links.games.characters": "Characters",
-  "links.games.favoriteCharacters": "My favorites",
-  "links.esport.live": "Live now",
+  "spaces.account": "My account",
+  "links.library.myLibrary": "My library",
+  "links.library.collections": "My collections",
+  "links.library.favoriteCharacters": "Favorite characters",
+  "links.esport.predictions": "Predictions",
+  "links.esport.fantasy": "Fantasy",
 };
 
 vi.mock("next-intl", () => ({
   useTranslations: (namespace?: string) => (key: string, params?: Record<string, string>) => {
-    // EditorialMobileNav uses both useTranslations("editorial") and
-    // useTranslations("editorial.mobileNav.account"). Strip the deepest
-    // namespace prefix so the flat dictionary above resolves both.
     const fullKey =
       namespace === "editorial.mobileNav.account" ? `mobileNav.account.${key}` : key;
     let value = editorialTranslations[fullKey] ?? fullKey;
@@ -146,9 +143,7 @@ describe("EditorialLayout", () => {
           <p>x</p>
         </EditorialLayout>
       );
-      // Rail aside is labelled by useTranslations.
       expect(screen.getByRole("complementary", { name: "Editorial rail" })).toBeDefined();
-      // The sub-sidebar exists but is collapsed (no is-open class, aria-hidden).
       const subSidebars = document.querySelectorAll(".editorial-sub-sidebar");
       expect(subSidebars.length).toBe(1);
       expect(subSidebars[0].className).not.toContain("is-open");
@@ -192,18 +187,15 @@ describe("EditorialLayout", () => {
         </EditorialLayout>
       );
 
-      // Initially closed
       expect(document.querySelector(".editorial-sub-sidebar.is-open")).toBeNull();
 
-      // Click the Games rail button
-      fireEvent.click(screen.getByRole("button", { name: "Games" }));
+      fireEvent.click(screen.getByRole("button", { name: "Library" }));
 
-      // Sub-sidebar is open, shows the Games heading and links
       const subSidebar = document.querySelector(".editorial-sub-sidebar");
       expect(subSidebar?.className).toContain("is-open");
-      expect(subSidebar?.getAttribute("data-space")).toBe("games");
-      expect(screen.getByRole("heading", { level: 2, name: "Games" })).toBeDefined();
-      expect(screen.getByText("Trending")).toBeDefined();
+      expect(subSidebar?.getAttribute("data-space")).toBe("library");
+      expect(screen.getByRole("heading", { level: 2, name: "Library" })).toBeDefined();
+      expect(screen.getByText("My collections")).toBeDefined();
     });
 
     it("closes the sub-sidebar when the same rail icon is clicked twice", () => {
@@ -212,8 +204,8 @@ describe("EditorialLayout", () => {
           <p>x</p>
         </EditorialLayout>
       );
-      fireEvent.click(screen.getByRole("button", { name: "Games" }));
-      fireEvent.click(screen.getByRole("button", { name: "Games" }));
+      fireEvent.click(screen.getByRole("button", { name: "Library" }));
+      fireEvent.click(screen.getByRole("button", { name: "Library" }));
       expect(document.querySelector(".editorial-sub-sidebar.is-open")).toBeNull();
     });
 
@@ -223,13 +215,13 @@ describe("EditorialLayout", () => {
           <p>x</p>
         </EditorialLayout>
       );
-      fireEvent.click(screen.getByRole("button", { name: "Games" }));
-      fireEvent.click(screen.getByRole("button", { name: "Esport" }));
+      fireEvent.click(screen.getByRole("button", { name: "Library" }));
+      fireEvent.click(screen.getByRole("button", { name: "Predictions" }));
 
       const subSidebar = document.querySelector(".editorial-sub-sidebar");
       expect(subSidebar?.getAttribute("data-space")).toBe("esport");
-      expect(screen.getByRole("heading", { level: 2, name: "Esport" })).toBeDefined();
-      expect(screen.getByText("Live now")).toBeDefined();
+      expect(screen.getByRole("heading", { level: 2, name: "Predictions" })).toBeDefined();
+      expect(screen.getByText("Fantasy")).toBeDefined();
     });
 
     it("closes the sub-sidebar when its X button is clicked", () => {
@@ -238,7 +230,7 @@ describe("EditorialLayout", () => {
           <p>x</p>
         </EditorialLayout>
       );
-      fireEvent.click(screen.getByRole("button", { name: "Games" }));
+      fireEvent.click(screen.getByRole("button", { name: "Library" }));
       fireEvent.click(screen.getByRole("button", { name: "Close sub-sidebar" }));
       expect(document.querySelector(".editorial-sub-sidebar.is-open")).toBeNull();
     });
@@ -246,42 +238,39 @@ describe("EditorialLayout", () => {
 
   describe("rail-pathname active sync", () => {
     it("marks the rail icon active based on the current pathname when sub-sidebar is closed", () => {
-      mockUsePathname.mockReturnValue("/esport/calendar");
+      mockUsePathname.mockReturnValue("/esport/predictions");
       render(
         <EditorialLayout>
           <p>x</p>
         </EditorialLayout>
       );
-      const esport = screen.getByRole("button", { name: "Esport" });
+      const esport = screen.getByRole("button", { name: "Predictions" });
       expect(esport.getAttribute("aria-pressed")).toBe("true");
     });
 
     it("the open sub-sidebar takes precedence over the pathname for the rail indicator", () => {
-      mockUsePathname.mockReturnValue("/games");
+      mockUsePathname.mockReturnValue("/library");
       render(
         <EditorialLayout>
           <p>x</p>
         </EditorialLayout>
       );
-      // Initially Games is active because of the pathname
       expect(
-        screen.getByRole("button", { name: "Games" }).getAttribute("aria-pressed")
+        screen.getByRole("button", { name: "Library" }).getAttribute("aria-pressed")
       ).toBe("true");
 
-      // Open coaching sub-sidebar — coaching becomes active visually
       fireEvent.click(screen.getByRole("button", { name: "Coaching" }));
       expect(
         screen.getByRole("button", { name: "Coaching" }).getAttribute("aria-pressed")
       ).toBe("true");
       expect(
-        screen.getByRole("button", { name: "Games" }).getAttribute("aria-pressed")
+        screen.getByRole("button", { name: "Library" }).getAttribute("aria-pressed")
       ).toBe("false");
     });
   });
 
   describe("persistence between mounts", () => {
     it("restores the previously open space from localStorage", () => {
-      // Pre-seed the storage as if the user had Library opened last session
       window.localStorage.setItem(
         "gu.editorial.openSpace.v1",
         JSON.stringify("library")

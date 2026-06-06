@@ -38,28 +38,23 @@ const editorialTranslations: Record<string, string> = {
   "editorial.megaMenu.entries.games": "Games",
   "editorial.megaMenu.entries.characters": "Characters",
   "editorial.megaMenu.entries.players": "Players",
+  "editorial.megaMenu.entries.esport": "Esports",
   "editorial.megaMenu.sections.games.explore": "Explore",
-  "editorial.megaMenu.sections.games.library": "My content",
   "editorial.megaMenu.sections.characters.explore": "Explore",
-  "editorial.megaMenu.sections.characters.library": "My content",
   "editorial.megaMenu.sections.players.community": "Community",
-  "editorial.megaMenu.sections.players.esport": "Esport",
-  "editorial.megaMenu.sections.players.coaching": "Coaching",
+  "editorial.megaMenu.sections.esport.competitions": "Competitions",
+  "editorial.megaMenu.sections.esport.proScene": "Teams & players",
   "editorial.megaMenu.links.games.all": "All games",
   "editorial.megaMenu.links.games.trending": "Trending",
   "editorial.megaMenu.links.games.upcoming": "Upcoming",
-  "editorial.megaMenu.links.games.library": "My library",
-  "editorial.megaMenu.links.games.collections": "My collections",
   "editorial.megaMenu.links.characters.all": "All characters",
-  "editorial.megaMenu.links.characters.favorites": "My favorites",
   "editorial.megaMenu.links.players.all": "Gamers Universe players",
-  "editorial.megaMenu.links.players.discussions": "Discussions",
-  "editorial.megaMenu.links.players.friends": "My friends",
-  "editorial.megaMenu.links.players.teams": "Esport teams",
-  "editorial.megaMenu.links.players.proPlayers": "Pro players",
-  "editorial.megaMenu.links.players.esportLive": "Live now",
-  "editorial.megaMenu.links.players.coachingHub": "Coaching hub",
-  "editorial.megaMenu.links.players.coachingSessions": "My sessions",
+  "editorial.megaMenu.links.esport.live": "Live now",
+  "editorial.megaMenu.links.esport.calendar": "Calendar",
+  "editorial.megaMenu.links.esport.tournaments": "Tournaments",
+  "editorial.megaMenu.links.esport.results": "Results",
+  "editorial.megaMenu.links.esport.teams": "Teams",
+  "editorial.megaMenu.links.esport.proPlayers": "Pro players",
 };
 
 vi.mock("next-intl", () => ({
@@ -96,44 +91,54 @@ describe("megaMenuEntryFromPathname (helper)", () => {
     expect(megaMenuEntryFromPathname("/upcoming")).toBe("games");
   });
 
-  it("matches the characters entry", () => {
+  it("matches the characters entry (only public character browsing)", () => {
     expect(megaMenuEntryFromPathname("/characters")).toBe("characters");
-    expect(megaMenuEntryFromPathname("/favorites/characters")).toBe("characters");
+    // Favorite characters are user-specific now → handled by the rail, not the top bar.
+    expect(megaMenuEntryFromPathname("/favorites/characters")).toBeNull();
   });
 
-  it("matches the players entry (incl. esport and coaching)", () => {
+  it("matches the players entry (public players directory only)", () => {
     expect(megaMenuEntryFromPathname("/players")).toBe("players");
-    expect(megaMenuEntryFromPathname("/discussions")).toBe("players");
-    expect(megaMenuEntryFromPathname("/friends")).toBe("players");
-    expect(megaMenuEntryFromPathname("/esport")).toBe("players");
-    expect(megaMenuEntryFromPathname("/esport/teams")).toBe("players");
-    expect(megaMenuEntryFromPathname("/coaching")).toBe("players");
-    expect(megaMenuEntryFromPathname("/coaching/sessions")).toBe("players");
+    // Discussions are user-specific now → rail (account space), not the top bar.
+    expect(megaMenuEntryFromPathname("/discussions")).toBeNull();
+    // Friends are user-specific now → not part of the public players entry.
+    expect(megaMenuEntryFromPathname("/friends")).toBeNull();
+  });
+
+  it("matches the esport entry for public esport pages only", () => {
+    expect(megaMenuEntryFromPathname("/esport/live")).toBe("esport");
+    expect(megaMenuEntryFromPathname("/esport/teams")).toBe("esport");
+    expect(megaMenuEntryFromPathname("/esport/tournaments")).toBe("esport");
+    // Predictions / fantasy are user-specific → rail, not top bar.
+    expect(megaMenuEntryFromPathname("/esport/predictions")).toBeNull();
+    expect(megaMenuEntryFromPathname("/esport/fantasy")).toBeNull();
   });
 
   it("does not match prefixes that only share a starting substring", () => {
     expect(megaMenuEntryFromPathname("/gamesettings")).toBeNull();
-    expect(megaMenuEntryFromPathname("/coachingExtra")).toBeNull();
   });
 });
 
 describe("EDITORIAL_MEGA_MENU_ENTRIES contract", () => {
-  it("exposes exactly 3 entries (games, characters, players)", () => {
+  it("exposes exactly 4 public entries (games, characters, players, esport)", () => {
     expect(EDITORIAL_MEGA_MENU_ENTRIES.map((e) => e.key)).toEqual([
       "games",
       "characters",
       "players",
+      "esport",
     ]);
   });
 
-  it("each entry has at least one section with at least one link", () => {
+  it("each entry has an icon and at least one section with at least one link (icon included)", () => {
     EDITORIAL_MEGA_MENU_ENTRIES.forEach((entry) => {
+      expect(entry.icon).toMatch(/^[a-z]+:/);
       expect(entry.sections.length).toBeGreaterThan(0);
       entry.sections.forEach((section) => {
         expect(section.links.length).toBeGreaterThan(0);
         section.links.forEach((link) => {
           expect(link.href).toMatch(/^\//);
           expect(link.labelKey.length).toBeGreaterThan(0);
+          expect(link.icon).toMatch(/^[a-z]+:/);
         });
       });
     });
@@ -158,11 +163,12 @@ describe("EditorialMegaMenu", () => {
       expect(logo.getAttribute("href")).toBe("/");
     });
 
-    it("renders the 3 entry buttons", () => {
+    it("renders the 4 entry buttons", () => {
       render(<EditorialMegaMenu />);
       expect(screen.getByRole("button", { name: /Games/i })).toBeDefined();
       expect(screen.getByRole("button", { name: /Characters/i })).toBeDefined();
       expect(screen.getByRole("button", { name: /Players/i })).toBeDefined();
+      expect(screen.getByRole("button", { name: /Esports/i })).toBeDefined();
     });
 
     it("renders the primary nav with i18n aria-label", () => {
@@ -202,7 +208,6 @@ describe("EditorialMegaMenu", () => {
     it("opens the games panel on click", () => {
       render(<EditorialMegaMenu />);
       fireEvent.click(screen.getByRole("button", { name: /Games/i }));
-      // Games panel content
       expect(screen.getByRole("region", { name: "Games sub-menu" })).toBeDefined();
       expect(screen.getByText("All games")).toBeDefined();
       expect(screen.getByText("Trending")).toBeDefined();
@@ -226,12 +231,11 @@ describe("EditorialMegaMenu", () => {
     it("clicking another entry switches the panel", () => {
       render(<EditorialMegaMenu />);
       fireEvent.click(screen.getByRole("button", { name: /Games/i }));
-      // Players panel must replace the Games one
       act(() => {
-        fireEvent.click(screen.getByRole("button", { name: /Players/i }));
+        fireEvent.click(screen.getByRole("button", { name: /Esports/i }));
       });
       expect(screen.queryByRole("region", { name: "Games sub-menu" })).toBeNull();
-      expect(screen.getByRole("region", { name: "Players sub-menu" })).toBeDefined();
+      expect(screen.getByRole("region", { name: "Esports sub-menu" })).toBeDefined();
     });
   });
 
@@ -241,7 +245,6 @@ describe("EditorialMegaMenu", () => {
       const item = screen.getByRole("button", { name: /Games/i }).parentElement!;
       fireEvent.mouseEnter(item);
 
-      // Right after mouseEnter the panel is not open yet.
       expect(screen.queryByRole("region", { name: "Games sub-menu" })).toBeNull();
 
       act(() => {
@@ -254,21 +257,18 @@ describe("EditorialMegaMenu", () => {
       render(<EditorialMegaMenu />);
       const item = screen.getByRole("button", { name: /Games/i }).parentElement!;
 
-      // Open
       fireEvent.mouseEnter(item);
       act(() => {
         vi.advanceTimersByTime(80);
       });
       expect(screen.queryByRole("region", { name: "Games sub-menu" })).not.toBeNull();
 
-      // Leave — panel still open during close delay
       fireEvent.mouseLeave(item);
       act(() => {
         vi.advanceTimersByTime(199);
       });
       expect(screen.queryByRole("region", { name: "Games sub-menu" })).not.toBeNull();
 
-      // After delay
       act(() => {
         vi.advanceTimersByTime(2);
       });
@@ -289,7 +289,6 @@ describe("EditorialMegaMenu", () => {
       act(() => {
         vi.advanceTimersByTime(100);
       });
-      // Re-enter cancels the close
       fireEvent.mouseEnter(item);
       act(() => {
         vi.advanceTimersByTime(500);
@@ -344,12 +343,10 @@ describe("EditorialMegaMenu", () => {
     it("the open panel takes precedence over the pathname", () => {
       mockUsePathname.mockReturnValue("/games");
       render(<EditorialMegaMenu />);
-      // Games is initially active because of the URL
       expect(
         screen.getByRole("button", { name: /Games/i }).className
       ).toContain("is-active");
 
-      // Open the players panel — players becomes active
       fireEvent.click(screen.getByRole("button", { name: /Players/i }));
       expect(
         screen.getByRole("button", { name: /Players/i }).className
@@ -372,21 +369,20 @@ describe("EditorialMegaMenu", () => {
   });
 
   describe("panel content", () => {
-    it("renders one section title per entry section, translated", () => {
+    it("renders one section title per esport section, translated", () => {
       render(<EditorialMegaMenu />);
-      fireEvent.click(screen.getByRole("button", { name: /Players/i }));
-      expect(screen.getByText("Community")).toBeDefined();
-      expect(screen.getByText("Esport")).toBeDefined();
-      expect(screen.getByText("Coaching")).toBeDefined();
+      fireEvent.click(screen.getByRole("button", { name: /Esports/i }));
+      expect(screen.getByText("Competitions")).toBeDefined();
+      expect(screen.getByText("Teams & players")).toBeDefined();
     });
 
-    it("renders the right links inside each section", () => {
+    it("renders the right links inside the esport sections", () => {
       render(<EditorialMegaMenu />);
-      fireEvent.click(screen.getByRole("button", { name: /Players/i }));
-      expect(screen.getByText("Esport teams")).toBeDefined();
-      expect(screen.getByText("Pro players")).toBeDefined();
+      fireEvent.click(screen.getByRole("button", { name: /Esports/i }));
       expect(screen.getByText("Live now")).toBeDefined();
-      expect(screen.getByText("Coaching hub")).toBeDefined();
+      expect(screen.getByText("Tournaments")).toBeDefined();
+      expect(screen.getByText("Teams")).toBeDefined();
+      expect(screen.getByText("Pro players")).toBeDefined();
     });
   });
 });

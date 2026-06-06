@@ -3,12 +3,12 @@
 /**
  * EditorialMobileNav : bouton hamburger + overlay full-screen mobile.
  *
- * Sur mobile (< lg), le rail vertical et la sub-sidebar (F0-08, F0-09)
- * sont cachés, remplacés par ce composant. Au clic sur le hamburger,
- * un overlay plein écran s'ouvre avec un accordéon des 5 spaces. Chaque
- * space déplie ses liens. Une section "Compte" en bas regroupe les
- * actions utilisateur (Profile / Library / Settings / Sign out, ou
- * Sign in si non connecté). Voir issue #264.
+ * Sur mobile (< lg), la top bar (`EditorialMegaMenu`, public) **et** le rail
+ * vertical + sub-sidebar (privé, propre à l'utilisateur connecté) sont cachés.
+ * Cet overlay prend donc le relais pour les deux : il expose un accordéon des
+ * espaces publics ("Découvrir") puis des espaces utilisateur ("Mon espace"),
+ * et une section "Compte" en bas (Profile / Library / Settings / Sign out, ou
+ * Sign in si non connecté).
  *
  * - Body scroll lock pendant que l'overlay est ouvert
  * - Fermeture : Escape, ╳, clic sur un lien
@@ -18,21 +18,33 @@
  * Voir docs/design/editorial-refonte-plan.md.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 
 import { Link, usePathname } from "@/i18n/navigation";
 import { useAuth } from "@/hooks/useAuth";
 
-import {
-  EDITORIAL_SPACES,
-  type EditorialSpaceKey,
-} from "./EditorialRail";
+import { EDITORIAL_MEGA_MENU_ENTRIES } from "./EditorialMegaMenu";
+import { EDITORIAL_SPACES } from "./EditorialRail";
 
 interface EditorialMobileNavProps {
   /** Classe additionnelle pour le bouton hamburger. */
   className?: string;
+}
+
+interface NavLink {
+  href: string;
+  label: string;
+  icon: string;
+}
+
+interface NavGroup {
+  /** Identifiant unique (préfixé public/privé pour éviter les collisions). */
+  id: string;
+  label: string;
+  icon: string;
+  links: NavLink[];
 }
 
 interface AccountLink {
@@ -49,25 +61,56 @@ const ACCOUNT_LINKS: readonly AccountLink[] = [
 
 export function EditorialMobileNav({ className = "" }: EditorialMobileNavProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [expandedSpace, setExpandedSpace] = useState<EditorialSpaceKey | null>(null);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
   const pathname = usePathname();
   const t = useTranslations("editorial");
   const tAccount = useTranslations("editorial.mobileNav.account");
   const { user, loading, signOut } = useAuth();
 
-  const open = () => setIsOpen(true);
+  // Public groups (top bar) : sections aplaties en une liste de liens.
+  const publicGroups = useMemo<NavGroup[]>(
+    () =>
+      EDITORIAL_MEGA_MENU_ENTRIES.map((entry) => ({
+        id: `public-${entry.key}`,
+        label: t(`megaMenu.entries.${entry.key}`),
+        icon: entry.icon,
+        links: entry.sections
+          .flatMap((section) => section.links)
+          .map((link) => ({
+            href: link.href,
+            label: t(`megaMenu.links.${entry.key}.${link.labelKey}`),
+            icon: link.icon,
+          })),
+      })),
+    [t]
+  );
+
+  // Private groups (rail) : contenu propre à l'utilisateur connecté.
+  const privateGroups = useMemo<NavGroup[]>(
+    () =>
+      EDITORIAL_SPACES.map((space) => ({
+        id: `private-${space.key}`,
+        label: t(`spaces.${space.key}`),
+        icon: space.icon,
+        links: space.links.map((link) => ({
+          href: link.href,
+          label: t(`links.${space.key}.${link.labelKey}`),
+          icon: link.icon,
+        })),
+      })),
+    [t]
+  );
+
   const close = () => {
     setIsOpen(false);
-    setExpandedSpace(null);
+    setExpandedId(null);
   };
 
   // Escape closes the overlay
   useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        close();
-      }
+      if (event.key === "Escape") close();
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
@@ -84,11 +127,61 @@ export function EditorialMobileNav({ className = "" }: EditorialMobileNavProps) 
     };
   }, [isOpen]);
 
+  const renderGroups = (groups: NavGroup[]) =>
+    groups.map((group) => {
+      const isExpanded = expandedId === group.id;
+      return (
+        <section
+          key={group.id}
+          className={`editorial-mobile-section ${isExpanded ? "is-expanded" : ""}`.trim()}
+          data-group={group.id}
+        >
+          <button
+            type="button"
+            onClick={() => setExpandedId((current) => (current === group.id ? null : group.id))}
+            aria-expanded={isExpanded}
+            aria-controls={`editorial-mobile-section-${group.id}`}
+            className="editorial-mobile-section-trigger"
+          >
+            <span className="flex items-center gap-3">
+              <Icon icon={group.icon} className="size-5" />
+              <span>{group.label}</span>
+            </span>
+            <Icon
+              icon="lucide:chevron-down"
+              className={`size-4 transition-transform ${isExpanded ? "rotate-180" : ""}`}
+            />
+          </button>
+
+          {isExpanded && (
+            <ul id={`editorial-mobile-section-${group.id}`} className="editorial-mobile-section-list">
+              {group.links.map((link) => {
+                const active = pathname === link.href;
+                return (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      onClick={close}
+                      aria-current={active ? "page" : undefined}
+                      className={`editorial-mobile-link ${active ? "is-active" : ""}`.trim()}
+                    >
+                      <Icon icon={link.icon} className="size-4" aria-hidden />
+                      <span>{link.label}</span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </section>
+      );
+    });
+
   return (
     <>
       <button
         type="button"
-        onClick={open}
+        onClick={() => setIsOpen(true)}
         aria-label={t("mobileNav.openAriaLabel")}
         aria-expanded={isOpen}
         aria-controls="editorial-mobile-nav-overlay"
@@ -106,9 +199,7 @@ export function EditorialMobileNav({ className = "" }: EditorialMobileNavProps) 
           className="editorial-mobile-overlay"
         >
           <header className="editorial-mobile-overlay-header">
-            <span className="editorial-display text-xl text-white">
-              {t("mobileNav.title")}
-            </span>
+            <span className="editorial-display text-xl text-white">{t("mobileNav.title")}</span>
             <button
               type="button"
               onClick={close}
@@ -119,64 +210,17 @@ export function EditorialMobileNav({ className = "" }: EditorialMobileNavProps) 
             </button>
           </header>
 
-          <nav
-            aria-label={t("mobileNav.spacesAriaLabel")}
-            className="editorial-mobile-overlay-nav"
-          >
-            {EDITORIAL_SPACES.map((space) => {
-              const isExpanded = expandedSpace === space.key;
-              const spaceLabel = t(`spaces.${space.key}`);
-              return (
-                <section
-                  key={space.key}
-                  className={`editorial-mobile-section ${isExpanded ? "is-expanded" : ""}`.trim()}
-                  data-space={space.key}
-                >
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setExpandedSpace((current) => (current === space.key ? null : space.key))
-                    }
-                    aria-expanded={isExpanded}
-                    aria-controls={`editorial-mobile-section-${space.key}`}
-                    className="editorial-mobile-section-trigger"
-                  >
-                    <span className="flex items-center gap-3">
-                      <Icon icon={space.icon} className="size-5" />
-                      <span>{spaceLabel}</span>
-                    </span>
-                    <Icon
-                      icon="lucide:chevron-down"
-                      className={`size-4 transition-transform ${isExpanded ? "rotate-180" : ""}`}
-                    />
-                  </button>
+          <div className="editorial-mobile-overlay-nav">
+            <nav aria-label={t("mobileNav.discoverTitle")}>
+              <h2 className="editorial-mobile-group-title">{t("mobileNav.discoverTitle")}</h2>
+              {renderGroups(publicGroups)}
+            </nav>
 
-                  {isExpanded && (
-                    <ul
-                      id={`editorial-mobile-section-${space.key}`}
-                      className="editorial-mobile-section-list"
-                    >
-                      {space.links.map((link) => {
-                        const active = pathname === link.href;
-                        return (
-                          <li key={link.href}>
-                            <Link
-                              href={link.href}
-                              onClick={close}
-                              aria-current={active ? "page" : undefined}
-                              className={`editorial-mobile-link ${active ? "is-active" : ""}`.trim()}
-                            >
-                              {t(`links.${space.key}.${link.labelKey}`)}
-                            </Link>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  )}
-                </section>
-              );
-            })}
-          </nav>
+            <nav aria-label={t("mobileNav.myAreaTitle")}>
+              <h2 className="editorial-mobile-group-title">{t("mobileNav.myAreaTitle")}</h2>
+              {renderGroups(privateGroups)}
+            </nav>
+          </div>
 
           {!loading && (
             <section

@@ -26,16 +26,15 @@ vi.mock("@/i18n/navigation", () => ({
 }));
 
 // Mock useTranslations with a deterministic dictionary tailored to the rail.
-// Using the editorial namespace structure agreed in F0-11.
+// The sidebar now exposes user-specific spaces only.
 const editorialTranslations: Record<string, string> = {
   "rail.ariaLabel": "Editorial rail",
   "rail.logoAriaLabel": "Gamers Universe — home",
   "rail.spacesAriaLabel": "Spaces",
-  "spaces.games": "Games",
-  "spaces.esport": "Esport",
-  "spaces.library": "Library",
-  "spaces.community": "Community",
+  "spaces.library": "My library",
+  "spaces.esport": "Predictions",
   "spaces.coaching": "Coaching",
+  "spaces.account": "My account",
 };
 vi.mock("next-intl", () => ({
   useTranslations: () => (key: string) => editorialTranslations[key] ?? key,
@@ -54,38 +53,26 @@ describe("spaceFromPathname (helper)", () => {
     expect(spaceFromPathname("")).toBeNull();
   });
 
-  it("returns null for paths that do not belong to any space", () => {
+  it("returns null for public routes that are not user-specific spaces", () => {
     expect(spaceFromPathname("/")).toBeNull();
-    expect(spaceFromPathname("/auth/sign-in")).toBeNull();
+    expect(spaceFromPathname("/games")).toBeNull();
+    expect(spaceFromPathname("/trending")).toBeNull();
+    expect(spaceFromPathname("/characters")).toBeNull();
+    expect(spaceFromPathname("/players")).toBeNull();
+    expect(spaceFromPathname("/esport/calendar")).toBeNull();
     expect(spaceFromPathname("/admin/games")).toBeNull();
   });
 
-  it("matches exact prefixes for the games space", () => {
-    expect(spaceFromPathname("/games")).toBe("games");
-    expect(spaceFromPathname("/games/zelda")).toBe("games");
-    expect(spaceFromPathname("/trending")).toBe("games");
-    expect(spaceFromPathname("/upcoming")).toBe("games");
-    expect(spaceFromPathname("/characters")).toBe("games");
-    expect(spaceFromPathname("/favorites/characters")).toBe("games");
-  });
-
-  it("matches deep paths under /esport", () => {
-    expect(spaceFromPathname("/esport")).toBe("esport");
-    expect(spaceFromPathname("/esport/calendar")).toBe("esport");
-    expect(spaceFromPathname("/esport/teams/team-liquid")).toBe("esport");
-  });
-
-  it("matches the library space (library, collections, profile)", () => {
+  it("matches the library space (library, collections, favorite characters)", () => {
     expect(spaceFromPathname("/library")).toBe("library");
     expect(spaceFromPathname("/collections")).toBe("library");
-    expect(spaceFromPathname("/profile")).toBe("library");
+    expect(spaceFromPathname("/collections/my-list")).toBe("library");
+    expect(spaceFromPathname("/favorites/characters")).toBe("library");
   });
 
-  it("matches the community space (players, discussions, friends)", () => {
-    expect(spaceFromPathname("/players")).toBe("community");
-    expect(spaceFromPathname("/players/123")).toBe("community");
-    expect(spaceFromPathname("/discussions")).toBe("community");
-    expect(spaceFromPathname("/friends")).toBe("community");
+  it("matches the esport space only for predictions/fantasy", () => {
+    expect(spaceFromPathname("/esport/predictions")).toBe("esport");
+    expect(spaceFromPathname("/esport/fantasy")).toBe("esport");
   });
 
   it("matches the coaching space", () => {
@@ -93,24 +80,29 @@ describe("spaceFromPathname (helper)", () => {
     expect(spaceFromPathname("/coaching/sessions")).toBe("coaching");
   });
 
+  it("matches the account space (friends, discussions, coins)", () => {
+    expect(spaceFromPathname("/friends")).toBe("account");
+    expect(spaceFromPathname("/discussions")).toBe("account");
+    expect(spaceFromPathname("/coins")).toBe("account");
+  });
+
   it("does not match a prefix that only shares the same start", () => {
-    expect(spaceFromPathname("/gamesettings")).toBeNull();
+    expect(spaceFromPathname("/librarything")).toBeNull();
     expect(spaceFromPathname("/coachingExtra")).toBeNull();
   });
 });
 
 describe("EDITORIAL_SPACES", () => {
-  it("exposes exactly the 5 expected spaces in stable order", () => {
+  it("exposes exactly the 4 expected user-specific spaces in stable order", () => {
     expect(EDITORIAL_SPACES.map((s) => s.key)).toEqual([
-      "games",
-      "esport",
       "library",
-      "community",
+      "esport",
       "coaching",
+      "account",
     ]);
   });
 
-  it("each space has an icon, at least one path prefix, and links with labelKey", () => {
+  it("each space has an icon, at least one path prefix, and links with labelKey + icon", () => {
     EDITORIAL_SPACES.forEach((space) => {
       expect(space.icon).toMatch(/^[a-z]+:/);
       expect(space.pathPrefixes.length).toBeGreaterThan(0);
@@ -118,14 +110,13 @@ describe("EDITORIAL_SPACES", () => {
       space.links.forEach((link) => {
         expect(link.href).toMatch(/^\//);
         expect(link.labelKey.length).toBeGreaterThan(0);
+        expect(link.icon).toMatch(/^[a-z]+:/);
       });
     });
   });
 
   it("does not expose any hardcoded label string on the space (i18n contract)", () => {
     EDITORIAL_SPACES.forEach((space) => {
-      // The legacy `label` field has been removed in F0-11. Any non-undefined
-      // value here would be a regression.
       expect((space as { label?: unknown }).label).toBeUndefined();
       space.links.forEach((link) => {
         expect((link as { label?: unknown }).label).toBeUndefined();
@@ -140,7 +131,7 @@ describe("EditorialRail", () => {
     mockUsePathname.mockReturnValue("/");
   });
 
-  it("renders the logo link to '/' and 5 space buttons (labels via i18n)", () => {
+  it("renders the logo link to '/' and the space buttons (labels via i18n)", () => {
     render(<EditorialRail />);
 
     const logo = screen.getByLabelText("Gamers Universe — home");
@@ -161,20 +152,20 @@ describe("EditorialRail", () => {
   });
 
   it("marks the active space based on the current pathname", () => {
-    mockUsePathname.mockReturnValue("/esport/calendar");
+    mockUsePathname.mockReturnValue("/esport/predictions");
     render(<EditorialRail />);
 
-    const esport = screen.getByRole("button", { name: "Esport" });
+    const esport = screen.getByRole("button", { name: "Predictions" });
     expect(esport.getAttribute("aria-pressed")).toBe("true");
     expect(esport.className).toContain("is-active");
 
-    const games = screen.getByRole("button", { name: "Games" });
-    expect(games.getAttribute("aria-pressed")).toBe("false");
-    expect(games.className).not.toContain("is-active");
+    const library = screen.getByRole("button", { name: "My library" });
+    expect(library.getAttribute("aria-pressed")).toBe("false");
+    expect(library.className).not.toContain("is-active");
   });
 
-  it("falls back to no active space on routes outside of any space (e.g. /admin)", () => {
-    mockUsePathname.mockReturnValue("/admin/games");
+  it("falls back to no active space on public routes (e.g. /games)", () => {
+    mockUsePathname.mockReturnValue("/games");
     render(<EditorialRail />);
 
     EDITORIAL_SPACES.forEach((space) => {
@@ -185,21 +176,21 @@ describe("EditorialRail", () => {
   });
 
   it("openSpace prop overrides the pathname-derived active space", () => {
-    mockUsePathname.mockReturnValue("/games");
+    mockUsePathname.mockReturnValue("/library");
     render(<EditorialRail openSpace="coaching" />);
 
     const coaching = screen.getByRole("button", { name: "Coaching" });
     expect(coaching.getAttribute("aria-pressed")).toBe("true");
 
-    const games = screen.getByRole("button", { name: "Games" });
-    expect(games.getAttribute("aria-pressed")).toBe("false");
+    const library = screen.getByRole("button", { name: "My library" });
+    expect(library.getAttribute("aria-pressed")).toBe("false");
   });
 
   it("openSpace=null lets the pathname determine the active space", () => {
     mockUsePathname.mockReturnValue("/library");
     render(<EditorialRail openSpace={null} />);
 
-    expect(screen.getByRole("button", { name: "Library" }).getAttribute("aria-pressed")).toBe(
+    expect(screen.getByRole("button", { name: "My library" }).getAttribute("aria-pressed")).toBe(
       "true"
     );
   });
@@ -208,8 +199,8 @@ describe("EditorialRail", () => {
     const onToggleSpace = vi.fn();
     render(<EditorialRail onToggleSpace={onToggleSpace} />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Games" }));
-    expect(onToggleSpace).toHaveBeenLastCalledWith("games");
+    fireEvent.click(screen.getByRole("button", { name: "My library" }));
+    expect(onToggleSpace).toHaveBeenLastCalledWith("library");
 
     fireEvent.click(screen.getByRole("button", { name: "Coaching" }));
     expect(onToggleSpace).toHaveBeenLastCalledWith("coaching");
@@ -220,7 +211,7 @@ describe("EditorialRail", () => {
   it("does not throw when onToggleSpace is omitted", () => {
     render(<EditorialRail />);
     expect(() =>
-      fireEvent.click(screen.getByRole("button", { name: "Games" }))
+      fireEvent.click(screen.getByRole("button", { name: "My library" }))
     ).not.toThrow();
   });
 
@@ -243,12 +234,11 @@ describe("EditorialRail", () => {
 
   it("maintains the EditorialSpaceKey type contract", () => {
     const keys: readonly EditorialSpaceKey[] = [
-      "games",
-      "esport",
       "library",
-      "community",
+      "esport",
       "coaching",
+      "account",
     ];
-    expect(keys.length).toBe(5);
+    expect(keys.length).toBe(4);
   });
 });

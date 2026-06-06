@@ -51,20 +51,20 @@ describe("useEditorialRailState", () => {
   describe("toggleSpace", () => {
     it("opens a space from the closed state", () => {
       const { result } = renderHook(() => useEditorialRailState());
-      act(() => result.current.toggleSpace("games"));
-      expect(result.current.openSpace).toBe("games");
+      act(() => result.current.toggleSpace("library"));
+      expect(result.current.openSpace).toBe("library");
     });
 
     it("closes the same space when toggled twice", () => {
       const { result } = renderHook(() => useEditorialRailState());
-      act(() => result.current.toggleSpace("games"));
-      act(() => result.current.toggleSpace("games"));
+      act(() => result.current.toggleSpace("library"));
+      act(() => result.current.toggleSpace("library"));
       expect(result.current.openSpace).toBeNull();
     });
 
     it("switches to another space when toggling a different key", () => {
       const { result } = renderHook(() => useEditorialRailState());
-      act(() => result.current.toggleSpace("games"));
+      act(() => result.current.toggleSpace("library"));
       act(() => result.current.toggleSpace("esport"));
       expect(result.current.openSpace).toBe("esport");
     });
@@ -98,12 +98,12 @@ describe("useEditorialRailState", () => {
   describe("persistance", () => {
     it("writes openSpace to localStorage after a toggle", () => {
       const { result } = renderHook(() => useEditorialRailState());
-      act(() => result.current.toggleSpace("community"));
-      expect(readPersistedSpace()).toBe("community");
+      act(() => result.current.toggleSpace("account"));
+      expect(readPersistedSpace()).toBe("account");
     });
 
     it("writes null to localStorage when closed", () => {
-      writePersistedSpace("games");
+      writePersistedSpace("library");
       const { result } = renderHook(() => useEditorialRailState());
       act(() => result.current.closeSpace());
       expect(readPersistedSpace()).toBeNull();
@@ -133,8 +133,8 @@ describe("readPersistedSpace / writePersistedSpace (helpers)", () => {
   });
 
   it("round-trips a value through write + read", () => {
-    writePersistedSpace("games");
-    expect(readPersistedSpace()).toBe("games");
+    writePersistedSpace("library");
+    expect(readPersistedSpace()).toBe("library");
   });
 
   it("returns null when the persisted value is not a known space", () => {
@@ -172,7 +172,7 @@ describe("readPersistedSpace / writePersistedSpace (helpers)", () => {
       window.localStorage.setItem = vi.fn(() => {
         throw new Error("Quota exceeded");
       });
-      expect(() => writePersistedSpace("games")).not.toThrow();
+      expect(() => writePersistedSpace("library")).not.toThrow();
     });
   });
 });

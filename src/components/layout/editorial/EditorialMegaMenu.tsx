@@ -28,13 +28,15 @@ import { Link, usePathname } from "@/i18n/navigation";
 // Data structure (exposed for tests & potential reuse)
 // ============================================================================
 
-export type MegaMenuEntryKey = "games" | "characters" | "players";
+export type MegaMenuEntryKey = "games" | "characters" | "players" | "esport";
 
 export interface MegaMenuLink {
   /** Href without locale prefix. */
   href: string;
   /** i18n sub-key under `editorial.megaMenu.links.{entry}`. */
   labelKey: string;
+  /** Iconify icon (`lucide:`, `fa:`, `mdi:`…). */
+  icon: string;
 }
 
 export interface MegaMenuSection {
@@ -45,72 +47,82 @@ export interface MegaMenuSection {
 
 export interface MegaMenuEntry {
   key: MegaMenuEntryKey;
+  /** Iconify icon shown next to the entry label. */
+  icon: string;
   /** Path prefixes that mark this entry as active. */
   pathPrefixes: string[];
   sections: MegaMenuSection[];
 }
 
+/**
+ * Top bar = **contenu public** uniquement. Tout ce qui est propre à
+ * l'utilisateur connecté (bibliothèque, pronostics, coaching, compte) vit
+ * dans le rail / la sub-sidebar (voir `EDITORIAL_SPACES`).
+ */
 export const EDITORIAL_MEGA_MENU_ENTRIES: readonly MegaMenuEntry[] = [
   {
     key: "games",
+    icon: "fa:dice",
     pathPrefixes: ["/games", "/trending", "/upcoming"],
     sections: [
       {
         titleKey: "explore",
         links: [
-          { href: "/games", labelKey: "all" },
-          { href: "/trending", labelKey: "trending" },
-          { href: "/upcoming", labelKey: "upcoming" },
-        ],
-      },
-      {
-        titleKey: "library",
-        links: [
-          { href: "/library", labelKey: "library" },
-          { href: "/collections", labelKey: "collections" },
+          { href: "/games", labelKey: "all", icon: "lucide:gamepad-2" },
+          { href: "/trending", labelKey: "trending", icon: "lucide:flame" },
+          { href: "/upcoming", labelKey: "upcoming", icon: "lucide:calendar-clock" },
         ],
       },
     ],
   },
   {
     key: "characters",
-    pathPrefixes: ["/characters", "/favorites/characters"],
+    icon: "fa:user-ninja",
+    pathPrefixes: ["/characters"],
     sections: [
       {
         titleKey: "explore",
-        links: [{ href: "/characters", labelKey: "all" }],
-      },
-      {
-        titleKey: "library",
-        links: [{ href: "/favorites/characters", labelKey: "favorites" }],
+        links: [{ href: "/characters", labelKey: "all", icon: "lucide:users-round" }],
       },
     ],
   },
   {
     key: "players",
-    pathPrefixes: ["/players", "/discussions", "/friends", "/esport", "/coaching"],
+    icon: "fa:user-friends",
+    pathPrefixes: ["/players"],
     sections: [
       {
         titleKey: "community",
+        links: [{ href: "/players", labelKey: "all", icon: "lucide:users" }],
+      },
+    ],
+  },
+  {
+    key: "esport",
+    icon: "fa:bolt",
+    pathPrefixes: [
+      "/esport/live",
+      "/esport/calendar",
+      "/esport/tournaments",
+      "/esport/results",
+      "/esport/teams",
+      "/esport/players",
+    ],
+    sections: [
+      {
+        titleKey: "competitions",
         links: [
-          { href: "/players", labelKey: "all" },
-          { href: "/discussions", labelKey: "discussions" },
-          { href: "/friends", labelKey: "friends" },
+          { href: "/esport/live", labelKey: "live", icon: "lucide:radio" },
+          { href: "/esport/calendar", labelKey: "calendar", icon: "lucide:calendar" },
+          { href: "/esport/tournaments", labelKey: "tournaments", icon: "lucide:trophy" },
+          { href: "/esport/results", labelKey: "results", icon: "lucide:list-checks" },
         ],
       },
       {
-        titleKey: "esport",
+        titleKey: "proScene",
         links: [
-          { href: "/esport/teams", labelKey: "teams" },
-          { href: "/esport/players", labelKey: "proPlayers" },
-          { href: "/esport/live", labelKey: "esportLive" },
-        ],
-      },
-      {
-        titleKey: "coaching",
-        links: [
-          { href: "/coaching", labelKey: "coachingHub" },
-          { href: "/coaching/sessions", labelKey: "coachingSessions" },
+          { href: "/esport/teams", labelKey: "teams", icon: "lucide:users" },
+          { href: "/esport/players", labelKey: "proPlayers", icon: "lucide:gamepad-2" },
         ],
       },
     ],
@@ -275,6 +287,7 @@ export function EditorialMegaMenu({
                   }`.trim()}
                   data-entry={entry.key}
                 >
+                  <Icon icon={entry.icon} className="size-4" aria-hidden />
                   <span>{label}</span>
                   <Icon
                     icon="lucide:chevron-down"
@@ -336,7 +349,8 @@ export function EditorialMegaMenu({
                           onClick={closeImmediately}
                           className="editorial-mega-menu-link"
                         >
-                          {tLinks(`${entry.key}.${link.labelKey}`)}
+                          <Icon icon={link.icon} className="size-4" aria-hidden />
+                          <span>{tLinks(`${entry.key}.${link.labelKey}`)}</span>
                         </Link>
                       </li>
                     ))}

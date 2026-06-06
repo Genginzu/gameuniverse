@@ -33,43 +33,57 @@ vi.mock("@/i18n/navigation", () => ({
     ),
 }));
 
+// The mobile overlay now exposes BOTH the public top-bar entries ("Discover")
+// and the user-specific rail spaces ("My area"), since both are hidden < lg.
 const editorialTranslations: Record<string, string> = {
   "mobileNav.openAriaLabel": "Open navigation",
   "mobileNav.closeAriaLabel": "Close navigation",
   "mobileNav.dialogAriaLabel": "Mobile navigation",
   "mobileNav.title": "Navigation",
-  "mobileNav.spacesAriaLabel": "Spaces",
+  "mobileNav.discoverTitle": "Discover",
+  "mobileNav.myAreaTitle": "My area",
   "mobileNav.account.title": "Account",
   "mobileNav.account.signIn": "Sign in",
   "mobileNav.account.signOut": "Sign out",
   "mobileNav.account.profile": "Profile",
   "mobileNav.account.library": "Library",
   "mobileNav.account.settings": "Settings",
-  "spaces.games": "Games",
-  "spaces.esport": "Esport",
-  "spaces.library": "Library",
-  "spaces.community": "Community",
+  // Public mega entries + links
+  "megaMenu.entries.games": "Games",
+  "megaMenu.entries.characters": "Characters",
+  "megaMenu.entries.players": "Players",
+  "megaMenu.entries.esport": "Esports",
+  "megaMenu.links.games.all": "All games",
+  "megaMenu.links.games.trending": "Trending",
+  "megaMenu.links.games.upcoming": "Upcoming",
+  "megaMenu.links.characters.all": "All characters",
+  "megaMenu.links.players.all": "Players directory",
+  "megaMenu.links.players.discussions": "Discussions",
+  "megaMenu.links.esport.live": "Live now",
+  "megaMenu.links.esport.calendar": "Calendar",
+  "megaMenu.links.esport.tournaments": "Tournaments",
+  "megaMenu.links.esport.results": "Results",
+  "megaMenu.links.esport.teams": "Teams",
+  "megaMenu.links.esport.proPlayers": "Pro players",
+  // Private rail spaces + links
+  "spaces.library": "My library",
+  "spaces.esport": "Predictions",
   "spaces.coaching": "Coaching",
-  "links.games.all": "All games",
-  "links.games.trending": "Trending",
-  "links.games.upcoming": "Upcoming",
-  "links.games.characters": "Characters",
-  "links.games.favoriteCharacters": "My favorites",
-  "links.esport.live": "Live now",
-  "links.esport.calendar": "Calendar",
-  "links.esport.tournaments": "Tournaments",
-  "links.esport.results": "Results",
-  "links.esport.teams": "Teams",
-  "links.esport.players": "Pro players",
+  "spaces.account": "My account",
+  "links.library.myLibrary": "My library",
+  "links.library.collections": "My collections",
+  "links.library.favoriteCharacters": "Favorite characters",
   "links.esport.predictions": "Predictions",
   "links.esport.fantasy": "Fantasy",
+  "links.coaching.hub": "Coaching hub",
+  "links.coaching.sessions": "My sessions",
+  "links.coaching.settings": "Coach settings",
+  "links.account.friends": "My friends",
+  "links.account.coins": "My coins",
 };
 
 vi.mock("next-intl", () => ({
   useTranslations: (namespace?: string) => (key: string) => {
-    // The component calls useTranslations("editorial") and
-    // useTranslations("editorial.mobileNav.account"). We strip the namespace
-    // prefix from our flat dictionary keys so both calls resolve correctly.
     if (namespace === "editorial.mobileNav.account") {
       const fullKey = `mobileNav.account.${key}`;
       return editorialTranslations[fullKey] ?? fullKey;
@@ -78,21 +92,18 @@ vi.mock("next-intl", () => ({
   },
 }));
 
-// useAuth mock (loading=false + no user by default).
 const mockUseAuth = vi.fn();
 vi.mock("@/hooks/useAuth", () => ({
   useAuth: () => mockUseAuth(),
 }));
 
 import { EditorialMobileNav } from "@/components/layout/editorial/EditorialMobileNav";
-import { EDITORIAL_SPACES } from "@/components/layout/editorial/EditorialRail";
 
 describe("EditorialMobileNav", () => {
   beforeEach(() => {
     mockUsePathname.mockReset();
     mockUsePathname.mockReturnValue("/");
     mockUseAuth.mockReset();
-    // default : user not authenticated, not loading
     mockUseAuth.mockReturnValue({ user: null, loading: false, signOut: vi.fn() });
     document.body.style.overflow = "";
   });
@@ -130,18 +141,22 @@ describe("EditorialMobileNav", () => {
     it("renders the i18n title in the header", () => {
       render(<EditorialMobileNav />);
       fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
-      // The header title is the dictionary value of mobileNav.title.
       expect(screen.getByText("Navigation")).toBeDefined();
     });
 
-    it("renders all 5 spaces as accordion triggers when open", () => {
+    it("renders the Discover (public) and My area (private) group titles", () => {
       render(<EditorialMobileNav />);
       fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
-      EDITORIAL_SPACES.forEach((space) => {
-        const expectedLabel = editorialTranslations[`spaces.${space.key}`];
-        const trigger = screen.getByRole("button", { name: new RegExp(expectedLabel, "i") });
-        expect(trigger.getAttribute("aria-expanded")).toBe("false");
-      });
+      expect(screen.getByRole("navigation", { name: "Discover" })).toBeDefined();
+      expect(screen.getByRole("navigation", { name: "My area" })).toBeDefined();
+    });
+
+    it("renders public entries (Games, Esports) and private spaces (My library) as triggers", () => {
+      render(<EditorialMobileNav />);
+      fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
+      expect(screen.getByRole("button", { name: /Games/i })).toBeDefined();
+      expect(screen.getByRole("button", { name: /Esports/i })).toBeDefined();
+      expect(screen.getByRole("button", { name: /My library/i })).toBeDefined();
     });
 
     it("flips the toggle aria-expanded to true when opened", () => {
@@ -160,7 +175,7 @@ describe("EditorialMobileNav", () => {
   });
 
   describe("accordion sections", () => {
-    it("expands a section on click and shows its translated links", () => {
+    it("expands a public section on click and shows its translated links", () => {
       render(<EditorialMobileNav />);
       fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
 
@@ -170,6 +185,14 @@ describe("EditorialMobileNav", () => {
       expect(gamesTrigger.getAttribute("aria-expanded")).toBe("true");
       expect(screen.getByText("Trending")).toBeDefined();
       expect(screen.getByText("Upcoming")).toBeDefined();
+    });
+
+    it("expands a private section on click and shows its translated links", () => {
+      render(<EditorialMobileNav />);
+      fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
+
+      fireEvent.click(screen.getByRole("button", { name: /My library/i }));
+      expect(screen.getByText("My collections")).toBeDefined();
     });
 
     it("collapses an expanded section when clicked again", () => {
@@ -184,22 +207,22 @@ describe("EditorialMobileNav", () => {
       expect(screen.queryByText("Trending")).toBeNull();
     });
 
-    it("only one section can be expanded at a time (accordion behaviour)", () => {
+    it("only one section can be expanded at a time across both groups", () => {
       render(<EditorialMobileNav />);
       fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
 
       fireEvent.click(screen.getByRole("button", { name: /Games/i }));
-      fireEvent.click(screen.getByRole("button", { name: /Esport/i }));
+      fireEvent.click(screen.getByRole("button", { name: /My library/i }));
 
       expect(
         screen.getByRole("button", { name: /Games/i }).getAttribute("aria-expanded")
       ).toBe("false");
       expect(
-        screen.getByRole("button", { name: /Esport/i }).getAttribute("aria-expanded")
+        screen.getByRole("button", { name: /My library/i }).getAttribute("aria-expanded")
       ).toBe("true");
 
       expect(screen.queryByText("Trending")).toBeNull();
-      expect(screen.getByText("Live now")).toBeDefined();
+      expect(screen.getByText("My collections")).toBeDefined();
     });
 
     it("marks a link active when its href matches the current pathname", () => {
@@ -286,7 +309,6 @@ describe("EditorialMobileNav", () => {
       const cta = screen.getByTestId("editorial-mobile-account-signin");
       expect(cta.getAttribute("href")).toBe("/auth");
       expect(cta.textContent).toContain("Sign in");
-      // No authenticated links rendered
       expect(screen.queryByTestId("editorial-mobile-account-profile")).toBeNull();
       expect(screen.queryByTestId("editorial-mobile-account-signout")).toBeNull();
     });
@@ -317,7 +339,6 @@ describe("EditorialMobileNav", () => {
       fireEvent.click(screen.getByRole("button", { name: "Open navigation" }));
 
       fireEvent.click(screen.getByTestId("editorial-mobile-account-signout"));
-      // Wait a tick for the async handler to run
       await Promise.resolve();
       expect(signOut).toHaveBeenCalledTimes(1);
       expect(screen.queryByRole("dialog")).toBeNull();

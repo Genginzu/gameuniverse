@@ -30,11 +30,10 @@ import { Link, usePathname } from "@/i18n/navigation";
 // ============================================================================
 
 export type EditorialSpaceKey =
-  | "games"
-  | "esport"
   | "library"
-  | "community"
-  | "coaching";
+  | "esport"
+  | "coaching"
+  | "account";
 
 /**
  * Lien d'un espace, identifié par une `labelKey` qui pointe vers une clé
@@ -44,6 +43,8 @@ export interface EditorialSpaceLink {
   href: string;
   /** Sous-clé i18n dans `editorial.links.{spaceKey}`. */
   labelKey: string;
+  /** Icône Iconify affichée devant le label. */
+  icon: string;
 }
 
 /**
@@ -68,52 +69,29 @@ export interface EditorialSpace {
   links: EditorialSpaceLink[];
 }
 
+/**
+ * Sidebar = **contenu propre à l'utilisateur connecté** uniquement. Le
+ * contenu public (jeux, personnages, joueurs, e-sport) vit dans la top bar
+ * (voir `EDITORIAL_MEGA_MENU_ENTRIES`).
+ */
 export const EDITORIAL_SPACES: readonly EditorialSpace[] = [
   {
-    key: "games",
-    icon: "fa:dice",
-    pathPrefixes: ["/games", "/trending", "/upcoming", "/characters", "/favorites/characters"],
+    key: "library",
+    icon: "fa:gamepad",
+    pathPrefixes: ["/library", "/collections", "/favorites/characters"],
     links: [
-      { href: "/games", labelKey: "all" },
-      { href: "/trending", labelKey: "trending" },
-      { href: "/upcoming", labelKey: "upcoming" },
-      { href: "/characters", labelKey: "characters" },
-      { href: "/favorites/characters", labelKey: "favoriteCharacters" },
+      { href: "/library", labelKey: "myLibrary", icon: "lucide:library" },
+      { href: "/collections", labelKey: "collections", icon: "lucide:folder-heart" },
+      { href: "/favorites/characters", labelKey: "favoriteCharacters", icon: "lucide:heart" },
     ],
   },
   {
     key: "esport",
     icon: "fa:bolt",
-    pathPrefixes: ["/esport"],
+    pathPrefixes: ["/esport/predictions", "/esport/fantasy"],
     links: [
-      { href: "/esport/live", labelKey: "live" },
-      { href: "/esport/calendar", labelKey: "calendar" },
-      { href: "/esport/tournaments", labelKey: "tournaments" },
-      { href: "/esport/results", labelKey: "results" },
-      { href: "/esport/teams", labelKey: "teams" },
-      { href: "/esport/players", labelKey: "players" },
-      { href: "/esport/predictions", labelKey: "predictions" },
-      { href: "/esport/fantasy", labelKey: "fantasy" },
-    ],
-  },
-  {
-    key: "library",
-    icon: "fa:gamepad",
-    pathPrefixes: ["/library", "/collections", "/profile"],
-    links: [
-      { href: "/library", labelKey: "myLibrary" },
-      { href: "/collections", labelKey: "collections" },
-      { href: "/profile", labelKey: "profile" },
-    ],
-  },
-  {
-    key: "community",
-    icon: "fa:user-friends",
-    pathPrefixes: ["/players", "/discussions", "/friends"],
-    links: [
-      { href: "/players", labelKey: "players" },
-      { href: "/discussions", labelKey: "discussions" },
-      { href: "/friends", labelKey: "friends" },
+      { href: "/esport/predictions", labelKey: "predictions", icon: "lucide:target" },
+      { href: "/esport/fantasy", labelKey: "fantasy", icon: "lucide:sparkles" },
     ],
   },
   {
@@ -121,9 +99,19 @@ export const EDITORIAL_SPACES: readonly EditorialSpace[] = [
     icon: "fa:graduation-cap",
     pathPrefixes: ["/coaching"],
     links: [
-      { href: "/coaching", labelKey: "hub" },
-      { href: "/coaching/sessions", labelKey: "sessions" },
-      { href: "/coaching/settings", labelKey: "settings" },
+      { href: "/coaching", labelKey: "hub", icon: "lucide:layout-dashboard" },
+      { href: "/coaching/sessions", labelKey: "sessions", icon: "lucide:calendar-clock" },
+      { href: "/coaching/settings", labelKey: "settings", icon: "lucide:settings" },
+    ],
+  },
+  {
+    key: "account",
+    icon: "fa:user",
+    pathPrefixes: ["/friends", "/discussions", "/coins"],
+    links: [
+      { href: "/friends", labelKey: "friends", icon: "lucide:users" },
+      { href: "/discussions", labelKey: "discussions", icon: "lucide:messages-square" },
+      { href: "/coins", labelKey: "coins", icon: "lucide:coins" },
     ],
   },
 ];
