@@ -671,7 +671,7 @@ indicatives, à ajuster).
 - [x] `/profile` — My profile (redirige vers `/players/[id]`)
 - [x] `/settings` — Settings (onglet du profil joueur)
 - [x] `/favorites/characters` — Favorite characters
-- [ ] `/dashboard` — Dashboard (si encore actif)
+- [x] `/dashboard` — Dashboard (si encore actif)
 
 ### Phase 3 — Esport
 
