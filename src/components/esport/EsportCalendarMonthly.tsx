@@ -5,7 +5,7 @@ import useSWR from "swr";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { Link } from "@/i18n/navigation";
-import { Skeleton } from "@/components/ui/skeleton";
+import { KickerLabel } from "@/components/shared/KickerLabel";
 import { EmptyState } from "@/components/shared/EmptyState";
 
 interface CalendarMatch {
@@ -19,6 +19,9 @@ interface CalendarMatch {
 }
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
+
+const NAV_BTN =
+  "border-editorial-line bg-editorial-2 hover:bg-editorial-3 hover:border-editorial-accent/50 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border text-white transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]";
 
 export function EsportCalendarMonthly() {
   const t = useTranslations("esport.calendar");
@@ -86,83 +89,84 @@ export function EsportCalendarMonthly() {
   ];
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-      <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
-        {/* Month navigation */}
-        <div className="mb-6 flex items-center justify-between">
+    <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
+      {/* Editorial hero */}
+      <header className="mb-8">
+        <KickerLabel>{t("kicker")}</KickerLabel>
+        <h1 className="mt-2 font-display text-[clamp(1.75rem,3vw+1rem,3rem)] leading-[1.05] font-bold tracking-tight text-white">
+          {t("title")}
+        </h1>
+        <p className="text-editorial-muted mt-3 max-w-[60ch] text-base leading-relaxed">
+          {t("subtitle")}
+        </p>
+      </header>
+
+      {/* Month navigation */}
+      <div className="mb-6 flex items-center justify-between">
+        <button type="button" onClick={goToPrevMonth} className={NAV_BTN} aria-label={t("weekMon")}>
+          <Icon icon="mdi:chevron-left" className="size-6" />
+        </button>
+
+        <div className="flex items-center gap-3">
+          <h2 className="font-display text-lg font-bold capitalize text-white sm:text-xl">
+            {monthLabel}
+          </h2>
           <button
             type="button"
-            onClick={goToPrevMonth}
-            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl bg-white/50 p-2 transition-all hover:bg-white/80 dark:bg-slate-800/50 dark:hover:bg-slate-700/60"
+            onClick={goToToday}
+            className="text-editorial-accent bg-editorial-accent/15 hover:bg-editorial-accent/25 rounded-lg px-3 py-1 text-xs font-medium transition"
           >
-            <Icon icon="mdi:chevron-left" className="size-6" />
-          </button>
-
-          <div className="flex items-center gap-3">
-            <h2 className="text-lg font-bold capitalize text-gray-900 sm:text-xl dark:text-white">
-              {monthLabel}
-            </h2>
-            <button
-              type="button"
-              onClick={goToToday}
-              className="rounded-lg bg-palette-primary-500/10 px-3 py-1 text-xs font-medium text-palette-primary-600 transition-all hover:bg-palette-primary-500/20 dark:text-palette-primary-400"
-            >
-              {t("today")}
-            </button>
-          </div>
-
-          <button
-            type="button"
-            onClick={goToNextMonth}
-            className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl bg-white/50 p-2 transition-all hover:bg-white/80 dark:bg-slate-800/50 dark:hover:bg-slate-700/60"
-          >
-            <Icon icon="mdi:chevron-right" className="size-6" />
+            {t("today")}
           </button>
         </div>
 
-        {/* Calendar grid */}
-        {isLoading && matches.length === 0 ? (
-          <CalendarGridSkeleton />
-        ) : (
-          <div className="glass-card overflow-hidden rounded-2xl">
-            {/* Week day headers */}
-            <div className="grid grid-cols-7 divide-x divide-gray-200 border-b border-gray-200 dark:divide-slate-600/50 dark:border-slate-600/50">
-              {weekDays.map((day) => (
-                <div
-                  key={day}
-                  className="px-1 py-2 text-center text-xs font-semibold uppercase text-gray-500 sm:px-3 sm:py-3 sm:text-sm dark:text-gray-400"
-                >
-                  {day}
-                </div>
-              ))}
-            </div>
-
-            {/* Days grid */}
-            <div className="grid auto-rows-[120px] grid-cols-7 sm:auto-rows-[140px]">
-              {calendarDays.map((day, idx) => (
-                <CalendarCell
-                  key={idx}
-                  day={day}
-                  isToday={isCurrentMonth && day === todayDate.getDate()}
-                  matches={day ? matchesByDay[day] ?? [] : []}
-                  year={currentDate.getFullYear()}
-                  month={currentDate.getMonth()}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {!isLoading && matches.length === 0 && (
-          <div className="mt-6">
-            <EmptyState
-              icon="mdi:calendar-blank"
-              title={t("noMatches")}
-              description={t("noMatchesDescription")}
-            />
-          </div>
-        )}
+        <button type="button" onClick={goToNextMonth} className={NAV_BTN} aria-label={t("weekSun")}>
+          <Icon icon="mdi:chevron-right" className="size-6" />
+        </button>
       </div>
+
+      {/* Calendar grid */}
+      {isLoading && matches.length === 0 ? (
+        <CalendarGridSkeleton />
+      ) : (
+        <div className="border-editorial-line bg-editorial-2 overflow-hidden rounded-2xl border">
+          {/* Week day headers */}
+          <div className="border-editorial-line grid grid-cols-7 border-b">
+            {weekDays.map((day) => (
+              <div
+                key={day}
+                className="text-editorial-muted border-editorial-line border-r px-1 py-2 text-center text-xs font-semibold uppercase tracking-wide last:border-r-0 sm:px-3 sm:py-3 sm:text-sm"
+              >
+                {day}
+              </div>
+            ))}
+          </div>
+
+          {/* Days grid */}
+          <div className="grid auto-rows-[120px] grid-cols-7 sm:auto-rows-[140px]">
+            {calendarDays.map((day, idx) => (
+              <CalendarCell
+                key={idx}
+                day={day}
+                isToday={isCurrentMonth && day === todayDate.getDate()}
+                matches={day ? matchesByDay[day] ?? [] : []}
+                year={currentDate.getFullYear()}
+                month={currentDate.getMonth()}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      {!isLoading && matches.length === 0 && (
+        <div className="mt-6">
+          <EmptyState
+            icon="mdi:calendar-blank"
+            title={t("noMatches")}
+            description={t("noMatchesDescription")}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -181,9 +185,7 @@ function CalendarCell({
   month: number;
 }) {
   if (day === null) {
-    return (
-      <div className="h-full border-b border-r border-gray-200 bg-white/10 p-1 sm:p-2 dark:border-slate-600/50 dark:bg-slate-800/20" />
-    );
+    return <div className="border-editorial-line h-full border-b border-r bg-white/[0.02]" />;
   }
 
   const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
@@ -191,18 +193,16 @@ function CalendarCell({
 
   const content = (
     <div
-      className={`flex h-full flex-col overflow-hidden border-b border-r border-gray-200 p-1 transition-all sm:p-2 dark:border-slate-600/50 ${
+      className={`border-editorial-line flex h-full flex-col overflow-hidden border-b border-r p-1 transition-all sm:p-2 ${
         hasMatches
-          ? "cursor-pointer bg-white/30 hover:bg-white/60 dark:bg-slate-700/20 dark:hover:bg-slate-700/50"
-          : "bg-white/10 dark:bg-slate-800/10"
+          ? "bg-editorial-3 hover:border-editorial-accent/40 cursor-pointer"
+          : "bg-transparent"
       }`}
     >
       {/* Day number */}
       <span
         className={`mb-1 inline-flex size-6 items-center justify-center rounded-full text-xs font-bold sm:size-7 sm:text-sm ${
-          isToday
-            ? "bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 text-white"
-            : "text-gray-700 dark:text-gray-300"
+          isToday ? "bg-editorial-accent text-white" : "text-white/80"
         }`}
       >
         {day}
@@ -211,19 +211,19 @@ function CalendarCell({
       {/* Match indicators */}
       {hasMatches && (
         <div className="mt-1 space-y-0.5">
-          <span className="inline-flex items-center gap-1 rounded-md bg-palette-primary-500/10 px-1.5 py-0.5 text-[10px] font-medium text-palette-primary-600 sm:text-xs dark:text-palette-primary-400">
+          <span className="text-editorial-accent bg-editorial-accent/15 inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-medium sm:text-xs">
             <Icon icon="mdi:sword-cross" className="size-3" />
             {matches.length}
           </span>
           {/* Show first match teams on larger screens */}
           <div className="hidden sm:block">
             {matches.slice(0, 2).map((m) => (
-              <p key={m.id} className="truncate text-[10px] text-gray-500 dark:text-gray-400">
+              <p key={m.id} className="text-editorial-muted truncate text-[10px]">
                 {m.opponent1?.acronym ?? "?"} vs {m.opponent2?.acronym ?? "?"}
               </p>
             ))}
             {matches.length > 2 && (
-              <p className="text-[10px] text-gray-400">+{matches.length - 2}</p>
+              <p className="text-editorial-muted/70 text-[10px]">+{matches.length - 2}</p>
             )}
           </div>
         </div>
@@ -244,18 +244,18 @@ function CalendarCell({
 
 function CalendarGridSkeleton() {
   return (
-    <div className="glass-card overflow-hidden rounded-2xl">
-      <div className="grid grid-cols-7 divide-x divide-gray-200 border-b border-gray-200 dark:divide-slate-600/50 dark:border-slate-600/50">
+    <div className="border-editorial-line bg-editorial-2 overflow-hidden rounded-2xl border">
+      <div className="border-editorial-line grid grid-cols-7 border-b">
         {Array.from({ length: 7 }).map((_, i) => (
-          <div key={i} className="px-3 py-3">
-            <Skeleton className="mx-auto h-4 w-8" />
+          <div key={i} className="border-editorial-line border-r px-3 py-3 last:border-r-0">
+            <div className="mx-auto h-4 w-8 animate-pulse rounded bg-white/[0.06]" />
           </div>
         ))}
       </div>
-      <div className="grid grid-cols-7">
+      <div className="grid auto-rows-[120px] grid-cols-7 sm:auto-rows-[140px]">
         {Array.from({ length: 35 }).map((_, i) => (
-          <div key={i} className="min-h-[100px] border-b border-r border-gray-200 p-2 dark:border-slate-600/50">
-            <Skeleton className="h-5 w-5 rounded-full" />
+          <div key={i} className="border-editorial-line border-b border-r p-2">
+            <div className="size-6 animate-pulse rounded-full bg-white/[0.06]" />
           </div>
         ))}
       </div>

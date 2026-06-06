@@ -3,7 +3,6 @@
 import { useState } from "react";
 import useSWR from "swr";
 import { useTranslations } from "next-intl";
-import { Skeleton } from "@/components/ui/skeleton";
 import { PlayerHero } from "./PlayerHero";
 import { PlayerAboutCard, PlayerTeamCard } from "./PlayerInfoCards";
 import { PlayerRecentMatches } from "./PlayerRecentMatches";
@@ -62,7 +61,7 @@ export function EsportPlayerDetailContent({
   if (error || !data?.player) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
-        <p className="text-gray-500">{t("loadError")}</p>
+        <p className="text-editorial-muted">{t("loadError")}</p>
       </div>
     );
   }
@@ -74,28 +73,26 @@ export function EsportPlayerDetailContent({
   const history = historyData?.history ?? [];
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-      <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
-        <PlayerHero player={player} />
+    <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
+      <PlayerHero player={player} />
 
-        <PlayerStats stats={statsData?.stats} isLoading={statsLoading} />
+      <PlayerStats stats={statsData?.stats} isLoading={statsLoading} />
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-5">
-          <div className="space-y-6 lg:col-span-2">
-            <PlayerAboutCard player={player} />
-            {player.teamName && <PlayerTeamCard player={player} />}
-            <PlayerTeamHistory history={history} isLoading={historyLoading} />
-          </div>
-          <div className="lg:col-span-3">
-            <PlayerRecentMatches
-              matches={matches}
-              total={total}
-              page={matchesPage}
-              limit={limit}
-              onPageChange={setMatchesPage}
-              isLoading={matchesLoading}
-            />
-          </div>
+      <div className="mt-6 grid gap-6 lg:grid-cols-5">
+        <div className="space-y-6 lg:col-span-2">
+          <PlayerAboutCard player={player} />
+          {player.teamName && <PlayerTeamCard player={player} />}
+          <PlayerTeamHistory history={history} isLoading={historyLoading} />
+        </div>
+        <div className="lg:col-span-3">
+          <PlayerRecentMatches
+            matches={matches}
+            total={total}
+            page={matchesPage}
+            limit={limit}
+            onPageChange={setMatchesPage}
+            isLoading={matchesLoading}
+          />
         </div>
       </div>
     </div>
@@ -105,29 +102,29 @@ export function EsportPlayerDetailContent({
 function PlayerDetailSkeleton() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-      <div className="from-palette-secondary-500/40 to-palette-primary-500/40 mb-6 rounded-3xl bg-linear-to-br p-8">
+      <div className="border-editorial-line bg-editorial-2 mb-6 rounded-3xl border p-8">
         <div className="flex flex-col items-center gap-6 sm:flex-row">
-          <Skeleton className="h-32 w-32 rounded-full sm:h-40 sm:w-40" />
+          <div className="h-32 w-32 animate-pulse rounded-full bg-white/[0.06] sm:h-40 sm:w-40" />
           <div className="flex-1 space-y-3">
-            <Skeleton className="h-9 w-48" />
-            <Skeleton className="h-4 w-32" />
+            <div className="h-9 w-48 animate-pulse rounded bg-white/[0.06]" />
+            <div className="h-4 w-32 animate-pulse rounded bg-white/[0.06]" />
             <div className="flex gap-2">
-              <Skeleton className="h-6 w-20 rounded-full" />
-              <Skeleton className="h-6 w-20 rounded-full" />
+              <div className="h-6 w-20 animate-pulse rounded-full bg-white/[0.06]" />
+              <div className="h-6 w-20 animate-pulse rounded-full bg-white/[0.06]" />
             </div>
           </div>
         </div>
       </div>
 
-      <Skeleton className="mb-6 h-32 rounded-2xl" />
+      <div className="mb-6 h-32 animate-pulse rounded-2xl bg-white/[0.06]" />
 
       <div className="grid gap-6 lg:grid-cols-5">
         <div className="space-y-6 lg:col-span-2">
-          <Skeleton className="h-48 rounded-2xl" />
-          <Skeleton className="h-32 rounded-2xl" />
-          <Skeleton className="h-48 rounded-2xl" />
+          <div className="h-48 animate-pulse rounded-2xl bg-white/[0.06]" />
+          <div className="h-32 animate-pulse rounded-2xl bg-white/[0.06]" />
+          <div className="h-48 animate-pulse rounded-2xl bg-white/[0.06]" />
         </div>
-        <Skeleton className="h-72 rounded-2xl lg:col-span-3" />
+        <div className="h-72 animate-pulse rounded-2xl bg-white/[0.06] lg:col-span-3" />
       </div>
     </div>
   );

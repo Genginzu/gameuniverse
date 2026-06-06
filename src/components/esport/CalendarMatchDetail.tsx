@@ -100,30 +100,30 @@ export function CalendarMatchDetail({ match, open, onOpenChange }: CalendarMatch
 
   const statusColor =
     match.status === "running"
-      ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+      ? "bg-emerald-500/15 text-emerald-300"
       : match.status === "finished"
-        ? "bg-gray-100 text-gray-700 dark:bg-gray-700/30 dark:text-gray-400"
-        : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400";
+        ? "bg-white/10 text-editorial-muted"
+        : "bg-editorial-accent/15 text-editorial-accent";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="editorial-esport max-h-[90vh] w-[95vw] overflow-y-auto sm:max-w-md">
+      <DialogContent className="editorial-esport border-editorial-line bg-editorial-2 max-h-[90vh] w-[95vw] overflow-y-auto text-white sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-base font-bold">{match.name}</DialogTitle>
+          <DialogTitle className="text-base font-bold text-white">{match.name}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-5">
           {/* Match info */}
-          <div className="space-y-2 text-sm">
-            <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
+          <div className="text-editorial-muted space-y-2 text-sm">
+            <div className="flex items-center gap-2">
               <Icon icon="mdi:calendar" className="size-4" />
               <span className="capitalize">{matchDate}</span>
             </div>
-            <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
+            <div className="flex items-center gap-2">
               <Icon icon="mdi:clock-outline" className="size-4" />
               <span>{matchTime}</span>
             </div>
-            <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
+            <div className="flex items-center gap-2">
               <Icon icon="mdi:gamepad-variant" className="size-4" />
               <span>{match.game}</span>
             </div>
@@ -133,16 +133,16 @@ export function CalendarMatchDetail({ match, open, onOpenChange }: CalendarMatch
           </div>
 
           {/* Teams face-off */}
-          <div className="flex items-center justify-center gap-4 rounded-xl bg-white/50 p-4 dark:bg-slate-800/50">
+          <div className="bg-editorial-3 flex items-center justify-center gap-4 rounded-xl p-4">
             <TeamDisplay team={match.opponent1} score={match.opponent1Score} />
-            <span className="text-lg font-bold text-gray-400">VS</span>
+            <span className="text-editorial-muted text-lg font-bold">VS</span>
             <TeamDisplay team={match.opponent2} score={match.opponent2Score} />
           </div>
 
           {/* Bet section */}
           {canBet && !betResult && (
-            <div className="space-y-3 rounded-xl border border-amber-200/50 bg-amber-50/50 p-4 dark:border-amber-800/30 dark:bg-amber-900/10">
-              <h4 className="flex items-center gap-2 text-sm font-bold text-amber-700 dark:text-amber-400">
+            <div className="space-y-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4">
+              <h4 className="flex items-center gap-2 text-sm font-bold text-amber-300">
                 <Icon icon="mdi:dice-multiple" className="size-4" />
                 {t("prediction.chooseWinner")}
               </h4>
@@ -151,10 +151,10 @@ export function CalendarMatchDetail({ match, open, onOpenChange }: CalendarMatch
                 <button
                   type="button"
                   onClick={() => setSelectedWinner("opponent1")}
-                  className={`rounded-lg border-2 p-3 text-center text-sm font-medium transition-all ${
+                  className={`rounded-lg border-2 p-3 text-center text-sm font-medium text-white transition-all ${
                     selectedWinner === "opponent1"
-                      ? "border-amber-500 bg-amber-100 dark:bg-amber-900/30"
-                      : "border-transparent bg-white/60 hover:border-amber-300 dark:bg-slate-700/40"
+                      ? "border-amber-500 bg-amber-500/20"
+                      : "border-editorial-line bg-editorial-2 hover:border-amber-400/50"
                   }`}
                 >
                   {match.opponent1?.acronym || match.opponent1?.name}
@@ -162,10 +162,10 @@ export function CalendarMatchDetail({ match, open, onOpenChange }: CalendarMatch
                 <button
                   type="button"
                   onClick={() => setSelectedWinner("opponent2")}
-                  className={`rounded-lg border-2 p-3 text-center text-sm font-medium transition-all ${
+                  className={`rounded-lg border-2 p-3 text-center text-sm font-medium text-white transition-all ${
                     selectedWinner === "opponent2"
-                      ? "border-amber-500 bg-amber-100 dark:bg-amber-900/30"
-                      : "border-transparent bg-white/60 hover:border-amber-300 dark:bg-slate-700/40"
+                      ? "border-amber-500 bg-amber-500/20"
+                      : "border-editorial-line bg-editorial-2 hover:border-amber-400/50"
                   }`}
                 >
                   {match.opponent2?.acronym || match.opponent2?.name}
@@ -174,7 +174,7 @@ export function CalendarMatchDetail({ match, open, onOpenChange }: CalendarMatch
 
               {selectedWinner && (
                 <div className="space-y-2">
-                  <label className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                  <label className="text-editorial-muted text-xs font-medium">
                     {t("prediction.amount")}
                   </label>
                   <input
@@ -183,13 +183,13 @@ export function CalendarMatchDetail({ match, open, onOpenChange }: CalendarMatch
                     max={1000}
                     value={amount}
                     onChange={(e) => setAmount(Number(e.target.value))}
-                    className="glass-input w-full rounded-lg px-3 py-2 text-base"
+                    className="border-editorial-line bg-editorial-3 w-full rounded-lg border px-3 py-2 text-base text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
                   />
                   <button
                     type="button"
                     onClick={handlePlaceBet}
                     disabled={placing}
-                    className="w-full rounded-lg bg-linear-to-r from-palette-secondary-500 to-palette-primary-500 px-4 py-2.5 text-sm font-bold text-white transition-all hover:opacity-90 disabled:opacity-50"
+                    className="bg-editorial-accent w-full rounded-lg px-4 py-2.5 text-sm font-bold text-white transition-all hover:opacity-90 disabled:opacity-50"
                   >
                     {placing ? t("prediction.placing") : t("prediction.placeBet", { amount })}
                   </button>
@@ -200,13 +200,13 @@ export function CalendarMatchDetail({ match, open, onOpenChange }: CalendarMatch
 
           {/* Bet result */}
           {betResult === "success" && (
-            <div className="flex items-center gap-2 rounded-lg bg-green-100 p-3 text-sm font-medium text-green-700 dark:bg-green-900/30 dark:text-green-400">
+            <div className="flex items-center gap-2 rounded-lg bg-emerald-500/15 p-3 text-sm font-medium text-emerald-300">
               <Icon icon="mdi:check-circle" className="size-5" />
               {t("prediction.success")}
             </div>
           )}
           {betResult === "error" && (
-            <div className="flex items-center gap-2 rounded-lg bg-red-100 p-3 text-sm font-medium text-red-700 dark:bg-red-900/30 dark:text-red-400">
+            <div className="flex items-center gap-2 rounded-lg bg-red-500/15 p-3 text-sm font-medium text-red-300">
               <Icon icon="mdi:alert-circle" className="size-5" />
               {t("prediction.error")}
             </div>
@@ -225,7 +225,7 @@ function TeamDisplay({
   score: number | null;
 }) {
   if (!team) {
-    return <span className="text-sm text-gray-400">TBD</span>;
+    return <span className="text-editorial-muted text-sm">TBD</span>;
   }
 
   return (
@@ -233,16 +233,14 @@ function TeamDisplay({
       {team.image_url ? (
         <img src={team.image_url} alt="" className="size-10 rounded-lg object-contain" />
       ) : (
-        <div className="flex size-10 items-center justify-center rounded-lg bg-gray-200 dark:bg-slate-700">
-          <Icon icon="mdi:account-group" className="size-5 text-gray-400" />
+        <div className="flex size-10 items-center justify-center rounded-lg bg-white/10">
+          <Icon icon="mdi:account-group" className="text-editorial-muted size-5" />
         </div>
       )}
-      <span className="max-w-[80px] truncate text-center text-xs font-bold text-gray-800 dark:text-gray-100">
+      <span className="max-w-[80px] truncate text-center text-xs font-bold text-white/90">
         {team.acronym || team.name}
       </span>
-      {score !== null && (
-        <span className="text-lg font-bold text-gray-900 dark:text-white">{score}</span>
-      )}
+      {score !== null && <span className="text-lg font-bold text-white">{score}</span>}
     </div>
   );
 }

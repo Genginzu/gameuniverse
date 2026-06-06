@@ -4210,6 +4210,7 @@
     "calendar": {
       "metaTitle": "Calendrier Esport",
       "metaDescription": "Suivez les tournois esport professionnels à venir et en cours",
+      "kicker": "Esport",
       "title": "Calendrier Esport",
       "subtitle": "Tournois professionnels à venir et en cours",
       "noMatches": "Aucun match ce mois-ci",

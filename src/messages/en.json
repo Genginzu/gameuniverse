@@ -4207,6 +4207,7 @@
     "calendar": {
       "metaTitle": "Esport Calendar",
       "metaDescription": "Follow upcoming and ongoing professional esport tournaments",
+      "kicker": "Esport",
       "title": "Esport Calendar",
       "subtitle": "Upcoming and ongoing professional tournaments",
       "noMatches": "No matches this month",

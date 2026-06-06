@@ -4,7 +4,6 @@ import { useState, useCallback, useMemo, useEffect } from "react";
 import useSWR from "swr";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
-import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { FilterChip } from "@/components/shared/FilterChip";
 import { Pagination } from "@/components/shared/Pagination";
@@ -95,64 +94,62 @@ export function EsportPlayersContent({ initialData }: EsportPlayersContentProps)
   const isFiltered = Boolean(selectedGame || debouncedSearch);
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
-        <PlayersToolbar
-          search={search}
-          onSearch={handleSearch}
-          total={total}
-          isFiltered={isFiltered}
-        />
+    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
+      <PlayersToolbar
+        search={search}
+        onSearch={handleSearch}
+        total={total}
+        isFiltered={isFiltered}
+      />
 
-        {games.length > 0 && (
-          <div className="mb-6 flex flex-wrap gap-2">
+      {games.length > 0 && (
+        <div className="mb-6 flex flex-wrap gap-2">
+          <FilterChip
+            label={t("allGames")}
+            selected={selectedGame === null}
+            onClick={() => setSelectedGame(null)}
+          />
+          {games.map((game) => (
             <FilterChip
-              label={t("allGames")}
-              selected={selectedGame === null}
-              onClick={() => setSelectedGame(null)}
+              key={game}
+              label={game}
+              selected={selectedGame === game}
+              onClick={() => handleGameFilter(game)}
+              icon={<Icon icon={getGameIcon(game)} className="h-3.5 w-3.5" />}
             />
-            {games.map((game) => (
-              <FilterChip
-                key={game}
-                label={game}
-                selected={selectedGame === game}
-                onClick={() => handleGameFilter(game)}
-                icon={<Icon icon={getGameIcon(game)} className="h-3.5 w-3.5" />}
-              />
+          ))}
+        </div>
+      )}
+
+      {showSkeleton ? (
+        <PlayersSkeleton />
+      ) : players.length === 0 ? (
+        <EmptyState
+          icon="mdi:account-search"
+          title={t("noPlayers")}
+          description={t("noPlayersDescription")}
+        />
+      ) : (
+        <>
+          <div className="xs:grid-cols-2 grid gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            {players.map((player) => (
+              <EsportPlayerCard key={player.id} player={player} />
             ))}
           </div>
-        )}
 
-        {showSkeleton ? (
-          <PlayersSkeleton />
-        ) : players.length === 0 ? (
-          <EmptyState
-            icon="mdi:account-search"
-            title={t("noPlayers")}
-            description={t("noPlayersDescription")}
-          />
-        ) : (
-          <>
-            <div className="xs:grid-cols-2 grid gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-              {players.map((player) => (
-                <EsportPlayerCard key={player.id} player={player} />
-              ))}
+          {totalPages > 1 && (
+            <div className="mt-8">
+              <Pagination
+                currentPage={page}
+                totalPages={totalPages}
+                totalCount={total}
+                onPageChange={handlePageChange}
+                loading={isLoading}
+              />
             </div>
-
-            {totalPages > 1 && (
-              <div className="mt-8">
-                <Pagination
-                  currentPage={page}
-                  totalPages={totalPages}
-                  totalCount={total}
-                  onPageChange={handlePageChange}
-                  loading={isLoading}
-                />
-              </div>
-            )}
-          </>
-        )}
-      </div>
+          )}
+        </>
+      )}
     </div>
   );
 }
@@ -171,19 +168,19 @@ function PlayersToolbar({ search, onSearch, total, isFiltered }: PlayersToolbarP
       <div className="relative w-full sm:max-w-md">
         <Icon
           icon="mdi:magnify"
-          className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 text-gray-400"
+          className="text-editorial-muted absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2"
         />
         <input
           type="text"
           value={search}
           onChange={onSearch}
           placeholder={t("searchPlaceholder")}
-          className="glass-input w-full rounded-xl py-2.5 pr-4 pl-10 text-base"
+          className="border-editorial-line bg-editorial-2 w-full rounded-xl border py-2.5 pr-4 pl-10 text-base text-white placeholder:text-editorial-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
         />
       </div>
 
       {total > 0 && (
-        <div className="text-sm text-gray-600 dark:text-gray-400">
+        <div className="text-editorial-muted text-sm">
           {isFiltered
             ? t("matchingPlayers", { count: total })
             : t("totalPlayers", { count: total })}
@@ -197,12 +194,12 @@ function PlayersSkeleton() {
   return (
     <div className="xs:grid-cols-2 grid gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
       {Array.from({ length: 10 }).map((_, i) => (
-        <div key={i} className="glass-card flex flex-col items-center rounded-2xl p-4 sm:p-5">
-          <Skeleton className="mb-3 h-20 w-20 rounded-full" />
-          <Skeleton className="mb-2 h-4 w-24" />
-          <Skeleton className="mb-2 h-5 w-16 rounded-full" />
-          <Skeleton className="mb-1 h-3 w-20" />
-          <Skeleton className="h-3 w-16" />
+        <div key={i} className="border-editorial-line bg-editorial-2 flex flex-col items-center rounded-2xl border p-4 sm:p-5">
+          <div className="mb-3 h-20 w-20 animate-pulse rounded-full bg-white/[0.06]" />
+          <div className="mb-2 h-4 w-24 animate-pulse rounded bg-white/[0.06]" />
+          <div className="mb-2 h-5 w-16 animate-pulse rounded-full bg-white/[0.06]" />
+          <div className="mb-1 h-3 w-20 animate-pulse rounded bg-white/[0.06]" />
+          <div className="h-3 w-16 animate-pulse rounded bg-white/[0.06]" />
         </div>
       ))}
     </div>

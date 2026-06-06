@@ -4,7 +4,6 @@ import useSWR from "swr";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { LazyImage } from "@/components/ui/lazy-image";
 
 interface TeamDetail {
@@ -49,7 +48,7 @@ export function EsportTeamDetailContent({ teamId, initialData }: EsportTeamDetai
   if (error || !data?.team) {
     return (
       <div className="flex min-h-[50vh] items-center justify-center">
-        <p className="text-gray-500">{t("loadError")}</p>
+        <p className="text-editorial-muted">{t("loadError")}</p>
       </div>
     );
   }
@@ -57,90 +56,82 @@ export function EsportTeamDetailContent({ teamId, initialData }: EsportTeamDetai
   const team = data.team;
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-      <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
-        <div className="glass-card mb-6 flex flex-col items-center gap-4 rounded-2xl p-6 sm:flex-row sm:items-start sm:p-8">
-          <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-full bg-white/50 dark:bg-gray-700/50">
-            {team.imageUrl ? (
-              <LazyImage
-                src={team.imageUrl}
-                alt={team.name}
-                fill
-                className="object-contain p-2"
-                sizes="96px"
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center">
-                <Icon icon="mdi:shield-account" className="h-12 w-12 text-gray-400" />
-              </div>
-            )}
-          </div>
-          <div className="text-center sm:text-left">
-            <h1 className="text-xl font-bold text-gray-900 sm:text-2xl lg:text-3xl dark:text-white">
-              {team.name}
-            </h1>
-            {team.acronym && (
-              <span className="text-sm text-gray-500 dark:text-gray-400">{team.acronym}</span>
-            )}
-            <div className="mt-2 flex flex-wrap justify-center gap-2 sm:justify-start">
-              {team.game && (
-                <Badge className="bg-palette-primary-100 text-palette-primary-700 dark:bg-palette-primary-900/30 dark:text-palette-primary-300 rounded-full px-3 py-1 text-xs">
-                  {team.game}
-                </Badge>
-              )}
-              {team.location && (
-                <Badge className="rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-600 dark:bg-gray-800 dark:text-gray-400">
-                  <Icon icon="mdi:map-marker" className="mr-1 inline h-3 w-3" />
-                  {team.location}
-                </Badge>
-              )}
+    <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
+      <div className="border-editorial-line bg-editorial-2 mb-6 flex flex-col items-center gap-4 rounded-2xl border p-6 sm:flex-row sm:items-start sm:p-8">
+        <div className="bg-editorial-3 relative h-24 w-24 shrink-0 overflow-hidden rounded-full">
+          {team.imageUrl ? (
+            <LazyImage
+              src={team.imageUrl}
+              alt={team.name}
+              fill
+              className="object-contain p-2"
+              sizes="96px"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center">
+              <Icon icon="mdi:shield-account" className="text-editorial-muted h-12 w-12" />
             </div>
+          )}
+        </div>
+        <div className="text-center sm:text-left">
+          <h1 className="font-display text-xl font-bold tracking-tight text-white sm:text-2xl lg:text-3xl">
+            {team.name}
+          </h1>
+          {team.acronym && <span className="text-editorial-muted text-sm">{team.acronym}</span>}
+          <div className="mt-2 flex flex-wrap justify-center gap-2 sm:justify-start">
+            {team.game && (
+              <Badge className="bg-editorial-accent/15 text-editorial-accent rounded-full px-3 py-1 text-xs">
+                {team.game}
+              </Badge>
+            )}
+            {team.location && (
+              <Badge className="text-editorial-muted rounded-full bg-white/10 px-3 py-1 text-xs">
+                <Icon icon="mdi:map-marker" className="mr-1 inline h-3 w-3" />
+                {team.location}
+              </Badge>
+            )}
           </div>
         </div>
-
-        {team.players.length > 0 && (
-          <div>
-            <h2 className="mb-4 text-lg font-bold text-gray-900 sm:text-xl dark:text-white">
-              {t("roster")}
-            </h2>
-            <div className="xs:grid-cols-2 grid gap-3 sm:grid-cols-3 lg:grid-cols-4">
-              {team.players.map((player) => (
-                <div
-                  key={player.id}
-                  className="glass-card flex items-center gap-3 rounded-xl p-3 sm:p-4"
-                >
-                  <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
-                    {player.imageUrl ? (
-                      <LazyImage
-                        src={player.imageUrl}
-                        alt={player.name}
-                        fill
-                        className="object-cover"
-                        sizes="40px"
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center">
-                        <Icon icon="mdi:account" className="h-5 w-5 text-gray-400" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold text-gray-900 dark:text-white">
-                      {player.name}
-                    </p>
-                    {player.role && (
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{player.role}</p>
-                    )}
-                    {player.nationality && (
-                      <p className="text-xs text-gray-400">{player.nationality}</p>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
+
+      {team.players.length > 0 && (
+        <div>
+          <h2 className="font-display mb-4 text-lg font-bold tracking-tight text-white sm:text-xl">
+            {t("roster")}
+          </h2>
+          <div className="xs:grid-cols-2 grid gap-3 sm:grid-cols-3 lg:grid-cols-4">
+            {team.players.map((player) => (
+              <div
+                key={player.id}
+                className="border-editorial-line bg-editorial-2 flex items-center gap-3 rounded-xl border p-3 sm:p-4"
+              >
+                <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-white/10">
+                  {player.imageUrl ? (
+                    <LazyImage
+                      src={player.imageUrl}
+                      alt={player.name}
+                      fill
+                      className="object-cover"
+                      sizes="40px"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center">
+                      <Icon icon="mdi:account" className="text-editorial-muted h-5 w-5" />
+                    </div>
+                  )}
+                </div>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-white">{player.name}</p>
+                  {player.role && <p className="text-editorial-muted text-xs">{player.role}</p>}
+                  {player.nationality && (
+                    <p className="text-editorial-muted text-xs">{player.nationality}</p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -148,21 +139,21 @@ export function EsportTeamDetailContent({ teamId, initialData }: EsportTeamDetai
 function TeamDetailSkeleton() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-      <div className="glass-card mb-6 flex flex-col items-center gap-4 rounded-2xl p-8 sm:flex-row sm:items-start">
-        <Skeleton className="h-24 w-24 rounded-full" />
+      <div className="border-editorial-line bg-editorial-2 mb-6 flex flex-col items-center gap-4 rounded-2xl border p-8 sm:flex-row sm:items-start">
+        <div className="h-24 w-24 animate-pulse rounded-full bg-white/[0.06]" />
         <div>
-          <Skeleton className="mb-2 h-7 w-48" />
-          <Skeleton className="h-4 w-24" />
+          <div className="mb-2 h-7 w-48 animate-pulse rounded bg-white/[0.06]" />
+          <div className="h-4 w-24 animate-pulse rounded bg-white/[0.06]" />
         </div>
       </div>
-      <Skeleton className="mb-4 h-6 w-32" />
+      <div className="mb-4 h-6 w-32 animate-pulse rounded bg-white/[0.06]" />
       <div className="xs:grid-cols-2 grid gap-3 sm:grid-cols-3 lg:grid-cols-4">
         {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="glass-card flex items-center gap-3 rounded-xl p-4">
-            <Skeleton className="h-10 w-10 rounded-full" />
+          <div key={i} className="border-editorial-line bg-editorial-2 flex items-center gap-3 rounded-xl border p-4">
+            <div className="h-10 w-10 animate-pulse rounded-full bg-white/[0.06]" />
             <div>
-              <Skeleton className="mb-1 h-4 w-20" />
-              <Skeleton className="h-3 w-14" />
+              <div className="mb-1 h-4 w-20 animate-pulse rounded bg-white/[0.06]" />
+              <div className="h-3 w-14 animate-pulse rounded bg-white/[0.06]" />
             </div>
           </div>
         ))}

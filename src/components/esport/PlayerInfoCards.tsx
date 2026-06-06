@@ -13,9 +13,9 @@ export function PlayerAboutCard({ player }: { player: PlayerDetail }) {
   const fullName = [player.firstName, player.lastName].filter(Boolean).join(" ");
 
   return (
-    <section className="glass-card rounded-2xl p-5 sm:p-6">
-      <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white">
-        <Icon icon="mdi:information-outline" className="text-palette-primary-500 h-5 w-5" />
+    <section className="border-editorial-line bg-editorial-2 rounded-2xl border p-5 sm:p-6">
+      <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-white">
+        <Icon icon="mdi:information-outline" className="text-editorial-accent h-5 w-5" />
         {t("about")}
       </h2>
 
@@ -62,14 +62,14 @@ export function PlayerTeamCard({ player }: { player: PlayerDetail }) {
   if (!player.teamName) return null;
 
   return (
-    <section className="glass-card rounded-2xl p-5 sm:p-6">
-      <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white">
-        <Icon icon="mdi:shield-account" className="text-palette-primary-500 h-5 w-5" />
+    <section className="border-editorial-line bg-editorial-2 rounded-2xl border p-5 sm:p-6">
+      <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-white">
+        <Icon icon="mdi:shield-account" className="text-editorial-accent h-5 w-5" />
         {t("currentTeam")}
       </h2>
 
-      <div className="flex items-center gap-4 rounded-xl bg-white/60 p-3 dark:bg-gray-800/40">
-        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-white p-1 shadow-sm dark:bg-gray-700">
+      <div className="bg-editorial-3 flex items-center gap-4 rounded-xl p-3">
+        <div className="bg-editorial-2 relative h-14 w-14 shrink-0 overflow-hidden rounded-xl p-1">
           {player.teamImageUrl ? (
             <LazyImage
               src={player.teamImageUrl}
@@ -80,15 +80,13 @@ export function PlayerTeamCard({ player }: { player: PlayerDetail }) {
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center">
-              <Icon icon="mdi:shield-account" className="h-8 w-8 text-gray-400" />
+              <Icon icon="mdi:shield-account" className="text-editorial-muted h-8 w-8" />
             </div>
           )}
         </div>
         <div className="flex-1">
-          <p className="font-bold text-gray-900 dark:text-white">{player.teamName}</p>
-          {player.game && (
-            <p className="text-xs text-gray-500 dark:text-gray-400">{player.game}</p>
-          )}
+          <p className="font-bold text-white">{player.teamName}</p>
+          {player.game && <p className="text-editorial-muted text-xs">{player.game}</p>}
         </div>
       </div>
     </section>
@@ -108,13 +106,11 @@ function InfoRow({
 }) {
   return (
     <div className="flex items-center justify-between gap-3">
-      <dt className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+      <dt className="text-editorial-muted flex items-center gap-2">
         <Icon icon={icon} className="h-4 w-4" />
         <span>{label}</span>
       </dt>
-      <dd className="text-right font-medium text-gray-900 dark:text-white">
-        {valueNode ?? value}
-      </dd>
+      <dd className="text-right font-medium text-white">{valueNode ?? value}</dd>
     </div>
   );
 }
