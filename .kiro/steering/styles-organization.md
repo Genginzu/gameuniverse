@@ -44,16 +44,71 @@ src/app/
 
 ## Règles obligatoires
 
-### Quand ajouter du CSS
+### Standard éditorial : Tailwind inline par défaut
 
-- ✅ Pour un **nouveau composant éditorial** : créer
-  `src/app/styles/editorial/<nom>.css` et ajouter son `@import` dans
-  `globals.css`.
-- ✅ Pour un **nouvel utilitaire global** non couvert par Tailwind (animation
-  custom, scrollbar, etc.) : `src/app/styles/<nom>.css`.
-- ✅ Pour un **nouveau token de design** (couleur, spacing, font) : ajouter dans
-  `@theme` (utilities Tailwind) ou `:root` / `.dark` (variables CSS). **Ne
-  jamais** dans un module importé.
+> **Standard depuis le dashboard (`/dashboard`, page de référence).**
+> La migration des pages éditoriales antérieures (encore en CSS module) se
+> fait progressivement.
+
+Les composants éditoriaux s'écrivent en **Tailwind inline**, pas en classes
+`.editorial-*` dans des modules CSS. La réutilisation passe par des
+**composants React** partagés (ex `KickerLabel`, `GameCard`) et par des
+**tokens `@theme`**, pas par des classes CSS sémantiques.
+
+Les tokens éditoriaux sont exposés comme utilities Tailwind dans `@theme` :
+
+| Utility Tailwind        | Token source                                  |
+| ----------------------- | --------------------------------------------- |
+| `bg-editorial-bg`       | `--editorial-bg`                              |
+| `bg-editorial-2`        | `--editorial-bg-2`                            |
+| `bg-editorial-3`        | `--editorial-bg-3`                            |
+| `border-editorial-line` | `--editorial-line`                            |
+| `text-editorial-muted`  | `--editorial-muted`                           |
+| `text-editorial-accent` | `rgb(var(--accent-rgb, var(--neon-primary)))` |
+
+- ✅ Surfaces sombres → `bg-editorial-2` / `bg-editorial-3`, bordures
+  `border-editorial-line`, texte secondaire `text-editorial-muted`, accent
+  dynamique `text-editorial-accent` / `bg-editorial-accent/15`.
+- ✅ Titre display → `font-display` + `text-[clamp(...)]`.
+- ✅ Factoriser la répétition en **sous-composants React**, jamais en classes
+  `.editorial-*`.
+
+### Skeletons : design éditorial obligatoire
+
+Tout skeleton (état de chargement) affiché sur une page **refondue/éditoriale**
+doit adopter la direction artistique éditoriale sombre dès le **premier paint**.
+Aucun skeleton ne doit apparaître blanc/clair puis basculer en sombre.
+
+- ✅ Surfaces sombres via tokens éditoriaux (`bg-editorial-2` / `bg-editorial-3`,
+  bordures `border-editorial-line`) ou blocs en transparence blanche
+  (`bg-white/[0.06]` à `bg-white/10`) qui ne dépendent **pas** du thème.
+- ✅ Réutiliser les classes skeleton éditoriales existantes quand elles
+  conviennent (`.editorial-card-skeleton`, `.editorial-*-skeleton`).
+- ❌ Ne **jamais** utiliser de couleurs claires/dépendantes du thème dans un
+  skeleton éditorial : `bg-white` opaque, `bg-gray-*`, `bg-slate-*`,
+  `bg-muted` (le `Skeleton` de base `@/components/ui/skeleton`), `.glass-card`,
+  ni de gradient clair (`from-slate-50`, `from-blue-50`…).
+- ⚠️ Un composant skeleton **partagé** avec des pages legacy (ex `EntitySkeleton`,
+  `GridSkeleton`) ne doit pas être modifié globalement : neutraliser les surfaces
+  claires via un override scopé au conteneur éditorial racine
+  (`.editorial-layout-main`) plutôt qu'en touchant le composant partagé.
+
+### Quand un module CSS reste justifié
+
+Réservé à ce que Tailwind ne sait **pas** exprimer proprement inline :
+
+- ✅ `@keyframes` + animations custom (scanlines, scan, breath, marquee…).
+- ✅ Gradients animés complexes, effets multi-couches, `prefers-reduced-motion`.
+- ✅ Un **nouvel utilitaire global** non couvert par Tailwind
+  (`src/app/styles/<nom>.css`).
+- ❌ Ne **plus** créer de module `src/app/styles/editorial/<nom>.css` pour le
+  simple layout/couleur d'un composant : utiliser Tailwind inline.
+
+### Tokens de design
+
+- ✅ Pour un **nouveau token** (couleur, spacing, font) : ajouter dans `@theme`
+  (utilities Tailwind) ou `:root` / `.dark` (variables CSS). **Ne jamais** dans
+  un module importé.
 
 ### Contraintes Tailwind v4 + Turbopack
 
