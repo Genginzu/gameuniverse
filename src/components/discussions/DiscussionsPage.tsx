@@ -94,10 +94,8 @@ export default function DiscussionsPage() {
     <div className="flex h-full flex-col gap-6 p-4 md:p-6" data-testid="discussions-page">
       {/* Page header */}
       <div>
-        <h1 className="neon-text text-2xl font-bold text-slate-900 dark:text-white">
-          {t("pageTitle")}
-        </h1>
-        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{t("pageSubtitle")}</p>
+        <h1 className="font-display text-2xl font-bold text-white">{t("pageTitle")}</h1>
+        <p className="text-editorial-muted mt-1 text-sm">{t("pageSubtitle")}</p>
       </div>
 
       {/* Split layout */}
@@ -129,23 +127,23 @@ export default function DiscussionsPage() {
           </div>
 
           {selectedConversationId && user ? (
-            <div className="glass-card flex flex-1 flex-col rounded-2xl">
+            <div className="border-editorial-line bg-editorial-2 flex flex-1 flex-col rounded-2xl border">
               {/* Thread header */}
               {selectedConversation && (
-                <div className="flex items-center gap-3 border-b border-white/20 px-4 py-3 md:px-5 md:py-4 dark:border-slate-700/50">
+                <div className="border-editorial-line flex items-center gap-3 border-b px-4 py-3 md:px-5 md:py-4">
                   {/* Back button — mobile only */}
                   <button
                     type="button"
                     onClick={handleBackToList}
-                    className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl transition-colors hover:bg-white/30 md:hidden dark:hover:bg-slate-700/50"
+                    className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl transition-colors hover:bg-white/10 md:hidden"
                     aria-label={t("backToConversations")}
                   >
                     <Icon
                       icon="lucide:arrow-left"
-                      className="h-5 w-5 text-slate-600 dark:text-slate-300"
+                      className="text-editorial-muted h-5 w-5"
                     />
                   </button>
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-linear-to-br from-blue-500/30 via-purple-600/30 to-purple-700/30">
+                  <div className="bg-editorial-3 flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full">
                     {selectedConversation.friend.avatarUrl ? (
                       <LazyImage
                         src={selectedConversation.friend.avatarUrl}
@@ -156,10 +154,10 @@ export default function DiscussionsPage() {
                         showSkeleton
                       />
                     ) : (
-                      <Icon icon="lucide:user" className="text-neon-primary h-4 w-4" />
+                      <Icon icon="lucide:user" className="text-editorial-accent h-4 w-4" />
                     )}
                   </div>
-                  <span className="text-sm font-semibold text-slate-900 dark:text-white">
+                  <span className="text-sm font-semibold text-white">
                     {selectedConversation.friend.displayName}
                   </span>
                 </div>
@@ -177,7 +175,7 @@ export default function DiscussionsPage() {
               </div>
 
               {/* Input */}
-              <div className="border-t border-white/20 px-3 py-2 md:px-4 md:py-3 dark:border-slate-700/50">
+              <div className="border-editorial-line border-t px-3 py-2 md:px-4 md:py-3">
                 <MessageInput onSend={sendMessage} isSending={isSending} maxLength={2000} />
               </div>
             </div>

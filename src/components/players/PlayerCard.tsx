@@ -19,7 +19,7 @@ export function PlayerCard({ player, locale: _locale = "fr", priority = false }:
 
   return (
     <Link href={`/players/${player.id}`} className="group block">
-      <div className="relative overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:scale-[1.02] hover:shadow-xl dark:bg-gray-800">
+      <div className="border-editorial-line bg-editorial-2 hover:border-editorial-accent/50 relative overflow-hidden rounded-2xl border shadow-md transition-all duration-300 hover:scale-[1.02]">
         {/* Banner */}
         {player.bannerUrl ? (
           <div className="relative h-20">
@@ -34,13 +34,13 @@ export function PlayerCard({ player, locale: _locale = "fr", priority = false }:
             />
           </div>
         ) : (
-          <div className="h-20 bg-linear-to-r from-[#615dfa] via-[#5b36d4] to-[#7c5cfc]" />
+          <div className="from-editorial-accent/30 to-editorial-accent/5 h-20 bg-gradient-to-r" />
         )}
 
         {/* Avatar with level badge */}
         <div className="relative z-10 -mt-12 flex justify-center">
           <div className="relative">
-            <div className="h-20 w-20 overflow-hidden rounded-2xl border-4 border-white bg-linear-to-br from-blue-100 to-indigo-100 shadow-lg dark:border-gray-800 dark:from-blue-900/30 dark:to-indigo-900/30">
+            <div className="border-editorial-bg bg-editorial-3 h-20 w-20 overflow-hidden rounded-2xl border-4 shadow-lg">
               {player.avatarUrl ? (
                 <LazyImage
                   src={player.avatarUrl}
@@ -53,13 +53,13 @@ export function PlayerCard({ player, locale: _locale = "fr", priority = false }:
                 />
               ) : (
                 <div className="flex h-full w-full items-center justify-center">
-                  <Icon icon="lucide:user" className="h-8 w-8 text-blue-300" />
+                  <Icon icon="lucide:user" className="text-editorial-muted h-8 w-8" />
                 </div>
               )}
             </div>
             {/* Level badge */}
             {player.level > 0 && (
-              <span className="absolute -right-1 -bottom-1 flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-bold text-white shadow-sm ring-2 ring-white dark:ring-gray-800">
+              <span className="bg-editorial-accent ring-editorial-bg absolute -right-1 -bottom-1 flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-bold text-white shadow-sm ring-2">
                 {player.level}
               </span>
             )}
@@ -68,10 +68,12 @@ export function PlayerCard({ player, locale: _locale = "fr", priority = false }:
 
         {/* Name */}
         <div className="px-4 pt-3 text-center">
-          <h3 className="line-clamp-1 text-sm font-semibold text-gray-900 group-hover:text-indigo-600 dark:text-white dark:group-hover:text-indigo-400">
+          <h3 className="group-hover:text-editorial-accent line-clamp-1 text-sm font-semibold text-white">
             {displayName}
           </h3>
-          {player.fullName && <p className="mt-0.5 text-xs text-gray-400">@{player.fullName}</p>}
+          {player.fullName && (
+            <p className="text-editorial-muted mt-0.5 text-xs">@{player.fullName}</p>
+          )}
         </div>
 
         {/* Stats row */}
@@ -103,11 +105,11 @@ function PlayerCardStats({
   ];
 
   return (
-    <div className="my-3 flex justify-center gap-6 border-y border-gray-100 py-3 dark:border-gray-700">
+    <div className="border-editorial-line my-3 flex justify-center gap-6 border-y py-3">
       {stats.map((s) => (
         <div key={s.label} className="text-center">
-          <p className="text-sm font-bold text-gray-900 dark:text-white">{s.value}</p>
-          <p className="text-[10px] font-semibold tracking-wider text-gray-400 uppercase">
+          <p className="text-sm font-bold text-white">{s.value}</p>
+          <p className="text-editorial-muted text-[10px] font-semibold tracking-wider uppercase">
             {s.label}
           </p>
         </div>

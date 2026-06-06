@@ -547,3 +547,11 @@
 .editorial-layout-main [class*="bg-slate-700"] {
   background-color: rgba(255, 255, 255, 0.08) !important;
 }
+
+/* Dégradés clairs des skeletons « player » (image section gradient bleu/indigo
+ * via EntitySkeleton useGradientBackground) -> surface sombre neutre. */
+.editorial-layout-main [class*="from-blue-100"],
+.editorial-layout-main [class*="from-indigo-100"] {
+  background-image: none !important;
+  background-color: rgba(255, 255, 255, 0.06) !important;
+}

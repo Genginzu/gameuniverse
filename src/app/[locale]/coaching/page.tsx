@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { CoachingHubContent } from "@/components/coaching/CoachingHubContent";
-import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
+import { EditorialShell } from "@/components/layout/editorial/EditorialShell";
 
 interface Props {
   params: Promise<{ locale: string }>;
@@ -15,8 +15,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default function CoachingHubPage() {
   return (
-    <DashboardLayout>
-      <CoachingHubContent />
-    </DashboardLayout>
+    <EditorialShell>
+      <div className="editorial-coaching">
+        <CoachingHubContent />
+      </div>
+    </EditorialShell>
   );
 }

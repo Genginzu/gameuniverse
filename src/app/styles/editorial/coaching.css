@@ -1,0 +1,107 @@
+/*
+ * Editorial : pages Coaching (hub, sessions, settings, profil public).
+ *
+ * Wrapper minimal-touch `.editorial-coaching` qui pose le fond sombre éditorial
+ * et neutralise les surfaces glassmorphism legacy des composants
+ * `src/components/coaching/*` (glass-card, glass-input, bg-white/*, badges
+ * gris, backdrop-blur, dégradés clairs) sans réécrire chaque composant.
+ * Même approche que `.editorial-esport`. Pas de blur.
+ */
+
+.editorial-coaching {
+  min-height: 100vh;
+  background: var(--editorial-bg);
+  color: #fff;
+}
+
+/* Fond de page legacy (dégradé clair from-slate-50) -> transparent. */
+.editorial-coaching [class*="from-slate-50"],
+.editorial-coaching [class*="from-blue-50"],
+.editorial-coaching [class*="from-indigo-50"] {
+  background-image: none !important;
+}
+
+/* ===== Cards / sections glass -> surfaces sombres bordées ===== */
+.editorial-coaching .glass-card {
+  background: var(--editorial-bg-3);
+  border: 1px solid var(--editorial-line);
+  backdrop-filter: none;
+  color: #fff;
+  transition:
+    border-color 150ms ease,
+    box-shadow 200ms ease;
+}
+
+.editorial-coaching .glass-card:hover {
+  border-color: rgba(var(--accent-rgb, var(--neon-primary)), 0.4);
+  box-shadow: 0 8px 24px -12px rgba(var(--accent-rgb, var(--neon-primary)), 0.25);
+}
+
+/* ===== Inputs glass -> input sombre ===== */
+.editorial-coaching .glass-input,
+.editorial-coaching .glass {
+  background: var(--editorial-bg-2);
+  border: 1px solid var(--editorial-line);
+  color: #fff;
+  backdrop-filter: none;
+}
+
+.editorial-coaching .glass-input::placeholder {
+  color: var(--editorial-muted);
+}
+
+.editorial-coaching .glass-input:focus,
+.editorial-coaching .glass-input:focus-visible {
+  outline: none;
+  border-color: rgb(var(--accent-rgb, var(--neon-primary)));
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb, var(--neon-primary)), 0.15);
+}
+
+/* ===== Surfaces blanches internes -> sombres ===== */
+.editorial-coaching :not(button)[class*="bg-white"],
+.editorial-coaching button[class*="bg-white"] {
+  background-color: var(--editorial-bg-2) !important;
+}
+
+/* ===== Badges / surfaces grises claires -> surface subtile ===== */
+.editorial-coaching [class*="bg-gray-50"],
+.editorial-coaching [class*="bg-gray-100"],
+.editorial-coaching [class*="bg-gray-200"],
+.editorial-coaching [class*="bg-slate-50"],
+.editorial-coaching [class*="bg-slate-100"],
+.editorial-coaching [class*="bg-slate-200"] {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* ===== Bordures legacy claires -> ligne éditoriale ===== */
+.editorial-coaching [class*="border-gray-200"],
+.editorial-coaching [class*="border-slate-200"] {
+  border-color: var(--editorial-line) !important;
+}
+
+/* ===== Plus de blur ===== */
+.editorial-coaching [class*="backdrop-blur"] {
+  backdrop-filter: none !important;
+}
+
+/* ===== Textes legacy mode clair -> clair / muted ===== */
+.editorial-coaching .text-gray-900,
+.editorial-coaching .text-slate-900 {
+  color: #fff;
+}
+
+.editorial-coaching .text-gray-700,
+.editorial-coaching .text-gray-800,
+.editorial-coaching .text-slate-700,
+.editorial-coaching .text-slate-800 {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.editorial-coaching .text-gray-400,
+.editorial-coaching .text-gray-500,
+.editorial-coaching .text-gray-600,
+.editorial-coaching .text-slate-400,
+.editorial-coaching .text-slate-500,
+.editorial-coaching .text-slate-600 {
+  color: var(--editorial-muted);
+}

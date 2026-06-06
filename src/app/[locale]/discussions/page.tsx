@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
+import { EditorialShell } from "@/components/layout/editorial/EditorialShell";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
 import DiscussionsPage from "@/components/discussions/DiscussionsPage";
@@ -27,7 +27,7 @@ export default async function DiscussionsPageRoute({ params }: DiscussionsPagePr
   const t = await getTranslations({ locale, namespace: "discussions" });
 
   return (
-    <DashboardLayout>
+    <EditorialShell>
       <ErrorBoundary
         fallback={
           <ErrorFallback description={t("pageTitle")} showRefresh={true} showHomeButton={true} />
@@ -35,6 +35,6 @@ export default async function DiscussionsPageRoute({ params }: DiscussionsPagePr
       >
         <DiscussionsPage />
       </ErrorBoundary>
-    </DashboardLayout>
+    </EditorialShell>
   );
 }

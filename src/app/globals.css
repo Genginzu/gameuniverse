@@ -42,6 +42,7 @@
 @import "./styles/editorial/recommendations.css";
 @import "./styles/editorial/player-tabs.css";
 @import "./styles/editorial/esport.css";
+@import "./styles/editorial/coaching.css";
 
 @custom-variant dark (&:is(.dark *));
 
