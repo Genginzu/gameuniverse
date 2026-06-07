@@ -291,7 +291,7 @@ describe("GamesListingEditorial", () => {
     it("flags revalidation via the data-revalidating attribute on the content wrapper", () => {
       setHookDefaults({ validating: true, loading: false });
       const { container } = render(<GamesListingEditorial />);
-      const content = container.querySelector(".editorial-games-listing-content");
+      const content = container.querySelector("[data-revalidating]");
       expect(content?.getAttribute("data-revalidating")).toBe("true");
     });
   });
