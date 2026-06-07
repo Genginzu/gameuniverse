@@ -1,46 +1,44 @@
-"use client";
+/**
+ * Skeleton de chargement de la page bibliothèque (look éditorial).
+ * Reproduit le hero (titre + stats inline) + barre de recherche +
+ * grille de cartes. Style Tailwind inline.
+ */
 
-import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { GridSkeleton } from "@/components/shared/GridSkeleton";
 import { gameSkeletonConfig } from "@/components/shared/EntitySkeleton";
 
-/** Skeleton fidèle au layout réel : stats cards + search bar + grille */
+const PULSE = "animate-pulse rounded bg-white/10";
+
 export function LibraryPageSkeleton() {
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
-        {/* Stats Cards Skeleton — 4 cartes identiques au layout réel */}
-        <div className="mb-6 grid grid-cols-2 gap-4 sm:mb-8 sm:gap-6 md:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <Card key={index} className="rounded-2xl bg-white dark:bg-gray-800">
-              <CardHeader className="pb-3">
-                <div className="flex items-center">
-                  <Skeleton className="h-9 w-9 rounded-lg" />
-                  <div className="ml-3">
-                    <Skeleton className="h-4 w-24" />
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <Skeleton className="mb-1 h-7 w-14" />
-                <Skeleton className="h-3 w-20" />
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Search bar + filter button skeleton */}
-        <div className="mb-6 space-y-4 sm:mb-8">
-          <div className="flex flex-col gap-4 sm:flex-row">
-            <Skeleton className="h-12 flex-1 rounded-xl" />
-            <Skeleton className="h-12 w-12 shrink-0 rounded-xl sm:w-28" />
+    <section className="w-full">
+      <div className="mx-auto max-w-[1536px] px-4 pt-8 pb-16 md:px-8 md:pt-12 md:pb-20">
+        {/* Hero placeholder */}
+        <header className="mb-12 grid grid-cols-1 gap-4 lg:grid-cols-[5fr_7fr] lg:items-end lg:gap-12">
+          <div>
+            <div className={`mb-3 h-3 w-24 ${PULSE}`} />
+            <div className={`mb-3 h-12 w-3/4 max-w-md ${PULSE}`} />
+            <div className={`h-4 w-full max-w-lg ${PULSE}`} />
           </div>
+          <div className="border-editorial-line grid grid-cols-2 gap-6 border-y py-6 md:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i}>
+                <div className={`mb-2 h-8 w-16 ${PULSE}`} />
+                <div className={`h-3 w-20 ${PULSE}`} />
+              </div>
+            ))}
+          </div>
+        </header>
+
+        {/* Controls placeholder */}
+        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className={`h-12 flex-1 rounded-xl ${PULSE}`} />
+          <div className={`h-12 w-12 shrink-0 rounded-xl sm:w-32 ${PULSE}`} />
         </div>
 
-        {/* Game cards grid skeleton */}
+        {/* Grid placeholder */}
         <GridSkeleton skeletonConfig={gameSkeletonConfig} count={20} />
       </div>
-    </div>
+    </section>
   );
 }

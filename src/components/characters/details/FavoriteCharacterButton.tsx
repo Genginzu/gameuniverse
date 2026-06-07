@@ -25,7 +25,7 @@ export function FavoriteCharacterButton({ characterSlug }: FavoriteCharacterButt
   // Skeleton pendant le chargement initial
   if (isLoading) {
     return (
-      <div className="flex items-center gap-1.5 rounded-md bg-slate-900/60 px-3 py-1.5 backdrop-blur-xs">
+      <div className="border-editorial-line bg-editorial-2 flex items-center gap-1.5 rounded-md border px-3 py-1.5">
         <Skeleton className="h-4 w-4 rounded-full" />
         <Skeleton className="h-4 w-5" />
       </div>
@@ -36,8 +36,8 @@ export function FavoriteCharacterButton({ characterSlug }: FavoriteCharacterButt
     <Button
       variant="ghost"
       size="sm"
-      className={`cursor-pointer bg-slate-900/60 backdrop-blur-xs hover:bg-slate-900/80 hover:text-white ${
-        isFavorite ? "text-red-400" : "text-slate-300"
+      className={`border-editorial-line bg-editorial-2 cursor-pointer border hover:bg-white/[0.06] hover:text-white ${
+        isFavorite ? "text-red-400" : "text-editorial-muted"
       }`}
       onClick={toggleFavorite}
       disabled={isToggling}

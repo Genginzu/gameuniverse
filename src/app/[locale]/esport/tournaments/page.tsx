@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
+import { EsportShell } from "@/components/esport/EsportShell";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
 import { EsportTournamentsContent, type EsportTournamentsData } from "@/components/esport/EsportTournamentsContent";
@@ -34,7 +34,7 @@ export default async function EsportTournamentsPage() {
   }
 
   return (
-    <DashboardLayout>
+    <EsportShell>
       <ErrorBoundary
         fallback={
           <ErrorFallback
@@ -46,6 +46,6 @@ export default async function EsportTournamentsPage() {
       >
         <EsportTournamentsContent initialData={initialData} />
       </ErrorBoundary>
-    </DashboardLayout>
+    </EsportShell>
   );
 }

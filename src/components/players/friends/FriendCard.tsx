@@ -46,10 +46,10 @@ export function FriendCard({ friend, locale: _locale, onRemove }: FriendCardProp
   };
 
   return (
-    <div className="group flex items-center rounded-xl border border-gray-200 bg-white p-3 transition-all hover:shadow-md dark:border-slate-700/50 dark:bg-slate-800/50 dark:hover:bg-slate-800">
+    <div className="border-editorial-line bg-editorial-3 group flex items-center rounded-[0.875rem] border p-3 text-white transition hover:border-[rgba(var(--accent-rgb,var(--neon-primary)),0.4)] hover:shadow-[0_8px_24px_-12px_rgba(var(--accent-rgb,var(--neon-primary)),0.25)]">
       <Link href={`/players/${friend.id}`} className="flex min-w-0 flex-1 items-center gap-3">
         {/* Avatar */}
-        <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-linear-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30">
+        <div className="bg-editorial-accent/[0.18] text-editorial-accent relative size-10 flex-shrink-0 overflow-hidden rounded-full">
           {friend.avatarUrl ? (
             <LazyImage
               src={friend.avatarUrl}
@@ -61,21 +61,21 @@ export function FriendCard({ friend, locale: _locale, onRemove }: FriendCardProp
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center">
-              <Icon icon="lucide:user" className="h-5 w-5 text-blue-300" />
+              <Icon icon="lucide:user" className="h-5 w-5" aria-hidden="true" />
             </div>
           )}
         </div>
 
         {/* Name */}
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold text-gray-900 group-hover:text-indigo-600 dark:text-white dark:group-hover:text-indigo-400">
+          <p className="group-hover:text-editorial-accent m-0 truncate text-sm font-semibold text-white transition-colors">
             {friend.displayName}
           </p>
         </div>
 
         {/* Level badge */}
         {friend.level > 0 && (
-          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-indigo-600 text-[10px] font-bold text-white">
+          <span className="flex size-6 flex-shrink-0 items-center justify-center rounded-full bg-[rgb(var(--accent-rgb,var(--neon-primary)))] text-[0.65rem] font-bold text-[#0a0418]">
             {friend.level}
           </span>
         )}
@@ -88,10 +88,10 @@ export function FriendCard({ friend, locale: _locale, onRemove }: FriendCardProp
           type="button"
           onClick={handleClick}
           disabled={isRemoving}
-          className={`ml-2 shrink-0 rounded-lg transition-all duration-200 disabled:opacity-50 ${
+          className={`ml-2 flex-shrink-0 rounded-lg transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-500 disabled:cursor-not-allowed disabled:opacity-50 ${
             confirming
-              ? "bg-red-600 px-3 py-1 text-xs font-medium text-white hover:bg-red-700"
-              : "p-1.5 text-gray-400 hover:bg-red-50 hover:text-red-500 dark:text-slate-500 dark:hover:bg-red-900/20 dark:hover:text-red-400"
+              ? "bg-red-600/90 px-3 py-1 text-[0.7rem] font-semibold text-white hover:bg-red-700"
+              : "text-editorial-muted p-1.5 hover:bg-red-600/12 hover:text-red-300"
           }`}
           aria-label={confirming ? t("confirmRemoveConfirm") : t("removeFriend")}
         >
@@ -102,7 +102,7 @@ export function FriendCard({ friend, locale: _locale, onRemove }: FriendCardProp
               t("confirmRemoveConfirm")
             )
           ) : (
-            <Icon icon="lucide:user-minus" className="h-4 w-4" />
+            <Icon icon="lucide:user-minus" className="h-4 w-4" aria-hidden="true" />
           )}
         </button>
       )}

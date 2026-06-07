@@ -45,7 +45,7 @@ export function PriceHistoryTab({ gameSlug, currentPrice }: PriceHistoryTabProps
           {Array.from({ length: 3 }).map((_, i) => (
             <Card
               key={i}
-              className="rounded-xl border-white/10 bg-white/5 shadow-lg shadow-black/20 backdrop-blur-xl"
+              className="rounded-xl border border-[var(--editorial-line)] bg-[var(--editorial-bg-2)]"
             >
               <CardContent className="p-4">
                 <Skeleton className="mb-2 h-4 w-24" />
@@ -62,7 +62,7 @@ export function PriceHistoryTab({ gameSlug, currentPrice }: PriceHistoryTabProps
   // Error state — message with retry button
   if (error) {
     return (
-      <Card className="rounded-xl border-white/10 bg-white/5 shadow-lg shadow-black/20 backdrop-blur-xl">
+      <Card className="rounded-xl border border-[var(--editorial-line)] bg-[var(--editorial-bg-2)]">
         <CardContent className="flex flex-col items-center gap-3 p-8 text-center">
           <Icon icon="lucide:alert-circle" className="h-8 w-8 text-red-400" />
           <p className="text-sm text-slate-400">Impossible de charger l&apos;historique de prix.</p>
@@ -77,7 +77,7 @@ export function PriceHistoryTab({ gameSlug, currentPrice }: PriceHistoryTabProps
   // Empty state — no history available
   if (history.length === 0) {
     return (
-      <Card className="rounded-xl border-white/10 bg-white/5 shadow-lg shadow-black/20 backdrop-blur-xl">
+      <Card className="rounded-xl border border-[var(--editorial-line)] bg-[var(--editorial-bg-2)]">
         <CardContent className="flex flex-col items-center gap-2 p-8 text-center">
           <Icon icon="lucide:bar-chart-3" className="h-8 w-8 text-slate-400" />
           <p className="text-sm text-slate-400">Aucun historique de prix disponible pour ce jeu.</p>

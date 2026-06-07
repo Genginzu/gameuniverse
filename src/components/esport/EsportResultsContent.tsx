@@ -5,7 +5,6 @@ import useSWR from "swr";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { FilterChip } from "@/components/shared/FilterChip";
 
@@ -62,37 +61,35 @@ export function EsportResultsContent({ initialData }: EsportResultsContentProps)
   );
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
-        {games.length > 0 && (
-          <div className="mb-6 flex flex-wrap gap-2">
-            {games.map((game) => (
-              <FilterChip
-                key={game}
-                label={game}
-                selected={selectedGame === game}
-                onClick={() => handleGameFilter(game)}
-              />
-            ))}
-          </div>
-        )}
+    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
+      {games.length > 0 && (
+        <div className="mb-6 flex flex-wrap gap-2">
+          {games.map((game) => (
+            <FilterChip
+              key={game}
+              label={game}
+              selected={selectedGame === game}
+              onClick={() => handleGameFilter(game)}
+            />
+          ))}
+        </div>
+      )}
 
-        {isLoading && matches.length === 0 ? (
-          <ResultsSkeleton />
-        ) : matches.length === 0 ? (
-          <EmptyState
-            icon="mdi:scoreboard"
-            title={t("noResults")}
-            description={t("noResultsDescription")}
-          />
-        ) : (
-          <div className="space-y-3">
-            {matches.map((match) => (
-              <MatchCard key={match.id} match={match} />
-            ))}
-          </div>
-        )}
-      </div>
+      {isLoading && matches.length === 0 ? (
+        <ResultsSkeleton />
+      ) : matches.length === 0 ? (
+        <EmptyState
+          icon="mdi:scoreboard"
+          title={t("noResults")}
+          description={t("noResultsDescription")}
+        />
+      ) : (
+        <div className="space-y-3">
+          {matches.map((match) => (
+            <MatchCard key={match.id} match={match} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -113,8 +110,8 @@ function MatchCard({ match }: { match: ResultMatch }) {
   const [teamA, teamB] = match.opponents;
 
   return (
-    <div className="glass-card rounded-2xl p-4 transition-all duration-300 hover:shadow-lg sm:p-5">
-      <div className="mb-2 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+    <div className="border-editorial-line bg-editorial-2 hover:border-editorial-accent/50 rounded-2xl border p-4 transition-all duration-300 sm:p-5">
+      <div className="text-editorial-muted mb-2 flex items-center justify-between text-xs">
         <span className="flex items-center gap-1">
           <Icon icon="mdi:gamepad-variant" className="h-3.5 w-3.5" />
           {match.game}
@@ -122,22 +119,22 @@ function MatchCard({ match }: { match: ResultMatch }) {
         <span>{formatDate(match.beginAt)}</span>
       </div>
 
-      <p className="mb-3 text-xs text-gray-400 dark:text-gray-500">
+      <p className="text-editorial-muted mb-3 text-xs">
         {match.league} · {match.tournament}
       </p>
 
       {teamA && teamB ? (
         <div className="flex items-center justify-between gap-3">
           <TeamScore team={teamA} isWinner={teamA.score > teamB.score} />
-          <span className="text-xs font-bold text-gray-400">VS</span>
+          <span className="text-editorial-muted text-xs font-bold">VS</span>
           <TeamScore team={teamB} isWinner={teamB.score > teamA.score} align="right" />
         </div>
       ) : (
-        <p className="text-sm text-gray-500">{match.name}</p>
+        <p className="text-editorial-muted text-sm">{match.name}</p>
       )}
 
       <div className="mt-2">
-        <Badge className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600 dark:bg-gray-800 dark:text-gray-400">
+        <Badge className="text-editorial-muted rounded-full bg-white/10 px-2 py-0.5 text-xs">
           {t("finished")}
         </Badge>
       </div>
@@ -159,15 +156,13 @@ function TeamScore({
       className={`flex flex-1 items-center gap-2 ${align === "right" ? "flex-row-reverse text-right" : ""}`}
     >
       <span
-        className={`text-sm font-semibold ${isWinner ? "text-green-600 dark:text-green-400" : "text-gray-700 dark:text-gray-300"}`}
+        className={`text-sm font-semibold ${isWinner ? "text-emerald-300" : "text-white/80"}`}
       >
         {team.name}
       </span>
       <span
         className={`rounded-lg px-2 py-0.5 text-sm font-bold ${
-          isWinner
-            ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-            : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
+          isWinner ? "bg-emerald-500/15 text-emerald-300" : "text-editorial-muted bg-white/10"
         }`}
       >
         {team.score}
@@ -180,13 +175,13 @@ function ResultsSkeleton() {
   return (
     <div className="space-y-3">
       {Array.from({ length: 5 }).map((_, i) => (
-        <div key={i} className="glass-card rounded-2xl p-5">
-          <Skeleton className="mb-2 h-3 w-1/4" />
-          <Skeleton className="mb-3 h-3 w-1/3" />
+        <div key={i} className="border-editorial-line bg-editorial-2 rounded-2xl border p-5">
+          <div className="mb-2 h-3 w-1/4 animate-pulse rounded bg-white/[0.06]" />
+          <div className="mb-3 h-3 w-1/3 animate-pulse rounded bg-white/[0.06]" />
           <div className="flex items-center justify-between">
-            <Skeleton className="h-5 w-1/3" />
-            <Skeleton className="h-4 w-8" />
-            <Skeleton className="h-5 w-1/3" />
+            <div className="h-5 w-1/3 animate-pulse rounded bg-white/[0.06]" />
+            <div className="h-4 w-8 animate-pulse rounded bg-white/[0.06]" />
+            <div className="h-5 w-1/3 animate-pulse rounded bg-white/[0.06]" />
           </div>
         </div>
       ))}

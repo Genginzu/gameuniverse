@@ -1,0 +1,404 @@
+﻿/* Glassmorphism legacy (.glass-*) + Vikinger admin (.topbar, .dashboard-bg, scrollbar, cursor pointer global). Suppression aprÃ¨s refonte admin. Voir docs/setup/styles-organization.md */
+
+/* ===== Glassmorphism Design System ===== */
+/*
+ * @deprecated Pour les pages éditoriales refondues (cf F0-13 / issue #258).
+ *
+ * Les classes .glass, .glass-card, .glass-header, .glass-sidebar,
+ * .glass-dropdown, .glass-input, .glass-overlay, .glass-nav-active et
+ * .glass-nav-hover ci-dessous **ne doivent plus être utilisées** dans les
+ * nouveaux composants. La direction artistique de la refonte éditoriale
+ * (Imba-inspired) retire le glassmorphism : pas de `backdrop-blur`, fonds
+ * opaques `--editorial-bg` / `--editorial-bg-2`, bordures fines via
+ * `--editorial-line`. Voir :
+ *
+ *   - docs/design/editorial-refonte-plan.md (section 3 « Glassmorphism : retrait »)
+ *   - docs/design/editorial-components.md (composants de remplacement)
+ *
+ * Ces classes sont **conservées** pour le moment car elles sont encore
+ * utilisées par /admin et par d'anciennes pages publiques non encore
+ * refondues. La suppression définitive aura lieu après la refonte de
+ * l'admin (hors scope de cette milestone).
+ */
+
+/* @deprecated Base glass utility */
+.glass {
+  position: relative;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(var(--neon-primary), var(--neon-border-opacity));
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: 1rem;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 0 15px rgba(var(--neon-primary), var(--neon-glow-opacity)),
+    0 0 30px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.5));
+  transition:
+    box-shadow 200ms ease,
+    border-color 200ms ease;
+}
+
+.glass:hover {
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 0 20px rgba(var(--neon-primary), calc(var(--neon-glow-opacity) * 1.5)),
+    0 0 40px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.8));
+}
+
+.dark .glass {
+  border: 1px solid rgba(var(--neon-primary), var(--neon-border-opacity));
+  background: rgba(15, 23, 42, 0.5);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 0 15px rgba(var(--neon-primary), var(--neon-glow-opacity)),
+    0 0 30px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.5));
+}
+
+.dark .glass:hover {
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 0 20px rgba(var(--neon-primary), calc(var(--neon-glow-opacity) * 1.5)),
+    0 0 40px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.8));
+}
+
+/* @deprecated Glass card */
+.glass-card {
+  position: relative;
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(var(--neon-primary), var(--neon-border-opacity));
+  background: rgba(255, 255, 255, 0.4);
+  border-radius: 1rem;
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.04),
+    0 1px 2px rgba(0, 0, 0, 0.03),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 0 15px rgba(var(--neon-primary), var(--neon-glow-opacity)),
+    0 0 30px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.5));
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.08),
+    0 2px 4px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 0 20px rgba(var(--neon-primary), calc(var(--neon-glow-opacity) * 1.5)),
+    0 0 40px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.8));
+  transform: translateY(-1px);
+}
+
+.dark .glass-card {
+  border: 1px solid rgba(var(--neon-primary), var(--neon-border-opacity));
+  background: rgba(30, 41, 59, 0.4);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 0 15px rgba(var(--neon-primary), var(--neon-glow-opacity)),
+    0 0 30px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.5));
+}
+
+.dark .glass-card:hover {
+  background: rgba(30, 41, 59, 0.55);
+  box-shadow:
+    0 8px 40px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 0 20px rgba(var(--neon-primary), calc(var(--neon-glow-opacity) * 1.5)),
+    0 0 40px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.8));
+}
+
+/* @deprecated Glass sidebar */
+.glass-sidebar {
+  background: #fff;
+  border-right: 1px solid #eaeaf5;
+  box-shadow: 3px 0 16px rgba(var(--neon-primary), 0.04);
+}
+
+.dark .glass-sidebar {
+  background: #1d2333;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 3px 0 16px rgba(0, 0, 0, 0.25);
+}
+
+/* Top bar — Vikinger-style gradient header */
+.topbar {
+  background: linear-gradient(
+    135deg,
+    var(--color-palette-primary-800) 0%,
+    var(--color-palette-primary-600) 50%,
+    var(--color-palette-accent-500) 100%
+  );
+  box-shadow:
+    0 4px 20px rgba(var(--neon-primary), 0.35),
+    0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.dark .topbar {
+  background: linear-gradient(
+    135deg,
+    var(--color-palette-primary-950) 0%,
+    var(--color-palette-primary-800) 50%,
+    var(--color-palette-primary-600) 100%
+  );
+  box-shadow:
+    0 4px 20px rgba(var(--neon-primary), 0.5),
+    0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* @deprecated Glass header — used by landing page */
+.glass-header {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border-bottom: 1px solid rgba(var(--neon-primary), var(--neon-border-opacity));
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.03),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.5),
+    0 0 15px rgba(var(--neon-primary), var(--neon-glow-opacity)),
+    0 0 30px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.5));
+  transition:
+    box-shadow 200ms ease,
+    border-color 200ms ease;
+}
+
+.dark .glass-header {
+  background: rgba(15, 23, 42, 0.6);
+  border-bottom: 1px solid rgba(var(--neon-primary), var(--neon-border-opacity));
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.2),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.03),
+    0 0 15px rgba(var(--neon-primary), var(--neon-glow-opacity)),
+    0 0 30px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.5));
+}
+
+/* @deprecated Glass dropdown */
+.glass-dropdown {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 1rem;
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.12),
+    0 4px 12px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  transition:
+    box-shadow 200ms ease,
+    border-color 200ms ease;
+}
+
+.glass-dropdown:hover {
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.15),
+    0 4px 12px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.dark .glass-dropdown {
+  border: 1px solid rgba(var(--neon-primary), var(--neon-border-opacity));
+  background: rgba(30, 41, 59, 0.75);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 0 15px rgba(var(--neon-primary), var(--neon-glow-opacity)),
+    0 0 30px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.5));
+}
+
+.dark .glass-dropdown:hover {
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 0 20px rgba(var(--neon-primary), calc(var(--neon-glow-opacity) * 1.5)),
+    0 0 40px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.8));
+}
+
+/* @deprecated Glass input fields */
+.glass-input {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(var(--neon-primary), var(--neon-border-opacity));
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 1rem;
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.04),
+    0 0 10px rgba(var(--neon-primary), calc(var(--neon-glow-opacity) * 0.5)),
+    0 0 20px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.25));
+  transition: all 0.2s ease;
+}
+
+.glass-input:hover {
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.04),
+    0 0 15px rgba(var(--neon-primary), calc(var(--neon-glow-opacity) * 0.8)),
+    0 0 25px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.4));
+}
+
+.glass-input:focus {
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(var(--neon-primary), 0.4);
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.04),
+    0 0 0 3px rgba(var(--neon-primary), 0.1),
+    0 0 15px rgba(var(--neon-primary), var(--neon-glow-opacity)),
+    0 0 30px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.5));
+}
+
+.dark .glass-input {
+  border: 1px solid rgba(var(--neon-primary), var(--neon-border-opacity));
+  background: rgba(30, 41, 59, 0.4);
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.1),
+    0 0 10px rgba(var(--neon-primary), calc(var(--neon-glow-opacity) * 0.5)),
+    0 0 20px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.25));
+}
+
+.dark .glass-input:hover {
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.1),
+    0 0 15px rgba(var(--neon-primary), calc(var(--neon-glow-opacity) * 0.8)),
+    0 0 25px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.4));
+}
+
+.dark .glass-input:focus {
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid rgba(var(--neon-primary), 0.4);
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.1),
+    0 0 0 3px rgba(var(--neon-primary), 0.15),
+    0 0 15px rgba(var(--neon-primary), var(--neon-glow-opacity)),
+    0 0 30px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.5));
+}
+
+/* @deprecated Glass nav link — active state */
+.glass-nav-active {
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.dark .glass-nav-active {
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+/* @deprecated Glass nav link — hover state */
+.glass-nav-hover:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.dark .glass-nav-hover:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* @deprecated Glass overlay for mobile sidebar */
+.glass-overlay {
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Mesh animation keyframe for dashboard background */
+@keyframes meshDrift {
+  0% {
+    background-position:
+      0% 0%,
+      100% 0%,
+      50% 100%,
+      0% 50%,
+      0% 0%;
+  }
+  50% {
+    background-position:
+      30% 20%,
+      70% 30%,
+      40% 80%,
+      20% 60%,
+      0% 0%;
+  }
+  100% {
+    background-position:
+      0% 0%,
+      100% 0%,
+      50% 100%,
+      0% 50%,
+      0% 0%;
+  }
+}
+
+/* Dashboard background — Vikinger-style light gray */
+.dashboard-bg {
+  background: #f8f8fb;
+  min-height: 100vh;
+}
+
+.dark .dashboard-bg {
+  background: #161b28;
+}
+
+/* Cursor pointer global pour tous les éléments cliquables */
+button,
+a,
+select,
+summary,
+[role="button"],
+[role="tab"],
+[role="menuitem"],
+[role="option"],
+[role="link"],
+[type="button"],
+[type="submit"],
+[type="reset"],
+label[for],
+.cursor-pointer {
+  cursor: pointer;
+}
+
+/* Scrollbar personnalisée */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Hide scrollbar but keep scroll functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

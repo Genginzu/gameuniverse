@@ -51,7 +51,7 @@ function CustomTooltip({ active, payload, label, currency }: CustomTooltipProps)
   if (!active || !payload?.length) return null;
 
   return (
-    <div className="rounded-lg border border-white/10 bg-white/5 p-3 shadow-lg shadow-black/20 backdrop-blur-xl">
+    <div className="rounded-lg border border-[var(--editorial-line)] bg-[var(--editorial-bg-2)] p-3 shadow-lg shadow-black/30">
       <p className="mb-1.5 text-sm font-medium text-white">{formatDateLabel(label as string)}</p>
       {payload.map((entry) => (
         <div key={entry.dataKey} className="flex items-center gap-2 text-sm">

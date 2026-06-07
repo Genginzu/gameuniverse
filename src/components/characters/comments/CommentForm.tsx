@@ -67,14 +67,14 @@ export function CommentForm({
           {...register("content")}
           rows={4}
           placeholder={t("placeholder")}
-          className="w-full resize-none rounded-lg border border-slate-700 bg-slate-800/50 px-4 py-3 text-sm text-slate-200 placeholder:text-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-hidden"
+          className="border-editorial-line bg-editorial-2 w-full resize-none rounded-lg border px-4 py-3 text-sm text-white placeholder:text-[var(--editorial-muted)] focus:border-[rgb(var(--accent-rgb,var(--neon-primary)))] focus:ring-1 focus:ring-[rgb(var(--accent-rgb,var(--neon-primary)))] focus:outline-hidden"
         />
 
         <div className="flex items-center justify-between">
           <div className="min-h-5">
             {errors.content && <p className="text-destructive text-sm">{errors.content.message}</p>}
           </div>
-          <span className={`text-xs ${isOverLimit ? "text-destructive" : "text-slate-500"}`}>
+          <span className={`text-xs ${isOverLimit ? "text-destructive" : "text-editorial-muted"}`}>
             {trimmedLength}/{MAX_CHARS}
           </span>
         </div>

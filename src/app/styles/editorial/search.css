@@ -1,0 +1,677 @@
+﻿/* Editorial search : full-page SearchOverlay. Voir docs/setup/styles-organization.md */
+
+/*
+ * SearchOverlay (F0-07c): full-page modal for global search.
+ * No backdrop-blur (consistent with the editorial refonte).
+ */
+.search-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: clamp(2rem, 8vh, 6rem) 1rem 1rem;
+  background: rgba(8, 2, 15, 0.95); /* var(--editorial-bg) at 95% */
+  animation: search-overlay-fade-in 200ms ease-out;
+}
+
+@keyframes search-overlay-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.search-overlay-panel {
+  width: 100%;
+  max-width: 42rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-height: calc(100vh - 4rem);
+}
+
+.search-overlay-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.search-overlay-input-wrapper {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  height: 64px;
+  padding: 0 0.875rem;
+  border: 1px solid var(--editorial-line);
+  border-radius: 0.75rem;
+  background: var(--editorial-bg-2);
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease,
+    background-color 200ms ease;
+}
+
+@media (min-width: 768px) {
+  .search-overlay-input-wrapper {
+    height: 72px;
+  }
+}
+
+/* Hairline gradient au-dessus du wrapper pour signaler "barre de recherche". */
+.search-overlay-input-wrapper::before {
+  content: "";
+  position: absolute;
+  top: -1px;
+  left: 1rem;
+  right: 1rem;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(var(--accent-rgb, var(--neon-primary)), 0.6),
+    transparent
+  );
+  opacity: 0;
+  transition: opacity 200ms ease;
+  pointer-events: none;
+}
+
+.search-overlay-input-wrapper:focus-within {
+  border-color: rgba(var(--accent-rgb, var(--neon-primary)), 0.7);
+  background: var(--editorial-bg-3);
+  box-shadow:
+    0 0 0 4px rgba(var(--accent-rgb, var(--neon-primary)), 0.15),
+    0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+.search-overlay-input-wrapper:focus-within::before {
+  opacity: 1;
+}
+
+.search-overlay-input-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--editorial-muted);
+  flex-shrink: 0;
+  transition: color 200ms ease;
+}
+
+.search-overlay-input-wrapper:focus-within .search-overlay-input-icon {
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+}
+
+.search-overlay-input {
+  flex: 1;
+  height: 100%;
+  margin-left: 0.625rem;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-family: var(--font-display, "Tomorrow"), system-ui, sans-serif;
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+
+/*
+ * Override de la règle globale `input:focus-visible` (l. ~413) : le wrapper
+ * gère déjà le retour visuel via `:focus-within` qui peint la bordure en
+ * accent. Un outline en plus créerait un double encadré disgracieux.
+ */
+.search-overlay-input:focus,
+.search-overlay-input:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+@media (min-width: 768px) {
+  .search-overlay-input {
+    font-size: 1.75rem;
+  }
+}
+
+.search-overlay-input::placeholder {
+  color: var(--editorial-muted);
+}
+
+.search-overlay-input::-webkit-search-decoration,
+.search-overlay-input::-webkit-search-cancel-button,
+.search-overlay-input::-webkit-search-results-button,
+.search-overlay-input::-webkit-search-results-decoration {
+  display: none;
+}
+
+.search-overlay-input-clear,
+.search-overlay-input-spinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--editorial-muted);
+  flex-shrink: 0;
+  margin-left: 0.5rem;
+  border: none;
+  cursor: pointer;
+  transition: background-color 200ms ease;
+}
+
+.search-overlay-input-clear:hover {
+  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.18);
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+}
+
+.search-overlay-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--editorial-muted);
+  border: 1px solid var(--editorial-line);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    background-color 200ms ease,
+    color 200ms ease;
+}
+
+.search-overlay-close:hover {
+  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.18);
+  border-color: rgba(var(--accent-rgb, var(--neon-primary)), 0.45);
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+}
+
+.search-overlay-content {
+  position: relative;
+  flex: 1;
+  overflow-y: auto;
+  border: 1px solid var(--editorial-line);
+  border-radius: 0.75rem;
+  background: var(--editorial-bg-2);
+  padding: 0.75rem;
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease,
+    padding 200ms ease;
+}
+
+/*
+ * Quand il n'y a rien à montrer (pas de query, pas de récents), on retire
+ * la bordure et le fond pour ne pas laisser un panneau vide visuellement
+ * agressif. Seul le texte hint reste, centré.
+ */
+.search-overlay-content[data-state="hint"] {
+  border-color: transparent;
+  background: transparent;
+  padding: 1.5rem 0.5rem;
+}
+
+/* Barre de loading hairline en haut du panel des résultats. Visible quand
+ * le wrapper input a `data-loading="true"` (le hook `useGlobalSearch` met
+ * `isLoading=true` pendant le debounce/fetch). */
+.search-overlay-content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  border-radius: 0.75rem 0.75rem 0 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(var(--accent-rgb, var(--neon-primary)), 0.8) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease;
+}
+
+.search-overlay[data-loading="true"] .search-overlay-content::before,
+.search-overlay-input-wrapper[data-loading="true"] ~ * .search-overlay-content::before {
+  /* Fallback : le wrapper input expose data-loading. On préfère un sélecteur
+   * sur le content directement, ajouté plus bas via attribut data-loading
+   * propagé. */
+}
+
+.search-overlay-content[data-loading="true"]::before {
+  opacity: 1;
+  animation: search-overlay-loading-bar 1.2s linear infinite;
+}
+
+@keyframes search-overlay-loading-bar {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+/* Empty state (recent searches) */
+.search-overlay-empty {
+  padding: 1rem 0.5rem;
+}
+
+.search-overlay-empty-hint {
+  margin: 0;
+  text-align: center;
+  color: var(--editorial-muted);
+  font-size: 0.95rem;
+}
+
+/*
+ * Searching state : pendant le fetch initial (avant que des résultats ne
+ * soient arrivés), on remplace le panneau vide par un spinner + texte
+ * centrés. Anime un fade-in léger pour ne pas flasher.
+ */
+.search-overlay-searching {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  padding: 2rem 1rem;
+  color: var(--editorial-muted);
+  font-size: 0.9rem;
+  animation: search-overlay-searching-fade-in 200ms ease-out both;
+}
+
+.search-overlay-searching-spinner {
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+}
+
+@keyframes search-overlay-searching-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.search-overlay-recent-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.search-overlay-recent-clear-all {
+  background: none;
+  border: none;
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+  font-size: 0.875rem;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  transition: background-color 200ms ease;
+}
+
+.search-overlay-recent-clear-all:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.search-overlay-recent-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.search-overlay-recent-item {
+  display: flex;
+  align-items: stretch;
+  gap: 0.25rem;
+  border-top: 1px solid var(--editorial-line);
+}
+
+.search-overlay-recent-item:first-child {
+  border-top: none;
+}
+
+.search-overlay-recent-button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0.75rem;
+  border-radius: 0.5rem;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 0.95rem;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color 200ms ease,
+    transform 200ms ease,
+    color 200ms ease;
+}
+
+/* Badge "clock" accent à gauche du texte. */
+.search-overlay-recent-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 9999px;
+  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.15);
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+  flex-shrink: 0;
+  transition: background-color 200ms ease;
+}
+
+.search-overlay-recent-label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.search-overlay-recent-button:hover {
+  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.08);
+  transform: translateX(2px);
+}
+
+.search-overlay-recent-button:hover .search-overlay-recent-icon {
+  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.25);
+}
+
+.search-overlay-recent-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: auto;
+  background: transparent;
+  border: none;
+  color: var(--editorial-muted);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition:
+    background-color 200ms ease,
+    color 200ms ease;
+}
+
+.search-overlay-recent-remove:hover {
+  background: rgba(248, 113, 113, 0.12);
+  color: #f87171;
+}
+
+/* Empty results (after a search yielded nothing) */
+.search-overlay-empty-results {
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.search-overlay-empty-title {
+  margin: 0 0 0.25rem;
+  font-size: 1.05rem;
+  color: #fff;
+}
+
+/* Results list */
+.search-overlay-results {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.search-overlay-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-overlay-group-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem 0.375rem 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.search-overlay-group-header::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 14px;
+  border-radius: 9999px;
+  background: rgb(var(--accent-rgb, var(--neon-primary)));
+}
+
+.search-overlay-group-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.12);
+  border: 1px solid rgba(var(--accent-rgb, var(--neon-primary)), 0.3);
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+  font-size: 0.7rem;
+  font-weight: 600;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.search-overlay-group-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.search-overlay-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  min-height: 64px;
+  padding: 0.625rem 0.75rem;
+  border-radius: 0.625rem;
+  cursor: pointer;
+  transition:
+    background-color 200ms ease,
+    transform 200ms ease;
+  /* Stagger fade-in : chaque item entre avec un délai = --stagger-index * 35ms */
+  animation: search-overlay-item-fade-in 280ms ease-out both;
+  animation-delay: calc(var(--stagger-index, 0) * 35ms);
+}
+
+@keyframes search-overlay-item-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.search-overlay-item:hover {
+  background: linear-gradient(
+    to right,
+    rgba(var(--accent-rgb, var(--neon-primary)), 0.1),
+    rgba(var(--accent-rgb, var(--neon-primary)), 0)
+  );
+  transform: translateX(2px);
+}
+
+.search-overlay-item.is-active {
+  background: linear-gradient(
+    to right,
+    rgba(var(--accent-rgb, var(--neon-primary)), 0.18),
+    rgba(var(--accent-rgb, var(--neon-primary)), 0.04)
+  );
+}
+
+.search-overlay-item.is-active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.625rem;
+  bottom: 0.625rem;
+  width: 3px;
+  border-radius: 0 9999px 9999px 0;
+  background: rgb(var(--accent-rgb, var(--neon-primary)));
+  box-shadow: 0 0 12px rgba(var(--accent-rgb, var(--neon-primary)), 0.6);
+}
+
+.search-overlay-item-avatar {
+  flex-shrink: 0;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.04);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--editorial-muted);
+  object-fit: cover;
+  transition: box-shadow 200ms ease;
+}
+
+.search-overlay-item:hover .search-overlay-item-avatar,
+.search-overlay-item.is-active .search-overlay-item-avatar {
+  box-shadow: 0 0 0 1px rgba(var(--accent-rgb, var(--neon-primary)), 0.4);
+}
+
+.search-overlay-item-avatar.avatar-game {
+  width: 44px;
+  height: 60px;
+}
+
+.search-overlay-item-avatar.avatar-character {
+  width: 52px;
+  height: 52px;
+}
+
+.search-overlay-item-avatar.avatar-team {
+  width: 52px;
+  height: 52px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.search-overlay-item-avatar.avatar-round {
+  width: 44px;
+  height: 44px;
+  border-radius: 9999px;
+}
+
+.search-overlay-item-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.search-overlay-item-title {
+  font-size: 0.95rem;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.search-overlay-item-subtitle {
+  font-size: 0.8rem;
+  color: var(--editorial-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.search-overlay-item-meta {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  color: var(--editorial-muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* See all link — CTA en bas de chaque groupe. */
+.search-overlay-see-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0.5rem 0 0 0.625rem;
+  padding: 0.5rem 0.875rem;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.08);
+  border: 1px solid rgba(var(--accent-rgb, var(--neon-primary)), 0.2);
+  text-decoration: none;
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.search-overlay-see-all:hover {
+  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.18);
+  border-color: rgba(var(--accent-rgb, var(--neon-primary)), 0.45);
+  box-shadow: 0 0 16px rgba(var(--accent-rgb, var(--neon-primary)), 0.2);
+}
+
+.search-overlay-see-all-arrow {
+  transition: transform 200ms ease;
+}
+
+.search-overlay-see-all:hover .search-overlay-see-all-arrow {
+  transform: translateX(3px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .search-overlay {
+    animation: none;
+  }
+  .search-overlay-input-wrapper,
+  .search-overlay-input-clear,
+  .search-overlay-close,
+  .search-overlay-recent-button,
+  .search-overlay-recent-clear-all,
+  .search-overlay-recent-remove,
+  .search-overlay-item,
+  .search-overlay-see-all,
+  .search-overlay-see-all-arrow {
+    transition: none;
+  }
+  .search-overlay-item {
+    animation: none;
+  }
+  .search-overlay-content[data-loading="true"]::before {
+    animation: none;
+  }
+  .search-overlay-searching {
+    animation: none;
+  }
+  .search-overlay-recent-button:hover,
+  .search-overlay-item:hover {
+    transform: none;
+  }
+}

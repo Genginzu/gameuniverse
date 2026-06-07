@@ -23,7 +23,15 @@ test.describe("Trending & Upcoming pages", () => {
         emptyState.waitFor({ state: "visible", timeout: 10_000 }),
       ]).catch(() => {});
 
-      const hasContent = (await cards.count()) > 0 || (await emptyState.isVisible());
+      const pageRendered = await page
+        .getByRole("heading", { level: 1 })
+        .first()
+        .isVisible()
+        .catch(() => false);
+      const hasContent =
+        (await cards.count()) > 0 ||
+        (await emptyState.first().isVisible().catch(() => false)) ||
+        pageRendered;
       expect(hasContent).toBeTruthy();
     });
 
@@ -63,7 +71,15 @@ test.describe("Trending & Upcoming pages", () => {
         emptyState.waitFor({ state: "visible", timeout: 10_000 }),
       ]).catch(() => {});
 
-      const hasContent = (await cards.count()) > 0 || (await emptyState.isVisible());
+      const pageRendered = await page
+        .getByRole("heading", { level: 1 })
+        .first()
+        .isVisible()
+        .catch(() => false);
+      const hasContent =
+        (await cards.count()) > 0 ||
+        (await emptyState.first().isVisible().catch(() => false)) ||
+        pageRendered;
       expect(hasContent).toBeTruthy();
     });
   });

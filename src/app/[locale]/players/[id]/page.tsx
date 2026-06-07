@@ -1,10 +1,13 @@
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
+
 import { PlayerDetailsContent } from "@/components/players/PlayerDetailsContent";
 import { PlayerService } from "@/lib/services/playerService";
-import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
+import { EditorialShell } from "@/components/layout/editorial/EditorialShell";
+import { DynamicAccent } from "@/components/shared/DynamicAccent";
+import { paletteFromHex } from "@/lib/utils/accent-palette";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
-import { getTranslations } from "next-intl/server";
 import { createServerClient } from "@/lib/supabase-server";
 
 interface PlayerDetailsPageProps {
@@ -36,31 +39,33 @@ export default async function PlayerDetailsPage({ params }: PlayerDetailsPagePro
     }
 
     return (
-      <DashboardLayout>
-        <ErrorBoundary
-          fallback={
-            <ErrorFallback
-              title={t("loadingTitle")}
-              description={t("detailsLoadingDescription")}
-              showBackButton={true}
-              backUrl={`/${locale}/players`}
-              backLabel={t("backToPlayers")}
+      <EditorialShell>
+        {/* Accent bleu du site (palette-primary-500) plutôt que gold */}
+        <DynamicAccent palette={paletteFromHex("#0077e6", "blue")} as="div">
+          <ErrorBoundary
+            fallback={
+              <ErrorFallback
+                title={t("loadingTitle")}
+                description={t("detailsLoadingDescription")}
+                showBackButton={true}
+                backUrl={`/${locale}/players`}
+                backLabel={t("backToPlayers")}
+                locale={locale}
+              />
+            }
+          >
+            <PlayerDetailsContent
+              player={player}
               locale={locale}
+              currentUserId={playerData.user?.id ?? null}
             />
-          }
-        >
-          <PlayerDetailsContent
-            player={player}
-            locale={locale}
-            currentUserId={playerData.user?.id ?? null}
-          />
-        </ErrorBoundary>
-      </DashboardLayout>
+          </ErrorBoundary>
+        </DynamicAccent>
+      </EditorialShell>
     );
   } catch {
-    // Return error state - Requirements 9.1, 9.2
     return (
-      <DashboardLayout>
+      <EditorialShell>
         <ErrorFallback
           title={t("loadingTitle")}
           description={t("unableToLoad")}
@@ -69,7 +74,7 @@ export default async function PlayerDetailsPage({ params }: PlayerDetailsPagePro
           backLabel={t("backToPlayers")}
           locale={locale}
         />
-      </DashboardLayout>
+      </EditorialShell>
     );
   }
 }

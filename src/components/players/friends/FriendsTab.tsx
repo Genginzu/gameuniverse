@@ -39,7 +39,7 @@ export function FriendsTab({ playerId, locale }: FriendsTabProps) {
   );
 
   return (
-    <section className="mb-8">
+    <section className="mb-8 flex flex-col gap-4">
       {/* Pending requests — owner only */}
       {isOwner && pendingRequests.length > 0 && (
         <FriendRequestList

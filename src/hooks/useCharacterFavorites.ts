@@ -31,25 +31,3 @@ export function useCharacterFavorites(): UseCharacterFavoritesReturn {
     error: error ? (error instanceof Error ? error.message : "Failed to fetch favorites") : null,
   };
 }
-
-/**
- * Hook for a player's profile — public favorites.
- * Fetches from GET /api/players/[id]/favorite-characters.
- */
-export function usePlayerFavoriteCharacters(playerId: string): UseCharacterFavoritesReturn {
-  const locale = useLocale();
-
-  const { data, error, isLoading } = useSWR<CharacterFavoritesResponse>(
-    playerId ? `/api/players/${playerId}/favorite-characters?locale=${locale}` : null
-  );
-
-  return {
-    characters: data?.characters ?? [],
-    loading: isLoading,
-    error: error
-      ? error instanceof Error
-        ? error.message
-        : "Failed to fetch player favorites"
-      : null,
-  };
-}

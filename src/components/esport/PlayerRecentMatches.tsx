@@ -36,17 +36,11 @@ export function PlayerRecentMatches({
 
   if (isLoading && matches.length === 0) {
     return (
-      <section className="glass-card rounded-2xl p-5 sm:p-6">
-        <h2 className="mb-4 text-lg font-bold text-gray-900 dark:text-white">
-          {t("recentMatches")}
-        </h2>
+      <section className="border-editorial-line bg-editorial-2 rounded-2xl border p-5 sm:p-6">
+        <h2 className="mb-4 text-lg font-bold text-white">{t("recentMatches")}</h2>
         <div className="space-y-3">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div
-              key={i}
-              className="h-20 rounded-xl bg-gray-100 dark:bg-gray-800/60"
-              aria-hidden
-            />
+            <div key={i} className="h-20 animate-pulse rounded-xl bg-white/[0.06]" aria-hidden />
           ))}
         </div>
       </section>
@@ -58,9 +52,9 @@ export function PlayerRecentMatches({
   }
 
   return (
-    <section className="glass-card rounded-2xl p-5 sm:p-6">
-      <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white">
-        <Icon icon="mdi:history" className="text-palette-primary-500 h-5 w-5" />
+    <section className="border-editorial-line bg-editorial-2 rounded-2xl border p-5 sm:p-6">
+      <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-white">
+        <Icon icon="mdi:history" className="text-editorial-accent h-5 w-5" />
         {t("recentMatches")}
       </h2>
       <ul className="space-y-3">
@@ -97,8 +91,8 @@ function MatchRow({ match }: { match: PlayerMatch }) {
   const winnerB = isFinished && opponentB && match.winnerId === opponentB.id;
 
   return (
-    <div className="rounded-xl bg-white/60 p-3 transition-colors hover:bg-white/80 dark:bg-gray-800/40 dark:hover:bg-gray-800/60">
-      <div className="mb-2 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+    <div className="bg-editorial-3 hover:bg-editorial-3/70 rounded-xl p-3 transition-colors">
+      <div className="text-editorial-muted mb-2 flex items-center justify-between text-xs">
         <span className="flex items-center gap-1.5">
           <Icon icon={getGameIcon(match.gameSlug)} className="h-3.5 w-3.5" />
           <span className="line-clamp-1">{match.tournament}</span>
@@ -112,11 +106,11 @@ function MatchRow({ match }: { match: PlayerMatch }) {
       {opponentA && opponentB ? (
         <div className="flex items-center justify-between gap-3">
           <OpponentScore opponent={opponentA} isWinner={winnerA} />
-          <span className="text-xs font-bold text-gray-400">VS</span>
+          <span className="text-editorial-muted text-xs font-bold">VS</span>
           <OpponentScore opponent={opponentB} isWinner={winnerB} align="right" />
         </div>
       ) : (
-        <p className="text-sm text-gray-600 dark:text-gray-300">{match.name}</p>
+        <p className="text-editorial-muted text-sm">{match.name}</p>
       )}
     </div>
   );
@@ -138,7 +132,7 @@ function OpponentScore({
       }`}
     >
       {opponent.imageUrl ? (
-        <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-full bg-white p-0.5 dark:bg-gray-700">
+        <div className="bg-editorial-2 relative h-7 w-7 shrink-0 overflow-hidden rounded-full p-0.5">
           <LazyImage
             src={opponent.imageUrl}
             alt={opponent.name}
@@ -148,25 +142,21 @@ function OpponentScore({
           />
         </div>
       ) : (
-        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gray-200 dark:bg-gray-700">
-          <Icon icon="mdi:shield-account" className="h-4 w-4 text-gray-400" />
+        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white/10">
+          <Icon icon="mdi:shield-account" className="text-editorial-muted h-4 w-4" />
         </div>
       )}
       <Link
         href={`/esport/teams/${opponent.id}`}
         className={`line-clamp-1 text-sm font-semibold transition-colors hover:underline ${
-          isWinner
-            ? "text-emerald-600 dark:text-emerald-400"
-            : "text-gray-700 dark:text-gray-200"
+          isWinner ? "text-emerald-300" : "text-white/80"
         }`}
       >
         {opponent.name}
       </Link>
       <span
         className={`rounded-md px-2 py-0.5 text-sm font-bold ${
-          isWinner
-            ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
-            : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300"
+          isWinner ? "bg-emerald-500/15 text-emerald-300" : "text-editorial-muted bg-white/10"
         }`}
       >
         {opponent.score}
@@ -185,10 +175,10 @@ function StatusPill({
   t: ReturnType<typeof useTranslations>;
 }) {
   const toneClasses: Record<typeof tone, string> = {
-    live: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300",
-    upcoming: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300",
-    finished: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300",
-    neutral: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300",
+    live: "bg-red-500/15 text-red-300",
+    upcoming: "bg-editorial-accent/15 text-editorial-accent",
+    finished: "bg-emerald-500/15 text-emerald-300",
+    neutral: "text-editorial-muted bg-white/10",
   };
 
   return (

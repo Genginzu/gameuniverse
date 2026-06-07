@@ -1,0 +1,208 @@
+/*
+ * Editorial : loader animé de /library (LibraryLoadingState).
+ * Voir steering styles-organization (approche hybride).
+ *
+ * Toute la structure /library est en Tailwind inline. Ce module ne conserve
+ * QUE les animations keyframes (scan/breath/wave) du loader, que Tailwind ne
+ * sait pas exprimer inline.
+ */
+
+.editorial-library-loading {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  border-radius: 1.25rem;
+  border: 1px solid var(--editorial-line);
+  background: var(--editorial-bg-2);
+  overflow: hidden;
+}
+
+.editorial-library-loading-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+}
+
+.editorial-library-loading-bar-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 35%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(var(--accent-rgb, var(--neon-primary)), 0.6) 50%,
+    transparent 100%
+  );
+  animation: editorial-library-loading-scan 1.4s ease-in-out infinite;
+}
+
+@keyframes editorial-library-loading-scan {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(380%);
+  }
+}
+
+.editorial-library-loading-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.editorial-library-loading-kicker {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+}
+
+.editorial-library-loading-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.editorial-library-loading-dots span {
+  display: block;
+  width: 4px;
+  height: 4px;
+  border-radius: 9999px;
+  background: rgb(var(--accent-rgb, var(--neon-primary)));
+  animation: editorial-library-loading-dot 1.2s ease-in-out infinite;
+}
+
+.editorial-library-loading-dots span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.editorial-library-loading-dots span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes editorial-library-loading-dot {
+  0%,
+  60%,
+  100% {
+    opacity: 0.25;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+
+.editorial-library-loading-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+@media (min-width: 475px) {
+  .editorial-library-loading-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 768px) {
+  .editorial-library-loading-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .editorial-library-loading-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .editorial-library-loading-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+@media (min-width: 1536px) {
+  .editorial-library-loading-grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+.editorial-library-loading-ghost {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  border-radius: 0.875rem;
+  border: 1px solid var(--editorial-line);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.01) 100%
+  );
+  overflow: hidden;
+  animation: editorial-library-loading-breath 1.8s ease-in-out infinite;
+}
+
+.editorial-library-loading-ghost::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 30%,
+    rgba(var(--accent-rgb, var(--neon-primary)), 0.08) 50%,
+    transparent 70%
+  );
+  transform: translateX(-100%);
+  animation: editorial-library-loading-shine 2.4s ease-in-out infinite;
+}
+
+@keyframes editorial-library-loading-breath {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.005);
+  }
+}
+
+@keyframes editorial-library-loading-shine {
+  0% {
+    transform: translateX(-100%);
+  }
+  60%,
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editorial-library-loading-bar-fill,
+  .editorial-library-loading-dots span,
+  .editorial-library-loading-ghost,
+  .editorial-library-loading-ghost::after {
+    animation: none;
+  }
+  .editorial-library-loading-ghost {
+    opacity: 0.7;
+  }
+}

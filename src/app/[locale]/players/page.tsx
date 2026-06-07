@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { AllPlayersContent } from "@/components/players/AllPlayersContent";
-import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
+import { EditorialShell } from "@/components/layout/editorial/EditorialShell";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
 
@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: AllPlayersPageProps): Promise
 
 export default function AllPlayersPage() {
   return (
-    <DashboardLayout>
+    <EditorialShell>
       <ErrorBoundary
         fallback={
           <ErrorFallback
@@ -36,6 +36,6 @@ export default function AllPlayersPage() {
       >
         <AllPlayersContent />
       </ErrorBoundary>
-    </DashboardLayout>
+    </EditorialShell>
   );
 }

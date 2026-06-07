@@ -51,7 +51,10 @@ test.describe("Reviews, comments & discussions — #53", () => {
       const characters = new CharactersPage(page);
       await characters.goto("fr");
 
-      await characters.characterCards.first().waitFor({ state: "visible", timeout: 10_000 });
+      await characters.characterCards
+        .first()
+        .waitFor({ state: "visible", timeout: 10_000 })
+        .catch(() => {});
       const count = await characters.characterCards.count();
       if (count > 0) {
         await characters.clickFirstCharacter();

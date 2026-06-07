@@ -55,3 +55,25 @@ export function getPlatformIcon(slug: string): string {
   const rule = PLATFORM_ICON_RULES.find((r) => r.match(normalized));
   return rule?.icon ?? "fa:gamepad";
 }
+
+/**
+ * Filters a list of platforms keeping only the principal ones, deduplicated
+ * by icon (avoids displaying e.g. 3 Xbox chips). Returns the resolved icon
+ * name + the original platform name.
+ */
+export function getDistinctPlatformIcons(
+  platforms: { slug: string; name: string }[],
+  max = 3
+): { icon: string; name: string }[] {
+  const seen = new Set<string>();
+  const result: { icon: string; name: string }[] = [];
+  for (const p of platforms) {
+    const icon = getPlatformIcon(p.slug);
+    if (!seen.has(icon)) {
+      seen.add(icon);
+      result.push({ icon, name: p.name });
+      if (result.length >= max) break;
+    }
+  }
+  return result;
+}

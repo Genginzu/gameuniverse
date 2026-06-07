@@ -5,7 +5,9 @@ import { notFound } from "next/navigation";
 import { GameDetailsContent } from "@/components/games/details/GameDetailsContent";
 import { GameDetailsSkeleton } from "@/components/games/details/GameDetailsSkeleton";
 import { GameService } from "@/lib/services/gameService";
-import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
+import { EditorialShell } from "@/components/layout/editorial/EditorialShell";
+import { DynamicAccent } from "@/components/shared/DynamicAccent";
+import { paletteFromHex } from "@/lib/utils/accent-palette";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
 import { JsonLd } from "@/components/shared/JsonLd";
@@ -48,6 +50,9 @@ async function GameDetailsLoader({ slug, locale }: { slug: string; locale: strin
       ...(game.releaseDate && { datePublished: game.releaseDate }),
     };
 
+    // Génère la palette d'accent dynamique depuis la couleur extraite de la cover
+    const palette = paletteFromHex(game.accentColor ?? null, game.slug);
+
     return (
       <>
         <JsonLd data={gameJsonLd} />
@@ -63,7 +68,9 @@ async function GameDetailsLoader({ slug, locale }: { slug: string; locale: strin
             />
           }
         >
-          <GameDetailsContent game={game} locale={locale} />
+          <DynamicAccent palette={palette} as="div">
+            <GameDetailsContent game={game} locale={locale} />
+          </DynamicAccent>
         </ErrorBoundary>
       </>
     );
@@ -84,15 +91,12 @@ async function GameDetailsLoader({ slug, locale }: { slug: string; locale: strin
 export default async function GameDetailsPage({ params }: GameDetailsPageProps) {
   const { locale, slug } = await params;
 
-  // Fetch léger : juste les couleurs pour colorer le skeleton
-  const colorHints = await GameService.fetchGameColors(slug);
-
   return (
-    <DashboardLayout>
-      <Suspense fallback={<GameDetailsSkeleton backgroundColor={colorHints?.backgroundColor} />}>
+    <EditorialShell>
+      <Suspense fallback={<GameDetailsSkeleton />}>
         <GameDetailsLoader slug={slug} locale={locale} />
       </Suspense>
-    </DashboardLayout>
+    </EditorialShell>
   );
 }
 
@@ -100,7 +104,6 @@ export async function generateMetadata({ params }: GameDetailsPageProps) {
   const { locale, slug } = await params;
   return await GameService.generateGameMetadata(slug, locale);
 }
-
 
 // Return empty array: pages are generated on-demand with ISR (revalidate: 60s)
 export async function generateStaticParams() {

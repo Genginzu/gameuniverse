@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
+import { EsportShell } from "@/components/esport/EsportShell";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
 import { EsportLiveContent, type EsportLiveData } from "@/components/esport/EsportLiveContent";
@@ -34,7 +34,7 @@ export default async function EsportLivePage() {
   }
 
   return (
-    <DashboardLayout>
+    <EsportShell>
       <ErrorBoundary
         fallback={
           <ErrorFallback description="Error loading live streams." showRefresh showHomeButton />
@@ -42,6 +42,6 @@ export default async function EsportLivePage() {
       >
         <EsportLiveContent initialData={initialData} />
       </ErrorBoundary>
-    </DashboardLayout>
+    </EsportShell>
   );
 }

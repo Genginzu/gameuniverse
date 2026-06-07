@@ -2,10 +2,55 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/*
+ * Modules CSS thématiques (split du globals.css legacy, cf docs/setup/styles-organization.md).
+ *
+ * IMPORTANT (Tailwind v4 + Turbopack) :
+ *   - `@import "tailwindcss"` doit rester en première position.
+ *   - Les variables `@theme` et `@layer base` ci-dessous ne peuvent pas être
+ *     dans un fichier importé : Tailwind v4 a besoin de les voir dans le
+ *     fichier d'entrée pour générer les utilities.
+ *   - Les modules importés ci-dessous ne contiennent que des classes
+ *     utilitaires, des composants `.editorial-*`, des keyframes et des
+ *     overrides scoped — aucune règle `@theme` / `@layer base`.
+ *
+ * Pour ajouter de nouveaux styles :
+ *   - Si c'est un nouveau composant éditorial → créer `styles/editorial/<nom>.css`
+ *     et ajouter son `@import` ci-dessous.
+ *   - Si c'est un utilitaire global non-Tailwind → `styles/<nom>.css`.
+ *   - Si c'est un nouveau token → ajouter dans `@theme` / `:root` ci-dessous,
+ *     pas dans un module.
+ */
+@import "./styles/animations.css";
+@import "./styles/neon.css";
+@import "./styles/landing-grid.css";
+@import "./styles/glass-deprecated.css";
+@import "./styles/editorial/typography.css";
+@import "./styles/editorial/layout.css";
+@import "./styles/editorial/header.css";
+@import "./styles/editorial/header-user.css";
+@import "./styles/editorial/search.css";
+@import "./styles/editorial/game-card.css";
+@import "./styles/editorial/game-detail.css";
+@import "./styles/editorial/library.css";
+@import "./styles/editorial/settings.css";
+@import "./styles/editorial/activity.css";
+@import "./styles/editorial/stats.css";
+@import "./styles/editorial/achievements.css";
+@import "./styles/editorial/reviews.css";
+@import "./styles/editorial/goals.css";
+@import "./styles/editorial/recommendations.css";
+@import "./styles/editorial/player-tabs.css";
+@import "./styles/editorial/esport.css";
+@import "./styles/editorial/coaching.css";
+
 @custom-variant dark (&:is(.dark *));
 
 @theme {
   --breakpoint-xs: 475px;
+
+  /* Editorial display font (Tomorrow loaded via next/font, see src/app/layout.tsx) */
+  --font-display: var(--font-tomorrow), system-ui, sans-serif;
 
   /* Palette primary — marine (#003566) */
   --color-palette-primary-50: #f0f8ff;
@@ -50,6 +95,16 @@
   --color-neon-primary: rgb(var(--neon-primary));
   --color-neon-secondary: rgb(var(--neon-secondary));
   --color-neon-accent: rgb(var(--neon-accent));
+
+  /* Editorial tokens exposés comme utilities Tailwind (bg-editorial-2, text-editorial-muted,
+     text-editorial-accent…). Pointent vers les variables :root pour rester non destructifs :
+     les modules CSS éditoriaux existants continuent d'utiliser var(--editorial-*). */
+  --color-editorial-bg: var(--editorial-bg);
+  --color-editorial-2: var(--editorial-bg-2);
+  --color-editorial-3: var(--editorial-bg-3);
+  --color-editorial-line: var(--editorial-line);
+  --color-editorial-muted: var(--editorial-muted);
+  --color-editorial-accent: rgb(var(--accent-rgb, var(--neon-primary)));
 
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
@@ -148,6 +203,14 @@
     --neon-accent: 5 96 225;
     --neon-glow-opacity: 0.15;
     --neon-border-opacity: 0.3;
+
+    /* Editorial design tokens — surfaces sombres pour la refonte éditoriale (dark-only)
+       Voir docs/design/editorial-refonte-plan.md section 3 */
+    --editorial-bg: #120821;
+    --editorial-bg-2: #1a0f2e;
+    --editorial-bg-3: #251745;
+    --editorial-line: rgba(255, 255, 255, 0.08);
+    --editorial-muted: #a89dbf;
   }
 
   .dark {
@@ -178,656 +241,4 @@
     --neon-glow-opacity: 0.25;
     --neon-border-opacity: 0.5;
   }
-}
-
-/* Animation pulse ralentie pour un effet de chargement plus doux */
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.4;
-  }
-}
-
-.animate-pulse {
-  animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-/* Animations modernes pour les pages de jeux */
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-/* Floating animation for hero orbs */
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0) scale(1);
-  }
-  50% {
-    transform: translateY(-30px) scale(1.05);
-  }
-}
-
-/* Classes utilitaires pour les animations */
-.animate-slide-in-up {
-  animation: slideInUp 0.6s ease-out;
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.4s ease-out;
-}
-
-.animate-scale-in {
-  animation: scaleIn 0.3s ease-out;
-}
-
-.animate-shimmer {
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  background-size: 200% 100%;
-  animation: shimmer 2s infinite;
-}
-
-/* Page entry animation — fade-in combined with slide-up (Req 8.1) */
-.animate-page-enter {
-  animation:
-    fadeIn 0.3s ease-out,
-    slideInUp 0.3s ease-out;
-}
-
-/* Effets de survol modernes */
-.hover-lift {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.hover-lift:hover {
-  transform: translateY(-4px);
-  box-shadow:
-    0 20px 25px -5px rgba(0, 0, 0, 0.3),
-    0 10px 10px -5px rgba(0, 0, 0, 0.1);
-}
-
-/* Effets de glow personnalisés */
-.glow-effect {
-  position: relative;
-}
-
-.glow-effect::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-}
-
-/* Styles pour les états de focus améliorés */
-.focus-visible:focus {
-  outline: 2px solid var(--color-palette-primary-500);
-  outline-offset: 2px;
-  border-radius: 8px;
-}
-
-/* Responsive design amélioré */
-@media (max-width: 768px) {
-  .game-hero-title {
-    font-size: 2rem;
-    line-height: 1.1;
-  }
-}
-
-/* Amélioration de l'accessibilité */
-@media (prefers-reduced-motion: reduce) {
-  .animate-pulse,
-  .animate-slide-in-up,
-  .animate-fade-in,
-  .animate-scale-in,
-  .animate-shimmer,
-  .animate-page-enter,
-  .dashboard-bg,
-  .landing-grid-bg {
-    animation: none;
-  }
-
-  /* Disable float animation on orbs */
-  [class*="animate-\\[float"] {
-    animation: none;
-  }
-
-  .hover-lift {
-    transition: none;
-  }
-
-  /* Neon utility classes — disable transitions */
-  .neon-glow {
-    transition: none;
-  }
-
-  .neon-border {
-    transition: none;
-  }
-
-  .neon-btn {
-    transition: none;
-  }
-
-  .neon-btn:hover {
-    box-shadow: none;
-  }
-
-  /* Glass classes — disable transitions */
-  .glass,
-  .glass-card,
-  .glass-header,
-  .glass-dropdown,
-  .glass-input {
-    transition: none;
-  }
-}
-
-/* ===== Neon Utility Classes ===== */
-
-/* Neon glow — box-shadow violet/cyan */
-.neon-glow {
-  box-shadow:
-    0 0 15px rgba(var(--neon-primary), var(--neon-glow-opacity)),
-    0 0 30px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.5));
-  transition: box-shadow 200ms ease;
-}
-
-/* Neon border — gradient violet→cyan via pseudo-element */
-.neon-border {
-  position: relative;
-  border: 2px solid rgba(var(--neon-primary), var(--neon-border-opacity));
-  transition: border-color 200ms ease;
-}
-
-/* Neon text — text-shadow glow for h1 titles */
-.neon-text {
-  text-shadow:
-    0 0 10px rgba(var(--neon-primary), var(--neon-glow-opacity)),
-    0 0 20px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.5));
-}
-
-/* Neon focus — accessible violet focus ring */
-.neon-focus:focus-visible {
-  outline: 2px solid rgb(var(--neon-primary));
-  outline-offset: 3px;
-  transition: outline-color 200ms ease;
-}
-
-/* Global neon focus on all interactive elements (Req 8.3) */
-button:focus-visible,
-a:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible,
-[role="button"]:focus-visible,
-[tabindex]:focus-visible {
-  outline: 2px solid rgb(var(--neon-primary));
-  outline-offset: 3px;
-  transition: outline-color 200ms ease;
-}
-
-/* Neon button — luminous border + glow on hover */
-.neon-btn {
-  border: 1px solid rgba(var(--neon-primary), var(--neon-border-opacity));
-  box-shadow: 0 0 8px rgba(var(--neon-primary), calc(var(--neon-glow-opacity) * 0.5));
-  transition:
-    box-shadow 200ms ease,
-    border-color 200ms ease;
-}
-
-.neon-btn:hover {
-  border-color: rgba(var(--neon-primary), calc(var(--neon-border-opacity) * 1.5));
-  box-shadow:
-    0 0 15px rgba(var(--neon-primary), var(--neon-glow-opacity)),
-    0 0 30px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.5));
-}
-
-/* ===== Landing Grid Background ===== */
-
-/* Animated CSS grid for the landing hero section */
-.landing-grid-bg {
-  background-image:
-    linear-gradient(rgba(var(--neon-primary), 0.15) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(var(--neon-primary), 0.15) 1px, transparent 1px);
-  background-size: 60px 60px;
-  animation: gridPulse 8s ease-in-out infinite;
-}
-
-@keyframes gridPulse {
-  0%,
-  100% {
-    opacity: 0.2;
-  }
-  50% {
-    opacity: 0.4;
-  }
-}
-
-/* ===== Glassmorphism Design System ===== */
-
-/* Base glass utility */
-.glass {
-  position: relative;
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(var(--neon-primary), var(--neon-border-opacity));
-  background: rgba(255, 255, 255, 0.45);
-  border-radius: 1rem;
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6),
-    0 0 15px rgba(var(--neon-primary), var(--neon-glow-opacity)),
-    0 0 30px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.5));
-  transition:
-    box-shadow 200ms ease,
-    border-color 200ms ease;
-}
-
-.glass:hover {
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6),
-    0 0 20px rgba(var(--neon-primary), calc(var(--neon-glow-opacity) * 1.5)),
-    0 0 40px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.8));
-}
-
-.dark .glass {
-  border: 1px solid rgba(var(--neon-primary), var(--neon-border-opacity));
-  background: rgba(15, 23, 42, 0.5);
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 0 15px rgba(var(--neon-primary), var(--neon-glow-opacity)),
-    0 0 30px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.5));
-}
-
-.dark .glass:hover {
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 0 20px rgba(var(--neon-primary), calc(var(--neon-glow-opacity) * 1.5)),
-    0 0 40px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.8));
-}
-
-/* Glass card — stats, info panels */
-.glass-card {
-  position: relative;
-  backdrop-filter: blur(16px) saturate(180%);
-  -webkit-backdrop-filter: blur(16px) saturate(180%);
-  border: 1px solid rgba(var(--neon-primary), var(--neon-border-opacity));
-  background: rgba(255, 255, 255, 0.4);
-  border-radius: 1rem;
-  box-shadow:
-    0 4px 24px rgba(0, 0, 0, 0.04),
-    0 1px 2px rgba(0, 0, 0, 0.03),
-    inset 0 1px 0 rgba(255, 255, 255, 0.7),
-    0 0 15px rgba(var(--neon-primary), var(--neon-glow-opacity)),
-    0 0 30px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.5));
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.glass-card:hover {
-  background: rgba(255, 255, 255, 0.55);
-  box-shadow:
-    0 8px 40px rgba(0, 0, 0, 0.08),
-    0 2px 4px rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.8),
-    0 0 20px rgba(var(--neon-primary), calc(var(--neon-glow-opacity) * 1.5)),
-    0 0 40px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.8));
-  transform: translateY(-1px);
-}
-
-.dark .glass-card {
-  border: 1px solid rgba(var(--neon-primary), var(--neon-border-opacity));
-  background: rgba(30, 41, 59, 0.4);
-  box-shadow:
-    0 4px 24px rgba(0, 0, 0, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    0 0 15px rgba(var(--neon-primary), var(--neon-glow-opacity)),
-    0 0 30px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.5));
-}
-
-.dark .glass-card:hover {
-  background: rgba(30, 41, 59, 0.55);
-  box-shadow:
-    0 8px 40px rgba(0, 0, 0, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 0 20px rgba(var(--neon-primary), calc(var(--neon-glow-opacity) * 1.5)),
-    0 0 40px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.8));
-}
-
-/* Glass sidebar — Vikinger-style clean white panel */
-.glass-sidebar {
-  background: #fff;
-  border-right: 1px solid #eaeaf5;
-  box-shadow: 3px 0 16px rgba(var(--neon-primary), 0.04);
-}
-
-.dark .glass-sidebar {
-  background: #1d2333;
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
-  box-shadow: 3px 0 16px rgba(0, 0, 0, 0.25);
-}
-
-/* Top bar — Vikinger-style gradient header */
-.topbar {
-  background: linear-gradient(
-    135deg,
-    var(--color-palette-primary-800) 0%,
-    var(--color-palette-primary-600) 50%,
-    var(--color-palette-accent-500) 100%
-  );
-  box-shadow:
-    0 4px 20px rgba(var(--neon-primary), 0.35),
-    0 1px 3px rgba(0, 0, 0, 0.12);
-}
-
-.dark .topbar {
-  background: linear-gradient(
-    135deg,
-    var(--color-palette-primary-950) 0%,
-    var(--color-palette-primary-800) 50%,
-    var(--color-palette-primary-600) 100%
-  );
-  box-shadow:
-    0 4px 20px rgba(var(--neon-primary), 0.5),
-    0 1px 3px rgba(0, 0, 0, 0.3);
-}
-
-/* Glass header — used by landing page */
-.glass-header {
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(24px) saturate(200%);
-  -webkit-backdrop-filter: blur(24px) saturate(200%);
-  border-bottom: 1px solid rgba(var(--neon-primary), var(--neon-border-opacity));
-  box-shadow:
-    0 4px 24px rgba(0, 0, 0, 0.03),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.5),
-    0 0 15px rgba(var(--neon-primary), var(--neon-glow-opacity)),
-    0 0 30px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.5));
-  transition:
-    box-shadow 200ms ease,
-    border-color 200ms ease;
-}
-
-.dark .glass-header {
-  background: rgba(15, 23, 42, 0.6);
-  border-bottom: 1px solid rgba(var(--neon-primary), var(--neon-border-opacity));
-  box-shadow:
-    0 4px 24px rgba(0, 0, 0, 0.2),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.03),
-    0 0 15px rgba(var(--neon-primary), var(--neon-glow-opacity)),
-    0 0 30px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.5));
-}
-
-/* Glass dropdown */
-.glass-dropdown {
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 1rem;
-  box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.12),
-    0 4px 12px rgba(0, 0, 0, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.7);
-  transition:
-    box-shadow 200ms ease,
-    border-color 200ms ease;
-}
-
-.glass-dropdown:hover {
-  box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.15),
-    0 4px 12px rgba(0, 0, 0, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.7);
-}
-
-.dark .glass-dropdown {
-  border: 1px solid rgba(var(--neon-primary), var(--neon-border-opacity));
-  background: rgba(30, 41, 59, 0.75);
-  box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 0 15px rgba(var(--neon-primary), var(--neon-glow-opacity)),
-    0 0 30px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.5));
-}
-
-.dark .glass-dropdown:hover {
-  box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 0 20px rgba(var(--neon-primary), calc(var(--neon-glow-opacity) * 1.5)),
-    0 0 40px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.8));
-}
-
-/* Glass input fields */
-.glass-input {
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(var(--neon-primary), var(--neon-border-opacity));
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 1rem;
-  box-shadow:
-    inset 0 1px 2px rgba(0, 0, 0, 0.04),
-    0 0 10px rgba(var(--neon-primary), calc(var(--neon-glow-opacity) * 0.5)),
-    0 0 20px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.25));
-  transition: all 0.2s ease;
-}
-
-.glass-input:hover {
-  box-shadow:
-    inset 0 1px 2px rgba(0, 0, 0, 0.04),
-    0 0 15px rgba(var(--neon-primary), calc(var(--neon-glow-opacity) * 0.8)),
-    0 0 25px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.4));
-}
-
-.glass-input:focus {
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(var(--neon-primary), 0.4);
-  box-shadow:
-    inset 0 1px 2px rgba(0, 0, 0, 0.04),
-    0 0 0 3px rgba(var(--neon-primary), 0.1),
-    0 0 15px rgba(var(--neon-primary), var(--neon-glow-opacity)),
-    0 0 30px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.5));
-}
-
-.dark .glass-input {
-  border: 1px solid rgba(var(--neon-primary), var(--neon-border-opacity));
-  background: rgba(30, 41, 59, 0.4);
-  box-shadow:
-    inset 0 1px 2px rgba(0, 0, 0, 0.1),
-    0 0 10px rgba(var(--neon-primary), calc(var(--neon-glow-opacity) * 0.5)),
-    0 0 20px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.25));
-}
-
-.dark .glass-input:hover {
-  box-shadow:
-    inset 0 1px 2px rgba(0, 0, 0, 0.1),
-    0 0 15px rgba(var(--neon-primary), calc(var(--neon-glow-opacity) * 0.8)),
-    0 0 25px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.4));
-}
-
-.dark .glass-input:focus {
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(var(--neon-primary), 0.4);
-  box-shadow:
-    inset 0 1px 2px rgba(0, 0, 0, 0.1),
-    0 0 0 3px rgba(var(--neon-primary), 0.15),
-    0 0 15px rgba(var(--neon-primary), var(--neon-glow-opacity)),
-    0 0 30px rgba(var(--neon-secondary), calc(var(--neon-glow-opacity) * 0.5));
-}
-
-/* Glass nav link — active state */
-.glass-nav-active {
-  background: rgba(255, 255, 255, 0.55);
-  box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.04),
-    inset 0 1px 0 rgba(255, 255, 255, 0.7);
-}
-
-.dark .glass-nav-active {
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.04);
-}
-
-/* Glass nav link — hover state */
-.glass-nav-hover:hover {
-  background: rgba(255, 255, 255, 0.35);
-}
-
-.dark .glass-nav-hover:hover {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-/* Glass overlay for mobile sidebar */
-.glass-overlay {
-  background: rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-}
-
-/* Mesh animation keyframe for dashboard background */
-@keyframes meshDrift {
-  0% {
-    background-position:
-      0% 0%,
-      100% 0%,
-      50% 100%,
-      0% 50%,
-      0% 0%;
-  }
-  50% {
-    background-position:
-      30% 20%,
-      70% 30%,
-      40% 80%,
-      20% 60%,
-      0% 0%;
-  }
-  100% {
-    background-position:
-      0% 0%,
-      100% 0%,
-      50% 100%,
-      0% 50%,
-      0% 0%;
-  }
-}
-
-/* Dashboard background — Vikinger-style light gray */
-.dashboard-bg {
-  background: #f8f8fb;
-  min-height: 100vh;
-}
-
-.dark .dashboard-bg {
-  background: #161b28;
-}
-
-/* Cursor pointer global pour tous les éléments cliquables */
-button,
-a,
-select,
-summary,
-[role="button"],
-[role="tab"],
-[role="menuitem"],
-[role="option"],
-[role="link"],
-[type="button"],
-[type="submit"],
-[type="reset"],
-label[for],
-.cursor-pointer {
-  cursor: pointer;
-}
-
-/* Scrollbar personnalisée */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-
-.dark ::-webkit-scrollbar-track {
-  background: #1e293b;
-}
-
-.dark ::-webkit-scrollbar-thumb {
-  background: #475569;
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
-}
-
-/* Hide scrollbar but keep scroll functionality */
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
 }

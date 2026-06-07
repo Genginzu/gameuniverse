@@ -58,8 +58,7 @@ async function dashboardFetcher(url: string): Promise<DashboardStatsResponse> {
   return json;
 }
 
-const CARD_STYLE =
-  "rounded-2xl border-gray-200 bg-white backdrop-blur-xs dark:border-slate-700/50 dark:bg-slate-800/50";
+const CARD_STYLE = "editorial-stats-card";
 
 export function StatsDashboard({
   playerId,
@@ -84,7 +83,7 @@ export function StatsDashboard({
   // Private stats — known upfront or detected from API
   if (isPrivate || error?.message === "private") {
     return (
-      <div>
+      <div className="editorial-stats">
         {title}
         <Card className={CARD_STYLE}>
           <CardContent className="flex flex-col items-center gap-2 p-8 text-center">
@@ -103,7 +102,7 @@ export function StatsDashboard({
 
   if (isLoading) {
     return (
-      <div>
+      <div className="editorial-stats">
         {title}
         <StatsDashboardSkeleton />
       </div>
@@ -112,7 +111,7 @@ export function StatsDashboard({
 
   if (error) {
     return (
-      <div>
+      <div className="editorial-stats">
         {title}
         <Card className={CARD_STYLE}>
           <CardContent className="flex flex-col items-center gap-3 p-8 text-center">
@@ -130,7 +129,7 @@ export function StatsDashboard({
   if (!data) return null;
 
   return (
-    <div>
+    <div className="editorial-stats">
       {title}
       <div className="space-y-8">
         <StatsOverviewCards metrics={data.overview} locale={locale} />

@@ -47,7 +47,7 @@ export function PriceHistoryStatsDisplay({ stats, currentPrice }: PriceHistorySt
         return (
           <Card
             key={card.label}
-            className="rounded-xl border-white/10 bg-white/5 shadow-lg shadow-black/20 backdrop-blur-xl"
+            className="rounded-xl border border-[var(--editorial-line)] bg-[var(--editorial-bg-2)]"
           >
             <CardContent className="flex items-center gap-3 p-4">
               <div className={`rounded-md bg-white/10 p-2 ${card.iconColor}`}>

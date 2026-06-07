@@ -26,6 +26,14 @@
       "title": "Ma bibliothèque",
       "description": "Gérez votre collection de jeux vidéo personnelle"
     },
+    "collections": {
+      "title": "Mes collections",
+      "description": "Organisez vos jeux en collections personnalisées et partagez-les avec la communauté"
+    },
+    "dashboard": {
+      "title": "Tableau de bord",
+      "description": "Votre espace personnel : bibliothèque, collections et accès rapides"
+    },
     "favorites": {
       "title": "Personnages favoris",
       "description": "Vos personnages de jeux vidéo favoris"
@@ -41,6 +49,17 @@
     "coins": {
       "title": "Historique GU Coins",
       "description": "Consultez l'historique de vos GU Coins gagnés et dépensés"
+    }
+  },
+  "header": {
+    "userDropdown": {
+      "dropdownAriaLabel": "Menu utilisateur",
+      "avatarAlt": "Avatar de {username}",
+      "signIn": "Se connecter",
+      "signOut": "Se déconnecter",
+      "profile": "Profil",
+      "library": "Bibliothèque",
+      "settings": "Paramètres"
     }
   },
   "navigation": {
@@ -73,57 +92,81 @@
     "esportPredictions": "Pronostics"
   },
   "landing": {
-    "title": "Votre univers",
-    "titleHighlight": "gaming",
-    "titleEnd": "commence ici",
-    "subtitle": "Explorez des milliers de jeux, découvrez des personnages iconiques et rejoignez une communauté de passionnés",
-    "cta": {
-      "signup": "Commencer gratuitement",
-      "explore": "Explorer les jeux",
-      "login": "Se connecter",
-      "title": "Prêt à rejoindre l'aventure ?",
-      "subtitle": "Rejoignez des milliers de gamers qui utilisent déjà Gamers Universe pour découvrir leurs prochains jeux favoris"
+    "hero": {
+      "kicker": "ÉDITION 2026 · UNIVERS GAMING",
+      "titlePart1": "Votre",
+      "titlePart2": "univers",
+      "titlePart3": "gaming",
+      "titlePart4": "commence ici",
+      "imageAlt": "Cover du jeu en avant",
+      "description": "Explorez des milliers de jeux, suivez les personnages emblématiques et rejoignez une communauté de passionnés sans filtre.",
+      "ctaSignup": "Commencer gratuitement",
+      "ctaExplore": "Explorer les jeux",
+      "fallbackBackgroundAlt": "Univers gaming Gamers Universe"
+    },
+    "marquee": {
+      "trending": "Trending now",
+      "esport": "Esport · Live",
+      "characters": "Personnages",
+      "reviews": "Reviews communauté",
+      "coaching": "Coaching",
+      "library": "Bibliothèque"
     },
     "features": {
-      "mainTitle": "Tout pour les gamers",
-      "mainSubtitle": "Une plateforme pensée pour enrichir votre expérience gaming",
-      "library": {
-        "title": "Bibliothèque immense",
-        "description": "Des milliers de jeux avec fiches détaillées, notes, médias et prix comparés"
-      },
-      "characters": {
-        "title": "Personnages iconiques",
-        "description": "Explorez les héros et vilains de vos jeux préférés avec leurs biographies complètes"
-      },
-      "community": {
-        "title": "Communauté active",
-        "description": "Partagez vos avis, créez des collections et connectez-vous avec d'autres joueurs"
-      },
-      "search": {
-        "title": "Recherche avancée",
-        "description": "Trouvez facilement vos jeux préférés grâce à notre système de recherche et filtres"
-      },
-      "tracking": {
-        "title": "Suivi de collection",
-        "description": "Gérez votre bibliothèque, suivez votre temps de jeu et vos progressions"
-      },
-      "reviews": {
-        "title": "Avis détaillés",
-        "description": "Rédigez et consultez des avis complets avec points positifs et négatifs"
+      "kicker": "CE QUE GAMERS UNIVERSE FAIT",
+      "title": "Tout l'univers du jeu",
+      "titleAccent": "en un seul endroit",
+      "description": "Six piliers pensés pour les passionnés : du suivi de collection à la communauté, en passant par l'esport et les personnages iconiques.",
+      "items": {
+        "library": {
+          "title": "Bibliothèque immense",
+          "description": "Des milliers de jeux avec fiches détaillées, notes, médias et prix comparés."
+        },
+        "characters": {
+          "title": "Personnages iconiques",
+          "description": "Explorez les héros et vilains de vos jeux préférés avec leurs biographies complètes."
+        },
+        "community": {
+          "title": "Communauté active",
+          "description": "Partagez vos avis, créez des collections et connectez-vous avec d'autres joueurs."
+        },
+        "search": {
+          "title": "Recherche avancée",
+          "description": "Trouvez facilement vos jeux préférés grâce à un moteur de recherche pensé pour le gaming."
+        },
+        "tracking": {
+          "title": "Suivi de collection",
+          "description": "Gérez votre bibliothèque, suivez votre temps de jeu et vos progressions."
+        },
+        "reviews": {
+          "title": "Avis détaillés",
+          "description": "Rédigez et consultez des avis complets avec points positifs et négatifs."
+        }
       }
     },
-    "recentGames": {
-      "title": "Derniers jeux ajoutés",
-      "subtitle": "Les dernières pépites ajoutées à notre catalogue",
-      "viewAll": "Voir tous les jeux"
+    "trending": {
+      "kicker": "TENDANCES DU MOMENT",
+      "title": "Les jeux qui",
+      "titleAccent": "font vibrer la communauté",
+      "viewAll": "Voir toutes les tendances",
+      "empty": "Aucun jeu tendance pour le moment."
     },
     "stats": {
-      "title": "Une communauté qui grandit",
-      "subtitle": "Des chiffres qui parlent d'eux-mêmes",
-      "gamesReferenced": "Jeux référencés",
-      "characters": "Personnages",
-      "players": "Joueurs actifs",
-      "reviews": "Avis publiés"
+      "kicker": "UNE COMMUNAUTÉ QUI GRANDIT",
+      "title": "Des chiffres qui",
+      "titleAccent": "parlent d'eux-mêmes",
+      "gamesReferenced": "JEUX RÉFÉRENCÉS",
+      "characters": "PERSONNAGES",
+      "players": "JOUEURS ACTIFS",
+      "reviews": "AVIS PUBLIÉS"
+    },
+    "cta": {
+      "kicker": "PRÊT À EMBARQUER ?",
+      "title": "Rejoignez l'univers",
+      "titleAccent": "Gamers Universe",
+      "description": "Des milliers de joueurs explorent déjà leurs prochains coups de cœur. Créez votre compte en moins d'une minute, gardez la trace de vos jeux et discutez avec la communauté.",
+      "signup": "Commencer gratuitement",
+      "login": "J'ai déjà un compte"
     }
   },
   "library": {
@@ -302,7 +345,7 @@
     "collections": "Mes collections",
     "profile": "Profil",
     "settings": "Paramètres",
-    "welcome": "Bienvenue, {name}",
+    "welcome": "Bienvenue, <name></name>",
     "subtitle": "Votre espace personnel pour explorer l'univers du jeu vidéo",
     "overview": "Vue d'ensemble",
     "favorites": "Favoris",
@@ -352,7 +395,126 @@
     "logout": "Déconnexion",
     "mySpace": "Mon espace",
     "friends": "Amis",
-    "discussions": "Discussions"
+    "discussions": "Discussions",
+    "editorial": {
+      "kicker": "Mon espace",
+      "statGames": "Jeux",
+      "statCompleted": "Terminés",
+      "statPlaytime": "Temps de jeu"
+    }
+  },
+  "editorial": {
+    "rail": {
+      "ariaLabel": "Barre de navigation éditoriale",
+      "logoAriaLabel": "Gamers Universe — accueil",
+      "spacesAriaLabel": "Espaces"
+    },
+    "subSidebar": {
+      "closeAriaLabel": "Fermer la sous-barre",
+      "navAriaLabel": "Liens {space}"
+    },
+    "mobileNav": {
+      "openAriaLabel": "Ouvrir la navigation",
+      "closeAriaLabel": "Fermer la navigation",
+      "dialogAriaLabel": "Navigation mobile",
+      "title": "Navigation",
+      "spacesAriaLabel": "Espaces",
+      "discoverTitle": "Découvrir",
+      "myAreaTitle": "Mon espace",
+      "account": {
+        "title": "Compte",
+        "signIn": "Se connecter",
+        "signOut": "Se déconnecter",
+        "profile": "Profil",
+        "library": "Bibliothèque",
+        "settings": "Paramètres"
+      }
+    },
+    "languageSwitcher": {
+      "ariaLabel": "Changer la langue",
+      "currentLanguage": "Langue actuelle : {language}",
+      "listboxAriaLabel": "Langues disponibles"
+    },
+    "languages": {
+      "fr": "Français",
+      "en": "Anglais"
+    },
+    "megaMenu": {
+      "entries": {
+        "games": "Jeux",
+        "characters": "Personnages",
+        "players": "Joueurs",
+        "esport": "E-sport"
+      },
+      "panel": {
+        "ariaLabel": "Sous-menu {entry}"
+      },
+      "sections": {
+        "games": {
+          "explore": "Explorer"
+        },
+        "characters": {
+          "explore": "Explorer"
+        },
+        "players": {
+          "community": "Communauté"
+        },
+        "esport": {
+          "competitions": "Compétitions",
+          "proScene": "Équipes & joueurs"
+        }
+      },
+      "links": {
+        "games": {
+          "all": "Tous les jeux",
+          "trending": "Tendances",
+          "upcoming": "À venir"
+        },
+        "characters": {
+          "all": "Tous les personnages"
+        },
+        "players": {
+          "all": "Joueurs Gamers Universe"
+        },
+        "esport": {
+          "live": "En direct",
+          "calendar": "Calendrier",
+          "tournaments": "Tournois",
+          "results": "Résultats",
+          "teams": "Équipes",
+          "proPlayers": "Joueurs pros"
+        }
+      },
+      "logoAriaLabel": "Gamers Universe — accueil",
+      "primaryNavAriaLabel": "Navigation principale"
+    },
+    "spaces": {
+      "library": "Ma bibliothèque",
+      "esport": "Pronostics",
+      "coaching": "Coaching",
+      "account": "Mon compte"
+    },
+    "links": {
+      "library": {
+        "myLibrary": "Ma bibliothèque",
+        "collections": "Mes collections",
+        "favoriteCharacters": "Personnages favoris"
+      },
+      "esport": {
+        "predictions": "Pronostics",
+        "fantasy": "Fantasy"
+      },
+      "coaching": {
+        "hub": "Hub coaching",
+        "sessions": "Mes sessions",
+        "settings": "Paramètres coach"
+      },
+      "account": {
+        "friends": "Mes amis",
+        "discussions": "Discussions",
+        "coins": "Mes coins"
+      }
+    }
   },
   "common": {
     "loading": "Chargement...",
@@ -574,6 +736,39 @@
         "posts": "Posts",
         "friends": "Amis",
         "comments": "Commentaires"
+      },
+      "editorial": {
+        "kicker": "Profil joueur · Niv. {level}",
+        "kickerNoLevel": "Profil joueur",
+        "rankBadge": "◆ Niv. {level}",
+        "inGame": "En jeu",
+        "online": "En ligne",
+        "stats": {
+          "games": "Jeux",
+          "completed": "Terminés",
+          "playtime": "Heures",
+          "rating": "Note moyenne",
+          "trophies": "Trophées"
+        },
+        "bento": {
+          "recentTitle": "Bibliothèque récente",
+          "recentKicker": "Récemment ajoutés",
+          "recentLink": "Voir la bibliothèque",
+          "recentEmpty": "Aucun jeu récent.",
+          "achievementsTitle": "Derniers",
+          "achievementsKicker": "Succès",
+          "achievementsEmpty": "Aucun succès débloqué.",
+          "winRateKicker": "Note moyenne",
+          "winRateHelper": "Sur les {count} avis publiés.",
+          "winRateNoData": "Pas encore d'avis publié.",
+          "postKicker": "Dernier post",
+          "postEmpty": "Aucun post pour le moment.",
+          "postHours": "il y a {hours}h",
+          "postDays": "il y a {days}j",
+          "friendsKicker": "Amis",
+          "friendsHelper": "{count, plural, =0 {Aucun ami} =1 {1 ami} other {# amis}}",
+          "noTagline": "« Joueur de la communauté Gamers Universe. »"
+        }
       }
     },
     "tabs": {
@@ -868,13 +1063,34 @@
     },
     "yourGames": "Vos jeux ({count})",
     "loadingError": "Erreur de chargement",
-    "retry": "Réessayer"
+    "retry": "Réessayer",
+    "editorial": {
+      "kicker": "Bibliothèque",
+      "titlePrefix": "Votre",
+      "titleAccent": "collection",
+      "subtitle": "Tout votre univers gaming en un seul endroit. Filtrez, recherchez, explorez vos titres.",
+      "stats": {
+        "games": "Jeux",
+        "completed": "Terminés",
+        "playtime": "Heures jouées",
+        "rating": "Note moyenne"
+      },
+      "searchPlaceholder": "Rechercher dans votre bibliothèque…",
+      "loading": {
+        "status": "Recherche en cours"
+      }
+    }
   },
   "games": {
     "heroTitle": "Découvrez des Jeux",
     "heroTitleHighlight": "Extraordinaires",
     "heroSubtitle": "Explorez notre collection de jeux vidéo exceptionnels",
     "availableCount": "{count} jeux disponibles",
+    "listingKicker": "Catalogue",
+    "listingTitle": "Tous les jeux",
+    "listingDescription": "Explorez la bibliothèque complète de Gamers Universe.",
+    "listingCount": "{count} titres",
+    "readMore": "Découvrir",
     "noGamesFound": "Aucun jeu trouvé",
     "modifySearch": "Essayez de modifier vos critères de recherche ou explorez d'autres catégories",
     "noGamesAvailable": "Aucun jeu disponible pour le moment",
@@ -1115,6 +1331,76 @@
       "empty": "Aucun historique de prix disponible pour ce jeu.",
       "error": "Impossible de charger l'historique de prix.",
       "retry": "Réessayer"
+    },
+    "editorial": {
+      "heroPlatformsCount": "{count} plateformes",
+      "heroPlatformsOne": "1 plateforme",
+      "liveTicker": "{players} en jeu · {streams} streams · {tournaments} tournois cette semaine",
+      "score": "Score",
+      "from": "À partir de",
+      "lowestPrice": "Prix le plus bas",
+      "allTimeLow": "Plus bas historique",
+      "current": "Actuel",
+      "highest": "Plus haut",
+      "ninetyDayChange": "Évolution sur 90 jours",
+      "platforms": "Plateformes",
+      "released": "Sortie",
+      "metascoreRating": {
+        "exceptional": "Exceptionnel — parmi les meilleurs de l'année.",
+        "excellent": "Excellent — largement acclamé par la presse et les joueurs.",
+        "good": "Bon — solides recommandations de la presse.",
+        "mixed": "Mitigé — consultez plusieurs avis avant de vous lancer."
+      },
+      "sections": {
+        "about": "À propos",
+        "aboutTitle": "L''<accent>histoire</accent>",
+        "atGlance": "En un coup d'œil",
+        "ageRatings": "Classifications",
+        "ageRatingsTitle": "Public <accent>averti</accent>",
+        "languages": "Langues",
+        "languagesTitle": "Disponible <accent>partout</accent>",
+        "languagesSupported": "{count} langues supportées",
+        "playtime": "Combien de temps pour ce jeu ?",
+        "media": "Médias",
+        "mediaTitle": "Voyez-le en <accent>action</accent>",
+        "mediaCount": "{screenshots} captures · {videos} vidéos",
+        "editions": "Éditions",
+        "editionsTitle": "Choisissez votre <accent>version</accent>",
+        "expansions": "Extensions",
+        "expansionsTitle": "DLC & <accent>extensions</accent>",
+        "soundtrack": "Bande son",
+        "soundtrackTitle": "Musique <accent>originale</accent>",
+        "whereToBuy": "Où acheter",
+        "whereToBuyTitle": "Meilleures <accent>offres</accent> du moment",
+        "priceHistory": "Historique des prix",
+        "priceHistoryTitle": "Évolution sur 90 jours",
+        "communityVoice": "Voix de la communauté",
+        "communityVoiceTitle": "Ce que les <accent>joueurs</accent> en disent",
+        "reviewsCount": "{count} avis · moyenne {avg}/10",
+        "youMightAlsoLike": "Vous aimerez peut-être",
+        "similarTitle": "Jeux <accent>similaires</accent>",
+        "viewAll": "Voir tout"
+      },
+      "playtime": {
+        "officialKicker": "Source : HowLongToBeat",
+        "officialTitle": "Durée estimée",
+        "communityKicker": "Moyenne communauté",
+        "communityFromPlayers": "À partir de {count} joueurs",
+        "topContributors": "Meilleurs contributeurs"
+      },
+      "languages": {
+        "language": "Langue",
+        "interface": "Interface",
+        "audio": "Audio",
+        "subtitles": "Sous-titres"
+      },
+      "review": {
+        "best": "Meilleure offre",
+        "buy": "Acheter sur {store}"
+      },
+      "ageRating": {
+        "contentDescriptors": "Avertissements"
+      }
     }
   },
   "footer": {
@@ -1253,6 +1539,12 @@
         "ubisoft": "Ubisoft",
         "itch": "itch.io"
       }
+    },
+    "editorial": {
+      "kicker": "Paramètres",
+      "titlePrefix": "Votre",
+      "titleAccent": "compte",
+      "subtitle": "Gérez vos informations personnelles, votre apparence, vos plateformes liées et la sécurité de votre compte."
     }
   },
   "admin": {
@@ -2894,9 +3186,86 @@
       "deleteSuccess": "Collection supprimée avec succès.",
       "addGameSuccess": "Jeu ajouté à la collection.",
       "updateSuccess": "Collection mise à jour."
+    },
+    "editorial": {
+      "kicker": "Collections",
+      "titlePrefix": "Vos",
+      "titleAccent": "univers",
+      "subtitle": "Rassemblez vos jeux en sélections, partagez-les avec la communauté et retrouvez-les en un coup d'œil.",
+      "createButton": "Créer une collection",
+      "stats": {
+        "collections": "Collections",
+        "games": "Jeux rassemblés",
+        "largest": "Plus grande collection"
+      },
+      "listKicker": "{count, plural, =0 {Aucune collection} one {# collection} other {# collections}}",
+      "empty": {
+        "title": "Aucune collection pour le moment",
+        "description": "Créez votre première collection pour regrouper vos jeux par thème, par envie ou par projet.",
+        "cta": "Créer ma première collection"
+      },
+      "authRequired": {
+        "title": "Vos collections vous attendent",
+        "description": "Connectez-vous pour créer et organiser vos collections de jeux.",
+        "signIn": "Se connecter"
+      },
+      "detail": {
+        "kicker": "Collection",
+        "gamesLabel": "jeux",
+        "updatedLabel": "Mise à jour",
+        "gamesKicker": "Sélection",
+        "gamesTitle": "Les jeux de cette collection",
+        "emptyTitle": "Aucun jeu pour le moment",
+        "emptyDescriptionOwner": "Ajoutez vos premiers jeux pour donner vie à cette collection.",
+        "emptyDescriptionViewer": "Le propriétaire n'a pas encore ajouté de jeu à cette collection.",
+        "emptyCta": "Ajouter un jeu",
+        "authRequiredTitle": "Connexion requise",
+        "authRequiredDescription": "Connectez-vous pour accéder à cette collection.",
+        "removeItem": {
+          "ariaLabel": "Retirer {title} de la collection",
+          "confirmTitle": "Retirer ce jeu ?",
+          "confirmDescription": "Êtes-vous sûr de vouloir retirer « {title} » de la collection ? Vous pourrez le ré-ajouter plus tard.",
+          "confirmCancel": "Annuler",
+          "confirmAction": "Retirer",
+          "removing": "Suppression…",
+          "successToast": "Jeu retiré de la collection."
+        }
+      }
     }
   },
   "globalSearch": {
+    "trigger": {
+      "placeholder": "Rechercher un jeu, un personnage, un joueur…",
+      "placeholderShort": "Rechercher…",
+      "ariaLabel": "Ouvrir la recherche",
+      "shortcutHint": "Ctrl K"
+    },
+    "overlay": {
+      "dialogAriaLabel": "Recherche globale",
+      "inputPlaceholder": "Rechercher un jeu, un personnage, un joueur…",
+      "inputAriaLabel": "Saisir votre recherche",
+      "closeAriaLabel": "Fermer la recherche",
+      "clearAriaLabel": "Effacer la saisie",
+      "resultsAriaLabel": "Résultats de recherche",
+      "loading": "Recherche en cours…",
+      "noResults": "Aucun résultat pour « {query} »",
+      "noResultsHint": "Essayez avec d'autres mots-clés.",
+      "groups": {
+        "games": "Jeux",
+        "characters": "Personnages",
+        "players": "Joueurs",
+        "teams": "Équipes esport",
+        "proPlayers": "Joueurs pros",
+        "coaches": "Coachs"
+      },
+      "seeAll": "Voir tous les {category} pour « {query} » →",
+      "recent": {
+        "title": "Recherches récentes",
+        "clearAll": "Effacer tout",
+        "removeAriaLabel": "Supprimer la recherche « {query} »"
+      },
+      "emptyHint": "Commencez à saisir pour voir les résultats."
+    },
     "placeholder": "Rechercher jeux, personnages, joueurs...",
     "noResults": "Aucun résultat trouvé",
     "loading": "Recherche en cours...",
@@ -3547,6 +3916,7 @@
     }
   },
   "trending": {
+    "kicker": "À la une",
     "title": "Tendances",
     "subtitle": "Découvrez les jeux les plus populaires du moment",
     "count": "{count} jeux",
@@ -3558,6 +3928,7 @@
     }
   },
   "upcoming": {
+    "kicker": "Calendrier",
     "title": "Prochaines sorties",
     "subtitle": "Les jeux qui arrivent bientôt",
     "count": "{count} jeux à venir",
@@ -3565,13 +3936,17 @@
     "empty": "Aucune sortie prévue pour cette période."
   },
   "homeDashboard": {
+    "kicker": "TABLEAU DE BORD",
     "title": "Bienvenue",
     "subtitle": "Votre tableau de bord gaming",
     "trending": "Jeux tendances",
+    "trendingKicker": "TENDANCES",
     "seeAllTrending": "Voir toutes les tendances",
     "upcoming": "Sorties du mois",
+    "upcomingKicker": "SORTIES À VENIR",
     "seeAllUpcoming": "Toutes les prochaines sorties",
-    "noUpcoming": "Aucune sortie prévue ce mois-ci."
+    "noUpcoming": "Aucune sortie prévue ce mois-ci.",
+    "noTrending": "Aucun jeu tendance pour le moment."
   },
   "coaching": {
     "settings": {
@@ -3835,6 +4210,7 @@
     "calendar": {
       "metaTitle": "Calendrier Esport",
       "metaDescription": "Suivez les tournois esport professionnels à venir et en cours",
+      "kicker": "Esport",
       "title": "Calendrier Esport",
       "subtitle": "Tournois professionnels à venir et en cours",
       "noMatches": "Aucun match ce mois-ci",

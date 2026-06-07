@@ -39,27 +39,25 @@ export function ActivityFeed({
   };
 
   return (
-    <section className="mb-8 space-y-6">
+    <section className="editorial-activity">
       {/* Top bar: search + new post button */}
-      <div className="xs:flex-row xs:items-center xs:justify-between flex flex-col-reverse gap-3">
+      <div className="editorial-activity-toolbar">
         <div className="min-w-0 flex-1">
           <SearchBar value={postHook.searchTerm} onChange={postHook.setSearchTerm} />
         </div>
         {isOwner && (
-          <div className="xs:w-auto flex shrink-0">
-            <button
-              type="button"
-              onClick={() => setShowComposer((v) => !v)}
-              className="from-palette-primary-500 shadow-palette-primary-500/20 inline-flex items-center justify-center gap-2 rounded-2xl bg-linear-to-br to-blue-500 px-5 py-3 text-sm font-medium text-white shadow-lg transition-all duration-300 hover:opacity-90"
-            >
-              {showComposer ? (
-                <Icon icon="lucide:x" className="h-4 w-4" />
-              ) : (
-                <Icon icon="lucide:plus" className="h-4 w-4" />
-              )}
-              {t("newPost")}
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => setShowComposer((v) => !v)}
+            className="editorial-activity-new-post"
+          >
+            {showComposer ? (
+              <Icon icon="lucide:x" className="h-4 w-4" aria-hidden="true" />
+            ) : (
+              <Icon icon="lucide:plus" className="h-4 w-4" aria-hidden="true" />
+            )}
+            {t("newPost")}
+          </button>
         )}
       </div>
 
@@ -75,7 +73,7 @@ export function ActivityFeed({
       )}
 
       {/* Two-column layout: posts left, activities right */}
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+      <div className="editorial-activity-columns">
         <PostsFeedColumn
           postHook={postHook}
           playerName={playerName}

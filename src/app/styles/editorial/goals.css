@@ -1,0 +1,75 @@
+/*
+ * Editorial : onglet Goals — THEMING DES COMPOSANTS LEGACY UNIQUEMENT.
+ * Voir steering styles-organization (approche hybride).
+ *
+ * La structure (actions, boutons) est en Tailwind inline (GoalsTab.tsx).
+ * Ce module ne conserve QUE le theming descendant des composants legacy
+ * imbriqués (PersonalGoals, SessionComposer, GameSearchPicker, PersonalGoalForm) :
+ * glass-card, inputs glass, fonds bg-white + couleurs gray legacy ramenés sur
+ * des surfaces sombres. Hook : `.editorial-goals`. (cf issue #268.)
+ */
+
+.editorial-goals .glass-card {
+  background: var(--editorial-bg-3);
+  border: 1px solid var(--editorial-line);
+  backdrop-filter: none;
+  color: #fff;
+}
+
+.editorial-goals [class*="bg-gray-200"],
+.editorial-goals [class*="bg-slate-700"] {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.editorial-goals .text-gray-500,
+.editorial-goals .text-gray-600 {
+  color: var(--editorial-muted);
+}
+
+.editorial-goals .text-gray-900 {
+  color: #fff;
+}
+
+/* ===== Override remaining legacy form surfaces ===== */
+.editorial-goals input,
+.editorial-goals select,
+.editorial-goals textarea,
+.editorial-goals .glass-input {
+  background-color: var(--editorial-bg-2);
+  border-color: var(--editorial-line);
+  color: #fff;
+  backdrop-filter: none;
+}
+
+.editorial-goals input::placeholder,
+.editorial-goals textarea::placeholder {
+  color: var(--editorial-muted);
+}
+
+.editorial-goals input[type="date"] {
+  color-scheme: dark;
+}
+
+.editorial-goals option {
+  background-color: var(--editorial-bg-2);
+  color: #fff;
+}
+
+.editorial-goals :not(button)[class*="bg-white"] {
+  background-color: var(--editorial-bg-3) !important;
+  backdrop-filter: none;
+}
+
+.editorial-goals [role="listbox"] {
+  background-color: var(--editorial-bg-2) !important;
+  border-color: var(--editorial-line) !important;
+}
+
+.editorial-goals .text-gray-400 {
+  color: var(--editorial-muted);
+}
+
+.editorial-goals .text-gray-700,
+.editorial-goals .text-gray-800 {
+  color: rgba(255, 255, 255, 0.85);
+}

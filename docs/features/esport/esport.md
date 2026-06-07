@@ -63,9 +63,6 @@ Tous dans `src/components/esport/` :
 - `EsportPlayerDetailContent` — Profil joueur avec badges
 - `EsportLiveContent` — Cartes de streams live avec auto-refresh 2min
 
-`src/components/players/GameRanksSection.tsx` — Section rangs compétitifs pour
-le profil joueur.
-
 ## Prérequis
 
 - Variable d'environnement `PANDASCORE_API_KEY` configurée

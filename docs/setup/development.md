@@ -247,6 +247,46 @@ const { data: comparison } = await supabase.rpc("compare_game_prices", {
 });
 ```
 
+## Editorial Design System (refonte)
+
+Les pages publiques utilisent la **direction artistique éditoriale** (dark,
+typo display Tomorrow, accent dynamique) introduite par la refonte
+`design/editorial-refonte`. L'admin (`/admin/*`) conserve son
+`DashboardLayout` glassmorphism.
+
+### Layout
+
+- **`EditorialShell`** (`src/components/layout/editorial/EditorialShell.tsx`) —
+  wrapper de référence pour toute page publique : assemble `EditorialLayout`
+  (rail 56px + sub-sidebar + mega-menu + recherche full-page). Les `page.tsx`
+  publics enveloppent leur contenu dans `<EditorialShell>`.
+- **`EditorialLayout`** — shell bas niveau (header sticky, rail, sub-sidebar,
+  hamburger mobile). Fournit le fond sombre éditorial.
+
+### Conventions
+
+- **Tailwind inline** par défaut (pas de classes `.editorial-*` dans des
+  modules CSS pour le simple layout/couleur). Réutilisation via composants
+  React partagés (`KickerLabel`, `GameCard`…) et tokens `@theme`.
+- Tokens : surfaces `bg-editorial-2` / `bg-editorial-3`, bordures
+  `border-editorial-line`, texte secondaire `text-editorial-muted`, accent
+  dynamique `text-editorial-accent` / `bg-editorial-accent/15`. Titres en
+  `font-display` + `text-[clamp(...)]`.
+- **Skeletons** sombres dès le premier paint (jamais de surface claire qui
+  bascule). Override scopé `.editorial-layout-main` pour neutraliser les
+  skeletons partagés (`GridSkeleton`, `EntitySkeleton`).
+- **Glassmorphism retiré** des pages publiques (`backdrop-blur`, `.glass-*`
+  dépréciés). Conservé uniquement pour `/admin` et legacy non migré.
+- Espaces transitoires `.editorial-esport` / `.editorial-coaching`
+  (`src/app/styles/editorial/*.css`) : couches de neutralisation legacy
+  conservées comme filet de sécurité.
+
+### Références
+
+- Plan : [`docs/design/editorial-refonte-plan.md`](../design/editorial-refonte-plan.md)
+- Composants : [`docs/design/editorial-components.md`](../design/editorial-components.md)
+- Steering : `.kiro/steering/styles-organization.md`, `design-glassmorphism.md`
+
 ## Development Best Practices
 
 ### Code Quality

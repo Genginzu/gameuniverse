@@ -1,0 +1,329 @@
+/*
+ * Editorial : onglet Reviews (PlayerReviewsFeed) de la page joueur.
+ * Cartes d'avis dédiées au mode éditorial : surfaces sombres, texte clair.
+ */
+
+.editorial-reviews {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ===== Review card ===== */
+.editorial-review-card {
+  padding: 1.25rem;
+  border-radius: 0.875rem;
+  border: 1px solid var(--editorial-line);
+  /* Fond plus clair par défaut (anciennement le hover) pour une meilleure
+     lisibilité du texte sur la page sombre. */
+  background: var(--editorial-bg-3);
+  color: #fff;
+  transition:
+    border-color 150ms ease,
+    box-shadow 200ms ease;
+}
+
+/* Hover : pas de changement de fond, on met en valeur la bordure + une légère
+   ombre. Texte déjà blanc, donc pas d'override nécessaire. */
+.editorial-review-card:hover {
+  border-color: rgba(var(--accent-rgb, var(--neon-primary)), 0.4);
+  box-shadow: 0 8px 24px -12px rgba(var(--accent-rgb, var(--neon-primary)), 0.25);
+}
+
+/* Header : cover + game name + rating */
+.editorial-review-card-header {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.editorial-review-card-cover {
+  position: relative;
+  width: 3.5rem;
+  height: 5rem;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  background: var(--editorial-bg-3);
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.editorial-review-card-game {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #fff;
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+
+.editorial-review-card-game:hover {
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+}
+
+.editorial-review-card-date {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin-top: 0.375rem;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--editorial-muted);
+}
+
+.editorial-review-card-rating {
+  font-family: var(--font-display, "Tomorrow"), system-ui, sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+/* Content excerpt */
+.editorial-review-card-content {
+  margin: 0 0 1rem;
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Positive / negative points block */
+.editorial-review-card-points {
+  display: grid;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--editorial-line);
+}
+
+@media (min-width: 640px) {
+  .editorial-review-card-points {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.editorial-review-card-points-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.editorial-review-card-points-label {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.editorial-review-card-points-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.editorial-review-card-points-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+/* ===== Sort select ===== */
+.editorial-reviews-sort {
+  cursor: pointer;
+  height: 40px;
+  padding: 0 2.25rem 0 1rem;
+  border-radius: 10px;
+  border: 1px solid var(--editorial-line);
+  background-color: var(--editorial-bg-3);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a89dbf' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 12px 12px;
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.editorial-reviews-sort:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.editorial-reviews-sort:focus,
+.editorial-reviews-sort:focus-visible {
+  outline: none;
+  border-color: rgb(var(--accent-rgb, var(--neon-primary)));
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb, var(--neon-primary)), 0.15);
+}
+
+/* Options : style natif (limite contrôle CSS) — on force au moins le bg
+   sombre pour éviter le fond blanc/menu déroulant blanc dans Chrome/Firefox */
+.editorial-reviews-sort option {
+  background-color: var(--editorial-bg-2);
+  color: #fff;
+}
+
+/* ===== Stats recap card ===== */
+.editorial-reviews-stats {
+  padding: 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid var(--editorial-line);
+  background: var(--editorial-bg-3);
+  color: #fff;
+}
+
+.editorial-reviews-stats-metrics {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--editorial-line);
+}
+
+@media (min-width: 640px) {
+  .editorial-reviews-stats-metrics {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+.editorial-reviews-stats-metric {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+.editorial-reviews-stats-metric-icon {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  flex-shrink: 0;
+  border-radius: 0.75rem;
+  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.15);
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+}
+
+.editorial-reviews-stats-metric-label {
+  margin: 0 0 0.25rem;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--editorial-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.editorial-reviews-stats-metric-value {
+  margin: 0;
+  font-family: var(--font-display, "Tomorrow"), system-ui, sans-serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  color: #fff;
+}
+
+.editorial-reviews-stats-metric-unit {
+  font-family: var(--font-display, "Tomorrow"), system-ui, sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.4);
+  margin-left: 0.125rem;
+}
+
+.editorial-reviews-stats-metric-empty {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--editorial-muted);
+}
+
+/* Distribution */
+.editorial-reviews-stats-distribution-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.875rem;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--editorial-muted);
+}
+
+.editorial-reviews-stats-distribution-header p {
+  margin: 0;
+}
+
+.editorial-reviews-stats-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.editorial-reviews-stats-bar-range {
+  width: 3rem;
+  text-align: right;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.editorial-reviews-stats-bar-track {
+  position: relative;
+  flex: 1;
+  height: 1.25rem;
+  overflow: hidden;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.editorial-reviews-stats-bar-fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 500ms ease;
+}
+
+.editorial-reviews-stats-bar-count {
+  width: 5rem;
+  text-align: right;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.7rem;
+  color: var(--editorial-muted);
+}
+
+/* ===== Skeleton override (legacy SkeletonCard with glass-card) ===== */
+.editorial-reviews .glass-card {
+  background: var(--editorial-bg-2);
+  border: 1px solid var(--editorial-line);
+  backdrop-filter: none;
+}
+
+.editorial-reviews [class*="bg-gray-200"],
+.editorial-reviews [class*="bg-slate-700"] {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}

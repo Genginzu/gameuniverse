@@ -1,22 +1,47 @@
 import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+
 import { GlobalSearchService } from "@/lib/services/globalSearchService";
 import type { GlobalSearchResponse } from "@/types/global-search";
 import { logger } from "@/lib/logger";
 
-const DEFAULT_LIMIT = 5;
+/**
+ * Zod schema for the GET query string.
+ *
+ * - `query` is required, ≥ 2 chars after trim.
+ * - `locale` defaults to "fr".
+ * - All `*Limit` params accept positive integers; missing or invalid values
+ *   fall back to the service's defaults (5 for character/player/team/proPlayer/coach).
+ */
+const QuerySchema = z.object({
+  query: z
+    .string()
+    .trim()
+    .min(2, "Query must be at least 2 characters long"),
+  locale: z.string().trim().min(1).default("fr"),
+  charactersLimit: z.coerce.number().int().positive().optional(),
+  playersLimit: z.coerce.number().int().positive().optional(),
+  teamsLimit: z.coerce.number().int().positive().optional(),
+  proPlayersLimit: z.coerce.number().int().positive().optional(),
+  coachesLimit: z.coerce.number().int().positive().optional(),
+});
 
 /**
  * GET /api/search/global
  *
- * Performs a global search across games, characters, and players.
+ * Performs a global search across the 6 supported entity types: games,
+ * characters, players (Gamers Universe), esport teams, esport pro players,
+ * and coaches. Each source runs in parallel via `Promise.allSettled` so
+ * a single backend failure does not break the whole response.
  *
  * Query Parameters:
- * - query (required): Search query string (minimum 2 characters after trim)
- * - locale (optional): Locale for translations (default: "fr")
- * - charactersLimit (optional): Maximum character results (default: 5)
- * - playersLimit (optional): Maximum player results (default: 5)
+ * - `query` (required): Search string, ≥ 2 characters after trim
+ * - `locale` (optional): "fr" by default
+ * - `charactersLimit` / `playersLimit` / `teamsLimit` /
+ *   `proPlayersLimit` / `coachesLimit` (optional): Per-group cap.
+ *   Games are not capped (returned in full from local DB + IGDB).
  *
- * Requirements: 1.1, 1.4, 2.5, 8.1
+ * Requirements: 1.1, 1.4, 2.5, 8.1 + F0-07d (esport teams/pro players, coaches)
  */
 export async function GET(
   request: NextRequest
@@ -24,47 +49,32 @@ export async function GET(
   try {
     const { searchParams } = new URL(request.url);
 
-    const query = searchParams.get("query")?.trim() || "";
+    // Build a plain object from the URLSearchParams to feed Zod. Multi-valued
+    // params would be lost here, but our query-string contract is single-valued.
+    const raw: Record<string, string> = {};
+    for (const [key, value] of searchParams.entries()) {
+      if (value !== "") raw[key] = value;
+    }
 
-    // Validate minimum query length (Requirement 1.4)
-    if (query.length < 2) {
+    const parsed = QuerySchema.safeParse(raw);
+    if (!parsed.success) {
+      const firstIssue = parsed.error.issues[0];
       return NextResponse.json(
-        { error: "Query must be at least 2 characters long" },
+        { error: firstIssue?.message ?? "Invalid query parameters" },
         { status: 400 }
       );
     }
 
-    const locale = searchParams.get("locale") || "fr";
+    const result = await GlobalSearchService.search(parsed.data);
 
-    // Parse optional limit parameters with defaults (Requirement 2.5)
-    // Games: no limit — return all matching local games
-    const charactersLimit = parseLimit(searchParams.get("charactersLimit"));
-    const playersLimit = parseLimit(searchParams.get("playersLimit"));
-
-    const result = await GlobalSearchService.search({
-      query,
-      locale,
-      charactersLimit,
-      playersLimit,
-    });
-
-    // Surface IGDB/search errors for debugging
     if (result.errors.length > 0) {
       logger.warn("[GlobalSearch] Partial failures", { errors: result.errors });
     }
 
     const response = GlobalSearchService.toGlobalSearchResponse(result);
-
     return NextResponse.json(response);
   } catch (error) {
     logger.error("Error in global search API", { error });
     return NextResponse.json({ error: "Internal server error during search" }, { status: 500 });
   }
-}
-
-/** Parses a limit query param to a positive integer, falling back to the given default. */
-function parseLimit(value: string | null, fallback: number = DEFAULT_LIMIT): number {
-  if (value === null) return fallback;
-  const parsed = parseInt(value, 10);
-  return isNaN(parsed) || parsed < 1 ? fallback : parsed;
 }

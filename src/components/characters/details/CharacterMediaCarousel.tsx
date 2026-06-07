@@ -21,7 +21,7 @@ export function CharacterMediaCarousel({
   onNext,
 }: MediaCarouselProps) {
   return (
-    <div className="relative mb-4 aspect-video overflow-hidden rounded-2xl border border-slate-700/50 bg-slate-800/50">
+    <div className="border-editorial-line bg-editorial-2 relative mb-4 aspect-video overflow-hidden rounded-2xl border">
       <LazyImage
         src={src}
         alt={alt}

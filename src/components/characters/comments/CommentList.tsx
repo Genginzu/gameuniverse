@@ -13,10 +13,10 @@ function CommentListEmpty() {
   const t = useTranslations("characters.comments");
 
   return (
-    <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-slate-700 py-12 text-center">
-      <Icon icon="lucide:message-circle" className="mb-3 h-10 w-10 text-slate-600" />
-      <p className="text-lg font-medium text-slate-400">{t("emptyTitle")}</p>
-      <p className="mt-1 text-sm text-slate-500">{t("emptyDescription")}</p>
+    <div className="border-editorial-line flex flex-col items-center justify-center rounded-xl border border-dashed py-12 text-center">
+      <Icon icon="lucide:message-circle" className="text-editorial-muted mb-3 h-10 w-10" />
+      <p className="text-lg font-medium text-white">{t("emptyTitle")}</p>
+      <p className="text-editorial-muted mt-1 text-sm">{t("emptyDescription")}</p>
     </div>
   );
 }

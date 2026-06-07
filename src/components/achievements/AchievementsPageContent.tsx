@@ -21,13 +21,19 @@ export function AchievementsPageContent({ playerId }: AchievementsPageContentPro
   const { achievements, xpStats, isLoading, error } = useAchievements(playerId, locale);
 
   if (isLoading) {
-    return <AchievementsSkeleton />;
+    return (
+      <div className="editorial-achievements">
+        <AchievementsSkeleton />
+      </div>
+    );
   }
 
   if (error) {
     return (
-      <div className="glass-card rounded-xl p-6 text-center">
-        <p className="text-sm text-red-500 dark:text-red-400">{t("error")}</p>
+      <div className="editorial-achievements">
+        <div className="editorial-achievements-error">
+          <p>{t("error")}</p>
+        </div>
       </div>
     );
   }
@@ -35,7 +41,7 @@ export function AchievementsPageContent({ playerId }: AchievementsPageContentPro
   const filtered = filterByCategory(achievements, selectedCategory);
 
   return (
-    <div className="space-y-6">
+    <div className="editorial-achievements space-y-6">
       <AchievementsHeader achievements={achievements} xpStats={xpStats} />
 
       <AchievementCategoryFilter
@@ -44,8 +50,8 @@ export function AchievementsPageContent({ playerId }: AchievementsPageContentPro
       />
 
       {filtered.length === 0 ? (
-        <div className="glass-card rounded-xl p-6 text-center">
-          <p className="text-sm text-gray-500 dark:text-slate-400">{t("empty")}</p>
+        <div className="editorial-achievements-empty">
+          <p>{t("empty")}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">

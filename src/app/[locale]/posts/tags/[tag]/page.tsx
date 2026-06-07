@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
+import { EditorialShell } from "@/components/layout/editorial/EditorialShell";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
 import { TagPostsContent } from "@/components/posts/TagPostsContent";
@@ -22,10 +22,10 @@ export default async function TagPostsPage({ params }: TagPostsPageProps) {
   const { tag } = await params;
 
   return (
-    <DashboardLayout>
+    <EditorialShell>
       <ErrorBoundary fallback={<ErrorFallback showRefresh showHomeButton />}>
         <TagPostsContent tag={decodeURIComponent(tag)} />
       </ErrorBoundary>
-    </DashboardLayout>
+    </EditorialShell>
   );
 }

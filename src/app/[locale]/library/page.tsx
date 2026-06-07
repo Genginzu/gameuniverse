@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { LibraryGamesContent } from "@/components/library/LibraryGamesContent";
-import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
+
+import { LibraryEditorial } from "@/components/library/LibraryEditorial";
+import { EditorialShell } from "@/components/layout/editorial/EditorialShell";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
 
@@ -27,7 +28,7 @@ export default async function LibraryPage({ params }: LibraryPageProps) {
   const t = await getTranslations({ locale, namespace: "userLibrary.errors" });
 
   return (
-    <DashboardLayout>
+    <EditorialShell>
       <ErrorBoundary
         fallback={
           <ErrorFallback
@@ -37,8 +38,8 @@ export default async function LibraryPage({ params }: LibraryPageProps) {
           />
         }
       >
-        <LibraryGamesContent />
+        <LibraryEditorial locale={locale} />
       </ErrorBoundary>
-    </DashboardLayout>
+    </EditorialShell>
   );
 }

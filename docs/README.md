@@ -8,10 +8,18 @@
 | [deployment-checklist.md](setup/deployment-checklist.md)     | Checklist de déploiement                   |
 | [component-organization.md](setup/component-organization.md) | Organisation des composants React          |
 
+## 🎨 Design
+
+| Document                                                      | Description                                                     |
+| ------------------------------------------------------------- | --------------------------------------------------------------- |
+| [editorial-refonte-plan.md](design/editorial-refonte-plan.md) | Plan de la refonte éditoriale (Imba-inspired) — phases & DoD    |
+| [editorial-components.md](design/editorial-components.md)     | Composants éditoriaux : API, tokens, système d'accent dynamique |
+
 ## 🎮 Features — Jeux
 
 | Document                                                            | Description                    |
 | ------------------------------------------------------------------- | ------------------------------ |
+| [home.md](features/home.md)                                         | Page d'accueil (`/`)           |
 | [game-details-redesign.md](features/games/game-details-redesign.md) | Redesign de la page de détails |
 | [collections.md](features/games/collections.md)                     | Collections de jeux            |
 | [reviews.md](features/games/reviews.md)                             | Système d'avis                 |
@@ -63,18 +71,18 @@
 
 ## ⚙️ Features — Admin
 
-| Document                                                                | Description               |
-| ----------------------------------------------------------------------- | ------------------------- |
-| [achievements-management.md](features/admin/achievements-management.md) | Gestion des succès        |
-| [age-classification.md](features/admin/age-classification.md)           | Classification d'âge      |
-| [character-management.md](features/admin/character-management.md)       | Gestion des personnages   |
-| [company-management.md](features/admin/company-management.md)           | Gestion des entreprises   |
-| [game-color-preview.md](features/admin/game-color-preview.md)           | Prévisualisation couleurs |
-| [genre-management.md](features/admin/genre-management.md)               | Gestion des genres        |
-| [language-management.md](features/admin/language-management.md)         | Gestion des langues       |
+| Document                                                                | Description                             |
+| ----------------------------------------------------------------------- | --------------------------------------- |
+| [achievements-management.md](features/admin/achievements-management.md) | Gestion des succès                      |
+| [age-classification.md](features/admin/age-classification.md)           | Classification d'âge                    |
+| [character-management.md](features/admin/character-management.md)       | Gestion des personnages                 |
+| [company-management.md](features/admin/company-management.md)           | Gestion des entreprises                 |
+| [game-color-preview.md](features/admin/game-color-preview.md)           | Prévisualisation couleurs               |
+| [genre-management.md](features/admin/genre-management.md)               | Gestion des genres                      |
+| [language-management.md](features/admin/language-management.md)         | Gestion des langues                     |
 | [pandascore-sync.md](features/admin/pandascore-sync.md)                 | Sync esport PandaScore (Edge Functions) |
-| [review-management.md](features/admin/review-management.md)             | Gestion des avis          |
-| [translation-management.md](features/admin/translation-management.md)   | Gestion des traductions   |
+| [review-management.md](features/admin/review-management.md)             | Gestion des avis                        |
+| [translation-management.md](features/admin/translation-management.md)   | Gestion des traductions                 |
 
 ## 🔧 Systèmes transversaux
 

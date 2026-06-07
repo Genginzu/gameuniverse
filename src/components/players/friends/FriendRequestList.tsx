@@ -53,9 +53,7 @@ export function FriendRequestList({ requests, onAccept, onDecline }: FriendReque
 
   return (
     <section aria-busy={isProcessing} className="mb-6">
-      <h3 className="mb-3 text-sm font-semibold text-gray-700 dark:text-slate-300">
-        {t("pendingRequests")}
-      </h3>
+      <h3 className="text-editorial-muted m-0 mb-3 font-mono text-xs font-semibold tracking-[0.12em] uppercase">{t("pendingRequests")}</h3>
       <div className="space-y-2">
         {requests.map((request) => (
           <FriendRequestCard

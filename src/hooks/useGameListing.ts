@@ -28,7 +28,12 @@ function buildGamesUrl(
   sort: GameListingSort,
   esport: boolean | null = null
 ): string {
-  const params = new URLSearchParams({ locale, page: String(page), limit: "20" });
+  const params = new URLSearchParams({
+    locale,
+    page: String(page),
+    limit: "20",
+    fields: "description",
+  });
   if (genres.length > 0) params.set("genres", genres.join(","));
   if (platforms.length > 0) params.set("platforms", platforms.join(","));
   if (sort !== DEFAULT_GAME_LISTING_SORT) params.set("sort", sort);

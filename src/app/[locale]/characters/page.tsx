@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { AllCharactersContent } from "@/components/characters/AllCharactersContent";
-import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
+import { EditorialShell } from "@/components/layout/editorial/EditorialShell";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
 import { logger } from "@/lib/logger";
@@ -47,7 +47,7 @@ export default async function AllCharactersPage({ params }: AllCharactersPagePro
   }
 
   return (
-    <DashboardLayout>
+    <EditorialShell>
       <ErrorBoundary
         fallback={
           <ErrorFallback
@@ -63,6 +63,6 @@ export default async function AllCharactersPage({ params }: AllCharactersPagePro
           initialPagination={initialPagination}
         />
       </ErrorBoundary>
-    </DashboardLayout>
+    </EditorialShell>
   );
 }

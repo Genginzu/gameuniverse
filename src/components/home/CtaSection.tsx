@@ -1,53 +1,49 @@
 "use client";
 
+/**
+ * CtaSection : bloc final éditorial pour inciter à la création de compte.
+ *
+ * Design : carte sombre avec bordure fine, bordure haute en gradient
+ * secondary→primary, kicker mono + titre display avec accent gradient,
+ * description et 2 CTAs (signup + login).
+ *
+ * Voir docs/design/editorial-refonte-plan.md.
+ */
+
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
 import { Icon } from "@iconify/react";
-import { useRef } from "react";
-import { useInView } from "@/hooks/useInView";
+
+import { KickerLabel } from "@/components/shared/KickerLabel";
+import { Link } from "@/i18n/navigation";
 
 export function CtaSection() {
   const t = useTranslations("landing.cta");
-  const ref = useRef<HTMLDivElement>(null);
-  const isVisible = useInView(ref, { threshold: 0.3 });
 
   return (
-    <section ref={ref} className="relative px-4 py-20 sm:px-6 lg:px-8">
-      <div
-        className={`glass mx-auto max-w-4xl overflow-hidden rounded-3xl transition-all duration-700 ${
-          isVisible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
-        }`}
-      >
-        {/* Gradient accent top border */}
-        <div className="from-palette-secondary-500 to-palette-primary-500 h-1 w-full bg-linear-to-r" />
-
-        <div className="relative px-6 py-14 text-center sm:px-12">
-          {/* Background orbs */}
-          <div className="pointer-events-none absolute inset-0 overflow-hidden">
-            <div className="bg-palette-primary-500/10 absolute -top-20 -right-20 h-40 w-40 rounded-full blur-3xl" />
-            <div className="bg-palette-secondary-500/10 absolute -bottom-20 -left-20 h-40 w-40 rounded-full blur-3xl" />
+    <section className="w-full px-4 py-16 md:px-8 md:py-24 lg:px-10 lg:py-28">
+      <div className="mx-auto w-full max-w-[1536px]">
+        <div className="border-editorial-line bg-editorial-2 relative flex flex-col gap-8 overflow-hidden rounded-3xl border p-8 md:p-12 lg:flex-row lg:items-end lg:justify-between">
+          <div className="from-neon-secondary to-neon-primary absolute inset-x-0 top-0 h-px bg-gradient-to-r" />
+          <div className="flex flex-col gap-3">
+            <KickerLabel>{t("kicker")}</KickerLabel>
+            <h2 className="font-display text-[clamp(2rem,5vw,3.5rem)] leading-none font-bold tracking-tight text-white">
+              {t("title")}{" "}
+              <span className="from-neon-secondary to-neon-primary bg-gradient-to-r bg-clip-text text-transparent">
+                {t("titleAccent")}
+              </span>
+            </h2>
+            <p className="text-editorial-muted max-w-[60ch] text-[0.95rem] leading-relaxed md:text-base">
+              {t("description")}
+            </p>
           </div>
 
-          <div className="relative z-10">
-            <Icon
-              icon="mdi:controller"
-              className="text-palette-primary-500 dark:text-palette-primary-400 mx-auto mb-4 h-12 w-12"
-            />
-            <h2 className="neon-text mb-3 text-3xl font-black text-gray-900 sm:text-4xl dark:text-white">
-              {t("title")}
-            </h2>
-            <p className="mx-auto mb-8 max-w-lg text-gray-600 dark:text-gray-400">
-              {t("subtitle")}
-            </p>
-            <Link
-              href="/auth?mode=signup"
-              className="group from-palette-secondary-500 to-palette-primary-500 shadow-palette-primary-500/25 hover:shadow-palette-primary-500/30 inline-flex items-center gap-2 rounded-2xl bg-linear-to-r px-8 py-4 text-lg font-bold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
-            >
-              <Icon
-                icon="mdi:rocket-launch"
-                className="h-5 w-5 transition-transform group-hover:-translate-y-0.5"
-              />
+          <div className="flex flex-wrap items-center gap-3">
+            <Link href="/auth?mode=signup" className="editorial-button-primary">
+              <Icon icon="mdi:rocket-launch" className="size-4" aria-hidden />
               {t("signup")}
+            </Link>
+            <Link href="/auth" className="editorial-button-ghost">
+              {t("login")}
             </Link>
           </div>
         </div>

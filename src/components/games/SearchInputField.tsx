@@ -2,6 +2,14 @@
 
 import { Input } from "@/components/ui/input";
 
+/**
+ * Variantes visuelles supportées par `SearchInputField`.
+ * - `default` : style legacy bleu pâle (borders bleus, fond `bg-blue-50/50`).
+ * - `editorial` : style éditorial sombre (`--editorial-bg-2`, bordure
+ *   `--editorial-line`, hauteur 56px alignée sur `FilterButton`).
+ */
+export type SearchInputVariant = "default" | "editorial";
+
 interface SearchInputFieldProps {
   value: string;
   onChange: (value: string) => void;
@@ -9,6 +17,8 @@ interface SearchInputFieldProps {
   onSubmit: () => void;
   onClear: () => void;
   placeholder: string;
+  /** Variante visuelle. Default: `"default"` (legacy). */
+  variant?: SearchInputVariant;
 }
 
 export function SearchInputField({
@@ -18,7 +28,61 @@ export function SearchInputField({
   onSubmit,
   onClear,
   placeholder,
+  variant = "default",
 }: SearchInputFieldProps) {
+  if (variant === "editorial") {
+    return (
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          onSubmit();
+        }}
+        className="group bg-editorial-2 border-editorial-line hover:bg-editorial-3 focus-within:border-editorial-accent relative flex h-14 w-full items-center rounded-[14px] border transition hover:border-white/[0.18] focus-within:shadow-[0_0_0_3px_rgba(var(--accent-rgb,var(--neon-primary)),0.15)]"
+      >
+        <span
+          className="text-editorial-muted group-focus-within:text-editorial-accent pointer-events-none grid h-full w-12 place-items-center"
+          aria-hidden="true"
+        >
+          <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+        </span>
+
+        <input
+          type="text"
+          placeholder={placeholder}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          onFocus={onFocus}
+          className="placeholder:text-editorial-muted h-full min-w-0 flex-1 border-0 bg-transparent pr-4 text-base text-white outline-none"
+        />
+
+        {value && (
+          <button
+            type="button"
+            onClick={onClear}
+            className="text-editorial-muted mr-1 grid size-11 place-items-center rounded-full transition-colors hover:bg-white/[0.08] hover:text-white"
+            aria-label="Clear search"
+          >
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        )}
+      </form>
+    );
+  }
+
   return (
     <form
       onSubmit={(e) => {

@@ -36,21 +36,21 @@ export function TagPostsContent({ tag }: TagPostsContentProps) {
       <div className="mb-6 flex items-center gap-3">
         <Link
           href="/players"
-          className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl bg-white/40 text-gray-600 transition-all duration-300 hover:bg-white/60 dark:bg-slate-800/50 dark:text-slate-300 dark:hover:bg-slate-700/60"
+          className="border-editorial-line bg-editorial-2 text-editorial-muted hover:bg-editorial-3 hover:border-editorial-accent/50 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border transition-all duration-300"
           aria-label={t("back")}
         >
           <Icon icon="lucide:arrow-left" className="size-5" />
         </Link>
         <div className="min-w-0">
-          <h1 className="flex items-center gap-2 text-xl font-bold text-gray-900 sm:text-2xl lg:text-3xl dark:text-white">
+          <h1 className="font-display flex items-center gap-2 text-xl font-bold tracking-tight text-white sm:text-2xl lg:text-3xl">
             <Icon
               icon="lucide:hash"
-              className="text-palette-primary-500 size-5 shrink-0 sm:size-6"
+              className="text-editorial-accent size-5 shrink-0 sm:size-6"
             />
             <span className="truncate">{tag}</span>
           </h1>
           {data && (
-            <p className="text-sm text-gray-500 dark:text-slate-400">
+            <p className="text-editorial-muted text-sm">
               {t("count", { count: data.pagination.totalCount })}
             </p>
           )}
@@ -61,19 +61,16 @@ export function TagPostsContent({ tag }: TagPostsContentProps) {
       {isLoading && (
         <div className="space-y-4">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div
-              key={i}
-              className="h-32 animate-pulse rounded-2xl bg-white/40 dark:bg-slate-800/40"
-            />
+            <div key={i} className="h-32 animate-pulse rounded-2xl bg-white/[0.06]" />
           ))}
         </div>
       )}
 
       {/* Empty state */}
       {!isLoading && data && data.posts.length === 0 && (
-        <div className="flex flex-col items-center justify-center rounded-2xl bg-white/40 px-6 py-16 text-center backdrop-blur-xl dark:bg-slate-800/50">
-          <Icon icon="lucide:hash" className="mb-4 size-12 text-gray-300 dark:text-slate-600" />
-          <p className="text-lg font-semibold text-gray-700 dark:text-slate-300">{t("empty")}</p>
+        <div className="border-editorial-line bg-editorial-2 flex flex-col items-center justify-center rounded-2xl border px-6 py-16 text-center">
+          <Icon icon="lucide:hash" className="text-editorial-muted mb-4 size-12" />
+          <p className="text-lg font-semibold text-white/85">{t("empty")}</p>
         </div>
       )}
 

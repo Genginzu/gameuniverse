@@ -14,7 +14,7 @@ import {
 } from "./PlayerLazyTabs";
 import { PlayerLibraryTab } from "./PlayerLibraryTab";
 import { ActivityFeed } from "./activity/ActivityFeed";
-import type { ProfileTab } from "./PlayerProfileTabs";
+import type { ProfileTab } from "./profile-tabs";
 import type { PlayerDetails } from "@/types/player";
 
 interface PlayerTabContentProps {
@@ -108,7 +108,7 @@ export function PlayerTabContent({
           visible={activeTab === "recommendations"}
           mounted={visitedTabs.has("recommendations")}
         >
-          <LazyPersonalRecommendationSection locale={locale} />
+          <LazyPersonalRecommendationSection />
         </TabPanel>
       )}
 

@@ -1,0 +1,150 @@
+/*
+ * Editorial : onglet Settings — THEMING DES COMPOSANTS LEGACY IMBRIQUÉS UNIQUEMENT.
+ * Voir docs/design/editorial-refonte-plan.md
+ *
+ * La structure de la page (header, sections-cards, icônes) est écrite en
+ * Tailwind inline dans SettingsContent.tsx / SettingsSkeleton.tsx.
+ * Ce module ne conserve QUE les overrides descendants que Tailwind ne peut pas
+ * exprimer inline : ils reteignent les forms shadcn et la LinkedPlatformsSection
+ * (Card, inputs, boutons, couleurs legacy gray/secondary) pour les rendre
+ * lisibles sur les surfaces sombres éditoriales. Hook : `.editorial-settings-section-body`.
+ */
+
+/* Strip the visual chrome from any nested shadcn Card so the editorial
+   section stays clean. The forms inside still keep their inputs/buttons. */
+.editorial-settings-section-body > [data-slot="card"] {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  backdrop-filter: none !important;
+}
+
+.editorial-settings-section-body > [data-slot="card"] > [data-slot="card-header"],
+.editorial-settings-section-body > [data-slot="card"] > [data-slot="card-content"] {
+  padding: 0 !important;
+}
+
+/* When a sub-component renders its own internal Card header (e.g. legacy
+   AppearanceSection), hide it because we now provide a clean editorial header. */
+.editorial-settings-section-body > [data-slot="card"] > [data-slot="card-header"] {
+  display: none;
+}
+
+/* ===== Form labels & inputs (theming for surfaces sombres) ===== */
+.editorial-settings-section-body label {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.editorial-settings-section-body input[type="text"],
+.editorial-settings-section-body input[type="email"],
+.editorial-settings-section-body input[type="password"],
+.editorial-settings-section-body input[type="url"],
+.editorial-settings-section-body input:not([type]) {
+  /* Inputs un cran plus sombres que la section pour ressortir sur le fond bg-3 */
+  background: var(--editorial-bg-2);
+  border: 1px solid var(--editorial-line);
+  color: #fff;
+  font-size: 1rem; /* >=16px to prevent iOS zoom */
+  height: 44px;
+  border-radius: 10px;
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.editorial-settings-section-body input::placeholder {
+  color: var(--editorial-muted);
+  opacity: 1;
+}
+
+.editorial-settings-section-body input:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.editorial-settings-section-body input:focus,
+.editorial-settings-section-body input:focus-visible {
+  outline: none;
+  border-color: rgb(var(--accent-rgb, var(--neon-primary)));
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb, var(--neon-primary)), 0.15);
+}
+
+/* ===== Surfaces & textes legacy imbriqués (LinkedPlatformsSection) ===== */
+/* Sous-cards non directes (PlatformsCard) : surfaces sombres bordées —
+   leur header reste visible (contrairement aux cards directes). */
+.editorial-settings-section-body [data-slot="card"] {
+  background: var(--editorial-bg-2);
+  border-color: var(--editorial-line);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+/* Lignes plateformes + chips de suggestions (bg-white/*). */
+.editorial-settings-section-body [class*="bg-white"] {
+  background-color: var(--editorial-bg-3) !important;
+  backdrop-filter: none !important;
+}
+
+/* Bannière de suggestions + pastille d'icône (teintes secondary) -> accent. */
+.editorial-settings-section-body [class*="bg-palette-secondary-50"] {
+  background-color: rgba(var(--accent-rgb, var(--neon-primary)), 0.08) !important;
+  border-color: rgba(var(--accent-rgb, var(--neon-primary)), 0.2) !important;
+  backdrop-filter: none !important;
+}
+
+.editorial-settings-section-body [class*="bg-palette-secondary-100"] {
+  background-color: rgba(var(--accent-rgb, var(--neon-primary)), 0.12) !important;
+}
+
+.editorial-settings-section-body [class*="bg-gray-200"] {
+  background-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* Texte legacy mode clair -> clair / muted sur surfaces sombres. */
+.editorial-settings-section-body .text-gray-900 {
+  color: #fff;
+}
+
+.editorial-settings-section-body .text-gray-700 {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.editorial-settings-section-body .text-gray-400,
+.editorial-settings-section-body .text-gray-500 {
+  color: var(--editorial-muted);
+}
+
+.editorial-settings-section-body [class*="text-palette-secondary-900"] {
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+}
+
+/* ===== Boutons d'action ghost en fin de ligne (PlatformRow) ===== */
+/* Icônes connexion / sync / visibilité : lisibles au repos, accent au survol.
+   La corbeille (text-red) garde sa couleur ; les boutons primaires (variant
+   default, sans `hover:bg-accent`) ne sont pas touchés. */
+.editorial-settings-section-body button[class*="hover:bg-accent"]:not([class*="text-red"]) {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.editorial-settings-section-body
+  button[class*="hover:bg-accent"]:not([class*="text-red"]):hover {
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+  background-color: rgba(var(--accent-rgb, var(--neon-primary)), 0.12);
+}
+
+/* ===== Boutons outline (ex : PasswordResetSection) ===== */
+/* `variant="outline"` rend `bg-background` (blanc en thème clair) -> on le
+   passe en surface sombre bordée avec label clair. */
+.editorial-settings-section-body button[class*="bg-background"] {
+  background-color: var(--editorial-bg-2);
+  border-color: var(--editorial-line);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.editorial-settings-section-body button[class*="bg-background"]:hover {
+  border-color: rgb(var(--accent-rgb, var(--neon-primary)));
+  background-color: var(--editorial-bg-3);
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+}

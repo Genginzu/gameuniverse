@@ -5,7 +5,6 @@ import useSWR, { mutate } from "swr";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { useAuth } from "@/hooks/useAuth";
-import { Skeleton } from "@/components/ui/skeleton";
 
 interface MatchComment {
   id: string;
@@ -80,23 +79,19 @@ export function MatchDiscussion({ matchId, matchSource = "pandascore" }: MatchDi
   );
 
   return (
-    <div className="glass-card rounded-2xl p-4 sm:p-6">
-      <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white">
+    <div className="border-editorial-line bg-editorial-2 rounded-2xl border p-4 sm:p-6">
+      <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-white">
         <Icon icon="mdi:forum" className="size-5" />
         {t("title")}
         {comments.length > 0 && (
-          <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
-            ({comments.length})
-          </span>
+          <span className="text-editorial-muted text-sm font-normal">({comments.length})</span>
         )}
       </h3>
 
       {isLoading ? (
         <DiscussionSkeleton />
       ) : comments.length === 0 ? (
-        <p className="py-6 text-center text-sm text-gray-500 dark:text-gray-400">
-          {t("noComments")}
-        </p>
+        <p className="text-editorial-muted py-6 text-center text-sm">{t("noComments")}</p>
       ) : (
         <div className="mb-4 max-h-96 space-y-3 overflow-y-auto pr-1">
           {comments.map((comment) => (
@@ -119,18 +114,18 @@ export function MatchDiscussion({ matchId, matchSource = "pandascore" }: MatchDi
             onChange={(e) => setContent(e.target.value)}
             placeholder={t("placeholder")}
             maxLength={2000}
-            className="glass-input min-h-[44px] flex-1 rounded-xl px-4 text-base"
+            className="border-editorial-line bg-editorial-3 min-h-[44px] flex-1 rounded-xl border px-4 text-base text-white placeholder:text-editorial-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
           />
           <button
             type="submit"
             disabled={!content.trim() || submitting}
-            className="from-palette-secondary-500 to-palette-primary-500 min-h-[44px] min-w-[44px] rounded-xl bg-linear-to-r px-4 text-sm font-medium text-white transition-all duration-300 hover:opacity-90 disabled:opacity-50"
+            className="bg-editorial-accent min-h-[44px] min-w-[44px] rounded-xl px-4 text-sm font-medium text-white transition-all duration-300 hover:opacity-90 disabled:opacity-50"
           >
             <Icon icon="mdi:send" className="size-5" />
           </button>
         </form>
       ) : (
-        <p className="text-center text-sm text-gray-500 dark:text-gray-400">{t("loginRequired")}</p>
+        <p className="text-editorial-muted text-center text-sm">{t("loginRequired")}</p>
       )}
     </div>
   );
@@ -148,19 +143,17 @@ function CommentBubble({
   const [showReactions, setShowReactions] = useState(false);
 
   return (
-    <div className="rounded-xl bg-white/30 p-3 transition-all dark:bg-slate-800/30">
+    <div className="bg-editorial-3 rounded-xl p-3 transition-all">
       <div className="mb-1 flex items-center gap-2">
         {comment.playerAvatar ? (
           <img src={comment.playerAvatar} alt="" className="size-6 rounded-full object-cover" />
         ) : (
-          <div className="bg-palette-primary-100 dark:bg-palette-primary-900 flex size-6 items-center justify-center rounded-full">
-            <Icon icon="mdi:account" className="text-palette-primary-500 size-4" />
+          <div className="bg-editorial-accent/15 flex size-6 items-center justify-center rounded-full">
+            <Icon icon="mdi:account" className="text-editorial-accent size-4" />
           </div>
         )}
-        <span className="text-sm font-medium text-gray-900 dark:text-white">
-          {comment.playerName ?? "Anonyme"}
-        </span>
-        <span className="text-xs text-gray-400">
+        <span className="text-sm font-medium text-white">{comment.playerName ?? "Anonyme"}</span>
+        <span className="text-editorial-muted text-xs">
           {new Date(comment.createdAt).toLocaleTimeString([], {
             hour: "2-digit",
             minute: "2-digit",
@@ -168,7 +161,7 @@ function CommentBubble({
         </span>
       </div>
 
-      <p className="mb-2 text-sm text-gray-700 dark:text-gray-300">{comment.content}</p>
+      <p className="mb-2 text-sm text-white/85">{comment.content}</p>
 
       {/* Existing reactions */}
       <div className="flex flex-wrap items-center gap-1">
@@ -178,12 +171,12 @@ function CommentBubble({
             onClick={() => onReact(comment.id, emoji)}
             className={`flex items-center gap-1 rounded-full px-2 py-0.5 text-xs transition-all ${
               userId && users.includes(userId)
-                ? "bg-palette-primary-100 dark:bg-palette-primary-900/50"
-                : "bg-white/40 hover:bg-white/60 dark:bg-slate-700/40 dark:hover:bg-slate-700/60"
+                ? "bg-editorial-accent/20"
+                : "bg-white/10 hover:bg-white/15"
             }`}
           >
             <span>{emoji}</span>
-            <span className="text-gray-600 dark:text-gray-300">{users.length}</span>
+            <span className="text-editorial-muted">{users.length}</span>
           </button>
         ))}
 
@@ -191,12 +184,12 @@ function CommentBubble({
           <div className="relative">
             <button
               onClick={() => setShowReactions(!showReactions)}
-              className="flex size-6 items-center justify-center rounded-full bg-white/40 text-xs transition-all hover:bg-white/60 dark:bg-slate-700/40 dark:hover:bg-slate-700/60"
+              className="flex size-6 items-center justify-center rounded-full bg-white/10 text-xs transition-all hover:bg-white/15"
             >
-              <Icon icon="mdi:emoticon-outline" className="size-4 text-gray-500" />
+              <Icon icon="mdi:emoticon-outline" className="text-editorial-muted size-4" />
             </button>
             {showReactions && (
-              <div className="glass-dropdown absolute bottom-full left-0 z-10 mb-1 flex gap-1 rounded-xl p-1.5">
+              <div className="border-editorial-line bg-editorial-2 absolute bottom-full left-0 z-10 mb-1 flex gap-1 rounded-xl border p-1.5">
                 {REACTION_EMOJIS.map((emoji) => (
                   <button
                     key={emoji}
@@ -204,7 +197,7 @@ function CommentBubble({
                       onReact(comment.id, emoji);
                       setShowReactions(false);
                     }}
-                    className="rounded-lg p-1 text-base transition-all hover:bg-white/60 dark:hover:bg-slate-700/60"
+                    className="rounded-lg p-1 text-base transition-all hover:bg-white/10"
                   >
                     {emoji}
                   </button>
@@ -222,12 +215,12 @@ function DiscussionSkeleton() {
   return (
     <div className="mb-4 space-y-3">
       {Array.from({ length: 3 }).map((_, i) => (
-        <div key={i} className="rounded-xl bg-white/30 p-3 dark:bg-slate-800/30">
+        <div key={i} className="bg-editorial-3 rounded-xl p-3">
           <div className="mb-2 flex items-center gap-2">
-            <Skeleton className="size-6 rounded-full" />
-            <Skeleton className="h-4 w-24" />
+            <div className="size-6 animate-pulse rounded-full bg-white/[0.06]" />
+            <div className="h-4 w-24 animate-pulse rounded bg-white/[0.06]" />
           </div>
-          <Skeleton className="h-4 w-3/4" />
+          <div className="h-4 w-3/4 animate-pulse rounded bg-white/[0.06]" />
         </div>
       ))}
     </div>

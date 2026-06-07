@@ -45,16 +45,6 @@ import { GameDetailsSkeleton } from "@/components/games/GameDetailsSkeleton";
 <GameDetailsSkeleton />;
 ```
 
-### DashboardSkeleton
-
-Skeleton pour le tableau de bord utilisateur.
-
-```tsx
-import { DashboardSkeleton } from "@/components/dashboard/DashboardSkeleton";
-
-<DashboardSkeleton />;
-```
-
 ### LibrarySkeleton
 
 Skeleton pour la bibliothèque utilisateur.

@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { SearchResultsDropdown } from "./SearchResultsDropdown";
-import { SearchInputField } from "./SearchInputField";
+import { SearchInputField, type SearchInputVariant } from "./SearchInputField";
 import type { SearchResultItem } from "@/types/search";
 import { useTranslations } from "next-intl";
 import { useHybridSearch } from "@/hooks/useHybridSearch";
@@ -15,6 +15,8 @@ interface GameSearchBarProps {
   debounceMs?: number;
   locale?: string;
   onNavigateToGame?: (slug: string) => void;
+  /** Variante visuelle de l'input. Default: `"default"` (legacy). */
+  variant?: SearchInputVariant;
 }
 
 export function GameSearchBar({
@@ -24,6 +26,7 @@ export function GameSearchBar({
   debounceMs = 300,
   locale = "fr",
   onNavigateToGame,
+  variant = "default",
 }: GameSearchBarProps) {
   const t = useTranslations("search");
   const router = useRouter();
@@ -128,6 +131,7 @@ export function GameSearchBar({
         onSubmit={handleSubmit}
         onClear={handleClear}
         placeholder={placeholder || t("placeholder")}
+        variant={variant}
       />
 
       {isHybridMode && hybrid.isOpen && searchQuery.length >= 2 && (

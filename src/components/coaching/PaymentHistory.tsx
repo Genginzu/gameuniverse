@@ -167,7 +167,7 @@ export function PaymentHistory() {
             {data.payments.map((p) => (
               <div
                 key={p.id}
-                className="glass-card flex items-center justify-between rounded-xl p-4"
+                className="border border-editorial-line bg-editorial-2 flex items-center justify-between rounded-xl p-4"
               >
                 <div>
                   <p className="text-sm font-medium text-gray-900 dark:text-white">

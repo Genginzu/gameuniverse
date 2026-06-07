@@ -23,6 +23,9 @@ const emptySearchResult: GlobalSearchResult = {
   games: { local: [], igdb: [] },
   characters: [],
   players: [],
+  teams: [],
+  proPlayers: [],
+  coaches: [],
   errors: [],
 };
 
@@ -30,7 +33,17 @@ const emptyResponse = {
   games: [],
   characters: [],
   players: [],
-  counts: { games: 0, characters: 0, players: 0 },
+  teams: [],
+  proPlayers: [],
+  coaches: [],
+  counts: {
+    games: 0,
+    characters: 0,
+    players: 0,
+    teams: 0,
+    proPlayers: 0,
+    coaches: 0,
+  },
 };
 
 describe("GET /api/search/global", () => {
@@ -39,6 +52,8 @@ describe("GET /api/search/global", () => {
     mockSearch.mockResolvedValue(emptySearchResult);
     mockToGlobalSearchResponse.mockReturnValue(emptyResponse);
   });
+
+  // ---------- Validation errors ----------
 
   it("returns 400 when query is missing", async () => {
     const response = await GET(makeRequest());
@@ -51,26 +66,46 @@ describe("GET /api/search/global", () => {
 
   it("returns 400 when query is a single character", async () => {
     const response = await GET(makeRequest({ query: "a" }));
-    const body = await response.json();
-
     expect(response.status).toBe(400);
-    expect(body.error).toBeDefined();
     expect(mockSearch).not.toHaveBeenCalled();
   });
 
   it("returns 400 when query is only whitespace", async () => {
     const response = await GET(makeRequest({ query: "   " }));
-
     expect(response.status).toBe(400);
     expect(mockSearch).not.toHaveBeenCalled();
   });
 
   it("returns 400 when trimmed query is less than 2 chars", async () => {
     const response = await GET(makeRequest({ query: " x " }));
-
     expect(response.status).toBe(400);
     expect(mockSearch).not.toHaveBeenCalled();
   });
+
+  it("returns 400 for invalid limit values (Zod rejects non-positive integers)", async () => {
+    // With Zod validation, invalid limits fail early instead of being silently coerced
+    const response = await GET(
+      makeRequest({ query: "test", charactersLimit: "-1" })
+    );
+    expect(response.status).toBe(400);
+    expect(mockSearch).not.toHaveBeenCalled();
+  });
+
+  it("returns 400 for non-integer limit values", async () => {
+    const response = await GET(
+      makeRequest({ query: "test", playersLimit: "abc" })
+    );
+    expect(response.status).toBe(400);
+  });
+
+  it("returns 400 for zero limits (must be positive)", async () => {
+    const response = await GET(
+      makeRequest({ query: "test", coachesLimit: "0" })
+    );
+    expect(response.status).toBe(400);
+  });
+
+  // ---------- Successful queries ----------
 
   it("returns 200 with results for a valid query", async () => {
     const response = await GET(makeRequest({ query: "zelda" }));
@@ -81,24 +116,27 @@ describe("GET /api/search/global", () => {
     expect(mockSearch).toHaveBeenCalledOnce();
   });
 
-  it("passes query and default params to GlobalSearchService.search", async () => {
+  it("passes the trimmed query and default locale to the service (limits remain undefined)", async () => {
+    // Zod doesn't inject defaults for *Limit when omitted — the service's
+    // own destructuring defaults handle that. The route just forwards.
     await GET(makeRequest({ query: "mario" }));
 
     expect(mockSearch).toHaveBeenCalledWith({
       query: "mario",
       locale: "fr",
-      charactersLimit: 5,
-      playersLimit: 5,
     });
   });
 
-  it("passes custom locale and limits", async () => {
+  it("passes custom locale and limits including the 3 new entity types", async () => {
     await GET(
       makeRequest({
         query: "link",
         locale: "en",
         charactersLimit: "10",
         playersLimit: "2",
+        teamsLimit: "3",
+        proPlayersLimit: "4",
+        coachesLimit: "5",
       })
     );
 
@@ -107,29 +145,14 @@ describe("GET /api/search/global", () => {
       locale: "en",
       charactersLimit: 10,
       playersLimit: 2,
-    });
-  });
-
-  it("falls back to default limit for invalid limit values", async () => {
-    await GET(
-      makeRequest({
-        query: "test",
-        charactersLimit: "-1",
-        playersLimit: "0",
-      })
-    );
-
-    expect(mockSearch).toHaveBeenCalledWith({
-      query: "test",
-      locale: "fr",
-      charactersLimit: 5,
-      playersLimit: 5,
+      teamsLimit: 3,
+      proPlayersLimit: 4,
+      coachesLimit: 5,
     });
   });
 
   it("trims the query before passing to service", async () => {
     await GET(makeRequest({ query: "  zelda  " }));
-
     expect(mockSearch).toHaveBeenCalledWith(expect.objectContaining({ query: "zelda" }));
   });
 
@@ -150,5 +173,37 @@ describe("GET /api/search/global", () => {
 
     expect(response.status).toBe(500);
     expect(body.error).toBeDefined();
+  });
+
+  // ---------- Response shape includes the 6 groups ----------
+
+  it("forwards the 6-group response from the service", async () => {
+    const fullResponse = {
+      games: [],
+      characters: [],
+      players: [],
+      teams: [{ id: 100, name: "Team Liquid", slug: "team-liquid" }],
+      proPlayers: [{ id: 200, name: "Caps", slug: "caps" }],
+      coaches: [
+        { id: "c1", username: "topcoach", averageRating: 4.5, totalReviews: 12, isVerified: true },
+      ],
+      counts: {
+        games: 0,
+        characters: 0,
+        players: 0,
+        teams: 1,
+        proPlayers: 1,
+        coaches: 1,
+      },
+    };
+    mockToGlobalSearchResponse.mockReturnValue(fullResponse);
+
+    const response = await GET(makeRequest({ query: "zelda" }));
+    const body = await response.json();
+
+    expect(body).toEqual(fullResponse);
+    expect(body.teams).toHaveLength(1);
+    expect(body.proPlayers).toHaveLength(1);
+    expect(body.coaches).toHaveLength(1);
   });
 });

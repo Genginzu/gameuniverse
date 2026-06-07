@@ -7,8 +7,7 @@ test.describe("Esport — calendar, live, teams, players, results", () => {
       await page.waitForLoadState("domcontentloaded");
 
       await expect(page).toHaveURL(/\/fr\/esport\/tournaments/);
-      const title = page.getByTestId("page-banner-title");
-      await expect(title).toBeVisible({ timeout: 10_000 });
+      await expect(page.getByTestId("editorial-layout-main")).toBeVisible({ timeout: 10_000 });
     });
 
     test("should display tournament cards or empty state", async ({ page }) => {
@@ -34,8 +33,7 @@ test.describe("Esport — calendar, live, teams, players, results", () => {
       await page.waitForLoadState("domcontentloaded");
 
       await expect(page).toHaveURL(/\/fr\/esport\/live/);
-      const title = page.getByTestId("page-banner-title");
-      await expect(title).toBeVisible({ timeout: 10_000 });
+      await expect(page.getByTestId("editorial-layout-main")).toBeVisible({ timeout: 10_000 });
     });
   });
 
@@ -45,8 +43,7 @@ test.describe("Esport — calendar, live, teams, players, results", () => {
       await page.waitForLoadState("domcontentloaded");
 
       await expect(page).toHaveURL(/\/fr\/esport\/teams/);
-      const title = page.getByTestId("page-banner-title");
-      await expect(title).toBeVisible({ timeout: 10_000 });
+      await expect(page.getByTestId("editorial-layout-main")).toBeVisible({ timeout: 10_000 });
     });
 
     test("should display team cards or empty state", async ({ page }) => {
@@ -72,8 +69,7 @@ test.describe("Esport — calendar, live, teams, players, results", () => {
       await page.waitForLoadState("domcontentloaded");
 
       await expect(page).toHaveURL(/\/fr\/esport\/players/);
-      const title = page.getByTestId("page-banner-title");
-      await expect(title).toBeVisible({ timeout: 10_000 });
+      await expect(page.getByTestId("editorial-layout-main")).toBeVisible({ timeout: 10_000 });
     });
   });
 
@@ -83,8 +79,7 @@ test.describe("Esport — calendar, live, teams, players, results", () => {
       await page.waitForLoadState("domcontentloaded");
 
       await expect(page).toHaveURL(/\/fr\/esport\/results/);
-      const title = page.getByTestId("page-banner-title");
-      await expect(title).toBeVisible({ timeout: 10_000 });
+      await expect(page.getByTestId("editorial-layout-main")).toBeVisible({ timeout: 10_000 });
     });
   });
 

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { TrendingContent, type TrendingData } from "@/components/games/TrendingContent";
-import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
+import { EditorialShell } from "@/components/layout/editorial/EditorialShell";
 import { logger } from "@/lib/logger";
 
 export const revalidate = 300;
@@ -39,8 +39,8 @@ export default async function TrendingPage({ params }: TrendingPageProps) {
   }
 
   return (
-    <DashboardLayout>
+    <EditorialShell>
       <TrendingContent initialData={initialData} />
-    </DashboardLayout>
+    </EditorialShell>
   );
 }

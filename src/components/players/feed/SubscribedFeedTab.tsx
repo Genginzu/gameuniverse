@@ -44,7 +44,7 @@ export const SubscribedFeedTab = memo(function SubscribedFeedTab({
   const isBusy = isLoading || isLoadingMore;
 
   return (
-    <section className="mb-8">
+    <section className="editorial-activity mb-8">
       <div role="feed" aria-busy={isBusy} aria-label={t("feedLabel")}>
         {isLoading && <FeedSkeleton />}
 
@@ -65,10 +65,7 @@ export const SubscribedFeedTab = memo(function SubscribedFeedTab({
         {isLoadingMore && (
           <div className="mt-3 space-y-3">
             {Array.from({ length: 2 }).map((_, i) => (
-              <Skeleton
-                key={i}
-                className="h-24 w-full rounded-xl bg-gray-200 dark:bg-slate-700/50"
-              />
+              <Skeleton key={i} className="editorial-activity-skeleton" />
             ))}
           </div>
         )}
@@ -83,7 +80,7 @@ function FeedSkeleton() {
   return (
     <div className="space-y-3">
       {Array.from({ length: 4 }).map((_, i) => (
-        <Skeleton key={i} className="h-24 w-full rounded-xl bg-gray-200 dark:bg-slate-700/50" />
+        <Skeleton key={i} className="editorial-activity-skeleton" />
       ))}
     </div>
   );
@@ -93,11 +90,11 @@ function FeedEmpty() {
   const t = useTranslations("players.feed");
 
   return (
-    <div className="flex flex-col items-center justify-center rounded-2xl border border-gray-200 bg-white/80 py-12 text-center backdrop-blur-xl dark:border-slate-700/50 dark:bg-slate-800/50">
-      <div className="mb-4 rounded-full bg-gray-100 p-4 dark:bg-slate-700/50">
-        <Icon icon="lucide:newspaper" className="h-10 w-10 text-gray-400 dark:text-slate-400" />
+    <div className="editorial-activity-empty">
+      <div className="editorial-activity-empty-icon">
+        <Icon icon="lucide:newspaper" className="h-10 w-10" aria-hidden="true" />
       </div>
-      <p className="text-sm text-gray-500 dark:text-slate-400">{t("empty")}</p>
+      <p className="editorial-activity-empty-text">{t("empty")}</p>
     </div>
   );
 }

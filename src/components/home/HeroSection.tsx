@@ -1,69 +1,76 @@
 "use client";
 
+/**
+ * HeroSection : hero éditorial de la page d'accueil (visiteurs déconnectés).
+ *
+ * Pattern Imba-inspired :
+ *   - Image de couverture du jeu trending #1 en background plein cadre
+ *   - Kicker mono uppercase
+ *   - Titre display géant (police Tomorrow) avec accent gradient sur "gaming"
+ *   - Visuel inline rond (cover du jeu trending) entre 2 mots du titre
+ *   - Description courte + CTAs (signup + explorer)
+ *
+ * Réutilise `EditorialHero` (composant partagé F0-04).
+ *
+ * Voir docs/design/editorial-refonte-plan.md.
+ */
+
 import { useTranslations } from "next-intl";
-import { Link } from "@/i18n/navigation";
 import { Icon } from "@iconify/react";
 
-/** Floating animated orbs for the hero background */
-function FloatingOrbs() {
-  return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden">
-      {/* Large violet orb */}
-      <div className="bg-palette-primary-500/20 dark:bg-palette-primary-500/10 absolute -top-32 -left-32 h-96 w-96 animate-[float_8s_ease-in-out_infinite] rounded-full blur-3xl" />
-      {/* Cyan orb */}
-      <div className="bg-palette-secondary-500/20 dark:bg-palette-secondary-500/10 absolute top-1/4 -right-20 h-72 w-72 animate-[float_6s_ease-in-out_infinite_reverse] rounded-full blur-3xl" />
-      {/* Small magenta orb */}
-      <div className="absolute bottom-10 left-1/3 h-56 w-56 animate-[float_10s_ease-in-out_infinite] rounded-full bg-pink-500/15 blur-3xl dark:bg-pink-500/8" />
-      {/* Grid pattern overlay */}
-      <div className="landing-grid-bg absolute inset-0" />
-    </div>
-  );
+import { EditorialHero, type EditorialHeroPart } from "@/components/shared/EditorialHero";
+import { Link } from "@/i18n/navigation";
+import type { GameSummary } from "@/types/game";
+
+interface HeroSectionProps {
+  /** Jeu trending utilisé pour l'image de fond + l'image inline du titre. */
+  featuredGame?: GameSummary;
 }
 
-export function HeroSection() {
-  const t = useTranslations("landing");
+/** Image de fallback quand aucun jeu featured n'est dispo. */
+const FALLBACK_BACKGROUND = "/assets/no-cover.png";
+
+export function HeroSection({ featuredGame }: HeroSectionProps) {
+  const t = useTranslations("landing.hero");
+
+  const backgroundImage =
+    featuredGame?.backgroundImage || featuredGame?.coverImage || FALLBACK_BACKGROUND;
+  const backgroundAlt = featuredGame
+    ? `${t("imageAlt")} — ${featuredGame.title}`
+    : t("fallbackBackgroundAlt");
+
+  const inlineImage = featuredGame?.coverImage;
+
+  const parts: EditorialHeroPart[] = [
+    { type: "text", value: t("titlePart1") },
+    { type: "text", value: t("titlePart2") },
+    ...(inlineImage
+      ? [{ type: "image" as const, src: inlineImage, alt: featuredGame?.title ?? t("imageAlt") }]
+      : []),
+    { type: "text", value: t("titlePart3"), accent: true },
+    { type: "break" },
+    { type: "text", value: t("titlePart4") },
+  ];
 
   return (
-    <section className="relative flex min-h-[70vh] items-center justify-center overflow-hidden px-4 py-20 sm:px-6 lg:px-8">
-      <FloatingOrbs />
-
-      <div className="relative z-10 mx-auto max-w-4xl text-center">
-        {/* Main title with gradient highlight */}
-        <h1 className="animate-slide-in-up mb-6 text-4xl font-black tracking-tight text-gray-900 sm:text-5xl lg:text-7xl dark:text-white">
-          {t("title")}{" "}
-          <span className="from-palette-secondary-500 to-palette-primary-500 bg-linear-to-r bg-clip-text text-transparent">
-            {t("titleHighlight")}
-          </span>
-          <br />
-          {t("titleEnd")}
-        </h1>
-
-        {/* Subtitle */}
-        <p className="animate-fade-in mx-auto mb-10 max-w-2xl text-lg text-gray-600 sm:text-xl dark:text-gray-400">
-          {t("subtitle")}
-        </p>
-
-        {/* CTA buttons */}
-        <div className="animate-fade-in flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <Link
-            href="/auth?mode=signup"
-            className="group from-palette-secondary-500 to-palette-primary-500 shadow-palette-primary-500/25 hover:shadow-palette-primary-500/30 inline-flex items-center gap-2 rounded-2xl bg-linear-to-r px-8 py-4 text-lg font-bold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
-          >
-            <Icon
-              icon="mdi:rocket-launch"
-              className="h-5 w-5 transition-transform group-hover:-translate-y-0.5"
-            />
-            {t("cta.signup")}
+    <EditorialHero
+      kicker={t("kicker")}
+      parts={parts}
+      description={t("description")}
+      backgroundImage={backgroundImage}
+      backgroundAlt={backgroundAlt}
+      ctas={
+        <>
+          <Link href="/auth?mode=signup" className="editorial-button-primary">
+            <Icon icon="mdi:rocket-launch" className="size-4" aria-hidden />
+            {t("ctaSignup")}
           </Link>
-          <Link
-            href="/games"
-            className="neon-btn inline-flex items-center gap-2 rounded-2xl px-8 py-4 text-lg font-semibold text-gray-900 transition-all duration-300 hover:scale-105 dark:text-white"
-          >
-            <Icon icon="mdi:gamepad-variant" className="h-5 w-5" />
-            {t("cta.explore")}
+          <Link href="/games" className="editorial-button-ghost">
+            <Icon icon="mdi:gamepad-variant" className="size-4" aria-hidden />
+            {t("ctaExplore")}
           </Link>
-        </div>
-      </div>
-    </section>
+        </>
+      }
+    />
   );
 }

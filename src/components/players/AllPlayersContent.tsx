@@ -53,91 +53,87 @@ export function AllPlayersContent() {
 
   if (initialLoading) {
     return (
-      <div className="via-palette-secondary-50 to-palette-primary-100 min-h-screen bg-linear-to-br from-slate-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
-          <GridSkeleton skeletonConfig={playerSkeletonConfig} count={20} />
-        </div>
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
+        <GridSkeleton skeletonConfig={playerSkeletonConfig} count={20} />
       </div>
     );
   }
 
   return (
-    <div className="via-palette-secondary-50 to-palette-primary-100 min-h-screen bg-linear-to-br from-slate-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
-        <h1 className="mb-6 text-xl font-bold text-gray-900 sm:text-2xl lg:text-3xl dark:text-white">
-          {tNav("players")}
-        </h1>
+    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
+      <h1 className="font-display mb-6 text-[clamp(1.75rem,3vw+1rem,3rem)] font-bold tracking-tight text-white">
+        {tNav("players")}
+      </h1>
 
-        <div className="mb-6 space-y-4 sm:mb-8">
-          <div className="flex flex-col gap-4 sm:flex-row">
-            <div className="flex-1">
-              <SearchBar
-                onSearch={handleSearch}
-                initialValue={searchQuery}
-                placeholder={t("searchPlaceholder")}
-                showSearchIndicator
-                searchIndicatorText={t("searchingFor")}
-              />
-            </div>
-            <div className="shrink-0">
-              <FilterButton
-                hasFilters={selectedGameCounts.length > 0}
-                filterCount={selectedGameCounts.length}
-                onClick={() => setShowFilters(!showFilters)}
-              />
-            </div>
+      <div className="mb-6 space-y-4 sm:mb-8">
+        <div className="flex flex-col gap-4 sm:flex-row">
+          <div className="flex-1">
+            <SearchBar
+              onSearch={handleSearch}
+              initialValue={searchQuery}
+              placeholder={t("searchPlaceholder")}
+              showSearchIndicator
+              searchIndicatorText={t("searchingFor")}
+            />
           </div>
-
-          <PlayerFilters
-            selectedGameCounts={selectedGameCounts}
-            onGameCountChange={handleGameCountFilter}
-            onClearFilters={handleClearFilters}
-            showAllFilters={showFilters}
-          />
+          <div className="shrink-0">
+            <FilterButton
+              hasFilters={selectedGameCounts.length > 0}
+              filterCount={selectedGameCounts.length}
+              onClick={() => setShowFilters(!showFilters)}
+            />
+          </div>
         </div>
 
-        {loading && !initialLoading && (
-          <GridSkeleton skeletonConfig={playerSkeletonConfig} count={20} />
-        )}
-
-        {!loading && (
-          <>
-            {players.length === 0 ? (
-              <EmptyState
-                icon="mdi:account-group-outline"
-                title={t("empty.title")}
-                description={hasFilters ? t("empty.description") : t("empty.noPlayers")}
-                action={
-                  hasFilters
-                    ? { label: t("empty.clearFilters"), onClick: handleClearFilters }
-                    : undefined
-                }
-              />
-            ) : (
-              <div className="space-y-8">
-                <div className="xs:grid-cols-2 grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                  {players.map((player, index) => (
-                    <PlayerCard key={player.id} player={player} priority={index < 4} />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {pagination && pagination.totalPages > 1 && (
-              <div className="mt-8 sm:mt-12">
-                <Pagination
-                  currentPage={pagination.currentPage}
-                  totalPages={pagination.totalPages}
-                  totalCount={pagination.totalCount}
-                  onPageChange={handlePageChange}
-                  loading={loading}
-                  translationNamespace="players.pagination"
-                />
-              </div>
-            )}
-          </>
-        )}
+        <PlayerFilters
+          selectedGameCounts={selectedGameCounts}
+          onGameCountChange={handleGameCountFilter}
+          onClearFilters={handleClearFilters}
+          showAllFilters={showFilters}
+        />
       </div>
+
+      {loading && !initialLoading && (
+        <GridSkeleton skeletonConfig={playerSkeletonConfig} count={20} />
+      )}
+
+      {!loading && (
+        <>
+          {players.length === 0 ? (
+            <EmptyState
+              icon="mdi:account-group-outline"
+              title={t("empty.title")}
+              description={hasFilters ? t("empty.description") : t("empty.noPlayers")}
+              action={
+                hasFilters
+                  ? { label: t("empty.clearFilters"), onClick: handleClearFilters }
+                  : undefined
+              }
+            />
+          ) : (
+            <div className="space-y-8">
+              <div className="xs:grid-cols-2 grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                {players.map((player, index) => (
+                  <PlayerCard key={player.id} player={player} priority={index < 4} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {pagination && pagination.totalPages > 1 && (
+            <div className="mt-8 sm:mt-12">
+              <Pagination
+                currentPage={pagination.currentPage}
+                totalPages={pagination.totalPages}
+                totalCount={pagination.totalCount}
+                onPageChange={handlePageChange}
+                loading={loading}
+                translationNamespace="players.pagination"
+              />
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }

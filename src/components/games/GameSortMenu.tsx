@@ -46,23 +46,21 @@ export function GameSortMenu({ value, onChange }: GameSortMenuProps) {
         onClick={() => setOpen((v) => !v)}
         aria-haspopup="listbox"
         aria-expanded={open}
-        className="inline-flex h-12 cursor-pointer items-center gap-2 rounded-xl border border-white/20 bg-white/60 px-4 text-sm font-semibold text-gray-700 shadow-sm backdrop-blur-md transition-all hover:bg-white/80 sm:h-14 sm:px-5 sm:text-base dark:border-slate-700/60 dark:bg-slate-800/50 dark:text-slate-200 dark:hover:bg-slate-800/70"
+        className="group bg-editorial-2 border-editorial-line hover:bg-editorial-3 hover:border-editorial-accent/45 aria-expanded:bg-editorial-3 aria-expanded:border-editorial-accent/45 inline-flex h-12 items-center gap-2 rounded-xl border px-4 text-sm font-semibold text-white transition sm:h-14 sm:px-5 sm:text-base"
       >
         <Icon icon={SORT_ICONS[value]} className="size-4 sm:size-5" />
-        <span className="hidden sm:inline">{t("label")}</span>
-        <span className="text-palette-secondary-600 dark:text-palette-secondary-400 hidden sm:inline">
-          {t(value)}
-        </span>
+        <span className="text-editorial-muted hidden font-medium sm:inline">{t("label")}</span>
+        <span className="text-editorial-accent hidden sm:inline">{t(value)}</span>
         <Icon
           icon="mdi:chevron-down"
-          className={`size-4 transition-transform ${open ? "rotate-180" : ""}`}
+          className="size-4 transition-transform group-aria-expanded:rotate-180"
         />
       </button>
 
       {open && (
         <div
           role="listbox"
-          className="absolute top-full right-0 z-20 mt-2 w-56 overflow-hidden rounded-xl border border-white/20 bg-white/90 shadow-xl backdrop-blur-xl dark:border-slate-700/60 dark:bg-slate-900/90"
+          className="bg-editorial-2 border-editorial-line absolute top-[calc(100%+0.5rem)] right-0 z-20 w-56 overflow-hidden rounded-xl border shadow-[0_12px_32px_rgba(0,0,0,0.45)]"
         >
           {GAME_LISTING_SORT_OPTIONS.map((option) => {
             const active = option === value;
@@ -76,10 +74,10 @@ export function GameSortMenu({ value, onChange }: GameSortMenuProps) {
                   onChange(option);
                   setOpen(false);
                 }}
-                className={`flex w-full items-center gap-3 px-4 py-3 text-left text-sm transition-colors ${
+                className={`flex w-full items-center gap-3 px-4 py-3 text-left text-sm transition ${
                   active
-                    ? "from-palette-secondary-500/10 to-palette-primary-500/10 text-palette-secondary-600 dark:text-palette-secondary-400 bg-linear-to-r"
-                    : "text-gray-700 hover:bg-gray-100 dark:text-slate-200 dark:hover:bg-slate-800"
+                    ? "text-editorial-accent bg-editorial-accent/10"
+                    : "text-editorial-muted hover:bg-white/[0.04] hover:text-white"
                 }`}
               >
                 <Icon icon={SORT_ICONS[option]} className="size-4 shrink-0" />

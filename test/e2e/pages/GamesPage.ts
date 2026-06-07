@@ -10,7 +10,7 @@ export class GamesPage extends BasePage {
   }
 
   get heading(): Locator {
-    return this.page.getByTestId("page-banner-title");
+    return this.page.getByRole("heading", { level: 1 });
   }
 
   get gameCards(): Locator {

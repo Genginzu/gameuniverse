@@ -2,7 +2,6 @@
 
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
-import { Skeleton } from "@/components/ui/skeleton";
 import type {
   PlayerStats as PlayerStatsType,
 } from "@/lib/services/esportPlayerHistoryService";
@@ -30,9 +29,9 @@ export function PlayerStats({ stats, isLoading }: PlayerStatsProps) {
   const winRatePct = Math.round(stats.winRate * 100);
 
   return (
-    <section className="glass-card rounded-2xl p-5 sm:p-6">
-      <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-gray-900 dark:text-white">
-        <Icon icon="mdi:chart-box" className="text-palette-primary-500 h-5 w-5" />
+    <section className="border-editorial-line bg-editorial-2 mt-6 rounded-2xl border p-5 sm:p-6">
+      <h2 className="mb-4 flex items-center gap-2 text-lg font-bold text-white">
+        <Icon icon="mdi:chart-box" className="text-editorial-accent h-5 w-5" />
         {t("heading")}
       </h2>
 
@@ -65,7 +64,7 @@ export function PlayerStats({ stats, isLoading }: PlayerStatsProps) {
         />
       </div>
 
-      <p className="mt-3 text-xs text-gray-500 dark:text-gray-400">
+      <p className="text-editorial-muted mt-3 text-xs">
         {t("totalMatches", { count: stats.totalMatches })}
       </p>
 
@@ -103,11 +102,9 @@ function ActivitySection({ stats }: { stats: PlayerStatsType }) {
   const a = stats.activity30d;
   if (a.matches === 0) return null;
   return (
-    <div className="mt-4 rounded-xl bg-white/40 p-3 dark:bg-gray-800/30">
-      <p className="mb-1 text-xs font-medium text-gray-700 dark:text-gray-200">
-        {t("activity30d")}
-      </p>
-      <p className="text-sm text-gray-600 dark:text-gray-300">
+    <div className="mt-4 rounded-xl bg-white/[0.04] p-3">
+      <p className="mb-1 text-xs font-medium text-white/85">{t("activity30d")}</p>
+      <p className="text-editorial-muted text-sm">
         {t("activityDetails", { matches: a.matches, wins: a.wins, losses: a.losses })}
       </p>
     </div>
@@ -120,18 +117,10 @@ function OpponentsSection({ stats }: { stats: PlayerStatsType }) {
   return (
     <div className="mt-4 grid gap-3 sm:grid-cols-2">
       {stats.bestOpponent && (
-        <OpponentCard
-          title={t("bestOpponent")}
-          opponent={stats.bestOpponent}
-          tone="positive"
-        />
+        <OpponentCard title={t("bestOpponent")} opponent={stats.bestOpponent} tone="positive" />
       )}
       {stats.worstOpponent && stats.worstOpponent !== stats.bestOpponent && (
-        <OpponentCard
-          title={t("worstOpponent")}
-          opponent={stats.worstOpponent}
-          tone="negative"
-        />
+        <OpponentCard title={t("worstOpponent")} opponent={stats.worstOpponent} tone="negative" />
       )}
     </div>
   );
@@ -146,15 +135,12 @@ function OpponentCard({
   opponent: NonNullable<PlayerStatsType["bestOpponent"]>;
   tone: "positive" | "negative";
 }) {
-  const klass =
-    tone === "positive"
-      ? "text-emerald-600 dark:text-emerald-400"
-      : "text-rose-600 dark:text-rose-400";
+  const klass = tone === "positive" ? "text-emerald-300" : "text-rose-300";
   const winRatePct = Math.round(opponent.winRate * 100);
   return (
-    <div className="rounded-xl bg-white/60 p-3 dark:bg-gray-800/40">
-      <p className="mb-1 text-xs font-medium text-gray-500 dark:text-gray-400">{title}</p>
-      <p className="truncate text-sm font-bold text-gray-900 dark:text-white">{opponent.name}</p>
+    <div className="border-editorial-line bg-editorial-3 rounded-xl border p-3">
+      <p className="text-editorial-muted mb-1 text-xs font-medium">{title}</p>
+      <p className="truncate text-sm font-bold text-white">{opponent.name}</p>
       <p className={`text-sm font-semibold ${klass}`}>
         {winRatePct}% · {opponent.wins}W–{opponent.losses}L
       </p>
@@ -167,19 +153,15 @@ function GameBreakdownSection({ stats }: { stats: PlayerStatsType }) {
   if (stats.gameBreakdown.length < 2) return null;
   return (
     <div className="mt-4">
-      <p className="mb-2 text-xs font-medium text-gray-700 dark:text-gray-200">
-        {t("gameBreakdown")}
-      </p>
+      <p className="mb-2 text-xs font-medium text-white/85">{t("gameBreakdown")}</p>
       <ul className="space-y-1.5">
         {stats.gameBreakdown.map((g) => (
           <li
             key={g.game}
-            className="flex items-center justify-between rounded-lg bg-white/40 px-3 py-1.5 text-sm dark:bg-gray-800/30"
+            className="flex items-center justify-between rounded-lg bg-white/[0.04] px-3 py-1.5 text-sm"
           >
-            <span className="truncate font-medium text-gray-800 dark:text-gray-200">
-              {g.game}
-            </span>
-            <span className="text-xs text-gray-500 dark:text-gray-400">
+            <span className="truncate font-medium text-white/85">{g.game}</span>
+            <span className="text-editorial-muted text-xs">
               {g.wins}W–{g.losses}L · {Math.round(g.winRate * 100)}%
             </span>
           </li>
@@ -191,11 +173,11 @@ function GameBreakdownSection({ stats }: { stats: PlayerStatsType }) {
 
 function StatsSkeleton() {
   return (
-    <section className="glass-card rounded-2xl p-5 sm:p-6">
-      <Skeleton className="mb-4 h-5 w-24" />
+    <section className="border-editorial-line bg-editorial-2 mt-6 rounded-2xl border p-5 sm:p-6">
+      <div className="mb-4 h-5 w-24 animate-pulse rounded bg-white/[0.06]" />
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         {Array.from({ length: 6 }).map((_, i) => (
-          <Skeleton key={i} className="h-20 rounded-xl" />
+          <div key={i} className="h-20 animate-pulse rounded-xl bg-white/[0.06]" />
         ))}
       </div>
     </section>

@@ -1,271 +1,188 @@
-# Nouveau Design de la Page de Détails des Jeux
+# Page de détail d'un jeu — refonte éditoriale (P1-03)
 
-## 🎨 Concept de Design
+> Statut : Refondue dans la branche `design/editorial-refonte` (issue #215).
+>
+> **Plan global** :
+> [`docs/design/editorial-refonte-plan.md`](../../design/editorial-refonte-plan.md)
+> · **Composants éditoriaux** :
+> [`docs/design/editorial-components.md`](../../design/editorial-components.md)
 
-J'ai créé un design complètement nouveau et moderne pour la page de détails des
-jeux, inspiré des plateformes gaming modernes comme Steam, Epic Games Store, et
-PlayStation Store. **Le design a été mis à jour pour supprimer le système
-d'onglets et séparer les différents types de médias en sections distinctes.**
+## Description
 
-## 🚀 Caractéristiques Principales
+La page `/games/[slug]` adopte la direction artistique éditoriale
+(Imba-inspired) mise en place pour la refonte du site. Elle remplace l'ancienne
+version à onglets glassmorphism par une mise en page **magazine** : scroll
+vertical, sections numérotées 01..13, hero plein cadre, Bento asymétrique,
+accent dynamique par jeu.
 
-### 1. **Layout Split Moderne**
+## Accès
 
-- **Colonne gauche (33%)** : Cover du jeu, boutons d'action, statistiques
-- **Colonne droite (67%)** : Informations détaillées, sections séparées
-- **Header sticky** : Navigation persistante avec boutons d'action rapides
+- **URL** : `/[locale]/games/[slug]` (FR + EN)
+- **Source** : `src/app/[locale]/games/[slug]/page.tsx`
+- **ISR** : `revalidate = 60s`
 
-### 2. **Design System Cohérent**
+## Architecture
 
-- **Palette sombre** : Fond slate-950 avec éléments slate-800/700
-- **Couleurs d'accent dynamiques** : Basées sur le jeu (Witcher = amber,
-  Cyberpunk = cyan, etc.)
-- **Typographie moderne** : Titres en 4xl/6xl, hiérarchie claire
-- **Espacement cohérent** : Grid system avec gaps de 6/8
-
-### 3. **Sections Séparées (Nouveau)**
-
-- **Aperçu** : Informations générales et tarification
-- **Captures d'écran** : Galerie dédiée aux screenshots avec navigation
-- **Illustrations** : Section séparée pour l'artwork avec navigation
-  indépendante
-- **Vidéos** : Lecteur vidéo avec liste des vidéos disponibles
-- **Spécifications** : Spécifications techniques
-
-### 4. **Interactions Modernes**
-
-- **Hover effects** : Lift et shadow sur les éléments interactifs
-- **Transitions fluides** : 0.3s cubic-bezier pour tous les éléments
-- **États visuels** : Focus, hover, active clairement définis
-- **Navigation indépendante** : Chaque type de média a sa propre navigation
-
-## 🎯 Éléments Clés du Design
-
-### Header Sticky
-
-```tsx
-- Position sticky avec backdrop-blur-sm
-- Navigation retour + actions rapides (partage, favoris)
-- Fond semi-transparent avec bordure
+```
+EditorialShell (rail + sub-sidebar + mega-menu + search overlay)
+└── DynamicAccent (palette dérivée de game.accentColor)
+    └── GameDetailsContent
+        ├── 00 — DetailHero            (cover sticky + titre display +
+        │                               kicker dev/year/platforms +
+        │                               tagline + genres pills + CTAs)
+        ├── 01 — AboutSection          (description + storyline 2 cols)
+        ├── 02 — StatsBento            (Bento asymétrique : Metascore XL,
+        │                               prix mini, age, date, plateformes,
+        │                               dev/publisher, genres)
+        ├── 03 — AgeRatingsSection     (badges PEGI/ESRB + descriptors)
+        ├── 04 — LanguagesSection      (table interface/audio/subtitles)
+        ├── 05 — PlaytimeSection       (HowLongToBeat + moyenne communauté
+        │                               + contributors + form add)
+        ├── 06 — MediaSection          (gallery asymétrique 1 grand + 2
+        │                               petits + grille vidéos)
+        ├── 07 — VersionsSection       (cards éditions GOTY/Deluxe/etc)
+        ├── 08 — DlcSection            (cards DLC/extensions)
+        ├── 09 — MusicSection          (compositeur + Spotify/YouTube)
+        ├── 10 — PricingSection        (multi-store, "Best" sur le moins cher)
+        ├── 11 — PriceHistorySection   (chart Recharts 90j)
+        ├── 12 — ReviewsSection        (GameReviewsTab existant en wrapper)
+        └── 13 — SimilarGamesSection   (IGDB similar_games ou recos algo)
 ```
 
-### Cover Section
+Toutes les sections sont autonomes : si la donnée associée est absente, la
+section retourne `null` (pas d'affichage vide).
 
-```tsx
-- Aspect ratio 3:4 avec effet de glow
-- Badge Metascore positionné en overlay
-- Boutons d'action full-width avec couleurs thématiques
-- Stats rapides en grid 2x2
-```
+## Composants
 
-### Contenu Principal
+### Sections éditoriales (nouvelles)
 
-```tsx
-- Titre en 4xl/6xl avec genres en badges
-- Métadonnées avec icônes colorées
-- Description en text-lg avec max-width
-- Navigation par onglets avec états actifs
-```
+Toutes sous `src/components/games/details/sections/` :
 
-### Galerie Media Séparée (Nouveau)
+| Fichier                          | Rôle                                                  |
+| -------------------------------- | ----------------------------------------------------- |
+| `DetailHero.tsx`                 | Hero plein cadre + cover + identité du jeu            |
+| `AboutSection.tsx`               | Description + storyline 2 cols magazine               |
+| `StatsBento.tsx`                 | Bento Metascore XL + cards stats                      |
+| `AgeRatingsSection.tsx`          | Badges PEGI/ESRB + descriptors                        |
+| `LanguagesSection.tsx`           | Table interface/audio/subtitles                       |
+| `PlaytimeSection.tsx`            | Officiel + communauté + form add                      |
+| `MediaSection.tsx`               | Screenshots + videos asymétrique                      |
+| `VersionsSection.tsx`            | Cards éditions du jeu                                 |
+| `DlcSection.tsx`                 | Cards DLC + extensions                                |
+| `MusicSection.tsx`               | Compositeur + embeds Spotify/YouTube                  |
+| `PricingSection.tsx`             | Cards prix multi-store                                |
+| `PriceHistorySection.tsx`        | Wrapper editorial autour de PriceHistoryTab           |
+| `ReviewsSection.tsx`             | Wrapper editorial autour de GameReviewsTab            |
+| `SimilarGamesSection.tsx`        | IGDB similar_games + fallback algo recos              |
+| `AlgorithmicRecommendations.tsx` | Fallback de SimilarGames (utilise useRecommendations) |
 
-```tsx
-// Captures d'écran avec navigation indépendante
-const [selectedScreenshotIndex, setSelectedScreenshotIndex] = useState(0);
+### Composants partagés réutilisés
 
-// Illustrations avec navigation indépendante
-const [selectedArtworkIndex, setSelectedArtworkIndex] = useState(0);
+- `SpotlightCard` (`src/components/shared/`) — toutes les cards des sections
+  sont des SpotlightCard (halo curseur + bordure accent au hover)
+- `KickerLabel` (`src/components/shared/`) — kickers numérotés et labels
+- `DynamicAccent` (`src/components/shared/`) — injecte `--accent-*` depuis
+  `game.accentColor`
+- `EditorialGameCard` (`src/components/games/`) — cards de la grille similar
+  games
 
-// Vidéos avec lecteur intégré
-const [selectedVideoIndex, setSelectedVideoIndex] = useState(0);
+### Composants conservés inchangés
 
-// Chaque section a sa propre galerie avec miniatures
-// Navigation avec chevrons pour chaque type de média
-// Indicateur de position séparé
-```
+- `PriceHistoryTab` + `PriceHistoryChart` + `PriceHistoryStats` +
+  `PriceHistoryFilters` (chart Recharts existant)
+- `GameReviewsTab` + sous-composants reviews
+- `PlayerPlaytimeForm` (form de soumission de temps de jeu)
 
-## 🎨 Système de Couleurs
+### Helpers
 
-### Couleurs par Jeu
+- `utils/render-accent-segments.tsx` — transforme les balises pseudo-XML
+  `<accent>...</accent>` dans les traductions en JSX `<span class="accent">`
+  pour permettre aux clés i18n de désigner le mot accentué d'un titre
 
-| Jeu            | Primary | Secondary | Accent  | Usage                    |
-| -------------- | ------- | --------- | ------- | ------------------------ |
-| The Witcher 3  | #f59e0b | #d97706   | #fbbf24 | Boutons, icônes, accents |
-| Cyberpunk 2077 | #06b6d4 | #8b5cf6   | #22d3ee | Thème futuriste          |
-| Minecraft      | #10b981 | #059669   | #34d399 | Thème naturel            |
-| Défaut         | #8b5cf6 | #7c3aed   | #a78bfa | Violet moderne           |
+## Direction artistique
 
-### Palette de Base
+### Tokens utilisés
 
-```css
-- Fond principal: slate-950
-- Cartes: slate-800/50 avec border slate-700
-- Texte principal: white
-- Texte secondaire: slate-300
-- Texte tertiaire: slate-400
-```
+- `--editorial-bg`, `--editorial-bg-2` : surfaces sombres
+- `--editorial-line` : bordures fines
+- `--editorial-muted` : texte secondaire
+- `--font-display` (Tomorrow) : titres, gros chiffres, valeurs stats
+- `--accent-50` … `--accent-900`, `--accent-rgb` : injectés par
+  `<DynamicAccent>` à partir de `game.accentColor`
 
-## 🛠️ Composants Techniques
+### Patterns
 
-### Structure des Sections (Nouveau)
+- ✅ Surfaces opaques `bg-[var(--editorial-bg-2)]` + bordure
+  `border-[var(--editorial-line)]`
+- ✅ Hero plein cadre avec dégradé vers `--editorial-bg` (pas de
+  `backdrop-blur`)
+- ✅ Kicker numéroté `01 — About` au-dessus de chaque section
+- ✅ Titre de section : display Tomorrow avec dernier mot en accent dégradé
+  (rendu via `<accent>...</accent>` dans la clé i18n)
+- ✅ Bouton library coloré sur l'accent dynamique du jeu
+- ✅ Chiffres XL (Metascore, durée communauté) en typo display
+- ✅ Plus de `backdrop-blur` ni de `.glass-*`
 
-```tsx
-// Suppression du système d'onglets
-// Remplacement par des sections verticales séparées
+### Styles
 
-// État séparé pour chaque type de média
-const [selectedScreenshotIndex, setSelectedScreenshotIndex] = useState(0);
-const [selectedArtworkIndex, setSelectedArtworkIndex] = useState(0);
-const [selectedVideoIndex, setSelectedVideoIndex] = useState(0);
+CSS modulaire dans `src/app/styles/editorial/game-detail.css`. Importé depuis
+`src/app/globals.css` après les autres modules éditoriaux.
 
-// Sections avec titres h2 et espacement de 12
-<div className="space-y-12">
-  <div>Aperçu</div>
-  <div>Captures d'écran</div>
-  <div>Illustrations</div>
-  <div>Vidéos</div>
-  <div>Spécifications</div>
-</div>;
-```
+## Données conservées
 
-### Système de Couleurs Dynamiques
+Aucun changement fonctionnel — toutes les données affichées par l'ancienne
+version sont conservées :
 
-```tsx
-const getGameColors = (gameTitle: string) => {
-  // Détection basée sur le titre
-  // Retourne { primary, secondary, accent, bg }
-};
-```
+- **Hero** : background image, cover, titre, kicker dev/year/plateformes,
+  description (tagline), genres, CTAs library/share, stats inline
+- **About** : description complète + storyline IGDB
+- **Bento** : metascore, prix mini, age (PEGI), date, plateformes,
+  dev/publisher, genres
+- **Sections** : age ratings (PEGI/ESRB + descriptors), langues
+  (interface/audio/subtitles), playtime IGDB officiel + moyenne communauté
+  - contributeurs, médias (screenshots + videos), éditions, DLC, bande son
+    (compositeur + Spotify + YouTube), pricing multi-store, historique de prix
+    (90 jours), reviews, jeux similaires
 
-### Galerie Interactive Séparée (Nouveau)
+## Hooks utilisés
 
-```tsx
-// Navigation indépendante pour chaque type de média
-const [selectedScreenshotIndex, setSelectedScreenshotIndex] = useState(0);
-const [selectedArtworkIndex, setSelectedArtworkIndex] = useState(0);
-const [selectedVideoIndex, setSelectedVideoIndex] = useState(0);
+- `useBackgroundSync(slug, igdbId, lastSyncedAt)` — sync IGDB en arrière-plan
+- `useViewTracker("games", slug)` — tracking des vues
+- `useGameLibraryStatus(gameId)` — état de la bibliothèque + add/remove (hero)
+- `usePlayerPlaytime(slug)` — moyennes/contributeurs/userPlaytime + submit
+- `usePriceHistory(slug, filters)` — chart Recharts (PriceHistoryTab)
+- `useRecommendations(slug)` — fallback similar games
 
-// Sections séparées avec leurs propres contrôles
-// Screenshots: Image principale + miniatures
-// Artwork: Image principale + miniatures
-// Videos: Lecteur vidéo + liste des vidéos
-```
+## SEO
 
-## 📱 Responsive Design
+- `generateMetadata` : titre, description, OG, alternates FR/EN
+- `<JsonLd>` : Schema.org `VideoGame` avec `aggregateRating` (metascore) et
+  `datePublished` (release date)
 
-### Mobile (< 768px)
+## Mobile
 
-- Layout en colonne unique
-- Cover centrée avec actions en dessous
-- Onglets en scroll horizontal
-- Titre réduit à 2rem
+- Hero : 60vh sur mobile, fade vers `--editorial-bg`
+- Layout : sections empilées en 1 colonne sous `lg`, grilles bento en 2 cols dès
+  `xs`/`sm`
+- Touch targets : ≥ 44px (CTA library, share, buttons)
+- Tableau langues : scroll horizontal sur mobile
 
-### Tablette (768px - 1024px)
+## i18n
 
-- Layout split maintenu
-- Ajustements des proportions
-- Navigation tactile optimisée
+Toutes les nouvelles clés sont sous `gameDetails.editorial.*` dans
+`src/messages/{fr,en}.json` :
 
-### Desktop (> 1024px)
+- `editorial.sections.*` — kickers et titres de sections (avec balises
+  `<accent>...</accent>` pour le mot accentué)
+- `editorial.playtime.*` — kickers playtime
+- `editorial.languages.*` — colonnes de la table langues
+- `editorial.review.*` — labels prix/buy
+- `editorial.metascoreRating.*` — phrases d'accompagnement metascore
+- `editorial.heroPlatformsCount`, `editorial.liveTicker` — labels du hero
 
-- Layout split complet
-- Tous les effets visuels
-- Navigation au clavier
+## Tests
 
-## 🎭 Animations et Transitions
-
-### Classes CSS Personnalisées
-
-```css
-.animate-slide-in-up {
-  /* Entrée par le bas */
-}
-.animate-fade-in {
-  /* Apparition en fondu */
-}
-.animate-scale-in {
-  /* Zoom d'entrée */
-}
-.hover-lift {
-  /* Élévation au survol */
-}
-```
-
-### Transitions
-
-- **Durée** : 0.3s pour les interactions, 0.6s pour les entrées
-- **Easing** : cubic-bezier(0.4, 0, 0.2, 1) pour un mouvement naturel
-- **Propriétés** : transform, opacity, box-shadow
-
-## 🔧 Fonctionnalités Avancées
-
-### États Interactifs
-
-- **Wishlist** : Toggle avec animation du cœur
-- **Navigation media séparée** : Boutons avec feedback visuel pour chaque type
-- **Sections fluides** : Défilement vertical sans interruption
-
-### Gestion des Données
-
-- **Fallbacks** : Gestion des médias manquants
-- **Loading states** : Skeletons pour le chargement
-- **Error states** : Messages d'erreur élégants
-
-### Accessibilité
-
-- **Focus visible** : Contours colorés
-- **Navigation clavier** : Tous les éléments accessibles
-- **Réduction de mouvement** : Respect des préférences utilisateur
-- **Contraste** : Ratios WCAG respectés
-
-## 🚀 Avantages du Nouveau Design
-
-### UX Améliorée
-
-- **Navigation fluide** : Sections séparées sans interruption
-- **Information hiérarchisée** : Priorité visuelle claire
-- **Actions rapides** : Boutons accessibles en permanence
-- **Médias organisés** : Chaque type de média dans sa propre section
-
-### Performance
-
-- **Images optimisées** : Next.js Image avec sizes appropriées
-- **Animations hardware-accelerated** : Transform et opacity
-- **Lazy loading** : Chargement progressif des médias
-
-### Maintenabilité
-
-- **Composants modulaires** : Séparation claire des responsabilités
-- **Système de couleurs** : Facilement extensible
-- **CSS organisé** : Classes utilitaires et animations séparées
-
-## 📊 Comparaison Avant/Après
-
-### Ancien Design (avec onglets)
-
-- Layout complexe avec particules
-- Thèmes trop chargés visuellement
-- Navigation par onglets
-- Médias mélangés dans une seule galerie
-
-### Nouveau Design (sections séparées)
-
-- Layout clair et professionnel
-- Couleurs subtiles et élégantes
-- Sections verticales fluides
-- Médias séparés par type (screenshots, artwork, vidéos)
-- Navigation indépendante pour chaque type de média
-
-## 🎯 Résultat Final
-
-Le nouveau design offre :
-
-- **Une expérience utilisateur moderne** et intuitive
-- **Une identité visuelle cohérente** avec des accents personnalisés
-- **Une navigation fluide** par sections séparées
-- **Des médias bien organisés** avec navigation indépendante par type
-- **Des performances optimisées** avec des animations fluides
-- **Une accessibilité complète** pour tous les utilisateurs
-
-C'est un design qui rivalise avec les meilleures plateformes gaming actuelles
-tout en gardant une identité propre à Game Universe !
+- Tests existants conservés :
+  `test/unit/components/games/details/PriceHistoryTab.test.tsx`
+- Tests de hooks éditoriaux : `useGameAccent`, `useEditorialRailState`
+- Pas de régression sur les services (IGDB, GameService)

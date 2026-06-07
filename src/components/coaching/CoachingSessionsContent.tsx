@@ -18,7 +18,7 @@ const STATUS_ICONS: Record<string, string> = {
 };
 const STATUS_COLORS: Record<string, string> = {
   requested: "text-yellow-500",
-  confirmed: "text-palette-secondary-400",
+  confirmed: "text-editorial-accent",
   in_progress: "text-blue-500",
   completed: "text-green-500",
   cancelled: "text-red-400",
@@ -140,7 +140,7 @@ export function CoachingSessionsContent() {
           ))}
         </div>
       ) : data?.sessions.length === 0 ? (
-        <div className="glass-card flex flex-col items-center justify-center rounded-xl p-8 text-center">
+        <div className="border border-editorial-line bg-editorial-2 flex flex-col items-center justify-center rounded-xl p-8 text-center">
           <Icon icon="lucide:calendar" className="mb-3 size-10 text-gray-400" />
           <p className="text-sm text-gray-500 dark:text-gray-400">{t("empty")}</p>
         </div>
@@ -149,7 +149,7 @@ export function CoachingSessionsContent() {
           {data?.sessions.map((s) => (
             <div
               key={s.id}
-              className="glass-card flex flex-col gap-4 rounded-xl p-4 sm:flex-row sm:items-center"
+              className="border border-editorial-line bg-editorial-2 flex flex-col gap-4 rounded-xl p-4 sm:flex-row sm:items-center"
             >
               <div className="flex items-center gap-3">
                 {s.gameCoverImage && (
@@ -243,7 +243,7 @@ export function CoachingSessionsContent() {
                   {s.conversationId && (
                     <Link
                       href="/discussions"
-                      className="bg-palette-secondary-500/10 text-palette-secondary-400 hover:bg-palette-secondary-500/20 rounded-lg px-3 py-1.5 text-xs font-medium"
+                      className="bg-editorial-accent/15 text-editorial-accent hover:bg-editorial-accent/25 rounded-lg px-3 py-1.5 text-xs font-medium"
                     >
                       <Icon icon="lucide:message-circle" className="inline size-3.5" />{" "}
                       {t("actions.chat")}

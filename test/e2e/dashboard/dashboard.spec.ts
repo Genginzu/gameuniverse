@@ -22,15 +22,14 @@ test.describe("Dashboard — home page & navigation", () => {
     await page.goto("/fr");
     await page.waitForLoadState("domcontentloaded");
 
-    const gamesLink = page.locator('a[href*="/games"]').first();
-    const charactersLink = page.locator('a[href*="/characters"]').first();
-    const playersLink = page.locator('a[href*="/players"]').first();
+    // Les liens de section vivent dans les panneaux du méga-menu (masqués
+    // tant qu'on ne survole pas) + dans le contenu de la home (hero). On ne
+    // retient donc que les liens réellement visibles.
+    const visibleSectionLinks = page.locator(
+      'a[href*="/games"]:visible, a[href*="/characters"]:visible, a[href*="/players"]:visible'
+    );
 
-    const hasGames = await gamesLink.isVisible().catch(() => false);
-    const hasCharacters = await charactersLink.isVisible().catch(() => false);
-    const hasPlayers = await playersLink.isVisible().catch(() => false);
-
-    expect(hasGames || hasCharacters || hasPlayers).toBeTruthy();
+    await expect(visibleSectionLinks.first()).toBeVisible({ timeout: 10_000 });
   });
 
   test("should redirect /library to auth when not connected", async ({ page }) => {

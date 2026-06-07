@@ -1,80 +1,67 @@
 "use client";
 
+/**
+ * FeaturesSection : présentation des 6 piliers de Gamers Universe en
+ * cartes éditoriales numérotées 01..06 avec halo lumineux (`SpotlightCard`).
+ *
+ * Pas de glassmorphism : on s'appuie uniquement sur les surfaces sombres
+ * et bordures fines des composants partagés.
+ *
+ * Voir docs/design/editorial-refonte-plan.md.
+ */
+
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
-import { useRef } from "react";
-import { useInView } from "@/hooks/useInView";
+
+import { KickerLabel } from "@/components/shared/KickerLabel";
+import { SpotlightCard } from "@/components/shared/SpotlightCard";
 
 const FEATURES = [
-  { key: "library", icon: "mdi:bookshelf", color: "from-palette-primary-500 to-purple-600" },
-  { key: "characters", icon: "mdi:account-star", color: "from-palette-secondary-500 to-blue-600" },
-  { key: "community", icon: "mdi:account-group", color: "from-pink-500 to-rose-600" },
-  { key: "search", icon: "mdi:magnify", color: "from-amber-500 to-orange-600" },
-  { key: "tracking", icon: "mdi:chart-timeline-variant", color: "from-emerald-500 to-green-600" },
-  { key: "reviews", icon: "mdi:star-shooting", color: "from-indigo-500 to-palette-primary-600" },
+  { key: "library", icon: "mdi:bookshelf" },
+  { key: "characters", icon: "mdi:account-star" },
+  { key: "community", icon: "mdi:account-group" },
+  { key: "search", icon: "mdi:magnify" },
+  { key: "tracking", icon: "mdi:chart-timeline-variant" },
+  { key: "reviews", icon: "mdi:star-shooting" },
 ] as const;
-
-function FeatureCard({
-  featureKey,
-  icon,
-  colorGradient,
-  index,
-}: {
-  featureKey: string;
-  icon: string;
-  colorGradient: string;
-  index: number;
-}) {
-  const t = useTranslations("landing.features");
-  const ref = useRef<HTMLDivElement>(null);
-  const isVisible = useInView(ref, { threshold: 0.2 });
-
-  return (
-    <div
-      ref={ref}
-      className={`glass-card group rounded-2xl p-6 transition-all duration-500 hover:scale-[1.03] ${
-        isVisible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
-      }`}
-      style={{ transitionDelay: `${index * 100}ms` }}
-    >
-      {/* Icon with gradient background */}
-      <div className={`mb-4 inline-flex rounded-xl bg-linear-to-br ${colorGradient} p-3 shadow-lg`}>
-        <Icon icon={icon} className="h-6 w-6 text-white" />
-      </div>
-      <h3 className="mb-2 text-lg font-bold text-gray-900 dark:text-white">
-        {t(`${featureKey}.title`)}
-      </h3>
-      <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-400">
-        {t(`${featureKey}.description`)}
-      </p>
-    </div>
-  );
-}
 
 export function FeaturesSection() {
   const t = useTranslations("landing.features");
 
   return (
-    <section className="relative px-4 py-20 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-6xl">
-        {/* Section header */}
-        <div className="mb-14 text-center">
-          <h2 className="neon-text mb-3 text-3xl font-black text-gray-900 sm:text-4xl dark:text-white">
-            {t("mainTitle")}
+    <section className="w-full px-4 py-16 md:px-8 md:py-24 lg:px-10 lg:py-28">
+      <div className="mx-auto w-full max-w-[1536px]">
+        <header className="mb-10 flex max-w-[720px] flex-col gap-3 md:mb-14">
+          <KickerLabel>{t("kicker")}</KickerLabel>
+          <h2 className="font-display text-[clamp(2rem,5vw,3.75rem)] leading-none font-bold tracking-tight text-white">
+            {t("title")}{" "}
+            <span className="from-neon-secondary to-neon-primary bg-gradient-to-r bg-clip-text text-transparent">
+              {t("titleAccent")}
+            </span>
           </h2>
-          <p className="mx-auto max-w-xl text-gray-600 dark:text-gray-400">{t("mainSubtitle")}</p>
-        </div>
+          <p className="text-editorial-muted text-[0.95rem] leading-relaxed md:text-base">
+            {t("description")}
+          </p>
+        </header>
 
-        {/* Feature cards grid */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {FEATURES.map((feature, index) => (
-            <FeatureCard
-              key={feature.key}
-              featureKey={feature.key}
-              icon={feature.icon}
-              colorGradient={feature.color}
-              index={index}
-            />
+            <SpotlightCard key={feature.key} className="flex flex-col gap-3 p-6">
+              <div className="flex items-center justify-between">
+                <span className="bg-editorial-accent/15 text-editorial-accent grid size-10 place-items-center rounded-xl">
+                  <Icon icon={feature.icon} className="size-5" aria-hidden />
+                </span>
+                <span className="text-editorial-muted font-mono text-sm">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+              </div>
+              <h3 className="font-display text-lg font-bold text-white">
+                {t(`items.${feature.key}.title`)}
+              </h3>
+              <p className="text-editorial-muted text-sm leading-relaxed">
+                {t(`items.${feature.key}.description`)}
+              </p>
+            </SpotlightCard>
           ))}
         </div>
       </div>

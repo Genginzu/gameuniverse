@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { getTranslations } from "next-intl/server";
-import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
+import { EditorialShell } from "@/components/layout/editorial/EditorialShell";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
 import { GridSkeleton } from "@/components/shared/GridSkeleton";
@@ -14,7 +14,7 @@ const FavoriteCharactersContent = dynamic(
     ),
   {
     loading: () => (
-      <div className="p-4 sm:p-6">
+      <div className="min-h-screen bg-[var(--editorial-bg)] p-4 sm:p-6">
         <GridSkeleton skeletonConfig={characterSkeletonConfig} count={8} />
       </div>
     ),
@@ -43,7 +43,7 @@ export default async function FavoriteCharactersPage({ params }: FavoriteCharact
   const t = await getTranslations({ locale, namespace: "characters.favorites" });
 
   return (
-    <DashboardLayout>
+    <EditorialShell>
       <ErrorBoundary
         fallback={
           <ErrorFallback description={t("errorTitle")} showRefresh={true} showHomeButton={true} />
@@ -51,6 +51,6 @@ export default async function FavoriteCharactersPage({ params }: FavoriteCharact
       >
         <FavoriteCharactersContent />
       </ErrorBoundary>
-    </DashboardLayout>
+    </EditorialShell>
   );
 }

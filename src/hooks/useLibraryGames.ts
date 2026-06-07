@@ -93,6 +93,17 @@ export function useLibraryGames(locale: string = "fr") {
     mutate: mutateGames,
   } = useSWR<GamesResponse>(gamesKey);
 
+  // Sticky flag : devient true dès que la première réponse arrive et le reste.
+  // Permet de distinguer le tout premier chargement (skeleton page entière OK)
+  // d'une revalidation déclenchée par un changement de filtre / recherche
+  // (où on veut juste un spinner ciblé sur la grille, pas refaire le hero).
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
+  useEffect(() => {
+    if (gamesData && !hasLoadedOnce) {
+      setHasLoadedOnce(true);
+    }
+  }, [gamesData, hasLoadedOnce]);
+
   // SWR — stats
   const { data: statsData, mutate: mutateStats } = useSWR<LibraryStats>(
     user ? "/api/library/stats" : null
@@ -177,7 +188,7 @@ export function useLibraryGames(locale: string = "fr") {
     genres,
     pagination,
     // Loading states
-    initialLoading: gamesLoading,
+    initialLoading: gamesLoading && !hasLoadedOnce,
     loading: gamesValidating,
     // Filter state
     searchQuery,

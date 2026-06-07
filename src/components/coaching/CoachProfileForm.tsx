@@ -58,7 +58,7 @@ export function CoachProfileForm() {
     return (
       <div className="space-y-4">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="h-20 animate-pulse rounded-xl bg-gray-200 dark:bg-gray-700" />
+          <div key={i} className="h-20 animate-pulse rounded-xl bg-white/[0.06]" />
         ))}
       </div>
     );
@@ -67,59 +67,53 @@ export function CoachProfileForm() {
   return (
     <div className="space-y-6">
       {profile && (
-        <div className="glass-card flex items-center justify-between rounded-xl p-4">
+        <div className="border-editorial-line bg-editorial-2 flex items-center justify-between rounded-xl border p-4">
           <div className="flex items-center gap-3">
             <Icon
               icon={profile.isActive ? "lucide:check-circle" : "lucide:circle-off"}
-              className={`size-5 ${profile.isActive ? "text-green-500" : "text-gray-400"}`}
+              className={`size-5 ${profile.isActive ? "text-emerald-400" : "text-editorial-muted"}`}
             />
-            <span className="text-sm font-medium text-gray-900 dark:text-white">
+            <span className="text-sm font-medium text-white">
               {profile.isActive ? t("active") : t("inactive")}
             </span>
             {profile.isVerified && (
-              <span className="bg-palette-secondary-500/20 text-palette-secondary-400 rounded-full px-2 py-0.5 text-xs font-medium">
+              <span className="bg-editorial-accent/15 text-editorial-accent rounded-full px-2 py-0.5 text-xs font-medium">
                 {t("verified")}
               </span>
             )}
           </div>
           <button
             onClick={handleToggle}
-            className="rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
+            className="text-editorial-muted rounded-lg bg-white/10 px-3 py-1.5 text-xs font-medium transition-colors hover:bg-white/15"
           >
             {profile.isActive ? t("deactivate") : t("activate")}
           </button>
         </div>
       )}
 
-      <div className="glass-card space-y-4 rounded-xl p-4 md:p-6">
+      <div className="border-editorial-line bg-editorial-2 space-y-4 rounded-xl border p-4 md:p-6">
         <div>
-          <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
-            {t("bioLabel")}
-          </label>
+          <label className="mb-1 block text-sm font-medium text-white">{t("bioLabel")}</label>
           <textarea
             value={bio}
             onChange={(e) => setBio(e.target.value)}
             rows={4}
-            className="glass-input w-full rounded-lg p-3 text-base"
+            className="border-editorial-line bg-editorial-3 w-full rounded-lg border p-3 text-base text-white placeholder:text-editorial-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
             placeholder={t("bioPlaceholder")}
           />
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
-            {t("experienceLabel")}
-          </label>
+          <label className="mb-1 block text-sm font-medium text-white">{t("experienceLabel")}</label>
           <textarea
             value={experience}
             onChange={(e) => setExperience(e.target.value)}
             rows={3}
-            className="glass-input w-full rounded-lg p-3 text-base"
+            className="border-editorial-line bg-editorial-3 w-full rounded-lg border p-3 text-base text-white placeholder:text-editorial-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
             placeholder={t("experiencePlaceholder")}
           />
         </div>
         <div>
-          <label className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
-            {t("languagesLabel")}
-          </label>
+          <label className="mb-2 block text-sm font-medium text-white">{t("languagesLabel")}</label>
           <div className="flex gap-4">
             {[
               { value: "Français", label: "Français" },
@@ -135,7 +129,7 @@ export function CoachProfileForm() {
                   }}
                   className="text-palette-secondary-500 focus:ring-palette-secondary-500 size-4 rounded border-gray-300"
                 />
-                <span className="text-sm text-gray-700 dark:text-gray-300">{lang.label}</span>
+                <span className="text-sm text-white/85">{lang.label}</span>
               </label>
             ))}
           </div>

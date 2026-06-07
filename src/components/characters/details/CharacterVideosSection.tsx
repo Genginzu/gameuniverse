@@ -21,7 +21,7 @@ export function CharacterVideosSection({
   return (
     <section>
       <h3 className="mb-6 text-xl font-bold text-white">{t("characters.media.videos")}</h3>
-      <div className="relative mb-4 aspect-video overflow-hidden rounded-2xl border border-slate-700/50 bg-slate-800/50">
+      <div className="border-editorial-line bg-editorial-2 relative mb-4 aspect-video overflow-hidden rounded-2xl border">
         {videos[selectedIndex]?.url ? (
           <video
             src={videos[selectedIndex].url}
@@ -31,7 +31,7 @@ export function CharacterVideosSection({
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
-            <Icon icon="lucide:play" className="h-16 w-16 text-slate-400" />
+            <Icon icon="lucide:play" className="text-editorial-muted h-16 w-16" />
           </div>
         )}
       </div>
@@ -43,7 +43,7 @@ export function CharacterVideosSection({
             className={`group relative overflow-hidden rounded-xl border transition-all ${
               selectedIndex === index
                 ? "border-white ring-2 ring-white/20"
-                : "border-slate-700/50 hover:border-slate-600"
+                : "border-editorial-line hover:border-white/20"
             }`}
           >
             <div className="relative aspect-video">
@@ -57,15 +57,15 @@ export function CharacterVideosSection({
                   showSkeleton={true}
                 />
               ) : (
-                <div className="flex h-full w-full items-center justify-center bg-slate-800">
-                  <Icon icon="lucide:play" className="h-8 w-8 text-slate-400" />
+                <div className="bg-editorial-2 text-editorial-muted flex h-full w-full items-center justify-center">
+                  <Icon icon="lucide:play" className="h-8 w-8" />
                 </div>
               )}
               <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition-opacity group-hover:opacity-100">
                 <Icon icon="lucide:play" className="h-8 w-8 text-white" />
               </div>
             </div>
-            <div className="bg-slate-800/80 p-2">
+            <div className="bg-editorial-3 p-2">
               <p className="truncate text-sm font-medium text-white">{video.title}</p>
             </div>
           </button>
