@@ -100,14 +100,12 @@ test.describe("Navigation, routing i18n & responsive — #48", () => {
       await page.goto("/fr");
       await page.waitForLoadState("domcontentloaded");
 
-      // Le shell éditorial public ne rend pas le Footer legacy (glass). On
-      // tolère donc son absence tant que la page s'affiche (titre h1).
+      // Le shell éditorial public ne rend pas le Footer legacy (glass), et la
+      // home hydrate son contenu côté client (useAuth) : on attend le titre h1.
+      const heading = page.getByRole("heading", { level: 1 }).first();
+      await heading.waitFor({ state: "visible", timeout: 10_000 }).catch(() => {});
+      const hasHeading = await heading.isVisible().catch(() => false);
       const hasFooter = await page.locator("footer").isVisible().catch(() => false);
-      const hasHeading = await page
-        .getByRole("heading", { level: 1 })
-        .first()
-        .isVisible()
-        .catch(() => false);
       expect(hasFooter || hasHeading).toBeTruthy();
     });
   });
