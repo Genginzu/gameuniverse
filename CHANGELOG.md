@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/Genginzu/gameuniverse/compare/gameuniverse-v0.2.0...gameuniverse-v0.3.0) (2026-06-07)
+
+
+### Features
+
+* refonte éditoriale complète (Imba-inspired) ([#269](https://github.com/Genginzu/gameuniverse/issues/269)) ([0224291](https://github.com/Genginzu/gameuniverse/commit/0224291c1d6018663e27d87e164d6ec8b24fd928)), closes [#257](https://github.com/Genginzu/gameuniverse/issues/257)
+
 ## [0.2.0](https://github.com/Genginzu/gameuniverse/compare/gameuniverse-v0.1.0...gameuniverse-v0.2.0) (2026-06-05)
 
 
