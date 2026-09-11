@@ -14,6 +14,6 @@ echo "🔧 Running TypeScript type check..."
 bun run type-check
 
 echo "🧪 Running tests..."
-bun run test:run
+bun test --isolate
 
 echo "✅ All checks passed!"

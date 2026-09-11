@@ -1,4 +1,4 @@
-﻿import { describe, it, expect } from "vitest";
+﻿import { describe, it, expect } from "bun:test";
 import * as fc from "fast-check";
 import { enrichReviewsWithVotes } from "../../../../src/lib/utils/reviewVoteQueries";
 import type { Review, VoteType, ReviewVoteCounts } from "../../../../src/types/review";

@@ -1,4 +1,4 @@
-﻿import { describe, it, expect } from "vitest";
+﻿import { describe, it, expect } from "bun:test";
 import * as fc from "fast-check";
 import type { Comment, CommentsResponse } from "../../../../src/types/comment";
 import type { AdminComment } from "../../../../src/types/admin-comments";

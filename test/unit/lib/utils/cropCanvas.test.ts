@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "bun:test";
 import { cropCanvas } from "@/lib/utils/cropCanvas";
 import type { CropParams, CropOutputConfig } from "@/types/crop";
 

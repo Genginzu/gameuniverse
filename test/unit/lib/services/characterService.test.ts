@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "bun:test";
 import { CharacterService } from "../../../../src/lib/services/characterService";
 import type {
   CharacterDetails,

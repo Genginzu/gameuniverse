@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "bun:test";
 import { render, screen } from "@testing-library/react";
 import { DynamicAccent } from "@/components/shared/DynamicAccent";
 import { MAGENTA_PALETTE, paletteFromHex } from "@/lib/utils/accent-palette";

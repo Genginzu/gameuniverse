@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "bun:test";
 
 vi.mock("@/lib/services/igdbService", () => ({
   IGDBService: { buildImageUrl: vi.fn() },

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "bun:test";
 import { GlobalSearchService } from "@/lib/services/globalSearchService";
 import { HybridSearchService } from "@/lib/services/hybridSearchService";
 import { CharacterService } from "@/lib/services/characterService";
@@ -6,10 +6,18 @@ import { PlayerService } from "@/lib/services/playerService";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import type { GlobalSearchRequest, GlobalSearchResult } from "@/types/global-search";
 
-vi.mock("@/lib/services/hybridSearchService");
-vi.mock("@/lib/services/characterService");
-vi.mock("@/lib/services/playerService");
-vi.mock("@/lib/supabase-admin");
+vi.mock("@/lib/services/hybridSearchService", () => ({
+  HybridSearchService: { search: vi.fn() },
+}));
+vi.mock("@/lib/services/characterService", () => ({
+  CharacterService: { fetchCharacters: vi.fn() },
+}));
+vi.mock("@/lib/services/playerService", () => ({
+  PlayerService: { fetchPlayersFromDB: vi.fn() },
+}));
+vi.mock("@/lib/supabase-admin", () => ({
+  getSupabaseAdmin: vi.fn(),
+}));
 
 const mockHybridSearch = vi.mocked(HybridSearchService.search);
 const mockFetchCharacters = vi.mocked(CharacterService.fetchCharacters);

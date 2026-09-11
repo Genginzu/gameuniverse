@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "bun:test";
 import { HybridSearchService } from "../../../../src/lib/services/hybridSearchService";
 import { GameService } from "../../../../src/lib/services/gameService";
 import { IGDBService } from "../../../../src/lib/services/igdbService";

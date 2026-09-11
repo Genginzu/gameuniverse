@@ -1,5 +1,5 @@
 // Feature: igdb-video-sync, Property 1: Video transformation correctness
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "bun:test";
 import * as fc from "fast-check";
 import {
   transformIgdbVideos,

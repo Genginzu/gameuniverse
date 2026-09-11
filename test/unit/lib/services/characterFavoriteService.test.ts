@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "bun:test";
 
 // Mock Supabase client setup
 const mockInsert = vi.fn(() => Promise.resolve({ error: null }));

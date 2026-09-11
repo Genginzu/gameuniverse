@@ -3,7 +3,7 @@
  * Tests CRUD, duplicate slug (409), validation (400), non-admin (403).
  */
 
-import { describe, test, expect, beforeEach, vi } from "vitest";
+import { describe, test, expect, beforeEach, vi } from "bun:test";
 
 // --- Mock setup ---
 let mockRequireAdmin: any;

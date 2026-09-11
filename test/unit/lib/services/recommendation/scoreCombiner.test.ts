@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "bun:test";
 import { computeCombinedScore, DEFAULT_WEIGHTS } from "@/lib/services/recommendation/scoreCombiner";
 import type { CandidateScores, ScoringWeights } from "@/types/recommendation";
 

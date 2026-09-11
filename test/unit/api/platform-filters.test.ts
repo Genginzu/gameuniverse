@@ -3,7 +3,7 @@
  * Requirements: 4.1, 4.2, 4.3, 4.4
  */
 
-import { describe, test, expect, beforeEach, vi } from "vitest";
+import { describe, test, expect, beforeEach, vi } from "bun:test";
 
 let mockSupabaseFrom: any;
 let mockSupabaseRpc: any;

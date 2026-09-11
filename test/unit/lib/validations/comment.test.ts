@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "bun:test";
 import { commentSchema } from "../../../../src/lib/validations/comment";
 
 describe("commentSchema", () => {

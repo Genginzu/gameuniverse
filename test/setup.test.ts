@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "bun:test";
 
 describe("Test Setup", () => {
   it("should have DOM globals available", () => {

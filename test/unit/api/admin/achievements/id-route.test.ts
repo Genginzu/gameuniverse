@@ -3,7 +3,7 @@
  * Tests auth, not found, validation, duplicate key, update, and deletion.
  */
 
-import { describe, test, expect, beforeEach, vi } from "vitest";
+import { describe, test, expect, beforeEach, vi } from "bun:test";
 
 let mockRequireAdmin: ReturnType<typeof vi.fn>;
 let mockSupabaseFrom: ReturnType<typeof vi.fn> | null;

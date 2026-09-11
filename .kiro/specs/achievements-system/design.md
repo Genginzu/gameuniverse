@@ -483,9 +483,9 @@ Conformément aux steering rules :
 - Tests unitaires : `test/unit/lib/services/achievementEngine.test.ts`, etc.
 - Tests property-based : `test/unit/lib/services/levelSystem.property.test.ts`,
   etc.
-- Imports via alias `@/` (résolu par vitest.config.ts)
-- Framework : Vitest uniquement
-  (`import { describe, it, expect } from "vitest"`)
+- Imports via alias `@/` (résolu par bunfig.toml et tsconfig.json)
+- Framework : bun:test uniquement
+  (`import { describe, it, expect } from "bun:test"`)
 
 ### Tagging des tests property-based
 

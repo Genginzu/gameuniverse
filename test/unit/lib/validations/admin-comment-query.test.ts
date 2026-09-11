@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "bun:test";
 import { adminCommentQuerySchema } from "@/lib/validations/admin-comment-query";
 
 describe("adminCommentQuerySchema", () => {

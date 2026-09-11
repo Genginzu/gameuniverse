@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "bun:test";
 import { renderHook, act } from "@testing-library/react";
 import { useInView } from "@/hooks/useInView";
 

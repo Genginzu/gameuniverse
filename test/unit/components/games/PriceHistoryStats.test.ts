@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "bun:test";
 import { computePriceIndicators } from "@/lib/services/priceHistoryService";
 import type { PriceHistoryStats } from "@/types/price-history";
 

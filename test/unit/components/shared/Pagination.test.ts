@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "bun:test";
 import { getVisiblePages } from "../../../../src/components/shared/Pagination";
 
 describe("getVisiblePages helper", () => {

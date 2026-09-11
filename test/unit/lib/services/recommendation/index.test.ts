@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi } from "bun:test";
 
 vi.mock("@/lib/supabase-server", () => ({
   createServerClient: vi.fn(async () => ({ from: vi.fn() })),

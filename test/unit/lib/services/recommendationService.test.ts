@@ -1,7 +1,15 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "bun:test";
 import type { GameRecommendation } from "@/types/recommendation";
 
-vi.mock("@/lib/services/recommendation/dataFetchers");
+vi.mock("@/lib/services/recommendation/dataFetchers", () => ({
+  fetchGameGenreIds: vi.fn(),
+  fetchAllGameGenres: vi.fn(),
+  fetchCoOccurrences: vi.fn(),
+  fetchReviewStats: vi.fn(),
+  fetchMetascores: vi.fn(),
+  fetchGameMetadata: vi.fn(),
+  fetchUserLibraryGameIds: vi.fn(),
+}));
 vi.mock("@/lib/services/recommendation/cache", () => ({
   cacheGet: vi.fn(() => null),
   cacheSet: vi.fn(),

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "bun:test";
 import { ActivityService } from "@/lib/services/activityService";
 import type { ActivityResponse } from "@/types/activity";
 

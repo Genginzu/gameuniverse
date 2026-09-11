@@ -1,4 +1,4 @@
-﻿import { describe, it, expect } from "vitest";
+﻿import { describe, it, expect } from "bun:test";
 import * as fc from "fast-check";
 import { PlayerService } from "../../../../src/lib/services/playerService";
 import type { PlayerLibraryGame, PlayerStats } from "../../../../src/types/player";

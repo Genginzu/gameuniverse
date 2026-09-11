@@ -14,8 +14,8 @@ bun run lint             # ESLint (run before pushing)
 bun run lint:fix         # Autofix lint issues
 bun run format           # Prettier write
 bun run type-check       # tsc --noEmit
-bun run test             # Full Vitest suite (~10 min — do not run during dev)
-bunx vitest run <path>   # Targeted tests (preferred — see Testing below)
+bun run test             # Full bun:test suite
+bun test <path>          # Targeted tests (preferred — see Testing below)
 bun run test:e2e         # Playwright E2E
 bun run supabase:types   # Regenerate src/lib/database.types.ts from local DB
 bun run supabase:start   # Start local Supabase
@@ -28,21 +28,20 @@ bun run check-all:unix   # Full gate: lint + format + type-check + tests
 The full test suite takes **10+ minutes** — never run `bun run test:all` during
 iteration. Match modified files to targeted test dirs:
 
-| Source changed                   | Targeted command                               |
+| Source changed                   | Targeted command                              |
 | -------------------------------- | ---------------------------------------------- |
-| `src/components/games/X.tsx`     | `bunx vitest run test/unit/components/games/`  |
-| `src/hooks/useX.ts`              | `bunx vitest run test/unit/hooks/useX.test.ts` |
-| `src/lib/services/X.ts`          | `bunx vitest run test/unit/lib/services/X*`    |
-| `src/app/api/admin/.../route.ts` | `bunx vitest run test/unit/api/admin*`         |
+| `src/components/games/X.tsx`     | `bun test test/unit/components/games/`         |
+| `src/hooks/useX.ts`              | `bun test test/unit/hooks/useX.test.ts`        |
+| `src/lib/services/X.ts`          | `bun test test/unit/lib/services/X*`           |
+| `src/app/api/admin/.../route.ts` | `bun test test/unit/api/admin*`                |
 
 **Never** append redirections (`2>&1`, `| tee`, etc.) to test commands. Tests
-live in `test/` (never `src/**/__tests__/`). Use Vitest only — **never**
-`bun:test`. See `.kiro/steering/testing.md`.
+live in `test/` (never `src/**/__tests__/`). Use `bun:test` only — **never**
+Vitest. See `.kiro/steering/testing.md`.
 
-Vitest has a two-project setup (`node` vs `dom`) configured in
-`vitest.config.ts`. Hook tests that use `renderHook` must be listed in the
-`HOOK_TESTS_NEEDING_DOM` array there or they will fail with "document is not
-defined".
+DOM tests use happy-dom (registered via `test/setup-bun.ts` preloaded by
+`bunfig.toml`). All tests share the same environment — no separate node/dom
+project split needed.
 
 ## Architecture
 
@@ -133,7 +132,7 @@ when touching the related area:
 
 - `project-architecture.md` — full hook/component/service inventory
 - `code-quality.md` — file organization, placement rules, SWR usage
-- `testing.md` — Vitest-only, test colocation, targeted commands
+- `testing.md` — bun:test only, test colocation, targeted commands
 - `database-migrations.md` — Supabase-only migration rules
 - `i18n-translations.md` — bilingual key requirements
 - `design-glassmorphism.md` — design system + gradient rules
@@ -166,8 +165,8 @@ keyword match in their `description`:
 
 `.claude/settings.json` registers a `PostToolUse` hook on `Write|Edit` that runs
 `.claude/hooks/run-related-tests.sh`. When a `.ts`/`.tsx` file under `src/` or
-`test/` is modified, the hook injects a reminder to run the targeted Vitest
-command (`bunx vitest run --related <file>` for source, `bunx vitest run <file>`
+`test/` is modified, the hook injects a reminder to run the targeted Bun test
+command (`bun test --changed <file>` for source, `bun test <file>`
 for a test) at the next checkpoint — never the full suite, no redirections.
 
 ## MCP servers

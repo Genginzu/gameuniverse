@@ -23,7 +23,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 Write-Host "🧪 Running tests..." -ForegroundColor Blue
-bun run test:run
+bun test --isolate
 if ($LASTEXITCODE -ne 0) {
     Write-Host "❌ Tests failed" -ForegroundColor Red
     exit 1

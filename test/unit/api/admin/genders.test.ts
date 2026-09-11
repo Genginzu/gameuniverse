@@ -6,7 +6,7 @@
  * Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.7, 8.8
  */
 
-import { describe, test, expect } from "vitest";
+import { describe, test, expect } from "bun:test";
 import { adminGenderFormSchema } from "@/lib/validations/admin-gender-form";
 
 // ---------------------------------------------------------------------------

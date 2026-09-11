@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "bun:test";
 import { reducer, toast, useToast } from "../../../src/hooks/use-toast";
 import { renderHook, act } from "@testing-library/react";
 

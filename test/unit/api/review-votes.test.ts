@@ -1,4 +1,4 @@
-import { describe, test, expect, beforeEach, vi } from "vitest";
+import { describe, test, expect, beforeEach, vi } from "bun:test";
 
 let mockSupabaseFrom: any;
 let mockGetUser: any;

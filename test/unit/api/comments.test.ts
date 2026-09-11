@@ -5,7 +5,7 @@
  * Requirements: 1.2, 1.3, 2.1, 7.4
  */
 
-import { describe, test, expect, beforeEach, vi } from "vitest";
+import { describe, test, expect, beforeEach, vi } from "bun:test";
 
 // --- Mock state ---
 let mockSupabaseFrom: ReturnType<typeof mock>;

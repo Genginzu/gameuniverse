@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "bun:test";
 import { computeGenreScore, type GenreScoreInput } from "@/lib/services/recommendation/genreScorer";
 
 describe("computeGenreScore", () => {

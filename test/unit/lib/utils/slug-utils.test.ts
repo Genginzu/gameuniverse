@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "bun:test";
 import { generateSlugFromTitle } from "@/lib/utils/slug-utils";
 
 describe("generateSlugFromTitle", () => {

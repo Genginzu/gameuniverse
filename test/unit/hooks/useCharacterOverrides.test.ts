@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "bun:test";
 import { renderHook, waitFor } from "@testing-library/react";
 import { useCharacterOverrides } from "@/hooks/useCharacterOverrides";
 

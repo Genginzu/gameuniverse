@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "bun:test";
 
 // vi.hoisted runs before vi.mock hoisting — safe to reference in mock factories
 const { mockCreateSignedUploadUrl, mockRemove, mockFrom } = vi.hoisted(() => {

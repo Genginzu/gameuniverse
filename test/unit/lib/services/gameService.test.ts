@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "bun:test";
 import { GameService } from "../../../../src/lib/services/gameService";
 import type { GameDetails, GameSummary } from "../../../../src/types/game";
 

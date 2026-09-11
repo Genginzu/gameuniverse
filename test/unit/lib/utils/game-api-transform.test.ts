@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "bun:test";
 import { toFormData, extractCompaniesFromApi } from "@/lib/utils/game-api-transform";
 
 const minimalGame = {

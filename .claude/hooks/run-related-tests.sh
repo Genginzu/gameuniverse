@@ -1,7 +1,7 @@
 #!/bin/bash
 # PostToolUse hook: when Claude writes or edits a .ts/.tsx file under
 # src/ or test/, emit additionalContext reminding the assistant to run
-# the targeted Vitest tests (never the full suite, no redirections).
+# the targeted Bun tests (never the full suite, no redirections).
 #
 # Reads the hook JSON payload from stdin.
 
@@ -31,11 +31,11 @@ rel="${rel//\\//}"
 
 case "$rel" in
   src/*.ts|src/*.tsx|src/**/*.ts|src/**/*.tsx)
-    cmd="bunx vitest run --related \"$rel\""
+    cmd="bun test --changed \"$rel\""
     kind="source file"
     ;;
   test/*.test.ts|test/*.test.tsx|test/**/*.test.ts|test/**/*.test.tsx)
-    cmd="bunx vitest run \"$rel\""
+    cmd="bun test \"$rel\""
     kind="test file"
     ;;
   *)
@@ -50,10 +50,10 @@ node -e '
   const cmd = process.argv[2];
   const kind = process.argv[3];
   const msg = `A ${kind} was just modified: ${rel}\n\n`
-    + `When you reach a stopping point, run the targeted Vitest command:\n`
+    + `When you reach a stopping point, run the targeted Bun test command:\n`
     + `  ${cmd}\n\n`
     + `Rules: never run the full suite (bun run test:all). Never append redirections `
-    + `(2>&1, | tee, > file). If --related finds no matching test, that is fine.`;
+    + `(2>&1, | tee, > file). If --changed finds no matching test, that is fine.`;
   const out = {
     hookSpecificOutput: {
       hookEventName: "PostToolUse",

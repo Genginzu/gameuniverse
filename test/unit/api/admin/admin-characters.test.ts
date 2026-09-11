@@ -7,7 +7,7 @@
  * **Validates: Requirements 7.5, 7.6**
  */
 
-import { describe, test, expect } from "vitest";
+import { describe, test, expect } from "bun:test";
 import * as fc from "fast-check";
 import {
   adminCharacterFormSchema,

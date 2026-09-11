@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "bun:test";
 
 // Since Bun's mock.module doesn't work reliably with React hooks,
 // we test the useUserLibrary hook logic through unit tests of its expected behavior.

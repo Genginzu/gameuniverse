@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "bun:test";
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { ErrorBoundary, useErrorBoundaryHandler } from "@/components/shared/ErrorBoundary";

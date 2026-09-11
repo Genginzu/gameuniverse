@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "bun:test";
 import { renderHook, act, waitFor } from "@testing-library/react";
 
 // Mock next-intl before importing the hook

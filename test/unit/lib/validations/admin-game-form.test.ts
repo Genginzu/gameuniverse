@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "bun:test";
 import { adminGameFormSchema } from "@/lib/validations/admin-game-form";
 
 const valid = {

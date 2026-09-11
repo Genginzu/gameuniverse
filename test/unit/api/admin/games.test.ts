@@ -3,7 +3,7 @@
  * These tests verify the API routes are properly structured and handle validation
  */
 
-import { describe, test, expect } from "vitest";
+import { describe, test, expect } from "bun:test";
 import {
   createGameSchema,
   updateGameSchema,

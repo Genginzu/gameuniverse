@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "bun:test";
 import { enrichReviewsWithVotes } from "../../../../src/lib/utils/reviewVoteQueries";
 import type { Review, ReviewVoteCounts, VoteType } from "../../../../src/types/review";
 

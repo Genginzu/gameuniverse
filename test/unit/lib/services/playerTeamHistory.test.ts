@@ -1,4 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "bun:test";
+import { reconcilePlayerTeamHistory } from "@/lib/services/esport/playerTeamHistory";
 
 vi.mock("@/lib/logger", () => ({ logger: { error: vi.fn(), warn: vi.fn() } }));
 
@@ -64,17 +65,11 @@ vi.mock("@/lib/supabase-admin", () => ({
 
 beforeEach(() => {
   vi.clearAllMocks();
-  vi.resetModules();
   operations.length = 0;
 });
 
 describe("reconcilePlayerTeamHistory", () => {
-  async function load() {
-    return import("@/lib/services/esport/playerTeamHistory");
-  }
-
   it("returns zero counts on empty input without hitting the DB", async () => {
-    const { reconcilePlayerTeamHistory } = await load();
     const result = await reconcilePlayerTeamHistory([]);
     expect(result).toEqual({ opened: 0, closed: 0, errors: 0 });
     expect(mockFrom).not.toHaveBeenCalled();
@@ -88,7 +83,6 @@ describe("reconcilePlayerTeamHistory", () => {
       buildChain("esport_player_team_history", { data: null, error: null })
     );
 
-    const { reconcilePlayerTeamHistory } = await load();
     const result = await reconcilePlayerTeamHistory([
       { playerLocalId: "p1", newTeamLocalId: "team-A" },
     ]);
@@ -113,7 +107,6 @@ describe("reconcilePlayerTeamHistory", () => {
       buildChain("esport_player_team_history", { data: null, error: null })
     );
 
-    const { reconcilePlayerTeamHistory } = await load();
     const result = await reconcilePlayerTeamHistory([
       { playerLocalId: "p1", newTeamLocalId: null },
     ]);
@@ -140,7 +133,6 @@ describe("reconcilePlayerTeamHistory", () => {
       buildChain("esport_player_team_history", { data: null, error: null })
     );
 
-    const { reconcilePlayerTeamHistory } = await load();
     const result = await reconcilePlayerTeamHistory([
       { playerLocalId: "p1", newTeamLocalId: "team-B" },
     ]);
@@ -157,7 +149,6 @@ describe("reconcilePlayerTeamHistory", () => {
       })
     );
 
-    const { reconcilePlayerTeamHistory } = await load();
     const result = await reconcilePlayerTeamHistory([
       { playerLocalId: "p1", newTeamLocalId: "team-A" },
     ]);
@@ -173,7 +164,6 @@ describe("reconcilePlayerTeamHistory", () => {
       buildChain("esport_player_team_history", { data: null, error: new Error("nope") })
     );
 
-    const { reconcilePlayerTeamHistory } = await load();
     const result = await reconcilePlayerTeamHistory([
       { playerLocalId: "p1", newTeamLocalId: "team-A" },
     ]);

@@ -3,7 +3,7 @@
  * Requirements: 8.1, 8.2
  */
 
-import { describe, test, expect, beforeEach, vi } from "vitest";
+import { describe, test, expect, beforeEach, vi } from "bun:test";
 
 // --- Mock setup ---
 let mockSupabaseFrom: any;

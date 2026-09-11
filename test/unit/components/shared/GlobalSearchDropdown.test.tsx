@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi } from "bun:test";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { GlobalSearchDropdown } from "@/components/shared/GlobalSearchDropdown";
 import type { GlobalSearchResponse } from "@/types/global-search";

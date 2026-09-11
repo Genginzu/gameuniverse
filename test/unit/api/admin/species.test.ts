@@ -6,7 +6,7 @@
  * Requirements: 8.6, 8.7, 8.8
  */
 
-import { describe, test, expect } from "vitest";
+import { describe, test, expect } from "bun:test";
 import { adminSpeciesFormSchema } from "@/lib/validations/admin-species-form";
 
 // ---------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi } from "bun:test";
 import { renderHook } from "@testing-library/react";
 
 const mockUseTranslations = vi.fn((ns: string) => (key: string) => `${ns}.${key}`);

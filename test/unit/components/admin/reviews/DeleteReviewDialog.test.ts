@@ -8,7 +8,7 @@
  * Requirements: 3.1
  */
 
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "bun:test";
 
 interface AdminReview {
   id: string;

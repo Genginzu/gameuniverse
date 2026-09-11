@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "bun:test";
 
 // Track state
 let imageState = { isLoading: true, hasError: false, imageSrc: undefined as string | undefined };

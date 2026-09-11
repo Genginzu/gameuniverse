@@ -3,7 +3,7 @@
  * Tests validation, not found (404), non-admin (403), cascade delete.
  */
 
-import { describe, test, expect, beforeEach, vi } from "vitest";
+import { describe, test, expect, beforeEach, vi } from "bun:test";
 
 // --- Mock setup ---
 let mockRequireAdmin: any;

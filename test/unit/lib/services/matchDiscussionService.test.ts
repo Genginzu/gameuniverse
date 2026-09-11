@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "bun:test";
 import { getComments, addComment, addReaction } from "@/lib/services/matchDiscussionService";
 
 function createMockSupabase(overrides: Record<string, unknown> = {}) {

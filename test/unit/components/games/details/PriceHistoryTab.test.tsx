@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "bun:test";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { PriceHistoryTab } from "@/components/games/details/PriceHistoryTab";
 import type { UsePriceHistoryReturn } from "@/hooks/usePriceHistory";

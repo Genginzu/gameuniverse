@@ -4,7 +4,7 @@
  * Placed in isolated/ because vi.mock() conflicts with parallel tests.
  */
 
-import { describe, test, expect, beforeEach, vi } from "vitest";
+import { describe, test, expect, beforeEach, vi } from "bun:test";
 import { z } from "zod";
 
 // --- Query schema (mirrors the one in route.ts) ---

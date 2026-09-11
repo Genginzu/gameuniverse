@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "bun:test";
 import { FriendService } from "@/lib/services/friendService";
 import type { FriendsListResponse, RelationshipStatusResponse } from "@/types/friendship";
 

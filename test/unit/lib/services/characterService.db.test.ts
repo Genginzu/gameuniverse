@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "bun:test";
 
 // Mock the supabase-server module before importing CharacterService
 const mockSelect = vi.fn(() => mockQuery);

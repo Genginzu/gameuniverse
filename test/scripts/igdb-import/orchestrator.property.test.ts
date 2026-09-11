@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "bun:test";
 import * as fc from "fast-check";
 import type { ImportStats } from "../../../scripts/igdb-import/types";
 

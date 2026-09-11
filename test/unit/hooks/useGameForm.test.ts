@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "bun:test";
 import { renderHook, waitFor, act } from "@testing-library/react";
 
 vi.mock("next-intl", () => ({ useLocale: () => "fr" }));

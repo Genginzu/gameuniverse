@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "bun:test";
 import { getUserRoleFromUser } from "../../../src/lib/auth-admin";
 import type { User } from "@supabase/supabase-js";
 

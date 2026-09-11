@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "bun:test";
 import { renderHook, waitFor, act } from "@testing-library/react";
 import { createSWRWrapper } from "../../helpers/swr-wrapper";
 

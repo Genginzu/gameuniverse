@@ -1,4 +1,4 @@
-import { describe, test, expect, beforeEach, vi } from "vitest";
+import { describe, test, expect, beforeEach, vi } from "bun:test";
 import { NextRequest } from "next/server";
 
 vi.mock("@/lib/logger", () => ({

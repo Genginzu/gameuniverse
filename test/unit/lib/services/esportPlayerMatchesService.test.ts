@@ -1,4 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "bun:test";
+import { getPlayerRecentMatches } from "@/lib/services/esportPlayerMatchesService";
 
 vi.mock("@/lib/logger", () => ({ logger: { error: vi.fn() } }));
 
@@ -36,7 +37,6 @@ vi.mock("@/lib/supabase-admin", () => ({
 
 beforeEach(() => {
   vi.clearAllMocks();
-  vi.resetModules();
 });
 
 function makeMatchRow(overrides: Record<string, unknown> = {}) {
@@ -60,15 +60,10 @@ function makeMatchRow(overrides: Record<string, unknown> = {}) {
 }
 
 describe("esportPlayerMatchesService.getPlayerRecentMatches", () => {
-  async function load() {
-    return import("@/lib/services/esportPlayerMatchesService");
-  }
-
   it("returns empty page when player isn't in the DB", async () => {
     mockFrom.mockReturnValueOnce(
       buildChain("esport_players", { data: [], error: null })
     );
-    const { getPlayerRecentMatches } = await load();
     const result = await getPlayerRecentMatches(404);
     expect(result).toEqual({ matches: [], total: 0, page: 1, limit: 10 });
   });
@@ -81,7 +76,6 @@ describe("esportPlayerMatchesService.getPlayerRecentMatches", () => {
       .mockReturnValueOnce(
         buildChain("esport_player_team_history", { data: [], error: null })
       );
-    const { getPlayerRecentMatches } = await load();
     const result = await getPlayerRecentMatches(1);
     expect(result.matches).toEqual([]);
     expect(result.total).toBe(0);
@@ -108,7 +102,6 @@ describe("esportPlayerMatchesService.getPlayerRecentMatches", () => {
         })
       );
 
-    const { getPlayerRecentMatches } = await load();
     const result = await getPlayerRecentMatches(1, 2, 5);
     expect(result.total).toBe(42);
     expect(result.page).toBe(2);
@@ -154,7 +147,6 @@ describe("esportPlayerMatchesService.getPlayerRecentMatches", () => {
         })
       );
 
-    const { getPlayerRecentMatches } = await load();
     const result = await getPlayerRecentMatches(1);
     expect(result.matches.map((m) => m.id)).toEqual([1]);
   });
@@ -177,7 +169,6 @@ describe("esportPlayerMatchesService.getPlayerRecentMatches", () => {
           error: null,
         })
       );
-    const { getPlayerRecentMatches } = await load();
     const result = await getPlayerRecentMatches(1);
     expect(result.matches).toEqual([]);
   });
@@ -197,7 +188,6 @@ describe("esportPlayerMatchesService.getPlayerRecentMatches", () => {
         buildChain("esport_matches", { data: [], count: 0, error: null })
       );
 
-    const { getPlayerRecentMatches } = await load();
     await getPlayerRecentMatches(1, 3, 10);
     const range = lastChain.filters.find((f) => f.op === "range");
     // page 3 limit 10 → from=20, to=29

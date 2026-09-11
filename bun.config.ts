@@ -4,7 +4,7 @@ import type { BunPlugin } from "bun";
 export default {
   test: {
     // Configuration pour les tests avec Bun
-    preload: ["./test/setup.ts"],
+    preload: ["./test/setup-bun.ts"],
     timeout: 30000,
     coverage: {
       enabled: true,
@@ -25,8 +25,6 @@ export default {
         statement: 80,
       },
     },
-    // Support pour les tests de propriété avec fast-check
-    setupFilesAfterEnv: ["<rootDir>/test/setup.ts"],
   },
   build: {
     // Configuration pour le build avec Bun

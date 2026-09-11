@@ -3,7 +3,7 @@
  * Tests auth protection, validation, duplicate key, pagination, and creation.
  */
 
-import { describe, test, expect, beforeEach, vi } from "vitest";
+import { describe, test, expect, beforeEach, vi } from "bun:test";
 
 // --- Mutable mock references ---
 let mockRequireAdmin: ReturnType<typeof vi.fn>;

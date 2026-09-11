@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "bun:test";
 import { clearAuthCookies, handleAuthError } from "../../../src/lib/auth-utils";
 
 describe("auth-utils", () => {

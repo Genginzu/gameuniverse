@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "bun:test";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { SpotlightCard } from "@/components/shared/SpotlightCard";
 

@@ -1,4 +1,4 @@
-﻿import { describe, it, expect } from "vitest";
+﻿import { describe, it, expect } from "bun:test";
 import * as fc from "fast-check";
 import { adminRatingSystemFormSchema } from "../../../../src/lib/validations/admin-rating-system-form";
 import { adminRatingFormSchema } from "../../../../src/lib/validations/admin-rating-form";

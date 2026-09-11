@@ -1,4 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "bun:test";
+import { getCalendarTournaments, getCalendarGames } from "@/lib/services/esportCalendarService";
 
 vi.mock("@/lib/logger", () => ({ logger: { error: vi.fn() } }));
 
@@ -42,20 +43,14 @@ function makeTournament(overrides: Record<string, unknown> = {}) {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  vi.resetModules();
 });
 
 describe("esportCalendarService", () => {
-  async function loadService() {
-    return import("@/lib/services/esportCalendarService");
-  }
-
   it("returns tournaments from DB and determines status", async () => {
     const past = makeTournament({ pandascore_id: 1, name: "Running", begin_at: "2020-01-01T00:00:00Z" });
     const future = makeTournament({ pandascore_id: 2, name: "Upcoming", begin_at: "2099-01-01T00:00:00Z" });
     setupChain([past, future]);
 
-    const { getCalendarTournaments } = await loadService();
     const result = await getCalendarTournaments();
 
     expect(result).toHaveLength(2);
@@ -68,7 +63,6 @@ describe("esportCalendarService", () => {
   it("maps tournament fields correctly", async () => {
     setupChain([makeTournament()]);
 
-    const { getCalendarTournaments } = await loadService();
     const [t] = await getCalendarTournaments();
 
     expect(t.id).toBe(1);
@@ -82,7 +76,6 @@ describe("esportCalendarService", () => {
   it("passes game filter as eq query", async () => {
     setupChain([]);
 
-    const { getCalendarTournaments } = await loadService();
     await getCalendarTournaments({ game: "Valorant" });
 
     expect(mockEq).toHaveBeenCalledWith("game", "Valorant");
@@ -95,7 +88,6 @@ describe("esportCalendarService", () => {
       makeTournament({ pandascore_id: 3, game: "Valorant" }),
     ]);
 
-    const { getCalendarGames } = await loadService();
     const games = await getCalendarGames();
 
     expect(games).toEqual(["CS2", "Valorant"]);
@@ -104,7 +96,6 @@ describe("esportCalendarService", () => {
   it("throws on DB error", async () => {
     setupChain(null, { message: "DB down" });
 
-    const { getCalendarTournaments } = await loadService();
     await expect(getCalendarTournaments()).rejects.toThrow();
   });
 });

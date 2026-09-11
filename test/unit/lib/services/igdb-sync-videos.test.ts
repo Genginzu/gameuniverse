@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "bun:test";
 import { syncVideos } from "@/lib/services/igdb-sync-fields-extended";
 import type { SyncSupabaseClient } from "@/lib/services/igdb-sync";
 import type { IGDBGame } from "@/types/igdb";

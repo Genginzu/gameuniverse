@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "bun:test";
 
 // Since Bun's mock.module doesn't work reliably with React hooks and Next.js modules,
 // we test the Navigation component logic through unit tests of its rendering behavior.

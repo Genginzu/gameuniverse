@@ -4,7 +4,7 @@
  * Placed in isolated/ because vi.mock() conflicts with parallel tests.
  */
 
-import { describe, test, expect, beforeEach, vi } from "vitest";
+import { describe, test, expect, beforeEach, vi } from "bun:test";
 
 // --- Mock setup ---
 let mockRequireAdmin: ReturnType<typeof mock>;

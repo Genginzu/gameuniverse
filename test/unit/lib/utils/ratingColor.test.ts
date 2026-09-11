@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "bun:test";
 import { getRatingColor } from "@/lib/utils/ratingColor";
 
 describe("getRatingColor", () => {

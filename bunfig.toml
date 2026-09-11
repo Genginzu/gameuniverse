@@ -30,14 +30,13 @@ prefer-bun = true
 
 [test]
 # Use Bun's built-in test runner
-preload = ["./test/setup.ts"]
+preload = ["./test/happydom.ts", "./test/setup-bun.ts"]
 # Set timeout for tests (including property-based tests)
 timeout = 30000
-# Enable coverage by default
-coverage = true
 # Bail on first failure for faster feedback
 bail = false
 # Enable parallel execution - each worker has isolated module cache
+# --isolate flag is passed via package.json scripts to prevent mock.module leakage
 parallel = true
 
 [build]

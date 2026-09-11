@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "bun:test";
 import { ApiClient, apiClient } from "../../../src/lib/api-client";
 import { ErrorType } from "../../../src/lib/error-handling";
 

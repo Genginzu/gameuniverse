@@ -5,7 +5,7 @@
  * Requirements: 1.1, 1.2, 1.3, 1.4, 2.2, 3.2
  */
 
-import { describe, test, expect, beforeEach, vi } from "vitest";
+import { describe, test, expect, beforeEach, vi } from "bun:test";
 
 // --- Mock setup ---
 let mockRequireAdmin: ReturnType<typeof mock>;
