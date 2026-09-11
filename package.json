@@ -3,7 +3,7 @@
   "version": "0.3.0",
   "private": true,
   "scripts": {
-    "prepare": "git config core.hooksPath .githooks || true && bun scripts/setup-agents.ts || true",
+    "prepare": "git config core.hooksPath .githooks || true && [ -f scripts/setup-agents.ts ] && bun scripts/setup-agents.ts || true",
     "dev": "bun --bun next dev -H 0.0.0.0",
     "build": "bun --bun next build",
     "start": "bun --bun next start",

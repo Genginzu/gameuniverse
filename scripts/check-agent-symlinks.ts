@@ -10,8 +10,8 @@
  * Exit 0 if all good, 1 if any check fails.
  */
 import { lstatSync, readFileSync, readlinkSync, existsSync } from 'node:fs';
-import { resolve, join, dirname, relative, sep } from 'node:path';
-import { LINKS } from './setup-agents.ts';
+import { resolve, join, dirname } from 'node:path';
+import { LINKS } from './setup-agents';
 
 const ROOT = resolve(import.meta.dirname, '..');
 let failed = 0;
