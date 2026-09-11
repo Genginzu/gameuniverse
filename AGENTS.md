@@ -81,16 +81,17 @@ reference.
 The full test suite takes **10+ minutes** — never run `bun run test:all` during
 iteration. Match modified files to targeted test dirs:
 
-| Source changed                   | Targeted command                               |
-| -------------------------------- | ---------------------------------------------- |
-| `src/components/games/X.tsx`     | `bunx vitest run test/unit/components/games/`  |
-| `src/hooks/useX.ts`              | `bunx vitest run test/unit/hooks/useX.test.ts` |
-| `src/lib/services/X.ts`          | `bunx vitest run test/unit/lib/services/X*`    |
-| `src/app/api/admin/.../route.ts` | `bunx vitest run test/unit/api/admin*`         |
+| Source changed                   | Targeted command                                    |
+| -------------------------------- | --------------------------------------------------- |
+| `src/components/games/X.tsx`     | `bunx vitest run src/components/games/__tests__/`   |
+| `src/hooks/useX.ts`              | `bunx vitest run src/hooks/__tests__/useX.test.ts`  |
+| `src/lib/services/X.ts`          | `bunx vitest run src/lib/services/__tests__/X*`     |
+| `src/app/api/admin/.../route.ts` | `bunx vitest run src/app/api/admin/__tests__/`      |
 
-**Never** append redirections (`2>&1`, `| tee`, etc.) to test commands. Tests
-live in `test/` (never `src/**/__tests__/`). Use Vitest only — **never**
-`bun:test`. See `.agents/steering/testing.md`.
+**Never** append redirections (`2>&1`, `| tee`, etc.) to test commands.
+Unit tests are **co-located** in `src/**/__tests__/` next to source.
+Integration tests live in `test/integration/`, E2E in `test/e2e/`.
+Use Vitest only — **never** `bun:test`. See `.agents/steering/testing.md`.
 
 Vitest has a two-project setup (`node` vs `dom`) configured in
 `vitest.config.ts`. Hook tests that use `renderHook` must be listed in the
