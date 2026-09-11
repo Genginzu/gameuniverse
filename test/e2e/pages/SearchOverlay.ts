@@ -36,6 +36,10 @@ export class SearchOverlay extends BasePage {
 
   async search(query: string) {
     await this.input.fill(query);
+    // The search hook has a 300ms debounce — wait for it to fire before
+    // checking for network idle, otherwise networkidle resolves before
+    // the search request is even sent.
+    await this.page.waitForTimeout(500);
     await this.page.waitForLoadState("networkidle");
   }
 
