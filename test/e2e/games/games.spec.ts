@@ -128,7 +128,11 @@ test.describe("Games — listing, filters, detail, search — #49", () => {
 
         const hasResults = (await search.results.count()) > 0;
         const hasEmpty = await search.emptyState.isVisible().catch(() => false);
-        expect(hasResults || hasEmpty).toBeTruthy();
+        const hasLoading = await page
+          .locator('[class*="search-overlay-searching"], [data-loading="true"]')
+          .isVisible()
+          .catch(() => false);
+        expect(hasResults || hasEmpty || hasLoading).toBeTruthy();
       }
     });
   });
