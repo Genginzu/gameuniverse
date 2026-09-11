@@ -2,6 +2,11 @@ const withNextIntl = require("next-intl/plugin")("./src/i18n.ts");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Pin the workspace root to this project (a stray bun.lock exists in the
+  // parent directory, which made Next.js infer the wrong Turbopack root).
+  turbopack: {
+    root: __dirname,
+  },
   // TypeScript checking done separately via `bun run type-check`
   // Disabled in build to avoid OOM on large codebases
   typescript: {
@@ -77,6 +82,12 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "kwlomzswurveyywcoivy.supabase.co",
+        port: "",
+        pathname: "/storage/v1/object/public/**",
+      },
+      {
+        protocol: "https",
+        hostname: "vilgzbeifmimflyttwhr.supabase.co",
         port: "",
         pathname: "/storage/v1/object/public/**",
       },
