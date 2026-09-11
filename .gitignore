@@ -65,8 +65,12 @@ playwright-report/
 blob-report/
 playwright/.cache/
 # Database dumps (large, generated — never committed)
-scripts/dumps/*
-!scripts/dumps/.gitkeep
+scripts/db/dumps/*
+!scripts/db/dumps/.gitkeep
+!scripts/db/dumps/export-supabase.ps1
+!scripts/db/dumps/import-supabase.ps1
+!scripts/db/dumps/recover-storage.ps1
+!scripts/db/dumps/README.md
 
 # Deno lockfile (Supabase Edge Functions — generated locally on `deno check`)
 deno.lock
