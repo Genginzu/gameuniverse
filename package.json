@@ -3,7 +3,7 @@
   "version": "0.3.0",
   "private": true,
   "scripts": {
-    "prepare": "git config core.hooksPath .githooks || true",
+    "prepare": "git config core.hooksPath .githooks || true && [ -f scripts/setup-agents.ts ] && bun scripts/setup-agents.ts || true",
     "dev": "bun --bun next dev -H 0.0.0.0",
     "build": "bun --bun next build",
     "start": "bun --bun next start",
@@ -19,6 +19,8 @@
     "clean": "bun rimraf .next dist coverage",
     "check-all": "powershell -ExecutionPolicy Bypass -File scripts/dev/check-all.ps1",
     "check-all:unix": "bash scripts/dev/check-all.sh",
+    "check:agent-symlinks": "bun scripts/check-agent-symlinks.ts",
+    "check:skill-discovery": "bun scripts/check-skill-discovery.ts",
     "supabase:start": "bunx supabase start",
     "supabase:stop": "bunx supabase stop",
     "supabase:status": "bunx supabase status",

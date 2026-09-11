@@ -6,28 +6,23 @@ import { BasePage } from "./BasePage";
  */
 export class SearchOverlay extends BasePage {
   get trigger(): Locator {
-    return this.page
-      .locator('[data-testid*="search"], [class*="search-trigger"], button:has(svg)')
-      .filter({ hasText: /rechercher|search/i })
-      .first()
-      .or(this.page.getByRole("button", { name: /rechercher|search/i }).first());
+    return this.page.locator('[data-testid="header-search-trigger"]');
   }
 
   get input(): Locator {
-    return this.page
-      .getByRole("searchbox")
-      .or(this.page.getByPlaceholder(/rechercher|search/i))
-      .first();
+    return this.page.locator('[data-testid="search-overlay-input"]');
   }
 
   get results(): Locator {
     return this.page.locator(
-      '[class*="search-result"], [data-testid*="search-result"], [class*="dropdown"] a'
+      '[data-testid="search-overlay"] [class*="search-result"], [data-testid="search-overlay"] [class*="dropdown"] a'
     );
   }
 
   get emptyState(): Locator {
-    return this.page.locator('[class*="empty"], [data-testid*="empty"]').first();
+    return this.page
+      .locator('[data-testid="search-overlay"] [class*="empty"], [data-testid="search-overlay"] [data-testid*="empty"]')
+      .first();
   }
 
   async open() {
@@ -36,6 +31,10 @@ export class SearchOverlay extends BasePage {
 
   async search(query: string) {
     await this.input.fill(query);
+    // The search hook has a 300ms debounce — wait for it to fire before
+    // checking for network idle, otherwise networkidle resolves before
+    // the search request is even sent.
+    await this.page.waitForTimeout(500);
     await this.page.waitForLoadState("networkidle");
   }
 

@@ -47,12 +47,17 @@ scripts/igdb-import/dumps/*.csv
 
 # Kiro MCP settings (contains API tokens)
 .kiro/settings/mcp.json
+.agents/settings/mcp.json
 
 # Claude Code MCP settings (contains API tokens)
 .mcp.json
 
 # Claude Code local (machine-specific) settings
 .claude/settings.local.json
+.agents/settings.local.json
+
+# graphify knowledge graph (generated — regenerate with: graphify src/ --code-only)
+graphify-out/
 
 # Playwright
 test-results/
