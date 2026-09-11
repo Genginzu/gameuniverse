@@ -83,7 +83,7 @@ jobs:
         with:
           path: node_modules
           key: modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
-      - run: bun test --isolate test/unit/${{ matrix.shard }}/
+      - run: bunx vitest run test/unit/${{ matrix.shard }}/
 
   build:
     name: Build

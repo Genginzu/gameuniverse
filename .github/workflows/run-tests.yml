@@ -33,7 +33,7 @@ jobs:
           ref: ${{ inputs.branch }}
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
-      - run: bun test --isolate test/unit/${{ matrix.shard }}/
+      - run: bunx vitest run test/unit/${{ matrix.shard }}/
 
   e2e-tests:
     name: E2E Tests (${{ matrix.shard }}/4)
