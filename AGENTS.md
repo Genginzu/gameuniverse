@@ -55,6 +55,27 @@ bun run check:agent-symlinks  # Verify .agents/ symlinks + steering cross-refs
 bun run check:skill-discovery # Verify skills have valid SKILL.md frontmatter
 ```
 
+### Knowledge graph (graphify)
+
+A knowledge graph of the codebase lives in `graphify-out/`. It is gitignored —
+each developer must generate it locally:
+
+```bash
+graphify . --code-only                # Generate (AST, no LLM key, covers entire repo)
+graphify update .                       # Incremental update after code changes
+graphify query "<question>"             # Scoped subgraph (BFS)
+graphify path "<A>" "<B>"               # Shortest path between concepts
+graphify explain "<concept>"            # Plain-language node explanation
+```
+
+The graph covers the entire repo: `src/` (app code), `scripts/` (tooling, import
+CLI), `supabase/` (migrations — requires `graphifyy[sql]`), and `test/` (unit +
+E2E tests). PreToolUse hooks automatically enforce `graphify query` before
+grepping or reading source files when `graphify-out/graph.json` exists. Without
+a graph, the hooks fall back to steering doc reminders. See
+`.agents/steering/graphify.md` and `.agents/skills/graphify/SKILL.md` for full
+reference.
+
 ### Testing strategy
 
 The full test suite takes **10+ minutes** — never run `bun run test:all` during
