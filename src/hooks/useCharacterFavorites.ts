@@ -2,6 +2,7 @@
 
 import useSWR from "swr";
 import { useLocale } from "next-intl";
+import { useAuth } from "./useAuth";
 import type { CharacterFavoriteSummary } from "@/types/character";
 
 export interface UseCharacterFavoritesReturn {
@@ -20,9 +21,10 @@ interface CharacterFavoritesResponse {
  */
 export function useCharacterFavorites(): UseCharacterFavoritesReturn {
   const locale = useLocale();
+  const { user } = useAuth();
 
   const { data, error, isLoading } = useSWR<CharacterFavoritesResponse>(
-    `/api/favorites/characters?locale=${locale}`
+    user ? `/api/favorites/characters?locale=${locale}` : null
   );
 
   return {

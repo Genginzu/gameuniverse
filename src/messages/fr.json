@@ -22,6 +22,10 @@
       "title": "Discussions",
       "description": "Participez aux discussions de la communauté Gamers Universe"
     },
+    "friends": {
+      "title": "Mes amis",
+      "description": "Gérez vos amis et vos demandes d'amitié sur Gamers Universe"
+    },
     "library": {
       "title": "Ma bibliothèque",
       "description": "Gérez votre collection de jeux vidéo personnelle"
@@ -679,7 +683,22 @@
       "emptyTitle": "Aucun personnage favori",
       "emptyDescription": "Explorez notre collection de personnages et ajoutez vos favoris en cliquant sur l'icône cœur sur leur page.",
       "exploreCharacters": "Explorer les personnages",
-      "errorTitle": "Impossible de charger les favoris"
+      "errorTitle": "Impossible de charger les favoris",
+      "editorial": {
+        "kicker": "Favoris",
+        "titlePrefix": "Vos personnages",
+        "titleAccent": "favoris",
+        "subtitle": "Retrouvez tous les personnages que vous avez ajoutés à vos favoris.",
+        "stats": {
+          "characters": "Personnages",
+          "games": "Jeux représentés"
+        }
+      },
+      "authRequired": {
+        "title": "Vos personnages favoris vous attendent",
+        "description": "Connectez-vous pour retrouver et gérer vos personnages favoris.",
+        "signIn": "Se connecter"
+      }
     }
   },
   "players": {
@@ -1061,13 +1080,18 @@
       "exploreGames": "Explorer les jeux",
       "addGames": "Ajouter des jeux"
     },
+    "authRequired": {
+      "title": "Votre bibliothèque vous attend",
+      "description": "Connectez-vous pour construire et explorer votre collection personnelle de jeux.",
+      "signIn": "Se connecter"
+    },
     "yourGames": "Vos jeux ({count})",
     "loadingError": "Erreur de chargement",
     "retry": "Réessayer",
     "editorial": {
       "kicker": "Bibliothèque",
       "titlePrefix": "Votre",
-      "titleAccent": "collection",
+      "titleAccent": "bibliothèque",
       "subtitle": "Tout votre univers gaming en un seul endroit. Filtrez, recherchez, explorez vos titres.",
       "stats": {
         "games": "Jeux",
@@ -3336,7 +3360,13 @@
       "emptyState": "Vous n'avez pas encore d'amis. Explorez la page des joueurs pour trouver des personnes avec qui vous connecter !",
       "explorePlayers": "Explorer les joueurs",
       "pendingBadgeLabel": "{count, plural, one {# demande d'amitié en attente} other {# demandes d'amitié en attente}}",
-      "loadingError": "Une erreur est survenue lors du chargement de la page amis."
+      "loadingError": "Une erreur est survenue lors du chargement de la page amis.",
+      "subtitle": "Gérez vos amis et vos demandes en attente.",
+      "authRequired": {
+        "title": "Connectez-vous pour voir vos amis",
+        "description": "Vous devez être connecté pour consulter et gérer vos amis.",
+        "signIn": "Se connecter"
+      }
     }
   },
   "subscriptions": {
@@ -3952,6 +3982,8 @@
     "settings": {
       "title": "Espace Coach",
       "subtitle": "Gérez votre profil coach, vos jeux et vos tarifs",
+      "loginRequired": "Connectez-vous pour accéder à votre espace coach.",
+      "login": "Se connecter",
       "tabs": {
         "profile": "Profil",
         "games": "Jeux",
@@ -4112,7 +4144,9 @@
       "paymentSuccess": "Paiement effectué avec succès !",
       "paymentError": "Erreur lors du paiement.",
       "paymentCancelled": "Paiement annulé.",
-      "paymentDone": "Paiement effectué"
+      "paymentDone": "Paiement effectué",
+      "loginRequired": "Connectez-vous pour voir vos sessions de coaching.",
+      "login": "Se connecter"
     },
     "reviews": {
       "empty": "Aucun avis pour le moment.",

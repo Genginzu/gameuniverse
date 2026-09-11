@@ -25,6 +25,7 @@ import { KickerLabel } from "@/components/shared/KickerLabel";
 import { LibraryStatusProvider } from "@/components/providers/LibraryStatusProvider";
 
 import { useLibraryGames } from "@/hooks/useLibraryGames";
+import { useAuth } from "@/hooks/useAuth";
 
 import { LibraryPageSkeleton } from "./LibraryPageSkeleton";
 import { LibraryLoadingState } from "./LibraryLoadingState";
@@ -46,6 +47,7 @@ const GRID =
 export function LibraryEditorial({ locale = "fr" }: LibraryEditorialProps) {
   const [showFilters, setShowFilters] = useState(false);
   const t = useTranslations("userLibrary");
+  const { user, loading: authLoading } = useAuth();
 
   const {
     games,
@@ -127,75 +129,84 @@ export function LibraryEditorial({ locale = "fr" }: LibraryEditorialProps) {
         </header>
 
         {/* Controls */}
-        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-          <div className="min-w-0 flex-1">
-            <GameSearchBar
-              onSearch={handleSearch}
-              initialValue={searchQuery}
-              placeholder={t("editorial.searchPlaceholder")}
-              variant="editorial"
-            />
-          </div>
-          <FilterButton
-            hasFilters={selectedGenres.length > 0 || selectedPublishers.length > 0}
-            filterCount={selectedGenres.length}
-            onClick={() => setShowFilters((v) => !v)}
-          />
-        </div>
-
-        {/* Filters (collapsible) */}
-        <div className="mb-6">
-          <GameFilters
-            genres={genres}
-            platforms={[]}
-            selectedGenres={selectedGenres}
-            selectedPublishers={selectedPublishers}
-            selectedPlatforms={[]}
-            esportFilter={null}
-            onGenreChange={handleGenreFilter}
-            onPublisherChange={handlePublisherFilter}
-            onPlatformsChange={() => {}}
-            onEsportChange={() => {}}
-            onClearFilters={handleClearFilters}
-            showAllGenres={showFilters}
-            variant="editorial"
-            showPlatforms={false}
-          />
-        </div>
-
-        {/* Content */}
-        <div
-          className="transition-opacity duration-200 data-[revalidating=true]:opacity-50"
-          data-revalidating={loading && games.length > 0 ? "true" : "false"}
-        >
-          {loading && games.length === 0 ? (
-            <LibraryLoadingState />
-          ) : !loading && games.length === 0 ? (
-            <LibraryEmptyState hasFilters={hasActiveFilters} onClearFilters={handleClearFilters} />
-          ) : (
-            <LibraryStatusProvider gameIds={games.map((g) => g.id)}>
-              <div className={GRID} data-testid="editorial-library-grid">
-                {games.map((game, index) => (
-                  <GameCard key={game.id} game={game} priority={index < 5} />
-                ))}
+        {!authLoading && !user ? (
+          <LibraryAuthRequired />
+        ) : (
+          <>
+            <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center">
+              <div className="min-w-0 flex-1">
+                <GameSearchBar
+                  onSearch={handleSearch}
+                  initialValue={searchQuery}
+                  placeholder={t("editorial.searchPlaceholder")}
+                  variant="editorial"
+                />
               </div>
-            </LibraryStatusProvider>
-          )}
-
-          {pagination && pagination.totalPages > 1 && (
-            <div className="mt-12">
-              <Pagination
-                currentPage={pagination.currentPage}
-                totalPages={pagination.totalPages}
-                totalCount={pagination.totalCount}
-                onPageChange={handlePageChange}
-                loading={loading}
-                translationNamespace="pagination"
-                variant="editorial"
+              <FilterButton
+                hasFilters={selectedGenres.length > 0 || selectedPublishers.length > 0}
+                filterCount={selectedGenres.length}
+                onClick={() => setShowFilters((v) => !v)}
               />
             </div>
-          )}
-        </div>
+
+            {/* Filters (collapsible) */}
+            <div className="mb-6">
+              <GameFilters
+                genres={genres}
+                platforms={[]}
+                selectedGenres={selectedGenres}
+                selectedPublishers={selectedPublishers}
+                selectedPlatforms={[]}
+                esportFilter={null}
+                onGenreChange={handleGenreFilter}
+                onPublisherChange={handlePublisherFilter}
+                onPlatformsChange={() => {}}
+                onEsportChange={() => {}}
+                onClearFilters={handleClearFilters}
+                showAllGenres={showFilters}
+                variant="editorial"
+                showPlatforms={false}
+              />
+            </div>
+
+            {/* Content */}
+            <div
+              className="transition-opacity duration-200 data-[revalidating=true]:opacity-50"
+              data-revalidating={loading && games.length > 0 ? "true" : "false"}
+            >
+              {loading && games.length === 0 ? (
+                <LibraryLoadingState />
+              ) : !loading && games.length === 0 ? (
+                <LibraryEmptyState
+                  hasFilters={hasActiveFilters}
+                  onClearFilters={handleClearFilters}
+                />
+              ) : (
+                <LibraryStatusProvider gameIds={games.map((g) => g.id)}>
+                  <div className={GRID} data-testid="editorial-library-grid">
+                    {games.map((game, index) => (
+                      <GameCard key={game.id} game={game} priority={index < 5} />
+                    ))}
+                  </div>
+                </LibraryStatusProvider>
+              )}
+
+              {pagination && pagination.totalPages > 1 && (
+                <div className="mt-12">
+                  <Pagination
+                    currentPage={pagination.currentPage}
+                    totalPages={pagination.totalPages}
+                    totalCount={pagination.totalCount}
+                    onPageChange={handlePageChange}
+                    loading={loading}
+                    translationNamespace="pagination"
+                    variant="editorial"
+                  />
+                </div>
+              )}
+            </div>
+          </>
+        )}
       </div>
     </section>
   );
@@ -216,6 +227,27 @@ function Stat({ label, value, accent }: { label: string; value: ReactNode; accen
         {value}
       </p>
       <KickerLabel className="mt-2">{label}</KickerLabel>
+    </div>
+  );
+}
+
+/** Bloc affiché à la place de la recherche et du contenu quand l'utilisateur n'est pas connecté. */
+function LibraryAuthRequired() {
+  const t = useTranslations("userLibrary");
+
+  return (
+    <div className="border-editorial-line bg-editorial-2 flex flex-col items-center justify-center gap-5 rounded-3xl border px-8 py-16 text-center">
+      <div className="bg-editorial-accent/15 text-editorial-accent grid size-16 place-items-center rounded-full">
+        <Icon icon="lucide:lock" className="h-7 w-7" />
+      </div>
+      <h3 className="font-display text-2xl font-bold text-white">{t("authRequired.title")}</h3>
+      <p className="text-editorial-muted max-w-[50ch]">{t("authRequired.description")}</p>
+      <Button asChild>
+        <Link href="/auth">
+          <Icon icon="lucide:log-in" className="mr-2 h-4 w-4" />
+          {t("authRequired.signIn")}
+        </Link>
+      </Button>
     </div>
   );
 }

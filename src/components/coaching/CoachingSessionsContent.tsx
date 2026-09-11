@@ -99,12 +99,40 @@ export function CoachingSessionsContent() {
     if (url) window.location.href = url;
   };
 
-  if (loading) return null;
-  if (!user) return null;
+  if (loading) {
+    return (
+      <div className="space-y-3 p-4 md:p-6 lg:p-8">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="h-24 animate-pulse rounded-xl bg-gray-200 dark:bg-gray-700" />
+        ))}
+      </div>
+    );
+  }
+  if (!user) {
+    return (
+      <div className="space-y-6 p-4 md:p-6 lg:p-8">
+        <h1 className="font-display text-xl font-bold tracking-tight text-white sm:text-2xl lg:text-3xl">
+          {t("title")}
+        </h1>
+        <div className="border border-editorial-line bg-editorial-2 flex flex-col items-center justify-center gap-3 rounded-xl p-8 text-center">
+          <Icon icon="lucide:lock" className="size-10 text-gray-400" />
+          <p className="text-sm text-gray-500 dark:text-gray-400">{t("loginRequired")}</p>
+          <Link
+            href="/auth"
+            className="from-palette-secondary-500 to-palette-primary-500 rounded-lg bg-linear-to-r px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+          >
+            {t("login")}
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 p-4 md:space-y-8 md:p-6 lg:p-8">
-      <h1 className="text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">{t("title")}</h1>
+      <h1 className="font-display text-xl font-bold tracking-tight text-white sm:text-2xl lg:text-3xl">
+        {t("title")}
+      </h1>
 
       {paymentMessage && (
         <div
