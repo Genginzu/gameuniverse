@@ -72,7 +72,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [api, components, hooks, lib, scripts]
+        include:
+          - shard: api
+            path: src/app/api/__tests__/
+          - shard: components
+            path: src/components/__tests__/
+          - shard: hooks
+            path: src/hooks/__tests__/
+          - shard: lib
+            path: src/lib/__tests__/
+          - shard: scripts
+            path: scripts/__tests__/
     steps:
       - uses: actions/checkout@v5
         with:
@@ -83,7 +93,7 @@ jobs:
         with:
           path: node_modules
           key: modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
-      - run: bunx vitest run test/unit/${{ matrix.shard }}/
+      - run: bunx vitest run ${{ matrix.path }}
 
   build:
     name: Build

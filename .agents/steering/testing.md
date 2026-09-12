@@ -32,22 +32,30 @@ import { renderHook } from "@testing-library/react";
 
 ## Structure des tests
 
-Tous les tests doivent être dans le dossier centralisé `test/`. Ne **jamais**
-créer de `__tests__/` dans `src/`.
+Les tests unitaires sont **co-localisés** dans `src/**/__tests__/` à côté du
+code source (`foo.ts` → `__tests__/foo.test.ts`). Les tests d'intégration et
+E2E restent centralisés dans `test/`.
 
 ```
+src/
+├── hooks/
+│   └── __tests__/           # Tests hooks (co-localisés)
+├── lib/
+│   ├── services/
+│   │   └── __tests__/       # Tests services
+│   └── utils/
+│       └── __tests__/       # Tests utilitaires
+├── components/
+│   └── __tests__/           # Tests composants
+├── app/api/
+│   └── __tests__/           # Tests routes API
+└── test-helpers/            # Helpers partagés (ex: swr-wrapper)
+
 test/
-├── unit/                    # Tests unitaires (parallèles)
-│   ├── api/                # Tests routes API
-│   ├── hooks/              # Tests hooks
-│   ├── lib/                # Tests utilitaires/services
-│   │   ├── services/
-│   │   └── utils/
-│   └── components/         # Tests composants
 ├── integration/            # Tests d'intégration
-├── scripts/                # Tests de scripts
-├── setup-vitest.ts         # Setup Vitest (jsdom, mocks Next)
-└── setup.test.ts           # Vérification du setup
+├── scripts/                # Tests de scripts igdb-import
+├── e2e/                    # Tests E2E (Playwright)
+└── setup-vitest.ts         # Setup Vitest (jsdom, mocks Next)
 ```
 
 ## Nommage des fichiers
@@ -79,20 +87,20 @@ modifiés.
 
 #### Correspondance fichier source → fichier test
 
-| Fichier source modifié              | Tests à lancer                                          |
-| ----------------------------------- | ------------------------------------------------------- |
-| `src/components/games/GameCard.tsx` | `bunx vitest run test/unit/components/games/`           |
-| `src/hooks/useGameForm.ts`          | `bunx vitest run test/unit/hooks/useGameForm.test.ts`   |
-| `src/lib/services/playerService.ts` | `bunx vitest run test/unit/lib/services/playerService*` |
-| `src/lib/utils/slug-utils.ts`       | `bunx vitest run test/unit/lib/utils/slug*`             |
-| `src/app/api/admin/games/route.ts`  | `bunx vitest run test/unit/api/admin*`                  |
+| Fichier source modifié              | Tests à lancer                                              |
+| ----------------------------------- | ----------------------------------------------------------- |
+| `src/components/games/GameCard.tsx` | `bunx vitest run src/components/games/__tests__/`          |
+| `src/hooks/useGameForm.ts`          | `bunx vitest run src/hooks/__tests__/useGameForm.test.ts`  |
+| `src/lib/services/playerService.ts` | `bunx vitest run src/lib/services/__tests__/playerService*`|
+| `src/lib/utils/slug-utils.ts`       | `bunx vitest run src/lib/utils/__tests__/slug*`            |
+| `src/app/api/admin/games/route.ts`  | `bunx vitest run src/app/api/admin/__tests__/`             |
 
 #### Règles d'exécution
 
-- ✅ Lancer `bunx vitest run test/unit/<dossier-correspondant>/` pour les
+- ✅ Lancer `bunx vitest run src/<domain>/__tests__/` pour les
   fichiers modifiés
 - ✅ Si plusieurs domaines sont touchés, lancer plusieurs commandes ciblées
-- ✅ Utiliser `bunx vitest run test/unit/` (tout le dossier unit) uniquement si
+- ✅ Utiliser `bunx vitest run src/` (tous les tests co-localisés) uniquement si
   les modifications sont transversales (ex : utilitaire partagé, type global)
 - ✅ `bun run test:all` uniquement si l'utilisateur le demande explicitement
 - ❌ Ne **jamais** lancer `bun run test:all` automatiquement
@@ -101,12 +109,12 @@ modifiés.
 
 ```bash
 # ✅ Tests ciblés (préféré)
-bunx vitest run test/unit/components/games/
-bunx vitest run test/unit/hooks/useGameForm.test.ts
-bunx vitest run test/unit/lib/services/playerService*
+bunx vitest run src/components/games/__tests__/
+bunx vitest run src/hooks/__tests__/useGameForm.test.ts
+bunx vitest run src/lib/services/__tests__/playerService*
 
-# ✅ Tous les tests unitaires (si modifications transversales)
-bunx vitest run test/unit/
+# ✅ Tous les tests co-localisés (si modifications transversales)
+bunx vitest run src/
 
 # ✅ Suite complète (uniquement sur demande explicite de l'utilisateur)
 bun run test:all
@@ -141,7 +149,7 @@ tests qui ne correspondent plus à du code existant. Un test obsolète est :
 ### Procédure
 
 1. Identifier le fichier source modifié/supprimé
-2. Trouver les fichiers de test correspondants (`test/unit/...`,
+2. Trouver les fichiers de test correspondants (`src/**/__tests__/...`,
    `test/integration/...`)
 3. Si la cible n'existe plus, **supprimer** le fichier de test entier
 4. Si seules certaines fonctions ont disparu, **supprimer** uniquement les
@@ -167,7 +175,6 @@ tests qui ne correspondent plus à du code existant. Un test obsolète est :
 - ❌ Importer depuis `bun:test`
 - ❌ Utiliser `mock()` ou `spyOn()` de `bun:test`
 - ❌ Utiliser `mock.module()` — utiliser `vi.mock()` à la place
-- ❌ Créer des `src/**/__tests__/`
-- ❌ Placer des tests dans `src/`
+- ❌ Créer des tests en dehors de `src/**/__tests__/` (unit) ou `test/` (integration/e2e)
 - ❌ Utiliser l'extension `.vitest.ts` / `.vitest.tsx`
 - ❌ Ajouter des redirections aux commandes de test

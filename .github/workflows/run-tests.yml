@@ -26,14 +26,24 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [api, components, hooks, lib, scripts]
+        include:
+          - shard: api
+            path: src/app/api/__tests__/
+          - shard: components
+            path: src/components/__tests__/
+          - shard: hooks
+            path: src/hooks/__tests__/
+          - shard: lib
+            path: src/lib/__tests__/
+          - shard: scripts
+            path: scripts/__tests__/
     steps:
       - uses: actions/checkout@v5
         with:
           ref: ${{ inputs.branch }}
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
-      - run: bunx vitest run test/unit/${{ matrix.shard }}/
+      - run: bunx vitest run ${{ matrix.path }}
 
   e2e-tests:
     name: E2E Tests (${{ matrix.shard }}/4)
