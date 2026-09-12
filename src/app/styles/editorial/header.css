@@ -293,6 +293,16 @@
   animation: editorial-mega-menu-fade-in 200ms ease-out;
 }
 
+/*
+ * >= lg : le rail vertical (56px) est visible sous le header. Le panneau
+ * démarre après le rail pour ne pas le recouvrir.
+ */
+@media (min-width: 1024px) {
+  .editorial-mega-menu-panel {
+    left: 56px;
+  }
+}
+
 @keyframes editorial-mega-menu-fade-in {
   from {
     opacity: 0;
