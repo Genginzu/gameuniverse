@@ -4189,6 +4189,17 @@
     "filterAll": "Tous les types",
     "errorLoading": "Impossible de charger l'historique des GU Coins.",
     "earnTitle": "Comment gagner des GU Coins",
+    "editorial": {
+      "kicker": "GU Coins",
+      "titlePrefix": "Votre",
+      "titleAccent": "portefeuille",
+      "subtitle": "Suivez vos gains, vos dépenses et l'historique complet de vos GU Coins."
+    },
+    "authRequired": {
+      "title": "Connexion requise",
+      "description": "Connectez-vous pour consulter votre portefeuille et l'historique de vos GU Coins.",
+      "signIn": "Se connecter"
+    },
     "toast": {
       "rewarded": "+{amount} GU Coins — {reason}"
     },

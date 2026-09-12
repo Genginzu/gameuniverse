@@ -4186,6 +4186,17 @@
     "filterAll": "All types",
     "errorLoading": "Failed to load GU Coins history.",
     "earnTitle": "How to earn GU Coins",
+    "editorial": {
+      "kicker": "GU Coins",
+      "titlePrefix": "Your",
+      "titleAccent": "wallet",
+      "subtitle": "Track your earnings, spending and the full history of your GU Coins."
+    },
+    "authRequired": {
+      "title": "Sign in required",
+      "description": "Sign in to view your wallet and your GU Coins history.",
+      "signIn": "Sign in"
+    },
     "toast": {
       "rewarded": "+{amount} GU Coins — {reason}"
     },

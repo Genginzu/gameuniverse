@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { CoinHistoryContent } from "@/components/coins/CoinHistoryContent";
-import { DashboardLayout } from "@/components/layout/dashboard/DashboardLayout";
+import { EditorialShell } from "@/components/layout/editorial/EditorialShell";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
 
@@ -24,12 +24,12 @@ export default async function CoinHistoryPage({ params }: CoinHistoryPageProps) 
   const t = await getTranslations({ locale, namespace: "coins" });
 
   return (
-    <DashboardLayout>
+    <EditorialShell>
       <ErrorBoundary
         fallback={<ErrorFallback description={t("errorLoading")} showRefresh showHomeButton />}
       >
         <CoinHistoryContent />
       </ErrorBoundary>
-    </DashboardLayout>
+    </EditorialShell>
   );
 }
