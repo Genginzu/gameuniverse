@@ -5,6 +5,7 @@ import { Icon } from "@iconify/react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import type { SearchResultItem } from "@/types/search";
+import type { UIEvent } from "react";
 import Image from "next/image";
 
 interface SelectedGamePreviewProps {
@@ -52,6 +53,9 @@ interface SearchInputProps {
   onChange: (value: string) => void;
   results: SearchResultItem[];
   isSearching: boolean;
+  isLoadingMore: boolean;
+  hasMore: boolean;
+  onLoadMore: () => void;
   onSelect: (game: SearchResultItem) => void;
   placeholder: string;
   noResultsText: string;
@@ -63,11 +67,22 @@ export function SearchInput({
   onChange,
   results,
   isSearching,
+  isLoadingMore,
+  hasMore,
+  onLoadMore,
   onSelect,
   placeholder,
   noResultsText,
 }: SearchInputProps) {
   const showDropdown = query.trim().length >= 2;
+
+  const handleScroll = (e: UIEvent<HTMLDivElement>) => {
+    const el = e.currentTarget;
+    const nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+    if (nearBottom && hasMore && !isSearching && !isLoadingMore) {
+      onLoadMore();
+    }
+  };
 
   return (
     <div className="relative">
@@ -86,7 +101,10 @@ export function SearchInput({
       </div>
 
       {showDropdown && (
-        <div className="bg-popover absolute top-full right-0 left-0 z-50 mt-1 max-h-64 overflow-y-auto rounded-lg border shadow-md">
+        <div
+          onScroll={handleScroll}
+          className="bg-popover absolute top-full right-0 left-0 z-50 mt-1 max-h-64 overflow-y-auto rounded-lg border shadow-md"
+        >
           {isSearching ? (
             <div className="flex items-center justify-center p-4">
               <div className="border-primary h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />
@@ -94,40 +112,47 @@ export function SearchInput({
           ) : results.length === 0 ? (
             <p className="text-muted-foreground p-4 text-center text-sm">{noResultsText}</p>
           ) : (
-            <ul className="divide-y">
-              {results.map((game) => (
-                <li key={`${game.source}-${game.id}`}>
-                  <button
-                    type="button"
-                    onClick={() => onSelect(game)}
-                    className="hover:bg-accent flex w-full items-center gap-3 px-3 py-2 text-left transition-colors"
-                  >
-                    {game.coverUrl ? (
-                      <Image
-                        src={game.coverUrl}
-                        alt={game.title}
-                        width={28}
-                        height={40}
-                        className="h-10 w-7 rounded object-cover"
-                      />
-                    ) : (
-                      <div className="bg-muted flex h-10 w-7 items-center justify-center rounded text-xs">
-                        🎮
+            <>
+              <ul className="divide-y">
+                {results.map((game) => (
+                  <li key={`${game.source}-${game.id}`}>
+                    <button
+                      type="button"
+                      onClick={() => onSelect(game)}
+                      className="hover:bg-accent flex w-full items-center gap-3 px-3 py-2 text-left transition-colors"
+                    >
+                      {game.coverUrl ? (
+                        <Image
+                          src={game.coverUrl}
+                          alt={game.title}
+                          width={28}
+                          height={40}
+                          className="h-10 w-7 rounded object-cover"
+                        />
+                      ) : (
+                        <div className="bg-muted flex h-10 w-7 items-center justify-center rounded text-xs">
+                          🎮
+                        </div>
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <p className="truncate text-sm font-medium">{game.title}</p>
+                          <SourceBadge source={game.source} />
+                        </div>
+                        <p className="text-muted-foreground truncate text-xs">
+                          {[game.releaseYear, game.developer].filter(Boolean).join(" · ")}
+                        </p>
                       </div>
-                    )}
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <p className="truncate text-sm font-medium">{game.title}</p>
-                        <SourceBadge source={game.source} />
-                      </div>
-                      <p className="text-muted-foreground truncate text-xs">
-                        {[game.releaseYear, game.developer].filter(Boolean).join(" · ")}
-                      </p>
-                    </div>
-                  </button>
-                </li>
-              ))}
-            </ul>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              {isLoadingMore && (
+                <div className="flex items-center justify-center p-3">
+                  <div className="border-primary h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />
+                </div>
+              )}
+            </>
           )}
         </div>
       )}
