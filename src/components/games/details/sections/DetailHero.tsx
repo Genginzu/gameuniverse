@@ -131,7 +131,7 @@ export function DetailHero({ game, formatPrice }: DetailHeroProps) {
                   onFocus={() => setLibraryHovered(true)}
                   onBlur={() => setLibraryHovered(false)}
                   disabled={isProcessing}
-                  className={`editorial-game-detail-cta-ghost${
+                  className={`editorial-game-detail-cta-ghost min-w-[16rem] justify-center whitespace-nowrap${
                     inLibrary ? (libraryHovered ? " is-remove" : " is-active") : ""
                   }`}
                   aria-pressed={inLibrary}
@@ -139,12 +139,9 @@ export function DetailHero({ game, formatPrice }: DetailHeroProps) {
                   {isProcessing ? (
                     <Icon icon="svg-spinners:ring-resize" className="h-4 w-4" />
                   ) : inLibrary ? (
-                    <Icon
-                      icon={libraryHovered ? "lucide:x" : "lucide:heart"}
-                      className={`h-4 w-4 ${libraryHovered ? "" : "fill-current"}`}
-                    />
+                    <Icon icon="lucide:heart" className="h-4 w-4 fill-current" />
                   ) : (
-                    <Icon icon="lucide:plus" className="h-4 w-4" />
+                    <Icon icon="lucide:heart" className="h-4 w-4" />
                   )}
                   {inLibrary
                     ? libraryHovered
