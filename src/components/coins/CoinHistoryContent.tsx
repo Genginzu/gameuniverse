@@ -16,6 +16,7 @@ import type {
   CoinTransactionType,
   CoinActivityType,
   TransactionsResponse,
+  WalletPeriodStats,
 } from "@/types/coins";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
@@ -71,6 +72,11 @@ export function CoinHistoryContent() {
     fetcher
   );
 
+  const { data: statsData } = useSWR<WalletPeriodStats>(
+    user ? "/api/players/me/wallet/stats?days=7" : null,
+    fetcher
+  );
+
   const totalPages = data ? Math.ceil(data.total / ITEMS_PER_PAGE) : 0;
 
   return (
@@ -92,8 +98,14 @@ export function CoinHistoryContent() {
           {wallet && (
             <div className="border-editorial-line grid grid-cols-3 gap-6 border-y py-6">
               <Stat label={t("balance")} value={wallet.balance.toLocaleString()} accent />
-              <Stat label={t("totalEarned")} value={`+${wallet.totalEarned.toLocaleString()}`} />
-              <Stat label={t("totalSpent")} value={`-${wallet.totalSpent.toLocaleString()}`} />
+              <Stat
+                label={t("earnedLast7Days")}
+                value={`+${(statsData?.earned ?? 0).toLocaleString()}`}
+              />
+              <Stat
+                label={t("spentLast7Days")}
+                value={`-${(statsData?.spent ?? 0).toLocaleString()}`}
+              />
             </div>
           )}
         </header>

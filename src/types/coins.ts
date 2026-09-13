@@ -62,3 +62,9 @@ export interface TransactionsResponse {
   transactions: CoinTransaction[];
   total: number;
 }
+
+export interface WalletPeriodStats {
+  earned: number;
+  spent: number;
+  periodDays: number;
+}

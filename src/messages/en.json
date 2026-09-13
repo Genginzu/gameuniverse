@@ -4180,6 +4180,8 @@
     "balance": "Balance",
     "totalEarned": "Total earned",
     "totalSpent": "Total spent",
+    "earnedLast7Days": "Earned (7 days)",
+    "spentLast7Days": "Spent (7 days)",
     "history": "GU Coins History",
     "myWallet": "My wallet",
     "noTransactions": "No transactions",

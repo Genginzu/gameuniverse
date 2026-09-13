@@ -4183,6 +4183,8 @@
     "balance": "Solde",
     "totalEarned": "Total gagné",
     "totalSpent": "Total dépensé",
+    "earnedLast7Days": "Gagné (7 jours)",
+    "spentLast7Days": "Dépensé (7 jours)",
     "history": "Historique GU Coins",
     "myWallet": "Mon portefeuille",
     "noTransactions": "Aucune transaction",
