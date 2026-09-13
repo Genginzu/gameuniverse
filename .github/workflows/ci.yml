@@ -147,7 +147,7 @@ jobs:
       matrix:
         shard: [1, 2, 3, 4]
     container:
-      image: mcr.microsoft.com/playwright:v1.59.1-noble
+      image: mcr.microsoft.com/playwright:v1.63.0-noble
     steps:
       # Sparse checkout: E2E only needs test/e2e + Playwright/build config files,
       # not the entire src/ tree. Cuts checkout from ~57s to a few seconds.

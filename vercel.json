@@ -4,6 +4,8 @@
       "main": false
     }
   },
+  "installCommand": "bunx bun@1.4.2 install",
+  "buildCommand": "bunx bun@1.4.2 run build",
   "crons": [
     {
       "path": "/api/cron/sync-libraries",

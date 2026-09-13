@@ -28,7 +28,7 @@ export async function POST() {
     const stripe = getStripe();
 
     // Check available balance on the connected account
-    const balance = await stripe.balance.retrieve({ stripeAccount: coach.stripe_account_id });
+    const balance = await stripe.balance.retrieve(undefined, { stripeAccount: coach.stripe_account_id });
     const available = balance.available.reduce((sum, b) => sum + b.amount, 0);
 
     if (available <= 0) {
