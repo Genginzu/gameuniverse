@@ -29,15 +29,31 @@ interface CollectionGameCardEditorialProps {
    * parent via `user.id === collection.userId`.
    */
   onRemove?: () => void;
+  /**
+   * Callback d'édition de la note. Si défini, affiche le bouton crayon overlay
+   * (owner-only, même logique que `onRemove`).
+   */
+  onEditNote?: () => void;
 }
 
-export function CollectionGameCardEditorial({ item, onRemove }: CollectionGameCardEditorialProps) {
+export function CollectionGameCardEditorial({
+  item,
+  onRemove,
+  onEditNote,
+}: CollectionGameCardEditorialProps) {
   const t = useTranslations("collections.editorial.detail.removeItem");
+  const tNote = useTranslations("collections.editorial.detail.editNote");
 
   const handleRemoveClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
     onRemove?.();
+  };
+
+  const handleEditNoteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onEditNote?.();
   };
 
   return (
@@ -77,6 +93,17 @@ export function CollectionGameCardEditorial({ item, onRemove }: CollectionGameCa
           aria-label={t("ariaLabel", { title: item.title })}
         >
           <Icon icon="lucide:trash-2" className="h-4 w-4" aria-hidden="true" />
+        </button>
+      )}
+
+      {onEditNote && (
+        <button
+          type="button"
+          onClick={handleEditNoteClick}
+          className="pointer-events-none absolute top-2 left-2 z-[2] grid size-9 scale-90 place-items-center rounded-full border border-[rgba(var(--accent-rgb,var(--neon-primary)),0.4)] bg-editorial-2/85 text-[rgb(var(--accent-rgb,var(--neon-primary)))] opacity-0 backdrop-blur-md transition group-focus-within/card:pointer-events-auto group-focus-within/card:scale-100 group-focus-within/card:opacity-100 group-hover/card:pointer-events-auto group-hover/card:scale-100 group-hover/card:opacity-100 hover:border-[rgba(var(--accent-rgb,var(--neon-primary)),0.9)] hover:bg-[rgba(var(--accent-rgb,var(--neon-primary)),0.2)] focus-visible:scale-100 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))] pointer-coarse:pointer-events-auto pointer-coarse:scale-100 pointer-coarse:opacity-100"
+          aria-label={tNote("ariaLabel", { title: item.title })}
+        >
+          <Icon icon="lucide:pencil" className="h-4 w-4" aria-hidden="true" />
         </button>
       )}
     </div>

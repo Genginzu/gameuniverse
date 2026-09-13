@@ -64,6 +64,15 @@ export async function apiRemoveItem(playerId: string, slug: string, gameId: stri
   return jsonRequest(`${itemsUrl(playerId, slug)}/${gameId}`, "DELETE");
 }
 
+export async function apiUpdateItemNote(
+  playerId: string,
+  slug: string,
+  gameId: string,
+  note: string | null
+) {
+  return jsonRequest(`${itemsUrl(playerId, slug)}/${gameId}`, "PATCH", { note });
+}
+
 export async function apiReorderItems(
   playerId: string,
   slug: string,

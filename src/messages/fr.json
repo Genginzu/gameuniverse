@@ -3253,6 +3253,15 @@
           "confirmAction": "Retirer",
           "removing": "Suppression…",
           "successToast": "Jeu retiré de la collection."
+        },
+        "editNote": {
+          "ariaLabel": "Modifier la note de {title}",
+          "title": "Note pour « {title} »",
+          "placeholder": "Ajouter une note (optionnel)…",
+          "cancel": "Annuler",
+          "save": "Enregistrer",
+          "saving": "Enregistrement…",
+          "successToast": "Note mise à jour."
         }
       }
     }

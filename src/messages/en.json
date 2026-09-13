@@ -3250,6 +3250,15 @@
           "confirmAction": "Remove",
           "removing": "Removing…",
           "successToast": "Game removed from the collection."
+        },
+        "editNote": {
+          "ariaLabel": "Edit the note for {title}",
+          "title": "Note for \"{title}\"",
+          "placeholder": "Add a note (optional)…",
+          "cancel": "Cancel",
+          "save": "Save",
+          "saving": "Saving…",
+          "successToast": "Note updated."
         }
       }
     }

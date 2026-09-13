@@ -31,6 +31,7 @@ import { CollectionDetailEditorialSkeleton } from "./CollectionDetailEditorialSk
 import { CollectionDetailHero } from "./CollectionDetailHero";
 import { CollectionDetailDialogs } from "./CollectionDetailDialogs";
 import { CollectionGameCardEditorial } from "./CollectionGameCardEditorial";
+import { EditItemNoteDialog } from "./EditItemNoteDialog";
 
 interface CollectionDetailEditorialProps {
   slug: string;
@@ -47,7 +48,7 @@ export function CollectionDetailEditorial({ slug, locale }: CollectionDetailEdit
 
   const { collection, isLoading, error, notFound, refetch } = useCollectionDetail(playerId, slug);
 
-  const { updateCollection, deleteCollection, toggleVisibility, addItem, removeItem } =
+  const { updateCollection, deleteCollection, toggleVisibility, addItem, removeItem, updateItemNote } =
     useCollectionMutations({
       playerId,
       refetchDetail: refetch,
@@ -61,6 +62,8 @@ export function CollectionDetailEditorial({ slug, locale }: CollectionDetailEdit
   const [isDeleting, setIsDeleting] = useState(false);
   const [itemToRemove, setItemToRemove] = useState<CollectionItem | null>(null);
   const [isRemovingItem, setIsRemovingItem] = useState(false);
+  const [itemToEditNote, setItemToEditNote] = useState<CollectionItem | null>(null);
+  const [isSavingNote, setIsSavingNote] = useState(false);
 
   if (authLoading || isLoading) return <CollectionDetailEditorialSkeleton />;
 
@@ -165,6 +168,18 @@ export function CollectionDetailEditorial({ slug, locale }: CollectionDetailEdit
     }
   };
 
+  const handleSaveNote = async (note: string) => {
+    if (!itemToEditNote) return;
+    setIsSavingNote(true);
+    try {
+      await updateItemNote(slug, itemToEditNote.gameId, note.trim() || null);
+      toast({ title: t("editNote.successToast") });
+      setItemToEditNote(null);
+    } finally {
+      setIsSavingNote(false);
+    }
+  };
+
   const updatedAtFormatted = new Intl.DateTimeFormat(locale, {
     year: "numeric",
     month: "short",
@@ -215,6 +230,7 @@ export function CollectionDetailEditorial({ slug, locale }: CollectionDetailEdit
                   key={item.id}
                   item={item}
                   onRemove={isOwner ? () => setItemToRemove(item) : undefined}
+                  onEditNote={isOwner ? () => setItemToEditNote(item) : undefined}
                 />
               ))}
             </div>
@@ -240,6 +256,15 @@ export function CollectionDetailEditorial({ slug, locale }: CollectionDetailEdit
             onAddGame={handleAddGame}
             onDelete={handleDelete}
             onConfirmRemoveItem={handleConfirmRemoveItem}
+          />
+        )}
+
+        {isOwner && (
+          <EditItemNoteDialog
+            item={itemToEditNote}
+            isSaving={isSavingNote}
+            onClose={() => setItemToEditNote(null)}
+            onSave={handleSaveNote}
           />
         )}
       </div>

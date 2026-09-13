@@ -8,6 +8,7 @@ export {
   deleteCollection,
   addItem,
   removeItem,
+  updateItemNote,
   reorderItems,
 } from "./collectionMutations";
 
