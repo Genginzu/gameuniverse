@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import useSWR from "swr";
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
@@ -10,7 +10,6 @@ import { Pagination } from "@/components/shared/Pagination";
 import { KickerLabel } from "@/components/shared/KickerLabel";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
-import type { ReactNode } from "react";
 import type {
   CoinTransaction,
   CoinTransactionType,
