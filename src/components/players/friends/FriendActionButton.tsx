@@ -7,6 +7,11 @@ import { Button } from "@/components/ui/button";
 import { getButtonState } from "@/lib/utils/friendUtils";
 import type { RelationshipStatus } from "@/types/friendship";
 
+/** Editorial override for outline buttons (avoid the default white bg-background). */
+const EDITORIAL_OUTLINE =
+  "border-editorial-line bg-editorial-3 text-white hover:bg-editorial-3 hover:border-[rgba(var(--accent-rgb,var(--neon-primary)),0.4)] hover:text-[rgb(var(--accent-rgb,var(--neon-primary)))]";
+
+
 interface FriendActionButtonProps {
   playerId: string;
   isAuthenticated: boolean;
@@ -89,6 +94,7 @@ export function FriendActionButton({
           <Button
             size="sm"
             variant="outline"
+            className={EDITORIAL_OUTLINE}
             onClick={() => handleAction(() => declineRequest(friendshipId))}
             disabled={isProcessing}
           >
@@ -103,7 +109,13 @@ export function FriendActionButton({
       )}
 
       {buttonState === "remove_friend" && (
-        <Button size="sm" variant="outline" onClick={handleRemoveFriend} disabled={isProcessing}>
+        <Button
+          size="sm"
+          variant="outline"
+          className={EDITORIAL_OUTLINE}
+          onClick={handleRemoveFriend}
+          disabled={isProcessing}
+        >
           {isProcessing ? (
             <Icon icon="lucide:loader-2" className="animate-spin" />
           ) : (
