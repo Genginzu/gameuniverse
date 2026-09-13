@@ -105,7 +105,7 @@ export function SearchInput({
       {showDropdown && (
         <div
           onScroll={handleScroll}
-          className="border-editorial-line bg-editorial-2 absolute top-full right-0 left-0 z-50 mt-1 max-h-64 overflow-y-auto rounded-xl border shadow-lg"
+          className="border-editorial-line bg-editorial-2 absolute top-full right-0 left-0 z-50 mt-1 max-h-[55vh] overflow-y-auto rounded-xl border shadow-lg"
         >
           {isSearching ? (
             <div className="flex items-center justify-center p-4">

@@ -90,7 +90,7 @@ export function CollectionDetailDialogs({
       </Dialog>
 
       <Dialog open={showAddGameDialog} onOpenChange={setShowAddGameDialog}>
-        <DialogContent className="border-editorial-line bg-editorial-2 text-white">
+        <DialogContent className="border-editorial-line bg-editorial-2 top-[8%] translate-y-0 text-white">
           <DialogHeader>
             <DialogTitle className="font-display text-white">{tPage("addGame")}</DialogTitle>
           </DialogHeader>
