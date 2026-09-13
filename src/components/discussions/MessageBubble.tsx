@@ -24,8 +24,8 @@ export default memo(function MessageBubble({ message, isOwn }: MessageBubbleProp
       <div
         className={`max-w-[85%] px-3.5 py-2.5 transition-all duration-300 sm:max-w-[75%] sm:px-4 ${
           isOwn
-            ? "rounded-2xl rounded-br-md bg-linear-to-br from-blue-500 via-purple-600 to-purple-700 text-white shadow-[0_2px_12px_rgba(139,92,246,0.25)]"
-            : "border-editorial-line rounded-2xl rounded-bl-md border bg-editorial-3 text-white shadow-[0_2px_10px_rgba(0,0,0,0.35)]"
+            ? "border-editorial-line rounded-2xl rounded-br-md border bg-editorial-3 text-white shadow-[0_2px_10px_rgba(0,0,0,0.35)]"
+            : "rounded-2xl rounded-bl-md bg-linear-to-br from-blue-500 via-purple-600 to-purple-700 text-white shadow-[0_2px_12px_rgba(139,92,246,0.25)]"
         }`}
         data-testid={isOwn ? "message-own" : "message-received"}
       >
@@ -34,7 +34,7 @@ export default memo(function MessageBubble({ message, isOwn }: MessageBubbleProp
         </p>
         <span
           className={`mt-1 block text-[10px] ${
-            isOwn ? "text-white/60" : "text-editorial-muted"
+            isOwn ? "text-editorial-muted" : "text-white/60"
           }`}
           aria-label={t("sentAt", { time: timestamp })}
         >
