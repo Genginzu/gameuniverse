@@ -178,9 +178,9 @@ export function AddGameToCollection({ onAdd, isAdding = false }: AddGameToCollec
             onChange={(e) => setNote(e.target.value)}
             maxLength={NOTE_MAX_LENGTH}
             rows={2}
-            className="resize-none"
+            className="border-editorial-line bg-editorial-3 resize-none text-white placeholder:text-editorial-muted"
           />
-          <p className="text-muted-foreground mt-1 text-xs">
+          <p className="text-editorial-muted mt-1 text-xs">
             {note.length}/{NOTE_MAX_LENGTH}
           </p>
         </div>
@@ -192,6 +192,7 @@ export function AddGameToCollection({ onAdd, isAdding = false }: AddGameToCollec
           loading={submitting}
           loadingText={submitText}
           disabled={!selectedGame}
+          className="w-full border border-[rgba(var(--accent-rgb,var(--neon-primary)),0.5)] bg-[rgba(var(--accent-rgb,var(--neon-primary)),0.15)] text-[rgb(var(--accent-rgb,var(--neon-primary)))] shadow-none hover:bg-[rgba(var(--accent-rgb,var(--neon-primary)),0.25)]"
         >
           <Icon icon="lucide:plus" className="mr-1.5 h-4 w-4" />
           {t("addButton")}
