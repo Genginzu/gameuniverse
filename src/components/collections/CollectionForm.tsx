@@ -40,6 +40,9 @@ export function CollectionForm({
 }: CollectionFormProps) {
   const t = useTranslations("collections.form");
 
+  const inputClass =
+    "border-editorial-line bg-editorial-3 text-white placeholder:text-editorial-muted hover:border-editorial-line focus-visible:border-[rgba(var(--accent-rgb,var(--neon-primary)),0.5)] focus-visible:outline-none! focus-visible:ring-0 focus-visible:ring-offset-0";
+
   const schema = mode === "create" ? createCollectionSchema : updateCollectionSchema;
 
   const form = useForm<CollectionFormValues>({
@@ -64,9 +67,14 @@ export function CollectionForm({
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("nameLabel")}</FormLabel>
+              <FormLabel className="text-white">{t("nameLabel")}</FormLabel>
               <FormControl>
-                <Input placeholder={t("namePlaceholder")} maxLength={100} {...field} />
+                <Input
+                  placeholder={t("namePlaceholder")}
+                  maxLength={100}
+                  className={inputClass}
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -78,12 +86,13 @@ export function CollectionForm({
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("descriptionLabel")}</FormLabel>
+              <FormLabel className="text-white">{t("descriptionLabel")}</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder={t("descriptionPlaceholder")}
                   maxLength={500}
                   rows={3}
+                  className={`${inputClass} resize-none`}
                   {...field}
                   value={field.value ?? ""}
                 />
@@ -98,16 +107,19 @@ export function CollectionForm({
           name="coverImageUrl"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{t("coverImageLabel")}</FormLabel>
+              <FormLabel className="text-white">{t("coverImageLabel")}</FormLabel>
               <FormControl>
                 <Input
                   type="url"
                   placeholder={t("coverImagePlaceholder")}
+                  className={inputClass}
                   {...field}
                   value={field.value ?? ""}
                 />
               </FormControl>
-              <FormDescription>{t("coverImageDescription")}</FormDescription>
+              <FormDescription className="text-editorial-muted">
+                {t("coverImageDescription")}
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -122,8 +134,10 @@ export function CollectionForm({
                 <Checkbox checked={field.value} onCheckedChange={field.onChange} />
               </FormControl>
               <div className="space-y-1 leading-none">
-                <FormLabel>{t("visibilityLabel")}</FormLabel>
-                <FormDescription>{t("visibilityDescription")}</FormDescription>
+                <FormLabel className="text-white">{t("visibilityLabel")}</FormLabel>
+                <FormDescription className="text-editorial-muted">
+                  {t("visibilityDescription")}
+                </FormDescription>
               </div>
             </FormItem>
           )}
@@ -134,6 +148,7 @@ export function CollectionForm({
           loading={isSubmitting}
           loadingText={t("submitting")}
           disabled={!form.formState.isDirty}
+          className="border border-[rgba(var(--accent-rgb,var(--neon-primary)),0.5)] bg-[rgba(var(--accent-rgb,var(--neon-primary)),0.15)] text-[rgb(var(--accent-rgb,var(--neon-primary)))] shadow-none hover:border-[rgb(var(--accent-rgb,var(--neon-primary)))] hover:bg-[rgb(var(--accent-rgb,var(--neon-primary)))] hover:text-white"
         >
           {mode === "create" ? t("submit") : t("submitEdit")}
         </LoadingButton>

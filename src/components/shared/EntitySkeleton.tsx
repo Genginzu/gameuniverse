@@ -67,21 +67,19 @@ export function EntitySkeleton({ config, className = "" }: EntitySkeletonProps) 
   if (config.showInfoSection) {
     return (
       <div className={`group relative ${className}`}>
-        <div className="relative overflow-hidden rounded-2xl bg-white shadow-md dark:bg-gray-800">
+        <div className="border-editorial-line bg-editorial-2 relative overflow-hidden rounded-2xl border">
           {/* Image section */}
           <div
             className={`relative ${aspectRatioClass} ${
-              config.useGradientBackground
-                ? "bg-linear-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30"
-                : ""
+              config.useGradientBackground ? "bg-white/[0.04]" : ""
             }`}
           >
-            <Skeleton className="h-full w-full" />
+            <Skeleton className="h-full w-full bg-white/10" />
 
             {/* Badge skeleton */}
             {config.showBadge && (
               <div className={`absolute ${badgePositionClass} top-3 z-20`}>
-                <Skeleton className={badgeSizeClasses} />
+                <Skeleton className={`${badgeSizeClasses} bg-white/10`} />
               </div>
             )}
           </div>
@@ -91,7 +89,7 @@ export function EntitySkeleton({ config, className = "" }: EntitySkeletonProps) 
             {Array.from({ length: config.infoLines || 1 }).map((_, index) => (
               <Skeleton
                 key={index}
-                className={`h-5 ${index === 0 ? "w-3/4" : "w-1/2"} ${index > 0 ? "mt-2" : ""}`}
+                className={`h-5 bg-white/10 ${index === 0 ? "w-3/4" : "w-1/2"} ${index > 0 ? "mt-2" : ""}`}
               />
             ))}
           </div>
@@ -104,15 +102,15 @@ export function EntitySkeleton({ config, className = "" }: EntitySkeletonProps) 
   return (
     <div className={`group relative ${className}`}>
       <div
-        className={`relative ${aspectRatioClass} overflow-hidden rounded-2xl bg-white shadow-md dark:bg-gray-800`}
+        className={`border-editorial-line bg-editorial-2 relative ${aspectRatioClass} overflow-hidden rounded-2xl border`}
       >
         {/* Cover Image Skeleton */}
-        <Skeleton className="h-full w-full rounded-2xl" />
+        <Skeleton className="h-full w-full rounded-2xl bg-white/10" />
 
         {/* Badge skeleton */}
         {config.showBadge && (
           <div className={`absolute ${badgePositionClass} top-3 z-20`}>
-            <Skeleton className={badgeSizeClasses} />
+            <Skeleton className={`${badgeSizeClasses} bg-white/10`} />
           </div>
         )}
       </div>

@@ -10,10 +10,10 @@ export function CollectionsFeedSkeleton() {
     <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
       {Array.from({ length: 4 }).map((_, i) => (
         <div key={i} className="overflow-hidden rounded-xl">
-          <Skeleton className="aspect-video w-full bg-gray-200 dark:bg-slate-700" />
+          <Skeleton className="aspect-video w-full bg-white/10" />
           <div className="space-y-2 p-3">
-            <Skeleton className="h-4 w-3/4 bg-gray-200 dark:bg-slate-700" />
-            <Skeleton className="h-3 w-1/2 bg-gray-200 dark:bg-slate-700" />
+            <Skeleton className="h-4 w-3/4 bg-white/10" />
+            <Skeleton className="h-3 w-1/2 bg-white/10" />
           </div>
         </div>
       ))}

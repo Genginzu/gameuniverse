@@ -285,12 +285,32 @@
   cursor: pointer;
   transition:
     background-color 200ms ease,
-    border-color 200ms ease;
+    border-color 200ms ease,
+    color 200ms ease;
 }
 
 .editorial-game-detail-cta-ghost:hover {
   background: rgba(255, 255, 255, 0.06);
   border-color: rgba(255, 255, 255, 0.18);
+}
+
+/* Active state (e.g. game already in library) — accent-tinted */
+.editorial-game-detail-cta-ghost.is-active {
+  border-color: rgba(var(--accent-rgb, var(--neon-primary)), 0.55);
+  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.14);
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+}
+
+.editorial-game-detail-cta-ghost.is-active:hover {
+  border-color: rgba(var(--accent-rgb, var(--neon-primary)), 0.8);
+  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.22);
+}
+
+/* Remove intent on hover when the game is already in the library */
+.editorial-game-detail-cta-ghost.is-remove {
+  border-color: rgba(239, 68, 68, 0.6);
+  background: rgba(239, 68, 68, 0.16);
+  color: rgb(252, 165, 165);
 }
 
 /* Hero stats inline */

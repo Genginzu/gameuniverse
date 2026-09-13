@@ -137,9 +137,9 @@ export function PlayerCollectionDetailView({
       {isOwner && (
         <>
           <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-            <DialogContent>
+            <DialogContent className="border-editorial-line bg-editorial-2 text-white">
               <DialogHeader>
-                <DialogTitle>{t("editCollection")}</DialogTitle>
+                <DialogTitle className="font-display text-white">{t("editCollection")}</DialogTitle>
               </DialogHeader>
               <CollectionForm
                 mode="edit"

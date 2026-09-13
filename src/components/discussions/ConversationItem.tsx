@@ -40,7 +40,7 @@ export default memo(function ConversationItem({
       className={`flex w-full items-center gap-3 rounded-xl p-3 text-left transition-all duration-300 ${
         isSelected
           ? "bg-linear-to-r from-blue-500/15 via-purple-600/10 to-purple-700/10 shadow-[inset_0_0_0_1px_rgba(139,92,246,0.3)]"
-          : "cursor-pointer hover:bg-white/40 dark:hover:bg-slate-700/40"
+          : "cursor-pointer hover:bg-white/[0.05]"
       }`}
       data-testid="conversation-item"
     >
@@ -65,11 +65,11 @@ export default memo(function ConversationItem({
       {/* Content */}
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-2">
-          <p className="truncate text-sm font-semibold text-slate-900 dark:text-white">
+          <p className="truncate text-sm font-semibold text-white">
             {friend.displayName}
           </p>
           {timestamp && (
-            <span className="shrink-0 text-[11px] text-slate-400 dark:text-slate-500">
+            <span className="text-editorial-muted shrink-0 text-[11px]">
               {timestamp}
             </span>
           )}
@@ -77,9 +77,7 @@ export default memo(function ConversationItem({
         <div className="flex items-center justify-between gap-2">
           <p
             className={`truncate text-xs ${
-              unreadCount > 0
-                ? "font-medium text-slate-700 dark:text-slate-300"
-                : "text-slate-500 dark:text-slate-400"
+              unreadCount > 0 ? "font-medium text-zinc-200" : "text-editorial-muted"
             }`}
           >
             {preview}

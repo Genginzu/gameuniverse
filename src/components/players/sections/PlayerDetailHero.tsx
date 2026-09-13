@@ -144,8 +144,7 @@ export function PlayerDetailHero({
   );
 }
 
-const ACCENT_TEXT =
-  "bg-gradient-to-r from-[rgb(var(--accent-rgb,var(--neon-primary)))] to-[rgba(var(--accent-rgb,var(--neon-primary)),0.6)] bg-clip-text text-transparent";
+const ACCENT_TEXT = "text-[rgb(var(--accent-rgb,var(--neon-primary)))]";
 
 function Stat({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
   return (

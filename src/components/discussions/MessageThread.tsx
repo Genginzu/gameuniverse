@@ -13,15 +13,13 @@ function MessageSkeleton({ isOwn }: { isOwn: boolean }) {
     <div className={`flex ${isOwn ? "justify-end" : "justify-start"}`}>
       <div
         className={`animate-pulse space-y-2 rounded-2xl px-4 py-2.5 ${
-          isOwn
-            ? "rounded-br-md bg-purple-500/15 dark:bg-purple-500/10"
-            : "rounded-bl-md bg-slate-200/40 dark:bg-slate-700/40"
+          isOwn ? "rounded-br-md bg-purple-500/15" : "rounded-bl-md bg-white/[0.06]"
         }`}
         style={{ width: isOwn ? "55%" : "65%", maxWidth: "75%" }}
       >
-        <div className="h-3 w-full rounded-md bg-slate-300/50 dark:bg-slate-600/50" />
-        <div className="h-3 w-3/4 rounded-md bg-slate-300/40 dark:bg-slate-600/40" />
-        <div className="h-2 w-12 rounded-md bg-slate-300/30 dark:bg-slate-600/30" />
+        <div className="h-3 w-full rounded-md bg-white/10" />
+        <div className="h-3 w-3/4 rounded-md bg-white/[0.08]" />
+        <div className="h-2 w-12 rounded-md bg-white/[0.06]" />
       </div>
     </div>
   );
@@ -75,7 +73,7 @@ export default function MessageThread({
               type="button"
               onClick={onLoadMore}
               disabled={isLoading}
-              className="flex min-h-[44px] items-center gap-1.5 rounded-xl bg-white/30 px-4 py-2 text-sm font-medium text-slate-700 backdrop-blur-xs transition-all duration-300 hover:bg-white/50 disabled:opacity-50 dark:bg-slate-700/40 dark:text-slate-300 dark:hover:bg-slate-700/60"
+              className="border-editorial-line text-editorial-muted flex min-h-[44px] items-center gap-1.5 rounded-xl border bg-white/[0.03] px-4 py-2 text-sm font-medium transition-colors duration-300 hover:bg-white/[0.06] hover:text-white disabled:opacity-50"
               data-testid="load-more-button"
             >
               {isLoading ? (

@@ -13,6 +13,7 @@ import {
   apiToggleVisibility,
   apiAddItem,
   apiRemoveItem,
+  apiUpdateItemNote,
   apiReorderItems,
 } from "@/lib/services/collectionApi";
 
@@ -93,6 +94,14 @@ export function useCollectionMutations({
     [playerId, invalidateAll]
   );
 
+  const updateItemNote = useCallback(
+    async (slug: string, gameId: string, note: string | null) => {
+      await apiUpdateItemNote(playerId, slug, gameId, note);
+      await invalidateAll();
+    },
+    [playerId, invalidateAll]
+  );
+
   const reorderItems = useCallback(
     async (slug: string, items: Array<{ gameId: string; position: number }>) => {
       const result = await apiReorderItems(playerId, slug, items);
@@ -109,6 +118,7 @@ export function useCollectionMutations({
     toggleVisibility,
     addItem,
     removeItem,
+    updateItemNote,
     reorderItems,
   };
 }

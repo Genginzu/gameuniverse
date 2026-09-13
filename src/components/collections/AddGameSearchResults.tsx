@@ -5,6 +5,7 @@ import { Icon } from "@iconify/react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import type { SearchResultItem } from "@/types/search";
+import type { UIEvent } from "react";
 import Image from "next/image";
 
 interface SelectedGamePreviewProps {
@@ -17,7 +18,7 @@ export function SelectedGamePreview({ game, onClear }: SelectedGamePreviewProps)
   const t = useTranslations("collections.addGame");
 
   return (
-    <div className="flex items-center gap-3 rounded-lg border p-3">
+    <div className="border-editorial-line bg-editorial-3 flex items-center gap-3 rounded-xl border p-3">
       {game.coverUrl ? (
         <Image
           src={game.coverUrl}
@@ -27,19 +28,21 @@ export function SelectedGamePreview({ game, onClear }: SelectedGamePreviewProps)
           className="h-12 w-9 rounded object-cover"
         />
       ) : (
-        <div className="bg-muted flex h-12 w-9 items-center justify-center rounded text-xs">🎮</div>
+        <div className="bg-editorial-2 flex h-12 w-9 items-center justify-center rounded text-xs">
+          🎮
+        </div>
       )}
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <p className="truncate text-sm font-medium">{game.title}</p>
+          <p className="truncate text-sm font-medium text-white">{game.title}</p>
           <SourceBadge source={game.source} />
         </div>
-        {game.releaseYear && <p className="text-muted-foreground text-xs">{game.releaseYear}</p>}
+        {game.releaseYear && <p className="text-editorial-muted text-xs">{game.releaseYear}</p>}
       </div>
       <button
         type="button"
         onClick={onClear}
-        className="text-muted-foreground hover:text-foreground text-xs"
+        className="text-editorial-muted text-xs transition-colors hover:text-[rgb(var(--accent-rgb,var(--neon-primary)))]"
       >
         {t("changeGame")}
       </button>
@@ -52,6 +55,9 @@ interface SearchInputProps {
   onChange: (value: string) => void;
   results: SearchResultItem[];
   isSearching: boolean;
+  isLoadingMore: boolean;
+  hasMore: boolean;
+  onLoadMore: () => void;
   onSelect: (game: SearchResultItem) => void;
   placeholder: string;
   noResultsText: string;
@@ -63,71 +69,92 @@ export function SearchInput({
   onChange,
   results,
   isSearching,
+  isLoadingMore,
+  hasMore,
+  onLoadMore,
   onSelect,
   placeholder,
   noResultsText,
 }: SearchInputProps) {
   const showDropdown = query.trim().length >= 2;
 
+  const handleScroll = (e: UIEvent<HTMLDivElement>) => {
+    const el = e.currentTarget;
+    const nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 80;
+    if (nearBottom && hasMore && !isSearching && !isLoadingMore) {
+      onLoadMore();
+    }
+  };
+
   return (
     <div className="relative">
       <div className="relative">
         <Icon
           icon="lucide:search"
-          className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2"
+          className="text-editorial-muted pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2"
         />
         <Input
           type="text"
           placeholder={placeholder}
           value={query}
           onChange={(e) => onChange(e.target.value)}
-          className="pl-9"
+          className="border-editorial-line bg-editorial-3 pl-9 text-white placeholder:text-editorial-muted hover:border-editorial-line focus-visible:border-[rgba(var(--accent-rgb,var(--neon-primary)),0.5)] focus-visible:outline-none! focus-visible:ring-0 focus-visible:ring-offset-0"
         />
       </div>
 
       {showDropdown && (
-        <div className="bg-popover absolute top-full right-0 left-0 z-50 mt-1 max-h-64 overflow-y-auto rounded-lg border shadow-md">
+        <div
+          onScroll={handleScroll}
+          className="border-editorial-line bg-editorial-2 absolute top-full right-0 left-0 z-50 mt-1 max-h-[55vh] overflow-y-auto rounded-xl border shadow-lg"
+        >
           {isSearching ? (
             <div className="flex items-center justify-center p-4">
-              <div className="border-primary h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />
+              <div className="h-4 w-4 animate-spin rounded-full border-2 border-[rgb(var(--accent-rgb,var(--neon-primary)))] border-t-transparent" />
             </div>
           ) : results.length === 0 ? (
-            <p className="text-muted-foreground p-4 text-center text-sm">{noResultsText}</p>
+            <p className="text-editorial-muted p-4 text-center text-sm">{noResultsText}</p>
           ) : (
-            <ul className="divide-y">
-              {results.map((game) => (
-                <li key={`${game.source}-${game.id}`}>
-                  <button
-                    type="button"
-                    onClick={() => onSelect(game)}
-                    className="hover:bg-accent flex w-full items-center gap-3 px-3 py-2 text-left transition-colors"
-                  >
-                    {game.coverUrl ? (
-                      <Image
-                        src={game.coverUrl}
-                        alt={game.title}
-                        width={28}
-                        height={40}
-                        className="h-10 w-7 rounded object-cover"
-                      />
-                    ) : (
-                      <div className="bg-muted flex h-10 w-7 items-center justify-center rounded text-xs">
-                        🎮
+            <>
+              <ul className="divide-editorial-line divide-y">
+                {results.map((game) => (
+                  <li key={`${game.source}-${game.id}`}>
+                    <button
+                      type="button"
+                      onClick={() => onSelect(game)}
+                      className="flex w-full items-center gap-3 px-3 py-2 text-left transition-colors hover:bg-white/[0.04]"
+                    >
+                      {game.coverUrl ? (
+                        <Image
+                          src={game.coverUrl}
+                          alt={game.title}
+                          width={28}
+                          height={40}
+                          className="h-10 w-7 rounded object-cover"
+                        />
+                      ) : (
+                        <div className="bg-editorial-3 flex h-10 w-7 items-center justify-center rounded text-xs">
+                          🎮
+                        </div>
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <p className="truncate text-sm font-medium text-white">{game.title}</p>
+                          <SourceBadge source={game.source} />
+                        </div>
+                        <p className="text-editorial-muted truncate text-xs">
+                          {[game.releaseYear, game.developer].filter(Boolean).join(" · ")}
+                        </p>
                       </div>
-                    )}
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <p className="truncate text-sm font-medium">{game.title}</p>
-                        <SourceBadge source={game.source} />
-                      </div>
-                      <p className="text-muted-foreground truncate text-xs">
-                        {[game.releaseYear, game.developer].filter(Boolean).join(" · ")}
-                      </p>
-                    </div>
-                  </button>
-                </li>
-              ))}
-            </ul>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              {isLoadingMore && (
+                <div className="flex items-center justify-center p-3">
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-[rgb(var(--accent-rgb,var(--neon-primary)))] border-t-transparent" />
+                </div>
+              )}
+            </>
           )}
         </div>
       )}
@@ -139,7 +166,10 @@ export function SearchInput({
 function SourceBadge({ source }: { source: "local" | "igdb" }) {
   if (source === "local") {
     return (
-      <Badge variant="secondary" className="shrink-0 gap-1 px-1.5 py-0 text-[10px]">
+      <Badge
+        variant="outline"
+        className="border-editorial-line text-editorial-muted shrink-0 gap-1 bg-white/[0.04] px-1.5 py-0 text-[10px]"
+      >
         <Icon icon="lucide:database" className="h-2.5 w-2.5" />
         Local
       </Badge>
@@ -149,7 +179,7 @@ function SourceBadge({ source }: { source: "local" | "igdb" }) {
   return (
     <Badge
       variant="outline"
-      className="shrink-0 gap-1 border-purple-300 px-1.5 py-0 text-[10px] text-purple-600 dark:border-purple-600 dark:text-purple-400"
+      className="shrink-0 gap-1 border-purple-500/40 bg-purple-500/10 px-1.5 py-0 text-[10px] text-purple-300"
     >
       <Icon icon="lucide:globe" className="h-2.5 w-2.5" />
       IGDB

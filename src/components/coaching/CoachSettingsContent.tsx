@@ -6,6 +6,7 @@ import useSWR from "swr";
 import { fetcher } from "@/lib/swr/fetcher";
 import { useAuth } from "@/hooks/useAuth";
 import { Icon } from "@iconify/react";
+import { Link } from "@/i18n/navigation";
 import { CoachProfileForm } from "./CoachProfileForm";
 import { CoachGamesSection } from "./CoachGamesSection";
 import { CoachPricingSection } from "./CoachPricingSection";
@@ -30,8 +31,35 @@ export function CoachSettingsContent() {
 
   const hasProfile = !!data?.profile;
 
-  if (loading) return null;
-  if (!user) return null;
+  if (loading) {
+    return (
+      <div className="space-y-4 p-4 md:p-6 lg:p-8">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className="h-20 animate-pulse rounded-xl bg-white/[0.06]" />
+        ))}
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="space-y-6 p-4 md:p-6 lg:p-8">
+        <h1 className="font-display text-xl font-bold tracking-tight text-white sm:text-2xl lg:text-3xl">
+          {t("title")}
+        </h1>
+        <div className="border-editorial-line bg-editorial-2 flex flex-col items-center justify-center gap-3 rounded-xl border p-8 text-center">
+          <Icon icon="lucide:lock" className="text-editorial-muted size-10" />
+          <p className="text-editorial-muted text-sm">{t("loginRequired")}</p>
+          <Link
+            href="/auth"
+            className="from-palette-secondary-500 to-palette-primary-500 rounded-lg bg-linear-to-r px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+          >
+            {t("login")}
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 p-4 md:space-y-8 md:p-6 lg:p-8">

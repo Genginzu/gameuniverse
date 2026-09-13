@@ -67,26 +67,7 @@ export function CollectionsEditorial() {
     return <CollectionsPageSkeleton />;
   }
 
-  if (!user) {
-    return (
-      <section className="w-full">
-        <div className="mx-auto max-w-[1536px] px-4 pt-8 pb-16 md:px-8 md:pt-12 md:pb-20">
-          <div className="flex flex-col items-center justify-center gap-4 px-8 py-20 text-center">
-            <KickerLabel>{t("kicker")}</KickerLabel>
-            <h1 className="font-display text-[1.75rem] font-bold text-white">
-              {t("authRequired.title")}
-            </h1>
-            <p className="text-editorial-muted max-w-[50ch]">{t("authRequired.description")}</p>
-            <Button asChild>
-              <Link href="/auth">{t("authRequired.signIn")}</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  if (isLoading) {
+  if (user && isLoading) {
     return <CollectionsPageSkeleton />;
   }
 
@@ -122,39 +103,45 @@ export function CollectionsEditorial() {
         </header>
 
         {/* Controls */}
-        <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <KickerLabel>{t("listKicker", { count: stats.totalCollections })}</KickerLabel>
-          <button
-            type="button"
-            onClick={() => setShowCreateDialog(true)}
-            className="bg-editorial-accent inline-flex h-14 items-center gap-2 rounded-[14px] px-6 text-[0.95rem] font-semibold text-[#0a0418] transition hover:-translate-y-px hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
-          >
-            <Icon icon="lucide:plus" className="h-4 w-4" aria-hidden="true" />
-            {t("createButton")}
-          </button>
-        </div>
-
-        {/* Content */}
-        {collections.length === 0 ? (
-          <CollectionsEmptyState onCreate={() => setShowCreateDialog(true)} />
+        {!user ? (
+          <CollectionsAuthRequired />
         ) : (
-          <div className="grid grid-cols-1 gap-4 min-[475px]:grid-cols-2 md:grid-cols-3 md:gap-6 xl:grid-cols-4">
-            {collections.map((collection) => (
-              <CollectionCardEditorial
-                key={collection.id}
-                collection={collection}
-                basePath="/collections"
-                showVisibility
-              />
-            ))}
-          </div>
+          <>
+            <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <KickerLabel>{t("listKicker", { count: stats.totalCollections })}</KickerLabel>
+              <button
+                type="button"
+                onClick={() => setShowCreateDialog(true)}
+                className="bg-editorial-accent inline-flex h-14 items-center gap-2 rounded-[14px] px-6 text-[0.95rem] font-semibold text-[#0a0418] transition hover:-translate-y-px hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
+              >
+                <Icon icon="lucide:plus" className="h-4 w-4" aria-hidden="true" />
+                {t("createButton")}
+              </button>
+            </div>
+
+            {/* Content */}
+            {collections.length === 0 ? (
+              <CollectionsEmptyState onCreate={() => setShowCreateDialog(true)} />
+            ) : (
+              <div className="grid grid-cols-1 gap-4 min-[475px]:grid-cols-2 md:grid-cols-3 md:gap-6 xl:grid-cols-4">
+                {collections.map((collection) => (
+                  <CollectionCardEditorial
+                    key={collection.id}
+                    collection={collection}
+                    basePath="/collections"
+                    showVisibility
+                  />
+                ))}
+              </div>
+            )}
+          </>
         )}
 
         {/* Create dialog */}
         <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-          <DialogContent>
+          <DialogContent className="border-editorial-line bg-editorial-2 text-white">
             <DialogHeader>
-              <DialogTitle>{tPage("createButton")}</DialogTitle>
+              <DialogTitle className="font-display text-white">{tPage("createButton")}</DialogTitle>
             </DialogHeader>
             <CollectionForm mode="create" onSubmit={handleCreate} isSubmitting={isCreating} />
           </DialogContent>
@@ -175,6 +162,27 @@ function Stat({ label, value, accent }: { label: string; value: ReactNode; accen
         {value}
       </p>
       <KickerLabel className="mt-2">{label}</KickerLabel>
+    </div>
+  );
+}
+
+/** Carte d'auth affichée à la place des contrôles et du contenu quand non connecté. */
+function CollectionsAuthRequired() {
+  const t = useTranslations("collections.editorial");
+
+  return (
+    <div className="border-editorial-line bg-editorial-2 flex flex-col items-center justify-center gap-5 rounded-3xl border px-8 py-16 text-center">
+      <div className="bg-editorial-accent/15 text-editorial-accent grid size-16 place-items-center rounded-full">
+        <Icon icon="lucide:lock" className="h-7 w-7" aria-hidden="true" />
+      </div>
+      <h3 className="font-display text-2xl font-bold text-white">{t("authRequired.title")}</h3>
+      <p className="text-editorial-muted max-w-[50ch]">{t("authRequired.description")}</p>
+      <Button asChild>
+        <Link href="/auth">
+          <Icon icon="lucide:log-in" className="mr-2 h-4 w-4" aria-hidden="true" />
+          {t("authRequired.signIn")}
+        </Link>
+      </Button>
     </div>
   );
 }

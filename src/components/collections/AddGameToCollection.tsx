@@ -17,6 +17,7 @@ interface AddGameToCollectionProps {
 
 const DEBOUNCE_MS = 300;
 const NOTE_MAX_LENGTH = 250;
+const PAGE_SIZE = 10;
 
 export function AddGameToCollection({ onAdd, isAdding = false }: AddGameToCollectionProps) {
   const t = useTranslations("collections.addGame");
@@ -26,17 +27,38 @@ export function AddGameToCollection({ onAdd, isAdding = false }: AddGameToCollec
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResultItem[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(false);
+  const [limit, setLimit] = useState(PAGE_SIZE);
   const [selectedGame, setSelectedGame] = useState<SearchResultItem | null>(null);
   const [note, setNote] = useState("");
   const [isImporting, setIsImporting] = useState(false);
 
   const abortRef = useRef<AbortController | null>(null);
 
-  // Debounced hybrid search (local + IGDB)
+  const runSearch = useCallback(
+    async (searchLimit: number, signal: AbortSignal) => {
+      const data = await apiClient.get<HybridSearchResponse>(
+        `/api/search/hybrid?query=${encodeURIComponent(
+          query.trim()
+        )}&locale=${locale}&localLimit=${searchLimit}&igdbLimit=${searchLimit}`,
+        { signal }
+      );
+      if (!signal.aborted) {
+        setResults(data.results ?? []);
+        setHasMore(data.hasMore ?? false);
+      }
+    },
+    [query, locale, apiClient]
+  );
+
+  // Debounced hybrid search (local + IGDB), reset to the first page on query change
   useEffect(() => {
     if (query.trim().length < 2) {
       setResults([]);
       setIsSearching(false);
+      setHasMore(false);
+      setLimit(PAGE_SIZE);
       return;
     }
 
@@ -48,19 +70,15 @@ export function AddGameToCollection({ onAdd, isAdding = false }: AddGameToCollec
       abortRef.current = controller;
 
       try {
-        const data = await apiClient.get<HybridSearchResponse>(
-          `/api/search/hybrid?query=${encodeURIComponent(query.trim())}&locale=${locale}&localLimit=5&igdbLimit=5`,
-          { signal: controller.signal }
-        );
-        if (!controller.signal.aborted) {
-          setResults(data.results ?? []);
-          setIsSearching(false);
-        }
+        setLimit(PAGE_SIZE);
+        await runSearch(PAGE_SIZE, controller.signal);
       } catch {
         if (!controller.signal.aborted) {
           setResults([]);
-          setIsSearching(false);
+          setHasMore(false);
         }
+      } finally {
+        if (!controller.signal.aborted) setIsSearching(false);
       }
     }, DEBOUNCE_MS);
 
@@ -68,7 +86,27 @@ export function AddGameToCollection({ onAdd, isAdding = false }: AddGameToCollec
       clearTimeout(timer);
       abortRef.current?.abort();
     };
-  }, [query, locale, apiClient]);
+  }, [query, locale, apiClient, runSearch]);
+
+  // Grow the result window when the user scrolls near the bottom
+  const loadMore = useCallback(async () => {
+    if (isLoadingMore || isSearching || !hasMore) return;
+
+    const nextLimit = limit + PAGE_SIZE;
+    setIsLoadingMore(true);
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    try {
+      await runSearch(nextLimit, controller.signal);
+      if (!controller.signal.aborted) setLimit(nextLimit);
+    } catch {
+      // keep the current results on failure
+    } finally {
+      if (!controller.signal.aborted) setIsLoadingMore(false);
+    }
+  }, [isLoadingMore, isSearching, hasMore, limit, runSearch]);
 
   const handleSelect = useCallback((game: SearchResultItem) => {
     setSelectedGame(game);
@@ -123,6 +161,9 @@ export function AddGameToCollection({ onAdd, isAdding = false }: AddGameToCollec
           onChange={setQuery}
           results={results}
           isSearching={isSearching}
+          isLoadingMore={isLoadingMore}
+          hasMore={hasMore}
+          onLoadMore={loadMore}
           onSelect={handleSelect}
           placeholder={t("searchPlaceholder")}
           noResultsText={t("noResults")}
@@ -137,9 +178,9 @@ export function AddGameToCollection({ onAdd, isAdding = false }: AddGameToCollec
             onChange={(e) => setNote(e.target.value)}
             maxLength={NOTE_MAX_LENGTH}
             rows={2}
-            className="resize-none"
+            className="border-editorial-line bg-editorial-3 resize-none text-white placeholder:text-editorial-muted"
           />
-          <p className="text-muted-foreground mt-1 text-xs">
+          <p className="text-editorial-muted mt-1 text-xs">
             {note.length}/{NOTE_MAX_LENGTH}
           </p>
         </div>
@@ -151,6 +192,7 @@ export function AddGameToCollection({ onAdd, isAdding = false }: AddGameToCollec
           loading={submitting}
           loadingText={submitText}
           disabled={!selectedGame}
+          className="w-full border border-[rgba(var(--accent-rgb,var(--neon-primary)),0.5)] bg-[rgba(var(--accent-rgb,var(--neon-primary)),0.15)] text-[rgb(var(--accent-rgb,var(--neon-primary)))] shadow-none hover:bg-[rgba(var(--accent-rgb,var(--neon-primary)),0.25)]"
         >
           <Icon icon="lucide:plus" className="mr-1.5 h-4 w-4" />
           {t("addButton")}

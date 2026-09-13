@@ -71,9 +71,9 @@ export function CollectionDetailDialogs({
   return (
     <>
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-        <DialogContent>
+        <DialogContent className="border-editorial-line bg-editorial-2 text-white">
           <DialogHeader>
-            <DialogTitle>{tPage("editCollection")}</DialogTitle>
+            <DialogTitle className="font-display text-white">{tPage("editCollection")}</DialogTitle>
           </DialogHeader>
           <CollectionForm
             mode="edit"
@@ -90,9 +90,9 @@ export function CollectionDetailDialogs({
       </Dialog>
 
       <Dialog open={showAddGameDialog} onOpenChange={setShowAddGameDialog}>
-        <DialogContent>
+        <DialogContent className="border-editorial-line bg-editorial-2 top-[8%] translate-y-0 text-white">
           <DialogHeader>
-            <DialogTitle>{tPage("addGame")}</DialogTitle>
+            <DialogTitle className="font-display text-white">{tPage("addGame")}</DialogTitle>
           </DialogHeader>
           <AddGameToCollection onAdd={onAddGame} isAdding={isAddingGame} />
         </DialogContent>

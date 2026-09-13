@@ -22,6 +22,10 @@
       "title": "Discussions",
       "description": "Join Gamers Universe community discussions"
     },
+    "friends": {
+      "title": "My Friends",
+      "description": "Manage your friends and friend requests on Gamers Universe"
+    },
     "library": {
       "title": "My library",
       "description": "Manage your personal video game collection"
@@ -679,7 +683,22 @@
       "emptyTitle": "No favorite characters yet",
       "emptyDescription": "Explore our character collection and add your favorites by clicking the heart icon on their page.",
       "exploreCharacters": "Explore characters",
-      "errorTitle": "Unable to load favorites"
+      "errorTitle": "Unable to load favorites",
+      "editorial": {
+        "kicker": "Favorites",
+        "titlePrefix": "Your favorite",
+        "titleAccent": "characters",
+        "subtitle": "Find every character you have added to your favorites.",
+        "stats": {
+          "characters": "Characters",
+          "games": "Games featured"
+        }
+      },
+      "authRequired": {
+        "title": "Your favorite characters await",
+        "description": "Log in to find and manage your favorite characters.",
+        "signIn": "Log in"
+      }
     }
   },
   "players": {
@@ -1061,13 +1080,18 @@
       "exploreGames": "Explore games",
       "addGames": "Add games"
     },
+    "authRequired": {
+      "title": "Your library awaits",
+      "description": "Log in to build and explore your personal game collection.",
+      "signIn": "Log in"
+    },
     "yourGames": "Your games ({count})",
     "loadingError": "Loading error",
     "retry": "Retry",
     "editorial": {
       "kicker": "Library",
       "titlePrefix": "Your",
-      "titleAccent": "collection",
+      "titleAccent": "library",
       "subtitle": "Your entire gaming world in one place. Filter, search, explore your titles.",
       "stats": {
         "games": "Games",
@@ -1335,6 +1359,9 @@
     "editorial": {
       "heroPlatformsCount": "{count} platforms",
       "heroPlatformsOne": "1 platform",
+      "libraryAdd": "Add to library",
+      "libraryIn": "In my library",
+      "libraryRemove": "Remove",
       "liveTicker": "{players} playing now · {streams} streams · {tournaments} tournaments this week",
       "score": "Score",
       "from": "From",
@@ -3226,6 +3253,15 @@
           "confirmAction": "Remove",
           "removing": "Removing…",
           "successToast": "Game removed from the collection."
+        },
+        "editNote": {
+          "ariaLabel": "Edit the note for {title}",
+          "title": "Note for \"{title}\"",
+          "placeholder": "Add a note (optional)…",
+          "cancel": "Cancel",
+          "save": "Save",
+          "saving": "Saving…",
+          "successToast": "Note updated."
         }
       }
     }
@@ -3333,7 +3369,13 @@
       "emptyState": "You don't have any friends yet. Explore the players page to find people to connect with!",
       "explorePlayers": "Explore players",
       "pendingBadgeLabel": "{count, plural, one {# pending friend request} other {# pending friend requests}}",
-      "loadingError": "An error occurred while loading the friends page."
+      "loadingError": "An error occurred while loading the friends page.",
+      "subtitle": "Manage your friends and pending requests.",
+      "authRequired": {
+        "title": "Sign in to see your friends",
+        "description": "You need to be signed in to view and manage your friends.",
+        "signIn": "Sign in"
+      }
     }
   },
   "subscriptions": {
@@ -3949,6 +3991,8 @@
     "settings": {
       "title": "Coach Settings",
       "subtitle": "Manage your coach profile, games and pricing",
+      "loginRequired": "Log in to access your coach settings.",
+      "login": "Log in",
       "tabs": {
         "profile": "Profile",
         "games": "Games",
@@ -4109,7 +4153,9 @@
       "paymentSuccess": "Payment successful!",
       "paymentError": "Payment error.",
       "paymentCancelled": "Payment cancelled.",
-      "paymentDone": "Payment done"
+      "paymentDone": "Payment done",
+      "loginRequired": "Log in to view your coaching sessions.",
+      "login": "Log in"
     },
     "reviews": {
       "empty": "No reviews yet.",
@@ -4146,12 +4192,25 @@
     "balance": "Balance",
     "totalEarned": "Total earned",
     "totalSpent": "Total spent",
+    "earnedLast7Days": "Earned (7 days)",
+    "spentLast7Days": "Spent (7 days)",
     "history": "GU Coins History",
     "myWallet": "My wallet",
     "noTransactions": "No transactions",
     "filterAll": "All types",
     "errorLoading": "Failed to load GU Coins history.",
     "earnTitle": "How to earn GU Coins",
+    "editorial": {
+      "kicker": "GU Coins",
+      "titlePrefix": "Your",
+      "titleAccent": "wallet",
+      "subtitle": "Track your earnings, spending and the full history of your GU Coins."
+    },
+    "authRequired": {
+      "title": "Sign in required",
+      "description": "Sign in to view your wallet and your GU Coins history.",
+      "signIn": "Sign in"
+    },
     "toast": {
       "rewarded": "+{amount} GU Coins — {reason}"
     },

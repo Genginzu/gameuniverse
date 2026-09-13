@@ -177,6 +177,27 @@ export async function removeItem(
 }
 
 /**
+ * Met à jour la note d'un jeu dans une collection.
+ */
+export async function updateItemNote(
+  userId: string,
+  collectionSlug: string,
+  gameId: string,
+  note: string | null
+): Promise<void> {
+  const supabase = await createServerClient();
+  const collectionId = await resolveCollectionId(supabase, userId, collectionSlug);
+
+  const { error } = await supabase
+    .from("game_collection_items" as UntypedFrom)
+    .update({ note: note && note.trim() ? note.trim() : null })
+    .eq("collection_id", collectionId)
+    .eq("game_id", gameId);
+
+  if (error) throw error;
+}
+
+/**
  * Réordonne les jeux d'une collection selon les positions fournies.
  */
 export async function reorderItems(

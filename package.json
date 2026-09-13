@@ -8,7 +8,7 @@
   "scripts": {
     "prepare": "git config core.hooksPath .githooks || true && [ -f scripts/setup-agents.ts ] && bun scripts/setup-agents.ts || true",
     "dev": "bun --bun next dev -H 0.0.0.0",
-    "build": "bun --bun next build",
+    "build": "next build",
     "start": "bun --bun next start",
     "lint": "bun eslint .",
     "lint:fix": "bun eslint . --fix",

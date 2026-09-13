@@ -167,6 +167,34 @@ export class CoinService {
     };
   }
 
+  static async getPeriodStats(
+    playerId: string,
+    periodDays: number = 7
+  ): Promise<{ earned: number; spent: number; periodDays: number }> {
+    const supabase = await createRouteHandlerClient();
+    const cutoff = new Date(Date.now() - periodDays * 24 * 60 * 60 * 1000).toISOString();
+
+    const { data, error } = await untypedTable(supabase, "coin_transactions")
+      .select("amount")
+      .eq("player_id", playerId)
+      .gte("created_at", cutoff);
+
+    if (error) {
+      logger.error("Failed to fetch period stats", { playerId, error });
+      throw new Error("Failed to fetch period stats");
+    }
+
+    let earned = 0;
+    let spent = 0;
+    for (const row of data ?? []) {
+      const amount = (row as { amount: number }).amount;
+      if (amount > 0) earned += amount;
+      else spent += -amount;
+    }
+
+    return { earned, spent, periodDays };
+  }
+
   static async getRewardConfig(): Promise<CoinRewardConfig[]> {
     const supabase = await createRouteHandlerClient();
     const { data, error } = await untypedTable(supabase, "coin_reward_config")
