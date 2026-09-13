@@ -141,7 +141,7 @@ export function DetailHero({ game, formatPrice }: DetailHeroProps) {
                   ) : inLibrary && libraryHovered ? (
                     <Icon icon="lucide:x" className="h-4 w-4" />
                   ) : (
-                    <Icon icon="lucide:heart" className="h-4 w-4 fill-current" />
+                    <Icon icon="mdi:heart" className="h-4 w-4" />
                   )}
                   {inLibrary
                     ? libraryHovered
