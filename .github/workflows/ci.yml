@@ -27,7 +27,7 @@ jobs:
       - run: bun install --frozen-lockfile
 
       - name: Cache node_modules
-        uses: actions/cache/save@v5
+        uses: actions/cache/save@v6
         with:
           path: node_modules
           key: modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
@@ -42,7 +42,7 @@ jobs:
           show-progress: false
       - uses: oven-sh/setup-bun@v2
       - name: Restore node_modules
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         with:
           path: node_modules
           key: modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
@@ -58,7 +58,7 @@ jobs:
           show-progress: false
       - uses: oven-sh/setup-bun@v2
       - name: Restore node_modules
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         with:
           path: node_modules
           key: modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
@@ -89,7 +89,7 @@ jobs:
           show-progress: false
       - uses: oven-sh/setup-bun@v2
       - name: Restore node_modules
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         with:
           path: node_modules
           key: modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
@@ -106,7 +106,7 @@ jobs:
           show-progress: false
       - uses: oven-sh/setup-bun@v2
       - name: Restore node_modules
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         with:
           path: node_modules
           key: modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
@@ -116,7 +116,7 @@ jobs:
       # incremental cache. Hashing src/** would invalidate on every commit and
       # defeat the purpose.
       - name: Cache Next.js build
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: .next/cache
           key: nextjs-${{ runner.os }}-${{ hashFiles('bun.lock', 'next.config.*', 'tsconfig.json') }}-${{ github.sha }}
@@ -171,7 +171,7 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - name: Restore node_modules
         id: cache
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         with:
           path: node_modules
           key: modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
