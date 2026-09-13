@@ -98,7 +98,7 @@ export function SearchInput({
           placeholder={placeholder}
           value={query}
           onChange={(e) => onChange(e.target.value)}
-          className="border-editorial-line bg-editorial-3 pl-9 text-white placeholder:text-editorial-muted focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-[rgba(var(--accent-rgb,var(--neon-primary)),0.5)]"
+          className="border-editorial-line bg-editorial-3 pl-9 text-white placeholder:text-editorial-muted hover:border-editorial-line focus-visible:border-[rgba(var(--accent-rgb,var(--neon-primary)),0.5)] focus-visible:outline-none! focus-visible:ring-0 focus-visible:ring-offset-0"
         />
       </div>
 
