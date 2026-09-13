@@ -148,7 +148,7 @@ export function CollectionForm({
           loading={isSubmitting}
           loadingText={t("submitting")}
           disabled={!form.formState.isDirty}
-          className="border border-[rgba(var(--accent-rgb,var(--neon-primary)),0.5)] bg-[rgba(var(--accent-rgb,var(--neon-primary)),0.15)] text-[rgb(var(--accent-rgb,var(--neon-primary)))] shadow-none hover:bg-[rgba(var(--accent-rgb,var(--neon-primary)),0.25)]"
+          className="border border-[rgba(var(--accent-rgb,var(--neon-primary)),0.5)] bg-[rgba(var(--accent-rgb,var(--neon-primary)),0.15)] text-[rgb(var(--accent-rgb,var(--neon-primary)))] shadow-none hover:border-[rgb(var(--accent-rgb,var(--neon-primary)))] hover:bg-[rgb(var(--accent-rgb,var(--neon-primary)))] hover:text-white"
         >
           {mode === "create" ? t("submit") : t("submitEdit")}
         </LoadingButton>
