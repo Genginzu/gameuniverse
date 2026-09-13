@@ -20,14 +20,14 @@ jobs:
     name: Install
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           show-progress: false
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
 
       - name: Cache node_modules
-        uses: actions/cache/save@v5
+        uses: actions/cache/save@v6
         with:
           path: node_modules
           key: modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
@@ -37,12 +37,12 @@ jobs:
     needs: [install]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           show-progress: false
       - uses: oven-sh/setup-bun@v2
       - name: Restore node_modules
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         with:
           path: node_modules
           key: modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
@@ -53,12 +53,12 @@ jobs:
     needs: [install]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           show-progress: false
       - uses: oven-sh/setup-bun@v2
       - name: Restore node_modules
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         with:
           path: node_modules
           key: modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
@@ -84,12 +84,12 @@ jobs:
           - shard: scripts
             path: scripts/__tests__/
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           show-progress: false
       - uses: oven-sh/setup-bun@v2
       - name: Restore node_modules
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         with:
           path: node_modules
           key: modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
@@ -101,12 +101,12 @@ jobs:
     needs: [install]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           show-progress: false
       - uses: oven-sh/setup-bun@v2
       - name: Restore node_modules
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         with:
           path: node_modules
           key: modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
@@ -116,7 +116,7 @@ jobs:
       # incremental cache. Hashing src/** would invalidate on every commit and
       # defeat the purpose.
       - name: Cache Next.js build
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: .next/cache
           key: nextjs-${{ runner.os }}-${{ hashFiles('bun.lock', 'next.config.*', 'tsconfig.json') }}-${{ github.sha }}
@@ -131,7 +131,7 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         with:
           name: nextjs-build
           path: .next/
@@ -151,7 +151,7 @@ jobs:
     steps:
       # Sparse checkout: E2E only needs test/e2e + Playwright/build config files,
       # not the entire src/ tree. Cuts checkout from ~57s to a few seconds.
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           show-progress: false
           sparse-checkout: |
@@ -171,7 +171,7 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - name: Restore node_modules
         id: cache
-        uses: actions/cache/restore@v5
+        uses: actions/cache/restore@v6
         with:
           path: node_modules
           key: modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
@@ -179,7 +179,7 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Download build artifact
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v8
         with:
           name: nextjs-build
           path: .next/
@@ -192,7 +192,7 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
 
       - name: Upload Playwright Report
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         if: ${{ !cancelled() }}
         with:
           name: playwright-report-${{ matrix.shard }}
