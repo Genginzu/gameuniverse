@@ -4,6 +4,7 @@
       "main": false
     }
   },
+  "buildCommand": "node node_modules/.bin/next build",
   "crons": [
     {
       "path": "/api/cron/sync-libraries",
