@@ -107,7 +107,7 @@ export function LibraryEditorial({ locale = "fr" }: LibraryEditorialProps) {
               value={
                 <>
                   {stats.totalPlayTime}
-                  <Suffix>h</Suffix>
+                  <Suffix className="ml-0.5">h</Suffix>
                 </>
               }
             />
@@ -212,8 +212,8 @@ export function LibraryEditorial({ locale = "fr" }: LibraryEditorialProps) {
   );
 }
 
-function Suffix({ children }: { children: ReactNode }) {
-  return <span className="text-sm font-light text-white/40">{children}</span>;
+function Suffix({ children, className }: { children: ReactNode; className?: string }) {
+  return <span className={`text-sm font-light text-white/40 ${className ?? ""}`}>{children}</span>;
 }
 
 function Stat({ label, value, accent }: { label: string; value: ReactNode; accent?: boolean }) {
