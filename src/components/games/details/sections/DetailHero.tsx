@@ -10,6 +10,7 @@
  */
 
 import Image from "next/image";
+import { useState } from "react";
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 import { LazyImage } from "@/components/ui/lazy-image";
@@ -26,6 +27,7 @@ interface DetailHeroProps {
 export function DetailHero({ game, formatPrice }: DetailHeroProps) {
   const t = useTranslations();
   const tEd = useTranslations("gameDetails.editorial");
+  const [libraryHovered, setLibraryHovered] = useState(false);
   const { inLibrary, loading, adding, addToLibrary, removeFromLibrary } = useGameLibraryStatus(
     game.id
   );
@@ -124,19 +126,31 @@ export function DetailHero({ game, formatPrice }: DetailHeroProps) {
                 <button
                   type="button"
                   onClick={handleLibraryToggle}
+                  onMouseEnter={() => setLibraryHovered(true)}
+                  onMouseLeave={() => setLibraryHovered(false)}
+                  onFocus={() => setLibraryHovered(true)}
+                  onBlur={() => setLibraryHovered(false)}
                   disabled={isProcessing}
-                  className={`editorial-game-detail-cta-ghost${inLibrary ? " is-active" : ""}`}
+                  className={`editorial-game-detail-cta-ghost${
+                    inLibrary ? (libraryHovered ? " is-remove" : " is-active") : ""
+                  }`}
                   aria-pressed={inLibrary}
                 >
                   {isProcessing ? (
                     <Icon icon="svg-spinners:ring-resize" className="h-4 w-4" />
-                  ) : (
+                  ) : inLibrary ? (
                     <Icon
-                      icon="lucide:heart"
-                      className={`h-4 w-4 ${inLibrary ? "fill-current" : ""}`}
+                      icon={libraryHovered ? "lucide:x" : "lucide:heart"}
+                      className={`h-4 w-4 ${libraryHovered ? "" : "fill-current"}`}
                     />
+                  ) : (
+                    <Icon icon="lucide:plus" className="h-4 w-4" />
                   )}
-                  {inLibrary ? tEd("libraryIn") : tEd("libraryAdd")}
+                  {inLibrary
+                    ? libraryHovered
+                      ? tEd("libraryRemove")
+                      : tEd("libraryIn")
+                    : tEd("libraryAdd")}
                 </button>
 
                 <button type="button" className="editorial-game-detail-cta-ghost">

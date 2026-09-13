@@ -305,6 +305,13 @@
   background: rgba(var(--accent-rgb, var(--neon-primary)), 0.22);
 }
 
+/* Remove intent on hover when the game is already in the library */
+.editorial-game-detail-cta-ghost.is-remove {
+  border-color: rgba(239, 68, 68, 0.6);
+  background: rgba(239, 68, 68, 0.16);
+  color: rgb(252, 165, 165);
+}
+
 /* Hero stats inline */
 .editorial-game-detail-hero-stats {
   display: flex;
