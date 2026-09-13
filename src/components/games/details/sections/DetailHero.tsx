@@ -125,7 +125,7 @@ export function DetailHero({ game, formatPrice }: DetailHeroProps) {
                   type="button"
                   onClick={handleLibraryToggle}
                   disabled={isProcessing}
-                  className="editorial-game-detail-cta"
+                  className="editorial-game-detail-cta-ghost"
                   aria-pressed={inLibrary}
                 >
                   {isProcessing ? (
