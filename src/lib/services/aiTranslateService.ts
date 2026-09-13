@@ -76,7 +76,7 @@ export async function translateFields(params: {
     const { output } = await generateText({
       model: "openai/gpt-5.4-nano",
       output: Output.object({ schema }),
-      system: systemPrompt,
+      instructions: systemPrompt,
       prompt: userPrompt,
       abortSignal: controller.signal,
     });
