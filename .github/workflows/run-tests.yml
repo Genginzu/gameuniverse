@@ -38,7 +38,7 @@ jobs:
           - shard: scripts
             path: scripts/__tests__/
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           ref: ${{ inputs.branch }}
       - uses: oven-sh/setup-bun@v2
@@ -56,7 +56,7 @@ jobs:
     container:
       image: mcr.microsoft.com/playwright:v1.63.0-noble
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           ref: ${{ inputs.branch }}
 
@@ -80,7 +80,7 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
 
       - name: Upload Playwright Report
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v7
         if: ${{ !cancelled() }}
         with:
           name: playwright-report-${{ matrix.shard }}
