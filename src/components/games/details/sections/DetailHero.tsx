@@ -138,10 +138,10 @@ export function DetailHero({ game, formatPrice }: DetailHeroProps) {
                 >
                   {isProcessing ? (
                     <Icon icon="svg-spinners:ring-resize" className="h-4 w-4" />
-                  ) : inLibrary ? (
-                    <Icon icon="lucide:heart" className="h-4 w-4 fill-current" />
+                  ) : inLibrary && libraryHovered ? (
+                    <Icon icon="lucide:x" className="h-4 w-4" />
                   ) : (
-                    <Icon icon="lucide:heart" className="h-4 w-4" />
+                    <Icon icon="lucide:heart" className="h-4 w-4 fill-current" />
                   )}
                   {inLibrary
                     ? libraryHovered
