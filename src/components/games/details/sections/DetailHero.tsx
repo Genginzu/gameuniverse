@@ -125,7 +125,7 @@ export function DetailHero({ game, formatPrice }: DetailHeroProps) {
                   type="button"
                   onClick={handleLibraryToggle}
                   disabled={isProcessing}
-                  className="editorial-game-detail-cta-ghost"
+                  className={`editorial-game-detail-cta-ghost${inLibrary ? " is-active" : ""}`}
                   aria-pressed={inLibrary}
                 >
                   {isProcessing ? (
@@ -136,7 +136,7 @@ export function DetailHero({ game, formatPrice }: DetailHeroProps) {
                       className={`h-4 w-4 ${inLibrary ? "fill-current" : ""}`}
                     />
                   )}
-                  {inLibrary ? t("game.removeFromLibrary") : t("game.addToLibrary")}
+                  {inLibrary ? tEd("libraryIn") : tEd("libraryAdd")}
                 </button>
 
                 <button type="button" className="editorial-game-detail-cta-ghost">

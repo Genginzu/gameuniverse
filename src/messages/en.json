@@ -1359,6 +1359,8 @@
     "editorial": {
       "heroPlatformsCount": "{count} platforms",
       "heroPlatformsOne": "1 platform",
+      "libraryAdd": "Add to library",
+      "libraryIn": "In my library",
       "liveTicker": "{players} playing now · {streams} streams · {tournaments} tournaments this week",
       "score": "Score",
       "from": "From",

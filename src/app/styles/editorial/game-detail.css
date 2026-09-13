@@ -293,6 +293,18 @@
   border-color: rgba(255, 255, 255, 0.18);
 }
 
+/* Active state (e.g. game already in library) — accent-tinted */
+.editorial-game-detail-cta-ghost.is-active {
+  border-color: rgba(var(--accent-rgb, var(--neon-primary)), 0.55);
+  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.14);
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+}
+
+.editorial-game-detail-cta-ghost.is-active:hover {
+  border-color: rgba(var(--accent-rgb, var(--neon-primary)), 0.8);
+  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.22);
+}
+
 /* Hero stats inline */
 .editorial-game-detail-hero-stats {
   display: flex;
