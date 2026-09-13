@@ -56,15 +56,17 @@ export function CollectionGameCardEditorial({ item, onRemove }: CollectionGameCa
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 14vw"
             showSkeleton
           />
+          {item.note && (
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-2.5 pt-8 opacity-0 transition-opacity duration-200 group-hover/card:opacity-100 group-focus-within/card:opacity-100">
+              <p className="text-editorial-accent text-[0.7rem] font-medium italic line-clamp-3">
+                {item.note}
+              </p>
+            </div>
+          )}
         </div>
         <h3 className="px-0.5 text-sm leading-tight font-semibold text-white line-clamp-2">
           {item.title}
         </h3>
-        {item.note && (
-          <p className="text-editorial-accent px-0.5 text-[0.7rem] font-medium italic line-clamp-1">
-            {item.note}
-          </p>
-        )}
       </Link>
 
       {onRemove && (
