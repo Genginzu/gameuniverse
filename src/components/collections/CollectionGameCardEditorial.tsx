@@ -73,8 +73,12 @@ export function CollectionGameCardEditorial({
             showSkeleton
           />
           {item.note && (
-            <div className="absolute inset-0 flex flex-col justify-end opacity-0 transition-opacity duration-200 group-hover/card:opacity-100 group-focus-within/card:opacity-100">
-              <div className="pointer-events-auto max-h-full overflow-y-auto bg-gradient-to-t from-black/95 via-black/85 to-black/50 p-2.5 pt-10">
+            <div className="absolute inset-0 opacity-0 transition-opacity duration-200 group-hover/card:opacity-100 group-focus-within/card:opacity-100">
+              <div
+                className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/95 via-black/75 to-transparent"
+                aria-hidden="true"
+              />
+              <div className="pointer-events-auto absolute inset-x-0 bottom-0 max-h-full overflow-y-auto p-2.5">
                 <p className="text-editorial-accent text-[0.7rem] font-medium italic">
                   {item.note}
                 </p>
