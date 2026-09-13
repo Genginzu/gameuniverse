@@ -71,9 +71,9 @@ export function CollectionDetailDialogs({
   return (
     <>
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
-        <DialogContent>
+        <DialogContent className="border-editorial-line bg-editorial-2 text-white">
           <DialogHeader>
-            <DialogTitle>{tPage("editCollection")}</DialogTitle>
+            <DialogTitle className="font-display text-white">{tPage("editCollection")}</DialogTitle>
           </DialogHeader>
           <CollectionForm
             mode="edit"

@@ -87,9 +87,9 @@ export function PlayerCollectionsFeed({ playerId, locale, isOwner }: PlayerColle
       {/* Create dialog */}
       {isOwner && (
         <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-          <DialogContent>
+          <DialogContent className="border-editorial-line bg-editorial-2 text-white">
             <DialogHeader>
-              <DialogTitle>{t("createButton")}</DialogTitle>
+              <DialogTitle className="font-display text-white">{t("createButton")}</DialogTitle>
             </DialogHeader>
             <CollectionForm mode="create" onSubmit={handleCreate} isSubmitting={isCreating} />
           </DialogContent>

@@ -139,9 +139,9 @@ export function CollectionsEditorial() {
 
         {/* Create dialog */}
         <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-          <DialogContent>
+          <DialogContent className="border-editorial-line bg-editorial-2 text-white">
             <DialogHeader>
-              <DialogTitle>{tPage("createButton")}</DialogTitle>
+              <DialogTitle className="font-display text-white">{tPage("createButton")}</DialogTitle>
             </DialogHeader>
             <CollectionForm mode="create" onSubmit={handleCreate} isSubmitting={isCreating} />
           </DialogContent>
