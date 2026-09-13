@@ -20,7 +20,7 @@ jobs:
     name: Install
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           show-progress: false
       - uses: oven-sh/setup-bun@v2
@@ -37,7 +37,7 @@ jobs:
     needs: [install]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           show-progress: false
       - uses: oven-sh/setup-bun@v2
@@ -53,7 +53,7 @@ jobs:
     needs: [install]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           show-progress: false
       - uses: oven-sh/setup-bun@v2
@@ -84,7 +84,7 @@ jobs:
           - shard: scripts
             path: scripts/__tests__/
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           show-progress: false
       - uses: oven-sh/setup-bun@v2
@@ -101,7 +101,7 @@ jobs:
     needs: [install]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           show-progress: false
       - uses: oven-sh/setup-bun@v2
@@ -151,7 +151,7 @@ jobs:
     steps:
       # Sparse checkout: E2E only needs test/e2e + Playwright/build config files,
       # not the entire src/ tree. Cuts checkout from ~57s to a few seconds.
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           show-progress: false
           sparse-checkout: |

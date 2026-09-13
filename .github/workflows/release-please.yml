@@ -40,7 +40,7 @@ jobs:
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     steps:
       # Déploie l'exact contenu du tag créé par la release, pas le HEAD de main.
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           ref: ${{ needs.release-please.outputs.tag_name }}
           show-progress: false
