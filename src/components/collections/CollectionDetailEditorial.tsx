@@ -163,6 +163,8 @@ export function CollectionDetailEditorial({ slug, locale }: CollectionDetailEdit
       await removeItem(slug, itemToRemove.gameId);
       toast({ title: t("removeItem.successToast") });
       setItemToRemove(null);
+    } catch {
+      toast({ title: t("removeItem.errorToast"), variant: "destructive" });
     } finally {
       setIsRemovingItem(false);
     }
