@@ -157,14 +157,6 @@ export function DetailHero({ game, formatPrice }: DetailHeroProps) {
               </div>
 
               <div className="editorial-game-detail-hero-stats">
-                {game.metascore && game.metascore > 0 && (
-                  <HeroStat
-                    label={tEd("score")}
-                    value={String(game.metascore)}
-                    suffix="/100"
-                    accent
-                  />
-                )}
                 {cheapest && (
                   <HeroStat
                     label={tEd("from")}
