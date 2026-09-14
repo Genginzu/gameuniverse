@@ -80,6 +80,8 @@ interface SearchOverlayResultsProps {
    * to do (typically: persist the query in recent searches and navigate).
    */
   onSelect: (item: FlatSearchItem) => void;
+  /** ID of an IGDB game currently being imported (shows a spinner). */
+  importingId?: string | null;
 }
 
 export function SearchOverlayResults({
@@ -87,6 +89,7 @@ export function SearchOverlayResults({
   activeIndex,
   query,
   onSelect,
+  importingId,
 }: SearchOverlayResultsProps) {
   const t = useTranslations("globalSearch.overlay");
 
@@ -130,6 +133,7 @@ export function SearchOverlayResults({
           activeIndex={activeIndex}
           query={query}
           onSelect={onSelect}
+          importingId={importingId}
         />
       ))}
     </ul>
@@ -148,6 +152,7 @@ interface SearchOverlayGroupProps {
   activeIndex: number;
   query: string;
   onSelect: (item: FlatSearchItem) => void;
+  importingId?: string | null;
 }
 
 export function SearchOverlayGroup({
@@ -157,6 +162,7 @@ export function SearchOverlayGroup({
   activeIndex,
   query,
   onSelect,
+  importingId,
 }: SearchOverlayGroupProps) {
   const t = useTranslations("globalSearch.overlay");
   const tGroups = useTranslations("globalSearch.overlay.groups");
@@ -179,6 +185,7 @@ export function SearchOverlayGroup({
             index={startIndex + i}
             active={startIndex + i === activeIndex}
             onSelect={() => onSelect(item)}
+            importing={item.type === "game" && importingId === item.id}
           />
         ))}
       </ul>

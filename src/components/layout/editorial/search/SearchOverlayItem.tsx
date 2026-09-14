@@ -23,9 +23,11 @@ interface SearchOverlayItemProps {
   index: number;
   /** Appelé au clic ou à l'activation clavier (Enter). */
   onSelect: () => void;
+  /** True pendant l'import d'un jeu IGDB (clic → import → navigation). */
+  importing?: boolean;
 }
 
-export function SearchOverlayItem({ item, active, index, onSelect }: SearchOverlayItemProps) {
+export function SearchOverlayItem({ item, active, index, onSelect, importing }: SearchOverlayItemProps) {
   // Stagger fade-in : on plafonne `--i` à 8 pour que les items plus loin
   // apparaissent immédiatement (évite un délai cumulé excessif sur les
   // longs résultats).
@@ -36,12 +38,20 @@ export function SearchOverlayItem({ item, active, index, onSelect }: SearchOverl
       role="option"
       id={`search-option-${index}`}
       aria-selected={active}
-      onClick={onSelect}
-      className={`search-overlay-item ${active ? "is-active" : ""}`.trim()}
+      aria-busy={importing || undefined}
+      onClick={importing ? undefined : onSelect}
+      className={`search-overlay-item ${active ? "is-active" : ""} ${importing ? "is-importing" : ""}`.trim()}
       data-type={item.type}
       style={{ "--stagger-index": staggerIndex } as React.CSSProperties}
     >
       {renderItemContent(item)}
+      {importing && (
+        <Icon
+          icon="lucide:loader-2"
+          className="search-overlay-item-importing-spinner size-4 animate-spin"
+          aria-hidden
+        />
+      )}
     </li>
   );
 }

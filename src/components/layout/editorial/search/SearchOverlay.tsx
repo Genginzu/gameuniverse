@@ -70,6 +70,9 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   // from localStorage on mount.
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
 
+  // ID of the IGDB game currently being imported (click → import → navigate).
+  const [importingId, setImportingId] = useState<string | null>(null);
+
   // Hydrate recent searches when the overlay opens (avoids stale data
   // from a different tab session).
   useEffect(() => {
@@ -123,9 +126,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   // Selection
   // ----------------------------------------------------------------------
 
-  const persistAndNavigate = (item: FlatSearchItem) => {
-    const url = getResultUrl(item);
-    if (!url) return; // IGDB game without local import — ignored for now
+  const persistAndNavigate = (url: string) => {
     if (query.trim().length >= MIN_QUERY_LENGTH) {
       addRecentSearch(query);
     }
@@ -133,8 +134,34 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     router.push(url);
   };
 
-  const handleItemSelect = (item: FlatSearchItem) => {
-    persistAndNavigate(item);
+  const handleItemSelect = async (item: FlatSearchItem) => {
+    const url = getResultUrl(item);
+    if (url) {
+      persistAndNavigate(url);
+      return;
+    }
+
+    // IGDB game not yet imported locally: import on click, then navigate to
+    // its freshly created local page. Without this, the item click is a no-op.
+    if (item.type === "game" && item.source === "igdb" && item.igdbId) {
+      if (importingId) return; // an import is already in flight
+      setImportingId(item.id);
+      try {
+        const res = await fetch("/api/games/import", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ igdbId: item.igdbId }),
+        });
+        const data = await res.json();
+        setImportingId(null);
+        if (!res.ok) return;
+        if (data.game?.slug) {
+          persistAndNavigate(`/games/${data.game.slug}`);
+        }
+      } catch {
+        setImportingId(null);
+      }
+    }
   };
 
   // ----------------------------------------------------------------------
@@ -147,19 +174,22 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
       onClose();
       return;
     }
-    // Forward ↑↓/Enter to the hook (uses flatItems to compute next index)
-    hookHandleKeyDown(event);
-    // If Enter was pressed and the hook navigated us, hookHandleKeyDown will
-    // have set isOpen=false. We can't easily intercept that here; instead
-    // we add our own Enter handler when no item is active to also persist
-    // the query into recent searches even without selection.
-    if (
-      event.key === "Enter" &&
-      activeIndex < 0 &&
-      query.trim().length >= MIN_QUERY_LENGTH
-    ) {
-      addRecentSearch(query);
+
+    // Enter: select the active item ourselves so IGDB games get imported
+    // (the hook's own Enter handler no-ops on items without a direct URL).
+    if (event.key === "Enter") {
+      event.preventDefault();
+      const item = flatItems[activeIndex];
+      if (item) {
+        void handleItemSelect(item);
+      } else if (query.trim().length >= MIN_QUERY_LENGTH) {
+        addRecentSearch(query);
+      }
+      return;
     }
+
+    // Forward ↑↓ to the hook (uses flatItems to compute next index)
+    hookHandleKeyDown(event);
   };
 
   // ----------------------------------------------------------------------
@@ -272,6 +302,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
               activeIndex={activeIndex}
               query={query}
               onSelect={handleItemSelect}
+              importingId={importingId}
             />
           ) : isSearching ? (
             <div className="search-overlay-searching" role="status" aria-live="polite">
