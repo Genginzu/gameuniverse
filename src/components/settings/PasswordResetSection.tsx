@@ -23,11 +23,9 @@ export function PasswordResetSection({
   return (
     <div className="space-y-4">
       <div>
-        <label className="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
-          {t("password")}
-        </label>
-        <p className="mb-4 text-sm text-gray-600 dark:text-gray-400">{t("passwordDescription")}</p>
-        <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">{userEmail}</p>
+        <label className="mb-2 block text-sm font-medium text-white/85">{t("password")}</label>
+        <p className="text-editorial-muted mb-4 text-sm">{t("passwordDescription")}</p>
+        <p className="text-editorial-muted mb-4 text-sm">{userEmail}</p>
       </div>
       <LoadingButton
         type="button"
@@ -35,6 +33,7 @@ export function PasswordResetSection({
         loading={isLoading}
         loadingText={t("requestReset")}
         variant="outline"
+        className="border-editorial-line bg-editorial-2 hover:border-editorial-accent hover:bg-editorial-3 hover:text-editorial-accent text-white/90"
       >
         {t("requestReset")}
       </LoadingButton>

@@ -41,15 +41,10 @@ export function SuggestionsBanner({
   if (suggestions.length === 0) return null;
 
   return (
-    <div className="border-palette-secondary-200/60 bg-palette-secondary-50/70 dark:border-palette-secondary-900/40 dark:bg-palette-secondary-900/20 flex flex-col gap-2 rounded-xl border p-3 backdrop-blur-xl">
+    <div className="border-editorial-accent/20 bg-editorial-accent/8 flex flex-col gap-2 rounded-xl border p-3">
       <div className="flex items-center gap-2">
-        <Icon
-          icon="lucide:sparkles"
-          className="text-palette-secondary-600 dark:text-palette-secondary-400 h-4 w-4"
-        />
-        <p className="text-palette-secondary-900 dark:text-palette-secondary-100 text-sm">
-          {t("suggestionsTitle")}
-        </p>
+        <Icon icon="lucide:sparkles" className="text-editorial-accent h-4 w-4" />
+        <p className="text-editorial-accent text-sm">{t("suggestionsTitle")}</p>
       </div>
       <div className="flex flex-wrap gap-2">
         {suggestions.map((s) => {
@@ -58,16 +53,16 @@ export function SuggestionsBanner({
           return (
             <div
               key={s.platform}
-              className="flex items-center gap-2 rounded-lg bg-white/70 px-3 py-1.5 text-sm shadow-sm dark:bg-slate-800/50"
+              className="border-editorial-line bg-editorial-3 flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm"
             >
               <Icon icon={meta.icon} className={`h-4 w-4 ${meta.color}`} />
-              <span className="font-medium">{t(`names.${s.platform}`)}</span>
-              <span className="text-gray-500 dark:text-gray-400">({s.username})</span>
+              <span className="font-medium text-white">{t(`names.${s.platform}`)}</span>
+              <span className="text-editorial-muted">({s.username})</span>
               {oauthRoute ? (
                 <Button
                   size="sm"
                   variant="ghost"
-                  className="h-7 px-2 text-xs"
+                  className="hover:bg-editorial-accent/12 hover:text-editorial-accent h-7 px-2 text-xs text-white/70"
                   onClick={() => {
                     window.location.href = oauthRoute;
                   }}

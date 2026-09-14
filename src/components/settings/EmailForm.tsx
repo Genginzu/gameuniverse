@@ -22,6 +22,9 @@ export const emailSchema = z.object({
 
 export type EmailFormValues = z.infer<typeof emailSchema>;
 
+const editorialInputClass =
+  "h-11 rounded-[10px] border-editorial-line bg-editorial-2 text-white transition-colors placeholder:text-editorial-muted hover:border-white/20 focus-visible:border-editorial-accent focus-visible:ring-2 focus-visible:ring-editorial-accent/15 focus-visible:ring-offset-0";
+
 interface EmailFormProps {
   currentEmail: string;
   onUpdate: (email: string) => Promise<void>;
@@ -59,15 +62,13 @@ export function EmailForm({ currentEmail, onUpdate, isLoading }: EmailFormProps)
           name="email"
           render={({ field, fieldState }) => (
             <FormItem>
-              <FormLabel className="text-sm font-medium text-gray-900 dark:text-white">
-                {t("email")}
-              </FormLabel>
+              <FormLabel className="text-sm font-medium text-white/85">{t("email")}</FormLabel>
               <FormControl>
                 <Input
                   type="email"
                   placeholder={t("emailPlaceholder")}
                   {...field}
-                  className={fieldState.error ? "border-red-500" : ""}
+                  className={`${editorialInputClass} ${fieldState.error ? "border-red-500" : ""}`}
                 />
               </FormControl>
               {fieldState.error && (

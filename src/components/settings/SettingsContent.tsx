@@ -26,8 +26,9 @@ import { LinkedPlatformsSection } from "./LinkedPlatformsSection";
  * sombres avec icône + kicker + titre + description.
  *
  * Conserve toute la logique métier intacte — seules les surfaces visuelles
- * passent en mode éditorial. Les forms (UsernameForm, EmailForm, etc.) sont
- * réutilisés tels quels et héritent du theming via `.editorial-settings-section-body`.
+ * passent en mode éditorial. Les forms (UsernameForm, EmailForm, etc.) et la
+ * LinkedPlatformsSection sont stylés en Tailwind inline (surfaces sombres,
+ * tokens éditoriaux), sans dépendre d'un module CSS de theming descendant.
  */
 export function SettingsContent() {
   const t = useTranslations("settings");
@@ -125,7 +126,7 @@ export function SettingsContent() {
     <section className="w-full px-4 pt-6 pb-16 md:px-6 md:pt-8 md:pb-20">
       <header className="border-editorial-line mb-10 border-b pb-8">
         <KickerLabel>{tEditorial("kicker")}</KickerLabel>
-        <h1 className="mt-2 font-display text-[clamp(1.5rem,2.5vw+0.5rem,2.25rem)] leading-tight font-bold tracking-tight text-white">
+        <h1 className="font-display mt-2 text-[clamp(1.5rem,2.5vw+0.5rem,2.25rem)] leading-tight font-bold tracking-tight text-white">
           {tEditorial("titlePrefix")}{" "}
           <span className="text-editorial-accent">{tEditorial("titleAccent")}</span>
         </h1>
@@ -214,13 +215,13 @@ function SettingsSection({
           <Icon icon={icon} className="h-5 w-5" />
         </div>
         <div className="min-w-0 flex-1">
-          <h2 className="mt-1.5 font-display text-lg font-bold tracking-tight text-white">
+          <h2 className="font-display mt-1.5 text-lg font-bold tracking-tight text-white">
             {title}
           </h2>
           <p className="text-editorial-muted mt-1.5 text-sm leading-normal">{description}</p>
         </div>
       </header>
-      <div className="editorial-settings-section-body p-6 md:px-8 md:pt-7 md:pb-8">{children}</div>
+      <div className="p-6 md:px-8 md:pt-7 md:pb-8">{children}</div>
     </section>
   );
 }
