@@ -612,6 +612,36 @@
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
+/*
+ * Badge « pas encore importé » pour les jeux absents de la base locale.
+ * Bleu vif (--neon-primary) pour rester visible quel que soit l'accent
+ * dynamique de la page.
+ */
+.search-overlay-item-badge {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: rgb(var(--neon-primary));
+  background: rgba(var(--neon-primary), 0.14);
+  border: 1px solid rgba(var(--neon-primary), 0.35);
+}
+
+/* Spinner d'import : bleu vif, forcé indépendamment de l'accent courant. */
+.search-overlay-item-importing-spinner {
+  flex-shrink: 0;
+  color: rgb(var(--neon-primary));
+}
+
+.search-overlay-item.is-importing {
+  cursor: wait;
+  opacity: 0.7;
+}
+
 /* See all link — CTA en bas de chaque groupe. */
 .search-overlay-see-all {
   display: inline-flex;

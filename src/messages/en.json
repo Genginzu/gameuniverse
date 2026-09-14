@@ -3283,6 +3283,7 @@
       "loading": "Searching…",
       "noResults": "No results for “{query}”",
       "noResultsHint": "Try different keywords.",
+      "notImported": "Not imported yet",
       "groups": {
         "games": "Games",
         "characters": "Characters",

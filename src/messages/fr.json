@@ -3286,6 +3286,7 @@
       "loading": "Recherche en cours…",
       "noResults": "Aucun résultat pour « {query} »",
       "noResultsHint": "Essayez avec d'autres mots-clés.",
+      "notImported": "Pas encore importé",
       "groups": {
         "games": "Jeux",
         "characters": "Personnages",

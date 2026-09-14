@@ -12,6 +12,7 @@
  */
 
 import { Icon } from "@iconify/react";
+import { useTranslations } from "next-intl";
 
 import type { FlatSearchItem } from "@/lib/utils/global-search-utils";
 
@@ -28,10 +29,15 @@ interface SearchOverlayItemProps {
 }
 
 export function SearchOverlayItem({ item, active, index, onSelect, importing }: SearchOverlayItemProps) {
+  const t = useTranslations("globalSearch.overlay");
   // Stagger fade-in : on plafonne `--i` à 8 pour que les items plus loin
   // apparaissent immédiatement (évite un délai cumulé excessif sur les
   // longs résultats).
   const staggerIndex = Math.min(index, 8);
+
+  // Jeu pas encore présent en base locale : on l'indique discrètement sans
+  // exposer le terme technique « IGDB ». Le clic lance l'import (spinner).
+  const notImported = item.type === "game" && item.source === "igdb";
 
   return (
     <li
@@ -45,6 +51,9 @@ export function SearchOverlayItem({ item, active, index, onSelect, importing }: 
       style={{ "--stagger-index": staggerIndex } as React.CSSProperties}
     >
       {renderItemContent(item)}
+      {notImported && !importing && (
+        <span className="search-overlay-item-badge">{t("notImported")}</span>
+      )}
       {importing && (
         <Icon
           icon="lucide:loader-2"
