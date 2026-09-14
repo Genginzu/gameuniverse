@@ -607,6 +607,8 @@
 
 .search-overlay-item-meta {
   flex-shrink: 0;
+  /* Passe après l'icône d'import / le spinner (rendus après dans le DOM). */
+  order: 1;
   font-size: 0.75rem;
   color: var(--editorial-muted);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
