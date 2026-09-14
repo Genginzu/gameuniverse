@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLinkedPlatforms } from "@/hooks/useLinkedPlatforms";
 import { useToast } from "@/hooks/use-toast";
 import { GAMING_PLATFORMS, PLATFORM_META, type GamingPlatform } from "@/types/linked-platforms";
@@ -49,10 +48,7 @@ export function LinkedPlatformsSection() {
       const title = code
         ? t(
             `errors.${code}` as
-              | "errors.empty"
-              | "errors.format"
-              | "errors.not_found"
-              | "errors.unreachable"
+              "errors.empty" | "errors.format" | "errors.not_found" | "errors.unreachable"
           )
         : tErrors("updateFailed");
       toast({ title, variant: "destructive" });
@@ -197,27 +193,20 @@ function PlatformsCard({
   children: React.ReactNode;
 }) {
   return (
-    <Card className="overflow-hidden rounded-xl bg-white/40 backdrop-blur-xl dark:bg-slate-800/50">
-      <CardHeader>
-        <div className="flex items-center">
-          <div className="bg-palette-secondary-100 dark:bg-palette-secondary-900/30 rounded-xl p-2">
-            <Icon
-              icon="lucide:gamepad-2"
-              className="text-palette-secondary-600 dark:text-palette-secondary-400 h-4 w-4 sm:h-5 sm:w-5"
-            />
-          </div>
-          <div className="ml-3">
-            <CardTitle className="text-base font-semibold text-gray-900 sm:text-lg dark:text-white">
-              {t(titleKey as "title")}
-            </CardTitle>
-            <CardDescription className="text-sm text-gray-500 dark:text-gray-400">
-              {t(descriptionKey as "description")}
-            </CardDescription>
-          </div>
+    <div className="border-editorial-line bg-editorial-2 overflow-hidden rounded-xl border">
+      <div className="flex items-center p-4">
+        <div className="bg-editorial-accent/12 rounded-xl p-2">
+          <Icon icon="lucide:gamepad-2" className="text-editorial-accent h-4 w-4 sm:h-5 sm:w-5" />
         </div>
-      </CardHeader>
-      <CardContent className="p-4 pt-0">{children}</CardContent>
-    </Card>
+        <div className="ml-3">
+          <h3 className="text-base font-semibold text-white sm:text-lg">
+            {t(titleKey as "title")}
+          </h3>
+          <p className="text-editorial-muted text-sm">{t(descriptionKey as "description")}</p>
+        </div>
+      </div>
+      <div className="p-4 pt-0">{children}</div>
+    </div>
   );
 }
 
@@ -225,10 +214,7 @@ function PlatformsSkeleton() {
   return (
     <div className="space-y-2">
       {Array.from({ length: 4 }).map((_, i) => (
-        <div
-          key={i}
-          className="h-14 animate-pulse rounded-xl bg-gray-200/50 dark:bg-slate-700/30"
-        />
+        <div key={i} className="h-14 animate-pulse rounded-xl bg-white/[0.06]" />
       ))}
     </div>
   );

@@ -26,6 +26,9 @@ export const usernameSchema = z.object({
 
 export type UsernameFormValues = z.infer<typeof usernameSchema>;
 
+const editorialInputClass =
+  "h-11 rounded-[10px] border-editorial-line bg-editorial-2 text-white transition-colors placeholder:text-editorial-muted hover:border-white/20 focus-visible:border-editorial-accent focus-visible:ring-2 focus-visible:ring-editorial-accent/15 focus-visible:ring-offset-0";
+
 interface UsernameFormProps {
   currentUsername: string | null;
   onUpdate: (username: string) => Promise<void>;
@@ -63,14 +66,12 @@ export function UsernameForm({ currentUsername, onUpdate, isLoading }: UsernameF
           name="username"
           render={({ field, fieldState }) => (
             <FormItem>
-              <FormLabel className="text-sm font-medium text-gray-900 dark:text-white">
-                {t("username")}
-              </FormLabel>
+              <FormLabel className="text-sm font-medium text-white/85">{t("username")}</FormLabel>
               <FormControl>
                 <Input
                   placeholder={t("usernamePlaceholder")}
                   {...field}
-                  className={fieldState.error ? "border-red-500" : ""}
+                  className={`${editorialInputClass} ${fieldState.error ? "border-red-500" : ""}`}
                 />
               </FormControl>
               {fieldState.error && (

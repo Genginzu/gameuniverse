@@ -39,7 +39,7 @@ export function PlatformRow(props: PlatformRowProps) {
   const meta = PLATFORM_META[platform];
 
   return (
-    <div className="flex items-center gap-3 rounded-xl bg-white/30 p-3 transition-all dark:bg-slate-700/30">
+    <div className="border-editorial-line bg-editorial-3 flex items-center gap-3 rounded-xl border p-3 transition-all">
       <PlatformIdentity platform={platform} linked={linked} t={t} />
 
       {isEditing ? (
@@ -79,9 +79,7 @@ function PlatformIdentity({
       ) : (
         <Icon icon={meta.icon} className={`h-6 w-6 shrink-0 ${meta.color}`} />
       )}
-      <span className="truncate text-sm font-medium text-gray-700 dark:text-gray-300">
-        {t(`names.${platform}`)}
-      </span>
+      <span className="truncate text-sm font-medium text-white/85">{t(`names.${platform}`)}</span>
     </div>
   );
 }
@@ -118,7 +116,7 @@ function EditingRow({
         value={editValue}
         onChange={(e) => onEditValueChange(e.target.value)}
         placeholder={placeholder}
-        className="h-9 flex-1 text-base"
+        className="border-editorial-line bg-editorial-2 placeholder:text-editorial-muted focus-visible:border-editorial-accent focus-visible:ring-editorial-accent/15 h-9 flex-1 text-base text-white transition-colors hover:border-white/20 focus-visible:ring-2 focus-visible:ring-offset-0"
         onKeyDown={(e) => e.key === "Enter" && onSave()}
         autoFocus
       />
@@ -172,7 +170,7 @@ function DisplayRow({
   return (
     <div className="flex flex-1 items-center justify-between gap-2">
       <div className="flex min-w-0 flex-col gap-0.5">
-        <span className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400">
+        <span className="text-editorial-muted flex items-center gap-1.5 text-sm">
           {isConnected ? (
             <>
               <Icon icon="lucide:check-circle" className="h-4 w-4 shrink-0 text-green-500" />
@@ -190,7 +188,7 @@ function DisplayRow({
           )}
         </span>
         {isConnected && linked?.lastSyncedAt && (
-          <span className="text-xs text-gray-400 dark:text-gray-500">
+          <span className="text-editorial-muted text-xs">
             {t("lastSyncedAt", { when: formatRelative(linked.lastSyncedAt) })}
           </span>
         )}
@@ -201,7 +199,7 @@ function DisplayRow({
             size="sm"
             variant="ghost"
             onClick={handleConnect}
-            className="min-h-[44px] min-w-[44px]"
+            className="hover:bg-editorial-accent/12 hover:text-editorial-accent min-h-[44px] min-w-[44px] text-white/70"
           >
             <Icon icon={connectIcon} className="h-4 w-4" />
           </Button>
@@ -211,7 +209,7 @@ function DisplayRow({
             size="sm"
             variant="ghost"
             onClick={onStartEdit}
-            className="min-h-[44px] min-w-[44px]"
+            className="hover:bg-editorial-accent/12 hover:text-editorial-accent min-h-[44px] min-w-[44px] text-white/70"
           >
             <Icon icon="lucide:pencil" className="h-4 w-4" />
           </Button>
@@ -222,7 +220,7 @@ function DisplayRow({
             variant="ghost"
             onClick={() => onSyncLibrary(platform)}
             disabled={syncing || saving}
-            className="min-h-[44px] min-w-[44px]"
+            className="hover:bg-editorial-accent/12 hover:text-editorial-accent min-h-[44px] min-w-[44px] text-white/70"
             title={t("syncLibrary")}
           >
             <Icon
@@ -237,7 +235,7 @@ function DisplayRow({
             variant="ghost"
             onClick={onToggleVisibility}
             disabled={saving}
-            className="min-h-[44px] min-w-[44px]"
+            className="hover:bg-editorial-accent/12 hover:text-editorial-accent min-h-[44px] min-w-[44px] text-white/70"
             title={linked?.isPublic ? t("makePrivate") : t("makePublic")}
           >
             <Icon icon={linked?.isPublic ? "lucide:eye" : "lucide:eye-off"} className="h-4 w-4" />
