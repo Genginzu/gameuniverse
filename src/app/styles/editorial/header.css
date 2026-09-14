@@ -319,7 +319,9 @@
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 2rem;
   max-width: 1536px;
-  margin: 0 auto;
+  /* Aligné à gauche (comme la barre) plutôt que centré : évite le décalage
+   * vers la droite du contenu sur les écrans larges. */
+  margin: 0;
   padding: 1.5rem 2rem;
 }
 
