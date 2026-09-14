@@ -96,17 +96,13 @@ test.describe("Navigation, routing i18n & responsive — #48", () => {
       }
     });
 
-    test("should render the home page (footer optional on editorial layout)", async ({ page }) => {
+    test("should have a footer on the home page", async ({ page }) => {
       await page.goto("/fr");
       await page.waitForLoadState("domcontentloaded");
 
-      // Le shell éditorial public ne rend pas le Footer legacy (glass), et la
-      // home hydrate son contenu côté client (useAuth) : on attend le titre h1.
-      const heading = page.getByRole("heading", { level: 1 }).first();
-      await heading.waitFor({ state: "visible", timeout: 10_000 }).catch(() => {});
-      const hasHeading = await heading.isVisible().catch(() => false);
-      const hasFooter = await page.locator("footer").isVisible().catch(() => false);
-      expect(hasFooter || hasHeading).toBeTruthy();
+      // Le shell éditorial rend désormais un <footer> sémantique sur toutes
+      // les pages publiques (issue #270). Assertion stricte rétablie.
+      await expect(page.locator("footer")).toBeVisible();
     });
   });
 

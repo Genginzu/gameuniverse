@@ -21,6 +21,7 @@
 
 import type { ReactNode } from "react";
 
+import { EditorialFooter } from "./EditorialFooter";
 import { EditorialMobileNav } from "./EditorialMobileNav";
 import {
   EditorialRail,
@@ -43,6 +44,11 @@ interface EditorialLayoutProps {
    * version mobile.
    */
   disableMobileNav?: boolean;
+  /**
+   * Si `true`, le footer éditorial par défaut (`EditorialFooter`) n'est pas
+   * rendu. À utiliser pour les rares pages qui gèrent leur propre footer.
+   */
+  disableFooter?: boolean;
   /** Contenu principal de la page. */
   children: ReactNode;
   /** Classe additionnelle sur le wrapper racine. */
@@ -52,6 +58,7 @@ interface EditorialLayoutProps {
 export function EditorialLayout({
   header,
   disableMobileNav = false,
+  disableFooter = false,
   children,
   className = "",
 }: EditorialLayoutProps) {
@@ -85,6 +92,9 @@ export function EditorialLayout({
           {children}
         </main>
       </div>
+
+      {/* Footer éditorial full-width — rendu après le body (rail + main) */}
+      {!disableFooter && <EditorialFooter />}
 
       {/* Hamburger + overlay mobile — visible uniquement sous lg */}
       {!disableMobileNav && (

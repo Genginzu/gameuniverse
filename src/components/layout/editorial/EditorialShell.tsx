@@ -40,6 +40,11 @@ interface EditorialShellProps {
    * Forwarded à `EditorialLayout`.
    */
   disableMobileNav?: boolean;
+  /**
+   * Si `true`, le footer éditorial par défaut n'est pas rendu.
+   * Forwarded à `EditorialLayout`.
+   */
+  disableFooter?: boolean;
   /** Classe additionnelle sur le wrapper racine. */
   className?: string;
 }
@@ -47,6 +52,7 @@ interface EditorialShellProps {
 export function EditorialShell({
   children,
   disableMobileNav = false,
+  disableFooter = false,
   className = "",
 }: EditorialShellProps) {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -56,6 +62,7 @@ export function EditorialShell({
       <EditorialLayout
         className={className}
         disableMobileNav={disableMobileNav}
+        disableFooter={disableFooter}
         header={
           <EditorialMegaMenu
             searchSlot={<HeaderSearchTrigger onActivate={() => setIsSearchOpen(true)} />}
