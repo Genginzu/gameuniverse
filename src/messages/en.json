@@ -3252,7 +3252,8 @@
           "confirmCancel": "Cancel",
           "confirmAction": "Remove",
           "removing": "Removing…",
-          "successToast": "Game removed from the collection."
+          "successToast": "Game removed from the collection.",
+          "errorToast": "Could not remove the game. Please try again."
         },
         "editNote": {
           "ariaLabel": "Edit the note for {title}",

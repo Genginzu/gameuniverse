@@ -3255,7 +3255,8 @@
           "confirmCancel": "Annuler",
           "confirmAction": "Retirer",
           "removing": "Suppression…",
-          "successToast": "Jeu retiré de la collection."
+          "successToast": "Jeu retiré de la collection.",
+          "errorToast": "Impossible de retirer le jeu. Réessayez."
         },
         "editNote": {
           "ariaLabel": "Modifier la note de {title}",
