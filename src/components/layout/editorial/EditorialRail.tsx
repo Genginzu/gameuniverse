@@ -19,11 +19,11 @@
  * Voir docs/design/editorial-refonte-plan.md.
  */
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 
-import { Link, usePathname } from "@/i18n/navigation";
+import { usePathname } from "@/i18n/navigation";
 
 // ============================================================================
 // Spaces — exporté pour réutilisation par la sub-sidebar (F0-09)
@@ -158,6 +158,10 @@ export function EditorialRail({
   const pathname = usePathname();
   const t = useTranslations("editorial");
 
+  // Rail replié (icônes seules) par défaut ; le bouton burger l'élargit pour
+  // afficher les libellés à côté des icônes.
+  const [expanded, setExpanded] = useState(false);
+
   // L'indicateur visuel suit la sub-sidebar ouverte si elle l'est, sinon le
   // space dérivé de l'URL courante.
   const activeSpace = useMemo<EditorialSpaceKey | null>(() => {
@@ -168,22 +172,24 @@ export function EditorialRail({
   return (
     <aside
       aria-label={t("rail.ariaLabel")}
-      className={`editorial-rail ${className}`.trim()}
+      className={`editorial-rail ${expanded ? "is-expanded" : ""} ${className}`.trim()}
     >
-      {/* Logo en haut */}
-      <Link
-        href="/"
-        aria-label={t("rail.logoAriaLabel")}
-        className="editorial-rail-logo"
+      {/* Burger : bascule l'élargissement du rail */}
+      <button
+        type="button"
+        onClick={() => setExpanded((v) => !v)}
+        aria-label={t("rail.toggleAriaLabel")}
+        aria-expanded={expanded}
+        className="editorial-rail-toggle"
       >
-        <Icon icon="fa:gamepad" className="size-5" />
-      </Link>
+        <Icon icon="lucide:menu" className="size-5" />
+      </button>
 
       {/* Séparateur fin */}
       <span aria-hidden className="editorial-rail-divider" />
 
-      {/* 5 espaces */}
-      <nav aria-label={t("rail.spacesAriaLabel")} className="flex flex-col items-center gap-1">
+      {/* Espaces utilisateur */}
+      <nav aria-label={t("rail.spacesAriaLabel")} className="editorial-rail-nav">
         {EDITORIAL_SPACES.map((space) => {
           const isActive = activeSpace === space.key;
           const label = t(`spaces.${space.key}`);
@@ -198,7 +204,8 @@ export function EditorialRail({
               data-space={space.key}
               title={label}
             >
-              <Icon icon={space.icon} className="size-4" />
+              <Icon icon={space.icon} className="size-4 editorial-rail-button-icon" />
+              <span className="editorial-rail-button-label">{label}</span>
               {isActive && (
                 <span aria-hidden className="editorial-rail-active-pill" />
               )}

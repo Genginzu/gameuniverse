@@ -411,6 +411,7 @@
     "rail": {
       "ariaLabel": "Barre de navigation éditoriale",
       "logoAriaLabel": "Gamers Universe — accueil",
+      "toggleAriaLabel": "Développer ou réduire la barre latérale",
       "spacesAriaLabel": "Espaces"
     },
     "subSidebar": {
