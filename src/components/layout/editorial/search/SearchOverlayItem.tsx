@@ -52,7 +52,14 @@ export function SearchOverlayItem({ item, active, index, onSelect, importing }: 
     >
       {renderItemContent(item)}
       {notImported && !importing && (
-        <span className="search-overlay-item-badge">{t("notImported")}</span>
+        <span
+          className="search-overlay-item-import-icon"
+          title={t("notImported")}
+          aria-label={t("notImported")}
+          role="img"
+        >
+          <Icon icon="lucide:download" className="size-4" aria-hidden />
+        </span>
       )}
       {importing && (
         <Icon

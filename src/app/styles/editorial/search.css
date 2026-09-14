@@ -613,22 +613,26 @@
 }
 
 /*
- * Badge « pas encore importé » pour les jeux absents de la base locale.
+ * Icône « pas encore importé » pour les jeux absents de la base locale.
  * Bleu vif (--neon-primary) pour rester visible quel que soit l'accent
- * dynamique de la page.
+ * dynamique de la page ; s'anime légèrement au survol de la ligne.
  */
-.search-overlay-item-badge {
+.search-overlay-item-import-icon {
   flex-shrink: 0;
   display: inline-flex;
   align-items: center;
-  padding: 0.15rem 0.5rem;
-  border-radius: 9999px;
-  font-size: 0.7rem;
-  font-weight: 600;
-  white-space: nowrap;
+  justify-content: center;
   color: rgb(var(--neon-primary));
-  background: rgba(var(--neon-primary), 0.14);
-  border: 1px solid rgba(var(--neon-primary), 0.35);
+  opacity: 0.75;
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease;
+}
+
+.search-overlay-item:hover .search-overlay-item-import-icon,
+.search-overlay-item.is-active .search-overlay-item-import-icon {
+  opacity: 1;
+  transform: translateY(-1px);
 }
 
 /* Spinner d'import : bleu vif, forcé indépendamment de l'accent courant. */
