@@ -71,6 +71,11 @@
   height: 1px;
   margin: 0.5rem 0 0.75rem;
   background: var(--editorial-line);
+  transition: width 220ms ease;
+}
+
+.editorial-rail.is-expanded .editorial-rail-divider {
+  width: 100%;
 }
 
 .editorial-rail-button {
