@@ -29,14 +29,6 @@ Types pour les props des composants React :
 - Types de composants d'authentification (`AuthFormProps`, etc.)
 - Types de composants UI (`SpinnerProps`, `LoadingSpinnerProps`, etc.)
 
-### `database.ts`
-
-Types pour les données brutes de la base de données Supabase :
-
-- `DatabaseGameData` - Structure complète d'un jeu depuis la DB
-- `DatabaseGameGenre`, `DatabaseGameCompany`, etc. - Types pour les relations
-- Préfixés par `Database` pour éviter les conflits avec les types transformés
-
 ### `game.ts`
 
 Types pour les données de jeux transformées (côté client) :
@@ -70,12 +62,13 @@ Types pour les profils utilisateur :
 
 - `Profile` - Interface de profil utilisateur
 
-### `supabase.ts`
+### `supabase-queries.ts`
 
-Types générés automatiquement par Supabase CLI :
+Types de résultats de requêtes Supabase avec jointures, partagés entre les
+routes API (ex: `GameRowWithRelations`, `CharacterRowWithRelations`).
 
-- `Database` - Schema complet de la base de données
-- Types utilitaires pour les requêtes Supabase
+> Le schéma Supabase généré (`Database`, `Tables`, etc.) vit dans
+> `src/lib/database.types.ts` et est régénéré via `bun run supabase:types`.
 
 ### `ui.ts`
 
@@ -104,7 +97,6 @@ Export central de tous les types pour faciliter les imports.
 import { GameDetails, SupabaseError, GameCardProps } from "@/types";
 
 // Ou import spécifique
-import { DatabaseGameData } from "@/types/database";
 import { UseGameDetailsReturn } from "@/types/hooks";
 ```
 
