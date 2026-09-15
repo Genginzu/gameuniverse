@@ -3295,6 +3295,7 @@
     },
     "page": {
       "title": "Collections",
+      "kicker": "Collections de jeux",
       "createButton": "Créer une collection",
       "backToPlayer": "Retour au profil",
       "errorTitle": "Erreur de chargement",

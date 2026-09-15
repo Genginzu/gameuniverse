@@ -3292,6 +3292,7 @@
     },
     "page": {
       "title": "Collections",
+      "kicker": "Game collections",
       "createButton": "Create a collection",
       "backToPlayer": "Back to profile",
       "errorTitle": "Loading error",
