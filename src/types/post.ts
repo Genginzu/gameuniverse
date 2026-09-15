@@ -44,3 +44,12 @@ export interface TagPostsResponse {
     hasNextPage: boolean;
   };
 }
+
+export interface TrendingTag {
+  tag: string;
+  count: number;
+}
+
+export interface TrendingTagsResponse {
+  tags: TrendingTag[];
+}

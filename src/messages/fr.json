@@ -497,6 +497,7 @@
       "library": "Ma bibliothèque",
       "esport": "Pronostics",
       "coaching": "Coaching",
+      "social": "Social",
       "account": "Mon compte"
     },
     "links": {
@@ -514,6 +515,9 @@
         "hub": "Hub coaching",
         "sessions": "Mes sessions",
         "settings": "Paramètres coach"
+      },
+      "social": {
+        "tags": "Tags tendance"
       },
       "account": {
         "friends": "Mes amis",
@@ -4044,9 +4048,23 @@
     "tags": {
       "metaTitle": "Posts avec le tag #{tag}",
       "metaDescription": "Tous les posts de la communauté avec le tag #{tag}",
+      "hubTitle": "Tags",
+      "hubSubtitle": "Explorez les posts de la communauté par tag",
+      "hubMetaTitle": "Tags des posts",
+      "hubMetaDescription": "Explorez les posts de la communauté par tag",
+      "searchPlaceholder": "Rechercher par tag…",
+      "searchAriaLabel": "Rechercher des posts par tag",
+      "searchMinHint": "Tapez au moins {min} caractères pour lancer la recherche",
+      "recentTitle": "Posts récents",
+      "resultsFor": "Résultats pour #{tag}",
+      "loginPrompt": "Connectez-vous pour publier et interagir avec la communauté",
+      "loginCta": "Se connecter",
       "count": "{count, plural, =0 {Aucun post} one {1 post} other {# posts}}",
       "empty": "Aucun post avec ce tag",
-      "back": "Retour"
+      "back": "Retour",
+      "trendingTitle": "Tags tendance",
+      "trendingEmpty": "Aucun tag pour le moment",
+      "trendingPostCount": "#{tag}, {count, plural, one {1 post} other {# posts}}"
     }
   },
   "trending": {

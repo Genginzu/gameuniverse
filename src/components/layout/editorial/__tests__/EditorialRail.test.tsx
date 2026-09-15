@@ -35,6 +35,7 @@ const editorialTranslations: Record<string, string> = {
   "spaces.library": "My library",
   "spaces.esport": "Predictions",
   "spaces.coaching": "Coaching",
+  "spaces.social": "Social",
   "spaces.account": "My account",
 };
 vi.mock("next-intl", () => ({
@@ -81,6 +82,12 @@ describe("spaceFromPathname (helper)", () => {
     expect(spaceFromPathname("/coaching/sessions")).toBe("coaching");
   });
 
+  it("matches the social space for /posts routes (incl. tag pages)", () => {
+    expect(spaceFromPathname("/posts")).toBe("social");
+    expect(spaceFromPathname("/posts/tags")).toBe("social");
+    expect(spaceFromPathname("/posts/tags/gaming")).toBe("social");
+  });
+
   it("matches the account space (friends, discussions, coins)", () => {
     expect(spaceFromPathname("/friends")).toBe("account");
     expect(spaceFromPathname("/discussions")).toBe("account");
@@ -94,8 +101,9 @@ describe("spaceFromPathname (helper)", () => {
 });
 
 describe("EDITORIAL_SPACES", () => {
-  it("exposes exactly the 4 expected user-specific spaces in stable order", () => {
+  it("exposes exactly the 5 expected user-specific spaces in stable order", () => {
     expect(EDITORIAL_SPACES.map((s) => s.key)).toEqual([
+      "social",
       "library",
       "esport",
       "coaching",
@@ -251,11 +259,12 @@ describe("EditorialRail", () => {
 
   it("maintains the EditorialSpaceKey type contract", () => {
     const keys: readonly EditorialSpaceKey[] = [
+      "social",
       "library",
       "esport",
       "coaching",
       "account",
     ];
-    expect(keys.length).toBe(4);
+    expect(keys.length).toBe(5);
   });
 });

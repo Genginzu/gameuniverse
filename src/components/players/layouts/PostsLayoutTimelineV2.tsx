@@ -7,6 +7,7 @@ import { PostComposer } from "../posts/PostComposer";
 import { PostCard } from "../posts/PostCard";
 import { SearchBar } from "../SearchBar";
 import { SkeletonCards, PostsFeedEmpty } from "./PostsFeedParts";
+import { TrendingTags } from "@/components/posts/TrendingTags";
 import type { Post } from "@/types/post";
 
 export interface PostsLayoutProps {
@@ -91,6 +92,9 @@ export function PostsLayoutTimelineV2(props: PostsLayoutProps) {
           />
         </div>
       )}
+
+      {/* Trending tags */}
+      <TrendingTags limit={10} />
 
       {/* Timeline feed */}
       <div role="feed" aria-busy={isLoading || isLoadingMore} aria-label={t("feedLabel")}>
