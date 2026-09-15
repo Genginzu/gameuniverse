@@ -17,8 +17,8 @@ creates a page/layout, works on routing, or touches `src/app/**`,
 
 ## Key points (see reference for examples)
 
-- **Two layouts only**: `src/app/[locale]/` (public, wrapped in
-  `<DashboardLayout>`) or `src/app/[locale]/admin/` (wrapped via
+- **Two layouts only**: `src/app/[locale]/` (public, pages wrapped in
+  `<EditorialShell>`) or `src/app/[locale]/admin/` (wrapped via
   `<AdminLayout>`). Never create pages outside these.
 - **API routes**: under `src/app/api/`, outside the `[locale]` segment.
 - **Three page patterns**:

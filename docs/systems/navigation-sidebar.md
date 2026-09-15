@@ -1,5 +1,10 @@
 # Navigation Sidebar — Game Universe
 
+> ⚠️ **Document historique — obsolète.** La sidebar `layout/dashboard/*` décrite
+> ici a été supprimée et remplacée par le layout éditorial (`layout/editorial/*` :
+> `EditorialShell`, `EditorialRail`, `EditorialMegaMenu`, `EditorialMobileNav`,
+> `EditorialSubSidebar`). Conservé à titre de référence historique.
+
 ## Description
 
 Remplacement de la navigation horizontale (`GamingNavBar`) et du header connecté

@@ -12,7 +12,7 @@ description:
 
 Toutes les pages sous `src/app/[locale]/`. Deux layouts :
 
-- `src/app/[locale]/` — pages publiques (wrappées dans `<DashboardLayout>`)
+- `src/app/[locale]/` — pages publiques (wrappées dans `<EditorialShell>`)
 - `src/app/[locale]/admin/` — pages admin (wrappées via `<AdminLayout>`)
 
 API routes dans `src/app/api/` (hors du segment `[locale]`).
@@ -25,9 +25,9 @@ API routes dans `src/app/api/` (hors du segment `[locale]`).
 "use client";
 export default function Page() {
   return (
-    <DashboardLayout>
+    <EditorialShell>
       <Content />
-    </DashboardLayout>
+    </EditorialShell>
   );
 }
 ```
@@ -41,9 +41,9 @@ export default async function Page({ params }) {
   const { locale, slug } = await params; // Next 15 : params est une Promise
   const data = await Service.fetch(slug, locale);
   if (!data) notFound();
-  return <DashboardLayout>
+  return <EditorialShell>
     <Suspense fallback={<Skeleton />}><Content data={data} /></Suspense>
-  </DashboardLayout>;
+  </EditorialShell>;
 }
 export async function generateMetadata({ params }) { ... }
 ```
@@ -62,9 +62,9 @@ export default async function Page({ params }) {
     /* client fallback */
   }
   return (
-    <DashboardLayout>
+    <EditorialShell>
       <Content initialData={initialData} locale={locale} />
-    </DashboardLayout>
+    </EditorialShell>
   );
 }
 ```

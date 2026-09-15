@@ -94,7 +94,7 @@ useComments, useReviews, useReviewVote, useMentionAutocomplete
 
 ### UI & Utilitaires
 
-useAuth, useCropEditor, useDashboard, useDebouncedValue, useImageLoading,
+useAuth, useCropEditor, useDebouncedValue, useImageLoading,
 useImageUpload, useInView, useLocaleManager, usePriceHistory, useGlobalSearch,
 useSearchOverlay, useWebhookEvents, useWebhookRegistrations, useAchievements,
 useRecommendations, usePersonalRecommendations

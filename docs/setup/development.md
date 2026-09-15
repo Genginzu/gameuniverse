@@ -252,7 +252,7 @@ const { data: comparison } = await supabase.rpc("compare_game_prices", {
 Les pages publiques utilisent la **direction artistique éditoriale** (dark,
 typo display Tomorrow, accent dynamique) introduite par la refonte
 `design/editorial-refonte`. L'admin (`/admin/*`) conserve son
-`DashboardLayout` glassmorphism.
+`AdminLayout` glassmorphism.
 
 ### Layout
 
