@@ -5,6 +5,7 @@ import {
   updateCollection,
   deleteCollection,
 } from "@/lib/services/collectionService";
+import { CollectionAdvancedStatsService } from "@/lib/services/collectionAdvancedStatsService";
 import { updateCollectionSchema } from "@/lib/validations/collection";
 import { logger } from "@/lib/logger";
 
@@ -36,7 +37,14 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
       return NextResponse.json({ error: "Collection not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ collection });
+    // Advanced stats: computed from the collection's games + owner library.
+    const stats = await CollectionAdvancedStatsService.computeForGames(
+      collection.items.map((item) => item.gameId),
+      collection.userId,
+      locale
+    );
+
+    return NextResponse.json({ collection, stats });
   } catch (error) {
     logger.error("Error in collection GET", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
