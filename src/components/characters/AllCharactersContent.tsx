@@ -21,6 +21,7 @@ import { Pagination } from "@/components/shared/Pagination";
 import { GridSkeleton } from "@/components/shared/GridSkeleton";
 import { characterSkeletonConfig } from "@/components/shared/EntitySkeleton";
 import { KickerLabel } from "@/components/shared/KickerLabel";
+import { EditorialContainer } from "@/components/layout/editorial/EditorialContainer";
 import { CharacterFavoriteStatusProvider } from "@/components/providers/CharacterFavoriteStatusProvider";
 import { useCharacters } from "@/hooks/useCharacters";
 import { useCharacterFilters } from "@/hooks/useCharacterFilters";
@@ -128,7 +129,7 @@ export function AllCharactersContent({
 
   return (
     <section className="w-full">
-      <div className="mx-auto max-w-[1536px] px-4 pt-8 pb-16 md:px-8 md:pt-12 md:pb-20">
+      <EditorialContainer>
         {/* Hero */}
         <header className="mb-10 flex flex-col gap-3">
           <KickerLabel>{t("title")}</KickerLabel>
@@ -218,7 +219,7 @@ export function AllCharactersContent({
             />
           </div>
         )}
-      </div>
+      </EditorialContainer>
     </section>
   );
 }
