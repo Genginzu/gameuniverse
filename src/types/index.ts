@@ -5,7 +5,6 @@ export * from "./api";
 export * from "./auth";
 export * from "./character";
 export * from "./components";
-export * from "./database";
 export * from "./game";
 export * from "./genre";
 export * from "./hooks";
