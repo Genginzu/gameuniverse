@@ -280,9 +280,19 @@ describe("Game Utilities Property-Based Tests", () => {
         expect(result).toBe("bg-gray-500");
       });
 
-      it("returns bg-green-500 for scores >= 90", () => {
+      it("returns bg-green-600 for scores >= 90", () => {
         fc.assert(
           fc.property(fc.integer({ min: 90, max: 100 }), (score) => {
+            const result = getMetascoreColor(score);
+            expect(result).toBe("bg-green-600");
+          }),
+          { numRuns: 30 }
+        );
+      });
+
+      it("returns bg-green-500 for scores 75-89", () => {
+        fc.assert(
+          fc.property(fc.integer({ min: 75, max: 89 }), (score) => {
             const result = getMetascoreColor(score);
             expect(result).toBe("bg-green-500");
           }),
@@ -290,41 +300,31 @@ describe("Game Utilities Property-Based Tests", () => {
         );
       });
 
-      it("returns bg-green-400 for scores 75-89", () => {
-        fc.assert(
-          fc.property(fc.integer({ min: 75, max: 89 }), (score) => {
-            const result = getMetascoreColor(score);
-            expect(result).toBe("bg-green-400");
-          }),
-          { numRuns: 30 }
-        );
-      });
-
-      it("returns bg-yellow-400 for scores 60-74", () => {
+      it("returns bg-yellow-500 for scores 60-74", () => {
         fc.assert(
           fc.property(fc.integer({ min: 60, max: 74 }), (score) => {
             const result = getMetascoreColor(score);
-            expect(result).toBe("bg-yellow-400");
+            expect(result).toBe("bg-yellow-500");
           }),
           { numRuns: 30 }
         );
       });
 
-      it("returns bg-orange-400 for scores 40-59", () => {
+      it("returns bg-orange-500 for scores 40-59", () => {
         fc.assert(
           fc.property(fc.integer({ min: 40, max: 59 }), (score) => {
             const result = getMetascoreColor(score);
-            expect(result).toBe("bg-orange-400");
+            expect(result).toBe("bg-orange-500");
           }),
           { numRuns: 30 }
         );
       });
 
-      it("returns bg-red-400 for scores 1-39", () => {
+      it("returns bg-red-500 for scores 1-39", () => {
         fc.assert(
           fc.property(fc.integer({ min: 1, max: 39 }), (score) => {
             const result = getMetascoreColor(score);
-            expect(result).toBe("bg-red-400");
+            expect(result).toBe("bg-red-500");
           }),
           { numRuns: 30 }
         );
@@ -354,23 +354,23 @@ describe("Game Utilities Property-Based Tests", () => {
       });
 
       it("boundary test: score 39 returns red, score 40 returns orange", () => {
-        expect(getMetascoreColor(39)).toBe("bg-red-400");
-        expect(getMetascoreColor(40)).toBe("bg-orange-400");
+        expect(getMetascoreColor(39)).toBe("bg-red-500");
+        expect(getMetascoreColor(40)).toBe("bg-orange-500");
       });
 
       it("boundary test: score 59 returns orange, score 60 returns yellow", () => {
-        expect(getMetascoreColor(59)).toBe("bg-orange-400");
-        expect(getMetascoreColor(60)).toBe("bg-yellow-400");
+        expect(getMetascoreColor(59)).toBe("bg-orange-500");
+        expect(getMetascoreColor(60)).toBe("bg-yellow-500");
       });
 
-      it("boundary test: score 74 returns yellow, score 75 returns green-400", () => {
-        expect(getMetascoreColor(74)).toBe("bg-yellow-400");
-        expect(getMetascoreColor(75)).toBe("bg-green-400");
+      it("boundary test: score 74 returns yellow, score 75 returns green-500", () => {
+        expect(getMetascoreColor(74)).toBe("bg-yellow-500");
+        expect(getMetascoreColor(75)).toBe("bg-green-500");
       });
 
-      it("boundary test: score 89 returns green-400, score 90 returns green-500", () => {
-        expect(getMetascoreColor(89)).toBe("bg-green-400");
-        expect(getMetascoreColor(90)).toBe("bg-green-500");
+      it("boundary test: score 89 returns green-500, score 90 returns green-600", () => {
+        expect(getMetascoreColor(89)).toBe("bg-green-500");
+        expect(getMetascoreColor(90)).toBe("bg-green-600");
       });
     });
   });
