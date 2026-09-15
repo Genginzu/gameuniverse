@@ -502,6 +502,7 @@
     "links": {
       "library": {
         "myLibrary": "Ma bibliothèque",
+        "backlog": "Mon backlog",
         "collections": "Mes collections",
         "favoriteCharacters": "Personnages favoris"
       },
@@ -1093,6 +1094,78 @@
       "trigger": "Ajouter un jeu",
       "title": "Ajouter un jeu à votre bibliothèque",
       "addButton": "Ajouter à la bibliothèque"
+    },
+    "backlog": {
+      "openManager": "Gérer mon backlog",
+      "backToLibrary": "Retour à la bibliothèque",
+      "kicker": "Backlog",
+      "titlePrefix": "Quelle est ta prochaine",
+      "titleAccent": "partie ?",
+      "subtitle": "Priorisez vos jeux, estimez le temps restant et laissez-vous guider vers votre prochaine aventure.",
+      "metaTitle": "Mon backlog",
+      "metaDescription": "Gérez la priorité de vos jeux, estimez le temps restant et découvrez quoi jouer ensuite.",
+      "reorderHint": "Glissez-déposez pour réordonner vos priorités.",
+      "noResults": "Aucun jeu ne correspond à ces filtres.",
+      "listLabel": "Jeux du backlog",
+      "dragHandle": "Réordonner le jeu",
+      "hoursValue": "{hours} h",
+      "hoursRemaining": "{hours} h restantes",
+      "noEstimate": "Durée inconnue",
+      "priority": {
+        "label": "Priorité",
+        "level": {
+          "1": "Priorité basse",
+          "2": "Priorité moyenne",
+          "3": "Priorité haute"
+        }
+      },
+      "summary": {
+        "games": "Jeux",
+        "totalTime": "Temps restant estimé",
+        "withoutEstimate": "{count, plural, one {# jeu sans estimation} other {# jeux sans estimation}}"
+      },
+      "playNext": {
+        "title": "Quelle est ta prochaine partie ?",
+        "availableTime": "Temps disponible",
+        "availableTimePlaceholder": "heures",
+        "mood": "Type",
+        "moods": {
+          "any": "Peu importe",
+          "quick": "Rapide",
+          "long": "Longue",
+          "chill": "Détente",
+          "intense": "Intense"
+        },
+        "empty": "Ajoutez des jeux à votre backlog pour obtenir une suggestion.",
+        "reasons": {
+          "high-priority": "Priorité haute",
+          "fits-available-time": "Rentre dans votre temps",
+          "matches-genre": "Genre préféré",
+          "quick-to-finish": "Vite terminé",
+          "long-adventure": "Grande aventure",
+          "already-started": "Déjà commencé",
+          "highly-rated": "Très bien noté"
+        }
+      },
+      "filters": {
+        "title": "Filtres",
+        "clear": "Effacer",
+        "maxDuration": "Durée maximale",
+        "underHours": "Moins de {hours} h",
+        "overHours": "Plus de {hours} h",
+        "genre": "Genre",
+        "platform": "Plateforme"
+      },
+      "authRequired": {
+        "title": "Votre backlog vous attend",
+        "description": "Connectez-vous pour prioriser vos jeux et savoir quoi jouer ensuite.",
+        "signIn": "Se connecter"
+      },
+      "empty": {
+        "title": "Votre backlog est vide",
+        "description": "Ajoutez des jeux à votre bibliothèque pour commencer à organiser votre backlog.",
+        "exploreGames": "Explorer les jeux"
+      }
     },
     "editorial": {
       "kicker": "Bibliothèque",
