@@ -4,10 +4,6 @@ import { GameDetails } from "./game";
 import { Genre } from "./genre";
 import { AuthMode } from "./auth";
 
-export interface DashboardLayoutProps {
-  children: React.ReactNode;
-}
-
 export interface LandingLayoutProps {
   children: React.ReactNode;
 }
