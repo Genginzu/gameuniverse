@@ -502,6 +502,7 @@
     "links": {
       "library": {
         "myLibrary": "My library",
+        "backlog": "My backlog",
         "collections": "My collections",
         "favoriteCharacters": "Favorite characters"
       },
@@ -1093,6 +1094,78 @@
       "trigger": "Add a game",
       "title": "Add a game to your library",
       "addButton": "Add to library"
+    },
+    "backlog": {
+      "openManager": "Manage my backlog",
+      "backToLibrary": "Back to library",
+      "kicker": "Backlog",
+      "titlePrefix": "What's your next",
+      "titleAccent": "game?",
+      "subtitle": "Prioritize your games, estimate the time left, and let us guide you to your next adventure.",
+      "metaTitle": "My backlog",
+      "metaDescription": "Manage your games' priority, estimate the remaining time, and discover what to play next.",
+      "reorderHint": "Drag and drop to reorder your priorities.",
+      "noResults": "No game matches these filters.",
+      "listLabel": "Backlog games",
+      "dragHandle": "Reorder game",
+      "hoursValue": "{hours}h",
+      "hoursRemaining": "{hours}h left",
+      "noEstimate": "Unknown length",
+      "priority": {
+        "label": "Priority",
+        "level": {
+          "1": "Low priority",
+          "2": "Medium priority",
+          "3": "High priority"
+        }
+      },
+      "summary": {
+        "games": "Games",
+        "totalTime": "Estimated time left",
+        "withoutEstimate": "{count, plural, one {# game without estimate} other {# games without estimate}}"
+      },
+      "playNext": {
+        "title": "What's your next game?",
+        "availableTime": "Available time",
+        "availableTimePlaceholder": "hours",
+        "mood": "Type",
+        "moods": {
+          "any": "Any",
+          "quick": "Quick",
+          "long": "Long",
+          "chill": "Chill",
+          "intense": "Intense"
+        },
+        "empty": "Add games to your backlog to get a suggestion.",
+        "reasons": {
+          "high-priority": "High priority",
+          "fits-available-time": "Fits your time",
+          "matches-genre": "Favorite genre",
+          "quick-to-finish": "Quick to finish",
+          "long-adventure": "Long adventure",
+          "already-started": "Already started",
+          "highly-rated": "Highly rated"
+        }
+      },
+      "filters": {
+        "title": "Filters",
+        "clear": "Clear",
+        "maxDuration": "Max length",
+        "underHours": "Under {hours}h",
+        "overHours": "Over {hours}h",
+        "genre": "Genre",
+        "platform": "Platform"
+      },
+      "authRequired": {
+        "title": "Your backlog awaits",
+        "description": "Sign in to prioritize your games and know what to play next.",
+        "signIn": "Sign in"
+      },
+      "empty": {
+        "title": "Your backlog is empty",
+        "description": "Add games to your library to start organizing your backlog.",
+        "exploreGames": "Explore games"
+      }
     },
     "editorial": {
       "kicker": "Library",
