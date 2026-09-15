@@ -33,6 +33,7 @@ export type EditorialSpaceKey =
   | "library"
   | "esport"
   | "coaching"
+  | "social"
   | "account";
 
 /**
@@ -75,6 +76,12 @@ export interface EditorialSpace {
  * (voir `EDITORIAL_MEGA_MENU_ENTRIES`).
  */
 export const EDITORIAL_SPACES: readonly EditorialSpace[] = [
+  {
+    key: "social",
+    icon: "fa:hashtag",
+    pathPrefixes: ["/posts"],
+    links: [{ href: "/posts/tags", labelKey: "tags", icon: "lucide:hash" }],
+  },
   {
     key: "library",
     icon: "fa:gamepad",
