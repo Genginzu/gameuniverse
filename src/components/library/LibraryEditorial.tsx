@@ -116,6 +116,13 @@ export function LibraryEditorial({ locale = "fr" }: LibraryEditorialProps) {
             <p className="text-editorial-muted mt-4 max-w-[60ch] text-base">
               {t("editorial.subtitle")}
             </p>
+            <Link
+              href="/library/backlog"
+              className="border-editorial-line text-editorial-muted hover:text-white mt-6 inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm"
+            >
+              <Icon icon="lucide:list-checks" className="h-4 w-4" />
+              {t("backlog.openManager")}
+            </Link>
           </div>
 
           {/* Stats inline */}
@@ -174,14 +181,16 @@ export function LibraryEditorial({ locale = "fr" }: LibraryEditorialProps) {
                 hasFilters={selectedGenres.length > 0 || selectedPublishers.length > 0}
                 filterCount={selectedGenres.length}
                 onClick={() => setShowFilters((v) => !v)}
+                variant="secondary"
               />
-              <Button
+              <button
+                type="button"
                 onClick={() => setShowAddGameDialog(true)}
-                className="shrink-0"
+                className="from-palette-secondary-500 to-palette-primary-500 hover:from-palette-secondary-600 hover:to-palette-primary-600 inline-flex h-12 shrink-0 cursor-pointer items-center gap-1.5 rounded-xl bg-linear-to-r px-4 text-sm font-semibold text-white shadow-lg transition-all hover:shadow-xl sm:h-14 sm:px-6 sm:text-base"
               >
-                <Icon icon="lucide:plus" className="mr-1.5 h-4 w-4" />
+                <Icon icon="lucide:plus" className="size-4 sm:size-5" />
                 {t("addGame.trigger")}
-              </Button>
+              </button>
             </div>
 
             {/* Filters (collapsible) */}

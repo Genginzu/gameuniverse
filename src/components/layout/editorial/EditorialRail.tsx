@@ -81,6 +81,7 @@ export const EDITORIAL_SPACES: readonly EditorialSpace[] = [
     pathPrefixes: ["/library", "/collections", "/favorites/characters"],
     links: [
       { href: "/library", labelKey: "myLibrary", icon: "lucide:library" },
+      { href: "/library/backlog", labelKey: "backlog", icon: "lucide:list-checks" },
       { href: "/collections", labelKey: "collections", icon: "lucide:folder-heart" },
       { href: "/favorites/characters", labelKey: "favoriteCharacters", icon: "lucide:heart" },
     ],
