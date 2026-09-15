@@ -1089,6 +1089,11 @@
     "yourGames": "Your games ({count})",
     "loadingError": "Loading error",
     "retry": "Retry",
+    "addGame": {
+      "trigger": "Add a game",
+      "title": "Add a game to your library",
+      "addButton": "Add to library"
+    },
     "editorial": {
       "kicker": "Library",
       "titlePrefix": "Your",

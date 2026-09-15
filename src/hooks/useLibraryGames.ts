@@ -181,6 +181,12 @@ export function useLibraryGames(locale: string = "fr") {
   const hasActiveFilters =
     searchQuery !== "" || selectedGenres.length > 0 || selectedPublishers.length > 0;
 
+  // Revalide la liste et les stats après l'ajout d'un jeu à la bibliothèque.
+  const refresh = useCallback(() => {
+    mutateGames();
+    mutateStats();
+  }, [mutateGames, mutateStats]);
+
   return {
     // Data
     games,
@@ -202,5 +208,6 @@ export function useLibraryGames(locale: string = "fr") {
     handlePageChange,
     handleClearFilters,
     handleGameRemoved,
+    refresh,
   };
 }

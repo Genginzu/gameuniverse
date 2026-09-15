@@ -18,6 +18,9 @@ import { Icon } from "@iconify/react";
 
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AddGameToCollection } from "@/components/collections/AddGameToCollection";
+import type { AddCollectionItemInput } from "@/types/collection";
 import { GameSearchBar } from "@/components/games/GameSearchBar";
 import { GameCard } from "@/components/games/GameCard";
 import { FilterButton } from "@/components/shared/FilterButton";
@@ -46,6 +49,8 @@ const GRID =
 
 export function LibraryEditorial({ locale = "fr" }: LibraryEditorialProps) {
   const [showFilters, setShowFilters] = useState(false);
+  const [showAddGameDialog, setShowAddGameDialog] = useState(false);
+  const [isAddingGame, setIsAddingGame] = useState(false);
   const t = useTranslations("userLibrary");
   const { user, loading: authLoading } = useAuth();
 
@@ -65,7 +70,29 @@ export function LibraryEditorial({ locale = "fr" }: LibraryEditorialProps) {
     handlePublisherFilter,
     handlePageChange,
     handleClearFilters,
+    refresh,
   } = useLibraryGames(locale);
+
+  // Ajout d'un jeu à la bibliothèque depuis le dialog (même flux que l'ajout
+  // à une collection, sans la note). Importe d'abord depuis IGDB si besoin
+  // (géré par AddGameToCollection), puis POST /api/library.
+  const handleAddGame = async ({ gameId }: AddCollectionItemInput) => {
+    setIsAddingGame(true);
+    try {
+      const response = await fetch("/api/library", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ gameId }),
+      });
+      // 409 = déjà présent : on considère l'action comme aboutie côté UI.
+      if (response.ok || response.status === 409) {
+        refresh();
+        setShowAddGameDialog(false);
+      }
+    } finally {
+      setIsAddingGame(false);
+    }
+  };
 
   if (initialLoading) {
     return <LibraryPageSkeleton />;
@@ -147,6 +174,13 @@ export function LibraryEditorial({ locale = "fr" }: LibraryEditorialProps) {
                 filterCount={selectedGenres.length}
                 onClick={() => setShowFilters((v) => !v)}
               />
+              <Button
+                onClick={() => setShowAddGameDialog(true)}
+                className="shrink-0"
+              >
+                <Icon icon="lucide:plus" className="mr-1.5 h-4 w-4" />
+                {t("addGame.trigger")}
+              </Button>
             </div>
 
             {/* Filters (collapsible) */}
@@ -180,6 +214,7 @@ export function LibraryEditorial({ locale = "fr" }: LibraryEditorialProps) {
                 <LibraryEmptyState
                   hasFilters={hasActiveFilters}
                   onClearFilters={handleClearFilters}
+                  onAddGame={() => setShowAddGameDialog(true)}
                 />
               ) : (
                 <LibraryStatusProvider gameIds={games.map((g) => g.id)}>
@@ -208,6 +243,21 @@ export function LibraryEditorial({ locale = "fr" }: LibraryEditorialProps) {
           </>
         )}
       </div>
+
+      {/* Dialog d'ajout d'un jeu — même UX que l'ajout en collection, sans note */}
+      <Dialog open={showAddGameDialog} onOpenChange={setShowAddGameDialog}>
+        <DialogContent className="border-editorial-line bg-editorial-2 top-[8%] translate-y-0 text-white">
+          <DialogHeader>
+            <DialogTitle className="font-display text-white">{t("addGame.title")}</DialogTitle>
+          </DialogHeader>
+          <AddGameToCollection
+            onAdd={handleAddGame}
+            isAdding={isAddingGame}
+            showNote={false}
+            addButtonLabel={t("addGame.addButton")}
+          />
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }
@@ -256,9 +306,11 @@ function LibraryAuthRequired() {
 function LibraryEmptyState({
   hasFilters,
   onClearFilters,
+  onAddGame,
 }: {
   hasFilters: boolean;
   onClearFilters: () => void;
+  onAddGame: () => void;
 }) {
   const t = useTranslations("userLibrary");
 
@@ -276,11 +328,9 @@ function LibraryEmptyState({
       {hasFilters ? (
         <Button onClick={onClearFilters}>{t("empty.clearFilters")}</Button>
       ) : (
-        <Button asChild>
-          <Link href="/games">
-            <Icon icon="lucide:plus" className="mr-2 h-4 w-4" />
-            {t("empty.exploreGames")}
-          </Link>
+        <Button onClick={onAddGame}>
+          <Icon icon="lucide:plus" className="mr-2 h-4 w-4" />
+          {t("addGame.trigger")}
         </Button>
       )}
     </div>
