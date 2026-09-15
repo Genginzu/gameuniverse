@@ -20,6 +20,7 @@ import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AddGameToCollection } from "@/components/collections/AddGameToCollection";
+import { EditorialContainer } from "@/components/layout/editorial/EditorialContainer";
 import type { AddCollectionItemInput } from "@/types/collection";
 import { GameSearchBar } from "@/components/games/GameSearchBar";
 import { GameCard } from "@/components/games/GameCard";
@@ -103,7 +104,7 @@ export function LibraryEditorial({ locale = "fr" }: LibraryEditorialProps) {
 
   return (
     <section className="w-full">
-      <div className="mx-auto max-w-[1536px] px-4 pt-8 pb-16 md:px-8 md:pt-12 md:pb-20">
+      <EditorialContainer>
         {/* Hero */}
         <header className="mb-12 grid grid-cols-1 gap-4 lg:grid-cols-[5fr_7fr] lg:items-end lg:gap-12">
           <div>
@@ -242,7 +243,7 @@ export function LibraryEditorial({ locale = "fr" }: LibraryEditorialProps) {
             </div>
           </>
         )}
-      </div>
+      </EditorialContainer>
 
       {/* Dialog d'ajout d'un jeu — même UX que l'ajout en collection, sans note */}
       <Dialog open={showAddGameDialog} onOpenChange={setShowAddGameDialog}>

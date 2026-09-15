@@ -17,6 +17,7 @@ import { Icon } from "@iconify/react";
 
 import { Link } from "@/i18n/navigation";
 import { KickerLabel } from "@/components/shared/KickerLabel";
+import { EditorialContainer } from "@/components/layout/editorial/EditorialContainer";
 import { useUserLibrary } from "@/hooks/useUserLibrary";
 
 interface DashboardEditorialProps {
@@ -43,7 +44,7 @@ export function DashboardEditorial({ user }: DashboardEditorialProps) {
   });
 
   return (
-    <section className="mx-auto max-w-[1536px] px-4 pt-8 pb-16 md:px-8 md:pt-12 md:pb-20">
+    <EditorialContainer as="section">
       {/* Hero */}
       <header className="mb-12 grid grid-cols-1 gap-4 lg:grid-cols-[5fr_7fr] lg:items-end lg:gap-12">
         <div>
@@ -112,7 +113,7 @@ export function DashboardEditorial({ user }: DashboardEditorialProps) {
           <AccountRow label={t("accountStatus")} value={t("active")} accent />
         </div>
       </section>
-    </section>
+    </EditorialContainer>
   );
 }
 
