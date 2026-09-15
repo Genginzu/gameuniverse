@@ -31,6 +31,7 @@ import { CollectionDetailEditorialSkeleton } from "./CollectionDetailEditorialSk
 import { CollectionDetailHero } from "./CollectionDetailHero";
 import { CollectionDetailDialogs } from "./CollectionDetailDialogs";
 import { CollectionGameCardEditorial } from "./CollectionGameCardEditorial";
+import { CollectionAdvancedStatsSection } from "./stats/CollectionAdvancedStats";
 import { EditItemNoteDialog } from "./EditItemNoteDialog";
 
 interface CollectionDetailEditorialProps {
@@ -46,7 +47,10 @@ export function CollectionDetailEditorial({ slug, locale }: CollectionDetailEdit
   const { user, loading: authLoading } = useAuth();
   const playerId = user?.id ?? "";
 
-  const { collection, isLoading, error, notFound, refetch } = useCollectionDetail(playerId, slug);
+  const { collection, stats, isLoading, error, notFound, refetch } = useCollectionDetail(
+    playerId,
+    slug
+  );
 
   const { updateCollection, deleteCollection, toggleVisibility, addItem, removeItem, updateItemNote } =
     useCollectionMutations({
@@ -238,6 +242,14 @@ export function CollectionDetailEditorial({ slug, locale }: CollectionDetailEdit
             </div>
           )}
         </section>
+
+        {/* Advanced statistics — editorial page forces a dark surface without
+            toggling the `.dark` class, so scope it here for correct contrast. */}
+        {stats && stats.totalGames > 0 && (
+          <div className="dark mt-12">
+            <CollectionAdvancedStatsSection stats={stats} />
+          </div>
+        )}
 
         {isOwner && (
           <CollectionDetailDialogs

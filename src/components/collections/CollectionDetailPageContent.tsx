@@ -10,6 +10,7 @@ import { CollectionDetail } from "./CollectionDetail";
 import { CollectionActions } from "./CollectionActions";
 import { CollectionForm } from "./CollectionForm";
 import { AddGameToCollection } from "./AddGameToCollection";
+import { CollectionAdvancedStatsSection } from "./stats/CollectionAdvancedStats";
 import { CollectionDetailSkeleton } from "./CollectionSkeleton";
 import { useCollectionDetail } from "@/hooks/useCollectionDetail";
 import { useCollectionMutations } from "@/hooks/useCollectionMutations";
@@ -33,7 +34,10 @@ export function CollectionDetailPageContent({
   const { user } = useAuth();
   const isOwner = user?.id === playerId;
 
-  const { collection, isLoading, error, notFound, refetch } = useCollectionDetail(playerId, slug);
+  const { collection, stats, isLoading, error, notFound, refetch } = useCollectionDetail(
+    playerId,
+    slug
+  );
 
   const { updateCollection, deleteCollection, toggleVisibility, addItem } = useCollectionMutations({
     playerId,
@@ -141,6 +145,13 @@ export function CollectionDetailPageContent({
 
       {/* Collection detail */}
       <CollectionDetail collection={collection} />
+
+      {/* Advanced statistics */}
+      {stats && stats.totalGames > 0 && (
+        <div className="mt-8">
+          <CollectionAdvancedStatsSection stats={stats} />
+        </div>
+      )}
 
       {/* Edit dialog */}
       {isOwner && (

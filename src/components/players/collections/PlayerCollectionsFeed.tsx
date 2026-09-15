@@ -8,8 +8,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { CollectionForm } from "@/components/collections/CollectionForm";
 import { useCollections } from "@/hooks/useCollections";
 import { useCollectionMutations } from "@/hooks/useCollectionMutations";
+import { useCollectionAdvancedStats } from "@/hooks/useCollectionAdvancedStats";
 import { PlayerCollectionsListView } from "./PlayerCollectionsListView";
 import { PlayerCollectionDetailView } from "./PlayerCollectionDetailView";
+import { CollectionAdvancedStatsSection } from "@/components/collections/stats/CollectionAdvancedStats";
 
 interface PlayerCollectionsFeedProps {
   playerId: string;
@@ -25,6 +27,7 @@ export function PlayerCollectionsFeed({ playerId, locale, isOwner }: PlayerColle
 
   // Legacy hook for simple list (used by list view + refetch after mutations)
   const { collections, isLoading, error, refetch } = useCollections(playerId);
+  const { stats: advancedStats, isLoading: isStatsLoading } = useCollectionAdvancedStats(playerId);
   const { createCollection } = useCollectionMutations({
     playerId,
     refetchCollections: refetch,
@@ -83,6 +86,15 @@ export function PlayerCollectionsFeed({ playerId, locale, isOwner }: PlayerColle
         error={error}
         onSelectCollection={setSelectedSlug}
       />
+
+      {/* Aggregated advanced stats — shown once the player has collections.
+          The player profile uses the always-dark editorial shell (no `.dark`
+          class), so scope dark here for correct contrast in light app theme. */}
+      {!isLoading && !error && collections.length > 0 && (
+        <div className="dark">
+          <CollectionAdvancedStatsSection stats={advancedStats} isLoading={isStatsLoading} />
+        </div>
+      )}
 
       {/* Create dialog */}
       {isOwner && (
