@@ -714,7 +714,7 @@
       "byGameCount": "Filter by game count",
       "options": "options",
       "active": "Active filters",
-      "selected": "{count} selected",
+      "selected": "selected",
       "clearAll": "Clear all",
       "clear": "Clear",
       "filter": "Filter"

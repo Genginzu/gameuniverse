@@ -714,7 +714,7 @@
       "byGameCount": "Filtrer par nombre de jeux",
       "options": "options",
       "active": "Filtres actifs",
-      "selected": "{count} sélectionné(s)",
+      "selected": "sélectionné(s)",
       "clearAll": "Tout effacer",
       "clear": "Effacer",
       "filter": "Filtrer"
