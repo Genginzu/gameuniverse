@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.4.0](https://github.com/Genginzu/gameuniverse/compare/gameuniverse-v0.3.0...gameuniverse-v0.4.0) (2026-09-15)
+
+
+### Features
+
+* [#266](https://github.com/Genginzu/gameuniverse/issues/266) add remove-item error toast + confirm flow test ([#301](https://github.com/Genginzu/gameuniverse/issues/301)) ([6212c38](https://github.com/Genginzu/gameuniverse/commit/6212c388396b2ddc8f4f4cf7d4cd9f7b7a42f69a))
+* [#270](https://github.com/Genginzu/gameuniverse/issues/270) editorial footer for refactored public pages ([#300](https://github.com/Genginzu/gameuniverse/issues/300)) ([b4768b7](https://github.com/Genginzu/gameuniverse/commit/b4768b71e10f216531668aad8b19e852fd956b0e))
+* [#99](https://github.com/Genginzu/gameuniverse/issues/99) backlog manager (priorisation, temps restant, suggestions) ([#305](https://github.com/Genginzu/gameuniverse/issues/305)) ([3abebd9](https://github.com/Genginzu/gameuniverse/commit/3abebd95a22595c63856922017c5a6f83f952a7c))
+* collections notes, coins 7-day stats, editorial UI polish ([#292](https://github.com/Genginzu/gameuniverse/issues/292)) ([c78f3bc](https://github.com/Genginzu/gameuniverse/commit/c78f3bc7f64166c92e56114362efc854d59332f8))
+* statistiques de collection avancees avec graphiques ([#101](https://github.com/Genginzu/gameuniverse/issues/101)) ([#304](https://github.com/Genginzu/gameuniverse/issues/304)) ([a726ed1](https://github.com/Genginzu/gameuniverse/commit/a726ed17321c0f6ba888dec70a2011e9364a6a84))
+* unification .agents/ + hooks graphify + output rules + guard-rails ([#272](https://github.com/Genginzu/gameuniverse/issues/272)) ([3842f4b](https://github.com/Genginzu/gameuniverse/commit/3842f4b92f7b81a5baa9a286df8d511065014ce0))
+
+
+### Refactoring
+
+* [#268](https://github.com/Genginzu/gameuniverse/issues/268) migrate legacy settings components to editorial inline, drop descendant theming CSS ([#302](https://github.com/Genginzu/gameuniverse/issues/302)) ([e860d42](https://github.com/Genginzu/gameuniverse/commit/e860d423528d2fb1413d4561d31bb66feed59e79))
+* colocate unit tests in src/**/__tests__ like synaps ([99f6fed](https://github.com/Genginzu/gameuniverse/commit/99f6fedd6e6e6caf38d205382ec754ca2461b3f2))
+
 ## [0.3.0](https://github.com/Genginzu/gameuniverse/compare/gameuniverse-v0.2.0...gameuniverse-v0.3.0) (2026-06-07)
 
 
