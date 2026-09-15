@@ -122,7 +122,7 @@ export function SettingsContent() {
   };
 
   return (
-    <section className="w-full px-4 pt-6 pb-16 md:px-6 md:pt-8 md:pb-20">
+    <section className="mx-auto max-w-[1536px] px-4 pt-8 pb-16 md:px-8 md:pt-12 md:pb-20">
       <header className="border-editorial-line mb-10 border-b pb-8">
         <KickerLabel>{tEditorial("kicker")}</KickerLabel>
         <h1 className="mt-2 font-display text-[clamp(1.5rem,2.5vw+0.5rem,2.25rem)] leading-tight font-bold tracking-tight text-white">
