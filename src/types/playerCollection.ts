@@ -1,4 +1,27 @@
 import type { CollectionSummary } from "@/types/collection";
+import type { GenreDistributionEntry, PlatformDistributionEntry } from "@/types/dashboard-stats";
+
+/**
+ * Advanced statistics for a collection (or an aggregate of collections).
+ * Powers the genre pie chart, platform bar chart and extra metric cards
+ * (average rating, completion rate, total playtime).
+ */
+export interface CollectionAdvancedStats {
+  /** Number of games taken into account for the stats. */
+  totalGames: number;
+  /** Genre distribution of the games (top genres + "Autres" bucket). */
+  genreDistribution: GenreDistributionEntry[];
+  /** Platform distribution of the games. */
+  platformDistribution: PlatformDistributionEntry[];
+  /** Average game rating (metascore, 0-100), rounded to 1 decimal. Null if no rated game. */
+  averageRating: number | null;
+  /** Number of games the owner has marked as completed in their library. */
+  completedGames: number;
+  /** Completion rate: completedGames / totalGames as a percentage (0-100), integer. */
+  completionRate: number;
+  /** Sum of the owner's playtime (hours) for the games, rounded to 1 decimal. */
+  totalPlaytimeHours: number;
+}
 
 /** Options de tri des collections */
 export type CollectionSortOption =
@@ -18,6 +41,8 @@ export interface PlayerCollectionsStatsData {
 export interface PlayerCollectionsResponse {
   collections: CollectionSummary[];
   stats: PlayerCollectionsStatsData;
+  /** Advanced aggregated stats (charts + extra cards). Present on page 1 only. */
+  advancedStats?: CollectionAdvancedStats | null;
   pagination: {
     currentPage: number;
     totalPages: number;

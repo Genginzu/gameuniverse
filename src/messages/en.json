@@ -3154,6 +3154,17 @@
       "emptyDescription": "This collection doesn't contain any games yet.",
       "gamesList": "Games"
     },
+    "stats": {
+      "title": "Advanced statistics",
+      "genreDistribution": "Genre distribution",
+      "platformDistribution": "Platform distribution",
+      "averageRating": "Average rating",
+      "totalPlaytime": "Total playtime",
+      "completionRate": "Completion rate",
+      "hoursValue": "{hours} h",
+      "completedCount": "{completed} / {total} completed",
+      "empty": "Not enough data to display statistics."
+    },
     "gameCard": {
       "noteLabel": "Note"
     },

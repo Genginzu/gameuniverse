@@ -3,10 +3,12 @@
 import useSWR from "swr";
 import { useLocale } from "next-intl";
 import type { CollectionDetail } from "@/types/collection";
+import type { CollectionAdvancedStats } from "@/types/playerCollection";
 import { ErrorType } from "@/lib/error-handling";
 
 interface CollectionDetailResponse {
   collection: CollectionDetail;
+  stats?: CollectionAdvancedStats | null;
 }
 
 interface TypedError extends Error {
@@ -16,6 +18,7 @@ interface TypedError extends Error {
 
 interface UseCollectionDetailReturn {
   collection: CollectionDetail | null;
+  stats: CollectionAdvancedStats | null;
   isLoading: boolean;
   error: string | null;
   notFound: boolean;
@@ -39,6 +42,7 @@ export function useCollectionDetail(playerId: string, slug: string): UseCollecti
 
   return {
     collection: data?.collection ?? null,
+    stats: data?.stats ?? null,
     isLoading,
     error:
       error && !notFound
