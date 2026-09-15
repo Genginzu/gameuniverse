@@ -4,13 +4,15 @@
  * Style Tailwind inline.
  */
 
+import { EditorialContainer } from "@/components/layout/editorial/EditorialContainer";
+
 const PULSE = "animate-pulse rounded bg-white/10";
 const GAME_COUNT = 12;
 
 export function CollectionDetailEditorialSkeleton() {
   return (
     <section className="w-full">
-      <div className="mx-auto max-w-[1536px] px-4 pt-6 pb-16 md:px-8 md:pt-10 md:pb-20">
+      <EditorialContainer spacing="compact">
         <div className={`mb-6 h-3 w-32 ${PULSE}`} />
 
         <header className="mb-12 grid grid-cols-1 gap-6 lg:grid-cols-[5fr_7fr] lg:items-stretch lg:gap-12">
@@ -51,7 +53,7 @@ export function CollectionDetailEditorialSkeleton() {
             </div>
           ))}
         </div>
-      </div>
+      </EditorialContainer>
     </section>
   );
 }

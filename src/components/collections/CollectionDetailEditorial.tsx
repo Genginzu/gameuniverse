@@ -19,6 +19,7 @@ import { Link, useRouter } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
 import { KickerLabel } from "@/components/shared/KickerLabel";
+import { EditorialContainer } from "@/components/layout/editorial/EditorialContainer";
 
 import { useAuth } from "@/hooks/useAuth";
 import { useCollectionDetail } from "@/hooks/useCollectionDetail";
@@ -188,7 +189,7 @@ export function CollectionDetailEditorial({ slug, locale }: CollectionDetailEdit
 
   return (
     <section className="w-full">
-      <div className="mx-auto max-w-[1536px] px-4 pt-6 pb-16 md:px-8 md:pt-10 md:pb-20">
+      <EditorialContainer spacing="compact">
         <Link
           href="/collections"
           className="text-editorial-muted hover:text-editorial-accent mb-6 inline-flex items-center gap-1.5 font-mono text-[0.7rem] font-semibold tracking-[0.14em] uppercase transition-colors focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
@@ -267,7 +268,7 @@ export function CollectionDetailEditorial({ slug, locale }: CollectionDetailEdit
             onSave={handleSaveNote}
           />
         )}
-      </div>
+      </EditorialContainer>
     </section>
   );
 }
