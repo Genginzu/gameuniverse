@@ -10,6 +10,7 @@ import { memo } from "react";
 import { Link } from "@/i18n/navigation";
 
 import type { EntityCardProps } from "@/types/entity-card";
+import { getMetascoreColor } from "@/lib/utils/game-utils";
 import dynamic from "next/dynamic";
 
 // Chargement dynamique d'Iconify — utilisé uniquement pour les icônes configurables du hover overlay
@@ -63,16 +64,6 @@ export type {
   EntityCardConfig,
   EntityCardProps,
 } from "@/types/entity-card";
-
-// Helper function to get metascore color
-export function getMetascoreColor(score?: number): string {
-  if (!score) return "bg-gray-500";
-  if (score >= 90) return "bg-green-600";
-  if (score >= 75) return "bg-green-500";
-  if (score >= 60) return "bg-yellow-500";
-  if (score >= 40) return "bg-orange-500";
-  return "bg-red-500";
-}
 
 // Generic EntityCard component — mémoïsé pour éviter les re-renders
 // quand les props (entity, config, locale, priority) n'ont pas changé

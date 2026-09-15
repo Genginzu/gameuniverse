@@ -3,7 +3,6 @@
 // EntityCard - Generic card component for games, players, characters
 export {
   EntityCard,
-  getMetascoreColor,
   type EntityCardConfig,
   type EntityCardProps,
   type BadgeConfig,
@@ -12,6 +11,7 @@ export {
   type HoverOverlayField,
   type ActionsConfig,
 } from "./EntityCard";
+export { getMetascoreColor } from "@/lib/utils/game-utils";
 
 // EntityCard Presets - Pre-configured card settings for each entity type
 export { gameCardConfig, playerCardConfig, characterCardConfig } from "./entityCardPresets";
