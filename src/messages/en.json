@@ -411,6 +411,7 @@
     "rail": {
       "ariaLabel": "Editorial navigation rail",
       "logoAriaLabel": "Gamers Universe — home",
+      "toggleAriaLabel": "Expand or collapse the sidebar",
       "spacesAriaLabel": "Spaces"
     },
     "subSidebar": {
@@ -478,7 +479,7 @@
           "all": "All characters"
         },
         "players": {
-          "all": "Gamers Universe players"
+          "all": "Players"
         },
         "esport": {
           "live": "Live now",
@@ -1088,6 +1089,11 @@
     "yourGames": "Your games ({count})",
     "loadingError": "Loading error",
     "retry": "Retry",
+    "addGame": {
+      "trigger": "Add a game",
+      "title": "Add a game to your library",
+      "addButton": "Add to library"
+    },
     "editorial": {
       "kicker": "Library",
       "titlePrefix": "Your",
@@ -3295,6 +3301,7 @@
       "loading": "Searching…",
       "noResults": "No results for “{query}”",
       "noResultsHint": "Try different keywords.",
+      "notImported": "Not imported yet",
       "groups": {
         "games": "Games",
         "characters": "Characters",

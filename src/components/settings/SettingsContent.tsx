@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { createClient } from "@/lib/supabase";
 
 import { KickerLabel } from "@/components/shared/KickerLabel";
+import { EditorialContainer } from "@/components/layout/editorial/EditorialContainer";
 
 import { SettingsSkeleton } from "./SettingsSkeleton";
 import { UsernameForm } from "./UsernameForm";
@@ -123,7 +124,7 @@ export function SettingsContent() {
   };
 
   return (
-    <section className="w-full px-4 pt-6 pb-16 md:px-6 md:pt-8 md:pb-20">
+    <EditorialContainer as="section">
       <header className="border-editorial-line mb-10 border-b pb-8">
         <KickerLabel>{tEditorial("kicker")}</KickerLabel>
         <h1 className="font-display mt-2 text-[clamp(1.5rem,2.5vw+0.5rem,2.25rem)] leading-tight font-bold tracking-tight text-white">
@@ -190,7 +191,7 @@ export function SettingsContent() {
           />
         </SettingsSection>
       </div>
-    </section>
+    </EditorialContainer>
   );
 }
 

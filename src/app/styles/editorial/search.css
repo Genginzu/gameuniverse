@@ -607,9 +607,45 @@
 
 .search-overlay-item-meta {
   flex-shrink: 0;
+  /* Passe après l'icône d'import / le spinner (rendus après dans le DOM). */
+  order: 1;
   font-size: 0.75rem;
   color: var(--editorial-muted);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/*
+ * Icône « pas encore importé » pour les jeux absents de la base locale.
+ * Bleu vif (--neon-primary) pour rester visible quel que soit l'accent
+ * dynamique de la page ; s'anime légèrement au survol de la ligne.
+ */
+.search-overlay-item-import-icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: rgb(var(--neon-primary));
+  opacity: 0.75;
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease;
+}
+
+.search-overlay-item:hover .search-overlay-item-import-icon,
+.search-overlay-item.is-active .search-overlay-item-import-icon {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+/* Spinner d'import : bleu vif, forcé indépendamment de l'accent courant. */
+.search-overlay-item-importing-spinner {
+  flex-shrink: 0;
+  color: rgb(var(--neon-primary));
+}
+
+.search-overlay-item.is-importing {
+  cursor: wait;
+  opacity: 0.7;
 }
 
 /* See all link — CTA en bas de chaque groupe. */

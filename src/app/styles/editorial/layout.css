@@ -17,24 +17,52 @@
   padding: 1rem 0;
   background: var(--editorial-bg);
   border-right: 1px solid var(--editorial-line);
+  transition: width 220ms ease;
 }
 
-.editorial-rail-logo {
+/* Rail élargi : affiche les libellés à côté des icônes. */
+.editorial-rail.is-expanded {
+  width: 220px;
+  align-items: stretch;
+  padding: 1rem 0.5rem;
+}
+
+/* Bouton burger en tête du rail : bascule l'élargissement. */
+.editorial-rail-toggle {
   display: grid;
   place-items: center;
   width: 40px;
   height: 40px;
+  border: 0;
   border-radius: 0.75rem;
   color: rgb(var(--neon-primary));
   background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
   transition:
     background-color 200ms ease,
     color 200ms ease;
 }
 
-.editorial-rail-logo:hover {
+.editorial-rail-toggle:hover {
   background: rgba(var(--neon-primary), 0.18);
   color: rgb(var(--neon-secondary));
+}
+
+.editorial-rail.is-expanded .editorial-rail-toggle {
+  justify-self: start;
+}
+
+/* Nav des espaces : centrée quand replié, étirée quand élargi. */
+.editorial-rail-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: 100%;
+  align-items: center;
+}
+
+.editorial-rail.is-expanded .editorial-rail-nav {
+  align-items: stretch;
 }
 
 .editorial-rail-divider {
@@ -43,6 +71,11 @@
   height: 1px;
   margin: 0.5rem 0 0.75rem;
   background: var(--editorial-line);
+  transition: width 220ms ease;
+}
+
+.editorial-rail.is-expanded .editorial-rail-divider {
+  width: 100%;
 }
 
 .editorial-rail-button {
@@ -58,6 +91,32 @@
   transition:
     background-color 200ms ease,
     color 200ms ease;
+}
+
+/* Icône du bouton : taille fixe pour ne pas s'étirer en mode élargi. */
+.editorial-rail-button-icon {
+  flex-shrink: 0;
+}
+
+/* Libellé masqué quand replié, révélé en mode élargi. */
+.editorial-rail-button-label {
+  display: none;
+  white-space: nowrap;
+  font-size: 0.875rem;
+  line-height: 1;
+}
+
+.editorial-rail.is-expanded .editorial-rail-button {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0 0.75rem;
+}
+
+.editorial-rail.is-expanded .editorial-rail-button-label {
+  display: inline;
 }
 
 .editorial-rail-button:hover {
@@ -82,7 +141,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .editorial-rail-logo,
+  .editorial-rail {
+    transition: none;
+  }
+  .editorial-rail-toggle,
   .editorial-rail-button {
     transition: none;
   }

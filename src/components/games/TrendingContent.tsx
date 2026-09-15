@@ -14,6 +14,7 @@ import { fetcher } from "@/lib/swr/fetcher";
 import { GameCard } from "@/components/games/GameCard";
 import { GameCardSkeleton } from "@/components/games/GameCardSkeleton";
 import { KickerLabel } from "@/components/shared/KickerLabel";
+import { EditorialContainer } from "@/components/layout/editorial/EditorialContainer";
 import type { GameSummary } from "@/types/game";
 
 export interface TrendingData {
@@ -85,7 +86,7 @@ export function TrendingContent({ initialData }: TrendingContentProps) {
 
   return (
     <section className="w-full">
-      <div className="mx-auto max-w-[1536px] px-4 pt-8 pb-16 md:px-8 md:pt-12 md:pb-20">
+      <EditorialContainer>
         <header className="mb-12 flex flex-col gap-3">
           <KickerLabel>{t("kicker")}</KickerLabel>
           <h1 className="font-display text-[clamp(2rem,4vw+1rem,3.5rem)] leading-[1.05] font-bold tracking-tight text-white">
@@ -101,7 +102,7 @@ export function TrendingContent({ initialData }: TrendingContentProps) {
             <TrendingSection key={key} titleKey={key} games={data?.[key] ?? []} />
           ))
         )}
-      </div>
+      </EditorialContainer>
     </section>
   );
 }

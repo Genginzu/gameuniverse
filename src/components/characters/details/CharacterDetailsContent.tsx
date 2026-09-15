@@ -9,6 +9,7 @@ import { CharacterGamesTab } from "./CharacterGamesTab";
 import { CharacterMediaTab } from "./CharacterMediaTab";
 import { CharacterHeroSection } from "./CharacterHeroSection";
 import { CharacterTabNavigation } from "./CharacterTabNavigation";
+import { EditorialContainer } from "@/components/layout/editorial/EditorialContainer";
 import { useViewTracker } from "@/hooks/useViewTracker";
 
 const CharacterCommentsTab = dynamic(
@@ -44,7 +45,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
       />
 
       <div className="relative z-20">
-        <div className="mx-auto max-w-[1536px] px-4 pb-16 md:px-8">
+        <EditorialContainer spacing="body">
           <CharacterTabNavigation
             activeTab={activeTab}
             onTabChange={setActiveTab}
@@ -70,7 +71,7 @@ export function CharacterDetailsContent({ character, locale }: CharacterDetailsC
               <CharacterCommentsTab characterId={character.id} onCountLoaded={setCommentCount} />
             )}
           </div>
-        </div>
+        </EditorialContainer>
       </div>
     </div>
   );

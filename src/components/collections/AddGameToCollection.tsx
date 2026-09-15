@@ -13,13 +13,22 @@ import { SelectedGamePreview, SearchInput } from "./AddGameSearchResults";
 interface AddGameToCollectionProps {
   onAdd: (input: AddCollectionItemInput) => Promise<void>;
   isAdding?: boolean;
+  /** Affiche le champ note (défaut: true). Mettre à false pour la bibliothèque. */
+  showNote?: boolean;
+  /** Libellé du bouton d'ajout. Défaut: `collections.addGame.addButton`. */
+  addButtonLabel?: string;
 }
 
 const DEBOUNCE_MS = 300;
 const NOTE_MAX_LENGTH = 250;
 const PAGE_SIZE = 10;
 
-export function AddGameToCollection({ onAdd, isAdding = false }: AddGameToCollectionProps) {
+export function AddGameToCollection({
+  onAdd,
+  isAdding = false,
+  showNote = true,
+  addButtonLabel,
+}: AddGameToCollectionProps) {
   const t = useTranslations("collections.addGame");
   const locale = useLocale();
   const apiClient = useApiClient();
@@ -138,7 +147,7 @@ export function AddGameToCollection({ onAdd, isAdding = false }: AddGameToCollec
       setIsImporting(false);
     }
 
-    await onAdd({ gameId, note: note.trim() || undefined });
+    await onAdd({ gameId, note: showNote ? note.trim() || undefined : undefined });
     setSelectedGame(null);
     setNote("");
   };
@@ -170,7 +179,7 @@ export function AddGameToCollection({ onAdd, isAdding = false }: AddGameToCollec
         />
       )}
 
-      {selectedGame && (
+      {selectedGame && showNote && (
         <div>
           <Textarea
             placeholder={t("notePlaceholder")}
@@ -195,7 +204,7 @@ export function AddGameToCollection({ onAdd, isAdding = false }: AddGameToCollec
           className="w-full border border-[rgba(var(--accent-rgb,var(--neon-primary)),0.5)] bg-[rgba(var(--accent-rgb,var(--neon-primary)),0.15)] text-[rgb(var(--accent-rgb,var(--neon-primary)))] shadow-none hover:bg-[rgba(var(--accent-rgb,var(--neon-primary)),0.25)]"
         >
           <Icon icon="lucide:plus" className="mr-1.5 h-4 w-4" />
-          {t("addButton")}
+          {addButtonLabel ?? t("addButton")}
         </LoadingButton>
       )}
     </div>

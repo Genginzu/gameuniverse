@@ -30,6 +30,7 @@ vi.mock("@/i18n/navigation", () => ({
 const editorialTranslations: Record<string, string> = {
   "rail.ariaLabel": "Editorial rail",
   "rail.logoAriaLabel": "Gamers Universe — home",
+  "rail.toggleAriaLabel": "Expand or collapse the sidebar",
   "rail.spacesAriaLabel": "Spaces",
   "spaces.library": "My library",
   "spaces.esport": "Predictions",
@@ -131,11 +132,11 @@ describe("EditorialRail", () => {
     mockUsePathname.mockReturnValue("/");
   });
 
-  it("renders the logo link to '/' and the space buttons (labels via i18n)", () => {
+  it("renders the burger toggle and the space buttons (labels via i18n)", () => {
     render(<EditorialRail />);
 
-    const logo = screen.getByLabelText("Gamers Universe — home");
-    expect(logo.getAttribute("href")).toBe("/");
+    const toggle = screen.getByRole("button", { name: "Expand or collapse the sidebar" });
+    expect(toggle.getAttribute("aria-expanded")).toBe("false");
 
     EDITORIAL_SPACES.forEach((space) => {
       const expectedLabel = editorialTranslations[`spaces.${space.key}`];
@@ -143,6 +144,22 @@ describe("EditorialRail", () => {
       expect(button).toBeDefined();
       expect(button.getAttribute("data-space")).toBe(space.key);
     });
+  });
+
+  it("expands the rail when the burger toggle is clicked", () => {
+    const { container } = render(<EditorialRail />);
+    const aside = container.querySelector("aside");
+    const toggle = screen.getByRole("button", { name: "Expand or collapse the sidebar" });
+
+    expect(aside?.className).not.toContain("is-expanded");
+
+    fireEvent.click(toggle);
+    expect(aside?.className).toContain("is-expanded");
+    expect(toggle.getAttribute("aria-expanded")).toBe("true");
+
+    fireEvent.click(toggle);
+    expect(aside?.className).not.toContain("is-expanded");
+    expect(toggle.getAttribute("aria-expanded")).toBe("false");
   });
 
   it("uses i18n keys for the rail aria-label and the spaces nav aria-label", () => {

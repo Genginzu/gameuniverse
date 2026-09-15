@@ -7,6 +7,7 @@ import { EntityCard, type EntityCardConfig } from "@/components/shared/EntityCar
 import { GridSkeleton } from "@/components/shared/GridSkeleton";
 import { characterSkeletonConfig } from "@/components/shared/EntitySkeleton";
 import { KickerLabel } from "@/components/shared/KickerLabel";
+import { EditorialContainer } from "@/components/layout/editorial/EditorialContainer";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@iconify/react";
 import { Link } from "@/i18n/navigation";
@@ -61,7 +62,7 @@ export function FavoriteCharactersContent() {
 
   return (
     <section className="w-full">
-      <div className="mx-auto max-w-[1536px] px-4 pt-8 pb-16 md:px-8 md:pt-12 md:pb-20">
+      <EditorialContainer>
         {/* Hero */}
         <header className="mb-12 grid grid-cols-1 gap-4 lg:grid-cols-[5fr_7fr] lg:items-end lg:gap-12">
           <div>
@@ -125,7 +126,7 @@ export function FavoriteCharactersContent() {
             ))}
           </div>
         )}
-      </div>
+      </EditorialContainer>
     </section>
   );
 }

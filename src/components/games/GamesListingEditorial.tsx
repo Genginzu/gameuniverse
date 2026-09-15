@@ -23,6 +23,7 @@ import { useTranslations } from "next-intl";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { FilterButton } from "@/components/shared/FilterButton";
 import { KickerLabel } from "@/components/shared/KickerLabel";
+import { EditorialContainer } from "@/components/layout/editorial/EditorialContainer";
 import { GameSortMenu } from "@/components/games/GameSortMenu";
 import { SearchSkeleton } from "@/components/games/SearchSkeleton";
 import { LibraryStatusProvider } from "@/components/providers/LibraryStatusProvider";
@@ -151,7 +152,7 @@ export function GamesListingEditorial({
 
   return (
     <section className="w-full">
-      <div className="mx-auto max-w-[1536px] px-4 pt-8 pb-16 md:px-8 md:pt-12 md:pb-20">
+      <EditorialContainer>
         {/* Hero léger */}
         <header className="mb-10 flex flex-col gap-3">
           <KickerLabel>{t("listingKicker")}</KickerLabel>
@@ -239,7 +240,7 @@ export function GamesListingEditorial({
             </div>
           )}
         </div>
-      </div>
+      </EditorialContainer>
     </section>
   );
 }

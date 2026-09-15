@@ -12,6 +12,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
 import { KickerLabel } from "@/components/shared/KickerLabel";
+import { EditorialContainer } from "@/components/layout/editorial/EditorialContainer";
 import { useAuth } from "@/hooks/useAuth";
 
 import { FriendsTab } from "./FriendsTab";
@@ -23,7 +24,7 @@ export function FriendsPageContent() {
 
   return (
     <section className="w-full">
-      <div className="mx-auto max-w-[1536px] px-4 pt-8 pb-16 md:px-8 md:pt-12 md:pb-20">
+      <EditorialContainer>
         {/* Hero */}
         <header className="mb-10">
           <KickerLabel>{t("title")}</KickerLabel>
@@ -47,7 +48,7 @@ export function FriendsPageContent() {
         ) : (
           <FriendsTab playerId={user.id} locale={locale} />
         )}
-      </div>
+      </EditorialContainer>
     </section>
   );
 }

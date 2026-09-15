@@ -315,12 +315,19 @@
 }
 
 .editorial-mega-menu-panel-inner {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  /* Colonnes dimensionnées au contenu et regroupées à gauche : évite que
+   * les sections (ex. e-sport) soient étirées et éloignées les unes des
+   * autres comme le faisait `grid` avec des pistes en `1fr`. */
+  gap: 1.5rem 3rem;
   max-width: 1536px;
-  margin: 0 auto;
+  margin: 0;
   padding: 1.5rem 2rem;
+}
+
+.editorial-mega-menu-section {
+  min-width: 200px;
 }
 
 .editorial-mega-menu-section-title {

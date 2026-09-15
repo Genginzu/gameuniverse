@@ -12,6 +12,7 @@
  */
 
 import { Icon } from "@iconify/react";
+import { useTranslations } from "next-intl";
 
 import type { FlatSearchItem } from "@/lib/utils/global-search-utils";
 
@@ -23,25 +24,50 @@ interface SearchOverlayItemProps {
   index: number;
   /** Appelé au clic ou à l'activation clavier (Enter). */
   onSelect: () => void;
+  /** True pendant l'import d'un jeu IGDB (clic → import → navigation). */
+  importing?: boolean;
 }
 
-export function SearchOverlayItem({ item, active, index, onSelect }: SearchOverlayItemProps) {
+export function SearchOverlayItem({ item, active, index, onSelect, importing }: SearchOverlayItemProps) {
+  const t = useTranslations("globalSearch.overlay");
   // Stagger fade-in : on plafonne `--i` à 8 pour que les items plus loin
   // apparaissent immédiatement (évite un délai cumulé excessif sur les
   // longs résultats).
   const staggerIndex = Math.min(index, 8);
+
+  // Jeu pas encore présent en base locale : on l'indique discrètement sans
+  // exposer le terme technique « IGDB ». Le clic lance l'import (spinner).
+  const notImported = item.type === "game" && item.source === "igdb";
 
   return (
     <li
       role="option"
       id={`search-option-${index}`}
       aria-selected={active}
-      onClick={onSelect}
-      className={`search-overlay-item ${active ? "is-active" : ""}`.trim()}
+      aria-busy={importing || undefined}
+      onClick={importing ? undefined : onSelect}
+      className={`search-overlay-item ${active ? "is-active" : ""} ${importing ? "is-importing" : ""}`.trim()}
       data-type={item.type}
       style={{ "--stagger-index": staggerIndex } as React.CSSProperties}
     >
       {renderItemContent(item)}
+      {notImported && !importing && (
+        <span
+          className="search-overlay-item-import-icon"
+          title={t("notImported")}
+          aria-label={t("notImported")}
+          role="img"
+        >
+          <Icon icon="lucide:download" className="size-4" aria-hidden />
+        </span>
+      )}
+      {importing && (
+        <Icon
+          icon="lucide:loader-2"
+          className="search-overlay-item-importing-spinner size-4 animate-spin"
+          aria-hidden
+        />
+      )}
     </li>
   );
 }
