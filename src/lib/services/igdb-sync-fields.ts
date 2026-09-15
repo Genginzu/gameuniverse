@@ -14,15 +14,11 @@ import type { SyncSupabaseClient } from "./igdb-sync";
 // ---------------------------------------------------------------------------
 
 /** Supprime toutes les lignes d'une table pour un game_id donné */
-async function deleteByGameId(
-  supabase: SyncSupabaseClient,
-  table: string,
-  gameId: string
-): Promise<void> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase as any).from(table).delete().eq("game_id", gameId);
-  if (error) throw new Error(`Failed to delete from ${table}: ${error.message}`);
-}
+export async function deleteByGameId(supabase: SyncSupabaseClient,
+table: string,
+gameId: string): Promise<void> { // eslint-disable-next-line @typescript-eslint/no-explicit-any
+const { error } = await (supabase as any).from(table).delete().eq("game_id", gameId);
+if (error) throw new Error(`Failed to delete from ${table}: ${error.message}`); }
 // Transformation IGDB → Supabase (logique partagée avec game-importer)
 // ---------------------------------------------------------------------------
 

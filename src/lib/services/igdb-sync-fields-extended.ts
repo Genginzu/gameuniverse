@@ -6,20 +6,10 @@
 import { IGDBService } from "./igdbService";
 import { IGDB_RATING_CATEGORIES, IGDB_ALL_RATINGS, type IGDBGame } from "@/types/igdb";
 import type { SyncSupabaseClient } from "./igdb-sync";
+import { deleteByGameId } from "./igdb-sync-fields";
 import { untypedTable } from "@/lib/utils/untypedTable";
 import { transformIgdbVideos } from "../../../scripts/igdb-import/games/video-transform";
 import type { SupabaseClient } from "@supabase/supabase-js";
-
-/** Supprime toutes les lignes d'une table pour un game_id donné */
-async function deleteByGameId(
-  supabase: SyncSupabaseClient,
-  table: string,
-  gameId: string
-): Promise<void> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase as any).from(table).delete().eq("game_id", gameId);
-  if (error) throw new Error(`Failed to delete from ${table}: ${error.message}`);
-}
 
 /** Synchronise les age ratings */
 export async function syncAgeRatings(

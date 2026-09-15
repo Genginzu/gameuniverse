@@ -203,11 +203,11 @@ export function formatPrice(price: number, currency: string, locale: string): st
  * Returns the appropriate Tailwind CSS background color class for a metascore.
  *
  * Score ranges:
- * - 90+: green-500 (exceptional)
- * - 75-89: green-400 (excellent)
- * - 60-74: yellow-400 (good)
- * - 40-59: orange-400 (average)
- * - Below 40: red-400 (poor)
+ * - 90+: green-600 (exceptional)
+ * - 75-89: green-500 (excellent)
+ * - 60-74: yellow-500 (good)
+ * - 40-59: orange-500 (average)
+ * - Below 40: red-500 (poor)
  * - No score: gray-500
  *
  * **Validates: Requirements 14.7**
@@ -217,19 +217,19 @@ export function formatPrice(price: number, currency: string, locale: string): st
  *
  * @example
  * ```ts
- * getMetascoreColor(92);  // Returns "bg-green-500"
- * getMetascoreColor(75);  // Returns "bg-green-400"
- * getMetascoreColor(65);  // Returns "bg-yellow-400"
- * getMetascoreColor(45);  // Returns "bg-orange-400"
- * getMetascoreColor(30);  // Returns "bg-red-400"
+ * getMetascoreColor(92);  // Returns "bg-green-600"
+ * getMetascoreColor(75);  // Returns "bg-green-500"
+ * getMetascoreColor(65);  // Returns "bg-yellow-500"
+ * getMetascoreColor(45);  // Returns "bg-orange-500"
+ * getMetascoreColor(30);  // Returns "bg-red-500"
  * getMetascoreColor();    // Returns "bg-gray-500"
  * ```
  */
 export function getMetascoreColor(score?: number): string {
   if (!score) return "bg-gray-500";
-  if (score >= 90) return "bg-green-500";
-  if (score >= 75) return "bg-green-400";
-  if (score >= 60) return "bg-yellow-400";
-  if (score >= 40) return "bg-orange-400";
-  return "bg-red-400";
+  if (score >= 90) return "bg-green-600";
+  if (score >= 75) return "bg-green-500";
+  if (score >= 60) return "bg-yellow-500";
+  if (score >= 40) return "bg-orange-500";
+  return "bg-red-500";
 }

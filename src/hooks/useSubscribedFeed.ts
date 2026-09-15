@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import type { FeedEvent } from "@/types/feed";
-import { SubscriptionService } from "@/lib/services/subscriptionService";
+import { FeedService } from "@/lib/services/feedService";
 
 export interface UseSubscribedFeedReturn {
   events: FeedEvent[];
@@ -39,7 +39,7 @@ export function useSubscribedFeed(viewerId: string, locale: string): UseSubscrib
         }
         setError(null);
 
-        const response = await SubscriptionService.fetchFeed(viewerId, { page, locale });
+        const response = await FeedService.fetchFeed(viewerId, { page, locale });
 
         setEvents((prev) => (append ? [...prev, ...response.events] : response.events));
         setHasNextPage(response.pagination.hasNextPage);

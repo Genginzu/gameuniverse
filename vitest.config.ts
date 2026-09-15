@@ -42,7 +42,6 @@ const HOOK_TESTS_NEEDING_DOM = [
   "src/hooks/__tests__/usePlayerPlaytime.test.ts",
   "src/hooks/__tests__/usePlayerSessions.test.ts",
   "src/hooks/__tests__/useDebouncedValue.test.ts",
-  "src/hooks/__tests__/useDashboard.test.ts",
   "src/hooks/__tests__/useLocaleManager.test.ts",
   "src/hooks/__tests__/useGameDetails.test.ts",
   "src/hooks/__tests__/useGameAccent.test.ts",

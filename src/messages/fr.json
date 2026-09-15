@@ -720,7 +720,7 @@
       "byGameCount": "Filtrer par nombre de jeux",
       "options": "options",
       "active": "Filtres actifs",
-      "selected": "{count} sélectionné(s)",
+      "selected": "sélectionné(s)",
       "clearAll": "Tout effacer",
       "clear": "Effacer",
       "filter": "Filtrer"
@@ -3295,6 +3295,7 @@
     },
     "page": {
       "title": "Collections",
+      "kicker": "Collections de jeux",
       "createButton": "Créer une collection",
       "backToPlayer": "Retour au profil",
       "errorTitle": "Erreur de chargement",

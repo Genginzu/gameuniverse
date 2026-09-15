@@ -89,7 +89,7 @@ confirmation s'affiche avant la suppression effective.
 
 | Fichier                                                 | Rôle                              |
 | ------------------------------------------------------- | --------------------------------- |
-| `src/app/[locale]/friends/page.tsx`                     | Page Next.js avec DashboardLayout |
+| `src/app/[locale]/friends/page.tsx`                     | Page Next.js avec EditorialShell  |
 | `src/app/api/players/me/friends/pending-count/route.ts` | Endpoint API compteur demandes    |
 | `src/hooks/usePendingRequestCount.ts`                   | Hook pour le compteur de demandes |
 
@@ -100,9 +100,13 @@ confirmation s'affiche avant la suppression effective.
 | `src/lib/utils/navigation-utils.ts`                    | Ajout lien `/friends` dans `NAV_LINKS`     |
 | `src/lib/services/friendService.ts`                    | Ajout méthode `getPendingCount()`          |
 | `src/lib/utils/friendUtils.ts`                         | Ajout `countPendingRequests()`             |
-| `src/components/layout/dashboard/SidebarNav.tsx`       | Rendu du `NotificationBadge`               |
-| `src/components/layout/dashboard/MobileNavOverlay.tsx` | Rendu du `NotificationBadge`               |
+| `src/components/layout/editorial/EditorialRail.tsx`    | Lien `/friends` (espace « account ») ¹    |
 | `src/messages/en.json` / `src/messages/fr.json`        | Clés `friends.page.*`, `dashboard.friends` |
+
+> ¹ Le rendu du `NotificationBadge` de demandes en attente vivait dans l'ancien
+> shell `layout/dashboard/*` (SidebarNav / MobileNavOverlay), supprimé lors de la
+> migration éditoriale. Le hook `usePendingRequestCount` existe toujours ; son
+> câblage dans la nav éditoriale reste à re-brancher.
 
 ## Tests
 
