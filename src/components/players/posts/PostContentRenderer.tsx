@@ -9,6 +9,8 @@ interface PostContentRendererProps {
   tags: string[];
   mentions: PostMention[];
   locale: string;
+  /** Overrides the wrapper text classes (e.g. for the editorial dark theme). */
+  className?: string;
 }
 
 /** Regex matching #tag or @mention tokens in post content. */
@@ -43,6 +45,7 @@ export function PostContentRenderer({
   tags,
   mentions,
   locale: _locale,
+  className,
 }: PostContentRendererProps) {
   const t = useTranslations("players.posts");
 
@@ -56,7 +59,12 @@ export function PostContentRenderer({
   const segments = tokenize(content);
 
   return (
-    <span className="text-sm leading-relaxed whitespace-pre-wrap text-gray-700 dark:text-slate-200">
+    <span
+      className={
+        className ??
+        "text-sm leading-relaxed whitespace-pre-wrap text-gray-700 dark:text-slate-200"
+      }
+    >
       {segments.map((segment, index) => {
         // Tag token: render as clickable link to tag page
         if (segment.startsWith("#")) {

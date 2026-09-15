@@ -5,8 +5,9 @@ import useSWR from "swr";
 import { useTranslations, useLocale } from "next-intl";
 import { Icon } from "@iconify/react";
 import { Link } from "@/i18n/navigation";
-import { PostCard } from "@/components/players/posts/PostCard";
+import { EditorialPostCard } from "@/components/posts/EditorialPostCard";
 import { Pagination } from "@/components/shared/Pagination";
+import { TrendingTags } from "@/components/posts/TrendingTags";
 import type { TagPostsResponse } from "@/types/post";
 
 interface TagPostsContentProps {
@@ -57,6 +58,9 @@ export function TagPostsContent({ tag }: TagPostsContentProps) {
         </div>
       </div>
 
+      {/* Trending tags */}
+      <TrendingTags limit={10} className="mb-6" />
+
       {/* Loading */}
       {isLoading && (
         <div className="space-y-4">
@@ -78,15 +82,7 @@ export function TagPostsContent({ tag }: TagPostsContentProps) {
       {!isLoading && data && data.posts.length > 0 && (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {data.posts.map((post) => (
-            <PostCard
-              key={post.id}
-              post={post}
-              playerName={post.authorName}
-              playerAvatar={post.authorAvatar}
-              locale={locale}
-              isOwner={false}
-              onDelete={() => {}}
-            />
+            <EditorialPostCard key={post.id} post={post} locale={locale} />
           ))}
         </div>
       )}
