@@ -1,9 +1,11 @@
 "use client";
 
 import { Icon } from "@iconify/react";
+import { Link } from "@/i18n/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PLATFORM_META, type GamingPlatform, type LinkedPlatform } from "@/types/linked-platforms";
+import type { LibrarySyncJob } from "@/types/library-sync";
 
 interface PlatformRowProps {
   platform: GamingPlatform;
@@ -12,6 +14,7 @@ interface PlatformRowProps {
   editValue: string;
   saving: boolean;
   syncing: boolean;
+  job?: LibrarySyncJob | null;
   t: (key: string, values?: Record<string, string | number>) => string;
   onStartEdit: () => void;
   onCancelEdit: () => void;
@@ -37,25 +40,110 @@ export function PlatformRow(props: PlatformRowProps) {
     onCancelEdit,
   } = props;
   const meta = PLATFORM_META[platform];
+  const job = props.job ?? null;
 
   return (
-    <div className="border-editorial-line bg-editorial-3 flex items-center gap-3 rounded-xl border p-3 transition-all">
-      <PlatformIdentity platform={platform} linked={linked} t={t} />
+    <div className="border-editorial-line bg-editorial-3 flex flex-col gap-2 rounded-xl border p-3 transition-all">
+      <div className="flex items-center gap-3">
+        <PlatformIdentity platform={platform} linked={linked} t={t} />
 
-      {isEditing ? (
-        <EditingRow
-          platform={platform}
-          authType={meta.authType}
-          editValue={editValue}
-          saving={saving}
-          t={t}
-          onEditValueChange={onEditValueChange}
-          onSave={meta.authType === "npsso" ? onConnectPsn : onSaveManual}
-          onCancel={onCancelEdit}
+        {isEditing ? (
+          <EditingRow
+            platform={platform}
+            authType={meta.authType}
+            editValue={editValue}
+            saving={saving}
+            t={t}
+            onEditValueChange={onEditValueChange}
+            onSave={meta.authType === "npsso" ? onConnectPsn : onSaveManual}
+            onCancel={onCancelEdit}
+          />
+        ) : (
+          <DisplayRow {...props} />
+        )}
+      </div>
+
+      <SyncProgress job={job} t={t} />
+    </div>
+  );
+}
+
+/**
+ * Live progress bar for an in-flight (or just-finished) library sync. Renders
+ * nothing when there is no job or the last job succeeded silently.
+ */
+function SyncProgress({
+  job,
+  t,
+}: {
+  job: LibrarySyncJob | null;
+  t: (key: string, values?: Record<string, string | number>) => string;
+}) {
+  if (!job) return null;
+  const isActive = job.status === "pending" || job.status === "running";
+
+  if (job.status === "failed") {
+    return (
+      <p className="text-xs text-red-400">
+        {t("syncFailed", { error: job.errorMessage ?? "" })}
+      </p>
+    );
+  }
+
+  if (job.status === "succeeded") {
+    if (job.total === 0) {
+      return (
+        <p className="text-editorial-muted text-xs">
+          {job.privateProfile ? t("syncPrivateProfile") : t("syncEmpty")}
+        </p>
+      );
+    }
+    return (
+      <div className="flex items-center justify-between gap-2 text-xs">
+        <span className="text-editorial-muted flex min-w-0 items-center gap-1.5">
+          <Icon icon="lucide:check-circle" className="h-3.5 w-3.5 shrink-0 text-green-500" />
+          <span className="truncate">
+            {t("syncResult", { matched: job.matched, total: job.total })}
+            {job.imported > 0 ? ` · ${t("syncImportedShort", { imported: job.imported })}` : ""}
+          </span>
+        </span>
+        <Link
+          href="/library"
+          className="text-editorial-accent shrink-0 font-medium hover:underline"
+        >
+          {t("viewLibrary")} →
+        </Link>
+      </div>
+    );
+  }
+
+  if (!isActive) return null;
+
+  const total = job.total || 0;
+  const done = Math.max(job.processed, job.imported);
+  const pct = total > 0 ? Math.min(100, Math.round((done / total) * 100)) : null;
+  const phaseLabel =
+    job.phase === "importing" && job.currentItem
+      ? t("syncImportingGame", { game: job.currentItem })
+      : t(`syncPhase.${job.phase}`);
+
+  return (
+    <div className="flex flex-col gap-1">
+      <div className="text-editorial-muted flex items-center justify-between text-xs">
+        <span className="flex min-w-0 items-center gap-1.5">
+          <Icon icon="lucide:loader-2" className="h-3.5 w-3.5 shrink-0 animate-spin" />
+          <span className="truncate">{phaseLabel}</span>
+        </span>
+        <span className="shrink-0">
+          {total > 0 ? t("syncCount", { processed: done, total }) : ""}
+        </span>
+      </div>
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/[0.08]">
+        <div
+          className="from-editorial-accent h-full rounded-full bg-gradient-to-r to-violet-500 transition-all duration-500"
+          style={{ width: pct !== null ? `${pct}%` : "40%" }}
         />
-      ) : (
-        <DisplayRow {...props} />
-      )}
+      </div>
     </div>
   );
 }
@@ -135,6 +223,7 @@ function DisplayRow({
   linked,
   saving,
   syncing,
+  job,
   t,
   onStartEdit,
   onSyncLibrary,
@@ -166,6 +255,8 @@ function DisplayRow({
   const manualOnlyPlatforms: GamingPlatform[] = ["ubisoft", "ea"];
   const showManualHint = manualOnlyPlatforms.includes(platform);
   const canSync = isConnected && (platform === "steam" || platform === "xbox");
+  const isRunning = job?.status === "pending" || job?.status === "running";
+  const syncBusy = syncing || isRunning;
 
   return (
     <div className="flex flex-1 items-center justify-between gap-2">
@@ -219,13 +310,13 @@ function DisplayRow({
             size="sm"
             variant="ghost"
             onClick={() => onSyncLibrary(platform)}
-            disabled={syncing || saving}
+            disabled={syncBusy || saving}
             className="hover:bg-editorial-accent/12 hover:text-editorial-accent min-h-[44px] min-w-[44px] text-white/70"
             title={t("syncLibrary")}
           >
             <Icon
-              icon={syncing ? "lucide:loader-2" : "lucide:refresh-cw"}
-              className={`h-4 w-4 ${syncing ? "animate-spin" : ""}`}
+              icon={syncBusy ? "lucide:loader-2" : "lucide:refresh-cw"}
+              className={`h-4 w-4 ${syncBusy ? "animate-spin" : ""}`}
             />
           </Button>
         )}

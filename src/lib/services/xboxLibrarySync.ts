@@ -3,6 +3,7 @@ import type { Database } from "@/lib/database.types";
 import { logger } from "@/lib/logger";
 import { EXTERNAL_GAME_CATEGORY, resolveIgdbIdsByExternalUids } from "./igdb-external-games";
 import { getXboxAuthForPlayer, xboxAuthorizationHeader, type XboxAuthContext } from "./xboxAuth";
+import type { LibrarySyncProgressCallback } from "@/types/library-sync";
 
 const TITLE_HISTORY_URL = (xuid: string) =>
   `https://titlehub.xboxlive.com/users/xuid(${xuid})/titles/titleHistory/decoration/detail`;
@@ -83,8 +84,10 @@ async function resolveTitleIdsToGameIds(
 
 export async function syncXboxLibrary(
   supabase: SupabaseClient<Database>,
-  playerId: string
+  playerId: string,
+  onProgress?: LibrarySyncProgressCallback
 ): Promise<XboxSyncResult> {
+  onProgress?.({ phase: "fetching" });
   const auth = await getXboxAuthForPlayer(supabase, playerId);
   if (!auth) {
     throw new Error("Xbox account not connected or refresh failed");
@@ -94,8 +97,11 @@ export async function syncXboxLibrary(
   const gameTitles = titles.filter((t) => t.type !== "Application");
 
   if (gameTitles.length === 0) {
+    onProgress?.({ phase: "done", total: 0, processed: 0, matched: 0 });
     return { total: 0, matched: 0, upserted: 0, unmatched: 0 };
   }
+
+  onProgress?.({ phase: "resolving", total: gameTitles.length });
 
   const idMap = await resolveTitleIdsToGameIds(
     supabase,
@@ -118,6 +124,8 @@ export async function syncXboxLibrary(
     })
     .filter((r): r is NonNullable<typeof r> => r !== null);
 
+  onProgress?.({ phase: "saving", total: gameTitles.length, matched: rows.length });
+
   let upserted = 0;
   for (let i = 0; i < rows.length; i += UPSERT_CHUNK) {
     const chunk = rows.slice(i, i + UPSERT_CHUNK);
@@ -129,7 +137,16 @@ export async function syncXboxLibrary(
       throw error;
     }
     upserted += count ?? chunk.length;
+    onProgress?.({ processed: upserted });
   }
+
+  onProgress?.({
+    phase: "done",
+    total: gameTitles.length,
+    processed: upserted,
+    matched: rows.length,
+    unmatched: gameTitles.length - rows.length,
+  });
 
   return {
     total: gameTitles.length,

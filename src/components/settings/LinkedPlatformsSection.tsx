@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { useLinkedPlatforms } from "@/hooks/useLinkedPlatforms";
+import { useLibrarySync } from "@/hooks/useLibrarySync";
 import { useToast } from "@/hooks/use-toast";
 import { GAMING_PLATFORMS, PLATFORM_META, type GamingPlatform } from "@/types/linked-platforms";
+import { isSyncablePlatform } from "@/types/library-sync";
 import { PlatformRow } from "./PlatformRow";
 import { SuggestionsBanner } from "./SuggestionsBanner";
 
@@ -19,17 +21,33 @@ export function LinkedPlatformsSection() {
     isLoading,
     savePlatform,
     connectPsn,
-    syncLibrary,
     setVisibility,
     removePlatform,
+    refresh: refreshLinked,
   } = useLinkedPlatforms();
+  const { jobByPlatform, startSync } = useLibrarySync();
   const { toast } = useToast();
   const [editingPlatform, setEditingPlatform] = useState<GamingPlatform | null>(null);
   const [editValue, setEditValue] = useState("");
   const [saving, setSaving] = useState(false);
-  const [syncingPlatform, setSyncingPlatform] = useState<"steam" | "xbox" | null>(null);
+  const [startingPlatform, setStartingPlatform] = useState<"steam" | "xbox" | null>(null);
 
   const linkedMap = new Map(platforms.map((p) => [p.platform, p]));
+
+  // Refresh the linked-platforms list (for `lastSyncedAt`) whenever the set of
+  // active jobs changes — i.e. when a sync starts or finishes.
+  const activeKey = Array.from(jobByPlatform.values())
+    .filter((j) => j.status === "running" || j.status === "pending")
+    .map((j) => j.platform)
+    .sort()
+    .join(",");
+  const prevActiveKey = useRef(activeKey);
+  useEffect(() => {
+    if (prevActiveKey.current !== activeKey) {
+      prevActiveKey.current = activeKey;
+      void refreshLinked();
+    }
+  }, [activeKey, refreshLinked]);
 
   const cancelEdit = () => {
     setEditingPlatform(null);
@@ -73,38 +91,15 @@ export function LinkedPlatformsSection() {
   };
 
   const handleSyncLibrary = async (platform: "steam" | "xbox") => {
-    setSyncingPlatform(platform);
+    setStartingPlatform(platform);
     try {
-      const result = await syncLibrary(platform);
-
-      if (result.privateProfile) {
-        toast({ title: t("syncPrivateProfile"), variant: "destructive" });
-        return;
-      }
-      if (result.total === 0) {
-        toast({ title: t("syncEmpty"), variant: "destructive" });
-        return;
-      }
-
-      const description = [
-        t("syncSummary", {
-          matched: result.matched,
-          total: result.total,
-          unmatched: result.unmatched,
-        }),
-        result.imported && result.imported > 0
-          ? t("syncImported", { imported: result.imported })
-          : null,
-      ]
-        .filter(Boolean)
-        .join(" · ");
-
-      toast({ title: t("syncDone"), description });
+      const job = await startSync(platform);
+      toast({ title: job.status === "succeeded" ? t("syncDone") : t("syncStarted") });
     } catch (err) {
       const msg = err instanceof Error ? err.message : tErrors("updateFailed");
       toast({ title: msg, variant: "destructive" });
     } finally {
-      setSyncingPlatform(null);
+      setStartingPlatform(null);
     }
   };
 
@@ -141,7 +136,8 @@ export function LinkedPlatformsSection() {
       isEditing={editingPlatform === platform}
       editValue={editValue}
       saving={saving}
-      syncing={syncingPlatform === platform}
+      syncing={startingPlatform === platform}
+      job={isSyncablePlatform(platform) ? (jobByPlatform.get(platform) ?? null) : null}
       t={t}
       onStartEdit={() => {
         setEditingPlatform(platform);
