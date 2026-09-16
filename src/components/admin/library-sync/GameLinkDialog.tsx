@@ -113,11 +113,11 @@ export function GameLinkDialog({ open, initialQuery, onClose, onSelect }: GameLi
                       <img
                         src={g.coverImage}
                         alt=""
-                        className="h-14 w-10 shrink-0 rounded border border-gray-200 object-cover dark:border-gray-600"
+                        className="h-24 w-16 shrink-0 rounded-md border border-gray-200 object-cover dark:border-gray-600"
                       />
                     ) : (
-                      <span className="grid h-14 w-10 shrink-0 place-items-center rounded border border-gray-200 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
-                        <Icon icon="lucide:gamepad-2" className="h-4 w-4 text-gray-400" />
+                      <span className="grid h-24 w-16 shrink-0 place-items-center rounded-md border border-gray-200 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
+                        <Icon icon="lucide:gamepad-2" className="h-6 w-6 text-gray-400" />
                       </span>
                     )}
                     <span className="min-w-0">
