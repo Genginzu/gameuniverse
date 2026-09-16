@@ -10,38 +10,37 @@
  * Style : Tailwind inline + tokens éditoriaux (cf steering styles-organization).
  */
 
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 
 import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { KickerLabel } from "@/components/shared/KickerLabel";
 import { EditorialContainer } from "@/components/layout/editorial/EditorialContainer";
 
 import { useAuth } from "@/hooks/useAuth";
 import { useCollections } from "@/hooks/useCollections";
-import { useCollectionMutations } from "@/hooks/useCollectionMutations";
+import { useCreateCollectionDialog } from "@/hooks/useCreateCollectionDialog";
+import { useCollectionSuggestions } from "@/hooks/useCollectionSuggestions";
 
-import { CollectionCardEditorial } from "./CollectionCardEditorial";
-import { CollectionForm } from "./CollectionForm";
+import { CollectionsGrid } from "./CollectionsGrid";
+import { CreateCollectionDialog } from "./CreateCollectionDialog";
 import { CollectionsPageSkeleton } from "./CollectionsPageSkeleton";
+import { SuggestedCollections } from "./suggestions/SuggestedCollections";
+import { SuggestionsButton } from "./suggestions/SuggestionsButton";
 
 export function CollectionsEditorial() {
   const t = useTranslations("collections.editorial");
-  const tPage = useTranslations("collections.page");
   const { user, loading: authLoading } = useAuth();
 
   const playerId = user?.id ?? "";
   const { collections, isLoading, refetch } = useCollections(playerId);
-  const { createCollection } = useCollectionMutations({
+  const { isOpen, setIsOpen, isCreating, handleCreate } = useCreateCollectionDialog(
     playerId,
-    refetchCollections: refetch,
-  });
-
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [isCreating, setIsCreating] = useState(false);
+    refetch
+  );
+  const suggestions = useCollectionSuggestions(!!user);
 
   const stats = useMemo(() => {
     const totalCollections = collections.length;
@@ -53,16 +52,6 @@ export function CollectionsEditorial() {
     );
     return { totalCollections, totalGames, publicCollections, largest };
   }, [collections]);
-
-  const handleCreate = async (data: Record<string, unknown>) => {
-    setIsCreating(true);
-    try {
-      await createCollection(data as { name: string; description?: string; isPublic?: boolean });
-      setShowCreateDialog(false);
-    } finally {
-      setIsCreating(false);
-    }
-  };
 
   if (authLoading) {
     return <CollectionsPageSkeleton />;
@@ -110,43 +99,38 @@ export function CollectionsEditorial() {
           <>
             <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <KickerLabel>{t("listKicker", { count: stats.totalCollections })}</KickerLabel>
-              <button
-                type="button"
-                onClick={() => setShowCreateDialog(true)}
-                className="bg-editorial-accent inline-flex h-14 items-center gap-2 rounded-[14px] px-6 text-[0.95rem] font-semibold text-[#0a0418] transition hover:-translate-y-px hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
-              >
-                <Icon icon="lucide:plus" className="h-4 w-4" aria-hidden="true" />
-                {t("createButton")}
-              </button>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                <SuggestionsButton controller={suggestions} />
+                <button
+                  type="button"
+                  onClick={() => setIsOpen(true)}
+                  className="bg-editorial-accent inline-flex h-14 items-center justify-center gap-2 rounded-[14px] px-6 text-[0.95rem] font-semibold text-[#0a0418] transition hover:-translate-y-px hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
+                >
+                  <Icon icon="lucide:plus" className="h-4 w-4" aria-hidden="true" />
+                  {t("createButton")}
+                </button>
+              </div>
             </div>
+
+            {/* Suggested collections results (button-triggered) */}
+            <SuggestedCollections controller={suggestions} onCreated={refetch} />
 
             {/* Content */}
             {collections.length === 0 ? (
-              <CollectionsEmptyState onCreate={() => setShowCreateDialog(true)} />
+              <CollectionsEmptyState onCreate={() => setIsOpen(true)} />
             ) : (
-              <div className="grid grid-cols-1 gap-4 min-[475px]:grid-cols-2 md:grid-cols-3 md:gap-6 xl:grid-cols-4">
-                {collections.map((collection) => (
-                  <CollectionCardEditorial
-                    key={collection.id}
-                    collection={collection}
-                    basePath="/collections"
-                    showVisibility
-                  />
-                ))}
-              </div>
+              <CollectionsGrid collections={collections} basePath="/collections" showVisibility />
             )}
           </>
         )}
 
         {/* Create dialog */}
-        <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-          <DialogContent className="border-editorial-line bg-editorial-2 text-white">
-            <DialogHeader>
-              <DialogTitle className="font-display text-white">{tPage("createButton")}</DialogTitle>
-            </DialogHeader>
-            <CollectionForm mode="create" onSubmit={handleCreate} isSubmitting={isCreating} />
-          </DialogContent>
-        </Dialog>
+        <CreateCollectionDialog
+          open={isOpen}
+          onOpenChange={setIsOpen}
+          onSubmit={handleCreate}
+          isSubmitting={isCreating}
+        />
       </EditorialContainer>
     </section>
   );

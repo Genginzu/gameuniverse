@@ -5,26 +5,26 @@
  * (`/players/[id]/collections`) au look éditorial dark.
  *
  * Affiche les collections de `playerId` (vue propriétaire ou visiteur).
- * Logique métier inchangée :
- *   - `useCollections(playerId)` pour la liste
- *   - `useCollectionMutations` pour la création (propriétaire uniquement)
+ * Le corps (grille, suggestions, dialog de création) est mutualisé avec la
+ * page « Mes collections » via les briques partagées.
  */
 
-import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 
 import { Link } from "@/i18n/navigation";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { KickerLabel } from "@/components/shared/KickerLabel";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
 
-import { CollectionCardEditorial } from "./CollectionCardEditorial";
-import { CollectionForm } from "./CollectionForm";
+import { CollectionsGrid } from "./CollectionsGrid";
+import { CreateCollectionDialog } from "./CreateCollectionDialog";
 import { CollectionsPageSkeleton } from "./CollectionsPageSkeleton";
+import { SuggestedCollections } from "./suggestions/SuggestedCollections";
+import { SuggestionsButton } from "./suggestions/SuggestionsButton";
 
 import { useCollections } from "@/hooks/useCollections";
-import { useCollectionMutations } from "@/hooks/useCollectionMutations";
+import { useCreateCollectionDialog } from "@/hooks/useCreateCollectionDialog";
+import { useCollectionSuggestions } from "@/hooks/useCollectionSuggestions";
 import { useAuth } from "@/hooks/useAuth";
 
 interface CollectionsPageContentProps {
@@ -39,23 +39,11 @@ export function CollectionsPageContent({ playerId, locale }: CollectionsPageCont
   const isOwner = user?.id === playerId;
 
   const { collections, isLoading, error, refetch } = useCollections(playerId);
-  const { createCollection } = useCollectionMutations({
+  const { isOpen, setIsOpen, isCreating, handleCreate } = useCreateCollectionDialog(
     playerId,
-    refetchCollections: refetch,
-  });
-
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [isCreating, setIsCreating] = useState(false);
-
-  const handleCreate = async (data: Record<string, unknown>) => {
-    setIsCreating(true);
-    try {
-      await createCollection(data as { name: string; description?: string; isPublic?: boolean });
-      setShowCreateDialog(false);
-    } finally {
-      setIsCreating(false);
-    }
-  };
+    refetch
+  );
+  const suggestions = useCollectionSuggestions(isOwner);
 
   if (error) {
     return (
@@ -74,8 +62,6 @@ export function CollectionsPageContent({ playerId, locale }: CollectionsPageCont
   if (isLoading) {
     return <CollectionsPageSkeleton />;
   }
-
-  const basePath = `/players/${playerId}/collections`;
 
   return (
     <section className="w-full">
@@ -99,17 +85,23 @@ export function CollectionsPageContent({ playerId, locale }: CollectionsPageCont
             </div>
 
             {isOwner && (
-              <button
-                type="button"
-                onClick={() => setShowCreateDialog(true)}
-                className="bg-editorial-accent inline-flex h-14 items-center gap-2 self-start rounded-[14px] px-6 text-[0.95rem] font-semibold text-[#0a0418] transition hover:-translate-y-px hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))] sm:self-auto"
-              >
-                <Icon icon="lucide:plus" className="h-4 w-4" aria-hidden="true" />
-                {t("createButton")}
-              </button>
+              <div className="flex flex-col gap-3 self-start sm:flex-row sm:items-center sm:self-auto">
+                <SuggestionsButton controller={suggestions} />
+                <button
+                  type="button"
+                  onClick={() => setIsOpen(true)}
+                  className="bg-editorial-accent inline-flex h-14 items-center justify-center gap-2 rounded-[14px] px-6 text-[0.95rem] font-semibold text-[#0a0418] transition hover:-translate-y-px hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
+                >
+                  <Icon icon="lucide:plus" className="h-4 w-4" aria-hidden="true" />
+                  {t("createButton")}
+                </button>
+              </div>
             )}
           </div>
         </header>
+
+        {/* Suggested collections results (owner only, button-triggered) */}
+        <SuggestedCollections controller={suggestions} onCreated={refetch} />
 
         {/* Content */}
         {collections.length === 0 ? (
@@ -121,28 +113,21 @@ export function CollectionsPageContent({ playerId, locale }: CollectionsPageCont
             <p className="text-editorial-muted max-w-[50ch]">{tList("emptyDescription")}</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-4 min-[475px]:grid-cols-2 md:grid-cols-3 md:gap-6 xl:grid-cols-4">
-            {collections.map((collection) => (
-              <CollectionCardEditorial
-                key={collection.id}
-                collection={collection}
-                basePath={basePath}
-                showVisibility={isOwner}
-              />
-            ))}
-          </div>
+          <CollectionsGrid
+            collections={collections}
+            basePath={`/players/${playerId}/collections`}
+            showVisibility={isOwner}
+          />
         )}
 
         {/* Create dialog */}
         {isOwner && (
-          <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
-            <DialogContent className="border-editorial-line bg-editorial-2 text-white">
-              <DialogHeader>
-                <DialogTitle className="font-display text-white">{t("createButton")}</DialogTitle>
-              </DialogHeader>
-              <CollectionForm mode="create" onSubmit={handleCreate} isSubmitting={isCreating} />
-            </DialogContent>
-          </Dialog>
+          <CreateCollectionDialog
+            open={isOpen}
+            onOpenChange={setIsOpen}
+            onSubmit={handleCreate}
+            isSubmitting={isCreating}
+          />
         )}
       </div>
     </section>

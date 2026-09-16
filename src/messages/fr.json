@@ -3363,6 +3363,31 @@
           "successToast": "Note mise à jour."
         }
       }
+    },
+    "suggestions": {
+      "title": "Collections suggérées",
+      "subtitle": "Générées à partir de votre bibliothèque",
+      "gamesCount": "{count, plural, =0 {Aucun jeu} one {# jeu} other {# jeux}}",
+      "create": "Créer",
+      "ignore": "Ignorer",
+      "generate": "Générer des suggestions",
+      "regenerate": "Régénérer",
+      "loading": "Analyse de votre bibliothèque…",
+      "empty": "Aucune nouvelle collection à suggérer. Ajoutez de nouveaux jeux à votre bibliothèque pour en générer d'autres.",
+      "names": {
+        "genre": "Vos jeux {genre}",
+        "completionYear": "Complétés en {year}",
+        "durationShort": "Jeux de moins de {hours}h",
+        "durationLong": "Jeux de plus de {hours}h",
+        "platform": "Vos jeux {platform}",
+        "rating": "Vos mieux notés"
+      },
+      "platforms": {
+        "steam": "Steam",
+        "playstation": "PlayStation",
+        "xbox": "Xbox",
+        "epic": "Epic Games"
+      }
     }
   },
   "globalSearch": {

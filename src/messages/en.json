@@ -3360,6 +3360,31 @@
           "successToast": "Note updated."
         }
       }
+    },
+    "suggestions": {
+      "title": "Suggested collections",
+      "subtitle": "Generated from your library",
+      "gamesCount": "{count, plural, =0 {No games} one {# game} other {# games}}",
+      "create": "Create",
+      "ignore": "Ignore",
+      "generate": "Generate suggestions",
+      "regenerate": "Regenerate",
+      "loading": "Analyzing your library…",
+      "empty": "No new collection to suggest. Add new games to your library to generate more.",
+      "names": {
+        "genre": "Your {genre} games",
+        "completionYear": "Completed in {year}",
+        "durationShort": "Games under {hours}h",
+        "durationLong": "Games over {hours}h",
+        "platform": "Your {platform} games",
+        "rating": "Your top rated"
+      },
+      "platforms": {
+        "steam": "Steam",
+        "playstation": "PlayStation",
+        "xbox": "Xbox",
+        "epic": "Epic Games"
+      }
     }
   },
   "globalSearch": {
