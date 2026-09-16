@@ -2876,6 +2876,7 @@
       "linkButton": "Search",
       "dialogTitle": "Link to a game",
       "searchHint": "Type at least 2 characters to search",
+      "igdbHint": "Direct IGDB search — the game is imported locally if needed.",
       "noGameResults": "No game found",
       "count": "{total} title(s)",
       "loading": "Loading…",

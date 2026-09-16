@@ -1,16 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useLocale, useTranslations } from "next-intl";
+import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
-interface GameSearchResult {
-  id: string;
+interface IgdbSearchResult {
+  igdbId: number;
+  name: string;
   slug: string;
-  title: string;
-  coverImage: string | null;
+  coverUrl: string | null;
+  releaseYear: number | null;
+  developer: string | null;
 }
 
 interface GameLinkDialogProps {
@@ -18,29 +20,30 @@ interface GameLinkDialogProps {
   /** Title pre-filled in the search box (the unmatched platform title). */
   initialQuery: string;
   onClose: () => void;
-  onSelect: (gameId: string) => void;
+  /** Link the match to the chosen IGDB game (imported locally if needed). */
+  onSelect: (igdbId: number) => Promise<void> | void;
 }
 
 const SEARCH_LIMIT = 50;
 
 /**
- * Centered game-search dialog (same UX as the editorial search overlay, admin
- * styling). Pre-fills the platform title so the admin just picks the right game
- * from a generous result list.
+ * Centered game-search dialog that queries IGDB directly (not the local DB), so
+ * any IGDB game can be linked — imported on selection if not present locally.
+ * Pre-fills the platform title so the admin just picks the right game.
  */
 export function GameLinkDialog({ open, initialQuery, onClose, onSelect }: GameLinkDialogProps) {
   const t = useTranslations("admin.librarySync");
-  const locale = useLocale();
   const [query, setQuery] = useState(initialQuery);
-  const [results, setResults] = useState<GameSearchResult[]>([]);
+  const [results, setResults] = useState<IgdbSearchResult[]>([]);
   const [loading, setLoading] = useState(false);
+  const [linkingId, setLinkingId] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Reset the query to the pre-filled title each time the dialog opens.
   useEffect(() => {
     if (open) {
       setQuery(initialQuery);
       setResults([]);
+      setLinkingId(null);
       setTimeout(() => inputRef.current?.focus(), 50);
     }
   }, [open, initialQuery]);
@@ -56,24 +59,34 @@ export function GameLinkDialog({ open, initialQuery, onClose, onSelect }: GameLi
       setLoading(true);
       try {
         const res = await fetch(
-          `/api/admin/games/search?q=${encodeURIComponent(query.trim())}&locale=${locale}&limit=${SEARCH_LIMIT}`,
+          `/api/admin/library-sync/igdb-search?q=${encodeURIComponent(query.trim())}&limit=${SEARCH_LIMIT}`,
           { signal: controller.signal }
         );
-        if (res.ok) setResults((await res.json()) as GameSearchResult[]);
+        if (res.ok) setResults((await res.json()) as IgdbSearchResult[]);
       } catch {
         /* aborted / ignored */
       } finally {
         setLoading(false);
       }
-    }, 300);
+    }, 350);
     return () => {
       clearTimeout(id);
       controller.abort();
     };
-  }, [query, locale, open]);
+  }, [query, open]);
+
+  const handleSelect = async (igdbId: number) => {
+    if (linkingId !== null) return;
+    setLinkingId(igdbId);
+    try {
+      await onSelect(igdbId);
+    } finally {
+      setLinkingId(null);
+    }
+  };
 
   return (
-    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
+    <Dialog open={open} onOpenChange={(v) => !v && linkingId === null && onClose()}>
       <DialogContent className="top-[8%] max-w-xl translate-y-0 gap-4">
         <DialogHeader>
           <DialogTitle className="text-gray-900 dark:text-white">{t("dialogTitle")}</DialogTitle>
@@ -95,6 +108,8 @@ export function GameLinkDialog({ open, initialQuery, onClose, onSelect }: GameLi
           />
         </div>
 
+        <p className="text-xs text-gray-400">{t("igdbHint")}</p>
+
         <div className="max-h-[55vh] overflow-y-auto rounded-xl border border-gray-200 dark:border-gray-700">
           {query.trim().length < 2 ? (
             <p className="p-6 text-center text-sm text-gray-400">{t("searchHint")}</p>
@@ -103,15 +118,16 @@ export function GameLinkDialog({ open, initialQuery, onClose, onSelect }: GameLi
           ) : (
             <ul className="divide-y divide-gray-100 dark:divide-gray-700">
               {results.map((g) => (
-                <li key={g.id}>
+                <li key={g.igdbId}>
                   <button
                     type="button"
-                    onClick={() => onSelect(g.id)}
-                    className="flex w-full items-center gap-3 bg-white px-4 py-2.5 text-left hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700"
+                    disabled={linkingId !== null}
+                    onClick={() => handleSelect(g.igdbId)}
+                    className="flex w-full items-center gap-3 bg-white px-4 py-3 text-left hover:bg-gray-50 disabled:opacity-50 dark:bg-gray-800 dark:hover:bg-gray-700"
                   >
-                    {g.coverImage ? (
+                    {g.coverUrl ? (
                       <img
-                        src={g.coverImage}
+                        src={g.coverUrl}
                         alt=""
                         className="h-24 w-16 shrink-0 rounded-md border border-gray-200 object-cover dark:border-gray-600"
                       />
@@ -120,12 +136,17 @@ export function GameLinkDialog({ open, initialQuery, onClose, onSelect }: GameLi
                         <Icon icon="lucide:gamepad-2" className="h-6 w-6 text-gray-400" />
                       </span>
                     )}
-                    <span className="min-w-0">
+                    <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm font-medium text-gray-900 dark:text-white">
-                        {g.title}
+                        {g.name}
                       </span>
-                      <span className="block truncate text-xs text-gray-400">{g.slug}</span>
+                      <span className="block truncate text-xs text-gray-400">
+                        {[g.developer, g.releaseYear].filter(Boolean).join(" · ") || g.slug}
+                      </span>
                     </span>
+                    {linkingId === g.igdbId && (
+                      <Icon icon="lucide:loader-2" className="h-5 w-5 shrink-0 animate-spin text-gray-400" />
+                    )}
                   </button>
                 </li>
               ))}

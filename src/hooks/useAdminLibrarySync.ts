@@ -60,12 +60,30 @@ export function useAdminLibrarySync(params: UseAdminLibrarySyncParams) {
     [mutate]
   );
 
+  /** Link to an IGDB game, importing it locally first if needed. */
+  const importAndLink = useCallback(
+    async (platform: string, sourceId: string, igdbId: number) => {
+      const res = await fetch("/api/admin/library-sync/matches", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ platform, sourceId, igdbId }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || "Failed to link game");
+      }
+      await mutate();
+    },
+    [mutate]
+  );
+
   return {
     matches: data?.matches ?? [],
     total: data?.total ?? 0,
     pageSize: data?.pageSize ?? 25,
     isLoading,
     linkMatch,
+    importAndLink,
     refresh: mutate,
   };
 }

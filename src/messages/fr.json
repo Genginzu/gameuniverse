@@ -2879,6 +2879,7 @@
       "linkButton": "Rechercher",
       "dialogTitle": "Lier à un jeu",
       "searchHint": "Tapez au moins 2 caractères pour rechercher",
+      "igdbHint": "Recherche directe dans IGDB — le jeu sera importé localement si besoin.",
       "noGameResults": "Aucun jeu trouvé",
       "count": "{total} titre(s)",
       "loading": "Chargement…",

@@ -2,7 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { requireAdmin } from "@/lib/auth-admin";
+import { GameImportService } from "@/lib/services/gameImportService";
 import { logger } from "@/lib/logger";
+
+/** Linking may import a game from IGDB, which can take a few seconds. */
+export const maxDuration = 60;
 
 /**
  * Admin management of the shared platform → game match cache
@@ -111,10 +115,12 @@ export async function GET(request: NextRequest) {
 
 /**
  * PATCH /api/admin/library-sync/matches
- * Body: { platform, sourceId, gameId }  (gameId = null to clear the link)
+ * Body: { platform, sourceId, gameId? , igdbId? }
+ *   - gameId: link to an existing local game (null clears the link)
+ *   - igdbId: link to an IGDB game, importing it locally first if needed
  *
- * Links a platform title to a local game (or clears it). Writes use the
- * service role since `platform_game_matches` is service-role-write-only.
+ * Writes use the service role since `platform_game_matches` is
+ * service-role-write-only.
  */
 export async function PATCH(request: NextRequest) {
   try {
@@ -123,14 +129,19 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: "Admin access required" }, { status: 403 });
   }
 
-  let body: { platform?: string; sourceId?: string; gameId?: string | null };
+  let body: {
+    platform?: string;
+    sourceId?: string;
+    gameId?: string | null;
+    igdbId?: number | null;
+  };
   try {
     body = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid body" }, { status: 400 });
   }
 
-  const { platform, sourceId, gameId } = body;
+  const { platform, sourceId, gameId, igdbId } = body;
   if (!platform || !sourceId) {
     return NextResponse.json({ error: "platform and sourceId are required" }, { status: 400 });
   }
@@ -138,15 +149,46 @@ export async function PATCH(request: NextRequest) {
   try {
     const admin = getSupabaseAdmin();
 
-    // Validate the target game exists when linking.
-    if (gameId) {
+    // Resolve the target local game id.
+    let finalGameId: string | null = null;
+
+    if (igdbId) {
+      // Prefer an existing local game; import from IGDB otherwise.
+      const { data: existing } = await admin
+        .from("games")
+        .select("id")
+        .eq("igdb_id", igdbId)
+        .maybeSingle();
+      if (existing) {
+        finalGameId = existing.id;
+      } else {
+        const result = await GameImportService.importFromIGDB(igdbId);
+        if (!result.success) {
+          return NextResponse.json(
+            { error: result.error || "IGDB import failed" },
+            { status: 502 }
+          );
+        }
+        const { data: created } = await admin
+          .from("games")
+          .select("id")
+          .eq("igdb_id", igdbId)
+          .maybeSingle();
+        if (!created) {
+          return NextResponse.json({ error: "Imported game not found" }, { status: 500 });
+        }
+        finalGameId = created.id;
+      }
+    } else if (gameId) {
       const { data: game } = await admin.from("games").select("id").eq("id", gameId).maybeSingle();
       if (!game) return NextResponse.json({ error: "Game not found" }, { status: 404 });
+      finalGameId = gameId;
     }
+    // Neither igdbId nor gameId → clear the link (finalGameId stays null).
 
     const { error } = await admin
       .from("platform_game_matches")
-      .update({ game_id: gameId ?? null, updated_at: new Date().toISOString() })
+      .update({ game_id: finalGameId, updated_at: new Date().toISOString() })
       .eq("platform", platform)
       .eq("source_id", sourceId);
 
@@ -155,7 +197,7 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: "Update failed" }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, gameId: finalGameId });
   } catch (error) {
     logger.error("Error in admin library-sync matches PATCH", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

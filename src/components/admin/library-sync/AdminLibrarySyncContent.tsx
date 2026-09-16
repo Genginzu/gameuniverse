@@ -31,7 +31,7 @@ export function AdminLibrarySyncContent() {
   const [page, setPage] = useState(1);
   const [linkingMatch, setLinkingMatch] = useState<PlatformMatch | null>(null);
 
-  const { matches, total, pageSize, isLoading, linkMatch } = useAdminLibrarySync({
+  const { matches, total, pageSize, isLoading, linkMatch, importAndLink } = useAdminLibrarySync({
     platform,
     status,
     search,
@@ -208,10 +208,16 @@ export function AdminLibrarySyncContent() {
         open={linkingMatch !== null}
         initialQuery={linkingMatch?.name ?? ""}
         onClose={() => setLinkingMatch(null)}
-        onSelect={(gameId) => {
+        onSelect={async (igdbId) => {
           const m = linkingMatch;
-          setLinkingMatch(null);
-          if (m) handleLink(m, gameId);
+          if (!m) return;
+          try {
+            await importAndLink(m.platform, m.sourceId, igdbId);
+            toast({ title: t("linkedToast"), variant: "success" });
+            setLinkingMatch(null);
+          } catch {
+            toast({ title: t("errorToast"), variant: "destructive" });
+          }
         }}
       />
     </div>
