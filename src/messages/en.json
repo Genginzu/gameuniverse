@@ -1728,7 +1728,8 @@
       "esportImport": "Esport Import",
       "esportSync": "PandaScore Sync",
       "translations": "Translations",
-      "globalSync": "Global Sync"
+      "globalSync": "Global Sync",
+      "librarySync": "Library Sync"
     },
     "closeSidebar": "Close sidebar",
     "openSidebar": "Open sidebar",
@@ -2852,6 +2853,35 @@
         "content_descriptors": "Descriptors",
         "ratings": "Ratings"
       }
+    },
+    "librarySync": {
+      "title": "Library Sync",
+      "description": "Titles reported by connected platforms (Steam, Xbox, PlayStation) that couldn't be auto-matched to a game. Link them to a game and every player picks it up on their next sync.",
+      "filters": {
+        "platform": "Platform",
+        "allPlatforms": "All",
+        "status": "Status",
+        "unmatched": "Unmatched",
+        "matched": "Matched",
+        "all": "All",
+        "search": "Search"
+      },
+      "platforms": {
+        "steam": "Steam",
+        "xbox": "Xbox",
+        "playstation": "PlayStation"
+      },
+      "searchPlaceholder": "Game name…",
+      "searchGame": "Search a game to link…",
+      "noGameResults": "No game found",
+      "count": "{total} title(s)",
+      "loading": "Loading…",
+      "empty": "No titles to show",
+      "unlink": "Unlink",
+      "linkedToast": "Game linked",
+      "unlinkedToast": "Link removed",
+      "errorToast": "Update failed",
+      "pageOf": "Page {page} / {total}"
     },
     "globalSync": {
       "title": "IGDB Global Sync",

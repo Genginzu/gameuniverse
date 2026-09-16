@@ -1728,7 +1728,8 @@
       "esportImport": "Import Esport",
       "esportSync": "Sync PandaScore",
       "translations": "Traductions",
-      "globalSync": "Synchro globale"
+      "globalSync": "Synchro globale",
+      "librarySync": "Synchro bibliothèque"
     },
     "closeSidebar": "Fermer le menu latéral",
     "openSidebar": "Ouvrir le menu latéral",
@@ -2855,6 +2856,35 @@
         "content_descriptors": "Descripteurs",
         "ratings": "Classifications"
       }
+    },
+    "librarySync": {
+      "title": "Synchro bibliothèque",
+      "description": "Titres remontés par les plateformes (Steam, Xbox, PlayStation) non associés automatiquement à un jeu. Liez-les à un jeu : tous les joueurs le récupèreront à leur prochaine synchro.",
+      "filters": {
+        "platform": "Plateforme",
+        "allPlatforms": "Toutes",
+        "status": "Statut",
+        "unmatched": "Non associés",
+        "matched": "Associés",
+        "all": "Tous",
+        "search": "Recherche"
+      },
+      "platforms": {
+        "steam": "Steam",
+        "xbox": "Xbox",
+        "playstation": "PlayStation"
+      },
+      "searchPlaceholder": "Nom du jeu…",
+      "searchGame": "Rechercher un jeu à lier…",
+      "noGameResults": "Aucun jeu trouvé",
+      "count": "{total} titre(s)",
+      "loading": "Chargement…",
+      "empty": "Aucun titre à afficher",
+      "unlink": "Délier",
+      "linkedToast": "Jeu associé",
+      "unlinkedToast": "Association retirée",
+      "errorToast": "Échec de la mise à jour",
+      "pageOf": "Page {page} / {total}"
     },
     "globalSync": {
       "title": "Synchronisation globale IGDB",
