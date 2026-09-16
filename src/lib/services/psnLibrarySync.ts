@@ -2,20 +2,15 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { getRecentlyPlayedGames } from "psn-api";
 import type { Database } from "@/lib/database.types";
 import { logger } from "@/lib/logger";
-import { EXTERNAL_GAME_CATEGORY, resolveIgdbIdsByExternalUids } from "./igdb-external-games";
-import { GameImportService } from "./gameImportService";
-import { IGDBService } from "./igdbService";
+import { EXTERNAL_GAME_CATEGORY } from "./igdb-external-games";
+import { resolveLibraryGames, type ResolvableLibraryItem } from "./libraryGameResolver";
 import { getValidAccessToken } from "./platformTokenRefresh";
 import type { LibrarySyncProgressCallback } from "@/types/library-sync";
 
 const UPSERT_CHUNK = 200;
 /** How many played games to request from PSN in one call. */
 const PSN_FETCH_LIMIT = 200;
-/**
- * Combined budget (per run) for expensive IGDB operations: importing a missing
- * game and running a name-search fallback. Keeps us within IGDB's rate limit
- * (4 req/s) and the function time budget; the rest is picked up next run.
- */
+/** Cap on IGDB imports/searches per run (rate-limit + function-time budget). */
 const MAX_IGDB_OPS_PER_SYNC = 30;
 
 export interface PsnSyncResult {
@@ -33,26 +28,6 @@ interface PsnGame {
   productId: string | null;
 }
 
-/**
- * Normalize a game title for strict cross-source comparison: lower-case, strip
- * trademark symbols, collapse whitespace, and drop common edition/platform
- * suffixes. Used to guard the fuzzy IGDB name-search fallback against false
- * positives.
- */
-function normalizeTitle(title: string): string {
-  return title
-    .toLowerCase()
-    .replace(/[™®©]/g, "")
-    .replace(/[:\-–—]/g, " ")
-    .replace(
-      /\b(ps4|ps5|playstation( ?[45])?|deluxe|standard|digital|edition|remastered|goty|game of the year|complete)\b/g,
-      " "
-    )
-    .replace(/[^a-z0-9 ]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
 async function fetchPsnLibrary(accessToken: string): Promise<PsnGame[]> {
   const response = await getRecentlyPlayedGames(
     { accessToken },
@@ -65,44 +40,6 @@ async function fetchPsnLibrary(accessToken: string): Promise<PsnGame[]> {
     conceptId: g.conceptId,
     productId: g.productId,
   }));
-}
-
-/** Map already-local games by their igdb_id. */
-async function fetchLocalGameIdsByIgdb(
-  supabase: SupabaseClient<Database>,
-  igdbIds: number[]
-): Promise<Map<number, string>> {
-  const map = new Map<number, string>();
-  if (igdbIds.length === 0) return map;
-  const { data, error } = await supabase
-    .from("games")
-    .select("id, igdb_id")
-    .in("igdb_id", Array.from(new Set(igdbIds)));
-  if (error) throw error;
-  for (const row of data ?? []) {
-    if (row.igdb_id !== null) map.set(row.igdb_id, row.id);
-  }
-  return map;
-}
-
-/** Import a game from IGDB and return the new local game id (or null). */
-async function importIgdbGame(
-  supabase: SupabaseClient<Database>,
-  igdbId: number
-): Promise<string | null> {
-  try {
-    const result = await GameImportService.importFromIGDB(igdbId);
-    if (!result.success) return null;
-    const { data } = await supabase
-      .from("games")
-      .select("id")
-      .eq("igdb_id", igdbId)
-      .maybeSingle();
-    return data?.id ?? null;
-  } catch (err) {
-    logger.error("IGDB import threw during PSN sync", { igdbId, err });
-    return null;
-  }
 }
 
 export async function syncPsnLibrary(
@@ -125,82 +62,23 @@ export async function syncPsnLibrary(
 
   onProgress?.({ phase: "resolving", total: games.length });
 
-  // ── 1. Primary mapping: IGDB external_games, PlayStation Store source (36).
-  //    PSN exposes several store identifiers; try each as a candidate uid.
-  const uidToGame = new Map<string, PsnGame>();
-  for (const g of games) {
-    for (const uid of [g.conceptId, g.productId, g.titleId]) {
-      if (uid) uidToGame.set(String(uid), g);
-    }
-  }
-  const uidToIgdb = await resolveIgdbIdsByExternalUids(
-    Array.from(uidToGame.keys()),
-    EXTERNAL_GAME_CATEGORY.PLAYSTATION_STORE_US
+  const items: ResolvableLibraryItem[] = games.map((g) => ({
+    sourceId: g.titleId,
+    name: g.name,
+    uids: [g.conceptId, g.productId, g.titleId].filter((u): u is string => !!u),
+  }));
+
+  const { resolved, imported } = await resolveLibraryGames(
+    supabase,
+    items,
+    EXTERNAL_GAME_CATEGORY.PLAYSTATION_STORE_US,
+    { importBudget: MAX_IGDB_OPS_PER_SYNC, onProgress }
   );
 
-  // titleId → resolved igdb id (dedupe per game via titleId as the stable key).
-  const gameIgdbId = new Map<string, number>();
-  for (const [uid, igdbId] of uidToIgdb.entries()) {
-    const g = uidToGame.get(uid);
-    if (g && !gameIgdbId.has(g.titleId)) gameIgdbId.set(g.titleId, igdbId);
-  }
-
-  const resolvedGameId = new Map<string, string>(); // titleId → local game id
-  let igdbOps = 0;
-  let imported = 0;
-
-  // Resolve cat-36 igdb ids to local games, importing missing ones on budget.
-  const igdbIds = Array.from(new Set(gameIgdbId.values()));
-  const localByIgdb = await fetchLocalGameIdsByIgdb(supabase, igdbIds);
-  for (const [titleId, igdbId] of gameIgdbId.entries()) {
-    const local = localByIgdb.get(igdbId);
-    if (local) {
-      resolvedGameId.set(titleId, local);
-    } else if (igdbOps < MAX_IGDB_OPS_PER_SYNC) {
-      igdbOps += 1;
-      onProgress?.({ phase: "importing", imported, currentItem: nameOf(games, titleId) });
-      const newId = await importIgdbGame(supabase, igdbId);
-      if (newId) {
-        resolvedGameId.set(titleId, newId);
-        imported += 1;
-        onProgress?.({ phase: "importing", imported });
-      }
-    }
-  }
-
-  // ── 2. Fallback: IGDB name search for still-unmatched games (strict match).
-  for (const g of games) {
-    if (igdbOps >= MAX_IGDB_OPS_PER_SYNC) break;
-    if (resolvedGameId.has(g.titleId)) continue;
-    igdbOps += 1;
-    try {
-      const results = await IGDBService.searchGames(g.name, 5);
-      const target = normalizeTitle(g.name);
-      const hit = results.find((r) => r.name && normalizeTitle(r.name) === target);
-      if (!hit?.id) continue;
-
-      const local = (await fetchLocalGameIdsByIgdb(supabase, [hit.id])).get(hit.id);
-      if (local) {
-        resolvedGameId.set(g.titleId, local);
-      } else if (imported < MAX_IGDB_OPS_PER_SYNC) {
-        onProgress?.({ phase: "importing", imported, currentItem: g.name });
-        const newId = await importIgdbGame(supabase, hit.id);
-        if (newId) {
-          resolvedGameId.set(g.titleId, newId);
-          imported += 1;
-          onProgress?.({ phase: "importing", imported });
-        }
-      }
-    } catch (err) {
-      logger.warn("PSN name-search fallback failed", { name: g.name, err });
-    }
-  }
-
-  // ── 3. Upsert resolved games into the user library.
   const now = new Date().toISOString();
   const rows = games
     .map((g) => {
-      const gameId = resolvedGameId.get(g.titleId);
+      const gameId = resolved.get(g.titleId);
       if (!gameId) return null;
       return {
         user_id: playerId,
@@ -245,8 +123,4 @@ export async function syncPsnLibrary(
     unmatched: games.length - rows.length,
     imported,
   };
-}
-
-function nameOf(games: PsnGame[], titleId: string): string | undefined {
-  return games.find((g) => g.titleId === titleId)?.name;
 }

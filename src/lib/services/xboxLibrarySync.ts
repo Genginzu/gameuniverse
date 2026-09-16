@@ -1,19 +1,23 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/database.types";
 import { logger } from "@/lib/logger";
-import { EXTERNAL_GAME_CATEGORY, resolveIgdbIdsByExternalUids } from "./igdb-external-games";
+import { EXTERNAL_GAME_CATEGORY } from "./igdb-external-games";
+import { resolveLibraryGames, type ResolvableLibraryItem } from "./libraryGameResolver";
 import { getXboxAuthForPlayer, xboxAuthorizationHeader, type XboxAuthContext } from "./xboxAuth";
 import type { LibrarySyncProgressCallback } from "@/types/library-sync";
 
 const TITLE_HISTORY_URL = (xuid: string) =>
   `https://titlehub.xboxlive.com/users/xuid(${xuid})/titles/titleHistory/decoration/detail`;
 const UPSERT_CHUNK = 200;
+/** Cap on IGDB imports/searches per run (rate-limit + function-time budget). */
+const MAX_IGDB_OPS_PER_SYNC = 30;
 
 export interface XboxSyncResult {
   total: number;
   matched: number;
   upserted: number;
   unmatched: number;
+  imported: number;
 }
 
 interface XboxTitle {
@@ -48,40 +52,6 @@ async function fetchTitleHistory(auth: XboxAuthContext): Promise<XboxTitle[]> {
   return data.titles ?? [];
 }
 
-async function resolveTitleIdsToGameIds(
-  supabase: SupabaseClient<Database>,
-  titleIds: string[]
-): Promise<Map<string, string>> {
-  const resolved = new Map<string, string>();
-  if (titleIds.length === 0) return resolved;
-
-  const uidToIgdb = await resolveIgdbIdsByExternalUids(
-    titleIds,
-    EXTERNAL_GAME_CATEGORY.XBOX_MARKETPLACE
-  );
-  if (uidToIgdb.size === 0) return resolved;
-
-  const igdbIds = Array.from(new Set(uidToIgdb.values()));
-  const { data: rows, error } = await supabase
-    .from("games")
-    .select("id, igdb_id")
-    .in("igdb_id", igdbIds);
-
-  if (error) throw error;
-
-  const igdbIdToGameId = new Map<number, string>();
-  for (const row of rows ?? []) {
-    if (row.igdb_id !== null) igdbIdToGameId.set(row.igdb_id, row.id);
-  }
-
-  for (const [uid, igdbId] of uidToIgdb.entries()) {
-    const gameId = igdbIdToGameId.get(igdbId);
-    if (gameId) resolved.set(uid, gameId);
-  }
-
-  return resolved;
-}
-
 export async function syncXboxLibrary(
   supabase: SupabaseClient<Database>,
   playerId: string,
@@ -98,20 +68,31 @@ export async function syncXboxLibrary(
 
   if (gameTitles.length === 0) {
     onProgress?.({ phase: "done", total: 0, processed: 0, matched: 0 });
-    return { total: 0, matched: 0, upserted: 0, unmatched: 0 };
+    return { total: 0, matched: 0, upserted: 0, unmatched: 0, imported: 0 };
   }
 
   onProgress?.({ phase: "resolving", total: gameTitles.length });
 
-  const idMap = await resolveTitleIdsToGameIds(
+  // Xbox title-history ids rarely line up with IGDB's xbox_marketplace uids, so
+  // the shared resolver falls back to a strict name search (and imports missing
+  // games) — mirroring the Steam/PSN behaviour.
+  const items: ResolvableLibraryItem[] = gameTitles.map((t) => ({
+    sourceId: t.titleId,
+    name: t.name,
+    uids: [t.titleId, t.pfn].filter((u): u is string => !!u),
+  }));
+
+  const { resolved, imported } = await resolveLibraryGames(
     supabase,
-    gameTitles.map((t) => t.titleId)
+    items,
+    EXTERNAL_GAME_CATEGORY.XBOX_MARKETPLACE,
+    { importBudget: MAX_IGDB_OPS_PER_SYNC, onProgress }
   );
 
   const now = new Date().toISOString();
   const rows = gameTitles
     .map((t) => {
-      const gameId = idMap.get(t.titleId);
+      const gameId = resolved.get(t.titleId);
       if (!gameId) return null;
       return {
         user_id: playerId,
@@ -124,7 +105,7 @@ export async function syncXboxLibrary(
     })
     .filter((r): r is NonNullable<typeof r> => r !== null);
 
-  onProgress?.({ phase: "saving", total: gameTitles.length, matched: rows.length });
+  onProgress?.({ phase: "saving", total: gameTitles.length, matched: rows.length, imported });
 
   let upserted = 0;
   for (let i = 0; i < rows.length; i += UPSERT_CHUNK) {
@@ -145,6 +126,7 @@ export async function syncXboxLibrary(
     total: gameTitles.length,
     processed: upserted,
     matched: rows.length,
+    imported,
     unmatched: gameTitles.length - rows.length,
   });
 
@@ -153,5 +135,6 @@ export async function syncXboxLibrary(
     matched: rows.length,
     upserted,
     unmatched: gameTitles.length - rows.length,
+    imported,
   };
 }

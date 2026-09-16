@@ -114,7 +114,7 @@ export async function runLibrarySyncJob({
       result = { total: r.total, matched: r.matched, imported: r.imported };
     } else {
       const r = await syncXboxLibrary(db, userId, onProgress);
-      result = { total: r.total, matched: r.matched, imported: 0 };
+      result = { total: r.total, matched: r.matched, imported: r.imported };
     }
 
     await lastFlushPromise;
