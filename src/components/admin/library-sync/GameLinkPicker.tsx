@@ -72,7 +72,7 @@ export function GameLinkPicker({ onSelect, disabled }: GameLinkPickerProps) {
       <div className="relative">
         <Icon
           icon={loading ? "lucide:loader-2" : "lucide:search"}
-          className={`text-editorial-muted pointer-events-none absolute top-1/2 left-2.5 h-4 w-4 -translate-y-1/2 ${
+          className={`pointer-events-none absolute top-1/2 left-2.5 h-4 w-4 -translate-y-1/2 text-gray-400 ${
             loading ? "animate-spin" : ""
           }`}
         />
@@ -87,7 +87,7 @@ export function GameLinkPicker({ onSelect, disabled }: GameLinkPickerProps) {
       </div>
 
       {open && results.length > 0 && (
-        <ul className="border-editorial-line bg-editorial-2 absolute z-20 mt-1 max-h-64 w-full overflow-auto rounded-lg border shadow-lg">
+        <ul className="absolute z-50 mt-1 max-h-64 w-full overflow-auto rounded-xl border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-800">
           {results.map((g) => (
             <li key={g.id}>
               <button
@@ -98,13 +98,17 @@ export function GameLinkPicker({ onSelect, disabled }: GameLinkPickerProps) {
                   setResults([]);
                   setOpen(false);
                 }}
-                className="hover:bg-editorial-3 flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-white/85"
+                className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-gray-700"
               >
                 {g.coverImage ? (
-                  <img src={g.coverImage} alt="" className="h-8 w-6 rounded object-cover" />
+                  <img
+                    src={g.coverImage}
+                    alt=""
+                    className="h-8 w-6 rounded border border-gray-200 object-cover dark:border-gray-600"
+                  />
                 ) : (
-                  <span className="bg-editorial-3 grid h-8 w-6 place-items-center rounded">
-                    <Icon icon="lucide:gamepad-2" className="h-3 w-3 text-white/40" />
+                  <span className="grid h-8 w-6 place-items-center rounded border border-gray-200 bg-gray-100 dark:border-gray-600 dark:bg-gray-700">
+                    <Icon icon="lucide:gamepad-2" className="h-3 w-3 text-gray-400" />
                   </span>
                 )}
                 <span className="truncate">{g.title}</span>
@@ -115,7 +119,7 @@ export function GameLinkPicker({ onSelect, disabled }: GameLinkPickerProps) {
       )}
 
       {open && !loading && query.trim().length >= 2 && results.length === 0 && (
-        <div className="border-editorial-line bg-editorial-2 text-editorial-muted absolute z-20 mt-1 w-full rounded-lg border px-3 py-2 text-sm">
+        <div className="absolute z-50 mt-1 w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm text-gray-400 shadow-lg dark:border-gray-700 dark:bg-gray-800">
           {t("noGameResults")}
         </div>
       )}

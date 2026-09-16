@@ -6,11 +6,19 @@ import { Icon } from "@iconify/react";
 import { toast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useAdminLibrarySync, type MatchStatus, type PlatformMatch } from "@/hooks/useAdminLibrarySync";
+import {
+  useAdminLibrarySync,
+  type MatchStatus,
+  type PlatformMatch,
+} from "@/hooks/useAdminLibrarySync";
 import { GameLinkPicker } from "./GameLinkPicker";
 
 const PLATFORMS = ["", "steam", "xbox", "playstation"] as const;
 const STATUSES: MatchStatus[] = ["unmatched", "matched", "all"];
+
+const selectClasses =
+  "h-9 rounded-lg border border-gray-200 bg-white px-2 text-sm text-gray-900 dark:border-gray-700 dark:bg-gray-800 dark:text-white";
+const labelClasses = "flex flex-col gap-1 text-xs font-medium text-gray-500 dark:text-gray-400";
 
 export function AdminLibrarySyncContent() {
   const t = useTranslations("admin.librarySync");
@@ -50,7 +58,7 @@ export function AdminLibrarySyncContent() {
 
       {/* Filters */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-        <label className="flex flex-col gap-1 text-xs font-medium text-gray-500 dark:text-gray-400">
+        <label className={labelClasses}>
           {t("filters.platform")}
           <select
             value={platform}
@@ -58,7 +66,7 @@ export function AdminLibrarySyncContent() {
               setPlatform(e.target.value);
               setPage(1);
             }}
-            className="border-editorial-line bg-editorial-2 h-9 rounded-lg border px-2 text-sm text-white"
+            className={selectClasses}
           >
             {PLATFORMS.map((p) => (
               <option key={p || "all"} value={p}>
@@ -68,7 +76,7 @@ export function AdminLibrarySyncContent() {
           </select>
         </label>
 
-        <label className="flex flex-col gap-1 text-xs font-medium text-gray-500 dark:text-gray-400">
+        <label className={labelClasses}>
           {t("filters.status")}
           <select
             value={status}
@@ -76,7 +84,7 @@ export function AdminLibrarySyncContent() {
               setStatus(e.target.value as MatchStatus);
               setPage(1);
             }}
-            className="border-editorial-line bg-editorial-2 h-9 rounded-lg border px-2 text-sm text-white"
+            className={selectClasses}
           >
             {STATUSES.map((s) => (
               <option key={s} value={s}>
@@ -94,7 +102,7 @@ export function AdminLibrarySyncContent() {
             setPage(1);
           }}
         >
-          <label className="flex flex-1 flex-col gap-1 text-xs font-medium text-gray-500 dark:text-gray-400">
+          <label className={`${labelClasses} flex-1`}>
             {t("filters.search")}
             <Input
               value={searchInput}
@@ -112,52 +120,58 @@ export function AdminLibrarySyncContent() {
       <p className="text-sm text-gray-500 dark:text-gray-400">{t("count", { total })}</p>
 
       {/* List */}
-      <div className="border-editorial-line divide-editorial-line divide-y overflow-hidden rounded-xl border">
+      <div className="overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
         {isLoading ? (
-          <div className="text-editorial-muted p-6 text-center text-sm">{t("loading")}</div>
+          <div className="p-6 text-center text-sm text-gray-500 dark:text-gray-400">
+            {t("loading")}
+          </div>
         ) : matches.length === 0 ? (
-          <div className="text-editorial-muted p-6 text-center text-sm">{t("empty")}</div>
+          <div className="p-6 text-center text-sm text-gray-500 dark:text-gray-400">
+            {t("empty")}
+          </div>
         ) : (
-          matches.map((m) => (
-            <div
-              key={`${m.platform}:${m.sourceId}`}
-              className="bg-editorial-3 flex flex-col gap-3 p-3 sm:flex-row sm:items-center sm:justify-between"
-            >
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <span className="bg-editorial-2 text-editorial-muted rounded px-1.5 py-0.5 text-[0.7rem] uppercase">
-                    {t(`platforms.${m.platform}` as "platforms.steam")}
-                  </span>
-                  <span className="truncate text-sm font-medium text-white/90">
-                    {m.name ?? m.sourceId}
-                  </span>
-                </div>
-                <span className="text-editorial-muted text-xs">{m.sourceId}</span>
-              </div>
-
-              <div className="flex w-full items-center gap-2 sm:w-auto">
-                {m.gameId ? (
-                  <>
-                    <span className="flex items-center gap-1.5 text-sm text-green-500">
-                      <Icon icon="lucide:check-circle" className="h-4 w-4 shrink-0" />
-                      <span className="truncate">{m.gameTitle ?? m.gameSlug}</span>
+          <div className="divide-y divide-gray-100 dark:divide-gray-700">
+            {matches.map((m) => (
+              <div
+                key={`${m.platform}:${m.sourceId}`}
+                className="flex flex-col gap-3 bg-white p-3 sm:flex-row sm:items-center sm:justify-between dark:bg-gray-800"
+              >
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <span className="rounded bg-gray-100 px-1.5 py-0.5 text-[0.7rem] text-gray-600 uppercase dark:bg-gray-700 dark:text-gray-300">
+                      {t(`platforms.${m.platform}` as "platforms.steam")}
                     </span>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => handleLink(m, null)}
-                      className="text-red-500 hover:text-red-600"
-                      title={t("unlink")}
-                    >
-                      <Icon icon="lucide:unlink" className="h-4 w-4" />
-                    </Button>
-                  </>
-                ) : (
-                  <GameLinkPicker onSelect={(gameId) => handleLink(m, gameId)} />
-                )}
+                    <span className="truncate text-sm font-medium text-gray-900 dark:text-white">
+                      {m.name ?? m.sourceId}
+                    </span>
+                  </div>
+                  <span className="text-xs text-gray-400 dark:text-gray-500">{m.sourceId}</span>
+                </div>
+
+                <div className="flex w-full items-center gap-2 sm:w-auto">
+                  {m.gameId ? (
+                    <>
+                      <span className="flex items-center gap-1.5 text-sm text-green-600 dark:text-green-400">
+                        <Icon icon="lucide:check-circle" className="h-4 w-4 shrink-0" />
+                        <span className="truncate">{m.gameTitle ?? m.gameSlug}</span>
+                      </span>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleLink(m, null)}
+                        className="text-red-600 hover:text-red-700 dark:text-red-400"
+                        title={t("unlink")}
+                      >
+                        <Icon icon="lucide:unlink" className="h-4 w-4" />
+                      </Button>
+                    </>
+                  ) : (
+                    <GameLinkPicker onSelect={(gameId) => handleLink(m, gameId)} />
+                  )}
+                </div>
               </div>
-            </div>
-          ))
+            ))}
+          </div>
         )}
       </div>
 
