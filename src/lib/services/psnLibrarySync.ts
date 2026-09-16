@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { getRecentlyPlayedGames } from "psn-api";
+import { getUserTitles } from "psn-api";
 import type { Database } from "@/lib/database.types";
 import { logger } from "@/lib/logger";
 import { EXTERNAL_GAME_CATEGORY } from "./igdb-external-games";
@@ -9,12 +9,10 @@ import { getValidAccessToken } from "./platformTokenRefresh";
 import type { LibrarySyncProgressCallback } from "@/types/library-sync";
 
 const UPSERT_CHUNK = 200;
-/**
- * How many played games to request from PSN in one call. PSN's
- * gameLibraryTitlesRetrieve validates this argument (200 triggers "Argument
- * Validation Error"); 50 is psn-api's known-good default.
- */
-const PSN_FETCH_LIMIT = 50;
+/** Trophy titles fetched per PSN page (nextOffset paginates the rest). */
+const PSN_PAGE_LIMIT = 100;
+/** Safety cap on total PSN titles fetched per sync. */
+const PSN_MAX_TITLES = 800;
 /** Cap on IGDB imports/searches per run (rate-limit + function-time budget). */
 const MAX_IGDB_OPS_PER_SYNC = 30;
 
@@ -29,24 +27,34 @@ export interface PsnSyncResult {
 }
 
 interface PsnGame {
+  /** npCommunicationId — stable per trophy set, used as the source id. */
+  sourceId: string;
   name: string;
-  titleId: string;
-  conceptId: string;
-  productId: string | null;
 }
 
-async function fetchPsnLibrary(accessToken: string): Promise<PsnGame[]> {
-  const response = await getRecentlyPlayedGames(
-    { accessToken },
-    { limit: PSN_FETCH_LIMIT, categories: ["ps4_game", "ps5_native_game"] }
-  );
-  const games = response.data?.gameLibraryTitlesRetrieve?.games ?? [];
-  return games.map((g) => ({
-    name: g.name,
-    titleId: g.titleId,
-    conceptId: g.conceptId,
-    productId: g.productId,
-  }));
+/**
+ * Fetch the user's full played-games list via the paginated trophy-titles API
+ * (getUserTitles). Unlike getRecentlyPlayedGames (≤50, no paging), this covers
+ * the whole library. Titles are matched by name (no reliable store id here).
+ */
+async function fetchPsnLibrary(accessToken: string, accountId: string): Promise<PsnGame[]> {
+  const games: PsnGame[] = [];
+  let offset = 0;
+
+  while (games.length < PSN_MAX_TITLES) {
+    const resp = await getUserTitles({ accessToken }, accountId, {
+      limit: PSN_PAGE_LIMIT,
+      offset,
+    });
+    const titles = resp.trophyTitles ?? [];
+    for (const t of titles) {
+      games.push({ sourceId: t.npCommunicationId, name: t.trophyTitleName });
+    }
+    if (titles.length === 0 || resp.nextOffset === undefined || resp.nextOffset <= offset) break;
+    offset = resp.nextOffset;
+  }
+
+  return games;
 }
 
 export async function syncPsnLibrary(
@@ -61,7 +69,18 @@ export async function syncPsnLibrary(
     throw new Error("PlayStation account not connected or token refresh failed");
   }
 
-  const games = await fetchPsnLibrary(accessToken);
+  const { data: linked } = await supabase
+    .from("player_linked_platforms")
+    .select("external_id")
+    .eq("player_id", playerId)
+    .eq("platform", "playstation")
+    .maybeSingle();
+  const accountId = linked?.external_id;
+  if (!accountId) {
+    throw new Error("PlayStation account id missing — reconnect the account");
+  }
+
+  const games = await fetchPsnLibrary(accessToken, accountId);
   if (games.length === 0) {
     onProgress?.({ phase: "done", total: 0, processed: 0, matched: 0 });
     return { total: 0, matched: 0, upserted: 0, unmatched: 0, imported: 0, done: true };
@@ -73,13 +92,15 @@ export async function syncPsnLibrary(
     supabase as unknown as SupabaseClient,
     playerId,
     "playstation",
-    games.map((g) => ({ sourceId: g.titleId, name: g.name }))
+    games.map((g) => ({ sourceId: g.sourceId, name: g.name }))
   );
 
+  // No reliable PSN store id from trophy titles, so the resolver matches by
+  // name (the shared cache makes multi-pass progress and avoids re-searching).
   const items: ResolvableLibraryItem[] = games.map((g) => ({
-    sourceId: g.titleId,
+    sourceId: g.sourceId,
     name: g.name,
-    uids: [g.conceptId, g.productId, g.titleId].filter((u): u is string => !!u),
+    uids: [],
   }));
 
   const { resolved, imported, pending } = await resolveLibraryGames(
@@ -92,14 +113,14 @@ export async function syncPsnLibrary(
   const now = new Date().toISOString();
   const rows = games
     .map((g) => {
-      const gameId = resolved.get(g.titleId);
+      const gameId = resolved.get(g.sourceId);
       if (!gameId) return null;
       return {
         user_id: playerId,
         game_id: gameId,
         status: "owned",
         source_platform: "playstation",
-        source_id: g.titleId,
+        source_id: g.sourceId,
         synced_at: now,
       };
     })
@@ -107,7 +128,7 @@ export async function syncPsnLibrary(
 
   onProgress?.({ phase: "saving", total: games.length, matched: rows.length, imported });
 
-  // Different PSN title ids can resolve to the same local game — collapse them.
+  // Different trophy sets can resolve to the same local game — collapse them.
   const dedupedRows = dedupeByGameId(rows);
 
   let upserted = 0;
