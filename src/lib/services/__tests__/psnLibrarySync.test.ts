@@ -10,6 +10,10 @@ vi.mock("@/lib/services/gameImportService", () => ({
 }));
 vi.mock("@/lib/services/igdbService", () => ({ IGDBService: { searchGames: vi.fn() } }));
 vi.mock("@/lib/services/platformTokenRefresh", () => ({ getValidAccessToken: vi.fn() }));
+vi.mock("@/lib/services/librarySyncBackfill", () => ({
+  recordUserPlatformTitles: vi.fn().mockResolvedValue(undefined),
+  backfillMatch: vi.fn().mockResolvedValue(0),
+}));
 
 import { syncPsnLibrary } from "@/lib/services/psnLibrarySync";
 import { getRecentlyPlayedGames } from "psn-api";

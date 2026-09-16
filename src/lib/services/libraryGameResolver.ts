@@ -4,6 +4,7 @@ import { logger } from "@/lib/logger";
 import { resolveIgdbIdsByExternalUids, type ExternalGameCategory } from "./igdb-external-games";
 import { GameImportService } from "./gameImportService";
 import { IGDBService } from "./igdbService";
+import { backfillMatch } from "./librarySyncBackfill";
 import type { LibrarySyncProgressCallback } from "@/types/library-sync";
 
 const MATCH_CACHE_TABLE = "platform_game_matches";
@@ -259,6 +260,16 @@ export async function resolveLibraryGames(
   }
 
   await writeMatchCache(supabase, platform, attempts);
+
+  // Backfill each freshly-discovered match into the libraries of other users
+  // who already reported this title (best-effort, so a slow/failed backfill
+  // never breaks the sync).
+  const admin = supabase as unknown as SupabaseClient;
+  await Promise.all(
+    attempts
+      .filter((a) => a.gameId)
+      .map((a) => backfillMatch(admin, platform, a.sourceId, a.gameId as string))
+  );
 
   // Candidates that still need work but weren't processed this pass.
   const pending = Math.max(0, needsWork.length - processed);

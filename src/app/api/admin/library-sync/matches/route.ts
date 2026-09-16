@@ -3,6 +3,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { requireAdmin } from "@/lib/auth-admin";
 import { GameImportService } from "@/lib/services/gameImportService";
+import { backfillMatch } from "@/lib/services/librarySyncBackfill";
 import { logger } from "@/lib/logger";
 
 /** Linking may import a game from IGDB, which can take a few seconds. */
@@ -197,7 +198,13 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: "Update failed" }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true, gameId: finalGameId });
+    // Immediately push the newly-linked game into the libraries of every user
+    // who already reported this title.
+    const backfilled = finalGameId
+      ? await backfillMatch(admin, platform, sourceId, finalGameId)
+      : 0;
+
+    return NextResponse.json({ success: true, gameId: finalGameId, backfilled });
   } catch (error) {
     logger.error("Error in admin library-sync matches PATCH", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

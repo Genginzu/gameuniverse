@@ -4,6 +4,7 @@ import type { Database } from "@/lib/database.types";
 import { logger } from "@/lib/logger";
 import { EXTERNAL_GAME_CATEGORY } from "./igdb-external-games";
 import { resolveLibraryGames, dedupeByGameId, type ResolvableLibraryItem } from "./libraryGameResolver";
+import { recordUserPlatformTitles } from "./librarySyncBackfill";
 import { getValidAccessToken } from "./platformTokenRefresh";
 import type { LibrarySyncProgressCallback } from "@/types/library-sync";
 
@@ -63,6 +64,13 @@ export async function syncPsnLibrary(
   }
 
   onProgress?.({ phase: "resolving", total: games.length });
+
+  await recordUserPlatformTitles(
+    supabase as unknown as SupabaseClient,
+    playerId,
+    "playstation",
+    games.map((g) => ({ sourceId: g.titleId, name: g.name }))
+  );
 
   const items: ResolvableLibraryItem[] = games.map((g) => ({
     sourceId: g.titleId,

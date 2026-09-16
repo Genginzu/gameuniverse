@@ -4,6 +4,7 @@ import { logger } from "@/lib/logger";
 import { EXTERNAL_GAME_CATEGORY, resolveIgdbIdsByExternalUids } from "./igdb-external-games";
 import { GameImportService } from "./gameImportService";
 import { dedupeByGameId } from "./libraryGameResolver";
+import { recordUserPlatformTitles } from "./librarySyncBackfill";
 import type { LibrarySyncProgressCallback } from "@/types/library-sync";
 
 const STEAM_OWNED_GAMES_URL = "https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/";
@@ -217,6 +218,13 @@ export async function syncSteamLibrary(
   const ordered = [...games].sort((a, b) => (b.playtime_forever ?? 0) - (a.playtime_forever ?? 0));
 
   onProgress?.({ phase: "resolving", total: games.length, privateProfile: false });
+
+  await recordUserPlatformTitles(
+    supabase as unknown as SupabaseClient,
+    playerId,
+    "steam",
+    games.map((g) => ({ sourceId: String(g.appid), name: g.name ?? "" }))
+  );
 
   const nameByAppid = new Map(games.map((g) => [g.appid, g.name]));
 

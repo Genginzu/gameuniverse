@@ -3,6 +3,7 @@ import type { Database } from "@/lib/database.types";
 import { logger } from "@/lib/logger";
 import { EXTERNAL_GAME_CATEGORY } from "./igdb-external-games";
 import { resolveLibraryGames, dedupeByGameId, type ResolvableLibraryItem } from "./libraryGameResolver";
+import { recordUserPlatformTitles } from "./librarySyncBackfill";
 import { getXboxAuthForPlayer, xboxAuthorizationHeader, type XboxAuthContext } from "./xboxAuth";
 import type { LibrarySyncProgressCallback } from "@/types/library-sync";
 
@@ -74,6 +75,13 @@ export async function syncXboxLibrary(
   }
 
   onProgress?.({ phase: "resolving", total: gameTitles.length });
+
+  await recordUserPlatformTitles(
+    supabase as unknown as SupabaseClient,
+    playerId,
+    "xbox",
+    gameTitles.map((t) => ({ sourceId: t.titleId, name: t.name }))
+  );
 
   // Xbox title-history ids rarely line up with IGDB's xbox_marketplace uids, so
   // the shared resolver falls back to a strict name search (and imports missing
