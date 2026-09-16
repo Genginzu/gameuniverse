@@ -29,6 +29,8 @@ interface PassResult {
   total: number;
   matched: number;
   imported: number;
+  /** True when there is no more work to do for this job. */
+  done: boolean;
 }
 
 /**
@@ -108,20 +110,21 @@ export async function runLibrarySyncJob({
     if (platform === "steam") {
       if (!steamId) throw new Error("Steam account not linked");
       const r = await syncSteamLibrary(db, userId, steamId, onProgress);
-      result = { total: r.total, matched: r.matched, imported: r.imported };
+      // Steam matches every appid each pass; work remains only while it keeps
+      // importing missing games.
+      result = { total: r.total, matched: r.matched, imported: r.imported, done: r.imported === 0 };
     } else if (platform === "playstation") {
       const r = await syncPsnLibrary(db, userId, onProgress);
-      result = { total: r.total, matched: r.matched, imported: r.imported };
+      result = { total: r.total, matched: r.matched, imported: r.imported, done: r.done };
     } else {
       const r = await syncXboxLibrary(db, userId, onProgress);
-      result = { total: r.total, matched: r.matched, imported: r.imported };
+      result = { total: r.total, matched: r.matched, imported: r.imported, done: r.done };
     }
 
     await lastFlushPromise;
 
-    // The job is complete when everything is matched, or when this pass made no
-    // new imports (the remaining titles can't be resolved — avoid looping).
-    const complete = result.matched >= result.total || result.imported === 0;
+    // Complete when the platform reports no more work (or everything matched).
+    const complete = result.done || result.matched >= result.total;
 
     if (complete) {
       await markJobSucceeded(admin, jobId, {

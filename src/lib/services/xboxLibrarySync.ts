@@ -18,6 +18,8 @@ export interface XboxSyncResult {
   upserted: number;
   unmatched: number;
   imported: number;
+  /** True when every title has been attempted (no more work to do). */
+  done: boolean;
 }
 
 interface XboxTitle {
@@ -68,7 +70,7 @@ export async function syncXboxLibrary(
 
   if (gameTitles.length === 0) {
     onProgress?.({ phase: "done", total: 0, processed: 0, matched: 0 });
-    return { total: 0, matched: 0, upserted: 0, unmatched: 0, imported: 0 };
+    return { total: 0, matched: 0, upserted: 0, unmatched: 0, imported: 0, done: true };
   }
 
   onProgress?.({ phase: "resolving", total: gameTitles.length });
@@ -82,11 +84,11 @@ export async function syncXboxLibrary(
     uids: [t.titleId, t.pfn].filter((u): u is string => !!u),
   }));
 
-  const { resolved, imported } = await resolveLibraryGames(
+  const { resolved, imported, pending } = await resolveLibraryGames(
     supabase,
     items,
     EXTERNAL_GAME_CATEGORY.XBOX_MARKETPLACE,
-    { importBudget: MAX_IGDB_OPS_PER_SYNC, onProgress }
+    { platform: "xbox", importBudget: MAX_IGDB_OPS_PER_SYNC, onProgress }
   );
 
   const now = new Date().toISOString();
@@ -139,5 +141,6 @@ export async function syncXboxLibrary(
     upserted,
     unmatched: gameTitles.length - rows.length,
     imported,
+    done: pending === 0,
   };
 }

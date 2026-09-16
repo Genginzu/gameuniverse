@@ -55,6 +55,17 @@ function makeSupabase(localGames: LocalGame[], upserted: unknown[]) {
           },
         };
       }
+      if (table === "platform_game_matches") {
+        return {
+          // Empty shared cache: select().eq("platform").in("source_id", …)
+          select: () => ({
+            eq: () => ({
+              in: () => Promise.resolve({ data: [], error: null }),
+            }),
+          }),
+          upsert: () => Promise.resolve({ error: null }),
+        };
+      }
       throw new Error(`unexpected table ${table}`);
     },
      
@@ -126,6 +137,13 @@ describe("syncPsnLibrary", () => {
     } as any);
     const supabase = makeSupabase([], []);
     const result = await syncPsnLibrary(supabase, "user-1");
-    expect(result).toEqual({ total: 0, matched: 0, upserted: 0, unmatched: 0, imported: 0 });
+    expect(result).toEqual({
+      total: 0,
+      matched: 0,
+      upserted: 0,
+      unmatched: 0,
+      imported: 0,
+      done: true,
+    });
   });
 });

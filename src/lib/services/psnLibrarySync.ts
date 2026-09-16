@@ -19,6 +19,8 @@ export interface PsnSyncResult {
   upserted: number;
   unmatched: number;
   imported: number;
+  /** True when every title has been attempted (no more work to do). */
+  done: boolean;
 }
 
 interface PsnGame {
@@ -57,7 +59,7 @@ export async function syncPsnLibrary(
   const games = await fetchPsnLibrary(accessToken);
   if (games.length === 0) {
     onProgress?.({ phase: "done", total: 0, processed: 0, matched: 0 });
-    return { total: 0, matched: 0, upserted: 0, unmatched: 0, imported: 0 };
+    return { total: 0, matched: 0, upserted: 0, unmatched: 0, imported: 0, done: true };
   }
 
   onProgress?.({ phase: "resolving", total: games.length });
@@ -68,11 +70,11 @@ export async function syncPsnLibrary(
     uids: [g.conceptId, g.productId, g.titleId].filter((u): u is string => !!u),
   }));
 
-  const { resolved, imported } = await resolveLibraryGames(
+  const { resolved, imported, pending } = await resolveLibraryGames(
     supabase,
     items,
     EXTERNAL_GAME_CATEGORY.PLAYSTATION_STORE_US,
-    { importBudget: MAX_IGDB_OPS_PER_SYNC, onProgress }
+    { platform: "playstation", importBudget: MAX_IGDB_OPS_PER_SYNC, onProgress }
   );
 
   const now = new Date().toISOString();
@@ -125,5 +127,6 @@ export async function syncPsnLibrary(
     upserted,
     unmatched: games.length - rows.length,
     imported,
+    done: pending === 0,
   };
 }
