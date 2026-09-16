@@ -25,12 +25,52 @@ interface RunLibrarySyncJobParams {
   steamId?: string | null;
 }
 
+interface PassResult {
+  total: number;
+  matched: number;
+  imported: number;
+}
+
 /**
- * Execute a library sync end-to-end while streaming progress into the job row.
+ * Kick off the next pass on a fresh server-side invocation, independent of the
+ * browser. Each library-sync "pass" imports a bounded number of missing games
+ * (see MAX_IMPORTS_PER_SYNC in the platform services); a big library therefore
+ * needs several passes. Rather than relying on the client to keep polling
+ * (which is throttled/stopped when the tab is backgrounded or closed), a pass
+ * that still has work hands off to the internal continuation endpoint, which
+ * schedules the next pass in its own `after()`. The chain runs to completion
+ * on the server. Client polling + cron remain as safety nets.
+ */
+async function triggerContinuation(params: {
+  jobId: string;
+  userId: string;
+  platform: SyncablePlatform;
+  steamId?: string | null;
+}): Promise<void> {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  const secret = process.env.CRON_SECRET;
+  // Without a base URL or shared secret we can't self-trigger; the client poll
+  // / cron safety nets will resume the still-"running" job instead.
+  if (!baseUrl || !secret) return;
+
+  try {
+    await fetch(`${baseUrl}/api/internal/library-sync`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-cron-secret": secret },
+      body: JSON.stringify(params),
+      cache: "no-store",
+    });
+  } catch (err) {
+    logger.warn("Failed to trigger library sync continuation", { jobId: params.jobId, err });
+  }
+}
+
+/**
+ * Execute one library-sync pass while streaming progress into the job row, then
+ * either finalize the job (converged) or hand off to the next pass.
  *
- * Intended to run inside a Next.js `after()` callback so it survives the HTTP
- * response: the client polls the job row and sees progress even after leaving
- * and returning to the page. Never throws — failures are recorded on the job.
+ * Runs inside a Next.js `after()` callback so it survives the HTTP response.
+ * Never throws — failures are recorded on the job.
  */
 export async function runLibrarySyncJob({
   admin,
@@ -52,8 +92,7 @@ export async function runLibrarySyncJob({
 
   const onProgress = (progress: LibrarySyncProgress) => {
     Object.assign(accumulated, progress);
-    // The terminal "done" state is written by markJobSucceeded below, so we
-    // skip flushing it here to avoid racing the final status update.
+    // Terminal state is written explicitly below; skip flushing it here.
     if (progress.phase === "done") return;
     flush(progress.phase !== undefined);
   };
@@ -65,18 +104,46 @@ export async function runLibrarySyncJob({
     // typed client but only use table names present in the schema.
     const db = admin as unknown as SupabaseClient<Database>;
 
+    let result: PassResult;
     if (platform === "steam") {
       if (!steamId) throw new Error("Steam account not linked");
-      await syncSteamLibrary(db, userId, steamId, onProgress);
+      const r = await syncSteamLibrary(db, userId, steamId, onProgress);
+      result = { total: r.total, matched: r.matched, imported: r.imported };
     } else if (platform === "playstation") {
-      await syncPsnLibrary(db, userId, onProgress);
+      const r = await syncPsnLibrary(db, userId, onProgress);
+      result = { total: r.total, matched: r.matched, imported: r.imported };
     } else {
-      await syncXboxLibrary(db, userId, onProgress);
+      const r = await syncXboxLibrary(db, userId, onProgress);
+      result = { total: r.total, matched: r.matched, imported: 0 };
     }
 
-    // Ensure the last throttled intermediate write settled before finalizing.
     await lastFlushPromise;
-    await markJobSucceeded(admin, jobId, accumulated);
+
+    // The job is complete when everything is matched, or when this pass made no
+    // new imports (the remaining titles can't be resolved — avoid looping).
+    const complete = result.matched >= result.total || result.imported === 0;
+
+    if (complete) {
+      await markJobSucceeded(admin, jobId, {
+        phase: "done",
+        total: result.total,
+        processed: result.matched,
+        matched: result.matched,
+        imported: result.imported,
+        unmatched: result.total - result.matched,
+      });
+    } else {
+      // More missing games to import: keep the job running, reflect cumulative
+      // progress, and hand off to the next pass on a fresh server invocation.
+      await updateJobProgress(admin, jobId, {
+        phase: "importing",
+        total: result.total,
+        processed: result.matched,
+        matched: result.matched,
+        imported: result.imported,
+      });
+      await triggerContinuation({ jobId, userId, platform, steamId });
+    }
   } catch (err) {
     const message = err instanceof Error ? err.message : "Library sync failed";
     logger.error("Library sync job failed", { jobId, platform, message });

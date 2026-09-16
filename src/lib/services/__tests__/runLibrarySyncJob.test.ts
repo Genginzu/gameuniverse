@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import type { LibrarySyncProgressCallback } from "@/types/library-sync";
 
 // Mock the sync services and the job-persistence helpers so we can assert the
@@ -26,30 +27,25 @@ import {
   updateJobProgress,
 } from "@/lib/services/librarySyncJobs";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const admin = {} as any;
+const admin = {} as unknown as SupabaseClient;
 
 beforeEach(() => {
   vi.clearAllMocks();
+  // Disable server-side continuation self-trigger so tests stay hermetic.
+  delete process.env.NEXT_PUBLIC_BASE_URL;
+  delete process.env.CRON_SECRET;
 });
 
 describe("runLibrarySyncJob", () => {
-  it("marks running, streams progress, then succeeds with final counts (steam)", async () => {
+  it("marks running, streams progress, then succeeds when the pass is complete (steam)", async () => {
     vi.mocked(syncSteamLibrary).mockImplementation(
       async (_db, _userId, _steamId, onProgress?: LibrarySyncProgressCallback) => {
         onProgress?.({ phase: "fetching" });
         onProgress?.({ phase: "resolving", total: 10 });
-        onProgress?.({ phase: "saving", total: 10, matched: 8 });
-        onProgress?.({ processed: 8 });
-        onProgress?.({
-          phase: "done",
-          total: 10,
-          processed: 8,
-          matched: 8,
-          imported: 2,
-          unmatched: 2,
-        });
-        return { total: 10, matched: 8, upserted: 8, unmatched: 2, imported: 2 };
+        onProgress?.({ phase: "saving", total: 10, matched: 10 });
+        onProgress?.({ processed: 10 });
+        // A complete pass: everything matched.
+        return { total: 10, matched: 10, upserted: 10, unmatched: 0, imported: 2 };
       }
     );
 
@@ -62,19 +58,40 @@ describe("runLibrarySyncJob", () => {
     });
 
     expect(markJobRunning).toHaveBeenCalledWith(admin, "job-1");
-    expect(updateJobProgress).toHaveBeenCalled();
     expect(markJobFailed).not.toHaveBeenCalled();
 
     expect(markJobSucceeded).toHaveBeenCalledTimes(1);
     const finalArg = vi.mocked(markJobSucceeded).mock.calls[0][2];
     expect(finalArg).toMatchObject({
       total: 10,
-      matched: 8,
+      matched: 10,
       imported: 2,
-      unmatched: 2,
-      processed: 8,
+      unmatched: 0,
       phase: "done",
     });
+  });
+
+  it("keeps the job running (no success yet) when more games remain to import", async () => {
+    vi.mocked(syncSteamLibrary).mockResolvedValue({
+      total: 100,
+      matched: 40,
+      upserted: 40,
+      unmatched: 60,
+      imported: 30, // hit the per-pass import budget → more to do
+    });
+
+    await runLibrarySyncJob({
+      admin,
+      jobId: "job-partial",
+      userId: "user-1",
+      platform: "steam",
+      steamId: "76561198000000000",
+    });
+
+    // Not finalized: a follow-up pass will continue the import.
+    expect(markJobSucceeded).not.toHaveBeenCalled();
+    expect(markJobFailed).not.toHaveBeenCalled();
+    expect(updateJobProgress).toHaveBeenCalled();
   });
 
   it("fails the job when steam has no linked steamId", async () => {
