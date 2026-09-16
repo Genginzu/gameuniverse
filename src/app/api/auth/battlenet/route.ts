@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { issueOauthState } from "@/lib/services/oauthState";
+import { issueOauthReturn } from "@/lib/services/oauthReturn";
 
 const BATTLENET_AUTHORIZE_URL = "https://oauth.battle.net/authorize";
 const ALLOWED_REGIONS = new Set(["us", "eu", "kr", "tw"]);
@@ -13,6 +14,7 @@ export async function GET(request: NextRequest) {
   const requestedRegion = request.nextUrl.searchParams.get("region")?.toLowerCase() ?? "eu";
   const region = ALLOWED_REGIONS.has(requestedRegion) ? requestedRegion : "eu";
 
+  await issueOauthReturn(request.nextUrl.searchParams.get("returnTo"));
   const state = await issueOauthState("battlenet");
 
   // Persist the region selection alongside the state so the callback can recover it.

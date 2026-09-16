@@ -141,7 +141,7 @@ function SyncProgress({
       <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/[0.08]">
         <div
           className="from-editorial-accent h-full rounded-full bg-gradient-to-r to-violet-500 transition-all duration-500"
-          style={{ width: pct !== null ? `${pct}%` : "40%" }}
+          style={{ width: pct !== null ? `${pct}%` : "0%" }}
         />
       </div>
     </div>
@@ -245,7 +245,12 @@ function DisplayRow({
       itch: "/api/auth/itch",
     };
     const route = routes[platform];
-    if (route) window.location.href = route;
+    if (route) {
+      // Come back to the page the connect was started from (e.g. Connections)
+      // instead of the hardcoded profile page.
+      const returnTo = encodeURIComponent(window.location.pathname);
+      window.location.href = `${route}?returnTo=${returnTo}`;
+    }
   };
 
   const connectIcon =

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 import { consumeOauthState } from "@/lib/services/oauthState";
+import { consumeOauthReturn, withParams } from "@/lib/services/oauthReturn";
 
 const STEAM_OPENID_URL = "https://steamcommunity.com/openid/login";
 const STEAM_ID_REGEX = /^https?:\/\/steamcommunity\.com\/openid\/id\/(\d+)$/;
@@ -94,8 +95,11 @@ export async function GET(request: NextRequest) {
       { onConflict: "player_id,platform" }
     );
 
+    const returnTo = await consumeOauthReturn();
     return NextResponse.redirect(
-      `${baseUrl}/players/${user.id}?tab=settings&platform=steam&success=true`
+      returnTo
+        ? `${baseUrl}${withParams(returnTo, { platform: "steam", success: "true" })}`
+        : `${baseUrl}/players/${user.id}?tab=settings&platform=steam&success=true`
     );
   } catch (error) {
     logger.error("Steam callback error", { error });

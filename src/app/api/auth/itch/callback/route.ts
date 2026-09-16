@@ -3,6 +3,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 import { encryptPlatformTokenOrNull } from "@/lib/services/platformTokens";
 import { consumeOauthState } from "@/lib/services/oauthState";
+import { consumeOauthReturn, withParams } from "@/lib/services/oauthReturn";
 
 const ITCH_ME_URL = "https://itch.io/api/1/key/me";
 
@@ -91,9 +92,12 @@ export async function POST(request: NextRequest) {
       { onConflict: "player_id,platform" }
     );
 
+    const returnTo = await consumeOauthReturn();
     return NextResponse.json({
       success: true,
-      redirect: `${baseUrl}/players/${user.id}?tab=settings&platform=itch&success=true`,
+      redirect: returnTo
+        ? `${baseUrl}${withParams(returnTo, { platform: "itch", success: "true" })}`
+        : `${baseUrl}/players/${user.id}?tab=settings&platform=itch&success=true`,
     });
   } catch (error) {
     logger.error("itch.io callback error", { error });
