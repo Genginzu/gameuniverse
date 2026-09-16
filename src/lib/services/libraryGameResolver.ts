@@ -24,6 +24,27 @@ export interface ResolveResult {
 }
 
 /**
+ * Collapse library rows that target the same local game (e.g. multiple store
+ * ids / editions resolving to one IGDB game). Prevents a single upsert command
+ * from touching the same (user_id, game_id) row twice, which Postgres rejects
+ * with "ON CONFLICT DO UPDATE command cannot affect row a second time".
+ *
+ * `pick(existing, candidate)` decides which row to keep on collision
+ * (defaults to keeping the first seen).
+ */
+export function dedupeByGameId<T extends { game_id: string }>(
+  rows: T[],
+  pick: (existing: T, candidate: T) => T = (existing) => existing
+): T[] {
+  const byGame = new Map<string, T>();
+  for (const row of rows) {
+    const existing = byGame.get(row.game_id);
+    byGame.set(row.game_id, existing ? pick(existing, row) : row);
+  }
+  return Array.from(byGame.values());
+}
+
+/**
  * Normalize a game title for strict cross-source comparison: lower-case, strip
  * trademark symbols, collapse whitespace, and drop common edition/platform
  * suffixes. Guards the fuzzy IGDB name-search fallback against false positives.

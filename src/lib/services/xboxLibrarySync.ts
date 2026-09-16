@@ -2,7 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/database.types";
 import { logger } from "@/lib/logger";
 import { EXTERNAL_GAME_CATEGORY } from "./igdb-external-games";
-import { resolveLibraryGames, type ResolvableLibraryItem } from "./libraryGameResolver";
+import { resolveLibraryGames, dedupeByGameId, type ResolvableLibraryItem } from "./libraryGameResolver";
 import { getXboxAuthForPlayer, xboxAuthorizationHeader, type XboxAuthContext } from "./xboxAuth";
 import type { LibrarySyncProgressCallback } from "@/types/library-sync";
 
@@ -107,9 +107,12 @@ export async function syncXboxLibrary(
 
   onProgress?.({ phase: "saving", total: gameTitles.length, matched: rows.length, imported });
 
+  // Different titleIds can resolve to the same local game — collapse duplicates.
+  const dedupedRows = dedupeByGameId(rows);
+
   let upserted = 0;
-  for (let i = 0; i < rows.length; i += UPSERT_CHUNK) {
-    const chunk = rows.slice(i, i + UPSERT_CHUNK);
+  for (let i = 0; i < dedupedRows.length; i += UPSERT_CHUNK) {
+    const chunk = dedupedRows.slice(i, i + UPSERT_CHUNK);
     const { error, count } = await supabase
       .from("user_library")
       .upsert(chunk, { onConflict: "user_id,game_id", count: "exact" });

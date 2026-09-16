@@ -3,7 +3,7 @@ import { getRecentlyPlayedGames } from "psn-api";
 import type { Database } from "@/lib/database.types";
 import { logger } from "@/lib/logger";
 import { EXTERNAL_GAME_CATEGORY } from "./igdb-external-games";
-import { resolveLibraryGames, type ResolvableLibraryItem } from "./libraryGameResolver";
+import { resolveLibraryGames, dedupeByGameId, type ResolvableLibraryItem } from "./libraryGameResolver";
 import { getValidAccessToken } from "./platformTokenRefresh";
 import type { LibrarySyncProgressCallback } from "@/types/library-sync";
 
@@ -93,9 +93,12 @@ export async function syncPsnLibrary(
 
   onProgress?.({ phase: "saving", total: games.length, matched: rows.length, imported });
 
+  // Different PSN title ids can resolve to the same local game — collapse them.
+  const dedupedRows = dedupeByGameId(rows);
+
   let upserted = 0;
-  for (let i = 0; i < rows.length; i += UPSERT_CHUNK) {
-    const chunk = rows.slice(i, i + UPSERT_CHUNK);
+  for (let i = 0; i < dedupedRows.length; i += UPSERT_CHUNK) {
+    const chunk = dedupedRows.slice(i, i + UPSERT_CHUNK);
     const { error, count } = await supabase
       .from("user_library")
       .upsert(chunk, { onConflict: "user_id,game_id", count: "exact" });

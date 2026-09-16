@@ -3,6 +3,7 @@ import type { Database } from "@/lib/database.types";
 import { logger } from "@/lib/logger";
 import { EXTERNAL_GAME_CATEGORY, resolveIgdbIdsByExternalUids } from "./igdb-external-games";
 import { GameImportService } from "./gameImportService";
+import { dedupeByGameId } from "./libraryGameResolver";
 import type { LibrarySyncProgressCallback } from "@/types/library-sync";
 
 const STEAM_OWNED_GAMES_URL = "https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/";
@@ -252,9 +253,16 @@ export async function syncSteamLibrary(
 
   onProgress?.({ phase: "saving", total: games.length, matched: rows.length, imported });
 
+  // Multiple appids can resolve to the same local game (editions/bundles).
+  // Collapse duplicates so a single upsert command never touches a row twice
+  // (Postgres: "ON CONFLICT DO UPDATE cannot affect row a second time").
+  const dedupedRows = dedupeByGameId(rows, (a, b) =>
+    b.external_playtime_seconds > a.external_playtime_seconds ? b : a
+  );
+
   let upserted = 0;
-  for (let i = 0; i < rows.length; i += UPSERT_CHUNK) {
-    const chunk = rows.slice(i, i + UPSERT_CHUNK);
+  for (let i = 0; i < dedupedRows.length; i += UPSERT_CHUNK) {
+    const chunk = dedupedRows.slice(i, i + UPSERT_CHUNK);
     const { error, count } = await supabase
       .from("user_library")
       .upsert(chunk, { onConflict: "user_id,game_id", count: "exact" });
