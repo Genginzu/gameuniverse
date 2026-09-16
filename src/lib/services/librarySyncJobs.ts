@@ -70,30 +70,70 @@ export interface CreateJobResult {
 }
 
 /**
- * Create a pending job for (user, platform). If an active job already exists
- * (unique partial index violation), return that job with `alreadyRunning`.
+ * A pending/running job whose runner hasn't updated progress within this window
+ * is considered dead (interrupted invocation) and can be reclaimed so a new run
+ * isn't permanently blocked by the active-job unique index.
+ */
+const STALE_JOB_MS = 90_000;
+
+function isStale(job: LibrarySyncJob): boolean {
+  const updated = new Date(job.updatedAt).getTime();
+  if (Number.isNaN(updated)) return true;
+  return Date.now() - updated > STALE_JOB_MS;
+}
+
+async function insertJob(
+  admin: SupabaseClient,
+  userId: string,
+  platform: string
+): Promise<LibrarySyncJob | null> {
+  const insert = await admin
+    .from(TABLE)
+    .insert({ user_id: userId, platform, status: "pending", phase: "starting" })
+    .select(SELECT_COLS)
+    .single();
+  if (insert.error) {
+    if (insert.error.code === UNIQUE_VIOLATION) return null;
+    throw insert.error;
+  }
+  return mapRow(insert.data as JobRow);
+}
+
+/**
+ * Create a pending job for (user, platform). If an active job already exists it
+ * is returned with `alreadyRunning: true` — unless it is stale (its runner
+ * died), in which case it is failed and replaced so the sync can be relaunched.
  */
 export async function createSyncJob(
   admin: SupabaseClient,
   userId: string,
   platform: string
 ): Promise<CreateJobResult> {
-  const insert = await admin
-    .from(TABLE)
-    .insert({ user_id: userId, platform, status: "pending", phase: "starting" })
-    .select(SELECT_COLS)
-    .single();
+  const created = await insertJob(admin, userId, platform);
+  if (created) return { job: created, alreadyRunning: false };
 
-  if (!insert.error && insert.data) {
-    return { job: mapRow(insert.data as JobRow), alreadyRunning: false };
+  // Active-job conflict: inspect the existing job.
+  const existing = await getActiveJob(admin, userId, platform);
+  if (!existing) {
+    // Raced away between insert and lookup — try once more.
+    const retry = await insertJob(admin, userId, platform);
+    if (retry) return { job: retry, alreadyRunning: false };
+    throw new Error("Failed to create library sync job");
   }
 
-  if (insert.error?.code === UNIQUE_VIOLATION) {
-    const existing = await getActiveJob(admin, userId, platform);
-    if (existing) return { job: existing, alreadyRunning: true };
+  if (!isStale(existing)) {
+    return { job: existing, alreadyRunning: true };
   }
 
-  throw insert.error ?? new Error("Failed to create library sync job");
+  // Reclaim the stalled job so its slot frees up, then create a fresh one.
+  await markJobFailed(admin, existing.id, "Superseded: previous run stalled");
+  const replacement = await insertJob(admin, userId, platform);
+  if (replacement) return { job: replacement, alreadyRunning: false };
+
+  // Still blocked (concurrent relaunch) — return the reclaimed one as active.
+  const current = await getActiveJob(admin, userId, platform);
+  if (current) return { job: current, alreadyRunning: true };
+  throw new Error("Failed to create library sync job");
 }
 
 /** Return the current active (pending/running) job, if any. */
