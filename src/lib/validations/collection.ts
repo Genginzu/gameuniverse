@@ -41,6 +41,18 @@ export const reorderCollectionItemsSchema = z.object({
   ),
 });
 
+export const acceptSuggestionSchema = z.object({
+  name: z
+    .string()
+    .min(1, "Le nom est requis")
+    .max(100, "Le nom ne doit pas dépasser 100 caractères")
+    .refine((val) => val.trim().length > 0, "Le nom ne peut pas être vide"),
+  gameIds: z.array(z.string().uuid("ID de jeu invalide")).min(1, "Au moins un jeu est requis"),
+  isPublic: z.boolean().optional().default(false),
+});
+
+export type AcceptSuggestionInput = z.infer<typeof acceptSuggestionSchema>;
+
 export type CreateCollectionInput = z.infer<typeof createCollectionSchema>;
 export type UpdateCollectionInput = z.infer<typeof updateCollectionSchema>;
 export type AddCollectionItemInput = z.infer<typeof addCollectionItemSchema>;
