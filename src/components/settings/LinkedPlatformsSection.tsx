@@ -7,7 +7,7 @@ import { useLinkedPlatforms } from "@/hooks/useLinkedPlatforms";
 import { useLibrarySync } from "@/hooks/useLibrarySync";
 import { useToast } from "@/hooks/use-toast";
 import { GAMING_PLATFORMS, PLATFORM_META, type GamingPlatform } from "@/types/linked-platforms";
-import { isSyncablePlatform } from "@/types/library-sync";
+import { isSyncablePlatform, type SyncablePlatform } from "@/types/library-sync";
 import { PlatformRow } from "./PlatformRow";
 import { SuggestionsBanner } from "./SuggestionsBanner";
 
@@ -30,7 +30,7 @@ export function LinkedPlatformsSection() {
   const [editingPlatform, setEditingPlatform] = useState<GamingPlatform | null>(null);
   const [editValue, setEditValue] = useState("");
   const [saving, setSaving] = useState(false);
-  const [startingPlatform, setStartingPlatform] = useState<"steam" | "xbox" | null>(null);
+  const [startingPlatform, setStartingPlatform] = useState<SyncablePlatform | null>(null);
 
   const linkedMap = new Map(platforms.map((p) => [p.platform, p]));
 
@@ -90,7 +90,7 @@ export function LinkedPlatformsSection() {
     }
   };
 
-  const handleSyncLibrary = async (platform: "steam" | "xbox") => {
+  const handleSyncLibrary = async (platform: SyncablePlatform) => {
     setStartingPlatform(platform);
     try {
       const job = await startSync(platform);

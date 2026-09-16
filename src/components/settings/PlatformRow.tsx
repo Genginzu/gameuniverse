@@ -5,7 +5,7 @@ import { Link } from "@/i18n/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PLATFORM_META, type GamingPlatform, type LinkedPlatform } from "@/types/linked-platforms";
-import type { LibrarySyncJob } from "@/types/library-sync";
+import { isSyncablePlatform, type LibrarySyncJob, type SyncablePlatform } from "@/types/library-sync";
 
 interface PlatformRowProps {
   platform: GamingPlatform;
@@ -21,7 +21,7 @@ interface PlatformRowProps {
   onEditValueChange: (v: string) => void;
   onSaveManual: () => void;
   onConnectPsn: () => void;
-  onSyncLibrary: (platform: "steam" | "xbox") => void;
+  onSyncLibrary: (platform: SyncablePlatform) => void;
   onToggleVisibility: () => void;
   onRemove: () => void;
 }
@@ -254,7 +254,7 @@ function DisplayRow({
 
   const manualOnlyPlatforms: GamingPlatform[] = ["ubisoft", "ea"];
   const showManualHint = manualOnlyPlatforms.includes(platform);
-  const canSync = isConnected && (platform === "steam" || platform === "xbox");
+  const canSync = isConnected && isSyncablePlatform(platform);
   const isRunning = job?.status === "pending" || job?.status === "running";
   const syncBusy = syncing || isRunning;
 
@@ -309,7 +309,7 @@ function DisplayRow({
           <Button
             size="sm"
             variant="ghost"
-            onClick={() => onSyncLibrary(platform)}
+            onClick={() => isSyncablePlatform(platform) && onSyncLibrary(platform)}
             disabled={syncBusy || saving}
             className="hover:bg-editorial-accent/12 hover:text-editorial-accent min-h-[44px] min-w-[44px] text-white/70"
             title={t("syncLibrary")}

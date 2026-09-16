@@ -4,6 +4,7 @@ import { logger } from "@/lib/logger";
 import type { LibrarySyncProgress, SyncablePlatform } from "@/types/library-sync";
 import { syncSteamLibrary } from "./steamLibrarySync";
 import { syncXboxLibrary } from "./xboxLibrarySync";
+import { syncPsnLibrary } from "./psnLibrarySync";
 import {
   markJobFailed,
   markJobRunning,
@@ -67,6 +68,8 @@ export async function runLibrarySyncJob({
     if (platform === "steam") {
       if (!steamId) throw new Error("Steam account not linked");
       await syncSteamLibrary(db, userId, steamId, onProgress);
+    } else if (platform === "playstation") {
+      await syncPsnLibrary(db, userId, onProgress);
     } else {
       await syncXboxLibrary(db, userId, onProgress);
     }
