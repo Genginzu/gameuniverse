@@ -9,8 +9,12 @@ import { getValidAccessToken } from "./platformTokenRefresh";
 import type { LibrarySyncProgressCallback } from "@/types/library-sync";
 
 const UPSERT_CHUNK = 200;
-/** How many played games to request from PSN in one call. */
-const PSN_FETCH_LIMIT = 200;
+/**
+ * How many played games to request from PSN in one call. PSN's
+ * gameLibraryTitlesRetrieve validates this argument (200 triggers "Argument
+ * Validation Error"); 50 is psn-api's known-good default.
+ */
+const PSN_FETCH_LIMIT = 50;
 /** Cap on IGDB imports/searches per run (rate-limit + function-time budget). */
 const MAX_IGDB_OPS_PER_SYNC = 30;
 
