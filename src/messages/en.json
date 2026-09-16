@@ -30,6 +30,10 @@
       "title": "My library",
       "description": "Manage your personal video game collection"
     },
+    "connections": {
+      "title": "Connections & sync",
+      "description": "Connect your gaming accounts and sync your libraries in My universe"
+    },
     "collections": {
       "title": "My collections",
       "description": "Organize your games into custom collections and share them with the community"
@@ -494,7 +498,7 @@
       "primaryNavAriaLabel": "Primary navigation"
     },
     "spaces": {
-      "library": "My library",
+      "library": "My universe",
       "esport": "Predictions",
       "coaching": "Coaching",
       "social": "Social",
@@ -505,7 +509,8 @@
         "myLibrary": "My library",
         "backlog": "My backlog",
         "collections": "My collections",
-        "favoriteCharacters": "Favorite characters"
+        "favoriteCharacters": "Favorite characters",
+        "connections": "Connections & sync"
       },
       "esport": {
         "predictions": "Predictions",
@@ -1057,6 +1062,12 @@
       "anonymousPlayer": "Anonymous Player",
       "newPost": "New post"
     }
+  },
+  "connections": {
+    "kicker": "My universe",
+    "titlePrefix": "Connections &",
+    "titleAccent": "sync",
+    "subtitle": "Connect your gaming accounts (Steam, Xbox, PlayStation, Epic…) and automatically sync your libraries in My universe."
   },
   "userLibrary": {
     "title": "My Library",
@@ -1636,6 +1647,22 @@
       "syncImported": "{imported} new games imported from IGDB",
       "syncPrivateProfile": "Your Steam profile is private — make it public to sync",
       "syncEmpty": "No games found in your Steam library",
+      "syncStarted": "Sync started in the background…",
+      "syncResult": "{matched}/{total} games in your library",
+      "syncImportedShort": "{imported} imported",
+      "viewLibrary": "View in My universe",
+      "syncFailed": "Sync failed: {error}",
+      "syncCount": "{processed}/{total} games",
+      "syncImportingGame": "Importing game: {game}",
+      "syncPhase": {
+        "starting": "Starting…",
+        "fetching": "Fetching your library…",
+        "resolving": "Matching games…",
+        "importing": "Importing new games from IGDB…",
+        "saving": "Saving…",
+        "done": "Done",
+        "failed": "Failed"
+      },
       "names": {
         "steam": "Steam",
         "epic": "Epic Games",

@@ -91,6 +91,7 @@ export const EDITORIAL_SPACES: readonly EditorialSpace[] = [
       { href: "/library/backlog", labelKey: "backlog", icon: "lucide:list-checks" },
       { href: "/collections", labelKey: "collections", icon: "lucide:folder-heart" },
       { href: "/favorites/characters", labelKey: "favoriteCharacters", icon: "lucide:heart" },
+      { href: "/library/connections", labelKey: "connections", icon: "lucide:plug-zap" },
     ],
   },
   {
