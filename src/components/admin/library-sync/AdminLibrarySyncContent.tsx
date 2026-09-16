@@ -11,7 +11,7 @@ import {
   type MatchStatus,
   type PlatformMatch,
 } from "@/hooks/useAdminLibrarySync";
-import { GameLinkPicker } from "./GameLinkPicker";
+import { GameLinkDialog } from "./GameLinkDialog";
 
 const PLATFORMS = ["", "steam", "xbox", "playstation"] as const;
 const STATUSES: MatchStatus[] = ["unmatched", "matched", "all"];
@@ -29,6 +29,7 @@ export function AdminLibrarySyncContent() {
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [linkingMatch, setLinkingMatch] = useState<PlatformMatch | null>(null);
 
   const { matches, total, pageSize, isLoading, linkMatch } = useAdminLibrarySync({
     platform,
@@ -166,7 +167,10 @@ export function AdminLibrarySyncContent() {
                       </Button>
                     </>
                   ) : (
-                    <GameLinkPicker onSelect={(gameId) => handleLink(m, gameId)} />
+                    <Button size="sm" variant="secondary" onClick={() => setLinkingMatch(m)}>
+                      <Icon icon="lucide:search" className="h-4 w-4" />
+                      {t("linkButton")}
+                    </Button>
                   )}
                 </div>
               </div>
@@ -199,6 +203,17 @@ export function AdminLibrarySyncContent() {
           </Button>
         </div>
       )}
+
+      <GameLinkDialog
+        open={linkingMatch !== null}
+        initialQuery={linkingMatch?.name ?? ""}
+        onClose={() => setLinkingMatch(null)}
+        onSelect={(gameId) => {
+          const m = linkingMatch;
+          setLinkingMatch(null);
+          if (m) handleLink(m, gameId);
+        }}
+      />
     </div>
   );
 }
