@@ -26,6 +26,10 @@
       "title": "Mes amis",
       "description": "Gérez vos amis et vos demandes d'amitié sur Gamers Universe"
     },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Retrouvez toutes vos notifications : amis, votes, mentions, succès et coaching"
+    },
     "library": {
       "title": "Ma bibliothèque",
       "description": "Gérez votre collection de jeux vidéo personnelle"
@@ -420,7 +424,8 @@
     },
     "subSidebar": {
       "closeAriaLabel": "Fermer la sous-barre",
-      "navAriaLabel": "Liens {space}"
+      "navAriaLabel": "Liens {space}",
+      "unreadBadge": "{count} notifications non lues"
     },
     "mobileNav": {
       "openAriaLabel": "Ouvrir la navigation",
@@ -527,7 +532,8 @@
       "account": {
         "friends": "Mes amis",
         "discussions": "Discussions",
-        "coins": "Mes coins"
+        "coins": "Mes coins",
+        "notifications": "Notifications"
       }
     }
   },
@@ -4054,6 +4060,7 @@
     "ariaLabel": "Notifications, {count} non lues",
     "noNotifications": "Aucune notification",
     "markAllAsRead": "Tout marquer comme lu",
+    "viewAll": "Voir toutes les notifications",
     "typePostComment": "a commenté votre post",
     "typeDiscussionMessage": "vous a envoyé un message",
     "typePostCreated": "a publié un nouveau post",
@@ -4070,6 +4077,39 @@
     "typeFriendAccepted": "a accepté votre demande d'ami",
     "typeReviewVote": "a voté sur votre review",
     "typeAchievementUnlocked": "Nouveau succès débloqué"
+  },
+  "notificationCenter": {
+    "kicker": "Votre activité",
+    "titlePrefix": "Centre de",
+    "titleAccent": "notifications",
+    "subtitle": "Retrouvez au même endroit toutes vos notifications : amis, votes, mentions, succès et coaching.",
+    "filterByType": "Filtrer par type",
+    "filterByStatus": "Filtrer par statut",
+    "categoryAll": "Tout",
+    "category": {
+      "friends": "Amis",
+      "reviews": "Reviews",
+      "mentions": "Mentions",
+      "achievements": "Succès",
+      "coaching": "Coaching",
+      "activity": "Activité"
+    },
+    "status": {
+      "all": "Toutes",
+      "unread": "Non lues",
+      "read": "Lues"
+    },
+    "markAllAsRead": "Tout marquer comme lu",
+    "markAsRead": "Marquer comme lu",
+    "markAsUnread": "Marquer comme non lu",
+    "viewResource": "Voir",
+    "empty": "Aucune notification à afficher",
+    "loadingError": "Impossible de charger vos notifications",
+    "authRequired": {
+      "title": "Connexion requise",
+      "description": "Connectez-vous pour consulter vos notifications.",
+      "signIn": "Se connecter"
+    }
   },
   "postComments": {
     "title": "Commentaires",

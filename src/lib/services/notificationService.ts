@@ -1,4 +1,10 @@
-import type { NotificationsResponse, NotificationCountResponse } from "@/types/notification";
+import type {
+  NotificationsResponse,
+  NotificationCountResponse,
+  PaginatedNotificationsResponse,
+  NotificationStatusFilter,
+} from "@/types/notification";
+import type { NotificationCategory } from "@/lib/notificationDisplay";
 
 /**
  * Service client pour gérer les opérations de notifications.
@@ -11,6 +17,30 @@ export class NotificationService {
   static async fetchNotifications(limit?: number): Promise<NotificationsResponse> {
     const params = limit ? `?limit=${limit}` : "";
     const response = await fetch(`/api/notifications${params}`);
+    if (!response.ok) {
+      const body = await response.json().catch(() => null);
+      throw new Error(body?.error || "Failed to fetch notifications");
+    }
+    return response.json();
+  }
+
+  /**
+   * Récupère une page de notifications filtrée (centre de notifications).
+   */
+  static async fetchPage(options: {
+    page: number;
+    limit: number;
+    category: NotificationCategory | "all";
+    status: NotificationStatusFilter;
+  }): Promise<PaginatedNotificationsResponse> {
+    const params = new URLSearchParams({
+      page: String(options.page),
+      limit: String(options.limit),
+      status: options.status,
+    });
+    if (options.category !== "all") params.set("type", options.category);
+
+    const response = await fetch(`/api/notifications?${params}`);
     if (!response.ok) {
       const body = await response.json().catch(() => null);
       throw new Error(body?.error || "Failed to fetch notifications");
@@ -38,6 +68,22 @@ export class NotificationService {
     if (!response.ok) {
       const body = await response.json().catch(() => null);
       throw new Error(body?.error || "Failed to mark notification as read");
+    }
+    return response.json();
+  }
+
+  /**
+   * Bascule le statut lu/non-lu d'une notification.
+   */
+  static async setReadStatus(id: string, isRead: boolean): Promise<{ success: boolean }> {
+    const response = await fetch(`/api/notifications/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ isRead }),
+    });
+    if (!response.ok) {
+      const body = await response.json().catch(() => null);
+      throw new Error(body?.error || "Failed to update notification");
     }
     return response.json();
   }
