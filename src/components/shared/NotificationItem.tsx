@@ -31,6 +31,7 @@ const TYPE_ICONS: Record<string, string> = {
   coaching_completed: "lucide:check-check",
   coaching_cancelled: "lucide:x-circle",
   coaching_paid: "lucide:credit-card",
+  moderation_warning: "lucide:shield-alert",
 };
 
 const TYPE_LABEL_KEYS: Record<string, string> = {
@@ -45,6 +46,7 @@ const TYPE_LABEL_KEYS: Record<string, string> = {
   coaching_completed: "typeCoachingCompleted",
   coaching_cancelled: "typeCoachingCancelled",
   coaching_paid: "typeCoachingPaid",
+  moderation_warning: "typeModerationWarning",
 };
 
 export function NotificationItem({ notification, onDismiss, onNavigate }: NotificationItemProps) {

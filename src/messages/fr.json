@@ -1696,6 +1696,7 @@
       "bulkImport": "Import en masse",
       "bulkImportCharacters": "Import en masse",
       "toolsCategory": "Outils",
+      "reports": "Signalements",
       "esportCategory": "Esport",
       "esport": "Gestion Esport",
       "esportImport": "Import Esport",
@@ -3031,6 +3032,48 @@
         "unsuspend": "Réactiver"
       }
     },
+    "reports": {
+      "title": "Signalements de contenu",
+      "empty": "Aucun signalement.",
+      "reportedBy": "Signalé par",
+      "contentId": "ID du contenu",
+      "actionTaken": "Action prise",
+      "filter": {
+        "pending": "En attente",
+        "reviewed": "Examinés",
+        "resolved": "Résolus",
+        "dismissed": "Rejetés",
+        "all": "Tous"
+      },
+      "status": {
+        "pending": "En attente",
+        "reviewed": "Examiné",
+        "resolved": "Résolu",
+        "dismissed": "Rejeté"
+      },
+      "contentType": {
+        "review": "Avis",
+        "post": "Post",
+        "comment": "Commentaire",
+        "profile": "Profil"
+      },
+      "reason": {
+        "spam": "Spam",
+        "harassment": "Harcèlement",
+        "inappropriate": "Contenu inapproprié",
+        "other": "Autre"
+      },
+      "action": {
+        "none": "Aucune action",
+        "content_deleted": "Supprimer le contenu",
+        "author_warned": "Avertir l'auteur",
+        "author_suspended": "Suspendre l'auteur"
+      },
+      "actions": {
+        "review": "Examiner",
+        "dismiss": "Rejeter"
+      }
+    },
     "disputes": {
       "title": "Signalements & Litiges",
       "empty": "Aucun signalement.",
@@ -4060,7 +4103,31 @@
     "typeCoachingStarted": "a démarré votre session de coaching",
     "typeCoachingCompleted": "a terminé votre session de coaching",
     "typeCoachingCancelled": "a annulé une session de coaching",
-    "typeCoachingPaid": "a payé votre session de coaching"
+    "typeCoachingPaid": "a payé votre session de coaching",
+    "typeModerationWarning": "vous a averti au sujet d'un contenu"
+  },
+  "reports": {
+    "report": "Signaler",
+    "modalTitle": "Signaler ce contenu",
+    "reasonLabel": "Raison du signalement",
+    "reason": {
+      "spam": "Spam",
+      "harassment": "Harcèlement",
+      "inappropriate": "Contenu inapproprié",
+      "other": "Autre"
+    },
+    "descriptionLabel": "Description (optionnelle)",
+    "descriptionPlaceholder": "Ajoutez des détails…",
+    "submit": "Envoyer le signalement",
+    "submitting": "Envoi…",
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "confirmation": "Merci, votre signalement a été envoyé.",
+    "errors": {
+      "limit": "Vous avez atteint la limite de signalements pour aujourd'hui.",
+      "duplicate": "Vous avez déjà signalé ce contenu.",
+      "generic": "Le signalement a échoué. Réessayez."
+    }
   },
   "postComments": {
     "title": "Commentaires",

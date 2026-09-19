@@ -1696,6 +1696,7 @@
       "bulkImport": "Bulk Import",
       "bulkImportCharacters": "Bulk Import",
       "toolsCategory": "Tools",
+      "reports": "Reports",
       "esportCategory": "Esport",
       "esport": "Esport Management",
       "esportImport": "Esport Import",
@@ -3028,6 +3029,48 @@
         "unsuspend": "Unsuspend"
       }
     },
+    "reports": {
+      "title": "Content reports",
+      "empty": "No reports.",
+      "reportedBy": "Reported by",
+      "contentId": "Content ID",
+      "actionTaken": "Action taken",
+      "filter": {
+        "pending": "Pending",
+        "reviewed": "Reviewed",
+        "resolved": "Resolved",
+        "dismissed": "Dismissed",
+        "all": "All"
+      },
+      "status": {
+        "pending": "Pending",
+        "reviewed": "Reviewed",
+        "resolved": "Resolved",
+        "dismissed": "Dismissed"
+      },
+      "contentType": {
+        "review": "Review",
+        "post": "Post",
+        "comment": "Comment",
+        "profile": "Profile"
+      },
+      "reason": {
+        "spam": "Spam",
+        "harassment": "Harassment",
+        "inappropriate": "Inappropriate content",
+        "other": "Other"
+      },
+      "action": {
+        "none": "No action",
+        "content_deleted": "Delete content",
+        "author_warned": "Warn author",
+        "author_suspended": "Suspend author"
+      },
+      "actions": {
+        "review": "Review",
+        "dismiss": "Dismiss"
+      }
+    },
     "disputes": {
       "title": "Reports & Disputes",
       "empty": "No reports.",
@@ -4057,7 +4100,31 @@
     "typeCoachingStarted": "started your coaching session",
     "typeCoachingCompleted": "completed your coaching session",
     "typeCoachingCancelled": "cancelled a coaching session",
-    "typeCoachingPaid": "paid for your coaching session"
+    "typeCoachingPaid": "paid for your coaching session",
+    "typeModerationWarning": "warned you about some content"
+  },
+  "reports": {
+    "report": "Report",
+    "modalTitle": "Report this content",
+    "reasonLabel": "Reason for reporting",
+    "reason": {
+      "spam": "Spam",
+      "harassment": "Harassment",
+      "inappropriate": "Inappropriate content",
+      "other": "Other"
+    },
+    "descriptionLabel": "Description (optional)",
+    "descriptionPlaceholder": "Add some details…",
+    "submit": "Submit report",
+    "submitting": "Submitting…",
+    "cancel": "Cancel",
+    "close": "Close",
+    "confirmation": "Thanks, your report has been submitted.",
+    "errors": {
+      "limit": "You have reached today's report limit.",
+      "duplicate": "You have already reported this content.",
+      "generic": "The report failed. Please try again."
+    }
   },
   "postComments": {
     "title": "Comments",
