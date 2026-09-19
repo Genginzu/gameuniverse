@@ -251,10 +251,10 @@ function DisplayRow({
 
   const manualOnlyPlatforms: GamingPlatform[] = ["ubisoft", "ea"];
   const showManualHint = manualOnlyPlatforms.includes(platform);
-  // Connected game platforms with no usable public library API — link works,
-  // sync doesn't (Epic/Battle.net: no owned-games API for non-partners; GOG:
-  // no official API; itch: OAuth scopes don't expose the purchased library).
-  const syncUnavailablePlatforms: GamingPlatform[] = ["epic", "battlenet", "gog", "itch"];
+  // Connect-only platforms (category 2): OAuth link works but no library sync
+  // (Epic/Battle.net: no owned-games API for non-partners; itch: OAuth scopes
+  // don't expose the purchased library).
+  const syncUnavailablePlatforms: GamingPlatform[] = ["epic", "battlenet", "itch"];
   const showSyncUnavailable = isConnected && syncUnavailablePlatforms.includes(platform);
   const canSync = isConnected && isSyncablePlatform(platform);
   const isRunning = job?.status === "pending" || job?.status === "running";

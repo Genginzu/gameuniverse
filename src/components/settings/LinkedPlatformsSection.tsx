@@ -182,7 +182,14 @@ export function LinkedPlatformsSection() {
     />
   );
 
-  const connectedPlatforms = GAMING_PLATFORMS.filter((p) => PLATFORM_META[p].authType !== "manual");
+  // Three groups:
+  //  1. Library sync — connected platforms with a working library API.
+  //  2. Account only — OAuth/NPSSO connect but no library sync.
+  //  3. Manual — no API; the player types their username.
+  const syncPlatforms = GAMING_PLATFORMS.filter((p) => isSyncablePlatform(p));
+  const connectOnlyPlatforms = GAMING_PLATFORMS.filter(
+    (p) => PLATFORM_META[p].authType !== "manual" && !isSyncablePlatform(p)
+  );
   const manualPlatforms = GAMING_PLATFORMS.filter((p) => PLATFORM_META[p].authType === "manual");
 
   if (isLoading) {
@@ -196,8 +203,11 @@ export function LinkedPlatformsSection() {
   return (
     <div className="space-y-4">
       <SuggestionsBanner linked={new Set(platforms.map((p) => p.platform))} t={t} />
-      <PlatformsCard t={t} titleKey="connectedTitle" descriptionKey="connectedDescription">
-        <div className="space-y-2">{connectedPlatforms.map(renderRow)}</div>
+      <PlatformsCard t={t} titleKey="syncTitle" descriptionKey="syncDescription">
+        <div className="space-y-2">{syncPlatforms.map(renderRow)}</div>
+      </PlatformsCard>
+      <PlatformsCard t={t} titleKey="connectOnlyTitle" descriptionKey="connectOnlyDescription">
+        <div className="space-y-2">{connectOnlyPlatforms.map(renderRow)}</div>
       </PlatformsCard>
       <PlatformsCard t={t} titleKey="manualTitle" descriptionKey="manualDescription">
         <div className="space-y-2">{manualPlatforms.map(renderRow)}</div>
