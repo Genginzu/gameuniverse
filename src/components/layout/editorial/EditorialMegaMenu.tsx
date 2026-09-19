@@ -158,6 +158,8 @@ interface EditorialMegaMenuProps {
   searchSlot?: ReactNode;
   /** Slot rendered after the search slot (typically HeaderLanguageSwitcher). */
   languageSlot?: ReactNode;
+  /** Slot rendered before the user slot (typically NotificationBell). */
+  notificationSlot?: ReactNode;
   /** Slot rendered last on the right (typically a user dropdown). */
   userSlot?: ReactNode;
   className?: string;
@@ -166,6 +168,7 @@ interface EditorialMegaMenuProps {
 export function EditorialMegaMenu({
   searchSlot,
   languageSlot,
+  notificationSlot,
   userSlot,
   className = "",
 }: EditorialMegaMenuProps) {
@@ -306,6 +309,11 @@ export function EditorialMegaMenu({
           {languageSlot && (
             <div className="editorial-mega-menu-action" data-slot="language">
               {languageSlot}
+            </div>
+          )}
+          {notificationSlot && (
+            <div className="editorial-mega-menu-action" data-slot="notification">
+              {notificationSlot}
             </div>
           )}
           {userSlot && (

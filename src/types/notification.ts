@@ -9,7 +9,11 @@ export type NotificationType =
   | "coaching_started"
   | "coaching_completed"
   | "coaching_cancelled"
-  | "coaching_paid";
+  | "coaching_paid"
+  | "friend_request"
+  | "friend_accepted"
+  | "review_vote"
+  | "achievement_unlocked";
 
 export interface Notification {
   id: string;

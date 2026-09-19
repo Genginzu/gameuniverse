@@ -52,12 +52,17 @@ export function NotificationDropdown({
     <div
       ref={dropdownRef}
       role="menu"
-      className={`glass-dropdown absolute top-full right-0 z-50 mt-2 w-screen max-w-[480px] p-2 sm:w-[480px] ${
+      className={`absolute top-full right-0 z-50 mt-2 w-screen max-w-[480px] rounded-2xl border p-2 sm:w-[480px] ${
         prefersReducedMotion ? "" : "animate-in fade-in slide-in-from-top-2 duration-200"
       }`}
+      style={{
+        background: "var(--editorial-bg-2)",
+        borderColor: "var(--editorial-line)",
+        boxShadow: "0 12px 32px rgba(0, 0, 0, 0.45)",
+      }}
     >
       {sorted.length === 0 ? (
-        <p className="px-3 py-6 text-center text-sm text-gray-500 dark:text-slate-400">
+        <p className="px-3 py-6 text-center text-sm text-slate-400">
           {t("noNotifications")}
         </p>
       ) : (
@@ -73,11 +78,12 @@ export function NotificationDropdown({
               </div>
             ))}
           </div>
-          <div className="mt-2 border-t border-gray-200/50 pt-2 dark:border-slate-600/50">
+          <div className="mt-2 border-t pt-2" style={{ borderColor: "var(--editorial-line)" }}>
             <button
               type="button"
               onClick={onDismissAll}
-              className="text-palette-primary-600 hover:bg-palette-primary-50 dark:text-palette-primary-400 dark:hover:bg-palette-primary-900/20 w-full rounded-lg px-3 py-2 text-center text-sm font-medium transition-colors"
+              className="w-full rounded-lg px-3 py-2 text-center text-sm font-medium transition-colors"
+              style={{ color: "rgb(var(--neon-primary))" }}
             >
               {t("markAllAsRead")}
             </button>

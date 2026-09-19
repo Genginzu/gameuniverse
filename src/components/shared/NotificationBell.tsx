@@ -42,7 +42,7 @@ export function NotificationBell() {
       <button
         type="button"
         onClick={handleToggle}
-        className="relative flex min-h-[44px] min-w-[44px] items-center justify-center rounded-2xl p-2 transition-all hover:bg-white/40 hover:shadow-md dark:hover:bg-slate-700/40"
+        className="relative flex min-h-[44px] min-w-[44px] items-center justify-center rounded-2xl p-2 transition-all hover:bg-white/10"
         aria-label={t("ariaLabel", { count: unreadCount })}
       >
         <Icon icon="mdi:bell-outline" className="h-6 w-6 text-white" />

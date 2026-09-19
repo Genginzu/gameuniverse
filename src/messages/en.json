@@ -4062,7 +4062,11 @@
     "typeCoachingStarted": "started your coaching session",
     "typeCoachingCompleted": "completed your coaching session",
     "typeCoachingCancelled": "cancelled a coaching session",
-    "typeCoachingPaid": "paid for your coaching session"
+    "typeCoachingPaid": "paid for your coaching session",
+    "typeFriendRequest": "sent you a friend request",
+    "typeFriendAccepted": "accepted your friend request",
+    "typeReviewVote": "voted on your review",
+    "typeAchievementUnlocked": "New achievement unlocked"
   },
   "postComments": {
     "title": "Comments",

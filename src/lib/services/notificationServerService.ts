@@ -89,6 +89,52 @@ export class NotificationServerService {
     };
   }
 
+  /**
+   * Create a system notification (self-notification allowed).
+   * Used for achievement_unlocked where sender and recipient are the same user.
+   * The sender_id is set to the recipient_id to satisfy the FK constraint.
+   */
+  static async createSystemNotification(
+    recipientId: string,
+    type: NotificationType,
+    referenceId: string,
+    contentPreview: string
+  ): Promise<Notification | null> {
+    const supabase = getSupabaseAdmin();
+    const truncatedPreview = contentPreview.slice(0, 100);
+
+    const { data, error } = await supabase
+      .from("notifications" as UntypedFrom)
+      .insert({
+        recipient_id: recipientId,
+        sender_id: recipientId,
+        type,
+        reference_id: referenceId,
+        content_preview: truncatedPreview,
+      })
+      .select(
+        "id, recipient_id, sender_id, type, reference_id, content_preview, is_read, created_at"
+      )
+      .single();
+
+    if (error || !data) {
+      logger.error("Failed to create system notification", { error: error?.message, recipientId, type });
+      return null;
+    }
+
+    const row = data as unknown as Omit<NotificationRow, "sender">;
+    return {
+      id: row.id,
+      recipientId: row.recipient_id,
+      senderId: row.sender_id,
+      type: row.type,
+      referenceId: row.reference_id,
+      contentPreview: row.content_preview,
+      isRead: row.is_read,
+      createdAt: row.created_at,
+    };
+  }
+
   /** Fetch unread notifications for a recipient, with sender profile info. */
   static async getUnread(recipientId: string, limit: number = 20): Promise<Notification[]> {
     const supabase = await createRouteHandlerClient();
