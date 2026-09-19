@@ -259,6 +259,10 @@ function DisplayRow({
 
   const manualOnlyPlatforms: GamingPlatform[] = ["ubisoft", "ea"];
   const showManualHint = manualOnlyPlatforms.includes(platform);
+  // Connected game platforms with no public library API (Epic has no owned-games
+  // endpoint for non-partners; GOG has no official API) — link works, sync doesn't.
+  const syncUnavailablePlatforms: GamingPlatform[] = ["epic", "gog"];
+  const showSyncUnavailable = isConnected && syncUnavailablePlatforms.includes(platform);
   const canSync = isConnected && isSyncablePlatform(platform);
   const isRunning = job?.status === "pending" || job?.status === "running";
   const syncBusy = syncing || isRunning;
@@ -286,6 +290,12 @@ function DisplayRow({
         {isConnected && linked?.lastSyncedAt && (
           <span className="text-editorial-muted text-xs">
             {t("lastSyncedAt", { when: formatRelative(linked.lastSyncedAt) })}
+          </span>
+        )}
+        {showSyncUnavailable && (
+          <span className="text-editorial-muted flex items-center gap-1 text-xs">
+            <Icon icon="lucide:info" className="h-3 w-3 shrink-0" />
+            {t("syncUnavailable")}
           </span>
         )}
       </div>

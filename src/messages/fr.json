@@ -1647,6 +1647,7 @@
       "syncImported": "{imported} nouveaux jeux importés depuis IGDB",
       "syncPrivateProfile": "Votre profil Steam est privé — rendez-le public pour synchroniser",
       "syncEmpty": "Aucun jeu trouvé dans votre bibliothèque Steam",
+      "syncUnavailable": "Synchronisation de bibliothèque non disponible pour cette plateforme",
       "syncStarted": "Synchronisation lancée en arrière-plan…",
       "syncResult": "{matched}/{total} jeux dans ta bibliothèque",
       "syncImportedShort": "{imported} importés",
