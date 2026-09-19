@@ -53,6 +53,10 @@
     "coins": {
       "title": "GU Coins History",
       "description": "View your GU Coins earning and spending history"
+    },
+    "feed": {
+      "title": "Friends Activity Feed",
+      "description": "Follow your friends' activity: reviews, posts, gaming sessions and unlocked achievements"
     }
   },
   "header": {
@@ -517,6 +521,7 @@
         "settings": "Coach settings"
       },
       "social": {
+        "feed": "Activity feed",
         "tags": "Trending tags"
       },
       "account": {
@@ -4571,6 +4576,28 @@
       "noComments": "No comments yet. Be the first to react!",
       "placeholder": "Write a comment...",
       "loginRequired": "Log in to join the discussion"
+    }
+  },
+  "feedPage": {
+    "title": "Activity Feed",
+    "subtitle": "Your friends' activity in real time",
+    "empty": "Add friends to see their activity here.",
+    "emptyFiltered": "None of your friends have posted this type of content yet.",
+    "errorTitle": "An error occurred",
+    "errorDescription": "Failed to load the activity feed. Please try again.",
+    "filters": {
+      "label": "Filter by activity type",
+      "all": "All",
+      "review": "Reviews",
+      "post": "Posts",
+      "comment": "Comments",
+      "library": "Library",
+      "playtime": "Playtime",
+      "favorite": "Favorites",
+      "collection": "Collections",
+      "friendship": "Friends",
+      "session": "Sessions",
+      "achievement": "Achievements"
     }
   }
 }
