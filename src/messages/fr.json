@@ -792,6 +792,8 @@
           "postDays": "il y a {days}j",
           "friendsKicker": "Amis",
           "friendsHelper": "{count, plural, =0 {Aucun ami} =1 {1 ami} other {# amis}}",
+          "followersHelper": "{count, plural, =0 {Aucun abonné} =1 {1 abonné} other {# abonnés}}",
+          "followingHelper": "{count, plural, =0 {Aucun abonnement} =1 {1 abonnement} other {# abonnements}}",
           "noTagline": "« Joueur de la communauté Gamers Universe. »"
         }
       }
@@ -808,7 +810,9 @@
       "stats": "Statistiques",
       "recommendations": "Recommandations",
       "settings": "Paramètres",
-      "goals": "Objectifs"
+      "goals": "Objectifs",
+      "followers": "Abonnés",
+      "following": "Abonnements"
     },
     "feed": {
       "feedLabel": "Fil d'actualité des abonnements",
@@ -3506,7 +3510,13 @@
   "subscriptions": {
     "subscribe": "S'abonner",
     "unsubscribe": "Se désabonner",
-    "confirmUnsubscribe": "Voulez-vous vraiment vous désabonner de ce joueur ?"
+    "confirmUnsubscribe": "Voulez-vous vraiment vous désabonner de ce joueur ?",
+    "followersTitle": "Abonnés",
+    "followingTitle": "Abonnements",
+    "emptyFollowers": "Aucun abonné pour le moment.",
+    "emptyFollowing": "Ce joueur ne suit personne pour le moment.",
+    "listLabel": "Liste des joueurs",
+    "unknownPlayer": "Joueur inconnu"
   },
   "playerStats": {
     "dashboard": {

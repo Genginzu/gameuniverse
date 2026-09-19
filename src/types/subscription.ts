@@ -17,6 +17,12 @@ export interface SubscriptionStatus {
   isSubscribed: boolean;
 }
 
+/** Compteurs d'abonnements d'un joueur (followers = abonnés, following = abonnements) */
+export interface SubscriptionCounts {
+  followers: number;
+  following: number;
+}
+
 /** Réponse de la liste d'abonnements/abonnés */
 export interface SubscriptionsListResponse {
   subscriptions: SubscriptionEntry[];

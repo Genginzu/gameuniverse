@@ -1,4 +1,5 @@
 import type {
+  SubscriptionCounts,
   SubscriptionsListResponse,
   SubscriptionStatus,
   CreateSubscriptionPayload,
@@ -25,6 +26,16 @@ export class SubscriptionService {
     if (!response.ok) {
       const body = await response.json().catch(() => null);
       throw new Error(body?.error || "Failed to fetch subscribers");
+    }
+    return response.json();
+  }
+
+  /** Compteurs d'abonnés / abonnements de playerId. */
+  static async getCounts(playerId: string): Promise<SubscriptionCounts> {
+    const response = await fetch(`/api/players/${playerId}/subscriptions/count`);
+    if (!response.ok) {
+      const body = await response.json().catch(() => null);
+      throw new Error(body?.error || "Failed to fetch subscription counts");
     }
     return response.json();
   }

@@ -17,7 +17,9 @@ export type ProfileTab =
   | "goals"
   | "stats"
   | "recommendations"
-  | "settings";
+  | "settings"
+  | "followers"
+  | "following";
 
 /** Onglet par défaut affiché à l'arrivée sur la page profil. */
 export function getDefaultTab(isOwner: boolean): ProfileTab {
