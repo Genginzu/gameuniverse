@@ -34,8 +34,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Failed to resolve PSN account id" }, { status: 400 });
     }
 
-    // Get PSN profile to retrieve onlineId
-    const profile = await getProfileFromAccountId(authorization, "me");
+    // Get PSN profile to retrieve onlineId (use the resolved accountId; the
+    // "me" shortcut is rejected by the current PSN API — "Bad Request (path:
+    // accountId)").
+    const profile = await getProfileFromAccountId(authorization, accountId);
 
     const tokenExpiresAt = new Date(
       Date.now() + (authorization.expiresIn ?? 3600) * 1000

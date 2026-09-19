@@ -4,6 +4,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 import { encryptPlatformTokenOrNull } from "@/lib/services/platformTokens";
 import { consumeOauthState } from "@/lib/services/oauthState";
+import { consumeOauthReturn, withParams } from "@/lib/services/oauthReturn";
 
 const BATTLENET_TOKEN_URL = "https://oauth.battle.net/token";
 const BATTLENET_USERINFO_URL = "https://oauth.battle.net/userinfo";
@@ -116,8 +117,11 @@ export async function GET(request: NextRequest) {
       { onConflict: "player_id,platform" }
     );
 
+    const returnTo = await consumeOauthReturn();
     return NextResponse.redirect(
-      `${baseUrl}/players/${user.id}?tab=settings&platform=battlenet&success=true`
+      returnTo
+        ? `${baseUrl}${withParams(returnTo, { platform: "battlenet", success: "true" })}`
+        : `${baseUrl}/players/${user.id}?tab=settings&platform=battlenet&success=true`
     );
   } catch (error) {
     logger.error("Battle.net callback error", { error });

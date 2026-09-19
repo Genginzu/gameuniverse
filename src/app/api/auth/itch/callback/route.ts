@@ -3,6 +3,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 import { encryptPlatformTokenOrNull } from "@/lib/services/platformTokens";
 import { consumeOauthState } from "@/lib/services/oauthState";
+import { consumeOauthReturn, withParams } from "@/lib/services/oauthReturn";
 
 const ITCH_ME_URL = "https://itch.io/api/1/key/me";
 
@@ -31,7 +32,10 @@ export async function GET() {
         access_token: params.get("access_token"),
         state: params.get("state"),
       }),
-    }).then(function () { location.replace("/"); });
+    })
+      .then(function (r) { return r.json().catch(function () { return {}; }); })
+      .then(function (d) { location.replace(d && d.redirect ? d.redirect : "/"); })
+      .catch(function () { location.replace("/"); });
   })();
 </script>
 Connecting to itch.io...
@@ -48,7 +52,17 @@ export async function POST(request: NextRequest) {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!user) {
+      return NextResponse.json({ redirect: `${baseUrl}/auth?error=unauthorized` });
+    }
+
+    // Where to send the user back (origin page, e.g. Connections) for both
+    // success and error outcomes.
+    const returnTo = await consumeOauthReturn();
+    const dest = (params: Record<string, string>) =>
+      returnTo
+        ? `${baseUrl}${withParams(returnTo, params)}`
+        : `${baseUrl}${withParams(`/players/${user.id}?tab=settings`, params)}`;
 
     const { access_token, state } = (await request.json()) as {
       access_token?: string;
@@ -57,22 +71,22 @@ export async function POST(request: NextRequest) {
 
     const stateValid = await consumeOauthState("itch", state ?? null);
     if (!stateValid) {
-      return NextResponse.json({ error: "State mismatch" }, { status: 400 });
+      return NextResponse.json({ redirect: dest({ error: "itch_state_mismatch" }) });
     }
     if (!access_token) {
-      return NextResponse.json({ error: "Missing access_token" }, { status: 400 });
+      return NextResponse.json({ redirect: dest({ error: "itch_no_token" }) });
     }
 
     const res = await fetch(ITCH_ME_URL, {
       headers: { Authorization: `Bearer ${access_token}` },
     });
     if (!res.ok) {
-      return NextResponse.json({ error: "itch profile fetch failed" }, { status: 502 });
+      return NextResponse.json({ redirect: dest({ error: "itch_profile_failed" }) });
     }
     const data = (await res.json()) as { user?: ItchUser };
     const itchUser = data.user;
     if (!itchUser) {
-      return NextResponse.json({ error: "Missing itch user" }, { status: 502 });
+      return NextResponse.json({ redirect: dest({ error: "itch_profile_failed" }) });
     }
 
     await supabase.from("player_linked_platforms").upsert(
@@ -91,12 +105,9 @@ export async function POST(request: NextRequest) {
       { onConflict: "player_id,platform" }
     );
 
-    return NextResponse.json({
-      success: true,
-      redirect: `${baseUrl}/players/${user.id}?tab=settings&platform=itch&success=true`,
-    });
+    return NextResponse.json({ redirect: dest({ platform: "itch", success: "true" }) });
   } catch (error) {
     logger.error("itch.io callback error", { error });
-    return NextResponse.json({ error: "itch callback failed" }, { status: 500 });
+    return NextResponse.json({ redirect: `${baseUrl}/?error=itch_callback_failed` });
   }
 }

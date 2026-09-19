@@ -37,27 +37,6 @@ export function useLinkedPlatforms() {
     await mutate();
   };
 
-  const syncLibrary = async (
-    platform: "steam" | "xbox"
-  ): Promise<{
-    total: number;
-    matched: number;
-    upserted: number;
-    unmatched: number;
-    imported?: number;
-    privateProfile?: boolean;
-  }> => {
-    const res = await fetch(`/api/profile/${platform}/sync-library`, { method: "POST" });
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      throw new Error(data.error || `${platform} sync failed`);
-    }
-    const result = await res.json();
-    // Refresh the linked platforms query so lastSyncedAt updates in the UI.
-    await mutate();
-    return result;
-  };
-
   const setVisibility = async (platform: GamingPlatform, isPublic: boolean) => {
     const res = await fetch(API_URL, {
       method: "PATCH",
@@ -84,7 +63,6 @@ export function useLinkedPlatforms() {
     error,
     savePlatform,
     connectPsn,
-    syncLibrary,
     setVisibility,
     removePlatform,
     refresh: mutate,

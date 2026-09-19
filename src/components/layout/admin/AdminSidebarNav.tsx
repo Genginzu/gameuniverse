@@ -71,6 +71,7 @@ const NAV_CATEGORIES: NavCategory[] = [
     items: [
       { href: "/admin/translations", icon: "mdi:translate", labelKey: "nav.translations" },
       { href: "/admin/global-sync", icon: "lucide:refresh-cw", labelKey: "nav.globalSync" },
+      { href: "/admin/library-sync", icon: "lucide:link", labelKey: "nav.librarySync" },
       { href: "/admin/webhooks", icon: "lucide:webhook", labelKey: "nav.webhooks" },
     ],
   },
