@@ -45,7 +45,7 @@ export function PlatformRow(props: PlatformRowProps) {
   return (
     <div className="border-editorial-line bg-editorial-3 flex flex-col gap-2 rounded-xl border p-3 transition-all">
       <div className="flex items-center gap-3">
-        <PlatformIdentity platform={platform} linked={linked} t={t} />
+        <PlatformIdentity platform={platform} t={t} />
 
         {isEditing ? (
           <EditingRow
@@ -150,23 +150,16 @@ function SyncProgress({
 
 function PlatformIdentity({
   platform,
-  linked,
   t,
 }: {
   platform: GamingPlatform;
-  linked: LinkedPlatform | null;
   t: (key: string) => string;
 }) {
   const meta = PLATFORM_META[platform];
-  const avatar = linked?.platformAvatarUrl;
 
   return (
     <div className="flex w-28 shrink-0 items-center gap-2 sm:w-32">
-      {avatar ? (
-        <img src={avatar} alt="" className="h-6 w-6 shrink-0 rounded-full object-cover" />
-      ) : (
-        <Icon icon={meta.icon} className={`h-6 w-6 shrink-0 ${meta.color}`} />
-      )}
+      <Icon icon={meta.icon} className={`h-6 w-6 shrink-0 ${meta.color}`} />
       <span className="truncate text-sm font-medium text-white/85">{t(`names.${platform}`)}</span>
     </div>
   );
