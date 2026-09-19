@@ -239,6 +239,27 @@
   color: rgb(var(--accent-rgb, var(--neon-primary)));
 }
 
+.editorial-sub-sidebar-divider {
+  margin: 0.5rem 0.75rem;
+  border-top: 1px solid var(--editorial-line);
+}
+
+.editorial-sub-sidebar-section-title {
+  padding: 0 0.75rem;
+  margin-bottom: 0.375rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--editorial-muted);
+}
+
+.editorial-sub-sidebar-empty {
+  padding: 0 0.75rem;
+  font-size: 0.8125rem;
+  color: var(--editorial-muted);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .editorial-sub-sidebar,
   .editorial-sub-sidebar-close,

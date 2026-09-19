@@ -57,6 +57,8 @@ const NAV_CATEGORIES: NavCategory[] = [
         icon: "lucide:award",
         labelKey: "nav.playerAchievements",
       },
+      { href: "/admin/groups", icon: "lucide:users", labelKey: "nav.groups" },
+      { href: "/admin/communities", icon: "fa:globe", labelKey: "nav.communities" },
     ],
   },
   {

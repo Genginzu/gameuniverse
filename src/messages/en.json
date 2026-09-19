@@ -34,6 +34,14 @@
       "title": "My collections",
       "description": "Organize your games into custom collections and share them with the community"
     },
+    "groups": {
+      "title": "Groups",
+      "description": "Join or create thematic groups around your favorite games and genres"
+    },
+    "communities": {
+      "title": "Communities",
+      "description": "Join large, permanent communities around your favorite games and genres"
+    },
     "dashboard": {
       "title": "Dashboard",
       "description": "Your personal space: library, collections and quick access"
@@ -420,7 +428,12 @@
     },
     "subSidebar": {
       "closeAriaLabel": "Close sub-sidebar",
-      "navAriaLabel": "{space} links"
+      "navAriaLabel": "{space} links",
+      "myGroups": "My groups",
+      "myCommunities": "My communities",
+      "noMyGroups": "You haven't joined any group yet",
+      "noMyCommunities": "You haven't joined any community yet",
+      "loading": "Loading…"
     },
     "mobileNav": {
       "openAriaLabel": "Open navigation",
@@ -502,6 +515,8 @@
       "esport": "Predictions",
       "coaching": "Coaching",
       "social": "Social",
+      "groups": "Groups",
+      "communities": "Communities",
       "account": "My account"
     },
     "links": {
@@ -523,6 +538,14 @@
       "social": {
         "feed": "Activity feed",
         "tags": "Trending tags"
+      },
+      "groups": {
+        "all": "All groups",
+        "create": "Create a group"
+      },
+      "communities": {
+        "all": "All communities",
+        "create": "Create a community"
       },
       "account": {
         "friends": "My friends",
@@ -1701,6 +1724,8 @@
       "playersCategory": "Players",
       "achievements": "Achievements",
       "playerAchievements": "Player Achievements",
+      "groups": "Groups",
+      "communities": "Communities",
       "webhooks": "Webhooks",
       "bulkImport": "Bulk Import",
       "bulkImportCharacters": "Bulk Import",
@@ -2522,6 +2547,88 @@
         "deleting": "Deleting...",
         "success": "Comment deleted successfully!",
         "errorGeneric": "An error occurred while deleting the comment."
+      }
+    },
+    "groups": {
+      "title": "Group Moderation",
+      "description": "Suspend or delete groups that violate community guidelines.",
+      "searchPlaceholder": "Search a group by name...",
+      "search": "Search",
+      "totalGroups": "{count, plural, =0 {No groups} one {1 group} other {# groups}}",
+      "noGroups": "No groups found.",
+      "unknownOwner": "Unknown owner",
+      "statusActive": "Active",
+      "statusSuspended": "Suspended",
+      "toggleError": "An error occurred while changing the status.",
+      "columns": {
+        "name": "Name",
+        "owner": "Owner",
+        "membersCount": "Members",
+        "visibility": "Status",
+        "date": "Date",
+        "actions": "Actions"
+      },
+      "sortBy": "Sort by {field}",
+      "deleteGroup": "Delete group {name}",
+      "page": "Page {current} of {total}",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "suspendDialog": {
+        "success": "Group suspended successfully."
+      },
+      "restoreDialog": {
+        "success": "Group restored successfully."
+      },
+      "deleteDialog": {
+        "title": "Delete Group",
+        "warning": "Are you sure you want to delete the group \"{name}\"?",
+        "irreversible": "This action is irreversible. The group, its members, and its posts will be permanently deleted.",
+        "confirm": "Delete",
+        "cancel": "Cancel",
+        "deleting": "Deleting...",
+        "success": "Group deleted successfully!",
+        "errorGeneric": "An error occurred while deleting the group."
+      }
+    },
+    "communities": {
+      "title": "Community Moderation",
+      "description": "Suspend or delete communities that violate community guidelines.",
+      "searchPlaceholder": "Search a community by name...",
+      "search": "Search",
+      "totalCommunities": "{count, plural, =0 {No communities} one {1 community} other {# communities}}",
+      "noCommunities": "No communities found.",
+      "unknownOwner": "Unknown owner",
+      "statusActive": "Active",
+      "statusSuspended": "Suspended",
+      "toggleError": "An error occurred while changing the status.",
+      "columns": {
+        "name": "Name",
+        "owner": "Owner",
+        "membersCount": "Members",
+        "visibility": "Status",
+        "date": "Date",
+        "actions": "Actions"
+      },
+      "sortBy": "Sort by {field}",
+      "deleteCommunity": "Delete community {name}",
+      "page": "Page {current} of {total}",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "suspendDialog": {
+        "success": "Community suspended successfully."
+      },
+      "restoreDialog": {
+        "success": "Community restored successfully."
+      },
+      "deleteDialog": {
+        "title": "Delete Community",
+        "warning": "Are you sure you want to delete the community \"{name}\"?",
+        "irreversible": "This action is irreversible. The community, its members, and its posts will be permanently deleted.",
+        "confirm": "Delete",
+        "cancel": "Cancel",
+        "deleting": "Deleting...",
+        "success": "Community deleted successfully!",
+        "errorGeneric": "An error occurred while deleting the community."
       }
     },
     "platforms": {
@@ -3477,6 +3584,192 @@
     "esportPlayersDesc": "Professional players",
     "esportPredictions": "Esport Predictions",
     "esportPredictionsDesc": "Bet on match outcomes"
+  },
+  "groups": {
+    "card": {
+      "membersCount": "{count, plural, =0 {No members} one {# member} other {# members}}",
+      "public": "Public",
+      "private": "Private",
+      "noDescription": "No description"
+    },
+    "form": {
+      "nameLabel": "Name",
+      "namePlaceholder": "e.g. RPG fans, Elden Ring guild...",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Describe your group's theme...",
+      "visibilityLabel": "Private group",
+      "visibilityLockedDescription": "Groups are always private: invisible publicly, accessible only by invitation.",
+      "imageLabel": "Image (URL)",
+      "imagePlaceholder": "https://example.com/image.jpg",
+      "imageDescription": "URL of a custom image for the group's illustration.",
+      "submit": "Create",
+      "submitEdit": "Save",
+      "submitting": "Saving..."
+    },
+    "page": {
+      "title": "Groups",
+      "createButton": "Create a group",
+      "errorTitle": "Loading error",
+      "errorDescription": "Unable to load this group. Please try again.",
+      "backToGroups": "Back to groups"
+    },
+    "editorial": {
+      "kicker": "Community",
+      "titlePrefix": "Your",
+      "titleAccent": "groups",
+      "subtitle": "Groups are invite-only: join one when a member invites you, or create your own and invite whoever you want (up to 50 members).",
+      "createButton": "Create a group",
+      "myGroupsKicker": "My groups",
+      "errorLoading": "Unable to load groups. Please try again.",
+      "authRequired": {
+        "title": "Sign-in required",
+        "description": "Sign in to see your groups and pending invitations."
+      },
+      "empty": {
+        "title": "No groups yet",
+        "description": "Create your first group and invite players by email or username.",
+        "cta": "Create my first group"
+      }
+    },
+    "detail": {
+      "public": "Public group",
+      "private": "Private group",
+      "membersCount": "{count, plural, =0 {No members} one {# member out of {max}} other {# members out of {max}}}",
+      "leave": "Leave group",
+      "postsKicker": "Discussions",
+      "membersKicker": "Members",
+      "invitationsKicker": "Invitations ({count}/{max})",
+      "errorTitle": "Group not found",
+      "errorDescription": "This group does not exist or is not accessible.",
+      "backToGroups": "Back to groups"
+    },
+    "members": {
+      "empty": "No members yet.",
+      "unknownPlayer": "Unknown player",
+      "changeRole": "Change role",
+      "removeMember": "Remove member",
+      "roles": {
+        "owner": "Owner",
+        "admin": "Admin",
+        "member": "Member"
+      }
+    },
+    "posts": {
+      "composerPlaceholder": "Share something with the group...",
+      "post": "Post",
+      "posting": "Posting...",
+      "empty": "No posts yet. Be the first to write one!",
+      "unknownAuthor": "Anonymous member"
+    },
+    "invitations": {
+      "byUsername": "By username",
+      "byEmail": "By email",
+      "usernamePlaceholder": "Player's username",
+      "emailPlaceholder": "email@example.com",
+      "invite": "Invite",
+      "inviteSuccess": "Invitation sent!",
+      "empty": "No invitation sent for this group yet.",
+      "unknownTarget": "Unknown recipient",
+      "status": {
+        "pending": "Pending",
+        "accepted": "Accepted",
+        "declined": "Declined"
+      }
+    },
+    "invitationPage": {
+      "kicker": "Invitation",
+      "pendingKicker": "{count, plural, =0 {No pending invitation} one {# pending invitation} other {# pending invitations}}",
+      "invitedBy": "Invited by {username}",
+      "membersCount": "{count, plural, =0 {No members} one {# member out of {max}} other {# members out of {max}}}",
+      "expiresAt": "This invitation expires on {date}",
+      "accept": "Accept",
+      "decline": "Decline",
+      "authRequiredTitle": "Sign-in required",
+      "authRequiredDescription": "Sign in to view and respond to this invitation.",
+      "signIn": "Sign in",
+      "notFoundTitle": "Invitation not found",
+      "notFoundDescription": "This invitation link is invalid or you don't have access to it.",
+      "alreadyAnsweredTitle": "Invitation already answered",
+      "alreadyAnsweredDescription": {
+        "accepted": "You have already accepted this invitation.",
+        "declined": "You have already declined this invitation."
+      },
+      "expiredTitle": "Invitation expired",
+      "expiredDescription": "This invitation has expired. Ask the group owner to send you a new one."
+    }
+  },
+  "communities": {
+    "card": {
+      "membersCount": "{count, plural, =0 {No members} one {# member} other {# members}}",
+      "public": "Public",
+      "private": "Private",
+      "noDescription": "No description"
+    },
+    "form": {
+      "nameLabel": "Name",
+      "namePlaceholder": "e.g. RPG Community, Zelda Universe...",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Describe your community's theme...",
+      "visibilityLabel": "Private community",
+      "visibilityLockedDescription": "Communities are always public: visible and joinable by anyone, with no approval and no member limit.",
+      "imageLabel": "Image (URL)",
+      "imagePlaceholder": "https://example.com/image.jpg",
+      "imageDescription": "URL of a custom image for the community's illustration.",
+      "submit": "Create",
+      "submitEdit": "Save",
+      "submitting": "Saving..."
+    },
+    "page": {
+      "title": "Communities",
+      "createButton": "Create a community",
+      "errorTitle": "Loading error",
+      "errorDescription": "Unable to load this community. Please try again.",
+      "backToCommunities": "Back to communities"
+    },
+    "editorial": {
+      "kicker": "Wider community",
+      "titlePrefix": "Find your",
+      "titleAccent": "community",
+      "subtitle": "Join large, permanent communities around your favorite games and genres, or create your own.",
+      "createButton": "Create a community",
+      "searchPlaceholder": "Search a community...",
+      "errorLoading": "Unable to load communities. Please try again.",
+      "empty": {
+        "title": "No communities yet",
+        "description": "Create the first community around a game or genre you're passionate about.",
+        "cta": "Create my first community"
+      }
+    },
+    "detail": {
+      "public": "Public community",
+      "private": "Private community",
+      "membersCount": "{count, plural, =0 {No members} one {# member} other {# members}}",
+      "join": "Join",
+      "leave": "Leave community",
+      "postsKicker": "Discussions",
+      "membersKicker": "Members",
+      "errorTitle": "Community not found",
+      "errorDescription": "This community does not exist or is not accessible.",
+      "backToCommunities": "Back to communities"
+    },
+    "members": {
+      "empty": "No members yet.",
+      "unknownPlayer": "Unknown player",
+      "changeRole": "Change role",
+      "removeMember": "Remove member",
+      "roles": {
+        "owner": "Owner",
+        "moderator": "Moderator",
+        "member": "Member"
+      }
+    },
+    "posts": {
+      "composerPlaceholder": "Share something with the community...",
+      "post": "Post",
+      "posting": "Posting...",
+      "empty": "No posts yet. Be the first to write one!",
+      "unknownAuthor": "Anonymous member"
+    }
   },
   "friends": {
     "searchPlaceholder": "Search for a friend…",

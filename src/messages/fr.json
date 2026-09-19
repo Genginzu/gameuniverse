@@ -34,6 +34,14 @@
       "title": "Mes collections",
       "description": "Organisez vos jeux en collections personnalisées et partagez-les avec la communauté"
     },
+    "groups": {
+      "title": "Groupes",
+      "description": "Rejoignez ou créez des groupes thématiques autour de vos jeux et genres préférés"
+    },
+    "communities": {
+      "title": "Communautés",
+      "description": "Rejoignez de grandes communautés permanentes autour de vos jeux et genres préférés"
+    },
     "dashboard": {
       "title": "Tableau de bord",
       "description": "Votre espace personnel : bibliothèque, collections et accès rapides"
@@ -420,7 +428,12 @@
     },
     "subSidebar": {
       "closeAriaLabel": "Fermer la sous-barre",
-      "navAriaLabel": "Liens {space}"
+      "navAriaLabel": "Liens {space}",
+      "myGroups": "Mes groupes",
+      "myCommunities": "Mes communautés",
+      "noMyGroups": "Vous n'avez rejoint aucun groupe",
+      "noMyCommunities": "Vous n'avez rejoint aucune communauté",
+      "loading": "Chargement…"
     },
     "mobileNav": {
       "openAriaLabel": "Ouvrir la navigation",
@@ -502,6 +515,8 @@
       "esport": "Pronostics",
       "coaching": "Coaching",
       "social": "Social",
+      "groups": "Groupes",
+      "communities": "Communautés",
       "account": "Mon compte"
     },
     "links": {
@@ -523,6 +538,14 @@
       "social": {
         "feed": "Fil d'actualité",
         "tags": "Tags tendance"
+      },
+      "groups": {
+        "all": "Tous les groupes",
+        "create": "Créer un groupe"
+      },
+      "communities": {
+        "all": "Toutes les communautés",
+        "create": "Créer une communauté"
       },
       "account": {
         "friends": "Mes amis",
@@ -1701,6 +1724,8 @@
       "playersCategory": "Joueurs",
       "achievements": "Succès",
       "playerAchievements": "Succès joueurs",
+      "groups": "Groupes",
+      "communities": "Communautés",
       "webhooks": "Webhooks",
       "bulkImport": "Import en masse",
       "bulkImportCharacters": "Import en masse",
@@ -2525,6 +2550,88 @@
         "deleting": "Suppression...",
         "success": "Commentaire supprimé avec succès !",
         "errorGeneric": "Une erreur est survenue lors de la suppression du commentaire."
+      }
+    },
+    "groups": {
+      "title": "Modération des groupes",
+      "description": "Suspendez ou supprimez les groupes qui ne respectent pas les règles de la communauté.",
+      "searchPlaceholder": "Rechercher un groupe par nom...",
+      "search": "Rechercher",
+      "totalGroups": "{count, plural, =0 {Aucun groupe} one {1 groupe} other {# groupes}}",
+      "noGroups": "Aucun groupe trouvé.",
+      "unknownOwner": "Propriétaire inconnu",
+      "statusActive": "Actif",
+      "statusSuspended": "Suspendu",
+      "toggleError": "Une erreur est survenue lors du changement de statut.",
+      "columns": {
+        "name": "Nom",
+        "owner": "Propriétaire",
+        "membersCount": "Membres",
+        "visibility": "Statut",
+        "date": "Date",
+        "actions": "Actions"
+      },
+      "sortBy": "Trier par {field}",
+      "deleteGroup": "Supprimer le groupe {name}",
+      "page": "Page {current} sur {total}",
+      "previousPage": "Page précédente",
+      "nextPage": "Page suivante",
+      "suspendDialog": {
+        "success": "Groupe suspendu avec succès."
+      },
+      "restoreDialog": {
+        "success": "Groupe réactivé avec succès."
+      },
+      "deleteDialog": {
+        "title": "Supprimer le groupe",
+        "warning": "Êtes-vous sûr de vouloir supprimer le groupe « {name} » ?",
+        "irreversible": "Cette action est irréversible. Le groupe, ses membres et ses posts seront définitivement supprimés.",
+        "confirm": "Supprimer",
+        "cancel": "Annuler",
+        "deleting": "Suppression...",
+        "success": "Groupe supprimé avec succès !",
+        "errorGeneric": "Une erreur est survenue lors de la suppression du groupe."
+      }
+    },
+    "communities": {
+      "title": "Modération des communautés",
+      "description": "Suspendez ou supprimez les communautés qui ne respectent pas les règles de la communauté.",
+      "searchPlaceholder": "Rechercher une communauté par nom...",
+      "search": "Rechercher",
+      "totalCommunities": "{count, plural, =0 {Aucune communauté} one {1 communauté} other {# communautés}}",
+      "noCommunities": "Aucune communauté trouvée.",
+      "unknownOwner": "Propriétaire inconnu",
+      "statusActive": "Active",
+      "statusSuspended": "Suspendue",
+      "toggleError": "Une erreur est survenue lors du changement de statut.",
+      "columns": {
+        "name": "Nom",
+        "owner": "Propriétaire",
+        "membersCount": "Membres",
+        "visibility": "Statut",
+        "date": "Date",
+        "actions": "Actions"
+      },
+      "sortBy": "Trier par {field}",
+      "deleteCommunity": "Supprimer la communauté {name}",
+      "page": "Page {current} sur {total}",
+      "previousPage": "Page précédente",
+      "nextPage": "Page suivante",
+      "suspendDialog": {
+        "success": "Communauté suspendue avec succès."
+      },
+      "restoreDialog": {
+        "success": "Communauté réactivée avec succès."
+      },
+      "deleteDialog": {
+        "title": "Supprimer la communauté",
+        "warning": "Êtes-vous sûr de vouloir supprimer la communauté « {name} » ?",
+        "irreversible": "Cette action est irréversible. La communauté, ses membres et ses posts seront définitivement supprimés.",
+        "confirm": "Supprimer",
+        "cancel": "Annuler",
+        "deleting": "Suppression...",
+        "success": "Communauté supprimée avec succès !",
+        "errorGeneric": "Une erreur est survenue lors de la suppression de la communauté."
       }
     },
     "platforms": {
@@ -3480,6 +3587,192 @@
     "esportPlayersDesc": "Les joueurs professionnels",
     "esportPredictions": "Prédictions Esport",
     "esportPredictionsDesc": "Pariez sur les résultats des matchs"
+  },
+  "groups": {
+    "card": {
+      "membersCount": "{count, plural, =0 {Aucun membre} one {# membre} other {# membres}}",
+      "public": "Public",
+      "private": "Privé",
+      "noDescription": "Aucune description"
+    },
+    "form": {
+      "nameLabel": "Nom",
+      "namePlaceholder": "ex. Fans de RPG, Guilde Elden Ring...",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Décrivez le thème de votre groupe...",
+      "visibilityLabel": "Groupe privé",
+      "visibilityLockedDescription": "Les groupes sont toujours privés : invisibles publiquement, accessibles uniquement sur invitation.",
+      "imageLabel": "Image (URL)",
+      "imagePlaceholder": "https://example.com/image.jpg",
+      "imageDescription": "URL d'une image personnalisée pour l'illustration du groupe.",
+      "submit": "Créer",
+      "submitEdit": "Enregistrer",
+      "submitting": "Enregistrement..."
+    },
+    "page": {
+      "title": "Groupes",
+      "createButton": "Créer un groupe",
+      "errorTitle": "Erreur de chargement",
+      "errorDescription": "Impossible de charger ce groupe. Veuillez réessayer.",
+      "backToGroups": "Retour aux groupes"
+    },
+    "editorial": {
+      "kicker": "Communauté",
+      "titlePrefix": "Vos",
+      "titleAccent": "groupes",
+      "subtitle": "Les groupes sont invite-only : rejoignez-les uniquement sur invitation d'un membre, ou créez le vôtre et invitez qui vous voulez (jusqu'à 50 membres).",
+      "createButton": "Créer un groupe",
+      "myGroupsKicker": "Mes groupes",
+      "errorLoading": "Impossible de charger les groupes. Veuillez réessayer.",
+      "authRequired": {
+        "title": "Connexion requise",
+        "description": "Connectez-vous pour voir vos groupes et vos invitations en attente."
+      },
+      "empty": {
+        "title": "Aucun groupe pour le moment",
+        "description": "Créez votre premier groupe et invitez des joueurs par email ou par pseudo.",
+        "cta": "Créer mon premier groupe"
+      }
+    },
+    "detail": {
+      "public": "Groupe public",
+      "private": "Groupe privé",
+      "membersCount": "{count, plural, =0 {Aucun membre} one {# membre sur {max}} other {# membres sur {max}}}",
+      "leave": "Quitter le groupe",
+      "postsKicker": "Discussions",
+      "membersKicker": "Membres",
+      "invitationsKicker": "Invitations ({count}/{max})",
+      "errorTitle": "Groupe introuvable",
+      "errorDescription": "Ce groupe n'existe pas ou n'est pas accessible.",
+      "backToGroups": "Retour aux groupes"
+    },
+    "members": {
+      "empty": "Aucun membre pour le moment.",
+      "unknownPlayer": "Joueur inconnu",
+      "changeRole": "Changer le rôle",
+      "removeMember": "Retirer le membre",
+      "roles": {
+        "owner": "Propriétaire",
+        "admin": "Admin",
+        "member": "Membre"
+      }
+    },
+    "posts": {
+      "composerPlaceholder": "Partagez quelque chose avec le groupe...",
+      "post": "Publier",
+      "posting": "Publication...",
+      "empty": "Aucune publication pour le moment. Soyez le premier à écrire !",
+      "unknownAuthor": "Membre anonyme"
+    },
+    "invitations": {
+      "byUsername": "Par pseudo",
+      "byEmail": "Par email",
+      "usernamePlaceholder": "Pseudo du joueur",
+      "emailPlaceholder": "email@exemple.com",
+      "invite": "Inviter",
+      "inviteSuccess": "Invitation envoyée !",
+      "empty": "Aucune invitation envoyée pour ce groupe.",
+      "unknownTarget": "Destinataire inconnu",
+      "status": {
+        "pending": "En attente",
+        "accepted": "Acceptée",
+        "declined": "Refusée"
+      }
+    },
+    "invitationPage": {
+      "kicker": "Invitation",
+      "pendingKicker": "{count, plural, =0 {Aucune invitation en attente} one {# invitation en attente} other {# invitations en attente}}",
+      "invitedBy": "Invité(e) par {username}",
+      "membersCount": "{count, plural, =0 {Aucun membre} one {# membre sur {max}} other {# membres sur {max}}}",
+      "expiresAt": "Cette invitation expire le {date}",
+      "accept": "Accepter",
+      "decline": "Refuser",
+      "authRequiredTitle": "Connexion requise",
+      "authRequiredDescription": "Connectez-vous pour consulter et répondre à cette invitation.",
+      "signIn": "Se connecter",
+      "notFoundTitle": "Invitation introuvable",
+      "notFoundDescription": "Ce lien d'invitation est invalide ou vous n'y avez pas accès.",
+      "alreadyAnsweredTitle": "Invitation déjà traitée",
+      "alreadyAnsweredDescription": {
+        "accepted": "Vous avez déjà accepté cette invitation.",
+        "declined": "Vous avez déjà refusé cette invitation."
+      },
+      "expiredTitle": "Invitation expirée",
+      "expiredDescription": "Cette invitation a expiré. Demandez au propriétaire du groupe de vous en envoyer une nouvelle."
+    }
+  },
+  "communities": {
+    "card": {
+      "membersCount": "{count, plural, =0 {Aucun membre} one {# membre} other {# membres}}",
+      "public": "Public",
+      "private": "Privé",
+      "noDescription": "Aucune description"
+    },
+    "form": {
+      "nameLabel": "Nom",
+      "namePlaceholder": "ex. Communauté RPG, Univers Zelda...",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Décrivez le thème de votre communauté...",
+      "visibilityLabel": "Communauté privée",
+      "visibilityLockedDescription": "Les communautés sont toujours publiques : visibles et rejoignables par tous, sans validation ni limite de membres.",
+      "imageLabel": "Image (URL)",
+      "imagePlaceholder": "https://example.com/image.jpg",
+      "imageDescription": "URL d'une image personnalisée pour l'illustration de la communauté.",
+      "submit": "Créer",
+      "submitEdit": "Enregistrer",
+      "submitting": "Enregistrement..."
+    },
+    "page": {
+      "title": "Communautés",
+      "createButton": "Créer une communauté",
+      "errorTitle": "Erreur de chargement",
+      "errorDescription": "Impossible de charger cette communauté. Veuillez réessayer.",
+      "backToCommunities": "Retour aux communautés"
+    },
+    "editorial": {
+      "kicker": "Communauté élargie",
+      "titlePrefix": "Trouvez votre",
+      "titleAccent": "communauté",
+      "subtitle": "Rejoignez de grandes communautés permanentes autour de vos jeux et genres préférés, ou créez la vôtre.",
+      "createButton": "Créer une communauté",
+      "searchPlaceholder": "Rechercher une communauté...",
+      "errorLoading": "Impossible de charger les communautés. Veuillez réessayer.",
+      "empty": {
+        "title": "Aucune communauté pour le moment",
+        "description": "Créez la première communauté autour d'un jeu ou d'un genre qui vous passionne.",
+        "cta": "Créer ma première communauté"
+      }
+    },
+    "detail": {
+      "public": "Communauté publique",
+      "private": "Communauté privée",
+      "membersCount": "{count, plural, =0 {Aucun membre} one {# membre} other {# membres}}",
+      "join": "Rejoindre",
+      "leave": "Quitter la communauté",
+      "postsKicker": "Discussions",
+      "membersKicker": "Membres",
+      "errorTitle": "Communauté introuvable",
+      "errorDescription": "Cette communauté n'existe pas ou n'est pas accessible.",
+      "backToCommunities": "Retour aux communautés"
+    },
+    "members": {
+      "empty": "Aucun membre pour le moment.",
+      "unknownPlayer": "Joueur inconnu",
+      "changeRole": "Changer le rôle",
+      "removeMember": "Retirer le membre",
+      "roles": {
+        "owner": "Propriétaire",
+        "moderator": "Modérateur",
+        "member": "Membre"
+      }
+    },
+    "posts": {
+      "composerPlaceholder": "Partagez quelque chose avec la communauté...",
+      "post": "Publier",
+      "posting": "Publication...",
+      "empty": "Aucune publication pour le moment. Soyez le premier à écrire !",
+      "unknownAuthor": "Membre anonyme"
+    }
   },
   "friends": {
     "searchPlaceholder": "Rechercher un ami…",
