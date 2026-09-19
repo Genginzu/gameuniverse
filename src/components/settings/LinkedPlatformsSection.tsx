@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { useLinkedPlatforms } from "@/hooks/useLinkedPlatforms";
@@ -33,6 +34,32 @@ export function LinkedPlatformsSection() {
   const [startingPlatform, setStartingPlatform] = useState<SyncablePlatform | null>(null);
 
   const linkedMap = new Map(platforms.map((p) => [p.platform, p]));
+
+  // Show a toast for the OAuth connect outcome carried back as query params
+  // (?platform=&success=true or ?error=&reason=), then strip them from the URL.
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const oauthHandledRef = useRef(false);
+  useEffect(() => {
+    if (oauthHandledRef.current) return;
+    const error = searchParams.get("error");
+    const success = searchParams.get("success");
+    const platform = searchParams.get("platform");
+    const reason = searchParams.get("reason");
+    if (!error && !(success && platform)) return;
+    oauthHandledRef.current = true;
+    if (error) {
+      toast({
+        title: t("connectFailed"),
+        description: reason ? `${error} · ${reason}` : error,
+        variant: "destructive",
+      });
+    } else {
+      toast({ title: t("connectSuccess"), variant: "success" });
+    }
+    router.replace(pathname);
+  }, [searchParams, pathname, router, t, toast]);
 
   // Refresh the linked-platforms list (for `lastSyncedAt`) whenever the set of
   // active jobs changes — i.e. when a sync starts or finishes.

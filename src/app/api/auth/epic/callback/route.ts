@@ -76,22 +76,27 @@ export async function GET(request: NextRequest) {
 
     if (!user) return NextResponse.redirect(`${baseUrl}/auth?error=unauthorized`);
 
+    // Where to send the user back (the page they started from, e.g. Connections),
+    // used for both success and error outcomes.
+    const returnTo = await consumeOauthReturn();
+    const dest = (params: Record<string, string>) =>
+      returnTo
+        ? `${baseUrl}${withParams(returnTo, params)}`
+        : `${baseUrl}${withParams(`/players/${user.id}?tab=settings`, params)}`;
+
     const stateValid = await consumeOauthState("epic", state);
     if (!stateValid) {
-      return NextResponse.redirect(
-        `${baseUrl}/players/${user.id}?tab=settings&error=epic_state_mismatch`
-      );
+      return NextResponse.redirect(dest({ error: "epic_state_mismatch" }));
     }
     if (!code) {
-      return NextResponse.redirect(`${baseUrl}/players/${user.id}?tab=settings&error=epic_no_code`);
+      return NextResponse.redirect(dest({ error: "epic_no_code" }));
     }
 
     const redirectUri = `${baseUrl}/api/auth/epic/callback`;
     const tokenData = await exchangeCodeForToken(code, redirectUri);
     if (!tokenData.access_token) {
-      const reason = tokenData.error ? `&reason=${encodeURIComponent(tokenData.error)}` : "";
       return NextResponse.redirect(
-        `${baseUrl}/players/${user.id}?tab=settings&error=epic_token_failed${reason}`
+        dest({ error: "epic_token_failed", ...(tokenData.error ? { reason: tokenData.error } : {}) })
       );
     }
 
@@ -120,12 +125,7 @@ export async function GET(request: NextRequest) {
       { onConflict: "player_id,platform" }
     );
 
-    const returnTo = await consumeOauthReturn();
-    return NextResponse.redirect(
-      returnTo
-        ? `${baseUrl}${withParams(returnTo, { platform: "epic", success: "true" })}`
-        : `${baseUrl}/players/${user.id}?tab=settings&platform=epic&success=true`
-    );
+    return NextResponse.redirect(dest({ platform: "epic", success: "true" }));
   } catch (error) {
     logger.error("Epic callback error", { error });
     return NextResponse.redirect(`${baseUrl}?error=epic_callback_failed`);

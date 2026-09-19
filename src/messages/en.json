@@ -1648,6 +1648,8 @@
       "syncPrivateProfile": "Your Steam profile is private — make it public to sync",
       "syncEmpty": "No games found in your Steam library",
       "syncUnavailable": "Library sync isn't available for this platform",
+      "connectFailed": "Account connection failed",
+      "connectSuccess": "Account connected",
       "syncStarted": "Sync started in the background…",
       "syncResult": "{matched}/{total} games in your library",
       "syncImportedShort": "{imported} imported",
