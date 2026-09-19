@@ -4,7 +4,10 @@ import {
   computeNextIndex,
   computePrevIndex,
   getResultUrl,
+  getAvailableTabs,
+  cycleTab,
   type FlatSearchItem,
+  type SearchTab,
 } from "@/lib/utils/global-search-utils";
 import type { GlobalSearchResponse } from "@/types/global-search";
 
@@ -88,6 +91,111 @@ describe("flattenResults", () => {
       slug: "team-liquid",
       acronym: "TL",
     });
+  });
+});
+
+// ============================================================================
+// flattenResults — tab filtering
+// ============================================================================
+
+function fullResponse(): GlobalSearchResponse {
+  return {
+    games: [{ id: "g1", slug: "zelda", title: "Zelda", source: "local" }],
+    characters: [{ id: "c1", slug: "link", name: "Link" }],
+    players: [{ id: "p1", username: "player1" }],
+    teams: [{ id: 100, name: "G2", slug: "g2" }],
+    proPlayers: [{ id: 200, name: "Caps", slug: "caps" }],
+    coaches: [
+      { id: "co1", username: "coachname", averageRating: 4.5, totalReviews: 10, isVerified: true },
+    ],
+    counts: { games: 1, characters: 1, players: 1, teams: 1, proPlayers: 1, coaches: 1 },
+  };
+}
+
+describe("flattenResults with a tab filter", () => {
+  it('returns every group when tab is "all"', () => {
+    expect(flattenResults(fullResponse(), "all")).toHaveLength(6);
+  });
+
+  it("returns only the selected group's items", () => {
+    const flat = flattenResults(fullResponse(), "characters");
+    expect(flat).toHaveLength(1);
+    expect(flat[0].type).toBe("character");
+  });
+
+  it("returns an empty list for a group with no results", () => {
+    const response = emptyResponse();
+    response.games = [{ id: "g1", slug: "zelda", title: "Zelda", source: "local" }];
+    response.counts.games = 1;
+    expect(flattenResults(response, "players")).toEqual([]);
+  });
+});
+
+// ============================================================================
+// getAvailableTabs
+// ============================================================================
+
+describe("getAvailableTabs", () => {
+  it("returns an empty array for null results", () => {
+    expect(getAvailableTabs(null)).toEqual([]);
+  });
+
+  it('shows "all" + the single group when only one group has results', () => {
+    const response = emptyResponse();
+    response.games = [{ id: "g1", slug: "zelda", title: "Zelda", source: "local" }];
+    response.counts.games = 1;
+    expect(getAvailableTabs(response)).toEqual(["all", "games"]);
+  });
+
+  it('prefixes "all" and lists non-empty groups in canonical order', () => {
+    const response = emptyResponse();
+    response.games = [{ id: "g1", slug: "zelda", title: "Zelda", source: "local" }];
+    response.players = [{ id: "p1", username: "player1" }];
+    response.counts.games = 1;
+    response.counts.players = 1;
+    expect(getAvailableTabs(response)).toEqual(["all", "games", "players"]);
+  });
+
+  it("includes every non-empty group", () => {
+    expect(getAvailableTabs(fullResponse())).toEqual([
+      "all",
+      "games",
+      "characters",
+      "players",
+      "teams",
+      "proPlayers",
+      "coaches",
+    ]);
+  });
+});
+
+// ============================================================================
+// cycleTab
+// ============================================================================
+
+describe("cycleTab", () => {
+  const tabs: SearchTab[] = ["all", "games", "players"];
+
+  it("moves forward", () => {
+    expect(cycleTab("all", tabs, 1)).toBe("games");
+    expect(cycleTab("games", tabs, 1)).toBe("players");
+  });
+
+  it("wraps around to the first tab when moving forward past the end", () => {
+    expect(cycleTab("players", tabs, 1)).toBe("all");
+  });
+
+  it("moves backward and wraps to the last tab", () => {
+    expect(cycleTab("games", tabs, -1)).toBe("all");
+    expect(cycleTab("all", tabs, -1)).toBe("players");
+  });
+
+  it('falls back to "all" when there are no tabs', () => {
+    expect(cycleTab("games", [], 1)).toBe("all");
+  });
+
+  it("falls back to the first tab when current is not in the list", () => {
+    expect(cycleTab("teams", tabs, 1)).toBe("all");
   });
 });
 

@@ -28,6 +28,8 @@ const editorialTranslations: Record<string, string> = {
   "globalSearch.overlay.noResults": "No results for “{query}”",
   "globalSearch.overlay.noResultsHint": "Try different keywords.",
   "globalSearch.overlay.seeAll": "See all {category} for “{query}” →",
+  "globalSearch.overlay.tabsAriaLabel": "Filter results by type",
+  "globalSearch.overlay.tabs.all": "All",
   "globalSearch.overlay.groups.games": "Games",
   "globalSearch.overlay.groups.characters": "Characters",
   "globalSearch.overlay.groups.players": "Players",
@@ -271,5 +273,87 @@ describe("SearchOverlayResults", () => {
       />
     );
     expect(screen.getByTestId("link-/coaching?q=top")).toBeDefined();
+  });
+});
+
+describe("SearchOverlayResults — filter tabs", () => {
+  function mixedResponse(): GlobalSearchResponse {
+    return {
+      games: [{ id: "g1", slug: "zelda", title: "Zelda", source: "local" }],
+      characters: [{ id: "c1", slug: "link", name: "Link" }],
+      players: [],
+      teams: [],
+      proPlayers: [],
+      coaches: [],
+      counts: { games: 1, characters: 1, players: 0, teams: 0, proPlayers: 0, coaches: 0 },
+    };
+  }
+
+  it("does not render a tab bar when fewer than 2 tabs are provided", () => {
+    render(
+      <SearchOverlayResults
+        results={mixedResponse()}
+        activeIndex={-1}
+        query="zelda"
+        onSelect={() => {}}
+      />
+    );
+    expect(screen.queryByRole("tablist")).toBeNull();
+  });
+
+  it("renders a tab bar and marks the active tab", () => {
+    render(
+      <SearchOverlayResults
+        results={mixedResponse()}
+        activeIndex={-1}
+        query="zelda"
+        onSelect={() => {}}
+        activeTab="all"
+        tabs={["all", "games", "characters"]}
+        onTabChange={() => {}}
+      />
+    );
+
+    expect(screen.getByRole("tablist", { name: "Filter results by type" })).toBeDefined();
+    const tabs = screen.getAllByRole("tab");
+    expect(tabs).toHaveLength(3);
+    expect(tabs[0].getAttribute("aria-selected")).toBe("true");
+    expect(tabs[1].getAttribute("aria-selected")).toBe("false");
+  });
+
+  it("calls onTabChange with the clicked tab", () => {
+    const onTabChange = vi.fn();
+    render(
+      <SearchOverlayResults
+        results={mixedResponse()}
+        activeIndex={-1}
+        query="zelda"
+        onSelect={() => {}}
+        activeTab="all"
+        tabs={["all", "games", "characters"]}
+        onTabChange={onTabChange}
+      />
+    );
+
+    fireEvent.click(screen.getByRole("tab", { name: /Characters/ }));
+    expect(onTabChange).toHaveBeenCalledWith("characters");
+  });
+
+  it("renders only the active group when a specific tab is selected", () => {
+    const { container } = render(
+      <SearchOverlayResults
+        results={mixedResponse()}
+        activeIndex={-1}
+        query="zelda"
+        onSelect={() => {}}
+        activeTab="characters"
+        tabs={["all", "games", "characters"]}
+        onTabChange={() => {}}
+      />
+    );
+
+    const groups = container.querySelectorAll(".search-overlay-group");
+    expect(groups).toHaveLength(1);
+    expect(groups[0].getAttribute("data-group")).toBe("characters");
   });
 });

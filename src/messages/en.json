@@ -3423,6 +3423,10 @@
         "coaches": "Coaches"
       },
       "seeAll": "See all {category} for “{query}” →",
+      "tabsAriaLabel": "Filter results by type",
+      "tabs": {
+        "all": "All"
+      },
       "recent": {
         "title": "Recent searches",
         "clearAll": "Clear all",
