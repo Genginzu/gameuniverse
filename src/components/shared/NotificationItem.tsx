@@ -16,6 +16,10 @@ function getNotificationHref(type: NotificationType, senderId: string): string |
   if (type === "post_created") return `/players/${senderId}?tab=activity`;
   if (type === "post_mention") return `/players/${senderId}?tab=posts`;
   if (type.startsWith("coaching_")) return "/coaching/sessions";
+  if (type === "friend_request") return "/players/me/friends";
+  if (type === "friend_accepted") return `/players/${senderId}`;
+  if (type === "review_vote") return "/reviews";
+  if (type === "achievement_unlocked") return `/players/me/achievements`;
   return null;
 }
 
@@ -31,6 +35,10 @@ const TYPE_ICONS: Record<string, string> = {
   coaching_completed: "lucide:check-check",
   coaching_cancelled: "lucide:x-circle",
   coaching_paid: "lucide:credit-card",
+  friend_request: "mdi:account-plus-outline",
+  friend_accepted: "mdi:account-check-outline",
+  review_vote: "mdi:thumb-up-outline",
+  achievement_unlocked: "mdi:trophy-outline",
 };
 
 const TYPE_LABEL_KEYS: Record<string, string> = {
@@ -45,6 +53,10 @@ const TYPE_LABEL_KEYS: Record<string, string> = {
   coaching_completed: "typeCoachingCompleted",
   coaching_cancelled: "typeCoachingCancelled",
   coaching_paid: "typeCoachingPaid",
+  friend_request: "typeFriendRequest",
+  friend_accepted: "typeFriendAccepted",
+  review_vote: "typeReviewVote",
+  achievement_unlocked: "typeAchievementUnlocked",
 };
 
 export function NotificationItem({ notification, onDismiss, onNavigate }: NotificationItemProps) {
@@ -57,33 +69,47 @@ export function NotificationItem({ notification, onDismiss, onNavigate }: Notifi
   const relativeDate = format.relativeTime(safeDate, now);
 
   const senderName = notification.sender?.username ?? "?";
+  const isSystemNotification = notification.type === "achievement_unlocked";
   const typeLabel = t(TYPE_LABEL_KEYS[notification.type] ?? "typePostComment");
   const href = getNotificationHref(notification.type, notification.senderId);
 
   const body = (
     <>
       {/* Type icon */}
-      <div className="bg-palette-primary-500/10 dark:bg-palette-primary-400/10 mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full">
+      <div
+        className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
+        style={{ background: "rgba(255, 255, 255, 0.05)" }}
+      >
         <Icon
           icon={TYPE_ICONS[notification.type] ?? "mdi:bell-outline"}
-          className="text-palette-primary-500 dark:text-palette-primary-300 h-4 w-4"
+          className="h-4 w-4"
+          style={{ color: "rgb(var(--neon-primary))" }}
         />
       </div>
 
       {/* Content */}
       <div className="min-w-0 flex-1 text-left">
-        <p className="text-sm text-gray-800 dark:text-slate-200">
-          <span className="font-semibold">{senderName}</span>{" "}
-          <span className="text-gray-600 dark:text-slate-400">{typeLabel}</span>
-        </p>
-        {notification.contentPreview && !notification.type.startsWith("coaching_") && (
-          <p className="mt-0.5 truncate text-xs text-gray-500 dark:text-slate-400">
-            {notification.contentPreview}
+        {isSystemNotification ? (
+          <p className="text-sm text-slate-200">
+            <span className="text-slate-400">{typeLabel}</span>
+          </p>
+        ) : (
+          <p className="text-sm text-slate-200">
+            <span className="font-semibold">{senderName}</span>{" "}
+            <span className="text-slate-400">{typeLabel}</span>
           </p>
         )}
+        {notification.contentPreview &&
+          !notification.type.startsWith("coaching_") &&
+          notification.type !== "friend_request" &&
+          notification.type !== "friend_accepted" && (
+            <p className="mt-0.5 truncate text-xs text-slate-400">
+              {notification.contentPreview}
+            </p>
+          )}
         <time
           dateTime={notification.createdAt}
-          className="mt-0.5 block text-xs text-gray-400 dark:text-slate-500"
+          className="mt-0.5 block text-xs text-slate-500"
           suppressHydrationWarning
         >
           {relativeDate}
@@ -93,7 +119,7 @@ export function NotificationItem({ notification, onDismiss, onNavigate }: Notifi
   );
 
   const containerClass =
-    "flex items-start gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-white/60 dark:hover:bg-slate-700/40";
+    "flex items-start gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-white/5";
 
   const handleNavigate = () => {
     onDismiss(notification.id);
@@ -118,7 +144,7 @@ export function NotificationItem({ notification, onDismiss, onNavigate }: Notifi
       <button
         type="button"
         onClick={() => onDismiss(notification.id)}
-        className="absolute top-2.5 right-2.5 rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:text-slate-500 dark:hover:bg-slate-600/50 dark:hover:text-slate-300"
+        className="absolute top-2.5 right-2.5 rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-white/10 hover:text-slate-300"
         aria-label={t("dismiss")}
       >
         <Icon icon="mdi:close" className="h-4 w-4" />

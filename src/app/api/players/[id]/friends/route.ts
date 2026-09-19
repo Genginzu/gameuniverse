@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { FriendServerService } from "@/lib/services/friendServerService";
+import { NotificationServerService } from "@/lib/services/notificationServerService";
 import { AchievementEngine } from "@/lib/services/achievementEngine";
 import { parsePaginationParams } from "@/lib/api-utils";
 import { logger } from "@/lib/logger";
@@ -86,6 +87,15 @@ export async function POST(_request: NextRequest, { params }: RouteContext) {
     }
 
     const friendship = await FriendServerService.sendRequest(user.id, playerId);
+
+    // Notify the receiver of the friend request (best-effort)
+    NotificationServerService.create(
+      playerId,
+      user.id,
+      "friend_request",
+      friendship.id,
+      ""
+    ).catch((err) => logger.error("Friend request notification failed", { error: err }));
 
     // Evaluate achievements (non-blocking)
     try {

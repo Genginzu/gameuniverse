@@ -12,6 +12,7 @@ const {
   mockParsePaginationParams,
   mockGetUser,
   mockFrom,
+  mockNotificationCreate,
 } = vi.hoisted(() => ({
   mockGetFriends: vi.fn(),
   mockGetPendingRequests: vi.fn(),
@@ -20,6 +21,7 @@ const {
   mockParsePaginationParams: vi.fn(() => ({ page: 1, limit: 20 })),
   mockGetUser: vi.fn(),
   mockFrom: vi.fn(),
+  mockNotificationCreate: vi.fn(),
 }));
 
 vi.mock("@/lib/services/friendServerService", () => ({
@@ -28,6 +30,12 @@ vi.mock("@/lib/services/friendServerService", () => ({
     getPendingRequests: mockGetPendingRequests,
     getRelationshipStatus: mockGetRelationshipStatus,
     sendRequest: mockSendRequest,
+  },
+}));
+
+vi.mock("@/lib/services/notificationServerService", () => ({
+  NotificationServerService: {
+    create: mockNotificationCreate,
   },
 }));
 
@@ -117,6 +125,7 @@ describe("/api/players/[id]/friends — POST", () => {
     });
     mockGetRelationshipStatus.mockResolvedValue({ status: "none" });
     mockSendRequest.mockResolvedValue({ id: "new-friendship", status: "pending" });
+    mockNotificationCreate.mockResolvedValue(null);
   });
 
   it("returns 201 when sending a valid friend request", async () => {
@@ -126,6 +135,21 @@ describe("/api/players/[id]/friends — POST", () => {
     const res = await POST(req, makeParams());
     expect(res.status).toBe(201);
     expect(mockSendRequest).toHaveBeenCalledWith(USER_ID, PLAYER_ID);
+  });
+
+  it("sends friend_request notification to the receiver", async () => {
+    mockSendRequest.mockResolvedValue({ id: "new-friendship", status: "pending" });
+    const req = new NextRequest(`http://localhost/api/players/${PLAYER_ID}/friends`, {
+      method: "POST",
+    });
+    await POST(req, makeParams());
+    expect(mockNotificationCreate).toHaveBeenCalledWith(
+      PLAYER_ID,
+      USER_ID,
+      "friend_request",
+      "new-friendship",
+      ""
+    );
   });
 
   it("returns 401 when not authenticated", async () => {

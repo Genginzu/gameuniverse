@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { untypedTable } from "@/lib/utils/untypedTable";
+import { NotificationServerService } from "@/lib/services/notificationServerService";
 import type { VoteType } from "@/types/review";
 import { logger } from "@/lib/logger";
 
@@ -108,6 +109,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         logger.error("Error inserting vote", { error: insertError });
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
       }
+
+      // Notify the review author of the new vote (best-effort)
+      NotificationServerService.create(
+        review.user_id,
+        user.id,
+        "review_vote",
+        reviewId,
+        voteType
+      ).catch((err) => logger.error("Review vote notification failed", { error: err }));
     }
 
     return NextResponse.json({ success: true, vote: { voteType } });

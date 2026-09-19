@@ -189,6 +189,21 @@ export class PlayerPostsServerService {
     // 4. Notify subscribers and accepted friends (best-effort, non-blocking)
     await this.notifyFollowers(playerId, postId, content);
 
+    // 5. Notify mentioned users (best-effort, non-blocking)
+    if (resolvedMentions.length > 0) {
+      await Promise.all(
+        resolvedMentions.map((m) =>
+          NotificationServerService.create(m.playerId, playerId, "post_mention", postId, content)
+        )
+      ).catch((err) =>
+        logger.error("Failed to create post_mention notifications", {
+          error: err instanceof Error ? err.message : String(err),
+          authorId: playerId,
+          postId,
+        })
+      );
+    }
+
     // 6. Build enriched response
     const row = data as unknown as PostRow;
     return {

@@ -4060,7 +4060,11 @@
     "typeCoachingStarted": "a démarré votre session de coaching",
     "typeCoachingCompleted": "a terminé votre session de coaching",
     "typeCoachingCancelled": "a annulé une session de coaching",
-    "typeCoachingPaid": "a payé votre session de coaching"
+    "typeCoachingPaid": "a payé votre session de coaching",
+    "typeFriendRequest": "vous a envoyé une demande d'ami",
+    "typeFriendAccepted": "a accepté votre demande d'ami",
+    "typeReviewVote": "a voté sur votre review",
+    "typeAchievementUnlocked": "Nouveau succès débloqué"
   },
   "postComments": {
     "title": "Commentaires",
