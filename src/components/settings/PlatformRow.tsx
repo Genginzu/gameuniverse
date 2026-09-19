@@ -251,9 +251,10 @@ function DisplayRow({
 
   const manualOnlyPlatforms: GamingPlatform[] = ["ubisoft", "ea"];
   const showManualHint = manualOnlyPlatforms.includes(platform);
-  // Connected game platforms with no public library API (Epic has no owned-games
-  // endpoint for non-partners; GOG has no official API) — link works, sync doesn't.
-  const syncUnavailablePlatforms: GamingPlatform[] = ["epic", "gog"];
+  // Connected game platforms with no public library API (Epic/Battle.net have no
+  // owned-games endpoint for non-partners; GOG has no official API) — link
+  // works, sync doesn't.
+  const syncUnavailablePlatforms: GamingPlatform[] = ["epic", "battlenet", "gog"];
   const showSyncUnavailable = isConnected && syncUnavailablePlatforms.includes(platform);
   const canSync = isConnected && isSyncablePlatform(platform);
   const isRunning = job?.status === "pending" || job?.status === "running";
