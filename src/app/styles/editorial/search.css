@@ -33,7 +33,10 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  max-height: calc(100vh - 4rem);
+  /* Fit within the overlay's vertical padding (top clamp + 1rem bottom) so the
+   * results list scrolls internally instead of overflowing off-screen. */
+  max-height: calc(100dvh - clamp(2rem, 8vh, 6rem) - 1rem);
+  min-height: 0;
 }
 
 .search-overlay-header {
@@ -425,6 +428,74 @@
   margin: 0 0 0.25rem;
   font-size: 1.05rem;
   color: #fff;
+}
+
+/* Results wrapper (tab bar + list) */
+.search-overlay-results-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Filter tabs — sticky so they stay visible while scrolling a long list. */
+.search-overlay-tabs {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: -0.25rem;
+  padding-top: 0.25rem;
+  padding-bottom: 0.5rem;
+  background: var(--editorial-bg-2);
+  border-bottom: 1px solid var(--editorial-line);
+}
+
+.search-overlay-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  min-height: 36px;
+  padding: 0.375rem 0.75rem;
+  border-radius: 9999px;
+  border: 1px solid var(--editorial-line);
+  background: transparent;
+  color: var(--editorial-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease,
+    color 200ms ease;
+}
+
+.search-overlay-tab:hover {
+  color: #fff;
+  border-color: rgba(var(--accent-rgb, var(--neon-primary)), 0.45);
+}
+
+.search-overlay-tab.is-active {
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+  border-color: rgba(var(--accent-rgb, var(--neon-primary)), 0.7);
+  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.15);
+}
+
+.search-overlay-tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  padding: 0 0.375rem;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.08);
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.search-overlay-tab.is-active .search-overlay-tab-count {
+  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.25);
 }
 
 /* Results list */

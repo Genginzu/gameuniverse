@@ -20,16 +20,55 @@ export type FlatSearchItem =
   | (GlobalSearchProPlayerItem & { type: "proPlayer" })
   | (GlobalSearchCoachItem & { type: "coach" });
 
+/** Result group key. Matches the `GlobalSearchResponse` array fields. */
+export type SearchGroupKey =
+  | "games"
+  | "characters"
+  | "players"
+  | "teams"
+  | "proPlayers"
+  | "coaches";
+
+/** Filter tab: either "all" (mixed results) or a single group. */
+export type SearchTab = "all" | SearchGroupKey;
+
+/** Canonical group order — drives both flattening and rendering. */
+export const SEARCH_GROUP_ORDER: readonly SearchGroupKey[] = [
+  "games",
+  "characters",
+  "players",
+  "teams",
+  "proPlayers",
+  "coaches",
+];
+
+/** Maps a flat item's discriminant `type` to its group key. */
+export const GROUP_OF_TYPE: Record<FlatSearchItem["type"], SearchGroupKey> = {
+  game: "games",
+  character: "characters",
+  player: "players",
+  team: "teams",
+  proPlayer: "proPlayers",
+  coach: "coaches",
+};
+
 /**
  * Flatten grouped results into a single ordered list, in the canonical order:
  *   games → characters → players → teams → proPlayers → coaches.
  *
  * Each item is tagged with its `type` for downstream routing. The order is
  * stable because keyboard navigation (↓/↑) and the F0-07c overlay rely on it.
+ *
+ * When `tab` is a specific group, only that group's items are returned (same
+ * order). Keyboard navigation and rendering both use the tab-filtered list so
+ * their indices stay aligned.
  */
-export function flattenResults(results: GlobalSearchResponse | null): FlatSearchItem[] {
+export function flattenResults(
+  results: GlobalSearchResponse | null,
+  tab: SearchTab = "all"
+): FlatSearchItem[] {
   if (!results) return [];
-  return [
+  const all: FlatSearchItem[] = [
     ...results.games.map((g) => ({ ...g, type: "game" as const })),
     ...results.characters.map((c) => ({ ...c, type: "character" as const })),
     ...results.players.map((p) => ({ ...p, type: "player" as const })),
@@ -37,6 +76,38 @@ export function flattenResults(results: GlobalSearchResponse | null): FlatSearch
     ...results.proPlayers.map((p) => ({ ...p, type: "proPlayer" as const })),
     ...results.coaches.map((c) => ({ ...c, type: "coach" as const })),
   ];
+  if (tab === "all") return all;
+  return all.filter((item) => GROUP_OF_TYPE[item.type] === tab);
+}
+
+/**
+ * Compute the list of selectable filter tabs for a result set.
+ *
+ * Returns `["all", ...nonEmptyGroups]` (canonical order) whenever at least one
+ * group has results, so the filter bar is always visible on a non-empty
+ * search. Returns an empty array only when there are no results at all.
+ */
+export function getAvailableTabs(results: GlobalSearchResponse | null): SearchTab[] {
+  if (!results) return [];
+  const groups = SEARCH_GROUP_ORDER.filter((key) => results[key].length > 0);
+  return groups.length > 0 ? ["all", ...groups] : [];
+}
+
+/**
+ * Cycle to the next/previous tab (wrapping around). Used by the Tab /
+ * Shift+Tab keyboard shortcut. Falls back to the first tab when `current`
+ * is not in the list, and to "all" when there are no tabs.
+ */
+export function cycleTab(
+  current: SearchTab,
+  tabs: readonly SearchTab[],
+  direction: 1 | -1
+): SearchTab {
+  if (tabs.length === 0) return "all";
+  const index = tabs.indexOf(current);
+  if (index === -1) return tabs[0];
+  const next = (index + direction + tabs.length) % tabs.length;
+  return tabs[next];
 }
 
 /**

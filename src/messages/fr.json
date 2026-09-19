@@ -3426,6 +3426,10 @@
         "coaches": "Coachs"
       },
       "seeAll": "Voir tous les {category} pour « {query} » →",
+      "tabsAriaLabel": "Filtrer les résultats par type",
+      "tabs": {
+        "all": "Tous"
+      },
       "recent": {
         "title": "Recherches récentes",
         "clearAll": "Effacer tout",
