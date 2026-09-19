@@ -29,7 +29,6 @@ interface PlatformRowProps {
 export function PlatformRow(props: PlatformRowProps) {
   const {
     platform,
-    linked,
     isEditing,
     editValue,
     saving,
