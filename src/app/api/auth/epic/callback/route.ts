@@ -15,6 +15,10 @@ interface EpicTokenResponse {
   account_id?: string;
   error?: string;
   error_description?: string;
+  // Epic services often return errors in their own shape:
+  errorCode?: string;
+  errorMessage?: string;
+  message?: string;
 }
 
 interface EpicUserInfo {
@@ -41,12 +45,26 @@ async function exchangeCodeForToken(code: string, redirectUri: string): Promise<
     }),
   });
 
-  const data = (await res.json().catch(() => ({}))) as EpicTokenResponse;
+  const rawText = await res.text();
+  let data: EpicTokenResponse = {};
+  try {
+    data = JSON.parse(rawText) as EpicTokenResponse;
+  } catch {
+    /* non-JSON body */
+  }
+
+  // Normalize Epic's error shapes (errorCode/errorMessage) into OAuth fields.
+  if (!data.error && data.errorCode) data.error = data.errorCode;
+  if (!data.error_description && (data.errorMessage || data.message)) {
+    data.error_description = data.errorMessage ?? data.message;
+  }
+
   if (!res.ok || !data.access_token) {
     logger.error("Epic token exchange failed", {
       status: res.status,
       error: data.error,
       errorDescription: data.error_description,
+      rawBody: rawText.slice(0, 500),
       hasClientId: !!process.env.EPIC_CLIENT_ID,
       hasClientSecret: !!process.env.EPIC_CLIENT_SECRET,
       redirectUri,
