@@ -5,7 +5,6 @@ import type { LibrarySyncProgress, SyncablePlatform } from "@/types/library-sync
 import { syncSteamLibrary } from "./steamLibrarySync";
 import { syncXboxLibrary } from "./xboxLibrarySync";
 import { syncPsnLibrary } from "./psnLibrarySync";
-import { syncItchLibrary } from "./itchLibrarySync";
 import {
   markJobFailed,
   markJobRunning,
@@ -116,9 +115,6 @@ export async function runLibrarySyncJob({
       result = { total: r.total, matched: r.matched, imported: r.imported, done: r.imported === 0 };
     } else if (platform === "playstation") {
       const r = await syncPsnLibrary(db, userId, onProgress);
-      result = { total: r.total, matched: r.matched, imported: r.imported, done: r.done };
-    } else if (platform === "itch") {
-      const r = await syncItchLibrary(db, userId, onProgress);
       result = { total: r.total, matched: r.matched, imported: r.imported, done: r.done };
     } else {
       const r = await syncXboxLibrary(db, userId, onProgress);

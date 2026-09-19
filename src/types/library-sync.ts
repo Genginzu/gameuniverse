@@ -1,7 +1,7 @@
 // Shared types for background library-sync jobs.
 
 /** Platforms that support automated library synchronization. */
-export const SYNCABLE_PLATFORMS = ["steam", "xbox", "playstation", "itch"] as const;
+export const SYNCABLE_PLATFORMS = ["steam", "xbox", "playstation"] as const;
 export type SyncablePlatform = (typeof SYNCABLE_PLATFORMS)[number];
 
 export function isSyncablePlatform(value: string): value is SyncablePlatform {
