@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/navigation";
 import { GameUniverseLogo } from "@/components/ui/game-universe-logo";
 import { HeaderLanguageSwitcher } from "@/components/layout/editorial/HeaderLanguageSwitcher";
+import { LegalFooterLinks } from "@/components/legal/LegalFooterLinks";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
@@ -28,6 +29,7 @@ export function AuthLayout({ children }: AuthLayoutProps) {
       </main>
 
       <footer className="border-t border-editorial-line px-4 py-6 text-center text-xs text-editorial-muted sm:px-6">
+        <LegalFooterLinks className="mb-3" />
         © {currentYear} Gamers Universe
       </footer>
     </div>

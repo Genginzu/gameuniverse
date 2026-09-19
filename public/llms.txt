@@ -1,0 +1,35 @@
+# Gamers Universe
+
+> Gamers Universe (gameuniverse.gg) est une plateforme communautaire francophone et
+> anglophone dédiée au jeu vidéo : fiches de jeux et de personnages, bibliothèque et
+> statistiques de jeu personnelles, publications et discussions entre joueurs, actualité
+> esport, et un service d'intermédiation de coaching entre joueurs et coachs indépendants.
+
+Le site est disponible en français (par défaut) et en anglais. Les URLs suivent le
+schéma https://gameuniverse.gg/{locale}/{section} où locale ∈ {fr, en}.
+
+## Pages principales
+
+- [Accueil](https://gameuniverse.gg/fr): présentation et découverte
+- [Jeux](https://gameuniverse.gg/fr/games): catalogue de jeux vidéo
+- [Personnages](https://gameuniverse.gg/fr/characters): base de personnages
+- [Joueurs](https://gameuniverse.gg/fr/players): profils publics des membres
+- [Discussions](https://gameuniverse.gg/fr/discussions): forums communautaires
+- [Esport](https://gameuniverse.gg/fr/esport/live): matchs, équipes, tournois, pronostics
+- [Coaching](https://gameuniverse.gg/fr/coaching): réservation de sessions de coaching
+
+## Mentions légales et politiques
+
+- [Mentions légales](https://gameuniverse.gg/fr/mentions-legales)
+- [Politique de confidentialité](https://gameuniverse.gg/fr/confidentialite)
+- [Politique de cookies](https://gameuniverse.gg/fr/cookies)
+- [Conditions générales de vente](https://gameuniverse.gg/fr/cgv)
+- [Conditions générales d'utilisation](https://gameuniverse.gg/fr/cgu)
+
+## Notes
+
+- Éditeur : micro-entreprise établie en France (coordonnées dans les mentions légales).
+- Le coaching est un service d'intermédiation : la plateforme met en relation des coachs
+  indépendants et des joueurs et n'est pas le prestataire de la session.
+- Les données descriptives et visuels de jeux proviennent de sources tierces (IGDB,
+  PandaScore) et appartiennent à leurs ayants droit respectifs.

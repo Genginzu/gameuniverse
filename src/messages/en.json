@@ -1528,7 +1528,48 @@
     "explore": "Explore",
     "community": "Community",
     "madeWith": "Made with",
-    "forGamers": "for gamers"
+    "forGamers": "for gamers",
+    "legal": "Legal",
+    "mentionsLegales": "Legal notice",
+    "confidentialite": "Privacy policy",
+    "cookies": "Cookie policy",
+    "cgv": "Terms of sale",
+    "cgu": "Terms of use",
+    "manageCookies": "Manage cookies"
+  },
+  "legal": {
+    "lastUpdated": "Last updated: {date}",
+    "tocTitle": "Contents",
+    "backToTop": "Back to top",
+    "cookieBanner": {
+      "title": "We respect your privacy",
+      "description": "We use cookies and trackers to measure audience and display some embedded content (videos). No non-essential tracker is set without your consent. You can accept, reject or customise your choices. See the cookie policy.",
+      "acceptAll": "Accept all",
+      "rejectAll": "Reject all",
+      "customize": "Customise",
+      "save": "Save my choices",
+      "policyLink": "Cookie policy",
+      "manageTitle": "Cookie preferences",
+      "necessary": "Strictly necessary",
+      "necessaryDescription": "Essential for the site to work (session, security, language preference, consent). Always on.",
+      "necessaryAlwaysOn": "Always on",
+      "analytics": "Audience measurement",
+      "analyticsDescription": "Traffic statistics (Vercel Analytics, Speed Insights) to improve the site.",
+      "media": "Multimedia content",
+      "mediaDescription": "Embedded videos (YouTube) on game pages. The player sets YouTube cookies.",
+      "marketing": "Advertising and marketing",
+      "marketingDescription": "Advertising trackers and contact tools (enabled only if installed).",
+      "close": "Close"
+    },
+    "authConsent": {
+      "label": "By creating an account, I accept the <cgu>Terms of Use</cgu> and I have read the <privacy>Privacy Policy</privacy>.",
+      "notice": "Your data (email address, username) is used to create and manage your account. See the privacy policy.",
+      "required": "You must accept the Terms of Use to create an account."
+    },
+    "bookingConsent": {
+      "label": "I accept the <cgv>Terms of Sale and Intermediation</cgv> and I request the service to be performed before the end of the 14-day withdrawal period, which means I lose this right once the service is fully performed.",
+      "required": "You must accept the Terms of Sale before booking."
+    }
   },
   "errors": {
     "unexpectedError": "An unexpected error occurred",
