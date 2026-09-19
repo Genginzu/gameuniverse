@@ -96,7 +96,13 @@ export async function GET(request: NextRequest) {
     const tokenData = await exchangeCodeForToken(code, redirectUri);
     if (!tokenData.access_token) {
       return NextResponse.redirect(
-        dest({ error: "epic_token_failed", ...(tokenData.error ? { reason: tokenData.error } : {}) })
+        dest({
+          error: "epic_token_failed",
+          ...(tokenData.error ? { reason: tokenData.error } : {}),
+          ...(tokenData.error_description
+            ? { detail: tokenData.error_description.slice(0, 160) }
+            : {}),
+        })
       );
     }
 

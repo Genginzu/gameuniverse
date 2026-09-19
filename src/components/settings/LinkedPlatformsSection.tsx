@@ -47,12 +47,14 @@ export function LinkedPlatformsSection() {
     const success = searchParams.get("success");
     const platform = searchParams.get("platform");
     const reason = searchParams.get("reason");
+    const detail = searchParams.get("detail");
     if (!error && !(success && platform)) return;
     oauthHandledRef.current = true;
     if (error) {
+      const parts = [reason, detail].filter(Boolean).join(" — ");
       toast({
         title: t("connectFailed"),
-        description: reason ? `${error} · ${reason}` : error,
+        description: parts || error,
         variant: "destructive",
       });
     } else {
