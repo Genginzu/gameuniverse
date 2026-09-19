@@ -81,8 +81,8 @@ jobs:
 
       - name: Upload Playwright Report
         uses: actions/upload-artifact@v7
-        if: ${{ !cancelled() }}
+        if: failure()
         with:
           name: playwright-report-${{ matrix.shard }}
           path: playwright-report/
-          retention-days: 30
+          retention-days: 3

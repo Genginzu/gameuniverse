@@ -26,11 +26,11 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
 
-      - name: Cache node_modules
+      - name: Cache bun install store
         uses: actions/cache/save@v6
         with:
-          path: node_modules
-          key: modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          path: ~/.bun/install/cache
+          key: bun-cache-${{ runner.os }}-${{ hashFiles('bun.lock') }}
 
   lint:
     name: Lint
@@ -41,11 +41,12 @@ jobs:
         with:
           show-progress: false
       - uses: oven-sh/setup-bun@v2
-      - name: Restore node_modules
+      - name: Restore bun install store
         uses: actions/cache/restore@v6
         with:
-          path: node_modules
-          key: modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          path: ~/.bun/install/cache
+          key: bun-cache-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+      - run: bun install --frozen-lockfile
       - run: bun run lint
 
   type-check:
@@ -57,11 +58,12 @@ jobs:
         with:
           show-progress: false
       - uses: oven-sh/setup-bun@v2
-      - name: Restore node_modules
+      - name: Restore bun install store
         uses: actions/cache/restore@v6
         with:
-          path: node_modules
-          key: modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          path: ~/.bun/install/cache
+          key: bun-cache-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+      - run: bun install --frozen-lockfile
       - run: bun run type-check
 
   unit-tests:
@@ -88,11 +90,12 @@ jobs:
         with:
           show-progress: false
       - uses: oven-sh/setup-bun@v2
-      - name: Restore node_modules
+      - name: Restore bun install store
         uses: actions/cache/restore@v6
         with:
-          path: node_modules
-          key: modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          path: ~/.bun/install/cache
+          key: bun-cache-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+      - run: bun install --frozen-lockfile
       - run: bunx vitest run ${{ matrix.path }}
 
   build:
@@ -105,21 +108,21 @@ jobs:
         with:
           show-progress: false
       - uses: oven-sh/setup-bun@v2
-      - name: Restore node_modules
+      - name: Restore bun install store
         uses: actions/cache/restore@v6
         with:
-          path: node_modules
-          key: modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          path: ~/.bun/install/cache
+          key: bun-cache-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+      - run: bun install --frozen-lockfile
 
-      # Cache the Next.js build cache. Saving with github.sha guarantees a fresh
-      # save every run, while restore-keys lets us reuse the latest available
-      # incremental cache. Hashing src/** would invalidate on every commit and
-      # defeat the purpose.
+      # Cache the Next.js build cache. Reusing the same key (without sha)
+      # overwrites the previous entry instead of accumulating one per
+      # commit. Next.js incremental cache handles staleness correctly.
       - name: Cache Next.js build
         uses: actions/cache@v6
         with:
           path: .next/cache
-          key: nextjs-${{ runner.os }}-${{ hashFiles('bun.lock', 'next.config.*', 'tsconfig.json') }}-${{ github.sha }}
+          key: nextjs-${{ runner.os }}-${{ hashFiles('bun.lock', 'next.config.*', 'tsconfig.json') }}
           restore-keys: |
             nextjs-${{ runner.os }}-${{ hashFiles('bun.lock', 'next.config.*', 'tsconfig.json') }}-
             nextjs-${{ runner.os }}-
@@ -169,14 +172,12 @@ jobs:
         run: apt-get update && apt-get install -y unzip
 
       - uses: oven-sh/setup-bun@v2
-      - name: Restore node_modules
-        id: cache
+      - name: Restore bun install store
         uses: actions/cache/restore@v6
         with:
-          path: node_modules
-          key: modules-${{ runner.os }}-${{ hashFiles('bun.lock') }}
-      - if: steps.cache.outputs.cache-hit != 'true'
-        run: bun install --frozen-lockfile
+          path: ~/.bun/install/cache
+          key: bun-cache-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+      - run: bun install --frozen-lockfile
 
       - name: Download build artifact
         uses: actions/download-artifact@v8
@@ -193,8 +194,8 @@ jobs:
 
       - name: Upload Playwright Report
         uses: actions/upload-artifact@v7
-        if: ${{ !cancelled() }}
+        if: failure()
         with:
           name: playwright-report-${{ matrix.shard }}
           path: playwright-report/
-          retention-days: 30
+          retention-days: 3
