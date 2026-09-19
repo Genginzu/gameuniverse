@@ -40,7 +40,19 @@ async function exchangeCodeForToken(code: string, redirectUri: string): Promise<
       redirect_uri: redirectUri,
     }),
   });
-  return res.json();
+
+  const data = (await res.json().catch(() => ({}))) as EpicTokenResponse;
+  if (!res.ok || !data.access_token) {
+    logger.error("Epic token exchange failed", {
+      status: res.status,
+      error: data.error,
+      errorDescription: data.error_description,
+      hasClientId: !!process.env.EPIC_CLIENT_ID,
+      hasClientSecret: !!process.env.EPIC_CLIENT_SECRET,
+      redirectUri,
+    });
+  }
+  return data;
 }
 
 async function getEpicUserInfo(accessToken: string): Promise<EpicUserInfo | null> {
@@ -77,8 +89,9 @@ export async function GET(request: NextRequest) {
     const redirectUri = `${baseUrl}/api/auth/epic/callback`;
     const tokenData = await exchangeCodeForToken(code, redirectUri);
     if (!tokenData.access_token) {
+      const reason = tokenData.error ? `&reason=${encodeURIComponent(tokenData.error)}` : "";
       return NextResponse.redirect(
-        `${baseUrl}/players/${user.id}?tab=settings&error=epic_token_failed`
+        `${baseUrl}/players/${user.id}?tab=settings&error=epic_token_failed${reason}`
       );
     }
 
