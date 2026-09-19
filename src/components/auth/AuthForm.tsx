@@ -44,6 +44,7 @@ interface AuthFormProps {
 
 export function AuthForm({ mode, onModeChange }: AuthFormProps) {
   const t = useTranslations("auth");
+  const tConsent = useTranslations("legal.authConsent");
   const locale = useLocale();
   const { signIn, signUp, loading: _loading } = useAuth();
 
@@ -53,6 +54,7 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
     fullName: "",
   });
   const [error, setError] = useState<string | null>(null);
+  const [consentAccepted, setConsentAccepted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [emailSent, setEmailSent] = useState(false);
   const [userAlreadyExists, setUserAlreadyExists] = useState(false);
@@ -93,7 +95,7 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
     if (mode === "signin") {
       return formData.email && formData.password;
     }
-    return formData.email && formData.password && formData.fullName;
+    return formData.email && formData.password && formData.fullName && consentAccepted;
   };
 
   if (emailSent) {
@@ -211,6 +213,37 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
               {t("signup.userAlreadyExists")}
             </AlertDescription>
           </Alert>
+        )}
+
+        {mode === "signup" && (
+          <div className="space-y-2">
+            <label className="flex cursor-pointer items-start gap-3 text-sm text-editorial-muted">
+              <input
+                type="checkbox"
+                name="consent"
+                checked={consentAccepted}
+                onChange={(e) => setConsentAccepted(e.target.checked)}
+                required
+                disabled={isSubmitting}
+                className="mt-1 size-4 shrink-0 rounded border-editorial-line bg-editorial-3 accent-editorial-accent"
+              />
+              <span>
+                {tConsent.rich("label", {
+                  cgu: (chunks) => (
+                    <Link href="/cgu" className={AUTH_LINK_CLASS} target="_blank">
+                      {chunks}
+                    </Link>
+                  ),
+                  privacy: (chunks) => (
+                    <Link href="/confidentialite" className={AUTH_LINK_CLASS} target="_blank">
+                      {chunks}
+                    </Link>
+                  ),
+                })}
+              </span>
+            </label>
+            <p className="text-xs text-editorial-muted">{tConsent("notice")}</p>
+          </div>
         )}
 
         <Button type="submit" className={AUTH_PRIMARY_BTN_CLASS} disabled={!isFormValid() || isSubmitting}>

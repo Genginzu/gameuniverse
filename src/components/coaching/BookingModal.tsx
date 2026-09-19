@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/hooks/useAuth";
+import { Link } from "@/i18n/navigation";
 import { Icon } from "@iconify/react";
 
 interface Pricing {
@@ -24,15 +25,17 @@ interface BookingModalProps {
 export function BookingModal({ coachId, gameId, gameTitle, pricing, onClose }: BookingModalProps) {
   const t = useTranslations("coaching.booking");
   const tProfile = useTranslations("coaching.publicProfile");
+  const tConsent = useTranslations("legal.bookingConsent");
   const { user } = useAuth();
   const [selected, setSelected] = useState<Pricing | null>(null);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
+  const [cgvAccepted, setCgvAccepted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
   const handleBook = async () => {
-    if (!selected || !date || !time) return;
+    if (!selected || !date || !time || !cgvAccepted) return;
     setLoading(true);
     try {
       const scheduledAt = new Date(`${date}T${time}`).toISOString();
@@ -137,9 +140,27 @@ export function BookingModal({ coachId, gameId, gameTitle, pricing, onClose }: B
               </div>
             </div>
 
+            <label className="flex cursor-pointer items-start gap-2 text-xs text-gray-600 dark:text-gray-300">
+              <input
+                type="checkbox"
+                checked={cgvAccepted}
+                onChange={(e) => setCgvAccepted(e.target.checked)}
+                className="mt-0.5 size-4 shrink-0 accent-editorial-accent"
+              />
+              <span>
+                {tConsent.rich("label", {
+                  cgv: (chunks) => (
+                    <Link href="/cgv" target="_blank" className="text-editorial-accent underline">
+                      {chunks}
+                    </Link>
+                  ),
+                })}
+              </span>
+            </label>
+
             <button
               onClick={handleBook}
-              disabled={!selected || !date || !time || loading}
+              disabled={!selected || !date || !time || !cgvAccepted || loading}
               className="from-palette-secondary-500 to-palette-primary-500 w-full rounded-xl bg-linear-to-r py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50"
             >
               {loading ? t("booking") : t("bookNow")}
