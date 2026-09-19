@@ -34,6 +34,15 @@ export interface NotificationsResponse {
   notifications: Notification[];
 }
 
+/** Read-status filter for the notification center list. */
+export type NotificationStatusFilter = "all" | "unread" | "read";
+
+/** Paginated response returned by the notification center list endpoint. */
+export interface PaginatedNotificationsResponse {
+  notifications: Notification[];
+  total: number;
+}
+
 export interface NotificationCountResponse {
   count: number;
 }

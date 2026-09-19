@@ -24,6 +24,7 @@ import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 
 import { Link, usePathname } from "@/i18n/navigation";
+import { useNotifications } from "@/hooks/useNotifications";
 
 import type { EditorialSpace } from "./EditorialRail";
 
@@ -48,6 +49,7 @@ export function EditorialSubSidebar({
   const pathname = usePathname();
   const asideRef = useRef<HTMLElement>(null);
   const t = useTranslations("editorial");
+  const { unreadCount } = useNotifications();
 
   // Escape closes
   useEffect(() => {
@@ -109,6 +111,7 @@ export function EditorialSubSidebar({
           >
             {space.links.map((link) => {
               const active = pathname === link.href;
+              const showBadge = link.href === "/notifications" && unreadCount > 0;
               return (
                 <Link
                   key={link.href}
@@ -123,6 +126,14 @@ export function EditorialSubSidebar({
                 >
                   <Icon icon={link.icon} className="size-4" aria-hidden />
                   <span>{t(`links.${space.key}.${link.labelKey}`)}</span>
+                  {showBadge && (
+                    <span
+                      className="from-palette-secondary-500 to-palette-primary-500 ml-auto inline-flex min-h-[18px] min-w-[18px] items-center justify-center rounded-full bg-linear-to-r px-1 text-[10px] leading-none font-bold text-white"
+                      aria-label={t("subSidebar.unreadBadge", { count: unreadCount })}
+                    >
+                      {unreadCount > 9 ? "9+" : unreadCount}
+                    </span>
+                  )}
                 </Link>
               );
             })}

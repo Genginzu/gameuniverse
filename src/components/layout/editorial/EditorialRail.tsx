@@ -119,8 +119,9 @@ export const EDITORIAL_SPACES: readonly EditorialSpace[] = [
   {
     key: "account",
     icon: "fa:user",
-    pathPrefixes: ["/friends", "/discussions", "/coins"],
+    pathPrefixes: ["/friends", "/discussions", "/coins", "/notifications"],
     links: [
+      { href: "/notifications", labelKey: "notifications", icon: "lucide:bell" },
       { href: "/friends", labelKey: "friends", icon: "lucide:users" },
       { href: "/discussions", labelKey: "discussions", icon: "lucide:messages-square" },
       { href: "/coins", labelKey: "coins", icon: "lucide:coins" },

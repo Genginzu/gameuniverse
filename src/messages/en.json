@@ -26,6 +26,10 @@
       "title": "My Friends",
       "description": "Manage your friends and friend requests on Gamers Universe"
     },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Find all your notifications in one place: friends, votes, mentions, achievements and coaching"
+    },
     "library": {
       "title": "My library",
       "description": "Manage your personal video game collection"
@@ -424,7 +428,8 @@
     },
     "subSidebar": {
       "closeAriaLabel": "Close sub-sidebar",
-      "navAriaLabel": "{space} links"
+      "navAriaLabel": "{space} links",
+      "unreadBadge": "{count} unread notifications"
     },
     "mobileNav": {
       "openAriaLabel": "Open navigation",
@@ -532,7 +537,8 @@
       "account": {
         "friends": "My friends",
         "discussions": "Discussions",
-        "coins": "My coins"
+        "coins": "My coins",
+        "notifications": "Notifications"
       }
     }
   },
@@ -4174,6 +4180,7 @@
     "ariaLabel": "Notifications, {count} unread",
     "noNotifications": "No notifications",
     "markAllAsRead": "Mark all as read",
+    "viewAll": "View all notifications",
     "typePostComment": "commented on your post",
     "typeDiscussionMessage": "sent you a message",
     "typePostCreated": "published a new post",
@@ -4190,6 +4197,39 @@
     "typeFriendAccepted": "accepted your friend request",
     "typeReviewVote": "voted on your review",
     "typeAchievementUnlocked": "New achievement unlocked"
+  },
+  "notificationCenter": {
+    "kicker": "Your activity",
+    "titlePrefix": "Notification",
+    "titleAccent": "center",
+    "subtitle": "Find all your notifications in one place: friends, votes, mentions, achievements and coaching.",
+    "filterByType": "Filter by type",
+    "filterByStatus": "Filter by status",
+    "categoryAll": "All",
+    "category": {
+      "friends": "Friends",
+      "reviews": "Reviews",
+      "mentions": "Mentions",
+      "achievements": "Achievements",
+      "coaching": "Coaching",
+      "activity": "Activity"
+    },
+    "status": {
+      "all": "All",
+      "unread": "Unread",
+      "read": "Read"
+    },
+    "markAllAsRead": "Mark all as read",
+    "markAsRead": "Mark as read",
+    "markAsUnread": "Mark as unread",
+    "viewResource": "View",
+    "empty": "No notifications to display",
+    "loadingError": "Unable to load your notifications",
+    "authRequired": {
+      "title": "Sign in required",
+      "description": "Sign in to view your notifications.",
+      "signIn": "Sign in"
+    }
   },
   "postComments": {
     "title": "Comments",
