@@ -66,3 +66,11 @@ export const LazyGoalsTab = dynamic(
   () => import("./goals/GoalsTab").then((m) => ({ default: m.GoalsTab })),
   { loading: () => <TabSkeleton /> }
 );
+
+export const LazySubscriptionListTab = dynamic(
+  () =>
+    import("./subscription/SubscriptionListTab").then((m) => ({
+      default: m.SubscriptionListTab,
+    })),
+  { loading: () => <FriendsSkeleton /> }
+);

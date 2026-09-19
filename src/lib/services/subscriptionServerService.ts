@@ -1,6 +1,6 @@
 import { createServerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
-import type { SubscriptionEntry } from "@/types/subscription";
+import type { SubscriptionCounts, SubscriptionEntry } from "@/types/subscription";
 
 /**
  * Service serveur pour les abonnements entre joueurs.
@@ -97,6 +97,46 @@ export class SubscriptionServerService {
       .eq("target_id", targetId);
 
     if (error) throw error;
+  }
+
+  /**
+   * Retourne le nombre d'abonnés (followers) et d'abonnements (following) d'un joueur.
+   * Les deux comptes sont récupérés en parallèle via des requêtes `head` (count only).
+   */
+  static async getCounts(playerId: string): Promise<SubscriptionCounts> {
+    const supabase = await createServerClient();
+
+    const [followersResult, followingResult] = await Promise.all([
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (supabase as any)
+        .from("player_subscriptions")
+        .select("id", { count: "exact", head: true })
+        .eq("target_id", playerId),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (supabase as any)
+        .from("player_subscriptions")
+        .select("id", { count: "exact", head: true })
+        .eq("subscriber_id", playerId),
+    ]);
+
+    const tableMissing = (code?: string) => code === "PGRST205" || code === "42P01";
+
+    if (followersResult.error && !tableMissing(followersResult.error.code)) {
+      throw followersResult.error;
+    }
+    if (followingResult.error && !tableMissing(followingResult.error.code)) {
+      throw followingResult.error;
+    }
+
+    if (tableMissing(followersResult.error?.code) || tableMissing(followingResult.error?.code)) {
+      logger.warn("player_subscriptions table not found - migration not applied yet");
+      return { followers: 0, following: 0 };
+    }
+
+    return {
+      followers: followersResult.count ?? 0,
+      following: followingResult.count ?? 0,
+    };
   }
 
   /**

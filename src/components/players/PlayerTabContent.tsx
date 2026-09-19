@@ -11,6 +11,7 @@ import {
   LazySettingsContent,
   LazySubscribedFeedTab,
   LazyGoalsTab,
+  LazySubscriptionListTab,
 } from "./PlayerLazyTabs";
 import { PlayerLibraryTab } from "./PlayerLibraryTab";
 import { ActivityFeed } from "./activity/ActivityFeed";
@@ -101,6 +102,14 @@ export function PlayerTabContent({
 
       <TabPanel visible={activeTab === "friends"} mounted={visitedTabs.has("friends")}>
         <LazyFriendsTab playerId={player.id} locale={locale} />
+      </TabPanel>
+
+      <TabPanel visible={activeTab === "followers"} mounted={visitedTabs.has("followers")}>
+        <LazySubscriptionListTab playerId={player.id} variant="followers" />
+      </TabPanel>
+
+      <TabPanel visible={activeTab === "following"} mounted={visitedTabs.has("following")}>
+        <LazySubscriptionListTab playerId={player.id} variant="following" />
       </TabPanel>
 
       {isOwner && (

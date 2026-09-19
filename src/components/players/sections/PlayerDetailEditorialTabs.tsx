@@ -25,6 +25,8 @@ const TAB_DEFINITIONS: ReadonlyArray<{
   { id: "activity", icon: "lucide:smile" },
   { id: "library", icon: "lucide:gamepad-2" },
   { id: "friends", icon: "lucide:users" },
+  { id: "followers", icon: "lucide:user-plus" },
+  { id: "following", icon: "lucide:rss" },
   { id: "reviews", icon: "lucide:book-open" },
   { id: "collections", icon: "lucide:folder-open" },
   { id: "achievements", icon: "lucide:trophy" },

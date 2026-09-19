@@ -797,6 +797,8 @@
           "postDays": "{days}d ago",
           "friendsKicker": "Friends",
           "friendsHelper": "{count, plural, =0 {No friends} =1 {1 friend} other {# friends}}",
+          "followersHelper": "{count, plural, =0 {No followers} =1 {1 follower} other {# followers}}",
+          "followingHelper": "{count, plural, =0 {Not following anyone} =1 {Following 1} other {Following #}}",
           "noTagline": "« Member of the Gamers Universe community. »"
         }
       }
@@ -813,7 +815,9 @@
       "stats": "Stats",
       "recommendations": "Recommendations",
       "settings": "Settings",
-      "goals": "Goals"
+      "goals": "Goals",
+      "followers": "Followers",
+      "following": "Following"
     },
     "feed": {
       "feedLabel": "Subscribed feed",
@@ -3508,7 +3512,13 @@
   "subscriptions": {
     "subscribe": "Subscribe",
     "unsubscribe": "Unsubscribe",
-    "confirmUnsubscribe": "Are you sure you want to unsubscribe from this player?"
+    "confirmUnsubscribe": "Are you sure you want to unsubscribe from this player?",
+    "followersTitle": "Followers",
+    "followingTitle": "Following",
+    "emptyFollowers": "No followers yet.",
+    "emptyFollowing": "This player is not following anyone yet.",
+    "listLabel": "Player list",
+    "unknownPlayer": "Unknown player"
   },
   "playerStats": {
     "dashboard": {
