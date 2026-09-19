@@ -53,6 +53,10 @@
     "coins": {
       "title": "Historique GU Coins",
       "description": "Consultez l'historique de vos GU Coins gagnés et dépensés"
+    },
+    "feed": {
+      "title": "Fil d'actualité des amis",
+      "description": "Suivez l'activité de vos amis : reviews, posts, sessions de jeu et succès débloqués"
     }
   },
   "header": {
@@ -517,6 +521,7 @@
         "settings": "Paramètres coach"
       },
       "social": {
+        "feed": "Fil d'actualité",
         "tags": "Tags tendance"
       },
       "account": {
@@ -4576,6 +4581,28 @@
       "noComments": "Aucun commentaire pour le moment. Soyez le premier à réagir !",
       "placeholder": "Écrire un commentaire...",
       "loginRequired": "Connectez-vous pour participer à la discussion"
+    }
+  },
+  "feedPage": {
+    "title": "Fil d'actualité",
+    "subtitle": "L'activité de vos amis en temps réel",
+    "empty": "Ajoutez des amis pour voir leur activité ici.",
+    "emptyFiltered": "Aucun de vos amis n'a encore publié ce type de contenu.",
+    "errorTitle": "Une erreur est survenue",
+    "errorDescription": "Impossible de charger le fil d'actualité. Veuillez réessayer.",
+    "filters": {
+      "label": "Filtrer par type d'activité",
+      "all": "Tous",
+      "review": "Reviews",
+      "post": "Posts",
+      "comment": "Commentaires",
+      "library": "Bibliothèque",
+      "playtime": "Temps de jeu",
+      "favorite": "Favoris",
+      "collection": "Collections",
+      "friendship": "Amis",
+      "session": "Sessions",
+      "achievement": "Succès"
     }
   }
 }

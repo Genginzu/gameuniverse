@@ -79,8 +79,11 @@ export const EDITORIAL_SPACES: readonly EditorialSpace[] = [
   {
     key: "social",
     icon: "fa:hashtag",
-    pathPrefixes: ["/posts"],
-    links: [{ href: "/posts/tags", labelKey: "tags", icon: "lucide:hash" }],
+    pathPrefixes: ["/posts", "/feed"],
+    links: [
+      { href: "/feed", labelKey: "feed", icon: "lucide:newspaper" },
+      { href: "/posts/tags", labelKey: "tags", icon: "lucide:hash" },
+    ],
   },
   {
     key: "library",
