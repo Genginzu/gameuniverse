@@ -11,7 +11,8 @@
  *   esport, joueurs pros, coachs)
  * - État vide : recherches récentes (localStorage, max 5) + bouton "Effacer
  *   tout"
- * - Navigation clavier : ↑↓ (entre items), Enter (sélection), Escape (close)
+ * - Navigation clavier : ↑↓ (entre items), Tab / Shift+Tab (change d'onglet
+ *   de filtre), Enter (sélection), Escape (close)
  * - Body scroll lock pendant l'ouverture
  * - Fermeture : ╳, Escape, clic backdrop, ou sélection d'un résultat
  *
@@ -61,6 +62,9 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     isOpen: hasResults,
     activeIndex,
     setActiveIndex,
+    activeTab,
+    availableTabs,
+    selectTab,
     handleKeyDown: hookHandleKeyDown,
     flatItems,
   } = useGlobalSearch();
@@ -303,6 +307,9 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
               query={query}
               onSelect={handleItemSelect}
               importingId={importingId}
+              activeTab={activeTab}
+              tabs={availableTabs}
+              onTabChange={selectTab}
             />
           ) : isSearching ? (
             <div className="search-overlay-searching" role="status" aria-live="polite">

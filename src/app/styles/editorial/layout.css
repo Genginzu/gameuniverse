@@ -608,6 +608,18 @@
   overflow-x: hidden;
 }
 
+/*
+ * Content column : stacks the main content and the footer vertically so the
+ * footer sits under the content (centered), not under the rail/sub-sidebar.
+ * Takes the remaining horizontal space next to the rail + sub-sidebar.
+ */
+.editorial-layout-content-column {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
 /* Mobile hamburger trigger — absolute top-left, only visible < lg */
 .editorial-layout-mobile-nav {
   position: fixed;

@@ -6,6 +6,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 const mockUsePathname = vi.fn<[], string>(() => "/");
 vi.mock("@/i18n/navigation", () => ({
   usePathname: () => mockUsePathname(),
+  useRouter: () => ({ push: vi.fn(), replace: vi.fn(), refresh: vi.fn(), back: vi.fn() }),
   Link: ({
     children,
     href,
@@ -32,6 +33,22 @@ vi.mock("@/i18n/navigation", () => ({
     ),
 }));
 
+// Mock useAuth, useNotifications, useMyGroups, useMyCommunities — all pulled
+// in transitively by EditorialSubSidebar (notification badge + membership
+// sections). Return empty/idle state so no real SWR/Supabase call happens.
+vi.mock("@/hooks/useAuth", () => ({
+  useAuth: () => ({ user: null, loading: false, signOut: vi.fn() }),
+}));
+vi.mock("@/hooks/useNotifications", () => ({
+  useNotifications: () => ({ unreadCount: 0 }),
+}));
+vi.mock("@/hooks/useMyGroups", () => ({
+  useMyGroups: () => ({ groups: [], isLoading: false, error: null }),
+}));
+vi.mock("@/hooks/useMyCommunities", () => ({
+  useMyCommunities: () => ({ communities: [], isLoading: false, error: null }),
+}));
+
 // Mock useTranslations with a deterministic dictionary tailored to the
 // editorial namespace (subSidebar, spaces, links). The sidebar now exposes
 // user-specific spaces only.
@@ -42,6 +59,12 @@ const editorialTranslations: Record<string, string> = {
   "spaces.esport": "Predictions",
   "spaces.coaching": "Coaching",
   "spaces.account": "My account",
+  "spaces.groups": "Groups",
+  "spaces.communities": "Communities",
+  "subSidebar.noMyGroups": "You haven't joined any group yet",
+  "subSidebar.noMyCommunities": "You haven't joined any community yet",
+  "subSidebar.loading": "Loading…",
+  "subSidebar.unreadBadge": "{count} unread notifications",
   // Library links
   "links.library.myLibrary": "My library",
   "links.library.collections": "My collections",

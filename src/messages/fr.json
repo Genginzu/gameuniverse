@@ -26,9 +26,17 @@
       "title": "Mes amis",
       "description": "Gérez vos amis et vos demandes d'amitié sur Gamers Universe"
     },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Retrouvez toutes vos notifications : amis, votes, mentions, succès et coaching"
+    },
     "library": {
       "title": "Ma bibliothèque",
       "description": "Gérez votre collection de jeux vidéo personnelle"
+    },
+    "connections": {
+      "title": "Connexions & synchronisation",
+      "description": "Connectez vos comptes gaming et synchronisez vos bibliothèques dans Mon univers"
     },
     "collections": {
       "title": "Mes collections",
@@ -433,7 +441,8 @@
       "myCommunities": "Mes communautés",
       "noMyGroups": "Vous n'avez rejoint aucun groupe",
       "noMyCommunities": "Vous n'avez rejoint aucune communauté",
-      "loading": "Chargement…"
+      "loading": "Chargement…",
+      "unreadBadge": "{count} notifications non lues"
     },
     "mobileNav": {
       "openAriaLabel": "Ouvrir la navigation",
@@ -511,7 +520,7 @@
       "primaryNavAriaLabel": "Navigation principale"
     },
     "spaces": {
-      "library": "Ma bibliothèque",
+      "library": "Mon univers",
       "esport": "Pronostics",
       "coaching": "Coaching",
       "social": "Social",
@@ -524,7 +533,8 @@
         "myLibrary": "Ma bibliothèque",
         "backlog": "Mon backlog",
         "collections": "Mes collections",
-        "favoriteCharacters": "Personnages favoris"
+        "favoriteCharacters": "Personnages favoris",
+        "connections": "Connexions & sync"
       },
       "esport": {
         "predictions": "Pronostics",
@@ -550,7 +560,8 @@
       "account": {
         "friends": "Mes amis",
         "discussions": "Discussions",
-        "coins": "Mes coins"
+        "coins": "Mes coins",
+        "notifications": "Notifications"
       }
     }
   },
@@ -1090,6 +1101,12 @@
       "newPost": "Nouveau post"
     }
   },
+  "connections": {
+    "kicker": "Mon univers",
+    "titlePrefix": "Connexions &",
+    "titleAccent": "synchronisation",
+    "subtitle": "Connectez vos comptes gaming (Steam, Xbox, PlayStation, Epic…) et synchronisez automatiquement vos bibliothèques dans Mon univers."
+  },
   "userLibrary": {
     "title": "Ma Bibliothèque",
     "subtitle": "Gérez votre collection personnelle de jeux vidéo",
@@ -1551,7 +1568,48 @@
     "explore": "Explorer",
     "community": "Communauté",
     "madeWith": "Fait avec",
-    "forGamers": "pour les gamers"
+    "forGamers": "pour les gamers",
+    "legal": "Légal",
+    "mentionsLegales": "Mentions légales",
+    "confidentialite": "Politique de confidentialité",
+    "cookies": "Politique de cookies",
+    "cgv": "CGV",
+    "cgu": "CGU",
+    "manageCookies": "Gérer mes cookies"
+  },
+  "legal": {
+    "lastUpdated": "Dernière mise à jour : {date}",
+    "tocTitle": "Sommaire",
+    "backToTop": "Haut de page",
+    "cookieBanner": {
+      "title": "Nous respectons votre vie privée",
+      "description": "Nous utilisons des cookies et traceurs pour mesurer l'audience et afficher certains contenus intégrés (vidéos). Aucun traceur non essentiel n'est déposé sans votre accord. Vous pouvez accepter, refuser ou personnaliser vos choix. Voir la politique de cookies.",
+      "acceptAll": "Tout accepter",
+      "rejectAll": "Tout refuser",
+      "customize": "Personnaliser",
+      "save": "Enregistrer mes choix",
+      "policyLink": "Politique de cookies",
+      "manageTitle": "Préférences de cookies",
+      "necessary": "Strictement nécessaires",
+      "necessaryDescription": "Indispensables au fonctionnement du site (session, sécurité, préférence de langue, consentement). Toujours actifs.",
+      "necessaryAlwaysOn": "Toujours actifs",
+      "analytics": "Mesure d'audience",
+      "analyticsDescription": "Statistiques de fréquentation (Vercel Analytics, Speed Insights) pour améliorer le site.",
+      "media": "Contenus multimédias",
+      "mediaDescription": "Vidéos intégrées (YouTube) sur les fiches de jeux. Le lecteur dépose des cookies YouTube.",
+      "marketing": "Publicité et marketing",
+      "marketingDescription": "Traceurs publicitaires et outils de contact (activés uniquement s'ils sont installés).",
+      "close": "Fermer"
+    },
+    "authConsent": {
+      "label": "En créant un compte, j'accepte les <cgu>Conditions générales d'utilisation</cgu> et j'ai pris connaissance de la <privacy>Politique de confidentialité</privacy>.",
+      "notice": "Vos données (adresse e-mail, pseudonyme) servent à créer et gérer votre compte. Voir la politique de confidentialité.",
+      "required": "Vous devez accepter les CGU pour créer un compte."
+    },
+    "bookingConsent": {
+      "label": "J'accepte les <cgv>Conditions générales de vente et d'intermédiation</cgv> et je demande l'exécution de la prestation avant la fin du délai de rétractation de 14 jours, ce qui entraîne la perte de ce droit une fois la prestation pleinement exécutée.",
+      "required": "Vous devez accepter les CGV avant de réserver."
+    }
   },
   "errors": {
     "unexpectedError": "Une erreur s'est produite",
@@ -1641,6 +1699,10 @@
       "description": "Connectez vos comptes de plateformes de jeux pour synchroniser vos données",
       "connectedTitle": "Comptes connectés",
       "connectedDescription": "Comptes reliés via OAuth — nom, avatar et bibliothèque importés automatiquement",
+      "syncTitle": "Synchronisation de bibliothèque",
+      "syncDescription": "Connectez le compte et importez automatiquement votre bibliothèque de jeux",
+      "connectOnlyTitle": "Connexion du compte",
+      "connectOnlyDescription": "Compte lié pour le profil — la synchronisation de bibliothèque n'est pas disponible",
       "manualTitle": "Pseudos manuels",
       "manualDescription": "Plateformes sans API : votre pseudo est affiché sur votre profil",
       "lastSyncedAt": "Synchronisé il y a {when}",
@@ -1668,6 +1730,25 @@
       "syncImported": "{imported} nouveaux jeux importés depuis IGDB",
       "syncPrivateProfile": "Votre profil Steam est privé — rendez-le public pour synchroniser",
       "syncEmpty": "Aucun jeu trouvé dans votre bibliothèque Steam",
+      "syncUnavailable": "Synchronisation de bibliothèque non disponible pour cette plateforme",
+      "connectFailed": "Échec de la connexion du compte",
+      "connectSuccess": "Compte connecté",
+      "syncStarted": "Synchronisation lancée en arrière-plan…",
+      "syncResult": "{matched}/{total} jeux dans ta bibliothèque",
+      "syncImportedShort": "{imported} importés",
+      "viewLibrary": "Voir dans Mon univers",
+      "syncFailed": "Échec de la synchronisation : {error}",
+      "syncCount": "{processed}/{total} jeux",
+      "syncImportingGame": "Import du jeu : {game}",
+      "syncPhase": {
+        "starting": "Démarrage…",
+        "fetching": "Récupération de la bibliothèque…",
+        "resolving": "Association des jeux…",
+        "importing": "Import de nouveaux jeux depuis IGDB…",
+        "saving": "Enregistrement…",
+        "done": "Terminé",
+        "failed": "Échec"
+      },
       "names": {
         "steam": "Steam",
         "epic": "Epic Games",
@@ -1735,7 +1816,8 @@
       "esportImport": "Import Esport",
       "esportSync": "Sync PandaScore",
       "translations": "Traductions",
-      "globalSync": "Synchro globale"
+      "globalSync": "Synchro globale",
+      "librarySync": "Synchro bibliothèque"
     },
     "closeSidebar": "Fermer le menu latéral",
     "openSidebar": "Ouvrir le menu latéral",
@@ -2945,6 +3027,39 @@
         "ratings": "Classifications"
       }
     },
+    "librarySync": {
+      "title": "Synchro bibliothèque",
+      "description": "Titres remontés par les plateformes (Steam, Xbox, PlayStation) non associés automatiquement à un jeu. Liez-les à un jeu : tous les joueurs le récupèreront à leur prochaine synchro.",
+      "filters": {
+        "platform": "Plateforme",
+        "allPlatforms": "Toutes",
+        "status": "Statut",
+        "unmatched": "Non associés",
+        "matched": "Associés",
+        "all": "Tous",
+        "search": "Recherche"
+      },
+      "platforms": {
+        "steam": "Steam",
+        "xbox": "Xbox",
+        "playstation": "PlayStation"
+      },
+      "searchPlaceholder": "Nom du jeu…",
+      "searchGame": "Rechercher un jeu à lier…",
+      "linkButton": "Rechercher",
+      "dialogTitle": "Lier à un jeu",
+      "searchHint": "Tapez au moins 2 caractères pour rechercher",
+      "igdbHint": "Recherche directe dans IGDB — le jeu sera importé localement si besoin.",
+      "noGameResults": "Aucun jeu trouvé",
+      "count": "{total} titre(s)",
+      "loading": "Chargement…",
+      "empty": "Aucun titre à afficher",
+      "unlink": "Délier",
+      "linkedToast": "Jeu associé",
+      "unlinkedToast": "Association retirée",
+      "errorToast": "Échec de la mise à jour",
+      "pageOf": "Page {page} / {total}"
+    },
     "globalSync": {
       "title": "Synchronisation globale IGDB",
       "subtitle": "Téléchargez le catalogue complet IGDB et associez les jeux à votre base de données",
@@ -3533,6 +3648,10 @@
         "coaches": "Coachs"
       },
       "seeAll": "Voir tous les {category} pour « {query} » →",
+      "tabsAriaLabel": "Filtrer les résultats par type",
+      "tabs": {
+        "all": "Tous"
+      },
       "recent": {
         "title": "Recherches récentes",
         "clearAll": "Effacer tout",
@@ -4381,6 +4500,7 @@
     "ariaLabel": "Notifications, {count} non lues",
     "noNotifications": "Aucune notification",
     "markAllAsRead": "Tout marquer comme lu",
+    "viewAll": "Voir toutes les notifications",
     "typePostComment": "a commenté votre post",
     "typeDiscussionMessage": "vous a envoyé un message",
     "typePostCreated": "a publié un nouveau post",
@@ -4397,6 +4517,39 @@
     "typeFriendAccepted": "a accepté votre demande d'ami",
     "typeReviewVote": "a voté sur votre review",
     "typeAchievementUnlocked": "Nouveau succès débloqué"
+  },
+  "notificationCenter": {
+    "kicker": "Votre activité",
+    "titlePrefix": "Centre de",
+    "titleAccent": "notifications",
+    "subtitle": "Retrouvez au même endroit toutes vos notifications : amis, votes, mentions, succès et coaching.",
+    "filterByType": "Filtrer par type",
+    "filterByStatus": "Filtrer par statut",
+    "categoryAll": "Tout",
+    "category": {
+      "friends": "Amis",
+      "reviews": "Reviews",
+      "mentions": "Mentions",
+      "achievements": "Succès",
+      "coaching": "Coaching",
+      "activity": "Activité"
+    },
+    "status": {
+      "all": "Toutes",
+      "unread": "Non lues",
+      "read": "Lues"
+    },
+    "markAllAsRead": "Tout marquer comme lu",
+    "markAsRead": "Marquer comme lu",
+    "markAsUnread": "Marquer comme non lu",
+    "viewResource": "Voir",
+    "empty": "Aucune notification à afficher",
+    "loadingError": "Impossible de charger vos notifications",
+    "authRequired": {
+      "title": "Connexion requise",
+      "description": "Connectez-vous pour consulter vos notifications.",
+      "signIn": "Se connecter"
+    }
   },
   "postComments": {
     "title": "Commentaires",

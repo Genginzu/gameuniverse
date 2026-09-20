@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { useLinkedPlatforms } from "@/hooks/useLinkedPlatforms";
+import { useLibrarySync } from "@/hooks/useLibrarySync";
 import { useToast } from "@/hooks/use-toast";
 import { GAMING_PLATFORMS, PLATFORM_META, type GamingPlatform } from "@/types/linked-platforms";
+import { isSyncablePlatform, type SyncablePlatform } from "@/types/library-sync";
 import { PlatformRow } from "./PlatformRow";
 import { SuggestionsBanner } from "./SuggestionsBanner";
 
@@ -19,17 +22,61 @@ export function LinkedPlatformsSection() {
     isLoading,
     savePlatform,
     connectPsn,
-    syncLibrary,
     setVisibility,
     removePlatform,
+    refresh: refreshLinked,
   } = useLinkedPlatforms();
+  const { jobByPlatform, startSync } = useLibrarySync();
   const { toast } = useToast();
   const [editingPlatform, setEditingPlatform] = useState<GamingPlatform | null>(null);
   const [editValue, setEditValue] = useState("");
   const [saving, setSaving] = useState(false);
-  const [syncingPlatform, setSyncingPlatform] = useState<"steam" | "xbox" | null>(null);
+  const [startingPlatform, setStartingPlatform] = useState<SyncablePlatform | null>(null);
 
   const linkedMap = new Map(platforms.map((p) => [p.platform, p]));
+
+  // Show a toast for the OAuth connect outcome carried back as query params
+  // (?platform=&success=true or ?error=&reason=), then strip them from the URL.
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const oauthHandledRef = useRef(false);
+  useEffect(() => {
+    if (oauthHandledRef.current) return;
+    const error = searchParams.get("error");
+    const success = searchParams.get("success");
+    const platform = searchParams.get("platform");
+    const reason = searchParams.get("reason");
+    const detail = searchParams.get("detail");
+    if (!error && !(success && platform)) return;
+    oauthHandledRef.current = true;
+    if (error) {
+      const parts = [reason, detail].filter(Boolean).join(" — ");
+      toast({
+        title: t("connectFailed"),
+        description: parts || error,
+        variant: "destructive",
+      });
+    } else {
+      toast({ title: t("connectSuccess"), variant: "success" });
+    }
+    router.replace(pathname);
+  }, [searchParams, pathname, router, t, toast]);
+
+  // Refresh the linked-platforms list (for `lastSyncedAt`) whenever the set of
+  // active jobs changes — i.e. when a sync starts or finishes.
+  const activeKey = Array.from(jobByPlatform.values())
+    .filter((j) => j.status === "running" || j.status === "pending")
+    .map((j) => j.platform)
+    .sort()
+    .join(",");
+  const prevActiveKey = useRef(activeKey);
+  useEffect(() => {
+    if (prevActiveKey.current !== activeKey) {
+      prevActiveKey.current = activeKey;
+      void refreshLinked();
+    }
+  }, [activeKey, refreshLinked]);
 
   const cancelEdit = () => {
     setEditingPlatform(null);
@@ -72,39 +119,16 @@ export function LinkedPlatformsSection() {
     }
   };
 
-  const handleSyncLibrary = async (platform: "steam" | "xbox") => {
-    setSyncingPlatform(platform);
+  const handleSyncLibrary = async (platform: SyncablePlatform) => {
+    setStartingPlatform(platform);
     try {
-      const result = await syncLibrary(platform);
-
-      if (result.privateProfile) {
-        toast({ title: t("syncPrivateProfile"), variant: "destructive" });
-        return;
-      }
-      if (result.total === 0) {
-        toast({ title: t("syncEmpty"), variant: "destructive" });
-        return;
-      }
-
-      const description = [
-        t("syncSummary", {
-          matched: result.matched,
-          total: result.total,
-          unmatched: result.unmatched,
-        }),
-        result.imported && result.imported > 0
-          ? t("syncImported", { imported: result.imported })
-          : null,
-      ]
-        .filter(Boolean)
-        .join(" · ");
-
-      toast({ title: t("syncDone"), description });
+      const job = await startSync(platform);
+      toast({ title: job.status === "succeeded" ? t("syncDone") : t("syncStarted") });
     } catch (err) {
       const msg = err instanceof Error ? err.message : tErrors("updateFailed");
       toast({ title: msg, variant: "destructive" });
     } finally {
-      setSyncingPlatform(null);
+      setStartingPlatform(null);
     }
   };
 
@@ -141,7 +165,8 @@ export function LinkedPlatformsSection() {
       isEditing={editingPlatform === platform}
       editValue={editValue}
       saving={saving}
-      syncing={syncingPlatform === platform}
+      syncing={startingPlatform === platform}
+      job={isSyncablePlatform(platform) ? (jobByPlatform.get(platform) ?? null) : null}
       t={t}
       onStartEdit={() => {
         setEditingPlatform(platform);
@@ -157,7 +182,14 @@ export function LinkedPlatformsSection() {
     />
   );
 
-  const connectedPlatforms = GAMING_PLATFORMS.filter((p) => PLATFORM_META[p].authType !== "manual");
+  // Three groups:
+  //  1. Library sync — connected platforms with a working library API.
+  //  2. Account only — OAuth/NPSSO connect but no library sync.
+  //  3. Manual — no API; the player types their username.
+  const syncPlatforms = GAMING_PLATFORMS.filter((p) => isSyncablePlatform(p));
+  const connectOnlyPlatforms = GAMING_PLATFORMS.filter(
+    (p) => PLATFORM_META[p].authType !== "manual" && !isSyncablePlatform(p)
+  );
   const manualPlatforms = GAMING_PLATFORMS.filter((p) => PLATFORM_META[p].authType === "manual");
 
   if (isLoading) {
@@ -171,8 +203,11 @@ export function LinkedPlatformsSection() {
   return (
     <div className="space-y-4">
       <SuggestionsBanner linked={new Set(platforms.map((p) => p.platform))} t={t} />
-      <PlatformsCard t={t} titleKey="connectedTitle" descriptionKey="connectedDescription">
-        <div className="space-y-2">{connectedPlatforms.map(renderRow)}</div>
+      <PlatformsCard t={t} titleKey="syncTitle" descriptionKey="syncDescription">
+        <div className="space-y-2">{syncPlatforms.map(renderRow)}</div>
+      </PlatformsCard>
+      <PlatformsCard t={t} titleKey="connectOnlyTitle" descriptionKey="connectOnlyDescription">
+        <div className="space-y-2">{connectOnlyPlatforms.map(renderRow)}</div>
       </PlatformsCard>
       <PlatformsCard t={t} titleKey="manualTitle" descriptionKey="manualDescription">
         <div className="space-y-2">{manualPlatforms.map(renderRow)}</div>

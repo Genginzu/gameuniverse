@@ -114,6 +114,7 @@ export const EDITORIAL_SPACES: readonly EditorialSpace[] = [
       { href: "/library/backlog", labelKey: "backlog", icon: "lucide:list-checks" },
       { href: "/collections", labelKey: "collections", icon: "lucide:folder-heart" },
       { href: "/favorites/characters", labelKey: "favoriteCharacters", icon: "lucide:heart" },
+      { href: "/library/connections", labelKey: "connections", icon: "lucide:plug-zap" },
     ],
   },
   {
@@ -138,8 +139,9 @@ export const EDITORIAL_SPACES: readonly EditorialSpace[] = [
   {
     key: "account",
     icon: "fa:user",
-    pathPrefixes: ["/friends", "/discussions", "/coins"],
+    pathPrefixes: ["/friends", "/discussions", "/coins", "/notifications"],
     links: [
+      { href: "/notifications", labelKey: "notifications", icon: "lucide:bell" },
       { href: "/friends", labelKey: "friends", icon: "lucide:users" },
       { href: "/discussions", labelKey: "discussions", icon: "lucide:messages-square" },
       { href: "/coins", labelKey: "coins", icon: "lucide:coins" },

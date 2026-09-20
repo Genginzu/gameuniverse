@@ -12,6 +12,7 @@ import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { SpotlightCard } from "@/components/shared/SpotlightCard";
 import { KickerLabel } from "@/components/shared/KickerLabel";
+import { ConsentGate } from "@/components/legal/ConsentGate";
 import type { GameDetails } from "@/types/game";
 import { accentRich } from "../utils/accent-rich";
 
@@ -65,29 +66,33 @@ export function MusicSection({ game }: MusicSectionProps) {
               </div>
               <div className="space-y-4">
                 {music.spotifyEmbedUrl && (
-                  <iframe
-                    src={getSpotifyEmbedSrc(music.spotifyEmbedUrl)}
-                    width="100%"
-                    height="232"
-                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                    loading="lazy"
-                    title={tMusic("spotifyPlayer")}
-                    className="rounded-xl border-0"
-                  />
+                  <ConsentGate category="media">
+                    <iframe
+                      src={getSpotifyEmbedSrc(music.spotifyEmbedUrl)}
+                      width="100%"
+                      height="232"
+                      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                      loading="lazy"
+                      title={tMusic("spotifyPlayer")}
+                      className="rounded-xl border-0"
+                    />
+                  </ConsentGate>
                 )}
                 {music.youtubeVideoUrl && (
-                  <div className="aspect-video overflow-hidden rounded-xl">
-                    <iframe
-                      src={getYoutubeEmbedSrc(music.youtubeVideoUrl)}
-                      width="100%"
-                      height="100%"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      loading="lazy"
-                      title={tMusic("youtubePlayer")}
-                      className="border-0"
-                    />
-                  </div>
+                  <ConsentGate category="media">
+                    <div className="aspect-video overflow-hidden rounded-xl">
+                      <iframe
+                        src={getYoutubeEmbedSrc(music.youtubeVideoUrl)}
+                        width="100%"
+                        height="100%"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        loading="lazy"
+                        title={tMusic("youtubePlayer")}
+                        className="border-0"
+                      />
+                    </div>
+                  </ConsentGate>
                 )}
                 {!music.spotifyEmbedUrl && !music.youtubeVideoUrl && music.composer && (
                   <div className="flex items-center gap-2 text-zinc-400">

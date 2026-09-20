@@ -86,6 +86,7 @@ const HOOK_TESTS_NEEDING_DOM = [
   "src/hooks/__tests__/useAdminSimilarGames.test.ts",
   "src/hooks/__tests__/useAdminSpecies.test.ts",
   "src/hooks/__tests__/useNotifications.test.ts",
+  "src/hooks/__tests__/useNotificationCenter.test.ts",
   "src/hooks/__tests__/usePostComments.test.ts",
   "src/hooks/__tests__/useSubscribedFeed.test.ts",
 ];

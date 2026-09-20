@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useCallback } from "react";
 import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { NotificationItem } from "@/components/shared/NotificationItem";
 import { useClickOutside } from "@/hooks/useClickOutside";
 import { useEscapeKey } from "@/hooks/useEscapeKey";
@@ -14,7 +15,7 @@ interface NotificationDropdownProps {
   onClose: () => void;
 }
 
-const MAX_VISIBLE = 8;
+const MAX_VISIBLE = 5;
 
 export function NotificationDropdown({
   notifications,
@@ -62,9 +63,20 @@ export function NotificationDropdown({
       }}
     >
       {sorted.length === 0 ? (
-        <p className="px-3 py-6 text-center text-sm text-slate-400">
-          {t("noNotifications")}
-        </p>
+        <>
+          <p className="px-3 py-6 text-center text-sm text-slate-400">
+            {t("noNotifications")}
+          </p>
+          <div className="border-t pt-2" style={{ borderColor: "var(--editorial-line)" }}>
+            <Link
+              href="/notifications"
+              onClick={onClose}
+              className="block w-full rounded-lg px-3 py-2 text-center text-sm font-medium text-slate-300 transition-colors hover:bg-white/5 hover:text-white"
+            >
+              {t("viewAll")}
+            </Link>
+          </div>
+        </>
       ) : (
         <>
           <div className="max-h-[360px] space-y-1 overflow-y-auto">
@@ -87,6 +99,15 @@ export function NotificationDropdown({
             >
               {t("markAllAsRead")}
             </button>
+          </div>
+          <div className="mt-1 border-t pt-2" style={{ borderColor: "var(--editorial-line)" }}>
+            <Link
+              href="/notifications"
+              onClick={onClose}
+              className="block w-full rounded-lg px-3 py-2 text-center text-sm font-medium text-slate-300 transition-colors hover:bg-white/5 hover:text-white"
+            >
+              {t("viewAll")}
+            </Link>
           </div>
         </>
       )}

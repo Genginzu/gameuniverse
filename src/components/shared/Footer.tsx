@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { Icon } from "@iconify/react";
 import { GameUniverseLogo } from "@/components/ui/game-universe-logo";
+import { ManageCookiesButton } from "@/components/legal/ManageCookiesButton";
 
 const EXPLORE_LINKS = [
   { href: "/games", icon: "fa:dice", labelKey: "games" },
@@ -49,8 +50,31 @@ export default function Footer() {
           <FooterLinkGroup title={t("community")} links={COMMUNITY_LINKS} tNav={tNav} />
         </div>
 
+        {/* Legal links row */}
+        <nav
+          aria-label={t("legal")}
+          className="mt-10 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-white/10 pt-6 text-xs"
+        >
+          <Link href="/mentions-legales" className="hover:text-neon-primary text-gray-500 transition-colors dark:text-gray-400">
+            {t("mentionsLegales")}
+          </Link>
+          <Link href="/confidentialite" className="hover:text-neon-primary text-gray-500 transition-colors dark:text-gray-400">
+            {t("confidentialite")}
+          </Link>
+          <Link href="/cookies" className="hover:text-neon-primary text-gray-500 transition-colors dark:text-gray-400">
+            {t("cookies")}
+          </Link>
+          <Link href="/cgv" className="hover:text-neon-primary text-gray-500 transition-colors dark:text-gray-400">
+            {t("cgv")}
+          </Link>
+          <Link href="/cgu" className="hover:text-neon-primary text-gray-500 transition-colors dark:text-gray-400">
+            {t("cgu")}
+          </Link>
+          <ManageCookiesButton className="hover:text-neon-primary text-gray-500 transition-colors dark:text-gray-400" />
+        </nav>
+
         {/* Bottom bar */}
-        <div className="mt-10 flex flex-col items-center gap-3 border-t border-white/10 pt-6 sm:flex-row sm:justify-between">
+        <div className="mt-6 flex flex-col items-center gap-3 border-t border-white/10 pt-6 sm:flex-row sm:justify-between">
           <p className="text-xs text-gray-500 dark:text-gray-500">
             {t("copyright", { year: currentYear })}
           </p>

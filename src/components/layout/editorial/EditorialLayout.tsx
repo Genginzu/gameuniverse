@@ -87,14 +87,16 @@ export function EditorialLayout({
           <EditorialSubSidebar space={space} onClose={closeSpace} />
         </div>
 
-        {/* Contenu */}
-        <main className="editorial-layout-main" data-testid="editorial-layout-main">
-          {children}
-        </main>
-      </div>
+        {/* Colonne de contenu : main + footer empilés, décalés du rail/sidebar */}
+        <div className="editorial-layout-content-column">
+          <main className="editorial-layout-main" data-testid="editorial-layout-main">
+            {children}
+          </main>
 
-      {/* Footer éditorial full-width — rendu après le body (rail + main) */}
-      {!disableFooter && <EditorialFooter />}
+          {/* Footer rendu sous le contenu (au milieu), pas sous le rail */}
+          {!disableFooter && <EditorialFooter />}
+        </div>
+      </div>
 
       {/* Hamburger + overlay mobile — visible uniquement sous lg */}
       {!disableMobileNav && (

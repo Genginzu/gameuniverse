@@ -6,6 +6,8 @@ import type { Metadata, Viewport } from "next";
 import { AuthErrorHandler } from "@/components/auth/AuthErrorHandler";
 import { ErrorProvider } from "@/components/providers/ErrorProvider";
 import { SWRProvider } from "@/components/providers/SWRProvider";
+import { CookieConsentProvider } from "@/components/providers/CookieConsentProvider";
+import { ConsentGatedAnalytics } from "@/components/legal/ConsentGatedAnalytics";
 import { JsonLd } from "@/components/shared/JsonLd";
 
 const LOCALE_MAP: Record<string, string> = { fr: "fr_FR", en: "en_US" };
@@ -81,10 +83,13 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
         }}
       />
       <NextIntlClientProvider locale={locale} messages={messages}>
-        <SWRProvider>
-          <AuthErrorHandler />
-          {children}
-        </SWRProvider>
+        <CookieConsentProvider>
+          <SWRProvider>
+            <AuthErrorHandler />
+            {children}
+          </SWRProvider>
+          <ConsentGatedAnalytics />
+        </CookieConsentProvider>
       </NextIntlClientProvider>
     </ErrorProvider>
   );

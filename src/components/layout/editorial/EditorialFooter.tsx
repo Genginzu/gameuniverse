@@ -17,6 +17,7 @@ import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 
 import { Link } from "@/i18n/navigation";
+import { ManageCookiesButton } from "@/components/legal/ManageCookiesButton";
 
 interface FooterLink {
   href: string;
@@ -69,8 +70,31 @@ export function EditorialFooter() {
           <FooterLinkGroup title={t("community")} links={COMMUNITY_LINKS} tNav={tNav} />
         </div>
 
+        {/* Legal links row — present on every public page */}
+        <nav
+          aria-label={t("legal")}
+          className="mt-10 flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-editorial-line pt-6 text-xs"
+        >
+          <Link href="/mentions-legales" className="text-editorial-muted transition-colors hover:text-editorial-accent">
+            {t("mentionsLegales")}
+          </Link>
+          <Link href="/confidentialite" className="text-editorial-muted transition-colors hover:text-editorial-accent">
+            {t("confidentialite")}
+          </Link>
+          <Link href="/cookies" className="text-editorial-muted transition-colors hover:text-editorial-accent">
+            {t("cookies")}
+          </Link>
+          <Link href="/cgv" className="text-editorial-muted transition-colors hover:text-editorial-accent">
+            {t("cgv")}
+          </Link>
+          <Link href="/cgu" className="text-editorial-muted transition-colors hover:text-editorial-accent">
+            {t("cgu")}
+          </Link>
+          <ManageCookiesButton className="text-editorial-muted transition-colors hover:text-editorial-accent" />
+        </nav>
+
         {/* Bottom bar */}
-        <div className="mt-10 flex flex-col items-center gap-3 border-t border-editorial-line pt-6 sm:flex-row sm:justify-between">
+        <div className="mt-6 flex flex-col items-center gap-3 border-t border-editorial-line pt-6 sm:flex-row sm:justify-between">
           <p className="text-xs text-editorial-muted">
             {t("copyright", { year: currentYear })}
           </p>

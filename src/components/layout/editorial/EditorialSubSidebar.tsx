@@ -27,6 +27,7 @@ import { Link, usePathname } from "@/i18n/navigation";
 import { LazyImage } from "@/components/ui/lazy-image";
 import { useMyGroups } from "@/hooks/useMyGroups";
 import { useMyCommunities } from "@/hooks/useMyCommunities";
+import { useNotifications } from "@/hooks/useNotifications";
 
 import type { EditorialSpace } from "./EditorialRail";
 
@@ -51,6 +52,7 @@ export function EditorialSubSidebar({
   const pathname = usePathname();
   const asideRef = useRef<HTMLElement>(null);
   const t = useTranslations("editorial");
+  const { unreadCount } = useNotifications();
 
   // Toujours appelés (règles des Hooks) ; le rendu ci-dessous décide lequel utiliser.
   const { groups: myGroups, isLoading: isLoadingMyGroups } = useMyGroups();
@@ -116,6 +118,7 @@ export function EditorialSubSidebar({
           >
             {space.links.map((link) => {
               const active = pathname === link.href;
+              const showBadge = link.href === "/notifications" && unreadCount > 0;
               return (
                 <Link
                   key={link.href}
@@ -130,6 +133,14 @@ export function EditorialSubSidebar({
                 >
                   <Icon icon={link.icon} className="size-4" aria-hidden />
                   <span>{t(`links.${space.key}.${link.labelKey}`)}</span>
+                  {showBadge && (
+                    <span
+                      className="from-palette-secondary-500 to-palette-primary-500 ml-auto inline-flex min-h-[18px] min-w-[18px] items-center justify-center rounded-full bg-linear-to-r px-1 text-[10px] leading-none font-bold text-white"
+                      aria-label={t("subSidebar.unreadBadge", { count: unreadCount })}
+                    >
+                      {unreadCount > 9 ? "9+" : unreadCount}
+                    </span>
+                  )}
                 </Link>
               );
             })}

@@ -26,9 +26,17 @@
       "title": "My Friends",
       "description": "Manage your friends and friend requests on Gamers Universe"
     },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Find all your notifications in one place: friends, votes, mentions, achievements and coaching"
+    },
     "library": {
       "title": "My library",
       "description": "Manage your personal video game collection"
+    },
+    "connections": {
+      "title": "Connections & sync",
+      "description": "Connect your gaming accounts and sync your libraries in My universe"
     },
     "collections": {
       "title": "My collections",
@@ -433,7 +441,8 @@
       "myCommunities": "My communities",
       "noMyGroups": "You haven't joined any group yet",
       "noMyCommunities": "You haven't joined any community yet",
-      "loading": "Loading…"
+      "loading": "Loading…",
+      "unreadBadge": "{count} unread notifications"
     },
     "mobileNav": {
       "openAriaLabel": "Open navigation",
@@ -511,7 +520,7 @@
       "primaryNavAriaLabel": "Primary navigation"
     },
     "spaces": {
-      "library": "My library",
+      "library": "My universe",
       "esport": "Predictions",
       "coaching": "Coaching",
       "social": "Social",
@@ -524,7 +533,8 @@
         "myLibrary": "My library",
         "backlog": "My backlog",
         "collections": "My collections",
-        "favoriteCharacters": "Favorite characters"
+        "favoriteCharacters": "Favorite characters",
+        "connections": "Connections & sync"
       },
       "esport": {
         "predictions": "Predictions",
@@ -550,7 +560,8 @@
       "account": {
         "friends": "My friends",
         "discussions": "Discussions",
-        "coins": "My coins"
+        "coins": "My coins",
+        "notifications": "Notifications"
       }
     }
   },
@@ -1090,6 +1101,12 @@
       "newPost": "New post"
     }
   },
+  "connections": {
+    "kicker": "My universe",
+    "titlePrefix": "Connections &",
+    "titleAccent": "sync",
+    "subtitle": "Connect your gaming accounts (Steam, Xbox, PlayStation, Epic…) and automatically sync your libraries in My universe."
+  },
   "userLibrary": {
     "title": "My Library",
     "subtitle": "Manage your personal video game collection",
@@ -1551,7 +1568,48 @@
     "explore": "Explore",
     "community": "Community",
     "madeWith": "Made with",
-    "forGamers": "for gamers"
+    "forGamers": "for gamers",
+    "legal": "Legal",
+    "mentionsLegales": "Legal notice",
+    "confidentialite": "Privacy policy",
+    "cookies": "Cookie policy",
+    "cgv": "Terms of sale",
+    "cgu": "Terms of use",
+    "manageCookies": "Manage cookies"
+  },
+  "legal": {
+    "lastUpdated": "Last updated: {date}",
+    "tocTitle": "Contents",
+    "backToTop": "Back to top",
+    "cookieBanner": {
+      "title": "We respect your privacy",
+      "description": "We use cookies and trackers to measure audience and display some embedded content (videos). No non-essential tracker is set without your consent. You can accept, reject or customise your choices. See the cookie policy.",
+      "acceptAll": "Accept all",
+      "rejectAll": "Reject all",
+      "customize": "Customise",
+      "save": "Save my choices",
+      "policyLink": "Cookie policy",
+      "manageTitle": "Cookie preferences",
+      "necessary": "Strictly necessary",
+      "necessaryDescription": "Essential for the site to work (session, security, language preference, consent). Always on.",
+      "necessaryAlwaysOn": "Always on",
+      "analytics": "Audience measurement",
+      "analyticsDescription": "Traffic statistics (Vercel Analytics, Speed Insights) to improve the site.",
+      "media": "Multimedia content",
+      "mediaDescription": "Embedded videos (YouTube) on game pages. The player sets YouTube cookies.",
+      "marketing": "Advertising and marketing",
+      "marketingDescription": "Advertising trackers and contact tools (enabled only if installed).",
+      "close": "Close"
+    },
+    "authConsent": {
+      "label": "By creating an account, I accept the <cgu>Terms of Use</cgu> and I have read the <privacy>Privacy Policy</privacy>.",
+      "notice": "Your data (email address, username) is used to create and manage your account. See the privacy policy.",
+      "required": "You must accept the Terms of Use to create an account."
+    },
+    "bookingConsent": {
+      "label": "I accept the <cgv>Terms of Sale and Intermediation</cgv> and I request the service to be performed before the end of the 14-day withdrawal period, which means I lose this right once the service is fully performed.",
+      "required": "You must accept the Terms of Sale before booking."
+    }
   },
   "errors": {
     "unexpectedError": "An unexpected error occurred",
@@ -1641,6 +1699,10 @@
       "description": "Connect your gaming platform accounts to sync your data",
       "connectedTitle": "Connected accounts",
       "connectedDescription": "Accounts linked via OAuth — name, avatar and library imported automatically",
+      "syncTitle": "Library sync",
+      "syncDescription": "Connect the account and automatically import your game library",
+      "connectOnlyTitle": "Account connection",
+      "connectOnlyDescription": "Account linked for your profile — library sync isn't available",
       "manualTitle": "Manual usernames",
       "manualDescription": "Platforms without an API: your username is just displayed on your profile",
       "lastSyncedAt": "Synced {when} ago",
@@ -1668,6 +1730,25 @@
       "syncImported": "{imported} new games imported from IGDB",
       "syncPrivateProfile": "Your Steam profile is private — make it public to sync",
       "syncEmpty": "No games found in your Steam library",
+      "syncUnavailable": "Library sync isn't available for this platform",
+      "connectFailed": "Account connection failed",
+      "connectSuccess": "Account connected",
+      "syncStarted": "Sync started in the background…",
+      "syncResult": "{matched}/{total} games in your library",
+      "syncImportedShort": "{imported} imported",
+      "viewLibrary": "View in My universe",
+      "syncFailed": "Sync failed: {error}",
+      "syncCount": "{processed}/{total} games",
+      "syncImportingGame": "Importing game: {game}",
+      "syncPhase": {
+        "starting": "Starting…",
+        "fetching": "Fetching your library…",
+        "resolving": "Matching games…",
+        "importing": "Importing new games from IGDB…",
+        "saving": "Saving…",
+        "done": "Done",
+        "failed": "Failed"
+      },
       "names": {
         "steam": "Steam",
         "epic": "Epic Games",
@@ -1735,7 +1816,8 @@
       "esportImport": "Esport Import",
       "esportSync": "PandaScore Sync",
       "translations": "Translations",
-      "globalSync": "Global Sync"
+      "globalSync": "Global Sync",
+      "librarySync": "Library Sync"
     },
     "closeSidebar": "Close sidebar",
     "openSidebar": "Open sidebar",
@@ -2942,6 +3024,39 @@
         "ratings": "Ratings"
       }
     },
+    "librarySync": {
+      "title": "Library Sync",
+      "description": "Titles reported by connected platforms (Steam, Xbox, PlayStation) that couldn't be auto-matched to a game. Link them to a game and every player picks it up on their next sync.",
+      "filters": {
+        "platform": "Platform",
+        "allPlatforms": "All",
+        "status": "Status",
+        "unmatched": "Unmatched",
+        "matched": "Matched",
+        "all": "All",
+        "search": "Search"
+      },
+      "platforms": {
+        "steam": "Steam",
+        "xbox": "Xbox",
+        "playstation": "PlayStation"
+      },
+      "searchPlaceholder": "Game name…",
+      "searchGame": "Search a game to link…",
+      "linkButton": "Search",
+      "dialogTitle": "Link to a game",
+      "searchHint": "Type at least 2 characters to search",
+      "igdbHint": "Direct IGDB search — the game is imported locally if needed.",
+      "noGameResults": "No game found",
+      "count": "{total} title(s)",
+      "loading": "Loading…",
+      "empty": "No titles to show",
+      "unlink": "Unlink",
+      "linkedToast": "Game linked",
+      "unlinkedToast": "Link removed",
+      "errorToast": "Update failed",
+      "pageOf": "Page {page} / {total}"
+    },
     "globalSync": {
       "title": "IGDB Global Sync",
       "subtitle": "Download the full IGDB catalog and match games to your database",
@@ -3530,6 +3645,10 @@
         "coaches": "Coaches"
       },
       "seeAll": "See all {category} for “{query}” →",
+      "tabsAriaLabel": "Filter results by type",
+      "tabs": {
+        "all": "All"
+      },
       "recent": {
         "title": "Recent searches",
         "clearAll": "Clear all",
@@ -4378,6 +4497,7 @@
     "ariaLabel": "Notifications, {count} unread",
     "noNotifications": "No notifications",
     "markAllAsRead": "Mark all as read",
+    "viewAll": "View all notifications",
     "typePostComment": "commented on your post",
     "typeDiscussionMessage": "sent you a message",
     "typePostCreated": "published a new post",
@@ -4394,6 +4514,39 @@
     "typeFriendAccepted": "accepted your friend request",
     "typeReviewVote": "voted on your review",
     "typeAchievementUnlocked": "New achievement unlocked"
+  },
+  "notificationCenter": {
+    "kicker": "Your activity",
+    "titlePrefix": "Notification",
+    "titleAccent": "center",
+    "subtitle": "Find all your notifications in one place: friends, votes, mentions, achievements and coaching.",
+    "filterByType": "Filter by type",
+    "filterByStatus": "Filter by status",
+    "categoryAll": "All",
+    "category": {
+      "friends": "Friends",
+      "reviews": "Reviews",
+      "mentions": "Mentions",
+      "achievements": "Achievements",
+      "coaching": "Coaching",
+      "activity": "Activity"
+    },
+    "status": {
+      "all": "All",
+      "unread": "Unread",
+      "read": "Read"
+    },
+    "markAllAsRead": "Mark all as read",
+    "markAsRead": "Mark as read",
+    "markAsUnread": "Mark as unread",
+    "viewResource": "View",
+    "empty": "No notifications to display",
+    "loadingError": "Unable to load your notifications",
+    "authRequired": {
+      "title": "Sign in required",
+      "description": "Sign in to view your notifications.",
+      "signIn": "Sign in"
+    }
   },
   "postComments": {
     "title": "Comments",
