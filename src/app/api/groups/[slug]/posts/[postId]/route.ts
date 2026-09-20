@@ -38,7 +38,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteContext) {
     const isAuthor = postAccess.authorId === user.id;
     if (!isAuthor) {
       const role = await GroupMembersServerService.getMemberRole(access.id, user.id);
-      if (role !== "owner" && role !== "admin") {
+      if (role !== "owner" && role !== "moderator") {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
       }
     }

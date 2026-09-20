@@ -2,7 +2,7 @@
 export type GroupVisibility = "public" | "private";
 
 /** Role of a member within a group */
-export type GroupMemberRole = "owner" | "admin" | "member";
+export type GroupMemberRole = "owner" | "moderator" | "member";
 
 /** Group summary for listing pages */
 export interface GroupSummary {

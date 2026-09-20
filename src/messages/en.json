@@ -3636,6 +3636,7 @@
       "private": "Private group",
       "membersCount": "{count, plural, =0 {No members} one {# member out of {max}} other {# members out of {max}}}",
       "leave": "Leave group",
+      "settings": "Settings",
       "postsKicker": "Discussions",
       "membersKicker": "Members",
       "invitationsKicker": "Invitations ({count}/{max})",
@@ -3643,14 +3644,25 @@
       "errorDescription": "This group does not exist or is not accessible.",
       "backToGroups": "Back to groups"
     },
+    "settings": {
+      "title": "Group settings",
+      "tabs": {
+        "info": "Information",
+        "members": "Members"
+      },
+      "membersKicker": "Member management",
+      "backToGroup": "Back to group",
+      "forbiddenTitle": "Access denied",
+      "forbiddenDescription": "Only the group's admin and moderators can access the settings."
+    },
     "members": {
       "empty": "No members yet.",
       "unknownPlayer": "Unknown player",
       "changeRole": "Change role",
       "removeMember": "Remove member",
       "roles": {
-        "owner": "Owner",
-        "admin": "Admin",
+        "owner": "Admin",
+        "moderator": "Moderator",
         "member": "Member"
       }
     },
@@ -3746,11 +3758,23 @@
       "membersCount": "{count, plural, =0 {No members} one {# member} other {# members}}",
       "join": "Join",
       "leave": "Leave community",
+      "settings": "Settings",
       "postsKicker": "Discussions",
       "membersKicker": "Members",
       "errorTitle": "Community not found",
       "errorDescription": "This community does not exist or is not accessible.",
       "backToCommunities": "Back to communities"
+    },
+    "settings": {
+      "title": "Community settings",
+      "tabs": {
+        "info": "Information",
+        "members": "Members"
+      },
+      "membersKicker": "Member management",
+      "backToCommunity": "Back to community",
+      "forbiddenTitle": "Access denied",
+      "forbiddenDescription": "Only the community's admin and moderators can access the settings."
     },
     "members": {
       "empty": "No members yet.",
@@ -3758,7 +3782,7 @@
       "changeRole": "Change role",
       "removeMember": "Remove member",
       "roles": {
-        "owner": "Owner",
+        "owner": "Admin",
         "moderator": "Moderator",
         "member": "Member"
       }

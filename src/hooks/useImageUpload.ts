@@ -14,6 +14,14 @@ function getContentType(data: File | Blob): string {
   return data instanceof File ? data.type : CROP_OUTPUT_FORMAT;
 }
 
+/**
+ * Contexts whose upload must be confirmed server-side to persist the URL on the
+ * user's profile (avatar_url / banner_url). Other contexts (group/community
+ * logos, post images) return the public URL directly to the caller, which
+ * persists it elsewhere (e.g. via updateGroup/updateCommunity).
+ */
+const PROFILE_CONFIRM_CONTEXTS: readonly UploadContext[] = ["avatars", "banners"];
+
 interface UseImageUploadParams {
   context: UploadContext;
   maxSizeMB?: number;
@@ -137,15 +145,17 @@ export function useImageUpload({
       // Step 2: Upload directly to Supabase Storage
       await uploadToStorage(signedUrl, selectedFile, contentType);
 
-      // Step 3: Confirm upload
-      const confirmResponse = await fetch("/api/upload/confirm", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ context, publicUrl }),
-      });
+      // Step 3: Confirm upload (profile contexts only — persists on the profile)
+      if (PROFILE_CONFIRM_CONTEXTS.includes(context)) {
+        const confirmResponse = await fetch("/api/upload/confirm", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ context, publicUrl }),
+        });
 
-      if (!confirmResponse.ok) {
-        throw new Error("confirmFailed");
+        if (!confirmResponse.ok) {
+          throw new Error("confirmFailed");
+        }
       }
 
       onUploadSuccess(publicUrl);
@@ -192,14 +202,16 @@ export function useImageUpload({
 
         await uploadToStorage(signedUrl, blob, contentType);
 
-        const confirmResponse = await fetch("/api/upload/confirm", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ context, publicUrl }),
-        });
+        if (PROFILE_CONFIRM_CONTEXTS.includes(context)) {
+          const confirmResponse = await fetch("/api/upload/confirm", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ context, publicUrl }),
+          });
 
-        if (!confirmResponse.ok) {
-          throw new Error("confirmFailed");
+          if (!confirmResponse.ok) {
+            throw new Error("confirmFailed");
+          }
         }
 
         onUploadSuccess(publicUrl);

@@ -9,8 +9,8 @@ interface CommunityMembersListProps {
   members: CommunityMember[];
   canManage: boolean;
   currentPlayerId?: string;
-  onUpdateRole: (playerId: string, role: CommunityMemberRole) => Promise<void>;
-  onRemoveMember: (playerId: string) => Promise<void>;
+  onUpdateRole?: (playerId: string, role: CommunityMemberRole) => Promise<void>;
+  onRemoveMember?: (playerId: string) => Promise<void>;
 }
 
 export function CommunityMembersList({
@@ -39,7 +39,13 @@ export function CommunityMembersList({
             <div className="flex items-center gap-3">
               <div className="relative size-9 overflow-hidden rounded-full bg-white/10">
                 {member.player.avatarUrl && (
-                  <LazyImage src={member.player.avatarUrl} alt="" fill className="object-cover" />
+                  <LazyImage
+                    src={member.player.avatarUrl}
+                    alt=""
+                    fill
+                    sizes="36px"
+                    className="object-cover"
+                  />
                 )}
               </div>
               <div>
@@ -57,7 +63,7 @@ export function CommunityMembersList({
                 <select
                   value={member.role}
                   onChange={(e) =>
-                    onUpdateRole(member.playerId, e.target.value as CommunityMemberRole)
+                    onUpdateRole?.(member.playerId, e.target.value as CommunityMemberRole)
                   }
                   aria-label={t("changeRole")}
                   className="border-editorial-line bg-editorial-3 rounded-lg border px-2 py-1 text-xs text-white"
@@ -67,7 +73,7 @@ export function CommunityMembersList({
                 </select>
                 <button
                   type="button"
-                  onClick={() => onRemoveMember(member.playerId)}
+                  onClick={() => onRemoveMember?.(member.playerId)}
                   aria-label={t("removeMember")}
                   className="text-editorial-muted hover:text-red-400"
                 >

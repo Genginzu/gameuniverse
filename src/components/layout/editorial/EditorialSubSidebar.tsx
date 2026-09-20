@@ -24,6 +24,7 @@ import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 
 import { Link, usePathname } from "@/i18n/navigation";
+import { LazyImage } from "@/components/ui/lazy-image";
 import { useMyGroups } from "@/hooks/useMyGroups";
 import { useMyCommunities } from "@/hooks/useMyCommunities";
 
@@ -167,6 +168,7 @@ interface MembershipItem {
   id: string;
   name: string;
   slug: string;
+  imageUrl: string | null;
 }
 
 interface MembershipSectionProps {
@@ -222,7 +224,13 @@ function MembershipSection({
                 }
               }}
             >
-              <Icon icon={icon} className="size-4" aria-hidden />
+              <span className="editorial-sub-sidebar-avatar" aria-hidden>
+                {item.imageUrl ? (
+                  <LazyImage src={item.imageUrl} alt="" fill sizes="20px" className="object-cover" />
+                ) : (
+                  <Icon icon={icon} className="size-4" />
+                )}
+              </span>
               <span className="truncate">{item.name}</span>
             </Link>
           );

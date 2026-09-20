@@ -239,6 +239,24 @@
   color: rgb(var(--accent-rgb, var(--neon-primary)));
 }
 
+.editorial-sub-sidebar-avatar {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.editorial-sub-sidebar-avatar svg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 .editorial-sub-sidebar-divider {
   margin: 0.5rem 0.75rem;
   border-top: 1px solid var(--editorial-line);

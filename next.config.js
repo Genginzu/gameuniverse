@@ -12,6 +12,12 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  // Keep server-only packages out of the bundle. Resend lazily imports the
+  // optional `@react-email/render` dependency (only used for React email
+  // components, which we don't use — we send plain HTML), so bundling it makes
+  // the build fail to resolve that module. Externalizing loads it via Node's
+  // native require at runtime instead.
+  serverExternalPackages: ["resend"],
   // Optimize images
   images: {
     remotePatterns: [

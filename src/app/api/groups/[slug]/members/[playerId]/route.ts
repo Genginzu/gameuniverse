@@ -32,7 +32,7 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
     }
 
     const requesterRole = await GroupMembersServerService.getMemberRole(access.id, user.id);
-    if (requesterRole !== "owner" && requesterRole !== "admin") {
+    if (requesterRole !== "owner" && requesterRole !== "moderator") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
@@ -88,7 +88,7 @@ export async function DELETE(_request: NextRequest, { params }: RouteContext) {
     const isSelf = playerId === user.id;
     if (!isSelf) {
       const requesterRole = await GroupMembersServerService.getMemberRole(access.id, user.id);
-      if (requesterRole !== "owner" && requesterRole !== "admin") {
+      if (requesterRole !== "owner" && requesterRole !== "moderator") {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
       }
     }

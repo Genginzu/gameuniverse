@@ -95,11 +95,11 @@ describe("GroupMembersServerService", () => {
 
   describe("getMemberRole", () => {
     it("returns the role when a membership row exists", async () => {
-      resultQueue = [{ data: { role: "admin" }, error: null }];
+      resultQueue = [{ data: { role: "moderator" }, error: null }];
 
       const role = await GroupMembersServerService.getMemberRole(GROUP_ID, PLAYER_ID);
 
-      expect(role).toBe("admin");
+      expect(role).toBe("moderator");
     });
 
     it("returns null when no membership row exists", async () => {
@@ -153,7 +153,7 @@ describe("GroupMembersServerService", () => {
       resultQueue = [{ error: null }];
 
       await expect(
-        GroupMembersServerService.updateMemberRole(GROUP_ID, PLAYER_ID, "admin")
+        GroupMembersServerService.updateMemberRole(GROUP_ID, PLAYER_ID, "moderator")
       ).resolves.toBeUndefined();
     });
 
@@ -161,7 +161,7 @@ describe("GroupMembersServerService", () => {
       resultQueue = [{ error: { message: "forbidden" } }];
 
       await expect(
-        GroupMembersServerService.updateMemberRole(GROUP_ID, PLAYER_ID, "admin")
+        GroupMembersServerService.updateMemberRole(GROUP_ID, PLAYER_ID, "moderator")
       ).rejects.toThrow("forbidden");
     });
   });

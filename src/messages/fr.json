@@ -3639,6 +3639,7 @@
       "private": "Groupe privé",
       "membersCount": "{count, plural, =0 {Aucun membre} one {# membre sur {max}} other {# membres sur {max}}}",
       "leave": "Quitter le groupe",
+      "settings": "Paramètres",
       "postsKicker": "Discussions",
       "membersKicker": "Membres",
       "invitationsKicker": "Invitations ({count}/{max})",
@@ -3646,14 +3647,25 @@
       "errorDescription": "Ce groupe n'existe pas ou n'est pas accessible.",
       "backToGroups": "Retour aux groupes"
     },
+    "settings": {
+      "title": "Paramètres du groupe",
+      "tabs": {
+        "info": "Informations",
+        "members": "Membres"
+      },
+      "membersKicker": "Gestion des membres",
+      "backToGroup": "Retour au groupe",
+      "forbiddenTitle": "Accès refusé",
+      "forbiddenDescription": "Seuls l'administrateur et les modérateurs du groupe peuvent accéder aux paramètres."
+    },
     "members": {
       "empty": "Aucun membre pour le moment.",
       "unknownPlayer": "Joueur inconnu",
       "changeRole": "Changer le rôle",
       "removeMember": "Retirer le membre",
       "roles": {
-        "owner": "Propriétaire",
-        "admin": "Admin",
+        "owner": "Administrateur",
+        "moderator": "Modérateur",
         "member": "Membre"
       }
     },
@@ -3749,11 +3761,23 @@
       "membersCount": "{count, plural, =0 {Aucun membre} one {# membre} other {# membres}}",
       "join": "Rejoindre",
       "leave": "Quitter la communauté",
+      "settings": "Paramètres",
       "postsKicker": "Discussions",
       "membersKicker": "Membres",
       "errorTitle": "Communauté introuvable",
       "errorDescription": "Cette communauté n'existe pas ou n'est pas accessible.",
       "backToCommunities": "Retour aux communautés"
+    },
+    "settings": {
+      "title": "Paramètres de la communauté",
+      "tabs": {
+        "info": "Informations",
+        "members": "Membres"
+      },
+      "membersKicker": "Gestion des membres",
+      "backToCommunity": "Retour à la communauté",
+      "forbiddenTitle": "Accès refusé",
+      "forbiddenDescription": "Seuls l'administrateur et les modérateurs de la communauté peuvent accéder aux paramètres."
     },
     "members": {
       "empty": "Aucun membre pour le moment.",
@@ -3761,7 +3785,7 @@
       "changeRole": "Changer le rôle",
       "removeMember": "Retirer le membre",
       "roles": {
-        "owner": "Propriétaire",
+        "owner": "Administrateur",
         "moderator": "Modérateur",
         "member": "Membre"
       }

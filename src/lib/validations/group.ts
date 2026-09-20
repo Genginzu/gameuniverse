@@ -41,8 +41,8 @@ export const createGroupPostSchema = z.object({
 });
 
 export const updateGroupMemberSchema = z.object({
-  role: z.enum(["admin", "member"], {
-    message: "Le rôle doit être 'admin' ou 'member'",
+  role: z.enum(["moderator", "member"], {
+    message: "Le rôle doit être 'moderator' ou 'member'",
   }),
 });
 

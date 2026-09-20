@@ -9,8 +9,8 @@ interface GroupMembersListProps {
   members: GroupMember[];
   canManage: boolean;
   currentPlayerId?: string;
-  onUpdateRole: (playerId: string, role: GroupMemberRole) => Promise<void>;
-  onRemoveMember: (playerId: string) => Promise<void>;
+  onUpdateRole?: (playerId: string, role: GroupMemberRole) => Promise<void>;
+  onRemoveMember?: (playerId: string) => Promise<void>;
 }
 
 export function GroupMembersList({
@@ -38,7 +38,13 @@ export function GroupMembersList({
             <div className="flex items-center gap-3">
               <div className="relative size-9 overflow-hidden rounded-full bg-white/10">
                 {member.player.avatarUrl && (
-                  <LazyImage src={member.player.avatarUrl} alt="" fill className="object-cover" />
+                  <LazyImage
+                    src={member.player.avatarUrl}
+                    alt=""
+                    fill
+                    sizes="36px"
+                    className="object-cover"
+                  />
                 )}
               </div>
               <div>
@@ -55,16 +61,16 @@ export function GroupMembersList({
               <div className="flex items-center gap-2">
                 <select
                   value={member.role}
-                  onChange={(e) => onUpdateRole(member.playerId, e.target.value as GroupMemberRole)}
+                  onChange={(e) => onUpdateRole?.(member.playerId, e.target.value as GroupMemberRole)}
                   aria-label={t("changeRole")}
                   className="border-editorial-line bg-editorial-3 rounded-lg border px-2 py-1 text-xs text-white"
                 >
                   <option value="member">{t("roles.member")}</option>
-                  <option value="admin">{t("roles.admin")}</option>
+                  <option value="moderator">{t("roles.moderator")}</option>
                 </select>
                 <button
                   type="button"
-                  onClick={() => onRemoveMember(member.playerId)}
+                  onClick={() => onRemoveMember?.(member.playerId)}
                   aria-label={t("removeMember")}
                   className="text-editorial-muted hover:text-red-400"
                 >

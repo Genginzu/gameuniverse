@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { LoadingButton } from "@/components/ui/loading-button";
+import { ImageUploader } from "@/components/shared/ImageUploader";
 
 type CommunityFormValues = CreateCommunityInput | UpdateCommunityInput;
 
@@ -108,12 +109,12 @@ export function CommunityForm({
             <FormItem>
               <FormLabel className="text-white">{t("imageLabel")}</FormLabel>
               <FormControl>
-                <Input
-                  type="url"
-                  placeholder={t("imagePlaceholder")}
-                  className={INPUT_CLASS}
-                  {...field}
-                  value={field.value ?? ""}
+                <ImageUploader
+                  context="community-images"
+                  currentImageUrl={(field.value as string) || null}
+                  aspectRatio="1:1"
+                  onUploadSuccess={(url) => field.onChange(url)}
+                  onDelete={() => field.onChange("")}
                 />
               </FormControl>
               <FormDescription className="text-editorial-muted">
@@ -126,10 +127,8 @@ export function CommunityForm({
 
         <div className="border-editorial-line bg-editorial-3 flex flex-row items-center justify-between gap-4 rounded-xl border p-4 opacity-70">
           <div className="space-y-1">
-            <FormLabel className="text-white">{t("visibilityLabel")}</FormLabel>
-            <FormDescription className="text-editorial-muted">
-              {t("visibilityLockedDescription")}
-            </FormDescription>
+            <p className="text-sm font-medium text-white">{t("visibilityLabel")}</p>
+            <p className="text-editorial-muted text-sm">{t("visibilityLockedDescription")}</p>
           </div>
           <Switch checked={false} disabled aria-label={t("visibilityLabel")} />
         </div>

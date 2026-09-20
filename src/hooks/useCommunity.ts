@@ -3,7 +3,7 @@
 import { useCallback, useState } from "react";
 import useSWR from "swr";
 import { CommunityService } from "@/lib/services/communityService";
-import type { CommunityDetail } from "@/types/community";
+import type { CommunityDetail, UpdateCommunityInput } from "@/types/community";
 
 interface CommunityResponse {
   community: CommunityDetail;
@@ -15,13 +15,15 @@ interface UseCommunityReturn {
   error: string | null;
   isJoining: boolean;
   isLeaving: boolean;
+  isUpdating: boolean;
   join: () => Promise<void>;
   leave: () => Promise<void>;
+  update: (input: UpdateCommunityInput) => Promise<void>;
   refetch: () => Promise<void>;
 }
 
 /**
- * Hook SWR pour le détail d'une communauté, avec actions rejoindre/quitter.
+ * Hook SWR pour le détail d'une communauté, avec actions rejoindre/quitter/mettre à jour.
  */
 export function useCommunity(slug: string): UseCommunityReturn {
   const { data, error, isLoading, mutate } = useSWR<CommunityResponse>(
@@ -29,6 +31,7 @@ export function useCommunity(slug: string): UseCommunityReturn {
   );
   const [isJoining, setIsJoining] = useState(false);
   const [isLeaving, setIsLeaving] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const join = useCallback(async () => {
     setIsJoining(true);
@@ -50,14 +53,29 @@ export function useCommunity(slug: string): UseCommunityReturn {
     }
   }, [slug, mutate]);
 
+  const update = useCallback(
+    async (input: UpdateCommunityInput) => {
+      setIsUpdating(true);
+      try {
+        await CommunityService.updateCommunity(slug, input);
+        await mutate();
+      } finally {
+        setIsUpdating(false);
+      }
+    },
+    [slug, mutate]
+  );
+
   return {
     community: data?.community ?? null,
     isLoading,
     error: error ? (error instanceof Error ? error.message : "Failed to fetch community") : null,
     isJoining,
     isLeaving,
+    isUpdating,
     join,
     leave,
+    update,
     refetch: async () => {
       await mutate();
     },

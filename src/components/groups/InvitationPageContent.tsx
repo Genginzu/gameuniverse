@@ -138,7 +138,7 @@ export function InvitationPageContent({ token }: InvitationPageContentProps) {
         <div className="mx-auto max-w-md text-center">
           <div className="border-editorial-line bg-editorial-2 relative mx-auto mb-6 size-20 overflow-hidden rounded-2xl border">
             {invitation.group.imageUrl ? (
-              <LazyImage src={invitation.group.imageUrl} alt="" fill className="object-cover" />
+              <LazyImage src={invitation.group.imageUrl} alt="" fill sizes="80px" className="object-cover" />
             ) : (
               <div className="text-editorial-accent/50 grid h-full w-full place-items-center">
                 <Icon icon="lucide:users" className="h-8 w-8" aria-hidden="true" />

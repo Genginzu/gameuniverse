@@ -13,6 +13,8 @@ import { KickerLabel } from "@/components/shared/KickerLabel";
 import { EditorialContainer } from "@/components/layout/editorial/EditorialContainer";
 import { LazyImage } from "@/components/ui/lazy-image";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
+import { Button } from "@/components/ui/button";
+import { Link } from "@/i18n/navigation";
 
 import { useAuth } from "@/hooks/useAuth";
 import { useCommunity } from "@/hooks/useCommunity";
@@ -32,7 +34,7 @@ export function CommunityDetailEditorial({ slug }: CommunityDetailEditorialProps
   const { user } = useAuth();
 
   const { community, isLoading, error, isJoining, isLeaving, join, leave } = useCommunity(slug);
-  const { members, updateRole, removeMember } = useCommunityMembers(slug);
+  const { members } = useCommunityMembers(slug);
   const { posts, isPosting, createPost } = useCommunityPosts(slug);
 
   if (isLoading) {
@@ -62,7 +64,7 @@ export function CommunityDetailEditorial({ slug }: CommunityDetailEditorialProps
           <div className="flex gap-4">
             <div className="border-editorial-line bg-editorial-2 relative size-20 shrink-0 overflow-hidden rounded-2xl border">
               {community.imageUrl ? (
-                <LazyImage src={community.imageUrl} alt="" fill className="object-cover" />
+                <LazyImage src={community.imageUrl} alt="" fill sizes="80px" className="object-cover" />
               ) : (
                 <div className="text-editorial-accent/50 grid h-full w-full place-items-center">
                   <Icon icon="lucide:globe-2" className="h-8 w-8" aria-hidden="true" />
@@ -82,14 +84,28 @@ export function CommunityDetailEditorial({ slug }: CommunityDetailEditorialProps
             </div>
           </div>
 
-          <CommunityJoinButton
-            isAuthenticated={!!user}
-            viewerRole={community.viewerRole}
-            isJoining={isJoining}
-            isLeaving={isLeaving}
-            onJoin={join}
-            onLeave={leave}
-          />
+          <div className="flex items-center gap-2">
+            {canManage && (
+              <Button
+                asChild
+                variant="outline"
+                className="border-editorial-line bg-editorial-3 text-white"
+              >
+                <Link href={`/communities/${slug}/settings`}>
+                  <Icon icon="lucide:settings" className="h-4 w-4" aria-hidden="true" />
+                  {t("settings")}
+                </Link>
+              </Button>
+            )}
+            <CommunityJoinButton
+              isAuthenticated={!!user}
+              viewerRole={community.viewerRole}
+              isJoining={isJoining}
+              isLeaving={isLeaving}
+              onJoin={join}
+              onLeave={leave}
+            />
+          </div>
         </header>
 
         {community.description && (
@@ -98,7 +114,7 @@ export function CommunityDetailEditorial({ slug }: CommunityDetailEditorialProps
           </p>
         )}
 
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[7fr_5fr]">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[3fr_1fr]">
           <div>
             <KickerLabel className="mb-4">{t("postsKicker")}</KickerLabel>
             <CommunityPostsFeed
@@ -111,13 +127,7 @@ export function CommunityDetailEditorial({ slug }: CommunityDetailEditorialProps
 
           <div>
             <KickerLabel className="mb-4">{t("membersKicker")}</KickerLabel>
-            <CommunityMembersList
-              members={members}
-              canManage={canManage}
-              currentPlayerId={user?.id}
-              onUpdateRole={updateRole}
-              onRemoveMember={removeMember}
-            />
+            <CommunityMembersList members={members} canManage={false} currentPlayerId={user?.id} />
           </div>
         </div>
       </EditorialContainer>

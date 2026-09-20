@@ -6,7 +6,7 @@
     "node": ">=24"
   },
   "scripts": {
-    "prepare": "git config core.hooksPath .githooks || true && [ -f scripts/setup-agents.ts ] && bun scripts/setup-agents.ts || true",
+    "prepare": "node -e \"try{require('child_process').execSync('git config core.hooksPath .githooks',{stdio:'ignore'})}catch(e){}\" && bun scripts/setup-agents.ts",
     "dev": "bun --bun next dev -H 0.0.0.0",
     "build": "next build",
     "start": "bun --bun next start",

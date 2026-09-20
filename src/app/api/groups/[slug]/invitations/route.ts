@@ -32,7 +32,7 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
     }
 
     const role = await GroupMembersServerService.getMemberRole(access.id, user.id);
-    if (role !== "owner" && role !== "admin") {
+    if (role !== "owner" && role !== "moderator") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
@@ -69,7 +69,7 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     }
 
     const role = await GroupMembersServerService.getMemberRole(access.id, user.id);
-    if (role !== "owner" && role !== "admin") {
+    if (role !== "owner" && role !== "moderator") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
