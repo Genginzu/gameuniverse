@@ -2,9 +2,20 @@
 
 import type { Profile } from "@/types/profile";
 
-export type UploadContext = "avatars" | "banners" | "post-images";
+export type UploadContext =
+  | "avatars"
+  | "banners"
+  | "post-images"
+  | "group-images"
+  | "community-images";
 
-export const ALLOWED_CONTEXTS: UploadContext[] = ["avatars", "banners", "post-images"];
+export const ALLOWED_CONTEXTS: UploadContext[] = [
+  "avatars",
+  "banners",
+  "post-images",
+  "group-images",
+  "community-images",
+];
 
 export const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"] as const;
 
@@ -53,11 +64,21 @@ export interface UploadConfirmResponse {
   profile: Profile;
 }
 
-/** Dimensions de sortie par contexte d'upload */
-export const OUTPUT_DIMENSIONS: Record<ProfileUploadContext, { width: number; height: number }> = {
-  avatars: { width: 256, height: 256 },
-  banners: { width: 1280, height: 400 },
-};
+/** Contextes d'upload utilisant l'éditeur de crop (avatar-like ou bannière). */
+export type CroppableUploadContext =
+  | "avatars"
+  | "banners"
+  | "group-images"
+  | "community-images";
+
+/** Dimensions de sortie par contexte d'upload croppable */
+export const OUTPUT_DIMENSIONS: Record<CroppableUploadContext, { width: number; height: number }> =
+  {
+    avatars: { width: 256, height: 256 },
+    banners: { width: 1280, height: 400 },
+    "group-images": { width: 512, height: 512 },
+    "community-images": { width: 512, height: 512 },
+  };
 
 /** Configuration WebP par défaut pour le crop */
 export const CROP_OUTPUT_FORMAT = "image/webp";

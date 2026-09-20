@@ -7,10 +7,10 @@ import Image from "next/image";
 
 import { CropEditor } from "@/components/shared/CropEditor";
 import { useImageUpload } from "@/hooks/useImageUpload";
-import { OUTPUT_DIMENSIONS, type ProfileUploadContext } from "@/types/upload";
+import { OUTPUT_DIMENSIONS, type CroppableUploadContext } from "@/types/upload";
 
 interface ImageUploaderProps {
-  context: ProfileUploadContext;
+  context: CroppableUploadContext;
   currentImageUrl: string | null;
   aspectRatio: "1:1" | "16:5";
   maxSizeMB?: number;

@@ -34,6 +34,8 @@ export type EditorialSpaceKey =
   | "esport"
   | "coaching"
   | "social"
+  | "groups"
+  | "communities"
   | "account";
 
 /**
@@ -83,6 +85,24 @@ export const EDITORIAL_SPACES: readonly EditorialSpace[] = [
     links: [
       { href: "/feed", labelKey: "feed", icon: "lucide:newspaper" },
       { href: "/posts/tags", labelKey: "tags", icon: "lucide:hash" },
+    ],
+  },
+  {
+    key: "groups",
+    icon: "lucide:users",
+    pathPrefixes: ["/groups"],
+    links: [
+      { href: "/groups", labelKey: "all", icon: "lucide:users" },
+      { href: "/groups?create=1", labelKey: "create", icon: "lucide:plus-circle" },
+    ],
+  },
+  {
+    key: "communities",
+    icon: "fa:globe",
+    pathPrefixes: ["/communities"],
+    links: [
+      { href: "/communities", labelKey: "all", icon: "lucide:globe-2" },
+      { href: "/communities?create=1", labelKey: "create", icon: "lucide:plus-circle" },
     ],
   },
   {
