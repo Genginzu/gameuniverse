@@ -47,7 +47,7 @@
     "@radix-ui/react-switch": "1.2.6",
     "@radix-ui/react-toast": "1.2.23",
     "@supabase/ssr": "0.12.7",
-    "@supabase/supabase-js": "2.116.0",
+    "@supabase/supabase-js": "2.117.2",
     "@tiptap/pm": "3.31.3",
     "@tiptap/react": "3.31.3",
     "@tiptap/starter-kit": "3.31.3",
