@@ -34,7 +34,7 @@ export function ReportButton({
         aria-label={t("report")}
         title={t("report")}
         className={cn(
-          "inline-flex min-h-[44px] items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm text-gray-400 transition-colors hover:text-red-500",
+          "inline-flex min-h-[44px] items-center gap-1.5 rounded-lg px-2 py-1.5 text-sm text-gray-400 transition-colors hover:bg-red-500/10 hover:text-red-500 dark:hover:bg-red-500/15",
           className
         )}
       >
