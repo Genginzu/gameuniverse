@@ -130,8 +130,10 @@ jobs:
       - name: Build
         run: bun run build
         env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          # Dependabot PRs cannot read Actions secrets: fall back to dummy
+          # values so prerendering does not fail on missing Supabase env vars.
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key' }}
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v7
@@ -144,6 +146,8 @@ jobs:
   e2e:
     name: E2E Tests (${{ matrix.shard }}/${{ strategy.job-total }})
     needs: [build]
+    # E2E needs real Supabase secrets, unavailable to Dependabot PRs
+    if: github.event.pull_request.user.login != 'dependabot[bot]'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
