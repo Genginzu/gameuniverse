@@ -3709,6 +3709,9 @@
       "noResults": "No results for “{query}”",
       "noResultsHint": "Try different keywords.",
       "notImported": "Not imported yet",
+      "loginToImportTitle": "Log in to import",
+      "loginToImportDescription": "Sign up or log in to add this game to the catalogue.",
+      "loginToImportCta": "Log in",
       "groups": {
         "games": "Games",
         "characters": "Characters",
