@@ -2,19 +2,14 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import type { GameDetails } from "@/types/game";
 
 // vi.hoisted ensures mock fns exist when the vi.mock factories run.
-const {
-  mockGetUser,
-  mockImportFromIGDB,
-  mockFindExisting,
-  mockCheckRateLimit,
-  mockRecordEvent,
-} = vi.hoisted(() => ({
-  mockGetUser: vi.fn(),
-  mockImportFromIGDB: vi.fn(),
-  mockFindExisting: vi.fn(),
-  mockCheckRateLimit: vi.fn(),
-  mockRecordEvent: vi.fn(() => Promise.resolve()),
-}));
+const { mockGetUser, mockImportFromIGDB, mockFindExisting, mockCheckRateLimit, mockRecordEvent } =
+  vi.hoisted(() => ({
+    mockGetUser: vi.fn(),
+    mockImportFromIGDB: vi.fn(),
+    mockFindExisting: vi.fn(),
+    mockCheckRateLimit: vi.fn(),
+    mockRecordEvent: vi.fn(() => Promise.resolve()),
+  }));
 
 const mockSupabase = { auth: { getUser: mockGetUser } };
 
@@ -51,12 +46,22 @@ function makeRequest(body: unknown) {
 }
 
 function mockUser(id = USER_ID, email = "player@example.com") {
-  mockGetUser.mockResolvedValue({ data: { user: { id, email, user_metadata: {} } }, error: null });
+  mockGetUser.mockResolvedValue({
+    data: { user: { id, email, app_metadata: {}, user_metadata: { role: "admin" } } },
+    error: null,
+  });
 }
 
 function mockAdmin() {
   mockGetUser.mockResolvedValue({
-    data: { user: { id: "admin-id", email: "boss@admin.gamesuniverse.com", user_metadata: {} } },
+    data: {
+      user: {
+        id: "admin-id",
+        email: "boss@example.com",
+        app_metadata: { role: "admin" },
+        user_metadata: {},
+      },
+    },
     error: null,
   });
 }
@@ -162,7 +167,10 @@ describe("POST /api/games/import", () => {
 
   it("returns 404 when the IGDB game is not found", async () => {
     mockUser();
-    mockImportFromIGDB.mockResolvedValue({ success: false, error: "Game with IGDB ID 123 not found" });
+    mockImportFromIGDB.mockResolvedValue({
+      success: false,
+      error: "Game with IGDB ID 123 not found",
+    });
 
     const res = await POST(makeRequest({ igdbId: 123 }));
     expect(res.status).toBe(404);
