@@ -2363,7 +2363,6 @@ export type Database = {
           avatar_url: string | null;
           banner_url: string | null;
           created_at: string | null;
-          email: string;
           id: string;
           level: number | null;
           preferred_locale: string | null;
@@ -2376,7 +2375,6 @@ export type Database = {
           avatar_url?: string | null;
           banner_url?: string | null;
           created_at?: string | null;
-          email: string;
           id: string;
           level?: number | null;
           preferred_locale?: string | null;
@@ -2389,7 +2387,6 @@ export type Database = {
           avatar_url?: string | null;
           banner_url?: string | null;
           created_at?: string | null;
-          email?: string;
           id?: string;
           level?: number | null;
           preferred_locale?: string | null;
