@@ -197,10 +197,19 @@ export class ImportOrchestrator {
           ? "_not-notable"
           : "";
       const sqlPath = join(sqlDir, `import-games_${fromStr}_${toStr}${notable}.sql`);
+
+      this.stats.total = allGames.length;
+
+      if (this.options.dryRun) {
+        this.stats.skipped = allGames.length;
+        this.stats.endTime = new Date();
+        console.log(`\n[Dry-run] Would generate ${sqlPath} for ${allGames.length} games.\n`);
+        return this.stats;
+      }
+
       await generateGamesSql(allGames, sqlPath, this.options.verbose);
 
       this.stats.endTime = new Date();
-      this.stats.total = allGames.length;
       this.stats.imported = allGames.length;
 
       console.log(`\n[Import] SQL file generated: ${sqlPath}`);

@@ -12,6 +12,7 @@ import {
   type AchievementFormData,
 } from "@/lib/validations/admin-achievement-form";
 import type { AdminAchievement } from "@/types/admin-achievements";
+import { toAchievementFormDefaults } from "@/lib/utils/achievementFormDefaults";
 import { AchievementFormFields } from "./AchievementFormFields";
 import { Icon } from "@iconify/react";
 
@@ -20,38 +21,6 @@ export interface AchievementFormProps {
   initialData?: AdminAchievement;
   onSubmit: (data: AchievementFormData) => Promise<void>;
   isSubmitting: boolean;
-}
-
-/** Map AdminAchievement to form default values */
-function toFormDefaults(data?: AdminAchievement): AchievementFormData {
-  if (!data) {
-    return {
-      key: "",
-      category: "library",
-      tier: "bronze",
-      threshold: 1,
-      xpValue: 10,
-      icon: "",
-      nameFr: "",
-      nameEn: "",
-      descriptionFr: "",
-      descriptionEn: "",
-      sortOrder: 0,
-    };
-  }
-  return {
-    key: data.key,
-    category: data.category,
-    tier: data.tier,
-    threshold: data.threshold,
-    xpValue: data.xpValue,
-    icon: data.icon,
-    nameFr: data.nameFr,
-    nameEn: data.nameEn,
-    descriptionFr: data.descriptionFr,
-    descriptionEn: data.descriptionEn,
-    sortOrder: data.sortOrder,
-  };
 }
 
 export function AchievementForm({
@@ -64,7 +33,7 @@ export function AchievementForm({
 
   const form = useForm<AchievementFormData>({
     resolver: zodResolver(adminAchievementFormSchema),
-    defaultValues: toFormDefaults(initialData),
+    defaultValues: toAchievementFormDefaults(initialData),
   });
 
   return (

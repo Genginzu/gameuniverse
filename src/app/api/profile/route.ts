@@ -26,7 +26,9 @@ export async function GET() {
     return NextResponse.json({ error: "Failed to fetch profile" }, { status: 500 });
   }
 
-  return NextResponse.json({ user, profile });
+  // Email is no longer stored in profiles (issue #375); surface the caller's own
+  // email from auth.users so the account page keeps showing it.
+  return NextResponse.json({ user, profile: { ...profile, email: user.email ?? null } });
 }
 
 export async function PATCH(request: NextRequest) {

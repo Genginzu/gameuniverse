@@ -7,6 +7,7 @@ import { useGenderForm } from "@/hooks/useGenderForm";
 import { GenderForm } from "@/components/admin/genders/GenderForm";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import { isDuplicateErrorMessage } from "@/lib/utils/duplicateError";
 import type { GenderFormData } from "@/lib/validations/admin-gender-form";
 import { Icon } from "@iconify/react";
 
@@ -23,9 +24,7 @@ export default function NewGenderPage() {
         setTimeout(() => router.push("/admin/genders"), 500);
       } catch (err) {
         const message = err instanceof Error ? err.message : t("createPage.errorGeneric");
-        const isDuplicate =
-          message.toLowerCase().includes("already exists") ||
-          message.toLowerCase().includes("existe déjà");
+        const isDuplicate = isDuplicateErrorMessage(message);
 
         toast({
           title: isDuplicate ? t("createPage.errorDuplicate") : message,

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { requireAdmin } from "@/lib/auth-admin";
+import { fetchUserEmails } from "@/lib/services/userEmailsServerService";
 import { logger } from "@/lib/logger";
 import type { AdminCommunity } from "@/types/admin-communities";
 
@@ -18,7 +19,7 @@ interface AdminCommunityRow {
   created_at: string;
   owner_id: string;
   community_members: Array<{ id: string }>;
-  owner: { username: string | null; email: string | null } | null;
+  owner: { username: string | null } | null;
 }
 
 /**
@@ -44,7 +45,7 @@ export async function GET(request: NextRequest) {
       .select(
         `id, name, slug, visibility, created_at, owner_id,
          community_members(id),
-         owner:profiles!communities_owner_id_fkey(username, email)`,
+         owner:profiles!communities_owner_id_fkey(username)`,
         { count: "exact" }
       );
 
@@ -78,6 +79,7 @@ export async function GET(request: NextRequest) {
     }
 
     const rows = (data ?? []) as unknown as AdminCommunityRow[];
+    const ownerEmails = await fetchUserEmails(rows.map((row) => row.owner_id));
     const communities: AdminCommunity[] = rows.map((row) => ({
       id: row.id,
       name: row.name,
@@ -85,7 +87,7 @@ export async function GET(request: NextRequest) {
       visibility: row.visibility,
       membersCount: row.community_members?.length ?? 0,
       ownerName: row.owner?.username ?? null,
-      ownerEmail: row.owner?.email ?? null,
+      ownerEmail: ownerEmails.get(row.owner_id) ?? null,
       createdAt: row.created_at,
     }));
 

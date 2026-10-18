@@ -7,6 +7,7 @@ import { SearchInputField, type SearchInputVariant } from "./SearchInputField";
 import type { SearchResultItem } from "@/types/search";
 import { useTranslations } from "next-intl";
 import { useHybridSearch } from "@/hooks/useHybridSearch";
+import { useAuth } from "@/hooks/useAuth";
 
 interface GameSearchBarProps {
   onSearch?: (query: string) => void;
@@ -30,6 +31,7 @@ export function GameSearchBar({
 }: GameSearchBarProps) {
   const t = useTranslations("search");
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const [searchQuery, setSearchQuery] = useState(initialValue);
   const [importingId, setImportingId] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -86,6 +88,13 @@ export function GameSearchBar({
         else router.push(`/${locale}/games/${item.slug}`);
       } else {
         if (!item.igdbId) return;
+        // Logged-out users cannot import (route returns 401): send them to the
+        // login page instead of calling it. Issue #376.
+        if (!authLoading && !user) {
+          hybrid.close();
+          router.push(`/${locale}/auth`);
+          return;
+        }
         setImportingId(item.id);
         try {
           const response = await fetch("/api/games/import", {
@@ -110,7 +119,7 @@ export function GameSearchBar({
         }
       }
     },
-    [locale, router, onNavigateToGame, hybrid]
+    [locale, router, onNavigateToGame, hybrid, user, authLoading]
   );
 
   const handleSubmit = () => {

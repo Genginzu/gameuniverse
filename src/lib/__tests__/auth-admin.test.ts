@@ -15,43 +15,44 @@ function makeUser(overrides: Partial<User> = {}): User {
 }
 
 describe("auth-admin getUserRoleFromUser", () => {
-  it("returns 'admin' for admin domain email", () => {
-    const user = makeUser({ email: "john@admin.gamesuniverse.com" });
+  it("returns 'admin' when app_metadata.role is admin", () => {
+    const user = makeUser({ app_metadata: { role: "admin" } });
     expect(getUserRoleFromUser(user)).toBe("admin");
   });
 
-  it("returns 'contributor' for contributor domain email", () => {
-    const user = makeUser({ email: "jane@contributor.gamesuniverse.com" });
+  it("returns 'contributor' when app_metadata.role is contributor", () => {
+    const user = makeUser({ app_metadata: { role: "contributor" } });
     expect(getUserRoleFromUser(user)).toBe("contributor");
   });
 
-  it("returns 'user' for regular email", () => {
-    const user = makeUser({ email: "someone@gmail.com" });
-    expect(getUserRoleFromUser(user)).toBe("user");
+  it("returns 'user' for a regular account", () => {
+    expect(getUserRoleFromUser(makeUser())).toBe("user");
   });
 
-  it("returns 'admin' via metadata role", () => {
-    const user = makeUser({
-      email: "someone@gmail.com",
-      user_metadata: { role: "admin" },
-    });
+  it("ignores a self-assigned user_metadata role (user-editable)", () => {
+    const admin = makeUser({ user_metadata: { role: "admin" } });
+    const contributor = makeUser({ user_metadata: { role: "contributor" } });
+    expect(getUserRoleFromUser(admin)).toBe("user");
+    expect(getUserRoleFromUser(contributor)).toBe("user");
+  });
+
+  it("no longer grants a role from the email domain", () => {
+    expect(getUserRoleFromUser(makeUser({ email: "john@admin.gamesuniverse.com" }))).toBe("user");
+    expect(getUserRoleFromUser(makeUser({ email: "jane@contributor.gamesuniverse.com" }))).toBe(
+      "user"
+    );
+  });
+
+  it("returns 'user' for an unknown app_metadata role", () => {
+    expect(getUserRoleFromUser(makeUser({ app_metadata: { role: "superuser" } }))).toBe("user");
+  });
+
+  it("keeps the app_metadata role for an account without email", () => {
+    const user = makeUser({ email: undefined, app_metadata: { role: "admin" } });
     expect(getUserRoleFromUser(user)).toBe("admin");
-  });
-
-  it("returns 'contributor' via metadata role", () => {
-    const user = makeUser({
-      email: "someone@gmail.com",
-      user_metadata: { role: "contributor" },
-    });
-    expect(getUserRoleFromUser(user)).toBe("contributor");
   });
 
   it("returns 'user' for null user", () => {
     expect(getUserRoleFromUser(null)).toBe("user");
-  });
-
-  it("returns 'user' for user without email", () => {
-    const user = makeUser({ email: undefined });
-    expect(getUserRoleFromUser(user)).toBe("user");
   });
 });

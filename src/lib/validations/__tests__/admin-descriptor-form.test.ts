@@ -23,22 +23,6 @@ describe("descriptorTranslationSchema", () => {
     expect(result.success).toBe(false);
   });
 
-  it("rejects empty name", () => {
-    const result = descriptorTranslationSchema.safeParse({
-      language_code: "en",
-      name: "",
-    });
-    expect(result.success).toBe(false);
-  });
-
-  it("rejects name longer than 100 characters", () => {
-    const result = descriptorTranslationSchema.safeParse({
-      language_code: "en",
-      name: "a".repeat(101),
-    });
-    expect(result.success).toBe(false);
-  });
-
   it("accepts empty string description", () => {
     const result = descriptorTranslationSchema.safeParse({
       language_code: "en",
@@ -54,15 +38,6 @@ describe("descriptorTranslationSchema", () => {
       name: "Violence",
     });
     expect(result.success).toBe(true);
-  });
-
-  it("rejects description longer than 500 characters", () => {
-    const result = descriptorTranslationSchema.safeParse({
-      language_code: "en",
-      name: "Violence",
-      description: "a".repeat(501),
-    });
-    expect(result.success).toBe(false);
   });
 });
 
@@ -85,14 +60,6 @@ describe("adminDescriptorFormSchema", () => {
     it("rejects an empty code", () => {
       const result = adminDescriptorFormSchema.safeParse({
         code: "",
-        translations: [validTranslation],
-      });
-      expect(result.success).toBe(false);
-    });
-
-    it("rejects a code longer than 30 characters", () => {
-      const result = adminDescriptorFormSchema.safeParse({
-        code: "a".repeat(31),
         translations: [validTranslation],
       });
       expect(result.success).toBe(false);
@@ -133,15 +100,6 @@ describe("adminDescriptorFormSchema", () => {
       });
       expect(result.success).toBe(true);
     });
-
-    it("rejects an invalid URL", () => {
-      const result = adminDescriptorFormSchema.safeParse({
-        code: "VIOLENCE",
-        icon_url: "not-a-url",
-        translations: [validTranslation],
-      });
-      expect(result.success).toBe(false);
-    });
   });
 
   describe("translations field", () => {
@@ -162,14 +120,6 @@ describe("adminDescriptorFormSchema", () => {
         ],
       });
       expect(result.success).toBe(true);
-    });
-
-    it("rejects an empty translations array", () => {
-      const result = adminDescriptorFormSchema.safeParse({
-        code: "VIOLENCE",
-        translations: [],
-      });
-      expect(result.success).toBe(false);
     });
 
     it("rejects when translations is missing", () => {

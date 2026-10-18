@@ -8,6 +8,7 @@ import { PostCard } from "../posts/PostCard";
 import { SearchBar } from "../SearchBar";
 import { SkeletonCards, PostsFeedEmpty } from "./PostsFeedParts";
 import { TrendingTags } from "@/components/posts/TrendingTags";
+import { SuspensionGate } from "@/components/shared/SuspensionGate";
 import type { Post } from "@/types/post";
 
 export interface PostsLayoutProps {
@@ -83,13 +84,15 @@ export function PostsLayoutTimelineV2(props: PostsLayoutProps) {
       {/* Composer (toggled) */}
       {isOwner && showComposer && (
         <div className="mx-auto max-w-2xl">
-          <PostComposer
-            playerId={playerId}
-            playerAvatar={playerAvatar}
-            isCreating={isCreating}
-            onSubmit={handlePostCreated}
-            onPostCreated={() => {}}
-          />
+          <SuspensionGate>
+            <PostComposer
+              playerId={playerId}
+              playerAvatar={playerAvatar}
+              isCreating={isCreating}
+              onSubmit={handlePostCreated}
+              onPostCreated={() => {}}
+            />
+          </SuspensionGate>
         </div>
       )}
 

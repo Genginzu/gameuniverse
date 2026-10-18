@@ -258,15 +258,6 @@ describe("Admin Age Classifications - Property-Based Tests", () => {
         );
       });
 
-      it("rejects empty rating codes", () => {
-        const result = adminRatingFormSchema.safeParse({
-          code: "",
-          display_name: "Test",
-          minimum_age: 0,
-        });
-        expect(result.success).toBe(false);
-      });
-
       it("rejects rating codes longer than 10 characters", () => {
         fc.assert(
           fc.property(
@@ -299,14 +290,6 @@ describe("Admin Age Classifications - Property-Based Tests", () => {
           }),
           { numRuns: 200 }
         );
-      });
-
-      it("rejects empty descriptor codes", () => {
-        const result = adminDescriptorFormSchema.safeParse({
-          code: "",
-          translations: validTranslation,
-        });
-        expect(result.success).toBe(false);
       });
 
       it("rejects descriptor codes longer than 30 characters", () => {

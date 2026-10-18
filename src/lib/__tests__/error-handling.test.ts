@@ -225,11 +225,11 @@ describe("error-handling", () => {
   });
 
   describe("apiCall", () => {
-    let toastMock: ReturnType<typeof mock>;
+    let toastMock: ReturnType<typeof vi.fn>;
 
     beforeEach(async () => {
       const toastModule = await import("@/hooks/use-toast");
-      toastMock = toastModule.toast as ReturnType<typeof mock>;
+      toastMock = toastModule.toast as ReturnType<typeof vi.fn>;
       toastMock.mockClear();
     });
 
@@ -363,25 +363,18 @@ describe("error-handling", () => {
 });
 
 describe("useErrorHandler", () => {
-  let toastMock: ReturnType<typeof mock>;
+  let toastMock: ReturnType<typeof vi.fn>;
   let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(async () => {
     const toastModule = await import("@/hooks/use-toast");
-    toastMock = toastModule.toast as ReturnType<typeof mock>;
+    toastMock = toastModule.toast as ReturnType<typeof vi.fn>;
     toastMock.mockClear();
     consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
     consoleErrorSpy.mockRestore();
-  });
-
-  it("should return handleError function", async () => {
-    const { useErrorHandler } = await import("@/lib/error-handling");
-    const { handleError } = useErrorHandler();
-
-    expect(typeof handleError).toBe("function");
   });
 
   it("should show toast when handleError is called", async () => {

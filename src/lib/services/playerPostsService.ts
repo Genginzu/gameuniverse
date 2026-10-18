@@ -1,4 +1,5 @@
 import type { CreatePostPayload, Post, PostsResponse } from "@/types/post";
+import { createApiError } from "@/lib/services/apiError";
 
 /**
  * Service client pour les posts d'un joueur.
@@ -47,9 +48,7 @@ export class PlayerPostsService {
     });
 
     if (!response.ok) {
-      const body = await response.json().catch(() => null);
-      const message = body?.error || `Failed to create post (${response.status})`;
-      throw new Error(message);
+      throw await createApiError(response, `Failed to create post (${response.status})`);
     }
 
     return response.json();

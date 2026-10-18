@@ -1,254 +1,212 @@
 /**
- * Tests unitaires pour les routes API de synchronisation IGDB admin.
- * Vérifie la validation des entrées, la gestion des erreurs,
- * et le contrat des réponses API.
- *
- * Requirements: 4.1, 4.2, 4.3, 4.4
+ * Tests for the admin IGDB sync routes, run against the real handlers:
+ * - POST /api/admin/games/[id]/sync
+ * - GET  /api/admin/games/[id]/overrides
  */
 
-import { describe, test, expect } from "vitest";
+import { describe, test, expect, vi, beforeEach } from "vitest";
+import type { NextRequest } from "next/server";
+import { createSupabaseQueryMock } from "@/test-helpers/supabase-query-mock";
 import { TRACKABLE_FIELDS } from "@/lib/utils/field-tracking";
-import type { TrackableField } from "@/types/admin-games";
 
-// ---------------------------------------------------------------------------
-// Helpers — simulate route handler logic without importing Next.js internals
-// ---------------------------------------------------------------------------
+const db = createSupabaseQueryMock();
+const mocks = vi.hoisted(() => ({
+  requireAdmin: vi.fn(),
+  syncGameField: vi.fn(),
+  syncAllGameFields: vi.fn(),
+  fetchMetacriticScore: vi.fn(),
+}));
 
-interface SyncRequestBody {
-  field?: string;
+vi.mock("@/lib/auth-admin", () => ({ requireAdmin: () => mocks.requireAdmin() }));
+vi.mock("@/lib/supabase-server", () => ({
+  createRouteHandlerClient: () => Promise.resolve(db.client),
+}));
+vi.mock("@/lib/services/igdb-sync", () => ({
+  syncGameField: mocks.syncGameField,
+  syncAllGameFields: mocks.syncAllGameFields,
+}));
+vi.mock("@/lib/services/metacriticService", () => ({
+  fetchMetacriticScore: mocks.fetchMetacriticScore,
+}));
+
+const { POST } = await import("@/app/api/admin/games/[id]/sync/route");
+const { GET } = await import("@/app/api/admin/games/[id]/overrides/route");
+
+const GAME_ID = "00000000-0000-0000-0000-000000000001";
+const IGDB_ID = 12345;
+const UPDATED_GAME = { id: GAME_ID, slug: "zelda", igdb_id: IGDB_ID, last_synced_at: "now" };
+const ctx = (id = GAME_ID) => ({ params: Promise.resolve({ id }) });
+
+function syncRequest(body?: unknown) {
+  return new Request(`http://localhost/api/admin/games/${GAME_ID}/sync`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  }) as unknown as NextRequest;
 }
 
-interface MockGame {
-  id: string;
-  igdb_id: number | null;
-}
+const overridesRequest = () =>
+  new Request(`http://localhost/api/admin/games/${GAME_ID}/overrides`) as unknown as NextRequest;
 
-/**
- * Reproduit la logique de validation du POST /api/admin/games/[id]/sync
- * sans dépendance Next.js, pour tester le contrat de l'API.
- */
-function simulateSyncRoute(params: {
-  gameId: string | null;
-  body: SyncRequestBody;
-  game: MockGame | null;
-  syncResult?: { success: boolean; error?: string; syncedFields: TrackableField[] };
-}): { status: number; body: Record<string, unknown> } {
-  const { gameId, body, game, syncResult } = params;
-
-  if (!gameId) {
-    return { status: 400, body: { error: "Game ID is required" } };
-  }
-
-  // Validate field name if provided
-  if (body.field && !TRACKABLE_FIELDS.includes(body.field as TrackableField)) {
-    return { status: 400, body: { error: `Invalid field: ${body.field}` } };
-  }
-
-  // Game not found
-  if (!game) {
-    return { status: 404, body: { error: "Game not found" } };
-  }
-
-  // No igdb_id → 400
-  if (!game.igdb_id) {
-    return {
-      status: 400,
-      body: { error: "Ce jeu n'est pas lié à IGDB" },
-    };
-  }
-
-  // Sync failure → 502
-  if (syncResult && !syncResult.success) {
-    return { status: 502, body: { error: syncResult.error } };
-  }
-
-  // Success
-  return {
-    status: 200,
-    body: {
-      success: true,
-      syncedFields: syncResult?.syncedFields ?? [],
-    },
-  };
-}
-
-/**
- * Reproduit la logique de validation du GET /api/admin/games/[id]/overrides
- */
-function simulateOverridesRoute(params: {
-  gameId: string | null;
-  overrides?: Array<{ id: string; field_name: string }>;
-  fetchError?: string;
-}): { status: number; body: Record<string, unknown> } {
-  const { gameId, overrides, fetchError } = params;
-
-  if (!gameId) {
-    return { status: 400, body: { error: "Game ID is required" } };
-  }
-
-  if (fetchError) {
-    return {
-      status: 500,
-      body: { error: `Failed to fetch overrides: ${fetchError}` },
-    };
-  }
-
-  return { status: 200, body: { overrides: overrides ?? [] } };
-}
-
-// ---------------------------------------------------------------------------
-// Tests — POST /api/admin/games/[id]/sync
-// ---------------------------------------------------------------------------
+beforeEach(() => {
+  db.reset();
+  Object.values(mocks).forEach((m) => m.mockReset());
+  mocks.requireAdmin.mockResolvedValue(true);
+});
 
 describe("POST /api/admin/games/[id]/sync", () => {
-  const GAME_ID = "00000000-0000-0000-0000-000000000001";
-
-  test("sync individuel — retourne les champs synchronisés", () => {
-    const result = simulateSyncRoute({
-      gameId: GAME_ID,
-      body: { field: "cover_image" },
-      game: { id: GAME_ID, igdb_id: 12345 },
-      syncResult: { success: true, syncedFields: ["cover_image"] },
-    });
-
-    expect(result.status).toBe(200);
-    expect(result.body.success).toBe(true);
-    expect(result.body.syncedFields).toEqual(["cover_image"]);
+  test("returns 403 when the admin guard rejects", async () => {
+    mocks.requireAdmin.mockRejectedValue(new Error("Admin access required"));
+    const res = await POST(syncRequest({}), ctx());
+    expect(res.status).toBe(403);
   });
 
-  test("sync global — retourne tous les champs synchronisés", () => {
-    const result = simulateSyncRoute({
-      gameId: GAME_ID,
-      body: {},
-      game: { id: GAME_ID, igdb_id: 12345 },
-      syncResult: {
-        success: true,
-        syncedFields: [...TRACKABLE_FIELDS] as TrackableField[],
-      },
-    });
-
-    expect(result.status).toBe(200);
-    expect(result.body.success).toBe(true);
-    expect(result.body.syncedFields).toHaveLength(TRACKABLE_FIELDS.length);
+  test("returns 400 for an unknown field without touching the database", async () => {
+    const res = await POST(syncRequest({ field: "nonexistent_field" }), ctx());
+    expect(res.status).toBe(400);
+    expect(await res.json()).toEqual({ error: "Invalid field: nonexistent_field" });
+    expect(db.calls).toHaveLength(0);
   });
 
-  test("erreur 400 — jeu sans igdb_id", () => {
-    const result = simulateSyncRoute({
-      gameId: GAME_ID,
-      body: { field: "genres" },
-      game: { id: GAME_ID, igdb_id: null },
-    });
-
-    expect(result.status).toBe(400);
-    expect(result.body.error).toBe("Ce jeu n'est pas lié à IGDB");
+  test("returns 404 when the game does not exist", async () => {
+    db.enqueue("games", { error: { code: "PGRST116" } });
+    const res = await POST(syncRequest({}), ctx());
+    expect(res.status).toBe(404);
   });
 
-  test("erreur 400 — champ invalide", () => {
-    const result = simulateSyncRoute({
-      gameId: GAME_ID,
-      body: { field: "nonexistent_field" },
-      game: { id: GAME_ID, igdb_id: 12345 },
-    });
-
-    expect(result.status).toBe(400);
-    expect(result.body.error).toBe("Invalid field: nonexistent_field");
+  test("returns 400 when the game is not linked to IGDB", async () => {
+    db.enqueue("games", { data: { id: GAME_ID, igdb_id: null } });
+    const res = await POST(syncRequest({ field: "genres" }), ctx());
+    expect(res.status).toBe(400);
+    expect(mocks.syncGameField).not.toHaveBeenCalled();
   });
 
-  test("erreur 502 — échec IGDB", () => {
-    const result = simulateSyncRoute({
-      gameId: GAME_ID,
-      body: { field: "translations" },
-      game: { id: GAME_ID, igdb_id: 12345 },
-      syncResult: {
-        success: false,
-        error: "Game not found in IGDB (id: 12345)",
-        syncedFields: [],
-      },
-    });
+  test("syncs a single field and returns the refreshed game", async () => {
+    db.enqueue("games", { data: { id: GAME_ID, igdb_id: IGDB_ID } }, { data: UPDATED_GAME });
+    mocks.syncGameField.mockResolvedValue({ success: true, syncedFields: ["cover_image"] });
 
-    expect(result.status).toBe(502);
-    expect(result.body.error).toContain("IGDB");
+    const res = await POST(syncRequest({ field: "cover_image" }), ctx());
+
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({
+      success: true,
+      syncedFields: ["cover_image"],
+      game: UPDATED_GAME,
+    });
+    expect(mocks.syncGameField).toHaveBeenCalledWith(db.client, GAME_ID, IGDB_ID, "cover_image");
+    expect(mocks.syncAllGameFields).not.toHaveBeenCalled();
   });
 
-  test("erreur 404 — jeu introuvable", () => {
-    const result = simulateSyncRoute({
-      gameId: GAME_ID,
-      body: {},
-      game: null,
-    });
+  test("syncs every field when no field is given (including an empty body)", async () => {
+    db.enqueue("games", { data: { id: GAME_ID, igdb_id: IGDB_ID } }, { data: UPDATED_GAME });
+    mocks.syncAllGameFields.mockResolvedValue({ success: true, syncedFields: TRACKABLE_FIELDS });
 
-    expect(result.status).toBe(404);
-    expect(result.body.error).toBe("Game not found");
+    const res = await POST(syncRequest(), ctx());
+
+    expect(res.status).toBe(200);
+    expect((await res.json()).syncedFields).toHaveLength(TRACKABLE_FIELDS.length);
+    expect(mocks.syncAllGameFields).toHaveBeenCalledWith(db.client, GAME_ID, IGDB_ID);
   });
 
-  test("chaque TRACKABLE_FIELD est accepté comme champ valide", () => {
-    for (const field of TRACKABLE_FIELDS) {
-      const result = simulateSyncRoute({
-        gameId: GAME_ID,
-        body: { field },
-        game: { id: GAME_ID, igdb_id: 99 },
-        syncResult: { success: true, syncedFields: [field] },
-      });
-      expect(result.status).toBe(200);
-    }
+  test("maps an IGDB failure to 502", async () => {
+    db.enqueue("games", { data: { id: GAME_ID, igdb_id: IGDB_ID } });
+    mocks.syncGameField.mockResolvedValue({ success: false, error: "IGDB timeout" });
+
+    const res = await POST(syncRequest({ field: "translations" }), ctx());
+
+    expect(res.status).toBe(502);
+    expect(await res.json()).toEqual({ error: "IGDB timeout" });
+  });
+
+  test("returns game: null when the refreshed game cannot be read", async () => {
+    db.enqueue("games", { data: { id: GAME_ID, igdb_id: IGDB_ID } }, { error: { message: "x" } });
+    mocks.syncGameField.mockResolvedValue({ success: true, syncedFields: ["genres"] });
+
+    const res = await POST(syncRequest({ field: "genres" }), ctx());
+    expect((await res.json()).game).toBeNull();
+  });
+
+  describe("metascore", () => {
+    test("uses the Metacritic score when available, without calling IGDB", async () => {
+      db.enqueue(
+        "games",
+        { data: { id: GAME_ID, igdb_id: IGDB_ID } },
+        { data: { slug: "zelda" } },
+        {},
+        { data: UPDATED_GAME }
+      );
+      mocks.fetchMetacriticScore.mockResolvedValue(92);
+
+      const res = await POST(syncRequest({ field: "metascore" }), ctx());
+
+      expect(res.status).toBe(200);
+      expect((await res.json()).syncedFields).toEqual(["metascore"]);
+      expect(mocks.fetchMetacriticScore).toHaveBeenCalledWith("zelda");
+      expect(db.callsFor("games", "update")).toEqual([[{ metascore: 92 }]]);
+      expect(mocks.syncGameField).not.toHaveBeenCalled();
+    });
+
+    test("falls back to IGDB when Metacritic has no score", async () => {
+      db.enqueue(
+        "games",
+        { data: { id: GAME_ID, igdb_id: IGDB_ID } },
+        { data: { slug: "zelda" } },
+        { data: UPDATED_GAME }
+      );
+      mocks.fetchMetacriticScore.mockResolvedValue(null);
+      mocks.syncGameField.mockResolvedValue({ success: true, syncedFields: ["metascore"] });
+
+      await POST(syncRequest({ field: "metascore" }), ctx());
+
+      expect(mocks.syncGameField).toHaveBeenCalledWith(db.client, GAME_ID, IGDB_ID, "metascore");
+      expect(db.callsFor("games", "update")).toHaveLength(0);
+    });
+
+    test("falls back to IGDB when the game has no slug", async () => {
+      db.enqueue(
+        "games",
+        { data: { id: GAME_ID, igdb_id: IGDB_ID } },
+        { data: { slug: null } },
+        { data: UPDATED_GAME }
+      );
+      mocks.syncGameField.mockResolvedValue({ success: true, syncedFields: ["metascore"] });
+
+      await POST(syncRequest({ field: "metascore" }), ctx());
+
+      expect(mocks.fetchMetacriticScore).not.toHaveBeenCalled();
+      expect(mocks.syncGameField).toHaveBeenCalled();
+    });
   });
 });
-
-// ---------------------------------------------------------------------------
-// Tests — GET /api/admin/games/[id]/overrides
-// ---------------------------------------------------------------------------
 
 describe("GET /api/admin/games/[id]/overrides", () => {
-  const GAME_ID = "00000000-0000-0000-0000-000000000001";
-
-  test("retourne la liste des overrides", () => {
-    const result = simulateOverridesRoute({
-      gameId: GAME_ID,
-      overrides: [
-        { id: "o1", field_name: "cover_image" },
-        { id: "o2", field_name: "genres" },
-      ],
-    });
-
-    expect(result.status).toBe(200);
-    expect(result.body.overrides).toHaveLength(2);
+  test("returns 403 when the admin guard rejects", async () => {
+    mocks.requireAdmin.mockRejectedValue(new Error("Admin access required"));
+    expect((await GET(overridesRequest(), ctx())).status).toBe(403);
   });
 
-  test("retourne un tableau vide si aucun override", () => {
-    const result = simulateOverridesRoute({
-      gameId: GAME_ID,
-      overrides: [],
-    });
+  test("returns the overrides of the game", async () => {
+    const overrides = [
+      { id: "o1", field_name: "cover_image" },
+      { id: "o2", field_name: "genres" },
+    ];
+    db.enqueue("game_field_overrides", { data: overrides });
 
-    expect(result.status).toBe(200);
-    expect(result.body.overrides).toEqual([]);
+    const res = await GET(overridesRequest(), ctx());
+
+    expect(await res.json()).toEqual({ overrides });
+    expect(db.callsFor("game_field_overrides", "eq")).toEqual([["game_id", GAME_ID]]);
   });
 
-  test("erreur 500 — échec de la requête DB", () => {
-    const result = simulateOverridesRoute({
-      gameId: GAME_ID,
-      fetchError: "connection refused",
-    });
-
-    expect(result.status).toBe(500);
-    expect(result.body.error).toContain("Failed to fetch overrides");
+  test("returns an empty list when there are none", async () => {
+    db.enqueue("game_field_overrides", { data: null });
+    expect(await (await GET(overridesRequest(), ctx())).json()).toEqual({ overrides: [] });
   });
-});
 
-// ---------------------------------------------------------------------------
-// Tests — Auth contract (403)
-// ---------------------------------------------------------------------------
-
-describe("Admin sync API - Auth contract", () => {
-  test("requireAdmin error maps to 403 response", () => {
-    const authError = new Error("Admin access required");
-
-    // Simule le catch block des routes sync et overrides
-    const isAuthError = authError instanceof Error && authError.message === "Admin access required";
-
-    expect(isAuthError).toBe(true);
-
-    const responseStatus = isAuthError ? 403 : 500;
-    expect(responseStatus).toBe(403);
+  test("returns 500 when the query fails", async () => {
+    db.enqueue("game_field_overrides", { error: { message: "connection refused" } });
+    const res = await GET(overridesRequest(), ctx());
+    expect(res.status).toBe(500);
+    expect((await res.json()).error).toBe("Failed to fetch overrides: connection refused");
   });
 });

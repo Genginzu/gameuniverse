@@ -1,6 +1,5 @@
 /**
  * Tests for player comments API routes (GET, POST, PUT)
- * Placed in isolated/ because vi.mock() conflicts with parallel tests.
  *
  * Requirements: 1.2, 1.3, 2.1, 7.4
  */
@@ -8,8 +7,8 @@
 import { describe, test, expect, beforeEach, vi } from "vitest";
 
 // --- Mock state ---
-let mockSupabaseFrom: ReturnType<typeof mock>;
-let mockGetUser: ReturnType<typeof mock>;
+let mockSupabaseFrom: ReturnType<typeof vi.fn>;
+let mockGetUser: ReturnType<typeof vi.fn>;
 
 const AUTHENTICATED_USER = { id: "user-1", email: "player@test.com" };
 
@@ -42,7 +41,7 @@ function makeRequest(url: string, init?: RequestInit) {
 describe("Comments API — GET /api/comments", () => {
   beforeEach(() => {
     mockGetUser = vi.fn(() => Promise.resolve({ data: { user: null }, error: null }));
-    mockSupabaseFrom = null as unknown as ReturnType<typeof mock>;
+    mockSupabaseFrom = null as unknown as ReturnType<typeof vi.fn>;
   });
 
   test("returns 400 if characterId is missing", async () => {
@@ -133,8 +132,8 @@ describe("Comments API — GET /api/comments", () => {
 });
 describe("Comments API — POST /api/comments", () => {
   beforeEach(() => {
-    mockGetUser = null as unknown as ReturnType<typeof mock>;
-    mockSupabaseFrom = null as unknown as ReturnType<typeof mock>;
+    mockGetUser = null as unknown as ReturnType<typeof vi.fn>;
+    mockSupabaseFrom = null as unknown as ReturnType<typeof vi.fn>;
   });
 
   test("returns 401 if user is not authenticated (Req 7.4)", async () => {
@@ -269,8 +268,8 @@ describe("Comments API — POST /api/comments", () => {
 });
 describe("Comments API — PUT /api/comments", () => {
   beforeEach(() => {
-    mockGetUser = null as unknown as ReturnType<typeof mock>;
-    mockSupabaseFrom = null as unknown as ReturnType<typeof mock>;
+    mockGetUser = null as unknown as ReturnType<typeof vi.fn>;
+    mockSupabaseFrom = null as unknown as ReturnType<typeof vi.fn>;
   });
 
   test("returns 401 if user is not authenticated (Req 7.4)", async () => {
