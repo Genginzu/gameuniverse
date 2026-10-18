@@ -1,4 +1,5 @@
 import type { ReviewFormData, ReviewsResponse } from "@/types/review";
+import { createApiError } from "@/lib/services/apiError";
 
 /**
  * Service pour la gestion des reviews de jeux.
@@ -35,8 +36,7 @@ export class ReviewService {
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || "Failed to submit review");
+      throw await createApiError(response, "Failed to submit review");
     }
 
     return response.json();
@@ -53,8 +53,7 @@ export class ReviewService {
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || "Failed to update review");
+      throw await createApiError(response, "Failed to update review");
     }
 
     return response.json();

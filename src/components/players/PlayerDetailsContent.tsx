@@ -27,6 +27,7 @@ import { PlayerProfileSocialLinks } from "./PlayerProfileSocialLinks";
 import { FriendActionButton } from "./friends/FriendActionButton";
 import { LibraryComparisonSection } from "./friends/LibraryComparisonSection";
 import { SubscribeButton } from "./subscription/SubscribeButton";
+import { ReportButton } from "@/components/shared/ReportButton";
 
 import { type ProfileTab, getDefaultTab } from "./profile-tabs";
 import { PlayerDetailHero } from "./sections/PlayerDetailHero";
@@ -118,6 +119,7 @@ export function PlayerDetailsContent({ player, locale, currentUserId }: PlayerDe
         removeFriend={relationship.removeFriend}
       />
       <SubscribeButton targetId={player.id} isAuthenticated={!!user} isOwner={isOwner} />
+      {!isOwner && user && <ReportButton contentType="profile" contentId={player.id} showLabel />}
     </div>
   );
 

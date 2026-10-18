@@ -7,6 +7,7 @@ import { useLanguageForm } from "@/hooks/useLanguageForm";
 import { LanguageForm } from "@/components/admin/languages/LanguageForm";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import { isDuplicateErrorMessage } from "@/lib/utils/duplicateError";
 
 import type { LanguageFormData } from "@/lib/validations/admin-language-form";
 import { Icon } from "@iconify/react";
@@ -24,10 +25,7 @@ export default function NewLanguagePage() {
         setTimeout(() => router.push("/admin/languages"), 500);
       } catch (err) {
         const message = err instanceof Error ? err.message : t("createPage.errorGeneric");
-        const isDuplicate =
-          message.toLowerCase().includes("duplicate") ||
-          message.toLowerCase().includes("already exists") ||
-          message.toLowerCase().includes("existe déjà");
+        const isDuplicate = isDuplicateErrorMessage(message);
 
         toast({
           title: isDuplicate ? t("createPage.errorDuplicate") : message,

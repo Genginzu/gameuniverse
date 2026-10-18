@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { getRatingColor } from "@/lib/utils/ratingColor";
 import { useReviewTranslations, useDateFormatter } from "@/hooks/useTranslations";
 import { ReviewVoteButtons } from "./ReviewVoteButtons";
+import { ReportButton } from "@/components/shared/ReportButton";
 import type { ReviewWithVotes } from "@/types/review";
 import Image from "next/image";
 
@@ -94,6 +95,7 @@ export function ReviewCard({ review }: ReviewCardProps) {
           <span className={cn("text-2xl font-bold", getRatingColor(review.rating))}>
             {review.rating}/20
           </span>
+          <ReportButton contentType="review" contentId={review.id} />
         </div>
       </div>
 

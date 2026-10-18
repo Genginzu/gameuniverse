@@ -1,229 +1,121 @@
-﻿import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import {
-  shouldTriggerSearch,
-  createDebouncedCallback,
-} from "@/components/shared/SearchBar";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { shouldTriggerSearch, createDebouncedCallback } from "@/components/shared/SearchBar";
 
 describe("SearchBar Helper Functions", () => {
   describe("shouldTriggerSearch", () => {
-    describe("with default minLength (2)", () => {
-      it("returns false for empty string", () => {
-        expect(shouldTriggerSearch("")).toBe(false);
-      });
-
-      it("returns false for single character", () => {
-        expect(shouldTriggerSearch("a")).toBe(false);
-      });
-
-      it("returns true for two characters", () => {
-        expect(shouldTriggerSearch("ab")).toBe(true);
-      });
-
-      it("returns true for longer strings", () => {
-        expect(shouldTriggerSearch("abc")).toBe(true);
-        expect(shouldTriggerSearch("test query")).toBe(true);
-      });
-
-      it("returns false for whitespace only", () => {
-        expect(shouldTriggerSearch(" ")).toBe(false);
-      });
-
-      it("returns true for two spaces", () => {
-        expect(shouldTriggerSearch("  ")).toBe(true);
-      });
+    it.each([
+      ["", false],
+      ["a", false],
+      [" ", false],
+      ["ab", true],
+      ["  ", true],
+      ["test query", true],
+      ["日", false],
+      ["日本", true],
+      ["🎮🎮", true],
+      ["1", false],
+      ["a1", true],
+    ])("with the default minLength, %j -> %s", (query, expected) => {
+      expect(shouldTriggerSearch(query)).toBe(expected);
     });
 
-    describe("with custom minLength", () => {
-      it("respects minLength of 1", () => {
-        expect(shouldTriggerSearch("a", 1)).toBe(true);
-        expect(shouldTriggerSearch("", 1)).toBe(false);
-      });
-
-      it("respects minLength of 3", () => {
-        expect(shouldTriggerSearch("ab", 3)).toBe(false);
-        expect(shouldTriggerSearch("abc", 3)).toBe(true);
-      });
-
-      it("respects minLength of 5", () => {
-        expect(shouldTriggerSearch("test", 5)).toBe(false);
-        expect(shouldTriggerSearch("tests", 5)).toBe(true);
-      });
-
-      it("respects minLength of 0", () => {
-        expect(shouldTriggerSearch("", 0)).toBe(true);
-      });
-    });
-
-    describe("edge cases", () => {
-      it("handles unicode characters", () => {
-        expect(shouldTriggerSearch("日本")).toBe(true);
-        expect(shouldTriggerSearch("日")).toBe(false);
-      });
-
-      it("handles emoji", () => {
-        expect(shouldTriggerSearch("🎮🎮")).toBe(true);
-      });
-
-      it("handles mixed content", () => {
-        expect(shouldTriggerSearch("a1")).toBe(true);
-        expect(shouldTriggerSearch("1")).toBe(false);
-      });
+    it.each([
+      ["", 0, true],
+      ["", 1, false],
+      ["a", 1, true],
+      ["ab", 3, false],
+      ["abc", 3, true],
+      ["test", 5, false],
+      ["tests", 5, true],
+    ])("%j with minLength %i -> %s", (query, minLength, expected) => {
+      expect(shouldTriggerSearch(query, minLength)).toBe(expected);
     });
   });
 
   describe("createDebouncedCallback", () => {
-    describe("basic functionality", () => {
-      it("returns an object with debouncedFn and cancel", () => {
-        const callback = vi.fn(() => {});
-        const result = createDebouncedCallback(callback, 100);
-
-        expect(typeof result.debouncedFn).toBe("function");
-        expect(typeof result.cancel).toBe("function");
-      });
-
-      it("does not call callback immediately", () => {
-        const callback = vi.fn(() => {});
-        const { debouncedFn } = createDebouncedCallback(callback, 100);
-
-        debouncedFn();
-
-        expect(callback).not.toHaveBeenCalled();
-      });
-
-      it("calls callback after delay", async () => {
-        const callback = vi.fn(() => {});
-        const { debouncedFn } = createDebouncedCallback(callback, 50);
-
-        debouncedFn();
-
-        await new Promise((resolve) => setTimeout(resolve, 100));
-
-        expect(callback).toHaveBeenCalledTimes(1);
-      });
+    beforeEach(() => {
+      vi.useFakeTimers();
     });
 
-    describe("debouncing behavior", () => {
-      it("resets timer on subsequent calls", async () => {
-        const callback = vi.fn(() => {});
-        const { debouncedFn } = createDebouncedCallback(callback, 50);
-
-        debouncedFn();
-        await new Promise((resolve) => setTimeout(resolve, 30));
-        debouncedFn();
-        await new Promise((resolve) => setTimeout(resolve, 30));
-        debouncedFn();
-
-        // Should not have been called yet
-        expect(callback).not.toHaveBeenCalled();
-
-        // Wait for final debounce
-        await new Promise((resolve) => setTimeout(resolve, 100));
-
-        expect(callback).toHaveBeenCalledTimes(1);
-      });
-
-      it("passes arguments to callback", async () => {
-        const callback = vi.fn((arg: string) => arg);
-        const { debouncedFn } = createDebouncedCallback(callback, 50);
-
-        debouncedFn("test");
-
-        await new Promise((resolve) => setTimeout(resolve, 100));
-
-        expect(callback).toHaveBeenCalledWith("test");
-      });
-
-      it("uses last arguments when called multiple times", async () => {
-        const callback = vi.fn((arg: string) => arg);
-        const { debouncedFn } = createDebouncedCallback(callback, 50);
-
-        debouncedFn("first");
-        debouncedFn("second");
-        debouncedFn("third");
-
-        await new Promise((resolve) => setTimeout(resolve, 100));
-
-        expect(callback).toHaveBeenCalledWith("third");
-        expect(callback).toHaveBeenCalledTimes(1);
-      });
+    afterEach(() => {
+      vi.useRealTimers();
     });
 
-    describe("cancel functionality", () => {
-      it("prevents callback execution when cancelled", async () => {
-        const callback = vi.fn(() => {});
-        const { debouncedFn, cancel } = createDebouncedCallback(callback, 50);
+    it("calls the callback once, only after the delay", () => {
+      const callback = vi.fn();
+      const { debouncedFn } = createDebouncedCallback(callback, 50);
 
-        debouncedFn();
-        cancel();
+      debouncedFn();
+      vi.advanceTimersByTime(49);
+      expect(callback).not.toHaveBeenCalled();
 
-        await new Promise((resolve) => setTimeout(resolve, 100));
-
-        expect(callback).not.toHaveBeenCalled();
-      });
-
-      it("can be called multiple times safely", () => {
-        const callback = vi.fn(() => {});
-        const { cancel } = createDebouncedCallback(callback, 50);
-
-        // Should not throw
-        cancel();
-        cancel();
-        cancel();
-      });
-
-      it("can cancel before any call", () => {
-        const callback = vi.fn(() => {});
-        const { cancel } = createDebouncedCallback(callback, 50);
-
-        // Should not throw
-        cancel();
-      });
+      vi.advanceTimersByTime(1);
+      expect(callback).toHaveBeenCalledTimes(1);
     });
 
-    describe("timing variations", () => {
-      it("works with very short delay", async () => {
-        const callback = vi.fn(() => {});
-        const { debouncedFn } = createDebouncedCallback(callback, 10);
+    it("restarts the timer on every call and uses the last arguments", () => {
+      const callback = vi.fn((arg: string) => arg);
+      const { debouncedFn } = createDebouncedCallback(callback, 50);
 
-        debouncedFn();
+      debouncedFn("first");
+      vi.advanceTimersByTime(30);
+      debouncedFn("second");
+      vi.advanceTimersByTime(30);
+      debouncedFn("third");
+      vi.advanceTimersByTime(49);
+      expect(callback).not.toHaveBeenCalled();
 
-        await new Promise((resolve) => setTimeout(resolve, 50));
-
-        expect(callback).toHaveBeenCalledTimes(1);
-      });
-
-      it("works with zero delay", async () => {
-        const callback = vi.fn(() => {});
-        const { debouncedFn } = createDebouncedCallback(callback, 0);
-
-        debouncedFn();
-
-        await new Promise((resolve) => setTimeout(resolve, 10));
-
-        expect(callback).toHaveBeenCalledTimes(1);
-      });
+      vi.advanceTimersByTime(1);
+      expect(callback).toHaveBeenCalledTimes(1);
+      expect(callback).toHaveBeenCalledWith("third");
     });
 
-    describe("multiple instances", () => {
-      it("maintains separate timers for different instances", async () => {
-        const callback1 = vi.fn(() => {});
-        const callback2 = vi.fn(() => {});
+    it("fires on the next tick with a zero delay", () => {
+      const callback = vi.fn();
+      const { debouncedFn } = createDebouncedCallback(callback, 0);
 
-        const { debouncedFn: fn1 } = createDebouncedCallback(callback1, 50);
-        const { debouncedFn: fn2 } = createDebouncedCallback(callback2, 100);
+      debouncedFn();
+      expect(callback).not.toHaveBeenCalled();
+      vi.advanceTimersByTime(0);
+      expect(callback).toHaveBeenCalledTimes(1);
+    });
 
-        fn1();
-        fn2();
+    it("cancel drops a pending call", () => {
+      const callback = vi.fn();
+      const { debouncedFn, cancel } = createDebouncedCallback(callback, 50);
 
-        await new Promise((resolve) => setTimeout(resolve, 75));
+      debouncedFn();
+      cancel();
+      vi.runAllTimers();
+      expect(callback).not.toHaveBeenCalled();
+    });
 
-        expect(callback1).toHaveBeenCalledTimes(1);
-        expect(callback2).not.toHaveBeenCalled();
+    it("cancel is a no-op when nothing is pending, and the debouncer keeps working", () => {
+      const callback = vi.fn();
+      const { debouncedFn, cancel } = createDebouncedCallback(callback, 50);
 
-        await new Promise((resolve) => setTimeout(resolve, 50));
+      expect(() => {
+        cancel();
+        cancel();
+      }).not.toThrow();
 
-        expect(callback2).toHaveBeenCalledTimes(1);
-      });
+      debouncedFn();
+      vi.advanceTimersByTime(50);
+      expect(callback).toHaveBeenCalledTimes(1);
+    });
+
+    it("keeps independent timers per instance", () => {
+      const fast = vi.fn();
+      const slow = vi.fn();
+      createDebouncedCallback(fast, 50).debouncedFn();
+      createDebouncedCallback(slow, 100).debouncedFn();
+
+      vi.advanceTimersByTime(75);
+      expect(fast).toHaveBeenCalledTimes(1);
+      expect(slow).not.toHaveBeenCalled();
+
+      vi.advanceTimersByTime(25);
+      expect(slow).toHaveBeenCalledTimes(1);
     });
   });
 });

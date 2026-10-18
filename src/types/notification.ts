@@ -13,7 +13,8 @@ export type NotificationType =
   | "friend_request"
   | "friend_accepted"
   | "review_vote"
-  | "achievement_unlocked";
+  | "achievement_unlocked"
+  | "moderation_warning";
 
 export interface Notification {
   id: string;
