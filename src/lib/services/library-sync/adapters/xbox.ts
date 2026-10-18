@@ -1,10 +1,7 @@
 import { EXTERNAL_GAME_CATEGORY } from "@/lib/services/igdb-external-games";
-import {
-  getXboxAuthForPlayer,
-  xboxAuthorizationHeader,
-  type XboxAuthContext,
-} from "@/lib/services/xboxAuth";
+import { getXboxAuthForPlayer, xboxAuthorizationHeader } from "@/lib/services/platform-connection";
 import type { LibrarySyncAdapter, PlatformLibraryItem } from "@/types/library-sync";
+import type { XboxAuthContext } from "@/types/platform-connection";
 
 const titleHistoryUrl = (xuid: string) =>
   `https://titlehub.xboxlive.com/users/xuid(${xuid})/titles/titleHistory/decoration/detail`;

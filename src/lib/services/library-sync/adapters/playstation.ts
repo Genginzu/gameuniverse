@@ -2,7 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { getUserTitles } from "psn-api";
 import type { Database } from "@/lib/database.types";
 import { EXTERNAL_GAME_CATEGORY } from "@/lib/services/igdb-external-games";
-import { getValidAccessToken } from "@/lib/services/platformTokenRefresh";
+import { getValidAccessToken } from "@/lib/services/platform-connection";
 import type { LibrarySyncAdapter, PlatformLibraryItem } from "@/types/library-sync";
 
 const PSN_PAGE_LIMIT = 100;

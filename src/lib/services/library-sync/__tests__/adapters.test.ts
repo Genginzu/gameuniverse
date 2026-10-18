@@ -3,15 +3,14 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/database.types";
 
 vi.mock("psn-api", () => ({ getUserTitles: vi.fn() }));
-vi.mock("@/lib/services/platformTokenRefresh", () => ({ getValidAccessToken: vi.fn() }));
-vi.mock("@/lib/services/xboxAuth", () => ({
+vi.mock("@/lib/services/platform-connection", () => ({
+  getValidAccessToken: vi.fn(),
   getXboxAuthForPlayer: vi.fn(),
   xboxAuthorizationHeader: vi.fn().mockReturnValue("XBL3.0 x=hash;token"),
 }));
 
 import { getUserTitles } from "psn-api";
-import { getValidAccessToken } from "@/lib/services/platformTokenRefresh";
-import { getXboxAuthForPlayer } from "@/lib/services/xboxAuth";
+import { getValidAccessToken, getXboxAuthForPlayer } from "@/lib/services/platform-connection";
 import { normalizeSteamLibrary, steamAdapter } from "@/lib/services/library-sync/adapters/steam";
 import { normalizeXboxTitles, xboxAdapter } from "@/lib/services/library-sync/adapters/xbox";
 import {
