@@ -4,14 +4,7 @@ import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-
-/** Single error entry as stored in pandascore_sync_logs.error_details JSONB. */
-export interface SyncErrorDetail {
-  type: string;
-  id: number | null;
-  phase: "fetch" | "upsert" | "delete" | string;
-  error: string;
-}
+import type { SyncErrorDetail } from "@/types/esport-sync";
 
 interface SyncErrorsDialogProps {
   open: boolean;

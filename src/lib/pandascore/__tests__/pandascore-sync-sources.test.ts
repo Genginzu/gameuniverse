@@ -27,7 +27,11 @@ import {
   syncMatchesByIds,
   syncPlayersByIds,
 } from "../../../../supabase/functions/pandascore-incremental/handlers/sync-by-ids.ts";
-import { SyncErrorCollector } from "../../../../supabase/functions/_shared/pandascore/helpers.ts";
+import {
+  MAX_ERROR_DETAILS,
+  SyncErrorCollector,
+} from "../../../../supabase/functions/_shared/pandascore/helpers.ts";
+import { PandaScoreApiError } from "../../../../supabase/functions/_shared/pandascore/sync-run/failure.ts";
 
 const IDS = {
   esport_teams: { 10: "team-uuid-10", 20: "team-uuid-20" },
@@ -52,7 +56,7 @@ describe("full-sync page source", () => {
     const result = await processEntityPage(supabaseWith(fake), "players", 3, "LoL", new SyncErrorCollector());
 
     expect(client.getPlayers).toHaveBeenCalledWith({ page: 3, per_page: 100, "filter[videogame_title]": "LoL" });
-    expect(result).toEqual({ pageItems: 2, failed: false, synced: 2, errors: 0 });
+    expect(result).toEqual({ pageItems: 2, failure: null, synced: 2, errors: 0 });
     expect(callbacks.reconcilePlayerTeamHistory).toHaveBeenCalledWith([
       { playerLocalId: "player-uuid-1", newTeamLocalId: "team-uuid-10" },
       { playerLocalId: "player-uuid-2", newTeamLocalId: "team-uuid-20" },
@@ -70,15 +74,28 @@ describe("full-sync page source", () => {
   });
 
   it("flags a failed fetch without touching the database", async () => {
-    client.getTeams.mockRejectedValue(new Error("PandaScore API error: 503"));
+    client.getTeams.mockRejectedValue(new PandaScoreApiError(503, "Service Unavailable"));
     const fake = createFakeEsportDb();
     const errors = new SyncErrorCollector();
 
     const result = await processEntityPage(supabaseWith(fake), "teams", 2, null, errors);
 
-    expect(result).toEqual({ pageItems: 0, failed: true, synced: 0, errors: 0 });
+    expect(result).toEqual({ pageItems: 0, failure: "transient", synced: 0, errors: 0 });
     expect(fake.upserts).toEqual({});
     expect(errors.toJSON()[0]).toMatchObject({ type: "team", phase: "fetch" });
+  });
+
+  it("reports a rate limit even once the error ledger is capped", async () => {
+    client.getTeams.mockRejectedValue(new PandaScoreApiError(429, "Too Many Requests"));
+    const errors = new SyncErrorCollector();
+    for (let i = 0; i < MAX_ERROR_DETAILS + 5; i++) {
+      errors.add({ type: "team", id: i, phase: "upsert", error: "boom" });
+    }
+
+    const result = await processEntityPage(supabaseWith(createFakeEsportDb()), "teams", 9, null, errors);
+
+    expect(result.failure).toBe("rate_limited");
+    expect(errors.droppedCount).toBe(6);
   });
 });
 

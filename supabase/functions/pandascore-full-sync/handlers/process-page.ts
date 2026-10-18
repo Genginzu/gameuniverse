@@ -3,17 +3,17 @@
  *
  * Each call fetches ONE page from a specific PandaScore list endpoint and
  * hands the items to the shared ingest module (FK resolution, upsert, side
- * effects). Returns `{ pageItems, failed, synced, errors }` so the caller
+ * effects). Returns `{ pageItems, failure, synced, errors }` so the caller
  * can advance the cursor:
- *   - if `failed` is true → keep cursor on the same page (will be retried
- *     by the next chunk)
+ *   - if `failure` is set → keep cursor on the same page (retried by the
+ *     next chunk, or the job fails, depending on the failure reason)
  *   - else if pageItems < per_page → entity is done
  *   - else → bump page by 1 and continue
  *
  * Each SyncEntity maps 1:1 to a PandaScore endpoint. No alternation
  * inside a single entity — entities that span two endpoints (matches
  * past/running, tournaments upcoming/running) get split into two
- * SyncEntity values in job-cursor.ts.
+ * SyncEntity values in _shared/pandascore/sync-run/cursor.ts.
  */
 
 import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
@@ -39,17 +39,17 @@ import {
 } from "../../_shared/pandascore/ingest/index.ts";
 import { createIngestDeps } from "../../_shared/pandascore/ingest-deps.ts";
 import type { PandaScoreListParams } from "../../_shared/pandascore/types.ts";
-import type { SyncEntity } from "../lib/job-cursor.ts";
+import type { SyncEntity, SyncFailureReason } from "../../_shared/pandascore/sync-run/index.ts";
 
 const PER_PAGE = 100;
 
 export interface PageResult {
-  /** Items returned by PandaScore for the page. < PER_PAGE means done IF !failed. */
+  /** Items returned by PandaScore for the page. < PER_PAGE means done IF no failure. */
   pageItems: number;
-  /** True when the fetch threw (network / 5xx / timeout). The cursor must
-   *  NOT advance on a failed fetch — a subsequent chunk should retry the
-   *  same page rather than mark the entity prematurely done. */
-  failed: boolean;
+  /** Set when the fetch threw (rate limit / network / 5xx / timeout). The
+   *  cursor must NOT advance on a failed fetch — a subsequent chunk should
+   *  retry the same page rather than mark the entity prematurely done. */
+  failure: SyncFailureReason | null;
   synced: number;
   errors: number;
 }
@@ -78,7 +78,7 @@ function pageSource<T>(
     const result = await ingest(deps, fetched.items);
     return {
       pageItems: fetched.items.length,
-      failed: fetched.failed,
+      failure: fetched.failure,
       synced: result.synced,
       errors: result.errors,
     };

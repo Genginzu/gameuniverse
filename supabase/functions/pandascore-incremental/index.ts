@@ -222,7 +222,7 @@ Deno.serve(async (req) => {
       await completeLogEntry(supabase, logId, {
         counts,
         durationMs,
-        errorDetails: errors.toJSON(),
+        errors,
       });
     }
     await releaseLock(supabase, { advanceCursorTo: runStartedAt.toISOString() });
@@ -252,7 +252,7 @@ Deno.serve(async (req) => {
       await failLogEntry(supabase, logId, {
         errorMessage: message,
         durationMs,
-        errorDetails: errors.toJSON(),
+        errors,
       });
     }
     // Release the lock but DO NOT advance the cursor: the next run will

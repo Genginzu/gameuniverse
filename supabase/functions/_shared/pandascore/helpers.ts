@@ -16,19 +16,22 @@ import type { PandaScoreListParams } from "./types.ts";
 export {
   MAX_ERROR_DETAILS,
   SyncErrorCollector,
+  type StoredSyncError,
   type SyncErrorDetail,
   type SyncErrorPhase,
 } from "./sync-error-collector.ts";
 import type { SyncErrorCollector } from "./sync-error-collector.ts";
+import { classifyFetchError, type SyncFailureReason } from "./sync-run/failure.ts";
 
 /**
- * Result of a single page fetch. `failed=true` lets the caller distinguish
- * a legitimate short page (< perPage items, end of dataset) from a fetch
- * error (which also returns 0 items but should NOT mark the entity as done).
+ * Result of a single page fetch. A non-null `failure` lets the caller
+ * distinguish a legitimate short page (< perPage items, end of dataset)
+ * from a fetch error (which also returns 0 items but should NOT mark the
+ * entity as done), and tells it how to react (see sync-run/failure.ts).
  */
 export interface PageFetchResult<T> {
   items: T[];
-  failed: boolean;
+  failure: SyncFailureReason | null;
 }
 
 /**
@@ -63,17 +66,18 @@ export async function fetchOnePage<T>(
 
   try {
     const items = await fetcher(params);
-    return { items, failed: false };
+    return { items, failure: null };
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
-    logger.warn("fetchOnePage failed", { label, page, error: msg });
+    const failure = classifyFetchError(error);
+    logger.warn("fetchOnePage failed", { label, page, failure, error: msg });
     errorCollector?.add({
       type: errorType ?? label ?? "unknown",
       id: null,
       phase: "fetch",
       error: `Page ${page}: ${msg}`,
     });
-    return { items: [], failed: true };
+    return { items: [], failure };
   }
 }
 
@@ -110,7 +114,7 @@ export async function fetchAllPages<T>(
     // For the incremental flow, treat a fetch error like end-of-data: stop
     // paginating but return what we have. The caller decides what to do
     // with the partial result via the errorCollector counts.
-    if (result.failed || result.items.length < perPage) return all;
+    if (result.failure || result.items.length < perPage) return all;
   }
 
   logger.warn("fetchAllPages reached max pages", { label, maxPages, total: all.length });

@@ -20,6 +20,7 @@ import type {
   PandaScoreTeam,
   PandaScoreTournament,
 } from "./types.ts";
+import { PandaScoreApiError, PandaScoreConfigError } from "./sync-run/failure.ts";
 
 const BASE_URL = "https://api.pandascore.co";
 // 429 backoff: PandaScore's free/standard plans are limited to ~2-4 req/s.
@@ -34,7 +35,7 @@ const REQUEST_TIMEOUT_MS = 30_000;
 function getApiKey(): string {
   const key = Deno.env.get("PANDASCORE_API_KEY");
   if (!key) {
-    throw new Error("PANDASCORE_API_KEY is not configured");
+    throw new PandaScoreConfigError("PANDASCORE_API_KEY is not configured");
   }
   return key;
 }
@@ -111,9 +112,7 @@ async function request<T>(
 
     const body = await response.text().catch(() => "");
     logger.error("PandaScore API error", { status: response.status, path, body });
-    throw new Error(
-      `PandaScore API error: ${response.status} ${response.statusText}`,
-    );
+    throw new PandaScoreApiError(response.status, response.statusText);
   }
 
   throw new Error("PandaScore API: max retries exceeded");

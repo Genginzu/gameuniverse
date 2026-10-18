@@ -16,29 +16,39 @@
  * Behaviour:
  *   - Atomically claims the job (status pending → running).
  *   - Loops: fetch one page from one entity, upsert, advance cursor.
+ *     Jobs of kind='entity' only walk that entity's cursor keys.
  *   - Stops the loop when the time budget (CHUNK_BUDGET_MS) is nearly
- *     exhausted, OR when the cursor is fully done.
- *   - On budget exit: persists cursor, sets status back to `pending`,
- *     and self-reschedules so the next chunk starts immediately.
+ *     exhausted, when a page fails, OR when the cursor is fully done.
+ *   - The typed failure reason of a failed page decides the outcome
+ *     (sync-run/lifecycle.ts): rate limit / fatal → job failed,
+ *     transient → persist and self-reschedule to retry the same page.
  *   - On completion: marks the job `completed`.
  *
  * Order: teams → tournaments → players → matches (FK-safe).
  */
 
+import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
 import { logger } from "../_shared/logger.ts";
 import { getSupabaseAdmin } from "../_shared/supabase-admin.ts";
 import { SyncErrorCollector } from "../_shared/pandascore/helpers.ts";
 import {
-  claimJob,
+  cursorKeysForJob,
+  decideChunkOutcome,
   ensureCursor,
   isCursorComplete,
+  pickNextEntity,
+  type Cursor,
+  type PageFailure,
+  type SyncEntity,
+} from "../_shared/pandascore/sync-run/index.ts";
+import {
+  claimJob,
   markJobCompleted,
   markJobFailed,
   markJobPending,
   persistJobProgress,
-  pickNextEntity,
   type JobRow,
-} from "./lib/job-cursor.ts";
+} from "./lib/job-store.ts";
 import { rescheduleNextChunk } from "./lib/reschedule.ts";
 import { processEntityPage } from "./handlers/process-page.ts";
 
@@ -65,11 +75,118 @@ const PERSIST_EVERY_N_PAGES = 5;
  *  incremental cron that runs alongside. */
 const MIN_DELAY_BETWEEN_PAGES_MS = 200;
 
+const PER_PAGE = 100;
+
 function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
     headers: { "content-type": "application/json" },
   });
+}
+
+class ChunkRun {
+  readonly cursor: Cursor;
+  readonly scope: readonly SyncEntity[];
+  readonly errors: SyncErrorCollector;
+  chunkSynced = 0;
+  chunkErrors = 0;
+  pages = 0;
+  failure: PageFailure | null = null;
+  private pendingSynced = 0;
+  private pendingErrors = 0;
+
+  constructor(
+    private readonly supabase: SupabaseClient,
+    private readonly job: JobRow,
+    private readonly startedAt: number,
+  ) {
+    this.cursor = ensureCursor(job.cursor);
+    this.scope = cursorKeysForJob(job);
+    this.errors = SyncErrorCollector.fromJSON(job.error_details);
+  }
+
+  async run(): Promise<void> {
+    while (this.pages < MAX_PAGES_PER_CHUNK) {
+      if (Date.now() - this.startedAt >= CHUNK_BUDGET_MS) {
+        logger.info("pandascore-full-sync: chunk budget reached", {
+          jobId: this.job.id,
+          pagesThisChunk: this.pages,
+          elapsed: Date.now() - this.startedAt,
+        });
+        return;
+      }
+      const entity = pickNextEntity(this.cursor, this.scope);
+      if (!entity) return;
+      const pageStartedAt = Date.now();
+      await this.processPage(entity);
+      if (this.failure) return;
+      if (this.pages % PERSIST_EVERY_N_PAGES === 0) await this.flush();
+      const elapsed = Date.now() - pageStartedAt;
+      if (elapsed < MIN_DELAY_BETWEEN_PAGES_MS) {
+        await new Promise((r) => setTimeout(r, MIN_DELAY_BETWEEN_PAGES_MS - elapsed));
+      }
+    }
+  }
+
+  async flush(): Promise<void> {
+    await persistJobProgress(this.supabase, {
+      jobId: this.job.id,
+      cursor: this.cursor,
+      syncedDelta: this.pendingSynced,
+      errorsDelta: this.pendingErrors,
+      errors: this.errors,
+    });
+    this.pendingSynced = 0;
+    this.pendingErrors = 0;
+  }
+
+  get isComplete(): boolean {
+    return isCursorComplete(this.cursor, this.scope);
+  }
+
+  private async processPage(entity: SyncEntity): Promise<void> {
+    const page = this.cursor[entity].page;
+    const result = await processEntityPage(this.supabase, entity, page, this.job.game, this.errors);
+    this.pages++;
+    this.chunkSynced += result.synced;
+    this.chunkErrors += result.errors;
+    this.pendingSynced += result.synced;
+    this.pendingErrors += result.errors;
+
+    if (result.failure) {
+      this.failure = { reason: result.failure, entity, page };
+      logger.warn("pandascore-full-sync: page failed", { jobId: this.job.id, ...this.failure });
+    } else if (result.pageItems < PER_PAGE) {
+      this.cursor[entity].done = true;
+      logger.info("pandascore-full-sync: entity done", { jobId: this.job.id, entity, pages: page });
+    } else {
+      this.cursor[entity].page = page + 1;
+    }
+  }
+}
+
+async function finishChunk(supabase: SupabaseClient, chunk: ChunkRun, jobId: string): Promise<Response> {
+  await chunk.flush();
+  const outcome = decideChunkOutcome({ failure: chunk.failure, cursorComplete: chunk.isComplete });
+  const stats = {
+    jobId,
+    chunkSynced: chunk.chunkSynced,
+    chunkErrors: chunk.chunkErrors,
+    pagesThisChunk: chunk.pages,
+  };
+
+  if (outcome.action === "fail") {
+    await markJobFailed(supabase, jobId, outcome.message);
+    return jsonResponse({ ok: false, failed: true, reason: outcome.reason, ...stats });
+  }
+  if (outcome.action === "complete") {
+    await markJobCompleted(supabase, jobId);
+    logger.info("pandascore-full-sync: job completed", stats);
+    return jsonResponse({ ok: true, completed: true, ...stats });
+  }
+  await markJobPending(supabase, jobId);
+  await rescheduleNextChunk(jobId);
+  return jsonResponse({ ok: true, completed: false, cursor: chunk.cursor, ...stats });
 }
 
 Deno.serve(async (req) => {
@@ -100,184 +217,15 @@ Deno.serve(async (req) => {
     return jsonResponse({ ok: true, skipped: true, reason: "not_claimable" });
   }
 
-  const cursor = ensureCursor(job.cursor);
-  const errors = new SyncErrorCollector();
-  // Inherit prior error_details so we keep history across chunks.
-  for (const e of job.error_details) errors.add(e);
-
-  let totalSyncedDelta = 0;
-  let totalErrorsDelta = 0;
-  let pagesThisChunk = 0;
-
+  const chunk = new ChunkRun(supabase, job, start);
   try {
-    while (pagesThisChunk < MAX_PAGES_PER_CHUNK) {
-      // Time budget check at every page.
-      if (Date.now() - start >= CHUNK_BUDGET_MS) {
-        logger.info("pandascore-full-sync: chunk budget reached", {
-          jobId,
-          pagesThisChunk,
-          elapsed: Date.now() - start,
-        });
-        break;
-      }
-
-      // Pick the next entity that isn't done. Order matters for FK.
-      const entity = pickNextEntity(cursor);
-      if (!entity) break; // all done
-
-      const pageStartedAt = Date.now();
-      const page = cursor[entity].page;
-      const result = await processEntityPage(
-        supabase,
-        entity,
-        page,
-        job.game,
-        errors,
-      );
-
-      totalSyncedDelta += result.synced;
-      totalErrorsDelta += result.errors;
-      pagesThisChunk++;
-
-      // Advance cursor unless the fetch failed: a failed page must be
-      // retried by the next chunk (e.g. transient PandaScore 5xx). A
-      // legitimate short page (< 100) means end-of-data → entity done.
-      if (result.failed) {
-        // Inspect the latest collector entry to decide between two
-        // failure modes:
-        //   - 429 rate limit  -> hard fail the job. Looping on the same
-        //     page only wastes more quota; the admin must wait or
-        //     upgrade the plan.
-        //   - other (network, 5xx) -> break the chunk and let the
-        //     watchdog retry after the cooldown.
-        const lastError = errors.toJSON().slice(-1)[0]?.error ?? "";
-        const isRateLimit = lastError.includes("429");
-        logger.warn("pandascore-full-sync: page failed", {
-          jobId,
-          entity,
-          page,
-          isRateLimit,
-          lastError,
-        });
-        if (isRateLimit) {
-          // Persist what we have so the cursor reflects the last
-          // successfully fetched page, then mark failed.
-          await persistJobProgress(supabase, {
-            jobId,
-            cursor,
-            totalSyncedDelta,
-            totalErrorsDelta,
-            errorDetails: errors.toJSON(),
-          });
-          await markJobFailed(
-            supabase,
-            jobId,
-            `Rate limit PandaScore atteint sur ${entity} page ${page}. La synchronisation est interrompue. Réessayez dans quelques minutes ou contactez PandaScore pour augmenter votre quota.`,
-          );
-          return jsonResponse({
-            ok: false,
-            jobId,
-            failed: true,
-            reason: "rate_limit",
-            chunkSynced: totalSyncedDelta,
-            chunkErrors: totalErrorsDelta,
-            pagesThisChunk,
-          });
-        }
-        // Non-rate-limit failure: break the chunk so the watchdog
-        // retries after the cooldown.
-        break;
-      } else if (result.pageItems < 100) {
-        cursor[entity].done = true;
-        logger.info("pandascore-full-sync: entity done", {
-          jobId,
-          entity,
-          pages: page,
-        });
-      } else {
-        cursor[entity].page = page + 1;
-      }
-
-      // Persist intermediate progress every PERSIST_EVERY_N_PAGES so the
-      // admin UI sees the cursor advance during a long chunk, not just
-      // at chunk boundaries. We pass the running delta and reset it
-      // after persisting so we don't double-count.
-      if (pagesThisChunk % PERSIST_EVERY_N_PAGES === 0) {
-        await persistJobProgress(supabase, {
-          jobId,
-          cursor,
-          totalSyncedDelta,
-          totalErrorsDelta,
-          errorDetails: errors.toJSON(),
-        });
-        totalSyncedDelta = 0;
-        totalErrorsDelta = 0;
-      }
-
-      // Throttle between pages so we never exceed PandaScore's rate
-      // limit on a fast chunk. The fetch already includes 429 backoff,
-      // but a proactive delay prevents hitting the limit in the first
-      // place and avoids burning retry budget.
-      const elapsed = Date.now() - pageStartedAt;
-      if (elapsed < MIN_DELAY_BETWEEN_PAGES_MS) {
-        await new Promise((r) => setTimeout(r, MIN_DELAY_BETWEEN_PAGES_MS - elapsed));
-      }
-    }
-
-    // Persist any remaining delta + the final cursor state.
-    await persistJobProgress(supabase, {
-      jobId,
-      cursor,
-      totalSyncedDelta,
-      totalErrorsDelta,
-      errorDetails: errors.toJSON(),
-    });
-
-    if (isCursorComplete(cursor)) {
-      await markJobCompleted(supabase, jobId);
-      logger.info("pandascore-full-sync: job completed", {
-        jobId,
-        totalSynced: job.total_synced + totalSyncedDelta,
-        totalErrors: job.total_errors + totalErrorsDelta,
-      });
-      return jsonResponse({
-        ok: true,
-        jobId,
-        completed: true,
-        chunkSynced: totalSyncedDelta,
-        chunkErrors: totalErrorsDelta,
-        pagesThisChunk,
-      });
-    }
-
-    // Not done: reset to pending and self-reschedule.
-    await markJobPending(supabase, jobId);
-    await rescheduleNextChunk(jobId);
-    return jsonResponse({
-      ok: true,
-      jobId,
-      completed: false,
-      chunkSynced: totalSyncedDelta,
-      chunkErrors: totalErrorsDelta,
-      pagesThisChunk,
-      cursor,
-    });
+    await chunk.run();
+    return await finishChunk(supabase, chunk, jobId);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
     logger.error("pandascore-full-sync: chunk failed", { jobId, error });
-
-    // Persist any progress we made before the error.
-    await persistJobProgress(supabase, {
-      jobId,
-      cursor,
-      totalSyncedDelta,
-      totalErrorsDelta,
-      errorDetails: errors.toJSON(),
-    }).catch(() => {});
-
+    await chunk.flush().catch(() => {});
     await markJobFailed(supabase, jobId, message);
     return jsonResponse({ ok: false, error: message }, 500);
   }
 });
-
-

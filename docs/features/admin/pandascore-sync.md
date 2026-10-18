@@ -91,6 +91,13 @@ sync ne peut pas tenir dans une seule invocation Edge Function (limite
    et re-déclenche la fonction par un POST HTTP interne (self-reschedule
    immédiat plutôt que d'attendre le webhook UI).
 5. Quand toutes les entités ont `done=true`, le job passe `completed`.
+   Un job `kind='entity'` ne parcourt que les clés de cursor de son entité.
+
+Les compteurs sont incrémentés atomiquement par la RPC
+`increment_pandascore_job_progress` (service role uniquement). Un échec de
+page porte une raison typée : `rate_limited` (429) ou `fatal` (4xx, clé API
+absente) → job `failed` ; `transient` (5xx, réseau, timeout) → re-planifié
+sur la même page.
 
 L'UI admin poll `/api/admin/esport/sync-jobs` toutes les 5s pour afficher
 la progression.
@@ -190,7 +197,9 @@ supabase/functions/
 │   └── pandascore/
 │       ├── types.ts                # PandaScore* types port
 │       ├── client.ts               # HTTP client + retry + timeout
-│       ├── helpers.ts              # bulkUpsert, preloadIdMap, errorCollector
+│       ├── helpers.ts              # fetchOnePage/fetchAllPages, errorCollector
+│       ├── sync-error-collector.ts # ledger plafonné (50) + résumé typé `dropped`
+│       ├── sync-run/               # cursor, scope entity, échecs typés, transitions de statut
 │       ├── mappers.ts              # PandaScore object → Supabase row
 │       └── vercel-callbacks.ts     # reconcile-history + resolve-predictions
 │
@@ -198,14 +207,14 @@ supabase/functions/
 │   ├── index.ts                    # entry point + orchestration
 │   ├── lib/
 │   │   ├── lock.ts                 # acquire/release sur sync_state
-│   │   └── log-entry.ts            # CRUD pandascore_sync_logs
+│   │   └── log-entry.ts            # adapter pandascore_sync_logs
 │   └── handlers/
 │       └── sync-by-ids.ts          # 1 fonction par type d'entité
 │
 └── pandascore-full-sync/
     ├── index.ts                    # claim + chunked loop + reschedule
     ├── lib/
-    │   ├── job-cursor.ts           # claim, persist, mark-completed
+    │   ├── job-store.ts            # adapter pandascore_sync_jobs (claim, RPC progress, mark-*)
     │   └── reschedule.ts           # self-rescheduling HTTP
     └── handlers/
         └── process-page.ts         # fetch 1 page + upsert
@@ -230,7 +239,12 @@ src/
 │       └── resolve-predictions/route.ts # callback Edge
 │
 ├── components/admin/esport/
-│   └── SyncJobCard.tsx                  # carte progression job
+│   ├── SyncJobCard.tsx                  # carte progression job
+│   └── SyncJobEntityRow.tsx             # ligne entité + barres de cursor
+│
+├── lib/pandascore/
+│   ├── sync-progress.ts                 # clés de cursor + vue de progression (parité Deno testée)
+│   └── sync-history.ts                  # normalisation logs + jobs → historique
 │
 └── app/[locale]/admin/esport/sync/
     └── page.tsx                         # UI admin (polling SWR)

@@ -12,19 +12,17 @@
  *
  * Body (optional): { game?: string, entity?: 'teams'|'players'|'tournaments'|'matches' }
  *   - game: filter PandaScore queries by videogame title
- *   - entity: when set, the job's kind is 'entity' and only that entity
- *     is synced. When omitted, kind is 'full'.
+ *   - entity: when set, the job's kind is 'entity' and the Edge Function
+ *     only walks that entity's cursor keys. When omitted, kind is 'full'.
  */
 
 import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { logger } from "@/lib/logger";
+import { isSyncJobEntity } from "@/lib/pandascore/sync-progress";
 
 export const dynamic = "force-dynamic";
-
-const VALID_ENTITIES = ["teams", "players", "tournaments", "matches"] as const;
-type Entity = (typeof VALID_ENTITIES)[number];
 
 export async function POST(request: NextRequest) {
   try {
@@ -35,11 +33,8 @@ export async function POST(request: NextRequest) {
 
   const body = await request.json().catch(() => ({}));
   const game = typeof body.game === "string" ? body.game : null;
-  const rawEntity = typeof body.entity === "string" ? body.entity : null;
-  const entity =
-    rawEntity && (VALID_ENTITIES as readonly string[]).includes(rawEntity)
-      ? (rawEntity as Entity)
-      : null;
+  const rawEntity: unknown = body.entity;
+  const entity = isSyncJobEntity(rawEntity) ? rawEntity : null;
 
   const supabase = getSupabaseAdmin();
 
