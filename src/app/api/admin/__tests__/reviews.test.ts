@@ -54,23 +54,22 @@ vi.mock("@/lib/supabase-server", () => ({
     }),
 }));
 
-// Emails now come from auth.users via the service-role client (issue #375).
+// Emails come from auth.users through the auth admin API (issues #375, #387).
+const AUTH_EMAILS: Record<string, string> = {
+  "user-1": "player1@test.com",
+  "user-2": "player2@test.com",
+};
 vi.mock("@/lib/supabase-admin", () => ({
   getSupabaseAdmin: () => ({
-    schema: () => ({
-      from: () => ({
-        select: () => ({
-          in: () =>
-            Promise.resolve({
-              data: [
-                { id: "user-1", email: "player1@test.com" },
-                { id: "user-2", email: "player2@test.com" },
-              ],
-              error: null,
-            }),
-        }),
-      }),
-    }),
+    auth: {
+      admin: {
+        getUserById: (id: string) =>
+          Promise.resolve({
+            data: { user: AUTH_EMAILS[id] ? { id, email: AUTH_EMAILS[id] } : null },
+            error: null,
+          }),
+      },
+    },
   }),
 }));
 
