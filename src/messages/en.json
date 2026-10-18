@@ -26,13 +26,29 @@
       "title": "My Friends",
       "description": "Manage your friends and friend requests on Gamers Universe"
     },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Find all your notifications in one place: friends, votes, mentions, achievements and coaching"
+    },
     "library": {
       "title": "My library",
       "description": "Manage your personal video game collection"
     },
+    "connections": {
+      "title": "Connections & sync",
+      "description": "Connect your gaming accounts and sync your libraries in My universe"
+    },
     "collections": {
       "title": "My collections",
       "description": "Organize your games into custom collections and share them with the community"
+    },
+    "groups": {
+      "title": "Groups",
+      "description": "Join or create thematic groups around your favorite games and genres"
+    },
+    "communities": {
+      "title": "Communities",
+      "description": "Join large, permanent communities around your favorite games and genres"
     },
     "dashboard": {
       "title": "Dashboard",
@@ -53,6 +69,10 @@
     "coins": {
       "title": "GU Coins History",
       "description": "View your GU Coins earning and spending history"
+    },
+    "feed": {
+      "title": "Friends Activity Feed",
+      "description": "Follow your friends' activity: reviews, posts, gaming sessions and unlocked achievements"
     }
   },
   "header": {
@@ -416,7 +436,13 @@
     },
     "subSidebar": {
       "closeAriaLabel": "Close sub-sidebar",
-      "navAriaLabel": "{space} links"
+      "navAriaLabel": "{space} links",
+      "myGroups": "My groups",
+      "myCommunities": "My communities",
+      "noMyGroups": "You haven't joined any group yet",
+      "noMyCommunities": "You haven't joined any community yet",
+      "loading": "Loading…",
+      "unreadBadge": "{count} unread notifications"
     },
     "mobileNav": {
       "openAriaLabel": "Open navigation",
@@ -494,10 +520,12 @@
       "primaryNavAriaLabel": "Primary navigation"
     },
     "spaces": {
-      "library": "My library",
+      "library": "My universe",
       "esport": "Predictions",
       "coaching": "Coaching",
       "social": "Social",
+      "groups": "Groups",
+      "communities": "Communities",
       "account": "My account"
     },
     "links": {
@@ -505,7 +533,8 @@
         "myLibrary": "My library",
         "backlog": "My backlog",
         "collections": "My collections",
-        "favoriteCharacters": "Favorite characters"
+        "favoriteCharacters": "Favorite characters",
+        "connections": "Connections & sync"
       },
       "esport": {
         "predictions": "Predictions",
@@ -517,12 +546,22 @@
         "settings": "Coach settings"
       },
       "social": {
+        "feed": "Activity feed",
         "tags": "Trending tags"
+      },
+      "groups": {
+        "all": "All groups",
+        "create": "Create a group"
+      },
+      "communities": {
+        "all": "All communities",
+        "create": "Create a community"
       },
       "account": {
         "friends": "My friends",
         "discussions": "Discussions",
-        "coins": "My coins"
+        "coins": "My coins",
+        "notifications": "Notifications"
       }
     }
   },
@@ -792,6 +831,8 @@
           "postDays": "{days}d ago",
           "friendsKicker": "Friends",
           "friendsHelper": "{count, plural, =0 {No friends} =1 {1 friend} other {# friends}}",
+          "followersHelper": "{count, plural, =0 {No followers} =1 {1 follower} other {# followers}}",
+          "followingHelper": "{count, plural, =0 {Not following anyone} =1 {Following 1} other {Following #}}",
           "noTagline": "« Member of the Gamers Universe community. »"
         }
       }
@@ -808,7 +849,9 @@
       "stats": "Stats",
       "recommendations": "Recommendations",
       "settings": "Settings",
-      "goals": "Goals"
+      "goals": "Goals",
+      "followers": "Followers",
+      "following": "Following"
     },
     "feed": {
       "feedLabel": "Subscribed feed",
@@ -1057,6 +1100,12 @@
       "anonymousPlayer": "Anonymous Player",
       "newPost": "New post"
     }
+  },
+  "connections": {
+    "kicker": "My universe",
+    "titlePrefix": "Connections &",
+    "titleAccent": "sync",
+    "subtitle": "Connect your gaming accounts (Steam, Xbox, PlayStation, Epic…) and automatically sync your libraries in My universe."
   },
   "userLibrary": {
     "title": "My Library",
@@ -1519,7 +1568,48 @@
     "explore": "Explore",
     "community": "Community",
     "madeWith": "Made with",
-    "forGamers": "for gamers"
+    "forGamers": "for gamers",
+    "legal": "Legal",
+    "mentionsLegales": "Legal notice",
+    "confidentialite": "Privacy policy",
+    "cookies": "Cookie policy",
+    "cgv": "Terms of sale",
+    "cgu": "Terms of use",
+    "manageCookies": "Manage cookies"
+  },
+  "legal": {
+    "lastUpdated": "Last updated: {date}",
+    "tocTitle": "Contents",
+    "backToTop": "Back to top",
+    "cookieBanner": {
+      "title": "We respect your privacy",
+      "description": "We use cookies and trackers to measure audience and display some embedded content (videos). No non-essential tracker is set without your consent. You can accept, reject or customise your choices. See the cookie policy.",
+      "acceptAll": "Accept all",
+      "rejectAll": "Reject all",
+      "customize": "Customise",
+      "save": "Save my choices",
+      "policyLink": "Cookie policy",
+      "manageTitle": "Cookie preferences",
+      "necessary": "Strictly necessary",
+      "necessaryDescription": "Essential for the site to work (session, security, language preference, consent). Always on.",
+      "necessaryAlwaysOn": "Always on",
+      "analytics": "Audience measurement",
+      "analyticsDescription": "Traffic statistics (Vercel Analytics, Speed Insights) to improve the site.",
+      "media": "Multimedia content",
+      "mediaDescription": "Embedded videos (YouTube) on game pages. The player sets YouTube cookies.",
+      "marketing": "Advertising and marketing",
+      "marketingDescription": "Advertising trackers and contact tools (enabled only if installed).",
+      "close": "Close"
+    },
+    "authConsent": {
+      "label": "By creating an account, I accept the <cgu>Terms of Use</cgu> and I have read the <privacy>Privacy Policy</privacy>.",
+      "notice": "Your data (email address, username) is used to create and manage your account. See the privacy policy.",
+      "required": "You must accept the Terms of Use to create an account."
+    },
+    "bookingConsent": {
+      "label": "I accept the <cgv>Terms of Sale and Intermediation</cgv> and I request the service to be performed before the end of the 14-day withdrawal period, which means I lose this right once the service is fully performed.",
+      "required": "You must accept the Terms of Sale before booking."
+    }
   },
   "errors": {
     "unexpectedError": "An unexpected error occurred",
@@ -1609,6 +1699,10 @@
       "description": "Connect your gaming platform accounts to sync your data",
       "connectedTitle": "Connected accounts",
       "connectedDescription": "Accounts linked via OAuth — name, avatar and library imported automatically",
+      "syncTitle": "Library sync",
+      "syncDescription": "Connect the account and automatically import your game library",
+      "connectOnlyTitle": "Account connection",
+      "connectOnlyDescription": "Account linked for your profile — library sync isn't available",
       "manualTitle": "Manual usernames",
       "manualDescription": "Platforms without an API: your username is just displayed on your profile",
       "lastSyncedAt": "Synced {when} ago",
@@ -1636,6 +1730,25 @@
       "syncImported": "{imported} new games imported from IGDB",
       "syncPrivateProfile": "Your Steam profile is private — make it public to sync",
       "syncEmpty": "No games found in your Steam library",
+      "syncUnavailable": "Library sync isn't available for this platform",
+      "connectFailed": "Account connection failed",
+      "connectSuccess": "Account connected",
+      "syncStarted": "Sync started in the background…",
+      "syncResult": "{matched}/{total} games in your library",
+      "syncImportedShort": "{imported} imported",
+      "viewLibrary": "View in My universe",
+      "syncFailed": "Sync failed: {error}",
+      "syncCount": "{processed}/{total} games",
+      "syncImportingGame": "Importing game: {game}",
+      "syncPhase": {
+        "starting": "Starting…",
+        "fetching": "Fetching your library…",
+        "resolving": "Matching games…",
+        "importing": "Importing new games from IGDB…",
+        "saving": "Saving…",
+        "done": "Done",
+        "failed": "Failed"
+      },
       "names": {
         "steam": "Steam",
         "epic": "Epic Games",
@@ -1692,6 +1805,8 @@
       "playersCategory": "Players",
       "achievements": "Achievements",
       "playerAchievements": "Player Achievements",
+      "groups": "Groups",
+      "communities": "Communities",
       "webhooks": "Webhooks",
       "bulkImport": "Bulk Import",
       "bulkImportCharacters": "Bulk Import",
@@ -1702,7 +1817,8 @@
       "esportImport": "Esport Import",
       "esportSync": "PandaScore Sync",
       "translations": "Translations",
-      "globalSync": "Global Sync"
+      "globalSync": "Global Sync",
+      "librarySync": "Library Sync"
     },
     "closeSidebar": "Close sidebar",
     "openSidebar": "Open sidebar",
@@ -2516,6 +2632,88 @@
         "errorGeneric": "An error occurred while deleting the comment."
       }
     },
+    "groups": {
+      "title": "Group Moderation",
+      "description": "Suspend or delete groups that violate community guidelines.",
+      "searchPlaceholder": "Search a group by name...",
+      "search": "Search",
+      "totalGroups": "{count, plural, =0 {No groups} one {1 group} other {# groups}}",
+      "noGroups": "No groups found.",
+      "unknownOwner": "Unknown owner",
+      "statusActive": "Active",
+      "statusSuspended": "Suspended",
+      "toggleError": "An error occurred while changing the status.",
+      "columns": {
+        "name": "Name",
+        "owner": "Owner",
+        "membersCount": "Members",
+        "visibility": "Status",
+        "date": "Date",
+        "actions": "Actions"
+      },
+      "sortBy": "Sort by {field}",
+      "deleteGroup": "Delete group {name}",
+      "page": "Page {current} of {total}",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "suspendDialog": {
+        "success": "Group suspended successfully."
+      },
+      "restoreDialog": {
+        "success": "Group restored successfully."
+      },
+      "deleteDialog": {
+        "title": "Delete Group",
+        "warning": "Are you sure you want to delete the group \"{name}\"?",
+        "irreversible": "This action is irreversible. The group, its members, and its posts will be permanently deleted.",
+        "confirm": "Delete",
+        "cancel": "Cancel",
+        "deleting": "Deleting...",
+        "success": "Group deleted successfully!",
+        "errorGeneric": "An error occurred while deleting the group."
+      }
+    },
+    "communities": {
+      "title": "Community Moderation",
+      "description": "Suspend or delete communities that violate community guidelines.",
+      "searchPlaceholder": "Search a community by name...",
+      "search": "Search",
+      "totalCommunities": "{count, plural, =0 {No communities} one {1 community} other {# communities}}",
+      "noCommunities": "No communities found.",
+      "unknownOwner": "Unknown owner",
+      "statusActive": "Active",
+      "statusSuspended": "Suspended",
+      "toggleError": "An error occurred while changing the status.",
+      "columns": {
+        "name": "Name",
+        "owner": "Owner",
+        "membersCount": "Members",
+        "visibility": "Status",
+        "date": "Date",
+        "actions": "Actions"
+      },
+      "sortBy": "Sort by {field}",
+      "deleteCommunity": "Delete community {name}",
+      "page": "Page {current} of {total}",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "suspendDialog": {
+        "success": "Community suspended successfully."
+      },
+      "restoreDialog": {
+        "success": "Community restored successfully."
+      },
+      "deleteDialog": {
+        "title": "Delete Community",
+        "warning": "Are you sure you want to delete the community \"{name}\"?",
+        "irreversible": "This action is irreversible. The community, its members, and its posts will be permanently deleted.",
+        "confirm": "Delete",
+        "cancel": "Cancel",
+        "deleting": "Deleting...",
+        "success": "Community deleted successfully!",
+        "errorGeneric": "An error occurred while deleting the community."
+      }
+    },
     "platforms": {
       "title": "Platform Management",
       "newPlatform": "New Platform",
@@ -2826,6 +3024,39 @@
         "content_descriptors": "Descriptors",
         "ratings": "Ratings"
       }
+    },
+    "librarySync": {
+      "title": "Library Sync",
+      "description": "Titles reported by connected platforms (Steam, Xbox, PlayStation) that couldn't be auto-matched to a game. Link them to a game and every player picks it up on their next sync.",
+      "filters": {
+        "platform": "Platform",
+        "allPlatforms": "All",
+        "status": "Status",
+        "unmatched": "Unmatched",
+        "matched": "Matched",
+        "all": "All",
+        "search": "Search"
+      },
+      "platforms": {
+        "steam": "Steam",
+        "xbox": "Xbox",
+        "playstation": "PlayStation"
+      },
+      "searchPlaceholder": "Game name…",
+      "searchGame": "Search a game to link…",
+      "linkButton": "Search",
+      "dialogTitle": "Link to a game",
+      "searchHint": "Type at least 2 characters to search",
+      "igdbHint": "Direct IGDB search — the game is imported locally if needed.",
+      "noGameResults": "No game found",
+      "count": "{total} title(s)",
+      "loading": "Loading…",
+      "empty": "No titles to show",
+      "unlink": "Unlink",
+      "linkedToast": "Game linked",
+      "unlinkedToast": "Link removed",
+      "errorToast": "Update failed",
+      "pageOf": "Page {page} / {total}"
     },
     "globalSync": {
       "title": "IGDB Global Sync",
@@ -3487,6 +3718,10 @@
         "coaches": "Coaches"
       },
       "seeAll": "See all {category} for “{query}” →",
+      "tabsAriaLabel": "Filter results by type",
+      "tabs": {
+        "all": "All"
+      },
       "recent": {
         "title": "Recent searches",
         "clearAll": "Clear all",
@@ -3542,6 +3777,216 @@
     "esportPredictions": "Esport Predictions",
     "esportPredictionsDesc": "Bet on match outcomes"
   },
+  "groups": {
+    "card": {
+      "membersCount": "{count, plural, =0 {No members} one {# member} other {# members}}",
+      "public": "Public",
+      "private": "Private",
+      "noDescription": "No description"
+    },
+    "form": {
+      "nameLabel": "Name",
+      "namePlaceholder": "e.g. RPG fans, Elden Ring guild...",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Describe your group's theme...",
+      "visibilityLabel": "Private group",
+      "visibilityLockedDescription": "Groups are always private: invisible publicly, accessible only by invitation.",
+      "imageLabel": "Image (URL)",
+      "imagePlaceholder": "https://example.com/image.jpg",
+      "imageDescription": "URL of a custom image for the group's illustration.",
+      "submit": "Create",
+      "submitEdit": "Save",
+      "submitting": "Saving..."
+    },
+    "page": {
+      "title": "Groups",
+      "createButton": "Create a group",
+      "errorTitle": "Loading error",
+      "errorDescription": "Unable to load this group. Please try again.",
+      "backToGroups": "Back to groups"
+    },
+    "editorial": {
+      "kicker": "Community",
+      "titlePrefix": "Your",
+      "titleAccent": "groups",
+      "subtitle": "Groups are invite-only: join one when a member invites you, or create your own and invite whoever you want (up to 50 members).",
+      "createButton": "Create a group",
+      "myGroupsKicker": "My groups",
+      "errorLoading": "Unable to load groups. Please try again.",
+      "authRequired": {
+        "title": "Sign-in required",
+        "description": "Sign in to see your groups and pending invitations."
+      },
+      "empty": {
+        "title": "No groups yet",
+        "description": "Create your first group and invite players by email or username.",
+        "cta": "Create my first group"
+      }
+    },
+    "detail": {
+      "public": "Public group",
+      "private": "Private group",
+      "membersCount": "{count, plural, =0 {No members} one {# member out of {max}} other {# members out of {max}}}",
+      "leave": "Leave group",
+      "settings": "Settings",
+      "postsKicker": "Discussions",
+      "membersKicker": "Members",
+      "invitationsKicker": "Invitations ({count}/{max})",
+      "errorTitle": "Group not found",
+      "errorDescription": "This group does not exist or is not accessible.",
+      "backToGroups": "Back to groups"
+    },
+    "settings": {
+      "title": "Group settings",
+      "tabs": {
+        "info": "Information",
+        "members": "Members"
+      },
+      "membersKicker": "Member management",
+      "backToGroup": "Back to group",
+      "forbiddenTitle": "Access denied",
+      "forbiddenDescription": "Only the group's admin and moderators can access the settings."
+    },
+    "members": {
+      "empty": "No members yet.",
+      "unknownPlayer": "Unknown player",
+      "changeRole": "Change role",
+      "removeMember": "Remove member",
+      "roles": {
+        "owner": "Admin",
+        "moderator": "Moderator",
+        "member": "Member"
+      }
+    },
+    "posts": {
+      "composerPlaceholder": "Share something with the group...",
+      "post": "Post",
+      "posting": "Posting...",
+      "empty": "No posts yet. Be the first to write one!",
+      "unknownAuthor": "Anonymous member"
+    },
+    "invitations": {
+      "byUsername": "By username",
+      "byEmail": "By email",
+      "usernamePlaceholder": "Player's username",
+      "emailPlaceholder": "email@example.com",
+      "invite": "Invite",
+      "inviteSuccess": "Invitation sent!",
+      "empty": "No invitation sent for this group yet.",
+      "unknownTarget": "Unknown recipient",
+      "status": {
+        "pending": "Pending",
+        "accepted": "Accepted",
+        "declined": "Declined"
+      }
+    },
+    "invitationPage": {
+      "kicker": "Invitation",
+      "pendingKicker": "{count, plural, =0 {No pending invitation} one {# pending invitation} other {# pending invitations}}",
+      "invitedBy": "Invited by {username}",
+      "membersCount": "{count, plural, =0 {No members} one {# member out of {max}} other {# members out of {max}}}",
+      "expiresAt": "This invitation expires on {date}",
+      "accept": "Accept",
+      "decline": "Decline",
+      "authRequiredTitle": "Sign-in required",
+      "authRequiredDescription": "Sign in to view and respond to this invitation.",
+      "signIn": "Sign in",
+      "notFoundTitle": "Invitation not found",
+      "notFoundDescription": "This invitation link is invalid or you don't have access to it.",
+      "alreadyAnsweredTitle": "Invitation already answered",
+      "alreadyAnsweredDescription": {
+        "accepted": "You have already accepted this invitation.",
+        "declined": "You have already declined this invitation."
+      },
+      "expiredTitle": "Invitation expired",
+      "expiredDescription": "This invitation has expired. Ask the group owner to send you a new one."
+    }
+  },
+  "communities": {
+    "card": {
+      "membersCount": "{count, plural, =0 {No members} one {# member} other {# members}}",
+      "public": "Public",
+      "private": "Private",
+      "noDescription": "No description"
+    },
+    "form": {
+      "nameLabel": "Name",
+      "namePlaceholder": "e.g. RPG Community, Zelda Universe...",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Describe your community's theme...",
+      "visibilityLabel": "Private community",
+      "visibilityLockedDescription": "Communities are always public: visible and joinable by anyone, with no approval and no member limit.",
+      "imageLabel": "Image (URL)",
+      "imagePlaceholder": "https://example.com/image.jpg",
+      "imageDescription": "URL of a custom image for the community's illustration.",
+      "submit": "Create",
+      "submitEdit": "Save",
+      "submitting": "Saving..."
+    },
+    "page": {
+      "title": "Communities",
+      "createButton": "Create a community",
+      "errorTitle": "Loading error",
+      "errorDescription": "Unable to load this community. Please try again.",
+      "backToCommunities": "Back to communities"
+    },
+    "editorial": {
+      "kicker": "Wider community",
+      "titlePrefix": "Find your",
+      "titleAccent": "community",
+      "subtitle": "Join large, permanent communities around your favorite games and genres, or create your own.",
+      "createButton": "Create a community",
+      "searchPlaceholder": "Search a community...",
+      "errorLoading": "Unable to load communities. Please try again.",
+      "empty": {
+        "title": "No communities yet",
+        "description": "Create the first community around a game or genre you're passionate about.",
+        "cta": "Create my first community"
+      }
+    },
+    "detail": {
+      "public": "Public community",
+      "private": "Private community",
+      "membersCount": "{count, plural, =0 {No members} one {# member} other {# members}}",
+      "join": "Join",
+      "leave": "Leave community",
+      "settings": "Settings",
+      "postsKicker": "Discussions",
+      "membersKicker": "Members",
+      "errorTitle": "Community not found",
+      "errorDescription": "This community does not exist or is not accessible.",
+      "backToCommunities": "Back to communities"
+    },
+    "settings": {
+      "title": "Community settings",
+      "tabs": {
+        "info": "Information",
+        "members": "Members"
+      },
+      "membersKicker": "Member management",
+      "backToCommunity": "Back to community",
+      "forbiddenTitle": "Access denied",
+      "forbiddenDescription": "Only the community's admin and moderators can access the settings."
+    },
+    "members": {
+      "empty": "No members yet.",
+      "unknownPlayer": "Unknown player",
+      "changeRole": "Change role",
+      "removeMember": "Remove member",
+      "roles": {
+        "owner": "Admin",
+        "moderator": "Moderator",
+        "member": "Member"
+      }
+    },
+    "posts": {
+      "composerPlaceholder": "Share something with the community...",
+      "post": "Post",
+      "posting": "Posting...",
+      "empty": "No posts yet. Be the first to write one!",
+      "unknownAuthor": "Anonymous member"
+    }
+  },
   "friends": {
     "searchPlaceholder": "Search for a friend…",
     "listLabel": "Friends list",
@@ -3576,7 +4021,13 @@
   "subscriptions": {
     "subscribe": "Subscribe",
     "unsubscribe": "Unsubscribe",
-    "confirmUnsubscribe": "Are you sure you want to unsubscribe from this player?"
+    "confirmUnsubscribe": "Are you sure you want to unsubscribe from this player?",
+    "followersTitle": "Followers",
+    "followingTitle": "Following",
+    "emptyFollowers": "No followers yet.",
+    "emptyFollowing": "This player is not following anyone yet.",
+    "listLabel": "Player list",
+    "unknownPlayer": "Unknown player"
   },
   "playerStats": {
     "dashboard": {
@@ -4119,6 +4570,7 @@
     "ariaLabel": "Notifications, {count} unread",
     "noNotifications": "No notifications",
     "markAllAsRead": "Mark all as read",
+    "viewAll": "View all notifications",
     "typePostComment": "commented on your post",
     "typeDiscussionMessage": "sent you a message",
     "typePostCreated": "published a new post",
@@ -4131,6 +4583,10 @@
     "typeCoachingCompleted": "completed your coaching session",
     "typeCoachingCancelled": "cancelled a coaching session",
     "typeCoachingPaid": "paid for your coaching session",
+    "typeFriendRequest": "sent you a friend request",
+    "typeFriendAccepted": "accepted your friend request",
+    "typeReviewVote": "voted on your review",
+    "typeAchievementUnlocked": "New achievement unlocked",
     "typeModerationWarning": "warned you about some content"
   },
   "suspension": {
@@ -4170,6 +4626,40 @@
       "generic": "The report failed. Please try again.",
       "cancelClosed": "This report has already been handled by moderation.",
       "cancelGeneric": "Cancelling failed. Please try again."
+    }
+  },
+  "notificationCenter": {
+    "kicker": "Your activity",
+    "titlePrefix": "Notification",
+    "titleAccent": "center",
+    "subtitle": "Find all your notifications in one place: friends, votes, mentions, achievements and coaching.",
+    "filterByType": "Filter by type",
+    "filterByStatus": "Filter by status",
+    "categoryAll": "All",
+    "category": {
+      "friends": "Friends",
+      "reviews": "Reviews",
+      "mentions": "Mentions",
+      "achievements": "Achievements",
+      "coaching": "Coaching",
+      "activity": "Activity",
+      "moderation": "Moderation"
+    },
+    "status": {
+      "all": "All",
+      "unread": "Unread",
+      "read": "Read"
+    },
+    "markAllAsRead": "Mark all as read",
+    "markAsRead": "Mark as read",
+    "markAsUnread": "Mark as unread",
+    "viewResource": "View",
+    "empty": "No notifications to display",
+    "loadingError": "Unable to load your notifications",
+    "authRequired": {
+      "title": "Sign in required",
+      "description": "Sign in to view your notifications.",
+      "signIn": "Sign in"
     }
   },
   "postComments": {
@@ -4684,6 +5174,28 @@
       "noComments": "No comments yet. Be the first to react!",
       "placeholder": "Write a comment...",
       "loginRequired": "Log in to join the discussion"
+    }
+  },
+  "feedPage": {
+    "title": "Activity Feed",
+    "subtitle": "Your friends' activity in real time",
+    "empty": "Add friends to see their activity here.",
+    "emptyFiltered": "None of your friends have posted this type of content yet.",
+    "errorTitle": "An error occurred",
+    "errorDescription": "Failed to load the activity feed. Please try again.",
+    "filters": {
+      "label": "Filter by activity type",
+      "all": "All",
+      "review": "Reviews",
+      "post": "Posts",
+      "comment": "Comments",
+      "library": "Library",
+      "playtime": "Playtime",
+      "favorite": "Favorites",
+      "collection": "Collections",
+      "friendship": "Friends",
+      "session": "Sessions",
+      "achievement": "Achievements"
     }
   }
 }

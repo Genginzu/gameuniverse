@@ -50,7 +50,7 @@ export const PLATFORM_META: Record<
   GamingPlatform,
   { icon: string; color: string; authType: AuthType }
 > = {
-  steam: { icon: "mdi:steam", color: "text-gray-800 dark:text-gray-200", authType: "oauth" },
+  steam: { icon: "mdi:steam", color: "text-white", authType: "oauth" },
   xbox: {
     icon: "mdi:microsoft-xbox",
     color: "text-green-600 dark:text-green-400",
@@ -63,7 +63,9 @@ export const PLATFORM_META: Record<
   },
   epic: {
     icon: "simple-icons:epicgames",
-    color: "text-gray-800 dark:text-gray-200",
+    // Monochrome brand logo; kept light so it stays visible on the dark
+    // linked-platforms surfaces (which don't always carry the `dark` class).
+    color: "text-white",
     authType: "oauth",
   },
   battlenet: {

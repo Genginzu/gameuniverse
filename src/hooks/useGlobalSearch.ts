@@ -9,7 +9,10 @@ import { useRouter } from "@/i18n/navigation";
 import type { GlobalSearchResponse } from "@/types/global-search";
 import {
   type FlatSearchItem,
+  type SearchTab,
+  cycleTab,
   flattenResults,
+  getAvailableTabs,
   computeNextIndex,
   computePrevIndex,
   getResultUrl,
@@ -27,12 +30,27 @@ export function useGlobalSearch() {
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
+  const [activeTab, setActiveTab] = useState<SearchTab>("all");
 
   const abortRef = useRef<AbortController | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Mémoïsé pour éviter de recréer le tableau à chaque render (navigation clavier, etc.)
-  const flatItems: FlatSearchItem[] = useMemo(() => flattenResults(results), [results]);
+  // Selectable filter tabs — derived from which groups have results.
+  const availableTabs: SearchTab[] = useMemo(() => getAvailableTabs(results), [results]);
+
+  // Mémoïsé pour éviter de recréer le tableau à chaque render (navigation clavier, etc.).
+  // Filtré par l'onglet actif : la liste aplatie et le rendu partagent le même
+  // sous-ensemble, ce qui garde les indices de navigation clavier alignés.
+  const flatItems: FlatSearchItem[] = useMemo(
+    () => flattenResults(results, activeTab),
+    [results, activeTab]
+  );
+
+  // Changer d'onglet réinitialise la sélection clavier.
+  const selectTab = useCallback((tab: SearchTab) => {
+    setActiveTab(tab);
+    setActiveIndex(-1);
+  }, []);
 
   const getActiveItem = useCallback((): FlatSearchItem | null => {
     if (activeIndex < 0 || activeIndex >= flatItems.length) return null;
@@ -47,6 +65,7 @@ export function useGlobalSearch() {
       setResults(null);
       setIsOpen(false);
       setActiveIndex(-1);
+      setActiveTab("all");
       setIsLoading(false);
       return;
     }
@@ -69,6 +88,7 @@ export function useGlobalSearch() {
         setResults(data);
         setIsOpen(true);
         setActiveIndex(-1);
+        setActiveTab("all");
       } catch (err: unknown) {
         if (err instanceof DOMException && err.name === "AbortError") return;
         setResults(null);
@@ -87,6 +107,16 @@ export function useGlobalSearch() {
       if (!isOpen) return;
 
       switch (e.key) {
+        case "Tab": {
+          // Cycle filter tabs. Only intercept when a tab bar is actually
+          // shown (≥ 2 groups) — otherwise let focus move normally.
+          if (availableTabs.length <= 1) break;
+          e.preventDefault();
+          const direction = e.shiftKey ? -1 : 1;
+          setActiveTab((current) => cycleTab(current, availableTabs, direction));
+          setActiveIndex(-1);
+          break;
+        }
         case "ArrowDown":
           e.preventDefault();
           setActiveIndex((i) => computeNextIndex(i, flatItems.length));
@@ -113,7 +143,7 @@ export function useGlobalSearch() {
           break;
       }
     },
-    [isOpen, activeIndex, flatItems, locale, router]
+    [isOpen, activeIndex, flatItems, availableTabs, locale, router]
   );
 
   return {
@@ -125,6 +155,9 @@ export function useGlobalSearch() {
     setIsOpen,
     activeIndex,
     setActiveIndex,
+    activeTab,
+    availableTabs,
+    selectTab,
     handleKeyDown,
     getActiveItem,
     flatItems,

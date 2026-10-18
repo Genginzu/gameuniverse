@@ -57,6 +57,8 @@ const NAV_CATEGORIES: NavCategory[] = [
         icon: "lucide:award",
         labelKey: "nav.playerAchievements",
       },
+      { href: "/admin/groups", icon: "lucide:users", labelKey: "nav.groups" },
+      { href: "/admin/communities", icon: "fa:globe", labelKey: "nav.communities" },
       { href: "/admin/reports", icon: "lucide:flag", labelKey: "nav.reports" },
     ],
   },
@@ -72,6 +74,7 @@ const NAV_CATEGORIES: NavCategory[] = [
     items: [
       { href: "/admin/translations", icon: "mdi:translate", labelKey: "nav.translations" },
       { href: "/admin/global-sync", icon: "lucide:refresh-cw", labelKey: "nav.globalSync" },
+      { href: "/admin/library-sync", icon: "lucide:link", labelKey: "nav.librarySync" },
       { href: "/admin/webhooks", icon: "lucide:webhook", labelKey: "nav.webhooks" },
     ],
   },

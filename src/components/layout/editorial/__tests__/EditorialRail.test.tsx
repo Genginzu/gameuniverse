@@ -36,6 +36,8 @@ const editorialTranslations: Record<string, string> = {
   "spaces.esport": "Predictions",
   "spaces.coaching": "Coaching",
   "spaces.social": "Social",
+  "spaces.groups": "Groups",
+  "spaces.communities": "Communities",
   "spaces.account": "My account",
 };
 vi.mock("next-intl", () => ({
@@ -101,9 +103,11 @@ describe("spaceFromPathname (helper)", () => {
 });
 
 describe("EDITORIAL_SPACES", () => {
-  it("exposes exactly the 5 expected user-specific spaces in stable order", () => {
+  it("exposes exactly the 7 expected user-specific spaces in stable order", () => {
     expect(EDITORIAL_SPACES.map((s) => s.key)).toEqual([
       "social",
+      "groups",
+      "communities",
       "library",
       "esport",
       "coaching",

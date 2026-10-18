@@ -3,6 +3,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 import { encryptPlatformTokenOrNull } from "@/lib/services/platformTokens";
 import { consumeOauthState } from "@/lib/services/oauthState";
+import { consumeOauthReturn, withParams } from "@/lib/services/oauthReturn";
 
 async function exchangeCodeForToken(code: string, redirectUri: string) {
   const res = await fetch("https://login.live.com/oauth20_token.srf", {
@@ -140,8 +141,11 @@ export async function GET(request: NextRequest) {
       { onConflict: "player_id,platform" }
     );
 
+    const returnTo = await consumeOauthReturn();
     return NextResponse.redirect(
-      `${baseUrl}/players/${user.id}?tab=settings&platform=xbox&success=true`
+      returnTo
+        ? `${baseUrl}${withParams(returnTo, { platform: "xbox", success: "true" })}`
+        : `${baseUrl}/players/${user.id}?tab=settings&platform=xbox&success=true`
     );
   } catch (error) {
     logger.error("Xbox callback error", { error });

@@ -3,6 +3,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 import { encryptPlatformTokenOrNull } from "@/lib/services/platformTokens";
 import { consumeOauthState } from "@/lib/services/oauthState";
+import { consumeOauthReturn, withParams } from "@/lib/services/oauthReturn";
 
 const EPIC_TOKEN_URL = "https://api.epicgames.dev/epic/oauth/v2/token";
 const EPIC_USERINFO_URL = "https://api.epicgames.dev/epic/oauth/v2/userInfo";
@@ -14,6 +15,10 @@ interface EpicTokenResponse {
   account_id?: string;
   error?: string;
   error_description?: string;
+  // Epic services often return errors in their own shape:
+  errorCode?: string;
+  errorMessage?: string;
+  message?: string;
 }
 
 interface EpicUserInfo {
@@ -39,7 +44,33 @@ async function exchangeCodeForToken(code: string, redirectUri: string): Promise<
       redirect_uri: redirectUri,
     }),
   });
-  return res.json();
+
+  const rawText = await res.text();
+  let data: EpicTokenResponse = {};
+  try {
+    data = JSON.parse(rawText) as EpicTokenResponse;
+  } catch {
+    /* non-JSON body */
+  }
+
+  // Normalize Epic's error shapes (errorCode/errorMessage) into OAuth fields.
+  if (!data.error && data.errorCode) data.error = data.errorCode;
+  if (!data.error_description && (data.errorMessage || data.message)) {
+    data.error_description = data.errorMessage ?? data.message;
+  }
+
+  if (!res.ok || !data.access_token) {
+    logger.error("Epic token exchange failed", {
+      status: res.status,
+      error: data.error,
+      errorDescription: data.error_description,
+      rawBody: rawText.slice(0, 500),
+      hasClientId: !!process.env.EPIC_CLIENT_ID,
+      hasClientSecret: !!process.env.EPIC_CLIENT_SECRET,
+      redirectUri,
+    });
+  }
+  return data;
 }
 
 async function getEpicUserInfo(accessToken: string): Promise<EpicUserInfo | null> {
@@ -63,21 +94,33 @@ export async function GET(request: NextRequest) {
 
     if (!user) return NextResponse.redirect(`${baseUrl}/auth?error=unauthorized`);
 
+    // Where to send the user back (the page they started from, e.g. Connections),
+    // used for both success and error outcomes.
+    const returnTo = await consumeOauthReturn();
+    const dest = (params: Record<string, string>) =>
+      returnTo
+        ? `${baseUrl}${withParams(returnTo, params)}`
+        : `${baseUrl}${withParams(`/players/${user.id}?tab=settings`, params)}`;
+
     const stateValid = await consumeOauthState("epic", state);
     if (!stateValid) {
-      return NextResponse.redirect(
-        `${baseUrl}/players/${user.id}?tab=settings&error=epic_state_mismatch`
-      );
+      return NextResponse.redirect(dest({ error: "epic_state_mismatch" }));
     }
     if (!code) {
-      return NextResponse.redirect(`${baseUrl}/players/${user.id}?tab=settings&error=epic_no_code`);
+      return NextResponse.redirect(dest({ error: "epic_no_code" }));
     }
 
     const redirectUri = `${baseUrl}/api/auth/epic/callback`;
     const tokenData = await exchangeCodeForToken(code, redirectUri);
     if (!tokenData.access_token) {
       return NextResponse.redirect(
-        `${baseUrl}/players/${user.id}?tab=settings&error=epic_token_failed`
+        dest({
+          error: "epic_token_failed",
+          ...(tokenData.error ? { reason: tokenData.error } : {}),
+          ...(tokenData.error_description
+            ? { detail: tokenData.error_description.slice(0, 160) }
+            : {}),
+        })
       );
     }
 
@@ -106,9 +149,7 @@ export async function GET(request: NextRequest) {
       { onConflict: "player_id,platform" }
     );
 
-    return NextResponse.redirect(
-      `${baseUrl}/players/${user.id}?tab=settings&platform=epic&success=true`
-    );
+    return NextResponse.redirect(dest({ platform: "epic", success: "true" }));
   } catch (error) {
     logger.error("Epic callback error", { error });
     return NextResponse.redirect(`${baseUrl}?error=epic_callback_failed`);

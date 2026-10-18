@@ -40,6 +40,14 @@ describe("getBucketName", () => {
   it('returns "banners" for banners context', () => {
     expect(getBucketName("banners")).toBe("banners");
   });
+
+  it('returns "group-images" for group-images context', () => {
+    expect(getBucketName("group-images")).toBe("group-images");
+  });
+
+  it('returns "community-images" for community-images context', () => {
+    expect(getBucketName("community-images")).toBe("community-images");
+  });
 });
 
 describe("extractStoragePathFromUrl", () => {

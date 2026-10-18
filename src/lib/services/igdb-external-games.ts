@@ -2,7 +2,9 @@ import { IGDBService } from "./igdbService";
 import { logger } from "@/lib/logger";
 
 /**
- * IGDB `external_games` categories.
+ * IGDB `external_game_source` ids (formerly the `external_games.category`
+ * enum, deprecated Feb 2026 and removed Aug 2026 — the numeric ids are
+ * unchanged, only the field name moved to `external_game_source`).
  * See https://api-docs.igdb.com/#external-game-enums
  */
 export const EXTERNAL_GAME_CATEGORY = {
@@ -57,7 +59,7 @@ export async function resolveIgdbIdsByExternalUids(
   for (let i = 0; i < unique.length; i += BATCH_SIZE) {
     const batch = unique.slice(i, i + BATCH_SIZE);
     const body = `fields uid, game;
-where category = ${category} & uid = (${batch.map(quoted).join(",")});
+where external_game_source = ${category} & uid = (${batch.map(quoted).join(",")});
 limit ${BATCH_SIZE};`;
 
     const rows = await callExternalGames(body);
@@ -79,7 +81,9 @@ async function callExternalGames(body: string): Promise<ExternalGameRow[]> {
       statusText: response.statusText,
       body: text,
     });
-    return [];
+    // Surface the failure instead of silently returning no matches — a silent
+    // empty result makes a broken query look like "0 games matched".
+    throw new Error(`IGDB external_games query failed (${response.status}): ${text.slice(0, 200)}`);
   }
   return (await response.json()) as ExternalGameRow[];
 }

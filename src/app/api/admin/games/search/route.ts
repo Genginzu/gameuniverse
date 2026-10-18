@@ -13,6 +13,8 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const query = searchParams.get("q")?.trim() ?? "";
     const locale = searchParams.get("locale") ?? "fr";
+    // Allow callers (e.g. the admin link dialog) to request more results.
+    const limit = Math.min(Math.max(Number(searchParams.get("limit") ?? "10") || 10, 1), 50);
 
     if (query.length < 2) {
       return NextResponse.json([]);
@@ -26,7 +28,7 @@ export async function GET(request: NextRequest) {
       .from("game_translations")
       .select("game_id, title, language_code")
       .ilike("title", term)
-      .limit(30);
+      .limit(limit * 4);
 
     if (!matches || matches.length === 0) {
       return NextResponse.json([]);
@@ -66,7 +68,7 @@ export async function GET(request: NextRequest) {
       return a.title.localeCompare(b.title);
     });
 
-    return NextResponse.json(results.slice(0, 10));
+    return NextResponse.json(results.slice(0, limit));
   } catch {
     return NextResponse.json([], { status: 200 });
   }

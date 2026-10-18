@@ -3,51 +3,20 @@
 import { useTranslations, useFormatter } from "next-intl";
 import { Icon } from "@iconify/react";
 import { Link } from "@/i18n/navigation";
-import type { Notification, NotificationType } from "@/types/notification";
+import type { Notification } from "@/types/notification";
+import {
+  getNotificationHref,
+  hasContentPreview,
+  isSystemNotification,
+  TYPE_ICONS,
+  TYPE_LABEL_KEYS,
+} from "@/lib/notificationDisplay";
 
 interface NotificationItemProps {
   notification: Notification;
   onDismiss: (id: string) => void;
   onNavigate?: () => void;
 }
-
-/** Build the target path a notification should route to, or null if non-navigable. */
-function getNotificationHref(type: NotificationType, senderId: string): string | null {
-  if (type === "post_created") return `/players/${senderId}?tab=activity`;
-  if (type === "post_mention") return `/players/${senderId}?tab=posts`;
-  if (type.startsWith("coaching_")) return "/coaching/sessions";
-  return null;
-}
-
-const TYPE_ICONS: Record<string, string> = {
-  post_comment: "mdi:comment-outline",
-  discussion_message: "mdi:message-outline",
-  post_created: "mdi:post-outline",
-  post_mention: "mdi:at",
-  coaching_requested: "lucide:calendar-plus",
-  coaching_confirmed: "lucide:check-circle",
-  coaching_declined: "lucide:x-circle",
-  coaching_started: "lucide:play-circle",
-  coaching_completed: "lucide:check-check",
-  coaching_cancelled: "lucide:x-circle",
-  coaching_paid: "lucide:credit-card",
-  moderation_warning: "lucide:shield-alert",
-};
-
-const TYPE_LABEL_KEYS: Record<string, string> = {
-  post_comment: "typePostComment",
-  discussion_message: "typeDiscussionMessage",
-  post_created: "typePostCreated",
-  post_mention: "typePostMention",
-  coaching_requested: "typeCoachingRequested",
-  coaching_confirmed: "typeCoachingConfirmed",
-  coaching_declined: "typeCoachingDeclined",
-  coaching_started: "typeCoachingStarted",
-  coaching_completed: "typeCoachingCompleted",
-  coaching_cancelled: "typeCoachingCancelled",
-  coaching_paid: "typeCoachingPaid",
-  moderation_warning: "typeModerationWarning",
-};
 
 export function NotificationItem({ notification, onDismiss, onNavigate }: NotificationItemProps) {
   const t = useTranslations("notifications");
@@ -59,33 +28,44 @@ export function NotificationItem({ notification, onDismiss, onNavigate }: Notifi
   const relativeDate = format.relativeTime(safeDate, now);
 
   const senderName = notification.sender?.username ?? "?";
+  const isSystem = isSystemNotification(notification.type);
   const typeLabel = t(TYPE_LABEL_KEYS[notification.type] ?? "typePostComment");
   const href = getNotificationHref(notification.type, notification.senderId);
 
   const body = (
     <>
       {/* Type icon */}
-      <div className="bg-palette-primary-500/10 dark:bg-palette-primary-400/10 mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full">
+      <div
+        className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
+        style={{ background: "rgba(255, 255, 255, 0.05)" }}
+      >
         <Icon
           icon={TYPE_ICONS[notification.type] ?? "mdi:bell-outline"}
-          className="text-palette-primary-500 dark:text-palette-primary-300 h-4 w-4"
+          className="h-4 w-4"
+          style={{ color: "rgb(var(--neon-primary))" }}
         />
       </div>
 
       {/* Content */}
       <div className="min-w-0 flex-1 text-left">
-        <p className="text-sm text-gray-800 dark:text-slate-200">
-          <span className="font-semibold">{senderName}</span>{" "}
-          <span className="text-gray-600 dark:text-slate-400">{typeLabel}</span>
-        </p>
-        {notification.contentPreview && !notification.type.startsWith("coaching_") && (
-          <p className="mt-0.5 truncate text-xs text-gray-500 dark:text-slate-400">
+        {isSystem ? (
+          <p className="text-sm text-slate-200">
+            <span className="text-slate-400">{typeLabel}</span>
+          </p>
+        ) : (
+          <p className="text-sm text-slate-200">
+            <span className="font-semibold">{senderName}</span>{" "}
+            <span className="text-slate-400">{typeLabel}</span>
+          </p>
+        )}
+        {notification.contentPreview && hasContentPreview(notification.type) && (
+          <p className="mt-0.5 truncate text-xs text-slate-400">
             {notification.contentPreview}
           </p>
         )}
         <time
           dateTime={notification.createdAt}
-          className="mt-0.5 block text-xs text-gray-400 dark:text-slate-500"
+          className="mt-0.5 block text-xs text-slate-500"
           suppressHydrationWarning
         >
           {relativeDate}
@@ -95,7 +75,7 @@ export function NotificationItem({ notification, onDismiss, onNavigate }: Notifi
   );
 
   const containerClass =
-    "flex items-start gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-white/60 dark:hover:bg-slate-700/40";
+    "flex items-start gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-white/5";
 
   const handleNavigate = () => {
     onDismiss(notification.id);
@@ -120,7 +100,7 @@ export function NotificationItem({ notification, onDismiss, onNavigate }: Notifi
       <button
         type="button"
         onClick={() => onDismiss(notification.id)}
-        className="absolute top-2.5 right-2.5 rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600 dark:text-slate-500 dark:hover:bg-slate-600/50 dark:hover:text-slate-300"
+        className="absolute top-2.5 right-2.5 rounded-lg p-1.5 text-slate-500 transition-colors hover:bg-white/10 hover:text-slate-300"
         aria-label={t("dismiss")}
       >
         <Icon icon="mdi:close" className="h-4 w-4" />

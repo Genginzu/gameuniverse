@@ -34,17 +34,21 @@ CREATE UNIQUE INDEX IF NOT EXISTS uq_content_reports_reporter_content
 
 ALTER TABLE public.content_reports ENABLE ROW LEVEL SECURITY;
 
+-- Policies are dropped first so the migration can be re-applied safely.
 -- Reporters can view their own reports.
+DROP POLICY IF EXISTS "Users can view their own reports" ON public.content_reports;
 CREATE POLICY "Users can view their own reports"
   ON public.content_reports FOR SELECT
   USING (reporter_id = auth.uid());
 
 -- Authenticated users can create reports authored by themselves.
+DROP POLICY IF EXISTS "Users can create reports" ON public.content_reports;
 CREATE POLICY "Users can create reports"
   ON public.content_reports FOR INSERT
   WITH CHECK (reporter_id = auth.uid());
 
 -- Service role has full access (admin moderation runs via the service-role client).
+DROP POLICY IF EXISTS "Service role full access content_reports" ON public.content_reports;
 CREATE POLICY "Service role full access content_reports"
   ON public.content_reports FOR ALL
   TO service_role
@@ -59,6 +63,7 @@ ALTER TABLE public.profiles
 COMMENT ON COLUMN public.profiles.is_suspended IS 'Whether the account is suspended by an admin';
 
 -- Allow the "warn author" moderation action to emit a notification.
+-- Keeps every type added before (incl. 20260919000001_add_enriched_notification_types).
 ALTER TABLE public.notifications DROP CONSTRAINT IF EXISTS notifications_type_check;
 ALTER TABLE public.notifications ADD CONSTRAINT notifications_type_check
   CHECK (type IN (
@@ -73,5 +78,9 @@ ALTER TABLE public.notifications ADD CONSTRAINT notifications_type_check
     'coaching_completed',
     'coaching_cancelled',
     'coaching_paid',
+    'friend_request',
+    'friend_accepted',
+    'review_vote',
+    'achievement_unlocked',
     'moderation_warning'
   ));

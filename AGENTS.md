@@ -171,8 +171,8 @@ in `.agents/steering/igdb-field-tracking.md`.
 
 ## Git workflow
 
-- Work on `dev` branch. CI only runs on PRs from `dev` → `main`. Never push
-  directly to `main`.
+- No `dev` branch exists on the remote — `main` is the only default branch.
+  Open PRs directly against `main`. Never push directly to `main` without a PR.
 - Commit messages are enforced by `.githooks/commit-msg` to match
   `<type>: <description>` where type ∈ {feat, fix, refactor, docs, ci, chore,
   style, test, perf}. Include `#N` after the type when working on an issue:

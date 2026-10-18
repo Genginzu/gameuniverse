@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { FriendServerService } from "@/lib/services/friendServerService";
+import { NotificationServerService } from "@/lib/services/notificationServerService";
 import { AchievementEngine } from "@/lib/services/achievementEngine";
 import { logger } from "@/lib/logger";
 import { CoinService } from "@/lib/services/coinService";
@@ -26,6 +27,17 @@ export async function PATCH(_request: NextRequest, { params }: RouteContext) {
     }
 
     const updated = await FriendServerService.acceptRequest(friendshipId, user.id);
+
+    // Notify the original requester that their request was accepted (best-effort)
+    if (updated.sender_id && updated.sender_id !== user.id) {
+      NotificationServerService.create(
+        updated.sender_id,
+        user.id,
+        "friend_accepted",
+        friendshipId,
+        ""
+      ).catch((err) => logger.error("Friend accepted notification failed", { error: err }));
+    }
 
     // Evaluate achievements for both users (non-blocking)
     try {

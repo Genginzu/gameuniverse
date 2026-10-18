@@ -89,6 +89,52 @@ export class NotificationServerService {
     };
   }
 
+  /**
+   * Create a system notification (self-notification allowed).
+   * Used for achievement_unlocked where sender and recipient are the same user.
+   * The sender_id is set to the recipient_id to satisfy the FK constraint.
+   */
+  static async createSystemNotification(
+    recipientId: string,
+    type: NotificationType,
+    referenceId: string,
+    contentPreview: string
+  ): Promise<Notification | null> {
+    const supabase = getSupabaseAdmin();
+    const truncatedPreview = contentPreview.slice(0, 100);
+
+    const { data, error } = await supabase
+      .from("notifications" as UntypedFrom)
+      .insert({
+        recipient_id: recipientId,
+        sender_id: recipientId,
+        type,
+        reference_id: referenceId,
+        content_preview: truncatedPreview,
+      })
+      .select(
+        "id, recipient_id, sender_id, type, reference_id, content_preview, is_read, created_at"
+      )
+      .single();
+
+    if (error || !data) {
+      logger.error("Failed to create system notification", { error: error?.message, recipientId, type });
+      return null;
+    }
+
+    const row = data as unknown as Omit<NotificationRow, "sender">;
+    return {
+      id: row.id,
+      recipientId: row.recipient_id,
+      senderId: row.sender_id,
+      type: row.type,
+      referenceId: row.reference_id,
+      contentPreview: row.content_preview,
+      isRead: row.is_read,
+      createdAt: row.created_at,
+    };
+  }
+
   /** Fetch unread notifications for a recipient, with sender profile info. */
   static async getUnread(recipientId: string, limit: number = 20): Promise<Notification[]> {
     const supabase = await createRouteHandlerClient();
@@ -113,6 +159,57 @@ export class NotificationServerService {
     return ((data ?? []) as unknown as NotificationRow[]).map(transformRow);
   }
 
+  /**
+   * Fetch a paginated, optionally type/status-filtered slice of notifications
+   * for the notification center. Returns the page rows plus the total count
+   * matching the filters (for pagination).
+   */
+  static async getAll(
+    recipientId: string,
+    options: {
+      page?: number;
+      limit?: number;
+      types?: NotificationType[] | null;
+      status?: "all" | "unread" | "read";
+    } = {}
+  ): Promise<{ notifications: Notification[]; total: number }> {
+    const supabase = await createRouteHandlerClient();
+
+    const page = Math.max(1, options.page ?? 1);
+    const limit = Math.min(50, Math.max(1, options.limit ?? 20));
+    const from = (page - 1) * limit;
+    const to = from + limit - 1;
+
+    let query = supabase
+      .from("notifications" as UntypedFrom)
+      .select(
+        "id, recipient_id, sender_id, type, reference_id, content_preview, is_read, created_at, sender:profiles!sender_id(username, avatar_url)",
+        { count: "exact" }
+      )
+      .eq("recipient_id", recipientId);
+
+    if (options.status === "unread") query = query.eq("is_read", false);
+    else if (options.status === "read") query = query.eq("is_read", true);
+
+    if (options.types && options.types.length > 0) {
+      query = query.in("type", options.types);
+    }
+
+    const { data, count, error } = await query
+      .order("created_at", { ascending: false })
+      .range(from, to);
+
+    if (error) {
+      logger.error("Failed to fetch notifications page", { error: error.message, recipientId });
+      return { notifications: [], total: 0 };
+    }
+
+    return {
+      notifications: ((data ?? []) as unknown as NotificationRow[]).map(transformRow),
+      total: count ?? 0,
+    };
+  }
+
   /** Count unread notifications for a recipient. */
   static async getUnreadCount(recipientId: string): Promise<number> {
     const supabase = await createRouteHandlerClient();
@@ -129,6 +226,35 @@ export class NotificationServerService {
     }
 
     return count ?? 0;
+  }
+
+  /** Set the read status of a single notification. Returns true on success. */
+  static async setReadStatus(
+    notificationId: string,
+    recipientId: string,
+    isRead: boolean
+  ): Promise<boolean> {
+    const supabase = await createRouteHandlerClient();
+
+    const { data, error } = await supabase
+      .from("notifications" as UntypedFrom)
+      .update({ is_read: isRead })
+      .eq("id", notificationId)
+      .eq("recipient_id", recipientId)
+      .select("id")
+      .single();
+
+    if (error || !data) {
+      logger.error("Failed to set notification read status", {
+        error: error?.message,
+        notificationId,
+        recipientId,
+        isRead,
+      });
+      return false;
+    }
+
+    return true;
   }
 
   /** Mark a single notification as read. Returns true on success. */

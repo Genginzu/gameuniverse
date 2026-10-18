@@ -19,6 +19,7 @@ import { useSearchParams } from "next/navigation";
 
 import { useAuth } from "@/hooks/useAuth";
 import { useFriendRelationship } from "@/hooks/useFriendRelationship";
+import { useSubscriptionCounts } from "@/hooks/useSubscriptionCounts";
 import type { PlayerDetails } from "@/types/player";
 
 import { PlayerTabContent } from "./PlayerTabContent";
@@ -38,6 +39,8 @@ const PROFILE_TABS = [
   "activity",
   "library",
   "friends",
+  "followers",
+  "following",
   "reviews",
   "collections",
   "achievements",
@@ -91,6 +94,9 @@ export function PlayerDetailsContent({ player, locale, currentUserId }: PlayerDe
   // Lightweight friend relationship (count + status, not the full list).
   const relationship = useFriendRelationship(player.id);
 
+  // Followers / following counts for the hero and tabs.
+  const subscriptionCounts = useSubscriptionCounts(player.id);
+
   const searchParams = useSearchParams();
   const requestedTab = parseTabParam(searchParams.get("tab"), isOwner);
   const [activeTab, setActiveTab] = useState<ProfileTab>(
@@ -126,6 +132,8 @@ export function PlayerDetailsContent({ player, locale, currentUserId }: PlayerDe
         socialLinksSlot={<PlayerProfileSocialLinks socialLinks={player.socialLinks} />}
         reviewCount={player.stats.totalGames}
         friendCount={relationship.friendCount}
+        followersCount={subscriptionCounts.followers}
+        followingCount={subscriptionCounts.following}
       />
 
       <PlayerDetailBento player={player} locale={locale} friendCount={relationship.friendCount} />

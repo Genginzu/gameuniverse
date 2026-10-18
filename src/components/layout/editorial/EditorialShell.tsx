@@ -30,6 +30,7 @@ import { EditorialMegaMenu } from "./EditorialMegaMenu";
 import { HeaderLanguageSwitcher } from "./HeaderLanguageSwitcher";
 import { HeaderSearchTrigger } from "./HeaderSearchTrigger";
 import { HeaderUserDropdown } from "./HeaderUserDropdown";
+import { NotificationBell } from "@/components/shared/NotificationBell";
 import { SearchOverlay } from "./search/SearchOverlay";
 
 interface EditorialShellProps {
@@ -67,6 +68,7 @@ export function EditorialShell({
           <EditorialMegaMenu
             searchSlot={<HeaderSearchTrigger onActivate={() => setIsSearchOpen(true)} />}
             languageSlot={<HeaderLanguageSwitcher />}
+            notificationSlot={<NotificationBell />}
             userSlot={<HeaderUserDropdown />}
           />
         }

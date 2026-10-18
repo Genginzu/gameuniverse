@@ -22,6 +22,8 @@ export function getBucketName(context: UploadContext): string {
     avatars: "avatars",
     banners: "banners",
     "post-images": "post-images",
+    "group-images": "group-images",
+    "community-images": "community-images",
   };
   return bucketMap[context];
 }

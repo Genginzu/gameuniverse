@@ -24,6 +24,16 @@ vi.mock("@/lib/logger", () => ({
   logger: { error: vi.fn(), warn: vi.fn(), info: vi.fn() },
 }));
 
+const { mockNotificationCreate } = vi.hoisted(() => ({
+  mockNotificationCreate: vi.fn(),
+}));
+
+vi.mock("@/lib/services/notificationServerService", () => ({
+  NotificationServerService: {
+    create: mockNotificationCreate,
+  },
+}));
+
 const { POST, DELETE } = await import("@/app/api/review-votes/route");
 
 function makeRequest(url: string, init?: RequestInit) {
@@ -44,6 +54,8 @@ describe("POST /api/review-votes", () => {
   beforeEach(() => {
     mockSupabaseFrom = null;
     mockGetUser = null;
+    mockNotificationCreate.mockReset();
+    mockNotificationCreate.mockResolvedValue(null);
   });
 
   test("returns 401 when not authenticated", async () => {
@@ -163,6 +175,95 @@ describe("POST /api/review-votes", () => {
     expect(body.vote).toEqual({ voteType: "helpful" });
   });
 
+  test("sends review_vote notification when creating a new vote", async () => {
+    mockGetUser = vi.fn(() => Promise.resolve({ data: { user: USER }, error: null }));
+    mockSupabaseFrom = vi.fn((table: string) => {
+      if (table === "game_reviews") {
+        return {
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              single: vi.fn(() =>
+                Promise.resolve({ data: { id: "r1", user_id: "other-user" }, error: null })
+              ),
+            })),
+          })),
+        };
+      }
+      if (table === "review_votes") {
+        return {
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              eq: vi.fn(() => ({
+                single: vi.fn(() => Promise.resolve({ data: null, error: null })),
+              })),
+            })),
+          })),
+          insert: vi.fn(() => Promise.resolve({ error: null })),
+        };
+      }
+      return {};
+    });
+
+    await POST(
+      makeRequest(
+        "http://localhost/api/review-votes",
+        jsonBody({ reviewId: "r1", voteType: "helpful" })
+      )
+    );
+    expect(mockNotificationCreate).toHaveBeenCalledWith(
+      "other-user",
+      USER.id,
+      "review_vote",
+      "r1",
+      "helpful"
+    );
+  });
+
+  test("does not send notification when toggling vote off", async () => {
+    mockGetUser = vi.fn(() => Promise.resolve({ data: { user: USER }, error: null }));
+    mockSupabaseFrom = vi.fn((table: string) => {
+      if (table === "game_reviews") {
+        return {
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              single: vi.fn(() =>
+                Promise.resolve({ data: { id: "r1", user_id: "other-user" }, error: null })
+              ),
+            })),
+          })),
+        };
+      }
+      if (table === "review_votes") {
+        return {
+          select: vi.fn(() => ({
+            eq: vi.fn(() => ({
+              eq: vi.fn(() => ({
+                single: vi.fn(() =>
+                  Promise.resolve({
+                    data: { id: "vote-1", vote_type: "helpful" },
+                    error: null,
+                  })
+                ),
+              })),
+            })),
+          })),
+          delete: vi.fn(() => ({
+            eq: vi.fn(() => Promise.resolve({ error: null })),
+          })),
+        };
+      }
+      return {};
+    });
+
+    await POST(
+      makeRequest(
+        "http://localhost/api/review-votes",
+        jsonBody({ reviewId: "r1", voteType: "helpful" })
+      )
+    );
+    expect(mockNotificationCreate).not.toHaveBeenCalled();
+  });
+
   test("toggles off when same vote type exists", async () => {
     mockGetUser = vi.fn(() => Promise.resolve({ data: { user: USER }, error: null }));
     mockSupabaseFrom = vi.fn((table: string) => {
@@ -215,6 +316,8 @@ describe("DELETE /api/review-votes", () => {
   beforeEach(() => {
     mockSupabaseFrom = null;
     mockGetUser = null;
+    mockNotificationCreate.mockReset();
+    mockNotificationCreate.mockResolvedValue(null);
   });
 
   test("returns 401 when not authenticated", async () => {

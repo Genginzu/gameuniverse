@@ -48,6 +48,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     entry("/characters", "daily", 0.8),
     entry("/players", "weekly", 0.7),
     entry("/discussions", "daily", 0.7),
+    entry("/mentions-legales", "yearly", 0.2),
+    entry("/confidentialite", "yearly", 0.2),
+    entry("/cookies", "yearly", 0.2),
+    entry("/cgv", "yearly", 0.2),
+    entry("/cgu", "yearly", 0.2),
   ];
 
   const gamePages = (games ?? []).map((g) =>

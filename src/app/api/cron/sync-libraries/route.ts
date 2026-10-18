@@ -3,12 +3,13 @@ import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { logger } from "@/lib/logger";
 import { syncSteamLibrary } from "@/lib/services/steamLibrarySync";
 import { syncXboxLibrary } from "@/lib/services/xboxLibrarySync";
+import { syncPsnLibrary } from "@/lib/services/psnLibrarySync";
 
 const MAX_USERS_PER_RUN = 50;
 
 interface SyncOutcome {
   playerId: string;
-  platform: "steam" | "xbox";
+  platform: "steam" | "xbox" | "playstation";
   ok: boolean;
   matched?: number;
   total?: number;
@@ -36,7 +37,7 @@ async function handler(request: NextRequest) {
   const { data: rows, error } = await supabase
     .from("player_linked_platforms")
     .select("player_id, platform, external_id")
-    .in("platform", ["steam", "xbox"])
+    .in("platform", ["steam", "xbox", "playstation"])
     .limit(MAX_USERS_PER_RUN);
 
   if (error) {
@@ -47,7 +48,7 @@ async function handler(request: NextRequest) {
   const outcomes: SyncOutcome[] = [];
 
   for (const row of rows ?? []) {
-    const platform = row.platform as "steam" | "xbox";
+    const platform = row.platform as "steam" | "xbox" | "playstation";
     try {
       if (platform === "steam") {
         if (!row.external_id) {
@@ -55,6 +56,15 @@ async function handler(request: NextRequest) {
           continue;
         }
         const r = await syncSteamLibrary(supabase, row.player_id, row.external_id);
+        outcomes.push({
+          playerId: row.player_id,
+          platform,
+          ok: true,
+          matched: r.matched,
+          total: r.total,
+        });
+      } else if (platform === "playstation") {
+        const r = await syncPsnLibrary(supabase, row.player_id);
         outcomes.push({
           playerId: row.player_id,
           platform,

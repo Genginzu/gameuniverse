@@ -32,6 +32,10 @@ interface PlayerDetailHeroProps {
   /** Bibliothèque accessible pour les stats playtime/rating. */
   reviewCount: number;
   friendCount: number;
+  /** Nombre d'abonnés (followers). */
+  followersCount: number;
+  /** Nombre d'abonnements (following). */
+  followingCount: number;
 }
 
 export function PlayerDetailHero({
@@ -41,6 +45,8 @@ export function PlayerDetailHero({
   socialLinksSlot,
   reviewCount,
   friendCount,
+  followersCount,
+  followingCount,
 }: PlayerDetailHeroProps) {
   const t = useTranslations("players.details.editorial");
 
@@ -132,6 +138,14 @@ export function PlayerDetailHero({
           <div className="mt-4 flex flex-wrap gap-4 text-sm text-zinc-400">
             <span className="font-mono text-xs tracking-widest uppercase">
               {t("bento.friendsHelper", { count: friendCount })}
+            </span>
+            <span className="text-zinc-600">·</span>
+            <span className="font-mono text-xs tracking-widest uppercase">
+              {t("bento.followersHelper", { count: followersCount })}
+            </span>
+            <span className="text-zinc-600">·</span>
+            <span className="font-mono text-xs tracking-widest uppercase">
+              {t("bento.followingHelper", { count: followingCount })}
             </span>
             <span className="text-zinc-600">·</span>
             <span className="font-mono text-xs tracking-widest uppercase">

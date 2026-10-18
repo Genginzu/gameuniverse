@@ -9,7 +9,7 @@ import {
 } from "@/types/upload";
 
 export const uploadRequestSchema = z.object({
-  context: z.enum(["avatars", "banners", "post-images"]),
+  context: z.enum(["avatars", "banners", "post-images", "group-images", "community-images"]),
   contentType: z.enum(["image/jpeg", "image/png", "image/webp", "image/gif"]),
   fileSize: z.number().int().positive().max(MAX_FILE_SIZE_BYTES),
 });

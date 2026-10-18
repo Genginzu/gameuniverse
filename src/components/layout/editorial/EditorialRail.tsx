@@ -34,6 +34,8 @@ export type EditorialSpaceKey =
   | "esport"
   | "coaching"
   | "social"
+  | "groups"
+  | "communities"
   | "account";
 
 /**
@@ -79,8 +81,29 @@ export const EDITORIAL_SPACES: readonly EditorialSpace[] = [
   {
     key: "social",
     icon: "fa:hashtag",
-    pathPrefixes: ["/posts"],
-    links: [{ href: "/posts/tags", labelKey: "tags", icon: "lucide:hash" }],
+    pathPrefixes: ["/posts", "/feed"],
+    links: [
+      { href: "/feed", labelKey: "feed", icon: "lucide:newspaper" },
+      { href: "/posts/tags", labelKey: "tags", icon: "lucide:hash" },
+    ],
+  },
+  {
+    key: "groups",
+    icon: "lucide:users",
+    pathPrefixes: ["/groups"],
+    links: [
+      { href: "/groups", labelKey: "all", icon: "lucide:users" },
+      { href: "/groups?create=1", labelKey: "create", icon: "lucide:plus-circle" },
+    ],
+  },
+  {
+    key: "communities",
+    icon: "fa:globe",
+    pathPrefixes: ["/communities"],
+    links: [
+      { href: "/communities", labelKey: "all", icon: "lucide:globe-2" },
+      { href: "/communities?create=1", labelKey: "create", icon: "lucide:plus-circle" },
+    ],
   },
   {
     key: "library",
@@ -91,6 +114,7 @@ export const EDITORIAL_SPACES: readonly EditorialSpace[] = [
       { href: "/library/backlog", labelKey: "backlog", icon: "lucide:list-checks" },
       { href: "/collections", labelKey: "collections", icon: "lucide:folder-heart" },
       { href: "/favorites/characters", labelKey: "favoriteCharacters", icon: "lucide:heart" },
+      { href: "/library/connections", labelKey: "connections", icon: "lucide:plug-zap" },
     ],
   },
   {
@@ -115,8 +139,9 @@ export const EDITORIAL_SPACES: readonly EditorialSpace[] = [
   {
     key: "account",
     icon: "fa:user",
-    pathPrefixes: ["/friends", "/discussions", "/coins"],
+    pathPrefixes: ["/friends", "/discussions", "/coins", "/notifications"],
     links: [
+      { href: "/notifications", labelKey: "notifications", icon: "lucide:bell" },
       { href: "/friends", labelKey: "friends", icon: "lucide:users" },
       { href: "/discussions", labelKey: "discussions", icon: "lucide:messages-square" },
       { href: "/coins", labelKey: "coins", icon: "lucide:coins" },

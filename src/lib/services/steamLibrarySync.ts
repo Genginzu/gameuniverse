@@ -3,6 +3,9 @@ import type { Database } from "@/lib/database.types";
 import { logger } from "@/lib/logger";
 import { EXTERNAL_GAME_CATEGORY, resolveIgdbIdsByExternalUids } from "./igdb-external-games";
 import { GameImportService } from "./gameImportService";
+import { dedupeByGameId } from "./libraryGameResolver";
+import { recordUserPlatformTitles } from "./librarySyncBackfill";
+import type { LibrarySyncProgressCallback } from "@/types/library-sync";
 
 const STEAM_OWNED_GAMES_URL = "https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/";
 const UPSERT_CHUNK = 200;
@@ -87,7 +90,8 @@ interface ResolutionResult {
 async function resolveAppidsToGameIds(
   supabase: SupabaseClient<Database>,
   orderedAppids: number[],
-  importBudget: number
+  importBudget: number,
+  onImport?: (importedCount: number, appid: number) => void
 ): Promise<ResolutionResult> {
   const resolved = new Map<number, string>();
   if (orderedAppids.length === 0) return { resolved, imported: 0 };
@@ -172,6 +176,7 @@ async function resolveAppidsToGameIds(
 
       resolved.set(appid, newRow.id);
       imported += 1;
+      onImport?.(imported, appid);
 
       const { error: backfillError } = await supabase
         .from("games")
@@ -191,10 +196,13 @@ async function resolveAppidsToGameIds(
 export async function syncSteamLibrary(
   supabase: SupabaseClient<Database>,
   playerId: string,
-  steamId: string
+  steamId: string,
+  onProgress?: LibrarySyncProgressCallback
 ): Promise<SteamSyncResult> {
+  onProgress?.({ phase: "fetching" });
   const { games, privateProfile } = await fetchSteamLibrary(steamId);
   if (games.length === 0) {
+    onProgress?.({ phase: "done", total: 0, processed: 0, matched: 0, privateProfile });
     return {
       total: 0,
       matched: 0,
@@ -209,10 +217,27 @@ export async function syncSteamLibrary(
   // user actually cares about).
   const ordered = [...games].sort((a, b) => (b.playtime_forever ?? 0) - (a.playtime_forever ?? 0));
 
+  onProgress?.({ phase: "resolving", total: games.length, privateProfile: false });
+
+  await recordUserPlatformTitles(
+    supabase as unknown as SupabaseClient,
+    playerId,
+    "steam",
+    games.map((g) => ({ sourceId: String(g.appid), name: g.name ?? "" }))
+  );
+
+  const nameByAppid = new Map(games.map((g) => [g.appid, g.name]));
+
   const { resolved, imported } = await resolveAppidsToGameIds(
     supabase,
     ordered.map((g) => g.appid),
-    MAX_IMPORTS_PER_SYNC
+    MAX_IMPORTS_PER_SYNC,
+    (importedCount, appid) =>
+      onProgress?.({
+        phase: "importing",
+        imported: importedCount,
+        currentItem: nameByAppid.get(appid),
+      })
   );
 
   const now = new Date().toISOString();
@@ -234,9 +259,18 @@ export async function syncSteamLibrary(
     })
     .filter((r): r is NonNullable<typeof r> => r !== null);
 
+  onProgress?.({ phase: "saving", total: games.length, matched: rows.length, imported });
+
+  // Multiple appids can resolve to the same local game (editions/bundles).
+  // Collapse duplicates so a single upsert command never touches a row twice
+  // (Postgres: "ON CONFLICT DO UPDATE cannot affect row a second time").
+  const dedupedRows = dedupeByGameId(rows, (a, b) =>
+    b.external_playtime_seconds > a.external_playtime_seconds ? b : a
+  );
+
   let upserted = 0;
-  for (let i = 0; i < rows.length; i += UPSERT_CHUNK) {
-    const chunk = rows.slice(i, i + UPSERT_CHUNK);
+  for (let i = 0; i < dedupedRows.length; i += UPSERT_CHUNK) {
+    const chunk = dedupedRows.slice(i, i + UPSERT_CHUNK);
     const { error, count } = await supabase
       .from("user_library")
       .upsert(chunk, { onConflict: "user_id,game_id", count: "exact" });
@@ -245,7 +279,18 @@ export async function syncSteamLibrary(
       throw error;
     }
     upserted += count ?? chunk.length;
+    onProgress?.({ processed: upserted });
   }
+
+  onProgress?.({
+    phase: "done",
+    total: games.length,
+    processed: upserted,
+    matched: rows.length,
+    imported,
+    unmatched: games.length - rows.length,
+    privateProfile: false,
+  });
 
   return {
     total: games.length,
