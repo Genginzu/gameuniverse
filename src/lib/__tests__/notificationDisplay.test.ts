@@ -29,6 +29,7 @@ const ALL_TYPES: NotificationType[] = [
   "friend_accepted",
   "review_vote",
   "achievement_unlocked",
+  "moderation_warning",
 ];
 
 describe("notificationDisplay", () => {
@@ -58,6 +59,7 @@ describe("notificationDisplay", () => {
     expect(categoryForType("achievement_unlocked")).toBe("achievements");
     expect(categoryForType("coaching_paid")).toBe("coaching");
     expect(categoryForType("post_comment")).toBe("activity");
+    expect(categoryForType("moderation_warning")).toBe("moderation");
   });
 
   it("typesForCategory returns null for 'all' and the type set otherwise", () => {
@@ -90,6 +92,7 @@ describe("notificationDisplay", () => {
     expect(hasContentPreview("coaching_requested")).toBe(false);
     expect(hasContentPreview("friend_request")).toBe(false);
     expect(hasContentPreview("friend_accepted")).toBe(false);
+    expect(hasContentPreview("moderation_warning")).toBe(false);
     expect(hasContentPreview("post_comment")).toBe(true);
   });
 });

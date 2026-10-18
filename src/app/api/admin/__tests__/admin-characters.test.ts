@@ -1,286 +1,261 @@
 /**
- * Unit tests for Admin Characters API routes
- *
- * Tests error cases: missing auth (403), invalid data (400), character not found (404)
- * Property 6: Auth rejection
- *
- * **Validates: Requirements 7.5, 7.6**
+ * Tests for the admin characters API routes, run against the real handlers:
+ * - GET/POST /api/admin/characters
+ * - GET/PUT/DELETE /api/admin/characters/[id]
+ * Schema rules themselves are covered in src/lib/validations/__tests__.
  */
 
-import { describe, test, expect } from "vitest";
+import { describe, test, expect, vi, beforeEach } from "vitest";
 import * as fc from "fast-check";
-import {
-  adminCharacterFormSchema,
-  adminCharacterQuerySchema,
-} from "@/lib/validations/admin-character-form";
+import type { NextRequest } from "next/server";
+import { createSupabaseQueryMock } from "@/test-helpers/supabase-query-mock";
 
-// ============================================================================
-// Query parameter validation
-// ============================================================================
+const db = createSupabaseQueryMock();
+const requireAdmin = vi.hoisted(() => vi.fn());
 
-describe("Admin Characters API - Query Validation", () => {
-  test("accepts valid query parameters with defaults", () => {
-    const result = adminCharacterQuerySchema.safeParse({});
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data.page).toBe(1);
-      expect(result.data.limit).toBe(20);
-      expect(result.data.sort_by).toBe("created_at");
-      expect(result.data.sort_order).toBe("desc");
-      expect(result.data.locale).toBe("fr");
+vi.mock("@/lib/auth-admin", () => ({ requireAdmin: () => requireAdmin() }));
+vi.mock("@/lib/supabase-server", () => ({
+  createRouteHandlerClient: () => Promise.resolve(db.client),
+}));
+
+const list = await import("@/app/api/admin/characters/route");
+const detail = await import("@/app/api/admin/characters/[id]/route");
+
+const CHAR_ID = "00000000-0000-0000-0000-0000000000c1";
+const BASE_URL = "http://localhost/api/admin/characters";
+const VALID_FORM = {
+  slug: "mario",
+  translations: [{ language_code: "fr", name: "Mario" }],
+};
+const ctx = (id = CHAR_ID) => ({ params: Promise.resolve({ id }) });
+
+function request(url: string, method = "GET", body?: unknown) {
+  return new Request(url, {
+    method,
+    headers: { "Content-Type": "application/json" },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  }) as unknown as NextRequest;
+}
+
+const callAll = () =>
+  Promise.all([
+    list.GET(request(BASE_URL)),
+    list.POST(request(BASE_URL, "POST", VALID_FORM)),
+    detail.GET(request(`${BASE_URL}/${CHAR_ID}`), ctx()),
+    detail.PUT(request(`${BASE_URL}/${CHAR_ID}`, "PUT", VALID_FORM), ctx()),
+    detail.DELETE(request(`${BASE_URL}/${CHAR_ID}`, "DELETE"), ctx()),
+  ]);
+
+beforeEach(() => {
+  db.reset();
+  requireAdmin.mockReset().mockResolvedValue(true);
+});
+
+describe("Property 6: auth rejection", () => {
+  test("every handler returns 403 when the admin guard rejects", async () => {
+    requireAdmin.mockRejectedValue(new Error("Admin access required"));
+    const responses = await callAll();
+    for (const res of responses) {
+      expect(res.status).toBe(403);
+      expect(await res.json()).toEqual({ error: "Admin access required" });
     }
+    expect(db.calls).toHaveLength(0);
   });
 
-  test("accepts valid custom query parameters", () => {
-    const result = adminCharacterQuerySchema.safeParse({
-      page: "2",
-      limit: "10",
-      search: "mario",
-      sort_by: "name",
-      sort_order: "asc",
-      locale: "en",
-    });
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data.page).toBe(2);
-      expect(result.data.limit).toBe(10);
-      expect(result.data.search).toBe("mario");
-      expect(result.data.sort_by).toBe("name");
-      expect(result.data.sort_order).toBe("asc");
-      expect(result.data.locale).toBe("en");
-    }
-  });
-
-  test("rejects invalid sort_by value", () => {
-    const result = adminCharacterQuerySchema.safeParse({
-      sort_by: "invalid_field",
-    });
-    expect(result.success).toBe(false);
-  });
-
-  test("rejects page less than 1", () => {
-    const result = adminCharacterQuerySchema.safeParse({ page: "0" });
-    expect(result.success).toBe(false);
-  });
-
-  test("rejects limit greater than 100", () => {
-    const result = adminCharacterQuerySchema.safeParse({ limit: "101" });
-    expect(result.success).toBe(false);
+  test("any other guard error maps to 500, never 403", async () => {
+    await fc.assert(
+      fc.asyncProperty(
+        fc.string({ minLength: 1 }).filter((m) => m !== "Admin access required"),
+        async (message) => {
+          requireAdmin.mockRejectedValue(new Error(message));
+          for (const res of await callAll()) expect(res.status).toBe(500);
+        }
+      ),
+      { numRuns: 20 }
+    );
   });
 });
 
-// ============================================================================
-// Form data validation (400 error cases)
-// ============================================================================
-
-describe("Admin Characters API - Form Validation (400)", () => {
-  test("rejects empty slug", () => {
-    const result = adminCharacterFormSchema.safeParse({
-      slug: "",
-      translations: [{ language_code: "fr", name: "Test" }],
-    });
-    expect(result.success).toBe(false);
-    if (!result.success) {
-      expect(result.error.issues.some((e) => e.path.includes("slug"))).toBe(true);
-    }
+describe("GET /api/admin/characters", () => {
+  test("returns 400 for invalid query parameters", async () => {
+    expect((await list.GET(request(`${BASE_URL}?sort_by=invalid`))).status).toBe(400);
+    expect((await list.GET(request(`${BASE_URL}?limit=101`))).status).toBe(400);
   });
 
-  test("rejects slug with uppercase letters", () => {
-    const result = adminCharacterFormSchema.safeParse({
-      slug: "Mario-Bros",
-      translations: [{ language_code: "fr", name: "Mario" }],
-    });
-    expect(result.success).toBe(false);
+  test("maps rows using the requested locale and the primary game", async () => {
+    db.enqueue(
+      "characters",
+      {
+        data: [
+          {
+            id: CHAR_ID,
+            slug: "mario",
+            main_image: null,
+            created_at: "c",
+            updated_at: "u",
+            character_translations: [
+              { name: "Mario FR", role: "hero", language_code: "fr" },
+              { name: "Mario EN", role: "hero", language_code: "en" },
+            ],
+            character_games: [
+              {
+                is_primary: true,
+                games: {
+                  id: "g1",
+                  game_translations: [
+                    { title: "Odyssée", language_code: "fr" },
+                    { title: "Odyssey", language_code: "en" },
+                  ],
+                },
+              },
+            ],
+          },
+        ],
+      },
+      { count: 41 }
+    );
+
+    const res = await list.GET(request(`${BASE_URL}?locale=en&page=2`));
+    const body = await res.json();
+
+    expect(body.characters).toEqual([
+      {
+        id: CHAR_ID,
+        slug: "mario",
+        name: "Mario EN",
+        role: "hero",
+        mainImage: null,
+        primaryGame: "Odyssey",
+        updatedAt: "u",
+      },
+    ]);
+    expect(body.pagination).toMatchObject({ currentPage: 2, totalPages: 3, totalCount: 41 });
+    expect(db.callsFor("characters", "range")).toEqual([[20, 39]]);
   });
 
-  test("rejects slug with special characters", () => {
-    const result = adminCharacterFormSchema.safeParse({
-      slug: "mario bros!",
-      translations: [{ language_code: "fr", name: "Mario" }],
-    });
-    expect(result.success).toBe(false);
+  test("falls back to 'Unnamed' when a character has no translation", async () => {
+    db.enqueue("characters", { data: [{ id: CHAR_ID, slug: "x" }] }, { count: 1 });
+    const body = await (await list.GET(request(BASE_URL))).json();
+    expect(body.characters[0]).toMatchObject({ name: "Unnamed", role: null, primaryGame: "" });
   });
 
-  test("rejects empty translations array", () => {
-    const result = adminCharacterFormSchema.safeParse({
-      slug: "mario",
-      translations: [],
-    });
-    expect(result.success).toBe(false);
+  test("returns 500 when the count fails", async () => {
+    db.enqueue("characters", {}, { error: { message: "boom" } });
+    expect((await list.GET(request(BASE_URL))).status).toBe(500);
+  });
+});
+
+describe("POST /api/admin/characters", () => {
+  test("returns 400 for invalid data without touching the database", async () => {
+    const res = await list.POST(
+      request(BASE_URL, "POST", { slug: "Mario Bros!", translations: [] })
+    );
+    expect(res.status).toBe(400);
+    expect((await res.json()).error).toBe("Invalid input data");
+    expect(db.calls).toHaveLength(0);
   });
 
-  test("rejects translations where all names are empty", () => {
-    const result = adminCharacterFormSchema.safeParse({
-      slug: "mario",
-      translations: [
-        { language_code: "fr", name: "" },
-        { language_code: "en", name: "   " },
-      ],
-    });
-    expect(result.success).toBe(false);
+  test("creates the character and its translations", async () => {
+    db.enqueue("characters", { data: { id: CHAR_ID, slug: "mario" } });
+    db.enqueue("character_translations", {});
+
+    const res = await list.POST(request(BASE_URL, "POST", VALID_FORM));
+
+    expect(res.status).toBe(201);
+    expect((await res.json()).character).toEqual({ id: CHAR_ID, slug: "mario" });
+    const [rows] = db.callsFor("character_translations", "insert")[0] as [
+      Array<Record<string, unknown>>,
+    ];
+    expect(rows).toEqual([expect.objectContaining({ character_id: CHAR_ID, name: "Mario" })]);
   });
 
-  test("accepts valid character form data", () => {
-    const result = adminCharacterFormSchema.safeParse({
-      slug: "mario",
+  test("returns 400 on duplicate slug", async () => {
+    db.enqueue("characters", { error: { code: "23505" } });
+    const res = await list.POST(request(BASE_URL, "POST", VALID_FORM));
+    expect(res.status).toBe(400);
+    expect((await res.json()).error).toContain("already exists");
+  });
+
+  test("deletes the character when related data fails to insert", async () => {
+    db.enqueue("characters", { data: { id: CHAR_ID, slug: "mario" } }, {});
+    db.enqueue("character_translations", { error: { message: "boom" } });
+
+    const res = await list.POST(request(BASE_URL, "POST", VALID_FORM));
+
+    expect(res.status).toBe(500);
+    expect(db.callsFor("characters", "delete")).toHaveLength(1);
+    expect(db.callsFor("characters", "eq")).toContainEqual(["id", CHAR_ID]);
+  });
+});
+
+describe("/api/admin/characters/[id]", () => {
+  test("GET returns 404 when the character does not exist", async () => {
+    db.enqueue("characters", { error: { code: "PGRST116" } });
+    const res = await detail.GET(request(`${BASE_URL}/${CHAR_ID}`), ctx());
+    expect(res.status).toBe(404);
+  });
+
+  test("GET returns 500 on other database errors", async () => {
+    db.enqueue("characters", { error: { code: "XX000" } });
+    expect((await detail.GET(request(`${BASE_URL}/${CHAR_ID}`), ctx())).status).toBe(500);
+  });
+
+  test("GET flattens relations and role ids", async () => {
+    db.enqueue("characters", {
+      data: {
+        id: CHAR_ID,
+        slug: "mario",
+        character_translations: [{ language_code: "fr", name: "Mario" }],
+        character_character_roles: [{ role_id: "r1" }, { role_id: "r2" }],
+      },
+    });
+    const body = await (await detail.GET(request(`${BASE_URL}/${CHAR_ID}`), ctx())).json();
+    expect(body).toMatchObject({
+      id: CHAR_ID,
+      igdb_id: null,
       translations: [{ language_code: "fr", name: "Mario" }],
       games: [],
       media: [],
+      role_ids: ["r1", "r2"],
     });
-    expect(result.success).toBe(true);
   });
 
-  test("accepts valid form data with all optional fields", () => {
-    const result = adminCharacterFormSchema.safeParse({
-      slug: "link-zelda",
-      background_color: "#0f172a",
-      main_image_url: "https://example.com/link.jpg",
-      background_image_url: "https://example.com/bg.jpg",
-      translations: [
-        {
-          language_code: "fr",
-          name: "Link",
-          role: "Héros",
-          description: "Le héros de Zelda",
-          biography: "Link est le héros de la série Zelda.",
-        },
-        {
-          language_code: "en",
-          name: "Link",
-          role: "Hero",
-          description: "The hero of Zelda",
-          biography: "Link is the hero of the Zelda series.",
-        },
-      ],
-      games: [
-        {
-          game_id: "550e8400-e29b-41d4-a716-446655440001",
-          is_primary: true,
-        },
-      ],
-      media: [
-        {
-          type: "screenshot" as const,
-          url: "https://example.com/screenshot.jpg",
-          is_featured: true,
-          display_order: 0,
-        },
-      ],
-    });
-    expect(result.success).toBe(true);
+  test("PUT returns 400 for invalid data and 404 for a missing character", async () => {
+    const invalid = await detail.PUT(request(`${BASE_URL}/${CHAR_ID}`, "PUT", { slug: "" }), ctx());
+    expect(invalid.status).toBe(400);
+
+    db.enqueue("characters", { data: null });
+    const missing = await detail.PUT(request(`${BASE_URL}/${CHAR_ID}`, "PUT", VALID_FORM), ctx());
+    expect(missing.status).toBe(404);
   });
 
-  test("rejects invalid background color format", () => {
-    const result = adminCharacterFormSchema.safeParse({
-      slug: "mario",
-      background_color: "red",
-      translations: [{ language_code: "fr", name: "Mario" }],
-    });
-    expect(result.success).toBe(false);
+  test("PUT replaces every relation table", async () => {
+    db.enqueue("characters", { data: { id: CHAR_ID } }, {});
+    const res = await detail.PUT(request(`${BASE_URL}/${CHAR_ID}`, "PUT", VALID_FORM), ctx());
+
+    expect(res.status).toBe(200);
+    const deleted = db.calls.filter((c) => c.method === "delete").map((c) => c.table);
+    expect(deleted).toEqual([
+      "character_translations",
+      "character_games",
+      "character_media",
+      "character_relationships",
+      "character_character_roles",
+    ]);
   });
 
-  test("rejects invalid game_id (not UUID)", () => {
-    const result = adminCharacterFormSchema.safeParse({
-      slug: "mario",
-      translations: [{ language_code: "fr", name: "Mario" }],
-      games: [{ game_id: "not-a-uuid", is_primary: true }],
-    });
-    expect(result.success).toBe(false);
-  });
-
-  test("rejects invalid media URL", () => {
-    const result = adminCharacterFormSchema.safeParse({
-      slug: "mario",
-      translations: [{ language_code: "fr", name: "Mario" }],
-      media: [{ type: "screenshot", url: "not-a-url", is_featured: false }],
-    });
-    expect(result.success).toBe(false);
-  });
-});
-
-// ============================================================================
-// Property 6: Auth rejection
-// **Validates: Requirements 7.5**
-//
-// For any API request without valid admin auth, the system must return HTTP 403.
-// We test this by verifying that requireAdmin() throws "Admin access required"
-// and that the route handlers catch it and return 403.
-// ============================================================================
-
-describe("Property 6: Auth rejection", () => {
-  // The API routes catch errors from requireAdmin() and return 403.
-  // We verify the contract: the error message "Admin access required"
-  // maps to a 403 response in the catch block pattern used by all routes.
-
-  test("requireAdmin error message matches the pattern used in route handlers", () => {
-    // All route handlers use this exact pattern:
-    // if (error instanceof Error && error.message === "Admin access required")
-    //   return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    const authError = new Error("Admin access required");
-
-    fc.assert(
-      fc.property(fc.constantFrom("GET", "POST", "PUT", "DELETE"), (method) => {
-        // For any HTTP method, the auth error must be an Error instance
-        // with the exact message that route handlers check for
-        expect(authError).toBeInstanceOf(Error);
-        expect(authError.message).toBe("Admin access required");
-
-        // Simulate the route handler catch block logic
-        const isAuthError =
-          authError instanceof Error && authError.message === "Admin access required";
-        expect(isAuthError).toBe(true);
-
-        // The response status would be 403
-        const responseStatus = isAuthError ? 403 : 500;
-        expect(responseStatus).toBe(403);
-      }),
-      { numRuns: 100 }
+  test("DELETE returns 404 for a missing character and the slug on success", async () => {
+    db.enqueue("characters", { data: null });
+    expect((await detail.DELETE(request(`${BASE_URL}/${CHAR_ID}`, "DELETE"), ctx())).status).toBe(
+      404
     );
-  });
 
-  test("non-admin errors do not trigger 403 response", () => {
-    fc.assert(
-      fc.property(
-        fc.string({ minLength: 1, maxLength: 100 }).filter((s) => s !== "Admin access required"),
-        (errorMessage) => {
-          const error = new Error(errorMessage);
-
-          // Simulate the route handler catch block logic
-          const isAuthError = error instanceof Error && error.message === "Admin access required";
-          expect(isAuthError).toBe(false);
-
-          // Non-auth errors should result in 500, not 403
-          const responseStatus = isAuthError ? 403 : 500;
-          expect(responseStatus).toBe(500);
-        }
-      ),
-      { numRuns: 100 }
-    );
-  });
-
-  test("auth rejection applies to all character API endpoints", () => {
-    const endpoints = ["/api/admin/characters", "/api/admin/characters/some-id"];
-    const methods = ["GET", "POST", "PUT", "DELETE"];
-
-    fc.assert(
-      fc.property(
-        fc.constantFrom(...endpoints),
-        fc.constantFrom(...methods),
-        (endpoint, method) => {
-          // For any endpoint + method combination, an unauthenticated
-          // request must result in 403
-          const authError = new Error("Admin access required");
-          const isAuthError =
-            authError instanceof Error && authError.message === "Admin access required";
-
-          expect(isAuthError).toBe(true);
-
-          // Verify the error response structure
-          const errorResponse = { error: "Admin access required" };
-          expect(errorResponse.error).toBe("Admin access required");
-        }
-      ),
-      { numRuns: 100 }
-    );
+    db.enqueue("characters", { data: { id: CHAR_ID, slug: "mario" } }, {});
+    const res = await detail.DELETE(request(`${BASE_URL}/${CHAR_ID}`, "DELETE"), ctx());
+    expect(await res.json()).toEqual({
+      message: "Character deleted successfully",
+      characterId: CHAR_ID,
+      slug: "mario",
+    });
   });
 });

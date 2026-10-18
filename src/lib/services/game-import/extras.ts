@@ -6,6 +6,7 @@ import {
   transformIgdbToDlcExtensionRow,
 } from "@/lib/utils/dlcExtensionUtils";
 import { untypedTable } from "@/lib/utils/untypedTable";
+import { toGameVersionRows } from "@/lib/utils/gameVersionRows";
 import { logger } from "@/lib/logger";
 
 /**
@@ -21,16 +22,7 @@ export async function createVersions(gameId: string, igdbId: number): Promise<vo
 
     const supabase = await getSupabaseAdmin();
 
-    const versionEntries = versions.map((version, index) => ({
-      game_id: gameId,
-      igdb_id: version.id,
-      version_title: version.version_title || version.name,
-      description: version.summary || null,
-      cover_image_url: version.cover?.image_id
-        ? IGDBService.buildImageUrl(version.cover.image_id, "cover_big")
-        : null,
-      display_order: index,
-    }));
+    const versionEntries = toGameVersionRows(gameId, versions);
 
     const { error } = await (
       supabase.from("game_versions") as ReturnType<typeof supabase.from>

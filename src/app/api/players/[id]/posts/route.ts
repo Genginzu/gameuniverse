@@ -5,6 +5,7 @@ import { PlayerPostsServerService } from "@/lib/services/playerPostsServerServic
 import { isValidImageUrl } from "@/lib/utils/postContentParser";
 import { logger } from "@/lib/logger";
 import { CoinService } from "@/lib/services/coinService";
+import { suspendedResponse } from "@/lib/services/suspensionGuard";
 import type { PostsResponse } from "@/types/post";
 
 const PAGE_SIZE = 20;
@@ -74,6 +75,9 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     if (user.id !== playerId) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
+
+    const suspended = await suspendedResponse(user.id);
+    if (suspended) return suspended;
 
     const body = await request.json().catch(() => null);
     const content = typeof body?.content === "string" ? body.content : "";

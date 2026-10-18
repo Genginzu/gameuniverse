@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { NextRequest } from "next/server";
 
-// Create mock functions using Bun's mock
+// Mock functions shared by the Supabase client mock
 const mockGetUser = vi.fn(() => Promise.resolve({ data: { user: null }, error: null }));
 const mockFrom = vi.fn(() => ({}));
 

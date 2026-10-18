@@ -162,11 +162,6 @@ describe("useErrorBoundaryHandler", () => {
     consoleErrorSpy.mockRestore();
   });
 
-  it("returns a function", () => {
-    const handler = useErrorBoundaryHandler();
-    expect(typeof handler).toBe("function");
-  });
-
   it("re-throws the error", () => {
     const handler = useErrorBoundaryHandler();
     expect(() => handler(new Error("Test error"))).toThrow("Test error");
