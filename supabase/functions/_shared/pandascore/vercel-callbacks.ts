@@ -9,12 +9,10 @@
  *     a player's current_team changes.
  *   - resolvePredictionsForMatch: settles esport_predictions for finished
  *     matches with a known winner (notifications, GU coins, etc.).
- *
- * Failures are logged and swallowed: a failed callback must not abort the
- * sync; predictions/history can be reconciled later from the cron run.
  */
 
 import { logger } from "../logger.ts";
+import type { PlayerTeamHistoryInput } from "./ingest/types.ts";
 
 function getCallbackBase(): string | null {
   const url = Deno.env.get("VERCEL_CALLBACK_BASE_URL");
@@ -58,25 +56,15 @@ async function callVercel(path: string, body: unknown): Promise<void> {
 
     if (!response.ok) {
       const text = await response.text().catch(() => "");
-      logger.warn("Vercel callback failed", {
-        path,
-        status: response.status,
-        body: text.slice(0, 200),
-      });
+      throw new Error(`${path} responded ${response.status}: ${text.slice(0, 200)}`);
     }
   } catch (error) {
-    logger.warn("Vercel callback error", {
-      path,
-      error: error instanceof Error ? error.message : String(error),
-    });
+    const message = error instanceof Error ? error.message : String(error);
+    logger.warn("Vercel callback failed", { path, error: message });
+    throw error instanceof Error ? error : new Error(message);
   } finally {
     clearTimeout(timeoutId);
   }
-}
-
-export interface PlayerTeamHistoryInput {
-  playerLocalId: string;
-  newTeamLocalId: string | null;
 }
 
 export async function reconcilePlayerTeamHistory(
