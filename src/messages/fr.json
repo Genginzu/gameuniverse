@@ -3712,6 +3712,9 @@
       "noResults": "Aucun résultat pour « {query} »",
       "noResultsHint": "Essayez avec d'autres mots-clés.",
       "notImported": "Pas encore importé",
+      "loginToImportTitle": "Connectez-vous pour importer",
+      "loginToImportDescription": "Créez un compte ou connectez-vous pour ajouter ce jeu au catalogue.",
+      "loginToImportCta": "Se connecter",
       "groups": {
         "games": "Jeux",
         "characters": "Personnages",

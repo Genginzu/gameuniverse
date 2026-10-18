@@ -941,6 +941,38 @@ export type Database = {
           },
         ];
       };
+      game_import_events: {
+        Row: {
+          created_at: string;
+          game_id: string | null;
+          id: string;
+          igdb_id: number;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          game_id?: string | null;
+          id?: string;
+          igdb_id: number;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          game_id?: string | null;
+          id?: string;
+          igdb_id?: number;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "game_import_events_game_id_fkey";
+            columns: ["game_id"];
+            isOneToOne: false;
+            referencedRelation: "games";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       game_field_overrides: {
         Row: {
           field_name: string;
@@ -2768,6 +2800,10 @@ export type Database = {
           total_stores: number;
           worst_price: number;
         }[];
+      };
+      count_recent_game_imports: {
+        Args: { target_user_id: string; window_seconds: number };
+        Returns: number;
       };
       create_store: {
         Args: { logo_url?: string; store_name: string; website_url?: string };
