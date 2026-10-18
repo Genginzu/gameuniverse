@@ -81,10 +81,10 @@ interface DatabaseGamePrice {
   last_updated?: string;
   store_url?: string;
   stores?: {
+    id?: string;
     name?: string;
     logo_url?: string;
     website_url?: string;
-    affiliate_enabled?: boolean;
   };
 }
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -215,10 +215,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           last_updated,
           store_url,
           stores(
+            id,
             name,
             logo_url,
-            website_url,
-            affiliate_enabled
+            website_url
           )
         )
       `
@@ -754,6 +754,19 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const primaryRating = gameRatingsArray.find((gr: DatabaseGameRating) => gr.is_primary);
     const ageRating = primaryRating ? processRating(primaryRating) : null;
 
+    // Fetch affiliated store ids separately (columns may not exist until the #342 migration runs)
+    let affiliateStoreIds = new Set<string>();
+    try {
+      const { data: affiliateStores, error: affiliateError } = await supabase
+        .from("stores")
+        .select("id")
+        .eq("affiliate_enabled", true);
+      if (affiliateError) throw affiliateError;
+      affiliateStoreIds = new Set((affiliateStores ?? []).map((s: { id: string }) => s.id));
+    } catch {
+      logger.warn("stores affiliate columns not available yet");
+    }
+
     // Process pricing
     const pricing =
       game.game_prices
@@ -765,7 +778,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           platform: price.platform,
           lastUpdated: price.last_updated || "",
           storeUrl: price.store_url,
-          isAffiliate: price.stores?.affiliate_enabled === true,
+          isAffiliate: !!price.stores?.id && affiliateStoreIds.has(price.stores.id),
           store: {
             name: price.stores?.name,
             logoUrl: price.stores?.logo_url,
