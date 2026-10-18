@@ -6,6 +6,7 @@ import { useAuth } from "./useAuth";
 import { GameSummary } from "@/types/game";
 import { Genre } from "@/types/genre";
 import { Pagination } from "@/types/pagination";
+import { buildLibraryGamesKey } from "@/lib/utils/libraryGamesKey";
 
 interface LibraryStats {
   totalGames: number;
@@ -21,28 +22,6 @@ interface GamesResponse {
 
 interface GenresResponse {
   genres: Genre[];
-}
-
-/** Construit l'URL SWR pour les jeux de la bibliothèque */
-function buildGamesKey(
-  locale: string,
-  page: number,
-  search: string,
-  genres: string[],
-  publishers: string[]
-): string {
-  const params = new URLSearchParams({
-    locale,
-    page: page.toString(),
-    limit: "20",
-    inLibrary: "true",
-  });
-
-  if (search.trim()) params.append("search", search.trim());
-  if (genres.length > 0) params.append("genres", genres.join(","));
-  if (publishers.length > 0) params.append("publishers", publishers.join(","));
-
-  return `/api/games?${params.toString()}`;
 }
 
 /**
@@ -83,7 +62,13 @@ export function useLibraryGames(locale: string = "fr") {
 
   // SWR — jeux de la bibliothèque
   const gamesKey = user
-    ? buildGamesKey(locale, currentPage, debouncedSearch, debouncedGenres, debouncedPublishers)
+    ? buildLibraryGamesKey(
+        locale,
+        currentPage,
+        debouncedSearch,
+        debouncedGenres,
+        debouncedPublishers
+      )
     : null;
 
   const {

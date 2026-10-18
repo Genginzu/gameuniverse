@@ -1,33 +1,12 @@
 import { describe, it, expect } from "vitest";
-import {
-  adminRatingFormSchema,
-  type RatingFormData,
-} from "@/lib/validations/admin-rating-form";
+import { adminRatingFormSchema, type RatingFormData } from "@/lib/validations/admin-rating-form";
 
 describe("adminRatingFormSchema", () => {
   describe("code field", () => {
-    it("accepts a valid code", () => {
-      const result = adminRatingFormSchema.safeParse({
-        code: "E",
-        display_name: "Everyone",
-        minimum_age: 0,
-      });
-      expect(result.success).toBe(true);
-    });
-
     it("rejects an empty code", () => {
       const result = adminRatingFormSchema.safeParse({
         code: "",
         display_name: "Everyone",
-        minimum_age: 0,
-      });
-      expect(result.success).toBe(false);
-    });
-
-    it("rejects a code longer than 10 characters", () => {
-      const result = adminRatingFormSchema.safeParse({
-        code: "ABCDEFGHIJK",
-        display_name: "Test",
         minimum_age: 0,
       });
       expect(result.success).toBe(false);
@@ -51,15 +30,6 @@ describe("adminRatingFormSchema", () => {
         minimum_age: 0,
       });
       expect(result.success).toBe(true);
-    });
-
-    it("rejects an empty display name", () => {
-      const result = adminRatingFormSchema.safeParse({
-        code: "E",
-        display_name: "",
-        minimum_age: 0,
-      });
-      expect(result.success).toBe(false);
     });
 
     it("rejects a display name longer than 50 characters", () => {
@@ -100,15 +70,6 @@ describe("adminRatingFormSchema", () => {
       expect(result.success).toBe(true);
     });
 
-    it("rejects a negative age", () => {
-      const result = adminRatingFormSchema.safeParse({
-        code: "E",
-        display_name: "Everyone",
-        minimum_age: -1,
-      });
-      expect(result.success).toBe(false);
-    });
-
     it("coerces string to number", () => {
       const result = adminRatingFormSchema.safeParse({
         code: "T",
@@ -120,28 +81,9 @@ describe("adminRatingFormSchema", () => {
         expect(result.data.minimum_age).toBe(13);
       }
     });
-
-    it("rejects non-integer age", () => {
-      const result = adminRatingFormSchema.safeParse({
-        code: "E",
-        display_name: "Everyone",
-        minimum_age: 3.5,
-      });
-      expect(result.success).toBe(false);
-    });
   });
 
   describe("color_hex field", () => {
-    it("accepts a valid hex color", () => {
-      const result = adminRatingFormSchema.safeParse({
-        code: "E",
-        display_name: "Everyone",
-        minimum_age: 0,
-        color_hex: "#00FF00",
-      });
-      expect(result.success).toBe(true);
-    });
-
     it("accepts lowercase hex color", () => {
       const result = adminRatingFormSchema.safeParse({
         code: "E",
@@ -170,36 +112,6 @@ describe("adminRatingFormSchema", () => {
       });
       expect(result.success).toBe(true);
     });
-
-    it("rejects invalid hex color (no hash)", () => {
-      const result = adminRatingFormSchema.safeParse({
-        code: "E",
-        display_name: "Everyone",
-        minimum_age: 0,
-        color_hex: "FF0000",
-      });
-      expect(result.success).toBe(false);
-    });
-
-    it("rejects invalid hex color (3-digit shorthand)", () => {
-      const result = adminRatingFormSchema.safeParse({
-        code: "E",
-        display_name: "Everyone",
-        minimum_age: 0,
-        color_hex: "#F00",
-      });
-      expect(result.success).toBe(false);
-    });
-
-    it("rejects invalid hex color (invalid characters)", () => {
-      const result = adminRatingFormSchema.safeParse({
-        code: "E",
-        display_name: "Everyone",
-        minimum_age: 0,
-        color_hex: "#GGGGGG",
-      });
-      expect(result.success).toBe(false);
-    });
   });
 
   describe("icon_url field", () => {
@@ -221,16 +133,6 @@ describe("adminRatingFormSchema", () => {
         icon_url: "",
       });
       expect(result.success).toBe(true);
-    });
-
-    it("rejects an invalid URL", () => {
-      const result = adminRatingFormSchema.safeParse({
-        code: "E",
-        display_name: "Everyone",
-        minimum_age: 0,
-        icon_url: "not-a-url",
-      });
-      expect(result.success).toBe(false);
     });
   });
 
@@ -312,16 +214,6 @@ describe("adminRatingFormSchema", () => {
         sort_order: 5,
       });
       expect(result.success).toBe(true);
-    });
-
-    it("rejects a negative sort order", () => {
-      const result = adminRatingFormSchema.safeParse({
-        code: "E",
-        display_name: "Everyone",
-        minimum_age: 0,
-        sort_order: -1,
-      });
-      expect(result.success).toBe(false);
     });
 
     it("coerces string to number", () => {

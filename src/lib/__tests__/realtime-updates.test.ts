@@ -197,42 +197,26 @@ describe("realtime-updates", () => {
   });
 
   describe("createGameUpdatesListener", () => {
-    it("should return an object with subscribe method", async () => {
+    it("returns a stub subscription that is safe to call and opens no channel", async () => {
       const { createGameUpdatesListener } = await import("@/lib/realtime-updates");
 
       const listener = createGameUpdatesListener();
 
-      expect(listener).toBeDefined();
-      expect(typeof listener.subscribe).toBe("function");
+      expect(() => listener.subscribe(vi.fn())).not.toThrow();
+      expect(mockSupabaseClient.channel).not.toHaveBeenCalled();
     });
   });
 
   describe("invalidateGameCache", () => {
-    it("should perform cache invalidation for single game", async () => {
-      const { invalidateGameCache } = await import("@/lib/realtime-updates");
+    it.each([["game-123"], [["game-1", "game-2"]]])(
+      "resolves without broadcasting for %j",
+      async (ids) => {
+        const { invalidateGameCache } = await import("@/lib/realtime-updates");
 
-      await invalidateGameCache("game-123");
-
-      // Logger uses structured format — no raw console.warn
-      // Just verify it doesn't throw
-    });
-
-    it("should perform cache invalidation for multiple games", async () => {
-      const { invalidateGameCache } = await import("@/lib/realtime-updates");
-
-      await invalidateGameCache(["game-1", "game-2"]);
-
-      // Logger uses structured format — no raw console.warn
-      // Just verify it doesn't throw
-    });
-
-    it("should handle errors gracefully", async () => {
-      // Mock logger.info to throw to simulate an error in the invalidation flow
-      const { invalidateGameCache } = await import("@/lib/realtime-updates");
-
-      // Should not throw even if something goes wrong internally
-      await expect(invalidateGameCache("game-123")).resolves.toBeUndefined();
-    });
+        await expect(invalidateGameCache(ids)).resolves.toBeUndefined();
+        expect(mockChannel.send).not.toHaveBeenCalled();
+      }
+    );
   });
 
   describe("verifyGameDeletionConsistency", () => {

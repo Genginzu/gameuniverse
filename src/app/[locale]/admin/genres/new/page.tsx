@@ -7,6 +7,7 @@ import { useGenreForm } from "@/hooks/useGenreForm";
 import { GenreForm } from "@/components/admin/genres/GenreForm";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import { isDuplicateErrorMessage } from "@/lib/utils/duplicateError";
 
 import type { GenreFormData } from "@/lib/validations/admin-genre-form";
 import { Icon } from "@iconify/react";
@@ -24,9 +25,7 @@ export default function NewGenrePage() {
         setTimeout(() => router.push("/admin/genres"), 500);
       } catch (err) {
         const message = err instanceof Error ? err.message : t("createPage.errorGeneric");
-        const isDuplicate =
-          message.toLowerCase().includes("already exists") ||
-          message.toLowerCase().includes("existe déjà");
+        const isDuplicate = isDuplicateErrorMessage(message);
 
         toast({
           title: isDuplicate ? t("createPage.errorDuplicate") : message,
