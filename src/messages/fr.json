@@ -3035,6 +3035,36 @@
     "reports": {
       "title": "Signalements de contenu",
       "empty": "Aucun signalement.",
+      "loadError": "Impossible de charger les signalements.",
+      "preview": {
+        "title": "Contenu signalé",
+        "author": "Auteur",
+        "viewInContext": "Voir dans son contexte",
+        "deleted": "Ce contenu a été supprimé depuis le signalement."
+      },
+      "confirm": {
+        "content_deleted": {
+          "title": "Supprimer le contenu ?",
+          "message": "Le contenu de {author} sera définitivement supprimé. Cette action est irréversible.",
+          "action": "Supprimer"
+        },
+        "author_suspended": {
+          "title": "Suspendre l'auteur ?",
+          "message": "{author} ne pourra plus publier de posts, commentaires ni avis pendant la durée choisie.",
+          "action": "Suspendre"
+        },
+        "duplicatesNote": "Les autres signalements ouverts sur ce contenu seront également clôturés.",
+        "cancel": "Annuler",
+        "submitting": "En cours…"
+      },
+      "suspension": {
+        "daysLabel": "Durée de la suspension (jours)",
+        "daysHint": "Nombre entier entre {min} et {max} jours."
+      },
+      "errors": {
+        "generic": "L'action a échoué. Réessayez.",
+        "closed": "Ce signalement a déjà été traité."
+      },
       "reportedBy": "Signalé par",
       "contentId": "ID du contenu",
       "actionTaken": "Action prise",
@@ -4106,8 +4136,22 @@
     "typeCoachingPaid": "a payé votre session de coaching",
     "typeModerationWarning": "vous a averti au sujet d'un contenu"
   },
+  "suspension": {
+    "title": "Votre compte est suspendu",
+    "bodyUntil": "Suite à une décision de la modération, vous ne pouvez plus publier de posts, de commentaires ni d'avis jusqu'au {date}.",
+    "bodyIndefinite": "Suite à une décision de la modération, vous ne pouvez plus publier de posts, de commentaires ni d'avis jusqu'à nouvel ordre.",
+    "readOnly": "Vous pouvez continuer à consulter le site normalement."
+  },
   "reports": {
     "report": "Signaler",
+    "reported": "Signalé",
+    "cancelReport": "Annuler le signalement",
+    "reportHandled": "Signalement déjà traité",
+    "cancelConfirmTitle": "Annuler le signalement ?",
+    "cancelConfirmMessage": "Votre signalement sera retiré de la file de modération. Vous pourrez signaler ce contenu à nouveau plus tard.",
+    "cancelConfirmAction": "Annuler le signalement",
+    "cancelConfirmKeep": "Conserver",
+    "cancelConfirmSubmitting": "Annulation…",
     "modalTitle": "Signaler ce contenu",
     "reasonLabel": "Raison du signalement",
     "reason": {
@@ -4126,7 +4170,9 @@
     "errors": {
       "limit": "Vous avez atteint la limite de signalements pour aujourd'hui.",
       "duplicate": "Vous avez déjà signalé ce contenu.",
-      "generic": "Le signalement a échoué. Réessayez."
+      "generic": "Le signalement a échoué. Réessayez.",
+      "cancelClosed": "Ce signalement a déjà été traité par la modération.",
+      "cancelGeneric": "L'annulation a échoué. Réessayez."
     }
   },
   "postComments": {

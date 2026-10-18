@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 import { ReportServerService } from "@/lib/services/reportServerService";
+import { ReportUserServerService } from "@/lib/services/reportUserServerService";
 import type { ReportContentType, ReportReason } from "@/types/report";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -9,6 +10,23 @@ type S = any;
 
 const CONTENT_TYPES: ReportContentType[] = ["review", "post", "comment", "profile"];
 const REASONS: ReportReason[] = ["spam", "harassment", "inappropriate", "other"];
+
+/** GET /api/reports — Authenticated user: list their own reports. */
+export async function GET() {
+  try {
+    const supabase: S = await createRouteHandlerClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const reports = await ReportUserServerService.listMine(user.id);
+    return NextResponse.json({ reports });
+  } catch (error) {
+    logger.error("Error in reports GET", { error });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
 
 /** POST /api/reports — Authenticated users flag a piece of content. */
 export async function POST(request: NextRequest) {

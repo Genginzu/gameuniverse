@@ -1,6 +1,7 @@
 import type {
   ContentReport,
   CreateReportInput,
+  ModerationOptions,
   ReportAction,
   ReportDecision,
 } from "@/types/report";
@@ -32,21 +33,36 @@ export class ReportService {
     return data.report;
   }
 
+  /** Withdraw one of the current user's open reports. */
+  static async cancelReport(id: string): Promise<void> {
+    const response = await fetch(`/api/reports/${id}`, { method: "DELETE" });
+
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      const error = new Error(data.error || "Failed to cancel report");
+      if (data.code) (error as Error & { code?: string }).code = data.code;
+      throw error;
+    }
+  }
+
   /** Admin: resolve, review or dismiss a report. */
   static async resolveReport(
     id: string,
     decision: ReportDecision,
-    actionTaken: ReportAction = "none"
+    actionTaken: ReportAction = "none",
+    options: ModerationOptions = {}
   ): Promise<void> {
     const response = await fetch(`/api/admin/reports/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ decision, actionTaken }),
+      body: JSON.stringify({ decision, actionTaken, ...options }),
     });
 
     if (!response.ok) {
       const data = await response.json().catch(() => ({}));
-      throw new Error(data.error || "Failed to update report");
+      const error = new Error(data.error || "Failed to update report");
+      if (data.code) (error as Error & { code?: string }).code = data.code;
+      throw error;
     }
   }
 }

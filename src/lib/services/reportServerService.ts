@@ -1,10 +1,12 @@
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { logger } from "@/lib/logger";
-import { NotificationServerService } from "@/lib/services/notificationServerService";
+import { applyModerationAction } from "@/lib/services/reportModerationActions";
+import { withContentPreviews } from "@/lib/services/reportContentPreview";
 import {
   MAX_REPORTS_PER_DAY,
   type ContentReport,
   type CreateReportInput,
+  type ModerationOptions,
   type ReportAction,
   type ReportContentType,
   type ReportStatus,
@@ -16,16 +18,7 @@ import {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type UntypedClient = any;
 
-/** Maps a content type to its table and author column for moderation actions. */
-const CONTENT_TABLE_MAP: Record<
-  ReportContentType,
-  { table: string; authorColumn: string; deletable: boolean }
-> = {
-  review: { table: "game_reviews", authorColumn: "user_id", deletable: true },
-  post: { table: "player_posts", authorColumn: "player_id", deletable: true },
-  comment: { table: "post_comments", authorColumn: "player_id", deletable: true },
-  profile: { table: "profiles", authorColumn: "id", deletable: false },
-};
+const OPEN_STATUSES: ReportStatus[] = ["pending", "reviewed"];
 
 interface ReportRow {
   id: string;
@@ -93,8 +86,7 @@ export class ReportServerService {
     reporterId: string,
     input: CreateReportInput
   ): Promise<
-    | { ok: true; report: ContentReport }
-    | { ok: false; code: "limit" | "duplicate" | "error" }
+    { ok: true; report: ContentReport } | { ok: false; code: "limit" | "duplicate" | "error" }
   > {
     const todayCount = await ReportServerService.countTodayReports(reporterId);
     if (todayCount >= MAX_REPORTS_PER_DAY) {
@@ -143,7 +135,7 @@ export class ReportServerService {
       return [];
     }
 
-    return ((data ?? []) as ReportRow[]).map(transformRow);
+    return withContentPreviews(((data ?? []) as ReportRow[]).map(transformRow));
   }
 
   /** Fetch a single report by id. */
@@ -162,135 +154,56 @@ export class ReportServerService {
   }
 
   /**
-   * Apply a moderation side effect to the reported content.
-   * Returns true on success (or when nothing needs to be done).
-   */
-  static async applyAction(
-    action: ReportAction,
-    contentType: ReportContentType,
-    contentId: string,
-    adminId: string
-  ): Promise<boolean> {
-    if (action === "none") return true;
-
-    const supabase = getSupabaseAdmin();
-    const mapping = CONTENT_TABLE_MAP[contentType];
-
-    if (action === "content_deleted") {
-      if (!mapping.deletable) return false;
-      const { error } = await supabase.from(mapping.table).delete().eq("id", contentId);
-      if (error) {
-        logger.error("Failed to delete reported content", {
-          error: error.message,
-          contentType,
-          contentId,
-        });
-        return false;
-      }
-      return true;
-    }
-
-    // Both warn and suspend need the content author's id.
-    const authorId = await ReportServerService.resolveAuthorId(contentType, contentId);
-    if (!authorId) return false;
-
-    if (action === "author_warned") {
-      await NotificationServerService.create(
-        authorId,
-        adminId,
-        "moderation_warning",
-        contentId,
-        ""
-      );
-      return true;
-    }
-
-    if (action === "author_suspended") {
-      const { error } = await supabase
-        .from("profiles")
-        .update({
-          is_suspended: true,
-          suspended_at: new Date().toISOString(),
-          suspended_reason: "content_report",
-        })
-        .eq("id", authorId);
-      if (error) {
-        logger.error("Failed to suspend author", { error: error.message, authorId });
-        return false;
-      }
-      return true;
-    }
-
-    return false;
-  }
-
-  /** Resolve the author id of a reported piece of content. */
-  private static async resolveAuthorId(
-    contentType: ReportContentType,
-    contentId: string
-  ): Promise<string | null> {
-    const mapping = CONTENT_TABLE_MAP[contentType];
-    if (contentType === "profile") return contentId;
-
-    const supabase = getSupabaseAdmin();
-    const { data, error } = await supabase
-      .from(mapping.table)
-      .select(mapping.authorColumn)
-      .eq("id", contentId)
-      .single();
-
-    if (error || !data) {
-      logger.error("Failed to resolve content author", {
-        error: error?.message,
-        contentType,
-        contentId,
-      });
-      return null;
-    }
-    return (data as unknown as Record<string, string>)[mapping.authorColumn] ?? null;
-  }
-
-  /**
-   * Resolve, review or dismiss a report and apply the chosen action.
-   * `status` is the new status; `action` is the moderation action taken.
+   * Review, resolve or dismiss a report.
+   * Resolving applies the moderation action and closes every other open report
+   * on the same content; dismissing only affects this report.
+   * Returns "closed" when the report is no longer open.
    */
   static async updateReport(
     id: string,
     status: ReportStatus,
     action: ReportAction,
-    adminId: string
-  ): Promise<boolean> {
+    adminId: string,
+    options: ModerationOptions = {}
+  ): Promise<"ok" | "not_found" | "closed" | "error"> {
     const report = await ReportServerService.getReport(id);
-    if (!report) return false;
+    if (!report) return "not_found";
+    if (!OPEN_STATUSES.includes(report.status)) return "closed";
 
     if (status === "resolved" && action !== "none") {
-      const applied = await ReportServerService.applyAction(
+      const applied = await applyModerationAction(
         action,
         report.contentType,
         report.contentId,
-        adminId
+        adminId,
+        options
       );
-      if (!applied) return false;
+      if (!applied) return "error";
     }
 
-    const supabase = getSupabaseAdmin();
     const updates: Record<string, unknown> = { status };
-
     if (status === "resolved" || status === "dismissed") {
       updates.resolved_by = adminId;
       updates.resolved_at = new Date().toISOString();
       updates.action_taken = status === "resolved" ? action : "none";
     }
 
-    const { error } = await supabase
+    const table = getSupabaseAdmin()
       .from("content_reports" as UntypedClient)
-      .update(updates)
-      .eq("id", id);
+      .update(updates);
+    const query =
+      status === "resolved"
+        ? table
+            .eq("content_type", report.contentType)
+            .eq("content_id", report.contentId)
+            .in("status", OPEN_STATUSES)
+        : table.eq("id", id);
 
+    const { error } = await query;
     if (error) {
       logger.error("Failed to update report", { error: error.message, id });
-      return false;
+      return "error";
     }
-    return true;
+    return "ok";
   }
 }
