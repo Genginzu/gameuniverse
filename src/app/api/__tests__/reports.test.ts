@@ -22,9 +22,19 @@ vi.mock("@/lib/services/reportUserServerService", () => ({
 
 const mockGetUser = vi.fn();
 
-// Admin rights come from the session (email domain / metadata), see @/lib/auth-admin.
-const ADMIN = { id: "admin1", email: "boss@admin.gamesuniverse.com", user_metadata: {} };
-const NON_ADMIN = { id: "u1", email: "player@example.com", user_metadata: {} };
+// Admin rights come from app_metadata.role only, see @/lib/utils/userRole (issue #390).
+const ADMIN = {
+  id: "admin1",
+  email: "boss@example.com",
+  app_metadata: { role: "admin" },
+  user_metadata: {},
+};
+const NON_ADMIN = {
+  id: "u1",
+  email: "player@example.com",
+  app_metadata: {},
+  user_metadata: { role: "admin" },
+};
 
 vi.mock("@/lib/supabase-server", () => ({
   createRouteHandlerClient: vi.fn(async () => ({
