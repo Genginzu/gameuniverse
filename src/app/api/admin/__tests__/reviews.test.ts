@@ -1,6 +1,5 @@
 /**
  * Tests for admin reviews API routes (GET list + GET/PUT/DELETE by id)
- * Placed in isolated/ because vi.mock() conflicts with parallel tests.
  *
  * Requirements: 1.1, 1.2, 1.3, 1.4, 2.2, 3.2
  */
@@ -8,8 +7,8 @@
 import { describe, test, expect, beforeEach, vi } from "vitest";
 
 // --- Mock setup ---
-let mockRequireAdmin: ReturnType<typeof mock>;
-let mockSupabaseFrom: ReturnType<typeof mock>;
+let mockRequireAdmin: ReturnType<typeof vi.fn>;
+let mockSupabaseFrom: ReturnType<typeof vi.fn>;
 
 const sampleReviewRow = {
   id: "review-1",
@@ -74,7 +73,7 @@ function makeParams(id: string) {
 describe("Admin Reviews API", () => {
   beforeEach(() => {
     mockRequireAdmin = vi.fn(() => Promise.resolve(true));
-    mockSupabaseFrom = null as unknown as ReturnType<typeof mock>;
+    mockSupabaseFrom = null as unknown as ReturnType<typeof vi.fn>;
   });
 
   // =====================
