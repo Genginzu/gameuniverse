@@ -9,7 +9,7 @@ import type {
   GamePriceResponse,
   BestPriceResponse,
   GamePriceComparison,
-  Store,
+  PublicStore,
   StoreCreationResponse,
   PriceFilters,
   StorePayload,
@@ -75,7 +75,7 @@ export async function compareGamePrices(gameId: string): Promise<GamePriceCompar
 /**
  * Get all active stores
  */
-export async function getActiveStores(): Promise<Store[]> {
+export async function getActiveStores(): Promise<PublicStore[]> {
   const { data, error } = await supabase.rpc("get_active_stores");
 
   if (error) {
@@ -88,7 +88,7 @@ export async function getActiveStores(): Promise<Store[]> {
 /**
  * Search stores by name or URL
  */
-export async function searchStores(searchTerm: string): Promise<Store[]> {
+export async function searchStores(searchTerm: string): Promise<PublicStore[]> {
   const { data, error } = await supabase.rpc("search_stores", {
     search_term: searchTerm,
   });

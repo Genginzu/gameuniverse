@@ -23,6 +23,7 @@ const NAV_CATEGORIES: NavCategory[] = [
       { href: "/admin/genres", icon: "fa:list", labelKey: "nav.genres" },
       { href: "/admin/companies", icon: "fa:building", labelKey: "nav.companies" },
       { href: "/admin/platforms", icon: "fa:desktop", labelKey: "nav.platforms" },
+      { href: "/admin/stores", icon: "lucide:shopping-cart", labelKey: "nav.stores" },
       { href: "/admin/languages", icon: "fa:globe", labelKey: "nav.languages" },
       {
         href: "/admin/age-classifications",

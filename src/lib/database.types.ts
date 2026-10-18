@@ -33,6 +33,48 @@ export type Database = {
   };
   public: {
     Tables: {
+      affiliate_clicks: {
+        Row: {
+          created_at: string;
+          game_id: string | null;
+          id: string;
+          player_id: string | null;
+          referrer: string | null;
+          store_id: string | null;
+        };
+        Insert: {
+          created_at?: string;
+          game_id?: string | null;
+          id?: string;
+          player_id?: string | null;
+          referrer?: string | null;
+          store_id?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          game_id?: string | null;
+          id?: string;
+          player_id?: string | null;
+          referrer?: string | null;
+          store_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "affiliate_clicks_game_id_fkey";
+            columns: ["game_id"];
+            isOneToOne: false;
+            referencedRelation: "games";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "affiliate_clicks_store_id_fkey";
+            columns: ["store_id"];
+            isOneToOne: false;
+            referencedRelation: "stores";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       achievement_catalog: {
         Row: {
           category: string;
@@ -2607,6 +2649,10 @@ export type Database = {
       };
       stores: {
         Row: {
+          affiliate_enabled: boolean;
+          affiliate_network: string | null;
+          affiliate_tag: string | null;
+          affiliate_url_template: string | null;
           created_at: string | null;
           id: string;
           is_active: boolean | null;
@@ -2616,6 +2662,10 @@ export type Database = {
           website_url: string | null;
         };
         Insert: {
+          affiliate_enabled?: boolean;
+          affiliate_network?: string | null;
+          affiliate_tag?: string | null;
+          affiliate_url_template?: string | null;
           created_at?: string | null;
           id?: string;
           is_active?: boolean | null;
@@ -2625,6 +2675,10 @@ export type Database = {
           website_url?: string | null;
         };
         Update: {
+          affiliate_enabled?: boolean;
+          affiliate_network?: string | null;
+          affiliate_tag?: string | null;
+          affiliate_url_template?: string | null;
           created_at?: string | null;
           id?: string;
           is_active?: boolean | null;

@@ -54,6 +54,16 @@ const FR = (
       non autorisée est interdite.
     </p>
 
+    <h2 id="affiliation">Liens d'affiliation</h2>
+    <p>
+      Certains liens « Acheter » de la section « Où acheter » sont des liens d'affiliation : si vous
+      effectuez un achat après avoir cliqué, le magasin partenaire peut nous reverser une commission.
+      Le prix payé reste identique pour vous. Ces liens n'influencent ni le classement des offres
+      (triées par prix) ni nos contenus éditoriaux. Un clic sur un lien d'affiliation est
+      enregistré (jeu, magasin, date, page d'origine et, si vous êtes connecté,
+      votre identifiant joueur) afin de mesurer l'efficacité du dispositif.
+    </p>
+
     <h2>Contact</h2>
     <p>Pour toute question relative au site : [À COMPLÉTER — e-mail de contact].</p>
   </>
@@ -107,6 +117,15 @@ const EN = (
       artwork, cover images and descriptive data come from third-party databases (notably IGDB and
       PandaScore) and remain the property of their respective rights holders; they are displayed for
       informational and community purposes. Any unauthorised reproduction is prohibited.
+    </p>
+
+    <h2 id="affiliation">Affiliate links</h2>
+    <p>
+      Some "Buy" links in the "Where to buy" section are affiliate links: if you make a purchase
+      after clicking, the partner store may pay us a commission. The price you pay stays the same.
+      These links do not influence how offers are ranked (sorted by price) nor our editorial
+      content. Clicks on affiliate links are logged (game, store, date, originating page and, when
+      signed in, your player ID) to measure the programme's performance.
     </p>
 
     <h2>Contact</h2>

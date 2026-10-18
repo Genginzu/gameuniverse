@@ -73,13 +73,19 @@ interface DatabaseGameRating {
   }>;
 }
 interface DatabaseGamePrice {
+  id: string;
   price: number;
   currency: string;
   platform: string;
   is_available?: boolean;
   last_updated?: string;
   store_url?: string;
-  stores?: { name?: string; logo_url?: string; website_url?: string };
+  stores?: {
+    name?: string;
+    logo_url?: string;
+    website_url?: string;
+    affiliate_enabled?: boolean;
+  };
 }
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type DatabaseGameData = Record<string, any>;
@@ -201,6 +207,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           )
         ),
         game_prices(
+          id,
           price,
           currency,
           platform,
@@ -210,7 +217,8 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
           stores(
             name,
             logo_url,
-            website_url
+            website_url,
+            affiliate_enabled
           )
         )
       `
@@ -751,11 +759,13 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       game.game_prices
         ?.filter((gp: DatabaseGamePrice) => gp.is_available)
         .map((price: DatabaseGamePrice) => ({
+          id: price.id,
           price: price.price,
           currency: price.currency,
           platform: price.platform,
           lastUpdated: price.last_updated || "",
           storeUrl: price.store_url,
+          isAffiliate: price.stores?.affiliate_enabled === true,
           store: {
             name: price.stores?.name,
             logoUrl: price.stores?.logo_url,

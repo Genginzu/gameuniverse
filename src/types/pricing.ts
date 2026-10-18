@@ -7,6 +7,11 @@ import type { Database, Json } from "../lib/database.types";
 
 // Base database types
 export type Store = Database["public"]["Tables"]["stores"]["Row"];
+/** Store columns exposed by public RPCs (get_active_stores, search_stores), without affiliate config. */
+export type PublicStore = Omit<
+  Store,
+  "affiliate_enabled" | "affiliate_network" | "affiliate_tag" | "affiliate_url_template"
+>;
 export type GamePrice = Database["public"]["Tables"]["game_prices"]["Row"];
 export type StoreInsert = Database["public"]["Tables"]["stores"]["Insert"];
 export type GamePriceInsert = Database["public"]["Tables"]["game_prices"]["Insert"];

@@ -1557,6 +1557,10 @@
         "best": "Meilleure offre",
         "buy": "Acheter sur {store}"
       },
+      "affiliate": {
+        "disclosure": "Certains liens d'achat sont des liens d'affiliation : nous pouvons percevoir une commission sur votre achat, sans surcoût pour vous. Le classement des offres reste trié par prix.",
+        "learnMore": "En savoir plus"
+      },
       "ageRating": {
         "contentDescriptors": "Avertissements"
       }
@@ -1798,6 +1802,7 @@
       "characterSpecies": "Espèces",
       "companies": "Entreprises",
       "platforms": "Plateformes",
+      "stores": "Magasins & affiliation",
       "ageClassifications": "Classifications d'âge",
       "reviewsCategory": "Avis",
       "reviews": "Avis",
@@ -1824,6 +1829,52 @@
     "openSidebar": "Ouvrir le menu latéral",
     "lightMode": "Mode clair",
     "darkMode": "Mode sombre",
+    "stores": {
+      "title": "Magasins & affiliation",
+      "subtitle": "Activez l'affiliation magasin par magasin. Tant qu'un magasin n'est pas activé, ses liens d'achat restent inchangés.",
+      "loadError": "Impossible de charger les magasins.",
+      "empty": "Aucun magasin.",
+      "noWebsite": "Aucun site web (redirection impossible)",
+      "inactiveStore": "Magasin inactif : ses liens ne sont pas affichés.",
+      "edit": "Configurer",
+      "status": {
+        "enabled": "Affiliation active",
+        "disabled": "Non affilié"
+      },
+      "fields": {
+        "enabled": "Affiliation activée",
+        "enabledHelp": "Les CTA passent par /api/go (suivi des clics) et reçoivent le code d'affilié.",
+        "network": "Réseau",
+        "networkPlaceholder": "Choisir un réseau",
+        "tag": "Code d'affilié",
+        "tagPlaceholder": "ex : gameuniverse-21",
+        "tagHelp": "Laisser vide pour utiliser la variable d'environnement du réseau.",
+        "template": "Modèle d'URL",
+        "templatePlaceholder": "?tag='{tag}' ou https://reseau.example/c/'{tag}'?u='{url}'",
+        "templateHelp": "« ?param='{tag}' » ajoute un paramètre au lien produit. « https://…'{url}'… » encapsule le lien produit encodé. Facultatif pour Amazon."
+      },
+      "networks": {
+        "amazon": "Amazon Associates",
+        "impact": "Impact",
+        "partnerize": "Partnerize",
+        "awin": "Awin",
+        "cj": "CJ Affiliate",
+        "custom": "Personnalisé"
+      },
+      "errors": {
+        "invalid": "Valeur invalide.",
+        "invalidTemplate": "Modèle invalide : commencez par « ? » ou par « https:// » avec '{url}'.",
+        "networkRequired": "Choisissez un réseau pour activer l'affiliation.",
+        "templateRequired": "Un modèle d'URL est requis pour ce réseau."
+      },
+      "form": {
+        "title": "Affiliation — {name}",
+        "save": "Enregistrer",
+        "cancel": "Annuler",
+        "success": "Configuration enregistrée.",
+        "errorGeneric": "Échec de l'enregistrement."
+      }
+    },
     "games": {
       "title": "Gestion des jeux",
       "newGame": "Nouveau jeu",

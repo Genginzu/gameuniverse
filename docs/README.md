@@ -109,6 +109,7 @@
 | [api-examples.md](systems/pricing/api-examples.md)       | Exemples TypeScript / React      |
 | [price-history.md](systems/pricing/price-history.md)     | Historique des prix              |
 | [migration-guide.md](systems/pricing/migration-guide.md) | Migration depuis l'ancien schéma |
+| [affiliation.md](systems/pricing/affiliation.md)         | Affiliation stores + `/api/go`   |
 
 ## 🔌 IGDB
 

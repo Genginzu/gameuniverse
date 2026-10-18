@@ -31,11 +31,13 @@ export interface GameMedia {
 }
 
 export interface GamePricing {
+  id?: string;
   price: number;
   currency: string;
   platform: string;
   lastUpdated: string;
   storeUrl?: string;
+  isAffiliate?: boolean;
   store: {
     name: string;
     logoUrl?: string;
