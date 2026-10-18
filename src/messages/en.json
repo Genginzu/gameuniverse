@@ -1811,6 +1811,7 @@
       "bulkImport": "Bulk Import",
       "bulkImportCharacters": "Bulk Import",
       "toolsCategory": "Tools",
+      "reports": "Reports",
       "esportCategory": "Esport",
       "esport": "Esport Management",
       "esportImport": "Esport Import",
@@ -3259,6 +3260,78 @@
         "unsuspend": "Unsuspend"
       }
     },
+    "reports": {
+      "title": "Content reports",
+      "empty": "No reports.",
+      "loadError": "Unable to load reports.",
+      "preview": {
+        "title": "Reported content",
+        "author": "Author",
+        "viewInContext": "View in context",
+        "deleted": "This content has been deleted since it was reported."
+      },
+      "confirm": {
+        "content_deleted": {
+          "title": "Delete this content?",
+          "message": "{author}'s content will be permanently deleted. This cannot be undone.",
+          "action": "Delete"
+        },
+        "author_suspended": {
+          "title": "Suspend the author?",
+          "message": "{author} won't be able to publish posts, comments or reviews for the chosen duration.",
+          "action": "Suspend"
+        },
+        "duplicatesNote": "Other open reports on this content will be closed as well.",
+        "cancel": "Cancel",
+        "submitting": "Working…"
+      },
+      "suspension": {
+        "daysLabel": "Suspension length (days)",
+        "daysHint": "Whole number between {min} and {max} days."
+      },
+      "errors": {
+        "generic": "The action failed. Please try again.",
+        "closed": "This report has already been handled."
+      },
+      "reportedBy": "Reported by",
+      "contentId": "Content ID",
+      "actionTaken": "Action taken",
+      "filter": {
+        "pending": "Pending",
+        "reviewed": "Reviewed",
+        "resolved": "Resolved",
+        "dismissed": "Dismissed",
+        "all": "All"
+      },
+      "status": {
+        "pending": "Pending",
+        "reviewed": "Reviewed",
+        "resolved": "Resolved",
+        "dismissed": "Dismissed"
+      },
+      "contentType": {
+        "review": "Review",
+        "post": "Post",
+        "comment": "Comment",
+        "profile": "Profile"
+      },
+      "reason": {
+        "spam": "Spam",
+        "harassment": "Harassment",
+        "inappropriate": "Inappropriate content",
+        "other": "Other"
+      },
+      "action": {
+        "none": "No action",
+        "content_deleted": "Delete content",
+        "author_warned": "Warn author",
+        "author_suspended": "Suspend author"
+      },
+      "actions": {
+        "review": "Review",
+        "dismiss": "Dismiss"
+      }
+    },
     "disputes": {
       "title": "Reports & Disputes",
       "empty": "No reports.",
@@ -4513,7 +4586,47 @@
     "typeFriendRequest": "sent you a friend request",
     "typeFriendAccepted": "accepted your friend request",
     "typeReviewVote": "voted on your review",
-    "typeAchievementUnlocked": "New achievement unlocked"
+    "typeAchievementUnlocked": "New achievement unlocked",
+    "typeModerationWarning": "warned you about some content"
+  },
+  "suspension": {
+    "title": "Your account is suspended",
+    "bodyUntil": "Following a moderation decision, you can't publish posts, comments or reviews until {date}.",
+    "bodyIndefinite": "Following a moderation decision, you can't publish posts, comments or reviews until further notice.",
+    "readOnly": "You can keep browsing the site as usual."
+  },
+  "reports": {
+    "report": "Report",
+    "reported": "Reported",
+    "cancelReport": "Cancel report",
+    "reportHandled": "Report already handled",
+    "cancelConfirmTitle": "Cancel this report?",
+    "cancelConfirmMessage": "Your report will be removed from the moderation queue. You can report this content again later.",
+    "cancelConfirmAction": "Cancel report",
+    "cancelConfirmKeep": "Keep it",
+    "cancelConfirmSubmitting": "Cancelling…",
+    "modalTitle": "Report this content",
+    "reasonLabel": "Reason for reporting",
+    "reason": {
+      "spam": "Spam",
+      "harassment": "Harassment",
+      "inappropriate": "Inappropriate content",
+      "other": "Other"
+    },
+    "descriptionLabel": "Description (optional)",
+    "descriptionPlaceholder": "Add some details…",
+    "submit": "Submit report",
+    "submitting": "Submitting…",
+    "cancel": "Cancel",
+    "close": "Close",
+    "confirmation": "Thanks, your report has been submitted.",
+    "errors": {
+      "limit": "You have reached today's report limit.",
+      "duplicate": "You have already reported this content.",
+      "generic": "The report failed. Please try again.",
+      "cancelClosed": "This report has already been handled by moderation.",
+      "cancelGeneric": "Cancelling failed. Please try again."
+    }
   },
   "notificationCenter": {
     "kicker": "Your activity",
@@ -4529,7 +4642,8 @@
       "mentions": "Mentions",
       "achievements": "Achievements",
       "coaching": "Coaching",
-      "activity": "Activity"
+      "activity": "Activity",
+      "moderation": "Moderation"
     },
     "status": {
       "all": "All",
