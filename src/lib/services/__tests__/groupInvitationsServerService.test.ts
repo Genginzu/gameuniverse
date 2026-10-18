@@ -37,16 +37,16 @@ vi.mock("@/lib/email", () => ({
   sendEmail: mockSendEmail,
 }));
 
-// Email now comes from auth.users via the service-role client (issue #375).
-const { mockEmailIn } = vi.hoisted(() => ({
-  mockEmailIn: vi.fn(async () => ({
-    data: [{ id: "aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa", email: "player@example.com" }],
+// Email comes from auth.users through the auth admin API (issues #375, #387).
+const { mockGetUserById } = vi.hoisted(() => ({
+  mockGetUserById: vi.fn(async (id: string) => ({
+    data: { user: { id, email: "player@example.com" } },
     error: null,
   })),
 }));
 vi.mock("@/lib/supabase-admin", () => ({
   getSupabaseAdmin: () => ({
-    schema: () => ({ from: () => ({ select: () => ({ in: mockEmailIn }) }) }),
+    auth: { admin: { getUserById: mockGetUserById } },
   }),
 }));
 

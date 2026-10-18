@@ -1,12 +1,15 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
-const { mockIn } = vi.hoisted(() => ({ mockIn: vi.fn() }));
-const mockSelect = vi.fn(() => ({ in: mockIn }));
-const mockFrom = vi.fn(() => ({ select: mockSelect }));
-const mockSchema = vi.fn(() => ({ from: mockFrom }));
+const { mockGetUserById, mockSchema } = vi.hoisted(() => ({
+  mockGetUserById: vi.fn(),
+  mockSchema: vi.fn(),
+}));
 
 vi.mock("@/lib/supabase-admin", () => ({
-  getSupabaseAdmin: () => ({ schema: mockSchema }),
+  getSupabaseAdmin: () => ({
+    auth: { admin: { getUserById: mockGetUserById } },
+    schema: mockSchema,
+  }),
 }));
 
 vi.mock("@/lib/logger", () => ({
@@ -15,59 +18,86 @@ vi.mock("@/lib/logger", () => ({
 
 import { fetchUserEmails, fetchUserEmail } from "@/lib/services/userEmailsServerService";
 
+const EMAILS: Record<string, string | null> = {
+  u1: "a@test.com",
+  u2: "b@test.com",
+  noEmail: null,
+};
+
+function resolveFromFixture(userId: string) {
+  if (userId in EMAILS) {
+    return Promise.resolve({ data: { user: { id: userId, email: EMAILS[userId] } }, error: null });
+  }
+  return Promise.resolve({ data: { user: null }, error: { message: "User not found" } });
+}
+
 describe("userEmailsServerService", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockGetUserById.mockImplementation(resolveFromFixture);
   });
 
-  it("reads emails from the auth schema, not public.profiles", async () => {
-    mockIn.mockResolvedValue({
-      data: [
-        { id: "u1", email: "a@test.com" },
-        { id: "u2", email: "b@test.com" },
-      ],
-      error: null,
-    });
-
+  it("reads emails through the auth admin API, never through PostgREST", async () => {
     const map = await fetchUserEmails(["u1", "u2"]);
 
-    expect(mockSchema).toHaveBeenCalledWith("auth");
-    expect(mockFrom).toHaveBeenCalledWith("users");
-    expect(mockSelect).toHaveBeenCalledWith("id, email");
+    expect(mockGetUserById).toHaveBeenCalledWith("u1");
+    expect(mockGetUserById).toHaveBeenCalledWith("u2");
+    expect(mockSchema).not.toHaveBeenCalled();
     expect(map.get("u1")).toBe("a@test.com");
     expect(map.get("u2")).toBe("b@test.com");
   });
 
-  it("dedupes and skips empty ids, and returns empty when none are valid", async () => {
+  it("returns an empty map without calling the API when no id is valid", async () => {
     const map = await fetchUserEmails(["", ""]);
     expect(map.size).toBe(0);
-    expect(mockIn).not.toHaveBeenCalled();
+    expect(mockGetUserById).not.toHaveBeenCalled();
   });
 
-  it("queries unique ids only", async () => {
-    mockIn.mockResolvedValue({ data: [{ id: "u1", email: "a@test.com" }], error: null });
+  it("looks up each unique id once", async () => {
     await fetchUserEmails(["u1", "u1", "u1"]);
-    expect(mockIn).toHaveBeenCalledWith("id", ["u1"]);
+    expect(mockGetUserById).toHaveBeenCalledTimes(1);
   });
 
-  it("returns an empty map and swallows the error when the query fails", async () => {
-    mockIn.mockResolvedValue({ data: null, error: { message: "boom" } });
-    const map = await fetchUserEmails(["u1"]);
-    expect(map.size).toBe(0);
+  it("omits ids whose lookup fails and keeps the others", async () => {
+    const map = await fetchUserEmails(["u1", "ghost"]);
+    expect(map.get("u1")).toBe("a@test.com");
+    expect(map.has("ghost")).toBe(false);
+  });
+
+  it("keeps users without an email as null", async () => {
+    const map = await fetchUserEmails(["noEmail"]);
+    expect(map.has("noEmail")).toBe(true);
+    expect(map.get("noEmail")).toBeNull();
+  });
+
+  it("never runs more than 10 lookups at the same time", async () => {
+    let inFlight = 0;
+    let peak = 0;
+    mockGetUserById.mockImplementation(async (userId: string) => {
+      inFlight += 1;
+      peak = Math.max(peak, inFlight);
+      await new Promise((resolve) => setTimeout(resolve, 1));
+      inFlight -= 1;
+      return { data: { user: { id: userId, email: `${userId}@test.com` } }, error: null };
+    });
+
+    const ids = Array.from({ length: 25 }, (_, index) => `user-${index}`);
+    const map = await fetchUserEmails(ids);
+
+    expect(map.size).toBe(25);
+    expect(peak).toBeLessThanOrEqual(10);
   });
 
   it("fetchUserEmail resolves a single id", async () => {
-    mockIn.mockResolvedValue({ data: [{ id: "u1", email: "a@test.com" }], error: null });
     expect(await fetchUserEmail("u1")).toBe("a@test.com");
   });
 
-  it("fetchUserEmail returns null for a missing id", async () => {
-    mockIn.mockResolvedValue({ data: [], error: null });
+  it("fetchUserEmail returns null for an unknown id", async () => {
     expect(await fetchUserEmail("ghost")).toBeNull();
   });
 
-  it("fetchUserEmail returns null for an empty id without querying", async () => {
+  it("fetchUserEmail returns null for an empty id without calling the API", async () => {
     expect(await fetchUserEmail("")).toBeNull();
-    expect(mockIn).not.toHaveBeenCalled();
+    expect(mockGetUserById).not.toHaveBeenCalled();
   });
 });

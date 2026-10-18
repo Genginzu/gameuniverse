@@ -35,17 +35,12 @@ vi.mock("@/lib/supabase-server", () => ({
 
 vi.mock("@/lib/supabase-admin", () => ({
   getSupabaseAdmin: () => ({
-    schema: () => ({
-      from: () => ({
-        select: () => ({
-          in: () =>
-            Promise.resolve({
-              data: [{ id: "owner-1", email: "alice@test.com" }],
-              error: null,
-            }),
-        }),
-      }),
-    }),
+    auth: {
+      admin: {
+        getUserById: (id: string) =>
+          Promise.resolve({ data: { user: { id, email: "alice@test.com" } }, error: null }),
+      },
+    },
   }),
 }));
 
