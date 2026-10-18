@@ -244,6 +244,21 @@ Configured in `.mcp.json` (gitignored — contains API tokens). Template in
 tools denied), `github` (stdio). Pre-approvals and denials live under
 `permissions` in `.agents/settings.json`.
 
+## Agent skills
+
+### Issue tracker
+
+Issues tracked in GitHub Issues (`Genginzu/gameuniverse`) via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default canonical labels (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`).
+See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: root `GLOSSARY.md` + `docs/adr/`. See `docs/agents/domain.md`.
+
 <!-- rtk-instructions v2 -->
 # RTK (Rust Token Killer) - Token-Optimized Commands
 
