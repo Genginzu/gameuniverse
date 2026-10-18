@@ -10,6 +10,7 @@ import {
   collectDlcExtensionIds,
   transformIgdbToDlcExtensionRow,
 } from "../../../src/lib/utils/dlcExtensionUtils";
+import { toGameVersionRows } from "../../../src/lib/utils/gameVersionRows";
 import { IGDB_RATING_CATEGORIES, IGDB_ALL_RATINGS } from "../../../src/types/igdb"; // eslint-disable-line no-duplicate-imports
 import { extractColorsFromCover } from "../shared/color-extractor";
 import { syncExistingGame } from "./game-sync";
@@ -678,32 +679,17 @@ async function importGameVersions(
     const supabase = createScriptClient();
     let importedCount = 0;
 
-    for (let i = 0; i < versions.length; i++) {
-      const version = versions[i];
-      const coverUrl = version.cover?.image_id
-        ? IGDBService.buildImageUrl(version.cover.image_id, "cover_big")
-        : null;
-
+    for (const row of toGameVersionRows(gameId, versions)) {
       const { error } = await (
         supabase.from("game_versions") as ReturnType<typeof supabase.from>
-      ).upsert(
-        {
-          game_id: gameId,
-          igdb_id: version.id,
-          version_title: version.version_title || version.name,
-          description: version.summary || null,
-          cover_image_url: coverUrl,
-          display_order: i,
-        } as Record<string, unknown>,
-        {
-          onConflict: "game_id,igdb_id",
-        }
-      );
+      ).upsert(row as unknown as Record<string, unknown>, {
+        onConflict: "game_id,igdb_id",
+      });
 
       if (!error) {
         importedCount++;
       } else if (verbose) {
-        console.log(`[Importer] Error importing version ${version.name}:`, error.message);
+        console.log(`[Importer] Error importing version ${row.version_title}:`, error.message);
       }
     }
 

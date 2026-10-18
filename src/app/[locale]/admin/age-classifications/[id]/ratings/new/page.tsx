@@ -8,6 +8,7 @@ import { useRatingForm } from "@/hooks/useRatingForm";
 import { RatingForm } from "@/components/admin/age-classifications/RatingForm";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import { isDuplicateErrorMessage } from "@/lib/utils/duplicateError";
 
 import type { RatingFormData } from "@/lib/validations/admin-rating-form";
 import { Icon } from "@iconify/react";
@@ -32,10 +33,7 @@ export default function NewRatingPage() {
         setTimeout(() => router.push(`/admin/age-classifications/${ratingSystemId}/edit`), 500);
       } catch (err) {
         const message = err instanceof Error ? err.message : t("toast.createError");
-        const isDuplicate =
-          message.toLowerCase().includes("already exists") ||
-          message.toLowerCase().includes("existe déjà") ||
-          message.toLowerCase().includes("duplicate");
+        const isDuplicate = isDuplicateErrorMessage(message);
 
         toast({
           title: isDuplicate ? t("toast.duplicateCode") : message,
