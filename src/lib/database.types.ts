@@ -3022,6 +3022,31 @@ export type Database = {
         Args: { game_uuid: string; user_uuid: string };
         Returns: boolean;
       };
+      place_esport_prediction: {
+        Args: {
+          p_player_id: string;
+          p_match_id: number;
+          p_match_name: string;
+          p_game: string;
+          p_predicted_winner_id: number;
+          p_predicted_winner_name: string;
+          p_amount: number;
+        };
+        Returns: {
+          id: string;
+          player_id: string;
+          match_id: number;
+          match_name: string;
+          game: string;
+          predicted_winner_id: number;
+          predicted_winner_name: string;
+          amount: number;
+          status: string;
+          payout: number;
+          resolved_at: string | null;
+          created_at: string;
+        };
+      };
       refresh_translation_stats: { Args: never; Returns: undefined };
       refresh_translation_stats_cross_lang: {
         Args: {
