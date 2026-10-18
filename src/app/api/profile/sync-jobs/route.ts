@@ -3,7 +3,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { logger } from "@/lib/logger";
 import { getLatestJobsByPlatform } from "@/lib/services/librarySyncJobs";
-import { runLibrarySyncJob } from "@/lib/services/runLibrarySyncJob";
+import { runLibrarySyncJob } from "@/lib/services/library-sync";
 import { isSyncablePlatform, type LibrarySyncJob } from "@/types/library-sync";
 
 /**
@@ -47,33 +47,10 @@ export async function GET() {
     const admin = getSupabaseAdmin();
     const jobs = await getLatestJobsByPlatform(admin, user.id);
 
-    const stalled = jobs.filter((j) => isStalled(j) && isSyncablePlatform(j.platform));
-    if (stalled.length > 0) {
-      // Steam needs the linked steamid to re-run.
-      let steamId: string | null = null;
-      if (stalled.some((j) => j.platform === "steam")) {
-        const { data } = await supabase
-          .from("player_linked_platforms")
-          .select("external_id")
-          .eq("player_id", user.id)
-          .eq("platform", "steam")
-          .maybeSingle();
-        steamId = data?.external_id ?? null;
-      }
-
-      for (const job of stalled) {
-        const platform = job.platform;
-        if (!isSyncablePlatform(platform)) continue;
-        after(() =>
-          runLibrarySyncJob({
-            admin,
-            jobId: job.id,
-            userId: user.id,
-            platform,
-            steamId,
-          })
-        );
-      }
+    for (const job of jobs) {
+      const platform = job.platform;
+      if (!isStalled(job) || !isSyncablePlatform(platform)) continue;
+      after(() => runLibrarySyncJob({ admin, jobId: job.id, userId: user.id, platform }));
     }
 
     return NextResponse.json({ jobs });

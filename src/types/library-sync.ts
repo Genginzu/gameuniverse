@@ -1,3 +1,7 @@
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/lib/database.types";
+import type { ExternalGameCategory } from "@/lib/services/igdb-external-games";
+
 // Shared types for background library-sync jobs.
 
 /** Platforms that support automated library synchronization. */
@@ -11,13 +15,7 @@ export function isSyncablePlatform(value: string): value is SyncablePlatform {
 export type LibrarySyncStatus = "pending" | "running" | "succeeded" | "failed";
 
 export type LibrarySyncPhase =
-  | "starting"
-  | "fetching"
-  | "resolving"
-  | "importing"
-  | "saving"
-  | "done"
-  | "failed";
+  "starting" | "fetching" | "resolving" | "importing" | "saving" | "done" | "failed";
 
 /** A background library-sync job as exposed to the client. */
 export interface LibrarySyncJob {
@@ -57,3 +55,47 @@ export interface LibrarySyncProgress {
 
 /** Callback used by sync services to stream progress to the job row. */
 export type LibrarySyncProgressCallback = (progress: LibrarySyncProgress) => void;
+
+export interface PlatformLibraryItem {
+  sourceId: string;
+  name: string;
+  uids: string[];
+  playtimeMinutes?: number;
+}
+
+export interface PlatformLibraryFetch {
+  items: PlatformLibraryItem[];
+  privateProfile?: boolean;
+}
+
+export interface LibrarySyncAdapter {
+  platform: SyncablePlatform;
+  externalCategory: ExternalGameCategory;
+  fetchLibrary(supabase: SupabaseClient<Database>, userId: string): Promise<PlatformLibraryFetch>;
+  findKnownGames?(
+    supabase: SupabaseClient<Database>,
+    items: PlatformLibraryItem[]
+  ): Promise<Map<string, string>>;
+  pickDuplicate?(
+    existing: PlatformLibraryItem,
+    candidate: PlatformLibraryItem
+  ): PlatformLibraryItem;
+}
+
+export interface LibrarySyncResult {
+  total: number;
+  matched: number;
+  upserted: number;
+  unmatched: number;
+  imported: number;
+  pending: number;
+  done: boolean;
+  privateProfile: boolean;
+}
+
+export interface LibrarySyncJobOutcome {
+  status: "succeeded" | "continuing" | "failed";
+  total: number;
+  matched: number;
+  error?: string;
+}
