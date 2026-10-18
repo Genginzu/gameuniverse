@@ -2,6 +2,7 @@
 
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend } from "recharts";
 import type { PriceChartDataPoint } from "@/types/price-history";
+import { formatPriceChartDate, formatPriceWithCurrency } from "@/lib/utils/priceChartFormat";
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -35,24 +36,15 @@ interface PriceHistoryChartProps {
   currency: string;
 }
 
-/** Formate une date ISO (YYYY-MM-DD) en libellé court (ex: "Jan 2024") */
-function formatDateLabel(dateStr: string): string {
-  const date = new Date(dateStr);
-  return date.toLocaleDateString("fr-FR", { month: "short", year: "numeric" });
-}
-
-/** Formate un prix avec sa devise */
-function formatPrice(value: number, currency: string): string {
-  return `${value.toFixed(2)} ${currency}`;
-}
-
 /** Tooltip personnalisé affichant prix, magasin et date */
 function CustomTooltip({ active, payload, label, currency }: CustomTooltipProps) {
   if (!active || !payload?.length) return null;
 
   return (
     <div className="rounded-lg border border-[var(--editorial-line)] bg-[var(--editorial-bg-2)] p-3 shadow-lg shadow-black/30">
-      <p className="mb-1.5 text-sm font-medium text-white">{formatDateLabel(label as string)}</p>
+      <p className="mb-1.5 text-sm font-medium text-white">
+        {formatPriceChartDate(label as string)}
+      </p>
       {payload.map((entry) => (
         <div key={entry.dataKey} className="flex items-center gap-2 text-sm">
           <span
@@ -61,7 +53,7 @@ function CustomTooltip({ active, payload, label, currency }: CustomTooltipProps)
           />
           <span className="text-slate-400">{entry.name}:</span>
           <span className="font-semibold text-white">
-            {formatPrice(entry.value as number, currency)}
+            {formatPriceWithCurrency(entry.value as number, currency)}
           </span>
         </div>
       ))}
@@ -77,12 +69,12 @@ export function PriceHistoryChart({ chartData, storeNames, currency }: PriceHist
       <LineChart data={chartData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
         <XAxis
           dataKey="date"
-          tickFormatter={formatDateLabel}
+          tickFormatter={formatPriceChartDate}
           tick={{ fontSize: 12 }}
           stroke="hsl(var(--muted-foreground))"
         />
         <YAxis
-          tickFormatter={(v: number) => formatPrice(v, currency)}
+          tickFormatter={(v: number) => formatPriceWithCurrency(v, currency)}
           tick={{ fontSize: 12 }}
           stroke="hsl(var(--muted-foreground))"
           width={90}

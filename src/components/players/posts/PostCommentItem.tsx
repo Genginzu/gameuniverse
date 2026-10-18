@@ -3,6 +3,7 @@
 import { useTranslations, useFormatter } from "next-intl";
 import { Icon } from "@iconify/react";
 import { LazyImage } from "@/components/ui/lazy-image";
+import { ReportButton } from "@/components/shared/ReportButton";
 import type { PostComment } from "@/types/post-comment";
 
 interface PostCommentItemProps {
@@ -74,6 +75,13 @@ export function PostCommentItem({ comment, isOwner, onDelete }: PostCommentItemP
         >
           <Icon icon="lucide:trash-2" className="h-4 w-4" />
         </button>
+      )}
+      {!isOwner && (
+        <ReportButton
+          contentType="comment"
+          contentId={comment.id}
+          className="shrink-0 self-start"
+        />
       )}
     </article>
   );

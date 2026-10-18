@@ -1,6 +1,5 @@
 /**
  * Tests for admin comments API routes (GET list + GET/PUT/DELETE by id)
- * Placed in isolated/ because vi.mock() conflicts with parallel tests.
  *
  * Requirements: 4.1, 5.2, 6.2, 7.1, 7.2
  */
@@ -8,8 +7,8 @@
 import { describe, test, expect, beforeEach, vi } from "vitest";
 
 // --- Mock state ---
-let mockRequireAdmin: ReturnType<typeof mock>;
-let mockSupabaseFrom: ReturnType<typeof mock>;
+let mockRequireAdmin: ReturnType<typeof vi.fn>;
+let mockSupabaseFrom: ReturnType<typeof vi.fn>;
 
 const sampleCommentRow = {
   id: "comment-1",
@@ -21,7 +20,7 @@ const sampleCommentRow = {
   characters: { id: "char-1", character_translations: [{ name: "Link" }] },
 };
 
-const sampleProfiles = [{ id: "user-1", username: "player1", email: "player1@test.com" }];
+const sampleProfiles = [{ id: "user-1", username: "player1" }];
 
 vi.mock("@/lib/auth-admin", () => ({
   requireAdmin: () => {
@@ -38,6 +37,21 @@ vi.mock("@/lib/supabase-server", () => ({
         return {};
       },
     }),
+}));
+
+// Emails come from auth.users through the auth admin API (issues #375, #387).
+vi.mock("@/lib/supabase-admin", () => ({
+  getSupabaseAdmin: () => ({
+    auth: {
+      admin: {
+        getUserById: (id: string) =>
+          Promise.resolve({
+            data: { user: id === "user-1" ? { id, email: "player1@test.com" } : null },
+            error: null,
+          }),
+      },
+    },
+  }),
 }));
 
 // Import after mocks
@@ -59,7 +73,7 @@ function makeParams(id: string) {
 describe("Admin Comments API", () => {
   beforeEach(() => {
     mockRequireAdmin = vi.fn(() => Promise.resolve(true));
-    mockSupabaseFrom = null as unknown as ReturnType<typeof mock>;
+    mockSupabaseFrom = null as unknown as ReturnType<typeof vi.fn>;
   });
 
   // =====================
@@ -109,6 +123,7 @@ describe("Admin Comments API", () => {
 
       const comment = body.comments[0];
       expect(comment.playerName).toBe("player1");
+      expect(comment.playerEmail).toBe("player1@test.com");
       expect(comment.characterName).toBe("Link");
       expect(comment.contentExcerpt).toBeDefined();
       expect(comment.createdAt).toBeDefined();

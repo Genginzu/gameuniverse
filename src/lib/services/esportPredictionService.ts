@@ -1,4 +1,5 @@
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { logger } from "@/lib/logger";
 import { CoinService } from "@/lib/services/coinService";
 import { getMatchById } from "@/lib/pandascore/client";
@@ -36,36 +37,29 @@ export async function placePrediction(
   predictedWinnerName: string,
   amount: number
 ): Promise<EsportPrediction> {
-  const supabase = await createRouteHandlerClient();
+  // Atomically debit coins and insert the prediction via a SECURITY DEFINER
+  // DB function. The service-role client is the only role allowed to execute it
+  // (issue #372), so a client can neither insert a prediction directly nor
+  // split the debit from the insert.
+  const supabase = getSupabaseAdmin();
 
-  // Deduct coins
-  await CoinService.debitCoins(
-    playerId,
-    amount,
-    "prediction_bet",
-    undefined,
-    `Pronostic: ${matchName}`
-  );
+  const { data, error } = await supabase.rpc("place_esport_prediction", {
+    p_player_id: playerId,
+    p_match_id: matchId,
+    p_match_name: matchName,
+    p_game: game,
+    p_predicted_winner_id: predictedWinnerId,
+    p_predicted_winner_name: predictedWinnerName,
+    p_amount: amount,
+  });
 
-  const { data, error } = await untypedTable(supabase, "esport_predictions")
-    .insert({
-      player_id: playerId,
-      match_id: matchId,
-      match_name: matchName,
-      game,
-      predicted_winner_id: predictedWinnerId,
-      predicted_winner_name: predictedWinnerName,
-      amount,
-    })
-    .select()
-    .single();
-
-  if (error) {
+  if (error || !data) {
     logger.error("Failed to place prediction", { playerId, matchId, error });
-    throw new Error("Failed to place prediction");
+    // Surface the function's own message (e.g. "Insufficient balance").
+    throw new Error(error?.message || "Failed to place prediction");
   }
 
-  return mapPrediction(data);
+  return mapPrediction(data as Record<string, unknown>);
 }
 
 export async function getMyPredictions(playerId: string): Promise<EsportPrediction[]> {
@@ -97,7 +91,9 @@ export async function resolvePrediction(matchId: number): Promise<number> {
  * Can be called from cron without re-fetching from PandaScore.
  */
 export async function resolvePredictionsForMatch(matchId: number, winnerId: number): Promise<number> {
-  const supabase = await createRouteHandlerClient();
+  // Server-internal callback (no user context): use the service-role client so
+  // prediction updates and coin credits bypass the client-only RLS (issue #372).
+  const supabase = getSupabaseAdmin();
 
   // Get all pending predictions for this match
   const { data: predictions, error } = await untypedTable(supabase, "esport_predictions")

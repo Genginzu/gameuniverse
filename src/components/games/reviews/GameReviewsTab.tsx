@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useReviews } from "@/hooks/useReviews";
 import { useReviewTranslations } from "@/hooks/useTranslations";
 import { ReviewFormDialog } from "./ReviewFormDialog";
+import { SuspensionGate } from "@/components/shared/SuspensionGate";
 import { ReviewList } from "./ReviewList";
 import type { ReviewFormData } from "@/types/review";
 
@@ -96,24 +97,28 @@ export function GameReviewsTab({
       {!authLoading && (
         <>
           {!isAuthenticated && <LoginPrompt message={t("loginPrompt")} />}
-          {showWriteButton && (
-            <ReviewFormDialog
-              gameId={gameId}
-              onSubmitSuccess={fetchReviews}
-              onSubmit={handleSubmit}
-              submitting={submitting}
-              accentColor={accentColor}
-            />
-          )}
-          {showEditButton && (
-            <ReviewFormDialog
-              gameId={gameId}
-              onSubmitSuccess={fetchReviews}
-              onSubmit={handleUpdate}
-              submitting={submitting}
-              accentColor={accentColor}
-              existingReview={userReview}
-            />
+          {isAuthenticated && (
+            <SuspensionGate>
+              {showWriteButton && (
+                <ReviewFormDialog
+                  gameId={gameId}
+                  onSubmitSuccess={fetchReviews}
+                  onSubmit={handleSubmit}
+                  submitting={submitting}
+                  accentColor={accentColor}
+                />
+              )}
+              {showEditButton && (
+                <ReviewFormDialog
+                  gameId={gameId}
+                  onSubmitSuccess={fetchReviews}
+                  onSubmit={handleUpdate}
+                  submitting={submitting}
+                  accentColor={accentColor}
+                  existingReview={userReview}
+                />
+              )}
+            </SuspensionGate>
           )}
         </>
       )}

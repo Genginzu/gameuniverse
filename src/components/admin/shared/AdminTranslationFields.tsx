@@ -46,7 +46,11 @@ export function AdminTranslationFields({
       return existing ?? defaultTranslation(lang.code);
     });
 
-    if (current.length !== updated.length) {
+    const isOutOfSync =
+      current.length !== updated.length ||
+      updated.some((tr, i) => current[i]?.language_code !== tr.language_code);
+
+    if (isOutOfSync) {
       form.setValue("translations", updated);
     }
   }, [supportedLanguages, form, fields]);
