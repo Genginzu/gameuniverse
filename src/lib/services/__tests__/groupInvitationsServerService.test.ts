@@ -37,6 +37,19 @@ vi.mock("@/lib/email", () => ({
   sendEmail: mockSendEmail,
 }));
 
+// Email now comes from auth.users via the service-role client (issue #375).
+const { mockEmailIn } = vi.hoisted(() => ({
+  mockEmailIn: vi.fn(async () => ({
+    data: [{ id: "aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa", email: "player@example.com" }],
+    error: null,
+  })),
+}));
+vi.mock("@/lib/supabase-admin", () => ({
+  getSupabaseAdmin: () => ({
+    schema: () => ({ from: () => ({ select: () => ({ in: mockEmailIn }) }) }),
+  }),
+}));
+
 import { GroupInvitationsServerService } from "@/lib/services/groupInvitationsServerService";
 
 const GROUP_ID = "gggggggg-gggg-4ggg-gggg-gggggggggggg";
@@ -53,7 +66,7 @@ describe("GroupInvitationsServerService", () => {
   describe("createInvitation", () => {
     it("resolves a username to a player_id and sends an email", async () => {
       resultQueue = [
-        { data: { id: PLAYER_ID, email: "player@example.com" }, error: null }, // profile lookup
+        { data: { id: PLAYER_ID }, error: null }, // profile lookup (id only; email from auth.users)
         {
           data: {
             id: "inv1",
@@ -135,7 +148,7 @@ describe("GroupInvitationsServerService", () => {
 
     it("throws a friendly error on duplicate pending invitation (23505)", async () => {
       resultQueue = [
-        { data: { id: PLAYER_ID, email: "player@example.com" }, error: null },
+        { data: { id: PLAYER_ID }, error: null },
         { data: null, error: { code: "23505" } },
       ];
 

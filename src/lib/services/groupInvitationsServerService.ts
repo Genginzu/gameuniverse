@@ -1,6 +1,7 @@
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 import { sendEmail } from "@/lib/email";
+import { fetchUserEmail } from "@/lib/services/userEmailsServerService";
 import { fetchInvitationByToken } from "@/lib/services/groupInvitationsQueries";
 import type {
   CreateGroupInvitationInput,
@@ -54,7 +55,7 @@ export class GroupInvitationsServerService {
     if (input.username) {
       const { data: profile, error } = await supabase
         .from("profiles" as UntypedFrom)
-        .select("id, email")
+        .select("id")
         .eq("username", input.username)
         .maybeSingle();
 
@@ -70,7 +71,9 @@ export class GroupInvitationsServerService {
       }
 
       invitedPlayerId = (profile as unknown as { id: string }).id;
-      recipientEmail = (profile as unknown as { email: string | null }).email ?? null;
+      // Email lives in auth.users (issue #375): resolve it with the service-role
+      // client so the invite email can be sent without exposing it to clients.
+      recipientEmail = await fetchUserEmail(invitedPlayerId);
     } else if (input.email) {
       invitedEmail = input.email;
       recipientEmail = input.email;

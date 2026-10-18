@@ -20,7 +20,7 @@ const sampleCommentRow = {
   characters: { id: "char-1", character_translations: [{ name: "Link" }] },
 };
 
-const sampleProfiles = [{ id: "user-1", username: "player1", email: "player1@test.com" }];
+const sampleProfiles = [{ id: "user-1", username: "player1" }];
 
 vi.mock("@/lib/auth-admin", () => ({
   requireAdmin: () => {
@@ -37,6 +37,23 @@ vi.mock("@/lib/supabase-server", () => ({
         return {};
       },
     }),
+}));
+
+// Emails now come from auth.users via the service-role client (issue #375).
+vi.mock("@/lib/supabase-admin", () => ({
+  getSupabaseAdmin: () => ({
+    schema: () => ({
+      from: () => ({
+        select: () => ({
+          in: () =>
+            Promise.resolve({
+              data: [{ id: "user-1", email: "player1@test.com" }],
+              error: null,
+            }),
+        }),
+      }),
+    }),
+  }),
 }));
 
 // Import after mocks
@@ -108,6 +125,7 @@ describe("Admin Comments API", () => {
 
       const comment = body.comments[0];
       expect(comment.playerName).toBe("player1");
+      expect(comment.playerEmail).toBe("player1@test.com");
       expect(comment.characterName).toBe("Link");
       expect(comment.contentExcerpt).toBeDefined();
       expect(comment.createdAt).toBeDefined();
