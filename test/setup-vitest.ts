@@ -1,6 +1,6 @@
 /**
  * Vitest setup for UI/component tests.
- * Vitest handles jsdom natively via environment: 'jsdom' in vitest.config.ts.
+ * Vitest handles jsdom natively via environment: 'jsdom' in vitest.config.mts.
  * No manual global.window assignment needed.
  */
 
