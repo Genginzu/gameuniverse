@@ -47,3 +47,47 @@ export interface PaginatedNotificationsResponse {
 export interface NotificationCountResponse {
   count: number;
 }
+
+export type NotificationCategory =
+  "friends" | "reviews" | "mentions" | "achievements" | "coaching" | "activity" | "moderation";
+
+export type NotificationHrefContext = Pick<
+  Notification,
+  "referenceId" | "senderId" | "recipientId" | "contentPreview"
+>;
+
+export type NotificationPreviewPolicy =
+  | { kind: "none" }
+  | { kind: "text" }
+  | { kind: "translated"; keys: Readonly<Record<string, string>> };
+
+export interface NotificationKindDescriptor {
+  icon: string;
+  labelKey: string;
+  category: NotificationCategory;
+  system: boolean;
+  preview: NotificationPreviewPolicy;
+  href: (context: NotificationHrefContext) => string | null;
+}
+
+export interface NotificationPresentation {
+  icon: string;
+  label: string;
+  href: string | null;
+  preview: string | null;
+  senderName: string | null;
+  date: Date;
+}
+
+export interface NotificationDeliveryResult {
+  delivered: number;
+}
+
+export type CoachingTransitionNotificationType = Extract<
+  NotificationType,
+  | "coaching_confirmed"
+  | "coaching_declined"
+  | "coaching_started"
+  | "coaching_completed"
+  | "coaching_cancelled"
+>;

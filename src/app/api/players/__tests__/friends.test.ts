@@ -12,7 +12,7 @@ const {
   mockParsePaginationParams,
   mockGetUser,
   mockFrom,
-  mockNotificationCreate,
+  mockFriendRequested,
 } = vi.hoisted(() => ({
   mockGetFriends: vi.fn(),
   mockGetPendingRequests: vi.fn(),
@@ -21,7 +21,7 @@ const {
   mockParsePaginationParams: vi.fn(() => ({ page: 1, limit: 20 })),
   mockGetUser: vi.fn(),
   mockFrom: vi.fn(),
-  mockNotificationCreate: vi.fn(),
+  mockFriendRequested: vi.fn(),
 }));
 
 vi.mock("@/lib/services/friendServerService", () => ({
@@ -33,10 +33,8 @@ vi.mock("@/lib/services/friendServerService", () => ({
   },
 }));
 
-vi.mock("@/lib/services/notificationServerService", () => ({
-  NotificationServerService: {
-    create: mockNotificationCreate,
-  },
+vi.mock("@/lib/services/notifications", () => ({
+  friendRequested: mockFriendRequested,
 }));
 
 vi.mock("@/lib/supabase-server", () => ({
@@ -125,7 +123,7 @@ describe("/api/players/[id]/friends — POST", () => {
     });
     mockGetRelationshipStatus.mockResolvedValue({ status: "none" });
     mockSendRequest.mockResolvedValue({ id: "new-friendship", status: "pending" });
-    mockNotificationCreate.mockResolvedValue(null);
+    mockFriendRequested.mockResolvedValue(null);
   });
 
   it("returns 201 when sending a valid friend request", async () => {
@@ -143,13 +141,11 @@ describe("/api/players/[id]/friends — POST", () => {
       method: "POST",
     });
     await POST(req, makeParams());
-    expect(mockNotificationCreate).toHaveBeenCalledWith(
-      PLAYER_ID,
-      USER_ID,
-      "friend_request",
-      "new-friendship",
-      ""
-    );
+    expect(mockFriendRequested).toHaveBeenCalledWith({
+      friendshipId: "new-friendship",
+      requesterId: USER_ID,
+      receiverId: PLAYER_ID,
+    });
   });
 
   it("returns 401 when not authenticated", async () => {

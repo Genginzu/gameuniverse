@@ -4,9 +4,9 @@ vi.mock("@/lib/logger", () => ({
   logger: { error: vi.fn(), info: vi.fn(), warn: vi.fn(), debug: vi.fn() },
 }));
 
-const notificationCreate = vi.fn(async () => null);
-vi.mock("@/lib/services/notificationServerService", () => ({
-  NotificationServerService: { create: (...args: unknown[]) => notificationCreate(...args) },
+const contentAuthorWarned = vi.fn(async () => ({ delivered: 1 }));
+vi.mock("@/lib/services/notifications", () => ({
+  contentAuthorWarned: (...args: unknown[]) => contentAuthorWarned(...(args as [])),
 }));
 
 // Queue of results consumed in order by terminal calls (.single() or awaiting the chain).
@@ -50,7 +50,7 @@ beforeEach(() => {
   resultQueue = [];
   fromCalls.length = 0;
   calls.length = 0;
-  notificationCreate.mockClear();
+  contentAuthorWarned.mockClear();
 });
 
 describe("ReportServerService.createReport", () => {
@@ -205,13 +205,12 @@ describe("ReportServerService.updateReport", () => {
     ];
     const res = await ReportServerService.updateReport("r1", "resolved", "author_warned", "a1");
     expect(res).toBe("ok");
-    expect(notificationCreate).toHaveBeenCalledWith(
-      "author1",
-      "a1",
-      "moderation_warning",
-      "p1",
-      ""
-    );
+    expect(contentAuthorWarned).toHaveBeenCalledWith({
+      authorId: "author1",
+      moderatorId: "a1",
+      contentType: "post",
+      contentId: "p1",
+    });
   });
 
   it("suspends the author for the requested number of days", async () => {

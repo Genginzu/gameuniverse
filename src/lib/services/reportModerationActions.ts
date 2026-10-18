@@ -1,6 +1,6 @@
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { logger } from "@/lib/logger";
-import { NotificationServerService } from "@/lib/services/notificationServerService";
+import { contentAuthorWarned } from "@/lib/services/notifications";
 import { isValidSuspensionDays, suspensionEndDate } from "@/lib/utils/suspension";
 import type { ModerationOptions, ReportAction, ReportContentType } from "@/types/report";
 
@@ -88,7 +88,7 @@ export async function applyModerationAction(
   if (!authorId) return false;
 
   if (action === "author_warned") {
-    await NotificationServerService.create(authorId, adminId, "moderation_warning", contentId, "");
+    await contentAuthorWarned({ authorId, moderatorId: adminId, contentType, contentId });
     return true;
   }
 

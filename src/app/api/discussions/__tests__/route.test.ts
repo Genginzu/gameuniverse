@@ -29,6 +29,15 @@ vi.mock("@/lib/logger", () => ({
   logger: { error: vi.fn(), info: vi.fn(), warn: vi.fn(), debug: vi.fn() },
 }));
 
+const mockDiscussionMessageSent = vi.fn();
+vi.mock("@/lib/services/notifications", () => ({
+  discussionMessageSent: (...args: unknown[]) => mockDiscussionMessageSent(...args),
+}));
+
+vi.mock("@/lib/services/coinService", () => ({
+  CoinService: { rewardActivity: vi.fn(() => Promise.resolve()) },
+}));
+
 import { GET, POST } from "@/app/api/discussions/route";
 import { GET as GET_UNREAD } from "@/app/api/discussions/unread-count/route";
 import {
@@ -194,6 +203,21 @@ describe("Discussion API Routes", () => {
       const res = await GET_UNREAD();
       expect(res.status).toBe(200);
       expect(await res.json()).toEqual({ count: 5 });
+    });
+
+    it("POST /api/discussions/[id]/messages notifies the conversation partner → 201", async () => {
+      mockSendMessage.mockResolvedValue({ id: "msg-1", content: "Hello" });
+      const req = createRequest("http://localhost/api/discussions/conv-123/messages", {
+        method: "POST",
+        body: JSON.stringify({ content: "Hello" }),
+      });
+      const res = await POST_MESSAGE(req, routeContext);
+      expect(res.status).toBe(201);
+      expect(mockDiscussionMessageSent).toHaveBeenCalledWith({
+        conversationId: "conv-123",
+        senderId: "user-123",
+        content: "Hello",
+      });
     });
   });
 });

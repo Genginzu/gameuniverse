@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { getStripe } from "@/lib/stripe";
 import { logger } from "@/lib/logger";
-
-import { NotificationServerService } from "@/lib/services/notificationServerService";
+import { coachingSessionPaid } from "@/lib/services/notifications";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type S = any;
@@ -54,32 +53,7 @@ export async function POST(request: NextRequest) {
       .update({ payment_status: "paid" })
       .eq("id", coachingSessionId);
 
-    // Notify coach that payment was received
-    try {
-      const { data: fullSession } = await supabase
-        .from("coaching_sessions")
-        .select("coach_id")
-        .eq("id", coachingSessionId)
-        .single();
-      if (fullSession) {
-        const { data: coach } = await supabase
-          .from("coach_profiles")
-          .select("player_id")
-          .eq("id", fullSession.coach_id)
-          .single();
-        if (coach?.player_id) {
-          await NotificationServerService.create(
-            coach.player_id,
-            user.id,
-            "coaching_paid",
-            coachingSessionId,
-            "coaching_paid"
-          );
-        }
-      }
-    } catch {
-      /* non-blocking */
-    }
+    await coachingSessionPaid({ sessionId: coachingSessionId, studentId: user.id });
 
     return NextResponse.json({ success: true });
   } catch (error) {

@@ -5,39 +5,23 @@ import { useTranslations, useFormatter } from "next-intl";
 import { Icon } from "@iconify/react";
 import { Link } from "@/i18n/navigation";
 import type { Notification } from "@/types/notification";
-import {
-  getNotificationHref,
-  hasContentPreview,
-  isSystemNotification,
-  TYPE_ICONS,
-  TYPE_LABEL_KEYS,
-} from "@/lib/notificationDisplay";
+import { presentNotification } from "@/lib/notifications/presentNotification";
 
 interface NotificationCenterItemProps {
   notification: Notification;
   onToggleRead: (id: string, isRead: boolean) => void;
 }
 
-/**
- * Row for the notification center list: expandable preview, read/unread toggle
- * and a direct link to the related resource.
- */
-export function NotificationCenterItem({ notification, onToggleRead }: NotificationCenterItemProps) {
+export function NotificationCenterItem({
+  notification,
+  onToggleRead,
+}: NotificationCenterItemProps) {
   const t = useTranslations("notifications");
   const tc = useTranslations("notificationCenter");
   const format = useFormatter();
   const [expanded, setExpanded] = useState(false);
-
-  const createdAt = new Date(notification.createdAt);
   const now = new Date();
-  const safeDate = createdAt > now ? now : createdAt;
-  const relativeDate = format.relativeTime(safeDate, now);
-
-  const senderName = notification.sender?.username ?? "?";
-  const system = isSystemNotification(notification.type);
-  const typeLabel = t(TYPE_LABEL_KEYS[notification.type] ?? "typePostComment");
-  const href = getNotificationHref(notification.type, notification.senderId);
-  const showPreview = Boolean(notification.contentPreview) && hasContentPreview(notification.type);
+  const view = presentNotification(notification, { now, translate: t });
   const isUnread = !notification.isRead;
 
   return (
@@ -48,30 +32,23 @@ export function NotificationCenterItem({ notification, onToggleRead }: Notificat
       data-unread={isUnread}
     >
       <div className="flex items-start gap-3">
-        {/* Type icon */}
         <div className="bg-editorial-accent/15 mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full">
-          <Icon
-            icon={TYPE_ICONS[notification.type] ?? "mdi:bell-outline"}
-            className="text-editorial-accent size-4.5"
-          />
+          <Icon icon={view.icon} className="text-editorial-accent size-4.5" />
         </div>
 
-        {/* Main */}
         <button
           type="button"
-          onClick={() => showPreview && setExpanded((v) => !v)}
-          className={`min-w-0 flex-1 text-left ${showPreview ? "cursor-pointer" : "cursor-default"}`}
-          aria-expanded={showPreview ? expanded : undefined}
+          onClick={() => view.preview && setExpanded((v) => !v)}
+          className={`min-w-0 flex-1 text-left ${view.preview ? "cursor-pointer" : "cursor-default"}`}
+          aria-expanded={view.preview ? expanded : undefined}
         >
           <p className="text-sm text-white">
-            {!system && <span className="font-semibold">{senderName} </span>}
-            <span className="text-editorial-muted">{typeLabel}</span>
+            {view.senderName && <span className="font-semibold">{view.senderName} </span>}
+            <span className="text-editorial-muted">{view.label}</span>
           </p>
-          {showPreview && (
-            <p
-              className={`text-editorial-muted mt-0.5 text-xs ${expanded ? "" : "truncate"}`}
-            >
-              {notification.contentPreview}
+          {view.preview && (
+            <p className={`text-editorial-muted mt-0.5 text-xs ${expanded ? "" : "truncate"}`}>
+              {view.preview}
             </p>
           )}
           <time
@@ -79,24 +56,19 @@ export function NotificationCenterItem({ notification, onToggleRead }: Notificat
             className="mt-1 block text-xs text-slate-500"
             suppressHydrationWarning
           >
-            {relativeDate}
+            {format.relativeTime(view.date, now)}
           </time>
         </button>
 
-        {/* Unread dot */}
         {isUnread && (
-          <span
-            aria-hidden
-            className="bg-editorial-accent mt-2 size-2 shrink-0 rounded-full"
-          />
+          <span aria-hidden className="bg-editorial-accent mt-2 size-2 shrink-0 rounded-full" />
         )}
       </div>
 
-      {/* Actions */}
       <div className="border-editorial-line mt-2.5 flex items-center gap-2 border-t pt-2.5">
-        {href && (
+        {view.href && (
           <Link
-            href={href}
+            href={view.href}
             onClick={() => isUnread && onToggleRead(notification.id, true)}
             className="text-editorial-accent inline-flex min-h-11 items-center gap-1.5 rounded-lg px-2 text-xs font-medium hover:underline"
           >

@@ -4590,7 +4590,13 @@
     "typeFriendAccepted": "a accepté votre demande d'ami",
     "typeReviewVote": "a voté sur votre review",
     "typeAchievementUnlocked": "Nouveau succès débloqué",
-    "typeModerationWarning": "vous a averti au sujet d'un contenu"
+    "typeModerationWarning": "vous a averti au sujet d'un contenu",
+    "reviewVoteHelpful": "Vote : utile",
+    "reviewVoteNotHelpful": "Vote : pas utile",
+    "moderationContentReview": "Contenu concerné : avis",
+    "moderationContentPost": "Contenu concerné : post",
+    "moderationContentComment": "Contenu concerné : commentaire",
+    "moderationContentProfile": "Contenu concerné : profil"
   },
   "suspension": {
     "title": "Votre compte est suspendu",

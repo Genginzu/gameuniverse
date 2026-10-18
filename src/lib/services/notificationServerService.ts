@@ -1,151 +1,34 @@
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { logger } from "@/lib/logger";
-import type { Notification, NotificationType } from "@/types/notification";
+import {
+  NOTIFICATION_WITH_SENDER_COLUMNS,
+  toNotification,
+  type NotificationRow,
+} from "@/lib/services/notifications/notificationRow";
+import type {
+  Notification,
+  NotificationStatusFilter,
+  NotificationType,
+} from "@/types/notification";
 
-// Table not yet in generated Supabase types (migration applied but types not regenerated)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type UntypedFrom = any;
 
-/** Raw row shape from Supabase notifications table */
-interface NotificationRow {
-  id: string;
-  recipient_id: string;
-  sender_id: string;
-  type: NotificationType;
-  reference_id: string;
-  content_preview: string;
-  is_read: boolean;
-  created_at: string;
-  sender: { username: string; avatar_url: string | null } | null;
+function toNotifications(data: unknown): Notification[] {
+  return ((data ?? []) as NotificationRow[]).map(toNotification);
 }
 
-function transformRow(row: NotificationRow): Notification {
-  return {
-    id: row.id,
-    recipientId: row.recipient_id,
-    senderId: row.sender_id,
-    type: row.type,
-    referenceId: row.reference_id,
-    contentPreview: row.content_preview,
-    isRead: row.is_read,
-    createdAt: row.created_at,
-    sender: row.sender
-      ? { username: row.sender.username, avatarUrl: row.sender.avatar_url }
-      : undefined,
-  };
+async function notificationsTable() {
+  const supabase = await createRouteHandlerClient();
+  return supabase.from("notifications" as UntypedFrom);
 }
 
-/**
- * Server-side service for notifications.
- * Queries the notifications table via Supabase.
- */
 export class NotificationServerService {
-  /** Create a notification. Returns null if self-notification or on error. */
-  static async create(
-    recipientId: string,
-    senderId: string,
-    type: NotificationType,
-    referenceId: string,
-    contentPreview: string
-  ): Promise<Notification | null> {
-    if (recipientId === senderId) return null;
-
-    // Use the admin client to bypass RLS: the insert is authored by the sender,
-    // but the notifications SELECT policy only grants reads to the recipient, so
-    // RLS would strip the RETURNING row when using a user-context client.
-    const supabase = getSupabaseAdmin();
-    const truncatedPreview = contentPreview.slice(0, 100);
-
-    const { data, error } = await supabase
-      .from("notifications" as UntypedFrom)
-      .insert({
-        recipient_id: recipientId,
-        sender_id: senderId,
-        type,
-        reference_id: referenceId,
-        content_preview: truncatedPreview,
-      })
-      .select(
-        "id, recipient_id, sender_id, type, reference_id, content_preview, is_read, created_at"
-      )
-      .single();
-
-    if (error || !data) {
-      logger.error("Failed to create notification", { error: error?.message, recipientId, type });
-      return null;
-    }
-
-    const row = data as unknown as Omit<NotificationRow, "sender">;
-    return {
-      id: row.id,
-      recipientId: row.recipient_id,
-      senderId: row.sender_id,
-      type: row.type,
-      referenceId: row.reference_id,
-      contentPreview: row.content_preview,
-      isRead: row.is_read,
-      createdAt: row.created_at,
-    };
-  }
-
-  /**
-   * Create a system notification (self-notification allowed).
-   * Used for achievement_unlocked where sender and recipient are the same user.
-   * The sender_id is set to the recipient_id to satisfy the FK constraint.
-   */
-  static async createSystemNotification(
-    recipientId: string,
-    type: NotificationType,
-    referenceId: string,
-    contentPreview: string
-  ): Promise<Notification | null> {
-    const supabase = getSupabaseAdmin();
-    const truncatedPreview = contentPreview.slice(0, 100);
-
-    const { data, error } = await supabase
-      .from("notifications" as UntypedFrom)
-      .insert({
-        recipient_id: recipientId,
-        sender_id: recipientId,
-        type,
-        reference_id: referenceId,
-        content_preview: truncatedPreview,
-      })
-      .select(
-        "id, recipient_id, sender_id, type, reference_id, content_preview, is_read, created_at"
-      )
-      .single();
-
-    if (error || !data) {
-      logger.error("Failed to create system notification", { error: error?.message, recipientId, type });
-      return null;
-    }
-
-    const row = data as unknown as Omit<NotificationRow, "sender">;
-    return {
-      id: row.id,
-      recipientId: row.recipient_id,
-      senderId: row.sender_id,
-      type: row.type,
-      referenceId: row.reference_id,
-      contentPreview: row.content_preview,
-      isRead: row.is_read,
-      createdAt: row.created_at,
-    };
-  }
-
-  /** Fetch unread notifications for a recipient, with sender profile info. */
   static async getUnread(recipientId: string, limit: number = 20): Promise<Notification[]> {
-    const supabase = await createRouteHandlerClient();
-
-    // notifications has two FKs to profiles (sender_id + recipient_id), so the
-    // embed needs the `!<column>` hint to disambiguate which relationship to follow.
-    const { data, error } = await supabase
-      .from("notifications" as UntypedFrom)
-      .select(
-        "id, recipient_id, sender_id, type, reference_id, content_preview, is_read, created_at, sender:profiles!sender_id(username, avatar_url)"
-      )
+    const { data, error } = await (
+      await notificationsTable()
+    )
+      .select(NOTIFICATION_WITH_SENDER_COLUMNS)
       .eq("recipient_id", recipientId)
       .eq("is_read", false)
       .order("created_at", { ascending: false })
@@ -155,37 +38,24 @@ export class NotificationServerService {
       logger.error("Failed to fetch unread notifications", { error: error.message, recipientId });
       return [];
     }
-
-    return ((data ?? []) as unknown as NotificationRow[]).map(transformRow);
+    return toNotifications(data);
   }
 
-  /**
-   * Fetch a paginated, optionally type/status-filtered slice of notifications
-   * for the notification center. Returns the page rows plus the total count
-   * matching the filters (for pagination).
-   */
   static async getAll(
     recipientId: string,
     options: {
       page?: number;
       limit?: number;
       types?: NotificationType[] | null;
-      status?: "all" | "unread" | "read";
+      status?: NotificationStatusFilter;
     } = {}
   ): Promise<{ notifications: Notification[]; total: number }> {
-    const supabase = await createRouteHandlerClient();
-
     const page = Math.max(1, options.page ?? 1);
     const limit = Math.min(50, Math.max(1, options.limit ?? 20));
     const from = (page - 1) * limit;
-    const to = from + limit - 1;
 
-    let query = supabase
-      .from("notifications" as UntypedFrom)
-      .select(
-        "id, recipient_id, sender_id, type, reference_id, content_preview, is_read, created_at, sender:profiles!sender_id(username, avatar_url)",
-        { count: "exact" }
-      )
+    let query = (await notificationsTable())
+      .select(NOTIFICATION_WITH_SENDER_COLUMNS, { count: "exact" })
       .eq("recipient_id", recipientId);
 
     if (options.status === "unread") query = query.eq("is_read", false);
@@ -197,25 +67,19 @@ export class NotificationServerService {
 
     const { data, count, error } = await query
       .order("created_at", { ascending: false })
-      .range(from, to);
+      .range(from, from + limit - 1);
 
     if (error) {
       logger.error("Failed to fetch notifications page", { error: error.message, recipientId });
       return { notifications: [], total: 0 };
     }
-
-    return {
-      notifications: ((data ?? []) as unknown as NotificationRow[]).map(transformRow),
-      total: count ?? 0,
-    };
+    return { notifications: toNotifications(data), total: count ?? 0 };
   }
 
-  /** Count unread notifications for a recipient. */
   static async getUnreadCount(recipientId: string): Promise<number> {
-    const supabase = await createRouteHandlerClient();
-
-    const { count, error } = await supabase
-      .from("notifications" as UntypedFrom)
+    const { count, error } = await (
+      await notificationsTable()
+    )
       .select("id", { count: "exact", head: true })
       .eq("recipient_id", recipientId)
       .eq("is_read", false);
@@ -224,20 +88,17 @@ export class NotificationServerService {
       logger.error("Failed to count unread notifications", { error: error.message, recipientId });
       return 0;
     }
-
     return count ?? 0;
   }
 
-  /** Set the read status of a single notification. Returns true on success. */
   static async setReadStatus(
     notificationId: string,
     recipientId: string,
     isRead: boolean
   ): Promise<boolean> {
-    const supabase = await createRouteHandlerClient();
-
-    const { data, error } = await supabase
-      .from("notifications" as UntypedFrom)
+    const { data, error } = await (
+      await notificationsTable()
+    )
       .update({ is_read: isRead })
       .eq("id", notificationId)
       .eq("recipient_id", recipientId)
@@ -253,40 +114,17 @@ export class NotificationServerService {
       });
       return false;
     }
-
     return true;
   }
 
-  /** Mark a single notification as read. Returns true on success. */
-  static async markAsRead(notificationId: string, recipientId: string): Promise<boolean> {
-    const supabase = await createRouteHandlerClient();
-
-    const { data, error } = await supabase
-      .from("notifications" as UntypedFrom)
-      .update({ is_read: true })
-      .eq("id", notificationId)
-      .eq("recipient_id", recipientId)
-      .select("id")
-      .single();
-
-    if (error || !data) {
-      logger.error("Failed to mark notification as read", {
-        error: error?.message,
-        notificationId,
-        recipientId,
-      });
-      return false;
-    }
-
-    return true;
+  static markAsRead(notificationId: string, recipientId: string): Promise<boolean> {
+    return NotificationServerService.setReadStatus(notificationId, recipientId, true);
   }
 
-  /** Mark all unread notifications as read for a recipient. Returns true on success. */
   static async markAllAsRead(recipientId: string): Promise<boolean> {
-    const supabase = await createRouteHandlerClient();
-
-    const { error } = await supabase
-      .from("notifications" as UntypedFrom)
+    const { error } = await (
+      await notificationsTable()
+    )
       .update({ is_read: true })
       .eq("recipient_id", recipientId)
       .eq("is_read", false);
@@ -298,7 +136,6 @@ export class NotificationServerService {
       });
       return false;
     }
-
     return true;
   }
 }

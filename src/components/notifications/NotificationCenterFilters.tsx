@@ -2,12 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
-import {
-  NOTIFICATION_CATEGORIES,
-  categoryIcon,
-  type NotificationCategory,
-} from "@/lib/notificationDisplay";
-import type { NotificationStatusFilter } from "@/types/notification";
+import { NOTIFICATION_CATEGORIES, categoryIcon } from "@/lib/notifications/notificationKinds";
+import type { NotificationCategory, NotificationStatusFilter } from "@/types/notification";
 
 interface NotificationCenterFiltersProps {
   category: NotificationCategory | "all";

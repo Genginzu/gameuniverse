@@ -4,13 +4,7 @@ import { useTranslations, useFormatter } from "next-intl";
 import { Icon } from "@iconify/react";
 import { Link } from "@/i18n/navigation";
 import type { Notification } from "@/types/notification";
-import {
-  getNotificationHref,
-  hasContentPreview,
-  isSystemNotification,
-  TYPE_ICONS,
-  TYPE_LABEL_KEYS,
-} from "@/lib/notificationDisplay";
+import { presentNotification } from "@/lib/notifications/presentNotification";
 
 interface NotificationItemProps {
   notification: Notification;
@@ -21,54 +15,34 @@ interface NotificationItemProps {
 export function NotificationItem({ notification, onDismiss, onNavigate }: NotificationItemProps) {
   const t = useTranslations("notifications");
   const format = useFormatter();
-
-  const createdAt = new Date(notification.createdAt);
   const now = new Date();
-  const safeDate = createdAt > now ? now : createdAt;
-  const relativeDate = format.relativeTime(safeDate, now);
-
-  const senderName = notification.sender?.username ?? "?";
-  const isSystem = isSystemNotification(notification.type);
-  const typeLabel = t(TYPE_LABEL_KEYS[notification.type] ?? "typePostComment");
-  const href = getNotificationHref(notification.type, notification.senderId);
+  const view = presentNotification(notification, { now, translate: t });
 
   const body = (
     <>
-      {/* Type icon */}
       <div
         className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
         style={{ background: "rgba(255, 255, 255, 0.05)" }}
       >
-        <Icon
-          icon={TYPE_ICONS[notification.type] ?? "mdi:bell-outline"}
-          className="h-4 w-4"
-          style={{ color: "rgb(var(--neon-primary))" }}
-        />
+        <Icon icon={view.icon} className="h-4 w-4" style={{ color: "rgb(var(--neon-primary))" }} />
       </div>
 
-      {/* Content */}
       <div className="min-w-0 flex-1 text-left">
-        {isSystem ? (
-          <p className="text-sm text-slate-200">
-            <span className="text-slate-400">{typeLabel}</span>
-          </p>
-        ) : (
-          <p className="text-sm text-slate-200">
-            <span className="font-semibold">{senderName}</span>{" "}
-            <span className="text-slate-400">{typeLabel}</span>
-          </p>
-        )}
-        {notification.contentPreview && hasContentPreview(notification.type) && (
-          <p className="mt-0.5 truncate text-xs text-slate-400">
-            {notification.contentPreview}
-          </p>
-        )}
+        <p className="text-sm text-slate-200">
+          {view.senderName && (
+            <>
+              <span className="font-semibold">{view.senderName}</span>{" "}
+            </>
+          )}
+          <span className="text-slate-400">{view.label}</span>
+        </p>
+        {view.preview && <p className="mt-0.5 truncate text-xs text-slate-400">{view.preview}</p>}
         <time
           dateTime={notification.createdAt}
           className="mt-0.5 block text-xs text-slate-500"
           suppressHydrationWarning
         >
-          {relativeDate}
+          {format.relativeTime(view.date, now)}
         </time>
       </div>
     </>
@@ -84,9 +58,9 @@ export function NotificationItem({ notification, onDismiss, onNavigate }: Notifi
 
   return (
     <div role="menuitem" className="relative">
-      {href ? (
+      {view.href ? (
         <Link
-          href={href}
+          href={view.href}
           onClick={handleNavigate}
           className={`${containerClass} cursor-pointer pr-10`}
         >
@@ -96,7 +70,6 @@ export function NotificationItem({ notification, onDismiss, onNavigate }: Notifi
         <div className={`${containerClass} pr-10`}>{body}</div>
       )}
 
-      {/* Dismiss button */}
       <button
         type="button"
         onClick={() => onDismiss(notification.id)}

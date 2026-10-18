@@ -4587,7 +4587,13 @@
     "typeFriendAccepted": "accepted your friend request",
     "typeReviewVote": "voted on your review",
     "typeAchievementUnlocked": "New achievement unlocked",
-    "typeModerationWarning": "warned you about some content"
+    "typeModerationWarning": "warned you about some content",
+    "reviewVoteHelpful": "Vote: helpful",
+    "reviewVoteNotHelpful": "Vote: not helpful",
+    "moderationContentReview": "Content: review",
+    "moderationContentPost": "Content: post",
+    "moderationContentComment": "Content: comment",
+    "moderationContentProfile": "Content: profile"
   },
   "suspension": {
     "title": "Your account is suspended",

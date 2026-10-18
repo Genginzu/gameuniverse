@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
+import { coachingSessionRequested } from "@/lib/services/notifications";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnySupabase = any;
@@ -62,27 +63,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Failed to create session" }, { status: 500 });
     }
 
-    // Notify coach of new session request
-    try {
-      const { data: coach } = await supabase
-        .from("coach_profiles")
-        .select("player_id")
-        .eq("id", coachId)
-        .single();
-      if (coach?.player_id) {
-        const { NotificationServerService } =
-          await import("@/lib/services/notificationServerService");
-        await NotificationServerService.create(
-          coach.player_id,
-          user.id,
-          "coaching_requested",
-          data.id,
-          "coaching_requested"
-        );
-      }
-    } catch {
-      /* non-blocking */
-    }
+    await coachingSessionRequested({
+      sessionId: data.id,
+      studentId: user.id,
+      coachProfileId: coachId,
+    });
 
     return NextResponse.json({ session: data }, { status: 201 });
   } catch (error) {

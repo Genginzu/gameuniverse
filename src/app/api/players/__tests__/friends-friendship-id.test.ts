@@ -5,12 +5,14 @@ const PLAYER_ID = "aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa";
 const USER_ID = "bbbbbbbb-bbbb-4bbb-bbbb-bbbbbbbbbbbb";
 const FRIENDSHIP_ID = "cccccccc-cccc-4ccc-cccc-cccccccccccc";
 
-const { mockAcceptRequest, mockDeleteRequest, mockGetUser, mockNotificationCreate } = vi.hoisted(() => ({
-  mockAcceptRequest: vi.fn(),
-  mockDeleteRequest: vi.fn(),
-  mockGetUser: vi.fn(),
-  mockNotificationCreate: vi.fn(),
-}));
+const { mockAcceptRequest, mockDeleteRequest, mockGetUser, mockFriendAccepted } = vi.hoisted(
+  () => ({
+    mockAcceptRequest: vi.fn(),
+    mockDeleteRequest: vi.fn(),
+    mockGetUser: vi.fn(),
+    mockFriendAccepted: vi.fn(),
+  })
+);
 
 vi.mock("@/lib/services/friendServerService", () => ({
   FriendServerService: {
@@ -19,10 +21,8 @@ vi.mock("@/lib/services/friendServerService", () => ({
   },
 }));
 
-vi.mock("@/lib/services/notificationServerService", () => ({
-  NotificationServerService: {
-    create: mockNotificationCreate,
-  },
+vi.mock("@/lib/services/notifications", () => ({
+  friendAccepted: mockFriendAccepted,
 }));
 
 vi.mock("@/lib/supabase-server", () => ({
@@ -47,8 +47,12 @@ describe("/api/players/[id]/friends/[friendshipId] — PATCH", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockGetUser.mockResolvedValue({ data: { user: { id: USER_ID } }, error: null });
-    mockAcceptRequest.mockResolvedValue({ id: FRIENDSHIP_ID, status: "accepted", sender_id: "sender-uuid" });
-    mockNotificationCreate.mockResolvedValue(null);
+    mockAcceptRequest.mockResolvedValue({
+      id: FRIENDSHIP_ID,
+      status: "accepted",
+      sender_id: "sender-uuid",
+    });
+    mockFriendAccepted.mockResolvedValue(null);
   });
 
   it("returns 200 when accepting a friend request", async () => {
@@ -72,13 +76,11 @@ describe("/api/players/[id]/friends/[friendshipId] — PATCH", () => {
       { method: "PATCH" }
     );
     await PATCH(req, makeFriendshipParams());
-    expect(mockNotificationCreate).toHaveBeenCalledWith(
-      "sender-uuid",
-      USER_ID,
-      "friend_accepted",
-      FRIENDSHIP_ID,
-      ""
-    );
+    expect(mockFriendAccepted).toHaveBeenCalledWith({
+      friendshipId: FRIENDSHIP_ID,
+      accepterId: USER_ID,
+      requesterId: "sender-uuid",
+    });
   });
 
   it("returns 401 when not authenticated", async () => {
