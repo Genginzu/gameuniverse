@@ -8,6 +8,7 @@ import type { Post } from "@/types/post";
 import Image from "next/image";
 import { PostContentRenderer } from "@/components/players/posts/PostContentRenderer";
 import { PostMenu } from "./PostMenu";
+import { ReportButton } from "@/components/shared/ReportButton";
 
 interface PostCardProps {
   post: Post;
@@ -76,6 +77,7 @@ export function PostCard({ post, playerName, playerAvatar, locale, isOwner, onDe
             confirmLabel={t("deleteConfirm")}
           />
         )}
+        {!isOwner && <ReportButton contentType="post" contentId={post.id} />}
       </div>
 
       <div className="pl-[52px]">

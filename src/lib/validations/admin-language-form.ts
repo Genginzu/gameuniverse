@@ -21,3 +21,13 @@ export const adminLanguageFormSchema = z.object({
 });
 
 export type LanguageFormData = z.infer<typeof adminLanguageFormSchema>;
+
+export const languageQuerySchema = z.object({
+  page: z.coerce.number().int().min(1).default(1),
+  limit: z.coerce.number().int().min(1).max(100).default(20),
+  search: z.string().optional(),
+  sort_by: z.enum(["code", "name"]).default("code"),
+  sort_order: z.enum(["asc", "desc"]).default("asc"),
+});
+
+export type LanguageQueryParams = z.infer<typeof languageQuerySchema>;

@@ -1,4 +1,5 @@
 import type { PostCommentsResponse, PostComment } from "@/types/post-comment";
+import { createApiError } from "@/lib/services/apiError";
 
 /**
  * Service client pour gérer les opérations de commentaires sur les posts.
@@ -27,8 +28,7 @@ export class PostCommentService {
       body: JSON.stringify({ content }),
     });
     if (!response.ok) {
-      const body = await response.json().catch(() => null);
-      throw new Error(body?.error || "Failed to create comment");
+      throw await createApiError(response, "Failed to create comment");
     }
     return response.json();
   }

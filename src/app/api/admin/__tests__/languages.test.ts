@@ -1,24 +1,14 @@
 /**
  * Tests for admin languages API route (GET + POST)
  * Tests validation, query parameters, and response structure.
- * Placed in isolated/ because vi.mock() conflicts with parallel tests.
  */
 
 import { describe, test, expect, beforeEach, vi } from "vitest";
-import { z } from "zod";
-
-// --- Query schema (mirrors the one in route.ts) ---
-const languageQuerySchema = z.object({
-  page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce.number().int().min(1).max(100).default(20),
-  search: z.string().optional(),
-  sort_by: z.enum(["code", "name"]).default("code"),
-  sort_order: z.enum(["asc", "desc"]).default("asc"),
-});
+import { languageQuerySchema } from "@/lib/validations/admin-language-form";
 
 // --- Mock setup ---
-let mockRequireAdmin: ReturnType<typeof mock>;
-let mockSupabaseFrom: ReturnType<typeof mock>;
+let mockRequireAdmin: ReturnType<typeof vi.fn>;
+let mockSupabaseFrom: ReturnType<typeof vi.fn>;
 let mockLanguagesData: Array<{ code: string; name: string; native_name: string | null }>;
 
 const createMockChain = (overrides: Record<string, unknown> = {}) => {
@@ -88,7 +78,7 @@ describe("Admin Languages API", () => {
       { code: "fr", name: "French", native_name: "Français" },
       { code: "ja", name: "Japanese", native_name: "日本語" },
     ];
-    mockSupabaseFrom = null as unknown as ReturnType<typeof mock>;
+    mockSupabaseFrom = null as unknown as ReturnType<typeof vi.fn>;
   });
 
   describe("Query Parameter Validation", () => {

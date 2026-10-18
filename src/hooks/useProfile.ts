@@ -44,7 +44,9 @@ export function useProfile() {
         }
 
         setProfileState({
-          profile,
+          // Email lives in auth.users (issue #375); surface the caller's own
+          // email so the account page keeps showing it.
+          profile: { ...profile, email: user.email ?? null },
           loading: false,
           error: null,
         });
@@ -121,7 +123,7 @@ export function useProfile() {
       }
 
       setProfileState({
-        profile,
+        profile: { ...profile, email: user.email ?? null },
         loading: false,
         error: null,
       });

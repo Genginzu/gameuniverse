@@ -1,14 +1,13 @@
 /**
  * Tests for admin genres [slug] API route (GET detail, PUT, DELETE)
  * Tests validation, usage checks, force delete, cascade, and response structure.
- * Placed in isolated/ because vi.mock() conflicts with parallel tests.
  */
 
 import { describe, test, expect, beforeEach, vi } from "vitest";
 
 // --- Mock setup ---
-let mockRequireAdmin: ReturnType<typeof mock>;
-let mockSupabaseFrom: ReturnType<typeof mock>;
+let mockRequireAdmin: ReturnType<typeof vi.fn>;
+let mockSupabaseFrom: ReturnType<typeof vi.fn>;
 
 const sampleGenre = {
   id: "genre-uuid-1",
@@ -46,11 +45,7 @@ vi.mock("@/lib/supabase-server", () => ({
     }),
 }));
 
-const {
-  GET,
-  PUT,
-  DELETE: DELETE_HANDLER,
-} = await import("@/app/api/admin/genres/[slug]/route");
+const { GET, PUT, DELETE: DELETE_HANDLER } = await import("@/app/api/admin/genres/[slug]/route");
 
 function makeRequest(url: string, init?: RequestInit) {
   return new Request(url, init) as unknown as import("next/server").NextRequest;
@@ -63,7 +58,7 @@ function makeParams(slug: string) {
 describe("Admin Genres [slug] API", () => {
   beforeEach(() => {
     mockRequireAdmin = vi.fn(() => Promise.resolve(true));
-    mockSupabaseFrom = null as unknown as ReturnType<typeof mock>;
+    mockSupabaseFrom = null as unknown as ReturnType<typeof vi.fn>;
   });
 
   // =====================

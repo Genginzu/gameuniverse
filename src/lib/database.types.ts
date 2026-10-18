@@ -941,6 +941,38 @@ export type Database = {
           },
         ];
       };
+      game_import_events: {
+        Row: {
+          created_at: string;
+          game_id: string | null;
+          id: string;
+          igdb_id: number;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          game_id?: string | null;
+          id?: string;
+          igdb_id: number;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          game_id?: string | null;
+          id?: string;
+          igdb_id?: number;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "game_import_events_game_id_fkey";
+            columns: ["game_id"];
+            isOneToOne: false;
+            referencedRelation: "games";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       game_field_overrides: {
         Row: {
           field_name: string;
@@ -2363,7 +2395,6 @@ export type Database = {
           avatar_url: string | null;
           banner_url: string | null;
           created_at: string | null;
-          email: string;
           id: string;
           level: number | null;
           preferred_locale: string | null;
@@ -2376,7 +2407,6 @@ export type Database = {
           avatar_url?: string | null;
           banner_url?: string | null;
           created_at?: string | null;
-          email: string;
           id: string;
           level?: number | null;
           preferred_locale?: string | null;
@@ -2389,7 +2419,6 @@ export type Database = {
           avatar_url?: string | null;
           banner_url?: string | null;
           created_at?: string | null;
-          email?: string;
           id?: string;
           level?: number | null;
           preferred_locale?: string | null;
@@ -2769,6 +2798,10 @@ export type Database = {
           worst_price: number;
         }[];
       };
+      count_recent_game_imports: {
+        Args: { target_user_id: string; window_seconds: number };
+        Returns: number;
+      };
       create_store: {
         Args: { logo_url?: string; store_name: string; website_url?: string };
         Returns: {
@@ -2988,6 +3021,31 @@ export type Database = {
       is_game_in_user_library: {
         Args: { game_uuid: string; user_uuid: string };
         Returns: boolean;
+      };
+      place_esport_prediction: {
+        Args: {
+          p_player_id: string;
+          p_match_id: number;
+          p_match_name: string;
+          p_game: string;
+          p_predicted_winner_id: number;
+          p_predicted_winner_name: string;
+          p_amount: number;
+        };
+        Returns: {
+          id: string;
+          player_id: string;
+          match_id: number;
+          match_name: string;
+          game: string;
+          predicted_winner_id: number;
+          predicted_winner_name: string;
+          amount: number;
+          status: string;
+          payout: number;
+          resolved_at: string | null;
+          created_at: string;
+        };
       };
       refresh_translation_stats: { Args: never; Returns: undefined };
       refresh_translation_stats_cross_lang: {

@@ -8,6 +8,7 @@ import { IGDB_RATING_CATEGORIES, IGDB_ALL_RATINGS, type IGDBGame } from "@/types
 import type { SyncSupabaseClient } from "./igdb-sync";
 import { deleteByGameId } from "./igdb-sync-fields";
 import { untypedTable } from "@/lib/utils/untypedTable";
+import { toGameVersionRows } from "@/lib/utils/gameVersionRows";
 import { transformIgdbVideos } from "../../../scripts/igdb-import/games/video-transform";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
@@ -82,24 +83,8 @@ export async function syncVersions(
   const versions = await IGDBService.getGameVersions(igdbId);
   await deleteByGameId(supabase, "game_versions", gameId);
 
-  for (let i = 0; i < versions.length; i++) {
-    const version = versions[i];
-    const coverUrl = version.cover?.image_id
-      ? IGDBService.buildImageUrl(version.cover.image_id, "cover_big")
-      : null;
-
-    await supabase
-      .from("game_versions")
-      .insert({
-        game_id: gameId,
-        igdb_id: version.id,
-        version_title: version.version_title || version.name,
-        description: version.summary || null,
-        cover_image_url: coverUrl,
-        display_order: i,
-      })
-      .select("id")
-      .single();
+  for (const row of toGameVersionRows(gameId, versions)) {
+    await supabase.from("game_versions").insert(row).select("id").single();
   }
 }
 

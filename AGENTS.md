@@ -94,9 +94,11 @@ Integration tests live in `test/integration/`, E2E in `test/e2e/`.
 Use Vitest only — **never** `bun:test`. See `.agents/steering/testing.md`.
 
 Vitest has a two-project setup (`node` vs `dom`) configured in
-`vitest.config.ts`. Hook tests that use `renderHook` must be listed in the
-`HOOK_TESTS_NEEDING_DOM` array there or they will fail with "document is not
-defined".
+`vitest.config.ts`, selected by extension: any test that renders React or uses
+`renderHook` must be named `*.test.tsx` (runs in jsdom); `*.test.ts` runs in
+node and fails with "document is not defined" if it touches the DOM.
+Tests must import and exercise the real code — never re-implement production
+logic inside a test file.
 
 ## Architecture
 
@@ -243,6 +245,21 @@ Configured in `.mcp.json` (gitignored — contains API tokens). Template in
 `.mcp.example.json`. Three servers: `vercel` (HTTP), `notion` (stdio, most write
 tools denied), `github` (stdio). Pre-approvals and denials live under
 `permissions` in `.agents/settings.json`.
+
+## Agent skills
+
+### Issue tracker
+
+Issues tracked in GitHub Issues (`Genginzu/gameuniverse`) via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default canonical labels (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`).
+See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: root `GLOSSARY.md` + `docs/adr/`. See `docs/agents/domain.md`.
 
 <!-- rtk-instructions v2 -->
 # RTK (Rust Token Killer) - Token-Optimized Commands

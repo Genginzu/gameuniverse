@@ -59,6 +59,7 @@ const NAV_CATEGORIES: NavCategory[] = [
       },
       { href: "/admin/groups", icon: "lucide:users", labelKey: "nav.groups" },
       { href: "/admin/communities", icon: "fa:globe", labelKey: "nav.communities" },
+      { href: "/admin/reports", icon: "lucide:flag", labelKey: "nav.reports" },
     ],
   },
   {

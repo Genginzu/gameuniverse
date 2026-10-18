@@ -62,7 +62,7 @@ vi.mock("../igdb-import/shared/color-extractor", () => ({
 }));
 
 const { importCharacterFromIGDB, ensureGender, ensureSpecies } =
-  await import("../../../scripts/igdb-import/characters/character-importer");
+  await import("../igdb-import/characters/character-importer");
 
 const CHAR_UUID = "char-uuid-001";
 const CHAR_SLUG = "mario";
