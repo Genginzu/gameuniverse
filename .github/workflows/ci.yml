@@ -158,6 +158,7 @@ jobs:
     steps:
       # Sparse checkout: E2E only needs test/e2e + Playwright/build config files,
       # not the entire src/ tree. Cuts checkout from ~57s to a few seconds.
+      # scripts/setup-agents.ts is required by the `prepare` script run by bun install.
       - uses: actions/checkout@v7
         with:
           show-progress: false
@@ -170,6 +171,7 @@ jobs:
             next.config.ts
             next.config.js
             next.config.mjs
+            scripts/setup-agents.ts
           sparse-checkout-cone-mode: false
 
       - name: Install system dependencies

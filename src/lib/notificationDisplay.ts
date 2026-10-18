@@ -39,6 +39,7 @@ export const TYPE_ICONS: Record<NotificationType, string> = {
   friend_accepted: "mdi:account-check-outline",
   review_vote: "mdi:thumb-up-outline",
   achievement_unlocked: "mdi:trophy-outline",
+  moderation_warning: "lucide:shield-alert",
 };
 
 /** i18n sub-key (under the `notifications` namespace) per notification type. */
@@ -58,6 +59,7 @@ export const TYPE_LABEL_KEYS: Record<NotificationType, string> = {
   friend_accepted: "typeFriendAccepted",
   review_vote: "typeReviewVote",
   achievement_unlocked: "typeAchievementUnlocked",
+  moderation_warning: "typeModerationWarning",
 };
 
 /** Notification types treated as system events (no human sender to display). */
@@ -70,7 +72,10 @@ export function isSystemNotification(type: NotificationType): boolean {
 /** Types whose content preview is not meaningful and should be hidden. */
 export function hasContentPreview(type: NotificationType): boolean {
   return (
-    !type.startsWith("coaching_") && type !== "friend_request" && type !== "friend_accepted"
+    !type.startsWith("coaching_") &&
+    type !== "friend_request" &&
+    type !== "friend_accepted" &&
+    type !== "moderation_warning"
   );
 }
 
@@ -79,12 +84,7 @@ export function hasContentPreview(type: NotificationType): boolean {
  * concrete notification types. `all` is handled separately (no type filter).
  */
 export type NotificationCategory =
-  | "friends"
-  | "reviews"
-  | "mentions"
-  | "achievements"
-  | "coaching"
-  | "activity";
+  "friends" | "reviews" | "mentions" | "achievements" | "coaching" | "activity" | "moderation";
 
 /** Ordered list of categories for rendering filter tabs. */
 export const NOTIFICATION_CATEGORIES: readonly NotificationCategory[] = [
@@ -94,6 +94,7 @@ export const NOTIFICATION_CATEGORIES: readonly NotificationCategory[] = [
   "achievements",
   "coaching",
   "activity",
+  "moderation",
 ];
 
 /** Exhaustive partition of every NotificationType into a display category. */
@@ -112,6 +113,7 @@ export const CATEGORY_TYPES: Record<NotificationCategory, readonly NotificationT
     "coaching_paid",
   ],
   activity: ["post_comment", "post_created", "discussion_message"],
+  moderation: ["moderation_warning"],
 };
 
 const CATEGORY_ICONS: Record<NotificationCategory, string> = {
@@ -121,6 +123,7 @@ const CATEGORY_ICONS: Record<NotificationCategory, string> = {
   achievements: "mdi:trophy-outline",
   coaching: "lucide:graduation-cap",
   activity: "mdi:message-outline",
+  moderation: "lucide:shield-alert",
 };
 
 export function categoryIcon(category: NotificationCategory): string {

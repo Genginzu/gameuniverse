@@ -1,4 +1,4 @@
-import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { untypedTable } from "@/lib/utils/untypedTable";
 import { logger } from "@/lib/logger";
 import type {
@@ -14,11 +14,13 @@ const SIGNUP_BONUS = 500;
 
 /**
  * Service for managing GU Coins: wallets, transactions, and activity rewards.
- * All methods use the route handler Supabase client (cookie-aware).
+ * All methods use the service-role Supabase client (supabase-admin.ts) because
+ * coin_transactions / player_wallets are server-only writes (issue #372). It is
+ * always invoked from trusted server code with an explicit playerId.
  */
 export class CoinService {
   static async getWallet(playerId: string): Promise<PlayerWallet> {
-    const supabase = await createRouteHandlerClient();
+    const supabase = getSupabaseAdmin();
     const { data, error } = await untypedTable(supabase, "player_wallets")
       .select("player_id, balance, total_earned, total_spent")
       .eq("player_id", playerId)
@@ -45,7 +47,7 @@ export class CoinService {
       undefined,
       "Bonus d'inscription"
     );
-    const supabase = await createRouteHandlerClient();
+    const supabase = getSupabaseAdmin();
     const { data } = await untypedTable(supabase, "player_wallets")
       .select("player_id, balance, total_earned, total_spent")
       .eq("player_id", playerId)
@@ -90,7 +92,7 @@ export class CoinService {
     activityType: CoinActivityType,
     referenceId?: string
   ): Promise<RewardResult> {
-    const supabase = await createRouteHandlerClient();
+    const supabase = getSupabaseAdmin();
 
     // Load config for this activity
     const { data: config } = await untypedTable(supabase, "coin_reward_config")
@@ -142,7 +144,7 @@ export class CoinService {
     type?: CoinTransactionType,
     activityType?: CoinActivityType
   ): Promise<{ transactions: CoinTransaction[]; total: number }> {
-    const supabase = await createRouteHandlerClient();
+    const supabase = getSupabaseAdmin();
     const offset = (page - 1) * limit;
 
     let query = untypedTable(supabase, "coin_transactions")
@@ -171,7 +173,7 @@ export class CoinService {
     playerId: string,
     periodDays: number = 7
   ): Promise<{ earned: number; spent: number; periodDays: number }> {
-    const supabase = await createRouteHandlerClient();
+    const supabase = getSupabaseAdmin();
     const cutoff = new Date(Date.now() - periodDays * 24 * 60 * 60 * 1000).toISOString();
 
     const { data, error } = await untypedTable(supabase, "coin_transactions")
@@ -196,7 +198,7 @@ export class CoinService {
   }
 
   static async getRewardConfig(): Promise<CoinRewardConfig[]> {
-    const supabase = await createRouteHandlerClient();
+    const supabase = getSupabaseAdmin();
     const { data, error } = await untypedTable(supabase, "coin_reward_config")
       .select("*")
       .order("activity_type");
@@ -213,7 +215,7 @@ export class CoinService {
     activityType: CoinActivityType,
     updates: Partial<Pick<CoinRewardConfig, "amount" | "cooldownSeconds" | "dailyCap" | "enabled">>
   ): Promise<CoinRewardConfig> {
-    const supabase = await createRouteHandlerClient();
+    const supabase = getSupabaseAdmin();
     const dbUpdates: Record<string, unknown> = {};
     if (updates.amount !== undefined) dbUpdates.amount = updates.amount;
     if (updates.cooldownSeconds !== undefined) dbUpdates.cooldown_seconds = updates.cooldownSeconds;
@@ -259,7 +261,7 @@ export class CoinService {
     referenceId?: string,
     description?: string
   ): Promise<CoinTransaction> {
-    const supabase = await createRouteHandlerClient();
+    const supabase = getSupabaseAdmin();
 
     // Get current balance to compute balance_after
     const { data: wallet } = await untypedTable(supabase, "player_wallets")

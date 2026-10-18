@@ -1,53 +1,20 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
+import { render, screen } from "@testing-library/react";
 import { IgdbFieldIndicator } from "@/components/admin/games/IgdbFieldIndicator";
+import { TRACKABLE_FIELDS } from "@/lib/utils/field-tracking";
+
+vi.mock("next-intl", () => ({ useTranslations: () => (key: string) => key }));
 
 describe("IgdbFieldIndicator", () => {
-  it("should export IgdbFieldIndicator component", () => {
-    expect(IgdbFieldIndicator).toBeDefined();
-    expect(typeof IgdbFieldIndicator).toBe("function");
+  it.each(TRACKABLE_FIELDS)("renders nothing for an overridden %s field", (fieldName) => {
+    const { container } = render(<IgdbFieldIndicator fieldName={fieldName} isIgdbField={false} />);
+    expect(container).toBeEmptyDOMElement();
   });
 
-  it("should return null when isIgdbField is false", () => {
-    // When isIgdbField is false, the component renders nothing
-    // We verify the logic by checking the function exists and is callable
-    const result = IgdbFieldIndicator({
-      fieldName: "genres",
-      isIgdbField: false,
-    });
-    expect(result).toBeNull();
-  });
-
-  it("should return a React element when isIgdbField is true", () => {
-    // When isIgdbField is true, the component renders a span badge
-    const result = IgdbFieldIndicator({
-      fieldName: "genres",
-      isIgdbField: true,
-    });
-    // Should return a valid React element (not null)
-    expect(result).not.toBeNull();
-    expect(result).toBeDefined();
-  });
-
-  it("should return null for any field when isIgdbField is false", () => {
-    const fields = [
-      "translations",
-      "cover_image",
-      "background_image",
-      "release_date",
-      "metascore",
-      "genres",
-      "companies",
-      "screenshots",
-      "artworks",
-      "age_ratings",
-      "versions",
-      "languages",
-      "playtime",
-    ] as const;
-
-    for (const fieldName of fields) {
-      const result = IgdbFieldIndicator({ fieldName, isIgdbField: false });
-      expect(result).toBeNull();
-    }
+  it("renders an accessible IGDB badge for fields still holding IGDB data", () => {
+    render(<IgdbFieldIndicator fieldName="genres" isIgdbField />);
+    const badge = screen.getByLabelText("igdbFieldTooltip");
+    expect(badge).toHaveTextContent("IGDB");
+    expect(badge).toHaveAttribute("title", "igdbFieldTooltip");
   });
 });

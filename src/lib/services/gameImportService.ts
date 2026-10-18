@@ -128,6 +128,32 @@ export class GameImportService {
   }
 
   /**
+   * Looks up a locally-imported game by its IGDB id WITHOUT calling IGDB.
+   * Returns its full details when present, or null otherwise. Used by the
+   * import route to short-circuit already-imported games (issue #376).
+   */
+  static async findExistingGameByIgdbId(igdbId: number): Promise<ImportResult | null> {
+    const supabase = getSupabaseAdmin();
+
+    const { data: existingGame, error } = await supabase
+      .from("games")
+      .select("id, slug")
+      .eq("igdb_id", igdbId)
+      .single();
+
+    if (error && error.code !== "PGRST116") {
+      logger.error("Error checking existing game by IGDB id", { igdbId, error });
+    }
+
+    if (!existingGame) {
+      return null;
+    }
+
+    const gameDetails = await fetchGameDetails(existingGame.slug);
+    return { success: true, game: gameDetails || undefined };
+  }
+
+  /**
    * Synchronizes an existing local game with fresh data from IGDB.
    */
   static async syncWithIGDB(gameId: string, igdbId: number): Promise<ImportResult> {
