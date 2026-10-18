@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import useSWR from "swr";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { Link } from "@/i18n/navigation";
-import { useDebouncedValue } from "@/hooks/useDebouncedValue";
+import { useDebouncedCallback } from "@/hooks/useDebouncedCallback";
+import { useListingQuery } from "@/hooks/useListingQuery";
+import { esportTeamsListing } from "@/lib/listing/resources/esport";
 import { LazyImage } from "@/components/ui/lazy-image";
 
 interface TeamSummary {
@@ -27,30 +28,20 @@ interface EsportTeamsContentProps {
   initialData?: EsportTeamsData;
 }
 
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
-
 export function EsportTeamsContent({ initialData }: EsportTeamsContentProps) {
   const t = useTranslations("esport.teams");
   const [search, setSearch] = useState("");
-  const debouncedSearch = useDebouncedValue(search, 300);
-
-  const url = debouncedSearch
-    ? `/api/esport/teams?search=${encodeURIComponent(debouncedSearch)}`
-    : "/api/esport/teams";
-
-  const fallbackData = !debouncedSearch ? initialData : undefined;
-
-  const { data, isLoading } = useSWR<EsportTeamsData>(url, fetcher, {
-    fallbackData,
-    revalidateOnFocus: false,
-    keepPreviousData: true,
+  const { setFilters, data, isLoading } = useListingQuery(esportTeamsListing, {
+    fallbackData: initialData,
   });
+  const applySearch = useDebouncedCallback((value: string) => setFilters({ search: value }), 300);
 
   const teams = data?.teams ?? [];
 
-  const handleSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
-  }, []);
+    applySearch(e.target.value);
+  };
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
@@ -65,7 +56,7 @@ export function EsportTeamsContent({ initialData }: EsportTeamsContentProps) {
             value={search}
             onChange={handleSearch}
             placeholder={t("searchPlaceholder")}
-            className="border-editorial-line bg-editorial-2 w-full rounded-xl border py-2.5 pr-4 pl-10 text-base text-white placeholder:text-editorial-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
+            className="border-editorial-line bg-editorial-2 placeholder:text-editorial-muted w-full rounded-xl border py-2.5 pr-4 pl-10 text-base text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
           />
         </div>
       </div>
@@ -126,7 +117,10 @@ function TeamsSkeleton() {
   return (
     <div className="xs:grid-cols-2 grid gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
       {Array.from({ length: 10 }).map((_, i) => (
-        <div key={i} className="border-editorial-line bg-editorial-2 flex flex-col items-center rounded-2xl border p-5">
+        <div
+          key={i}
+          className="border-editorial-line bg-editorial-2 flex flex-col items-center rounded-2xl border p-5"
+        >
           <div className="mb-3 h-16 w-16 animate-pulse rounded-full bg-white/[0.06]" />
           <div className="mb-1 h-4 w-20 animate-pulse rounded bg-white/[0.06]" />
           <div className="h-3 w-12 animate-pulse rounded bg-white/[0.06]" />

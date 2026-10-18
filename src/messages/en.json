@@ -1619,6 +1619,18 @@
     "technicalDetails": "Technical details (development)",
     "loadingError": "Loading error",
     "loadingErrorDescription": "Unable to load data. Previous data has been preserved.",
+    "pageLoad": {
+      "home": "An error occurred while loading the home page.",
+      "games": "An error occurred while loading the games page.",
+      "characters": "An error occurred while loading the characters page.",
+      "esportLive": "Error loading live streams.",
+      "esportResults": "Error loading esport results.",
+      "esportTeams": "Error loading esport teams.",
+      "esportPlayers": "Error loading esport players.",
+      "esportTournaments": "An error occurred while loading the esport tournaments.",
+      "esportTeam": "Error loading team.",
+      "esportPlayer": "Error loading player."
+    },
     "demo": {
       "title": "Error handling system demonstration",
       "description": "This component is only visible in development to test different error types.",

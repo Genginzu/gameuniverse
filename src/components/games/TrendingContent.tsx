@@ -1,31 +1,17 @@
 "use client";
 
-/**
- * TrendingContent : page Tendances (`/trending`) au look éditorial.
- *
- * Conserve la logique métier (SWR + ISR fallbackData). Style : Tailwind
- * inline + tokens éditoriaux, grille de `GameCard`, skeletons éditoriaux.
- */
-
 import { useTranslations, useLocale } from "next-intl";
-import useSWR from "swr";
 
-import { fetcher } from "@/lib/swr/fetcher";
 import { GameCard } from "@/components/games/GameCard";
 import { GameCardSkeleton } from "@/components/games/GameCardSkeleton";
 import { KickerLabel } from "@/components/shared/KickerLabel";
 import { EditorialContainer } from "@/components/layout/editorial/EditorialContainer";
-import type { GameSummary } from "@/types/game";
-
-export interface TrendingData {
-  mostViewed: GameSummary[];
-  mostPopular: GameSummary[];
-  bestRated: GameSummary[];
-  recentlyAdded: GameSummary[];
-}
+import { useListingQuery } from "@/hooks/useListingQuery";
+import { trendingListing } from "@/lib/listing/resources/games";
+import type { GameSummary, TrendingGamesData } from "@/types/game";
 
 interface TrendingContentProps {
-  initialData?: TrendingData;
+  initialData?: TrendingGamesData;
 }
 
 const SECTION_KEYS = ["mostViewed", "mostPopular", "bestRated", "recentlyAdded"] as const;
@@ -78,11 +64,10 @@ export function TrendingContent({ initialData }: TrendingContentProps) {
   const t = useTranslations("trending");
   const locale = useLocale();
 
-  const { data, isLoading } = useSWR<TrendingData>(
-    `/api/games/trending?locale=${locale}&limit=12`,
-    fetcher,
-    { fallbackData: initialData, revalidateOnFocus: false, dedupingInterval: 60000 }
-  );
+  const { data, isLoading } = useListingQuery(trendingListing, {
+    locale,
+    fallbackData: initialData,
+  });
 
   return (
     <section className="w-full">

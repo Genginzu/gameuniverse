@@ -1619,6 +1619,18 @@
     "technicalDetails": "Détails techniques (développement)",
     "loadingError": "Erreur de chargement",
     "loadingErrorDescription": "Impossible de charger les données. Les données précédentes sont conservées.",
+    "pageLoad": {
+      "home": "Une erreur s'est produite lors du chargement de la page d'accueil.",
+      "games": "Une erreur s'est produite lors du chargement de la page des jeux.",
+      "characters": "Une erreur s'est produite lors du chargement de la page des personnages.",
+      "esportLive": "Erreur lors du chargement des diffusions en direct.",
+      "esportResults": "Erreur lors du chargement des résultats esport.",
+      "esportTeams": "Erreur lors du chargement des équipes esport.",
+      "esportPlayers": "Erreur lors du chargement des joueurs esport.",
+      "esportTournaments": "Une erreur s'est produite lors du chargement des tournois esport.",
+      "esportTeam": "Erreur lors du chargement de l'équipe.",
+      "esportPlayer": "Erreur lors du chargement du joueur."
+    },
     "demo": {
       "title": "Démonstration du système de gestion d'erreurs",
       "description": "Ce composant est uniquement visible en développement pour tester les différents types d'erreurs.",

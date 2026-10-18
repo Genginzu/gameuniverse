@@ -76,3 +76,44 @@ export interface EsportMatchWithDetails extends EsportMatch {
 }
 
 export type AdminEsportTab = "teams" | "players" | "tournaments" | "matches";
+
+export interface EsportLiveMatch {
+  id: number;
+  name: string;
+  beginAt: string | null;
+  game: string;
+  gameSlug: string;
+  league: string;
+  tournament: string;
+  opponents: Array<{ id: number | null; name: string; imageUrl: string | null; score: number }>;
+  streams: Array<{ language: string; main: boolean; rawUrl: string }>;
+}
+
+export interface EsportResultMatch {
+  id: number;
+  name: string;
+  status: string;
+  beginAt: string | null;
+  game: string;
+  gameSlug: string;
+  league: string;
+  tournament: string;
+  opponents: Array<{ name: string; imageUrl: string | null; score: number }>;
+  winnerId: number | null;
+}
+
+export interface EsportCalendarTournament {
+  id: number;
+  name: string;
+  slug: string;
+  beginAt: string | null;
+  endAt: string | null;
+  game: string;
+  gameSlug: string;
+  league: string;
+  leagueImageUrl: string | null;
+  serie: string;
+  prizepool: string | null;
+  tier: string;
+  status: "upcoming" | "running";
+}

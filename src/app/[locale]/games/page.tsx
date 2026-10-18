@@ -5,7 +5,9 @@ import { EditorialShell } from "@/components/layout/editorial/EditorialShell";
 import { GamesListingEditorial } from "@/components/games/GamesListingEditorial";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
-import { logger } from "@/lib/logger";
+import { gamesListing } from "@/lib/listing/resources/games";
+import { fetchListingDefault } from "@/lib/listing/server";
+import type { GamesApiResponse } from "@/types/game";
 
 export const revalidate = 300;
 
@@ -28,41 +30,19 @@ export async function generateMetadata({ params }: AllGamesPageProps): Promise<M
 
 export default async function AllGamesPage({ params }: AllGamesPageProps) {
   const { locale } = await params;
-
-  let initialGames;
-  let initialPagination;
-
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-    const res = await fetch(`${baseUrl}/api/games?locale=${locale}&page=1&limit=20`, {
-      next: { revalidate: 300 },
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      initialGames = data.games;
-      initialPagination = data.pagination;
-    }
-  } catch (error) {
-    logger.error("Failed to fetch initial games server-side", { error });
-  }
+  const [initialData, tErrors] = await Promise.all([
+    fetchListingDefault<GamesApiResponse>(gamesListing, { locale }),
+    getTranslations({ locale, namespace: "errors.pageLoad" }),
+  ]);
 
   return (
     <EditorialShell>
       <ErrorBoundary
         fallback={
-          <ErrorFallback
-            description="Une erreur s'est produite lors du chargement de la page des jeux."
-            showRefresh={true}
-            showHomeButton={true}
-          />
+          <ErrorFallback description={tErrors("games")} showRefresh={true} showHomeButton={true} />
         }
       >
-        <GamesListingEditorial
-          locale={locale}
-          initialGames={initialGames}
-          initialPagination={initialPagination}
-        />
+        <GamesListingEditorial locale={locale} initialData={initialData} />
       </ErrorBoundary>
     </EditorialShell>
   );

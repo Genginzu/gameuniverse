@@ -3,8 +3,11 @@ import { getTranslations } from "next-intl/server";
 import { EsportShell } from "@/components/esport/EsportShell";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
-import { EsportPlayerDetailContent, type EsportPlayerDetailData } from "@/components/esport/EsportPlayerDetailContent";
-import { logger } from "@/lib/logger";
+import {
+  EsportPlayerDetailContent,
+  type EsportPlayerDetailData,
+} from "@/components/esport/EsportPlayerDetailContent";
+import { fetchInternalApi } from "@/lib/listing/server";
 
 export const revalidate = 3600;
 
@@ -19,26 +22,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function EsportPlayerDetailPage({ params }: Props) {
-  const { id } = await params;
-
-  let initialData: EsportPlayerDetailData | undefined;
-
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-    const res = await fetch(`${baseUrl}/api/esport/players/${id}`, {
-      next: { revalidate: 3600 },
-    });
-    if (res.ok) {
-      initialData = await res.json();
-    }
-  } catch (error) {
-    logger.error("Failed to fetch esport player detail server-side", { error });
-  }
+  const { locale, id } = await params;
+  const [initialData, tErrors] = await Promise.all([
+    fetchInternalApi<EsportPlayerDetailData>(`/api/esport/players/${id}`, revalidate),
+    getTranslations({ locale, namespace: "errors.pageLoad" }),
+  ]);
 
   return (
     <EsportShell>
       <ErrorBoundary
-        fallback={<ErrorFallback description="Error loading player." showRefresh showHomeButton />}
+        fallback={
+          <ErrorFallback description={tErrors("esportPlayer")} showRefresh showHomeButton />
+        }
       >
         <EsportPlayerDetailContent playerId={id} initialData={initialData} />
       </ErrorBoundary>

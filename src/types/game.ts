@@ -1,4 +1,5 @@
 import type { GamePlatform, GameSummaryPlatform } from "@/types/platform";
+import type { Pagination } from "@/types/pagination";
 
 export interface GameMedia {
   coverImage?: string;
@@ -235,6 +236,23 @@ export interface GameSummary {
   source?: "local" | "igdb";
   platforms?: GameSummaryPlatform[];
   isEsport?: boolean;
+}
+
+export interface GamesApiResponse {
+  games: GameSummary[];
+  pagination: Pagination;
+}
+
+export interface UpcomingGamesResponse {
+  games: GameSummary[];
+  pagination: { currentPage: number; totalPages: number; totalCount: number };
+}
+
+export interface TrendingGamesData {
+  mostViewed: GameSummary[];
+  mostPopular: GameSummary[];
+  bestRated: GameSummary[];
+  recentlyAdded: GameSummary[];
 }
 
 export const GAME_LISTING_SORT_OPTIONS = [

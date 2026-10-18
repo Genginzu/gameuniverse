@@ -1,49 +1,18 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import useSWR from "swr";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { Badge } from "@/components/ui/badge";
-import { EmptyState } from "@/components/shared/EmptyState";
-import { FilterChip } from "@/components/shared/FilterChip";
-import { PredictionDialog } from "@/components/esport/PredictionDialog";
-import { useAuth } from "@/hooks/useAuth";
+import type { EsportCalendarTournament as CalendarTournament } from "@/types/esport";
 
-interface CalendarTournament {
-  id: number;
-  name: string;
-  slug: string;
-  beginAt: string | null;
-  endAt: string | null;
-  game: string;
-  gameSlug: string;
-  league: string;
-  leagueImageUrl: string | null;
-  serie: string;
-  prizepool: string | null;
-  tier: string;
-  status: "upcoming" | "running";
-}
-
-export interface EsportCalendarData {
-  tournaments: CalendarTournament[];
-}
-
-interface EsportCalendarContentProps {
-  initialData?: EsportCalendarData;
-}
-
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
-
-const GAME_LOGOS: Record<string, string> = {
-  "LoL": "/assets/games/lol.png",
+export const GAME_LOGOS: Record<string, string> = {
+  LoL: "/assets/games/lol.png",
   "League of Legends": "/assets/games/lol.png",
   "Counter-Strike": "/assets/games/cs2.png",
-  "CS2": "/assets/games/cs2.png",
-  "Valorant": "/assets/games/valorant.png",
+  CS2: "/assets/games/cs2.png",
+  Valorant: "/assets/games/valorant.png",
   "Dota 2": "/assets/games/dota2.png",
-  "Overwatch": "/assets/games/overwatch.png",
+  Overwatch: "/assets/games/overwatch.png",
   "Call of Duty": "/assets/games/cod.png",
   "Rainbow 6 Siege": "/assets/games/r6.png",
   "Rocket League": "/assets/games/rocket-league.png",
@@ -52,86 +21,14 @@ const GAME_LOGOS: Record<string, string> = {
   "Mobile Legends: Bang Bang": "/assets/games/mlbb.png",
 };
 
-export function EsportCalendarContent({ initialData }: EsportCalendarContentProps) {
-  const t = useTranslations("esport.calendar");
-  const { user } = useAuth();
-  const [selectedGame, setSelectedGame] = useState<string | null>(null);
-  const [betTournament, setBetTournament] = useState<{ id: number; name: string } | null>(null);
-
-  const gamesUrl = "/api/esport/calendar?games_only=true";
-  const calendarUrl = selectedGame
-    ? `/api/esport/calendar?game=${encodeURIComponent(selectedGame)}`
-    : "/api/esport/calendar";
-
-  const fallbackCalendar = !selectedGame ? initialData : undefined;
-
-  const { data: gamesData } = useSWR<{ games: string[] }>(gamesUrl, fetcher, {
-    revalidateOnFocus: false,
-  });
-  const { data, isLoading } = useSWR<EsportCalendarData>(calendarUrl, fetcher, {
-    fallbackData: fallbackCalendar,
-    revalidateOnFocus: false,
-    keepPreviousData: true,
-  });
-
-  const games = gamesData?.games ?? [];
-  const tournaments = data?.tournaments ?? [];
-
-  const handleGameFilter = useCallback(
-    (game: string) => setSelectedGame((prev) => (prev === game ? null : game)),
-    []
-  );
-
-  return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8">
-      {games.length > 0 && (
-        <div className="mb-6 flex flex-wrap gap-2">
-          {games.map((game) => (
-            <FilterChip
-              key={game}
-              label={game}
-              icon={GAME_LOGOS[game] ? <img src={GAME_LOGOS[game]} alt="" className="size-4 rounded-sm object-contain" /> : undefined}
-              selected={selectedGame === game}
-              onClick={() => handleGameFilter(game)}
-            />
-          ))}
-        </div>
-      )}
-
-      {isLoading && tournaments.length === 0 ? (
-        <CalendarSkeleton />
-      ) : tournaments.length === 0 ? (
-        <EmptyState
-          icon="mdi:calendar-blank"
-          title={t("noTournaments")}
-          description={t("noTournamentsDescription")}
-        />
-      ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {tournaments.map((tournament) => (
-            <TournamentCard
-              key={tournament.id}
-              tournament={tournament}
-              onBet={user ? () => setBetTournament({ id: tournament.id, name: tournament.name }) : undefined}
-            />
-          ))}
-        </div>
-      )}
-
-      {betTournament && (
-        <PredictionDialog
-          open={!!betTournament}
-          onOpenChange={(open) => { if (!open) setBetTournament(null); }}
-          tournamentId={betTournament.id}
-          tournamentName={betTournament.name}
-        />
-      )}
-    </div>
-  );
-}
-
-function TournamentCard({ tournament, onBet }: { tournament: CalendarTournament; onBet?: () => void }) {
-  const t = useTranslations("esport.calendar");
+export function TournamentCard({
+  tournament,
+  onBet,
+}: {
+  tournament: CalendarTournament;
+  onBet?: () => void;
+}) {
+  const t = useTranslations("esport.tournaments");
 
   const formatDate = (dateStr: string | null) => {
     if (!dateStr) return null;
@@ -157,12 +54,13 @@ function TournamentCard({ tournament, onBet }: { tournament: CalendarTournament;
             {tournament.league}
           </h3>
           <p className="text-editorial-muted mt-0.5 text-xs">
-            {tournament.name}{tournament.serie ? ` · ${tournament.serie}` : ""}
+            {tournament.name}
+            {tournament.serie ? ` · ${tournament.serie}` : ""}
           </p>
         </div>
         {tournament.tier !== "unranked" && (
           <Badge
-            className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-bold uppercase ${tierColors[tournament.tier] ?? "bg-white/10 text-editorial-muted"}`}
+            className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-bold uppercase ${tierColors[tournament.tier] ?? "text-editorial-muted bg-white/10"}`}
           >
             {t("tier")} {tournament.tier.toUpperCase()}
           </Badge>
@@ -172,7 +70,11 @@ function TournamentCard({ tournament, onBet }: { tournament: CalendarTournament;
       <div className="text-editorial-muted space-y-2 text-xs">
         <div className="flex items-center gap-1.5">
           {GAME_LOGOS[tournament.game] ? (
-            <img src={GAME_LOGOS[tournament.game]} alt="" className="h-4 w-4 rounded-sm object-contain" />
+            <img
+              src={GAME_LOGOS[tournament.game]}
+              alt=""
+              className="h-4 w-4 rounded-sm object-contain"
+            />
           ) : (
             <Icon icon="mdi:gamepad-variant" className="h-3.5 w-3.5 shrink-0" />
           )}
@@ -218,7 +120,7 @@ function TournamentCard({ tournament, onBet }: { tournament: CalendarTournament;
   );
 }
 
-function CalendarSkeleton() {
+export function CalendarSkeleton() {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {Array.from({ length: 6 }).map((_, i) => (

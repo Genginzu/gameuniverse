@@ -1,32 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
-import { AllCharactersContent } from "../AllCharactersContent";
-import type { CharacterSummary } from "@/types/character";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+
+import { createSWRWrapper } from "@/test-helpers/swr-wrapper";
+import type { CharactersApiResponse, CharacterSummary } from "@/types/character";
 import type { Pagination } from "@/types/pagination";
 
-const mocks = vi.hoisted(() => ({
-  useCharacters: vi.fn(),
-  result: {
-    characters: [] as CharacterSummary[],
-    pagination: null as Pagination | null,
-    isLoading: false,
-    isValidating: false,
-  },
-}));
+const mocks = vi.hoisted(() => ({ fetcher: vi.fn() }));
 
 vi.mock("next-intl", () => ({
   useTranslations: () => (key: string, values?: Record<string, unknown>) =>
     values ? `${key}:${JSON.stringify(values)}` : key,
 }));
-vi.mock("@/hooks/useDebouncedValue", () => ({ useDebouncedValue: <T,>(v: T) => v }));
+vi.mock("@/lib/swr/fetcher", () => ({ fetcher: (url: string) => mocks.fetcher(url) }));
 vi.mock("@/hooks/useCharacterFilters", () => ({
   useCharacterFilters: () => ({ roles: [], platforms: [] }),
-}));
-vi.mock("@/hooks/useCharacters", () => ({
-  useCharacters: (...args: unknown[]) => {
-    mocks.useCharacters(...args);
-    return mocks.result;
-  },
 }));
 vi.mock("@/components/providers/CharacterFavoriteStatusProvider", () => ({
   CharacterFavoriteStatusProvider: ({ children }: { children: React.ReactNode }) => children,
@@ -54,7 +41,10 @@ vi.mock("@/components/shared/Pagination", () => ({
   ),
 }));
 
+import { AllCharactersContent } from "../AllCharactersContent";
+
 const CHARACTER = { id: "c1", slug: "link", name: "Link" } as CharacterSummary;
+const NETWORK_CHARACTER = { id: "c2", slug: "zelda", name: "Zelda" } as CharacterSummary;
 const PAGES: Pagination = {
   currentPage: 1,
   totalPages: 4,
@@ -63,83 +53,107 @@ const PAGES: Pagination = {
   hasPreviousPage: false,
 };
 
-const lastQuery = () => mocks.useCharacters.mock.lastCall?.[0];
-const lastFallback = () => mocks.useCharacters.mock.lastCall?.[1];
+function respond(payload: CharactersApiResponse | "pending") {
+  mocks.fetcher.mockImplementation(() =>
+    payload === "pending" ? new Promise(() => {}) : Promise.resolve(payload)
+  );
+}
+
+const requestedUrls = () => mocks.fetcher.mock.calls.map((call) => String(call[0]));
+const renderContent = (props: React.ComponentProps<typeof AllCharactersContent> = {}) =>
+  render(<AllCharactersContent {...props} />, { wrapper: createSWRWrapper() });
 
 describe("AllCharactersContent", () => {
   beforeEach(() => {
-    mocks.useCharacters.mockClear();
-    mocks.result = {
-      characters: [CHARACTER],
-      pagination: PAGES,
-      isLoading: false,
-      isValidating: false,
-    };
+    mocks.fetcher.mockReset();
+    respond({ characters: [NETWORK_CHARACTER], pagination: PAGES });
     window.scrollTo = vi.fn();
   });
 
-  it("requests page 1 with no filters and uses the ISR data as fallback", () => {
-    render(
-      <AllCharactersContent locale="en" initialCharacters={[CHARACTER]} initialPagination={PAGES} />
-    );
-    expect(lastQuery()).toEqual({ locale: "en", search: "", roles: [], platforms: [], page: 1 });
-    expect(lastFallback()).toEqual({ characters: [CHARACTER], pagination: PAGES });
+  it("requests page 1 with no filters and renders the ISR data immediately", async () => {
+    respond("pending");
+    renderContent({ locale: "en", initialData: { characters: [CHARACTER], pagination: PAGES } });
+
     expect(screen.getByText("card:Link")).toBeInTheDocument();
+    await waitFor(() =>
+      expect(requestedUrls()).toEqual(["/api/characters?locale=en&page=1&limit=20"])
+    );
   });
 
-  it("filters by role and platform and drops the fallback once filtered", () => {
-    render(<AllCharactersContent initialCharacters={[CHARACTER]} initialPagination={PAGES} />);
+  it("filters by role and platform and drops the fallback once filtered", async () => {
+    renderContent({ initialData: { characters: [CHARACTER], pagination: PAGES } });
     fireEvent.click(screen.getByText("pick-role"));
     fireEvent.click(screen.getByText("pick-platform"));
 
-    expect(lastQuery()).toMatchObject({ roles: ["protagonist"], platforms: ["pc"], page: 1 });
-    expect(lastFallback()).toBeUndefined();
+    await waitFor(() =>
+      expect(requestedUrls()).toContain(
+        "/api/characters?locale=fr&page=1&limit=20&roles=protagonist&platforms=pc"
+      )
+    );
+    expect(await screen.findByText("card:Zelda")).toBeInTheDocument();
   });
 
-  it("resets to page 1 when a filter changes after paginating", () => {
-    render(<AllCharactersContent />);
-    fireEvent.click(screen.getByText("go-page-3"));
-    expect(lastQuery()).toMatchObject({ page: 3 });
+  it("resets to page 1 when a filter changes after paginating", async () => {
+    renderContent();
+    fireEvent.click(await screen.findByText("go-page-3"));
+    await waitFor(() =>
+      expect(requestedUrls()).toContain("/api/characters?locale=fr&page=3&limit=20")
+    );
     expect(window.scrollTo).toHaveBeenCalled();
 
     fireEvent.click(screen.getByText("pick-role"));
-    expect(lastQuery()).toMatchObject({ page: 1, roles: ["protagonist"] });
+    await waitFor(() =>
+      expect(requestedUrls()).toContain(
+        "/api/characters?locale=fr&page=1&limit=20&roles=protagonist"
+      )
+    );
   });
 
-  it("clears every filter", () => {
-    render(<AllCharactersContent />);
+  it("clears every filter back to the default query", async () => {
+    mocks.fetcher.mockImplementation((url: string) =>
+      Promise.resolve({
+        characters: [url.includes("roles=") ? CHARACTER : NETWORK_CHARACTER],
+        pagination: PAGES,
+      })
+    );
+    renderContent();
+    expect(await screen.findByText("card:Zelda")).toBeInTheDocument();
+
     fireEvent.click(screen.getByText("pick-role"));
     fireEvent.click(screen.getByText("pick-platform"));
+    expect(await screen.findByText("card:Link")).toBeInTheDocument();
+
     fireEvent.click(screen.getByText("clear"));
-    expect(lastQuery()).toMatchObject({ roles: [], platforms: [], page: 1 });
+    expect(await screen.findByText("card:Zelda")).toBeInTheDocument();
   });
 
   it("shows the skeleton only during the initial load", () => {
-    mocks.result = { characters: [], pagination: null, isLoading: true, isValidating: true };
-    render(<AllCharactersContent />);
+    respond("pending");
+    renderContent();
     expect(screen.getByText("skeleton")).toBeInTheDocument();
   });
 
-  it("shows the no-characters empty state without filters", () => {
-    mocks.result = { characters: [], pagination: null, isLoading: false, isValidating: false };
-    render(<AllCharactersContent />);
-    expect(screen.getByText("empty.noCharacters")).toBeInTheDocument();
+  it("shows the no-characters empty state without filters", async () => {
+    respond({ characters: [], pagination: { ...PAGES, totalPages: 1 } });
+    renderContent();
+    expect(await screen.findByText("empty.noCharacters")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "empty.clearFilters" })).not.toBeInTheDocument();
   });
 
-  it("offers to clear filters when a filtered search is empty", () => {
-    mocks.result = { characters: [], pagination: null, isLoading: false, isValidating: false };
-    render(<AllCharactersContent />);
+  it("offers to clear filters when a filtered search is empty", async () => {
+    respond({ characters: [], pagination: { ...PAGES, totalPages: 1 } });
+    renderContent();
     fireEvent.click(screen.getByText("pick-role"));
 
-    expect(screen.getByText("empty.description")).toBeInTheDocument();
+    expect(await screen.findByText("empty.description")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "empty.clearFilters" }));
-    expect(lastQuery()).toMatchObject({ roles: [] });
+    await waitFor(() => expect(screen.getByText("empty.noCharacters")).toBeInTheDocument());
   });
 
-  it("hides pagination for a single page", () => {
-    mocks.result.pagination = { ...PAGES, totalPages: 1 };
-    render(<AllCharactersContent />);
+  it("hides pagination for a single page", async () => {
+    respond({ characters: [NETWORK_CHARACTER], pagination: { ...PAGES, totalPages: 1 } });
+    renderContent();
+    await screen.findByText("card:Zelda");
     expect(screen.queryByText("go-page-3")).not.toBeInTheDocument();
   });
 });

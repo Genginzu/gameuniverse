@@ -63,15 +63,20 @@ useCharacterForm, useCompanyForm, useDescriptorForm, useGameForm, useGenderForm,
 useGenreForm, useLanguageForm, useRatingForm, useRatingSystemForm, useRoleForm,
 useSpeciesForm
 
-### Jeux (6)
+### Jeux (7)
 
-useGameDetails, useGameListing, useGameLibraryStatus, useGameOverrides,
+useGameDetails, useGenres, usePlatforms, useGameLibraryStatus, useGameOverrides,
 useGameSync, useBackgroundSync
 
-### Personnages (6)
+### Listings (3)
+
+useListingQuery (module `src/lib/listing/`), useEsportGameOptions,
+useDebouncedCallback
+
+### Personnages (5)
 
 useCharacterFavorite, useCharacterFavorites, useCharacterFilters,
-useCharacterOverrides, useCharacters, useCharacterSync
+useCharacterOverrides, useCharacterSync
 
 ### Joueurs (8)
 

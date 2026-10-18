@@ -3,8 +3,12 @@ import { getTranslations } from "next-intl/server";
 import { EsportShell } from "@/components/esport/EsportShell";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
-import { EsportTournamentsContent, type EsportTournamentsData } from "@/components/esport/EsportTournamentsContent";
-import { logger } from "@/lib/logger";
+import {
+  EsportTournamentsContent,
+  type EsportTournamentsData,
+} from "@/components/esport/EsportTournamentsContent";
+import { esportTournamentsListing } from "@/lib/listing/resources/esport";
+import { fetchListingDefault } from "@/lib/listing/server";
 
 export const revalidate = 3600;
 
@@ -18,30 +22,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: t("metaTitle"), description: t("metaDescription") };
 }
 
-export default async function EsportTournamentsPage() {
-  let initialData: EsportTournamentsData | undefined;
-
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-    const res = await fetch(`${baseUrl}/api/esport/tournaments`, {
-      next: { revalidate: 3600 },
-    });
-    if (res.ok) {
-      initialData = await res.json();
-    }
-  } catch (error) {
-    logger.error("Failed to fetch esport tournaments server-side", { error });
-  }
+export default async function EsportTournamentsPage({ params }: Props) {
+  const { locale } = await params;
+  const [initialData, tErrors] = await Promise.all([
+    fetchListingDefault<EsportTournamentsData>(esportTournamentsListing, { locale }),
+    getTranslations({ locale, namespace: "errors.pageLoad" }),
+  ]);
 
   return (
     <EsportShell>
       <ErrorBoundary
         fallback={
-          <ErrorFallback
-            description="An error occurred while loading the esport tournaments."
-            showRefresh={true}
-            showHomeButton={true}
-          />
+          <ErrorFallback description={tErrors("esportTournaments")} showRefresh showHomeButton />
         }
       >
         <EsportTournamentsContent initialData={initialData} />

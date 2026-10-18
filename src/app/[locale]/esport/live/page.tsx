@@ -4,7 +4,8 @@ import { EsportShell } from "@/components/esport/EsportShell";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
 import { EsportLiveContent, type EsportLiveData } from "@/components/esport/EsportLiveContent";
-import { logger } from "@/lib/logger";
+import { esportLiveListing } from "@/lib/listing/resources/esport";
+import { fetchListingDefault } from "@/lib/listing/server";
 
 export const revalidate = 3600;
 
@@ -18,27 +19,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: t("metaTitle"), description: t("metaDescription") };
 }
 
-export default async function EsportLivePage() {
-  let initialData: EsportLiveData | undefined;
-
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-    const res = await fetch(`${baseUrl}/api/esport/live`, {
-      next: { revalidate: 3600 },
-    });
-    if (res.ok) {
-      initialData = await res.json();
-    }
-  } catch (error) {
-    logger.error("Failed to fetch esport live data server-side", { error });
-  }
+export default async function EsportLivePage({ params }: Props) {
+  const { locale } = await params;
+  const [initialData, tErrors] = await Promise.all([
+    fetchListingDefault<EsportLiveData>(esportLiveListing, { locale }),
+    getTranslations({ locale, namespace: "errors.pageLoad" }),
+  ]);
 
   return (
     <EsportShell>
       <ErrorBoundary
-        fallback={
-          <ErrorFallback description="Error loading live streams." showRefresh showHomeButton />
-        }
+        fallback={<ErrorFallback description={tErrors("esportLive")} showRefresh showHomeButton />}
       >
         <EsportLiveContent initialData={initialData} />
       </ErrorBoundary>
