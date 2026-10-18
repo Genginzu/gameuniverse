@@ -147,9 +147,10 @@ All schema changes go in `supabase/migrations/YYYYMMDD00000N_description.sql`.
 
 ### IGDB field tracking
 
-Adding a new synchronizable IGDB field requires updates in 4+ files
-(field-tracking constants, sync map, form labels, import script). Full checklist
-in `.agents/steering/igdb-field-tracking.md`.
+Every synchronizable IGDB field has one entry in the registry under
+`src/lib/services/igdb-fields/` (label, webhook payload keys, bulk alias, change
+detector, sync function). Full procedure in
+`.agents/steering/igdb-field-tracking.md`.
 
 ## Conventions
 
@@ -213,9 +214,9 @@ keyword match in their `description`:
   `supabase/migrations/**`.
 - **`nextjs-app-router`** — three page patterns, i18n nav, async `params`.
   Activates on `src/app/**`, `src/proxy.ts`, `src/i18n/**`.
-- **`igdb-field-tracking`** — 4-file checklist when adding a synchronizable IGDB
-  field. Activates on `field-tracking*`, `igdb-sync*`, `GameFormSyncTab*`,
-  `scripts/igdb-import/game-importer*`.
+- **`igdb-field-tracking`** — one-entry registry procedure when adding a
+  synchronizable IGDB field. Activates on `field-tracking*`, `igdb-sync*`,
+  `igdb-fields/**`, `GameFormSyncTab*`, `bulkFieldSync*`.
 - **`spec-final-validation`** — mandatory tests+lint+build+README block for spec
   `tasks.md`. Activates when writing `.agents/specs/**/tasks.md`.
 - **`graphify`** — knowledge graph of the codebase (5867 nodes, 237 communities).

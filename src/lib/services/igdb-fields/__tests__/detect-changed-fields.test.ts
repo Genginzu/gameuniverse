@@ -2,43 +2,10 @@ import { describe, it, expect } from "vitest";
 import {
   detectChangedFields,
   TRACKABLE_FIELDS,
-  type CurrentGameData,
-} from "@/lib/utils/field-tracking";
+  TRACKED_FIELD_REGISTRY,
+} from "@/lib/services/igdb-fields/registry";
+import type { CurrentGameData } from "@/types/admin-games";
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
-
-// =============================================================================
-// TRACKABLE_FIELDS
-// =============================================================================
-
-describe("TRACKABLE_FIELDS", () => {
-  it("contient exactement les 17 catégories attendues", () => {
-    expect(TRACKABLE_FIELDS).toHaveLength(17);
-    const expected = [
-      "translations",
-      "cover_image",
-      "background_image",
-      "release_date",
-      "metascore",
-      "genres",
-      "companies",
-      "platforms",
-      "screenshots",
-      "artworks",
-      "age_ratings",
-      "versions",
-      "languages",
-      "playtime",
-      "popularity",
-      "videos",
-      "similar_games",
-    ];
-    expect([...TRACKABLE_FIELDS]).toEqual(expected);
-  });
-});
-
-// =============================================================================
-// detectChangedFields
-// =============================================================================
 
 const baseCurrentData: CurrentGameData = {
   cover_image_url: "https://example.com/cover.png",
@@ -57,6 +24,16 @@ const baseCurrentData: CurrentGameData = {
   versions: [{ version_title: "Standard", description: "Base game" }],
   languages: [{ language_code: "fr", has_audio: true, has_subtitles: true, has_interface: true }],
   game_platforms: [{ platform_id: "platform-1" }],
+  videos: [{ url: "https://www.youtube.com/watch?v=abc", title: "Trailer" }],
+};
+
+const baseVideo = {
+  url: "https://www.youtube.com/watch?v=abc",
+  title: "Trailer",
+  thumbnail_url: "",
+  video_type: "trailer",
+  display_order: 0,
+  is_featured: true,
 };
 
 function toSubmitted(overrides: Partial<AdminGameFormData> = {}): AdminGameFormData {
@@ -103,18 +80,18 @@ function toSubmitted(overrides: Partial<AdminGameFormData> = {}): AdminGameFormD
       },
     ],
     game_platforms: [{ platform_id: "platform-1" }],
+    videos: [baseVideo],
     prices: [],
     ...overrides,
   } as AdminGameFormData;
 }
 
 describe("detectChangedFields", () => {
-  it("retourne un tableau vide quand rien n'a changé", () => {
-    const result = detectChangedFields(baseCurrentData, toSubmitted());
-    expect(result).toEqual([]);
+  it("returns an empty list when nothing changed", () => {
+    expect(detectChangedFields(baseCurrentData, toSubmitted())).toEqual([]);
   });
 
-  it("détecte un seul changement (cover_image)", () => {
+  it("detects a single change (cover_image)", () => {
     const result = detectChangedFields(
       baseCurrentData,
       toSubmitted({ cover_image_url: "https://example.com/new-cover.png" })
@@ -122,7 +99,7 @@ describe("detectChangedFields", () => {
     expect(result).toEqual(["cover_image"]);
   });
 
-  it("détecte tous les changements quand tout est modifié", () => {
+  it("detects every admin-editable field when everything changed", () => {
     const submitted = toSubmitted({
       cover_image_url: "https://new.com/cover.png",
       background_image_url: "https://new.com/bg.png",
@@ -165,18 +142,16 @@ describe("detectChangedFields", () => {
         },
       ],
       game_platforms: [{ platform_id: "platform-99" }],
+      videos: [{ ...baseVideo, url: "https://www.youtube.com/watch?v=xyz" }],
     });
 
-    const result = detectChangedFields(baseCurrentData, submitted);
-    // "videos", "similar_games" and "popularity" are not detectable via admin form
-    const formComparableFields = TRACKABLE_FIELDS.filter(
-      (f) => f !== "videos" && f !== "similar_games" && f !== "popularity"
+    const detectableFields = TRACKABLE_FIELDS.filter(
+      (field) => TRACKED_FIELD_REGISTRY[field].detect !== null
     );
-    expect(result).toHaveLength(formComparableFields.length);
-    expect(result).toEqual(expect.arrayContaining([...formComparableFields]));
+    expect(detectChangedFields(baseCurrentData, submitted)).toEqual(detectableFields);
   });
 
-  it("gère les valeurs null/vides correctement (pas de faux positif)", () => {
+  it("does not report false positives for null and empty values", () => {
     const emptyCurrentData: CurrentGameData = {
       cover_image_url: null,
       background_image_url: "",
@@ -194,6 +169,7 @@ describe("detectChangedFields", () => {
       versions: [],
       languages: [],
       game_platforms: [],
+      videos: [],
     };
 
     const emptySubmitted = toSubmitted({
@@ -213,9 +189,49 @@ describe("detectChangedFields", () => {
       versions: [],
       languages: [],
       game_platforms: [],
+      videos: [],
     });
 
-    const result = detectChangedFields(emptyCurrentData, emptySubmitted);
-    expect(result).toEqual([]);
+    expect(detectChangedFields(emptyCurrentData, emptySubmitted)).toEqual([]);
+  });
+
+  it("treats a null version description as equal to an empty one", () => {
+    const current: CurrentGameData = {
+      ...baseCurrentData,
+      versions: [{ version_title: "Standard", description: null }],
+    };
+    const submitted = toSubmitted({ versions: [{ version_title: "Standard", description: "" }] });
+    expect(detectChangedFields(current, submitted)).toEqual([]);
+  });
+});
+
+describe("detectChangedFields - videos override", () => {
+  it("flags videos when an admin removes a video", () => {
+    expect(detectChangedFields(baseCurrentData, toSubmitted({ videos: [] }))).toEqual(["videos"]);
+  });
+
+  it("flags videos when an admin adds a video", () => {
+    const videos = [baseVideo, { ...baseVideo, url: "https://www.youtube.com/watch?v=new" }];
+    expect(detectChangedFields(baseCurrentData, toSubmitted({ videos }))).toEqual(["videos"]);
+  });
+
+  it("flags videos when an admin renames a video", () => {
+    const videos = [{ ...baseVideo, title: "Launch trailer" }];
+    expect(detectChangedFields(baseCurrentData, toSubmitted({ videos }))).toEqual(["videos"]);
+  });
+
+  it("ignores video reordering and non-tracked video attributes", () => {
+    const current: CurrentGameData = {
+      ...baseCurrentData,
+      videos: [
+        { url: "https://www.youtube.com/watch?v=abc", title: "Trailer" },
+        { url: "https://www.youtube.com/watch?v=def", title: null },
+      ],
+    };
+    const videos = [
+      { ...baseVideo, url: "https://www.youtube.com/watch?v=def", title: "", display_order: 0 },
+      { ...baseVideo, display_order: 1, is_featured: false },
+    ];
+    expect(detectChangedFields(current, toSubmitted({ videos }))).toEqual([]);
   });
 });

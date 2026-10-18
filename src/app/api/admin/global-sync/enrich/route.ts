@@ -2,18 +2,21 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { IGDBService } from "@/lib/services/igdbService";
-import {
-  syncScreenshots,
-  syncArtworks,
-  syncAgeRatings,
-  syncVersions,
-  syncLanguages,
-  syncPlaytime,
-  syncVideos,
-} from "@/lib/services/igdb-sync-fields";
+import { syncTrackedFields } from "@/lib/services/igdb-fields/override-aware-sync";
+import type { TrackableField } from "@/types/admin-games";
 import { logger } from "@/lib/logger";
 
 const BATCH_SIZE = 2;
+
+const ENRICHED_FIELDS: readonly TrackableField[] = [
+  "screenshots",
+  "artworks",
+  "age_ratings",
+  "versions",
+  "languages",
+  "playtime",
+  "videos",
+];
 
 /**
  * POST /api/admin/global-sync/enrich
@@ -88,15 +91,13 @@ async function enrichOneGame(supabase: any, entry: EnrichEntry): Promise<EnrichR
       return { ...base, success: false, error: "Not found on IGDB" };
     }
 
-    await Promise.all([
-      syncScreenshots(supabase, gameId, igdb),
-      syncArtworks(supabase, gameId, igdb),
-      syncAgeRatings(supabase, gameId, igdb),
-      syncVersions(supabase, gameId, entry.igdb_id),
-      syncLanguages(supabase, gameId, igdb),
-      syncPlaytime(supabase, gameId, entry.igdb_id),
-      syncVideos(supabase, gameId, igdb),
-    ]);
+    await syncTrackedFields(supabase, {
+      gameId,
+      igdbId: entry.igdb_id,
+      fields: ENRICHED_FIELDS,
+      respectOverrides: true,
+      igdbGame: igdb,
+    });
 
     await supabase.from("igdb_global_sync").update({ is_enriched: true }).eq("id", entry.id);
     return { ...base, success: true };

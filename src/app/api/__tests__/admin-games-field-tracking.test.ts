@@ -5,11 +5,9 @@
  */
 
 import { describe, it, expect, vi } from "vitest";
-import {
-  detectChangedFields,
-  upsertFieldOverrides,
-  type CurrentGameData,
-} from "@/lib/utils/field-tracking";
+import { upsertFieldOverrides } from "@/lib/utils/field-tracking";
+import { detectChangedFields } from "@/lib/services/igdb-fields/registry";
+import type { CurrentGameData } from "@/types/admin-games";
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
 
 // --- Helpers ---

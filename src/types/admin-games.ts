@@ -107,6 +107,51 @@ export type TrackableField =
   | "videos"
   | "similar_games";
 
+export type BulkFieldAlias =
+  "cover" | "background" | "playtime" | "metascore" | "releaseDate" | "popularity";
+
+export interface CurrentGameData {
+  cover_image_url?: string | null;
+  background_image_url?: string | null;
+  release_date?: string | null;
+  metascore?: number | null;
+  playtime_hastily?: number | null;
+  playtime_normally?: number | null;
+  playtime_completely?: number | null;
+  translations?: Array<{ language_code: string; title?: string; description?: string }>;
+  genres?: Array<{ genre_id: string }>;
+  companies?: Array<{ company_id: string; role: string; is_primary: boolean }>;
+  screenshots?: Array<{ url: string }>;
+  artwork?: Array<{ url: string }>;
+  age_ratings?: Array<{ rating_id: string; is_primary: boolean; content_descriptors?: string[] }>;
+  versions?: Array<{ version_title: string; description?: string | null }>;
+  languages?: Array<{
+    language_code: string;
+    has_audio: boolean;
+    has_subtitles: boolean;
+    has_interface: boolean;
+  }>;
+  game_platforms?: Array<{ platform_id: string }>;
+  videos?: Array<{ url: string; title?: string | null }>;
+}
+
+export type TrackedFieldChangeDetector = (
+  current: CurrentGameData,
+  submitted: AdminGameFormData
+) => boolean;
+
+export interface TrackedFieldBulkImport {
+  alias: BulkFieldAlias;
+  missingColumn: string;
+}
+
+export interface TrackedFieldDescriptor {
+  labelKey: string;
+  webhookPayloadKeys: readonly string[];
+  bulkImport: TrackedFieldBulkImport | null;
+  detect: TrackedFieldChangeDetector | null;
+}
+
 /** Entrée de suivi d'un champ modifié manuellement */
 export interface GameFieldOverride {
   id: string;

@@ -1,16 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-import { BULK_FIELD_TO_OVERRIDE } from "@/lib/services/bulkFieldSync";
+import {
+  BULK_FIELD_TO_OVERRIDE,
+  BULK_IMPORTABLE_COLUMNS,
+  isBulkFieldAlias,
+} from "@/lib/services/igdb-fields/registry";
 import { logger } from "@/lib/logger";
-
-const IMPORTABLE_FIELDS: Record<string, string> = {
-  cover: "cover_image_url",
-  background: "background_image_url",
-  playtime: "playtime_normally",
-  metascore: "metascore",
-  releaseDate: "release_date",
-  popularity: "igdb_pop_updated_at",
-};
 
 /**
  * GET /api/admin/bulk-import/games?field=cover&limit=20&offset=0
@@ -23,27 +18,23 @@ export async function GET(request: NextRequest) {
   const limit = Math.min(parseInt(searchParams.get("limit") || "20", 10), 1000);
   const offset = parseInt(searchParams.get("offset") || "0", 10);
 
-  if (!field || !IMPORTABLE_FIELDS[field]) {
+  if (!isBulkFieldAlias(field)) {
     return NextResponse.json(
-      { error: "Invalid field. Valid: " + Object.keys(IMPORTABLE_FIELDS).join(", ") },
+      { error: "Invalid field. Valid: " + Object.keys(BULK_IMPORTABLE_COLUMNS).join(", ") },
       { status: 400 }
     );
   }
 
   try {
     const supabase = await createRouteHandlerClient();
-    const column = IMPORTABLE_FIELDS[field];
+    const column = BULK_IMPORTABLE_COLUMNS[field];
 
     // Fetch overridden game IDs for this field
-    const overrideName = BULK_FIELD_TO_OVERRIDE[field];
-    let excludedIds: string[] = [];
-    if (overrideName) {
-      const { data: overrides } = await supabase
-        .from("game_field_overrides")
-        .select("game_id")
-        .eq("field_name", overrideName);
-      excludedIds = (overrides ?? []).map((o) => o.game_id);
-    }
+    const { data: overrides } = await supabase
+      .from("game_field_overrides")
+      .select("game_id")
+      .eq("field_name", BULK_FIELD_TO_OVERRIDE[field]);
+    const excludedIds = (overrides ?? []).map((o) => o.game_id);
 
     let query = supabase
       .from("games")
