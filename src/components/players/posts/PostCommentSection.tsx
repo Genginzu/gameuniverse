@@ -5,6 +5,7 @@ import { Icon } from "@iconify/react";
 import { usePostComments } from "@/hooks/usePostComments";
 import { PostCommentItem } from "@/components/players/posts/PostCommentItem";
 import { PostCommentForm } from "@/components/players/posts/PostCommentForm";
+import { SuspensionGate } from "@/components/shared/SuspensionGate";
 
 interface PostCommentSectionProps {
   postId: string;
@@ -59,7 +60,9 @@ export function PostCommentSection({
       {/* Comment form for authenticated users */}
       {isAuthenticated && (
         <div className="mt-3">
-          <PostCommentForm onSubmit={addComment} isSubmitting={isSubmitting} />
+          <SuspensionGate>
+            <PostCommentForm onSubmit={addComment} isSubmitting={isSubmitting} />
+          </SuspensionGate>
         </div>
       )}
     </div>

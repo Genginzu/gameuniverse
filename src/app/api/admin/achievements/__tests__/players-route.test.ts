@@ -21,6 +21,12 @@ vi.mock("@/lib/supabase-server", () => ({
     }),
 }));
 
+vi.mock("@/lib/supabase-admin", () => ({
+  getSupabaseAdmin: () => ({
+    from: (table: string) => (mockSupabaseFrom ? mockSupabaseFrom(table) : {}),
+  }),
+}));
+
 vi.mock("@/lib/logger", () => ({
   logger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
 }));

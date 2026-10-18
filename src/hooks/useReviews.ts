@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import useSWR from "swr";
 import type { Review, ReviewFormData, ReviewsResponse, ReviewWithVotes } from "@/types/review";
 import { ReviewService } from "@/lib/services/reviewService";
+import { isSuspendedError } from "@/lib/services/apiError";
 
 interface UseReviewsReturn {
   reviews: ReviewWithVotes[];
@@ -48,8 +49,10 @@ export function useReviews(gameId: string): UseReviewsReturn {
         await mutate();
         return true;
       } catch (err) {
-        const message = err instanceof Error ? err.message : "Failed to submit review";
-        setMutationError(message);
+        // Suspension is explained by SuspensionGate, not by the generic error banner.
+        if (!isSuspendedError(err)) {
+          setMutationError(err instanceof Error ? err.message : "Failed to submit review");
+        }
         return false;
       } finally {
         setSubmitting(false);
@@ -69,8 +72,9 @@ export function useReviews(gameId: string): UseReviewsReturn {
         await mutate();
         return true;
       } catch (err) {
-        const message = err instanceof Error ? err.message : "Failed to update review";
-        setMutationError(message);
+        if (!isSuspendedError(err)) {
+          setMutationError(err instanceof Error ? err.message : "Failed to update review");
+        }
         return false;
       } finally {
         setSubmitting(false);
