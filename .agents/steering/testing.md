@@ -60,7 +60,13 @@ test/
 
 ## Nommage des fichiers
 
-- Tests classiques : `*.test.ts` ou `*.test.tsx`
+- Tests classiques : `*.test.ts` (environnement node) ou `*.test.tsx`
+  (environnement jsdom)
+- ✅ Tout test qui fait un rendu React ou utilise `renderHook` **doit** être en
+  `.test.tsx` : l'extension sélectionne le projet Vitest (`dom` vs `node`)
+- ❌ Ne **jamais** réimplémenter la logique de production dans un test
+  (« simulated handlers », copies de helpers) : importer le vrai code, ou
+  extraire le helper dans `src/lib/utils/` pour le partager
 - Tests property-based : `*.property.test.ts`
 
 ## Chemins d'import

@@ -4,6 +4,7 @@ import { PostCommentServerService } from "@/lib/services/postCommentServerServic
 import { PlayerPostsServerService } from "@/lib/services/playerPostsServerService";
 import { logger } from "@/lib/logger";
 import { CoinService } from "@/lib/services/coinService";
+import { suspendedResponse } from "@/lib/services/suspensionGuard";
 
 /**
  * GET /api/posts/[postId]/comments — Fetch comments for a post.
@@ -41,6 +42,9 @@ export async function POST(
     if (authError || !user) {
       return NextResponse.json({ error: "Authentication required" }, { status: 401 });
     }
+
+    const suspended = await suspendedResponse(user.id);
+    if (suspended) return suspended;
 
     const { postId } = await params;
 

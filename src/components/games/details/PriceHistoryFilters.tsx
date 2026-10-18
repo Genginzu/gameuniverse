@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { PriceHistoryFilters, PriceHistoryPeriod } from "@/types/price-history";
@@ -10,19 +11,15 @@ interface PriceHistoryFiltersProps {
   availableStores: string[];
 }
 
-const PERIOD_OPTIONS: { value: PriceHistoryPeriod; label: string }[] = [
-  { value: "1m", label: "1M" },
-  { value: "3m", label: "3M" },
-  { value: "6m", label: "6M" },
-  { value: "1y", label: "1A" },
-  { value: "all", label: "Tout" },
-];
+const PERIOD_OPTIONS: PriceHistoryPeriod[] = ["1m", "3m", "6m", "1y", "all"];
 
 export function PriceHistoryFiltersBar({
   filters,
   onFiltersChange,
   availableStores,
 }: PriceHistoryFiltersProps) {
+  const t = useTranslations("gameDetails.priceHistory");
+
   function handlePeriodChange(period: PriceHistoryPeriod) {
     onFiltersChange({ ...filters, period });
   }
@@ -35,17 +32,17 @@ export function PriceHistoryFiltersBar({
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
       {/* Period selector */}
-      <div className="flex items-center gap-1" role="group" aria-label="Sélection de période">
-        {PERIOD_OPTIONS.map((option) => (
+      <div className="flex items-center gap-1" role="group" aria-label={t("periodSelectionLabel")}>
+        {PERIOD_OPTIONS.map((period) => (
           <Button
-            key={option.value}
-            variant={filters.period === option.value ? "default" : "outline"}
+            key={period}
+            variant={filters.period === period ? "default" : "outline"}
             size="sm"
-            onClick={() => handlePeriodChange(option.value)}
-            aria-pressed={filters.period === option.value}
-            className={cn("min-w-12", filters.period === option.value && "pointer-events-none")}
+            onClick={() => handlePeriodChange(period)}
+            aria-pressed={filters.period === period}
+            className={cn("min-w-12", filters.period === period && "pointer-events-none")}
           >
-            {option.label}
+            {t(`periods.${period}`)}
           </Button>
         ))}
       </div>
@@ -55,7 +52,7 @@ export function PriceHistoryFiltersBar({
         <div
           className="flex flex-wrap items-center gap-1"
           role="group"
-          aria-label="Filtre par magasin"
+          aria-label={t("storeFilterLabel")}
         >
           {availableStores.map((store) => (
             <Button

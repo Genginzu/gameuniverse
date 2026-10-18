@@ -1,6 +1,5 @@
 /**
  * Tests for admin reviews API routes (GET list + GET/PUT/DELETE by id)
- * Placed in isolated/ because vi.mock() conflicts with parallel tests.
  *
  * Requirements: 1.1, 1.2, 1.3, 1.4, 2.2, 3.2
  */
@@ -8,8 +7,8 @@
 import { describe, test, expect, beforeEach, vi } from "vitest";
 
 // --- Mock setup ---
-let mockRequireAdmin: ReturnType<typeof mock>;
-let mockSupabaseFrom: ReturnType<typeof mock>;
+let mockRequireAdmin: ReturnType<typeof vi.fn>;
+let mockSupabaseFrom: ReturnType<typeof vi.fn>;
 
 const sampleReviewRow = {
   id: "review-1",
@@ -34,8 +33,8 @@ const sampleReviewRow2 = {
 };
 
 const sampleProfiles = [
-  { id: "user-1", username: "player1", email: "player1@test.com" },
-  { id: "user-2", username: "player2", email: "player2@test.com" },
+  { id: "user-1", username: "player1" },
+  { id: "user-2", username: "player2" },
 ];
 
 vi.mock("@/lib/auth-admin", () => ({
@@ -53,6 +52,25 @@ vi.mock("@/lib/supabase-server", () => ({
         return {};
       },
     }),
+}));
+
+// Emails come from auth.users through the auth admin API (issues #375, #387).
+const AUTH_EMAILS: Record<string, string> = {
+  "user-1": "player1@test.com",
+  "user-2": "player2@test.com",
+};
+vi.mock("@/lib/supabase-admin", () => ({
+  getSupabaseAdmin: () => ({
+    auth: {
+      admin: {
+        getUserById: (id: string) =>
+          Promise.resolve({
+            data: { user: AUTH_EMAILS[id] ? { id, email: AUTH_EMAILS[id] } : null },
+            error: null,
+          }),
+      },
+    },
+  }),
 }));
 
 // Import after mocks
@@ -74,7 +92,7 @@ function makeParams(id: string) {
 describe("Admin Reviews API", () => {
   beforeEach(() => {
     mockRequireAdmin = vi.fn(() => Promise.resolve(true));
-    mockSupabaseFrom = null as unknown as ReturnType<typeof mock>;
+    mockSupabaseFrom = null as unknown as ReturnType<typeof vi.fn>;
   });
 
   // =====================
@@ -125,6 +143,7 @@ describe("Admin Reviews API", () => {
       // Verify AdminReview shape (Req 1.2)
       const review = body.reviews[0];
       expect(review.playerName).toBe("player1");
+      expect(review.playerEmail).toBe("player1@test.com");
       expect(review.gameTitle).toBe("Zelda");
       expect(review.rating).toBe(15);
       expect(review.contentExcerpt).toBeDefined();

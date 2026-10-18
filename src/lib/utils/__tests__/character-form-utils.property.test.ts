@@ -4,10 +4,7 @@ import {
   adminCharacterFormSchema,
   type AdminCharacterFormData,
 } from "@/lib/validations/admin-character-form";
-import {
-  characterFormToPayload,
-  characterPayloadToForm,
-} from "@/lib/utils/character-form-utils";
+import { characterFormToPayload, characterPayloadToForm } from "@/lib/utils/character-form-utils";
 
 // =============================================================================
 // Property 3: Round-trip serialization (form â†’ payload â†’ form)
@@ -26,16 +23,6 @@ import {
 
 const validSlug = () =>
   fc.stringMatching(/^[a-z0-9][a-z0-9-]*$/).filter((s) => s.length >= 1 && s.length <= 255);
-
-const validTranslation = () =>
-  fc.record({
-    language_code: fc.constantFrom("fr", "en"),
-    name: fc.string({ minLength: 1, maxLength: 100 }).filter((s) => s.trim().length > 0),
-    role: fc.oneof(fc.constant(""), fc.string({ minLength: 1, maxLength: 50 })),
-    description: fc.oneof(fc.constant(""), fc.string({ minLength: 1, maxLength: 200 })),
-    biography: fc.oneof(fc.constant(""), fc.string({ minLength: 1, maxLength: 200 })),
-    weapons: fc.oneof(fc.constant(""), fc.string({ minLength: 1, maxLength: 200 })),
-  });
 
 const validHexColor = () =>
   fc.oneof(

@@ -1,18 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { requireAdmin } from "@/lib/auth-admin";
-import { adminLanguageFormSchema } from "@/lib/validations/admin-language-form";
+import {
+  adminLanguageFormSchema,
+  languageQuerySchema,
+} from "@/lib/validations/admin-language-form";
 import { logger } from "@/lib/logger";
-
-// Query params validation schema
-const languageQuerySchema = z.object({
-  page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce.number().int().min(1).max(100).default(20),
-  search: z.string().optional(),
-  sort_by: z.enum(["code", "name"]).default("code"),
-  sort_order: z.enum(["asc", "desc"]).default("asc"),
-});
 
 /**
  * GET /api/admin/languages - List supported languages with pagination, search, and sort
