@@ -1,27 +1,10 @@
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
-import type { User } from "@supabase/supabase-js";
+import { getUserRoleFromUser } from "@/lib/utils/userRole";
+import type { UserRole } from "@/types/admin-auth";
 
-export type UserRole = "admin" | "contributor" | "user";
-
-const ADMIN_DOMAIN = "@admin.gamesuniverse.com";
-const CONTRIBUTOR_DOMAIN = "@contributor.gamesuniverse.com";
-
-/**
- * Determine the role of a Supabase user based on email domain or metadata.
- */
-export function getUserRoleFromUser(user: User | null): UserRole {
-  if (!user || !user.email) return "user";
-
-  if (user.email.endsWith(ADMIN_DOMAIN)) return "admin";
-  if (user.email.endsWith(CONTRIBUTOR_DOMAIN)) return "contributor";
-
-  const metadataRole = user.user_metadata?.role as string | undefined;
-  if (metadataRole === "admin") return "admin";
-  if (metadataRole === "contributor") return "contributor";
-
-  return "user";
-}
+export type { UserRole };
+export { getUserRoleFromUser };
 
 /**
  * Get the role of the currently authenticated user (server-side).
@@ -36,8 +19,7 @@ export async function getUserRole(): Promise<UserRole> {
 }
 
 /**
- * Check if the current user is an admin
- * Admin users are identified by having an email ending with @admin.gamesuniverse.com
+ * Check if the current user is an admin (`app_metadata.role === "admin"`).
  */
 export async function isAdmin(): Promise<boolean> {
   try {

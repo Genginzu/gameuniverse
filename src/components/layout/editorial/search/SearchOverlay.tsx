@@ -24,6 +24,7 @@ import { Icon } from "@iconify/react";
 import { useTranslations } from "next-intl";
 
 import { useGlobalSearch } from "@/hooks/useGlobalSearch";
+import { useAuth } from "@/hooks/useAuth";
 import {
   type FlatSearchItem,
   getResultUrl,
@@ -50,6 +51,7 @@ interface SearchOverlayProps {
 export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   const t = useTranslations("globalSearch.overlay");
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const inputRef = useRef<HTMLInputElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const resultsId = useId();
@@ -76,6 +78,10 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
 
   // ID of the IGDB game currently being imported (click → import → navigate).
   const [importingId, setImportingId] = useState<string | null>(null);
+
+  // When a logged-out user tries to import an IGDB game, we prompt them to log
+  // in instead of calling the route (which would 401). Issue #376.
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
   // Hydrate recent searches when the overlay opens (avoids stale data
   // from a different tab session).
@@ -110,6 +116,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     if (!isOpen) {
       setQuery("");
       setActiveIndex(-1);
+      setShowLoginPrompt(false);
     }
   }, [isOpen, setQuery, setActiveIndex]);
 
@@ -148,6 +155,12 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     // IGDB game not yet imported locally: import on click, then navigate to
     // its freshly created local page. Without this, the item click is a no-op.
     if (item.type === "game" && item.source === "igdb" && item.igdbId) {
+      // Logged-out users cannot import (the route returns 401). Prompt them to
+      // log in instead of calling it. Issue #376.
+      if (!authLoading && !user) {
+        setShowLoginPrompt(true);
+        return;
+      }
       if (importingId) return; // an import is already in flight
       setImportingId(item.id);
       try {
@@ -203,8 +216,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
   const onSelectRecent = (q: string) => {
     setQuery(q);
     inputRef.current?.focus();
-  };
-  const onRemoveRecent = (q: string) => {
+  };  const onRemoveRecent = (q: string) => {
     setRecentSearches(removeRecentSearch(q));
   };
   const onClearAllRecent = () => {
@@ -220,6 +232,12 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     if (event.target === event.currentTarget) {
       onClose();
     }
+  };
+
+  // Navigate to the auth page from the login prompt (issue #376).
+  const goToLogin = () => {
+    onClose();
+    router.push("/auth");
   };
 
   // ----------------------------------------------------------------------
@@ -300,6 +318,34 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
           data-loading={isLoading || undefined}
           data-state={contentState}
         >
+          {showLoginPrompt && (
+            <div
+              role="alert"
+              className="mb-3 flex flex-col gap-3 rounded-xl border border-editorial-line bg-editorial-3 p-4 sm:flex-row sm:items-center sm:justify-between"
+            >
+              <div className="flex items-start gap-3">
+                <Icon
+                  icon="lucide:lock"
+                  className="mt-0.5 size-5 shrink-0 text-editorial-accent"
+                  aria-hidden
+                />
+                <div className="min-w-0">
+                  <p className="text-base font-semibold">{t("loginToImportTitle")}</p>
+                  <p className="text-sm text-editorial-muted">
+                    {t("loginToImportDescription")}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={goToLogin}
+                className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-editorial-accent px-4 text-base font-medium text-editorial-bg transition-all duration-300 hover:opacity-90"
+              >
+                <Icon icon="lucide:log-in" className="size-5" aria-hidden />
+                {t("loginToImportCta")}
+              </button>
+            </div>
+          )}
           {showResults && hasFetchedResults ? (
             <SearchOverlayResults
               results={results}

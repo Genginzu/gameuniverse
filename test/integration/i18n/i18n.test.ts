@@ -1,49 +1,25 @@
 import { describe, it, expect } from "vitest";
+import frMessages from "../../../src/messages/fr.json";
+import enMessages from "../../../src/messages/en.json";
 
-// Test the translation files structure
 describe("Internationalization", () => {
-  it("should have French translations", async () => {
-    const frMessages = await import("../../../src/messages/fr.json");
-
-    expect(frMessages.default).toBeDefined();
-    expect(frMessages.default.navigation).toBeDefined();
-    expect(frMessages.default.navigation.home).toBe("Accueil");
-    expect(frMessages.default.navigation.library).toBe("Bibliothèque");
-    expect(frMessages.default.landing.title).toBe("Votre univers");
+  it("should have French translations", () => {
+    expect(frMessages.navigation.home).toBe("Accueil");
+    expect(frMessages.navigation.library).toBe("Bibliothèque");
+    expect(frMessages.landing.hero.titlePart1).toBe("Votre");
+    expect(frMessages.landing.hero.titlePart2).toBe("univers");
   });
 
-  it("should have English translations", async () => {
-    const enMessages = await import("../../../src/messages/en.json");
-
-    expect(enMessages.default).toBeDefined();
-    expect(enMessages.default.navigation).toBeDefined();
-    expect(enMessages.default.navigation.home).toBe("Home");
-    expect(enMessages.default.navigation.library).toBe("Library");
-    expect(enMessages.default.landing.title).toBe("Your");
+  it("should have English translations", () => {
+    expect(enMessages.navigation.home).toBe("Home");
+    expect(enMessages.navigation.library).toBe("Library");
+    expect(enMessages.landing.hero.titlePart1).toBe("Your");
   });
 
-  it("should have consistent translation keys between languages", async () => {
-    const frMessages = await import("../../../src/messages/fr.json");
-    const enMessages = await import("../../../src/messages/en.json");
-
-    const frKeys = Object.keys(frMessages.default);
-    const enKeys = Object.keys(enMessages.default);
-
-    expect(frKeys.sort()).toEqual(enKeys.sort());
-
-    // Check nested keys for navigation
-    const frNavKeys = Object.keys(frMessages.default.navigation);
-    const enNavKeys = Object.keys(enMessages.default.navigation);
-
-    expect(frNavKeys.sort()).toEqual(enNavKeys.sort());
-  });
-
-  it("should have fallback behavior for missing translations", () => {
-    // This test verifies that our translation structure supports fallbacks
-    const testKey = "nonexistent.key";
-
-    // In a real scenario, next-intl would handle this gracefully
-    // For now, we just verify the structure allows for fallback handling
-    expect(typeof testKey).toBe("string");
+  it("should have consistent top-level and navigation keys between languages", () => {
+    expect(Object.keys(frMessages).sort()).toEqual(Object.keys(enMessages).sort());
+    expect(Object.keys(frMessages.navigation).sort()).toEqual(
+      Object.keys(enMessages.navigation).sort()
+    );
   });
 });

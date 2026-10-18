@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { requireAdmin } from "@/lib/auth-admin";
 import { playerAchievementActionSchema } from "@/lib/validations/admin-achievement-form";
 import { computeLevel } from "@/lib/services/levelSystem";
@@ -68,7 +69,9 @@ export async function POST(request: NextRequest) {
     }
 
     const { userId, achievementKey } = validation.data;
-    const supabase = await createRouteHandlerClient();
+    // Admin writes to player_achievements / player_xp / profiles are server-only
+    // (issue #372): use the service-role client, authz already done above.
+    const supabase = getSupabaseAdmin();
 
     // 1. Look up achievement in catalog to get xp_value
     const { data: achievement, error: catalogError } = await supabase
@@ -149,7 +152,8 @@ export async function DELETE(request: NextRequest) {
     }
 
     const { userId, achievementKey } = validation.data;
-    const supabase = await createRouteHandlerClient();
+    // Server-only writes (issue #372): service-role client, authz done above.
+    const supabase = getSupabaseAdmin();
 
     // 1. Look up achievement in catalog to get xp_value
     const { data: achievement, error: catalogError } = await supabase
@@ -209,14 +213,15 @@ export async function DELETE(request: NextRequest) {
 
 // --- Helper ---
 
-type SupabaseClient = Awaited<ReturnType<typeof createRouteHandlerClient>>;
+type AdminClient = ReturnType<typeof getSupabaseAdmin>;
 
 /**
  * Add or subtract XP from player_xp, creating the row if needed.
  * After updating xp_total, recalculates the level on the profiles table.
+ * Uses the service-role client (server-only XP writes, issue #372).
  */
 async function upsertPlayerXp(
-  supabase: SupabaseClient,
+  supabase: AdminClient,
   userId: string,
   xpValue: number,
   operation: "add" | "subtract"

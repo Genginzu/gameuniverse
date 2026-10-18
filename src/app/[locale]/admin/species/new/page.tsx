@@ -7,6 +7,7 @@ import { useSpeciesForm } from "@/hooks/useSpeciesForm";
 import { SpeciesForm } from "@/components/admin/species/SpeciesForm";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import { isDuplicateErrorMessage } from "@/lib/utils/duplicateError";
 import type { SpeciesFormData } from "@/lib/validations/admin-species-form";
 import { Icon } from "@iconify/react";
 
@@ -23,9 +24,7 @@ export default function NewSpeciesPage() {
         setTimeout(() => router.push("/admin/species"), 500);
       } catch (err) {
         const message = err instanceof Error ? err.message : t("createPage.errorGeneric");
-        const isDuplicate =
-          message.toLowerCase().includes("already exists") ||
-          message.toLowerCase().includes("existe déjà");
+        const isDuplicate = isDuplicateErrorMessage(message);
 
         toast({
           title: isDuplicate ? t("createPage.errorDuplicate") : message,

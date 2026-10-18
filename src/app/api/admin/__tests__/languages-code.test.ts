@@ -1,14 +1,13 @@
 /**
  * Tests for admin languages [code] API route (GET detail, PUT, DELETE)
  * Tests validation, usage checks, force delete, and response structure.
- * Placed in isolated/ because vi.mock() conflicts with parallel tests.
  */
 
 import { describe, test, expect, beforeEach, vi } from "vitest";
 
 // --- Mock setup ---
-let mockRequireAdmin: ReturnType<typeof mock>;
-let mockSupabaseFrom: ReturnType<typeof mock>;
+let mockRequireAdmin: ReturnType<typeof vi.fn>;
+let mockSupabaseFrom: ReturnType<typeof vi.fn>;
 
 const sampleLanguage = { code: "fr", name: "French", native_name: "Français" };
 
@@ -31,11 +30,7 @@ vi.mock("@/lib/supabase-server", () => ({
 }));
 
 // Import after mocks
-const {
-  GET,
-  PUT,
-  DELETE: DELETE_HANDLER,
-} = await import("@/app/api/admin/languages/[code]/route");
+const { GET, PUT, DELETE: DELETE_HANDLER } = await import("@/app/api/admin/languages/[code]/route");
 
 function makeRequest(url: string, init?: RequestInit) {
   return new Request(url, init) as unknown as import("next/server").NextRequest;
@@ -48,7 +43,7 @@ function makeParams(code: string) {
 describe("Admin Languages [code] API", () => {
   beforeEach(() => {
     mockRequireAdmin = vi.fn(() => Promise.resolve(true));
-    mockSupabaseFrom = null as unknown as ReturnType<typeof mock>;
+    mockSupabaseFrom = null as unknown as ReturnType<typeof vi.fn>;
   });
 
   // =====================
