@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { requireAdmin } from "@/lib/auth-admin";
+import { fetchUserEmails } from "@/lib/services/userEmailsServerService";
 import { adminReviewQuerySchema } from "@/lib/validations/admin-review-query";
 import type { AdminReview } from "@/types/admin-reviews";
 import { logger } from "@/lib/logger";
@@ -48,8 +49,10 @@ function toAdminReview(row: ReviewListRow, profilesMap: Map<string, ProfileInfo>
 }
 
 /**
- * Fetch profiles for a set of user IDs.
- * profiles.id = auth.users.id, so we can query directly by id.
+ * Fetch usernames + emails for a set of user IDs.
+ * profiles.id = auth.users.id. Username comes from public.profiles; email is
+ * resolved from auth.users via the service-role client (emails are no longer
+ * stored in profiles — issue #375).
  */
 async function fetchProfilesMap(
   supabase: SupabaseClient,
@@ -58,10 +61,13 @@ async function fetchProfilesMap(
   const map = new Map<string, ProfileInfo>();
   if (userIds.length === 0) return map;
 
-  const { data } = await supabase.from("profiles").select("id, username, email").in("id", userIds);
+  const [{ data }, emails] = await Promise.all([
+    supabase.from("profiles").select("id, username").in("id", userIds),
+    fetchUserEmails(userIds),
+  ]);
 
   for (const p of data ?? []) {
-    map.set(p.id, { username: p.username, email: p.email });
+    map.set(p.id, { username: p.username, email: emails.get(p.id) ?? null });
   }
 
   return map;

@@ -3,6 +3,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { reviewSchema } from "@/lib/validations/review";
 import { AchievementEngine } from "@/lib/services/achievementEngine";
 import { CoinService } from "@/lib/services/coinService";
+import { suspendedResponse } from "@/lib/services/suspensionGuard";
 import type { Review, ReviewsResponse, VoteType } from "@/types/review";
 import {
   fetchVoteCountsMap,
@@ -214,6 +215,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const suspended = await suspendedResponse(user.id);
+    if (suspended) return suspended;
+
     const body = await request.json();
     const parsed = reviewSchema.safeParse(body);
 
@@ -313,6 +317,9 @@ export async function PUT(request: NextRequest): Promise<NextResponse> {
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const suspended = await suspendedResponse(user.id);
+    if (suspended) return suspended;
 
     const body = await request.json();
     const parsed = reviewSchema.safeParse(body);

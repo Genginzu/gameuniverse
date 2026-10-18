@@ -1,4 +1,5 @@
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { computeLevel } from "@/lib/services/levelSystem";
 import { NotificationServerService } from "@/lib/services/notificationServerService";
 import { logger } from "@/lib/logger";
@@ -108,7 +109,7 @@ export class AchievementEngine {
       const totalXpAwarded = newlyUnlocked.reduce((sum, a) => sum + a.xpAwarded, 0);
 
       // 7. Mettre à jour l'XP et le niveau
-      const newLevel = await AchievementEngine.updateXpAndLevel(supabase, userId, totalXpAwarded);
+      const newLevel = await AchievementEngine.updateXpAndLevel(userId, totalXpAwarded);
 
       // 8. Notify the user of each newly unlocked achievement (best-effort)
       for (const achievement of newlyUnlocked) {
@@ -169,12 +170,16 @@ export class AchievementEngine {
   /**
    * Upsert l'XP du joueur et met à jour le niveau du profil si nécessaire.
    * Retourne le nouveau niveau si changé, null sinon.
+   *
+   * XP et niveau sont des écritures server-only (issue #372) : on utilise le
+   * client service-role (supabase-admin.ts) qui bypasse les RLS client-only.
    */
   private static async updateXpAndLevel(
-    supabase: Awaited<ReturnType<typeof createRouteHandlerClient>>,
     userId: string,
     xpToAdd: number
   ): Promise<number | null> {
+    const supabase = getSupabaseAdmin();
+
     // Récupérer l'XP actuel (ou 0 si pas de ligne)
     const { data: xpRow } = await supabase
       .from("player_xp")

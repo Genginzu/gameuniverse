@@ -7,6 +7,7 @@ import { useGameForm } from "@/hooks/useGameForm";
 import { GameForm } from "@/components/admin/games/GameForm";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import { isDuplicateErrorMessage } from "@/lib/utils/duplicateError";
 
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
 import { Icon } from "@iconify/react";
@@ -35,12 +36,10 @@ export default function NewGamePage() {
       try {
         await submitGame(data);
         toast({ title: t("createPage.success"), variant: "success" });
+        setTimeout(() => router.push("/admin/games"), 500);
       } catch (err) {
         const message = err instanceof Error ? err.message : t("createPage.errorGeneric");
-        const isDuplicate =
-          message.toLowerCase().includes("duplicate") ||
-          message.toLowerCase().includes("already exists") ||
-          message.toLowerCase().includes("existe déjà");
+        const isDuplicate = isDuplicateErrorMessage(message);
 
         toast({
           title: isDuplicate ? t("createPage.errorDuplicate") : message,

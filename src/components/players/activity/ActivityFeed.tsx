@@ -6,6 +6,7 @@ import { Icon } from "@iconify/react";
 import { usePlayerPosts } from "@/hooks/usePlayerPosts";
 import { SearchBar } from "../SearchBar";
 import { PostComposer } from "../posts/PostComposer";
+import { SuspensionGate } from "@/components/shared/SuspensionGate";
 import { ActivityFeedColumn } from "./ActivityFeedColumn";
 import { PostsFeedColumn } from "../posts/PostsFeedColumn";
 
@@ -63,13 +64,15 @@ export function ActivityFeed({
 
       {/* Post composer (toggled) */}
       {isOwner && showComposer && (
-        <PostComposer
-          playerId={playerId}
-          playerAvatar={playerAvatar}
-          isCreating={postHook.isCreating}
-          onSubmit={handlePostCreated}
-          onPostCreated={() => {}}
-        />
+        <SuspensionGate>
+          <PostComposer
+            playerId={playerId}
+            playerAvatar={playerAvatar}
+            isCreating={postHook.isCreating}
+            onSubmit={handlePostCreated}
+            onPostCreated={() => {}}
+          />
+        </SuspensionGate>
       )}
 
       {/* Two-column layout: posts left, activities right */}

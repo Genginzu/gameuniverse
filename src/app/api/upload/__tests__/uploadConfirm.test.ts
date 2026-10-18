@@ -194,8 +194,6 @@ describe("/api/upload/confirm POST", () => {
     const response = await POST(request);
 
     expect(response.status).toBe(200);
-    // Wait for fire-and-forget promise to settle
-    await new Promise((r) => setTimeout(r, 10));
     expect(mockDeleteFile).toHaveBeenCalledWith(oldAvatarUrl);
   });
 
@@ -216,7 +214,6 @@ describe("/api/upload/confirm POST", () => {
     });
     await POST(request);
 
-    await new Promise((r) => setTimeout(r, 10));
     expect(mockDeleteFile).not.toHaveBeenCalled();
   });
 

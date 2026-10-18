@@ -1811,6 +1811,7 @@
       "bulkImport": "Import en masse",
       "bulkImportCharacters": "Import en masse",
       "toolsCategory": "Outils",
+      "reports": "Signalements",
       "esportCategory": "Esport",
       "esport": "Gestion Esport",
       "esportImport": "Import Esport",
@@ -3262,6 +3263,78 @@
         "unsuspend": "Réactiver"
       }
     },
+    "reports": {
+      "title": "Signalements de contenu",
+      "empty": "Aucun signalement.",
+      "loadError": "Impossible de charger les signalements.",
+      "preview": {
+        "title": "Contenu signalé",
+        "author": "Auteur",
+        "viewInContext": "Voir dans son contexte",
+        "deleted": "Ce contenu a été supprimé depuis le signalement."
+      },
+      "confirm": {
+        "content_deleted": {
+          "title": "Supprimer le contenu ?",
+          "message": "Le contenu de {author} sera définitivement supprimé. Cette action est irréversible.",
+          "action": "Supprimer"
+        },
+        "author_suspended": {
+          "title": "Suspendre l'auteur ?",
+          "message": "{author} ne pourra plus publier de posts, commentaires ni avis pendant la durée choisie.",
+          "action": "Suspendre"
+        },
+        "duplicatesNote": "Les autres signalements ouverts sur ce contenu seront également clôturés.",
+        "cancel": "Annuler",
+        "submitting": "En cours…"
+      },
+      "suspension": {
+        "daysLabel": "Durée de la suspension (jours)",
+        "daysHint": "Nombre entier entre {min} et {max} jours."
+      },
+      "errors": {
+        "generic": "L'action a échoué. Réessayez.",
+        "closed": "Ce signalement a déjà été traité."
+      },
+      "reportedBy": "Signalé par",
+      "contentId": "ID du contenu",
+      "actionTaken": "Action prise",
+      "filter": {
+        "pending": "En attente",
+        "reviewed": "Examinés",
+        "resolved": "Résolus",
+        "dismissed": "Rejetés",
+        "all": "Tous"
+      },
+      "status": {
+        "pending": "En attente",
+        "reviewed": "Examiné",
+        "resolved": "Résolu",
+        "dismissed": "Rejeté"
+      },
+      "contentType": {
+        "review": "Avis",
+        "post": "Post",
+        "comment": "Commentaire",
+        "profile": "Profil"
+      },
+      "reason": {
+        "spam": "Spam",
+        "harassment": "Harcèlement",
+        "inappropriate": "Contenu inapproprié",
+        "other": "Autre"
+      },
+      "action": {
+        "none": "Aucune action",
+        "content_deleted": "Supprimer le contenu",
+        "author_warned": "Avertir l'auteur",
+        "author_suspended": "Suspendre l'auteur"
+      },
+      "actions": {
+        "review": "Examiner",
+        "dismiss": "Rejeter"
+      }
+    },
     "disputes": {
       "title": "Signalements & Litiges",
       "empty": "Aucun signalement.",
@@ -3639,6 +3712,9 @@
       "noResults": "Aucun résultat pour « {query} »",
       "noResultsHint": "Essayez avec d'autres mots-clés.",
       "notImported": "Pas encore importé",
+      "loginToImportTitle": "Connectez-vous pour importer",
+      "loginToImportDescription": "Créez un compte ou connectez-vous pour ajouter ce jeu au catalogue.",
+      "loginToImportCta": "Se connecter",
       "groups": {
         "games": "Jeux",
         "characters": "Personnages",
@@ -4516,7 +4592,47 @@
     "typeFriendRequest": "vous a envoyé une demande d'ami",
     "typeFriendAccepted": "a accepté votre demande d'ami",
     "typeReviewVote": "a voté sur votre review",
-    "typeAchievementUnlocked": "Nouveau succès débloqué"
+    "typeAchievementUnlocked": "Nouveau succès débloqué",
+    "typeModerationWarning": "vous a averti au sujet d'un contenu"
+  },
+  "suspension": {
+    "title": "Votre compte est suspendu",
+    "bodyUntil": "Suite à une décision de la modération, vous ne pouvez plus publier de posts, de commentaires ni d'avis jusqu'au {date}.",
+    "bodyIndefinite": "Suite à une décision de la modération, vous ne pouvez plus publier de posts, de commentaires ni d'avis jusqu'à nouvel ordre.",
+    "readOnly": "Vous pouvez continuer à consulter le site normalement."
+  },
+  "reports": {
+    "report": "Signaler",
+    "reported": "Signalé",
+    "cancelReport": "Annuler le signalement",
+    "reportHandled": "Signalement déjà traité",
+    "cancelConfirmTitle": "Annuler le signalement ?",
+    "cancelConfirmMessage": "Votre signalement sera retiré de la file de modération. Vous pourrez signaler ce contenu à nouveau plus tard.",
+    "cancelConfirmAction": "Annuler le signalement",
+    "cancelConfirmKeep": "Conserver",
+    "cancelConfirmSubmitting": "Annulation…",
+    "modalTitle": "Signaler ce contenu",
+    "reasonLabel": "Raison du signalement",
+    "reason": {
+      "spam": "Spam",
+      "harassment": "Harcèlement",
+      "inappropriate": "Contenu inapproprié",
+      "other": "Autre"
+    },
+    "descriptionLabel": "Description (optionnelle)",
+    "descriptionPlaceholder": "Ajoutez des détails…",
+    "submit": "Envoyer le signalement",
+    "submitting": "Envoi…",
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "confirmation": "Merci, votre signalement a été envoyé.",
+    "errors": {
+      "limit": "Vous avez atteint la limite de signalements pour aujourd'hui.",
+      "duplicate": "Vous avez déjà signalé ce contenu.",
+      "generic": "Le signalement a échoué. Réessayez.",
+      "cancelClosed": "Ce signalement a déjà été traité par la modération.",
+      "cancelGeneric": "L'annulation a échoué. Réessayez."
+    }
   },
   "notificationCenter": {
     "kicker": "Votre activité",
@@ -4532,7 +4648,8 @@
       "mentions": "Mentions",
       "achievements": "Succès",
       "coaching": "Coaching",
-      "activity": "Activité"
+      "activity": "Activité",
+      "moderation": "Modération"
     },
     "status": {
       "all": "Toutes",
