@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { requireAdmin } from "@/lib/auth-admin";
 import { translateBatchBodySchema } from "@/lib/validations/admin-translation";
 import { getSourceText, upsertTranslation } from "@/lib/services/translationService";
@@ -115,10 +116,11 @@ export async function POST(request: NextRequest) {
           }
         }
 
-        // Refresh stats cache after all entities are processed
+        // Refresh stats cache after all entities are processed.
+        // refresh_translation_stats is service_role only (migration 20261018000013).
         try {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          await (supabase as any).rpc("refresh_translation_stats");
+          await (getSupabaseAdmin() as any).rpc("refresh_translation_stats");
         } catch (e) {
           logger.error("Stats refresh failed after batch", { error: e });
         }

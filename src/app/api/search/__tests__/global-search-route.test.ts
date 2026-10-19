@@ -207,3 +207,26 @@ describe("GET /api/search/global", () => {
     expect(body.coaches).toHaveLength(1);
   });
 });
+
+describe("GET /api/search/global — per-group limit cap", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockSearch.mockResolvedValue(emptySearchResult);
+    mockToGlobalSearchResponse.mockReturnValue(emptyResponse);
+  });
+
+  it.each(["playersLimit", "charactersLimit", "teamsLimit", "proPlayersLimit", "coachesLimit"])(
+    "rejects %s above 20 so players cannot be bulk-scraped",
+    async (param) => {
+      const res = await GET(makeRequest({ query: "aa", [param]: "100000" }));
+      expect(res.status).toBe(400);
+      expect(mockSearch).not.toHaveBeenCalled();
+    }
+  );
+
+  it("accepts a limit of 20", async () => {
+    const res = await GET(makeRequest({ query: "aa", playersLimit: "20" }));
+    expect(res.status).toBe(200);
+    expect(mockSearch).toHaveBeenCalledWith(expect.objectContaining({ playersLimit: 20 }));
+  });
+});

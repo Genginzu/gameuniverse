@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
+import { adminGuardResponse } from "@/lib/auth-admin";
 
 const IMPORTABLE_FIELDS: Record<string, string> = {
   image: "main_image",
@@ -11,6 +12,9 @@ const IMPORTABLE_FIELDS: Record<string, string> = {
  * GET /api/admin/bulk-import-characters/characters?field=image&limit=20&offset=0
  */
 export async function GET(request: NextRequest) {
+  const denied = await adminGuardResponse();
+  if (denied) return denied;
+
   const { searchParams } = request.nextUrl;
   const field = searchParams.get("field");
   const limit = Math.min(parseInt(searchParams.get("limit") || "20", 10), 1000);

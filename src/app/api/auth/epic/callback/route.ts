@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { logger } from "@/lib/logger";
 import { encryptPlatformTokenOrNull } from "@/lib/services/platformTokens";
 import { consumeOauthState } from "@/lib/services/oauthState";
@@ -134,7 +135,9 @@ export async function GET(request: NextRequest) {
     const expiresIn = tokenData.expires_in ?? 7200;
     const tokenExpiresAt = new Date(Date.now() + expiresIn * 1000).toISOString();
 
-    await supabase.from("player_linked_platforms").upsert(
+    // Token columns are not writable/readable with the user client (migration
+    // 20261018000013): persist them with the service role, scoped to user.id.
+    await getSupabaseAdmin().from("player_linked_platforms").upsert(
       {
         player_id: user.id,
         platform: "epic",

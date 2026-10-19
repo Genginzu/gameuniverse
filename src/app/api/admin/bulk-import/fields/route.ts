@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { BULK_FIELD_TO_OVERRIDE } from "@/lib/services/bulkFieldSync";
 import { logger } from "@/lib/logger";
+import { adminGuardResponse } from "@/lib/auth-admin";
 
 /**
  * Importable fields: column on the `games` table where NULL means missing.
@@ -21,6 +22,9 @@ const IMPORTABLE_FIELDS: Record<string, string> = {
  * excluding games where the field has been manually overridden by an admin.
  */
 export async function GET() {
+  const denied = await adminGuardResponse();
+  if (denied) return denied;
+
   try {
     const supabase = await createRouteHandlerClient();
 

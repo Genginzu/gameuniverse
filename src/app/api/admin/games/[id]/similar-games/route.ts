@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
+import { adminGuardResponse } from "@/lib/auth-admin";
 import { untypedTable } from "@/lib/utils/untypedTable";
 
 interface SimilarGameRow {
@@ -24,6 +25,9 @@ interface ResolvedSimilarGame {
 
 /** GET — list similar games for a game */
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const denied = await adminGuardResponse();
+  if (denied) return denied;
+
   try {
     const { id: gameId } = await params;
     const supabase = await createRouteHandlerClient();
@@ -88,6 +92,9 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
 
 /** POST — add a similar game by slug (local game) */
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const denied = await adminGuardResponse();
+  if (denied) return denied;
+
   try {
     const { id: gameId } = await params;
     const body = await request.json();
@@ -165,6 +172,9 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const denied = await adminGuardResponse();
+  if (denied) return denied;
+
   try {
     const { id: gameId } = await params;
     const { searchParams } = new URL(request.url);

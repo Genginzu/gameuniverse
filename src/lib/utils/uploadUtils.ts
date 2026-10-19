@@ -55,6 +55,22 @@ export function extractStoragePathFromUrl(url: string): { bucket: string; path: 
 }
 
 /**
+ * True when `url` is a public Storage URL of this project, in `bucket`, under
+ * the `${userId}/` folder, with no traversal, query string or encoded chars.
+ * Used before trusting or deleting a client-supplied file URL.
+ */
+export function isOwnedStorageUrl(url: string, bucket: string, userId: string): boolean {
+  const extracted = extractStoragePathFromUrl(url);
+  if (!extracted || extracted.bucket !== bucket) return false;
+
+  const { path } = extracted;
+  if (/[?#%\\]/.test(path) || path.split("/").includes("..")) return false;
+
+  const [folder, ...rest] = path.split("/");
+  return folder === userId && rest.length === 1 && rest[0].length > 0;
+}
+
+/**
  * Maps a MIME type to its file extension.
  * Returns 'bin' for unknown types.
  */

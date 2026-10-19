@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
+import { adminGuardResponse } from "@/lib/auth-admin";
 
 const IMPORTABLE_FIELDS: Record<string, string> = {
   image: "main_image",
@@ -12,6 +13,9 @@ const IMPORTABLE_FIELDS: Record<string, string> = {
  * Returns the count of IGDB-linked characters missing data for each field.
  */
 export async function GET() {
+  const denied = await adminGuardResponse();
+  if (denied) return denied;
+
   try {
     const supabase = await createRouteHandlerClient();
     const results: Record<string, number> = {};

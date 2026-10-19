@@ -20,6 +20,7 @@ import { EmailForm } from "./EmailForm";
 import { PasswordResetSection } from "./PasswordResetSection";
 import { AppearanceSection } from "./AppearanceSection";
 import { LinkedPlatformsSection } from "./LinkedPlatformsSection";
+import { PrivacySection } from "./PrivacySection";
 
 /**
  * SettingsContent : onglet Settings de la page joueur (`/players/[id]`).
@@ -76,6 +77,15 @@ export function SettingsContent() {
       toast({ title: t("errors.connectionError"), variant: "destructive" });
     } finally {
       setIsUpdatingEmail(false);
+    }
+  };
+
+  const handlePrivacyChange = async (isPrivate: boolean) => {
+    try {
+      await updateProfile({ stats_private: isPrivate });
+      toast({ title: isPrivate ? t("privacy.nowPrivate") : t("privacy.nowPublic") });
+    } catch {
+      toast({ title: t("errors.updateFailed"), variant: "destructive" });
     }
   };
 
@@ -177,6 +187,17 @@ export function SettingsContent() {
           description={t("platforms.description")}
         >
           <LinkedPlatformsSection />
+        </SettingsSection>
+
+        <SettingsSection
+          icon="lucide:lock"
+          title={t("privacy.title")}
+          description={t("privacy.description")}
+        >
+          <PrivacySection
+            isPrivate={profile?.stats_private ?? false}
+            onChange={handlePrivacyChange}
+          />
         </SettingsSection>
 
         <SettingsSection

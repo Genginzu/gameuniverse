@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { BULK_FIELD_TO_OVERRIDE } from "@/lib/services/bulkFieldSync";
 import { logger } from "@/lib/logger";
+import { adminGuardResponse } from "@/lib/auth-admin";
 
 const IMPORTABLE_FIELDS: Record<string, string> = {
   cover: "cover_image_url",
@@ -18,6 +19,9 @@ const IMPORTABLE_FIELDS: Record<string, string> = {
  * excluding games where the field has been manually overridden by an admin.
  */
 export async function GET(request: NextRequest) {
+  const denied = await adminGuardResponse();
+  if (denied) return denied;
+
   const { searchParams } = request.nextUrl;
   const field = searchParams.get("field");
   const limit = Math.min(parseInt(searchParams.get("limit") || "20", 10), 1000);
