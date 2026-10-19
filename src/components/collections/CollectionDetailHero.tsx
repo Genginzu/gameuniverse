@@ -90,7 +90,7 @@ export function CollectionDetailHero({
             <button
               type="button"
               onClick={onAddGame}
-              className="bg-editorial-accent inline-flex h-10 items-center gap-2 rounded-[10px] px-4 text-[0.85rem] font-medium text-[#0a0418] transition hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
+              className="btn-filled inline-flex h-10 items-center gap-2 rounded-[10px] px-4 text-[0.85rem] font-medium transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
             >
               <Icon icon="lucide:plus" className="h-4 w-4" aria-hidden="true" />
               {tPage("addGame")}

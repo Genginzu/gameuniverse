@@ -30,7 +30,7 @@ export function ConsentGate({ category, children, placeholderLabel }: ConsentGat
       <button
         type="button"
         onClick={() => window.dispatchEvent(new Event(OPEN_PREFERENCES_EVENT))}
-        className="min-h-[44px] rounded-lg bg-editorial-accent px-4 py-2 text-sm font-semibold text-black hover:opacity-90"
+        className="min-h-[44px] rounded-lg btn-filled px-4 py-2 text-sm font-semibold"
       >
         {t("customize")}
       </button>

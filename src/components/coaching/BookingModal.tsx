@@ -161,7 +161,7 @@ export function BookingModal({ coachId, gameId, gameTitle, pricing, onClose }: B
             <button
               onClick={handleBook}
               disabled={!selected || !date || !time || !cgvAccepted || loading}
-              className="from-palette-secondary-500 to-palette-primary-500 w-full rounded-xl bg-linear-to-r py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50"
+              className="btn-filled w-full rounded-xl py-2.5 text-sm font-medium text-white transition-opacity disabled:opacity-50"
             >
               {loading ? t("booking") : t("bookNow")}
             </button>

@@ -119,7 +119,7 @@ export function MatchDiscussion({ matchId, matchSource = "pandascore" }: MatchDi
           <button
             type="submit"
             disabled={!content.trim() || submitting}
-            className="bg-editorial-accent min-h-[44px] min-w-[44px] rounded-xl px-4 text-sm font-medium text-white transition-all duration-300 hover:opacity-90 disabled:opacity-50"
+            className="btn-filled min-h-[44px] min-w-[44px] rounded-xl px-4 text-sm font-medium transition-all duration-300 disabled:opacity-50"
           >
             <Icon icon="mdi:send" className="size-5" />
           </button>

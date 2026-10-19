@@ -81,11 +81,13 @@ export class AchievementEngine {
 
       if (toUnlock.length === 0) return EMPTY_RESULT;
 
-      // 5. Insérer les nouveaux succès dans player_achievements
+      // 5. Insérer les nouveaux succès dans player_achievements.
+      // Server-only write (migration 20261019000003): service-role client.
+      const admin = getSupabaseAdmin();
       const newlyUnlocked: EvaluationResult["newlyUnlocked"] = [];
 
       for (const entry of toUnlock) {
-        const { error: insertError } = await supabase
+        const { error: insertError } = await admin
           .from("player_achievements")
           .insert({ user_id: userId, achievement_key: entry.key });
 

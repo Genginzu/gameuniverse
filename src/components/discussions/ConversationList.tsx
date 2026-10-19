@@ -50,7 +50,7 @@ export default function ConversationList({
         <button
           type="button"
           onClick={onNewConversation}
-          className="bg-editorial-accent flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-medium text-white transition-all duration-300 hover:opacity-90"
+          className="btn-filled flex items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-medium transition-all duration-300"
           aria-label={t("newConversation")}
           data-testid="new-conversation-button"
         >

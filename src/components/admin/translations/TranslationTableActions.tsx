@@ -56,7 +56,7 @@ export function TranslationTableActions({
       <button
         onClick={onTranslateSelection}
         disabled={selectedCount === 0 || isBusy}
-        className="from-palette-secondary-500 to-palette-primary-500 inline-flex items-center gap-1.5 rounded-xl bg-linear-to-r px-3 py-2 text-xs font-medium text-white transition-all duration-300 hover:opacity-90 disabled:opacity-40"
+        className="btn-filled inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium text-white transition-all duration-300 disabled:opacity-40"
       >
         <Icon icon="mdi:translate" className="size-4" />
         {t("buttons.translateSelection")}

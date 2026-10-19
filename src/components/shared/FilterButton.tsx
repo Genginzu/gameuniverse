@@ -24,8 +24,7 @@ const BASE_CLASSES =
   "inline-flex h-12 cursor-pointer items-center rounded-xl px-4 text-sm font-semibold transition-all sm:h-14 sm:px-6 sm:text-base";
 
 const VARIANT_CLASSES: Record<NonNullable<FilterButtonProps["variant"]>, string> = {
-  primary:
-    "from-palette-secondary-500 to-palette-primary-500 hover:from-palette-secondary-600 hover:to-palette-primary-600 bg-linear-to-r text-white shadow-lg hover:shadow-xl",
+  primary: "btn-filled text-white shadow-lg",
   secondary:
     "border-editorial-accent/40 bg-editorial-accent/10 text-editorial-accent hover:bg-editorial-accent/20 border",
 };

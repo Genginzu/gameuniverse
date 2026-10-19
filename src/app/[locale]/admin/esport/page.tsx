@@ -25,7 +25,7 @@ export default function AdminEsportPage() {
   return (
     <div className="space-y-4 p-4 md:space-y-6 md:p-6 lg:p-8">
       <div className="flex items-center gap-3">
-        <div className="from-palette-secondary-500 to-palette-primary-500 flex size-10 items-center justify-center rounded-xl bg-linear-to-r">
+        <div className="from-cta-from to-cta-to flex size-10 items-center justify-center rounded-xl bg-linear-to-r">
           <Icon icon="mdi:trophy" className="size-5 text-white" />
         </div>
         <h1 className="text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">

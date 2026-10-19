@@ -74,7 +74,7 @@ export default function MessageInput({ onSend, isSending, maxLength }: MessageIn
           type="button"
           onClick={handleSend}
           disabled={isSending}
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-blue-500 via-purple-600 to-purple-700 text-white shadow-lg transition-all duration-300 hover:opacity-90 disabled:opacity-50"
+          className="btn-filled flex h-11 w-11 shrink-0 items-center justify-center rounded-xl shadow-lg disabled:opacity-50"
           data-testid="message-send-button"
           aria-label={t("send")}
         >

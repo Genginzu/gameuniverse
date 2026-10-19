@@ -83,7 +83,7 @@ export function PageLoading({
           <div className="mx-auto w-64">
             <div className="mb-2 h-2 rounded-full bg-white/30 dark:bg-slate-700/50">
               <div
-                className="from-palette-secondary-500 to-palette-primary-500 h-2 rounded-full bg-linear-to-r transition-all duration-300 ease-out"
+                className="from-cta-from to-cta-to h-2 rounded-full bg-linear-to-r transition-all duration-300 ease-out"
                 style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
               ></div>
             </div>

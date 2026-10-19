@@ -30,7 +30,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
-    await PostCommentServerService.deleteComment(commentId, user.id, post.playerId);
+    await PostCommentServerService.deleteComment(commentId, user.id, post.playerId, postId);
     return new NextResponse(null, { status: 204 });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);

@@ -33,7 +33,7 @@ export function SearchBarDropdown<T extends SearchResultItem>({
       <div className="absolute top-full right-0 left-0 z-50 mt-2 rounded-xl bg-white shadow-lg ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700">
         {hybridConfig?.loadingComponent || (
           <div className="flex items-center justify-center p-4">
-            <Icon icon="svg-spinners:ring-resize" className="h-5 w-5 text-blue-500" />
+            <Icon icon="svg-spinners:ring-resize" className="text-palette-primary-500 h-5 w-5" />
             <span className="ml-2 text-sm text-gray-600 dark:text-gray-300">Loading...</span>
           </div>
         )}
@@ -75,7 +75,7 @@ export function SearchBarDropdown<T extends SearchResultItem>({
           <button
             type="button"
             onClick={hybridConfig.onSeeAll}
-            className="flex w-full items-center justify-center gap-2 rounded-lg p-2 text-sm font-medium text-blue-600 transition-colors hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20"
+            className="text-palette-primary-600 hover:bg-palette-primary-50 dark:text-palette-primary-400 dark:hover:bg-palette-primary-900/20 flex w-full items-center justify-center gap-2 rounded-lg p-2 text-sm font-medium transition-colors"
           >
             See all results
             <Icon icon="lucide:chevron-down" className="h-4 w-4" />

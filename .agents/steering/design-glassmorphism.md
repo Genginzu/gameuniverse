@@ -88,14 +88,23 @@ hover:bg-slate-700/60 transition-all  (dark)
 
 Le projet utilise un système de couleurs sémantiques défini dans
 `src/app/globals.css` via des échelles `palette-primary-*`,
-`palette-secondary-*` et `palette-accent-*` (50 à 950).
+`palette-secondary-*`, `palette-accent-*` et `palette-neutral-*` (50 à 950).
 
-Palette actuelle (marine) :
+Palette actuelle (terracotta) :
 
-- **Primary** (marine, H:209) : `palette-primary-{50..950}` — couleur dominante
-- **Secondary** (ocean, H:200) : `palette-secondary-{50..950}` — couleur
+- **Primary** (terracotta #e08a5c, H:21) : `palette-primary-{50..950}` — couleur dominante
+- **Secondary** (amber/peach, H:29) : `palette-secondary-{50..950}` — couleur
   complémentaire
-- **Accent** (bright blue, H:215) : `palette-accent-{50..950}` — accents vifs
+- **Accent** (deep terracotta, H:15) : `palette-accent-{50..950}` — accents vifs
+- **Neutral** (gris foncés éditoriaux) : `palette-neutral-{50..950}` — 950 = fond
+  de page, 900/800 = surfaces, 400 = texte secondaire. Les échelles Tailwind
+  `gray-*`, `slate-*` et `zinc-*` sont aliasées dessus dans `@theme`.
+
+Tokens dérivés (ne pas leur donner de valeur brute) :
+
+- `--editorial-*`, tokens shadcn (`--primary`, `--ring`, `--muted`…), `--chart-1..8`
+  (séries Recharts via `chartColor(i)` de `src/lib/utils/chart-colors.ts`),
+  `--color-cta-from/to` (`.btn-filled`) → tous en `var(--color-palette-*)`.
 
 Variables néon pour les effets glow/border :
 
@@ -104,8 +113,27 @@ Variables néon pour les effets glow/border :
 - `neon-accent` — glow accent
 
 Pour changer les couleurs du site, modifier uniquement les valeurs hex des
-`--color-palette-*` dans le `@theme` de `globals.css` + les valeurs RGB des
-`--neon-*` dans `:root`.
+`--color-palette-*` dans le `@theme` de `globals.css` + les triplets RGB des
+`--neon-*` dans `:root` + `BRAND_COLORS` dans `src/lib/utils/brand-colors.ts`
+(miroir hex pour le JS non-CSS : icônes, OG image, manifest). Puis relancer
+`bun scripts/dev/recolor-no-cover.ts` pour reteinter l'image placeholder.
+
+Garde-fous automatiques :
+
+- `src/lib/utils/__tests__/brand-colors.test.ts` échoue si `BRAND_COLORS` ou les
+  `--neon-*` divergent de `globals.css`.
+- `src/lib/__tests__/palette-guard.test.ts` échoue si une teinte froide codée en dur
+  (`blue-*`, `sky-*`, `cyan-*`, `indigo-*`, `violet-*`, `purple-*`, `pink-*`, hex/rgb
+  bleu-violet) apparaît dans `src/`.
+- ❌ Ne jamais coder une couleur en dur : utiliser `palette-*` / `editorial-*` /
+  `neon-*`, `var(--color-palette-*)`, `chartColor()` ou `BRAND_COLORS`. Les seules
+  couleurs littérales tolérées sont sémantiques (rouge erreur, vert succès, ambre/jaune
+  avertissement ou note).
+- ✅ Couleurs officielles de marques tierces (logos réseaux sociaux) : tokens
+  `--color-brand-*` dans le `@theme` de `globals.css` (`bg-brand-facebook`,
+  `bg-brand-x`, `bg-brand-twitch`). Ils ne changent pas lors d'un rebrand du site.
+- ❌ Ne pas utiliser de couleur stockée en base (`accent_color`, `background_color`)
+  pour styliser l'UI publique : l'accent est toujours `DEFAULT_PALETTE`.
 
 > Pour le périmètre éditorial, voir le système d'accent dynamique
 > (`paletteFromHex`, `useGameAccent`, `DynamicAccent`) dans
@@ -119,11 +147,11 @@ progression, badges, cercles, etc.), il **doit** utiliser le gradient secondary
 
 ```css
 /* CSS — direction adaptable selon le contexte */
-background: linear-gradient(to right, #0697e0, #0077e6);
+background: linear-gradient(to right, #eea663, #e08a5c);
 
 /* SVG (linearGradient) */
-<stop offset="0%" stop-color="#0697e0" />   /* secondary-500 */
-<stop offset="100%" stop-color="#0077e6" /> /* primary-500 */
+<stop offset="0%" stop-color="#eea663" />   /* secondary-500 */
+<stop offset="100%" stop-color="#e08a5c" /> /* primary-500 */
 
 /* Équivalent Tailwind */
 bg-linear-to-r from-palette-secondary-500 to-palette-primary-500

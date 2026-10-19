@@ -39,7 +39,7 @@ Ce document acte la décision d'adopter cette direction sur l'ensemble de l'app
 | Aspect                                         | Décision                                                                                                                                                                                                                                                    |
 | ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Layout / chrome (sidebar, header)              | ✅ Refonte complète, layout G adopté                                                                                                                                                                                                                        |
-| Système de couleurs (palette)                  | ✅ Conservation de la palette marine actuelle                                                                                                                                                                                                               |
+| Système de couleurs (palette)                  | ✅ Palette terracotta + gris foncés (voir `docs/systems/color-palette.md`)                                                                                                                                                                                  |
 | Typographie                                    | ✅ Ajout de **Tomorrow** pour les titres display, conservation de **Geist** pour le corps                                                                                                                                                                   |
 | Composants UI primitifs (Button, Input, Card…) | ✅ Ajustements ponctuels pour intégrer les nouveaux patterns                                                                                                                                                                                                |
 | Glassmorphism                                  | ❌ **Retrait du `backdrop-blur` partout**. Les transparences blanches très légères (2-5%) sur les cards/badges restent autorisées (ce ne sont pas du glassmorphism stricto sensu, juste de la hiérarchie visuelle sur fond sombre). Voir détails section 3. |
@@ -68,6 +68,10 @@ Thème **Imba (Themerex)**. Trois piliers :
    dominante du jeu/personnage (déjà en place via `accentColor` en BDD).
 
 ### Design tokens — couleurs
+
+> Mise à jour : la palette marine a été remplacée par une palette terracotta et
+> les fonds éditoriaux par des gris foncés. Référence à jour :
+> [`docs/systems/color-palette.md`](../systems/color-palette.md).
 
 La palette **marine actuelle est conservée** (primary, secondary, accent définis
 dans `globals.css`). On y ajoute :

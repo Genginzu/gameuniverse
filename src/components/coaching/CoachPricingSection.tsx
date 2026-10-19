@@ -125,7 +125,7 @@ export function CoachPricingSection() {
         <button
           onClick={() => setAdding(!adding)}
           disabled={games.length === 0}
-          className="from-palette-secondary-500 to-palette-primary-500 flex items-center gap-1.5 rounded-lg bg-linear-to-r px-3 py-1.5 text-xs font-medium text-white disabled:opacity-50"
+          className="from-cta-from to-cta-to flex items-center gap-1.5 rounded-lg bg-linear-to-r px-3 py-1.5 text-xs font-medium text-white disabled:opacity-50"
         >
           <Icon icon="lucide:plus" className="size-4" /> {t("addPricing")}
         </button>
@@ -175,7 +175,7 @@ export function CoachPricingSection() {
           </div>
           <button
             onClick={addPricing}
-            className="from-palette-secondary-500 to-palette-primary-500 w-full rounded-lg bg-linear-to-r px-4 py-2 text-sm font-medium text-white sm:w-auto"
+            className="from-cta-from to-cta-to w-full rounded-lg bg-linear-to-r px-4 py-2 text-sm font-medium text-white sm:w-auto"
           >
             {t("save")}
           </button>

@@ -43,7 +43,6 @@ const editorialCardConfig: EntityCardConfig<CharacterSummary> = {
   aspectRatio: "3:4",
   imageField: "mainImage",
   titleField: "name",
-  backgroundColorField: "backgroundColor",
   idField: "id",
   translationNamespace: "characters.card",
   badge: { field: "role", position: "top-right", variant: "role" },

@@ -12,7 +12,6 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import type { PlayerPlaytimeEntry } from "@/types/game";
-import { getContrastTextColor } from "@/lib/utils/game-utils";
 
 interface PlayerPlaytimeFormProps {
   open: boolean;
@@ -21,7 +20,6 @@ interface PlayerPlaytimeFormProps {
   submitting: boolean;
   error: string | null;
   onSubmit: (entry: Partial<PlayerPlaytimeEntry>) => Promise<boolean>;
-  accentColor?: string;
 }
 
 function toInputValue(val: number | null | undefined): string {
@@ -39,7 +37,6 @@ export function PlayerPlaytimeForm({
   submitting,
   error,
   onSubmit,
-  accentColor,
 }: PlayerPlaytimeFormProps) {
   const t = useTranslations("gameDetails.playtime.players");
 
@@ -164,11 +161,7 @@ export function PlayerPlaytimeForm({
             <button
               type="submit"
               disabled={submitting}
-              className="rounded-lg px-4 py-2 text-sm font-medium transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-              style={{
-                backgroundColor: accentColor || "#2563eb",
-                color: getContrastTextColor(accentColor || "#2563eb"),
-              }}
+              className="btn-filled rounded-lg px-4 py-2 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50"
             >
               {submitting ? t("submitting") : t("submit")}
             </button>

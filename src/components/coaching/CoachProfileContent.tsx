@@ -83,7 +83,7 @@ export function CoachProfileContent({ username }: { username: string }) {
     <div className="space-y-6 p-4 md:space-y-8 md:p-6 lg:p-8">
       {/* Header */}
       <div className="border-editorial-line bg-editorial-2 flex flex-col items-center gap-4 rounded-2xl border p-6 sm:flex-row sm:items-start">
-        <div className="from-palette-secondary-500 to-palette-primary-500 flex size-20 shrink-0 items-center justify-center rounded-full bg-linear-to-br text-2xl font-bold text-white">
+        <div className="from-cta-from to-cta-to flex size-20 shrink-0 items-center justify-center rounded-full bg-linear-to-br text-2xl font-bold text-white">
           {player.avatarUrl ? (
             <img src={player.avatarUrl} alt="" className="size-20 rounded-full object-cover" />
           ) : (
@@ -190,7 +190,7 @@ export function CoachProfileContent({ username }: { username: string }) {
                   )}
                   <button
                     onClick={() => setBookingGame(game)}
-                    className="from-palette-secondary-500 to-palette-primary-500 rounded-lg bg-linear-to-r px-3 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-90"
+                    className="btn-filled rounded-lg px-3 py-1.5 text-xs font-medium text-white transition-opacity"
                   >
                     <Icon icon="lucide:calendar-plus" className="mr-1 inline size-3.5" />
                     {t("book")}

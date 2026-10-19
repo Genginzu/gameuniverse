@@ -12,9 +12,9 @@ interface CompletionTrackerProps {
 
 const STATUS_COLORS = {
   completed: { bar: "bg-green-500", dot: "bg-green-500" },
-  playing: { bar: "bg-blue-500", dot: "bg-blue-500" },
+  playing: { bar: "bg-palette-primary-500", dot: "bg-palette-primary-500" },
   owned: { bar: "bg-gray-400 dark:bg-gray-500", dot: "bg-gray-400 dark:bg-gray-500" },
-  wishlist: { bar: "bg-orange-500", dot: "bg-orange-500" },
+  wishlist: { bar: "bg-palette-accent-300", dot: "bg-palette-accent-300" },
 } as const;
 
 type StatusKey = keyof typeof STATUS_COLORS;

@@ -51,7 +51,7 @@ export function StripeConnectSection() {
             <button
               onClick={startOnboarding}
               disabled={loading}
-              className="from-palette-secondary-500 to-palette-primary-500 w-full rounded-lg bg-linear-to-r px-4 py-2.5 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-50 sm:w-auto"
+              className="btn-filled w-full rounded-lg px-4 py-2.5 text-sm font-medium text-white transition-opacity disabled:opacity-50 sm:w-auto"
             >
               {loading ? t("connecting") : t("connect")}
             </button>

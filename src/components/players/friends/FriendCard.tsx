@@ -75,7 +75,7 @@ export function FriendCard({ friend, locale: _locale, onRemove }: FriendCardProp
 
         {/* Level badge */}
         {friend.level > 0 && (
-          <span className="flex size-6 flex-shrink-0 items-center justify-center rounded-full bg-[rgb(var(--accent-rgb,var(--neon-primary)))] text-[0.65rem] font-bold text-[#0a0418]">
+          <span className="text-editorial-bg flex size-6 flex-shrink-0 items-center justify-center rounded-full bg-[rgb(var(--accent-rgb,var(--neon-primary)))] text-[0.65rem] font-bold">
             {friend.level}
           </span>
         )}

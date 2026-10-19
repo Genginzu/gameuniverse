@@ -43,9 +43,6 @@ export function PlaytimeSection({ game }: PlaytimeSectionProps) {
     ? (stats.averages.normally ?? stats.averages.hastily ?? stats.averages.completely ?? null)
     : null;
 
-  // Use accent var to avoid passing a hard-coded color to the form.
-  const accentColor = game.accentColor ?? "#0697e0";
-
   return (
     <section className="editorial-game-detail-section editorial-game-detail-section--tight">
       <KickerLabel className="mb-6">05 — {tEd("sections.playtime")}</KickerLabel>
@@ -135,7 +132,6 @@ export function PlaytimeSection({ game }: PlaytimeSectionProps) {
           submitting={submitting}
           error={error}
           onSubmit={submitPlaytime}
-          accentColor={accentColor}
         />
       )}
     </section>

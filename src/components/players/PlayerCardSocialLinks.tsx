@@ -6,22 +6,27 @@ interface PlayerCardSocialLinksProps {
   socialLinks: PlayerSocialLinks;
 }
 
-/** Compact colored social icons for the player card */
+/** Compact social icons for the player card, in each network's official brand colour */
 export function PlayerCardSocialLinks({ socialLinks }: PlayerCardSocialLinksProps) {
   const links = [
     {
       key: "facebook" as const,
       href: socialLinks.facebook,
-      color: "bg-blue-600",
+      color: "bg-brand-facebook",
       icon: FacebookIcon,
     },
     {
       key: "twitter" as const,
       href: socialLinks.twitter,
-      color: "bg-black dark:bg-white dark:text-black",
+      color: "bg-brand-x ring-1 ring-white/20",
       icon: XIcon,
     },
-    { key: "twitch" as const, href: socialLinks.twitch, color: "bg-purple-500", icon: TwitchIcon },
+    {
+      key: "twitch" as const,
+      href: socialLinks.twitch,
+      color: "bg-brand-twitch",
+      icon: TwitchIcon,
+    },
   ];
 
   const visibleLinks = links.filter((l) => l.href);

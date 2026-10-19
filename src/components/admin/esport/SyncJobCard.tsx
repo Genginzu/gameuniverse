@@ -280,7 +280,7 @@ function SubBarRow({
           className={`h-full rounded-full transition-all duration-500 ${
             cursor.done
               ? "bg-green-500"
-              : "from-palette-secondary-500 to-palette-primary-500 bg-linear-to-r"
+              : "from-cta-from to-cta-to bg-linear-to-r"
           }`}
           style={{ width: `${pct}%` }}
         />
@@ -310,7 +310,7 @@ function statusClass(status: SyncJob["status"]): string {
     case "running":
       return "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400";
     case "pending":
-      return "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400";
+      return "bg-palette-primary-100 text-palette-primary-700 dark:bg-palette-primary-900/30 dark:text-palette-primary-400";
     case "completed":
       return "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400";
     case "failed":

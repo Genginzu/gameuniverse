@@ -60,10 +60,7 @@ export function BacklogItem({
       </button>
 
       <Link href={`/games/${game.slug}`} className="flex min-w-0 flex-1 items-center gap-3">
-        <span
-          className="bg-editorial-3 relative h-16 w-12 shrink-0 overflow-hidden rounded-md"
-          style={game.backgroundColor ? { backgroundColor: game.backgroundColor } : undefined}
-        >
+        <span className="bg-editorial-3 relative h-16 w-12 shrink-0 overflow-hidden rounded-md">
           {game.coverImage ? (
             <img
               src={game.coverImage}

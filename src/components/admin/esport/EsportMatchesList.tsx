@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 const STATUS_COLORS: Record<string, string> = {
   running: "bg-green-500/10 text-green-600 dark:text-green-400",
   finished: "bg-gray-200/60 text-gray-600 dark:bg-gray-700/60 dark:text-gray-300",
-  not_started: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
+  not_started: "bg-palette-primary-500/10 text-palette-primary-600 dark:text-palette-primary-400",
   canceled: "bg-red-500/10 text-red-500",
 };
 

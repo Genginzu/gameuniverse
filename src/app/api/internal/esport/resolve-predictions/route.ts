@@ -12,6 +12,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { resolvePredictionsForMatch } from "@/lib/services/esportPredictionService";
+import { safeEqual } from "@/lib/utils/safeEqual";
 import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
@@ -30,7 +31,7 @@ export async function POST(request: NextRequest) {
     logger.error("EDGE_CALLBACK_SECRET not configured");
     return NextResponse.json({ error: "Server misconfigured" }, { status: 500 });
   }
-  if (providedSecret !== expectedSecret) {
+  if (!safeEqual(providedSecret, expectedSecret)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

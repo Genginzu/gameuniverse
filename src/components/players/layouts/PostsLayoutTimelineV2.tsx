@@ -69,7 +69,7 @@ export function PostsLayoutTimelineV2(props: PostsLayoutProps) {
           <button
             type="button"
             onClick={() => setShowComposer((v) => !v)}
-            className="from-palette-primary-500 shadow-palette-primary-500/20 inline-flex shrink-0 items-center gap-2 rounded-2xl bg-linear-to-br to-blue-500 px-5 py-3 text-sm font-medium text-white shadow-lg transition-all duration-300 hover:opacity-90"
+            className="btn-filled inline-flex shrink-0 items-center gap-2 rounded-2xl px-5 py-3 text-sm font-medium shadow-lg"
           >
             {showComposer ? (
               <Icon icon="lucide:x" className="h-4 w-4" />

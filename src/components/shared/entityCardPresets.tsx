@@ -12,7 +12,6 @@ export const gameCardConfig: EntityCardConfig<GameSummary> = {
   imageField: "coverImage",
   titleField: "title",
   descriptionField: "description",
-  backgroundColorField: "backgroundColor",
   idField: "id",
   translationNamespace: "game",
   badge: {
@@ -33,7 +32,7 @@ export const gameCardConfig: EntityCardConfig<GameSummary> = {
   customBadgeRenderer: (game) =>
     game.isEsport ? (
       <div className="absolute top-3 left-3 z-20">
-        <Badge className="from-palette-secondary-500 to-palette-primary-500 rounded-full bg-linear-to-r px-2 py-0.5 text-xs font-bold text-white shadow-lg">
+        <Badge className="from-cta-from to-cta-to rounded-full bg-linear-to-r px-2 py-0.5 text-xs font-bold text-white shadow-lg">
           Esport
         </Badge>
       </div>
@@ -120,7 +119,7 @@ export const playerCardConfig: EntityCardConfig<PlayerSummary> = {
   fallbackAvatarRenderer: () => (
     <Icon
       icon="lucide:user"
-      className="h-20 w-20 text-blue-300 transition-transform duration-500 group-hover:scale-110"
+      className="text-palette-primary-300 h-20 w-20 transition-transform duration-500 group-hover:scale-110"
     />
   ),
   customHoverRenderer: (player, t) => {
@@ -134,7 +133,7 @@ export const playerCardConfig: EntityCardConfig<PlayerSummary> = {
             {player.gamesCount}
           </span>
         </div>
-        <div className="mt-2 text-xs text-blue-400">{t("viewProfile")}</div>
+        <div className="text-palette-primary-400 mt-2 text-xs">{t("viewProfile")}</div>
       </div>
     );
   },
@@ -146,7 +145,6 @@ export const characterCardConfig: EntityCardConfig<CharacterSummary> = {
   imageField: "mainImage",
   titleField: "name",
   descriptionField: "description",
-  backgroundColorField: "backgroundColor",
   idField: "id",
   translationNamespace: "characters.card",
   badge: {
@@ -168,7 +166,7 @@ export const characterCardConfig: EntityCardConfig<CharacterSummary> = {
   fallbackAvatarRenderer: () => (
     <Icon
       icon="lucide:user"
-      className="h-20 w-20 text-blue-300 transition-transform duration-500 group-hover:scale-110"
+      className="text-palette-primary-300 h-20 w-20 transition-transform duration-500 group-hover:scale-110"
     />
   ),
   customHoverRenderer: (character, t) => {

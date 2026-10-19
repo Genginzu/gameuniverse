@@ -65,7 +65,7 @@ export function PaginationButton({
       disabled={loading}
       className={`h-10 min-w-[44px] rounded-lg font-medium transition-all sm:h-10 sm:min-w-[44px] ${
         isCurrentPage
-          ? "from-palette-secondary-500 to-palette-primary-500 pointer-events-none bg-linear-to-r text-white shadow-lg"
+          ? "from-cta-from to-cta-to pointer-events-none bg-linear-to-r text-white shadow-lg"
           : "hover:border-palette-primary-300 hover:bg-palette-primary-50 hover:text-palette-primary-600 dark:hover:border-palette-primary-500 dark:hover:bg-palette-primary-900/20 border-gray-200 dark:border-gray-700"
       }`}
     >

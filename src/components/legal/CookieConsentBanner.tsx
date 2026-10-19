@@ -12,7 +12,9 @@ interface CookieConsentBannerProps {
 }
 
 const EQUAL_BTN =
-  "min-h-[44px] flex-1 rounded-lg px-4 py-2.5 text-sm font-semibold transition-colors";
+  "min-h-[44px] flex-1 rounded-lg px-4 py-2.5 text-sm font-semibold transition-all duration-200";
+
+const FILLED_BTN = "btn-filled";
 
 export function CookieConsentBanner({ managerOpen, onCloseManager }: CookieConsentBannerProps) {
   const t = useTranslations("legal.cookieBanner");
@@ -81,7 +83,7 @@ export function CookieConsentBanner({ managerOpen, onCloseManager }: CookieConse
             <button
               type="button"
               onClick={acceptAll}
-              className={`${EQUAL_BTN} bg-editorial-accent text-black hover:opacity-90`}
+              className={`${EQUAL_BTN} ${FILLED_BTN}`}
             >
               {t("acceptAll")}
             </button>
@@ -121,7 +123,7 @@ export function CookieConsentBanner({ managerOpen, onCloseManager }: CookieConse
           <button type="button" onClick={rejectAll} className={`${EQUAL_BTN} border border-editorial-line bg-editorial-3 text-white hover:border-editorial-accent lg:w-40`}>
             {t("rejectAll")}
           </button>
-          <button type="button" onClick={acceptAll} className={`${EQUAL_BTN} bg-editorial-accent text-black hover:opacity-90 lg:w-40`}>
+          <button type="button" onClick={acceptAll} className={`${EQUAL_BTN} ${FILLED_BTN} lg:w-40`}>
             {t("acceptAll")}
           </button>
           <button

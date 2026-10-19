@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { logger } from "@/lib/logger";
 import { requireAdmin } from "@/lib/auth-admin";
+import { isPublicHttpsUrl } from "@/lib/utils/publicUrl";
 
 const requestSchema = z.object({
   characterName: z.string().min(1).max(255),
@@ -34,14 +35,17 @@ function buildQuery(
 }
 
 /**
- * Validate that a URL actually serves an image.
+ * Validate that a URL actually serves an image. The URL comes from third-party
+ * search results, so it must be a public HTTPS host (SSRF guard) and redirects
+ * are not followed (a public URL could bounce to an internal address).
  */
 async function isReachableImage(url: string): Promise<boolean> {
+  if (!(await isPublicHttpsUrl(url))) return false;
   try {
     const res = await fetch(url, {
       method: "HEAD",
       signal: AbortSignal.timeout(5_000),
-      redirect: "follow",
+      redirect: "manual",
     });
     return res.ok && (res.headers.get("content-type") ?? "").startsWith("image/");
   } catch {

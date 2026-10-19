@@ -339,7 +339,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
               <button
                 type="button"
                 onClick={goToLogin}
-                className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-editorial-accent px-4 text-base font-medium text-editorial-bg transition-all duration-300 hover:opacity-90"
+                className="btn-filled inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg px-4 text-base font-medium"
               >
                 <Icon icon="lucide:log-in" className="size-5" aria-hidden />
                 {t("loginToImportCta")}

@@ -46,7 +46,7 @@ export function CoachReviewsSection({ coachId }: { coachId: string }) {
         <div key={r.id} className="border-editorial-line bg-editorial-2 space-y-2 rounded-xl border p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="from-palette-secondary-500 to-palette-primary-500 flex size-7 items-center justify-center rounded-full bg-linear-to-br text-xs font-bold text-white">
+              <div className="from-cta-from to-cta-to flex size-7 items-center justify-center rounded-full bg-linear-to-br text-xs font-bold text-white">
                 {r.student.avatarUrl ? (
                   <img
                     src={r.student.avatarUrl}
