@@ -35,7 +35,7 @@
 }
 
 /* Cover sans image : dégradé accent (bleu) au lieu du bleu clair legacy. */
-.editorial-player-collections [class*="from-blue-100"] {
+.editorial-player-collections [class*="from-palette-primary-100"] {
   background-image: linear-gradient(
     135deg,
     rgba(var(--accent-rgb, var(--neon-primary)), 0.22),
@@ -44,7 +44,7 @@
 }
 
 /* Icône placeholder (EmptyCovers) -> accent. */
-.editorial-player-collections .text-blue-300 {
+.editorial-player-collections .text-palette-primary-300 {
   color: rgb(var(--accent-rgb, var(--neon-primary)));
 }
 

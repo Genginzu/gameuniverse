@@ -293,7 +293,9 @@
       "userAlreadyRegistered": "An account already exists with this email address",
       "passwordTooShort": "Password must be at least 6 characters",
       "invalidEmail": "Invalid email format",
-      "rateLimitExceeded": "Too many attempts. Please try again later"
+      "rateLimitExceeded": "Too many attempts. Please try again later",
+      "invalidLink": "The link is invalid or has expired. Request a new one.",
+      "forbiddenRequest": "This request was not sent from Gamers Universe and was refused."
     },
     "resetPassword": {
       "title": "New Password",
@@ -350,12 +352,11 @@
     "confirm": {
       "errorTitle": "Confirmation error",
       "errorDescription": "An error occurred while confirming your account.",
-      "failedTitle": "Confirmation failed",
-      "failedDescription": "The confirmation link is invalid or has expired.",
-      "unexpectedTitle": "Unexpected error",
-      "unexpectedDescription": "An unexpected error occurred.",
-      "backToLogin": "Back to login",
-      "resendEmail": "Resend email"
+      "confirmTitle": "Confirm sign-in",
+      "confirmDescription": "This link will sign you in to the account that requested it.",
+      "confirmWarning": "Only continue if you requested this link yourself. If someone sent it to you, close this page: it would sign you in to their account.",
+      "confirmButton": "Continue",
+      "backToLogin": "Back to login"
     },
     "footer": {
       "text": "© 2024 Gamers Universe. All rights reserved."

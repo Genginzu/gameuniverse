@@ -1,13 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  paletteFromHex,
-  DEFAULT_PALETTE,
-  MAGENTA_PALETTE,
-  CYBERPUNK_PALETTE,
-  VALORANT_PALETTE,
-  GOLD_PALETTE,
-  CYAN_PALETTE,
-} from "@/lib/utils/accent-palette";
+import { paletteFromHex, DEFAULT_PALETTE, ORANGE_PALETTE } from "@/lib/utils/accent-palette";
 
 describe("accent-palette", () => {
   describe("paletteFromHex", () => {
@@ -101,33 +93,9 @@ describe("accent-palette", () => {
   });
 
   describe("predefined palettes", () => {
-    it("MAGENTA_PALETTE has the expected scale", () => {
-      expect(MAGENTA_PALETTE.name).toBe("magenta");
-      expect(MAGENTA_PALETTE.rgbTriplet).toBe("194 51 203");
-      expect(MAGENTA_PALETTE.scale[500]).toBe("#c233cb");
-    });
-
-    it("CYBERPUNK_PALETTE is yellow", () => {
-      expect(CYBERPUNK_PALETTE.name).toBe("cyberpunk-yellow");
-      expect(CYBERPUNK_PALETTE.scale[500]).toBe("#f5d40c");
-    });
-
-    it("VALORANT_PALETTE is red", () => {
-      expect(VALORANT_PALETTE.name).toBe("valorant-red");
-      expect(VALORANT_PALETTE.scale[400]).toBe("#ff4655");
-    });
-
-    it("GOLD_PALETTE has scale[400] matching Tailwind amber-400", () => {
-      expect(GOLD_PALETTE.scale[400]).toBe("#fbbf24");
-    });
-
-    it("CYAN_PALETTE is cyan", () => {
-      expect(CYAN_PALETTE.name).toBe("cyan");
-      expect(CYAN_PALETTE.scale[500]).toBe("#10b8a3");
-    });
-
-    it("DEFAULT_PALETTE points to MAGENTA_PALETTE", () => {
-      expect(DEFAULT_PALETTE).toBe(MAGENTA_PALETTE);
+    it("DEFAULT_PALETTE points to ORANGE_PALETTE", () => {
+      expect(DEFAULT_PALETTE).toBe(ORANGE_PALETTE);
+      expect(ORANGE_PALETTE.rgbTriplet).toBe("224 138 92");
     });
   });
 });

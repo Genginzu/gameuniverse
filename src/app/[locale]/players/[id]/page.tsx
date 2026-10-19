@@ -5,7 +5,7 @@ import { PlayerDetailsContent } from "@/components/players/PlayerDetailsContent"
 import { PlayerService } from "@/lib/services/playerService";
 import { EditorialShell } from "@/components/layout/editorial/EditorialShell";
 import { DynamicAccent } from "@/components/shared/DynamicAccent";
-import { paletteFromHex } from "@/lib/utils/accent-palette";
+import { DEFAULT_PALETTE } from "@/lib/utils/accent-palette";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
 import { createServerClient } from "@/lib/supabase-server";
@@ -40,8 +40,7 @@ export default async function PlayerDetailsPage({ params }: PlayerDetailsPagePro
 
     return (
       <EditorialShell>
-        {/* Accent bleu du site (palette-primary-500) plutôt que gold */}
-        <DynamicAccent palette={paletteFromHex("#0077e6", "blue")} as="div">
+        <DynamicAccent palette={DEFAULT_PALETTE} as="div">
           <ErrorBoundary
             fallback={
               <ErrorFallback

@@ -42,7 +42,7 @@ export function WebhookImportAllBar({
           type="button"
           disabled={importingAll || importingAny}
           onClick={onImportAll}
-          className="from-palette-secondary-500 to-palette-primary-500 shrink-0 rounded-lg bg-linear-to-r px-5 py-2 text-sm font-semibold text-white shadow-md transition-opacity hover:opacity-90 disabled:opacity-50"
+          className="btn-filled shrink-0 rounded-lg px-5 py-2 text-sm font-semibold text-white shadow-md transition-opacity disabled:opacity-50"
         >
           {importingAll ? t("importingAll") : t("importAll")}
         </button>

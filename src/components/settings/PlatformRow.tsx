@@ -139,7 +139,7 @@ function SyncProgress({
       </div>
       <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/[0.08]">
         <div
-          className="from-editorial-accent h-full rounded-full bg-gradient-to-r to-violet-500 transition-all duration-500"
+          className="from-editorial-accent h-full rounded-full bg-gradient-to-r to-palette-accent-500 transition-all duration-500"
           style={{ width: pct !== null ? `${pct}%` : "0%" }}
         />
       </div>

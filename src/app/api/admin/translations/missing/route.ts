@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { requireAdmin } from "@/lib/auth-admin";
 import { missingQuerySchema } from "@/lib/validations/admin-translation";
 import { getMissingTranslations } from "@/lib/services/translationService";
@@ -33,7 +33,8 @@ export async function GET(request: NextRequest) {
     }
 
     const { type, page, limit, search } = queryResult.data;
-    const supabase = await createRouteHandlerClient();
+    // get_missing_translations is service_role only (migration 20261019000002).
+    const supabase = getSupabaseAdmin();
 
     const { items, totalCount } = await getMissingTranslations({
       supabase,

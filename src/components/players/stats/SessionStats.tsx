@@ -7,6 +7,7 @@ import type { SessionStatsData, DayFrequency } from "@/types/dashboard-stats";
 import { formatLocalizedNumber } from "@/lib/utils/statsFormatters";
 import { StatsEmptyState } from "@/components/players/stats/StatsEmptyState";
 import { StatsSectionTitle } from "@/components/players/stats/StatsSectionTitle";
+import { chartColor } from "@/lib/utils/chart-colors";
 
 interface SessionStatsProps {
   sessions: SessionStatsData;
@@ -110,7 +111,7 @@ export function SessionStats({ sessions }: SessionStatsProps) {
                 className="text-gray-600 dark:text-slate-400"
               />
               <Tooltip content={<CustomTooltip />} cursor={false} />
-              <Bar dataKey="sessionCount" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="sessionCount" fill={chartColor(0)} radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

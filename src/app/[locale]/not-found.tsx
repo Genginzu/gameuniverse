@@ -8,7 +8,7 @@ export default async function NotFound() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-slate-50 via-white to-slate-100 p-4 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       <div className="glass w-full max-w-md rounded-2xl p-8 text-center">
-        <div className="from-palette-secondary-500 to-palette-primary-500 mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-linear-to-br">
+        <div className="from-cta-from to-cta-to mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-linear-to-br">
           <span className="text-3xl font-bold text-white">404</span>
         </div>
         <h1 className="mb-2 text-xl font-bold text-gray-900 sm:text-2xl dark:text-white">
@@ -18,7 +18,7 @@ export default async function NotFound() {
         <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
           <Link
             href="/"
-            className="from-palette-secondary-500 to-palette-primary-500 inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl bg-linear-to-r px-6 py-3 text-sm font-medium text-white transition-all hover:opacity-90"
+            className="btn-filled inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-medium text-white transition-all"
           >
             <Icon icon="mdi:home" className="size-5" />
             {t("home")}

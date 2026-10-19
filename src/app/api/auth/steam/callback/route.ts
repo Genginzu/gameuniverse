@@ -4,25 +4,27 @@ import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { logger } from "@/lib/logger";
 import { consumeOauthState } from "@/lib/services/oauthState";
 import { consumeOauthReturn, withParams } from "@/lib/services/oauthReturn";
+import {
+  STEAM_OPENID_URL,
+  isValidSteamVerification,
+  parseSteamAssertion,
+  steamReturnUrl,
+} from "@/lib/services/steamOpenId";
 
-const STEAM_OPENID_URL = "https://steamcommunity.com/openid/login";
-const STEAM_ID_REGEX = /^https?:\/\/steamcommunity\.com\/openid\/id\/(\d+)$/;
-
-async function verifySteamLogin(params: URLSearchParams): Promise<string | null> {
-  const verifyParams = new URLSearchParams(params);
-  verifyParams.set("openid.mode", "check_authentication");
+async function verifySteamLogin(
+  params: URLSearchParams,
+  expectedReturnTo: string
+): Promise<string | null> {
+  const assertion = parseSteamAssertion(params, expectedReturnTo);
+  if (!assertion) return null;
 
   const res = await fetch(STEAM_OPENID_URL, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: verifyParams.toString(),
+    body: assertion.verifyBody.toString(),
   });
   const text = await res.text();
-  if (!text.includes("is_valid:true")) return null;
-
-  const claimedId = params.get("openid.claimed_id") ?? "";
-  const match = claimedId.match(STEAM_ID_REGEX);
-  return match?.[1] ?? null;
+  return isValidSteamVerification(text) ? assertion.steamId : null;
 }
 
 interface SteamPlayerSummary {
@@ -58,14 +60,16 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(`${baseUrl}/auth?error=unauthorized`);
     }
 
-    const stateValid = await consumeOauthState("steam", params.get("state"));
-    if (!stateValid) {
+    const state = params.get("state");
+    const stateValid = await consumeOauthState("steam", state);
+    if (!stateValid || !state) {
       return NextResponse.redirect(
         `${baseUrl}/players/${user.id}?tab=settings&error=steam_state_mismatch`
       );
     }
 
-    const steamId = await verifySteamLogin(params);
+    // The signed return_to must carry the cookie state: binds the assertion to this flow.
+    const steamId = await verifySteamLogin(params, steamReturnUrl(baseUrl, state));
     if (!steamId) {
       return NextResponse.redirect(
         `${baseUrl}/players/${user.id}?tab=settings&error=steam_auth_failed`

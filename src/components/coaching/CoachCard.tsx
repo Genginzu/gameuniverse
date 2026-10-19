@@ -29,7 +29,7 @@ export function CoachCard({ coach }: CoachCardProps) {
       className="border-editorial-line bg-editorial-2 hover:border-editorial-accent/50 hover:bg-editorial-3 group flex flex-col rounded-xl border p-4 transition-all"
     >
       <div className="flex items-start gap-3">
-        <div className="from-palette-secondary-500 to-palette-primary-500 flex size-12 shrink-0 items-center justify-center rounded-full bg-linear-to-br text-sm font-bold text-white">
+        <div className="from-cta-from to-cta-to flex size-12 shrink-0 items-center justify-center rounded-full bg-linear-to-br text-sm font-bold text-white">
           {coach.avatarUrl ? (
             <img src={coach.avatarUrl} alt="" className="size-12 rounded-full object-cover" />
           ) : (

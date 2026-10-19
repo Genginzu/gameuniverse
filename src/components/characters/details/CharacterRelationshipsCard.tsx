@@ -13,7 +13,7 @@ function getRelationshipColors(type: string) {
   if (type === "ally" || type === "friend") return { bg: "#10b98120", text: "#34d399" };
   if (type === "enemy" || type === "rival") return { bg: "#ef444420", text: "#f87171" };
   if (type === "family" || type === "romantic") return { bg: "#f59e0b20", text: "#fbbf24" };
-  return { bg: "#8b5cf620", text: "#a78bfa" };
+  return { bg: "rgb(var(--accent-rgb, var(--neon-primary)) / 0.12)", text: ACCENT };
 }
 
 interface CharacterRelationshipsCardProps {

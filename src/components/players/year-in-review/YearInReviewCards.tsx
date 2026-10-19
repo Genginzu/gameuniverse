@@ -37,7 +37,7 @@ export function YearInReviewCards({ yearReview, locale, t }: YearInReviewCardsPr
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {/* Total Play Time — Req 6.2 */}
       <StatCard
-        icon={<Icon icon="lucide:clock" className="h-5 w-5 text-purple-400" />}
+        icon={<Icon icon="lucide:clock" className="text-palette-accent-400 h-5 w-5" />}
         label={t("totalPlayTime")}
       >
         <p className="text-2xl font-bold text-white">
@@ -48,7 +48,7 @@ export function YearInReviewCards({ yearReview, locale, t }: YearInReviewCardsPr
 
       {/* Games Added — Req 6.2 */}
       <StatCard
-        icon={<Icon icon="lucide:gamepad-2" className="h-5 w-5 text-blue-400" />}
+        icon={<Icon icon="lucide:gamepad-2" className="text-palette-primary-400 h-5 w-5" />}
         label={t("gamesAdded")}
       >
         <p className="text-2xl font-bold text-white">{yearReview.gamesAdded}</p>

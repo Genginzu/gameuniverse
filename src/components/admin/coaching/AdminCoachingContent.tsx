@@ -56,7 +56,7 @@ export function AdminCoachingContent() {
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${filter === f ? "from-palette-secondary-500 to-palette-primary-500 bg-linear-to-r text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400"}`}
+            className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${filter === f ? "from-cta-from to-cta-to bg-linear-to-r text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400"}`}
           >
             {t(`filter.${f}`)}
           </button>
@@ -77,7 +77,7 @@ export function AdminCoachingContent() {
               className="glass-card flex flex-col gap-3 rounded-xl p-4 sm:flex-row sm:items-center sm:justify-between"
             >
               <div className="flex items-center gap-3">
-                <div className="from-palette-secondary-500 to-palette-primary-500 flex size-10 items-center justify-center rounded-full bg-linear-to-br text-sm font-bold text-white">
+                <div className="from-cta-from to-cta-to flex size-10 items-center justify-center rounded-full bg-linear-to-br text-sm font-bold text-white">
                   {c.avatarUrl ? (
                     <img src={c.avatarUrl} alt="" className="size-10 rounded-full object-cover" />
                   ) : (

@@ -52,8 +52,8 @@ describe("getRoleBadgeClasses", () => {
   it("returns role-specific classes for known LoL roles", () => {
     expect(getRoleBadgeClasses("Top")).toContain("red-100");
     expect(getRoleBadgeClasses("Jungle")).toContain("emerald-100");
-    expect(getRoleBadgeClasses("Mid")).toContain("purple-100");
-    expect(getRoleBadgeClasses("Support")).toContain("sky-100");
+    expect(getRoleBadgeClasses("Mid")).toContain("palette-accent-100");
+    expect(getRoleBadgeClasses("Support")).toContain("palette-secondary-100");
   });
 
   it("matches ADC variants", () => {
@@ -63,8 +63,8 @@ describe("getRoleBadgeClasses", () => {
   });
 
   it("returns FPS-specific classes", () => {
-    expect(getRoleBadgeClasses("AWPer")).toContain("indigo-100");
-    expect(getRoleBadgeClasses("IGL")).toContain("pink-100");
+    expect(getRoleBadgeClasses("AWPer")).toContain("palette-secondary-100");
+    expect(getRoleBadgeClasses("IGL")).toContain("palette-accent-100");
   });
 
   it("returns a neutral palette for null role", () => {

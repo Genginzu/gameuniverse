@@ -29,7 +29,7 @@ export function PostCommentItem({ comment, isOwner, onDelete }: PostCommentItemP
       className="flex gap-3 rounded-xl bg-white/50 p-3 transition-colors dark:bg-slate-700/30"
     >
       {/* Avatar */}
-      <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full bg-linear-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30">
+      <div className="from-palette-primary-100 to-palette-accent-100 dark:from-palette-primary-900/30 dark:to-palette-accent-900/30 relative h-8 w-8 shrink-0 overflow-hidden rounded-full bg-linear-to-br">
         {avatarUrl ? (
           <LazyImage
             src={avatarUrl}
@@ -41,7 +41,7 @@ export function PostCommentItem({ comment, isOwner, onDelete }: PostCommentItemP
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
-            <Icon icon="lucide:user" className="h-4 w-4 text-blue-300" />
+            <Icon icon="lucide:user" className="text-palette-primary-300 h-4 w-4" />
           </div>
         )}
       </div>

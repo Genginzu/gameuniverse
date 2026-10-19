@@ -29,7 +29,7 @@ function renderSidebar(role: AdminUser["role"], sidebarOpen = false) {
 describe("AdminSidebar", () => {
   it.each([
     ["admin", "bg-red-100"],
-    ["contributor", "bg-blue-100"],
+    ["contributor", "bg-palette-primary-100"],
   ] as const)("renders the %s role badge with its color", (role, colorClass) => {
     renderSidebar(role);
     const badges = screen.getAllByText(`roles.${role}`);

@@ -6,6 +6,7 @@ import {
   ratingSystemQuerySchema,
 } from "@/lib/validations/admin-rating-system-form";
 import { logger } from "@/lib/logger";
+import { ilikeAnyFilter } from "@/lib/utils/postgrestFilter";
 
 /**
  * GET /api/admin/age-classifications - List rating systems with pagination, search, and sort
@@ -42,8 +43,7 @@ export async function GET(request: NextRequest) {
     let countQuery = supabase.from("rating_systems").select("id", { count: "exact", head: true });
 
     if (search?.trim()) {
-      const term = `%${search.trim()}%`;
-      countQuery = countQuery.or(`code.ilike.${term},name.ilike.${term}`);
+      countQuery = countQuery.or(ilikeAnyFilter(["code", "name"], search));
     }
 
     const { count: totalCount, error: countError } = await countQuery;
@@ -59,8 +59,7 @@ export async function GET(request: NextRequest) {
       .select("id, code, name, description, country_codes, website_url");
 
     if (search?.trim()) {
-      const term = `%${search.trim()}%`;
-      query = query.or(`code.ilike.${term},name.ilike.${term}`);
+      query = query.or(ilikeAnyFilter(["code", "name"], search));
     }
 
     const { data: systems, error } = await query

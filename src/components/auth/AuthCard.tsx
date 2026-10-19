@@ -68,7 +68,7 @@ export const AUTH_INPUT_CLASS =
 export const AUTH_LABEL_CLASS = "text-sm font-medium text-white/80";
 
 export const AUTH_PRIMARY_BTN_CLASS =
-  "h-12 w-full rounded-xl bg-linear-to-r from-neon-secondary to-neon-primary text-base font-semibold text-white shadow-lg transition-opacity hover:opacity-90";
+  "btn-filled h-12 w-full rounded-xl text-base font-semibold shadow-lg";
 
 export const AUTH_SECONDARY_BTN_CLASS =
   "h-12 w-full rounded-xl border-editorial-line bg-transparent text-base font-semibold text-white hover:bg-white/5 hover:text-white";

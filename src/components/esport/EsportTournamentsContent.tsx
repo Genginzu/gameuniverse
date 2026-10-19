@@ -144,8 +144,8 @@ function TournamentCard({ tournament, onBet }: { tournament: CalendarTournament;
 
   const tierColors: Record<string, string> = {
     s: "bg-amber-400/20 text-amber-300",
-    a: "bg-purple-400/20 text-purple-300",
-    b: "bg-sky-400/20 text-sky-300",
+    a: "bg-palette-accent-400/20 text-palette-accent-300",
+    b: "bg-palette-secondary-400/20 text-palette-secondary-300",
     c: "bg-white/10 text-editorial-muted",
   };
 

@@ -19,7 +19,7 @@ const STATUS_ICONS: Record<string, string> = {
 const STATUS_COLORS: Record<string, string> = {
   requested: "text-yellow-500",
   confirmed: "text-editorial-accent",
-  in_progress: "text-blue-500",
+  in_progress: "text-palette-primary-500",
   completed: "text-green-500",
   cancelled: "text-red-400",
   disputed: "text-orange-500",
@@ -119,7 +119,7 @@ export function CoachingSessionsContent() {
           <p className="text-sm text-gray-500 dark:text-gray-400">{t("loginRequired")}</p>
           <Link
             href="/auth"
-            className="from-palette-secondary-500 to-palette-primary-500 rounded-lg bg-linear-to-r px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+            className="btn-filled rounded-lg px-4 py-2 text-sm font-medium text-white"
           >
             {t("login")}
           </Link>
@@ -154,7 +154,7 @@ export function CoachingSessionsContent() {
           <button
             key={r}
             onClick={() => setRole(r)}
-            className={`rounded-lg px-4 py-2 text-sm font-medium transition-all ${role === r ? "from-palette-secondary-500 to-palette-primary-500 bg-linear-to-r text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400"}`}
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition-all ${role === r ? "from-cta-from to-cta-to bg-linear-to-r text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400"}`}
           >
             {t(`role.${r}`)}
           </button>
@@ -227,7 +227,7 @@ export function CoachingSessionsContent() {
                   {role === "coach" && s.status === "confirmed" && s.paymentStatus === "paid" && (
                     <button
                       onClick={() => handleAction(s.id, "start")}
-                      className="rounded-lg bg-blue-500/10 px-3 py-1.5 text-xs font-medium text-blue-500 hover:bg-blue-500/20"
+                      className="rounded-lg bg-palette-primary-500/10 px-3 py-1.5 text-xs font-medium text-palette-primary-500 hover:bg-palette-primary-500/20"
                     >
                       {t("actions.start")}
                     </button>
@@ -241,7 +241,7 @@ export function CoachingSessionsContent() {
                   {role === "student" && s.status === "confirmed" && s.paymentStatus !== "paid" && (
                     <button
                       onClick={() => handlePay(s.id)}
-                      className="from-palette-secondary-500 to-palette-primary-500 rounded-lg bg-linear-to-r px-3 py-1.5 text-xs font-medium text-white hover:opacity-90"
+                      className="btn-filled rounded-lg px-3 py-1.5 text-xs font-medium text-white"
                     >
                       {t("actions.pay")}
                     </button>

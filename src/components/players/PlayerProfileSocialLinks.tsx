@@ -6,17 +6,27 @@ interface PlayerProfileSocialLinksProps {
   socialLinks: PlayerSocialLinks;
 }
 
-/** Colored social-media icon buttons matching the screenshot design */
+/** Social-media icon buttons, in each network's official brand colour */
 export function PlayerProfileSocialLinks({ socialLinks }: PlayerProfileSocialLinksProps) {
   const links = [
     {
       key: "facebook" as const,
       href: socialLinks.facebook,
-      color: "bg-blue-600",
+      color: "bg-brand-facebook",
       icon: FacebookIcon,
     },
-    { key: "twitter" as const, href: socialLinks.twitter, color: "bg-black", icon: XIcon },
-    { key: "twitch" as const, href: socialLinks.twitch, color: "bg-purple-500", icon: TwitchIcon },
+    {
+      key: "twitter" as const,
+      href: socialLinks.twitter,
+      color: "bg-brand-x ring-1 ring-white/20",
+      icon: XIcon,
+    },
+    {
+      key: "twitch" as const,
+      href: socialLinks.twitch,
+      color: "bg-brand-twitch",
+      icon: TwitchIcon,
+    },
   ];
 
   const visibleLinks = links.filter((l) => l.href);

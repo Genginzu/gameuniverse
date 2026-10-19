@@ -1,5 +1,6 @@
-﻿import { describe, it, expect } from "vitest";
+import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
+import { BRAND_COLORS } from "@/lib/utils/brand-colors";
 import {
   getGameColors,
   buildGameColors,
@@ -126,7 +127,7 @@ describe("Game Utilities Property-Based Tests", () => {
 
         for (const title of cyberpunkTitles) {
           const colors = getGameColors(title, []);
-          expect(colors.primary).toBe("#0697e0");
+          expect(colors.primary).toBe(BRAND_COLORS.secondary[500]);
           expect(colors.bg).toContain("palette-secondary");
         }
       });
@@ -146,7 +147,7 @@ describe("Game Utilities Property-Based Tests", () => {
 
         for (const title of unknownTitles) {
           const colors = getGameColors(title, []);
-          expect(colors.primary).toBe("#0077e6");
+          expect(colors.primary).toBe(BRAND_COLORS.primary[500]);
           expect(colors.bg).toContain("palette-primary");
         }
       });
@@ -381,7 +382,7 @@ describe("Game Utilities Property-Based Tests", () => {
    *
    * For any combination of color inputs where each field is either a valid hex
    * string or null/undefined, buildGameColors() returns provided values when
-   * present, or defaults (bg=#0f172a, accent=#8b5cf6, label=#94a3b8, text=#e2e8f0)
+   * present, or defaults (bg=neutral-950, accent=primary-500, label=neutral-400, text=neutral-200)
    * when absent.
    *
    * **Validates: Requirements 1.3, 5.1, 5.2**
@@ -416,10 +417,10 @@ describe("Game Utilities Property-Based Tests", () => {
             });
 
             // Each field should equal the provided value or the default
-            expect(colors.backgroundColor).toBe(bg || "#0f172a");
-            expect(colors.accent).toBe(accent || "#0077e6");
-            expect(colors.labelColor).toBe(label || "#94a3b8");
-            expect(colors.textColor).toBe(text || "#e2e8f0");
+            expect(colors.backgroundColor).toBe(bg || BRAND_COLORS.neutral[950]);
+            expect(colors.accent).toBe(accent || BRAND_COLORS.primary[500]);
+            expect(colors.labelColor).toBe(label || BRAND_COLORS.neutral[400]);
+            expect(colors.textColor).toBe(text || BRAND_COLORS.neutral[200]);
 
             // primary and secondary mirror accent
             expect(colors.primary).toBe(colors.accent);

@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { BRAND_COLORS } from "@/lib/utils/brand-colors";
 
 export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
@@ -8,7 +9,7 @@ export default function AppleIcon() {
     <div
       style={{
         fontSize: 80,
-        background: "linear-gradient(135deg, rgb(6, 182, 212), rgb(139, 92, 246))",
+        background: `linear-gradient(135deg, ${BRAND_COLORS.secondary[500]}, ${BRAND_COLORS.primary[600]})`,
         width: "100%",
         height: "100%",
         display: "flex",

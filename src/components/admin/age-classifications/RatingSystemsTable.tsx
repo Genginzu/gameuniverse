@@ -119,7 +119,7 @@ export function RatingSystemsTable({ systems, pagination, onPageChange, onSearch
                           href={system.website_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-blue-600 hover:underline dark:text-blue-400"
+                          className="inline-flex items-center gap-1 text-palette-primary-600 hover:underline dark:text-palette-primary-400"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <Icon icon="lucide:external-link" className="h-3 w-3" />

@@ -16,8 +16,8 @@
 
 /* Fond de page legacy (dégradé clair from-slate-50) -> transparent. */
 .editorial-coaching [class*="from-slate-50"],
-.editorial-coaching [class*="from-blue-50"],
-.editorial-coaching [class*="from-indigo-50"] {
+.editorial-coaching [class*="from-palette-primary-50"],
+.editorial-coaching [class*="from-palette-accent-50"] {
   background-image: none !important;
 }
 

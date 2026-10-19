@@ -42,7 +42,7 @@ export function GroupInviteForm({ isSubmitting, error, onInvite }: GroupInviteFo
           onClick={() => setMode("username")}
           className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
             mode === "username"
-              ? "bg-editorial-accent text-[#0a0418]"
+              ? "btn-filled"
               : "border-editorial-line bg-editorial-3 border text-white"
           }`}
         >
@@ -53,7 +53,7 @@ export function GroupInviteForm({ isSubmitting, error, onInvite }: GroupInviteFo
           onClick={() => setMode("email")}
           className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
             mode === "email"
-              ? "bg-editorial-accent text-[#0a0418]"
+              ? "btn-filled"
               : "border-editorial-line bg-editorial-3 border text-white"
           }`}
         >

@@ -1,4 +1,4 @@
-﻿/* Editorial layout : rail, sub-sidebar, mobile overlay nav, layout shell. Voir docs/setup/styles-organization.md */
+/* Editorial layout : rail, sub-sidebar, mobile overlay nav, layout shell. Voir docs/setup/styles-organization.md */
 
 /*
  * EditorialRail: vertical 56px persistent rail (Discord-style).
@@ -495,7 +495,7 @@
 }
 
 .editorial-mobile-account-link-danger:hover {
-  color: #fca5a5;
+  color: var(--color-danger);
 }
 
 .editorial-mobile-account-cta {
@@ -506,7 +506,7 @@
   font-size: 0.95rem;
   font-weight: 500;
   color: #fff;
-  background: linear-gradient(135deg, rgb(var(--neon-secondary)), rgb(var(--neon-primary)));
+  background: linear-gradient(to right, var(--color-cta-from), var(--color-cta-to));
   border-radius: 0.5rem;
   text-decoration: none;
   transition: opacity 200ms ease;
@@ -663,8 +663,8 @@
 
 /* Dégradés clairs des skeletons « player » (image section gradient bleu/indigo
  * via EntitySkeleton useGradientBackground) -> surface sombre neutre. */
-.editorial-layout-main [class*="from-blue-100"],
-.editorial-layout-main [class*="from-indigo-100"] {
+.editorial-layout-main [class*="from-palette-primary-100"],
+.editorial-layout-main [class*="from-palette-accent-100"] {
   background-image: none !important;
   background-color: rgba(255, 255, 255, 0.06) !important;
 }

@@ -112,7 +112,7 @@ export function TranslationLangCard({
           <button
             onClick={onTranslate}
             disabled={isTranslating}
-            className="from-palette-secondary-500 to-palette-primary-500 inline-flex items-center gap-1.5 rounded-lg bg-linear-to-r px-3 py-1.5 text-xs font-medium text-white transition-all duration-300 hover:opacity-90 disabled:opacity-50"
+            className="btn-filled inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-white transition-all duration-300 disabled:opacity-50"
           >
             {isTranslating ? (
               <Icon icon="mdi:loading" className="size-3.5 animate-spin" />

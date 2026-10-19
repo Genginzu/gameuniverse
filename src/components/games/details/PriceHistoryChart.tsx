@@ -3,6 +3,7 @@
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, Legend } from "recharts";
 import type { PriceChartDataPoint } from "@/types/price-history";
 import { formatPriceChartDate, formatPriceWithCurrency } from "@/lib/utils/priceChartFormat";
+import { CHART_NEUTRAL, chartColor } from "@/lib/utils/chart-colors";
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -15,20 +16,6 @@ interface CustomTooltipProps {
   label?: string;
   currency: string;
 }
-
-/** Palette de couleurs distinctes pour les courbes de magasins */
-const STORE_COLORS = [
-  "#8884d8",
-  "#82ca9d",
-  "#ffc658",
-  "#ff7300",
-  "#0088fe",
-  "#00c49f",
-  "#ff6b6b",
-  "#a855f7",
-  "#f472b6",
-  "#34d399",
-];
 
 interface PriceHistoryChartProps {
   chartData: PriceChartDataPoint[];
@@ -71,12 +58,12 @@ export function PriceHistoryChart({ chartData, storeNames, currency }: PriceHist
           dataKey="date"
           tickFormatter={formatPriceChartDate}
           tick={{ fontSize: 12 }}
-          stroke="hsl(var(--muted-foreground))"
+          stroke={CHART_NEUTRAL}
         />
         <YAxis
           tickFormatter={(v: number) => formatPriceWithCurrency(v, currency)}
           tick={{ fontSize: 12 }}
-          stroke="hsl(var(--muted-foreground))"
+          stroke={CHART_NEUTRAL}
           width={90}
         />
         <Tooltip content={<CustomTooltip currency={currency} />} />
@@ -87,7 +74,7 @@ export function PriceHistoryChart({ chartData, storeNames, currency }: PriceHist
             type="monotone"
             dataKey={store}
             name={store}
-            stroke={STORE_COLORS[index % STORE_COLORS.length]}
+            stroke={chartColor(index)}
             strokeWidth={2}
             dot={{ r: 3 }}
             activeDot={{ r: 5 }}

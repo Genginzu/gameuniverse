@@ -55,7 +55,7 @@ export function GoalsTab({ playerId, locale }: GoalsTabProps) {
             setShowSessionComposer((v) => !v);
             if (!showSessionComposer) setShowGoalForm(false);
           }}
-          className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-transparent bg-[rgb(var(--accent-rgb,var(--neon-primary)))] px-5 text-[0.9rem] font-semibold text-[#0a0418] transition hover:brightness-110 hover:shadow-[0_8px_24px_-8px_rgba(var(--accent-rgb,var(--neon-primary)),0.5)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
+          className="btn-filled inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-transparent px-5 text-[0.9rem] font-semibold focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
         >
           {showSessionComposer ? (
             <Icon icon="lucide:x" className="h-4 w-4" aria-hidden="true" />

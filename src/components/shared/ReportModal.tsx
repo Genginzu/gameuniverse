@@ -115,7 +115,7 @@ export function ReportModal({ contentType, contentId, onClose, onReported }: Rep
               type="button"
               onClick={handleSubmit}
               disabled={status === "submitting"}
-              className="from-palette-secondary-500 to-palette-primary-500 min-h-[44px] rounded-lg bg-linear-to-r px-4 py-2 text-sm font-medium text-white transition-opacity hover:opacity-90 disabled:opacity-60"
+              className="btn-filled min-h-[44px] rounded-lg px-4 py-2 text-sm font-medium text-white transition-opacity disabled:opacity-60"
             >
               {status === "submitting" ? t("submitting") : t("submit")}
             </button>

@@ -30,6 +30,25 @@ function upgradeImageUrl(coverUrl: string): string {
 }
 
 /**
+ * Only fetch HTTPS images from IGDB or this project's Supabase storage: the
+ * URL can come from an admin request body, so it must not reach internal hosts.
+ */
+function isAllowedCoverUrl(coverUrl: string): boolean {
+  let url: URL;
+  try {
+    url = new URL(coverUrl);
+  } catch {
+    return false;
+  }
+  if (url.protocol !== "https:") return false;
+  if (url.hostname === "images.igdb.com") return true;
+  const supabaseHost = process.env.NEXT_PUBLIC_SUPABASE_URL
+    ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname
+    : null;
+  return url.hostname === supabaseHost && url.pathname.startsWith("/storage/v1/object/public/");
+}
+
+/**
  * Extracts colors from a cover image URL.
  * Uses a larger image (720p) and pixel sampling for accurate extraction.
  * Returns null if extraction fails (network error, invalid image, etc.)
@@ -41,8 +60,14 @@ export async function extractColorsFromCover(
 ): Promise<ExtractedGameColors | null> {
   try {
     const largeUrl = upgradeImageUrl(coverUrl);
+    if (!isAllowedCoverUrl(largeUrl)) {
+      return null;
+    }
 
-    const response = await fetch(largeUrl);
+    const response = await fetch(largeUrl, {
+      redirect: "error",
+      signal: AbortSignal.timeout(10_000),
+    });
     if (!response.ok) {
       return null;
     }

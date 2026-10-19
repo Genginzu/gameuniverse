@@ -20,12 +20,12 @@ export async function POST(
     }
 
     const body = await request.json();
-    const emoji = body.emoji?.trim();
-    if (!emoji) {
+    const emoji = typeof body.emoji === "string" ? body.emoji.trim() : "";
+    if (!emoji || emoji.length > 16) {
       return NextResponse.json({ error: "emoji is required" }, { status: 400 });
     }
 
-    const comment = await addReaction(supabase, commentId, user.id, emoji);
+    const comment = await addReaction(supabase, commentId, emoji);
     return NextResponse.json({ comment });
   } catch (error) {
     logger.error("Error adding reaction", { error });

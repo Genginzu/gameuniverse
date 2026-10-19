@@ -11,6 +11,7 @@ import {
   buildMedia,
   buildPlatforms,
 } from "./helpers";
+import { BRAND_COLORS } from "@/lib/utils/brand-colors";
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   try {
@@ -141,7 +142,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       description: translation?.description,
       biography: translation?.biography,
       weapons: translation?.weapons,
-      backgroundColor: character.background_color || "#0f172a",
+      backgroundColor: character.background_color || BRAND_COLORS.neutral[950],
       ...(genderObj && { gender: genderObj }),
       ...(speciesObj && { species: speciesObj }),
       games,

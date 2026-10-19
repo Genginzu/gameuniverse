@@ -46,7 +46,9 @@ export async function PATCH(_request: NextRequest, { params }: RouteContext) {
       console.error("Achievement evaluation failed:", error);
     }
 
-    CoinService.rewardActivity(user.id, "friend_add", friendshipId).catch((err) =>
+    // Keyed by the friend's id (not the friendship row) so unfriending and
+    // re-adding the same player never pays twice.
+    CoinService.rewardActivity(user.id, "friend_add", updated.sender_id).catch((err) =>
       logger.error("Coin reward failed", { error: err })
     );
 

@@ -71,7 +71,7 @@ export function PlayNextSection({
                 onClick={() => onContextChange({ ...context, mood })}
                 className={`inline-flex h-11 items-center rounded-lg px-3 text-sm transition-colors ${
                   (context.mood ?? "any") === mood
-                    ? "bg-editorial-accent text-black"
+                    ? "btn-filled"
                     : "border-editorial-line text-editorial-muted hover:text-white border"
                 }`}
               >
@@ -88,14 +88,7 @@ export function PlayNextSection({
             href={`/games/${top.game.slug}`}
             className="border-editorial-line bg-editorial-1 flex items-center gap-4 rounded-2xl border p-4 transition-colors hover:border-white/30"
           >
-            <span
-              className="bg-editorial-3 relative h-24 w-18 shrink-0 overflow-hidden rounded-lg"
-              style={
-                top.game.backgroundColor
-                  ? { backgroundColor: top.game.backgroundColor }
-                  : undefined
-              }
-            >
+            <span className="bg-editorial-3 relative h-24 w-18 shrink-0 overflow-hidden rounded-lg">
               {top.game.coverImage ? (
                 <img
                   src={top.game.coverImage}
