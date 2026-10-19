@@ -7,6 +7,7 @@ import { logger } from "@/lib/logger";
 import { CoinService } from "@/lib/services/coinService";
 import { suspendedResponse } from "@/lib/services/suspensionGuard";
 import type { PostsResponse } from "@/types/post";
+import { enforceRateLimit } from "@/lib/services/rateLimitService";
 
 const PAGE_SIZE = 20;
 
@@ -18,7 +19,7 @@ function parsePage(searchParams: URLSearchParams): number {
 }
 
 /**
- * GET /api/players/[id]/posts — Paginated posts for a player.
+ * GET /api/players/[id]/posts â€” Paginated posts for a player.
  */
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -55,7 +56,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 }
 
 /**
- * POST /api/players/[id]/posts — Create a new post.
+ * POST /api/players/[id]/posts â€” Create a new post.
  */
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -75,6 +76,9 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     if (user.id !== playerId) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
+
+    const limited = await enforceRateLimit("post", { userId: user.id });
+    if (limited) return limited;
 
     const suspended = await suspendedResponse(user.id);
     if (suspended) return suspended;

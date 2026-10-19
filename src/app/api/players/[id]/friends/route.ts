@@ -5,11 +5,12 @@ import { NotificationServerService } from "@/lib/services/notificationServerServ
 import { AchievementEngine } from "@/lib/services/achievementEngine";
 import { parsePaginationParams } from "@/lib/api-utils";
 import { logger } from "@/lib/logger";
+import { enforceRateLimit } from "@/lib/services/rateLimitService";
 
 type RouteContext = { params: Promise<{ id: string }> };
 
 /**
- * GET /api/players/[id]/friends — List accepted friends with pagination.
+ * GET /api/players/[id]/friends â€” List accepted friends with pagination.
  * Public for accepted friends. If the requester is the profile owner,
  * pending received requests are included in the response.
  */
@@ -42,7 +43,7 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
 }
 
 /**
- * POST /api/players/[id]/friends — Send a friend request.
+ * POST /api/players/[id]/friends â€” Send a friend request.
  * The authenticated user is the sender; [id] is the receiver.
  * Validates: auth, self-request, target exists, no duplicate relationship.
  */
@@ -60,6 +61,9 @@ export async function POST(_request: NextRequest, { params }: RouteContext) {
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const limited = await enforceRateLimit("friendRequest", { userId: user.id });
+    if (limited) return limited;
 
     // Cannot send a request to yourself
     if (user.id === playerId) {

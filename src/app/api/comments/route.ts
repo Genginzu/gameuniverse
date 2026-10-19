@@ -4,6 +4,7 @@ import { commentSchema } from "@/lib/validations/comment";
 import type { Comment, CommentsResponse } from "@/types/comment";
 import { logger } from "@/lib/logger";
 import { CoinService } from "@/lib/services/coinService";
+import { enforceRateLimit } from "@/lib/services/rateLimitService";
 
 interface CommentRow {
   id: string;
@@ -171,6 +172,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const limited = await enforceRateLimit("comment", { userId: user.id });
+    if (limited) return limited;
+
     const body = await request.json();
     const parsed = commentSchema.safeParse(body);
 
@@ -211,7 +215,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     if (insertError) {
       if (insertError.code === "23505") {
         return NextResponse.json(
-          { error: "Vous avez déjà laissé un commentaire pour ce personnage" },
+          { error: "Vous avez dÃ©jÃ  laissÃ© un commentaire pour ce personnage" },
           { status: 409 }
         );
       }
@@ -247,6 +251,9 @@ export async function PUT(request: NextRequest): Promise<NextResponse> {
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const limited = await enforceRateLimit("comment", { userId: user.id });
+    if (limited) return limited;
 
     const body = await request.json();
     const parsed = commentSchema.safeParse(body);

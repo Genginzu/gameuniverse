@@ -8,6 +8,7 @@ import {
 } from "@/lib/services/esportPredictionService";
 import { fetchBettableMatch, PredictionRejectedError } from "@/lib/services/esportPredictionGuard";
 import { logger } from "@/lib/logger";
+import { enforceRateLimit } from "@/lib/services/rateLimitService";
 
 /** Only ids and the stake come from the client; match facts come from PandaScore. */
 const placePredictionSchema = z.object({
@@ -51,6 +52,9 @@ export async function POST(request: NextRequest) {
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const limited = await enforceRateLimit("prediction", { userId: user.id });
+    if (limited) return limited;
 
     const parsed = placePredictionSchema.safeParse(await request.json());
     if (!parsed.success) {

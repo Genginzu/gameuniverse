@@ -4,6 +4,7 @@ import { logger } from "@/lib/logger";
 import { ReportServerService } from "@/lib/services/reportServerService";
 import { ReportUserServerService } from "@/lib/services/reportUserServerService";
 import type { ReportContentType, ReportReason } from "@/types/report";
+import { enforceRateLimit } from "@/lib/services/rateLimitService";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type S = any;
@@ -11,7 +12,7 @@ type S = any;
 const CONTENT_TYPES: ReportContentType[] = ["review", "post", "comment", "profile"];
 const REASONS: ReportReason[] = ["spam", "harassment", "inappropriate", "other"];
 
-/** GET /api/reports — Authenticated user: list their own reports. */
+/** GET /api/reports â€” Authenticated user: list their own reports. */
 export async function GET() {
   try {
     const supabase: S = await createRouteHandlerClient();
@@ -28,7 +29,7 @@ export async function GET() {
   }
 }
 
-/** POST /api/reports — Authenticated users flag a piece of content. */
+/** POST /api/reports â€” Authenticated users flag a piece of content. */
 export async function POST(request: NextRequest) {
   try {
     const supabase: S = await createRouteHandlerClient();
@@ -36,6 +37,9 @@ export async function POST(request: NextRequest) {
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const limited = await enforceRateLimit("report", { userId: user.id });
+    if (limited) return limited;
 
     const { contentType, contentId, reason, description } = await request.json();
 

@@ -5,9 +5,10 @@ import { PlayerPostsServerService } from "@/lib/services/playerPostsServerServic
 import { logger } from "@/lib/logger";
 import { CoinService } from "@/lib/services/coinService";
 import { suspendedResponse } from "@/lib/services/suspensionGuard";
+import { enforceRateLimit } from "@/lib/services/rateLimitService";
 
 /**
- * GET /api/posts/[postId]/comments — Fetch comments for a post.
+ * GET /api/posts/[postId]/comments â€” Fetch comments for a post.
  */
 export async function GET(
   _request: NextRequest,
@@ -26,7 +27,7 @@ export async function GET(
 }
 
 /**
- * POST /api/posts/[postId]/comments — Create a comment on a post.
+ * POST /api/posts/[postId]/comments â€” Create a comment on a post.
  */
 export async function POST(
   request: NextRequest,
@@ -45,6 +46,9 @@ export async function POST(
 
     const suspended = await suspendedResponse(user.id);
     if (suspended) return suspended;
+
+    const limited = await enforceRateLimit("comment", { userId: user.id });
+    if (limited) return limited;
 
     const { postId } = await params;
 

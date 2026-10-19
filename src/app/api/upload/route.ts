@@ -4,6 +4,7 @@ import { generateSignedUploadUrl } from "@/lib/services/uploadService";
 import { uploadRequestSchema } from "@/lib/validations/uploadValidation";
 import { getExtensionFromMimeType } from "@/lib/utils/uploadUtils";
 import { NextRequest, NextResponse } from "next/server";
+import { enforceRateLimit } from "@/lib/services/rateLimitService";
 
 export async function POST(request: NextRequest) {
   const supabase = await createRouteHandlerClient();
@@ -16,6 +17,9 @@ export async function POST(request: NextRequest) {
   if (userError || !user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+
+  const limited = await enforceRateLimit("upload", { userId: user.id });
+  if (limited) return limited;
 
   let body: unknown;
   try {

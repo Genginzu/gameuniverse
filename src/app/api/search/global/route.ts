@@ -4,6 +4,7 @@ import { z } from "zod";
 import { GlobalSearchService } from "@/lib/services/globalSearchService";
 import type { GlobalSearchResponse } from "@/types/global-search";
 import { logger } from "@/lib/logger";
+import { enforceRateLimit } from "@/lib/services/rateLimitService";
 
 /** Upper bound per result group, so anonymous callers cannot bulk-scrape players. */
 const MAX_GROUP_LIMIT = 20;
@@ -11,7 +12,7 @@ const MAX_GROUP_LIMIT = 20;
 /**
  * Zod schema for the GET query string.
  *
- * - `query` is required, ≥ 2 chars after trim.
+ * - `query` is required, â‰¥ 2 chars after trim.
  * - `locale` defaults to "fr".
  * - All `*Limit` params accept integers in [1, 20]; missing values fall back to
  *   the service's defaults (5 for character/player/team/proPlayer/coach).
@@ -38,7 +39,7 @@ const QuerySchema = z.object({
  * a single backend failure does not break the whole response.
  *
  * Query Parameters:
- * - `query` (required): Search string, ≥ 2 characters after trim
+ * - `query` (required): Search string, â‰¥ 2 characters after trim
  * - `locale` (optional): "fr" by default
  * - `charactersLimit` / `playersLimit` / `teamsLimit` /
  *   `proPlayersLimit` / `coachesLimit` (optional): Per-group cap.
@@ -50,6 +51,10 @@ export async function GET(
   request: NextRequest
 ): Promise<NextResponse<GlobalSearchResponse | { error: string }>> {
   try {
+    // Anonymous route: limit per client IP (search fans out to IGDB + DB).
+    const limited = await enforceRateLimit("search", { request });
+    if (limited) return limited as NextResponse<{ error: string }>;
+
     const { searchParams } = new URL(request.url);
 
     // Build a plain object from the URLSearchParams to feed Zod. Multi-valued
