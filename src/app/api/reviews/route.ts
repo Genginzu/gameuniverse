@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { reviewSchema } from "@/lib/validations/review";
+import { sanitizeRichText } from "@/lib/utils/sanitizeRichText";
 import { AchievementEngine } from "@/lib/services/achievementEngine";
 import { CoinService } from "@/lib/services/coinService";
 import { suspendedResponse } from "@/lib/services/suspensionGuard";
@@ -71,7 +72,7 @@ function toReview(row: ReviewRow, profilesMap: Map<string, ProfileRow>): Review 
     userId: row.user_id,
     gameId: row.game_id,
     rating: row.rating,
-    content: row.content,
+    content: sanitizeRichText(row.content),
     positivePoints: row.positive_points ?? [],
     negativePoints: row.negative_points ?? [],
     createdAt: row.created_at,
