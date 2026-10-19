@@ -12,6 +12,7 @@ import {
   enrichReviewsWithVotes,
 } from "@/lib/utils/reviewVoteQueries";
 import { logger } from "@/lib/logger";
+import { enforceRateLimit } from "@/lib/services/rateLimitService";
 
 interface ReviewRow {
   id: string;
@@ -219,6 +220,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const suspended = await suspendedResponse(user.id);
     if (suspended) return suspended;
 
+    const limited = await enforceRateLimit("review", { userId: user.id });
+    if (limited) return limited;
+
     const body = await request.json();
     const parsed = reviewSchema.safeParse(body);
 
@@ -321,6 +325,9 @@ export async function PUT(request: NextRequest): Promise<NextResponse> {
 
     const suspended = await suspendedResponse(user.id);
     if (suspended) return suspended;
+
+    const limited = await enforceRateLimit("review", { userId: user.id });
+    if (limited) return limited;
 
     const body = await request.json();
     const parsed = reviewSchema.safeParse(body);

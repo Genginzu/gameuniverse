@@ -30,6 +30,32 @@ supabase/migrations/YYYYMMDD00000N_description.sql
 - Ajouter un commentaire en en-tête décrivant l'objectif de la migration.
 - Inclure les `COMMENT ON` pour documenter les nouvelles colonnes/tables.
 
+### Privilèges : aucun accès automatique (depuis `20261018000017`)
+
+Les nouveaux objets du schéma `public` (tables, séquences, fonctions) ne sont
+plus accordés automatiquement à `anon` / `authenticated` : seul `service_role`
+y a accès. La clé anon et le JWT étant publics, tout objet accordé est
+appelable directement via PostgREST (`/rest/v1`, `/rest/v1/rpc`).
+
+- ✅ Table lue ou écrite par les clients : `ENABLE ROW LEVEL SECURITY`, policies,
+  puis `GRANT` explicite des seuls droits nécessaires
+  (`GRANT SELECT ON public.ma_table TO anon, authenticated;`).
+- ✅ RPC appelée par les clients : `GRANT EXECUTE ON FUNCTION ... TO authenticated`
+  (et `anon` seulement si public). `SECURITY DEFINER` uniquement si nécessaire,
+  avec `SET search_path` et un contrôle `auth.uid()` / `public.is_admin()` dans
+  le corps. Ne jamais faire confiance à un id d'utilisateur passé en paramètre.
+- ✅ Objet serveur uniquement (jobs, compteurs, journaux) : aucun `GRANT` client,
+  RLS activé sans policy.
+- ✅ Colonnes sensibles (prix, statut de paiement, soldes, notes, rôles, ids
+  Stripe, tokens) : trigger `BEFORE INSERT OR UPDATE` qui les fige pour
+  `authenticated` / `anon` ; écriture via le service role.
+- ❌ Ne **jamais** remettre de `ALTER DEFAULT PRIVILEGES ... GRANT ... TO anon,
+  authenticated` ni de `GRANT ... ON ALL TABLES / ALL FUNCTIONS`.
+- ❌ Ne **jamais** lire `user_metadata` (modifiable par l'utilisateur) dans une
+  policy : utiliser `public.is_admin()` (lit `app_metadata`).
+
+Référence : `docs/systems/database-privileges.md`.
+
 ### Emplacements interdits
 
 - ❌ Ne **jamais** placer de fichiers SQL de migration dans `scripts/`.

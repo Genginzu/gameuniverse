@@ -112,3 +112,59 @@ describe("20261018000014 stats_private", () => {
     );
   });
 });
+
+const stripeEvents = read("20261018000015_stripe_webhook_events.sql");
+const fantasy = read("20261018000016_lock_fantasy_writes.sql");
+
+describe("20261018000015 Stripe webhook ledger", () => {
+  it("creates a server-only event ledger keyed by the Stripe event id", () => {
+    expect(stripeEvents).toContain("CREATE TABLE IF NOT EXISTS public.stripe_webhook_events ( id TEXT PRIMARY KEY");
+    expect(stripeEvents).toContain("REVOKE ALL ON public.stripe_webhook_events FROM anon, authenticated");
+  });
+});
+
+describe("20261018000016 fantasy", () => {
+  it("forces the league budget and zero points on client-created teams", () => {
+    expect(fantasy).toContain("NEW.budget_remaining := v_budget");
+    expect(fantasy).toContain("NEW.total_points := 0");
+  });
+
+  it("removes client roster writes", () => {
+    expect(fantasy).toContain('DROP POLICY IF EXISTS "Players can manage their team players"');
+    expect(fantasy).toContain('DROP POLICY IF EXISTS "Players can delete their team players"');
+  });
+});
+
+const defaultPrivileges = read("20261018000017_revoke_default_privileges.sql");
+const rateLimits = read("20261018000018_rate_limits.sql");
+
+describe("20261018000017 default privileges", () => {
+  it("stops auto-granting new tables and functions to clients", () => {
+    expect(defaultPrivileges).toContain("REVOKE ALL ON TABLES FROM anon, authenticated");
+    expect(defaultPrivileges).toContain("REVOKE ALL ON FUNCTIONS FROM anon, authenticated");
+    expect(defaultPrivileges).toContain("ALTER DEFAULT PRIVILEGES FOR ROLE postgres REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC");
+  });
+});
+
+describe("20261018000018 rate limits", () => {
+  it("serialises hits per key and keeps the limiter server-only", () => {
+    expect(rateLimits).toContain("pg_advisory_xact_lock(hashtextextended(p_key, 0))");
+    expect(rateLimits).toContain(
+      "REVOKE EXECUTE ON FUNCTION public.consume_rate_limit(text, integer, integer) FROM PUBLIC, anon, authenticated"
+    );
+  });
+});
+
+const conversationsGuard = read("20261018000019_conversations_require_friendship.sql");
+
+describe("20261018000019 conversations", () => {
+  it("requires an accepted friendship to open a conversation", () => {
+    expect(conversationsGuard).toContain("AND public.are_friends(participant_1, participant_2)");
+    expect(conversationsGuard).toContain("WHERE f.status = 'accepted'");
+  });
+
+  it("keeps coaching_sessions.conversation_id server-only", () => {
+    expect(conversationsGuard).toContain("NEW.conversation_id IS DISTINCT FROM OLD.conversation_id");
+    expect(conversationsGuard).toContain("BEFORE UPDATE ON public.coaching_sessions");
+  });
+});

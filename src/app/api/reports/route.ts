@@ -4,6 +4,7 @@ import { logger } from "@/lib/logger";
 import { ReportServerService } from "@/lib/services/reportServerService";
 import { ReportUserServerService } from "@/lib/services/reportUserServerService";
 import type { ReportContentType, ReportReason } from "@/types/report";
+import { enforceRateLimit } from "@/lib/services/rateLimitService";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type S = any;
@@ -36,6 +37,9 @@ export async function POST(request: NextRequest) {
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const limited = await enforceRateLimit("report", { userId: user.id });
+    if (limited) return limited;
 
     const { contentType, contentId, reason, description } = await request.json();
 

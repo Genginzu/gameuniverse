@@ -124,6 +124,7 @@ function VideoItem({
               src={thumbnailUrl}
               alt="Video thumbnail"
               fill
+              unoptimized
               className="rounded-lg object-cover"
               onError={(e) => {
                 (e.target as HTMLImageElement).parentElement!.style.display = "none";

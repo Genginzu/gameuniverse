@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 import { createCoachingSessionSchema } from "@/lib/validations/coaching-session";
+import { enforceRateLimit } from "@/lib/services/rateLimitService";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnySupabase = any;
@@ -21,6 +22,9 @@ export async function POST(request: NextRequest) {
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const limited = await enforceRateLimit("coachingBooking", { userId: user.id });
+    if (limited) return limited;
 
     const parsed = createCoachingSessionSchema.safeParse(await request.json());
     if (!parsed.success) {

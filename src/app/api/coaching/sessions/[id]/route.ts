@@ -209,7 +209,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       try {
         const coachPlayerId = await resolveCoachPlayerId(supabase, session.coach_id);
         if (coachPlayerId) {
-          await createSessionConversation(supabase, coachPlayerId, session.student_id, id);
+          await createSessionConversation(coachPlayerId, session.student_id, id);
         }
       } catch (convError) {
         logger.error("Error creating session conversation", { error: convError });

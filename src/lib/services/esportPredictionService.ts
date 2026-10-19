@@ -4,6 +4,7 @@ import { logger } from "@/lib/logger";
 import { CoinService } from "@/lib/services/coinService";
 import { getMatchById } from "@/lib/pandascore/client";
 import { untypedTable } from "@/lib/utils/untypedTable";
+import type { BettableMatch } from "@/lib/services/esportPredictionGuard";
 
 export interface EsportPrediction {
   id: string;
@@ -30,31 +31,28 @@ export interface PredictionLeaderboardEntry {
 
 export async function placePrediction(
   playerId: string,
-  matchId: number,
-  matchName: string,
-  game: string,
-  predictedWinnerId: number,
-  predictedWinnerName: string,
+  match: BettableMatch,
   amount: number
 ): Promise<EsportPrediction> {
   // Atomically debit coins and insert the prediction via a SECURITY DEFINER
   // DB function. The service-role client is the only role allowed to execute it
   // (issue #372), so a client can neither insert a prediction directly nor
-  // split the debit from the insert.
+  // split the debit from the insert. Match facts come from PandaScore
+  // (fetchBettableMatch), never from the request body.
   const supabase = getSupabaseAdmin();
 
   const { data, error } = await supabase.rpc("place_esport_prediction", {
     p_player_id: playerId,
-    p_match_id: matchId,
-    p_match_name: matchName,
-    p_game: game,
-    p_predicted_winner_id: predictedWinnerId,
-    p_predicted_winner_name: predictedWinnerName,
+    p_match_id: match.matchId,
+    p_match_name: match.matchName,
+    p_game: match.game,
+    p_predicted_winner_id: match.winnerId,
+    p_predicted_winner_name: match.winnerName,
     p_amount: amount,
   });
 
   if (error || !data) {
-    logger.error("Failed to place prediction", { playerId, matchId, error });
+    logger.error("Failed to place prediction", { playerId, matchId: match.matchId, error });
     // Surface the function's own message (e.g. "Insufficient balance").
     throw new Error(error?.message || "Failed to place prediction");
   }
@@ -109,13 +107,19 @@ export async function resolvePredictionsForMatch(matchId: number, winnerId: numb
     const won = pred.predicted_winner_id === winnerId;
     const payout = won ? pred.amount * 2 : 0;
 
-    await untypedTable(supabase, "esport_predictions")
+    // Claim the row atomically: concurrent resolver runs (cron + Edge callback)
+    // must not settle and credit the same prediction twice.
+    const { data: claimed } = await untypedTable(supabase, "esport_predictions")
       .update({
         status: won ? "won" : "lost",
         payout,
         resolved_at: new Date().toISOString(),
       })
-      .eq("id", pred.id);
+      .eq("id", pred.id)
+      .eq("status", "pending")
+      .select("id");
+
+    if (!claimed?.length) continue;
 
     if (won) {
       await CoinService.creditCoins(

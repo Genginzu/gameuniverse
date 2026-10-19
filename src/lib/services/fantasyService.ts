@@ -33,18 +33,13 @@ export async function createTeam(
 ): Promise<FantasyTeam> {
   const supabase = await createRouteHandlerClient();
 
-  // Get league budget cap
-  const { data: league } = await untypedTable(supabase, "fantasy_leagues")
-    .select("budget_cap")
-    .eq("id", leagueId)
-    .single();
-
+  // budget_remaining / total_points are set by the DB trigger from the league
+  // (migration 20261018000016), never by the client.
   const { data, error } = await untypedTable(supabase, "fantasy_teams")
     .insert({
       player_id: playerId,
       league_id: leagueId,
       name,
-      budget_remaining: (league as Record<string, unknown>)?.budget_cap as number ?? 10000,
     })
     .select()
     .single();
@@ -55,66 +50,6 @@ export async function createTeam(
   }
 
   return { ...mapTeam(data), players: [] };
-}
-
-export async function addPlayer(
-  teamId: string,
-  proPlayerId: number,
-  proPlayerName: string,
-  price: number
-): Promise<void> {
-  const supabase = await createRouteHandlerClient();
-
-  // Check budget
-  const { data: team } = await untypedTable(supabase, "fantasy_teams")
-    .select("budget_remaining")
-    .eq("id", teamId)
-    .single();
-
-  if (!team || (team as Record<string, unknown>).budget_remaining as number < price) {
-    throw new Error("Insufficient budget");
-  }
-
-  const { error } = await untypedTable(supabase, "fantasy_team_players").insert({
-    team_id: teamId,
-    pro_player_id: proPlayerId,
-    pro_player_name: proPlayerName,
-    purchase_price: price,
-  });
-
-  if (error) {
-    logger.error("Failed to add player to fantasy team", { error });
-    throw new Error("Failed to add player");
-  }
-
-  await untypedTable(supabase, "fantasy_teams")
-    .update({ budget_remaining: (team as Record<string, unknown>).budget_remaining as number - price })
-    .eq("id", teamId);
-}
-
-export async function removePlayer(teamId: string, teamPlayerId: string): Promise<void> {
-  const supabase = await createRouteHandlerClient();
-
-  const { data: tp } = await untypedTable(supabase, "fantasy_team_players")
-    .select("purchase_price")
-    .eq("id", teamPlayerId)
-    .eq("team_id", teamId)
-    .single();
-
-  if (!tp) throw new Error("Player not found in team");
-
-  await untypedTable(supabase, "fantasy_team_players").delete().eq("id", teamPlayerId);
-
-  const { data: team } = await untypedTable(supabase, "fantasy_teams")
-    .select("budget_remaining")
-    .eq("id", teamId)
-    .single();
-
-  if (team) {
-    await untypedTable(supabase, "fantasy_teams")
-      .update({ budget_remaining: ((team as Record<string, unknown>).budget_remaining as number) + ((tp as Record<string, unknown>).purchase_price as number) })
-      .eq("id", teamId);
-  }
 }
 
 export async function getMyTeam(playerId: string, leagueId: string): Promise<FantasyTeam | null> {

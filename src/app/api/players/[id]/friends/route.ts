@@ -5,6 +5,7 @@ import { NotificationServerService } from "@/lib/services/notificationServerServ
 import { AchievementEngine } from "@/lib/services/achievementEngine";
 import { parsePaginationParams } from "@/lib/api-utils";
 import { logger } from "@/lib/logger";
+import { enforceRateLimit } from "@/lib/services/rateLimitService";
 
 type RouteContext = { params: Promise<{ id: string }> };
 
@@ -60,6 +61,9 @@ export async function POST(_request: NextRequest, { params }: RouteContext) {
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const limited = await enforceRateLimit("friendRequest", { userId: user.id });
+    if (limited) return limited;
 
     // Cannot send a request to yourself
     if (user.id === playerId) {

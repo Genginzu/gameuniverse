@@ -20,16 +20,50 @@ const nextConfig = {
   serverExternalPackages: ["resend"],
   // Optimize images
   images: {
+    // Explicit allowlist (no "**"): the optimizer must not proxy arbitrary hosts.
+    // Rebuild it from prod data with scripts/db/image-hosts-inventory.sql.
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "**",
-      },
       {
         protocol: "https",
         hostname: "images.igdb.com",
         port: "",
         pathname: "/igdb/image/upload/**",
+      },
+      {
+        protocol: "https",
+        hostname: "i.ytimg.com",
+        port: "",
+        pathname: "/vi/**",
+      },
+      {
+        protocol: "https",
+        hostname: "avatars.steamstatic.com",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "avatars.akamai.steamstatic.com",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "avatars.cloudflare.steamstatic.com",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "images-eds-ssl.xboxlive.com",
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.discordapp.com",
+        port: "",
+        pathname: "/avatars/**",
       },
       {
         protocol: "https",

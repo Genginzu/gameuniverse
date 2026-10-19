@@ -89,6 +89,7 @@ export function GameFormVersionsTab({ form, t, isIgdbField }: GameFormTabProps) 
                       src={form.watch(`versions.${idx}.cover_image_url`) || ""}
                       alt=""
                       fill
+                      unoptimized
                       className="rounded-lg object-cover"
                       onError={(e) => {
                         (e.target as HTMLImageElement).parentElement!.style.display = "none";
