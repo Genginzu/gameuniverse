@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.4.2](https://github.com/Genginzu/gameuniverse/compare/gameuniverse-v0.4.1...gameuniverse-v0.4.2) (2026-10-19)
+
+
+### Bug Fixes
+
+* business logic, privileges, rate limiting and messaging hardening ([#400](https://github.com/Genginzu/gameuniverse/issues/400)) ([00e69dc](https://github.com/Genginzu/gameuniverse/commit/00e69dc230416669f27ab49b36d730d7a736d51a))
+* harden admin RLS policies and coaching session writes ([#394](https://github.com/Genginzu/gameuniverse/issues/394)) ([6d9bc6f](https://github.com/Genginzu/gameuniverse/commit/6d9bc6f5425fc120ab90f2dbe45af0682c1d8241))
+* XSS, membership, message, coach profile and upload hardening ([#396](https://github.com/Genginzu/gameuniverse/issues/396)) ([ac72362](https://github.com/Genginzu/gameuniverse/commit/ac72362eee56bc5eae957e1fbadd0a884df826b0))
+
 ## [0.4.1](https://github.com/Genginzu/gameuniverse/compare/gameuniverse-v0.4.0...gameuniverse-v0.4.1) (2026-10-18)
 
 
