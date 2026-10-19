@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { requireAdmin } from "@/lib/auth-admin";
 import {
   createGameSchema,
@@ -93,13 +94,14 @@ export async function GET(request: NextRequest) {
 
     const { page, limit, search, genre, company, sort_by, sort_order, locale } = queryResult.data;
 
-    const supabase = await createRouteHandlerClient();
     const offset = (page - 1) * limit;
 
     // Single optimised RPC call — search, count, sort, paginate all happen
     // server-side in get_admin_games_listing() to avoid PostgREST join timeouts.
+    // The RPC is service_role only (migration 20261018000013): call it with the
+    // admin client now that requireAdmin() has passed.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data: rpcResult, error } = await (supabase as any).rpc("get_admin_games_listing", {
+    const { data: rpcResult, error } = await (getSupabaseAdmin() as any).rpc("get_admin_games_listing", {
       p_locale: locale,
       p_limit: limit,
       p_offset: offset,

@@ -5,13 +5,16 @@ import { GlobalSearchService } from "@/lib/services/globalSearchService";
 import type { GlobalSearchResponse } from "@/types/global-search";
 import { logger } from "@/lib/logger";
 
+/** Upper bound per result group, so anonymous callers cannot bulk-scrape players. */
+const MAX_GROUP_LIMIT = 20;
+
 /**
  * Zod schema for the GET query string.
  *
  * - `query` is required, ≥ 2 chars after trim.
  * - `locale` defaults to "fr".
- * - All `*Limit` params accept positive integers; missing or invalid values
- *   fall back to the service's defaults (5 for character/player/team/proPlayer/coach).
+ * - All `*Limit` params accept integers in [1, 20]; missing values fall back to
+ *   the service's defaults (5 for character/player/team/proPlayer/coach).
  */
 const QuerySchema = z.object({
   query: z
@@ -19,11 +22,11 @@ const QuerySchema = z.object({
     .trim()
     .min(2, "Query must be at least 2 characters long"),
   locale: z.string().trim().min(1).default("fr"),
-  charactersLimit: z.coerce.number().int().positive().optional(),
-  playersLimit: z.coerce.number().int().positive().optional(),
-  teamsLimit: z.coerce.number().int().positive().optional(),
-  proPlayersLimit: z.coerce.number().int().positive().optional(),
-  coachesLimit: z.coerce.number().int().positive().optional(),
+  charactersLimit: z.coerce.number().int().positive().max(MAX_GROUP_LIMIT).optional(),
+  playersLimit: z.coerce.number().int().positive().max(MAX_GROUP_LIMIT).optional(),
+  teamsLimit: z.coerce.number().int().positive().max(MAX_GROUP_LIMIT).optional(),
+  proPlayersLimit: z.coerce.number().int().positive().max(MAX_GROUP_LIMIT).optional(),
+  coachesLimit: z.coerce.number().int().positive().max(MAX_GROUP_LIMIT).optional(),
 });
 
 /**
