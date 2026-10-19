@@ -443,7 +443,8 @@
       "noMyGroups": "You haven't joined any group yet",
       "noMyCommunities": "You haven't joined any community yet",
       "loading": "Loading…",
-      "unreadBadge": "{count} unread notifications"
+      "unreadBadge": "{count} unread notifications",
+      "pendingFriendsBadge": "{count, plural, one {# pending friend request} other {# pending friend requests}}"
     },
     "mobileNav": {
       "openAriaLabel": "Open navigation",

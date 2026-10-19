@@ -443,7 +443,8 @@
       "noMyGroups": "Vous n'avez rejoint aucun groupe",
       "noMyCommunities": "Vous n'avez rejoint aucune communauté",
       "loading": "Chargement…",
-      "unreadBadge": "{count} notifications non lues"
+      "unreadBadge": "{count} notifications non lues",
+      "pendingFriendsBadge": "{count, plural, one {# demande d'ami en attente} other {# demandes d'amis en attente}}"
     },
     "mobileNav": {
       "openAriaLabel": "Ouvrir la navigation",
