@@ -134,7 +134,7 @@ export function SearchBar<T extends SearchResultItem = SearchResultItem>({
           <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
             <Icon
               icon="mdi:magnify"
-              className="size-5 text-gray-400 transition-colors group-focus-within:text-blue-500"
+              className="group-focus-within:text-palette-primary-500 size-5 text-gray-400 transition-colors"
             />
           </div>
           <Input
@@ -143,7 +143,7 @@ export function SearchBar<T extends SearchResultItem = SearchResultItem>({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onFocus={() => isHybridMode && searchQuery.length >= minQueryLength && setIsOpen(true)}
-            className="h-12 w-full rounded-2xl border-0 bg-white pr-12 pl-12 text-sm text-gray-900 placeholder-gray-400 shadow-lg ring-1 ring-gray-200 transition-all duration-300 hover:shadow-xl focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 sm:h-14 sm:text-base dark:bg-gray-800 dark:text-white dark:placeholder-gray-500 dark:ring-gray-700"
+            className="focus:ring-palette-primary-500 h-12 w-full rounded-2xl border-0 bg-white pr-12 pl-12 text-sm text-gray-900 placeholder-gray-400 shadow-lg ring-1 ring-gray-200 transition-all duration-300 hover:shadow-xl focus:ring-2 focus:ring-offset-2 sm:h-14 sm:text-base dark:bg-gray-800 dark:text-white dark:placeholder-gray-500 dark:ring-gray-700"
           />
           {searchQuery && (
             <button

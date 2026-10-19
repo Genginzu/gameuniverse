@@ -54,7 +54,7 @@ export function FilterOptionsGrid({
             return (
               <label
                 key={option.id}
-                className="group relative flex cursor-pointer items-center rounded-lg border border-gray-200 p-3 transition-all hover:border-blue-300 hover:bg-blue-50 dark:border-gray-700 dark:hover:border-blue-600 dark:hover:bg-blue-900/20"
+                className="group hover:border-palette-primary-300 hover:bg-palette-primary-50 dark:hover:border-palette-primary-600 dark:hover:bg-palette-primary-900/20 relative flex cursor-pointer items-center rounded-lg border border-gray-200 p-3 transition-all dark:border-gray-700"
               >
                 <input
                   type={filter.type}
@@ -66,8 +66,8 @@ export function FilterOptionsGrid({
                 <div
                   className={`flex h-4 w-4 items-center justify-center rounded${filter.type === "radio" ? "-full" : ""} border-2 transition-all sm:h-5 sm:w-5 ${
                     isSelected
-                      ? "border-blue-600 bg-blue-600"
-                      : "border-gray-300 group-hover:border-blue-400 dark:border-gray-600"
+                      ? "border-palette-primary-600 bg-palette-primary-600"
+                      : "group-hover:border-palette-primary-400 border-gray-300 dark:border-gray-600"
                   }`}
                 >
                   {isSelected && (

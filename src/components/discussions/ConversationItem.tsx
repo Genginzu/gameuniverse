@@ -39,13 +39,13 @@ export default memo(function ConversationItem({
       onClick={() => onSelect(conversation.id)}
       className={`flex w-full items-center gap-3 rounded-xl p-3 text-left transition-all duration-300 ${
         isSelected
-          ? "bg-linear-to-r from-blue-500/15 via-purple-600/10 to-purple-700/10 shadow-[inset_0_0_0_1px_rgba(139,92,246,0.3)]"
+          ? "bg-linear-to-r from-palette-primary-500/15 via-palette-accent-600/10 to-palette-accent-700/10 shadow-[inset_0_0_0_1px_rgb(var(--neon-primary)/0.3)]"
           : "cursor-pointer hover:bg-white/[0.05]"
       }`}
       data-testid="conversation-item"
     >
       {/* Avatar */}
-      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-linear-to-br from-blue-500/20 via-purple-600/20 to-purple-700/20">
+      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-linear-to-br from-palette-primary-500/20 via-palette-accent-600/20 to-palette-accent-700/20">
         {friend.avatarUrl ? (
           <LazyImage
             src={friend.avatarUrl}

@@ -135,7 +135,7 @@ export function EditorialSubSidebar({
                   <span>{t(`links.${space.key}.${link.labelKey}`)}</span>
                   {showBadge && (
                     <span
-                      className="from-palette-secondary-500 to-palette-primary-500 ml-auto inline-flex min-h-[18px] min-w-[18px] items-center justify-center rounded-full bg-linear-to-r px-1 text-[10px] leading-none font-bold text-white"
+                      className="from-cta-from to-cta-to ml-auto inline-flex min-h-[18px] min-w-[18px] items-center justify-center rounded-full bg-linear-to-r px-1 text-[10px] leading-none font-bold text-white"
                       aria-label={t("subSidebar.unreadBadge", { count: unreadCount })}
                     >
                       {unreadCount > 9 ? "9+" : unreadCount}

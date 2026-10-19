@@ -3,12 +3,11 @@
 import { useTranslations } from "next-intl";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import type { GenreDistributionEntry } from "@/types/dashboard-stats";
+import { chartColor } from "@/lib/utils/chart-colors";
 
 interface CollectionGenreChartProps {
   distribution: GenreDistributionEntry[];
 }
-
-const COLORS = ["#8b5cf6", "#06b6d4", "#3b82f6", "#a855f7", "#ec4899", "#6b7280"];
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -53,7 +52,7 @@ export function CollectionGenreChart({ distribution }: CollectionGenreChartProps
                 strokeWidth={0}
               >
                 {distribution.map((entry, index) => (
-                  <Cell key={entry.genre} fill={COLORS[index % COLORS.length]} />
+                  <Cell key={entry.genre} fill={chartColor(index)} />
                 ))}
               </Pie>
               <Tooltip content={<CustomTooltip />} />
@@ -65,7 +64,7 @@ export function CollectionGenreChart({ distribution }: CollectionGenreChartProps
             <li key={entry.genre} className="flex items-center gap-2">
               <span
                 className="inline-block h-3 w-3 rounded-full"
-                style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                style={{ backgroundColor: chartColor(index) }}
               />
               <span className="text-sm text-gray-700 dark:text-white">
                 {entry.genre} ({entry.percentage}%)

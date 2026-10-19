@@ -36,7 +36,7 @@ export function PriceHistoryStatsDisplay({ stats, currentPrice }: PriceHistorySt
       label: "Prix moyen",
       value: stats.avg_price,
       icon: "lucide:bar-chart-3",
-      iconColor: "text-blue-500",
+      iconColor: "text-palette-primary-500",
     },
   ];
 
@@ -47,7 +47,7 @@ export function PriceHistoryStatsDisplay({ stats, currentPrice }: PriceHistorySt
         return (
           <Card
             key={card.label}
-            className="rounded-xl border border-[var(--editorial-line)] bg-[var(--editorial-bg-2)]"
+            className="rounded-lg border border-[var(--editorial-line)] bg-[var(--editorial-bg-2)]"
           >
             <CardContent className="flex items-center gap-3 p-4">
               <div className={`rounded-md bg-white/10 p-2 ${card.iconColor}`}>
@@ -72,7 +72,7 @@ export function PriceHistoryStatsDisplay({ stats, currentPrice }: PriceHistorySt
             </Badge>
           )}
           {indicators.isBelowAverage && (
-            <Badge className="border border-blue-500/20 bg-blue-500/10 text-blue-400 hover:bg-blue-500/10">
+            <Badge className="border-palette-primary-500/20 bg-palette-primary-500/10 text-palette-primary-400 hover:bg-palette-primary-500/10 border">
               📉 En dessous de la moyenne
             </Badge>
           )}

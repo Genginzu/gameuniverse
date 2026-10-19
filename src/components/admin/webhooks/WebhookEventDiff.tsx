@@ -121,7 +121,7 @@ export function WebhookEventDiff({ eventId }: WebhookEventDiffProps) {
           <button
             onClick={handleApply}
             disabled={applying}
-            className="from-palette-secondary-500 to-palette-primary-500 flex items-center gap-2 rounded-xl bg-linear-to-r px-6 py-2.5 text-sm font-medium text-white shadow-lg transition-all hover:shadow-xl disabled:opacity-50"
+            className="from-cta-from to-cta-to flex items-center gap-2 rounded-xl bg-linear-to-r px-6 py-2.5 text-sm font-medium text-white shadow-lg transition-all hover:shadow-xl disabled:opacity-50"
           >
             {applying ? (
               <Icon icon="lucide:loader-2" className="h-4 w-4 animate-spin" />

@@ -139,7 +139,7 @@ function LiveMatchCard({ match }: { match: LiveMatch }) {
                 rel="noopener noreferrer"
                 className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
                   stream.main
-                    ? "bg-editorial-accent text-white hover:opacity-90"
+                    ? "btn-filled"
                     : "text-editorial-muted bg-white/10 hover:bg-white/15"
                 }`}
               >

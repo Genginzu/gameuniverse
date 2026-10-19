@@ -179,7 +179,7 @@ function SourceBadge({ source }: { source: "local" | "igdb" }) {
   return (
     <Badge
       variant="outline"
-      className="shrink-0 gap-1 border-purple-500/40 bg-purple-500/10 px-1.5 py-0 text-[10px] text-purple-300"
+      className="shrink-0 gap-1 border-palette-accent-500/40 bg-palette-accent-500/10 px-1.5 py-0 text-[10px] text-palette-accent-300"
     >
       <Icon icon="lucide:globe" className="h-2.5 w-2.5" />
       IGDB

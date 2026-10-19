@@ -75,7 +75,7 @@ export function GroupsEditorial() {
             <button
               type="button"
               onClick={() => setIsDialogOpen(true)}
-              className="bg-editorial-accent inline-flex h-12 items-center justify-center gap-2 rounded-[14px] px-5 text-sm font-semibold text-[#0a0418] transition hover:-translate-y-px hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
+              className="btn-filled inline-flex h-12 items-center justify-center gap-2 rounded-[14px] px-5 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
             >
               <Icon icon="lucide:plus" className="h-4 w-4" aria-hidden="true" />
               {t("createButton")}
@@ -146,7 +146,7 @@ function GroupsEmptyState({ onCreate }: { onCreate: () => void }) {
       <button
         type="button"
         onClick={onCreate}
-        className="bg-editorial-accent inline-flex h-12 items-center justify-center gap-2 rounded-[14px] px-6 text-sm font-semibold text-[#0a0418] transition hover:-translate-y-px hover:brightness-110"
+        className="btn-filled inline-flex h-12 items-center justify-center gap-2 rounded-[14px] px-6 text-sm font-semibold transition"
       >
         <Icon icon="lucide:plus" className="h-4 w-4" aria-hidden="true" />
         {t("empty.cta")}

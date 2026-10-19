@@ -82,7 +82,7 @@ export function CoachGamesSection() {
         <p className="text-sm text-gray-500 dark:text-gray-400">{t("description")}</p>
         <button
           onClick={() => setAdding(!adding)}
-          className="from-palette-secondary-500 to-palette-primary-500 flex items-center gap-1.5 rounded-lg bg-linear-to-r px-3 py-1.5 text-xs font-medium text-white"
+          className="from-cta-from to-cta-to flex items-center gap-1.5 rounded-lg bg-linear-to-r px-3 py-1.5 text-xs font-medium text-white"
         >
           <Icon icon="lucide:plus" className="size-4" /> {t("addGame")}
         </button>

@@ -209,7 +209,7 @@ export function PredictionDialog({ open, onOpenChange, tournamentId, tournamentN
             <Button
               onClick={handleSubmit}
               disabled={!selectedWinner || amount < 1 || amount > balance || submitting}
-              className="bg-editorial-accent w-full text-white hover:opacity-90"
+              className="btn-filled w-full"
             >
               {submitting ? t("placing") : t("placeBet", { amount })}
             </Button>

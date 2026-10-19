@@ -23,6 +23,7 @@
  */
 @import "./styles/animations.css";
 @import "./styles/neon.css";
+@import "./styles/buttons.css";
 @import "./styles/landing-grid.css";
 @import "./styles/glass-deprecated.css";
 @import "./styles/editorial/typography.css";
@@ -51,44 +52,116 @@
   /* Editorial display font (Tomorrow loaded via next/font, see src/app/layout.tsx) */
   --font-display: var(--font-tomorrow), system-ui, sans-serif;
 
-  /* Palette primary — marine (#003566) */
-  --color-palette-primary-50: #f0f8ff;
-  --color-palette-primary-100: #dbeeff;
-  --color-palette-primary-200: #b8dcff;
-  --color-palette-primary-300: #7abfff;
-  --color-palette-primary-400: #2997ff;
-  --color-palette-primary-500: #0077e6;
-  --color-palette-primary-600: #0061bd;
-  --color-palette-primary-700: #004c94;
-  --color-palette-primary-800: #00376b;
-  --color-palette-primary-900: #00284d;
-  --color-palette-primary-950: #001a33;
+  /* Palette primary — terracotta (#e08a5c). Single source of truth for the site colours.
+     To rebrand: change the primary / secondary / accent / neutral scales below, the --neon-*
+     triplets in :root and the hex mirror in src/lib/utils/brand-colors.ts (a unit test
+     fails if they drift). Every other colour is derived from these tokens. */
+  --color-palette-primary-50: #fdf6f2;
+  --color-palette-primary-100: #f9eae1;
+  --color-palette-primary-200: #f4d4c3;
+  --color-palette-primary-300: #ebb598;
+  --color-palette-primary-400: #e3976d;
+  --color-palette-primary-500: #e08a5c;
+  --color-palette-primary-600: #d66529;
+  --color-palette-primary-700: #ab5121;
+  --color-palette-primary-800: #813d18;
+  --color-palette-primary-900: #562910;
+  --color-palette-primary-950: #33180a;
 
-  /* Palette secondary — ocean (H:200) */
-  --color-palette-secondary-50: #f0faff;
-  --color-palette-secondary-100: #dcf3fe;
-  --color-palette-secondary-200: #b9e7fd;
-  --color-palette-secondary-300: #7ed2fc;
-  --color-palette-secondary-400: #2eb6fa;
-  --color-palette-secondary-500: #0697e0;
-  --color-palette-secondary-600: #057cb8;
-  --color-palette-secondary-700: #046190;
-  --color-palette-secondary-800: #034768;
-  --color-palette-secondary-900: #02324b;
-  --color-palette-secondary-950: #012232;
+  /* Palette secondary — amber / peach (H:29) */
+  --color-palette-secondary-50: #fdf7f1;
+  --color-palette-secondary-100: #fbeddf;
+  --color-palette-secondary-200: #f8dabf;
+  --color-palette-secondary-300: #f3c091;
+  --color-palette-secondary-400: #f0b077;
+  --color-palette-secondary-500: #eea663;
+  --color-palette-secondary-600: #e67c19;
+  --color-palette-secondary-700: #b86314;
+  --color-palette-secondary-800: #8a4a0f;
+  --color-palette-secondary-900: #5c320a;
+  --color-palette-secondary-950: #371e06;
 
-  /* Palette accent — bright blue (H:215) */
-  --color-palette-accent-50: #f0f6ff;
-  --color-palette-accent-100: #dceafe;
-  --color-palette-accent-200: #b9d6fe;
-  --color-palette-accent-300: #7db2fc;
-  --color-palette-accent-400: #2d83fb;
-  --color-palette-accent-500: #0560e1;
-  --color-palette-accent-600: #044fb9;
-  --color-palette-accent-700: #033e91;
-  --color-palette-accent-800: #022d69;
-  --color-palette-accent-900: #02204b;
-  --color-palette-accent-950: #011532;
+  /* Palette accent — deep terracotta (H:15) */
+  --color-palette-accent-50: #fdf5f2;
+  --color-palette-accent-100: #fae7e1;
+  --color-palette-accent-200: #f4cfc2;
+  --color-palette-accent-300: #edac97;
+  --color-palette-accent-400: #e58a6c;
+  --color-palette-accent-500: #df6d45;
+  --color-palette-accent-600: #d95326;
+  --color-palette-accent-700: #ad421f;
+  --color-palette-accent-800: #823217;
+  --color-palette-accent-900: #57210f;
+  --color-palette-accent-950: #341409;
+
+  /* Palette neutral — cool dark greys of the editorial surfaces (950 = page background,
+     900 / 800 = raised surfaces, 400 = muted text). */
+  --color-palette-neutral-50: #f6f6f8;
+  --color-palette-neutral-100: #ededf1;
+  --color-palette-neutral-200: #dcdde4;
+  --color-palette-neutral-300: #c0c3cf;
+  --color-palette-neutral-400: #9aa3b8;
+  --color-palette-neutral-500: #6f7487;
+  --color-palette-neutral-600: #535768;
+  --color-palette-neutral-700: #3b3e4f;
+  --color-palette-neutral-800: #2b2e3e;
+  --color-palette-neutral-900: #22242f;
+  --color-palette-neutral-950: #1b1c25;
+
+  /* Tailwind's gray / slate / zinc scales are blue-tinted by default: alias them to the
+     neutral palette so every legacy `gray-*` / `slate-*` / `zinc-*` class follows the brand. */
+  --color-gray-50: var(--color-palette-neutral-50);
+  --color-gray-100: var(--color-palette-neutral-100);
+  --color-gray-200: var(--color-palette-neutral-200);
+  --color-gray-300: var(--color-palette-neutral-300);
+  --color-gray-400: var(--color-palette-neutral-400);
+  --color-gray-500: var(--color-palette-neutral-500);
+  --color-gray-600: var(--color-palette-neutral-600);
+  --color-gray-700: var(--color-palette-neutral-700);
+  --color-gray-800: var(--color-palette-neutral-800);
+  --color-gray-900: var(--color-palette-neutral-900);
+  --color-gray-950: var(--color-palette-neutral-950);
+  --color-slate-50: var(--color-palette-neutral-50);
+  --color-slate-100: var(--color-palette-neutral-100);
+  --color-slate-200: var(--color-palette-neutral-200);
+  --color-slate-300: var(--color-palette-neutral-300);
+  --color-slate-400: var(--color-palette-neutral-400);
+  --color-slate-500: var(--color-palette-neutral-500);
+  --color-slate-600: var(--color-palette-neutral-600);
+  --color-slate-700: var(--color-palette-neutral-700);
+  --color-slate-800: var(--color-palette-neutral-800);
+  --color-slate-900: var(--color-palette-neutral-900);
+  --color-slate-950: var(--color-palette-neutral-950);
+  --color-zinc-50: var(--color-palette-neutral-50);
+  --color-zinc-100: var(--color-palette-neutral-100);
+  --color-zinc-200: var(--color-palette-neutral-200);
+  --color-zinc-300: var(--color-palette-neutral-300);
+  --color-zinc-400: var(--color-palette-neutral-400);
+  --color-zinc-500: var(--color-palette-neutral-500);
+  --color-zinc-600: var(--color-palette-neutral-600);
+  --color-zinc-700: var(--color-palette-neutral-700);
+  --color-zinc-800: var(--color-palette-neutral-800);
+  --color-zinc-900: var(--color-palette-neutral-900);
+  --color-zinc-950: var(--color-palette-neutral-950);
+
+  /* Third-party brand colours (official logos guidelines). Deliberately outside the site
+     palette: they must NOT change on a rebrand. Use only for the matching logo/button. */
+  --color-brand-facebook: #0866ff;
+  --color-brand-x: #000000;
+  --color-brand-twitch: #9146ff;
+
+  /* Filled CTA gradient (Filtrer & all filled buttons) — used by .btn-filled and
+     `from-cta-from to-cta-to`. Derived from the palette, slightly deeper than *-500. */
+  --color-cta-from: color-mix(
+    in srgb,
+    var(--color-palette-secondary-500) 55%,
+    var(--color-palette-primary-600)
+  );
+  --color-cta-to: color-mix(
+    in srgb,
+    var(--color-palette-primary-600) 70%,
+    var(--color-palette-primary-500)
+  );
 
   /* Neon semantic aliases (for glow/border effects) */
   --color-neon-primary: rgb(var(--neon-primary));
@@ -104,40 +177,46 @@
   --color-editorial-line: var(--editorial-line);
   --color-editorial-muted: var(--editorial-muted);
   --color-editorial-accent: rgb(var(--accent-rgb, var(--neon-primary)));
+  /* Semantic danger (logout, delete, errors) — soft red that keeps contrast on dark surfaces. */
+  --color-danger: rgb(var(--danger-rgb));
 
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
 
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--card-foreground));
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
 
-  --color-popover: hsl(var(--popover));
-  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
 
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
 
-  --color-secondary: hsl(var(--secondary));
-  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
 
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
 
-  --color-accent: hsl(var(--accent));
-  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
 
-  --color-destructive: hsl(var(--destructive));
-  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
 
-  --color-border: hsl(var(--border));
-  --color-input: hsl(var(--input));
-  --color-ring: hsl(var(--ring));
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 
-  --color-chart-1: hsl(var(--chart-1));
-  --color-chart-2: hsl(var(--chart-2));
-  --color-chart-3: hsl(var(--chart-3));
-  --color-chart-4: hsl(var(--chart-4));
-  --color-chart-5: hsl(var(--chart-5));
+  /* Categorical chart colours (Recharts series, legends, bars) — see src/lib/utils/chart-colors.ts */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-chart-6: var(--chart-6);
+  --color-chart-7: var(--chart-7);
+  --color-chart-8: var(--chart-8);
 
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
@@ -171,72 +250,108 @@
   }
 }
 
+/* Native browser UI follows the palette instead of the user-agent blue
+   (checkboxes, radios, range, progress, text selection, default focus ring, autofill). */
+@layer base {
+  :root {
+    accent-color: var(--color-palette-primary-500);
+  }
+
+  ::selection {
+    background-color: rgba(var(--neon-primary), 0.35);
+  }
+
+  :focus-visible {
+    outline-color: var(--color-palette-primary-500);
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  textarea:-webkit-autofill,
+  select:-webkit-autofill {
+    /* Keeps the field's own colours instead of Chrome's light-blue autofill fill. */
+    transition:
+      background-color 0s 600000s,
+      color 0s 600000s;
+  }
+}
+
 /* stylelint-enable at-rule-no-unknown */
 
 @layer base {
+  /* shadcn/ui semantic tokens — full colour values derived from the palette (no raw colours). */
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --background: #fff;
+    --foreground: var(--color-palette-neutral-950);
+    --card: #fff;
+    --card-foreground: var(--color-palette-neutral-950);
+    --popover: #fff;
+    --popover-foreground: var(--color-palette-neutral-950);
+    --primary: var(--color-palette-primary-500);
+    --primary-foreground: #fff;
+    --secondary: var(--color-palette-neutral-100);
+    --secondary-foreground: var(--color-palette-neutral-900);
+    --muted: var(--color-palette-neutral-100);
+    --muted-foreground: var(--color-palette-neutral-500);
+    --accent: var(--color-palette-neutral-100);
+    --accent-foreground: var(--color-palette-neutral-900);
+    --destructive: hsl(0 84.2% 60.2%);
+    --destructive-foreground: var(--color-palette-neutral-50);
+    --border: var(--color-palette-neutral-200);
+    --input: var(--color-palette-neutral-200);
+    --ring: var(--color-palette-primary-500);
     --radius: 0.5rem;
 
-    /* Neon glow tokens — RGB for box-shadow/text-shadow */
-    --neon-primary: 0 119 230;
-    --neon-secondary: 6 151 224;
-    --neon-accent: 5 96 225;
+    --chart-1: var(--color-palette-primary-500);
+    --chart-2: var(--color-palette-secondary-300);
+    --chart-3: var(--color-palette-accent-600);
+    --chart-4: var(--color-palette-neutral-300);
+    --chart-5: var(--color-palette-primary-200);
+    --chart-6: var(--color-palette-secondary-600);
+    --chart-7: var(--color-palette-accent-300);
+    --chart-8: var(--color-palette-neutral-500);
+
+    /* Neon glow tokens — RGB triplets of palette primary / secondary / accent 500
+       (keep in sync with @theme when rebranding). */
+    --neon-primary: 224 138 92;
+    --neon-secondary: 238 166 99;
+    --neon-accent: 223 109 69;
     --neon-glow-opacity: 0.15;
     --neon-border-opacity: 0.3;
 
     /* Editorial design tokens — surfaces sombres pour la refonte éditoriale (dark-only)
        Voir docs/design/editorial-refonte-plan.md section 3 */
-    --editorial-bg: #120821;
-    --editorial-bg-2: #1a0f2e;
-    --editorial-bg-3: #251745;
-    --editorial-line: rgba(255, 255, 255, 0.08);
-    --editorial-muted: #a89dbf;
+    --editorial-bg: var(--color-palette-neutral-950);
+    --editorial-bg-2: var(--color-palette-neutral-900);
+    --editorial-bg-3: var(--color-palette-neutral-800);
+    --editorial-line: rgba(255, 255, 255, 0.07);
+    --editorial-muted: var(--color-palette-neutral-400);
+    --danger-rgb: 252 165 165;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 209 100% 45%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 200 95% 45%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 209 100% 45%;
+    --background: var(--color-palette-neutral-950);
+    --foreground: var(--color-palette-neutral-50);
+    --card: var(--color-palette-neutral-900);
+    --card-foreground: var(--color-palette-neutral-50);
+    --popover: var(--color-palette-neutral-900);
+    --popover-foreground: var(--color-palette-neutral-50);
+    --primary: var(--color-palette-primary-500);
+    --primary-foreground: #fff;
+    --secondary: var(--color-palette-neutral-800);
+    --secondary-foreground: var(--color-palette-neutral-50);
+    --muted: var(--color-palette-neutral-800);
+    --muted-foreground: var(--color-palette-neutral-400);
+    --accent: var(--color-palette-secondary-400);
+    --accent-foreground: var(--color-palette-neutral-950);
+    --destructive: hsl(0 62.8% 30.6%);
+    --destructive-foreground: var(--color-palette-neutral-50);
+    --border: var(--color-palette-neutral-800);
+    --input: var(--color-palette-neutral-800);
+    --ring: var(--color-palette-primary-500);
 
     /* Neon glow tokens dark — same colors, higher opacity */
-    --neon-primary: 0 119 230;
-    --neon-secondary: 6 151 224;
-    --neon-accent: 5 96 225;
     --neon-glow-opacity: 0.25;
     --neon-border-opacity: 0.5;
   }

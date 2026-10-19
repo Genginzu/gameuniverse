@@ -41,7 +41,7 @@ export function PostCard({ post, playerName, playerAvatar, locale, isOwner, onDe
     <article className="rounded-2xl bg-white/80 p-5 shadow-md backdrop-blur-xl transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg dark:bg-slate-800/60 dark:shadow-lg dark:shadow-black/20 dark:hover:shadow-xl dark:hover:shadow-black/30">
       <div className="mb-3 flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-linear-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30">
+          <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-linear-to-br from-palette-primary-100 to-palette-accent-100 dark:from-palette-primary-900/30 dark:to-palette-accent-900/30">
             {playerAvatar ? (
               <LazyImage
                 src={playerAvatar}
@@ -53,7 +53,7 @@ export function PostCard({ post, playerName, playerAvatar, locale, isOwner, onDe
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center">
-                <Icon icon="lucide:user" className="h-5 w-5 text-blue-300" />
+                <Icon icon="lucide:user" className="h-5 w-5 text-palette-primary-300" />
               </div>
             )}
           </div>

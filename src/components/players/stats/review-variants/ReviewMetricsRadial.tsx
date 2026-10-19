@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import type { ReviewAnalyticsData } from "@/types/dashboard-stats";
 import { formatLocalizedNumber } from "@/lib/utils/statsFormatters";
+import { chartColor } from "@/lib/utils/chart-colors";
 
 interface Props {
   analytics: ReviewAnalyticsData;
@@ -53,8 +54,8 @@ function RadialGauge({ id, value, max, displayValue, label }: GaugeConfig) {
           />
           <defs>
             <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="rgb(139, 92, 246)" />
-              <stop offset="100%" stopColor="rgb(6, 182, 212)" />
+              <stop offset="0%" stopColor={chartColor(2)} />
+              <stop offset="100%" stopColor={chartColor(1)} />
             </linearGradient>
           </defs>
         </svg>
