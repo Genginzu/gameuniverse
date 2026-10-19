@@ -6,7 +6,7 @@ on:
       branch:
         description: "Branch to test"
         required: true
-        default: "dev"
+        default: "main"
         type: string
       test_type:
         description: "Which tests to run"
@@ -20,30 +20,20 @@ on:
 
 jobs:
   unit-tests:
-    name: Unit Tests (${{ matrix.shard }})
+    name: Unit Tests (${{ matrix.shard }}/4)
     if: inputs.test_type == 'unit' || inputs.test_type == 'both'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - shard: api
-            path: src/app/api/__tests__/
-          - shard: components
-            path: src/components/__tests__/
-          - shard: hooks
-            path: src/hooks/__tests__/
-          - shard: lib
-            path: src/lib/__tests__/
-          - shard: scripts
-            path: scripts/__tests__/
+        shard: [1, 2, 3, 4]
     steps:
       - uses: actions/checkout@v7
         with:
           ref: ${{ inputs.branch }}
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
-      - run: bunx vitest run ${{ matrix.path }}
+      - run: bunx vitest run --shard=${{ matrix.shard }}/4
 
   e2e-tests:
     name: E2E Tests (${{ matrix.shard }}/4)

@@ -25,7 +25,7 @@ concurrency:
 # a dedicated gate job would bill 1 min per run). e2e is skipped with build.
 jobs:
   unit-tests:
-    name: ${{ matrix.name }}
+    name: Unit Tests (${{ matrix.shard }}/4)
     if: >-
       github.event_name == 'workflow_dispatch' ||
       (github.event.pull_request.draft == false &&
@@ -34,20 +34,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # Vitest shards the whole suite (both projects in vitest.config.mts).
+        # Shard 1 also runs lint + type-check to save one job setup.
         include:
-          # Lint + type-check share the shortest test shard to save job setup minutes.
-          - name: Lint, types & API tests
+          - shard: 1
             static: true
-            paths: src/app/api/__tests__/
-          - name: Unit Tests (lib, hooks)
+          - shard: 2
             static: false
-            paths: src/lib/__tests__/ src/hooks/__tests__/
-          - name: Unit Tests (components)
+          - shard: 3
             static: false
-            paths: src/components/__tests__/
-          - name: Unit Tests (scripts)
+          - shard: 4
             static: false
-            paths: scripts/__tests__/
     steps:
       - uses: actions/checkout@v7
         with:
@@ -57,7 +54,7 @@ jobs:
         run: bun run lint
       - if: matrix.static
         run: bun run type-check
-      - run: bunx vitest run ${{ matrix.paths }}
+      - run: bunx vitest run --shard=${{ matrix.shard }}/${{ strategy.job-total }}
 
   build:
     name: Build

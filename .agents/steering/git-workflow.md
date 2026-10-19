@@ -134,7 +134,8 @@ Quand l'utilisateur demande de travailler sur une issue GitHub :
 Le CI (`.github/workflows/ci.yml`) se déclenche sur les **PR vers `main`** (et
 `workflow_dispatch`). Il ignore les changements purement docs/config agents
 (`docs/**`, `**/*.md`, `.agents/**`, `.vscode/**`). Jobs : 4 shards
-`unit-tests` (le premier inclut lint + type-check), `build`, puis `e2e`
+`unit-tests` (`vitest --shard`, toute la suite ; le premier inclut lint +
+type-check), `build`, puis `e2e`
 (Playwright, 2 shards). Tous doivent passer avant le squash and merge.
 
 ### Économie de minutes Actions (dépôt privé, quota gratuit)
