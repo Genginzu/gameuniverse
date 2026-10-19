@@ -25,6 +25,21 @@ describe("extractColorsFromCover", () => {
   it("upgrades URL to cover_big_2x", async () => {
     globalThis.fetch = vi.fn().mockResolvedValue({ ok: false, status: 404 });
     await extractColorsFromCover("https://images.igdb.com/t_cover_big/abc.jpg");
-    expect(fetch).toHaveBeenCalledWith("https://images.igdb.com/t_cover_big_2x/abc.jpg");
+    expect(fetch).toHaveBeenCalledWith(
+      "https://images.igdb.com/t_cover_big_2x/abc.jpg",
+      expect.objectContaining({ redirect: "error" })
+    );
+  });
+
+  it.each([
+    "http://169.254.169.254/latest/meta-data/",
+    "http://images.igdb.com/t_cover_big/abc.jpg",
+    "https://127.0.0.1:54321/storage/v1/object/public/a.png",
+    "https://evil.example/cover.jpg",
+    "not a url",
+  ])("refuses to fetch a non-allowlisted URL: %s", async (url) => {
+    globalThis.fetch = vi.fn();
+    await expect(extractColorsFromCover(url)).resolves.toBeNull();
+    expect(fetch).not.toHaveBeenCalled();
   });
 });
