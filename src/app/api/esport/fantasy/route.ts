@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import {
   createTeam,
-  addPlayer,
-  removePlayer,
   getMyTeam,
   getLeaderboard,
 } from "@/lib/services/fantasyService";
@@ -48,24 +46,23 @@ export async function POST(request: NextRequest) {
     const { action } = body;
 
     if (action === "createTeam") {
-      const team = await createTeam(user.id, body.leagueId, body.name);
+      if (typeof body.leagueId !== "string" || typeof body.name !== "string" || !body.name.trim()) {
+        return NextResponse.json({ error: "leagueId and name are required" }, { status: 400 });
+      }
+      const team = await createTeam(user.id, body.leagueId, body.name.trim().slice(0, 60));
       return NextResponse.json({ team }, { status: 201 });
     }
 
-    if (action === "addPlayer") {
-      await addPlayer(body.teamId, body.proPlayerId, body.proPlayerName, body.price);
-      return NextResponse.json({ success: true });
-    }
-
-    if (action === "removePlayer") {
-      await removePlayer(body.teamId, body.teamPlayerId);
-      return NextResponse.json({ success: true });
+    // Roster changes need a server-side price for each pro player, which does
+    // not exist yet: they were trusting a client-supplied price. Disabled until
+    // a pricing model lands (migration 20261018000016 also locks them in RLS).
+    if (action === "addPlayer" || action === "removePlayer") {
+      return NextResponse.json({ error: "Fantasy rosters are not available yet" }, { status: 501 });
     }
 
     return NextResponse.json({ error: "Unknown action" }, { status: 400 });
   } catch (error) {
     logger.error("Error in fantasy POST", { error });
-    const message = error instanceof Error ? error.message : "Failed";
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json({ error: "Failed" }, { status: 500 });
   }
 }

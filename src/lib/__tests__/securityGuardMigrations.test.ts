@@ -112,3 +112,25 @@ describe("20261018000014 stats_private", () => {
     );
   });
 });
+
+const stripeEvents = read("20261018000015_stripe_webhook_events.sql");
+const fantasy = read("20261018000016_lock_fantasy_writes.sql");
+
+describe("20261018000015 Stripe webhook ledger", () => {
+  it("creates a server-only event ledger keyed by the Stripe event id", () => {
+    expect(stripeEvents).toContain("CREATE TABLE IF NOT EXISTS public.stripe_webhook_events ( id TEXT PRIMARY KEY");
+    expect(stripeEvents).toContain("REVOKE ALL ON public.stripe_webhook_events FROM anon, authenticated");
+  });
+});
+
+describe("20261018000016 fantasy", () => {
+  it("forces the league budget and zero points on client-created teams", () => {
+    expect(fantasy).toContain("NEW.budget_remaining := v_budget");
+    expect(fantasy).toContain("NEW.total_points := 0");
+  });
+
+  it("removes client roster writes", () => {
+    expect(fantasy).toContain('DROP POLICY IF EXISTS "Players can manage their team players"');
+    expect(fantasy).toContain('DROP POLICY IF EXISTS "Players can delete their team players"');
+  });
+});
