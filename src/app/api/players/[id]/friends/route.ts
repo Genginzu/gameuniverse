@@ -10,7 +10,7 @@ import { enforceRateLimit } from "@/lib/services/rateLimitService";
 type RouteContext = { params: Promise<{ id: string }> };
 
 /**
- * GET /api/players/[id]/friends â€” List accepted friends with pagination.
+ * GET /api/players/[id]/friends — List accepted friends with pagination.
  * Public for accepted friends. If the requester is the profile owner,
  * pending received requests are included in the response.
  */
@@ -43,7 +43,7 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
 }
 
 /**
- * POST /api/players/[id]/friends â€” Send a friend request.
+ * POST /api/players/[id]/friends — Send a friend request.
  * The authenticated user is the sender; [id] is the receiver.
  * Validates: auth, self-request, target exists, no duplicate relationship.
  */

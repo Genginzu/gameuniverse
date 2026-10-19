@@ -19,7 +19,7 @@ function parsePage(searchParams: URLSearchParams): number {
 }
 
 /**
- * GET /api/players/[id]/posts â€” Paginated posts for a player.
+ * GET /api/players/[id]/posts — Paginated posts for a player.
  */
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -56,7 +56,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 }
 
 /**
- * POST /api/players/[id]/posts â€” Create a new post.
+ * POST /api/players/[id]/posts — Create a new post.
  */
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {

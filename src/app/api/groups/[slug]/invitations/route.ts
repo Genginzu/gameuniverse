@@ -10,7 +10,7 @@ import { enforceRateLimit } from "@/lib/services/rateLimitService";
 type RouteContext = { params: Promise<{ slug: string }> };
 
 /**
- * GET /api/groups/[slug]/invitations â€” List all invitations for a group.
+ * GET /api/groups/[slug]/invitations — List all invitations for a group.
  * Authentication required. Only owner/admin members can view.
  */
 export async function GET(_request: NextRequest, { params }: RouteContext) {
@@ -47,7 +47,7 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
 }
 
 /**
- * POST /api/groups/[slug]/invitations â€” Invite a player by email or username.
+ * POST /api/groups/[slug]/invitations — Invite a player by email or username.
  * Authentication required. Only owner/admin members can invite.
  */
 export async function POST(request: NextRequest, { params }: RouteContext) {

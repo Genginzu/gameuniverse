@@ -266,7 +266,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     if (insertError) {
       if (insertError.code === "23505") {
         return NextResponse.json(
-          { error: "Vous avez dÃ©jÃ  laissÃ© un avis pour ce jeu" },
+          { error: "Vous avez déjà laissé un avis pour ce jeu" },
           { status: 409 }
         );
       }
@@ -282,7 +282,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         status: "owned",
       });
     } catch {
-      // Library addition is non-blocking â€” log and continue
+      // Library addition is non-blocking — log and continue
       logger.warn("Could not add game to library (may already exist)");
     }
 

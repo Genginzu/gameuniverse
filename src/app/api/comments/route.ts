@@ -215,7 +215,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     if (insertError) {
       if (insertError.code === "23505") {
         return NextResponse.json(
-          { error: "Vous avez dÃ©jÃ  laissÃ© un commentaire pour ce personnage" },
+          { error: "Vous avez déjà laissé un commentaire pour ce personnage" },
           { status: 409 }
         );
       }

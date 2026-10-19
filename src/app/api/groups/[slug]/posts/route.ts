@@ -10,7 +10,7 @@ import { enforceRateLimit } from "@/lib/services/rateLimitService";
 type RouteContext = { params: Promise<{ slug: string }> };
 
 /**
- * GET /api/groups/[slug]/posts â€” List posts of a group's feed, newest first.
+ * GET /api/groups/[slug]/posts — List posts of a group's feed, newest first.
  * Access follows the group's RLS visibility (public groups: anyone; private: members only).
  */
 export async function GET(_request: NextRequest, { params }: RouteContext) {
@@ -32,7 +32,7 @@ export async function GET(_request: NextRequest, { params }: RouteContext) {
 }
 
 /**
- * POST /api/groups/[slug]/posts â€” Create a post in a group's feed.
+ * POST /api/groups/[slug]/posts — Create a post in a group's feed.
  * Authentication required. Only members can post.
  */
 export async function POST(request: NextRequest, { params }: RouteContext) {

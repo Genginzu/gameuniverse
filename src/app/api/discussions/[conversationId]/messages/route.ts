@@ -10,7 +10,7 @@ import { enforceRateLimit } from "@/lib/services/rateLimitService";
 type RouteContext = { params: Promise<{ conversationId: string }> };
 
 /**
- * GET /api/discussions/[conversationId]/messages â€” Get paginated messages.
+ * GET /api/discussions/[conversationId]/messages — Get paginated messages.
  */
 export async function GET(request: NextRequest, { params }: RouteContext) {
   try {
@@ -48,7 +48,7 @@ export async function GET(request: NextRequest, { params }: RouteContext) {
 }
 
 /**
- * POST /api/discussions/[conversationId]/messages â€” Send a message.
+ * POST /api/discussions/[conversationId]/messages — Send a message.
  */
 export async function POST(request: NextRequest, { params }: RouteContext) {
   try {
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
       parsed.data.content
     );
 
-    // Best-effort notification â€” failure must not block the 201 response
+    // Best-effort notification — failure must not block the 201 response
     try {
       const convSupabase = await createRouteHandlerClient();
       const { data: conversation } = await convSupabase

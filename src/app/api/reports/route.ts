@@ -12,7 +12,7 @@ type S = any;
 const CONTENT_TYPES: ReportContentType[] = ["review", "post", "comment", "profile"];
 const REASONS: ReportReason[] = ["spam", "harassment", "inappropriate", "other"];
 
-/** GET /api/reports â€” Authenticated user: list their own reports. */
+/** GET /api/reports — Authenticated user: list their own reports. */
 export async function GET() {
   try {
     const supabase: S = await createRouteHandlerClient();
@@ -29,7 +29,7 @@ export async function GET() {
   }
 }
 
-/** POST /api/reports â€” Authenticated users flag a piece of content. */
+/** POST /api/reports — Authenticated users flag a piece of content. */
 export async function POST(request: NextRequest) {
   try {
     const supabase: S = await createRouteHandlerClient();
