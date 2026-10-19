@@ -73,13 +73,15 @@ export async function POST(request: NextRequest) {
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { sessionId, reportedId, reason, description } = await request.json();
-    if (!reportedId || !reason)
-      return NextResponse.json({ error: "reportedId and reason required" }, { status: 400 });
+    if (!sessionId || !reportedId || !reason)
+      return NextResponse.json({ error: "sessionId, reportedId and reason required" }, { status: 400 });
 
+    // RLS (20261019000003) only accepts disputes about a session the reporter
+    // took part in, against the other participant.
     const { data, error } = await supabase
       .from("coaching_disputes")
       .insert({
-        session_id: sessionId || null,
+        session_id: sessionId,
         reporter_id: user.id,
         reported_id: reportedId,
         reason,
@@ -89,6 +91,9 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
+      if (error.code === "42501") {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
       logger.error("Error creating dispute", { error });
       return NextResponse.json({ error: "Failed to create" }, { status: 500 });
     }

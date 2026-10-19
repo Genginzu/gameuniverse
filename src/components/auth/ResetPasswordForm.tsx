@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { createBrowserClient } from "@supabase/ssr";
+import { usePasswordRecoveryLink } from "@/hooks/usePasswordRecoveryLink";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -22,9 +23,8 @@ import {
 } from "@/components/auth/AuthCard";
 
 export function ResetPasswordForm() {
-  const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [linkError, setLinkError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -37,6 +37,7 @@ export function ResetPasswordForm() {
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
+  const { status, establishSession } = usePasswordRecoveryLink(supabase.auth);
 
   const resetPasswordSchema = z
     .object({
@@ -63,72 +64,18 @@ export function ResetPasswordForm() {
     resolver: zodResolver(resetPasswordSchema),
   });
 
-  useEffect(() => {
-    const handleRecovery = async () => {
-      const hashParams = new URLSearchParams(window.location.hash.substring(1));
-      const accessToken = hashParams.get("access_token");
-      const refreshToken = hashParams.get("refresh_token");
-      const type = hashParams.get("type");
-
-      if (accessToken && refreshToken && type === "recovery") {
-        const { error: sessionError } = await supabase.auth.setSession({
-          access_token: accessToken,
-          refresh_token: refreshToken,
-        });
-
-        if (sessionError) {
-          setError(sessionError.message);
-          setIsLoading(false);
-          return;
-        }
-
-        window.history.replaceState(null, "", window.location.pathname);
-        setIsAuthenticated(true);
-        setIsLoading(false);
-        return;
-      }
-
-      const queryParams = new URLSearchParams(window.location.search);
-      const tokenHash = queryParams.get("token_hash");
-      const queryType = queryParams.get("type");
-
-      if (tokenHash && queryType === "recovery") {
-        const { error: verifyError } = await supabase.auth.verifyOtp({
-          token_hash: tokenHash,
-          type: "recovery",
-        });
-
-        if (verifyError) {
-          setError(verifyError.message);
-          setIsLoading(false);
-          return;
-        }
-
-        window.history.replaceState(null, "", window.location.pathname);
-        setIsAuthenticated(true);
-        setIsLoading(false);
-        return;
-      }
-
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      if (session) {
-        setIsAuthenticated(true);
-      } else {
-        setError(t("noTokenFound"));
-      }
-      setIsLoading(false);
-    };
-
-    handleRecovery();
-  }, [supabase.auth, t]);
-
   const onSubmit = async (data: ResetPasswordFormData) => {
     setIsSubmitting(true);
     setError(null);
 
     try {
+      // The recovery link only signs in now, on explicit submit.
+      const sessionError = await establishSession();
+      if (sessionError) {
+        setLinkError(sessionError);
+        return;
+      }
+
       const { error } = await supabase.auth.updateUser({
         password: data.password,
       });
@@ -149,7 +96,7 @@ export function ResetPasswordForm() {
     }
   };
 
-  if (isLoading) {
+  if (status === "loading") {
     return (
       <div className="flex w-full items-center justify-center rounded-2xl border border-editorial-line bg-editorial-2 py-16 shadow-2xl shadow-black/40">
         <Icon icon="lucide:loader-2" className="size-8 animate-spin text-editorial-accent" />
@@ -157,7 +104,7 @@ export function ResetPasswordForm() {
     );
   }
 
-  if (error && !isAuthenticated) {
+  if (status === "missing" || linkError) {
     return (
       <AuthCard
         icon="lucide:x-circle"
@@ -165,7 +112,9 @@ export function ResetPasswordForm() {
         title={t("invalidLink")}
         description={t("invalidLinkDescription")}
       >
-        <p className="text-center text-sm text-editorial-muted">{error}</p>
+        <p className="text-center text-sm text-editorial-muted">
+          {linkError ?? t("noTokenFound")}
+        </p>
         <Button asChild className={AUTH_PRIMARY_BTN_CLASS}>
           <Link href="/auth">{t("backToLogin")}</Link>
         </Button>

@@ -6,6 +6,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recha
 import type { MonthlyActivity } from "@/types/dashboard-stats";
 import { StatsEmptyState } from "@/components/players/stats/StatsEmptyState";
 import { StatsSectionTitle } from "@/components/players/stats/StatsSectionTitle";
+import { chartColor } from "@/lib/utils/chart-colors";
 
 interface ActivityTimelineProps {
   timeline: MonthlyActivity[];
@@ -70,7 +71,7 @@ export function ActivityTimeline({ timeline }: ActivityTimelineProps) {
                 className="text-gray-600 dark:text-slate-400"
               />
               <Tooltip content={<CustomTooltip />} cursor={false} />
-              <Bar dataKey="gamesAdded" fill="#06b6d4" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="gamesAdded" fill={chartColor(1)} radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>

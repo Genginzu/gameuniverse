@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
+import { enforceRateLimit } from "@/lib/services/rateLimitService";
 import { logger } from "@/lib/logger";
 
 export async function POST(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
   try {
@@ -12,6 +14,10 @@ export async function POST(
     if (!slug) {
       return NextResponse.json({ error: "Slug is required" }, { status: 400 });
     }
+
+    // view_count drives popularity: limit per client IP.
+    const limited = await enforceRateLimit("view", { request });
+    if (limited) return limited;
 
     const supabase = await createRouteHandlerClient();
 
@@ -30,8 +36,8 @@ export async function POST(
       return NextResponse.json({ error: "Character not found" }, { status: 404 });
     }
 
-    // Increment view count atomically via RPC
-    const { error } = await db.rpc("increment_character_view_count", {
+    // increment_character_view_count is service_role only (migration 20261019000002).
+    const { error } = await getSupabaseAdmin().rpc("increment_character_view_count", {
       p_character_id: character.id,
     });
 

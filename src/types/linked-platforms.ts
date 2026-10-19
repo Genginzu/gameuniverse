@@ -45,7 +45,7 @@ export interface LinkedPlatform {
   updatedAt: string;
 }
 
-/** Platform metadata for UI display */
+/** Platform metadata for UI display. Logos are monochrome so they follow the site palette. */
 export const PLATFORM_META: Record<
   GamingPlatform,
   { icon: string; color: string; authType: AuthType }
@@ -53,54 +53,52 @@ export const PLATFORM_META: Record<
   steam: { icon: "mdi:steam", color: "text-white", authType: "oauth" },
   xbox: {
     icon: "mdi:microsoft-xbox",
-    color: "text-green-600 dark:text-green-400",
+    color: "text-white",
     authType: "oauth",
   },
   playstation: {
     icon: "mdi:sony-playstation",
-    color: "text-blue-600 dark:text-blue-400",
+    color: "text-white",
     authType: "npsso",
   },
   epic: {
     icon: "simple-icons:epicgames",
-    // Monochrome brand logo; kept light so it stays visible on the dark
-    // linked-platforms surfaces (which don't always carry the `dark` class).
     color: "text-white",
     authType: "oauth",
   },
   battlenet: {
     icon: "simple-icons:battledotnet",
-    color: "text-blue-500 dark:text-blue-300",
+    color: "text-white",
     authType: "oauth",
   },
   discord: {
     icon: "simple-icons:discord",
-    color: "text-indigo-500 dark:text-indigo-400",
+    color: "text-white",
     authType: "oauth",
   },
   itch: {
     icon: "simple-icons:itchdotio",
-    color: "text-red-500 dark:text-red-400",
+    color: "text-white",
     authType: "oauth",
   },
   gog: {
     icon: "simple-icons:gogdotcom",
-    color: "text-purple-600 dark:text-purple-400",
+    color: "text-white",
     authType: "manual",
   },
   nintendo: {
     icon: "mdi:nintendo-switch",
-    color: "text-red-600 dark:text-red-400",
+    color: "text-white",
     authType: "manual",
   },
   ea: {
     icon: "simple-icons:ea",
-    color: "text-orange-600 dark:text-orange-400",
+    color: "text-white",
     authType: "manual",
   },
   ubisoft: {
     icon: "simple-icons:ubisoft",
-    color: "text-blue-700 dark:text-blue-300",
+    color: "text-white",
     authType: "manual",
   },
 };

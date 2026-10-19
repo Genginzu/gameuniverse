@@ -45,7 +45,7 @@ export function AdminReportsContent() {
             onClick={() => setFilter(f)}
             className={`min-h-[44px] rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
               filter === f
-                ? "from-palette-secondary-500 to-palette-primary-500 bg-linear-to-r text-white shadow-sm"
+                ? "from-cta-from to-cta-to bg-linear-to-r text-white shadow-sm"
                 : "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:bg-slate-800 dark:text-gray-200 dark:hover:bg-slate-700"
             }`}
           >

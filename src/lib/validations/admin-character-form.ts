@@ -82,7 +82,7 @@ export const adminCharacterFormSchema = z.object({
     .regex(/^[a-z0-9-]+$/, "Slug must contain only lowercase letters, numbers, and hyphens"),
   background_color: z
     .string()
-    .regex(/^#[0-9a-fA-F]{6}$/, "Background color must be a valid hex color (e.g. #0f172a)")
+    .regex(/^#[0-9a-fA-F]{6}$/, "Background color must be a valid hex color (e.g. #1b1c25)")
     .or(z.literal(""))
     .optional(),
   main_image_url: z.string().url("Invalid URL").or(z.literal("")).optional(),

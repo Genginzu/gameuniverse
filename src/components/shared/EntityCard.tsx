@@ -96,9 +96,6 @@ function EntityCardInner<T extends object>({
   const getStringValue = (field: keyof T): string => String(entity[field] || "");
 
   const imageUrl = entity[config.imageField] as string | undefined;
-  const backgroundColor = config.backgroundColorField
-    ? (entity[config.backgroundColorField] as string | undefined)
-    : undefined;
   const title = getStringValue(config.titleField);
   const description = config.descriptionField ? getStringValue(config.descriptionField) : undefined;
 
@@ -200,11 +197,10 @@ function EntityCardInner<T extends object>({
     <div className="group relative">
       <Link href={config.linkTemplate(entity, locale)}>
         <div
-          className={`relative ${aspectRatioClass} hover:ring-neon-primary/30 cursor-pointer overflow-hidden rounded-2xl bg-white shadow-md transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(var(--neon-primary),0.3),0_0_40px_rgba(var(--neon-secondary),0.15)] hover:ring-1 motion-reduce:transition-none motion-reduce:hover:scale-100 dark:bg-gray-800`}
-          style={{ backgroundColor: backgroundColor || "#f3f4f6" }}
+          className={`relative ${aspectRatioClass} hover:ring-neon-primary/30 bg-editorial-3 cursor-pointer overflow-hidden rounded-2xl shadow-md transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_20px_rgba(var(--neon-primary),0.3),0_0_40px_rgba(var(--neon-secondary),0.15)] hover:ring-1 motion-reduce:transition-none motion-reduce:hover:scale-100`}
         >
           {needsFallbackAvatar ? (
-            <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30">
+            <div className="from-palette-primary-100 to-palette-accent-100 dark:from-palette-primary-900/30 dark:to-palette-accent-900/30 flex h-full w-full items-center justify-center bg-linear-to-br">
               {config.fallbackAvatarRenderer!()}
             </div>
           ) : (
@@ -262,7 +258,7 @@ function EntityCardInner<T extends object>({
 
         {config.aspectRatio === "1:1" && config.subtitleField && (
           <div className="p-4">
-            <h3 className="line-clamp-1 text-base font-semibold text-gray-900 transition-colors group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400">
+            <h3 className="group-hover:text-palette-primary-600 dark:group-hover:text-palette-primary-400 line-clamp-1 text-base font-semibold text-gray-900 transition-colors dark:text-white">
               {title}
             </h3>
           </div>

@@ -4,6 +4,7 @@ import { logger } from "@/lib/logger";
 import { syncSteamLibrary } from "@/lib/services/steamLibrarySync";
 import { syncXboxLibrary } from "@/lib/services/xboxLibrarySync";
 import { syncPsnLibrary } from "@/lib/services/psnLibrarySync";
+import { bearerToken, safeEqual } from "@/lib/utils/safeEqual";
 
 const MAX_USERS_PER_RUN = 50;
 
@@ -19,9 +20,10 @@ interface SyncOutcome {
 function isAuthorized(request: NextRequest): boolean {
   const secret = process.env.CRON_SECRET;
   if (!secret) return false;
-  const header = request.headers.get("authorization");
-  const bearer = header?.startsWith("Bearer ") ? header.slice(7) : null;
-  return bearer === secret || request.headers.get("x-cron-secret") === secret;
+  return (
+    safeEqual(bearerToken(request.headers.get("authorization")), secret) ||
+    safeEqual(request.headers.get("x-cron-secret"), secret)
+  );
 }
 
 export const GET = handler;

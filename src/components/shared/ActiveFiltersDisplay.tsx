@@ -39,12 +39,12 @@ export function ActiveFiltersDisplay({
         </button>
       </div>
 
-      <div className="rounded-xl bg-linear-to-r from-blue-50 to-indigo-50 p-3 sm:p-4 dark:from-blue-900/20 dark:to-indigo-900/20">
+      <div className="from-palette-primary-50 to-palette-accent-50 dark:from-palette-primary-900/20 dark:to-palette-accent-900/20 rounded-xl bg-linear-to-r p-3 sm:p-4">
         <div className="mb-2 flex items-center justify-between">
-          <span className="text-sm font-medium text-blue-900 dark:text-blue-300">
+          <span className="text-palette-primary-900 dark:text-palette-primary-300 text-sm font-medium">
             {labels.activeFilters}
           </span>
-          <span className="text-xs text-blue-600 dark:text-blue-400">
+          <span className="text-palette-primary-600 dark:text-palette-primary-400 text-xs">
             {totalActiveCount} {labels.selected}
           </span>
         </div>

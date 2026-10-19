@@ -3,7 +3,7 @@ import { CharacterDetailsContent } from "@/components/characters/details/Charact
 import { CharacterService } from "@/lib/services/characterService";
 import { EditorialShell } from "@/components/layout/editorial/EditorialShell";
 import { DynamicAccent } from "@/components/shared/DynamicAccent";
-import { paletteFromHex } from "@/lib/utils/accent-palette";
+import { DEFAULT_PALETTE } from "@/lib/utils/accent-palette";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
 import { getTranslations } from "next-intl/server";
@@ -30,10 +30,7 @@ export default async function CharacterDetailsPage({ params }: CharacterDetailsP
 
     return (
       <EditorialShell>
-        <DynamicAccent
-          palette={paletteFromHex(character.backgroundColor ?? "#0077e6", "blue")}
-          as="div"
-        >
+        <DynamicAccent palette={DEFAULT_PALETTE} as="div">
           <ErrorBoundary
             fallback={
               <ErrorFallback

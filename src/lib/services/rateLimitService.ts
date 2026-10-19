@@ -18,6 +18,8 @@ export const RATE_LIMITS = {
   prediction: { limit: 30, windowSeconds: 600 },
   coachingBooking: { limit: 10, windowSeconds: 3600 },
   search: { limit: 120, windowSeconds: 60 },
+  view: { limit: 60, windowSeconds: 600 },
+  gameSession: { limit: 30, windowSeconds: 3600 },
 } as const;
 
 export type RateLimitAction = keyof typeof RATE_LIMITS;

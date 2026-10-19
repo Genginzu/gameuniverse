@@ -3,6 +3,7 @@
 import { Input } from "@/components/ui/input";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import type { CharacterFormTabProps } from "@/types/admin-characters";
+import { BRAND_COLORS } from "@/lib/utils/brand-colors";
 
 interface GeneralTabProps extends CharacterFormTabProps {
   mode: "create" | "edit";
@@ -38,7 +39,11 @@ export function CharacterFormGeneralTab({ form, t, mode }: GeneralTabProps) {
               <FormLabel>{t("backgroundColor")}</FormLabel>
               <div className="flex items-center gap-3">
                 <FormControl>
-                  <Input placeholder="#0f172a" {...field} value={field.value ?? ""} />
+                  <Input
+                    placeholder={BRAND_COLORS.neutral[950]}
+                    {...field}
+                    value={field.value ?? ""}
+                  />
                 </FormControl>
                 {field.value && /^#[0-9a-fA-F]{6}$/.test(field.value) && (
                   <div

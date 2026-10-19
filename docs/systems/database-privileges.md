@@ -16,7 +16,32 @@ nouveaux objets du schéma `public` ne sont **plus** accordés automatiquement �
 | Table / séquence           | aucun  | aucun           | tout           |
 | Fonction (`PUBLIC` inclus) | aucun  | aucun           | `EXECUTE`      |
 
-Les objets existants avant cette migration gardent leurs droits.
+Les objets existants avant cette migration gardent leurs droits. Les RPC
+historiques dangereuses ont été retirées des clients au cas par cas
+(`20261018000013`, `20261019000002`) : magasins (`create_store`,
+`update_store`), nettoyage (`cleanup_orphaned_*`), traductions, compteurs de
+vues. Les RPC de bibliothèque (`get_common_games`, `get_user_library_stats`…)
+sont `SECURITY INVOKER` pour respecter `stats_private`.
+
+## Données écrites par le serveur uniquement
+
+Ces tables n'ont pas de policy d'insertion client ; elles sont écrites via
+`getSupabaseAdmin()` :
+
+| Table / colonne                 | Écrit par                                   |
+| ------------------------------- | ------------------------------------------- |
+| `player_achievements`           | `AchievementEngine`, routes admin           |
+| `coin_transactions` / wallets   | `ensure_player_wallet`, `award_activity_reward` (verrou par joueur, une récompense par référence) |
+| `content_reports`               | `ReportServerService`                       |
+| `game_price_history`            | trigger sur `game_prices`, admins           |
+| `match_comments.reactions`      | RPC `toggle_match_comment_reaction`         |
+| `coaching_sessions.conversation_id` | `coachingConversationService`           |
+
+Gardes par trigger pour les données saisies par les joueurs (`20261019000001`,
+`20261019000003`) : amitiés (seul `status` change, création en `pending`),
+invitations de groupe (seul `status` change, invitation en attente et non
+expirée), groupes / communautés (`owner_id` figé, visibilité réservée au
+propriétaire), sessions de jeu (24 h max par session et par jour).
 
 ## Utilisation
 

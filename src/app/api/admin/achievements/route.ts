@@ -6,6 +6,7 @@ import {
   adminAchievementFormSchema,
 } from "@/lib/validations/admin-achievement-form";
 import { logger } from "@/lib/logger";
+import { ilikeAnyFilter } from "@/lib/utils/postgrestFilter";
 import type { AdminAchievement } from "@/types/admin-achievements";
 
 /** Raw row shape from the achievement_catalog table */
@@ -80,9 +81,8 @@ export async function GET(request: NextRequest) {
     // Search on key + localized name column
     const applySearchFilter = (query: ReturnType<typeof supabase.from>) => {
       if (!search?.trim()) return query;
-      const term = `%${search.trim()}%`;
       const nameCol = locale === "en" ? "name_en" : "name_fr";
-      return query.or(`key.ilike.${term},${nameCol}.ilike.${term}`);
+      return query.or(ilikeAnyFilter(["key", nameCol], search));
     };
 
     // Count

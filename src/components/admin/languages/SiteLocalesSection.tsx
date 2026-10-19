@@ -25,7 +25,7 @@ export function SiteLocalesSection({ locales }: SiteLocalesSectionProps) {
     <Card>
       <CardHeader>
         <div className="flex items-center gap-2">
-          <Icon icon="fa:globe" className="h-5 w-5 text-blue-500" />
+          <Icon icon="fa:globe" className="text-palette-primary-500 h-5 w-5" />
           <CardTitle>{t("title")}</CardTitle>
         </div>
         <CardDescription>{t("description")}</CardDescription>
@@ -100,9 +100,12 @@ export function SiteLocalesSection({ locales }: SiteLocalesSectionProps) {
         )}
 
         {/* Info message about source code management */}
-        <div className="flex items-start gap-2 rounded-lg border border-blue-200 bg-blue-50 p-3 dark:border-blue-800 dark:bg-blue-950">
-          <Icon icon="fa:info-circle" className="mt-0.5 h-4 w-4 shrink-0 text-blue-500" />
-          <p className="text-sm text-blue-700 dark:text-blue-300">
+        <div className="border-palette-primary-200 bg-palette-primary-50 dark:border-palette-primary-800 dark:bg-palette-primary-950 flex items-start gap-2 rounded-lg border p-3">
+          <Icon
+            icon="fa:info-circle"
+            className="text-palette-primary-500 mt-0.5 h-4 w-4 shrink-0"
+          />
+          <p className="text-palette-primary-700 dark:text-palette-primary-300 text-sm">
             {t("managedViaCode", {
               routingFile: "src/i18n/routing.ts",
               messagesDir: "src/messages/*.json",

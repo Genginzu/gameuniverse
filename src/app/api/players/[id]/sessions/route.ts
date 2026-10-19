@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { PlayerService } from "@/lib/services/playerService";
 import { GameSessionsServerService } from "@/lib/services/gameSessionsServerService";
+import { enforceRateLimit } from "@/lib/services/rateLimitService";
 import { logger } from "@/lib/logger";
 import type { GamingSessionsResponse } from "@/types/gaming-session";
 
@@ -100,6 +101,9 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const { searchParams } = new URL(request.url);
     const locale = searchParams.get("locale") || "fr";
 
+    const limited = await enforceRateLimit("gameSession", { userId: user.id });
+    if (limited) return limited;
+
     const session = await GameSessionsServerService.createSession(
       playerId,
       { gameId, date, durationMinutes },
@@ -108,6 +112,11 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
     return NextResponse.json(session, { status: 201 });
   } catch (error) {
+    const message = error instanceof Error ? error.message : "";
+    // DB guard (migration 20261019000003): 24h per session / per day, no future start.
+    if (message.startsWith("game_sessions:")) {
+      return NextResponse.json({ error: message }, { status: 400 });
+    }
     logger.error("Error in player sessions POST", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }

@@ -49,7 +49,7 @@
 
 .dark .glass {
   border: 1px solid rgba(var(--neon-primary), var(--neon-border-opacity));
-  background: rgba(15, 23, 42, 0.5);
+  background: color-mix(in srgb, var(--color-palette-neutral-900) 50%, transparent);
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.05),
@@ -95,7 +95,7 @@
 
 .dark .glass-card {
   border: 1px solid rgba(var(--neon-primary), var(--neon-border-opacity));
-  background: rgba(30, 41, 59, 0.4);
+  background: color-mix(in srgb, var(--color-palette-neutral-800) 40%, transparent);
   box-shadow:
     0 4px 24px rgba(0, 0, 0, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.04),
@@ -104,7 +104,7 @@
 }
 
 .dark .glass-card:hover {
-  background: rgba(30, 41, 59, 0.55);
+  background: color-mix(in srgb, var(--color-palette-neutral-800) 55%, transparent);
   box-shadow:
     0 8px 40px rgba(0, 0, 0, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.06),
@@ -115,12 +115,12 @@
 /* @deprecated Glass sidebar */
 .glass-sidebar {
   background: #fff;
-  border-right: 1px solid #eaeaf5;
+  border-right: 1px solid var(--color-palette-neutral-100);
   box-shadow: 3px 0 16px rgba(var(--neon-primary), 0.04);
 }
 
 .dark .glass-sidebar {
-  background: #1d2333;
+  background: var(--color-palette-neutral-900);
   border-right: 1px solid rgba(255, 255, 255, 0.06);
   box-shadow: 3px 0 16px rgba(0, 0, 0, 0.25);
 }
@@ -167,7 +167,7 @@
 }
 
 .dark .glass-header {
-  background: rgba(15, 23, 42, 0.6);
+  background: color-mix(in srgb, var(--color-palette-neutral-900) 60%, transparent);
   border-bottom: 1px solid rgba(var(--neon-primary), var(--neon-border-opacity));
   box-shadow:
     0 4px 24px rgba(0, 0, 0, 0.2),
@@ -201,7 +201,7 @@
 
 .dark .glass-dropdown {
   border: 1px solid rgba(var(--neon-primary), var(--neon-border-opacity));
-  background: rgba(30, 41, 59, 0.75);
+  background: color-mix(in srgb, var(--color-palette-neutral-800) 75%, transparent);
   box-shadow:
     0 12px 40px rgba(0, 0, 0, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.05),
@@ -250,7 +250,7 @@
 
 .dark .glass-input {
   border: 1px solid rgba(var(--neon-primary), var(--neon-border-opacity));
-  background: rgba(30, 41, 59, 0.4);
+  background: color-mix(in srgb, var(--color-palette-neutral-800) 40%, transparent);
   box-shadow:
     inset 0 1px 2px rgba(0, 0, 0, 0.1),
     0 0 10px rgba(var(--neon-primary), calc(var(--neon-glow-opacity) * 0.5)),
@@ -265,7 +265,7 @@
 }
 
 .dark .glass-input:focus {
-  background: rgba(30, 41, 59, 0.6);
+  background: color-mix(in srgb, var(--color-palette-neutral-800) 60%, transparent);
   border: 1px solid rgba(var(--neon-primary), 0.4);
   box-shadow:
     inset 0 1px 2px rgba(0, 0, 0, 0.1),
@@ -335,12 +335,12 @@
 
 /* Dashboard background — Vikinger-style light gray */
 .dashboard-bg {
-  background: #f8f8fb;
+  background: var(--color-palette-neutral-50);
   min-height: 100vh;
 }
 
 .dark .dashboard-bg {
-  background: #161b28;
+  background: var(--color-palette-neutral-950);
 }
 
 /* Cursor pointer global pour tous les éléments cliquables */
@@ -368,29 +368,29 @@ label[for],
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: var(--color-palette-neutral-100);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--color-palette-neutral-300);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: var(--color-palette-neutral-400);
 }
 
 .dark ::-webkit-scrollbar-track {
-  background: #1e293b;
+  background: var(--color-palette-neutral-800);
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: #475569;
+  background: var(--color-palette-neutral-600);
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-  background: #64748b;
+  background: var(--color-palette-neutral-500);
 }
 
 /* Hide scrollbar but keep scroll functionality */

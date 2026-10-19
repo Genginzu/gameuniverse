@@ -6,20 +6,12 @@ import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import type { GenreDistributionEntry } from "@/types/dashboard-stats";
 import { StatsEmptyState } from "@/components/players/stats/StatsEmptyState";
 import { StatsSectionTitle } from "@/components/players/stats/StatsSectionTitle";
+import { chartColor } from "@/lib/utils/chart-colors";
 
 interface GenreDistributionChartProps {
   distribution: GenreDistributionEntry[];
   locale: string;
 }
-
-const COLORS = [
-  "#8b5cf6", // violet
-  "#06b6d4", // cyan
-  "#3b82f6", // blue
-  "#a855f7", // purple
-  "#ec4899", // pink
-  "#6b7280", // gray (for "Autres")
-];
 
 interface CustomTooltipProps {
   active?: boolean;
@@ -80,7 +72,7 @@ export function GenreDistributionChart({
                   strokeWidth={0}
                 >
                   {distribution.map((entry, index) => (
-                    <Cell key={entry.genre} fill={COLORS[index % COLORS.length]} />
+                    <Cell key={entry.genre} fill={chartColor(index)} />
                   ))}
                 </Pie>
                 <Tooltip content={<CustomTooltip />} />
@@ -92,7 +84,7 @@ export function GenreDistributionChart({
               <div key={entry.genre} className="flex items-center gap-2">
                 <span
                   className="inline-block h-3 w-3 rounded-full"
-                  style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                  style={{ backgroundColor: chartColor(index) }}
                 />
                 <span className="text-sm text-gray-700 dark:text-slate-300">
                   {entry.genre} ({entry.percentage}%)

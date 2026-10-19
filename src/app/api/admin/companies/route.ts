@@ -3,6 +3,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { companyQuerySchema, adminCompanyFormSchema } from "@/lib/validations/admin-company-form";
 import { logger } from "@/lib/logger";
+import { ilikeAnyFilter } from "@/lib/utils/postgrestFilter";
 
 /**
  * GET /api/admin/companies - List companies with pagination, search, sort, and game count
@@ -37,8 +38,7 @@ export async function GET(request: NextRequest) {
 
     const applySearchFilter = (query: ReturnType<typeof supabase.from>) => {
       if (!search?.trim()) return query;
-      const term = `%${search.trim()}%`;
-      return query.or(`name.ilike.${term},slug.ilike.${term}`);
+      return query.or(ilikeAnyFilter(["name", "slug"], search));
     };
 
     // Count query

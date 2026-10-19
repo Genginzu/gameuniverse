@@ -1,0 +1,40 @@
+/*
+ * Boutons pleins : dégradé CTA (tokens --color-cta-from / --color-cta-to dans @theme).
+ *
+ * Classe unique `.btn-filled` pour tous les boutons pleins du site : changer la
+ * couleur ou l'effet de hover ici suffit à mettre à jour tout le site.
+ * Hors @layer volontairement : elle prime sur les utilities de fond/couleur/hover
+ * laissées sur l'élément.
+ */
+.btn-filled {
+  background-color: var(--color-cta-to);
+  background-image: linear-gradient(to right, var(--color-cta-from), var(--color-cta-to));
+  color: #fff;
+  transition:
+    filter 200ms ease,
+    translate 200ms ease,
+    opacity 200ms ease;
+}
+
+.btn-filled:hover:not(:disabled):not([aria-disabled="true"]),
+.btn-filled:focus-visible {
+  opacity: 1;
+  filter: brightness(1.1);
+  translate: 0 -2px;
+}
+
+.btn-filled:active:not(:disabled) {
+  filter: brightness(0.95);
+  translate: 0 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-filled {
+    transition: filter 200ms ease;
+  }
+
+  .btn-filled:hover:not(:disabled):not([aria-disabled="true"]),
+  .btn-filled:focus-visible {
+    translate: none;
+  }
+}

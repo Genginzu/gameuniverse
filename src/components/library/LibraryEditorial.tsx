@@ -186,7 +186,7 @@ export function LibraryEditorial({ locale = "fr" }: LibraryEditorialProps) {
               <button
                 type="button"
                 onClick={() => setShowAddGameDialog(true)}
-                className="from-palette-secondary-500 to-palette-primary-500 hover:from-palette-secondary-600 hover:to-palette-primary-600 inline-flex h-12 shrink-0 cursor-pointer items-center gap-1.5 rounded-xl bg-linear-to-r px-4 text-sm font-semibold text-white shadow-lg transition-all hover:shadow-xl sm:h-14 sm:px-6 sm:text-base"
+                className="btn-filled inline-flex h-12 shrink-0 cursor-pointer items-center gap-1.5 rounded-xl px-4 text-sm font-semibold text-white shadow-lg transition-all sm:h-14 sm:px-6 sm:text-base"
               >
                 <Icon icon="lucide:plus" className="size-4 sm:size-5" />
                 {t("addGame.trigger")}

@@ -168,3 +168,70 @@ describe("20261018000019 conversations", () => {
     expect(conversationsGuard).toContain("BEFORE UPDATE ON public.coaching_sessions");
   });
 });
+
+const socialGraph = read("20261019000001_guard_friendships_invitations_groups.sql");
+const legacyRpcs = read("20261019000002_restrict_legacy_rpcs.sql");
+const integrity = read("20261019000003_server_only_achievements_and_integrity.sql");
+const coinRewards = read("20261019000004_atomic_coin_rewards.sql");
+
+describe("20261019000001 social graph", () => {
+  it("only lets users send pending friend requests and change their status", () => {
+    expect(socialGraph).toContain("AND status = 'pending'");
+    expect(socialGraph).toContain("NEW.sender_id IS DISTINCT FROM OLD.sender_id");
+  });
+
+  it("only lets the invitee accept or decline a pending, unexpired invitation", () => {
+    expect(socialGraph).toContain("(to_jsonb(NEW) - 'status') IS DISTINCT FROM (to_jsonb(OLD) - 'status')");
+    expect(socialGraph).toContain("OR OLD.expires_at <= now()");
+  });
+
+  it("keeps owner_id immutable on groups and communities", () => {
+    expect(socialGraph).toContain("NEW.owner_id IS DISTINCT FROM OLD.owner_id");
+    expect(socialGraph).toContain("BEFORE UPDATE ON public.groups");
+    expect(socialGraph).toContain("BEFORE UPDATE ON public.communities");
+  });
+});
+
+describe("20261019000002 legacy RPCs", () => {
+  it("revokes store, cleanup, translation and view-count RPCs from clients", () => {
+    for (const fn of [
+      "update_store(uuid, text, text, text, boolean)",
+      "create_store(text, text, text)",
+      "cleanup_orphaned_prices()",
+      "refresh_translation_stats_cross_lang(text, text, text, text[], text[])",
+      "increment_game_view_count(uuid)",
+    ]) {
+      expect(legacyRpcs).toContain(`REVOKE EXECUTE ON FUNCTION public.${fn}`);
+    }
+  });
+
+  it("makes library RPCs respect user_library RLS", () => {
+    expect(legacyRpcs).toContain(
+      "ALTER FUNCTION public.get_common_games(uuid, uuid, text, integer, integer) SECURITY INVOKER"
+    );
+    expect(legacyRpcs).toContain("WHERE NOT public.is_stats_private(player_id)");
+  });
+});
+
+describe("20261019000003 integrity", () => {
+  it("removes client writes on achievements, price history and reports", () => {
+    expect(integrity).toContain("DROP POLICY IF EXISTS player_achievements_insert_own");
+    expect(integrity).toContain('DROP POLICY IF EXISTS "Authenticated users can insert price history"');
+    expect(integrity).toContain('DROP POLICY IF EXISTS "Users can create reports"');
+  });
+
+  it("caps self-reported game sessions and routes reactions through an RPC", () => {
+    expect(integrity).toContain("NEW.ended_at - NEW.started_at > interval '24 hours'");
+    expect(integrity).toContain("v_users := v_users || to_jsonb(v_uid::text)");
+  });
+});
+
+describe("20261019000004 coin rewards", () => {
+  it("serialises rewards per player and de-duplicates references", () => {
+    expect(coinRewards).toContain("pg_advisory_xact_lock(hashtextextended('coins:' || p_player_id::text, 0))");
+    expect(coinRewards).toContain("AND t.reference_id = p_reference_id");
+    expect(coinRewards).toContain(
+      "REVOKE EXECUTE ON FUNCTION public.award_activity_reward(uuid, text, uuid)"
+    );
+  });
+});

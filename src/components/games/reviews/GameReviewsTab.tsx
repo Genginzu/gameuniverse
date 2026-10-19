@@ -14,7 +14,6 @@ import type { ReviewFormData } from "@/types/review";
 interface GameReviewsTabProps {
   gameId: string;
   gameTitle: string;
-  accentColor?: string;
 }
 
 function AverageRating({
@@ -55,11 +54,7 @@ function LoginPrompt({ message }: { message: string }) {
   );
 }
 
-export function GameReviewsTab({
-  gameId,
-  gameTitle: _gameTitle,
-  accentColor,
-}: GameReviewsTabProps) {
+export function GameReviewsTab({ gameId, gameTitle: _gameTitle }: GameReviewsTabProps) {
   const t = useReviewTranslations();
   const { user, loading: authLoading } = useAuth();
   const {
@@ -105,7 +100,6 @@ export function GameReviewsTab({
                   onSubmitSuccess={fetchReviews}
                   onSubmit={handleSubmit}
                   submitting={submitting}
-                  accentColor={accentColor}
                 />
               )}
               {showEditButton && (
@@ -114,7 +108,6 @@ export function GameReviewsTab({
                   onSubmitSuccess={fetchReviews}
                   onSubmit={handleUpdate}
                   submitting={submitting}
-                  accentColor={accentColor}
                   existingReview={userReview}
                 />
               )}

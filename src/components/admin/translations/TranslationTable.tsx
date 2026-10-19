@@ -70,7 +70,7 @@ export function TranslationTable({
               onClick={() => {
                 items.filter((i) => selectedIds.has(i.entityId)).forEach(onTranslate);
               }}
-              className="from-palette-secondary-500 to-palette-primary-500 inline-flex items-center gap-1.5 rounded-lg bg-linear-to-r px-3 py-1.5 text-xs font-medium text-white transition-all duration-300 hover:opacity-90"
+              className="btn-filled inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium text-white transition-all duration-300"
             >
               <Icon icon="mdi:translate" className="size-4" />
               {t("buttons.translateSelection")}

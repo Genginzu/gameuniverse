@@ -9,6 +9,7 @@ import { SWRProvider } from "@/components/providers/SWRProvider";
 import { CookieConsentProvider } from "@/components/providers/CookieConsentProvider";
 import { ConsentGatedAnalytics } from "@/components/legal/ConsentGatedAnalytics";
 import { JsonLd } from "@/components/shared/JsonLd";
+import { BRAND_COLORS } from "@/lib/utils/brand-colors";
 
 const LOCALE_MAP: Record<string, string> = { fr: "fr_FR", en: "en_US" };
 
@@ -44,7 +45,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
+    { media: "(prefers-color-scheme: dark)", color: BRAND_COLORS.neutral[950] },
   ],
 };
 

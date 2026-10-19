@@ -138,14 +138,15 @@ export class PostCommentServerService {
   static async deleteComment(
     commentId: string,
     playerId: string,
-    postOwnerId: string
+    postOwnerId: string,
+    postId: string
   ): Promise<void> {
     const supabase = await createRouteHandlerClient();
 
-    // Fetch the comment to verify existence and ownership
+    // Fetch the comment to verify existence, post binding and ownership
     const { data: existing, error: fetchError } = await supabase
       .from("post_comments" as UntypedFrom)
-      .select("id, player_id")
+      .select("id, player_id, post_id")
       .eq("id", commentId)
       .single();
 
@@ -153,9 +154,13 @@ export class PostCommentServerService {
       throw new Error("Comment not found");
     }
 
-    const commentOwnerId = (existing as unknown as { player_id: string }).player_id;
+    const comment = existing as unknown as { player_id: string; post_id: string };
+    // postOwnerId belongs to the path post: the comment must be on that post.
+    if (comment.post_id !== postId) {
+      throw new Error("Comment not found");
+    }
 
-    if (playerId !== commentOwnerId && playerId !== postOwnerId) {
+    if (playerId !== comment.player_id && playerId !== postOwnerId) {
       throw new Error("Forbidden");
     }
 
