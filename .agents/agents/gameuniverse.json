@@ -1,6 +1,8 @@
 {
   "name": "gameuniverse",
   "description": "Agent principal pour le développement de Game Universe",
+  "tools": ["*"],
+  "useLegacyMcpJson": true,
   "resources": [
     {
       "type": "knowledgeBase",
@@ -9,15 +11,6 @@
       "indexType": "best",
       "include": ["**/*.md"],
       "exclude": ["**/draft/**"],
-      "autoUpdate": true
-    },
-    {
-      "type": "knowledgeBase",
-      "source": "file://./src",
-      "name": "Code source",
-      "indexType": "fast",
-      "include": ["**/*.ts", "**/*.tsx"],
-      "exclude": ["**/*.test.*", "**/*.d.ts"],
       "autoUpdate": true
     }
   ]

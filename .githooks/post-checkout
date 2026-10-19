@@ -1,0 +1,19 @@
+#!/bin/sh
+
+[ "$3" = "1" ] || exit 0
+[ -f graphify-out/graph.json ] && exit 0
+command -v graphify >/dev/null 2>&1 || exit 0
+
+current=$(pwd -P)
+
+git worktree list --porcelain | sed -n 's/^worktree //p' | while IFS= read -r wt; do
+  [ -f "$wt/graphify-out/graph.json" ] || continue
+  [ "$(cd "$wt" && pwd -P)" = "$current" ] && continue
+  mkdir -p graphify-out
+  cp -R "$wt/graphify-out/." graphify-out/
+  rm -f graphify-out/.graphify_root graphify-out/.graphify_python
+  break
+done
+
+(graphify update . >/dev/null 2>&1 &)
+exit 0
