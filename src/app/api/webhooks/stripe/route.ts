@@ -1,78 +1,52 @@
 import { NextRequest, NextResponse } from "next/server";
+import type Stripe from "stripe";
 import { getStripe } from "@/lib/stripe";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { logger } from "@/lib/logger";
-import type Stripe from "stripe";
+import { claimEvent, handleStripeEvent, releaseEvent } from "@/lib/services/stripeWebhookService";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type S = any;
-
+/**
+ * POST /api/webhooks/stripe
+ *
+ * Verifies the Stripe signature, then processes each event id once
+ * (stripe_webhook_events ledger). A processing failure releases the claim and
+ * returns 500 so Stripe retries instead of silently losing the update.
+ */
 export async function POST(request: NextRequest) {
-  const stripe = getStripe();
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  if (!webhookSecret) {
+    logger.error("STRIPE_WEBHOOK_SECRET not configured");
+    return NextResponse.json({ error: "Server misconfigured" }, { status: 500 });
+  }
 
   const body = await request.text();
   const sig = request.headers.get("stripe-signature");
-
   if (!sig) return NextResponse.json({ error: "Missing signature" }, { status: 400 });
 
   let event: Stripe.Event;
   try {
-    event = stripe.webhooks.constructEvent(body, sig, process.env.STRIPE_WEBHOOK_SECRET!);
+    event = getStripe().webhooks.constructEvent(body, sig, webhookSecret);
   } catch {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
-  const supabase: S = getSupabaseAdmin();
+  const db = getSupabaseAdmin();
 
   try {
-    switch (event.type) {
-      case "checkout.session.completed": {
-        const session = event.data.object as Stripe.Checkout.Session;
-        const sessionId = session.metadata?.coaching_session_id;
-        if (sessionId) {
-          await supabase
-            .from("coaching_sessions")
-            .update({ payment_status: "paid" })
-            .eq("id", sessionId);
-          logger.info("Payment completed for session", { sessionId });
-        }
-        break;
-      }
-
-      case "account.updated": {
-        const account = event.data.object as Stripe.Account;
-        if (account.charges_enabled && account.details_submitted) {
-          await supabase
-            .from("coach_profiles")
-            .update({ stripe_onboarding_complete: true })
-            .eq("stripe_account_id", account.id);
-          logger.info("Stripe onboarding complete", { accountId: account.id });
-        }
-        break;
-      }
-
-      case "charge.refunded": {
-        const charge = event.data.object as Stripe.Charge;
-        const pi =
-          typeof charge.payment_intent === "string"
-            ? charge.payment_intent
-            : charge.payment_intent?.id;
-        if (pi) {
-          const paymentIntent = await stripe.paymentIntents.retrieve(pi);
-          const sessionId = paymentIntent.metadata?.coaching_session_id;
-          if (sessionId) {
-            await supabase
-              .from("coaching_sessions")
-              .update({ payment_status: "refunded" })
-              .eq("id", sessionId);
-            logger.info("Refund processed for session", { sessionId });
-          }
-        }
-        break;
-      }
+    if ((await claimEvent(db, event)) === "duplicate") {
+      return NextResponse.json({ received: true, duplicate: true });
     }
   } catch (error) {
-    logger.error("Error processing Stripe webhook", { error, eventType: event.type });
+    logger.error("Could not record Stripe event", { error, eventId: event.id });
+    return NextResponse.json({ error: "Processing failed" }, { status: 500 });
+  }
+
+  try {
+    await handleStripeEvent(event, db);
+  } catch (error) {
+    logger.error("Error processing Stripe webhook", { error, eventType: event.type, eventId: event.id });
+    await releaseEvent(db, event.id).catch(() => undefined);
+    return NextResponse.json({ error: "Processing failed" }, { status: 500 });
   }
 
   return NextResponse.json({ received: true });
