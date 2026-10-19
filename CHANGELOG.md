@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/Genginzu/gameuniverse/compare/gameuniverse-v0.4.0...gameuniverse-v0.4.1) (2026-10-18)
+
+
+### Bug Fixes
+
+* [#385](https://github.com/Genginzu/gameuniverse/issues/385) use the shared admin check on coaching and dispute routes ([#392](https://github.com/Genginzu/gameuniverse/issues/392)) ([40c2b56](https://github.com/Genginzu/gameuniverse/commit/40c2b566e624af02c9f5c286146cede9b7499730))
+
 ## [0.4.0](https://github.com/Genginzu/gameuniverse/compare/gameuniverse-v0.3.0...gameuniverse-v0.4.0) (2026-10-18)
 
 
