@@ -38,6 +38,26 @@ export interface ReportContentPreview {
   href: string | null;
 }
 
+/** Data needed to build the public link of a piece of reportable content. */
+export interface ContentHrefContext {
+  authorId: string;
+  postOwnerId?: string | null;
+  gameSlug?: string | null;
+}
+
+/** Raw row loaded from a reportable content table. */
+export type ReportableContentRow = Record<string, unknown>;
+
+/** Everything moderation needs to know about one reportable content type. */
+export interface ReportableContentDescriptor {
+  table: string;
+  authorColumn: string;
+  previewSelect: string;
+  deletable: boolean;
+  previewText: (row: ReportableContentRow) => string | null;
+  hrefContext: (row: ReportableContentRow) => Omit<ContentHrefContext, "authorId">;
+}
+
 /** A report as returned to clients. */
 export interface ContentReport {
   id: string;

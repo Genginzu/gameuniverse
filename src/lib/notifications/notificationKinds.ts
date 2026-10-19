@@ -5,27 +5,20 @@ import type {
   NotificationPreviewPolicy,
   NotificationType,
 } from "@/types/notification";
-import type { ReportContentType } from "@/types/report";
+import {
+  contentHref,
+  isReportContentType,
+  playerActivityHref,
+  playerReviewsHref,
+} from "@/lib/moderation/contentHref";
+import { ownEntry } from "@/lib/utils/ownEntry";
 
 const NO_PREVIEW: NotificationPreviewPolicy = { kind: "none" };
 const TEXT_PREVIEW: NotificationPreviewPolicy = { kind: "text" };
 
-const playerActivityHref = (playerId: string) => `/players/${playerId}?tab=activity`;
-const playerReviewsHref = (playerId: string) => `/players/${playerId}?tab=reviews`;
-
-export function ownEntry<T>(record: Readonly<Record<string, T>>, key: string): T | undefined {
-  return Object.prototype.hasOwnProperty.call(record, key) ? record[key] : undefined;
-}
-
-const MODERATED_CONTENT_HREFS: Record<ReportContentType, (recipientId: string) => string | null> = {
-  review: playerReviewsHref,
-  post: playerActivityHref,
-  comment: () => null,
-  profile: (recipientId) => `/players/${recipientId}`,
-};
-
 function moderatedContentHref({ contentPreview, recipientId }: NotificationHrefContext) {
-  return ownEntry(MODERATED_CONTENT_HREFS, contentPreview)?.(recipientId) ?? null;
+  if (!isReportContentType(contentPreview)) return null;
+  return contentHref(contentPreview, { authorId: recipientId });
 }
 
 function coachingKind(icon: string, labelKey: string): NotificationKindDescriptor {

@@ -1,4 +1,5 @@
-import { notificationKind, ownEntry } from "@/lib/notifications/notificationKinds";
+import { notificationKind } from "@/lib/notifications/notificationKinds";
+import { ownEntry } from "@/lib/utils/ownEntry";
 import type {
   Notification,
   NotificationPresentation,
