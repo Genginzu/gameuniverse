@@ -2,10 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 import { createSessionConversation } from "@/lib/services/coachingConversationService";
-import { calculateRefund } from "@/lib/services/cancellationService";
+import { refundCancelledSession } from "@/lib/services/coachingRefundService";
 import { NotificationServerService } from "@/lib/services/notificationServerService";
 import type { NotificationType } from "@/types/notification";
-import { getStripe } from "@/lib/stripe";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnySupabase = any;
@@ -154,61 +153,55 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    // Build update payload
+    // Build update payload. Payment columns are server-only (DB trigger), so
+    // only the status and cancellation fields are written with the user client.
     const updates: Record<string, unknown> = { status: transition.to };
 
     if (action === "cancel" || action === "decline") {
       updates.cancelled_by = user.id;
       updates.cancelled_at = new Date().toISOString();
-      if (body.cancellationReason) {
-        updates.cancellation_reason = body.cancellationReason;
+      if (typeof body.cancellationReason === "string" && body.cancellationReason) {
+        updates.cancellation_reason = body.cancellationReason.slice(0, 1000);
       }
-      // Calculate refund if payment exists
-      if (action === "cancel" && session.payment_amount) {
+    }
+
+    // Conditional on the status we read: two concurrent requests cannot both
+    // apply the transition (and both trigger a refund).
+    const { data: claimed, error: updateError } = await supabase
+      .from("coaching_sessions")
+      .update(updates)
+      .eq("id", id)
+      .eq("status", session.status)
+      .select()
+      .maybeSingle();
+
+    if (updateError) {
+      logger.error("Error updating coaching session", { error: updateError });
+      return NextResponse.json({ error: "Failed to update session" }, { status: 500 });
+    }
+
+    if (!claimed) {
+      return NextResponse.json({ error: "Session status changed, retry" }, { status: 409 });
+    }
+
+    let updated = claimed;
+    if (action === "cancel") {
+      try {
         const { data: coach } = await supabase
           .from("coach_profiles")
           .select("cancellation_policy")
           .eq("id", session.coach_id)
           .single();
-        if (coach?.cancellation_policy) {
-          const { refundAmount } = calculateRefund(
-            coach.cancellation_policy,
-            session.scheduled_at,
-            session.payment_amount
-          );
-          updates.refund_amount = refundAmount;
-          // Issue Stripe refund if payment was made
-          if (refundAmount > 0 && session.payment_status === "paid") {
-            try {
-              const stripe = getStripe();
-              const payments = await stripe.paymentIntents.search({
-                query: `metadata["coaching_session_id"]:"${id}"`,
-              });
-              if (payments.data[0]) {
-                await stripe.refunds.create({
-                  payment_intent: payments.data[0].id,
-                  amount: Math.round(refundAmount * 100),
-                });
-                updates.payment_status = "refunded";
-              }
-            } catch (stripeErr) {
-              logger.error("Stripe refund failed", { error: stripeErr, sessionId: id });
-            }
-          }
-        }
+        await refundCancelledSession(session, coach?.cancellation_policy ?? null);
+        const { data: refreshed } = await supabase
+          .from("coaching_sessions")
+          .select("*")
+          .eq("id", id)
+          .single();
+        if (refreshed) updated = refreshed;
+      } catch (refundError) {
+        logger.error("Stripe refund failed", { error: refundError, sessionId: id });
       }
-    }
-
-    const { data: updated, error: updateError } = await supabase
-      .from("coaching_sessions")
-      .update(updates)
-      .eq("id", id)
-      .select()
-      .single();
-
-    if (updateError) {
-      logger.error("Error updating coaching session", { error: updateError });
-      return NextResponse.json({ error: "Failed to update session" }, { status: 500 });
     }
 
     // Auto-create conversation on confirm

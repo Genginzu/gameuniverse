@@ -71,7 +71,7 @@ test/
 
 ## Chemins d'import
 
-- Utiliser les alias (`@/lib/utils`) — résolus par vitest.config.ts
+- Utiliser les alias (`@/lib/utils`) — résolus par vitest.config.mts
 
 ## Isolation
 
