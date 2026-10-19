@@ -1557,6 +1557,10 @@
         "best": "Best deal",
         "buy": "Buy on {store}"
       },
+      "affiliate": {
+        "disclosure": "Some purchase links are affiliate links: we may earn a commission on your purchase at no extra cost to you. Offers are still ranked by price.",
+        "learnMore": "Learn more"
+      },
       "ageRating": {
         "contentDescriptors": "Content descriptors"
       }
@@ -1798,6 +1802,7 @@
       "characterSpecies": "Species",
       "companies": "Companies",
       "platforms": "Platforms",
+      "stores": "Stores & affiliation",
       "ageClassifications": "Age Classifications",
       "reviewsCategory": "Reviews",
       "reviews": "Reviews",
@@ -1824,6 +1829,52 @@
     "openSidebar": "Open sidebar",
     "lightMode": "Light mode",
     "darkMode": "Dark mode",
+    "stores": {
+      "title": "Stores & affiliation",
+      "subtitle": "Enable affiliation store by store. Until a store is enabled, its purchase links stay unchanged.",
+      "loadError": "Unable to load stores.",
+      "empty": "No stores.",
+      "noWebsite": "No website (redirect impossible)",
+      "inactiveStore": "Inactive store: its links are not displayed.",
+      "edit": "Configure",
+      "status": {
+        "enabled": "Affiliation on",
+        "disabled": "Not affiliated"
+      },
+      "fields": {
+        "enabled": "Affiliation enabled",
+        "enabledHelp": "CTAs go through /api/go (click tracking) and carry the affiliate code.",
+        "network": "Network",
+        "networkPlaceholder": "Choose a network",
+        "tag": "Affiliate code",
+        "tagPlaceholder": "e.g. gameuniverse-21",
+        "tagHelp": "Leave empty to use the network environment variable.",
+        "template": "URL template",
+        "templatePlaceholder": "?tag='{tag}' or https://network.example/c/'{tag}'?u='{url}'",
+        "templateHelp": "\"?param='{tag}'\" adds a parameter to the product link. \"https://…'{url}'…\" wraps the encoded product link. Optional for Amazon."
+      },
+      "networks": {
+        "amazon": "Amazon Associates",
+        "impact": "Impact",
+        "partnerize": "Partnerize",
+        "awin": "Awin",
+        "cj": "CJ Affiliate",
+        "custom": "Custom"
+      },
+      "errors": {
+        "invalid": "Invalid value.",
+        "invalidTemplate": "Invalid template: start with \"?\" or with \"https://\" including '{url}'.",
+        "networkRequired": "Choose a network to enable affiliation.",
+        "templateRequired": "A URL template is required for this network."
+      },
+      "form": {
+        "title": "Affiliation — {name}",
+        "save": "Save",
+        "cancel": "Cancel",
+        "success": "Configuration saved.",
+        "errorGeneric": "Failed to save."
+      }
+    },
     "games": {
       "title": "Game Management",
       "newGame": "New Game",

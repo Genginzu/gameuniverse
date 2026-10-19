@@ -14,7 +14,9 @@ import { Icon } from "@iconify/react";
 import { SpotlightCard } from "@/components/shared/SpotlightCard";
 import { KickerLabel } from "@/components/shared/KickerLabel";
 import type { GameDetails } from "@/types/game";
+import { getPricingCtaLink } from "@/lib/affiliate/getPricingCtaLink";
 import { accentRich } from "../utils/accent-rich";
+import { AffiliateDisclosure } from "./AffiliateDisclosure";
 
 interface PricingSectionProps {
   game: GameDetails;
@@ -26,6 +28,7 @@ export function PricingSection({ game, formatPrice }: PricingSectionProps) {
   if (game.pricing.length === 0) return null;
 
   const sorted = [...game.pricing].sort((a, b) => a.price - b.price);
+  const hasAffiliate = sorted.some((p) => getPricingCtaLink(p)?.isAffiliate);
 
   return (
     <section className="editorial-game-detail-section editorial-game-detail-section--tight">
@@ -37,6 +40,7 @@ export function PricingSection({ game, formatPrice }: PricingSectionProps) {
       <div className="editorial-game-detail-price-grid">
         {sorted.map((p, index) => {
           const isBest = index === 0;
+          const cta = getPricingCtaLink(p);
           return (
             <SpotlightCard
               key={`${p.store.name}-${p.platform}-${index}`}
@@ -72,11 +76,11 @@ export function PricingSection({ game, formatPrice }: PricingSectionProps) {
                 </span>
               </div>
 
-              {p.storeUrl && (
+              {cta && (
                 <a
-                  href={p.storeUrl}
+                  href={cta.href}
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel={cta.rel}
                   className="editorial-game-detail-price-cta"
                 >
                   {tEd("review.buy", { store: p.store.name })}
@@ -87,6 +91,8 @@ export function PricingSection({ game, formatPrice }: PricingSectionProps) {
           );
         })}
       </div>
+
+      {hasAffiliate && <AffiliateDisclosure />}
     </section>
   );
 }
