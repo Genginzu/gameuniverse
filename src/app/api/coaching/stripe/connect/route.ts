@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { getStripe } from "@/lib/stripe";
 import { logger } from "@/lib/logger";
 
@@ -70,7 +71,8 @@ export async function POST() {
         metadata: { coach_profile_id: coach.id, player_id: user.id },
       });
       accountId = account.id;
-      await supabase
+      // stripe_account_id is server-only (trigger on coach_profiles).
+      await getSupabaseAdmin()
         .from("coach_profiles")
         .update({ stripe_account_id: accountId })
         .eq("id", coach.id);

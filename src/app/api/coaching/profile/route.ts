@@ -54,6 +54,9 @@ export async function PATCH(request: NextRequest) {
 
     return NextResponse.json({ profile });
   } catch (error) {
+    if ((error as { code?: string } | null)?.code === "22023") {
+      return NextResponse.json({ error: "Invalid cancellation policy" }, { status: 400 });
+    }
     logger.error("Error in coaching profile PATCH", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
