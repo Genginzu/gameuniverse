@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { requireAdmin } from "@/lib/auth-admin";
 import { logger } from "@/lib/logger";
 
@@ -13,7 +13,8 @@ export async function POST() {
   try {
     await requireAdmin();
 
-    const supabase = await createRouteHandlerClient();
+    // refresh_translation_stats is service_role only (migration 20261018000013).
+    const supabase = getSupabaseAdmin();
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { error } = await (supabase as any).rpc("refresh_translation_stats");
