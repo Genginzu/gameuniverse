@@ -154,3 +154,17 @@ describe("20261018000018 rate limits", () => {
     );
   });
 });
+
+const conversationsGuard = read("20261018000019_conversations_require_friendship.sql");
+
+describe("20261018000019 conversations", () => {
+  it("requires an accepted friendship to open a conversation", () => {
+    expect(conversationsGuard).toContain("AND public.are_friends(participant_1, participant_2)");
+    expect(conversationsGuard).toContain("WHERE f.status = 'accepted'");
+  });
+
+  it("keeps coaching_sessions.conversation_id server-only", () => {
+    expect(conversationsGuard).toContain("NEW.conversation_id IS DISTINCT FROM OLD.conversation_id");
+    expect(conversationsGuard).toContain("BEFORE UPDATE ON public.coaching_sessions");
+  });
+});
