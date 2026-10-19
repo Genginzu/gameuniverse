@@ -3,6 +3,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { genderQuerySchema, adminGenderFormSchema } from "@/lib/validations/admin-gender-form";
 import { logger } from "@/lib/logger";
+import { ilikeAnyFilter } from "@/lib/utils/postgrestFilter";
 
 /**
  * GET /api/admin/genders - List genders with pagination, search, sort, and character count
@@ -60,7 +61,7 @@ export async function GET(request: NextRequest) {
       if (!search?.trim()) return query;
       const term = `%${search.trim()}%`;
       if (searchGenderIds && searchGenderIds.length > 0) {
-        return query.or(`slug.ilike.${term},id.in.(${searchGenderIds.join(",")})`);
+        return query.or(`${ilikeAnyFilter(["slug"], search)},id.in.(${searchGenderIds.join(",")})`);
       }
       return query.ilike("slug", term);
     };
