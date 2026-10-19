@@ -134,3 +134,23 @@ describe("20261018000016 fantasy", () => {
     expect(fantasy).toContain('DROP POLICY IF EXISTS "Players can delete their team players"');
   });
 });
+
+const defaultPrivileges = read("20261018000017_revoke_default_privileges.sql");
+const rateLimits = read("20261018000018_rate_limits.sql");
+
+describe("20261018000017 default privileges", () => {
+  it("stops auto-granting new tables and functions to clients", () => {
+    expect(defaultPrivileges).toContain("REVOKE ALL ON TABLES FROM anon, authenticated");
+    expect(defaultPrivileges).toContain("REVOKE ALL ON FUNCTIONS FROM anon, authenticated");
+    expect(defaultPrivileges).toContain("ALTER DEFAULT PRIVILEGES FOR ROLE postgres REVOKE EXECUTE ON FUNCTIONS FROM PUBLIC");
+  });
+});
+
+describe("20261018000018 rate limits", () => {
+  it("serialises hits per key and keeps the limiter server-only", () => {
+    expect(rateLimits).toContain("pg_advisory_xact_lock(hashtextextended(p_key, 0))");
+    expect(rateLimits).toContain(
+      "REVOKE EXECUTE ON FUNCTION public.consume_rate_limit(text, integer, integer) FROM PUBLIC, anon, authenticated"
+    );
+  });
+});

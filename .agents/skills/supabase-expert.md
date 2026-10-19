@@ -114,7 +114,8 @@ Patterns obligatoires :
 - `IF NOT EXISTS` / `IF EXISTS` systématique
 - `COMMENT ON TABLE/COLUMN` pour documenter
 - RLS activé sur toutes les tables
-- Policies : SELECT public, INSERT/UPDATE/DELETE pour authenticated
+- Policies limitées au propriétaire / rôle ; pas de `USING (true)` en écriture, jamais `user_metadata`
+- Aucun droit automatique depuis `20261018000017` : `GRANT` explicite pour tout accès client (cf. `.agents/steering/database.md`)
 - UUID PK avec `gen_random_uuid()`
 - `created_at`/`updated_at` avec `DEFAULT NOW()`
 
