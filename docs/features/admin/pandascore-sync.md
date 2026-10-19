@@ -121,9 +121,14 @@ EDGE_CALLBACK_SECRET=<secret-fort-32+ chars>
 ```bash
 supabase secrets set PANDASCORE_API_KEY=...
 supabase secrets set VERCEL_CALLBACK_BASE_URL=https://<domain>.com
-supabase secrets set VERCEL_CALLBACK_SECRET=<même valeur que EDGE_CALLBACK_SECRET côté Vercel>
+supabase secrets set EDGE_CALLBACK_SECRET=<même valeur que EDGE_CALLBACK_SECRET côté Vercel>
 # SUPABASE_URL et SUPABASE_SERVICE_ROLE_KEY sont auto-injectés
 ```
+
+> ℹ️ L'ancien nom `VERCEL_CALLBACK_SECRET` est encore lu en repli par les
+> Edge Functions (avec un warning de dépréciation) pendant une release.
+> Renommer le secret Supabase en `EDGE_CALLBACK_SECRET` puis supprimer
+> l'ancien.
 
 ### pg_cron
 
@@ -229,14 +234,13 @@ src/
 │   │   ├── incremental-sync/route.ts    # POST proxy Edge
 │   │   ├── full-sync/route.ts           # POST insère job
 │   │   ├── sync-jobs/route.ts           # GET liste jobs
-│   │   ├── sync-logs/route.ts           # GET historique (déjà existant)
-│   │   ├── import/route.ts              # 410 Gone (kill switch)
-│   │   └── sync/route.ts                # 410 Gone (kill switch)
-│   ├── cron/
-│   │   └── esport-sync/route.ts         # 410 Gone (kill switch)
+│   │   └── sync-history/route.ts        # GET historique unifié (logs + jobs)
 │   └── internal/esport/
 │       ├── reconcile-history/route.ts   # callback Edge
 │       └── resolve-predictions/route.ts # callback Edge
+│
+├── lib/security/
+│   └── verifyInternalSecret.ts          # comparaison constant-time du secret de callback
 │
 ├── components/admin/esport/
 │   ├── SyncJobCard.tsx                  # carte progression job
@@ -296,8 +300,8 @@ Accessible via **Admin → Esport → Sync**. La page propose :
 3. **Carte de progression** : visible quand un job est `pending` ou `running`.
    Affiche pour chaque entité son cursor (page courante ou ✓ si done) +
    les compteurs cumulés. Rafraîchie toutes les 5 secondes.
-4. **Historique des syncs** : table des derniers `pandascore_sync_logs`,
-   avec dialog pour les erreurs détaillées.
+4. **Historique des syncs** : historique unifié (`/api/admin/esport/sync-history`,
+   runs incrémentaux + jobs full-sync), avec dialog pour les erreurs détaillées.
 
 ## Dépannage
 
@@ -322,8 +326,8 @@ Accessible via **Admin → Esport → Sync**. La page propose :
 
 ### Les callbacks Edge → Vercel échouent
 
-- Vérifier que `EDGE_CALLBACK_SECRET` (Vercel) === `VERCEL_CALLBACK_SECRET`
-  (Supabase secrets).
+- Vérifier que `EDGE_CALLBACK_SECRET` a la même valeur côté Vercel et dans
+  les secrets Supabase (en-tête `x-edge-callback-secret`, sinon 401).
 - Vérifier que `VERCEL_CALLBACK_BASE_URL` pointe bien sur l'URL prod accessible
   depuis l'extérieur.
 - Les callbacks sont best-effort : un échec ne fait pas échouer la sync,

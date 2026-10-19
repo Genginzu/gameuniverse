@@ -21,9 +21,7 @@ import {
  *
  * Both tables are queried, normalised into a single shape by
  * src/lib/pandascore/sync-history.ts and merged by start date, then
- * paginated. The legacy /api/admin/esport/sync-logs endpoint is kept
- * around for any caller that still depends on it but the admin UI now
- * uses this one exclusively.
+ * paginated. The admin UI uses this endpoint exclusively.
  */
 
 const MAX_FETCH = 200;

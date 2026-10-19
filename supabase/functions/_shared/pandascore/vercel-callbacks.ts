@@ -24,12 +24,15 @@ function getCallbackBase(): string | null {
 }
 
 function getCallbackSecret(): string | null {
-  const secret = Deno.env.get("VERCEL_CALLBACK_SECRET");
-  if (!secret) {
-    logger.warn("VERCEL_CALLBACK_SECRET not set, skipping Vercel callback");
-    return null;
+  const secret = Deno.env.get("EDGE_CALLBACK_SECRET");
+  if (secret) return secret;
+  const legacySecret = Deno.env.get("VERCEL_CALLBACK_SECRET");
+  if (legacySecret) {
+    logger.warn("VERCEL_CALLBACK_SECRET is deprecated, rename it to EDGE_CALLBACK_SECRET");
+    return legacySecret;
   }
-  return secret;
+  logger.warn("EDGE_CALLBACK_SECRET not set, skipping Vercel callback");
+  return null;
 }
 
 /** Bounded HTTP timeout for callbacks. */

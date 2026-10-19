@@ -1,13 +1,12 @@
 /**
- * Shared helpers for PandaScore Edge Functions — Deno port of
- * src/lib/services/pandascore-sync-helpers.ts.
+ * Shared helpers for PandaScore Edge Functions.
  *
- * Differences vs the Vercel version:
+ * Notes:
  *   - Uses Deno-style imports
- *   - Drops `cleanupStaleSyncLogs` (replaced by the lock on
+ *   - No stale-log cleanup: replaced by the lock on
  *     pandascore_sync_state for the incremental flow, and by
- *     last_chunk_at staleness checks for the full-sync flow)
- *   - The `SyncErrorCollector` is identical (no DB or runtime deps)
+ *     last_chunk_at staleness checks for the full-sync flow
+ *   - The `SyncErrorCollector` has no DB or runtime deps
  */
 
 import { logger } from "../logger.ts";

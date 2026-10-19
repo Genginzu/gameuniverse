@@ -75,7 +75,7 @@ compact dans l'`EditorialMegaMenu` qui ouvre un overlay full-page (F0-07c).
    - `public.games` + `public.character_translations` (existant)
    - `public.profiles` (joueurs Gamers Universe et coachs)
    - `public.esport_teams`, `public.esport_players` (alimentées par
-     `pandascoreSyncService`)
+     les Edge Functions PandaScore)
    - `public.coach_profiles` (système de coaching)
 
    Aucune nouvelle migration n'est nécessaire.
