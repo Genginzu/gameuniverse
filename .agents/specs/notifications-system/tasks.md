@@ -6,7 +6,7 @@ Implémentation du système de commentaires sur les posts de joueurs et du syst�
 
 ## Tâches
 
-- [x] 1. Migration de base de données et types TypeScript
+- [ ] 1. Migration de base de données et types TypeScript
   - [x] 1.1 Créer le fichier de migration SQL `supabase/migrations/20260413000001_notifications_and_post_comments.sql`
     - Créer la table `post_comments` avec les champs `id`, `post_id`, `player_id`, `content` (CHECK 1-500), `created_at`, `updated_at`
     - Créer la table `notifications` avec les champs `id`, `recipient_id`, `sender_id`, `type` (CHECK post_comment/discussion_message), `reference_id`, `content_preview`, `is_read`, `created_at`
@@ -22,7 +22,7 @@ Implémentation du système de commentaires sur les posts de joueurs et du syst�
     - Suivre les interfaces définies dans le design document
     - _Exigences : 2.1, 1.1_
 
-- [x] 2. Services serveur
+- [ ] 2. Services serveur
   - [x] 2.1 Implémenter `src/lib/services/notificationServerService.ts`
     - Méthode `create(recipientId, senderId, type, referenceId, contentPreview)` — créer une notification avec `content_preview` tronqué à 100 caractères, ne pas créer si `recipientId === senderId`
     - Méthode `getUnread(recipientId, limit?)` — notifications non lues triées par `created_at` DESC, avec infos sender (username, avatar_url)
@@ -55,7 +55,7 @@ Implémentation du système de commentaires sur les posts de joueurs et du syst�
 - [x] 3. Checkpoint — Vérifier les services serveur
   - Ensure all tests pass, ask the user if questions arise.
 
-- [x] 4. Routes API
+- [ ] 4. Routes API
   - [x] 4.1 Créer la route `src/app/api/notifications/route.ts` (GET)
     - Retourner les notifications non lues du joueur authentifié, triées par `created_at` DESC, limite configurable (défaut 20)
     - Retourner 401 si non authentifié
@@ -108,13 +108,13 @@ Implémentation du système de commentaires sur les posts de joueurs et du syst�
 - [x] 5. Checkpoint — Vérifier les routes API
   - Ensure all tests pass, ask the user if questions arise.
 
-- [x] 6. Intégration avec le système de discussions existant
+- [ ] 6. Intégration avec le système de discussions existant
   - [x] 6.1 Modifier la route `POST /api/discussions/:id/messages` pour déclencher une notification `discussion_message`
     - Après l'envoi du message, appeler `NotificationServerService.create()` avec le destinataire de la conversation
     - L'erreur de notification ne doit pas bloquer l'envoi du message (try/catch + log)
     - _Exigences : 3.2, 11.2_
 
-- [x] 7. Services client et hooks SWR
+- [ ] 7. Services client et hooks SWR
   - [x] 7.1 Créer le service client `src/lib/services/notificationService.ts`
     - Méthodes statiques : `fetchNotifications(limit?)`, `fetchUnreadCount()`, `markAsRead(id)`, `markAllAsRead()`
     - Suivre le pattern de `DiscussionService` et `PlayerPostsService`
@@ -149,7 +149,7 @@ Implémentation du système de commentaires sur les posts de joueurs et du syst�
 - [x] 8. Checkpoint — Vérifier les services client et hooks
   - Ensure all tests pass, ask the user if questions arise.
 
-- [x] 9. Composants UI — Commentaires de posts
+- [ ] 9. Composants UI — Commentaires de posts
   - [x] 9.1 Créer `src/components/players/PostCommentItem.tsx`
     - Afficher le commentaire avec avatar, username, contenu, date relative
     - Bouton de suppression visible pour l'auteur du commentaire ou le propriétaire du post
@@ -177,7 +177,7 @@ Implémentation du système de commentaires sur les posts de joueurs et du syst�
     - Tester l'affichage des commentaires, le formulaire, l'accessibilité
     - _Exigences : 1.10, 10.6_
 
-- [x] 10. Composants UI — Notifications
+- [ ] 10. Composants UI — Notifications
   - [x] 10.1 Créer `src/components/shared/NotificationItem.tsx`
     - Afficher le nom du joueur émetteur, icône distincte par type, `content_preview`, date relative
     - Bouton de fermeture (icône croix) pour marquer comme lue
@@ -218,7 +218,7 @@ Implémentation du système de commentaires sur les posts de joueurs et du syst�
     - Tester l'état vide, la fermeture clic extérieur, la navigation clavier, les rôles ARIA du dropdown
     - _Exigences : 5.1, 5.5, 6.6, 6.7, 10.2, 10.3_
 
-- [x] 11. Intégration dans les headers et traductions i18n
+- [ ] 11. Intégration dans les headers et traductions i18n
   - [x] 11.1 Intégrer `NotificationBell` dans `TopBar.tsx` et `LandingHeader.tsx`
     - Positionner à gauche du `LanguageSwitcher`, conditionné à l'authentification
     - _Exigences : 5.1, 5.5_
@@ -232,22 +232,22 @@ Implémentation du système de commentaires sur les posts de joueurs et du syst�
     - Vérifier que toutes les clés `notifications` et `postComments` existent dans les deux fichiers FR et EN
     - _Exigences : 7.1, 7.4_
 
-- [x] 12. Exécution des tests complets
+- [ ] 12. Exécution des tests complets
   - [x] 12.1 Exécuter `bun run test:all`
   - [x] 12.2 Vérifier que tous les tests passent (parallèles + isolés)
   - [x] 12.3 Corriger les tests en échec si nécessaire
 
-- [x] 13. Lint du code
+- [ ] 13. Lint du code
   - [x] 13.1 Exécuter `bun run lint`
   - [x] 13.2 Vérifier qu'il n'y a pas d'erreurs ni de warnings de lint
   - [x] 13.3 Corriger les erreurs et warnings de lint si nécessaire
 
-- [x] 14. Build de production
+- [ ] 14. Build de production
   - [x] 14.1 Exécuter `bun run build`
   - [x] 14.2 Vérifier qu'il n'y a pas d'erreurs de compilation
   - [x] 14.3 Corriger les erreurs de build si nécessaire
 
-- [x] 15. Documentation de la fonctionnalité
+- [ ] 15. Documentation de la fonctionnalité
   - [x] 15.1 Créer `docs/features/players/notifications.md`
     - Description de ce qui a été implémenté (système de notifications + commentaires de posts)
     - Accès : icône cloche dans le header, commentaires sous les posts

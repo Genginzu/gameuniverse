@@ -16,7 +16,7 @@ Implémentation incrémentale du système de votes sur les avis : migration DB �
   - COMMENT ON pour documenter la table et les colonnes
   - _Requirements: 4.1, 4.2, 4.3, 4.4_
 
-- [x] 2. Types et fonctions pures
+- [ ] 2. Types et fonctions pures
   - [x] 2.1 Étendre les types dans `src/types/review.ts`
     - Ajouter `VoteType`, `ReviewVoteCounts`, `ReviewWithVotes`
     - Mettre à jour `ReviewsResponse` pour utiliser `ReviewWithVotes[]`
@@ -40,7 +40,7 @@ Implémentation incrémentale du système de votes sur les avis : migration DB �
 - [x] 3. Checkpoint — Vérifier que les tests des fonctions pures passent
   - Ensure all tests pass, ask the user if questions arise.
 
-- [x] 4. API route pour les votes
+- [ ] 4. API route pour les votes
   - [x] 4.1 Créer `src/app/api/review-votes/route.ts`
     - Implémenter POST (upsert/toggle) et DELETE
     - Validation : auth (401), review existe (404), pas son propre avis (403), vote_type valide (400)
@@ -57,7 +57,7 @@ Implémentation incrémentale du système de votes sur les avis : migration DB �
     - **Property 3: Complétude des données de vote dans la réponse GET**
     - **Validates: Requirements 5.5**
 
-- [x] 5. Service client et hook
+- [ ] 5. Service client et hook
   - [x] 5.1 Créer `src/lib/services/reviewVoteService.ts`
     - Méthodes statiques : `submitVote(reviewId, voteType)`, `removeVote(reviewId)`
     - Suit le pattern de `ReviewService`
@@ -82,7 +82,7 @@ Implémentation incrémentale du système de votes sur les avis : migration DB �
 - [x] 6. Checkpoint — Vérifier que tous les tests passent
   - Ensure all tests pass, ask the user if questions arise.
 
-- [x] 7. Composant UI et intégration
+- [ ] 7. Composant UI et intégration
   - [x] 7.1 Créer `src/components/games/reviews/ReviewVoteButtons.tsx`
     - Boutons ThumbsUp/ThumbsDown avec compteurs
     - Mise en surbrillance du vote actif

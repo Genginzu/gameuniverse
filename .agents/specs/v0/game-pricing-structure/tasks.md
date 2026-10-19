@@ -78,33 +78,33 @@ schéma → migration des données → fonctions utilitaires → tests.
     - Documenter les nouveaux types avec JSDoc
     - _Requirements: 3.1, 3.2, 4.1_
 
-- [x] 5. Tests de propriété et validation
-  - [x] 5.1 Écrire les tests de propriété pour l'unicité des magasins
+- [ ] 5. Tests de propriété et validation
+  - [ ] 5.1 Écrire les tests de propriété pour l'unicité des magasins
     - **Property 1: Store Name Uniqueness**
     - **Validates: Requirements 1.2**
 
-  - [x] 5.2 Écrire les tests de propriété pour la validation des prix
+  - [ ] 5.2 Écrire les tests de propriété pour la validation des prix
     - **Property 2: Price Non-Negativity**
     - **Property 3: Game-Store-Platform Uniqueness**
     - **Validates: Requirements 2.1, 2.3**
 
-  - [x] 5.3 Écrire les tests de propriété pour l'intégrité relationnelle
+  - [ ] 5.3 Écrire les tests de propriété pour l'intégrité relationnelle
     - **Property 4: Store Reference Integrity**
     - **Validates: Requirements 1.4, 2.2**
 
-  - [x] 5.4 Écrire les tests de propriété pour la comparaison de prix
+  - [ ] 5.4 Écrire les tests de propriété pour la comparaison de prix
     - **Property 5: Price Comparison Accuracy**
     - **Validates: Requirements 4.2**
 
 - [ ] 6. Tests unitaires et d'intégration
-  - [x] 6.1 Tester les fonctions de récupération de prix
+  - [ ] 6.1 Tester les fonctions de récupération de prix
     - Tester `get_game_prices` avec différents filtres
     - Tester `get_best_price` avec plusieurs magasins
     - Tester la gestion des cas où aucun prix n'existe
     - Vérifier les performances des requêtes
     - _Requirements: 3.1, 3.2, 3.3_
 
-  - [x] 6.2 Tester la gestion des magasins
+  - [ ] 6.2 Tester la gestion des magasins
     - Tester la création et modification de magasins
     - Tester les contraintes d'unicité des noms
     - Tester la validation des URLs
@@ -112,15 +112,13 @@ schéma → migration des données → fonctions utilitaires → tests.
     - _Requirements: 1.1, 1.2, 1.3_
 
   - [ ] 6.3 Tester la migration des données
-    - _Note : nécessite un harnais base de données (test d'intégration SQL),
-      non couvrable via Vitest avec RPC mockés. Reste ouverte._
     - Vérifier la migration complète des prix existants
     - Tester la création des magasins par défaut
     - Valider l'intégrité après migration
     - Tester le rollback en cas d'erreur
     - _Requirements: 5.1, 5.2, 5.4, 5.5_
 
-- [x] 7. Documentation et finalisation
+- [ ] 7. Documentation et finalisation
   - [x] 7.1 Documenter la nouvelle structure
     - Créer la documentation technique des nouvelles tables
     - Documenter les fonctions de base de données
@@ -128,7 +126,7 @@ schéma → migration des données → fonctions utilitaires → tests.
     - Mettre à jour le guide de migration
     - _Requirements: Tous_
 
-  - [x] 7.2 Checkpoint final - Ensure all tests pass
+  - [ ] 7.2 Checkpoint final - Ensure all tests pass
     - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes
