@@ -81,7 +81,7 @@ function EntityCard({
 
       <div className="mb-2 h-1.5 w-full overflow-hidden rounded-full bg-gray-200/60 dark:bg-slate-700/60">
         <div
-          className="from-palette-secondary-500 to-palette-primary-500 h-full rounded-full bg-linear-to-r transition-all duration-500"
+          className="from-cta-from to-cta-to h-full rounded-full bg-linear-to-r transition-all duration-500"
           style={{ width: `${stat.percentage}%` }}
         />
       </div>

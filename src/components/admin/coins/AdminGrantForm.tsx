@@ -76,7 +76,7 @@ export function AdminGrantForm({ playerId }: AdminGrantFormProps) {
       <button
         type="submit"
         disabled={loading || !amount || !description.trim()}
-        className="from-palette-secondary-500 to-palette-primary-500 flex items-center gap-2 rounded-xl bg-linear-to-r px-6 py-2 text-sm font-medium text-white transition-all hover:opacity-90 disabled:opacity-50"
+        className="btn-filled flex items-center gap-2 rounded-xl px-6 py-2 text-sm font-medium text-white transition-all disabled:opacity-50"
       >
         <Icon icon="mdi:check" className="size-4" />
         {t("grantSubmit")}

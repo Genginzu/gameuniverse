@@ -47,7 +47,7 @@ export function AchievementsHeader({ achievements, xpStats }: AchievementsHeader
             key={stat.label}
             className="glass-card flex items-center gap-3 rounded-xl p-4 transition-all duration-300"
           >
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-blue-500 via-purple-600 to-purple-700 text-white">
+            <div className="from-palette-primary-500 via-palette-accent-600 to-palette-accent-700 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-linear-to-br text-white">
               <Icon icon={stat.icon} className="h-5 w-5" />
             </div>
             <div className="min-w-0">

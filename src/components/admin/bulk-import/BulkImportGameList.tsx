@@ -45,7 +45,7 @@ export function BulkImportGameList({ games, total, loading, syncing, batchSize, 
             <button
               onClick={onSync}
               disabled={games.length === 0}
-              className="from-palette-secondary-500 to-palette-primary-500 flex min-h-[44px] items-center gap-2 rounded-xl bg-linear-to-r px-4 py-2 text-sm font-medium text-white transition-all hover:opacity-90 disabled:opacity-50"
+              className="btn-filled flex min-h-[44px] items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium text-white transition-all disabled:opacity-50"
             >
               <Icon icon="lucide:download" className="size-4" />
               {t("syncButton", { count: batchSize === 0 ? total : games.length })}
@@ -65,7 +65,7 @@ export function BulkImportGameList({ games, total, loading, syncing, batchSize, 
           </div>
           <div className="h-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
             <div
-              className="from-palette-secondary-500 to-palette-primary-500 h-full rounded-full bg-linear-to-r transition-all duration-300"
+              className="from-cta-from to-cta-to h-full rounded-full bg-linear-to-r transition-all duration-300"
               style={{ width: `${(processed / progress.total) * 100}%` }}
             />
           </div>

@@ -74,13 +74,13 @@ export function MusicSection({ game }: MusicSectionProps) {
                       allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                       loading="lazy"
                       title={tMusic("spotifyPlayer")}
-                      className="rounded-xl border-0"
+                      className="rounded-lg border-0"
                     />
                   </ConsentGate>
                 )}
                 {music.youtubeVideoUrl && (
                   <ConsentGate category="media">
-                    <div className="aspect-video overflow-hidden rounded-xl">
+                    <div className="aspect-video overflow-hidden rounded-lg">
                       <iframe
                         src={getYoutubeEmbedSrc(music.youtubeVideoUrl)}
                         width="100%"

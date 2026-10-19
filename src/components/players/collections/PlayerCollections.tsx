@@ -33,7 +33,7 @@ export function PlayerCollections({
     return (
       <section className="mb-8">
         <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-gray-900 dark:text-white">
-          <Icon icon="lucide:layers" className="h-6 w-6 text-indigo-400" />
+          <Icon icon="lucide:layers" className="text-palette-accent-400 h-6 w-6" />
           {t("title")}
         </h2>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
@@ -52,7 +52,7 @@ export function PlayerCollections({
     return (
       <section className="mb-8">
         <h2 className="mb-6 flex items-center gap-2 text-2xl font-bold text-gray-900 dark:text-white">
-          <Icon icon="lucide:layers" className="h-6 w-6 text-indigo-400" />
+          <Icon icon="lucide:layers" className="text-palette-accent-400 h-6 w-6" />
           {t("title")}
         </h2>
         <div className="flex flex-col items-center justify-center rounded-2xl border border-gray-200 bg-white py-12 text-center dark:border-slate-700/50 dark:bg-slate-800/50">
@@ -75,13 +75,13 @@ export function PlayerCollections({
     <section className="mb-8">
       <div className="mb-6 flex items-center justify-between">
         <h2 className="flex items-center gap-2 text-2xl font-bold text-gray-900 dark:text-white">
-          <Icon icon="lucide:layers" className="h-6 w-6 text-indigo-400" />
+          <Icon icon="lucide:layers" className="text-palette-accent-400 h-6 w-6" />
           {t("title")}
         </h2>
         {hasMore && (
           <Link
             href={`/players/${playerId}/collections`}
-            className="text-sm font-medium text-blue-400 transition-colors hover:text-blue-300"
+            className="text-palette-primary-400 hover:text-palette-primary-300 text-sm font-medium transition-colors"
           >
             {t("seeAll", { count: collections.length })}
           </Link>

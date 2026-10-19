@@ -1,4 +1,4 @@
-﻿/* Editorial HeaderUserDropdown (F0-07f / #264). Voir docs/setup/styles-organization.md */
+/* Editorial HeaderUserDropdown (F0-07f / #264). Voir docs/setup/styles-organization.md */
 
 /*
  * HeaderUserDropdown (F0-07f / #264, version minimale) :
@@ -177,11 +177,26 @@
 }
 
 .header-user-menu-item-danger {
-  color: #f87171;
+  color: rgb(var(--accent-rgb, var(--neon-primary)));
+  transition:
+    background-color 200ms ease,
+    color 200ms ease;
 }
 
-.header-user-menu-item-danger:hover {
-  background: rgba(248, 113, 113, 0.1);
+.header-user-menu-item-danger svg {
+  transition: transform 200ms ease;
+}
+
+.header-user-menu-item-danger:hover,
+.header-user-menu-item-danger:focus-visible {
+  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.16);
+  color: var(--color-palette-primary-300);
+}
+
+/* Exit arrow nudges outward on hover to hint at leaving. */
+.header-user-menu-item-danger:hover svg,
+.header-user-menu-item-danger:focus-visible svg {
+  transform: translateX(3px);
 }
 
 .header-user-menu-divider {
@@ -198,6 +213,9 @@
   .header-user-signin,
   .header-user-chevron,
   .header-user-menu-item {
+    transition: none;
+  }
+  .header-user-menu-item-danger svg {
     transition: none;
   }
 }

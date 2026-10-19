@@ -38,9 +38,9 @@ export function CollectionCard({
     : `/players/${playerId}/collections/${collection.slug}`;
 
   const cardContent = (
-    <div className="relative cursor-pointer overflow-hidden rounded-xl bg-white shadow-xs transition-all duration-300 hover:scale-[1.02] hover:shadow-lg hover:shadow-blue-500/10 dark:bg-gray-800">
+    <div className="hover:shadow-palette-primary-500/10 relative cursor-pointer overflow-hidden rounded-xl bg-white shadow-xs transition-all duration-300 hover:scale-[1.02] hover:shadow-lg dark:bg-gray-800">
       {/* Cover: image personnalisée ou grille auto */}
-      <div className="relative aspect-video bg-linear-to-br from-blue-100 to-indigo-100 dark:from-blue-900/30 dark:to-indigo-900/30">
+      <div className="from-palette-primary-100 to-palette-accent-100 dark:from-palette-primary-900/30 dark:to-palette-accent-900/30 relative aspect-video bg-linear-to-br">
         {collection.coverImageUrl ? (
           <LazyImage
             src={collection.coverImageUrl}
@@ -78,7 +78,7 @@ export function CollectionCard({
 
       {/* Info section */}
       <div className="p-3">
-        <h3 className="line-clamp-1 text-sm font-semibold text-gray-900 transition-colors group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400">
+        <h3 className="group-hover:text-palette-primary-600 dark:group-hover:text-palette-primary-400 line-clamp-1 text-sm font-semibold text-gray-900 transition-colors dark:text-white">
           {collection.name}
         </h3>
         <p className="text-muted-foreground mt-0.5 line-clamp-1 text-xs">
@@ -150,7 +150,7 @@ function EmptyCovers() {
   return (
     <div className="flex h-full w-full items-center justify-center">
       <svg
-        className="h-8 w-8 text-blue-300 dark:text-blue-600"
+        className="text-palette-primary-300 dark:text-palette-primary-600 h-8 w-8"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"

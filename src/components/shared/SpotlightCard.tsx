@@ -24,7 +24,7 @@ interface SpotlightCardBaseProps {
   className?: string;
   /**
    * Triplet RGB (sans virgules ni parenthèses) override pour la couleur du
-   * halo — ex `"168 85 247"` pour du violet. Par défaut, utilise
+   * halo — ex `"224 138 92"`. Par défaut, utilise
    * `--neon-primary` du thème (variable existante).
    */
   glowColor?: string;

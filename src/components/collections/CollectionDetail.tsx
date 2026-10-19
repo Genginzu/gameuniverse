@@ -77,7 +77,7 @@ function OwnerBadge({ owner }: { owner: CollectionDetailType["owner"] }) {
           className="h-6 w-6 rounded-full object-cover ring-1 ring-gray-300 dark:ring-gray-600"
         />
       ) : (
-        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 text-xs font-medium text-blue-700 dark:bg-blue-900 dark:text-blue-300">
+        <div className="bg-palette-primary-100 text-palette-primary-700 dark:bg-palette-primary-900 dark:text-palette-primary-300 flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium">
           {ownerName.charAt(0).toUpperCase()}
         </div>
       )}

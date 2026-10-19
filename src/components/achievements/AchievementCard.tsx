@@ -70,7 +70,7 @@ export function AchievementCard({ achievement }: AchievementCardProps) {
         <div
           className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
             isUnlocked
-              ? "bg-linear-to-br from-blue-500 via-purple-600 to-purple-700 text-white"
+              ? "from-palette-primary-500 via-palette-accent-600 to-palette-accent-700 bg-linear-to-br text-white"
               : "bg-gray-200 text-gray-400 dark:bg-slate-700 dark:text-slate-500"
           }`}
         >
@@ -109,7 +109,7 @@ export function AchievementCard({ achievement }: AchievementCardProps) {
             <span
               className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold ${
                 isUnlocked
-                  ? "bg-purple-500/10 text-purple-600 dark:bg-purple-500/20 dark:text-purple-400"
+                  ? "bg-palette-accent-500/10 text-palette-accent-600 dark:bg-palette-accent-500/20 dark:text-palette-accent-400"
                   : "bg-gray-100 text-gray-400 dark:bg-slate-800 dark:text-slate-600"
               }`}
             >

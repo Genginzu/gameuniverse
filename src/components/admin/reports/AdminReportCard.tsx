@@ -10,7 +10,8 @@ import type { ContentReport } from "@/types/report";
 /** Status pills: dark text on light tint (≥4.5:1) in light mode, light text on tint in dark mode. */
 const STATUS_STYLES: Record<string, string> = {
   pending: "bg-amber-100 text-amber-800 dark:bg-amber-500/15 dark:text-amber-300",
-  reviewed: "bg-blue-100 text-blue-800 dark:bg-blue-500/15 dark:text-blue-300",
+  reviewed:
+    "bg-palette-primary-100 text-palette-primary-800 dark:bg-palette-primary-500/15 dark:text-palette-primary-300",
   resolved: "bg-green-100 text-green-800 dark:bg-green-500/15 dark:text-green-300",
   dismissed: "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200",
 };

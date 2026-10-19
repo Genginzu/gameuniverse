@@ -12,7 +12,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useReviewTranslations } from "@/hooks/useTranslations";
-import { getContrastTextColor } from "@/lib/utils/game-utils";
 import { ReviewForm } from "./ReviewForm";
 import type { ReviewInput } from "@/lib/validations/review";
 import type { Review } from "@/types/review";
@@ -22,7 +21,6 @@ interface ReviewFormDialogProps {
   onSubmitSuccess: () => void;
   onSubmit: (data: ReviewInput) => Promise<boolean>;
   submitting?: boolean;
-  accentColor?: string;
   /** Pass existing review to enable edit mode */
   existingReview?: Review;
 }
@@ -32,7 +30,6 @@ export function ReviewFormDialog({
   onSubmitSuccess,
   onSubmit,
   submitting = false,
-  accentColor,
   existingReview,
 }: ReviewFormDialogProps) {
   const t = useReviewTranslations();
@@ -50,17 +47,7 @@ export function ReviewFormDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          className="hover:opacity-90"
-          style={
-            accentColor
-              ? {
-                  backgroundColor: accentColor,
-                  color: getContrastTextColor(accentColor),
-                }
-              : undefined
-          }
-        >
+        <Button>
           <Icon icon="lucide:pencil" className="mr-2 h-4 w-4" />
           {isEdit ? t("editReview") : t("writeReview")}
         </Button>

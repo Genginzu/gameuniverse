@@ -60,7 +60,7 @@ export function TranslationBatchProgress({
       {/* Progress bar */}
       <div className="h-2.5 w-full overflow-hidden rounded-full bg-gray-200/60 dark:bg-slate-700/60">
         <div
-          className="from-palette-secondary-500 to-palette-primary-500 h-full rounded-full bg-linear-to-r transition-all duration-300 ease-out"
+          className="from-cta-from to-cta-to h-full rounded-full bg-linear-to-r transition-all duration-300 ease-out"
           style={{ width: `${percentage}%` }}
         />
       </div>

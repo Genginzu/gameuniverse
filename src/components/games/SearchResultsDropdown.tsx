@@ -31,7 +31,7 @@ export function SearchResultsDropdown({
     return (
       <div className="absolute top-full right-0 left-0 z-50 mt-2 rounded-xl bg-white shadow-lg ring-1 ring-gray-200 dark:bg-gray-800 dark:ring-gray-700">
         <div className="flex items-center justify-center p-4">
-          <div className="h-5 w-5 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
+          <div className="border-palette-primary-500 h-5 w-5 animate-spin rounded-full border-2 border-t-transparent" />
           <span className="ml-2 text-sm text-gray-600 dark:text-gray-300">{t("loading")}</span>
         </div>
       </div>
@@ -86,7 +86,7 @@ export function SearchResultsDropdown({
                       className={`shrink-0 text-xs ${
                         item.source === "local"
                           ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                          : "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                          : "bg-palette-primary-100 text-palette-primary-700 dark:bg-palette-primary-900/30 dark:text-palette-primary-400"
                       }`}
                     >
                       {t(`source.${item.source}`)}
@@ -104,8 +104,8 @@ export function SearchResultsDropdown({
 
                 {/* Loading indicator for import */}
                 {isImporting && (
-                  <div className="flex items-center gap-2 text-xs text-blue-600 dark:text-blue-400">
-                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
+                  <div className="text-palette-primary-600 dark:text-palette-primary-400 flex items-center gap-2 text-xs">
+                    <div className="border-palette-primary-500 h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />
                     <span>{t("importing")}</span>
                   </div>
                 )}
@@ -122,11 +122,11 @@ export function SearchResultsDropdown({
             type="button"
             onClick={onSeeAll}
             disabled={isLoadingMore}
-            className="flex w-full items-center justify-center gap-2 rounded-lg p-2 text-sm font-medium text-blue-600 transition-colors hover:bg-blue-50 disabled:cursor-wait disabled:opacity-70 dark:text-blue-400 dark:hover:bg-blue-900/20"
+            className="text-palette-primary-600 hover:bg-palette-primary-50 dark:text-palette-primary-400 dark:hover:bg-palette-primary-900/20 flex w-full items-center justify-center gap-2 rounded-lg p-2 text-sm font-medium transition-colors disabled:cursor-wait disabled:opacity-70"
           >
             {isLoadingMore ? (
               <>
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-blue-500 border-t-transparent" />
+                <div className="border-palette-primary-500 h-4 w-4 animate-spin rounded-full border-2 border-t-transparent" />
                 {t("loading")}
               </>
             ) : (

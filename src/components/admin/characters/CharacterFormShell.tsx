@@ -26,7 +26,9 @@ export function CharacterHeroBanner({
       className="relative overflow-hidden rounded-2xl border border-gray-200/60 bg-linear-to-br from-gray-900 to-gray-800 shadow-lg dark:border-gray-700/40"
       style={
         backgroundColor
-          ? { background: `linear-gradient(135deg, ${backgroundColor}, #1f2937)` }
+          ? {
+              background: `linear-gradient(135deg, ${backgroundColor}, var(--color-palette-neutral-800))`,
+            }
           : undefined
       }
     >

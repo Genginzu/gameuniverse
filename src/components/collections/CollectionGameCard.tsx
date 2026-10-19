@@ -27,13 +27,13 @@ export function CollectionGameCard({ item }: CollectionGameCardProps) {
 
           {/* Info section */}
           <div className="p-1.5">
-            <h3 className="line-clamp-1 text-[11px] font-medium text-gray-900 group-hover:text-blue-600 dark:text-white dark:group-hover:text-blue-400">
+            <h3 className="group-hover:text-palette-primary-600 dark:group-hover:text-palette-primary-400 line-clamp-1 text-[11px] font-medium text-gray-900 dark:text-white">
               {item.title}
             </h3>
 
             {/* Owner note — compact inline */}
             {item.note && (
-              <p className="mt-0.5 line-clamp-1 text-[10px] text-blue-600 italic dark:text-blue-300">
+              <p className="text-palette-primary-600 dark:text-palette-primary-300 mt-0.5 line-clamp-1 text-[10px] italic">
                 {item.note}
               </p>
             )}

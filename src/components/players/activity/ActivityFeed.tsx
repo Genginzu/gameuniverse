@@ -50,7 +50,7 @@ export function ActivityFeed({
           <button
             type="button"
             onClick={() => setShowComposer((v) => !v)}
-            className="editorial-activity-new-post"
+            className="editorial-activity-new-post btn-filled"
           >
             {showComposer ? (
               <Icon icon="lucide:x" className="h-4 w-4" aria-hidden="true" />

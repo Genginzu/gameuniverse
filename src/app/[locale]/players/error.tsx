@@ -21,7 +21,7 @@ export default function PlayersError({ error, reset }: ErrorProps) {
   }, [error]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-slate-50 via-blue-50 to-indigo-100 p-4">
+    <div className="via-palette-primary-50 to-palette-accent-100 flex min-h-screen items-center justify-center bg-linear-to-br from-slate-50 p-4">
       <div className="w-full max-w-md">
         <Alert variant="destructive">
           <Icon icon="lucide:alert-triangle" className="h-4 w-4" />

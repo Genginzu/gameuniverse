@@ -189,7 +189,7 @@ export function CalendarMatchDetail({ match, open, onOpenChange }: CalendarMatch
                     type="button"
                     onClick={handlePlaceBet}
                     disabled={placing}
-                    className="bg-editorial-accent w-full rounded-lg px-4 py-2.5 text-sm font-bold text-white transition-all hover:opacity-90 disabled:opacity-50"
+                    className="btn-filled w-full rounded-lg px-4 py-2.5 text-sm font-bold transition-all disabled:opacity-50"
                   >
                     {placing ? t("prediction.placing") : t("prediction.placeBet", { amount })}
                   </button>
