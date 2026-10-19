@@ -51,3 +51,64 @@ describe("20261018000012 storage", () => {
     expect(folderChecks).toHaveLength(2);
   });
 });
+
+const dataExposure = read("20261018000013_restrict_personal_data_and_internal_rpcs.sql");
+
+describe("20261018000013 personal data and internal RPCs", () => {
+  it("removes the public wallet and notification-insert policies", () => {
+    expect(dataExposure).toContain('DROP POLICY IF EXISTS "Anyone can view wallet balance"');
+    expect(dataExposure).toContain('DROP POLICY IF EXISTS "notifications_insert"');
+  });
+
+  it("hides OAuth tokens from anon and authenticated", () => {
+    expect(dataExposure).toContain("REVOKE SELECT ON public.player_linked_platforms FROM anon, authenticated");
+    const grant = dataExposure.match(/GRANT SELECT \(([^)]*)\) ON public\.player_linked_platforms/);
+    expect(grant?.[1]).not.toContain("access_token");
+    expect(grant?.[1]).not.toContain("refresh_token");
+  });
+
+  it("scopes the feed and backlog RPCs to the caller", () => {
+    expect(dataExposure).toContain("viewer_uuid IS DISTINCT FROM auth.uid()");
+    expect(dataExposure).toContain("user_uuid IS DISTINCT FROM auth.uid()");
+  });
+
+  it.each([
+    "pandascore_acquire_lock(interval)",
+    "pandascore_release_lock(timestamptz)",
+    "refresh_translation_stats()",
+    "cleanup_old_igdb_webhook_events()",
+    "fast_count_estimate(text)",
+  ])("revokes %s from anon and authenticated", (signature) => {
+    expect(dataExposure).toContain(
+      `REVOKE EXECUTE ON FUNCTION public.${signature} FROM PUBLIC, anon, authenticated`
+    );
+  });
+});
+
+const statsPrivate = read("20261018000014_enforce_stats_private.sql");
+
+describe("20261018000014 stats_private", () => {
+  it.each([
+    "public.user_library",
+    "public.game_sessions",
+    "public.friendships",
+    "public.player_subscriptions",
+  ])("guards %s SELECT with is_stats_private", (table) => {
+    const policy = statsPrivate.match(new RegExp(`ON ${table.replace(".", "\\.")} FOR SELECT USING \\(([^;]*)\\);`));
+    expect(policy?.[1]).toContain("public.is_stats_private(");
+  });
+
+  it("returns an empty activity page for a private player", () => {
+    expect(statsPrivate).toContain("RENAME TO get_player_activity_unchecked");
+    expect(statsPrivate).toContain("jsonb_build_object('events', '[]'::jsonb, 'totalCount', 0)");
+  });
+
+  it("runs the feeds with the caller's rights so RLS applies", () => {
+    expect(statsPrivate).toContain(
+      "ALTER FUNCTION public.get_friends_feed_unchecked(uuid, text, text, integer, integer) SECURITY INVOKER"
+    );
+    expect(statsPrivate).toContain(
+      "ALTER FUNCTION public.get_subscribed_feed_unchecked(uuid, text, integer, integer) SECURITY INVOKER"
+    );
+  });
+});
