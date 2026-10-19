@@ -62,7 +62,11 @@ describe("placePrediction", () => {
     };
     mockRpc.mockResolvedValue({ data: row, error: null });
 
-    const result = await placePrediction("p1", 42, "A vs B", "lol", 7, "Team A", 100);
+    const result = await placePrediction(
+      "p1",
+      { matchId: 42, matchName: "A vs B", game: "lol", winnerId: 7, winnerName: "Team A" },
+      100
+    );
 
     expect(mockRpc).toHaveBeenCalledWith("place_esport_prediction", {
       p_player_id: "p1",
@@ -81,7 +85,11 @@ describe("placePrediction", () => {
     mockRpc.mockResolvedValue({ data: null, error: { message: "Insufficient balance" } });
 
     await expect(
-      placePrediction("p1", 42, "A vs B", "lol", 7, "Team A", 100)
+      placePrediction(
+        "p1",
+        { matchId: 42, matchName: "A vs B", game: "lol", winnerId: 7, winnerName: "Team A" },
+        100
+      )
     ).rejects.toThrow("Insufficient balance");
   });
 });
@@ -107,12 +115,12 @@ describe("resolvePredictionsForMatch", () => {
       },
     ];
 
-    // First .from() = select pending; subsequent = update chains.
+    // First .from() = select pending; subsequent = conditional update claims.
     let call = 0;
     mockFrom.mockImplementation(() => {
       call += 1;
       if (call === 1) return buildChain({ data: pending, error: null });
-      return buildChain({ data: null, error: null });
+      return buildChain({ data: [{ id: "claimed" }], error: null });
     });
 
     const resolved = await resolvePredictionsForMatch(42, 7);
@@ -128,6 +136,23 @@ describe("resolvePredictionsForMatch", () => {
       undefined,
       expect.stringContaining("A vs B")
     );
+  });
+
+  it("does not credit a prediction already settled by a concurrent run", async () => {
+    const pending = [
+      { id: "pred-1", player_id: "p1", match_id: 42, match_name: "A vs B", predicted_winner_id: 7, amount: 100 },
+    ];
+    let call = 0;
+    mockFrom.mockImplementation(() => {
+      call += 1;
+      if (call === 1) return buildChain({ data: pending, error: null });
+      return buildChain({ data: [], error: null });
+    });
+
+    const resolved = await resolvePredictionsForMatch(42, 7);
+
+    expect(resolved).toBe(0);
+    expect(mockCreditCoins).not.toHaveBeenCalled();
   });
 
   it("returns 0 when there are no pending predictions", async () => {
