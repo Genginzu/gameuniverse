@@ -1680,6 +1680,18 @@
       "resetSent": "A password reset email has been sent",
       "resetError": "Failed to send password reset email"
     },
+    "privacy": {
+      "title": "Privacy",
+      "description": "Choose what other players can see on your profile",
+      "privateProfile": "Private profile",
+      "privateProfileDescription": "Hides your stats, library, play sessions, activity, friends and subscriptions from other players. Your reviews and posts stay public.",
+      "on": "On",
+      "off": "Off",
+      "statusPrivate": "Your profile is private",
+      "statusPublic": "Your profile is public",
+      "nowPrivate": "Your profile is now private",
+      "nowPublic": "Your profile is now public"
+    },
     "appearance": {
       "title": "Appearance",
       "description": "Customize your avatar and banner",

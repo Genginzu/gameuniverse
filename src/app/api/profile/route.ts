@@ -47,7 +47,7 @@ export async function PATCH(request: NextRequest) {
     const updates = await request.json();
 
     // Validate allowed fields
-    const allowedFields = ["username", "preferred_locale"];
+    const allowedFields = ["username", "preferred_locale", "stats_private"];
     const filteredUpdates = Object.keys(updates)
       .filter((key) => allowedFields.includes(key))
       .reduce((obj: Record<string, unknown>, key) => {
@@ -57,6 +57,10 @@ export async function PATCH(request: NextRequest) {
 
     if (Object.keys(filteredUpdates).length === 0) {
       return NextResponse.json({ error: "No valid fields to update" }, { status: 400 });
+    }
+
+    if ("stats_private" in filteredUpdates && typeof filteredUpdates.stats_private !== "boolean") {
+      return NextResponse.json({ error: "stats_private must be a boolean" }, { status: 400 });
     }
 
     // Add updated_at timestamp

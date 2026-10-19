@@ -1680,6 +1680,18 @@
       "resetSent": "Un email de réinitialisation a été envoyé",
       "resetError": "Échec de l'envoi de l'email de réinitialisation"
     },
+    "privacy": {
+      "title": "Confidentialité",
+      "description": "Choisissez ce que les autres joueurs peuvent voir de votre profil",
+      "privateProfile": "Profil privé",
+      "privateProfileDescription": "Masque aux autres joueurs vos statistiques, votre bibliothèque, vos sessions de jeu, votre activité, vos amis et vos abonnements. Vos avis et publications restent publics.",
+      "on": "Activé",
+      "off": "Désactivé",
+      "statusPrivate": "Votre profil est privé",
+      "statusPublic": "Votre profil est public",
+      "nowPrivate": "Votre profil est maintenant privé",
+      "nowPublic": "Votre profil est maintenant public"
+    },
     "appearance": {
       "title": "Apparence",
       "description": "Personnalisez votre avatar et votre bannière",

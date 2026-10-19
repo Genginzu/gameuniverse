@@ -227,5 +227,47 @@ describe("/api/profile", () => {
       expect(response.status).toBe(400);
       expect(data.error).toBe("No valid fields to update");
     });
+
+    it("should toggle stats_private and ignore privileged fields", async () => {
+      mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
+
+      const updateChain = {
+        eq: vi.fn(() => updateChain),
+        select: vi.fn(() => updateChain),
+        single: vi.fn(() => Promise.resolve({ data: { ...mockProfile, stats_private: true }, error: null })),
+      };
+      const update = vi.fn(() => updateChain);
+      mockFrom.mockReturnValue({ update });
+
+      const request = new NextRequest("http://localhost:3000/api/profile", {
+        method: "PATCH",
+        body: JSON.stringify({ stats_private: true, level: 99, avatar_url: "https://evil.test/x.png" }),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const response = await PATCH(request);
+
+      expect(response.status).toBe(200);
+      const payload = (update.mock.calls[0] as unknown[])[0] as Record<string, unknown>;
+      expect(payload.stats_private).toBe(true);
+      expect(payload).not.toHaveProperty("level");
+      expect(payload).not.toHaveProperty("avatar_url");
+    });
+
+    it("should reject a non-boolean stats_private", async () => {
+      mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
+      mockFrom.mockClear();
+
+      const request = new NextRequest("http://localhost:3000/api/profile", {
+        method: "PATCH",
+        body: JSON.stringify({ stats_private: "yes" }),
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const response = await PATCH(request);
+
+      expect(response.status).toBe(400);
+      expect(mockFrom).not.toHaveBeenCalled();
+    });
   });
 });
