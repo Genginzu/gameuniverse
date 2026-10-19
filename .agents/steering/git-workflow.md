@@ -123,7 +123,8 @@ Quand l'utilisateur demande de travailler sur une issue GitHub :
    considéré terminé qu'après validation visuelle/fonctionnelle).
 3. **Phase 3** — Sur demande utilisateur : lint + tests ciblés + type-check +
    build + commit + push sur la branche courante.
-4. **Intégration** — Ouvrir une PR vers `main`. Quand le CI de la PR passe,
+4. **Intégration** — Ouvrir une PR **draft** vers `main`, puis `gh pr ready`
+   quand le travail est terminé (déclenche la CI). Quand le CI de la PR passe,
    l'utilisateur demande **explicitement** le squash and merge (jamais
    automatique).
 5. **Clôturer l'issue** uniquement après le merge dans `main`.
@@ -131,10 +132,20 @@ Quand l'utilisateur demande de travailler sur une issue GitHub :
 ## CI
 
 Le CI (`.github/workflows/ci.yml`) se déclenche sur les **PR vers `main`** (et
-`workflow_dispatch`). Il ignore les changements purement docs (`docs/**`,
-`**/*.md`, `.kiro/**`, `.vscode/**`). Jobs : `lint`, `type-check`,
-`unit-tests` (shards api/components/hooks/lib/scripts), `build`, puis `e2e`
-(Playwright, 4 shards). Tous doivent passer avant le squash and merge.
+`workflow_dispatch`). Il ignore les changements purement docs/config agents
+(`docs/**`, `**/*.md`, `.agents/**`, `.vscode/**`). Jobs : 4 shards
+`unit-tests` (le premier inclut lint + type-check), `build`, puis `e2e`
+(Playwright, 2 shards). Tous doivent passer avant le squash and merge.
+
+### Économie de minutes Actions (dépôt privé, quota gratuit)
+
+- ✅ Ouvrir les PR en **draft** (`gh pr create --draft`) : aucun job CI ne tourne
+  tant que la PR est en brouillon, quel que soit le nombre de pushes.
+- ✅ Passer la PR en **Ready for review** (`gh pr ready`) une fois le travail
+  terminé : la CI complète tourne alors une fois, puis à chaque push suivant.
+- ✅ La PR release-please ne lance pas de CI (code déjà testé à la PR mergée).
+- ✅ Plusieurs sous-branches → les merger dans une branche d'intégration
+  (sans PR vers `main`, donc sans CI), puis une seule PR vers `main`.
 
 ## Squash and merge
 

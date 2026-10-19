@@ -1,123 +1,79 @@
 name: CI
 
+# Minutes budget: CI does not run on draft PRs nor on the release-please PR.
+# Mark a PR "Ready for review" to trigger the full pipeline once.
 on:
   pull_request:
     branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
     paths-ignore:
       - "docs/**"
       - "**/*.md"
+      - ".agents/**"
       - ".kiro/**"
+      - ".claude/**"
       - ".vscode/**"
+      - ".github/dependabot.yml"
+      - ".github/pull_request_template.md"
   workflow_dispatch:
 
-# Cancel previous runs on the same ref when a new one starts
 concurrency:
-  group: ci-${{ github.ref }}
+  group: ci-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
+# The same skip condition sits on every root job (skipped jobs bill 0 min,
+# a dedicated gate job would bill 1 min per run). e2e is skipped with build.
 jobs:
-  install:
-    name: Install
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          show-progress: false
-      - uses: oven-sh/setup-bun@v2
-      - run: bun install --frozen-lockfile
-
-      - name: Cache bun install store
-        uses: actions/cache/save@v6
-        with:
-          path: ~/.bun/install/cache
-          key: bun-cache-${{ runner.os }}-${{ hashFiles('bun.lock') }}
-
-  lint:
-    name: Lint
-    needs: [install]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          show-progress: false
-      - uses: oven-sh/setup-bun@v2
-      - name: Restore bun install store
-        uses: actions/cache/restore@v6
-        with:
-          path: ~/.bun/install/cache
-          key: bun-cache-${{ runner.os }}-${{ hashFiles('bun.lock') }}
-      - run: bun install --frozen-lockfile
-      - run: bun run lint
-
-  type-check:
-    name: Type Check
-    needs: [install]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          show-progress: false
-      - uses: oven-sh/setup-bun@v2
-      - name: Restore bun install store
-        uses: actions/cache/restore@v6
-        with:
-          path: ~/.bun/install/cache
-          key: bun-cache-${{ runner.os }}-${{ hashFiles('bun.lock') }}
-      - run: bun install --frozen-lockfile
-      - run: bun run type-check
-
   unit-tests:
-    name: Unit Tests (${{ matrix.shard }})
-    # Run unit tests in parallel with lint/type-check (only depend on install)
-    needs: [install]
+    name: ${{ matrix.name }}
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.pull_request.draft == false &&
+       !startsWith(github.head_ref, 'release-please--'))
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         include:
-          - shard: api
-            path: src/app/api/__tests__/
-          - shard: components
-            path: src/components/__tests__/
-          - shard: hooks
-            path: src/hooks/__tests__/
-          - shard: lib
-            path: src/lib/__tests__/
-          - shard: scripts
-            path: scripts/__tests__/
+          # Lint + type-check share the shortest test shard to save job setup minutes.
+          - name: Lint, types & API tests
+            static: true
+            paths: src/app/api/__tests__/
+          - name: Unit Tests (lib, hooks)
+            static: false
+            paths: src/lib/__tests__/ src/hooks/__tests__/
+          - name: Unit Tests (components)
+            static: false
+            paths: src/components/__tests__/
+          - name: Unit Tests (scripts)
+            static: false
+            paths: scripts/__tests__/
     steps:
       - uses: actions/checkout@v7
         with:
           show-progress: false
-      - uses: oven-sh/setup-bun@v2
-      - name: Restore bun install store
-        uses: actions/cache/restore@v6
-        with:
-          path: ~/.bun/install/cache
-          key: bun-cache-${{ runner.os }}-${{ hashFiles('bun.lock') }}
-      - run: bun install --frozen-lockfile
-      - run: bunx vitest run ${{ matrix.path }}
+      - uses: ./.github/actions/setup-bun-deps
+      - if: matrix.static
+        run: bun run lint
+      - if: matrix.static
+        run: bun run type-check
+      - run: bunx vitest run ${{ matrix.paths }}
 
   build:
     name: Build
-    # Build can start as soon as deps are installed; lint/type-check run in parallel
-    needs: [install]
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.pull_request.draft == false &&
+       !startsWith(github.head_ref, 'release-please--'))
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
         with:
           show-progress: false
-      - uses: oven-sh/setup-bun@v2
-      - name: Restore bun install store
-        uses: actions/cache/restore@v6
-        with:
-          path: ~/.bun/install/cache
-          key: bun-cache-${{ runner.os }}-${{ hashFiles('bun.lock') }}
-      - run: bun install --frozen-lockfile
+      - uses: ./.github/actions/setup-bun-deps
 
-      # Cache the Next.js build cache. Reusing the same key (without sha)
-      # overwrites the previous entry instead of accumulating one per
-      # commit. Next.js incremental cache handles staleness correctly.
+      # Reusing the same key (without sha) overwrites the previous entry
+      # instead of accumulating one per commit.
       - name: Cache Next.js build
         uses: actions/cache@v6
         with:
@@ -136,6 +92,7 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key' }}
 
       - name: Upload build artifact
+        if: github.event.pull_request.user.login != 'dependabot[bot]'
         uses: actions/upload-artifact@v7
         with:
           name: nextjs-build
@@ -152,17 +109,18 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [1, 2, 3, 4]
+        # 2 shards: each shard pays ~1 min of container + install setup.
+        shard: [1, 2]
     container:
       image: mcr.microsoft.com/playwright:v1.63.0-noble
     steps:
-      # Sparse checkout: E2E only needs test/e2e + Playwright/build config files,
-      # not the entire src/ tree. Cuts checkout from ~57s to a few seconds.
+      # Sparse checkout: E2E only needs test/e2e + Playwright/build config files.
       # scripts/setup-agents.ts is required by the `prepare` script run by bun install.
       - uses: actions/checkout@v7
         with:
           show-progress: false
           sparse-checkout: |
+            .github/actions
             test/e2e
             playwright.config.ts
             package.json
@@ -177,13 +135,7 @@ jobs:
       - name: Install system dependencies
         run: apt-get update && apt-get install -y unzip
 
-      - uses: oven-sh/setup-bun@v2
-      - name: Restore bun install store
-        uses: actions/cache/restore@v6
-        with:
-          path: ~/.bun/install/cache
-          key: bun-cache-${{ runner.os }}-${{ hashFiles('bun.lock') }}
-      - run: bun install --frozen-lockfile
+      - uses: ./.github/actions/setup-bun-deps
 
       - name: Download build artifact
         uses: actions/download-artifact@v8
@@ -192,7 +144,7 @@ jobs:
           path: .next/
 
       - name: Run E2E Tests
-        run: npx playwright test --shard=${{ matrix.shard }}/4
+        run: npx playwright test --shard=${{ matrix.shard }}/${{ strategy.job-total }}
         env:
           HOME: /root
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
