@@ -3,6 +3,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { syncAllGameFields } from "@/lib/services/igdb-sync";
 import type { TrackableField } from "@/types/admin-games";
 import { logger } from "@/lib/logger";
+import { adminGuardResponse } from "@/lib/auth-admin";
 
 /**
  * POST /api/games/[slug]/sync
@@ -18,6 +19,11 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ): Promise<NextResponse> {
+  // Writes only succeed for admins (RLS), so restrict the IGDB / Metacritic
+  // calls to them too instead of letting anyone burn the API quotas.
+  const denied = await adminGuardResponse();
+  if (denied) return denied;
+
   try {
     const { slug } = await params;
 

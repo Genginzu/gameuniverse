@@ -1,3 +1,4 @@
+import { NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 import { getUserRoleFromUser } from "@/lib/utils/userRole";
@@ -108,4 +109,20 @@ export function adminAuthErrorStatus(error: unknown): 401 | 403 | null {
   if (error.message === "Authentication required") return 401;
   if (error.message === "Admin access required") return 403;
   return null;
+}
+
+/**
+ * Route guard: returns a 401/403 JSON response when the caller is not an
+ * admin, or null when the handler may proceed. Call it before reading the body
+ * or touching any external API.
+ */
+export async function adminGuardResponse(): Promise<NextResponse | null> {
+  try {
+    await requireAdminUser();
+    return null;
+  } catch (error) {
+    const status = adminAuthErrorStatus(error);
+    if (!status) throw error;
+    return NextResponse.json({ error: (error as Error).message }, { status });
+  }
 }

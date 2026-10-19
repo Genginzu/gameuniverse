@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { syncCharacterField } from "@/lib/services/bulkCharacterFieldSync";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
+import { adminGuardResponse } from "@/lib/auth-admin";
 
 const DELAY_MS = 100;
 const PAGE_SIZE = 1000;
@@ -24,6 +25,9 @@ const IMPORTABLE_FIELDS: Record<string, string> = {
  * - All:    { all: true, field }      — server fetches & syncs all
  */
 export async function POST(request: NextRequest) {
+  const denied = await adminGuardResponse();
+  if (denied) return denied;
+
   let charIds: Array<{ id: string; igdbId: number }> | null = null;
   let field: string | undefined;
   let allMode = false;
