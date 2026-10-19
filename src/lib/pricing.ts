@@ -10,7 +10,6 @@ import type {
   BestPriceResponse,
   GamePriceComparison,
   Store,
-  StoreCreationResponse,
   PriceFilters,
   StorePayload,
 } from "@/types/pricing";
@@ -101,27 +100,6 @@ export async function searchStores(searchTerm: string): Promise<Store[]> {
 }
 
 /**
- * Create a new store
- */
-export async function createStore(storeData: StorePayload): Promise<StoreCreationResponse> {
-  const { data, error } = await supabase.rpc("create_store", {
-    store_name: storeData.name,
-    website_url: storeData.website_url || undefined,
-    logo_url: storeData.logo_url || undefined,
-  });
-
-  if (error) {
-    throw new Error(`Failed to create store: ${error.message}`);
-  }
-
-  const result = data?.[0];
-  return {
-    success: result?.success || false,
-    store_id: result?.store_id || undefined,
-    message: result?.message || "Unknown error",
-  };
-}
-/**
  * Get store statistics
  */
 export async function getStoreStats(storeId: string) {
@@ -134,29 +112,6 @@ export async function getStoreStats(storeId: string) {
   }
 
   return data?.[0] || null;
-}
-
-/**
- * Update an existing store
- */
-export async function updateStore(storeId: string, updates: Partial<StorePayload>) {
-  const { data, error } = await supabase.rpc("update_store", {
-    store_id: storeId,
-    store_name: updates.name || undefined,
-    website_url: updates.website_url || undefined,
-    logo_url: updates.logo_url || undefined,
-    is_active: updates.is_active ?? undefined,
-  });
-
-  if (error) {
-    throw new Error(`Failed to update store: ${error.message}`);
-  }
-
-  const result = data?.[0];
-  return {
-    success: result?.success || false,
-    message: result?.message || "Unknown error",
-  };
 }
 
 /**

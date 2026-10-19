@@ -140,90 +140,40 @@ describe("matchDiscussionService", () => {
   });
 
   describe("addReaction", () => {
-    it("adds a new reaction emoji", async () => {
-      const existingRow = {
-        id: "c1",
-        match_id: "match-1",
-        match_source: "pandascore",
-        player_id: "user-1",
-        content: "Nice",
-        reactions: {},
-        created_at: "2026-04-25T20:00:00Z",
-      };
-      const updatedRow = { ...existingRow, reactions: { "👍": ["user-2"] } };
+    const toggledRow = {
+      id: "c1",
+      match_id: "match-1",
+      match_source: "pandascore",
+      player_id: "user-1",
+      content: "Nice",
+      reactions: { "👍": ["user-2"] },
+      created_at: "2026-04-25T20:00:00Z",
+    };
 
-      let callCount = 0;
+    function mockWithRpc(result: { data: unknown; error: unknown }) {
       const mock = createMockSupabase();
-      mock.from.mockImplementation((table: string) => {
-        callCount++;
-        if (table === "match_comments") {
-          const chain = { ...mock._chain };
-          if (callCount === 1) {
-            // fetch current
-            chain.single = vi.fn().mockResolvedValue({ data: existingRow, error: null });
-          } else if (callCount === 2) {
-            // update
-            chain.single = vi.fn().mockResolvedValue({ data: updatedRow, error: null });
-          }
-          chain.select = vi.fn().mockReturnValue(chain);
-          chain.eq = vi.fn().mockReturnValue(chain);
-          chain.update = vi.fn().mockReturnValue(chain);
-          return chain;
-        }
-        // profiles
-        const profileChain = { ...mock._chain };
-        profileChain.in = vi.fn().mockResolvedValue({ data: [MOCK_PROFILE], error: null });
-        profileChain.select = vi.fn().mockReturnValue(profileChain);
-        return profileChain;
-      });
+      mock._chain.in = vi.fn().mockResolvedValue({ data: [MOCK_PROFILE], error: null });
+      return { ...mock, rpc: vi.fn().mockResolvedValue(result) };
+    }
 
-      const result = await addReaction(mock as never, "c1", "user-2", "👍");
+    it("toggles the caller's reaction through the RPC, without a direct update", async () => {
+      const mock = mockWithRpc({ data: toggledRow, error: null });
+
+      const result = await addReaction(mock as never, "c1", "👍");
+
+      expect(mock.rpc).toHaveBeenCalledWith("toggle_match_comment_reaction", {
+        p_comment_id: "c1",
+        p_emoji: "👍",
+      });
+      expect(mock._chain.update).not.toHaveBeenCalled();
       expect(result.reactions).toEqual({ "👍": ["user-2"] });
+      expect(result.playerName).toBe("TestPlayer");
     });
 
-    it("toggles off an existing reaction", async () => {
-      const existingRow = {
-        id: "c1",
-        match_id: "match-1",
-        match_source: "pandascore",
-        player_id: "user-1",
-        content: "Nice",
-        reactions: { "👍": ["user-2"] },
-        created_at: "2026-04-25T20:00:00Z",
-      };
-      const updatedRow = { ...existingRow, reactions: {} };
+    it("throws when the RPC fails", async () => {
+      const mock = mockWithRpc({ data: null, error: { message: "comment not found" } });
 
-      let callCount = 0;
-      const mock = createMockSupabase();
-      mock.from.mockImplementation((table: string) => {
-        callCount++;
-        if (table === "match_comments") {
-          const chain = { ...mock._chain };
-          if (callCount === 1) {
-            chain.single = vi.fn().mockResolvedValue({ data: existingRow, error: null });
-          } else if (callCount === 2) {
-            chain.single = vi.fn().mockResolvedValue({ data: updatedRow, error: null });
-          }
-          chain.select = vi.fn().mockReturnValue(chain);
-          chain.eq = vi.fn().mockReturnValue(chain);
-          chain.update = vi.fn().mockReturnValue(chain);
-          return chain;
-        }
-        const profileChain = { ...mock._chain };
-        profileChain.in = vi.fn().mockResolvedValue({ data: [MOCK_PROFILE], error: null });
-        profileChain.select = vi.fn().mockReturnValue(profileChain);
-        return profileChain;
-      });
-
-      const result = await addReaction(mock as never, "c1", "user-2", "👍");
-      expect(result.reactions).toEqual({});
-    });
-
-    it("throws when comment not found", async () => {
-      const mock = createMockSupabase();
-      mock._chain.single.mockResolvedValue({ data: null, error: { message: "Not found" } });
-
-      await expect(addReaction(mock as never, "bad-id", "u1", "👍")).rejects.toThrow("Not found");
+      await expect(addReaction(mock as never, "bad-id", "👍")).rejects.toThrow("comment not found");
     });
   });
 });
