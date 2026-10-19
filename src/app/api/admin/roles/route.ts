@@ -3,6 +3,7 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { requireAdmin } from "@/lib/auth-admin";
 import { roleQuerySchema, adminRoleFormSchema } from "@/lib/validations/admin-role-form";
 import { logger } from "@/lib/logger";
+import { ilikeAnyFilter } from "@/lib/utils/postgrestFilter";
 
 /**
  * GET /api/admin/roles - List roles with pagination, search, sort, and character count
@@ -57,7 +58,7 @@ export async function GET(request: NextRequest) {
       if (!search?.trim()) return query;
       const term = `%${search.trim()}%`;
       if (searchRoleIds && searchRoleIds.length > 0) {
-        return query.or(`slug.ilike.${term},id.in.(${searchRoleIds.join(",")})`);
+        return query.or(`${ilikeAnyFilter(["slug"], search)},id.in.(${searchRoleIds.join(",")})`);
       }
       return query.ilike("slug", term);
     };

@@ -30,12 +30,14 @@ export async function PATCH(request: NextRequest, { params }: RouteContext) {
       .update(updates)
       .eq("id", gameId)
       .select("*")
-      .single();
+      .maybeSingle();
 
     if (error) {
       logger.error("Error updating coach game", { error, gameId });
       return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
+    // RLS only lets the owning coach update the row: no row = not found / not yours.
+    if (!row) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
     return NextResponse.json({ game: row });
   } catch (error) {
@@ -54,11 +56,18 @@ export async function DELETE(_request: NextRequest, { params }: RouteContext) {
 
     const { gameId } = await params;
 
-    const { error } = await (supabase as AnySupabase).from("coach_games").delete().eq("id", gameId);
+    const { data: deleted, error } = await (supabase as AnySupabase)
+      .from("coach_games")
+      .delete()
+      .eq("id", gameId)
+      .select("id");
 
     if (error) {
       logger.error("Error deleting coach game", { error, gameId });
       return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    }
+    if (!deleted || deleted.length === 0) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
     return NextResponse.json({ success: true });

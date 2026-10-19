@@ -97,42 +97,23 @@ export async function addComment(
   return toMatchComment(row, profilesMap);
 }
 
+/**
+ * Toggles the caller's reaction through toggle_match_comment_reaction
+ * (migration 20261019000003): the RPC adds or removes auth.uid() only, under a
+ * row lock, so reactions cannot be forged and any signed-in user can react.
+ */
 export async function addReaction(
   supabase: SupabaseClient,
   commentId: string,
-  userId: string,
   emoji: string
 ): Promise<MatchComment> {
-  // Fetch current comment
-  const { data: current, error: fetchError } = await supabase
-    .from("match_comments")
-    .select("*")
-    .eq("id", commentId)
-    .single();
+  const { data, error } = await supabase.rpc("toggle_match_comment_reaction", {
+    p_comment_id: commentId,
+    p_emoji: emoji,
+  });
 
-  if (fetchError || !current) throw new Error(fetchError?.message ?? "Comment not found");
-
-  const row = current as CommentRow;
-  const reactions = { ...row.reactions };
-  const users = reactions[emoji] ?? [];
-
-  // Toggle: remove if already reacted, add otherwise
-  if (users.includes(userId)) {
-    reactions[emoji] = users.filter((id) => id !== userId);
-    if (reactions[emoji].length === 0) delete reactions[emoji];
-  } else {
-    reactions[emoji] = [...users, userId];
-  }
-
-  const { data: updated, error: updateError } = await supabase
-    .from("match_comments")
-    .update({ reactions })
-    .eq("id", commentId)
-    .select()
-    .single();
-
-  if (updateError) throw new Error(updateError.message);
-  const updatedRow = updated as CommentRow;
+  if (error || !data) throw new Error(error?.message ?? "Comment not found");
+  const updatedRow = data as CommentRow;
   const profilesMap = await fetchProfilesMap(supabase, [updatedRow.player_id]);
   return toMatchComment(updatedRow, profilesMap);
 }

@@ -46,6 +46,8 @@ journalise l'erreur.
 | `prediction`      | 30     | 10 min  | `POST /api/esport/predictions`                                  |
 | `coachingBooking` | 10     | 1 h     | `POST /api/coaching/sessions`                                   |
 | `search`          | 120    | 1 min   | `GET /api/search/global`, `GET /api/search/hybrid` (par IP)     |
+| `view`            | 60     | 10 min  | `POST /api/games/[slug]/views`, `/api/characters/[slug]/views` (par IP) |
+| `gameSession`     | 30     | 1 h     | `POST /api/players/[id]/sessions`                               |
 
 Pour une nouvelle action : l'ajouter à `RATE_LIMITS` dans
 `src/lib/services/rateLimitService.ts`, puis appeler `enforceRateLimit` dans la

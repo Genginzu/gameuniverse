@@ -100,11 +100,24 @@ describe("/api/admin/disputes", () => {
     const res = await POST(
       request("http://localhost/api/admin/disputes", {
         method: "POST",
-        body: JSON.stringify({ reportedId: "coach-1", reason: "no_show" }),
+        body: JSON.stringify({ sessionId: "session-1", reportedId: "coach-1", reason: "no_show" }),
       })
     );
     expect(res.status).toBe(201);
     expect(adminDb.current!.calls).toHaveLength(0);
+  });
+
+  test("POST requires the coaching session the dispute is about", async () => {
+    signIn(SELF_PROMOTED);
+
+    const res = await POST(
+      request("http://localhost/api/admin/disputes", {
+        method: "POST",
+        body: JSON.stringify({ reportedId: "coach-1", reason: "no_show" }),
+      })
+    );
+    expect(res.status).toBe(400);
+    expect(sessionDb.current!.calls).toHaveLength(0);
   });
 
   test("PATCH returns 403 for a self-promoted user and writes nothing", async () => {

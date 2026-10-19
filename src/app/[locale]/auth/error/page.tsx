@@ -12,10 +12,17 @@ import {
   AUTH_SECONDARY_BTN_CLASS,
 } from "@/components/auth/AuthCard";
 
+/** Only known reasons are shown: the raw query string is never echoed (phishing). */
+const ERROR_REASON_KEYS: Record<string, string> = {
+  invalid_link: "error.invalidLink",
+  forbidden: "error.forbiddenRequest",
+};
+
 function AuthErrorContent() {
   const t = useTranslations("auth");
   const searchParams = useSearchParams();
-  const error = searchParams.get("message") || t("error.generic");
+  const reasonKey = ERROR_REASON_KEYS[searchParams.get("reason") ?? ""];
+  const error = t(reasonKey ?? "error.generic");
 
   return (
     <AuthLayout>
