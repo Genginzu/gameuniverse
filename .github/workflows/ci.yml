@@ -111,7 +111,7 @@ jobs:
         # 2 shards: each shard pays ~1 min of container + install setup.
         shard: [1, 2]
     container:
-      image: mcr.microsoft.com/playwright:v1.63.0-noble
+      image: mcr.microsoft.com/playwright:v1.64.1-noble
     steps:
       # Sparse checkout: E2E only needs test/e2e + Playwright/build config files.
       # scripts/setup-agents.ts is required by the `prepare` script run by bun install.
