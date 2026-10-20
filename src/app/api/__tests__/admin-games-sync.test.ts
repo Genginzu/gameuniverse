@@ -7,7 +7,7 @@
 import { describe, test, expect, vi, beforeEach } from "vitest";
 import type { NextRequest } from "next/server";
 import { createSupabaseQueryMock } from "@/test-helpers/supabase-query-mock";
-import { TRACKABLE_FIELDS } from "@/lib/utils/field-tracking";
+import { TRACKABLE_FIELDS } from "@/lib/services/igdb-fields/registry";
 
 const db = createSupabaseQueryMock();
 const mocks = vi.hoisted(() => ({

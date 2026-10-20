@@ -8,12 +8,9 @@ import {
   invalidateGameCache,
   verifyGameDeletionConsistency,
 } from "@/lib/realtime-updates";
-import {
-  detectChangedFields,
-  upsertFieldOverrides,
-  type SupabaseClientLike,
-  type CurrentGameData,
-} from "@/lib/utils/field-tracking";
+import { upsertFieldOverrides, type SupabaseClientLike } from "@/lib/utils/field-tracking";
+import { detectChangedFields } from "@/lib/services/igdb-fields/registry";
+import type { CurrentGameData } from "@/types/admin-games";
 import type { AdminGameFormData } from "@/lib/validations/admin-game-form";
 import { logger } from "@/lib/logger";
 import { invalidateForDeletedGame } from "@/lib/services/recommendation/cache";
@@ -443,7 +440,8 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         game_ratings(rating_id, is_primary, game_rating_descriptors(content_descriptor_id)),
         game_versions(version_title, description),
         game_languages(language_code, has_audio, has_subtitles, has_interface),
-        game_platforms(platform_id)
+        game_platforms(platform_id),
+        game_videos(url, title)
       `
       )
       .eq("id", gameId)
@@ -801,6 +799,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         versions: existingGame.game_versions ?? [],
         languages: existingGame.game_languages ?? [],
         game_platforms: existingGame.game_platforms ?? [],
+        videos: existingGame.game_videos ?? [],
       };
 
       // Build AdminGameFormData-compatible object from validated PUT data.
@@ -827,6 +826,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         versions: versions ?? currentGameData.versions,
         languages: languages ?? currentGameData.languages,
         game_platforms: game_platforms ?? currentGameData.game_platforms,
+        videos: videos ?? currentGameData.videos,
         prices: prices ?? [],
       } as AdminGameFormData;
 

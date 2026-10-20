@@ -6,8 +6,7 @@ import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { useGameSync } from "@/hooks/useGameSync";
 import { toast } from "@/hooks/use-toast";
-import { TRACKABLE_FIELDS } from "@/lib/utils/field-tracking";
-import type { TrackableField } from "@/types/admin-games";
+import { TRACKABLE_FIELDS, trackedFieldLabelKey } from "@/lib/services/igdb-fields/registry";
 import { Icon } from "@iconify/react";
 
 interface GameFormSyncTabProps {
@@ -16,27 +15,6 @@ interface GameFormSyncTabProps {
   /** Called after a successful sync so the parent can reload game data */
   onSyncComplete?: () => void;
 }
-
-/** Maps each trackable field to its i18n label key */
-const FIELD_LABEL_KEYS: Record<TrackableField, string> = {
-  translations: "translations",
-  cover_image: "coverImage",
-  background_image: "backgroundImage",
-  release_date: "releaseDate",
-  metascore: "metascore",
-  genres: "genres",
-  companies: "companies",
-  platforms: "gamePlatforms",
-  screenshots: "screenshots",
-  artworks: "artwork",
-  age_ratings: "ageRatings",
-  versions: "versions",
-  languages: "gameLanguages",
-  playtime: "playtime",
-  popularity: "popularity",
-  videos: "videos",
-  similar_games: "similarGames",
-};
 
 export function GameFormSyncTab({ gameId, igdbId, onSyncComplete }: GameFormSyncTabProps) {
   const t = useTranslations("admin.games.form");
@@ -125,7 +103,7 @@ export function GameFormSyncTab({ gameId, igdbId, onSyncComplete }: GameFormSync
                     </span>
                   )}
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {t(FIELD_LABEL_KEYS[field])}
+                    {t(trackedFieldLabelKey(field))}
                   </span>
                   <span className="text-xs text-gray-400">
                     {isOverridden ? t("fieldOverridden") : t("fieldSynced")}
@@ -137,7 +115,7 @@ export function GameFormSyncTab({ gameId, igdbId, onSyncComplete }: GameFormSync
                   size="sm"
                   disabled={isSyncing}
                   onClick={async () => {
-                    const fieldLabel = t(FIELD_LABEL_KEYS[field]);
+                    const fieldLabel = t(trackedFieldLabelKey(field));
                     toast({
                       title: t("syncFieldStarted", { field: fieldLabel }),
                       description:

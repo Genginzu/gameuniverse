@@ -5,6 +5,8 @@ import {
   type SyncSupabaseClient,
 } from "@/lib/services/igdb-sync";
 import { IGDBService } from "@/lib/services/igdbService";
+import { TRACKABLE_FIELDS } from "@/lib/services/igdb-fields/registry";
+import { createSupabaseQueryMock } from "@/test-helpers/supabase-query-mock";
 import type { IGDBGame } from "@/types/igdb";
 
 // =============================================================================
@@ -167,6 +169,47 @@ describe("igdb-sync", () => {
 
       expect(result.success).toBe(false);
       expect(result.error).toContain("Invalid field");
+    });
+  });
+
+  describe("syncAllGameFields - override modes", () => {
+    it("skips overridden fields and keeps their overrides in respect-overrides mode", async () => {
+      getGameDetailsSpy.mockResolvedValue(MOCK_IGDB_GAME);
+      const db = createSupabaseQueryMock();
+      db.enqueue("game_field_overrides", {
+        data: [{ field_name: "videos" }, { field_name: "cover_image" }],
+      });
+
+      const result = await syncAllGameFields(
+        db.client as unknown as SyncSupabaseClient,
+        "game-id",
+        123,
+        "respect-overrides"
+      );
+
+      expect(result.success).toBe(true);
+      expect(result.syncedFields).not.toContain("videos");
+      expect(result.syncedFields).not.toContain("cover_image");
+      expect(result.syncedFields).toHaveLength(TRACKABLE_FIELDS.length - 2);
+      expect(db.callsFor("game_videos", "delete")).toHaveLength(0);
+      expect(db.callsFor("game_field_overrides", "delete")).toHaveLength(0);
+    });
+
+    it("syncs every field and clears overrides in force mode", async () => {
+      getGameDetailsSpy.mockResolvedValue(MOCK_IGDB_GAME);
+      const db = createSupabaseQueryMock();
+
+      const result = await syncAllGameFields(
+        db.client as unknown as SyncSupabaseClient,
+        "game-id",
+        123
+      );
+
+      expect(result.syncedFields).toEqual([...TRACKABLE_FIELDS]);
+      expect(db.callsFor("game_field_overrides", "select")).toHaveLength(0);
+      expect(db.callsFor("game_field_overrides", "in")).toEqual([
+        ["field_name", [...TRACKABLE_FIELDS]],
+      ]);
     });
   });
 });

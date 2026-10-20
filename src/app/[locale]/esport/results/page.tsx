@@ -3,8 +3,12 @@ import { getTranslations } from "next-intl/server";
 import { EsportShell } from "@/components/esport/EsportShell";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
-import { EsportResultsContent, type EsportResultsData } from "@/components/esport/EsportResultsContent";
-import { logger } from "@/lib/logger";
+import {
+  EsportResultsContent,
+  type EsportResultsData,
+} from "@/components/esport/EsportResultsContent";
+import { esportResultsListing } from "@/lib/listing/resources/esport";
+import { fetchListingDefault } from "@/lib/listing/server";
 
 export const revalidate = 3600;
 
@@ -18,26 +22,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: t("metaTitle"), description: t("metaDescription") };
 }
 
-export default async function EsportResultsPage() {
-  let initialData: EsportResultsData | undefined;
-
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-    const res = await fetch(`${baseUrl}/api/esport/results`, {
-      next: { revalidate: 3600 },
-    });
-    if (res.ok) {
-      initialData = await res.json();
-    }
-  } catch (error) {
-    logger.error("Failed to fetch esport results server-side", { error });
-  }
+export default async function EsportResultsPage({ params }: Props) {
+  const { locale } = await params;
+  const [initialData, tErrors] = await Promise.all([
+    fetchListingDefault<EsportResultsData>(esportResultsListing, { locale }),
+    getTranslations({ locale, namespace: "errors.pageLoad" }),
+  ]);
 
   return (
     <EsportShell>
       <ErrorBoundary
         fallback={
-          <ErrorFallback description="Error loading esport results." showRefresh showHomeButton />
+          <ErrorFallback description={tErrors("esportResults")} showRefresh showHomeButton />
         }
       >
         <EsportResultsContent initialData={initialData} />

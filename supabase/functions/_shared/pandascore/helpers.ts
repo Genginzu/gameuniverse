@@ -1,87 +1,36 @@
 /**
- * Shared helpers for PandaScore Edge Functions — Deno port of
- * src/lib/services/pandascore-sync-helpers.ts.
+ * Shared helpers for PandaScore Edge Functions.
  *
- * Differences vs the Vercel version:
+ * Notes:
  *   - Uses Deno-style imports
- *   - Drops `cleanupStaleSyncLogs` (replaced by the lock on
+ *   - No stale-log cleanup: replaced by the lock on
  *     pandascore_sync_state for the incremental flow, and by
- *     last_chunk_at staleness checks for the full-sync flow)
- *   - The `SyncErrorCollector` is identical (no DB or runtime deps)
+ *     last_chunk_at staleness checks for the full-sync flow
+ *   - The `SyncErrorCollector` has no DB or runtime deps
  */
 
-import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
 import { logger } from "../logger.ts";
-import { untypedTable } from "../untyped-table.ts";
 import type { PandaScoreListParams } from "./types.ts";
 
-export const BULK_UPSERT_SIZE = 100;
-
-/** Maximum per-item error entries kept on a single sync log/job row. */
-export const MAX_ERROR_DETAILS = 50;
-
-export type SyncErrorPhase = "fetch" | "upsert" | "delete";
-
-export interface SyncErrorDetail {
-  type: string;
-  id: number | null;
-  phase: SyncErrorPhase;
-  error: string;
-}
+export {
+  MAX_ERROR_DETAILS,
+  SyncErrorCollector,
+  type StoredSyncError,
+  type SyncErrorDetail,
+  type SyncErrorPhase,
+} from "./sync-error-collector.ts";
+import type { SyncErrorCollector } from "./sync-error-collector.ts";
+import { classifyFetchError, type SyncFailureReason } from "./sync-run/failure.ts";
 
 /**
- * Captures per-item sync errors with a hard cap. Logs each entry via
- * `logger.warn` for full visibility even when the cap is reached.
- */
-export class SyncErrorCollector {
-  private entries: SyncErrorDetail[] = [];
-  private dropped = 0;
-
-  add(detail: SyncErrorDetail): void {
-    if (this.entries.length < MAX_ERROR_DETAILS) {
-      this.entries.push(detail);
-    } else {
-      this.dropped++;
-    }
-    logger.warn("Sync error", { ...detail });
-  }
-
-  toJSON(): SyncErrorDetail[] {
-    if (this.dropped === 0) return this.entries;
-    return [
-      ...this.entries,
-      {
-        type: "summary",
-        id: null,
-        phase: "fetch",
-        error: `${this.dropped} additional errors omitted (cap: ${MAX_ERROR_DETAILS})`,
-      },
-    ];
-  }
-
-  get count(): number {
-    return this.entries.length + this.dropped;
-  }
-}
-
-/** Splits an array into chunks of `size` items. */
-export function chunk<T>(items: T[], size: number): T[][] {
-  if (size <= 0) return [items];
-  const chunks: T[][] = [];
-  for (let i = 0; i < items.length; i += size) {
-    chunks.push(items.slice(i, i + size));
-  }
-  return chunks;
-}
-
-/**
- * Result of a single page fetch. `failed=true` lets the caller distinguish
- * a legitimate short page (< perPage items, end of dataset) from a fetch
- * error (which also returns 0 items but should NOT mark the entity as done).
+ * Result of a single page fetch. A non-null `failure` lets the caller
+ * distinguish a legitimate short page (< perPage items, end of dataset)
+ * from a fetch error (which also returns 0 items but should NOT mark the
+ * entity as done), and tells it how to react (see sync-run/failure.ts).
  */
 export interface PageFetchResult<T> {
   items: T[];
-  failed: boolean;
+  failure: SyncFailureReason | null;
 }
 
 /**
@@ -116,17 +65,18 @@ export async function fetchOnePage<T>(
 
   try {
     const items = await fetcher(params);
-    return { items, failed: false };
+    return { items, failure: null };
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
-    logger.warn("fetchOnePage failed", { label, page, error: msg });
+    const failure = classifyFetchError(error);
+    logger.warn("fetchOnePage failed", { label, page, failure, error: msg });
     errorCollector?.add({
       type: errorType ?? label ?? "unknown",
       id: null,
       phase: "fetch",
       error: `Page ${page}: ${msg}`,
     });
-    return { items: [], failed: true };
+    return { items: [], failure };
   }
 }
 
@@ -163,89 +113,11 @@ export async function fetchAllPages<T>(
     // For the incremental flow, treat a fetch error like end-of-data: stop
     // paginating but return what we have. The caller decides what to do
     // with the partial result via the errorCollector counts.
-    if (result.failed || result.items.length < perPage) return all;
+    if (result.failure || result.items.length < perPage) return all;
   }
 
   logger.warn("fetchAllPages reached max pages", { label, maxPages, total: all.length });
   return all;
-}
-
-/**
- * Bulk-upserts rows into a Supabase table by chunks of `BULK_UPSERT_SIZE`.
- * Returns the number of rows successfully written and the number of errors.
- */
-export async function bulkUpsert(
-  supabase: SupabaseClient,
-  table: string,
-  rows: Record<string, unknown>[],
-  onConflict: string,
-  options: {
-    errorCollector?: SyncErrorCollector;
-    errorType?: string;
-  } = {},
-): Promise<{ synced: number; errors: number }> {
-  if (rows.length === 0) return { synced: 0, errors: 0 };
-
-  let synced = 0;
-  let errors = 0;
-
-  for (const batch of chunk(rows, BULK_UPSERT_SIZE)) {
-    const { error } = await untypedTable(supabase, table).upsert(batch, {
-      onConflict,
-    });
-    if (error) {
-      logger.warn("bulkUpsert error", {
-        table,
-        batchSize: batch.length,
-        error: error.message,
-      });
-      errors += batch.length;
-      for (const row of batch) {
-        options.errorCollector?.add({
-          type: options.errorType ?? table,
-          id: typeof row.pandascore_id === "number" ? row.pandascore_id : null,
-          phase: "upsert",
-          error: error.message,
-        });
-      }
-    } else {
-      synced += batch.length;
-    }
-  }
-
-  return { synced, errors };
-}
-
-/**
- * Loads pandascore_id → uuid maps for a given table, in one query (chunked
- * by 500 to stay under PostgREST .in() limits).
- */
-export async function preloadIdMap(
-  supabase: SupabaseClient,
-  table: string,
-  pandaIds: number[],
-): Promise<Map<number, string>> {
-  const map = new Map<number, string>();
-  if (pandaIds.length === 0) return map;
-
-  const uniqueIds = Array.from(new Set(pandaIds));
-
-  for (const batch of chunk(uniqueIds, 500)) {
-    const { data, error } = await untypedTable(supabase, table)
-      .select("id, pandascore_id")
-      .in("pandascore_id", batch);
-
-    if (error) {
-      logger.warn("preloadIdMap error", { table, error: error.message });
-      continue;
-    }
-
-    for (const row of (data ?? []) as { id: string; pandascore_id: number }[]) {
-      map.set(row.pandascore_id, row.id);
-    }
-  }
-
-  return map;
 }
 
 /**

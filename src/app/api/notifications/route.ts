@@ -1,17 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { NotificationServerService } from "@/lib/services/notificationServerService";
-import { typesForCategory, type NotificationCategory } from "@/lib/notificationDisplay";
+import { NOTIFICATION_CATEGORIES, typesForCategory } from "@/lib/notifications/notificationKinds";
+import type { NotificationCategory } from "@/types/notification";
 import { logger } from "@/lib/logger";
-
-const VALID_CATEGORIES: readonly string[] = [
-  "friends",
-  "reviews",
-  "mentions",
-  "achievements",
-  "coaching",
-  "activity",
-];
 
 /**
  * GET /api/notifications
@@ -48,7 +40,7 @@ export async function GET(request: NextRequest) {
 
       const typeParam = searchParams.get("type");
       const category =
-        typeParam && VALID_CATEGORIES.includes(typeParam)
+        typeParam && (NOTIFICATION_CATEGORIES as readonly string[]).includes(typeParam)
           ? (typeParam as NotificationCategory)
           : "all";
       const types = typesForCategory(category);

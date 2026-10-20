@@ -1,13 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { act, render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { useSWRConfig, type ScopedMutator } from "swr";
 
-import type { GameSummary } from "@/types/game";
+import { createSWRWrapper } from "@/test-helpers/swr-wrapper";
+import type { GameSummary, GamesApiResponse } from "@/types/game";
 import type { Pagination } from "@/types/pagination";
 
-// ---------------------------------------------------------------------------
-// next-intl
-// ---------------------------------------------------------------------------
+const mocks = vi.hoisted(() => ({ fetcher: vi.fn() }));
 
 const translations: Record<string, string> = {
   "games.listingKicker": "Catalog",
@@ -21,93 +21,45 @@ const translations: Record<string, string> = {
 };
 
 vi.mock("next-intl", () => ({
-  useTranslations: (namespace: string) => (key: string, params?: Record<string, string | number>) => {
-    const fullKey = `${namespace}.${key}`;
-    let value = translations[fullKey] ?? fullKey;
-    if (params) {
-      for (const [k, v] of Object.entries(params)) {
-        value = value.replace(`{${k}}`, String(v));
-      }
-    }
-    return value;
-  },
+  useTranslations:
+    (namespace: string) => (key: string, params?: Record<string, string | number>) => {
+      let value = translations[`${namespace}.${key}`] ?? `${namespace}.${key}`;
+      for (const [k, v] of Object.entries(params ?? {})) value = value.replace(`{${k}}`, String(v));
+      return value;
+    },
 }));
 
-// ---------------------------------------------------------------------------
-// Hook mocks
-// ---------------------------------------------------------------------------
-
-const mockUseGameListing = vi.fn();
-const mockUseGenres = vi.fn();
-const mockUsePlatforms = vi.fn();
-
-vi.mock("@/hooks/useGameListing", () => ({
-  useGameListing: (...args: unknown[]) => mockUseGameListing(...args),
-  useGenres: (...args: unknown[]) => mockUseGenres(...args),
-  usePlatforms: (...args: unknown[]) => mockUsePlatforms(...args),
-}));
-
-// ---------------------------------------------------------------------------
-// Lightweight stubs for sub-components (focus on orchestration)
-// ---------------------------------------------------------------------------
+vi.mock("@/lib/swr/fetcher", () => ({ fetcher: (url: string) => mocks.fetcher(url) }));
 
 vi.mock("@/components/games/GameCard", () => ({
   GameCard: ({ game }: { game: GameSummary }) =>
     React.createElement(
       "a",
-      {
-        "data-testid": "editorial-card",
-        "data-game-id": game.id,
-        href: `/games/${game.slug}`,
-      },
+      { "data-testid": "editorial-card", "data-game-id": game.id },
       game.title
     ),
 }));
 
 vi.mock("@/components/games/GameSortMenu", () => ({
-  GameSortMenu: ({
-    value,
-    onChange,
-  }: {
-    value: string;
-    onChange: (next: string) => void;
-  }) =>
+  GameSortMenu: ({ value, onChange }: { value: string; onChange: (next: string) => void }) =>
     React.createElement(
       "button",
-      {
-        "data-testid": "sort-menu",
-        "data-value": value,
-        onClick: () => onChange("popularity"),
-      },
+      { "data-testid": "sort-menu", "data-value": value, onClick: () => onChange("popularity") },
       "Sort"
     ),
 }));
 
 vi.mock("@/components/games/SearchSkeleton", () => ({
-  SearchSkeleton: () =>
-    React.createElement("div", { "data-testid": "search-skeleton" }, "Loading..."),
+  SearchSkeleton: () => React.createElement("div", { "data-testid": "search-skeleton" }),
 }));
 
 vi.mock("@/components/shared/FilterButton", () => ({
-  FilterButton: ({
-    onClick,
-    hasFilters,
-    filterCount,
-  }: {
-    onClick: () => void;
-    hasFilters: boolean;
-    filterCount: number;
-  }) =>
-    React.createElement(
-      "button",
-      {
-        "data-testid": "filter-button",
-        "data-has-filters": String(hasFilters),
-        "data-filter-count": filterCount,
-        onClick,
-      },
-      "Filters"
-    ),
+  FilterButton: ({ hasFilters, filterCount }: { hasFilters: boolean; filterCount: number }) =>
+    React.createElement("button", {
+      "data-testid": "filter-button",
+      "data-has-filters": String(hasFilters),
+      "data-filter-count": filterCount,
+    }),
 }));
 
 vi.mock("@/components/shared/EmptyState", () => ({
@@ -116,7 +68,6 @@ vi.mock("@/components/shared/EmptyState", () => ({
     description,
     action,
   }: {
-    icon?: string;
     title: string;
     description: string;
     action?: { label: string; onClick: () => void };
@@ -129,7 +80,7 @@ vi.mock("@/components/shared/EmptyState", () => ({
       action
         ? React.createElement(
             "button",
-            { onClick: action.onClick, "data-testid": "empty-state-action" },
+            { onClick: action.onClick, "data-testid": "empty-action" },
             action.label
           )
         : null
@@ -138,50 +89,41 @@ vi.mock("@/components/shared/EmptyState", () => ({
 
 vi.mock("@/components/games/GameFilters", () => ({
   GameFilters: ({
+    onGenreChange,
+    onEsportChange,
     onClearFilters,
   }: {
+    onGenreChange: (next: string[]) => void;
+    onEsportChange: (next: boolean | null) => void;
     onClearFilters: () => void;
   }) =>
     React.createElement(
       "div",
       { "data-testid": "game-filters" },
-      React.createElement(
-        "button",
-        { onClick: onClearFilters, "data-testid": "filters-clear" },
-        "Clear"
-      )
+      React.createElement("button", {
+        onClick: () => onGenreChange(["RPG"]),
+        "data-testid": "pick-genre",
+      }),
+      React.createElement("button", {
+        onClick: () => onEsportChange(true),
+        "data-testid": "pick-esport",
+      }),
+      React.createElement("button", { onClick: onClearFilters, "data-testid": "filters-clear" })
     ),
 }));
 
 vi.mock("@/components/shared/Pagination", () => ({
   Pagination: ({
     currentPage,
-    totalPages,
     onPageChange,
   }: {
     currentPage: number;
-    totalPages: number;
-    totalCount: number;
     onPageChange: (next: number) => void;
-    loading: boolean;
-    translationNamespace: string;
   }) =>
-    React.createElement(
-      "div",
-      {
-        "data-testid": "pagination",
-        "data-current-page": currentPage,
-        "data-total-pages": totalPages,
-      },
-      React.createElement(
-        "button",
-        {
-          "data-testid": "next-page",
-          onClick: () => onPageChange(currentPage + 1),
-        },
-        "Next"
-      )
-    ),
+    React.createElement("button", {
+      "data-testid": "next-page",
+      onClick: () => onPageChange(currentPage + 1),
+    }),
 }));
 
 vi.mock("@/components/providers/LibraryStatusProvider", () => ({
@@ -189,29 +131,20 @@ vi.mock("@/components/providers/LibraryStatusProvider", () => ({
     React.createElement("div", { "data-testid": "library-status-provider" }, children),
 }));
 
-// ---------------------------------------------------------------------------
-// Imports (after mocks)
-// ---------------------------------------------------------------------------
-
 import { GamesListingEditorial } from "@/components/games/GamesListingEditorial";
-
-// ---------------------------------------------------------------------------
-// Test fixtures
-// ---------------------------------------------------------------------------
+import { gamesListing } from "@/lib/listing/resources/games";
+import { buildDefaultListingUrl } from "@/lib/listing/url";
 
 function makeGame(overrides: Partial<GameSummary> = {}): GameSummary {
   return {
     id: "g-1",
     slug: "zelda",
     title: "Zelda",
-    coverImage: "/c.jpg",
-    developer: "Nintendo",
-    publisher: "Nintendo",
-    releaseYear: 2023,
     genres: [],
-    isEsport: false,
+    developer: "",
+    publisher: "",
     ...overrides,
-  } as GameSummary;
+  };
 }
 
 function makePagination(overrides: Partial<Pagination> = {}): Pagination {
@@ -225,232 +158,154 @@ function makePagination(overrides: Partial<Pagination> = {}): Pagination {
   };
 }
 
-function setHookDefaults({
-  games = [makeGame()],
-  pagination = makePagination(),
-  loading = false,
-  validating = false,
-}: {
-  games?: GameSummary[];
-  pagination?: Pagination | null;
-  loading?: boolean;
-  validating?: boolean;
-} = {}) {
-  mockUseGameListing.mockReturnValue({
-    games,
-    pagination,
-    loading,
-    validating,
-    error: null,
+function respond(
+  listing: GamesApiResponse | { games: GameSummary[]; pagination: null } | "pending"
+) {
+  mocks.fetcher.mockImplementation((url: string) => {
+    if (url.startsWith("/api/genres")) return Promise.resolve({ genres: [] });
+    if (url.startsWith("/api/platforms")) return Promise.resolve({ platforms: [] });
+    return listing === "pending" ? new Promise(() => {}) : Promise.resolve(listing);
   });
-  mockUseGenres.mockReturnValue({ genres: [], loading: false });
-  mockUsePlatforms.mockReturnValue({ platforms: [], loading: false });
 }
 
-// ---------------------------------------------------------------------------
-// Tests
-// ---------------------------------------------------------------------------
+const gamesUrls = () =>
+  mocks.fetcher.mock.calls
+    .map((call) => String(call[0]))
+    .filter((url) => url.startsWith("/api/games"));
+
+let swrMutate: ScopedMutator;
+function CaptureMutate() {
+  swrMutate = useSWRConfig().mutate;
+  return null;
+}
+
+function renderListing(props: React.ComponentProps<typeof GamesListingEditorial> = {}) {
+  return render(
+    <>
+      <CaptureMutate />
+      <GamesListingEditorial {...props} />
+    </>,
+    { wrapper: createSWRWrapper() }
+  );
+}
 
 describe("GamesListingEditorial", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
-    setHookDefaults();
+    mocks.fetcher.mockReset();
+    window.scrollTo = vi.fn();
+    respond({ games: [makeGame()], pagination: makePagination() });
   });
 
-  describe("hero", () => {
-    it("renders the kicker, title and translated count", () => {
-      setHookDefaults({
-        games: [makeGame(), makeGame({ id: "g-2", slug: "mario", title: "Mario" })],
-        pagination: makePagination({ totalCount: 42, totalPages: 3 }),
-      });
-      render(<GamesListingEditorial />);
-
-      expect(screen.getByText("Catalog")).toBeDefined();
-      expect(screen.getByRole("heading", { level: 1, name: "All games" })).toBeDefined();
-      expect(screen.getByText("Explore the complete library.")).toBeDefined();
-      expect(screen.getByText("42 titles")).toBeDefined();
-    });
-
-    it("falls back to the games array length when pagination has no totalCount", () => {
-      setHookDefaults({
-        games: [makeGame(), makeGame({ id: "g-2", slug: "x", title: "X" })],
-        pagination: null,
-      });
-      render(<GamesListingEditorial />);
-      expect(screen.getByText("2 titles")).toBeDefined();
-    });
+  it("renders the hero with the translated total count", async () => {
+    respond({ games: [makeGame()], pagination: makePagination({ totalCount: 42, totalPages: 3 }) });
+    renderListing();
+    expect(await screen.findByText("42 titles")).toBeDefined();
+    expect(screen.getByText("Catalog")).toBeDefined();
+    expect(screen.getByRole("heading", { level: 1, name: "All games" })).toBeDefined();
   });
 
-  describe("loading", () => {
-    it("shows the SearchSkeleton on initial load (no games yet)", () => {
-      setHookDefaults({ games: [], loading: true });
-      render(<GamesListingEditorial />);
-      expect(screen.getByTestId("search-skeleton")).toBeDefined();
-    });
-
-    it("flags revalidation via the data-revalidating attribute on the content wrapper", () => {
-      setHookDefaults({ validating: true, loading: false });
-      const { container } = render(<GamesListingEditorial />);
-      const content = container.querySelector("[data-revalidating]");
-      expect(content?.getAttribute("data-revalidating")).toBe("true");
-    });
+  it("falls back to the games array length when pagination is missing", async () => {
+    respond({ games: [makeGame(), makeGame({ id: "g-2" })], pagination: null });
+    renderListing();
+    expect(await screen.findByText("2 titles")).toBeDefined();
   });
 
-  describe("grid", () => {
-    it("renders one GameCard per game", () => {
-      setHookDefaults({
-        games: [
-          makeGame({ id: "a", slug: "a", title: "Alpha" }),
-          makeGame({ id: "b", slug: "b", title: "Beta" }),
-          makeGame({ id: "c", slug: "c", title: "Gamma" }),
-        ],
-      });
-      render(<GamesListingEditorial />);
-      const cards = screen.getAllByTestId("editorial-card");
-      expect(cards).toHaveLength(3);
-      expect(cards.map((c) => c.getAttribute("data-game-id"))).toEqual(["a", "b", "c"]);
-    });
-
-    it("wraps the grid in LibraryStatusProvider", () => {
-      render(<GamesListingEditorial />);
-      const provider = screen.getByTestId("library-status-provider");
-      expect(provider.contains(screen.getByTestId("editorial-games-listing-grid"))).toBe(true);
-    });
+  it("shows the SearchSkeleton on the initial load", () => {
+    respond("pending");
+    renderListing();
+    expect(screen.getByTestId("search-skeleton")).toBeDefined();
   });
 
-  describe("empty state", () => {
-    it("renders the EmptyState when there are no games and not validating", () => {
-      setHookDefaults({ games: [], validating: false });
-      render(<GamesListingEditorial />);
-      expect(screen.getByTestId("empty-state")).toBeDefined();
-      expect(screen.getByText("No games found")).toBeDefined();
-      expect(screen.getByText("No games available yet")).toBeDefined();
+  it("renders one GameCard per game inside LibraryStatusProvider", async () => {
+    respond({
+      games: [makeGame({ id: "a" }), makeGame({ id: "b" }), makeGame({ id: "c" })],
+      pagination: makePagination(),
     });
-
-    it("does not render the EmptyState while validating (avoids flicker)", () => {
-      setHookDefaults({ games: [], validating: true });
-      render(<GamesListingEditorial />);
-      expect(screen.queryByTestId("empty-state")).toBeNull();
-    });
+    renderListing();
+    const cards = await screen.findAllByTestId("editorial-card");
+    expect(cards.map((c) => c.getAttribute("data-game-id"))).toEqual(["a", "b", "c"]);
+    expect(
+      screen
+        .getByTestId("library-status-provider")
+        .contains(screen.getByTestId("editorial-games-listing-grid"))
+    ).toBe(true);
   });
 
-  describe("pagination", () => {
-    it("renders pagination only when totalPages > 1", () => {
-      setHookDefaults({ pagination: makePagination({ totalPages: 1 }) });
-      const { rerender } = render(<GamesListingEditorial />);
-      expect(screen.queryByTestId("pagination")).toBeNull();
+  it("flags background revalidation on the content wrapper", async () => {
+    const { container } = renderListing();
+    await screen.findAllByTestId("editorial-card");
+    respond("pending");
 
-      setHookDefaults({ pagination: makePagination({ totalPages: 5, totalCount: 100 }) });
-      rerender(<GamesListingEditorial />);
-      expect(screen.getByTestId("pagination")).toBeDefined();
+    act(() => {
+      void swrMutate(buildDefaultListingUrl(gamesListing, { locale: "fr" }));
     });
 
-    it("changing page invalidates the SSR fallback (passes undefined fallbackData on page > 1)", () => {
-      setHookDefaults({ pagination: makePagination({ totalPages: 3, totalCount: 60 }) });
-      render(
-        <GamesListingEditorial
-          initialGames={[makeGame()]}
-          initialPagination={makePagination({ totalPages: 3, totalCount: 60 })}
-        />
-      );
-
-      // Page 1 default view: fallbackData is set
-      expect(mockUseGameListing).toHaveBeenLastCalledWith(
-        "fr",
-        1,
-        [],
-        [],
-        "recommended",
-        null,
-        expect.objectContaining({ games: expect.any(Array) })
-      );
-
-      // Click next
-      fireEvent.click(screen.getByTestId("next-page"));
-
-      // Page 2: no fallback data
-      expect(mockUseGameListing).toHaveBeenLastCalledWith("fr", 2, [], [], "recommended", null, undefined);
-    });
+    await waitFor(() =>
+      expect(
+        container.querySelector("[data-revalidating]")?.getAttribute("data-revalidating")
+      ).toBe("true")
+    );
   });
 
-  describe("controls", () => {
-    it("toggles the filter panel via the FilterButton", () => {
-      render(<GamesListingEditorial />);
-      const button = screen.getByTestId("filter-button");
-      // FilterButton stub just calls onClick once per click; we assert the button exists
-      // and is clickable. Real toggling logic is exercised by the GameFilters
-      // showAllGenres prop, mocked away here.
-      expect(button).toBeDefined();
-      fireEvent.click(button);
-    });
-
-    it("changing the sort resets the page to 1", () => {
-      setHookDefaults({ pagination: makePagination({ totalPages: 4, totalCount: 80 }) });
-      render(<GamesListingEditorial />);
-
-      // Move to page 2 first
-      fireEvent.click(screen.getByTestId("next-page"));
-      expect(mockUseGameListing).toHaveBeenLastCalledWith(
-        "fr",
-        2,
-        [],
-        [],
-        "recommended",
-        null,
-        undefined
-      );
-
-      // Change sort -> should reset to page 1 with new sort
-      fireEvent.click(screen.getByTestId("sort-menu"));
-      expect(mockUseGameListing).toHaveBeenLastCalledWith(
-        "fr",
-        1,
-        [],
-        [],
-        "popularity",
-        null,
-        undefined
-      );
-    });
-
-    it("clearing filters from the EmptyState resets the state", () => {
-      setHookDefaults({ games: [], pagination: makePagination({ totalCount: 0 }) });
-      render(<GamesListingEditorial />);
-      // No filters yet, so action is undefined -> just assert empty state render
-      expect(screen.getByTestId("empty-state")).toBeDefined();
-    });
+  it("renders the EmptyState when there are no games", async () => {
+    respond({ games: [], pagination: makePagination({ totalCount: 0 }) });
+    renderListing();
+    expect(await screen.findByTestId("empty-state")).toBeDefined();
+    expect(screen.getByText("No games available yet")).toBeDefined();
   });
 
-  describe("ISR fallback wiring", () => {
-    it("forwards initialGames + initialPagination to the hook on the default view", () => {
-      const initialGames = [makeGame()];
-      const initialPagination = makePagination({ totalPages: 2, totalCount: 30 });
+  it("does not render the EmptyState while the fallback is revalidating", () => {
+    respond("pending");
+    renderListing({ initialData: { games: [], pagination: makePagination({ totalCount: 0 }) } });
+    expect(screen.queryByTestId("empty-state")).toBeNull();
+  });
 
-      render(
-        <GamesListingEditorial
-          locale="en"
-          initialGames={initialGames}
-          initialPagination={initialPagination}
-        />
-      );
-
-      expect(mockUseGameListing).toHaveBeenLastCalledWith("en", 1, [], [], "recommended", null, {
-        games: initialGames,
-        pagination: initialPagination,
-      });
+  it("serves the ISR payload on the default view keyed on the shared default URL", async () => {
+    respond("pending");
+    renderListing({
+      locale: "en",
+      initialData: { games: [makeGame({ id: "ssr" })], pagination: makePagination() },
     });
 
-    it("does not pass fallbackData when initial data is missing", () => {
-      render(<GamesListingEditorial />);
-      expect(mockUseGameListing).toHaveBeenLastCalledWith(
-        "fr",
-        1,
-        [],
-        [],
-        "recommended",
-        null,
-        undefined
-      );
-    });
+    expect(screen.getByTestId("editorial-card").getAttribute("data-game-id")).toBe("ssr");
+    await waitFor(() => expect(gamesUrls()).toHaveLength(1));
+    expect(gamesUrls()[0]).toBe(buildDefaultListingUrl(gamesListing, { locale: "en" }));
+    expect(gamesUrls()[0]).toContain("fields=description");
+  });
+
+  it("requests the next page and resets to page 1 when the sort changes", async () => {
+    respond({ games: [makeGame()], pagination: makePagination({ totalPages: 4, totalCount: 80 }) });
+    renderListing();
+
+    fireEvent.click(await screen.findByTestId("next-page"));
+    await waitFor(() => expect(gamesUrls().some((url) => url.includes("page=2"))).toBe(true));
+    expect(window.scrollTo).toHaveBeenCalled();
+
+    fireEvent.click(screen.getByTestId("sort-menu"));
+    await waitFor(() =>
+      expect(gamesUrls()).toContain(
+        "/api/games?locale=fr&page=1&limit=20&fields=description&sort=popularity"
+      )
+    );
+  });
+
+  it("sends selected filters and keeps the filter count consistent with hasFilters", async () => {
+    renderListing();
+
+    fireEvent.click(await screen.findByTestId("pick-genre"));
+    fireEvent.click(screen.getByTestId("pick-esport"));
+
+    await waitFor(() =>
+      expect(gamesUrls()).toContain(
+        "/api/games?locale=fr&page=1&limit=20&fields=description&genres=RPG&esport=true"
+      )
+    );
+    const button = screen.getByTestId("filter-button");
+    expect(button.getAttribute("data-has-filters")).toBe("true");
+    expect(button.getAttribute("data-filter-count")).toBe("2");
+
+    fireEvent.click(screen.getByTestId("filters-clear"));
+    expect(button.getAttribute("data-has-filters")).toBe("false");
+    expect(button.getAttribute("data-filter-count")).toBe("0");
   });
 });

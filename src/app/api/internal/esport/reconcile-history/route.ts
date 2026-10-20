@@ -13,8 +13,8 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { reconcilePlayerTeamHistory } from "@/lib/services/esport/playerTeamHistory";
-import { safeEqual } from "@/lib/utils/safeEqual";
 import { logger } from "@/lib/logger";
+import { verifyEdgeCallbackSecret } from "@/lib/security/verifyInternalSecret";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -24,16 +24,8 @@ interface RequestBody {
 }
 
 export async function POST(request: NextRequest) {
-  const expectedSecret = process.env.EDGE_CALLBACK_SECRET;
-  const providedSecret = request.headers.get("x-edge-callback-secret");
-
-  if (!expectedSecret) {
-    logger.error("EDGE_CALLBACK_SECRET not configured");
-    return NextResponse.json({ error: "Server misconfigured" }, { status: 500 });
-  }
-  if (!safeEqual(providedSecret, expectedSecret)) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const denied = verifyEdgeCallbackSecret(request);
+  if (denied) return denied;
 
   let body: RequestBody;
   try {

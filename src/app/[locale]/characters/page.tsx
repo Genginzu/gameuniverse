@@ -4,7 +4,9 @@ import { AllCharactersContent } from "@/components/characters/AllCharactersConte
 import { EditorialShell } from "@/components/layout/editorial/EditorialShell";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
-import { logger } from "@/lib/logger";
+import { charactersListing } from "@/lib/listing/resources/characters";
+import { fetchListingDefault } from "@/lib/listing/server";
+import type { CharactersApiResponse } from "@/types/character";
 
 export const revalidate = 300;
 
@@ -27,41 +29,23 @@ export async function generateMetadata({ params }: AllCharactersPageProps): Prom
 
 export default async function AllCharactersPage({ params }: AllCharactersPageProps) {
   const { locale } = await params;
-
-  let initialCharacters;
-  let initialPagination;
-
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-    const res = await fetch(`${baseUrl}/api/characters?locale=${locale}&page=1&limit=20`, {
-      next: { revalidate: 300 },
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      initialCharacters = data.characters;
-      initialPagination = data.pagination;
-    }
-  } catch (error) {
-    logger.error("Failed to fetch initial characters server-side", { error });
-  }
+  const [initialData, tErrors] = await Promise.all([
+    fetchListingDefault<CharactersApiResponse>(charactersListing, { locale }),
+    getTranslations({ locale, namespace: "errors.pageLoad" }),
+  ]);
 
   return (
     <EditorialShell>
       <ErrorBoundary
         fallback={
           <ErrorFallback
-            description="Une erreur s'est produite lors du chargement de la page des personnages."
+            description={tErrors("characters")}
             showRefresh={true}
             showHomeButton={true}
           />
         }
       >
-        <AllCharactersContent
-          locale={locale}
-          initialCharacters={initialCharacters}
-          initialPagination={initialPagination}
-        />
+        <AllCharactersContent locale={locale} initialData={initialData} />
       </ErrorBoundary>
     </EditorialShell>
   );

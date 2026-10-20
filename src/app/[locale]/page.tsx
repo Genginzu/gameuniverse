@@ -6,7 +6,7 @@ import { HomeContent } from "@/components/home/HomeContent";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
 import { JsonLd } from "@/components/shared/JsonLd";
-import { logger } from "@/lib/logger";
+import { fetchInternalApi } from "@/lib/listing/server";
 import { getSiteUrl } from "@/lib/utils/siteUrl";
 import type { GameSummary } from "@/types/game";
 
@@ -36,21 +36,10 @@ export async function generateMetadata({ params }: HomePageProps): Promise<Metad
 
 export default async function Home({ params }: HomePageProps) {
   const { locale } = await params;
-
-  let initialHomeData: HomeApiResponse | undefined;
-
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-    const res = await fetch(`${baseUrl}/api/home?locale=${locale}`, {
-      next: { revalidate: 300 },
-    });
-
-    if (res.ok) {
-      initialHomeData = (await res.json()) as HomeApiResponse;
-    }
-  } catch (error) {
-    logger.error("Failed to fetch initial home data server-side", { error });
-  }
+  const [initialHomeData, tErrors] = await Promise.all([
+    fetchInternalApi<HomeApiResponse>(`/api/home?locale=${locale}`, revalidate),
+    getTranslations({ locale, namespace: "errors.pageLoad" }),
+  ]);
 
   return (
     <>
@@ -72,12 +61,7 @@ export default async function Home({ params }: HomePageProps) {
       />
       <EditorialShell>
         <ErrorBoundary
-          fallback={
-            <ErrorFallback
-              description="Une erreur s'est produite lors du chargement de la page d'accueil."
-              showRefresh={true}
-            />
-          }
+          fallback={<ErrorFallback description={tErrors("home")} showRefresh={true} />}
         >
           <HomeContent initialHomeData={initialHomeData} />
         </ErrorBoundary>

@@ -1,20 +1,12 @@
 import { NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
-import { BULK_FIELD_TO_OVERRIDE } from "@/lib/services/bulkFieldSync";
+import {
+  BULK_FIELD_TO_OVERRIDE,
+  BULK_IMPORTABLE_COLUMNS,
+  isBulkFieldAlias,
+} from "@/lib/services/igdb-fields/registry";
 import { logger } from "@/lib/logger";
 import { adminGuardResponse } from "@/lib/auth-admin";
-
-/**
- * Importable fields: column on the `games` table where NULL means missing.
- */
-const IMPORTABLE_FIELDS: Record<string, string> = {
-  cover: "cover_image_url",
-  background: "background_image_url",
-  playtime: "playtime_normally",
-  metascore: "metascore",
-  releaseDate: "release_date",
-  popularity: "igdb_pop_updated_at",
-};
 
 /**
  * GET /api/admin/bulk-import/fields
@@ -42,9 +34,9 @@ export async function GET() {
 
     const results: Record<string, number> = {};
 
-    for (const [key, column] of Object.entries(IMPORTABLE_FIELDS)) {
-      const overrideName = BULK_FIELD_TO_OVERRIDE[key];
-      const excludedIds = overrideName ? (overridesByField.get(overrideName) ?? []) : [];
+    for (const key of Object.keys(BULK_IMPORTABLE_COLUMNS).filter(isBulkFieldAlias)) {
+      const column = BULK_IMPORTABLE_COLUMNS[key];
+      const excludedIds = overridesByField.get(BULK_FIELD_TO_OVERRIDE[key]) ?? [];
 
       let query = supabase
         .from("games")

@@ -1,9 +1,8 @@
 // Types pour les hooks personnalisés
 
 import { GameDetails, GameSummary } from "./game";
-import { CharacterSummary, RoleFilterOption } from "./character";
+import { RoleFilterOption } from "./character";
 import { PlatformFilterOption } from "./platform";
-import { Pagination } from "./pagination";
 
 export interface UseGameDetailsReturn {
   game: GameDetails | null;
@@ -37,24 +36,6 @@ export interface UseGamesReturn {
 }
 
 // --- Characters ---
-
-export interface UseCharactersOptions {
-  search?: string;
-  roles?: string[];
-  platforms?: string[];
-  page?: number;
-  limit?: number;
-  locale?: string;
-}
-
-export interface UseCharactersReturn {
-  characters: CharacterSummary[];
-  pagination: Pagination | null;
-  isLoading: boolean;
-  isValidating: boolean;
-  error: string | null;
-  refetch: () => Promise<void>;
-}
 
 export interface UseCharacterFiltersReturn {
   roles: RoleFilterOption[];

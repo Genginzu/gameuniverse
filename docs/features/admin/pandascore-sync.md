@@ -91,6 +91,13 @@ sync ne peut pas tenir dans une seule invocation Edge Function (limite
    et re-déclenche la fonction par un POST HTTP interne (self-reschedule
    immédiat plutôt que d'attendre le webhook UI).
 5. Quand toutes les entités ont `done=true`, le job passe `completed`.
+   Un job `kind='entity'` ne parcourt que les clés de cursor de son entité.
+
+Les compteurs sont incrémentés atomiquement par la RPC
+`increment_pandascore_job_progress` (service role uniquement). Un échec de
+page porte une raison typée : `rate_limited` (429) ou `fatal` (4xx, clé API
+absente) → job `failed` ; `transient` (5xx, réseau, timeout) → re-planifié
+sur la même page.
 
 L'UI admin poll `/api/admin/esport/sync-jobs` toutes les 5s pour afficher
 la progression.
@@ -114,9 +121,14 @@ EDGE_CALLBACK_SECRET=<secret-fort-32+ chars>
 ```bash
 supabase secrets set PANDASCORE_API_KEY=...
 supabase secrets set VERCEL_CALLBACK_BASE_URL=https://<domain>.com
-supabase secrets set VERCEL_CALLBACK_SECRET=<même valeur que EDGE_CALLBACK_SECRET côté Vercel>
+supabase secrets set EDGE_CALLBACK_SECRET=<même valeur que EDGE_CALLBACK_SECRET côté Vercel>
 # SUPABASE_URL et SUPABASE_SERVICE_ROLE_KEY sont auto-injectés
 ```
+
+> ℹ️ L'ancien nom `VERCEL_CALLBACK_SECRET` est encore lu en repli par les
+> Edge Functions (avec un warning de dépréciation) pendant une release.
+> Renommer le secret Supabase en `EDGE_CALLBACK_SECRET` puis supprimer
+> l'ancien.
 
 ### pg_cron
 
@@ -190,7 +202,9 @@ supabase/functions/
 │   └── pandascore/
 │       ├── types.ts                # PandaScore* types port
 │       ├── client.ts               # HTTP client + retry + timeout
-│       ├── helpers.ts              # bulkUpsert, preloadIdMap, errorCollector
+│       ├── helpers.ts              # fetchOnePage/fetchAllPages, errorCollector
+│       ├── sync-error-collector.ts # ledger plafonné (50) + résumé typé `dropped`
+│       ├── sync-run/               # cursor, scope entity, échecs typés, transitions de statut
 │       ├── mappers.ts              # PandaScore object → Supabase row
 │       └── vercel-callbacks.ts     # reconcile-history + resolve-predictions
 │
@@ -198,14 +212,14 @@ supabase/functions/
 │   ├── index.ts                    # entry point + orchestration
 │   ├── lib/
 │   │   ├── lock.ts                 # acquire/release sur sync_state
-│   │   └── log-entry.ts            # CRUD pandascore_sync_logs
+│   │   └── log-entry.ts            # adapter pandascore_sync_logs
 │   └── handlers/
 │       └── sync-by-ids.ts          # 1 fonction par type d'entité
 │
 └── pandascore-full-sync/
     ├── index.ts                    # claim + chunked loop + reschedule
     ├── lib/
-    │   ├── job-cursor.ts           # claim, persist, mark-completed
+    │   ├── job-store.ts            # adapter pandascore_sync_jobs (claim, RPC progress, mark-*)
     │   └── reschedule.ts           # self-rescheduling HTTP
     └── handlers/
         └── process-page.ts         # fetch 1 page + upsert
@@ -220,17 +234,21 @@ src/
 │   │   ├── incremental-sync/route.ts    # POST proxy Edge
 │   │   ├── full-sync/route.ts           # POST insère job
 │   │   ├── sync-jobs/route.ts           # GET liste jobs
-│   │   ├── sync-logs/route.ts           # GET historique (déjà existant)
-│   │   ├── import/route.ts              # 410 Gone (kill switch)
-│   │   └── sync/route.ts                # 410 Gone (kill switch)
-│   ├── cron/
-│   │   └── esport-sync/route.ts         # 410 Gone (kill switch)
+│   │   └── sync-history/route.ts        # GET historique unifié (logs + jobs)
 │   └── internal/esport/
 │       ├── reconcile-history/route.ts   # callback Edge
 │       └── resolve-predictions/route.ts # callback Edge
 │
+├── lib/security/
+│   └── verifyInternalSecret.ts          # comparaison constant-time du secret de callback
+│
 ├── components/admin/esport/
-│   └── SyncJobCard.tsx                  # carte progression job
+│   ├── SyncJobCard.tsx                  # carte progression job
+│   └── SyncJobEntityRow.tsx             # ligne entité + barres de cursor
+│
+├── lib/pandascore/
+│   ├── sync-progress.ts                 # clés de cursor + vue de progression (parité Deno testée)
+│   └── sync-history.ts                  # normalisation logs + jobs → historique
 │
 └── app/[locale]/admin/esport/sync/
     └── page.tsx                         # UI admin (polling SWR)
@@ -282,8 +300,8 @@ Accessible via **Admin → Esport → Sync**. La page propose :
 3. **Carte de progression** : visible quand un job est `pending` ou `running`.
    Affiche pour chaque entité son cursor (page courante ou ✓ si done) +
    les compteurs cumulés. Rafraîchie toutes les 5 secondes.
-4. **Historique des syncs** : table des derniers `pandascore_sync_logs`,
-   avec dialog pour les erreurs détaillées.
+4. **Historique des syncs** : historique unifié (`/api/admin/esport/sync-history`,
+   runs incrémentaux + jobs full-sync), avec dialog pour les erreurs détaillées.
 
 ## Dépannage
 
@@ -308,8 +326,8 @@ Accessible via **Admin → Esport → Sync**. La page propose :
 
 ### Les callbacks Edge → Vercel échouent
 
-- Vérifier que `EDGE_CALLBACK_SECRET` (Vercel) === `VERCEL_CALLBACK_SECRET`
-  (Supabase secrets).
+- Vérifier que `EDGE_CALLBACK_SECRET` a la même valeur côté Vercel et dans
+  les secrets Supabase (en-tête `x-edge-callback-secret`, sinon 401).
 - Vérifier que `VERCEL_CALLBACK_BASE_URL` pointe bien sur l'URL prod accessible
   depuis l'extérieur.
 - Les callbacks sont best-effort : un échec ne fait pas échouer la sync,

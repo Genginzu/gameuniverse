@@ -3,8 +3,8 @@ import type {
   NotificationCountResponse,
   PaginatedNotificationsResponse,
   NotificationStatusFilter,
+  NotificationCategory,
 } from "@/types/notification";
-import type { NotificationCategory } from "@/lib/notificationDisplay";
 
 /**
  * Service client pour gérer les opérations de notifications.

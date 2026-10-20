@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { requireAdmin } from "@/lib/auth-admin";
-import { TRACKABLE_FIELDS } from "@/lib/utils/field-tracking";
+import { isTrackableField } from "@/lib/services/igdb-fields/registry";
 import { syncGameField, syncAllGameFields } from "@/lib/services/igdb-sync";
 import { fetchMetacriticScore } from "@/lib/services/metacriticService";
-import type { TrackableField } from "@/types/admin-games";
 
 /**
  * POST /api/admin/games/[id]/sync
@@ -30,7 +29,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const { field } = body as { field?: string };
 
     // Validate field name if provided
-    if (field && !TRACKABLE_FIELDS.includes(field as TrackableField)) {
+    const requestedField = isTrackableField(field) ? field : null;
+    if (field && !requestedField) {
       return NextResponse.json({ error: `Invalid field: ${field}` }, { status: 400 });
     }
 
@@ -75,8 +75,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         result = await syncGameField(supabase as never, gameId, game.igdb_id, "metascore");
       }
     } else {
-      result = field
-        ? await syncGameField(supabase as never, gameId, game.igdb_id, field as TrackableField)
+      result = requestedField
+        ? await syncGameField(supabase as never, gameId, game.igdb_id, requestedField)
         : await syncAllGameFields(supabase as never, gameId, game.igdb_id);
     }
 

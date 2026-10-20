@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { IgdbFieldIndicator } from "@/components/admin/games/IgdbFieldIndicator";
-import { TRACKABLE_FIELDS } from "@/lib/utils/field-tracking";
+import { TRACKABLE_FIELDS } from "@/lib/services/igdb-fields/registry";
 
 vi.mock("next-intl", () => ({ useTranslations: () => (key: string) => key }));
 

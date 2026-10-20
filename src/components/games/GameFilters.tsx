@@ -5,10 +5,7 @@ import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { Genre } from "@/types/genre";
 import { PlatformFilterOption } from "@/types/platform";
-import {
-  FilterSection,
-  type FilterVariant,
-} from "@/components/shared/FilterSection";
+import { FilterSection, type FilterVariant } from "@/components/shared/FilterSection";
 import { FilterChip, ActiveFilterChip } from "@/components/shared/FilterChip";
 import { getPlatformIcon } from "@/lib/utils/platform-icons";
 
@@ -16,11 +13,11 @@ interface GameFiltersProps {
   genres: Genre[];
   platforms: PlatformFilterOption[];
   selectedGenres: string[];
-  selectedPublishers: string[];
+  selectedPublishers?: string[];
   selectedPlatforms: string[];
   esportFilter: boolean | null;
   onGenreChange: (genres: string[]) => void;
-  onPublisherChange: (publishers: string[]) => void;
+  onPublisherChange?: (publishers: string[]) => void;
   onPlatformsChange: (platforms: string[]) => void;
   onEsportChange: (value: boolean | null) => void;
   onClearFilters: () => void;
@@ -39,7 +36,7 @@ export function GameFilters({
   genres,
   platforms,
   selectedGenres,
-  selectedPublishers: _selectedPublishers,
+  selectedPublishers: _selectedPublishers = [],
   selectedPlatforms,
   esportFilter,
   onGenreChange,
@@ -114,9 +111,7 @@ export function GameFilters({
               <ActiveFilterChip
                 key={slug}
                 label={platformMap.get(slug) || slug}
-                onRemove={() =>
-                  onPlatformsChange(selectedPlatforms.filter((s) => s !== slug))
-                }
+                onRemove={() => onPlatformsChange(selectedPlatforms.filter((s) => s !== slug))}
                 variant="violet"
                 themeVariant={variant}
               />
@@ -147,9 +142,7 @@ export function GameFilters({
 
           <FilterSection
             title={t("genres")}
-            availableLabel={
-              genres.length > 0 ? t("available", { count: genres.length }) : ""
-            }
+            availableLabel={genres.length > 0 ? t("available", { count: genres.length }) : ""}
             loading={genres.length === 0}
             skeletonWidths={[72, 88, 64, 96, 80, 68, 92, 76, 84, 60, 100, 72]}
             variant={variant}
@@ -181,10 +174,7 @@ export function GameFilters({
                   onClick={() => handlePlatformToggle(platform.slug)}
                   count={platform.gameCount}
                   icon={
-                    <Icon
-                      icon={getPlatformIcon(platform.slug)}
-                      className="h-3.5 w-3.5 shrink-0"
-                    />
+                    <Icon icon={getPlatformIcon(platform.slug)} className="h-3.5 w-3.5 shrink-0" />
                   }
                   variant={variant}
                 />

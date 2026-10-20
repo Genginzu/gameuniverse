@@ -55,7 +55,7 @@ endpoints : videogames, tournaments (all/upcoming/running/past), matches
 
 Tous dans `src/components/esport/` :
 
-- `EsportCalendarContent` — Grille de cartes tournois avec filtres par jeu
+- `EsportTournamentsContent` — Grille de cartes tournois avec filtres par jeu
 - `EsportResultsContent` — Liste de matchs avec scores et winner highlighting
 - `EsportTeamsContent` — Grille d'équipes avec recherche
 - `EsportTeamDetailContent` — Header équipe + grille roster

@@ -6,10 +6,10 @@ import { useAuth } from "@/hooks/useAuth";
 import { NotificationService } from "@/lib/services/notificationService";
 import type {
   Notification,
+  NotificationCategory,
   PaginatedNotificationsResponse,
   NotificationStatusFilter,
 } from "@/types/notification";
-import type { NotificationCategory } from "@/lib/notificationDisplay";
 
 export const NOTIFICATION_CENTER_PAGE_SIZE = 20;
 
@@ -43,9 +43,7 @@ export function useNotificationCenter(): UseNotificationCenterReturn {
   const [category, setCategoryState] = useState<NotificationCategory | "all">("all");
   const [status, setStatusState] = useState<NotificationStatusFilter>("all");
 
-  const key = user?.id
-    ? (["notification-center", user.id, page, category, status] as const)
-    : null;
+  const key = user?.id ? (["notification-center", user.id, page, category, status] as const) : null;
 
   const { data, isLoading, error, mutate } = useSWR<PaginatedNotificationsResponse>(
     key,

@@ -1,7 +1,7 @@
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { computeLevel } from "@/lib/services/levelSystem";
-import { NotificationServerService } from "@/lib/services/notificationServerService";
+import { achievementUnlocked } from "@/lib/services/notifications";
 import { logger } from "@/lib/logger";
 import type { AchievementCategory } from "@/types/achievement";
 
@@ -113,17 +113,11 @@ export class AchievementEngine {
       // 7. Mettre à jour l'XP et le niveau
       const newLevel = await AchievementEngine.updateXpAndLevel(userId, totalXpAwarded);
 
-      // 8. Notify the user of each newly unlocked achievement (best-effort)
-      for (const achievement of newlyUnlocked) {
-        NotificationServerService.createSystemNotification(
-          userId,
-          "achievement_unlocked",
-          userId,
-          achievement.key
-        ).catch((err) =>
-          logger.error("Achievement notification failed", { error: err, userId, key: achievement.key })
-        );
-      }
+      await Promise.all(
+        newlyUnlocked.map((achievement) =>
+          achievementUnlocked({ userId, achievementKey: achievement.key })
+        )
+      );
 
       return { newlyUnlocked, totalXpAwarded, newLevel };
     } catch (error) {

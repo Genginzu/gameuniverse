@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { syncSingleField } from "@/lib/services/bulkFieldSync";
+import { BULK_IMPORTABLE_COLUMNS, isBulkFieldAlias } from "@/lib/services/igdb-fields/registry";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 import { adminGuardResponse } from "@/lib/auth-admin";
@@ -19,15 +20,6 @@ const FIELD_FALLBACKS: Record<string, { column: string; fallback: string | numbe
   metascore: { column: "metascore", fallback: null },
   releaseDate: { column: "release_date", fallback: "1970-01-01" },
   playtime: { column: "playtime_normally", fallback: null },
-};
-
-const IMPORTABLE_FIELDS: Record<string, string> = {
-  cover: "cover_image_url",
-  background: "background_image_url",
-  playtime: "playtime_normally",
-  metascore: "metascore",
-  releaseDate: "release_date",
-  popularity: "igdb_pop_updated_at",
 };
 
 /**
@@ -56,7 +48,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    if (allMode && (!field || !IMPORTABLE_FIELDS[field])) {
+    if (allMode && !isBulkFieldAlias(field)) {
       return jsonError("field is required for all mode");
     }
   } catch {
@@ -113,10 +105,10 @@ export async function POST(request: NextRequest) {
         await Promise.all(Array.from({ length: WORKERS }, () => worker()));
       };
 
-      if (allMode && field) {
+      if (allMode && isBulkFieldAlias(field)) {
         // Server-side pagination: fetch and process page by page.
         // Pages are sequential but games within a page drain in parallel.
-        const column = IMPORTABLE_FIELDS[field];
+        const column = BULK_IMPORTABLE_COLUMNS[field];
         let offset = 0;
 
         while (true) {

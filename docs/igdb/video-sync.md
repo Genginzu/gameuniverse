@@ -119,11 +119,11 @@ existants :
 
 ### Types modifiés
 
-| Fichier                           | Modification                                                         |
-| --------------------------------- | -------------------------------------------------------------------- |
-| `src/types/igdb.ts`               | `videos?: Array<{ video_id: string; name: string }>` dans `IGDBGame` |
-| `src/types/admin-games.ts`        | `"videos"` dans `TrackableField`                                     |
-| `src/lib/utils/field-tracking.ts` | `"videos"` dans `TRACKABLE_FIELDS`                                   |
+| Fichier                                    | Modification                                                         |
+| ------------------------------------------ | -------------------------------------------------------------------- |
+| `src/types/igdb.ts`                        | `videos?: Array<{ video_id: string; name: string }>` dans `IGDBGame` |
+| `src/types/admin-games.ts`                 | `"videos"` dans `TrackableField`                                     |
+| `src/lib/services/igdb-fields/registry.ts` | Entrée `videos` dans `TRACKED_FIELD_REGISTRY` (détecteur inclus)     |
 
 ## Tests
 

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse, after } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { logger } from "@/lib/logger";
-import { runLibrarySyncJob } from "@/lib/services/runLibrarySyncJob";
+import { runLibrarySyncJob } from "@/lib/services/library-sync";
 import { isSyncablePlatform } from "@/types/library-sync";
 import { bearerToken, safeEqual } from "@/lib/utils/safeEqual";
 
@@ -33,22 +33,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let body: { jobId?: string; userId?: string; platform?: string; steamId?: string | null };
+  let body: { jobId?: string; userId?: string; platform?: string };
   try {
     body = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid body" }, { status: 400 });
   }
 
-  const { jobId, userId, platform, steamId } = body;
+  const { jobId, userId, platform } = body;
   if (!jobId || !userId || !platform || !isSyncablePlatform(platform)) {
     return NextResponse.json({ error: "Missing or invalid parameters" }, { status: 400 });
   }
 
   const admin = getSupabaseAdmin();
-  after(() =>
-    runLibrarySyncJob({ admin, jobId, userId, platform, steamId: steamId ?? null })
-  );
+  after(() => runLibrarySyncJob({ admin, jobId, userId, platform }));
 
   logger.info("Library sync continuation scheduled", { jobId, platform });
   return NextResponse.json({ ok: true }, { status: 202 });

@@ -1,17 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { logger } from "@/lib/logger";
-import { syncSteamLibrary } from "@/lib/services/steamLibrarySync";
-import { syncXboxLibrary } from "@/lib/services/xboxLibrarySync";
-import { syncPsnLibrary } from "@/lib/services/psnLibrarySync";
+import { createSyncJob } from "@/lib/services/librarySyncJobs";
+import { runLibrarySyncJob } from "@/lib/services/library-sync";
 import { bearerToken, safeEqual } from "@/lib/utils/safeEqual";
+import {
+  SYNCABLE_PLATFORMS,
+  isSyncablePlatform,
+  type SyncablePlatform,
+} from "@/types/library-sync";
 
 const MAX_USERS_PER_RUN = 50;
 
 interface SyncOutcome {
   playerId: string;
-  platform: "steam" | "xbox" | "playstation";
+  platform: SyncablePlatform;
+  status: "succeeded" | "continuing" | "failed" | "skipped";
   ok: boolean;
+  jobId?: string;
   matched?: number;
   total?: number;
   error?: string;
@@ -29,17 +35,37 @@ function isAuthorized(request: NextRequest): boolean {
 export const GET = handler;
 export const POST = handler;
 
+async function syncCandidate(
+  admin: ReturnType<typeof getSupabaseAdmin>,
+  playerId: string,
+  platform: SyncablePlatform
+): Promise<SyncOutcome> {
+  try {
+    const { job, alreadyRunning } = await createSyncJob(admin, playerId, platform);
+    if (alreadyRunning) {
+      return { playerId, platform, status: "skipped", ok: true, jobId: job.id };
+    }
+    const outcome = await runLibrarySyncJob({ admin, jobId: job.id, userId: playerId, platform });
+    return { playerId, platform, jobId: job.id, ok: outcome.status !== "failed", ...outcome };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "sync failed";
+    logger.error("cron sync-libraries user failed", { playerId, platform, message });
+    return { playerId, platform, status: "failed", ok: false, error: message };
+  }
+}
+
 async function handler(request: NextRequest) {
   if (!isAuthorized(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const supabase = getSupabaseAdmin();
+  const admin = getSupabaseAdmin();
 
-  const { data: rows, error } = await supabase
+  const { data: rows, error } = await admin
     .from("player_linked_platforms")
-    .select("player_id, platform, external_id")
-    .in("platform", ["steam", "xbox", "playstation"])
+    .select("player_id, platform")
+    .in("platform", [...SYNCABLE_PLATFORMS])
+    .order("id", { ascending: true })
     .limit(MAX_USERS_PER_RUN);
 
   if (error) {
@@ -48,57 +74,16 @@ async function handler(request: NextRequest) {
   }
 
   const outcomes: SyncOutcome[] = [];
-
-  for (const row of rows ?? []) {
-    const platform = row.platform as "steam" | "xbox" | "playstation";
-    try {
-      if (platform === "steam") {
-        if (!row.external_id) {
-          outcomes.push({ playerId: row.player_id, platform, ok: false, error: "missing steamid" });
-          continue;
-        }
-        const r = await syncSteamLibrary(supabase, row.player_id, row.external_id);
-        outcomes.push({
-          playerId: row.player_id,
-          platform,
-          ok: true,
-          matched: r.matched,
-          total: r.total,
-        });
-      } else if (platform === "playstation") {
-        const r = await syncPsnLibrary(supabase, row.player_id);
-        outcomes.push({
-          playerId: row.player_id,
-          platform,
-          ok: true,
-          matched: r.matched,
-          total: r.total,
-        });
-      } else {
-        const r = await syncXboxLibrary(supabase, row.player_id);
-        outcomes.push({
-          playerId: row.player_id,
-          platform,
-          ok: true,
-          matched: r.matched,
-          total: r.total,
-        });
-      }
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "sync failed";
-      logger.error("cron sync-libraries user failed", {
-        playerId: row.player_id,
-        platform,
-        message,
-      });
-      outcomes.push({ playerId: row.player_id, platform, ok: false, error: message });
-    }
+  for (const row of (rows ?? []) as Array<{ player_id: string; platform: string }>) {
+    if (!isSyncablePlatform(row.platform)) continue;
+    outcomes.push(await syncCandidate(admin, row.player_id, row.platform));
   }
 
   return NextResponse.json({
     processed: outcomes.length,
-    succeeded: outcomes.filter((o) => o.ok).length,
+    succeeded: outcomes.filter((o) => o.ok && o.status !== "skipped").length,
     failed: outcomes.filter((o) => !o.ok).length,
+    skipped: outcomes.filter((o) => o.status === "skipped").length,
     outcomes,
   });
 }

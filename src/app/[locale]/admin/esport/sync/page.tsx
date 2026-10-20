@@ -8,25 +8,11 @@ import { Link } from "@/i18n/navigation";
 import { Icon } from "@iconify/react";
 import { Button } from "@/components/ui/button";
 import { Pagination } from "@/components/shared/Pagination";
-import { SyncErrorsDialog, type SyncErrorDetail } from "@/components/admin/esport/SyncErrorsDialog";
-import { SyncJobCard, type SyncJob } from "@/components/admin/esport/SyncJobCard";
+import { SyncErrorsDialog } from "@/components/admin/esport/SyncErrorsDialog";
+import { SyncJobCard } from "@/components/admin/esport/SyncJobCard";
+import type { SyncHistoryPage, SyncHistoryEntry, SyncJob } from "@/types/esport-sync";
 
-interface SyncHistoryEntry {
-  id: string;
-  kind: "incremental" | "full";
-  trigger: string;
-  status: string;
-  total_synced: number;
-  total_errors: number;
-  duration_ms: number | null;
-  started_at: string;
-  completed_at: string | null;
-  error_message: string | null;
-  error_details: SyncErrorDetail[] | null;
-  entity?: string | null;
-}
-
-interface HistoryResponse { entries: SyncHistoryEntry[]; total: number; totalPages: number }
+type HistoryResponse = SyncHistoryPage;
 interface JobsResponse { jobs: SyncJob[] }
 
 export default function EsportSyncPage() {

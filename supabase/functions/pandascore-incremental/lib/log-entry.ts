@@ -1,15 +1,17 @@
 /**
- * Lifecycle helpers for pandascore_sync_logs rows.
+ * Persistence adapter for pandascore_sync_logs (incremental run kind).
  *
  * One row is inserted per incremental run for audit. The row is updated
- * at completion with per-entity counts and error details. Same shape as
- * the legacy Vercel cron, so the existing admin UI keeps working.
+ * at completion with per-entity counts and error details. Status
+ * transitions come from the shared sync-run module so both run kinds
+ * stamp the same columns.
  */
 
 import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
 import { logger } from "../../_shared/logger.ts";
 import { untypedTable } from "../../_shared/untyped-table.ts";
-import type { SyncErrorDetail } from "../../_shared/pandascore/helpers.ts";
+import type { SyncErrorCollector } from "../../_shared/pandascore/helpers.ts";
+import { completedPatch, failedPatch } from "../../_shared/pandascore/sync-run/index.ts";
 
 export interface SyncCounts {
   teams: { synced: number; errors: number };
@@ -34,30 +36,26 @@ export async function createLogEntry(
   return data?.id as string | null;
 }
 
+function countColumns(counts: SyncCounts): Record<string, number> {
+  const columns: Record<string, number> = {};
+  for (const [entity, value] of Object.entries(counts)) {
+    columns[`${entity}_synced`] = value.synced;
+    columns[`${entity}_errors`] = value.errors;
+  }
+  return columns;
+}
+
 export async function completeLogEntry(
   supabase: SupabaseClient,
   logId: string,
-  options: {
-    counts: SyncCounts;
-    durationMs: number;
-    errorDetails: SyncErrorDetail[];
-  },
+  options: { counts: SyncCounts; durationMs: number; errors: SyncErrorCollector },
 ): Promise<void> {
-  const { counts, durationMs, errorDetails } = options;
   await untypedTable(supabase, "pandascore_sync_logs")
     .update({
-      status: "completed",
-      teams_synced: counts.teams.synced,
-      teams_errors: counts.teams.errors,
-      players_synced: counts.players.synced,
-      players_errors: counts.players.errors,
-      tournaments_synced: counts.tournaments.synced,
-      tournaments_errors: counts.tournaments.errors,
-      matches_synced: counts.matches.synced,
-      matches_errors: counts.matches.errors,
-      duration_ms: durationMs,
-      error_details: errorDetails,
-      completed_at: new Date().toISOString(),
+      ...completedPatch(new Date()),
+      ...countColumns(options.counts),
+      duration_ms: options.durationMs,
+      error_details: options.errors.toJSON(),
     })
     .eq("id", logId);
 }
@@ -65,19 +63,13 @@ export async function completeLogEntry(
 export async function failLogEntry(
   supabase: SupabaseClient,
   logId: string,
-  options: {
-    errorMessage: string;
-    durationMs: number;
-    errorDetails: SyncErrorDetail[];
-  },
+  options: { errorMessage: string; durationMs: number; errors: SyncErrorCollector },
 ): Promise<void> {
   await untypedTable(supabase, "pandascore_sync_logs")
     .update({
-      status: "failed",
-      error_message: options.errorMessage,
+      ...failedPatch(options.errorMessage, new Date()),
       duration_ms: options.durationMs,
-      error_details: options.errorDetails,
-      completed_at: new Date().toISOString(),
+      error_details: options.errors.toJSON(),
     })
     .eq("id", logId);
 }

@@ -39,10 +39,12 @@ Profil joueur → onglet **Paramètres** → section **Plateformes gaming**.
   HttpOnly, Secure (en prod), SameSite=Lax, expiration 10 min
   (`src/lib/services/oauthState.ts`). Le state est vérifié et consommé au
   callback.
-- **Refresh automatique** : `src/lib/services/platformTokenRefresh.ts` expose
-  `getValidAccessToken(supabase, playerId, platform)` qui déchiffre, détecte
-  l'expiration (grâce de 60s) et rafraîchit le token Xbox (login.live.com) ou
-  PSN (`exchangeRefreshTokenForAuthTokens`) avant un appel API.
+- **Refresh automatique** : `getValidAccessToken(supabase, playerId, platform)`
+  (`src/lib/services/platform-connection/refresh.ts`) déchiffre, détecte
+  l'expiration (grâce de 60s) et délègue le refresh à l'adaptateur de la
+  plateforme : Xbox (login.live.com), Epic et Discord (grant OAuth
+  `refresh_token`), PSN (`exchangeRefreshTokenForAuthTokens`). Battle.net, Steam
+  et itch.io n'ont pas de refresh.
 - **Visibilité par plateforme** : colonne `is_public` (défaut `true`). La policy
   RLS `SELECT` autorise : `is_public = true OR auth.uid() = player_id`. Le
   propriétaire voit toujours ses lignes privées.
@@ -130,7 +132,8 @@ Deux plateformes font de l'import automatique de la bibliothèque dans la table
   `external_games` (category=1). Les correspondances résolues back-fill
   `games.steam_appid` pour la prochaine fois.
 - **Xbox** (`POST /api/profile/xbox/sync-library`) : rafraîchit l'access_token
-  Microsoft → user token XBL → XSTS via `src/lib/services/xboxAuth.ts`, appelle
+  Microsoft → user token XBL → XSTS via `getXboxAuthForPlayer`
+  (`src/lib/services/platform-connection/xboxPlayerAuth.ts`), appelle
   `titlehub.xboxlive.com/users/xuid(XUID)/titles/titleHistory`, résout les
   `titleId` via IGDB `external_games` category=31 (Xbox Marketplace).
 
@@ -156,12 +159,13 @@ via `vercel.json`.
 Les callbacks OAuth alimentent `platform_avatar_url` et `platform_metadata`
 (JSONB) :
 
-| Plateforme                  | Avatar                                              | Metadata                                                       |
-| --------------------------- | --------------------------------------------------- | -------------------------------------------------------------- |
-| Steam                       | `avatarfull`                                        | `{ country, profile_url, created_at }`                         |
-| Xbox                        | `GameDisplayPicRaw`                                 | `{ gamerscore, account_tier }`                                 |
-| Discord                     | `cdn.discordapp.com/avatars/<id>/<avatar>.png\|gif` | `{ connections: [...] }` (liste des comptes liés côté Discord) |
-| Epic / Battle.net / itch.io | — (à enrichir)                                      | —                                                              |
+| Plateforme        | Avatar                                              | Metadata                                                       |
+| ----------------- | --------------------------------------------------- | -------------------------------------------------------------- |
+| Steam             | `avatarfull`                                        | `{ country, profile_url, created_at }`                         |
+| Xbox              | `GameDisplayPicRaw`                                 | `{ gamerscore, account_tier }`                                 |
+| Discord           | `cdn.discordapp.com/avatars/<id>/<avatar>.png\|gif` | `{ connections: [...] }` (liste des comptes liés côté Discord) |
+| itch.io           | `cover_url`                                         | —                                                              |
+| Epic / Battle.net | — (à enrichir)                                      | — (Battle.net : `platform_region`)                             |
 
 ## Recommandations
 
@@ -229,36 +233,35 @@ toast.
 
 ### Services
 
-| Fichier                              | Rôle                                                                                                                                      |
-| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `linkedPlatformService.ts`           | CRUD côté serveur : `getLinkedPlatforms`, `upsertManualPlatform`, `deleteLinkedPlatform`, `setPlatformVisibility`. Agrège `lastSyncedAt`. |
-| `platformTokens.ts`                  | Chiffrement AES-256-GCM des tokens.                                                                                                       |
-| `oauthState.ts`                      | `issueOauthState` / `consumeOauthState` (cookie HttpOnly).                                                                                |
-| `platformTokenRefresh.ts`            | `getValidAccessToken(supabase, playerId, platform)` — déchiffre / refresh Xbox / refresh PSN.                                             |
-| `manualPlatformValidation.ts`        | `validateManualUsername(platform, raw)` — Nintendo / GOG / passthrough.                                                                   |
-| `xboxAuth.ts`                        | `getXboxAuthForPlayer` — XSTS + XUID à partir de l'access_token MS stocké.                                                                |
-| `steamLibrarySync.ts`                | Sync Steam + back-fill `games.steam_appid`.                                                                                               |
-| `xboxLibrarySync.ts`                 | Sync Xbox via `titleHistory` + résolution IGDB.                                                                                           |
-| `igdb-external-games.ts`             | `resolveIgdbIdsByExternalUids(uids, category)` + table `EXTERNAL_GAME_CATEGORY`.                                                          |
-| `discordConnections.ts`              | `discordConnectionToPlatform`, `buildSuggestionsFromDiscord`.                                                                             |
-| `recommendation/ownershipOverlap.ts` | Jaccard overlap entre deux bibliothèques.                                                                                                 |
+| Fichier                              | Rôle                                                                                                                                            |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| `linkedPlatformService.ts`           | CRUD côté serveur : `getLinkedPlatforms`, `upsertManualPlatform`, `deleteLinkedPlatform`, `setPlatformVisibility`. Agrège `lastSyncedAt`.       |
+| `platformTokens.ts`                  | Chiffrement AES-256-GCM des tokens.                                                                                                             |
+| `oauthState.ts`                      | `issueOauthState` / `consumeOauthState` (cookie HttpOnly).                                                                                      |
+| `oauthReturn.ts`                     | `issueOauthReturn` / `consumeOauthReturn` (page de retour, cookie HttpOnly).                                                                    |
+| `platform-connection/`               | Module unique des 7 flux de connexion : flux commun + adaptateurs `adapters/{xbox,epic,battlenet,discord,steam,itch,psn}.ts` (voir ci-dessous). |
+| `manualPlatformValidation.ts`        | `validateManualUsername(platform, raw)` — Nintendo / GOG / passthrough.                                                                         |
+| `library-sync/`                      | Module unique : `syncPlatformLibrary(supabase, userId, platform)` + adaptateurs `adapters/{steam,xbox,playstation}.ts`, `runLibrarySyncJob`.    |
+| `igdb-external-games.ts`             | `resolveIgdbIdsByExternalUids(uids, category)` + table `EXTERNAL_GAME_CATEGORY`.                                                                |
+| `discordConnections.ts`              | `discordConnectionToPlatform`, `buildSuggestionsFromDiscord`.                                                                                   |
+| `recommendation/ownershipOverlap.ts` | Jaccard overlap entre deux bibliothèques.                                                                                                       |
 
 ### API routes
 
-| Route                                       | Méthode                    | Rôle                                                                      |
-| ------------------------------------------- | -------------------------- | ------------------------------------------------------------------------- |
-| `/api/profile/linked-platforms`             | GET / PUT / PATCH / DELETE | Lire / sauver un pseudo manuel (validé) / toggle `is_public` / supprimer. |
-| `/api/profile/linked-platforms/suggestions` | GET                        | Liste les plateformes suggérées via Discord.                              |
-| `/api/profile/steam/sync-library`           | POST                       | Sync bibliothèque Steam (user courant).                                   |
-| `/api/profile/xbox/sync-library`            | POST                       | Sync bibliothèque Xbox.                                                   |
-| `/api/auth/steam` + `/callback`             | GET                        | OpenID Steam.                                                             |
-| `/api/auth/xbox` + `/callback`              | GET                        | OAuth Microsoft → Xbox Live.                                              |
-| `/api/auth/epic` + `/callback`              | GET                        | OAuth Epic Account Services.                                              |
-| `/api/auth/discord` + `/callback`           | GET                        | OAuth Discord (+ connections).                                            |
-| `/api/auth/battlenet` + `/callback`         | GET                        | OAuth Battle.net.                                                         |
-| `/api/auth/itch` + `/callback`              | GET + POST                 | OAuth itch.io (implicit via bootstrap HTML).                              |
-| `/api/auth/psn`                             | POST                       | Exchange NPSSO → tokens PSN.                                              |
-| `/api/cron/sync-libraries`                  | POST                       | Cron : sync batch steam+xbox. Protégé par `CRON_SECRET`.                  |
+| Route                                       | Méthode                    | Rôle                                                                                                  |
+| ------------------------------------------- | -------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `/api/profile/linked-platforms`             | GET / PUT / PATCH / DELETE | Lire / sauver un pseudo manuel (validé) / toggle `is_public` / supprimer.                             |
+| `/api/profile/linked-platforms/suggestions` | GET                        | Liste les plateformes suggérées via Discord.                                                          |
+| `/api/profile/steam/sync-library`           | POST                       | Sync bibliothèque Steam (user courant).                                                               |
+| `/api/profile/xbox/sync-library`            | POST                       | Sync bibliothèque Xbox.                                                                               |
+| `/api/auth/steam` + `/callback`             | GET                        | OpenID Steam.                                                                                         |
+| `/api/auth/xbox` + `/callback`              | GET                        | OAuth Microsoft → Xbox Live.                                                                          |
+| `/api/auth/epic` + `/callback`              | GET                        | OAuth Epic Account Services.                                                                          |
+| `/api/auth/discord` + `/callback`           | GET                        | OAuth Discord (+ connections).                                                                        |
+| `/api/auth/battlenet` + `/callback`         | GET                        | OAuth Battle.net.                                                                                     |
+| `/api/auth/itch` + `/callback`              | GET + POST                 | OAuth itch.io (implicit via bootstrap HTML).                                                          |
+| `/api/auth/psn`                             | POST                       | Exchange NPSSO → tokens PSN.                                                                          |
+| `/api/cron/sync-libraries`                  | POST                       | Cron : crée un job par compte lié (ordre `id`, verrou job actif respecté). Protégé par `CRON_SECRET`. |
 
 ### UI
 
@@ -271,51 +274,76 @@ toast.
 
 ## Flux typiques
 
-**OAuth code flow (Steam / Xbox / Epic / Discord / Battle.net)**
+Toutes les routes `/api/auth/<provider>` et `/callback` sont des fichiers d'une
+ligne qui lient un adaptateur à un handler de
+`src/lib/services/platform-connection/routeHandlers.ts`. Le flux commun
+(`connectPlatform.ts`) : authentifie le joueur, vérifie le state, lit le grant
+(`code`, assertion OpenID, token implicite ou NPSSO), appelle l'adaptateur
+(credentials puis profil), normalise la durée de vie du token (`expires_in` ou
+défaut de l'adaptateur), chiffre et upsert la ligne `player_linked_platforms`
+(`onConflict: player_id,platform`) en vérifiant l'erreur d'écriture.
 
-1. UI → `GET /api/auth/<platform>` → cookie `oauth_state_<platform>` + redirect
-   vers l'authorize URL du provider.
+Un adaptateur (`PlatformConnectionAdapter`, `src/types/platform-connection.ts`)
+fournit uniquement : `buildAuthorizeUrl`, `obtainCredentials`, `readProfile` et
+optionnellement `refresh`. La chaîne XBL → XSTS vit une seule fois dans
+`xboxLive.ts` (connexion, refresh et sync bibliothèque).
+
+**Redirections de sortie** (succès et erreur) : le cookie `oauth_return_to` est
+toujours consommé ; destination = page de retour, sinon
+`/players/<id>?tab=settings`.
+
+- Succès : `?platform=<provider>&success=true`.
+- Erreur : `?error=<provider>_callback_failed&reason=<raison>[&detail=...]` avec
+  `reason` ∈
+  `state_mismatch | no_code | auth_failed | token_failed | profile_failed | persist_failed | unexpected`
+  ; `detail` (≤ 160 caractères) porte l'erreur du provider (ex :
+  `invalid_grant: ...`).
+- Non connecté : `/auth?error=unauthorized`. Crash avant identification du
+  joueur : `/?error=<provider>_callback_failed`.
+
+**OAuth code flow (Xbox / Epic / Discord / Battle.net) et OpenID (Steam)**
+
+1. UI → `GET /api/auth/<platform>` → cookies `oauth_state_<platform>` +
+   `oauth_return_to` (+ `oauth_region_battlenet`) puis redirect vers le
+   provider.
 2. Provider → `GET /api/auth/<platform>/callback?code=...&state=...`.
-3. Callback : vérifie le state cookie, échange code → tokens, fetch profil (+
-   connections Discord, + métadonnées Xbox/Steam), chiffre et upsert dans
-   `player_linked_platforms`.
-4. Redirect vers `/players/<id>?tab=settings&platform=<platform>&success=true`.
+3. Flux commun ci-dessus (+ connections Discord, + métadonnées Xbox/Steam).
 
 **itch.io (implicit flow)**
 
 1. UI → `GET /api/auth/itch` → redirect vers itch.
 2. itch → `GET /api/auth/itch/callback#access_token=...` → retour d'un HTML qui
    extrait le token du fragment et `POST` au même endpoint.
-3. `POST /api/auth/itch/callback` : vérifie state, appelle `/api/1/key/me`,
-   upsert.
+3. `POST /api/auth/itch/callback` : flux commun, réponse `{ redirect }`.
 
 **PSN (NPSSO)**
 
-1. UI → `POST /api/auth/psn` avec `{ npsso }`.
+1. UI → `POST /api/auth/psn` avec `{ npsso }` (pas de state).
 2. `psn-api` : `exchangeNpssoForAccessCode` → `exchangeAccessCodeForAuthTokens`.
    `accountId` extrait du `sub` JWT `idToken`.
-3. Profil via `getProfileFromAccountId`, tokens chiffrés et persistés.
+3. Profil via `getProfileFromAccountId`, tokens chiffrés et persistés. Réponse
+   JSON `{ success, username, accountId }` ou `{ error }` (400 / 401).
 
-**Sync bibliothèque Steam**
+**Sync bibliothèque (Steam / Xbox / PlayStation)**
 
-1. UI bouton refresh → `POST /api/profile/steam/sync-library`.
-2. Lecture de `external_id` (steamid64) depuis `player_linked_platforms`.
-3. `IPlayerService/GetOwnedGames` → liste d'appids.
-4. Résolution : `SELECT id FROM games WHERE steam_appid IN (…)` puis pour les
-   manquants, IGDB `external_games` (category=1) →
-   `SELECT id FROM games WHERE igdb_id IN (…)` → back-fill `games.steam_appid`.
-5. Upsert `user_library` par chunks de 200 avec `source_platform='steam'`,
-   `source_id=appid`, `external_playtime_seconds`, `synced_at=now()`.
-
-**Sync bibliothèque Xbox**
-
-1. UI bouton refresh → `POST /api/profile/xbox/sync-library`.
-2. `getXboxAuthForPlayer` : rafraîchit le MS access_token si expiré → user token
-   XBL → XSTS → `{ xstsToken, userHash, xuid }`.
-3. `GET titlehub.xboxlive.com/users/xuid(XUID)/titles/titleHistory/decoration/detail`
-   avec `Authorization: XBL3.0 x=<uhs>;<xsts>`.
-4. Filtre `type !== "Application"`, résolution IGDB (category=31), upsert
-   `user_library`.
+1. UI bouton refresh → `POST /api/profile/<platform>/sync-library` → job
+   `player_library_sync_jobs` exécuté en `after()` par `runLibrarySyncJob`.
+2. `syncPlatformLibrary` charge l'adaptateur de la plateforme, qui lit ses
+   propres identifiants et normalise la bibliothèque en items communs
+   (`sourceId`, `name`, `uids`, `playtimeMinutes?`) :
+   - Steam : `external_id` (steamid64) depuis `player_linked_platforms`,
+     `IPlayerService/GetOwnedGames`, tri par temps de jeu, pré-résolution via
+     `games.steam_appid`.
+   - Xbox : `getXboxAuthForPlayer` (XSTS + XUID) puis `titleHistory`, filtre
+     `type !== "Application"`.
+   - PlayStation : trophy titles paginés (`getUserTitles`).
+3. Pipeline commun : enregistrement des titres (`user_platform_titles`),
+   résolution via `libraryGameResolver` (cache `platform_game_matches`,
+   `external_games`, fallback par nom, import IGDB budgété, backfill),
+   dédoublonnage par jeu (Steam garde le plus joué), upsert `user_library` par
+   chunks de 200.
+4. Le job se termine quand plus aucun titre n'est en attente (`pending === 0`),
+   sinon une continuation serveur relance une passe.
 
 ## Limitations / à venir
 

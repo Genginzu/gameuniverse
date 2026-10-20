@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { syncAllGameFields } from "@/lib/services/igdb-sync";
-import type { TrackableField } from "@/types/admin-games";
 import { logger } from "@/lib/logger";
 import { adminGuardResponse } from "@/lib/auth-admin";
 
@@ -54,25 +53,8 @@ export async function POST(
       );
     }
 
-    let overriddenFields: TrackableField[] = [];
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data: overrides } = await (supabase as any)
-        .from("game_field_overrides")
-        .select("field_name")
-        .eq("game_id", game.id);
-
-      if (overrides && overrides.length > 0) {
-        overriddenFields = overrides.map(
-          (o: { field_name: string }) => o.field_name as TrackableField
-        );
-      }
-    } catch {
-      // Table may not exist yet — sync all fields
-    }
-
     // Fire-and-forget: sync all fields (metascore fetched from Metacritic via igdb-sync)
-    syncAllGameFields(supabase as never, game.id, game.igdb_id, overriddenFields)
+    syncAllGameFields(supabase as never, game.id, game.igdb_id, "respect-overrides")
       .then((result) => {
         if (result.success) {
           logger.info(`Background sync completed for game ${slug}`, {

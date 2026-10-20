@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { TrendingContent, type TrendingData } from "@/components/games/TrendingContent";
+import { TrendingContent } from "@/components/games/TrendingContent";
 import { EditorialShell } from "@/components/layout/editorial/EditorialShell";
-import { logger } from "@/lib/logger";
+import { trendingListing } from "@/lib/listing/resources/games";
+import { fetchListingDefault } from "@/lib/listing/server";
+import type { TrendingGamesData } from "@/types/game";
 
 export const revalidate = 300;
 
@@ -22,21 +24,7 @@ export async function generateMetadata({ params }: TrendingPageProps): Promise<M
 
 export default async function TrendingPage({ params }: TrendingPageProps) {
   const { locale } = await params;
-
-  let initialData: TrendingData | undefined;
-
-  try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-    const res = await fetch(`${baseUrl}/api/games/trending?locale=${locale}&limit=12`, {
-      next: { revalidate: 300 },
-    });
-
-    if (res.ok) {
-      initialData = await res.json();
-    }
-  } catch (error) {
-    logger.error("Failed to fetch trending data server-side", { error });
-  }
+  const initialData = await fetchListingDefault<TrendingGamesData>(trendingListing, { locale });
 
   return (
     <EditorialShell>

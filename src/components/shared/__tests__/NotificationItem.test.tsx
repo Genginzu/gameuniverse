@@ -3,29 +3,13 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 
 vi.mock("next-intl", () => ({
-  useTranslations: () => (key: string) => {
-    const labels: Record<string, string> = {
-      typeFriendRequest: "sent you a friend request",
-      typeFriendAccepted: "accepted your friend request",
-      typeReviewVote: "voted on your review",
-      typeAchievementUnlocked: "New achievement unlocked",
-      typePostComment: "commented on your post",
-      typePostMention: "mentioned you in a post",
-      dismiss: "Dismiss",
-    };
-    return labels[key] ?? key;
-  },
-  useFormatter: () => ({
-    relativeTime: () => "just now",
-  }),
+  useTranslations: () => (key: string) => `t:${key}`,
+  useFormatter: () => ({ relativeTime: () => "just now" }),
 }));
 
 vi.mock("@iconify/react", () => ({
   Icon: (props: Record<string, unknown>) =>
-    React.createElement("span", {
-      "data-testid": `icon-${props.icon}`,
-      "data-icon": props.icon,
-    }),
+    React.createElement("span", { "data-testid": `icon-${props.icon}` }),
 }));
 
 vi.mock("@/i18n/navigation", () => ({
@@ -40,17 +24,14 @@ vi.mock("@/i18n/navigation", () => ({
 import { NotificationItem } from "@/components/shared/NotificationItem";
 import type { Notification } from "@/types/notification";
 
-function makeNotification(
-  type: Notification["type"],
-  overrides: Partial<Notification> = {}
-): Notification {
+function makeNotification(overrides: Partial<Notification> = {}): Notification {
   return {
     id: "n1",
     recipientId: "rec-1",
     senderId: "sender-1",
-    type,
-    referenceId: "ref-1",
-    contentPreview: "",
+    type: "post_comment",
+    referenceId: "post-1",
+    contentPreview: "Great post",
     isRead: false,
     createdAt: new Date().toISOString(),
     sender: { username: "Alice", avatarUrl: null },
@@ -58,133 +39,59 @@ function makeNotification(
   };
 }
 
-const mockDismiss = vi.fn();
-const mockNavigate = vi.fn();
+const onDismiss = vi.fn();
+const onNavigate = vi.fn();
+
+function renderItem(overrides: Partial<Notification> = {}) {
+  return render(
+    <NotificationItem
+      notification={makeNotification(overrides)}
+      onDismiss={onDismiss}
+      onNavigate={onNavigate}
+    />
+  );
+}
 
 beforeEach(() => {
   vi.clearAllMocks();
 });
 
-describe("NotificationItem — new notification types", () => {
-  it("renders friend_request with correct icon and label", () => {
-    render(
-      <NotificationItem
-        notification={makeNotification("friend_request")}
-        onDismiss={mockDismiss}
-        onNavigate={mockNavigate}
-      />
-    );
-    expect(screen.getByTestId("icon-mdi:account-plus-outline")).toBeInTheDocument();
+describe("NotificationItem", () => {
+  it("renders the kind icon, sender, label, preview and relative date", () => {
+    renderItem();
+    expect(screen.getByTestId("icon-mdi:comment-outline")).toBeInTheDocument();
     expect(screen.getByText("Alice")).toBeInTheDocument();
-    expect(screen.getByText("sent you a friend request")).toBeInTheDocument();
+    expect(screen.getByText("t:typePostComment")).toBeInTheDocument();
+    expect(screen.getByText("Great post")).toBeInTheDocument();
+    expect(screen.getByText("just now")).toBeInTheDocument();
   });
 
-  it("renders friend_accepted with correct icon and label", () => {
-    render(
-      <NotificationItem
-        notification={makeNotification("friend_accepted")}
-        onDismiss={mockDismiss}
-        onNavigate={mockNavigate}
-      />
-    );
-    expect(screen.getByTestId("icon-mdi:account-check-outline")).toBeInTheDocument();
-    expect(screen.getByText("Alice")).toBeInTheDocument();
-    expect(screen.getByText("accepted your friend request")).toBeInTheDocument();
+  it("omits the sender and raw payload for system notifications", () => {
+    renderItem({ type: "achievement_unlocked", contentPreview: "library_5" });
+    expect(screen.queryByText("Alice")).not.toBeInTheDocument();
+    expect(screen.queryByText("library_5")).not.toBeInTheDocument();
+    expect(screen.getByText("t:typeAchievementUnlocked")).toBeInTheDocument();
   });
 
-  it("renders review_vote with correct icon and label", () => {
-    render(
-      <NotificationItem
-        notification={makeNotification("review_vote", { contentPreview: "helpful" })}
-        onDismiss={mockDismiss}
-        onNavigate={mockNavigate}
-      />
-    );
-    expect(screen.getByTestId("icon-mdi:thumb-up-outline")).toBeInTheDocument();
-    expect(screen.getByText("Alice")).toBeInTheDocument();
-    expect(screen.getByText("voted on your review")).toBeInTheDocument();
-  });
-
-  it("renders achievement_unlocked as system notification without sender name", () => {
-    render(
-      <NotificationItem
-        notification={makeNotification("achievement_unlocked", {
-          senderId: "rec-1",
-          contentPreview: "library_5",
-          sender: { username: "Self", avatarUrl: null },
-        })}
-        onDismiss={mockDismiss}
-        onNavigate={mockNavigate}
-      />
-    );
-    expect(screen.getByTestId("icon-mdi:trophy-outline")).toBeInTheDocument();
-    expect(screen.getByText("New achievement unlocked")).toBeInTheDocument();
-    expect(screen.queryByText("Self")).not.toBeInTheDocument();
-  });
-
-  it("renders post_mention with correct icon and label", () => {
-    render(
-      <NotificationItem
-        notification={makeNotification("post_mention", { contentPreview: "Check this out" })}
-        onDismiss={mockDismiss}
-        onNavigate={mockNavigate}
-      />
-    );
-    expect(screen.getByTestId("icon-mdi:at")).toBeInTheDocument();
-    expect(screen.getByText("Alice")).toBeInTheDocument();
-    expect(screen.getByText("mentioned you in a post")).toBeInTheDocument();
-  });
-
-  it("hides content preview for friend_request and friend_accepted", () => {
-    const { rerender } = render(
-      <NotificationItem
-        notification={makeNotification("friend_request", { contentPreview: "some text" })}
-        onDismiss={mockDismiss}
-      />
-    );
-    expect(screen.queryByText("some text")).not.toBeInTheDocument();
-
-    rerender(
-      <NotificationItem
-        notification={makeNotification("friend_accepted", { contentPreview: "some text" })}
-        onDismiss={mockDismiss}
-      />
-    );
-    expect(screen.queryByText("some text")).not.toBeInTheDocument();
-  });
-
-  it("navigates to friends page for friend_request", () => {
-    render(
-      <NotificationItem
-        notification={makeNotification("friend_request")}
-        onDismiss={mockDismiss}
-        onNavigate={mockNavigate}
-      />
-    );
+  it("links to the resolved resource and dismisses on navigation", () => {
+    renderItem();
     const link = screen.getByTestId("nav-link");
-    expect(link.getAttribute("href")).toBe("/players/me/friends");
+    expect(link.getAttribute("href")).toBe("/players/rec-1?tab=activity");
+    fireEvent.click(link);
+    expect(onDismiss).toHaveBeenCalledWith("n1");
+    expect(onNavigate).toHaveBeenCalled();
   });
 
-  it("navigates to achievements page for achievement_unlocked", () => {
-    render(
-      <NotificationItem
-        notification={makeNotification("achievement_unlocked")}
-        onDismiss={mockDismiss}
-        onNavigate={mockNavigate}
-      />
-    );
-    const link = screen.getByTestId("nav-link");
-    expect(link.getAttribute("href")).toBe("/players/me/achievements");
+  it("renders a plain row when the notification has no destination", () => {
+    renderItem({ type: "moderation_warning", contentPreview: "comment" });
+    expect(screen.queryByTestId("nav-link")).not.toBeInTheDocument();
+    expect(screen.getByText("t:moderationContentComment")).toBeInTheDocument();
   });
 
-  it("calls onDismiss when dismiss button clicked", () => {
-    render(
-      <NotificationItem
-        notification={makeNotification("review_vote")}
-        onDismiss={mockDismiss}
-      />
-    );
-    fireEvent.click(screen.getByLabelText("Dismiss"));
-    expect(mockDismiss).toHaveBeenCalledWith("n1");
+  it("calls onDismiss from the dismiss button", () => {
+    renderItem();
+    fireEvent.click(screen.getByLabelText("t:dismiss"));
+    expect(onDismiss).toHaveBeenCalledWith("n1");
+    expect(onNavigate).not.toHaveBeenCalled();
   });
 });

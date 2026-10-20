@@ -1,8 +1,7 @@
 /**
  * Mappers from PandaScore objects to Supabase rows.
  *
- * These are pure functions extracted from the inline `.map()` blocks in
- * src/lib/services/pandascoreSyncService.ts and the cron route. Keeping
+ * These are pure functions. Keeping
  * them together makes the Edge Function handlers easier to read and tests
  * trivial to add later.
  */

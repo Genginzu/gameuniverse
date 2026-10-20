@@ -1,35 +1,28 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import useSWR from "swr";
 import { useTranslations, useLocale } from "next-intl";
 import { Icon } from "@iconify/react";
 import { Link } from "@/i18n/navigation";
 import { EditorialPostCard } from "@/components/posts/EditorialPostCard";
 import { Pagination } from "@/components/shared/Pagination";
 import { TrendingTags } from "@/components/posts/TrendingTags";
+import { useListingQuery } from "@/hooks/useListingQuery";
+import { tagPostsListing } from "@/lib/listing/resources/posts";
 import type { TagPostsResponse } from "@/types/post";
 
 interface TagPostsContentProps {
   tag: string;
+  initialData?: TagPostsResponse;
 }
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
-
-export function TagPostsContent({ tag }: TagPostsContentProps) {
+export function TagPostsContent({ tag, initialData }: TagPostsContentProps) {
   const t = useTranslations("posts.tags");
   const locale = useLocale();
-  const [page, setPage] = useState(1);
-
-  const { data, isLoading } = useSWR<TagPostsResponse>(
-    `/api/posts/tags/${encodeURIComponent(tag)}?page=${page}`,
-    fetcher
-  );
-
-  const handlePageChange = useCallback((newPage: number) => {
-    setPage(newPage);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
+  const { setPage, data, isLoading } = useListingQuery(tagPostsListing, {
+    locale,
+    pathParams: { tag },
+    fallbackData: initialData,
+  });
 
   return (
     <div className="p-4 md:p-6 lg:p-8">
@@ -44,10 +37,7 @@ export function TagPostsContent({ tag }: TagPostsContentProps) {
         </Link>
         <div className="min-w-0">
           <h1 className="font-display flex items-center gap-2 text-xl font-bold tracking-tight text-white sm:text-2xl lg:text-3xl">
-            <Icon
-              icon="lucide:hash"
-              className="text-editorial-accent size-5 shrink-0 sm:size-6"
-            />
+            <Icon icon="lucide:hash" className="text-editorial-accent size-5 shrink-0 sm:size-6" />
             <span className="truncate">{tag}</span>
           </h1>
           {data && (
@@ -94,7 +84,7 @@ export function TagPostsContent({ tag }: TagPostsContentProps) {
             currentPage={data.pagination.currentPage}
             totalPages={data.pagination.totalPages}
             totalCount={data.pagination.totalCount}
-            onPageChange={handlePageChange}
+            onPageChange={setPage}
             loading={isLoading}
           />
         </div>

@@ -24,14 +24,12 @@ vi.mock("@/lib/logger", () => ({
   logger: { error: vi.fn(), warn: vi.fn(), info: vi.fn() },
 }));
 
-const { mockNotificationCreate } = vi.hoisted(() => ({
-  mockNotificationCreate: vi.fn(),
+const { mockReviewVoted } = vi.hoisted(() => ({
+  mockReviewVoted: vi.fn(),
 }));
 
-vi.mock("@/lib/services/notificationServerService", () => ({
-  NotificationServerService: {
-    create: mockNotificationCreate,
-  },
+vi.mock("@/lib/services/notifications", () => ({
+  reviewVoted: mockReviewVoted,
 }));
 
 const { POST, DELETE } = await import("@/app/api/review-votes/route");
@@ -54,8 +52,8 @@ describe("POST /api/review-votes", () => {
   beforeEach(() => {
     mockSupabaseFrom = null;
     mockGetUser = null;
-    mockNotificationCreate.mockReset();
-    mockNotificationCreate.mockResolvedValue(null);
+    mockReviewVoted.mockReset();
+    mockReviewVoted.mockResolvedValue(null);
   });
 
   test("returns 401 when not authenticated", async () => {
@@ -210,13 +208,12 @@ describe("POST /api/review-votes", () => {
         jsonBody({ reviewId: "r1", voteType: "helpful" })
       )
     );
-    expect(mockNotificationCreate).toHaveBeenCalledWith(
-      "other-user",
-      USER.id,
-      "review_vote",
-      "r1",
-      "helpful"
-    );
+    expect(mockReviewVoted).toHaveBeenCalledWith({
+      reviewId: "r1",
+      voterId: USER.id,
+      authorId: "other-user",
+      voteType: "helpful",
+    });
   });
 
   test("does not send notification when toggling vote off", async () => {
@@ -261,7 +258,7 @@ describe("POST /api/review-votes", () => {
         jsonBody({ reviewId: "r1", voteType: "helpful" })
       )
     );
-    expect(mockNotificationCreate).not.toHaveBeenCalled();
+    expect(mockReviewVoted).not.toHaveBeenCalled();
   });
 
   test("toggles off when same vote type exists", async () => {
@@ -316,8 +313,8 @@ describe("DELETE /api/review-votes", () => {
   beforeEach(() => {
     mockSupabaseFrom = null;
     mockGetUser = null;
-    mockNotificationCreate.mockReset();
-    mockNotificationCreate.mockResolvedValue(null);
+    mockReviewVoted.mockReset();
+    mockReviewVoted.mockResolvedValue(null);
   });
 
   test("returns 401 when not authenticated", async () => {

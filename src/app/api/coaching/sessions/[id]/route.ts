@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 import { createSessionConversation } from "@/lib/services/coachingConversationService";
+import { coachingSessionTransitioned } from "@/lib/services/notifications";
+import type { CoachingTransitionNotificationType } from "@/types/notification";
 import { refundCancelledSession } from "@/lib/services/coachingRefundService";
-import { NotificationServerService } from "@/lib/services/notificationServerService";
-import type { NotificationType } from "@/types/notification";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnySupabase = any;
@@ -52,6 +52,14 @@ const TRANSITIONS: Record<
     to: "cancelled",
     allowedRoles: ["coach", "student"],
   },
+};
+
+const TRANSITION_NOTIFICATIONS: Record<SessionAction, CoachingTransitionNotificationType> = {
+  confirm: "coaching_confirmed",
+  decline: "coaching_declined",
+  start: "coaching_started",
+  complete: "coaching_completed",
+  cancel: "coaching_cancelled",
 };
 
 /**
@@ -216,32 +224,15 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       }
     }
 
-    // Send notifications
-    try {
-      const coachPlayerId = await resolveCoachPlayerId(supabase, session.coach_id);
-      const notifMap: Record<SessionAction, { recipientId: string; type: NotificationType }> = {
-        confirm: { recipientId: session.student_id, type: "coaching_confirmed" },
-        decline: { recipientId: session.student_id, type: "coaching_declined" },
-        start: { recipientId: session.student_id, type: "coaching_started" },
-        complete: { recipientId: session.student_id, type: "coaching_completed" },
-        cancel: {
-          recipientId: role === "student" ? coachPlayerId || "" : session.student_id,
-          type: "coaching_cancelled",
-        },
-      };
-      const notif = notifMap[action];
-      if (notif.recipientId) {
-        await NotificationServerService.create(
-          notif.recipientId,
-          user.id,
-          notif.type,
-          id,
-          notif.type
-        );
-      }
-    } catch (notifError) {
-      logger.error("Error sending coaching notification", { error: notifError });
-    }
+    const notifyCoach = action === "cancel" && role === "student";
+    await coachingSessionTransitioned({
+      sessionId: id,
+      actorId: user.id,
+      recipientId: notifyCoach
+        ? await resolveCoachPlayerId(supabase, session.coach_id)
+        : session.student_id,
+      type: TRANSITION_NOTIFICATIONS[action],
+    });
 
     return NextResponse.json({ session: updated });
   } catch (error) {

@@ -1,42 +1,17 @@
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { logger } from "@/lib/logger";
-import { NotificationServerService } from "@/lib/services/notificationServerService";
+import { contentAuthorWarned } from "@/lib/services/notifications";
 import { isValidSuspensionDays, suspensionEndDate } from "@/lib/utils/suspension";
+import { reportableContent } from "@/lib/services/reportable-content/registry";
 import type { ModerationOptions, ReportAction, ReportContentType } from "@/types/report";
-
-/** Maps a content type to its table and author column. */
-export const CONTENT_TABLE_MAP: Record<
-  ReportContentType,
-  { table: string; authorColumn: string; contentColumn: string; deletable: boolean }
-> = {
-  review: {
-    table: "game_reviews",
-    authorColumn: "user_id",
-    contentColumn: "content",
-    deletable: true,
-  },
-  post: {
-    table: "player_posts",
-    authorColumn: "player_id",
-    contentColumn: "content",
-    deletable: true,
-  },
-  comment: {
-    table: "post_comments",
-    authorColumn: "player_id",
-    contentColumn: "content",
-    deletable: true,
-  },
-  profile: { table: "profiles", authorColumn: "id", contentColumn: "username", deletable: false },
-};
 
 /** Resolve the author id of a reported piece of content. */
 export async function resolveAuthorId(
   contentType: ReportContentType,
   contentId: string
 ): Promise<string | null> {
-  if (contentType === "profile") return contentId;
-  const mapping = CONTENT_TABLE_MAP[contentType];
+  const mapping = reportableContent(contentType);
+  if (mapping.authorColumn === "id") return contentId;
 
   const { data, error } = await getSupabaseAdmin()
     .from(mapping.table)
@@ -68,7 +43,7 @@ export async function applyModerationAction(
 ): Promise<boolean> {
   if (action === "none") return true;
   const supabase = getSupabaseAdmin();
-  const mapping = CONTENT_TABLE_MAP[contentType];
+  const mapping = reportableContent(contentType);
 
   if (action === "content_deleted") {
     if (!mapping.deletable) return false;
@@ -88,7 +63,7 @@ export async function applyModerationAction(
   if (!authorId) return false;
 
   if (action === "author_warned") {
-    await NotificationServerService.create(authorId, adminId, "moderation_warning", contentId, "");
+    await contentAuthorWarned({ authorId, moderatorId: adminId, contentType, contentId });
     return true;
   }
 

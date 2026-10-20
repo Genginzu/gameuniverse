@@ -24,15 +24,12 @@ vi.mock("@/lib/services/levelSystem", () => ({
   computeLevel: vi.fn((xp: number) => Math.floor(0.3 * Math.sqrt(Math.max(xp, 0))) + 1),
 }));
 
-const { mockCreateSystemNotification } = vi.hoisted(() => ({
-  mockCreateSystemNotification: vi.fn(),
+const { mockAchievementUnlocked } = vi.hoisted(() => ({
+  mockAchievementUnlocked: vi.fn(),
 }));
 
-vi.mock("@/lib/services/notificationServerService", () => ({
-  NotificationServerService: {
-    createSystemNotification: mockCreateSystemNotification,
-    create: vi.fn(),
-  },
+vi.mock("@/lib/services/notifications", () => ({
+  achievementUnlocked: mockAchievementUnlocked,
 }));
 
 // Import after mocks
@@ -69,7 +66,7 @@ function setupFromMock(tableMap: Record<string, ReturnType<typeof buildChain>>) 
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mockCreateSystemNotification.mockResolvedValue(null);
+  mockAchievementUnlocked.mockResolvedValue({ delivered: 1 });
 });
 
 describe("AchievementEngine.evaluate", () => {
@@ -126,13 +123,15 @@ describe("AchievementEngine.evaluate", () => {
     expect(result.newlyUnlocked[1]).toEqual({ key: "library_5", xpAwarded: 25 });
     expect(result.totalXpAwarded).toBe(35);
 
-    expect(mockCreateSystemNotification).toHaveBeenCalledTimes(2);
-    expect(mockCreateSystemNotification).toHaveBeenCalledWith(
-      "user-1", "achievement_unlocked", "user-1", "library_1"
-    );
-    expect(mockCreateSystemNotification).toHaveBeenCalledWith(
-      "user-1", "achievement_unlocked", "user-1", "library_5"
-    );
+    expect(mockAchievementUnlocked).toHaveBeenCalledTimes(2);
+    expect(mockAchievementUnlocked).toHaveBeenCalledWith({
+      userId: "user-1",
+      achievementKey: "library_1",
+    });
+    expect(mockAchievementUnlocked).toHaveBeenCalledWith({
+      userId: "user-1",
+      achievementKey: "library_5",
+    });
   });
 
   it("should return EMPTY_RESULT when catalog is empty (Req 3.8)", async () => {

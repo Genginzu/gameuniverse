@@ -1,4 +1,5 @@
 import type { PlatformSummary } from "@/types/platform";
+import type { Pagination } from "@/types/pagination";
 
 export interface CharacterRelationship {
   id: string;
@@ -85,6 +86,11 @@ export interface CharacterSummary {
   species?: { id: string; slug: string; name: string };
   primaryGame?: string;
   gamesCount: number;
+}
+
+export interface CharactersApiResponse {
+  characters: CharacterSummary[];
+  pagination: Pagination;
 }
 
 export interface CharacterFilters {

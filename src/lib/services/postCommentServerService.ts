@@ -1,6 +1,6 @@
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
-import { NotificationServerService } from "@/lib/services/notificationServerService";
+import { postCommented } from "@/lib/services/notifications";
 import type { PostComment } from "@/types/post-comment";
 
 // Table not yet in generated Supabase types (migration applied but types not regenerated)
@@ -105,31 +105,7 @@ export class PostCommentServerService {
 
     const comment = transformRow(data as unknown as CommentRow);
 
-    // Get the post owner to send notification (best-effort)
-    try {
-      const { data: post } = await supabase
-        .from("player_posts" as UntypedFrom)
-        .select("player_id")
-        .eq("id", postId)
-        .single();
-
-      if (post) {
-        const postOwnerId = (post as unknown as { player_id: string }).player_id;
-        await NotificationServerService.create(
-          postOwnerId,
-          playerId,
-          "post_comment",
-          postId,
-          trimmed
-        );
-      }
-    } catch (err) {
-      logger.error("Failed to create notification for post comment", {
-        error: err instanceof Error ? err.message : String(err),
-        postId,
-        playerId,
-      });
-    }
+    await postCommented({ postId, commenterId: playerId, content: trimmed });
 
     return comment;
   }
