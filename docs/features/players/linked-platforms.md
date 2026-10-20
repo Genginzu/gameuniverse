@@ -150,9 +150,16 @@ L'agrégat `MAX(synced_at)` par plateforme est exposé en `lastSyncedAt` dans
 ### Cron
 
 `POST /api/cron/sync-libraries` (protégée par header
-`Authorization: Bearer $CRON_SECRET` ou `x-cron-secret`) itère jusqu'à 50
-comptes steam+xbox et exécute leur sync. Planifiée quotidiennement à 04h00 UTC
-via `vercel.json`.
+`Authorization: Bearer $CRON_SECRET` ou `x-cron-secret`) traite jusqu'à 50
+comptes liés synchronisables par exécution et lance leur sync via le système de
+jobs. Rotation : les comptes sont triés par
+`player_linked_platforms.last_library_sync_at` (NULLs en premier, puis `id`),
+colonne horodatée par le service role à la fin de chaque job (succès ou échec,
+pas pendant une continuation). Les comptes jamais synchronisés passent donc en
+premier, puis les moins récemment synchronisés. Colonne serveur uniquement :
+non sélectionnable par `anon`/`authenticated` et figée par trigger pour eux
+(migration `20261020000003`). Planifiée quotidiennement à 04h00 UTC via
+`vercel.json`.
 
 ## Enrichissement et métadonnées
 
@@ -261,7 +268,7 @@ toast.
 | `/api/auth/battlenet` + `/callback`         | GET                        | OAuth Battle.net.                                                                                     |
 | `/api/auth/itch` + `/callback`              | GET + POST                 | OAuth itch.io (implicit via bootstrap HTML).                                                          |
 | `/api/auth/psn`                             | POST                       | Exchange NPSSO → tokens PSN.                                                                          |
-| `/api/cron/sync-libraries`                  | POST                       | Cron : crée un job par compte lié (ordre `id`, verrou job actif respecté). Protégé par `CRON_SECRET`. |
+| `/api/cron/sync-libraries`                  | POST                       | Cron : crée un job par compte lié (rotation `last_library_sync_at` NULLs en premier, verrou job actif respecté). Protégé par `CRON_SECRET`. |
 
 ### UI
 

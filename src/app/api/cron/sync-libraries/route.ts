@@ -65,6 +65,8 @@ async function handler(request: NextRequest) {
     .from("player_linked_platforms")
     .select("player_id, platform")
     .in("platform", [...SYNCABLE_PLATFORMS])
+    // Rotate: never-synced accounts first, then least recently synced.
+    .order("last_library_sync_at", { ascending: true, nullsFirst: true })
     .order("id", { ascending: true })
     .limit(MAX_USERS_PER_RUN);
 
