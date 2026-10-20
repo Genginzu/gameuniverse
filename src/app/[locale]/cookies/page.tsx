@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { LegalPageShell } from "@/components/legal/LegalPageShell";
-import { CookiesContent } from "@/components/legal/CookiesContent";
+import { LegalDocument } from "@/components/legal/LegalDocument";
 
 const UPDATED_AT = "2026-09-19";
 
@@ -20,7 +20,7 @@ export default async function CookiesPage({ params }: PageProps) {
   const t = await getTranslations({ locale, namespace: "footer" });
   return (
     <LegalPageShell locale={locale} title={t("cookies")} updatedAt={UPDATED_AT}>
-      <CookiesContent locale={locale} />
+      <LegalDocument locale={locale} page="cookies" />
     </LegalPageShell>
   );
 }

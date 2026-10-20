@@ -32,6 +32,9 @@ export function LegalFooterLinks({ className = "" }: { className?: string }) {
       <Link href="/cgu" className={linkClass}>
         {t("cgu")}
       </Link>
+      <Link href="/cgv#mediation" className={linkClass}>
+        {t("mediation")}
+      </Link>
       <ManageCookiesButton className={linkClass} />
     </nav>
   );
