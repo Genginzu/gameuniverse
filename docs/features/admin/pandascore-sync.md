@@ -67,6 +67,13 @@ PandaScore Incidents (`/additions`, `/changes`, `/deletions`) avec
 quelques dizaines d'incidents. Le cursor est avancé à `now()` uniquement en
 cas de succès complet.
 
+Si un fetch d'incidents échoue (429, 5xx, réseau ; classé par
+`classifyFetchError`), le run échoue **avant tout upsert** : le cursor
+n'est pas avancé (le prochain run reprend la même fenêtre), la ligne
+`pandascore_sync_logs` passe en `failed` avec la raison en tête de
+`error_message` (`[rate_limited] …`, `[transient] …`, `[fatal] …`), et la
+réponse est `429` (rate limit) ou `500` avec `{ ok: false, reason }`.
+
 Un verrou applicatif (`pandascore_sync_state.incremental_running_since`)
 empêche le cron et le bouton manuel de tourner simultanément. Le verrou
 est auto-libéré après 6 minutes (au cas où une invocation crashée).

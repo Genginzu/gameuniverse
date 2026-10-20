@@ -18,6 +18,14 @@ export {
   type SyncFailureReason,
 } from "./failure.ts";
 export {
+  findIncidentFailure,
+  IncidentFetchError,
+  incidentFailureMessage,
+  incrementalFailureStatus,
+  type IncidentFetchFailure,
+  type IncidentFetchResult,
+} from "./incremental.ts";
+export {
   completedPatch,
   decideChunkOutcome,
   failedPatch,
