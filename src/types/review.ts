@@ -1,6 +1,7 @@
 export interface Review {
   id: string;
-  userId: string;
+  /** null once the author deleted their account: shown as "Deleted user". */
+  userId: string | null;
   gameId: string;
   rating: number;
   content: string;

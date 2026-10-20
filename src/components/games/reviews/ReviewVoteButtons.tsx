@@ -9,7 +9,7 @@ import type { ReviewVoteCounts, VoteType } from "@/types/review";
 
 interface ReviewVoteButtonsProps {
   reviewId: string;
-  reviewUserId: string;
+  reviewUserId: string | null;
   initialCounts: ReviewVoteCounts;
   initialUserVote: VoteType | null;
 }

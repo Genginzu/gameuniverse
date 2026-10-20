@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { LazyImage } from "@/components/ui/lazy-image";
 import { truncatePreview, formatMessageDate } from "@/lib/utils/discussion-utils";
 import type { ConversationSummary } from "@/types/discussion";
+import { useAuthorDisplayName } from "@/hooks/useAuthorDisplayName";
 
 import UnreadBadge from "./UnreadBadge";
 
@@ -23,6 +24,7 @@ export default memo(function ConversationItem({
 }: ConversationItemProps) {
   const t = useTranslations("discussions");
   const { friend, lastMessage, unreadCount } = conversation;
+  const friendName = useAuthorDisplayName()(friend.id, friend.displayName, t("unknownPlayer"));
 
   const preview = lastMessage ? truncatePreview(lastMessage.content, 80) : t("noMessages");
   const timestamp = lastMessage
@@ -39,17 +41,17 @@ export default memo(function ConversationItem({
       onClick={() => onSelect(conversation.id)}
       className={`flex w-full items-center gap-3 rounded-xl p-3 text-left transition-all duration-300 ${
         isSelected
-          ? "bg-linear-to-r from-palette-primary-500/15 via-palette-accent-600/10 to-palette-accent-700/10 shadow-[inset_0_0_0_1px_rgb(var(--neon-primary)/0.3)]"
+          ? "from-palette-primary-500/15 via-palette-accent-600/10 to-palette-accent-700/10 bg-linear-to-r shadow-[inset_0_0_0_1px_rgb(var(--neon-primary)/0.3)]"
           : "cursor-pointer hover:bg-white/[0.05]"
       }`}
       data-testid="conversation-item"
     >
       {/* Avatar */}
-      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-linear-to-br from-palette-primary-500/20 via-palette-accent-600/20 to-palette-accent-700/20">
+      <div className="from-palette-primary-500/20 via-palette-accent-600/20 to-palette-accent-700/20 relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-linear-to-br">
         {friend.avatarUrl ? (
           <LazyImage
             src={friend.avatarUrl}
-            alt={friend.displayName}
+            alt={friendName}
             fill
             className="object-cover"
             sizes="40px"
@@ -65,13 +67,9 @@ export default memo(function ConversationItem({
       {/* Content */}
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-2">
-          <p className="truncate text-sm font-semibold text-white">
-            {friend.displayName}
-          </p>
+          <p className="truncate text-sm font-semibold text-white">{friendName}</p>
           {timestamp && (
-            <span className="text-editorial-muted shrink-0 text-[11px]">
-              {timestamp}
-            </span>
+            <span className="text-editorial-muted shrink-0 text-[11px]">{timestamp}</span>
           )}
         </div>
         <div className="flex items-center justify-between gap-2">

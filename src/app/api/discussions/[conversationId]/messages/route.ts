@@ -95,6 +95,9 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     if (message === "Conversation not found") {
       return NextResponse.json({ error: message }, { status: 404 });
     }
+    if (message === "Conversation closed") {
+      return NextResponse.json({ error: message, code: "conversationClosed" }, { status: 409 });
+    }
     logger.error("Error in discussions messages POST", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }

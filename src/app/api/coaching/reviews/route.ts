@@ -32,7 +32,10 @@ export async function GET(request: NextRequest) {
       coachResponse: r.coach_response,
       coachRespondedAt: r.coach_responded_at,
       createdAt: r.created_at,
-      student: { username: r.profiles?.username, avatarUrl: r.profiles?.avatar_url },
+      student: {
+        username: r.profiles?.username ?? null,
+        avatarUrl: r.profiles?.avatar_url ?? null,
+      },
     }));
 
     return NextResponse.json({ reviews });

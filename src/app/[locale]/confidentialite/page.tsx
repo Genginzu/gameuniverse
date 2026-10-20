@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { LegalPageShell } from "@/components/legal/LegalPageShell";
 import { ConfidentialiteContent } from "@/components/legal/ConfidentialiteContent";
 
-const UPDATED_AT = "2026-09-19";
+const UPDATED_AT = "2026-10-20";
 
 interface PageProps {
   params: Promise<{ locale: string }>;

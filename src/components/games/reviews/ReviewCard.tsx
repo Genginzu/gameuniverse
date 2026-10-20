@@ -7,6 +7,7 @@ import { useReviewTranslations, useDateFormatter } from "@/hooks/useTranslations
 import { ReviewVoteButtons } from "./ReviewVoteButtons";
 import { ReportButton } from "@/components/shared/ReportButton";
 import type { ReviewWithVotes } from "@/types/review";
+import { useAuthorDisplayName } from "@/hooks/useAuthorDisplayName";
 import Image from "next/image";
 
 interface ReviewCardProps {
@@ -71,17 +72,16 @@ function ReviewPoints({
 export function ReviewCard({ review }: ReviewCardProps) {
   const t = useReviewTranslations();
   const { formatDate } = useDateFormatter();
+  const authorName = useAuthorDisplayName()(review.userId, review.playerName, t("anonymousPlayer"));
 
   return (
     <article className="rounded-xl border border-white/10 bg-white/5 p-5 shadow-lg shadow-black/20 backdrop-blur-xl">
       {/* Header: avatar, name, date, rating + votes */}
       <div className="mb-4 flex items-start justify-between">
         <div className="flex items-center gap-3">
-          <ReviewAvatar name={review.playerName} avatar={review.playerAvatar} />
+          <ReviewAvatar name={authorName} avatar={review.playerAvatar} />
           <div>
-            <p className="font-medium text-slate-200">
-              {review.playerName ?? t("anonymousPlayer")}
-            </p>
+            <p className="font-medium text-slate-200">{authorName}</p>
             <p className="text-xs text-slate-500">{formatDate(review.createdAt)}</p>
           </div>
         </div>

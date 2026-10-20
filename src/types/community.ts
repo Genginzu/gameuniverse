@@ -50,12 +50,13 @@ export interface CommunityMember {
 export interface CommunityPost {
   id: string;
   communityId: string;
-  authorId: string;
+  /** null once the author deleted their account: shown as "Deleted user". */
+  authorId: string | null;
   content: string;
   createdAt: string;
   updatedAt: string;
   author: {
-    id: string;
+    id: string | null;
     username: string | null;
     avatarUrl: string | null;
   };

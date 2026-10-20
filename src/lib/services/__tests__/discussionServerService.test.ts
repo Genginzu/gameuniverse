@@ -222,7 +222,10 @@ describe("DiscussionServerService", () => {
 
   describe("sendMessage", () => {
     it("inserts message and returns it (Property 14)", async () => {
-      const participationChain = buildChain({ data: { id: CONV_ID }, error: null });
+      const participationChain = buildChain({
+        data: { id: CONV_ID, participant_1: USER_ID, participant_2: FRIEND_ID },
+        error: null,
+      });
       const msgData = {
         id: "msg-1",
         conversation_id: CONV_ID,
@@ -244,6 +247,38 @@ describe("DiscussionServerService", () => {
       expect(result.content).toBe("Hi there");
       expect(result.senderId).toBe(USER_ID);
       expect(result.conversationId).toBe(CONV_ID);
+    });
+
+    it("refuses new messages once the other participant deleted their account", async () => {
+      const participationChain = buildChain({
+        data: { id: CONV_ID, participant_1: null, participant_2: USER_ID },
+        error: null,
+      });
+      mockFrom.mockImplementation((table: string) =>
+        table === "conversations" ? participationChain : buildChain({ data: null, error: null })
+      );
+
+      await expect(DiscussionServerService.sendMessage(CONV_ID, USER_ID, "Hi")).rejects.toThrow(
+        "Conversation closed"
+      );
+    });
+  });
+
+  describe("getConversations with a deleted participant", () => {
+    it("keeps the conversation with a null friend and skips it in the profile lookup", async () => {
+      const convChain = buildChain({
+        data: [{ id: CONV_ID, participant_1: null, participant_2: USER_ID }],
+        error: null,
+      });
+      mockFrom.mockReturnValue(convChain);
+      mockFetchProfileMap.mockResolvedValue(new Map());
+      mockFetchLastMessages.mockResolvedValue(new Map());
+      mockFetchUnreadCounts.mockResolvedValue(new Map());
+
+      const result = await DiscussionServerService.getConversations(USER_ID);
+
+      expect(mockFetchProfileMap).toHaveBeenCalledWith([]);
+      expect(result[0].friend).toEqual({ id: null, displayName: null, avatarUrl: null });
     });
   });
 

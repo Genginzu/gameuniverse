@@ -11,7 +11,7 @@ type UntypedFrom = any;
 interface CommentRow {
   id: string;
   post_id: string;
-  player_id: string;
+  player_id: string | null;
   content: string;
   created_at: string;
   updated_at: string;
@@ -114,7 +114,7 @@ export class PostCommentServerService {
   static async deleteComment(
     commentId: string,
     playerId: string,
-    postOwnerId: string,
+    postOwnerId: string | null,
     postId: string
   ): Promise<void> {
     const supabase = await createRouteHandlerClient();
@@ -130,7 +130,7 @@ export class PostCommentServerService {
       throw new Error("Comment not found");
     }
 
-    const comment = existing as unknown as { player_id: string; post_id: string };
+    const comment = existing as unknown as { player_id: string | null; post_id: string };
     // postOwnerId belongs to the path post: the comment must be on that post.
     if (comment.post_id !== postId) {
       throw new Error("Comment not found");

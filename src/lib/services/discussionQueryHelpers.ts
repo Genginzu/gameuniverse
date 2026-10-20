@@ -9,7 +9,7 @@ interface ProfileRow {
 
 interface LastMessageEntry {
   content: string;
-  senderId: string;
+  senderId: string | null;
   createdAt: string;
 }
 

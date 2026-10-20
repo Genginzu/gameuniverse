@@ -1,6 +1,7 @@
 export interface Comment {
   id: string;
-  userId: string;
+  /** null once the author deleted their account: shown as "Deleted user". */
+  userId: string | null;
   characterId: string;
   content: string;
   createdAt: string;

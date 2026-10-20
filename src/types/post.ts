@@ -30,7 +30,9 @@ export interface CreatePostPayload {
   tags?: string[];
 }
 
-export interface PostWithAuthor extends Post {
+/** Feed post with its author; playerId is null once the author deleted their account. */
+export interface PostWithAuthor extends Omit<Post, "playerId"> {
+  playerId: string | null;
   authorName: string | null;
   authorAvatar: string | null;
 }

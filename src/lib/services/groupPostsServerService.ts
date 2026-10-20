@@ -9,7 +9,7 @@ type UntypedFrom = any;
 interface GroupPostRow {
   id: string;
   group_id: string;
-  author_id: string;
+  author_id: string | null;
   content: string;
   created_at: string;
   updated_at: string;
@@ -65,7 +65,7 @@ export class GroupPostsServerService {
   /** Fetch a single post's group_id and author_id, for authorization checks. */
   static async getPostAccess(
     postId: string
-  ): Promise<{ groupId: string; authorId: string } | null> {
+  ): Promise<{ groupId: string; authorId: string | null } | null> {
     const supabase = await createRouteHandlerClient();
     const { data, error } = await supabase
       .from("group_posts" as UntypedFrom)
@@ -74,14 +74,17 @@ export class GroupPostsServerService {
       .maybeSingle();
 
     if (error || !data) return null;
-    const row = data as unknown as { group_id: string; author_id: string };
+    const row = data as unknown as { group_id: string; author_id: string | null };
     return { groupId: row.group_id, authorId: row.author_id };
   }
 
   /** Delete a post. Caller must have verified author/owner/admin role beforehand. */
   static async deletePost(postId: string): Promise<void> {
     const supabase = await createRouteHandlerClient();
-    const { error } = await supabase.from("group_posts" as UntypedFrom).delete().eq("id", postId);
+    const { error } = await supabase
+      .from("group_posts" as UntypedFrom)
+      .delete()
+      .eq("id", postId);
 
     if (error) {
       logger.error("Failed to delete group post", { error: error.message, postId });

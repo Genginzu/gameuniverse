@@ -8,7 +8,8 @@ import { enforceRateLimit } from "@/lib/services/rateLimitService";
 
 interface CommentRow {
   id: string;
-  user_id: string;
+  /** NULL once the author deleted their account (comment anonymised). */
+  user_id: string | null;
   character_id: string;
   content: string;
   created_at: string;
@@ -34,7 +35,7 @@ export function sortCommentsByDateDesc<T extends { createdAt: string }>(comments
  * Transform a database row into a Comment with profile info.
  */
 function toComment(row: CommentRow, profilesMap: Map<string, ProfileRow>): Comment {
-  const profile = profilesMap.get(row.user_id);
+  const profile = row.user_id ? profilesMap.get(row.user_id) : undefined;
   return {
     id: row.id,
     userId: row.user_id,
@@ -123,7 +124,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const commentRows = (rows ?? []) as CommentRow[];
 
     // Fetch profiles for all comment authors
-    const userIds = [...new Set(commentRows.map((r) => r.user_id))];
+    const userIds = [
+      ...new Set(commentRows.map((r) => r.user_id).filter((id): id is string => id !== null)),
+    ];
     const profilesMap = await fetchProfilesMap(supabase, userIds);
 
     // Transform rows to Comment objects

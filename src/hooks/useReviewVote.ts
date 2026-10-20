@@ -21,7 +21,7 @@ export interface UseReviewVoteReturn {
  */
 export function useReviewVote(
   reviewId: string,
-  reviewUserId: string,
+  reviewUserId: string | null,
   initialCounts: ReviewVoteCounts,
   initialUserVote: VoteType | null
 ): UseReviewVoteReturn {

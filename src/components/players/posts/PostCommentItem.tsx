@@ -5,6 +5,7 @@ import { Icon } from "@iconify/react";
 import { LazyImage } from "@/components/ui/lazy-image";
 import { ReportButton } from "@/components/shared/ReportButton";
 import type { PostComment } from "@/types/post-comment";
+import { useAuthorDisplayName } from "@/hooks/useAuthorDisplayName";
 
 interface PostCommentItemProps {
   comment: PostComment;
@@ -20,7 +21,7 @@ export function PostCommentItem({ comment, isOwner, onDelete }: PostCommentItemP
   const now = new Date();
   const safeDate = createdAt > now ? now : createdAt;
   const relativeDate = format.relativeTime(safeDate, now);
-  const displayName = comment.player?.username ?? "?";
+  const displayName = useAuthorDisplayName()(comment.playerId, comment.player?.username, "?");
   const avatarUrl = comment.player?.avatarUrl ?? null;
 
   return (

@@ -12,7 +12,7 @@ interface Review {
   coachResponse: string | null;
   coachRespondedAt: string | null;
   createdAt: string;
-  student: { username: string; avatarUrl: string | null };
+  student: { username: string | null; avatarUrl: string | null };
 }
 
 function Stars({ rating }: { rating: number }) {
@@ -31,48 +31,56 @@ function Stars({ rating }: { rating: number }) {
 
 export function CoachReviewsSection({ coachId }: { coachId: string }) {
   const t = useTranslations("coaching.reviews");
+  const tDeletion = useTranslations("accountDeletion");
   const { data, isLoading } = useSWR<{ reviews: Review[] }>(
     `/api/coaching/reviews?coachId=${coachId}`,
     fetcher
   );
 
   if (isLoading) return <div className="h-32 animate-pulse rounded-xl bg-white/[0.06]" />;
-  if (!data?.reviews.length)
-    return <p className="text-editorial-muted text-sm">{t("empty")}</p>;
+  if (!data?.reviews.length) return <p className="text-editorial-muted text-sm">{t("empty")}</p>;
 
   return (
     <div className="space-y-3">
-      {data.reviews.map((r) => (
-        <div key={r.id} className="border-editorial-line bg-editorial-2 space-y-2 rounded-xl border p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="from-cta-from to-cta-to flex size-7 items-center justify-center rounded-full bg-linear-to-br text-xs font-bold text-white">
-                {r.student.avatarUrl ? (
-                  <img
-                    src={r.student.avatarUrl}
-                    alt=""
-                    className="size-7 rounded-full object-cover"
-                  />
-                ) : (
-                  r.student.username[0].toUpperCase()
-                )}
+      {data.reviews.map((r) => {
+        const studentName = r.student.username ?? tDeletion("deletedUser");
+        return (
+          <div
+            key={r.id}
+            className="border-editorial-line bg-editorial-2 space-y-2 rounded-xl border p-4"
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="from-cta-from to-cta-to flex size-7 items-center justify-center rounded-full bg-linear-to-br text-xs font-bold text-white">
+                  {r.student.avatarUrl ? (
+                    <img
+                      src={r.student.avatarUrl}
+                      alt=""
+                      className="size-7 rounded-full object-cover"
+                    />
+                  ) : r.student.username ? (
+                    r.student.username[0].toUpperCase()
+                  ) : (
+                    <Icon icon="lucide:user" className="size-3.5" aria-hidden="true" />
+                  )}
+                </div>
+                <span className="text-sm font-medium text-white">{studentName}</span>
+                <Stars rating={r.rating} />
               </div>
-              <span className="text-sm font-medium text-white">{r.student.username}</span>
-              <Stars rating={r.rating} />
+              <span className="text-editorial-muted text-xs">
+                {new Date(r.createdAt).toLocaleDateString()}
+              </span>
             </div>
-            <span className="text-editorial-muted text-xs">
-              {new Date(r.createdAt).toLocaleDateString()}
-            </span>
+            {r.comment && <p className="text-editorial-muted text-sm">{r.comment}</p>}
+            {r.coachResponse && (
+              <div className="border-editorial-accent bg-editorial-accent/5 ml-4 rounded-lg border-l-2 p-3">
+                <p className="text-editorial-accent text-xs font-medium">{t("coachResponse")}</p>
+                <p className="text-editorial-muted mt-1 text-sm">{r.coachResponse}</p>
+              </div>
+            )}
           </div>
-          {r.comment && <p className="text-editorial-muted text-sm">{r.comment}</p>}
-          {r.coachResponse && (
-            <div className="border-editorial-accent bg-editorial-accent/5 ml-4 rounded-lg border-l-2 p-3">
-              <p className="text-editorial-accent text-xs font-medium">{t("coachResponse")}</p>
-              <p className="text-editorial-muted mt-1 text-sm">{r.coachResponse}</p>
-            </div>
-          )}
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 
 import { useDiscussions } from "@/hooks/useDiscussions";
 import { useAuth } from "@/hooks/useAuth";
+import { useAuthorDisplayName } from "@/hooks/useAuthorDisplayName";
 
 import { Icon } from "@iconify/react";
 
@@ -89,6 +90,16 @@ export default function DiscussionsPage() {
 
   // Find selected friend name for the thread header
   const selectedConversation = conversations.find((c) => c.id === selectedConversationId);
+  const displayAuthor = useAuthorDisplayName();
+  const selectedFriendName = selectedConversation
+    ? displayAuthor(
+        selectedConversation.friend.id,
+        selectedConversation.friend.displayName,
+        t("unknownPlayer")
+      )
+    : "";
+  // The friend deleted their account: history stays readable, no new messages.
+  const isClosed = selectedConversation?.friend.id === null;
 
   return (
     <div className="flex h-full flex-col gap-6 p-4 md:p-6" data-testid="discussions-page">
@@ -138,16 +149,13 @@ export default function DiscussionsPage() {
                     className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl transition-colors hover:bg-white/10 md:hidden"
                     aria-label={t("backToConversations")}
                   >
-                    <Icon
-                      icon="lucide:arrow-left"
-                      className="text-editorial-muted h-5 w-5"
-                    />
+                    <Icon icon="lucide:arrow-left" className="text-editorial-muted h-5 w-5" />
                   </button>
                   <div className="bg-editorial-3 flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full">
                     {selectedConversation.friend.avatarUrl ? (
                       <LazyImage
                         src={selectedConversation.friend.avatarUrl}
-                        alt={selectedConversation.friend.displayName}
+                        alt={selectedFriendName}
                         fill
                         className="object-cover"
                         sizes="40px"
@@ -157,9 +165,7 @@ export default function DiscussionsPage() {
                       <Icon icon="lucide:user" className="text-editorial-accent h-4 w-4" />
                     )}
                   </div>
-                  <span className="text-sm font-semibold text-white">
-                    {selectedConversation.friend.displayName}
-                  </span>
+                  <span className="text-sm font-semibold text-white">{selectedFriendName}</span>
                 </div>
               )}
 
@@ -176,7 +182,13 @@ export default function DiscussionsPage() {
 
               {/* Input */}
               <div className="border-editorial-line border-t px-3 py-2 md:px-4 md:py-3">
-                <MessageInput onSend={sendMessage} isSending={isSending} maxLength={2000} />
+                {isClosed ? (
+                  <p className="text-editorial-muted py-2 text-center text-sm">
+                    {t("closedConversation")}
+                  </p>
+                ) : (
+                  <MessageInput onSend={sendMessage} isSending={isSending} maxLength={2000} />
+                )}
               </div>
             </div>
           ) : (

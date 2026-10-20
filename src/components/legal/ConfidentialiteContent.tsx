@@ -39,7 +39,7 @@ const FR = (
       <li>Données : publications (posts), avis (reviews), discussions, commentaires, mentions, abonnements à d'autres joueurs, images téléversées.</li>
       <li>Finalité : faire fonctionner les fonctionnalités sociales et éditoriales.</li>
       <li>Base légale : exécution du contrat.</li>
-      <li>Conservation : jusqu'à suppression par vous ou clôture du compte.</li>
+      <li>Conservation : jusqu'à suppression par vous ; à la clôture du compte, les contenus sont conservés sous forme anonymisée (« Utilisateur supprimé »).</li>
     </ul>
 
     <h3>e. Mesure d'audience</h3>
@@ -78,6 +78,14 @@ const FR = (
 
     <h2>4. Vos droits</h2>
     <p>Vous disposez des droits d'accès, de rectification, d'effacement, d'opposition, de limitation et de portabilité, ainsi que du droit de définir des directives post-mortem.</p>
+    <h3>Suppression de votre compte (droit à l'effacement)</h3>
+    <ul>
+      <li>Depuis <a href="/settings">Paramètres</a> → « Supprimer mon compte », après confirmation de votre identité (mot de passe ou connexion récente) et saisie d'un mot de confirmation. Un e-mail confirme la demande.</li>
+      <li>Votre compte est immédiatement désactivé et masqué des pages publiques. Pendant 30 jours, vous pouvez annuler en vous reconnectant : tout est restauré.</li>
+      <li>Au terme de ces 30 jours, le compte et vos données personnelles sont définitivement supprimés (profil, bibliothèque, sessions, liste de souhaits, notifications, plateformes liées et leurs jetons, abonnements, amis, portefeuille de GU Coins, avatar et bannière). Un e-mail confirme la suppression.</li>
+      <li>Contenus : vos contributions (avis, commentaires, posts, posts de groupe et de communauté, avis de coaching, messages privés) sont conservées mais anonymisées : elles s'affichent sous le nom « Utilisateur supprimé » et ne sont plus rattachées à votre identité. Les groupes et communautés que vous administrez sont transmis au membre le plus ancien (modérateur en priorité), ou supprimés s'ils n'ont pas d'autre membre.</li>
+      <li>Données conservées : les sessions de coaching ayant donné lieu à un paiement sont conservées sans aucun lien avec votre profil (montants, dates, statut), pendant 10 ans au titre de l'obligation comptable. La suppression est impossible tant qu'un paiement de coaching est en attente de versement ou qu'un litige est ouvert.</li>
+    </ul>
     <p>Pour les exercer : [À COMPLÉTER — e-mail de contact]. Une réponse vous sera apportée dans un délai d'un mois.</p>
     <p>
       Vous pouvez également introduire une réclamation auprès de la CNIL — 3 place de Fontenoy, TSA
@@ -141,7 +149,7 @@ const EN = (
       <li>Data: posts, reviews, discussions, comments, mentions, player subscriptions, uploaded images.</li>
       <li>Purpose: run the social and editorial features.</li>
       <li>Legal basis: performance of the contract.</li>
-      <li>Retention: until deletion by you or account closure.</li>
+      <li>Retention: until you delete it; when the account is closed, content is kept in anonymised form ("Deleted user").</li>
     </ul>
 
     <h3>e. Audience measurement</h3>
@@ -178,6 +186,14 @@ const EN = (
 
     <h2>4. Your rights</h2>
     <p>You have the rights of access, rectification, erasure, objection, restriction and portability.</p>
+    <h3>Deleting your account (right to erasure)</h3>
+    <ul>
+      <li>From <a href="/settings">Settings</a> → "Delete my account", after confirming your identity (password or recent sign-in) and typing a confirmation word. An email confirms the request.</li>
+      <li>Your account is deactivated immediately and hidden from public pages. For 30 days you can cancel by signing in again: everything is restored.</li>
+      <li>After those 30 days, the account and your personal data are permanently deleted (profile, library, sessions, wishlist, notifications, linked platforms and their tokens, follows, friends, GU Coins wallet, avatar and banner). An email confirms the deletion.</li>
+      <li>Content: your contributions (reviews, comments, posts, group and community posts, coaching reviews, private messages) are kept but anonymised: they are shown as "Deleted user" and no longer linked to your identity. Groups and communities you own are handed to their oldest member (moderators first), or deleted when they have no other member.</li>
+      <li>Retained data: coaching sessions that involved a payment are kept with no link to your profile (amounts, dates, status) for 10 years as accounting records. Deletion is refused while a coaching payment awaits payout or a dispute is open.</li>
+    </ul>
     <p>To exercise them: [TO BE COMPLETED — contact email]. We will reply within one month.</p>
     <p>You may also lodge a complaint with the CNIL — <a href="https://www.cnil.fr">www.cnil.fr</a>.</p>
 

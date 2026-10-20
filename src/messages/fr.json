@@ -1664,6 +1664,32 @@
       "asyncErrorWithExecute": "Erreur async avec executeAsync"
     }
   },
+  "accountDeletion": {
+    "deletedUser": "Utilisateur supprimé",
+    "pending": {
+      "kicker": "Compte désactivé",
+      "title": "Suppression de compte programmée",
+      "description": "Votre compte sera définitivement supprimé le {date}. D'ici là, il est masqué des pages publiques.",
+      "restoreHint": "Vous pouvez annuler à tout moment avant cette date : votre compte et vos données seront restaurés à l'identique.",
+      "cancel": "Annuler la suppression",
+      "signOut": "Se déconnecter",
+      "cancelled": "Suppression annulée, votre compte est restauré",
+      "cancelError": "Impossible d'annuler la suppression"
+    },
+    "emails": {
+      "requested": {
+        "subject": "Votre demande de suppression de compte",
+        "body": "Nous avons bien reçu votre demande de suppression de compte Gamers Universe. Votre compte est désactivé et sera définitivement supprimé le {date}.",
+        "footer": "Si vous changez d'avis, connectez-vous avant cette date pour annuler. Si vous n'êtes pas à l'origine de cette demande, connectez-vous, annulez-la puis changez votre mot de passe.",
+        "cancelLink": "Annuler la suppression"
+      },
+      "completed": {
+        "subject": "Votre compte a été supprimé",
+        "body": "Votre compte Gamers Universe et vos données personnelles ont été définitivement supprimés.",
+        "footer": "Vos contributions publiques et vos messages restent visibles sous le nom « Utilisateur supprimé », sans lien avec votre identité. Les justificatifs de paiement de coaching sont conservés pour la durée légale."
+      }
+    }
+  },
   "settings": {
     "title": "Paramètres",
     "subtitle": "Gérez les paramètres de votre compte et vos préférences",
@@ -1693,6 +1719,34 @@
       "requestReset": "Demander une réinitialisation",
       "resetSent": "Un email de réinitialisation a été envoyé",
       "resetError": "Échec de l'envoi de l'email de réinitialisation"
+    },
+    "deletion": {
+      "title": "Supprimer mon compte",
+      "description": "Exercez votre droit à l'effacement (RGPD). La suppression est annulable pendant 30 jours.",
+      "consequences": {
+        "deactivated": "Votre compte est immédiatement désactivé et masqué des pages publiques.",
+        "grace": "Vous disposez de 30 jours pour annuler en vous reconnectant ; passé ce délai, la suppression est définitive.",
+        "removed": "Profil, bibliothèque, sessions de jeu, liste de souhaits, notifications, plateformes liées, abonnements, amis et portefeuille de GU Coins sont supprimés.",
+        "anonymised": "Vos contributions (avis, commentaires, posts, posts de groupe et de communauté, messages privés) sont conservées sous le nom « Utilisateur supprimé », sans lien avec votre identité.",
+        "retained": "Les justificatifs de paiement de coaching sont conservés sans vos données de profil, pour la durée légale (10 ans)."
+      },
+      "button": "Supprimer mon compte",
+      "dialogTitle": "Confirmer la suppression du compte",
+      "dialogDescription": "Pour votre sécurité, confirmez votre identité. Un e-mail de confirmation vous sera envoyé.",
+      "passwordLabel": "Mot de passe actuel",
+      "oauthReauth": "Votre compte utilise une connexion externe : déconnectez-vous puis reconnectez-vous juste avant de confirmer.",
+      "confirmationLabel": "Tapez {word} pour confirmer",
+      "cancel": "Annuler",
+      "confirm": "Programmer la suppression",
+      "errors": {
+        "invalidConfirmation": "Le mot de confirmation est incorrect.",
+        "reauthRequired": "Reconnectez-vous puis réessayez.",
+        "invalidPassword": "Mot de passe incorrect.",
+        "alreadyPending": "Une suppression est déjà programmée pour ce compte.",
+        "coachingPaymentPending": "Un paiement de coaching est en cours : attendez son versement ou son remboursement avant de supprimer votre compte.",
+        "coachingDisputeOpen": "Un litige de coaching est ouvert : il doit être résolu avant la suppression du compte.",
+        "generic": "La demande a échoué, réessayez plus tard."
+      }
     },
     "privacy": {
       "title": "Confidentialité",
@@ -1844,7 +1898,21 @@
       "esportSync": "Sync PandaScore",
       "translations": "Traductions",
       "globalSync": "Synchro globale",
-      "librarySync": "Synchro bibliothèque"
+      "librarySync": "Synchro bibliothèque",
+      "accountDeletions": "Suppressions de compte"
+    },
+    "accountDeletions": {
+      "title": "Suppressions de compte",
+      "description": "Comptes désactivés en attente de suppression définitive (délai de 30 jours).",
+      "empty": "Aucune suppression en attente.",
+      "loadError": "Impossible de charger les suppressions en attente.",
+      "dates": "Demandée le {requested} · suppression prévue le {scheduled}",
+      "cancel": "Annuler la suppression",
+      "purge": "Supprimer maintenant",
+      "purgeConfirm": "Supprimer définitivement le compte {name} maintenant ? Cette action est irréversible.",
+      "purged": "Compte supprimé définitivement",
+      "cancelled": "Suppression annulée",
+      "actionError": "L'action a échoué"
     },
     "closeSidebar": "Fermer le menu latéral",
     "openSidebar": "Ouvrir le menu latéral",
@@ -4558,7 +4626,9 @@
     "timeJustNow": "À l'instant",
     "timeMinutesAgo": "il y a {min} min",
     "timeHoursAgo": "il y a {hours} h",
-    "backToConversations": "Retour"
+    "backToConversations": "Retour",
+    "unknownPlayer": "Joueur inconnu",
+    "closedConversation": "Ce joueur a supprimé son compte : la conversation reste consultable mais vous ne pouvez plus lui écrire."
   },
   "platforms": {
     "title": "Plateformes",
@@ -5213,7 +5283,8 @@
       "title": "Discussion",
       "noComments": "Aucun commentaire pour le moment. Soyez le premier à réagir !",
       "placeholder": "Écrire un commentaire...",
-      "loginRequired": "Connectez-vous pour participer à la discussion"
+      "loginRequired": "Connectez-vous pour participer à la discussion",
+      "anonymous": "Anonyme"
     }
   },
   "feedPage": {

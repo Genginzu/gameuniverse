@@ -2242,7 +2242,7 @@ export type Database = {
           created_at: string;
           id: string;
           image_url: string | null;
-          player_id: string;
+          player_id: string | null;
           updated_at: string;
         };
         Insert: {
@@ -2250,7 +2250,7 @@ export type Database = {
           created_at?: string;
           id?: string;
           image_url?: string | null;
-          player_id: string;
+          player_id?: string | null;
           updated_at?: string;
         };
         Update: {
@@ -2258,7 +2258,7 @@ export type Database = {
           created_at?: string;
           id?: string;
           image_url?: string | null;
-          player_id?: string;
+          player_id?: string | null;
           updated_at?: string;
         };
         Relationships: [
@@ -2398,6 +2398,8 @@ export type Database = {
           avatar_url: string | null;
           banner_url: string | null;
           created_at: string | null;
+          deletion_requested_at: string | null;
+          deletion_scheduled_for: string | null;
           id: string;
           level: number | null;
           preferred_locale: string | null;
@@ -2410,6 +2412,8 @@ export type Database = {
           avatar_url?: string | null;
           banner_url?: string | null;
           created_at?: string | null;
+          deletion_requested_at?: string | null;
+          deletion_scheduled_for?: string | null;
           id: string;
           level?: number | null;
           preferred_locale?: string | null;
@@ -2422,6 +2426,8 @@ export type Database = {
           avatar_url?: string | null;
           banner_url?: string | null;
           created_at?: string | null;
+          deletion_requested_at?: string | null;
+          deletion_scheduled_for?: string | null;
           id?: string;
           level?: number | null;
           preferred_locale?: string | null;

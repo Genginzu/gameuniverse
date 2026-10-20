@@ -20,6 +20,7 @@ export const RATE_LIMITS = {
   search: { limit: 120, windowSeconds: 60 },
   view: { limit: 60, windowSeconds: 600 },
   gameSession: { limit: 30, windowSeconds: 3600 },
+  accountDeletion: { limit: 5, windowSeconds: 3600 },
 } as const;
 
 export type RateLimitAction = keyof typeof RATE_LIMITS;

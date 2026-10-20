@@ -8,14 +8,15 @@ export interface Conversation {
 
 export interface ConversationSummary {
   id: string;
+  /** id and displayName are null once the friend deleted their account. */
   friend: {
-    id: string;
-    displayName: string;
+    id: string | null;
+    displayName: string | null;
     avatarUrl: string | null;
   };
   lastMessage: {
     content: string;
-    senderId: string;
+    senderId: string | null;
     createdAt: string;
   } | null;
   unreadCount: number;
@@ -24,7 +25,8 @@ export interface ConversationSummary {
 export interface Message {
   id: string;
   conversationId: string;
-  senderId: string;
+  /** null once the sender deleted their account. */
+  senderId: string | null;
   content: string;
   createdAt: string;
   readAt: string | null;

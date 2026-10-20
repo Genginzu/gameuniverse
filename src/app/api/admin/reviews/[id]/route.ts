@@ -48,8 +48,10 @@ const DETAIL_SELECT = `
 /** Fetch username from profiles table by user_id */
 async function fetchPlayerName(
   supabase: Awaited<ReturnType<typeof createRouteHandlerClient>>,
-  userId: string
+  userId: string | null
 ): Promise<string | null> {
+  // Anonymised review: the author deleted their account.
+  if (!userId) return null;
   const { data } = await supabase.from("profiles").select("username").eq("id", userId).single();
   return data?.username ?? null;
 }

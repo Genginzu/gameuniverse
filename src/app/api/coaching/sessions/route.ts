@@ -154,7 +154,9 @@ export async function GET(request: NextRequest) {
       ),
     ];
     const coachIds =
-      role === "student" ? [...new Set(sessions.map((s: AnySupabase) => s.coach_id))] : [];
+      role === "student"
+        ? [...new Set(sessions.map((s: AnySupabase) => s.coach_id).filter(Boolean))]
+        : [];
 
     // Fetch game info
     const { data: games } = await supabase

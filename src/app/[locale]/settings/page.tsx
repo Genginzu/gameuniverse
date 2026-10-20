@@ -37,6 +37,16 @@ export default async function SettingsPage({ params }: SettingsPageProps) {
     redirect(`/${locale}/auth`);
   }
 
+  // A deactivated account only gets the cancellation page.
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("deletion_requested_at")
+    .eq("id", user.id)
+    .maybeSingle();
+  if (profile?.deletion_requested_at) {
+    redirect(`/${locale}/account-deletion`);
+  }
+
   return (
     <EditorialShell>
       <SettingsContent />
