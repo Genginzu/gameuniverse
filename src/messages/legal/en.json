@@ -1,0 +1,270 @@
+{
+  "placeholder": "[TO BE COMPLETED]",
+  "vatFranchise": "VAT not applicable, Art. 293 B of the French Tax Code (CGI)",
+  "mentionsLegales": {
+    "content": {
+      "p_intro": "In accordance with Articles 6-III and 19 of French Act No. 2004-575 of 21 June 2004 on confidence in the digital economy (LCEN), below is the legal information for the Gamers Universe website.",
+      "h2_publisher": "Website publisher",
+      "ul_publisher": {
+        "name": "Operator's name: <operator></operator>",
+        "status": "Status: Sole trader (French micro-enterprise)",
+        "address": "Business address: <address></address>",
+        "siret": "SIRET number: <siret></siret>",
+        "vat": "VAT: <vat></vat>",
+        "email": "Contact email: <email></email>",
+        "phone": "Phone: <phone></phone>"
+      },
+      "p_publisherNote": "As the site is operated by a micro-enterprise offering a paid intermediation service (coaching), disclosing the operator's identity is mandatory.",
+      "h2_director": "Publication director",
+      "p_director": "<director></director>",
+      "h2_hosting": "Hosting",
+      "p_hostedBy": "The website is hosted by:",
+      "ul_host": {
+        "vercel": "<strong><vercelName></vercelName></strong> — <vercelAddress></vercelAddress>, USA — vercel.com."
+      },
+      "p_providers": "Associated technical providers:",
+      "ul_providers": {
+        "supabase": "Database, authentication and storage: <strong><supabaseName></supabaseName></strong> — supabase.com. Data hosted in the West Europe region (London, United Kingdom).",
+        "domain": "Domain name: <strong>OVH SAS</strong> — 2 rue Kellermann, 59100 Roubaix, France — +33 9 72 10 10 07 — ovhcloud.com."
+      },
+      "h2_ip": "Intellectual property",
+      "p_ip": "The site structure, original texts, logo and visual identity are protected by copyright. Game artwork, cover images and descriptive data come from third-party databases (notably IGDB and PandaScore) and remain the property of their respective rights holders; they are displayed for informational and community purposes. Any unauthorised reproduction is prohibited.",
+      "h2_contact": "Contact",
+      "p_contact": "For any question about the site: <email></email>."
+    }
+  },
+  "confidentialite": {
+    "content": {
+      "p_intro": "This policy explains how Gamers Universe (\"the Platform\") processes your personal data under Regulation (EU) 2016/679 (GDPR) and the French Data Protection Act. The data controller is the operator identified in the <mentions>legal notice</mentions> (<operator></operator> — <email></email>).",
+      "h2_processing": "1. Processing activities",
+      "p_processing": "The activities below match the features actually present on the site.",
+      "h3_account": "a. Account creation and management",
+      "ul_account": {
+        "data": "Data: email address, password (encrypted by our authentication provider), username, avatar and banner, language preference, profile content.",
+        "purpose": "Purpose: create and manage your account, authenticate you, enable community use.",
+        "basis": "Legal basis: performance of the contract (Terms of Use).",
+        "retention": "Retention: for the life of the account, then deletion or anonymisation within 30 days of closure."
+      },
+      "h3_payments": "b. Coaching payments (intermediation)",
+      "ul_payments": {
+        "data": "Data: amount, currency, session and transaction history, dispute status. Card details are entered and processed directly by Stripe; the Platform has no access to them.",
+        "purpose": "Purpose: enable booking and payment of a coaching service between a third-party coach and a player via Stripe Connect; handle disputes.",
+        "basis": "Legal basis: performance of the contract; legal obligation (accounting records).",
+        "retention": "Retention: duration of the relationship, then 10 years for accounting records (Art. L123-22 French Commercial Code)."
+      },
+      "h3_platforms": "c. Linked gaming accounts",
+      "ul_platforms": {
+        "data": "Data: third-party platform identifiers (Steam, Xbox, PlayStation/PSN, Epic Games, Discord, Battle.net, itch.io), access and refresh tokens (encrypted at rest with AES-256-GCM), game library, playtime, region, platform avatar.",
+        "purpose": "Purpose: sync your library and gaming statistics.",
+        "basis": "Legal basis: your consent (you choose to link each platform); withdrawable at any time by unlinking.",
+        "retention": "Retention: until you unlink the platform or delete your account."
+      },
+      "h3_community": "d. Community content",
+      "ul_community": {
+        "data": "Data: posts, reviews, discussions, comments, mentions, player subscriptions, uploaded images.",
+        "purpose": "Purpose: run the social and editorial features.",
+        "basis": "Legal basis: performance of the contract.",
+        "retention": "Retention: until deletion by you or account closure."
+      },
+      "h3_analytics": "e. Audience measurement",
+      "ul_analytics": {
+        "data": "Data: page views, performance metrics (Vercel Analytics, Vercel Speed Insights).",
+        "purpose": "Purpose: measure traffic and improve the site.",
+        "basis": "Legal basis: your consent (see the <cookies>cookie policy</cookies>); enabled only after acceptance.",
+        "retention": "Retention: per provider settings (typically ≤ 25 months)."
+      },
+      "h3_logs": "f. Technical logs and security",
+      "ul_logs": {
+        "data": "Data: IP address, timestamp, technical connection information (via the host).",
+        "purpose": "Purpose: security, fraud and abuse prevention, proper operation.",
+        "basis": "Legal basis: legitimate interest.",
+        "retention": "Retention: short, typically ≤ 12 months."
+      },
+      "h2_recipients": "2. Recipients and processors",
+      "p_recipients": "Your data is accessible to the operator and to the following processors, acting on instruction:",
+      "ul_recipients": {
+        "vercel": "<strong>Vercel Inc.</strong> — application hosting (USA).",
+        "supabase": "<strong><supabaseName></supabaseName></strong> — database, authentication, file storage (region: London, United Kingdom).",
+        "stripe": "<strong>Stripe</strong> — payment processing and payouts to coaches (Stripe Connect).",
+        "platforms": "The third-party <strong>gaming platforms</strong> you voluntarily link.",
+        "ai": "<strong>Vercel AI Gateway</strong> — automatic content translation (where applicable)."
+      },
+      "h2_transfers": "3. Transfers outside the EU",
+      "p_transfersUk": "The database is hosted in the United Kingdom (London), which benefits from a European Commission adequacy decision (renewed on 19 December 2025): no additional safeguard is required for this transfer.",
+      "p_transfersOther": "Some providers (Vercel, Stripe, and Supabase for its support operations) may process data in the USA or Singapore. Such transfers rely on the European Commission's Standard Contractual Clauses and, for certified US providers, the EU–US Data Privacy Framework.",
+      "h2_rights": "4. Your rights",
+      "p_rights": "You have the rights of access, rectification, erasure, objection, restriction and portability, as well as the right to set post-mortem instructions.",
+      "p_rightsContact": "To exercise them: <email></email>. We will reply within one month.",
+      "p_cnil": "You may also lodge a complaint with the CNIL — 3 place de Fontenoy, TSA 80715, 75334 Paris Cedex 07, France — <cnil>www.cnil.fr</cnil>.",
+      "h2_minors": "5. Minors",
+      "p_minors": "The Platform may be used by minors. Creating an account requires being at least 15 years old; below that age, consent from a holder of parental authority is required (Art. 45 French Data Protection Act).",
+      "h2_security": "6. Security",
+      "p_security": "Passwords are handled securely by our authentication provider; gaming platform tokens are encrypted at rest (AES-256-GCM). Data access is restricted and protected by row-level security (RLS)."
+    }
+  },
+  "cookies": {
+    "content": {
+      "p_intro": "This policy details the cookies and trackers used by Gamers Universe. No non-essential tracker is set before your consent. You can change your choices at any time via the \"Manage cookies\" link in the footer.",
+      "h2_necessary": "1. Strictly necessary cookies (no consent)",
+      "p_necessary": "Essential for the site to work; they cannot be disabled.",
+      "table_necessary": {
+        "head": { "tracker": "Tracker", "issuer": "Issuer", "purpose": "Purpose", "duration": "Duration" },
+        "rows": {
+          "auth": {
+            "tracker": "Authentication session cookies (sb-*)",
+            "issuer": "Supabase (site)",
+            "purpose": "Keep your session logged in and secure",
+            "duration": "Session / until token expiry"
+          },
+          "consent": {
+            "tracker": "gu-cookie-consent",
+            "issuer": "Gamers Universe (site)",
+            "purpose": "Remember your cookie choices",
+            "duration": "6 months"
+          },
+          "theme": {
+            "tracker": "Theme preference (light/dark)",
+            "issuer": "Gamers Universe (site)",
+            "purpose": "Remember your display theme",
+            "duration": "Persistent (local storage)"
+          },
+          "language": {
+            "tracker": "Language preference",
+            "issuer": "Gamers Universe (site)",
+            "purpose": "Serve the site in your language",
+            "duration": "Persistent"
+          }
+        }
+      },
+      "h2_analytics": "2. Audience measurement (consent required)",
+      "table_analytics": {
+        "head": { "tracker": "Tracker", "issuer": "Issuer", "purpose": "Purpose", "duration": "Duration" },
+        "rows": {
+          "analytics": {
+            "tracker": "Vercel Web Analytics",
+            "issuer": "Vercel Inc. (USA)",
+            "purpose": "Traffic statistics",
+            "duration": "≤ 24 months"
+          },
+          "speed": {
+            "tracker": "Vercel Speed Insights",
+            "issuer": "Vercel Inc. (USA)",
+            "purpose": "Page performance measurement",
+            "duration": "≤ 24 months"
+          }
+        }
+      },
+      "h2_media": "3. Embedded multimedia (consent required)",
+      "table_media": {
+        "head": { "tracker": "Tracker", "issuer": "Issuer", "purpose": "Purpose", "duration": "Duration" },
+        "rows": {
+          "youtube": {
+            "tracker": "YouTube cookies (VISITOR_INFO1_LIVE, YSC, etc.)",
+            "issuer": "Google/YouTube (USA)",
+            "purpose": "Play embedded videos on game pages",
+            "duration": "Session to 6 months"
+          }
+        }
+      },
+      "p_media": "Until you accept this category, YouTube videos are not loaded and no YouTube cookie is set.",
+      "h2_marketing": "4. Advertising and marketing",
+      "p_marketing": "No advertising tracker or contact (chat) tool is currently used. If such tools are added, they will appear in this category and will only be enabled after your explicit consent.",
+      "h2_manage": "5. Manage your choices",
+      "p_manage": "You can withdraw or change your consent at any time via the <strong>\"Manage cookies\"</strong> link in the footer. Your choice is kept for at most six months, after which your consent is requested again."
+    }
+  },
+  "cgv": {
+    "content": {
+      "p_intro": "These Terms of Sale and Intermediation (\"Terms\") govern the use of the paid matchmaking (coaching) service offered by Gamers Universe (\"the Platform\"), operated by the publisher identified in the <mentions>legal notice</mentions>.",
+      "h2_role": "1. Role of the Platform (intermediation)",
+      "p_role": "The Platform acts as a <strong>technical intermediary</strong> connecting independent coaches (\"Coaches\") with users booking a service (\"Clients\"). The Platform is not a party to the service contract between the Coach and the Client; it provides the booking tool, collects payment via Stripe Connect and charges a commission. In accordance with Art. L111-7 of the French Consumer Code, the Platform informs the Client of the status (professional or individual) declared by each Coach.",
+      "h2_services": "2. Service characteristics",
+      "p_services": "Services are video-game coaching sessions described on each Coach's profile (session type, duration in minutes, relevant game). The Coach is solely responsible for the content and delivery of the service.",
+      "h2_price": "3. Price and payment",
+      "ul_price": {
+        "currency": "Prices are shown in euros (€), inclusive of tax where applicable. The Coach sets their rates.",
+        "commission": "The Platform charges a commission on each transaction; the balance is paid to the Coach via Stripe Connect.",
+        "stripe": "Payment is made online via Stripe. Card data is processed by Stripe and does not pass through the Platform.",
+        "vat": "The Coach, if liable, is responsible for invoicing and any applicable VAT."
+      },
+      "h2_withdrawal": "4. Right of withdrawal (consumer Clients)",
+      "p_withdrawal": "Under Art. L221-18 et seq. of the French Consumer Code, a consumer Client has <strong>14 days</strong> from conclusion of the contract to withdraw, without reason.",
+      "p_withdrawalException": "<strong>Exception (early performance):</strong> if the Client expressly requests the service to start before the end of that period, they acknowledge losing the right of withdrawal once the service is fully performed (Art. L221-28, 1°). This request is collected via a non-pre-ticked checkbox at booking.",
+      "p_withdrawalHow": "To withdraw before performance, the Client may use the model form in the annex and send it to <email></email>.",
+      "h2_guarantees": "5. Guarantees",
+      "p_guarantees": "Services are subject to the provider's conformity obligation. In case of non-performance or non-conforming performance, the Client may contact the Coach and, failing a solution, open a dispute via the Platform.",
+      "h2_complaints": "6. Complaints and disputes",
+      "p_complaints": "Any complaint may be sent to <email></email>. The Platform has an internal coaching dispute mechanism.",
+      "h2_mediation": "7. Consumer mediation",
+      "p_mediation": "Under Art. L612-1 of the French Consumer Code, a consumer Client may use a consumer mediator free of charge. The Platform is a member of:",
+      "ul_mediator": {
+        "name": "Mediator name: <mediatorName></mediatorName>",
+        "address": "Address: <mediatorAddress></mediatorAddress>",
+        "website": "Website: <mediatorWebsite></mediatorWebsite>"
+      },
+      "p_odr": "EU online dispute resolution platform: <odr>ec.europa.eu/consumers/odr</odr>.",
+      "h2_b2b": "8. Professional Clients (B2B)",
+      "ul_b2b": {
+        "withdrawal": "The right of withdrawal does not apply to professional Clients acting in the course of their business.",
+        "late": "Late payment: penalties at three times the legal interest rate and a fixed recovery indemnity of <strong>€40</strong> (Art. L441-10 French Commercial Code).",
+        "court": "Competent court: <court></court>."
+      },
+      "h2_law": "9. Governing law",
+      "p_law": "These Terms are governed by French law.",
+      "h2_annex": "Annex — Model withdrawal form",
+      "p_annex": "(Complete and return only if you wish to withdraw, before performance of the service.)",
+      "ul_annex": {
+        "to": "To <operator></operator> — <email></email>:",
+        "notice": "I hereby give notice of withdrawal from the contract for the following coaching service:",
+        "dates": "Ordered on: __________ / Booked for: __________",
+        "name": "Client name: __________",
+        "address": "Client address: __________",
+        "date": "Date: __________",
+        "signature": "Signature (if sent on paper): __________"
+      }
+    }
+  },
+  "cgu": {
+    "content": {
+      "p_intro": "These Terms of Use (\"Terms\") govern access to and use of the Gamers Universe site and services (\"the Platform\"), operated by the publisher identified in the <mentions>legal notice</mentions>.",
+      "h2_purpose": "1. Purpose",
+      "p_purpose": "The Platform is a video-game community site: game and character pages, game library and stats, posts, reviews, discussions, esports, and a coaching intermediation service (governed by the <cgv>Terms of Sale</cgv>).",
+      "h2_access": "2. Access and registration",
+      "ul_access": {
+        "free": "Most content is freely accessible. Some features require an account.",
+        "signup": "Registration requires a valid email and a username. Users must be at least 15 (or have parental consent).",
+        "accuracy": "Users must provide accurate information and keep their credentials confidential."
+      },
+      "h2_rules": "3. Usage rules and prohibited behaviour",
+      "p_rules": "The following are prohibited, among others:",
+      "ul_rules": {
+        "unlawful": "unlawful, hateful, defamatory, harassing, pornographic content or content infringing third-party rights;",
+        "rights": "posting content the user does not have the rights to;",
+        "fraud": "impersonation, spam, fraud, attacks on service security;",
+        "scraping": "large-scale automated data extraction without authorisation."
+      },
+      "h2_ugc": "4. User-generated content",
+      "ul_ugc": {
+        "ownership": "Users retain the rights to the content they post (posts, reviews, comments, images).",
+        "licence": "They grant the Platform a non-exclusive, free licence to host and display that content within the service, for as long as it is online.",
+        "removal": "The Platform may remove any manifestly unlawful content or content breaching these Terms."
+      },
+      "h2_ip": "5. Platform intellectual property",
+      "p_ip": "The Platform's structure, original texts, logo and visual identity are protected. Game visuals and data come from third-party sources (IGDB, PandaScore) and belong to their rights holders.",
+      "h2_termination": "6. Termination",
+      "ul_termination": {
+        "user": "Users may delete their account at any time. Data is then deleted or anonymised per the <privacy>privacy policy</privacy>, subject to legal retention obligations.",
+        "platform": "The Platform may suspend or close an account for serious breach of the Terms, with prior notice save in emergencies."
+      },
+      "h2_liability": "7. Liability and availability",
+      "ul_liability": {
+        "asIs": "The Platform is provided \"as is\". The publisher uses reasonable means to ensure availability, without guaranteeing uninterrupted service.",
+        "content": "The publisher is not liable for user-posted content or for services delivered by Coaches."
+      },
+      "h2_changes": "8. Changes to the Terms",
+      "p_changes": "The Terms may change. Users are informed of substantial changes; continued use constitutes acceptance.",
+      "h2_law": "9. Governing law",
+      "p_law": "These Terms are governed by French law."
+    }
+  }
+}

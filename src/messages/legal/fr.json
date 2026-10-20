@@ -1,0 +1,270 @@
+{
+  "placeholder": "[À COMPLÉTER]",
+  "vatFranchise": "TVA non applicable, art. 293 B du CGI",
+  "mentionsLegales": {
+    "content": {
+      "p_intro": "Conformément aux articles 6-III et 19 de la loi n° 2004-575 du 21 juin 2004 pour la confiance dans l’économie numérique (LCEN), voici les informations légales relatives au site Gamers Universe.",
+      "h2_publisher": "Éditeur du site",
+      "ul_publisher": {
+        "name": "Nom et prénom de l’exploitant : <operator></operator>",
+        "status": "Statut : Entrepreneur individuel (micro-entreprise)",
+        "address": "Adresse de l’établissement : <address></address>",
+        "siret": "Numéro SIRET : <siret></siret>",
+        "vat": "TVA : <vat></vat>",
+        "email": "Adresse e-mail de contact : <email></email>",
+        "phone": "Téléphone : <phone></phone>"
+      },
+      "p_publisherNote": "Le site étant exploité par une micro-entreprise proposant un service payant d’intermédiation (coaching), la mention de l’identité de l’exploitant est obligatoire.",
+      "h2_director": "Directeur de la publication",
+      "p_director": "<director></director>",
+      "h2_hosting": "Hébergement",
+      "p_hostedBy": "Le site est hébergé par :",
+      "ul_host": {
+        "vercel": "<strong><vercelName></vercelName></strong> — <vercelAddress></vercelAddress>, États-Unis — vercel.com."
+      },
+      "p_providers": "Prestataires techniques associés :",
+      "ul_providers": {
+        "supabase": "Base de données, authentification et stockage : <strong><supabaseName></supabaseName></strong> — supabase.com. Données hébergées dans la région Europe de l’Ouest (Londres, Royaume-Uni).",
+        "domain": "Nom de domaine : <strong>OVH SAS</strong> — 2 rue Kellermann, 59100 Roubaix, France — +33 9 72 10 10 07 — ovhcloud.com."
+      },
+      "h2_ip": "Propriété intellectuelle",
+      "p_ip": "La structure du site, ses textes originaux, son logo et sa charte graphique sont protégés par le droit d’auteur. Les visuels de jeux, jaquettes, artworks et données descriptives proviennent de bases tierces (notamment IGDB et PandaScore) et restent la propriété de leurs ayants droit respectifs ; ils sont affichés à des fins d’information et communautaires. Toute reproduction non autorisée est interdite.",
+      "h2_contact": "Contact",
+      "p_contact": "Pour toute question relative au site : <email></email>."
+    }
+  },
+  "confidentialite": {
+    "content": {
+      "p_intro": "La présente politique décrit la manière dont Gamers Universe (ci-après « la Plateforme ») traite vos données personnelles, conformément au Règlement (UE) 2016/679 (RGPD) et à la loi Informatique et Libertés. Le responsable de traitement est l’exploitant identifié dans les <mentions>mentions légales</mentions> (<operator></operator> — <email></email>).",
+      "h2_processing": "1. Traitements réalisés",
+      "p_processing": "Les traitements ci-dessous correspondent aux fonctionnalités réellement présentes sur le site.",
+      "h3_account": "a. Création et gestion de compte",
+      "ul_account": {
+        "data": "Données : adresse e-mail, mot de passe (chiffré par notre prestataire d’authentification), pseudonyme, avatar et bannière, préférence de langue, contenu de profil.",
+        "purpose": "Finalité : créer et gérer votre compte, vous authentifier, vous permettre d’utiliser la communauté.",
+        "basis": "Base légale : exécution du contrat (CGU).",
+        "retention": "Conservation : pendant la vie du compte, puis suppression ou anonymisation sous 30 jours après clôture."
+      },
+      "h3_payments": "b. Paiement des prestations de coaching (intermédiation)",
+      "ul_payments": {
+        "data": "Données : montant, devise, historique des sessions et des transactions, statut de litige. Les données de carte bancaire sont saisies et traitées directement par Stripe ; la Plateforme n’y a pas accès.",
+        "purpose": "Finalité : permettre la réservation et le paiement d’une prestation de coaching entre un coach tiers et un joueur, via Stripe Connect ; gérer les litiges.",
+        "basis": "Base légale : exécution du contrat ; obligation légale (conservation comptable des justificatifs).",
+        "retention": "Conservation : durée de la relation, puis 10 ans pour les pièces comptables (art. L123-22 Code de commerce)."
+      },
+      "h3_platforms": "c. Liaison de comptes de plateformes de jeu",
+      "ul_platforms": {
+        "data": "Données : identifiants de plateformes tierces (Steam, Xbox, PlayStation/PSN, Epic Games, Discord, Battle.net, itch.io), jetons d’accès et de rafraîchissement (chiffrés au repos en AES-256-GCM), bibliothèque de jeux, temps de jeu, région, avatar de la plateforme.",
+        "purpose": "Finalité : synchroniser votre bibliothèque et vos statistiques de jeu.",
+        "basis": "Base légale : votre consentement (vous choisissez de lier chaque plateforme) ; retirable à tout moment en déliant le compte.",
+        "retention": "Conservation : jusqu’à ce que vous déliiez la plateforme ou supprimiez votre compte."
+      },
+      "h3_community": "d. Contenu communautaire",
+      "ul_community": {
+        "data": "Données : publications (posts), avis (reviews), discussions, commentaires, mentions, abonnements à d’autres joueurs, images téléversées.",
+        "purpose": "Finalité : faire fonctionner les fonctionnalités sociales et éditoriales.",
+        "basis": "Base légale : exécution du contrat.",
+        "retention": "Conservation : jusqu’à suppression par vous ou clôture du compte."
+      },
+      "h3_analytics": "e. Mesure d’audience",
+      "ul_analytics": {
+        "data": "Données : pages vues, indicateurs de performance (Vercel Analytics, Vercel Speed Insights).",
+        "purpose": "Finalité : mesurer la fréquentation et améliorer le site.",
+        "basis": "Base légale : votre consentement (voir la <cookies>politique de cookies</cookies>). Ces mesures ne sont activées qu’après votre acceptation.",
+        "retention": "Conservation : selon les paramètres du prestataire (généralement ≤ 25 mois)."
+      },
+      "h3_logs": "f. Journaux techniques et sécurité",
+      "ul_logs": {
+        "data": "Données : adresse IP, horodatage, informations techniques de connexion (via l’hébergeur).",
+        "purpose": "Finalité : sécurité, prévention de la fraude et des abus, bon fonctionnement.",
+        "basis": "Base légale : intérêt légitime.",
+        "retention": "Conservation : durée courte, généralement ≤ 12 mois."
+      },
+      "h2_recipients": "2. Destinataires et sous-traitants",
+      "p_recipients": "Vos données sont accessibles à l’exploitant et aux sous-traitants suivants, agissant sur instruction :",
+      "ul_recipients": {
+        "vercel": "<strong>Vercel Inc.</strong> — hébergement de l’application (États-Unis).",
+        "supabase": "<strong><supabaseName></supabaseName></strong> — base de données, authentification, stockage de fichiers (région : Londres, Royaume-Uni).",
+        "stripe": "<strong>Stripe</strong> — traitement des paiements et versements aux coachs (Stripe Connect).",
+        "platforms": "Les <strong>plateformes de jeu</strong> tierces que vous liez volontairement.",
+        "ai": "<strong>Vercel AI Gateway</strong> — traduction automatique de contenus éditoriaux (le cas échéant)."
+      },
+      "h2_transfers": "3. Transferts hors Union européenne",
+      "p_transfersUk": "La base de données est hébergée au Royaume-Uni (Londres), pays bénéficiant d’une décision d’adéquation de la Commission européenne (renouvelée le 19 décembre 2025) : ce transfert ne requiert pas de garantie supplémentaire.",
+      "p_transfersOther": "Certains prestataires (Vercel, Stripe, ainsi que Supabase pour ses opérations de support) peuvent traiter des données aux États-Unis ou à Singapour. Ces transferts sont encadrés par les clauses contractuelles types de la Commission européenne et, pour les prestataires américains certifiés, par le Data Privacy Framework UE–États-Unis.",
+      "h2_rights": "4. Vos droits",
+      "p_rights": "Vous disposez des droits d’accès, de rectification, d’effacement, d’opposition, de limitation et de portabilité, ainsi que du droit de définir des directives post-mortem.",
+      "p_rightsContact": "Pour les exercer : <email></email>. Une réponse vous sera apportée dans un délai d’un mois.",
+      "p_cnil": "Vous pouvez également introduire une réclamation auprès de la CNIL — 3 place de Fontenoy, TSA 80715, 75334 Paris Cedex 07 — <cnil>www.cnil.fr</cnil>.",
+      "h2_minors": "5. Mineurs",
+      "p_minors": "La Plateforme s’adresse à un public susceptible d’inclure des mineurs. La création d’un compte requiert l’âge de 15 ans révolus ; en dessous, le consentement d’un titulaire de l’autorité parentale est nécessaire (art. 45 de la loi Informatique et Libertés).",
+      "h2_security": "6. Sécurité",
+      "p_security": "Les mots de passe sont gérés de façon sécurisée par notre prestataire d’authentification ; les jetons de plateformes de jeu sont chiffrés au repos (AES-256-GCM). L’accès aux données est restreint et protégé par des règles de sécurité au niveau de la base (RLS)."
+    }
+  },
+  "cookies": {
+    "content": {
+      "p_intro": "Cette politique détaille les cookies et traceurs utilisés par Gamers Universe. Aucun traceur non strictement nécessaire n’est déposé avant votre consentement. Vous pouvez modifier vos choix à tout moment via le lien « Gérer mes cookies » présent en pied de page.",
+      "h2_necessary": "1. Cookies strictement nécessaires (sans consentement)",
+      "p_necessary": "Indispensables au fonctionnement du site ; ils ne peuvent pas être désactivés.",
+      "table_necessary": {
+        "head": { "tracker": "Traceur", "issuer": "Émetteur", "purpose": "Finalité", "duration": "Durée" },
+        "rows": {
+          "auth": {
+            "tracker": "Cookies de session d’authentification (sb-*)",
+            "issuer": "Supabase (site)",
+            "purpose": "Maintenir votre session connectée et la sécurité",
+            "duration": "Session / jusqu’à expiration du jeton"
+          },
+          "consent": {
+            "tracker": "gu-cookie-consent",
+            "issuer": "Gamers Universe (site)",
+            "purpose": "Mémoriser vos choix de cookies",
+            "duration": "6 mois"
+          },
+          "theme": {
+            "tracker": "Préférence de thème (clair/sombre)",
+            "issuer": "Gamers Universe (site)",
+            "purpose": "Mémoriser votre thème d’affichage",
+            "duration": "Persistant (stockage local)"
+          },
+          "language": {
+            "tracker": "Préférence de langue",
+            "issuer": "Gamers Universe (site)",
+            "purpose": "Servir le site dans votre langue",
+            "duration": "Persistant"
+          }
+        }
+      },
+      "h2_analytics": "2. Mesure d’audience (consentement requis)",
+      "table_analytics": {
+        "head": { "tracker": "Traceur", "issuer": "Émetteur", "purpose": "Finalité", "duration": "Durée" },
+        "rows": {
+          "analytics": {
+            "tracker": "Vercel Web Analytics",
+            "issuer": "Vercel Inc. (États-Unis)",
+            "purpose": "Statistiques de fréquentation",
+            "duration": "≤ 24 mois"
+          },
+          "speed": {
+            "tracker": "Vercel Speed Insights",
+            "issuer": "Vercel Inc. (États-Unis)",
+            "purpose": "Mesure de performance des pages",
+            "duration": "≤ 24 mois"
+          }
+        }
+      },
+      "h2_media": "3. Contenus multimédias intégrés (consentement requis)",
+      "table_media": {
+        "head": { "tracker": "Traceur", "issuer": "Émetteur", "purpose": "Finalité", "duration": "Durée" },
+        "rows": {
+          "youtube": {
+            "tracker": "Cookies YouTube (VISITOR_INFO1_LIVE, YSC, etc.)",
+            "issuer": "Google/YouTube (États-Unis)",
+            "purpose": "Lecture des vidéos intégrées sur les fiches de jeux",
+            "duration": "De la session à 6 mois"
+          }
+        }
+      },
+      "p_media": "Tant que vous n’avez pas accepté cette catégorie, les vidéos YouTube ne sont pas chargées et aucun cookie YouTube n’est déposé.",
+      "h2_marketing": "4. Publicité et marketing",
+      "p_marketing": "Aucun traceur publicitaire ni outil de contact (chat) n’est actuellement utilisé. Si de tels outils sont ajoutés, ils apparaîtront dans cette catégorie et ne seront activés qu’après votre consentement explicite.",
+      "h2_manage": "5. Gérer vos choix",
+      "p_manage": "Vous pouvez à tout moment retirer ou modifier votre consentement via le lien <strong>« Gérer mes cookies »</strong> en pied de page. Votre choix est conservé six mois au maximum, après quoi votre consentement vous est redemandé."
+    }
+  },
+  "cgv": {
+    "content": {
+      "p_intro": "Les présentes Conditions générales de vente et d’intermédiation (« CGV ») régissent l’usage du service payant de mise en relation (coaching) proposé par Gamers Universe (« la Plateforme »), exploitée par l’éditeur identifié dans les <mentions>mentions légales</mentions>.",
+      "h2_role": "1. Rôle de la Plateforme (intermédiation)",
+      "p_role": "La Plateforme agit comme <strong>intermédiaire technique</strong> mettant en relation des coachs indépendants (« Coachs ») et des utilisateurs souhaitant réserver une prestation (« Clients »). La Plateforme n’est pas partie au contrat de prestation conclu entre le Coach et le Client ; elle fournit l’outil de réservation, l’encaissement via Stripe Connect et perçoit une commission. Conformément à l’article L111-7 du Code de la consommation, la Plateforme informe le Client du statut (professionnel ou particulier) déclaré par chaque Coach.",
+      "h2_services": "2. Caractéristiques des prestations",
+      "p_services": "Les prestations sont des sessions de coaching de jeu vidéo, décrites sur le profil de chaque Coach (type de session, durée en minutes, jeu concerné). Le Coach est seul responsable du contenu et de l’exécution de sa prestation.",
+      "h2_price": "3. Prix et paiement",
+      "ul_price": {
+        "currency": "Les prix sont affichés en euros (€), toutes taxes comprises le cas échéant. Le Coach détermine ses tarifs.",
+        "commission": "La Plateforme perçoit une commission sur chaque transaction ; le solde est reversé au Coach via Stripe Connect.",
+        "stripe": "Le paiement s’effectue en ligne via Stripe. Les données bancaires sont traitées par Stripe et ne transitent pas par la Plateforme.",
+        "vat": "Le Coach, s’il est assujetti, est responsable de la facturation et de la TVA applicable à sa prestation."
+      },
+      "h2_withdrawal": "4. Droit de rétractation (Clients consommateurs)",
+      "p_withdrawal": "Conformément aux articles L221-18 et suivants du Code de la consommation, le Client consommateur dispose d’un délai de <strong>14 jours</strong> à compter de la conclusion du contrat pour se rétracter, sans motif.",
+      "p_withdrawalException": "<strong>Exception (exécution anticipée) :</strong> si le Client demande expressément que la prestation commence avant la fin de ce délai, il reconnaît perdre son droit de rétractation une fois la prestation pleinement exécutée (art. L221-28, 1°). Cette demande est recueillie par une case à cocher non pré-cochée lors de la réservation.",
+      "p_withdrawalHow": "Pour se rétracter avant exécution, le Client peut utiliser le formulaire type figurant en annexe et l’adresser à <email></email>.",
+      "h2_guarantees": "5. Garanties",
+      "p_guarantees": "Les prestations relèvent de l’obligation de conformité du prestataire. En cas de non-exécution ou d’exécution non conforme, le Client peut solliciter le Coach et, à défaut de solution, ouvrir un litige via la Plateforme.",
+      "h2_complaints": "6. Réclamations et litiges",
+      "p_complaints": "Toute réclamation peut être adressée à <email></email>. La Plateforme dispose d’un mécanisme interne de gestion des litiges de coaching.",
+      "h2_mediation": "7. Médiation de la consommation",
+      "p_mediation": "Conformément à l’article L612-1 du Code de la consommation, le Client consommateur peut recourir gratuitement à un médiateur de la consommation. La Plateforme adhère au médiateur suivant :",
+      "ul_mediator": {
+        "name": "Nom du médiateur : <mediatorName></mediatorName>",
+        "address": "Adresse : <mediatorAddress></mediatorAddress>",
+        "website": "Site internet : <mediatorWebsite></mediatorWebsite>"
+      },
+      "p_odr": "Plateforme européenne de règlement en ligne des litiges : <odr>ec.europa.eu/consumers/odr</odr>.",
+      "h2_b2b": "8. Clients professionnels (B2B)",
+      "ul_b2b": {
+        "withdrawal": "Le droit de rétractation ne s’applique pas aux Clients professionnels agissant dans le cadre de leur activité.",
+        "late": "En cas de retard de paiement : pénalités au taux légal (3 fois le taux d’intérêt légal) et indemnité forfaitaire de recouvrement de <strong>40 €</strong> (art. L441-10 Code de commerce).",
+        "court": "Tribunal compétent : <court></court>."
+      },
+      "h2_law": "9. Loi applicable",
+      "p_law": "Les présentes CGV sont soumises au droit français.",
+      "h2_annex": "Annexe — Formulaire type de rétractation",
+      "p_annex": "(À compléter et renvoyer uniquement si vous souhaitez vous rétracter, avant exécution de la prestation.)",
+      "ul_annex": {
+        "to": "À l’attention de <operator></operator> — <email></email> :",
+        "notice": "Je vous notifie ma rétractation du contrat portant sur la prestation de coaching ci-dessous :",
+        "dates": "Commandée le : __________ / Réservée pour le : __________",
+        "name": "Nom du Client : __________",
+        "address": "Adresse du Client : __________",
+        "date": "Date : __________",
+        "signature": "Signature (si envoi papier) : __________"
+      }
+    }
+  },
+  "cgu": {
+    "content": {
+      "p_intro": "Les présentes Conditions générales d’utilisation (« CGU ») régissent l’accès et l’usage du site et des services de Gamers Universe (« la Plateforme »), exploitée par l’éditeur identifié dans les <mentions>mentions légales</mentions>.",
+      "h2_purpose": "1. Objet",
+      "p_purpose": "La Plateforme est un site communautaire consacré au jeu vidéo : fiches de jeux et personnages, bibliothèque et statistiques de jeu, publications, avis, discussions, esport, et un service d’intermédiation de coaching (régi par les <cgv>CGV</cgv>).",
+      "h2_access": "2. Accès et inscription",
+      "ul_access": {
+        "free": "La consultation est libre pour la plupart des contenus. Certaines fonctionnalités requièrent un compte.",
+        "signup": "L’inscription nécessite une adresse e-mail valide et un pseudonyme. L’utilisateur doit avoir 15 ans révolus (ou disposer de l’accord d’un titulaire de l’autorité parentale).",
+        "accuracy": "L’utilisateur s’engage à fournir des informations exactes et à préserver la confidentialité de ses identifiants."
+      },
+      "h2_rules": "3. Règles d’usage et comportements interdits",
+      "p_rules": "Sont notamment interdits :",
+      "ul_rules": {
+        "unlawful": "les contenus illicites, haineux, diffamatoires, harcelants, pornographiques ou portant atteinte aux droits de tiers ;",
+        "rights": "la publication de contenus dont l’utilisateur ne détient pas les droits ;",
+        "fraud": "l’usurpation d’identité, le spam, la fraude, l’atteinte à la sécurité du service ;",
+        "scraping": "l’extraction automatisée massive de données sans autorisation."
+      },
+      "h2_ugc": "4. Contenu publié par les utilisateurs",
+      "ul_ugc": {
+        "ownership": "L’utilisateur reste titulaire des droits sur les contenus qu’il publie (posts, avis, commentaires, images).",
+        "licence": "Il concède à la Plateforme une licence non exclusive, gratuite, pour héberger et afficher ces contenus dans le cadre du service, pour la durée de leur mise en ligne.",
+        "removal": "La Plateforme peut retirer tout contenu manifestement illicite ou contraire aux présentes CGU."
+      },
+      "h2_ip": "5. Propriété intellectuelle de la Plateforme",
+      "p_ip": "La structure, les textes originaux, le logo et la charte graphique de la Plateforme sont protégés. Les visuels et données de jeux proviennent de sources tierces (IGDB, PandaScore) et appartiennent à leurs ayants droit.",
+      "h2_termination": "6. Résiliation",
+      "ul_termination": {
+        "user": "L’utilisateur peut supprimer son compte à tout moment. Les données sont alors supprimées ou anonymisées selon la <privacy>politique de confidentialité</privacy>, sous réserve des obligations légales de conservation.",
+        "platform": "La Plateforme peut suspendre ou clôturer un compte en cas de manquement grave aux CGU, après information sauf urgence."
+      },
+      "h2_liability": "7. Responsabilité et disponibilité",
+      "ul_liability": {
+        "asIs": "La Plateforme est fournie « en l’état ». L’éditeur met en œuvre les moyens raisonnables pour assurer sa disponibilité, sans garantie d’absence d’interruption.",
+        "content": "L’éditeur n’est pas responsable des contenus publiés par les utilisateurs ni des prestations réalisées par les Coachs."
+      },
+      "h2_changes": "8. Modification des CGU",
+      "p_changes": "Les CGU peuvent être modifiées. Les utilisateurs sont informés des changements substantiels ; la poursuite de l’usage vaut acceptation.",
+      "h2_law": "9. Loi applicable",
+      "p_law": "Les présentes CGU sont soumises au droit français."
+    }
+  }
+}

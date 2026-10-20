@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { LegalPageShell } from "@/components/legal/LegalPageShell";
-import { CguContent } from "@/components/legal/CguContent";
+import { LegalDocument } from "@/components/legal/LegalDocument";
 
 const UPDATED_AT = "2026-09-19";
 
@@ -20,7 +20,7 @@ export default async function CguPage({ params }: PageProps) {
   const t = await getTranslations({ locale, namespace: "footer" });
   return (
     <LegalPageShell locale={locale} title={t("cgu")} updatedAt={UPDATED_AT}>
-      <CguContent locale={locale} />
+      <LegalDocument locale={locale} page="cgu" />
     </LegalPageShell>
   );
 }

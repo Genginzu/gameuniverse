@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { LegalPageShell } from "@/components/legal/LegalPageShell";
-import { ConfidentialiteContent } from "@/components/legal/ConfidentialiteContent";
+import { LegalDocument } from "@/components/legal/LegalDocument";
 
-const UPDATED_AT = "2026-09-19";
+const UPDATED_AT = "2026-10-20";
 
 interface PageProps {
   params: Promise<{ locale: string }>;
@@ -20,7 +20,7 @@ export default async function ConfidentialitePage({ params }: PageProps) {
   const t = await getTranslations({ locale, namespace: "footer" });
   return (
     <LegalPageShell locale={locale} title={t("confidentialite")} updatedAt={UPDATED_AT}>
-      <ConfidentialiteContent locale={locale} />
+      <LegalDocument locale={locale} page="confidentialite" />
     </LegalPageShell>
   );
 }

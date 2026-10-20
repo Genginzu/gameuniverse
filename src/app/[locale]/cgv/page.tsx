@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { LegalPageShell } from "@/components/legal/LegalPageShell";
-import { CgvContent } from "@/components/legal/CgvContent";
+import { LegalDocument } from "@/components/legal/LegalDocument";
 
-const UPDATED_AT = "2026-09-19";
+const UPDATED_AT = "2026-10-20";
 
 interface PageProps {
   params: Promise<{ locale: string }>;
@@ -20,7 +20,7 @@ export default async function CgvPage({ params }: PageProps) {
   const t = await getTranslations({ locale, namespace: "footer" });
   return (
     <LegalPageShell locale={locale} title={t("cgv")} updatedAt={UPDATED_AT}>
-      <CgvContent locale={locale} />
+      <LegalDocument locale={locale} page="cgv" />
     </LegalPageShell>
   );
 }
