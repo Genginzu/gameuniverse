@@ -93,7 +93,9 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: nextjs-build
-          path: .next/
+          path: |
+            .next/
+            !.next/cache
           retention-days: 1
           include-hidden-files: true
 
@@ -154,3 +156,20 @@ jobs:
           name: playwright-report-${{ matrix.shard }}
           path: playwright-report/
           retention-days: 3
+
+  cleanup-artifacts:
+    name: Cleanup build artifact
+    needs: [build, e2e]
+    if: always() && needs.build.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    continue-on-error: true
+    steps:
+      - name: Delete nextjs-build artifact
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts" \
+            --jq '.artifacts[] | select(.name == "nextjs-build") | .id' \
+            | xargs -r -I{} gh api -X DELETE "repos/${{ github.repository }}/actions/artifacts/{}"
