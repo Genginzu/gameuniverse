@@ -4,7 +4,8 @@ export interface MatchComment {
   id: string;
   matchId: string;
   matchSource: "internal" | "pandascore";
-  playerId: string;
+  /** null once the author deleted their account: shown as "Deleted user". */
+  playerId: string | null;
   playerName: string | null;
   playerAvatar: string | null;
   content: string;
@@ -16,7 +17,7 @@ interface CommentRow {
   id: string;
   match_id: string;
   match_source: string;
-  player_id: string;
+  player_id: string | null;
   content: string;
   reactions: Record<string, string[]>;
   created_at: string;
@@ -29,7 +30,7 @@ interface ProfileRow {
 }
 
 function toMatchComment(row: CommentRow, profilesMap: Map<string, ProfileRow>): MatchComment {
-  const profile = profilesMap.get(row.player_id);
+  const profile = row.player_id ? profilesMap.get(row.player_id) : undefined;
   return {
     id: row.id,
     matchId: row.match_id,
@@ -71,7 +72,9 @@ export async function getComments(
 
   if (error) throw new Error(error.message);
   const rows = (data ?? []) as CommentRow[];
-  const userIds = [...new Set(rows.map((r) => r.player_id))];
+  const userIds = [
+    ...new Set(rows.map((r) => r.player_id).filter((id): id is string => id !== null)),
+  ];
   const profilesMap = await fetchProfilesMap(supabase, userIds);
   return rows.map((row) => toMatchComment(row, profilesMap));
 }
@@ -93,7 +96,7 @@ export async function addComment(
 
   if (error) throw new Error(error.message);
   const row = data as CommentRow;
-  const profilesMap = await fetchProfilesMap(supabase, [row.player_id]);
+  const profilesMap = await fetchProfilesMap(supabase, [params.playerId]);
   return toMatchComment(row, profilesMap);
 }
 
@@ -114,6 +117,9 @@ export async function addReaction(
 
   if (error || !data) throw new Error(error?.message ?? "Comment not found");
   const updatedRow = data as CommentRow;
-  const profilesMap = await fetchProfilesMap(supabase, [updatedRow.player_id]);
+  const profilesMap = await fetchProfilesMap(
+    supabase,
+    updatedRow.player_id ? [updatedRow.player_id] : []
+  );
   return toMatchComment(updatedRow, profilesMap);
 }

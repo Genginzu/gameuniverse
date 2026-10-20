@@ -5,6 +5,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { Icon } from "@iconify/react";
 import { LoadingButton } from "@/components/ui/loading-button";
 import type { GroupPost } from "@/types/group";
+import { useAuthorDisplayName } from "@/hooks/useAuthorDisplayName";
 
 interface GroupPostsFeedProps {
   posts: GroupPost[];
@@ -15,6 +16,7 @@ interface GroupPostsFeedProps {
 
 export function GroupPostsFeed({ posts, canPost, isPosting, onCreatePost }: GroupPostsFeedProps) {
   const t = useTranslations("groups.posts");
+  const displayAuthor = useAuthorDisplayName();
   const locale = useLocale();
   const [content, setContent] = useState("");
 
@@ -34,7 +36,7 @@ export function GroupPostsFeed({ posts, canPost, isPosting, onCreatePost }: Grou
             placeholder={t("composerPlaceholder")}
             maxLength={2000}
             rows={3}
-            className="border-editorial-line bg-editorial-3 w-full resize-none rounded-xl border p-3 text-base text-white placeholder:text-editorial-muted focus-visible:border-[rgba(var(--accent-rgb,var(--neon-primary)),0.5)] outline-none"
+            className="border-editorial-line bg-editorial-3 placeholder:text-editorial-muted w-full resize-none rounded-xl border p-3 text-base text-white outline-none focus-visible:border-[rgba(var(--accent-rgb,var(--neon-primary)),0.5)]"
           />
           <div className="mt-3 flex justify-end">
             <LoadingButton
@@ -54,11 +56,14 @@ export function GroupPostsFeed({ posts, canPost, isPosting, onCreatePost }: Grou
       ) : (
         <ul className="flex flex-col gap-3">
           {posts.map((post) => (
-            <li key={post.id} className="border-editorial-line bg-editorial-2 rounded-2xl border p-4">
+            <li
+              key={post.id}
+              className="border-editorial-line bg-editorial-2 rounded-2xl border p-4"
+            >
               <div className="mb-2 flex items-center gap-2">
                 <Icon icon="lucide:user-circle" className="text-editorial-muted h-5 w-5" />
                 <span className="text-sm font-medium text-white">
-                  {post.author.username ?? t("unknownAuthor")}
+                  {displayAuthor(post.authorId, post.author.username, t("unknownAuthor"))}
                 </span>
                 <span className="text-editorial-muted text-xs">
                   {new Intl.DateTimeFormat(locale, {

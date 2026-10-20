@@ -14,7 +14,7 @@ function toMessage(r: Record<string, string | null>): Message {
   return {
     id: r.id!,
     conversationId: r.conversation_id!,
-    senderId: r.sender_id!,
+    senderId: r.sender_id,
     content: r.content!,
     createdAt: r.created_at!,
     readAt: r.read_at,
@@ -41,9 +41,9 @@ export class DiscussionServerService {
     }
     if (!conversations || conversations.length === 0) return [];
 
-    const friendIds = conversations.map((c) =>
-      c.participant_1 === userId ? c.participant_2 : c.participant_1
-    );
+    const friendIds = conversations
+      .map((c) => (c.participant_1 === userId ? c.participant_2 : c.participant_1))
+      .filter((id): id is string => id !== null);
     const conversationIds = conversations.map((c) => c.id);
 
     // Batch: profils, derniers messages et compteurs non lus en parallèle
@@ -54,8 +54,9 @@ export class DiscussionServerService {
     ]);
 
     const summaries: ConversationSummary[] = conversations.map((conv) => {
+      // null when the other participant deleted their account
       const friendId = conv.participant_1 === userId ? conv.participant_2 : conv.participant_1;
-      const profile = profileMap.get(friendId);
+      const profile = friendId ? profileMap.get(friendId) : undefined;
       const lastMessage = lastMessagesMap.get(conv.id) ?? null;
       const unreadCount = unreadCountsMap.get(conv.id) ?? 0;
 
@@ -63,7 +64,7 @@ export class DiscussionServerService {
         id: conv.id,
         friend: {
           id: friendId,
-          displayName: profile?.username ?? "Unknown",
+          displayName: profile?.username ?? null,
           avatarUrl: profile?.avatar_url ?? null,
         },
         lastMessage,
@@ -176,7 +177,11 @@ export class DiscussionServerService {
     content: string
   ): Promise<Message> {
     const supabase = await createRouteHandlerClient();
-    await this.verifyParticipation(conversationId, userId);
+    const participants = await this.verifyParticipation(conversationId, userId);
+    // The other participant deleted their account: the history stays read-only.
+    if (!participants.participant_1 || !participants.participant_2) {
+      throw new Error("Conversation closed");
+    }
 
     const { data, error } = await supabase
       .from("messages")
@@ -245,11 +250,15 @@ export class DiscussionServerService {
   }
 
   // Private helpers
-  private static async verifyParticipation(conversationId: string, userId: string): Promise<void> {
+  /** Throws unless the user takes part in the conversation; returns both participants. */
+  private static async verifyParticipation(
+    conversationId: string,
+    userId: string
+  ): Promise<{ participant_1: string | null; participant_2: string | null }> {
     const supabase = await createRouteHandlerClient();
     const { data, error } = await supabase
       .from("conversations")
-      .select("id")
+      .select("id, participant_1, participant_2")
       .eq("id", conversationId)
       .or(`participant_1.eq.${userId},participant_2.eq.${userId}`)
       .maybeSingle();
@@ -259,5 +268,6 @@ export class DiscussionServerService {
       throw new Error(error.message ?? "Failed to verify participation");
     }
     if (!data) throw new Error("Conversation not found");
+    return data as { participant_1: string | null; participant_2: string | null };
   }
 }

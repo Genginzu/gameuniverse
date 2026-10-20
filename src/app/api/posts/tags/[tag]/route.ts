@@ -11,7 +11,7 @@ const TAG_REGEX = /^[a-z0-9_-]+$/;
 
 interface TagPostRow {
   id: string;
-  player_id: string;
+  player_id: string | null;
   content: string;
   image_url: string | null;
   created_at: string;

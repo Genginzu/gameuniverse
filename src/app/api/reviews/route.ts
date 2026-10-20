@@ -16,7 +16,8 @@ import { enforceRateLimit } from "@/lib/services/rateLimitService";
 
 interface ReviewRow {
   id: string;
-  user_id: string;
+  /** NULL once the author deleted their account (review anonymised). */
+  user_id: string | null;
   game_id: string;
   rating: number;
   content: string;
@@ -47,7 +48,7 @@ export function computeAverageRating(reviews: { rating: number }[]): number | nu
  * The current user's review (if any) is always placed first.
  */
 export function sortReviewsByHelpfulVotes<
-  T extends { userId: string; voteCounts: { helpful: number }; createdAt: string },
+  T extends { userId: string | null; voteCounts: { helpful: number }; createdAt: string },
 >(reviews: T[], currentUserId: string | null): T[] {
   return [...reviews].sort((a, b) => {
     // Current user's review always first
@@ -67,7 +68,7 @@ export function sortReviewsByHelpfulVotes<
  * Transform a database row into a Review with profile info.
  */
 function toReview(row: ReviewRow, profilesMap: Map<string, ProfileRow>): Review {
-  const profile = profilesMap.get(row.user_id);
+  const profile = row.user_id ? profilesMap.get(row.user_id) : undefined;
   return {
     id: row.id,
     userId: row.user_id,
@@ -159,7 +160,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     const reviewIds = reviewRows.map((r) => r.id);
 
     // Fetch profiles and vote data in parallel
-    const userIds = [...new Set(reviewRows.map((r) => r.user_id))];
+    const userIds = [
+      ...new Set(reviewRows.map((r) => r.user_id).filter((id): id is string => id !== null)),
+    ];
     const {
       data: { user },
     } = await supabase.auth.getUser();

@@ -40,6 +40,9 @@ export async function fetchPlayersFromDB(
     { count: "exact" }
   );
 
+  // Accounts in their deletion grace period are hidden from public listings.
+  query = query.is("deletion_requested_at", null);
+
   if (search.trim()) {
     query = query.ilike("username", `%${search.trim()}%`);
   }
@@ -166,6 +169,7 @@ export async function fetchPlayerDetailsFromDB(
     `
     )
     .eq("id", playerId)
+    .is("deletion_requested_at", null)
     .single();
 
   if (profileError) {

@@ -7,6 +7,7 @@ import Image from "next/image";
 import { LazyImage } from "@/components/ui/lazy-image";
 import { PostContentRenderer } from "@/components/players/posts/PostContentRenderer";
 import type { PostWithAuthor } from "@/types/post";
+import { useAuthorDisplayName } from "@/hooks/useAuthorDisplayName";
 
 interface EditorialPostCardProps {
   post: PostWithAuthor;
@@ -16,6 +17,7 @@ interface EditorialPostCardProps {
 /** Read-only post card styled for the editorial (dark) theme. */
 export function EditorialPostCard({ post, locale }: EditorialPostCardProps) {
   const t = useTranslations("players.posts");
+  const displayAuthor = useAuthorDisplayName();
   const format = useFormatter();
   const [imageError, setImageError] = useState(false);
 
@@ -23,7 +25,7 @@ export function EditorialPostCard({ post, locale }: EditorialPostCardProps) {
   const now = new Date();
   const safeDate = createdAt > now ? now : createdAt;
   const relativeDate = format.relativeTime(safeDate, now);
-  const displayName = post.authorName || t("anonymousPlayer");
+  const displayName = displayAuthor(post.playerId, post.authorName, t("anonymousPlayer"));
 
   return (
     <article className="border-editorial-line bg-editorial-2 hover:border-editorial-accent/40 rounded-2xl border p-5 transition-all duration-300">

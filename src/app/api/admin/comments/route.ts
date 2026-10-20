@@ -122,7 +122,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch profiles separately
-    const userIds = [...new Set(comments.map((c) => c.user_id))];
+    const userIds = [...new Set(comments.map((c) => c.user_id).filter(Boolean))];
     const profilesMap = await fetchProfilesMap(supabase, userIds);
 
     const totalPages = Math.ceil(totalCount / limit);

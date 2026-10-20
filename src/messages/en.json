@@ -1665,6 +1665,32 @@
       "asyncErrorWithExecute": "Async error with executeAsync"
     }
   },
+  "accountDeletion": {
+    "deletedUser": "Deleted user",
+    "pending": {
+      "kicker": "Account deactivated",
+      "title": "Account deletion scheduled",
+      "description": "Your account will be permanently deleted on {date}. Until then, it is hidden from public pages.",
+      "restoreHint": "You can cancel at any time before that date: your account and data will be restored exactly as they were.",
+      "cancel": "Cancel deletion",
+      "signOut": "Sign out",
+      "cancelled": "Deletion cancelled, your account is restored",
+      "cancelError": "Could not cancel the deletion"
+    },
+    "emails": {
+      "requested": {
+        "subject": "Your account deletion request",
+        "body": "We received your request to delete your Gamers Universe account. Your account is deactivated and will be permanently deleted on {date}.",
+        "footer": "If you change your mind, sign in before that date to cancel. If you did not make this request, sign in, cancel it and change your password.",
+        "cancelLink": "Cancel the deletion"
+      },
+      "completed": {
+        "subject": "Your account has been deleted",
+        "body": "Your Gamers Universe account and personal data have been permanently deleted.",
+        "footer": "Your public contributions and messages remain visible as \"Deleted user\", with no link to your identity. Coaching payment records are kept for the legal retention period."
+      }
+    }
+  },
   "settings": {
     "title": "Settings",
     "subtitle": "Manage your account settings and preferences",
@@ -1694,6 +1720,34 @@
       "requestReset": "Request password reset",
       "resetSent": "A password reset email has been sent",
       "resetError": "Failed to send password reset email"
+    },
+    "deletion": {
+      "title": "Delete my account",
+      "description": "Exercise your right to erasure (GDPR). The deletion can be cancelled for 30 days.",
+      "consequences": {
+        "deactivated": "Your account is deactivated immediately and hidden from public pages.",
+        "grace": "You have 30 days to cancel by signing in again; after that, the deletion is permanent.",
+        "removed": "Profile, library, play sessions, wishlist, notifications, linked platforms, follows, friends and GU Coins wallet are deleted.",
+        "anonymised": "Your contributions (reviews, comments, posts, group and community posts, private messages) are kept as \"Deleted user\", with no link to your identity.",
+        "retained": "Coaching payment records are kept without your profile data, for the legal retention period (10 years)."
+      },
+      "button": "Delete my account",
+      "dialogTitle": "Confirm account deletion",
+      "dialogDescription": "For your security, confirm your identity. A confirmation email will be sent to you.",
+      "passwordLabel": "Current password",
+      "oauthReauth": "Your account uses an external sign-in: sign out and sign in again right before confirming.",
+      "confirmationLabel": "Type {word} to confirm",
+      "cancel": "Cancel",
+      "confirm": "Schedule deletion",
+      "errors": {
+        "invalidConfirmation": "The confirmation word is incorrect.",
+        "reauthRequired": "Sign in again, then retry.",
+        "invalidPassword": "Incorrect password.",
+        "alreadyPending": "A deletion is already scheduled for this account.",
+        "coachingPaymentPending": "A coaching payment is in progress: wait for its payout or refund before deleting your account.",
+        "coachingDisputeOpen": "A coaching dispute is open: it must be resolved before the account can be deleted.",
+        "generic": "The request failed, please try again later."
+      }
     },
     "privacy": {
       "title": "Privacy",
@@ -1845,7 +1899,21 @@
       "esportSync": "PandaScore Sync",
       "translations": "Translations",
       "globalSync": "Global Sync",
-      "librarySync": "Library Sync"
+      "librarySync": "Library Sync",
+      "accountDeletions": "Account deletions"
+    },
+    "accountDeletions": {
+      "title": "Account deletions",
+      "description": "Deactivated accounts waiting for permanent deletion (30-day grace period).",
+      "empty": "No pending deletion.",
+      "loadError": "Could not load pending deletions.",
+      "dates": "Requested on {requested} · deletion scheduled on {scheduled}",
+      "cancel": "Cancel deletion",
+      "purge": "Delete now",
+      "purgeConfirm": "Permanently delete the account {name} now? This cannot be undone.",
+      "purged": "Account permanently deleted",
+      "cancelled": "Deletion cancelled",
+      "actionError": "The action failed"
     },
     "closeSidebar": "Close sidebar",
     "openSidebar": "Open sidebar",
@@ -4556,7 +4624,9 @@
     "timeJustNow": "Just now",
     "timeMinutesAgo": "{min} min ago",
     "timeHoursAgo": "{hours}h ago",
-    "backToConversations": "Back"
+    "backToConversations": "Back",
+    "unknownPlayer": "Unknown player",
+    "closedConversation": "This player deleted their account: the conversation stays readable but you can no longer message them."
   },
   "platforms": {
     "title": "Platforms",
@@ -5209,7 +5279,8 @@
       "title": "Discussion",
       "noComments": "No comments yet. Be the first to react!",
       "placeholder": "Write a comment...",
-      "loginRequired": "Log in to join the discussion"
+      "loginRequired": "Log in to join the discussion",
+      "anonymous": "Anonymous"
     }
   },
   "feedPage": {

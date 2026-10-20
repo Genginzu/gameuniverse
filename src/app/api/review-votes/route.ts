@@ -110,7 +110,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
       }
 
-      await reviewVoted({ reviewId, voterId: user.id, authorId: review.user_id, voteType });
+      // An anonymised review (author deleted) has nobody to notify.
+      if (review.user_id) {
+        await reviewVoted({ reviewId, voterId: user.id, authorId: review.user_id, voteType });
+      }
     }
 
     return NextResponse.json({ success: true, vote: { voteType } });

@@ -85,6 +85,38 @@ describe("Coaching reviews API — GET", () => {
     expect(body.reviews[0].rating).toBe(5);
     expect(body.reviews[0].student.username).toBe("alice");
   });
+
+  test("keeps a review whose student deleted their account, with a null student", async () => {
+    mockSupabaseFrom = vi.fn(() => ({
+      select: vi.fn(() => ({
+        eq: vi.fn(() => ({
+          order: vi.fn(() =>
+            Promise.resolve({
+              data: [
+                {
+                  id: "review-2",
+                  rating: 4,
+                  comment: "Useful",
+                  coach_response: "Thanks!",
+                  coach_responded_at: "2026-01-02T00:00:00Z",
+                  created_at: "2026-01-01T00:00:00Z",
+                  student_id: null,
+                  profiles: null,
+                },
+              ],
+              error: null,
+            })
+          ),
+        })),
+      })),
+    }));
+
+    const res = await GET(makeRequest("http://localhost/api/coaching/reviews?coachId=coach-1"));
+    const body = await res.json();
+    expect(res.status).toBe(200);
+    expect(body.reviews[0].student).toEqual({ username: null, avatarUrl: null });
+    expect(body.reviews[0].coachResponse).toBe("Thanks!");
+  });
 });
 
 describe("Coaching reviews API — POST", () => {

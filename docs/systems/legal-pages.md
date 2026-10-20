@@ -20,7 +20,7 @@ Le préfixe de la clé donne le type de bloc :
 - `table_x` : `{ head: {...}, rows: { ligne: {...} } }`
 
 Balises rich text disponibles (`legalRichTags.tsx`) : `<strong>`, liens internes
-`<mentions>`, `<privacy>`, `<cookies>`, `<cgv>`, liens externes `<cnil>`, `<odr>`,
+`<mentions>`, `<privacy>`, `<cookies>`, `<cgv>`, `<settings>`, liens externes `<cnil>`, `<odr>`,
 et valeurs éditeur en balise vide (`<operator></operator>`, `<email></email>`,
 `<siret></siret>`, `<vat></vat>`, `<court></court>`, `<mediatorName></mediatorName>`…).
 

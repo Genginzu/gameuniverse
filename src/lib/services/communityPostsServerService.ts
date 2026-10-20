@@ -9,7 +9,7 @@ type UntypedFrom = any;
 interface CommunityPostRow {
   id: string;
   community_id: string;
-  author_id: string;
+  author_id: string | null;
   content: string;
   created_at: string;
   updated_at: string;
@@ -69,7 +69,7 @@ export class CommunityPostsServerService {
   /** Fetch a single post's community_id and author_id, for authorization checks. */
   static async getPostAccess(
     postId: string
-  ): Promise<{ communityId: string; authorId: string } | null> {
+  ): Promise<{ communityId: string; authorId: string | null } | null> {
     const supabase = await createRouteHandlerClient();
     const { data, error } = await supabase
       .from("community_posts" as UntypedFrom)
@@ -78,7 +78,7 @@ export class CommunityPostsServerService {
       .maybeSingle();
 
     if (error || !data) return null;
-    const row = data as unknown as { community_id: string; author_id: string };
+    const row = data as unknown as { community_id: string; author_id: string | null };
     return { communityId: row.community_id, authorId: row.author_id };
   }
 

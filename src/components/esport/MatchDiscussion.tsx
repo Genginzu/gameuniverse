@@ -5,12 +5,13 @@ import useSWR, { mutate } from "swr";
 import { useTranslations } from "next-intl";
 import { Icon } from "@iconify/react";
 import { useAuth } from "@/hooks/useAuth";
+import { useAuthorDisplayName } from "@/hooks/useAuthorDisplayName";
 
 interface MatchComment {
   id: string;
   matchId: string;
   matchSource: string;
-  playerId: string;
+  playerId: string | null;
   playerName: string | null;
   playerAvatar: string | null;
   content: string;
@@ -114,7 +115,7 @@ export function MatchDiscussion({ matchId, matchSource = "pandascore" }: MatchDi
             onChange={(e) => setContent(e.target.value)}
             placeholder={t("placeholder")}
             maxLength={2000}
-            className="border-editorial-line bg-editorial-3 min-h-[44px] flex-1 rounded-xl border px-4 text-base text-white placeholder:text-editorial-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
+            className="border-editorial-line bg-editorial-3 placeholder:text-editorial-muted min-h-[44px] flex-1 rounded-xl border px-4 text-base text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgb(var(--accent-rgb,var(--neon-primary)))]"
           />
           <button
             type="submit"
@@ -141,6 +142,8 @@ function CommentBubble({
   onReact: (commentId: string, emoji: string) => void;
 }) {
   const [showReactions, setShowReactions] = useState(false);
+  const t = useTranslations("esport.discussion");
+  const displayAuthor = useAuthorDisplayName();
 
   return (
     <div className="bg-editorial-3 rounded-xl p-3 transition-all">
@@ -152,7 +155,9 @@ function CommentBubble({
             <Icon icon="mdi:account" className="text-editorial-accent size-4" />
           </div>
         )}
-        <span className="text-sm font-medium text-white">{comment.playerName ?? "Anonyme"}</span>
+        <span className="text-sm font-medium text-white">
+          {displayAuthor(comment.playerId, comment.playerName, t("anonymous"))}
+        </span>
         <span className="text-editorial-muted text-xs">
           {new Date(comment.createdAt).toLocaleTimeString([], {
             hour: "2-digit",

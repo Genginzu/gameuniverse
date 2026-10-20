@@ -1,7 +1,8 @@
 export interface PostComment {
   id: string;
   postId: string;
-  playerId: string;
+  /** null once the author deleted their account: shown as "Deleted user". */
+  playerId: string | null;
   content: string;
   createdAt: string;
   updatedAt: string;

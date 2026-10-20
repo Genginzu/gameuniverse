@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useDateFormatter } from "@/hooks/useTranslations";
 import { LazyImage } from "@/components/ui/lazy-image";
 import type { Comment } from "@/types/comment";
+import { useAuthorDisplayName } from "@/hooks/useAuthorDisplayName";
 
 interface CommentCardProps {
   comment: Comment;
@@ -36,13 +37,18 @@ function CommentAvatar({ name, avatar }: { name: string | null; avatar: string |
 export function CommentCard({ comment }: CommentCardProps) {
   const t = useTranslations("characters.comments");
   const { formatDate } = useDateFormatter();
+  const authorName = useAuthorDisplayName()(
+    comment.userId,
+    comment.playerName,
+    t("anonymousPlayer")
+  );
 
   return (
     <article className="border-editorial-line bg-editorial-2 rounded-xl border p-5">
       <div className="mb-3 flex items-center gap-3">
-        <CommentAvatar name={comment.playerName} avatar={comment.playerAvatar} />
+        <CommentAvatar name={authorName} avatar={comment.playerAvatar} />
         <div>
-          <p className="font-medium text-white">{comment.playerName ?? t("anonymousPlayer")}</p>
+          <p className="font-medium text-white">{authorName}</p>
           <p className="text-editorial-muted text-xs">{formatDate(comment.createdAt)}</p>
         </div>
       </div>

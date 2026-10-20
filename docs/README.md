@@ -40,6 +40,7 @@
 | [collections-tab.md](features/players/collections-tab.md)   | Onglet collections                               |
 | [reviews-tab.md](features/players/reviews-tab.md)           | Onglet avis                                      |
 | [review-votes.md](features/players/review-votes.md)         | Votes sur les avis                               |
+| [account-deletion.md](features/players/account-deletion.md) | Suppression de compte (RGPD, délai de 30 jours)  |
 | [discussions.md](features/players/discussions.md)           | Discussions                                      |
 | [avatar-upload.md](features/players/avatar-upload.md)       | Upload d'avatar                                  |
 | [friends-system.md](features/players/friends-system.md)     | Système d'amis (core)                            |

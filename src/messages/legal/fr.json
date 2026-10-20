@@ -64,7 +64,7 @@
         "data": "Données : publications (posts), avis (reviews), discussions, commentaires, mentions, abonnements à d’autres joueurs, images téléversées.",
         "purpose": "Finalité : faire fonctionner les fonctionnalités sociales et éditoriales.",
         "basis": "Base légale : exécution du contrat.",
-        "retention": "Conservation : jusqu’à suppression par vous ou clôture du compte."
+        "retention": "Conservation : jusqu’à suppression par vous ; à la clôture du compte, les contenus sont conservés sous forme anonymisée (« Utilisateur supprimé »)."
       },
       "h3_analytics": "e. Mesure d’audience",
       "ul_analytics": {
@@ -94,6 +94,14 @@
       "p_transfersOther": "Certains prestataires (Vercel, Stripe, ainsi que Supabase pour ses opérations de support) peuvent traiter des données aux États-Unis ou à Singapour. Ces transferts sont encadrés par les clauses contractuelles types de la Commission européenne et, pour les prestataires américains certifiés, par le Data Privacy Framework UE–États-Unis.",
       "h2_rights": "4. Vos droits",
       "p_rights": "Vous disposez des droits d’accès, de rectification, d’effacement, d’opposition, de limitation et de portabilité, ainsi que du droit de définir des directives post-mortem.",
+      "h3_erasure": "Suppression de votre compte (droit à l’effacement)",
+      "ul_erasure": {
+        "request": "Depuis les <settings>Paramètres</settings> → « Supprimer mon compte », après confirmation de votre identité (mot de passe ou connexion récente) et saisie d’un mot de confirmation. Un e-mail confirme la demande.",
+        "grace": "Votre compte est immédiatement désactivé et masqué des pages publiques. Pendant 30 jours, vous pouvez annuler en vous reconnectant : tout est restauré.",
+        "deletion": "Au terme de ces 30 jours, le compte et vos données personnelles sont définitivement supprimés (profil, bibliothèque, sessions, liste de souhaits, notifications, plateformes liées et leurs jetons, abonnements, amis, portefeuille de GU Coins, avatar et bannière). Un e-mail confirme la suppression.",
+        "content": "Contenus : vos contributions (avis, commentaires, posts, posts de groupe et de communauté, avis de coaching, messages privés) sont conservées mais anonymisées : elles s’affichent sous le nom « Utilisateur supprimé » et ne sont plus rattachées à votre identité. Les groupes et communautés que vous administrez sont transmis au membre le plus ancien (modérateur en priorité), ou supprimés s’ils n’ont pas d’autre membre.",
+        "retained": "Données conservées : les sessions de coaching ayant donné lieu à un paiement sont conservées sans aucun lien avec votre profil (montants, dates, statut), pendant 10 ans au titre de l’obligation comptable. La suppression est impossible tant qu’un paiement de coaching est en attente de versement ou qu’un litige est ouvert."
+      },
       "p_rightsContact": "Pour les exercer : <email></email>. Une réponse vous sera apportée dans un délai d’un mois.",
       "p_cnil": "Vous pouvez également introduire une réclamation auprès de la CNIL — 3 place de Fontenoy, TSA 80715, 75334 Paris Cedex 07 — <cnil>www.cnil.fr</cnil>.",
       "h2_minors": "5. Mineurs",

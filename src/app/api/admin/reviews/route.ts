@@ -135,7 +135,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch profiles separately (no direct FK between game_reviews and profiles)
-    const userIds = [...new Set(reviews.map((r) => r.user_id))];
+    const userIds = [...new Set(reviews.map((r) => r.user_id).filter(Boolean))];
     const profilesMap = await fetchProfilesMap(supabase, userIds);
 
     const totalPages = Math.ceil(totalCount / limit);

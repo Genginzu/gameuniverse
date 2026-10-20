@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import type { Metadata, Viewport } from "next";
 import { AuthErrorHandler } from "@/components/auth/AuthErrorHandler";
+import { AccountDeletionGate } from "@/components/auth/AccountDeletionGate";
 import { ErrorProvider } from "@/components/providers/ErrorProvider";
 import { SWRProvider } from "@/components/providers/SWRProvider";
 import { CookieConsentProvider } from "@/components/providers/CookieConsentProvider";
@@ -88,6 +89,7 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
         <CookieConsentProvider>
           <SWRProvider>
             <AuthErrorHandler />
+            <AccountDeletionGate />
             {children}
           </SWRProvider>
           <ConsentGatedAnalytics />

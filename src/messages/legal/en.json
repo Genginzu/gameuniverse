@@ -64,7 +64,7 @@
         "data": "Data: posts, reviews, discussions, comments, mentions, player subscriptions, uploaded images.",
         "purpose": "Purpose: run the social and editorial features.",
         "basis": "Legal basis: performance of the contract.",
-        "retention": "Retention: until deletion by you or account closure."
+        "retention": "Retention: until you delete it; when the account is closed, content is kept in anonymised form (\"Deleted user\")."
       },
       "h3_analytics": "e. Audience measurement",
       "ul_analytics": {
@@ -94,6 +94,14 @@
       "p_transfersOther": "Some providers (Vercel, Stripe, and Supabase for its support operations) may process data in the USA or Singapore. Such transfers rely on the European Commission's Standard Contractual Clauses and, for certified US providers, the EU–US Data Privacy Framework.",
       "h2_rights": "4. Your rights",
       "p_rights": "You have the rights of access, rectification, erasure, objection, restriction and portability, as well as the right to set post-mortem instructions.",
+      "h3_erasure": "Deleting your account (right to erasure)",
+      "ul_erasure": {
+        "request": "From <settings>Settings</settings> → \"Delete my account\", after confirming your identity (password or recent sign-in) and typing a confirmation word. An email confirms the request.",
+        "grace": "Your account is deactivated immediately and hidden from public pages. For 30 days you can cancel by signing in again: everything is restored.",
+        "deletion": "After those 30 days, the account and your personal data are permanently deleted (profile, library, sessions, wishlist, notifications, linked platforms and their tokens, follows, friends, GU Coins wallet, avatar and banner). An email confirms the deletion.",
+        "content": "Content: your contributions (reviews, comments, posts, group and community posts, coaching reviews, private messages) are kept but anonymised: they are shown as \"Deleted user\" and no longer linked to your identity. Groups and communities you own are handed to their oldest member (moderators first), or deleted when they have no other member.",
+        "retained": "Retained data: coaching sessions that involved a payment are kept with no link to your profile (amounts, dates, status) for 10 years as accounting records. Deletion is refused while a coaching payment awaits payout or a dispute is open."
+      },
       "p_rightsContact": "To exercise them: <email></email>. We will reply within one month.",
       "p_cnil": "You may also lodge a complaint with the CNIL — 3 place de Fontenoy, TSA 80715, 75334 Paris Cedex 07, France — <cnil>www.cnil.fr</cnil>.",
       "h2_minors": "5. Minors",

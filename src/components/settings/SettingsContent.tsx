@@ -21,6 +21,7 @@ import { PasswordResetSection } from "./PasswordResetSection";
 import { AppearanceSection } from "./AppearanceSection";
 import { LinkedPlatformsSection } from "./LinkedPlatformsSection";
 import { PrivacySection } from "./PrivacySection";
+import { AccountDeletionSection } from "./AccountDeletionSection";
 
 /**
  * SettingsContent : onglet Settings de la page joueur (`/players/[id]`).
@@ -210,6 +211,14 @@ export function SettingsContent() {
             onRequestReset={handlePasswordReset}
             isLoading={isRequestingReset}
           />
+        </SettingsSection>
+
+        <SettingsSection
+          icon="lucide:user-x"
+          title={t("deletion.title")}
+          description={t("deletion.description")}
+        >
+          <AccountDeletionSection user={user} />
         </SettingsSection>
       </div>
     </EditorialContainer>

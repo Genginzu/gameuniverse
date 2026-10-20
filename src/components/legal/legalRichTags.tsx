@@ -26,6 +26,7 @@ const LINK_TAGS: LegalRichTags = {
   privacy: (chunks) => <Link href="/confidentialite">{chunks}</Link>,
   cookies: (chunks) => <Link href="/cookies">{chunks}</Link>,
   cgv: (chunks) => <Link href="/cgv">{chunks}</Link>,
+  settings: (chunks) => <Link href="/settings">{chunks}</Link>,
   cnil: (chunks) => <ExternalLink href="https://www.cnil.fr">{chunks}</ExternalLink>,
   odr: (chunks) => <ExternalLink href="https://ec.europa.eu/consumers/odr">{chunks}</ExternalLink>,
 };
