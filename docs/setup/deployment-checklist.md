@@ -77,4 +77,5 @@ bun run build
 - [ ] Pages `/fr/games`, `/fr/characters`, home : contenu rendu côté serveur
 - [ ] `/api/cron/sync-libraries` sans secret → 401
 - [ ] Pas d'erreur dans les logs Vercel / Sentry
-- [ ] Pages légales sans `[À COMPLÉTER]`
+- [ ] Pages légales sans `[À COMPLÉTER]` : `getMissingLegalFields()` renvoie `[]`
+  (cf [legal-pages.md](../systems/legal-pages.md))

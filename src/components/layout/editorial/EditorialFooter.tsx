@@ -90,6 +90,9 @@ export function EditorialFooter() {
           <Link href="/cgu" className="text-editorial-muted transition-colors hover:text-editorial-accent">
             {t("cgu")}
           </Link>
+          <Link href="/cgv#mediation" className="text-editorial-muted transition-colors hover:text-editorial-accent">
+            {t("mediation")}
+          </Link>
           <ManageCookiesButton className="text-editorial-muted transition-colors hover:text-editorial-accent" />
         </nav>
 
