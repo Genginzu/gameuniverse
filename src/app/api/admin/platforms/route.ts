@@ -6,6 +6,7 @@ import {
   adminPlatformFormSchema,
 } from "@/lib/validations/admin-platform-form";
 import { logger } from "@/lib/logger";
+import { ilikeAnyFilter } from "@/lib/utils/postgrestFilter";
 
 /**
  * GET /api/admin/platforms - List platforms with pagination, search, sort, and game count
@@ -59,7 +60,7 @@ export async function GET(request: NextRequest) {
       if (!search?.trim()) return query;
       const term = `%${search.trim()}%`;
       if (searchPlatformIds && searchPlatformIds.length > 0) {
-        return query.or(`slug.ilike.${term},id.in.(${searchPlatformIds.join(",")})`);
+        return query.or(`${ilikeAnyFilter(["slug"], search)},id.in.(${searchPlatformIds.join(",")})`);
       }
       return query.ilike("slug", term);
     };

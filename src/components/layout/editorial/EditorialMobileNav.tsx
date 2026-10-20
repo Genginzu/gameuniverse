@@ -27,6 +27,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 import { EDITORIAL_MEGA_MENU_ENTRIES } from "./EditorialMegaMenu";
 import { EDITORIAL_SPACES } from "./EditorialRail";
+import { NavCountBadge } from "./NavCountBadge";
 
 interface EditorialMobileNavProps {
   /** Classe additionnelle pour le bouton hamburger. */
@@ -167,6 +168,7 @@ export function EditorialMobileNav({ className = "" }: EditorialMobileNavProps) 
                     >
                       <Icon icon={link.icon} className="size-4" aria-hidden />
                       <span>{link.label}</span>
+                      <NavCountBadge href={link.href} />
                     </Link>
                   </li>
                 );

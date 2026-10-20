@@ -5,6 +5,7 @@ import { CommunityMembersServerService } from "@/lib/services/communityMembersSe
 import { CommunityPostsServerService } from "@/lib/services/communityPostsServerService";
 import { createCommunityPostSchema } from "@/lib/validations/community";
 import { logger } from "@/lib/logger";
+import { enforceRateLimit } from "@/lib/services/rateLimitService";
 
 type RouteContext = { params: Promise<{ slug: string }> };
 
@@ -47,6 +48,9 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const limited = await enforceRateLimit("post", { userId: user.id });
+    if (limited) return limited;
 
     const access = await CommunityServerService.getCommunityAccess(slug);
     if (!access) {

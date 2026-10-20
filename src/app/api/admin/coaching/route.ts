@@ -1,29 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
+import { adminAuthErrorStatus, requireAdminUser } from "@/lib/auth-admin";
+import { fetchUserEmails } from "@/lib/services/userEmailsServerService";
 import { logger } from "@/lib/logger";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type S = any;
 
-async function requireAdmin(supabase: S) {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
-  return profile?.role === "admin" ? user : null;
-}
-
-/** GET /api/admin/coaching — List all coaches with stats */
+/**
+ * GET /api/admin/coaching — List all coaches with stats.
+ * coach_profiles has no admin RLS policy, so the admin check runs first and
+ * the query uses the service-role client (issue #385).
+ */
 export async function GET(request: NextRequest) {
   try {
-    const supabase: S = await createRouteHandlerClient();
-    const admin = await requireAdmin(supabase);
-    if (!admin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    await requireAdminUser();
+    const supabase: S = getSupabaseAdmin();
 
     const status = request.nextUrl.searchParams.get("status"); // active, suspended, all
     const page = parseInt(request.nextUrl.searchParams.get("page") || "1");
@@ -33,7 +25,7 @@ export async function GET(request: NextRequest) {
     let query = supabase
       .from("coach_profiles")
       .select(
-        "id, player_id, bio, is_active, is_verified, is_suspended, average_rating, total_reviews, total_sessions, stripe_onboarding_complete, created_at, profiles!coach_profiles_player_id_fkey(username, avatar_url, email)",
+        "id, player_id, bio, is_active, is_verified, is_suspended, average_rating, total_reviews, total_sessions, stripe_onboarding_complete, created_at, profiles!coach_profiles_player_id_fkey(username, avatar_url)",
         { count: "exact" }
       );
 
@@ -49,7 +41,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Failed to fetch" }, { status: 500 });
     }
 
-    const coaches = (data || []).map((c: S) => ({
+    const rows = data || [];
+    const coachEmails = await fetchUserEmails(rows.map((c: S) => c.player_id));
+    const coaches = rows.map((c: S) => ({
       id: c.id,
       playerId: c.player_id,
       bio: c.bio,
@@ -63,11 +57,15 @@ export async function GET(request: NextRequest) {
       createdAt: c.created_at,
       username: c.profiles?.username,
       avatarUrl: c.profiles?.avatar_url,
-      email: c.profiles?.email,
+      email: coachEmails.get(c.player_id) ?? null,
     }));
 
     return NextResponse.json({ coaches, total: count || 0, page, limit });
   } catch (error) {
+    const authStatus = adminAuthErrorStatus(error);
+    if (authStatus) {
+      return NextResponse.json({ error: (error as Error).message }, { status: authStatus });
+    }
     logger.error("Error in admin coaching GET", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }

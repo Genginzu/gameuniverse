@@ -9,6 +9,8 @@ import { SWRProvider } from "@/components/providers/SWRProvider";
 import { CookieConsentProvider } from "@/components/providers/CookieConsentProvider";
 import { ConsentGatedAnalytics } from "@/components/legal/ConsentGatedAnalytics";
 import { JsonLd } from "@/components/shared/JsonLd";
+import { BRAND_COLORS } from "@/lib/utils/brand-colors";
+import { getSiteUrl } from "@/lib/utils/siteUrl";
 
 const LOCALE_MAP: Record<string, string> = { fr: "fr_FR", en: "en_US" };
 
@@ -21,7 +23,7 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: "metadata" });
 
   return {
-    metadataBase: new URL("https://gameuniverse.gg"),
+    metadataBase: new URL(getSiteUrl()),
     title: { default: "Gamers Universe", template: "%s | Gamers Universe" },
     description: t("description"),
     keywords: t("keywords"),
@@ -44,7 +46,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
+    { media: "(prefers-color-scheme: dark)", color: BRAND_COLORS.neutral[950] },
   ],
 };
 
@@ -78,8 +80,8 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
           "@context": "https://schema.org",
           "@type": "Organization",
           name: "Gamers Universe",
-          url: "https://gameuniverse.gg",
-          logo: "https://gameuniverse.gg/icon.png",
+          url: getSiteUrl(),
+          logo: `${getSiteUrl()}/icon.png`,
         }}
       />
       <NextIntlClientProvider locale={locale} messages={messages}>

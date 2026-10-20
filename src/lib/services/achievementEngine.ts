@@ -1,4 +1,5 @@
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { computeLevel } from "@/lib/services/levelSystem";
 import { achievementUnlocked } from "@/lib/services/notifications";
 import { logger } from "@/lib/logger";
@@ -80,11 +81,13 @@ export class AchievementEngine {
 
       if (toUnlock.length === 0) return EMPTY_RESULT;
 
-      // 5. Insérer les nouveaux succès dans player_achievements
+      // 5. Insérer les nouveaux succès dans player_achievements.
+      // Server-only write (migration 20261019000003): service-role client.
+      const admin = getSupabaseAdmin();
       const newlyUnlocked: EvaluationResult["newlyUnlocked"] = [];
 
       for (const entry of toUnlock) {
-        const { error: insertError } = await supabase
+        const { error: insertError } = await admin
           .from("player_achievements")
           .insert({ user_id: userId, achievement_key: entry.key });
 
@@ -108,7 +111,7 @@ export class AchievementEngine {
       const totalXpAwarded = newlyUnlocked.reduce((sum, a) => sum + a.xpAwarded, 0);
 
       // 7. Mettre à jour l'XP et le niveau
-      const newLevel = await AchievementEngine.updateXpAndLevel(supabase, userId, totalXpAwarded);
+      const newLevel = await AchievementEngine.updateXpAndLevel(userId, totalXpAwarded);
 
       await Promise.all(
         newlyUnlocked.map((achievement) =>
@@ -163,12 +166,16 @@ export class AchievementEngine {
   /**
    * Upsert l'XP du joueur et met à jour le niveau du profil si nécessaire.
    * Retourne le nouveau niveau si changé, null sinon.
+   *
+   * XP et niveau sont des écritures server-only (issue #372) : on utilise le
+   * client service-role (supabase-admin.ts) qui bypasse les RLS client-only.
    */
   private static async updateXpAndLevel(
-    supabase: Awaited<ReturnType<typeof createRouteHandlerClient>>,
     userId: string,
     xpToAdd: number
   ): Promise<number | null> {
+    const supabase = getSupabaseAdmin();
+
     // Récupérer l'XP actuel (ou 0 si pas de ligne)
     const { data: xpRow } = await supabase
       .from("player_xp")

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { getStripe } from "@/lib/stripe";
 import { logger } from "@/lib/logger";
 import { coachingSessionPaid } from "@/lib/services/notifications";
@@ -37,7 +38,7 @@ export async function POST(request: NextRequest) {
     // Verify the user is the student
     const { data: session } = await supabase
       .from("coaching_sessions")
-      .select("student_id, payment_status")
+      .select("student_id, payment_status, payment_amount")
       .eq("id", coachingSessionId)
       .single();
     if (!session || session.student_id !== user.id)
@@ -48,10 +49,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, alreadyPaid: true });
     }
 
-    await supabase
+    const expectedCents = Math.round(Number(session.payment_amount ?? 0) * 100);
+    if (!expectedCents || checkoutSession.amount_total !== expectedCents) {
+      logger.error("Checkout amount does not match session price", {
+        coachingSessionId,
+        amountTotal: checkoutSession.amount_total,
+        expectedCents,
+      });
+      return NextResponse.json({ error: "Payment amount mismatch" }, { status: 409 });
+    }
+
+    // payment_status is server-only (trigger on coaching_sessions).
+    await getSupabaseAdmin()
       .from("coaching_sessions")
       .update({ payment_status: "paid" })
-      .eq("id", coachingSessionId);
+      .eq("id", coachingSessionId)
+      .eq("payment_status", "pending");
 
     await coachingSessionPaid({ sessionId: coachingSessionId, studentId: user.id });
 

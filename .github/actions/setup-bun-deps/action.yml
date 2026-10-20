@@ -1,0 +1,17 @@
+name: Setup Bun dependencies
+description: Install Bun, restore/save the Bun install store and run a frozen install.
+
+runs:
+  using: composite
+  steps:
+    - uses: oven-sh/setup-bun@v2
+
+    - name: Cache bun install store
+      uses: actions/cache@v6
+      with:
+        path: ~/.bun/install/cache
+        key: bun-cache-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+
+    - name: Install dependencies
+      shell: bash
+      run: bun install --frozen-lockfile

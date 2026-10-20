@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 import { coachingSessionRequested } from "@/lib/services/notifications";
+import { createCoachingSessionSchema } from "@/lib/validations/coaching-session";
+import { enforceRateLimit } from "@/lib/services/rateLimitService";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnySupabase = any;
@@ -22,17 +24,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await request.json();
-    const { coachId, gameId, pricingId, scheduledAt, durationMinutes } = body;
+    const limited = await enforceRateLimit("coachingBooking", { userId: user.id });
+    if (limited) return limited;
 
-    if (!coachId || !gameId || !scheduledAt || !durationMinutes) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    const parsed = createCoachingSessionSchema.safeParse(await request.json());
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid session request" }, { status: 400 });
     }
+    const { coachId, gameId, pricingId, scheduledAt } = parsed.data;
 
-    // Validate coach exists and is active
     const { data: coach } = await supabase
       .from("coach_profiles")
-      .select("id, is_active")
+      .select("id, is_active, player_id")
       .eq("id", coachId)
       .single();
 
@@ -44,6 +47,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Coach is not active" }, { status: 400 });
     }
 
+    if (coach.player_id === user.id) {
+      return NextResponse.json({ error: "Cannot book your own coaching" }, { status: 400 });
+    }
+
     const { data, error } = await supabase
       .from("coaching_sessions")
       .insert({
@@ -52,13 +59,14 @@ export async function POST(request: NextRequest) {
         game_id: gameId,
         pricing_id: pricingId,
         scheduled_at: scheduledAt,
-        duration_minutes: durationMinutes,
-        status: "requested",
       })
       .select()
       .single();
 
     if (error) {
+      if (error.code === "42501" || error.code === "22023") {
+        return NextResponse.json({ error: "Invalid pricing for this coach" }, { status: 400 });
+      }
       logger.error("Error creating coaching session", { error });
       return NextResponse.json({ error: "Failed to create session" }, { status: 500 });
     }

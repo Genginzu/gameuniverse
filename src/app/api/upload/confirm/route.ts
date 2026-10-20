@@ -4,6 +4,7 @@ import { logger } from "@/lib/logger";
 import { deleteFile } from "@/lib/services/uploadService";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { uploadConfirmSchema } from "@/lib/validations/uploadValidation";
+import { getBucketName, isOwnedStorageUrl } from "@/lib/utils/uploadUtils";
 import { CONTEXT_TO_PROFILE_FIELD } from "@/types/upload";
 
 export async function POST(request: NextRequest) {
@@ -33,6 +34,14 @@ export async function POST(request: NextRequest) {
 
   const { context, publicUrl } = result.data;
   const profileField = CONTEXT_TO_PROFILE_FIELD[context];
+  const bucket = getBucketName(context);
+
+  // The URL comes from the client: it must point to a file this user uploaded
+  // in the matching bucket, otherwise it could reference (and later delete)
+  // another user's file or an external tracking image.
+  if (!isOwnedStorageUrl(publicUrl, bucket, user.id)) {
+    return NextResponse.json({ error: "Invalid file URL" }, { status: 400 });
+  }
 
   // Get current profile to find old image URL
   const { data: currentProfile } = await supabase
@@ -71,8 +80,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 
-  // Clean up old file (fire and forget)
-  if (oldUrl && oldUrl !== publicUrl) {
+  // Clean up old file (fire and forget). Legacy values may point elsewhere:
+  // only delete files that belong to this user.
+  if (oldUrl && oldUrl !== publicUrl && isOwnedStorageUrl(oldUrl, bucket, user.id)) {
     deleteFile(oldUrl).catch((err) => {
       logger.error("Failed to delete old file from storage", {
         error: err,

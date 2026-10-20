@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { reviewSchema } from "@/lib/validations/review";
+import { sanitizeRichText } from "@/lib/utils/sanitizeRichText";
 import { AchievementEngine } from "@/lib/services/achievementEngine";
 import { CoinService } from "@/lib/services/coinService";
 import { suspendedResponse } from "@/lib/services/suspensionGuard";
@@ -11,6 +12,7 @@ import {
   enrichReviewsWithVotes,
 } from "@/lib/utils/reviewVoteQueries";
 import { logger } from "@/lib/logger";
+import { enforceRateLimit } from "@/lib/services/rateLimitService";
 
 interface ReviewRow {
   id: string;
@@ -71,7 +73,7 @@ function toReview(row: ReviewRow, profilesMap: Map<string, ProfileRow>): Review 
     userId: row.user_id,
     gameId: row.game_id,
     rating: row.rating,
-    content: row.content,
+    content: sanitizeRichText(row.content),
     positivePoints: row.positive_points ?? [],
     negativePoints: row.negative_points ?? [],
     createdAt: row.created_at,
@@ -218,6 +220,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const suspended = await suspendedResponse(user.id);
     if (suspended) return suspended;
 
+    const limited = await enforceRateLimit("review", { userId: user.id });
+    if (limited) return limited;
+
     const body = await request.json();
     const parsed = reviewSchema.safeParse(body);
 
@@ -320,6 +325,9 @@ export async function PUT(request: NextRequest): Promise<NextResponse> {
 
     const suspended = await suspendedResponse(user.id);
     if (suspended) return suspended;
+
+    const limited = await enforceRateLimit("review", { userId: user.id });
+    if (limited) return limited;
 
     const body = await request.json();
     const parsed = reviewSchema.safeParse(body);

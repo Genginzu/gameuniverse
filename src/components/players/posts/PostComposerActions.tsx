@@ -39,7 +39,7 @@ export function PostComposerActions({
         type="button"
         onClick={onSubmit}
         disabled={isDisabled}
-        className="from-palette-primary-500 shadow-palette-primary-500/20 inline-flex shrink-0 items-center gap-2 rounded-full bg-linear-to-br to-blue-500 px-5 py-2 text-sm font-medium text-white shadow-lg transition-all duration-300 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+        className="btn-filled inline-flex shrink-0 items-center gap-2 rounded-full px-5 py-2 text-sm font-medium shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isCreating ? (
           <Icon icon="lucide:loader-2" className="h-4 w-4 animate-spin" />

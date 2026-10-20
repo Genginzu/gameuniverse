@@ -155,7 +155,7 @@ export function runTaxonomyRouteSuite(config: TaxonomyRouteSuiteConfig) {
 
       expect(res.status).toBe(200);
       expect(db.callsFor(translationsTable, "ilike")).toEqual([["name", "%alp%"]]);
-      expect(db.callsFor(table, "or")[0]).toEqual([`slug.ilike.%alp%,id.in.(${ID_A})`]);
+      expect(db.callsFor(table, "or")[0]).toEqual([`slug.ilike."%alp%",id.in.(${ID_A})`]);
     });
 
     test("returns 500 when the count query fails", async () => {

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { NextRequest } from "next/server";
 
 // --- Mocks ---
@@ -60,11 +60,16 @@ function createConfirmRequest(body: Record<string, unknown>) {
 
 describe("/api/upload/confirm POST", () => {
   beforeEach(() => {
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "https://test-project.supabase.co");
     mockGetUser.mockReset();
     mockDeleteFile.mockReset();
     mockSelectEqSingle.mockReset();
     mockUpdateEqSelectSingle.mockReset();
     mockSupabase.from.mockClear();
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 
   it("should return 401 when user is not authenticated", async () => {
@@ -115,6 +120,55 @@ describe("/api/upload/confirm POST", () => {
     const response = await POST(request);
 
     expect(response.status).toBe(400);
+  });
+
+  it.each([
+    [
+      "another user's file",
+      "https://test-project.supabase.co/storage/v1/object/public/avatars/victim-uuid/1700000000-abc.webp",
+    ],
+    [
+      "a file from another bucket",
+      "https://test-project.supabase.co/storage/v1/object/public/post-images/user-uuid-123/1700000000-abc.webp",
+    ],
+    [
+      "an external host",
+      "https://evil.test/storage/v1/object/public/avatars/user-uuid-123/1700000000-abc.webp",
+    ],
+    [
+      "a path traversal",
+      "https://test-project.supabase.co/storage/v1/object/public/avatars/user-uuid-123/../victim-uuid/a.webp",
+    ],
+  ])("should return 400 and touch nothing for %s", async (_label, publicUrl) => {
+    mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
+
+    const response = await POST(createConfirmRequest({ context: "avatars", publicUrl }));
+
+    expect(response.status).toBe(400);
+    expect(mockUpdateEqSelectSingle).not.toHaveBeenCalled();
+    expect(mockDeleteFile).not.toHaveBeenCalled();
+  });
+
+  it("should not delete a previous avatar that does not belong to the user", async () => {
+    mockGetUser.mockResolvedValue({ data: { user: mockUser }, error: null });
+    mockSelectEqSingle.mockResolvedValue({
+      data: {
+        avatar_url:
+          "https://test-project.supabase.co/storage/v1/object/public/avatars/victim-uuid/old.webp",
+      },
+      error: null,
+    });
+    mockUpdateEqSelectSingle.mockResolvedValue({
+      data: { id: mockUser.id, avatar_url: validPublicUrl },
+      error: null,
+    });
+
+    const response = await POST(
+      createConfirmRequest({ context: "avatars", publicUrl: validPublicUrl })
+    );
+
+    expect(response.status).toBe(200);
+    expect(mockDeleteFile).not.toHaveBeenCalled();
   });
 
   it("should return 200 with success and profile on successful confirmation", async () => {

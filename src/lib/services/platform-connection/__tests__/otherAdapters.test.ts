@@ -39,7 +39,30 @@ afterEach(() => {
 
 describe("steam connection adapter", () => {
   const claimedId = "https://steamcommunity.com/openid/id/76561198000000000";
-  const fields = new URLSearchParams({ "openid.claimed_id": claimedId, state: "s" });
+  const assertionFor = (returnTo: string) =>
+    new URLSearchParams({
+      state: "s",
+      "openid.ns": "http://specs.openid.net/auth/2.0",
+      "openid.mode": "id_res",
+      "openid.op_endpoint": "https://steamcommunity.com/openid/login",
+      "openid.claimed_id": claimedId,
+      "openid.identity": claimedId,
+      "openid.return_to": returnTo,
+      "openid.response_nonce": "nonce",
+      "openid.signed": "signed,op_endpoint,claimed_id,identity,return_to,response_nonce",
+      "openid.sig": "sig",
+    });
+  const fields = assertionFor(`${redirectUri}?state=s`);
+
+  it("rejects an assertion issued for another return_to without calling Steam", async () => {
+    await expect(
+      steamConnection.obtainCredentials(claimedId, {
+        fields: assertionFor("https://evil.test/callback?state=s"),
+        redirectUri,
+      })
+    ).rejects.toMatchObject({ reason: "auth_failed" });
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
 
   it("embeds the state in the OpenID return_to URL", async () => {
     const url = new URL(

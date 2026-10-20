@@ -28,7 +28,7 @@ const RED =
   "border-red-200 bg-red-50 text-red-700 hover:bg-red-100 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300 dark:hover:bg-red-500/20";
 const STYLES: Record<string, string> = {
   review:
-    "border-blue-200 bg-blue-50 text-blue-700 hover:bg-blue-100 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-300 dark:hover:bg-blue-500/20",
+    "border-palette-primary-200 bg-palette-primary-50 text-palette-primary-700 hover:bg-palette-primary-100 dark:border-palette-primary-500/30 dark:bg-palette-primary-500/10 dark:text-palette-primary-300 dark:hover:bg-palette-primary-500/20",
   content_deleted: RED,
   author_warned:
     "border-amber-200 bg-amber-50 text-amber-800 hover:bg-amber-100 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300 dark:hover:bg-amber-500/20",

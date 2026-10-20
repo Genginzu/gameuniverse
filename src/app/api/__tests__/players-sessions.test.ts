@@ -5,6 +5,10 @@ vi.mock("@/lib/logger", () => ({
   logger: { error: vi.fn(), info: vi.fn(), warn: vi.fn(), debug: vi.fn() },
 }));
 
+vi.mock("@/lib/services/rateLimitService", () => ({
+  enforceRateLimit: vi.fn(async () => null),
+}));
+
 const { mockCreateSession, mockFetchSessions, mockGetSession, mockDeleteSession } = vi.hoisted(
   () => ({
     mockCreateSession: vi.fn(),

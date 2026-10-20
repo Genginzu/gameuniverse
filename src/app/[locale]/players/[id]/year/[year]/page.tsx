@@ -5,7 +5,7 @@ import { PlayerService } from "@/lib/services/playerService";
 import { PlayerStatsService } from "@/lib/services/playerStatsService";
 import { EditorialShell } from "@/components/layout/editorial/EditorialShell";
 import { DynamicAccent } from "@/components/shared/DynamicAccent";
-import { paletteFromHex } from "@/lib/utils/accent-palette";
+import { DEFAULT_PALETTE } from "@/lib/utils/accent-palette";
 import { YearInReviewContent } from "@/components/players/year-in-review/YearInReviewContent";
 
 interface YearInReviewPageProps {
@@ -64,7 +64,7 @@ export default async function YearInReviewPage({ params }: YearInReviewPageProps
 
     return (
       <EditorialShell>
-        <DynamicAccent palette={paletteFromHex("#0077e6", "blue")} as="div">
+        <DynamicAccent palette={DEFAULT_PALETTE} as="div">
           <YearInReviewContent
             yearReview={yearReview}
             playerId={id}

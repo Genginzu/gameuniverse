@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 
 /**
  * Variantes visuelles supportées par `SearchInputField`.
- * - `default` : style legacy bleu pâle (borders bleus, fond `bg-blue-50/50`).
+ * - `default` : style legacy bleu pâle (borders bleus, fond `bg-palette-primary-50/50`).
  * - `editorial` : style éditorial sombre (`--editorial-bg-2`, bordure
  *   `--editorial-line`, hauteur 56px alignée sur `FilterButton`).
  */
@@ -94,7 +94,7 @@ export function SearchInputField({
       <div className="group relative">
         <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
           <svg
-            className="h-5 w-5 text-blue-500 transition-colors group-focus-within:text-blue-600"
+            className="h-5 w-5 text-palette-primary-500 transition-colors group-focus-within:text-palette-primary-600"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -114,7 +114,7 @@ export function SearchInputField({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onFocus={onFocus}
-          className="h-10 w-full rounded-xl border-2 border-blue-200 bg-blue-50/50 pr-10 pl-11 text-sm text-gray-900 placeholder-gray-500 shadow-xs transition-all duration-300 hover:border-blue-300 hover:bg-white hover:shadow-md focus:border-blue-500 focus:bg-white focus:shadow-lg focus:ring-2 focus:ring-blue-500/20 sm:h-12 sm:pr-12 sm:pl-12 sm:text-base dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400 dark:hover:border-gray-500 dark:hover:bg-gray-700 dark:focus:border-blue-500 dark:focus:bg-gray-700"
+          className="h-10 w-full rounded-xl border-2 border-palette-primary-200 bg-palette-primary-50/50 pr-10 pl-11 text-sm text-gray-900 placeholder-gray-500 shadow-xs transition-all duration-300 hover:border-palette-primary-300 hover:bg-white hover:shadow-md focus:border-palette-primary-500 focus:bg-white focus:shadow-lg focus:ring-2 focus:ring-palette-primary-500/20 sm:h-12 sm:pr-12 sm:pl-12 sm:text-base dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:placeholder-gray-400 dark:hover:border-gray-500 dark:hover:bg-gray-700 dark:focus:border-palette-primary-500 dark:focus:bg-gray-700"
         />
 
         {value && (

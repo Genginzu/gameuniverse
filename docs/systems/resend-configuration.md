@@ -191,6 +191,17 @@ https://yourdomain.com/auth/reset-password
 https://yourdomain.com/api/auth/callback
 ```
 
+### Liens email et connexion
+
+Un lien email (`token_hash`) n'ouvre **jamais** de session à l'ouverture :
+`GET /api/auth/callback?token_hash=…` renvoie vers la page `/auth/confirm`, qui
+demande de cliquer sur « Continuer ». Ce bouton fait un `POST` same-origin vers
+`/api/auth/callback`, qui vérifie le jeton. Sans ça, un lien transféré par
+quelqu'un d'autre connectait silencieusement à **son** compte (login CSRF), et
+les scanners de mails consommaient le jeton. Même principe pour la
+réinitialisation de mot de passe : la session n'est établie qu'à la validation
+du nouveau mot de passe. Le flux `code` (PKCE) reste vérifié en `GET`.
+
 ## 📚 Ressources
 
 - [Documentation Resend](https://resend.com/docs)

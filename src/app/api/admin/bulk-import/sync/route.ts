@@ -3,6 +3,7 @@ import { syncSingleField } from "@/lib/services/bulkFieldSync";
 import { BULK_IMPORTABLE_COLUMNS, isBulkFieldAlias } from "@/lib/services/igdb-fields/registry";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
+import { adminGuardResponse } from "@/lib/auth-admin";
 
 const WORKERS = 2;
 // With 2 workers each waiting 500ms per sync, combined throughput stays at ~4
@@ -28,6 +29,9 @@ const FIELD_FALLBACKS: Record<string, { column: string; fallback: string | numbe
  * - All:    { all: true, field }      — server fetches & syncs all missing games
  */
 export async function POST(request: NextRequest) {
+  const denied = await adminGuardResponse();
+  if (denied) return denied;
+
   let gameIds: Array<{ id: string; igdbId: number }> | null = null;
   let field: string | undefined;
   let allMode = false;

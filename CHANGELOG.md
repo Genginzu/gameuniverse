@@ -1,5 +1,68 @@
 # Changelog
 
+## [0.4.2](https://github.com/Genginzu/gameuniverse/compare/gameuniverse-v0.4.1...gameuniverse-v0.4.2) (2026-10-19)
+
+
+### Bug Fixes
+
+* business logic, privileges, rate limiting and messaging hardening ([#400](https://github.com/Genginzu/gameuniverse/issues/400)) ([00e69dc](https://github.com/Genginzu/gameuniverse/commit/00e69dc230416669f27ab49b36d730d7a736d51a))
+* harden admin RLS policies and coaching session writes ([#394](https://github.com/Genginzu/gameuniverse/issues/394)) ([6d9bc6f](https://github.com/Genginzu/gameuniverse/commit/6d9bc6f5425fc120ab90f2dbe45af0682c1d8241))
+* XSS, membership, message, coach profile and upload hardening ([#396](https://github.com/Genginzu/gameuniverse/issues/396)) ([ac72362](https://github.com/Genginzu/gameuniverse/commit/ac72362eee56bc5eae957e1fbadd0a884df826b0))
+
+## [0.4.1](https://github.com/Genginzu/gameuniverse/compare/gameuniverse-v0.4.0...gameuniverse-v0.4.1) (2026-10-18)
+
+
+### Bug Fixes
+
+* [#385](https://github.com/Genginzu/gameuniverse/issues/385) use the shared admin check on coaching and dispute routes ([#392](https://github.com/Genginzu/gameuniverse/issues/392)) ([40c2b56](https://github.com/Genginzu/gameuniverse/commit/40c2b566e624af02c9f5c286146cede9b7499730))
+
+## [0.4.0](https://github.com/Genginzu/gameuniverse/compare/gameuniverse-v0.3.0...gameuniverse-v0.4.0) (2026-10-18)
+
+
+### Features
+
+* [#172](https://github.com/Genginzu/gameuniverse/issues/172) content reporting, moderation and suspensions ([#340](https://github.com/Genginzu/gameuniverse/issues/340)) ([9dd16dc](https://github.com/Genginzu/gameuniverse/commit/9dd16dcff745219603ebcc64f0788c4303632d0f))
+* [#266](https://github.com/Genginzu/gameuniverse/issues/266) add remove-item error toast + confirm flow test ([#301](https://github.com/Genginzu/gameuniverse/issues/301)) ([6212c38](https://github.com/Genginzu/gameuniverse/commit/6212c388396b2ddc8f4f4cf7d4cd9f7b7a42f69a))
+* [#270](https://github.com/Genginzu/gameuniverse/issues/270) editorial footer for refactored public pages ([#300](https://github.com/Genginzu/gameuniverse/issues/300)) ([b4768b7](https://github.com/Genginzu/gameuniverse/commit/b4768b71e10f216531668aad8b19e852fd956b0e))
+* [#318](https://github.com/Genginzu/gameuniverse/issues/318) centre de notifications unifie (page, filtres, lu/non-lu, badge rail) ([#339](https://github.com/Genginzu/gameuniverse/issues/339)) ([547ebc3](https://github.com/Genginzu/gameuniverse/commit/547ebc3c7dcce7f8c66e7a8e52bb7f1894e83b36))
+* [#323](https://github.com/Genginzu/gameuniverse/issues/323) add filter tabs to global search overlay ([#335](https://github.com/Genginzu/gameuniverse/issues/335)) ([08b8df3](https://github.com/Genginzu/gameuniverse/commit/08b8df36b8db92b8c923c4ad97bd53fa9052dd43))
+* [#336](https://github.com/Genginzu/gameuniverse/issues/336) add legal pages, cookie consent and footer legal links ([#337](https://github.com/Genginzu/gameuniverse/issues/337)) ([3d3d6ae](https://github.com/Genginzu/gameuniverse/commit/3d3d6aee898c7dd707f37935b1929ca5ac6d1370))
+* [#85](https://github.com/Genginzu/gameuniverse/issues/85) navigation par tags dans les posts ([#306](https://github.com/Genginzu/gameuniverse/issues/306)) ([785c291](https://github.com/Genginzu/gameuniverse/commit/785c291674cd2bd45909398e3d80c79075cfaecb))
+* [#86](https://github.com/Genginzu/gameuniverse/issues/86) enriched notifications (friends, review votes, mentions, achievements) ([#333](https://github.com/Genginzu/gameuniverse/issues/333)) ([c46f1e7](https://github.com/Genginzu/gameuniverse/commit/c46f1e70c7679a9d9102822a438800ee7ffac520))
+* [#87](https://github.com/Genginzu/gameuniverse/issues/87) fil d'actualite global (feed amis) ([#332](https://github.com/Genginzu/gameuniverse/issues/332)) ([d0e580b](https://github.com/Genginzu/gameuniverse/commit/d0e580b7d95afb7f6612ad8a9cc697fd12f30b5f))
+* [#88](https://github.com/Genginzu/gameuniverse/issues/88) groupes et communautes thematiques ([#341](https://github.com/Genginzu/gameuniverse/issues/341)) ([fe0398c](https://github.com/Genginzu/gameuniverse/commit/fe0398c273110d44a6d28d204cf241ccacecf830))
+* [#89](https://github.com/Genginzu/gameuniverse/issues/89) follow counts, profile counters, followers/following tabs ([#334](https://github.com/Genginzu/gameuniverse/issues/334)) ([7141130](https://github.com/Genginzu/gameuniverse/commit/714113045e129ba635d7916bd59467e68b901941))
+* [#97](https://github.com/Genginzu/gameuniverse/issues/97) auto-generated collection suggestions from library ([#309](https://github.com/Genginzu/gameuniverse/issues/309)) ([459f022](https://github.com/Genginzu/gameuniverse/commit/459f0220ac71170d86d35f410352e6c8d05b0147))
+* [#98](https://github.com/Genginzu/gameuniverse/issues/98) sync multi-plateformes des bibliothèques (Steam/Xbox/PSN) + connexions ([#338](https://github.com/Genginzu/gameuniverse/issues/338)) ([25f3b00](https://github.com/Genginzu/gameuniverse/commit/25f3b00cc6b3392312647785582158af60b3c36a))
+* [#99](https://github.com/Genginzu/gameuniverse/issues/99) backlog manager (priorisation, temps restant, suggestions) ([#305](https://github.com/Genginzu/gameuniverse/issues/305)) ([3abebd9](https://github.com/Genginzu/gameuniverse/commit/3abebd95a22595c63856922017c5a6f83f952a7c))
+* collections notes, coins 7-day stats, editorial UI polish ([#292](https://github.com/Genginzu/gameuniverse/issues/292)) ([c78f3bc](https://github.com/Genginzu/gameuniverse/commit/c78f3bc7f64166c92e56114362efc854d59332f8))
+* statistiques de collection avancees avec graphiques ([#101](https://github.com/Genginzu/gameuniverse/issues/101)) ([#304](https://github.com/Genginzu/gameuniverse/issues/304)) ([a726ed1](https://github.com/Genginzu/gameuniverse/commit/a726ed17321c0f6ba888dec70a2011e9364a6a84))
+* unification .agents/ + hooks graphify + output rules + guard-rails ([#272](https://github.com/Genginzu/gameuniverse/issues/272)) ([3842f4b](https://github.com/Genginzu/gameuniverse/commit/3842f4b92f7b81a5baa9a286df8d511065014ce0))
+
+
+### Bug Fixes
+
+* [#372](https://github.com/Genginzu/gameuniverse/issues/372) make coins, XP and predictions server-only writes ([#382](https://github.com/Genginzu/gameuniverse/issues/382)) ([82896c2](https://github.com/Genginzu/gameuniverse/commit/82896c2ab5510fc8149fa38bf0f48cd0db4a4c3f))
+* [#375](https://github.com/Genginzu/gameuniverse/issues/375) restrict profile email exposure ([#383](https://github.com/Genginzu/gameuniverse/issues/383)) ([d98877a](https://github.com/Genginzu/gameuniverse/commit/d98877a7a9df9bbf83b4fa8cfac70c0734df3a4b))
+* [#376](https://github.com/Genginzu/gameuniverse/issues/376) require auth and rate limit IGDB game import ([#384](https://github.com/Genginzu/gameuniverse/issues/384)) ([5a3ef1f](https://github.com/Genginzu/gameuniverse/commit/5a3ef1f510e93eaf3563f139e394b7d8762a93ae))
+* [#377](https://github.com/Genginzu/gameuniverse/issues/377) harden coaching reviews RLS ([#381](https://github.com/Genginzu/gameuniverse/issues/381)) ([1761e88](https://github.com/Genginzu/gameuniverse/commit/1761e880d6072de16683a961b171f7f38d67d679))
+* [#386](https://github.com/Genginzu/gameuniverse/issues/386) make profiles.level a server-only write ([#389](https://github.com/Genginzu/gameuniverse/issues/389)) ([c480a50](https://github.com/Genginzu/gameuniverse/commit/c480a508a7376fe6e955774609e5a353925dabb9))
+* [#387](https://github.com/Genginzu/gameuniverse/issues/387) read user emails through the auth admin API ([#388](https://github.com/Genginzu/gameuniverse/issues/388)) ([7b232ca](https://github.com/Genginzu/gameuniverse/commit/7b232ca3ebf6a1188d941f3d6d8908d814ab562e))
+* [#390](https://github.com/Genginzu/gameuniverse/issues/390) derive admin role from app_metadata only ([#391](https://github.com/Genginzu/gameuniverse/issues/391)) ([aa042b3](https://github.com/Genginzu/gameuniverse/commit/aa042b353c3c05e80d17326b17183a6fd701d5a1))
+
+
+### Refactoring
+
+* [#268](https://github.com/Genginzu/gameuniverse/issues/268) migrate legacy settings components to editorial inline, drop descendant theming CSS ([#302](https://github.com/Genginzu/gameuniverse/issues/302)) ([e860d42](https://github.com/Genginzu/gameuniverse/commit/e860d423528d2fb1413d4561d31bb66feed59e79))
+* colocate unit tests in src/**/__tests__ like synaps ([99f6fed](https://github.com/Genginzu/gameuniverse/commit/99f6fedd6e6e6caf38d205382ec754ca2461b3f2))
+* dedupe shared code + finish editorial migration for collections ([#308](https://github.com/Genginzu/gameuniverse/issues/308)) ([bd982b9](https://github.com/Genginzu/gameuniverse/commit/bd982b90c3b504c86d0e91e26c961f0e5da09dd8))
+
+
+### Documentation
+
+* add agent skills config (issue tracker, triage labels, domain docs) ([#367](https://github.com/Genginzu/gameuniverse/issues/367)) ([5ca8b06](https://github.com/Genginzu/gameuniverse/commit/5ca8b06079b1e0adbd91bf7ba5a3c0bf8cdb16b6))
+* record rejected features in .out-of-scope (themes, AI chatbot) ([#379](https://github.com/Genginzu/gameuniverse/issues/379)) ([6aaacf6](https://github.com/Genginzu/gameuniverse/commit/6aaacf6e54dd4dfba2ed2a74b7abd2c811350898))
+
 ## [0.3.0](https://github.com/Genginzu/gameuniverse/compare/gameuniverse-v0.2.0...gameuniverse-v0.3.0) (2026-06-07)
 
 

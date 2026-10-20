@@ -35,9 +35,9 @@ export function AdminSidebarUserMenu({ user, signOut }: AdminSidebarUserMenuProp
       <div className="relative" ref={dropdownRef}>
         <button
           onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-          className="mb-3 flex w-full items-center rounded-xl p-2 text-left hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:outline-hidden dark:hover:bg-gray-800"
+          className="focus:ring-palette-primary-500 mb-3 flex w-full items-center rounded-xl p-2 text-left hover:bg-gray-50 focus:ring-2 focus:outline-hidden dark:hover:bg-gray-800"
         >
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-500">
+          <div className="bg-palette-primary-500 flex h-8 w-8 items-center justify-center rounded-full">
             <Icon icon="fa:user" className="h-4 w-4 text-white" />
           </div>
           <div className="ml-3 min-w-0 flex-1">

@@ -1,7 +1,8 @@
 import type { MetadataRoute } from "next";
 import { createServerClient } from "@/lib/supabase-server";
+import { getSiteUrl } from "@/lib/utils/siteUrl";
 
-const BASE_URL = "https://gameuniverse.gg";
+const BASE_URL = getSiteUrl();
 const LOCALES = ["fr", "en"] as const;
 
 type Frequency = MetadataRoute.Sitemap[number]["changeFrequency"];

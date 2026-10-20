@@ -52,7 +52,7 @@ export function CoachSettingsContent() {
           <p className="text-editorial-muted text-sm">{t("loginRequired")}</p>
           <Link
             href="/auth"
-            className="from-palette-secondary-500 to-palette-primary-500 rounded-lg bg-linear-to-r px-4 py-2 text-sm font-medium text-white hover:opacity-90"
+            className="btn-filled rounded-lg px-4 py-2 text-sm font-medium text-white"
           >
             {t("login")}
           </Link>
@@ -80,7 +80,7 @@ export function CoachSettingsContent() {
               disabled={disabled}
               className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium whitespace-nowrap transition-all ${
                 activeTab === tab
-                  ? "from-palette-secondary-500 to-palette-primary-500 bg-linear-to-r text-white"
+                  ? "from-cta-from to-cta-to bg-linear-to-r text-white"
                   : disabled
                     ? "cursor-not-allowed bg-white/5 text-white/30"
                     : "text-editorial-muted bg-white/10 hover:bg-white/15"

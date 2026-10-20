@@ -56,17 +56,17 @@ function SyncJobProgressBar({ bar, t }: { bar: SyncProgressBar; t: Translator })
               <Icon icon="mdi:loading" className="text-palette-secondary-500 size-3 animate-spin" />
             )}
           </span>
-          <span className="tabular-nums text-gray-500 dark:text-gray-400">{progressLabel}</span>
+          <span className="text-gray-500 tabular-nums dark:text-gray-400">{progressLabel}</span>
         </div>
       ) : (
         <div className="mb-1 flex justify-end text-xs">
-          <span className="tabular-nums text-gray-500 dark:text-gray-400">{progressLabel}</span>
+          <span className="text-gray-500 tabular-nums dark:text-gray-400">{progressLabel}</span>
         </div>
       )}
       <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
         <div
           className={`h-full rounded-full transition-all duration-500 ${
-            bar.done ? "bg-green-500" : "from-palette-secondary-500 to-palette-primary-500 bg-linear-to-r"
+            bar.done ? "bg-green-500" : "from-cta-from to-cta-to bg-linear-to-r"
           }`}
           style={{ width: `${bar.percent}%` }}
         />

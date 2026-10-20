@@ -7,7 +7,7 @@ import { GameDetailsSkeleton } from "@/components/games/details/GameDetailsSkele
 import { GameService } from "@/lib/services/gameService";
 import { EditorialShell } from "@/components/layout/editorial/EditorialShell";
 import { DynamicAccent } from "@/components/shared/DynamicAccent";
-import { paletteFromHex } from "@/lib/utils/accent-palette";
+import { DEFAULT_PALETTE } from "@/lib/utils/accent-palette";
 import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
 import { JsonLd } from "@/components/shared/JsonLd";
@@ -50,8 +50,8 @@ async function GameDetailsLoader({ slug, locale }: { slug: string; locale: strin
       ...(game.releaseDate && { datePublished: game.releaseDate }),
     };
 
-    // Génère la palette d'accent dynamique depuis la couleur extraite de la cover
-    const palette = paletteFromHex(game.accentColor ?? null, game.slug);
+    // Accent fixe orange (DA éditoriale) au lieu de la couleur extraite de la cover.
+    const palette = DEFAULT_PALETTE;
 
     return (
       <>

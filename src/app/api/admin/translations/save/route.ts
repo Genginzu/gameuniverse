@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { requireAdmin } from "@/lib/auth-admin";
 import { saveTranslationBodySchema } from "@/lib/validations/admin-translation";
 import { upsertTranslation } from "@/lib/services/translationService";
@@ -49,9 +50,12 @@ export async function PUT(request: NextRequest) {
       fields: translations,
     });
 
-    // Refresh stats cache before responding so SWR reads fresh data
+    // Refresh stats cache before responding so SWR reads fresh data.
+    // refresh_translation_stats is service_role only (migration 20261018000013).
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error: refreshError } = await (supabase as any).rpc("refresh_translation_stats");
+    const { error: refreshError } = await (getSupabaseAdmin() as any).rpc(
+      "refresh_translation_stats"
+    );
 
     if (refreshError) {
       logger.error("Stats refresh failed", { error: refreshError });

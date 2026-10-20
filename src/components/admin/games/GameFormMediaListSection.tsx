@@ -66,6 +66,7 @@ export function MediaListSection({
                       src={form.watch(`${fieldName}.${idx}.url`)}
                       alt={form.watch(`${fieldName}.${idx}.alt_text`) || ""}
                       fill
+                      unoptimized
                       className="rounded-lg object-cover"
                       onError={(e) => {
                         (e.target as HTMLImageElement).parentElement!.style.display = "none";

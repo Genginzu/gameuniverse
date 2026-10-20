@@ -62,7 +62,9 @@ overview du profil et pour la rétrocompatibilité de la page « Année en Revue
 
 ## Confidentialité
 
-Contrôlée par le champ `stats_private` (BOOLEAN, défaut FALSE) sur `profiles`.
+Contrôlée par le champ `stats_private` (BOOLEAN, défaut FALSE) sur `profiles`,
+modifiable par le joueur depuis `/settings` → section « Confidentialité »
+(interrupteur « Profil privé », `PATCH /api/profile { stats_private }`).
 
 - **Stats publiques** (par défaut) — accessibles à tous les visiteurs.
 - **Stats privées + visiteur** — message « Statistiques privées » avec icône
@@ -70,6 +72,15 @@ Contrôlée par le champ `stats_private` (BOOLEAN, défaut FALSE) sur `profiles`
 - **Propriétaire du profil** — voit toujours ses propres stats.
 - **Objectifs personnels** — toujours masqués aux visiteurs, même sur profil
   public.
+- **Profil privé = données de jeu et graphe social masqués** (migration
+  `20261018000014_enforce_stats_private.sql`, appliqué en RLS) : bibliothèque
+  (`user_library`), sessions (`game_sessions`), amitiés acceptées
+  (`friendships`) et abonnements (`player_subscriptions`) ne sont visibles que
+  par le joueur (et les admins). Une amitié ou un abonnement est masqué aux
+  tiers dès qu'un des deux côtés est privé. `get_player_activity` renvoie une
+  page vide pour un profil privé, et les fils d'actualité (`/feed`) n'affichent
+  plus les ajouts, temps de jeu et sessions d'un ami privé. Les visiteurs
+  reçoivent simplement des listes vides sur `/api/players/[id]/*`.
 
 ## Dashboard — 10 sections
 

@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { IGDBService } from "@/lib/services/igdbService";
 import { logger } from "@/lib/logger";
+import { adminGuardResponse } from "@/lib/auth-admin";
 
 const CONCURRENCY = 1;
 const DELAY_MS = 300;
@@ -14,6 +15,9 @@ const DELAY_MS = 300;
  * Body: { games: Array<{ id: string; igdbId: number; slug: string }> }
  */
 export async function POST(request: NextRequest) {
+  const denied = await adminGuardResponse();
+  if (denied) return denied;
+
   let games: Array<{ id: string; igdbId: number; slug: string }>;
 
   try {

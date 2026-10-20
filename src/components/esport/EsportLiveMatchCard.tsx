@@ -49,9 +49,7 @@ export function LiveMatchCard({ match }: { match: LiveMatch }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
-                  stream.main
-                    ? "bg-editorial-accent text-white hover:opacity-90"
-                    : "text-editorial-muted bg-white/10 hover:bg-white/15"
+                  stream.main ? "btn-filled" : "text-editorial-muted bg-white/10 hover:bg-white/15"
                 }`}
               >
                 <Icon icon="mdi:play-circle" className="h-3.5 w-3.5" />

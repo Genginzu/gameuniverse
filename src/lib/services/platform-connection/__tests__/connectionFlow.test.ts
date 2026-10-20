@@ -27,14 +27,22 @@ vi.mock("@/lib/supabase-server", () => ({
     if (env.db.crash) throw new Error("supabase unavailable");
     return {
       auth: { getUser: async () => ({ data: { user: env.db.user } }) },
-      from: () => ({
-        upsert: async (row: Record<string, unknown>, options: unknown) => {
-          env.db.upserts.push({ row, options });
-          return { error: env.db.upsertError };
-        },
-      }),
+      from: () => {
+        throw new Error("linked platform rows must be written with the service role");
+      },
     };
   },
+}));
+
+vi.mock("@/lib/supabase-admin", () => ({
+  getSupabaseAdmin: () => ({
+    from: () => ({
+      upsert: async (row: Record<string, unknown>, options: unknown) => {
+        env.db.upserts.push({ row, options });
+        return { error: env.db.upsertError };
+      },
+    }),
+  }),
 }));
 
 import {

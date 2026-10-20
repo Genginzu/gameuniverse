@@ -5,6 +5,7 @@ import { discussionMessageSent } from "@/lib/services/notifications";
 import { sendMessageSchema } from "@/lib/validations/discussion";
 import { logger } from "@/lib/logger";
 import { CoinService } from "@/lib/services/coinService";
+import { enforceRateLimit } from "@/lib/services/rateLimitService";
 
 type RouteContext = { params: Promise<{ conversationId: string }> };
 
@@ -62,6 +63,9 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     if (authError || !user) {
       return NextResponse.json({ error: "Authentication required" }, { status: 401 });
     }
+
+    const limited = await enforceRateLimit("message", { userId: user.id });
+    if (limited) return limited;
 
     const body = await request.json();
     const parsed = sendMessageSchema.safeParse(body);

@@ -60,7 +60,7 @@ export default function AdminSidebar({
   const roleBadgeClasses =
     user.role === "admin"
       ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
-      : "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
+      : "bg-palette-primary-100 text-palette-primary-800 dark:bg-palette-primary-900/30 dark:text-palette-primary-400";
 
   const sidebarContent = (
     <div className="flex h-full flex-col">

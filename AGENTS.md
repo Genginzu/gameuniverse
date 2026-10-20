@@ -94,7 +94,7 @@ Integration tests live in `test/integration/`, E2E in `test/e2e/`.
 Use Vitest only — **never** `bun:test`. See `.agents/steering/testing.md`.
 
 Vitest has a two-project setup (`node` vs `dom`) configured in
-`vitest.config.ts`, selected by extension: any test that renders React or uses
+`vitest.config.mts`, selected by extension: any test that renders React or uses
 `renderHook` must be named `*.test.tsx` (runs in jsdom); `*.test.ts` runs in
 node and fails with "document is not defined" if it touches the DOM.
 Tests must import and exercise the real code — never re-implement production
@@ -143,7 +143,39 @@ Two locales: `fr` (default) and `en`. Every user-facing string must use
 
 All schema changes go in `supabase/migrations/YYYYMMDD00000N_description.sql`.
 **Never** put migration SQL in `scripts/` or `src/`. See
-`.agents/steering/database-migrations.md`.
+`.agents/steering/database.md`.
+
+**No automatic grants** (migration `20261018000017`): new tables, sequences and
+functions in `public` are granted to `service_role` only. Any migration creating
+an object that clients (`anon` / `authenticated`) must reach through PostgREST
+**must** `GRANT` it explicitly, and only the privileges it needs. Server-only
+objects get no client grant. RPCs are `SECURITY DEFINER` only when required,
+with `SET search_path` and an `auth.uid()` / `is_admin()` check inside.
+Full rules: `docs/systems/database-privileges.md`.
+
+### Security rules (from the 2026-10 audit)
+
+The anon key and user JWT are public: any client can call `/rest/v1` and
+`/rest/v1/rpc` directly, bypassing API routes. RLS, grants and triggers are the
+real perimeter.
+
+- **Roles**: admin/contributor come from `app_metadata.role` only
+  (`getUserRoleFromUser`, `public.is_admin()`). Never trust `user_metadata`.
+- **Admin routes**: call `adminGuardResponse()` / `requireAdminUser()` first,
+  then use `getSupabaseAdmin()` for writes RLS would block.
+- **Server-only columns** (prices, payment status, balances, ratings,
+  verification, roles, Stripe ids, tokens): protect with a `BEFORE INSERT OR
+  UPDATE` trigger for `authenticated`/`anon` callers and write them with the
+  service role. Never take a price, amount, winner or owner id from the client.
+- **State machines / money**: claim transitions atomically
+  (`.eq("status", current)`), use Stripe idempotency keys, keep webhooks
+  idempotent (`stripe_webhook_events`).
+- **User HTML**: sanitize with `sanitizeRichText()` on write and on read.
+- **Rate limiting**: every user-generated write and anonymous search calls
+  `enforceRateLimit(action, identity)` (`src/lib/services/rateLimitService.ts`).
+  Add new actions to `RATE_LIMITS`. Docs: `docs/systems/rate-limiting.md`.
+- **Privacy**: `profiles.stats_private` hides library, sessions, activity,
+  friends and subscriptions (RLS via `is_stats_private()`).
 
 ### IGDB field tracking
 
@@ -191,7 +223,7 @@ when touching the related area:
 - `project-architecture.md` — full hook/component/service inventory
 - `code-quality.md` — file organization, placement rules, SWR usage
 - `testing.md` — Vitest-only, test colocation, targeted commands
-- `database-migrations.md` — Supabase-only migration rules
+- `database.md` — Supabase migrations, explicit grants (no default privileges), seeds
 - `i18n-translations.md` — bilingual key requirements
 - `design-glassmorphism.md` — design system + gradient rules
 - `frontend-mobile-first.md` — responsive patterns + breakpoints

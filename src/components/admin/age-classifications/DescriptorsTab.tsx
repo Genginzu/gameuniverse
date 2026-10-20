@@ -142,7 +142,7 @@ export function DescriptorsTab({ ratingSystemId }: DescriptorsTabProps) {
       </div>
 
       {showForm && (
-        <div className="rounded-xl border border-blue-200 bg-blue-50/50 p-4 dark:border-blue-800 dark:bg-blue-900/20">
+        <div className="border-palette-primary-200 bg-palette-primary-50/50 dark:border-palette-primary-800 dark:bg-palette-primary-900/20 rounded-xl border p-4">
           <div className="mb-4 flex items-center justify-between">
             <h3 className="font-medium text-gray-900 dark:text-white">
               {editingDescriptor ? t("editTitle", { code: editingDescriptor.code }) : t("newTitle")}

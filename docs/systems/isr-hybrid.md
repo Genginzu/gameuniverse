@@ -81,5 +81,5 @@ En production, vérifier les headers de réponse :
 
 Pour vérifier le contenu pré-rendu :
 ```bash
-curl -s https://gameuniverse.gg/fr/games | grep -o '<h3[^>]*>[^<]*</h3>' | head -5
+curl -s https://www.gamersuniverse.fr/fr/games | grep -o '<h3[^>]*>[^<]*</h3>' | head -5
 ```

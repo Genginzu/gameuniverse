@@ -1,10 +1,13 @@
 import type { PlatformConnectionAdapter } from "@/types/platform-connection";
+import {
+  STEAM_OPENID_URL,
+  isValidSteamVerification,
+  parseSteamAssertion,
+} from "@/lib/services/steamOpenId";
 import { PlatformConnectionError } from "../errors";
 
-const OPENID_URL = "https://steamcommunity.com/openid/login";
 const OPENID_NS = "http://specs.openid.net/auth/2.0";
 const IDENTIFIER_SELECT = "http://specs.openid.net/auth/2.0/identifier_select";
-const STEAM_ID_REGEX = /^https?:\/\/steamcommunity\.com\/openid\/id\/(\d+)$/;
 
 interface SteamPlayerSummary {
   personaname: string;
@@ -14,15 +17,18 @@ interface SteamPlayerSummary {
   timecreated?: number;
 }
 
-async function verifyOpenIdAssertion(fields: URLSearchParams): Promise<boolean> {
-  const verifyParams = new URLSearchParams(fields);
-  verifyParams.set("openid.mode", "check_authentication");
-  const res = await fetch(OPENID_URL, {
+async function verifyOpenIdAssertion(
+  fields: URLSearchParams,
+  expectedReturnTo: string
+): Promise<string | null> {
+  const assertion = parseSteamAssertion(fields, expectedReturnTo);
+  if (!assertion) return null;
+  const res = await fetch(STEAM_OPENID_URL, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: verifyParams.toString(),
+    body: assertion.verifyBody.toString(),
   });
-  return (await res.text()).includes("is_valid:true");
+  return isValidSteamVerification(await res.text()) ? assertion.steamId : null;
 }
 
 async function fetchPlayerSummary(steamId: string): Promise<SteamPlayerSummary | null> {
@@ -52,14 +58,15 @@ export const steamConnection: PlatformConnectionAdapter = {
       "openid.identity": IDENTIFIER_SELECT,
       "openid.claimed_id": IDENTIFIER_SELECT,
     });
-    return `${OPENID_URL}?${params.toString()}`;
+    return `${STEAM_OPENID_URL}?${params.toString()}`;
   },
 
-  async obtainCredentials(claimedId, { fields }) {
-    const steamId = claimedId.match(STEAM_ID_REGEX)?.[1];
-    if (!steamId || !(await verifyOpenIdAssertion(fields))) {
-      throw new PlatformConnectionError("auth_failed");
-    }
+  async obtainCredentials(_claimedId, { fields, redirectUri }) {
+    const state = fields.get("state");
+    const steamId = state
+      ? await verifyOpenIdAssertion(fields, `${redirectUri}?state=${state}`)
+      : null;
+    if (!steamId) throw new PlatformConnectionError("auth_failed");
     return { accessToken: null, refreshToken: null, expiresIn: null, accountId: steamId };
   },
 

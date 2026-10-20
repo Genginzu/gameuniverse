@@ -141,7 +141,7 @@ function Chip({
       aria-pressed={active}
       className={`min-h-9 rounded-full px-3 text-sm transition-colors ${
         active
-          ? "bg-editorial-accent text-black"
+          ? "btn-filled"
           : "border-editorial-line text-editorial-muted hover:text-white border"
       }`}
     >

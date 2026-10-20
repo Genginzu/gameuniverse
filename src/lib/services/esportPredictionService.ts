@@ -1,8 +1,10 @@
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { logger } from "@/lib/logger";
 import { CoinService } from "@/lib/services/coinService";
 import { getMatchById } from "@/lib/pandascore/client";
 import { untypedTable } from "@/lib/utils/untypedTable";
+import type { BettableMatch } from "@/lib/services/esportPredictionGuard";
 
 export interface EsportPrediction {
   id: string;
@@ -29,43 +31,33 @@ export interface PredictionLeaderboardEntry {
 
 export async function placePrediction(
   playerId: string,
-  matchId: number,
-  matchName: string,
-  game: string,
-  predictedWinnerId: number,
-  predictedWinnerName: string,
+  match: BettableMatch,
   amount: number
 ): Promise<EsportPrediction> {
-  const supabase = await createRouteHandlerClient();
+  // Atomically debit coins and insert the prediction via a SECURITY DEFINER
+  // DB function. The service-role client is the only role allowed to execute it
+  // (issue #372), so a client can neither insert a prediction directly nor
+  // split the debit from the insert. Match facts come from PandaScore
+  // (fetchBettableMatch), never from the request body.
+  const supabase = getSupabaseAdmin();
 
-  // Deduct coins
-  await CoinService.debitCoins(
-    playerId,
-    amount,
-    "prediction_bet",
-    undefined,
-    `Pronostic: ${matchName}`
-  );
+  const { data, error } = await supabase.rpc("place_esport_prediction", {
+    p_player_id: playerId,
+    p_match_id: match.matchId,
+    p_match_name: match.matchName,
+    p_game: match.game,
+    p_predicted_winner_id: match.winnerId,
+    p_predicted_winner_name: match.winnerName,
+    p_amount: amount,
+  });
 
-  const { data, error } = await untypedTable(supabase, "esport_predictions")
-    .insert({
-      player_id: playerId,
-      match_id: matchId,
-      match_name: matchName,
-      game,
-      predicted_winner_id: predictedWinnerId,
-      predicted_winner_name: predictedWinnerName,
-      amount,
-    })
-    .select()
-    .single();
-
-  if (error) {
-    logger.error("Failed to place prediction", { playerId, matchId, error });
-    throw new Error("Failed to place prediction");
+  if (error || !data) {
+    logger.error("Failed to place prediction", { playerId, matchId: match.matchId, error });
+    // Surface the function's own message (e.g. "Insufficient balance").
+    throw new Error(error?.message || "Failed to place prediction");
   }
 
-  return mapPrediction(data);
+  return mapPrediction(data as Record<string, unknown>);
 }
 
 export async function getMyPredictions(playerId: string): Promise<EsportPrediction[]> {
@@ -97,7 +89,9 @@ export async function resolvePrediction(matchId: number): Promise<number> {
  * Can be called from cron without re-fetching from PandaScore.
  */
 export async function resolvePredictionsForMatch(matchId: number, winnerId: number): Promise<number> {
-  const supabase = await createRouteHandlerClient();
+  // Server-internal callback (no user context): use the service-role client so
+  // prediction updates and coin credits bypass the client-only RLS (issue #372).
+  const supabase = getSupabaseAdmin();
 
   // Get all pending predictions for this match
   const { data: predictions, error } = await untypedTable(supabase, "esport_predictions")
@@ -113,13 +107,19 @@ export async function resolvePredictionsForMatch(matchId: number, winnerId: numb
     const won = pred.predicted_winner_id === winnerId;
     const payout = won ? pred.amount * 2 : 0;
 
-    await untypedTable(supabase, "esport_predictions")
+    // Claim the row atomically: concurrent resolver runs (cron + Edge callback)
+    // must not settle and credit the same prediction twice.
+    const { data: claimed } = await untypedTable(supabase, "esport_predictions")
       .update({
         status: won ? "won" : "lost",
         payout,
         resolved_at: new Date().toISOString(),
       })
-      .eq("id", pred.id);
+      .eq("id", pred.id)
+      .eq("status", "pending")
+      .select("id");
+
+    if (!claimed?.length) continue;
 
     if (won) {
       await CoinService.creditCoins(

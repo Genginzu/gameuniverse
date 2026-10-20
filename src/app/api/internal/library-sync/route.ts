@@ -3,6 +3,7 @@ import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { logger } from "@/lib/logger";
 import { runLibrarySyncJob } from "@/lib/services/library-sync";
 import { isSyncablePlatform } from "@/types/library-sync";
+import { bearerToken, safeEqual } from "@/lib/utils/safeEqual";
 
 /** Give the after() sync pass room to run. */
 export const maxDuration = 60;
@@ -10,9 +11,10 @@ export const maxDuration = 60;
 function isAuthorized(request: NextRequest): boolean {
   const secret = process.env.CRON_SECRET;
   if (!secret) return false;
-  const header = request.headers.get("authorization");
-  const bearer = header?.startsWith("Bearer ") ? header.slice(7) : null;
-  return bearer === secret || request.headers.get("x-cron-secret") === secret;
+  return (
+    safeEqual(bearerToken(request.headers.get("authorization")), secret) ||
+    safeEqual(request.headers.get("x-cron-secret"), secret)
+  );
 }
 
 /**

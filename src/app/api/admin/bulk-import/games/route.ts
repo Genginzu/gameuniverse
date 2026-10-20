@@ -6,6 +6,7 @@ import {
   isBulkFieldAlias,
 } from "@/lib/services/igdb-fields/registry";
 import { logger } from "@/lib/logger";
+import { adminGuardResponse } from "@/lib/auth-admin";
 
 /**
  * GET /api/admin/bulk-import/games?field=cover&limit=20&offset=0
@@ -13,6 +14,9 @@ import { logger } from "@/lib/logger";
  * excluding games where the field has been manually overridden by an admin.
  */
 export async function GET(request: NextRequest) {
+  const denied = await adminGuardResponse();
+  if (denied) return denied;
+
   const { searchParams } = request.nextUrl;
   const field = searchParams.get("field");
   const limit = Math.min(parseInt(searchParams.get("limit") || "20", 10), 1000);

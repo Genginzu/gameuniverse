@@ -72,7 +72,8 @@ Parameters must be prefixed `p_`.
 - `IF NOT EXISTS` / `IF EXISTS` for idempotence
 - `COMMENT ON TABLE/COLUMN` for documentation
 - RLS enabled on every table
-- Policies: SELECT public, INSERT/UPDATE/DELETE for authenticated
+- Policies scoped to the owner / role; no `USING (true)` on writes, never read `user_metadata`
+- No automatic grants since `20261018000017`: `GRANT` client access explicitly (see `.agents/steering/database.md`)
 - UUID PK with `gen_random_uuid()`
 - `created_at` / `updated_at` with `DEFAULT NOW()`
 - **Never** put migration SQL in `scripts/` or `src/`. See

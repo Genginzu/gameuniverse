@@ -208,8 +208,8 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
         )}
 
         {userAlreadyExists && mode === "signin" && (
-          <Alert className="rounded-xl border-sky-500/30 bg-sky-500/10">
-            <AlertDescription className="text-sky-300">
+          <Alert className="rounded-xl border-palette-secondary-500/30 bg-palette-secondary-500/10">
+            <AlertDescription className="text-palette-secondary-300">
               {t("signup.userAlreadyExists")}
             </AlertDescription>
           </Alert>

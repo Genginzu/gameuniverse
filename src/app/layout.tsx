@@ -4,6 +4,7 @@ import { Inter, Tomorrow } from "next/font/google";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { NavigationProgress } from "@/components/shared/NavigationProgress";
 import type { Metadata } from "next";
+import { getSiteUrl } from "@/lib/utils/siteUrl";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,7 +18,7 @@ const tomorrow = Tomorrow({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://gameuniverse.gg"),
+  metadataBase: new URL(getSiteUrl()),
 };
 
 interface RootLayoutProps {

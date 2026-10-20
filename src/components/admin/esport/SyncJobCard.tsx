@@ -11,7 +11,8 @@ type Translator = ReturnType<typeof useTranslations>;
 
 const STATUS_CLASSES: Record<SyncJob["status"], string> = {
   running: "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400",
-  pending: "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
+  pending:
+    "bg-palette-primary-100 text-palette-primary-700 dark:bg-palette-primary-900/30 dark:text-palette-primary-400",
   completed: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
   failed: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
   cancelled: "bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400",
@@ -49,14 +50,18 @@ export function SyncJobCard({ job }: SyncJobCardProps) {
           <h2 className="text-base font-semibold text-gray-900 dark:text-white">
             {job.kind === "full" ? t("titleFull") : t("titleEntity", { entity: job.entity ?? "" })}
           </h2>
-          <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_CLASSES[job.status]}`}>
+          <span
+            className={`rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_CLASSES[job.status]}`}
+          >
             {t(`status.${job.status}`)}
           </span>
         </div>
         <div className="flex flex-wrap gap-3 text-xs text-gray-500 dark:text-gray-400">
           <span>{t("elapsed", { duration: elapsed })}</span>
           {lastChunkAgo && (
-            <span title={job.last_chunk_at ?? undefined}>{t("lastChunkAgo", { ago: lastChunkAgo })}</span>
+            <span title={job.last_chunk_at ?? undefined}>
+              {t("lastChunkAgo", { ago: lastChunkAgo })}
+            </span>
           )}
         </div>
       </div>

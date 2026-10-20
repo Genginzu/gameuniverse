@@ -25,7 +25,7 @@ export default memo(function MessageBubble({ message, isOwn }: MessageBubbleProp
         className={`max-w-[85%] px-3.5 py-2.5 transition-all duration-300 sm:max-w-[75%] sm:px-4 ${
           isOwn
             ? "border-editorial-line rounded-2xl rounded-br-md border bg-editorial-3 text-white shadow-[0_2px_10px_rgba(0,0,0,0.35)]"
-            : "rounded-2xl rounded-bl-md bg-linear-to-br from-blue-500 via-purple-600 to-purple-700 text-white shadow-[0_2px_12px_rgba(139,92,246,0.25)]"
+            : "rounded-2xl rounded-bl-md bg-linear-to-br from-palette-primary-500 via-palette-accent-600 to-palette-accent-700 text-white shadow-[0_2px_12px_rgb(var(--neon-primary)/0.25)]"
         }`}
         data-testid={isOwn ? "message-own" : "message-received"}
       >

@@ -111,7 +111,7 @@ export function IconPicker({ value, onChange, placeholder, className }: IconPick
                   className={cn(
                     "flex h-9 w-full items-center justify-center rounded-lg transition-all",
                     isSelected
-                      ? "from-palette-secondary-500 to-palette-primary-500 bg-linear-to-r text-white"
+                      ? "from-cta-from to-cta-to bg-linear-to-r text-white"
                       : "text-gray-700 hover:bg-white/60 dark:text-gray-300 dark:hover:bg-slate-700/60"
                   )}
                 >

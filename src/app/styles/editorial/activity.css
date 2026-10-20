@@ -28,7 +28,7 @@
   }
 }
 
-/* New post CTA */
+/* New post CTA — colours and hover come from .btn-filled (styles/buttons.css) */
 .editorial-activity-new-post {
   display: inline-flex;
   align-items: center;
@@ -37,23 +37,11 @@
   height: 44px;
   padding: 0 1.25rem;
   border-radius: 12px;
-  background: rgb(var(--accent-rgb, var(--neon-primary)));
-  color: #0a0418;
   font-size: 0.9rem;
   font-weight: 600;
   border: none;
   cursor: pointer;
-  transition:
-    filter 150ms ease,
-    box-shadow 200ms ease,
-    transform 150ms ease;
   flex-shrink: 0;
-}
-
-.editorial-activity-new-post:hover {
-  filter: brightness(1.1);
-  box-shadow: 0 8px 24px -8px rgba(var(--accent-rgb, var(--neon-primary)), 0.5);
-  transform: translateY(-1px);
 }
 
 .editorial-activity-new-post:focus-visible {

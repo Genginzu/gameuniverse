@@ -26,7 +26,9 @@ export function CharacterHeroBanner({
       className="relative overflow-hidden rounded-2xl border border-gray-200/60 bg-linear-to-br from-gray-900 to-gray-800 shadow-lg dark:border-gray-700/40"
       style={
         backgroundColor
-          ? { background: `linear-gradient(135deg, ${backgroundColor}, #1f2937)` }
+          ? {
+              background: `linear-gradient(135deg, ${backgroundColor}, var(--color-palette-neutral-800))`,
+            }
           : undefined
       }
     >
@@ -36,6 +38,7 @@ export function CharacterHeroBanner({
           src={backgroundImageUrl}
           alt=""
           fill
+          unoptimized
           className="object-cover opacity-40"
           onError={(e) => {
             (e.target as HTMLImageElement).style.display = "none";
@@ -53,6 +56,7 @@ export function CharacterHeroBanner({
               alt="Character"
               width={128}
               height={176}
+              unoptimized
               className="h-44 w-32 rounded-xl border-2 border-white/20 object-cover shadow-2xl ring-1 ring-black/10"
               onError={(e) => {
                 (e.target as HTMLImageElement).style.display = "none";

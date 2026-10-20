@@ -5,6 +5,7 @@ import { GroupMembersServerService } from "@/lib/services/groupMembersServerServ
 import { GroupInvitationsServerService } from "@/lib/services/groupInvitationsServerService";
 import { createGroupInvitationSchema } from "@/lib/validations/group";
 import { logger } from "@/lib/logger";
+import { enforceRateLimit } from "@/lib/services/rateLimitService";
 
 type RouteContext = { params: Promise<{ slug: string }> };
 
@@ -72,6 +73,9 @@ export async function POST(request: NextRequest, { params }: RouteContext) {
     if (role !== "owner" && role !== "moderator") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
+
+    const limited = await enforceRateLimit("invitation", { userId: user.id });
+    if (limited) return limited;
 
     const body = await request.json();
     const parsed = createGroupInvitationSchema.safeParse(body);

@@ -41,7 +41,6 @@ export interface EntityCardConfig<T> {
   titleField: keyof T;
   subtitleField?: keyof T;
   descriptionField?: keyof T;
-  backgroundColorField?: keyof T;
   badge?: BadgeConfig<T>;
   hoverOverlay?: HoverOverlayConfig<T>;
   actions?: ActionsConfig;

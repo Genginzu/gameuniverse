@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/database.types";
 import { logger } from "@/lib/logger";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { consumeOauthState } from "@/lib/services/oauthState";
 import type {
   ConnectionFailureReason,
@@ -13,6 +14,7 @@ import { buildLinkedPlatformRow, persistLinkedPlatform } from "./persistLinkedPl
 export interface ConnectPlatformParams {
   adapter: PlatformConnectionAdapter;
   supabase: SupabaseClient<Database>;
+  tokenWriter?: SupabaseClient<Database>;
   fields: URLSearchParams;
   redirectUri: string;
 }
@@ -26,7 +28,7 @@ async function runStep<T>(fallback: ConnectionFailureReason, step: () => Promise
 }
 
 async function linkPlatform(
-  { adapter, supabase, fields, redirectUri }: ConnectPlatformParams,
+  { adapter, tokenWriter, fields, redirectUri }: ConnectPlatformParams,
   playerId: string
 ): Promise<ConnectionOutcome> {
   if (adapter.usesState && !(await consumeOauthState(adapter.provider, fields.get("state")))) {
@@ -41,7 +43,7 @@ async function linkPlatform(
   const profile = await runStep("profile_failed", () => adapter.readProfile(credentials, input));
 
   const writeError = await persistLinkedPlatform(
-    supabase,
+    tokenWriter ?? getSupabaseAdmin(),
     buildLinkedPlatformRow(playerId, adapter, credentials, profile)
   );
   if (writeError)

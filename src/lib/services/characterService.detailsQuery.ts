@@ -9,6 +9,7 @@ import { createServerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
 import { pickTranslation, pickTranslationWithName } from "@/lib/utils/pickTranslation";
 import type { CharacterDetailsRow, GameRow, RelatedCharacterRow } from "./characterService.types";
+import { BRAND_COLORS } from "@/lib/utils/brand-colors";
 
 /**
  * Récupère les détails d'un personnage directement depuis la base de données
@@ -70,7 +71,7 @@ export async function fetchCharacterDetailsFromDB(
     description: translation?.description || undefined,
     biography: translation?.biography || undefined,
     weapons: translation?.weapons || undefined,
-    backgroundColor: typedCharacter.background_color || "#0f172a",
+    backgroundColor: typedCharacter.background_color || BRAND_COLORS.neutral[950],
     ...(genderObj && { gender: genderObj }),
     ...(speciesObj && { species: speciesObj }),
     games: processedGames,

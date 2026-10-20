@@ -2,10 +2,11 @@
 
 import { createClient } from "@/lib/supabase";
 import { useEffect, useState } from "react";
-import type { User } from "@supabase/supabase-js";
+import { getUserRoleFromUser } from "@/lib/utils/userRole";
 import type { UserRole, AdminUser } from "@/types/admin-auth";
 
 export type { UserRole, AdminUser };
+export { getUserRoleFromUser };
 
 export interface UseAdminAuthReturn {
   user: AdminUser | null;
@@ -17,26 +18,6 @@ export interface UseAdminAuthReturn {
   canDelete: boolean;
   loading: boolean;
   error: Error | null;
-}
-
-const ADMIN_DOMAIN = "@admin.gamesuniverse.com";
-const CONTRIBUTOR_DOMAIN = "@contributor.gamesuniverse.com";
-
-/**
- * Determine user role based on email domain or user metadata.
- */
-export function getUserRoleFromUser(user: User | null): UserRole {
-  if (!user || !user.email) return "user";
-
-  if (user.email.endsWith(ADMIN_DOMAIN)) return "admin";
-  if (user.email.endsWith(CONTRIBUTOR_DOMAIN)) return "contributor";
-
-  // Check user metadata for role override
-  const metadataRole = user.user_metadata?.role as string | undefined;
-  if (metadataRole === "admin") return "admin";
-  if (metadataRole === "contributor") return "contributor";
-
-  return "user";
 }
 
 const ROLE_PERMISSIONS: Record<

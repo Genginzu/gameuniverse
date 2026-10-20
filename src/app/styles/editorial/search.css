@@ -1,4 +1,4 @@
-﻿/* Editorial search : full-page SearchOverlay. Voir docs/setup/styles-organization.md */
+/* Editorial search : full-page SearchOverlay. Voir docs/setup/styles-organization.md */
 
 /*
  * SearchOverlay (F0-07c): full-page modal for global search.
@@ -12,7 +12,7 @@
   flex-direction: column;
   align-items: center;
   padding: clamp(2rem, 8vh, 6rem) 1rem 1rem;
-  background: rgba(8, 2, 15, 0.95); /* var(--editorial-bg) at 95% */
+  background: color-mix(in srgb, var(--editorial-bg) 95%, transparent);
   animation: search-overlay-fade-in 200ms ease-out;
 }
 
@@ -414,8 +414,8 @@
 }
 
 .search-overlay-recent-remove:hover {
-  background: rgba(248, 113, 113, 0.12);
-  color: #f87171;
+  background: rgb(var(--danger-rgb) / 0.12);
+  color: var(--color-danger);
 }
 
 /* Empty results (after a search yielded nothing) */

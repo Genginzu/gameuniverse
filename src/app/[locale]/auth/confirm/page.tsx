@@ -1,12 +1,11 @@
 import { redirect } from "next/navigation";
-import { createServerClient } from "@/lib/supabase-server";
-import { logger } from "@/lib/logger";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Icon } from "@iconify/react";
-import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
-import type { EmailOtpType } from "@supabase/supabase-js";
+import { Button } from "@/components/ui/button";
+import { Link } from "@/i18n/navigation";
+import { AuthLayout } from "@/components/auth/AuthLayout";
+import { AuthCard, AUTH_PRIMARY_BTN_CLASS } from "@/components/auth/AuthCard";
+import { EmailLinkConfirmCard } from "@/components/auth/EmailLinkConfirmCard";
+import { isAllowedOtpType, isSafeRelativePath } from "@/lib/utils/authLinks";
 
 interface ConfirmSearchParams {
   token?: string;
@@ -19,60 +18,30 @@ interface ConfirmPageProps {
   searchParams: Promise<ConfirmSearchParams>;
 }
 
-function ErrorCard({
-  title,
-  description,
-  detail,
-  showResend,
-  t,
-}: {
-  title: string;
-  description: string;
-  detail?: string;
-  showResend?: boolean;
-  t: (key: string) => string;
-}) {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-linear-to-br from-slate-50 via-white to-slate-100 p-4 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
-      <Card className="mx-auto w-full max-w-md border-0 bg-white/95 shadow-2xl backdrop-blur-xs dark:bg-slate-800/95">
-        <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30">
-            <Icon icon="lucide:x-circle" className="h-6 w-6 text-red-600 dark:text-red-400" />
-          </div>
-          <CardTitle className="text-red-600 dark:text-red-400">{title}</CardTitle>
-          <CardDescription className="dark:text-slate-400">{description}</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4 text-center">
-          {detail && <p className="text-muted-foreground text-sm">{detail}</p>}
-          <div className="space-y-2">
-            <Button asChild className="w-full">
-              <Link href="/auth">{t("backToLogin")}</Link>
-            </Button>
-            {showResend && (
-              <Button variant="outline" asChild className="w-full">
-                <Link href="/auth/resend">{t("resendEmail")}</Link>
-              </Button>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
-
+/**
+ * /auth/confirm — email link interstitial. Nothing is verified on GET: the
+ * user confirms with a same-origin POST to /api/auth/callback.
+ */
 export default async function ConfirmPage({ searchParams }: ConfirmPageProps) {
   const params = await searchParams;
-  const supabase = await createServerClient();
   const t = await getTranslations("auth.confirm");
 
   if (params.error) {
+    // Never echo the raw query value: anyone could print arbitrary text inside
+    // the site's official error card (phishing).
     return (
-      <ErrorCard
-        title={t("errorTitle")}
-        description={t("errorDescription")}
-        detail={params.error}
-        t={t}
-      />
+      <AuthLayout>
+        <AuthCard
+          icon="lucide:x-circle"
+          iconVariant="danger"
+          title={t("errorTitle")}
+          description={t("errorDescription")}
+        >
+          <Button asChild className={AUTH_PRIMARY_BTN_CLASS}>
+            <Link href="/auth">{t("backToLogin")}</Link>
+          </Button>
+        </AuthCard>
+      </AuthLayout>
     );
   }
 
@@ -80,31 +49,13 @@ export default async function ConfirmPage({ searchParams }: ConfirmPageProps) {
     redirect("/auth");
   }
 
-  try {
-    const { error } = await supabase.auth.verifyOtp({
-      token_hash: params.token,
-      type: (params.type as EmailOtpType) || "signup",
-    });
-
-    if (error) {
-      logger.error("Confirmation error", { error: error.message });
-      return (
-        <ErrorCard
-          title={t("failedTitle")}
-          description={t("failedDescription")}
-          detail={error.message}
-          showResend
-          t={t}
-        />
-      );
-    }
-
-    const redirectTo = params.redirect_to || "/profile";
-    redirect(redirectTo);
-  } catch (error) {
-    logger.error("Unexpected error in confirm page", { error });
-    return (
-      <ErrorCard title={t("unexpectedTitle")} description={t("unexpectedDescription")} t={t} />
-    );
-  }
+  return (
+    <AuthLayout>
+      <EmailLinkConfirmCard
+        tokenHash={params.token}
+        type={isAllowedOtpType(params.type) ? params.type : "signup"}
+        next={isSafeRelativePath(params.redirect_to) ? params.redirect_to : undefined}
+      />
+    </AuthLayout>
+  );
 }

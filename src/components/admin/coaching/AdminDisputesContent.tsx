@@ -21,7 +21,7 @@ interface Dispute {
 
 const STATUS_COLORS: Record<string, string> = {
   open: "text-yellow-500",
-  investigating: "text-blue-500",
+  investigating: "text-palette-primary-500",
   resolved: "text-green-500",
   dismissed: "text-gray-400",
 };
@@ -53,7 +53,7 @@ export function AdminDisputesContent() {
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${filter === f ? "from-palette-secondary-500 to-palette-primary-500 bg-linear-to-r text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400"}`}
+            className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${filter === f ? "from-cta-from to-cta-to bg-linear-to-r text-white" : "bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400"}`}
           >
             {t(`filter.${f}`)}
           </button>
@@ -107,7 +107,7 @@ export function AdminDisputesContent() {
                 <div className="flex gap-1.5">
                   <button
                     onClick={() => handleAction(d.id, "investigate")}
-                    className="rounded-lg bg-blue-500/10 px-3 py-1.5 text-xs font-medium text-blue-500 hover:bg-blue-500/20"
+                    className="bg-palette-primary-500/10 text-palette-primary-500 hover:bg-palette-primary-500/20 rounded-lg px-3 py-1.5 text-xs font-medium"
                   >
                     {t("actions.investigate")}
                   </button>

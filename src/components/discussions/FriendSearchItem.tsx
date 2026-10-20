@@ -22,7 +22,7 @@ export default function FriendSearchItem({ friend, onSelect }: FriendSearchItemP
       data-testid="friend-search-item"
     >
       {/* Avatar */}
-      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-linear-to-br from-blue-500/20 via-purple-600/20 to-purple-700/20">
+      <div className="from-palette-primary-500/20 via-palette-accent-600/20 to-palette-accent-700/20 relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-linear-to-br">
         {friend.avatarUrl ? (
           <LazyImage
             src={friend.avatarUrl}

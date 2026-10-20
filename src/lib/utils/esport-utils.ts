@@ -58,19 +58,19 @@ export function getRoleBadgeClasses(role: string | null | undefined): string {
   if (value.includes("jungle"))
     return "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300";
   if (value.includes("mid"))
-    return "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300";
+    return "bg-palette-accent-100 text-palette-accent-700 dark:bg-palette-accent-900/30 dark:text-palette-accent-300";
   if (value.includes("adc") || value.includes("bot") || value.includes("carry"))
     return "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300";
   if (value.includes("support"))
-    return "bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-300";
+    return "bg-palette-secondary-100 text-palette-secondary-700 dark:bg-palette-secondary-900/30 dark:text-palette-secondary-300";
 
   // CS / FPS roles
   if (value.includes("awp") || value.includes("sniper"))
-    return "bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-300";
+    return "bg-palette-secondary-100 text-palette-secondary-700 dark:bg-palette-secondary-900/30 dark:text-palette-secondary-300";
   if (value.includes("rifler"))
-    return "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300";
+    return "bg-palette-primary-100 text-palette-primary-700 dark:bg-palette-primary-900/30 dark:text-palette-primary-300";
   if (value.includes("igl"))
-    return "bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300";
+    return "bg-palette-accent-100 text-palette-accent-700 dark:bg-palette-accent-900/30 dark:text-palette-accent-300";
 
   // Generic fallback
   return "bg-palette-primary-100 text-palette-primary-700 dark:bg-palette-primary-900/30 dark:text-palette-primary-300";

@@ -6,12 +6,13 @@ import { Button } from "@/components/ui/button";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Icon } from "@iconify/react";
 import type { GameFormTabProps } from "@/types/admin-games";
+import { BRAND_COLORS } from "@/lib/utils/brand-colors";
 
 const COLOR_DEFAULTS = {
-  background_color: "#0f172a",
-  accent_color: "#8b5cf6",
-  label_color: "#94a3b8",
-  text_color: "#e2e8f0",
+  background_color: BRAND_COLORS.neutral[950],
+  accent_color: BRAND_COLORS.primary[500],
+  label_color: BRAND_COLORS.neutral[400],
+  text_color: BRAND_COLORS.neutral[200],
 } as const;
 
 type ColorFieldName = keyof typeof COLOR_DEFAULTS;

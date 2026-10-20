@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { isSafeRelativePath as isSafeReturnPath } from "@/lib/utils/authLinks";
 
 /**
  * Round-trips a "return to" path through an OAuth connect flow so the user
@@ -11,17 +12,6 @@ import { cookies } from "next/headers";
 
 const COOKIE = "oauth_return_to";
 const MAX_AGE_SECONDS = 600;
-
-/** Accept only same-origin relative paths (must start with a single "/"). */
-function isSafeReturnPath(path: string | null | undefined): path is string {
-  return (
-    !!path &&
-    path.startsWith("/") &&
-    !path.startsWith("//") &&
-    !path.includes("\\") &&
-    !path.includes("://")
-  );
-}
 
 /** Store the return path (no-op when missing or unsafe). */
 export async function issueOauthReturn(returnTo: string | null | undefined): Promise<void> {

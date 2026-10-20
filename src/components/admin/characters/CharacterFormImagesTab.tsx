@@ -117,6 +117,7 @@ function ImageField({
             src={imageUrl}
             alt={`${label} preview`}
             fill
+            unoptimized
             className="rounded-xl object-contain"
             onError={(e) => {
               (e.target as HTMLImageElement).parentElement!.style.display = "none";

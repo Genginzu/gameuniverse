@@ -92,7 +92,7 @@ export function SuggestionCard({ suggestion, onAccept, onIgnore }: SuggestionCar
           type="button"
           onClick={handleCreate}
           disabled={isCreating}
-          className="bg-editorial-accent inline-flex h-11 flex-1 items-center justify-center gap-1.5 rounded-xl px-4 text-sm font-semibold text-[#0a0418] transition hover:brightness-110 disabled:opacity-60"
+          className="btn-filled inline-flex h-11 flex-1 items-center justify-center gap-1.5 rounded-xl px-4 text-sm font-semibold transition disabled:opacity-60"
         >
           {isCreating ? (
             <Icon icon="lucide:loader-2" className="h-4 w-4 animate-spin" />

@@ -85,7 +85,7 @@ export function TagsHubContent() {
           <p className="text-editorial-muted text-sm">{t("loginPrompt")}</p>
           <Link
             href="/auth"
-            className="from-palette-primary-500 inline-flex min-h-[44px] shrink-0 items-center gap-2 rounded-xl bg-linear-to-br to-blue-500 px-4 text-sm font-medium text-white transition-all duration-300 hover:opacity-90"
+            className="btn-filled inline-flex min-h-[44px] shrink-0 items-center gap-2 rounded-xl px-4 text-sm font-medium"
           >
             <Icon icon="lucide:log-in" className="size-4" aria-hidden />
             {t("loginCta")}

@@ -12,6 +12,10 @@ vi.mock("@/lib/supabase-server", () => ({
   createRouteHandlerClient: vi.fn(async () => mockSupabaseClient),
 }));
 
+vi.mock("@/lib/supabase-admin", () => ({
+  getSupabaseAdmin: vi.fn(() => mockSupabaseClient),
+}));
+
 vi.mock("@/lib/logger", () => ({
   logger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn() },
 }));

@@ -7,6 +7,7 @@ import type { ReviewAnalyticsData, ReviewBucket } from "@/types/dashboard-stats"
 import { StatsEmptyState } from "@/components/players/stats/StatsEmptyState";
 import { StatsSectionTitle } from "@/components/players/stats/StatsSectionTitle";
 import { ReviewMetricsRadial } from "./review-variants/ReviewMetricsRadial";
+import { chartColor } from "@/lib/utils/chart-colors";
 
 interface ReviewAnalyticsProps {
   analytics: ReviewAnalyticsData;
@@ -81,7 +82,7 @@ export function ReviewAnalytics({ analytics, locale }: ReviewAnalyticsProps) {
                   }
                   cursor={false}
                 />
-                <Bar dataKey="count" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="count" fill={chartColor(0)} radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>

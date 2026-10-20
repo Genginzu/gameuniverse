@@ -131,7 +131,7 @@ export default function EsportSyncPage() {
           <Button
             onClick={startFullSync}
             disabled={fullSyncStarting || Boolean(activeJob)}
-            className="from-palette-secondary-500 to-palette-primary-500 min-h-[44px] bg-linear-to-r text-white"
+            className="from-cta-from to-cta-to min-h-[44px] bg-linear-to-r text-white"
             title={t("triggerFullSyncDescription")}
           >
             <Icon
@@ -184,8 +184,8 @@ export default function EsportSyncPage() {
                       <span
                         className={`rounded-full px-2 py-0.5 text-xs font-medium ${
                           entry.kind === "full"
-                            ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
-                            : "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400"
+                            ? "bg-palette-primary-100 text-palette-primary-700 dark:bg-palette-primary-900/30 dark:text-palette-primary-400"
+                            : "bg-palette-accent-100 text-palette-accent-700 dark:bg-palette-accent-900/30 dark:text-palette-accent-400"
                         }`}
                       >
                         {t(`kindLabel.${entry.kind}`)}

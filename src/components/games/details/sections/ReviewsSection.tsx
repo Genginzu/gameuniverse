@@ -32,14 +32,14 @@ export function ReviewsSection({ game }: ReviewsSectionProps) {
           <h2>{tEd.rich("sections.communityVoiceTitle", accentRich)}</h2>
         </div>
       </div>
-      <GameReviewsTab gameId={game.id} gameTitle={game.title} accentColor={game.accentColor} />
+      <GameReviewsTab gameId={game.id} gameTitle={game.title} />
     </section>
   );
 }
 
 /** Skeleton de chargement de la section reviews. */
 function ReviewsSkeleton() {
-  const card = "rounded-xl border border-[var(--editorial-line)] bg-[var(--editorial-bg-2)] p-5";
+  const card = "rounded-lg border border-[var(--editorial-line)] bg-[var(--editorial-bg-2)] p-5";
   const pulse = "animate-pulse rounded bg-white/10";
 
   return (

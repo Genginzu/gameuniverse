@@ -33,8 +33,8 @@ const sampleReviewRow2 = {
 };
 
 const sampleProfiles = [
-  { id: "user-1", username: "player1", email: "player1@test.com" },
-  { id: "user-2", username: "player2", email: "player2@test.com" },
+  { id: "user-1", username: "player1" },
+  { id: "user-2", username: "player2" },
 ];
 
 vi.mock("@/lib/auth-admin", () => ({
@@ -52,6 +52,25 @@ vi.mock("@/lib/supabase-server", () => ({
         return {};
       },
     }),
+}));
+
+// Emails come from auth.users through the auth admin API (issues #375, #387).
+const AUTH_EMAILS: Record<string, string> = {
+  "user-1": "player1@test.com",
+  "user-2": "player2@test.com",
+};
+vi.mock("@/lib/supabase-admin", () => ({
+  getSupabaseAdmin: () => ({
+    auth: {
+      admin: {
+        getUserById: (id: string) =>
+          Promise.resolve({
+            data: { user: AUTH_EMAILS[id] ? { id, email: AUTH_EMAILS[id] } : null },
+            error: null,
+          }),
+      },
+    },
+  }),
 }));
 
 // Import after mocks
@@ -124,6 +143,7 @@ describe("Admin Reviews API", () => {
       // Verify AdminReview shape (Req 1.2)
       const review = body.reviews[0];
       expect(review.playerName).toBe("player1");
+      expect(review.playerEmail).toBe("player1@test.com");
       expect(review.gameTitle).toBe("Zelda");
       expect(review.rating).toBe(15);
       expect(review.contentExcerpt).toBeDefined();

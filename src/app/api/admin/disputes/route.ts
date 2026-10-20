@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
+import { adminAuthErrorStatus, requireAdminUser } from "@/lib/auth-admin";
 import { logger } from "@/lib/logger";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -12,18 +14,15 @@ async function getUser(supabase: S) {
   return user;
 }
 
-async function isAdmin(supabase: S, userId: string) {
-  const { data } = await supabase.from("profiles").select("role").eq("id", userId).single();
-  return data?.role === "admin";
-}
-
-/** GET /api/admin/disputes — Admin: list disputes */
+/**
+ * GET /api/admin/disputes — Admin: list disputes.
+ * coaching_disputes RLS only exposes a user's own disputes, so the admin check
+ * runs first and the query uses the service-role client (issue #385).
+ */
 export async function GET(request: NextRequest) {
   try {
-    const supabase: S = await createRouteHandlerClient();
-    const user = await getUser(supabase);
-    if (!user || !(await isAdmin(supabase, user.id)))
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    await requireAdminUser();
+    const supabase: S = getSupabaseAdmin();
 
     const status = request.nextUrl.searchParams.get("status") || "open";
 
@@ -57,6 +56,10 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ disputes });
   } catch (error) {
+    const authStatus = adminAuthErrorStatus(error);
+    if (authStatus) {
+      return NextResponse.json({ error: (error as Error).message }, { status: authStatus });
+    }
     logger.error("Error in disputes GET", { error });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
@@ -70,13 +73,15 @@ export async function POST(request: NextRequest) {
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { sessionId, reportedId, reason, description } = await request.json();
-    if (!reportedId || !reason)
-      return NextResponse.json({ error: "reportedId and reason required" }, { status: 400 });
+    if (!sessionId || !reportedId || !reason)
+      return NextResponse.json({ error: "sessionId, reportedId and reason required" }, { status: 400 });
 
+    // RLS (20261019000003) only accepts disputes about a session the reporter
+    // took part in, against the other participant.
     const { data, error } = await supabase
       .from("coaching_disputes")
       .insert({
-        session_id: sessionId || null,
+        session_id: sessionId,
         reporter_id: user.id,
         reported_id: reportedId,
         reason,
@@ -86,6 +91,9 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
+      if (error.code === "42501") {
+        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      }
       logger.error("Error creating dispute", { error });
       return NextResponse.json({ error: "Failed to create" }, { status: 500 });
     }

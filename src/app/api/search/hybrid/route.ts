@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { HybridSearchService } from "@/lib/services/hybridSearchService";
 import { HybridSearchResponse } from "@/types/search";
 import { logger } from "@/lib/logger";
+import { enforceRateLimit } from "@/lib/services/rateLimitService";
 
 /**
  * GET /api/search/hybrid
@@ -20,6 +21,10 @@ export async function GET(
   request: NextRequest
 ): Promise<NextResponse<HybridSearchResponse | { error: string }>> {
   try {
+    // Anonymous route: limit per client IP (search fans out to IGDB + DB).
+    const limited = await enforceRateLimit("search", { request });
+    if (limited) return limited as NextResponse<{ error: string }>;
+
     const { searchParams } = new URL(request.url);
 
     // Extract and validate query parameter

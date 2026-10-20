@@ -1,27 +1,12 @@
+import { NextResponse } from "next/server";
 import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { logger } from "@/lib/logger";
+import { getUserRoleFromUser } from "@/lib/utils/userRole";
 import type { User } from "@supabase/supabase-js";
+import type { UserRole } from "@/types/admin-auth";
 
-export type UserRole = "admin" | "contributor" | "user";
-
-const ADMIN_DOMAIN = "@admin.gamesuniverse.com";
-const CONTRIBUTOR_DOMAIN = "@contributor.gamesuniverse.com";
-
-/**
- * Determine the role of a Supabase user based on email domain or metadata.
- */
-export function getUserRoleFromUser(user: User | null): UserRole {
-  if (!user || !user.email) return "user";
-
-  if (user.email.endsWith(ADMIN_DOMAIN)) return "admin";
-  if (user.email.endsWith(CONTRIBUTOR_DOMAIN)) return "contributor";
-
-  const metadataRole = user.user_metadata?.role as string | undefined;
-  if (metadataRole === "admin") return "admin";
-  if (metadataRole === "contributor") return "contributor";
-
-  return "user";
-}
+export type { UserRole };
+export { getUserRoleFromUser };
 
 /**
  * Get the role of the currently authenticated user (server-side).
@@ -36,8 +21,7 @@ export async function getUserRole(): Promise<UserRole> {
 }
 
 /**
- * Check if the current user is an admin
- * Admin users are identified by having an email ending with @admin.gamesuniverse.com
+ * Check if the current user is an admin (`app_metadata.role === "admin"`).
  */
 export async function isAdmin(): Promise<boolean> {
   try {
@@ -101,4 +85,44 @@ export async function getCurrentUser() {
   }
 
   return user;
+}
+
+/**
+ * Return the current user when they are an admin.
+ * Throws "Authentication required" (401) when signed out and
+ * "Admin access required" (403) for a signed-in non-admin.
+ */
+export async function requireAdminUser(): Promise<User> {
+  const user = await getCurrentUser();
+  if (getUserRoleFromUser(user) !== "admin") {
+    throw new Error("Admin access required");
+  }
+  return user;
+}
+
+/**
+ * Map an error thrown by requireAdminUser() to its HTTP status, or null when
+ * the error is unrelated to authentication.
+ */
+export function adminAuthErrorStatus(error: unknown): 401 | 403 | null {
+  if (!(error instanceof Error)) return null;
+  if (error.message === "Authentication required") return 401;
+  if (error.message === "Admin access required") return 403;
+  return null;
+}
+
+/**
+ * Route guard: returns a 401/403 JSON response when the caller is not an
+ * admin, or null when the handler may proceed. Call it before reading the body
+ * or touching any external API.
+ */
+export async function adminGuardResponse(): Promise<NextResponse | null> {
+  try {
+    await requireAdminUser();
+    return null;
+  } catch (error) {
+    const status = adminAuthErrorStatus(error);
+    if (!status) throw error;
+    return NextResponse.json({ error: (error as Error).message }, { status });
+  }
 }

@@ -64,12 +64,12 @@ export function PageBanner() {
   const iconName = config.icon;
 
   return (
-    <div className="mx-auto mt-6 w-[90%] overflow-hidden rounded-2xl bg-linear-to-r from-[#615dfa] via-[#5b7fff] to-[#41efff] shadow-lg">
+    <div className="mx-auto mt-6 w-[90%] overflow-hidden rounded-2xl bg-linear-to-r from-palette-accent-600 via-palette-primary-500 to-palette-secondary-400 shadow-lg">
       <div className="relative flex items-center px-6 py-6 sm:px-10 sm:py-8">
         {/* Icon card — mimics the Vikinger illustration block */}
         <div className="relative mr-3 flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white shadow-xl sm:mr-6 sm:h-[72px] sm:w-[72px] dark:bg-gray-800">
-          <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-[#615dfa] to-[#41efff] opacity-10" />
-          <Icon icon={iconName} className="relative h-6 w-6 text-[#615dfa] sm:h-8 sm:w-8" />
+          <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-palette-accent-600 to-palette-secondary-400 opacity-10" />
+          <Icon icon={iconName} className="relative h-6 w-6 text-palette-primary-500 sm:h-8 sm:w-8" />
         </div>
 
         {/* Title + description */}

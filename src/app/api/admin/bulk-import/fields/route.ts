@@ -6,6 +6,7 @@ import {
   isBulkFieldAlias,
 } from "@/lib/services/igdb-fields/registry";
 import { logger } from "@/lib/logger";
+import { adminGuardResponse } from "@/lib/auth-admin";
 
 /**
  * GET /api/admin/bulk-import/fields
@@ -13,6 +14,9 @@ import { logger } from "@/lib/logger";
  * excluding games where the field has been manually overridden by an admin.
  */
 export async function GET() {
+  const denied = await adminGuardResponse();
+  if (denied) return denied;
+
   try {
     const supabase = await createRouteHandlerClient();
 

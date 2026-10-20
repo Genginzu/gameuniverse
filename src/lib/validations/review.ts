@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { sanitizeRichText } from "@/lib/utils/sanitizeRichText";
 
 /**
  * Extracts plain text from HTML by stripping all tags.
@@ -21,8 +22,8 @@ export const reviewSchema = z.object({
     .max(20, "La note doit être au maximum 20"),
   content: z
     .string()
-    .min(1, "Le contenu de la review est requis")
-    .refine((val) => stripHtmlTags(val).length > 0, "Le contenu de la review ne peut pas être vide")
+    .transform(sanitizeRichText)
+    .refine((val) => stripHtmlTags(val).length > 0, "Le contenu de la review est requis")
     .refine(
       (val) => stripHtmlTags(val).length <= 5000,
       "Le contenu ne doit pas dépasser 5000 caractères"
