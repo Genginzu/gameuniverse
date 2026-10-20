@@ -43,7 +43,7 @@ Vérifier avec `vercel env ls --environment production`.
 - Secrets Edge Functions (`bunx supabase secrets list`) : `IGDB_CLIENT_ID`,
   `IGDB_CLIENT_SECRET`, `IGDB_WEBHOOK_SECRET`, `PANDASCORE_API_KEY`,
   `VERCEL_CALLBACK_BASE_URL=https://www.gamersuniverse.fr`,
-  `VERCEL_CALLBACK_SECRET` (= `EDGE_CALLBACK_SECRET` Vercel).
+  `EDGE_CALLBACK_SECRET` (même valeur que `EDGE_CALLBACK_SECRET` côté Vercel).
 - Edge Functions : `bunx supabase functions deploy` (igdb-processor,
   igdb-webhook, pandascore-full-sync, pandascore-incremental).
 - Extensions `pg_cron` et `pg_net` activées, crons planifiés (voir

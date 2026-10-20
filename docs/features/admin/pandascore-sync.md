@@ -125,10 +125,9 @@ supabase secrets set EDGE_CALLBACK_SECRET=<même valeur que EDGE_CALLBACK_SECRET
 # SUPABASE_URL et SUPABASE_SERVICE_ROLE_KEY sont auto-injectés
 ```
 
-> ℹ️ L'ancien nom `VERCEL_CALLBACK_SECRET` est encore lu en repli par les
-> Edge Functions (avec un warning de dépréciation) pendant une release.
-> Renommer le secret Supabase en `EDGE_CALLBACK_SECRET` puis supprimer
-> l'ancien.
+> ℹ️ À retirer : l'ancien nom `VERCEL_CALLBACK_SECRET` n'est plus lu par les
+> Edge Functions (repli supprimé, prod migrée vers `EDGE_CALLBACK_SECRET`).
+> Seul `EDGE_CALLBACK_SECRET` est à configurer.
 
 ### pg_cron
 
