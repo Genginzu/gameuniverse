@@ -84,6 +84,10 @@ export async function fetchOnePage<T>(
  * Fetches all pages of a paginated PandaScore endpoint. Used by the
  * incremental flow which fetches the entire delta (typically a few dozen
  * incidents at most) in a single Edge Function invocation.
+ *
+ * Stops at the first failed page and returns it in `failure` with the items
+ * fetched so far: the caller must treat the result as partial (the
+ * incremental flow then keeps its `since` cursor, see sync-run/incremental.ts).
  */
 export async function fetchAllPages<T>(
   fetcher: (p: PandaScoreListParams) => Promise<T[]>,
@@ -95,7 +99,7 @@ export async function fetchAllPages<T>(
     errorCollector?: SyncErrorCollector;
     errorType?: string;
   },
-): Promise<T[]> {
+): Promise<PageFetchResult<T>> {
   const { maxPages, perPage = 100, extra, label, errorCollector, errorType } =
     options;
   const all: T[] = [];
@@ -110,14 +114,12 @@ export async function fetchAllPages<T>(
       errorType,
     });
     all.push(...result.items);
-    // For the incremental flow, treat a fetch error like end-of-data: stop
-    // paginating but return what we have. The caller decides what to do
-    // with the partial result via the errorCollector counts.
-    if (result.failure || result.items.length < perPage) return all;
+    if (result.failure) return { items: all, failure: result.failure };
+    if (result.items.length < perPage) return { items: all, failure: null };
   }
 
   logger.warn("fetchAllPages reached max pages", { label, maxPages, total: all.length });
-  return all;
+  return { items: all, failure: null };
 }
 
 /**

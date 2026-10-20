@@ -20,7 +20,10 @@
  *     deletions. Order: teams → tournaments → players → matches (FK order).
  *   - Writes a pandascore_sync_logs row for audit.
  *   - Advances the cursor to `now()` on success only. On failure, leaves
- *     the cursor untouched so the next run retries the same delta.
+ *     the cursor untouched so the next run retries the same delta. A failed
+ *     incident fetch (429, 5xx, network) fails the run before any upsert:
+ *     the log row is `failed` with the reason (`[rate_limited]`, …) in
+ *     error_message and the response is 429 (rate limit) or 500.
  *
  * Returns 200 with a JSON body so callers (cron pg_net, admin route) can
  * surface the result. The response contains `{ ok, skipped?, results, since }`.
@@ -37,6 +40,11 @@ import {
   fetchAllPages,
   SyncErrorCollector,
 } from "../_shared/pandascore/helpers.ts";
+import {
+  findIncidentFailure,
+  IncidentFetchError,
+  incrementalFailureStatus,
+} from "../_shared/pandascore/sync-run/index.ts";
 import type {
   PandaScoreIncident,
   PandaScoreListParams,
@@ -132,7 +140,7 @@ Deno.serve(async (req) => {
       type: ENTITY_TYPES.join(","),
     };
 
-    const [additions, changes, deletions] = await Promise.all([
+    const [additionsFetch, changesFetch, deletionsFetch] = await Promise.all([
       fetchAllPages(getAdditions, {
         maxPages: INCIDENTS_MAX_PAGES,
         extra: baseParams as Record<string, string | number>,
@@ -155,6 +163,20 @@ Deno.serve(async (req) => {
         errorType: "incidents",
       }),
     ]);
+
+    // A failed fetch (429, 5xx, network, config) leaves a partial delta:
+    // fail the run before any upsert so the cursor is not advanced and the
+    // next run retries the full window.
+    const fetchFailure = findIncidentFailure([
+      { label: "additions", failure: additionsFetch.failure },
+      { label: "changes", failure: changesFetch.failure },
+      { label: "deletions", failure: deletionsFetch.failure },
+    ]);
+    if (fetchFailure) throw new IncidentFetchError(fetchFailure);
+
+    const additions = additionsFetch.items;
+    const changes = changesFetch.items;
+    const deletions = deletionsFetch.items;
 
     logger.info("pandascore-incremental: incidents fetched", {
       since,
@@ -245,7 +267,8 @@ Deno.serve(async (req) => {
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
-    logger.error("pandascore-incremental: failed", { error });
+    const reason = error instanceof IncidentFetchError ? error.reason : null;
+    logger.error("pandascore-incremental: failed", { error, reason });
 
     const durationMs = Date.now() - start;
     if (logId) {
@@ -259,6 +282,6 @@ Deno.serve(async (req) => {
     // re-process the same delta.
     await releaseLock(supabase, { advanceCursorTo: null });
 
-    return jsonResponse({ ok: false, error: message }, 500);
+    return jsonResponse({ ok: false, error: message, reason, since }, incrementalFailureStatus(reason));
   }
 });
