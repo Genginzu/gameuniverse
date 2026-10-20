@@ -45,7 +45,7 @@ describe("cron sync-libraries", () => {
     expect(res.status).toBe(401);
   });
 
-  it("selects candidates in id order and runs them through the job system", async () => {
+  it("selects least recently synced candidates first and runs them through the job system", async () => {
     vi.mocked(createSyncJob).mockImplementation(async (_admin, userId) => ({
       job: { id: `job-${userId}` } as never,
       alreadyRunning: userId === "u2",
@@ -57,7 +57,12 @@ describe("cron sync-libraries", () => {
     const res = await GET(request("cron-secret"));
     const body = await res.json();
 
-    expect(query.order).toHaveBeenCalledWith("id", { ascending: true });
+    expect(query.order).toHaveBeenNthCalledWith(1, "last_library_sync_at", {
+      ascending: true,
+      nullsFirst: true,
+    });
+    expect(query.order).toHaveBeenNthCalledWith(2, "id", { ascending: true });
+    expect(query.limit).toHaveBeenCalledWith(50);
     expect(createSyncJob).toHaveBeenCalledTimes(3);
     expect(runLibrarySyncJob).toHaveBeenCalledTimes(2);
     expect(runLibrarySyncJob).toHaveBeenCalledWith({

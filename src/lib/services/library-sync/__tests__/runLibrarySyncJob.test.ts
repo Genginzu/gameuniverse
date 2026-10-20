@@ -10,6 +10,7 @@ vi.mock("@/lib/services/librarySyncJobs", () => ({
   updateJobProgress: vi.fn().mockResolvedValue(undefined),
   markJobSucceeded: vi.fn().mockResolvedValue(undefined),
   markJobFailed: vi.fn().mockResolvedValue(undefined),
+  stampLastLibrarySync: vi.fn().mockResolvedValue(undefined),
 }));
 
 import { runLibrarySyncJob } from "@/lib/services/library-sync/runLibrarySyncJob";
@@ -18,6 +19,7 @@ import {
   markJobFailed,
   markJobRunning,
   markJobSucceeded,
+  stampLastLibrarySync,
   updateJobProgress,
 } from "@/lib/services/librarySyncJobs";
 
@@ -77,6 +79,7 @@ describe("runLibrarySyncJob", () => {
       imported: 2,
       unmatched: 0,
     });
+    expect(stampLastLibrarySync).toHaveBeenCalledWith(admin, "user-1", "steam");
     expect(outcome).toEqual({ status: "succeeded", total: 10, matched: 10 });
   });
 
@@ -106,6 +109,7 @@ describe("runLibrarySyncJob", () => {
     });
 
     expect(markJobSucceeded).not.toHaveBeenCalled();
+    expect(stampLastLibrarySync).not.toHaveBeenCalled();
     expect(updateJobProgress).toHaveBeenLastCalledWith(admin, "job-2", {
       phase: "importing",
       total: 100,
@@ -131,6 +135,7 @@ describe("runLibrarySyncJob", () => {
 
     expect(markJobSucceeded).not.toHaveBeenCalled();
     expect(markJobFailed).toHaveBeenCalledWith(admin, "job-3", "Xbox token refresh failed");
+    expect(stampLastLibrarySync).toHaveBeenCalledWith(admin, "user-1", "xbox");
     expect(outcome).toMatchObject({ status: "failed", error: "Xbox token refresh failed" });
   });
 });

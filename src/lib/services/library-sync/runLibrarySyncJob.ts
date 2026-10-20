@@ -5,6 +5,7 @@ import {
   markJobFailed,
   markJobRunning,
   markJobSucceeded,
+  stampLastLibrarySync,
   updateJobProgress,
 } from "@/lib/services/librarySyncJobs";
 import type {
@@ -89,6 +90,7 @@ export async function runLibrarySyncJob({
         unmatched: result.unmatched,
         privateProfile: result.privateProfile,
       });
+      await stampLastLibrarySync(admin, userId, platform);
       return { status: "succeeded", total: result.total, matched: result.matched };
     }
 
@@ -99,6 +101,7 @@ export async function runLibrarySyncJob({
     const message = err instanceof Error ? err.message : "Library sync failed";
     logger.error("Library sync job failed", { jobId, platform, message });
     await markJobFailed(admin, jobId, message);
+    await stampLastLibrarySync(admin, userId, platform);
     return { status: "failed", total: 0, matched: 0, error: message };
   }
 }

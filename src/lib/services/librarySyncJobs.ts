@@ -254,3 +254,22 @@ export async function getLatestJobsByPlatform(
   }
   return Array.from(latest.values());
 }
+
+
+/**
+ * Stamp `player_linked_platforms.last_library_sync_at` when a job ends (any
+ * outcome) so the sync-libraries cron rotates to the least recently synced
+ * accounts. Best-effort (errors are logged).
+ */
+export async function stampLastLibrarySync(
+  admin: SupabaseClient,
+  userId: string,
+  platform: string
+): Promise<void> {
+  const { error } = await admin
+    .from("player_linked_platforms")
+    .update({ last_library_sync_at: new Date().toISOString() })
+    .eq("player_id", userId)
+    .eq("platform", platform);
+  if (error) logger.error("Failed to stamp last library sync", { userId, platform, error });
+}

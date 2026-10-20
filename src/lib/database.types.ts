@@ -2179,6 +2179,7 @@ export type Database = {
           external_id: string | null;
           id: string;
           is_public: boolean;
+          last_library_sync_at: string | null;
           platform: string;
           platform_avatar_url: string | null;
           platform_metadata: Json | null;
@@ -2196,6 +2197,7 @@ export type Database = {
           external_id?: string | null;
           id?: string;
           is_public?: boolean;
+          last_library_sync_at?: string | null;
           platform: string;
           platform_avatar_url?: string | null;
           platform_metadata?: Json | null;
@@ -2213,6 +2215,7 @@ export type Database = {
           external_id?: string | null;
           id?: string;
           is_public?: boolean;
+          last_library_sync_at?: string | null;
           platform?: string;
           platform_avatar_url?: string | null;
           platform_metadata?: Json | null;
