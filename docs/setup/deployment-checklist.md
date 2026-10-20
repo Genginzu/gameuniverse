@@ -1,162 +1,80 @@
-# Checklist de Déploiement - Game Universe
+# Checklist de déploiement — Gamers Universe
 
-## Avant le déploiement
+Production : **https://www.gamersuniverse.fr** (projet Vercel
+`darkennights-projects/gamersuniverse`, Supabase `vilgzbeifmimflyttwhr`, Londres).
 
-### 1. Base de données (Supabase)
+## Comment la prod est déployée
 
-- [ ] Vérifier que toutes les migrations sont appliquées
+- Le push sur `main` ne déploie **pas** (`vercel.json` → `deploymentEnabled.main: false`).
+- release-please maintient une PR de release ; son merge crée le tag et le job
+  `Deploy to Vercel (production)` de `.github/workflows/release-please.yml`
+  exécute `vercel deploy --prod` (secrets GitHub `VERCEL_TOKEN`, `VERCEL_ORG_ID`,
+  `VERCEL_PROJECT_ID`).
+- Rollback : `vercel rollback` ou « Promote » d'un déploiement précédent.
+- Les variables `NEXT_PUBLIC_*` sont figées au build : redéployer après les avoir
+  modifiées.
 
-  ```bash
-  supabase db push
-  ```
+## 1. Variables Vercel (environnement Production)
 
-- [ ] Vérifier que la table `user_library` existe
+Vérifier avec `vercel env ls --environment production`.
 
-  ```sql
-  SELECT * FROM information_schema.tables
-  WHERE table_schema = 'public' AND table_name = 'user_library';
-  ```
+| Variable | Rôle | Obligatoire |
+| --- | --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY` | Supabase | oui |
+| `NEXT_PUBLIC_SITE_URL` | Redirections e-mail d'auth, SEO (metadataBase, sitemap, robots) | oui |
+| `NEXT_PUBLIC_BASE_URL` | Fetch ISR serveur des routes `/api/*` | oui |
+| `NEXT_PUBLIC_APP_URL` | URLs de retour Stripe Checkout / Connect | oui |
+| `CRON_SECRET` | `/api/cron/*`, `/api/internal/library-sync` | oui |
+| `EDGE_CALLBACK_SECRET` | Callbacks Edge → Vercel (`/api/internal/esport/*`) | oui |
+| `IGDB_CLIENT_ID`, `IGDB_CLIENT_SECRET`, `IGDB_WEBHOOK_SECRET` | IGDB | oui |
+| `RESEND_API_KEY`, `RESEND_FROM_EMAIL` | E-mails (domaine `gamersuniverse.fr` vérifié sur Resend) | oui |
+| `PLATFORM_TOKEN_ENCRYPTION_KEY` | Chiffrement des tokens de plateformes liées | oui |
+| `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` | Paiements coaching — clés **live** | si coaching payant |
+| `AI_GATEWAY_API_KEY` | Traduction automatique | oui |
+| `PANDASCORE_API_KEY` | Esport | oui |
+| `STEAM_API_KEY`, `EPIC_*`, `XBOX_*`, `DISCORD_*`, `BATTLENET_*`, `ITCH_CLIENT_ID` | Plateformes liées | par plateforme |
+| `GOOGLE_CSE_API_KEY`, `GOOGLE_CSE_CX` | Recherche d'images (admin) | optionnel |
+| `RIOT_API_KEY`, `FACEIT_API_KEY`, `BLIZZARD_ACCESS_TOKEN` | Stats esport joueurs | optionnel |
 
-- [ ] Vérifier que les fonctions de base de données existent
+## 2. Supabase
 
-  ```sql
-  SELECT routine_name FROM information_schema.routines
-  WHERE routine_schema = 'public'
-  AND routine_name IN ('get_user_library_stats', 'is_game_in_user_library');
-  ```
+- Migrations : `bunx supabase migration list --linked` → aucune ligne sans
+  correspondance « Remote ». Appliquer avec `bun run supabase:migrate`.
+- Secrets Edge Functions (`bunx supabase secrets list`) : `IGDB_CLIENT_ID`,
+  `IGDB_CLIENT_SECRET`, `IGDB_WEBHOOK_SECRET`, `PANDASCORE_API_KEY`,
+  `VERCEL_CALLBACK_BASE_URL=https://www.gamersuniverse.fr`,
+  `VERCEL_CALLBACK_SECRET` (= `EDGE_CALLBACK_SECRET` Vercel).
+- Edge Functions : `bunx supabase functions deploy` (igdb-processor,
+  igdb-webhook, pandascore-full-sync, pandascore-incremental).
+- Extensions `pg_cron` et `pg_net` activées, crons planifiés (voir
+  `docs/features/admin/pandascore-sync.md`, `docs/igdb/webhooks.md`).
+- Auth → URL Configuration : Site URL `https://www.gamersuniverse.fr`, Redirect
+  URLs `https://www.gamersuniverse.fr/**` et `https://gamersuniverse.fr/**`.
 
-- [ ] Vérifier les politiques RLS
-  ```sql
-  SELECT * FROM pg_policies WHERE tablename = 'user_library';
-  ```
+## 3. Services tiers
 
-### 2. Variables d'environnement
+- Stripe (live) : webhook vers `https://www.gamersuniverse.fr/api/webhooks/stripe`,
+  son secret dans `STRIPE_WEBHOOK_SECRET`.
+- IGDB : webhooks enregistrés vers l'Edge Function `igdb-webhook` (admin →
+  Webhooks).
+- OAuth plateformes : URLs de callback `https://www.gamersuniverse.fr/api/auth/<provider>/callback`.
+- Resend : domaine `gamersuniverse.fr` au statut *verified* (DNS gérés par Vercel).
 
-- [ ] `NEXT_PUBLIC_SUPABASE_URL` configurée
-- [ ] `NEXT_PUBLIC_SUPABASE_ANON_KEY` configurée
-- [ ] `RESEND_API_KEY` configurée (pour les emails)
-- [ ] Toutes les variables sont définies dans Vercel
-
-### 3. Build et Tests
-
-- [ ] Le build passe sans erreur
-
-  ```bash
-  bun run build
-  ```
-
-- [ ] Les tests passent
-
-  ```bash
-  bun test --run
-  ```
-
-- [ ] Pas d'erreurs TypeScript
-  ```bash
-  bun run type-check
-  ```
-
-### 4. Fonctionnalités à tester
-
-- [ ] Authentification (inscription, connexion, déconnexion)
-- [ ] Page d'accueil (landing page)
-- [ ] Page des jeux (`/games`)
-  - [ ] Recherche de jeux
-  - [ ] Filtres par genre
-  - [ ] Pagination
-  - [ ] Pas de rechargement infini
-- [ ] Page de détails d'un jeu (`/games/[slug]`)
-- [ ] Page bibliothèque (`/library`)
-  - [ ] Affichage des statistiques
-  - [ ] Liste des jeux de l'utilisateur
-- [ ] Bouton "Ajouter à ma bibliothèque"
-  - [ ] Fonctionne correctement
-  - [ ] Gère les erreurs gracieusement si la migration n'est pas appliquée
-- [ ] Internationalisation (FR/EN)
-
-## Déploiement sur Vercel
-
-### 1. Configuration Vercel
+## 4. Validation avant release
 
 ```bash
-# Se connecter à Vercel
-vercel login
-
-# Lier le projet
-vercel link
-
-# Configurer les variables d'environnement
-vercel env add NEXT_PUBLIC_SUPABASE_URL
-vercel env add NEXT_PUBLIC_SUPABASE_ANON_KEY
-vercel env add RESEND_API_KEY
-```
-
-### 2. Déploiement
-
-```bash
-# Déploiement en production
-vercel --prod
-```
-
-### 3. Vérifications post-déploiement
-
-- [ ] Le site est accessible
-- [ ] Les pages se chargent correctement
-- [ ] L'authentification fonctionne
-- [ ] Les jeux s'affichent
-- [ ] La recherche fonctionne
-- [ ] Les filtres fonctionnent
-- [ ] La bibliothèque utilisateur fonctionne (si migration appliquée)
-- [ ] Pas d'erreurs dans la console du navigateur
-- [ ] Pas d'erreurs dans les logs Vercel
-
-## En cas de problème
-
-### Migration non appliquée
-
-Si la table `user_library` n'existe pas :
-
-1. L'application fonctionne normalement
-2. Les boutons "Ajouter à ma bibliothèque" ne causent pas d'erreur
-3. La page `/library` affiche un état vide
-4. Appliquer la migration dès que possible
-
-### Erreurs de build
-
-```bash
-# Nettoyer le cache
-rm -rf .next
-rm -rf node_modules
-bun install
+bun run lint
+bunx vitest run src/<domaines-modifiés>/
+bun run type-check
 bun run build
 ```
 
-### Erreurs de connexion Supabase
+## 5. Vérifications post-déploiement
 
-1. Vérifier les variables d'environnement
-2. Vérifier que l'URL Supabase est correcte
-3. Vérifier que la clé anon est valide
-4. Vérifier les politiques RLS
-
-## Rollback
-
-En cas de problème critique :
-
-```bash
-# Revenir à la version précédente
-vercel rollback
-```
-
-## Monitoring
-
-- [ ] Configurer les alertes Vercel
-- [ ] Surveiller les logs d'erreur
-- [ ] Surveiller les performances
-- [ ] Surveiller l'utilisation de la base de données
-
-## Documentation
-
-- [ ] README.md à jour
-- [ ] Documentation de la fonctionnalité bibliothèque
-      (`docs/LIBRARY_FEATURE_SETUP.md`)
-- [ ] Changelog mis à jour
+- [ ] `curl -sI https://www.gamersuniverse.fr/api/auth/callback` → `Location` sur le domaine prod (pas localhost)
+- [ ] `https://www.gamersuniverse.fr/sitemap.xml` et `robots.txt` pointent sur le domaine prod
+- [ ] Inscription + e-mail de confirmation reçu, lien fonctionnel
+- [ ] Pages `/fr/games`, `/fr/characters`, home : contenu rendu côté serveur
+- [ ] `/api/cron/sync-libraries` sans secret → 401
+- [ ] Pas d'erreur dans les logs Vercel / Sentry
+- [ ] Pages légales sans `[À COMPLÉTER]`

@@ -7,6 +7,7 @@ import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 import { ErrorFallback } from "@/components/shared/ErrorFallback";
 import { JsonLd } from "@/components/shared/JsonLd";
 import { logger } from "@/lib/logger";
+import { getSiteUrl } from "@/lib/utils/siteUrl";
 import type { GameSummary } from "@/types/game";
 
 export const revalidate = 300;
@@ -58,12 +59,12 @@ export default async function Home({ params }: HomePageProps) {
           "@context": "https://schema.org",
           "@type": "WebSite",
           name: "Gamers Universe",
-          url: "https://gameuniverse.gg",
+          url: getSiteUrl(),
           potentialAction: {
             "@type": "SearchAction",
             target: {
               "@type": "EntryPoint",
-              urlTemplate: `https://gameuniverse.gg/${locale}/games?q={search_term_string}`,
+              urlTemplate: `${getSiteUrl()}/${locale}/games?q={search_term_string}`,
             },
             "query-input": "required name=search_term_string",
           },

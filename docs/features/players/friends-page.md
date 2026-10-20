@@ -100,13 +100,12 @@ confirmation s'affiche avant la suppression effective.
 | `src/lib/utils/navigation-utils.ts`                    | Ajout lien `/friends` dans `NAV_LINKS`     |
 | `src/lib/services/friendService.ts`                    | Ajout méthode `getPendingCount()`          |
 | `src/lib/utils/friendUtils.ts`                         | Ajout `countPendingRequests()`             |
-| `src/components/layout/editorial/EditorialRail.tsx`    | Lien `/friends` (espace « account ») ¹    |
+| `src/components/layout/editorial/EditorialRail.tsx`    | Lien `/friends` (espace « account »)       |
+| `src/components/layout/editorial/NavCountBadge.tsx`    | Badge demandes en attente (sub-sidebar + nav mobile) |
 | `src/messages/en.json` / `src/messages/fr.json`        | Clés `friends.page.*`, `dashboard.friends` |
 
-> ¹ Le rendu du `NotificationBadge` de demandes en attente vivait dans l'ancien
-> shell `layout/dashboard/*` (SidebarNav / MobileNavOverlay), supprimé lors de la
-> migration éditoriale. Le hook `usePendingRequestCount` existe toujours ; son
-> câblage dans la nav éditoriale reste à re-brancher.
+> Le compteur `usePendingRequestCount` est affiché par `NavCountBadge` sur le lien
+> `/friends` de la sub-sidebar desktop et de la nav mobile (#307).
 
 ## Tests
 
