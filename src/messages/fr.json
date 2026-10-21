@@ -278,8 +278,8 @@
       "emailPlaceholder": "votre@email.com",
       "password": "Mot de passe",
       "passwordPlaceholder": "Votre mot de passe",
-      "fullName": "Nom complet",
-      "fullNamePlaceholder": "Votre nom complet",
+      "fullName": "Pseudo",
+      "fullNamePlaceholder": "Votre pseudo",
       "submitting": "En cours..."
     },
     "error": {
@@ -306,7 +306,7 @@
       "confirmPasswordPlaceholder": "Confirmez votre nouveau mot de passe",
       "submit": "Mettre à jour le mot de passe",
       "submitting": "Mise à jour...",
-      "success": "Mot de passe mis à jour !",
+      "success": "Mot de passe modifié !",
       "successDescription": "Votre mot de passe a été mis à jour avec succès. Redirection en cours...",
       "invalidLink": "Lien invalide",
       "invalidLinkDescription": "Le lien de réinitialisation est invalide ou a expiré.",
@@ -345,8 +345,8 @@
       "successStep1": "Vérifiez votre boîte de réception",
       "successStep2": "Cliquez sur le lien dans l'email",
       "successStep3": "Créez votre nouveau mot de passe",
-      "successSpam": "Vous ne voyez pas l'email ? Vérifiez vos spams ou",
-      "successRetry": "essayez avec une autre adresse",
+      "successNotReceived": "Vous ne voyez pas l'email ?",
+      "successSpam": "Vérifiez vos spams",
       "forgotPasswordLink": "Mot de passe oublié ?"
     },
     "confirm": {
@@ -1606,7 +1606,6 @@
     },
     "authConsent": {
       "label": "En créant un compte, j'accepte les <cgu>Conditions générales d'utilisation</cgu> et j'ai pris connaissance de la <privacy>Politique de confidentialité</privacy>.",
-      "notice": "Vos données (adresse e-mail, pseudonyme) servent à créer et gérer votre compte. Voir la politique de confidentialité.",
       "required": "Vous devez accepter les CGU pour créer un compte."
     },
     "bookingConsent": {

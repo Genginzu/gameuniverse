@@ -278,8 +278,8 @@
       "emailPlaceholder": "your@email.com",
       "password": "Password",
       "passwordPlaceholder": "Your password",
-      "fullName": "Full Name",
-      "fullNamePlaceholder": "Your full name",
+      "fullName": "Username",
+      "fullNamePlaceholder": "Your username",
       "submitting": "Processing..."
     },
     "error": {
@@ -345,8 +345,8 @@
       "successStep1": "Check your inbox",
       "successStep2": "Click the link in the email",
       "successStep3": "Create your new password",
-      "successSpam": "Don't see the email? Check your spam folder or",
-      "successRetry": "try with a different address",
+      "successNotReceived": "Don't see the email?",
+      "successSpam": "Check your spam folder",
       "forgotPasswordLink": "Forgot password?"
     },
     "confirm": {
@@ -1606,7 +1606,6 @@
     },
     "authConsent": {
       "label": "By creating an account, I accept the <cgu>Terms of Use</cgu> and I have read the <privacy>Privacy Policy</privacy>.",
-      "notice": "Your data (email address, username) is used to create and manage your account. See the privacy policy.",
       "required": "You must accept the Terms of Use to create an account."
     },
     "bookingConsent": {
