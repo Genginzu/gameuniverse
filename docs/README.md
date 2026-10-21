@@ -80,6 +80,7 @@
 | [company-management.md](features/admin/company-management.md)           | Gestion des entreprises                 |
 | [game-color-preview.md](features/admin/game-color-preview.md)           | Prévisualisation couleurs               |
 | [genre-management.md](features/admin/genre-management.md)               | Gestion des genres                      |
+| [home-showcase.md](features/admin/home-showcase.md)                     | Vitrine de l'accueil (jeux, persos)     |
 | [language-management.md](features/admin/language-management.md)         | Gestion des langues                     |
 | [pandascore-sync.md](features/admin/pandascore-sync.md)                 | Sync esport PandaScore (Edge Functions) |
 | [review-management.md](features/admin/review-management.md)             | Gestion des avis                        |

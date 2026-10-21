@@ -1928,7 +1928,59 @@
       "translations": "Traductions",
       "globalSync": "Synchro globale",
       "librarySync": "Synchro bibliothèque",
-      "accountDeletions": "Suppressions de compte"
+      "accountDeletions": "Suppressions de compte",
+      "homeShowcase": "Vitrine de l'accueil"
+    },
+    "homeShowcase": {
+      "title": "Vitrine de l'accueil",
+      "hint": "Choisissez les jeux et personnages affichés dans les aperçus de la page d'accueil visiteurs. Sans sélection, les jeux tendances et les personnages populaires sont utilisés. Les changements apparaissent sur l'accueil sous 5 minutes.",
+      "count": "{count} / {limit}",
+      "limitReached": "Limite atteinte : retirez un élément pour en ajouter un autre.",
+      "noResults": "Aucun résultat",
+      "searching": "Recherche en cours…",
+      "resultsCount": "{count, plural, =0 {Aucun résultat} one {# résultat} other {# résultats}}",
+      "loadMore": "Afficher plus",
+      "missingEntity": "Élément supprimé",
+      "statusLabel": "Statut affiché pour {name}",
+      "moveUp": "Monter {name}",
+      "moveDown": "Descendre {name}",
+      "remove": "Retirer {name}",
+      "statuses": {
+        "playing": "En cours",
+        "completed": "Terminé",
+        "wishlist": "Liste de souhaits",
+        "owned": "Possédé"
+      },
+      "igdb": {
+        "title": "Pas encore dans le catalogue : importer depuis IGDB",
+        "searching": "Recherche sur IGDB…",
+        "failed": "La recherche IGDB a échoué.",
+        "empty": "Aucun autre jeu trouvé sur IGDB.",
+        "import": "Importer"
+      },
+      "game": {
+        "title": "Jeux de la ludothèque",
+        "description": "Bloc « Bibliothèque » : 3 jeux maximum, avec le statut affiché sur la carte.",
+        "searchLabel": "Ajouter un jeu",
+        "searchPlaceholder": "Titre du jeu, ex : Grand Theft Auto",
+        "empty": "Aucun jeu choisi : les jeux tendances sont affichés."
+      },
+      "character": {
+        "title": "Personnages mis en avant",
+        "description": "Bloc « Personnages » : 4 personnages maximum.",
+        "searchLabel": "Ajouter un personnage",
+        "searchPlaceholder": "Rechercher un personnage (2 caractères min.)",
+        "empty": "Aucun personnage choisi : les personnages populaires sont affichés."
+      },
+      "errors": {
+        "load": "Impossible de charger la vitrine.",
+        "import": "L'import depuis IGDB a échoué, réessayez.",
+        "limit": "Nombre maximum d'éléments atteint.",
+        "duplicate": "Cet élément est déjà dans la vitrine.",
+        "notFound": "Élément introuvable.",
+        "invalid": "Requête invalide.",
+        "database": "Une erreur est survenue, réessayez."
+      }
     },
     "accountDeletions": {
       "title": "Suppressions de compte",

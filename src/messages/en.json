@@ -1928,7 +1928,59 @@
       "translations": "Translations",
       "globalSync": "Global Sync",
       "librarySync": "Library Sync",
-      "accountDeletions": "Account deletions"
+      "accountDeletions": "Account deletions",
+      "homeShowcase": "Home showcase"
+    },
+    "homeShowcase": {
+      "title": "Home showcase",
+      "hint": "Pick the games and characters shown in the previews of the logged-out home page. Without a selection, trending games and popular characters are used. Changes appear on the home page within 5 minutes.",
+      "count": "{count} / {limit}",
+      "limitReached": "Limit reached: remove an item to add another one.",
+      "noResults": "No results",
+      "searching": "Searching…",
+      "resultsCount": "{count, plural, =0 {No results} one {# result} other {# results}}",
+      "loadMore": "Show more",
+      "missingEntity": "Deleted item",
+      "statusLabel": "Status shown for {name}",
+      "moveUp": "Move {name} up",
+      "moveDown": "Move {name} down",
+      "remove": "Remove {name}",
+      "statuses": {
+        "playing": "Playing",
+        "completed": "Completed",
+        "wishlist": "Wishlist",
+        "owned": "Owned"
+      },
+      "igdb": {
+        "title": "Not in the catalogue yet: import from IGDB",
+        "searching": "Searching IGDB…",
+        "failed": "IGDB search failed.",
+        "empty": "No other game found on IGDB.",
+        "import": "Import"
+      },
+      "game": {
+        "title": "Library games",
+        "description": "\"Library\" block: up to 3 games, with the status shown on the card.",
+        "searchLabel": "Add a game",
+        "searchPlaceholder": "Game title, e.g. Grand Theft Auto",
+        "empty": "No game picked: trending games are shown."
+      },
+      "character": {
+        "title": "Featured characters",
+        "description": "\"Characters\" block: up to 4 characters.",
+        "searchLabel": "Add a character",
+        "searchPlaceholder": "Search a character (2 characters min.)",
+        "empty": "No character picked: popular characters are shown."
+      },
+      "errors": {
+        "load": "Could not load the showcase.",
+        "import": "Import from IGDB failed, please try again.",
+        "limit": "Maximum number of items reached.",
+        "duplicate": "This item is already in the showcase.",
+        "notFound": "Item not found.",
+        "invalid": "Invalid request.",
+        "database": "Something went wrong, please try again."
+      }
     },
     "accountDeletions": {
       "title": "Account deletions",
