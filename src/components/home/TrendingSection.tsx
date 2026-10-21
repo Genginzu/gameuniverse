@@ -18,12 +18,7 @@ import { GameCard } from "@/components/games/GameCard";
 import { KickerLabel } from "@/components/shared/KickerLabel";
 import { fetcher } from "@/lib/swr/fetcher";
 import { Link } from "@/i18n/navigation";
-import type { GameSummary } from "@/types/game";
-
-interface HomeApiResponse {
-  trending: GameSummary[];
-  upcoming: GameSummary[];
-}
+import type { HomeApiResponse } from "@/types/home";
 
 interface TrendingSectionProps {
   initialData?: HomeApiResponse;

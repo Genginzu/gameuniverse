@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Icon } from "@iconify/react";
 import { Link } from "@/i18n/navigation";
-import { useParams } from "next/navigation";
 
 interface ErrorProps {
   error: Error & { digest?: string };
@@ -13,8 +13,8 @@ interface ErrorProps {
 }
 
 export default function LocaleError({ error, reset }: ErrorProps) {
-  const params = useParams();
-  const locale = (params?.locale as string) || "fr";
+  const tErrors = useTranslations("errors");
+  const tCommon = useTranslations("common");
 
   useEffect(() => {
     console.error(error);
@@ -25,23 +25,17 @@ export default function LocaleError({ error, reset }: ErrorProps) {
       <div className="w-full max-w-md">
         <Alert variant="destructive">
           <Icon icon="lucide:alert-triangle" className="h-4 w-4" />
-          <AlertTitle>
-            {locale === "fr" ? "Une erreur est survenue" : "An error occurred"}
-          </AlertTitle>
-          <AlertDescription className="mt-2">
-            {locale === "fr"
-              ? "Une erreur inattendue s'est produite. Veuillez réessayer."
-              : "An unexpected error occurred. Please try again."}
-          </AlertDescription>
+          <AlertTitle>{tErrors("unexpectedError")}</AlertTitle>
+          <AlertDescription className="mt-2">{tErrors("unexpectedErrorMessage")}</AlertDescription>
           <div className="mt-4 flex flex-wrap gap-2">
             <Button onClick={reset} variant="outline">
               <Icon icon="lucide:refresh-cw" className="mr-2 h-4 w-4" />
-              {locale === "fr" ? "Réessayer" : "Retry"}
+              {tErrors("retry")}
             </Button>
             <Button asChild variant="outline">
               <Link href="/dashboard">
                 <Icon icon="lucide:home" className="mr-2 h-4 w-4" />
-                {locale === "fr" ? "Accueil" : "Home"}
+                {tCommon("backToHome")}
               </Link>
             </Button>
           </div>

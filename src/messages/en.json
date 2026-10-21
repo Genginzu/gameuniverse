@@ -136,35 +136,63 @@
       "coaching": "Coaching",
       "library": "Library"
     },
-    "features": {
+    "previews": {
       "kicker": "WHAT GAMERS UNIVERSE DELIVERS",
       "title": "The whole gaming world",
       "titleAccent": "in one place",
-      "description": "Six pillars built for passionate players: from collection tracking to community, esport and iconic characters.",
+      "description": "Six pillars built for passionate players, shown as they look once your account is created.",
       "items": {
         "library": {
-          "title": "Massive library",
-          "description": "Thousands of games with detailed info, ratings, media and price comparisons."
+          "kicker": "LIBRARY",
+          "title": "Your whole game collection, finally in one place",
+          "description": "Add games in one click, sort them by status (playing, completed, wishlist) and find your collection across all your platforms.",
+          "explore": "Browse the catalogue"
         },
         "characters": {
-          "title": "Iconic characters",
-          "description": "Explore the heroes and villains of your favorite games with full biographies."
+          "kicker": "CHARACTERS",
+          "title": "The heroes and villains that shaped your playthroughs",
+          "description": "Explore iconic characters, their biographies and the games they appear in, then keep your favorites close.",
+          "explore": "See characters"
         },
         "community": {
-          "title": "Active community",
-          "description": "Share your reviews, create collections and connect with other players."
+          "kicker": "COMMUNITY",
+          "title": "A player profile that looks like you",
+          "description": "Show your level, games and reviews, add friends and see what the community is playing.",
+          "explore": "Discover players"
         },
         "search": {
-          "title": "Advanced search",
-          "description": "Easily find your favorite games with a search engine built for gaming."
+          "kicker": "SEARCH",
+          "title": "Find any game in a few keystrokes",
+          "description": "One search for games, characters and players, with instant results.",
+          "explore": "Explore games"
         },
         "tracking": {
-          "title": "Collection tracking",
-          "description": "Manage your library, track your playtime and progress."
+          "kicker": "TRACKING & STATS",
+          "title": "Your playtime, finally measured",
+          "description": "Track your hours played, your progress and completed games on a personal dashboard.",
+          "explore": "See trending games"
         },
         "reviews": {
-          "title": "Detailed reviews",
-          "description": "Write and read full-length reviews with pros and cons."
+          "kicker": "REVIEWS",
+          "title": "Detailed reviews, rated out of 20",
+          "description": "Write reviews with pros and cons, and vote for the community's most helpful ones.",
+          "explore": "Read game reviews"
+        }
+      },
+      "mockups": {
+        "empty": "Preview coming soon",
+        "libraryTitle": "My library",
+        "searchGames": "GAMES",
+        "searchCharacters": "CHARACTERS",
+        "trackingPlaytime": "PLAYTIME",
+        "trackingCompleted": "COMPLETED GAMES",
+        "trackingAverage": "AVERAGE RATING",
+        "trackingNowPlaying": "NOW PLAYING",
+        "reviewFor": "REVIEW OF {game}",
+        "demoReview": {
+          "content": "Stunning art direction and gameplay that keeps reinventing itself until the very end. One of the best games of the year.",
+          "positive": "World and atmosphere",
+          "negative": "A few framerate drops"
         }
       }
     },
@@ -181,7 +209,7 @@
       "titleAccent": "speak for themselves",
       "gamesReferenced": "GAMES REFERENCED",
       "characters": "CHARACTERS",
-      "players": "ACTIVE PLAYERS",
+      "players": "REGISTERED PLAYERS",
       "reviews": "PUBLISHED REVIEWS"
     },
     "cta": {
@@ -190,6 +218,7 @@
       "titleAccent": "Universe community",
       "description": "Thousands of players are already exploring their next favorites. Create your account in under a minute, keep track of your games and chat with the community.",
       "signup": "Get started for free",
+      "explore": "Explore the catalogue",
       "login": "I already have an account"
     }
   },

@@ -30,7 +30,7 @@
 }
 
 .editorial-card:hover {
-  border-color: rgba(var(--accent-rgb, var(--neon-primary)), 0.55);
+  border-color: rgb(var(--accent-rgb, var(--neon-primary)) / 0.55);
   transform: translateY(-3px);
 }
 
@@ -104,7 +104,7 @@
   font-size: 0.55rem;
   font-weight: 700;
   letter-spacing: 0.18em;
-  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.92);
+  background: rgb(var(--accent-rgb, var(--neon-primary)) / 0.92);
   color: #fff;
   z-index: 3;
 }
@@ -133,9 +133,25 @@
   pointer-events: none;
 }
 
-.editorial-card:hover .editorial-card-score {
+.editorial-card:hover .editorial-card-score,
+.editorial-card-score.is-visible {
   opacity: 1;
   transform: scale(1) translateY(0);
+}
+
+/* Library overlay: same height, typography and top alignment as the status badge. */
+.editorial-card-score.is-compact {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  height: auto;
+  padding: 0.18rem 0.45rem;
+  font-size: 0.55rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  line-height: inherit;
+  background: color-mix(in srgb, var(--editorial-bg) 70%, transparent);
+  backdrop-filter: blur(8px);
 }
 
 .editorial-card-footer {
@@ -223,7 +239,7 @@
 }
 
 .editorial-card-status-badge[data-status="wishlist"] {
-  color: var(--color-palette-accent-300);
+  color: var(--color-palette-neutral-200);
 }
 
 .editorial-card-status-badge[data-status="completed"] {

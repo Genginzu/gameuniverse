@@ -2,71 +2,81 @@
 
 ## Description
 
-Page d'accueil refondue dans le cadre de la refonte éditoriale (P1-01, issue
-#217). Deux variantes orchestrées par `HomeContent` :
+Page d'accueil éditoriale (P1-01 #217, landing marketing #19). Deux variantes
+orchestrées par `HomeContent` :
 
-- **Visiteur déconnecté** — landing éditorial complet avec hero plein cadre,
-  bandeau marquee, sections numérotées, grille trending, stats XL et CTA final.
-- **Utilisateur connecté** — `HomeDashboard` éditorial avec deux blocs (Jeux
-  tendances + Sorties du mois).
+- **Visiteur déconnecté** (rendu par défaut) : landing marketing `HomeLanding`
+  rendu côté serveur (HTML ISR + premier paint), avec 6 aperçus produit live,
+  trending, stats réelles et CTA d'inscription.
+- **Utilisateur connecté** : `HomeDashboard` (Jeux tendances + Sorties du mois).
+  La bascule a lieu côté client une fois `useAuth` résolu : un bref flash du
+  landing est accepté pour conserver l'ISR (pas de cookies, pas de
+  `force-dynamic`).
 
 ## Accès
 
 - Route : `/[locale]` (`/fr`, `/en`)
-- Layout : `EditorialShell` (mega-menu + rail + sub-sidebar)
+- Layout : `EditorialShell`
+- Aucun prérequis : la page est publique.
 
 ## Données
 
-- Endpoint serveur : `GET /api/home?locale=…` retourne
-  `{ trending: GameSummary[], upcoming: GameSummary[] }`.
-- Pattern ISR hybrid : `revalidate = 300` (5 min). Le server-component fetch les
-  données via l'API interne avec `next: { revalidate: 300 }`, puis passe
-  `initialHomeData` au `HomeContent` (Client). SWR utilise `fallbackData` pour
-  un rendu immédiat.
+- `GET /api/home?locale=…` → `HomeApiResponse` (`src/types/home.ts`) :
+  `trending`, `upcoming`, `popularCharacters`, `recentReviews`, `showcaseGames`,
+  `showcaseCharacters`, `stats`.
+- Les jeux de la ludothèque et les personnages mis en avant se choisissent dans
+  l'admin : voir [Vitrine de l'accueil](admin/home-showcase.md).
+- Requêtes landing : `src/lib/services/homeLandingService.ts` (client route
+  anonyme, RLS respectée).
+- `stats` = `count` exacts sur `games`, `characters`, `profiles`,
+  `game_reviews`. `null` si un seul compteur échoue : la section est alors
+  masquée (jamais de chiffres inventés).
+- ISR : `revalidate = 300` sur la page et le fetch interne.
 
 ## Structure (visiteur déconnecté)
 
-| Section          | Composant         | Source données                  | Notes                                                         |
-| ---------------- | ----------------- | ------------------------------- | ------------------------------------------------------------- |
-| Hero             | `HeroSection`     | `trending[0]`                   | Image plein cadre + image inline dans le titre                |
-| Bandeau défilant | `MarqueeSection`  | i18n `landing.marquee`          | Mots-clés (trending, esport, characters, reviews, …)          |
-| 6 piliers        | `FeaturesSection` | i18n `landing.features.items.*` | Grille `SpotlightCard` numérotés 01..06                       |
-| Trending         | `TrendingSection` | `trending[0..3]`                | Grille 4 `EditorialGameCard`                                  |
-| Stats            | `StatsSection`    | Constantes locales              | 4 `StatXL` avec count-up animé (respect reduced-motion)       |
-| CTA final        | `CtaSection`      | i18n `landing.cta`              | Carte sombre avec bordure haute en gradient secondary→primary |
+| Section           | Composant                | Données                                     |
+| ----------------- | ------------------------ | ------------------------------------------- |
+| Hero              | `HeroSection`            | `trending[0]`                               |
+| Bandeau défilant  | `MarqueeSection`         | i18n `landing.marquee`                      |
+| 6 aperçus produit | `ProductPreviewsSection` | voir tableau ci-dessous                     |
+| Trending          | `TrendingSection`        | `trending[0..3]` (SWR `fallbackData`)       |
+| Stats             | `StatsSection`           | `stats` (count-up, valeur finale `sr-only`) |
+| CTA final         | `CtaSection`             | i18n `landing.cta`                          |
 
-## Structure (utilisateur connecté)
+### Aperçus produit (`src/components/home/previews/`)
 
-| Section          | Composant       | Source données       |
-| ---------------- | --------------- | -------------------- |
-| Header bienvenue | `HomeDashboard` | i18n `homeDashboard` |
-| Jeux tendances   | `HomeDashboard` | `trending[0..5]`     |
-| Sorties du mois  | `HomeDashboard` | `upcoming[0..5]`     |
+Blocs alternés texte / visuel (empilés sur mobile, 2 colonnes ≥ `lg`). Chaque
+bloc a un seul lien discret vers le catalogue : l'inscription est portée par le
+hero et le CTA final uniquement. Les visuels sont des mockups `inert` +
+`aria-hidden` construits avec les vrais composants partagés, sans capture
+d'écran. Le contenu des avis est réduit à un extrait texte
+(`toReviewExcerptHtml`) : `/api/home` ne charge pas `sanitize-html`.
+
+| Pilier     | Visuel                                   | Données                           |
+| ---------- | ---------------------------------------- | --------------------------------- |
+| library    | `GameCard` overlay `library`             | sélection admin, sinon trending   |
+| characters | `EntityCard` + config personnage         | sélection admin, sinon populaires |
+| community  | `PlayerCard`                             | profils démo                      |
+| search     | `GlobalSearchGameItem` / `CharacterItem` | trending + personnages réels      |
+| tracking   | `StatXL` + barres de progression         | stats démo + jeux upcoming        |
+| reviews    | `ReviewCard`                             | dernier avis public, sinon démo   |
+
+Les données de démo sont dans `previews/previewDemoData.ts`.
 
 ## i18n
 
-- Namespaces : `landing.hero`, `landing.marquee`, `landing.features`,
+- Namespaces : `landing.hero`, `landing.marquee`, `landing.previews`,
   `landing.trending`, `landing.stats`, `landing.cta`, `homeDashboard`.
-- FR (référence) : `src/messages/fr.json`
-- EN : `src/messages/en.json`
+- La page d'erreur `[locale]/error.tsx` utilise `errors.*` et
+  `common.backToHome`.
 
-## Composants utilisés (refonte éditoriale)
+## Tests
 
-- `EditorialShell` (`@/components/layout/editorial/EditorialShell`)
-- `EditorialHero` (`@/components/shared/EditorialHero`)
-- `Marquee` (`@/components/shared/Marquee`)
-- `KickerLabel`, `StatXL`, `SpotlightCard` (`@/components/shared/`)
-- `EditorialGameCard` (`@/components/games/EditorialGameCard`)
-
-## Mobile-first
-
-- Breakpoints adaptés `sm` / `md` / `lg` (cf classes `editorial-home-*` dans
-  `globals.css`).
-- Hero : titre clamp `text-[clamp(3rem,8vw,7.5rem)]`.
-- Trending grid : 2 colonnes mobile, 4 colonnes ≥ md.
-- Stats grid : 2 colonnes mobile, 4 colonnes ≥ md.
-- CTA card : empilée mobile, 2 colonnes ≥ md.
-- Touch targets ≥ 44px sur les liens et CTAs.
+- `src/components/home/__tests__/` : `HomeContent`, `HomeLanding`,
+  `StatsSection`, `ProductPreviewsSection`.
+- `src/app/api/__tests__/home.test.ts`,
+  `src/lib/services/__tests__/homeLandingService.test.ts`.
 
 ## Voir aussi
 

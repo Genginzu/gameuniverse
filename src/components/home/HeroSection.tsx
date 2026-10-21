@@ -21,6 +21,7 @@ import { Icon } from "@iconify/react";
 import { EditorialHero, type EditorialHeroPart } from "@/components/shared/EditorialHero";
 import { Link } from "@/i18n/navigation";
 import type { GameSummary } from "@/types/game";
+import { GHOST_CTA_CLASS, PRIMARY_CTA_CLASS } from "./landingButtonClasses";
 
 interface HeroSectionProps {
   /** Jeu trending utilisé pour l'image de fond + l'image inline du titre. */
@@ -61,11 +62,11 @@ export function HeroSection({ featuredGame }: HeroSectionProps) {
       backgroundAlt={backgroundAlt}
       ctas={
         <>
-          <Link href="/auth?mode=signup" className="editorial-button-primary">
+          <Link href="/auth?mode=signup" className={PRIMARY_CTA_CLASS}>
             <Icon icon="mdi:rocket-launch" className="size-4" aria-hidden />
             {t("ctaSignup")}
           </Link>
-          <Link href="/games" className="editorial-button-ghost">
+          <Link href="/games" className={GHOST_CTA_CLASS}>
             <Icon icon="mdi:gamepad-variant" className="size-4" aria-hidden />
             {t("ctaExplore")}
           </Link>

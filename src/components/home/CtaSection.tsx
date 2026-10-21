@@ -15,6 +15,7 @@ import { Icon } from "@iconify/react";
 
 import { KickerLabel } from "@/components/shared/KickerLabel";
 import { Link } from "@/i18n/navigation";
+import { GHOST_CTA_CLASS, PRIMARY_CTA_CLASS } from "./landingButtonClasses";
 
 export function CtaSection() {
   const t = useTranslations("landing.cta");
@@ -37,12 +38,19 @@ export function CtaSection() {
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <Link href="/auth?mode=signup" className="editorial-button-primary">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+            <Link href="/auth?mode=signup" className={PRIMARY_CTA_CLASS}>
               <Icon icon="mdi:rocket-launch" className="size-4" aria-hidden />
               {t("signup")}
             </Link>
-            <Link href="/auth" className="editorial-button-ghost">
+            <Link href="/games" className={GHOST_CTA_CLASS}>
+              <Icon icon="mdi:gamepad-variant" className="size-4" aria-hidden />
+              {t("explore")}
+            </Link>
+            <Link
+              href="/auth"
+              className="text-editorial-muted inline-flex min-h-11 items-center justify-center px-2 text-sm underline-offset-4 hover:text-white hover:underline"
+            >
               {t("login")}
             </Link>
           </div>
