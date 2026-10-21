@@ -5,8 +5,8 @@
 /* Animated CSS grid for the landing hero section */
 .landing-grid-bg {
   background-image:
-    linear-gradient(rgba(var(--neon-primary), 0.15) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(var(--neon-primary), 0.15) 1px, transparent 1px);
+    linear-gradient(rgb(var(--neon-primary) / 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--neon-primary) / 0.15) 1px, transparent 1px);
   background-size: 60px 60px;
   animation: gridPulse 8s ease-in-out infinite;
 }

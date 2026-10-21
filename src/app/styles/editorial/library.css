@@ -38,7 +38,7 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(var(--accent-rgb, var(--neon-primary)), 0.6) 50%,
+    rgb(var(--accent-rgb, var(--neon-primary)) / 0.6) 50%,
     transparent 100%
   );
   animation: editorial-library-loading-scan 1.4s ease-in-out infinite;
@@ -166,7 +166,7 @@
   background: linear-gradient(
     115deg,
     transparent 30%,
-    rgba(var(--accent-rgb, var(--neon-primary)), 0.08) 50%,
+    rgb(var(--accent-rgb, var(--neon-primary)) / 0.08) 50%,
     transparent 70%
   );
   transform: translateX(-100%);

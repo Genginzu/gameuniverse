@@ -44,7 +44,7 @@
 }
 
 .editorial-rail-toggle:hover {
-  background: rgba(var(--neon-primary), 0.18);
+  background: rgb(var(--neon-primary) / 0.18);
   color: rgb(var(--neon-secondary));
 }
 
@@ -125,7 +125,7 @@
 }
 
 .editorial-rail-button.is-active {
-  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.2);
+  background: rgb(var(--accent-rgb, var(--neon-primary)) / 0.2);
   color: rgb(var(--accent-rgb, var(--neon-primary)));
 }
 
@@ -235,7 +235,7 @@
 }
 
 .editorial-sub-sidebar-link.is-active {
-  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.15);
+  background: rgb(var(--accent-rgb, var(--neon-primary)) / 0.15);
   color: rgb(var(--accent-rgb, var(--neon-primary)));
 }
 

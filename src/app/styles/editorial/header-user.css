@@ -172,7 +172,7 @@
 }
 
 .header-user-menu-item.is-active {
-  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.12);
+  background: rgb(var(--accent-rgb, var(--neon-primary)) / 0.12);
   color: rgb(var(--accent-rgb, var(--neon-primary)));
 }
 
@@ -189,7 +189,7 @@
 
 .header-user-menu-item-danger:hover,
 .header-user-menu-item-danger:focus-visible {
-  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.16);
+  background: rgb(var(--accent-rgb, var(--neon-primary)) / 0.16);
   color: var(--color-palette-primary-300);
 }
 

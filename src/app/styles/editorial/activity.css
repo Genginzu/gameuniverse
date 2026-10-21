@@ -77,8 +77,8 @@
 }
 
 .editorial-activity-item:hover {
-  border-color: rgba(var(--accent-rgb, var(--neon-primary)), 0.4);
-  box-shadow: 0 8px 24px -12px rgba(var(--accent-rgb, var(--neon-primary)), 0.25);
+  border-color: rgb(var(--accent-rgb, var(--neon-primary)) / 0.4);
+  box-shadow: 0 8px 24px -12px rgb(var(--accent-rgb, var(--neon-primary)) / 0.25);
 }
 
 .editorial-activity-item-icon {
@@ -88,7 +88,7 @@
   width: 2.25rem;
   height: 2.25rem;
   border-radius: 9999px;
-  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.12);
+  background: rgb(var(--accent-rgb, var(--neon-primary)) / 0.12);
   color: rgb(var(--accent-rgb, var(--neon-primary)));
 }
 
@@ -118,8 +118,8 @@
 }
 
 .editorial-feed-item:hover {
-  border-color: rgba(var(--accent-rgb, var(--neon-primary)), 0.4);
-  box-shadow: 0 8px 24px -12px rgba(var(--accent-rgb, var(--neon-primary)), 0.25);
+  border-color: rgb(var(--accent-rgb, var(--neon-primary)) / 0.4);
+  box-shadow: 0 8px 24px -12px rgb(var(--accent-rgb, var(--neon-primary)) / 0.25);
 }
 
 /* ===== Override des couleurs legacy mode clair des sous-items ===== */
@@ -203,7 +203,7 @@
 .editorial-activity-search-input:focus-visible {
   outline: none;
   border-color: rgb(var(--accent-rgb, var(--neon-primary)));
-  box-shadow: 0 0 0 3px rgba(var(--accent-rgb, var(--neon-primary)), 0.15);
+  box-shadow: 0 0 0 3px rgb(var(--accent-rgb, var(--neon-primary)) / 0.15);
 }
 
 /* ===== Skeleton ===== */
@@ -234,7 +234,7 @@
   height: 4rem;
   margin-bottom: 1rem;
   border-radius: 9999px;
-  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.12);
+  background: rgb(var(--accent-rgb, var(--neon-primary)) / 0.12);
   color: rgb(var(--accent-rgb, var(--neon-primary)));
 }
 

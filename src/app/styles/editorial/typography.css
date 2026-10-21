@@ -19,7 +19,7 @@
   background:
     radial-gradient(
       600px circle at var(--spotlight-mx, 50%) var(--spotlight-my, 50%),
-      rgba(var(--spotlight-glow, var(--neon-primary)), 0.12),
+      rgb(var(--spotlight-glow, var(--neon-primary)) / 0.12),
       transparent 40%
     ),
     linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
@@ -27,7 +27,7 @@
 }
 
 .spotlight-card:hover {
-  border-color: rgba(var(--spotlight-glow, var(--neon-primary)), 0.35);
+  border-color: rgb(var(--spotlight-glow, var(--neon-primary)) / 0.35);
 }
 
 .spotlight-card::before {
@@ -38,7 +38,7 @@
   padding: 1px;
   background: radial-gradient(
     400px circle at var(--spotlight-mx, 50%) var(--spotlight-my, 50%),
-    rgba(var(--spotlight-glow, var(--neon-primary)), 0.4),
+    rgb(var(--spotlight-glow, var(--neon-primary)) / 0.4),
     transparent 50%
   );
   -webkit-mask:
