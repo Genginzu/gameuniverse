@@ -143,6 +143,7 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
               id="fullName"
               name="fullName"
               type="text"
+              autoComplete="nickname"
               placeholder={t("form.fullNamePlaceholder")}
               value={formData.fullName}
               onChange={handleInputChange}
@@ -242,7 +243,6 @@ export function AuthForm({ mode, onModeChange }: AuthFormProps) {
                 })}
               </span>
             </label>
-            <p className="text-xs text-editorial-muted">{tConsent("notice")}</p>
           </div>
         )}
 

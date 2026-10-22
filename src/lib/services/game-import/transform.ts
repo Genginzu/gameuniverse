@@ -1,4 +1,5 @@
 import { IGDBGame } from "@/types/igdb";
+import { isAdultIgdbGame } from "@/lib/utils/igdbAdult";
 import { IGDBService } from "../igdbService";
 import { GameInsertData } from "./types";
 
@@ -39,6 +40,7 @@ export function transformIGDBToSupabase(igdbGame: IGDBGame): GameInsertData {
     playtime_normally: null,
     playtime_completely: null,
     playtime_updated_at: null,
+    is_adult: isAdultIgdbGame(igdbGame.themes),
   };
 }
 
@@ -59,5 +61,6 @@ export function transformIGDBToSupabaseUpdate(igdbGame: IGDBGame): Partial<GameI
     label_color: baseData.label_color,
     text_color: baseData.text_color,
     last_synced_at: baseData.last_synced_at,
+    is_adult: baseData.is_adult,
   };
 }

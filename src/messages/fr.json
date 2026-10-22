@@ -122,11 +122,10 @@
       "titlePart2": "univers",
       "titlePart3": "gaming",
       "titlePart4": "commence ici",
-      "imageAlt": "Cover du jeu en avant",
       "description": "Explorez des milliers de jeux, suivez les personnages emblématiques et rejoignez une communauté de passionnés sans filtre.",
       "ctaSignup": "Commencer gratuitement",
       "ctaExplore": "Explorer les jeux",
-      "fallbackBackgroundAlt": "Univers gaming Gamers Universe"
+      "backgroundAlt": "Un groupe d'amis joue ensemble sur un grand écran dans un salon gaming"
     },
     "marquee": {
       "trending": "Trending now",
@@ -136,35 +135,63 @@
       "coaching": "Coaching",
       "library": "Bibliothèque"
     },
-    "features": {
+    "previews": {
       "kicker": "CE QUE GAMERS UNIVERSE FAIT",
       "title": "Tout l'univers du jeu",
       "titleAccent": "en un seul endroit",
-      "description": "Six piliers pensés pour les passionnés : du suivi de collection à la communauté, en passant par l'esport et les personnages iconiques.",
+      "description": "Six piliers pensés pour les passionnés, présentés tels qu'ils apparaissent une fois votre compte créé.",
       "items": {
         "library": {
-          "title": "Bibliothèque immense",
-          "description": "Des milliers de jeux avec fiches détaillées, notes, médias et prix comparés."
+          "kicker": "BIBLIOTHÈQUE",
+          "title": "Toute votre bibliothèque, enfin réunie",
+          "description": "Ajoutez vos jeux en un clic, classez-les par statut (en cours, terminé, liste de souhaits) et retrouvez votre collection sur toutes vos plateformes.",
+          "explore": "Parcourir le catalogue"
         },
         "characters": {
-          "title": "Personnages iconiques",
-          "description": "Explorez les héros et vilains de vos jeux préférés avec leurs biographies complètes."
+          "kicker": "PERSONNAGES",
+          "title": "Les héros et vilains qui ont marqué vos parties",
+          "description": "Explorez les personnages iconiques, leurs biographies et les jeux où ils apparaissent, puis gardez vos favoris sous la main.",
+          "explore": "Voir les personnages"
         },
         "community": {
-          "title": "Communauté active",
-          "description": "Partagez vos avis, créez des collections et connectez-vous avec d'autres joueurs."
+          "kicker": "COMMUNAUTÉ",
+          "title": "Un profil joueur à votre image",
+          "description": "Affichez votre niveau, vos jeux et vos avis, ajoutez des amis et découvrez ce que joue la communauté.",
+          "explore": "Découvrir les joueurs"
         },
         "search": {
-          "title": "Recherche avancée",
-          "description": "Trouvez facilement vos jeux préférés grâce à un moteur de recherche pensé pour le gaming."
+          "kicker": "RECHERCHE",
+          "title": "Trouvez n'importe quel jeu en quelques lettres",
+          "description": "Une recherche unique pour les jeux, les personnages et les joueurs, avec des résultats instantanés.",
+          "explore": "Explorer les jeux"
         },
         "tracking": {
-          "title": "Suivi de collection",
-          "description": "Gérez votre bibliothèque, suivez votre temps de jeu et vos progressions."
+          "kicker": "SUIVI & STATS",
+          "title": "Votre temps de jeu, enfin mesuré",
+          "description": "Suivez vos heures de jeu, votre progression et vos jeux terminés grâce à un tableau de bord personnel.",
+          "explore": "Voir les tendances"
         },
         "reviews": {
-          "title": "Avis détaillés",
-          "description": "Rédigez et consultez des avis complets avec points positifs et négatifs."
+          "kicker": "AVIS",
+          "title": "Des avis détaillés, notés sur 20",
+          "description": "Rédigez vos critiques avec points positifs et négatifs, et votez pour les avis les plus utiles de la communauté.",
+          "explore": "Lire les avis des jeux"
+        }
+      },
+      "mockups": {
+        "empty": "Aperçu bientôt disponible",
+        "libraryTitle": "Ma bibliothèque",
+        "searchGames": "JEUX",
+        "searchCharacters": "PERSONNAGES",
+        "trackingPlaytime": "TEMPS DE JEU",
+        "trackingCompleted": "JEUX TERMINÉS",
+        "trackingAverage": "NOTE MOYENNE",
+        "trackingNowPlaying": "EN COURS",
+        "reviewFor": "AVIS SUR {game}",
+        "demoReview": {
+          "content": "Une direction artistique superbe et un gameplay qui se renouvelle jusqu'au bout. Un des meilleurs jeux de l'année.",
+          "positive": "Univers et ambiance",
+          "negative": "Quelques baisses de framerate"
         }
       }
     },
@@ -181,7 +208,7 @@
       "titleAccent": "parlent d'eux-mêmes",
       "gamesReferenced": "JEUX RÉFÉRENCÉS",
       "characters": "PERSONNAGES",
-      "players": "JOUEURS ACTIFS",
+      "players": "JOUEURS INSCRITS",
       "reviews": "AVIS PUBLIÉS"
     },
     "cta": {
@@ -190,6 +217,7 @@
       "titleAccent": "Gamers Universe",
       "description": "Des milliers de joueurs explorent déjà leurs prochains coups de cœur. Créez votre compte en moins d'une minute, gardez la trace de vos jeux et discutez avec la communauté.",
       "signup": "Commencer gratuitement",
+      "explore": "Explorer le catalogue",
       "login": "J'ai déjà un compte"
     }
   },
@@ -278,8 +306,8 @@
       "emailPlaceholder": "votre@email.com",
       "password": "Mot de passe",
       "passwordPlaceholder": "Votre mot de passe",
-      "fullName": "Nom complet",
-      "fullNamePlaceholder": "Votre nom complet",
+      "fullName": "Pseudo",
+      "fullNamePlaceholder": "Votre pseudo",
       "submitting": "En cours..."
     },
     "error": {
@@ -306,7 +334,7 @@
       "confirmPasswordPlaceholder": "Confirmez votre nouveau mot de passe",
       "submit": "Mettre à jour le mot de passe",
       "submitting": "Mise à jour...",
-      "success": "Mot de passe mis à jour !",
+      "success": "Mot de passe modifié !",
       "successDescription": "Votre mot de passe a été mis à jour avec succès. Redirection en cours...",
       "invalidLink": "Lien invalide",
       "invalidLinkDescription": "Le lien de réinitialisation est invalide ou a expiré.",
@@ -345,8 +373,8 @@
       "successStep1": "Vérifiez votre boîte de réception",
       "successStep2": "Cliquez sur le lien dans l'email",
       "successStep3": "Créez votre nouveau mot de passe",
-      "successSpam": "Vous ne voyez pas l'email ? Vérifiez vos spams ou",
-      "successRetry": "essayez avec une autre adresse",
+      "successNotReceived": "Vous ne voyez pas l'email ?",
+      "successSpam": "Vérifiez vos spams",
       "forgotPasswordLink": "Mot de passe oublié ?"
     },
     "confirm": {
@@ -1606,7 +1634,6 @@
     },
     "authConsent": {
       "label": "En créant un compte, j'accepte les <cgu>Conditions générales d'utilisation</cgu> et j'ai pris connaissance de la <privacy>Politique de confidentialité</privacy>.",
-      "notice": "Vos données (adresse e-mail, pseudonyme) servent à créer et gérer votre compte. Voir la politique de confidentialité.",
       "required": "Vous devez accepter les CGU pour créer un compte."
     },
     "bookingConsent": {
@@ -1900,7 +1927,59 @@
       "translations": "Traductions",
       "globalSync": "Synchro globale",
       "librarySync": "Synchro bibliothèque",
-      "accountDeletions": "Suppressions de compte"
+      "accountDeletions": "Suppressions de compte",
+      "homeShowcase": "Vitrine de l'accueil"
+    },
+    "homeShowcase": {
+      "title": "Vitrine de l'accueil",
+      "hint": "Choisissez les jeux et personnages affichés dans les aperçus de la page d'accueil visiteurs. Sans sélection, les jeux tendances et les personnages populaires sont utilisés. Les changements apparaissent sur l'accueil sous 5 minutes.",
+      "count": "{count} / {limit}",
+      "limitReached": "Limite atteinte : retirez un élément pour en ajouter un autre.",
+      "noResults": "Aucun résultat",
+      "searching": "Recherche en cours…",
+      "resultsCount": "{count, plural, =0 {Aucun résultat} one {# résultat} other {# résultats}}",
+      "loadMore": "Afficher plus",
+      "missingEntity": "Élément supprimé",
+      "statusLabel": "Statut affiché pour {name}",
+      "moveUp": "Monter {name}",
+      "moveDown": "Descendre {name}",
+      "remove": "Retirer {name}",
+      "statuses": {
+        "playing": "En cours",
+        "completed": "Terminé",
+        "wishlist": "Liste de souhaits",
+        "owned": "Possédé"
+      },
+      "igdb": {
+        "title": "Pas encore dans le catalogue : importer depuis IGDB",
+        "searching": "Recherche sur IGDB…",
+        "failed": "La recherche IGDB a échoué.",
+        "empty": "Aucun autre jeu trouvé sur IGDB.",
+        "import": "Importer"
+      },
+      "game": {
+        "title": "Jeux de la bibliothèque",
+        "description": "Bloc « Bibliothèque » : 3 jeux maximum, avec le statut affiché sur la carte.",
+        "searchLabel": "Ajouter un jeu",
+        "searchPlaceholder": "Titre du jeu, ex : Grand Theft Auto",
+        "empty": "Aucun jeu choisi : les jeux tendances sont affichés."
+      },
+      "character": {
+        "title": "Personnages mis en avant",
+        "description": "Bloc « Personnages » : 4 personnages maximum.",
+        "searchLabel": "Ajouter un personnage",
+        "searchPlaceholder": "Rechercher un personnage (2 caractères min.)",
+        "empty": "Aucun personnage choisi : les personnages populaires sont affichés."
+      },
+      "errors": {
+        "load": "Impossible de charger la vitrine.",
+        "import": "L'import depuis IGDB a échoué, réessayez.",
+        "limit": "Nombre maximum d'éléments atteint.",
+        "duplicate": "Cet élément est déjà dans la vitrine.",
+        "notFound": "Élément introuvable.",
+        "invalid": "Requête invalide.",
+        "database": "Une erreur est survenue, réessayez."
+      }
     },
     "accountDeletions": {
       "title": "Suppressions de compte",
@@ -3829,19 +3908,6 @@
         "removeAriaLabel": "Supprimer la recherche « {query} »"
       },
       "emptyHint": "Commencez à saisir pour voir les résultats."
-    },
-    "placeholder": "Rechercher jeux, personnages, joueurs...",
-    "noResults": "Aucun résultat trouvé",
-    "loading": "Recherche en cours...",
-    "importing": "Import en cours...",
-    "categories": {
-      "games": "Jeux",
-      "characters": "Personnages",
-      "players": "Joueurs"
-    },
-    "source": {
-      "local": "En bibliothèque",
-      "igdb": "IGDB"
     }
   },
   "pageBanner": {
@@ -4808,6 +4874,7 @@
     "subtitle": "Découvrez les jeux les plus populaires du moment",
     "count": "{count} jeux",
     "sections": {
+      "trendingNow": "Tendances du moment",
       "mostViewed": "Les plus vus",
       "mostPopular": "Les plus populaires",
       "bestRated": "Les mieux notés",

@@ -28,6 +28,8 @@ export interface GameInsertData {
   playtime_normally: number | null;
   playtime_completely: number | null;
   playtime_updated_at: string | null;
+  /** IGDB Erotic theme: excluded from trending. */
+  is_adult: boolean;
 }
 
 /**

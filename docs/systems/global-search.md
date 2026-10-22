@@ -30,10 +30,9 @@ Fonctionnalités principales :
 
 ### Barre de recherche
 
-La `GlobalSearchBar` est intégrée dans le `DashboardHeader` et accessible
-depuis toutes les pages de l'application, en version desktop et mobile. La
-refonte éditoriale (Phase 0) introduit également un `HeaderSearchTrigger`
-compact dans l'`EditorialMegaMenu` qui ouvre un overlay full-page (F0-07c).
+Le `HeaderSearchTrigger` de l'`EditorialMegaMenu` (raccourci Ctrl+K / Cmd+K)
+ouvre un overlay full-page (`SearchOverlay`, F0-07c), accessible depuis toutes
+les pages en version desktop et mobile.
 
 ### Route API
 
@@ -149,13 +148,13 @@ prête à sérialiser.
 - Délégation à `GlobalSearchService.search`
 - Sérialisation via `GlobalSearchService.toGlobalSearchResponse`
 
-### Composants React (`src/components/shared/`)
+### Composants React
 
-- `GlobalSearchBar.tsx` — Barre de recherche principale
-- `GlobalSearchDropdown.tsx` — Dropdown de résultats groupés
-- `GlobalSearchGameItem.tsx` — Rendu d'un résultat jeu
-- `GlobalSearchCharacterItem.tsx` — Rendu d'un résultat personnage
-- `GlobalSearchPlayerItem.tsx` — Rendu d'un résultat joueur
+- `src/components/layout/editorial/search/SearchOverlay.tsx` — Overlay de
+  recherche plein écran (Ctrl+K), avec `SearchOverlayResults`,
+  `SearchOverlayItem`, `SearchOverlayInput` et `SearchOverlayEmptyState`
+- `GlobalSearchGameItem.tsx` — Carte de résultat jeu (aperçu « Recherche » de la landing)
+- `GlobalSearchCharacterItem.tsx` — Ligne de résultat personnage (aperçu « Recherche » de la landing)
 
 > Les rendus pour `team`, `proPlayer`, `coach` sont implémentés par F0-07c
 > (`SearchOverlay` et ses sous-composants `SearchOverlayItem`).
@@ -192,7 +191,6 @@ section `globalSearch`.
 | `test/unit/lib/utils/globalSearchUtils.test.ts`                    | Unitaires        | `flattenResults`, indices, génération d'URL pour 6 types    |
 | `test/unit/lib/utils/global-search.property.test.ts`               | Property-based   | Invariants : longueur, ordre, identité, URLs, indices       |
 | `test/unit/api/search/global-search-route.test.ts`                 | Unitaires        | Validation Zod, paramètres, sérialisation, erreurs          |
-| `test/unit/components/shared/GlobalSearchDropdown.test.tsx`        | Tests composant  | Rendu, états (loading, empty, results)                      |
 
 Le `useGlobalSearch.test.ts` reste sur le périmètre du hook lui-même
 (debounce, fetch, navigation clavier).

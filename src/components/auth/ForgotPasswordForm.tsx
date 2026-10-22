@@ -87,12 +87,10 @@ export function ForgotPasswordForm() {
             <li>{t("successStep3")}</li>
           </ol>
         </div>
-        <div className="text-center text-xs text-editorial-muted">
-          <p>{t("successSpam")}</p>
-          <button type="button" className={AUTH_LINK_CLASS} onClick={() => setSuccess(false)}>
-            {t("successRetry")}
-          </button>
-        </div>
+        <p className="text-center text-sm text-editorial-muted">
+          {t("successNotReceived")}{" "}
+          <span className="font-semibold text-editorial-accent">{t("successSpam")}</span>
+        </p>
         <div className="border-t border-editorial-line pt-4">
           <Button asChild variant="outline" className={AUTH_SECONDARY_BTN_CLASS}>
             <Link href="/auth">
@@ -147,9 +145,9 @@ export function ForgotPasswordForm() {
           )}
         </Button>
       </form>
-      <div className="border-t border-editorial-line pt-4 text-center text-sm text-editorial-muted">
-        {t("rememberPassword")}{" "}
-        <Link href="/auth" className={AUTH_LINK_CLASS}>
+      <div className="flex flex-col items-center gap-1 border-t border-editorial-line pt-4 text-center text-sm text-editorial-muted">
+        <span>{t("rememberPassword")}</span>
+        <Link href="/auth" className={`inline-flex min-h-11 items-center ${AUTH_LINK_CLASS}`}>
           {t("backToLogin")}
         </Link>
       </div>

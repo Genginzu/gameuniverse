@@ -1,33 +1,18 @@
 "use client";
 
 /**
- * HomeContent : orchestration de la page d'accueil refondue.
+ * HomeContent : orchestration de la page d'accueil.
  *
- * Deux variantes :
- *   - Visiteur déconnecté : landing éditorial complet (hero plein cadre,
- *     marquee, features, trending, stats, CTA).
- *   - Utilisateur connecté : `HomeDashboard` éditorial (trending + upcoming).
- *
- * Les deux variantes reçoivent les mêmes données initiales (`trending` +
- * `upcoming`) hydratées server-side via ISR (cf `page.tsx`).
- *
- * Voir docs/design/editorial-refonte-plan.md.
+ * Le landing visiteur est rendu par défaut (HTML serveur + premier paint,
+ * page ISR sans cookies). Une fois l'auth résolue côté client, un
+ * utilisateur connecté bascule sur `HomeDashboard` : un bref flash du
+ * landing est accepté pour garder l'ISR.
  */
 
 import { useAuth } from "@/hooks/useAuth";
-import { CtaSection } from "./CtaSection";
-import { FeaturesSection } from "./FeaturesSection";
-import { HeroSection } from "./HeroSection";
+import type { HomeApiResponse } from "@/types/home";
 import { HomeDashboard } from "./HomeDashboard";
-import { MarqueeSection } from "./MarqueeSection";
-import { StatsSection } from "./StatsSection";
-import { TrendingSection } from "./TrendingSection";
-import type { GameSummary } from "@/types/game";
-
-interface HomeApiResponse {
-  trending: GameSummary[];
-  upcoming: GameSummary[];
-}
+import { HomeLanding } from "./HomeLanding";
 
 interface HomeContentProps {
   /** Données hydratées server-side via /api/home (ISR 5 min). */
@@ -36,25 +21,10 @@ interface HomeContentProps {
 
 export function HomeContent({ initialHomeData }: HomeContentProps) {
   const { user, loading } = useAuth();
-  const isAuthenticated = !loading && !!user;
 
-  if (loading) return null;
-
-  if (isAuthenticated) {
+  if (!loading && user) {
     return <HomeDashboard initialData={initialHomeData} />;
   }
 
-  // Le jeu trending #1 alimente l'image de fond + l'image inline du hero.
-  const featuredGame = initialHomeData?.trending?.[0];
-
-  return (
-    <div className="bg-editorial-bg min-h-screen text-white">
-      <HeroSection featuredGame={featuredGame} />
-      <MarqueeSection />
-      <FeaturesSection />
-      <TrendingSection initialData={initialHomeData} />
-      <StatsSection />
-      <CtaSection />
-    </div>
-  );
+  return <HomeLanding data={initialHomeData} />;
 }

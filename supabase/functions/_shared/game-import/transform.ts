@@ -26,7 +26,11 @@ export interface GameInsertData {
   playtime_normally: number | null;
   playtime_completely: number | null;
   playtime_updated_at: string | null;
+  is_adult: boolean;
 }
+
+/** IGDB theme id of "Erotic" (mirror of src/lib/utils/igdbAdult.ts). */
+const IGDB_EROTIC_THEME_ID = 42;
 
 export function transformIGDBToSupabase(igdbGame: IGDBGame): GameInsertData {
   const coverUrl = igdbGame.cover?.image_id
@@ -60,6 +64,7 @@ export function transformIGDBToSupabase(igdbGame: IGDBGame): GameInsertData {
     playtime_normally: null,
     playtime_completely: null,
     playtime_updated_at: null,
+    is_adult: (igdbGame.themes ?? []).includes(IGDB_EROTIC_THEME_ID),
   };
 }
 
@@ -74,5 +79,6 @@ export function transformIGDBToSupabaseUpdate(
     cover_image_url: baseData.cover_image_url,
     background_image_url: baseData.background_image_url,
     last_synced_at: baseData.last_synced_at,
+    is_adult: baseData.is_adult,
   };
 }

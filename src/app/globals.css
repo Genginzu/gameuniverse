@@ -258,7 +258,7 @@
   }
 
   ::selection {
-    background-color: rgba(var(--neon-primary), 0.35);
+    background-color: rgb(var(--neon-primary) / 0.35);
   }
 
   :focus-visible {

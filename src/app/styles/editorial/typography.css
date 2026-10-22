@@ -19,7 +19,7 @@
   background:
     radial-gradient(
       600px circle at var(--spotlight-mx, 50%) var(--spotlight-my, 50%),
-      rgba(var(--spotlight-glow, var(--neon-primary)), 0.12),
+      rgb(var(--spotlight-glow, var(--neon-primary)) / 0.12),
       transparent 40%
     ),
     linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
@@ -27,7 +27,7 @@
 }
 
 .spotlight-card:hover {
-  border-color: rgba(var(--spotlight-glow, var(--neon-primary)), 0.35);
+  border-color: rgb(var(--spotlight-glow, var(--neon-primary)) / 0.35);
 }
 
 .spotlight-card::before {
@@ -38,7 +38,7 @@
   padding: 1px;
   background: radial-gradient(
     400px circle at var(--spotlight-mx, 50%) var(--spotlight-my, 50%),
-    rgba(var(--spotlight-glow, var(--neon-primary)), 0.4),
+    rgb(var(--spotlight-glow, var(--neon-primary)) / 0.4),
     transparent 50%
   );
   -webkit-mask:
@@ -116,8 +116,9 @@
 }
 
 /*
- * Hero éditorial : conteneur de section avec hauteur min responsive et
- * débordement caché. Le gradient et l'image sont gérés par le composant.
+ * Hero éditorial : conteneur de section avec débordement caché. Le gradient
+ * et l'image sont gérés par le composant. Desktop : ratio 3/2 de l'illustration
+ * pour qu'elle soit visible en entier (largeur pleine × 2/3).
  */
 .editorial-hero {
   position: relative;
@@ -127,7 +128,8 @@
 
 @media (min-width: 1024px) {
   .editorial-hero {
-    min-height: 720px;
+    min-height: 0;
+    aspect-ratio: 3 / 2;
   }
 }
 
@@ -157,4 +159,3 @@
     animation: none;
   }
 }
-

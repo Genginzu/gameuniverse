@@ -33,8 +33,8 @@
 }
 
 .editorial-coaching .glass-card:hover {
-  border-color: rgba(var(--accent-rgb, var(--neon-primary)), 0.4);
-  box-shadow: 0 8px 24px -12px rgba(var(--accent-rgb, var(--neon-primary)), 0.25);
+  border-color: rgb(var(--accent-rgb, var(--neon-primary)) / 0.4);
+  box-shadow: 0 8px 24px -12px rgb(var(--accent-rgb, var(--neon-primary)) / 0.25);
 }
 
 /* ===== Inputs glass -> input sombre ===== */
@@ -54,7 +54,7 @@
 .editorial-coaching .glass-input:focus-visible {
   outline: none;
   border-color: rgb(var(--accent-rgb, var(--neon-primary)));
-  box-shadow: 0 0 0 3px rgba(var(--accent-rgb, var(--neon-primary)), 0.15);
+  box-shadow: 0 0 0 3px rgb(var(--accent-rgb, var(--neon-primary)) / 0.15);
 }
 
 /* ===== Surfaces blanches internes -> sombres ===== */

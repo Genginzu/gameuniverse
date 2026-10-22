@@ -21,7 +21,13 @@ export async function GET(request: NextRequest) {
 
     const supabase = await createRouteHandlerClient();
 
-    const [mostViewed, mostPopular, bestRated, recentlyAdded] = await Promise.all([
+    const [trendingNow, mostViewed, mostPopular, bestRated, recentlyAdded] = await Promise.all([
+      supabase
+        .from("games")
+        .select(GAME_SELECT)
+        .gt("trending_score", 0)
+        .order("trending_score", { ascending: false })
+        .limit(limit),
       supabase
         .from("games")
         .select(GAME_SELECT)
@@ -53,6 +59,7 @@ export async function GET(request: NextRequest) {
     const fields: string[] = [];
 
     return NextResponse.json({
+      trendingNow: transformGames(trendingNow.data ?? [], locale, fields),
       mostViewed: transformGames(mostViewed.data ?? [], locale, fields),
       mostPopular: transformGames(mostPopular.data ?? [], locale, fields),
       bestRated: transformGames(bestRated.data ?? [], locale, fields),

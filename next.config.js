@@ -67,6 +67,12 @@ const nextConfig = {
       },
       {
         protocol: "https",
+        hostname: "cdn-api.pandascore.co",
+        port: "",
+        pathname: "/images/**",
+      },
+      {
+        protocol: "https",
         hostname: "upload.wikimedia.org",
         port: "",
         pathname: "/**",

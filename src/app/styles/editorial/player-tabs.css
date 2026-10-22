@@ -38,8 +38,8 @@
 .editorial-player-collections [class*="from-palette-primary-100"] {
   background-image: linear-gradient(
     135deg,
-    rgba(var(--accent-rgb, var(--neon-primary)), 0.22),
-    rgba(var(--accent-rgb, var(--neon-primary)), 0.06)
+    rgb(var(--accent-rgb, var(--neon-primary)) / 0.22),
+    rgb(var(--accent-rgb, var(--neon-primary)) / 0.06)
   ) !important;
 }
 

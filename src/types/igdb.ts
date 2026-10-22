@@ -131,6 +131,7 @@ export interface IGDBGame {
   expansions?: number[]; // IDs des expansions associées
   bundles?: number[]; // IDs des bundles associés
   similar_games?: number[]; // IDs des jeux similaires
+  themes?: number[]; // IDs des thèmes IGDB (42 = Erotic)
   platforms?: Array<{ id: number; name: string }>;
   videos?: Array<{ video_id: string; name?: string }>;
 }

@@ -8,17 +8,12 @@ import { ErrorFallback } from "@/components/shared/ErrorFallback";
 import { JsonLd } from "@/components/shared/JsonLd";
 import { fetchInternalApi } from "@/lib/listing/server";
 import { getSiteUrl } from "@/lib/utils/siteUrl";
-import type { GameSummary } from "@/types/game";
+import type { HomeApiResponse } from "@/types/home";
 
 export const revalidate = 300;
 
 interface HomePageProps {
   params: Promise<{ locale: string }>;
-}
-
-interface HomeApiResponse {
-  trending: GameSummary[];
-  upcoming: GameSummary[];
 }
 
 export async function generateMetadata({ params }: HomePageProps): Promise<Metadata> {

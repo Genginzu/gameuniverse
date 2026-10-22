@@ -249,6 +249,8 @@ export interface UpcomingGamesResponse {
 }
 
 export interface TrendingGamesData {
+  /** Popularity weighted by release recency (trending_score). */
+  trendingNow: GameSummary[];
   mostViewed: GameSummary[];
   mostPopular: GameSummary[];
   bestRated: GameSummary[];

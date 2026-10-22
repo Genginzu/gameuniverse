@@ -26,8 +26,8 @@
 /* Hover : pas de changement de fond, on met en valeur la bordure + une légère
    ombre. Texte déjà blanc, donc pas d'override nécessaire. */
 .editorial-review-card:hover {
-  border-color: rgba(var(--accent-rgb, var(--neon-primary)), 0.4);
-  box-shadow: 0 8px 24px -12px rgba(var(--accent-rgb, var(--neon-primary)), 0.25);
+  border-color: rgb(var(--accent-rgb, var(--neon-primary)) / 0.4);
+  box-shadow: 0 8px 24px -12px rgb(var(--accent-rgb, var(--neon-primary)) / 0.25);
 }
 
 /* Header : cover + game name + rating */
@@ -171,7 +171,7 @@
 .editorial-reviews-sort:focus-visible {
   outline: none;
   border-color: rgb(var(--accent-rgb, var(--neon-primary)));
-  box-shadow: 0 0 0 3px rgba(var(--accent-rgb, var(--neon-primary)), 0.15);
+  box-shadow: 0 0 0 3px rgb(var(--accent-rgb, var(--neon-primary)) / 0.15);
 }
 
 /* Options : style natif (limite contrôle CSS) — on force au moins le bg
@@ -219,7 +219,7 @@
   height: 2.5rem;
   flex-shrink: 0;
   border-radius: 0.75rem;
-  background: rgba(var(--accent-rgb, var(--neon-primary)), 0.15);
+  background: rgb(var(--accent-rgb, var(--neon-primary)) / 0.15);
   color: rgb(var(--accent-rgb, var(--neon-primary)));
 }
 

@@ -30,6 +30,7 @@ import { useTranslations } from "next-intl";
 
 import { Link } from "@/i18n/navigation";
 import { getDistinctPlatformIcons } from "@/lib/utils/platform-icons";
+import { toHiResCover } from "@/lib/utils/igdbImage";
 import type { GameSummary } from "@/types/game";
 
 /**
@@ -43,6 +44,8 @@ export type GameCardOverlay =
       status: "owned" | "wishlist" | "completed" | "playing";
       rating: number | null;
       playtimeHours: number;
+      /** Shows the metascore (always visible) instead of the personal rating. */
+      showMetascore?: boolean;
     }
   | {
       type: "common";
@@ -65,12 +68,7 @@ function getMetascoreColor(score: number): string {
   return "rgb(248, 113, 113)";
 }
 
-export function GameCard({
-  game,
-  priority = false,
-  className = "",
-  overlay,
-}: GameCardProps) {
+export function GameCard({ game, priority = false, className = "", overlay }: GameCardProps) {
   const t = useTranslations("games");
   const description = game.description?.trim() ?? "";
 
@@ -85,7 +83,7 @@ export function GameCard({
       <div className="editorial-card-media">
         {game.coverImage ? (
           <Image
-            src={game.coverImage}
+            src={toHiResCover(game.coverImage)}
             alt={game.title}
             fill
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
@@ -129,13 +127,7 @@ export function GameCard({
 }
 
 /** Top-left : plateformes (default) ou badge status (library). */
-function CardTopLeft({
-  game,
-  overlay,
-}: {
-  game: GameSummary;
-  overlay?: GameCardOverlay;
-}) {
+function CardTopLeft({ game, overlay }: { game: GameSummary; overlay?: GameCardOverlay }) {
   const t = useTranslations("players.library.status");
 
   if (overlay?.type === "library") {
@@ -155,20 +147,14 @@ function CardTopLeft({
     return null;
   }
 
-  const platformIcons = game.platforms
-    ? getDistinctPlatformIcons(game.platforms, 3)
-    : [];
+  const platformIcons = game.platforms ? getDistinctPlatformIcons(game.platforms, 3) : [];
 
   if (platformIcons.length === 0) return null;
 
   return (
     <div className="editorial-card-platforms" aria-hidden="true">
       {platformIcons.map((p) => (
-        <span
-          key={p.icon}
-          className="editorial-card-platform-chip"
-          title={p.name}
-        >
+        <span key={p.icon} className="editorial-card-platform-chip" title={p.name}>
           <Icon icon={p.icon} className="size-3" />
         </span>
       ))}
@@ -177,14 +163,11 @@ function CardTopLeft({
 }
 
 /** Top-right : métascore (default, hover) ou rating étoile (library, toujours visible). */
-function CardTopRight({
-  game,
-  overlay,
-}: {
-  game: GameSummary;
-  overlay?: GameCardOverlay;
-}) {
+function CardTopRight({ game, overlay }: { game: GameSummary; overlay?: GameCardOverlay }) {
   if (overlay?.type === "library") {
+    if (overlay.showMetascore) {
+      return <MetascoreBadge metascore={game.metascore ?? null} alwaysVisible />;
+    }
     if (overlay.rating === null) return null;
     return (
       <span className="editorial-card-rating" title={`Rating ${overlay.rating}/5`}>
@@ -198,12 +181,21 @@ function CardTopRight({
     return null;
   }
 
-  const metascore = game.metascore ?? null;
+  return <MetascoreBadge metascore={game.metascore ?? null} />;
+}
+
+function MetascoreBadge({
+  metascore,
+  alwaysVisible = false,
+}: {
+  metascore: number | null;
+  alwaysVisible?: boolean;
+}) {
   if (metascore === null) return null;
 
   return (
     <span
-      className="editorial-card-score"
+      className={`editorial-card-score ${alwaysVisible ? "is-visible is-compact" : ""}`.trim()}
       style={{ color: getMetascoreColor(metascore) }}
       title={`Metascore ${metascore}`}
     >
@@ -213,13 +205,7 @@ function CardTopRight({
 }
 
 /** Footer : titre + sous-ligne adaptée au contexte. */
-function CardFooter({
-  game,
-  overlay,
-}: {
-  game: GameSummary;
-  overlay?: GameCardOverlay;
-}) {
+function CardFooter({ game, overlay }: { game: GameSummary; overlay?: GameCardOverlay }) {
   return (
     <div className="editorial-card-footer">
       <h3 className="editorial-card-title">{game.title}</h3>
@@ -228,13 +214,7 @@ function CardFooter({
   );
 }
 
-function CardByline({
-  game,
-  overlay,
-}: {
-  game: GameSummary;
-  overlay?: GameCardOverlay;
-}) {
+function CardByline({ game, overlay }: { game: GameSummary; overlay?: GameCardOverlay }) {
   if (overlay?.type === "library") {
     if (overlay.playtimeHours <= 0) return null;
     return (
