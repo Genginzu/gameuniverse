@@ -97,9 +97,7 @@ confirmation s'affiche avant la suppression effective.
 
 | Fichier                                                | Modification                               |
 | ------------------------------------------------------ | ------------------------------------------ |
-| `src/lib/utils/navigation-utils.ts`                    | Ajout lien `/friends` dans `NAV_LINKS`     |
 | `src/lib/services/friendService.ts`                    | Ajout méthode `getPendingCount()`          |
-| `src/lib/utils/friendUtils.ts`                         | Ajout `countPendingRequests()`             |
 | `src/components/layout/editorial/EditorialRail.tsx`    | Lien `/friends` (espace « account »)       |
 | `src/components/layout/editorial/NavCountBadge.tsx`    | Badge demandes en attente (sub-sidebar + nav mobile) |
 | `src/messages/en.json` / `src/messages/fr.json`        | Clés `friends.page.*`, `dashboard.friends` |
@@ -116,7 +114,6 @@ confirmation s'affiche avant la suppression effective.
 | `test/unit/components/friends/FriendsPageFriendCard.test.tsx` | Unit           | Carte : suppression, confirmation, loading |
 | `test/unit/api/players/pending-count.test.ts`                 | Unit           | API : 200, 401, 500                        |
 | `test/unit/hooks/usePendingRequestCount.test.ts`              | Unit           | Hook : fetch, decrement, refresh           |
-| `test/unit/lib/utils/navigation-utils.test.ts`                | Unit           | Navigation : position lien, isActive       |
 | `test/unit/lib/utils/friendsPage.property.test.ts`            | Property-based | 2 propriétés (badge, compteur pending)     |
 
 ```bash

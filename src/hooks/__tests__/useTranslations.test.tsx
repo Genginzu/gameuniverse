@@ -9,28 +9,13 @@ vi.mock("next-intl", () => ({
   useLocale: () => mockUseLocale(),
 }));
 
-import {
-  useCommonTranslations,
-  useCurrentLocale,
-  useDateFormatter,
-  useNumberFormatter,
-} from "@/hooks/useTranslations";
+import { useDateFormatter, useReviewTranslations } from "@/hooks/useTranslations";
 
 describe("useTranslations hooks", () => {
-  it("useCommonTranslations calls useTranslations with 'common'", () => {
-    const { result } = renderHook(() => useCommonTranslations());
-    expect(mockUseTranslations).toHaveBeenCalledWith("common");
-    expect(result.current("hello")).toBe("common.hello");
-  });
-
-  it("useCurrentLocale returns locale info for fr", () => {
-    const { result } = renderHook(() => useCurrentLocale());
-    expect(result.current).toEqual({
-      locale: "fr",
-      isDefault: true,
-      isFrench: true,
-      isEnglish: false,
-    });
+  it("useReviewTranslations calls useTranslations with 'gameDetails.reviews'", () => {
+    const { result } = renderHook(() => useReviewTranslations());
+    expect(mockUseTranslations).toHaveBeenCalledWith("gameDetails.reviews");
+    expect(result.current("title")).toBe("gameDetails.reviews.title");
   });
 
   it("useDateFormatter.formatDate returns a formatted string", () => {
@@ -38,12 +23,5 @@ describe("useTranslations hooks", () => {
     const formatted = result.current.formatDate(new Date("2025-01-15"));
     expect(typeof formatted).toBe("string");
     expect(formatted.length).toBeGreaterThan(0);
-  });
-
-  it("useNumberFormatter.formatNumber returns formatted number", () => {
-    const { result } = renderHook(() => useNumberFormatter());
-    const formatted = result.current.formatNumber(1234.5);
-    expect(typeof formatted).toBe("string");
-    expect(formatted).toContain("1");
   });
 });

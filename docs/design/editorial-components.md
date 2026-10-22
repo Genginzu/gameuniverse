@@ -234,7 +234,7 @@ type EditorialHeroPart =
 #### Quand l'utiliser
 
 - ✅ Page d'accueil, sections "Jeu en avant", landing pages éditoriales.
-- ❌ En-têtes de pages d'admin ou utilitaires (utiliser `PageBanner`).
+- ❌ En-têtes de pages d'admin ou utilitaires.
 
 ---
 

@@ -9,7 +9,3 @@ export {
   getAvailableGamePlatforms,
   getGameStatistics,
 } from "./admin-fetchers";
-
-export { validateGameSlug, validateGameData } from "./admin-validators";
-
-export { generateSlugFromTitle } from "@/lib/utils/slug-utils";

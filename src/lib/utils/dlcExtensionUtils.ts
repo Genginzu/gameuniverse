@@ -1,33 +1,16 @@
 /**
  * DLC & Extension Utilities
  *
- * Pure utility functions for transforming, sorting, and grouping
- * DLC/expansion/bundle data from IGDB into application-ready formats.
+ * Pure utility functions for transforming DLC/expansion/bundle data
+ * from IGDB into application-ready formats.
  *
  * @module dlcExtensionUtils
  */
 
 import type { IGDBDlcExtension, IGDBGame } from "@/types/igdb";
-import type { DlcExtensionCategory, GameDlcExtension } from "@/types/game";
+import type { DlcExtensionCategory } from "@/types/game";
 
 const IGDB_COVER_URL_PREFIX = "https://images.igdb.com/igdb/image/upload/t_cover_big/";
-
-/** Defines the sort order for categories in the UI */
-const CATEGORY_ORDER: Record<DlcExtensionCategory, number> = {
-  dlc: 0,
-  expansion: 1,
-  bundle: 2,
-  episode: 3,
-  season: 4,
-  pack: 5,
-  mod: 6,
-  remake: 7,
-  remaster: 8,
-  expanded_game: 9,
-  port: 10,
-  fork: 11,
-  update: 12,
-};
 
 interface TaggedId {
   id: number;
@@ -159,52 +142,4 @@ export function collectDlcExtensionIds(igdbGame: IGDBGame): TaggedId[] {
   }
 
   return taggedIds;
-}
-
-/**
- * Sorts DLC extensions by category order, then by release date ascending.
- *
- * Items with null release dates come last within their category group.
- *
- * @param extensions - Array of DLC extensions to sort
- * @returns A new sorted array (does not mutate the input)
- */
-export function sortDlcExtensions(extensions: GameDlcExtension[]): GameDlcExtension[] {
-  return [...extensions].sort((a, b) => {
-    // Sort by category order first
-    const categoryDiff = CATEGORY_ORDER[a.category] - CATEGORY_ORDER[b.category];
-    if (categoryDiff !== 0) return categoryDiff;
-
-    // Within same category, sort by release date ascending (nulls last)
-    if (a.releaseDate === null && b.releaseDate === null) return 0;
-    if (a.releaseDate === null) return 1;
-    if (b.releaseDate === null) return -1;
-    return a.releaseDate.localeCompare(b.releaseDate);
-  });
-}
-
-/**
- * Groups DLC extensions by category.
- *
- * Only returns non-empty groups. The result is a partial record
- * where each key is a category with at least one extension.
- *
- * @param extensions - Array of DLC extensions to group
- * @returns Record mapping each non-empty category to its extensions
- */
-export function groupDlcExtensionsByCategory(
-  extensions: GameDlcExtension[]
-): Partial<Record<DlcExtensionCategory, GameDlcExtension[]>> {
-  const groups: Partial<Record<DlcExtensionCategory, GameDlcExtension[]>> = {};
-
-  for (const extension of extensions) {
-    const group = groups[extension.category];
-    if (group) {
-      group.push(extension);
-    } else {
-      groups[extension.category] = [extension];
-    }
-  }
-
-  return groups;
 }

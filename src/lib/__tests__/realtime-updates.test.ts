@@ -196,17 +196,6 @@ describe("realtime-updates", () => {
     });
   });
 
-  describe("createGameUpdatesListener", () => {
-    it("returns a stub subscription that is safe to call and opens no channel", async () => {
-      const { createGameUpdatesListener } = await import("@/lib/realtime-updates");
-
-      const listener = createGameUpdatesListener();
-
-      expect(() => listener.subscribe(vi.fn())).not.toThrow();
-      expect(mockSupabaseClient.channel).not.toHaveBeenCalled();
-    });
-  });
-
   describe("invalidateGameCache", () => {
     it.each([["game-123"], [["game-1", "game-2"]]])(
       "resolves without broadcasting for %j",

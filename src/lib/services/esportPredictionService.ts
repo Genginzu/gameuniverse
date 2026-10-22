@@ -2,7 +2,6 @@ import { createRouteHandlerClient } from "@/lib/supabase-server";
 import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { logger } from "@/lib/logger";
 import { CoinService } from "@/lib/services/coinService";
-import { getMatchById } from "@/lib/pandascore/client";
 import { untypedTable } from "@/lib/utils/untypedTable";
 import type { BettableMatch } from "@/lib/services/esportPredictionGuard";
 
@@ -74,14 +73,6 @@ export async function getMyPredictions(playerId: string): Promise<EsportPredicti
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return ((data ?? []) as any[]).map(mapPrediction);
-}
-
-export async function resolvePrediction(matchId: number): Promise<number> {
-  // Fetch match result from PandaScore
-  const match = await getMatchById(matchId);
-  if (match.status !== "finished" || !match.winner_id) return 0;
-
-  return resolvePredictionsForMatch(matchId, match.winner_id);
 }
 
 /**

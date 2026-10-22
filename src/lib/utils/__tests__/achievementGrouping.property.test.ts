@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import * as fc from "fast-check";
-import { groupByCategory, filterByCategory } from "@/lib/utils/achievementGrouping";
+import { filterByCategory } from "@/lib/utils/achievementGrouping";
 import type {
   AchievementCategory,
   AchievementTier,
@@ -40,40 +40,6 @@ const achievementArb: fc.Arbitrary<PlayerAchievementWithDetails> = fc.record({
 });
 
 const achievementsArb = fc.array(achievementArb, { maxLength: 200 });
-
-// --- Property 8: Category grouping preserves all achievements ---
-
-/**
- * Feature: achievements-system, Property 8: Category grouping preserves all achievements
- * **Validates: Requirements 6.4**
- */
-describe("Property 8: Category grouping preserves all achievements", () => {
-  // Feature: achievements-system, Property 8: Category grouping preserves all achievements
-  it("sum of all group sizes equals total number of achievements", () => {
-    fc.assert(
-      fc.property(achievementsArb, (achievements) => {
-        const groups = groupByCategory(achievements);
-        const totalInGroups = CATEGORIES.reduce((sum, cat) => sum + groups[cat].length, 0);
-        expect(totalInGroups).toBe(achievements.length);
-      }),
-      { numRuns: 100 }
-    );
-  });
-
-  it("every achievement in a group has the matching category", () => {
-    fc.assert(
-      fc.property(achievementsArb, (achievements) => {
-        const groups = groupByCategory(achievements);
-        for (const cat of CATEGORIES) {
-          for (const a of groups[cat]) {
-            expect(a.category).toBe(cat);
-          }
-        }
-      }),
-      { numRuns: 100 }
-    );
-  });
-});
 
 // --- Property 9: Category filtering correctness ---
 

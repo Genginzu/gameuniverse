@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { ErrorBoundary, useErrorBoundaryHandler } from "@/components/shared/ErrorBoundary";
+import { ErrorBoundary } from "@/components/shared/ErrorBoundary";
 
 function ThrowingComponent({ shouldThrow = true }: { shouldThrow?: boolean }) {
   if (shouldThrow) {
@@ -148,22 +148,5 @@ describe("ErrorBoundary", () => {
 
       expect(screen.getByText("Une erreur s'est produite")).toBeDefined();
     });
-  });
-});
-
-describe("useErrorBoundaryHandler", () => {
-  let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
-
-  beforeEach(() => {
-    consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-  });
-
-  afterEach(() => {
-    consoleErrorSpy.mockRestore();
-  });
-
-  it("re-throws the error", () => {
-    const handler = useErrorBoundaryHandler();
-    expect(() => handler(new Error("Test error"))).toThrow("Test error");
   });
 });

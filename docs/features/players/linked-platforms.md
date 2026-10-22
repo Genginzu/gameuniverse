@@ -174,19 +174,6 @@ Les callbacks OAuth alimentent `platform_avatar_url` et `platform_metadata`
 | itch.io           | `cover_url`                                         | —                                                              |
 | Epic / Battle.net | — (à enrichir)                                      | — (Battle.net : `platform_region`)                             |
 
-## Recommandations
-
-`src/lib/services/recommendation/ownershipOverlap.ts` expose :
-
-- `computeOwnershipOverlap({ aGames, bGames })` — pure, calcule la similarité de
-  Jaccard entre deux sets de `game_id`.
-- `getOwnershipOverlap(supabase, aId, bId)` — charge les bibliothèques
-  synchronisées (`source_platform IS NOT NULL`) des deux joueurs et renvoie
-  `{ jaccard, intersection, union }`.
-
-Exposé depuis `src/lib/services/recommendation/index.ts`. Pas encore câblé dans
-`scoreCombiner` — à pondérer lors de la prochaine itération du moteur de reco.
-
 ## Suggestions Discord
 
 `GET /api/profile/linked-platforms/suggestions` :
@@ -251,7 +238,6 @@ toast.
 | `library-sync/`                      | Module unique : `syncPlatformLibrary(supabase, userId, platform)` + adaptateurs `adapters/{steam,xbox,playstation}.ts`, `runLibrarySyncJob`.    |
 | `igdb-external-games.ts`             | `resolveIgdbIdsByExternalUids(uids, category)` + table `EXTERNAL_GAME_CATEGORY`.                                                                |
 | `discordConnections.ts`              | `discordConnectionToPlatform`, `buildSuggestionsFromDiscord`.                                                                                   |
-| `recommendation/ownershipOverlap.ts` | Jaccard overlap entre deux bibliothèques.                                                                                                       |
 
 ### API routes
 

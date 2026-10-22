@@ -1,11 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import {
   truncatePreview,
-  sortConversationsByRecent,
   formatMessageDate,
   canonicalParticipants,
 } from "@/lib/utils/discussion-utils";
-import type { ConversationSummary } from "@/types/discussion";
 
 describe("truncatePreview", () => {
   it("returns content as-is when within limit", () => {
@@ -35,53 +33,6 @@ describe("truncatePreview", () => {
 
   it("respects custom maxLength", () => {
     expect(truncatePreview("Hello World", 5)).toBe("Hello…");
-  });
-});
-
-describe("sortConversationsByRecent", () => {
-  const makeConversation = (id: string, lastMessageDate: string | null): ConversationSummary => ({
-    id,
-    friend: { id: "f1", displayName: "Friend", avatarUrl: null },
-    lastMessage: lastMessageDate
-      ? { content: "msg", senderId: "s1", createdAt: lastMessageDate }
-      : null,
-    unreadCount: 0,
-  });
-
-  it("sorts conversations by most recent first", () => {
-    const conversations = [
-      makeConversation("1", "2024-01-01T00:00:00Z"),
-      makeConversation("2", "2024-03-01T00:00:00Z"),
-      makeConversation("3", "2024-02-01T00:00:00Z"),
-    ];
-    const sorted = sortConversationsByRecent(conversations);
-    expect(sorted.map((c) => c.id)).toEqual(["2", "3", "1"]);
-  });
-
-  it("places conversations without lastMessage at the end", () => {
-    const conversations = [
-      makeConversation("1", null),
-      makeConversation("2", "2024-01-01T00:00:00Z"),
-      makeConversation("3", null),
-    ];
-    const sorted = sortConversationsByRecent(conversations);
-    expect(sorted[0].id).toBe("2");
-    expect(sorted[1].lastMessage).toBeNull();
-    expect(sorted[2].lastMessage).toBeNull();
-  });
-
-  it("does not mutate the original array", () => {
-    const conversations = [
-      makeConversation("1", "2024-03-01T00:00:00Z"),
-      makeConversation("2", "2024-01-01T00:00:00Z"),
-    ];
-    const original = [...conversations];
-    sortConversationsByRecent(conversations);
-    expect(conversations).toEqual(original);
-  });
-
-  it("handles empty array", () => {
-    expect(sortConversationsByRecent([])).toEqual([]);
   });
 });
 

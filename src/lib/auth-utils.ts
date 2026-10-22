@@ -33,15 +33,3 @@ export const clearAuthCookies = () => {
     });
   }
 };
-
-export const handleAuthError = async (
-  error: { message?: string },
-  supabase: { auth: { signOut: () => Promise<unknown> } }
-) => {
-  // Erreur auth — si c'est un refresh token, nettoyer et rediriger
-  if (error?.message?.includes("refresh") || error?.message?.includes("token")) {
-    clearAuthCookies();
-    await supabase.auth.signOut();
-    window.location.href = "/auth";
-  }
-};

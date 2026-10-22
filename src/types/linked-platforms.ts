@@ -102,7 +102,3 @@ export const PLATFORM_META: Record<
     authType: "manual",
   },
 };
-
-export function isConnectedPlatform(platform: GamingPlatform): boolean {
-  return PLATFORM_META[platform].authType !== "manual";
-}

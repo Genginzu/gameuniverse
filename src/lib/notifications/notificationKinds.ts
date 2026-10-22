@@ -152,16 +152,8 @@ export function notificationKind(type: NotificationType): NotificationKindDescri
   return ownEntry(NOTIFICATION_KINDS, type) ?? FALLBACK_KIND;
 }
 
-export function isSystemNotification(type: NotificationType): boolean {
-  return notificationKind(type).system;
-}
-
 export function categoryIcon(category: NotificationCategory): string {
   return CATEGORY_ICONS[category];
-}
-
-export function categoryForType(type: NotificationType): NotificationCategory | null {
-  return ownEntry(NOTIFICATION_KINDS, type)?.category ?? null;
 }
 
 export function typesForCategory(

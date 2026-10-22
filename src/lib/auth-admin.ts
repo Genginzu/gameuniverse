@@ -9,18 +9,6 @@ export type { UserRole };
 export { getUserRoleFromUser };
 
 /**
- * Get the role of the currently authenticated user (server-side).
- */
-export async function getUserRole(): Promise<UserRole> {
-  try {
-    const user = await getCurrentUser();
-    return getUserRoleFromUser(user);
-  } catch {
-    return "user";
-  }
-}
-
-/**
  * Check if the current user is an admin (`app_metadata.role === "admin"`).
  */
 export async function isAdmin(): Promise<boolean> {
@@ -54,19 +42,6 @@ export async function requireAdmin() {
   }
 
   return true;
-}
-
-/**
- * Middleware to check admin or contributor access for API routes.
- */
-export async function requireAdminOrContributor() {
-  const role = await getUserRole();
-
-  if (role !== "admin" && role !== "contributor") {
-    throw new Error("Admin or contributor access required");
-  }
-
-  return role;
 }
 
 /**

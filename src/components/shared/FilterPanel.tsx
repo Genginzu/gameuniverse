@@ -13,7 +13,6 @@ export type {
   FilterPanelProps,
   FilterPanelLabels,
 } from "@/types/filters";
-export { hasActiveFilters, countActiveFilters, toggleFilterValue } from "@/lib/utils/filter-utils";
 
 const defaultLabels = {
   activeFilters: "Active filters",

@@ -6,9 +6,6 @@ import {
   getBucketName,
 } from "@/lib/utils/uploadUtils";
 import {
-  ALLOWED_MIME_TYPES,
-  MAX_FILE_SIZE_BYTES,
-  type AllowedMimeType,
   type SignedUploadUrlParams,
   type SignedUploadUrlResult,
 } from "@/types/upload";
@@ -73,18 +70,4 @@ export async function deleteFile(fileUrl: string): Promise<void> {
   if (error) {
     throw new Error(`Failed to delete file: ${error.message}`);
   }
-}
-
-/**
- * Checks whether a MIME type is in the allowed list.
- */
-export function isAllowedMimeType(mimeType: string): boolean {
-  return ALLOWED_MIME_TYPES.includes(mimeType as AllowedMimeType);
-}
-
-/**
- * Checks whether a file size is within the allowed limit (0 < size <= 5 MB).
- */
-export function isValidFileSize(size: number): boolean {
-  return size > 0 && size <= MAX_FILE_SIZE_BYTES;
 }

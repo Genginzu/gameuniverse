@@ -104,33 +104,6 @@ export async function notifyBulkOperation(
 }
 
 /**
- * Client-side hook for listening to real-time updates
- * This would be used in React components to update the UI in real-time
- */
-export function createGameUpdatesListener() {
-  return {
-    subscribe: (_callback: (event: GameUpdateEvent) => void) => {
-      // This would be implemented on the client side using Supabase client
-      // Example implementation:
-      /*
-      const supabase = createClient();
-      const channel = supabase.channel("game_updates");
-      
-      channel
-        .on("broadcast", { event: "game_update" }, (payload) => {
-          callback(payload.payload as GameUpdateEvent);
-        })
-        .subscribe();
-      
-      return () => {
-        channel.unsubscribe();
-      };
-      */
-    },
-  };
-}
-
-/**
  * Invalidate cache entries for updated games and ensure search consistency
  * This helps ensure that cached data is refreshed when games are modified
  */

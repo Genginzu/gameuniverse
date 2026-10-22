@@ -184,28 +184,3 @@ export function SearchBar<T extends SearchResultItem = SearchResultItem>({
     </div>
   );
 }
-
-export function shouldTriggerSearch(query: string, minLength: number = 2): boolean {
-  return query.length >= minLength;
-}
-
-export function createDebouncedCallback<T extends (...args: Parameters<T>) => void>(
-  callback: T,
-  delay: number
-): { debouncedFn: T; cancel: () => void } {
-  let timeoutId: ReturnType<typeof setTimeout> | null = null;
-  const debouncedFn = ((...args: Parameters<T>) => {
-    if (timeoutId) clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => {
-      callback(...args);
-      timeoutId = null;
-    }, delay);
-  }) as T;
-  const cancel = () => {
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-      timeoutId = null;
-    }
-  };
-  return { debouncedFn, cancel };
-}

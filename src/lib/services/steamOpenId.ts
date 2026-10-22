@@ -13,10 +13,6 @@ const OPENID_NS = "http://specs.openid.net/auth/2.0";
 const STEAM_ID_REGEX = /^https?:\/\/steamcommunity\.com\/openid\/id\/(\d{17})$/;
 const REQUIRED_SIGNED = ["op_endpoint", "claimed_id", "identity", "return_to", "response_nonce"];
 
-export function steamReturnUrl(baseUrl: string, state: string): string {
-  return `${baseUrl}/api/auth/steam/callback?state=${state}`;
-}
-
 /** Returns the SteamID when the assertion is well-formed and bound to this flow, else null. */
 export function parseSteamAssertion(
   params: URLSearchParams,

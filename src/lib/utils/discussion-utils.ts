@@ -1,28 +1,9 @@
-import type { ConversationSummary } from "@/types/discussion";
-
 /**
  * Tronque un contenu à maxLength caractères avec ellipsis ("…") si nécessaire.
  */
 export function truncatePreview(content: string, maxLength: number = 80): string {
   if (content.length <= maxLength) return content;
   return content.slice(0, maxLength) + "…";
-}
-
-/**
- * Trie les conversations par date du dernier message (plus récent en premier).
- * Les conversations sans dernier message sont placées à la fin.
- */
-export function sortConversationsByRecent(
-  conversations: ConversationSummary[]
-): ConversationSummary[] {
-  return [...conversations].sort((a, b) => {
-    if (!a.lastMessage && !b.lastMessage) return 0;
-    if (!a.lastMessage) return 1;
-    if (!b.lastMessage) return -1;
-    return (
-      new Date(b.lastMessage.createdAt).getTime() - new Date(a.lastMessage.createdAt).getTime()
-    );
-  });
 }
 
 /**

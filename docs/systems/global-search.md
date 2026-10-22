@@ -149,16 +149,11 @@ prête à sérialiser.
 - Délégation à `GlobalSearchService.search`
 - Sérialisation via `GlobalSearchService.toGlobalSearchResponse`
 
-### Composants React (`src/components/shared/`)
+### Composants React
 
-- `GlobalSearchBar.tsx` — Barre de recherche principale
-- `GlobalSearchDropdown.tsx` — Dropdown de résultats groupés
-- `GlobalSearchGameItem.tsx` — Rendu d'un résultat jeu
-- `GlobalSearchCharacterItem.tsx` — Rendu d'un résultat personnage
-- `GlobalSearchPlayerItem.tsx` — Rendu d'un résultat joueur
-
-> Les rendus pour `team`, `proPlayer`, `coach` sont implémentés par F0-07c
-> (`SearchOverlay` et ses sous-composants `SearchOverlayItem`).
+L'UI de recherche est `SearchOverlay` (`src/components/layout/editorial/search/`)
+et ses sous-composants (`SearchOverlayResults`, `SearchOverlayItem`), qui rendent
+les 6 types d'entités.
 
 ### Hook (`src/hooks/useGlobalSearch.ts`)
 
@@ -192,7 +187,6 @@ section `globalSearch`.
 | `test/unit/lib/utils/globalSearchUtils.test.ts`                    | Unitaires        | `flattenResults`, indices, génération d'URL pour 6 types    |
 | `test/unit/lib/utils/global-search.property.test.ts`               | Property-based   | Invariants : longueur, ordre, identité, URLs, indices       |
 | `test/unit/api/search/global-search-route.test.ts`                 | Unitaires        | Validation Zod, paramètres, sérialisation, erreurs          |
-| `test/unit/components/shared/GlobalSearchDropdown.test.tsx`        | Tests composant  | Rendu, états (loading, empty, results)                      |
 
 Le `useGlobalSearch.test.ts` reste sur le périmètre du hook lui-même
 (debounce, fetch, navigation clavier).

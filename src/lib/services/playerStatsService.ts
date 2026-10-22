@@ -136,22 +136,6 @@ export function computeMostActiveMonth(entries: LibraryEntryWithDate[]): MostAct
 }
 
 /**
- * Filtre les entrées de bibliothèque par année (basé sur le champ `addedAt`).
- * Fonction pure — pas d'accès DB — testable en property-based.
- */
-export interface LibraryEntryForYear {
-  addedAt: string;
-  playTimeHours: number;
-}
-
-export function filterEntriesByYear(
-  entries: LibraryEntryForYear[],
-  year: number
-): LibraryEntryForYear[] {
-  return entries.filter((e) => new Date(e.addedAt).getFullYear() === year);
-}
-
-/**
  * Service de calcul des statistiques enrichies d'un joueur.
  * Méthodes statiques + Supabase, suit le pattern existant de PlayerService.
  */

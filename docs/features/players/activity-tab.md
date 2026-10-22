@@ -98,7 +98,6 @@ cliquables redirigeant vers la page de détail correspondante.
 | Composant                | Fichier                                             | Rôle                                |
 | ------------------------ | --------------------------------------------------- | ----------------------------------- |
 | `ActivityFeed`           | `src/components/players/ActivityFeed.tsx`           | Composant principal (scroll infini) |
-| `ActivityFilters`        | `src/components/players/ActivityFilters.tsx`        | Barre de filtres par type           |
 | `ActivityItem`           | `src/components/players/ActivityItem.tsx`           | Dispatch vers le sous-composant     |
 | `ActivityItemReview`     | `src/components/players/ActivityItemReview.tsx`     | Rendu d'une review                  |
 | `ActivityItemComment`    | `src/components/players/ActivityItemComment.tsx`    | Rendu d'un commentaire              |

@@ -30,18 +30,3 @@ export const playerPlaytimeSchema = z
   );
 
 export type PlayerPlaytimeInput = z.infer<typeof playerPlaytimeSchema>;
-
-/**
- * Legacy schema kept for backward compatibility.
- * @deprecated Use playerPlaytimeSchema instead.
- */
-export const playerPlaytimeLegacySchema = z.object({
-  playTimeHours: z
-    .number()
-    .positive("Le temps de jeu doit être strictement positif")
-    .max(50000, "Le temps de jeu ne peut pas dépasser 50 000 heures")
-    .refine(
-      (val) => Math.round(val * 10) / 10 === val,
-      "Le temps de jeu doit être arrondi à une décimale (0.1h)"
-    ),
-});

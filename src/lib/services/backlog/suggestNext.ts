@@ -196,11 +196,3 @@ export function rankSuggestions(
 
   return scored.slice(0, Math.max(0, limit));
 }
-
-/** Convenience: the single best game to play next, or null when empty. */
-export function suggestNext(
-  games: BacklogGame[],
-  context: BacklogSuggestionContext = {}
-): BacklogSuggestion | null {
-  return rankSuggestions(games, context, 1)[0] ?? null;
-}

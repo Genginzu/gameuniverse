@@ -115,11 +115,12 @@ src/
 └── app/[locale]/admin/webhooks/page.tsx         # Page admin
 ```
 
-⚠️ Les services Next.js `igdbService`, `gameImportService`,
-`metacriticService`, `webhookDiffApplier` restent utilisés par d'autres
-routes admin (global-sync, bulk-import, sync individuel d'un jeu, etc.) et
-ne sont **pas** supprimés. Le code Edge Function est une copie portée
-en Deno qui vit en parallèle.
+⚠️ Les services Next.js `igdbService`, `gameImportService` et
+`metacriticService` restent utilisés par d'autres routes admin (global-sync,
+bulk-import, sync individuel d'un jeu, etc.). Le code Edge Function est une
+copie portée en Deno qui vit en parallèle. Les anciens `igdbWebhookService` et
+`webhookDiffApplier` côté Next.js ont été supprimés : seule la version Deno
+(`supabase/functions/_shared/webhook-diff-applier.ts`) applique les diffs.
 
 ## Différences entre la version Edge et la version Vercel
 

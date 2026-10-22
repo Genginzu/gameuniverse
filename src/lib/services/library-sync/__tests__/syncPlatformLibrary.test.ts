@@ -20,7 +20,7 @@ vi.mock("@/lib/services/librarySyncBackfill", () => ({
   backfillMatch: vi.fn().mockResolvedValue(0),
 }));
 
-import { syncLibraryWithAdapter } from "@/lib/services/library-sync";
+import { syncLibraryWithAdapter } from "@/lib/services/library-sync/syncPlatformLibrary";
 import { resolveIgdbIdsByExternalUids } from "@/lib/services/igdb-external-games";
 import { IGDBService } from "@/lib/services/igdbService";
 import { backfillMatch, recordUserPlatformTitles } from "@/lib/services/librarySyncBackfill";

@@ -9,14 +9,6 @@ export type UploadContext =
   | "group-images"
   | "community-images";
 
-export const ALLOWED_CONTEXTS: UploadContext[] = [
-  "avatars",
-  "banners",
-  "post-images",
-  "group-images",
-  "community-images",
-];
-
 export const ALLOWED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"] as const;
 
 export type AllowedMimeType = (typeof ALLOWED_MIME_TYPES)[number];

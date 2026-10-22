@@ -270,5 +270,3 @@ function EntityCardInner<T extends object>({
 
 // Memo wrapper preserving generic type signature
 export const EntityCard = memo(EntityCardInner) as typeof EntityCardInner;
-
-export default EntityCard;

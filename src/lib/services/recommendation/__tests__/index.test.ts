@@ -9,10 +9,6 @@ import {
   computeCollaborativeScore,
   computeReviewScore,
   computeMetacriticScore,
-  cacheGet,
-  cacheSet,
-  cacheClear,
-  cacheInvalidate,
 } from "@/lib/services/recommendation";
 
 describe("recommendation/index barrel exports", () => {
@@ -21,12 +17,5 @@ describe("recommendation/index barrel exports", () => {
     expect(computeCollaborativeScore).toBeDefined();
     expect(computeReviewScore).toBeDefined();
     expect(computeMetacriticScore).toBeDefined();
-  });
-
-  it("exports cache functions", () => {
-    expect(cacheGet).toBeDefined();
-    expect(cacheSet).toBeDefined();
-    expect(cacheClear).toBeDefined();
-    expect(cacheInvalidate).toBeDefined();
   });
 });
