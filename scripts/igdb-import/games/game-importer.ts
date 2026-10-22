@@ -11,6 +11,7 @@ import {
   transformIgdbToDlcExtensionRow,
 } from "../../../src/lib/utils/dlcExtensionUtils";
 import { toGameVersionRows } from "../../../src/lib/utils/gameVersionRows";
+import { isAdultIgdbGame } from "../../../src/lib/utils/igdbAdult";
 import { IGDB_RATING_CATEGORIES, IGDB_ALL_RATINGS } from "../../../src/types/igdb"; // eslint-disable-line no-duplicate-imports
 import { extractColorsFromCover } from "../shared/color-extractor";
 import { syncExistingGame } from "./game-sync";
@@ -192,6 +193,7 @@ function transformIGDBToSupabase(igdbGame: IGDBGame) {
     playtime_normally: null,
     playtime_completely: null,
     playtime_updated_at: null,
+    is_adult: isAdultIgdbGame(igdbGame.themes),
   };
 }
 

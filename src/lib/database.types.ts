@@ -1660,6 +1660,7 @@ export type Database = {
           created_at: string | null;
           id: string;
           igdb_id: number | null;
+          is_adult: boolean;
           label_color: string | null;
           last_activity_at: string | null;
           last_synced_at: string | null;
@@ -1685,6 +1686,7 @@ export type Database = {
           created_at?: string | null;
           id?: string;
           igdb_id?: number | null;
+          is_adult?: boolean;
           label_color?: string | null;
           last_activity_at?: string | null;
           last_synced_at?: string | null;
@@ -1710,6 +1712,7 @@ export type Database = {
           created_at?: string | null;
           id?: string;
           igdb_id?: number | null;
+          is_adult?: boolean;
           label_color?: string | null;
           last_activity_at?: string | null;
           last_synced_at?: string | null;

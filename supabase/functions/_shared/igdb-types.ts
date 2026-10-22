@@ -119,6 +119,7 @@ export interface IGDBGame {
   expansions?: number[];
   bundles?: number[];
   similar_games?: number[];
+  themes?: number[];
   platforms?: Array<{ id: number; name: string }>;
   videos?: Array<{ video_id: string; name?: string }>;
 }

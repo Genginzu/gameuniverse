@@ -132,7 +132,7 @@ export async function fetchGamesBatch(
            age_ratings.rating_content_descriptions,
            platforms.id, platforms.name,
            videos.video_id, videos.name,
-           dlcs, expansions, bundles;
+           dlcs, expansions, bundles, themes;
     where ${buildWhereClause(options)};
     sort first_release_date desc;
     limit ${Math.min(limit, BATCH_SIZE)};

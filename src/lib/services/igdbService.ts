@@ -217,7 +217,7 @@ export class IGDBService {
              age_ratings.rating_content_descriptions,
              platforms.id, platforms.name,
              videos.video_id, videos.name,
-             dlcs, expansions, bundles, similar_games;
+             dlcs, expansions, bundles, similar_games, themes;
       where id = ${igdbId};
     `;
 
@@ -232,6 +232,42 @@ export class IGDBService {
 
     const games: IGDBGame[] = await response.json();
     return games.length === 0 ? null : games[0];
+  }
+
+  /** One page (max 500, sorted by id) of IGDB game ids tagged with a theme. */
+  static async getGameIdsByTheme(themeId: number, offset: number, limit = 500): Promise<number[]> {
+    const body = `fields id; where themes = (${themeId}); sort id asc; limit ${limit}; offset ${offset};`;
+    const response = await this.igdbFetch("games", body);
+    if (!response.ok) {
+      throw new Error(`IGDB getGameIdsByTheme failed: ${response.status} ${response.statusText}`);
+    }
+    const rows: Array<{ id: number }> = await response.json();
+    return rows.map((row) => row.id);
+  }
+
+  /** IGDB game ids with the highest value for a popularity type (1 Visits, 2 Want to Play, 3 Playing). */
+  static async getTopPopularityGameIds(popularityType: number, limit = 500): Promise<number[]> {
+    const body = `fields game_id, value; where popularity_type = ${popularityType}; sort value desc; limit ${limit};`;
+    const response = await this.igdbFetch("popularity_primitives", body);
+    if (!response.ok) {
+      throw new Error(`IGDB getTopPopularityGameIds failed: ${response.status}`);
+    }
+    const rows: Array<{ game_id: number }> = await response.json();
+    return rows.map((row) => row.game_id);
+  }
+
+  /**
+   * Keeps the ids worth auto-importing, in input order: main games, remakes and
+   * remasters (no ports, DLCs, bundles, versions) that have a cover and are not
+   * tagged Erotic (theme 42).
+   */
+  static async filterImportableGameIds(igdbIds: number[]): Promise<number[]> {
+    if (igdbIds.length === 0) return [];
+    const body = `fields id; where id = (${igdbIds.join(",")}) & themes != (42) & cover != null & game_type = (0,8,9) & version_parent = null; limit 500;`;
+    const response = await this.igdbFetch("games", body);
+    if (!response.ok) return [];
+    const kept = new Set(((await response.json()) as Array<{ id: number }>).map((row) => row.id));
+    return igdbIds.filter((id) => kept.has(id));
   }
 
   // ---------------------------------------------------------------------------

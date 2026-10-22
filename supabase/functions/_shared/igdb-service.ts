@@ -144,7 +144,7 @@ export const IGDBService = {
              age_ratings.rating_content_descriptions,
              platforms.id, platforms.name,
              videos.video_id, videos.name,
-             dlcs, expansions, bundles, similar_games;
+             dlcs, expansions, bundles, similar_games, themes;
       where id = ${igdbId};
     `;
 

@@ -191,6 +191,7 @@ function assembleGame(raw: RawGame, l: GameLookups): IGDBGame {
     expansions: asNumberArray(raw.expansions),
     bundles: asNumberArray(raw.bundles),
     similar_games: asNumberArray(raw.similar_games),
+    themes: asNumberArray(raw.themes),
     // Fields used by isNotableGame filter (not in IGDBGame type, accessed via cast)
     total_rating_count: raw.total_rating_count,
     aggregated_rating_count: raw.aggregated_rating_count,
